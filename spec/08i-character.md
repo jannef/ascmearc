@@ -544,7 +544,8 @@ developer notes (CLAUDE.md, `docs/dev/`).
     rolls come from (the owner, 2026-10-27, #543; §6 "Level-up"); one function computes each for
     the rule and the screen (`world::skill_roll`, `world::roll_count`). The dev `levelup:auto`
     spends every roll on the first trained skill.
-  - **Knowledge** (#667, the owner 2026-10-28: know your enemy): the player's check to resist a
+  - **Knowledge** (#667, the owner 2026-10-28: know your enemy; `kind = "passive"`, no
+    abilities-menu row, #1698): the player's check to resist a
     creature's ability (a drain, §8 "Stats"; exposure to a disease its attack carries, §8
     "Diseases"; struggling free of its hold, §8 "Status effects") adds what the `resist` benefit
     gives, read at how far the skill's value stands **above the creature's level** (its type's),

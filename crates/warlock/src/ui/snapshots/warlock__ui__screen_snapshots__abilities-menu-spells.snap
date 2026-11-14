@@ -19,15 +19,14 @@ expression: "render(case, content.clone())"
                     │ Skills                                                   │
                     │   i  Decipher           no unknown scroll                │
                     │   j  Heal               nothing to treat                 │
-                    │   k  Knowledge          not usable yet                   │
-                    │   l  Forage             not usable here                  │
-                    │   m  Salvage            on something you carry           │
+                    │   k  Forage             not usable here                  │
+                    │   l  Salvage            on something you carry           │
                     │ Weapon skills                                            │
-                    │   n  Shield bash        no foe within reach              │
+                    │   m  Shield bash        no foe within reach              │
                     │                                                          │
                     │ The basilisk's stare: a foe nearby that sees you slows   │
                     │ to a crawl a moment; your eyes then rest two hours.      │
                     │                                                          │
                     │                                                          │
-                    │ a-n or Enter use   Esc close                             │
+                    │ a-m or Enter use   Esc close                             │
                     └──────────────────────────────────────────────────────────┘
