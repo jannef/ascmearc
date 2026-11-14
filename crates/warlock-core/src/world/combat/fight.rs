@@ -208,6 +208,9 @@ pub(in crate::world) struct Words {
     noun: String,
     verb: String,
     you: String,
+    /// The noun is a plural ("flames", "shards"): what it does is said in the plural verb
+    /// ("The flames burn the goblin.", "Your shards glance off its hide.").
+    plural: bool,
 }
 
 impl Words {
@@ -218,6 +221,7 @@ impl Words {
             noun: noun.into(),
             verb: verb.into(),
             you: second_person(verb),
+            plural: is_plural(noun),
         }
     }
 
@@ -239,6 +243,7 @@ impl Words {
             (None, Some(kind)) => {
                 let kind = content.damage_type(kind);
                 Self {
+                    plural: is_plural(&weapon.name),
                     noun: weapon.name.clone(),
                     verb: kind.verb.clone(),
                     you: kind.you.clone(),
@@ -355,6 +360,13 @@ impl End<'_> {
     }
 }
 
+/// Whether a noun's last word is a plural ("flames", "shards"): it ends in `s` but not in `ss`
+/// ("soulglass"), `us`, or `is`. The one test the messages' verb agreement reads.
+fn is_plural(noun: &str) -> bool {
+    let last = noun.rsplit(' ').next().unwrap_or(noun);
+    last.ends_with('s') && !["ss", "us", "is"].iter().any(|e| last.ends_with(e))
+}
+
 /// A verb in the player's person: "slashes" → "slash", "bashes" → "bash", "pierces" →
 /// "pierce", "hits" → "hit" (an `es` after a sibilant comes off, else the `s`); a verb that
 /// does not end in `s` stays as it is.
@@ -433,10 +445,18 @@ pub(in crate::world) fn attack_message(
         return Some(format!("{a} {verb} {t}."));
     };
     let weapon = format!("{} {}", attacker.whose(), words.noun);
+    // A plural subject takes the plural verb: the weapon's own, and a trap's, which is its noun.
+    let many = words.plural;
+    let (glances, does, turns, strikes) = if many {
+        ("glance", "do", "turn", "strike")
+    } else {
+        ("glances", "does", "turns", "strikes")
+    };
     let both_seen = attacker != End::Unseen && target != End::Unseen;
     let hit = match (attacker, kind) {
         (End::You, AttackKind::Ranged) => "shoot",
         (End::You, _) => words.you.as_str(),
+        (End::Trap(_), _) if many => words.you.as_str(),
         _ => words.verb.as_str(),
     };
     let text = match strike {
@@ -445,24 +465,36 @@ pub(in crate::world) fn attack_message(
             format!("{a} {hit} {t}{end}")
         }
         Strike::Soaked if both_seen => format!(
-            "{} glances off {} {}.",
+            "{} {glances} off {} {}.",
             capitalized(&weapon),
             target.whose(),
             guard.soak.unwrap_or("armour")
         ),
-        Strike::Resisted if both_seen => format!("{} does {t} no harm.", capitalized(&weapon)),
+        Strike::Resisted if both_seen => format!("{} {does} {t} no harm.", capitalized(&weapon)),
         Strike::Soaked | Strike::Resisted => {
-            format!("{a} {hit} {t} but {} no harm.", attacker.verb("do", "does"))
+            let harmless = if matches!(attacker, End::Trap(_)) && many {
+                "do"
+            } else {
+                attacker.verb("do", "does")
+            };
+            format!("{a} {hit} {t} but {harmless} no harm.")
         }
         Strike::Missed { by } => match by.filter(|_| both_seen) {
-            None => format!("{a} {} {t}.", attacker.verb("miss", "misses")),
+            None => {
+                let misses = if matches!(attacker, End::Trap(_)) && many {
+                    "miss"
+                } else {
+                    attacker.verb("miss", "misses")
+                };
+                format!("{a} {misses} {t}.")
+            }
             Some(Category::Dexterity | Category::Dodge) => format!(
                 "{} {} {weapon}.",
                 target.subject(),
                 target.verb("dodge", "dodges")
             ),
             Some(Category::Armour) => format!(
-                "{} glances off {} armour.",
+                "{} {glances} off {} armour.",
                 capitalized(&weapon),
                 target.whose()
             ),
@@ -478,17 +510,18 @@ pub(in crate::world) fn attack_message(
                 target.verb("parry", "parries")
             ),
             Some(Category::Natural) => format!(
-                "{} glances off {} {}.",
+                "{} {glances} off {} {}.",
                 capitalized(&weapon),
                 target.whose(),
                 guard.hide.unwrap_or("hide")
             ),
             Some(Category::Deflection) => format!(
-                "{} turns aside before it reaches {t}.",
-                capitalized(&weapon)
+                "{} {turns} aside before {} {t}.",
+                capitalized(&weapon),
+                if many { "they reach" } else { "it reaches" }
             ),
             Some(Category::Wall) => format!(
-                "{} strikes stone where {} {} in the wall.",
+                "{} {strikes} stone where {} {} in the wall.",
                 capitalized(&weapon),
                 target.object(),
                 target.verb("hide", "hides")
