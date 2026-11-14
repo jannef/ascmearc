@@ -987,8 +987,10 @@ by 13 to 15 (measured on the way); with marks up to 200 % before #1095, sooner s
 issue's level-13 warrior at rank 9). A fighter with two blows a round
 trains faster (the thief's daggers, both hands, rank 10 by 32 to 37), one with slow, heavy blows
 slower (the berserker's great axe, rank 10 by 52 to 57). The warrior's Weapon drill (+25 % marks
-in melee skills) is in these numbers: each rank takes a fifth fewer blows, worth more levels now
-that the last ranks take a career, so it still earns its place. Practised technique asks for rank 7,
+in melee skills) was meant to be in these numbers, but until #1704 it rounded down, so on a
+blow's 1 to 3 marks it added nothing; rounded to the nearest it makes a hit's 3 marks 4 (a miss
+stays 1), so the warrior's ranks come somewhat sooner than measured here. Worth more levels now
+that the last ranks take a career, it still earns its place. Practised technique asks for rank 7,
 now about level 15 instead of 7. The caster styles keep a gentler curve of their own
 (`caster`, once `school`, flatter than doubling from rank 8): with the 100 % cap the wizard's evocation is
 rank 4 at level 10, 6 at 20, 8 at 40, and 9 at 60 (Sniper 9 to 10; #1095's run, before #1263 removed the schools), where before

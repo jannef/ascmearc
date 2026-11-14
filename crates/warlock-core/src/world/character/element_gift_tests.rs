@@ -220,6 +220,10 @@ fn the_forge_born_earn_marks_half_again_as_fast_in_every_skill() {
             100 + drill,
             "{role:?}"
         );
+        // A blow's few marks, rounded to the nearest (#1704): a miss's 1 is 2 for the
+        // forge-born (1.5), a hit's 3 is 5 (4.5; 5.25 with the drill).
+        assert_eq!(mods(&metal).offence.marks(role, 1), 2, "{role:?}");
+        assert_eq!(mods(&metal).offence.marks(role, 3), 5, "{role:?}");
     }
 }
 

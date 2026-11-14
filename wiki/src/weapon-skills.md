@@ -64,6 +64,10 @@ Missile weapons need fewer marks than weapons up close. The caster styles, train
 follow a gentler curve of their own (the Caster columns). You start every skill with no
 marks.
 
+Talents that make you learn faster count each attack's marks for more, rounded to the nearest.
+The warrior's [Weapon drill](class-warrior.md#talent-weapon-drill) (a quarter more in melee
+skills) makes a hit worth 4 marks instead of 3, while a miss stays at 1.
+
 ## Target dummies
 
 The [Weyfarers' Gilde](guild.md#the-yard) keeps a yard of training dummies in Cēaptūn, straw men

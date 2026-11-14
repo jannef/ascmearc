@@ -406,7 +406,8 @@
 #   Class abilities' own (spec §8 "Class abilities"; the actives are used from the abilities
 #   menu, each one's id the ability's id, `use:rage`):
 #   weapon_marks { role, value }  the marks its attacks earn in that role's weapon skills, that
-#                                 percent more; without `role`, in every weapon skill and style
+#                                 percent more, rounded to the nearest; without `role`, in every
+#                                 weapon skill and style
 #   two_handed_crit { value }     a confirmed critical's multiplier with a two-handed weapon, that
 #                                 much more (1 to 3, at most x5)
 #   unarmed_die { sides }         blows with nothing in hand and kicks roll one die of that many
