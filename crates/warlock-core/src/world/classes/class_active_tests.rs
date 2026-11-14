@@ -208,6 +208,10 @@ fn weapon_drill_shield_line_and_armour_drill() {
         "Weapon drill: a quarter more marks"
     );
     assert_eq!(mods.offence.marks(crate::content::Role::Launcher, 100), 100);
+    // A blow earns so few marks that only rounding to the nearest lets the quarter count: a
+    // hit's 3 are 4, a miss's 1 stays 1 (#1704).
+    assert_eq!(mods.offence.marks(melee, 3), 4, "a hit");
+    assert_eq!(mods.offence.marks(melee, 1), 1, "a miss");
     // Shield line: the class talent's own effect gives the shield +1 (the picks levelup:auto
     // makes on the way may add to Defence too).
     let book = content.talents();

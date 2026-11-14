@@ -176,7 +176,7 @@ wiki's effect text appends "while raging".
 | `sure_step`, `pit_proof` | `World::step_onto_trap` → `steps_lightly` (the player's steps only) |
 | `speed_percent` | `World::burdened`, the one place every price passes (`quicker`) |
 | `weapon` `crit`, `at_rank` | `OffenceMods::weapon_benefit` (the held rank passed in) |
-| `weapon_marks` | `World::practise` (`OffenceMods::marks`; no `role`: every skill, Forge-born) |
+| `weapon_marks` | `World::practise` (`OffenceMods::marks`, rounded to the nearest by `TalentMods::scaled_nearest`: a blow's 1 to 3 marks; no `role`: every skill, Forge-born) |
 | `blaze` | `world/character/element_gifts.rs` (`Action::Gift`, `Ability::Sign` under `Source::Sign`): the burst, the fires, then its `cooldown` status |
 | `two_handed_crit`, `unarmed_die` | `Actor::melee` (and `kick` for the die, the bigger of it and `kick_die`) |
 | `unarmed_on_hit` | `Actor::melee`: a bare-handed profile carries them as its `on_hit` (a natural attack's place), applied in `World::after_blow`'s rider loop; never a kick's (Clawed's bleeding) |

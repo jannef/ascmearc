@@ -79,7 +79,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     twelve hours, during which the menu greys it "you are burnt out"), Kindled (a lit lantern burns
     as Lamplighter's brighter preset, a cell farther; with Lamplighter too, no farther; and fire
     resistance 25 %, #271), Forge-born (marks +50 % in every weapon skill and fighting style,
-    added to Weapon drill's; in words "you learn weapons quickly"), Tidal (mana regeneration
+    added to Weapon drill's, rounded to the nearest; in words "you learn weapons quickly"), Tidal (mana regeneration
     +25 %, added to the affixes' percent in `World::mana_rate`).
     The rest of the design's gifts land with their rules and are listed in `grants` only then.
   - **Background story** (#702, B1 of `docs/design/background-story.md`; `background.rs`,
@@ -1609,7 +1609,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     at 12, #906: `scribe:SPELL`, chosen from the scribe list, a scroll of a spell known written
     on a blank scroll for three times its mana and a study's time; §8 "Scrolls": "Writing
     scrolls").
-  - **Passives**, each one read: Weapon drill (melee weapon skill marks +25 %, `practise`),
+  - **Passives**, each one read: Weapon drill (melee weapon skill marks +25 %, rounded to the nearest, `practise`),
     Shield line (Shield +1 in a shield style, the styles' role, #1093), Cleaving strike (the cleave free blow; with the Cleave talent too, great
     cleave), Armour drill (worn armour's Dexterity cap +1, Protection +1 while wearing any),
     Weapon mastery (threat +1 with melee weapon skills at rank 8 or more), Battle rhythm (the
