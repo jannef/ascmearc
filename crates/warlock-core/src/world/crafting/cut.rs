@@ -24,15 +24,16 @@
 //!
 //! [`Action::Craft`]: crate::action::Action::Craft
 //! [`Actor::skill_effect_of`]: crate::world::Actor::skill_effect_of
+//! [`Effect::Craft`]: crate::skills::Effect::Craft
 
 use super::work::{Job, Task};
 use crate::action::Event;
 use crate::combat;
-use crate::content::{Content, CutId, Cutting, Gems, RecipeId};
+use crate::content::{Content, CutId, Cutting, Gems, MaterialId, RecipeDef, RecipeId};
 use crate::item_parts::ItemPart;
 use crate::object::{self, Stack};
 use crate::rng::draw;
-use crate::skills::{Effect, Use};
+use crate::skills::Use;
 use crate::stats::Stat;
 use crate::world::{Spent, World};
 
@@ -178,6 +179,20 @@ impl World {
         self.craft_work(Task::Cut(GemWork { recipe: id, item }), def.seconds)
     }
 
+    /// The modifier and the target of the player's check on gem `gem` by recipe `def`, Cut's
+    /// and Set's alike (the module docs): the gem's profession's stat (Dexterity without one)
+    /// in [`Actor::craft_modifier`] with the recipe's skill, plus the binding's boon, against
+    /// the recipe's `difficulty` + the gem's `work`.
+    ///
+    /// [`Actor::craft_modifier`]: crate::world::Actor::craft_modifier
+    pub(super) fn gem_check(&self, def: &RecipeDef, gem: MaterialId) -> (i32, i32) {
+        let content = &self.content;
+        let stat = (self.profession_of(gem)).map_or(Stat::Dexterity, |(_, stat)| stat);
+        let modifier = (self.state.player()).craft_modifier(content, stat, def.skill)
+            + self.binding_boon(def.skill);
+        (modifier, def.difficulty + content.material(gem).work)
+    }
+
     /// The cut of `work` is done: the check, the gem's new state, the mark (module docs).
     fn gem_cut(&mut self, work: GemWork) {
         let content = self.content.clone();
@@ -192,12 +207,7 @@ impl World {
             self.say("You have nothing left to work on.");
             return;
         };
-        let stat = (self.profession_of(gem)).map_or(Stat::Dexterity, |(_, stat)| stat);
-        let me = self.state.player();
-        let modifier = me.check_modifier(&content, stat)
-            + me.skill_effect_of(&content, def.skill, Effect::Craft)
-            + self.binding_boon(def.skill);
-        let against = def.difficulty + content.material(gem).work;
+        let (modifier, against) = self.gem_check(def, gem);
         let natural = combat::roll_natural(&mut draw!(self, "cut/player"));
         let step = (content.recipes().settings.as_ref()).map_or(5, |s| s.cut_step);
         // Master's hand: the cut comes sooner, never the making (`mastery.rs`).

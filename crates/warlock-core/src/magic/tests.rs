@@ -960,10 +960,7 @@ fn skill_reader(effect: crate::skills::Effect) -> (&'static str, &'static str) {
             "world/crafting/temper.rs",
             include_str!("../world/crafting/temper.rs"),
         ),
-        S::Craft => (
-            "world/crafting/salvage.rs",
-            include_str!("../world/crafting/salvage.rs"),
-        ),
+        S::Craft => ACTOR,
         S::EnchantLevel => (
             "world/crafting/enchant.rs",
             include_str!("../world/crafting/enchant.rs"),

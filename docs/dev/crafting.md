@@ -29,7 +29,13 @@ forge, P5), the forging wizard, and salvage. Material stock (the piece) is in
   (`world/turn/actor.rs`) reads the one named skill's curve at its value plus what affixes and talents
   add to that skill (`Actor::skill_bonus`, as `skill_effect` counts them); it never sums another
   skill's craft, which `skill_effect` would (Metalcraft's and Woodcraft's `craft` together on one
-  check). The magic tests' exhaustive `skill_reader` names `world/crafting/salvage.rs` as its reader.
+  check). The magic tests' exhaustive `skill_reader` names `world/turn/actor.rs` (`craft_modifier`)
+  as its reader.
+- **One craft-check modifier** (#1670): every crafting check (Craft, Cut, Set, Enchant, Make do,
+  Mine, Rig, Salvage, a crystal's salvage) adds `Actor::craft_modifier(content, stat, skill)` =
+  `check_modifier(stat)` (the stat's modifier + `VigourMods::check`) + `skill_effect_of(skill,
+  Effect::Craft)`, then its own terms (the binding's boon, Fletcher's). A "+X to every crafting
+  check" effect goes there, once. Cut and Set share one check, `World::gem_check` (`cut.rs`).
 
 ## Recipes as data
 

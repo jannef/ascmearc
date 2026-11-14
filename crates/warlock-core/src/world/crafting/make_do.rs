@@ -24,13 +24,15 @@
 //! - **Failed**: nothing happens to it; it stays damaged and is never destroyed. Trying again
 //!   costs only the time.
 //! - **Marks**: [`Use::Craft`] on that profession alone, if trained, whatever came of it.
+//!
+//! [`Effect::Craft`]: crate::skills::Effect::Craft
 
 use super::work::{Job, Task};
 use crate::action::Event;
 use crate::combat;
 use crate::object::Stack;
 use crate::rng::draw;
-use crate::skills::{Effect, Use};
+use crate::skills::Use;
 use crate::world::{Actor, Spent, World};
 
 /// Whether `stack` is damaged, so that a mend has something to do. Worn, protected, unpaid, and
@@ -128,8 +130,7 @@ impl World {
             self.say("You have nothing left to work on.");
             return;
         };
-        let modifier =
-            me.check_modifier(&content, stat) + me.skill_effect_of(&content, skill, Effect::Craft);
+        let modifier = me.craft_modifier(&content, stat, skill);
         let against = rules.difficulty + content.material(material).work;
         let natural = combat::roll_natural(&mut draw!(self, "make_do/player"));
         if crate::check::makes(natural, modifier, against) {

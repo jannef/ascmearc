@@ -472,6 +472,13 @@ impl Actor {
             .saturating_add(self.talent_mods(content).vigour.check(stat))
     }
 
+    /// What it adds to a crafting check of `stat` made with the profession `skill` (#1670):
+    /// [`Actor::check_modifier`] and that skill's own [`Effect::Craft`]
+    /// ([`Actor::skill_effect_of`]). Every crafting check reads this (docs/dev/crafting.md).
+    pub fn craft_modifier(&self, content: &Content, stat: Stat, skill: SkillId) -> i32 {
+        self.check_modifier(content, stat) + self.skill_effect_of(content, skill, Effect::Craft)
+    }
+
     /// Its own scores raised by what it wears and wields, before what its status effects,
     /// hunger, and stat damage take (the character screen marks the scores those lower).
     pub fn raised_stats(&self, content: &Content) -> Stats {

@@ -744,8 +744,7 @@ impl World {
         };
         let me = self.state.player();
         let stat = content.enchanting().map_or(Stat::Willpower, |r| r.stat);
-        let modifier = me.check_modifier(&content, stat)
-            + me.skill_effect_of(&content, def.skill, Effect::Craft);
+        let modifier = me.craft_modifier(&content, stat, def.skill);
         let step = content.enchanting().map_or(3, |r| r.level_step.max(1));
         let against = def.difficulty + i32::from(resolved.level / step);
         let natural = combat::roll_natural(&mut draw!(self, "enchant/check/player"));

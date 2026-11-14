@@ -21,6 +21,7 @@
 //!   of it. No noise, no alignment.
 //!
 //! [`Action::Craft`]: crate::action::Action::Craft
+//! [`Effect::Craft`]: crate::skills::Effect::Craft
 
 use super::craft::RecipeLack;
 use super::craft_make::{CraftOption, CraftPlan, CraftStep, CraftStepKind, cut_gem};
@@ -33,8 +34,7 @@ use crate::item_parts::{self, ItemPart};
 use crate::object::{self, Stack};
 use crate::rng::draw;
 use crate::scroll_label::Lore;
-use crate::skills::{Effect, Use};
-use crate::stats::Stat;
+use crate::skills::Use;
 use crate::time::Duration;
 use crate::world::{Actor, Spent, World};
 
@@ -273,12 +273,7 @@ impl World {
             self.say("You have nothing left to work on.");
             return;
         };
-        let stat = (self.profession_of(gem)).map_or(Stat::Dexterity, |(_, stat)| stat);
-        let me = self.state.player();
-        let modifier = me.check_modifier(&content, stat)
-            + me.skill_effect_of(&content, def.skill, Effect::Craft)
-            + self.binding_boon(def.skill);
-        let against = def.difficulty + content.material(gem).work;
+        let (modifier, against) = self.gem_check(def, gem);
         let natural = combat::roll_natural(&mut draw!(self, "set/player"));
         let band = set_band(natural, natural + modifier - against);
         self.set_out(work, gem, cutting, made, band);
