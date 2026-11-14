@@ -3,7 +3,7 @@ source: crates/warlock/src/ui/screen_snapshots.rs
 expression: "render(case, content.clone())"
 ---
  You spend 16 mana (dev).
- You give you┌─ Abilities ───────────────────────────────────────────────── Page 1/2 ─┐
+ You give you┌─ Abilities ────────────────────────────────────────────────────────────┐
              │                                                                        │
              │ Birth sign                                                             │
              │ > a  Transfixing stare  at a place you see                             │
@@ -21,12 +21,13 @@ expression: "render(case, content.clone())"
              │ Skills                                                                 │
              │   j  Alchemy…                                                          │
              │   k  Decipher           no unknown scroll                              │
-             │   l  Knowledge          not usable yet                                 │
-             │   m  Salvage            on something you carry                         │
+             │   l  Salvage            on something you carry                         │
+             │ Weapon skills                                                          │
+             │   m  Shield bash        you hold no shield                             │
              │                                                                        │
              │ The basilisk's stare: a foe nearby that sees you slows to a crawl a    │
              │ moment; your eyes then rest two hours.                                 │
              │                                                                        │
              │                                                                        │
-             │ a-m or Enter use   > < page   Esc close                                │
+             │ a-m or Enter use   Esc close                                           │
              └────────────────────────────────────────────────────────────────────────┘

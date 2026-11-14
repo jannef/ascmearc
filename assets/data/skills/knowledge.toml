@@ -2,7 +2,7 @@
 id = "knowledge"
 name = "Knowledge"
 description = "Lore of history, peoples, places, and the things that live there. Knowing your enemy helps you resist its powers and tells you what it shrugs off and what it fears."
-kind = "action"
+kind = "passive"
 # Know your enemy (#667; the use and the effect are documented here, not in the header, while
 # other skills' work is in flight): marked by "discover" (discovery experience gained: a first
 # kill of a kind, an arrival that pays) and by "resist" (a check rolled to resist a creature's
