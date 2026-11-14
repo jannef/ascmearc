@@ -34,7 +34,8 @@ Some potions work **for a while** instead of at once:
   of renewal [Renewing](status-list.md#status-renewing) (wounds close faster, four minutes),
   the potion of the quick [Quick-sensed](status-list.md#status-quick-sensed) (you feel the
   living about you, three minutes), the potion of the unseen
-  [Invisible](status-list.md#status-invisible) (two minutes), and the potion of sea legs
+  [Invisible](status-list.md#status-invisible) (creatures that need eyes do not see you, two
+  minutes; [When you are invisible](creature-tricks.md#when-you-are-invisible)), and the potion of sea legs
   [Water-borne](status-list.md#status-water-borne) (you walk on water, six minutes). A
   second one of the same kind starts its time over.
 

@@ -19,7 +19,18 @@
 //! so what it makes is heard there as any sound (its footsteps, its fighting: the `sound`
 //! layer's `x` where an unseen blow came from), and the heartbeat with it. Hearing is untouched:
 //! an invisible duergar's hobnails are heard as any duergar's. The dev reveal (F2) shows ground
-//! truth and so shows it too. Creature sight is unchanged: creatures see the unseen.
+//! truth and so shows it too.
+//!
+//! **Creature sight** ([`invisible_to`]): a creature does not see an invisible actor (the player
+//! who drank the potion of the unseen, an invisible duergar to the player's allies) unless it is
+//! Seeing itself or has no eyes to fool (tagged `eyeless`: the potion's "unseen by what needs
+//! eyes"). The shadowy hide from the player's eyes only. Not seen, the actor is no one to look at
+//! (`ai.rs::nearest_in_sight`), and the creature is unaware of it ([`World::sees_now`], so
+//! surprised by its blow, and neither frightened by its war cry nor its intimidation); but it
+//! hears it as ever, and a noise from the cell of one it does not see is one to look into
+//! (`ai.rs::noise_to_look_into`), as is the cell it last saw it on. Come beside such a cell with
+//! a hostile it does not see on it, it strikes at it ([`World::strike_at_heard`], from
+//! `ai.rs::go_look`), at the same `[unseen]` `to_hit` as the player's blow at the unseen.
 //!
 //! **Striking at the unseen** ([`World::at_the_unseen`]): a blow of the player's at a concealed
 //! creature (a move into its cell) is at the `[unseen]` `to_hit` of `data/rules/tuning.toml`, said
@@ -43,7 +54,8 @@ use crate::content::{ActionKind, Content, Invisible, Stance};
 use crate::geom::Pos;
 use crate::noise::Act;
 use crate::status::Effect;
-use crate::world::{Actor, ActorId, World, WorldState, smelt_within};
+use crate::world::creatures::ai::Plan;
+use crate::world::{Actor, ActorId, ActorKind, World, WorldState, smelt_within};
 
 /// What the player feels as an unseen shadowy creature comes near.
 pub(crate) const DRAUGHT_LINE: &str = "You feel a cold draught.";
@@ -54,6 +66,17 @@ impl Actor {
         content.creature(self.creature).invisible == Some(Invisible::Innate)
             || self.effects.unseen(content)
     }
+}
+
+/// Whether creature `viewer`'s eyes miss `target` for its being invisible (the module docs'
+/// creature sight): never the player's (theirs is [`unseen_by_player`]), nor a Seeing or eyeless
+/// creature's.
+pub(crate) fn invisible_to(content: &Content, viewer: &Actor, target: &Actor) -> bool {
+    viewer.kind == ActorKind::Creature
+        && viewer.id != target.id
+        && target.invisible(content)
+        && !viewer.effects.sees_unseen(content)
+        && !content.has_tag(viewer.creature, crate::content::EYELESS)
 }
 
 /// One the player does not see though they might its cell (the module docs).
@@ -170,10 +193,31 @@ impl World {
         target: ActorId,
         mut profile: Profile,
     ) -> Profile {
-        if attacker == self.state.player && self.perception.conceals(target) {
+        let unseen = if attacker == self.state.player {
+            self.perception.conceals(target)
+        } else {
+            let actors = &self.state.actors;
+            (actors.get(&attacker).zip(actors.get(&target)))
+                .is_some_and(|(me, them)| invisible_to(&self.content, me, them))
+        };
+        if unseen {
             profile.to_hit += self.content.tuning().unseen.to_hit;
         }
         profile
+    }
+
+    /// Creature `id`, gone to look at cell `spot` (`ai.rs::go_look`): beside it with a hostile
+    /// it does not see for its being invisible on it, it strikes at it (the module docs).
+    pub(in crate::world) fn strike_at_heard(&self, id: ActorId, spot: Pos) -> Option<Plan> {
+        let me = self.state.actors.get(&id)?;
+        let them = self.state.actor_at(&self.state.current_level, spot)?;
+        (me.pos.chebyshev(spot) == 1
+            && invisible_to(&self.content, me, them)
+            && self.stance(id, them.id) == Stance::Hostile)
+            .then_some(Plan::Attack {
+                target: them.id,
+                kind: AttackKind::Melee,
+            })
     }
 
     /// A blow by `attacker` at `target` that `hit`: the player's at one unseen shows it for

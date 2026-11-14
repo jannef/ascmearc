@@ -61,6 +61,27 @@ You hear them as you hear anyone: their steps, and the fighting where an unseen 
 Their blows are "something's". Walking into one strikes at it at −4 to hit. One that hunts by
 scent comes to you wherever you are on its level.
 
+### When you are invisible
+
+The potion of the unseen makes you [Invisible](status-list.md#status-invisible) for two
+minutes. No creature sees you then, however near and however bright the light, unless it is
+[Seeing](status-list.md#status-seeing) or has no eyes at all (oozes, worms, and the like). The
+same goes for an invisible creature and your allies: they do not see it either.
+
+A creature that does not see you:
+
+- does not come after you or shoot at you;
+- is [unaware](surprise.md#unaware) of you, if it was not already after you, so your blow may
+  [surprise](surprise.md#caught-unawares) it;
+- is not frightened by your [War cry](abilities.md#ability-war-cry) or by
+  [intimidating](skill-uses.md#intimidating), which need it to see you.
+
+It still hears you. A creature that hears your steps or your fighting goes to look where the
+sound came from, as it goes to look into any noise. Beside the cell it looks into, if you stand
+there, it strikes at you at −4 to hit. It does the same at the cell where it last saw you, so
+drinking the potion in the middle of a fight does not stop a blow from the one beside you. Step
+away quietly.
+
 {{#include generated/creature-unseen.md}}
 
 ## Warning signs

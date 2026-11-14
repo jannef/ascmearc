@@ -91,9 +91,16 @@ fades from sight."), and then takes its turn as ever; `World::unveiled` (from `b
 says "You can see the duergar warrior again." where the player sees the cell. **Striking**:
 `World::at_the_unseen` (one line in `fight.rs::resolve`) puts the `[unseen]` `to_hit` of `data/rules/tuning.toml` (−4) on the
 player's blow at a concealed creature, `World::glimpse` marks a hit, and `travel.rs::strike_at`
-says "You strike at something." first. Creature sight is unchanged (creatures see the unseen;
-the player's own Invisible, from the dev `afflict:invisible`, hides them from no one yet). The
-tests are `unseen_tests.rs`.
+says "You strike at something." first. **Creature sight** (#1699): `unseen::invisible_to` is
+the one test: a creature does not see an invisible actor (the player under the potion of the
+unseen, an invisible duergar to the player's allies) unless it is Seeing (`sees_unseen`) or
+tagged `eyeless`; the shadowy hide from the player only. It is read by
+`ai.rs::nearest_in_sight` (no one to look at), `surprise.rs::sees_now` (so unaware: surprised by
+the blow, not frightened by a war cry or intimidation), and `ai.rs::noise_to_look_into` (a noise
+from such an actor's cell is looked into though the cell is in sight). `ai.rs::go_look` asks
+`World::strike_at_heard` first: beside the spot it looks into (a noise's, or where it last saw
+them) with a hostile it does not see on it, it attacks it in melee, and `at_the_unseen` puts the
+same `[unseen]` `to_hit` on that blow. The tests are `unseen_tests.rs`.
 
 Factions and creature behavior (spec §7 "Factions", §5 "Creature sight", §8 "Creature behavior"):
 `data/factions/` (`content/faction.rs`: `Factions`, symmetric hostility, `Stance`; optional,
