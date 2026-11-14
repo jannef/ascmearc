@@ -1,4 +1,4 @@
-//! A town's goodwill (spec §8 "Dialogue": "Goodwill", #1247): every quest the player completes
+//! A town's goodwill (#1247): every quest the player completes
 //! for one of a town's people (`content/town.rs`, a campaign's `data/towns/`) makes that town's
 //! services cheaper by the town's `goodwill` percent, after every other discount, up to free.
 //!

@@ -1,4 +1,4 @@
-//! Glyph particles (spec §4.8): sparks, dust motes, splashes, drawn on the free-glyph layer.
+//! Glyph particles: sparks, dust motes, splashes, drawn on the free-glyph layer.
 //!
 //! Particles are stateless: each one is a pure function of its emitter, a seed, and visual time.
 //! An ambient emitter emits one particle per time slot (`1 / rate` seconds); the slot number and

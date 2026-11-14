@@ -1,4 +1,4 @@
-//! Averted eyes, forced (spec §8 "Creature behavior": "Gazes", #1125; the owner's decision D4
+//! Averted eyes, forced (#1125; the owner's decision D4
 //! of `docs/design/monster-dread.md` §17): while the player sees a hostile whose gaze is marked
 //! `averted` (`content/gaze.rs`), they avert their eyes by reflex. No toggle, no action, no actor
 //! flag, nothing saved: the condition is derived each turn from the perception snapshot, as

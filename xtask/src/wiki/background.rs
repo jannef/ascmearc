@@ -1,4 +1,4 @@
-//! Background stories (spec §8 "Background story"): the tiers' odds, what an effect is worth,
+//! Background stories: the tiers' odds, what an effect is worth,
 //! and every line of every chapter with its conditions and effects exactly (the game tells the
 //! story in words only).
 

@@ -1,4 +1,4 @@
-# The priest's Cure wounds (spec §8 "Class abilities"): hit points back; it takes a while to say.
+# The priest's Cure wounds: hit points back; it takes a while to say.
 [[spell]]
 id = "cure_wounds"
 name = "Cure wounds"
@@ -14,7 +14,7 @@ effect = { heal = "2d6" }
 [spell.grows]
 heal = "willpower 16 3d6, 22 3d6+3"
 
-# What rereading its grimoire adds, rank by rank (spec §8 "Spells": "Ranks"; README.toml
+# What rereading its grimoire adds, rank by rank (README.toml
 # `[spell.ranks]`). At rank 10: +3 on the roll, a die more, every die two sides bigger, 1s rolled
 # again, 15 percent off the mana, and 35 percent off the casting time.
 [spell.ranks]

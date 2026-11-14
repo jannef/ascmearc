@@ -18,11 +18,11 @@ map = '''
 "L" = "lava"
 # The drake at rest on its hoard: it wakes to what it sees or hears.
 "D" = { terrain = "floor", creature = "fire_drake" }
-# The hoard (spec §8 "Magic items"): a rare thing and a magic one, rolled when the level is made.
+# The hoard: a rare thing and a magic one, rolled when the level is made.
 "r" = { terrain = "floor", loot = "rare" }
 "m" = { terrain = "floor", loot = "magic" }
 "$" = { terrain = "floor", objects = ["gold_coin*150"] }
-# Two strongboxes of those who came for the gold (spec §8 "Chests"): of the floor's level and
+# Two strongboxes of those who came for the gold: of the floor's level and
 # locked, one of them trapped; what they hold is rolled when the level is made.
 "C" = { terrain = "chest", locked = true }
 "T" = { terrain = "chest", locked = true, trap = "spear" }

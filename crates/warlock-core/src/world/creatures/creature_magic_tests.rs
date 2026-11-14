@@ -1,4 +1,4 @@
-//! Creatures honour the mana affixes of what they wear and wield (#525, spec §8 "Mana"): a
+//! Creatures honour the mana affixes of what they wear and wield (#525): a
 //! larger pool and a faster pace, read by the same hooks as the
 //! player's (`Mods::worn`: `Actor::max_mana`, `World::mana_rate`), and a
 //! summoner spends from the larger pool. A creature without them is unchanged.

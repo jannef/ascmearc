@@ -28,14 +28,14 @@ pub enum MagicEffect {
     /// What abilities cost in mana, this percent more (negative: less; never below 1; Frugal
     /// caster), in [`crate::world::World::spend_mana`].
     ManaCostPercent { value: i32 },
-    /// What rods cost in mana, this percent more (negative: less; never below 1; Channeler; spec
-    /// §8 "Magic items": "Rods"), before [`TalentEffect::ManaCostPercent`].
+    /// What rods cost in mana, this percent more (negative: less; never below 1; Channeler), before
+    /// [`TalentEffect::ManaCostPercent`].
     RodCostPercent { value: i32 },
     /// The active Blood magic: give `hp` hit points (never the last) for `mana` mana.
     BloodMagic { hp: i32, mana: i32 },
     /// Reading a scroll takes this percent more time (negative: less; Scroll savant).
     ReadPercent { value: i32 },
-    /// Studying a spell (spec §8 "Spells"): `bonus` points off the check's difficulty, it
+    /// Studying a spell: `bonus` points off the check's difficulty, it
     /// takes `percent` more time (negative: less; Quick study), and its overreach counts
     /// `overreach_percent` more in the check (negative: less, rounded down; Overreach, the
     /// spell scaling design §7.2). Each defaults to 0.
@@ -59,14 +59,13 @@ pub enum MagicEffect {
     /// they see grows `degrees` and starts its degree afresh, to its status's `max`
     /// (`world/classes/witch.rs`).
     Cackle { degrees: u16, noise: u16 },
-    /// A caster's spell (design §4.1 B2, spec §8 "Spells"): its holder has the spell ability
+    /// A caster's spell (design §4.1 B2): its holder has the spell ability
     /// `spell`, the spell of that id in `data/spells/` (a class ability's; each given once).
     Spell { spell: String },
-    /// What it does to its spells through the six hooks (spec §8 "Spells": "Hooks";
-    /// `content/spell_mod.rs`): rungs, dice, rerolls, riders, reach, degrees, and a cost
-    /// percent, for every spell or those of its `when` tags (a talent chosen for a school or an
-    /// element: those of the choice). Empower, Archmage, Keen mind, School focus, Scroll
-    /// adept, Wand mastery, Sure hand, Brimming.
+    /// What it does to its spells through the six hooks (`content/spell_mod.rs`): rungs, dice,
+    /// rerolls, riders, reach, degrees, and a cost percent, for every spell or those of its `when`
+    /// tags (a talent chosen for a school or an element: those of the choice). Empower, Archmage,
+    /// Keen mind, School focus, Scroll adept, Wand mastery, Sure hand, Brimming.
     SpellMod(crate::content::SpellModSpec),
     /// What it does to a spell type's own rule (`[types]` in `data/spells.toml`) for the damage
     /// types in `when`: `arc_chance`, the percent its spells of them arc at, read in
@@ -79,11 +78,10 @@ pub enum MagicEffect {
     /// at least 1, never past its maximum (Malison; `world/magic/malison.rs`).
     HexTithe { per_levels: u8 },
     /// The class active Knock: for `mana` mana, the lock of the locked door or chest in a
-    /// direction springs open (`world/fixtures/knock.rs`; spec §8 "Chests").
+    /// direction springs open (`world/fixtures/knock.rs`).
     Knock { mana: i32 },
     /// The class active Scribe: a scroll of a spell the player knows written on a blank scroll,
-    /// for `mana_times` the spell's mana and a study's time (`world/magic/scribe.rs`; spec §8
-    /// "Scrolls").
+    /// for `mana_times` the spell's mana and a study's time (`world/magic/scribe.rs`).
     Scribe { mana_times: u8 },
 }
 
@@ -131,7 +129,7 @@ pub struct MagicMods {
     pub mana_cost_percent: i32,
     /// Percent more mana a rod costs (negative: less; Channeler).
     pub rod_cost_percent: i32,
-    /// What it does to its spells through the six hooks (spec §8 "Spells": "Hooks"), one entry
+    /// What it does to its spells through the six hooks, one entry
     /// per `spell_mod` effect, each with its tag filter
     /// ([`MagicMods::spell_mods`]).
     pub spell: Vec<crate::content::SpellMod>,
@@ -149,7 +147,7 @@ pub struct MagicMods {
     /// Its own bursts never catch it.
     pub spares_self: bool,
     /// Points off the difficulty of its studies, and percent more time they take (negative:
-    /// less; Quick study, spec §8 "Spells").
+    /// less; Quick study).
     pub study_bonus: i32,
     pub study_percent: i32,
     /// Percent more a study's overreach counts in its check (negative: less; Overreach).
@@ -220,12 +218,12 @@ impl MagicMods {
         }
     }
 
-    /// Whether it has the caster's spell `spell` (spec §8 "Class abilities").
+    /// Whether it has the caster's spell `spell`.
     pub fn has_spell(&self, spell: crate::content::SpellId) -> bool {
         self.spells.contains(&spell)
     }
 
-    /// What its talents do to a spell with `tags` (spec §8 "Spells": "Hooks"): every
+    /// What its talents do to a spell with `tags`: every
     /// `spell_mod` whose filter the spell fits, summed.
     pub fn spell_mods(&self, tags: &[&str]) -> crate::content::SpellMods {
         let mut sum = crate::content::SpellMods::default();
@@ -290,7 +288,7 @@ impl MagicMods {
     }
 }
 
-/// The active Cackle (spec §8 "Class abilities"; `world/classes/witch.rs`): how many degrees it adds
+/// The active Cackle (`world/classes/witch.rs`): how many degrees it adds
 /// to each hex of its holder's in sight, and how loud it is.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Cackle {
@@ -298,13 +296,13 @@ pub struct Cackle {
     pub noise: u16,
 }
 
-/// The active Knock (spec §8 "Class abilities", "Chests"): its mana.
+/// The active Knock: its mana.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Knock {
     pub mana: i32,
 }
 
-/// The active Blood magic (spec §8 "Talents"): `hp` hit points given for `mana` mana.
+/// The active Blood magic: `hp` hit points given for `mana` mana.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct BloodMagic {
     pub hp: i32,

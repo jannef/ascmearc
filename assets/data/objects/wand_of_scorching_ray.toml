@@ -1,4 +1,4 @@
-# A wand of scorching ray (spec §8 "Magic items": "Wands"): ready it in the missile weapon slot and
+# A wand of scorching ray: ready it in the missile weapon slot and
 # use it as a missile weapon (`t`), and it casts Scorching ray, a level-7 spell, at its own caster
 # level, a charge a cast instead of mana. Its charges are its own; it is never recharged. Level
 # and frequency by its spell's level (objects/README.toml): the lower, the commoner the wand.

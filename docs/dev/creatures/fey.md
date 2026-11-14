@@ -43,7 +43,7 @@ them). Teleport, illusions, flight, charm, tree-binding, a death burst, poisoned
 missiles, oil, stone shaping, captive transformation, and a woodland place for the rest are
 follow-ups.
 
-Surprise (#686, spec §8 "Surprise and sneak attacks"): four of the Unseelie's kin sneak-attack,
+Surprise (#686): four of the Unseelie's kin sneak-attack,
 by their `skills`: the quickling `sneak_attack = 40` (2d6) with `initiative = 150` (it cuts
 before it is seen, and is nearly never caught off guard), the darkling 30 (2d6) and 50, the
 redcap 40 (2d6) and 40, the meenlock 30 (2d6) and 30. The meenlock **lurks** (`lurks = true`,

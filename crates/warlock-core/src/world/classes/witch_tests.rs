@@ -1,4 +1,4 @@
-//! Cackle (spec §8 "Class abilities"; #904; `world/classes/witch.rs`): the witch's at 6, for the time of
+//! Cackle (#904; `world/classes/witch.rs`): the witch's at 6, for the time of
 //! a cast; every hex of hers on a creature she sees grows a degree (to its max) and starts
 //! afresh; another's hex and one out of sight untouched; refused with no time when none of hers
 //! is in sight; a voice 60 loud; no draws.

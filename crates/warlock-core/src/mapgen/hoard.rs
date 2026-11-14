@@ -1,4 +1,4 @@
-//! Tempting hoards (spec §7 "Special rooms"; `docs/dev/special-rooms.md`): a generated floor's
+//! Tempting hoards (`docs/dev/special-rooms.md`): a generated floor's
 //! special room whose effect has a `hoard` gets its items on the floor: `hoard.items` of them at
 //! the floor's item level + `hoard.loot_level`, with the finder's luck, each on a cell of the
 //! room's plain floor drawn anew (no stairs, light, or trap). Lifting them is what seals the room

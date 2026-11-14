@@ -1,4 +1,4 @@
-//! Treating oneself or an ally (spec §8 "Skills": the Heal ability, #549; design
+//! Treating oneself or an ally (the Heal ability, #549; design
 //! ranger-companion.md §9, "Tending"): the use of the Heal skill,
 //! [`crate::action::Action::Heal`] (`heal`, `heal:ID`, `heal:ID:DIR`). What may be treated is
 //! [`crate::heal`]; here is the try.
@@ -14,7 +14,7 @@
 //!   be treated now (not suffered, or a disease still incubating), is refused with no time and
 //!   no draw.
 //! - **A try** is a check ([`crate::check`]): 2d12 plus the healer's Intelligence modifier (of the
-//!   effective score, spec §8 "Stats", and what talents add to every Intelligence check) plus
+//!   effective score, and what talents add to every Intelligence check) plus
 //!   what Heal gives ([`Effect::Heal`]) against a status's `treat` difficulty at the patient's
 //!   degrees, or a disease's own `difficulty`. It takes the `heal` action's time whatever comes of it, may earn
 //!   Heal a training mark ([`Use::Heal`]), and makes no noise.

@@ -4,12 +4,12 @@ Designs approved by the owner, one file per topic. Each arrived as a draft PR th
 its document. It was reviewed in the PR, and merging the PR approved it. Implementation issues
 link to the section they build.
 
-What is built is described by the spec (`specification.md`, `spec/`) and `docs/dev/`. These
+What is built is described by the design document (`specification.md`, `spec/`) and `docs/dev/`. These
 documents record what was decided and why. The process is in `docs/dev/merging.md`, "Design
 documents".
 
 **A built design is history.** Its first lines say "Built; this file is history" and name the
-spec sections and `docs/dev/` topics that describe the game now: read those, not the design.
+design document's sections and `docs/dev/` topics that describe the game now: read those, not the design.
 Numbers in a built design may have moved since (for example, `spell-scaling.md` placed Magister
 at 45, `witch-and-wizard.md` moved it to 40, and #1263 later removed it with the school skills).
 How far a design's slices have come is tracked in its issues, not here.

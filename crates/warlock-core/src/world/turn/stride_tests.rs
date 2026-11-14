@@ -1,4 +1,4 @@
-//! Coarse turns while the player rests (spec §8 "Rest", `stride.rs`): an idle creature away
+//! Coarse turns while the player rests (`stride.rs`): an idle creature away
 //! from a resting player strides at its own pace, a busy one goes slower, one near the player
 //! acts turn by turn, and outside a rest nothing changes; the rest's look at who came into view
 //! sees what a perception would.

@@ -1,4 +1,4 @@
-//! Feint (spec §8 "Skills": Bluff; #1016; `world/skills/feint.rs`): Bluff's use; made and failed; its
+//! Feint (Bluff; #1016; `world/skills/feint.rs`): Bluff's use; made and failed; its
 //! refusals, with no time and no draw; a blow after it finds the foe flat-footed, though the foe
 //! acted between; Sneak attack's dice for a thief; marks on the training stream.
 

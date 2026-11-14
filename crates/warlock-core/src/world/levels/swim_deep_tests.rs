@@ -1,4 +1,4 @@
-//! Deep water (spec §8 "Skills": Swim; `world/levels/swim.rs`, #1019).
+//! Deep water (Swim; `world/levels/swim.rs`, #1019).
 
 use crate::burden::Burden;
 use crate::content::ContentFiles;

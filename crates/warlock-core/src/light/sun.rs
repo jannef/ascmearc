@@ -1,4 +1,4 @@
-//! Sunlight and sky light on levels under the open sky (spec §5 "Sunlight").
+//! Sunlight and sky light on levels under the open sky.
 //!
 //! **The sun's path** is one table entry per minute of the day ([`Sun::at`]), computed at compile
 //! time with integer math only (a fixed-point sine), so it is the same on every platform. The sun

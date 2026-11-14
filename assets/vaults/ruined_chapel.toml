@@ -1,4 +1,4 @@
-# Outdoor vault (spec §7): the walls of a roofless chapel, pillars still standing in the nave, an
+# Outdoor vault: the walls of a roofless chapel, pillars still standing in the nave, an
 # altar at its east end that glows faintly at night. Grass grows through the flagstones. Spaces
 # take the local area's own ground.
 name = "Ruined chapel"
@@ -17,7 +17,7 @@ map = '''
 "." = "flagstones"
 "," = "rubble"
 '"' = "tall_grass"
-# A reward (spec §8 "Magic items"): something left by the altar, rolled when the area is made.
+# A reward: something left by the altar, rolled when the area is made.
 "m" = { terrain = "flagstones", loot = "any" }
 # A scroll left on the steps of the altar, rolled when the area is made.
 "s" = { terrain = "flagstones", loot = { pool = "scrolls" } }

@@ -1,4 +1,4 @@
-//! Shops in play (spec §7 "Shops"; the kinds and prices are `content/shop.rs`), ADOM-like.
+//! Shops in play (the kinds and prices are `content/shop.rs`), ADOM-like.
 //!
 //! A level keeps its shops ([`Shop`]): the shop floor, the keeper and where it stands, what the
 //! player has picked up there and not paid for, and how the keeper stands toward them. While the
@@ -17,7 +17,7 @@
 //! - **Dropping** in the shop puts back what is unpaid; of the player's own things it offers a
 //!   price for what it buys ([`crate::Action::Drop`] says the offer and keeps them;
 //!   [`crate::Action::Sell`] takes it, from the keeper's purse), and has no use for the rest.
-//! - **Rotten food** (spec §8 "Hunger") is worth nothing: lying in the shop it is not for sale,
+//! - **Rotten food** is worth nothing: lying in the shop it is not for sale,
 //!   and the keeper will not buy it ("Grimbold sniffs at a loaf of bread and says: \"Not at any
 //!   price.\""). What is on the bill stays priced as it was.
 //! - **Leaving** by the shop's way out (its `exits`: the door) owing anything, the keeper steps
@@ -64,7 +64,7 @@ impl ShopStatus {
     }
 }
 
-/// A shop on a level (spec §7 "Shops"), kept in the level's state (saved, hashed).
+/// A shop on a level, kept in the level's state (saved, hashed).
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Shop {
     pub kind: ShopId,
@@ -212,10 +212,10 @@ pub fn unpaid_parts(inventory: &[Stack], unpaid: &[Stack]) -> Vec<u32> {
     parts
 }
 
-/// How far prices move in `actor`'s favour, in percent (spec §7 "Shops"): the shops' `presence`
+/// How far prices move in `actor`'s favour, in percent: the shops' `presence`
 /// for each point of their Presence modifier, plus what their skills give (Negotiation's
-/// bargaining), plus what a good keeper makes of their alignment (spec §8 "Alignment"), at most
-/// [`MAX_FAVOUR`] either way. Talents (spec §8 "Class abilities": the merchant's Haggler) add
+/// bargaining), plus what a good keeper makes of their alignment, at most
+/// [`MAX_FAVOUR`] either way. Talents (the merchant's Haggler) add
 /// theirs before the cap. Never shown.
 pub fn favour(content: &Content, shops: &Shops, actor: &crate::world::Actor) -> i32 {
     let alignment = crate::world::character::alignment::keeper_favour(content, shops, actor);
@@ -314,7 +314,7 @@ impl World {
         }
     }
 
-    /// Whether `stack` is rotten food, which is worth nothing (spec §7 "Shops").
+    /// Whether `stack` is rotten food, which is worth nothing.
     fn spoilt(&self, stack: &Stack) -> bool {
         self.stage(stack).is_some_and(|s| s.is_rotten())
     }
@@ -357,7 +357,7 @@ impl World {
     }
 
     /// The player ate `food` (one of it), from the pack or the floor as `meal` says, in the open
-    /// shop they stand in: eaten goods are bought (spec §7 "Shops"). Food that lay there for sale
+    /// shop they stand in: eaten goods are bought. Food that lay there for sale
     /// is now owed for; unpaid food from the pack stays owed, as the bill counts by object and
     /// nothing that uses goods up takes them off it. The keeper says so. (Rotten food lying
     /// there was worth nothing; unpaid food from the pack is priced as the bill prices it.)
@@ -365,7 +365,7 @@ impl World {
         self.consumed_goods(meal, food, false);
     }
 
-    /// [`World::ate_goods`] for a potion drunk (spec §8 "Potions"): bought as food eaten is, and
+    /// [`World::ate_goods`] for a potion drunk: bought as food eaten is, and
     /// named as the player knows it ("You drink it, you buy it: 40 gold for the fizzy red
     /// potion.").
     pub(in crate::world) fn drank_goods(&mut self, meal: Meal, potion: &Stack) {
@@ -426,7 +426,7 @@ impl World {
         (owed > 0).then(|| (shop.name.clone(), owed))
     }
 
-    /// The player pays for what they took in the open shop they stand in (spec §7 "Shops"): all
+    /// The player pays for what they took in the open shop they stand in: all
     /// of it, from the gold they carry into the keeper's purse. Takes no time. Refused (and
     /// nothing changes) outside a shop, owing nothing, or without enough gold.
     pub(super) fn pay(&mut self) -> Spent {
@@ -478,7 +478,7 @@ impl World {
     }
 
     /// Drops (`sell` false) or sells (`sell` true) the inventory stacks `positions` names in the
-    /// open shop the player stands in (spec §7 "Shops"): what of them is unpaid goes back; of
+    /// open shop the player stands in: what of them is unpaid goes back; of
     /// the player's own things, a drop says what the shop offers for what it buys and keeps
     /// them, a sale takes the offer from the keeper's purse. Returns `None` outside an open
     /// shop.
@@ -641,7 +641,7 @@ impl World {
     }
 
     /// Where the player ends up trying to step from `from` onto `to`, if the keeper of the open
-    /// shop they stand in turns them back (spec §7 "Shops"): `to` is one of its ways out and they
+    /// shop they stand in turns them back: `to` is one of its ways out and they
     /// owe it something. They are pushed one cell away from the way out, the other way from the
     /// step, or else onto the nearest free cell of the shop floor (the first in row order among
     /// the nearest), or else they stay where they are. Says why.
@@ -674,7 +674,7 @@ impl World {
 
     /// The player stepped from `from` to `to` on the current level: entering an open shop the
     /// keeper greets them; leaving one owing anything (any way but its ways out, which turn them
-    /// back) is theft (spec §7 "Shops").
+    /// back) is theft.
     pub(in crate::world) fn shop_step(&mut self, from: Pos, to: Pos) {
         let content = self.content.clone();
         for i in 0..self.state.current().shops.len() {
@@ -723,7 +723,7 @@ impl World {
         self.player_did(Deed::AttackedShopkeeper);
     }
 
-    /// Actor `victim` caught the player stealing from it (spec §8 "Stealing"): a keeper of an
+    /// Actor `victim` caught the player stealing from it: a keeper of an
     /// open shop on the current level is outraged, as a robbed one is, and says so. Returns
     /// whether it was one.
     pub(in crate::world) fn caught_stealing(&mut self, victim: ActorId) -> bool {

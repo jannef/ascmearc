@@ -1,4 +1,4 @@
-//! Concentration's hold on mana (spec §8 "Mana" and "Skills"; #668): a skill with
+//! Concentration's hold on mana (#668): a skill with
 //! [`Effect::ManaRegen`] makes mana come back faster (`World::mana_rate`), one with
 //! [`Effect::MaxMana`] deepens the pool a little ([`Actor::max_mana`], at most a fifth,
 //! [`crate::mana::deeper`]). Both only while the actor is trained in such a skill: an untrained

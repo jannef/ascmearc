@@ -1,4 +1,4 @@
-//! Chests (spec §8 "Chests"; `data/chests.toml`): the bands, how hard each is to kick open,
+//! Chests (`data/chests.toml`): the bands, how hard each is to kick open,
 //! which blasts blow it apart, how often a generated one is locked and trapped, what it holds,
 //! and how often each dungeon's floors have one.
 
@@ -90,7 +90,7 @@ pub(super) fn chest_odds(content: &Content) -> String {
     out
 }
 
-/// What a generated chest of each band holds (spec §8 "Chest loot"): the dice, the levels above
+/// What a generated chest of each band holds: the dice, the levels above
 /// the floor's its items and gems are rolled at, how many are magic and rare, the purse, the
 /// gems, and the mean of each.
 pub(super) fn chest_loot(content: &Content) -> String {

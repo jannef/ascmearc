@@ -45,7 +45,7 @@ screen, a scenario, a dump layer, or an action. For example:
   the simulation as text; `replay --create` and `replay --verify` check determinism.
 - Action text is whitespace-separated `verb:args` words: `move:N open:E pickup:a fire:12,5 wait*10`.
 
-## Architecture (spec §8)
+## Architecture
 
 ```
 crates/warlock-core   plain Rust, no Bevy, deterministic simulation; takes its content as input

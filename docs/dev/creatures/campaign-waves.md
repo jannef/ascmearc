@@ -35,7 +35,7 @@ Fennmynster (#338) is where the fen wave lives: all eleven are its branch's `pop
 hag too (unique, so the population and spawns bring her once a run); the sunken crypt at its
 bottom adds two drowned standing guard in its water.
 
-The barrow spider sneak-attacks and lurks (#686, spec §8 "Surprise and sneak attacks"):
+The barrow spider sneak-attacks and lurks (#686):
 `sneak_attack = 10` (1d6), `initiative = 20`, and `lurks = true` (`world/combat/lurk.rs`): one that
 sees the player waits in its passage until they come beside it or it is hurt, so Cealdhlāw's
 dark holds a thing that waits rather than one that comes.

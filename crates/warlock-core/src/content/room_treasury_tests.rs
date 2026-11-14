@@ -1,4 +1,4 @@
-//! A treasure room's fields (spec §7 "Special rooms"): `secret_doors`, `sealed`, `treasure`, and
+//! A treasure room's fields: `secret_doors`, `sealed`, `treasure`, and
 //! `arrive` parsed, their refusals, and never over a whole level.
 
 use super::{RoomEffectId, RoomEffects, Sealed, SecretDoors};

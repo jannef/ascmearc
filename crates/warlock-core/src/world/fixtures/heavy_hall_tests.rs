@@ -1,4 +1,4 @@
-//! The heavy hall (spec §7 "Special rooms"; `WorldState::load`, the one burden hook): carrying
+//! The heavy hall (`WorldState::load`, the one burden hook): carrying
 //! limits are halved inside, for the player and creatures alike; the player is told as their
 //! burden changes, cannot step in where they would be overloaded, and can always step out.
 

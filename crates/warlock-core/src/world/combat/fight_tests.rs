@@ -1,4 +1,4 @@
-//! Combat in the world (spec §8 "Combat"): attacks hurt and kill, creatures drop what they
+//! Combat in the world: attacks hurt and kill, creatures drop what they
 //! carry, hit points come back with time, and the player's death ends the run.
 
 use super::fight::{End, Guard, Words, attack_message, death_message};

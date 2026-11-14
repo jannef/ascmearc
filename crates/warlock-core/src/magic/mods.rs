@@ -1,4 +1,4 @@
-//! What magic items do (spec §8 "Magic items"): their affixes' effects, summed.
+//! What magic items do: their affixes' effects, summed.
 //!
 //! [`Mods::local`] is what an item's affixes do to itself and to the attacks made with it;
 //! [`Mods::worn`] what everything an actor wears and wields does to the actor. Within one sum,
@@ -35,15 +35,15 @@ pub struct Mods {
     values: [i32; Effect::COUNT],
     /// The brightest light among them.
     pub light: Option<LightId>,
-    /// What skill affixes add to each skill's value, by skill (spec §8 "Skills").
+    /// What skill affixes add to each skill's value, by skill.
     skills: Vec<(SkillId, i32)>,
     /// The sides of the die of damage elemental affixes add, by damage type, in the order
-    /// first met (spec §8 "Damage types").
+    /// first met.
     elemental: Vec<(DamageTypeId, i32)>,
     /// What resistance affixes add, by damage type, in percent.
     resistances: Vec<(DamageTypeId, i32)>,
     /// What pooled affixes add ([`Effect::is_pooled`]), by effect and resource, in the order
-    /// first met (spec §8 "Resources").
+    /// first met.
     pools: Vec<(Effect, ResourceId, i32)>,
     /// What its hits cause, from a unique item's Inflict power (local: the weapon that hits).
     on_hit: Vec<OnHit>,
@@ -87,7 +87,7 @@ impl Mods {
         &self.skills
     }
 
-    /// What resistance affixes add, in percent by damage type (spec §8 "Damage types").
+    /// What resistance affixes add, in percent by damage type.
     pub fn resistances(&self) -> &[(DamageTypeId, i32)] {
         &self.resistances
     }

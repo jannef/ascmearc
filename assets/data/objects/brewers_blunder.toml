@@ -1,4 +1,4 @@
-# A brewer's blunder (spec §8 "Potions", the potions wave 2 design §4.3): a gamble
+# A brewer's blunder (the potions wave 2 design §4.3): a gamble
 # (data/outcomes/brewers_blunder.toml), as likely to raise a stat greatly for a while as to drain
 # one for good. Gambles are iridescent.
 [[object]]

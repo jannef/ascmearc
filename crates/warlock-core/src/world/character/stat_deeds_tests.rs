@@ -1,4 +1,4 @@
-//! Deeds that cost stat marks, and the drop (spec §8 "Stats"; the design's §7): each deed takes
+//! Deeds that cost stat marks, and the drop (the design's §7): each deed takes
 //! its marks at its hook, a pile within reach of a drop is warned of in words first, a check
 //! drops the stat with its odds and pays the drop's price back, never past zero, never below the
 //! floors, and never lowers the potential; noise cancels, and a round trip costs more than it

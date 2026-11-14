@@ -68,7 +68,8 @@ Either way you remember it at once, even in the dark.
 Each hidden thing has its own difficulty. The table gives the chances for an average, untrained
 character with Intelligence and Willpower 10. It shows one turn of searching, ten turns (one search for a while),
 and one turn of noticing in passing. Better scores, a trained skill, and an
-[elf's](races.md#race-elf) eye all do better.
+[elf's](races.md#race-elf) eye all do better. For example, such a character finds a secret door
+of difficulty 14 on about 46% of their turns of searching, so ten turns all but always find it.
 
 {{#include generated/search-features.md}}
 

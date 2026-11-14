@@ -1,4 +1,4 @@
-# A scroll of rouse the dead (spec §8 "Scrolls", "Spells"): read it (`r`) at a corpse you see, and
+# A scroll of rouse the dead: read it (`r`) at a corpse you see, and
 # it casts Rouse the dead, free of mana; its grimoire teaches the spell for good.
 [[object]]
 id = "scroll_of_rouse_the_dead"

@@ -1,4 +1,4 @@
-//! Several natural attacks (spec §8 "Combat": "Natural attacks", #1099): a creature type with
+//! Several natural attacks (#1099): a creature type with
 //! a list of them (`[[creature.attack]]`, a dragon's two claws and a bite) strikes each in turn
 //! in one melee attack, while it wields no weapon. The first is its melee blow as ever
 //! ([`crate::world::Actor::melee`]); the rest follow it here, each rolled on its own against the

@@ -67,7 +67,7 @@ summoning and the faction.
 
 ## Surprise (#686)
 
-The stalker and the assassin sneak-attack (spec §8 "Surprise and sneak attacks"; their
+The stalker and the assassin sneak-attack (their
 `skills`): the stalker `sneak_attack = 75` (4d6), `initiative = 60`, `spot = 50`; the assassin
 `sneak_attack = 160` (6d6), `initiative = 100`, `spot = 40`. Spot is their side of the contest
 to slip past them in the dark (both see by darkvision and carry no light, so the contest comes up

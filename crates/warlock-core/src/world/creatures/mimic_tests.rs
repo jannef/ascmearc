@@ -1,4 +1,4 @@
-//! Mimics (spec §8 "Mimics", docs/design/chests-and-treasure.md §5, §9; `world/creatures/mimic.rs`): a
+//! Mimics (docs/design/chests-and-treasure.md §5, §9; `world/creatures/mimic.rs`): a
 //! disguised mimic is a chest in every snapshot; a touch reveals it with a free blow and no
 //! time; Knock reveals it without one; a blow reveals it; a search and the passive Spot find it;
 //! Chest-wise sees it; Chest-wise slips its grip; it takes no turn and no creature sets on it; it

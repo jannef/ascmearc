@@ -1,4 +1,4 @@
-//! Perception, the turn's last phase (spec §5): recomputing what the player perceives, what of
+//! Perception, the turn's last phase: recomputing what the player perceives, what of
 //! the turn's events they saw (and the messages for them), the news they heard, and the weather
 //! they see change. `world/mod.rs` has only the call from the turn pipeline.
 
@@ -123,7 +123,7 @@ impl World {
     /// death is always said, and settles whether they saw what killed them. A death of a status
     /// effect is said if the player sees where it happened ("The giant rat bleeds to death.").
     /// An attack on the player stops a rest; others' attacks and deaths only within
-    /// [`World::stop_within`] of them (spec §8 "Rest"). The player's own status effects are said as
+    /// [`World::stop_within`] of them. The player's own status effects are said as
     /// they begin (stopping a rest) and end (not stopping one); their diseases as they show and
     /// worsen (stopping a rest) and leave (not stopping one). A trap going off is said and kept if
     /// the player set it off, saw its cell, or saw any of its blast; what it did to someone if they
@@ -149,8 +149,8 @@ impl World {
         let mut killer_seen: Option<Option<CreatureId>> = None;
         let mut collapsed = 0;
         let perception = &self.perception;
-        // Others' fights and deaths stop a rest only within close reach of the player (spec §8
-        // "Rest", `rest.rs`): farther off they are told and the rest goes on.
+        // Others' fights and deaths stop a rest only within close reach of the player (`rest.rs`):
+        // farther off they are told and the rest goes on.
         let here = self.player_pos();
         let close = |p: Pos| p.chebyshev(here) <= self.stop_within();
         let end = |id: ActorId, seen: bool| match self.actor_or_fallen(id) {
@@ -248,7 +248,7 @@ impl World {
             | Event::Identified { .. }
             | Event::VoiceThrown { .. }
             | Event::Ordered { .. } => true,
-            // An ally departed where the player sees (spec §8 "Allies").
+            // An ally departed where the player sees.
             Event::Departed { at, .. } => perception.sees_actors_at(at),
             Event::Missile { ref path, .. } => !path.is_empty(),
             Event::Spell { ref cells, .. } => !cells.is_empty(),

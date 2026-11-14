@@ -1,4 +1,4 @@
-//! Drains (spec §8 "Stats": "Drain"; #382): the touch of some undead takes points off a stat
+//! Drains (#382): the touch of some undead takes points off a stat
 //! for good.
 //!
 //! A natural attack's `on_hit` may name a drain ([`crate::content::Drain`]); a hit that lands,

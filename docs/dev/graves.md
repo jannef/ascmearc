@@ -1,9 +1,7 @@
 # Graves and burial grounds
 
 The run's dead (the graveyard, `docs/dev/saves.md` "The graveyard") laid to rest in a chain of
-hand-made levels: Līctūn, Cēaptūn's churchyard, then crypt after crypt below it (spec §7
-"Graves"; #1258, #1682). The petrified are statues instead (`world/fixtures/graveyard.rs`, spec §8
-"Statues").
+hand-made levels: Līctūn, Cēaptūn's churchyard, then crypt after crypt below it (#1258, #1682). The petrified are statues instead (`world/fixtures/graveyard.rs`).
 
 ## Modules
 

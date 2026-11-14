@@ -1,4 +1,4 @@
-//! Unique items (spec §8 "Magic items": "Unique items"): each with its base, item level, affixes
+//! Unique items: each with its base, item level, affixes
 //! exactly, power exactly, and lore.
 
 use super::order;

@@ -1,4 +1,4 @@
-# Weapon abilities (spec §8 "Weapon skills", "Fighting styles"; the combat progression design
+# Weapon abilities (the combat progression design
 # §4): what a rank in a weapon skill or a fighting style teaches. One `[[weapon_ability]]` per
 # file, named by its id; a campaign's data/weapon_abilities/ may add more. An ability names its
 # skills; a skill does not list its abilities. Every number is a first guess, kept here.
@@ -34,7 +34,7 @@
 #   systems       the talent table's systems it touches (the ids of talents/systems/)
 #   [weapon_ability.effect]   what it does, by `kind`, with only its own fields:
 #                 free_blow       `trigger`: riposte, cleave, great_cleave, opportunist, or
-#                                 gatekeeper: switches that free blow on (spec §8 "Free blows")
+#                                 gatekeeper: switches that free blow on
 #                                 while the holder wields a weapon of the skill (or fights in
 #                                 the style)
 #                 status          `status` (status/) on the other end (`on = "target"`, the

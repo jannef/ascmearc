@@ -1,4 +1,4 @@
-//! Status effects on actors (spec §8 "Status effects"): the rules of one actor's effects. What
+//! Status effects on actors: the rules of one actor's effects. What
 //! the statuses are is data ([`crate::content::StatusDef`], `data/status/`); applying them
 //! to the world (causes, ticks as the clock moves, deaths, messages) is `world/health/status.rs`.
 //!
@@ -334,7 +334,7 @@ impl Effects {
     }
 
     /// Whether one of its statuses hides its sufferer as something else (`hides`: a mimic's
-    /// Disguised; spec §8 "Mimics").
+    /// Disguised).
     pub fn hides(&self, content: &Content) -> bool {
         !self.0.is_empty() && self.0.iter().any(|e| content.status(e.status).hides)
     }
@@ -351,7 +351,7 @@ impl Effects {
     }
 
     /// Whether one of its statuses leaves its sufferer flat-footed (`flat_footed`: Surprised,
-    /// Stunned; spec §8 "Surprise and sneak attacks").
+    /// Stunned).
     pub fn flat_footed(&self, content: &Content) -> bool {
         !self.0.is_empty() && self.0.iter().any(|e| content.status(e.status).flat_footed)
     }
@@ -380,7 +380,7 @@ impl Effects {
         }
     }
 
-    /// How fast mana comes back while these last (spec §8 "Mana"): the slowest of their
+    /// How fast mana comes back while these last: the slowest of their
     /// statuses' `mana_regen`, 100 without any.
     pub fn mana_regen(&self, content: &Content) -> u16 {
         (self.0.iter())

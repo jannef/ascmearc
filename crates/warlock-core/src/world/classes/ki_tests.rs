@@ -1,4 +1,4 @@
-//! The ascetic's Ki and the bard's Inspiration (spec §8 "Resources"; the progression design §4.18,
+//! The ascetic's Ki and the bard's Inspiration (the progression design §4.18,
 //! R4, #252; the ki tricks design, #846): Martial arts grants Ki at level 1, its maximum grows
 //! with Willpower and the level, Flurry's second blows spend a point each from level 1, Quivering
 //! palm costs five instead of a cooldown, Perfect self brings it back twice as fast, Inspire

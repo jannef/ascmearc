@@ -1,4 +1,4 @@
-//! Alignment (spec §8 "Alignment", #254): good against evil, ADOM's law and chaos turned. The
+//! Alignment (#254): good against evil, ADOM's law and chaos turned. The
 //! player has a hidden [`Score`] from −[`MAX`] (as evil as can be) to +[`MAX`] (as good); what
 //! they do moves it ([`Score::shifted`]: the further along a direction they already are, the less
 //! each deed that way moves them), and they know it only as one of seven [`Band`]s, by edges in
@@ -166,10 +166,9 @@ impl Band {
         }
     }
 
-    /// Whether someone of alignment `them` turns cold toward a character of this band (spec §8
-    /// "Alignment"): a good creature toward an Evil or Wicked character, an evil one toward a
-    /// Good or Saintly character. They greet them coldly and offer them no quest that would do
-    /// them good.
+    /// Whether someone of alignment `them` turns cold toward a character of this band: a good
+    /// creature toward an Evil or Wicked character, an evil one toward a Good or Saintly character.
+    /// They greet them coldly and offer them no quest that would do them good.
     pub fn scorned_by(self, them: Alignment) -> bool {
         match them {
             Alignment::Good => self <= Band::Evil,

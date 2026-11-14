@@ -1,4 +1,4 @@
-//! The priest's prayer (`world/classes/orison.rs`, spec §8 "Class abilities"; the priest design §6.1,
+//! The priest's prayer (`world/classes/orison.rs`; the priest design §6.1,
 //! §7): each use at its level, the priority order, the answers a tier gives, the refusal, the
 //! strain and its lock, the faces, and saves and replays.
 

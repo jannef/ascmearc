@@ -1,4 +1,4 @@
-//! The game clock and calendar (spec §8 "Time").
+//! The game clock and calendar.
 //!
 //! World time is whole seconds since the calendar epoch: year 1, day 1 of the first month, 00:00.
 //! The calendar has 12 months of 30 days (a 360-day year) and 24-hour days; only the month names

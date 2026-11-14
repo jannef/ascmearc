@@ -1,4 +1,4 @@
-//! Player summons (spec §8 "Allies": "Summons"; docs/design/druid-and-summons.md §5 and §14;
+//! Player summons (docs/design/druid-and-summons.md §5 and §14;
 //! `docs/dev/allies.md`): a spell of `kind = "summon"` calls creatures of its pool to the
 //! caster's side, as allies ([`crate::world::Ally`]) that follow and fight for them until their time
 //! runs out or they are slain.

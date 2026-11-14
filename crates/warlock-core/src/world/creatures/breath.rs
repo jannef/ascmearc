@@ -1,4 +1,4 @@
-//! A dragon's breath (spec §8 "Creature behavior": "Dragons", #1099): a `combat = "dragon"`
+//! A dragon's breath (#1099): a `combat = "dragon"`
 //! creature with `[creature.breath]` in its type (`content/breath.rs`) breathes a cone of its
 //! element. Enemy-only: no player ability.
 //!

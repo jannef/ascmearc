@@ -1,4 +1,4 @@
-//! Mining (`assets/data/mining.toml`, spec §8 "Digging" and "Skills": Mining; #1389): the chance
+//! Mining (`assets/data/mining.toml`: Mining; #1389): the chance
 //! that a wall a miner digs through gives anything, the check that breaks it out, and the table
 //! of what it can be, by rarity and the floor's danger.
 //!

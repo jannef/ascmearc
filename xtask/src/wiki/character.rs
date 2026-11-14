@@ -1,4 +1,4 @@
-//! Character creation (spec §8 "Character creation"): stats, genders, races, classes, and the
+//! Character creation: stats, genders, races, classes, and the
 //! horoscope, with adjustments as written in data.
 
 use super::util::{Term, anchored, damage_link, signed, table_text};
@@ -22,7 +22,7 @@ pub(super) fn stats(_content: &Content) -> String {
     out
 }
 
-/// Every score's modifier (spec §8 "Stats": [`stats::modifier`], D&D 3.5's), scores of one
+/// Every score's modifier ([`stats::modifier`], D&D 3.5's), scores of one
 /// modifier on one row.
 pub(super) fn stat_modifiers(_content: &Content) -> String {
     let mut out = String::from("| Score | Modifier |\n|:---:|:---:|\n");
@@ -45,7 +45,7 @@ pub(super) fn stat_modifiers(_content: &Content) -> String {
     out
 }
 
-/// What each stat feeds, by its modifier and by its score (spec §8 "Stats"), with the numbers of
+/// What each stat feeds, by its modifier and by its score, with the numbers of
 /// the rules that read it: the carrying limit's grams a point, the regeneration pace, the shops'
 /// Presence share, and the diseases each stat's checks resist.
 pub(super) fn stat_uses(content: &Content) -> String {
@@ -150,7 +150,7 @@ pub(super) fn stat_uses(content: &Content) -> String {
     out
 }
 
-/// Each race's potentials (spec §8 "Character creation"): the races file's base potential plus
+/// Each race's potentials: the races file's base potential plus
 /// the race's adjustment, rolled once at the start of a run, kept within the scores' range; a
 /// potential is never below its starting score.
 pub(super) fn potentials(content: &Content) -> String {
@@ -178,7 +178,7 @@ pub(super) fn potentials(content: &Content) -> String {
     out
 }
 
-/// What each gender raises (spec §8 "Character creation").
+/// What each gender raises.
 pub(super) fn genders(_content: &Content) -> String {
     let mut out = String::from("| Gender | Starting stats |\n|---|---|\n");
     for gender in Gender::ALL {
@@ -351,7 +351,7 @@ pub(super) fn classes(content: &Content) -> String {
     out
 }
 
-/// Which classes each race may take (spec §8 "Character creation", #1279): per race, by name, the
+/// Which classes each race may take (#1279): per race, by name, the
 /// classes closed to it (`races_not`) and those open only with some genders (`only`); then the
 /// classes New run never offers (`hidden`).
 pub(super) fn class_limits(content: &Content) -> String {
@@ -397,7 +397,7 @@ pub(super) fn class_limits(content: &Content) -> String {
     out
 }
 
-/// The prestige classes (spec §8 "Prestige classes", `data/prestige/`), in file order as the
+/// The prestige classes (`data/prestige/`), in file order as the
 /// classes are: how many levels each has, what each level adds to the hit points and mana (half
 /// of it a level, as a class's), its skill rolls, the skills it is known for; then each one's
 /// description.

@@ -1,4 +1,4 @@
-//! The overworld (spec §3, §5, §8): travel time per terrain, impassable terrain, locations,
+//! The overworld: travel time per terrain, impassable terrain, locations,
 //! local areas entered with `>` and left by their edges, persistence, sight by daylight and
 //! moonlight, saves, and replays.
 

@@ -1,4 +1,4 @@
-//! Foraging in the wild (spec §8 "Foraging"; #547): [`Action::Forage`], the Forage ability,
+//! Foraging in the wild (#547): [`Action::Forage`], the Forage ability,
 //! Survival's use.
 //!
 //! - **Who**: an actor trained in a skill with the `forage` benefit (Survival,

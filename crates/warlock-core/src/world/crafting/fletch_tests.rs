@@ -1,4 +1,4 @@
-//! Fletching on the recipes (spec §8 "Fletching"; docs/dev/crafting.md "Arrows and bolts"; #1021,
+//! Fletching on the recipes (docs/dev/crafting.md "Arrows and bolts"; #1021,
 //! #1336): the arrows and bolts of Woodcraft (`count = "fletch"`), headed by a metal arrowhead, a
 //! bone shard, a flint block, or nothing (brittle); the arrowheads of Metalcraft; the sling stones
 //! and the flaming arrows; wood free in the woods; the knife and the launcher; the ranger's

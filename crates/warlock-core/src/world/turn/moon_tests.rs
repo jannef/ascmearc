@@ -1,4 +1,4 @@
-//! Moonlight through the whole turn pipeline (spec §5 "Moonlight").
+//! Moonlight through the whole turn pipeline.
 
 use super::light_tests::{check_invariants, check_wall_completion};
 use super::sun_tests::{field, sky_world};

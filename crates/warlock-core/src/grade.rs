@@ -1,4 +1,4 @@
-//! Grades (spec §8 "Grades"; `docs/design/monster-dread.md` §7.4): one creature in
+//! Grades (`docs/design/monster-dread.md` §7.4): one creature in
 //! six comes greater than its kind and one in six lesser, so two kobolds are two fights.
 //!
 //! The grade is [`Actor::grade`] (−1, 0, +1), drawn once as the creature is made

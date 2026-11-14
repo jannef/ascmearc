@@ -1,4 +1,4 @@
-//! The dialogue screen (spec §6 "Dialogue"): chatting (`C`) with someone who has topics opens it
+//! The dialogue screen: chatting (`C`) with someone who has topics opens it
 //! over the run. It shows who the player talks to, what they said last, and the topics to ask
 //! about, numbered: a digit (or the arrows and Enter) asks, which takes no time; Esc (or the chat
 //! key) leaves.

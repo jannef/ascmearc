@@ -28,7 +28,7 @@ kit = [
 random_scrolls = { count = "1d2", below_level = 10 }
 # Bonus talents from Wayfarer and Vigour.
 bonus_talents = { levels = [10, 20, 30, 45, 55], trees = ["wayfarer", "vigour"] }
-# The level table (spec §8 "Class abilities").
+# The level table.
 # Call lightning and Flame and frost are spells paid in mana (the placeholders until the
 # spell system). Beast-friend is the Wayfarer talent, given (#790: a table names the pickable,
 # never a clone). Woodland stride (6) and Winter's friend (25) were cut by #791: outdoors only.

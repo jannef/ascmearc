@@ -1,4 +1,4 @@
-# Grimoires (spec §8 "Spells": "Learning"; #1260): the books spells are learned from. When content
+# Grimoires (#1260): the books spells are learned from. When content
 # loads, every scroll of a spell (`read` of kind `spell`, objects/scroll_of_*.toml) gets a grimoire
 # beside it: `grimoire_of_X` for `scroll_of_X`, named "grimoire of X", at the scroll's level, worth
 # `value` times the scroll, and otherwise what `[object]` below says (the objects' fields,

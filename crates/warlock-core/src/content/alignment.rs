@@ -1,4 +1,4 @@
-//! Alignment (`assets/data/alignment.toml`, spec §8 "Alignment", #254): the edges of the seven
+//! Alignment (`assets/data/alignment.toml`, #254): the edges of the seven
 //! bands and what crossing into each says, how far each kind of deed moves the score, and how a
 //! good shopkeeper's prices follow the band. Optional: without it nobody has a score, everyone
 //! counts as Neutral, and nothing moves (`crate::alignment` holds the score, the bands, and the
@@ -86,7 +86,7 @@ pub struct Shifts {
     /// Consuming a magic crystal (docs/design/enchanting.md §5), a crystal.
     #[serde(default)]
     pub consume_crystal: i32,
-    /// Praying at a good forgotten altar (spec §7 "Special rooms").
+    /// Praying at a good forgotten altar.
     #[serde(default)]
     pub prayed_good: i32,
     /// Praying at an evil forgotten altar.
@@ -215,7 +215,7 @@ impl AlignmentRules {
     }
 
     /// How far a good shopkeeper moves its prices in the favour of a customer of `band`, in
-    /// percent (spec §7 "Shops").
+    /// percent.
     pub fn favour(&self, band: Band) -> i32 {
         self.favour.get(&band).copied().unwrap_or(0)
     }

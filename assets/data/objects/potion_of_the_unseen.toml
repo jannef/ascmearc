@@ -1,4 +1,4 @@
-# A potion of the unseen (spec §8 "Potions", the potions wave 2 design §4.1): Invisible for two minutes, unseen by what needs eyes. The unseen and the unplaced are opal.
+# A potion of the unseen (the potions wave 2 design §4.1): Invisible for two minutes, unseen by what needs eyes. The unseen and the unplaced are opal.
 [[object]]
 id = "potion_of_the_unseen"
 name = "potion of the unseen"

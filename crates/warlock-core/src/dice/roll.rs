@@ -1,4 +1,4 @@
-//! A roll of dice of more than one size (spec §8 "Dice"; the spell scaling design §6.2): a sum
+//! A roll of dice of more than one size (the spell scaling design §6.2): a sum
 //! of [`Dice`] groups and one fixed bonus, such as `3d6+1d10`, `5d6+2`, `2d8`, or `+3`.
 //!
 //! [`Dice`] stays one group for stats, weapons, and everything else; a `Roll` is what an attack

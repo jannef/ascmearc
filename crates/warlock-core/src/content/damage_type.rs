@@ -1,4 +1,4 @@
-//! Damage types (`assets/data/damage_types.toml`, spec §8 "Damage types"): what kind of harm a
+//! Damage types (`assets/data/damage_types.toml`): what kind of harm a
 //! blow, a missile, a trap, or a spell does, as data names them: the physical subtypes
 //! (slashing, piercing, bludgeoning) and the elements (fire, cold, electricity, acid, poison).
 //!
@@ -7,7 +7,7 @@
 //! (as the player reads it: "fire"), whether it is `physical` (Protection soaks only physical
 //! damage), and the verbs its blows are said with (`verb` "burns", `you` "burn"). Exactly one
 //! type may be marked `unarmed = true`: bare hands, kicks, and shield bashes do that kind.
-//! Presentation reads two more (spec §8 "Blood"): whether its harm draws `blood` (default yes;
+//! Presentation reads two more: whether its harm draws `blood` (default yes;
 //! fire sears), and the `char` it leaves where it burns, a light and a heavy colour (none: it
 //! leaves none).
 //!
@@ -78,10 +78,10 @@ pub struct DamageTypeDef {
     pub you: String,
     /// Whether bare hands, kicks, and shield bashes do this kind (one type at most).
     pub unarmed: bool,
-    /// Whether its harm draws blood (spec §8 "Blood"): a blow of two kinds draws it if the kind
+    /// Whether its harm draws blood: a blow of two kinds draws it if the kind
     /// that struck does. Fire sears instead.
     pub blood: bool,
-    /// The char it leaves on floors and walls where it burns (spec §8 "Blood": fire's), if any.
+    /// The char it leaves on floors and walls where it burns (fire's), if any.
     pub char: Option<CharColors>,
 }
 

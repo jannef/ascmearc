@@ -1,4 +1,4 @@
-//! Potions (spec §8 "Potions", the combat progression design §10): an object with an
+//! Potions (the combat progression design §10): an object with an
 //! `[object.drink]` table is drunk from the Consume list (Eat's command and action), and does
 //! what its `kind` says, at once.
 //!
@@ -66,7 +66,7 @@ const FLASK_RANGE: i32 = 6;
 /// The status a haste gives: the Haste spell's.
 const HASTE: &str = "hasted";
 
-/// What drinking a potion does (spec §8 "Potions").
+/// What drinking a potion does.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Draught {
     /// Hit points back at once, never past the maximum, and what `cures` names cured.

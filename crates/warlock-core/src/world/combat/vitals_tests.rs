@@ -1,4 +1,4 @@
-//! Vitals (spec §8 "Surprise and sneak attacks"; `Content::has_vitals`, `ambush.rs`): what has
+//! Vitals (`Content::has_vitals`, `ambush.rs`): what has
 //! none is immune to criticals (no confirmation drawn) and to sneak attacks, but is surprised
 //! like anyone; Anatomist finds them in bones and constructs; without the surprise rules
 //! everything has them.

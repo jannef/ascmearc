@@ -1,4 +1,4 @@
-//! Gems in play (spec §7 "Gems", #191; the data is [`crate::content::Gems`]): what a loose gem is
+//! Gems in play (#191; the data is [`crate::content::Gems`]): what a loose gem is
 //! called and looks like, and how loot finds gems and sets them in items.
 //!
 //! **Names**: a loose gem is called by its gem, with its size and cut unless they are the plain
@@ -106,8 +106,8 @@ pub fn find(content: &Content, rng: &mut Rng, level: u8) -> Option<Stack> {
     find_with(content, rng, level, 0)
 }
 
-/// [`find`] for a finder whose gems' chance is `more` percent higher (Hoard sense, spec §8
-/// "Birth sign"), never above certain: the same draws.
+/// [`find`] for a finder whose gems' chance is `more` percent higher (Hoard sense), never above
+/// certain: the same draws.
 pub fn find_with(content: &Content, rng: &mut Rng, level: u8, more: i32) -> Option<Stack> {
     let gems = content.gems()?;
     let chance = crate::talent::TalentMods::scaled(u64::from(gems.chance), more).min(100);
@@ -125,8 +125,8 @@ pub fn loose(content: &Content, rng: &mut Rng, level: u8) -> Option<Stack> {
     Some(Stack::one(gems.object).with_parts(vec![ItemPart::gem(content, None, gem, cutting)]))
 }
 
-/// An uncut loose gem at item level `level`, as a miner breaks one out of the rock (spec §8
-/// "Digging"; `world/crafting/mine.rs`): its gem by rarity and its size by the level ([`roll`]'s first two
+/// An uncut loose gem at item level `level`, as a miner breaks one out of the rock
+/// (`world/crafting/mine.rs`): its gem by rarity and its size by the level ([`roll`]'s first two
 /// draws), the roughest cut. A stack of one; `None` without gems or a rough cut.
 pub fn uncut(content: &Content, rng: &mut Rng, level: u8) -> Option<Stack> {
     let gems = content.gems()?;

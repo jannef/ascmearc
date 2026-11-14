@@ -1,4 +1,4 @@
-//! Animated objects (spec §8 "Animated objects"): the tiers, the numbers by level, the household
+//! Animated objects: the tiers, the numbers by level, the household
 //! bodies, and what a body's material gives, stated exactly from `data/animated.toml` and
 //! `data/animated/`, read through the generated creature types themselves.
 

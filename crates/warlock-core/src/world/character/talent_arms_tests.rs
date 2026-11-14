@@ -1,4 +1,4 @@
-//! The Weaponcraft and Guard talents in the world (spec §8 "Talents"; #238): each changes the
+//! The Weaponcraft and Guard talents in the world (#238): each changes the
 //! one rule it names — a weapon skill's or a role's benefits, ranges, worn armour's cap,
 //! Deflection, Protection while heavy armour or a shield is worn, a stance's to-hit penalty and
 //! fleeing steps, hits after the soak, a chosen element's resistance — and their prerequisites

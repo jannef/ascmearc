@@ -1,4 +1,4 @@
-//! The dialogs and screens input opens before an action (spec §6): what a step asks first
+//! The dialogs and screens input opens before an action: what a step asks first
 //! (deep water, leaving a shop owing, a known trap, a hungry journey, an offer, an anvil's
 //! screen), selling what is dropped in a shop, the Heal ability's choice, and a burst that may
 //! catch the reader. `input` decides when to ask; these say what.
@@ -22,7 +22,7 @@ pub(crate) fn step_dialog(view: &PerceptionView<'_>, dir: Dir) -> Option<Dialog>
 }
 
 /// The dialog a step in `dir` opens first, if it leaves the shop the player stands in owing
-/// anything (spec §7 "Shops"). Out of its door: pay and leave in one action (offered only with
+/// anything. Out of its door: pay and leave in one action (offered only with
 /// the gold; else the dialog says what they owe and have), or not, and the keeper turns them
 /// back one step (declining and Esc send the step, which the rules turn back). Any other way
 /// out (a wall dug open): pay and leave, leave without paying (theft), or stay.
@@ -65,7 +65,7 @@ fn leaving_dialog(view: &PerceptionView<'_>, dir: Dir) -> Option<Dialog> {
 }
 
 /// The dialog dropping the inventory stacks `letters` opens first, if the shop the player stands
-/// in would buy some of them (spec §7 "Shops"): sell them, or keep them (nothing is dropped).
+/// in would buy some of them: sell them, or keep them (nothing is dropped).
 pub(crate) fn sale_dialog(view: &PerceptionView<'_>, letters: &Positions) -> Option<Dialog> {
     let sale = view.sale(letters)?;
     let shop = view.shop_here()?;
@@ -79,7 +79,7 @@ pub(crate) fn sale_dialog(view: &PerceptionView<'_>, letters: &Positions) -> Opt
     )
 }
 
-/// The Heal ability's choice when the player may treat several things (spec §8 "Skills"): one
+/// The Heal ability's choice when the player may treat several things: one
 /// option for each, in the order the rules list them, and a way out.
 pub(crate) fn treat_dialog(ailments: &[warlock_core::heal::OwnAilment]) -> Dialog {
     let dialog = Dialog::new("Heal", "What do you tend to?");
@@ -88,7 +88,7 @@ pub(crate) fn treat_dialog(ailments: &[warlock_core::heal::OwnAilment]) -> Dialo
         .cancel("Never mind", ScreenAction::Close)
 }
 
-/// The question before reading a scroll (or casting a spell, spec §8 "Class abilities") whose
+/// The question before reading a scroll (or casting a spell) whose
 /// burst may catch the player too, aimed by `aim` (as far as they know,
 /// [`Aim::catches_reader`]): read (cast) it anyway, aim again (back at the same cursor, the
 /// target remembered), or not.
@@ -107,7 +107,7 @@ pub(crate) fn burst_dialog(view: &PerceptionView<'_>, aim: Aim) -> Option<Dialog
         );
     };
     let stack = view.inventory().get(item)?;
-    // An unknown scroll is a gamble (spec §8 "Scrolls"): nothing warns of what it may do.
+    // An unknown scroll is a gamble: nothing warns of what it may do.
     if view.lore().label(stack.object).is_some() {
         return None;
     }
@@ -124,9 +124,9 @@ pub(crate) fn burst_dialog(view: &PerceptionView<'_>, aim: Aim) -> Option<Dialog
 }
 
 /// The dialog a step in `dir` opens first, if it goes onto a trap the player knows, where no one
-/// they see stands (moving there would be an attack, or stop; spec §8 "Traps"): "Really step
+/// they see stands (moving there would be an attack, or stop): "Really step
 /// onto the fireball trap?", to step onto it or stay back (the safe answer, selected first). A
-/// door's trap is not stepped on (spec §8 "Trapped doors"), so a door never asks.
+/// door's trap is not stepped on, so a door never asks.
 fn trap_dialog(view: &PerceptionView<'_>, dir: Dir) -> Option<Dialog> {
     let to = view.viewer().step(dir);
     let door = match view.cell(to) {
@@ -144,9 +144,9 @@ fn trap_dialog(view: &PerceptionView<'_>, dir: Dir) -> Option<Dialog> {
     )
 }
 
-/// The dialog a step in `dir` opens first, if it dives into deep water from anything else (spec §8
-/// "Skills": Swim; [`PerceptionView::dives_at`]): always, no setting turns it off. To dive in or
-/// stay back (the safe answer, selected first, and Esc's; it takes no time).
+/// The dialog a step in `dir` opens first, if it dives into deep water from anything else (Swim;
+/// [`PerceptionView::dives_at`]): always, no setting turns it off. To dive in or stay back (the
+/// safe answer, selected first, and Esc's; it takes no time).
 fn deep_water_dialog(view: &PerceptionView<'_>, dir: Dir) -> Option<Dialog> {
     view.dives_at(view.viewer().step(dir)).then(|| {
         Dialog::new("Deep water", "Really dive into the deep water?")
@@ -156,7 +156,7 @@ fn deep_water_dialog(view: &PerceptionView<'_>, dir: Dir) -> Option<Dialog> {
 }
 
 /// The dialog a step in `dir` opens first, if it is a journey on the overworld for a player who
-/// is Fainting or Starving (spec §8 "Hunger"), onto ground that may be walked, where no one they
+/// is Fainting or Starving, onto ground that may be walked, where no one they
 /// see stands (moving there would be an attack, or stop): that it may kill them, to go on or
 /// stay (the safe answer, selected first, and Esc's; it takes no time). Judged by the state
 /// alone, never by what this step would cost, so it tells no number. Long fast is asked too: it
@@ -218,7 +218,7 @@ pub(crate) fn step_screen(view: &PerceptionView<'_>, dir: Dir) -> Option<ScreenN
 }
 
 /// The dialog a step in `dir` opens first, if it walks into a feature the player sees or remembers
-/// that offers an action (spec §7 "Special rooms"; what the abilities menu's Here group reads, so
+/// that offers an action (what the abilities menu's Here group reads, so
 /// a spent altar blocks as any wall does), where no one they see stands (moving there would be an
 /// attack, or stop): "Would you like to pray at the forgotten altar?", to use its ability, just as
 /// the menu does, or leave it (the safe answer, selected first, and Esc's; it takes no time). An

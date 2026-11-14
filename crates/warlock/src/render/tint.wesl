@@ -1,4 +1,4 @@
-// Screen tint overlay (spec §4.2, post-processing): one color over the map viewport, for the fade
+// Screen tint overlay (post-processing): one color over the map viewport, for the fade
 // on level change and flashes. The quad covers the screen; pixels outside the clip rectangle are
 // left untouched. Hidden (not drawn) while no tint is running.
 

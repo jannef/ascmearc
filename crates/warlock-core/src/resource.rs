@@ -1,4 +1,4 @@
-//! Alternative resources (spec §8 "Resources", #225): the pools an actor holds beside hit
+//! Alternative resources (#225): the pools an actor holds beside hit
 //! points and mana ([`Pools`], `Actor::resources`), and the pure rules of time passing for them.
 //! `content/resource.rs` is the data; `world/character/resource.rs` grants, builds, spends, and ends them,
 //! and `world/health/status.rs` passes time for them in `World::live`'s loop.

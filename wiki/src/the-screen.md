@@ -99,7 +99,10 @@ each shows
 `1 Character · 2 Inventory · 3 Equipment · 4 Skills · 5 Weapons · 6 Magic · 7 Quests · 8 Talents · 9 Story`
 
 with the page you are on highlighted. All pages are the same width, so the frame stays put as you
-turn them. In a small window the pages go by short names (`1 Char · 2 Inv · 3 Eqp · 4 Skl · 5 Weap
+turn them. The game keeps most of its numbers hidden, with one exception: every list of items,
+the inventory and the equipment screen among them, shows after each item what it gives, its
+to-hit and damage, or its Defence and Protection, "a long sword (+0 hit, 1d9)", "a chain mail
+shirt (Dv +2, Pv 3)" (see [Equipment](equipment.md#numbers)). In a small window the pages go by short names (`1 Char · 2 Inv · 3 Eqp · 4 Skl · 5 Weap
 · 6 Mag · 7 Qst · 8 Tal · 9 Story`), and in the narrowest by their numbers alone.
 
 While one of them is open, `1` to `9` switch to the page with that number. These are the number

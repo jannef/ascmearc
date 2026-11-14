@@ -1,4 +1,4 @@
-//! Missiles in flight (spec §4.8 "Missiles"): every shot and throw the player perceives flies on
+//! Missiles in flight: every shot and throw the player perceives flies on
 //! the free-glyph layer, from the turn's [`Event::Missile`]s, which carry the cells it flew over
 //! as far as the player saw them (never more: no ground truth is read here).
 //!

@@ -1,4 +1,4 @@
-# Spell effects (spec §4.8 "Spell effects"), shown with the dev action `effect` (no time passes,
+# Spell effects, shown with the dev action `effect` (no time passes,
 # so `freeze_time` is how long after the effect began): a fireball in the arena's pit at its peak
 # (white-hot core cooling outward, its light on the floor around it, the rest of the arena
 # darkened); a lightning bolt across the pit at its first flash; and a fireball in the start room

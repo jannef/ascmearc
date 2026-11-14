@@ -90,8 +90,8 @@ nothing = "You are whole, child. Go with my blessing."
 
 # Godgifu, the innkeeper of the Gæsthūs: rumours of the march. She knows what the quest-givers
 # know, in her own words, and tells the way: each topic's `route` (waypoints on the overworld,
-# from the town's gate) marks on the player's map what walking it by day would show (spec §8
-# "Dialogue", "Rumoured ways"). Only terrain: the hidden places along the ways stay hidden.
+# from the town's gate) marks on the player's map what walking it by day would show. Only terrain:
+# the hidden places along the ways stay hidden.
 [[dialogue]]
 npc = "godgifu"
 name = "Godgifu"

@@ -1,5 +1,5 @@
-//! Creatures and factions (spec §7 "Factions"), and the numbers the game keeps to itself about
-//! them (spec §8 "Creature behavior", "Combat", "Speed", "Stats"): the wiki states them exactly,
+//! Creatures and factions, and the numbers the game keeps to itself about
+//! them: the wiki states them exactly,
 //! read through the rules' own functions.
 
 use super::combat::threat_range;
@@ -25,7 +25,7 @@ use warlock_core::world::{Actor, ActorId, ActorKind};
 
 /// How a creature stands toward the player and how it attacks, as seen in play, how often it
 /// drops a magic item, and the gear it may spawn with. By name: the shared types, then each
-/// campaign's own (spec §3) under its name.
+/// campaign's own under its name.
 pub(super) fn creatures(content: &Content) -> String {
     let mut out = creature_table(content, None);
     for campaign in order::campaigns(content) {
@@ -166,7 +166,7 @@ fn courts(content: &Content, player: CreatureId, c: &CreatureDef) -> (String, St
     (names.join(", "), stances.join(" or "))
 }
 
-/// A creature type's gear table in words (spec §8 "Creature gear"): each line in the order it is
+/// A creature type's gear table in words: each line in the order it is
 /// tried, its alternatives, its chance, and the chance it is magic; the racial weapon marked.
 fn gear(content: &Content, c: &CreatureDef) -> String {
     let racial = c.gear.racial_weapon;
@@ -249,7 +249,7 @@ pub(super) fn factions(content: &Content) -> String {
     out
 }
 
-/// Every creature tag (spec §8 "Quests"), by tag: the word a kill quest names (`tag:goblin`),
+/// Every creature tag, by tag: the word a kill quest names (`tag:goblin`),
 /// its plural as quests say it, and the creature types that carry it, by name (a tag carried
 /// by one type is listed too).
 pub(super) fn creature_tags(content: &Content) -> String {
@@ -543,7 +543,7 @@ pub(super) fn creature_defences(content: &Content) -> String {
         } else {
             format!("{} ({})", defence.total(), parts.join(", "))
         };
-        // An incorporeal creature inside a wall (spec §8 "Incorporeal creatures").
+        // An incorporeal creature inside a wall.
         if let Some(i) = c.incorporeal.filter(|i| i.wall_defence != 0) {
             defence.push_str(&format!("; Wall {} inside walls", signed(i.wall_defence)));
         }
@@ -746,7 +746,7 @@ pub(super) fn creature_attacks(content: &Content) -> String {
     by_family(content, &out)
 }
 
-/// What each creature that throws (spec §8 "Ranged combat": "Creatures' throws") throws: what,
+/// What each creature that throws throws: what,
 /// the damage (its Strength modifier and its ranks counted), the to-hit (its Dexterity's), the
 /// critical, how far, how long a throw takes it, and what a hit may cause.
 pub(super) fn creature_throws(content: &Content) -> String {
@@ -808,7 +808,7 @@ pub(super) fn creature_throws(content: &Content) -> String {
     out
 }
 
-/// Each summoner's summoning (spec §8 "Summoning"): what it calls forth, how many at once, how
+/// Each summoner's summoning: what it calls forth, how many at once, how
 /// often and at what mana, from how far, and how many of its summoned may live at once.
 pub(super) fn creature_summons(content: &Content) -> String {
     let mut out = String::from(
@@ -902,7 +902,7 @@ pub(super) fn creature_splits(content: &Content) -> String {
     out
 }
 
-/// What each dragon (spec §8 "Creature behavior": "Dragons") breathes: its element, the damage
+/// What each dragon breathes: its element, the damage
 /// rolled once for everyone in the cone, how long the cone is, what else it causes on those it
 /// harmed (the gorgon's stiffening), and how long before it breathes again.
 pub(super) fn creature_breaths(content: &Content) -> String {
@@ -931,7 +931,7 @@ pub(super) fn creature_breaths(content: &Content) -> String {
     out
 }
 
-/// Each gazer's gaze (spec §8 "Creature behavior": "Gazes"): how far it reaches, the chance that
+/// Each gazer's gaze: how far it reaches, the chance that
 /// eyes that meet it are caught (and a glance's against averted ones), what it then causes, and
 /// how long before it looks again.
 pub(super) fn creature_gazes(content: &Content) -> String {
@@ -1136,7 +1136,7 @@ pub(super) fn creature_unseen(content: &Content) -> String {
     out
 }
 
-/// What each caster (spec §8 "Creature behavior": "Casters") casts, in the order it prefers
+/// What each caster casts, in the order it prefers
 /// them, with what each costs it, and its pool of mana; how rare it is beside it.
 pub(super) fn creature_spells(content: &Content) -> String {
     let mut out = String::from(
@@ -1221,7 +1221,7 @@ pub(super) fn creature_auras(content: &Content) -> String {
     out
 }
 
-/// Grades (spec §8 "Grades"): how often a creature comes greater or lesser than its kind, and
+/// Grades: how often a creature comes greater or lesser than its kind, and
 /// what that changes, from `warlock_core::grade`'s own numbers.
 pub(super) fn creature_grades(_: &Content) -> String {
     use warlock_core::grade::{DAMAGE, HP_PERCENT, ONE_IN, SPEED_PERCENT, TO_HIT};
@@ -1244,7 +1244,7 @@ pub(super) fn creature_grades(_: &Content) -> String {
 }
 
 /// The words look mode gives a lesser and a greater creature, each pair with the kinds that use
-/// it, and the kinds that are never graded (spec §8 "Grades").
+/// it, and the kinds that are never graded.
 pub(super) fn creature_grade_words(content: &Content) -> String {
     let mut pairs: Vec<(&[String; 2], Vec<String>)> = Vec::new();
     let mut none = Vec::new();
@@ -1303,8 +1303,8 @@ pub(super) fn creature_senses(content: &Content) -> String {
     by_family(content, &out)
 }
 
-/// Each creature's weight, its size, its carrying limit (spec §8 "Burden"), and whether it may
-/// be tamed, with its nose as a companion (spec §8 "Allies").
+/// Each creature's weight, its size, its carrying limit, and whether it may
+/// be tamed, with its nose as a companion.
 pub(super) fn creature_size(content: &Content) -> String {
     let mut out = String::from(
         "| Creature | Weight | Size | Carrying limit | Tameable |\n|---|---:|---|---:|---|\n",
@@ -1332,7 +1332,7 @@ pub(super) fn creature_size(content: &Content) -> String {
     by_family(content, &out)
 }
 
-/// The creatures with a craft for surprise (spec §8 "Surprise and sneak attacks"), by name:
+/// The creatures with a craft for surprise, by name:
 /// their Sneak attack (its dice and the points it adds to the initiative check's difficulty),
 /// their Initiative (the points it adds to their own check and the share of the dear action's
 /// extra time it spares), their Spot against slipping past, and whether they lurk; each read

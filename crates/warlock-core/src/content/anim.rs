@@ -1,4 +1,4 @@
-//! Glyph animation descriptors (spec §4.3).
+//! Glyph animation descriptors.
 //!
 //! These are **presentation-only**: the core loads and carries them so all content lives in one
 //! place, but no gameplay rule reads them.

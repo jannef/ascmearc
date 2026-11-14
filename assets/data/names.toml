@@ -1,4 +1,4 @@
-# Names for new characters (spec §8 "Character creation"): the Name step's Random draws one for
+# Names for new characters: the Name step's Random draws one for
 # the chosen race and gender, from the run seed, and so does a run told no name for a character
 # that is not its scenario's own (scenarios name their own character).
 #

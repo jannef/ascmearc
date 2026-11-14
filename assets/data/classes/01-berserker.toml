@@ -24,7 +24,7 @@ kit = [
 ]
 # Bonus talents from Might and Vigour.
 bonus_talents = { levels = [10, 20, 30, 45, 55], trees = ["might", "vigour"] }
-# The level table (spec §8 "Class abilities"). The rage and the three that build on it move onto
+# The level table. The rage and the three that build on it move onto
 # a Rage pool with the alternative resources (#225).
 abilities = [
     { level = 1, talent = "rage" },

@@ -1,4 +1,4 @@
-# A healing spring's drink (spec §7 "Special rooms"; content/outcome.rs has the fields): ten
+# A healing spring's drink (content/outcome.rs has the fields): ten
 # seconds of drinking from the basin, then one draw of the kinds and one by weight among that
 # kind's outcomes. A spring has no side, so nothing leans, and it never runs dry (`exhaust = 0`):
 # drink as often as you like; the foul water is the price. Messages stay vague: never a number.

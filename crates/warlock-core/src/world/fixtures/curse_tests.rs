@@ -1,4 +1,4 @@
-//! Cursed rooms (spec §7 "Special rooms", design §5; `world/fixtures/curse.rs`) and Consecrate
+//! Cursed rooms (design §5; `world/fixtures/curse.rs`) and Consecrate
 //! (`world/classes/consecrate.rs`): the dead killed inside rise two minutes later as undead of their
 //! level (the nearest level when none has theirs), unless their corpse is gone; Old delver;
 //! a whole cursed level; frozen floors catching up; Consecrate lifting a room or a level.

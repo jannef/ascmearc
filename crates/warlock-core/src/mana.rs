@@ -1,4 +1,4 @@
-//! Mana (spec §8 "Mana"): the second pool beside hit points, built the same way. These are the
+//! Mana: the second pool beside hit points, built the same way. These are the
 //! pure rules; `world/magic/mana.rs` applies them to actors, and `world/health/status.rs` regenerates it as
 //! time passes.
 //!
@@ -44,7 +44,7 @@ pub fn max_mana(stats: &Stats, base: i32) -> i32 {
 /// How much of a pool a skill's mana (Concentration, `Effect::MaxMana`) may add to it: a fifth.
 pub const DEEPER_DIVISOR: i32 = 5;
 
-/// A pool of `pool` deepened by a skill's `bonus` points (Concentration; spec §8 "Mana"): never
+/// A pool of `pool` deepened by a skill's `bonus` points (Concentration): never
 /// more than a fifth of `pool` (rounded down), so a pool of 0 to 4 gains nothing.
 pub fn deeper(pool: i32, bonus: i32) -> i32 {
     pool + bonus.clamp(0, (pool / DEEPER_DIVISOR).max(0))

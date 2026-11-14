@@ -91,7 +91,7 @@ pub(super) fn actor_rows(world: &World) -> Vec<String> {
             } else {
                 format!("; equipped {}", equipped.join(", "))
             };
-            // What its magic items do to it (spec §8 "Magic items"), by effect id.
+            // What its magic items do to it, by effect id.
             let mods = a.mods(content);
             let mut magic: Vec<String> = (mods.iter())
                 .map(|(effect, value)| format!("{} {value:+}", effect.id()))
@@ -143,7 +143,7 @@ pub(super) fn actor_rows(world: &World) -> Vec<String> {
                 format!("; effects {}", effects.join(", "))
             };
             let diseases = disease_text(a, content);
-            // Its alternative resources (spec §8 "Resources"): value/maximum, and the progress
+            // Its alternative resources: value/maximum, and the progress
             // toward the next point over time in hundredths of a second.
             let resources: Vec<String> = (a.resources.iter())
                 .map(|p| {
@@ -159,22 +159,22 @@ pub(super) fn actor_rows(world: &World) -> Vec<String> {
             };
             let weapons = actor_weapon_skills(content, a)
                 .map_or(String::new(), |s| format!("; weapon skills {s}"));
-            // Who it is and how far its talk has got (spec §8 "Dialogue"), if anything.
+            // Who it is and how far its talk has got, if anything.
             let npc = (a.npc.as_ref()).map_or(String::new(), |n| format!("; npc {n}"));
-            // Where it stands between good and evil (spec §8 "Alignment"): its score and band
+            // Where it stands between good and evil: its score and band
             // (the player's), or its nature.
             let alignment = match a.alignment {
                 Some(score) => format!("; alignment {} ({})", score.value(), a.band(content).id()),
                 None => format!("; alignment {}", a.nature(content).id()),
             };
-            // The court it joined, for a type of several factions (spec §7 "Factions": the fey).
+            // The court it joined, for a type of several factions (the fey).
             let court = match a.faction(content) {
                 Some(f) if !content.creature(a.creature).factions.is_empty() => {
                     format!("; court {}", content.factions().def(f).id)
                 }
                 _ => String::new(),
             };
-            // Its grade (spec §8 "Grades"): `; grade big`.
+            // Its grade: `; grade big`.
             let def = content.creature(a.creature);
             let court = match crate::grade::word(def, a.graded()) {
                 Some(word) => format!("{court}; grade {word}"),
@@ -192,7 +192,7 @@ pub(super) fn actor_rows(world: &World) -> Vec<String> {
             } else {
                 court
             };
-            // Who summoned it (spec §8 "Summoning"), and so whose side it took.
+            // Who summoned it, and so whose side it took.
             let court = match a.summoner {
                 Some(by) => format!("{court}; summoned by {by}"),
                 None => court,
@@ -202,8 +202,8 @@ pub(super) fn actor_rows(world: &World) -> Vec<String> {
                 Some(mark) => format!("{court}; mark {mark}"),
                 None => court,
             };
-            // Whose ally it is, what made it one, how long it stays, and its order (spec §8
-            // "Allies"): `; ally of #0 (summoned, 4 min; follow)`, `(companion; stay at (12, 5))`,
+            // Whose ally it is, what made it one, how long it stays, and its order: `; ally of #0
+            // (summoned, 4 min; follow)`, `(companion; stay at (12, 5))`,
             // `(summoned; follow; retinue)`.
             let court = match &a.ally {
                 Some(ally) => {
@@ -245,7 +245,7 @@ pub(super) fn actor_rows(world: &World) -> Vec<String> {
                 }
                 None => court,
             };
-            // The overworld encounter that made it (spec §7 "Overworld encounters").
+            // The overworld encounter that made it.
             let court = match world.party_of(a.id) {
                 Some(entry) => format!("{court}; of encounter {entry}"),
                 None => court,
@@ -304,7 +304,7 @@ pub(super) fn actor_rows(world: &World) -> Vec<String> {
                     None => format!("{talk}; {aware}"),
                 }
             };
-            // The player's background story by ids (spec §8 "Background story").
+            // The player's background story by ids.
             let talk = match world.state().character.as_ref().filter(|_| a.id == player) {
                 Some(c) if !c.story.is_empty() => {
                     let ids: Vec<String> = c.story.iter().map(|t| t.id()).collect();

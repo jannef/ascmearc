@@ -1,4 +1,4 @@
-# Magic missile (spec §8 "Spells", the first spell list): a dart of force that never misses, a
+# Magic missile (the first spell list): a dart of force that never misses, a
 # die more a rung of its Intelligence ladder ([spell.grows]).
 [[spell]]
 id = "magic_missile"
@@ -23,7 +23,7 @@ noise = { sound = "chanting", loudness = 30 }
 damage = "intelligence 13 4d4, 16 6d4, 22 6d4+1"
 range = "willpower 14 9, 18 10"
 
-# What rereading its grimoire adds, rank by rank (spec §8 "Spells": "Ranks"; README.toml
+# What rereading its grimoire adds, rank by rank (README.toml
 # `[spell.ranks]`): a worked example. Each entry is what reaching that rank adds; a cast at rank
 # N has everything listed up to N. At rank 10: +2 on the roll, two dice more, two cells farther,
 # a fifth off the mana, and half the casting time.

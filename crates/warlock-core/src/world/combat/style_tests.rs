@@ -1,4 +1,4 @@
-//! Fighting styles in the world (spec §8 "Fighting styles"): each style's configuration, marks
+//! Fighting styles in the world: each style's configuration, marks
 //! earned only while fighting in it, its benefits on attacks, Defence, and prices, two-weapon
 //! fighting (both hands strike, at penalties a style eases; the off hand only takes a light
 //! weapon and draws on its own skill), the shield bash that may follow a blow, starting ranks

@@ -8,7 +8,7 @@ use warlock_core::content::Content;
 /// The scenarios a new run can start, as a release build's New run starts them: per campaign the
 /// wiki describes (`order::campaigns`), its name and description and its start scenario, with
 /// the moment it starts. The campaign's other scenarios (in its town, on a branch's first level)
-/// are developer conveniences, listed by New run in developer builds only (spec §3b).
+/// are developer conveniences, listed by New run in developer builds only.
 pub(super) fn scenarios(content: &Content) -> String {
     let mut out = String::new();
     for campaign in order::campaigns(content) {

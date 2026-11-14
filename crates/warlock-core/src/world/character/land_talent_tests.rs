@@ -1,4 +1,4 @@
-//! The Shadow and Wayfarer talents (spec §8 "Talents"; #239): effective eyes (Night eyes, Dark
+//! The Shadow and Wayfarer talents (#239): effective eyes (Night eyes, Dark
 //! adaptation, which took in Owl eyes, #817), Blood scent, Lamplighter, Ambusher, and the land's: Swimmer, Marsh
 //! walker, Beast-friend. Each changes the one rule it names.
 
@@ -179,7 +179,7 @@ fn blood_scent_sees_a_bleeding_creature_in_the_dark() {
 #[test]
 fn a_full_moon_lets_hounds_nose_smell_blood_two_cells_farther() {
     // Hound's nose reaches six cells: the rat bleeds seven off. The built-in moon is full at
-    // the start of the 16th (spec §8 "Birth sign", the flavour; underground all the same).
+    // the start of the 16th (the flavour; underground all the same).
     let mut w = world("den");
     let rat = creature(&w);
     w.state.vision = "darkvision".into();

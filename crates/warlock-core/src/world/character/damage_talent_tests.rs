@@ -1,4 +1,4 @@
-//! The damage-type talents in the world (spec §8 "Talents", "Damage types"; #248): Elemental
+//! The damage-type talents in the world (#248): Elemental
 //! ward takes its share off the chosen element's damage, spells' and statuses' doses alike (the
 //! path a poison-typed burst such as the witch's blight takes), and says so on the character
 //! screen in words; Crusher drives bludgeoning blows through Protection; and the damage-types

@@ -1,4 +1,4 @@
-//! The animal companion (spec §8 "Allies": "The animal companion"; docs/design/ranger-companion.md
+//! The animal companion (docs/design/ranger-companion.md
 //! §5–§8; `docs/dev/companion.md`): a beast that is the player's for good. It is an ally of the
 //! core (`ally.rs`: [`Actor::ally`], the side, the arm, the orders, the retinue) with
 //! `source = Companion(CompanionData)`, `until = None`, and four things of its own:
@@ -376,8 +376,8 @@ impl Actor {
             .map_or(0, |(g, above)| above / g.defence_every)
     }
 
-    /// The natural Protection of a companion at its grade: its body's by the rule of spec §8
-    /// "Creatures" (a hide (grade − 10) ÷ 8, a bony body grade ÷ 6, an armoured one grade ÷ 4 +
+    /// The natural Protection of a companion at its grade: its body's by the creatures' body
+    /// rule (a hide (grade − 10) ÷ 8, a bony body grade ÷ 6, an armoured one grade ÷ 4 +
     /// 1, by what its hide is called; a body with none, none), for the type's own to be taken
     /// over when it is more ([`Actor::protection_plus`]); 0 for anyone else.
     pub(in crate::world) fn growth_protection(&self, content: &Content) -> i32 {
@@ -405,8 +405,8 @@ impl Actor {
 }
 
 /// The body rule's Protection at level `grade` for a creature whose hide is called `hide`
-/// (`None`: a plain hide): hide (L − 10) ÷ 8, bony L ÷ 6, armoured L ÷ 4 + 1, none 0 (spec §8
-/// "Creatures"; `content/creature_body_tests.rs` pins the types to it).
+/// (`None`: a plain hide): hide (L − 10) ÷ 8, bony L ÷ 6, armoured L ÷ 4 + 1, none 0
+/// (`content/creature_body_tests.rs` pins the types to it).
 pub fn body_protection(hide: Option<&str>, grade: u8) -> i32 {
     const NONE: &[&str] = &[
         "insubstantial",

@@ -1,4 +1,4 @@
-//! Gathering herbs (`assets/data/herbs.toml`, spec §8 "Skills": Herbalism; #1340): what the
+//! Gathering herbs (`assets/data/herbs.toml`: Herbalism; #1340): what the
 //! glowing fungus gives, how long a gather takes, and how many herbs it finds.
 //!
 //! The rule itself lives in `world/skills/gather.rs`. The file is optional: without it nobody gathers.

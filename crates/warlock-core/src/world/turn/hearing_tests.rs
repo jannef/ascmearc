@@ -1,4 +1,4 @@
-//! Hearing in the turn pipeline (spec §5 "Hearing"): who hears what, what the player perceives,
+//! Hearing in the turn pipeline: who hears what, what the player perceives,
 //! messages, and resting.
 
 use crate::action::parse_actions;

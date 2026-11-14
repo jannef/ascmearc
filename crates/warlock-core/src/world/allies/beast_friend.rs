@@ -1,4 +1,4 @@
-//! Beast-friend (spec §8 "Talents"): creatures of animal factions (`animal = true` in
+//! Beast-friend: creatures of animal factions (`animal = true` in
 //! `data/factions/`: the vermin, the wildlife) are neutral to a player with the talent, and
 //! creatures whose type carries a tag a `kin_to` talent names (Rat-king's court's vermin) to its
 //! holder, until the player attacks one: from then on that creature type stands toward them as its

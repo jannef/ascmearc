@@ -1,4 +1,4 @@
-//! Smiting (spec §8 "Class abilities": "Smite"; docs/design/paladin-smites.md §5): the paladin's
+//! Smiting (docs/design/paladin-smites.md §5): the paladin's
 //! blow of holy wrath, paid in zeal.
 //!
 //! A smite is a melee blow with what the player wields at the hostile in a direction, priced as

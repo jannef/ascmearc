@@ -1,4 +1,4 @@
-//! Running (#1325; spec §6 "Running"): [`crate::action::Action::Run`], step after step in a
+//! Running (#1325): [`crate::action::Action::Run`], step after step in a
 //! direction until something worth stopping for. A long action through [`World::keep_at`], so it
 //! stops for whatever a rest stops for (a hostile coming within [`World::stop_within`] in view,
 //! an attack, a shot or a spell near, a message said, death); the step is its `act`, and whether

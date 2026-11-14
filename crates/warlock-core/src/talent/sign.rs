@@ -1,4 +1,4 @@
-//! The sign talents (#1495): what a birth sign's gifts do (spec §8 "Birth sign"): the sign actives
+//! The sign talents (#1495): what a birth sign's gifts do: the sign actives
 //! and what makes them stronger. [`SignEffect`] is the data (a talent's `[[effect]]` of one of
 //! [`SignEffect::KINDS`]), [`SignMods`] the sum every rule reads (`TalentMods::sign`). A new effect
 //! of the area is a variant here, its field and its arm in [`SignMods::add`] here, its wiki text in
@@ -12,7 +12,7 @@ use serde::Deserialize;
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum SignEffect {
-    /// The active Blaze (a birth sign's, spec §8 "Birth sign"): a burst of `radius` around the
+    /// The active Blaze (a birth sign's): a burst of `radius` around the
     /// player that does `damage` of kind `damage_type` (an id in `data/damage_types.toml`) to
     /// every creature it reaches but them, melts the ice it reaches, and sets each cell it
     /// reaches but theirs burning for `burns` seconds with light preset `fire` (as a burning
@@ -29,7 +29,7 @@ pub enum SignEffect {
     },
     /// Blaze bursts out to `radius` with `damage` instead of its own (Wildfire).
     Wildfire { radius: i32, damage: Dice },
-    /// The active Fire breath (a birth sign's pick, spec §8 "Birth sign"), aimed at a cell
+    /// The active Fire breath (a birth sign's pick), aimed at a cell
     /// within `range` (1 to 40): a bolt of `damage` of kind `damage_type` along the
     /// line toward it, `length` cells from the player, through everyone on it; shown as effect
     /// `spell` (a bolt); then `degrees` of the `cooldown` status.
@@ -247,7 +247,7 @@ impl SignMods {
         }
     }
 
-    /// Whether it has the birth sign's active `active` (spec §8 "Birth sign").
+    /// Whether it has the birth sign's active `active`.
     pub fn has_sign_active(&self, active: crate::content::SignActive) -> bool {
         use crate::content::SignActive as A;
         match active {
@@ -272,7 +272,7 @@ impl SignMods {
     }
 }
 
-/// The active Fire breath (spec §8 "Birth sign"): a bolt of fire, then a cooldown.
+/// The active Fire breath: a bolt of fire, then a cooldown.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct FireBreath {
     pub bolt: crate::content::Bolt,
@@ -280,7 +280,7 @@ pub struct FireBreath {
     pub degrees: u16,
 }
 
-/// The active Hound's bay (spec §8 "Birth sign"): the status a howl leaves on lesser foes
+/// The active Hound's bay: the status a howl leaves on lesser foes
 /// who hear it, then a cooldown.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct HoundsBay {
@@ -289,7 +289,7 @@ pub struct HoundsBay {
     pub cooldown: StatusId,
 }
 
-/// The birth sign's active Horn's grace (spec §8 "Birth sign"): what it cures, then a cooldown.
+/// The birth sign's active Horn's grace: what it cures, then a cooldown.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct HornsGrace {
     pub cures: Vec<StatusId>,
@@ -299,7 +299,7 @@ pub struct HornsGrace {
     pub degrees: u16,
 }
 
-/// The birth sign's active Transfixing stare (spec §8 "Birth sign"): the status it leaves on
+/// The birth sign's active Transfixing stare: the status it leaves on
 /// the creature stared at, then a cooldown.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Stare {
@@ -309,7 +309,7 @@ pub struct Stare {
     pub degrees: u16,
 }
 
-/// The birth sign's active Blaze (spec §8 "Birth sign"): a burst of flame around the player,
+/// The birth sign's active Blaze: a burst of flame around the player,
 /// fires on the cells it reaches, then a cooldown.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Blaze {

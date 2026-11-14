@@ -1,4 +1,4 @@
-//! Spells (spec §8 "Spells"): the shapes' and resolutions' cost multipliers, the
+//! Spells: the shapes' and resolutions' cost multipliers, the
 //! spell list by spell level, each spell's ranks, the classes' guaranteed spells, the armour
 //! that makes casting dearer, and the wands.
 
@@ -218,7 +218,7 @@ pub(super) fn list(content: &Content) -> String {
     out
 }
 
-/// Every spell with a rank table (`[spell.ranks]`, spec §8 "Spells": "Ranks"), by level then
+/// Every spell with a rank table (`[spell.ranks]`), by level then
 /// name: what reaching each rank adds, and what a cast at rank 10 has in all. A spell without a
 /// table is left out (its ranks give nothing).
 pub(super) fn ranks(content: &Content) -> String {
@@ -618,7 +618,7 @@ pub(super) fn armour(content: &Content) -> String {
     out
 }
 
-/// The wands (spec §8 "Magic items": "Wands"): each one's spell, its spell level, charges, the
+/// The wands: each one's spell, its spell level, charges, the
 /// roll it casts at (its lowest rung, before the user's wand rungs), and where loot finds it; by
 /// spell level, then name.
 pub(super) fn wands(content: &Content) -> String {
@@ -659,7 +659,7 @@ pub(super) fn wands(content: &Content) -> String {
     out
 }
 
-/// The rods (spec §8 "Magic items": "Rods"): each one's effect, its shape and reach (with its
+/// The rods: each one's effect, its shape and reach (with its
 /// ladder, as a spell's), what it does exactly, its mana cost, and where loot finds it; by item
 /// level, then name.
 pub(super) fn rods(content: &Content) -> String {

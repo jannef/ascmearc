@@ -1,4 +1,4 @@
-//! Player settings (spec §4.7, §6): font size, reduced effects, color palette, key bindings.
+//! Player settings: font size, reduced effects, color palette, key bindings.
 //!
 //! They live in `settings.toml` in the platform config directory, or under the key
 //! `warlock/settings.toml` in the browser's local storage on the web (`storage.rs`). A missing or damaged file means defaults
@@ -67,7 +67,7 @@ pub struct Settings {
     pub temperature: TemperatureUnit,
 }
 
-/// How temperatures are shown (spec §6 "Settings"): degrees Celsius (the default) or
+/// How temperatures are shown: degrees Celsius (the default) or
 /// Fahrenheit, whole degrees.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum TemperatureUnit {
@@ -116,7 +116,7 @@ impl TemperatureUnit {
     }
 }
 
-/// Which visual effects run (spec §4.7). In [`Settings`] these are the player's per-effect
+/// Which visual effects run. In [`Settings`] these are the player's per-effect
 /// switches; the `Effects` resource in rendering holds the effective values.
 #[derive(Resource, Debug, Clone, Copy, PartialEq, Eq)]
 pub struct EffectSwitches {
@@ -132,7 +132,7 @@ pub struct EffectSwitches {
     /// Heat haze.
     pub distortion: bool,
     pub particles: bool,
-    /// Spell circles (spec §4.8 "Spell circles"): a turning circle about every seen
+    /// Spell circles: a turning circle about every seen
     /// actor with a buff's or a hex's status. Information, not decoration: reduced effects only
     /// stills it (as `motion` off does), so it stays as set, as blood does.
     pub circles: bool,
@@ -145,7 +145,7 @@ pub struct EffectSwitches {
     /// its own (not `particles`): it moves over the whole view, not around a few sources. The
     /// weather itself (its light, the status bar) does not depend on it.
     pub weather: bool,
-    /// Blood stains on floors and walls (spec §8 "Blood"). A content preference rather than an
+    /// Blood stains on floors and walls. A content preference rather than an
     /// effect: reduced effects leaves it as it is.
     pub blood: bool,
 }

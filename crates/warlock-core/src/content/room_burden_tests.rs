@@ -1,4 +1,4 @@
-//! A special room's `burden` (spec §7 "Special rooms"): parsed, defaulted, and multiplied by
+//! A special room's `burden`: parsed, defaulted, and multiplied by
 //! [`Here::burden`].
 
 use super::{Here, RoomEffectId, RoomEffects};

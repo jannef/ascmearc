@@ -1,4 +1,4 @@
-//! Overworld encounters (spec §7 "Overworld encounters", #804; `docs/dev/encounters.md`): the
+//! Overworld encounters (#804; `docs/dev/encounters.md`): the
 //! roll and its draws, the four outcomes, the pending choice, evading, the positions by outcome,
 //! the known party, saves, and replays (the design's §9.3 invariants). The fixture is the
 //! built-in content with a table in the showcase campaign: kobolds (hostile), deer (wildlife),

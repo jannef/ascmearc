@@ -1,4 +1,4 @@
-//! Outcome tables (`data/outcomes/<id>.toml`, one table a file; spec §7 "Special rooms"): what
+//! Outcome tables (`data/outcomes/<id>.toml`, one table a file): what
 //! using a place's ability draws: a forgotten altar's prayer, a healing spring's drink. The rules
 //! are `world/fixtures/outcome.rs` (applying an outcome), `world/fixtures/pray.rs` (the prayer),
 //! `world/fixtures/drink.rs` (the drink), and `world/health/potion.rs` (a gamble's draught, `kind = "gamble"`:

@@ -1,4 +1,4 @@
-//! Eating and corpses (spec §8 "Hunger").
+//! Eating and corpses.
 //!
 //! **A meal** ([`Action::Eat`](crate::Action::Eat): one of a stack from the pack or the floor)
 //! takes as many turns as the food says, each the `eat` action, and passes them like a rest
@@ -6,16 +6,16 @@
 //! came into view or a message was logged that stops a rest ("You stop eating."), and the food is
 //! left as it was. Only when
 //! the last turn is done is one eaten, and it feeds: "You eat the ration." In a shop, what is
-//! eaten is bought ([`World::ate_goods`], spec §7 "Shops"). Then come what a corpse does when
+//! eaten is bought ([`World::ate_goods`]). Then come what a corpse does when
 //! eaten and the news of the player's hunger ("You feel satiated.").
 //!
 //! **What food does**: its nutrition, up to the most there can be. A meal that would go past it
 //! is overeating: the player may choke to death on it (a chance, 0 by default: off), else vomit
 //! (a chance), else what does not fit is lost. Vomiting leaves at most `vomit_leaves` nutrition
 //! and feeds nothing. A remedy (food with `cures`, `data/objects.toml`) then cures what it
-//! names, as [`World::cure`] does (a disease remedy ends every disease, spec §8 "Diseases").
+//! names, as [`World::cure`] does (a disease remedy ends every disease).
 //!
-//! **Rotten food** (spec §8 "Hunger"; food rots by its age, `world/health/rot.rs`): eating any food
+//! **Rotten food** (food rots by its age, `world/health/rot.rs`): eating any food
 //! past its keeping is risky (vomiting, else sickness and exposure to the diseases rotten food
 //! carries, [`World::expose_to`], and then it feeds). Old food is as good as fresh. A race that
 //! `eats_rotten` (ratfolk) eats it without harm: it only feeds them.
@@ -34,7 +34,7 @@
 //! only by eating it.
 //!
 //! **Sickness**: harm from what was eaten is degrees of the status `sickness` names
-//! (`data/hunger.toml`: poisoned, spec §8 "Status effects"), given through [`World::afflict`],
+//! (`data/hunger.toml`: poisoned), given through [`World::afflict`],
 //! the one way to give a status; it costs hit points as time passes and may kill ("Died of
 //! poison").
 
@@ -76,10 +76,10 @@ fn gift_news(stat: Stat) -> String {
 const LOUD_MARKS: u32 = 30;
 
 impl World {
-    /// The player sets out to consume `meal`: a potion is drunk at once ([`World::drink_potion`],
-    /// spec §8 "Potions"), a magic crystal consumed at once ([`World::consume_crystal`]), food is
-    /// a meal. Refused, taking no time, when there is no such stack, or it is none of those, or
-    /// it is food and nobody hungers.
+    /// The player sets out to consume `meal`: a potion is drunk at once ([`World::drink_potion`]),
+    /// a magic crystal consumed at once ([`World::consume_crystal`]), food is a meal. Refused,
+    /// taking no time, when there is no such stack, or it is none of those, or it is food and
+    /// nobody hungers.
     pub(in crate::world) fn eat(&mut self, meal: Meal, events: &mut Vec<Event>) -> Spent {
         let content = self.content.clone();
         let stack = match meal {
@@ -240,7 +240,7 @@ impl World {
         if let Some(text) = &on_eat.message {
             self.say(text.clone());
         }
-        // Herb lore, Cauldron (spec §8 "Class abilities"): a corpse's own harm never touches
+        // Herb lore, Cauldron: a corpse's own harm never touches
         // them (no draw for it).
         let harmless = self
             .state
@@ -366,7 +366,7 @@ impl World {
             "Ugh! {} was rotten.",
             the_start(&content.object(what).name)
         ));
-        // Iron stomach (spec §8 "Talents"): never vomits, and half the sickness (no draw for
+        // Iron stomach: never vomits, and half the sickness (no draw for
         // the vomiting it is spared).
         let iron = self
             .state
@@ -380,7 +380,7 @@ impl World {
             self.vomit();
             return;
         }
-        // Purify (spec §8 "Class abilities"): rotten food neither sickens them nor exposes them
+        // Purify: rotten food neither sickens them nor exposes them
         // to a disease, and draws nothing for it.
         if self.state.player().talent_mods(&content).hunger.purify {
             self.feed(nutrition, what);
@@ -406,14 +406,14 @@ impl World {
         if degrees > 0 {
             self.sicken(degrees, events);
         }
-        // Rotten food may carry a disease (grave rot): a check to resist it (spec §8 "Diseases").
+        // Rotten food may carry a disease (grave rot): a check to resist it.
         self.expose_to(self.state.player, "rotten_food");
         self.feed(nutrition, what);
     }
 
-    /// What the player's talents heal of a meal of `food` besides (spec §8 "Class abilities":
-    /// Herb lore's angelica root, Cauldron's fresh corpses): each match rolls its dice, never
-    /// past the maximum. A rotten meal heals nothing; no draw without a match.
+    /// What the player's talents heal of a meal of `food` besides (Herb lore's angelica root,
+    /// Cauldron's fresh corpses): each match rolls its dice, never past the maximum. A rotten meal
+    /// heals nothing; no draw without a match.
     fn meal_heals(&mut self, food: &Stack, rotten: bool) {
         let mods = self.state.player().talent_mods(&self.content);
         let corpse = self.content.object(food.object).corpse.is_some();
@@ -493,7 +493,7 @@ impl World {
 
     /// The player gains `points` of nutrition from `what`. A meal that would go past the most
     /// there can be is overeating: they may choke to death (if choking is on), else vomit, else
-    /// what does not fit is lost. With Gourmand (spec §8 "Talents") a meal never leaves them
+    /// what does not fit is lost. With Gourmand a meal never leaves them
     /// Bloated: what does not fit below it is lost, and they never overeat.
     fn feed(&mut self, points: i32, what: ObjectId) {
         let content = self.content.clone();

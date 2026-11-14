@@ -1,4 +1,4 @@
-//! Light presets (`assets/data/lights.toml`, spec §5).
+//! Light presets (`assets/data/lights.toml`).
 
 use crate::light::Light;
 use serde::{Deserialize, Serialize};
@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct LightId(pub u16);
 
-/// How a light varies over time (spec §4.4): visual only, carried for the renderer. Gameplay
+/// How a light varies over time: visual only, carried for the renderer. Gameplay
 /// rules never read it. The default (every part absent) is a perfectly stable light: constant
 /// hue and intensity.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Serialize, Deserialize)]
@@ -102,7 +102,7 @@ pub struct LightPreset {
     pub color: Light,
     /// Reach in cells; the light fades to zero at squared distance `radius² + radius`.
     pub radius: i32,
-    /// The preset this light burns as with its hood lowered (spec §5 "Light sources": the
+    /// The preset this light burns as with its hood lowered (the
     /// player's lantern, hooded): an id in `data/lights.toml`, itself without a hood. `None`:
     /// it has no hood.
     #[serde(default, skip_serializing_if = "Option::is_none")]

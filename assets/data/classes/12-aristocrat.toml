@@ -12,7 +12,7 @@ optional_skills = { appraise = { chance = 20, dice = "2d4" }, decipher_script = 
 rolls = 2
 weapon_skills = { long_blades = 1 }
 styles = { duelist = 1 }
-# The level table (spec §8 "Class abilities"): their tutors' lessons and their family's name,
+# The level table: their tutors' lessons and their family's name,
 # one by one as the levels come; bonus talents from Weaponcraft and Delver.
 abilities = [
     { level = 1, talent = "family_wealth" },

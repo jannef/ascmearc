@@ -1,9 +1,9 @@
 # Hunger
 
 Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
-rules it implements are in spec/08h-hunger.md. Keep it current with the code, as CLAUDE.md says.
+rules it implements are in spec/12-character.md. Keep it current with the code, as CLAUDE.md says.
 
-Hunger (spec §8 "Hunger"; M23, #137): the rules are `warlock-core/src/hunger.rs` (`Hunger`, the
+Hunger (M23, #137): the rules are `warlock-core/src/hunger.rs` (`Hunger`, the
 seven states from `Starving` up to `Bloated`, ordered so `<` is hungrier; `news(from, to)`,
 `worsens`; `Satiation { nutrition, banked, starving }` on `Actor::satiation`, the player's
 only, with `burn`/`starve`/`feed`), data `data/hunger.toml` (`content/hunger.rs`, `HungerDef`:
@@ -129,7 +129,8 @@ from where the first left the player, `input::asks_first`, #1538: the frame's pr
 before any is applied, so input asked about it from the cell before) (it takes the `ResMut` so a frame without actions leaves the
 `Game` unchanged: `on_level_up` and `refresh` run on change). A replay's last step sets no stop.
 `ui::step_dialogs::hunger_dialog` asks before an overworld step while Fainting or Starving
-(`PerceptionView::level_kind`, the state alone); text cases `hunger-*` in `screen_snapshots.rs`.
+(`PerceptionView::level_kind`, the state alone, never whether this step would be fatal, so it
+gives no number away); text cases `hunger-*` in `screen_snapshots.rs`.
 There is no multi-step movement to end (no run or travel command, on the overworld or anywhere): a
 held key's repeats are the only walking.
 

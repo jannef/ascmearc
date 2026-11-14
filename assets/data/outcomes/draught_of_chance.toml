@@ -1,4 +1,4 @@
-# A draught of chance's drink (spec §8 "Potions", the potions wave 2 design §4.3;
+# A draught of chance's drink (the potions wave 2 design §4.3;
 # content/outcome.rs has the fields): one draw of the kinds and one by weight among that kind's
 # outcomes. A potion has no side, so nothing leans, and nothing is spent (`exhaust = 0`). Mostly
 # a small good, sometimes nothing, sometimes a sickness. Messages stay vague: never a number.

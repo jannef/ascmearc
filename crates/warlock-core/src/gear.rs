@@ -1,4 +1,4 @@
-//! Creature gear (spec §8 "Creature gear"): what a creature made from a type without a fixed kit
+//! Creature gear: what a creature made from a type without a fixed kit
 //! spawns carrying, wielding, and wearing, by its type's gear table
 //! ([`crate::content::Gear`]). Combat reads it as it reads anyone's equipment, and it falls where
 //! the creature dies with the rest of what it carried.
@@ -81,7 +81,7 @@ fn make(
     magic: bool,
     placed: (u8, Source),
 ) -> Stack {
-    // A spell scroll may be its grimoire (spec §8 "Spells": "Learning"): one draw, a scroll's.
+    // A spell scroll may be its grimoire: one draw, a scroll's.
     let object = content.grimoire_or(rng, stack.object);
     let grimoire = (object != stack.object).then(|| Stack::new(object, stack.count));
     let stack = grimoire.as_ref().unwrap_or(stack);

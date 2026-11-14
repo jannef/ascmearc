@@ -1,4 +1,4 @@
-//! Climbing out through a hidden way reveals it (spec §7 "Ways up", #1117): Ūtgang's top floor
+//! Climbing out through a hidden way reveals it (#1117): Ūtgang's top floor
 //! climbs out onto the slopes of Fyrbeorg, where its way in lies hidden until the player first
 //! comes out there; then it is marked on their map, named, and a way back in. Arriving on the
 //! overworld any other way reveals nothing.

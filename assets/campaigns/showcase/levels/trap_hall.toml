@@ -1,4 +1,4 @@
-# The trap hall (spec §3, §8 "Traps"): down the hub stairs nook's fourth staircase down (`T` in
+# The trap hall: down the hub stairs nook's fourth staircase down (`T` in
 # the hub's map), a lit hall to try traps in and to watch them catch creatures. The showcase
 # itself has no traps. `<` leads back up to the hub. The `traps` scenario starts here.
 #
@@ -15,11 +15,11 @@
 # here and the beetle is wildlife, so nobody attacks you; the traps attack everybody. You arrive
 # in the middle of the south wall, where the whole hall is in view: wait (`.`) and watch.
 #
-# Walls (spec §8 "Digging"): three pillars stand by the hidden fireball: packed earth (E) and
+# Walls: three pillars stand by the hidden fireball: packed earth (E) and
 # stone (#) north of it, granite (G) south. Its blast breaks the two softer ones into rubble ("The
 # walls collapse!"); the granite holds.
 #
-# The closets (north-west, spec §8 "Trapped doors"): three closets open onto the hall, each by a
+# The closets (north-west): three closets open onto the hall, each by a
 # trapped door. A trap on a door goes off at whoever opens or kicks the door, never at whoever
 # walks through the doorway. The west door shows its arrow trap (d): open it and an arrow shoots
 # out of the wall beside it. The middle door hides a fireball (e): search (`s`) next to it first,
@@ -27,7 +27,7 @@
 # stands open on a kobold's rounds (k) in and out of its closet, and hides an alarm: shut it (`c`)
 # and watch the kobold open it again.
 #
-# Scrolls (spec §8 "Scrolls"): beside the arrival lie scrolls to try the same spells with, aimed
+# Scrolls: beside the arrival lie scrolls to try the same spells with, aimed
 # where you like (`r`): fireball, lightning, and frost; and a scroll of identify for the dagger
 # beside them, which nobody has identified.
 arrival = "Scorch marks and old arrows litter the flagstones."
@@ -95,13 +95,13 @@ objects = [
     "scroll_of_fireball*2", "scroll_of_lightning*2", "scroll_of_frost*2", "scroll_of_identify*3",
 ]
 
-# Two wands one cell further east (spec §8 "Magic items": "Wands"), unknown until used or
+# Two wands one cell further east, unknown until used or
 # identified: ready one in the missile weapon slot and `t` uses it.
 [[pile]]
 at = [39, 19]
 objects = ["wand_of_magic_missile", "wand_of_fireball"]
 
-# Two rods one cell further east (spec §8 "Magic items": "Rods"), unknown until used or
+# Two rods one cell further east, unknown until used or
 # identified: ready one in the missile weapon slot and `t` uses it, for mana.
 [[pile]]
 at = [40, 19]

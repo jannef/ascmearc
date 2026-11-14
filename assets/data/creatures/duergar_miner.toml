@@ -1,7 +1,7 @@
 # The delf wave (Fyrdelf, docs/design/campaign.md §10.1). The grey dwarves who work the deep
 # delf's seams. Most carry the pick-axe they dig with (a tool in their hands: creatures do not
 # dig, and they fight with what else they hold), some the hand axe of their kind (their racial
-# weapon, spec §8 "Creature gear"), and a few a leather cap. They see in the dark.
+# weapon), and a few a leather cap. They see in the dark.
 [[creature]]
 id = "duergar_miner"
 level = 9

@@ -1,4 +1,4 @@
-# The class abilities (spec §8 "Class abilities"): given by the classes' level tables
+# The class abilities: given by the classes' level tables
 # (classes/), never picked; `class = true` keeps them off every pick list.
 [[tree]]
 id = "class"

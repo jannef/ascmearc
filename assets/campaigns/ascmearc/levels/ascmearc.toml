@@ -1,4 +1,4 @@
-# The overworld of the Ascmearc (spec §3, §7; docs/design/campaign.md §5): the ash march at map
+# The overworld of the Ascmearc (docs/design/campaign.md §5): the ash march at map
 # scale, 120x60. A step is a journey of the terrain's `travel_minutes` (road 20, plains 45,
 # grassland 50, forest 90, hills 120, swamp and dense forest 150, a ford 30).
 #
@@ -145,7 +145,7 @@ MMMMMMMMMMMMMMMMMMM.ff..................................."......................
 # Holtwīc's wise-woman tells of it (her quest, #1141).
 "E" = { terrain = "forest", hidden = { id = "aelfham", terrain = "barrow", to = "aelfham:1", name = "Ælfhām" } }
 # The way out from the drake's deep (#1117), on the volcano's south foot: hidden until the player
-# first climbs out of it (spec §7 "Ways up"), never by a quest.
+# first climbs out of it, never by a quest.
 "0" = { terrain = "hills", hidden = { id = "utgang", terrain = "cave_mouth", to = "utgang:1", name = "Ūtgang" } }
 # The four lairs of the wanted (docs/design/adventurers-guild.md §8), on reserved sites: Wat
 # One-Eye's "Wanted" reveals the one whose criminal it names, and the other three stay hidden.

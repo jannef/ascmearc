@@ -1,4 +1,4 @@
-//! The edge rule (spec §7 "Leaving an outdoor area", #803): walking off the edge of an outdoor
+//! The edge rule (#803): walking off the edge of an outdoor
 //! area with an overworld cell (`travel.rs::player_moves`) is refused while a creature hostile
 //! to the player is within `edge_reach` cells of them (`data/encounters.toml`, 3; Chebyshev),
 //! seen or not. Like the quick leave's (`quick_leave.rs`), the check reads ground truth as a

@@ -1,4 +1,4 @@
-//! Factions (`assets/data/factions/`, spec §7): who is hostile to whom.
+//! Factions (`assets/data/factions/`): who is hostile to whom.
 //!
 //! Every creature type belongs to a faction, and the player to the faction [`PLAYER_FACTION`].
 //! Relations are pairwise and symmetric: if faction A lists B as `hostile`, A and B are hostile
@@ -7,7 +7,7 @@
 //! (the berserk risen, `world/magic/corpse_spell.rs`, and a backfired summon's creatures,
 //! `world/magic/backfire.rs`). A faction with `hostile_to_others` is hostile to
 //! every other faction but neutral to itself: loyal to its own and to nothing else (the loosed,
-//! what a miscast lets through; spec §8 "Spells"). A faction with `friendly_to_all` is neutral to
+//! what a miscast lets through). A faction with `friendly_to_all` is neutral to
 //! every faction but those its own `hostile` names, whatever theirs says: the other two flags
 //! pass it by (the gates a miscast opens, at peace with every monster and hostile to the player
 //! and the player's side alone; #1316).
@@ -43,11 +43,11 @@ pub(super) struct FactionSpec {
     /// Factions this one is hostile to (and that are hostile to it).
     #[serde(default)]
     pub hostile: Vec<String>,
-    /// Animals (Beast-friend's, spec §8 "Talents").
+    /// Animals (Beast-friend's).
     #[serde(default)]
     pub animal: bool,
     /// The faction one of its creatures joins when the player attacks it (the Seelie court's
-    /// wrath, spec §7 "Factions"); none: it stays.
+    /// wrath); none: it stays.
     #[serde(default)]
     pub provoked: Option<String>,
     /// Hostile to every faction, itself too.
@@ -79,7 +79,7 @@ pub(super) struct FactionFile {
 pub struct FactionDef {
     pub id: String,
     pub name: String,
-    /// Its creatures are animals: a Beast-friend's neutral friends (spec §8 "Talents").
+    /// Its creatures are animals: a Beast-friend's neutral friends.
     pub animal: bool,
     /// The faction one of its creatures joins when the player attacks it
     /// (`World::provoke_court`); none: it stays.

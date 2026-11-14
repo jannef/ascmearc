@@ -1,4 +1,4 @@
-# Shallow water: ankle-deep over a stone floor (a flooded room, spec §7 "Special rooms"), paler
+# Shallow water: ankle-deep over a stone floor (a flooded room), paler
 # than a pool, its swell fainter. Slower than dry floor but quicker than wading a pool, and loud.
 [[terrain]]
 id = "shallow_water"

@@ -1,4 +1,4 @@
-//! The condition creature gear spawns in (spec §8 "Creature gear"; #1193): a rolled piece of
+//! The condition creature gear spawns in (#1193): a rolled piece of
 //! arms or armour is often damaged and rarely improved, by the creature's tribe
 //! (`data/gear_condition.toml`, [`crate::content::GearConditions`]). The states are the smith's
 //! ([`Worked`]): damaged, a point worse with its harm's word ("rusted"), or Fine, Marvellous,

@@ -52,10 +52,10 @@ pub(super) struct TerrainSpec {
     pub walkable: bool,
     #[serde(default = "yes")]
     pub transparent: bool,
-    /// What a step onto this terrain costs, in percent of a normal step (spec §8 "Time").
+    /// What a step onto this terrain costs, in percent of a normal step.
     #[serde(default = "full_cost")]
     pub move_cost: u16,
-    /// Overworld terrain: minutes one overworld step onto it takes (spec §8 "Time").
+    /// Overworld terrain: minutes one overworld step onto it takes.
     pub travel_minutes: Option<u16>,
     /// Overworld terrain: the ground of the local area entered from it (`>` on the cell); none
     /// means the cell has no local area.
@@ -71,47 +71,47 @@ pub(super) struct TerrainSpec {
     /// door, open for good); with `sturdiness`.
     pub breaks_to: Option<String>,
     /// For a closed door that can be kicked in: a kick breaks it with a chance of the kicker's
-    /// Strength in this (spec §8 "Doors"); with `breaks_to`. For a statue (`statue`): a kick
+    /// Strength in this; with `breaks_to`. For a statue (`statue`): a kick
     /// breaks it as digging would, with the same chance.
     pub sturdiness: Option<u8>,
-    /// A chest (spec §8 "Chests"): `"shut"`, `"open"`, or `"smashed"`; at most one terrain each.
+    /// A chest: `"shut"`, `"open"`, or `"smashed"`; at most one terrain each.
     pub chest: Option<crate::chest::ChestState>,
-    /// The statue a stoned creature leaves (spec §8 "Statues"; `world/creatures/statue.rs`): at most one
+    /// The statue a stoned creature leaves (`world/creatures/statue.rs`): at most one
     /// terrain, solid but seen past, breaking (`hardness`), with a `sturdiness`.
     #[serde(default)]
     pub statue: bool,
-    /// A grave (spec §7 "Graves"; `world/fixtures/graves.rs`): a gravestone, a sealed niche, a lidded
+    /// A grave (`world/fixtures/graves.rs`): a gravestone, a sealed niche, a lidded
     /// tomb, whose inscription look mode reads.
     #[serde(default)]
     pub grave: bool,
-    /// A place for one of the run's dead (spec §7 "Graves"; `content/burial.rs`): the grave
+    /// A place for one of the run's dead (`content/burial.rs`): the grave
     /// terrain it becomes when one is laid there.
     pub burial: Option<String>,
     pub stairs: Option<StairsDir>,
     /// Light preset the terrain emits (torch sconce, glowing fungus, rune). Must be transparent.
     pub light: Option<String>,
-    /// Tint of the light the surface bounces (spec §5); white (neutral) by default.
+    /// Tint of the light the surface bounces; white (neutral) by default.
     #[serde(default = "neutral")]
     pub bounce: Rgb,
-    /// How tall it stands for sun shadows, in cells (spec §5 "Sunlight"); default 1 for opaque
+    /// How tall it stands for sun shadows, in cells; default 1 for opaque
     /// terrain, 0 for transparent terrain.
     pub height: Option<u8>,
     /// Under a roof: never lit by the sun or the sky (indoor floors on outdoor levels).
     #[serde(default)]
     pub roofed: bool,
-    /// Whether blood stains it (spec §8 "Blood"); water, lava, and fire do not hold it.
+    /// Whether blood stains it; water, lava, and fire do not hold it.
     #[serde(default = "yes")]
     pub stains: bool,
-    /// Whether it is stone (spec §8 "Searching": dwarves notice what is hidden on stone).
+    /// Whether it is stone (dwarves notice what is hidden on stone).
     #[serde(default)]
     pub stone: bool,
-    /// The station it serves as (spec §7 "Special rooms": a makeshift anvil works as an anvil):
+    /// The station it serves as (a makeshift anvil works as an anvil):
     /// a terrain id, one that works as nothing itself.
     pub works_as: Option<String>,
-    /// Whether things grow on it (spec §8 "Spells": Bramble calls them up).
+    /// Whether things grow on it (Bramble calls them up).
     #[serde(default)]
     pub plants: bool,
-    /// How loud steps onto it are, in percent of the walker's footsteps (spec §5 "Hearing").
+    /// How loud steps onto it are, in percent of the walker's footsteps.
     #[serde(default = "full_noise")]
     pub step_noise: u16,
     /// For a door: how loud opening or closing it is; none: silent.
@@ -120,7 +120,7 @@ pub(super) struct TerrainSpec {
     /// Loudness a sound loses entering the cell; none: 0, or for solid terrain (neither walkable
     /// nor transparent) blocking sound.
     pub muffle: Option<u16>,
-    /// How hard it is to break (spec §8 "Digging"): a wall that can be dug through or blasted
+    /// How hard it is to break: a wall that can be dug through or blasted
     /// open, taking this much work; none: it never breaks. Goes with `becomes`.
     pub hardness: Option<u16>,
     /// What a broken wall becomes (rubble): a walkable, transparent terrain.
@@ -128,12 +128,12 @@ pub(super) struct TerrainSpec {
     /// Solid rock deep in the ground: the terrain it shows as once a cell next to it is broken
     /// open (its wall face).
     pub face: Option<String>,
-    /// Deep water: not walkable, but a trained swimmer may dive in (spec §8 "Skills": Swim).
+    /// Deep water: not walkable, but a trained swimmer may dive in (Swim).
     #[serde(default)]
     pub swim: bool,
-    /// Water: how ice grows on it (spec §5 "Ice").
+    /// Water: how ice grows on it.
     pub freeze: Option<FreezeSpec>,
-    /// Ice: the thinnest ice that looks like this, in mm (spec §5 "Ice"); it lies on water.
+    /// Ice: the thinnest ice that looks like this, in mm; it lies on water.
     pub ice: Option<u16>,
     pub anim: Option<GlyphAnim>,
     #[serde(default)]
@@ -148,7 +148,7 @@ fn yes() -> bool {
     true
 }
 
-/// The `freeze` table of a water terrain as data writes it (spec §5 "Ice"): [`Freeze`] with
+/// The `freeze` table of a water terrain as data writes it: [`Freeze`] with
 /// the kind of damage the plunge does by name (`damage_type = "cold"`).
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -157,7 +157,7 @@ pub struct FreezeSpec {
     #[serde(default = "full_rate")]
     pub rate: u8,
     pub plunge: Dice,
-    /// The kind of damage the plunge does (spec §8 "Damage types": cold).
+    /// The kind of damage the plunge does (cold).
     pub damage_type: Option<String>,
 }
 
@@ -173,7 +173,7 @@ impl FreezeSpec {
     }
 }
 
-/// How water freezes (spec §5 "Ice"): the `freeze` table of a water terrain.
+/// How water freezes: the `freeze` table of a water terrain.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Freeze {
     /// Ice grows on it while the air is colder than this, in °C: still water at 0, running water
@@ -183,7 +183,7 @@ pub struct Freeze {
     pub rate: u8,
     /// The hit points a fall through the ice into it takes (dice; it never takes the last one).
     pub plunge: Dice,
-    /// The kind of damage the plunge does (cold; spec §8 "Damage types"), which the one who
+    /// The kind of damage the plunge does (cold), which the one who
     /// falls in resists; `None`: untyped.
     pub kind: Option<super::DamageTypeId>,
 }
@@ -209,10 +209,9 @@ fn neutral() -> Rgb {
 pub struct TerrainDef {
     pub id: String,
     pub name: String,
-    /// What look mode says of it after its name, if anything (a forgotten altar's, spec §7
-    /// "Special rooms").
+    /// What look mode says of it after its name, if anything (a forgotten altar's).
     pub description: Option<String>,
-    /// A special feature of the ground (an altar, a faint rune, a statue; spec §6): arriving
+    /// A special feature of the ground (an altar, a faint rune, a statue): arriving
     /// on it, or beside it if it is not walkable, says so (`world/fixtures/feature.rs`).
     pub announce: bool,
     pub glyph: char,
@@ -243,19 +242,18 @@ pub struct TerrainDef {
     /// ([`crate::door::kick_breaks`]). `None`: kicks never break it. (Digging and blasts break
     /// walls, `breaks`, never doors.)
     pub kicked_in: Option<(TerrainId, u8)>,
-    /// Gameplay: a chest's terrain, and in which state (spec §8 "Chests"); its band, lock, and
+    /// Gameplay: a chest's terrain, and in which state; its band, lock, and
     /// contents are per-cell state (`LevelState::chests`, `locks`).
     pub chest: Option<crate::chest::ChestState>,
-    /// Gameplay: the statue a stoned creature leaves (spec §8 "Statues"), with the sturdiness a
+    /// Gameplay: the statue a stoned creature leaves, with the sturdiness a
     /// kick breaks it against as digging would ([`crate::door::kick_breaks`]); what it held is
     /// per-cell state (`LevelState::statues`). `None`: no statue.
     pub statue: Option<u8>,
-    /// Presentation-only: a grave (spec §7 "Graves"), whose inscription (its legend's
+    /// Presentation-only: a grave, whose inscription (its legend's
     /// `epitaph`, or one of the run's dead laid there) look mode reads (`world/fixtures/graves.rs`).
     pub grave: bool,
-    /// Presentation-only: a place for one of the run's dead (spec §7 "Graves";
-    /// `content/burial.rs`), and the grave it becomes when one is laid there: the same in every
-    /// rule (checked at load).
+    /// Presentation-only: a place for one of the run's dead (`content/burial.rs`), and the grave it
+    /// becomes when one is laid there: the same in every rule (checked at load).
     pub burial: Option<TerrainId>,
     pub stairs: Option<StairsDir>,
     /// Light this terrain emits, if any.
@@ -268,17 +266,17 @@ pub struct TerrainDef {
     pub height: u8,
     /// Gameplay: under a roof, so never lit by the sun or the sky.
     pub roofed: bool,
-    /// Presentation-only: whether blood stains it (spec §8 "Blood"); water, lava, and fire do
+    /// Presentation-only: whether blood stains it; water, lava, and fire do
     /// not hold it.
     pub stains: bool,
-    /// Gameplay: stone, worked or not (spec §8 "Searching"): dwarves notice the hidden features
+    /// Gameplay: stone, worked or not: dwarves notice the hidden features
     /// on it in passing (a secret door in a stone wall, a trap in a stone floor).
     pub stone: bool,
     /// Gameplay: the station it serves as, its own terrain otherwise (a makeshift anvil works
     /// as the anvil: every recipe's station test and the anvil's walk-in read it through
     /// [`crate::content::Content::works_as`], the one read).
     pub works_as: Option<TerrainId>,
-    /// Gameplay: things grow on it (spec §8 "Spells"): a spell with `only_terrain = "plants"`
+    /// Gameplay: things grow on it: a spell with `only_terrain = "plants"`
     /// takes only those standing on it (Bramble).
     pub plants: bool,
     /// Gameplay: how loud steps onto it are, in percent of the walker's footsteps
@@ -317,7 +315,7 @@ pub struct TerrainDef {
     pub particles: Vec<ParticleEmitter>,
 }
 
-/// How a wall breaks (spec §8 "Digging"): dug through with a tool, or blasted open by an
+/// How a wall breaks: dug through with a tool, or blasted open by an
 /// explosion whose blast is greater than its hardness.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Breakable {
@@ -331,7 +329,7 @@ pub struct Breakable {
 
 impl TerrainDef {
     /// The energy price of stepping onto this terrain on a level of `kind` for an actor whose
-    /// step costs `step` (spec §8 "Time"; the rules ask through
+    /// step costs `step` (the rules ask through
     /// [`crate::world::LevelState::step_price`]): on the overworld the step's cost over the
     /// terrain's `travel_minutes`; elsewhere the step's cost scaled by its `move_cost` percent
     /// over the 6-second base ([`BASE_TURN`]). The actor's speed decides how long it takes.
@@ -364,12 +362,12 @@ impl TerrainDef {
         self.closes_to.is_some()
     }
 
-    /// A shut chest (spec §8 "Chests"): opened, kicked, picked, and knocked as a closed door is.
+    /// A shut chest: opened, kicked, picked, and knocked as a closed door is.
     pub fn is_shut_chest(&self) -> bool {
         self.chest == Some(crate::chest::ChestState::Shut)
     }
 
-    /// A door, closed or open: what a trap on it belongs to (spec §8 "Trapped doors").
+    /// A door, closed or open: what a trap on it belongs to.
     pub fn is_door(&self) -> bool {
         self.is_closed_door() || self.is_open_door()
     }

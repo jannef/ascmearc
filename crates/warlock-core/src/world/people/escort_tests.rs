@@ -1,4 +1,4 @@
-//! Escorts (`escort.rs`; spec §8 "Quests": "Escort quests"): a fixture wise woman in a hamlet
+//! Escorts (`escort.rs`): a fixture wise woman in a hamlet
 //! gives an escort quest for Eadgyth, lost in the cave below; chatted with, Eadgyth follows in
 //! the coward stance, across the stairs, wields what she is given and drops what she held,
 //! refuses what fits nothing, and home with the player completes the quest; home alone does

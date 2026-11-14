@@ -1,4 +1,4 @@
-//! Unstable rooms (spec §7 "Special rooms", design §9.6): every step onto a cell inside one, the
+//! Unstable rooms (design §9.6): every step onto a cell inside one, the
 //! player's or a creature's, has the effects' `warp` chance (`Here::warp`, one draw of the
 //! gameplay stream, only on such a cell) to move the stepper to a free cell of the level, as a
 //! teleport trap moves its victim ([`World::teleport`]: where it lands is a hash, not a draw).

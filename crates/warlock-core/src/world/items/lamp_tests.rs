@@ -1,4 +1,4 @@
-//! Carried lights (spec §5 "Light sources"; #643): a lantern ready in the Tool slot, its modes,
+//! Carried lights (#643): a lantern ready in the Tool slot, its modes,
 //! what each costs and says, saves, and the content checks. The light it gives is tested with
 //! the rest of the light (`light_tests.rs`).
 

@@ -31,7 +31,7 @@ random_scrolls = { count = "1d4", below_level = 10 }
 max_level = 30
 # Bonus talents from any tree (the bard design's Q13), on the halved cadence.
 bonus_talents = { levels = [5, 10, 15, 23, 28] }
-# The level table (spec §8 "Class abilities"), every ability by 30 (the bard design §5: the old
+# The level table, every ability by 30 (the bard design §5: the old
 # 1, 6, 12, 18, 25, 32, 40, 50, 60 halved). Fast healer is the Vigour talent, given (#790: a
 # table names the pickable, never a clone). Inspire is a song paid in Inspiration (#870).
 # Travelled hands takes Blessing's place (Blessing is a priest's abjuration, off the bard's

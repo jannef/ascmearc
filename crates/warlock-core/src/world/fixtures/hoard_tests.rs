@@ -1,4 +1,4 @@
-//! Tempting hoards (spec §7 "Special rooms", design §9.7; `world/fixtures/hoard.rs`, `mapgen/hoard.rs`):
+//! Tempting hoards (design §9.7; `world/fixtures/hoard.rs`, `mapgen/hoard.rs`):
 //! the first stack lifted inside seals the room (its doors shut and lock, guardians come at its
 //! edges, out of view where they can be), Old delver lets one go first, a room seals once, a cave
 //! blob gets only guardians, the dumps, saving, and a generated hoard's items.

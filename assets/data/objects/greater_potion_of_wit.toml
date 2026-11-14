@@ -1,4 +1,4 @@
-# A greater potion of wit (spec §8 "Potions"): Intelligence raised twice as much, easing to a potion of
+# A greater potion of wit: Intelligence raised twice as much, easing to a potion of
 # wit's after ten minutes. Greater boosts are deep orange.
 [[object]]
 id = "greater_potion_of_wit"

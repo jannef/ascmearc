@@ -1,9 +1,8 @@
-//! Līctūn, Cēaptūn's churchyard by the south road, and its crypts (#1258, #1682; spec §7
-//! "Graves"): the way in from the town and out by the edge, nobody but the sexton and nothing
-//! coming, Old Dudda's words, the ten old graves and the forty plots, the run's dead laid oldest
-//! first (never the petrified), the way down opening once a level is full, the crypts filled in
-//! turn, all out of the state hash and kept by a save, and a replay verified without the
-//! graveyard.
+//! Līctūn, Cēaptūn's churchyard by the south road, and its crypts (#1258, #1682): the way in from
+//! the town and out by the edge, nobody but the sexton and nothing coming, Old Dudda's words, the
+//! ten old graves and the forty plots, the run's dead laid oldest first (never the petrified), the
+//! way down opening once a level is full, the crypts filled in turn, all out of the state hash and
+//! kept by a save, and a replay verified without the graveyard.
 
 use crate::action::parse_actions;
 use crate::content::{Burial, ContentFiles, Stance};

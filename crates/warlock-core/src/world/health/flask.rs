@@ -1,4 +1,4 @@
-//! Flasks (spec §8 "Potions": "Flasks"; the potions wave 2 design §3, §5): a potion thrown
+//! Flasks (the potions wave 2 design §3, §5): a potion thrown
 //! shatters where it comes down, and a flask (a potion with `[object.throw]`,
 //! [`crate::content::Flask`]) casts its spell there, as a scroll casts one where it is read.
 //!

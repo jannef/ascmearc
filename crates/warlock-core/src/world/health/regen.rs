@@ -1,4 +1,4 @@
-//! Regeneration (spec §8 "Creature gimmicks"; the dread design §5.9): a creature type's `regen`
+//! Regeneration (the dread design §5.9): a creature type's `regen`
 //! is its own healing pace, read with its statuses' in the one place that decides the pace
 //! ([`World::healing_rate_at`], through [`crate::status::Effects::regen`]: Burning's and
 //! Corroded's `regen = 0` stop it). This module only tells the player of it: "The troll's wounds

@@ -1,4 +1,4 @@
-# What a creature turned to stone leaves (spec §8 "Statues"; a status's `statue`, Stiffening's):
+# What a creature turned to stone leaves (a status's `statue`, Stiffening's):
 # a fixture of the cell, as a chest is. The statue on the cell (`LevelState::statues`) names what
 # it was ("a statue of a dwarf, mouth open") and holds what it carried. Dug through (a quarter
 # hour with a pick-axe: harder than a wall, softer than granite, and no fireball breaks it) or

@@ -1,11 +1,11 @@
-//! Weapon skills in the world (spec §8 "Weapon skills"): attacks earn marks (more for a hit,
+//! Weapon skills in the world: attacks earn marks (more for a hit,
 //! fewer as the rank rises), a rank gained is said and raises no other skill, a
 //! shield bash is a blow of its own, ranks change
 //! to-hit, damage, threat, Defence, and cost, starting ranks come from race and class, and all of
 //! it is saved and replayed.
 
 use crate::test_support::{CONTENT as BUILTIN, builtin, said as messages};
-/// The test creatures name no level: level 1 (spec §8 "Experience").
+/// The test creatures name no level: level 1.
 const UNLEVELLED: u32 = 1;
 use crate::action::{AttackKind, parse_actions};
 use crate::character::CharacterSpec;

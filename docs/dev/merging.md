@@ -133,8 +133,9 @@ conflict every time; two that insert at different places merge cleanly. So:
   the root's items as `crate::world::World` and another folder's as
   `crate::world::combat::fight::...`; `super::` reaches only its own folder.
 - **Docs follow the same rule**: a feature edits its own `docs/dev/<topic>.md` (a new topic file
-  adds its line to `docs/dev/README.md`, in its group) and the `spec/`
-  files of the sections it touches (bullets next to the related ones); `docs/dev/cli.md` for a new
+  adds its line to `docs/dev/README.md`, in its group) and, when it changes a rule or the intent,
+  the `spec/` bullet that states it (next to the related ones; a new creature, object, or spell
+  edits nothing there); `docs/dev/cli.md` for a new
   flag, `--screen` name, scenario, dump layer, or action (by its group); CLAUDE.md only for a new
   command; the wiki gets its page and tables; `README.md` is not touched by feature work.
 
@@ -142,15 +143,16 @@ conflict every time; two that insert at different places merge cleanly. So:
 
 A fact written in several places drifts: the copies come to disagree, and no merge conflict
 says so. It also makes every feature PR edit four to six files, which then become the hot files
-of the next merge. So each kind of fact has **one home**; everywhere else links to it (spec §8
-"Professions", `docs/dev/crafting.md` "Making a recipe") instead of restating it.
+of the next merge. So each kind of fact has **one home**; everywhere else links to it
+(`spec/12-character.md` "Professions and crafting", `docs/dev/crafting.md` "Making a recipe")
+instead of restating it.
 
 | Kind of fact | Its one home | Elsewhere |
 |---|---|---|
-| Player-visible rules: what the game does | `spec/`, the section's bullet | link "§N Name" |
+| The rules and the design intent: what the game does and why, in the game's terms | `spec/`, the area file's bullet | link the file and its heading |
 | Numbers kept in data, and every tuning number (`docs/dev/content.md` "Tuning numbers live in data") | the data file under `assets/` (the rule's own, a one-system rules file in `data/rules/`, else `data/rules/tuning.toml`), never a Rust `const` | the wiki's generated tables show them (`xtask/src/wiki/`); never retyped in prose |
 | Modules, functions, invariants, tests | `docs/dev/<topic>.md` | link the topic and its heading |
-| Flags, `--scenario` and `--screen` names, dump layers, action text, replay files | `docs/dev/cli.md` | CLAUDE.md and spec §9 link |
+| Flags, `--scenario` and `--screen` names, dump layers, action text, replay files | `docs/dev/cli.md` | CLAUDE.md and `spec/13-development.md` link |
 | Explanation for players | `wiki/` | |
 | Why it was decided, and when it changed | git log, PRs, issues, `docs/design/` | the homes above state the current fact only |
 | How agents work | CLAUDE.md (short), this playbook, `ops/agents/rules.md` (the briefs' shared rules) | each brief links `rules.md` |
@@ -164,15 +166,14 @@ of the next merge. So each kind of fact has **one home**; everywhere else links 
 - **A built design is history.** Once its issues are closed, a `docs/design/` file gets a
   header line naming the spec sections and `docs/dev/` topics that now describe it (see
   "Design documents" below), and agents read those instead.
-- Whether `spec/` keeps implementation paths and issue numbers is the owner's open question
-  (#1539): leave the ones there until it is decided.
+- `spec/` names no module, function, issue, or history (the owner, 2026-11-14): it states the
+  rules and the intent in the game's terms, and `docs/dev/` names the code that builds them.
 
 ## Roster and content PRs and hot docs
 
 Creature roster PRs edit only their own `docs/dev/creatures/<tribe>.md`; never
-`docs/dev/creatures.md` (the stable index) or the spec's creature and faction lists
-(`spec/07b-data.md` points at `assets/data/creatures/` and `assets/data/factions/`; the
-tag list is the one in `assets/data/creatures/README.toml`). Other hot spots seen in the
+`docs/dev/creatures.md` (the stable index) or the design document, which lists no creatures or
+factions (the tag list is the one in `assets/data/creatures/README.toml`). Other hot spots seen in the
 roster wave, and what to do in each:
 - `assets/data/factions/`: a new faction takes a free `NNN-` number by its group, never the last.
 - test fixtures and the factions list: `world/{equip,magic,object,read}_tests.rs` take their
@@ -284,12 +285,11 @@ issue body, or one with many choices to review) is a **draft PR that adds
   Answer by revising the document; each revision is a commit, so the owner can see what changed
   since their last read.
 - **Merging the PR approves the design.** Then split it into implementation issues, each linking
-  to the section it implements. The spec stays the source of truth for what is built: when a
-  feature lands, its spec section and `docs/dev/` topic describe it, and the design document
-  stays as the record of why.
+  to the section it implements. When a feature lands, its `spec/` bullets and `docs/dev/` topic
+  describe it, and the design document stays as the record of why.
 - **When its last implementation issue closes**, the design gets one header line under its
   title, and is otherwise left as approved: "**Built; this file is history.** Current behaviour
-  is in spec §N "Name" and `docs/dev/<topic>.md`." Agents read those, not the design; a number
+  is in `spec/<area>.md` "Heading" and `docs/dev/<topic>.md`." Agents read those, not the design; a number
   in a built design may since have moved. `docs/design/README.md` lists the built and the
   unbuilt designs; the slices' progress is the issues', not the README's.
 - CI's `changes` job sees a PR that touches only `docs/design/` and skips the build. The

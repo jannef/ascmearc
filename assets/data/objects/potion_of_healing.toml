@@ -1,4 +1,4 @@
-# A potion of healing (spec §8 "Potions"): drunk from the Consume list, it closes wounds at once.
+# A potion of healing: drunk from the Consume list, it closes wounds at once.
 # Its colour is healing's hue, red; unknown, it is "a {word} red potion".
 [[object]]
 id = "potion_of_healing"

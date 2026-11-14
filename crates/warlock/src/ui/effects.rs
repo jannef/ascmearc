@@ -1,4 +1,4 @@
-//! Visual effects from the perception snapshot (spec §4.8): glyph particles, per-cell glow and
+//! Visual effects from the perception snapshot: glyph particles, per-cell glow and
 //! heat haze in the map grid, and the screen fade on level change. Missiles in flight are
 //! [`super::missiles`].
 //!
@@ -224,7 +224,7 @@ pub(super) fn track(
             | Event::TrapSprung { .. }
             | Event::TrapStruck { .. }
             | Event::VoiceThrown { .. }
-            // An order and an ally's departure (spec §8 "Allies"): the A3 slice gives them looks.
+            // An order and an ally's departure: the A3 slice gives them looks.
             | Event::Ordered { .. }
             | Event::Departed { .. } => {}
             Event::LevelChanged { .. } => {

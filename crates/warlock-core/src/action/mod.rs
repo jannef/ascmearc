@@ -18,30 +18,30 @@ mod text;
 
 pub use text::{MOST_COORDINATE, MOST_REPEATS, format_actions, parse_actions};
 
-/// Something the player asks to do. Actions are the unit of replays (spec §9).
+/// Something the player asks to do. Actions are the unit of replays.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Action {
     /// Step in a direction; bumping a closed door opens it (unlocking it first with a key that
     /// fits, if it is locked).
     Move(Dir),
-    /// Run in a direction (#1325; spec §6 "Running"): step after step until something worth
+    /// Run in a direction (#1325): step after step until something worth
     /// stopping for, a long action like a rest (each step a move's time). In the open it holds
     /// the direction; landing in a corridor, it follows it to an intersection or a room. A first
     /// step a run cannot take is a plain [`Action::Move`].
     Run(Dir),
-    /// Let a turn pass, looking around: the same as `Search(1)`, one code path (#1326; spec §8
-    /// "Searching"). Kept as its own spelling, `wait`, for replays, tests, and the manifests.
+    /// Let a turn pass, looking around: the same as `Search(1)`, one code path (#1326). Kept as its
+    /// own spelling, `wait`, for replays, tests, and the manifests.
     Wait,
     /// Open the door in a direction; a locked one only with a key that fits, which unlocks it
-    /// first (spec §8 "Doors").
+    /// first.
     Open(Dir),
     Close(Dir),
-    /// Kick in a direction (spec §8 "Doors"): a closed door, to break it (a chance of Strength in
+    /// Kick in a direction: a closed door, to break it (a chance of Strength in
     /// its sturdiness), or a creature, an unarmed blow. Takes the time of `kick`; kicking at
     /// empty space or something solid takes none.
     Kick(Dir),
-    /// Pick the lock of the closed door in a direction (spec §8 "Doors"; the Pick lock ability,
+    /// Pick the lock of the closed door in a direction (the Pick lock ability,
     /// the Open lock skill's use): a Dexterity check plus what Open lock gives against the lock's
     /// difficulty. Picked, the door opens. Takes the time of `pick_lock` whatever comes of it
     /// (plus `open_door` when it opens); refused, taking none, without the skill or a lock there.
@@ -50,7 +50,7 @@ pub enum Action {
     Ascend,
     /// Take stairs down.
     Descend,
-    /// Use the tool ready in the Tool slot without a direction (`u`; spec §5 "Light sources"):
+    /// Use the tool ready in the Tool slot without a direction (`u`):
     /// a light there (a lantern) turns from unlit to lit, lit to hooded, and hooded to unlit
     /// (`world/items/lamp.rs`). Takes the time of `light` (lowering a hood: `hood`); refused, no time,
     /// without a light ready. A digging tool is used toward a direction: [`Action::Dig`].
@@ -60,14 +60,14 @@ pub enum Action {
     PickUp(Positions),
     /// Drop the inventory stacks at these positions onto the player's cell, or everything
     /// carried with none. Takes a turn (its cost: `drop`, plus taking off what of it is worn or
-    /// wielded). In a shop (spec §7 "Shops") what of them is unpaid goes back; the player's own
+    /// wielded). In a shop what of them is unpaid goes back; the player's own
     /// things stay, and the shop says what it would pay for those it buys.
     Drop(Positions),
     /// Sell the inventory stacks at these positions (everything with none) to the shop the
-    /// player stands in, for what it offers (spec §7 "Shops"): like [`Action::Drop`] there, but
+    /// player stands in, for what it offers: like [`Action::Drop`] there, but
     /// what the shop buys is sold, paid from the keeper's purse. Takes the time of `drop`.
     Sell(Positions),
-    /// Pay for everything unpaid in the shop the player stands in (spec §7 "Shops"), from the
+    /// Pay for everything unpaid in the shop the player stands in, from the
     /// gold they carry, which takes no game time; then, with a direction, step that way (out of
     /// the shop, as [`Action::Move`] would, taking its time): paying and leaving in one action.
     /// Refused, with no step, if the player cannot pay.
@@ -81,11 +81,10 @@ pub enum Action {
     },
     /// Take off what is in a slot (an id in `data/slots.toml`). Takes the time of its action.
     Remove(String),
-    /// Bash whoever stands in a direction with the shield the player holds (spec §8 "Weapon
-    /// skills"): a melee blow with the shield's own damage, drawing on and training shield
-    /// bashing. Takes the time of `melee`.
+    /// Bash whoever stands in a direction with the shield the player holds: a melee blow with the
+    /// shield's own damage, drawing on and training shield bashing. Takes the time of `melee`.
     Bash(Dir),
-    /// Shoot the readied missile weapon's ammunition at this cell (spec §8 "Ranged combat"):
+    /// Shoot the readied missile weapon's ammunition at this cell:
     /// one shot flies along the line through it, as far as the weapon shoots. Takes the time of
     /// `shoot` (plus `reload` for a missile weapon that needs it).
     Fire(Pos),
@@ -98,65 +97,64 @@ pub enum Action {
     /// Wait turn after turn (creatures act) until the goal, stopping early when a creature comes
     /// into view or a message is logged.
     Rest(Rest),
-    /// Answer the overworld encounter that is pending (spec §7 "Overworld encounters";
-    /// `encounter:ambush`, `evade`, `fight`, `hail`, `hunt`, `pass`): lie in wait (ten minutes),
-    /// slip away (a check; half the step's time again), or fight, hail, or hunt (the area opens
-    /// as `>` opens it), or pass by (no time). While one pends, every other action that takes
-    /// time is refused. Refused (no time) with none pending or a choice it does not offer.
+    /// Answer the overworld encounter that is pending (`encounter:ambush`, `evade`, `fight`,
+    /// `hail`, `hunt`, `pass`): lie in wait (ten minutes), slip away (a check; half the step's time
+    /// again), or fight, hail, or hunt (the area opens as `>` opens it), or pass by (no time).
+    /// While one pends, every other action that takes time is refused. Refused (no time) with none
+    /// pending or a choice it does not offer.
     Encounter(crate::world::EncounterChoice),
-    /// Chat with the creature in a direction (spec §8 "Dialogue"): it answers with a line, and
+    /// Chat with the creature in a direction: it answers with a line, and
     /// one that has topics opens the dialogue screen. Takes the time of `chat`; refused (no
     /// time) when the player sees no one there.
     Chat(Dir),
-    /// Ask the creature in a direction about one of its topics, by id. Takes no time. Quests
-    /// (spec §8 "Quests") are asked about with topics of their own: `quest-ID` (be given it,
-    /// be reminded, or hand it in).
+    /// Ask the creature in a direction about one of its topics, by id. Takes no time. Quests are
+    /// asked about with topics of their own: `quest-ID` (be given it, be reminded, or hand it in).
     Ask {
         dir: Dir,
         topic: String,
     },
-    /// Try to steal from the creature in a direction (spec §8 "Stealing"): one stack of what it
+    /// Try to steal from the creature in a direction: one stack of what it
     /// carries and neither wears nor wields, if the player's Dexterity and Steal skill beat its
     /// Willpower; caught, it turns on them. Takes the time of `steal`; refused (no time) when the
     /// player sees no one there, or someone hostile.
     Steal(Dir),
-    /// Feint at the creature in a direction (spec §8 "Skills": Bluff; `world/skills/feint.rs`): a
+    /// Feint at the creature in a direction (Bluff; `world/skills/feint.rs`): a
     /// hostile one the player sees, with a mind to fool, checks its Willpower against
     /// `data/rules/feint.toml`'s difficulty + the player's Presence modifier + Bluff's `feint`
     /// points, and is Surprised if it fails. Takes the time of `feint`, whatever comes of it;
     /// refused (no time) untrained, at no one seen, at one not hostile, or at one without a mind.
     Feint(Dir),
-    /// Tame the beast in a direction (spec §8 "Allies": Tame; `world/allies/tame.rs`): `[tame] turns`
+    /// Tame the beast in a direction (Tame; `world/allies/tame.rs`): `[tame] turns`
     /// actions beside it (`data/companions.toml`), each the time of `tame`, then a Willpower
     /// check; made, it is the player's companion. Refused (no time) untrained, with a companion
     /// already, at no beast seen there, at one that cannot be tamed, or at one hostile that has
     /// seen them.
     Tame(Dir),
     /// Intimidate the creature on a cell the player sees within the `range` of
-    /// `data/rules/intimidate.toml` (spec §8 "Skills": Intimidate; `world/skills/intimidate.rs`): a
+    /// `data/rules/intimidate.toml` (Intimidate; `world/skills/intimidate.rs`): a
     /// hostile one that hears and sees them checks its nerve, and failed, is frightened. Takes the
     /// time of `intimidate`; refused (no time) untrained, at no one seen, out of reach, at one not
     /// hostile, or at one with no vitals.
     Intimidate(Pos),
     /// Throw the player's voice to a cell they see within the `[throw_voice]` range of
-    /// `data/rules/tuning.toml` (spec §5 "Hearing"): a voice sounds there, and creatures that hear
+    /// `data/rules/tuning.toml`: a voice sounds there, and creatures that hear
     /// it and do not see its cell go and look. Takes the time of `throw_voice`; refused (no time)
     /// at a cell they do not see, out of reach, solid, or their own.
     ThrowVoice(Pos),
-    /// Give every ally of the player's on the level an order (spec §8 "Allies";
-    /// `world/allies/ally.rs`): `order:follow` (Come to heel), `order:stay` (Hold here), `order:hunt:X,Y`
-    /// (Set on a cell). No time, a voice's noise where the player stands; refused (no time, no
-    /// noise) with no ally on the level, and Set on at a cell the player does not see.
+    /// Give every ally of the player's on the level an order (`world/allies/ally.rs`):
+    /// `order:follow` (Come to heel), `order:stay` (Hold here), `order:hunt:X,Y` (Set on a cell).
+    /// No time, a voice's noise where the player stands; refused (no time, no noise) with no ally
+    /// on the level, and Set on at a cell the player does not see.
     Order(Command),
-    /// Eat one of a stack, from the pack or the floor (spec §8 "Hunger"): a meal of as many
+    /// Eat one of a stack, from the pack or the floor: a meal of as many
     /// turns (each the `eat` action) as the food takes, stopping early like a rest; the food is
     /// eaten and feeds at the end.
     Eat(Meal),
-    /// Read one of inventory stack `item` (a position, `a` = 0), a scroll (spec §8 "Scrolls"),
+    /// Read one of inventory stack `item` (a position, `a` = 0), a scroll,
     /// using it up: a spell scroll at the cell `target` names (it flies or runs there from the
     /// player, with the traps' rules), the scroll of identify on the inventory stack it names.
     /// Takes the time of `read`; refused (no time, the scroll kept) without a fitting target.
-    /// A grimoire (spec §8 "Spells": "Learning") is read with no target, and its reading is a
+    /// A grimoire is read with no target, and its reading is a
     /// study of its spell (`world/magic/learn.rs`): turn after turn of the `study` action, stopping
     /// early like a rest; at the end, above the player's learning, a check decides whether they
     /// learn it or a mishap befalls them. The grimoire is kept either way. Refused (no time) for
@@ -166,7 +164,7 @@ pub enum Action {
         target: Option<ReadTarget>,
     },
     /// Write a scroll of `spell` (a spell's id), one the player knows, on the first blank scroll
-    /// they carry (spec §8 "Scrolls": the wizard's Scribe, `scribe:fireball`): turn after turn of
+    /// they carry (the wizard's Scribe, `scribe:fireball`): turn after turn of
     /// the `scribe` action, as many as a study of the spell takes, stopping early like a rest
     /// (the blank and the mana kept); at the end the blank is used up, three times the spell's
     /// mana spent, and the scroll made, its type known. Refused (no time) without the ability, a
@@ -174,30 +172,30 @@ pub enum Action {
     Scribe {
         spell: String,
     },
-    /// Take a combat stance (spec §8 "Stances"). Takes no game time, but changes state, so
+    /// Take a combat stance. Takes no game time, but changes state, so
     /// replays record it.
     SetStance(CombatStance),
-    /// Dig into the wall in this direction with the digging tool the player has ready (spec §8
-    /// "Digging"): turn after turn (each the `dig` action's time) until the wall gives way,
-    /// stopping early like a rest. What was dug stays dug.
+    /// Dig into the wall in this direction with the digging tool the player has ready: turn after
+    /// turn (each the `dig` action's time) until the wall gives way, stopping early like a rest.
+    /// What was dug stays dug.
     Dig(Dir),
-    /// Search for hidden features (secret doors, hidden traps; spec §8 "Searching") for up to
+    /// Search for hidden features (secret doors, hidden traps) for up to
     /// this many turns (each the `search` action's time, a fresh check every turn), stopping at
     /// once when something is found or something interrupts, like a rest. 1 is one search.
     Search(u8),
-    /// Try to disarm the trap the player knows of in a direction (spec §8 "Disarming traps"; the
+    /// Try to disarm the trap the player knows of in a direction (the
     /// Disarm ability): a Dexterity check plus Disable device against the trap's difficulty takes
     /// it away; a bad failure sets it off at the player. Takes the time of `disarm`, whatever
     /// comes of it; refused (no time) without the skill or a known trap there.
     Disarm(Dir),
-    /// Listen at the closed door in a direction (spec §5 "Hearing"; the Listen ability,
+    /// Listen at the closed door in a direction (the Listen ability,
     /// `world/skills/listen.rs`): a turn in which the player's hearing through that door is keener.
     Listen(Dir),
-    /// Wedge the closed door in a direction shut (spec §8 "Doors"; the Wedge ability,
+    /// Wedge the closed door in a direction shut (the Wedge ability,
     /// `world/skills/wedge.rs`): a turn, after which creatures that open doors must kick it in. Refused
     /// (no time) without Woodcraft or a closed door that way.
     Wedge(Dir),
-    /// Treat oneself, or an ally beside one, with the Heal skill (spec §8 "Skills"; the Heal
+    /// Treat oneself, or an ally beside one, with the Heal skill (the Heal
     /// ability): the ailment named (a status id, `heal:bleeding`, or a disease id,
     /// `heal:filth_fever`), else the player's first there is to treat (`heal`); `ally` the
     /// player's ally that way (`heal:bleeding:E`), which needs an ailment named. An Intelligence
@@ -208,28 +206,28 @@ pub enum Action {
         what: Option<String>,
         ally: Option<Dir>,
     },
-    /// Pray at the forgotten altar next to the player (spec §7 "Special rooms"; the Pray
+    /// Pray at the forgotten altar next to the player (the Pray
     /// ability, the abilities menu's Here group): a minute of turns of the `pray` action, then one
     /// outcome drawn from the altar's table, and perhaps the altar spent. Interrupted, it gives
     /// nothing. Refused (no time) with no altar next to the player.
     Pray,
-    /// Drink at the healing spring next to the player (spec §7 "Special rooms"; the Drink
+    /// Drink at the healing spring next to the player (the Drink
     /// ability, the abilities menu's Here group): ten seconds of turns of the `drink` action,
     /// then one outcome drawn from the spring's table. A spring never runs dry. Interrupted, it
     /// gives nothing. Refused (no time) with no spring next to the player.
     Drink,
-    /// Forage for food in the wild (spec §8 "Foraging"; the Forage ability, Survival's use): turns
+    /// Forage for food in the wild (the Forage ability, Survival's use): turns
     /// of the `forage` action for `data/forage.toml`'s time, then a chance of food by the
     /// landscape and Survival. Interrupted, it finds nothing. Refused (no time) untrained, or
     /// anywhere but on land of the overworld or a local area of it.
     Forage,
-    /// Gather herbs from the glowing fungus in a direction (spec §8 "Skills": Herbalism; the
+    /// Gather herbs from the glowing fungus in a direction (Herbalism; the
     /// Gather ability, the abilities menu's Here group): turns of the `gather` action for
     /// `data/herbs.toml`'s time, then herbs drawn by the level's depth, more with Herbalism.
     /// Interrupted, it finds nothing. The fungus is never picked over. Refused (no time) with no
     /// fungus that way.
     Gather(Dir),
-    /// Make a profession's recipe (spec §8 "Skills"; docs/design/professions.md §8;
+    /// Make a profession's recipe (docs/design/professions.md §8;
     /// `world/crafting/craft.rs`): `recipe` its id (`data/recipes/<skill>/<id>.toml`), `picks` the
     /// inventory positions chosen for its steps in order, `None` a skipped optional one
     /// (`craft:long_sword:c,f`, `craft:dagger:a,-`). A built-in recipe's row runs its own action
@@ -241,21 +239,20 @@ pub enum Action {
         picks: Vec<Option<usize>>,
     },
     /// Make out the carried stack at this position, a scroll of a type not yet identified,
-    /// without reading it (spec §8 "Scrolls"; the Decipher ability, Decipher script's use;
+    /// without reading it (the Decipher ability, Decipher script's use;
     /// `world/magic/decipher.rs`): `data/rules/decipher.toml`'s time of turns of the `decipher` action,
     /// then the reading's check; made, the type is learned. Interrupted, nothing comes of it.
     /// Refused (no time) with a stack that is no scroll of a type not yet known.
     Decipher {
         item: usize,
     },
-    /// Temper the carried stack at this position at the anvil next to the player (spec §7
-    /// "Special rooms"; the Temper ability, the abilities menu's Here group): ten minutes of turns
-    /// of the `temper` action, then a Strength check plus Metalcraft, harder for every attempt
-    /// ever made on the item: an improvement or damage, or on a damaged item its repair or its
-    /// end (`world/crafting/temper.rs`). Interrupted, it gives nothing and counts for nothing. Refused (no
-    /// time) with no anvil next to the player, a stack with all its improvements, or one that is
-    /// not a metal
-    /// weapon or armour.
+    /// Temper the carried stack at this position at the anvil next to the player (the Temper
+    /// ability, the abilities menu's Here group): ten minutes of turns of the `temper` action, then
+    /// a Strength check plus Metalcraft, harder for every attempt ever made on the item: an
+    /// improvement or damage, or on a damaged item its repair or its end
+    /// (`world/crafting/temper.rs`). Interrupted, it gives nothing and counts for nothing. Refused
+    /// (no time) with no anvil next to the player, a stack with all its improvements, or one that
+    /// is not a metal weapon or armour.
     Temper {
         item: usize,
     },
@@ -275,8 +272,8 @@ pub enum Action {
     Salvage {
         item: usize,
     },
-    /// Rig a trap of rig `rig` (an id in `data/rigs.toml`) on the cell `dir` of the player (spec
-    /// §8 "Traps": "Rigging traps"; the craftsperson's Trapwright, `world/crafting/rig.rs`):
+    /// Rig a trap of rig `rig` (an id in `data/rigs.toml`) on the cell `dir` of the player (the
+    /// craftsperson's Trapwright, `world/crafting/rig.rs`):
     /// `rig:tripwire:E`. Turn after turn of the `craft` action for the rig's time, then a
     /// Dexterity check: made, the trap is placed, known, and the inputs spent. Refused (no time)
     /// without the ability, a direction (`rig:tripwire`), a cell that may hold it, or what it
@@ -286,7 +283,7 @@ pub enum Action {
         dir: Option<Dir>,
     },
     /// Give the carried stack at this position (one of it) to the player's companion beside them,
-    /// for its neck (spec §8 "Allies"; the Give ability, the abilities menu's Allies group;
+    /// for its neck (the Give ability, the abilities menu's Allies group;
     /// `world/allies/collar.rs`): priced as a `wear`, and what it wore falls on its cell. `ally` is the
     /// way to the beast when one is named, `give:b:E`; with none, the first beside the player.
     /// Refused (no time) with none beside them or a stack that does not fit a neck.
@@ -294,20 +291,20 @@ pub enum Action {
         item: usize,
         ally: Option<Dir>,
     },
-    /// Use a talent's own active (spec §8 "Talents"; the abilities menu's Talents group), with
+    /// Use a talent's own active (the abilities menu's Talents group), with
     /// the verb every ability use has (#644). `use:second_wind` catches a second wind: hit
     /// points back at once, then Winded for a while; refused (no time) without the talent or
     /// while winded. `use:blood_magic` gives some hit points for some mana; refused (no time)
     /// without the talent, when it would cost the last hit point, or while mana is full. Either
     /// takes the time of `wait`.
     UseTalent(TalentActive),
-    /// Use a class active (spec §8 "Class abilities"; the abilities menu's Class group): rage,
+    /// Use a class active (the abilities menu's Class group): rage,
     /// veteran's wind, lay on hands, holy radiance, and, aimed in a direction, smite
     /// and quivering palm (`use:rage`, `use:smite:E`). Takes the time of its cost's action;
     /// refused (no time) without the ability, while its cooldown lasts, or without the
     /// direction it asks.
     Use(ClassActive, Option<Dir>),
-    /// Cast a spell the player knows (spec §8 "Spells"; the abilities menu's Spells group), by
+    /// Cast a spell the player knows (the abilities menu's Spells group), by
     /// its id in `data/spells/`: on oneself, or aimed at a cell (`use:blessing`,
     /// `use:magic_missile:12,5`). Takes the time of its `cast`s and its mana; refused (no time)
     /// for an unknown spell, without the spell, without the mana, or without the cell it asks.
@@ -315,8 +312,8 @@ pub enum Action {
     /// spell's is a weapon active's (#564; `use:shield_wall`, `use:piercing_shot:12,5`): the
     /// rules resolve it after the spells.
     Cast(String, Option<Pos>),
-    /// Use a weapon active aimed in a direction (spec §8 "Weapon skills", "Fighting styles";
-    /// #564; the abilities menu's Weapon skills group), by its id in `data/weapon_abilities/`:
+    /// Use a weapon active aimed in a direction (#564; the abilities menu's Weapon skills group),
+    /// by its id in `data/weapon_abilities/`:
     /// `use:lunge:E` (the direction in upper case). Takes its energy's percent of the time of
     /// the action it is and its stamina; refused (no time) without the ability, while what the
     /// player holds is not for it, short of stamina, or with nobody it may strike there.
@@ -325,42 +322,40 @@ pub enum Action {
     /// `use:identify:c`). Refused as [`Action::Cast`] is, and for a spell that asks for no
     /// stack.
     CastOn(String, usize),
-    /// Use a class active aimed at a cell (spec §8 "Class abilities"): the ranger's Volley
+    /// Use a class active aimed at a cell: the ranger's Volley
     /// (`use:volley:12,5`). Takes the time of its cost's action; refused (no time) without the
     /// ability or while its cooldown lasts.
     UseAt(ClassActive, Pos),
-    /// Use a class active on a stack the player carries, by its position (spec §8 "Class
-    /// abilities"): the merchant's Merchant's eye (`use:merchants_eye:c`). Takes the time of its
-    /// cost's action; refused (no time) without the ability, or for a stack it may not work on.
+    /// Use a class active on a stack the player carries, by its position: the merchant's Merchant's
+    /// eye (`use:merchants_eye:c`). Takes the time of its cost's action; refused (no time) without
+    /// the ability, or for a stack it may not work on.
     UseOn(ClassActive, usize),
-    /// Use a class active that throws a stack the player carries, by its position, at a cell
-    /// (spec §8 "Class abilities"): the thief's Thrown exploit (`use:thrown_exploit:c:12,5`).
-    /// Takes the time of a throw; refused (no time) without the ability, without an opening, or
-    /// for a throw it may not make.
+    /// Use a class active that throws a stack the player carries, by its position, at a cell: the
+    /// thief's Thrown exploit (`use:thrown_exploit:c:12,5`). Takes the time of a throw; refused (no
+    /// time) without the ability, without an opening, or for a throw it may not make.
     UseThrow(ClassActive, usize, Pos),
-    /// Use a class active in a weapon's shape, by the object's id (spec §8 "Prestige classes"):
+    /// Use a class active in a weapon's shape, by the object's id:
     /// the Hunter's Spirit weapon (`use:spirit_weapon:long_sword`) calls a weapon of that shape
     /// into the main hand, for the time of a wield. Refused (no time) without the ability, or
     /// for an id that is no melee weapon's.
     Shape(ClassActive, String),
-    /// Use a birth sign's active gift (spec §8 "Birth sign"; the abilities menu's Birth sign
+    /// Use a birth sign's active gift (the abilities menu's Birth sign
     /// group): Horn's grace, Blaze, and, aimed at a cell, the Transfixing stare
     /// (`use:horns_grace`, `use:blaze`, `use:transfixing_stare:12,5`). Takes the time of its
     /// cost's action; refused (no time) without the gift, while its cooldown lasts, or without the cell it asks.
     Gift(SignActive, Option<Pos>),
-    /// Take talent `id` (an id in `data/talents/`), for `choice` if it takes one (spec §8
-    /// "Talents"): one of the picks a level brings, made at once (nothing is banked). Refused
-    /// with the reason when none is due or a prerequisite fails. Takes no game time; recorded in
-    /// replays.
+    /// Take talent `id` (an id in `data/talents/`), for `choice` if it takes one: one of the picks
+    /// a level brings, made at once (nothing is banked). Refused with the reason when none is due
+    /// or a prerequisite fails. Takes no game time; recorded in replays.
     Talent {
         id: String,
         choice: Option<String>,
     },
-    /// Spend one of the current level's skill rolls on trained skill `skill` (spec §8 "Skills";
-    /// `world/character/skill_roll.rs`, `World::advance_skill`; docs/dev/skills.md): throws the skill's
-    /// ladder die and adds the result to the skill. A level brings rolls by class, race,
-    /// Intelligence, and talents (`skill_roll::roll_count`); refused with the reason when none is left to spend or the
-    /// skill is not trained. Takes no game time; recorded in replays.
+    /// Spend one of the current level's skill rolls on trained skill `skill`
+    /// (`world/character/skill_roll.rs`, `World::advance_skill`; docs/dev/skills.md): throws the
+    /// skill's ladder die and adds the result to the skill. A level brings rolls by class, race,
+    /// Intelligence, and talents (`skill_roll::roll_count`); refused with the reason when none is
+    /// left to spend or the skill is not trained. Takes no game time; recorded in replays.
     Advance(String),
     /// Dev command: switch the player's vision profile (an id in `data/vision.toml`). Takes no
     /// game time, but changes state and perception, so replays record it like any action.
@@ -370,12 +365,12 @@ pub enum Action {
     /// Dev command: set the weather for three hours of game time ([`crate::weather::OVERRIDE`]),
     /// then the weather of the day returns. Takes no game time; recorded in replays.
     SetWeather(Weather),
-    /// Dev command: one attempt to bring a creature to the current level now (spec §7 "Danger
-    /// levels"), whatever its cap and chance: a type by its danger, out of the player's sight.
-    /// Refused on a level of danger 0. Takes no game time; recorded in replays.
+    /// Dev command: one attempt to bring a creature to the current level now, whatever its cap and
+    /// chance: a type by its danger, out of the player's sight. Refused on a level of danger 0.
+    /// Takes no game time; recorded in replays.
     Spawn,
     /// Dev command: `count` allies of type `creature` beside the player, following, on their
-    /// side (spec §8 "Allies"; `world/allies/ally.rs`), their stay ending after `lasts` if given
+    /// side (`world/allies/ally.rs`), their stay ending after `lasts` if given
     /// (`ally:wolf`, `ally:wolf:2`, `ally:wolf:2:10m`). No game time; refused without
     /// `data/allies.toml`, for an unknown type, at the cap, or with no free cell beside the
     /// player. Recorded in replays.
@@ -385,7 +380,7 @@ pub enum Action {
         lasts: Option<Duration>,
     },
     /// Dev command: overworld encounter entry `entry` (an id of the run's campaign's tables) is
-    /// met now on the player's overworld cell (spec §7 "Overworld encounters"), whatever its
+    /// met now on the player's overworld cell, whatever its
     /// tables say there: the lookouts as usual, or `outcome` forced (`meet:kobolds:ambushed`).
     /// Refused (no time) off the overworld or on a cell without a local area. Takes no game time;
     /// recorded in replays.
@@ -397,26 +392,26 @@ pub enum Action {
     /// or from `at` toward `to`: a burst around `at` (around `to`, flying there from `at`), or a
     /// bolt from `at` to `to` (cut short by the first opaque cell). It only shows: it hurts no
     /// one and takes no game time, but it is recorded in replays, so captures can show any moment
-    /// of an effect (spec §4.8 "Spell effects").
+    /// of an effect.
     Effect {
         effect: String,
         at: Pos,
         to: Option<Pos>,
     },
     /// Dev command: identify the inventory stacks at these positions, or everything carried
-    /// with none (spec §8 "Magic items"; the scroll of identify does it in play). Takes no
+    /// with none (the scroll of identify does it in play). Takes no
     /// game time; recorded in replays.
     Identify(Positions),
     /// Dev command: the player suffers one degree more of a status effect (an id in
     /// `data/status/`), as a wound or a bite would give it: for trying statuses out and for
     /// captures. Takes no game time; recorded in replays.
     Afflict(String),
-    /// Dev command: the player spends this much mana (spec §8 "Mana"), as a spell will, through
+    /// Dev command: the player spends this much mana, as a spell will, through
     /// the one way to spend it; refused when they have less. For captures. Takes no game time;
     /// recorded in replays.
     Drain(u16),
     /// Dev command: the player is granted an alternative resource (an id in
-    /// `data/resources.toml`, spec §8 "Resources") at its start, as the ability that grants it
+    /// `data/resources.toml`) at its start, as the ability that grants it
     /// will, through the one way to grant it. For trying resources out and for captures. Takes no
     /// game time; recorded in replays.
     Resource(String),
@@ -424,11 +419,11 @@ pub enum Action {
     /// had failed to resist it: it incubates, then shows. Takes no game time; recorded in
     /// replays.
     Infect(String),
-    /// Dev command: reveal a hidden location of the overworld (spec §7 "Hidden locations"), by
+    /// Dev command: reveal a hidden location of the overworld, by
     /// its id, as a quest would: it is marked on the player's map. For tests and captures. Takes
     /// no game time; recorded in replays.
     Reveal(String),
-    /// Dev command: active lure quest `ID`'s creature (spec §8 "Quests": "Lure quests") comes
+    /// Dev command: active lure quest `ID`'s creature comes
     /// beside the player, aware of them: made if it is nowhere, else taken from wherever it is
     /// (`world/people/lure.rs`). For replays, tests, and captures that skip the walk. Takes no game
     /// time; recorded in replays.
@@ -441,7 +436,7 @@ pub enum Action {
     /// time; recorded in replays.
     Rescind(String),
     /// Dev command: active rolled quest `quest`, with no progress yet, draws `target` instead
-    /// (spec §8 "Quests": a target its pool may hold, or a variant's id), its kills counted
+    /// (a target its pool may hold, or a variant's id), its kills counted
     /// from now and a variant's reveal made. For replays, tests, and captures. Takes no game
     /// time; recorded in replays.
     QuestRoll {
@@ -449,18 +444,17 @@ pub enum Action {
         target: String,
     },
     /// Dev command: spend every choice a level still asks for with the first the player may
-    /// take (spec §8 "Talents"), for tests and benchmarks. Takes no game time; recorded in
+    /// take, for tests and benchmarks. Takes no game time; recorded in
     /// replays.
     LevelUpAuto,
-    /// Dev command: the player gains this much experience, and any levels it brings (spec §8
-    /// "Experience"), for tests and captures. Takes no game time; recorded in replays.
+    /// Dev command: the player gains this much experience, and any levels it brings, for tests and
+    /// captures. Takes no game time; recorded in replays.
     GrantXp(u32),
-    /// Dev command: the player is called into prestige class `ID` (spec §8 "Prestige
-    /// classes") now, whatever their level, through the calling of the run's campaign that
-    /// opens it to their class, as saying its words would: the class is theirs, and the
-    /// experience the first prestige level costs with it. Refused with no such prestige class,
-    /// one held already, or no calling open to their class. For tests and captures. Takes no
-    /// game time; recorded in replays.
+    /// Dev command: the player is called into prestige class `ID` now, whatever their level,
+    /// through the calling of the run's campaign that opens it to their class, as saying its words
+    /// would: the class is theirs, and the experience the first prestige level costs with it.
+    /// Refused with no such prestige class, one held already, or no calling open to their class.
+    /// For tests and captures. Takes no game time; recorded in replays.
     Call(String),
     /// Dev command: the player's rank in weapon skill or fighting style `skill` (an id in
     /// `data/weapon_skills.toml`) becomes `rank` (0 to 10), its marks starting from 0, as a
@@ -470,7 +464,7 @@ pub enum Action {
         skill: String,
         rank: u8,
     },
-    /// Dev command: an instant frost (spec §5 "Ice"): the water within `radius` of cell `at`, in
+    /// Dev command: an instant frost: the water within `radius` of cell `at`, in
     /// its line of sight, freezes at once to ice that holds a laden person
     /// ([`crate::ice::FROST`]). Takes no game time; recorded in replays.
     Freeze {
@@ -499,7 +493,7 @@ pub const MAX_BURST: i32 = 20;
 /// The most turns one search action may last (`search:N`).
 pub const MAX_SEARCH: u8 = 100;
 
-/// An order to one's allies ([`Action::Order`]; spec §8 "Allies"): what the three abilities of
+/// An order to one's allies ([`Action::Order`]): what the three abilities of
 /// the Allies group tell every ally on the level.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
@@ -550,7 +544,7 @@ pub enum ReadTarget {
 
 /// A set of stacks of a list (a pile, the inventory) by position, `0` the first: the rules name
 /// stacks by where they are, never by the letter a screen shows (letters restart on every page
-/// of a list, spec §6). Action text writes the set as letters while every position is below 26
+/// of a list). Action text writes the set as letters while every position is below 26
 /// (`a` = 0: `ac`), else as numbers (`0,2,30`); both forms parse, mixed too (`ac,30`).
 #[derive(Clone, Debug, Default, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct Positions(BTreeSet<usize>);
@@ -661,7 +655,7 @@ pub enum Event {
     DoorClosed {
         pos: Pos,
     },
-    /// A kick at a closed door that held: "WHAMM!" (spec §8 "Doors").
+    /// A kick at a closed door that held: "WHAMM!".
     DoorKicked {
         pos: Pos,
     },
@@ -669,7 +663,7 @@ pub enum Event {
     DoorBroken {
         pos: Pos,
     },
-    /// A chest kicked open or blown apart (spec §8 "Chests").
+    /// A chest kicked open or blown apart.
     ChestBroken {
         pos: Pos,
     },
@@ -677,7 +671,7 @@ pub enum Event {
         from: String,
         to: String,
     },
-    /// An actor attacked another (spec §8 "Combat"). `from` and `to` are where they stood at
+    /// An actor attacked another. `from` and `to` are where they stood at
     /// that moment; `strike` is what came of it: a hit (a critical, perhaps) or a miss and why,
     /// or `None` for an intent only (a spell). Kept only when the player saw both of them (or
     /// is one of them); the message line reports more (an attack on the player by something
@@ -692,7 +686,7 @@ pub enum Event {
         /// What a shot or a throw was made with: the missile (the ammunition as it flew, the
         /// thrown thing); for a shield bash, the shield; `None` for other blows and spells.
         with: Option<ObjectId>,
-        /// The kind of damage it did (spec §8 "Damage types": what a blow is said with, a
+        /// The kind of damage it did (what a blow is said with, a
         /// sword's slashing or piercing by what was better); `None` for a miss, an intent, or
         /// an untyped attack.
         damage: Option<DamageTypeId>,
@@ -703,12 +697,11 @@ pub enum Event {
         natural: Option<u8>,
         /// How the player's attack that rolled to hit (a blow, a shot, a throw, a spell) found
         /// its target, told in the attack's own words ("You hit the sleeping kobold."): `None`
-        /// for an aware target and for anyone else's attack (spec §8 "Surprise and sneak
-        /// attacks"; `surprise.rs`).
+        /// for an aware target and for anyone else's attack (`surprise.rs`).
         #[serde(default, skip_serializing_if = "Option::is_none")]
         caught: Option<Caught>,
     },
-    /// A missile flew (spec §8 "Ranged combat"): a shot or a throw. As the player perceives it
+    /// A missile flew: a shot or a throw. As the player perceives it
     /// (the rest of the turn's events are kept only when seen; this one is cut to what was
     /// seen): `from` is where it was loosed if the player saw that cell, `path` the cells it
     /// flew over, in order, from the first the player saw to the last, and `end` how its flight
@@ -728,7 +721,7 @@ pub enum Event {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         of: Option<StatusId>,
     },
-    /// A status effect began (`began`) or ended on an actor (spec §8 "Status effects"). Only the
+    /// A status effect began (`began`) or ended on an actor. Only the
     /// player's own, which they always perceive: said in the message line ("You are bleeding.",
     /// "The bleeding stops.").
     Status {
@@ -736,22 +729,22 @@ pub enum Event {
         status: StatusId,
         began: bool,
     },
-    /// An alternative resource that ends at zero ended on an actor (spec §8 "Resources"): its
+    /// An alternative resource that ends at zero ended on an actor: its
     /// bar is gone. Only the player's own, which they always perceive: said in the message line
     /// in the resource's words (its `ended`, "Your rage subsides.").
     ResourceEnded {
         actor: ActorId,
         resource: ResourceId,
     },
-    /// A disease of the player's showed itself, went badly at a progression, or left them (spec
-    /// §8 "Diseases"). Only the player's own, which they always perceive: said in the message
-    /// line in the disease's own words (its `onset`, a symptom, `recovered`).
+    /// A disease of the player's showed itself, went badly at a progression, or left them. Only the
+    /// player's own, which they always perceive: said in the message line in the disease's own
+    /// words (its `onset`, a symptom, `recovered`).
     Disease {
         actor: ActorId,
         disease: DiseaseId,
         news: DiseaseNews,
     },
-    /// A drain touched an actor (spec §8 "Stats": "Drain"): `stat` lost points for good, or
+    /// A drain touched an actor: `stat` lost points for good, or
     /// none when it held (or had nothing more to lose). Only the player's own, which they always
     /// perceive: said in the message line in words, never the points.
     Drained {
@@ -759,7 +752,7 @@ pub enum Event {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         stat: Option<crate::stats::Stat>,
     },
-    /// A trap went off (spec §8 "Traps"): `victim` set off trap `trap` lying on `at`. Kept when
+    /// A trap went off: `victim` set off trap `trap` lying on `at`. Kept when
     /// the player perceived it: they set it off, saw its cell, or saw any of its blast.
     TrapSprung {
         trap: TrapId,
@@ -774,7 +767,7 @@ pub enum Event {
         to: Pos,
         strike: Strike,
     },
-    /// A spell-like effect the player perceives (spec §4.8 "Spell effects"): traps now, spells
+    /// A spell-like effect the player perceives: traps now, spells
     /// later. As the player perceives it: it is light itself, so its cells are cut to those the
     /// player sees or has in line of sight (in the dark too), and a bolt's path to the stretch
     /// from the first of them to the last. Kept when the player saw any of its cells.
@@ -793,32 +786,31 @@ pub enum Event {
     Identified {
         item: usize,
     },
-    /// The player chatted with a creature, or asked it about a topic, and it answered (spec §8
-    /// "Dialogue"): what it said and what the player may ask it about. One with topics opens
-    /// the dialogue screen.
+    /// The player chatted with a creature, or asked it about a topic, and it answered: what it said
+    /// and what the player may ask it about. One with topics opens the dialogue screen.
     Talked(Conversation),
-    /// The player threw their voice to this cell (spec §5 "Hearing"; a cell they see): where it
+    /// The player threw their voice to this cell (a cell they see): where it
     /// sounded.
     VoiceThrown {
         at: Pos,
     },
-    /// The player called an order to their allies (spec §8 "Allies") from this cell.
+    /// The player called an order to their allies from this cell.
     Ordered {
         at: Pos,
     },
-    /// An ally departed (spec §8 "Allies"): its time ran out where the player is. Nothing is
+    /// An ally departed: its time ran out where the player is. Nothing is
     /// left on its cell; presentation may fade it.
     Departed {
         actor: ActorId,
         at: Pos,
     },
-    /// A wall gave way (spec §8 "Digging") and is rubble now. Kept when the player sees the cell
+    /// A wall gave way and is rubble now. Kept when the player sees the cell
     /// afterwards.
     WallBroken {
         pos: Pos,
         cause: Breach,
     },
-    /// An actor broke through the ice and plunged into the water at `at` (spec §5 "Ice"). Kept
+    /// An actor broke through the ice and plunged into the water at `at`. Kept
     /// when the player saw it (their own always).
     FellThroughIce {
         actor: ActorId,
@@ -872,7 +864,7 @@ pub enum Breach {
     Dug,
     /// Blasted open by an explosion.
     Blast,
-    /// Kicked apart (a statue, spec §8 "Statues").
+    /// Kicked apart (a statue).
     Kicked,
 }
 

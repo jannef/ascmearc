@@ -1,4 +1,4 @@
-//! Rigs (`assets/data/rigs.toml`, spec §8 "Traps": "Rigging traps"; the craftsperson design
+//! Rigs (`assets/data/rigs.toml`: "Rigging traps"; the craftsperson design
 //! §7.6): the traps the craftsperson's Trapwright rigs on a cell beside them, what each takes,
 //! how long it takes, and how often the trap it places goes off.
 //!

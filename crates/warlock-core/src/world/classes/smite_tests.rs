@@ -1,4 +1,4 @@
-//! Smite and zeal (`world/classes/smite.rs`; spec §8 "Class abilities": "Smite", "Resources"; the
+//! Smite and zeal (`world/classes/smite.rs`; "Smite", "Resources"; the
 //! paladin design P1, #910): the pool, the blow's dice and aim, its cost, the sin that empties
 //! it, and a save without it.
 

@@ -1,4 +1,4 @@
-//! Sanctuary (spec §8 "Class abilities", §7 "Special rooms": hallowed ground; #885, the priest
+//! Sanctuary (hallowed ground; #885, the priest
 //! design §6.4): the priest's level-50 class active, `use:sanctuary`. The player kneels for the
 //! rite's time, its mana spent ([`World::keep_at`], as Consecrate prays: anything that would stop
 //! a rest stops it, and an interrupted rite lays nothing, its mana and time spent). Done, a

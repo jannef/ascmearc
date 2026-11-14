@@ -1,4 +1,4 @@
-//! The birth sign's gifts (spec §8 "Birth sign"): a sign grants its animal's and its element's
+//! The birth sign's gifts: a sign grants its animal's and its element's
 //! talents, a lucky day one more and a title; they are computed, never stored as a choice, so a
 //! restored run gets them afresh; and each of the first gifts changes the one rule it names.
 

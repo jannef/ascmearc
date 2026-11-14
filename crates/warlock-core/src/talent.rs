@@ -1,4 +1,4 @@
-//! Talents an actor holds (spec §8 "Talents"): the runtime side of
+//! Talents an actor holds: the runtime side of
 //! [`crate::content::TalentBook`].
 //!
 //! [`Talents`] is what an actor has taken, saved by talent id (like affixes: adding talents to
@@ -78,7 +78,7 @@ fn one_degree() -> u16 {
     1
 }
 
-/// The most percent off a mana cost talents and magic items give together (spec §8 "Mana"):
+/// The most percent off a mana cost talents and magic items give together:
 /// Frugal caster's fifth and of Thrift's percents summed, held here, as speeds are held at
 /// [`crate::content::MAX_SPEED`].
 pub const MAX_MANA_CUT: i32 = 50;
@@ -202,7 +202,7 @@ impl Talents {
 
     /// Replaces the granted talents held (those `content` marks `granted` outside a class tree:
     /// a race's, the birth sign's; a class's abilities are left alone) with `ids`, first and in
-    /// that order (spec §8 "Birth sign": a sign's gifts are computed, never
+    /// that order (a sign's gifts are computed, never
     /// chosen; a race's likewise). Picked talents keep their order after them; ids the content
     /// lacks are skipped.
     pub(crate) fn regrant(&mut self, content: &Content, ids: &[&str]) {
@@ -290,7 +290,7 @@ impl Talents {
 }
 
 /// Which of an actor's reaches come of a birth sign's gifts (talents of the `stars` tree), the
-/// ones a full moon lengthens (spec §8 "Birth sign", the flavour; the stare and Inner light are
+/// ones a full moon lengthens (the flavour; the stare and Inner light are
 /// gifts only, so they need no mark).
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct GiftReach {
@@ -366,7 +366,7 @@ pub struct TalentMods {
     pub ally: AllyMods,
 }
 
-/// The active Second wind (spec §8 "Talents"): hit points back at once, then a cooldown.
+/// The active Second wind: hit points back at once, then a cooldown.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct SecondWind {
     pub per_level: u8,
@@ -387,7 +387,7 @@ impl TalentMods {
         *self == TalentMods::default()
     }
 
-    /// Whether it has class active `active` (spec §8 "Class abilities").
+    /// Whether it has class active `active`.
     pub fn has_active(&self, active: crate::content::ClassActive) -> bool {
         use crate::content::ClassActive as A;
         match active {
@@ -488,7 +488,7 @@ fn per_levels_at(effects: &[(u8, i32)], level: u8) -> i32 {
         .sum()
 }
 
-/// Everything a prerequisite may ask of whoever would take a talent (spec §8 "Talents"): the
+/// Everything a prerequisite may ask of whoever would take a talent: the
 /// talents held, the stored scores (never the effective ones), the trained skills, the weapon
 /// skills, the character level, and the character's race, class, and eyes (the race's vision
 /// profile), by id.
@@ -502,7 +502,7 @@ pub struct Candidate<'a> {
     pub race: Option<&'a str>,
     pub class: Option<&'a str>,
     pub eyes: Option<&'a str>,
-    /// The birth sign (spec §8 "Birth sign"), if any, and whether it is a lucky day's.
+    /// The birth sign, if any, and whether it is a lucky day's.
     pub sign: Option<&'a Sign>,
     pub lucky: bool,
 }

@@ -1,4 +1,4 @@
-//! Mana in the world (spec §8 "Mana"): the second pool beside hit points, built the same way;
+//! Mana in the world: the second pool beside hit points, built the same way;
 //! the pure rules are [`crate::mana`].
 //!
 //! - **The maximum** ([`crate::world::Actor::max_mana`]): what race and class (a creature type, a
@@ -39,13 +39,13 @@ impl World {
     }
 
     /// How fast actor `id` gets mana back at `now` (a moment of `World::live`), in percent of
-    /// the normal pace (spec §8 "Mana"): the slowest `mana_regen` of its statuses and of the
+    /// the normal pace: the slowest `mana_regen` of its statuses and of the
     /// diseases that show (100 without any), times `[healing] mana_resting` while the player
     /// rests (Meditation adds its percent to that), times the `mana_regen` of a special room it
     /// stands in or the pace of hallowed ground (`sanctuary.rs`), the larger, times what the
     /// mana regeneration affixes of what it wears and wields and its talents add (+50 % is half
-    /// again as fast; Tidal's and Clear mind's +25 %). None for a Starving player (spec §8
-    /// "Hunger"). The one place that decides it.
+    /// again as fast; Tidal's and Clear mind's +25 %). None for a Starving player. The one place
+    /// that decides it.
     pub(crate) fn mana_rate_at(&self, id: ActorId, now: GameTime) -> u32 {
         let Some(actor) = self.state.actors.get(&id) else {
             return 0;
@@ -56,7 +56,7 @@ impl World {
         let statuses = actor.effects.mana_regen(&self.content);
         let mut rate = u32::from(statuses.min(actor.diseases.mana_regen(&self.content)));
         if self.resting && id == self.state.player {
-            // Resting's pace, and half again with Meditation (spec §8 "Talents").
+            // Resting's pace, and half again with Meditation.
             let faster = actor.talent_mods(&self.content).magic.mana_resting_percent;
             let resting = u32::from(self.content.healing().mana_resting);
             let resting = resting * u32::try_from((100 + faster).max(0)).unwrap_or(0) / 100;
@@ -72,19 +72,19 @@ impl World {
             .mods(&self.content)
             .get(ItemEffect::ManaRegeneration)
             .max(0);
-        // Talents (spec §8 "Birth sign": Tidal) add their percent to the affixes'.
+        // Talents (Tidal) add their percent to the affixes'.
         let faster = faster + actor.talent_mods(&self.content).magic.mana_regen_percent;
-        // Concentration (spec §8 "Skills") adds its percent to theirs.
+        // Concentration adds its percent to theirs.
         let faster = faster + actor.mind(&self.content, Effect::ManaRegen);
         rate * u32::try_from((100 + faster).max(0)).unwrap_or(0) / 100
     }
 
-    /// Actor `id` spends what costs `base` mana (spec §8 "Mana"): the one way mana is spent.
+    /// Actor `id` spends what costs `base` mana: the one way mana is spent.
     /// The cost is what its talents make of `base` ([`Actor::mana_cost`]: Frugal caster's fifth
     /// less). Refused, spending nothing, when it has less than that (or `base` is below 0);
     /// returns whether it was spent, and while a status of theirs blocks casting (a raging
     /// berserker spends none). The player's spending of any is a `cast` use of their
-    /// stats (spec §8 "Stats": it trains Willpower). Says nothing: the spell or ability that
+    /// stats (it trains Willpower). Says nothing: the spell or ability that
     /// spends it does.
     pub(crate) fn spend_mana(&mut self, id: ActorId, base: i32) -> bool {
         let content = self.content.clone();
@@ -102,7 +102,7 @@ impl World {
         actor.mana -= cost;
         if id == self.state.player && cost > 0 {
             self.train_stat(StatUse::Cast);
-            // Concentration's marks (spec §8 "Skills").
+            // Concentration's marks.
             self.train(Use::Cast);
         }
         true
@@ -120,7 +120,7 @@ impl World {
         }
     }
 
-    /// The player went up from level `before` to `after` (spec §8 "Experience"): each level
+    /// The player went up from level `before` to `after`: each level
     /// gained up to the experience file's `mana_level` adds [`World::level_mana`] to their
     /// maximum mana and to their mana.
     pub(in crate::world) fn level_up_mana(&mut self, before: u8, after: u8) {
@@ -136,7 +136,7 @@ impl World {
     }
 
     /// What total level `level` adds to the player's mana: half the mana of the class the
-    /// level falls in (spec §8 "Prestige classes"; the scenario's `mana` without a character)
+    /// level falls in (the scenario's `mana` without a character)
     /// plus the better of the Intelligence and Willpower modifiers, at least 0 (the progression
     /// design, `docs/design/progression.md` §3.7). The stats as what the player wears raises
     /// them, not as a status lowers them: the penalty passes, this mana stays.
@@ -168,7 +168,7 @@ impl World {
         Spent::NoTime
     }
 
-    /// Blood magic (spec §8 "Talents", the Scholar tree's active): the player gives the
+    /// Blood magic (the Scholar tree's active): the player gives the
     /// talent's hit points for its mana, for the time of a wait. Refused, taking no time,
     /// without the talent, when it would cost their last hit point, and while their mana is
     /// full. Nothing is drawn; it is not a blow (no Protection, no pain, no training of

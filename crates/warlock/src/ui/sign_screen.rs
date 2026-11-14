@@ -1,4 +1,4 @@
-//! Character creation's reveal (spec §8 "Birth sign"): right after the race, *Born under the
+//! Character creation's reveal: right after the race, *Born under the
 //! stars* says when the character was born, under which sign, what the animal and the element
 //! are like, a lucky day's legend if the day is one, the sign's gifts and flaw in words, and the
 //! sign's stat adjustments as written in data. Nothing is chosen on it: the stars decide, from

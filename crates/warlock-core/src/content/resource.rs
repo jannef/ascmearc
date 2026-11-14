@@ -1,4 +1,4 @@
-//! Alternative resources (`assets/data/resources.toml`, spec §8 "Resources", #225): integer
+//! Alternative resources (`assets/data/resources.toml`, #225): integer
 //! pools beside hit points and mana that a character holds once something grants them (a class
 //! ability, a talent), each with its own rules: it may regenerate toward its maximum or decay
 //! toward 0 over time, build up from events (a kill, a hit, a critical, being hit, a sneak
@@ -41,8 +41,8 @@ pub enum Build {
     /// The holder was hit by a blow: any that hit, even one their armour soaked or they
     /// resisted to nothing (`Strike::is_hit`).
     Struck,
-    /// A sneak attack of the holder's hit: a blow at a creature unaware of it (spec §8 "Class
-    /// abilities": the thief's sneak attack).
+    /// A sneak attack of the holder's hit: a blow at a creature unaware of it (the thief's sneak
+    /// attack).
     SneakAttack,
     /// A feint of the holder's fooled its foe (`world/skills/feint.rs`: it falls for it). A chosen
     /// attack under the mark rule (`world/classes/mark.rs`), made before the check.

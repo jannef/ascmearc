@@ -1,9 +1,9 @@
 # Weapon skills and fighting styles
 
 Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
-rules it implements are in spec/08i-character.md. Keep it current with the code, as CLAUDE.md says.
+rules it implements are in spec/12-character.md. Keep it current with the code, as CLAUDE.md says.
 
-Weapon skills (spec §8 "Weapon skills"; M22, #134): data is `data/weapon_skills.toml`
+Weapon skills (M22, #134): data is `data/weapon_skills.toml`
 (`content/weapon_skill.rs`: `WeaponSkillTable` with `MarkRules` (the scale clamped at
 `MOST_PERCENT`, 100: a strong opponent never speeds training, #1095), named need curves, skills
 (`WeaponSkillDef`: `id`, `name`, `phrase`, `Role`, curve, `[Benefit; 11]` per rank); `SkillId` is an index in file order, in the content fingerprint). Weapons
@@ -18,7 +18,7 @@ is `weapon_skills.rs`: `WeaponSkills` (a `Training { rank, marks }` per skill on
 from below, for a talent's `weapon_ranks` hand-out, Travelled hands), `from_ranks` (starting ranks,
 order-free), `progress`. The rules hook in at one place each: `Actor::attack_skill(kind, with)`
 picks the skill of an attack (a blow: the wielded weapon's, else unarmed; `Melee` `with` a
-shield: shield bashing; a shot: the launcher's; a throw: thrown; a kick, spec §8 "Doors": unarmed
+shield: shield bashing; a shot: the launcher's; a throw: thrown; a kick: unarmed
 whatever is wielded, `World::player_kicks`), and `fight.rs::resolve` takes the skills its caller
 picked (`AttackSkills`: the weapon skill and the fighting style); `Profile::with(&Benefit)` and
 `Actor::melee`/`ranged`/`thrown`/`bash`/`kick` apply to-hit, damage, and threat; `Actor::defence` adds
@@ -28,7 +28,7 @@ shield blocking skill, #1093); `World::attack_price` takes `speed` off the cost 
 items' speed; a shield bash costs a blow with the shield, never the wielded weapon's cost);
 `World::resolve` (`fight.rs`) earns the player's marks (`practise`; a blow the player's shield
 blocks trains no weapon skill; `World::level_of` weighs the opponent by its creature type's
-`level`, spec §8 "Experience") and pushes "You feel more skilled ..." into the unsaved
+`level`) and pushes "You feel more skilled ..." into the unsaved
 `World::news`, said after the attack's own messages (`say_news`, also at the end of
 `perceive` for a block in a creature's turn). Starting ranks roll from
 their own stream (`character/weapon-skills/...`), so stat rolls never move. Presentation reads
@@ -42,7 +42,7 @@ and thrown; a pattern for writing the arrays, not a data concept);
 are `xtask/src/wiki/weapon_skills.rs`. What ranks teach (weapon abilities, #561) is
 `docs/dev/weapon-abilities.md`: a rank risen says it (`World::ranks_news`, called by `practise`).
 
-Target dummies (spec §8 "Weapon skills": "Target dummies", #1199; `world/combat/dummy.rs`, its module
+Target dummies (#1199; `world/combat/dummy.rs`, its module
 docs the summary): a creature type's `training` table (`content/dummy.rs`, `DummyTraining`:
 `percent`, `melee`, `ranged`, `breaks`; checked in `Content::load`) makes it a dummy, read by
 `World::dummy(id)`. It is a creature so every attack reaches it through `World::resolve` as it
@@ -56,10 +56,11 @@ but `AttackKind::Ranged`, and pushes `dummy::LEARNED_ALL` when a rank reaches th
 Gilde yard (`campaigns/ascmearc/data/creatures/training_dummy.toml`). Tests:
 `world/combat/dummy_tests.rs`, `content/dummy.rs`.
 
-Fighting styles (spec §8 "Fighting styles"; M22, #135) are weapon skills of `Role::Style`: rows
+Fighting styles (M22, #135) are weapon skills of `Role::Style`: rows
 after the weapon skills in `data/weapon_skills.toml` with a `grip` (`content/weapon_skill.rs`:
 `Grip`, `Style { grip, weapons }`; a style naming no `weapons` takes the rest of its grip,
-`WeaponSkillTable::style_for`, one configuration one style), the same ranks, marks, curves, and
+`WeaponSkillTable::style_for`, one configuration one style: within a grip at most one style
+leaves `weapons` out and no weapon skill is named twice, else a content error), the same ranks, marks, curves, and
 `Benefit`s (plus `crit`, `ease_main`/`ease_off`, `bash`; which a grip may use is checked).
 **Every rule asks the attack, not a skill**:
 `Actor::attack_skills(kind, with)` is the `AttackSkills` of an attack (its weapon skill and its

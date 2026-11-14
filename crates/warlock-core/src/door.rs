@@ -1,4 +1,4 @@
-//! Doors (spec §8 "Doors"): locks, keys, and kicking doors in.
+//! Doors: locks, keys, and kicking doors in.
 //!
 //! **Locks** are per-cell state of a level ([`Lock`], in `LevelTemplate::locks` and
 //! `LevelState::locks`), not terrain of their own: a locked door is the closed door terrain with
@@ -28,7 +28,7 @@ use serde::{Deserialize, Serialize};
 /// The key text of a skeleton key: it opens every lock.
 pub const SKELETON: &str = "*";
 
-/// How hard a lock is to pick unless its level says otherwise (spec §8 "Doors"): a check of
+/// How hard a lock is to pick unless its level says otherwise: a check of
 /// 2d12 plus the picker's modifiers against this.
 pub const LOCK_DIFFICULTY: u8 = 14;
 

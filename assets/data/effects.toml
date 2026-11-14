@@ -1,4 +1,4 @@
-# Spell effects (spec §4.8 "Spell effects", §7): what traps' (and later spells') effects look like.
+# Spell effects: what traps' (and later spells') effects look like.
 # Presentation only: no rule reads this file. The renderer draws each perceived spell event with
 # the effect it names; the dev action `effect:ID@X,Y` (or `effect:ID@X,Y>X,Y`) shows one at a cell
 # for captures, a burst of this file's `radius`.
@@ -39,14 +39,14 @@
 #   shake          { pixels, radius, seconds }: when it lands within `radius` cells of the player
 #                  the view shakes, at most `pixels` (logical pixels; less the farther), dying
 #                  down over `seconds`. Off with the `screen_shake` switch.
-#   [[effect.particles]]  emitters (spec §4.8): `impact` and `linger` bursts of `count` particles
+#   [[effect.particles]]  emitters: `impact` and `linger` bursts of `count` particles
 #                  from each affected cell as the effect reaches it and as it starts to fade;
 #                  `flight` (a `rate`) from a burst's projectile.
 #
 # With the `motion` switch off (or reduced effects) an effect is a brief, still flash of its cells:
 # no travel, light, darkening, or shake. Keep effects short: dramatic, never long or garish.
 
-# Blaze (the Fire-born's gift, spec §8 "Birth sign"): flames burst from the player onto the cells
+# Blaze (the Fire-born's gift): flames burst from the player onto the cells
 # beside them, smaller and quicker than a fireball; no projectile (it starts where it lands), no
 # darkening, no shake.
 [[effect]]
@@ -157,7 +157,7 @@ area = [0.1, 0.1]
 scale = 0.6
 glow = 0.8
 
-# The Phoenix rising from its ashes (spec §8 "Birth sign": Rise from the ashes): flames burst
+# The Phoenix rising from its ashes (Rise from the ashes): flames burst
 # from where the player fell, a short, bright, upward flare; no projectile (it starts where it
 # lands), no darkening, a small shake.
 [[effect]]
@@ -192,7 +192,7 @@ scale = 0.6
 fade = 0.6
 glow = 0.8
 
-# Fire breath (a Wyvern's pick, spec §8 "Birth sign"): a short gout of flame along a line, slower
+# Fire breath (a Wyvern's pick): a short gout of flame along a line, slower
 # and warmer than lightning, with no forks, darkening, or shake.
 [[effect]]
 id = "fire_breath"
@@ -225,7 +225,7 @@ projectile = "*"
 colors = ["#e0e2e6", "#b8bcc4", "#8a9098", "#60666e", "#3a3e44", "#202226"]
 glow = 0.1
 
-# A fire-breathing dragon's breath (spec §8 "Creature behavior": "Dragons"; the fire drake): fire
+# A fire-breathing dragon's breath (the fire drake): fire
 # breath's flames over the whole cone, drawn as a burst around the dragon that rolls out to the
 # cone's end and burns a little longer than Blaze; no projectile, darkening, or shake.
 [[effect]]
@@ -275,7 +275,7 @@ light = { color = [520, 620, 1000], radius = 5 }
 darken = { amount = 0.7, seconds = 0.45 }
 shake = { pixels = 3, radius = 5, seconds = 0.22 }
 
-# The wizard's arcane bolt (spec §8 "Class abilities"): a thin violet line of force, quicker and
+# The wizard's arcane bolt: a thin violet line of force, quicker and
 # dimmer than lightning, no shake.
 [[effect]]
 id = "arcane_bolt"
@@ -291,7 +291,7 @@ glow = 0.7
 branches = 0.02
 light = { color = [520, 380, 820], radius = 3 }
 
-# Ray of frost's (spec §8 "Spells", #1249): a ray, a long icicle flying straight from the caster:
+# Ray of frost's (#1249): a ray, a long icicle flying straight from the caster:
 # a glint of white at its thin point, a pale solid shaft behind it thinning to a fading tail of
 # frost, rime settling where it passed; struck once at the end. Dimmer than the bolts above, no
 # shake.
@@ -341,7 +341,7 @@ glow = 0.5
 branches = 0.0
 light = { color = [380, 460, 620], radius = 2 }
 
-# Spark's small crackle (spec §8 "Spells"): dimmer and shorter than the bolts above, no shake.
+# Spark's small crackle: dimmer and shorter than the bolts above, no shake.
 
 [[effect]]
 id = "spark"
@@ -373,7 +373,7 @@ glow = 0.5
 branches = 0.0
 light = { color = [380, 520, 240], radius = 2 }
 
-# A frost burst (spec §5 "Ice"): a quiet, cold flash of rime over the cells it reaches, which
+# A frost burst: a quiet, cold flash of rime over the cells it reaches, which
 # freezes the water there (the dev action `freeze:X,Y,R` shows it with its own radius; frost
 # traps and spells will). No shake and no darkening: a breath of cold light and a few crystals.
 [[effect]]
@@ -407,7 +407,7 @@ scale = 0.6
 fade = 0.7
 glow = 0.3
 
-# The witch's blight (spec §8 "Class abilities"): a slow, sickly green cloud over the cells it
+# The witch's blight: a slow, sickly green cloud over the cells it
 # reaches. No shake and no darkening.
 [[effect]]
 id = "blight"

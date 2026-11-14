@@ -1,4 +1,4 @@
-//! The witch's familiar's data (`assets/data/familiars.toml`; spec §8 "Allies": "The familiar";
+//! The witch's familiar's data (`assets/data/familiars.toml`; "The familiar";
 //! docs/design/witch-familiar.md §9.1 and §16; `docs/dev/familiar.md`): the starting beasts by
 //! race and the rares, the hex its touch lays, the names, and how each kind arrives. The rules
 //! live in `world/allies/familiar.rs`; the kept beasts' growth is `companions.toml`'s, the ally core's

@@ -1,4 +1,4 @@
-//! What magic items are called (spec §8 "Magic items"):
+//! What magic items are called:
 //!
 //! - normal: "a long sword";
 //! - magic: its prefix and suffix around the base name, "a Sharp long sword of the Bear";

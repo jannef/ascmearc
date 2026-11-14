@@ -1,15 +1,15 @@
-//! Object screens (spec §6): the inventory (`I`), with its drop mode (`D` there, or `d` in play;
+//! Object screens: the inventory (`I`), with its drop mode (`D` there, or `d` in play;
 //! #1196), and the selection screens for picking up from a pile (`,` or `g` where several objects
 //! lie) and for choosing what to throw (`T`: the throwing weapons the player carries; choosing
 //! one aims it, `ui::target`).
 //!
-//! Each is the one paged list (`paged_list`, spec §6 "Item lists"): stacks grouped by item class
+//! Each is the one paged list (`paged_list`): stacks grouped by item class
 //! under a header per class, lettered down each page from `a`, with their glyph, name, and
 //! weight; `>` and `<` (PageDown, PageUp) turn the pages. The inventory marks
 //! what is worn or wielded ("(being worn)", "(wielded)"; dropping it takes it off first). Names
-//! are in their rarity's color (spec §8 "Magic items"): magic blue, rare yellow. The inventory
+//! are in their rarity's color: magic blue, rare yellow. The inventory
 //! takes no action and also shows what the player carries and weighs, their burden when they
-//! have one, and the weights at which it changes (spec §8 "Burden"); a stack's letter there
+//! have one, and the weights at which it changes; a stack's letter there
 //! opens its description (`describe_screen`). In its drop mode it is a selection screen that
 //! drops (titled "Inventory: drop", no page tabs), and Esc leaves the mode (or closes the
 //! inventory `d` opened in it). In a selection screen a letter marks or unmarks
@@ -23,21 +23,21 @@
 //! grimoire, and a scroll used up shifts the positions of the stacks after it, so a row kept from
 //! before would name another stack (#591).
 //!
-//! The eat screen (`E`, spec §8 "Hunger") lists what can be eaten: first what lies here
+//! The eat screen (`E`) lists what can be eaten: first what lies here
 //! ("lying here"; the cursor starts on it, as ADOM asks about the floor first), then what the
 //! player carries. A letter or Enter on the `>` row eats it.
 //!
-//! The read screen (`r`, spec §8 "Scrolls") lists the scrolls and grimoires the player carries:
+//! The read screen (`r`) lists the scrolls and grimoires the player carries:
 //! choosing a spell scroll aims it (`ui::target`), choosing the scroll of identify replaces the
 //! list with the unidentified stacks carried, and choosing one of those reads the scroll on it.
-//! A grimoire whose spell the player could learn or deepen (`PerceptionView::studies`, spec §8 "Spells":
-//! "Learning") is marked with the chance in words, and choosing it asks in the one dialog (read
-//! it, or not); any other grimoire is read at once, which says why it teaches nothing.
+//! A grimoire whose spell the player could learn or deepen (`PerceptionView::studies`) is marked
+//! with the chance in words, and choosing it asks in the one dialog (read it, or not); any other
+//! grimoire is read at once, which says why it teaches nothing.
 //!
-//! The temper screen (the Temper ability beside a forge's anvil, spec §7 "Special rooms") lists
+//! The temper screen (the Temper ability beside a forge's anvil) lists
 //! the metal arms and armour the player carries that can be made finer; choosing one tempers it
 //! ([`Action::Temper`]).
-//! The give screen (the Give ability, spec §8 "Allies") lists what fits a neck; choosing one
+//! The give screen (the Give ability) lists what fits a neck; choosing one
 //! fastens it on the player's kept beast beside them ([`Action::Give`]; with two, input asks
 //! which way first).
 
@@ -370,7 +370,7 @@ struct Entry {
     mark: Option<String>,
     /// Grams.
     weight: u64,
-    /// Its name's color: by its rarity (spec §8 "Magic items").
+    /// Its name's color: by its rarity.
     rarity: Rarity,
     /// A scroll read at a cell (a spell): choosing it to read aims it.
     aimed: bool,
@@ -451,7 +451,7 @@ impl ObjectScreen {
                 };
                 let def = content.object(s.object);
                 // The inventory marks what is worn or wielded; a pile has nothing worn, and
-                // what to eat says what lies here. In a shop (spec §7 "Shops") goods lying
+                // what to eat says what lies here. In a shop goods lying
                 // there say their price, and what the player has not paid for what they owe.
                 let mark = match (item, list) {
                     (Item::Floor(_), ObjectList::Eat) => Some("lying here".to_string()),
@@ -466,7 +466,7 @@ impl ObjectScreen {
                         (unpaid.get(i).copied().flatten()).map(|g| format!("unpaid, {g} gold"))
                     }
                 };
-                // Hound's nose (spec §8 "Birth sign"): what to eat says how fresh it smells.
+                // Hound's nose: what to eat says how fresh it smells.
                 let smell = (list == ObjectList::Eat)
                     .then(|| view.smell(s))
                     .flatten()
@@ -670,7 +670,7 @@ impl ObjectScreen {
 
     /// Applies a key press. Letters name the stacks of the page shown (never commands, even
     /// `h j k l`), and the list keys turn its pages. In the inventory a stack's letter opens its
-    /// description (spec §6 "Item description"), `D` turns on its drop mode (where it works as a
+    /// description, `D` turns on its drop mode (where it works as a
     /// selection screen that drops, and Esc turns the mode off again, or closes it when `d` in
     /// play opened it); it closes on Esc, Enter, or its own key when that names no stack.
     pub fn handle(&mut self, press: &Press, bindings: &Bindings) -> ScreenAction {
@@ -812,7 +812,7 @@ impl ObjectScreen {
         };
         let gaps = if inventory { 3 } else { 2 };
         let extra = 3 + gaps + summary.len() as i32;
-        // A page takes what rows the console has for it (spec §6 "Item lists"); where that is
+        // A page takes what rows the console has for it; where that is
         // what pages the list (not its 26 letters), the margin and the gaps give way first.
         let room = |extra: i32| (rows as i32 - extra).max(1) as usize;
         self.entries.set_room(usize::MAX);
@@ -1113,7 +1113,7 @@ mod tests {
         let world = with_scrolls();
         let b = Bindings::default();
         let mut screen = ObjectScreen::new(ObjectList::Read, Some(&world.perception()));
-        // Unknown scrolls by their labels (spec §8 "Scrolls").
+        // Unknown scrolls by their labels.
         let lore = world.perception().lore();
         let pack = world.perception().inventory();
         let labelled: Vec<String> = pack[1..].iter().map(|s| lore.describe(s)).collect();

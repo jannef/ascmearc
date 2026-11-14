@@ -1,4 +1,4 @@
-# Household bodies (spec §8 "Animated objects"; docs/dev/animated.md), one file per body, named by
+# Household bodies (docs/dev/animated.md), one file per body, named by
 # its id (`candlestick.toml`); this file holds only the notes. Each body becomes one creature
 # type, generated when content loads: `animated_<id>` ("animated candlestick"), numbered in path
 # order after the shared data/creatures/ files and before every campaign's. Its numbers come from

@@ -1,4 +1,4 @@
-//! Items made of another material than their base item (spec §7 "Materials", #193, #194): the
+//! Items made of another material than their base item (#193, #194): the
 //! materials' properties and construction lists are checked as content loads; a variant weighs,
 //! strikes, protects, and is worth what its material makes it, is drawn in its colour, and is
 //! named "[ornament] [material] base"; it is placed by level files, refused off its base item's

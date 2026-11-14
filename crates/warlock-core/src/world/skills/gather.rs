@@ -1,4 +1,4 @@
-//! Gathering herbs from the glowing fungus (spec §8 "Skills": Herbalism; #1340, the recipe
+//! Gathering herbs from the glowing fungus (Herbalism; #1340, the recipe
 //! design's §8): [`Action::Gather`], the Gather ability of the abilities menu's *Here* group,
 //! offered beside the fungus.
 //!

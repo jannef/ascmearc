@@ -1,4 +1,4 @@
-# Talents (spec §8 "Talents"), one file per talent, named by its id (`hardy.toml`); a file holds
+# Talents, one file per talent, named by its id (`hardy.toml`); a file holds
 # one `[[talent]]`. The trees and the systems are one file each in
 # trees/ and systems/. This file holds only the notes below: a file
 # of comments defines nothing. Saves name talents by id, so a new talent is a new file (never
@@ -77,7 +77,7 @@
 #   threat { value }              every attack threatens a critical that many points lower
 #   reroll_fumble                 a natural 2 on an attack roll is rolled again, once
 #   ally_mod { to_hit, protection, count, duration_percent, lasting, most }   what its allies
-#                                 get (allies.toml; spec §8 "Allies"): that to-hit on their
+#                                 get (allies.toml): that to-hit on their
 #                                 attacks and that Protection, read through their master; and its
 #                                 summon spells: `count` (0 to 6) more come every call, a call
 #                                 lasts `duration_percent` (0 to 500) longer, `lasting = true`
@@ -287,7 +287,7 @@
 #   free_blow { trigger, one_in } a free blow: "cleave", "great_cleave", "riposte",
 #                                 "opportunist", "flurry" (a melee attack with nothing in
 #                                 hand strikes twice), or "gatekeeper" (a hostile stepping up
-#                                 beside it is struck; spec §8 "Free blows"); `one_in` (1 to
+#                                 beside it is struck); `one_in` (1 to
 #                                 100, the gatekeeper's only) strikes it one time in that many,
 #                                 scaled by the stance's `gatekeeper` (data/stances.toml)
 #   weapon { role, skill, to_hit, damage, threat, ranks, speed, reload, ease, bash, shield, crit, at_rank }
@@ -326,7 +326,7 @@
 #                                 it rises with hp_percent of its hit points, damage of
 #                                 damage_type strikes every creature within radius (the spell
 #                                 effect, ../effects.toml), the ice there melts, and it suffers
-#                                 status (spec §8 "Birth sign")
+#                                 status
 #   reborn_whole                  its rising from the ashes brings it back whole: every hit
 #                                 point, every status and disease gone, and no rising status
 #   second_rising                 it may rise from the ashes once more
@@ -353,7 +353,7 @@
 #   penalty_percent { value }     what its statuses take off its scores, that percent more
 #                                 (negative: less; raises are untouched)
 #   disease_checks { value }      added to its disease checks
-#   drain_checks { value }        added to its checks against a drain (spec §8 "Stats")
+#   drain_checks { value }        added to its checks against a drain
 #   checks { stat, value }        added to every check of that stat it makes
 #   disease_recovery { value }    a disease needs that many fewer checks won in a row to go
 #   disease_interval_percent { value }   a disease's progressions come that percent further
@@ -403,7 +403,7 @@
 #   small_target { value }        Dodge added against the attacks of creatures larger than it
 #   spell_damage_percent { value }   the damage bursts and bolts do it, that percent more
 #                                 (negative: less)
-#   Class abilities' own (spec §8 "Class abilities"; the actives are used from the abilities
+#   Class abilities' own (the actives are used from the abilities
 #   menu, each one's id the ability's id, `use:rage`):
 #   weapon_marks { role, value }  the marks its attacks earn in that role's weapon skills, that
 #                                 percent more; without `role`, in every weapon skill and style
@@ -489,7 +489,7 @@
 #   wind_step { status }          the active Step of the wind: a degree of the status
 #                                 (Light-footed) for no time (what it costs is the talent's
 #                                 `resource`: a point of ki); refused while it lasts
-#   The casters' (spec §8 "Class abilities"; the priest's, druid's, wizard's, witch's):
+#   The casters' (the priest's, druid's, wizard's, witch's):
 #   spell_type { arc_chance, when }   the percent its spells of the damage types `when` arc at
 #                                 (`arc` in `[types]`, ../spells.toml; docs/dev/spells.md "Spell
 #                                 types"): Conductor
@@ -615,8 +615,7 @@
 #   familiar_sight                it sees what its familiar sees, by the familiar's eyes and nose
 #                                 (Familiar's sight; familiars.toml's `nose` at the least); no buff
 #                                 crosses
-#   song { id, on, status, severity, resource, cost, mana, check, difficulty }   a song (spec §8
-#                                 "Class abilities", the bard's songs): the class active `id`
+#   song { id, on, status, severity, resource, cost, mana, check, difficulty }   a song (the bard's songs): the class active `id`
 #                                 (`use:inspire`, `use:lullaby`; an active that sings), sung aloud (heard as a
 #                                 voice, louder than a chat) for the time of a `song`, refused on
 #                                 the overworld and while Silenced. It costs ONE thing: `cost`
@@ -699,7 +698,7 @@
 #                                 `threat` (0 to 10) lower, and ignores all Protection if
 #                                 ignores_protection; it fades the moment it leaves the hand
 #                                 and is never thrown. `phrase` is its description's power line
-#   A birth sign's actives (spec §8 "Birth sign"; the abilities menu's Birth sign group, the
+#   A birth sign's actives (the abilities menu's Birth sign group, the
 #   talent's id the ability's id, `use:horns_grace`):
 #   horns_grace { cures, diseases, cooldown, degrees }   the active Horn's grace: the statuses
 #                                 `cures` end and the first `diseases` diseases that show are

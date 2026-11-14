@@ -1,4 +1,4 @@
-//! The thief's Openings (spec §8 "Resources" and "Class abilities"; #251, #1463, #1464): Sneak
+//! The thief's Openings (#251, #1463, #1464): Sneak
 //! attack (level 1) grants the pool, a sneak attack that hits builds it, it slips away with
 //! time, Exploit (level 1) spends every one held on a sneak attack whatever the foe knows, its
 //! dice by the openings spent (2d6 each from Improved sneak attack, 32), Low blow's stun and

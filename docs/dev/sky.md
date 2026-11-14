@@ -1,9 +1,9 @@
 # Sunlight, moonlight, and weather
 
 Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
-rules it implements are in spec/05-visibility.md. Keep it current with the code, as CLAUDE.md says.
+rules it implements are in spec/04-perception.md. Keep it current with the code, as CLAUDE.md says.
 
-**Sunlight** (spec §5 "Sunlight", `light/sun.rs`): a level gets the sun and sky iff
+**Sunlight** (`light/sun.rs`): a level gets the sun and sky iff
 `LevelKind::is_sky_exposed()` (outdoor and the overworld; add new sky kinds there, nowhere
 else); terrain `roofed` never does. `Sun::at(time)` reads a per-minute table (`SUN_PATH`) built by
 `const fn`s with integer math only (fixed-point sine), so no runtime trig; a test pins a hash of
@@ -17,7 +17,7 @@ sky light goes into base light. `PerceptionView::sun()` gives the sun and sky of
 sky-exposed level (`is_up`, `is_night`, `elevation`), e.g. for day/night rules. The showcase
 courtyard (`levels/courtyard.toml`, scenario `courtyard`) is up the hub stairs nook's `<`.
 
-**Moonlight** (spec §5 "Moonlight", `light/moon.rs`): the moons are `data/sky.toml`
+**Moonlight** (`light/moon.rs`): the moons are `data/sky.toml`
 (`content/sky.rs`, `MoonDef`, `Content::moons()`; optional, none without the file, so test
 fixtures have dark nights unless they add one). `MoonDef::phase_at(time)` is its age over its
 period (16-bit fraction, 0 new, half full). `Moon::at` walks the sun's path (`Sun::at_minute`)
@@ -36,7 +36,7 @@ day as an ordinal, `Calendar::month_name`); the status bar shows neither. Tune m
 from disk without a rebuild. The wiki's moons and overworld-sight tables come from `sky.toml`
 (`Moon::brightest`); run `cargo xtask wiki` after changing it.
 
-**Weather** (spec §5 "Weather", `weather.rs`; data `data/weather.toml`, `content/weather.rs`,
+**Weather** (`weather.rs`; data `data/weather.toml`, `content/weather.rs`,
 `Climate`, `WeatherDef`, `Content::climate()`; optional, always clear without the file, so test
 fixtures without it have clear skies — `ContentFiles::remove("data/weather.toml")` gives built-in
 content a clear sky, as the overworld tests do): stateless, `weather::conditions(seed, time,

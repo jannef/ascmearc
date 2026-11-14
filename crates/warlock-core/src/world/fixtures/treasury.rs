@@ -1,4 +1,4 @@
-//! The hint on arrival (spec §7 "Special rooms"; docs/design/chests-and-treasure.md §6.5): on
+//! The hint on arrival (docs/design/chests-and-treasure.md §6.5): on
 //! every arrival on a level (and at the start of a run), for each effect with an `arrive` line
 //! that has a room on the level the player has not entered (nor stands in), the line, once per
 //! effect however many such rooms there are. Nothing is stored: `SpecialRoom::entered` is the

@@ -122,7 +122,7 @@ fn footsteps_text(step_noise: u16) -> String {
 }
 
 /// Walkable dungeon and outdoor terrain on which steps are louder or quieter than normal, by how
-/// loud, loudest first (spec §5 "Hearing"); the overworld is silent.
+/// loud, loudest first; the overworld is silent.
 pub(super) fn footsteps(content: &Content) -> String {
     let ids = overworld_ids(content);
     let walked: Vec<&TerrainDef> = (content.terrain_defs().iter())

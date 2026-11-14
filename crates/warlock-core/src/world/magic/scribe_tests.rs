@@ -1,4 +1,4 @@
-//! Writing scrolls (spec §8 "Scrolls"; the witch and wizard design §6.1): the price by spell and
+//! Writing scrolls (the witch and wizard design §6.1): the price by spell and
 //! by Archmage, the time, interruption, the scroll made known at its own rung, every shipped
 //! spell writable, the refusals, the wizard's table, the dumps, saves and replays.
 

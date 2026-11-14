@@ -4,7 +4,7 @@ use crate::content::{Choice, ResourceId, TalentId, TreeId};
 use crate::skills::SkillId;
 use serde::Serialize;
 
-/// One of the player's own trained skills, as they know it (spec §8 "Skills"): its value and a
+/// One of the player's own trained skills, as they know it: its value and a
 /// coarse sense of how near its next point is. Never its marks or what it gives. (Its active use,
 /// if it has one, is an ability: [`PerceptionView::abilities`].)
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
@@ -16,7 +16,7 @@ pub struct OwnSkill {
     pub progress: u8,
 }
 
-/// One of the player's own alternative resources (spec §8 "Resources"), as the status bar and
+/// One of the player's own alternative resources, as the status bar and
 /// the character screen show it: what it holds and its maximum. Never its pace.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct OwnResource {
@@ -28,7 +28,7 @@ pub struct OwnResource {
     pub marked: bool,
 }
 
-/// A grimoire the player could learn from (spec §8 "Spells": "Learning"): one teaching a spell
+/// A grimoire the player could learn from: one teaching a spell
 /// they do not know, or one of a spell they know below its last rank (a deepening, "Ranks"),
 /// with the chance in words ("easy", "a struggle", "far beyond you", or "certain"). Never the
 /// number.
@@ -42,7 +42,7 @@ pub struct OwnStudy {
     pub chance: &'static str,
 }
 
-/// A spell the player could write a scroll of (spec §8 "Scrolls": the wizard's Scribe), as the
+/// A spell the player could write a scroll of (the wizard's Scribe), as the
 /// scribe list shows it: what it costs them in mana (they know their own costs) and how long it
 /// takes at a normal pace.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -52,7 +52,7 @@ pub struct OwnScribe {
     pub time: crate::time::Duration,
 }
 
-/// One of the player's own talents (spec §8 "Talents"), as the Talents page and the character
+/// One of the player's own talents, as the Talents page and the character
 /// screen list it: its name for its choice and what it does in the
 /// game's words. Never a rule's number.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -64,29 +64,29 @@ pub struct OwnTalent {
     /// The choice it was taken for, by id.
     pub choice: Option<String>,
     pub description: String,
-    /// Given, not picked: a birth sign's gift (spec §8 "Birth sign") or a race's.
+    /// Given, not picked: a birth sign's gift or a race's.
     pub granted: bool,
-    /// Their race gives it (spec §8 "Talents": the humans' Versatile), a granted talent of the
+    /// Their race gives it (the humans' Versatile), a granted talent of the
     /// racial tree; `granted` too.
     pub race: bool,
     /// A birth sign's flaw.
     pub flaw: bool,
-    /// Their class gives it (spec §8 "Class abilities"): a class ability, or a talent their
+    /// Their class gives it: a class ability, or a talent their
     /// class's table hands out at their level or below.
     pub class: bool,
-    /// What it gives once in a life has been given (spec §8 "Birth sign": Rise from the ashes,
+    /// What it gives once in a life has been given (Rise from the ashes,
     /// risen): "(spent)".
     pub spent: bool,
-    /// A forgotten altar gave it (spec §7 "Special rooms": Chosen, Forsaken).
+    /// A forgotten altar gave it (Chosen, Forsaken).
     pub boon: bool,
-    /// The background story gave it (spec §8 "Background story"): "(story)", "(story, flaw)".
+    /// The background story gave it: "(story)", "(story, flaw)".
     pub story: bool,
     /// A profane gift, of this kind (docs/design/profane-gifts.md §11): "(profane)", "(profane,
     /// bane)" in the dump; never an altar's or a story's.
     pub profane: Option<crate::content::GiftKind>,
 }
 
-/// How fresh food smells to those who can tell (spec §8 "Birth sign": Hound's nose): a word,
+/// How fresh food smells to those who can tell (Hound's nose): a word,
 /// never its age.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Freshness {
@@ -107,7 +107,7 @@ impl Freshness {
     }
 }
 
-/// A talent as the Talents page and the level-up screen list it (spec §8 "Talents"): whether
+/// A talent as the Talents page and the level-up screen list it: whether
 /// the player holds it, what it asks and whether each part holds, and the choices it may be
 /// taken for now.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -135,7 +135,7 @@ pub struct NeedView {
     pub met: bool,
 }
 
-/// The player's experience (spec §8 "Experience"), all of which they are shown.
+/// The player's experience, all of which they are shown.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
 pub struct Progress {
     pub level: u8,

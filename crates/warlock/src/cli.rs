@@ -1,4 +1,4 @@
-//! Command-line options of the game binary (see spec §9).
+//! Command-line options of the game binary.
 
 use crate::ui::ScreenName;
 use bevy::prelude::*;
@@ -65,7 +65,7 @@ pub struct Args {
 
     /// Force reduced effects on: no glyph animation, light flicker, movement slides, camera
     /// easing, particles, bloom, heat haze, screen fades, screen shake, or falling rain, and spell
-    /// effects are still flashes (spec §4.7). The settings file can turn them on too; this flag
+    /// effects are still flashes. The settings file can turn them on too; this flag
     /// always wins.
     #[arg(long)]
     pub reduced_effects: bool,
@@ -122,7 +122,7 @@ pub struct Args {
     pub dry_run: bool,
 
     /// Put every key back to its default and save that, then start as usual: the way back from
-    /// keys that cannot be used (spec §6 "Rebinding").
+    /// keys that cannot be used.
     #[arg(long)]
     pub reset_keys: bool,
 

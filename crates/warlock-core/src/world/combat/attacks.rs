@@ -1,10 +1,9 @@
-//! The player's attacks as the character screen shows them (spec §6 "Character screen", §8
-//! "Combat"): for each attack they have ready — the main hand's blow (or bare hands'), the off
-//! hand's while they fight with two weapons, and a shot or throw with what the Missile weapon
-//! slot holds — its to-hit, damage, and reach, taken from the very [`Profile`] a strike would
-//! roll ([`Actor::melee`], [`Actor::off_hand_blow`], [`Actor::ranged`], [`Actor::thrown`], with
-//! the fighting style in use and everything else those read), so the sheet can never drift
-//! from the rules.
+//! The player's attacks as the character screen shows them: for each attack they have ready — the
+//! main hand's blow (or bare hands'), the off hand's while they fight with two weapons, and a shot
+//! or throw with what the Missile weapon slot holds — its to-hit, damage, and reach, taken from the
+//! very [`Profile`] a strike would roll ([`Actor::melee`], [`Actor::off_hand_blow`],
+//! [`Actor::ranged`], [`Actor::thrown`], with the fighting style in use and everything else those
+//! read), so the sheet can never drift from the rules.
 //!
 //! What the player does not know stays out: the profiles are built for the actor as it would
 //! be if its unidentified items had no magic ([`Stack::as_known`]), so an unknown affix moves

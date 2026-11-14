@@ -1,4 +1,4 @@
-//! Drinking potions (spec §8 "Potions"): the Consume command's action, [`Action::Eat`], hands a
+//! Drinking potions: the Consume command's action, [`Action::Eat`], hands a
 //! stack with a `drink` table here instead of starting a meal ([`World::eat`]).
 //!
 //! - **A drink** takes the `drink` action's time (one turn) and one of the stack, from the pack

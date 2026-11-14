@@ -1,4 +1,4 @@
-//! Character creation (spec §8 "Character creation"): a run starts as the chosen character, or
+//! Character creation: a run starts as the chosen character, or
 //! as the scenario's; its race gives the player's eyes; its rolls, birth date, and sign follow
 //! from the seed, the choices, and the start date; the character is saved and hashed.
 

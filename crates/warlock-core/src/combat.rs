@@ -1,4 +1,4 @@
-//! Combat (spec §8 "Combat"): hitting, Defence, criticals, damage, hit points, and
+//! Combat: hitting, Defence, criticals, damage, hit points, and
 //! regeneration. These are the pure rules; `world/combat/fight.rs` applies them to actors.
 //!
 //! - **Hitting**: an attack hits when 2d12 (its *natural* roll, 2 to 24) plus its to-hit is at
@@ -20,7 +20,7 @@
 //!   the Pv is the target's against the kind of damage ([`Protection`]: a piece may stand
 //!   better or worse against one physical kind), and an element is never soaked. A hit may be
 //!   soaked to nothing ([`Strike::Soaked`]).
-//! - **Damage types** (spec §8 "Damage types"): an attack does one of its [`Kinds`], whichever
+//! - **Damage types**: an attack does one of its [`Kinds`], whichever
 //!   is better against the target (decided before the dice, no draw), and may carry
 //!   [`Rider`]s of other kinds (a flaming arrow's fire), rolled after its own dice. After the
 //!   soak, the target's [`Resistances`] take their percentage off each kind
@@ -111,7 +111,7 @@ pub fn hit_ways(to_hit: i32, defence: i32) -> u32 {
 /// stack, in order (the order a miss is attributed in).
 macro_rules! categories {
     ($($(#[$doc:meta])* $variant:ident = $id:literal, $name:literal, $stacks:literal;)+) => {
-        /// A category of Defence, after D&D's third edition (spec §8 "Combat").
+        /// A category of Defence, after D&D's third edition.
         #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
         #[serde(rename_all = "snake_case")]
         pub enum Category {
@@ -161,7 +161,7 @@ categories! {
     Dodge = "dodge", "Dodge", true;
     /// Magic (none yet).
     Deflection = "deflection", "Deflection", false;
-    /// Solid terrain an incorporeal creature stands inside (spec §8 "Incorporeal creatures").
+    /// Solid terrain an incorporeal creature stands inside.
     Wall = "wall", "Wall", false;
 }
 
@@ -253,35 +253,34 @@ pub struct Profile {
     pub damage: Roll,
     /// Added to every roll of the damage dice.
     pub bonus: i32,
-    /// A die of the damage dice showing this or less is drawn once more (a spell's roll hook,
-    /// spec §8 "Spells": "Hooks"; 0 for every blow).
+    /// A die of the damage dice showing this or less is drawn once more (a spell's roll hook:
+    /// "Hooks"; 0 for every blow).
     pub reroll: u32,
     /// The lowest natural roll that threatens a critical.
     pub threat: u8,
     /// How many times a confirmed critical rolls the damage.
     pub crit: u8,
-    /// Added to the roll that confirms a critical, on top of the to-hit (spec §8 "Class
-    /// abilities": Peerless).
+    /// Added to the roll that confirms a critical, on top of the to-hit (Peerless).
     pub confirm: i32,
-    /// Every hit is a critical, with no confirmation roll (spec §8 "Class abilities": the
+    /// Every hit is a critical, with no confirmation roll (the
     /// Master thief's exploit of five or more).
     pub sure_critical: bool,
     /// Dice rolled with every roll of the damage, after its own (a magic weapon's "adds 1d4
-    /// damage"; spec §8 "Magic items").
+    /// damage").
     pub extra: Option<Dice>,
     /// How much of the target's Protection it ignores (a weapon's or a missile's
     /// `penetration`: a war hammer, a crossbow bolt).
     pub penetration: i32,
     /// How much more of the target's Protection a confirmed critical ignores (Armour-breaker).
     pub critical_penetration: i32,
-    /// The kinds of damage its own dice do (spec §8 "Damage types"): a blow does whichever is
+    /// The kinds of damage its own dice do: a blow does whichever is
     /// better against its target; none for an untyped attack.
     pub kinds: Kinds,
     /// Damage of other kinds added to every roll (a flaming arrow's fire, a magic weapon's
     /// "adds 1d4 fire damage"), rolled after the extra die, in this order; never soaked.
     pub riders: Vec<Rider>,
     /// What a hit that leaves its target alive causes besides its damage, by its chance: the
-    /// power of the unique weapon it is made with (spec §8 "Magic items": Inflict; a natural
+    /// power of the unique weapon it is made with (Inflict; a natural
     /// attack's `on_hit` is read from its creature).
     pub on_hit: Vec<crate::content::OnHit>,
 }
@@ -301,7 +300,7 @@ pub struct Attack {
     pub strength: Option<u8>,
     /// A finesse weapon: in melee, Dexterity adds to hit instead of Strength.
     pub finesse: bool,
-    /// The kinds of damage it does (spec §8 "Damage types"): one, or two of which a blow does
+    /// The kinds of damage it does: one, or two of which a blow does
     /// the better; none without damage types in content.
     pub kinds: Kinds,
 }
@@ -363,7 +362,7 @@ impl Profile {
         Self::of(attack, attack.to_hit + dexterity - short, -short)
     }
 
-    /// This attack with what a weapon skill's rank gives (spec §8 "Weapon skills"; a fighting
+    /// This attack with what a weapon skill's rank gives (a fighting
     /// style's adds to it): more to hit, more to every roll of the damage, a wider threat range
     /// (never past a natural 2), and a bigger critical multiplier (never past ×5).
     pub fn with(self, benefit: &Benefit) -> Self {
@@ -388,7 +387,7 @@ impl Profile {
         }
     }
 
-    /// An attack with no one's stats behind it (a trap's, spec §8 "Traps"): its own to-hit and
+    /// An attack with no one's stats behind it (a trap's): its own to-hit and
     /// damage, nothing added.
     pub fn bare(attack: &Attack) -> Self {
         Self::of(attack, attack.to_hit, 0)
@@ -442,7 +441,7 @@ pub struct Target {
     pub defence: Defence,
     pub protection: Protection,
     pub resistances: Resistances,
-    /// It has no vitals to find (spec §8 "Surprise and sneak attacks"): immune to criticals, a
+    /// It has no vitals to find: immune to criticals, a
     /// threat is a plain hit, with no confirmation roll drawn.
     pub no_criticals: bool,
 }
@@ -490,8 +489,7 @@ pub enum Strike {
     Hit { critical: bool },
     /// It hit, but the target's Protection took all of its damage: it glanced off.
     Soaked,
-    /// It hit, but the target resisted all of what was left: it did no harm (spec §8 "Damage
-    /// types").
+    /// It hit, but the target resisted all of what was left: it did no harm.
     Resisted,
 }
 
@@ -620,7 +618,7 @@ pub fn strike_with(profile: &Profile, target: &Target, rng: &mut Rng, reroll_fum
     }
 }
 
-/// The damage `protection` takes off a hit (spec §8 "Combat": Protection, "Pv"): one draw in
+/// The damage `protection` takes off a hit (Protection, "Pv"): one draw in
 /// [`soaks`], uniform; nothing, and no draw, when it is 0 or less (an unprotected target, a
 /// penetration that ignores all of it, or an element, which no armour stops).
 pub fn soak(protection: i32, rng: &mut Rng) -> i32 {
@@ -639,7 +637,7 @@ pub fn soaks(protection: i32) -> std::ops::RangeInclusive<i32> {
 }
 
 /// Whether a blow of `damage` against a target of `max` hit points is a **big hit**: at least a
-/// third of them (spec §8 "Status effects": it may make the target bleed).
+/// third of them (it may make the target bleed).
 pub fn big_hit(damage: i32, max: i32) -> bool {
     damage > 0 && 3 * i64::from(damage) >= i64::from(max.max(1))
 }

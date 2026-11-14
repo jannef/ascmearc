@@ -1,4 +1,4 @@
-//! Doors (spec §8 "Doors"): kicking them in, the keys, and picking locks.
+//! Doors: kicking them in, the keys, and picking locks.
 
 use super::order;
 use super::util::{capital, glyph, percent_of};
@@ -11,7 +11,7 @@ use warlock_core::door;
 const KICK_STRENGTHS: [u8; 8] = [3, 6, 9, 10, 12, 15, 18, 20];
 
 /// How often a kick breaks each door that can break, and a statue, by the kicker's Strength
-/// score (spec §8 "Doors", "Statues").
+/// score.
 pub(super) fn doors(content: &Content) -> String {
     let mut out = String::from("| Door or fixture | Sturdiness |");
     let mut rule = String::from("|---|:---:|");
@@ -21,7 +21,7 @@ pub(super) fn doors(content: &Content) -> String {
     }
     let _ = writeln!(out, "\n{rule}");
     for t in content.terrain_defs() {
-        // A door kicked in, or a statue kicked apart (spec §8 "Statues").
+        // A door kicked in, or a statue kicked apart.
         let Some(sturdiness) = t.kicked_in.map(|(_, s)| s).or(t.statue) else {
             continue;
         };
@@ -38,7 +38,7 @@ pub(super) fn doors(content: &Content) -> String {
 /// what Open lock gives.
 const PICK_BONUSES: [i32; 7] = [0, 2, 4, 6, 8, 10, 12];
 
-/// How often a try picks a lock, by its difficulty and what the picker adds (spec §8 "Doors"): a
+/// How often a try picks a lock, by its difficulty and what the picker adds: a
 /// lock of the usual difficulty, then the usual lock deeper in each branch whose locks harden.
 pub(super) fn lock_picking(content: &Content) -> String {
     let mut out = String::from("| Lock | Difficulty |");
@@ -68,7 +68,7 @@ pub(super) fn lock_picking(content: &Content) -> String {
     out
 }
 
-/// The keys and the locks they open (spec §8 "Doors").
+/// The keys and the locks they open.
 pub(super) fn keys(content: &Content) -> String {
     let mut out = String::from("| Key | Glyph | Opens |\n|---|:---:|---|\n");
     for (_, o) in order::objects(content) {

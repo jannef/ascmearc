@@ -1,4 +1,4 @@
-# Unidentified wands (spec §8 "Magic items": "Wands"), as unidentified scrolls are (the format
+# Unidentified wands, as unidentified scrolls are (the format
 # of scroll_labels.toml): a wand type the player has not yet used or identified shows as "an oak
 # wand" (and in one plain colour) until they do. Every wand type gets its own label at the start
 # of a run, drawn after the scrolls' labels from the same stream, so this file never changes a

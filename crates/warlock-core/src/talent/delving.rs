@@ -58,7 +58,7 @@ pub enum DelvingEffect {
     /// Its door kicks are this percent louder (negative: quieter; Lockbreaker).
     KickNoisePercent { value: i32 },
     /// What a chest it kicks open holds breaks this percent more often (negative: less;
-    /// Lockbreaker; spec §8 "Chests").
+    /// Lockbreaker).
     SmashDestroyPercent { value: i32 },
     /// Its digging does this percent more work a turn.
     DigPercent { value: i32 },

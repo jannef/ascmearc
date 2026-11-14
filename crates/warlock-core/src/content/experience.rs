@@ -1,4 +1,4 @@
-//! Experience (`assets/data/experience.toml`, spec §8 "Experience"): the player's level
+//! Experience (`assets/data/experience.toml`): the player's level
 //! thresholds (a curve written in kills of the player's own level, scaled by their race's and
 //! their class's experience factors), the hit points and mana a level gives, what a kill is worth
 //! at the player's level (classic World of Warcraft scaling), and the small rewards for discovery
@@ -52,7 +52,7 @@ struct Early {
     percent: Vec<u8>,
 }
 
-/// What levels bring besides hit points (`[levels]`; spec §8 "Talents").
+/// What levels bring besides hit points (`[levels]`).
 #[derive(Clone, Copy, Debug, Default, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct Levels {
@@ -62,8 +62,8 @@ pub struct Levels {
     /// Talent picks at creation for a character the player chose (a class may add more).
     #[serde(default)]
     pub creation_talents: u8,
-    /// The highest level a class reaches unless its file says otherwise (spec §8 "Prestige
-    /// classes": `ClassDef::max_level`); 0, or no table: the curve's `max_level`.
+    /// The highest level a class reaches unless its file says otherwise (`ClassDef::max_level`); 0,
+    /// or no table: the curve's `max_level`.
     #[serde(default)]
     pub class_max: u8,
 }
@@ -146,7 +146,7 @@ pub struct SpellXp {
     pub per_level: u32,
 }
 
-/// A character's experience factor (spec §8 "Experience"): their race's and their class's
+/// A character's experience factor: their race's and their class's
 /// `experience`, in percent, which scale every threshold (Angband's `expfact`). 100 % each
 /// without a character.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -193,8 +193,8 @@ impl Factor {
     }
 }
 
-/// How a race's or a class's `experience` reads when it is chosen (spec §6 "Character
-/// creation"): "Levels come slowly." from 115 %, "Levels come quickly." to 95 %, else nothing.
+/// How a race's or a class's `experience` reads when it is chosen: "Levels come slowly." from 115
+/// %, "Levels come quickly." to 95 %, else nothing.
 pub fn pace_words(experience: u16) -> Option<&'static str> {
     match experience {
         115.. => Some("Levels come slowly."),
@@ -355,7 +355,7 @@ impl Experience {
         self.hp_level
     }
 
-    /// The last level whose gain adds mana (spec §8 "Mana"); 0 when the file says none.
+    /// The last level whose gain adds mana; 0 when the file says none.
     pub fn mana_level(&self) -> u8 {
         self.mana_level
     }
@@ -381,19 +381,18 @@ impl Experience {
         self.discovery
     }
 
-    /// Every this many levels brings a talent pick (spec §8 "Talents"); 0: never.
+    /// Every this many levels brings a talent pick; 0: never.
     pub fn talent_every(&self) -> u8 {
         self.levels.talent_every
     }
 
-    /// The talent picks a character the player chose takes at creation, before the class's
-    /// (spec §8 "Talents").
+    /// The talent picks a character the player chose takes at creation, before the class's.
     pub fn creation_talents(&self) -> u8 {
         self.levels.creation_talents
     }
 
-    /// The highest level a class reaches when its file names none (`[levels] class_max`; spec
-    /// §8 "Prestige classes"): the curve's top without it.
+    /// The highest level a class reaches when its file names none (`[levels] class_max`): the
+    /// curve's top without it.
     pub fn class_max(&self) -> u8 {
         match self.levels.class_max {
             0 => self.max_level,
@@ -433,7 +432,7 @@ impl Experience {
     }
 
     /// The level a character of `factor` with `xp` has reached, at most `cap` (their classes'
-    /// highest level, spec §8 "Prestige classes"; the curve's top caps it too). XP past the cap
+    /// highest level; the curve's top caps it too). XP past the cap
     /// counts, and buys nothing until the cap rises.
     pub fn level_for(&self, xp: u32, factor: Factor, cap: u8) -> u8 {
         (1..=self.max_level.min(cap))
@@ -843,7 +842,7 @@ mod tests {
 
     #[test]
     fn mana_comes_with_levels_up_to_mana_level() {
-        // Mana grows to the last level, 60 (spec §8 "Spells").
+        // Mana grows to the last level, 60.
         assert_eq!(
             Experience::parse("x", SHIPPED).expect("valid").mana_level(),
             60

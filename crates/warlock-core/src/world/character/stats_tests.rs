@@ -1,4 +1,4 @@
-//! Stats (spec §8 "Stats"): every actor starts with its scores and potentials, they are saved and
+//! Stats: every actor starts with its scores and potentials, they are saved and
 //! hashed, and the player perceives only their own scores.
 
 use crate::content::ContentFiles;

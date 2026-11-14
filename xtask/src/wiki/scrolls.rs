@@ -1,4 +1,4 @@
-//! Scrolls (spec §8 "Scrolls").
+//! Scrolls.
 
 use super::traps::sound_text;
 use super::util::{Term, anchored, capital};

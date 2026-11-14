@@ -558,7 +558,7 @@ Replays record the spec only, as today. Content changes to the gifts change hash
 
 ## 11. Implementation plan
 
-Issue-ready items. Each becomes one GitHub issue (title as given), one branch, one PR, with the spec (`spec/08i-character.md` "Birth sign", `spec/07e-characters.md` the data), `docs/dev/character-creation.md`, CLAUDE.md (the wiki exception of §9.4), and the wiki updated in the same PR, as the repo's rule is. Sizes S (a day), M (two to three). Progression references: the talents core is **#229**; buff and cooldown statuses **#227** (PR #258); free blows **#228** (PR #260); the other progression items are #226–#253 (skill rolls #230, the level-up screen and the Talents step #236); alignment is #254; mana #223; damage types #151; names #218; the wording issue #256.
+Issue-ready items. Each becomes one GitHub issue (title as given), one branch, one PR, with the spec (`spec/12-character.md` "Birth sign", `spec/12-character.md` the data), `docs/dev/character-creation.md`, CLAUDE.md (the wiki exception of §9.4), and the wiki updated in the same PR, as the repo's rule is. Sizes S (a day), M (two to three). Progression references: the talents core is **#229**; buff and cooldown statuses **#227** (PR #258); free blows **#228** (PR #260); the other progression items are #226–#253 (skill rolls #230, the level-up screen and the Talents step #236); alignment is #254; mana #223; damage types #151; names #218; the wording issue #256.
 
 | # | Issue title | Sections | Depends on | Size | Parallel with |
 |---|---|---|---|---|---|

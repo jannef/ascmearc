@@ -1,4 +1,4 @@
-//! Potions that lend a status for a while (spec §8 "Potions", #567): boosts, visions, quickness,
+//! Potions that lend a status for a while (#567): boosts, visions, quickness,
 //! and resistances drunk through `eat:`; how they stack and wear off; Lasting draughts and
 //! Cauldron-wise; the content checks of `vision` and `resist` on statuses; the helpful draughts
 //! of kind `status` (the potions wave 2 design §4.1) and their checks.

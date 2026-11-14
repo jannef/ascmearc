@@ -1,4 +1,4 @@
-# Recipes (spec §8 "Skills": professions; docs/design/professions.md §6, docs/dev/crafting.md): what
+# Recipes (professions; docs/design/professions.md §6, docs/dev/crafting.md): what
 # the professions make, one file a recipe under `recipes/<skill>/`, the directory the profession.
 # A skill with a directory of recipes is a profession: the abilities menu lists one row for it,
 # "Metalcraft…", which opens its screen of recipes. Recipes are known by skill value, never

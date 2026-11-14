@@ -1,4 +1,4 @@
-# A haunted room (spec §7 "Special rooms"): a fine camp spot that is not. While the player rests
+# A haunted room: a fine camp spot that is not. While the player rests
 # inside, at every full hour something undead of the floor's danger comes inside, out of view where
 # it can. Consecrate lifts it.
 [[effect]]

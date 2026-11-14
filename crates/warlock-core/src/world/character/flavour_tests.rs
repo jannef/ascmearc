@@ -1,4 +1,4 @@
-//! The calendar and moon flavour of the gifts (spec §8 "Birth sign"; `[flavour]`): the
+//! The calendar and moon flavour of the gifts (`[flavour]`): the
 //! birthday heals faster and is noted at its dawn, the birth month halves the sign actives'
 //! cooldowns, and a full moon lengthens the gifts' reaches; content without the table has none
 //! of it.

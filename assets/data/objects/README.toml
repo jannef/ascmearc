@@ -5,7 +5,7 @@
 # new file (never edited into another's), a renamed id is a renamed file, and the same id in two
 # files is a load error naming both (docs/dev/content.md).
 #
-# Objects: things that lie on the floor and are picked up and carried (spec §7).
+# Objects: things that lie on the floor and are picked up and carried.
 #
 # Every object defines:
 #   id        stable name used by level files (`objects = ["dagger", "arrow*12"]`)
@@ -33,8 +33,8 @@
 #             only in the item's description, which lists every part. Materials are never
 #             hidden: an unidentified amulet shows that it is gold and ruby
 #   ornament  the part a gem becomes when loot sets this object with one (a part id: `tip`),
-#             instead of its class's in gems.toml (spec §7 "Gems"): staves are gem-tipped
-#   made_of   what its main part may be made of instead (#194, spec §7 "Materials"): groups of
+#             instead of its class's in gems.toml: staves are gem-tipped
+#   made_of   what its main part may be made of instead (#194): groups of
 #             materials (materials/README.toml: metal, wood, bone, stone, hide, cloth), material
 #             ids, or "any" (every material of a group: jewellery), e.g. `made_of = ["metal",
 #             "dragonbone"]`; it must allow the part's own material. A weapon's or ammunition's
@@ -57,7 +57,7 @@
 #
 # A loose gem is gems.toml's `object` (gem.toml): one object for every gem, its gem, size, and cut
 # carried by each gem (level files place one as `"gem:ruby"`, of the plain size and cut).
-#   key       a key (spec §8 "Doors"): the lock id it opens (levels lock doors with `lock =
+#   key       a key: the lock id it opens (levels lock doors with `lock =
 #             "id"`), or "*" for a skeleton key, which opens every lock
 #
 # Things that can be worn or wielded also say where they go (equipment, slots.toml):
@@ -65,14 +65,14 @@
 #              goes on either hand); none: it cannot be worn or wielded
 #   two_handed takes both hands (main and off hand); default false
 #   light_weapon  a light one-handed weapon (a dagger, a short sword): it goes in either hand, so
-#              a second one in the off hand fights with two weapons (spec §8 "Fighting styles");
+#              a second one in the off hand fights with two weapons;
 #              default false. Only the off hand's own things (a shield) and light weapons go
 #              there
 #   ammo       the kind of ammunition it is (`ammo = "arrow"`)
 #   launches   the kind of ammunition a missile weapon shoots (`launches = "arrow"`); launchers
 #              and ammunition pair by that kind
 #
-# Weapons and armour say what they do in a fight (spec §8 "Combat"; only for things with a slot):
+# Weapons and armour say what they do in a fight (only for things with a slot):
 #   damage     a weapon's damage dice (`1d8`); a launcher's are those of its shots and carry its
 #              draw weight (`1d8+2`). Melee blows add the wielder's Strength modifier; shots add
 #              nothing. A missile weapon without them does not shoot
@@ -94,14 +94,14 @@
 #   shield     Defence while held (the Shield category)
 #   spell_cost_percent  worn or held, a spell costs this percent more mana (what is
 #              worn adds up; spells.toml): heavy armour and big shields hinder casting
-#   bash       a shield's damage dice when bashing with it (spec §8 "Weapon skills"); the
+#   bash       a shield's damage dice when bashing with it; the
 #              wielder's Strength modifier adds to it, as to every melee blow
 #   penetration how much of a target's Protection a blow or a shot with it ignores (
 #              weapons and ammunition: a shot's is its launcher's and its ammunition's together;
 #              picks, war hammers, stilettos, crossbow bolts). Never shown as a number
 # Within a category of Defence only the best bonus counts.
 #
-# Damage types (spec §8 "Damage types"; damage_types.toml):
+# Damage types (damage_types.toml):
 #   damage_type the kind of damage a weapon does (`"slashing"`), or two of which a blow does
 #              whichever is better against its target (`["slashing", "piercing"]`: the kind it
 #              resists least, then the one its armour stands least against); a launcher's is its
@@ -119,14 +119,14 @@
 #              `protection`: { slashing = 1, piercing = -1 } (chain mail turns a blade well and
 #              a point badly); armour with protection only
 #
-# Weapon skills (spec §8 "Weapon skills"):
+# Weapon skills:
 #   category   the weapon skill a weapon trains and draws on (an id in weapon_skills.toml; every
 #              weapon of the game names one): a melee skill for what is wielded in a hand, a
 #              launcher skill for a missile weapon, the thrown skill for what is only thrown (a
 #              rock). Every
 #              throw trains the thrown skill, whatever is thrown
 #
-# Ranged combat (spec §8 "Ranged combat"; `t` shoots or throws what is in the missile weapon slot, `T` chooses):
+# Ranged combat (`t` shoots or throws what is in the missile weapon slot, `T` chooses):
 #   range      how far a missile weapon shoots, in cells (without one it does not shoot);
 #              anything else with a range is a throwing weapon, thrown that far, with its own `damage` (it needs no
 #              slot: a rock). Ammunition takes its range from the missile weapon
@@ -141,9 +141,9 @@
 #              object cannot be picked up. Without `burns`, on a thing with a `slot`, `light` is a
 #              carried light (a lantern): it gives that light ready in the Tool slot and lit,
 #              and `u` (the use-tool command) turns it from unlit to lit to hooded (the preset's
-#              `hooded`) and back (spec §5 "Light sources")
+#              `hooded`) and back
 #
-# Base items (spec §8 "Magic items"; affixes in affixes.toml): what may be found magic or rare,
+# Base items (affixes in affixes.toml): what may be found magic or rare,
 # and lies about as loot, says what kind of item it is:
 #   kind       weapon, launcher (missile weapons), ammo, body (body armour), helmet, cloak,
 #              gloves, boots, shield, ring, amulet, or tool (a digging tool): the affixes it
@@ -152,7 +152,7 @@
 #   frequency  how often loot holds it, relative to the rest; default 100, 0 never
 # Things without a kind are never magic, and never loot but for scrolls (below).
 #
-# Digging (spec §8 "Digging"; ready a tool in the Tool slot, then use it with `U`):
+# Digging (ready a tool in the Tool slot, then use it with `U`):
 #   dig        a digging tool's power: each turn of digging does power × (Strength +
 #              10) / 20 work against a wall's hardness (terrain/), so a pick-axe (10) does 10
 #              at Strength 10. A tool goes in a `slot` (the Tool slot)
@@ -165,7 +165,7 @@
 #   [[object.particles]] emitters (terrain/ has the fields): `ambient` while it lies in view
 #              on top of its pile, `flight` while it flies
 #
-# Food (spec §8 "Hunger"; eat with `E`):
+# Food (eat with `E`):
 #   food       { nutrition = N, turns = T, keeps = "5d", lasts = "10d" }: the nutrition points it
 #              gives (at most 100000; a human burns 1440 a day, hunger.toml), the turns of eating
 #              it takes (at least 1, each the `eat` action), and its shelf life in whole hours or
@@ -174,8 +174,8 @@
 #              away); never on things worn, wielded, shot, thrown, or burned
 #   cures      a remedy (food only): what eating it cures, means that statuses and diseases name
 #              in their `cured_by` (status/, diseases.toml): `cures = ["remove_disease"]`
-#              ends every disease at once, shown or not (spec §8 "Diseases")
-# Scrolls (spec §8 "Scrolls"; read with `r`):
+#              ends every disease at once, shown or not
+# Scrolls (read with `r`):
 #   [object.read]  what reading it does (never on things worn, wielded, eaten, shot, or thrown);
 #              reading takes the `read` action (actions.toml) and uses one up. `kind = "spell"`:
 #              `spell`, a spell of spells/ it casts free of mana through the one cast path (its
@@ -186,7 +186,7 @@
 #              `restores = true`, every point drains took comes back (the scroll of
 #              restoration). A scroll may have `level` and `frequency`, as base items do: it
 #              is loot, never magic.
-# Potions (spec §8 "Potions"; drunk from the Consume list, `e`):
+# Potions (drunk from the Consume list, `e`):
 #   [object.drink]  what drinking it does (stackable, and nothing else: no slot, weapon, food,
 #              scroll, wand, or rod); a drink takes the `drink` action and uses one up. `kind`
 #              and only its fields: `heal` (`dice` hit points back, optional `cures`), `cure`
@@ -225,7 +225,7 @@
 # Digging tools go in the Tool slot. A pick-axe digs through a stone wall in six minutes at
 # Strength 10; the heavier mattock does it in four.
 #
-# Keys (spec §8 "Doors"): `key` is the lock id it opens; opening a door locked with that id
+# Keys: `key` is the lock id it opens; opening a door locked with that id
 # while carrying it unlocks the door. A skeleton key (`key = "*"`) opens every lock.
 #
 # Potions

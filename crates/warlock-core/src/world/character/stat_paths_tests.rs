@@ -1,4 +1,4 @@
-//! The training paths (spec §8 "Stats"; the design `docs/design/stat-training.md` §5): each
+//! The training paths (the design `docs/design/stat-training.md` §5): each
 //! hook that reports a use of the player's stats, one test each (or a few where one call
 //! carries several), on content where every chance is 100 so a mark comes without a draw.
 

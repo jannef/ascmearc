@@ -1,4 +1,4 @@
-//! The animal companion (spec §8 "Allies"; `data/companions.toml`): the starting beasts by race
+//! The animal companion (`data/companions.toml`): the starting beasts by race
 //! and the rares with their odds, the growth table at the cadence levels for every tameable
 //! beast, through the game's own code, and the rules in words.
 

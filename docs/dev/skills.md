@@ -1,9 +1,9 @@
 # Skills
 
 Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
-rules it implements are in spec/08i-character.md. Keep it current with the code, as CLAUDE.md says.
+rules it implements are in spec/12-character.md. Keep it current with the code, as CLAUDE.md says.
 
-Skills (spec §8 "Skills", #132) live in `warlock-core`: `skills.rs` (`Skills` per actor: trained
+Skills (#132) live in `warlock-core`: `skills.rs` (`Skills` per actor: trained
 skills only, a missing one is untrained and gives nothing; `Effect` and `Use`, the typed benefit
 and training-mark hooks; `Benefit` growth by `steps` or a `curve`; `Ladder` and `RollRules`, the
 skill rolls' data; `Skills::mark` adds a mark, `Skills::roll` applies a roll and spends the
@@ -141,7 +141,7 @@ sound that is no news heard while resting or waiting (`World::waiting` is set ar
 wait); Detect traps also marks on `disarm` and, with Spot, on `search`, as data. Concentration's
 `mana_regen` and `max_mana` (trained only, `Actor::mind`) are read in
 `World::mana_rate` and `Actor::max_mana` (`world/magic/concentration.rs`, docs/dev/mana.md), its `cast`
-use reported by `World::spend_mana` (Spellcraft's `cast` mark, its only one, 25 %, rides the same use, #989, #1270). Spellcraft's `cast` (points on the Spellcraft check every cast with one's own mana makes) and `ward` (points off a miscast's total) are read in `world/magic/miscast.rs` (`Actor::cast_bonus`, `Actor::miscast_ward`; #1271, docs/dev/spells.md "Miscasts"), by anyone: an untrained caster has none of them and checks all the same. Knowledge's `resist` (#667) is read
+use reported by `World::spend_mana` (Spellcraft's `cast` mark, its only one, 25 %, rides the same use, #989, #1270). Spellcraft's `cast` (points on the Spellcraft check every cast with one's own mana makes) and `ward` (points off a miscast's total) are read in `world/magic/miscast.rs` (`Actor::cast_bonus`, `Actor::miscast_ward`; #1271, docs/dev/spells.md "Miscasts"), by anyone: an untrained caster has none of them and checks all the same. Knowledge's `resist` (#667; the owner, 2026-10-28: "know your enemy") is read
 in `world/skills/knowledge.rs` (`World::resisting`, `resist_bonus`) through `Actor::skill_effect_above`
 (`Skills::effect_above`: each benefit read at the value less the creature's level, nothing at or
 below it), called for the modifier of the player's check against a creature's drain
@@ -222,7 +222,7 @@ directory is `Ability::Profession` instead, before any use (Metalcraft, Woodcraf
 (`Ability::every` adds it right after the skills while some skill gives `Effect::Wedge`; see
 `docs/dev/doors.md` "Wedging").
 
-**Fletching** (spec §8 "Fletching", #1021) is no action of its own (#1336): arrows and bolts
+**Fletching** (#1021) is no action of its own (#1336): arrows and bolts
 are Woodcraft's recipes (`recipes/woodcraft/arrows.toml`, `bolts.toml`, `count = "fletch"`), made
 as any generic recipe is; `data/fletch.toml` keeps the count, the knives, and the launchers' words,
 and the ranger's Fletcher is read there. All of it is in `docs/dev/crafting.md` "Arrows and bolts".
@@ -243,7 +243,7 @@ are not trained in Woodcraft.", #1387) stands beside the arrows on Woodcraft's s
 `ScreenName::Whittle`, the list `world::workable_wood`), and is greyed "no knife" without one (the
 rules' refusal is `world::whittle_lack`). Tests: `world/crafting/whittle_tests.rs`.
 
-**Balance** (spec §8 "Skills", #1029, `docs/design/skill-uses.md` §6.13): besides `burden`,
+**Balance** (#1029, `docs/design/skill-uses.md` §6.13): besides `burden`,
 `Effect::Footing` is read in `World::step_price` (`world/turn/schedule.rs`) in the `else` of the wading
 branch, on a step `World::rough_step` (`world/levels/footing.rs`) calls rough: off the overworld,
 `move_cost` above 100, not `wading_step`; the same `surcharge_spared`. `Use::RoughStep` is marked by
@@ -253,7 +253,7 @@ beside Initiative's ease of Surprised; `Use::Staggered` is marked in `spend_acti
 (`world/combat/weapon_ability.rs`) for the player's action that eases Staggered (not the one that gave it).
 Tests `world/levels/footing_tests.rs`.
 
-**Swim** (spec §8 "Skills", #1018, `docs/design/skill-uses.md` §6.4; `kind = "rules"`, no menu
+**Swim** (#1018, `docs/design/skill-uses.md` §6.4; `kind = "rules"`, no menu
 row): `Effect::Wade` is read in `World::step_price` (`world/turn/schedule.rs`), on a step
 `World::wading_step` calls wading (off the overworld, `move_cost` above 100, `stars::wading`): a
 percent of what the terrain adds over a plain step is spared (`surcharge_spared`, rounded up), 100
@@ -263,7 +263,7 @@ talent spares still trains. `Effect::Swim` is read in `World::keeps_afloat` (`wo
 `docs/dev/temperature.md`), which marks `swim` once a check; it is `Skills::trains_effect`-gated, so
 an item's Swim bonus alone asks no check. Tests `world/levels/swim_tests.rs`.
 
-**Deep water** (spec §8 "Skills": Swim, #1019; design §6.4 S2) is `world/levels/swim.rs`, one line each
+**Deep water** (#1019; design §6.4 S2) is `world/levels/swim.rs`, one line each
 in `player_moves`, the refused actions (`pick_up_objects`, `drop_objects`, `start_rest`, the
 search dispatch, `start_dig`, lighting in `use_tool`), and `equip`. The terrain's `swim = true`
 with `walkable = false` (`content/load_world.rs` checks the pair) is why nothing else needs to know of it:
@@ -286,7 +286,8 @@ Overloaded swimmer cannot step (`can_step_to`, as anywhere) and cannot drop: the
 things away, eat, or teleport, so it is no trap. Tests `world/levels/swim_deep_tests.rs`; the showcase's
 quarry pit holds a pool to try it in (the test world only; #1020 places it in the world).
 
-**Foraging** (spec §8 "Foraging", #547): `Action::Forage` (replay text `forage`, cost `forage`
+**Foraging** (#547; the owner, 2026-10-27: "survival can be used on
+wilderness map, some chance to gather food items"): `Action::Forage` (replay text `forage`, cost `forage`
 a turn, `ActionKind::Forage`), dispatched by one arm in `World::player_acts` to
 `World::start_forage` in `world/skills/forage.rs` (`Spent::Forage(seconds)`, then `World::forage`, a
 `keep_at` loop like a prayer's; tests `world/skills/forage_tests.rs`). Data `data/forage.toml`
@@ -301,7 +302,7 @@ the count's dice; the food is made then (`rot::made_at`) and joins the pack; the
 `train(Use::Forage)`. Nothing is stored, so saves change only by content (the new
 `ActionKind`, the new food objects). The wiki's table is `generated/foraging.md`
 (`xtask/src/wiki/skills.rs::foraging`).
-**Appraise** (spec §8 "Skills", #666; Negotiation took the shops' bargain): `world/skills/appraise.rs`,
+**Appraise** (#666; Negotiation took the shops' bargain): `world/skills/appraise.rs`,
 `World::appraise_hours(start, seconds)`, called for the player from `World::live` (the status
 loop, so rests roll each hour they pass) and from `World::skip_time_dev` (`skip:`). It walks the
 whole game hours in `(start, start + seconds]`; it returns at once unless the player is trained

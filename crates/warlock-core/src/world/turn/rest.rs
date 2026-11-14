@@ -1,4 +1,4 @@
-//! Resting (spec §8 "Time"): [`crate::action::Action::Rest`], its goal, and the turn-by-turn
+//! Resting: [`crate::action::Action::Rest`], its goal, and the turn-by-turn
 //! loop of a long action ([`World::keep_at`]) that resting, eating, and digging share.
 //! `world/mod.rs` has only the dispatch line.
 
@@ -17,7 +17,7 @@ pub(super) type Sightline = ((u64, Pos), LineOfSight);
 
 impl World {
     /// How near, in steps (Chebyshev), a hostile creature in view must come to stop a long
-    /// action ([`World::keep_at`], spec §8 "Rest"; `[long_action]` in `data/rules/tuning.toml`);
+    /// action ([`World::keep_at`]; `[long_action]` in `data/rules/tuning.toml`);
     /// one farther off may be seen and the action goes on.
     pub(in crate::world) fn stop_within(&self) -> i32 {
         self.content.tuning().long_action.stop_within
@@ -204,7 +204,7 @@ impl World {
             None if self.said != said || stirred => Ended::Said,
             None => Ended::Done,
         };
-        // Seen through to its end, longer than a turn: it trains Willpower (spec §8 "Stats").
+        // Seen through to its end, longer than a turn: it trains Willpower.
         // A run is no such effort (`run.rs`).
         if ended == Ended::Done && turns > 1 && !self.running {
             self.train_stat(StatUse::Endured);

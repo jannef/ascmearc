@@ -1,4 +1,4 @@
-//! The calling (spec §8 "Prestige classes"): the one place a prestige class is given. A
+//! The calling: the one place a prestige class is given. A
 //! calling (`content/calling.rs`, a campaign's `data/callings/`) is **open** to the player when
 //! they have no prestige class yet, their class is one it is `from`, and their level is at
 //! least its `level` ([`World::calling_open`]). [`World::call`] walks them through it: the
