@@ -306,8 +306,8 @@ developer notes (CLAUDE.md, `docs/dev/`).
   shot, a throw; `World::attack_price`; never a door kick or a reload),
   `flee_cost` and `flee_noise` (percent of the price and the loudness of a step that **flees**:
   the actor has a hostile next to it and the step ends out of that creature's reach,
-  `World::flees`), and `weapon_mark` (percent: the multiplier for weapon skill marks, the hook
-  for #134; nothing counts marks yet), and `gatekeeper` (percent: scales the Gatekeeper gift's
+  `World::flees`), and `weapon_mark` (percent: the multiplier for the player's weapon skill
+  marks, after a dummy's share and before the talents', rounded to the nearest; `World::practise_at`), and `gatekeeper` (percent: scales the Gatekeeper gift's
   chance of a blow, capped at always, §8 "Free blows"). Shipped
   numbers (first guesses, tuned by playtesting; none is ever shown, only the stance's name):
   aggressive +1 to hit, +2 damage, -3 Dodge, marks ×1.25; defensive -2 to hit, -1 damage, +2

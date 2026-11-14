@@ -1097,6 +1097,8 @@ impl World {
         let me = self.player_mut();
         let marks = rules.earned(success, level, me.weapon_skills.rank(skill));
         let marks = (marks * percent + 50) / 100;
+        // The stance (spec §8 "Stances": aggressive and frenzy ×1.25).
+        let marks = content.stance_def(me.stance).marks(marks);
         // Weapon drill (spec §8 "Class abilities"): more marks in a role's skills.
         let marks = (me.talent_mods(&content))
             .offence
