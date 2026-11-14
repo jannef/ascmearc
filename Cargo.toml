@@ -27,6 +27,8 @@ workspace-hack = { path = "crates/workspace-hack" }
 # The leaf features the game uses (#1590): `default_app` and `2d_bevy_render` would add bevy_state,
 # bevy_text, bevy_animation, and the gizmos, none of which it uses (glyphs are drawn with
 # fontdue). `multi_threaded` (native) and `webgpu` (wasm) are added in crates/warlock.
+# `tonemapping_luts` is deliberately off (it pulls `ruzstd` 0.8, RUSTSEC-2026-0344); cameras use
+# `Tonemapping::None`, which also keeps palette colors exact.
 bevy = { version = "0.20", default-features = false, features = [
   "std",
   "async_executor",

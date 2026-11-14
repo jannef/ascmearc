@@ -9,6 +9,12 @@ creature and faction lists are likewise not edited by a roster (`spec/07b-data.m
 line here only if it truly is a new family, in the same PR as nothing else shares.
 
 Per-tribe notes:
+- `docs/dev/creatures/beasts.md`: the beasts (#839; the druid design's roster, the ranger's)
+- `docs/dev/creatures/devils.md`: the devils (#448; ten shared types, faction `devil`)
+- `docs/dev/creatures/drow.md`: the drow (#519; levels 14 to 50, twelve shared types)
+- `docs/dev/creatures/elementals.md`: the elementals (#453; six elements, each a ladder)
+- `docs/dev/creatures/fiends.md`: the fiends of no family (#450; hell hound, nightmare, succubus, incubus)
+- `docs/dev/creatures/giants.md`: the giant tribe (#457; levels 12 to 50, faction `giant`)
 - `docs/dev/creatures/undead.md`: the undead roster (#383; batches, population lines, holds, drains)
 - `docs/dev/creatures/campaign-waves.md`: the barrow, fen, and delf waves (the non-undead notes)
 - `docs/dev/creatures/deep-gnomes.md`: the deep gnomes (#1434; Gimmwīc's people, not playable, the `deep-gnome` tag, the types)

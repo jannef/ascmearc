@@ -132,7 +132,8 @@ conflict every time; two that insert at different places merge cleanly. So:
   `world/` reads); a folder's module is `pub(in crate::world) mod` the same way. A module names
   the root's items as `crate::world::World` and another folder's as
   `crate::world::combat::fight::...`; `super::` reaches only its own folder.
-- **Docs follow the same rule**: a feature edits its own `docs/dev/<topic>.md` and the `spec/`
+- **Docs follow the same rule**: a feature edits its own `docs/dev/<topic>.md` (a new topic file
+  adds its line to `docs/dev/README.md`, in its group) and the `spec/`
   files of the sections it touches (bullets next to the related ones); `docs/dev/cli.md` for a new
   flag, `--screen` name, scenario, dump layer, or action (by its group); CLAUDE.md only for a new
   command; the wiki gets its page and tables; `README.md` is not touched by feature work.

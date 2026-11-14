@@ -33,7 +33,7 @@ screenshot (the Playwright Chromium under `~/Library/Caches/ms-playwright` works
 http://localhost:8080 in a WebGPU browser. CI builds it on pushes to `main` (artifact
 `warlock-web`). There is no command line on the web, so `cli.rs` uses the defaults.
 
-**GitHub Pages** (https://jannef.github.io/warlock/): the `web` job of the `Release` workflow also
+**GitHub Pages** (https://ascmearc.com/): the `web` job of the `Release` workflow also
 uploads `target/web` plus `LICENSE` as the Pages artifact, and the `pages` job (`environment:
 github-pages`) deploys it on every `v*` tag; a manual run deploys only with the `publish_pages`
 input ticked. The page is `web/index.html` (inline, no external requests, relative asset paths so
