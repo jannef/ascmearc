@@ -706,8 +706,13 @@ developer notes (CLAUDE.md, `docs/dev/`).
   blow of the player's that hit (for that turn); their noises are heard where they are (the
   `sound` layer's `x` where an unseen blow came from, their footsteps, a heartbeat to
   Quick-sensed if they have one: elementals have none). Their blows are "something"'s; a move
-  into an unseen creature's cell strikes at it at −4 ("You strike at something."). Creature
-  sight is unchanged. No talent (a creature gimmick).
+  into an unseen creature's cell strikes at it at −4 ("You strike at something."). **Creature
+  sight**: a creature does not see an invisible actor (the player under the potion of the
+  unseen, an invisible creature to the player's allies) unless it is Seeing or eyeless (tagged
+  `eyeless`); the shadowy hide from the player only. It is unaware of it (surprised by its
+  blow), hears it as ever, looks into a noise from its cell, and beside the cell it looks into
+  (a noise's, or the one it last saw it on) with a hostile it does not see there, strikes at it
+  at −4. No talent (a creature gimmick).
 - **Creature gear** (`warlock-core/src/gear.rs`, the rolls; `content/gear.rs`, the data; #328,
   campaign design §10.3): a creature type may have a `racial_weapon` (a weapon it must have a
   rank in: the affinity is the rank, which combat applies) and `[[creature.gear]]` lines

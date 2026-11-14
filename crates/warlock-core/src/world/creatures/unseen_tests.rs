@@ -1,7 +1,8 @@
 //! The unseen (`world/creatures/unseen.rs`; docs/design/monster-dread.md §5.10, §5.11): the shadowy by
 //! the light and beside the player, the invisible by status and by type, what shows them (Seeing,
 //! Blood scent, the companion's nose, a blow that found it), striking at the unseen, the sound of
-//! its blows, the self-buff step, the wisp's light, the stalker's hunt, and the roster rows.
+//! its blows, the self-buff step, the wisp's light, the stalker's hunt, creature sight of the
+//! invisible (and hearing and striking at it), and the roster rows.
 
 use crate::content::{Content, ContentFiles, Invisible};
 use crate::geom::Pos;
@@ -380,6 +381,86 @@ fn the_dev_afflict_gives_the_player_invisibility() {
     let player = w.state.player;
     assert!(has(&w, player, "invisible"));
     assert!(said(&w).iter().any(|m| m == "You fade from sight."));
+}
+
+// ---- creature sight -------------------------------------------------------------------------
+
+/// The room with a creature of type `id` (in place of a duergar warrior) on `at`.
+fn room_with_type(id: &str, at: Pos) -> (World, ActorId) {
+    let (mut w, them) = room_with('d', at, 255);
+    let creature = w.content().creature_id(id).expect(id);
+    w.state.actors.get_mut(&them).expect("it").creature = creature;
+    (w, them)
+}
+
+#[test]
+fn an_invisible_player_is_seen_only_by_seeing_or_eyeless_eyes() {
+    let (mut w, kobold) = room_with_type("kobold", Pos::new(6, 1));
+    let player = w.state.player;
+    assert_eq!(
+        w.nearest_hostile_in_sight(kobold).map(|t| t.0),
+        Some(player)
+    );
+    assert!(w.sees_now(kobold, player));
+    afflict(&mut w, player, "invisible");
+    assert_eq!(w.nearest_hostile_in_sight(kobold), None);
+    assert!(!w.sees_now(kobold, player));
+    assert!(w.unaware(kobold, player), "so its blow surprises");
+    // Seeing, it sees them.
+    afflict(&mut w, kobold, "seeing");
+    assert_eq!(
+        w.nearest_hostile_in_sight(kobold).map(|t| t.0),
+        Some(player)
+    );
+    assert!(w.sees_now(kobold, player));
+    // The eyeless were never fooled.
+    let (mut w, pudding) = room_with_type("black_pudding", Pos::new(4, 1));
+    let player = w.state.player;
+    afflict(&mut w, player, "invisible");
+    assert_eq!(
+        w.nearest_hostile_in_sight(pudding).map(|t| t.0),
+        Some(player)
+    );
+}
+
+#[test]
+fn a_creature_hears_the_invisible_player_and_strikes_at_where_they_stand() {
+    let (mut w, kobold) = room_with_type("kobold", Pos::new(5, 2));
+    let player = w.state.player;
+    afflict(&mut w, player, "invisible");
+    w.state.actors.get_mut(&player).expect("the player").hp = 1000;
+    // Footsteps it hears; then it comes to look, and strikes at the cell.
+    run(&mut w, "move:E");
+    let at = w.state.actors[&player].pos;
+    let mut struck = false;
+    for _ in 0..12 {
+        let from = w.messages().len();
+        run(&mut w, "wait");
+        let them = &w.state.actors[&kobold];
+        assert_eq!(them.mind.last_seen, None, "it never sees them");
+        struck |= (w.messages().iter().skip(from))
+            .any(|m| m.display().starts_with("The kobold") && m.display().contains("you"));
+        if struck {
+            assert_eq!(them.pos.chebyshev(at), 1);
+            break;
+        }
+    }
+    assert!(struck, "it struck at them: {:?}", said(&w));
+}
+
+#[test]
+fn a_creatures_blow_at_one_it_does_not_see_is_at_minus_four() {
+    let (mut w, kobold) = room_with_type("kobold", Pos::new(2, 1));
+    let player = w.state.player;
+    let profile = w.state.actors[&kobold].melee(&w.content);
+    let seen = w.at_the_unseen(kobold, player, profile.clone());
+    assert_eq!(seen.to_hit, profile.to_hit);
+    afflict(&mut w, player, "invisible");
+    let unseen = w.at_the_unseen(kobold, player, profile.clone());
+    assert_eq!(
+        unseen.to_hit,
+        profile.to_hit + w.content().tuning().unseen.to_hit
+    );
 }
 
 #[test]
