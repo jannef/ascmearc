@@ -17,6 +17,10 @@ Where the lists come from: `--scenario` names are the files of `assets/campaigns
 
 The one-line table is in CLAUDE.md ("Commands"); this is what each row does.
 
+`target/` below is Cargo's target directory: xtask follows `CARGO_TARGET_DIR` (else `cargo
+metadata`'s `target_directory`) for the build output it reads and the files it writes
+(`xtask/src/main.rs::target_dir`, the one place).
+
 - **Screenshot smoke test**, `cargo xtask smoke`: writes `target/xtask/smoke.png`; captures
   after 60 frames, retried once after 600 if the capture is a single flat color, which still
   fails: #669.

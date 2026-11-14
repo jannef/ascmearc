@@ -56,7 +56,7 @@ screenshots and a tour of every feature.
 
 ## How to play
 
-- **In your browser:** [jannef.github.io/warlock](https://ascmearc.com/), always the
+- **In your browser:** [ascmearc.com](https://ascmearc.com/), always the
   latest release. It needs a browser with WebGPU (a recent Chrome or Edge, for example) and a
   keyboard.
 - **On your computer:** download the
