@@ -10,6 +10,58 @@ use crate::test_support::{builtin, run, said as messages};
 use crate::world::*;
 
 #[test]
+fn a_plural_noun_takes_a_plural_verb() {
+    let flames = Words::test("flames", "burns");
+    let glass = Words::test("soulglass", "cuts");
+    let say = |a, t, words: &Words, strike| {
+        attack_message(
+            a,
+            t,
+            words,
+            AttackKind::Spell,
+            Some(strike),
+            Guard::default(),
+        )
+        .unwrap_or_default()
+    };
+    let hit = Strike::Hit { critical: false };
+    let haunt = End::Seen("stone haunt");
+    for (text, expected) in [
+        (
+            say(End::Trap("flames"), haunt, &flames, hit),
+            "The flames burn the stone haunt.",
+        ),
+        (
+            say(End::Trap("flames"), End::You, &flames, hit),
+            "The flames burn you.",
+        ),
+        (
+            say(End::Trap("flames"), haunt, &flames, Strike::Resisted),
+            "The flames do the stone haunt no harm.",
+        ),
+        (
+            say(
+                End::Trap("flames"),
+                haunt,
+                &flames,
+                Strike::Missed { by: None },
+            ),
+            "The flames miss the stone haunt.",
+        ),
+        (
+            say(End::Trap("soulglass"), haunt, &glass, hit),
+            "The soulglass cuts the stone haunt.",
+        ),
+        (
+            say(End::You, haunt, &flames, hit),
+            "You burn the stone haunt.",
+        ),
+    ] {
+        assert_eq!(text, expected);
+    }
+}
+
+#[test]
 fn messages_say_what_came_of_an_attack_without_numbers() {
     let spear = Words::test("spear", "hits");
     let bite = Words::test("bite", "bites");
