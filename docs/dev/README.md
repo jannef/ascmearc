@@ -75,17 +75,7 @@ here, in its group.
 
 ## Creatures and people
 
-- [creatures.md](creatures.md): factions, the AI, paths, sight, spawning, gear
-- [creatures/](creatures/): one roster per tribe or wave, indexed in creatures.md:
-  [beasts](creatures/beasts.md), [campaign-waves](creatures/campaign-waves.md),
-  [deep-gnomes](creatures/deep-gnomes.md), [demons](creatures/demons.md),
-  [devils](creatures/devils.md), [drow](creatures/drow.md), [duergar](creatures/duergar.md),
-  [elementals](creatures/elementals.md), [fey](creatures/fey.md), [fiends](creatures/fiends.md),
-  [gates](creatures/gates.md), [giants](creatures/giants.md), [hags](creatures/hags.md),
-  [hobgoblins](creatures/hobgoblins.md), [layer-bosses](creatures/layer-bosses.md),
-  [mimics](creatures/mimics.md), [orcs](creatures/orcs.md), [outlaws](creatures/outlaws.md),
-  [second-wave](creatures/second-wave.md), [summoners](creatures/summoners.md),
-  [trolls](creatures/trolls.md), [undead](creatures/undead.md), [yugoloth](creatures/yugoloth.md)
+- [creatures.md](creatures.md), and one roster file per tribe in `creatures/` (listed in creatures.md): factions, the AI, paths, sight, spawning, gear
 - [summoning.md](summoning.md): creatures that summon others
 - [animated.md](animated.md): animated objects
 - [allies.md](allies.md): allies, their orders, following across levels
