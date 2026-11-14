@@ -55,6 +55,9 @@ all. One at your rank or above teaches you the full marks, but never more. Past 
 
 {{#include generated/weapon-marks.md}}
 
+The [aggressive](stances.md#stance-aggressive) stance and the berserker's
+[frenzy](stances.md#stance-frenzy) count the marks of every attack for a quarter more, rounded to the nearest: a hit earns 4 marks instead of 3, a miss still 1.
+
 Marks you earn beyond what a rank needs count toward the next one. The first ranks come within a
 few levels. From rank 7 on, each rank asks for far more, and the last ranks take most of a career.
 Missile weapons need fewer marks than weapons up close. The caster styles, trained by casting,
