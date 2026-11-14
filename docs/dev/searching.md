@@ -47,7 +47,7 @@ only if `connect::validate` still passes: it treats secret cells as doors for re
 cell and as walls for reaching the stairs and the keys. The insta snapshots show them as `S`
 where the map had `+`.
 
-**The rules** are `world/search.rs`: `hidden_near(reach)` (the hidden features within reach,
+**The rules** are `world/skills/search.rs`: `hidden_near(reach)` (the hidden features within reach,
 never the player's own cell, in position order; beyond the adjacent cells only those in line of
 sight), `difficulty_of` (own difficulty + `hidden_at(depth)`), `search_modifier(Look, Hidden)` (the
 effective Intelligence or Willpower modifier, the skill effect through `Actor::skill_effect`,
@@ -67,7 +67,7 @@ notice that the door is trapped: an arrow trap."); so is a shut chest's ("You no
 coffer is trapped: an arrow trap.", docs/dev/chests.md). Doors and chests are no `stone`, so
 dwarves do not notice their traps in passing.
 
-**Invariants**: checks draw from the gameplay stream (`crate::check`, two draws each) only for
+**Invariants**: checks draw from keyed streams of their own (`search/active/<cell>`, `search/passive/<cell>`; `crate::check`, two draws each) only for
 hidden features in reach, so runs without any nearby keep their hashes; no memory of failed
 checks and no cooldown (the owner's rule: no anti-farming limits); presentation never sees a
 difficulty, a modifier, or a roll. Waiting is searching (#1326): `Action::Wait` (action text `wait`, kept as a spelling) is
@@ -82,7 +82,7 @@ app binds Num5 and `s` (`KeyCommand::Wait`, "Wait/search", `wait`) and Alt+Num5 
 abilities. `dump`'s `truth` layer and `warlock-cli gen` mark secret doors `S`; `truth` marks a
 standing breach `H`.
 
-**Tests**: `world/search_tests.rs` (looks, finding, waiting is searching (`waiting_is_searching`), draws, who notices, traps and the skill each
+**Tests**: `world/skills/search_tests.rs` (looks, finding, waiting is searching (`waiting_is_searching`), draws, who notices, traps and the skill each
 look reads (`traps_are_detect_traps_to_find_and_the_rest_spot_and_search`), long searches,
 rests, reach, `set_terrain`, depth, saves and replays, legend errors), `content/search.rs`,
 `mapgen/tests.rs` (`rooms_levels_hide_a_few_doors_of_their_own`, the secret checks in

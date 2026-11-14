@@ -13,7 +13,7 @@ attacks".
 - `marked = true` on a `[[resource]]` (`ResourceDef::marked`): its points are in one creature's
   guard. Only Openings has it. Every rule below reads the flag, never the id.
 - `builds` on Openings, one each: `sneak_attack`, `feint` (O2, #1462), and `mark_kill`.
-  `Build::MarkKill` (`mark_kill`) replaced `Build::SneakKill` (`sneak_kill`, gone).
+  `Build::MarkKill` (`mark_kill`) replaced the build `sneak_kill` (gone).
 
 | Build | Where | The mark rule |
 |---|---|---|
@@ -25,12 +25,12 @@ attacks".
 
 ## State
 
-`Actor::mark: Option<ActorId>` (`world/actor.rs`), `#[serde(default, skip_serializing_if =
+`Actor::mark: Option<ActorId>` (`world/turn/actor.rs`), `#[serde(default, skip_serializing_if =
 "Option::is_none")]`: saved and hashed, absent while `None`, so runs without a thief save and
-hash as before. Only the player ever has one; it is set and cleared only in `world/mark.rs`.
+hash as before. Only the player ever has one; it is set and cleared only in `world/classes/mark.rs`.
 `World::mark_of(id)` reads it while the creature is still in the game.
 
-## The rules (`world/mark.rs`)
+## The rules (`world/classes/mark.rs`)
 
 | What | Function | Effect |
 |---|---|---|
@@ -69,7 +69,7 @@ Whirling charge's blows on the way (`charge.rs::whirl`) go through `strike_free`
 Vanishing act stays where a sneak attack's blow kills, in `fight.rs::resolve` (`unseen` is
 known only there); it rides no build.
 
-## Exploit (`world/openings.rs`)
+## Exploit (`world/classes/openings.rs`)
 
 The thief's one active for openings from level 1 (`ClassActive::Exploit`, the class talent
 `exploit`, `use:exploit:E`, `Aim::Direction`, the abilities menu only; its `KeyCommand` unbound).
@@ -79,7 +79,7 @@ The thief's one active for openings from level 1 (`ClassActive::Exploit`, the cl
 | Refusals, no time, nothing spent | `use_class`: `may_use_class` (greyed `Unavailable::Short`, "you have no opening": Openings' `lacking`), "Which way?", then `thief.rs::thief_may` → `openings.rs::exploit_may` | "There is no one there." (no hostile that way); `off_mark` ("Your openings are in the kobold's guard."); "It has no vital spot." for a foe the player **sees** without vitals (`Content::has_vitals`; an unseen one is struck and told so after, as any blow, so nothing leaks) |
 | The price | `ability::class_cost` | the talent's `resource` cost (1) is the least it needs; for Exploit the cost is **every opening held** (n), spent by `use_class` and handed to `World::exploit` |
 | The blow | `World::exploit` | a melee attack's price and exertion; the words by n ("You strike at the opening." 1, "You press your openings." 2–4, "You tear into every opening!" 5+); `exploit_profile(n, melee)` (`ExploitMods::profile`: +n × `to_hit`, the threat n × `threat` lower, never below 2, `Profile::sure_critical` from `sure_at` spent; the sneak attack's own lower threat, `ambush.rs::sneak_threat`, never raises it back); `Technique::sneak` (a sneak attack whatever the foe knows: the sneak dice land on a hit, the foe keeps its Defence and is not Surprised) and `Technique::exploit = n`; `player_blow_with` (which runs `choose_mark`) |
-| The ladder's dice | `fight.rs::resolve` → `openings.rs::exploited` → `land_exploit(n, blow)` | after `ambush.rs::ambushed`, on a hit whose sneak dice landed: n × `ExploitMods::dice` from the gameplay stream, after Protection, never multiplied |
+| The ladder's dice | `fight.rs::resolve` → `openings.rs::exploited` → `land_exploit(n, blow)` | after `ambush.rs::ambushed`, on a hit whose sneak dice landed: n × `ExploitMods::dice` from its keyed stream, after Protection, never multiplied |
 | No build | `ambush.rs::ambushed` asks `exploiting(attacker)` | an exploit's sneak attack builds no opening (it spends them) |
 | After | `World::exploit` | `unmark(target)`: the mark goes with the pool unless the blow killed it (then `mark_dies` cleared it and `mark_kill` gave one); on a hit at a foe still standing, a degree of `ExploitMods::status` (Low blow's Stunned); then `after_attack`. Vanishing act fires on a kill as on any sneak kill |
 
@@ -144,24 +144,24 @@ attack. Saves are pinned to the version (no shim).
 
 ## Tests
 
-`world/mark_tests.rs` (a chosen attack sets, keeps, or empties, said once and only above 0; a
+`world/classes/mark_tests.rs` (a chosen attack sets, keeps, or empties, said once and only above 0; a
 free blow sets and never moves or builds on a stranger; a throw counts and a burst does not;
 the mark's death by the thief carries and adds one, by another carries; a departure, a level
 change, and the decay to 0 clear; Exploit's refusal off the mark; the dumps, a save, and a replay);
-`world/feint_tests.rs` (a feint made builds one, at the mark too; a failed one builds none and
+`world/skills/feint_tests.rs` (a feint made builds one, at the mark too; a failed one builds none and
 moves the mark; one at a new foe empties first, then builds; a refused one moves nothing);
-`world/openings_tests.rs` (Exploit at level 1, each refusal with no time and nothing spent, the
+`world/classes/openings_tests.rs` (Exploit at level 1, each refusal with no time and nothing spent, the
 spend of all with the words by n and no build, the ladder's dice by n, Low blow's stun and
 to-hit, Improved sneak attack's 2d6 at 32, Master thief's threat by n and the sure critical from
 five at 60 (every hit of five a critical; no finisher row, no `use:master_thief`), a pool of eight
 spent whole, a killing exploit's one opening and no mark, the replay);
-`world/thrown_exploit_tests.rs` (Thrown exploit at 18, each refusal with no time and nothing
+`world/combat/thrown_exploit_tests.rs` (Thrown exploit at 18, each refusal with no time and nothing
 spent, the spend of all and one dagger, Low blow's stun at range, every hit of five a critical
 at 60, a carried pool adopting a foe across the room, an unseen creature in the way taking a
 plain throw, a kill at range with Vanishing act, the action text and determinism);
-`world/class_rogue_tests.rs`
+`world/classes/class_rogue_tests.rs`
 (the table: Exploit at 1, no Trained wind, no stamina until an active rank; Vanishing act on a
-killing exploit); `world/resource_talent_tests.rs` (Patient blade's two); `content/resource.rs` (`marked`,
+killing exploit); `world/character/resource_talent_tests.rs` (Patient blade's two); `content/resource.rs` (`marked`,
 `mark_kill`, and `feint` parse, `sneak_kill` is refused); `content/talent.rs` (the `exploit_*`
 effects refuse a bad die or status, `exploit_threat` a value or `sure_at` of 0); the balance
 probe's "Exploits" tables (`balance_probe/exploits.rs`, `docs/balance.md`); `ui/look.rs`'s

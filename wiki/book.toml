@@ -11,7 +11,7 @@ build-dir = "book"
 [output.html]
 default-theme = "coal"
 preferred-dark-theme = "coal"
-# The wiki is published beside the game at https://jannef.github.io/warlock/wiki/.
+# The wiki is published beside the game at https://ascmearc.com/wiki/.
 site-url = "/warlock/wiki/"
 git-repository-url = "https://github.com/jannef/warlock"
 edit-url-template = "https://github.com/jannef/warlock/edit/main/wiki/{path}"

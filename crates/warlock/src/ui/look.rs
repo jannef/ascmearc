@@ -92,7 +92,7 @@ pub fn known(view: &PerceptionView<'_>, p: Pos) -> Option<String> {
     Some(format!("You know {who} is {}.", and_list(&parts)))
 }
 
-/// What look mode says of a zone on a cell (`world/zone.rs`).
+/// What look mode says of a zone on a cell (`world/magic/zone.rs`).
 fn zone_words(kind: ZoneKind) -> &'static str {
     match kind {
         ZoneKind::Fire => "wreathed in fire",
@@ -321,7 +321,7 @@ fn creature(view: &PerceptionView<'_>, actor: &SeenActor) -> String {
     } else {
         effects
     };
-    // The creature the player's openings are in (`world/mark.rs`).
+    // The creature the player's openings are in (`world/classes/mark.rs`).
     let effects = if actor.marked {
         format!("{effects}, your mark")
     } else {
@@ -1039,7 +1039,13 @@ mod tests {
             "{rat}"
         );
         let bat = of("bat").expect("a cave bat in view");
-        assert!(bat.starts_with("A big cave bat (unhurt), on "), "{bat}");
+        // Its grade word, if it has a grade, comes first.
+        assert!(
+            ["A cave bat", "A big cave bat", "A small cave bat"]
+                .iter()
+                .any(|start| bat.starts_with(&format!("{start} (unhurt), on "))),
+            "{bat}"
+        );
     }
 
     #[test]
@@ -1155,7 +1161,13 @@ mod tests {
         );
         let archer = of("kobold_archer");
         assert!(
-            archer.starts_with("A big kobold archer (hostile, ")
+            [
+                "A kobold archer",
+                "A big kobold archer",
+                "A small kobold archer"
+            ]
+            .iter()
+            .any(|start| archer.starts_with(&format!("{start} (hostile, ")))
                 && archer.contains("), with a short bow and ")
                 && archer.contains(" arrows ready, on "),
             "{archer}"
@@ -1386,18 +1398,23 @@ map = '''
             .parse::<warlock_core::character::CharacterSpec>()
             .expect("a character")
             .with_talents(["healthy", "lean"].map(String::from).to_vec());
-        // A ranger gains the talent at level 2.
+        // A ranger gains the talent at level 2. A run whose deer is big (its grade is the
+        // run's, `rng.rs` "Actor keys"), so the grade word shows before the talent's.
+        let start = |seed: u64, actions: &str| {
+            let mut w =
+                World::start_run(content.clone(), "hall", Some(seed), Some(&spec), None, true)
+                    .expect("starts");
+            for action in warlock_core::action::parse_actions(actions).expect("actions") {
+                w.apply(&action);
+            }
+            describe(&w.perception(), Pos::new(4, 1), true)
+        };
+        let seed = (1..200u64)
+            .find(|&seed| start(seed, "").starts_with("A big deer"))
+            .expect("a big deer");
         let said: Vec<String> = ["", "xp:691 levelup:auto*2"]
             .into_iter()
-            .map(|actions| {
-                let mut w =
-                    World::start_run(content.clone(), "hall", Some(1), Some(&spec), None, true)
-                        .expect("starts");
-                for action in warlock_core::action::parse_actions(actions).expect("actions") {
-                    w.apply(&action);
-                }
-                describe(&w.perception(), Pos::new(4, 1), true)
-            })
+            .map(|actions| start(seed, actions))
             .collect();
         assert_eq!(said[0], "A big deer (unhurt), on stone floor.");
         assert_eq!(

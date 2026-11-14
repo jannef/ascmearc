@@ -26,6 +26,7 @@
 //! so they are testable without a window.
 
 use super::abilities_screen::AbilitiesScreen;
+use super::almanac::Almanac;
 use super::character_screen::CharacterScreen;
 use super::characters_screen::CharactersScreen;
 use super::chargen_screen::{ChoiceScreen, Draft, Picks, Step, SummaryScreen};
@@ -172,7 +173,7 @@ pub enum ScreenName {
     /// Choose something carried to take apart for its materials (the Salvage ability).
     Salvage,
     /// Choose a damaged thing carried to mend in the field (the craftsperson's Make do and mend,
-    /// `world/make_do.rs`).
+    /// `world/crafting/make_do.rs`).
     MakeDo,
     /// Choose a loose gem to cut (Jewelcraft's Cut recipe, from its profession's screen).
     Cut,
@@ -442,7 +443,7 @@ impl Screen {
             ScreenName::Graveyard => {
                 Screen::Graveyard(GraveyardScreen::new(&launch.fallen, content))
             }
-            ScreenName::Pause => Screen::Menu(MainMenu::pause()),
+            ScreenName::Pause => Screen::Menu(MainMenu::pause(run.map(Almanac::of))),
             // A release build's new run gets a seed no one chooses; a developer may type one.
             ScreenName::NewRun => {
                 let fresh = (!launch.dev).then(new_run_screen::fresh_seed);
@@ -1264,6 +1265,30 @@ mod tests {
             stack.screens.push(screen);
         }
         stack
+    }
+
+    /// `docs/dev/cli.md` lists every `--screen` value by hand (#1667): each written as code, a
+    /// backtick and the name with no more of a name after it.
+    #[test]
+    fn every_screen_name_is_in_the_cli_doc() {
+        let doc = include_str!("../../../../docs/dev/cli.md");
+        let missing: Vec<_> = ScreenName::value_variants()
+            .iter()
+            .filter_map(|s| s.to_possible_value())
+            .map(|v| v.get_name().to_string())
+            .filter(|name| {
+                !doc.match_indices(&format!("`{name}")).any(|(at, m)| {
+                    doc[at + m.len()..]
+                        .chars()
+                        .next()
+                        .is_some_and(|c| !(c.is_ascii_alphanumeric() || c == '_' || c == '-'))
+                })
+            })
+            .collect();
+        assert!(
+            missing.is_empty(),
+            "docs/dev/cli.md lacks the screens {missing:?}"
+        );
     }
 
     #[test]

@@ -337,7 +337,7 @@ impl Content {
         &self,
         spec: &creature::CreatureSpec,
     ) -> Result<Vec<(FactionId, u32)>, String> {
-        (spec.factions.iter())
+        let factions: Vec<(FactionId, u32)> = (spec.factions.iter())
             .map(|(name, &weight)| {
                 let id = (self.factions.id(name))
                     .ok_or_else(|| format!("creature `{}`: unknown faction `{name}`", spec.id))?;
@@ -346,7 +346,16 @@ impl Content {
                 }
                 Ok((id, weight))
             })
-            .collect()
+            .collect::<Result<_, _>>()?;
+        // The court's draw is `Rng::weighted` over them: their sum must fit (#1594).
+        if crate::rng::weight_sum(factions.iter().map(|&(_, w)| w)).is_none() {
+            return Err(format!(
+                "creature `{}`: {}",
+                spec.id,
+                crate::rng::WEIGHTS_OVERFLOW
+            ));
+        }
+        Ok(factions)
     }
 
     /// Status effects and the healing rules (optional: none, and the default healing).
@@ -493,7 +502,7 @@ struct CreatureFile {
 }
 
 /// Checks the fields a creature type's `combat` would leave unread: only a dragon breathes
-/// (`world/breath.rs`), a burst on touch is struck instead of every melee blow, and only
+/// (`world/creatures/breath.rs`), a burst on touch is struck instead of every melee blow, and only
 /// `ranged` and `caster` creatures have a `range`.
 fn check_combat(spec: &creature::CreatureSpec) -> Result<(), String> {
     let id = &spec.id;
@@ -502,7 +511,7 @@ fn check_combat(spec: &creature::CreatureSpec) -> Result<(), String> {
             "creature `{id}`: only a `combat = \"dragon\"` creature has a breath"
         ));
     }
-    // A vortex's burst is its whole offence (`world/creature_burst.rs`): no attack beside it.
+    // A vortex's burst is its whole offence (`world/creatures/creature_burst.rs`): no attack beside it.
     if (spec.burst.as_ref()).is_some_and(|b| b.when == crate::content::BurstWhen::Touches)
         && (spec.attack.is_some() || spec.combat != Combat::Melee)
     {

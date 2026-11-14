@@ -91,7 +91,7 @@ conflict every time; two that insert at different places merge cleanly. So:
   `VERBS` table and `Display`), `ActionKind::ALL` and `data/actions.toml`, `KeyCommand` and `REBINDABLE`
   (`settings/keys.rs`: the controls screen shows that order, so a new command goes next to its
   group), the dump layers (`dump/layer.rs`, `dump/mod.rs::layer_rows`), the settings rows (`ui/settings_screen.rs`), the
-  `Content` fields and `Content::load` steps, the `mod` lists (`world/mod.rs`: below),
+  `Content` fields and `Content::load` steps, the `mod` lists (`world/<group>/mod.rs`: below),
   the wiki's `generate()` list (`xtask/src/wiki/mod.rs`) and `wiki/src/SUMMARY.md` (pages by
   topic), `tests/golden/manifest/*.toml` (the feature's own file), the content fingerprint
   groups, and single-file data tables (`data/slots.toml`, `stats.rs`, `data/weapon_skills.toml`,
@@ -113,19 +113,27 @@ conflict every time; two that insert at different places merge cleanly. So:
   indices in path order, so two PRs adding files both change the ids after theirs: that is the
   per-release save bump's business, not the PR's.
 - **A feature's dispatch lives in its own module**: one match arm in `world/mod.rs::player_acts`
-  calling `self.feature(..)` in `world/feature.rs`, one line each in the other hot files
-  (`action.rs`, `content/mod.rs`, `dump.rs`, `input/play.rs`, `settings/keys.rs`), and its own tests
-  file (`world/feature_tests.rs`).
-- **`world/mod.rs`'s module lists are grouped by subsystem** (#1497), each group under a comment
-  naming it and its `docs/dev/` topics: the group's modules, then its test modules inside one
-  `cfg_if! { if #[cfg(test)] { ... } }` block, each list sorted by name. A new module is one line,
-  `mod feature;` in its group's list, and its tests one line, `mod feature_tests;` in the group's
-  `cfg_if!` block (no `#[cfg(test)]` of its own: the block gives it). Pick the group of the
-  feature's `docs/dev/` topic; a test of a campaign's places end to end goes in the last group. The
-  `cfg_if!` is a local macro shaped and named after the `cfg-if` crate's because rustfmt follows
-  `mod` declarations inside `cfg_if!` and no other macro: under any other name `cargo fmt` would
-  skip the test files. The groups are the folders #1496 will move `world/` into, one per PR.
-- **Docs follow the same rule**: a feature edits its own `docs/dev/<topic>.md` and the `spec/`
+  calling `self.feature(..)` in `world/<group>/feature.rs`, one line each in the other hot files
+  (`action/mod.rs`, `content/mod.rs`, `dump/mod.rs`, `input/play.rs`, `settings/keys.rs`), and its own tests
+  file (`world/<group>/feature_tests.rs`).
+- **`world/` is one folder per subsystem** (#1497, #1496): `world/mod.rs` declares the groups,
+  each under a comment naming it and its `docs/dev/` topics (`turn`, `levels`, `combat`,
+  `health`, `magic`, `creatures`, `allies`, `character`, `classes`, `skills`, `items`, `crafting`,
+  `fixtures`, `people`, `campaigns`), and each folder's `mod.rs` lists its modules, then its test
+  modules inside one `cfg_if! { if #[cfg(test)] { ... } }` block, each list sorted by name. A new
+  module is one line, `mod feature;` in its folder's list, and its tests one line, `mod
+  feature_tests;` in the folder's `cfg_if!` block (no `#[cfg(test)]` of its own: the block gives
+  it). Pick the folder of the feature's `docs/dev/` topic; a test of a campaign's places end to end
+  goes in `campaigns/`. The `cfg_if!` is a local macro (defined in `world/mod.rs`, before the
+  folders) shaped and named after the `cfg-if` crate's because rustfmt follows `mod` declarations
+  inside `cfg_if!` and no other macro: under any other name `cargo fmt` would skip the test files.
+- **Visibility in `world/`**: an item starts at `pub(super)`, its folder only, and is widened to
+  `pub(in crate::world)` when another folder uses it (`pub(crate)` only for what code outside
+  `world/` reads); a folder's module is `pub(in crate::world) mod` the same way. A module names
+  the root's items as `crate::world::World` and another folder's as
+  `crate::world::combat::fight::...`; `super::` reaches only its own folder.
+- **Docs follow the same rule**: a feature edits its own `docs/dev/<topic>.md` (a new topic file
+  adds its line to `docs/dev/README.md`, in its group) and the `spec/`
   files of the sections it touches (bullets next to the related ones); `docs/dev/cli.md` for a new
   flag, `--screen` name, scenario, dump layer, or action (by its group); CLAUDE.md only for a new
   command; the wiki gets its page and tables; `README.md` is not touched by feature work.
@@ -168,8 +176,8 @@ tag list is the one in `assets/data/creatures/README.toml`). Other hot spots see
 roster wave, and what to do in each:
 - `assets/data/factions/`: a new faction takes a free `NNN-` number by its group, never the last.
 - test fixtures and the factions list: `world/{equip,magic,object,read}_tests.rs` take their
-  at-peace factions from `world/fixture_factions.rs::peaceful_factions()` (the shipped
-  `factions/` without its grudges), so a new faction edits none of them. `world/mana_tests.rs`
+  at-peace factions from `world/creatures/fixture_factions.rs::peaceful_factions()` (the shipped
+  `factions/` without its grudges), so a new faction edits none of them. `world/magic/mana_tests.rs`
   keeps the shipped `status/` and replaces only the few statuses it needs
   (`status_text()`), so a creature's rider status needs no fixture edit.
 - the creatures README tag list: add a tag's line by group, only when something uses the tag.
@@ -191,29 +199,75 @@ The release that bumps the workspace version touches no test file: the fixture s
 `tests/golden/saved-characters/saves/` say `@VERSION@` (all but Osric's, another version's on
 purpose), and the screen snapshots write the version `[version]` (#1532).
 
-## Random streams: keep the gameplay stream still
+## Random streams: every rule draws by its own key
 
-`state.rng`, the `gameplay` stream (`rng.rs`), is shared by about two hundred draw sites in
-ninety modules. A draw added to it or taken from it shifts every later roll of the run, so one
-feature's change breaks the replays, insta snapshots, and golden walks of unrelated features,
-and every PR in flight that touches them conflicts. The policy (#1523):
+There is no shared gameplay stream (#1662). Every rule that rolls in play draws from a stream of
+its own, keyed by what it decides, so a draw added to or taken from one rule never moves
+another's rolls: the replays, insta snapshots, and golden walks of unrelated features stay as
+they were, and PRs in flight no longer conflict over them. The scheme is `rng.rs`'s module docs
+("Keys"); the rules:
 
-- **A self-contained new feature draws from a keyed stream of its own**, never `state.rng`: a
-  constructor in `rng.rs` (`Rng::grade`, `Rng::court`) when the stream is kept or shared, a
-  labelled `Rng::stream(seed, "feature/<key>")` made where it is used when it is not
-  (`appraise/<hour>`, `wares/<actor id>`), or a keyed draw with no generator at all
-  (`weather::draw(seed, label, k)`, as one-liners and mutters do). Key it by what makes the draw
-  unique (an actor, a level, the moment), so two draws never share a value by accident. A
-  stream kept in `WorldState` (`ruin`, `encounters`) is made on its first draw, so a run that
-  never draws from it hashes as before.
-- **Add the stream to the table at the top of `rng.rs`** in the same PR, in its group.
-- **High-churn users of `gameplay` move out as they are touched**: the outcome tables
-  (`world/outcome.rs`), eating (`world/eat.rs`), miscasts. Each move is a PR of its own, or a
-  commit its PR names, that says the run's rolls change; never move a draw between streams as a
-  side effect of another change.
-- Rules that are part of the core loop (to-hit, damage, checks, the AI) stay on `gameplay`.
+- **A moment's draw** is `draw!(self, "<rule>/<decision>/<actor key>")` in a `World` method
+  (`crate::rng::draw`): the label names the rule and whom it concerns, and the key is the label,
+  the second of game time, and how many draws of that label the second has seen
+  (`<label>@<second>#<n>`, counted by `WorldState::draws`, a `rng::Draws`). Several dice of one
+  decision (a check and the degrees it inflicts) come from the one stream; distinct decisions
+  take distinct labels, so no rule's draw counts against another's. An actor is named by its
+  `Actor::key` (`self.state.actors.key(id)`, `player` for the player), never its `ActorId`
+  (`rng.rs`, "Actor keys": the id is the global creation counter, which renumbers every later
+  creature when one more or fewer is made earlier).
+- **A one-shot decision of an entity** (what a creature drops as it dies, its grade as it is
+  made, a trader's wares) is `Rng::stream(seed, "<rule>/<actor key>")`, or a constructor in
+  `rng.rs` when the stream is shared by several callers (`Rng::grade`, `Rng::court`). Its key
+  must be unique by construction: the entity's key, a level's id, a quest's id.
+- **A kept stream of a subsystem** (`training`, `levels`, `ruin`, `encounters`, a level's
+  `spawn/<level id>`) is sequential within that subsystem and kept in the state; only its own
+  draws move it. Add no new kept stream unless the rolls must continue across the run in order.
+- **Unique and stable.** A key names *what* is decided, never how many things came before it:
+  level id, cell, actor key, the moment, an attempt number. Two decisions never share a key
+  (include enough context, or let `draw!`'s counter settle repeats in one second). A PR that adds
+  or changes keys says why each is unique and stable.
+- **Every label is written at its site**, so `grep 'draw!(' crates/warlock-core/src` lists them
+  all; the table at the top of `rng.rs` lists the one-shot and kept streams. Add a new one-shot
+  or kept stream to that table in the same PR, in its group.
+- **The guard**: `WorldState` has no shared stream to draw from, so a new draw must name a key;
+  `Rng::stream` in a `World` method is reviewed for the uniqueness and stability above.
 
-**The state hash's format.** `World::state_hash` (`world/hash.rs`) is FNV-1a over the
+## Random streams: every rule draws by its own key
+
+There is no shared gameplay stream (#1662). Every rule that rolls in play draws from a stream of
+its own, keyed by what it decides, so a draw added to or taken from one rule never moves
+another's rolls: the replays, insta snapshots, and golden walks of unrelated features stay as
+they were, and PRs in flight no longer conflict over them. The scheme is `rng.rs`'s module docs
+("Keys"); the rules:
+
+- **A moment's draw** is `draw!(self, "<rule>/<decision>/<actor key>")` in a `World` method
+  (`crate::rng::draw`): the label names the rule and whom it concerns, and the key is the label,
+  the second of game time, and how many draws of that label the second has seen
+  (`<label>@<second>#<n>`, counted by `WorldState::draws`, a `rng::Draws`). Several dice of one
+  decision (a check and the degrees it inflicts) come from the one stream; distinct decisions
+  take distinct labels, so no rule's draw counts against another's. An actor is named by its
+  `Actor::key` (`self.state.actors.key(id)`, `player` for the player), never its `ActorId`
+  (`rng.rs`, "Actor keys": the id is the global creation counter, which renumbers every later
+  creature when one more or fewer is made earlier).
+- **A one-shot decision of an entity** (what a creature drops as it dies, its grade as it is
+  made, a trader's wares) is `Rng::stream(seed, "<rule>/<actor key>")`, or a constructor in
+  `rng.rs` when the stream is shared by several callers (`Rng::grade`, `Rng::court`). Its key
+  must be unique by construction: the entity's key, a level's id, a quest's id.
+- **A kept stream of a subsystem** (`training`, `levels`, `ruin`, `encounters`, a level's
+  `spawn/<level id>`) is sequential within that subsystem and kept in the state; only its own
+  draws move it. Add no new kept stream unless the rolls must continue across the run in order.
+- **Unique and stable.** A key names *what* is decided, never how many things came before it:
+  level id, cell, actor key, the moment, an attempt number. Two decisions never share a key
+  (include enough context, or let `draw!`'s counter settle repeats in one second). A PR that adds
+  or changes keys says why each is unique and stable.
+- **Every label is written at its site**, so `grep 'draw!(' crates/warlock-core/src` lists them
+  all; the table at the top of `rng.rs` lists the one-shot and kept streams. Add a new one-shot
+  or kept stream to that table in the same PR, in its group.
+- **The guard**: `WorldState` has no shared stream to draw from, so a new draw must name a key;
+  `Rng::stream` in a `World` method is reviewed for the uniqueness and stability above.
+
+**The state hash's format.** `World::state_hash` (`world/turn/hash.rs`) is FNV-1a over the
 `serde_json` encoding of `WorldState`, streamed into the hasher. It therefore also depends on
 `serde_json`'s output and on `rand_chacha`'s serde format for every kept stream (`rng.rs`): a
 dependency bump that changes either changes every replay's recorded hashes with no rule change.

@@ -32,6 +32,8 @@ pub struct PerceptionView<'a> {
     pub(crate) campaign: &'a str,
     /// The time on the clock, which the player knows.
     pub(crate) time: GameTime,
+    /// The turns taken so far, for the developer's status bar segment (#1666).
+    pub(crate) turn: u64,
     /// How the run ended, once the player has died.
     pub(crate) death: Option<&'a Death>,
     /// The player's experience total.
@@ -40,8 +42,8 @@ pub struct PerceptionView<'a> {
     pub(crate) progress: &'a crate::world::Progress,
     /// The player's quests, which they know.
     pub(crate) quests: &'a crate::world::Quests,
-    /// The patron's open commission, which the player knows (`world/patron.rs`).
-    pub(crate) patron: &'a crate::world::patron::Patron,
+    /// The patron's open commission, which the player knows (`world/crafting/patron.rs`).
+    pub(crate) patron: &'a crate::world::crafting::patron::Patron,
     /// Everything the player was told, which they know.
     pub(crate) messages: &'a crate::messages::MessageLog,
     /// What the player knows of scroll types: how they name what they see.
@@ -49,8 +51,8 @@ pub struct PerceptionView<'a> {
     pub(crate) snapshot: &'a Perception,
     /// The overworld encounter the player must answer, which they know.
     pub(crate) encounter: Option<&'a crate::world::Pending>,
-    /// The run's seed, for the freshness check (`world/freshness.rs`), which only draws a stream
-    /// of its own.
+    /// The run's seed, for the freshness check (`world/health/freshness.rs`), which only draws a
+    /// stream of its own, and the developer's status bar segment (#1557).
     pub(crate) seed: u64,
 }
 
@@ -60,7 +62,7 @@ impl<'a> PerceptionView<'a> {
     }
 
     /// Whether `stack` is a magic crystal, one the Consume list (`e`) offers beside food and
-    /// potions (`data/crystals.toml`; the rare materials are not; `world/crystal.rs`).
+    /// potions (`data/crystals.toml`; the rare materials are not; `world/crafting/crystal.rs`).
     pub fn is_crystal(&self, stack: &crate::object::Stack) -> bool {
         (self.content.crystals()).is_some_and(|c| c.colour_of_object(stack.object).is_some())
     }
@@ -102,7 +104,7 @@ impl<'a> PerceptionView<'a> {
     }
 
     /// Whether a corpse lies at `p` where the player sees it now (what a spell aimed at a corpse
-    /// asks, `world/corpse_spell.rs`).
+    /// asks, `world/magic/corpse_spell.rs`).
     pub fn corpse_at(&self, p: Pos) -> bool {
         self.snapshot.sees_actors_at(p)
             && (self.objects(p).iter()).any(|s| self.content.object(s.object).corpse.is_some())
@@ -169,9 +171,21 @@ impl<'a> PerceptionView<'a> {
         self.time
     }
 
+    /// The turns taken so far. Developer text only: the status bar shows it with the dev keys
+    /// on, never to a player (#1666).
+    pub fn turn(&self) -> u64 {
+        self.turn
+    }
+
+    /// The run's seed. Developer text only: the status bar shows it with the dev keys on, and
+    /// player text never mentions it (#1557).
+    pub fn seed(&self) -> u64 {
+        self.seed
+    }
+
     /// The slots the player has, in display order: every slot but another class's own (the
     /// aristocrat's extra rings, #1404; `Content::slots_for`), unless a talent of theirs opens it
-    /// (Many-fingered; `world/body_slots.rs`).
+    /// (Many-fingered; `world/items/body_slots.rs`).
     pub fn own_slots(&self) -> Vec<(SlotId, &'a SlotDef)> {
         let class = self.character.map(|c| c.spec.class.as_str());
         let mods = self.player.talent_mods(self.content);
@@ -181,7 +195,7 @@ impl<'a> PerceptionView<'a> {
     }
 
     /// The equipment screen's note for slot `slot` when a talent of the player's bars it, which
-    /// they know: `horns`, shown `— (horns)` (Horned; `world/body_slots.rs`).
+    /// they know: `horns`, shown `— (horns)` (Horned; `world/items/body_slots.rs`).
     pub fn barred(&self, slot: SlotId) -> Option<String> {
         if self.player.talents.is_empty() {
             return None;
@@ -221,7 +235,7 @@ impl<'a> PerceptionView<'a> {
         crate::world::weapon_shapes(self.content)
     }
 
-    /// What keeps the player from calling a familiar now (`world/familiar.rs`): one alive,
+    /// What keeps the player from calling a familiar now (`world/allies/familiar.rs`): one alive,
     /// wherever it is (they know their own), or a hostile they see.
     pub(crate) fn calling_barred(&self) -> Option<crate::ability::Unavailable> {
         use crate::ability::Unavailable;
@@ -314,7 +328,7 @@ impl<'a> PerceptionView<'a> {
         self.snapshot.dazzled
     }
 
-    /// Whether the player averts their eyes from a gaze they see (`world/avert.rs`): they fight
+    /// Whether the player averts their eyes from a gaze they see (`world/creatures/avert.rs`): they fight
     /// half-blind. Only that they do, never how much.
     pub fn averted(&self) -> bool {
         self.snapshot.averted
@@ -325,7 +339,7 @@ impl<'a> PerceptionView<'a> {
         &self.snapshot.allies
     }
 
-    /// The player's companion among their allies (`world/companion.rs`), with its name and
+    /// The player's companion among their allies (`world/allies/companion.rs`), with its name and
     /// grade; `None` without one.
     pub fn companion(&self) -> Option<(&AllyView, &crate::world::CompanionData)> {
         (self.snapshot.allies.iter()).find_map(|a| match &a.source {
@@ -334,7 +348,7 @@ impl<'a> PerceptionView<'a> {
         })
     }
 
-    /// The player's familiar among their allies (`world/familiar.rs`), with its name and
+    /// The player's familiar among their allies (`world/allies/familiar.rs`), with its name and
     /// grade; `None` without one.
     pub fn familiar(&self) -> Option<(&AllyView, &crate::world::CompanionData)> {
         (self.snapshot.allies.iter()).find_map(|a| match &a.source {
@@ -356,14 +370,14 @@ impl<'a> PerceptionView<'a> {
         &self.snapshot.kept_beside
     }
 
-    /// Whether an escort of the player's stands beside them (`world/escort.rs`): the Give list
+    /// Whether an escort of the player's stands beside them (`world/people/escort.rs`): the Give list
     /// holds anything it could put on.
     pub fn escort_beside(&self) -> bool {
         self.snapshot.escort_beside
     }
 
     /// Whether the escort of quest `quest` is with the player, on their level or in their
-    /// retinue (`world/escort.rs`): the quest log's status.
+    /// retinue (`world/people/escort.rs`): the quest log's status.
     pub fn escorting(&self, quest: &str) -> bool {
         (self.snapshot.allies.iter()).any(|a| {
             (a.here || a.retinue)

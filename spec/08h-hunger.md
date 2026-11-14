@@ -4,7 +4,7 @@ Part of the specification, the source of truth for what to build; the index is
 [`specification.md`](../specification.md). Update it together with the code and the
 developer notes (CLAUDE.md, `docs/dev/`).
 
-- **Hunger** (`warlock-core/src/hunger.rs`, the rules; `world/hunger.rs` and `world/eat.rs`,
+- **Hunger** (`warlock-core/src/hunger.rs`, the rules; `world/health/hunger.rs` and `world/health/eat.rs`,
   applying them; `data/hunger.toml`, §7; M23, #137), ADOM-like:
   - **Nutrition**: the player has a counter of nutrition points (`Actor::satiation`; creatures
     do not hunger). Game time burns it as the scheduler moves the clock, so long actions,
@@ -24,7 +24,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     Starving. **Hungry**: a warning only. **Weak** (and Fainting and Starving): Strength and
     Dexterity −1 (`[weak] stats`) in the effective scores combat and burden read (§8 "Stats";
     hit points go by the actor's own Toughness). **Fainting** (and Starving): as each turn
-    begins (`World::run_turn`), one draw of the gameplay stream with `[fainting] chance` (5 %;
+    begins (`World::run_turn`), one draw of its keyed stream with `[fainting] chance` (5 %;
     none drawn otherwise): "You faint from hunger." and the player loses `turns` (5) turns, a
     wait's price each added to their action's, while the others act (`World::faint`).
     Long fast (§8 "Talents"; Grit, Willpower 13, `no_hunger_weakness`, reworked in #775) takes
@@ -77,7 +77,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     `vomit` (50 %) to vomit ("You vomit!": it feeds nothing, and the counter falls to at most
     `vomit_leaves`, 1000, Hungry), else "You have a hard time getting it all down." and what
     does not fit is lost.
-  - **Food rots** (`crate::rot`, the stages; `world/rot.rs`, applying them; #195): every food
+  - **Food rots** (`crate::rot`, the stages; `world/health/rot.rs`, applying them; #195): every food
     has a shelf life in data, `keeps` and `lasts` (§7 "Objects": a loaf of bread keeps 5 days
     and lasts 10, an apple 14 and 28, a food ration 30 and 60, dried meat and the angelica root
     longer; corpses by their creature's size, 8 and 36 hours), and every stack of food knows
@@ -119,7 +119,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
       table (`profane = { rolls, tiers = { lesser, greater, dire } }`, the tiers' odds summing
       to 100); both or neither, only on an everlasting creature, and never with `vomit`. Eating
       one, after its message and what any fresh corpse does: the signature is given (its line,
-      then "You are Rat-king's court."), then each roll draws a gift on the gameplay stream (a
+      then "You are Rat-king's court."), then each roll draws a gift on its keyed stream (a
       tier by the odds; then, among that tier's drawn gifts the eater may take, one by weight; an
       empty tier gives way to the next up, then down; all empty: "Nothing more of it will take in
       you.") and gives it, each before the next is drawn; then the deed `eat_profane` (−300, the
@@ -162,7 +162,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     it begins); it costs hit points as time passes and may kill (`Death::of`, "Died of poison").
   - **Eating a corpse** feeds by its creature's size (`[corpses.size]`; small 400 in 3 turns,
     medium 1000 in 6). A fresh (or old) one does what
-    its creature's `on_eat` says (§7), in this order, each draw from the gameplay stream and none
+    its creature's `on_eat` says (§7), in this order, each draw from its keyed stream and none
     for a chance of 0: its `message`; a draw with `vomit` (it comes back up: no food, no more
     effects); per stat in display order, its `train` marks into the stat's training pile (sure,
     no draw; "Something of its strength passes into you." for 30 or more, the stat's word:

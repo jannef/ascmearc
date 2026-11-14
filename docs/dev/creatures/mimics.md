@@ -30,7 +30,7 @@ animated families) with the brute's adjustments from `[family]`.
 - **Not a stray**: `stray = false` and no population names it ; the
   generic list test leaves mimics out as it does animated things.
 
-## In play (`world/mimic.rs`)
+## In play (`world/creatures/mimic.rs`)
 
 A generated chest is a mimic by its band's `mimic` chance (`mapgen/chest.rs::lay`, after the
 chest's lock, trap, and contents are drawn: the lock and trap dropped, the contents carried, no
@@ -60,7 +60,7 @@ Every mimic is placed **disguised** (`travel::make_creature` adds the status tha
 status the player never saw), says the line when the cell is in sight (`Perception::in_sight`;
 `Found` always), and on a touch strikes. A revealed mimic never hides again.
 
-Draws: none of its own; the touch's blow is the gameplay stream's as any attack, the search
+Draws: none of its own; the touch's blow is its keyed stream's as any attack, the search
 checks too. A run that never meets a mimic is unchanged.
 
 ## Talents
@@ -77,7 +77,7 @@ JSON `seen_actors` and `chests` show the chest the player sees.
 ## Tests
 
 `content/mimic_roster_tests.rs` (one type a level, the bands and names, no
-population), `world/mimic_tests.rs` (the legend, the snapshot equal to a real chest's, touch,
+population), `world/creatures/mimic_tests.rs` (the legend, the snapshot equal to a real chest's, touch,
 Knock, a blow, searching and Spot, Chest-wise seeing it and slipping its grip, no turn and no foe, the drop, unaware, a
 save and a replay, the dumps), and
 `warlock/src/ui/look.rs` (`a_disguised_mimic_looks_like_a_chest`).

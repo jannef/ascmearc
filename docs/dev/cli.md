@@ -17,6 +17,10 @@ Where the lists come from: `--scenario` names are the files of `assets/campaigns
 
 The one-line table is in CLAUDE.md ("Commands"); this is what each row does.
 
+`target/` below is Cargo's target directory: xtask follows `CARGO_TARGET_DIR` (else `cargo
+metadata`'s `target_directory`) for the build output it reads and the files it writes
+(`xtask/src/main.rs::target_dir`, the one place).
+
 - **Screenshot smoke test**, `cargo xtask smoke`: writes `target/xtask/smoke.png`; captures
   after 60 frames, retried once after 600 if the capture is a single flat color, which still
   fails: #669.
@@ -36,6 +40,19 @@ The one-line table is in CLAUDE.md ("Commands"); this is what each row does.
 - **Regenerate the vast level**, `cargo xtask gen-vast`: writes
   `assets/campaigns/showcase/levels/vast.toml`; deterministic, never hand-edit. `--check` fails
   if the file differs from the generator output; run it after touching `xtask/src/vast.rs` (CI runs it).
+- **Check the docs' code paths**, `cargo xtask docs-check` (`xtask/src/docs_check.rs`, #1667):
+  every code name in an inline code span of CLAUDE.md, `spec/`, and `docs/dev/` (not
+  `docs/design/`, which is history) must name something in the sources under `crates/` and
+  `xtask/`: a file by its path's tail (`world/allies/familiar.rs`), with its items
+  (`ui/screens.rs::ScreenName`), a type's item (`World::state_hash`), a module's
+  (`ui::step_dialogs::trap_dialog`), `shoot_tests::a_shade_...` by the start of its name. It is a
+  grep: an item is found when it is a word of the file (outside `//` comments), so it catches a
+  file moved or gone and a name renamed or gone, not every stale detail; a bare file name
+  (`action.rs`) is found in any folder. Names from outside the workspace (`std`, Bevy) are
+  passed over, and `IGNORED` there lists the few intentional examples. CI runs it. The lists of
+  this file are held by tests too: every `--screen` value (`ui/screens.rs`), scenario
+  (`content/scenario.rs`), dump layer (`dump/layer.rs`), and action verb (`action/text.rs`'s
+  `VERBS`) must be written here as code.
 - **Third-party notices**, `cargo xtask licenses`: regenerates `THIRD_PARTY_LICENSES.html` with
   `cargo-about`, config `about.toml`/`about.hbs`; install: `cargo install cargo-about --locked
   --features cli`; `--check` fails when it is stale (CI runs the same `cargo about` call in shell,
@@ -178,7 +195,9 @@ On the main menu:
 
 - `main`, `new-run` (a release build, which skips New run, shows the race), `characters` (the
   saved characters; a capture reads them, never writes, from `--save-dir`, e.g.
-  `tests/golden/saved-characters`), and `graveyard` (the fallen, most experienced first; a
+  `tests/golden/saved-characters`, whose summaries say `@VERSION@` (#1649: the screen snapshots
+  write it as this version), so read straight from there they all list as another version's;
+  docs/dev/saves.md), and `graveyard` (the fallen, most experienced first; a
   capture reads `graveyard.toml` from `--config-dir`).
 - Character creation over New run and the steps before them, each on its preselection (the
   first scenario's character, the Ascmearc's, an empty name): `race`, `sign` (the birth sign's
@@ -581,7 +600,7 @@ thaw:X,Y,R`
   rank 10 or a character not trained in Decipher script; docs/dev/spells.md "Learning").
 - `decipher:b` makes out the scroll in inventory stack `b`, of a type not yet identified,
   without reading it (the Decipher ability, Decipher script's use: ten minutes, then the reading
-  check of `world/decipher.rs`; made, the type is learned and the scroll kept, failed, the time
+  check of `world/magic/decipher.rs`; made, the type is learned and the scroll kept, failed, the time
   is gone and it may be tried again; refused, with no time, for a known scroll or a stack that is
   no scroll; docs/dev/scrolls.md).
 - `scribe:fireball` writes a scroll of a spell the player knows on the first blank scroll they
@@ -792,7 +811,7 @@ All in docs/dev/crafting.md unless named.
   with its choice) when a level's pick is due (every third level; until it is made every other
   action is refused).
 - `advance:stealth` spends one of a level's skill rolls (on a trained skill;
-  `world/skill_roll.rs`).
+  `world/character/skill_roll.rs`).
 
 ### Dev actions
 

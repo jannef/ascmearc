@@ -40,7 +40,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     and a rare name do not, and their effects apply all the same while worn or wielded (as in
     ADOM and Path of Exile; so an attentive player may notice them: a stat on the character
     screen, a glow). Wearing or wielding an item for a while does not identify it. The core API
-    `World::identify(item)` (`world/loot.rs`; crate-internal, for actions: the scroll of identify,
+    `World::identify(item)` (`world/items/loot.rs`; crate-internal, for actions: the scroll of identify,
     #150, calls it from its read action, the Identify spell and the merchant's Merchant's eye too) identifies the player's inventory stack `item` and says
     "This is a Sharp long sword of the Bear!", returning `Identified::Now(name)`, `Known`
     (already identified, or normal), or `NoSuchItem`. Presentation reaches affixes only through
@@ -171,7 +171,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     fewer affixes, with none it is normal; then a wand's rung, then its make, and last the trim
     (below). Loot is found unidentified (its gems and material show).
   - **Deeper finds are better made** (#1436; `data/gear_condition.toml` `[[depth]]`,
-    `world/gear_condition.rs::make`): from item level 3 on, a row by item level gives loot's arms
+    `gear/condition.rs::make`): from item level 3 on, a row by item level gives loot's arms
     and armour (single pieces with something to better) a chance in per mille of Fine,
     Marvellous, or Masterwork (one draw from the loot stream after the wand's rung, then the
     aspects as the anvil draws them; none at item levels 1 and 2 or for anything else, so
@@ -238,7 +238,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     and is read in one place each:
     - **Inflict** (`{ inflict = STATUS, chance, severity }`): a hit with it that leaves its
       target alive causes `severity` degrees of the status by `chance` percent (one draw of the
-      gameplay stream below 100, none at 100), read where a natural attack's `on_hit` is
+      keyed stream below 100, none at 100), read where a natural attack's `on_hit` is
       (`World::after_blow`), through the attack's profile (`Profile::on_hit`, from
       `Mods::local` of the weapon that hit: the main hand's, the off hand's for its blows, a
       launcher's for its shots, a thrown weapon's; never a kick or a shield bash). The target's
@@ -268,7 +268,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
   - **Dev**: replay text `identify` / `identify:LETTERS` (`Action::Identify`, `F8` in dev
     builds: everything carried) identifies without time passing, recorded in replays.
 
-- **Scrolls** (`warlock-core/src/world/read.rs`, data `read` in `data/objects/` §7; M29, #150):
+- **Scrolls** (`warlock-core/src/world/magic/read.rs`, data `read` in `data/objects/` §7; M29, #150):
   objects (`?`, the scrolls class, stackable, with a value) whose `read` says what reading one
   does. They are **read** (`Action::Read { item, target }`, replay text `read:LETTER:X,Y` at a
   cell or `read:LETTER:LETTER` on an inventory stack; `r`, §6 "Read"), which takes the `read`
@@ -277,7 +277,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
   kind ("Read it at what?", "Read it on what?"), the player's own cell ("You cannot aim at
   yourself."), out of reach ("That is out of range."), a spell on the overworld, or a stack
   there is nothing to learn about ("You already know what a dagger is.").
-  - **Making out a scroll** (`world/decipher.rs`, data `data/rules/decipher.toml`; #1024, the skill
+  - **Making out a scroll** (`world/magic/decipher.rs`, data `data/rules/decipher.toml`; #1024, the skill
     uses design §6.6, the owner's rule: Decipher script is how non-casters use scrolls, by a
     check; one with enough learning (Decipher script's, #1270) bypasses it; this overrides the no-caster-level
     design's line that reading works for anyone). Once nothing refuses the reading and before the
@@ -287,7 +287,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     scroll with no spell behind it (restoration) counts as level 0. **Otherwise a check**, never
     a refusal: 2d12 + the Intelligence modifier + talents' additions to its checks + Decipher
     script's `decipher` benefit (curve 0, +8 at 100, +12 at 200; 0 for one without the skill, whatever they wear that raises it), against `base` (10) + the spell level ÷ `levels_per_point` (5).
-    Two gameplay draws, only when it is asked. **Made**, the scroll reads as anywhere in this
+    Two keyed draws, only when it is asked. **Made**, the scroll reads as anywhere in this
     section (Scroll adept, Scroll savant, an unknown type identified). **Failed**, "The writing
     swims before your eyes.": a read's price, the scroll kept, a label still unknown, no cast, no
     Scroll savant draw, no Read training; try again. **Marks**: `Use::Decipher` 100 % per check
@@ -356,7 +356,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     of mana through the one cast path (`read:b:c`); the grimoire of identify teaches it. It is the commonest scroll in loot (`frequency` 300 against the spell scrolls'
     20 to 60, by tier) and a regular general-store item.
   - **The scroll of restoration** (#887; the priest design §11) casts no spell (`read` of kind
-    `cleanse`, `mends` and `restores`; `world/restore.rs`): read on oneself (`read:b`; refused,
+    `cleanse`, `mends` and `restores`; `world/magic/restore.rs`): read on oneself (`read:b`; refused,
     no time, with a target), every point of the reader's stat damage mends and every point
     drains took comes back (§8 "Stats": "Drain"), as a temple's mending does (`StatDamage::mend_all`,
     `World::restore_drained`), a disease showing or not; each stat that comes back is said ("You
@@ -368,7 +368,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     nothing on it (the scrolls class, no `read`: never labelled, known on sight). Read, it is
     refused, takes no time, and keeps the scroll ("There is nothing written on it."). Loot and general-store stock as the scrolls are (item level 1,
     frequency 30, 15 gold).
-  - **Writing scrolls** (`world/scribe.rs`): the wizard's **Scribe** (§8 "Class abilities", at
+  - **Writing scrolls** (`world/magic/scribe.rs`): the wizard's **Scribe** (§8 "Class abilities", at
     12; `Action::Scribe`, replay text `scribe:SPELL`, `scribe:fireball`) writes a scroll of a
     spell the player knows on the first blank scroll they carry. The price is the talent's
     `mana_times` (3) times the spell's mana before Frugal caster (`Actor::spell_base`: the cost
@@ -393,7 +393,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     "Learning", #1270) and of reading a scroll; Spellcraft, which casting trains, helps neither.
     A spell scroll made at random is its grimoire one time in ten (§8 "Spells": "Learning").
 
-- **Wands** (`warlock-core/src/world/zap.rs`, data `wand` in `data/objects/` §7, `content/wand.rs`;
+- **Wands** (`warlock-core/src/world/magic/zap.rs`, data `wand` in `data/objects/` §7, `content/wand.rs`;
   the magic design §9; #398): objects (`-`, the wands class, one at a time) whose `[object.wand]`
   holds a spell of `data/spells/` (an aimed one), its `charges` (its own, required:
   the wand's, not its spell's), and the `rungs = { min, max }` a wand of the kind casts at
@@ -419,7 +419,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     one rung and none for anything but a wand), from the stream its maker already draws from:
     loot's (`magic::loot::make_from`, so drops, chests, and hoards), a starting kit's (`character/kit/...`), a
     generated shop's stock (the shop's), a creature's gear (`gear/...`), an outcome's objects
-    (`gameplay`), and, for the wands a level gives as it is first made (a level
+    (`outcome/objects/<cell>`), and, for the wands a level gives as it is first made (a level
     file's pile or chest, a vault's), a fixed creature kit's, and a scenario's pack, the
     `objects/<level id>`, `objects/actor/<id>`, and `objects/pack` streams. It is kept on the
     stack (`Stack`'s `wand_rung`: saved and hashed, left out of the save for everything but a
@@ -449,7 +449,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     hall's pile beside its arrival (a wand of magic missile and one of fireball).
   - **Talents**: Wand mastery (Weaponcraft, system `spells`): wands cast a rung higher
     (`spell_mod { wand_rungs = 1 }`).
-- **Rods** (`warlock-core/src/world/rod.rs`, data `rod` in `data/objects/` §7 and
+- **Rods** (`warlock-core/src/world/magic/rod.rs`, data `rod` in `data/objects/` §7 and
   `data/rod_effects/`, `content/rod.rs`; the magic design §9; #399): objects (`-`, the rods
   class, one at a time) whose `[object.rod]` holds an **effect no spell has** (`effect`, an id of
   `data/rod_effects/`) and the `mana` a use costs. A rod goes in the **missile weapon
@@ -494,7 +494,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     sleep).
   - **Talents**: Channeler (Spellcraft, from level 5, systems `spells` and `mana`): rods cost a
     quarter less mana, before Frugal caster.
-- **Potions** (`warlock-core/src/world/potion.rs`, data `drink` in `data/objects/` §7,
+- **Potions** (`warlock-core/src/world/health/potion.rs`, data `drink` in `data/objects/` §7,
   `content/potion.rs`; the combat progression design §10; #565): objects (`!`, the potions
   class, stackable) whose `[object.drink]` says what drinking one does by its `kind`, each
   through the one path that does it: `heal` (`dice` hit points back at once, never past the
@@ -504,7 +504,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
   Sluggish, Stunned, Staggered, and Transfixed; `diseases = true` ends
   every disease), `mana` (`dice` mana back, never past the maximum), `elixir` (#568: its `stat`
   +`points` (1) for good, each a trained rise, the potential then lifted to the score where it
-  was below (a trained rise alone never moves it, §8 "Stats"), then the potential +a roll of `potential`, "1d2", one gameplay draw; hit points
+  was below (a trained rise alone never moves it, §8 "Stats"), then the potential +a roll of `potential`, "1d2", one keyed draw; hit points
   follow a Toughness rise at once, the maximum mana and the carrying limits follow the score;
   "You feel stronger.", with ", and that you could be stronger yet." when the potential rose by
   2), `harm` (`dice` degrees of its `status`, Poisoned: sickness, as rotten food gives), and,
@@ -529,7 +529,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
   A **gamble** (kind `gamble`, the potions wave 2 design §4.3) names an `outcomes` table of
   `data/outcomes/` (§7 "Special rooms"; checked to exist once the tables load): drunk, one
   outcome is drawn from it as a healing spring's drink draws (the kind by the table's weights,
-  then one of its outcomes by weight: two gameplay draws; a potion has no side, nothing leans,
+  then one of its outcomes by weight: two keyed draws; a potion has no side, nothing leans,
   nothing is spent) and befalls the drinker where they stand, its own line said instead of the
   statuses'. Two outcome effects serve the gambles: `status` may be a list (`status = [{ id =
   "renewing", degrees = 3 }, { id = "poisoned", degrees = 2 }]`, each given), and `drain_stat =
@@ -612,7 +612,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     and buy potions; never the elixirs, the gambles, the flasks of thunder, fire, and frost, pitch fire, or the blasting flask), the
     alchemist (§7 "Shops": potions only, healing always first), quest rewards, and the hub's
     pile.
-  - **Flasks** (the potions wave 2 design §3, §5; `world/flask.rs`, `[object.throw]` in
+  - **Flasks** (the potions wave 2 design §3, §5; `world/health/flask.rs`, `[object.throw]` in
     `content/potion.rs`; #1223): any potion may be thrown (`throw:c:X,Y`; the throw choice `T`
     lists potions beside throwing weapons). A **flask** is a potion with an `[object.throw]`
     table: `spell` (an id of `data/spells/`, the only thing the loader checks: the data author is
@@ -652,7 +652,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     silver family's kind one), the vial of acid (Acid splash, acid that eats the player's
     armour; drunk, Corroded 2).
   - **Talents** (system `potions`): Thrifty drinker (Delver, from level 6): a potion is not used
-    up one time in four (one gameplay draw a drink, none while the chance is 0); worn
+    up one time in four (one keyed draw a drink, none while the chance is 0); worn
     `potion_kept` affixes add their percent to it, the sum at most 50 (a talent's own chance
     above 50 stands); Lasting draughts (Vigour, Toughness 13; #567): boost and vision statuses
     last half again (`status_lasts`, each degree half again as long to ease). #787 cut Nose for

@@ -4,7 +4,7 @@ Part of the specification, the source of truth for what to build; the index is
 [`specification.md`](../specification.md). Update it together with the code and the
 developer notes (CLAUDE.md, `docs/dev/`).
 
-- **Traps** (`warlock-core/src/world/trap.rs`, data `data/traps.toml` §7; M18, #128):
+- **Traps** (`warlock-core/src/world/fixtures/trap.rs`, data `data/traps.toml` §7; M18, #128):
   - **On a level**: a trap lies on a cell (`LevelState::traps`: its type, whether the player
     knows it, its charges left, a bolt's direction; saved), from the level's legend, a vault, or
     a generator (§7). It is **hidden** until the player sets it off, or sees it set off: the
@@ -71,11 +71,11 @@ developer notes (CLAUDE.md, `docs/dev/`).
     - **teleport**: the victim is moved at once to a free cell of the level (walkable, no one
       there, no trap, no ice: §5 "Ice"), the cell at index `hash % count` of those in row order,
       the hash FNV-1a over the seed, the level id, the turn, the victim's id, and the trap's cell:
-      deterministic, and never the gameplay random stream. A creature goes on from where it
+      deterministic, and never a keyed stream of its own. A creature goes on from where it
       lands.
     A burst or a bolt is the one shared spell code that scrolls cast too (§8 "Scrolls";
     `World::cast_burst`, `World::cast_bolt`, with the trap as the caster). Every roll (attack
-    rolls, damage) comes from the gameplay random stream, so traps replay exactly. A trap's blow is dealt like any other: a big one spills the victim's blood (§8
+    rolls, damage) comes from a keyed stream of its own, so traps replay exactly. A trap's blow is dealt like any other: a big one spills the victim's blood (§8
     "Blood"; from the slit for an arrow, from the trap's cell for the rest), it takes hit points
     and kills (`Event::Died`; a creature drops what it carried), and a victim that lives gets the
     statuses its wound causes (bleeding from a big hit or a confirmed critical; §8 "Status
@@ -85,14 +85,14 @@ developer notes (CLAUDE.md, `docs/dev/`).
     no quest (§8 "Quests"), even when they lured the creature there. Traps never lie on water
     that freezes (§5 "Ice": ice would cover them; a content error in a level file), so a fall into
     a pit and a fall through the ice never meet.
-  - **Sidestepping a known trap** (`world/sidestep.rs`, #476): the player who steps onto a trap
+  - **Sidestepping a known trap** (`world/skills/sidestep.rs`, #476): the player who steps onto a trap
     they know of, of their own will (a `move` onto it, after the interface's question), may avoid
     it. The chance in percent is `[avoid]` in `data/traps.toml`: `base` (55) plus `per_point`
     (10) for each point of their **dodge**, the Dexterity and Dodge categories of their Defence
     (§8 "Combat": the Dexterity modifier capped by the worn armour that allows the least and by
     the burden, plus every Dodge bonus: the Dodge skill, talents, magic items, the stance,
     statuses), kept within `min` (15) and `max` (90): never certain, never hopeless. One draw of
-    the gameplay random stream, only when a known trap lies on the cell (not on a door: a door's
+    a keyed stream of its own, only when a known trap lies on the cell (not on a door: a door's
     trap goes off as the door opens, "Trapped doors" below). An avoided trap stays as it was (no
     charge spent, still known), nothing goes off, the step costs what it costs, the player is told
     in words ("You deftly avoid the arrow trap.", "You step lightly over the pit."), and it counts
@@ -139,7 +139,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     place of the door's, like any known trap (§4.2), and look mode names both ("An arrow trap, on
     closed door."). A secret door is never trapped, as it is never locked (generators never hide
     a trapped door, and a level file's author does not trap one). The trap hall's closets show them (§3).
-  - **Disarming traps** (`warlock-core/src/world/disarm.rs`; #232, the progression design's
+  - **Disarming traps** (`warlock-core/src/world/skills/disarm.rs`; #232, the progression design's
     B7): the use of the Disable device skill, an ability (§6 "Abilities": `Ability::Disarm`,
     "Disarm a trap", in the Skills group; `KeyCommand::Disarm`, no key by default) and an action
     with replay text, `disarm:DIR` (`Action::Disarm`). Whoever is trained in Disable device (the
@@ -159,7 +159,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     a charge. Every try takes the time of `disarm` (2000: 12 s at a normal pace; priced before
     the trap may go off, plus a pit's climb) and may earn Disable device a training mark (`Use::
     Disarm`, 20 %, the training stream), whatever comes of it; the check is two draws of the
-    gameplay stream. Nothing remembers a failed try and there is no limit on trying again (the
+    keyed stream. Nothing remembers a failed try and there is no limit on trying again (the
     owner's rule): time and the risk are the price. Refused, with no time and no draw: without
     the skill ("You do not know how to disarm traps."), and where the player knows of no trap
     ("You know of no trap there.": a hidden trap is refused as an empty cell is, so trying
@@ -167,7 +167,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     those not trained in the skill; the thief is
     trained in Disable device from level 1 (`2d6+10`, known for; #684 took the Trapfinding
     class ability that gave it).
-  - **Rigging traps** (`warlock-core/src/world/rig.rs`; #1423, the craftsperson design §7.6):
+  - **Rigging traps** (`warlock-core/src/world/crafting/rig.rs`; #1423, the craftsperson design §7.6):
     the craftsperson's Trapwright (at 25), a class active (§6 "Abilities": the Class group,
     `Aim::Rig`: the rig list, `ui/rig_screen.rs`, then the direction prompt) and an action with
     replay text, `rig:ID:DIR` (`Action::Rig`, `ActionKind::Craft`). The rigs are data
@@ -181,7 +181,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     trap, chest, door, stairs, shop floor, water, ice, or glowing fungus; refused with the
     reason and no time. The work is the rig's `seconds` of `craft` turns (`World::keep_at`),
     interrupted for nothing; at its end the cell and inputs are asked again (a hidden trap there
-    is found, someone unseen is in the way), then one check, two gameplay draws: 2d12 +
+    is found, someone unseen is in the way), then one check, two keyed draws: 2d12 +
     Dexterity modifier + the skill's `craft` points (Woodcraft) + the talents' Dexterity checks
     against `difficulty` (10). Made: the trap is placed, `known`, `rigged` (`Trap::rigged`,
     saved, default false), with the rig's charges, and the inputs spent ("You rig a tripwire
@@ -193,7 +193,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     is the player. Being known, stepping onto it asks and may be sidestepped. Creatures, allies
     too, know nothing of it. Dumps: `truth` lists each rigged trap, `trap rigged_arrows at (12,
     5): 3 charges (rigged)`; JSON `known_traps[]` has `rigged`.
-- **Doors** (`warlock-core/src/door.rs`, the rules; `world/door.rs`, applying them; M19, #130):
+- **Doors** (`warlock-core/src/door.rs`, the rules; `world/fixtures/door.rs`, applying them; M19, #130):
   locked doors and keys, and kicking doors in.
   - **Locks** are per-cell state of a level, not terrain of their own: a locked door is the
     closed door's terrain with a lock on its cell (`LevelState::locks`, saved and hashed). So it
@@ -222,7 +222,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
       200, at most 20) against the lock's **difficulty**: its own (`lock_difficulty` in level
       and vault legends; default 14, `door::LOCK_DIFFICULTY`), plus on a dungeon branch
       its `locks_per_depth` for each level below the first (the Depths: 1, so 14 on the first
-      level and 21 on the eighth). Two draws of the gameplay stream; a natural 2 fails and a
+      level and 21 on the eighth). Two draws of its keyed stream; a natural 2 fails and a
       natural 24 succeeds, as every check. It takes `pick_lock` whatever comes of it, may earn
       Open lock a training mark (`pick`, 20 %), and makes no noise of its own.
     - **Picked**: the lock is gone and the door swings open in the same action, as with a key
@@ -252,7 +252,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
   - **Kicking** (`k`, then a direction; `Action::Kick`, replay text `kick:DIR`; the `kick` action,
     6 s), ADOM-like:
     - **A closed door**, locked or not, breaks with a chance of the kicker's Strength **score**
-      (never the modifier) in the door's `sturdiness` (§7): one draw of the gameplay stream,
+      (never the modifier) in the door's `sturdiness` (§7): one draw of its keyed stream,
       `1d(sturdiness) ≤ Strength`. The closed door's sturdiness is 30: Strength 9 breaks it 30 %
       of the time, 10 33 %, 15 50 %, 18 60 %, 30 and up always. A door without a sturdiness never
       breaks, and no die is rolled. The kicker's athletics (§8 "Skills") adds to the Strength:
@@ -291,7 +291,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     its brass key carried by the kobold on guard, a skeleton key inside); a dungeon branch with a
     `key` gets a few locked rooms on its rooms levels, its key always within reach (§7
     "Generators", validated). The showcase's locked door is harmless.
-- **Statues** (`warlock-core/src/world/statue.rs`; #1126, the dread design §5.2): a creature killed by
+- **Statues** (`warlock-core/src/world/creatures/statue.rs`; #1126, the dread design §5.2): a creature killed by
   a status with `statue` (Stiffening, the basilisk's gaze) leaves no corpse but a statue, a
   **fixture of a cell** as a chest is: the terrain with `statue` (`petrified`, "statue": solid,
   seen past, stone) and a `Statue` on the cell in `LevelState::statues`, the creature type it was
@@ -319,7 +319,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     floor (`acid_pit`, a floor in sick green), and torn cloth (an object worth nothing). Look
     mode names them for what they are. A dread type's `first_sight` line is said once a run,
     the first time one is in sight, after the turn's other lines (`Progress::sighted`, saved).
-- **Chests** (`warlock-core/src/chest.rs`, the rules; `world/chest.rs`, applying them; data
+- **Chests** (`warlock-core/src/chest.rs`, the rules; `world/fixtures/chest.rs`, applying them; data
   `data/chests.toml` §7 "Chests"; docs/design/chests-and-treasure.md, slices C1 to C3): a chest is a
   **fixture of a cell**, as a door is, never a carried object.
   - **What it is**: one of three terrains (`chest = "shut"`, `"open"`, `"smashed"` in
@@ -349,11 +349,11 @@ developer notes (CLAUDE.md, `docs/dev/`).
     springs open with a click."); nothing opens. Where nothing locked stands it is refused, with
     no time or mana spent: "There is no lock there to spring."
   - **Kicking** (`k`, `kick:DIR`; the plain `kick`, priced and heard as a door kick, and training
-    athletics as one): one draw of the gameplay stream, `1d(sturdiness) ≤ Strength` + athletics +
+    athletics as one): one draw of its keyed stream, `1d(sturdiness) ≤ Strength` + athletics +
     the talents' `door_kick` (Lockbreaker's 6) + the worn `door_kick` (`World::kick_force`), against the band's sturdiness (a coffer's 20).
     Held: "You kick the coffer. It holds.", nothing else changes (try again as often as you
     like). Broken, it is **smashed**: "The coffer bursts apart!", the lock gone, and each stack
-    inside is destroyed with `[smash] destroyed` percent (50; one gameplay draw a stack, in the
+    inside is destroyed with `[smash] destroyed` percent (50; one keyed draw a stack, in the
     order held; Lockbreaker halves it), **coins and loose gems spared** (never rolled); "The
     potion of healing and 2 scrolls are destroyed.", then what is left, spilled on the cell. The
     terrain becomes the smashed chest (splinters, `Event::ChestBroken`).
@@ -429,7 +429,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     (12, 5): shut, locked, trapped (arrow), holds 3 stacks`; JSON `chests` lists those the player sees or
     remembers (`pos`, `band`, `state`, and `locked`: with Chest-wise for a shut one in sight,
     else null).
-- **Searching** (`warlock-core/src/world/search.rs`; data `data/rules/search.toml` §7; #140): one
+- **Searching** (`warlock-core/src/world/skills/search.rs`; data `data/rules/search.toml` §7; #140): one
   check finds every hidden feature, secret doors, hidden traps, and the breaches of sealed rooms
   (§7 "Special rooms": a greater treasure room's, at the secret-door difficulty) alike.
   - **Secret doors**: a closed door that looks and acts like the wall around it until it is
@@ -481,7 +481,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     each trap found, searching or in passing, Detect traps (50 %).
   - **No limit on trying again** (the owner's rule): every check is rolled afresh, after every
     turn, with no memory of failed ones and no cooldown; time is the only price. Checks draw
-    from the gameplay stream only when a hidden feature is in reach (two draws each), so a turn
+    from its keyed stream only when a hidden feature is in reach (two draws each), so a turn
     with nothing hidden around draws nothing extra.
   - **Found**: a secret door becomes its closed door ("You find a secret door!"); a trap becomes
     known as one seen going off does (`World::know_trap`, shared with `learn_traps`; "You notice
@@ -496,7 +496,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     or two a level), only where the level does without them (§7 "Generators"). The showcase hub
     has one, harmless: the hall below the storeroom and the pantry hides a closet with a little
     gold and two gems (§7 "Gems").
-- **Digging** (`warlock-core/src/world/dig.rs`; M19, #131): walls give way to digging and to
+- **Digging** (`warlock-core/src/world/crafting/dig.rs`; M19, #131): walls give way to digging and to
   explosions, ADOM-like.
   - **Walls that break**: terrain with a `hardness` and what it `becomes` (§7): stone walls 600,
     packed earth 100, granite 3000, each becoming rubble (walkable at 150 %, loud underfoot).
@@ -528,7 +528,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     (`LevelState::dug`, saved) for the next dig. Messages: "After 6 minutes, the stone wall
     crumbles.", "A kobold comes into view; you stop digging after 3 minutes.", "You stop digging
     after 3 minutes."
-  - **Mining** (`world/mine.rs`, `data/mining.toml`; #1389): a wall the player digs through on a
+  - **Mining** (`world/crafting/mine.rs`, `data/mining.toml`; #1389): a wall the player digs through on a
     floor of a dungeon branch may hold something, for one trained in Mining only (never on a
     hand-made level, the overworld, or its areas; never a wall a blast or a rod breaks, nor a
     statue). The wall's hardness band gives the chance that it does (packed earth 5 %, a stone
@@ -543,7 +543,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
     deep floors. A branch may name the only ores its rock holds (`ores` in its dungeon file; the
     wiki lists each branch's), stone and gems found anyway. Ore and stone come one lump, one more
     for every 6 the check was made by, at most 3. What is found lies on the rubble: "You break
-    out a lump of iron ore." All draws are the gameplay stream's, after the wall crumbles. A lump
+    out a lump of iron ore." All draws are its keyed stream's, after the wall crumbles. A lump
     of ore (`objects/ore.toml`, one object for every metal, as the piece is) is smelted at an
     anvil into an ingot of its metal by Metalcraft's **Smelt** (§8 "Professions").
   - **Veins** (`mapgen/vein.rs`, `data/mining.toml`'s `[veins]` and the ore rows' `vein`;

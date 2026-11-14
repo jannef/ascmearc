@@ -161,7 +161,7 @@ jobs:
           mkdir -p pages
           cp -r target/web/. pages/
           cp LICENSE pages/
-          # The player wiki, at https://jannef.github.io/warlock/wiki/ (its tables are generated
+          # The player wiki, at https://ascmearc.com/wiki/ (its tables are generated
           # from the game data; they are not committed).
           cargo xtask wiki
           mdbook build wiki
@@ -170,7 +170,7 @@ jobs:
         with:
           path: pages
 
-  # Deploys the latest web build to https://jannef.github.io/warlock/ on every release tag, and on
+  # Deploys the latest web build to https://ascmearc.com/ on every release tag, and on
   # a manual run only when `publish_pages` is ticked.
   pages:
     name: Deploy to GitHub Pages
