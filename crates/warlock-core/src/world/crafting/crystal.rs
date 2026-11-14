@@ -38,13 +38,13 @@
 //! [`Crystals::yield_at`]: crate::content::Crystals::yield_at
 //! [`EnchantingRules::salvage_against`]: crate::content::EnchantingRules::salvage_against
 //! [`Crystals::colour_of_affix`]: crate::content::Crystals::colour_of_affix
+//! [`Effect::Craft`]: crate::skills::Effect::Craft
 
 use crate::action::{Meal, Positions};
 use crate::combat;
 use crate::content::{ActionKind, AffixKind, StatUse};
 use crate::object::Stack;
 use crate::rng::draw;
-use crate::skills::Effect;
 use crate::text::capitalized;
 use crate::world::character::alignment::Deed;
 use crate::world::{Actor, Spent, World};
@@ -130,8 +130,7 @@ impl World {
             return caught;
         };
         let me = self.state.player();
-        let modifier = me.check_modifier(&content, rules.stat)
-            + me.skill_effect_of(&content, rules.skill, Effect::Craft);
+        let modifier = me.craft_modifier(&content, rules.stat, rules.skill);
         for affix in &magic.affixes {
             let Some(def) = content.affixes().get(&affix.id) else {
                 continue;

@@ -85,7 +85,7 @@ use crate::magic::worked::aspects;
 use crate::object::Stack;
 use crate::rng::draw;
 use crate::scroll_label::Lore;
-use crate::skills::{Effect, Use};
+use crate::skills::Use;
 use crate::stats::Stat;
 use crate::time::Duration;
 use crate::world::levels::encounter::Watch;
@@ -1062,8 +1062,7 @@ impl World {
         let content = &self.content;
         let stat = profession_stat(content, def, main);
         let me = self.state.player();
-        me.check_modifier(content, stat)
-            + me.skill_effect_of(content, def.skill, Effect::Craft)
+        me.craft_modifier(content, stat, def.skill)
             + fletch::fletcher_check(content, me, def)
             + self.binding_boon(def.skill)
     }

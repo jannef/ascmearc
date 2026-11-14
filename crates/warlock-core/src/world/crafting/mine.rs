@@ -31,7 +31,6 @@ use crate::item_parts::ItemPart;
 use crate::magic::loot::pick_weighted;
 use crate::object::{self, Stack};
 use crate::rng::draw;
-use crate::skills::Effect;
 use crate::world::World;
 
 /// `count` lumps of `metal`'s ore: the ore object, made of it.
@@ -69,8 +68,7 @@ impl World {
         let Some(band) = rules.band(breaks.hardness).copied() else {
             return;
         };
-        let modifier = me.check_modifier(&content, rules.stat)
-            + me.skill_effect_of(&content, rules.skill, Effect::Craft);
+        let modifier = me.craft_modifier(&content, rules.stat, rules.skill);
         let vein = rules.vein_of(wall);
         // The strike: whether anything is there, the check, what, and a gem: one stream.
         let mut rng = draw!(self, "mine/player");

@@ -38,7 +38,6 @@ use crate::content::{ActionKind, ClassActive, Content, LevelKind, RigDef, RigId,
 use crate::geom::{Dir, Pos};
 use crate::perception::PerceptionView;
 use crate::rng::draw;
-use crate::skills::Effect;
 use crate::stats::Stat;
 use crate::text::article;
 use crate::time::Duration;
@@ -352,8 +351,7 @@ impl World {
             return;
         };
         let me = self.state.player();
-        let modifier = me.check_modifier(&content, Stat::Dexterity)
-            + me.skill_effect_of(&content, rules.skill, Effect::Craft);
+        let modifier = me.craft_modifier(&content, Stat::Dexterity, rules.skill);
         let natural = combat::roll_natural(&mut draw!(self, "rig/player"));
         let snaps = natural == 2;
         if !snaps && !crate::check::makes(natural, modifier, rules.difficulty) {

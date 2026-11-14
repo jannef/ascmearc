@@ -33,6 +33,7 @@
 //!
 //! [`Action::Salvage`]: crate::action::Action::Salvage
 //! [`Actor::skill_effect_of`]: crate::world::Actor::skill_effect_of
+//! [`Effect::Craft`]: crate::skills::Effect::Craft
 
 use super::work::{Job, Task};
 use crate::action::Event;
@@ -41,7 +42,7 @@ use crate::content::{ActionKind, Content, Cutting, Gems, MaterialId};
 use crate::item_parts::ItemPart;
 use crate::object::{self, Stack};
 use crate::rng::draw;
-use crate::skills::{Effect, SkillId, Use};
+use crate::skills::{SkillId, Use};
 use crate::stats::Stat;
 use crate::world::{Spent, World};
 
@@ -181,8 +182,7 @@ impl World {
         let mut checks = Vec::with_capacity(works.len());
         for (material, skill, stat) in works {
             let me = self.state.player();
-            let modifier = me.check_modifier(&content, stat)
-                + me.skill_effect_of(&content, skill, Effect::Craft);
+            let modifier = me.craft_modifier(&content, stat, skill);
             let against = rules.difficulty + content.material(material).work;
             let natural = combat::roll_natural(&mut draw!(self, "salvage/player"));
             let made = crate::check::makes(natural, modifier, against);
