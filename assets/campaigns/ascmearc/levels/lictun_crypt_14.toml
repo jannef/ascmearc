@@ -1,0 +1,56 @@
+# Līctūn crypt 14, "the well-house" (#1685): the fourteenth crypt under Līctūn, below
+# Līctūn crypt 13, reached by the stairs that open there once its places are filled (spec §7
+# "Graves"; `docs/dev/graves.md`). Its stairs up (<) lead back to Līctūn crypt 13. No danger,
+# nobody here.
+#
+# Older than the old people's work: a round chamber cut about a spring by the Britons before
+# them, who brought gifts to the water. The spring wells up into a stone basin in the middle and
+# spills into a channel that runs away south under the wall. Niches, rough and uneven, round the
+# wall; one is sealed, with no words on it (F). Places for statues about the spring (S). A short
+# passage on the east is the way down to the next crypt (v), shut until every place here is
+# filled.
+#
+# Places: 21 niches, filled in row order.
+name = "Līctūn crypt 14"
+arrival = "Līctūn crypt 14, the well-house: a round chamber about a spring, its water running away under the wall."
+temperature = 4
+ambient = [6, 6, 8, 0]
+item_level = 1
+map = '''
+##################################################
+##################################################
+######################t<t#########################
+###################N##F.N##N######################
+################N#...........#N###################
+###############...................################
+#############N.....S.......S.......N##############
+#############.......................##############
+############N..........~~~..........N#############
+############.........i~~{~~i.........#############
+###########N...........~↓~...........N############
+############............↓...........##############
+############N...........↓...........N#############
+#############...........↓...........##############
+#############N.....S....↓......S...N##############
+###############.........↓...........v#############
+################N#......↓......#N#################
+###################N##N#↓#N##N####################
+##################################################
+##################################################
+'''
+
+[burial]
+chain = "lictun"
+depth = 14
+epitaph = "Here lies {name}, {death}. Laid by the spring, to hear it."
+
+[legend]
+"#" = "granite"
+"N" = "empty_niche"
+"{" = "spring"
+"i" = "candles"
+"t" = "sconce"
+"<" = { terrain = "stairs_up", to = "lictun_crypt_13" }
+"S" = { terrain = "floor", statue_place = true }
+"v" = { terrain = "floor", burial_stairs = "stairs_down" }
+"F" = { terrain = "sealed_niche", epitaph = "No letters: a wheel cut in the stone, and a bronze pin pushed into the crack beside it." }

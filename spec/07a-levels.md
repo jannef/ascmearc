@@ -193,10 +193,10 @@ Rule: **hand-authored data is TOML; machine-written data is JSON.**
   …`. Decoration: no rule reads the words, and the state hash sees every level as with no
   graveyard (the places empty, the way down shut), so a replay verifies under any graveyard
   unless it steps on or takes an opened way down; saves keep them. Līctūn, Cēaptūn's churchyard
-  (§3), has ten fixed graves and forty plots; below it eleven crypts, named "Līctūn crypt 1" to "Līctūn crypt 11" (`lictun_crypt_01`, family
+  (§3), has ten fixed graves and forty plots; below it twenty crypts, named "Līctūn crypt 1" to "Līctūn crypt 20" (`lictun_crypt_01`, family
   vaults, 26 places; `lictun_crypt_02`, the bone-house, 30 places; and nine more), each older and rougher than the one above (`lictun_crypt_03` to `_11`: a priests'
   crypt, a gild's vault, a sexton's store, a flooded crypt, a children's, a fallen one, a plague
-  pit, a monks' cloister, and a hall of the people before the English), no danger and nobody
+  pit, a monks' cloister, a hall of the people before the English; `_12` to `_20`: their house of urns, a hidden temple, a well-house, an earth-house, a barrow, a long barrow, a bone cave, a river cave, and the first grave, the deepest), no danger and nobody
   there.
 - **Traps in level files** (M18; §8 "Traps"): a legend entry places a trap with `trap = "id"` (an
   id in `data/traps.toml`), hidden unless `known = true`, and for a bolt trap optionally the way

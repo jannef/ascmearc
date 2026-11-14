@@ -22,7 +22,7 @@ const START: Pos = Pos::new(2, 13);
 /// The walk from the pass to the yard's cell.
 const WALK: &str = "move:E*6 move:S*4 move:E";
 /// The chain's levels, the yard first.
-const CHAIN: [&str; 12] = [
+const CHAIN: [&str; 21] = [
     "lictun",
     "lictun_crypt_01",
     "lictun_crypt_02",
@@ -35,6 +35,15 @@ const CHAIN: [&str; 12] = [
     "lictun_crypt_09",
     "lictun_crypt_10",
     "lictun_crypt_11",
+    "lictun_crypt_12",
+    "lictun_crypt_13",
+    "lictun_crypt_14",
+    "lictun_crypt_15",
+    "lictun_crypt_16",
+    "lictun_crypt_17",
+    "lictun_crypt_18",
+    "lictun_crypt_19",
+    "lictun_crypt_20",
 ];
 
 /// Built-in content with nobody hungering, and nobody met on the way.
