@@ -1,14 +1,17 @@
 //! The calendar and moon flavour of the birth sign's gifts (`[flavour]`
 //! in `data/horoscope.toml`, none of it without the table): the birthday's faster healing and
-//! its note, the birth month's shorter cooldowns of the sign's actives, and the full moon's
-//! longer reaches (read where each reach is, through [`Content::full_moon_reach`]). Pure
-//! functions of the game time, the birth date, and the moons: nothing here draws at random, and
-//! the birthday's start and end are moments of [`World::live`], so it is exact however time is
-//! split.
+//! its note, the birth month's shorter cooldowns of the sign's actives, the full moon's
+//! longer reaches (read where each reach is, through [`Content::full_moon_reach`]), and the
+//! element's season strengthening its first gift ([`World::in_season`], read at each of the
+//! five gifts' hooks). Pure functions of the game time, the birth date, the sign, and the
+//! moons: nothing here draws at random, the birthday's start and end are moments of
+//! [`World::live`], and a season is read at the moment a gift is used, so it is exact however
+//! time is split.
 //!
 //! [`Content::full_moon_reach`]: crate::content::Content::full_moon_reach
 
 use crate::action::Event;
+use crate::combat::{FUMBLE, Profile};
 use crate::content::StatusId;
 use crate::time::{DAWN, DAY, GameTime};
 use crate::world::{ActorId, World};
@@ -69,6 +72,47 @@ impl World {
         let player = self.state.player;
         (self.content.flavour().is_some() && self.birthday_on(player, self.state.time))
             .then_some(BIRTHDAY)
+    }
+
+    /// What the season adds to actor `id`'s gift `gift` (a talent id) now: the flavour's
+    /// `more` for the player's element while the calendar is in its season, when `gift` is the
+    /// element's first gift (`grants[0]`) and they hold it; else 0. The hooks read it: Supple's
+    /// Dodge (`World::defence_of`), Blaze's dice (`World::blaze`), Stone hide's Protection
+    /// (`World::protection_of`), Keen edge's threat ([`World::season_threat`]), Always a way's
+    /// search (`World::search_modifier`).
+    pub(in crate::world) fn in_season(&self, id: ActorId, gift: &str) -> i32 {
+        if id != self.state.player {
+            return 0;
+        }
+        let Some(flavour) = self.content.flavour() else {
+            return 0;
+        };
+        let Some(sign) = (self.state.character.as_ref()).and_then(|c| c.sign.as_ref()) else {
+            return 0;
+        };
+        let first = (self.content.horoscope())
+            .and_then(|h| h.elements.iter().find(|e| e.id == sign.element))
+            .and_then(|e| e.grants.first());
+        if first.is_none_or(|g| g != gift) || !self.state.player().talents.has(gift) {
+            return 0;
+        }
+        flavour.season_more(&sign.element, self.state.time)
+    }
+
+    /// `profile` of a blow by `attacker`, with Keen edge's threat lower by what its season
+    /// adds ([`World::in_season`]), never below the lowest roll that can hit (as the gift's own
+    /// threat, `Actor::stanced`).
+    pub(in crate::world) fn season_threat(
+        &self,
+        attacker: ActorId,
+        mut profile: Profile,
+    ) -> Profile {
+        let more = self.in_season(attacker, "keen_edge");
+        if more != 0 {
+            let lowered = (i32::from(profile.threat) - more).max(FUMBLE + 1);
+            profile.threat = u8::try_from(lowered).unwrap_or(profile.threat);
+        }
+        profile
     }
 
     /// The player, having used a birth sign's active, suffers `degrees` of its cooldown

@@ -46,6 +46,16 @@ struct FlavourSpec {
     #[serde(default)]
     full_moon_reach: i32,
     full_moon_light: Option<String>,
+    #[serde(default)]
+    seasons: BTreeMap<String, SeasonSpec>,
+}
+
+#[derive(Clone, Debug, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub(super) struct SeasonSpec {
+    from: String,
+    to: String,
+    more: i32,
 }
 
 fn hundred() -> u32 {
@@ -147,6 +157,36 @@ pub struct Flavour {
     pub(super) full_moon_light_spec: Option<String>,
     /// The light preset Inner light burns as while a full moon is up.
     pub full_moon_light: Option<crate::content::LightId>,
+    /// The elements' seasons, as written; resolved by the loader into `seasons`.
+    pub(super) season_specs: BTreeMap<String, SeasonSpec>,
+    /// The elements' seasons, by element id: while the calendar is in one, the element's first
+    /// gift is a little stronger.
+    pub seasons: BTreeMap<String, Season>,
+}
+
+/// An element's season (`[flavour.seasons]`): the months `from` to `to`, both in, counted on
+/// past the year's end when `to` comes before `from` (Water's, Darkening to Thawmonth); in it,
+/// the element's first gift is `more` stronger (in its own unit: Dodge, a die of Blaze,
+/// Protection, threat, a search's ease).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Season {
+    /// The first month, 1 to 12.
+    pub from: u32,
+    /// The last month, 1 to 12.
+    pub to: u32,
+    /// How much stronger the element's first gift is in it.
+    pub more: i32,
+}
+
+impl Season {
+    /// Whether month `month` (1 to 12) is in the season.
+    pub fn holds(&self, month: u32) -> bool {
+        if self.from <= self.to {
+            (self.from..=self.to).contains(&month)
+        } else {
+            month >= self.from || month <= self.to
+        }
+    }
 }
 
 /// [`crate::content::MoonDef::phase_at`]'s distance from full within which a moon counts as
@@ -179,6 +219,14 @@ impl Flavour {
         self.full_moon_reach
     }
 
+    /// What element `element`'s season adds to its first gift at `time`: its `more` in the
+    /// season, else 0 (and 0 for an element without one). The one read.
+    pub fn season_more(&self, element: &str, time: crate::time::GameTime) -> i32 {
+        (self.seasons.get(element))
+            .filter(|s| s.holds(time.month()))
+            .map_or(0, |s| s.more)
+    }
+
     /// The light preset Inner light burns as at `time`, if a full moon changes it.
     pub fn inner_light_at(
         &self,
@@ -195,6 +243,8 @@ impl Flavour {
             full_moon_reach: spec.full_moon_reach,
             full_moon_light_spec: spec.full_moon_light,
             full_moon_light: None,
+            season_specs: spec.seasons,
+            seasons: BTreeMap::new(),
         }
     }
 }
@@ -377,6 +427,45 @@ pub(super) fn resolve_flavour(
             )
         })?;
         flavour.full_moon_light = Some(id);
+    }
+    Ok(())
+}
+
+/// Resolves the `[flavour]` table's seasons: each names an element of the horoscope and two
+/// months of the calendar by name, and is `more` 0 to 10 stronger; anything else is an error.
+pub(super) fn resolve_seasons(
+    horoscope: &mut Horoscope,
+    calendar: &super::Calendar,
+) -> Result<(), ContentError> {
+    let err = |m: String| ContentError::new("data/horoscope.toml", m);
+    let elements: Vec<String> = horoscope.elements.iter().map(|e| e.id.clone()).collect();
+    let Some(flavour) = horoscope.flavour.as_mut() else {
+        return Ok(());
+    };
+    for (element, spec) in &flavour.season_specs {
+        if !elements.contains(element) {
+            return Err(err(format!(
+                "flavour: a season for an unknown element `{element}`"
+            )));
+        }
+        let month = |name: &str| {
+            calendar.month_number(name).ok_or_else(|| {
+                err(format!(
+                    "flavour: `{element}`'s season names an unknown month `{name}`"
+                ))
+            })
+        };
+        if !(0..=10).contains(&spec.more) {
+            return Err(err(format!(
+                "flavour: `{element}`'s season: `more` must be 0 to 10"
+            )));
+        }
+        let season = Season {
+            from: month(&spec.from)?,
+            to: month(&spec.to)?,
+            more: spec.more,
+        };
+        flavour.seasons.insert(element.clone(), season);
     }
     Ok(())
 }

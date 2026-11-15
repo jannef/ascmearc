@@ -720,6 +720,8 @@ impl World {
             self.state.load(&self.content, actor).penalty(),
             self.state.race_of(&self.content, actor),
         );
+        // Supple in Wood's season (`flavour.rs`).
+        let defence = defence.plus(Category::Dodge, self.in_season(id, "supple"));
         self.averted_defence(id, self.wall_defence(id, defence))
     }
 
@@ -730,7 +732,9 @@ impl World {
             || Protection::plain(0),
             |a| {
                 let race = self.state.race_of(&self.content, a);
-                a.protection_plus(&self.content, race, self.ally_protection(id))
+                // Stone hide in Earth's season (`flavour.rs`).
+                let more = self.ally_protection(id) + self.in_season(id, "stone_hide");
+                a.protection_plus(&self.content, race, more)
             },
         )
     }
@@ -868,6 +872,8 @@ impl World {
         let profile = profile.map(|p| self.averted_blow(attacker, p));
         // Relentless: a streak of blows at one creature.
         let profile = profile.map(|p| self.relentless(attacker, target, kind, p));
+        // Keen edge in Metal's season (`flavour.rs`).
+        let profile = profile.map(|p| self.season_threat(attacker, p));
         // Favoured prey and a sneak attack.
         let profile = profile.map(|p| self.favoured(attacker, target, p));
         // An ally's master's gifts to it (Beast-bond).

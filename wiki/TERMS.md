@@ -197,6 +197,7 @@ above.
 | The story screen, the Story page (page 8) | `background.md#when-it-is-told` |
 | Horoscope, animal, element, lucky day | `horoscope.md`, `horoscope.md#animals`, `horoscope.md#elements`, `horoscope.md#lucky-days` |
 | The great cycle | `horoscope.md#the-great-cycle` |
+| An element's season | `horoscope.md#the-elements-seasons` |
 | Alignment, good, evil, band | `alignment.md`, `alignment.md#what-moves-you` |
 | Talent, prerequisites | `talents.md`, `talents.md#choices-and-prerequisites` (a talent: its row) |
 | Racial talents | `talents-origins.md#racial-talents` |

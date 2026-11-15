@@ -54,6 +54,12 @@ impl Calendar {
         &self.months[index]
     }
 
+    /// The number (1 to 12) of the month named `name`, if one is.
+    pub fn month_number(&self, name: &str) -> Option<u32> {
+        let index = self.months.iter().position(|m| m == name)?;
+        u32::try_from(index + 1).ok()
+    }
+
     /// Day and month, e.g. `12 Rainmoon`.
     pub fn date(&self, time: GameTime) -> String {
         format!("{} {}", time.day(), self.month_name(time))
@@ -88,6 +94,8 @@ mod tests {
         assert_eq!(calendar.month_name(t), "M4");
         assert_eq!((calendar.month(1), calendar.month(12)), ("M1", "M12"));
         assert_eq!((calendar.month(0), calendar.month(13)), ("M1", "M12"));
+        assert_eq!(calendar.month_number("M4"), Some(4));
+        assert_eq!(calendar.month_number("M13"), None);
         assert!(Calendar::parse("c", "months = [\"A\"]").is_err());
     }
 }
