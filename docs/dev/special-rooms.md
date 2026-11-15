@@ -1,6 +1,6 @@
 # Special rooms
 
-Developer notes for special rooms (spec §7 "Special rooms"; the second wave's design is
+Developer notes for special rooms (the second wave's design is
 `docs/design/special-rooms.md`). Moved out of `docs/dev/mapgen.md` in #402: every special-rooms
 change edits this file, not the generator notes.
 
@@ -413,7 +413,7 @@ floor `DRAIN_FLOOR`, then stat damage clamped and `keep_hp_within_max`), `levels
 drawn, `bestow`: `Talents::take`, `class::hand_out`, and pushed to
 `Actor::boons`), and `flaw` (Forsaken: the `flaw` talents not held, by id, one drawn, given
 likewise); `rarity` (`magic`/`rare`, only with `loot`) is the relic's floor, the `LootGrade`
-`loot::roll_with` takes. `Actor::boons` (saved, left out while empty) is read by
+`loot::roll_with` takes. No outcome grants a wish. `Actor::boons` (saved, left out while empty) is read by
 `stars::grant`, which passes its ids to `Talents::regrant` beside the race's and the sign's
 (the flaws, being granted, are dropped and put back there) and `Talents::take`s the rest.
 `World::lose_level` takes the experience to `threshold_for(level - 1)`, the level's

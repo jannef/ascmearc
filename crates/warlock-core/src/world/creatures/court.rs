@@ -1,4 +1,4 @@
-//! Courts (spec §7 "Factions"): a creature type may list several factions with weights
+//! Courts: a creature type may list several factions with weights
 //! (`factions = { seelie = 50, unseelie = 50 }`, the fey's), and each creature of it joins one
 //! when it is made ([`join`], one call in `travel::make_creature`), drawn from its own stream
 //! `court/<actor id>` ([`crate::rng::Rng::court`]), so no other draw moves. The pick is the

@@ -1,4 +1,4 @@
-//! The edge rule (spec §7 "Leaving an outdoor area", #803): walking off the edge of an outdoor
+//! The edge rule (#803): walking off the edge of an outdoor
 //! area with an overworld cell is refused while a hostile creature is within `edge_reach` (3,
 //! `data/encounters.toml`) cells of the player, seen or not; refused, it takes no time and names
 //! nobody. The fixture is the forest scenario's generated local area, the player moved to its

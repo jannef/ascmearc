@@ -1,4 +1,4 @@
-# A potion of renewal (spec §8 "Potions", the potions wave 2 design §4.1): Renewing for four minutes, wounds closing quicker. Renewal is rose.
+# A potion of renewal (the potions wave 2 design §4.1): Renewing for four minutes, wounds closing quicker. Renewal is rose.
 [[object]]
 id = "potion_of_renewal"
 name = "potion of renewal"

@@ -1,8 +1,7 @@
 # Chests
 
 Developer notes for chests (slices C1, #613, C2, #614, C3, #615, and C7, #619, of
-docs/design/chests-and-treasure.md); the rules are in spec/08d-traps-doors-digging.md "Chests",
-the loot in spec/08g-magic-items.md "Chest loot", and the data in spec/07b-data.md "Chests".
+docs/design/chests-and-treasure.md); the rules are in spec/10-combat.md "Chests".
 Keep it current with the code, as CLAUDE.md says. Treasure rooms (C5, #617) and greater
 treasure rooms (C6, #618) lay their chests with `mapgen/chest.rs::lay` from their own stream
 (`docs/dev/special-rooms.md` "Treasure rooms"). Mimics (C4, #616) have their own topic,

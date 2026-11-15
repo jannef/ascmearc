@@ -1,4 +1,4 @@
-//! Gems (spec §7 "Gems"): the ten gems, their sizes and cuts, how loot finds them, and where items
+//! Gems: the ten gems, their sizes and cuts, how loot finds them, and where items
 //! are set with them.
 
 use super::order;

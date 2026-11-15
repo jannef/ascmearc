@@ -1,4 +1,4 @@
-//! The condition creature gear spawns in (spec §8 "Creature gear"; #1193): the odds by tribe from
+//! The condition creature gear spawns in (#1193): the odds by tribe from
 //! `data/gear_condition.toml`, exactly, and what damaged gear of each material is called.
 
 use super::util::per_mille;

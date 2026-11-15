@@ -871,8 +871,8 @@ Fourteen numbered pieces; PRs 1–4 and 11–12 touch no creature or level, PRs 
 
 ## 11. Docs, wiki, tests
 
-- **Spec**: `spec/08e-blood-and-status.md` "Miscasts" (the total, the protected rule, the new
-  kinds, the gates and the Pit in a sentence each); `spec/07b-data.md` points at the new faction
+- **Spec**: `spec/11-magic.md` "Miscasts" (the total, the protected rule, the new
+  kinds, the gates and the Pit in a sentence each); `spec/06-content.md` points at the new faction
   flag and the `rooted` field; spec §7 gains "The Pits" beside "The endless branch".
 - **`docs/dev/spells.md` "Miscasts"**: the data (`rank_ease`, `die` as a `Roll`, `safe_below`),
   the kinds, the fallbacks, the whitelist; **`docs/dev/summoning.md`**: gates as summoners with

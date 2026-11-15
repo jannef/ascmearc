@@ -1,4 +1,4 @@
-//! Spell ranks (spec §8 "Spells": "Ranks"; #1264): a known spell's grimoire read again deepens
+//! Spell ranks (#1264): a known spell's grimoire read again deepens
 //! it, rank by rank, in rank times the learning time and against a check harder per rank; a
 //! failure costs the time alone; the last rank is refused; a class's spell is deepened like any
 //! other; what a rank gives joins an own cast's hooks and no scroll's or wand's; the rank is

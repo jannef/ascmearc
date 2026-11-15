@@ -1,4 +1,4 @@
-//! Glyph particle emitters (spec §4.8).
+//! Glyph particle emitters.
 //!
 //! These are **presentation-only**, like [`super::GlyphAnim`]: the core loads and validates them
 //! so all content lives in one place, but no gameplay rule reads them. The renderer evaluates

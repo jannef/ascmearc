@@ -1,4 +1,4 @@
-//! Grades (spec §8 "Grades"): the draw, the four rules reads, the types with
+//! Grades: the draw, the four rules reads, the types with
 //! none, the save and the hash, and the dumps.
 
 use super::*;

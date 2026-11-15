@@ -1,4 +1,4 @@
-//! Talk (spec §8 "Dialogue", #146) and making way (spec §8 "Displacement", #147) in the turn
+//! Talk (#146) and making way (#147) in the turn
 //! pipeline: chatting, topics, non-answers, mutters heard and seen, swapping places and the
 //! refusals, patrols carrying on, rests, saves, and replays.
 
@@ -575,7 +575,7 @@ fn someone_who_talks_coming_into_view_does_not_stop_a_rest() {
     let mut w = world("cloister");
     w.apply(&Action::Rest(Rest::For(Duration::hours(1))));
     assert_eq!(last_message(&w), "You rest for 1 hour.");
-    // Nor does a goat on the same round: it is no hostile (spec §8 "Rest", #1216).
+    // Nor does a goat on the same round: it is no hostile (#1216).
     let mut w = world("pen");
     w.apply(&Action::Rest(Rest::For(Duration::hours(1))));
     assert_eq!(last_message(&w), "You rest for 1 hour.");

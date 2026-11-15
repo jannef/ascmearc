@@ -1,4 +1,4 @@
-//! Sneak attacks (spec §8 "Surprise and sneak attacks"; `ambush.rs`): the Sneak attack skill's
+//! Sneak attacks (`ambush.rs`): the Sneak attack skill's
 //! ladder of dice, their sum with the talents', the reach of missiles and Long reach, Surprised
 //! as the second door, the spell path, the marks, and the craft and Initiative in the check.
 

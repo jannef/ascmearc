@@ -1,4 +1,4 @@
-//! Class abilities in the world (spec §8 "Class abilities"; #244): the ranger's, thief's, and
+//! Class abilities in the world (#244): the ranger's, thief's, and
 //! bard's level tables, and the kill tally of every creature type that Favoured prey reads. A
 //! level brings its abilities, the bonus picks come from the class's trees, each passive changes
 //! the rule it names, and the actives (Volley, Inspire) are used from the abilities menu.
@@ -802,7 +802,7 @@ fn a_volley_looses_three_shots_for_one_then_spends() {
     assert_eq!(w.state.turn, turn + 1, "one shot's time");
     assert_eq!(count(&w), arrows - 3, "three arrows loosed");
     assert!(said(&w).contains(&"You loose a volley!".to_string()));
-    // It costs Focus, not a cooldown (spec §8 "Resources"): 6 of the 10, one back since.
+    // It costs Focus, not a cooldown: 6 of the 10, one back since.
     assert!(!out.events.is_empty());
     let focus = content.resource_id("focus").expect("focus");
     let held = w.state.player().resources.get(focus).map(|p| p.value);

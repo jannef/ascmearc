@@ -1,4 +1,4 @@
-//! Moonlight on levels under the open sky (spec §5 "Moonlight"), and the sky as a whole
+//! Moonlight on levels under the open sky, and the sky as a whole
 //! ([`Sky`]).
 //!
 //! **Moons** are content ([`MoonDef`], `data/sky.toml`), each with its own cycle from new moon to

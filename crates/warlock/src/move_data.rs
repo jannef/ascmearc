@@ -1,4 +1,4 @@
-//! `warlock --move-data native | portable [DIR]` (spec §7): moves the game's files between a
+//! `warlock --move-data native | portable [DIR]`: moves the game's files between a
 //! portable folder and the platform's standard folders, then exits.
 //!
 //! Safe by construction: every file is copied beside its destination, compared byte for byte,

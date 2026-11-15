@@ -1,4 +1,4 @@
-//! Item damage (spec §7 "Materials"; #1168): one damaged state, whatever does it. Acid and rust
+//! Item damage (#1168): one damaged state, whatever does it. Acid and rust
 //! from a creature's `corrodes` (`corrode.rs`), heat from one whose kind is fire, and a failed
 //! attempt at the anvil or with the knife (`temper.rs`) all go through [`World::harm_item`]:
 //!

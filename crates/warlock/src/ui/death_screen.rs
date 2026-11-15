@@ -1,4 +1,4 @@
-//! The death screen (spec §6 "Death"): the run is over. Who died ("Here lies Brakka,"), where,
+//! The death screen: the run is over. Who died ("Here lies Brakka,"), where,
 //! when, and what killed them, as far as the player knows it; the character's save is already
 //! gone (permadeath).
 //!
@@ -46,7 +46,7 @@ impl DeathScreen {
                 (def.death.clone())
                     .unwrap_or_else(|| format!("Died of {}", def.name.to_lowercase()))
             }
-            // Hunger, overeating (spec §8 "Hunger"), or a trap: "Killed by a fireball trap".
+            // Hunger, overeating, or a trap: "Killed by a fireball trap".
             (None, Some(cause), _) => cause.epitaph(content),
             (None, None, Some(creature)) => {
                 let name = &content.creature(creature).name;
@@ -63,7 +63,7 @@ impl DeathScreen {
         let by = match view.character() {
             Some(c) => {
                 lines.push(format!("Here lies {},", c.titled_name(view.content())));
-                // "a bard", or "a bard and hunter" once called (spec §8 "Prestige classes").
+                // "a bard", or "a bard and hunter" once called.
                 lines.push(format!("{},", c.class_phrase(view.content())));
                 let mut chars = by.chars();
                 chars

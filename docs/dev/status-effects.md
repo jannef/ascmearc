@@ -1,7 +1,7 @@
 # Status effects, healing, and diseases
 
 Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
-rules it implements are in spec/08e-blood-and-status.md. Keep it current with the code, as CLAUDE.md says.
+rules it implements are in spec/11-magic.md. Keep it current with the code, as CLAUDE.md says.
 
 **Three fields of buffs** (#1002, `world/health/buff_field_tests.rs`; the spell types design §7 entries
 24 to 26). `retaliates = { damage, damage_type }` (Fire cloak's `fire_cloaked`): `World::retaliate`
@@ -17,7 +17,7 @@ damage_type }` (Brand's `branded_blade`): `Effects::blows`, docs/dev/equipment.m
 `World::tread` the ice holds its bearer at once, with no draw, and `World::shock` skips the cell
 it stands on, so no plunge (`fall_in`) ever comes of it.
 
-Status effects and healing (spec §8 "Status effects", "Healing"; M24, #138; **diseases, #139,
+Status effects and healing (M24, #138; **diseases, #139,
 build on this**): statuses are data, `data/status/` (`content/status.rs`: `StatusDef` with
 `seen`, `max`, `stacking`, `tick`/`damage`, `eases`, `regen`, `penalty`, `wound`, `cured_by`,
 and the words `start`/`end`/`dies`/`death`; `Healing { resting }`; `OnHit` on a creature's
@@ -76,7 +76,7 @@ status that lends something (a positive `penalty`, a `combat` bonus, a `cost` un
 "bark-skinned", the potions' boosts, visions, and resistances by their names, `spell_ward`
 "warded", `light_footed` "light-footed", `poised` "poised". Not buffs, never shown: `disguised` (a mimic's disguise),
 `lurking`, the cooldowns, and harms. `content/circles.rs`'s `every_buff_status_is_seen` test keeps
-it. **Circled statuses** (spec §4.8 "Spell circles"): `data/circles.toml` (`content/circles.rs`,
+it. **Circled statuses**: `data/circles.toml` (`content/circles.rs`,
 `CircleStatuses`, `Content::circles()`; the rows' statuses and schools fingerprinted) gives each
 buff and hex spell's status a school, whose colour its spell circle about the actor is drawn in:
 `lit` (evocation), `hasted`, `barkskin`, `branded_blade`, `water_borne` (transmutation), `blessed`,
@@ -104,7 +104,7 @@ fingerprint). Saved and hashed
 action `afflict:ID` (`Action::Afflict`) gives the player a degree, for tests and captures. Tests:
 `status.rs`, `content/status.rs`, `world/health/status_tests.rs`.
 
-Buffs, hexes, and cooldowns (spec §8 "Status effects"; #227, design
+Buffs, hexes, and cooldowns (#227, design
 `docs/design/progression.md` §4.1 B1) are statuses too, with four more optional fields
 (`StatusDef`): `combat` (`CombatBonus { to_hit, damage, dodge, parry }`, the stances' numbers),
 `cost` (percent of every price, above 0, a price of 0 being no time at all: below 100 only a spell's buff on
@@ -206,7 +206,7 @@ built-in content: combat on the player and a creature, slows and time, refusals 
 shield bash, the rage's whole course, cures followed, saves and replays), the parse tests in
 `content/status.rs`, `Effects` in `status.rs`.
 
-Diseases (spec §8 "Checks", "Diseases"; M24, #139) build on status effects: every disease shows
+Diseases (M24, #139) build on status effects: every disease shows
 as one umbrella status, Diseased (`data/diseases.toml`'s `status`, `Content::disease_status`; it
 may have no `tick`/`eases`/`wound`/`cured_by`, no `on_hit` names it, and `afflict:diseased` is
 refused), present exactly while a disease shows (`from_state` checks it). **Checks** are
@@ -244,7 +244,7 @@ the character screen's `Diseased` row, the `stats` dump layer). Saved and hashed
 Tests: `check.rs`, `disease.rs`, `content/disease.rs`,
 `world/health/disease_tests.rs` (custom content with extreme stats, mirrored draws).
 
-Treating oneself (spec §8 "Treating oneself", #549): the Heal skill's use. `crate::heal` holds
+Treating oneself (#549): the Heal skill's use. `crate::heal` holds
 what may be treated (`Ailment::{Status, Disease}`, `treatable` in status then disease order,
 `may_treat`, `own` and `of_allies` for `PerceptionView::own_ailments`, `noun`: a disease's name
 once known, else "sickness"); `world/health/heal.rs` the try (`World::heal`, dispatched from

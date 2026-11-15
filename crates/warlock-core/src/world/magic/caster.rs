@@ -1,4 +1,4 @@
-//! The casters' passives that need a rule of their own (spec §8 "Class abilities", design
+//! The casters' passives that need a rule of their own (design
 //! §4.9–4.12): the once-in-a-life reprieves (Miracle, Hag's bargain) and the blows that hurt a
 //! suffering creature more (Poison lore). Their spells are cast by the one cast path
 //! (`world/magic/cast.rs`).
@@ -9,7 +9,7 @@ use crate::world::ActorId;
 use crate::world::World;
 
 impl World {
-    /// Miracle, Hag's bargain (spec §8 "Class abilities"): once in a life, what would kill the
+    /// Miracle, Hag's bargain: once in a life, what would kill the
     /// player does not. They are left at 1 hit point, suffer the reprieve's status, and lose its
     /// stat for good; its words are said. Returns whether it saved them (never twice).
     pub(in crate::world) fn reprieve(&mut self, events: &mut Vec<Event>) -> bool {

@@ -1,9 +1,9 @@
 # Shops
 
 Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
-rules it implements are in spec/07d-shops-and-rooms.md. Keep it current with the code, as CLAUDE.md says.
+rules it implements are in spec/07-generation.md. Keep it current with the code, as CLAUDE.md says.
 
-Shops (spec §7 "Shops", M27, #145) are data: `data/shops.toml` (`content/shop.rs`: `Shops` with
+Shops (M27, #145) are data: `data/shops.toml` (`content/shop.rs`: `Shops` with
 the currency, the outraged faction, `presence`, the generation `chance`, keeper `names`, the
 `[keeper]` template, and the kinds, `ShopDef`: `always` (objects a generated shop lays out
 first, a stack each, before its drawn goods: the general store's scrolls of identify, #393),
@@ -39,7 +39,7 @@ object and its own parts, `Stack::same_goods`/`goods`, so a gem is owed at its g
 a quest hand-in, rotting away) leaves their price on the bill with no hook of its own; it may
 hold more of an object than the pack does; its lines are counts by object, not stacks lying
 anywhere, so `Shop::is_valid_for` checks them as such: any count, no magic, no food age), and
-`ShopStatus` (Open, Outraged, Abandoned). Rotten food (spec §8 "Hunger", #195) is worth
+`ShopStatus` (Open, Outraged, Abandoned). Rotten food (#195) is worth
 nothing: `World::spoilt` (by `rot::stage`) makes `asking_price` and `picked_up_goods` free and
 `deal` refuse it (`Deal::spoilt`: "Grimbold sniffs at ... and says: \"Not at any price.\"");
 `ShopView::price`/`offer` in perception do the same for look mode, the object screens, and the

@@ -1,4 +1,4 @@
-# A potion of moth's eyes (spec §8 "Potions"): the moth's ultraviolet sight for half an hour. Vision potions are violet.
+# A potion of moth's eyes: the moth's ultraviolet sight for half an hour. Vision potions are violet.
 [[object]]
 id = "potion_of_moths_eyes"
 name = "potion of moth's eyes"

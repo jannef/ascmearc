@@ -1,4 +1,4 @@
-# Damage types (spec §8 "Damage types"): what kind of harm a blow, a missile, a trap, a spell, or
+# Damage types: what kind of harm a blow, a missile, a trap, a spell, or
 # a fall does. Weapons (objects/*.toml `damage_type`, one id or two: a sword does the better of
 # slashing and piercing against its target), creatures' natural attacks, traps (traps.toml),
 # scrolls (`read.damage_type`), the poison status (status/), and water that freezes (the

@@ -1,4 +1,4 @@
-//! Food rotting in the world (spec §8 "Hunger"): its stages by age, rotting away from a pack at
+//! Food rotting in the world: its stages by age, rotting away from a pack at
 //! the exact moment however the time is cut (the player's, told; a creature's, silently, and
 //! frozen on another level), piles cleaned as they are perceived, stacks keeping the oldest age,
 //! eating rotten food of any kind, shops and rotten food, the dev dump, saves, and replays.

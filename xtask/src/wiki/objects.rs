@@ -188,7 +188,7 @@ pub(super) fn objects(content: &Content) -> String {
     out
 }
 
-/// The kinds of shop (spec §7 "Shops"): what each sells and buys, by class, and its prices in
+/// The kinds of shop: what each sells and buys, by class, and its prices in
 /// words of the value (an object's worth, in the objects table).
 pub(super) fn shops(content: &Content) -> String {
     let mut out =

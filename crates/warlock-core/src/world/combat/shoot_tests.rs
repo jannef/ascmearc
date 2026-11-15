@@ -1,4 +1,4 @@
-//! Ranged combat in the world (spec §8 "Ranged combat"): shots and throws fly along their line
+//! Ranged combat in the world: shots and throws fly along their line
 //! as far as their range, attack whoever stands in the way, spend ammunition, and come down to be
 //! picked up again; burning arrows light the level until they burn out.
 

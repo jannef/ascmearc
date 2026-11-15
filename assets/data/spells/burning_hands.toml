@@ -1,4 +1,4 @@
-# Burning hands (spec §8 "Spells", the first spell list; #979): the wizard's first real spell, a
+# Burning hands (the first spell list; #979): the wizard's first real spell, a
 # short fan of flame from the caster's hands. No hit roll and a little area, so dearer than Ray of
 # frost: the cost table's cone price at the mana floor (6; its own `mana = 3` went with the floor,
 # #1264), half again Magic missile's, for less reach and no aim to miss.
@@ -24,7 +24,7 @@ noise = { sound = "explosion", loudness = 40 }
 [spell.grows]
 damage = "intelligence 13 2d6, 16 4d4, 22 4d4+2"
 
-# What rereading its grimoire adds, rank by rank (spec §8 "Spells": "Ranks"; README.toml
+# What rereading its grimoire adds, rank by rank (README.toml
 # `[spell.ranks]`). At rank 10: +2 on the roll, 1s rolled again, d6s for d4s, a die more, a
 # fan two cells longer (the most a cone reaches), 15 % off the mana, and a quarter off the casting
 # time.

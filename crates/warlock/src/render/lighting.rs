@@ -1,4 +1,4 @@
-//! Visual lighting (spec §4.4): the light the map is drawn with, derived every frame from the
+//! Visual lighting: the light the map is drawn with, derived every frame from the
 //! perceived gameplay light plus visual-only modulation. Gameplay never reads any of it.
 //!
 //! [`VisualLight::composite`] covers the map grid's cells plus a one-cell margin ([`MARGIN`]). For
@@ -22,7 +22,7 @@
 //! position, over the cells in its line of sight), and the light of a burning missile that has
 //! landed in the rules but is still flying on screen is held back until it arrives.
 //!
-//! Spell effects ([`SpellLights`], spec §4.8 "Spell effects") light the scene the same way, in
+//! Spell effects ([`SpellLights`]) light the scene the same way, in
 //! any color, and may darken it: while a bright effect peaks, everything but its own light (base
 //! light, every source, transient lights, darkvision's glow) is scaled down by
 //! [`SpellLights::dim`], and so is the readability floor (here for free glyphs,
@@ -159,7 +159,7 @@ pub struct TransientLight {
     pub key: u64,
 }
 
-/// Visual-only light for this frame beyond the perception snapshot (spec §4.4): moving lights,
+/// Visual-only light for this frame beyond the perception snapshot: moving lights,
 /// and point sources of the snapshot held back (by position and preset) until what gives them
 /// arrives on screen. Written by the missiles (`ui::missiles`) every frame.
 #[derive(Resource, Debug, Default, Clone, PartialEq)]
@@ -179,9 +179,9 @@ pub struct SpellLight {
     pub radius: i32,
 }
 
-/// Spell effects' light this frame and how much they darken everything else (spec §4.8 "Spell
-/// effects"): `dim` 0 is none; 0.6 makes the rest of the view look 60 % darker. Written by the
-/// spell effects (`ui::spells`) every frame.
+/// Spell effects' light this frame and how much they darken everything else: `dim` 0 is none; 0.6
+/// makes the rest of the view look 60 % darker. Written by the spell effects (`ui::spells`) every
+/// frame.
 #[derive(Resource, Debug, Default, Clone, PartialEq)]
 pub struct SpellLights {
     pub lights: Vec<SpellLight>,
@@ -543,7 +543,7 @@ pub fn gain_byte(gain: f32) -> u8 {
     (128.0 + (gain - 1.0) * 256.0).round().clamp(0.0, 255.0) as u8
 }
 
-/// Darkvision (spec §4.4) for a cell seen only through it, with light `rgb`, brightness `lit`
+/// Darkvision for a cell seen only through it, with light `rgb`, brightness `lit`
 /// relative to the eye's threshold (1 = just visible without darkvision) and distance `far`
 /// relative to the darkvision radius (1 = at its edge). The darker the cell, the more a
 /// monochrome glow lights it, fading toward the edge; its color fades toward monochrome the

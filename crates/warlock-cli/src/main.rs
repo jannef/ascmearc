@@ -1,4 +1,4 @@
-//! `warlock-cli`: drive the simulation without a window (spec §9).
+//! `warlock-cli`: drive the simulation without a window.
 //!
 //! ```text
 //! warlock-cli dump --scenario showcase --actions "move:N move:N" --layers view,fov
@@ -145,7 +145,7 @@ struct GenArgs {
     /// Run seed: a number, or a word that is hashed.
     #[arg(long, value_parser = parse_seed, default_value = "1")]
     seed: u64,
-    /// The campaign whose overworld a local area is of (spec §3).
+    /// The campaign whose overworld a local area is of.
     #[arg(long, default_value = "showcase")]
     campaign: String,
 }
@@ -192,7 +192,7 @@ fn parse_run_actions(args: &RunArgs) -> Result<Vec<Action>, String> {
 
 /// A fresh run of `--scenario` with `--seed`, `--character`, and `--name`: a character chosen
 /// with `--character` or `--name` starts with its kit, the scenario's own with the scenario's
-/// pack (spec §8 "Character creation").
+/// pack.
 fn start(content: Arc<Content>, args: &RunArgs) -> Result<World, String> {
     let kit = args.character.is_some() || args.name.is_some() || args.talents.is_some();
     if let Some(spec) = &args.character {
@@ -336,7 +336,7 @@ fn gen_command(content: &Content, args: &GenArgs) -> Result<(), String> {
         let to = stairs.to.as_deref().unwrap_or("nowhere");
         println!("stairs {:?} at {} -> {to}", stairs.dir, stairs.pos);
     }
-    // A layer boss's lair hides the way down until the boss dies (spec §7 "The endless branch").
+    // A layer boss's lair hides the way down until the boss dies.
     for (p, hidden) in &level.hidden {
         let to = hidden.to.as_deref().unwrap_or("nowhere");
         println!(

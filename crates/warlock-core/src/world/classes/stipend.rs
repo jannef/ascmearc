@@ -1,4 +1,4 @@
-//! The aristocrat's stipend and servant (spec §8 "Class abilities": Stipend; #1405).
+//! The aristocrat's stipend and servant (Stipend; #1405).
 //!
 //! A character with the Stipend class ability (`FortuneMods::stipend`, the aristocrat's from
 //! level 1) has their family put something by at every level they reach, a prestige class's

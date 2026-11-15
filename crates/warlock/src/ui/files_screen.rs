@@ -1,6 +1,6 @@
 //! Settings > Files: where the settings, the graveyard, saves, snapshots, and logs are for this
 //! launch, why
-//! (portable or the platform's folders), and an Open folder action for each (spec §7). The
+//! (portable or the platform's folders), and an Open folder action for each. The
 //! same facts as `warlock --paths`, from `paths.rs`.
 
 use super::cursor;

@@ -1,4 +1,4 @@
-# The showcase hub (spec §3). Each room demonstrates one engine capability:
+# The showcase hub. Each room demonstrates one engine capability:
 # top row: light hall (M3), darkness chamber (M3), water garden (M4);
 # bottom row: start room, door corridor, patrol gallery, effects room (M4), stairs nook (> down to
 # the Vast Caverns, v down to the arena, Q down to the quarry, g down to the Frost Grotto, T down
@@ -49,7 +49,7 @@
 # ring and the amulets lie elsewhere): a helm, mail, a cloak, weapons (a quarterstaff and a
 # great sword for both hands), a shield, gloves, boots, and a bow with arrows. Wear and wield them
 # with `e`. The start room's dagger is light: it goes in the off hand beside the spear or the
-# club, for fighting with two weapons (spec §8 "Fighting styles").
+# club, for fighting with two weapons.
 #
 # Materials (#193, #194): the great sword under the spear is bronze, not steel, as a placement
 # may say (`"great_sword:bronze"`): heavier, a little weaker, and cheaper, drawn in bronze's
@@ -127,16 +127,16 @@ map = '''
 "^" = { terrain = "stairs_up", to = "courtyard" }
 # Stairs down (drawn `>`) to the arena.
 "v" = { terrain = "stairs_down", to = "arena" }
-# The pantry's west door is locked (spec §8 "Doors"); its key, the iron key, lies in the storeroom
+# The pantry's west door is locked; its key, the iron key, lies in the storeroom
 # across the corridor. Open it with the key, or kick it in (`K`).
 "P" = { terrain = "door_closed", lock = "pantry" }
 # Stairs down (drawn `>`) to the quarry, the place to dig.
 "Q" = { terrain = "stairs_down", to = "quarry" }
-# A secret door (spec §8 "Searching"): a closed door that looks like the wall until it is found.
+# A secret door: a closed door that looks like the wall until it is found.
 "S" = { terrain = "door_closed", secret = true }
 # Stairs down (drawn `>`) to the Frost Grotto, where the cold has frozen a pool.
 "g" = { terrain = "stairs_down", to = "frost_grotto" }
-# Stairs down (drawn `>`) to the trap hall (spec §8 "Traps"): the showcase has no traps.
+# Stairs down (drawn `>`) to the trap hall: the showcase has no traps.
 "T" = { terrain = "stairs_down", to = "trap_hall" }
 # The old hermit, by the stairs.
 "H" = { terrain = "floor", creature = "hermit" }

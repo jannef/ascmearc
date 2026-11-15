@@ -1,4 +1,4 @@
-//! Allies (spec §8 "Allies"): the rules of `data/allies.toml` in words and numbers, and the
+//! Allies: the rules of `data/allies.toml` in words and numbers, and the
 //! summon spells: what each calls, how many, for how long, how many at once, its mana, and how
 //! hard its scroll is to learn.
 

@@ -1,4 +1,4 @@
-//! Merchant's eye (spec §8 "Class abilities"; #816): the merchant's class active, used on a
+//! Merchant's eye (#816): the merchant's class active, used on a
 //! stack the player carries (`use:merchants_eye:c`), identifies it as the scroll of identify
 //! would, for the time of a reading, with nothing else spent.
 

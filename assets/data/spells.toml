@@ -1,4 +1,4 @@
-# Spells (spec §8 "Spells", the magic design docs/design/magic.md §3 and §5, the spell scaling
+# Spells (the magic design docs/design/magic.md §3 and §5, the spell scaling
 # design docs/design/spell-scaling.md §5): the cost table every spell's mana is measured by. The
 # spells themselves are in spells/, one file each.
 #

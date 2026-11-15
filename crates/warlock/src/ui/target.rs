@@ -1,7 +1,7 @@
-//! Targeting (spec §6 "Targeting"): aiming a shot (`f`), a throw (`t`), a spell scroll read
-//! (`r`, spec §8 "Scrolls"), or an ability that asks for a cell (throwing one's voice, spec §6
-//! "Abilities") with a cursor on the map, ADOM-like. It is an input mode like look mode, not a
-//! screen: no game time passes until the missile is loosed, the scroll read, or the ability used.
+//! Targeting: aiming a shot (`f`), a throw (`t`), a spell scroll read
+//! (`r`), or an ability that asks for a cell (throwing one's voice) with a cursor on the map,
+//! ADOM-like. It is an input mode like look mode, not a screen: no game time passes until the
+//! missile is loosed, the scroll read, or the ability used.
 //!
 //! The cursor starts on the last target if the player still sees it (a creature) or it lies on
 //! this level (a cell), else on the nearest creature in view that is hostile, else on the player.
@@ -15,15 +15,14 @@
 //! A target beyond something solid or behind a creature in the way is blocked (a bolt runs
 //! through creatures: only what is solid blocks it), one beyond the range out of range; the
 //! message line says so (never color alone). No chance to hit is shown. A burst read or cast so
-//! close that it may catch the player asks first ([`Aim::catches_reader`]). A spell (spec §8
-//! "Spells") is aimed by its shape: a burst, a ray, or a bolt as a scroll's burst (stopped by
-//! the first creature in the way), a line as a scroll's bolt (through creatures), a cone as the
-//! fan of cells it would reach, a touch at the cell next to the player; its reach is the
-//! player's own, Willpower counted. A spell aimed at a corpse flies nowhere: its cursor starts
-//! on the nearest corpse the player sees, Tab cycles the corpses, and a cell without one says
-//! so. Any other ability (and a hex) flies nowhere: it draws no
-//! line, and a cell the player does not see (or a solid one) is the muted red of a blocked
-//! target, "You do not see there.". Everything here reads the perception snapshot only.
+//! close that it may catch the player asks first ([`Aim::catches_reader`]). A spell is aimed by its
+//! shape: a burst, a ray, or a bolt as a scroll's burst (stopped by the first creature in the way),
+//! a line as a scroll's bolt (through creatures), a cone as the fan of cells it would reach, a
+//! touch at the cell next to the player; its reach is the player's own, Willpower counted. A spell
+//! aimed at a corpse flies nowhere: its cursor starts on the nearest corpse the player sees, Tab
+//! cycles the corpses, and a cell without one says so. Any other ability (and a hex) flies nowhere:
+//! it draws no line, and a cell the player does not see (or a solid one) is the muted red of a
+//! blocked target, "You do not see there.". Everything here reads the perception snapshot only.
 
 use super::look;
 use crate::game::Game;
@@ -69,8 +68,7 @@ pub enum AimKind {
     ThrownExploit(usize),
     /// Reading the spell scroll of inventory stack `usize` at a cell (`r`).
     Read(usize),
-    /// Using the wand or rod of inventory stack `usize`, ready in the missile weapon slot (`t`;
-    /// spec §8 "Magic items": "Wands", "Rods").
+    /// Using the wand or rod of inventory stack `usize`, ready in the missile weapon slot (`t`).
     Zap(usize),
     /// Using an ability that asks for a cell (from the abilities menu, or its key).
     Ability(Ability),
@@ -117,7 +115,7 @@ impl LastTarget {
     }
 }
 
-/// The creatures in view but the player and their allies (spec §8 "Allies": their own side is
+/// The creatures in view but the player and their allies (their own side is
 /// no one's target), nearest first (ties: the lower id): what Tab cycles.
 fn targets(view: &PerceptionView<'_>) -> Vec<(Pos, Stance)> {
     let me = view.viewer();
@@ -319,7 +317,7 @@ impl Aim {
     }
 
     /// Whether the burst a scroll read at the cursor goes off near enough to catch the player,
-    /// as far as they know (the rules', spec §8 "Scrolls": it flies along the line of fire and
+    /// as far as they know (the rules': it flies along the line of fire and
     /// goes off on the first creature they see in its way, before the first cell they know is
     /// solid, or on the cursor; the player within its radius of that, walls between not
     /// counted). Returns what would catch them ("fireball"); `None` for anything else, and for
@@ -437,8 +435,8 @@ pub struct Line {
     pub no_corpse: bool,
 }
 
-/// The spell of `data/spells/` `kind` casts: one of the player's spells, a scroll of one read
-/// (spec §8 "Spells"), or a wand of one used, if the player knows what the wand is.
+/// The spell of `data/spells/` `kind` casts: one of the player's spells, a scroll of one read, or a
+/// wand of one used, if the player knows what the wand is.
 fn spell_of(view: &PerceptionView<'_>, kind: AimKind) -> Option<SpellId> {
     match kind {
         AimKind::Ability(Ability::Spell(spell)) => Some(spell),

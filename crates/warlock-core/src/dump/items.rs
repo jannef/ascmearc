@@ -52,7 +52,7 @@ pub(super) fn inventory_rows(view: &PerceptionView<'_>) -> Vec<String> {
         if let Some(rung) = s.known_wand_rung(view.lore()) {
             name += &format!(" (rung {rung})");
         }
-        // A flask's throw once its type is known (spec §8 "Potions": "Flasks").
+        // A flask's throw once its type is known.
         if let Some(range) = known_flask_range(view, i) {
             name += &format!(" (throw {range})");
         }

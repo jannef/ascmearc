@@ -1,4 +1,4 @@
-//! The witch's familiar (spec §8 "Allies"; `data/familiars.toml`): the starting beasts by race and
+//! The witch's familiar (`data/familiars.toml`): the starting beasts by race and
 //! the rares with their odds, the growth table of the small beasts only a familiar is, and the
 //! rules in words.
 

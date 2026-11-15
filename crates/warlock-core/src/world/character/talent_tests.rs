@@ -1,4 +1,4 @@
-//! Talents in the world (spec §8 "Talents"): a level every third brings a pick that must be
+//! Talents in the world: a level every third brings a pick that must be
 //! made before anything else, prerequisites are checked in words, a talent is taken once,
 //! each talent changes the one rule it names, picks nothing can be spent on are dropped, and
 //! all of it survives saves and replays while runs without talents hash as before.

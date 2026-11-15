@@ -1,4 +1,4 @@
-//! The priest's prayer (`assets/data/prayer.toml`, spec §8 "Class abilities"; the priest design,
+//! The priest's prayer (`assets/data/prayer.toml`; the priest design,
 //! `docs/design/priest.md` §6.1; `docs/dev/prayer.md`): the strain a prayer adds and how fast it
 //! passes, the chance a strained prayer fizzles, the bands each face of the prayer answers, the
 //! statuses the release use ends, and the uses in their priority order with their words.

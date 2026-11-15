@@ -1,6 +1,6 @@
 # The delf wave (Fyrdelf, docs/design/campaign.md §10.1), the least of the giant tribe (#457). A
 # brute twice a man's height that runs with the goblin tribes and their kin: slow, but its maul
-# (its racial weapon, spec §8 "Creature gear") lands like a falling rock. It throws nothing.
+# (its racial weapon) lands like a falling rock. It throws nothing.
 [[creature]]
 id = "ogre"
 level = 12

@@ -1,4 +1,4 @@
-//! The collar (spec §8 "Allies": "The collar"; docs/design/ranger-companion.md §10;
+//! The collar (docs/design/ranger-companion.md §10;
 //! `docs/dev/companion.md`): a kept beast, a companion or a familiar, wears one thing, on its
 //! neck, and the player gives it.
 //!

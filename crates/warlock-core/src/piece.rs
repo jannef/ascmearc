@@ -1,5 +1,5 @@
-//! Pieces of a material, and breaking an item into the parts it is made of (spec §7 "Objects and
-//! materials"; the design: docs/design/animated-objects.md §9.2).
+//! Pieces of a material, and breaking an item into the parts it is made of (the design:
+//! docs/design/animated-objects.md §9.2).
 //!
 //! A **piece** is the one generic object [`ID`] (`data/objects/piece.toml`), made of whatever
 //! material its main part carries, as the loose gem is made of its gem. It is the material stock

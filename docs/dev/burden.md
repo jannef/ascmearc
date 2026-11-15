@@ -1,9 +1,9 @@
 # Burden
 
 Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
-rules it implements are in spec/08f-stats-and-burden.md. Keep it current with the code, as CLAUDE.md says.
+rules it implements are in spec/12-character.md. Keep it current with the code, as CLAUDE.md says.
 
-Burden (spec §8 "Burden"; M16, #115) lives in `warlock-core/src/burden.rs`: `Load` (`carried`,
+Burden (M16, #115) lives in `warlock-core/src/burden.rs`: `Load` (`carried`,
 `limit`, `ignores_burdened`; `burden()` the level by thirds, `penalty()` what the actor suffers:
 Unburdened for a Burdened dwarf, `thresholds()`/`over()`), `Burden` (Unburdened, Burdened,
 Strained, Overloaded; its effects: `slow(price)` ×1.25/×1.5 rounded up, `max_dex()` +3/+1/0,

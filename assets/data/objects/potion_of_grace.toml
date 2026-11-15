@@ -1,4 +1,4 @@
-# A potion of grace (spec §8 "Potions"): Dexterity raised for ten minutes. Stat boosts are orange.
+# A potion of grace: Dexterity raised for ten minutes. Stat boosts are orange.
 [[object]]
 id = "potion_of_grace"
 name = "potion of grace"

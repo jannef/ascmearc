@@ -1,4 +1,4 @@
-//! Mining (spec §8 "Digging"; #1389, docs/design/professions.md §9): what a wall a miner digs
+//! Mining (#1389, docs/design/professions.md §9): what a wall a miner digs
 //! through gives, by `data/mining.toml` ([`crate::content::MiningRules`]).
 //!
 //! - **When**: the player breaks through a wall by digging ([`World::dig`]) on a floor of a

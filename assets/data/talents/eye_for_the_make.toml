@@ -1,4 +1,4 @@
-# The craftsperson's class ability from level 1 (spec §8 "Class abilities": Eye for the make;
+# The craftsperson's class ability from level 1 (Eye for the make;
 # the craftsperson design §7.2): passive and perception only, read by the item description
 # (`PerceptionView::describe_item`, the lines `magic/describe.rs::make_lines`).
 [[talent]]

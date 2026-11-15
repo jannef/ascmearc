@@ -1,4 +1,4 @@
-// Spell circles (spec §4.8 "Spell circles", `circles.rs`): one quad per circled actor, all in one
+// Spell circles (`circles.rs`): one quad per circled actor, all in one
 // mesh and one draw. Every vertex of a quad carries the circle (flat): the cell height, the
 // darkening, the actor's cell, and each circle's head and motion.
 //

@@ -1,4 +1,4 @@
-//! Talking past a party on the overworld (spec §7 "Overworld encounters"; Bluff, #1017; the
+//! Talking past a party on the overworld (Bluff, #1017; the
 //! design `docs/design/skill-uses.md` §6.2 B3): `encounter:bluff`, [`Choice::Bluff`].
 //!
 //! Offered ([`offered`]) only for an entry flagged `talk_past` (a hostile entry with a `group`,

@@ -1,4 +1,4 @@
-# Special rooms (spec §7 "Special rooms"), ADOM-like: a room of a generated level, or an area a
+# Special rooms, ADOM-like: a room of a generated level, or an area a
 # hand-made level marks with `[[room]]`, can carry an effect that changes the rules while one is
 # inside it. The first time the player enters one they are told (`enter`), and from then on look
 # mode names the room ("in an echoing hall"). Numbers never reach the player.

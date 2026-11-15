@@ -1,4 +1,4 @@
-//! The element gifts (spec §8 "Birth sign"; #268): Fire's Blaze (an active in the abilities
+//! The element gifts (#268): Fire's Blaze (an active in the abilities
 //! menu's Birth sign group, with its cooldown) and Kindled (a brighter lantern), Metal's
 //! Forge-born (marks half again as fast), and Water's Tidal (mana a quarter faster).
 

@@ -1,4 +1,4 @@
-//! Miscasts (spec §8 "Spells": "Miscasts", #1271): the Spellcraft check's difficulty by spell
+//! Miscasts (#1271): the Spellcraft check's difficulty by spell
 //! level and its chance of a miscast by bonus, what Spellcraft gives it, and the whole miscast
 //! table with its exact ranges.
 

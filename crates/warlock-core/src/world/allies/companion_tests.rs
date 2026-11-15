@@ -1,4 +1,4 @@
-//! The animal companion (`companion.rs`; spec §8 "Allies"): the starting beast by race and
+//! The animal companion (`companion.rs`): the starting beast by race and
 //! the rares, the name, the story's chapter, growth with the master's level, always coming
 //! along (and the retinue), the nose through a closed door, the words, saves, and replays.
 

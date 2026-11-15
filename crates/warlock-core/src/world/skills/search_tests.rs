@@ -1,4 +1,4 @@
-//! Searching in the world (spec §8 "Searching"): secret doors that look like walls until found,
+//! Searching in the world: secret doors that look like walls until found,
 //! hidden traps found and known, the active and the passive check, who notices in passing, what
 //! draws from the gameplay stream, searching for a while, and saves and replays.
 

@@ -1,4 +1,4 @@
-# An elixir of vigour (spec §8 "Potions"): toughness +1 for good, its potential +1d2. Elixirs are gold.
+# An elixir of vigour: toughness +1 for good, its potential +1d2. Elixirs are gold.
 [[object]]
 id = "elixir_of_vigour"
 name = "elixir of vigour"

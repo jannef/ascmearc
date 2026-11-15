@@ -14,7 +14,7 @@ difficulty = 11
 [slick]
 difficulty = 12
 
-# Plunging through the ice (spec §5 "Ice"): one trained in Swim makes a Toughness check plus Swim
+# Plunging through the ice: one trained in Swim makes a Toughness check plus Swim
 # against `difficulty`; made, the plunge's harm is halved. 0 to 40.
 [plunge]
 difficulty = 11
@@ -33,7 +33,7 @@ range = 3
 [pit]
 mouth_reach = 3
 
-# The quick leave (spec §7 "Leaving an outdoor area"): refused while a hostile creature is seen,
+# The quick leave: refused while a hostile creature is seen,
 # or unseen within `reach` steps. 0 to 40.
 [quick_leave]
 reach = 10
@@ -43,7 +43,7 @@ reach = 10
 [long_action]
 stop_within = 5
 
-# A creature that comes to a level (spec §7 "Danger levels") appears at least `away` steps from
+# A creature that comes to a level appears at least `away` steps from
 # the player. 0 to 40.
 [spawn]
 away = 8

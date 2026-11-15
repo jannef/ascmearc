@@ -1,6 +1,6 @@
 # Crafting: professions, recipes, salvage
 
-Spec §8 "Skills" (professions); design `docs/design/professions.md` (§6 the recipe format, §8 the
+The rules are `spec/12-character.md` "Professions and crafting"; design `docs/design/professions.md` (§6 the recipe format, §8 the
 menus) and `docs/design/recipes.md` (§4 the grades, the format's second half, P4b); epic #1337.
 This topic covers what is built: the recipe data, the profession rows of the abilities menu, the
 profession screen, `Action::Craft`, who works which material, making a generic recipe (the
@@ -658,7 +658,7 @@ The shipped ones (`docs/design/recipes.md` §6 "Missiles"):
 
 ## Arrows and bolts
 
-Fletching (spec §8 "Fletching", #1021) is these two recipes (#1336), with no action, ability,
+Fletching (#1021) is these two recipes (#1336), with no action, ability,
 or built-in recipe of its own. Fletching in a replay is `craft:arrows:HEAD,SHAFT` (or
 `craft:bolts:...`), `-` for no head: `craft:arrows:-,c`
 for brittle arrows from billet `c`, `craft:arrows:-` where wood is free. `world/crafting/fletch.rs` holds

@@ -1,4 +1,4 @@
-# A gaze spent (spec §8 "Creature behavior": "Gazes", the creatures' `[creature.gaze]`): a degree
+# A gaze spent (the creatures' `[creature.gaze]`): a degree
 # for every six seconds of its `cooldown`; while it lasts the creature looks no one in the eye.
 # Creatures only: no one sees it on them.
 [[status]]

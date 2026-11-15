@@ -2,7 +2,7 @@
 # from the town, four cells out (the Ascmearc's overworld, g, at 19, 32). A hand-made outdoor
 # level (sky, sun, weather), entered from that cell, arriving on the road outside the gate (@).
 # Like any outdoor area it is left by walking off its edge (or with `<` when no enemy is about),
-# back to its overworld cell (spec §7 "Leaving an outdoor area"). No danger: nothing comes, and
+# back to its overworld cell. No danger: nothing comes, and
 # nobody here but the sexton.
 #
 # A drystone wall round the yard, the lych-gate on the road; a yew in each corner. The path runs
@@ -12,7 +12,7 @@
 # lie in four rows of ten, two north of the chapel and two south. Old Dudda the sexton (K) walks
 # his rounds between them.
 #
-# The burial ground (spec §7 "Graves"; `docs/dev/graves.md`): the top of the chain `lictun`, its
+# The burial ground (`docs/dev/graves.md`): the top of the chain `lictun`, its
 # crypts below (`lictun_crypt_01`, ...). Every one of the graveyard's dead but the petrified gets a
 # plot, the oldest death first; once all forty are filled the slab at the end of the flagged path
 # (v) opens as the stairs down to the first crypt.

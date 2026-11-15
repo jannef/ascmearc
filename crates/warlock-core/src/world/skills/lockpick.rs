@@ -1,11 +1,11 @@
-//! Picking locks (spec §8 "Doors"; the Pick lock ability, the Open lock skill's use, #233).
+//! Picking locks (the Pick lock ability, the Open lock skill's use, #233).
 //!
 //! - **Who**: an actor trained in a skill with the `pick` effect (Open lock, `data/skills/`),
 //!   [`crate::skills::Skills::trains_effect`]: the abilities menu lists Pick lock for them
 //!   ([`crate::ability::Ability::PickLock`]). Anyone else is told "You do not know how to pick
 //!   locks." and no time passes.
 //! - **A try** at the locked closed door in a direction is a check ([`crate::check`]): 2d12 plus
-//!   the picker's Dexterity modifier (of the effective score, spec §8 "Stats") plus what Open lock
+//!   the picker's Dexterity modifier (of the effective score) plus what Open lock
 //!   gives ([`Effect::Pick`]) against the lock's difficulty ([`World::lock_difficulty`]). It takes
 //!   the `pick_lock` action whatever comes of it, may earn Open lock a training mark
 //!   ([`Use::Pick`]), and makes no noise of its own.
@@ -15,7 +15,7 @@
 //!   **Failed**, the lock holds: "You fail to pick the lock." Nothing is remembered of a failed
 //!   try, so the next may succeed (no limit on trying again, the owner's rule: time is the
 //!   price).
-//! - A shut chest's lock is picked the same way (spec §8 "Chests"): picked, the chest opens as a
+//! - A shut chest's lock is picked the same way: picked, the chest opens as a
 //!   key opens it ([`World::lift_lid`]), on top of the try's time (`open_chest`).
 //! - A closed door without a lock, or anything else, is refused and takes no time: "That door is
 //!   not locked." (as `o` would find out at once), "There is no lock there."
@@ -47,7 +47,7 @@ impl World {
         }
         let level = self.state.current();
         let def = (level.terrain.get(at)).map(|t| content.terrain(*t));
-        // A shut chest's lock is picked as a door's (spec §8 "Chests").
+        // A shut chest's lock is picked as a door's.
         let chest = def.is_some_and(|d| d.is_shut_chest());
         if !def.is_some_and(|d| d.is_closed_door()) && !chest {
             self.say("There is no lock there.");
@@ -89,7 +89,7 @@ impl World {
         Spent::Turn(try_price + open_price)
     }
 
-    /// How hard the lock at `at` on the current level is to pick (spec §8 "Doors"): its own
+    /// How hard the lock at `at` on the current level is to pick: its own
     /// difficulty ([`crate::door::Lock::difficulty`]), plus on a dungeon branch its
     /// `locks_per_depth` for each level below the first. 0 where there is no lock.
     pub(super) fn lock_difficulty(&self, at: Pos) -> i32 {

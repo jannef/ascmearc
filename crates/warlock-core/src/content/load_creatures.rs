@@ -360,7 +360,7 @@ impl Content {
 
     /// Status effects and the healing rules (optional: none, and the default healing).
     /// Every status that something `follows` into must end: it eases, something cures it, or
-    /// a resource brings it (Raging ends with Rage, spec §8 "Resources"), so the one that
+    /// a resource brings it (Raging ends with Rage), so the one that
     /// follows it begins. Checked once the resources are loaded.
     pub(super) fn check_follows_end(&self) -> Result<(), ContentError> {
         for def in &self.statuses {
@@ -401,9 +401,9 @@ impl Content {
         Ok(())
     }
 
-    /// The classes', races', and birth signs' starting kits (spec §8 "Character creation"), once
+    /// The classes', races', and birth signs' starting kits, once
     /// the objects, gems, slots, and weapon skills they name are known.
-    /// Resolves the creature types' gear (spec §8 "Creature gear") once objects are known.
+    /// Resolves the creature types' gear once objects are known.
     pub(super) fn load_gear(&mut self) -> Result<(), ContentError> {
         let gear = (self.creatures.iter())
             .map(|c| {
@@ -424,8 +424,8 @@ impl Content {
         Ok(())
     }
 
-    /// Resolves what the creature types' throws fly as (spec §8 "Ranged combat": "Creatures'
-    /// throws") once objects are known, and names a throw by its object unless it has a name.
+    /// Resolves what the creature types' throws fly as once objects are known, and names a throw by
+    /// its object unless it has a name.
     pub(super) fn load_throws(&mut self) -> Result<(), ContentError> {
         for i in 0..self.creatures.len() {
             let Some(throw) = &self.creatures[i].throw else {
@@ -459,7 +459,7 @@ impl Content {
         Ok(())
     }
 
-    /// Resolves the creature types' summonings (spec §8 "Summoning") once every type is known:
+    /// Resolves the creature types' summonings once every type is known:
     /// their pools and their cooldown status (`content/summon.rs`).
     pub(super) fn load_summons(&mut self) -> Result<(), ContentError> {
         for i in 0..self.creatures.len() {

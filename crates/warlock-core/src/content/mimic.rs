@@ -1,4 +1,4 @@
-//! Mimics (spec §8 "Mimics"; docs/dev/creatures/mimics.md; the design:
+//! Mimics (docs/dev/creatures/mimics.md; the design:
 //! docs/design/chests-and-treasure.md §5): `data/mimics.toml`, a generated family of creature
 //! types, one a level, `mimic_<L>` (`mimic_1` … `mimic_60`), each an ordinary creature type every
 //! rule reads as it reads a kobold. A mimic's level is the floor's item level, as a chest's; its
@@ -245,7 +245,7 @@ impl Mimics {
 }
 
 impl Content {
-    /// The mimics (`data/mimics.toml`; spec §8 "Mimics").
+    /// The mimics (`data/mimics.toml`).
     pub fn mimics(&self) -> &Mimics {
         &self.mimics
     }

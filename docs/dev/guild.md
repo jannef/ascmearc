@@ -1,7 +1,7 @@
 # Guilds
 
 Developer notes for guilds and their ranks (#425; the guild design `docs/design/adventurers-guild.md`
-§4, §7.6, §10); the rules are in spec/08b-creatures.md ("Quests": "Guilds"). Keep it current with
+§4, §7.6, §10); the rules are in spec/09-creatures.md ("Quests"). Keep it current with
 the code, as CLAUDE.md says.
 
 ## Data

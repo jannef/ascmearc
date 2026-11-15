@@ -1,6 +1,6 @@
 # The barrow wave (Cealdhlāw, docs/design/campaign.md §10.1). The goblin tribes that camp in the
 # barrows' outer halls: they open doors, stamp about loudly, and fight with clubs (their racial
-# weapon, spec §8 "Creature gear").
+# weapon).
 [[creature]]
 id = "goblin"
 level = 2

@@ -1,4 +1,4 @@
-//! Throwing one's voice (spec §5 "Hearing"; #235): where it may go, what it costs, who hears it,
+//! Throwing one's voice (#235): where it may go, what it costs, who hears it,
 //! and who goes to look.
 
 use crate::content::ContentFiles;

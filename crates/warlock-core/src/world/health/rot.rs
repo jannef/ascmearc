@@ -1,4 +1,4 @@
-//! Food rotting in the world (spec §8 "Hunger"; the stages are [`crate::rot`]).
+//! Food rotting in the world (the stages are [`crate::rot`]).
 //!
 //! - **In a pack** (the player's and creatures'): food rots away at its exact moment as the
 //!   carrier lives through the time ([`World::rot_pack`], called by `World::live` in

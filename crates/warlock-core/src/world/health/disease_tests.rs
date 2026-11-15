@@ -1,4 +1,4 @@
-//! Diseases in the world (spec §8 "Diseases"): caught by a check, they incubate, show as
+//! Diseases in the world: caught by a check, they incubate, show as
 //! Diseased, progress day by day with a check each time, damage stats (and through Toughness
 //! the most hit points), are shaken off by checks won in a row or never, can kill, slow healing,
 //! and are known by name after their first progression; stat damage mends once they are gone.

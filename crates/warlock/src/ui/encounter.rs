@@ -1,4 +1,4 @@
-//! The overworld encounter's question (spec §7 "Overworld encounters", #805;
+//! The overworld encounter's question (#805;
 //! `docs/dev/encounters.md`): while the world holds one pending
 //! ([`warlock_core::perception::PerceptionView::encounter`]), the one dialog asks it, a row per
 //! choice that sends `Action::Encounter(choice)`. It must be answered (the owner, #796 Q9): Esc

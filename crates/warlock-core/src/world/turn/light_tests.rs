@@ -1,4 +1,4 @@
-//! Light and vision through the whole turn pipeline (spec §5).
+//! Light and vision through the whole turn pipeline.
 
 use crate::content::ContentFiles;
 use crate::light::{BOUNCE, Light, falloff};
@@ -160,7 +160,7 @@ const LEGEND: &str = r##"
 "k" = { terrain = "floor", creature = "kobold" }
 "##;
 
-/// Special rooms (spec §7 "Special rooms"): a shadowed room keeping 30 % of the light, and a
+/// Special rooms: a shadowed room keeping 30 % of the light, and a
 /// sanctuary with a glow (some of it UV, which only UV sight perceives).
 const ROOM_EFFECTS: &str = r##"
 [[effect]]
@@ -313,7 +313,7 @@ pub(in crate::world) fn check_invariants(world: &World) -> Result<(), TestCaseEr
     Ok(())
 }
 
-/// Creature sight uses the player's rules (spec §5 "Creature sight"): on every transparent cell
+/// Creature sight uses the player's rules: on every transparent cell
 /// the player sees, the light a creature with the player's eyes finds there ([`crate::sight::light`],
 /// one cell at a time, from a cold light cache) is the light the player perceives.
 pub(in crate::world) fn check_creature_sight(world: &World) -> Result<(), TestCaseError> {
@@ -1057,7 +1057,7 @@ fn time_turns(mut world: World, turns: usize) -> (f64, f64) {
     (total / turns as f64, max)
 }
 
-/// Turn cost against the spec §10 budgets (5 ms hub, 16 ms vast). Run in release:
+/// Turn cost against the turn-time budgets (5 ms hub, 16 ms vast). Run in release:
 /// `cargo test --release -p warlock-core turn_cost -- --ignored --nocapture`.
 #[test]
 #[ignore = "timing; run manually in release mode"]
@@ -1261,7 +1261,7 @@ proptest! {
         check_invariants(&w)?;
     }
 
-    /// Random caves with a shadowed room and a sanctuary (spec §7 "Special rooms"), the level
+    /// Random caves with a shadowed room and a sanctuary, the level
     /// gloomy throughout or not, torches, and a light-bearing kobold, any profile and ambient
     /// level, the player walking about: every
     /// light invariant holds (contributions and base light add up, wall faces), and a creature

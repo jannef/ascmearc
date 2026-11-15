@@ -1,4 +1,4 @@
-//! Parts (`assets/data/parts.toml`, spec §7 "Objects and materials", #199): what objects are
+//! Parts (`assets/data/parts.toml`, #199): what objects are
 //! made of. Every object lists its parts in `materials`, each of one material, the first the
 //! main one: `materials = [{ part = "chain", of = "gold" }, { part = "setting", of = "ruby",
 //! share = 10 }]`; a plain material id is one unnamed part, so `materials = ["steel"]` is an
@@ -128,7 +128,7 @@ pub struct Part {
     /// part an item has and its base item does not (a gem it was set with) has none: it weighs
     /// nothing beside the rest.
     pub share: u8,
-    /// A gem's size and cut (spec §7 "Gems"): an item's own gem part (a loose gem, an
+    /// A gem's size and cut: an item's own gem part (a loose gem, an
     /// ornament, [`crate::object::Stack::parts`]); never a base item's.
     pub gem: Option<Cutting>,
 }
@@ -364,7 +364,7 @@ pub fn phrase(parts: &[Part], materials: &[MaterialDef], names: &[PartDef]) -> S
 
 /// What an object written as `name` (and `plural`) is called, made of `parts`: its name with the
 /// notable parts it does not mention yet (parts of a `precious` material: gems and precious
-/// metals; spec §7 "Objects and materials"). The plain parts (a leather grip) show only in its
+/// metals). The plain parts (a leather grip) show only in its
 /// description ([`phrase`]).
 ///
 /// A notable part whose part has an `adjective` goes before the name, "ruby-pommelled long

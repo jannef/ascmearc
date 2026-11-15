@@ -1,4 +1,4 @@
-//! Damage types in the world (spec §8 "Damage types"): a blow does the kind that is better
+//! Damage types in the world: a blow does the kind that is better
 //! against its target and is said with its verb, Protection stands by kind and never against an
 //! element, resistances add up across what a creature is and wears (at most 75 counting, immunity
 //! apart), added damage rides along unsoaked, only cuts and stabs bleed, poison meets its

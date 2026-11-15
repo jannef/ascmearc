@@ -1,4 +1,4 @@
-# Allies (spec §8 "Allies"; docs/design/druid-and-summons.md §10, §14 Q10): the one pickable of
+# Allies (docs/design/druid-and-summons.md §10, §14 Q10): the one pickable of
 # the `allies` system. Handle animal 20, not 40: the skill earns its marks from orders and allies'
 # kills, and 40 was too far to reach (the owner).
 [[talent]]

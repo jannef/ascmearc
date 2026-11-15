@@ -1,4 +1,4 @@
-//! The thief's identity abilities (spec §8 "Class abilities"; the surprise design §6.2, #684):
+//! The thief's identity abilities (the surprise design §6.2, #684):
 //! what the class table gives that no skill does.
 //!
 //! - **Lurk** (`use:lurk`, a class active): a wait in ambush, a degree of its status (Lurking)

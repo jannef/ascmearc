@@ -1,4 +1,4 @@
-# A remedy against disease (spec §8 "Diseases"): eaten, it cures every disease, even grave rot,
+# A remedy against disease: eaten, it cures every disease, even grave rot,
 # which never goes by itself. Shops that sell food sell it.
 [[object]]
 id = "angelica_root"

@@ -1,4 +1,4 @@
-# Brand (spec §8 "Spells"): the paladin's; a brand is a burning stick and a sword (Old English *brand*, both).
+# Brand: the paladin's; a brand is a burning stick and a sword (Old English *brand*, both).
 [[spell]]
 id = "brand"
 name = "Brand"

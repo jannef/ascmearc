@@ -1,4 +1,4 @@
-//! Shortest paths for creatures (spec §8 "Creature behavior"): A* over king's moves with integer
+//! Shortest paths for creatures: A* over king's moves with integer
 //! costs and fixed tie-breaks, so the same situation always gives the same step.
 
 use crate::geom::{Dir, Pos};

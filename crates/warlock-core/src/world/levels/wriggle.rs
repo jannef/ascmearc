@@ -1,4 +1,4 @@
-//! Wriggling past (spec §8 "Displacement", Escape artist; #1032): a step into a cell held by a
+//! Wriggling past (Escape artist; #1032): a step into a cell held by a
 //! creature that will not make way ([`Refusal::Budge`]: it keeps its post or never gives way)
 //! is, for a player trained in Escape artist, an automatic check instead of a refusal, as the
 //! check against bonds is part of the attempt (`hold.rs`): no action, no ability row, no key.

@@ -1,4 +1,4 @@
-//! The rank tables of the necromancy and divination spells (#1267; spec §8 "Spells": "Ranks"):
+//! The rank tables of the necromancy and divination spells (#1267):
 //! every spell of the part has an entry for each rank from 2 to 10, and a deep rank reaches the
 //! caster's own cast: Charnel burst's corpse tears two cells round from rank 7, Identify costs
 //! two fifths less and takes half the time at rank 10.

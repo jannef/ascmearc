@@ -14,7 +14,7 @@ size = [100, 40]
 traps = ["pit", "arrow", "alarm"]
 hidden_per_depth = 1
 loot = [2, 4]
-# Danger 6 on the first floor to 9 on the fourth (spec §7 "Danger levels"): his footpads and their
+# Danger 6 on the first floor to 9 on the fourth: his footpads and their
 # archers, the goblin bowmen he hires, and what lives in the dark under the roots.
 # Under the forest's roots: iron and copper (#1389, data/mining.toml).
 ores = ["iron", "copper"]
@@ -22,10 +22,10 @@ danger = 6
 population = [
     "bat", "giant_centipede", "footpad", "goblin_archer", "barrow_spider", "footpad_archer",
 ]
-# Its strays come only from what lives in the campaign's populations (spec §7 "Danger
-# levels"): its folk are the guild design's table (docs/design/adventurers-guild.md §8.2).
+# Its strays come only from what lives in the campaign's populations: its folk are the guild
+# design's table (docs/design/adventurers-guild.md §8.2).
 stray_pool = "populations"
-# Robbers keep no shop (spec §7 "Shops").
+# Robbers keep no shop.
 shops = { chance = 0 }
 
 # The bottom: the robbers' hoard.

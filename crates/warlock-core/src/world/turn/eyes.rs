@@ -1,4 +1,4 @@
-//! Effective eyes (spec §5 "Vision"; the design's B4): the player's vision profile as their
+//! Effective eyes (the design's B4): the player's vision profile as their
 //! talents change it. `WorldState::vision` stays the base profile (the race's, or the dev
 //! `vision:` override), which a `vision` talent replaces ([`WorldState::base_vision`]: Deep-eyed's
 //! darkvision eyes); [`WorldState::eyes`] betters it by a unique item's Vision power they
@@ -12,7 +12,7 @@ use crate::world::{World, WorldState};
 
 impl WorldState {
     /// The player's eyes: the base profile, bettered by a unique item's Vision power they wear
-    /// (spec §8 "Magic items"; never the dev override, which shows a profile as it is), with
+    /// (never the dev override, which shows a profile as it is), with
     /// what their talents change.
     pub(crate) fn eyes(&self, content: &Content) -> VisionProfile {
         let base = &content.vision_profiles()[self.base_vision(content)];
@@ -40,7 +40,7 @@ impl WorldState {
 }
 
 impl World {
-    /// The player's eyes now (spec §5 "Vision"): their vision profile as their talents change
+    /// The player's eyes now: their vision profile as their talents change
     /// it ([`WorldState::eyes`]).
     pub fn eyes(&self) -> VisionProfile {
         self.state.eyes(&self.content)

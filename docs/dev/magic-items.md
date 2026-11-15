@@ -1,14 +1,14 @@
 # Magic items
 
 Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
-rules it implements are in spec/08g-magic-items.md. Keep it current with the code, as CLAUDE.md says.
+rules it implements are in spec/11-magic.md. Keep it current with the code, as CLAUDE.md says.
 
 Affix capacity and the trim that holds every item made to it (`magic/capacity.rs`,
 `loot::finished`, `quality` on hand-made items) are in `docs/dev/enchanting.md`, and so is the
 better make, gems, and materials of deeper finds (#1436: `gear_condition.toml`'s `[[depth]]`,
 `magic/make.rs::make`, loot step 9).
 
-Magic items (spec §8 "Magic items", #149) live in `warlock-core`: `content/affix.rs`
+Magic items (#149) live in `warlock-core`: `content/affix.rs`
 (`data/affixes.toml`, the settings file with the rarity weights and rare names, and
 `data/affixes/`, one file per prefix or suffix named by its id, read in path order; see
 "Content directories" in `docs/dev/content.md`: `ItemKind`, `Effect`, `AffixDef` with tiers,
@@ -19,13 +19,18 @@ time in ten, `Content::grimoire_or`, docs/dev/spells.md "Learning"), and
 `magic/` (`mod.rs`: `Magic`/`Affix`, the instance on a `Stack` (saved, hashed), `check`;
 `mods.rs`: `Mods::local` (an item's own and its attacks', with what an anvil's work added,
 `magic/worked.rs`, docs/dev/special-rooms.md) and `Mods::worn` (what an actor wears
-and wields, global), the one aggregation every rule reads; `loot.rs`: `roll`, its draw order;
+and wields, global), the one aggregation every rule reads (attack speed, `Effect::AttackSpeed`,
+is summed from the worn things and the attack's own object and applied by `mods::faster` in
+`World::attack_cost`: together at most `affix::MAX_SPEED` 50 % off, and never below `COSTS.start()`
+100, the cheapest action); `loot.rs`: `roll`, its draw order;
 `name.rs`: the names around `Stack::names`, the item as it is made (its gems, #191, and its
 material, #193), so the order is [prefix] [ornament] [material] base [suffix] and a rare item's
 base shows its gem; `describe.rs`: base
 stats, gems with their size and cut, and affixes in words for the item description screen
 (never the item level, a hidden number; #637);
-`numbers.rs`: `Numbers::of(stack)`, what an item gives in numbers (#552: a weapon's to-hit and
+`numbers.rs`: `Numbers::of(stack)`, what an item gives in numbers (#552, the owner's one
+exception to hidden numbers, 2026-10-27: "player just needs to know how much +hit and damage, dv
+and pv equipment has"; a weapon's to-hit and
 damage with its material and local affixes through the very `Mods::sharpen` a strike uses and
 `Profile::bare`, a launcher's or thrower's range, ammunition's additions, a worn thing's global
 to-hit and damage (`Mods::global`, one stack's global effects), Dv as armour + shield + parry +
@@ -73,7 +78,14 @@ elemental prefix (`magic/tests.rs`, #638), and each rider lands unsoaked
 (`world/combat/damage_tests.rs`). **Categories** (#621): `AffixDef::category` (required in data) is the
 rule loot and `Magic::check` read: an item never has two affixes of one category
 (`loot::roll_affix` leaves out the categories already rolled; `Magic::check` refuses a repeat in a
-save, a legend's `[[item]]`, or a unique). The data gives every affix of one `Group` one
+save, a legend's `[[item]]`, or a unique). A level file places a magic item with an `[[item]]`
+table on top of the pile at `at = [x, y]`, after the `[[pile]]`s: `object` (a base item),
+`affixes` (affix ids, each with an optional tier, `"sharp:2"`, default 1; the value is the top of
+the tier's range), `name` (a rare item's: with a name it is rare, without magic), `identified`
+(default false), `level` (the item level, default that of its highest tier), `count` (stackable
+ones, default 1), `quality` (`"fine"`, `"marvellous"`, `"masterwork"`; refused on an item with no
+aspect, docs/dev/enchanting.md), and `parts` (gems and materials, `{ part, of, size, cut }`,
+docs/dev/objects.md "Gems"); an item its affixes may not roll on is a content error. The data gives every affix of one `Group` one
 category, so one per category is one per group; nothing checks it at load (#1205: two affixes of
 one group on an item would only add up in `Mods`). Tests: `magic/tests.rs`
 (`no_rolled_item_repeats_an_affix_category`,
@@ -191,7 +203,7 @@ item's shape only among those its base can take (`loot::rolls_any`).
 
 ## Unique items
 
-Unique items (spec §8 "Magic items", #423, docs/design/adventurers-guild.md §9) are data in
+Unique items (#423, docs/design/adventurers-guild.md §9) are data in
 `content/unique.rs` (`data/uniques/` and each campaign's `data/uniques/`, one file per item,
 read through `ContentFiles::table("uniques")` after objects, affixes, and gems and before
 everything that places objects): `UniqueDef` with its `name`, base `object`, the template

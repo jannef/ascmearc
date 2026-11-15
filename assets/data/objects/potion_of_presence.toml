@@ -1,4 +1,4 @@
-# A potion of presence (spec §8 "Potions"): Presence raised for ten minutes. Stat boosts are orange.
+# A potion of presence: Presence raised for ten minutes. Stat boosts are orange.
 [[object]]
 id = "potion_of_presence"
 name = "potion of presence"

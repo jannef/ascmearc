@@ -1,4 +1,4 @@
-//! The forging wizard (spec §8 "Skills": professions; docs/design/professions.md §8; #1335):
+//! The forging wizard (professions; docs/design/professions.md §8; #1335):
 //! what a generic recipe's row on a profession's screen opens. One paged list for each choice of
 //! the recipe, in the order the rules give them (`PerceptionView::craft_steps`): the stock for
 //! each chosen part ("blade"; the arrows' head: arrowheads, then shards and blocks, after a

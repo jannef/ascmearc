@@ -1,4 +1,4 @@
-//! Wands (spec §8 "Magic items": "Wands", the magic design §9, the spell scaling design §7.4): an
+//! Wands (the magic design §9, the spell scaling design §7.4): an
 //! object with a `[object.wand]` table holds a spell of `data/spells/` and a number of charges,
 //! and casts it at a rung of its own on the spell's damage ladder, whoever holds it. It goes in
 //! the missile weapon slot and is used as a missile weapon is (`t`, `fire:X,Y`); a charge pays

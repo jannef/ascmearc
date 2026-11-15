@@ -1,9 +1,9 @@
 # NPCs, dialogue, and making way
 
 Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
-rules it implements are in spec/08b-creatures.md. Keep it current with the code, as CLAUDE.md says.
+rules it implements are in spec/09-creatures.md. Keep it current with the code, as CLAUDE.md says.
 
-NPCs, dialogue, and making way (spec §8 "Dialogue" and "Displacement", #146, #147):
+NPCs, dialogue, and making way (#146, #147):
 `content/dialogue.rs` loads the `dialogue` table (`data/dialogue.toml`, the shopkeeper's, and each
 campaign's `data/dialogue/`: the showcase's hermit, gardener, and bard; the Ascmearc's people
 by place in `docs/dev/campaign.md`, among them Līctūn's sexton, Old Dudda (`dudda`, #1258), who
@@ -46,7 +46,7 @@ the name. An escort quest's character, chatted with while the quest is active, j
 greeting them (`World::escort_joins`, the one line in `chat`; `docs/dev/quests.md`). Creatures that talk and fight no one
 never stop a rest by coming into view (`World::disturbs_rest`).
 
-**Services** (#329, the campaign design §6.1; spec §8 "Dialogue"): `world/people/service.rs`.
+**Services** (#329, the campaign design §6.1): `world/people/service.rs`.
 `World::ask` hands a topic id it is not a quest's to `World::ask_service` before the dialogue's
 topics; it checks there is something to do (`prayer_cures`: a status or disease, showing or not,
 whose `cured_by` lists `service::PRAYER`; or stat damage or drained points, with no disease showing for a mend),
@@ -101,7 +101,7 @@ Tests: `world/people/train_service_tests.rs` (a fixture teacher: listed while un
 refusals, digging before and after, the replay and the save, the load checks),
 `mapgen/fyrdelf_tests.rs::alberich_keeps_his_delving_on_the_fifth_floor`.
 
-**Goodwill** (#1247; spec §8 "Dialogue": "Goodwill"): `content/town.rs` (`TownDef`, a
+**Goodwill** (#1247): `content/town.rs` (`TownDef`, a
 campaign's `data/towns/`, one file per town: `id`, `name`, `people`, `goodwill` in percent,
 `told`; well-formedness only, #1205: a name in `people` that speaks no dialogue just matches
 nobody) and `world/people/goodwill.rs`. `Content::town_of(dialogue)` is the town whose `people` name
@@ -117,7 +117,7 @@ such a service "(free)" and asks no pay dialog. `World::complete_saying` calls
 and the Gilde's counting but Holtwīc's not, the cap and a free cure), the screen's row in
 `ui/dialogue_screen.rs`; the wiki's table is `xtask/src/wiki/services.rs::towns`.
 
-**The aristocrat's servant** (#1405; spec §8 "Class abilities": Stipend): `world/classes/stipend.rs`.
+**The aristocrat's servant** (#1405; the aristocrat's Stipend): `world/classes/stipend.rs`.
 A town's class helpers, `[[town.servant]]` (`content/town.rs::TownServant`: `talent`, the class
 ability whose holder has them, `level`, `at`, `creature` by gender, `speech` npc ids by race id
 with a `default`; the loader checks the creatures, the `default`, and that each npc's
@@ -137,7 +137,7 @@ coins then the finds into the pack, each stack that would leave the player Overl
 on their cell ("Too much to carry, set down at your feet: …"; `World::receive`, which the
 partner's withdrawals share). Tests: `world/classes/stipend_tests.rs`.
 
-**The merchant's business partner** (#1407; spec §8 "Class abilities": Invest): `world/classes/invest.rs`,
+**The merchant's business partner** (#1407; the merchant's Invest): `world/classes/invest.rs`,
 `content/invest.rs` (`data/rules/invest.toml`: `fees`, `week` (`base` and `dice` in basis points),
 `bonus.quest` per quest of the partner's town, `steps`; shared, so it names no campaign's quest).
 Cēaptūn's second class helper (`talent = "invest"`, `bonus = { fire_deep = 6 }`: a helper's own
@@ -162,7 +162,7 @@ the partner entry's `bonus`). `World::partner_dies` (one line in `fight.rs::dies
 skip against week-by-week and a rest across a week's turn, the quests' bonus, the death, the
 yearly return by simulation, a save and a replay), `content/invest.rs`.
 
-**The craftsperson's patron** (#1421; spec §8 "Class abilities": Patron; the craftsperson design
+**The craftsperson's patron** (#1421; the craftsperson's Patron; the craftsperson design
 §7.4): `world/crafting/patron.rs`, `content/patron.rs` (`data/rules/patron.toml`: `pays`, the percent of the
 work's worth paid, and `bonus`, more for a piece bearing the player's maker's mark, read once
 Maker's mark lands; shared). Cēaptūn's third class helper (`talent = "patron"`) lodges in the
@@ -192,7 +192,7 @@ left out when the table gave stock; never a gem) through `World::receive`; an em
 `World::patron_dies` (one line in `fight.rs::dies`) drops the open one. The `progress` dump's
 row: `patron 2 taken, open long_sword`. Tests: `world/crafting/patron_tests.rs`, `content/patron.rs`.
 
-**A trader's offer** (#808, docs/design/overworld-encounters.md §15 Q7; spec §8 "Dialogue"):
+**A trader's offer** (#808, docs/design/overworld-encounters.md §15 Q7):
 `content/offer.rs` (`TradeOffer`, a dialogue's `[dialogue.offer]`: `id`, `name`, `reply` said on
 a sale, `sold` said after, `level = { bonus, least }`, `affixes` as `[count, weight]` pairs,
 `price = { affix, unique }`, `uniques = { chance, items }` with the chance in basis points),
@@ -226,7 +226,7 @@ find, the three's slots, the load checks, a replay and a save),
 `offer-short`); the wiki's `npcs.md` "The pedlar's offer" and the uniques table's offer column
 (`xtask/src/wiki/uniques.rs::offered_by`).
 
-**Rumoured ways** (the owner's request of 2026-10-27; spec §8 "Dialogue"): `world/people/rumour.rs`.
+**Rumoured ways** (the owner's request of 2026-10-27): `world/people/rumour.rs`.
 A topic's optional `route` (`Topic::route`, waypoints `[x, y]` on the campaign's overworld;
 `Topic::route_cells` joins them with `Pos::line_between`) is checked when content loads
 (`Content::check_topic_routes`, one line in `Content::load`: a campaign's dialogue with an
@@ -244,8 +244,7 @@ cell (18, 28). Tests: `world/people/rumour_tests.rs` (marks after the ask and no
 not the map, idempotent, no time, hidden locations stay hidden while Cealdhlāw shows, the
 `memory` and `locations` layers back on the map, a replay, the validation).
 
-**Callings by topic** (#1174, which removed #878's saying words; spec §8 "Dialogue",
-"Callings"): a `[[dialogue.topic]]` may have `calls` (a prestige class's calling of the
+**Callings by topic** (#1174, which removed #878's saying words): a `[[dialogue.topic]]` may have `calls` (a prestige class's calling of the
 dialogue's campaign, or, outside every campaign, one outside every campaign:
 `Content::check_topic_callings`, one line in `Content::load` after the callings) and `departs`
 (a creature type's dialogue only, checked in `dialogue.rs`'s parse). `World::topics` lists such

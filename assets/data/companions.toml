@@ -1,4 +1,4 @@
-# The animal companion (spec §8 "Class abilities", "Allies"; docs/design/ranger-companion.md;
+# The animal companion (docs/design/ranger-companion.md;
 # docs/dev/companion.md): a beast that is yours for good, an ally of `allies.toml`'s core with
 # data of its own. This file holds only the companion's own numbers; the allies' rules (heel,
 # leash, orders, the cap, the kill's share) are allies.toml. Without this file no companion can
@@ -48,7 +48,7 @@ food = 2
 # above, +1 damage per `damage_bonus_every`, and one more die of its attack's kind per
 # `damage_dice_every`; its Defence +1 per `defence_every` (natural armour); its Strength,
 # Dexterity, and Toughness +1 per `stat_every`; its natural Protection is its body's at the
-# grade (the body rule of spec §8 "Creatures"), never below its type's own. Speed, senses, size,
+# grade (the creatures' body rule), never below its type's own. Speed, senses, size,
 # and resistances stay the type's. Summons have no grade.
 [growth]
 grade_percent = 100

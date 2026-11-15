@@ -1,4 +1,4 @@
-//! Sunlight and sky light through the whole turn pipeline (spec §5 "Sunlight").
+//! Sunlight and sky light through the whole turn pipeline.
 
 use super::light_tests::{check_invariants, check_wall_completion};
 use crate::content::ContentFiles;

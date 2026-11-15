@@ -1,4 +1,4 @@
-//! Alignment (spec §8 "Alignment", #254) in play: starting bands, each deed that moves the score
+//! Alignment (#254) in play: starting bands, each deed that moves the score
 //! (kills by stance and alignment, shopkeepers, theft, paying, eating kin, quests), diminishing,
 //! band crossings said as notes, what reads it (cold greetings, quest offers, a good keeper's
 //! prices, abilities that ask for an alignment), saves, and replays.
@@ -270,7 +270,7 @@ fn set_score(w: &mut World, value: i32) {
     w.state.actors.get_mut(&player).expect("player").alignment = Some(Score::new(value));
 }
 
-/// What the player's birth animal added to their starting score (spec §8 "Alignment").
+/// What the player's birth animal added to their starting score.
 fn nudge(w: &World) -> i32 {
     let sign = (w.character().and_then(|c| c.sign.as_ref())).expect("a sign");
     w.content()

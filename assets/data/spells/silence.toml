@@ -20,7 +20,7 @@ noise = { sound = "chanting", loudness = 10 }
 range = "willpower 14 9, 18 10"
 radius = "willpower 18 2"
 
-# What rereading its grimoire adds, rank by rank (spec §8 "Spells": "Ranks"; README.toml
+# What rereading its grimoire adds, rank by rank (README.toml
 # `[spell.ranks]`). Silenced holds one degree at most, so its ranks go to the reach and the price.
 # At rank 10: three cells farther, a cell wider, 30 percent off the mana, and half the casting
 # time.

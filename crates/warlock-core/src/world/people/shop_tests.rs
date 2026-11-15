@@ -1,4 +1,4 @@
-//! Shops in play (spec §7 "Shops"): greeting, prices, buying and paying, putting back, selling,
+//! Shops in play: greeting, prices, buying and paying, putting back, selling,
 //! theft, an attacked or dead keeper, saves, replays, and generated shops.
 
 use crate::action::{Positions, letter, parse_actions};
@@ -209,7 +209,7 @@ fn dropping_ones_own_gets_an_offer_and_selling_takes_it() {
     let (player, keeper) = (w.player_id(), keeper(&w));
     let (purse, till) = (gold(&w, player), gold(&w, keeper));
     let scroll = object(&w, "scroll_of_light");
-    // Not yet read, so known by its label (spec §8 "Scrolls").
+    // Not yet read, so known by its label.
     let named = w.lore().describe(&scroll);
     assert!(named.starts_with("a scroll labelled "), "{named}");
     let f = favour(w.content(), shops(&w), w.state.player());

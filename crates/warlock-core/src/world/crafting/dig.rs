@@ -1,4 +1,4 @@
-//! Digging and breaking walls (spec §8 "Digging").
+//! Digging and breaking walls.
 //!
 //! Terrain that `breaks` (`data/terrain/`: a `hardness` and what it `becomes`) gives way to
 //! digging and to explosions; a cell on a level's edge never does, whatever its terrain.
@@ -50,7 +50,7 @@ pub fn dig_work(power: u16, strength: u8) -> u32 {
 pub const UNTRAINED: &str = "You do not know how to mine: that takes the Mining skill.";
 
 /// Why `digger` cannot dig at all now, in the words the player is told, or `None` when they
-/// can (spec §8 "Digging"): without a digging tool ready, or untrained in the skill
+/// can: without a digging tool ready, or untrained in the skill
 /// `data/mining.toml` names (Mining; no rule without that file). The one check, read by
 /// [`World::start_dig`] and by perception ([`crate::PerceptionView::dig_refusal`]), so the
 /// game asks for no direction where the rules would refuse. Creatures do not dig.
@@ -84,7 +84,7 @@ impl LevelState {
 }
 
 impl World {
-    /// Starts digging toward `dir` (spec §8 "Digging"): refused, taking no time, without a
+    /// Starts digging toward `dir`: refused, taking no time, without a
     /// digging tool ready or untrained in Mining ([`dig_refusal`]), on the overworld, and toward
     /// anything that is no wall that breaks.
     pub(in crate::world) fn start_dig(&mut self, dir: Dir) -> Spent {
@@ -170,7 +170,7 @@ impl World {
             return;
         };
         let strength = player.effective_stats(&self.content).score(Stat::Strength);
-        // Breaker (spec §8 "Talents"), a Delving tool or gear (spec §8 "Magic items"), and
+        // Breaker, a Delving tool or gear, and
         // Mining (#1343): more work a turn.
         let faster = player.talent_mods(&self.content).delving.dig_percent
             + player.mods(&self.content).get(Effect::DigPercent)
@@ -196,7 +196,7 @@ impl World {
         }
     }
 
-    /// An explosion's effect on walls (spec §8 "Digging"): every wall in its burst (the cells in
+    /// An explosion's effect on walls: every wall in its burst (the cells in
     /// line of sight of `center` within `radius`, the walls bounding it included) whose hardness
     /// is below `blast` breaks, all at once, so a blast never reaches through a wall it breaks.
     /// Walls on the level's edge never break. Returns the cells that broke, in order.
@@ -225,8 +225,7 @@ impl World {
                 }
             }
         }
-        // A shut chest whose band's hardness is below the blast is blown apart, nothing spared
-        // (spec §8 "Chests").
+        // A shut chest whose band's hardness is below the blast is blown apart, nothing spared.
         let chests: Vec<Pos> = (level.chests.iter())
             .filter(|(p, chest)| {
                 let shut =

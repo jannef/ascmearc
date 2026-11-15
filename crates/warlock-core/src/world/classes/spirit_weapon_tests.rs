@@ -1,4 +1,4 @@
-//! Spirit weapon (spec §8 "Prestige classes"; #881): the Hunter's class ability calls a weapon
+//! Spirit weapon (#881): the Hunter's class ability calls a weapon
 //! of spirit-stuff into the main hand in any melee weapon's shape, for the time of a wield; in
 //! the hand it strikes surer, threatens lower, and ignores Protection; it fades the moment it
 //! leaves the hand (removed, swapped, dropped, sold), is never thrown, and is never handed in.

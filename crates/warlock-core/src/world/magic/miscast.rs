@@ -1,4 +1,4 @@
-//! Miscasts (spec §8 "Spells": "Miscasts", #1271): every spell cast with the caster's own mana,
+//! Miscasts (#1271): every spell cast with the caster's own mana,
 //! the player's (`cast.rs`) or a creature's (`creature_cast.rs`), makes a **Spellcraft check**
 //! once it has gone off; a scroll, a wand, a flask, and a miscast's own echo make none.
 //!

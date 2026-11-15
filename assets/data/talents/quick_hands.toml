@@ -1,4 +1,4 @@
-# The craftsperson's class ability from level 40 (spec §8 "Class abilities": Quick hands; the
+# The craftsperson's class ability from level 40 (Quick hands; the
 # craftsperson design §7.8): passive, read in one place, `world/crafting/mastery.rs::craft_seconds`, which
 # every craft's loop asks for its time (recipes, Temper, Whittle, Cut, Set, Salvage, Make do and
 # mend, Field forge).

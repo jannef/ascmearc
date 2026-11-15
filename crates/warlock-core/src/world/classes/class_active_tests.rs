@@ -1,4 +1,4 @@
-//! Class abilities in the world (spec §8 "Class abilities"; #243): the warrior's, berserker's,
+//! Class abilities in the world (#243): the warrior's, berserker's,
 //! paladin's, and ascetic's level tables. A level brings its abilities and says so, the bonus picks
 //! come from the class's trees, each passive changes the rule it names, and each active is used
 //! from the abilities menu with its cooldown.

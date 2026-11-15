@@ -1,4 +1,4 @@
-//! The fades and glides of spell circles (spec §4.8 "Spell circles", docs/design/buff-circles.md
+//! The fades and glides of spell circles (docs/design/buff-circles.md
 //! §11): a circle appears over [`FADE`] seconds and goes over as long; when an effect begins or
 //! ends, its figure changes over [`GLIDE`] seconds (the
 //! polygon and the rings blend from the old count), and a hexes' circle moves out when a buffs'

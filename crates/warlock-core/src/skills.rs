@@ -1,4 +1,4 @@
-//! Skills (spec §8 "Skills"; #132): what an actor has trained in, ADOM-like.
+//! Skills (#132): what an actor has trained in, ADOM-like.
 //!
 //! The skills themselves are content (`data/skills/`, [`crate::content::SkillDef`]): an id,
 //! a name, a one-line description, what kind of skill it is, when it earns training marks, and
@@ -10,7 +10,7 @@
 //!   trained (and shown) but gives little.
 //! - **Values** start from what the race and the class grant (dice, rolled when the character is
 //!   made, [`roll_grants`]), or what a creature type lists, and grow only by **skill rolls**
-//!   (spec §8 "Skills"; `world/character/skill_roll.rs`): past the soft cap (100) a roll adds half
+//!   (`world/character/skill_roll.rs`): past the soft cap (100) a roll adds half
 //!   ([`RollRules`]). At most [`MAX_VALUE`].
 //! - **Training marks**: a meaningful use of a skill ([`Use`]) may earn it a mark, with the
 //!   chance its rule in data gives ([`MarkRule`]), drawn from the run's own training stream
@@ -48,71 +48,67 @@ pub const MAX_VALUE: u16 = 999;
 /// How finely the player senses how practised a skill is (its ladder step): in quarters.
 pub const PROGRESS_STEPS: u8 = 4;
 
-/// The most a skill adds to searching or to noticing in passing (spec §8 "Searching").
+/// The most a skill adds to searching or to noticing in passing.
 pub const MAX_SEARCH_BONUS: i32 = 20;
 
-/// The most a skill adds to disarming a trap (spec §8 "Disarming traps").
+/// The most a skill adds to disarming a trap.
 pub const MAX_DISARM_BONUS: i32 = 20;
 
-/// The most a skill adds to the check against bonds (spec §8 "Status effects"; `world/health/hold.rs`).
+/// The most a skill adds to the check against bonds (`world/health/hold.rs`).
 pub const MAX_ESCAPE_BONUS: i32 = 20;
 
-/// The most a skill cuts a pit's climb: 1 halves it, 2 skips it (spec §8 "Traps"; `world/fixtures/trap.rs`).
+/// The most a skill cuts a pit's climb: 1 halves it, 2 skips it (`world/fixtures/trap.rs`).
 pub const MAX_CLIMB_CUT: i32 = 2;
 
-/// The most a skill takes off the difficulty of studying a spell (spec §8 "Spells").
+/// The most a skill takes off the difficulty of studying a spell.
 pub const MAX_STUDY_BONUS: i32 = 20;
 
-/// The most a skill adds to the Spellcraft check every cast makes (spec §8 "Spells": "Miscasts";
-/// `world/magic/miscast.rs`).
+/// The most a skill adds to the Spellcraft check every cast makes (`world/magic/miscast.rs`).
 pub const MAX_CAST_BONUS: i32 = 40;
 
-/// The most a skill takes off a miscast's total (spec §8 "Spells": "Miscasts").
+/// The most a skill takes off a miscast's total.
 pub const MAX_WARD_BONUS: i32 = 30;
 
-/// The most a skill adds to a character's learning (spec §8 "Spells": "Learning"), the last spell
+/// The most a skill adds to a character's learning, the last spell
 /// level.
 pub const MAX_LEARNING: i32 = crate::content::MAX_SPELL_LEVEL as i32;
 
 /// The most cells farther a search may reach than the cells around the searcher.
 pub const MAX_SEARCH_REACH: i32 = 2;
 
-/// The most a skill adds to slipping past a creature unseen (spec §8 "Surprise and sneak
-/// attacks").
+/// The most a skill adds to slipping past a creature unseen.
 pub const MAX_SLIP_BONUS: i32 = 20;
-/// The most a skill adds to an overworld encounter's lookout, stalk, or evade (spec §7
-/// "Overworld encounters").
+/// The most a skill adds to an overworld encounter's lookout, stalk, or evade.
 pub const MAX_ENCOUNTER_BONUS: i32 = 20;
-/// The most a skill adds to stealing from someone (spec §8 "Stealing").
+/// The most a skill adds to stealing from someone.
 pub const MAX_STEAL_BONUS: i32 = 20;
-/// The most d6 a skill adds to a sneak attack (spec §8 "Surprise and sneak attacks").
+/// The most d6 a skill adds to a sneak attack.
 pub const MAX_SNEAK_DICE: i32 = 25;
 /// The most a skill adds to the initiative check, or to its difficulty for those its holder
-/// catches unawares (spec §8 "Surprise and sneak attacks").
+/// catches unawares.
 pub const MAX_SURPRISE_BONUS: i32 = 20;
-/// The most a skill adds to the difficulty of the check a feint asks of a foe (spec §8 "Skills":
-/// Bluff).
+/// The most a skill adds to the difficulty of the check a feint asks of a foe (Bluff).
 pub const MAX_FEINT_BONUS: i32 = 20;
 /// The most a skill adds to the difficulty of the check a war cry asks of those who hear it
-/// (spec §8 "Skills": Intimidate).
+/// (Intimidate).
 pub const MAX_INTIMIDATE_BONUS: i32 = 20;
-/// The most degrees a skill adds to a song (spec §8 "Class abilities", the bard's songs), before
+/// The most degrees a skill adds to a song (the bard's songs), before
 /// the status's own `max`.
 pub const MAX_SONG_DEGREES: i32 = 10;
 /// The most a skill adds to the difficulty of the check a song asks of those who hear it against
-/// them (spec §8 "Class abilities", the bard's songs).
+/// them (the bard's songs).
 pub const MAX_SONG_CRAFT: i32 = 20;
-/// The most a skill adds to treating bleeding, poison, or a disease (spec §8 "Skills": Heal).
+/// The most a skill adds to treating bleeding, poison, or a disease (Heal).
 pub const MAX_HEAL_BONUS: i32 = 20;
-/// The most a skill adds to taming a beast (spec §8 "Allies": Tame).
+/// The most a skill adds to taming a beast (Tame).
 pub const MAX_TAME_BONUS: i32 = 20;
-/// The most a skill adds to picking a lock (spec §8 "Doors").
+/// The most a skill adds to picking a lock.
 pub const MAX_PICK_BONUS: i32 = 20;
-/// The most a skill adds to the sturdiness of a wedged door (spec §8 "Doors").
+/// The most a skill adds to the sturdiness of a wedged door.
 pub const MAX_WEDGE_BONUS: i32 = 12;
-/// The most percent a skill adds to the chance of a forage finding food (spec §8 "Foraging").
+/// The most percent a skill adds to the chance of a forage finding food.
 pub const MAX_FORAGE_BONUS: i32 = 30;
-/// The most a skill adds to tempering an item at an anvil (spec §7 "Special rooms": the forge).
+/// The most a skill adds to tempering an item at an anvil (the forge).
 pub const MAX_TEMPER_BONUS: i32 = 20;
 /// The most a skill adds to whittling a wooden item with a knife (`world/crafting/temper.rs`).
 pub const MAX_WHITTLE_BONUS: i32 = 12;
@@ -122,16 +118,16 @@ pub const MAX_CRAFT_BONUS: i32 = 20;
 /// The highest item level an enchanting recipe's reach gives (docs/design/enchanting.md §7: the
 /// ladders' top).
 pub const MAX_ENCHANT_LEVEL: i32 = 12;
-/// The most a skill adds to reading a scroll (spec §8 "Scrolls"; `world/magic/decipher.rs`).
+/// The most a skill adds to reading a scroll (`world/magic/decipher.rs`).
 pub const MAX_DECIPHER_BONUS: i32 = 20;
-/// The most a skill adds to a Swim check (spec §8 "Skills": a plunge through the ice).
+/// The most a skill adds to a Swim check (a plunge through the ice).
 pub const MAX_SWIM_BONUS: i32 = 20;
-/// The most a skill adds to resisting a creature's ability (spec §8 "Skills": Knowledge): kept
+/// The most a skill adds to resisting a creature's ability (Knowledge): kept
 /// small, know your enemy.
 pub const MAX_RESIST_BONUS: i32 = 6;
-/// The most percent a skill adds to the pace mana comes back at (spec §8 "Mana").
+/// The most percent a skill adds to the pace mana comes back at.
 pub const MAX_MANA_REGEN_BONUS: i32 = 100;
-/// The most mana points a skill adds to the maximum (spec §8 "Mana"), before the fifth's cap.
+/// The most mana points a skill adds to the maximum, before the fifth's cap.
 pub const MAX_MANA_POOL_BONUS: i32 = 20;
 
 /// Index of a skill in [`Content::skills`]: in file order.
@@ -165,99 +161,95 @@ impl SkillKind {
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Deserialize, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Effect {
-    /// A bonus to Defence in the Dodge category, whose bonuses add up (spec §8 "Combat").
+    /// A bonus to Defence in the Dodge category, whose bonuses add up.
     Dodge,
-    /// Percent less noise from the actor's steps and doors (spec §5 "Hearing"; `noise::noise`).
+    /// Percent less noise from the actor's steps and doors (`noise::noise`).
     Quiet,
     /// How much fainter a sound the actor hears: its hearing threshold, that much lower (never
     /// below 1).
     Hearing,
-    /// Points added to an active search for hidden features (spec §8 "Searching";
-    /// `world/skills/search.rs`).
+    /// Points added to an active search for hidden features (`world/skills/search.rs`).
     Search,
     /// Cells farther a search reaches than the cells around the searcher.
     SearchReach,
-    /// Points added to noticing hidden features in passing (spec §8 "Searching"); a skill with
+    /// Points added to noticing hidden features in passing; a skill with
     /// it, trained, lets the actor notice them at all; hidden traps are Detect traps' instead.
     Spot,
-    /// Points added to finding hidden traps, searching and in passing alike (spec §8
-    /// "Searching"; `world/skills/search.rs`), in place of Search's and Spot's; a skill with it,
-    /// trained, lets the actor notice traps in passing at all.
+    /// Points added to finding hidden traps, searching and in passing alike
+    /// (`world/skills/search.rs`), in place of Search's and Spot's; a skill with it, trained, lets
+    /// the actor notice traps in passing at all.
     DetectTraps,
-    /// Points taken off the difficulty of studying a spell (spec §8 "Spells";
-    /// `world/magic/learn.rs`).
+    /// Points taken off the difficulty of studying a spell (`world/magic/learn.rs`).
     Study,
-    /// Points added to the Spellcraft check every cast with one's own mana makes (spec §8
-    /// "Spells": "Miscasts"; `world/magic/miscast.rs`).
+    /// Points added to the Spellcraft check every cast with one's own mana makes
+    /// (`world/magic/miscast.rs`).
     Cast,
-    /// Points taken off a miscast's total on the miscast table (spec §8 "Spells": "Miscasts").
+    /// Points taken off a miscast's total on the miscast table.
     Ward,
-    /// The spell level up to which a scroll teaches for certain (spec §8 "Spells": "Learning";
-    /// `world/magic/learn.rs`); a skill with it, trained, lets the actor learn from a scroll at all.
+    /// The spell level up to which a scroll teaches for certain (`world/magic/learn.rs`); a skill
+    /// with it, trained, lets the actor learn from a scroll at all.
     Learn,
-    /// Points added to reading a scroll one cannot simply read (spec §8 "Scrolls";
-    /// `world/magic/decipher.rs`). The check is everyone's: none of it asks for the skill.
+    /// Points added to reading a scroll one cannot simply read (`world/magic/decipher.rs`). The
+    /// check is everyone's: none of it asks for the skill.
     Decipher,
-    /// Points added to disarming a trap (spec §8 "Disarming traps"; `world/skills/disarm.rs`); a skill
+    /// Points added to disarming a trap (`world/skills/disarm.rs`); a skill
     /// with it, trained, lets the actor disarm traps at all (the Disarm ability).
     Disarm,
-    /// Percent less of the burden's slowdown (spec §8 "Burden"): Burdened ×1.25 becomes ×1.10
+    /// Percent less of the burden's slowdown: Burdened ×1.25 becomes ×1.10
     /// at 60.
     Burden,
-    /// Percent less time a journey on the overworld takes (spec §8 "Time").
+    /// Percent less time a journey on the overworld takes.
     Travel,
-    /// Percent of what wading adds to a step that is spared (spec §8 "Skills": Swim;
+    /// Percent of what wading adds to a step that is spared (Swim;
     /// `World::step_price`), under the talents that spare all of it.
     Wade,
     /// Percent of what rough ground (bush, reeds, rubble, ice: not water) adds to a step that is
-    /// spared (spec §8 "Skills": Balance; `World::step_price`).
+    /// spared (Balance; `World::step_price`).
     Footing,
-    /// Percent added to the chance of a forage finding food (spec §8 "Foraging";
-    /// `world/skills/forage.rs`); a skill with it, trained, lets the actor forage at all (the abilities
-    /// menu's Forage).
+    /// Percent added to the chance of a forage finding food (`world/skills/forage.rs`); a skill
+    /// with it, trained, lets the actor forage at all (the abilities menu's Forage).
     Forage,
     /// Percent chance, on a forage that found something, of one more find from the ground's
-    /// `herbs` (spec §8 "Foraging": Herbalism; `world/skills/forage.rs`); only a skill with it, trained,
+    /// `herbs` (Herbalism; `world/skills/forage.rs`); only a skill with it, trained,
     /// gives it at all.
     Herbs,
-    /// Percent chance, an hour at a time, of telling how fresh a corpse or food is (spec §8
-    /// "Hunger": Appraise, Survival; `world/health/freshness.rs`); only a skill with it, trained, gives
-    /// it at all.
+    /// Percent chance, an hour at a time, of telling how fresh a corpse or food is (Appraise,
+    /// Survival; `world/health/freshness.rs`); only a skill with it, trained, gives it at all.
     Freshness,
-    /// Percent better prices in shops (spec §7 "Shops"; `world/people/shop.rs`): less to pay and more
+    /// Percent better prices in shops (`world/people/shop.rs`): less to pay and more
     /// offered, together with Presence at most half.
     Bargain,
     /// Percent chance, each game hour, of telling one unidentified thing the actor carries or
-    /// wears for what it is (spec §8 "Skills": Appraise; `world/skills/appraise.rs`); only a skill with
+    /// wears for what it is (Appraise; `world/skills/appraise.rs`); only a skill with
     /// it, trained, gives it at all.
     Identify,
     /// [`Effect::Identify`]'s chance for a potion or flask whose kind the actor does not know
-    /// (spec §8 "Skills": Alchemy; `world/skills/appraise.rs`); only a skill with it, trained, gives it.
+    /// (Alchemy; `world/skills/appraise.rs`); only a skill with it, trained, gives it.
     IdentifyPotion,
     /// [`Effect::Identify`]'s chance for a magic thing whose magic the actor does not know
-    /// (spec §8 "Skills": Enchanting; `world/skills/appraise.rs`); only a skill with it, trained, gives
+    /// (Enchanting; `world/skills/appraise.rs`); only a skill with it, trained, gives
     /// it.
     IdentifyMagic,
     /// Points added to the player's side of slipping past a creature that would see them by
-    /// darkvision alone (spec §8 "Surprise and sneak attacks"; `world/combat/slip.rs`).
+    /// darkvision alone (`world/combat/slip.rs`).
     Slip,
-    /// Points added to the player's lookout for a party on the overworld (spec §7 "Overworld
-    /// encounters"; `world/levels/encounter.rs`), and a creature's Spot to the party's.
+    /// Points added to the player's lookout for a party on the overworld
+    /// (`world/levels/encounter.rs`), and a creature's Spot to the party's.
     Lookout,
     /// Points added to the other side's lookout difficulty on the overworld: the actor stalks
     /// unseen (`world/levels/encounter.rs`); and, while the party is unaware, to slipping away.
     Stalk,
     /// Points added to slipping away from a party on the overworld (`world/levels/encounter.rs`).
     Evade,
-    /// Points added to the difficulty of the Willpower check a feint asks (spec §8 "Skills":
-    /// Bluff; `world/skills/feint.rs`); a skill with it, trained, lets the actor feint at all (the
+    /// Points added to the difficulty of the Willpower check a feint asks (Bluff;
+    /// `world/skills/feint.rs`); a skill with it, trained, lets the actor feint at all (the
     /// abilities menu's Feint).
     Feint,
-    /// Points added to stealing from someone (spec §8 "Stealing"; `world/skills/steal.rs`); a skill
+    /// Points added to stealing from someone (`world/skills/steal.rs`); a skill
     /// with it, trained, lets the actor steal at all (the abilities menu's Steal).
     Steal,
     /// How many d6 a sneak attack adds, after Protection, to a hit on a target unaware of the
-    /// actor or Surprised (spec §8 "Surprise and sneak attacks"; `World::sneak_dice`,
+    /// actor or Surprised (`World::sneak_dice`,
     /// `world/combat/ambush.rs`).
     SneakDice,
     /// Points added to the difficulty of the initiative check of those the actor catches
@@ -271,46 +263,45 @@ pub enum Effect {
     /// Percent of the extra cost of the action the actor takes Staggered that is spared
     /// (`World::status_cost`).
     SteadyEase,
-    /// Points added to treating oneself (spec §8 "Skills": Heal; `world/health/heal.rs`): bleeding,
+    /// Points added to treating oneself (Heal; `world/health/heal.rs`): bleeding,
     /// poison, a disease; a skill with it, trained, lets the actor treat at all (the Heal
     /// ability).
     Heal,
     /// Points added to the difficulty of the Willpower check the actor's war cry asks of those
-    /// who hear and see it (spec §8 "Class abilities": War cry; `world/classes/war_cry.rs`), and their
-    /// threat at one foe (spec §8 "Skills": Intimidate; `world/skills/intimidate.rs`), whose degrees of
+    /// who hear and see it (War cry; `world/classes/war_cry.rs`), and their
+    /// threat at one foe (Intimidate; `world/skills/intimidate.rs`), whose degrees of
     /// fear the points also set; a skill with it, trained, lets the actor intimidate at all (the
     /// Intimidate ability).
     Intimidate,
-    /// Points added to the Willpower check that tames a beast (spec §8 "Allies": Tame;
+    /// Points added to the Willpower check that tames a beast (Tame;
     /// `world/allies/tame.rs`); a skill with it, trained, lets the actor tame at all (the Tame
     /// ability).
     Tame,
-    /// Degrees added to what a song gives (spec §8 "Class abilities", the bard's songs;
+    /// Degrees added to what a song gives (the bard's songs;
     /// `world/classes/song.rs`), before the status's `max`.
     SongDegrees,
     /// Points added to the difficulty of the check a song asks of those who hear it against them
-    /// (spec §8 "Class abilities", the bard's songs: the Lullaby's, #873).
+    /// (the bard's songs: the Lullaby's, #873).
     SongCraft,
-    /// Points added to the Strength score a kick at a closed door is rolled against (spec §8
-    /// "Doors"; `world/fixtures/door.rs`).
+    /// Points added to the Strength score a kick at a closed door is rolled against
+    /// (`world/fixtures/door.rs`).
     Kick,
-    /// Percent more work a turn of digging does (spec §8 "Digging": Mining; `world/crafting/dig.rs`),
+    /// Percent more work a turn of digging does (Mining; `world/crafting/dig.rs`),
     /// added to the talents' and items' `dig_percent`.
     Dig,
-    /// Points added to the check against bonds (spec §8 "Status effects"; `world/health/hold.rs`); a
+    /// Points added to the check against bonds (`world/health/hold.rs`); a
     /// skill with it, trained, makes an action that bonds stop that check at all.
     Escape,
-    /// How far a pit's climb is cut (spec §8 "Traps"; `world/fixtures/trap.rs`): 1 halves it, 2 skips it.
+    /// How far a pit's climb is cut (`world/fixtures/trap.rs`): 1 halves it, 2 skips it.
     /// For those trained in the skill only.
     Climb,
-    /// Points added to picking a lock (spec §8 "Doors"; `world/skills/lockpick.rs`); a skill with it,
+    /// Points added to picking a lock (`world/skills/lockpick.rs`); a skill with it,
     /// trained, lets the actor pick locks at all (the Pick lock ability).
     Pick,
-    /// Points added to the sturdiness of a door the actor wedges shut (spec §8 "Doors";
-    /// `world/skills/wedge.rs`); a skill with it, trained, lets the actor wedge doors at all (the Wedge
-    /// ability).
+    /// Points added to the sturdiness of a door the actor wedges shut (`world/skills/wedge.rs`); a
+    /// skill with it, trained, lets the actor wedge doors at all (the Wedge ability).
     Wedge,
-    /// Points added to the check of an attempt at an anvil (spec §7 "Special rooms": Temper;
+    /// Points added to the check of an attempt at an anvil (Temper;
     /// `world/crafting/temper.rs`). Anyone may temper; the skill only helps.
     Temper,
     /// Points added to the check of an attempt at whittling a wooden item with a knife (Woodcraft;
@@ -325,23 +316,22 @@ pub enum Effect {
     /// (docs/design/enchanting.md §7, the reach; `world/crafting/enchant.rs`): Enchanting's, at most
     /// [`MAX_ENCHANT_LEVEL`].
     EnchantLevel,
-    /// Points added to a Swim check (spec §8 "Skills": Swim; `world/levels/ice.rs`, a plunge through the
+    /// Points added to a Swim check (Swim; `world/levels/ice.rs`, a plunge through the
     /// ice; `world/levels/swim.rs`, a step in deep water); only a skill with it, trained, asks the check
     /// at all.
     Swim,
-    /// Percent faster the actor regains mana (spec §8 "Mana"; `World::mana_rate`), added to its
+    /// Percent faster the actor regains mana (`World::mana_rate`), added to its
     /// items' and talents' percent; only a trained skill gives it ([`crate::world::Actor::mind`]).
     ManaRegen,
-    /// Mana points added to the actor's maximum (spec §8 "Mana"; [`crate::world::Actor::max_mana`]),
+    /// Mana points added to the actor's maximum ([`crate::world::Actor::max_mana`]),
     /// never more than a fifth of the pool without them ([`crate::mana::deeper`]); only a trained
     /// skill gives it.
     MaxMana,
-    /// Percent quicker the actor is in everything (spec §8 "Speed";
-    /// [`crate::world::Actor::speed`]): its speed, added to its talents' percent, the two
-    /// together at most [`crate::content::MAX_SPEED`].
+    /// Percent quicker the actor is in everything ([`crate::world::Actor::speed`]): its speed,
+    /// added to its talents' percent, the two together at most [`crate::content::MAX_SPEED`].
     Speed,
-    /// Points added to the player's check resisting a creature's ability (spec §8 "Skills":
-    /// Knowledge; `world/skills/knowledge.rs`): read at how far the skill's value stands **above the
+    /// Points added to the player's check resisting a creature's ability (Knowledge;
+    /// `world/skills/knowledge.rs`): read at how far the skill's value stands **above the
     /// creature's level**, not at the value itself ([`Skills::effect_above`]).
     Resist,
 }
@@ -409,117 +399,114 @@ impl Effect {
 pub enum Use {
     /// A step within earshot of a creature that could hear it, before stealth made it quieter.
     Sneak,
-    /// Hearing something new: a sound that is news (spec §5 "Hearing").
+    /// Hearing something new: a sound that is news.
     Hear,
-    /// A turn spent searching (spec §8 "Searching"), whatever it finds.
+    /// A turn spent searching, whatever it finds.
     Search,
-    /// Noticing something hidden in passing (spec §8 "Searching"), not a trap.
+    /// Noticing something hidden in passing, not a trap.
     Spot,
-    /// Finding a hidden trap (spec §8 "Searching"), searching or in passing.
+    /// Finding a hidden trap, searching or in passing.
     FindTrap,
-    /// A spell studied (spec §8 "Spells"), whatever comes of it.
+    /// A spell studied, whatever comes of it.
     Study,
-    /// A check made to read a scroll (spec §8 "Scrolls"), whatever comes of it.
+    /// A check made to read a scroll, whatever comes of it.
     Decipher,
-    /// A scroll read and used up (spec §8 "Scrolls"): a spell scroll, identify, restoration.
+    /// A scroll read and used up: a spell scroll, identify, restoration.
     Read,
-    /// Mana spent (spec §8 "Mana"): a spell cast, an ability paid in mana, whatever it costs.
+    /// Mana spent: a spell cast, an ability paid in mana, whatever it costs.
     Cast,
-    /// An attempt to disarm a trap (spec §8 "Disarming traps"), whatever comes of it.
+    /// An attempt to disarm a trap, whatever comes of it.
     Disarm,
     /// An attack that missed because the actor dodged it (the Dexterity or Dodge category), or a
-    /// known trap the player stepped past (spec §8 "Traps").
+    /// known trap the player stepped past.
     Dodge,
     /// An action taken (not waiting) while the burden slows the actor.
     Burdened,
     /// A step on the overworld: a journey.
     Travel,
-    /// A lookout for a party met on the overworld (spec §7 "Overworld encounters"), whatever
+    /// A lookout for a party met on the overworld, whatever
     /// came of it.
     Lookout,
-    /// A forage that ran its time (spec §8 "Foraging"), whatever it found.
+    /// A forage that ran its time, whatever it found.
     Forage,
-    /// A gather that ran its time (spec §8 "Skills": Herbalism), whatever it found.
+    /// A gather that ran its time (Herbalism), whatever it found.
     Gather,
-    /// An attempt to steal from someone (spec §8 "Stealing"), whatever comes of it.
+    /// An attempt to steal from someone, whatever comes of it.
     Steal,
-    /// A feint at a foe (spec §8 "Skills": Bluff), whatever comes of it.
+    /// A feint at a foe (Bluff), whatever comes of it.
     Feint,
-    /// A try at talking past a party on the overworld (spec §7 "Overworld encounters"; Bluff),
+    /// A try at talking past a party on the overworld (Bluff),
     /// whatever comes of it. Named `talk_past` in the data.
     #[serde(rename = "talk_past")]
     Bluffed,
-    /// A sneak attack that hit (spec §8 "Surprise and sneak attacks"): its dice landed.
+    /// A sneak attack that hit: its dice landed.
     SneakAttack,
     /// An initiative check made on being caught unawares, whatever comes of it.
     Surprise,
-    /// A try at treating oneself (spec §8 "Skills": Heal), whatever comes of it.
+    /// A try at treating oneself (Heal), whatever comes of it.
     Heal,
-    /// An order given to one's allies, an ally's kill, or a try at taming a beast (spec §8
-    /// "Allies": Handle animal, Tame).
+    /// An order given to one's allies, an ally's kill, or a try at taming a beast (Handle animal,
+    /// Tame).
     Handle,
-    /// A war cry roared (spec §8 "Class abilities": War cry) or a foe threatened (spec §8
-    /// "Skills": Intimidate), whatever comes of it.
+    /// A war cry roared (War cry) or a foe threatened (Intimidate), whatever comes of it.
     Intimidate,
-    /// A song sung (spec §8 "Class abilities", the bard's songs), whatever it does.
+    /// A song sung (the bard's songs), whatever it does.
     Song,
-    /// A check against bonds (spec §8 "Status effects"; `world/health/hold.rs`), whatever came of it.
+    /// A check against bonds (`world/health/hold.rs`), whatever came of it.
     Escape,
-    /// A climb out of a pit (spec §8 "Traps"; `world/fixtures/trap.rs`).
+    /// A climb out of a pit (`world/fixtures/trap.rs`).
     Climb,
-    /// A try at wriggling past a creature that will not make way (spec §8 "Displacement";
-    /// `world/levels/wriggle.rs`), whatever came of it.
+    /// A try at wriggling past a creature that will not make way (`world/levels/wriggle.rs`),
+    /// whatever came of it.
     Wriggle,
-    /// A kick at a closed door (spec §8 "Doors").
+    /// A kick at a closed door.
     Kick,
-    /// A try at picking a lock (spec §8 "Doors"), whatever comes of it.
+    /// A try at picking a lock, whatever comes of it.
     Pick,
-    /// A door wedged shut (spec §8 "Doors").
+    /// A door wedged shut.
     Wedge,
-    /// An attempt on an item at a forge's anvil done (spec §7 "Special rooms"), whatever comes of
+    /// An attempt on an item at a forge's anvil done, whatever comes of
     /// it.
     Temper,
     /// An attempt at whittling a wooden item done, whatever comes of it.
     Whittle,
-    /// A recipe's work that ran its time (spec §8 "Skills": professions), whatever came of it.
+    /// A recipe's work that ran its time (professions), whatever came of it.
     Craft,
     /// A check of salvaging a material from an item, whatever comes of it (`world/crafting/salvage.rs`):
     /// marks only the profession that worked the material.
     Salvage,
-    /// A step onto wading terrain (spec §8 "Skills": Swim; `World::wade`).
+    /// A step onto wading terrain (Swim; `World::wade`).
     Wade,
-    /// A step onto rough ground that is not water (spec §8 "Skills": Balance;
+    /// A step onto rough ground that is not water (Balance;
     /// `World::train_rough_step`).
     RoughStep,
-    /// An action taken Staggered (spec §8 "Skills": Balance; `World::spend_actions`).
+    /// An action taken Staggered (Balance; `World::spend_actions`).
     Staggered,
-    /// A Swim check, whatever comes of it (spec §8 "Skills": Swim; a plunge through the ice).
+    /// A Swim check, whatever comes of it (Swim; a plunge through the ice).
     Swim,
-    /// A step in deep water, whatever comes of it (spec §8 "Skills": Swim; `world/levels/swim.rs`).
+    /// A step in deep water, whatever comes of it (Swim; `world/levels/swim.rs`).
     Stroke,
-    /// A deal made in a shop (spec §7 "Shops"): goods paid for, or the player's own sold.
+    /// A deal made in a shop: goods paid for, or the player's own sold.
     Deal,
-    /// A carried thing told for what it is by looking it over (spec §8 "Skills": Appraise).
+    /// A carried thing told for what it is by looking it over (Appraise).
     Appraise,
-    /// A food whose freshness the player's eye told, eaten (spec §8 "Hunger": Appraise).
+    /// A food whose freshness the player's eye told, eaten (Appraise).
     Judged,
-    /// Discovery experience gained (spec §8 "Experience": a first kill of a kind, an arrival
+    /// Discovery experience gained (a first kill of a kind, an arrival
     /// that pays).
     Discover,
-    /// A check rolled to resist a creature's ability (spec §8 "Skills": Knowledge), whatever
+    /// A check rolled to resist a creature's ability (Knowledge), whatever
     /// comes of it.
     Resist,
-    /// A creature seen for the first time that has not noticed the player (spec §8 "Surprise and
-    /// sneak attacks"): Spot's passive side.
+    /// A creature seen for the first time that has not noticed the player: Spot's passive side.
     Sight,
-    /// A hidden trap that went off under the player, or under a creature they see (spec §8
-    /// "Traps").
+    /// A hidden trap that went off under the player, or under a creature they see.
     Sprung,
-    /// A sound heard that is not news while the player rests or waits (spec §5 "Hearing").
+    /// A sound heard that is not news while the player rests or waits.
     Overhear,
-    /// A turn spent listening at a closed door (spec §5 "Hearing"), whatever is heard.
+    /// A turn spent listening at a closed door, whatever is heard.
     Listen,
-    /// A wall the player dug through, breaking it (spec §8 "Digging": Mining).
+    /// A wall the player dug through, breaking it (Mining).
     Dug,
 }
 
@@ -817,7 +804,7 @@ impl Benefit {
     }
 }
 
-/// The skill ladder (spec §8 "Skills", ADOM's): the die a level-up roll on a skill throws, set by
+/// The skill ladder (ADOM's): the die a level-up roll on a skill throws, set by
 /// the training marks it has gathered since its last roll. `dice[i]` is thrown from `marks[i]`
 /// marks on (`[ladder]` in `data/skills.toml`: `+1` at 0 marks, `1d3` at 5, … `4d5` at 800).
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
@@ -1031,15 +1018,14 @@ impl Skills {
     }
 
     /// Whether a skill with a benefit of `effect` is trained, whatever it gives at its value
-    /// (the Spot skill lets the actor notice hidden features in passing at all, spec §8
-    /// "Searching").
+    /// (the Spot skill lets the actor notice hidden features in passing at all).
     pub fn trains_effect(&self, content: &Content, effect: Effect) -> bool {
         self.iter()
             .any(|(id, _)| (content.skill(id).benefits.iter()).any(|b| b.effect == effect))
     }
 
     /// What its skills give of `effect` with `bonus` added to some skills' values (what magic
-    /// items add, spec §8 "Magic items"; `Actor::skill_effect`): a skill with a bonus gives as if
+    /// items add; `Actor::skill_effect`): a skill with a bonus gives as if
     /// its value were that much higher, and so does an untrained one, from 0. Values stay
     /// within 0 to [`MAX_VALUE`].
     pub fn effect_with(&self, content: &Content, effect: Effect, bonus: &[(SkillId, i32)]) -> i32 {

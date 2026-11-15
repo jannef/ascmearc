@@ -1,4 +1,4 @@
-//! Flow of running water (spec §4.3, §7): which way and how fast the water on a cell moves.
+//! Flow of running water: which way and how fast the water on a cell moves.
 //!
 //! **Presentation-only**, like [`super::GlyphAnim`]: levels carry it (set in the legend, see
 //! `assets/data/legend.toml`) and the renderer moves running water's ripples along it, but no

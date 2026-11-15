@@ -15,7 +15,7 @@ fg = "#a0c860"
 speed = 900
 faction = "kobolds"
 tags = ["kobold"]
-# Its grades (spec §8 "Grades"): the lesser and the greater.
+# Its grades: the lesser and the greater.
 grade_words = ["scrawny", "big"]
 alignment = "evil"
 vision = "darkvision"

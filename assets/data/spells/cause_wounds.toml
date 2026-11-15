@@ -1,4 +1,4 @@
-# Cause wounds (spec §8 "Spells", the first spell list): the witch's touch that opens wounds; a
+# Cause wounds (the first spell list): the witch's touch that opens wounds; a
 # touch, so cheap and strong, but the creature must be beside you and the blow must land.
 [[spell]]
 id = "cause_wounds"

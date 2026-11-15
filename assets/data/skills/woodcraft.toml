@@ -6,7 +6,7 @@ kind = "action"
 mark = [{ on = "craft", chance = 100 }, { on = "whittle", chance = 100 }, { on = "wedge", chance = 100 }, { on = "salvage", chance = 100 }]
 # Whittling (the Whittle recipe, for those trained, with a knife; rules/temper.toml's rules, for wood):
 # the same, added to the Dexterity check of an attempt.
-# Wedging (spec §8 "Doors"; the Wedge ability, for those trained): the same curve, added to the
+# Wedging (the Wedge ability, for those trained): the same curve, added to the
 # sturdiness of a door wedged shut.
 # Its craft (docs/dev/crafting.md; salvage.toml; the hand-made recipes, data/recipes/woodcraft/):
 # the same, added to the check of salvaging wood, bone, hide, sinew, horn, or knapped stone and

@@ -1,10 +1,11 @@
 # Resources
 
 Developer notes for working on this part of Warlock; the rules it implements are in
-spec/08e-blood-and-status.md ("Resources"). Keep it current with the code, as CLAUDE.md says.
+spec/11-magic.md ("Resources"). Keep it current with the code, as CLAUDE.md says.
 
 Alternative resources (#225) are integer pools beside hit points and mana that a character holds
-once something grants them, several at once. This is the foundation; the class features of
+once something grants them, several at once. Mana is separate: nothing converts between mana and
+a resource, and nothing is paid in one else the other (a song costs one thing). This is the foundation; the class features of
 `docs/design/progression.md` §4.18 move onto it in R1–R5 (#249–#253): Rage (R1), Focus (R2),
 Openings (R3), Ki and Inspiration (R4), and the four resource talents (R5). Rage (R1), Focus
 (R2), Openings (R3), Ki, and Inspiration (R4), and the resource talents (R5) have moved (below).
@@ -124,7 +125,7 @@ statuses).
   (`spend_resource`, so the rage ends at 0), and `World::live` numbs the statuses while Raging
   lasts. Raging `blocks` `cast`, so `World::spend_mana` refuses while it lasts. While the
   player's own Raging lasts they are in the frenzy stance and cannot leave it, and its end
-  leaves them aggressive (`world/combat/frenzy.rs`, #680; spec §8 "Stances"): `frenzy::settle`
+  leaves them aggressive (`world/combat/frenzy.rs`, #680): `frenzy::settle`
   runs where a status begins or ends; `world/combat/frenzy_tests.rs` covers it. War cry
   (#844, `world/classes/war_cry.rs`) is a class active paid in rage (`resource = { id = "rage", cost =
   4 }` on its talent): `short_of` greys it with the pool's `lacking`, and `World::may_use_class`

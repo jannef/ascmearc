@@ -1,4 +1,4 @@
-//! The map grid layer (spec §4.2, layer 1): a console the map is drawn into, shown behind a clip
+//! The map grid layer (layer 1): a console the map is drawn into, shown behind a clip
 //! rectangle (the map viewport) with a sub-cell pixel offset, so the camera can scroll smoothly.
 //!
 //! The grid is one cell larger than the viewport in each direction: whatever the offset, the

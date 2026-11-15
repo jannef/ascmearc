@@ -523,7 +523,7 @@ Potions and elixirs, the other sure sources, are re-pointed in the same unit (de
 | `corpse-effects.md` | the resolved `train` and `widen` per creature (replacing the raise chances) |
 | `stat-checks.md`, `stat-daily-checks.md` | removed (one formula now; `stat-odds.md` is it) |
 
-**The spec**: `spec/08f-stats-and-burden.md` "Training" rewritten (the pile, the price, the odds, the deeds, the drop, the potential's new rule); `spec/08h-hunger.md` "Eating a corpse" (train and widen); `spec/08g-magic-items.md` "Potions" (the marks); `spec/08i-character.md` (Hard-won's marks). **The docs**: `docs/dev/stats.md` "Training" (the new modules and hooks, one line each), `docs/dev/hunger.md` (`OnEat`), `docs/dev/potions.md`, `docs/dev/background.md` (Hard-won), `docs/dev/progression.md` (the talents), `docs/balance.md` (the probe's stats method, §13 T6).
+**The spec**: `spec/12-character.md` "Training" rewritten (the pile, the price, the odds, the deeds, the drop, the potential's new rule); `spec/12-character.md` "Eating a corpse" (train and widen); `spec/11-magic.md` "Potions" (the marks); `spec/12-character.md` (Hard-won's marks). **The docs**: `docs/dev/stats.md` "Training" (the new modules and hooks, one line each), `docs/dev/hunger.md` (`OnEat`), `docs/dev/potions.md`, `docs/dev/background.md` (Hard-won), `docs/dev/progression.md` (the talents), `docs/balance.md` (the probe's stats method, §13 T6).
 
 ## 11. Determinism, saves, replays
 

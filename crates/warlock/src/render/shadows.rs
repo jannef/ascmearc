@@ -1,4 +1,4 @@
-//! Creature shadows (spec §4.4): visible creatures shade the visual light of the sources behind
+//! Creature shadows: visible creatures shade the visual light of the sources behind
 //! them. Visual only: gameplay light and visibility never see them.
 //!
 //! A creature casts a shadow from every perceived light source that lights its cell, except one

@@ -1,4 +1,4 @@
-//! The ally talents (#1495): what a talent does for the holder's allies (spec §8 "Allies"):
+//! The ally talents (#1495): what a talent does for the holder's allies:
 //! Beast-bond's edge, the summon draw's bias, and Sic 'em. [`AllyEffect`] is the data (a talent's
 //! `[[effect]]` of one of [`AllyEffect::KINDS`]), [`AllyMods`] the sum every rule reads
 //! (`TalentMods::ally`). A new effect of the area is a variant here, its field and its arm in
@@ -11,7 +11,7 @@ use serde::Deserialize;
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum AllyEffect {
-    /// What the holder's allies get (spec §8 "Allies": Beast-bond): to-hit on their attacks
+    /// What the holder's allies get (Beast-bond): to-hit on their attacks
     /// and Protection, read through their master (`world/allies/ally.rs`); and what the holder's summon
     /// spells do (`world/magic/summon_spell.rs`): `count` more come every call, a call lasts
     /// `duration_percent` longer, `lasting` calls stay until slain, `most` more of each call's
@@ -49,7 +49,7 @@ impl AllyEffect {
     pub const KINDS: [&'static str; 3] = ["ally_mod", "sic", "summon_bias"];
 }
 
-/// What a talent gives the holder's allies (spec §8 "Allies"): read where an ally strikes and
+/// What a talent gives the holder's allies: read where an ally strikes and
 /// is struck (`world/allies/ally.rs`), through its master's mods.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct AllyMods {
@@ -109,7 +109,7 @@ impl AllyMods {
     }
 }
 
-/// The active Sic 'em (spec §8 "Class abilities"; `world/allies/sic.rs`): the companion is set on a
+/// The active Sic 'em (`world/allies/sic.rs`): the companion is set on a
 /// creature the player sees within `range`, suffering `blows` degrees of `status`.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Sic {

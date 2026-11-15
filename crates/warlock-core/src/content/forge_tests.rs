@@ -1,4 +1,4 @@
-//! The forge as data (spec §7 "Special rooms"; #418, #1022): the room, its anvil and what it
+//! The forge as data (#418, #1022): the room, its anvil and what it
 //! offers (Temper names no outcome table), and what is refused.
 
 use super::*;

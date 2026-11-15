@@ -1,4 +1,4 @@
-//! Spell reflection (spec §8 "Fighting styles"; the combat progression design §4.3, §4.4, §5;
+//! Spell reflection (the combat progression design §4.3, §4.4, §5;
 //! #566): Sword and Board's capstone turns a spell its holder's shield blocked back at the
 //! caster.
 //!

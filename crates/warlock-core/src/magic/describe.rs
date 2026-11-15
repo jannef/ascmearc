@@ -1,7 +1,6 @@
-//! What an item is, in words, as the player knows it (spec §6 "Item description", §8 "Magic
-//! items"): its base stats, and its affixes once it is identified. The item description screen
-//! shows these lines; they read an item only through [`Stack::known_magic`], so an unidentified
-//! item's affixes cannot leak.
+//! What an item is, in words, as the player knows it: its base stats, and its affixes once it is
+//! identified. The item description screen shows these lines; they read an item only through
+//! [`Stack::known_magic`], so an unidentified item's affixes cannot leak.
 //!
 //! Numbers that are item properties are shown, as in Path of Exile (dice, criticals, Defence
 //! bonuses, Protection, an affix's rolled value); speed is said in words ("attacks faster") and
@@ -47,7 +46,7 @@ fn line(kind: LineKind, text: impl Into<String>) -> Line {
     }
 }
 
-/// What a description shows of worth (spec §8 "Talents": Gem lore): nothing unless the player
+/// What a description shows of worth (Gem lore): nothing unless the player
 /// has an eye for it.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct Appraisal {
@@ -60,7 +59,7 @@ pub struct Appraisal {
 
 /// [`lines`] for a player with an eye for worth: each gem's worth after its line (`Pommel: small
 /// emerald, fine cut (worth 40 gold)`), as `appraisal` shows.
-/// An unidentified scroll is called by its label (spec §8 "Scrolls"), as `lore` names it.
+/// An unidentified scroll is called by its label, as `lore` names it.
 pub fn appraised(stack: &Stack, lore: Lore<'_>, appraisal: Appraisal) -> Vec<Line> {
     appraised_for(stack, lore, appraisal, None, None)
 }
@@ -147,7 +146,7 @@ fn enchantments(n: usize) -> String {
     }
 }
 
-/// What a grimoire teaches (spec §8 "Spells": "Learning", "Ranks"): its spell and level, then
+/// What a grimoire teaches: its spell and level, then
 /// where `user` stands with it: a spell they know at its rank and that reading it would
 /// deepen (`You know it at rank 3 of 10: reading it again would deepen it.`), one known at the
 /// last rank, or one they could learn. Nothing for anything else.
@@ -176,7 +175,7 @@ fn grimoire_lines(stack: &Stack, lore: Lore<'_>, user: Option<&Actor>) -> Vec<Li
     out
 }
 
-/// What a wand holds, as the player knows it (spec §8 "Magic items": "Wands"): once its type is
+/// What a wand holds, as the player knows it: once its type is
 /// known, its spell and what it does in `user`'s hands at the wand's rung (`Holds Fireball: 4d6
 /// fire, radius 2`, [`wand_does`]), or the spell in words where it rolls nothing or nobody holds
 /// it (`Holds Sleep (level 7): ...`), else that it is unknown; its charges once it is identified
@@ -233,7 +232,7 @@ pub(crate) fn wand_does(stack: &Stack, lore: Lore<'_>, user: &Actor) -> Option<S
     Some(text)
 }
 
-/// What a rod holds, as the player knows it (spec §8 "Magic items": "Rods"): its effect in words
+/// What a rod holds, as the player knows it: its effect in words
 /// and its cost once its type is known (`Holds Digging: ...`, `Costs 6 mana a use, before your
 /// talents`), else that it is unknown. Nothing for anything else.
 fn rod_lines(stack: &Stack, lore: Lore<'_>) -> Vec<Line> {
@@ -263,7 +262,7 @@ fn rod_lines(stack: &Stack, lore: Lore<'_>) -> Vec<Line> {
     ]
 }
 
-/// What a potion does, as the player knows it (spec §8 "Potions"): in words once its type is
+/// What a potion does, as the player knows it: in words once its type is
 /// known ("Heals wounds at once"), never its dice; else that it is unknown. Nothing for anything
 /// else.
 fn potion_lines(stack: &Stack, lore: Lore<'_>) -> Vec<Line> {
@@ -333,7 +332,7 @@ fn potion_lines(stack: &Stack, lore: Lore<'_>) -> Vec<Line> {
         Draught::Gamble { .. } => "Does good, or harm, or nothing: a gamble".to_string(),
     };
     let mut lines = vec![line(LineKind::Stat, text)];
-    // A flask (spec §8 "Potions": "Flasks"): what its splash is, by its spell's name.
+    // A flask: what its splash is, by its spell's name.
     if let Some(flask) = &content.object(stack.object).flask {
         let spell = &content.spell(flask.spell).name;
         let text = format!("Thrown, it shatters and casts {spell} where it breaks");
@@ -423,8 +422,7 @@ fn lines_named(
         ));
     }
     // Its own stats as it is made: another material's damage and Protection (#193), the dice an
-    // anvil's work left it; a spirit weapon's with its gifts' threat and piercing (spec §8
-    // "Prestige classes").
+    // anvil's work left it; a spirit weapon's with its gifts' threat and piercing.
     let gift = crate::world::spirit_gift(content).filter(|_| stack.is_spirit());
     let spirit = gift.map(|(_, threat, pierces, _)| Spirit { threat, pierces });
     let (_, damage) = crate::variant::weapon(def, &parts, content);
@@ -466,7 +464,7 @@ fn lines_named(
                 let text = format!("{}: {}", rolled.def.name, phrase(&rolled, kind, content));
                 out.push(line(LineKind::Affix(rolled.def.kind), text));
             }
-            // A unique item's power and lore (spec §8 "Magic items").
+            // A unique item's power and lore.
             if let Some(unique) = magic.unique.as_deref().and_then(|id| content.unique(id)) {
                 out.extend(
                     unique
@@ -675,7 +673,7 @@ fn stats(
             attack.damage.plus(damage),
             attack.crit
         ));
-        // Its kinds of damage (spec §8 "Damage types"): "Slashing or piercing damage".
+        // Its kinds of damage: "Slashing or piercing damage".
         let kinds: Vec<&str> = (attack.kinds.iter())
             .map(|k| content.damage_type(k).name.as_str())
             .collect();
@@ -705,7 +703,7 @@ fn stats(
         (Some(range), false) => out.push(format!("Thrown up to {range} cells")),
         _ => {}
     }
-    // A digging tool's power, its base stat as damage is a weapon's (spec §8 "Digging").
+    // A digging tool's power, its base stat as damage is a weapon's.
     if let Some(dig) = def.dig {
         out.push(format!("Digs at {dig}"));
     }
@@ -810,7 +808,7 @@ fn how_held(def: &ObjectDef, content: &Content) -> Option<String> {
     })
 }
 
-/// What the craftsperson's Eye for the make reads of `stack` (spec §8 "Class abilities"; the
+/// What the craftsperson's Eye for the make reads of `stack` (the
 /// craftsperson design §7.2), in words and never a number, as `lore` names things: what salvage
 /// would give of one if every check went well, at `percent` of each material's grams, a gem whole
 /// ("Taken apart, it would give 2 steel ingots and a small ruby."; "Nothing in it is worth

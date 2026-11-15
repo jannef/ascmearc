@@ -1,4 +1,4 @@
-//! The casters' class tables in the world (spec §8 "Class abilities"; #245): the priest's,
+//! The casters' class tables in the world (#245): the priest's,
 //! druid's, wizard's, and witch's level tables, their spells (migrated onto the one cast path,
 //! #395: paid in mana by the spell level), and the passives with rules of their own.
 

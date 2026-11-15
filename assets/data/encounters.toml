@@ -1,5 +1,4 @@
-# Encounters on the overworld (spec §7 "Leaving an outdoor area", "Overworld encounters";
-# docs/design/overworld-encounters.md).
+# Encounters on the overworld (docs/design/overworld-encounters.md).
 #
 # Walking off the edge of an outdoor area (a local area of the overworld, or a hand-made one an
 # overworld location leads into) back to the overworld is refused while a creature hostile to

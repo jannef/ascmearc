@@ -1,4 +1,4 @@
-//! Songs (spec §8 "Class abilities", the bard's songs; #870): the one place a song is sung.
+//! Songs (the bard's songs; #870): the one place a song is sung.
 //!
 //! A song is a class active ([`ClassActive::sings`]) that a talent's `song` effect names
 //! ([`crate::talent::Song`]), used from the abilities menu (`use:inspire`). [`World::sing`]

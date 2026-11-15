@@ -1,4 +1,4 @@
-//! Picking up and dropping (spec §6 "Objects", §8 "Burden"): [`crate::action::Action::PickUp`]
+//! Picking up and dropping: [`crate::action::Action::PickUp`]
 //! and [`crate::action::Action::Drop`], the positions they name, and the burden news a changed
 //! load is said with. `world/mod.rs` has only the dispatch line.
 
@@ -24,7 +24,7 @@ impl World {
         }
     }
 
-    /// A message when the player's burden is no longer `before` (spec §8 "Burden"): picking
+    /// A message when the player's burden is no longer `before`: picking
     /// something up or dropping it changed it. Said right after the action that did it.
     pub(in crate::world) fn burden_news(&mut self, before: Burden) {
         let now = self.load_of(self.state.player).burden();
@@ -68,7 +68,7 @@ impl World {
         }
         let (got, left) = split(&pile, &chosen);
         self.state.current_mut().set_pile(here, left);
-        // In a shop, goods for sale are now owed for (spec §7 "Shops").
+        // In a shop, goods for sale are now owed for.
         let prices = self.picked_up_goods(&got);
         let tag = |i: usize| prices[i].map(|p| format!("unpaid, {p} gold"));
         let mut text = format!(
@@ -136,7 +136,7 @@ impl World {
 
     /// The stacks `positions` names in a list of `len` stacks, every one for none. A
     /// position past the end is refused with the message `missing` (no letter: positions are
-    /// not what the player sees, spec §6).
+    /// not what the player sees).
     pub(in crate::world) fn chosen(
         &mut self,
         positions: &Positions,

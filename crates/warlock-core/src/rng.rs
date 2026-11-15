@@ -1,4 +1,4 @@
-//! Deterministic random streams (spec §8 Determinism).
+//! Deterministic random streams.
 //!
 //! Every stream is a ChaCha8 generator (`rand_chacha`; its output is specified, so it is identical
 //! on every platform) seeded from a 64-bit key: FNV-1a over the run seed and a stream label
@@ -84,7 +84,7 @@
 //! | What level-ups roll (skill rolls, stat checks) | `levels` | from the first draw |
 //! | What an area spell ruins | `ruin` | from the first draw |
 //! | Overworld encounters | `encounters` | from the first draw |
-//! | What comes to a level with a danger (spec §7 "Danger levels") | `spawn/<level id>` | in the level's state, from its making |
+//! | What comes to a level with a danger | `spawn/<level id>` | in the level's state, from its making |
 //! | The moment's draws made this second ([`Draws`]) | (counts, not a stream) | always |
 //!
 //! In play, keyed by the moment (made where used, never kept):
@@ -141,13 +141,13 @@ impl Rng {
         Self(ChaCha8Rng::seed_from_u64(key))
     }
 
-    /// The training stream of a run: the chances of skills' training marks (spec §8 "Skills"),
+    /// The training stream of a run: the chances of skills' training marks,
     /// kept apart from every rule's draws so training never changes a fight's rolls.
     pub fn training(run_seed: u64) -> Self {
         Self::stream(run_seed, "training")
     }
 
-    /// The levels stream of a run (spec §8 "Talents"): what level-ups roll (skill rolls, stat
+    /// The levels stream of a run: what level-ups roll (skill rolls, stat
     /// checks), apart from the gameplay stream so a level moves no fight, and apart from
     /// training so marks and level-ups never shift each other. The world state keeps it from
     /// the first draw on.
@@ -155,7 +155,7 @@ impl Rng {
         Self::stream(run_seed, "levels")
     }
 
-    /// The ruin stream of a run (spec §8 "Spells": "Ruin"): which items lying in an area spell
+    /// The ruin stream of a run: which items lying in an area spell
     /// are lost, apart from the gameplay stream so a pile in a Fireball moves no fight's roll.
     /// The world state keeps it from the first draw on.
     pub fn ruin(run_seed: u64) -> Self {
@@ -184,20 +184,19 @@ impl Rng {
         Self::stream(run_seed, &format!("veins/{level}"))
     }
 
-    /// The stream that hides traps on generated level `level` (spec §8 "Traps"), apart from its
+    /// The stream that hides traps on generated level `level`, apart from its
     /// map's, so a level is the same with or without traps.
     pub fn traps(run_seed: u64, level: &str) -> Self {
         Self::stream(run_seed, &format!("traps/{level}"))
     }
 
-    /// The stream that hides doors on generated level `level` (secret doors, spec §8
-    /// "Searching"), apart from its map's and its traps', so a level is the same with or without
-    /// them.
+    /// The stream that hides doors on generated level `level` (secret doors), apart from its map's
+    /// and its traps', so a level is the same with or without them.
     pub fn secrets(run_seed: u64, level: &str) -> Self {
         Self::stream(run_seed, &format!("secrets/{level}"))
     }
 
-    /// The loot stream of generated level `level` (spec §8 "Magic items"): what lies on its floor
+    /// The loot stream of generated level `level`: what lies on its floor
     /// and in its vaults, rolled once the map is built, so the map is the same without it.
     pub fn loot(run_seed: u64, level: &str) -> Self {
         Self::stream(run_seed, &format!("loot/{level}"))
@@ -211,72 +210,72 @@ impl Rng {
         Self::stream(run_seed, &format!("objects/{key}"))
     }
 
-    /// The population stream of generated level `level` (spec §7 "Danger levels"): its initial
+    /// The population stream of generated level `level`: its initial
     /// creatures, their cells and routes, drawn once its loot is (so the map, traps, secrets, and
     /// loot are the same with any population).
     pub fn population(run_seed: u64, level: &str) -> Self {
         Self::stream(run_seed, &format!("population/{level}"))
     }
 
-    /// The vault monsters stream of generated level `level` (spec §7 "Level file format"): who
+    /// The vault monsters stream of generated level `level`: who
     /// its vaults' monster pools bring, their cells and routes, drawn just before its population
     /// (so the map, traps, secrets, and loot are the same with any of them).
     pub fn vault_monsters(run_seed: u64, level: &str) -> Self {
         Self::stream(run_seed, &format!("vault_monsters/{level}"))
     }
 
-    /// The swarm stream of generated level `level` (spec §7 "Special rooms"): its teeming dens'
+    /// The swarm stream of generated level `level`: its teeming dens'
     /// sleepers, their cells, and their hoards, drawn once its population is (so the rest of the
     /// level is the same with or without a den).
     pub fn swarm(run_seed: u64, level: &str) -> Self {
         Self::stream(run_seed, &format!("swarm/{level}"))
     }
 
-    /// The chest stream of generated level `level` (spec §8 "Chests"): whether its floor gets
+    /// The chest stream of generated level `level`: whether its floor gets
     /// chests, their cells, locks, traps, and contents, drawn once its rooms' loot is and before
     /// its gear (so the rest of the level is the same with or without chests).
     pub fn chests(run_seed: u64, level: &str) -> Self {
         Self::stream(run_seed, &format!("chests/{level}"))
     }
 
-    /// The vault chest stream of generated level `level` (spec §8 "Chests"): what the chests its
+    /// The vault chest stream of generated level `level`: what the chests its
     /// vaults stamped with nothing in them hold, drawn before its own chests (so the rest of the
     /// level is the same with or without a vault's chests).
     pub fn vault_chests(run_seed: u64, level: &str) -> Self {
         Self::stream(run_seed, &format!("vault_chests/{level}"))
     }
 
-    /// The treasure stream of generated level `level` (spec §7 "Special rooms"): its treasure
+    /// The treasure stream of generated level `level`: its treasure
     /// rooms' chests, heaps of gold, and gems, drawn once its chests are (so the rest of the level,
     /// its other chests too, is the same with or without a treasure room).
     pub fn treasure(run_seed: u64, level: &str) -> Self {
         Self::stream(run_seed, &format!("treasure/{level}"))
     }
 
-    /// The spawn stream of level `level` (spec §7 "Danger levels"): what comes to it over time,
+    /// The spawn stream of level `level`: what comes to it over time,
     /// apart from `gameplay` and its generation streams, so a fight rolls the same with or
     /// without a spawn between two blows. The level's state keeps it.
     pub fn spawn(run_seed: u64, level: &str) -> Self {
         Self::stream(run_seed, &format!("spawn/{level}"))
     }
 
-    /// The gear stream of `key` (spec §8 "Creature gear"): a generated level's id, rolled once
+    /// The gear stream of `key`: a generated level's id, rolled once
     /// its loot is (so the map, traps, secrets, and loot are the same without it), or an actor's
     /// id for a creature placed in play without a fixed kit.
     pub fn gear(run_seed: u64, key: &str) -> Self {
         Self::stream(run_seed, &format!("gear/{key}"))
     }
 
-    /// The stream of quest `id`'s roll (spec §8 "Quests", #422): used once, as the quest is
+    /// The stream of quest `id`'s roll (#422): used once, as the quest is
     /// given, never kept; only what it drew is saved.
     pub fn quest(run_seed: u64, id: &str) -> Self {
         Self::stream(run_seed, &format!("quest/{id}"))
     }
 
-    /// The stream of chapter `chapter` of the background story of a character of `spec` (spec §8
-    /// "Background story"): the tier, the line, and its dice, apart from every other stream, so
-    /// no roll of the character moves with or without a story. The spec's `Display` names it
-    /// (race, gender, class; never the picks).
+    /// The stream of chapter `chapter` of the background story of a character of `spec`: the tier,
+    /// the line, and its dice, apart from every other stream, so no roll of the character moves
+    /// with or without a story. The spec's `Display` names it (race, gender, class; never the
+    /// picks).
     pub fn background(
         run_seed: u64,
         spec: &crate::character::CharacterSpec,
@@ -285,14 +284,14 @@ impl Rng {
         Self::stream(run_seed, &format!("background/{spec}/{chapter}"))
     }
 
-    /// The court stream of actor `key` (spec §7 "Factions"): the faction a creature of a type
+    /// The court stream of actor `key`: the faction a creature of a type
     /// with several draws when it is made, apart from every other stream, so a level is the
     /// same whichever court its fey joined.
     pub fn court(run_seed: u64, key: &str) -> Self {
         Self::stream(run_seed, &format!("court/{key}"))
     }
 
-    /// The grade stream of actor `key` (spec §8 "Grades"; [`crate::grade`]): the
+    /// The grade stream of actor `key` ([`crate::grade`]): the
     /// one draw that makes a creature greater or lesser as it is made, apart from every other
     /// stream, so nothing else moves with it.
     pub fn grade(run_seed: u64, key: &str) -> Self {

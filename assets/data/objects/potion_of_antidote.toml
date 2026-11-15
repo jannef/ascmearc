@@ -1,4 +1,4 @@
-# A potion of antidote (spec §8 "Potions"): poison is gone at once. Cures are green.
+# A potion of antidote: poison is gone at once. Cures are green.
 [[object]]
 id = "potion_of_antidote"
 name = "potion of antidote"

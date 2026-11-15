@@ -1,4 +1,4 @@
-//! The noise an action makes (spec §5 "Hearing"; the loudness and its reach are
+//! The noise an action makes (the loudness and its reach are
 //! [`crate::noise`]): made where the action happens, heard at once by everyone it reaches.
 //! `world/mod.rs` has nothing of it; the actions call these where they happen.
 

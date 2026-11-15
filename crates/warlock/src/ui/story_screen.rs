@@ -1,4 +1,4 @@
-//! The player's background story (spec §8 "Background story", §6 "Info screens"): a read-only
+//! The player's background story: a read-only
 //! panel of its paragraphs, titled with the character's name ("Brakka's story"), wrapped, and
 //! scrolled with up and down when the console is too short for it (the message history's way).
 //! Enter and Esc close it (the menu context's Confirm and Back); nothing on it can be chosen.

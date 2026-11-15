@@ -27,7 +27,7 @@ immune = ["acid", "poison"]
 weapon_skills = { spears = 7, duelist = 3 }
 corpse = false
 blood = "#3a4020"
-# Its gear (spec §8 "Creature gear"): the trident it is paid to carry.
+# Its gear: the trident it is paid to carry.
 [[creature.gear]]
 chance = 80
 one_of = ["trident"]

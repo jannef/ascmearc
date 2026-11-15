@@ -23,7 +23,7 @@ Design document for the owner's review (2026-10-25). Written against `origin/mai
 
 ## 1. Summary
 
-**What the owner asked for**: start the game world. Everything built so far (the hub, the arena, the courtyard, the quarry, the trap hall, the Frost Grotto, the vast level, the Depths, the Wildlands overworld, and the nine scenarios; `spec/03-showcase-world.md`) stays, for tests: it is one test world with several start locations. The game gets a **second world with no connection to it**, and **test scenarios do not appear in release builds**, only in dev and CI builds. In the distant future there may be several full campaigns that share no world; this document designs the seam and builds no more of the machinery than the second world needs. To build now: an **overworld** entered ADOM-style through a **mountain pass**, with a **market town** the closest location to the entry, a **volcano, mountain ranges, swamps, rivers, and deep forests**, and room for **about 40 locations** without crowding or sprawl; the **first town**; the **dungeons closest to it**, procedurally generated, **two of them hidden until a quest reveals their location** (at least one visible from the start); and on every dungeon level a **hidden danger level** (ADOM's) from which **monsters of that level keep spawning over time**.
+**What the owner asked for**: start the game world. Everything built so far (the hub, the arena, the courtyard, the quarry, the trap hall, the Frost Grotto, the vast level, the Depths, the Wildlands overworld, and the nine scenarios; `spec/02-worlds.md`) stays, for tests: it is one test world with several start locations. The game gets a **second world with no connection to it**, and **test scenarios do not appear in release builds**, only in dev and CI builds. In the distant future there may be several full campaigns that share no world; this document designs the seam and builds no more of the machinery than the second world needs. To build now: an **overworld** entered ADOM-style through a **mountain pass**, with a **market town** the closest location to the entry, a **volcano, mountain ranges, swamps, rivers, and deep forests**, and room for **about 40 locations** without crowding or sprawl; the **first town**; the **dungeons closest to it**, procedurally generated, **two of them hidden until a quest reveals their location** (at least one visible from the start); and on every dungeon level a **hidden danger level** (ADOM's) from which **monsters of that level keep spawning over time**.
 
 **The proposal in one table:**
 
@@ -122,7 +122,7 @@ Levels, scenarios, dungeons, quests, and dialogue keep their ids as they are: no
 
 | Today | Proposed |
 |---|---|
-| New run lists every scenario (`ui/new_run_screen.rs`, from `Content::scenarios()`), the showcase first | lists the **start scenario of every campaign of kind `campaign`** first, then, in dev builds (debug or `--dev`) only, every scenario of every campaign (test ones included), grouped under their campaign's name; a release build has one row, so the step is **skipped** and New run goes straight to character creation (race first, `spec/06-input-and-ui.md`) |
+| New run lists every scenario (`ui/new_run_screen.rs`, from `Content::scenarios()`), the showcase first | lists the **start scenario of every campaign of kind `campaign`** first, then, in dev builds (debug or `--dev`) only, every scenario of every campaign (test ones included), grouped under their campaign's name; a release build has one row, so the step is **skipped** and New run goes straight to character creation (race first, `spec/05-interface.md`) |
 | `--scenario NAME` starts any scenario | unchanged (an unknown one is refused as today; in a release build the showcase ones are unknown) |
 | a scenario of a campaign that starts in its town or a dungeon (dev conveniences, like `depths` today) | `dev = true` in the scenario file: not listed by New run outside dev builds; still in the binary (a scenario is twenty lines; the content it starts in is the campaign's own) |
 
@@ -403,7 +403,7 @@ The reveal of Fyrdelf waits for C2 (a reach of `cealdhlaw:4`): Fyrdelf starts at
 | Shops | the Depths' one-in-six chance (the shared `chance = 70`) | none (`shops = { chance = 0 }`) | one in four (`shops` on the branch, §7.3: `chance = 100`, `kinds = ["general_store"]`, the duergar keepers' names) |
 | Population's gear (§10.3) | goblins with clubs and short bows, the chief in a jerkin | cultists with daggers and a scroll now and then | duergar with pick-axes, axes, mail, and shields; the smith's war hammer |
 
-Each entrance is an overworld location whose `to` is `<branch>:1`; the first level's `<` leads back to the level it was first entered from (the overworld), as today (`spec/07c-generation.md`).
+Each entrance is an overworld location whose `to` is `<branch>:1`; the first level's `<` leads back to the level it was first entered from (the overworld), as today (`spec/07-generation.md`).
 
 ### 7.2 Vaults of their own (`campaigns/ascmearc/vaults/`)
 
@@ -712,7 +712,7 @@ No golden screenshot: nothing here is something only the GPU produces (the overw
 | `gear.rs` (new: `gear::roll`), `mapgen/mod.rs` (`add_patrol` rolls gear; `Canvas::room_odds`), `mapgen/special.rs`, `mapgen/shop.rs` (the branch's odds), `world/people/service.rs` (new: `cure`, `mend`, the purse), `world/people/talk.rs` (services in `topics` and `ask`), `world/creatures/spawn.rs` (new: `tick`, `attempt`, the cell and route picks; `World::danger`), `world/turn/schedule.rs` (one call), `world/levels/travel.rs` (one line resetting `spawn_at` on arrival; `instantiate_level` applies `revealed` and rolls legend gear), `mapgen/population.rs` (new: the initial population), `world/levels/reveal.rs` (new: `reveal_location`), `world/people/quest.rs` (three calls), `world/turn/dev.rs` (`reveal`, `spawn`), `rng.rs` (`spawn`, `population`, `gear`), `dump.rs` | |
 | `crates/warlock/src/ui/new_run_screen.rs`, `save/characters.rs` (the summary's campaign), `cli.rs` (nothing: `--scenario` is any id) | §3.5 |
 | `xtask/src/wiki/{scenarios,dungeons,quests,overworld,services}.rs`, `creatures.rs` (the campaign sections, the Gear column), `wiki/src/SUMMARY.md` | §11.4 |
-| `docs/dev/campaign.md` (new topic: the seam, the gating, the checklist of §4.2), `docs/dev/overworld.md`, `mapgen.md`, `quests.md`, `creatures.md` (spawning), `content.md`, `saves.md`; `spec/03` (the showcase as the test campaign), a new `spec/03b-campaign.md`, `spec/07c`, `07f`, `08b`; CLAUDE.md's commands | the repo's rule: together with the code |
+| `docs/dev/campaign.md` (new topic: the seam, the gating, the checklist of §4.2), `docs/dev/overworld.md`, `mapgen.md`, `quests.md`, `creatures.md` (spawning), `content.md`, `saves.md`; `spec/03` (the showcase as the test campaign), a new `spec/02-worlds.md`, `spec/07c`, `07f`, `08b`; CLAUDE.md's commands | the repo's rule: together with the code |
 
 ### 12.2 State
 
@@ -776,7 +776,7 @@ Issue-ready items; each one issue, one branch, one PR, with the spec, `docs/dev/
 | **I** | Fennmynster: the branch (danger 4–11, the raised flooded-room odds, no shops), the sunken crypt vault, the `fennmynster` dev scenario | §7 | C, E, N2, P | S–M | F, G, J |
 | **J** | Fyrdelf: the branch (danger 8–19, the duergar traders), the cabin and hoard vaults, per-depth vaults, the `fyrdelf` dev scenario | §7 | C, E, N3, P | S–M | F, G, I |
 | **H** | The town's quests: the three chains, the two reveals, the silver chalice, the minster reliquary, and the ledger objects, the branch `arrival` lines | §6.2 | D, F, G, I, J (the targets; a chain may land before its deep targets with the last quest held back) | S–M | K |
-| **K** | Release start: New run skips the scenario step in a release, the Characters screen's campaign, `spec/03b-campaign.md`, the wiki's world page with the names and the map, CLAUDE.md's commands | §3.5, §11 | B, E, F | S | H |
+| **K** | Release start: New run skips the scenario step in a release, the Characters screen's campaign, `spec/02-worlds.md`, the wiki's world page with the names and the map, CLAUDE.md's commands | §3.5, §11 | B, E, F | S | H |
 
 **Waves**: **1** A, C, D, and beside them M, L, P (A, C, D each add save state: that is the integrator's three; M, L, and P add no action and no save state, so they sit outside the limit and touch no file of the three but one line each) · **2** B, E, N1, N2, N3 (the waves are data files and tests) · **3** F, G, I, J · **4** H, K. The ending is deferred (§1) and no PR here depends on it.
 

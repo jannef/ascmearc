@@ -1,4 +1,4 @@
-//! The game clock in the turn pipeline (spec §8 "Time"): how long actions take, resting,
+//! The game clock in the turn pipeline: how long actions take, resting,
 //! skipping. What actions cost and how speed scales it: `cost_tests.rs`.
 
 use crate::action::parse_actions;
@@ -94,7 +94,7 @@ weight = 4000
 faction = "vermin"
 "##;
 
-/// Giant rats are hostile to the player (only a hostile stops a rest, spec §8 "Rest"); rats
+/// Giant rats are hostile to the player (only a hostile stops a rest); rats
 /// are neutral.
 const FACTIONS: &str = r##"
 [[faction]]

@@ -14,7 +14,7 @@ skill_choice = { skills = ["alchemy", "jewelcraft", "metalcraft", "woodcraft"], 
 rolls = 2
 weapon_skills = { maces = 1 }
 styles = { brawler = 1 }
-# The level table (spec §8 "Class abilities"): what a hard life taught them; bonus talents from
+# The level table: what a hard life taught them; bonus talents from
 # any tree, the commoner's gift.
 abilities = [
     { level = 1, talent = "pack_mule" },

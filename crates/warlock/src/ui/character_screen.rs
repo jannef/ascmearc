@@ -1,19 +1,17 @@
-//! The character screen (spec §6; `@`): who the player is, as far as they know it. Their name,
-//! their race, gender, and class, their age, birthday, and birth sign (spec §8 "Character
-//! creation"; when the run has a character), their score in each stat (spec §8 "Stats") with its
-//! abbreviation and full name (as the rules read it: a score a status effect or stat damage
-//! lowers is shown lowered, in a warning color), their hit points, Defence, and Protection
-//! (spec §8 "Combat"; the totals only), their alignment band (spec §8 "Alignment": `Kind`, never
-//! the score), the status effects they suffer, by name (spec §8 "Status
-//! effects"), the diseases they know they have, by name (spec §8 "Diseases": `Diseased  Filth
-//! fever`), what they weigh and carry, their burden, and the weights at which it changes (spec §8 "Burden": they follow from
+//! The character screen (`@`): who the player is, as far as they know it. Their name,
+//! their race, gender, and class, their age, birthday, and birth sign (when the run has a
+//! character), their score in each stat with its abbreviation and full name (as the rules read it:
+//! a score a status effect or stat damage lowers is shown lowered, in a warning color), their hit
+//! points, Defence, and Protection (the totals only), their alignment band (`Kind`, never
+//! the score), the status effects they suffer, by name, the diseases they know they have, by name (`Diseased  Filth
+//! fever`), what they weigh and carry, their burden, and the weights at which it changes (they follow from
 //! scores the player knows). Beside the stats, the attacks they have ready (main hand, off hand,
 //! missile weapon), each with its to-hit, damage, and range as a strike would roll them now
 //! (`PerceptionView::own_attacks`): the owner's one exception to hidden numbers. Never a
 //! modifier, a potential, a creature's to-hit, or how severe an effect is.
 //!
 //! Read-only: Esc, Enter, or its own key closes it; the Skills key opens the Skills screen over
-//! it (spec §8 "Skills"; Esc there comes back here). It is read from the perception snapshot when
+//! it (Esc there comes back here). It is read from the perception snapshot when
 //! it opens; no game time passes while it is open, so it cannot go stale.
 
 use super::menu::{Nav, Panel, Press};
@@ -34,7 +32,7 @@ use warlock_core::time::GameTime;
 /// Width of the stat name column: the longest name and a space.
 const NAME_W: i32 = 14;
 
-/// The player's resistances as rows (spec §8 "Damage types"): one per word, in the order
+/// The player's resistances as rows: one per word, in the order
 /// immune, resistant, vulnerable, each listing its kinds in damage type order; none at 0.
 fn resistance_rows(view: &PerceptionView<'_>) -> Vec<(&'static str, String)> {
     use warlock_core::damage::ResistanceWord;
@@ -84,10 +82,10 @@ pub struct CharacterScreen {
     identity: Vec<(&'static str, String)>,
     /// Age, birthday, and birth sign ([`birth_parts`]); empty without a character.
     birth: Vec<String>,
-    /// The birth sign's gifts and flaw by name, in grant order (spec §8 "Birth sign"): the
+    /// The birth sign's gifts and flaw by name, in grant order: the
     /// dimmed Stars line; empty without any.
     stars: Vec<String>,
-    /// The kept beasts by name and kind, "Snel, a hound", "Tibb, a cat" (spec §8 "Allies": a
+    /// The kept beasts by name and kind, "Snel, a hound", "Tibb, a cat" (a
     /// companion, a familiar), in actor id order; none without one.
     kept: Vec<String>,
     scores: PerStat<u8>,
@@ -100,13 +98,13 @@ pub struct CharacterScreen {
     /// The diseases they know they have, by name (one that has not progressed yet is only
     /// "Diseased").
     diseases: Vec<String>,
-    /// What they resist, in words only (spec §8 "Damage types"): a row per word ("Resistant
+    /// What they resist, in words only: a row per word ("Resistant
     /// to", "Vulnerable to", "Immune to") with the kinds it holds for, in that order.
     resistances: Vec<(&'static str, String)>,
     weight: Weight,
     /// What they carry against what they can; `None` outside a run.
     load: Option<Load>,
-    /// Character level and experience (spec §8 "Experience").
+    /// Character level and experience.
     progress: Progress,
     /// Hit points left and the most.
     hp: (i32, i32),
@@ -118,16 +116,16 @@ pub struct CharacterScreen {
     protection: i32,
     /// The combat stance's name.
     stance: String,
-    /// The alternative resources they hold (spec §8 "Resources"), in resource order: the name,
+    /// The alternative resources they hold, in resource order: the name,
     /// and what it holds of its maximum (`7/20`).
     resources: Vec<(String, String)>,
-    /// How many talents they have (spec §8 "Talents"): picked, and the sign's; not the class's
+    /// How many talents they have: picked, and the sign's; not the class's
     /// abilities.
     talents: usize,
-    /// Their alignment band's name (spec §8 "Alignment"), never the score; `None` without
+    /// Their alignment band's name, never the score; `None` without
     /// alignment rules.
     alignment: Option<&'static str>,
-    /// The guilds they belong to (spec §8 "Quests": "Guilds"): the rank's title, in its metal's
+    /// The guilds they belong to: the rank's title, in its metal's
     /// colour, and the guild's name in a sentence ("the Weyfarers' Gilde").
     guilds: Vec<(String, Rgb, String)>,
     /// The attacks they have ready: where each comes from, what it is made with, and its
@@ -190,7 +188,7 @@ impl CharacterScreen {
                 ),
                 ("Gender", gender_text(c)),
                 // `Bard` until the class is full, `Bard 30` at its cap, `Bard 30, Hunter 4` once
-                // called (spec §8 "Prestige classes").
+                // called.
                 ("Class", c.class_text(content, view.own_experience().level)),
             ]
         });
@@ -355,7 +353,7 @@ impl CharacterScreen {
             y += 1;
         }
         for (i, beast) in self.kept.iter().enumerate() {
-            // `With    Snel, a hound`: the beasts at the character's side (spec §8 "Allies"), a
+            // `With    Snel, a hound`: the beasts at the character's side, a
             // companion and a familiar each on its own row.
             if fits(y) {
                 if i == 0 {
@@ -530,7 +528,7 @@ fn gender_text(character: &Character) -> String {
     }
 }
 
-/// The Stars line's names (spec §8 "Birth sign"), fitted to `width` cells after the label: one
+/// The Stars line's names, fitted to `width` cells after the label: one
 /// line, two at most (the second ending in "…" if even that is too little).
 fn stars_lines(names: &[String], width: i32) -> Vec<String> {
     let mut lines = fit_joined(names, ", ", width - 8);
@@ -579,7 +577,7 @@ pub fn fit_joined(parts: &[String], sep: &str, width: i32) -> Vec<String> {
     lines
 }
 
-/// The weights at which the player's burden changes (spec §8 "Burden"), in lines of at most
+/// The weights at which the player's burden changes, in lines of at most
 /// `width` characters: `Burdened over 15 kg, strained over 30 kg, overloaded over 45 kg`.
 pub fn thresholds(load: &Load, width: i32) -> Vec<String> {
     let mut parts = load.over().to_vec();

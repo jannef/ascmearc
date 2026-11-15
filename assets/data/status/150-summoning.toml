@@ -1,4 +1,4 @@
-# A summoner's cooldown (spec §8 "Summoning", the creatures' `[creature.summon]`): a degree for
+# A summoner's cooldown (the creatures' `[creature.summon]`): a degree for
 # every six seconds of its `cooldown`; while it lasts the creature summons nothing. Creatures
 # only: no one sees it on them.
 [[status]]

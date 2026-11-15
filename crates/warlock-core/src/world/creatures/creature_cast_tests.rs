@@ -1,4 +1,4 @@
-//! Creatures' spells (spec §8 "Creature behavior": "Casters", `creature_cast.rs`): a caster
+//! Creatures' spells (`creature_cast.rs`): a caster
 //! casts the spells of its list through the player's spell code while it has the mana and they
 //! go, else fights; low-level casters are rare and know only the weakest spells.
 

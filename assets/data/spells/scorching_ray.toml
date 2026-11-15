@@ -1,4 +1,4 @@
-# Scorching ray (spec §8 "Spells", the first spell list): a ray of fire that must hit; its
+# Scorching ray (the first spell list): a ray of fire that must hit; its
 # Intelligence ladder ([spell.grows]) adds dice, and a hotter core at the top.
 [[spell]]
 id = "scorching_ray"
@@ -22,7 +22,7 @@ noise = { sound = "chanting", loudness = 30 }
 damage = "intelligence 13 4d6, 16 6d6, 19 8d6, 25 6d6+2d10"
 range = "willpower 14 9, 18 10"
 
-# What rereading its grimoire adds, rank by rank (spec §8 "Spells": "Ranks"; README.toml
+# What rereading its grimoire adds, rank by rank (README.toml
 # `[spell.ranks]`): an attack ray's table: at rank 10 +3 to hit, criticals from 20,
 # 1s rolled again, every die a side bigger, a die more, +2 on the roll, a cell farther, and 15 %
 # off the mana.

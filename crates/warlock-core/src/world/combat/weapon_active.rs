@@ -1,4 +1,4 @@
-//! Active weapon abilities in the world (spec §8 "Weapon skills", "Fighting styles"; the combat
+//! Active weapon abilities in the world (the combat
 //! progression design §4.5, §4.6, §6; #564): what a rank teaches that the player uses from the
 //! abilities menu (`Ability::Weapon`), as `use:lunge:E` ([`crate::action::Action::Act`]) or
 //! `use:shield_wall`, `use:piercing_shot:12,5` ([`crate::action::Action::Cast`] of an id that is
@@ -75,7 +75,7 @@ pub(in crate::world) enum Aimed {
 }
 
 impl Actor {
-    /// Whether what it holds now is for weapon active `id` (spec §8 "Weapon skills"): the
+    /// Whether what it holds now is for weapon active `id`: the
     /// abilities its attack of that kind brings (a blow's weapon skill and style, a shot's) teach
     /// it.
     pub(crate) fn holds_for(&self, content: &Content, id: WeaponAbilityId) -> bool {

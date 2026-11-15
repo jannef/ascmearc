@@ -1,4 +1,4 @@
-//! Objects (spec §5, §6): piles, picking up and dropping, inventories, weights, and memory.
+//! Objects: piles, picking up and dropping, inventories, weights, and memory.
 
 use crate::action::{Positions, parse_actions};
 use crate::content::ContentFiles;
@@ -214,7 +214,7 @@ fn refused_pick_ups_and_drops_take_no_time() {
 
 #[test]
 fn the_pack_holds_any_number_of_stacks_named_by_position() {
-    // No count limit (spec §6): weight is the only one. Past `z`, action text names stacks by
+    // No count limit: weight is the only one. Past `z`, action text names stacks by
     // number, and equipment follows positions past the 26th.
     let mut w = world();
     run(&mut w, "move:SE move:SE move:E move:E");
@@ -250,7 +250,7 @@ fn the_pack_holds_any_number_of_stacks_named_by_position() {
 #[test]
 fn the_inventory_dump_groups_by_class_and_keeps_positions() {
     // A ruby picked up first, then a dagger: the dagger's class (melee weapons) comes first in
-    // the list, but each keeps its position (spec §6 "Item lists").
+    // the list, but each keeps its position.
     let mut w = world();
     run(
         &mut w,

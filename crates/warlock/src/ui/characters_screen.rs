@@ -1,4 +1,4 @@
-//! The Characters screen (spec §6 "Characters", §7 "Saves"), from the main menu: every saved
+//! The Characters screen, from the main menu: every saved
 //! character, the one played last first, with its race, class, and level, and for the selected
 //! one where it is (and in which campaign, when more than one is installed: a developer build)
 //! and when it was last played. Choose one to resume it; the Erase key deletes

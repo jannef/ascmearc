@@ -1,13 +1,13 @@
 # Campaign-owned (docs/design/campaign.md §3.6): the Ascmearc's own type, which only its files
 # may name.
 #
-# The sixth layer boss of Grundlēas (#1122; spec §7 "The endless branch"): Līgetdrȳ (Old English
+# The sixth layer boss of Grundlēas (#1122): Līgetdrȳ (Old English
 # līget, lightning, and drȳ, a sorcerer), the Storm-Wright, who went down after the thunder that
 # rolls under the hills and found it on the sixtieth floor. Once a run (`unique`), in no
-# population: only his hall of standing stones places him. A caster (#1102, spec §8 "Creature
-# behavior": "Casters"): his fight is the storm at range. He hastens himself, silences whoever
-# comes, and throws lightning that leaps from one foe to the next; his body is a scholar's and
-# his staff little, so the fight is crossing the hall from stone to stone to reach him.
+# population: only his hall of standing stones places him. A caster (#1102): his fight is the storm
+# at range. He hastens himself, silences whoever comes, and throws lightning that leaps from one foe
+# to the next; his body is a scholar's and his staff little, so the fight is crossing the hall from
+# stone to stone to reach him.
 [[creature]]
 id = "ligetdry"
 level = 61

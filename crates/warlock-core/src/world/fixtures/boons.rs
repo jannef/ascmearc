@@ -1,4 +1,4 @@
-//! A forgotten altar's great boons and banes (spec §7 "Special rooms"; the design's §7.4, #407):
+//! A forgotten altar's great boons and banes (the design's §7.4, #407):
 //! the hooks of the outcome fields `gift`, `wrath`, `levels`, `talent`, and `flaw`
 //! (`world/fixtures/outcome.rs` calls them; the relic is `loot` with a `rarity` floor, the horde a
 //! `summon`).

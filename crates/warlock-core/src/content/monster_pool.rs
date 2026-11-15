@@ -1,4 +1,4 @@
-//! A vault's monster pools (spec §7 "Level file format"): `monsters = { pool = "level", count = 20
+//! A vault's monster pools: `monsters = { pool = "level", count = 20
 //! }` on a legend entry marks cells of a pool of creatures, drawn at the floor's danger when the
 //! level is generated (`mapgen/population.rs`), so who is inside differs from one visit to the
 //! next.
@@ -10,7 +10,7 @@
 //! `count` monsters come, each on a different marked cell of the entry; without one, every marked
 //! cell gets one.
 //!
-//! The entry may say what a placed creature's may (spec §7 "Level file format"): `status` (each
+//! The entry may say what a placed creature's may: `status` (each
 //! draw is placed with it, `["asleep"]`), `carry` (the first placed carries it, a key to the
 //! vault's lock: `check_keys` counts it within reach when every marked cell is), and `route` (each
 //! draw walks it from its cell, checked from every marked cell as a placed creature's is).

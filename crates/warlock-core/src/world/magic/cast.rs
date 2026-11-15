@@ -1,4 +1,4 @@
-//! The one cast path (spec §8 "Spells", the magic design §5): a spell of `data/spells/` cast by
+//! The one cast path (the magic design §5): a spell of `data/spells/` cast by
 //! the player ([`Action::Cast`], `use:arcane_bolt:12,5`), from its cost to what it does.
 //!
 //! - **Cost** ([`Actor::spell_cost`], the one hook): the cost table's price
@@ -96,14 +96,14 @@ pub struct Reach {
 }
 
 impl Actor {
-    /// The percent more mana a spell costs it for what it wears (spec §8 "Spells"): the
+    /// The percent more mana a spell costs it for what it wears: the
     /// `spell_cost_percent` of every piece worn or held, added up.
     pub fn armour_spell_cost(&self, content: &Content) -> u32 {
         let worn = self.worn_spell_cost(content);
         if worn == 0 {
             return 0;
         }
-        // Battle caster (spec §8 "Fighting styles"): its rank eases the armour's percent.
+        // Battle caster: its rank eases the armour's percent.
         let table = content.weapon_skills();
         let style = table.style_for(Grip::ArmouredSpell, &[]);
         let ease = u32::from(self.benefit(content, style).armour.min(100));
@@ -145,7 +145,7 @@ impl Actor {
             .spell_mana_with(price, self.spell_mods(content, spell).cost)
     }
 
-    /// What `spell` costs it (the one hook, spec §8 "Spells"): [`Actor::spell_base`] through
+    /// What `spell` costs it (the one hook): [`Actor::spell_base`] through
     /// [`Actor::mana_cost`], what a cast spends and what the abilities menu's "too little mana"
     /// compares with.
     pub fn spell_cost(&self, content: &Content, spell: &SpellData) -> i32 {
@@ -248,7 +248,7 @@ impl World {
     }
 
     /// The player reads the scroll in inventory stack `item`, which casts `spell` at its own
-    /// `rungs` (spec §8 "Scrolls"): the cast path's, but paid by the scroll, not mana,
+    /// `rungs`: the cast path's, but paid by the scroll, not mana,
     /// and never refused for what the player knows or holds. Whether it went off (`false`: the
     /// scroll is kept, no time).
     pub(super) fn read_cast(
@@ -273,7 +273,7 @@ impl World {
     }
 
     /// The player uses the wand in inventory stack `item`, which casts `spell` at its own
-    /// `rungs` at cell `at` (spec §8 "Magic items": "Wands"): the cast path's, paid by a
+    /// `rungs` at cell `at`: the cast path's, paid by a
     /// charge, not mana, and never refused for what the player knows or holds. Whether it went
     /// off (`false`: no charge used, no time).
     pub(super) fn wand_cast(
@@ -375,7 +375,7 @@ impl World {
         true
     }
 
-    /// The player's cast `cast` went off (spec §8 "Fighting styles"): one paid in mana
+    /// The player's cast `cast` went off: one paid in mana
     /// practises the caster style it was cast in (`cast_style.rs`) once, as a blow practises
     /// its style, by the [`Outcome`] its kind filled (an attempt, and a success when it landed,
     /// weighed by the strongest creature it struck at, else the player's own level). A spell
@@ -393,7 +393,7 @@ impl World {
         }
     }
 
-    /// `cast` reached creature `other` (spec §8 "Fighting styles"): its [`Outcome`] weighs
+    /// `cast` reached creature `other`: its [`Outcome`] weighs
     /// the strongest creature struck at, and `landed` (a harm done, a hex taken, a heal given,
     /// a buff or a cure or a utility's work done) makes it a success. The one place every kind
     /// reports a landing.
@@ -419,7 +419,7 @@ impl World {
         true
     }
 
-    /// Identify: the truth of inventory stack `on` (spec §8 "Spells"), as the scroll of identify
+    /// Identify: the truth of inventory stack `on`, as the scroll of identify
     /// told it ([`World::identify`]). Refused (said, `false`) without such a stack, or for one
     /// whose truth is known. A scroll read on its own stack identifies nothing more: the read
     /// named it.
@@ -978,8 +978,8 @@ impl World {
         } else {
             me.item_spell_to_hit(&self.content)
         };
-        // The spell's school and the caster style it is cast in (spec §8 "Weapon skills",
-        // "Fighting styles"): the caster's own spells that roll to hit only, as its aim is.
+        // The spell's school and the caster style it is cast in: the caster's own spells that roll
+        // to hit only, as its aim is.
         let skills = (own.filter(|_| def.rolls_to_hit())).unwrap_or_default();
         // Baleful's wider threat (`spell_threat`): an own cast only, as its aim.
         let threat = if own.is_some() {
@@ -1109,9 +1109,8 @@ impl World {
 
 impl World {
     /// The player's spell that rolls to hit came to `blow` against `target`, made with
-    /// `skills`: the weapon abilities of `skills` fire on a hit and a critical (spec §8 "Weapon
-    /// abilities": Spell guard). Its marks are the whole cast's
-    /// ([`World::practise_cast`]).
+    /// `skills`: the weapon abilities of `skills` fire on a hit and a critical (Spell guard). Its
+    /// marks are the whole cast's ([`World::practise_cast`]).
     fn spell_practised(
         &mut self,
         target: ActorId,

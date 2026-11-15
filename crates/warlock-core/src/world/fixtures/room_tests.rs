@@ -1,4 +1,4 @@
-//! Special rooms in the turn pipeline (spec §7 "Special rooms"): what each effect does, the
+//! Special rooms in the turn pipeline: what each effect does, the
 //! first-entry message, what the player knows of a room, and saving.
 
 use crate::content::ContentFiles;

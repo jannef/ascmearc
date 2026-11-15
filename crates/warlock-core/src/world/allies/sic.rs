@@ -1,4 +1,4 @@
-//! Sic 'em, the ranger's level 40 (spec §8 "Allies": "Sic 'em"; docs/design/ranger-companion.md
+//! Sic 'em, the ranger's level 40 (docs/design/ranger-companion.md
 //! §11.3; `docs/dev/companion.md`): a class active aimed at a creature the player sees
 //! ([`crate::action::Action::UseAt`], `use:sic:12,5`), for Focus and the time of a wait.
 //!

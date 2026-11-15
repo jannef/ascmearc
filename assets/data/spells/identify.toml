@@ -1,4 +1,4 @@
-# Identify (spec §8 "Spells"): the truth of one thing the caster carries, as the scroll of
+# Identify: the truth of one thing the caster carries, as the scroll of
 # identify tells it. Its cost is given outright (`mana`), not by its level: a large one, so a
 # caster of the first levels cannot cast it at all (see docs/dev/spells.md "Identify"). Its
 # level is how hard it is to learn. The scroll of identify casts it.

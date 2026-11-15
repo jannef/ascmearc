@@ -1,4 +1,4 @@
-//! Stat training (`assets/data/stats.toml`, spec §8 "Stats"; the design is
+//! Stat training (`assets/data/stats.toml`; the design is
 //! `docs/design/stat-training.md`): uses of the player's stats earn training marks into a signed
 //! pile per stat, and at every level gained and every day at 06:00 each stat gets one check,
 //! its chance set by its pile against the price of its next point.
@@ -33,7 +33,7 @@ const PILE_CAP: u64 = 8;
 /// The least a stack picked up weighs to train [`StatUse::Hauled`], in grams: 20 kg.
 pub const HAUL_GRAMS: u64 = 20_000;
 
-/// A use of the player's stats that may earn a training mark (spec §8 "Stats"), reported at
+/// A use of the player's stats that may earn a training mark, reported at
 /// the one place the thing happens.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -278,7 +278,7 @@ impl StatUse {
     }
 }
 
-/// A deed of the player's that costs a stat marks (spec §8 "Stats"; the design's §7.1): few, and
+/// A deed of the player's that costs a stat marks (the design's §7.1): few, and
 /// deliberate, each reported at the one hook that already knows the event.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Deserialize)]
 #[serde(rename_all = "snake_case")]

@@ -1,4 +1,4 @@
-//! Skill rolls at level-up (spec §8 "Skills"): every level gives the class's, the race's, and
+//! Skill rolls at level-up: every level gives the class's, the race's, and
 //! Intelligence's rolls, refused around until spent; each throws the die the skill's marks set
 //! on the ladder (one step up for a known-for skill, +1 for a class's or race's other skill),
 //! spends half the marks, and draws from the levels stream only; replays and saves agree.

@@ -1,4 +1,4 @@
-//! Hunger (`assets/data/hunger.toml`, spec §8 "Hunger"): how fast the player burns nutrition, the
+//! Hunger (`assets/data/hunger.toml`): how fast the player burns nutrition, the
 //! least nutrition of each state, what the states do, overeating, what rotten food does, and
 //! corpses (what they give by their creature's size, and how long they keep).
 //!
@@ -111,7 +111,7 @@ pub struct SkillNews {
     pub rise: String,
 }
 
-/// What eating rotten food does (spec §8 "Hunger"), whatever the food: the chance in percent that
+/// What eating rotten food does, whatever the food: the chance in percent that
 /// it comes back up, else the degrees of sickness it gives (and it feeds all the same).
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -162,7 +162,7 @@ impl Food {
         Ok(())
     }
 
-    /// How food of this shelf life is at `age` (spec §8 "Hunger"): old past half of what it
+    /// How food of this shelf life is at `age`: old past half of what it
     /// keeps, rotten past it, gone once it has lasted.
     /// Food that keeps for ever is always fresh.
     pub fn stage(&self, age: Duration) -> Stage {
@@ -202,7 +202,7 @@ fn shelf_life<'de, D: Deserializer<'de>>(d: D) -> Result<Option<Duration>, D::Er
         .ok_or_else(bad)
 }
 
-/// Corpses (spec §8 "Hunger"): what they are made of, and what each size of creature gives and
+/// Corpses: what they are made of, and what each size of creature gives and
 /// how long it keeps.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Corpses {
@@ -250,7 +250,7 @@ pub struct HungerDef {
     /// Extra points the player's exertions burn, by action (only [`EXERTIONS`]).
     pub exertion: BTreeMap<ActionKind, u32>,
     pub overeating: Overeating,
-    /// What harm from eating is (spec §8 "Status effects"): a status id in `data/status/`
+    /// What harm from eating is: a status id in `data/status/`
     /// (checked when content loads), `poisoned`; rotten food's `harm` and a creature's `on_eat`
     /// `harm` are degrees of it. `None`: nothing eaten harms.
     pub sickness: Option<String>,

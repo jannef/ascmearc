@@ -1,4 +1,4 @@
-//! Shots by distance (spec §8 "Ranged combat"; #956; `World::flight_profile`, `data/ranged.toml`):
+//! Shots by distance (#956; `World::flight_profile`, `data/ranged.toml`):
 //! the to-hit a shot rolls with at each band and beside the shooter, for the player and a creature
 //! alike, each creature on the line by its own distance, throws left as they are; and Parry against
 //! a shot from beside its target. Exact, not statistical: with the same draws, a shot at a band

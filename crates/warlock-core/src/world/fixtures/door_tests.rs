@@ -1,4 +1,4 @@
-//! Doors (spec §8 "Doors"): locks and keys, kicking doors in, kicking creatures, creatures and
+//! Doors: locks and keys, kicking doors in, kicking creatures, creatures and
 //! locked doors, and locks in saves and replays.
 
 use crate::action::{AttackKind, parse_actions};

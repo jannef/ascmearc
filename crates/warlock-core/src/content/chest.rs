@@ -1,4 +1,4 @@
-//! The chest bands (`assets/data/chests.toml`, spec §7 "Chests"; [`crate::chest`]): ten
+//! The chest bands (`assets/data/chests.toml`; [`crate::chest`]): ten
 //! `[[band]]`s from the coffer to the gilded ark, each from a least level up, and `[smash]`.
 //!
 //! A chest's band is the last whose `from` its level reaches ([`ChestRules::band_of`]): it names
@@ -38,7 +38,7 @@ pub struct ChestBand {
     pub loot: ChestLoot,
 }
 
-/// A band's loot table (spec §8 "Chest loot"; rolled by a later slice).
+/// A band's loot table (rolled by a later slice).
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ChestLoot {

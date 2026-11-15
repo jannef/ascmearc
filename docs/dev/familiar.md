@@ -1,6 +1,6 @@
 # The witch's familiar
 
-Developer notes for the familiar, the witch's small beast (spec §8 "Allies": "The familiar"; the
+Developer notes for the familiar, the witch's small beast (the
 design is `docs/design/witch-familiar.md`, its §16 the owner's round overrides §15's defaults).
 Slices **F1** (#929) and **F2** Call familiar and the imp from level 30 (#930); the sight and nose shared at 25 (#932, below) are in; F3 the
 story's lines (#931) and the probe's row (#933) build on them. It stands on the ally core (`docs/dev/allies.md`) and the companion

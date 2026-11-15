@@ -1,4 +1,4 @@
-//! The mark: whose guard the thief's openings are in (spec §8 "Resources"; the openings design
+//! The mark: whose guard the thief's openings are in (the openings design
 //! `docs/design/thief-openings.md` §3; `docs/dev/openings.md`). A pool `marked` in data
 //! (Openings) is worth something against one creature only, the holder's mark
 //! ([`Actor::mark`]). Only the player has one: only the player chooses attacks.

@@ -1,4 +1,4 @@
-# A birth sign's pick (spec §8 "Birth sign"; horoscope design §9.1): offered only to those born
+# A birth sign's pick (horoscope design §9.1): offered only to those born
 # under its sign.
 [[talent]]
 id = "deep_roots"

@@ -1,4 +1,4 @@
-//! A master's hands (spec §8 "Class abilities"; the craftsperson design §7.8, §7.9; #1425): the
+//! A master's hands (the craftsperson design §7.8, §7.9; #1425): the
 //! craftsperson's passives at levels 40 and 50, each read in one place.
 //!
 //! - **Quick hands** (`craft_time_percent`, [`craft_seconds`]): every craft takes that percent of

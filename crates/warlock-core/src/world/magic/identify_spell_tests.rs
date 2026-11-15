@@ -1,4 +1,4 @@
-//! Identify, the spell (spec §8 "Spells", "Scrolls"; #592): the scroll of identify casts it and
+//! Identify, the spell (#592): the scroll of identify casts it and
 //! teaches it; cast for mana it asks for a stack the caster carries (`use:identify:c`), and its
 //! cost is its own, a large one, refused without the mana, no time taken.
 

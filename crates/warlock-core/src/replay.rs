@@ -1,5 +1,5 @@
 //! Replays: a scenario, a seed, the character, and the actions taken, with the state hash after
-//! every step (spec §9). Replaying verifies the hashes and reports the first step that diverges.
+//! every step. Replaying verifies the hashes and reports the first step that diverges.
 //!
 //! JSON shape (hashes are 16-digit hex strings, actions use the text syntax of [`Action`]):
 //!

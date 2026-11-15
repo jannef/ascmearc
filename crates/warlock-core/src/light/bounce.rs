@@ -1,4 +1,4 @@
-//! Bounce light (spec §5, "Bounce light"): one weak bounce of source light off the surfaces it
+//! Bounce light: one weak bounce of source light off the surfaces it
 //! falls on, as gameplay light.
 //!
 //! 1. **Direct light**: the sum of every source's light (its cached [`super::Mask`], or the

@@ -1,4 +1,4 @@
-//! Mimics in play (spec §8 "Mimics"; docs/dev/creatures/mimics.md): a mimic is an ordinary
+//! Mimics in play (docs/dev/creatures/mimics.md): a mimic is an ordinary
 //! creature with the status that `hides` (Disguised), placed so by `travel::make_creature`.
 //!
 //! - **While disguised** it takes no turn (`creature_turn`, beside the sleepers), it is unaware of

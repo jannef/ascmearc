@@ -1,4 +1,4 @@
-//! Shops in generated levels (spec §7 "Shops"): last of all, after special rooms, with the
+//! Shops in generated levels: last of all, after special rooms, with the
 //! branch's `chance` (its `shops` table, else the shared one: `Canvas::shop_odds`) a rooms level
 //! turns one room into a shop, at most one a level. Like special
 //! rooms it draws from the level's map stream after everything else, so a level without a shop is
@@ -102,7 +102,7 @@ pub(super) fn place(canvas: &mut Canvas, rng: &mut Rng, candidates: &[Candidate]
     for (i, &p) in cells.iter().take(count).enumerate() {
         let object = match always.get(i) {
             Some(&object) => object,
-            // A spell scroll drawn may be its grimoire (spec §8 "Spells": "Learning").
+            // A spell scroll drawn may be its grimoire.
             None => match pick_weighted(rng, &goods) {
                 Some(&object) => content.grimoire_or(rng, object),
                 None => break,

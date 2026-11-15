@@ -26,7 +26,7 @@ noise = { sound = "chanting", loudness = 40 }
 damage = "willpower 13 6d6, 16 8d6, 19 10d6, 25 10d6+2"
 range = "willpower 14 9, 18 10"
 
-# What rereading its grimoire adds, rank by rank (spec §8 "Spells": "Ranks"; README.toml
+# What rereading its grimoire adds, rank by rank (README.toml
 # `[spell.ranks]`). Its fright is already at Frightened's most, so its ranks go to the fire and
 # the reach. At rank 10: +2 on the roll, a die more, 1s rolled again, a cell wider, two cells
 # farther, and a quarter off the mana and the casting time.

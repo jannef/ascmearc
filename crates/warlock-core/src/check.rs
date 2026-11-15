@@ -1,17 +1,16 @@
-//! Checks (spec §8 "Checks"): a stat put to the test, rolled like an attack (spec §8 "Combat").
+//! Checks: a stat put to the test, rolled like an attack.
 //!
 //! A check succeeds when 2d12 (its natural roll, the same dice as an attack's: [`combat::
 //! roll_natural`]) plus the modifier of the stat it tests reaches its **difficulty**. A natural 2
 //! always fails and a natural 24 always succeeds ([`makes`]: narrower than an attack's sure hit,
 //! a natural 22 or better, [`combat::hits`]). Diseases are resisted and fought off with
-//! checks, mostly of Toughness, a few of Willpower (spec §8 "Diseases"); disarming a trap is a
-//! Dexterity check whose failure counts by how much it fell short ([`roll`], spec §8 "Disarming
-//! traps"). Rolls come from the
+//! checks, mostly of Toughness, a few of Willpower; disarming a trap is a
+//! Dexterity check whose failure counts by how much it fell short ([`roll`]). Rolls come from the
 //! gameplay random stream, so they replay exactly; the player never sees a difficulty, a
 //! modifier, or a roll: they see what comes of it.
 //!
 //! A **contest** puts one side's check against the other's: the other side's natural roll plus
-//! its modifier is the difficulty (stealing, spec §8 "Stealing": the thief's Dexterity against
+//! its modifier is the difficulty (stealing: the thief's Dexterity against
 //! the victim's Willpower). A tie goes to the side making the check.
 
 use crate::combat;

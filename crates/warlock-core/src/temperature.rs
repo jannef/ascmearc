@@ -1,4 +1,4 @@
-//! Temperature (spec §5 "Temperature"): how warm the air is on a level.
+//! Temperature: how warm the air is on a level.
 //!
 //! **Underground** (dungeon levels, hand-made or generated) it is fixed: the level file's
 //! `temperature`, else its dungeon branch's for that depth (`data/dungeons.toml`), else

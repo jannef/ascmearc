@@ -18,7 +18,7 @@ cases! {
         keys: Some("r d"),
         ..BASE
     },
-    // The Decipher ability's list (spec §8 "Scrolls"): the scrolls carried of a type not yet made
+    // The Decipher ability's list: the scrolls carried of a type not yet made
     // out; a wizard is trained in Decipher script.
     scroll_decipher_list: Case {
         name: "scroll-decipher-list",
@@ -36,7 +36,7 @@ cases! {
         keys: Some("r a k Enter"),
         ..BASE
     },
-    // Wands (spec §8 "Magic items": "Wands"): the trap hall's two, unknown, then identified;
+    // Wands: the trap hall's two, unknown, then identified;
     // aiming one from the missile weapon slot.
     wand_description_unidentified: Case {
         name: "wand-description-unidentified",
@@ -59,7 +59,7 @@ cases! {
         keys: Some("t"),
         ..BASE
     },
-    // Rods (spec §8 "Magic items": "Rods"): the trap hall's two, identified; aiming one from the
+    // Rods: the trap hall's two, identified; aiming one from the
     // missile weapon slot shows its reach.
     rod_description: Case {
         name: "rod-description",

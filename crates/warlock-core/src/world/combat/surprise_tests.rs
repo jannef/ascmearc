@@ -1,4 +1,4 @@
-//! Surprise (spec §8 "Surprise and sneak attacks"; `world/combat/surprise.rs`): unaware both ways round,
+//! Surprise (`world/combat/surprise.rs`): unaware both ways round,
 //! the initiative check's two outcomes and its two draws, the Surprised status (flat-footed, no
 //! free blows out of turn, the dear action and Cool head's ease), hidden traps and their
 //! bystanders, sleepers and mimics without a check, the messages, saves and replays, no draw

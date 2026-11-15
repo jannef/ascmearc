@@ -1,4 +1,4 @@
-//! A creature type's throw (spec §8 "Ranged combat": "Creatures' throws"): a natural ranged
+//! A creature type's throw: a natural ranged
 //! attack, `[creature.throw]`, that needs no ammunition. A giant hurls boulders: what flies is an
 //! object (for its look only; it never lands), the attack is a natural attack's. A throw whose
 //! object is a flask (a bomber's, the potions wave 2 design §5) has no `damage`: the flask's

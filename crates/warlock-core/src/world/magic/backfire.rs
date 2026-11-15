@@ -1,4 +1,4 @@
-//! Miscast backfires (spec §8 "Spells": "Miscasts"; docs/design/miscasts-review.md §5.3, #1291):
+//! Miscast backfires (docs/design/miscasts-review.md §5.3, #1291):
 //! a `backfire` entry turns the spell just cast on its caster, at the spell's base roll, or the
 //! roll it was cast with when `full`. What it does goes by the spell's kind:
 //!

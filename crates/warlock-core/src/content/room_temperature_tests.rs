@@ -1,4 +1,4 @@
-//! A special room's `temperature` (spec §7 "Special rooms"): parsed, defaulted, and added up by
+//! A special room's `temperature`: parsed, defaulted, and added up by
 //! [`Here::warmth`].
 
 use super::{Here, RoomEffectId, RoomEffects};

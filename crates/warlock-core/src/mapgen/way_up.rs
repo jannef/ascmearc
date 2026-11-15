@@ -1,4 +1,4 @@
-//! Ways up from below (spec §7 "Ways up"; `DungeonDef::below`): a level that another branch's
+//! Ways up from below (`DungeonDef::below`): a level that another branch's
 //! deepest level leads down to gets a staircase up to it, besides its own. It stands in the
 //! roomy spot nearest, by walking, to the entrance of a vault the level names (Fyrdelf 12: the
 //! drake's hoard), ties in row order, so it draws nothing; on a level that names no vault, nearest

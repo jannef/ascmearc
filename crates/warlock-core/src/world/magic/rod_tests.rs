@@ -1,4 +1,4 @@
-//! Rods (spec §8 "Magic items": "Rods"; #399): a rod in the missile weapon slot does its effect
+//! Rods (#399): a rod in the missile weapon slot does its effect
 //! for the user's mana (Channeler and Frugal caster cut it), reaching by the user's Willpower
 //! (a ladder, as a spell's; the spell scaling design §7.5); sleep and
 //! terror take creatures up to the rod's own level; no mana, no use; a rod type is unknown until used or identified; the effects dig, teleport,

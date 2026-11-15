@@ -1,4 +1,4 @@
-# Allies (spec §8 "Allies"; docs/design/druid-and-summons.md §4, §14): every constant of the ally
+# Allies (docs/design/druid-and-summons.md §4, §14): every constant of the ally
 # core. An ally is a creature on the player's side (a summon, a companion); these numbers say
 # how it follows, holds, hunts, and comes along, how loud an order is, how many may be led, and
 # what an ally's kill pays. Without this file no ally can be made.

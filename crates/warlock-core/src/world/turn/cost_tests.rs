@@ -1,4 +1,4 @@
-//! Action costs (spec §8 "Time"): an action's cost and the actor's speed decide how long it
+//! Action costs: an action's cost and the actor's speed decide how long it
 //! takes, `cost / 1000 × 1000 / speed × 6 s` (an overworld step: its travel time instead of
 //! 6 s), exactly over any run of actions; resting ends exactly at its goal at any speed.
 
@@ -134,7 +134,7 @@ weight = 1000
 base_hp = 1000
 faction = "wildlife"
 
-# The hall's walker: hostile, as only a hostile stops a rest (spec §8 "Rest").
+# The hall's walker: hostile, as only a hostile stops a rest.
 [[creature]]
 grades = false
 id = "stalker"

@@ -1,4 +1,4 @@
-//! The free-glyph layer (spec §4.2, layer 2): glyph quads at arbitrary sub-pixel positions with
+//! The free-glyph layer (layer 2): glyph quads at arbitrary sub-pixel positions with
 //! color, alpha, and scale, for anything that moves between cells or grows beyond its cell.
 //!
 //! Producers push [`FreeGlyph`]s into [`FreeGlyphs`] each frame (it is emptied in `PreUpdate`). In
@@ -69,7 +69,7 @@ pub struct FreeGlyph {
     /// vertical stroke leans along a slanted motion (falling rain).
     pub slant: f32,
     /// Rotation about the cell center, in radians, clockwise on screen (y down): a missile's
-    /// glyph turned along its flight (spec §4.8).
+    /// glyph turned along its flight.
     pub turn: f32,
 }
 
@@ -81,10 +81,10 @@ impl FreeGlyph {
     }
 }
 
-/// A glyph drawn in horizontal colour bands, top first (a composite animated thing, spec §8
-/// "Animated objects"): the glyph's own colour is the first band, `more` the next `count - 1`.
-/// The bands lie over the rows a capital letter covers; `drift` (in band heights) moves the
-/// borders between them up or down, never past the glyph's top or bottom band.
+/// A glyph drawn in horizontal colour bands, top first (a composite animated thing): the glyph's
+/// own colour is the first band, `more` the next `count - 1`. The bands lie over the rows a capital
+/// letter covers; `drift` (in band heights) moves the borders between them up or down, never past
+/// the glyph's top or bottom band.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Bands {
     pub more: [LinearRgba; 3],

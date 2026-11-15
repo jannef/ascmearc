@@ -1,13 +1,12 @@
-//! Classes (`assets/data/classes/`, one file per class, spec §8 "Character creation"): the third
+//! Classes (`assets/data/classes/`, one file per class): the third
 //! choice of a new run. A class adjusts the starting scores, by fixed numbers or dice, adds hit
-//! points and mana (spec §8 "Mana"), sets how much experience its levels need (spec §8
-//! "Experience"), trains the character in skills (spec §8 "Skills"), by dice, names the skills it is known for and how many skill
-//! rolls each level gives, and gives starting ranks in weapon skills (spec §8 "Weapon skills")
-//! and fighting styles (spec §8 "Fighting styles"): some always, and perhaps one set of a
+//! points and mana, sets how much experience its levels need, trains the character in skills, by
+//! dice, names the skills it is known for and how many skill rolls each level gives, and gives starting ranks in weapon skills
+//! and fighting styles: some always, and perhaps one set of a
 //! choice, rolled when the character is made. Its `kit` is what the character starts with
 //! ([`super::kit`]).
 //!
-//! Its level table (spec §8 "Class abilities") names the **class abilities** each level gives,
+//! Its level table names the **class abilities** each level gives,
 //! talents of the class tree (`data/talents/`, given, never picked) or ordinary talents the class
 //! hands out, and the levels that bring a **bonus talent pick** from the trees the class names
 //! (any tree when it names none). The talents it names are checked once the talents are loaded
@@ -111,7 +110,7 @@ struct SkillChoiceSpec {
 }
 
 /// One skill a new character of the class always starts trained in, picked at random from a few
-/// (spec §8 "Skills": the commoner's one profession).
+/// (the commoner's one profession).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct SkillChoice {
     /// The skills it picks from, in skill order (at least two, none of the class's skills).
@@ -199,7 +198,7 @@ pub(super) fn check_rows(
     Ok(())
 }
 
-/// A class's bonus talent picks (spec §8 "Class abilities").
+/// A class's bonus talent picks.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct BonusTalents {
     /// The levels that bring one, ascending.
@@ -217,53 +216,53 @@ pub struct ClassDef {
     pub description: String,
     /// Adjustments to the starting scores.
     pub stats: PerStat<Dice>,
-    /// What the class adds to the hit points (spec §8 "Combat").
+    /// What the class adds to the hit points.
     pub hp: i32,
-    /// What the class adds to the mana (spec §8 "Mana"); half of it comes with each level.
+    /// What the class adds to the mana; half of it comes with each level.
     pub mana: i32,
-    /// Its affinity with the schools of magic (spec §8 "Spells"): points off the difficulty of
+    /// Its affinity with the schools of magic: points off the difficulty of
     /// studying a spell of the school (a malus when negative); a school it leaves out, 0.
     pub affinity: BTreeMap<super::spell_def::School, i8>,
-    /// How much experience a level needs, in percent (spec §8 "Experience"): multiplied with
+    /// How much experience a level needs, in percent: multiplied with
     /// the race's onto every threshold. Patient classes pay more (a wizard, 125).
     pub experience: u16,
-    /// Its part of a new character's alignment score (spec §8 "Alignment"), added to the
+    /// Its part of a new character's alignment score, added to the
     /// race's: a paladin starts Good.
     pub alignment: i32,
-    /// The skills it trains (spec §8 "Skills"), each by dice rolled when the character is made,
+    /// The skills it trains, each by dice rolled when the character is made,
     /// in skill order; added to the race's.
     pub skills: Vec<(SkillId, Dice)>,
-    /// The skills it is known for (spec §8 "Skills"), of [`ClassDef::skills`], in skill order:
+    /// The skills it is known for, of [`ClassDef::skills`], in skill order:
     /// a level-up roll on one throws the die one step up the ladder.
     pub known_for: Vec<SkillId>,
     /// The skills a new character may start with besides [`ClassDef::skills`], each by its
-    /// chance (spec §8 "Skills"), in skill order; none of them one of the class's skills.
+    /// chance, in skill order; none of them one of the class's skills.
     pub optional_skills: Vec<OptionalSkill>,
     /// One skill picked at random that a new character always starts with, by its dice (the
     /// commoner's profession); none for most classes.
     pub skill_choice: Option<SkillChoice>,
-    /// The skill rolls each level gives (spec §8 "Skills"), before the race's and
+    /// The skill rolls each level gives, before the race's and
     /// Intelligence's.
     pub rolls: u8,
-    /// Talent picks at creation beyond everyone's (spec §8 "Talents": the bard's one more).
+    /// Talent picks at creation beyond everyone's (the bard's one more).
     pub creation_talents: u8,
     /// Bonus talent picks at creation, from its own trees (the craftsperson's two trades):
     /// level 1's `Due::bonus` (`world/character/creation.rs`).
     pub creation_bonus: Option<CreationBonus>,
-    /// Starting ranks in weapon skills (spec §8 "Weapon skills"), in skill order: added to the
+    /// Starting ranks in weapon skills, in skill order: added to the
     /// race's.
     pub weapon_skills: Vec<(WeaponSkillId, Dice)>,
     /// Sets of starting ranks of which one is picked at random (the berserker: axes or great
     /// blades); empty for none.
     pub weapon_skill_choice: Vec<Vec<(WeaponSkillId, Dice)>>,
-    /// Starting ranks in fighting styles (spec §8 "Fighting styles"), in skill order.
+    /// Starting ranks in fighting styles, in skill order.
     pub styles: Vec<(WeaponSkillId, Dice)>,
     /// Sets of starting ranks in fighting styles of which one is picked at random (the thief:
     /// Twin Blades or Duelist); empty for none.
     pub style_choice: Vec<Vec<(WeaponSkillId, Dice)>>,
     /// The starting kit as written; resolved by the loader into `kit`.
     pub(super) kit_spec: Vec<KitLineSpec>,
-    /// What the class starts with (spec §8 "Character creation"): first in a new character's
+    /// What the class starts with: first in a new character's
     /// pack; filled in by the loader once objects are known.
     pub kit: Kit,
     /// Its `random_scrolls` as written; resolved by the loader into `random_scrolls`.
@@ -271,21 +270,21 @@ pub struct ClassDef {
     /// The spell scrolls its kit adds at random (the casters'), after every kit's lines;
     /// filled in by the loader once objects and spells are known.
     pub random_scrolls: Option<RandomScrolls>,
-    /// Its class abilities (spec §8 "Class abilities"): at each level, the talent it gives, by
+    /// Its class abilities: at each level, the talent it gives, by
     /// id, ascending by level.
     pub abilities: Vec<(u8, String)>,
     /// Its bonus talent picks.
     pub bonus_talents: BonusTalents,
-    /// The highest level the class reaches (spec §8 "Prestige classes"): the file's
+    /// The highest level the class reaches: the file's
     /// `max_level`, else `[levels] class_max` of `data/experience.toml`, filled in by the loader
     /// ([`ClassDef::settle_cap`]; 0 until then). A character's level stops here until a prestige
     /// class takes them on.
     pub max_level: u8,
-    /// What an ally's kill pays a character of the class, in percent of their own kill (spec §8
-    /// "Allies"): the pet classes' 100 (the ranger, the druid); `None` for `[xp] ally_percent`
-    /// of `data/allies.toml`, everyone else's.
+    /// What an ally's kill pays a character of the class, in percent of their own kill: the pet
+    /// classes' 100 (the ranger, the druid); `None` for `[xp] ally_percent` of `data/allies.toml`,
+    /// everyone else's.
     pub ally_share: Option<u8>,
-    /// The races that may not take it, by id (spec §8 "Character creation": no goblin paladin).
+    /// The races that may not take it, by id (no goblin paladin).
     pub races_not: Vec<String>,
     /// The races that may take it only with some genders (a drow priest is a woman).
     pub only: Vec<OnlySpec>,
@@ -580,7 +579,7 @@ impl ClassDef {
     }
 }
 
-/// The class actives (spec §8 "Class abilities"): what a class ability with an active effect
+/// The class actives: what a class ability with an active effect
 /// does when it is used from the abilities menu, each its own rule (`world/classes/class_ability.rs`).
 /// The ability that has one is named by its id (`use:rage`, `use:smite:E`).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
@@ -796,8 +795,8 @@ impl ClassActive {
         self.aimed() && !matches!(self, ClassActive::Knock | ClassActive::FieldForge)
     }
 
-    /// Whether it is a holy gift that may be given an `alignment` in its data (spec §8
-    /// "Alignment"): used outside those bands, it does nothing (`World::unanswered`).
+    /// Whether it is a holy gift that may be given an `alignment` in its data: used outside those
+    /// bands, it does nothing (`World::unanswered`).
     pub const fn holy(self) -> bool {
         matches!(
             self,
@@ -1126,7 +1125,7 @@ mod tests {
         assert!(levels.windows(2).all(|w| w[0] <= w[1]), "{levels:?}");
     }
 
-    /// The highest level a class reaches (spec §8 "Prestige classes"): the file's `max_level`,
+    /// The highest level a class reaches: the file's `max_level`,
     /// else the experience file's `class_max`, never past the curve.
     #[test]
     fn max_level_defaults_to_the_class_cap() {

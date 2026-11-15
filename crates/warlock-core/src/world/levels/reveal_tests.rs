@@ -1,4 +1,4 @@
-//! Hidden locations (spec §7 "Hidden locations", #327): the legend's `hidden`, what the player
+//! Hidden locations (#327): the legend's `hidden`, what the player
 //! sees before (nothing: the plain terrain, in every view and dump) and after a reveal, the
 //! reveal by a quest at each of its stages and by the dev action, a reveal before the overworld
 //! is made, saves, replays, and the content checks. The fixture is the built-in content with a

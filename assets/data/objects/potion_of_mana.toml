@@ -1,4 +1,4 @@
-# A potion of mana (spec §8 "Potions"): mana back at once. Mana is blue.
+# A potion of mana: mana back at once. Mana is blue.
 [[object]]
 id = "potion_of_mana"
 name = "potion of mana"

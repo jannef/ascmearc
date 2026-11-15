@@ -1,4 +1,4 @@
-# A potion of clear head (spec §8 "Potions", the potions wave 2 design §4.2): the clouded mind
+# A potion of clear head (the potions wave 2 design §4.2): the clouded mind
 # and the numbed body cleared at once (what `cured_by` names `clear_head`: Frightened, Drowsy,
 # Sluggish, Stunned, Staggered, Transfixed). Cures are green; this one a pale green.
 [[object]]

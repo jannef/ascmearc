@@ -1,5 +1,4 @@
-//! Object definitions (`assets/data/objects/`, one file per object, docs/dev/content.md; spec
-//! §7): the things that lie on the floor and
+//! Object definitions (`assets/data/objects/`, one file per object, docs/dev/content.md): the things that lie on the floor and
 //! are picked up and carried.
 //!
 //! Every object defines the glyph it is drawn with, its color, what it is made of (`materials`,
@@ -15,21 +14,20 @@
 //! Things that can be worn or wielded say where they go (`slot`, the id or `fits` of a slot in
 //! `data/slots.toml`: `slot = "body"`, `slot = "ring"` for either ring slot); a `two_handed` one
 //! takes both hands, and a `light_weapon` (a dagger) goes in any hand: the off hand too, for
-//! fighting with two weapons (spec §8 "Fighting styles"). Missiles say what kind of ammunition they are (`ammo = "arrow"`) and missile
+//! fighting with two weapons. Missiles say what kind of ammunition they are (`ammo = "arrow"`) and missile
 //! weapons what they shoot (`launches = "arrow"`): launchers and ammunition pair by that kind.
 //!
-//! Weapons and armour say what they do in a fight (spec §8 "Combat"): a weapon its `damage` dice
+//! Weapons and armour say what they do in a fight: a weapon its `damage` dice
 //! (a launcher's carry its draw weight, `1d8+2`), its critical (`threat`, the lowest natural roll
 //! that threatens, default 22; `crit`, the damage multiplier, default 2), an optional `to_hit`,
 //! a `parry` bonus to Defence while wielded, and for bows the `strength` they need; armour its
 //! `armour` bonus and the most Dexterity bonus it allows (`max_dex`), and its `protection` (the
 //! damage it soaks off every hit, which adds up across what is worn); a shield its `shield` bonus,
-//! and the `bash` dice of a blow with it (spec §8 "Weapon skills": the shield bash). A weapon or
+//! and the `bash` dice of a blow with it (the shield bash). A weapon or
 //! a missile may have `penetration`: that much of a target's Protection it ignores. Armour and
-//! shields may have `spell_cost_percent`: worn, a spell costs that much more mana (spec §8
-//! "Spells"; what is worn adds up).
+//! shields may have `spell_cost_percent`: worn, a spell costs that much more mana (what is worn adds up).
 //!
-//! Damage types (spec §8 "Damage types"): every weapon (and a shield that bashes) names the
+//! Damage types: every weapon (and a shield that bashes) names the
 //! kind of damage it does (`damage_type`, an id in `data/damage_types.toml`, or two: a sword's
 //! `["slashing", "piercing"]` does whichever is better against its target), and may name the
 //! `verb` its blows are said with ("cleaves") instead of the kind's; a weapon or a missile may
@@ -38,14 +36,14 @@
 //! with Protection may stand better or worse against a physical kind (`protects = { slashing =
 //! 1, piercing = -1 }`).
 //!
-//! A weapon names its weapon skill (`category`, an id in `data/weapon_skills.toml`; spec §8
-//! "Weapon skills"): the game's give a skill of role `melee` to what is wielded in a hand,
+//! A weapon names its weapon skill (`category`, an id in `data/weapon_skills.toml`): the game's
+//! give a skill of role `melee` to what is wielded in a hand,
 //! `launcher` to a missile weapon, `thrown` to what is only thrown (a rock).
 //!
-//! Keys (spec §8 "Doors") say which locks they open: `key = "pantry"` opens the locks with that
+//! Keys say which locks they open: `key = "pantry"` opens the locks with that
 //! lock id, `key = "*"` (a skeleton key) every lock.
 //!
-//! Ranged combat (spec §8 "Ranged combat"): a missile weapon shoots as far as its `range` (and
+//! Ranged combat: a missile weapon shoots as far as its `range` (and
 //! one that `reloads`, a crossbow, takes the `reload` action after every shot); anything else
 //! with a `range` is a throwing weapon, thrown that far, its `damage` its own (a rock needs no
 //! slot). What flies may `break` on a hit (a percent chance), and what is `lit` as it is loosed
@@ -55,13 +53,13 @@
 //! whether it `spins`, how much it `glow`s where it lies, and its `particles` (`ambient` while
 //! it lies in view on top of its pile, `flight` while it flies).
 //!
-//! Base items (spec §8 "Magic items"): an object that may be found magic says what `kind` of
+//! Base items: an object that may be found magic says what `kind` of
 //! item it is ([`ItemKind`]: a weapon, a missile weapon, ammunition, body armour, a helmet, a
 //! cloak, gloves, boots, a shield, a ring, or an amulet), the item `level` from which loot holds
 //! it (default 1), and how often (`frequency`, default 100; 0: never). Weapons may cost more or
 //! less than a normal attack (`attack_cost`, instead of the `melee` or `shoot` action's).
 //!
-//! Food (spec §8 "Hunger") says what it gives, how long it takes to eat, and how long it keeps
+//! Food says what it gives, how long it takes to eat, and how long it keeps
 //! and lasts: `food = { nutrition = 1500, turns = 4, keeps = "30d", lasts = "60d" }` (it rots
 //! from when it was made, [`Stack::died`], [`crate::rot`]). Corpses are objects too, one made for
 //! each creature type that leaves one ([`ObjectDef::corpse_of`]): "kobold corpse", `%` in the
@@ -69,10 +67,10 @@
 //! files cannot place them: they lie where creatures died, each with the moment it died, from
 //! which it rots.
 //!
-//! Digging tools (spec §8 "Digging") have a `dig` power: the work a dig with one does against a
+//! Digging tools have a `dig` power: the work a dig with one does against a
 //! wall's hardness (a pick-axe 10, at Strength 10). They go in a slot (the Tool slot).
 //!
-//! Scrolls (spec §8 "Scrolls") say what reading one does (`read`, [`super::scroll`]): cast a
+//! Scrolls say what reading one does (`read`, [`super::scroll`]): cast a
 //! spell the reader aims, with the traps' rules, or identify an item. They are loot too (`level`,
 //! `frequency`), never magic.
 
@@ -116,7 +114,7 @@ pub const MAX_VALUE: u32 = 1_000_000;
 pub struct ObjectId(pub u16);
 
 /// What one weapon of each weapon skill (`category`, an id in `data/weapon_skills.toml`) is
-/// called, for item descriptions (spec §8 "Magic items"): a skill not listed is called by its
+/// called, for item descriptions: a skill not listed is called by its
 /// name.
 pub const WEAPON_NOUNS: [(&str, &str); 13] = [
     ("daggers", "dagger"),
@@ -168,11 +166,11 @@ pub(super) struct ObjectSpec {
     /// and materials ([`part::construction`]).
     pub made_of: Option<Vec<String>>,
     /// The part a gem is set as when loot ornaments it (a part id: `tip`), instead of its
-    /// class's in `data/gems.toml` (spec §7 "Gems").
+    /// class's in `data/gems.toml`.
     pub ornament: Option<String>,
     /// Grams.
     pub weight: u32,
-    /// What one is worth, in gold coins (shops; spec §7 "Shops").
+    /// What one is worth, in gold coins (shops).
     pub value: u32,
     #[serde(default)]
     pub stackable: bool,
@@ -224,7 +222,7 @@ pub(super) struct ObjectSpec {
     /// missile weapon, ammunition).
     #[serde(default)]
     pub penetration: i32,
-    /// The kind of damage a weapon does (spec §8 "Damage types"), or two of which a blow does
+    /// The kind of damage a weapon does, or two of which a blow does
     /// the better: `damage_type = "slashing"`, `["slashing", "piercing"]`. A shield's is its
     /// bash's.
     pub damage_type: Option<TypeNames>,
@@ -261,7 +259,7 @@ pub(super) struct ObjectSpec {
     pub light: Option<String>,
     /// How long it burns where it lands, in seconds of game time; then it is gone.
     pub burns: Option<u32>,
-    /// A digging tool's power (spec §8 "Digging"): how much work a dig with it does.
+    /// A digging tool's power: how much work a dig with it does.
     pub dig: Option<u16>,
     /// Presentation: the glyph it flies as, drawn pointing right and turned along its flight
     /// (default: its own glyph, upright).
@@ -286,21 +284,21 @@ pub(super) struct ObjectSpec {
     pub level: Option<u8>,
     /// How often loot holds it among what may be there (default 100; 0: never).
     pub frequency: Option<u32>,
-    /// What eating it gives (spec §8 "Hunger"): its nutrition and the turns it takes.
+    /// What eating it gives: its nutrition and the turns it takes.
     pub food: Option<Food>,
     /// What eating it cures (food only): means named in the statuses' and diseases' `cured_by`
     /// (`remove_disease`).
     #[serde(default)]
     pub cures: Vec<String>,
-    /// What reading it does (a scroll, spec §8 "Scrolls").
+    /// What reading it does (a scroll).
     pub read: Option<ReadSpec>,
-    /// The spell it holds and its charges, if it is a wand (spec §8 "Magic items": "Wands").
+    /// The spell it holds and its charges, if it is a wand.
     pub wand: Option<WandSpec>,
-    /// The effect it holds and its mana cost, if it is a rod (spec §8 "Magic items": "Rods").
+    /// The effect it holds and its mana cost, if it is a rod.
     pub rod: Option<RodSpec>,
-    /// What drinking it does, if it is a potion (spec §8 "Potions").
+    /// What drinking it does, if it is a potion.
     pub drink: Option<DrinkSpec>,
-    /// What throwing it does, if it is a flask (spec §8 "Potions": "Flasks").
+    /// What throwing it does, if it is a flask.
     pub throw: Option<ThrowSpec>,
 }
 
@@ -329,12 +327,11 @@ pub struct ObjectDef {
     /// `parts`' order, each sorted by material id; empty when no part has a list, as then each
     /// is made only of its own material.
     pub construction: Vec<Vec<MaterialId>>,
-    /// The part a gem is set as when loot ornaments it, instead of its class's (spec §7 "Gems").
+    /// The part a gem is set as when loot ornaments it, instead of its class's.
     pub ornament: Option<PartId>,
     /// Weight of one, in grams.
     pub weight: u32,
-    /// What one is worth, in gold coins; 0 for junk (spec §7 "Shops":
-    /// nobody buys or sells it).
+    /// What one is worth, in gold coins; 0 for junk (nobody buys or sells it).
     pub value: u32,
     /// Several lie in one stack (coins, arrows) instead of a stack each.
     pub stackable: bool,
@@ -358,9 +355,9 @@ pub struct ObjectDef {
     /// While worn, the most the Dexterity bonus may add to Defence (`None`: no limit).
     pub max_dex: Option<i32>,
     /// While worn, the damage it soaks off every hit: its Protection, which adds up with the
-    /// rest of what is worn (spec §8 "Combat").
+    /// rest of what is worn.
     pub protection: i32,
-    /// While worn, percent more mana a spell costs (spec §8 "Spells"); what is worn adds up.
+    /// While worn, percent more mana a spell costs; what is worn adds up.
     pub spell_cost_percent: u16,
     /// Defence while held: its Shield bonus.
     pub shield: i32,
@@ -370,12 +367,12 @@ pub struct ObjectDef {
     /// ammunition: a shot's is its launcher's and its ammunition's together). Rules only.
     pub penetration: i32,
     /// What a blow with it does to its target, if it says ("cleaves"); else its damage type's
-    /// verb, else "hits" (spec §8 "Damage types").
+    /// verb, else "hits".
     pub verb: Option<String>,
     /// Damage of another kind every hit with it adds (a weapon's, a missile weapon's, or
     /// ammunition's: a shot adds the launcher's and the ammunition's).
     pub added: Option<Rider>,
-    /// What it resists while worn or held, in percent per damage type (spec §8 "Damage types").
+    /// What it resists while worn or held, in percent per damage type.
     pub resist: Vec<(DamageTypeId, i32)>,
     /// How its Protection stands against each physical kind, more or less than `protection`.
     pub protects: Vec<(DamageTypeId, i32)>,
@@ -392,13 +389,13 @@ pub struct ObjectDef {
     pub lit: Option<ObjectId>,
     /// The light it gives where it lies, while it burns, and for how long it burns.
     pub burning: Option<Burning>,
-    /// A carried light (a lantern; spec §5 "Light sources"): the light preset it gives while it
+    /// A carried light (a lantern): the light preset it gives while it
     /// is ready in the Tool slot and lit (`u`, `World::use_tool`, lights it). Read in one place,
     /// `WorldState::carried_light`. `None`: it gives no light carried.
     pub carried_light: Option<LightId>,
-    /// A key: what locks it opens (spec §8 "Doors").
+    /// A key: what locks it opens.
     pub key: Option<Key>,
-    /// A digging tool's power (spec §8 "Digging"): a dig with it at Strength 10 does this much
+    /// A digging tool's power: a dig with it at Strength 10 does this much
     /// work against a wall's hardness ([`crate::world::dig_work`]). `None`: it does not dig.
     pub dig: Option<u16>,
     /// Presentation: the glyph it flies as, pointing right; `None`: its glyph, upright.
@@ -419,28 +416,26 @@ pub struct ObjectDef {
     /// How often loot holds it, relative to the rest (0 for what is no loot: neither a base item,
     /// with a `kind`, nor a scroll).
     pub frequency: u32,
-    /// What eating it gives, if it is food or a corpse (spec §8 "Hunger").
+    /// What eating it gives, if it is food or a corpse.
     pub food: Option<Food>,
     /// What eating it cures: means named in the statuses' and diseases' `cured_by` (a remedy
-    /// for diseases: `remove_disease`; spec §8 "Diseases").
+    /// for diseases: `remove_disease`).
     pub cures: Vec<String>,
     /// The creature type it is the corpse of, if it is a corpse: it rots from the moment its
     /// creature died ([`Stack::died`]).
     pub corpse: Option<CreatureId>,
-    /// What reading it does, if it is a scroll (spec §8 "Scrolls").
+    /// What reading it does, if it is a scroll.
     pub read: Option<Reading>,
-    /// The spell it teaches, if it is a grimoire (spec §8 "Spells": "Learning";
-    /// [`super::grimoire`]): read, it is a study of that spell. Generated, never written.
+    /// The spell it teaches, if it is a grimoire ([`super::grimoire`]): read, it is a study of that
+    /// spell. Generated, never written.
     pub grimoire: Option<SpellId>,
-    /// The spell it holds, its charges, and its rungs, if it is a wand (spec §8 "Magic
-    /// items": "Wands").
+    /// The spell it holds, its charges, and its rungs, if it is a wand.
     pub wand: Option<Wand>,
-    /// The effect it holds and what a use costs in mana, if it is a rod (spec §8 "Magic items":
-    /// "Rods").
+    /// The effect it holds and what a use costs in mana, if it is a rod.
     pub rod: Option<Rod>,
-    /// What drinking it does, if it is a potion (spec §8 "Potions").
+    /// What drinking it does, if it is a potion.
     pub drink: Option<Drink>,
-    /// What throwing it does, if it is a flask (spec §8 "Potions": "Flasks"): a potion too.
+    /// What throwing it does, if it is a flask: a potion too.
     pub flask: Option<Flask>,
 }
 
@@ -505,7 +500,7 @@ impl ObjectDef {
             construction: Vec::new(),
             ornament: None,
             weight: creature.weight,
-            // Nobody buys or sells a corpse (spec §7 "Shops").
+            // Nobody buys or sells a corpse.
             value: 0,
             stackable: false,
             slot: None,
@@ -555,7 +550,7 @@ impl ObjectDef {
         }
     }
 
-    /// What it is made of: its main part's material (spec §7 "Objects and materials"), which
+    /// What it is made of: its main part's material, which
     /// decides what a single material decides. [`ObjectDef::parts`] has every part.
     pub fn material(&self) -> MaterialId {
         self.parts[0].material
@@ -634,7 +629,7 @@ impl ObjectDef {
     }
 
     /// How far it is thrown, if it can be: a flask its own range, any other potion as far as an
-    /// improvised weapon (it shatters where it lands, spec §8 "Potions": "Flasks").
+    /// improvised weapon (it shatters where it lands).
     pub fn throw_range(&self) -> Option<i32> {
         if let Some(flask) = &self.flask {
             Some(flask.range)
@@ -785,7 +780,7 @@ impl ObjectSpec {
             return Err(err("`protects` is for armour with `protection`".into()));
         }
         // Without `burns`, a light that goes in a slot is carried: it gives its light ready in the
-        // Tool slot, lit (spec §5 "Light sources").
+        // Tool slot, lit.
         let carried_light = match (&self.light, self.burns, &self.slot) {
             (Some(id), None, Some(_)) => {
                 let light = light(id).ok_or_else(|| err(format!("unknown light preset `{id}`")))?;
@@ -923,7 +918,7 @@ impl ObjectSpec {
         Ok((def, self.lit))
     }
 
-    /// Its wand, resolved (spec §8 "Magic items": "Wands"): one that goes in a slot (the missile
+    /// Its wand, resolved: one that goes in a slot (the missile
     /// weapon slot), one at a time, and is nothing else (no weapon, missile, food, scroll, or
     /// magic item kind).
     fn wand_of(&self, content: &Content) -> Result<Option<Wand>, String> {
@@ -948,7 +943,7 @@ impl ObjectSpec {
         spec.resolve(content).map(Some)
     }
 
-    /// Its rod, resolved (spec §8 "Magic items": "Rods"): as a wand, one that goes in a slot,
+    /// Its rod, resolved: as a wand, one that goes in a slot,
     /// one at a time, and is nothing else (no weapon, missile, food, scroll, wand, or magic item
     /// kind).
     fn rod_of(&self, content: &Content) -> Result<Option<Rod>, String> {
@@ -974,7 +969,7 @@ impl ObjectSpec {
         spec.resolve(content).map(Some)
     }
 
-    /// Its potion, resolved (spec §8 "Potions"): stackable, and nothing else (no slot, weapon,
+    /// Its potion, resolved: stackable, and nothing else (no slot, weapon,
     /// missile, food, scroll, wand, rod, or magic item kind).
     fn drink_of(&self, content: &Content) -> Result<Option<Drink>, String> {
         let Some(spec) = self.drink.clone() else {
@@ -1174,10 +1169,9 @@ impl ObjectSpec {
 
 /// Parses objects as level files place them: ids, each optionally with a count (`"arrow*12"`),
 /// first on top; a loose gem names its gem (`"gem:ruby*3"`: the gems' object made of that gem,
-/// of the plain size and cut, or of a cut named after it, `"gem:garnet:uncut"`; spec §7
-/// "Gems"), and anything else may name another material its
-/// base item may be made of (`"dagger:bronze"`, a variant, #193), and a unique item is named by
-/// its id (`"unique:widowmaker"`, spec §8 "Magic items"). A stackable
+/// of the plain size and cut, or of a cut named after it, `"gem:garnet:uncut"`), and anything else
+/// may name another material its base item may be made of (`"dagger:bronze"`, a variant, #193), and
+/// a unique item is named by its id (`"unique:widowmaker"`). A stackable
 /// object becomes one stack (the same placement twice joins it); any other object becomes a
 /// stack of one per count.
 pub(super) fn parse_stacks(specs: &[String], content: &Content) -> Result<Vec<Stack>, String> {

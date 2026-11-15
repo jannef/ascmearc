@@ -1,4 +1,4 @@
-//! Escorts (#1139; spec §8 "Quests": "Escort quests"; `docs/dev/quests.md`, `docs/dev/allies.md`):
+//! Escorts (#1139; "Escort quests"; `docs/dev/quests.md`, `docs/dev/allies.md`):
 //! a unique character the player brings home for an escort quest (`type = "escort"`,
 //! [`Goal::Escort`]).
 //!

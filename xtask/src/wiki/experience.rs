@@ -1,4 +1,4 @@
-//! Experience (spec §8 "Experience"): the level curve in kills and XP with the race and class
+//! Experience: the level curve in kills and XP with the race and class
 //! factors, the zero difference, kill XP scaling, an example, discovery, and the creatures'
 //! levels.
 
@@ -23,7 +23,7 @@ fn extremes(content: &Content) -> Option<[(String, Factor); 2]> {
     Some([named(quick_race, quick_class), named(slow_race, slow_class)])
 }
 
-/// The XP needed for each level (spec §8 "Experience"), every level to the curve's top: the
+/// The XP needed for each level, every level to the curve's top: the
 /// kills of the player's own level the level costs, its XP, the total for a character of 100 %,
 /// the totals for the quickest and the slowest race and class, whether it grows hit points and
 /// mana, and the classes whose last level it is (`ClassDef::max_level`).

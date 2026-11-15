@@ -1,4 +1,4 @@
-//! `--more--` (spec §6 "Messages", #207): this turn's messages in the message line, ADOM-style.
+//! `--more--` (#207): this turn's messages in the message line, ADOM-style.
 //!
 //! The messages logged since the player last acted ([`Game::unread`]: since the run began, for
 //! a new run) run on one after another in the message line's rows, wrapped at word boundaries
@@ -12,7 +12,7 @@
 //! keeps the end of this turn's messages; rows they leave free show earlier messages, one a
 //! row, as before.
 //!
-//! A turn that left the player hungrier ([`Game::hunger_stop`], spec §8 "Hunger") waits at its
+//! A turn that left the player hungrier ([`Game::hunger_stop`]) waits at its
 //! last page too, however little it said, so the news cannot scroll past.
 //!
 //! Presentation only: the rules, replays, and dumps never see pages. The whole log is on the

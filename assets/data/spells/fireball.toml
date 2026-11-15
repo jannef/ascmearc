@@ -1,4 +1,4 @@
-# Fireball (spec §8 "Spells", the first spell list; the wizard's Fire burst of #395 folded into it):
+# Fireball (the first spell list; the wizard's Fire burst of #395 folded into it):
 # a burst of fire; its ladder of Intelligence ([spell.grows]) adds dice.
 [[spell]]
 id = "fireball"
@@ -26,7 +26,7 @@ noise = { sound = "explosion", loudness = 150 }
 damage = "intelligence 13 6d6, 16 8d6, 19 10d6, 25 10d6+2"
 range = "willpower 14 11, 18 12"
 
-# What rereading its grimoire adds, rank by rank (spec §8 "Spells": "Ranks"; README.toml
+# What rereading its grimoire adds, rank by rank (README.toml
 # `[spell.ranks]`). At rank 10: two cells farther, 1s rolled again, +2 on the roll, two dice more, a
 # fifth off the mana, and a burst a cell wider.
 [spell.ranks]

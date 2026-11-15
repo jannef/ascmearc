@@ -1,10 +1,10 @@
-//! Trap definitions (`assets/data/traps.toml`, spec §7, §8 "Traps").
+//! Trap definitions (`assets/data/traps.toml`).
 //!
 //! Every trap type has an `id`, a `name` ("fireball trap"), the glyph it shows as once known
 //! (`^` by default) and its color, an optional `message` said when the player perceives it go off
 //! ("A fireball explodes!"), optional `charges` (how often it goes off before it is spent; none:
 //! it never runs out), an optional `noise` it makes going off (`{ sound = "explosion", loudness
-//! = 150 }`, heard like any noise, spec §5 "Hearing"), and what it does (`kind`):
+//! = 150 }`, heard like any noise), and what it does (`kind`):
 //!
 //! - `shot`: an `object` (an arrow) shoots out of a hidden slit in the nearest wall at whoever
 //!   set it off: an attack roll with the trap's `to_hit` and `damage` against their Defence; the
@@ -13,9 +13,9 @@
 //!   Defence of whoever stands on the trap, made with what `noun` names;
 //! - `burst`: a blast of `radius` cells around the trap (a fireball): everyone in it takes
 //!   `damage`, no roll to hit, half of it (at least 1) beyond the inner cells; with a `blast`, it
-//!   breaks every wall in it whose hardness is below that (spec §8 "Digging"); with `heat`, it
+//!   breaks every wall in it whose hardness is below that; with `heat`, it
 //!   melts all the ice in it, and with `frost` (mm) it freezes the water in it at once to at
-//!   least that thick (spec §5 "Ice");
+//!   least that thick;
 //! - `bolt`: a line from the trap in one direction, up to `length` cells or the first wall (a
 //!   lightning bolt): everyone on it takes `damage`;
 //! - `pit`: whoever steps on it falls in, takes `damage`, and loses their next action climbing
@@ -26,13 +26,13 @@
 //! `burst` and `bolt` name the `spell` effect presentation shows (`data/effects.toml`: what a
 //! fireball looks like); `strike`, `burst`, and `bolt` name what hits (`noun`, "fireball") and
 //! what it does (`verb`, default: its damage type's verb), for messages ("The fireball burns
-//! the kobold."). Every trap that does damage names its `damage_type` (spec §8 "Damage
-//! types"): the arrow and the spears piercing, the fireball fire, the pit bludgeoning.
+//! the kobold."). Every trap that does damage names its `damage_type`: the arrow and the spears
+//! piercing, the fireball fire, the pit bludgeoning.
 //!
 //! A trap on a level ([`Trap`]) is hidden until the player sets it off or sees a creature do it,
-//! and from then on known and remembered (spec §8 "Traps"). A level may put one on a door, of any
-//! kind but a pit ([`TrapEffect::fits_fixture`]): opening or kicking the door sets it off (spec §8
-//! "Trapped doors"); so may a shut chest, from the same list (spec §8 "Chests").
+//! and from then on known and remembered. A level may put one on a door, of any
+//! kind but a pit ([`TrapEffect::fits_fixture`]): opening or kicking the door sets it off; so may a
+//! shut chest, from the same list.
 
 use super::damage_type::TypeNames;
 use super::danger::MAX_DANGER;
@@ -58,7 +58,7 @@ fn trap_glyph() -> char {
     '^'
 }
 
-/// A trap's difficulty where data gives none (spec §8 "Searching").
+/// A trap's difficulty where data gives none.
 pub const DEFAULT_TRAP_DIFFICULTY: u8 = 15;
 
 fn trap_difficulty() -> u8 {
@@ -81,9 +81,9 @@ pub(super) struct TrapFile {
     pub trap: Vec<TrapSpec>,
 }
 
-/// The chance of stepping onto a known trap without setting it off (spec §8 "Traps",
-/// `[avoid]` in `data/traps.toml`): `base` percent plus `per_point` for each point of the
-/// stepper's dodge (the Dexterity and Dodge parts of their Defence), kept within `min` and `max`.
+/// The chance of stepping onto a known trap without setting it off (`[avoid]` in
+/// `data/traps.toml`): `base` percent plus `per_point` for each point of the stepper's dodge (the
+/// Dexterity and Dodge parts of their Defence), kept within `min` and `max`.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct TrapAvoid {
@@ -208,7 +208,7 @@ pub(super) struct TrapSpec {
     message: Option<String>,
     charges: Option<u16>,
     noise: Option<TrapNoise>,
-    /// How hard it is to find (spec §8 "Searching").
+    /// How hard it is to find.
     #[serde(default = "trap_difficulty")]
     difficulty: u8,
     /// What gives it away to whoever finds it: "a pressure plate".
@@ -228,9 +228,9 @@ pub(super) struct TrapSpec {
     to_hit: i32,
     /// `burst`.
     radius: Option<i32>,
-    /// `burst`: how strong the explosion is against walls (spec §8 "Digging"); none breaks none.
+    /// `burst`: how strong the explosion is against walls; none breaks none.
     blast: Option<u16>,
-    /// `burst`: it is hot, and melts the ice it reaches (spec §5 "Ice").
+    /// `burst`: it is hot, and melts the ice it reaches.
     #[serde(default)]
     heat: bool,
     /// `burst`: it is cold, and freezes the water it reaches to at least this many mm of ice.
@@ -252,7 +252,7 @@ struct GrowsSpec {
     damage: String,
 }
 
-/// A trap's damage by the danger of the level it lies on (spec §8 "Traps", `[trap.grows]` in
+/// A trap's damage by the danger of the level it lies on (`[trap.grows]` in
 /// `data/traps.toml`, in the style of a spell's `[spell.grows]`, `content/spell_ladder.rs`):
 /// rungs `danger AT ROLL`, `AT` 1 to [`MAX_DANGER`] strictly ascending; a level of danger *D*
 /// reads the last rung at or below *D*, and below the first (a level without a danger: 0) the
@@ -344,15 +344,15 @@ impl TrapEffect {
         }
     }
 
-    /// Whether a trap of this kind may lie on a fixture: a door (spec §8 "Trapped doors") or a
-    /// shut chest (spec §8 "Chests"). Its trap goes off at whoever opens or kicks it, from the
+    /// Whether a trap of this kind may lie on a fixture: a door or a
+    /// shut chest. Its trap goes off at whoever opens or kicks it, from the
     /// next cell: everything that strikes its victim where it stands or bursts out around the
     /// trap works there, but a pit needs its victim on its own cell, to fall in and climb out.
     pub const fn fits_fixture(&self) -> bool {
         !matches!(self, TrapEffect::Pit { .. })
     }
 
-    /// Whether this trap, going off on a shut chest, blows the chest up (spec §8 "Chests"): a
+    /// Whether this trap, going off on a shut chest, blows the chest up: a
     /// burst goes off inside the box; a shot, a strike, a bolt, an alarm, or a teleport leaves it
     /// as it was.
     pub const fn blows_fixture(&self) -> bool {
@@ -387,7 +387,7 @@ impl TrapEffect {
         effect
     }
 
-    /// The kind of damage it does, if it does any (spec §8 "Damage types").
+    /// The kind of damage it does, if it does any.
     pub fn damage_kind(&self) -> Option<DamageTypeId> {
         match self {
             TrapEffect::Shot { attack, .. } | TrapEffect::Strike { attack } => attack.kinds.main(),
@@ -413,7 +413,7 @@ pub struct TrapDef {
     pub charges: Option<u16>,
     /// The noise it makes going off, on its cell.
     pub noise: Option<TrapNoise>,
-    /// How hard it is to find while hidden (spec §8 "Searching"): what a search must reach.
+    /// How hard it is to find while hidden: what a search must reach.
     pub difficulty: u8,
     /// What gives it away to whoever finds it: "You notice a pressure plate: an arrow trap."
     pub sign: String,
@@ -427,7 +427,7 @@ pub struct TrapDef {
 }
 
 impl TrapDef {
-    /// Its damage on a level of `danger` (spec §8 "Traps": [`TrapGrows`]), if it does any.
+    /// Its damage on a level of `danger` ([`TrapGrows`]), if it does any.
     pub fn damage_at(&self, danger: u8) -> Option<Roll> {
         let base = self.effect.damage()?;
         Some((self.grows.as_ref()).map_or(base, |g| g.damage_at(danger, base)))
@@ -626,7 +626,7 @@ pub(super) fn parse(
     Ok((defs, ids, (parsed.avoid, parsed.disarm, parsed.harm)))
 }
 
-/// A trap lying on a level's cell (spec §8 "Traps"): ground truth, kept in the level state.
+/// A trap lying on a level's cell: ground truth, kept in the level state.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Trap {
     /// Its type.

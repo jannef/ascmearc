@@ -1,4 +1,4 @@
-//! `cargo xtask golden [--update | --local]`: golden screenshots per showcase room (spec §10).
+//! `cargo xtask golden [--update | --local]`: golden screenshots per showcase room.
 //!
 //! The manifest is the directory `tests/golden/manifest/`: every `*.toml` directly in it, read in
 //! file-name order (one file per showcase room or feature, so feature branches add entries without
@@ -132,8 +132,8 @@ struct Entry {
     seed: Option<u64>,
     /// The character the run starts as (`dwarf,female,warrior`), instead of the scenario's.
     character: Option<String>,
-    /// Start with the character's starting kit, as a run whose character the player chose does
-    /// (spec §8 "Character creation"); default false: the scenario's pack alone.
+    /// Start with the character's starting kit, as a run whose character the player chose does;
+    /// default false: the scenario's pack alone.
     #[serde(default)]
     kit: bool,
     /// Text actions (`move:N*3 open:E wait`; `*N` repeats an action); created into a replay.

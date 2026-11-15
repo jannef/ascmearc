@@ -1,4 +1,4 @@
-//! Searching (spec §8 "Searching"): how hard the hidden things are to find, deeper down too, and
+//! Searching: how hard the hidden things are to find, deeper down too, and
 //! who notices them in passing. Chances for an average character (Intelligence and Willpower 10,
 //! untrained, no racial bonus), never a difficulty or a modifier.
 

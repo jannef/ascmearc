@@ -10,23 +10,23 @@
 # twice as many actions in the same game time; never 0; never shown to the player), weight
 # (the creature's own weight in grams; what it carries adds to it), size (a size in
 # sizes.toml, default "medium": how much it can carry, 1.5 kg × (2 × Strength + Toughness) scaled
-# by the size's carry, before it is burdened, spec §8 "Burden"; the player's comes from their
+# by the size's carry, before it is burdened; the player's comes from their
 # race when the run has a character), light (a preset in
 # lights.toml the creature carries), anim, and the presentation-only effects glow and
 # [[creature.particles]] (see terrain/; they move with the creature; `on = "attack"` bursts
 # at the target of each attack the player sees, e.g. a spell's sparkle).
-# Hearing (gameplay, spec §5 "Hearing"): footsteps (how loud its steps are on terrain with a
+# Hearing (gameplay): footsteps (how loud its steps are on terrain with a
 # step_noise of 100; a sound loses 10 a cell, 14 diagonally, and a closed door muffles 30; at most
 # 300; default 0: it moves silently) and hearing (the faintest loudness it hears, 1 to 300; default
 # none: it is deaf).
 #
-# Behavior (spec §8 "Creature behavior"; nothing here is shown to the player but the faction's
+# Behavior (nothing here is shown to the player but the faction's
 # stance toward them):
 #   faction      a faction id in factions/ (none: neutral to all; the player's is "player")
 #   factions     instead of faction: the factions each creature of the type may join, by weight
 #                (1 or more), `{ seelie = 50, unseelie = 50 }`: each draws its own when it is made
 #                (a spawn, a floor's population, a level file's entry without a faction of its
-#                own), and keeps it (spec §7 "Factions"); the type counts as its heaviest
+#                own), and keeps it; the type counts as its heaviest
 #   vision       its eyes: a profile in vision.toml (default "normal"); it sees by the same rules
 #                as the player, under the same light
 #   sight        how far it sees, in cells (default 10, at most 40)
@@ -37,7 +37,7 @@
 #   range        how far a ranged or caster creature reaches, in cells (default 1; it
 #                needs a clear line of fire); a caster casts no farther than its spells reach
 #   spells       a caster's spells, and only a caster's: ids in data/spells/, in the order it
-#                prefers them (spec §8 "Creature behavior": "Casters"); harm, hexes that lay a
+#                prefers them; harm, hexes that lay a
 #                plain status, heals by touch, and buffs (no zones, corpses, open sky, pushes,
 #                charms, summons, cleansings, or utilities). Each cast spends the spell's cost
 #                from its `mana`. Up to level 10 only level-1 harm and level 3 or lower hexes,
@@ -45,7 +45,7 @@
 #   mana         mana beyond its mental stats' modifiers (default 0): a caster's and a
 #                summoner's pool, spent by each spell or summoning and back at the usual pace
 #   opens_doors  whether it opens closed doors in its way (default false)
-#   lurks        whether it lurks (default false; spec §8 "Creature behavior"): a hostile it
+#   lurks        whether it lurks (default false): a hostile it
 #                sees, it waits for where it stands (shooting from there if it can) until the
 #                hostile is beside it or it has been harmed, then fights as any creature
 #   hunts        whether it hunts the player by scent (default false): seeing no hostile, it
@@ -59,8 +59,8 @@
 #                the Invisible status (data/status/, two minutes), free of time and mana,
 #                then goes on as ever; Silenced, it cannot. Seeing, Blood scent, a companion's
 #                nose, and a blow that finds it show it; it is heard as ever
-#   budge       whether you can swap places with it when it is not hostile to you (spec §8
-#                "Displacement"): "always" (default), "off_post" (not while it keeps its post,
+#   budge       whether you can swap places with it when it is not hostile to you: "always"
+#                (default), "off_post" (not while it keeps its post,
 #                going about its routine: a shopkeeper at its counter), or "never" (rooted)
 #   rooted      whether it never moves (default false; docs/dev/creatures.md "Rooted"): it
 #                never steps, never makes way, is never driven back, swapped, or teleported, and
@@ -68,7 +68,7 @@
 #                stands (a miscast's gate)
 #   attack_cost  what its attacks cost in energy, instead of the attack's cost in
 #                actions.toml (melee, shoot, or cast; 1000 is a normal action)
-#   training    makes it a target dummy (spec §8 "Weapon skills": "Target dummies"): it never
+#   training    makes it a target dummy: it never
 #                acts or dies, the player strikes it by moving into it, a blow at it disturbs no
 #                one and trains weapon skills and styles only, at `percent` (1 to 100) of the
 #                marks, below rank `melee` (blows, bashes, kicks, throws) or `ranged` (shots);
@@ -76,7 +76,7 @@
 #                that never breaks), else drops beside it: { percent = 50, melee = 2, ranged = 4,
 #                breaks = 25 }
 #
-# Tags (spec §8 "Quests", #441; never shown to the player; the wiki lists them): tags, plain
+# Tags (#441; never shown to the player; the wiki lists them): tags, plain
 # words a quest or a rule may ask for, `tags = ["goblin", "archer"]`. One flat pool: nothing
 # declares a tag, a creature carrying it is all there is, and a kill quest's `target =
 # "tag:goblin"` counts every type that carries it. A tag is the base word, singular (`goblin`,
@@ -113,24 +113,24 @@
 #            other tribe too), dragon (every combat = "dragon" type, #1099: the fire drake)
 # A creature may carry several: the kobold shaman is ["kobold", "caster"].
 #
-# Alignment (spec §8 "Alignment"; never shown to the player): alignment, where it stands between
+# Alignment (never shown to the player): alignment, where it stands between
 # good and evil: "good", "neutral" (the default), or "evil" (a level legend entry may give one
 # spawn another). Killing it, and eating its corpse, moves the player's alignment by it
 # (alignment.toml); good folk greet an evil character coldly. race: the race it is one of (an id
 # in races.toml), if any: to a character of that race, eating its corpse is eating kin.
 #
-# Experience (spec §8 "Experience"; the player sees only the XP and level they earn): level
+# Experience (the player sees only the XP and level they earn): level
 # (default 1) and xp (what a kill by the player is worth when the player is at that level, default 0;
 # the player's own entry has neither). xp_percent (optional, any whole number from 0 up, default
 # 100) is a hand-set modifier of xp in percent, no formula: a kill and the first-kill bonus start
 # from xp × xp_percent ÷ 100, so xp itself can stay on the guideline. Kills of lower-level
-# monsters give less and less (data/experience.toml). The level is also its danger (spec §7 "Danger levels"): a dungeon
+# monsters give less and less (data/experience.toml). The level is also its danger: a dungeon
 # branch's or a level's `population` draws it on floors of about that danger.
 #
-# Uniques (spec §7 "Danger levels"): unique = true (default false) for a type a population draws
+# Uniques: unique = true (default false) for a type a population draws
 # at most once in a run (a boss); a level legend may still place it by hand.
 #
-# Grades (spec §8 "Grades"; crates/warlock-core/src/grade.rs): one creature in six
+# Grades (crates/warlock-core/src/grade.rs): one creature in six
 # comes greater than its kind (+25 % maximum hit points, +1 to hit and +2 damage in melee, 10 %
 # slower) and one in six lesser (the reverse), drawn as it is made; its kill pays its kind's
 # experience. grades = false (default true) for a type that has none (the people); a unique, a
@@ -138,38 +138,38 @@
 # grade_words = ["scrawny", "big"] (optional) are the words look mode gives the lesser and the
 # greater ("a big kobold"); none: the tags' (undead: "withered", "ancient"), else "small", "big".
 #
-# Strays (spec §7 "Danger levels"): every type hostile to the player that is no unique and no
+# Strays: every type hostile to the player that is no unique and no
 # animated object may come to any branch of its campaign (a shared type to every campaign's) as a
 # stray, its population or not, the out-of-depth draws bringing the deep ones now and then; a
 # type in no population is met only so. stray = false (default true) keeps a type out of the
 # strays (one only placed by hand or by its own rules); a population naming it still draws it.
 #
-# Rarity (spec §7 "Danger levels"; never shown to the player): rarity, a tier in
+# Rarity (never shown to the player): rarity, a tier in
 # creature_rarities.toml (default "common") whose factor multiplies the type's weight when a
 # population or a spawn draws it: the more dangerous and rewarding (casters, chieftains, the
 # strongest of a place), the rarer. A level legend's hand-placed creatures are not drawn.
 #
-# Skills (spec §8 "Skills"; never shown to the player): skills, the skills it is trained in, by
+# Skills (never shown to the player): skills, the skills it is trained in, by
 # skill id (skills/), with fixed values (0 to 999); every other skill is untrained. The player's
 # come from their race and class, not from here. Creatures do not train (yet). Those of surprise
-# (spec §8 "Surprise and sneak attacks") work for creatures as for the player: sneak_attack (dice
-# on a hit that finds its target unaware, and a harder initiative check for it), initiative
-# (keeping its wits when caught unawares), and spot (its side of the contest to slip past it).
+# work for creatures as for the player: sneak_attack (dice on a hit that finds its target unaware,
+# and a harder initiative check for it), initiative (keeping its wits when caught unawares), and
+# spot (its side of the contest to slip past it).
 #
-# Loot (spec §8 "Magic items"): loot, the chance in percent (default 0) that it drops a magic or
+# Loot: loot, the chance in percent (default 0) that it drops a magic or
 # rare item where it dies, besides what it carried; the item level is the level's.
 #
-# Material drops (spec §7 "Material drops"; data/drops/README.toml): the crafting stock its body
+# Material drops (data/drops/README.toml): the crafting stock its body
 # leaves where it dies comes from its tags' files in data/drops/; [[creature.drops]] rows of the
 # same shape ({ material = "fur", count = "1", chance = 50 }, or object = "..." for an object) add
 # its own, and drops_from_tags = false (default true) switches its tags' rows off.
 #
-# Stats (spec §8 "Stats"; never shown to the player; combat and burden use them): stats, its scores
+# Stats (never shown to the player; combat and burden use them): stats, its scores
 # by stat (strength, dexterity, toughness, intelligence, willpower, presence; 1 to 40, default 10,
 # the average), and potential, how far each score could grow (default: the score; never below
 # it). The player's stats come from the scenario, not from here.
 #
-# Combat (spec §8 "Combat"; never shown to the player but as words):
+# Combat (never shown to the player but as words):
 #   base_hp   hit points beyond its Toughness (default 0); the player's come from the scenario
 #   regen     how fast its wounds close, in percent of the normal pace (default 100, 0 to 1000;
 #             a troll's 400): counted with its statuses' paces, so Burning and Corroded stop it.
@@ -183,18 +183,17 @@
 #   attack    its natural attack, used when it wields no weapon (without one: bare hands, 1d3):
 #             { damage = "1d4", damage_type = "piercing", name = "bite", verb = "bites" } and
 #             optionally threat, crit, and to_hit as for weapons (objects.toml); Strength adds
-#             to hit and to damage. damage_type is the kind of damage it does (damage_types.toml,
-#             spec §8 "Damage types": a bite piercing, a claw slashing, a slam bludgeoning).
-#             on_hit lists the status effects (status/) and diseases (diseases.toml) a hit
-#             with it may cause, if the target lives: [{ status = "poisoned", chance = 10,
-#             severity = 2 }] (chance in percent, 1 to 100; severity in degrees, up to the
+#             to hit and to damage. damage_type is the kind of damage it does (damage_types.toml: a
+#             bite piercing, a claw slashing, a slam bludgeoning). on_hit lists the status effects
+#             (status/) and diseases (diseases.toml) a hit with it may cause, if the target lives:
+#             [{ status = "poisoned", chance = 10, severity = 2 }] (chance in percent, 1 to 100; severity in degrees, up to the
 #             status's max), { disease = "filth_fever", chance = 10 } (then a check to resist it).
 #             A status may be resisted too: check (a stat id) and difficulty (1 to 40) together,
 #             as a drain's ({ status = "stiffening", ..., check = "toughness", difficulty = 15 }).
 #             Several natural attacks, each struck in turn in one melee attack and rolled on its
 #             own (a dragon's two claws and a bite): [[creature.attack]] tables, one per attack
 #             (#1099); a wielded weapon's blow stands in for the first, and the rest are not struck
-#   breath    a dragon's breath (spec §8 "Creature behavior": "Dragons"; enemy-only; the type
+#   breath    a dragon's breath (enemy-only; the type
 #             needs combat = "dragon", and a dragon needs it): [creature.breath] with damage
 #             (dice, rolled once for everyone in the cone), damage_type (its element: one type),
 #             length (the cone's, in cells, 2 to 12; a quarter turn wide, as Burning hands'),
@@ -206,7 +205,7 @@
 #             harmed; the gorgon's stiffening; default none). It breathes at a hostile it
 #             sees in the cone with a clear line whenever the status is off, with no roll to hit:
 #             Evasion halves it and resistances take their share
-#   gaze      a rider at sight, not at touch (spec §8 "Creature behavior": "Gazes"; enemy-only):
+#   gaze      a rider at sight, not at touch (enemy-only):
 #             [creature.gaze] with range (it gazes at a hostile it sees within this many cells,
 #             1 to 8), riders (on_hit entries, as for attack: statuses with a severity, drains
 #             with their check, each by its own chance; never a disease or a hold), and
@@ -232,12 +231,11 @@
 #             the Natural category of Defence, protection the damage it soaks off every hit
 #             (adding up with what it wears); "Your sword glances off
 #             the cave beetle's shell." Its protection follows the body its name names, by
-#             level (#563, spec §8 "Natural Protection by body and level"): none 0, hide
+#             level (#563): none 0, hide
 #             (L − 10) ÷ 8, bony (bones, scales, chitin, shell) L ÷ 6, armoured (stone, ice,
 #             iron-hard skin) L ÷ 4 + 1; the peoples and types that may roll armour have none;
 #             content::creature_body_tests checks it, and lists the exceptions.
-#   throw     a natural ranged attack that needs no ammunition (spec §8 "Ranged combat":
-#             "Creatures' throws"; the giants' boulders): [creature.throw] with object (what
+#   throw     a natural ranged attack that needs no ammunition (the giants' boulders): [creature.throw] with object (what
 #             flies, for its look: "boulder"; it never lands), damage, damage_type, range (cells,
 #             2 to 20), verb (what it does as it throws: "hurls"), and optionally name (what flies
 #             is called; default the object's name), cost (a throw's energy;
@@ -245,13 +243,13 @@
 #             attack. Dexterity adds to hit, Strength to damage. Not next to its target, it throws
 #             whenever the target is in range with a clear line of fire
 #   incorporeal  it passes through solid terrain (walls, rock, closed doors; never the level's
-#             edge) and may stand inside it (spec §8 "Incorporeal creatures"):
+#             edge) and may stand inside it:
 #             { wall_defence = 4 }: its Defence bonus while inside (the Wall category, 0 to 20)
-#   vitals    false: it has no vitals to find, so it is immune to criticals and sneak attacks
-#             (spec §8 "Surprise and sneak attacks"); default true. The incorporeal, animated
+#   vitals    false: it has no vitals to find, so it is immune to criticals and sneak attacks;
+#             default true. The incorporeal, animated
 #             objects, and the types carrying a tag of surprise.toml's `no_vitals` have none
 #             whatever this says.
-#   summon    it calls forth creatures of its side (spec §8 "Summoning"; enemy-only):
+#   summon    it calls forth creatures of its side (enemy-only):
 #             [creature.summon] with its pool, either creatures (ids, each as likely; one named twice is twice as
 #             likely: ["goblin", "goblin", "warg"]) or tag and levels (every type carrying the tag
 #             with a level within [lowest, highest], uniques and itself left out; a shared type
@@ -311,17 +309,16 @@
 #             (1 to 100) to knock it away: the player's Dexterity check against the difficulty
 #             (2 to 40), plus the weapon's skill rank and their grip, keeps it; failed, it lies on
 #             a random open cell beside them (a spirit weapon fades instead)
-#   resist    what it resists, in percent per damage type (spec §8 "Damage types"):
+#   resist    what it resists, in percent per damage type:
 #             { acid = 50 }; negative is a vulnerability. Any amount: it adds up with what it
 #             wears, its statuses, and the rest uncapped, and at most 75 of the total counts, at
 #             least -100 (it takes double). An immunity is no resistance: name the damage type in
 #             `immune`. Never shown: the player learns it by play
-#   weapon_skills  its ranks in weapon skills (spec §8 "Weapon skills"), by skill id in
-#             weapon_skills.toml, 0 to 10: { spears = 1 }; fighting styles too ({ duelist = 2 },
-#             spec §8 "Fighting styles"). Creatures do not
+#   weapon_skills  its ranks in weapon skills, by skill id in
+#             weapon_skills.toml, 0 to 10: { spears = 1 }; fighting styles too ({ duelist = 2 }). Creatures do not
 #             train (yet); the player's come from their race and class
 #
-# Gear (spec §8 "Creature gear"; rules only, the wiki states it): what a creature of the type
+# Gear (rules only, the wiki states it): what a creature of the type
 # spawns carrying, wielding, and wearing when a level gives it no fixed kit (a legend entry
 # without carry, wield, or wear; a generated level's creatures). Combat reads it as it reads the
 # player's, and it falls where the creature dies.
@@ -338,7 +335,7 @@
 #             is made of a material by the materials' `gear` at the creature's level; one that
 #             would overload the creature is left out
 #
-# Corpses (spec §8 "Hunger"; with hunger.toml; never shown to the player before they try):
+# Corpses (with hunger.toml; never shown to the player before they try):
 #   corpse    whether it leaves a corpse when it dies (default true): a "kobold corpse" (`%` in its
 #             color) weighing what it does, feeding by its size (hunger.toml)
 #   on_eat    what eating its fresh corpse does besides feeding, in this order: { message = "..."
@@ -359,11 +356,11 @@
 #             summing to 100), both or neither, only on an `everlasting` creature, never with
 #             `vomit`
 #
-# Blood (spec §8 "Blood"; presentation only, no rule reads it): blood, the colour of the stains it
+# Blood (presentation only, no rule reads it): blood, the colour of the stains it
 # leaves when hurt badly or killed ("#rrggbb"; default dark red, "#6e0e0c"), or "none" for a
 # bloodless creature. How much it spills goes by its size's `blood` in sizes.toml.
 
-# Immunities and death (spec §8 "Status effects"; never shown to the player):
+# Immunities and death (never shown to the player):
 #   immune    status ids it never suffers and damage type ids that never hurt it, whatever
 #             its resistances (`immune = ["poison", "poisoned", "bleeding"]`; `diseased` is every
 #             disease): refused where they are given, nothing rolled; an id is a status or a
@@ -372,14 +369,14 @@
 #   depart    the words of its going as an ally whose call has run out, "The wolf slips back into
 #             the dark." (default "fades away"; docs/dev/allies.md)
 #
-# Animated objects (spec §8 "Animated objects", #483) are not written here: their types are
+# Animated objects (#483) are not written here: their types are
 # generated when content loads from data/animated.toml and data/animated/ (`animated_<body>`),
 # numbered after these files and before every campaign's; an id here that one of them takes is
 # an error.
 
 # Notes on the groups, in the order they were kept in:
 #
-# The showcase's people (spec §3), its own types in campaigns/showcase/data/creatures/ (a
+# The showcase's people, its own types in campaigns/showcase/data/creatures/ (a
 # campaign's types are its files there, numbered after these; only its own files may name them):
 # folk who talk (its data/dialogue/, `C` to chat) and mutter to themselves now and then.
 # Peaceful by type: they never fight, and you swap places with them when they are in your way.

@@ -1,4 +1,4 @@
-//! Quests (`assets/data/quests.toml` and the campaigns' `data/quests/`, spec §7 "Quests", §8 "Quests", #148): simple, ADOM-like
+//! Quests (`assets/data/quests.toml` and the campaigns' `data/quests/`, #148): simple, ADOM-like
 //! errands people give the player through their dialogue topics.
 //!
 //! Each `[[quest]]` has an `id`, a `name` (the quest log's title and the topic it is asked
@@ -33,12 +33,11 @@
 //! the training marks a trained one gets, and `taught`/`more`, what is said of each), each
 //! optional. `requires` names a quest, or a list of them (loaded before this
 //! one), that must all be done before this one is offered, and `requires_alignment` the bands the player must be in for it
-//! to be offered (spec §8 "Alignment"); `min_level` the character level the player must have
+//! to be offered; `min_level` the character level the player must have
 //! reached for it to be given, with `early`, what the giver says asked about it before then (the
 //! topic is listed; the quest is not given); `alignment` moves their score as it is completed;
 //! `repeatable` quests are offered again once done (never a reach). `reveals` names a hidden
-//! location of the overworld revealed as the quest is given (the default) or done (spec §7
-//! "Hidden locations"), and `where` says where its goal lies after the objective.
+//! location of the overworld revealed as the quest is given (the default) or done, and `where` says where its goal lies after the objective.
 //!
 //! A kill or bring quest may draw its target as it is given instead of naming it: a `pick` or
 //! `[[quest.variant]]`s ([`super::quest_roll`]), its texts naming the roll through placeholders.
@@ -240,7 +239,7 @@ pub(super) struct RevealSpec {
     when: RevealWhen,
 }
 
-/// At which of a quest's stages its hidden location is revealed (spec §7 "Hidden locations").
+/// At which of a quest's stages its hidden location is revealed.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum RevealWhen {
@@ -261,7 +260,7 @@ impl RevealWhen {
     }
 }
 
-/// The hidden location a quest reveals, and when (spec §7 "Hidden locations").
+/// The hidden location a quest reveals, and when.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Reveal {
     /// A hidden location of the overworld, by id.
@@ -304,7 +303,7 @@ pub enum KillTarget {
 
 impl KillTarget {
     /// Whether a kill of a `creature` is one of these: of the type, or of any member of its
-    /// family (spec §8 "Animated objects": `animated_blade` counts every blade).
+    /// family (`animated_blade` counts every blade).
     pub fn has(&self, content: &Content, creature: CreatureId) -> bool {
         match self {
             KillTarget::Creature(c) => content.family(*c) == content.family(creature),
@@ -430,19 +429,19 @@ pub struct QuestDef {
     pub texts: QuestTexts,
     /// The quests that must all be done before this one is offered.
     pub requires: Vec<QuestId>,
-    /// The alignment the player must be of for it to be offered (spec §8 "Alignment").
+    /// The alignment the player must be of for it to be offered.
     pub requires_alignment: Option<Requirement>,
     /// The character level the player must have reached for it to be given, and what the giver
     /// says, asked about it before then (`early`): the topic is listed, the quest not given.
     pub min_level: Option<(u8, String)>,
-    /// How far completing it moves the player's alignment score (spec §8 "Alignment"):
+    /// How far completing it moves the player's alignment score:
     /// helping quests good, dark ones evil.
     pub alignment: i32,
     /// Offered again once done.
     pub repeatable: bool,
     /// The campaign whose `data/quests/` it is in; `None` outside every campaign.
     pub campaign: Option<String>,
-    /// The hidden location it reveals, and at which stage (spec §7 "Hidden locations").
+    /// The hidden location it reveals, and at which stage.
     pub reveals: Option<Reveal>,
     /// Where its goal lies, in words, after the objective in the quest log ("The minster lies
     /// in Micelfenn, east of Fennhām.").
@@ -916,7 +915,7 @@ fn resolve(
 }
 
 /// Whether a quest of campaign `campaign` may name level `id`: one it can reach, and no Pit's
-/// floor (spec §7 "The Pits": nothing leads into a Pit but a portal).
+/// floor (nothing leads into a Pit but a portal).
 fn names_level(content: &Content, campaign: &str, id: &str) -> bool {
     content.has_level(campaign, id) && !content.is_portal_floor(id)
 }

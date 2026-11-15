@@ -1,4 +1,4 @@
-//! Treasure rooms in generated levels (spec §7 "Special rooms", `treasury.rs`): every door of a
+//! Treasure rooms in generated levels (`treasury.rs`): every door of a
 //! rooms level's treasure room secret and the level valid; a cave's a box in the rock with one
 //! secret door; chests, gold, and gems as the dice say, from their own stream.
 

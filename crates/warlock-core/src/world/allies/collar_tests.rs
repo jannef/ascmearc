@@ -1,4 +1,4 @@
-//! The collar (`collar.rs`; spec §8 "Allies": "The collar"): the hand-over and its price, the old
+//! The collar (`collar.rs`): the hand-over and its price, the old
 //! one on the floor, the refusals, the amulet's magic on the beast, the pile on its death, what
 //! the player is shown, and a save and a replay.
 

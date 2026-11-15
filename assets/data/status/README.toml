@@ -1,4 +1,4 @@
-# Status effects (spec §8 "Status effects"): the fields of a status file.
+# Status effects: the fields of a status file.
 # One file per entity, `NNN-<id>.toml`: the number keeps the order the game reads them in
 # (their ids are indices in that order), in steps of 10 so a new one fits between two.
 #
@@ -48,10 +48,10 @@
 #              wound this way (damage_types.toml; bleeding from slashing and piercing), none
 #              listed: any
 #   damage_type the kind of damage the status is (poison): a target immune to it never suffers
-#              it, and a resistance shrinks each dose it is given (spec §8 "Damage types")
+#              it, and a resistance shrinks each dose it is given
 #   cured_by   what cures it at once (a bandage, an antidote, a potion of clear head's
 #              `clear_head`)
-#   treat      how the Heal skill treats it (the Heal ability, spec §8 "Skills"): an Intelligence
+#   treat      how the Heal skill treats it (the Heal ability): an Intelligence
 #              check plus Heal against { difficulty = 6, per_degree = 2 } (the difficulty,
 #              plus `per_degree` for each degree); `stops = true`: made, it ends, and a failed try may
 #              be made again at once; else, made, it eases a degree, and a failed try may be
@@ -72,7 +72,7 @@
 #              terrain with `statue` in terrain/), holding what it carried
 #   hides      true: a creature suffering it hides as a shut chest (a mimic's Disguised): it takes
 #              no turn, has seen no one, no creature sets on it, and perception shows the chest in
-#              its place, never it; only being found out ends it (spec §8 "Mimics")
+#              its place, never it; only being found out ends it
 #   unseen     true: its sufferer is unseen by the player whatever the light and however near
 #              (Invisible): perception leaves it out, unless Blood scent, the companion's nose,
 #              Seeing, or a blow that just found it shows it; it sheds no light of its own type
@@ -81,13 +81,12 @@
 #              (Seeing)
 #   flat_footed true: its sufferer is flat-footed while it lasts (Surprised, Stunned): its
 #              Dexterity and Dodge count nothing toward its Defence, it makes no free blow out
-#              of its turn, and an attacker's sneak dice land on it (spec §8 "Surprise and sneak
-#              attacks")
+#              of its turn, and an attacker's sneak dice land on it
 #   auto_critical  true: its sufferer's blows that hit are criticals without the confirmation
 #              roll, and each such hit spends a degree (Savage, Sic 'em's)
 #   sleeps     true: a creature suffering it sleeps: it takes no turn and has seen no one (a
 #              sneak attack lands); noise at its hearing threshold times its den's `wake`, a
-#              blow, or a cry wakes it, which ends the status (spec §7 "Special rooms")
+#              blow, or a cry wakes it, which ends the status
 #   per_action true: it eases a degree with each action its sufferer takes, instead of with
 #              time (no `eases`): at one degree it lasts until the next action, which is priced
 #              with it (its `cost`). One given during an action is not eased by that action
@@ -113,7 +112,7 @@
 #              web.") is said of a failed try; not on a hold, whose
 #              grip counts the same way. Slowed minds and bodies (Staggered, Stunned, Surprised,
 #              Transfixed, Sluggish, Drowsy) are no bonds and take none
-#   light      a light of lights.toml its sufferer sheds while it lasts (Lit; spec §5); the
+#   light      a light of lights.toml its sufferer sheds while it lasts (Lit); the
 #              brightest of several
 # Creatures' attacks may cause statuses too: `on_hit` in creatures.toml. Diseases (diseases.toml)
 # show as one status here, named by their `status`.

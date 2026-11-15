@@ -1,4 +1,4 @@
-//! Stat training in the world (spec §8 "Stats"): uses earn the player marks (through the call
+//! Stat training in the world: uses earn the player marks (through the call
 //! skills share too), long actions done to their end and blows given and taken among them, and
 //! each level checks every stat once on the levels stream: a rise pays its price and keeps the
 //! surplus, says so in words, may pass the potential (which stays), and brings Toughness's hit

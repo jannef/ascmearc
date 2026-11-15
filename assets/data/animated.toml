@@ -1,4 +1,4 @@
-# Animated objects (spec §8 "Animated objects"; docs/dev/animated.md; the design:
+# Animated objects (docs/dev/animated.md; the design:
 # docs/design/animated-objects.md): things a will set moving and left. Each of them is an ordinary
 # creature type, generated when content loads from this file and data/animated/, and made of real
 # objects: a household thing of its body (data/animated/<id>.toml).
@@ -114,7 +114,7 @@ slots = [{ slot = "main_hand", classes = ["melee_weapons"], chance = 100 }]
 magic = { base = 0, per_level = 0.5, most = 10 }
 rare = { from = 15, base = 0.25, per_level = 0.25, most = 1.25 }
 weapon_rank = { base = 1, per_level = 0.35, most = 10 }   # ranks in its weapon's skill: 1 + 0.35 L (#1169)
-# Graded, as other creatures are (spec §8 "Grades"): one in six notched, one in six keen. The
+# Graded, as other creatures are: one in six notched, one in six keen. The
 # other tiers name no words and are never graded.
 grade_words = ["notched", "keen"]
 

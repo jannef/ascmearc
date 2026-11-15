@@ -1,4 +1,4 @@
-# Equipment slots (spec §7): where you and creatures wear and wield things, in the order the
+# Equipment slots: where you and creatures wear and wield things, in the order the
 # equipment screen lists them, lettered a on, as in ADOM.
 #
 # Every slot defines:
@@ -18,9 +18,9 @@
 #           sees, fills, or is given it (the aristocrat's extra ring slots); default: everyone,
 #           creatures too
 #
-# What is worn and wielded fights and protects (spec §8 "Combat": the weapon in the first hand
+# What is worn and wielded fights and protects (the weapon in the first hand
 # that holds one, the missile weapon in a `ready` slot, and every worn thing's armour, shield,
-# and parry in Defence), and a digging tool ready digs (spec §8 "Digging"); it also takes time to
+# and parry in Defence), and a digging tool ready digs; it also takes time to
 # put on and off, and weighs what it weighs.
 
 [[slot]]
@@ -126,7 +126,7 @@ name = "Missiles"
 action = "ready"
 mark = "quivered"
 
-# A tool ready to use: a pick-axe or a mattock to dig with (`U`, spec §8 "Digging").
+# A tool ready to use: a pick-axe or a mattock to dig with (`U`).
 [[slot]]
 id = "tool"
 name = "Tool"

@@ -1,4 +1,4 @@
-# A potion of barkskin (spec §8 "Potions", the potions wave 2 design §4.1): Barkskin for two minutes, harder to hit. Wards are bronze.
+# A potion of barkskin (the potions wave 2 design §4.1): Barkskin for two minutes, harder to hit. Wards are bronze.
 [[object]]
 id = "potion_of_barkskin"
 name = "potion of barkskin"

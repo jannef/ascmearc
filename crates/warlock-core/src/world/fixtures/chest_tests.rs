@@ -1,4 +1,4 @@
-//! Chests (spec §8 "Chests", docs/design/chests-and-treasure.md §3, §9; `world/fixtures/chest.rs`): a
+//! Chests (docs/design/chests-and-treasure.md §3, §9; `world/fixtures/chest.rs`): a
 //! coffer opens on a bump and on `open`; a locked one refuses without a key and opens with a
 //! skeleton key, Pick lock, or Knock then Open; Knock is refused with no time where nothing is
 //! locked; kicks smash it (half the stacks, never coins or gems; Lockbreaker's quarter; a kick

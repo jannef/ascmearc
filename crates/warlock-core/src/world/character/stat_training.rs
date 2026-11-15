@@ -1,4 +1,4 @@
-//! Stat training in the world (spec §8 "Stats"; the rules are
+//! Stat training in the world (the rules are
 //! [`crate::content::StatTraining`]): the player's uses of their stats earn marks, and each level
 //! gained, and every day at 06:00, checks every stat once.
 //!
@@ -230,7 +230,7 @@ impl World {
     }
 
     /// The player won a check against a disease made with `stat`: Willpower's trains it, any
-    /// other's Toughness (spec §8 "Diseases").
+    /// other's Toughness.
     pub(in crate::world) fn train_resisting(&mut self, id: ActorId, stat: Stat) {
         if id != self.state.player {
             return;

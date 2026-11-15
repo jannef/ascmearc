@@ -1,4 +1,4 @@
-# Diseases (spec §8 "Diseases"), modelled on D&D 3.5's: caught, they incubate unseen, then show,
+# Diseases, modelled on D&D 3.5's: caught, they incubate unseen, then show,
 # and progress day by day until they are shaken off (or kill). Whatever the disease, the
 # sufferer shows one status, `status` below ("Diseased"); which disease it is shows through its
 # symptoms, and the character screen names it once it has progressed once.

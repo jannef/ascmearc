@@ -1,4 +1,4 @@
-//! The fey courts (spec §7 "Factions", #452): each fey joins the Seelie or the Unseelie court
+//! The fey courts (#452): each fey joins the Seelie or the Unseelie court
 //! when it is made, by its type's weights, from its own stream; the pick is saved; a level's
 //! `faction` wins; a Seelie fey the player attacks turns wrathful.
 

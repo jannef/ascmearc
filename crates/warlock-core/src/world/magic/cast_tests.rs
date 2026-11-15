@@ -1,4 +1,4 @@
-//! The one cast path (spec §8 "Spells", #395, the spell scaling design §13): resolution, no cap
+//! The one cast path (#395, the spell scaling design §13): resolution, no cap
 //! (decision 16), the shapes, the cost's armour, the ladders' rungs, the roll and rider hooks,
 //! and the draws a cast makes. Spells the casters do not have are
 //! tried as the wizard's Arcane bolt, its file replaced (the ability's id is the spell's).

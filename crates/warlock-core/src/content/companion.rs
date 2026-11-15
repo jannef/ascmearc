@@ -1,4 +1,4 @@
-//! The animal companion's data (`assets/data/companions.toml`; spec §8 "Allies": "The animal
+//! The animal companion's data (`assets/data/companions.toml`; "The animal
 //! companion"; docs/design/ranger-companion.md §12.1; `docs/dev/companion.md`): the starting
 //! beasts by race and the rares, the taming numbers, the growth table, and the names. The rules
 //! live in `world/allies/companion.rs`; the ally core's constants are `allies.toml`. The file is

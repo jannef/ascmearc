@@ -1,4 +1,4 @@
-//! Spells aimed at a corpse (spec §8 "Spells"; the spell types design §7 entries 2, 29, 30;
+//! Spells aimed at a corpse (the spell types design §7 entries 2, 29, 30;
 //! `docs/dev/spells.md`): `[spell.effect] corpse` asks for a cell where the caster **sees** a
 //! corpse (their own cell too), the pile's top-most corpse stack is the one used, and with
 //! `corpse = "consumed"` one corpse of it is gone. No stage is read: a rotten corpse does as a

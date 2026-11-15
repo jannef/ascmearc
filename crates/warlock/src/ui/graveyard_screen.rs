@@ -1,4 +1,4 @@
-//! The Graveyard screen (spec §6 "Graveyard", §7 "The graveyard"; #1252), from the main menu
+//! The Graveyard screen (#1252), from the main menu
 //! once anyone has died: every fallen character of `graveyard.toml` (`crate::graveyard`), the
 //! most experienced at death first (`graveyard::by_experience`). Each takes a few lines: the
 //! name, race and class (and prestige class), level, and experience; then what killed them and

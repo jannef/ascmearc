@@ -1,4 +1,4 @@
-//! Wedging a door shut (spec §8 "Doors"; #1027): a turn's work for those trained in Woodcraft;
+//! Wedging a door shut (#1027): a turn's work for those trained in Woodcraft;
 //! a creature that opens doors must kick the door in instead; the player opens it as usual; the
 //! wedge is saved, hashed, and replays.
 

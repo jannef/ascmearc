@@ -1,4 +1,4 @@
-//! A vault's monster pools (spec §7 "Level file format"): who comes, where, and what is refused.
+//! A vault's monster pools: who comes, where, and what is refused.
 //! How they stand with the spawner's cap: `world/creatures/spawn_tests.rs`.
 
 use super::*;

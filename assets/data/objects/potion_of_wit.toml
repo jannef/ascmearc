@@ -1,4 +1,4 @@
-# A potion of wit (spec §8 "Potions"): Intelligence raised for ten minutes. Stat boosts are orange.
+# A potion of wit: Intelligence raised for ten minutes. Stat boosts are orange.
 [[object]]
 id = "potion_of_wit"
 name = "potion of wit"

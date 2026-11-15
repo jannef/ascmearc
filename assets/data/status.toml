@@ -1,4 +1,4 @@
-# Status effects and passive healing (spec §8 "Status effects", "Healing").
+# Status effects and passive healing.
 #
 # [healing]
 #   resting   how fast hit points come back while you rest (R), in percent of the normal pace

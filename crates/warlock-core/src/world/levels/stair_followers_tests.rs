@@ -1,4 +1,4 @@
-//! Stair followers (spec §8 "Creature behavior"; `stair_followers.rs`): who comes along a
+//! Stair followers (`stair_followers.rs`): who comes along a
 //! staircase, where it stands, what it keeps, when it may act, and what the other ways of
 //! leaving a level do.
 

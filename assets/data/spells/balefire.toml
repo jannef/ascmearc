@@ -25,7 +25,7 @@ noise = { sound = "explosion", loudness = 60 }
 damage = "intelligence 13 6d6, 16 8d6, 25 8d6+2"
 length = "willpower 14 6, 18 7"
 
-# What rereading its grimoire adds, rank by rank (spec §8 "Spells": "Ranks"; README.toml
+# What rereading its grimoire adds, rank by rank (README.toml
 # `[spell.ranks]`). At rank 10: two cells longer, 1s rolled again, two dice more, +2 on the roll,
 # a fifth off the mana, and a quarter off the casting time. The fire left burning rolls as the
 # spell does, so it burns hotter with it.

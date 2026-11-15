@@ -1,5 +1,5 @@
 # The orc tribe (#455; content::orc_roster_tests checks the numbers). The common orc of a war
-# band: a curved blade (the orcs' racial weapon, spec §8 "Creature gear"), a jerkin and a cap
+# band: a curved blade (the orcs' racial weapon), a jerkin and a cap
 # half the time, and a shield now and then.
 [[creature]]
 id = "orc_warrior"

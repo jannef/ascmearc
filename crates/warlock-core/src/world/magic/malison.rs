@@ -1,4 +1,4 @@
-//! Malison's tithe (spec §8 "Class abilities"; docs/design/witch-and-wizard.md §5.2; #905): a
+//! Malison's tithe (docs/design/witch-and-wizard.md §5.2; #905): a
 //! creature that dies under a hex the player laid (an effect whose status is one of
 //! [`crate::content::Content::hex_statuses`] and whose giver is the player), of any cause and by
 //! anyone's hand, pays the player, while they hold the `hex_tithe` effect, the dead creature's

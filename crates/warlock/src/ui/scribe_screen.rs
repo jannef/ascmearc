@@ -1,4 +1,4 @@
-//! The scribe list (spec §6 "Abilities", §8 "Scrolls"; #906): what the wizard's Scribe asks
+//! The scribe list (#906): what the wizard's Scribe asks
 //! before it is used, opened from the abilities menu. The spells the player knows that a scroll
 //! holds (`PerceptionView::scribes`), in the one paged list grouped by school, each row the
 //! spell's name, what writing it costs them in mana (they know their own costs), and how long it

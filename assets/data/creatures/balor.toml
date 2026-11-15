@@ -42,7 +42,7 @@ name = "flaming whip"
 verb = "lashes"
 to_hit = 15
 on_hit = [{ status = "held", chance = 15, difficulty = 24 }]
-# Its gear (spec §8 "Creature gear"): the great sword it never puts down.
+# Its gear: the great sword it never puts down.
 [[creature.gear]]
 chance = 100
 one_of = ["great_sword"]

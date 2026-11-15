@@ -1,4 +1,4 @@
-//! Levels' choices and talents in the world (spec §8 "Talents"). A level that comes
+//! Levels' choices and talents in the world. A level that comes
 //! ([`World::level_up`], from `grant_xp`) hands out what it brings: its skill rolls
 //! (`world/character/skill_roll.rs`) and every `talent_every`th level a talent pick, kept as a [`Due`] in
 //! `Progress` until they are made. **Nothing is banked**: while a choice is due the rules refuse
@@ -26,7 +26,7 @@ use crate::talent::{self, Candidate};
 use crate::world::{Spent, World, classes::class};
 use serde::{Deserialize, Serialize};
 
-/// What a level still asks the player to choose (spec §8 "Talents").
+/// What a level still asks the player to choose.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Due {
     /// The level that brought the choices.
@@ -37,7 +37,7 @@ pub struct Due {
     /// Skill rolls left (`world/character/skill_roll.rs`).
     #[serde(default, skip_serializing_if = "is_zero")]
     pub rolls: u8,
-    /// Bonus talent picks left, from the class's trees (spec §8 "Class abilities").
+    /// Bonus talent picks left, from the class's trees.
     #[serde(default, skip_serializing_if = "is_zero")]
     pub bonus: u8,
 }
@@ -78,8 +78,7 @@ impl World {
         let every = content.experience().talent_every();
         let character = self.state.character.clone();
         for level in from.saturating_add(1)..=to {
-            // Its skill rolls and bonus pick are the class of the level's (spec §8 "Prestige
-            // classes").
+            // Its skill rolls and bonus pick are the class of the level's.
             let rolls = self.level_rolls(level);
             let bonus = (character.as_ref())
                 .and_then(|c| c.class_of(&content, level))
@@ -138,7 +137,7 @@ impl World {
                 self.check_stats();
             }
         }
-        // The companion's grade follows its master's level (spec §8 "Allies"; `companion.rs`).
+        // The companion's grade follows its master's level (`companion.rs`).
         self.grow_companion();
         self.settle_due();
     }
@@ -151,7 +150,7 @@ impl World {
     }
 
     /// The trees of every bonus pick still due, by the level that brought it (the class of
-    /// that level's trees, spec §8 "Prestige classes"), the lowest level's first.
+    /// that level's trees), the lowest level's first.
     fn bonus_trees_due(&self) -> Vec<(u8, Option<Vec<TreeId>>)> {
         (self.state.progress.due.iter())
             .filter(|d| d.bonus > 0)
@@ -193,7 +192,7 @@ impl World {
             && !rolls_left
             && talent::offers(&self.content, &self.candidate()).is_empty();
         // A bonus pick nothing of its level's trees fits is dropped on its own: the trees are
-        // the class of the level's (spec §8 "Prestige classes").
+        // the class of the level's.
         let no_bonus: Vec<u8> = (self.bonus_trees_due().into_iter())
             .filter(|_| !rolls_left)
             .map(|(level, _)| level)

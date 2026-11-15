@@ -1,4 +1,4 @@
-# Creature rarities (spec §7 "Danger levels"): how often a level's population or a spawn draws a
+# Creature rarities: how often a level's population or a spawn draws a
 # creature type, beside its level. A type's weight in a draw (4 near the danger, 2 a little
 # below, 1 further down) is multiplied by its rarity's factor: the dangerous and rewarding types
 # (casters, chieftains, the strongest of a place) are fewer than the plain ones. Never shown in

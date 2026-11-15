@@ -1,4 +1,4 @@
-//! Shrines of a side in play (spec §7 "Special rooms", design §9.3; `docs/dev/special-rooms.md`):
+//! Shrines of a side in play (design §9.3; `docs/dev/special-rooms.md`):
 //! a shrine treats everyone inside by their own side against its hidden one
 //! ([`crate::content::Shrine::regard`]): one who agrees heals faster ([`World::shrine_pace`], read
 //! by `World::healing_rate_at`), one opposed holds its status, Unwelcome ([`World::dwell_shrine`],

@@ -1,4 +1,4 @@
-//! Stat training (spec §8 "Stats"; `data/stats.toml`): what trains each stat, what a point
+//! Stat training (`data/stats.toml`): what trains each stat, what a point
 //! costs, how likely a check is to pay it, and how fast; and the creature attacks that drain
 //! stats for good. The game says
 //! none of these numbers; the wiki states them exactly.
@@ -189,7 +189,7 @@ pub(super) fn drained_stat(stat: Option<Stat>) -> String {
     stat.map_or_else(|| "a random stat".to_string(), |s| s.name().to_string())
 }
 
-/// Every creature attack that drains (spec §8 "Stats": "Drain"): the stat and the points it
+/// Every creature attack that drains: the stat and the points it
 /// takes, the chance a hit tries, and the check that resists it; then, by difficulty, how often
 /// that check is held by score (a grid, #1668); then the floor no drain goes below.
 pub(super) fn drain_attacks(content: &Content) -> String {

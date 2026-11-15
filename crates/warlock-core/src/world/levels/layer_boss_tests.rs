@@ -1,4 +1,4 @@
-//! Layer bosses (`layer_boss.rs`; spec §7 "The endless branch", #1118): the lair on a tenth
+//! Layer bosses (`layer_boss.rs`, #1118): the lair on a tenth
 //! floor, its hidden way down, the boss's death opening it, the boss made again until it is
 //! slain, an ordinary floor after, and the content's checks.
 

@@ -1,4 +1,4 @@
-# An elixir of grace (spec §8 "Potions"): dexterity +1 for good, its potential +1d2. Elixirs are gold.
+# An elixir of grace: dexterity +1 for good, its potential +1d2. Elixirs are gold.
 [[object]]
 id = "elixir_of_grace"
 name = "elixir of grace"

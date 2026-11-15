@@ -1,7 +1,7 @@
-//! Outcome tables (spec §7 "Special rooms"): what a forgotten altar's prayer may bring, exactly,
+//! Outcome tables: what a forgotten altar's prayer may bring, exactly,
 //! and how often, per prayer and per altar, computed from `data/outcomes/forgotten_altar.toml`;
 //! what a healing spring's drink may bring, per drink (`data/outcomes/spring.toml`); and what
-//! each gamble potion may bring, per draught (spec §8 "Potions").
+//! each gamble potion may bring, per draught.
 
 use super::util::{capital, percent};
 use std::fmt::Write as _;
@@ -371,7 +371,7 @@ pub(super) fn spring_outcomes(content: &Content) -> String {
     out
 }
 
-/// Every gamble potion's table (spec §8 "Potions": a `gamble` draught draws one outcome), by the
+/// Every gamble potion's table (a `gamble` draught draws one outcome), by the
 /// potion's name: a heading anchored for links, then each outcome's kind, tier, chance per
 /// draught, what it does exactly, and what it says.
 pub(super) fn gamble_outcomes(content: &Content) -> String {

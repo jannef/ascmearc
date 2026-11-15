@@ -472,7 +472,7 @@ holders (`Ability::Class`'s `had_by`).
 | `wiki/src/allies.md` | a section **"Familiars"** after "Companions": what a familiar is, the touch (the hex, the giver, that every hex of hers on the target is refreshed), the harrying, Call familiar and its hour, that it grows and comes along as a companion does, the collar; the generated table `familiars.md` (`xtask/src/wiki/familiars.rs`: kind, Old English name, level, speed, hit points, blow, eyes, footsteps, hearing) and the names list; `TERMS.md` gains "familiar", "touch" |
 | `wiki/src/classes.md` | the witch's prose gains the familiar (linking allies, hexes, statuses per `TERMS.md`); the generated class table picks Familiar up |
 | `wiki/src/status-effects.md` | the Hexed row notes the familiar's touch beside Cackle and Malison |
-| The spec | spec §8 "Class abilities" (the witch: Familiar, Call familiar); spec/08b-creatures.md "Allies" (a familiar: kept, the touch, the calling) |
+| The spec | spec §8 "Class abilities" (the witch: Familiar, Call familiar); spec/09-creatures.md "Allies" (a familiar: kept, the touch, the calling) |
 | `docs/dev/` | `familiar.md` (the topic file: the module, the data, the hooks, the invariants, the tests); `allies.md` (the third variant, `kept()`); `companion.md` (the shared rules' predicate); `progression.md`'s hook table (`familiar`); `status-effects.md` (the touch as a giver of Hexed); CLAUDE.md's action text and dump layer lines; `docs/design/README.md` (this document under "Approved, implementing") |
 
 ## 12. Talents and the coverage policy

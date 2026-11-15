@@ -32,7 +32,8 @@ A cast that cannot go off (aimed at yourself, or out of reach) uses no charge an
 that goes off takes a cast's time.
 
 An empty wand does nothing ("Nothing happens.") and takes no time. It stays a wand, to sell or to
-keep. Wands are **never recharged**.
+keep. Wands are **never recharged**. No [skill](skills.md) governs wands: anyone zaps one as well
+as anyone else. There are no magic staffs; what no spell does, a [rod](#rods) does.
 
 Wands are found unknown. Each kind has its own look for the whole game ("an oak wand"). Using one
 tells you its kind, and from then on every wand of that kind shows by name. Its **charges** stay

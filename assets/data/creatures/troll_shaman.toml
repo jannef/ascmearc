@@ -37,7 +37,7 @@ damage_type = "slashing"
 name = "claws"
 verb = "rakes"
 to_hit = 5
-# Its gear (spec §8 "Creature gear"): a staff half the time.
+# Its gear: a staff half the time.
 [[creature.gear]]
 chance = 50
 one_of = ["ironwood_staff"]

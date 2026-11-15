@@ -35,7 +35,7 @@ verb = "stabs"
 to_hit = 6
 threat = 19
 on_hit = [{ status = "poisoned", chance = 30, severity = 3 }]
-# Its gear (spec §8 "Creature gear"): armour and coins, never a weapon (its venom rides on
+# Its gear: armour and coins, never a weapon (its venom rides on
 # its natural attack, which a wielded weapon would replace).
 [[creature.gear]]
 chance = 70
