@@ -840,6 +840,7 @@ impl ScreenStack {
     }
 
     /// Tells the Mods screen, if open, how its Apply went.
+    #[cfg_attr(target_arch = "wasm32", allow(dead_code))]
     pub fn mods_applied(&mut self, result: Result<Vec<String>, String>) {
         if let Some(Screen::Mods(screen)) = self.screens.last_mut() {
             screen.applied(result);

@@ -7,7 +7,7 @@
 use ascmearc_core::content::{Content, ContentError, ContentFiles};
 use std::path::Path;
 
-#[cfg(not(target_arch = "wasm32"))]
+/// Built for the web too (the Mods screen's types compile there), but never called there.
 pub mod mods;
 
 mod embedded {

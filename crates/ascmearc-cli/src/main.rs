@@ -7,7 +7,7 @@
 //! ascmearc-cli replay --create --scenario showcase --actions "move:N wait" -o run.json
 //! ascmearc-cli replay --verify run.json
 //! ascmearc-cli gen --level depths:3 --seed ascmearc
-//! ascmearc-cli --mod mods/pride_month dump --scenario ceaptun --layers view
+//! ascmearc-cli dump --mod mods/pride_month --scenario ceaptun --layers view
 //! ```
 
 use ascmearc_assets::mods::{self, Mod};

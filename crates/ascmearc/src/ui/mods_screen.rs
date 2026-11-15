@@ -169,6 +169,7 @@ impl ModsScreen {
     }
 
     /// The content was loaded with `on`, or failed to (the old content stays): told here.
+    #[cfg_attr(target_arch = "wasm32", allow(dead_code))]
     pub fn applied(&mut self, result: Result<Vec<String>, String>) {
         match result {
             Ok(on) => {

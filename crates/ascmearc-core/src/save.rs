@@ -306,7 +306,7 @@ mod tests {
     #[test]
     fn rejects_another_set_of_mods() {
         let plain = encode(&world());
-        let err = decode(&plain, with_pride_month()).err().expect("refused");
+        let err = decode(&plain, with_pride_month()).expect_err("refused");
         assert_eq!(
             err.to_string(),
             "this save was made without mods, and the game now runs with the mod pride_month \

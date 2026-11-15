@@ -281,7 +281,7 @@ logs are, over Settings), `controls`, and `dialog` (the quit dialog).
 
 ## The headless dev loop: `ascmearc-cli`
 
-No window, no Bevy; `--content-dir` and `--mod DIR` work here too (`ascmearc-cli dump --mod
+No window, no Bevy; `--content-dir` and `--mod DIR` work here too (`cargo dev-cli dump --mod
 mods/pride_month ...`; `replay --create` records the mods, and `replay --verify` and `dump
 --replay` refuse a replay whose mods are not the ones given).
 
