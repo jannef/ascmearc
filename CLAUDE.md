@@ -120,10 +120,10 @@ after changing content.
 Bevy 0.19 (2026-06) and 0.20 (2026-10) are newer than most model training data. **Do not write
 Bevy code from memory; check the pinned sources.**
 
-- API docs: https://docs.rs/bevy/0.20.0/bevy/
-- Examples at the pinned tag: https://github.com/bevyengine/bevy/tree/v0.20.0/examples
+- API docs: https://docs.rs/bevy/0.20.1/bevy/
+- Examples at the pinned tag: https://github.com/bevyengine/bevy/tree/v0.20.1/examples
 - Fastest: a local shallow clone to grep —
-  `git clone --depth 1 --branch v0.20.0 https://github.com/bevyengine/bevy /tmp/bevy-0.20`
+  `git clone --depth 1 --branch v0.20.1 https://github.com/bevyengine/bevy /tmp/bevy-0.20`
   (relevant: `examples/shader/shader_material_2d.rs`, `examples/2d/`, `examples/window/screenshot.rs`,
   `crates/bevy_sprite_render/src/mesh2d/`).
 
