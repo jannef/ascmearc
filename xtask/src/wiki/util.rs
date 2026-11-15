@@ -2,10 +2,10 @@
 //! numbers (signs, ordinals, factors, percentages), damage, durations, and the terms' anchors
 //! and links. A helper one topic alone uses stays in its module.
 
-use warlock_core::content::{Content, DamageTypeId, NORMAL_SPEED};
-use warlock_core::dice::Roll;
-use warlock_core::stats::Stat;
-use warlock_core::time::Duration;
+use ascmearc_core::content::{Content, DamageTypeId, NORMAL_SPEED};
+use ascmearc_core::dice::Roll;
+use ascmearc_core::stats::Stat;
+use ascmearc_core::time::Duration;
 
 pub(super) fn glyph(c: char) -> String {
     if c == ' ' {
@@ -33,7 +33,7 @@ pub(super) fn thousands(n: u32) -> String {
 }
 
 /// A name for a player-facing table, first letter capitalized: the game's own helper.
-pub(super) use warlock_core::text::capitalized as capital;
+pub(super) use ascmearc_core::text::capitalized as capital;
 
 /// A percentage, `p` in percent, as every table writes one: `0%`, `25%`, `12.5%`, `0.35%`; a
 /// tenth from 1% up and two significant digits below, trailing zeros left out, and `under
@@ -78,7 +78,7 @@ pub(super) fn table_text(text: &str) -> String {
 }
 
 /// `a` or `an` for a noun: the game's own helper.
-pub(super) use warlock_core::text::article;
+pub(super) use ascmearc_core::text::article;
 
 /// A signed number with a real minus sign: `+1`, `−1`.
 pub(super) fn signed(n: i32) -> String {

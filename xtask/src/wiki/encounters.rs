@@ -3,15 +3,15 @@
 //! checks and their odds, the skill ladders, where everyone stands, and each campaign's tables.
 
 use super::util::{Term, capital, link, percent_of, signed};
-use std::fmt::Write as _;
-use warlock_core::check;
-use warlock_core::content::{
+use ascmearc_core::check;
+use ascmearc_core::content::{
     Content, EncounterEntry, EncounterTable, EncounterWhen, EntryStance, Landscape, TalentEffect,
 };
-use warlock_core::daylight::DayPhase;
-use warlock_core::dice::Dice;
-use warlock_core::skills::Effect;
-use warlock_core::talent::DelvingEffect;
+use ascmearc_core::daylight::DayPhase;
+use ascmearc_core::dice::Dice;
+use ascmearc_core::skills::Effect;
+use ascmearc_core::talent::DelvingEffect;
+use std::fmt::Write as _;
 
 /// The landscapes a step rolls on, in the order the pages list them: safest first.
 const LANDSCAPES: [Landscape; 7] = [
@@ -201,7 +201,7 @@ pub(super) fn ladders(content: &Content) -> String {
         Effect::Stalk => "stalk",
         _ => "slipping away",
     };
-    let columns: Vec<(String, &warlock_core::skills::Benefit)> = (content.skills().iter())
+    let columns: Vec<(String, &ascmearc_core::skills::Benefit)> = (content.skills().iter())
         .flat_map(|s| s.benefits.iter().map(move |b| (s, b)))
         .filter(|(_, b)| matches!(b.effect, Effect::Lookout | Effect::Stalk | Effect::Evade))
         .map(|(s, b)| {
@@ -458,7 +458,7 @@ mod tests {
 
     #[test]
     fn the_tables_read_the_data() {
-        let content = warlock_assets::content().expect("content");
+        let content = ascmearc_assets::content().expect("content");
         let rates = rates(&content);
         assert!(rates.contains("| Road | 1% | 1.5% | 2% |"), "{rates}");
         assert!(rates.contains("(20 min): 0.33%"), "{rates}");

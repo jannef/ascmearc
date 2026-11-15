@@ -1,0 +1,23 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ Welcome to Showcase. Press ? for controls.
+
+
+
+
+
+
+
+
+
+
+           ┌─ Consume what? ────────────────────────────────────────────────────────────┐
+           │                                                                            │
+           │ Food                                                                       │
+           │ > a - % 2 food rations (smells fresh)                                1 kg  │
+           │   b - % 2 loaves of bread (smells fresh)                            800 g  │
+           │                                                                            │
+           │ a-b or Enter consume   Esc cancel                                          │
+           └────────────────────────────────────────────────────────────────────────────┘

@@ -1,9 +1,9 @@
 # Digging
 
-Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
+Developer notes for working on this part of Ascmearc (moved from CLAUDE.md, #185); the
 rules it implements are in spec/10-combat.md. Keep it current with the code, as CLAUDE.md says.
 
-Digging (M19, #131) lives in `warlock-core/src/world/crafting/dig.rs`. Terrain that
+Digging (M19, #131) lives in `ascmearc-core/src/world/crafting/dig.rs`. Terrain that
 breaks has `hardness` and `becomes` (`TerrainDef::breaks: Option<Breakable>`; the data breaks only
 solid terrain, into walkable, transparent, plain ground); `void` (solid rock) has a `face`
 (`wall`) it turns into when a cell next to it opens, as mapgen walls open ground. Cells on a

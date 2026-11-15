@@ -1,6 +1,6 @@
 # Overworld encounters
 
-Developer notes for working on this part of Warlock; the design is
+Developer notes for working on this part of Ascmearc; the design is
 `docs/design/overworld-encounters.md` (its §15, the owner's decisions, overrides the rest), the
 slices #803 (E0, the edge rule: `world/levels/edge_leave.rs`, `docs/dev/overworld.md`), #804 (E1, the
 rules, this file), #805 (E2, the dialog), #806 (E3, the Ascmearc's tables, `draw`, `npc`, and
@@ -218,7 +218,7 @@ action and never saved.
 cell); the `truth` layer's `encounter rate here N bp/h, tables: ...` on the overworld of a
 campaign with tables; the `actors` layer's `of encounter ID`.
 
-The app (`crates/warlock/src/ui/encounter.rs`, #805): `on_encounter` opens the one dialog
+The app (`crates/ascmearc/src/ui/encounter.rs`, #805): `on_encounter` opens the one dialog
 (`Dialog`, `docs/dev/screens.md`) from the view whenever the run changed with an encounter
 pending and no such dialog open: after the step that met them and on load. Its title and text
 are the view's (the known line included), a plain row per choice sending `Action::Encounter`;

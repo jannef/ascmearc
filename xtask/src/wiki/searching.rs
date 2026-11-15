@@ -3,11 +3,11 @@
 //! untrained, no racial bonus), never a difficulty or a modifier.
 
 use super::util::{capital, percent_of};
+use ascmearc_core::check;
+use ascmearc_core::content::{Content, Generator, PassiveSearch};
+use ascmearc_core::dice::Dice;
+use ascmearc_core::skills::{Effect, SkillId};
 use std::fmt::Write as _;
-use warlock_core::check;
-use warlock_core::content::{Content, Generator, PassiveSearch};
-use warlock_core::dice::Dice;
-use warlock_core::skills::{Effect, SkillId};
 
 /// How many turns the "ten turns" column searches.
 const TURNS: i32 = 10;

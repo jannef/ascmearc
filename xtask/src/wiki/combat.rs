@@ -4,12 +4,12 @@
 use super::objects::goes_on;
 use super::order;
 use super::util::{Term, anchored, at_normal_pace, capital, percent_of, signed};
+use ascmearc_core::combat;
+use ascmearc_core::content::{ActionKind, BASE_TURN, Content, price};
+use ascmearc_core::geom::Pos;
+use ascmearc_core::talent::OffenceEffect;
+use ascmearc_core::text::and_list;
 use std::fmt::Write as _;
-use warlock_core::combat;
-use warlock_core::content::{ActionKind, BASE_TURN, Content, price};
-use warlock_core::geom::Pos;
-use warlock_core::talent::OffenceEffect;
-use warlock_core::text::and_list;
 
 /// The natural rolls of a threat range: `22–24`, or `24` alone.
 pub(super) fn threat_range(threat: u8) -> String {
@@ -457,7 +457,7 @@ pub(super) fn to_hit(content: &Content) -> String {
 /// The Gatekeeper gift's chance of a blow in a stance whose `gatekeeper` percent is `percent`:
 /// "1 in 4", "always" (the talent's `one_in` scaled, at most always); "-" without the talent.
 fn gatekeeper_chance(content: &Content, percent: u32) -> String {
-    use warlock_core::content::{FreeBlowTrigger, TalentEffect};
+    use ascmearc_core::content::{FreeBlowTrigger, TalentEffect};
     let book = content.talents();
     let one_in = (book.id("gatekeeper").map(|t| book.get(t).effects.iter()))
         .into_iter()

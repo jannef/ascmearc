@@ -1,0 +1,25 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ You set to work on the Fine long sword at the anvil. The metal rings true. This is a Marvellous
+ long sword!
+
+
+
+
+
+
+
+           ┌─ Temper ───────────────────────────────────────────────────────────────────┐
+           │                                                                            │
+           │ Melee weapons                                                              │
+           │ > a - ) a Marvellous long sword (+2 hit, 1d9)                      1.8 kg  │
+           │   b - ) a dagger (+0 hit, 1d4, range 5)                             450 g  │
+           │ Body armour                                                                │
+           │   c - [ a chain mail shirt (Dv +2, Pv 3)                            11 kg  │
+           │ Helmets                                                                    │
+           │   d - [ an iron helm (Dv +0, Pv 1)                                 1.5 kg  │
+           │                                                                            │
+           │ a-d or Enter temper   Esc cancel                                           │
+           └────────────────────────────────────────────────────────────────────────────┘

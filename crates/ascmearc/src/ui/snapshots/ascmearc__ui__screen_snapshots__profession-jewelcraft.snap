@@ -1,0 +1,28 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ There are several objects here.
+ You pick up a medium fine sapphire, an uncut tiny garnet, and 25 gold coins.
+
+
+
+
+            ┌─ Jewelcraft: recipes ────────────────────────────────────────────────────┐
+            │                                                                          │
+            │ Work                                                                     │
+            │ > a - Cut           a loose gem, about 30 minutes                        │
+            │   b - Set           an item and a cut gem, about 20 minutes              │
+            │ Rings                                                                    │
+            │   c - Gold ring     beyond your skill                                    │
+            │   d - Iron ring     no metal to hand                                     │
+            │   e - Silver ring   beyond your skill                                    │
+            │ Amulets                                                                  │
+            │   f - Amber amulet  no resin to hand                                     │
+            │   g - Gold amulet   beyond your skill                                    │
+            │   h - Jade amulet   no stone to hand                                     │
+            │                                                                          │
+            │ Takes a loose gem, about 30 minutes.                                     │
+            │                                                                          │
+            │ a-h or Enter make   Esc back                                             │
+            └──────────────────────────────────────────────────────────────────────────┘

@@ -1,0 +1,25 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ There are several objects here.
+ You pick up 29 objects.
+
+
+
+
+
+
+
+                  ┌─ Dagger: pommel ─────────────────────────────────────────────┐
+                  │                                                              │
+                  │ Dagger — metal: mithril                                      │
+                  │                                                              │
+                  │   - - None                                                   │
+                  │ Gems                                                         │
+                  │ > a - a ruby                                          uses 1 │
+                  │   b - an emerald                                      uses 1 │
+                  │                                                              │
+                  │                                                              │
+                  │ a-b or Enter choose   - none   Esc back                      │
+                  └──────────────────────────────────────────────────────────────┘

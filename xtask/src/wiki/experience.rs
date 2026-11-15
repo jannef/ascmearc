@@ -4,8 +4,8 @@
 
 use super::creatures::xp_cell;
 use super::util::{capital, thousands};
+use ascmearc_core::content::{Content, CreatureId, Factor, pace_words};
 use std::fmt::Write as _;
-use warlock_core::content::{Content, CreatureId, Factor, pace_words};
 
 /// The slowest and the quickest race and class: the characters whose thresholds are the
 /// highest and the lowest, by name, with their factors.
@@ -16,7 +16,8 @@ fn extremes(content: &Content) -> Option<[(String, Factor); 2]> {
     let quick_race = races.iter().min_by_key(|r| r.experience)?;
     let slow_class = classes.iter().max_by_key(|c| c.experience)?;
     let quick_class = classes.iter().min_by_key(|c| c.experience)?;
-    let named = |race: &warlock_core::content::RaceDef, class: &warlock_core::content::ClassDef| {
+    let named = |race: &ascmearc_core::content::RaceDef,
+                 class: &ascmearc_core::content::ClassDef| {
         let name = format!("{} {}", race.name, class.name.to_lowercase());
         (name, Factor::new(Some(race), Some(class)))
     };

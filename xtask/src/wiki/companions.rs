@@ -5,11 +5,11 @@
 use super::creatures::bare;
 use super::order;
 use super::util::{Term, damage_text, link, signed};
+use ascmearc_core::burden::Burden;
+use ascmearc_core::combat::Category;
+use ascmearc_core::content::{Content, CreatureId, RaceBeasts};
+use ascmearc_core::world::{Ally, AllySource, CompanionData, Order};
 use std::fmt::Write as _;
-use warlock_core::burden::Burden;
-use warlock_core::combat::Category;
-use warlock_core::content::{Content, CreatureId, RaceBeasts};
-use warlock_core::world::{Ally, AllySource, CompanionData, Order};
 
 /// The levels the growth table is printed at.
 const GRADES: [u8; 7] = [1, 10, 20, 30, 40, 50, 60];
@@ -218,11 +218,11 @@ pub(super) fn taming(content: &Content) -> String {
     };
     let t = rules.tame;
     let handle = (content.skills().iter())
-        .find(|s| (s.benefits.iter()).any(|b| b.effect == warlock_core::skills::Effect::Tame));
+        .find(|s| (s.benefits.iter()).any(|b| b.effect == ascmearc_core::skills::Effect::Tame));
     let at = |value: u16| {
         handle
             .and_then(|s| {
-                (s.benefits.iter()).find(|b| b.effect == warlock_core::skills::Effect::Tame)
+                (s.benefits.iter()).find(|b| b.effect == ascmearc_core::skills::Effect::Tame)
             })
             .map_or(0, |b| b.at(value))
     };
@@ -246,7 +246,7 @@ pub(super) fn taming(content: &Content) -> String {
     out.push_str("\n|---|---:|");
     out.push_str(&"---:|".repeat(TAME_EDGES.len()));
     out.push('\n');
-    let mut beasts: Vec<(CreatureId, &warlock_core::content::CreatureDef)> =
+    let mut beasts: Vec<(CreatureId, &ascmearc_core::content::CreatureDef)> =
         (order::creatures(content).into_iter())
             .filter(|(_, c)| c.tameable)
             .collect();
@@ -255,7 +255,7 @@ pub(super) fn taming(content: &Content) -> String {
         let difficulty = t.difficulty + t.per_level * i32::from(def.level);
         let _ = write!(out, "| {} | {difficulty} |", beast(content, id));
         for edge in TAME_EDGES {
-            let ways = warlock_core::check::ways(edge, difficulty);
+            let ways = ascmearc_core::check::ways(edge, difficulty);
             let _ = write!(out, " {} |", super::util::percent_of(ways, 144));
         }
         out.push('\n');

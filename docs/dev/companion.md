@@ -358,5 +358,5 @@ the kill, the dumps, the mark); a save round trip. `content/companion.rs::tests`
 file and every race's list, the refusals, loading without the file, the wolf's `tameable` and
 `nose`. `background_tests` pins the
 chapter list; the samples (`the_samples_read_as_written`) prove a non-ranger's story unchanged.
-Screen snapshots (`crates/warlock/src/ui/screen_snapshots.rs`): every ranger case shows the
+Screen snapshots (`crates/ascmearc/src/ui/screen_snapshots.rs`): every ranger case shows the
 status bar's segment, the Character screen's row, and the Allies group.

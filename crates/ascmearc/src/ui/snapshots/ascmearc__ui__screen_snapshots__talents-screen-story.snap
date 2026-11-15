@@ -1,0 +1,44 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+┌─ Talents ────────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                                  │
+│ Your talents                                                                                     │
+│   Stars                                                                                          │
+│ >   Grasping arms  (birth sign)                                                                  │
+│     Of the deep  (birth sign)                                                                    │
+│     Ungainly ashore  (birth sign)                                                                │
+│     Blaze  (birth sign)                                                                          │
+│     Kindled  (birth sign)                                                                        │
+│   Heritage                                                                                       │
+│     Family wealth                                                                                │
+│   Vigour                                                                                         │
+│     Strong constitution                                                                          │
+│     Hardy  (story)                                                                               │
+│   Delver                                                                                         │
+│     Quiet delver                                                                                 │
+│   Racial                                                                                         │
+│     Versatile  (race)                                                                            │
+│   Class abilities                                                                                │
+│     Weapon drill  (class)                                                                        │
+│     Charge  (class)                                                                              │
+│ Other talents                                                                                    │
+│   Stars                                                                                          │
+│     Tentacles                                                                                    │
+│         Needs: Twin Blades 3, to be born in the year of the Kraken                               │
+│     Wildfire                                                                                     │
+│         Needs: level 15, to be Fire-born                                                         │
+│   Heritage                                                                                       │
+│     Father's sword                                                                               │
+│         Needs: Family wealth, to be a new character                                              │
+│     Landed noble                                                                                 │
+│         Needs: to be an aristocrat, to be a new character                                        │
+│   Crafts                                                                                         │
+│                                                                                                ↓ │
+│ A weapon in each hand hampers you less, and with sword and shield your free bash comes more      │
+│ often.                                                                                           │
+│                                                                                                  │
+│                                                                                                  │
+│ ↑↓ choose   G or Esc close                                                                       │
+└─ 1 Char · 2 Inv · 3 Eqp · 4 Skl · 5 Weap · 6 Mag · 7 Qst · 8 Tal · 9 Story ──────────────────────┘

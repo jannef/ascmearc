@@ -2,12 +2,12 @@
 
 use super::order;
 use super::util::{capital, factor, signed};
+use ascmearc_core::content::{Content, HungerDef};
+use ascmearc_core::hunger::Hunger;
+use ascmearc_core::object::format_weight;
+use ascmearc_core::stats::Stat;
+use ascmearc_core::time::{DAY, Duration};
 use std::fmt::Write as _;
-use warlock_core::content::{Content, HungerDef};
-use warlock_core::hunger::Hunger;
-use warlock_core::object::format_weight;
-use warlock_core::stats::Stat;
-use warlock_core::time::{DAY, Duration};
 
 /// How long `points` of nutrition last a race of hunger `percent`, in whole minutes: "36
 /// hours", "1 hour and 15 minutes".
@@ -119,7 +119,7 @@ pub(super) fn hunger_facts(content: &Content) -> String {
         ),
     );
     row("The most there can be", def.max.to_string());
-    let exertion: Vec<String> = (warlock_core::content::EXERTIONS.iter())
+    let exertion: Vec<String> = (ascmearc_core::content::EXERTIONS.iter())
         .map(|k| format!("{} {}", def.exertion(*k), k.id()))
         .collect();
     row(

@@ -1,6 +1,6 @@
 [book]
-title = "Warlock Wiki"
-description = "How Warlock works: time, light, sight, the overworld, and more."
+title = "Ascmearc Wiki"
+description = "How Ascmearc works: time, light, sight, the overworld, and more."
 authors = ["Janne Lê Forsell"]
 language = "en"
 src = "src"
@@ -12,9 +12,9 @@ build-dir = "book"
 default-theme = "coal"
 preferred-dark-theme = "coal"
 # The wiki is published beside the game at https://ascmearc.com/wiki/.
-site-url = "/warlock/wiki/"
-git-repository-url = "https://github.com/jannef/warlock"
-edit-url-template = "https://github.com/jannef/warlock/edit/main/wiki/{path}"
+site-url = "/wiki/"
+git-repository-url = "https://github.com/jannef/ascmearc"
+edit-url-template = "https://github.com/jannef/ascmearc/edit/main/wiki/{path}"
 
 # Fold the sidebar: only the open page's branch shows its children.
 [output.html.fold]

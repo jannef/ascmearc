@@ -1,6 +1,6 @@
 # Enchanting
 
-Developer notes for working on this part of Warlock; the approved design is
+Developer notes for working on this part of Ascmearc; the approved design is
 `docs/design/enchanting.md` (#1414), built in phases E1 to E6 (#1427 to #1432). Keep it current
 with the code, as CLAUDE.md says. All six are built: affix capacity and the trim; the
 crystals, consuming one, and salvage's affix checks; the Soulglass spell; the profession with
@@ -8,7 +8,7 @@ its six recipes; and the seals and the rare materials (E6).
 
 ## Affix capacity
 
-`warlock-core/src/magic/capacity.rs`: `capacity(stack, content) -> u8`, the one read, is how many
+`ascmearc-core/src/magic/capacity.rs`: `capacity(stack, content) -> u8`, the one read, is how many
 affixes, prefixes and suffixes together, an item can hold:
 
 | Term | Value | Read from |
@@ -295,7 +295,7 @@ reach `enchant_level` (`Effect::EnchantLevel`, `[[0, 1], [110, 12], [200, 12]]`,
   (`xtask/src/wiki/enchanting.rs`: each recipe's crystals, time, listed from, difficulty, and the
   odds of a made check at three skill values, from `enchant_band`).
 - **Snapshots**: `profession-enchanting`, `enchant-pick-item`, `enchant-dialog`
-  (`crates/warlock/src/ui/screen_snapshots.rs`).
+  (`crates/ascmearc/src/ui/screen_snapshots.rs`).
 
 ## Seals and the rare materials
 

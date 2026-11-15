@@ -14,7 +14,7 @@ leaves a detail open, the PR decides in its spirit and says so. -->
 
 ## Rules
 
-<!-- What warlock-core does: data, state, actions, hooks, determinism, saves. Hidden numbers
+<!-- What ascmearc-core does: data, state, actions, hooks, determinism, saves. Hidden numbers
 stay hidden in the game (the wiki states them). -->
 
 ## What the player sees
@@ -24,8 +24,8 @@ abilities menu), dumps. -->
 
 ## Tests
 
-<!-- Unit, property, or snapshot tests in warlock-core; a replay created and verified; text
-snapshots for new screens (`crates/warlock/src/ui/screen_snapshots.rs`; no golden entries unless
+<!-- Unit, property, or snapshot tests in ascmearc-core; a replay created and verified; text
+snapshots for new screens (`crates/ascmearc/src/ui/screen_snapshots.rs`; no golden entries unless
 only the GPU can show it, CLAUDE.md "Golden screenshots"); `cargo xtask wiki`. -->
 
 ## Docs

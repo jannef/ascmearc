@@ -1,9 +1,9 @@
 # Skills
 
-Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
+Developer notes for working on this part of Ascmearc (moved from CLAUDE.md, #185); the
 rules it implements are in spec/12-character.md. Keep it current with the code, as CLAUDE.md says.
 
-Skills (#132) live in `warlock-core`: `skills.rs` (`Skills` per actor: trained
+Skills (#132) live in `ascmearc-core`: `skills.rs` (`Skills` per actor: trained
 skills only, a missing one is untrained and gives nothing; `Effect` and `Use`, the typed benefit
 and training-mark hooks; `Benefit` growth by `steps` or a `curve`; `Ladder` and `RollRules`, the
 skill rolls' data; `Skills::mark` adds a mark, `Skills::roll` applies a roll and spends the
@@ -209,7 +209,7 @@ effect or use is a variant there plus its one hook. The player sees values only
 (`PerceptionView::own_skills`, the Skills screen `ui/skills_screen.rs`, `A`); never marks or
 benefit numbers. Skills get no keys of their own: active uses are chosen from the one abilities
 menu (#156, `docs/dev/screens.md`): each trained skill of kind `action` is an `Ability::Skill`
-there (`warlock_core::ability`), unavailable ("not usable yet") until its use exists, when it
+there (`ascmearc_core::ability`), unavailable ("not usable yet") until its use exists, when it
 becomes an ability of its own in the skill's place (`Ability::use_of`): Disable device is
 `Ability::Disarm` (`docs/dev/traps.md`), Open lock `Ability::PickLock` (`docs/dev/doors.md`),
 Steal `Ability::Steal` (`docs/dev/stealing.md`), Heal `Ability::Heal` (`docs/dev/status-effects.md`),

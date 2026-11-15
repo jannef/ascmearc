@@ -1,0 +1,5 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(&case, content.clone())"
+---
+ Give it to which side? (Esc to cancel)

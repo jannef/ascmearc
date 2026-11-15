@@ -130,7 +130,7 @@
 # Uniques: unique = true (default false) for a type a population draws
 # at most once in a run (a boss); a level legend may still place it by hand.
 #
-# Grades (crates/warlock-core/src/grade.rs): one creature in six
+# Grades (crates/ascmearc-core/src/grade.rs): one creature in six
 # comes greater than its kind (+25 % maximum hit points, +1 to hit and +2 damage in melee, 10 %
 # slower) and one in six lesser (the reverse), drawn as it is made; its kill pays its kind's
 # experience. grades = false (default true) for a type that has none (the people); a unique, a

@@ -1,0 +1,23 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(&case, content.clone())"
+---
+ Lēof, your hound, pads at your heel.
+ You meet a hermit on the way.
+
+
+
+
+
+
+
+
+                                 ┌─ A hermit ────────────────────┐
+                                 │                               │
+                                 │ You meet a hermit on the way. │
+                                 │                               │
+                                 │          > Hail them          │
+                                 │            Pass by            │
+                                 │                               │
+                                 │ ↑/↓ choose  Enter select      │
+                                 └───────────────────────────────┘

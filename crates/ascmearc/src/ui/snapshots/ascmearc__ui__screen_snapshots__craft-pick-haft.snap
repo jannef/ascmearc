@@ -1,0 +1,24 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ There are several objects here.
+ You pick up 29 objects.
+
+
+
+
+
+
+
+                  ┌─ Javelin: haft ──────────────────────────────────────────────┐
+                  │                                                              │
+                  │ Javelin — head: iron                                         │
+                  │                                                              │
+                  │ Materials                                                    │
+                  │ > a - 12 wood billets                                 uses 4 │
+                  │                                                              │
+                  │                                                              │
+                  │                                                              │
+                  │ a or Enter choose   Esc back                                 │
+                  └──────────────────────────────────────────────────────────────┘

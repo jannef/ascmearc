@@ -1,9 +1,9 @@
 # Doors
 
-Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
+Developer notes for working on this part of Ascmearc (moved from CLAUDE.md, #185); the
 rules it implements are in spec/10-combat.md. Keep it current with the code, as CLAUDE.md says.
 
-Doors (M19, #130): the rules are `warlock-core/src/door.rs` (`Lock`, `Key`,
+Doors (M19, #130): the rules are `ascmearc-core/src/door.rs` (`Lock`, `Key`,
 `kick_breaks`/`break_chance`: `1d(sturdiness) ≤ Strength`, one keyed draw), applied in
 `world/fixtures/door.rs` (`open_door` unlocks with `Actor::key_for` and costs `unlock` + `open_door`,
 `swing_open`, `close_door`, `kick`/`kick_door`, the kick's Strength `World::kick_force`
@@ -36,7 +36,7 @@ plus the branch's `DungeonDef::locks_at`, from `locks_per_depth` in `dungeons.to
 are taken before the check, `Use::Pick` trains Open lock, and a picked lock is removed and the
 door opened by `swing_open` (so a trapped door's trap goes off at the picker); a failure changes
 nothing, so trying again is free but for time. The ability is `Ability::PickLock`
-(`warlock_core::ability`, Open lock's use; `KeyCommand::PickLock`, unbound). `Lock::difficulty`
+(`ascmearc_core::ability`, Open lock's use; `KeyCommand::PickLock`, unbound). `Lock::difficulty`
 is saved only when a level gives one (`skip_serializing_if`), so locks without one hash as
 before. Level legends lock with `lock = "id"` or
 `locked = true` (and `lock_difficulty = N`); objects are keys with `key = "id"` (`"*"`: skeleton).

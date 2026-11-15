@@ -21,7 +21,7 @@ start_session() {
       --arg model "$model" '{
       agent: (if $model == "" then $agent
               else {type: "agent_with_overrides", id: $agent, model: {id: $model, effort: "high"}} end),
-      resources: [{type: "github_repository", url: "https://github.com/jannef/warlock",
+      resources: [{type: "github_repository", url: "https://github.com/jannef/ascmearc",
                    authorization_token: env.BODY_TOKEN, checkout: {type: "branch", name: $co}}],
       initial_events: [{type: "user.message", content: [{type: "text", text: $msg}]}]
     }' | ant beta:sessions create \

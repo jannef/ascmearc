@@ -1,0 +1,26 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ There are several objects here. (×2)
+ You pick up a glass wand and an ivory wand.
+
+
+
+
+
+
+                  ┌─ Item ───────────────────────────────────────────────────────┐
+                  │                                                              │
+                  │ - Glass wand                                                 │
+                  │                                                              │
+                  │ Glass wand · wood · 200 g                                    │
+                  │                                                              │
+                  │ Readied: missile weapon                                      │
+                  │                                                              │
+                  │ Unidentified: the spell it holds is unknown until it is used │
+                  │ or identified.                                               │
+                  │ Its charges are unknown until it is identified.              │
+                  │                                                              │
+                  │ Esc close                                                    │
+                  └──────────────────────────────────────────────────────────────┘

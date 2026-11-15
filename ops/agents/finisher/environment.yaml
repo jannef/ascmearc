@@ -1,5 +1,5 @@
-name: warlock-finisher-env
-description: Ubuntu sandbox that builds and renders the Warlock workspace (software Vulkan); GitHub, crates.io and Rust hosts only. Shared by the finisher and the engineer.
+name: ascmearc-finisher-env
+description: Ubuntu sandbox that builds and renders the Ascmearc workspace (software Vulkan); GitHub, crates.io and Rust hosts only. Shared by the finisher and the engineer.
 config:
   type: cloud
   networking:

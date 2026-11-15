@@ -3,12 +3,12 @@
 //! that makes casting dearer, and the wands.
 
 use super::util::{Term, anchored, damage_link, link};
-use std::fmt::Write as _;
-use warlock_core::content::{
+use ascmearc_core::content::{
     BurstIce, Content, MAX_SPELL_RANK, Resolution, RodDoes, RodShape, RuinOf, Shape, SpellData,
     SpellMods, SpellPurpose, TalentEffect, ZoneKind,
 };
-use warlock_core::talent::MagicEffect;
+use ascmearc_core::talent::MagicEffect;
+use std::fmt::Write as _;
 
 /// What each shape multiplies the base cost by; a burst by radius.
 pub(super) fn shapes(content: &Content) -> String {
@@ -316,7 +316,7 @@ fn rank_words(mods: &SpellMods) -> String {
 /// The spell circles' statuses (`data/circles.toml`): each buff's and hex's spell, the status it
 /// marks, and its school's colour; buffs first, then hexes, each by spell name.
 pub(super) fn circles(content: &Content) -> String {
-    let mut rows: Vec<(bool, &SpellData, &warlock_core::content::CircledStatus)> = (content
+    let mut rows: Vec<(bool, &SpellData, &ascmearc_core::content::CircledStatus)> = (content
         .spells())
     .iter()
     .filter(|s| matches!(s.kind, SpellPurpose::Buff | SpellPurpose::Hex))
@@ -535,7 +535,7 @@ pub(super) fn does(content: &Content, spell: &SpellData) -> String {
         let _ = write!(text, "; everyone it harms suffers {} ({n})", status(s));
     }
     if let Some(n) = spell.effect.arcs {
-        let reach = warlock_core::content::ARC_REACH;
+        let reach = ascmearc_core::content::ARC_REACH;
         let _ = write!(
             text,
             "; it jumps {n} times for certain, every jump reaching {reach} cells"
@@ -626,7 +626,7 @@ pub(super) fn wands(content: &Content) -> String {
         .filter_map(|o| Some((o, o.wand?)))
         .collect();
     wands.sort_by(|(a, x), (b, y)| {
-        let level = |w: &warlock_core::content::Wand| content.spell(w.spell).level;
+        let level = |w: &ascmearc_core::content::Wand| content.spell(w.spell).level;
         level(x).cmp(&level(y)).then(a.name.cmp(&b.name))
     });
     let mut out = String::from(

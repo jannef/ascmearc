@@ -3,13 +3,13 @@
 //! intimidated foe flees (Intimidate), and what foraging finds.
 
 use super::util::{Term, anchored, capital, factor, link, percent_of};
+use ascmearc_core::burden::Burden;
+use ascmearc_core::check::{CONTEST_WAYS, contest_ways, ways};
+use ascmearc_core::content::{Content, OptionalSkill, RecipeCount, TalentEffect};
+use ascmearc_core::dice::Dice;
+use ascmearc_core::skills::{Effect, SkillId};
+use ascmearc_core::talent::CraftEffect;
 use std::fmt::Write as _;
-use warlock_core::burden::Burden;
-use warlock_core::check::{CONTEST_WAYS, contest_ways, ways};
-use warlock_core::content::{Content, OptionalSkill, RecipeCount, TalentEffect};
-use warlock_core::dice::Dice;
-use warlock_core::skills::{Effect, SkillId};
-use warlock_core::talent::CraftEffect;
 
 /// Every skill in the order the Skills screen lists them: what kind it is, what it is about,
 /// what it gives (the benefits table has the numbers), and when it earns a training mark (with
@@ -80,7 +80,7 @@ pub(super) fn gated_effect(effect: Effect) -> bool {
 
 /// Whether everything `skill` gives is for those trained in it only (a skill suffix of it helps
 /// them only).
-pub(super) fn gated(skill: &warlock_core::content::SkillDef) -> bool {
+pub(super) fn gated(skill: &ascmearc_core::content::SkillDef) -> bool {
     !skill.benefits.is_empty() && skill.benefits.iter().all(|b| gated_effect(b.effect))
 }
 
@@ -243,7 +243,7 @@ fn benefit_words(effect: Effect) -> &'static str {
 }
 
 /// What a benefit gives at a value, as the benefits table says it.
-fn benefit_cell(b: &warlock_core::skills::Benefit, value: u16) -> String {
+fn benefit_cell(b: &ascmearc_core::skills::Benefit, value: u16) -> String {
     let n = b.at(value);
     match b.effect {
         _ if n == 0 => "—".to_string(),
@@ -316,7 +316,7 @@ const RESIST_MARGINS: [u16; 12] = [0, 1, 4, 5, 10, 15, 20, 25, 30, 35, 40, 60];
 /// against a creature's drain, a disease its attack carries, or its hold, by how far the skill's
 /// value stands above the creature's level.
 pub(super) fn skill_resist(content: &Content) -> String {
-    let columns: Vec<(&str, &warlock_core::skills::Benefit)> = (content.skills().iter())
+    let columns: Vec<(&str, &ascmearc_core::skills::Benefit)> = (content.skills().iter())
         .flat_map(|s| s.benefits.iter().map(move |b| (s.name.as_str(), b)))
         .filter(|(_, b)| b.effect == Effect::Resist)
         .collect();
@@ -473,7 +473,7 @@ pub(super) fn intimidating(content: &Content) -> String {
         rules.range, rules.difficulty
     );
     for &(points, degrees) in &rules.degrees {
-        let value = (0..=warlock_core::skills::MAX_VALUE)
+        let value = (0..=ascmearc_core::skills::MAX_VALUE)
             .find(|&v| benefit.is_some_and(|b| b.at(v) >= points))
             .map_or("—".to_string(), |v| format!("{v}+"));
         let plural = if degrees == 1 { "" } else { "s" };
@@ -628,7 +628,7 @@ pub(super) fn heal_targets(content: &Content) -> String {
          |---|---:|---:|---:|---|---|\n",
     );
     let odds = |difficulty: i32| {
-        let at = |m| percent_of(warlock_core::check::ways(m, difficulty), 144);
+        let at = |m| percent_of(ascmearc_core::check::ways(m, difficulty), 144);
         (at(0), at(8))
     };
     for (_, def) in content.status_ids() {

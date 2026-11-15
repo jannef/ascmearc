@@ -3,11 +3,11 @@
 //! The docs read before every task (CLAUDE.md, `spec/`, `docs/dev/`; not `docs/design/`, which
 //! is history) name code in inline code spans in three forms: a file, `ui/screens.rs`, perhaps
 //! with an item in it, `ui/screens.rs::ScreenName`; a type's item, `World::state_hash`; and a
-//! module's, `background::tell`, `ui::step_dialogs::trap_dialog`, `warlock_core::GAME_VERSION`.
+//! module's, `background::tell`, `ui::step_dialogs::trap_dialog`, `ascmearc_core::GAME_VERSION`.
 //! Each is looked up in the sources under `crates/` and `xtask/`:
 //!
 //! - a file by its path's tail (`world/allies/familiar.rs` matches
-//!   `crates/warlock-core/src/world/allies/familiar.rs`);
+//!   `crates/ascmearc-core/src/world/allies/familiar.rs`);
 //! - a type in the files that define it (`struct`, `enum`, `trait`, `type`, `union`) or `impl`
 //!   something for it;
 //! - a module by the longest run of its leading segments that is a file or folder
@@ -68,10 +68,10 @@ const IGNORED: &[&str] = &[
 
 /// The crates a name may start with, and their source folders.
 const CRATES: &[(&str, &str)] = &[
-    ("warlock", "crates/warlock/"),
-    ("warlock_assets", "crates/warlock-assets/"),
-    ("warlock_cli", "crates/warlock-cli/"),
-    ("warlock_core", "crates/warlock-core/"),
+    ("ascmearc", "crates/ascmearc/"),
+    ("ascmearc_assets", "crates/ascmearc-assets/"),
+    ("ascmearc_cli", "crates/ascmearc-cli/"),
+    ("ascmearc_core", "crates/ascmearc-core/"),
     ("xtask", "xtask/"),
 ];
 

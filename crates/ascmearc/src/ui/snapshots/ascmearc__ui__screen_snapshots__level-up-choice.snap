@@ -1,0 +1,32 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ Welcome to level 3.
+ Your athletics improves. (×6)
+
+
+
+
+
+
+
+
+
+            ┌─ Level 3 · Talent 1 ─────────────────────────────────────────────────────┐
+            │                                                                          │
+            │ Skill focus                                                              │
+            │ > a  Athletics                                                           │
+            │   b  Balance                                                             │
+            │   c  Heal                                                                │
+            │   d  Initiative                                                          │
+            │   e  Intimidate                                                          │
+            │   f  Negotiation                                                         │
+            │   g  Swim                                                                │
+            │                                                                          │
+            │ You have a knack for one trade you know: your chosen skill counts higher │
+            │ than its training alone, however far that training goes.                 │
+            │                                                                          │
+            │                                                                          │
+            │ a-g or Enter choose   Esc back                                           │
+            └──────────────────────────────────────────────────────────────────────────┘

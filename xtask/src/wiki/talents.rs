@@ -2,12 +2,12 @@
 //! in full (the game says them in words), and the talents by system.
 
 use super::util::{Term, anchored, link, signed};
-use std::fmt::Write as _;
-use warlock_core::content::{
+use ascmearc_core::content::{
     Content, Faced, Keep, KitLineSpec, Need, PrayerUse, SignActive, SpellData, SpellModSpec,
     StatusId, Table, TalentDef, TalentEffect, TreeId,
 };
-use warlock_core::talent::{CraftEffect, FortuneEffect, MagicEffect, SignEffect, StealthEffect};
+use ascmearc_core::talent::{CraftEffect, FortuneEffect, MagicEffect, SignEffect, StealthEffect};
+use std::fmt::Write as _;
 
 mod ally;
 mod beast;
@@ -438,7 +438,7 @@ pub(super) fn by_system(content: &Content) -> String {
     systems.sort_by(|a, b| a.1.name.cmp(&b.1.name));
     let mut out = String::from("| System | Talents |\n|---|---|\n");
     for (i, system) in systems {
-        let mut names: Vec<String> = (book.of_system(warlock_core::content::SystemId(i)))
+        let mut names: Vec<String> = (book.of_system(ascmearc_core::content::SystemId(i)))
             .map(|(_, t)| {
                 // A class's, a race's, or a birth sign's gift is marked: given, never picked.
                 let racial = book.tree_id("racial");
@@ -804,7 +804,7 @@ mod tests {
     /// none falls off the wiki when a tree is added.
     #[test]
     fn every_pickable_tree_has_a_page() {
-        let content = warlock_assets::content().expect("content");
+        let content = ascmearc_assets::content().expect("content");
         let book = content.talents();
         for tree in &book.trees {
             if tree.class || tree.id == STARS || tree.id == "profane" {

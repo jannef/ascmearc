@@ -1,6 +1,6 @@
 # Sunlight, moonlight, and weather
 
-Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
+Developer notes for working on this part of Ascmearc (moved from CLAUDE.md, #185); the
 rules it implements are in spec/04-perception.md. Keep it current with the code, as CLAUDE.md says.
 
 **Sunlight** (`light/sun.rs`): a level gets the sun and sky iff
@@ -53,8 +53,8 @@ Perception knows the weather only on sky-exposed levels (`Sky::conditions`,
 `PerceptionView::weather`); `World::perceive` compares it with the previous snapshot's and says the
 change (`weather_news`: rain starting or growing heavier `say`s, which stops a rest; the rest
 `note`s, which does not). Overworld sight loses the weather's `sight` (`daylight::overworld_sight`).
-Look at the weather of a seed: `WARLOCK_SEED=1 WARLOCK_FROM=4,1 WARLOCK_DAYS=10 cargo test -p
-warlock-core --lib print_weather -- --ignored --nocapture` (a line per day, `.` clear, `o`
+Look at the weather of a seed: `ASCMEARC_SEED=1 ASCMEARC_FROM=4,1 ASCMEARC_DAYS=10 cargo test -p
+ascmearc-core --lib print_weather -- --ignored --nocapture` (a line per day, `.` clear, `o`
 overcast, `r` rain, `R` heavy). Tune the clouds and the rain with captures of the `courtyard` and
 `forest` scenarios after `skip:330m weather:rain` (noon) and `skip:353h skip:30m weather:heavy`
 (full-moon midnight) with `--content-dir assets`; the wiki's weather tables come from the file.

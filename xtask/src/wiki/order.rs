@@ -2,7 +2,7 @@
 //! directories read in path order (docs/dev/content.md), so no table follows that order: each
 //! list here sorts by an explicit key, the group a page reads by first, then the name.
 
-use warlock_core::content::{
+use ascmearc_core::content::{
     AffixDef, AffixKind, CampaignDef, CampaignKind, Content, CreatureDef, CreatureId, MaterialDef,
     MaterialId, ObjectDef, ObjectId,
 };

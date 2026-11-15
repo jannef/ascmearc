@@ -1,0 +1,32 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ You learn Dragon's hoard.
+ Your thou┌─ Abilities ─────────────────────────────────────────────────────────────────┐
+          │                                                                             │
+          │ Class                                                                       │
+          │   a  Knock            no lock beside you                                    │
+          │   b  Scribe           a scroll of a spell you know                          │
+          │ Spells                                                                      │
+          │   c  Burning hands    4d4+2 fire, burns one in four, 4 mana, aimed          │
+          │   d  Ray of frost     2d8 cold, numbs, 2 mana, aimed                        │
+          │   e  Magic missile    6d4+1 force, shoves on a big hit, 2 mana, aimed       │
+          │ > f  Arcane bolt      6d6+4 force, shoves on a big hit, 7 mana, aimed       │
+          │   g  Blink            4 mana                                                │
+          │   h  Shatter          6d6+4 force, shoves on a big hit, 10 mana, aimed      │
+          │   i  Chain lightning  12d6+3 electricity, may arc, conducts, 14 mana, aimed │
+          │ Skills                                                                      │
+          │   j  Decipher         no unknown scroll                                     │
+          │   k  Heal             nothing to treat                                      │
+          │   l  Jewelcraft…                                                            │
+          │   m  Salvage          on something you carry                                │
+          │ Weapon skills                                                               │
+          │   n  Shield bash      you hold no shield                                    │
+          │                                                                             │
+          │ A bolt of raw force from your hand toward a place you aim at, through       │
+          │ everyone on its line. Length 6.                                             │
+          │                                                                             │
+          │                                                                             │
+          │ a-n or Enter use   Esc close                                                │
+          └─────────────────────────────────────────────────────────────────────────────┘

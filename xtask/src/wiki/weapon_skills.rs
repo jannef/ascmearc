@@ -5,12 +5,12 @@
 
 use super::order;
 use super::util::{Term, anchored, capital, link, thousands};
-use std::fmt::Write as _;
-use warlock_core::content::{
+use ascmearc_core::content::{
     Benefit, ClassDef, Content, Grip, MAX_RANK, MOST_PERCENT, Role, TwoShields, TwoWeapons,
     WeaponSkillDef, WeaponSkillId, WeaponSkillTable,
 };
-use warlock_core::dice::Dice;
+use ascmearc_core::dice::Dice;
+use std::fmt::Write as _;
 
 /// What trains a skill of `role`, in words.
 fn trained_by(role: Role) -> &'static str {

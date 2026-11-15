@@ -1,0 +1,8 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content)"
+---
+ A rotting drake (hostile, unhurt), on stone floor.
+ Looking: direction keys move, Esc or l to stop.
+
+   D

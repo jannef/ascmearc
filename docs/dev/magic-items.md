@@ -1,6 +1,6 @@
 # Magic items
 
-Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
+Developer notes for working on this part of Ascmearc (moved from CLAUDE.md, #185); the
 rules it implements are in spec/11-magic.md. Keep it current with the code, as CLAUDE.md says.
 
 What magic adds to an item's shop price (`Stack::worth`, `data/rules/magic_worth.toml`, #1709)
@@ -11,7 +11,7 @@ Affix capacity and the trim that holds every item made to it (`magic/capacity.rs
 better make, gems, and materials of deeper finds (#1436: `gear_condition.toml`'s `[[depth]]`,
 `magic/make.rs::make`, loot step 9).
 
-Magic items (#149) live in `warlock-core`: `content/affix.rs`
+Magic items (#149) live in `ascmearc-core`: `content/affix.rs`
 (`data/affixes.toml`, the settings file with the rarity weights and rare names, and
 `data/affixes/`, one file per prefix or suffix named by its id, read in path order; see
 "Content directories" in `docs/dev/content.md`: `ItemKind`, `Effect`, `AffixDef` with tiers,

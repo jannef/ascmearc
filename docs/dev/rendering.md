@@ -1,6 +1,6 @@
 # Rendering, visual lighting, and effects
 
-Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
+Developer notes for working on this part of Ascmearc (moved from CLAUDE.md, #185); the
 rules it implements are in spec/03-rendering.md. Keep it current with the code, as CLAUDE.md says.
 
 Stairs and locations (terrain with `stairs`) under a pile: `ui/mod.rs::draw_map` draws the
@@ -172,7 +172,7 @@ upload) when the composite would repeat the last one (#785): `Game` and `Shadows
 origin, size, and flicker switch, and either no flickering source lit the grid or the visual time
 is the same (`VisualLight::would_repeat`; `--freeze-time`, flicker off, idle frames). A new input
 of the composite must become one of these conditions, or the map keeps stale light. Gameplay light lives in
-`warlock-core/src/light/` (`mod.rs`: falloff and the wall-face rule; `cache.rs`: per-source shadow
+`ascmearc-core/src/light/` (`mod.rs`: falloff and the wall-face rule; `cache.rs`: per-source shadow
 masks, kept for every level visited, so a terrain change on any level calls `terrain_changed`
 (#1518; ice, transparent to transparent, writes directly), a `hollow` preset's leaving out its own cell, and the player's carried light from
 `WorldState::carried_light`, `world/items/lamp.rs`: a lantern ready in the Tool slot, by its object's
@@ -240,7 +240,7 @@ Effects, each off with its own switch (`particles`, `glow`, `distortion`,
   falling across a cell boundary never shows over a roof or a wall (#1691). Drops are `│` sheared along their velocity (`FreeGlyph::slant`, pixels
   across per pixel down, applied in `free_glyph::glyph_mesh`) and faint (`ParticleEmitter::opacity`).
 - **Spell effects**: `Event::Spell { effect, origin, shape:
-  SpellShape::{Burst { center, radius }, Bolt { path }}, cells }` in `warlock-core/src/action.rs`
+  SpellShape::{Burst { center, radius }, Bolt { path }}, cells }` in `ascmearc-core/src/action.rs`
   (traps emit it; `perceive_events` cuts it with `world/magic/spell.rs::perceive_spell` to the cells the
   player sees or has in line of sight). Data: `data/effects.toml` (`content/effect.rs`,
   `EffectDef`, `Content::effects()`/`effect(id)`; presentation only, not in the fingerprint; a

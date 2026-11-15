@@ -1,0 +1,33 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ Your appraise improves. (×236) You learn Early mastery. You learn Far shot. You learn Steady hand.
+ You learn Sworn foe┌─ Abilities ─────────────────────────────────── Page 1/2 ─┐(archer). --more--
+                    │                                                          │
+                    │ Birth sign                                               │
+                    │ > a  Transfixing stare  at a place you see               │
+                    │ Class                                                    │
+                    │   b  Volley             at a place you see               │
+                    │   c  Sic 'em            at a place you see               │
+                    │ Spells                                                   │
+                    │   d  Barkskin           4 mana                           │
+                    │   e  Nightsight         4 mana                           │
+                    │   f  Water walking      5 mana                           │
+                    │ Skills                                                   │
+                    │   g  Decipher           no unknown scroll                │
+                    │   h  Tame               you already have a companion     │
+                    │   i  Forage             not usable here                  │
+                    │   j  Woodcraft…                                          │
+                    │   k  Salvage            on something you carry           │
+                    │ Weapon skills                                            │
+                    │   l  Shield bash        you hold no shield               │
+                    │ Allies                                                   │
+                    │   m  Come to heel                                        │
+                    │                                                          │
+                    │ The basilisk's stare: a foe nearby that sees you slows   │
+                    │ to a crawl a moment; your eyes then rest two hours.      │
+                    │                                                          │
+                    │                                                          │
+                    │ a-m or Enter use   > < page   Esc close                  │
+                    └──────────────────────────────────────────────────────────┘

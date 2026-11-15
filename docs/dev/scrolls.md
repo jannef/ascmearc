@@ -1,6 +1,6 @@
 # Scrolls
 
-Developer notes for working on this part of Warlock (#150); the rules it implements are in
+Developer notes for working on this part of Ascmearc (#150); the rules it implements are in
 spec/11-magic.md ("Scrolls") and spec/05-interface.md. Keep it current with the code,
 as CLAUDE.md says.
 

@@ -1,0 +1,28 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ You pick up Ash Coat, a Masterwork chain mail shirt. Spears spring from the floor! The spear stabs
+ the giant rat. Lightning arcs across the floor! The lightning bolt strikes the cave beetle.
+
+
+
+                  ┌─ Item ───────────────────────────────────────────────────────┐
+                  │                                                              │
+                  │ [ Ash Coat                                                   │
+                  │                                                              │
+                  │ Rare Masterwork chain mail shirt · iron · 11 kg              │
+                  │                                                              │
+                  │ Worn: body                                                   │
+                  │ Armour +2                                                    │
+                  │ Protection 3 (+1 against slashing, −1 against piercing)      │
+                  │ Dexterity adds at most +4 to Defence while worn              │
+                  │ Dv +4, Pv 4                                                  │
+                  │                                                              │
+                  │ Prefix  Tireless: +3 to maximum stamina                      │
+                  │ Prefix  Mage-wrought: hinders casting 7 points less          │
+                  │ Suffix  of Breath: stamina comes back 30% faster             │
+                  │ Suffix  of Fury: +3 to maximum rage                          │
+                  │                                                              │
+                  │ Esc close                                                    │
+                  └──────────────────────────────────────────────────────────────┘

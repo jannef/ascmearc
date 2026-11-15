@@ -1,10 +1,10 @@
 # Procedural generation and special rooms
 
-Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
+Developer notes for working on this part of Ascmearc (moved from CLAUDE.md, #185); the
 rules it implements are in spec/07-generation.md; special
 rooms are in `docs/dev/special-rooms.md`. Keep it current with the code, as CLAUDE.md says.
 
-Procedural generation lives in `warlock-core`: `rng.rs` (ChaCha8 streams derived
+Procedural generation lives in `ascmearc-core`: `rng.rs` (ChaCha8 streams derived
 from the run seed: `map/<level id>` per generated level; in play every rule draws by a key of its
 own, `<rule>/<decision>/<actor key>@<second>#<n>` (`rng::draw!`, "Keys" in `rng.rs`: no shared
 keyed stream, #1662);
@@ -227,7 +227,7 @@ depth (`DungeonDef::row`), and `depth` 1 for what loops over them; `leads_down` 
 `generate_for` draws the floor's generator and size from stream `floor_kind/<level id>`
 (`endless_plan`), and its first floor's `<` is `Content::way_into`, not `entered_from`. The whole
 generation runs under the floor's own seed (`world/levels/endless.rs::floor_seed`) with the usual stream
-labels, so `warlock-cli gen --level grundleas:3 --seed S` shows what that seed makes, not what the
+labels, so `ascmearc-cli gen --level grundleas:3 --seed S` shows what that seed makes, not what the
 run of seed S makes on its third floor (that depends on how many floors it has made). Spaced
 vaults (`spaced_vaults`) deal anew for every floor under that seed: a random vault may come on two
 floors in a row, which no one can compare. `Content::spawning` reads the danger at
@@ -259,7 +259,7 @@ depth)`), so a Pit's stairs stay in it; its first floor's `<` is `entered_from`,
 `World::visit` sets to the Pit's record's `from` (its mouth's level, `world/levels/pit.rs`, #1297) however
 the floor is reached, a climb from the second included. Every stream is
 labelled by the id, and `floor_seed` gives a Pit's floor the run seed (not `endless/<n>`), so a
-floor is a pure function of the run seed, `S`, and the depth: `warlock-cli gen --level
+floor is a pure function of the run seed, `S`, and the depth: `ascmearc-cli gen --level
 hellegeat@7:3 --seed S` prints what a run of seed `S` makes of Pit 7's third floor (but for the
 population, read at the player's level as the floor is made, and the first floor's `<`).
 `Content::is_endless_floor` is true of a Pit's floor (`is_portal_floor` tells them apart), so
@@ -283,7 +283,7 @@ in `gen` and tests: the lair): for a boss not slain, `Needs::vaults` is the lair
 template's `hidden` holds it as a `HiddenLocation` (id the boss's type, terrain the stairs, `to`
 the next floor, name the boss's), which `connect::validate` reaches as it does stairs and
 `hide_traps` keeps clear. `world/levels/layer_boss.rs::open_lair` (one line in `fight.rs::creature_dies`)
-turns it into stairs. `warlock-cli gen --level grundleas:10` prints `hidden stairs at ...`.
+turns it into stairs. `ascmearc-cli gen --level grundleas:10` prints `hidden stairs at ...`.
 
 **A Pit's warden** (#1298): `[dungeon.portal] boss = { depth, creature,
 vault }` resolves into the same `DungeonDef::bosses` (`resolve_bosses` takes the rows of either

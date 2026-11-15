@@ -1,0 +1,31 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ Welcome to Showcase. Press ? for controls.
+
+
+
+
+
+
+
+
+
+
+
+┌─ Magic ─────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                                             │
+│ Mana 17/17                                                                                                  │
+│                                                                                                             │
+│ Caster styles                                                                                               │
+│   Sniper                   1  ──────────                                                                    │
+│   Toucher                  0  ──────────                                                                    │
+│   Battle caster            0  ──────────                                                                    │
+│                                                                                                             │
+│ Spells                                                                                                      │
+│   Burning hands           rank 1  2d6 fire, burns one in four, 6 mana, aimed                                │
+│   Ray of frost            rank 1  2d6 cold, numbs, 4 mana, aimed                                            │
+│                                                                                                             │
+│ Esc close                                                                                                   │
+└─ 1 Character · 2 Inventory · 3 Equipment · 4 Skills · 5 Weapons · 6 Magic · 7 Quests · 8 Talents · 9 Story ─┘

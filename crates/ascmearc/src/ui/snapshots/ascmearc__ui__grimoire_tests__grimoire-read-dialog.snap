@@ -1,0 +1,24 @@
+---
+source: crates/ascmearc/src/ui/grimoire_tests.rs
+expression: shown
+---
+ Welcome to Hall. Press ? for controls.
+
+
+
+
+
+
+
+
+                             ┌─ Read ────────────────────────────────┐
+                             │                                       │
+                             │ Read the grimoire of light? Learning  │
+                             │ Light will be certain. Once you begin │
+                             │  you cannot stop of your own accord.  │
+                             │                                       │
+                             │         Read it  (y)                  │
+                             │       > Don't read it  (n, Esc)       │
+                             │                                       │
+                             │ ↑/↓ choose  Enter select              │
+                             └───────────────────────────────────────┘

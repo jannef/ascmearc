@@ -1,10 +1,10 @@
-//! What the song talents do, in the wiki's words (`warlock_core::talent::SongEffect`, #1495): one
-//! arm a variant, beside the area's enum and sum in `warlock-core/src/talent/song.rs`.
+//! What the song talents do, in the wiki's words (`ascmearc_core::talent::SongEffect`, #1495): one
+//! arm a variant, beside the area's enum and sum in `ascmearc-core/src/talent/song.rs`.
 
 use super::{buff, resource_name};
-use warlock_core::content::{Content, SongOn};
-use warlock_core::noise::SONG_NOISE;
-use warlock_core::talent::SongEffect;
+use ascmearc_core::content::{Content, SongOn};
+use ascmearc_core::noise::SONG_NOISE;
+use ascmearc_core::talent::SongEffect;
 
 /// What `effect` does, as the talents' tables say it.
 pub(super) fn text(content: &Content, effect: &SongEffect) -> String {

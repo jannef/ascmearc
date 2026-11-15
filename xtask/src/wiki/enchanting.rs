@@ -7,12 +7,12 @@
 //! chances, from `data/rules/enchanting.toml` and `data/crystals.toml`.
 
 use super::util::capital;
+use ascmearc_core::combat::HIGHEST;
+use ascmearc_core::content::{Content, EnchantKind, RecipeUse};
+use ascmearc_core::skills::{Effect, MAX_ENCHANT_LEVEL};
+use ascmearc_core::time::Duration;
+use ascmearc_core::world::{EnchantBand, MOST_SEALS, enchant_band};
 use std::fmt::Write as _;
-use warlock_core::combat::HIGHEST;
-use warlock_core::content::{Content, EnchantKind, RecipeUse};
-use warlock_core::skills::{Effect, MAX_ENCHANT_LEVEL};
-use warlock_core::time::Duration;
-use warlock_core::world::{EnchantBand, MOST_SEALS, enchant_band};
 
 /// The skill values the odds are given at.
 const ODDS_AT: [u16; 3] = [20, 60, 110];

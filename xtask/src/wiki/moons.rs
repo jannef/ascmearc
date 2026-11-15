@@ -1,10 +1,10 @@
 //! The moons.
 
 use super::sight::percent_of_full;
+use ascmearc_core::content::Content;
+use ascmearc_core::light::Moon;
+use ascmearc_core::time::{DAY, GameTime};
 use std::fmt::Write as _;
-use warlock_core::content::Content;
-use warlock_core::light::Moon;
-use warlock_core::time::{DAY, GameTime};
 
 pub(super) fn moons(content: &Content) -> String {
     if content.moons().is_empty() {

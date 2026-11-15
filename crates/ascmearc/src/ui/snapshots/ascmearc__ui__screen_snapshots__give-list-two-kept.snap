@@ -1,0 +1,23 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(&case, content.clone())"
+---
+ You crouch by the hound and hold out a strip of dried meat. The hound comes to your hand. You call
+ it Græg.
+
+
+
+
+
+
+
+
+           ┌─ Give ─────────────────────────────────────────────────────────────────────┐
+           │                                                                            │
+           │ Amulets                                                                    │
+           │ > a - " a jade amulet                                                80 g  │
+           │   b - " a jade amulet                                                80 g  │
+           │   c - " a jade amulet                                                80 g  │
+           │                                                                            │
+           │ a-c or Enter give   Esc cancel                                             │
+           └────────────────────────────────────────────────────────────────────────────┘

@@ -1,16 +1,16 @@
 //! Abilities: every ability the abilities menu can list, from the one
-//! registry (`warlock_core::ability`).
+//! registry (`ascmearc_core::ability`).
 
 use super::util::{Term, anchored, at_normal_pace, link, percent_of};
-use std::fmt::Write as _;
-use warlock_core::ability::{Ability, Aim, Source};
-use warlock_core::check;
-use warlock_core::content::{
+use ascmearc_core::ability::{Ability, Aim, Source};
+use ascmearc_core::check;
+use ascmearc_core::content::{
     ActionKind, BASE_TURN, ClassActive, Content, Offer, SignActive, SongOn, TalentEffect, price,
 };
-use warlock_core::skills::Effect;
-use warlock_core::stats::Stat;
-use warlock_core::talent::{FaithEffect, MagicEffect, SongEffect, StealthEffect};
+use ascmearc_core::skills::Effect;
+use ascmearc_core::stats::Stat;
+use ascmearc_core::talent::{FaithEffect, MagicEffect, SongEffect, StealthEffect};
+use std::fmt::Write as _;
 
 /// Every ability, grouped as the menu groups them (by where they come from) and by name within a
 /// group: who has it, what it asks for, what it does, how long it takes at a normal pace, and the
@@ -586,7 +586,7 @@ mod tests {
 
     #[test]
     fn the_song_tables_read_the_data() {
-        let content = warlock_assets::content().expect("content");
+        let content = ascmearc_assets::content().expect("content");
         let songs = songs(&content);
         assert!(
             songs.contains("[Inspire](abilities.md#ability-inspire)"),

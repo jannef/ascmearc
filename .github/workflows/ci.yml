@@ -150,7 +150,7 @@ jobs:
       - name: Install pinned toolchain
         run: rustup toolchain install
       - uses: Swatinem/rust-cache@v2
-      - run: cargo check --package warlock --package warlock-core --target wasm32-unknown-unknown --locked
+      - run: cargo check --package ascmearc --package ascmearc-core --target wasm32-unknown-unknown --locked
 
   # The release configuration (`--no-default-features`: no `showcase` feature, so no test world;
   # docs/dev/campaign.md): it builds, checks for the web, its content holds no campaign of kind
@@ -170,15 +170,15 @@ jobs:
         run: rustup toolchain install
       - uses: Swatinem/rust-cache@v2
       - name: Build
-        run: cargo build --no-default-features --locked --package warlock --package warlock-cli
+        run: cargo build --no-default-features --locked --package ascmearc --package ascmearc-cli
       - name: wasm32 check
-        run: cargo check --no-default-features --locked --package warlock --package warlock-core --target wasm32-unknown-unknown
+        run: cargo check --no-default-features --locked --package ascmearc --package ascmearc-core --target wasm32-unknown-unknown
       # An integration test: one small harness, not the crate's whole test build (#1593).
       - name: release_content
-        run: cargo test --no-default-features --locked --package warlock-assets --test release_content
+        run: cargo test --no-default-features --locked --package ascmearc-assets --test release_content
       - name: The CLI refuses the showcase
         run: |
-          if out=$(target/debug/warlock-cli dump --scenario showcase 2>&1); then
+          if out=$(target/debug/ascmearc-cli dump --scenario showcase 2>&1); then
             echo "the release CLI started the showcase"; exit 1
           fi
           grep -q "unknown scenario" <<< "$out" || { echo "$out"; exit 1; }
@@ -216,7 +216,7 @@ jobs:
       - run: cargo xtask web
       - uses: actions/upload-artifact@v4
         with:
-          name: warlock-web
+          name: ascmearc-web
           path: target/web/
           if-no-files-found: error
 

@@ -1,5 +1,5 @@
 # The UI console over the main menu and over a run. Every other screen is a text snapshot
-# (`crates/warlock/src/ui/screen_snapshots.rs`), not a golden.
+# (`crates/ascmearc/src/ui/screen_snapshots.rs`), not a golden.
 
 # The main menu (no run; the replay goes unused).
 [[golden]]

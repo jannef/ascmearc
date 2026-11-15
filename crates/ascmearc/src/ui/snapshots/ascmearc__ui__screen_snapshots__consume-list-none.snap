@@ -1,0 +1,22 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ Welcome to Arena. Press ? for controls.
+
+
+
+
+
+
+
+
+
+
+
+           ┌─ Consume what? ────────────────────────────────────────────────────────────┐
+           │                                                                            │
+           │   You have nothing to consume.                                             │
+           │                                                                            │
+           │ Enter consume   Esc cancel                                                 │
+           └────────────────────────────────────────────────────────────────────────────┘

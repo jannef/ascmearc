@@ -1,0 +1,33 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ Welcome to Showcase. Press ? for controls.
+                    ┌─ Settings ───────────────────────────────────────────────┐
+                    │                                                          │
+                    │ > Font size           < 18 px >                          │
+                    │   Reduced effects       Off                              │
+                    │     Glyph animation     On                               │
+                    │     Light flicker       On                               │
+                    │     Slides, camera      On                               │
+                    │     Bloom and glow      On                               │
+                    │     Heat haze           On                               │
+                    │     Particles           On                               │
+                    │     Screen fades        On                               │
+                    │     Screen shake        On                               │
+                    │     Weather             On                               │
+                    │   Spell circles         On                               │
+                    │   Blood                 On                               │
+                    │   Color palette         Default                          │
+                    │   Clock                 24-hour                          │
+                    │   Temperature           °C (Celsius)                     │
+                    │                                                          │
+                    │   Where are my files?                                    │
+                    │   Reset to defaults                                      │
+                    │   Back                                                   │
+                    │                                                          │
+                    │ Size of the glyphs, in logical pixels.                   │
+                    │ Sample: legible text, then  [ marked ]  and  * flagged * │
+                    │ Sample accent text                                       │
+                    │ ↑↓ select   ←→ change   Esc back                         │
+                    └──────────────────────────────────────────────────────────┘

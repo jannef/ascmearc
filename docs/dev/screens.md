@@ -1,6 +1,6 @@
 # Screens, input, and key commands
 
-Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
+Developer notes for working on this part of Ascmearc (moved from CLAUDE.md, #185); the
 rules it implements are in spec/05-interface.md. Keep it current with the code, as CLAUDE.md says.
 
 Modal screens — main menu, the saved characters (Characters), new run and character
@@ -39,7 +39,7 @@ to open, read keys for, or draw one:
   `ListSpec` per list (its `ScreenName`, title, empty words, rows, footer verb, and the action
   a chosen stack makes when that is all it does); `Screen::new` opens a list by its name
   (`ObjectList::of_screen`, the `BY_NAME` lists) and `Screen::name` asks the screen. Which
-  stacks a list offers is core's: `warlock_core::item_list::ItemList` and
+  stacks a list offers is core's: `ascmearc_core::item_list::ItemList` and
   `PerceptionView::item_choices`/`floor_choices` (the rules' own predicates, `world::workable`,
   `salvageable`, ...). An ability that asks for a stack names its list (`Aim::Item(ItemList)`),
   and `use_ability` opens `ObjectList::screen_of(list)` (the identify list opens for the
@@ -238,7 +238,7 @@ to open, read keys for, or draw one:
   keep their keys while it waits beneath them. `more::draw` draws the page waited at with
   `--more--` after it, else the end of this turn's messages with earlier ones, one a row, in the
   rows left. Presentation only: dumps and replays never see pages. The rules never ask: a `move` steps onto whatever is there.
-- **Something beside the player** (#1327, `warlock_core::beside`): `Beside` names what acts on
+- **Something beside the player** (#1327, `ascmearc_core::beside`): `Beside` names what acts on
   a cell beside the player (`Open`, `Close`, `Chat`, `Dig`, `Use(ability)` for an ability aimed
   in a direction); `Beside::target` its `Target` (a closed door, a known trap, a foe, ...), and
   `PerceptionView::ways` the ways to the legal ones, from the perception only.
@@ -360,7 +360,7 @@ asking in the one dialog before its `Action::Read`; there is no Study command of
 
 **Abilities** (racial, class, skill, weapon skill and style, item; the
 owner's rule, #156) get no key of their own: they go into the one abilities menu.
-- **Registry**: `warlock_core::ability` is the one place they are registered. A new ability is
+- **Registry**: `ascmearc_core::ability` is the one place they are registered. A new ability is
   a variant of `Ability` (id, name, description, `Source`, `Aim`, cost `ActionKind`, the `Action`
   it makes from its aim), a line in `Ability::every` (menu order: by source, then as listed),
   who has it (`had_by`), and when it cannot be used (`unavailable` → `Unavailable` with its
@@ -456,14 +456,14 @@ place of golden screenshots. Each `Case` starts a run the way a golden entry doe
 console `size`). It runs the real systems headlessly (`open_startup_screens`, `route_keys`,
 `apply_choice`, `refresh`, `converse`, `on_death`, `more::wait`, `draw`) and snapshots the UI
 console with `insta` (`ui/snapshots/`, one file per case). The map layer and colors aren't part
-of it: map content is `warlock-cli dump`. The harness is `screen_snapshots.rs`; the cases
+of it: map content is `ascmearc-cli dump`. The harness is `screen_snapshots.rs`; the cases
 are in `ui/screen_snapshots/`, a file per group of screens (`menus`, `creation`, `pages`,
 `abilities`, `crafting`, `progression`, `items`, `magic_items`, `talk`, `shops`, and `play`
 for the map view's prompts), so UI PRs touch different files (#1504). Every snapshot is
 asserted in the harness (`check`, `check_with` for a case on content of its own), so its file
-keeps the name `warlock__ui__screen_snapshots__<name>.snap` whichever group holds the case. To
+keeps the name `ascmearc__ui__screen_snapshots__<name>.snap` whichever group holds the case. To
 add one, add a case to its group's `cases!` (`test_name: Case { name: "test-name", .. }`: one
-`#[test]` a case, #1529, so one mismatch hides no other), run `cargo test -p warlock screen_snapshots`, then `cargo insta review` (or
+`#[test]` a case, #1529, so one mismatch hides no other), run `cargo test -p ascmearc screen_snapshots`, then `cargo insta review` (or
 `INSTA_UPDATE=always`, then read the diff). The snapshot leaves out the status bar's row where
 it shows whole (`shown`, #1521: a HUD change rewrites only the cases about the bar, those with
 `status_bar: true`, which show the bar as a player sees it: a whole row is drawn again without the developer segments, the turn, position, light, vision, and seed, that the debug build adds, #1666) and writes the game's version `[version]` (#1532). A changed screen shows as a text diff in the PR. New

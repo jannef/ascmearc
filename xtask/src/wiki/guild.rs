@@ -2,8 +2,8 @@
 
 use super::order;
 use super::util::capital;
+use ascmearc_core::content::{Content, Pick, RankBy, Rolled};
 use std::fmt::Write as _;
-use warlock_core::content::{Content, Pick, RankBy, Rolled};
 
 /// Every guild's ranks, lowest first: the title, the metal it is named by and its value (in
 /// percent of steel, the order of the ranks), and what reaches it.
@@ -130,7 +130,7 @@ fn all_branches(content: &Content, campaign: Option<&str>) -> Vec<String> {
 fn lives_in(
     content: &Content,
     branches: &[String],
-    holds: impl Fn(warlock_core::content::CreatureId) -> bool,
+    holds: impl Fn(ascmearc_core::content::CreatureId) -> bool,
 ) -> String {
     let names: Vec<&str> = (branches.iter())
         .filter_map(|b| content.dungeon(b))

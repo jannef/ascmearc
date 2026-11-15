@@ -1,4 +1,4 @@
-# Managed Agents: cloud agents for Warlock
+# Managed Agents: cloud agents for Ascmearc
 
 Claude Managed Agents run in a cloud sandbox and are billed to the API usage credits, not the
 subscription. Each one does a job that a local subagent would otherwise do, with the same brief and
@@ -78,7 +78,7 @@ $0.08/hour on top of tokens.
 - `git push` goes through Anthropic's git proxy, which uses only the session's
   `github_repository` resource token: `session.sh` reads the PAT from the Keychain (`security
   find-generic-password -a jannef -s warlock-github-pat -w`) and sends it on stdin, never on a
-  command line or in a file. The repo is mounted at `/workspace/warlock` with the branch checked
+  command line or in a file. The repo is mounted at `/workspace/ascmearc` with the branch checked
   out.
 - The vault token is for `gh` (API, `gh run download`) only. It lives in vault
   `vlt_011CgLo82BAUBMmoHUVRfyRA` (`GH_TOKEN`, a fine-grained PAT on this repo only), managed

@@ -4,13 +4,13 @@
 
 use super::order;
 use super::util::{capital, percent, signed, times};
-use std::fmt::Write as _;
-use warlock_core::content::{
+use ascmearc_core::content::{
     Content, Fit, MaterialDef, MaterialId, ObjectDef, PartRole, VERY_RARE,
 };
-use warlock_core::item_parts::ItemPart;
-use warlock_core::object::{Stack, format_weight};
-use warlock_core::variant;
+use ascmearc_core::item_parts::ItemPart;
+use ascmearc_core::object::{Stack, format_weight};
+use ascmearc_core::variant;
+use std::fmt::Write as _;
 
 /// Every material, by group (metals first, then by group name, then those of no group) and
 /// then by name.
@@ -167,7 +167,7 @@ pub(super) fn material_finds(content: &Content) -> String {
          | Each level higher | Weapons | Armour | Jewellery | Other items |\n\
          |---|---|---:|---:|---|---:|---|---|---|---|\n",
     );
-    let level = |found: Option<warlock_core::content::Found>| match found {
+    let level = |found: Option<ascmearc_core::content::Found>| match found {
         Some(f) => (
             format!("{} ({})", f.weight, how_often(f.weight)),
             signed(f.deeper),
@@ -470,7 +470,7 @@ pub(super) fn pieces(content: &Content) -> String {
          |---|---|---|---:|---:|---:|---|\n",
     );
     for (id, m) in by_group(content) {
-        let (Some(group), Some(piece)) = (&m.group, warlock_core::piece::make(content, id, 1))
+        let (Some(group), Some(piece)) = (&m.group, ascmearc_core::piece::make(content, id, 1))
         else {
             continue;
         };

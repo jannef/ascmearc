@@ -4,10 +4,10 @@
 //! none of these numbers; the wiki states them exactly.
 
 use super::util::{capital, ordinal, percent_of};
+use ascmearc_core::check;
+use ascmearc_core::content::{Affliction, Content, ODDS_SCALE};
+use ascmearc_core::stats::{self, DRAIN_FLOOR, Stat};
 use std::fmt::Write as _;
-use warlock_core::check;
-use warlock_core::content::{Affliction, Content, ODDS_SCALE};
-use warlock_core::stats::{self, DRAIN_FLOOR, Stat};
 
 /// Every use that earns a stat a training mark, stat by stat in display order, the uses in
 /// file order, with the chance of a mark.
@@ -160,7 +160,7 @@ pub(super) fn stat_pace(content: &Content) -> String {
 
 /// The expected days until a pile that grows by `a_day` marks a day from nothing wins a daily
 /// check against `price`.
-fn expected_days(rules: &warlock_core::content::StatTraining, a_day: u32, price: u32) -> f64 {
+fn expected_days(rules: &ascmearc_core::content::StatTraining, a_day: u32, price: u32) -> f64 {
     let (mut none_yet, mut expected) = (1.0f64, 0.0f64);
     for day in 1..=100_000u32 {
         let p = f64::from(rules.odds(a_day.saturating_mul(day), price)) / f64::from(ODDS_SCALE);

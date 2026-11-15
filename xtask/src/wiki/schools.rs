@@ -4,8 +4,8 @@
 
 use super::util::{Term, anchored};
 use super::weapon_skills::{grip_text, rank_table};
+use ascmearc_core::content::{Content, School};
 use std::fmt::Write as _;
-use warlock_core::content::{Content, School};
 
 /// Each school of magic, in the game's order, with how many of the shipped spells are of it.
 pub fn schools(content: &Content) -> String {

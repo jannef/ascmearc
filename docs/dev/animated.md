@@ -1,6 +1,6 @@
 # Animated objects
 
-Developer notes for working on this part of Warlock; the rules it implements are in
+Developer notes for working on this part of Ascmearc; the rules it implements are in
 spec/09-creatures.md ("What creatures are made of"), the approved design in
 `docs/design/animated-objects.md` (its §15 cuts it into issues A1 to A6). Keep it current with
 the code, as CLAUDE.md says.

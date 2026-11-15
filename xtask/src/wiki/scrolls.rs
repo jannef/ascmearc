@@ -2,9 +2,9 @@
 
 use super::traps::sound_text;
 use super::util::{Term, anchored, capital};
+use ascmearc_core::check;
+use ascmearc_core::content::{Content, Reading};
 use std::fmt::Write as _;
-use warlock_core::check;
-use warlock_core::content::{Content, Reading};
 
 /// The bonuses the check's table shows a column for: Intelligence's modifier, talents, and
 /// Decipher script's points (at most 12 at 200, more with what raises the skill, for one trained in it).

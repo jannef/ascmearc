@@ -1,0 +1,22 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ Welcome to Showcase. Press ? for controls.
+ Brūn, your hound, pads at your heel.
+
+
+
+
+
+
+
+
+
+           ┌─ Whittle ──────────────────────────────────────────────────────────────────┐
+           │                                                                            │
+           │ Missile weapons                                                            │
+           │ > a - } a short bow (+0 hit, 1d6, range 10) (readied)               700 g  │
+           │                                                                            │
+           │ a or Enter whittle   Esc cancel                                            │
+           └────────────────────────────────────────────────────────────────────────────┘

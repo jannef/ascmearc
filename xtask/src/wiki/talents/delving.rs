@@ -1,9 +1,9 @@
-//! What the delving talents do, in the wiki's words (`warlock_core::talent::DelvingEffect`, #1495):
-//! one arm a variant, beside the area's enum and sum in `warlock-core/src/talent/delving.rs`.
+//! What the delving talents do, in the wiki's words (`ascmearc_core::talent::DelvingEffect`, #1495):
+//! one arm a variant, beside the area's enum and sum in `ascmearc-core/src/talent/delving.rs`.
 
 use crate::wiki::util::signed;
-use warlock_core::content::Content;
-use warlock_core::talent::DelvingEffect;
+use ascmearc_core::content::Content;
+use ascmearc_core::talent::DelvingEffect;
 
 /// What `effect` does, as the talents' tables say it.
 pub(super) fn text(content: &Content, effect: &DelvingEffect) -> String {

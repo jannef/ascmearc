@@ -1,9 +1,9 @@
-//! What the faith talents do, in the wiki's words (`warlock_core::talent::FaithEffect`, #1495): one
-//! arm a variant, beside the area's enum and sum in `warlock-core/src/talent/faith.rs`.
+//! What the faith talents do, in the wiki's words (`ascmearc_core::talent::FaithEffect`, #1495): one
+//! arm a variant, beside the area's enum and sum in `ascmearc-core/src/talent/faith.rs`.
 
 use super::{prayer_text, resource_name};
-use warlock_core::content::{Content, SmiteRiderKind};
-use warlock_core::talent::FaithEffect;
+use ascmearc_core::content::{Content, SmiteRiderKind};
+use ascmearc_core::talent::FaithEffect;
 
 /// What `effect` does, as the talents' tables say it.
 pub(super) fn text(content: &Content, effect: &FaithEffect) -> String {

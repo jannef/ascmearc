@@ -1,17 +1,17 @@
 # Content files and levels
 
-Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
+Developer notes for working on this part of Ascmearc (moved from CLAUDE.md, #185); the
 rules it implements are in spec/06-content.md. Keep it current with the code, as CLAUDE.md says.
 
 Content (`assets/campaigns`, `assets/data`, `assets/vaults`; test fixtures may also insert
-`levels/` and `scenarios/` at the top) is TOML. `warlock-core` embeds none of it: it takes the
+`levels/` and `scenarios/` at the top) is TOML. `ascmearc-core` embeds none of it: it takes the
 files as input, a `ContentFiles`, and `Content::load` builds the rules' tables from them (#1587).
-The small crate `crates/warlock-assets` embeds `assets/` at build time with its `build.rs` (the
+The small crate `crates/ascmearc-assets` embeds `assets/` at build time with its `build.rs` (the
 test world, `campaigns/showcase/`, only with its `showcase` feature: never in a release;
 `docs/dev/campaign.md`), and the binaries (the game, the CLI, xtask) load it with
-`warlock_assets::files()` (or `content()`), or a directory with `warlock_assets::from_dir`
+`ascmearc_assets::files()` (or `content()`), or a directory with `ascmearc_assets::from_dir`
 (`--content-dir`). So a data edit rebuilds that crate and the binaries above it, never the core;
-warlock-core's own tests read `assets/` from disk instead (`ContentFiles::builtin` and
+ascmearc-core's own tests read `assets/` from disk instead (`ContentFiles::builtin` and
 `Content::builtin`, test-only, once per test binary; the tests share one parsed copy,
 `test_support::CONTENT`, #1509), and its integration tests do the same with
 `ContentFiles::from_dir`. Extra files laid over a set (mods, later: #196) go in with
@@ -148,11 +148,11 @@ entry takes a free number where it belongs; skills were already by id, so they a
 variants always edited together, named after the family (`objects/arrows.toml`: the arrow, the
 flaming arrow, and the burning arrow it flies as). Each directory's `README.toml` is comments
 only (the field documentation and notes for authors; a file of comments defines nothing, the
-loaders take a missing array as empty). `warlock-assets`' `build.rs` embeds and
+loaders take a missing array as empty). `ascmearc-assets`' `build.rs` embeds and
 `ContentFiles::from_dir` reads `{campaigns,data,vaults}` recursively through one walk,
 core's `content/walk.rs` (the build script includes it with `#[path]`), both in sorted path order
 and both leaving `campaigns/showcase/` out without the `showcase` feature (`from_dir` takes it as
-an argument, `warlock_assets::from_dir` passes the build's, so `--content-dir assets` on a release
+an argument, `ascmearc_assets::from_dir` passes the build's, so `--content-dir assets` on a release
 build has no test world either; #1560; `the_embedded_copy_is_the_assets_directory` checks the
 embedded set against the disk), and a table loader reads `ContentFiles::table(name)`: `data/<name>.toml` first, if there is one (a
 whole table in one file is still accepted, so test fixtures that insert it keep working), then
@@ -214,11 +214,11 @@ embedded copy:
 
 ## Words
 
-The small text helpers live once, in `warlock_core::text`, and core, the app, and the wiki
+The small text helpers live once, in `ascmearc_core::text`, and core, the app, and the wiki
 generator all call them (#1543, #1548): `capitalized` (a first letter in capitals), `article`
 (`a` or `an`, lower case), `and_list` and `or_list` (a list with the Oxford comma, "a, b, and c",
 the owner's choice for all game text), and `number_word` ("no", "one" to "twelve", digits
-beyond). The app keeps its wall-clock helpers in `crates/warlock/src/utc.rs` (`since_epoch`,
+beyond). The app keeps its wall-clock helpers in `crates/ascmearc/src/utc.rs` (`since_epoch`,
 `utc_parts`; #1571) and its cut-to-width helpers beside `wrap` in `ui/menu.rs` (`truncated`,
 `truncated_head`). The wiki generator writes every percentage through `xtask/src/wiki/util.rs`
 (`percent`, `percent_of`: `12.5%`, no space, a tenth from 1% up; #1577).

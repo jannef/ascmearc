@@ -1,10 +1,10 @@
-//! What the martial talents do, in the wiki's words (`warlock_core::talent::MartialEffect`, #1495):
-//! one arm a variant, beside the area's enum and sum in `warlock-core/src/talent/martial.rs`.
+//! What the martial talents do, in the wiki's words (`ascmearc_core::talent::MartialEffect`, #1495):
+//! one arm a variant, beside the area's enum and sum in `ascmearc-core/src/talent/martial.rs`.
 
 use super::resource_name;
 use crate::wiki::util::signed;
-use warlock_core::content::Content;
-use warlock_core::talent::MartialEffect;
+use ascmearc_core::content::Content;
+use ascmearc_core::talent::MartialEffect;
 
 /// What `effect` does, as the talents' tables say it.
 pub(super) fn text(content: &Content, effect: &MartialEffect) -> String {
@@ -52,7 +52,7 @@ pub(super) fn text(content: &Content, effect: &MartialEffect) -> String {
                  {severity} degrees (it runs from you while a step takes it farther{eases}). \
                  No level cut; with nobody to hear it the roar is still made, its time and cost \
                  spent",
-                warlock_core::noise::HOWL_NOISE,
+                ascmearc_core::noise::HOWL_NOISE,
                 status(&id),
             )
         }
@@ -150,11 +150,11 @@ pub(super) fn text(content: &Content, effect: &MartialEffect) -> String {
                  one), and one you hold fades first. It strikes {} to hit, threatens criticals \
                  {threat} lower{armour}; it fades the moment it leaves your hands (put away, \
                  swapped, dropped, sold) and cannot be thrown",
-                crate::wiki::util::at_normal_pace(warlock_core::content::price(
+                crate::wiki::util::at_normal_pace(ascmearc_core::content::price(
                     content
                         .action_costs()
-                        .cost(warlock_core::content::ActionKind::Wield),
-                    warlock_core::content::BASE_TURN
+                        .cost(ascmearc_core::content::ActionKind::Wield),
+                    ascmearc_core::content::BASE_TURN
                 )),
                 signed(to_hit),
             )

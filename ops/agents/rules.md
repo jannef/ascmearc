@@ -1,4 +1,4 @@
-# Rules every Warlock agent follows
+# Rules every Ascmearc agent follows
 
 The shared part of the agent briefs: the local ones (`local/feature.md`, `local/finisher.md`) and
 the cloud ones (`engineer/agent.md`, `finisher/agent.md`). Each brief keeps only its role, its
@@ -16,7 +16,7 @@ to failures and the summary, never print whole diffs or logs.
 
 ## House rules (the owner's)
 
-- `warlock-core` stays deterministic and Bevy-free; presentation reads the perception snapshot
+- `ascmearc-core` stays deterministic and Bevy-free; presentation reads the perception snapshot
   only. Hidden numbers stay hidden **in the game**: never show a modifier, a roll, a to-hit, a
   creature's stats, hit points, speed, or Protection/resistance numbers the player couldn't
   know. **The wiki states them exactly** (CLAUDE.md, "The game is vague, the wiki is accurate"):
@@ -48,7 +48,7 @@ CI compares every entry in `tests/golden/manifest/*.toml` with `tests/golden/<na
 
 - **Do not add golden entries.** Goldens are reserved for what only the GPU produces (lighting,
   sky, weather, glow, water, blood tint, spell effects). A new or changed screen, list, dialog,
-  prompt, message line, or status bar gets a case in `crates/warlock/src/ui/screen_snapshots.rs`
+  prompt, message line, or status bar gets a case in `crates/ascmearc/src/ui/screen_snapshots.rs`
   (a text snapshot; read its diff). Map state gets core tests and dumps. If you are certain only
   pixels can show your change, say why in the PR; otherwise add none.
 - **A feature agent makes no references** and starts no update run: it greps the manifest for the
@@ -67,7 +67,7 @@ CI compares every entry in `tests/golden/manifest/*.toml` with `tests/golden/<na
    --all-targets -- -D warnings`, `cargo test --workspace`, `cargo xtask wiki` (then read the
    pages you changed); core tests for the new rules (unit, property, or snapshot; read insta
    diffs before accepting); a replay that exercises the feature, created and verified with
-   `warlock-cli replay --create/--verify`, and a `dump` that shows it; for anything visible,
+   `ascmearc-cli replay --create/--verify`, and a `dump` that shows it; for anything visible,
    captures at `--scale 1`, and **look at the PNGs**.
 3. Commit (messages end with the `Co-Authored-By:` line for the model you run on), push, and open
    the PR with `gh pr create`: `Closes #N` per issue, what you verified and how, the golden entries
@@ -91,7 +91,7 @@ CI compares every entry in `tests/golden/manifest/*.toml` with `tests/golden/<na
    touched), commit and push at once. Do not run clippy, tests, replays, or goldens before that
    push, and do not re-merge main just before pushing. If CI fails, it fails. Then keep verifying
    in the session and push each follow-up fix as soon as it is made: the PR's own replays with
-   `warlock-cli replay --verify` (CI doesn't run them; re-created with `replay --create` if hashes
+   `ascmearc-cli replay --verify` (CI doesn't run them; re-created with `replay --create` if hashes
    moved for a reason the merge explains; say so), and after a merge with conflicts in code,
    snapshots, or registries, or a fix of your own, `cargo clippy --workspace --all-targets -- -D
    warnings` and `cargo test --workspace`, plus `cargo xtask wiki` if content or

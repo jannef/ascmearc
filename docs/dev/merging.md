@@ -34,14 +34,14 @@ Take one side and regenerate; never resolve hunks in these by hand:
 | File | Regenerate with |
 |---|---|
 | `wiki/src/generated/*.md` | not committed any more (`.gitignore`); `cargo xtask wiki` writes them |
-| insta snapshots (`crates/warlock-core/src/snapshots/`, `src/mapgen/snapshots/`, `src/mapgen/local/snapshots/`) | take `main`'s (`git checkout --theirs -- <path>` while merging main), then `INSTA_UPDATE=always cargo test -p warlock-core`, then read the diff (below) |
+| insta snapshots (`crates/ascmearc-core/src/snapshots/`, `src/mapgen/snapshots/`, `src/mapgen/local/snapshots/`) | take `main`'s (`git checkout --theirs -- <path>` while merging main), then `INSTA_UPDATE=always cargo test -p ascmearc-core`, then read the diff (below) |
 | `assets/campaigns/showcase/levels/vast.toml` | take either side, `cargo xtask gen-vast` (`--check` must pass) |
 | `THIRD_PARTY_LICENSES.html` | take either side, `cargo xtask licenses` after `Cargo.lock` is settled |
 | `Cargo.lock` | take `main`'s, then `cargo build --workspace` re-resolves your additions |
 | `tests/golden/*.png` | take `main`'s, then `WGPU_BACKEND=vulkan cargo xtask golden --update` in the cloud sandbox (lavapipe, as CI; `docs/dev/golden.md`), never on macOS |
-| `assets/keymaps/default.toml` | take either side, `WARLOCK_UPDATE_KEYMAPS=1 cargo test -p warlock keymap` (only a changed default key makes it stale) |
+| `assets/keymaps/default.toml` | take either side, `ASCMEARC_UPDATE_KEYMAPS=1 cargo test -p ascmearc keymap` (only a changed default key makes it stale) |
 
-**Reading an insta diff.** `INSTA_UPDATE=always cargo test -p warlock-core` rewrites the `.snap`
+**Reading an insta diff.** `INSTA_UPDATE=always cargo test -p ascmearc-core` rewrites the `.snap`
 files in place (`cargo insta review` walks them one by one); then `git diff` them. The showcase
 dump snapshots have their state hash redacted, so a change there is a real change in what the
 player sees: a glyph, a message, a light value. A mapgen snapshot is a map: a different room,
@@ -55,31 +55,31 @@ on one (#1537): its test run records every snapshot file a test reads
 (`INSTA_SNAPSHOT_REFERENCES_FILE`), and `.github/scripts/orphan-snapshots.sh` rejects a committed
 `.snap` not among them. Delete the orphan (or `cargo insta test --unreferenced=delete`).
 
-## One build of warlock-core
+## One build of ascmearc-core
 
-Cargo resolves features per command, so `cargo test --workspace`, `cargo run -p warlock`,
-`cargo run -p warlock-cli`, and `cargo xtask` each see their own tree. A crate whose features
-differ anywhere below it gets another fingerprint, so before #1572 warlock-core (300k lines) was
+Cargo resolves features per command, so `cargo test --workspace`, `cargo run -p ascmearc`,
+`cargo run -p ascmearc-cli`, and `cargo xtask` each see their own tree. A crate whose features
+differ anywhere below it gets another fingerprint, so before #1572 ascmearc-core (300k lines) was
 built once per tree: twice in a CI job, and again on every switch between the tests, the CLI,
-and xtask after an edit to core. Three things keep the trees equal below warlock-core (it has no
-features of its own: the test world's `showcase` feature is `warlock-assets`', #1587):
+and xtask after an edit to core. Three things keep the trees equal below ascmearc-core (it has no
+features of its own: the test world's `showcase` feature is `ascmearc-assets`', #1587):
 
 - the workspace's `serde` (`alloc`) and `flate2` (default features) carry what the game's tree
   adds;
-- `crates/workspace-hack` (no code; a dependency of `warlock-cli` and xtask) pins the rest the
-  game's tree and the tests' dev-dependencies add below warlock-core, the proc macros' host
+- `crates/workspace-hack` (no code; a dependency of `ascmearc-cli` and xtask) pins the rest the
+  game's tree and the tests' dev-dependencies add below ascmearc-core, the proc macros' host
   crates (`syn` 2 and 3, `proc-macro2`) as build dependencies;
 - `[profile.dev.build-override] debug = false`: without it, Cargo builds a host crate the game
   also uses at runtime (`unicode-ident`) with debug info, and without it in a tree that does not.
 
 After a Bevy or dependency update, check it: after `cargo test --workspace --no-run`, each of
-`cargo build -p xtask`, `-p warlock-cli`, and `-p warlock` compiles no warlock-core. Where one
+`cargo build -p xtask`, `-p ascmearc-cli`, and `-p ascmearc` compiles no ascmearc-core. Where one
 does, compare the trees: `cargo tree -p <member> -e normal,build -f '{p} {f}'`, or, for
 everything Cargo hashes (features, profile, host or target), `RUSTC_BOOTSTRAP=1 cargo build -p
 <member> --unit-graph -Z unstable-options`; the difference goes into
 `crates/workspace-hack/Cargo.toml`. Release builds are other trees by design; a
 `--no-default-features` build (the release configuration, the web build) changes only
-`warlock-assets` and the binaries above it.
+`ascmearc-assets` and the binaries above it.
 
 ## Hot registries: insert by group, never append
 
@@ -228,7 +228,7 @@ they were, and PRs in flight no longer conflict over them. The scheme is `rng.rs
   level id, cell, actor key, the moment, an attempt number. Two decisions never share a key
   (include enough context, or let `draw!`'s counter settle repeats in one second). A PR that adds
   or changes keys says why each is unique and stable.
-- **Every label is written at its site**, so `grep 'draw!(' crates/warlock-core/src` lists them
+- **Every label is written at its site**, so `grep 'draw!(' crates/ascmearc-core/src` lists them
   all; the table at the top of `rng.rs` lists the one-shot and kept streams. Add a new one-shot
   or kept stream to that table in the same PR, in its group.
 - **The guard**: `WorldState` has no shared stream to draw from, so a new draw must name a key;
@@ -262,7 +262,7 @@ they were, and PRs in flight no longer conflict over them. The scheme is `rng.rs
   level id, cell, actor key, the moment, an attempt number. Two decisions never share a key
   (include enough context, or let `draw!`'s counter settle repeats in one second). A PR that adds
   or changes keys says why each is unique and stable.
-- **Every label is written at its site**, so `grep 'draw!(' crates/warlock-core/src` lists them
+- **Every label is written at its site**, so `grep 'draw!(' crates/ascmearc-core/src` lists them
   all; the table at the top of `rng.rs` lists the one-shot and kept streams. Add a new one-shot
   or kept stream to that table in the same PR, in its group.
 - **The guard**: `WorldState` has no shared stream to draw from, so a new draw must name a key;
@@ -272,7 +272,7 @@ they were, and PRs in flight no longer conflict over them. The scheme is `rng.rs
 `serde_json` encoding of `WorldState`, streamed into the hasher. It therefore also depends on
 `serde_json`'s output and on `rand_chacha`'s serde format for every kept stream (`rng.rs`): a
 dependency bump that changes either changes every replay's recorded hashes with no rule change.
-Such a bump says so in its PR and re-creates the test replays (`warlock-cli replay --create`,
+Such a bump says so in its PR and re-creates the test replays (`ascmearc-cli replay --create`,
 then `--verify`); old replay files then warn on load, as any divergence does.
 
 ## Design documents

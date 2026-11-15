@@ -101,7 +101,7 @@ fn metadata_target_dir() -> Result<PathBuf, String> {
 pub(crate) fn run_game(extra: &[&str]) -> Result<(), String> {
     let status = Command::new(env!("CARGO"))
         .current_dir(workspace_root())
-        .args(["run", "--quiet", "--package", "warlock", "--"])
+        .args(["run", "--quiet", "--package", "ascmearc", "--"])
         .args(extra)
         .status()
         .map_err(|e| format!("failed to run cargo: {e}"))?;
@@ -214,7 +214,7 @@ fn web() -> Result<(), String> {
             // A release artifact: without the test world (`showcase`, docs/dev/campaign.md).
             "--no-default-features",
             "--package",
-            "warlock",
+            "ascmearc",
             "--target",
             "wasm32-unknown-unknown",
         ])
@@ -237,19 +237,19 @@ fn web() -> Result<(), String> {
             "--remove-name-section",
             "--remove-producers-section",
             "--out-name",
-            "warlock",
+            "ascmearc",
             "--out-dir",
         ])
         .arg(&out)
-        .arg(target.join("wasm32-unknown-unknown/web/warlock.wasm"))
+        .arg(target.join("wasm32-unknown-unknown/web/ascmearc.wasm"))
         .status()
         .map_err(|e| format!("failed to run wasm-bindgen: {e}"))?;
     if !status.success() {
         return Err(format!("wasm-bindgen failed: {status}"));
     }
-    optimize_wasm(&out.join("warlock_bg.wasm"))?;
-    wasm_check::check(&out.join("warlock_bg.wasm"))?;
-    no_test_world(&out.join("warlock_bg.wasm"))?;
+    optimize_wasm(&out.join("ascmearc_bg.wasm"))?;
+    wasm_check::check(&out.join("ascmearc_bg.wasm"))?;
+    no_test_world(&out.join("ascmearc_bg.wasm"))?;
     // Stamp the workspace version into the page (like `release/Info.plist.in`).
     let page = std::fs::read_to_string(root.join("web/index.html"))
         .map_err(|e| format!("cannot read web/index.html: {e}"))?;
@@ -269,7 +269,7 @@ fn web() -> Result<(), String> {
 }
 
 /// Fails when a release artifact embeds the test world: its `campaign.toml`'s path is a key of
-/// the embedded content table (`warlock-assets/build.rs`) whenever the `showcase` feature is on.
+/// the embedded content table (`ascmearc-assets/build.rs`) whenever the `showcase` feature is on.
 fn no_test_world(artifact: &Path) -> Result<(), String> {
     const MARKER: &[u8] = b"campaigns/showcase/campaign.toml";
     let bytes =
@@ -332,7 +332,7 @@ fn web_smoke(args: &[String]) -> Result<(), String> {
     let root = workspace_root();
     let target = target_dir()?;
     let web = target.join("web");
-    if !web.join("warlock_bg.wasm").exists() {
+    if !web.join("ascmearc_bg.wasm").exists() {
         return Err(format!(
             "{} is missing; run `cargo xtask web` first",
             web.display()

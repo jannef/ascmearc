@@ -3,10 +3,10 @@
 
 use super::order;
 use super::util::{capital, percent_of, times};
+use ascmearc_core::content::{Content, GemDef, ItemClassId, PartId};
+use ascmearc_core::item_parts::ItemPart;
+use ascmearc_core::object::Stack;
 use std::fmt::Write as _;
-use warlock_core::content::{Content, GemDef, ItemClassId, PartId};
-use warlock_core::item_parts::ItemPart;
-use warlock_core::object::Stack;
 
 /// The deepest item level the wiki shows loot chances at: the Depths' bottom.
 const DEEP: u8 = 8;

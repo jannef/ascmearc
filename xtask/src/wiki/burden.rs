@@ -1,10 +1,10 @@
 //! Burden: its levels, the races' sizes, and sample carrying limits.
 
 use super::util::{at_normal_pace, factor};
+use ascmearc_core::burden::{self, Burden, Load};
+use ascmearc_core::content::{BASE_TURN, Content, price};
+use ascmearc_core::object::format_weight;
 use std::fmt::Write as _;
-use warlock_core::burden::{self, Burden, Load};
-use warlock_core::content::{BASE_TURN, Content, price};
-use warlock_core::object::format_weight;
 
 /// What each level of burden costs, from the rules' own numbers.
 pub(super) fn burden_levels(_content: &Content) -> String {
@@ -20,7 +20,7 @@ pub(super) fn burden_levels(_content: &Content) -> String {
             Burden::Overloaded => "more than your limit",
         };
         // How long a normal action takes, from its price: 6 s at a normal pace.
-        let normal = price(warlock_core::content::NORMAL_COST, BASE_TURN);
+        let normal = price(ascmearc_core::content::NORMAL_COST, BASE_TURN);
         let takes = match (b.can_move(), at_normal_pace(b.slow(normal))) {
             (true, t) if b == Burden::Unburdened => format!("{t} (as usual)"),
             (true, t) => format!("{t} (×{})", factor(b.slow(100))),

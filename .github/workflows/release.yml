@@ -62,16 +62,16 @@ jobs:
       # Without the test world: `--no-default-features` leaves out the `showcase` feature
       # (docs/dev/campaign.md, "The test world in release builds").
       - name: Release build
-        run: cargo build --release --locked --no-default-features --package warlock --package warlock-cli
+        run: cargo build --release --locked --no-default-features --package ascmearc --package ascmearc-cli
       - name: No test world in the release
         run: |
           exe=""
           if [ "$RUNNER_OS" = "Windows" ]; then exe=".exe"; fi
-          if out=$("target/release/warlock-cli$exe" dump --scenario showcase 2>&1); then
+          if out=$("target/release/ascmearc-cli$exe" dump --scenario showcase 2>&1); then
             echo "the release CLI started the showcase"; exit 1
           fi
           grep -q "unknown scenario" <<< "$out" || { echo "$out"; exit 1; }
-          if grep -aq "campaigns/showcase/campaign.toml" "target/release/warlock$exe"; then
+          if grep -aq "campaigns/showcase/campaign.toml" "target/release/ascmearc$exe"; then
             echo "the release game embeds the test world"; exit 1
           fi
       - name: Package
@@ -79,17 +79,17 @@ jobs:
           REF_NAME: ${{ github.ref_type == 'tag' && github.ref_name || format('dev-{0}', github.run_number) }}
           PLATFORM: ${{ matrix.platform }}
         run: |
-          name="warlock-${REF_NAME}-${PLATFORM}"
+          name="ascmearc-${REF_NAME}-${PLATFORM}"
           exe=""
           if [ "$RUNNER_OS" = "Windows" ]; then exe=".exe"; fi
           mkdir -p "dist/$name"
-          cp "target/release/warlock$exe" "target/release/warlock-cli$exe" "dist/$name/"
+          cp "target/release/ascmearc$exe" "target/release/ascmearc-cli$exe" "dist/$name/"
           cp release/README.txt LICENSE THIRD_PARTY_LICENSES.html assets/fonts/JuliaMono-OFL.txt "dist/$name/"
           cp -r assets/keymaps "dist/$name/"
           if [ "$RUNNER_OS" = "macOS" ]; then
-            app="dist/$name/Warlock.app/Contents"
+            app="dist/$name/Ascmearc.app/Contents"
             mkdir -p "$app/MacOS"
-            cp target/release/warlock "$app/MacOS/warlock"
+            cp target/release/ascmearc "$app/MacOS/ascmearc"
             sed "s/@VERSION@/${REF_NAME#v}/g" release/Info.plist.in > "$app/Info.plist"
             (cd dist && zip -r -q "$name.zip" "$name")
           elif [ "$RUNNER_OS" = "Windows" ]; then
@@ -143,7 +143,7 @@ jobs:
           REF_NAME: ${{ github.ref_type == 'tag' && github.ref_name || format('dev-{0}', github.run_number) }}
         run: |
           mkdir -p dist
-          name="warlock-${REF_NAME}-web"
+          name="ascmearc-${REF_NAME}-web"
           cp -r target/web "dist/$name"
           cp release/README.txt LICENSE assets/fonts/JuliaMono-OFL.txt "dist/$name/"
           # target/web already holds THIRD_PARTY_LICENSES.html (copied by `cargo xtask web`).
@@ -209,4 +209,4 @@ jobs:
           prerelease=""
           case "$GITHUB_REF_NAME" in v0.*) prerelease="--prerelease" ;; esac
           gh release create "$GITHUB_REF_NAME" dist/* $prerelease \
-            --title "Warlock $GITHUB_REF_NAME" --generate-notes --verify-tag
+            --title "Ascmearc $GITHUB_REF_NAME" --generate-notes --verify-tag

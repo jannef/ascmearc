@@ -1,0 +1,24 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ Welcome to Showcase. Press ? for controls.
+
+
+
+
+
+
+
+
+                  ┌─ Unbind: item ───────────────────────────────────────────────┐
+                  │                                                              │
+                  │ Unbind                                                       │
+                  │                                                              │
+                  │ Melee weapons                                                │
+                  │ > a - Storm Hunger, a Masterwork long sword (+1 hit,  uses 1 │
+                  │                                                              │
+                  │                                                              │
+                  │                                                              │
+                  │ a or Enter choose   Esc back                                 │
+                  └──────────────────────────────────────────────────────────────┘

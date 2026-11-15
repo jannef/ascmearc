@@ -1,9 +1,9 @@
-//! What the fortune talents do, in the wiki's words (`warlock_core::talent::FortuneEffect`, #1495):
-//! one arm a variant, beside the area's enum and sum in `warlock-core/src/talent/fortune.rs`.
+//! What the fortune talents do, in the wiki's words (`ascmearc_core::talent::FortuneEffect`, #1495):
+//! one arm a variant, beside the area's enum and sum in `ascmearc-core/src/talent/fortune.rs`.
 
 use crate::wiki::util::signed;
-use warlock_core::content::Content;
-use warlock_core::talent::FortuneEffect;
+use ascmearc_core::content::Content;
+use ascmearc_core::talent::FortuneEffect;
 
 /// What `effect` does, as the talents' tables say it.
 pub(super) fn text(content: &Content, effect: &FortuneEffect) -> String {
@@ -108,11 +108,11 @@ pub(super) fn text(content: &Content, effect: &FortuneEffect) -> String {
              no mana, cooldown, or check, as often as you like): the thing is identified as a \
              scroll of identify would identify it. On a thing you already know it is refused, \
              with no time spent",
-            crate::wiki::util::at_normal_pace(warlock_core::content::price(
+            crate::wiki::util::at_normal_pace(ascmearc_core::content::price(
                 content
                     .action_costs()
-                    .cost(warlock_core::content::ActionKind::Read),
-                warlock_core::content::BASE_TURN
+                    .cost(ascmearc_core::content::ActionKind::Read),
+                ascmearc_core::content::BASE_TURN
             ))
         ),
     }

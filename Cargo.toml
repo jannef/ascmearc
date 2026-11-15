@@ -1,14 +1,14 @@
 [workspace]
 resolver = "3"
 members = [
-  "crates/warlock-assets",
-  "crates/warlock-core",
-  "crates/warlock-cli",
-  "crates/warlock",
+  "crates/ascmearc-assets",
+  "crates/ascmearc-core",
+  "crates/ascmearc-cli",
+  "crates/ascmearc",
   "crates/workspace-hack",
   "xtask",
 ]
-default-members = ["crates/warlock-assets", "crates/warlock-core", "crates/warlock-cli", "crates/warlock"]
+default-members = ["crates/ascmearc-assets", "crates/ascmearc-core", "crates/ascmearc-cli", "crates/ascmearc"]
 
 [workspace.package]
 version = "0.17.0"
@@ -17,16 +17,16 @@ rust-version = "1.99"
 publish = false
 license = "GPL-3.0-only"
 authors = ["Janne Lê Forsell <janne@jannef.com>"]
-repository = "https://github.com/jannef/warlock"
+repository = "https://github.com/jannef/ascmearc"
 
 [workspace.dependencies]
 # Each binary turns the test world on through its own `showcase` feature (docs/dev/campaign.md).
-warlock-assets = { path = "crates/warlock-assets", default-features = false }
-warlock-core = { path = "crates/warlock-core" }
+ascmearc-assets = { path = "crates/ascmearc-assets", default-features = false }
+ascmearc-core = { path = "crates/ascmearc-core" }
 workspace-hack = { path = "crates/workspace-hack" }
 # The leaf features the game uses (#1590): `default_app` and `2d_bevy_render` would add bevy_state,
 # bevy_text, bevy_animation, and the gizmos, none of which it uses (glyphs are drawn with
-# fontdue). `multi_threaded` (native) and `webgpu` (wasm) are added in crates/warlock.
+# fontdue). `multi_threaded` (native) and `webgpu` (wasm) are added in crates/ascmearc.
 # `tonemapping_luts` is deliberately off (it pulls `ruzstd` 0.8, RUSTSEC-2026-0344); cameras use
 # `Tonemapping::None`, which also keeps palette colors exact.
 bevy = { version = "0.20", default-features = false, features = [

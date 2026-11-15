@@ -3,8 +3,8 @@
 
 use super::order;
 use super::util::{at_normal_pace, at_speed, capital};
+use ascmearc_core::content::{ActionKind, BASE_TURN, Content, NORMAL_COST, price};
 use std::fmt::Write as _;
-use warlock_core::content::{ActionKind, BASE_TURN, Content, NORMAL_COST, price};
 
 /// What each action costs and how long it takes at a normal pace, and the
 /// creature types whose attacks cost something else.

@@ -1,14 +1,14 @@
 //! Sight on the overworld: by daylight, twilight, moonlight, and weather.
 
-use std::fmt::Write as _;
-use warlock_core::content::Content;
-use warlock_core::daylight::{
+use ascmearc_core::content::Content;
+use ascmearc_core::daylight::{
     MOONLIGHT_PER_CELL, SIGHT_DAY, SIGHT_MOONLIT, SIGHT_NIGHT, SIGHT_TWILIGHT, overworld_sight,
 };
-use warlock_core::light::{Light, Moon, Sky};
-use warlock_core::perception::VIEW_RADIUS;
-use warlock_core::time::GameTime;
-use warlock_core::weather::{Clouds, Conditions, Weather};
+use ascmearc_core::light::{Light, Moon, Sky};
+use ascmearc_core::perception::VIEW_RADIUS;
+use ascmearc_core::time::GameTime;
+use ascmearc_core::weather::{Clouds, Conditions, Weather};
+use std::fmt::Write as _;
 
 /// A share of full light (255) in whole percent, rounded.
 pub(super) fn percent_of_full(luma: u16) -> u32 {

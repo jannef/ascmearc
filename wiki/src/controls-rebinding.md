@@ -42,12 +42,12 @@ You cannot lock yourself out. `Esc` always backs out of every screen and cancels
 it cannot be taken. The keys of the menus, which you need to get back to Controls, and of text
 fields, which you need to name a new character, are fixed. `Delete` on a command whose keys are closed
 puts its default keys back, and **Reset all keys** resets every command. If your keys still get in the way, start the game with
-`warlock --reset-keys`: every key goes back to its default, and the game starts as usual. Your
+`ascmearc --reset-keys`: every key goes back to its default, and the game starts as usual. Your
 keys are kept with your [settings](settings.md).
 
 ## Sharing your keys
 
-**Export keys…** in Controls writes all your keys to a file, `warlock-keys.toml`, in the folder
+**Export keys…** in Controls writes all your keys to a file, `ascmearc-keys.toml`, in the folder
 with your settings (Settings, then Files, shows where). In the browser it downloads the file.
 **Import keys…** reads it back; in the browser, you choose the file. Use it to copy your keys to
 another computer, to back them up, or to share them.
@@ -55,8 +55,8 @@ another computer, to back them up, or to share them.
 It is a plain text file you can edit. It lists each command by name with its keys, in the same
 groups as the Controls screen, as in `descend = [">"]`. An import changes only the commands the
 file lists and moves keys the way rebinding does. It skips anything it does not know, says so,
-and is saved at once. From the command line, `warlock --export-keys FILE` and
-`warlock --import-keys FILE` do the same. The desktop downloads come with the default keys in such
+and is saved at once. From the command line, `ascmearc --export-keys FILE` and
+`ascmearc --import-keys FILE` do the same. The desktop downloads come with the default keys in such
 a file, `keymaps/default.toml`.
 
 See also: [Controls](controls.md), [Settings](settings.md), and

@@ -3,12 +3,12 @@
 use super::order;
 use super::util::{capital, percent_of};
 use super::vision::glow_word;
+use ascmearc_core::content::Effect as ItemEffect;
+use ascmearc_core::content::{AffixDef, AffixKind, Content, ItemKind, MAX_ITEM_LEVEL, Rarity};
+use ascmearc_core::magic::describe;
+use ascmearc_core::magic::loot::TIER_WINDOW;
+use ascmearc_core::object::format_weight;
 use std::fmt::Write as _;
-use warlock_core::content::Effect as ItemEffect;
-use warlock_core::content::{AffixDef, AffixKind, Content, ItemKind, MAX_ITEM_LEVEL, Rarity};
-use warlock_core::magic::describe;
-use warlock_core::magic::loot::TIER_WINDOW;
-use warlock_core::object::format_weight;
 
 /// The prefixes table.
 pub(super) fn prefixes(content: &Content) -> String {
@@ -231,7 +231,11 @@ fn effect_words(content: &Content, effect: ItemEffect) -> String {
 
 /// What a tier rolls, exactly: `+1–2`, `1d3–1d4`, `20–35%`, `5–8% less time` (speed takes its
 /// percent off the cost, `magic::mods::faster`).
-fn tier_value(effect: ItemEffect, tier: &warlock_core::content::Tier, content: &Content) -> String {
+fn tier_value(
+    effect: ItemEffect,
+    tier: &ascmearc_core::content::Tier,
+    content: &Content,
+) -> String {
     let range = |prefix: &str, suffix: &str| {
         if tier.min == tier.max {
             format!("{prefix}{}{suffix}", tier.min)

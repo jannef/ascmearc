@@ -1,0 +1,30 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ Welcome to Showcase. Press ? for controls.
+
+
+
+┌─ Skills ─────────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                                  │
+│ > Appraise           11  ────                                                                    │
+│   Detect traps       14  ────                                                                    │
+│   Disable device     14  ────                                                                    │
+│   Escape artist      10  ────                                                                    │
+│   Initiative          9  ────                                                                    │
+│   Listen              6  ────                                                                    │
+│   Negotiation        10  ────                                                                    │
+│   Open lock          17  ────                                                                    │
+│   Search             10  ────                                                                    │
+│   Sneak attack       25  ────                                                                    │
+│   Spot                9  ────                                                                    │
+│   Steal              12  ────                                                                    │
+│   Stealth            16  ────                                                                    │
+│   Tumble             15  ────                                                                    │
+│                                                                                                  │
+│ Judging what a thing is worth and what it is made of.                                            │
+│                                                                                                  │
+│                                                                                                  │
+│ ↑↓ choose   A or Esc close                                                                       │
+└─ 1 Char · 2 Inv · 3 Eqp · 4 Skl · 5 Weap · 6 Mag · 7 Qst · 8 Tal · 9 Story ──────────────────────┘

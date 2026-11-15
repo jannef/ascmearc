@@ -10,7 +10,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - Every glyph stays readable under every effect.
 - Targets: native Windows, macOS, and Linux, and a web build that ships with every release.
 - The game ends in a victory driven by the story, never by reaching the top level.
-- A release plays one world, the Ascmearc. The engine, its rules, and its shared content are built to carry any campaign.
+- A release plays one world, the Ascmearc campaign. The engine, its rules, and its shared content are built to carry any campaign.
 
 ## Scope
 

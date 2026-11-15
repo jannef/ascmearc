@@ -1,6 +1,0 @@
----
-source: crates/warlock/src/ui/screen_snapshots.rs
-expression: "render(&case, content.clone())"
----
- There are several objects here.
- You need Metalcraft to work at the anvil.

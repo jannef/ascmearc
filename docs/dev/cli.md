@@ -1,7 +1,7 @@
 # Command-line reference
 
 Developer notes for the development interface (moved from CLAUDE.md, #1505): every flag of the
-game (`warlock`), the headless dev tool (`warlock-cli`), the `cargo xtask` commands in detail,
+game (`ascmearc`), the headless dev tool (`ascmearc-cli`), the `cargo xtask` commands in detail,
 the replay format, the dump layers, and the action text syntax. What the interface must do is
 `spec/13-development.md`; CLAUDE.md keeps the one-line command table and
 points here. Keep it current with the code, as CLAUDE.md says: a new flag, `--screen` name,
@@ -9,7 +9,7 @@ scenario, dump layer, or action is added here in the same PR, by its group, neve
 (an action's rules belong in its own topic file; here its syntax and a short gloss).
 
 Where the lists come from: `--scenario` names are the files of `assets/campaigns/*/scenarios/`,
-`--screen` names are `ui/screens.rs::ScreenName` (clap lists them: `cargo run -p warlock --
+`--screen` names are `ui/screens.rs::ScreenName` (clap lists them: `cargo run -p ascmearc --
 --help`), dump layers are `dump/layer.rs::Layer`, and action verbs are `action/text.rs`'s `VERBS` table
 (read by `Action::from_str`).
 
@@ -26,15 +26,15 @@ metadata`'s `target_directory`) for the build output it reads and the files it w
   fails: #669.
 - **Web build**, `cargo xtask web`: writes `target/web/`, without the test world (CLAUDE.md
   "Releases, web build, logs").
-- **Release configuration**, `cargo build --no-default-features -p warlock -p warlock-cli`: no
+- **Release configuration**, `cargo build --no-default-features -p ascmearc -p ascmearc-cli`: no
   `showcase` feature, the test world left out, as in a release; `cargo test
-  --no-default-features -p warlock-assets --test release_content` checks it; CI's
+  --no-default-features -p ascmearc-assets --test release_content` checks it; CI's
   `release-config` job; docs/dev/campaign.md.
 - **Web smoke test**, `cargo xtask web-smoke <chrome>`: serves `target/web`, drives headless
   Chromium through menu → New run (skipped: the web build lists one scenario, the Ascmearc's
   start, so it opens on the race) → race, the stars, gender, class (preselected) → talents
   (Random) → name (empty: a random one) → summary → the story (opened once as the run begins;
-  Enter) → the run on Beorggeat, checks the new character's save `warlock/saves/<id>.sav`, waits
+  Enter) → the run on Beorggeat, checks the new character's save `ascmearc/saves/<id>.sav`, waits
   five turns, reloads, Continue, and checks the run resumed at turn 5; writes
   `target/xtask/web-smoke.png`; fails on logged errors; not run in CI.
 - **Regenerate the vast level**, `cargo xtask gen-vast`: writes
@@ -85,16 +85,16 @@ metadata`'s `target_directory`) for the build output it reads and the files it w
   too: far creatures take coarse turns while the player rests, `docs/dev/creatures.md`), also
   beside the arena's fight going on unseen until one side is dead (a walk that gets the player
   killed starts over, untimed), and rested on to dawn when rain wakes the player.
-- **Light stress benchmark**, `cargo test --release -p warlock-core turn_cost -- --ignored
+- **Light stress benchmark**, `cargo test --release -p ascmearc-core turn_cost -- --ignored
   --nocapture`: 400×300, 825 lights; again outdoors at 06:15.
-- **Balance probe**, `cargo test --release -p warlock-core balance_probe -- --ignored
+- **Balance probe**, `cargo test --release -p ascmearc-core balance_probe -- --ignored
   --nocapture`: prints the tables `docs/balance.md` records: the player against the monsters of
   their level, through the game's own code; run it after tuning combat data and update the
   tables.
 
-## The game: `warlock`
+## The game: `ascmearc`
 
-`cargo run -p warlock -- --help` lists the flags and the values clap accepts.
+`cargo run -p ascmearc -- --help` lists the flags and the values clap accepts.
 
 ### Scenarios: `--scenario NAME`
 
@@ -148,10 +148,10 @@ The test world (`assets/campaigns/showcase/`, the `showcase` feature):
 ### The run and the character
 
 - `--seed S`: default the scenario's seed; a number, or a word hashed with FNV-1a, e.g. `--seed
-  warlock`.
+  ascmearc`.
 - `--character RACE,GENDER,CLASS` (e.g. `dwarf,female,warrior`; default: the scenario's
   character): like `--seed` it shapes the run other flags start (`--scenario`, `--new`, `--record`,
-  `--capture`, and `warlock-cli dump` and `replay --create`) and alone does not skip the menu;
+  `--capture`, and `ascmearc-cli dump` and `replay --create`) and alone does not skip the menu;
   a class closed to the race and gender, `drow,male,priest`, is refused, while a class hidden
   from New run (none is now) is taken; `assets/data/classes/README.toml`.
 - `--name NAME`: the character's name, up to 20 characters; default: the scenario's for its own
@@ -170,7 +170,7 @@ The test world (`assets/campaigns/showcase/`, the `showcase` feature):
 ### Content, window, and captures
 
 - `--content-dir assets`: read content from disk instead of the copy built into the binary
-  (`warlock-cli` takes it too).
+  (`ascmearc-cli` takes it too).
 - `--window WxH` (physical pixels), `--scale F` (display scale; `1` for reproducible captures).
 - `--capture out.png`: render **offscreen** (no window), save a screenshot, exit.
   `--capture-after-frames N` (default 10), `--freeze-time SECONDS` pins animation time (glyph
@@ -257,28 +257,28 @@ logs are, over Settings), `controls`, and `dialog` (the quit dialog).
 
 ### Data, keys, and saves
 
-- `--portable [DIR]`: keep everything in `warlock-data` next to the game (or DIR); a
-  `warlock-data` folder there does it without the flag. `--paths` prints the locations and why,
+- `--portable [DIR]`: keep everything in `ascmearc-data` next to the game (or DIR); a
+  `ascmearc-data` folder there does it without the flag. `--paths` prints the locations and why,
   then exits. `--move-data native|portable [DIR]` (`--dry-run` to preview) moves files between
   portable and the platform folders.
 - `--reset-keys` puts every key back to its default (saved at once), then starts as usual.
   `--export-keys FILE` writes the keymap (every command's keys by context, the format of
-  Controls' Export keys, `warlock-keys.toml`) to FILE; `--import-keys FILE` reads one into the
+  Controls' Export keys, `ascmearc-keys.toml`) to FILE; `--import-keys FILE` reads one into the
   settings (the commands it lists only) and says what changed; both then exit.
 - `--save-dir DIR` keeps saves in DIR instead of the platform data dir (`DIR/saves/<id>.sav`, one
   per character; with `--capture` or `--replay` only read).
 
-## The headless dev loop: `warlock-cli`
+## The headless dev loop: `ascmearc-cli`
 
 No window, no Bevy; `--content-dir` works here too.
 
 | Task | Command |
 |---|---|
-| ASCII dump after actions | `cargo run -p warlock-cli -- dump --scenario showcase --actions "move:N move:N" --layers view,fov,memory` |
+| ASCII dump after actions | `cargo run -p ascmearc-cli -- dump --scenario showcase --actions "move:N move:N" --layers view,fov,memory` |
 | Dump a replay's end state | `... dump --replay runs/x.json [--actions "wait"] --format ascii\|json [--state]` |
 | Create a replay | `... replay --create --scenario showcase --actions "move:N wait" -o runs/x.json` |
 | Verify a replay | `... replay --verify runs/x.json` (exit 1 and first diverging step on mismatch) |
-| Preview a generated level | `... gen --level depths:3 --seed warlock` |
+| Preview a generated level | `... gen --level depths:3 --seed ascmearc` |
 
 - `dump` and `replay --create` take `--character dwarf,female,warrior` (starts as that
   character), `--name Brakka` (names them), `--talents healthy,lean` (picks their creation

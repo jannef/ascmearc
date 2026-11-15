@@ -1,0 +1,24 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(&case, content.clone())"
+---
+ Lēof, your hound, pads at your heel.
+ You and a band of kobolds see each other at the same moment.
+
+
+
+
+
+
+
+
+                            ┌─ A band of kobolds ──────────────────────┐
+                            │                                          │
+                            │ You and a band of kobolds see each other │
+                            │           at the same moment.            │
+                            │                                          │
+                            │           > Give them the slip           │
+                            │             Stand and fight              │
+                            │                                          │
+                            │ ↑/↓ choose  Enter select                 │
+                            └──────────────────────────────────────────┘

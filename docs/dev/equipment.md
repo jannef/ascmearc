@@ -1,6 +1,6 @@
 # Equipment
 
-Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
+Developer notes for working on this part of Ascmearc (moved from CLAUDE.md, #185); the
 rules it implements are in spec/06-content.md and spec/05-interface.md. Keep it current with the code, as CLAUDE.md says.
 
 Equipment (M16): slots are data, `data/slots.toml`

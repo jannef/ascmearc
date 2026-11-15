@@ -1,11 +1,11 @@
-//! What the resource talents do, in the wiki's words (`warlock_core::talent::ResourceEffect`,
+//! What the resource talents do, in the wiki's words (`ascmearc_core::talent::ResourceEffect`,
 //! #1495): one arm a variant, beside the area's enum and sum in
-//! `warlock-core/src/talent/resource.rs`.
+//! `ascmearc-core/src/talent/resource.rs`.
 
 use super::resource_name;
 use crate::wiki::util::{Term, link, signed};
-use warlock_core::content::{Content, OverTime};
-use warlock_core::talent::ResourceEffect;
+use ascmearc_core::content::{Content, OverTime};
+use ascmearc_core::talent::ResourceEffect;
 
 /// What `effect` does, as the talents' tables say it.
 pub(super) fn text(content: &Content, effect: &ResourceEffect) -> String {

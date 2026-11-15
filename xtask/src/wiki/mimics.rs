@@ -1,12 +1,12 @@
 //! Mimics: the family's bands and their numbers, stated exactly from
 //! `data/mimics.toml` and the chest bands, read through the generated creature types themselves.
 
+use ascmearc_core::content::Content;
+use ascmearc_core::content::mimic::Mimics;
+use ascmearc_core::content::starter;
+use ascmearc_core::stats::Stat;
+use ascmearc_core::text::and_list;
 use std::fmt::Write as _;
-use warlock_core::content::Content;
-use warlock_core::content::mimic::Mimics;
-use warlock_core::content::starter;
-use warlock_core::stats::Stat;
-use warlock_core::text::and_list;
 
 /// The bands: each band's levels, the chest it passes for, and its first member's numbers (every
 /// level between has its own type on the same formulas); then what every mimic is.

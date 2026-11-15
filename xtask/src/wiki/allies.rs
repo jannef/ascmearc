@@ -4,8 +4,8 @@
 
 use super::spells::grows_with;
 use super::util::{Term, capital, link};
+use ascmearc_core::content::{Content, SpellData, SpellPurpose};
 use std::fmt::Write as _;
-use warlock_core::content::{Content, SpellData, SpellPurpose};
 
 /// The ally rules, one a row.
 pub(super) fn rules(content: &Content) -> String {

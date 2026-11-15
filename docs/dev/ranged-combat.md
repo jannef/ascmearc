@@ -1,9 +1,9 @@
 # Ranged combat
 
-Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
+Developer notes for working on this part of Ascmearc (moved from CLAUDE.md, #185); the
 rules it implements are in spec/10-combat.md. Keep it current with the code, as CLAUDE.md says.
 
-Ranged combat (keys: `t` shoots or throws the Missile weapon slot's contents, `T` is the throw chooser; the slot `takes_weapons`) lives in `warlock-core/src/world/combat/shoot.rs`: `fire`,
+Ranged combat (keys: `t` shoots or throws the Missile weapon slot's contents, `T` is the throw chooser; the slot `takes_weapons`) lives in `ascmearc-core/src/world/combat/shoot.rs`: `fire`,
 `throw` (a potion it hands to `World::throw_flask`, `world/health/flask.rs`: it flies and shatters, docs/dev/potions.md "Flasks"), and `creature_shoots` loose one missile (`loose`): it leaves its stack, makes its noise
 once, flies along `Pos::ray` (the line the AI's `clear_shot` checks) over transparent cells as far
 as the weapon's `range`, attacks whoever stands in its way (`World::missile_hits`, no noise) until
@@ -57,7 +57,7 @@ Tests: `world/combat/shot_range_tests.rs` (with the same draws, a shot at a band
 distance with the penalty added to its to-hit), `content/ranged.rs`.
 
 Creatures' throws (#457) live in
-`warlock-core/src/world/combat/hurl.rs` (the earth elementals' stones too, the dread design §5.3): a
+`ascmearc-core/src/world/combat/hurl.rs` (the earth elementals' stones too, the dread design §5.3): a
 creature type's `[creature.throw]` (`content/throw.rs`:
 `ThrowSpec` resolved like a natural attack, its `object` once objects are known,
 `Content::load_throws`; `Throw` on `CreatureDef::throw`). `World::hurls_at` is the AI's check (not

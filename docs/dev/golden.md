@@ -14,7 +14,7 @@ and optional `character` (`human,male,paladin`: the run starts as it, not the sc
 (default 0.05% of pixels). Walks that fight or wait for creatures belong on hand-made levels
 (the showcase, the arena, the trap hall): a walk through a generated level breaks whenever the
 generator changes.
-`cargo xtask golden` builds a replay per entry with `warlock-core`, runs the game with
+`cargo xtask golden` builds a replay per entry with `ascmearc-core`, runs the game with
 `--replay ... --capture ...`, and compares with `tests/golden/<name>.png`. On a mismatch it writes
 `target/xtask/golden/<name>.{actual,diff}.png` (diff: red pixels are over tolerance). Every entry
 is tried: a blocked walk (an action that takes no turn and is not free), a failed capture, a

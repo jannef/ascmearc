@@ -1,6 +1,6 @@
 # Allies
 
-Developer notes for working on this part of Warlock; the rules it implements are in
+Developer notes for working on this part of Ascmearc; the rules it implements are in
 spec/09-creatures.md ("Allies"), the design is `docs/design/druid-and-summons.md` (§4 the ally
 core, §14 the owner's decisions, which override the rest). Slices: **A1** (#836, this file: the
 core), A2 (#837, "Summons" below: the spell kind, `Ally::until` set from the spell's degrees), A3 (the UI: the

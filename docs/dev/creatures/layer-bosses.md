@@ -1,7 +1,7 @@
 # The layer bosses of Grundlēas (#1118)
 
 The unique bosses that keep every tenth floor of Grundlēas, the endless branch. The rules (the boss rows, the lair, the hidden stairs, made again until slain)
-are in `docs/dev/mapgen.md` ("Layer bosses") and `crates/warlock-core/src/world/levels/layer_boss.rs`;
+are in `docs/dev/mapgen.md` ("Layer bosses") and `crates/ascmearc-core/src/world/levels/layer_boss.rs`;
 this file holds the roster.
 
 - **Faction** `layer_keepers` ("keepers of the layers", `assets/data/factions/`): hostile to

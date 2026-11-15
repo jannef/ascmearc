@@ -47,5 +47,5 @@ per section, worked examples tested) are in CLAUDE.md "Wiki"; this file holds th
 
 The hand-written `> **Example: ...**` boxes (Combat, Stats, Burden, Skills, Mana, Enchanting) are
 checked by `xtask/src/wiki/examples.rs` (`cargo test -p xtask`): each test rebuilds the example's
-character through `warlock-core` and fails unless the box states the numbers the game computes.
+character through `ascmearc-core` and fails unless the box states the numbers the game computes.
 A tuning change that moves one fails there: fix the box. A new box gets a test there too.

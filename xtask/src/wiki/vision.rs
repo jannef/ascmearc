@@ -2,9 +2,9 @@
 
 use super::order;
 use super::util::{article, capital, yes};
+use ascmearc_core::content::{AffixKind, Content, LightId, TalentEffect};
+use ascmearc_core::talent::SensesEffect;
 use std::fmt::Write as _;
-use warlock_core::content::{AffixKind, Content, LightId, TalentEffect};
-use warlock_core::talent::SensesEffect;
 
 pub(super) fn vision(content: &Content) -> String {
     let mut out = String::from(

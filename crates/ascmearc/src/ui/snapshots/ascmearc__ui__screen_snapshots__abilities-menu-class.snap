@@ -1,0 +1,33 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ You learn Horn of plenty.
+ Your zeal is not en┌─ Abilities ──────────────────────────────────────────────┐
+                    │                                                          │
+                    │ Birth sign                                               │
+                    │ > a  Horn's grace                                        │
+                    │ Class                                                    │
+                    │   b  Lay on hands    your zeal is not enough             │
+                    │   c  Smite           no foe within reach                 │
+                    │   d  Branding smite  no foe within reach                 │
+                    │   e  Consecrate                                          │
+                    │ Spells                                                   │
+                    │   f  Blessing        4 mana                              │
+                    │   g  Brand           7 mana                              │
+                    │ Skills                                                   │
+                    │   h  Decipher        no unknown scroll                   │
+                    │   i  Tame            no beast beside you to tame         │
+                    │   j  Heal            nothing to treat                    │
+                    │   k  Intimidate      at a place you see                  │
+                    │   l  Forage          not usable here                     │
+                    │   m  Salvage         on something you carry              │
+                    │ Weapon skills                                            │
+                    │   n  Shield bash     no foe within reach                 │
+                    │                                                          │
+                    │ The unicorn's grace: your bleeding and poison end, and a │
+                    │ disease is shaken off; then it rests a day.              │
+                    │                                                          │
+                    │                                                          │
+                    │ a-n or Enter use   Esc close                             │
+                    └──────────────────────────────────────────────────────────┘

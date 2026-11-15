@@ -1,5 +1,0 @@
----
-source: crates/warlock/src/ui/screen_snapshots.rs
-expression: "render(case, content.clone())"
----
- In which direction? (Esc to cancel)

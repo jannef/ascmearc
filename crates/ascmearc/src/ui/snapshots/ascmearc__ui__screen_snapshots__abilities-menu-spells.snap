@@ -1,0 +1,32 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ You feel blessed.
+ You spend 101 mana ┌─ Abilities ──────────────────────────────────────────────┐
+                    │                                                          │
+                    │ Birth sign                                               │
+                    │ > a  Transfixing stare  at a place you see               │
+                    │ Class                                                    │
+                    │   b  Consecrate         you have too little mana         │
+                    │   c  Prayer                                              │
+                    │ Spells                                                   │
+                    │   d  Mend               1d4 healed, 3 mana, aimed        │
+                    │   e  Blessing           4 mana                           │
+                    │   f  Cure wounds        3d6 healed, 3 mana, aimed        │
+                    │   g  Renewal            10 mana                          │
+                    │   h  Silence            20 mana: you have 13             │
+                    │ Skills                                                   │
+                    │   i  Decipher           no unknown scroll                │
+                    │   j  Heal               nothing to treat                 │
+                    │   k  Forage             not usable here                  │
+                    │   l  Salvage            on something you carry           │
+                    │ Weapon skills                                            │
+                    │   m  Shield bash        no foe within reach              │
+                    │                                                          │
+                    │ The basilisk's stare: a foe nearby that sees you slows   │
+                    │ to a crawl a moment; your eyes then rest two hours.      │
+                    │                                                          │
+                    │                                                          │
+                    │ a-m or Enter use   Esc close                             │
+                    └──────────────────────────────────────────────────────────┘

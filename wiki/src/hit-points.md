@@ -1,7 +1,7 @@
 # Hit points and death
 
 Hit points measure how much harm you can take. They come back slowly with time. When they run out
-you die, and death in Warlock is for good. This page also covers the blood that fights leave
+you die, and death in this game is for good. This page also covers the blood that fights leave
 behind. How blows land and how much they do is on [Combat](combat.md). Every way to get your
 health back is on [Healing](healing.md).
 

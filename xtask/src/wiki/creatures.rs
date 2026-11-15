@@ -7,21 +7,21 @@ use super::order;
 use super::util::{
     Term, anchored, at_speed, capital, damage_link, damage_text, glyph, link, signed, yes,
 };
-use std::fmt::Write as _;
-use warlock_core::action::AttackKind;
-use warlock_core::burden::{self, Burden};
-use warlock_core::combat::Category;
-use warlock_core::content::{
+use ascmearc_core::action::AttackKind;
+use ascmearc_core::burden::{self, Burden};
+use ascmearc_core::combat::Category;
+use ascmearc_core::content::{
     ActionKind, Affliction, BASE_TURN, Benefit, BurstWhen, Combat, Content, CorrodesWhat,
     CreatureDef, CreatureId, FactionId, Invisible, Leaving, NORMAL_COST, NaturalAttack, OnHit,
     Stance, Takes, price, spoken,
 };
-use warlock_core::geom::Pos;
-use warlock_core::object::format_weight;
-use warlock_core::skills::Effect;
-use warlock_core::stats::Stat;
-use warlock_core::text::article;
-use warlock_core::world::{Actor, ActorId, ActorKind};
+use ascmearc_core::geom::Pos;
+use ascmearc_core::object::format_weight;
+use ascmearc_core::skills::Effect;
+use ascmearc_core::stats::Stat;
+use ascmearc_core::text::article;
+use ascmearc_core::world::{Actor, ActorId, ActorKind};
+use std::fmt::Write as _;
 
 /// How a creature stands toward the player and how it attacks, as seen in play, how often it
 /// drops a magic item, and the gear it may spawn with. By name: the shared types, then each
@@ -430,7 +430,7 @@ fn blow_price(content: &Content, actor: &Actor) -> i64 {
 
 /// A score with its modifier: `13 (+1)`.
 fn score(score: u8) -> String {
-    let modifier = warlock_core::stats::modifier(i32::from(score));
+    let modifier = ascmearc_core::stats::modifier(i32::from(score));
     format!("{score} ({})", signed(modifier))
 }
 
@@ -1222,9 +1222,9 @@ pub(super) fn creature_auras(content: &Content) -> String {
 }
 
 /// Grades: how often a creature comes greater or lesser than its kind, and
-/// what that changes, from `warlock_core::grade`'s own numbers.
+/// what that changes, from `ascmearc_core::grade`'s own numbers.
 pub(super) fn creature_grades(_: &Content) -> String {
-    use warlock_core::grade::{DAMAGE, HP_PERCENT, ONE_IN, SPEED_PERCENT, TO_HIT};
+    use ascmearc_core::grade::{DAMAGE, HP_PERCENT, ONE_IN, SPEED_PERCENT, TO_HIT};
     let mut out = String::from(
         "| Grade | Chance | Maximum hit points | To hit | Damage | Speed |\n\
          |---|:---:|:---:|:---:|:---:|:---:|\n",
@@ -1404,7 +1404,7 @@ mod tests {
 
     #[test]
     fn the_tags_name_their_creatures() {
-        let content = warlock_assets::content().expect("content");
+        let content = ascmearc_assets::content().expect("content");
         let table = creature_tags(&content);
         assert!(
             table.contains(
@@ -1424,7 +1424,7 @@ mod tests {
     /// Every family of the numbers' pages has creatures, and every creature is in one (#1550).
     #[test]
     fn every_family_has_its_creatures() {
-        let content = warlock_assets::content().expect("content");
+        let content = ascmearc_assets::content().expect("content");
         let stats = creature_stats(&content);
         for (i, (title, _, _)) in FAMILIES.iter().enumerate() {
             let n = (listed(&content).into_iter()).filter(|&(id, _)| family(&content, id) == i);

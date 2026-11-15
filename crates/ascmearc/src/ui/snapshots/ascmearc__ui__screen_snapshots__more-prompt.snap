@@ -1,0 +1,6 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ The old hermit says: "Here we don't fight. Down in the arena, you may. The rats have the run of
+ the pit again, and their squeaking comes up the stairs all night. Kill three of them for --more--

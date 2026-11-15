@@ -1,6 +1,6 @@
 # Your first run
 
-New to Warlock? Make a [warrior](class-warrior.md), walk into the little cave beside the pass
+New to the game? Make a [warrior](class-warrior.md), walk into the little cave beside the pass
 where you start, then on to the market town to the east. Rest when you are hurt, eat when you are
 hungry, and leave a fight that is going badly. Death is final. This page tells you the rest of what
 you need for your first hour; the other pages tell you everything else.
