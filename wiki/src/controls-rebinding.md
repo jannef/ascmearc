@@ -56,8 +56,8 @@ It is a plain text file you can edit. It lists each command by name with its key
 groups as the Controls screen, as in `descend = [">"]`. An import changes only the commands the
 file lists and moves keys the way rebinding does. It skips anything it does not know, says so,
 and is saved at once. From the command line, `ascmearc --export-keys FILE` and
-`ascmearc --import-keys FILE` do the same. The desktop downloads come with the default keys in such
-a file, `keymaps/default.toml`.
+`ascmearc --import-keys FILE` do the same. To get a starting file with the default keys, use
+Export keys, or run `ascmearc --export-keys FILE`.
 
 See also: [Controls](controls.md), [Settings](settings.md), and
 [Menus and lists](controls-menus.md).

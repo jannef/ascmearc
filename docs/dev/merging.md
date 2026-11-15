@@ -39,7 +39,6 @@ Take one side and regenerate; never resolve hunks in these by hand:
 | `THIRD_PARTY_LICENSES.html` | take either side, `cargo xtask licenses` after `Cargo.lock` is settled |
 | `Cargo.lock` | take `main`'s, then `cargo build --workspace` re-resolves your additions |
 | `tests/golden/*.png` | take `main`'s, then `WGPU_BACKEND=vulkan cargo xtask golden --update` in the cloud sandbox (lavapipe, as CI; `docs/dev/golden.md`), never on macOS |
-| `assets/keymaps/default.toml` | take either side, `ASCMEARC_UPDATE_KEYMAPS=1 cargo test -p ascmearc keymap` (only a changed default key makes it stale) |
 
 **Reading an insta diff.** `INSTA_UPDATE=always cargo test -p ascmearc-core` rewrites the `.snap`
 files in place (`cargo insta review` walks them one by one); then `git diff` them. The showcase

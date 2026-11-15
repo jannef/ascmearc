@@ -25,8 +25,7 @@ Keys
 ----
 Every key can be rebound in Controls (main menu or pause menu). Esc always backs out. Controls can
 export your keys to `ascmearc-keys.toml` in the settings folder and import them back (or run
-`ascmearc --export-keys FILE` / `ascmearc --import-keys FILE`); `keymaps/default.toml` holds the
-default keys. If your keys ever get in the way, `ascmearc --reset-keys` puts them all back.
+`ascmearc --export-keys FILE` / `ascmearc --import-keys FILE`). If your keys ever get in the way, `ascmearc --reset-keys` puts them all back.
 
 Logs and crash reports
 ----------------------

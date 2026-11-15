@@ -141,9 +141,8 @@ whose file arrives through `keymap::take_picked`, applied by `controls_screen::r
 or nowhere (captures). `--export-keys FILE` / `--import-keys FILE` are file commands
 (`keymap::command`, from `main.rs::file_command`). The web build's `web-sys` features for them:
 `Blob`, `BlobPropertyBag`, `Element`, `File`, `FileList`, `HtmlAnchorElement`, `HtmlElement`,
-`HtmlInputElement`, `Url`. `assets/keymaps/default.toml` is the defaults as a file (shipped in the
-desktop archives); after changing a default key, regenerate it with
-`ASCMEARC_UPDATE_KEYMAPS=1 cargo test -p ascmearc keymap` (a test fails until then).
+`HtmlInputElement`, `Url`. The defaults are compiled in; no file of them
+ships (a player gets a starting file from Export keys or `--export-keys`).
 
 `Game` exists only during a run (the menu runs without
 it): gate systems that read it with `run_if(resource_exists::<Game>)`; content is the
