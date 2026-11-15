@@ -1,4 +1,4 @@
-//! Digging and breaking walls (spec §8 "Digging"): the Tool slot, how long a wall takes by its
+//! Digging and breaking walls: the Tool slot, how long a wall takes by its
 //! hardness, the tool's power, Strength, and burden; interruptions and progress kept on the wall;
 //! walls that never break; light, sight, and memory after a wall gives way; solid rock showing
 //! its face; explosions and their blast; noise; saves and replays mid-dig.

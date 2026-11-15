@@ -1,10 +1,10 @@
-// Console grid renderer (spec §4.2: the grid layer and the UI layer).
+// Console grid renderer (the grid layer and the UI layer).
 //
 // A console is one quad. Each fragment finds its cell from its framebuffer position, looks up the
 // cell's glyph, colors, and animation in small per-cell textures, and reads glyph coverage from the
 // atlas with integer texel addressing — so still glyphs are drawn 1:1, crisp, with no filtering.
 //
-// In-cell animation (spec §4.3) is evaluated here from visual time: `wave` bobs the glyph inside
+// In-cell animation is evaluated here from visual time: `wave` bobs the glyph inside
 // its cell (sampling the supersampled atlas with linear filtering), `flow` moves it downstream
 // along the cell's flow (running water), `shimmer` moves the foreground toward a color, `cycle`
 // steps through glyph frames. Water may also glint in the color of the light on it. The curves
@@ -14,13 +14,13 @@
 // water.rs), `fg_colors`, `bg_colors`, and `anims` (animation table entry plus one, phase, glow,
 // haze).
 //
-// Effects (spec §4.8): `glow` brightens a glyph past 1 so bloom picks it up, and heat haze
+// Effects: `glow` brightens a glyph past 1 so bloom picks it up, and heat haze
 // distorts glyphs over hot cells by shifting where their coverage is read. Both come from per-cell
 // bytes next to the animation data, and are off (0) on the UI console and with reduced effects.
 //
 // Cells nothing was drawn into are transparent (background alpha 0), so layers below show through.
 //
-// Visual lighting (spec §4.4) lights the map grid's terrain per pixel; see `lighting.wesl`.
+// Visual lighting lights the map grid's terrain per pixel; see `lighting.wesl`.
 
 import bevy_sprite_render::mesh2d::vertex_output::VertexOutput;
 import super::lighting::{TERRAIN_FLOOR, light_at, shade};
@@ -135,7 +135,7 @@ fn cycle_glyph(anim: GridAnim, t: f32, phase: f32) -> u32 {
     return (anim.frames[i / 2u] >> ((i % 2u) * 16u)) & 0xffffu;
 }
 
-// --- Water (spec §4.3) -------------------------------------------------------------------------
+// --- Water -------------------------------------------------------------------------
 
 // `scramble` in anim.rs (MurmurHash3 finalizer).
 fn scramble(x: u32) -> u32 {
@@ -210,7 +210,7 @@ fn coverage_at(index: u32, local: vec2<f32>, smooth_sample: bool) -> f32 {
     return coverage_crisp(index, vec2<i32>(floor(local)));
 }
 
-// --- Heat haze (spec §4.8) ---------------------------------------------------------------------
+// --- Heat haze ---------------------------------------------------------------------
 
 // Haze strength of a cell (0 to 1), from the per-cell effect bytes.
 fn cell_haze(cell: vec2<i32>) -> f32 {

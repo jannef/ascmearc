@@ -1,4 +1,4 @@
-# Troll's blood (spec §8 "Potions", the potions wave 2 design §4.3): a gamble with one outcome
+# Troll's blood (the potions wave 2 design §4.3): a gamble with one outcome
 # (data/outcomes/trolls_blood.toml): the regeneration is real, and so is the sickness. Gambles
 # are iridescent.
 [[object]]

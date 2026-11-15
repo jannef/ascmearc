@@ -1,4 +1,4 @@
-//! Ruin (spec §8 "Spells": "Ruin"; #1100): what an area spell does to the items lying on the
+//! Ruin (#1100): what an area spell does to the items lying on the
 //! floor it reaches. A Fireball burns the scrolls on it, a blast of frost shatters the potions.
 //!
 //! - **Who**: an actor's area cast only ([`Caster::Actor`]): a spell's burst, cone, or line,

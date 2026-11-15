@@ -1,4 +1,4 @@
-//! Trapped chests (spec §8 "Chests", docs/design/chests-and-treasure.md §3.5, §9;
+//! Trapped chests (docs/design/chests-and-treasure.md §3.5, §9;
 //! `world/fixtures/chest.rs`): a chest's trap springs at whoever opens it (a bump, a key, Pick lock) and
 //! at whoever smashes it with a kick, never on a kick that holds; its arrow flies out of the box;
 //! a burst blows the chest apart with nothing spared (the fireball's own blast on a coffer, the

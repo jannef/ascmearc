@@ -158,13 +158,12 @@ pub(super) enum Invalid {
 /// Checks a generated level: it has an up staircase (the arrival point and player start), and
 /// every stair, door (secret ones too), and walkable cell is reachable from it; locks lie only on
 /// closed doors and shut chests, and the stairs and a key to every door's lock (lying, or carried by a creature) are
-/// reachable without unlocking any door (spec §8 "Doors") or finding any secret door (spec §8
-/// "Searching"), so no level needs a key it does not give or a door the player may never find;
-/// every patrol stays on walkable terrain and loops; and at least one cell emits light. The one
-/// exception to reaching every cell: a sealed room (a greater treasure room, `sealed = "dig"`),
-/// whose cells are reached by breaking its breach, provided the breach opens it
-/// ([`breach_fault`]); nothing the level needs (stairs, a key, a creature) is ever inside one; a mimic in a chest's
-/// place may be.
+/// reachable without unlocking any door or finding any secret door, so no level needs a key it does
+/// not give or a door the player may never find; every patrol stays on walkable terrain and loops;
+/// and at least one cell emits light. The one exception to reaching every cell: a sealed room (a
+/// greater treasure room, `sealed = "dig"`), whose cells are reached by breaking its breach,
+/// provided the breach opens it ([`breach_fault`]); nothing the level needs (stairs, a key, a
+/// creature) is ever inside one; a mimic in a chest's place may be.
 pub(super) fn validate(level: &LevelTemplate, content: &Content) -> Result<(), Invalid> {
     let terrain = &level.terrain;
     let up = level
@@ -224,7 +223,7 @@ pub(super) fn validate(level: &LevelTemplate, content: &Content) -> Result<(), I
         }
         let keyless = |lock: &Lock| !level.has_key_for(content, lock, |p| open[p]);
         // A generated chest's lock wants no key: Pick lock, Knock, or a kick open it, and a
-        // chest is never in the way (spec §8 "Chests").
+        // chest is never in the way.
         let needs_key = |(p, lock): (&Pos, &Lock)| !chest(*p) && keyless(lock);
         if let Some((p, _)) = level.locks.iter().find(|&entry| needs_key(entry)) {
             return Err(Invalid::NoKey(*p));
@@ -232,8 +231,8 @@ pub(super) fn validate(level: &LevelTemplate, content: &Content) -> Result<(), I
     }
     for spawn in &level.creatures {
         validate_route(level, content, spawn).map_err(Invalid::BadPatrol)?;
-        // A mimic standing in for a sealed room's chest is found with the room (spec §8
-        // "Mimics"): the level never needs it.
+        // A mimic standing in for a sealed room's chest is found with the room: the level never
+        // needs it.
         let sealed_mimic = walled(spawn.pos) && content.is_mimic(spawn.creature);
         if !reached[spawn.pos] && !sealed_mimic {
             return Err(Invalid::Unreachable(spawn.pos));

@@ -1,4 +1,4 @@
-//! The stamina pool (spec §8 "Resources"; the combat progression design §4.5, #560): the
+//! The stamina pool (the combat progression design §4.5, #560): the
 //! warrior holds it from level 1 by the granted talent Charge (#1466; the others from the first
 //! weapon active a rank teaches, `weapon_active_tests.rs`), its maximum grows
 //! with Toughness and the level (`max_from`, read in `Actor::resource_max`), it comes back a

@@ -1,4 +1,4 @@
-# The overworld (spec §3): the land at large, at map scale. A step takes `travel_minutes`.
+# The overworld: the land at large, at map scale. A step takes `travel_minutes`.
 
 [[terrain]]
 id = "plains"

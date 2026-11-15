@@ -1,4 +1,4 @@
-//! Disarming traps (spec §8 "Disarming traps"): the thief, trained in Disable device, takes a
+//! Disarming traps: the thief, trained in Disable device, takes a
 //! known trap apart with a Dexterity check, fails and tries again, or sets it off by failing
 //! badly; a door's trap too; the untrained and the traps nobody knows of are refused for free;
 //! the abilities menu lists it; every try takes its time, may train the skill, and replays.

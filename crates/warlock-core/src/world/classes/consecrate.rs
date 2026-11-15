@@ -1,4 +1,4 @@
-//! Consecrate (spec §8 "Class abilities", §7 "Special rooms"; #408): the priest's and the
+//! Consecrate (#408): the priest's and the
 //! paladin's class active, `use:consecrate`. Standing inside an unholy special room
 //! ([`crate::content::RoomEffectDef::unholy`]: a cursed, a draining, or a haunted room), or anywhere on a
 //! level an unholy effect covers whole, the player spends the ability's mana and prays for its

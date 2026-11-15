@@ -1,4 +1,4 @@
-//! Weapon abilities (spec §8 "Weapon skills", "Fighting styles"; the combat progression design
+//! Weapon abilities (the combat progression design
 //! §4): what a rank in a weapon skill or a fighting style teaches, for the player and, by the same
 //! rule and data, for every creature with the rank (`content/weapon_ability.rs` holds the data).
 //!
@@ -61,9 +61,8 @@ pub(super) struct Switches {
 }
 
 impl Actor {
-    /// Its rank in weapon skill or style `skill` as weapon abilities read it (spec §8 "Weapon
-    /// skills"): its own, raised by a weapon talent's ranks (Stylist, Fencing) and by Early
-    /// mastery; an untrained skill stays 0.
+    /// Its rank in weapon skill or style `skill` as weapon abilities read it: its own, raised by a
+    /// weapon talent's ranks (Stylist, Fencing) and by Early mastery; an untrained skill stays 0.
     pub fn ability_rank(&self, content: &Content, skill: WeaponSkillId) -> u8 {
         let rank = self.weapon_skills.rank(skill);
         if rank == 0 || self.talents.is_empty() {

@@ -1,7 +1,7 @@
-//! The New run screen (spec §6): the scenarios from content and, in developer builds, an
+//! The New run screen: the scenarios from content and, in developer builds, an
 //! optional seed. The start scenario of every campaign of kind `campaign` comes first; developer
 //! builds then list every scenario of every campaign, the test world's too, under its
-//! campaign's name ([`rows`], spec §3). Enter goes on to character creation ([`super::chargen_screen`]), or with
+//! campaign's name ([`rows`]). Enter goes on to character creation ([`super::chargen_screen`]), or with
 //! content that has no races or classes, starts the run as the scenario's. With one scenario to
 //! choose (a release build, which lists only the campaign's start) the screen is skipped
 //! ([`NewRunScreen::skips`]): it stays on the stack, unseen, holding the pick, and the race step
@@ -98,8 +98,7 @@ impl NewRunScreen {
 
     /// Whether the screen is skipped: it has one scenario, and a character to create for it.
     /// Character creation's race step then opens over it at once, and closing that step closes
-    /// this one too, so the player goes from the main menu straight to the race and back (spec
-    /// §3 "Campaigns").
+    /// this one too, so the player goes from the main menu straight to the race and back.
     pub fn skips(&self) -> bool {
         self.scenarios.len() == 1 && self.creates_characters
     }

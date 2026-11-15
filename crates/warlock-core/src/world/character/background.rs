@@ -1,9 +1,9 @@
-//! A chosen character's background story, told as the run begins (spec §8 "Background story";
-//! docs/dev/background.md): [`World::tell_background`], called by `World::start_run` after the
-//! creation picks, so the story reads every choice (the Random picks too) and no pick's
-//! prerequisite can be met by a gift of fate. It builds the [`Witness`] from the finished
-//! character, tells the story ([`background::tell`]), keeps the ids in `Character::story`, and
-//! applies each rolled effect once, one function per kind:
+//! A chosen character's background story, told as the run begins (docs/dev/background.md):
+//! [`World::tell_background`], called by `World::start_run` after the creation picks, so the story
+//! reads every choice (the Random picks too) and no pick's prerequisite can be met by a gift of
+//! fate. It builds the [`Witness`] from the finished character, tells the story
+//! ([`background::tell`]), keeps the ids in `Character::story`, and applies each rolled effect
+//! once, one function per kind:
 //!
 //! - **stat**: `Stats::gift`, the score and its potential together, a score never below 1; with
 //!   Hard-won, each point taken is stat training marks on the stat;

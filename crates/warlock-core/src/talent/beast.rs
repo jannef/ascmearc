@@ -1,4 +1,4 @@
-//! The beast talents (spec §8 "Allies"): what a talent does with the holder's companion, its
+//! The beast talents: what a talent does with the holder's companion, its
 //! familiar, and beasts. [`BeastEffect`] is the data (a talent's `[[effect]]` of one of
 //! [`BeastEffect::KINDS`]), [`BeastMods`] the sum every rule reads (`TalentMods::beast`). One
 //! of the areas of [`crate::content::TalentEffect`] and [`crate::talent::TalentMods`]
@@ -11,10 +11,10 @@ use serde::Deserialize;
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum BeastEffect {
-    /// An animal companion from the first turn (Animal companion, the ranger's level 1; spec §8
-    /// "Allies": `World::bring_companion`): a beast of its race's list, or rarely a rare one.
+    /// An animal companion from the first turn (Animal companion, the ranger's level 1;
+    /// `World::bring_companion`): a beast of its race's list, or rarely a rare one.
     Companion,
-    /// A familiar from the first turn (Familiar, the witch's level 1; spec §8 "Allies":
+    /// A familiar from the first turn (Familiar, the witch's level 1;
     /// `World::bring_familiar`): a small beast of its race's list, or rarely a rare one, whose
     /// touch is her evil eye.
     Familiar,

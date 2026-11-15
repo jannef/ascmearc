@@ -18,7 +18,7 @@ loot = [2, 4]
 key = "rusty_key"
 # Cold, as a barrow is.
 temperature = 8
-# Danger 1 on the first floor to 6 on the sixth (spec §7 "Danger levels"); nothing scales with
+# Danger 1 on the first floor to 6 on the sixth; nothing scales with
 # the player. The barrow wave, and the vermin and kobolds that were there first; in the hill's
 # hollows an orc war band (#455) camps beside the goblins. Among the grave goods, household
 # things that will not lie still (#483: animated objects), and blades that dance alone (#485:

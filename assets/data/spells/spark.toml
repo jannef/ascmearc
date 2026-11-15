@@ -1,4 +1,4 @@
-# Spark (spec §8 "Spells", the first spell list): the druid's cantrip, a crackle of lightning
+# Spark (the first spell list): the druid's cantrip, a crackle of lightning
 # that never misses and never does much.
 [[spell]]
 id = "spark"
@@ -22,7 +22,7 @@ noise = { sound = "chanting", loudness = 20 }
 damage = "intelligence 16 2d6"
 range = "willpower 14 6"
 
-# What rereading its grimoire adds, rank by rank (spec §8 "Spells": "Ranks"; README.toml
+# What rereading its grimoire adds, rank by rank (README.toml
 # `[spell.ranks]`): the cheap crackle grows hot and long: at rank 10 every die two sides bigger,
 # 1s rolled again, a die more, +2 on the roll, two cells farther, a quarter off the mana, and a
 # fifth off the casting time.

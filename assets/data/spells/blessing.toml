@@ -1,4 +1,4 @@
-# The priest's Blessing (spec §8 "Class abilities"): a god's favour on the caster.
+# The priest's Blessing: a god's favour on the caster.
 [[spell]]
 id = "blessing"
 name = "Blessing"
@@ -13,7 +13,7 @@ effect = { status = "blessed" }
 [spell.grows]
 degrees = "presence 14 2, 18 3"
 
-# What rereading its grimoire adds, rank by rank (spec §8 "Spells": "Ranks"; README.toml
+# What rereading its grimoire adds, rank by rank (README.toml
 # `[spell.ranks]`). At rank 10: two degrees longer, 30 percent off the mana, and two fifths off
 # the casting time.
 [spell.ranks]

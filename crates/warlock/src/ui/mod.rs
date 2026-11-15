@@ -1,4 +1,4 @@
-//! Glyph UI: the map viewport, message line, status bar, and the modal screens (spec §6).
+//! Glyph UI: the map viewport, message line, status bar, and the modal screens.
 //!
 //! Everything shown about the world comes from `World::perception()`. Terrain and the top object
 //! of each pile go into the map grid layer, creatures and glyphs that outgrow their cell into the
@@ -121,7 +121,7 @@ const TEXT: Rgb = Rgb::new(0xd8, 0xd4, 0xc8);
 const TEXT_DIM: Rgb = Rgb::new(0x8e, 0x8a, 0x82);
 const ACCENT: Rgb = Rgb::new(0xe0, 0xb0, 0x50);
 const PANEL_BG: Rgb = Rgb::new(0x12, 0x12, 0x18);
-/// The names of magic items (spec §8 "Magic items"): a soft blue, as in Path of Exile...
+/// The names of magic items: a soft blue, as in Path of Exile...
 const MAGIC: Rgb = Rgb::new(0x96, 0xaa, 0xe6);
 /// ...and of rare ones, a pale yellow (paler than the accent, so a selection still stands out).
 const RARE: Rgb = Rgb::new(0xe6, 0xd8, 0x8c);
@@ -135,7 +135,7 @@ fn rarity_color(rarity: warlock_core::content::Rarity, normal: Rgb) -> Rgb {
         warlock_core::content::Rarity::Rare => RARE,
     }
 }
-/// The status bar's hunger word as it worsens (spec §8 "Hunger"): Hungry a mild yellow, Weak a
+/// The status bar's hunger word as it worsens: Hungry a mild yellow, Weak a
 /// strong orange, Fainting and Starving alarming reds. Colour only, no flashing.
 const HUNGRY: Rgb = Rgb::new(0xe8, 0xc8, 0x70);
 const WEAK: Rgb = Rgb::new(0xf0, 0x98, 0x40);
@@ -435,8 +435,7 @@ fn draw_map(
             let top = pile
                 .first()
                 .map(|s| (content.object(s.object).glyph, view.lore().fg(s)));
-            // A chest takes its band's colour, and keeps its glyph over a known trap (spec §8
-            // "Chests").
+            // A chest takes its band's colour, and keeps its glyph over a known trap.
             let chest = view.chest_at(p);
             let band = chest.and_then(|c| content.chests().bands.get(c.band));
             let trap = (view.trap(p).filter(|_| chest.is_none())).map(|t| content.trap(t));
@@ -741,10 +740,10 @@ fn status_segments(view: &PerceptionView, clock: Clock, dev: bool) -> Vec<Segmen
     let content = view.content();
     // Display order; the number is the drop priority (higher drops first when space runs out;
     // of equal ones the later first). Hit points matter most after the level, and mana right
-    // after them, then each alternative resource the player holds (`Rage 7`, `Focus 7/10`; spec
-    // §8 "Resources"), giving way before mana: they outlast the time, and so do the conditions
-    // on the character ([`conditions`]). The character level (`Lv 3`) comes after them and goes
-    // before them, but after the time.
+    // after them, then each alternative resource the player holds (`Rage 7`, `Focus 7/10`), giving
+    // way before mana: they outlast the time, and so do the conditions on the character
+    // ([`conditions`]). The character level (`Lv 3`) comes after them and goes before them, but
+    // after the time.
     let (hp, max_hp) = view.own_hp();
     let (mp, max_mp) = view.own_mana();
     let resources = (view.own_resources().into_iter()).map(|r| {
@@ -755,7 +754,7 @@ fn status_segments(view: &PerceptionView, clock: Clock, dev: bool) -> Vec<Segmen
         };
         Segment::new(1, text)
     });
-    // The kept beasts (spec §8 "Allies": a companion, a familiar), each its name and how it
+    // The kept beasts (a companion, a familiar), each its name and how it
     // looks, in words ("Snel: unhurt"), or "Snel: with you" while it travels in the retinue, in
     // actor id order; cut down to its name before it is dropped.
     let kept: Vec<Segment> = (view.kept())
@@ -808,10 +807,9 @@ fn status_segments(view: &PerceptionView, clock: Clock, dev: bool) -> Vec<Segmen
 
 /// The conditions on the character, in display order, as the status bar's segments: the
 /// status effects the player suffers (by name, never how bad, the most important first: the
-/// last gives way first), Dazzled (strong light on light-blind eyes, spec §8 "Character
-/// creation"), Averted (eyes kept from a gaze, spec §8 "Creature behavior"), hunger (shown
-/// unless the player is Not hungry; from Hungry down it outlasts everything, the level's name
-/// too, spec §8 "Hunger"), and the burden (when there is one), which slows everything the
+/// last gives way first), Dazzled (strong light on light-blind eyes), Averted (eyes kept from a
+/// gaze), hunger (shown unless the player is Not hungry; from Hungry down it outlasts everything,
+/// the level's name too), and the burden (when there is one), which slows everything the
 /// player does. The Character screen lists the same, all of them, however narrow the window
 /// (#1695), so the two never disagree.
 fn conditions(view: &PerceptionView) -> Vec<Segment> {

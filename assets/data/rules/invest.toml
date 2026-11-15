@@ -1,4 +1,4 @@
-# The merchant's investment (spec §8 "Class abilities": Invest; #1407; crates/warlock-core/src/
+# The merchant's investment (Invest; #1407; crates/warlock-core/src/
 # content/invest.rs, world/classes/invest.rs). A character with the Invest class ability (the merchant's,
 # from level 1) may put gold with their business partner (a campaign's town's `servant` entry
 # for `invest`, data/towns/) and take it out again. It works like a mutual fund: every game week

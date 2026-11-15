@@ -15,7 +15,7 @@ pub struct ScenarioDef {
     /// File stem; filled in by the loader.
     #[serde(skip)]
     pub id: String,
-    /// The campaign it starts a run of (spec §3): the one whose `scenarios/` it is in, or for a
+    /// The campaign it starts a run of: the one whose `scenarios/` it is in, or for a
     /// scenario outside every campaign (a test fixture), its start level's; filled in by the
     /// loader.
     #[serde(skip)]
@@ -34,7 +34,7 @@ pub struct ScenarioDef {
     /// The `character` table as written: the spec and, optionally, the character's name.
     #[serde(default, rename = "character")]
     character_table: Option<CharacterTable>,
-    /// The player's character when the run does not choose one (spec §8 "Character creation"):
+    /// The player's character when the run does not choose one:
     /// their eyes and stats then come from it, so `vision`, `stats`, and `potential` may not be
     /// given. Filled in by the loader from `character`.
     #[serde(skip)]
@@ -63,7 +63,7 @@ pub struct ScenarioDef {
     /// loader.
     #[serde(skip)]
     pub start: GameTime,
-    /// Without a character: the player's scores by stat (spec §8 "Stats"); a missing one is
+    /// Without a character: the player's scores by stat; a missing one is
     /// average.
     #[serde(default)]
     stats: BTreeMap<Stat, u8>,
@@ -74,24 +74,24 @@ pub struct ScenarioDef {
     /// `potential`; filled in by the loader.
     #[serde(skip)]
     pub player_stats: Stats,
-    /// Without a character: the player's hit points beyond their Toughness (spec §8 "Combat"),
+    /// Without a character: the player's hit points beyond their Toughness,
     /// what a race and a class would give (default 0).
     #[serde(default)]
     pub hp: u16,
-    /// Without a character: the player's mana beyond their mental stats' modifiers (spec §8
-    /// "Mana"), what a race and a class would give (default 0).
+    /// Without a character: the player's mana beyond their mental stats' modifiers, what a race and
+    /// a class would give (default 0).
     #[serde(default)]
     pub mana: u16,
     /// What the player starts with in their pack, as level files place objects
-    /// (`carry = ["ration*2"]`): on top of the character's starting kit when they start with it
-    /// (spec §8 "Character creation"), else alone.
+    /// (`carry = ["ration*2"]`): on top of the character's starting kit when they start with it,
+    /// else alone.
     #[serde(default, rename = "carry")]
     pub(super) carry_spec: Vec<String>,
     /// The player's starting pack, from `carry`; filled in by the loader.
     #[serde(skip)]
     pub carry: Vec<crate::object::Stack>,
     /// What the scenario's own character has ready at the start, in the first free slot each
-    /// fits (`wield = ["lantern"]`: a lantern in the Tool slot, spec §5 "Light sources"), when the
+    /// fits (`wield = ["lantern"]`: a lantern in the Tool slot), when the
     /// run starts without the starting kit; a chosen character brings their kit instead.
     #[serde(default, rename = "wield")]
     pub(super) wield_spec: Vec<String>,

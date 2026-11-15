@@ -2,7 +2,7 @@
 # floor (`vaults` in its `[[dungeon.levels]]`), so it is stamped there for certain and nowhere
 # else: the silver chalice of Sister Hild's "Grave goods" lies on its plinth. A skeleton walks the
 # old burial hall; behind a locked bronze door the grave goods lie on a plinth (the altar), lit by
-# its faint glow. The guardian carries the key (spec §8 "Doors"): take it from its bones, or kick
+# its faint glow. The guardian carries the key: take it from its bones, or kick
 # the door in.
 name = "Barrow chamber"
 map = '''

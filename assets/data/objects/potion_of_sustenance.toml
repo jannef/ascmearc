@@ -1,4 +1,4 @@
-# A potion of sustenance (spec §8 "Potions", the potions wave 2 design §4.2): a food ration's
+# A potion of sustenance (the potions wave 2 design §4.2): a food ration's
 # nutrition at once, never into Bloated. Utility draughts are sky blue.
 [[object]]
 id = "potion_of_sustenance"

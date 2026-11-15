@@ -1,4 +1,4 @@
-//! The mana talents of the Scholar tree (spec §8 "Talents"; #242): Deep well's mana by level,
+//! The mana talents of the Scholar tree (#242): Deep well's mana by level,
 //! Clear mind's and Meditation's paces, Frugal caster's cut of what abilities cost, Blood magic's
 //! trade of hit points for mana, and spending mana as the `cast` use that trains Willpower.
 

@@ -1,4 +1,4 @@
-//! The witch's familiar (spec §8 "Allies": "The familiar"; docs/design/witch-familiar.md, §16
+//! The witch's familiar (docs/design/witch-familiar.md, §16
 //! the owner's round; `docs/dev/familiar.md`): a small beast of the old craft at her heel. It is
 //! an ally of the core (`ally.rs`) with `source = Familiar(CompanionData)`, `until = None`: a
 //! **kept** beast ([`crate::world::AllySource::kept`]) as the ranger's companion is, so it is named,

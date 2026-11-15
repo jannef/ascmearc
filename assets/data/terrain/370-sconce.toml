@@ -1,4 +1,4 @@
-# Light sources (spec §5). Emitting terrain must be transparent so light cannot leak through it.
+# Light sources. Emitting terrain must be transparent so light cannot leak through it.
 
 [[terrain]]
 id = "sconce"

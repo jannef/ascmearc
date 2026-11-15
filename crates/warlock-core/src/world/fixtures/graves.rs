@@ -1,4 +1,4 @@
-//! The run's dead laid to rest (spec §7 "Graves"; #1682; `docs/dev/graves.md`): a burial
+//! The run's dead laid to rest (#1682; `docs/dev/graves.md`): a burial
 //! ground's places (`content/burial.rs`) are filled from the run's graveyard
 //! (`world/fixtures/graveyard.rs`) as the level is made ([`bury`], from `travel.rs::instantiate_level`,
 //! and again for the levels made already when the run is given its graveyard,

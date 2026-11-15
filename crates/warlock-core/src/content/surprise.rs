@@ -1,4 +1,4 @@
-//! Surprise (`assets/data/surprise.toml`, spec §8 "Surprise and sneak attacks"): the numbers of
+//! Surprise (`assets/data/surprise.toml`): the numbers of
 //! being caught unawares.
 //!
 //! The rule itself lives in `world/combat/surprise.rs`: who is unaware of whom, the initiative check,
@@ -87,11 +87,10 @@ impl super::RulesFile for SurpriseRules {
 }
 
 impl Content {
-    /// Whether creature type `id` has vitals to find: the one reader of what has none (spec §8
-    /// "Surprise and sneak attacks"). Without vitals it is immune to criticals and to sneak
-    /// attacks: an incorporeal type; one that says `vitals = false`; an animated object or a
-    /// type carrying a `no_vitals` tag. Everything has vitals without the surprise rules
-    /// (fixtures).
+    /// Whether creature type `id` has vitals to find: the one reader of what has none. Without
+    /// vitals it is immune to criticals and to sneak attacks: an incorporeal type; one that says
+    /// `vitals = false`; an animated object or a type carrying a `no_vitals` tag. Everything has
+    /// vitals without the surprise rules (fixtures).
     pub fn has_vitals(&self, id: CreatureId) -> bool {
         let Some(rules) = self.surprise() else {
             return true;

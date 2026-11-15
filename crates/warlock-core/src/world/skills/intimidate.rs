@@ -1,4 +1,4 @@
-//! Intimidating (spec §8 "Skills": Intimidate; #868): the Intimidate skill's use,
+//! Intimidating (Intimidate; #868): the Intimidate skill's use,
 //! [`crate::Action::Intimidate`] (`intimidate:X,Y`), chosen from the abilities menu
 //! ([`crate::ability::Ability::Intimidate`]) and aimed at a place the player sees.
 //!

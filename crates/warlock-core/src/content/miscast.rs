@@ -1,4 +1,4 @@
-//! Miscasts as data (spec §8 "Spells": "Miscasts", #1271): the Spellcraft check every cast with
+//! Miscasts as data (#1271): the Spellcraft check every cast with
 //! one's own mana makes (`data/miscast.toml`, [`MiscastRules`]) and the one ordered table a
 //! failed check rolls on (`data/miscasts/`, one `[[miscast]]` file each, [`Miscast`]). The rules
 //! are `world/magic/miscast.rs`.

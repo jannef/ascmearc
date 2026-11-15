@@ -1,4 +1,4 @@
-//! A hall of mirrors' `mirrors` (spec §7 "Special rooms"): parsed, left out by default, and
+//! A hall of mirrors' `mirrors`: parsed, left out by default, and
 //! never over a whole level.
 
 use super::{RoomEffectId, RoomEffects};

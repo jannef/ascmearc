@@ -1,4 +1,4 @@
-//! Feinting (spec §8 "Skills": Bluff; #1016): Bluff's use, [`crate::Action::Feint`]
+//! Feinting (Bluff; #1016): Bluff's use, [`crate::Action::Feint`]
 //! (`feint:DIR`), chosen from the abilities menu ([`crate::ability::Ability::Feint`]).
 //!
 //! The player, trained in a skill with the `feint` benefit (`data/skills/`: Bluff), lies with

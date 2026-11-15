@@ -1,16 +1,16 @@
-# Cēaptūn, "the market town" (docs/design/campaign.md §6; spec §3): the trading town at the
+# Cēaptūn, "the market town" (docs/design/campaign.md §6): the trading town at the
 # crossroads below the pass, where the mountain road meets the river roads. A hand-made outdoor
 # level (sky, sun, weather; the pond and the well freeze in a hard winter), entered from its cell
 # on the Ascmearc's overworld, arriving on the square (@). It has no stairs: like any outdoor area
 # it is left by walking off its edge (or with `<` when no enemy is about), back to its overworld
-# cell (spec §7 "Leaving an outdoor area"). Walled on the pass side (west), open to the river
+# cell. Walled on the pass side (west), open to the river
 # (east, Beorhtburna's mill race). Everyone here is peaceful (the townsfolk, the people, and the
 # merchants), so the town is safe unless the player steals.
 #
 # The square: the well, two braziers, and the townsfolk (villagers, 1-6) on their rounds of the
 # square, the lanes, and the main street.
 #
-# North of the square, two shops (spec §7 "Shops"; #1248), each a timber house with its door
+# North of the square, two shops (#1248), each a timber house with its door
 # open on the lane and its goods on the plank floor (the [[shop]] and [[pile]] tables at the
 # end): the general store (west; everything but arms and armour: food for the road, angelica
 # root, light, tools, potions, scrolls, and cloaks) and the smithy (arms, missiles, and armour; a
@@ -122,7 +122,7 @@ TTTTTT#TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
 "P" = { terrain = "plank_floor", creature = "villager", npc = "ceolred" }
 # The Gildhalle's bounty board, nailed up beside its door (a named place: look mode reads it).
 "N" = { terrain = "timber_wall", name = "the bounty board", note = "Bills nailed up three deep, most of them years old." }
-# The Gilde's yard across the lane (spec §8 "Weapon skills": "Target dummies"): beaten earth, a
+# The Gilde's yard across the lane: beaten earth, a
 # dummy at the west end of the shooting lane (the top row), three to strike below it.
 "," = "dirt_road"
 "Y" = { terrain = "dirt_road", creature = "training_dummy" }

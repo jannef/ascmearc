@@ -1,4 +1,4 @@
-//! Call familiar (`familiar.rs`; spec §8 "Allies": "The familiar", docs/design/witch-familiar.md
+//! Call familiar (`familiar.rs`; "The familiar", docs/design/witch-familiar.md
 //! §7.2 and §16): the refusals and the menu's reasons, the hour, what interrupts it, the draw with
 //! the imp from the witch's level 30, a level with no room, the overworld, and determinism.
 

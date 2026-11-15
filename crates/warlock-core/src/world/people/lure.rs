@@ -1,4 +1,4 @@
-//! Lure quests (#1446; spec §8 "Quests": "Lure quests"; `docs/dev/quests.md`): a unique creature
+//! Lure quests (#1446; "Lure quests"; `docs/dev/quests.md`): a unique creature
 //! the player draws after them, stair by stair, to the quest's level, where the giver binds it
 //! (`type = "lure"`, [`Goal::Lure`]). The Ascmearc's one is the crystal guardian of Meyn Bew,
 //! bound to Gimmwīc's gem trade by Ysella the Binder.

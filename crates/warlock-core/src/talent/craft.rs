@@ -14,7 +14,7 @@ use serde::Deserialize;
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum CraftEffect {
-    /// A batch of arrows or bolts (Fletcher, the ranger's level 1; spec §8 "Fletching"): `check`
+    /// A batch of arrows or bolts (Fletcher, the ranger's level 1): `check`
     /// more on its check, `count_times` the count after the margin, `time_percent` of its time,
     /// and plain at any Woodcraft.
     Fletcher {
@@ -68,7 +68,7 @@ pub enum CraftEffect {
     /// `work` that destroys nothing (`world/crafting/make_do.rs`; the craftsperson design §7.5).
     MakeDo { seconds: u32, difficulty: i32 },
     /// The class active Trapwright: a trap rigged on a cell beside the player from what the rig
-    /// list (`data/rigs.toml`) asks (`world/crafting/rig.rs`; spec §8 "Traps": "Rigging traps").
+    /// list (`data/rigs.toml`) asks (`world/crafting/rig.rs`).
     Rigs,
 }
 
@@ -174,7 +174,7 @@ impl CraftMods {
     }
 }
 
-/// The active Make do and mend (spec §8 "Class abilities"; `world/crafting/make_do.rs`): how long a mend
+/// The active Make do and mend (`world/crafting/make_do.rs`): how long a mend
 /// takes, in seconds, and its check's difficulty before the material's `work`.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct MakeDo {
@@ -182,7 +182,7 @@ pub struct MakeDo {
     pub difficulty: i32,
 }
 
-/// What Fletcher does to a batch (spec §8 "Fletching"): plain arrows at any Woodcraft, and these
+/// What Fletcher does to a batch: plain arrows at any Woodcraft, and these
 /// numbers.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Fletcher {

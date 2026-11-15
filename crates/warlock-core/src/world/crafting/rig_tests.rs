@@ -1,4 +1,4 @@
-//! Rigging traps (spec §8 "Traps": "Rigging traps"; #1423, the craftsperson design §7.6): the
+//! Rigging traps (#1423, the craftsperson design §7.6): the
 //! craftsperson's Trapwright rigs a tripwire, stakes, or a pitfall beside them; the refusals,
 //! the wall rule, the check and its natural 2, the kill credited, the sidestep of one's own
 //! trap, the menu, saves and replays.

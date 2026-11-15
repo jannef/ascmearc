@@ -1,4 +1,4 @@
-//! A spell's ranks (spec §8 "Spells": "Ranks"; #1264): what a known spell gains as its caster
+//! A spell's ranks (#1264): what a known spell gains as its caster
 //! deepens it, rank 1 (the spell as learned) to [`MAX_SPELL_RANK`], written in the spell's own
 //! file as `[spell.ranks]`, one entry a rank with what reaching that rank **adds** (the
 //! `spells/README.toml`). The entries are cumulative: at rank N a cast has everything the

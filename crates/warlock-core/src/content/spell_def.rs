@@ -1,4 +1,4 @@
-//! Spells as data (spec §8 "Spells", the magic design `docs/design/magic.md` §3, §5, §6, the
+//! Spells as data (the magic design `docs/design/magic.md` §3, §5, §6, the
 //! spell scaling design `docs/design/spell-scaling.md` §4 to §6): the cost table
 //! (`data/spells.toml`, [`SpellRules`]) and the spells (`data/spells/`, one `[[spell]]` file
 //! each, [`SpellData`]), cast by the one cast path (`world/magic/cast.rs`). Not the bursts and bolts
@@ -92,7 +92,7 @@ pub enum SpellPurpose {
     Hex,
     Cleanse,
     Utility,
-    /// Calls creatures to the caster's side (spec §8 "Allies"; `world/magic/summon_spell.rs`).
+    /// Calls creatures to the caster's side (`world/magic/summon_spell.rs`).
     Summon,
 }
 
@@ -765,7 +765,7 @@ pub struct SpellZone {
     pub turns: u16,
 }
 
-/// A summon spell's call (`[spell.effect] summon`; spec §8 "Allies": "Summons";
+/// A summon spell's call (`[spell.effect] summon`; "Summons";
 /// `world/magic/summon_spell.rs`).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct SpellSummon {
@@ -851,9 +851,9 @@ pub struct SpellData {
 }
 
 impl SpellData {
-    /// Whether it rolls to hit (spec §8 "Spells"): a damage spell, a ray, a bolt, or a touch,
+    /// Whether it rolls to hit: a damage spell, a ray, a bolt, or a touch,
     /// resolved by the attack roll. Such a cast trains the spell attack skill and a caster
-    /// style (spec §8 "Weapon skills", "Fighting styles").
+    /// style.
     pub fn rolls_to_hit(&self) -> bool {
         self.kind == SpellPurpose::Damage
             && matches!(self.resolution, Resolution::Attack | Resolution::Touch)
@@ -932,7 +932,7 @@ impl SpellData {
         }
     }
 
-    /// The stats a cast of it trains (spec §8 "Stats", the `spell` use): its ladders' stats
+    /// The stats a cast of it trains (the `spell` use): its ladders' stats
     /// (Intelligence when its roll has none), each once.
     pub fn trained_stats(&self) -> PerStat<bool> {
         let mut trained = PerStat::splat(false);

@@ -1,4 +1,4 @@
-//! Animated types generated at load (spec §8 "Animated objects", #483): their ids and order,
+//! Animated types generated at load (#483): their ids and order,
 //! their numbers by the tier's formulas, what every one of them is, the same on every load, and
 //! the files refused.
 

@@ -1,4 +1,4 @@
-# The quarry (spec §3, §8 "Digging"; M19): an old stone quarry under the hub, down the stairs
+# The quarry (M19): an old stone quarry under the hub, down the stairs
 # nook's `Q`. The place to dig, outside the safe showcase (nothing lives here, so nothing stops
 # a dig but you).
 #
@@ -13,7 +13,7 @@
 # no door leads in, so dig through the wall (six minutes with a pick-axe), and its light spills
 # into the pit. Rock (spaces) bared by a dig shows as stone walls; the level's edge never breaks.
 # The pit's old workings have flooded: a pool of deep water (w) in its south-east, for one trained
-# in Swim to dive into (spec §8 "Skills": Swim), asked first every time.
+# in Swim to dive into (Swim), asked first every time.
 arrival = "Chisel marks score the walls of the old quarry."
 name = "The Quarry"
 ambient = [0, 0, 0, 0]
@@ -60,7 +60,7 @@ objects = ["pick_axe"]
 at = [9, 10]
 objects = ["mattock"]
 
-# A unique dagger an old stonecutter left (spec §8 "Magic items"), west of the start.
+# A unique dagger an old stonecutter left, west of the start.
 [[pile]]
 at = [7, 8]
 objects = ["unique:stonebiter"]

@@ -1,4 +1,4 @@
-# Mishaps (spec §8 "Spells", the magic design §4): what may befall a reader of a grimoire who
+# Mishaps (the magic design §4): what may befall a reader of a grimoire who
 # fails to learn its spell (study.toml). One `[[mishap]]` per file; a campaign's data/mishaps/ may add more.
 #
 # Fields:
@@ -17,7 +17,7 @@
 #             teleport   to a free cell of the level, as a teleport trap does
 #             lose_mark  one stat training mark is lost, of a stat that has any
 #             drain      `stat` (or "random") loses `points` for good unless the reader
-#                        makes a Willpower check against `difficulty` (spec §8 "Stats": "Drain")
+#                        makes a Willpower check against `difficulty`
 #             summon     a hostile `creature` (an id of creatures/) comes next to the reader
 #             learn      the spell is learned anyway (lucky, by custom)
 #             mark       a training mark of `stat` more (lucky, by custom)

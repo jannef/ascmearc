@@ -15,7 +15,7 @@ tags = ["fey"]
 alignment = "evil"
 vision = "darkvision"
 sight = 10
-# A lurker (spec §8 "Creature behavior"): it waits where it stands for its prey to come
+# A lurker: it waits where it stands for its prey to come
 # beside it, and hunts only once hurt.
 lurks = true
 footsteps = 20

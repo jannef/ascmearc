@@ -1,7 +1,6 @@
 # The animal companion
 
-Developer notes for the companion, a beast that is the player's for good (spec §8 "Allies": "The
-animal companion"; the design is `docs/design/ranger-companion.md`, §18 and §20 the owner's
+Developer notes for the companion, a beast that is the player's for good (the design is `docs/design/ranger-companion.md`, §18 and §20 the owner's
 decisions, which override the rest). Slices **C1** (#916: the starting beast, the story's chapter,
 growth, always along, the nose), **C2** Tame (#917, "Taming" below), **C3** the collar (#918,
 below), **C4** Pack tactics (#919, below), **C5** Hunter's bond (#920, below), and **C6** Sic 'em

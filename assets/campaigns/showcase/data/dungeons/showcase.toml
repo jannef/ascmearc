@@ -13,7 +13,7 @@ secret_doors = [1, 2]
 hidden_per_depth = 1
 # Locks harder to pick deeper down too (14 on the first level, 21 on the eighth).
 locks_per_depth = 1
-# Loot on the floor of each level (spec §8 "Magic items"): its item level is the depth.
+# Loot on the floor of each level: its item level is the depth.
 loot = [2, 4]
 key = "rusty_key"
 # Cool, as cellars are, and colder deeper down (never freezing).

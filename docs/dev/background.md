@@ -1,6 +1,6 @@
 # Background story
 
-Developer notes for a chosen character's background story (spec §8 "Background story"; the
+Developer notes for a chosen character's background story (the
 design is `docs/design/background-story.md`, tracked in #708). B1 (#702) is the data, the roll,
 the effects, and the saved ids; the story screen and its page (now 9) are B2 (#703), the full pools and
 the wiki's tables B3 (#704), the `background` system's talents B4 (#705), and talent and flaw

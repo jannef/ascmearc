@@ -1,4 +1,4 @@
-# Item classes (spec §7 "Objects and materials"; #189), as in ADOM: what kind of thing an object
+# Item classes (#189), as in ADOM: what kind of thing an object
 # is. Every item list (the inventory, picking up, dropping, what to eat or throw, what goes in an
 # equipment slot) groups its items by class, in the order of this file, each class under a header
 # with its name; within a class, items keep their order. Shops sell and buy by class (shops.toml).
@@ -112,13 +112,13 @@ name = "Potions"
 id = "scrolls"
 name = "Scrolls"
 
-# Wands (spec §8 "Magic items": "Wands"): a spell and its charges, used from the missile weapon
+# Wands: a spell and its charges, used from the missile weapon
 # slot.
 [[class]]
 id = "wands"
 name = "Wands"
 
-# Rods (spec §8 "Magic items": "Rods"): an effect no spell has, paid in the user's mana, used
+# Rods: an effect no spell has, paid in the user's mana, used
 # from the missile weapon slot.
 [[class]]
 id = "rods"

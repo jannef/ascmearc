@@ -27,7 +27,7 @@ immune = ["poison"]
 weapon_skills = { bows = 1 }
 corpse = false
 blood = "none"
-# Its gear (spec §8 "Creature gear"): the short bow it was buried with, as a rule, and arrows.
+# Its gear: the short bow it was buried with, as a rule, and arrows.
 racial_weapon = "short_bow"
 [[creature.gear]]
 chance = 95

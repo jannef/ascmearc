@@ -1,5 +1,5 @@
-//! The dead of past runs, as statues' names (spec §8 "Statues"; #1137, design
-//! `docs/design/monster-dread.md` §9.5) and on gravestones (spec §7 "Graves"; #1258,
+//! The dead of past runs, as statues' names (#1137, design
+//! `docs/design/monster-dread.md` §9.5) and on gravestones (#1258,
 //! `world/fixtures/graves.rs`).
 //!
 //! The app keeps the graveyard file (every character who has died, `crates/warlock/src/

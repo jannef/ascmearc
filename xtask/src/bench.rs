@@ -5,7 +5,7 @@
 //! full population, 80 creatures of danger 8, the same with all but its kobolds shedding a spell
 //! circle's light, the same of animated panoplies at danger 40, the deepest floor of a
 //! 40-floor cave branch fresh and after visiting the other 39 (a long run's actors, #1507),
-//! each wearing and wielding up to ten things (the vast level's budget; spec §10 budgets; a generated 80×21
+//! each wearing and wielding up to ten things (the vast level's budget; a generated 80×21
 //! level, the courtyard, the 100×50 overworld, an 80×40 local area, and the 72×21 arena get the
 //! hub's), and the time a night's rest takes on each (dusk to dawn: 7200 turns of six seconds,
 //! the overworld's too). Fights are real: a walk that gets the player killed starts over from
@@ -25,7 +25,7 @@ const REST_BUDGET_MS: f64 = 500.0;
 /// (the 16th), in minutes.
 const TO_FULL_MOON: u64 = (14 * 24 + 17) * 60 + 30;
 
-/// A cave branch of the campaign's deepest kind (spec §7 "Danger levels"): a 120×60 floor of
+/// A cave branch of the campaign's deepest kind: a 120×60 floor of
 /// danger 8 laid down at full population (80 creatures, the ceiling), every one awake to the
 /// player, who has hit points enough to walk among them, and a teeming den (its sleepers on top);
 /// the turn budget is the vast level's.
@@ -43,19 +43,18 @@ room_effects = { chance = 100, per_level = 1, favoured = { teeming = 100 } }
 const DELF_SCENARIO: &str = "name = \"Bench delf\"\nstart_level = \"bench_delf:1\"\nseed = 1\n\
                              wield = [\"lantern\"]\nhp = 900\n";
 
-/// The same cave floor with a high-level ranger and their companion (spec §8 "Allies", #923): the beast an
+/// The same cave floor with a high-level ranger and their companion (#923): the beast an
 /// ally in every turn of the floor, the coarse turns of a rest included (it follows the
 /// player, so it is never far). A ranger has the hit points of their level: a walk that
 /// gets them killed starts over, untimed. The budget is the vast level's.
 const PET_SCENARIO: &str = "name = \"Bench pet\"\nstart_level = \"bench_delf:1\"\nseed = 1\n\
                             character = { race = \"human\", gender = \"male\", class = \"ranger\" }\n";
 
-/// The same cave floor with every creature but the torch-bearing kobolds circled (spec §4.8
-/// "Spell circles"): each sheds a spell circle's light, radius 1, as a hexed creature does
-/// (bench copies, `bench_hexed_<id>`, carrying the light as a creature's own: the same one
-/// source per actor, keyed by the actor, its mask recomputed when it moves). The design's "delf
-/// floor of twenty hexed creatures" (docs/design/buff-circles.md §8.3), more of them; the budget
-/// is the vast level's.
+/// The same cave floor with every creature but the torch-bearing kobolds circled: each sheds a
+/// spell circle's light, radius 1, as a hexed creature does (bench copies, `bench_hexed_<id>`,
+/// carrying the light as a creature's own: the same one source per actor, keyed by the actor, its
+/// mask recomputed when it moves). The design's "delf floor of twenty hexed creatures"
+/// (docs/design/buff-circles.md §8.3), more of them; the budget is the vast level's.
 const HEXED_BRANCH: &str = r#"
 [[dungeon]]
 id = "bench_hexed"
@@ -80,7 +79,7 @@ const HEXED_LIGHT: &str = "circle_enchantment";
 /// run the whole night among 75 creatures too (about 0.1 ms a turn): shown to compare the two.
 const UNJUDGED_REST: [&str; 4] = ["d-hex", "d-pet", "l-1", "long"];
 
-/// The same cave floor at danger 40, all of it animated panoplies (spec §8 "Animated objects"):
+/// The same cave floor at danger 40, all of it animated panoplies:
 /// each wears and wields its pieces, whose magic every rule reads through `Mods::worn`, the
 /// design's open performance risk (docs/design/animated-objects.md §12); the budget is the
 /// vast level's.

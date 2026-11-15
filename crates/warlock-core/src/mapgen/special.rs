@@ -1,4 +1,4 @@
-//! Special rooms in generated levels (spec §7 "Special rooms"; `docs/dev/special-rooms.md`).
+//! Special rooms in generated levels (`docs/dev/special-rooms.md`).
 //!
 //! Each room of a rooms level (but the arrival room and vaults), and each of [`CAVE_CHAMBERS`]
 //! chambers a cave level tries, is special with the branch's `chance` (its `room_effects` table,
@@ -200,7 +200,7 @@ pub(super) fn make(canvas: &mut Canvas, room: SpecialRoom) -> bool {
     true
 }
 
-/// Where a room's feature goes (spec §7 "Special rooms"): the cell of plain floor nearest the
+/// Where a room's feature goes: the cell of plain floor nearest the
 /// middle of its box (ties by cell order) that nothing else holds (no stamp, light, creature or
 /// patrol, trap, or object), that is no door's neighbour, and without which the room's walkable
 /// cells stay joined; `None` when there is none.

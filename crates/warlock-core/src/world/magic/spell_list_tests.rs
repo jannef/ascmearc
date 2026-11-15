@@ -1,4 +1,4 @@
-//! The first spell list (spec §8 "Spells", "Scrolls"; #397): a scroll of a spell casts it
+//! The first spell list (#397): a scroll of a spell casts it
 //! through the one cast path at its own rungs, free of mana; the area hexes (Sleep, Web)
 //! and Haste; the list's content checks (one scroll a spell, the classes' guaranteed spells,
 //! mana for everyone).

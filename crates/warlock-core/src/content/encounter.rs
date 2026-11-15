@@ -1,6 +1,5 @@
-//! Encounters on the overworld (`assets/data/encounters.toml`, spec §7 "Leaving an outdoor
-//! area", "Overworld encounters"; `docs/dev/encounters.md`): the edge rule, how near a hostile
-//! creature holds the player in an outdoor area when they walk off its edge
+//! Encounters on the overworld (`assets/data/encounters.toml`; `docs/dev/encounters.md`): the edge
+//! rule, how near a hostile creature holds the player in an outdoor area when they walk off its edge
 //! (`world/levels/edge_leave.rs`); the numbers of meeting someone on the way ([`Meetings`]); and each
 //! campaign's encounter tables (`campaigns/<id>/data/encounters/*.toml`, [`EncounterTable`]).
 //!
@@ -116,7 +115,7 @@ struct ChecksSpec {
     light: i32,
 }
 
-/// Where each side stands by outcome (spec §7 "Overworld encounters", the owner's: the more
+/// Where each side stands by outcome (the owner's: the more
 /// advantaged the encounter, the nearer the player stands to the edge they came from).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -336,7 +335,7 @@ pub struct When {
     /// Whole days since the run began: at least, and fewer than.
     pub after_days: Option<u32>,
     pub before_days: Option<u32>,
-    /// A calling of the campaign (spec §8 "Prestige classes"), by its prestige class's id, open
+    /// A calling of the campaign, by its prestige class's id, open
     /// to the player now (`World::calling_open`): their class, their level, and not called yet.
     pub calling: Option<String>,
 }
@@ -438,7 +437,7 @@ struct DrawSpec {
     count: String,
 }
 
-/// A campaign's encounter table (spec §7 "Overworld encounters").
+/// A campaign's encounter table.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct EncounterTable {
     pub id: String,
@@ -804,7 +803,7 @@ impl Content {
         self.encounters().meetings.as_ref()
     }
 
-    /// Campaign `campaign`'s encounter tables, by id (spec §7 "Overworld encounters").
+    /// Campaign `campaign`'s encounter tables, by id.
     pub fn encounter_tables(&self, campaign: &str) -> impl Iterator<Item = &EncounterTable> {
         (self.encounter_tables.iter()).filter(move |t| t.campaign == campaign)
     }

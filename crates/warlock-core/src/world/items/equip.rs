@@ -1,4 +1,4 @@
-//! Wearing and wielding (spec §6 "Equipment"): the player puts inventory stacks on in slots and
+//! Wearing and wielding: the player puts inventory stacks on in slots and
 //! takes them off ([`crate::equipment`]).
 //!
 //! Every thing put on or taken off takes the time of its slot's action (`wield`, `wear`,

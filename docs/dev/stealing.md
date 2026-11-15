@@ -1,9 +1,9 @@
 # Stealing
 
 Developer notes for working on this part of Warlock; the rules it implements are in
-spec/08i-character.md ("Stealing"). Keep it current with the code, as CLAUDE.md says.
+spec/12-character.md ("Stealing"). Keep it current with the code, as CLAUDE.md says.
 
-Stealing (spec §8 "Stealing", #234; the progression design's B7, `docs/design/progression.md`)
+Stealing (#234; the progression design's B7, `docs/design/progression.md`)
 is the Steal skill's use: `Action::Steal(Dir)` (replay text `steal:DIR`, cost `steal` in
 `data/actions.toml`, `ActionKind::Steal`), dispatched by one arm in `World::player_acts` to
 `World::steal` in `world/skills/steal.rs`; tests in `world/skills/steal_tests.rs`.
@@ -33,7 +33,9 @@ is the Steal skill's use: `Action::Steal(Dir)` (replay text `steal:DIR`, cost `s
   Caught: `World::caught_stealing` (`shop.rs`) outrages a keeper of an open shop on the level as
   a robbery does (`outrage`), else the victim's `faction_override` becomes `StealRules::caught`
   (by custom one hostile to the player; the loader only resolves it), so the AI and every stance follow. Then
-  `train(Use::Steal)` (training stream). Nothing is stored beyond what changed hands and the
+  `train(Use::Steal)` (training stream). There is no limit on trying again (the owner's rule): a
+  victim that caught the player stays angry, and that is the price. There is no Bluff check when
+  caught: a caught thief stays caught (the owner). Nothing is stored beyond what changed hands and the
   override (saved and hashed as they already are), so saves change only by content (the new
   `ActionKind`, no new indexed id).
 - **The hook for alignment (#254)**: `World::got_away_with(victim, stack)` in `world/skills/steal.rs`

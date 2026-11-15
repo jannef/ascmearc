@@ -1,4 +1,4 @@
-//! A special room's `collapse` (spec §7 "Special rooms"): parsed, refused without `needs_below`,
+//! A special room's `collapse`: parsed, refused without `needs_below`,
 //! never over a whole level, and read by [`Here::collapse`] of the room only.
 
 use super::{Here, RoomEffectId, RoomEffects};

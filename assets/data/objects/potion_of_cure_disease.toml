@@ -1,4 +1,4 @@
-# A potion of cure disease (spec §8 "Potions"): every disease is gone at once, grave rot too.
+# A potion of cure disease: every disease is gone at once, grave rot too.
 # Cures are green; this one a pale green.
 [[object]]
 id = "potion_of_cure_disease"

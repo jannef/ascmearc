@@ -1,4 +1,4 @@
-//! Menu building blocks and the main and pause menus (spec §6), drawn in glyphs on the UI
+//! Menu building blocks and the main and pause menus, drawn in glyphs on the UI
 //! console.
 //!
 //! [`Press`] is a key press as screens see it, and [`Panel`] a centered frame with row helpers.
@@ -242,7 +242,7 @@ fn pair(a: &str, b: &str) -> String {
     }
 }
 
-/// The dialog every way to quit asks (spec §6): over a run (`saving`) the run is saved first; on
+/// The dialog every way to quit asks: over a run (`saving`) the run is saved first; on
 /// the web, quitting reloads the page (`MenuChoice::Quit` does either).
 pub fn quit_dialog(saving: bool) -> Dialog {
     let (text, yes) = if saving {

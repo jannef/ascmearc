@@ -1,4 +1,4 @@
-# A potion of will (spec §8 "Potions"): Willpower raised for ten minutes. Stat boosts are orange.
+# A potion of will: Willpower raised for ten minutes. Stat boosts are orange.
 [[object]]
 id = "potion_of_will"
 name = "potion of will"

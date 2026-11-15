@@ -1,4 +1,4 @@
-//! What an item gives, in numbers (spec §6 "Item lists", "Item description"; the owner's
+//! What an item gives, in numbers (the owner's
 //! exception to hidden numbers, 2026-10-27): a weapon's to-hit and damage (and a launcher's or a
 //! throwing weapon's range), what ammunition adds to a shot, and the Defence (Dv) and Protection
 //! (Pv) a piece of armour, a shield, a parrying weapon, or a ring gives.
@@ -81,7 +81,7 @@ impl Numbers {
         }
         let known = stack.as_known();
         let mut attack = attack(&known, content);
-        // A spirit weapon's gift to hit (spec §8 "Prestige classes"), with its own.
+        // A spirit weapon's gift to hit, with its own.
         if let (Some(attack), Some((to_hit, ..))) =
             (attack.as_mut(), crate::world::spirit_gift(content))
             && stack.is_spirit()

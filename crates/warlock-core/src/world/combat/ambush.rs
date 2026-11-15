@@ -1,4 +1,4 @@
-//! Sneak attacks (spec §8 "Surprise and sneak attacks"; `docs/dev/surprise.md`): an attack on a
+//! Sneak attacks (`docs/dev/surprise.md`): an attack on a
 //! target that has not seen its attacker, or is Surprised, does the attacker's sneak dice more
 //! damage, after Protection: the Sneak attack skill's d6s ([`Effect::SneakDice`]) and its
 //! talents' ambush dice on top (Ambusher, Improved sneak attack; `Dice::and`), and with Master
@@ -150,7 +150,7 @@ impl World {
             self.state.actors.key(target)
         );
         let extra = dice.roll(&mut rng).max(0);
-        // A sneak attack that hits builds the attacker's resources (spec §8 "Resources"); its
+        // A sneak attack that hits builds the attacker's resources; its
         // openings only on its mark, or with none standing (`mark.rs`); an exploit's, spending
         // them, builds none (`openings.rs`).
         if !self.exploiting(attacker) {

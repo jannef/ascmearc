@@ -1,4 +1,4 @@
-//! Gazes (spec §8 "Creature behavior": "Gazes", #1125, design `docs/design/monster-dread.md`
+//! Gazes (#1125, design `docs/design/monster-dread.md`
 //! §5.1): a creature with `[creature.gaze]` in its type (`content/gaze.rs`) gives its riders at
 //! sight, not at touch. Enemy-only: no player ability.
 //!

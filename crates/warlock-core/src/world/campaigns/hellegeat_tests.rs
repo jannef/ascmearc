@@ -1,4 +1,4 @@
-//! A Pit's floors in a run (#1296; spec §7 "The Pits", `endless.rs`): forgotten when left as an
+//! A Pit's floors in a run (#1296, `endless.rs`): forgotten when left as an
 //! endless branch's are, made the same again from their id, paid once per Pit, and leaving the
 //! endless branches' own count of floors made alone.
 

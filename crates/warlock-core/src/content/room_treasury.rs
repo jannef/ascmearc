@@ -1,4 +1,4 @@
-//! A treasure room's fields (spec §7 "Special rooms"; docs/design/chests-and-treasure.md §6):
+//! A treasure room's fields (docs/design/chests-and-treasure.md §6):
 //! `secret_doors = "all"` (every door of the room is a secret door, `mapgen/treasury.rs`),
 //! `sealed = "dig"` (a greater treasure room: no door at all, a box in the rock opened by breaking
 //! a wall, its one wall guaranteed thin the room's breach, `SpecialRoom::breach`), and `treasure`
@@ -65,11 +65,11 @@ impl Treasury {
     }
 }
 
-/// Why `breach` does not open `room` on a level of `terrain`, if it does not (spec §7 "Special
-/// rooms": the rule a sealed room's breach keeps, for generators and level files alike): it is a
-/// wall that breaks (a terrain with a hardness, not walkable), on the room's rim and not on the
-/// level's edge, and 4-adjacent both to a cell outside the room that `reached` holds (reached
-/// from the arrival) and to a walkable cell of the room. One wall to break, never two.
+/// Why `breach` does not open `room` on a level of `terrain`, if it does not (the rule a sealed
+/// room's breach keeps, for generators and level files alike): it is a wall that breaks (a terrain
+/// with a hardness, not walkable), on the room's rim and not on the level's edge, and 4-adjacent
+/// both to a cell outside the room that `reached` holds (reached from the arrival) and to a
+/// walkable cell of the room. One wall to break, never two.
 pub(crate) fn breach_fault(
     terrain: &Grid<TerrainId>,
     content: &Content,

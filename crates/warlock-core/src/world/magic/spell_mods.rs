@@ -1,6 +1,6 @@
-//! What a caster's talents and worn items do to one of its spells (spec §8 "Spells": "Hooks";
-//! the spell scaling design §7.1): the six hooks' [`SpellMods`] (`content/spell_mod.rs`), summed
-//! once a cast from two sources, the first filtered by the spell's tags:
+//! What a caster's talents and worn items do to one of its spells (the spell scaling design §7.1):
+//! the six hooks' [`SpellMods`] (`content/spell_mod.rs`), summed once a cast from two sources, the
+//! first filtered by the spell's tags:
 //!
 //! - its **talents**' `spell_mod` effects ([`crate::talent::MagicMods::spell_mods`]: Empower,
 //!   Archmage, Keen mind, School focus, Scroll adept, Wand mastery, Sure hand, Brimming);

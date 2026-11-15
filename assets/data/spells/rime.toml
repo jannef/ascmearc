@@ -24,7 +24,7 @@ noise = { sound = "explosion", loudness = 40 }
 damage = "willpower 13 6d6, 16 8d6, 22 8d6+2"
 length = "willpower 18 5"
 
-# What rereading its grimoire adds, rank by rank (spec §8 "Spells": "Ranks"; README.toml
+# What rereading its grimoire adds, rank by rank (README.toml
 # `[spell.ranks]`): a cone is held to 5 cells, so its reach comes early and its dice after: at
 # rank 10 1s rolled again, +2 on the roll, a cell longer, every die two sides bigger, a die
 # more, a fifth off the mana, and a fifth off the casting time.

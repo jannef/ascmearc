@@ -1,4 +1,4 @@
-//! Mining (spec §8 "Digging"; `data/mining.toml`, the branches' `ores`): which walls may hold
+//! Mining (`data/mining.toml`, the branches' `ores`): which walls may hold
 //! something and how hard it is to break out, what comes out by danger, the veins, and each
 //! dungeon's ores.
 

@@ -37,7 +37,7 @@ fn looking_with_knowledge() {
     }
 }
 
-/// A run on the overworld beside the Hall that starts with `nutrition` (spec §8 "Hunger"), or if
+/// A run on the overworld beside the Hall that starts with `nutrition`, or if
 /// that is below 0 (no run starts so hungry), has just begun to starve.
 fn on_the_road(nutrition: i32) -> (Case, Arc<Content>) {
     let mut files = warlock_assets::files();
@@ -84,7 +84,7 @@ fn hunger_stops_as_text() {
     }
 }
 
-/// Beside what offers an action, north of the player (spec §7 "Special rooms"): its scenario and
+/// Beside what offers an action, north of the player: its scenario and
 /// the walk there.
 const OFFERS: [(&str, &str, &str); 2] = [
     ("offer-dialog-altar", "shrine", "move:N open:N move:N*3"),

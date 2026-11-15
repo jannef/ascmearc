@@ -1,5 +1,4 @@
-//! Healing (spec §8 "Healing"), status effects (spec §8 "Status effects"), and diseases (spec §8
-//! "Diseases").
+//! Healing, status effects, and diseases.
 
 use super::order;
 use super::util::{Term, anchored, capital, link, percent_of, signed, stat_link, yes};
@@ -29,7 +28,7 @@ pub(super) fn pace(percent: u32) -> String {
     }
 }
 
-/// How fast hit points come back (spec §8 "Healing"): resting, each status that changes it,
+/// How fast hit points come back: resting, each status that changes it,
 /// and each disease that slows it more than Diseased does.
 pub(super) fn healing(content: &Content) -> String {
     let mut out = String::from("| While | Hit points come back |\n|---|---|\n");
@@ -120,7 +119,7 @@ fn causing<'a>(
                 }
             }
         }
-        // A gaze's riders, at sight (spec §8 "Creature behavior": "Gazes").
+        // A gaze's riders, at sight.
         for o in c.gaze.iter().flat_map(|g| &g.riders) {
             if let Some(detail) = what(&o.what) {
                 found.push(Causing {
@@ -178,7 +177,7 @@ fn status_detail(def: &StatusDef, status: usize, what: &Affliction) -> Option<St
 
 /// What causes a status, in words: wounds, diseases, the creatures' attacks whose `on_hit` names
 /// it (with the chance a hit has and the degrees it gives), and rotten corpses when it is the
-/// sickness of food (spec §8 "Hunger").
+/// sickness of food.
 fn causes(content: &Content, status: usize, def: &StatusDef) -> String {
     // The creatures are only counted here: the Who causes it table names them (#1558).
     let creatures = causing(content, |what| status_detail(def, status, what)).len();
@@ -301,7 +300,7 @@ fn causes(content: &Content, status: usize, def: &StatusDef) -> String {
             }
         }
     }
-    // Being caught unawares (the surprise rules, spec §8 "Surprise and sneak attacks").
+    // Being caught unawares (the surprise rules).
     if let Some(rules) = content
         .surprise()
         .filter(|r| usize::from(r.status.0) == status)
@@ -575,7 +574,7 @@ impl StatusGroup {
     }
 }
 
-/// The status effects (spec §8 "Status effects") in four tables by what they do (#1558), each
+/// The status effects in four tables by what they do (#1558), each
 /// between mdBook anchors of its group: what each does (what it costs, its stats, healing, the
 /// rest, and how it shows on others), what causes it (the creatures only counted:
 /// [`status_causes`] names them), and how it ends.
@@ -808,7 +807,7 @@ pub(super) fn status_causes(content: &Content) -> String {
 /// The scores [`disease_checks`] gives the odds for.
 const CHECK_SCORES: [u8; 8] = [4, 6, 8, 10, 12, 14, 16, 18];
 
-/// Each disease's check (spec §8 "Checks": 2d12 plus the stat's modifier against the
+/// Each disease's check (2d12 plus the stat's modifier against the
 /// difficulty, [`check::ways`]): the stat, the difficulty, and how often it is won by score.
 pub(super) fn disease_checks(content: &Content) -> String {
     let scores: String = CHECK_SCORES.iter().map(|s| format!(" {s} |")).collect();
@@ -875,7 +874,7 @@ fn caught_by(content: &Content, disease: DiseaseId, def: &DiseaseDef) -> String 
     }
 }
 
-/// The diseases (spec §8 "Diseases"): how they are caught and resisted (the stat, and how often
+/// The diseases: how they are caught and resisted (the stat, and how often
 /// an average one makes the check), how long they incubate, how often they progress, what a
 /// failed check does, how they are shaken off, whether they kill, and healing meanwhile.
 pub(super) fn diseases(content: &Content) -> String {

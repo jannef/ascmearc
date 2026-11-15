@@ -1,4 +1,4 @@
-//! Surprise (spec §8 "Surprise and sneak attacks"; `docs/dev/surprise.md`): who is unaware of
+//! Surprise (`docs/dev/surprise.md`): who is unaware of
 //! whom, the initiative check, and the Surprised status, both ways round.
 //!
 //! - [`World::unaware`] is the one definition. A creature is unaware of an actor when it hunts

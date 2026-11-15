@@ -1,4 +1,4 @@
-//! The ranger's Focus (spec §8 "Resources"; the progression design §4.18, R2): an alternative
+//! The ranger's Focus (the progression design §4.18, R2): an alternative
 //! resource that Rapid shot (level 12) grants for good, that comes back a point a base turn but
 //! not while resting (`data/resources.toml`), and that two rules spend:
 //!

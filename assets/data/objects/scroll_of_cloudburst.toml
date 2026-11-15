@@ -1,4 +1,4 @@
-# A scroll of cloudburst (spec §8 "Scrolls", "Spells"): read it (`r`), and it casts Cloudburst, a
+# A scroll of cloudburst: read it (`r`), and it casts Cloudburst, a
 # level-20 spell, free of mana; its grimoire teaches the spell for good. Level and frequency by its
 # spell's level (README.toml): the lower, the commoner the scroll.
 [[object]]

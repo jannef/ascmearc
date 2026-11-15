@@ -1,4 +1,4 @@
-//! Rumoured ways (spec §8 "Dialogue", "Rumoured ways"; `world/people/rumour.rs`): asking Godgifu of
+//! Rumoured ways (`world/people/rumour.rs`): asking Godgifu of
 //! Cēaptūn about a place marks the way there on the player's overworld map, the cells about a
 //! route and not the whole region, idempotently, in no time; the hidden locations along the ways
 //! stay hidden; the memory layer shows the marks once the player is back on the map; a replay.

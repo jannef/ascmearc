@@ -1,4 +1,4 @@
-# Ray of frost (spec §8 "Spells", the first spell list): the wizard's cantrip, a thin ray of cold
+# Ray of frost (the first spell list): the wizard's cantrip, a thin ray of cold
 # that must hit like a missile; a poor weapon beside a crossbow, which is the point.
 [[spell]]
 id = "ray_of_frost"
@@ -22,7 +22,7 @@ noise = { sound = "chanting", loudness = 20 }
 damage = "intelligence 16 2d8"
 range = "willpower 14 7, 18 8"
 
-# What rereading its grimoire adds, rank by rank (spec §8 "Spells": "Ranks"; README.toml
+# What rereading its grimoire adds, rank by rank (README.toml
 # `[spell.ranks]`): a worked example of an attack spell's table, which may also sharpen the aim
 # (`to_hit`) and widen the threat range (`threat`: a natural 21, then a 20, threatens a
 # critical). At rank 10: +2 to hit, criticals from 20, 1s rolled again, d8s, a die more, two

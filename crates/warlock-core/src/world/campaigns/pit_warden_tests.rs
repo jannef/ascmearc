@@ -1,4 +1,4 @@
-//! The Pits' wardens and the sealing (#1298; `pit.rs`, spec §7 "The Pits"): the warden's hall on
+//! The Pits' wardens and the sealing (#1298; `pit.rs`): the warden's hall on
 //! every Pit's fifth floor and nowhere above, with no way down; its death sealing its own Pit
 //! alone, never the slain list; a sealed Pit's fifth floor made without it; the mouth closing on
 //! the next arrival outside; the content's checks of a portal branch's boss row.

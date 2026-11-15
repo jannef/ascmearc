@@ -13,7 +13,7 @@ pub(super) fn perceived_glyph(view: &PerceptionView<'_>, layer: Layer, p: Pos) -
         CellView::Unknown => false,
         CellView::Remembered(t) | CellView::Visible(t) => content.terrain(t).stairs.is_some(),
     };
-    // A chest's known trap leaves the chest's glyph (spec §8 "Chests").
+    // A chest's known trap leaves the chest's glyph.
     let trap = view.trap(p).filter(|_| view.chest_at(p).is_none());
     let known_glyph = |cell: CellView| match (trap, view.objects(p).first()) {
         (Some(trap), _) => content.trap(trap).glyph,

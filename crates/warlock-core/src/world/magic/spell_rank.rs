@@ -1,4 +1,4 @@
-//! The rank a caster knows a spell at (spec §8 "Spells": "Ranks"; #1264), and what it gives
+//! The rank a caster knows a spell at (#1264), and what it gives
 //! their casts: rank 1 as it is learned (or as a class gives it) to
 //! [`MAX_SPELL_RANK`], raised by reading its grimoire again (`learn.rs`). The rank is kept in
 //! [`Actor::spells`] beside the spell and saved; a spell a class grants that was never deepened

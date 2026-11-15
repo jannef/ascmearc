@@ -1,4 +1,4 @@
-//! Hunger (spec §8 "Hunger"), ADOM-like: a nutrition counter that game time burns, the states it
+//! Hunger, ADOM-like: a nutrition counter that game time burns, the states it
 //! puts the player in, and what each state does.
 //!
 //! **Nutrition** is counted in points (`data/hunger.toml`): a race of hunger 100 % burns one
@@ -117,7 +117,7 @@ impl Hunger {
     }
 
     /// Whether going from `from` to `to` is the player getting hungrier, into Hungry or worse:
-    /// it stops a rest (spec §6 "Rest") and any long action, and in the game the message waits at
+    /// it stops a rest and any long action, and in the game the message waits at
     /// `--more--` (`Game::apply`). Satiation wearing off is only logged.
     pub const fn worsens(from: Hunger, to: Hunger) -> bool {
         (to as u8) < (from as u8) && (to as u8) <= (Hunger::Hungry as u8)

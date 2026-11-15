@@ -5,8 +5,8 @@ guard its points are in: the **mark**. Design: `docs/design/thief-openings.md` (
 file covers phases O1 (#1461: the mark, the kill that carries, and the builds), O2 (#1462:
 a feint builds), O3 (#1463: Exploit at level 1, Low blow its first increment, Trained wind
 off the thief's table), O4 (#1464: the ladder's top, the finisher folded into Exploit, the
-balance probe), and O5 (#1465: Thrown exploit at level 18). Spec §8 "Resources", "Class abilities", and "Surprise and sneak
-attacks".
+balance probe), and O5 (#1465: Thrown exploit at level 18). The rules are `spec/11-magic.md` "Resources" and
+`spec/12-character.md` "Classes and their tables".
 
 ## Data
 

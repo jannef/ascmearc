@@ -1,4 +1,4 @@
-# The craftsperson's class ability from level 6 (spec §8 "Class abilities": Waste not; the
+# The craftsperson's class ability from level 6 (Waste not; the
 # craftsperson design §7.3): passive, three reads: salvage's yield (world/crafting/salvage.rs), a failed
 # recipe's stock back (world/crafting/craft_make.rs), and a failed Temper or Whittle (world/crafting/temper.rs).
 [[talent]]

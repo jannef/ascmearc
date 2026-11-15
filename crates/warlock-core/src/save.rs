@@ -1,4 +1,4 @@
-//! Save format: an envelope around [`WorldState`], as gzip-compressed JSON (spec §7).
+//! Save format: an envelope around [`WorldState`], as gzip-compressed JSON.
 //!
 //! This module only turns a world into bytes and back; where the bytes live is the app's concern.
 //! A save is pinned to the game version that wrote it ([`crate::GAME_VERSION`], the workspace

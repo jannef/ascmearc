@@ -1,4 +1,4 @@
-//! The per-turn perception snapshot (spec §5, §8).
+//! The per-turn perception snapshot.
 //!
 //! Everything the player can know — and therefore everything rendering, UI, and dumps may show —
 //! goes through [`PerceptionView`]. It exposes currently visible cells, creatures (what they
@@ -12,12 +12,12 @@
 //! severe a status effect is or how long it lasts, the nutrition counter, a corpse's age, or
 //! light the player's eyes cannot perceive.
 //!
-//! **Memory** (spec §5): terrain, piles of objects, and blood as last seen. Objects are seen where
+//! **Memory**: terrain, piles of objects, and blood as last seen. Objects are seen where
 //! creatures are (cells in line of sight, never completed walls); a pile seen gone is forgotten,
-//! and one that changed out of sight is remembered as it was. Known traps (spec §8 "Traps") are
+//! and one that changed out of sight is remembered as it was. Known traps are
 //! seen and remembered the same way; hidden ones never show.
 //!
-//! **Blood** (spec §8 "Blood", [`crate::blood`]): a stain on an open cell is seen where objects
+//! **Blood** ([`crate::blood`]): a stain on an open cell is seen where objects
 //! are; one on a wall only when a stained face is seen (a visible open cell next to the wall on
 //! that side), so blood on the far side of a wall stays hidden. Blood is remembered like piles.
 //! Char ([`crate::scorch`]) is seen and remembered by the same rules.
@@ -37,7 +37,7 @@
 //! or a blow that just found it shows them; their cells count as hidden to the player's hearing,
 //! so what they make is heard there.
 //!
-//! **Hunter's bond** (spec §8 "Allies"; `TalentMods::shared_sight`): with the player's companion
+//! **Hunter's bond** (`TalentMods::shared_sight`): with the player's companion
 //! on their level, a **second viewpoint** ([`seeing::BondView`]): the cells the companion sees by
 //! its own line of sight and eyes ([`crate::sight::sees_by`], creature sight's rule) are seen,
 //! with wall completion around them, and so are the cells of the hostiles its nose finds
@@ -62,7 +62,7 @@
 //! not roofed. Ambient plus sky plus bounce is the cell's *base light*: steady, and not tied to
 //! one source.
 //!
-//! A **special room** (spec §7 "Special rooms") changes the light inside it: a shadowed room
+//! A **special room** changes the light inside it: a shadowed room
 //! keeps only part of every bit of it (base light and each source's contribution alike, so they
 //! still add up), and a sanctuary's glow adds to the base light like ambient light (on walls
 //! through the wall-face rule, from the room's side only). Creature sight finds the same light.
@@ -147,7 +147,7 @@ pub(crate) struct Perception {
     ambient: Light,
     /// The sun, the moons, and the sky over a level under the open sky.
     sky: Option<Sky>,
-    /// The temperature of the air where the player is (spec §5 "Temperature").
+    /// The temperature of the air where the player is.
     temperature: Temperature,
     /// Ambient plus sky plus bounce light; meaningful on visible cells only.
     base: Window<Light>,
@@ -299,7 +299,7 @@ fn heard(
         p != viewer
             && (seeing.sight.get(p) == Some(&Sight::Hidden) || concealed.iter().any(|c| c.pos == p))
     };
-    // Watchful (spec §8 "Birth sign"): footsteps placed exactly; the ranger's Tracker: every
+    // Watchful: footsteps placed exactly; the ranger's Tracker: every
     // sound.
     let exact = match (talents.senses.exact_sounds, talents.senses.exact_footsteps) {
         (true, _) => noise::Exact::All,

@@ -1,4 +1,4 @@
-//! Light-blindness in the world (spec §8 "Character creation"; a race's `light_blind`, drow):
+//! Light-blindness in the world (a race's `light_blind`, drow):
 //! strong light on a light-blind player's own cell dazzles them. [`LightBlind::dazzled_by`] is
 //! the one rule; the perception reads it for how far the player sees
 //! ([`crate::perception`]), [`World::glared`] for their attacks, and [`World::glare_news`] says

@@ -1,4 +1,4 @@
-//! The gambles (spec §8 "Potions", the potions wave 2 design §4.3): a `gamble` draught draws one
+//! The gambles (the potions wave 2 design §4.3): a `gamble` draught draws one
 //! outcome of its `data/outcomes/` table, as a healing spring's drink does; the draught of
 //! chance, troll's blood, and the brewer's blunder; the outcome effects they brought (a list of
 //! statuses, `drain_stat`); the loader's checks.

@@ -1,4 +1,4 @@
-//! The Vigour, Might, and Finesse talents (spec §8 "Talents"; #237): each changes the one rule it
+//! The Vigour, Might, and Finesse talents (#237): each changes the one rule it
 //! names, Second wind is an ability with a cooldown, and the prerequisites that ask for any of
 //! several weapon skills are checked and said in words.
 

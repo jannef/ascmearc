@@ -1,4 +1,4 @@
-# A scroll of call of the wild (spec §8 "Scrolls", "Spells"): read it (`r`), and it casts Call of
+# A scroll of call of the wild: read it (`r`), and it casts Call of
 # the wild, a level-5 spell, at its own rungs, free of mana; its grimoire teaches the spell for
 # good, though it is very hard to learn (`study_difficulty`). Level and frequency by its spell's
 # level (README.toml): the lower, the commoner the scroll.

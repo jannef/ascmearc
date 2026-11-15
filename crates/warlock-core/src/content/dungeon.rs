@@ -7,7 +7,7 @@
 //! `depths:N+1` (the deepest level has none).
 //!
 //! A branch with `below` (a level of another branch, `below = "fyrdelf:12"`) is a way between
-//! that level and the overworld (spec §7 "Ways up"): its deepest level's `>` leads there, that
+//! that level and the overworld: its deepest level's `>` leads there, that
 //! level gets a `<` back up (`mapgen/way_up.rs`), and its first level's `<` climbs out to its way
 //! in, however the branch was entered.
 //!
@@ -15,12 +15,12 @@
 //! level: its deepest level's `>` leads there, and the hand-made level's own `<` names the deepest
 //! level (checked by `Content::validate`), so it arrives on that staircase coming back up.
 //!
-//! A branch with `endless` instead of `depth` has no last floor (spec §7 "The endless branch",
-//! `world/levels/endless.rs`): every staircase makes a new floor, only the current one exists, and each
-//! floor is drawn rooms or caves as it is made. It has one row of per-depth tables, read at every
-//! depth, and so no `[[dungeon.levels]]`, and with them no pinned vault.
+//! A branch with `endless` instead of `depth` has no last floor (`world/levels/endless.rs`): every
+//! staircase makes a new floor, only the current one exists, and each floor is drawn rooms or caves
+//! as it is made. It has one row of per-depth tables, read at every depth, and so no
+//! `[[dungeon.levels]]`, and with them no pinned vault.
 //!
-//! A branch with `[dungeon.portal]` (Hellegeat, spec §7 "The Pits") exists only as instances: a
+//! A branch with `[dungeon.portal]` (Hellegeat) exists only as instances: a
 //! Pit `S` (a positive integer) has the levels `id@S:1` … `id@S:depth`, each a pure function of
 //! the run seed and its id, forgotten when left as an endless branch's floors are
 //! (`world/levels/endless.rs`). No stairs, hidden location, or quest names its levels: only a `portal`
@@ -34,17 +34,17 @@
 //! depth = 8                     # or, instead: [dungeon.endless] (below)
 //! size = [80, 21]
 //! creatures = ["rat", "kobold"] # patrolling creatures generators may place; default none
-//! traps = ["arrow", "pit"]      # traps generators may hide (spec §8 "Traps"); default none
+//! traps = ["arrow", "pit"]      # traps generators may hide; default none
 //! traps_per_level = [2, 4]      # how many a level gets, at least and at most; default [2, 4]
-//! secret_doors = [0, 2]         # doors hidden on each level (spec §8 "Searching"); default none
+//! secret_doors = [0, 2]         # doors hidden on each level; default none
 //! hidden_per_depth = 1          # hidden features this much harder to find per level down
 //! locks_per_depth = 1           # locks this much harder to pick per level down
 //! loot = [2, 4]                 # items of loot on each level's floor; default none
-//! chests = { chance = 20, count = [1, 1] } # chests a floor gets (spec §8 "Chests"); the default
+//! chests = { chance = 20, count = [1, 1] } # chests a floor gets; the default
 //! ambient = [0, 0, 0, 0]        # optional
 //! temperature = 9               # °C; default the dungeon default (10)
 //! key = "rusty_key"             # optional: rooms levels lock a few rooms with its lock
-//! danger = 4                    # optional (spec §7 "Danger levels"; `super::danger`): its
+//! danger = 4                    # optional (`super::danger`): its
 //! population = ["rat"]          # floors' danger, who lives there, how many, and how they
 //! population_count = 40         # come back; none: danger 0, nothing comes
 //! stray = 5                    # the draws' odds (`super::danger::Odds`); default
@@ -140,7 +140,7 @@ impl Generator {
 pub(super) struct DungeonFile {
     #[serde(default)]
     dungeon: Vec<DungeonSpec>,
-    /// The default odds of a draw (spec §7 "Danger levels"): only `data/dungeons.toml` gives
+    /// The default odds of a draw: only `data/dungeons.toml` gives
     /// them, read before the levels (`danger::DefaultsFile`).
     pub(super) defaults: Option<Odds>,
 }
@@ -161,7 +161,7 @@ struct DungeonSpec {
     bottom: Option<String>,
     /// Floors without end, instead of `depth`.
     endless: Option<EndlessSpec>,
-    /// A branch of Pits, opened only by a portal (spec §7 "The Pits").
+    /// A branch of Pits, opened only by a portal.
     portal: Option<PortalSpec>,
     size: [i32; 2],
     #[serde(default)]
@@ -189,7 +189,7 @@ struct DungeonSpec {
     locks_per_depth: u8,
     /// The only ores its walls give a miner (`data/mining.toml`); none: every ore.
     ores: Option<Vec<String>>,
-    /// How dangerous its floors are (spec §7 "Danger levels"); none: 0, nothing comes.
+    /// How dangerous its floors are; none: 0, nothing comes.
     danger: Option<DangerSpec>,
     /// The creature types that live there; default: `creatures`.
     population: Option<Vec<String>>,
@@ -231,7 +231,7 @@ struct BossSpec {
     vault: String,
 }
 
-/// A layer boss of an endless branch (spec §7 "The endless branch", `world/levels/layer_boss.rs`): the
+/// A layer boss of an endless branch (`world/levels/layer_boss.rs`): the
 /// unique creature whose lair, a vault, floor `depth` stamps until it is slain, with the floor's
 /// only way down hidden in it.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -243,7 +243,7 @@ pub struct LayerBoss {
     pub vault: String,
 }
 
-/// What makes a branch endless (spec §7 "The endless branch"): the odds of a floor's generator,
+/// What makes a branch endless: the odds of a floor's generator,
 /// and how deep its danger still finds anything to draw.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Endless {
@@ -278,10 +278,9 @@ struct ShopOddsSpec {
     keeper: Option<String>,
 }
 
-/// How often a generated level's rooms are special, and which effects they get (spec §7
-/// "Special rooms"): the shared odds of `room_effects.toml` or a branch's own. The effects not
-/// banned are drawn by their own `weight`, but the favoured ones, which keep a fixed share of the
-/// draws (`mapgen/special.rs`).
+/// How often a generated level's rooms are special, and which effects they get: the shared odds of
+/// `room_effects.toml` or a branch's own. The effects not banned are drawn by their own `weight`,
+/// but the favoured ones, which keep a fixed share of the draws (`mapgen/special.rs`).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct RoomOdds {
     /// Percent per room (each of a cave's chambers) to be special.
@@ -323,8 +322,8 @@ impl RoomOdds {
     }
 }
 
-/// How often a generated rooms level has a shop, of which kinds, and who keeps it (spec §7
-/// "Shops"): the shared odds of `shops.toml` or a branch's own.
+/// How often a generated rooms level has a shop, of which kinds, and who keeps it: the shared odds
+/// of `shops.toml` or a branch's own.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ShopOdds {
     /// Percent of rooms levels (with a fitting room) with a shop.
@@ -444,7 +443,7 @@ impl ShopOddsSpec {
 /// How many traps a level gets unless its branch says otherwise: 2 to 4.
 const TRAPS_PER_LEVEL: [u32; 2] = [2, 4];
 
-/// How often a branch's floors get chests (spec §8 "Chests"; `mapgen/chest.rs`): with `chance`
+/// How often a branch's floors get chests (`mapgen/chest.rs`): with `chance`
 /// percent a floor has some, between `count`'s least and most. One floor in five has one unless
 /// the branch says otherwise (docs/design/chests-and-treasure.md decision 12).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
@@ -497,12 +496,12 @@ struct LevelsSpec {
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct PortalSpec {
-    /// Each Pit's boss and its lair (spec §7 "The Pits", #1298): a layer boss's row, but its
+    /// Each Pit's boss and its lair (#1298): a layer boss's row, but its
     /// type need not be unique, and its death seals only its own Pit (`world/levels/pit.rs`).
     boss: Option<BossSpec>,
 }
 
-/// What makes a branch a branch of Pits (spec §7 "The Pits"): it exists only as instances
+/// What makes a branch a branch of Pits: it exists only as instances
 /// `id@S:N`, opened by a portal, each floor forgotten when left.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Portal;
@@ -513,9 +512,9 @@ pub struct LevelPlan {
     pub generator: Generator,
     pub width: i32,
     pub height: i32,
-    /// Its temperature (spec §5 "Temperature"); `None`: the dungeon default.
+    /// Its temperature; `None`: the dungeon default.
     pub temperature: Option<Temperature>,
-    /// How dangerous it is (spec §7 "Danger levels"); `None`: danger 0, nothing comes.
+    /// How dangerous it is; `None`: danger 0, nothing comes.
     pub danger: Option<DangerRule>,
     /// Its own `dread_one_in` (a `[[dungeon.levels]]` entry's); `None`: the branch's.
     pub dread_one_in: Option<u16>,
@@ -537,9 +536,9 @@ pub struct DungeonDef {
     /// The hand-made level of its campaign its deepest level's `>` leads to (checked by
     /// `Content::validate`; that level's `<` leads back); `None`: none.
     pub bottom: Option<String>,
-    /// Floors without end (spec §7 "The endless branch"); `None`: `depth` levels.
+    /// Floors without end; `None`: `depth` levels.
     pub endless: Option<Endless>,
-    /// A branch of Pits (spec §7 "The Pits"): its levels are `id@S:N`, never `id:N`.
+    /// A branch of Pits: its levels are `id@S:N`, never `id:N`.
     pub portal: Option<Portal>,
     /// An endless branch's layer bosses, by depth, or a portal branch's one (every Pit's
     /// warden); none for any other branch.
@@ -549,31 +548,31 @@ pub struct DungeonDef {
     pub ambient: Light,
     /// Creatures generators may place on patrol.
     pub creatures: Vec<CreatureId>,
-    /// Traps generators may hide on a level (spec §8 "Traps"); none: the branch has none.
+    /// Traps generators may hide on a level; none: the branch has none.
     pub traps: Vec<TrapId>,
     /// How many traps a level gets, at least and at most.
     pub traps_per_level: [u32; 2],
-    /// How many of a level's doors are hidden (secret doors, spec §8 "Searching"), at least and
+    /// How many of a level's doors are hidden (secret doors), at least and
     /// at most: only doors the level can do without, so a level may get fewer.
     pub secret_doors: [u32; 2],
     /// How much harder the hidden features on a level (secret doors, hidden traps) are to find
     /// for each level below the first ([`DungeonDef::hidden_at`]).
     pub hidden_per_depth: u8,
-    /// How much harder the locks on a level are to pick for each level below the first (spec §8
-    /// "Doors"; [`DungeonDef::locks_at`]).
+    /// How much harder the locks on a level are to pick for each level below the first
+    /// ([`DungeonDef::locks_at`]).
     pub locks_per_depth: u8,
-    /// The only ores (metal ids) its walls give a miner (spec §8 "Digging", `world/crafting/mine.rs`;
+    /// The only ores (metal ids) its walls give a miner (`world/crafting/mine.rs`;
     /// checked against `data/mining.toml`'s ore rows); `None`: every ore of the table.
     pub ores: Option<Vec<String>>,
-    /// How many items of loot lie on the floor of each level, fewest and most (spec §8 "Magic
-    /// items"; item level: the depth).
+    /// How many items of loot lie on the floor of each level, fewest and most (item level: the
+    /// depth).
     pub loot: [u8; 2],
-    /// How often its floors get chests (spec §8 "Chests").
+    /// How often its floors get chests.
     pub chests: ChestOdds,
-    /// The key to the rooms the rooms generator locks (spec §8 "Doors"): it locks them with the
+    /// The key to the rooms the rooms generator locks: it locks them with the
     /// lock this key opens and leaves one where the player can reach it. `None`: no locked rooms.
     pub key: Option<ObjectId>,
-    /// What lives on its floors and how it comes back (spec §7 "Danger levels"); `None`: its
+    /// What lives on its floors and how it comes back; `None`: its
     /// floors have danger 0 and only the generator's patrols.
     pub spawning: Option<Spawning>,
     /// One plan per depth, index `depth - 1`.
@@ -659,20 +658,19 @@ impl DungeonDef {
         format!("{}:{depth}", self.id)
     }
 
-    /// The level id of floor `depth` of Pit `pit` of a portal branch, e.g. `hellegeat@7:3`
-    /// (spec §7 "The Pits").
+    /// The level id of floor `depth` of Pit `pit` of a portal branch, e.g. `hellegeat@7:3`.
     pub fn pit_level_id(&self, pit: u32, depth: u32) -> String {
         format!("{}@{pit}:{depth}", self.id)
     }
 
-    /// What finding a hidden feature on level `depth` takes beyond its own difficulty (spec §8
-    /// "Searching"): [`DungeonDef::hidden_per_depth`] for each level below the first.
+    /// What finding a hidden feature on level `depth` takes beyond its own difficulty:
+    /// [`DungeonDef::hidden_per_depth`] for each level below the first.
     pub fn hidden_at(&self, depth: u32) -> i32 {
         per_level_below(self.hidden_per_depth, depth)
     }
 
-    /// What picking a lock on level `depth` takes beyond the lock's own difficulty (spec §8
-    /// "Doors"): [`DungeonDef::locks_per_depth`] for each level below the first.
+    /// What picking a lock on level `depth` takes beyond the lock's own difficulty:
+    /// [`DungeonDef::locks_per_depth`] for each level below the first.
     pub fn locks_at(&self, depth: u32) -> i32 {
         per_level_below(self.locks_per_depth, depth)
     }
@@ -800,7 +798,7 @@ impl DungeonFile {
                     "dungeon `{id}`: an endless branch has no deepest level for `below`"
                 )));
             }
-            // Nothing leads out of a Pit but its own `<`, and it ends (spec §7 "The Pits").
+            // Nothing leads out of a Pit but its own `<`, and it ends.
             if spec.portal.is_some()
                 && (spec.endless.is_some() || spec.below.is_some() || spec.bottom.is_some())
             {

@@ -36,7 +36,7 @@ name = "poisoned dagger"
 verb = "stabs"
 to_hit = 5
 on_hit = [{ status = "poisoned", chance = 20, severity = 3 }]
-# Its gear (spec §8 "Creature gear"): armour and coins, never a weapon (its venom rides on
+# Its gear: armour and coins, never a weapon (its venom rides on
 # its natural attack, which a wielded weapon would replace).
 [[creature.gear]]
 chance = 90

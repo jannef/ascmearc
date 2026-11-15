@@ -1,6 +1,5 @@
-//! What an item is made of where it differs from its base item (spec §7 "Objects and materials",
-//! "Gems"; #191): its own parts, carried on its stack beside its magic
-//! ([`crate::object::Stack::parts`]), in saves and replays.
+//! What an item is made of where it differs from its base item (#191): its own parts, carried on
+//! its stack beside its magic ([`crate::object::Stack::parts`]), in saves and replays.
 //!
 //! An item's own parts are a short list of [`ItemPart`]s, each a part (`None`: the main part),
 //! the material it is made of, and for a gem its size and cut. Each takes the place of its base

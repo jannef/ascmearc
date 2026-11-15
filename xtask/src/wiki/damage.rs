@@ -1,4 +1,4 @@
-//! Damage types (spec §8 "Damage types"): the kinds, what each weapon does, and what armour
+//! Damage types: the kinds, what each weapon does, and what armour
 //! stands against or resists. Never a creature's resistances: the player learns those by play.
 
 use super::order;
@@ -7,8 +7,8 @@ use std::fmt::Write as _;
 use warlock_core::content::{Content, DamageTypeId, Effect};
 
 /// The damage types, in content order: whether armour (Protection) soaks the kind, whether its
-/// big hits and criticals bleed, whether it spills blood and leaves char (spec §8 "Blood",
-/// "Char"), and how a blow of it is said.
+/// big hits and criticals bleed, whether it spills blood and leaves char, and how a blow of it is
+/// said.
 pub(super) fn damage_types(content: &Content) -> String {
     let mut out = String::from(
         "| Kind | Armour soaks it | Wounds bleed | Spills blood | Leaves char | A blow of it |\n\

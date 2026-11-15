@@ -1,4 +1,4 @@
-//! Rolled quests in play (spec §8 "Quests", docs/design/adventurers-guild.md §5, #422): the draw
+//! Rolled quests in play (docs/design/adventurers-guild.md §5, #422): the draw
 //! as a quest is given, what the player can reach, the dev action `quest_roll:ID:TARGET`, and
 //! the bounties system's Quarry sense. The rules of giving are `world/people/quest.rs`'s; the data is
 //! `content/quest_roll.rs`'s.

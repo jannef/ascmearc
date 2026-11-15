@@ -1,4 +1,4 @@
-//! The abilities menu (spec §6 "Abilities"; #156; `a` in play): everything the player can do
+//! The abilities menu (#156; `a` in play): everything the player can do
 //! because of who they are — racial, class, skill, weapon skill and fighting style, and item
 //! abilities — in one menu, unlike ADOM's key for each. It lists
 //! `PerceptionView::abilities` (the one registry, `warlock_core::ability`) as the one paged list

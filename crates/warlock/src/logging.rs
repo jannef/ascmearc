@@ -1,4 +1,4 @@
-//! Desktop logging and crash reports (spec §10).
+//! Desktop logging and crash reports.
 //!
 //! Every run writes `warlock-<UTC timestamp>.log` into the logs folder (`paths.rs`: `<platform data dir>/logs`, or `logs/` of a portable folder), keeping the
 //! most recent few. A panic hook writes `crash-<UTC timestamp>.txt` next to them (version, OS,

@@ -9,7 +9,7 @@ mark = [
   { on = "disarm", chance = 30 },
   { on = "search", chance = 3 },
 ]
-# Finding hidden traps (spec §8 "Searching"), on the floor, on doors, and on chests: in place of
+# Finding hidden traps, on the floor, on doors, and on chests: in place of
 # Search when you search and of Spot in passing; trained at all, you notice traps in passing (else
 # only elves and kobolds do, and dwarves on stone); added to both checks, +8 at 100 (a trap of 14
 # found with 46 % of the turns of searching at Intelligence 10 becomes 93 %), +12 at 200.

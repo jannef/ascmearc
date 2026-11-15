@@ -1,4 +1,4 @@
-//! Hunger in the turn pipeline (spec §8 "Hunger", [`crate::hunger`]).
+//! Hunger in the turn pipeline ([`crate::hunger`]).
 //!
 //! Game time burns the player's nutrition as the scheduler moves the clock, so long actions,
 //! rests, and overworld journeys burn it too, at their race's hunger: it is one of the things
@@ -97,7 +97,7 @@ impl World {
         (lost, Some(before))
     }
 
-    /// A hit point lost to starving stops a rest (spec §6 "Rest"), which would otherwise run on
+    /// A hit point lost to starving stops a rest, which would otherwise run on
     /// to the player's death; the other long actions are short and may be what saves them (a
     /// meal), so they go on. A traveller's step says nothing: the question was asked before it.
     pub(super) fn starving_stops_rest(&mut self, id: ActorId) {

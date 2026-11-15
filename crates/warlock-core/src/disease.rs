@@ -1,4 +1,4 @@
-//! Diseases on actors (spec §8 "Diseases"): the rules of one actor's infections. What the
+//! Diseases on actors: the rules of one actor's infections. What the
 //! diseases are is data ([`crate::content::DiseaseDef`], `data/diseases.toml`); applying them to
 //! the world (exposure, their turns as the clock moves, stat damage, deaths, messages) is
 //! `world/health/disease.rs`.
@@ -163,7 +163,7 @@ impl Diseases {
             .unwrap_or(100)
     }
 
-    /// How fast mana comes back while these show (spec §8 "Mana"): the slowest `mana_regen` of
+    /// How fast mana comes back while these show: the slowest `mana_regen` of
     /// the showing diseases that have one, 100 otherwise. (Diseased has its own.)
     pub fn mana_regen(&self, content: &Content) -> u16 {
         (self.0.iter())

@@ -1,4 +1,4 @@
-//! A miscast's rank loss and forgetting (spec §8 "Spells": "Miscasts", #1289, `forget.rs`):
+//! A miscast's rank loss and forgetting (#1289, `forget.rs`):
 //! rank loss stops at rank 1; forgetting removes a learned spell and marks a class's at rank 0
 //! (not known, not cast, not listed); the grimoire teaches either again at rank 1 with its
 //! experience; `amnesia` takes one more, `blank` every spell; a creature loses nothing; the

@@ -1,4 +1,4 @@
-//! The weapon abilities tables (spec §8 "Weapon skills", "Fighting styles"; the combat
+//! The weapon abilities tables (the combat
 //! progression design §4, §6), from `data/weapon_abilities/`: what each rank teaches, the weapon
 //! skills' on the Weapon skills page, the styles' on the Fighting styles page, and the caster
 //! styles' on the Schools and caster styles page (`schools.rs`), with the rank, the kind,

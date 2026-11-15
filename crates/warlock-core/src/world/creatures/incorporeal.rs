@@ -1,4 +1,4 @@
-//! Incorporeal creatures (spec §8 "Incorporeal creatures"): ghosts and their kind pass through
+//! Incorporeal creatures: ghosts and their kind pass through
 //! solid terrain and may stand inside it.
 //!
 //! - **Where**: any cell its type may walk, and any *solid* cell ([`LevelState::phaseable`]:

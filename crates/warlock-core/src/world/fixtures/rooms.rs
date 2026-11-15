@@ -1,4 +1,4 @@
-//! Special rooms in play (spec §7 "Special rooms"; `docs/dev/special-rooms.md`): what the
+//! Special rooms in play (`docs/dev/special-rooms.md`): what the
 //! player is told of them besides the first entry (`travel.rs::enter_room`): a room's `near`
 //! line the first time a cell of it comes into view, and a whole level's `pervade` line on each
 //! arrival; the pace a room gives healing and mana as an actor's talents make it (Hallowed
@@ -35,7 +35,7 @@ impl World {
     }
 
     /// The percent `room` (the pace a special room gives healing or mana, 100 none) is for
-    /// `actor`: where it quickens, Old delver quickens it more (spec §8 "Talents").
+    /// `actor`: where it quickens, Old delver quickens it more.
     pub(in crate::world) fn room_pace(&self, actor: &Actor, room: u32) -> u32 {
         if room <= 100 || actor.talents.is_empty() {
             return room;

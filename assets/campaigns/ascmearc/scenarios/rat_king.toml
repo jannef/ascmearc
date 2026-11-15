@@ -1,4 +1,4 @@
-# A dev scenario of the Ascmearc (spec §7 "The endless branch", #1118): straight onto the tenth
+# A dev scenario of the Ascmearc (#1118): straight onto the tenth
 # floor of Grundlēas, the first layer boss's, Gnægan the Rat King in his midden with the floor's
 # way down hidden in it. A new character here is level 1: give them levels with the dev `xp:`
 # and `levelup:auto` first. Its `<` climbs to a new ninth floor, as on any floor.

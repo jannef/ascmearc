@@ -1,4 +1,4 @@
-//! Cursed rooms (spec §7 "Special rooms", #408): the dead rise. A creature that dies on a cell
+//! Cursed rooms (#408): the dead rise. A creature that dies on a cell
 //! whose effects raise the dead ([`crate::content::Here::rise`]: a cursed room, or a whole cursed
 //! level), is not of the rise's faction, and leaves a corpse is marked to rise
 //! ([`World::curse_corpse`], one line in `fight.rs::creature_dies`): what it rises as is drawn

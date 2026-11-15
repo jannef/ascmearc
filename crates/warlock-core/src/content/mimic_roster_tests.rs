@@ -1,4 +1,4 @@
-//! The mimics (spec §8 "Mimics", `data/mimics.toml`; docs/design/chests-and-treasure.md §5.6):
+//! The mimics (`data/mimics.toml`; docs/design/chests-and-treasure.md §5.6):
 //! one type a level, named by bands that match the chest bands, every level's slam holding, and
 //! placed by nothing but a chest.
 

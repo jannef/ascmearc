@@ -1,4 +1,4 @@
-//! Ice on the levels (spec §5 "Ice"; the model is [`crate::ice`]): bringing it up to the clock,
+//! Ice on the levels (the model is [`crate::ice`]): bringing it up to the clock,
 //! stepping onto it, breaking through and climbing out, an instant frost, and heat and blasts.
 //!
 //! **Stepping onto ice** ([`World::tread`], for the player and creatures alike): ice holds an
@@ -104,7 +104,7 @@ impl LevelState {
     }
 
     /// What the special rooms at `p` add to the level's temperature (a hot room's warmth, a cold
-    /// room's chill; spec §7 "Special rooms").
+    /// room's chill).
     pub(crate) fn warmth_at(&self, content: &Content, p: Pos) -> Temperature {
         self.effects_at(content, p).warmth()
     }
@@ -206,9 +206,9 @@ impl LevelState {
 
 impl WorldState {
     /// The temperature at `p` on `level` at `time`: the level's ([`WorldState::temperature_on`])
-    /// and what the special rooms there add (a hot room's warmth, a cold room's chill; spec §7
-    /// "Special rooms"). The one place a cell's temperature is decided: every reader that wants
-    /// the temperature at a place asks it.
+    /// and what the special rooms there add (a hot room's warmth, a cold room's chill). The one
+    /// place a cell's temperature is decided: every reader that wants the temperature at a place
+    /// asks it.
     pub(crate) fn temperature_at(
         &self,
         level: &LevelState,
@@ -310,12 +310,12 @@ impl World {
             return Footing::Plain;
         }
         let actor = &self.state.actors[&id];
-        // Water walking (spec §8 "Status effects"): the ice holds it, however thin, with no draw.
+        // Water walking: the ice holds it, however thin, with no draw.
         if actor.ice_holds(&content) {
             return Footing::Held { climb: wading };
         }
         let weight = actor.weight(&content);
-        // Winter-born (spec §8 "Talents"): the ice holds it as if it carried nothing.
+        // Winter-born: the ice holds it as if it carried nothing.
         let load = if actor.talent_mods(&content).movement.light_on_ice {
             weight.base
         } else {
@@ -414,7 +414,7 @@ impl World {
     }
 
     /// Actor `id` plunged through the ice into the freezing water at `at`: it loses the water's
-    /// `plunge` hit points, cold damage it resists like any (spec §8 "Damage types"; never the
+    /// `plunge` hit points, cold damage it resists like any (never the
     /// last hit point: the cold does not kill yet, [`Harm::Spared`]); none, and no draw, for a
     /// Swimmer. A creature's fall is said when the player perceives it ([`World::perceive`]);
     /// the player's where it happens.
@@ -465,7 +465,7 @@ impl World {
         made
     }
 
-    /// An instant frost (spec §5 "Ice"; spell effects and frost traps): the water within
+    /// An instant frost (spell effects and frost traps): the water within
     /// `radius` of `center` in its line of sight freezes at once to at least `um` thick.
     /// Returns how many cells froze.
     pub(crate) fn frost(&mut self, center: Pos, radius: i32, um: u32) -> usize {
@@ -528,7 +528,7 @@ impl World {
     }
 
     /// What a frost burst of `radius` around `center` looks like (`frost_burst` in
-    /// `data/effects.toml`, spec §4.8 "Spell effects"), when content has it: a spell event over
+    /// `data/effects.toml`), when content has it: a spell event over
     /// the cells it reaches, for presentation.
     pub(super) fn frost_look(&self, center: Pos, radius: i32, events: &mut Vec<Event>) {
         if self.content.effect(FROST_BURST).is_none() {

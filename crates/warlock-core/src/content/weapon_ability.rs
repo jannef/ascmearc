@@ -1,4 +1,4 @@
-//! Weapon abilities (spec §8 "Weapon skills", "Fighting styles"; the combat progression design
+//! Weapon abilities (the combat progression design
 //! §4): what a rank in a weapon skill or a fighting style teaches. One `[[weapon_ability]]` a
 //! file in `data/weapon_abilities/` (a campaign's may add more), read in path order:
 //! [`WeaponAbilityId`] is an index in that order, in the content fingerprint, and never saved.

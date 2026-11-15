@@ -1,4 +1,4 @@
-//! Unique items (spec §8 "Magic items": "Unique items"; `data/uniques/` and each campaign's
+//! Unique items (`data/uniques/` and each campaign's
 //! `data/uniques/`, one file per item named by its id): a rare item with a set name, set affixes
 //! and parts, a make (`quality`), an item level, a power ([`Power`]: a rule only a unique carries), and a line of
 //! lore. Content places one as `unique:ID` wherever it names objects (a pile, a legend's
@@ -24,9 +24,9 @@ use std::collections::BTreeMap;
 /// How a placement names a unique item: `unique:widowmaker`.
 pub const UNIQUE: &str = "unique:";
 
-/// What a unique item does besides its affixes, while it is worn or wielded (spec §8 "Magic
-/// items"): a rule, read in one place each. A new power is a variant here, its one read, its
-/// phrase (the unique's `phrase`), and a wiki word (`xtask/src/wiki/uniques.rs`).
+/// What a unique item does besides its affixes, while it is worn or wielded: a rule, read in one
+/// place each. A new power is a variant here, its one read, its phrase (the unique's `phrase`), and
+/// a wiki word (`xtask/src/wiki/uniques.rs`).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Power {
     /// Its hits cause a status, by a chance (`{ inflict = "poisoned", chance = 100, severity =

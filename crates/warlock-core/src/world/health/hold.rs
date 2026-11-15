@@ -1,4 +1,4 @@
-//! Holds (spec §8 "Status effects"; #431): a status with a `hold` ([`crate::content::Hold`],
+//! Holds (#431): a status with a `hold` ([`crate::content::Hold`],
 //! Held) is one actor holding another fast. Its effect's `by` is the holder (saved with the
 //! effect, as every cause is).
 //!

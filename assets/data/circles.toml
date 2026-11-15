@@ -1,7 +1,7 @@
-# Spell circles (spec §4.8 "Spell circles", docs/design/buff-circles.md): the school of every
+# Spell circles (docs/design/buff-circles.md): the school of every
 # buff's and hex's status, and each school's colour. The renderer draws a circle about every actor
-# the player sees with a circled status, in its first effect's school's colour. One rule reads it
-# (spec §8 "Status effects"): a circled status without a light of its own sheds its school's,
+# the player sees with a circled status, in its first effect's school's colour. One rule reads it: a
+# circled status without a light of its own sheds its school's,
 # `circle_<school>` in lights.toml, so the rows' statuses and schools are in the content
 # fingerprint.
 #

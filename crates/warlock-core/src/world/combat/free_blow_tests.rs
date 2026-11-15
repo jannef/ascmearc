@@ -1,4 +1,4 @@
-//! Free blows in the world (spec §8 "Free blows"): a cleave after a kill (the next hostile
+//! Free blows in the world: a cleave after a kill (the next hostile
 //! clockwise, one an attack, more with great cleave), a riposte after a blow the Parry turned
 //! (never answered by another), an opportunist's blow at a hostile stepping away (before it
 //! steps), the player's blows in another's turn said after what they answer, and none of it

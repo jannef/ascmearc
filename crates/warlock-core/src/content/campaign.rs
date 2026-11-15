@@ -1,4 +1,4 @@
-//! Campaigns (spec §3, `docs/dev/campaign.md`): worlds that share the engine's data and nothing
+//! Campaigns (`docs/dev/campaign.md`): worlds that share the engine's data and nothing
 //! else.
 //!
 //! A campaign is a directory `campaigns/<id>/` with a `campaign.toml` ([`CampaignDef`]) and what

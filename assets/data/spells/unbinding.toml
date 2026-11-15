@@ -11,7 +11,7 @@ shape = "self"
 resolution = "auto"
 effect = { cures = ["ill_wished", "weakened", "sluggish", "drowsy", "webbed", "frightened", "transfixed", "pinned"] }
 
-# What rereading its grimoire adds, rank by rank (spec §8 "Spells": "Ranks"; README.toml
+# What rereading its grimoire adds, rank by rank (README.toml
 # `[spell.ranks]`). A cleanse has nothing to roll or reach, so its ranks make it cheaper and
 # quicker. At rank 10: half the mana and 60 percent off the casting time.
 [spell.ranks]

@@ -28,7 +28,7 @@ immune = ["poison"]
 weapon_skills = { axes = 6 }
 on_eat = { message = "Grave-cold meat, long gone bad.", vomit = 80, harm = "1d4" }
 blood = "#2a3440"
-# Its gear (spec §8 "Creature gear"): the axe it was laid in the mound with.
+# Its gear: the axe it was laid in the mound with.
 [[creature.gear]]
 chance = 50
 one_of = ["great_axe"]

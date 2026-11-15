@@ -22,7 +22,7 @@ ambient = [30, 24, 48, 0]
 temperature = 12
 # Its walls give no ore a gnome would want: gems and stone (data/mining.toml).
 ores = []
-# Danger 22 on the first floor to 25 on the fourth (spec §7 "Danger levels"), as deep as
+# Danger 22 on the first floor to 25 on the fourth, as deep as
 # Dēopgang's lowest floors above Gimmwīc. Only the earth's own: its elementals, the basilisk
 # whose eyes turn flesh to stone, and the stone giant and stone troll of the deep rock. Nothing
 # strays in from outside.

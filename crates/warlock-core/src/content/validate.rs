@@ -42,7 +42,7 @@ impl Content {
         }
         for level in self.levels.values() {
             let campaign = self.level_campaign(&level.id).unwrap_or_default();
-            // Nothing leads into a Pit but a portal (spec §7 "The Pits").
+            // Nothing leads into a Pit but a portal.
             let pit = (level.stairs.iter().filter_map(|l| l.to.as_deref()))
                 .chain(level.hidden.values().filter_map(|h| h.to.as_deref()))
                 .find(|to| self.is_portal_floor(to));
@@ -76,7 +76,7 @@ impl Content {
                 }
             }
         }
-        // A way up (spec §7 "Ways up"): `below` names a level of another, bounded branch of the
+        // A way up: `below` names a level of another, bounded branch of the
         // same campaign.
         for def in self.dungeons.values() {
             let Some(below) = &def.below else { continue };
@@ -97,7 +97,7 @@ impl Content {
                 ));
             }
         }
-        // A bottom (spec §7 "Dungeon branches"): `bottom` names a hand-made level of the same
+        // A bottom: `bottom` names a hand-made level of the same
         // campaign whose `<` leads back to the deepest level.
         for def in self.dungeons.values() {
             let Some(bottom) = &def.bottom else { continue };
@@ -151,8 +151,8 @@ impl Content {
         Ok(())
     }
 
-    /// Checks the classes' and prestige classes' level tables against the talents (spec §8
-    /// "Class abilities"): what they name resolves; and a class's own slots name a class.
+    /// Checks the classes' and prestige classes' level tables against the talents: what they name
+    /// resolves; and a class's own slots name a class.
     pub(super) fn check_class_tables(&self) -> Result<(), ContentError> {
         // A slot of one class's (the aristocrat's extra rings) names a class there is.
         if !self.classes.is_empty()

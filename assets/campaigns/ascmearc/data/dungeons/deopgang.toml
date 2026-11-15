@@ -22,9 +22,9 @@ locks_per_depth = 2
 loot = [3, 6]
 key = "brass_key"
 temperature = 12
-# More chests than the shared odds: the deep's old caches (spec §8 "Chests").
+# More chests than the shared odds: the deep's old caches.
 chests = { chance = 40, count = [1, 2] }
-# Danger 14 on the first floor to 24 on the eleventh (spec §7 "Danger levels"), the Ascmearc's
+# Danger 14 on the first floor to 24 on the eleventh, the Ascmearc's
 # deepest tier after Fyrdelf (5 to 16) and Ūtgang (13 to 15). The folk of the deep: the duergar
 # who dig toward the gnomes' veins, the drow who raid them, the elementals of stone and water in
 # the rock, the trolls and the stone giant who live in the dark, the knockers and the dead of old
@@ -50,7 +50,7 @@ population = [
 # (docs/design/monster-dread.md §8), one draw in 50 (the default is one in 100).
 dread_one_in = 50
 
-# The deep-gnome traders (spec §7 "Shops"): on the gallery floors, about one in two with a fitting
+# The deep-gnome traders: on the gallery floors, about one in two with a fitting
 # room has a store of theirs. Shops stand on rooms levels only, so the wild deep has none.
 shops = { chance = 50, kinds = ["general_store"], keeper = "deep_gnome_trader", names = [
     "Jago", "Peder", "Kitto", "Locryn", "Mawgan", "Tristan",

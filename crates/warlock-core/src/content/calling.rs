@@ -1,4 +1,4 @@
-//! Callings (a campaign's `data/callings/`, one file per calling, spec §8 "Prestige classes"):
+//! Callings (a campaign's `data/callings/`, one file per calling):
 //! the **door** into a prestige class, never the deed. A calling names the prestige class, the
 //! base classes it is open to (`from`), the total level it asks (`level`, at least each base's
 //! `max_level`), and what is said when the character is called. How a world makes the calling
@@ -29,7 +29,7 @@ struct CallingSpec {
     message: String,
 }
 
-/// A calling (spec §8 "Prestige classes"): its id is its prestige class's.
+/// A calling: its id is its prestige class's.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct CallingDef {
     /// The prestige class it opens (`data/prestige/`), and its own id.
@@ -110,7 +110,7 @@ fn resolve(
 }
 
 impl Content {
-    /// The callings (spec §8 "Prestige classes"), in table order.
+    /// The callings, in table order.
     pub fn callings(&self) -> &[CallingDef] {
         &self.callings
     }

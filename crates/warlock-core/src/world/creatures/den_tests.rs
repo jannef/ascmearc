@@ -1,4 +1,4 @@
-//! Teeming dens (spec §7 "Special rooms"; `world/creatures/den.rs`, `mapgen/den.rs`): sleepers take no
+//! Teeming dens (`world/creatures/den.rs`, `mapgen/den.rs`): sleepers take no
 //! turn and never wake by time, a quiet noise wakes no one, a loud one wakes the near ones and
 //! their cries the rest, a blow wakes, sneak attacks land on sleepers, Hush-foot, sleepers count
 //! toward the spawn cap, and a generated den's sleepers and hoard.

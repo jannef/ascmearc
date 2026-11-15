@@ -1,4 +1,4 @@
-//! Rain on the free-glyph layer (spec §4.8 "Weather"): faint drops falling on every visible cell
+//! Rain on the free-glyph layer: faint drops falling on every visible cell
 //! under the open sky, small splashes on open ground, and rings on still water, while it rains
 //! where the player is.
 //!
@@ -232,7 +232,7 @@ mod tests {
     use warlock_core::{Action, World};
 
     /// A walled garden under the sky: grass, a pond, a roofed porch (the player on it, by a lamp), a wall, and
-    /// a tree; in high summer, so the pond is open water (spec §5 "Ice").
+    /// a tree; in high summer, so the pond is open water.
     fn garden() -> World {
         let mut files = warlock_assets::files();
         files.insert(

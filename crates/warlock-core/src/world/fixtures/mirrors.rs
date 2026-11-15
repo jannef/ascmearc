@@ -1,4 +1,4 @@
-//! Halls of mirrors (spec §7 "Special rooms"; `docs/dev/special-rooms.md`): every actor inside
+//! Halls of mirrors (`docs/dev/special-rooms.md`): every actor inside
 //! a room whose effect holds `mirrors` has that many **images**, reflections on free floor of the
 //! room. Where they stand is no draw: a hash of the level, the turn, the actor, and the image's
 //! index ([`WorldState::images`]), so the rules and perception compute the same images and the

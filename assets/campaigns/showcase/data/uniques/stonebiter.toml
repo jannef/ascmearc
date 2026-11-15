@@ -1,4 +1,4 @@
-# The test world's unique item (spec §8 "Magic items"): a dagger left in the quarry beside the
+# The test world's unique item: a dagger left in the quarry beside the
 # pick-axe, so the item description of a unique (its power and lore) has a case to show
 # (`crates/warlock/src/ui/screen_snapshots.rs`). The campaigns' own uniques are placed on their
 # owners.

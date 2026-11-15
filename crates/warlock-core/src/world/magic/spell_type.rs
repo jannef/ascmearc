@@ -170,7 +170,7 @@ impl World {
     }
 
     /// The shut doors at `doors` break, with no sturdiness to it: the lock and any trap go with
-    /// the door, sprung at no one, as a blown chest's do (spec §8 "Doors").
+    /// the door, sprung at no one, as a blown chest's do.
     pub(super) fn blast_doors(&mut self, doors: &[Pos], events: &mut Vec<Event>) {
         for &p in doors {
             let level = self.state.current_mut();

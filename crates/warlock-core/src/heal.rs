@@ -1,4 +1,4 @@
-//! What the Heal skill treats (spec §8 "Skills": the Heal ability, #549): the rules of which of
+//! What the Heal skill treats (the Heal ability, #549): the rules of which of
 //! an actor's ailments may be treated now. The treating itself (the check, what comes of it, the
 //! time) is `world/health/heal.rs`.
 //!

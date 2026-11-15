@@ -1,4 +1,4 @@
-# A potion of seeing (spec §8 "Potions"; docs/design/monster-dread.md §5.11): five minutes of
+# A potion of seeing (docs/design/monster-dread.md §5.11): five minutes of
 # Seeing, the invisible and the shadowy plain to the drinker's eyes. Vision potions are violet.
 [[object]]
 id = "potion_of_seeing"

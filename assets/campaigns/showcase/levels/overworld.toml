@@ -1,4 +1,4 @@
-# The overworld (spec §3): the Wildlands at map scale, 100x50. One step is a journey: it takes
+# The overworld: the Wildlands at map scale, 100x50. One step is a journey: it takes
 # the terrain's `travel_minutes` (road 20, plains 45, grassland 50, forest 90, hills 120, swamp
 # and dense forest 150). Mountains (M) and water are impassable: the river Wendle (arrows, the
 # way it flows) and the deep water of Silvermere, the ponds, and the Grey Sea (w); the one bridge

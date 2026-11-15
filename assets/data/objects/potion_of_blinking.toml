@@ -1,4 +1,4 @@
-# A potion of blinking (spec §8 "Potions", the potions wave 2 design §4.2): the drinker is
+# A potion of blinking (the potions wave 2 design §4.2): the drinker is
 # elsewhere on the level at once, as a teleport trap moves its victim. No marks: it is a gamble
 # one chooses. The unseen and the unplaced are opal.
 [[object]]

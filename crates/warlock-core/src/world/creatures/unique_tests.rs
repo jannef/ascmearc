@@ -1,4 +1,4 @@
-//! Unique items (spec §8 "Magic items": "Unique items"): made from their table, rare with a set
+//! Unique items: made from their table, rare with a set
 //! name and affixes; hidden until identified, power and lore too; placed once in all content;
 //! and their powers, each read in its one place: Inflict (`World::after_blow`, through the
 //! attack's profile), Vision (the eyes), and Ward (`World::afflict`).

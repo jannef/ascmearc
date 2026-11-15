@@ -1,4 +1,4 @@
-//! Taming (`tame.rs`; spec §8 "Allies": Tame): who may try (trained, no companion), which beasts
+//! Taming (`tame.rs`; Tame): who may try (trained, no companion), which beasts
 //! (tameable, not hostile or unaware, any level), the channel and what stops it, the food, the
 //! check's modifier and difficulty, what a tamed beast becomes, the refusals' cost, the mark,
 //! the menu's reason, and a replay.

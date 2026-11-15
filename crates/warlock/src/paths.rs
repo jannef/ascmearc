@@ -1,4 +1,4 @@
-//! Where the game's files live (spec §7): the one place that decides, so settings, saves,
+//! Where the game's files live: the one place that decides, so settings, saves,
 //! snapshots, and logs always agree, and `--paths` and Settings > Files can say why.
 //!
 //! Precedence, per location: an explicit `--config-dir` / `--save-dir` (for its own folder),

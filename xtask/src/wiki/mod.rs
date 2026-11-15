@@ -794,7 +794,7 @@ mod tests {
             "creature-senses.md",
             "| Deer | 1300 (4.6 seconds) | 12 cells, Normal | 2 | 50 |",
         );
-        // The companion's nose and the growth table through the rules (spec §8 "Allies").
+        // The companion's nose and the growth table through the rules.
         has(
             "creature-senses.md",
             "| Hound | 1200 (5 seconds) | 10 cells, Low-light | 20 | 40 |",

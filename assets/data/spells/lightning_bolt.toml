@@ -1,4 +1,4 @@
-# Lightning bolt (spec §8 "Spells", the first spell list): a line of lightning through everyone in
+# Lightning bolt (the first spell list): a line of lightning through everyone in
 # it; its ladder of Intelligence ([spell.grows]) adds dice.
 [[spell]]
 id = "lightning_bolt"
@@ -24,7 +24,7 @@ noise = { sound = "thunder", loudness = 120 }
 damage = "intelligence 13 6d6, 16 8d6, 19 10d6, 25 10d6+2"
 length = "willpower 14 9, 18 10, 22 11, 26 12"
 
-# What rereading its grimoire adds, rank by rank (spec §8 "Spells": "Ranks"; README.toml
+# What rereading its grimoire adds, rank by rank (README.toml
 # `[spell.ranks]`): the bolt reaches farther above all: at rank 10 four cells longer,
 # 1s rolled again, +2 on the roll, a die more, every die a side bigger, and a fifth off the
 # mana.

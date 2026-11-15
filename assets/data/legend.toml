@@ -11,7 +11,7 @@
 "~" = "water"
 "_" = "altar"
 
-# Running water, drawn as arrows pointing the way it flows (presentation-only; spec §7).
+# Running water, drawn as arrows pointing the way it flows (presentation-only).
 # `flow` is the direction; `flow_speed` the speed in percent (default 100): double arrows run
 # twice as fast.
 "↑" = { terrain = "running_water", flow = "N" }

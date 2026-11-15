@@ -1,4 +1,4 @@
-# A forgotten altar (spec §7 "Special rooms"): ADOM's pool with another flavour. Pray beside it;
+# A forgotten altar: ADOM's pool with another flavour. Pray beside it;
 # its glow's colour is its hidden side. data/outcomes/forgotten_altar.toml has what a prayer draws.
 [[effect]]
 id = "altar"

@@ -1,4 +1,4 @@
-//! The ranger's Focus (spec §8 "Resources"; the progression design §4.18, R2, #250): Rapid shot
+//! The ranger's Focus (the progression design §4.18, R2, #250): Rapid shot
 //! grants it for good, a shot spends 2 of it for a tenth less time, and Volley costs 6 of it
 //! instead of a cooldown.
 

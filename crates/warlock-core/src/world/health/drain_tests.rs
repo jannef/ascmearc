@@ -1,4 +1,4 @@
-//! Drains (spec §8 "Stats": "Drain"; #382): a hit with a draining touch makes its target check,
+//! Drains (#382): a hit with a draining touch makes its target check,
 //! and on a failure takes points off a stat's score for good (the potential stays), never below
 //! the floor, never killing; the player is told in words; talents raise the check; a temple's
 //! mending gives the points back; all of it is saved, hashed, and replayed.

@@ -1,4 +1,4 @@
-//! Character creation's Name step (spec §6 "New run", §8 "Character creation"): after the class,
+//! Character creation's Name step: after the class,
 //! before the summary, a text field for the character's name: the game's text field
 //! ([`TextField`]) of [`MAX_NAME`] characters, with Random on top. Held keys type and erase
 //! again, but never accept.

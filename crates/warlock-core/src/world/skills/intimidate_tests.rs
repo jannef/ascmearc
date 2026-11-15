@@ -1,4 +1,4 @@
-//! Intimidate (spec §8 "Skills": Intimidate; #868; `world/skills/intimidate.rs`): the skill's use at one
+//! Intimidate (Intimidate; #868; `world/skills/intimidate.rs`): the skill's use at one
 //! foe, on War cry's check; its degrees by the ladder of `data/rules/intimidate.toml`; its
 //! refusals, with no time and no draw; a turn and a voice; each threat a mark of Intimidate.
 

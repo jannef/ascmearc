@@ -1,4 +1,4 @@
-# The moons (spec §5 "Moonlight", §7). Each `[[moon]]` walks the sun's path, trailing the sun by
+# The moons. Each `[[moon]]` walks the sun's path, trailing the sun by
 # its phase of a day: a new moon rises with the sun, a full moon at sunset, standing high at
 # midnight. Its light falls on every cell under the open sky (not roofed) that no taller terrain
 # shades from it, and casts shadows like the sun's. Several moons add up their light.

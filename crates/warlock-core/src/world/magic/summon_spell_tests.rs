@@ -1,4 +1,4 @@
-//! Player summons (spec §8 "Allies": "Summons", `summon_spell.rs`): the spell kind's checks, the
+//! Player summons (`summon_spell.rs`): the spell kind's checks, the
 //! call, its count, cap, and time, the oldest giving way, the global cap, the `ally_mod` reads,
 //! the draw's bias, a slain summon's nothing, `study_difficulty`, saves, and determinism. On the
 //! built-in content's spell-circle hall (peaceful kobolds) with fixture spells and talents, and

@@ -40,7 +40,7 @@ damage_type = "piercing"
 range = 8
 verb = "shoots"
 on_hit = [{ status = "drowsy", chance = 20, severity = 1 }, { status = "poisoned", chance = 15, severity = 2 }]
-# Its gear (spec §8 "Creature gear"): armour and coins, never a weapon (its venom rides on
+# Its gear: armour and coins, never a weapon (its venom rides on
 # its natural attack, which a wielded weapon would replace).
 [[creature.gear]]
 chance = 70

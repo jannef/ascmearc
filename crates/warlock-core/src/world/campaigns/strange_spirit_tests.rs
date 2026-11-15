@@ -1,10 +1,9 @@
-//! The Strange Spirit and the oath (#879; docs/design/prestige-classes.md §7; spec §8 "Prestige
-//! classes"): the Ascmearc's door into the Hunter. The spirit's entries are drawn only while the
-//! calling is open (a bard whose class is full, not yet called); it speaks to the good alone; its
-//! one topic, the oath, calls the bard and sends the spirit away; killed, it leaves nothing but the stain on the killer, and the
+//! The Strange Spirit and the oath (#879; docs/design/prestige-classes.md §7): the Ascmearc's door
+//! into the Hunter. The spirit's entries are drawn only while the calling is open (a bard whose
+//! class is full, not yet called); it speaks to the good alone; its one topic, the oath, calls the
+//! bard and sends the spirit away; killed, it leaves nothing but the stain on the killer, and the
 //! road may bring it again. End to end by replay, from a new bard to Hunter 1. The test world's
-//! door, the hermit's topic, too. The bard's cap and the callings' level are the shipped ones, 30
-//! (#874).
+//! door, the hermit's topic, too. The bard's cap and the callings' level are the shipped ones, 30 (#874).
 
 use crate::action::parse_actions;
 use crate::alignment::Score;

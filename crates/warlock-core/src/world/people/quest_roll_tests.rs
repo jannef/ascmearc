@@ -1,4 +1,4 @@
-//! Rolled quests and the giving rules' named monsters (spec §8 "Quests", #422; the guild design
+//! Rolled quests and the giving rules' named monsters (#422; the guild design
 //! §5, §8.4, §11): a roll drawn as the quest is given, the same for the same seed and state,
 //! never drawn again, kept by saves and replays; only branches the player can enter are drawn;
 //! kills before the giving do not count; a variant reveals its own location only; the dev

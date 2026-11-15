@@ -1,4 +1,4 @@
-# The arena (spec §3): factions and creature behavior (M10). A kobold war band (k: kobolds with
+# The arena: factions and creature behavior (M10). A kobold war band (k: kobolds with
 # torches, a: their archer, s: their shaman) and a pack of giant rats (r) face each other across a
 # fire pit (B) in a pit lit by wall torches (t); kobolds hunt rats and rats fight back, while the
 # cave bats (1, 2) and a cave beetle (3), wildlife, go their ways untouched. Everyone hostile to
@@ -14,7 +14,7 @@
 # West: the kobolds' camp behind two doors, which kobolds open and rats do not. East: the rat
 # warren, open to the pit through three gaps. `<` leads back up to the hub's stairs nook.
 arrival = "The clash of arms echoes off the stone."
-# What the fallen drop is rolled at this item level (spec §8 "Magic items").
+# What the fallen drop is rolled at this item level.
 item_level = 2
 name = "The Arena"
 ambient = [0, 0, 0, 0]

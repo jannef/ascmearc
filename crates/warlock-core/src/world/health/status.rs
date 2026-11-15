@@ -1,4 +1,4 @@
-//! Status effects and passive healing in the world (spec §8 "Status effects", "Healing"); the
+//! Status effects and passive healing in the world; the
 //! rules of one actor's effects are [`crate::status`], the statuses data
 //! ([`crate::content::StatusDef`]).
 //!
@@ -24,8 +24,8 @@
 //!   player rests (`[healing] resting`) and three times as fast in a sanctuary (a special
 //!   room's `regen`); slowed or stopped by the slowest `regen` of its statuses (bleeding stops
 //!   it, poison and disease halve it) and of the diseases that show (marsh ague slows it more),
-//!   and stopped while the player is Starving (spec §8 "Hunger"); faster with regeneration
-//!   affixes on what it wears and wields (spec §8 "Magic items").
+//!   and stopped while the player is Starving; faster with regeneration
+//!   affixes on what it wears and wields.
 //! - **Hunger**: the player's nutrition burns as they live through the time, and starving costs
 //!   them hit points ([`World::digest`], `hunger.rs`); each change of their hunger state is a
 //!   moment of its own, so healing stops exactly when they start to starve.
@@ -72,12 +72,12 @@ struct Moment {
 impl World {
     /// Actor `id` comes to suffer `severity` degrees of status `status`, caused by `by` (if
     /// anyone): added to what it has by the status's stacking rule. A status that is a kind of
-    /// damage (poison; spec §8 "Damage types") meets the actor's resistance to it: an immune
+    /// damage (poison) meets the actor's resistance to it: an immune
     /// actor never suffers it, and a resistance takes its share off the dose (rounded to the
     /// nearest, half up; a dose shrunk to nothing is no dose). The player is told when it
-    /// begins. A unique item the actor wears that wards off the status (spec §8 "Magic items":
-    /// Ward) refuses it, and the player is told so. With Hunter's bond a buff on the player or
-    /// their companion lands on the other too (`bond.rs`).
+    /// begins. A unique item the actor wears that wards off the status (Ward) refuses it, and the
+    /// player is told so. With Hunter's bond a buff on the player or their companion lands on the
+    /// other too (`bond.rs`).
     pub(crate) fn afflict(
         &mut self,
         id: ActorId,
@@ -99,7 +99,7 @@ impl World {
         by: Option<ActorId>,
         events: &mut Vec<Event>,
     ) {
-        // Immune by its type (spec §8 "Status effects": an animated thing never bleeds), and a
+        // Immune by its type (an animated thing never bleeds), and a
         // wound's status (Bleeding) takes only where there is blood: never on the bloodless.
         let wound = self.content.status(status).wound.is_some();
         if (self.state.actors.get(&id)).is_some_and(|a| {
@@ -108,11 +108,11 @@ impl World {
         }) {
             return;
         }
-        // Chest-wise (spec §8 "Mimics"): a mimic's grip never holds it.
+        // Chest-wise: a mimic's grip never holds it.
         if self.content.status(status).hold.is_some() && self.slips(id, by) {
             return;
         }
-        // A unique item's Ward (spec §8 "Magic items"): never taken, and the player is told.
+        // A unique item's Ward: never taken, and the player is told.
         let ward = (self.state.actors.get(&id))
             .and_then(|a| a.ward(&self.content, status))
             .map(str::to_string);
@@ -240,7 +240,7 @@ impl World {
             return;
         }
         self.wounded(target, blow, Some(attacker), events);
-        // Staggering blow (spec §8 "Talents"): a critical confirmed in melee staggers.
+        // Staggering blow: a critical confirmed in melee staggers.
         let critical = matches!(blow.strike, Strike::Hit { critical: true });
         let staggers = (self.actor_or_fallen(attacker))
             .and_then(|a| a.talent_mods(&self.content).offence.critical_status);
@@ -298,10 +298,9 @@ impl World {
         }
     }
 
-    /// `target` took `blow`, dealt by `by` (none for a trap's, spec §8 "Traps"), and lives: the
+    /// `target` took `blow`, dealt by `by` (none for a trap's), and lives: the
     /// statuses its wound causes (bleeding from a big hit or a confirmed critical, of a kind
-    /// that wounds that way: slashing and piercing bleed, a club and a fireball do not; spec §8
-    /// "Damage types").
+    /// that wounds that way: slashing and piercing bleed, a club and a fireball do not).
     pub(in crate::world) fn wounded(
         &mut self,
         target: ActorId,
@@ -315,8 +314,8 @@ impl World {
         };
         let critical = matches!(blow.strike, Strike::Hit { critical: true });
         let big = combat::big_hit(blow.damage, victim.max_hp(&content));
-        // Clotting (spec §8 "Talents"): a big hit wounds no more, a critical a degree less;
-        // Thin-skinned (spec §8 "Birth sign"): a big hit that wounds, degrees more.
+        // Clotting: a big hit wounds no more, a critical a degree less;
+        // Thin-skinned: a big hit that wounds, degrees more.
         let mods = victim.talent_mods(&content);
         let (clots, thin) = (
             mods.vigour.clotting,
@@ -355,20 +354,19 @@ impl World {
         }
     }
 
-    /// How fast actor `id` gets hit points back now, in percent of the normal pace (spec §8
-    /// "Healing"): the slowest `regen` of its statuses and of the diseases that show (100
+    /// How fast actor `id` gets hit points back now, in percent of the normal pace: the slowest `regen` of its statuses and of the diseases that show (100
     /// without any), times the resting bonus while the player rests, times the `regen` of a
-    /// special room it stands in (a sanctuary: three times; spec §7 "Special rooms"), times what
-    /// the regeneration affixes of what it wears and wields add (spec §8 "Magic items": +50 % is
-    /// half again as fast), with its talents' (Healthy; Sun-blessed's under the open sun). The one place that decides it. A Starving player gets none back
-    /// (spec §8 "Hunger"); disease (#139) slows it through Diseased's `regen` and its own.
+    /// special room it stands in (a sanctuary: three times), times what
+    /// the regeneration affixes of what it wears and wields add (+50 % is
+    /// half again as fast), with its talents' (Healthy; Sun-blessed's under the open sun). The one
+    /// place that decides it. A Starving player gets none back; disease (#139) slows it through Diseased's `regen` and its own.
     #[cfg(test)]
     pub(crate) fn healing_rate(&self, id: ActorId) -> u32 {
         self.healing_rate_at(id, self.state.time)
     }
 
     /// [`World::healing_rate`] at `now`, a moment of [`World::live`]: the player heals the
-    /// flavour's `birthday_healing` percent as fast on their birthday (spec §8 "Birth sign").
+    /// flavour's `birthday_healing` percent as fast on their birthday.
     pub(crate) fn healing_rate_at(&self, id: ActorId, now: GameTime) -> u32 {
         let Some(actor) = self.state.actors.get(&id) else {
             return 0;
@@ -391,7 +389,7 @@ impl World {
             statuses
         });
         if self.resting && id == self.state.player {
-            // Resting's pace, and half again with Fast healer (spec §8 "Talents").
+            // Resting's pace, and half again with Fast healer.
             let faster = actor.talent_mods(&self.content).vigour.resting_percent;
             let resting = u32::from(self.content.healing().resting);
             let resting = resting * u32::try_from((100 + faster).max(0)).unwrap_or(0) / 100;
@@ -466,7 +464,7 @@ impl World {
     /// (the player) its stats get their daily check, and the food in its pack rots away, each at the moment it happens, until the time is up or it
     /// dies.
     fn live(&mut self, id: ActorId, start: GameTime, seconds: u64, events: &mut Vec<Event>) {
-        // Appraise's hourly look at what the player carries (spec §8 "Skills").
+        // Appraise's hourly look at what the player carries.
         if id == self.state.player {
             self.appraise_hours(start, seconds);
         }
@@ -570,7 +568,7 @@ impl World {
             passed += step;
             heal(actor, &content, step, rate);
             mana::regain(actor, &content, step, mana_rate);
-            // A resource's point gained or lost (spec §8 "Resources"); one that decays to 0 and
+            // A resource's point gained or lost; one that decays to 0 and
             // ends there ends now, and the status it brought with it (the rage's Raging).
             let mut gone = Vec::new();
             for ended in crate::resource::pass(&mut actor.resources, &content, &paces, step) {
@@ -583,7 +581,7 @@ impl World {
                 by: None,
                 bled: false,
             };
-            // Unstoppable (spec §8 "Class abilities"): while raging, some statuses tick nothing.
+            // Unstoppable: while raging, some statuses tick nothing.
             let numb: &[StatusId] = match (
                 &talents.martial.unstoppable,
                 talents.martial.rage_status(&content),
@@ -665,7 +663,7 @@ impl World {
             self.say(format!("`{id}` comes of a disease: try `infect:DISEASE`."));
             return Spent::Nothing;
         }
-        // A status a resource brings lasts while that is held (spec §8 "Resources"): Raging
+        // A status a resource brings lasts while that is held: Raging
         // comes of Rage.
         if let Some(r) = (self.content.resources().iter()).find(|r| r.status == Some(status)) {
             self.say(format!(

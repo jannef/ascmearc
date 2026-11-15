@@ -1,4 +1,4 @@
-//! Forgotten altars and prayer (spec §7 "Special rooms"; `world/fixtures/pray.rs`, `world/fixtures/outcome.rs`):
+//! Forgotten altars and prayer (`world/fixtures/pray.rs`, `world/fixtures/outcome.rs`):
 //! the Here group lists Pray only beside an altar, a broken prayer gives nothing, the lean by
 //! side and band (Pious), the hooks, the shares of the draw, exhaustion, the explosion, the
 //! deed, and a spent altar kept as terrain alone.

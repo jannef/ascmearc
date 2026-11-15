@@ -3,7 +3,7 @@ id = "intimidate"
 name = "Intimidate"
 description = "Making others back down with a look or a threat."
 kind = "action"
-# War cry's (#844; spec §8 "Class abilities", the berserker's at 25): marked by "intimidate" (a
+# War cry's (#844, the berserker's at 25): marked by "intimidate" (a
 # war cry roared or a foe threatened (rules/intimidate.toml, the skill's use, #868), whatever comes of
 # it). Effect "intimidate": points added to the difficulty of
 # the Willpower check the cry and a threat ask of every hostile that hears and sees you, +8 at

@@ -1,4 +1,4 @@
-//! Working an item at an anvil (spec §7 "Special rooms"): the odds of an attempt, computed from
+//! Working an item at an anvil: the odds of an attempt, computed from
 //! `data/rules/temper.toml` and the 2d12 rules, and the grades of a worked item with their worth,
 //! from `magic/worked.rs`.
 

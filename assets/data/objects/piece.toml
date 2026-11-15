@@ -1,4 +1,4 @@
-# A piece of some material (spec §7 "Objects and materials"; the designs:
+# A piece of some material (the designs:
 # docs/design/animated-objects.md §9.2, docs/design/professions.md §3): what a broken item falls
 # to, by the parts it was made of (crate::piece::break_up), and the material stock salvage gives
 # and recipes take. One object for every material with a group, as the loose gem is one object

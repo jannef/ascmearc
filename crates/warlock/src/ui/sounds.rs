@@ -1,7 +1,7 @@
-//! Heard sounds on the map (spec §5 "Hearing", §4.8): a faint marker on the free-glyph layer at
+//! Heard sounds on the map: a faint marker on the free-glyph layer at
 //! the rough place of each sound the player heard during the last turn from a source they do not
 //! see (`PerceptionView::sounds`). It lasts until the next turn. The player's own voice, thrown
-//! to a cell they see (`Event::VoiceThrown`, spec §5 "Hearing"), is marked where it sounded the
+//! to a cell they see (`Event::VoiceThrown`), is marked where it sounded the
 //! same way, as a loud sound: they made it, so they hear nothing, but they know where it went.
 //!
 //! The marker is information, so it is always drawn: still, faint, and fainter for fainter

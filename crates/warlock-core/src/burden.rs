@@ -1,4 +1,4 @@
-//! Burden (spec §8 "Burden"): how much an actor can carry, and what carrying more costs it.
+//! Burden: how much an actor can carry, and what carrying more costs it.
 //!
 //! **Limit**: 1.5 kg × (2 × Strength + Toughness) × its size's `carry` percent (small races and
 //! creatures 75 %; `data/sizes.toml`), from the scores, never the modifiers: a St 10 To 10 human
@@ -16,7 +16,7 @@
 //! - **moving**: Overloaded, it cannot move at all ("You carry too much to move."); it can do
 //!   anything else (drop things, pick things up, fight, wait), as slowly as when Strained.
 //!
-//! Magic items (spec §8 "Magic items") count by their scores and weight: a Strength affix raises
+//! Magic items count by their scores and weight: a Strength affix raises
 //! the limit with the score, a carrying affix adds its kilograms, and a lighter item weighs less.
 //!
 //! A race may shrug off Burdened (dwarves, `ignores_burdened`): Burdened costs it nothing, and
@@ -96,7 +96,7 @@ impl Burden {
         self.slow_eased(price, 0)
     }
 
-    /// [`Burden::slow`] for an actor whose skills (balance; spec §8 "Skills") take `ease`
+    /// [`Burden::slow`] for an actor whose skills (balance) take `ease`
     /// percent (0 to 100) off the slowdown: Burdened ×1.25 becomes ×1.10 with 60 off, Strained
     /// ×1.5 becomes ×1.2. Rounded up like the rest.
     pub fn slow_eased(self, price: i64, ease: i32) -> i64 {
@@ -148,7 +148,7 @@ pub const MOVE_REFUSED: &str = "You carry too much to move.";
 /// What a player is told who could move but would be overloaded where they step (a heavy hall).
 pub const HEAVY_REFUSED: &str = "You carry too much to go in there.";
 
-/// What an actor carries against what it can (spec §8 "Burden").
+/// What an actor carries against what it can.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
 pub struct Load {
     /// Everything it carries, worn and wielded things included, in grams.
@@ -223,7 +223,7 @@ pub fn load(actor: &Actor, race: Option<&RaceDef>, content: &Content, room: u32)
         None => (content.creature(actor.creature).size, false),
     };
     // Magic items that raise Strength or Toughness raise the limit; a status effect that lowers
-    // either, or hunger sapping Strength (Weak, spec §8 "Hunger"), lowers it.
+    // either, or hunger sapping Strength (Weak), lowers it.
     let stats = actor.effective_stats(content);
     let base = limit(
         stats.score(Stat::Strength),
@@ -234,7 +234,7 @@ pub fn load(actor: &Actor, race: Option<&RaceDef>, content: &Content, room: u32)
     // to it.
     let talents = actor.talent_mods(content);
     let base = TalentMods::scaled(base, talents.movement.carry_percent);
-    // Deep pockets (spec §8 "Class abilities"): coins weigh nothing.
+    // Deep pockets: coins weigh nothing.
     let coins = content.item_class_id("coins");
     let carried = match talents.movement.weightless_coins {
         false => weight_of(&actor.inventory, content),
@@ -247,7 +247,7 @@ pub fn load(actor: &Actor, race: Option<&RaceDef>, content: &Content, room: u32)
     Load {
         carried,
         limit: in_room(limit, room),
-        // Porter (spec §8) shrugs Burdened off as a dwarf does.
+        // Porter shrugs Burdened off as a dwarf does.
         ignores_burdened: ignores_burdened || talents.movement.ignore_burdened,
         // Beast of burden: Strained costs what Burdened costs others.
         stout: talents.movement.stout,
@@ -263,7 +263,7 @@ pub fn in_room(limit: u64, percent: u32) -> u64 {
     }
 }
 
-/// `limit` raised by `kg` kilograms that magic items add (spec §8 "Magic items"), kept a multiple
+/// `limit` raised by `kg` kilograms that magic items add, kept a multiple
 /// of 3 grams so the thirds stay exact.
 pub fn with_carry(limit: u64, kg: i32) -> u64 {
     let more = u64::try_from(kg.max(0)).unwrap_or(0) * 1000;

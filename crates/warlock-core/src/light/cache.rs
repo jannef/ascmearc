@@ -1,4 +1,4 @@
-//! Light sources per level and their cached shadow masks (spec §5, "Recomputation").
+//! Light sources per level and their cached shadow masks.
 //!
 //! A mask depends only on the source's position, its preset, and opacity within its radius, so
 //! it is computed once and reused until the source moves or a cell within its radius changes
@@ -271,7 +271,7 @@ impl LevelLights {
                     preset,
                 });
             }
-            // A glowing magic item it wears or wields (spec §8 "Magic items"): the brightest.
+            // A glowing magic item it wears or wields: the brightest.
             if !actor.equipment.is_empty()
                 && let Some(preset) = actor.mods(content).light
             {
@@ -281,8 +281,8 @@ impl LevelLights {
                     preset,
                 });
             }
-            // Its own light while a status of its lasts (spec §8 "Class abilities": Holy
-            // radiance), and the light it always sheds (spec §8 "Birth sign": Inner light).
+            // Its own light while a status of its lasts (Holy
+            // radiance), and the light it always sheds (Inner light).
             if !actor.talents.is_empty() {
                 let talents = actor.talent_mods(content);
                 if let Some((status, preset)) = talents.faith.radiance
@@ -295,7 +295,7 @@ impl LevelLights {
                     });
                 }
                 if let Some(preset) = talents.senses.inner_light {
-                    // A full moon brightens it (spec §8 "Birth sign", the flavour).
+                    // A full moon brightens it (the flavour).
                     let moon = (content.flavour())
                         .and_then(|f| f.inner_light_at(state.time, content.moons()));
                     let preset = moon.unwrap_or(preset);
@@ -306,7 +306,7 @@ impl LevelLights {
                     });
                 }
             }
-            // The light of a status that sheds one (Lit, spec §8 "Scrolls"; a spell circle's,
+            // The light of a status that sheds one (Lit; a spell circle's,
             // §4.8): the widest, the first in status order on a tie. A disguised mimic sheds
             // none: its disguise would glow.
             let radius = |id: LightId| content.light(id).radius;

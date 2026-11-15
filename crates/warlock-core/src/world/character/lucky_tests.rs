@@ -1,4 +1,4 @@
-//! The lucky days' gifts (spec §8 "Birth sign"; #269): the Phoenix rises once from the ashes,
+//! The lucky days' gifts (#269): the Phoenix rises once from the ashes,
 //! the Firebird rises whole; the Iron Scourge cleaves and the Gate Warden strikes those who
 //! leave, soaks more, and is less bowed by afflictions; the Deep One's melee hits hold a
 //! creature fast until they miss it, strike another, or move. A character born on another day

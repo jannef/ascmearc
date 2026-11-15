@@ -1,4 +1,4 @@
-# What an area spell does to the things lying in it (spec §8 "Spells": "Ruin"; #1100): a
+# What an area spell does to the things lying in it (#1100): a
 # Fireball burns the scrolls on the floor it reaches, a blast of frost shatters the potions. The
 # rules are `world/magic/ruin.rs`; this file is the table.
 #

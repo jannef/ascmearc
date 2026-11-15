@@ -1,6 +1,5 @@
 # The giant tribe (#457): the least of the giants, twice an ogre's height and half its wits. It
-# clubs what is near and hurls boulders at what is not (spec §8 "Ranged combat": "Creatures'
-# throws").
+# clubs what is near and hurls boulders at what is not.
 [[creature]]
 id = "hill_giant"
 level = 20

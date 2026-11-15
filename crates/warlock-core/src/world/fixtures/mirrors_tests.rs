@@ -1,4 +1,4 @@
-//! Halls of mirrors (spec §7 "Special rooms"; `world/fixtures/mirrors.rs`): the images of everyone inside,
+//! Halls of mirrors (`world/fixtures/mirrors.rs`): the images of everyone inside,
 //! where they stand, what the player sees of them, the glass a blow meets, a missile flying on
 //! through one, the creatures' aim from outside, and the `actors` dump.
 

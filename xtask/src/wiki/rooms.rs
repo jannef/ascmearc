@@ -1,4 +1,4 @@
-//! Special rooms (spec §7 "Special rooms").
+//! Special rooms.
 
 use super::util::{Term, anchored, article, capital};
 use std::fmt::Write as _;
@@ -24,7 +24,7 @@ fn share(part: u32, of: u32) -> String {
     format!("{}.{}%", tenths / 10, tenths % 10)
 }
 
-/// The special rooms (spec §7 "Special rooms"): what each is called, what it says the first time
+/// The special rooms: what each is called, what it says the first time
 /// you enter it (and, for some, from outside, and on a level it covers whole), what it does
 /// inside, in words, and how often it is drawn: its weight, its share of the draws where no
 /// dungeon says otherwise, the chance it covers the whole level instead, and what it needs.
@@ -373,7 +373,7 @@ fn held(content: &Content, status: StatusId) -> String {
     )
 }
 
-/// The numbers of each teeming den (spec §7 "Special rooms": an effect with a `swarm`), by name:
+/// The numbers of each teeming den (an effect with a `swarm`), by name:
 /// how many sleepers and of what, what wakes them, their cry, the hoard, and the themes.
 pub(super) fn teeming_dens(content: &Content) -> String {
     let mut out = String::from(
@@ -431,7 +431,7 @@ pub(super) fn teeming_dens(content: &Content) -> String {
     out
 }
 
-/// Each branch's special-room and shop odds (spec §7 "Special rooms", "Shops"), its depths with
+/// Each branch's special-room and shop odds, its depths with
 /// the same odds in one row, branches by name: the chance a room is special, how many a level
 /// may get, which rooms, the chance a rooms-and-corridors level has a shop (if it has a room
 /// that fits), its kinds, and who keeps it.
@@ -514,7 +514,7 @@ fn faction_name(content: &Content, id: &str) -> String {
     (factions.id(id)).map_or_else(|| id.to_string(), |f| factions.def(f).name.to_lowercase())
 }
 
-/// What the dead rise as in a cursed room (spec §7 "Special rooms": an effect with a `rise`), by
+/// What the dead rise as in a cursed room (an effect with a `rise`), by
 /// the dead's level: the shared types of the rise's faction of that level, else of the nearest
 /// level (the lower on a tie), each alike; levels that rise alike share a row.
 pub(super) fn risings(content: &Content) -> String {

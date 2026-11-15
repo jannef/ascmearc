@@ -1,4 +1,4 @@
-//! Blood in the world (spec §8 "Blood"): big hits and kills stain the floor and the walls next to
+//! Blood in the world: big hits and kills stain the floor and the walls next to
 //! the victim, never water; stains add up, are saved and remembered, and are perceived only
 //! where the player sees them; and they never change what happens in a fight.
 

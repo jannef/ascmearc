@@ -1,4 +1,4 @@
-//! The birth sign's gifts from the Salamander to the Basilisk (spec §8 "Birth sign"; #266):
+//! The birth sign's gifts from the Salamander to the Basilisk (#266):
 //! each changes the one rule it names, the two actives are used from the abilities menu with
 //! their cooldowns, and a character born under another sign keeps the rule as it was.
 

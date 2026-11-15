@@ -25,7 +25,7 @@ immune = ["poison"]
 weapon_skills = { maces = 4, duelist = 1 }
 corpse = false
 blood = "none"
-# Its gear (spec §8 "Creature gear"): the hammer and helm it died in.
+# Its gear: the hammer and helm it died in.
 [[creature.gear]]
 chance = 80
 one_of = ["war_hammer"]

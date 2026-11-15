@@ -1,4 +1,4 @@
-//! Post-processing (spec §4.2, layer 4): bloom for glowing glyphs, and screen tints over the map
+//! Post-processing (layer 4): bloom for glowing glyphs, and screen tints over the map
 //! (the fade on level change, and flashes as a hook for hit-style effects).
 //!
 //! Bloom runs on an HDR camera. Only colors brighter than 1 bloom (glyphs that content marks as

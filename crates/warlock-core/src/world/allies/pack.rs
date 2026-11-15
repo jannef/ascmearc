@@ -1,4 +1,4 @@
-//! Pack tactics, the ranger's level 18 (spec §8 "Class abilities"; docs/design/ranger-companion.md
+//! Pack tactics, the ranger's level 18 (docs/design/ranger-companion.md
 //! §11.1; `docs/dev/companion.md`): one hook in `fight.rs::resolve`, [`World::pack_blow`].
 //!
 //! - **Flanking**: a creature beside both the player and their companion (Chebyshev 1, the

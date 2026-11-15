@@ -1,4 +1,4 @@
-//! What a scriptorium carries (spec §7 "Special rooms"; `docs/dev/special-rooms.md`): items of
+//! What a scriptorium carries (`docs/dev/special-rooms.md`): items of
 //! one class the generator lays on its floor ([`RoomLoot`], `loot = { class = "scrolls", count =
 //! [2, 4] }`; `mapgen/room_loot.rs`), and skills it trains faster while one is inside
 //! (`train = { decipher_script = 200 }`, percent of each training mark's chance; `World::train`).

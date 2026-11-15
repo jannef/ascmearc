@@ -1,4 +1,4 @@
-//! Knock (spec §8 "Class abilities", "Chests"; docs/design/chests-and-treasure.md §9): the
+//! Knock (docs/design/chests-and-treasure.md §9): the
 //! wizard's class active, `use:knock:DIR`, paid in mana and priced as a spell (`cast`). The lock
 //! of the locked door or shut chest that way springs open: the lock is gone ("The lock springs
 //! open with a click."), nothing opens, and no trap springs; `open:DIR` then opens it as an

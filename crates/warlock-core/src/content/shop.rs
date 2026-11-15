@@ -1,4 +1,4 @@
-//! Shops (`assets/data/shops.toml`, spec §7 "Shops"), ADOM-like: kinds of shop (a general store
+//! Shops (`assets/data/shops.toml`), ADOM-like: kinds of shop (a general store
 //! and specialty shops), what each sells and buys by item class ([`ItemClassId`]), its prices,
 //! the shopkeeper every shop has, and how often generated levels get one.
 //!
@@ -32,7 +32,7 @@ pub struct ShopId(pub u8);
 pub const MAX_SHOPS: usize = 256;
 /// The most the player's favour moves a price, in percent either way.
 pub const MAX_FAVOUR: i32 = 50;
-/// The most favour there can be once talents lift the cap (spec §8 "Class abilities": the
+/// The most favour there can be once talents lift the cap (the
 /// merchant's Magnate and Golden tongue), either way.
 pub const MOST_FAVOUR: i32 = 90;
 /// The placeholder for the keeper's name in a shop's `title`.

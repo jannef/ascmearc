@@ -1,10 +1,10 @@
-//! Spell circles' statuses (`assets/data/circles.toml`, spec §4.8 "Spell circles"): the school of
+//! Spell circles' statuses (`assets/data/circles.toml`): the school of
 //! every buff's and hex's status, and each school's colour.
 //!
 //! The renderer draws a circle about every actor the player sees with a circled status
 //! (`crates/warlock/src/ui/circles.rs`). Without the file there are no circles.
 //!
-//! **One rule** (spec §8 "Status effects", docs/design/buff-circles.md §8): a circled status sheds
+//! **One rule** (docs/design/buff-circles.md §8): a circled status sheds
 //! its school's light, `circle_<school>` in `data/lights.toml`, through the status light
 //! (`StatusDef::light`, filled by [`shed_lights`] for every circled status without a light of its
 //! own: `lit` keeps the Light spell's). So the school of a row decides a light, and the rows'

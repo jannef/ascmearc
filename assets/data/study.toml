@@ -1,11 +1,11 @@
-# Learning a spell from its grimoire (spec §8 "Spells", the magic design §4, the spell scaling
+# Learning a spell from its grimoire (the magic design §4, the spell scaling
 # design §5.4; reading one, `read:b`, is a study: grimoires.toml). All first guesses, to be tuned
 # by play.
 #
 # A study takes turns_base turns of the `study` action (actions.toml) and turns_per_level more
 # for each level of the spell: 100 turns are 10 minutes, so a level-11 spell takes 320 turns, 32
 # minutes (Quick study: half). The grimoire is kept whatever comes of it. Only a character
-# trained in Decipher script may study at all (spec §8 "Spells": "Learning"). A spell of a level
+# trained in Decipher script may study at all. A spell of a level
 # at most the learning (Decipher script's `learn` curve, skills/; at least 1) is learned for
 # certain. Above it, by `overreach` levels (the spell's level less the learning; Overreach counts
 # a third fewer, rounded down), a 2d12 check decides:
@@ -19,7 +19,7 @@
 # slight below bad_from levels, bad below terrible_from, terrible from there, lucky ones beside
 # any.
 #
-# Reading the grimoire of a spell already known deepens it (spec §8 "Spells": "Ranks"; #1264):
+# Reading the grimoire of a spell already known deepens it (#1264):
 # rank 1 as learned, up to 10, each rank what the spell's own `[spell.ranks]` table gives. A
 # deepening to rank N reads the whole book over N times (N × the learning time) and is always a
 # check, the same one with `per_rank × (N − 1)` added to the difficulty (the overreach counted

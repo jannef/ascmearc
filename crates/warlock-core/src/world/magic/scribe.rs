@@ -1,4 +1,4 @@
-//! Writing scrolls (spec §8 "Scrolls"; the witch and wizard design §6.1): the wizard's Scribe,
+//! Writing scrolls (the witch and wizard design §6.1): the wizard's Scribe,
 //! [`Action::Scribe`](crate::Action::Scribe) (`scribe:fireball`), from the abilities menu's
 //! Class group through the scribe list.
 //!

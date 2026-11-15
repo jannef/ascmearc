@@ -153,7 +153,7 @@ pub(super) fn build(canvas: &mut Canvas, rng: &mut Rng, needs: Needs) -> Option<
 
 /// Locks the door of up to [`MAX_LOCKED`] rooms that have only one (not the arrival room, not a
 /// room with stairs, not a vault) with the lock `key` opens, and leaves the key on a free spot
-/// in a room that is not locked, so the player can always reach it (spec §8 "Doors"). A
+/// in a room that is not locked, so the player can always reach it. A
 /// doorway or an open door becomes a closed door to be locked. Whatever lies or walks in a
 /// locked room stays there.
 fn lock_rooms(canvas: &mut Canvas, rng: &mut Rng, rooms: &[Room], up_room: usize, key: ObjectId) {
@@ -195,7 +195,7 @@ fn lock_rooms(canvas: &mut Canvas, rng: &mut Rng, rooms: &[Room], up_room: usize
 }
 
 /// Rooms but the arrival room and vaults with a single door, not locked, may become a shop,
-/// rarely and last of all (spec §7 "Shops"; `shop.rs`).
+/// rarely and last of all (`shop.rs`).
 fn shops(canvas: &mut Canvas, rng: &mut Rng, rooms: &[Room], up_room: usize) {
     let candidates: Vec<shop::Candidate> = (rooms.iter().enumerate())
         .filter(|(i, r)| !r.vault && *i != up_room && r.doors.len() == 1)
@@ -214,8 +214,8 @@ fn shops(canvas: &mut Canvas, rng: &mut Rng, rooms: &[Room], up_room: usize) {
     shop::place(canvas, rng, &candidates);
 }
 
-/// Rooms but the arrival room and vaults may be special, each with the content's chance (spec §7
-/// "Special rooms"): the room with its walls and doors, its effect's floor over its own.
+/// Rooms but the arrival room and vaults may be special, each with the content's chance: the room
+/// with its walls and doors, its effect's floor over its own.
 fn special_rooms(canvas: &mut Canvas, rng: &mut Rng, rooms: &[Room], up_room: usize) {
     for (i, room) in rooms.iter().enumerate() {
         if room.vault || i == up_room {

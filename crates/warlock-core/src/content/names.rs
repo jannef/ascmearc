@@ -1,4 +1,4 @@
-//! Names for new characters (`assets/data/names.toml`, spec §8 "Character creation"): by race
+//! Names for new characters (`assets/data/names.toml`): by race
 //! id, a list for male and one for female characters; `other` picks from both. Character
 //! creation's Name step offers one at random (`character::random_name`), and so does a run told
 //! no name for a character that is not its scenario's own (`character::default_name`).

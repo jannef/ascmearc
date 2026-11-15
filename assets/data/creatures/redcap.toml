@@ -25,7 +25,7 @@ base_hp = 80
 # A murderer's craft: it strikes the unwary.
 skills = { sneak_attack = 40, initiative = 40 }
 attack = { damage = "3d6", damage_type = "bludgeoning", name = "stamp", verb = "stamps on", to_hit = 2, threat = 24, crit = 3 }
-# Its gear (spec §8 "Creature gear"): the iron-shod boots it is named for.
+# Its gear: the iron-shod boots it is named for.
 [[creature.gear]]
 chance = 90
 one_of = ["iron_shod_boots"]

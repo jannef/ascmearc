@@ -1,4 +1,4 @@
-# Cēaptūn, the market town (levels/ceaptun.toml; spec §8 "Dialogue": "Goodwill", #1247). Every
+# Cēaptūn, the market town (levels/ceaptun.toml; "Goodwill", #1247). Every
 # quest its people give that the player completes (the Weyfarers' Gilde's, Wat's, included) makes
 # their services 5% cheaper, on top of any other discount, up to free (world/people/goodwill.rs).
 #

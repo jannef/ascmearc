@@ -1,4 +1,4 @@
-//! Char (spec §8 "Blood"): the scorch marks fire leaves on floors and walls, building up the
+//! Char: the scorch marks fire leaves on floors and walls, building up the
 //! more a cell burns, from light soot to blackened to charred.
 //!
 //! A sibling of [`crate::blood`]: the same [`Stain`] per cell, kept in its own map of the level

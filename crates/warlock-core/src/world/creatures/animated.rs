@@ -1,4 +1,4 @@
-//! Animated objects in play (spec §8 "Animated objects"; docs/dev/animated.md): what falls when
+//! Animated objects in play (docs/dev/animated.md): what falls when
 //! one dies.
 //!
 //! **Drops**: what an animated creature is made of (its household body) falls **intact** by the

@@ -1,4 +1,4 @@
-//! Materials (spec §7 "Materials", #193, #194): their properties, how often loot and creatures'
+//! Materials (#193, #194): their properties, how often loot and creatures'
 //! gear are made of each, what each item may be made of, and what a few items are like in each
 //! metal.
 

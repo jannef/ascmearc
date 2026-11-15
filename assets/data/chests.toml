@@ -1,4 +1,4 @@
-# Chests (spec §7 "Chests", §8 "Chests"; docs/design/chests-and-treasure.md): what a chest of each
+# Chests (docs/design/chests-and-treasure.md): what a chest of each
 # level is called and what it is like. A chest is a fixture of a cell (the `chest` terrains,
 # terrain/) with a level: its floor's (a branch floor's depth, a hand-made level's
 # item_level), or what a level's legend gives it (`chest = "kist"`: that band's `from`; `chest =

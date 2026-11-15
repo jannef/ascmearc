@@ -3,8 +3,8 @@
 **Rule: a roster PR adds or edits ONLY its own `docs/dev/creatures/<tribe>.md`; it never edits
 this file.** This file is the stable overview of the creature subsystem (factions, the AI,
 sight, spawning, gear, incorporeal creatures, coarse turns); every tribe's or wave's roster
-notes, per-creature facts, and test-row lists live in the per-tribe files below. The spec's
-creature and faction lists are likewise not edited by a roster (`spec/07b-data.md` points at
+notes, per-creature facts, and test-row lists live in the per-tribe files below. The design
+document lists no creatures or factions, so a roster never edits it (the data is
 `assets/data/creatures/` and `assets/data/factions/`). A new tribe adds a new file and one
 line here only if it truly is a new family, in the same PR as nothing else shares.
 
@@ -36,9 +36,9 @@ Per-tribe notes:
 ## Overview
 
 Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
-rules it implements are in spec/08b-creatures.md. Keep it current with the code, as CLAUDE.md says.
+rules it implements are in spec/09-creatures.md. Keep it current with the code, as CLAUDE.md says.
 
-Stair followers (spec §8 "Stair followers", #985) live in `world/levels/stair_followers.rs`, whose
+Stair followers (#985) live in `world/levels/stair_followers.rs`, whose
 module docs are the rules: `take_stairs` asks `stair_followers` before `travel` (awareness reads
 the level being left) and `followers_arrive` after. A follower crosses through
 `travel.rs::cross_to`, the allies' way, and keeps its `Mind` with `last_seen` set to the player's
@@ -61,7 +61,7 @@ status; its draws (a check's two per target, `aura/resist/<target>/<creature>`) 
 the bearer's turn. `content::aura_roster_tests` holds the bearers' rows; the tribe files say
 whose is whose.
 
-Grades (spec §8 "Grades", #1135; `docs/design/monster-dread.md` §7.4) live in `grade.rs`, whose
+Grades (#1135; `docs/design/monster-dread.md` §7.4) live in `grade.rs`, whose
 module docs are the rules: `grade::draw` is one line in `travel::make_creature`, after the court,
 on its own stream `grade/<actor id>` (`Rng::grade`), so adding or removing it moves no other
 draw. Per type: `grades` (default true; `CreatureSpec::resolve` forces it false for a unique, a
@@ -108,7 +108,7 @@ from such an actor's cell is looked into though the cell is in sight). `ai.rs::g
 them) with a hostile it does not see on it, it attacks it in melee, and `at_the_unseen` puts the
 same `[unseen]` `to_hit` on that blow. The tests are `unseen_tests.rs`.
 
-Factions and creature behavior (spec §7 "Factions", §5 "Creature sight", §8 "Creature behavior"):
+Factions and creature behavior:
 `data/factions/` (`content/faction.rs`: `Factions`, symmetric hostility, `Stance`; optional,
 without it everyone is neutral, but then no creature may name a faction; monsters fight only the
 player but for the two story feuds, Seelie and wrathful fey against the Unseelie and demons
@@ -118,7 +118,10 @@ one side a faction of its own by a legend override, as the arena's rats are `are
 (unharmed, it waits where it stands for a hostile it sees to come beside it; `world/combat/lurk.rs`, one
 branch on `ai.rs::fight`'s plan; the meenlock and the barrow spider),
 `alignment` and `race` (`docs/dev/alignment.md`; read a creature's with `Actor::nature`, never the
-type's) (`content/creature.rs`, checked in `content/load_creatures.rs`). Its `tags` (`content/tag.rs`, #441) are plain singular
+type's) (`content/creature.rs`, checked in `content/load_creatures.rs`). No creature takes a side
+by the player's race: hostile kobolds attack a kobold player as they would anyone, and good
+creatures greet a drow coldly only when the player's alignment is Evil or worse, never for their
+race (`WorldState::race_of` is the one lookup of the player's race, and no stance reads it). Its `tags` (`content/tag.rs`, #441) are plain singular
 words for quests and rules (`tag:goblin`, `docs/dev/quests.md` "Creature tags"), never the
 faction: **tag every new creature** of a group or role listed in the README (an undead of the
 `undead` faction must carry `undead`: `content::tag`'s test). Creature types live in `data/creatures/`,
@@ -151,8 +154,7 @@ place of both (`World::crystallise`, `docs/dev/enchanting.md` "Soulglass"). No c
 behavior may use randomness (combat rolls are the rules', from their keyed streams); tie-breaks
 are by distance, direction order, and actor id.
 
-Dragons and several natural attacks (spec §8 "Creature behavior": "Dragons", "Several natural
-attacks", #1099). **Data**: `Combat::Dragon` (`combat = "dragon"`) and `[creature.breath]`
+Dragons and several natural attacks (#1099). **Data**: `Combat::Dragon` (`combat = "dragon"`) and `[creature.breath]`
 (`content/breath.rs`: `BreathSpec` resolved in the creature loop by `BreathSpec::resolve` into
 `CreatureDef::breath: Option<Breath>`, the damage type and the `breath` status's degrees,
 `ceil(cooldown / eases)`; refused with an unknown type, without the status, or with a cooldown
@@ -212,7 +214,7 @@ rooted ally stays behind). **Dump**: the dev `actors` layer adds `; rooted`. **T
 rooted gate that summons to its cap, a rooted shrub that never gives way, never driven or
 teleported, never a stair follower beside a wolf that is).
 
-Gazes and averted eyes (spec §8 "Creature behavior": "Gazes", #1125, design
+Gazes and averted eyes (#1125, design
 `docs/design/monster-dread.md` §5.1). **Data**: `[creature.gaze]` (`content/gaze.rs`:
 `GazeSpec` resolved in the creature loop into `CreatureDef::gaze: Option<Gaze>`; `range` 1 to 8,
 `chance` (default 100), `cooldown` 6 to 600 s (default 12, the `gaze` status's
@@ -291,7 +293,7 @@ stack is taken off and `fade_spirit` says it goes. No noise of its own (the figh
 **Wiki**: `creature_disarmers` (`creature-disarmers.md`, "Disarmers" in `creature-numbers.md`).
 **Tests**: `world/combat/knock_away_tests.rs` (the roster pinned there). No talent (a gimmick).
 
-Casters (spec §8 "Creature behavior": "Casters", #1102). **Data**: `spells = [...]` on a
+Casters (#1102). **Data**: `spells = [...]` on a
 `combat = "caster"` type (`CreatureSpec::spells`, resolved in the creature loop by
 `content/creature_spells.rs::resolve` into `CreatureDef::spells: Vec<SpellId>`, in preference
 order; spells load before creatures). Refused: a caster without a list, a list on any other
@@ -315,7 +317,7 @@ and `cast.rs::cast_single`, which now takes its caster's id, then `spell_type_sp
 heals, and buffs, and `rarity = "very_rare"`), and `mana` for a
 handful of its main spell.
 
-Natural Protection by body and level (spec §8 "Natural Protection by body and level", #563,
+Natural Protection by body and level (#563,
 `docs/design/combat-progression.md` §8): data only. Every type's `natural.protection` is the
 body's at its level, the hide's `name` picking the body: none 0, hide (L − 10) ÷ 8, bony L ÷ 6,
 armoured L ÷ 4 + 1. The shipped types were written to the rule, but for the hand-tuned (beetle,
@@ -325,7 +327,7 @@ ember beetle, stone troll, mud golem, balor, pit fiend), the peoples (who wear t
 author decides). Animated objects (tag `animated`) keep their own table, which their generator
 computes. A new creature type: give it the hide its body asks at its level.
 
-Incorporeal creatures (spec §8 "Incorporeal creatures", #381): the data is a creature type's
+Incorporeal creatures (#381): the data is a creature type's
 `incorporeal = { wall_defence }` (`content/creature.rs::Incorporeal`, read in `Content::load`
 beside `natural`; `Content::incorporeal(type)`). The rules are `world/creatures/incorporeal.rs`:
 `LevelState::phaseable` (solid terrain, neither walkable nor transparent, off the level's edge:
@@ -343,7 +345,7 @@ arm. The example type is `stone_haunt` (placed by no level). Tests:
 `world/creatures/incorporeal_tests.rs`, `shoot_tests::a_shade_in_a_wall_is_shot_there_...`,
 `spawn_tests::an_incorporeal_creature_is_never_placed_inside_a_wall`.
 
-Danger levels and spawning (spec §7 "Danger levels", #326): the data is `content/danger.rs`
+Danger levels and spawning (#326): the data is `content/danger.rs`
 (`DangerRule`, `Spawning`, `level_weight`, `weight` and `draw`, the field parsing shared by
 `data/dungeons.toml` and level files), reached through `Content::spawning(level id)` (a hand-made level's own, else
 its branch's at the depth; `None`: danger 0). The rules are `world/creatures/spawn.rs`: `World::danger`
@@ -377,7 +379,7 @@ took on the pool's first cell. Their cells stand in `LevelTemplate::outside_cap`
 leaves those out, so the spawner's cap and the dumps' `population 2/6` do not count them. Without
 this a floor laid down full would see nothing come until as many had died as the vault holds, and
 an avoided vault would stop the floor's respawning for good; a teeming den's sleepers, by contrast,
-do count (spec §7 "Special rooms"). Tests: `mapgen/vault_monsters_tests.rs`,
+do count. Tests: `mapgen/vault_monsters_tests.rs`,
 `world::creatures::spawn_tests::a_vault_s_monster_pool_stands_outside_the_cap`.
 Rarity (#373): `content/creature_rarity.rs` parses `data/creature_rarities.toml` (tiers in file
 order, each a `factor` in percent of a common type's weight, 1 to 1000; `common` required, the
@@ -446,8 +448,7 @@ branch's odds. Tests: `content::danger::tests` (the roll, the fallbacks, determi
 `content::dread_roster_tests` (the sort's flags and tiers, no unique dread), and
 `world::creatures::spawn_tests::the_spawner_rolls_for_dread_at_the_levels_own_odds`,
 `draw_odds_take_the_most_specific_dread_one_in`.
-Splitting and dying into (docs/design/monster-dread.md §5.5, #1129; spec §8 "Splitting and dying
-into"): `CreatureDef::splits` (`content::Splits`: damage types, `least`) and `dies_into`
+Splitting and dying into (docs/design/monster-dread.md §5.5, #1129): `CreatureDef::splits` (`content::Splits`: damage types, `least`) and `dies_into`
 (`content::DiesInto`: pool, count, spread), resolved in `Content::load_splits`
 (`content/split.rs`, after `load_summons`). The rules are `world/creatures/split.rs`: `World::split`, one
 line in `fight.rs::resolve` after a blow that left the target alive; `World::dies_into`, one
@@ -477,7 +478,7 @@ filter the whole map. The index is derived: the saved map is unchanged, and the 
 on load. `bench-turns` measures it with `l-1` (the deepest floor of a 40-floor cave branch,
 fresh) and `long` (the same floor after visiting the other 39, about 3,000 actors in the run).
 
-Coarse turns while the player rests (#349, spec §8 "Coarse turns while resting"): `world/turn/stride.rs`,
+Coarse turns while the player rests (#349): `world/turn/stride.rs`,
 one call at the top of `World::creature_turn` (`coarse_turn` → `Coarse::Strode(price)` returns at
 once, `Slow` multiplies the usual action's price by `STRIDE`, `Usual` is the usual turn). `away`
 (the player rests, a local level, no dialogue, and not hostile to the player within its sight
@@ -499,7 +500,7 @@ population, a spawn's gear stream, frozen floors, the talents, determinism),
 draws by rarity), `content/creature_rarity.rs` (the tier file and its refusals), and
 `content::tests::every_drawn_creature_has_a_rarity` (shipped content).
 
-Creature gear (spec §8 "Creature gear", #328): the data is `content/gear.rs` (`GearLineSpec`
+Creature gear (#328): the data is `content/gear.rs` (`GearLineSpec`
 as written, kept on `CreatureDef::gear_spec` until objects load, then `Content::load_gear`
 resolves `CreatureDef::gear`: the racial weapon's line first, `Keep` defaults by the slot an
 object fits; what fits no slot as kept is carried, `Pack::equip`).

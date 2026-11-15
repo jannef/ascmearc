@@ -1,4 +1,4 @@
-//! Items made of another material than their base item (spec §7 "Materials", #193, #194): "a
+//! Items made of another material than their base item (#193, #194): "a
 //! bronze long sword", "a duralumin chain mail", "a dragonbone quarterstaff".
 //!
 //! A variant is an item whose main part is of another material than its base item's: an

@@ -1,4 +1,4 @@
-//! Quests (spec §8 "Quests", #148) in the turn pipeline: giving (#422: asking gives), each
+//! Quests (#148) in the turn pipeline: giving (#422: asking gives), each
 //! kind of goal end to end (kill, bring, reach, deliver), prerequisites, rewards with XP,
 //! repeats, no cap on active quests, the quest log, saves, and replays; then the showcase's own
 //! quests.
@@ -761,7 +761,7 @@ fn a_delivery_is_blocked_while_the_item_is_lost_and_handed_in_to_the_recipient()
 
 #[test]
 fn a_pack_of_any_size_takes_a_delivery_and_a_reward() {
-    // No count limit on the pack (spec §6): 26 stacks of one rock each, and the letter and the
+    // No count limit on the pack: 26 stacks of one rock each, and the letter and the
     // reward still go into it.
     let mut w = world_on("#########\n#E@C....#\n#r......#\n#########\n");
     run(&mut w, "move:SW pickup move:NE");

@@ -1,4 +1,4 @@
-//! Spell circles (spec §4.8 "Spell circles", docs/design/buff-circles.md): a slowly turning
+//! Spell circles (docs/design/buff-circles.md): a slowly turning
 //! circle of thin rings and a regular polygon about every actor the player sees with a buff's or
 //! a hex's status, the actor's own glyph glowing and glinting within it.
 //!

@@ -1,4 +1,4 @@
-//! Working a metal item at an anvil (spec §7 "Special rooms"; `docs/design/skill-uses.md` §6.7
+//! Working a metal item at an anvil (`docs/design/skill-uses.md` §6.7
 //! M0): [`Action::Temper`], the Temper ability of the abilities menu's *Here* group, offered
 //! beside an anvil. One action does it all; the item's state and its pure rules are
 //! `magic/worked.rs`, the numbers `data/rules/temper.toml`.

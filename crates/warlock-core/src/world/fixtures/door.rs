@@ -1,4 +1,4 @@
-//! Doors in the world (spec §8 "Doors", [`crate::door`]): opening (and unlocking), closing, and
+//! Doors in the world ([`crate::door`]): opening (and unlocking), closing, and
 //! kicking.
 //!
 //! - **Opening** a closed door swings it open (`open_door`, a noise). A locked one opens only
@@ -10,10 +10,10 @@
 //!   draw of the gameplay stream: with a chance of the kicker's Strength score in the door's
 //!   sturdiness it breaks ("The door crashes open!", the terrain's `breaks_to`, its lock gone),
 //!   else "WHAMM!". At a creature, an unarmed blow ([`World::player_kicks`]; it draws on unarmed
-//!   fighting, spec §8 "Weapon skills"). At anything else it is refused and takes no time:
+//!   fighting). At anything else it is refused and takes no time:
 //!   "You kick at empty space." where one could walk, else "Kicking the stone wall would only
 //!   hurt your foot."
-//! - **Trapped doors** (spec §8 "Trapped doors"): a trap on a door goes off
+//! - **Trapped doors**: a trap on a door goes off
 //!   ([`World::spring_trap`]) at whoever opens the door (unlocking it too: [`World::swing_open`],
 //!   the player and creatures alike) or kicks it, as it swings open or as the kick lands, before
 //!   the door breaks; walking through the doorway never sets it off. A door kicked in takes its
@@ -42,7 +42,7 @@ impl World {
         let def = terrain.map(|t| self.content.terrain(t));
         match def {
             Some(def) if def.is_closed_door() => {}
-            // A shut chest opens as a door does (spec §8 "Chests").
+            // A shut chest opens as a door does.
             Some(def) if def.is_shut_chest() => return self.open_chest(p, events),
             Some(def) if def.is_open_door() => {
                 self.say("That door is already open.");
@@ -158,14 +158,12 @@ impl World {
 
     /// The player kicks the closed door at `p`: a banging noise, and with a chance of their
     /// Strength in its sturdiness it breaks for good (one draw of the gameplay stream; a door
-    /// that cannot break draws nothing). Their athletics adds to the Strength (spec §8
-    /// "Skills"), and the kick trains it. A trap on the door goes off at them as the kick lands,
-    /// before the door gives way. Kicking a door is no attack: neither the combat stance nor
-    /// attack speed changes its time.
+    /// that cannot break draws nothing). Their athletics adds to the Strength, and the kick trains
+    /// it. A trap on the door goes off at them as the kick lands, before the door gives way.
+    /// Kicking a door is no attack: neither the combat stance nor attack speed changes its time.
     /// The Strength the player's kick is rolled against, a door's or a chest's: their
-    /// effective Strength, their athletics (spec §8 "Skills"), their talents' (Mighty kick,
-    /// Lockbreaker; spec §8 "Talents"), and what they wear (Hobnailed; spec §8 "Magic
-    /// items"): as if stronger.
+    /// effective Strength, their athletics, their talents' (Mighty kick,
+    /// Lockbreaker), and what they wear (Hobnailed): as if stronger.
     pub(in crate::world) fn kick_force(&self) -> u8 {
         let me = self.state.player();
         let strength = me.effective_stats(&self.content).score(Stat::Strength);

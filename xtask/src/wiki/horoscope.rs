@@ -1,4 +1,4 @@
-//! The birth signs' gifts (spec §8 "Birth sign"): what each animal, element, and lucky day gives,
+//! The birth signs' gifts: what each animal, element, and lucky day gives,
 //! with the exact rules the game says only in words, and how likely a lucky day is by race.
 
 use super::talents::{effects_text, needs_text, talent_link};
@@ -65,7 +65,7 @@ fn gifts(content: &Content, grants: &[String], table: Home) -> String {
 }
 
 /// Every animal with its gifts and flaw, the rules exact, and its nudge to the starting
-/// alignment score (spec §8 "Alignment", #272).
+/// alignment score (#272).
 pub(super) fn animals(content: &Content) -> String {
     let Some(h) = content.horoscope() else {
         return "There is no horoscope.\n".into();

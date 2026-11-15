@@ -1,4 +1,4 @@
-//! The moons (`assets/data/sky.toml`, spec §5 "Moonlight", §7): how many there are, how they
+//! The moons (`assets/data/sky.toml`): how many there are, how they
 //! look, and how fast they wax and wane. Where they stand and the light they give at a moment is
 //! [`crate::light::Sky`]. Without the file there are no moons: nights are dark.
 

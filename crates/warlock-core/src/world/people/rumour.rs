@@ -1,4 +1,4 @@
-//! Rumoured ways (spec §8 "Dialogue", "Rumoured ways"): a topic with a `route`
+//! Rumoured ways: a topic with a `route`
 //! ([`crate::content::Topic::route`]) is a way the speaker describes, from her door to the place
 //! she speaks of. Asking about it marks on the player's overworld map what they would have seen
 //! walking that way by day: every cell in line of sight within [`daylight::SIGHT_DAY`] of a cell

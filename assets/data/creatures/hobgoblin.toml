@@ -1,6 +1,6 @@
 # The goblin tribe's second tier (#454). The goblins' big kin: taller than a man, drilled, and
-# well armed. A hobgoblin soldier fights in mail with a long sword (its racial weapon, spec §8
-# "Creature gear") and, as often as not, a shield.
+# well armed. A hobgoblin soldier fights in mail with a long sword (its racial weapon) and, as often
+# as not, a shield.
 [[creature]]
 id = "hobgoblin"
 level = 9

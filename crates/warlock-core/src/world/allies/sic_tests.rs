@@ -1,4 +1,4 @@
-//! Sic 'em (`sic.rs`; spec §8 "Allies"): the ranger's level 40, the hunt that follows its quarry,
+//! Sic 'em (`sic.rs`): the ranger's level 40, the hunt that follows its quarry,
 //! Savage's critical hits and speed, the refusals, and that it never crosses Hunter's bond.
 
 use crate::action::{Event, parse_actions};

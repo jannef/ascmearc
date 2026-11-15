@@ -1,4 +1,4 @@
-//! The thief's Openings in the world (spec §8 "Resources" and "Class abilities"; the openings
+//! The thief's Openings in the world (the openings
 //! design `docs/design/thief-openings.md` §5, §6; `docs/dev/openings.md`): the thief's Sneak
 //! attack grants the pool (from level 1), sneak attacks, feints, and the mark's kill build it
 //! (`builds` in `data/resources.toml`, through `ambush.rs`, `feint.rs`, and `mark.rs`), it

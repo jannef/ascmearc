@@ -1,4 +1,4 @@
-//! Fletching (spec §8 "Fletching"; #1021, #1336): what the `count = "fletch"` recipes (the arrows
+//! Fletching (#1021, #1336): what the `count = "fletch"` recipes (the arrows
 //! and bolts of `recipes/woodcraft/`) and a recipe's `launcher` read beyond the generic making of
 //! `world/crafting/craft_make.rs`, which makes them.
 //!

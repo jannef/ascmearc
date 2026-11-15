@@ -1,10 +1,10 @@
-//! Disarming traps (spec §8 "Disarming traps"; #232): the use of the Disable device skill, the
+//! Disarming traps (#232): the use of the Disable device skill, the
 //! Disarm ability ([`crate::ability::Ability::Disarm`], [`crate::Action::Disarm`]).
 //!
 //! The player may try to take apart a trap they know of on a cell next to them (a door's trap
-//! too, spec §8 "Trapped doors", and a chest's, spec §8 "Chests"), if they are trained in Disable device (the skill with the
-//! disarm effect). The try is a check (spec §8 "Checks", [`crate::check::roll`]): 2d12 plus the
-//! Dexterity modifier (of the effective score, spec §8 "Stats") plus what Disable device gives,
+//! too, and a chest's), if they are trained in Disable device (the skill with the
+//! disarm effect). The try is a check ([`crate::check::roll`]): 2d12 plus the
+//! Dexterity modifier (of the effective score) plus what Disable device gives,
 //! against the trap's difficulty (the one finding it takes, deeper on a branch too:
 //! [`World::difficulty_of`]). Made, the trap is gone; failed, it stays, and failed by
 //! the `[disarm]` `springs_short_by` of `data/traps.toml` or more it goes off at the player
@@ -63,7 +63,7 @@ impl World {
             }
             Checked::Failed { by } if by >= self.content.trap_disarm().springs_short_by => {
                 self.say(format!("You set off the {name}!"));
-                // A burst on a chest blows it apart (spec §8 "Chests").
+                // A burst on a chest blows it apart.
                 let (climb, _) = self.spring_chest_trap(at, player, events);
                 Spent::Turn(price + climb)
             }

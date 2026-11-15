@@ -1,4 +1,4 @@
-//! The quest log (spec §6 "Quest log"; `q`, or its number among the info pages): the quests the
+//! The quest log (`q`, or its number among the info pages): the quests the
 //! player has taken up, then those they have done, by name. The selected one's details show
 //! below: what it asks, how far it has got ("2 / 3 killed.", "Return to the old hermit."), and
 //! who gave it, in their words. Offers not yet answered are not here.

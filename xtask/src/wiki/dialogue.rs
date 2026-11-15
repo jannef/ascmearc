@@ -107,7 +107,7 @@ fn speaks_to_text(d: &Dialogue) -> String {
     )
 }
 
-/// Each campaign's callings (spec §8 "Prestige classes"), stated plain: who the calling is
+/// Each campaign's callings, stated plain: who the calling is
 /// open to, who grants it when spoken to (the speakers with a topic that `calls` it, in the
 /// calling's campaign), whom the speaker speaks to, and the encounter tables
 /// that bring the speaker (entries whose `when.calling` is the class). By campaign, then class.
@@ -184,7 +184,7 @@ pub(super) fn callings(content: &Content) -> String {
     out
 }
 
-/// Who a calling (spec §8 "Prestige classes") is open to, and into what, by the prestige class
+/// Who a calling is open to, and into what, by the prestige class
 /// `class` it opens, as the wiki says it: "a [bard](class-bard.md) of level 30 or more, not
 /// yet called, to be a Hunter". The calling of `campaign` (or of none) if there is one, else the
 /// first of that class.

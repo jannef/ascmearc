@@ -1,4 +1,4 @@
-//! Statues of the stoned (spec §8 "Statues"; #1126, design `docs/design/monster-dread.md` §5.2,
+//! Statues of the stoned (#1126, design `docs/design/monster-dread.md` §5.2,
 //! §17 D9): a creature killed by a status with `statue` (Stiffening, a basilisk's gaze) leaves no
 //! corpse but a statue, a **fixture of the cell** as a chest is: the statue terrain (the one with
 //! `statue` in `data/terrain/`: solid, seen past, stone) plus a [`Statue`] on the cell in

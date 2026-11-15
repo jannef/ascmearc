@@ -1,4 +1,4 @@
-//! The scroll of restoration (spec §8 "Scrolls"; the priest design §11, #887): a read with no
+//! The scroll of restoration (the priest design §11, #887): a read with no
 //! spell behind it ([`Reading::Cleanse`](crate::content::Reading::Cleanse)). Read on oneself, it
 //! mends every point of stat damage (`mends`) and gives back every point drains took
 //! (`restores`), as a temple's mending does, free, wherever the reader is; a disease showing

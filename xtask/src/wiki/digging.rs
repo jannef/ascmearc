@@ -1,4 +1,4 @@
-//! Digging (spec §8 "Digging"): the walls that break and how long each tool takes through them.
+//! Digging: the walls that break and how long each tool takes through them.
 
 use super::util::{article, capital, glyph, yes};
 use std::fmt::Write as _;
@@ -27,7 +27,7 @@ fn dig_time(content: &Content, hardness: u16, power: u16, strength: u8) -> Strin
     }
 }
 
-/// The walls that break (spec §8 "Digging"): how hard each is, how long each digging tool takes
+/// The walls that break: how hard each is, how long each digging tool takes
 /// through it at average Strength, and what it becomes.
 pub(super) fn digging(content: &Content) -> String {
     // The tools from the weakest, so the pick-axe comes before the mattock.

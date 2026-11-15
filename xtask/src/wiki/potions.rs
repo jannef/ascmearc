@@ -1,4 +1,4 @@
-//! Potions (spec §8 "Potions").
+//! Potions.
 
 use super::util::{Term, anchored, capital, damage_link, link};
 use std::fmt::Write as _;
@@ -7,7 +7,7 @@ use warlock_core::content::{Content, Draught, ObjectDef, SpellPurpose, StatusId}
 use warlock_core::noise::SoundKind;
 
 /// The potions: what drinking each does in numbers, its colour, the training marks it gives,
-/// what throwing it does (a flask's splash, spec §8 "Potions": "Flasks"), from which item level
+/// what throwing it does (a flask's splash), from which item level
 /// (depth) loot holds it and how often, and what it is worth. By name.
 pub(super) fn potions(content: &Content) -> String {
     let mut out = String::from(

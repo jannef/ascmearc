@@ -1,7 +1,7 @@
 # Caster styles
 
 Developer notes for the caster styles (Sniper, Toucher, Battle caster) and the Magic page. The
-rules are in spec/08i-character.md, "Fighting styles". Keep it current with the code, as
+rules are in spec/12-character.md, "Fighting styles". Keep it current with the code, as
 CLAUDE.md says.
 
 The schools of magic were trained skills with ranks, marks, benefits, talents (Schooled,

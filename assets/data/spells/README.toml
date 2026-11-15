@@ -1,4 +1,4 @@
-# Spells (spec §8 "Spells", the magic design docs/design/magic.md §3, §5, §6, the spell scaling
+# Spells (the magic design docs/design/magic.md §3, §5, §6, the spell scaling
 # design docs/design/spell-scaling.md §4 to §6): one file per spell holding one `[[spell]]`, its mana
 # priced by the cost table in ../spells.toml. Spells are numbered
 # in path order (saves will name them by index), so a new spell is a new file. This file holds
@@ -16,7 +16,7 @@
 #   school        evocation, necromancy, abjuration, restoration, transmutation, enchantment,
 #                 or divination
 #   kind          damage, heal, buff, hex, cleanse, utility, or summon (a summon is cast on
-#                 `self` with `auto`: it calls creatures to the caster's side, spec §8 "Allies")
+#                 `self` with `auto`: it calls creatures to the caster's side)
 #   shape         ray, bolt, touch, self (single targets), cone, line, or burst (areas)
 #   damage_type   a damage type of ../damage_types.toml (a `damage` spell's, its tag)
 #   resolution    how it finds its targets (../spells.toml [resolution]): `area` for the area
@@ -113,7 +113,7 @@
 #                 `max`). A caster whose effective score reaches a rung's `AT` casts that rung;
 #                 below the first, the base. Talents and items may add rungs and change the
 #                 roll (the six hooks, ../talents/README.toml `spell_mod`).
-#   [spell.ranks]  its ranks (spec §8 "Spells": "Ranks"; #1264): what a caster gains as they
+#   [spell.ranks]  its ranks (#1264): what a caster gains as they
 #                 deepen the spell by reading its grimoire again. A spell is known at rank 1 as
 #                 it is learned (or as a class gives it), up to rank 10. One entry a rank, keyed
 #                 by the rank (`2` to `10`, any of them, in any order), each an inline table of

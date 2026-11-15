@@ -1,4 +1,4 @@
-//! What an area spell does to the items lying in it (`assets/data/ruin.toml`, spec §8 "Spells":
+//! What an area spell does to the items lying in it (`assets/data/ruin.toml`:
 //! "Ruin"; #1100): the chance an item is lost, by the spell's damage type and the item's class,
 //! the material of its main part, or that material's group, the first row of the type that
 //! matches deciding.

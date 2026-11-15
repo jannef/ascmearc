@@ -1,4 +1,4 @@
-//! The frenzy stance (spec §8 "Stances"; #680): rage puts a berserker in it and holds them
+//! The frenzy stance (#680): rage puts a berserker in it and holds them
 //! there, every end of the rage leaves them aggressive, and nothing else ever gives it.
 
 use crate::content::CombatStance::{self, *};
