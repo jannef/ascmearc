@@ -111,8 +111,6 @@ pub(in crate::world) struct Mutter {
 pub enum Refusal {
     /// It will not or cannot move: it keeps its post, never gives way, or cannot move at all.
     Budge,
-    /// It is too big to squeeze past: two sizes or more larger than the player.
-    TooBig,
     /// The player is swimming, and it would have to take their place in deep water (`swim.rs`).
     Water,
 }
@@ -496,8 +494,8 @@ impl World {
     }
 
     /// Why creature `id` would not make way for the player, if it would not: it keeps its post or
-    /// never gives way (its type's `budge`), it cannot move (overloaded), or it is two sizes or
-    /// more larger than the player. For one Trusted by none no one budges.
+    /// never gives way (its type's `budge`), or it cannot move (overloaded). For one Trusted by
+    /// none no one budges.
     pub fn refusal(&self, id: ActorId) -> Option<Refusal> {
         let actor = self.state.actors.get(&id)?;
         let mods = self.state.player().talent_mods(&self.content);
@@ -508,12 +506,7 @@ impl World {
                 Budge::Never => false,
             }
             && !self.is_rooted(id);
-        if !budges || !self.load_of(id).penalty().can_move() {
-            return Some(Refusal::Budge);
-        }
-        let player = self.state.player();
-        let size = |a: &Actor| self.state.size_of(&self.content, a);
-        (size(actor) >= size(player) + 2).then_some(Refusal::TooBig)
+        (!budges || !self.load_of(id).penalty().can_move()).then_some(Refusal::Budge)
     }
 
     /// What the player is told when creature `id` will not make way: why, if they see it.
@@ -523,10 +516,6 @@ impl World {
             (true, Refusal::Budge) => {
                 let who = capitalized(&self.called(&self.state.actors[&id]));
                 format!("{who} doesn't budge.")
-            }
-            (true, Refusal::TooBig) => {
-                let who = capitalized(&self.called(&self.state.actors[&id]));
-                format!("{who} is too big to squeeze past.")
             }
             (true, Refusal::Water) => {
                 let who = capitalized(&self.called(&self.state.actors[&id]));

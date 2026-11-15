@@ -148,12 +148,10 @@ fn the_other_refusals_stand_for_the_trained() {
         .expect("shopkeeper")
         .id;
     assert_eq!(w.refusal(id), Some(Refusal::Budge));
-    for why in [Refusal::TooBig, Refusal::Water] {
-        assert!(matches!(
-            w.wriggle(id, why, Pos::new(3, 1), true),
-            super::wriggle::Wriggled::No
-        ));
-    }
+    assert!(matches!(
+        w.wriggle(id, Refusal::Water, Pos::new(3, 1), true),
+        super::wriggle::Wriggled::No
+    ));
 }
 
 #[test]
