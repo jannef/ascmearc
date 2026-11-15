@@ -1,0 +1,46 @@
+# Līctūn crypt 12, "the house of urns" (#1685): the twelfth crypt under Līctūn, below
+# Līctūn crypt 11, reached by the stairs that open there once its places are filled (spec §7
+# "Graves"; `docs/dev/graves.md`). Its stairs up (<) lead back to Līctūn crypt 11. No danger,
+# nobody here.
+#
+# Built by the same people as the hall above, for their ashes: a long room whose walls are set
+# with rows of little niches, as a dovecote is, and a low wall of niches down its middle. In the
+# middle wall a small chamber holds the tomb of the woman the house was first built for (F). The
+# urns are long gone to dust, and the niches are deep enough for the dead of Cēaptūn. Places for
+# statues at the room's four corners (S). The way down to the next crypt (v) is in the south-east
+# corner, shut until every place here is filled.
+#
+# Places: 40 niches, filled in row order.
+name = "Līctūn crypt 12"
+arrival = "Līctūn crypt 12, the house of urns: walls set with rows of little niches, like a dovecote's."
+temperature = 4
+ambient = [6, 6, 8, 0]
+item_level = 1
+map = '''
+############################################
+####################<#######################
+###################t.t######################
+###N##N##N##N##N##N#.#N##N##N##N##N##N######
+##S.....................................S###
+###.##N##N##N##N##.....##N##N##N##N##.######
+###.##############..F..##############.######
+###.##N##N##N##N##.....##N##N##N##N##.######
+##S........i....................i.......S###
+###N##N##N##N##N##N##N##N##N##N##N##N##.####
+#######################################v####
+############################################
+'''
+
+[burial]
+chain = "lictun"
+depth = 12
+epitaph = "Here lies {name}, {death}. Laid where the old people kept their ashes."
+
+[legend]
+"N" = "empty_niche"
+"i" = "candles"
+"t" = "sconce"
+"<" = { terrain = "stairs_up", to = "lictun_crypt_11" }
+"S" = { terrain = "floor", statue_place = true }
+"v" = { terrain = "floor", burial_stairs = "stairs_down" }
+"F" = { terrain = "sarcophagus", epitaph = "Letters cut round a carved urn: D·M·IVLIAE·SEVERAE·CONIVGI·CARISSIMAE·AVRELIVS·VICTOR·FECIT." }

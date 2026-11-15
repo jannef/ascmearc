@@ -1,0 +1,61 @@
+# Līctūn crypt 18, "the bone cave" (#1685): the eighteenth crypt under Līctūn, below
+# Līctūn crypt 17, reached by the stairs that open there once its places are filled (spec §7
+# "Graves"; `docs/dev/graves.md`). Its stairs up (<) lead back to Līctūn crypt 17. No danger,
+# nobody here.
+#
+# No one built this: a cave in the rock, two hollows joined by a narrow throat. The first people
+# of this place laid their dead in its clefts (the niches) and left the bones of the beasts they
+# ate in heaps on the floor (B); stones have fallen from the roof since. One cleft is sealed (F).
+# A little fungus glows on the damp. Places for statues across both hollows (S). A gap in the
+# east wall is the way down to the next crypt (v), shut until every place here is filled.
+#
+# Places: 27 niches, filled in row order.
+name = "Līctūn crypt 18"
+arrival = "Līctūn crypt 18, the bone cave: a cave of two hollows, the dead in its clefts and beasts' bones on its floor."
+temperature = 2
+ambient = [6, 6, 8, 0]
+item_level = 1
+map = '''
+##############################################################
+##############################################################
+##############################################################
+##############################################################
+##############################################################
+##################N###N########################N##############
+###############N#........#N###N#####N###N###N#..##N###########
+###############.......●........##N#..................#N#######
+###########N##.........................................#######
+#########t#.......BB..................●.......BB..S.....######
+#########<..i.....B............................B.........N####
+#########....f..........S.....S.........................v#####
+#######N..................................S........fi..#######
+########.........................f....................########
+#########.....●...........BB............●...........#N########
+########F..................B........#..............###########
+##########........................###N###N#.......############
+###########.............#N###N###N###########N###N############
+###########N#........#N#######################################
+###############N###N##########################################
+##############################################################
+##############################################################
+##############################################################
+##############################################################
+'''
+
+[burial]
+chain = "lictun"
+depth = 18
+epitaph = "Here lies {name}, {death}. Laid in a cleft of the rock."
+
+[legend]
+"#" = "granite"
+"N" = "empty_niche"
+"B" = "bone_wall"
+"●" = "boulder"
+"f" = "fungus"
+"i" = "candles"
+"t" = "sconce"
+"<" = { terrain = "stairs_up", to = "lictun_crypt_17" }
+"S" = { terrain = "floor", statue_place = true }
+"v" = { terrain = "floor", burial_stairs = "stairs_down" }
+"F" = { terrain = "sealed_niche", epitaph = "No words: red earth smeared over the stone, and a string of shells hung across it." }

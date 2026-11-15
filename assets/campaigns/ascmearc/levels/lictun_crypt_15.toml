@@ -1,0 +1,57 @@
+# Līctūn crypt 15, "the earth-house" (#1685): the fifteenth crypt under Līctūn, below
+# Līctūn crypt 14, reached by the stairs that open there once its places are filled (spec §7
+# "Graves"; `docs/dev/graves.md`). Its stairs up (<) lead back to Līctūn crypt 14. No danger,
+# nobody here.
+#
+# An earth-house: a long low passage dug in the clay, bending like a bow, where a farmstead once
+# kept its grain out of the frost. Later its people laid their dead in niches cut in pairs along
+# both walls. From the bottom of the bend a creep goes down to a small round chamber, where the
+# first of them lies under a stone box (F), places for statues round it (S). The passage's east
+# end is the way down to the next crypt (v), shut until every place here is filled.
+#
+# Places: 32 niches, filled in row order.
+name = "Līctūn crypt 15"
+arrival = "Līctūn crypt 15, the earth-house: a long low passage dug in the clay, bending like a bow."
+temperature = 3
+ambient = [6, 6, 8, 0]
+item_level = 1
+map = '''
+############################################################
+############################################################
+############################################################
+############################################################
+####t##N#N#######################################N#N##t#####
+###<,,,,,,,,,##################################,,,,,,,,,####
+######,,,,,,,N#N###########################N#N#,,,,,,,,v####
+#######N#N#,,,,,,,,######################,,,,,,,,N#N########
+###########,,,,,,,,N#N###############N#N#,,,,,,,,###########
+#############N#N#,,,,,,,,##########,,,,,,,,N#N##############
+#################,,,,,,,,N#N###N#N#,,,,,,,,#################
+###################N#N#,,,,,,,,,,,,,,N#N####################
+#######################,,,,,,,,,,,,,,#######################
+#########################N#N#,,N#N##########################
+#############################,,#############################
+##########################,,,,,,,,##########################
+#########################S,,,,,,,,S#########################
+########################i,,,,F,,,,,i########################
+#########################S,,,,,,,,S#########################
+##########################,,,,,,,,##########################
+############################################################
+############################################################
+'''
+
+[burial]
+chain = "lictun"
+depth = 15
+epitaph = "Here lies {name}, {death}. Laid in the earth-house, out of the wind."
+
+[legend]
+"#" = "packed_earth"
+"," = "dusty_floor"
+"N" = "empty_niche"
+"i" = "candles"
+"t" = "sconce"
+"<" = { terrain = "stairs_up", to = "lictun_crypt_14" }
+"S" = { terrain = "dusty_floor", statue_place = true }
+"v" = { terrain = "dusty_floor", burial_stairs = "stairs_down" }
+"F" = { terrain = "sarcophagus", epitaph = "A stone box under a heap of pebbles. No words; a jet bead lies on its lid." }

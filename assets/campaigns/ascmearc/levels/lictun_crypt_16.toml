@@ -1,0 +1,61 @@
+# Līctūn crypt 16, "the barrow" (#1685): the sixteenth crypt under Līctūn, below
+# Līctūn crypt 15, reached by the stairs that open there once its places are filled (spec §7
+# "Graves"; `docs/dev/graves.md`). Its stairs up (<) lead back to Līctūn crypt 15. No danger,
+# nobody here.
+#
+# The inside of a great round barrow, heaped up over its dead long before the Britons: bare earth
+# walls, a passage straight through from west to east. Stone coffins stand in a ring round a kerb
+# of standing stones, and inside the kerb the barrow's lord lies in the great cist it was raised
+# for (F), a candle each side, places for statues about him (S). The passage's east end is the
+# way down to the next crypt (v), shut until every place here is filled.
+#
+# Places: 20 stone coffins, filled in row order.
+name = "Līctūn crypt 16"
+arrival = "Līctūn crypt 16, the barrow: the inside of a great mound, stone coffins in a ring about a ring of stones."
+temperature = 3
+ambient = [6, 6, 8, 0]
+item_level = 1
+map = '''
+################################################################
+################################################################
+################################################################
+##########################,,,,,,,,,,,###########################
+######################,,,,,,,,,,,,,,,,,,,#######################
+####################,,,,,,,,,O,,,O,,,,,,,,,#####################
+##################,,,,,,,,O,,,,,,,,,O,,,,,,,,###################
+#################,,,,,,O,,,,,,,,,,,,,,,O,,,,,,##################
+################,,,,,,,,,,,,●●●●●●●,,,,,,,,,,,,#################
+###############,,,,,O,,,,,●●,,,,,,,●●,,,,,O,,,,,################
+###############,,,,,,,,,,●,,,,,,,,,,,●,,,,,,,,,,################
+####t##########,,,,O,,,,●,,,S,,,,,S,,,●,,,,O,,,,################
+###<,,,,,,,,,,,,,,,,,,,,,,,,,i,F,i,,,,,,,,,,,,,,,,,,,,,,,,,,v###
+###############,,,,O,,,,●,,,S,,,,,S,,,●,,,,O,,,,################
+###############,,,,,,,,,,●,,,,,,,,,,,●,,,,,,,,,,################
+###############,,,,,O,,,,,●●,,,,,,,●●,,,,,O,,,,,################
+################,,,,,,,,,,,,●●●●●●●,,,,,,,,,,,,#################
+#################,,,,,,O,,,,,,,,,,,,,,,O,,,,,,##################
+##################,,,,,,,,O,,,,,,,,,O,,,,,,,,###################
+####################,,,,,,,,,O,,,O,,,,,,,,,#####################
+######################,,,,,,,,,,,,,,,,,,,#######################
+##########################,,,,,,,,,,,###########################
+################################################################
+################################################################
+################################################################
+'''
+
+[burial]
+chain = "lictun"
+depth = 16
+epitaph = "Here lies {name}, {death}. Laid in the mound, in the ring."
+
+[legend]
+"#" = "packed_earth"
+"," = "dusty_floor"
+"O" = "open_sarcophagus"
+"●" = "standing_stone"
+"i" = "candles"
+"t" = "sconce"
+"<" = { terrain = "stairs_up", to = "lictun_crypt_15" }
+"S" = { terrain = "dusty_floor", statue_place = true }
+"v" = { terrain = "dusty_floor", burial_stairs = "stairs_down" }
+"F" = { terrain = "sarcophagus", epitaph = "A great cist under its capstone. Cut in the stone: cups and rings, and nothing else." }

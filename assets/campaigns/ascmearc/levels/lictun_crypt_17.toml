@@ -1,0 +1,61 @@
+# Līctūn crypt 17, "the long barrow" (#1685): the seventeenth crypt under Līctūn, below
+# Līctūn crypt 16, reached by the stairs that open there once its places are filled (spec §7
+# "Graves"; `docs/dev/graves.md`). Its stairs up (<) lead back to Līctūn crypt 16. No danger,
+# nobody here.
+#
+# Older than the barrow: a tomb of great stones. The stairs come down into its forecourt, a
+# crescent of stones, and from there a long passage walled with standing stones runs east, three
+# pairs of little chambers off it, each with niches in its walls. At the end a wider chamber holds
+# the two the tomb was first built for (F, G), places for statues in its corners (S). Behind them
+# is the way down to the next crypt (v), shut until every place here is filled.
+#
+# Places: 36 niches, filled in row order.
+name = "Līctūn crypt 17"
+arrival = "Līctūn crypt 17, the long barrow: a forecourt of great stones, and a passage walled with them, chambers either side."
+temperature = 3
+ambient = [6, 6, 8, 0]
+item_level = 1
+map = '''
+################################################################
+################################################################
+################################################################
+################################################################
+################################################################
+################################################################
+#########●########N#N#########N#N#########N#N###################
+######●●●●●●●#####...#########...#########...###################
+######.......●###N...N#######N...N#######N...N##################
+#####.........●###...#########...#########...#######S.....S#####
+#####.........●##N...N#######N...N#######N...N######...i...#####
+####t........●●●●●●.●●●●●●●●●●●.●●●●●●●●●●●.●●●●●●●●.......#####
+####<....................................................F.#####
+#####....................................................Gv#####
+#####........●●●●●●.●●●●●●●●●●●.●●●●●●●●●●●.●●●●●●●●.......#####
+#####.........●##N...N#######N...N#######N...N######...i...#####
+######.......●####...#########...#########...#######S.....S#####
+######●●●●●●●####N...N#######N...N#######N...N##################
+#########●########...#########...#########...###################
+##################N#N#########N#N#########N#N###################
+################################################################
+################################################################
+################################################################
+################################################################
+################################################################
+'''
+
+[burial]
+chain = "lictun"
+depth = 17
+epitaph = "Here lies {name}, {death}. Laid in the house of the long dead."
+
+[legend]
+"#" = "granite"
+"N" = "empty_niche"
+"●" = "standing_stone"
+"i" = "candles"
+"t" = "sconce"
+"<" = { terrain = "stairs_up", to = "lictun_crypt_16" }
+"S" = { terrain = "floor", statue_place = true }
+"v" = { terrain = "floor", burial_stairs = "stairs_down" }
+"F" = { terrain = "sarcophagus", epitaph = "A slab over a man laid on his side, an axe of green stone at his hand." }
+"G" = { terrain = "sarcophagus", epitaph = "A slab over a woman, a child curled against her as if asleep." }
