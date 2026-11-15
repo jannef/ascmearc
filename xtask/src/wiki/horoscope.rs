@@ -212,6 +212,90 @@ pub(super) fn flavour(content: &Content) -> String {
     out
 }
 
+/// The elements' seasons (`[flavour] seasons`, #1732): each element's months, and how much
+/// stronger its first gift is in them, exactly.
+pub(super) fn seasons(content: &Content) -> String {
+    let (Some(h), Some(f)) = (content.horoscope(), content.flavour()) else {
+        return "The elements have no seasons.\n".into();
+    };
+    if f.seasons.is_empty() {
+        return "The elements have no seasons.\n".into();
+    }
+    let book = content.talents();
+    let calendar = content.calendar();
+    let mut out = String::from("| Element | Season | Gift | In its season |\n|---|---|---|---|\n");
+    for e in &h.elements {
+        let Some(season) = f.seasons.get(&e.id) else {
+            continue;
+        };
+        let months = match (season.from, season.to) {
+            (from, to) if from == to => calendar.month(from).to_string(),
+            (from, to) => format!("{} to {}", calendar.month(from), calendar.month(to)),
+        };
+        let Some(def) = (e.grants.first())
+            .and_then(|id| book.id(id))
+            .map(|t| book.get(t))
+        else {
+            continue;
+        };
+        let _ = writeln!(
+            out,
+            "| {} | {months} | {} | {} |",
+            e.name,
+            talent_link(content, &def.id, &def.name),
+            in_season(content, def, season.more)
+        );
+    }
+    out
+}
+
+/// What `more` adds to first gift `def` in its season, in the gift's own unit.
+fn in_season(content: &Content, def: &TalentDef, more: i32) -> String {
+    use ascmearc_core::content::TalentEffect;
+    use ascmearc_core::dice::Dice;
+    use ascmearc_core::talent::SignEffect;
+    let hotter = |damage: Dice| {
+        let die = Dice::of(more.unsigned_abs(), damage.sides());
+        format!("{} instead of {damage}", damage.and(die))
+    };
+    match def.id.as_str() {
+        "supple" => format!("Dodge {} more", signed(more)),
+        "stone_hide" => format!("Protection {} more", signed(more)),
+        "keen_edge" => format!("threat {} more", signed(more)),
+        "always_a_way" => format!(
+            "secret doors and hidden traps {more} easier still to find (searching and in \
+             passing)"
+        ),
+        "blaze" => {
+            let own = (def.effects.iter()).find_map(|e| match e {
+                TalentEffect::Sign(SignEffect::Blaze { damage, .. }) => Some(*damage),
+                _ => None,
+            });
+            let book = content.talents();
+            let wildfire = (book.iter()).find_map(|(_, t)| {
+                t.effects.iter().find_map(|e| match e {
+                    TalentEffect::Sign(SignEffect::Wildfire { damage, .. }) => {
+                        Some((t.name.clone(), *damage))
+                    }
+                    _ => None,
+                })
+            });
+            let mut text = format!(
+                "{more} more {} of damage",
+                if more == 1 { "die" } else { "dice" }
+            );
+            if let Some(own) = own {
+                let _ = write!(text, ": {}", hotter(own));
+            }
+            if let Some((name, damage)) = wildfire {
+                let _ = write!(text, "; with {name}, {}", hotter(damage));
+            }
+            text
+        }
+        _ => "no change".into(),
+    }
+}
+
 /// The years of the sign `animal`–`element` in the great cycle that holds `year` and the one
 /// before it.
 fn years_of(h: &Horoscope, animal: &str, element: &str, year: i64) -> Vec<i64> {
