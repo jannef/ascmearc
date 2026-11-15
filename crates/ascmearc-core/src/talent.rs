@@ -402,7 +402,7 @@ impl TalentMods {
                 self.faith.smite_mode(active).is_some()
             }
             A::HolyRadiance => self.faith.radiance.is_some(),
-            A::PatientDefence => self.martial.patient_defence.is_some(),
+            A::Roundhouse => self.martial.roundhouse,
             A::StunningStrike => self.martial.stunning_strike.is_some(),
             A::QuiveringPalm => self.martial.quivering_palm.is_some(),
             A::StepOfTheWind => self.martial.wind_step.is_some(),

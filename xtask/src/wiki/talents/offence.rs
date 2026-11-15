@@ -189,7 +189,13 @@ pub(super) fn text(content: &Content, effect: &OffenceEffect) -> String {
              unarmed, launcher, and thrown skills; ties all count) threaten a critical {value} \
              lower"
         ),
-        OffenceEffect::KickDie { sides } => format!("kicks at creatures roll 1d{sides}"),
+        OffenceEffect::KickDie { sides, bonus: 0 } => format!("kicks at creatures roll 1d{sides}"),
+        OffenceEffect::KickDie { sides, bonus } => format!(
+            "kicks at creatures roll 1d{sides}; if your bare hands roll a die of their own \
+             ([martial arts](class-ascetic.md#unarmed-damage)), kicks roll the bigger of the two \
+             dice, {} damage",
+            signed(bonus)
+        ),
         OffenceEffect::KickBack => "a kick that hits drives the foe one cell straight back, \
                                    when that cell is walkable, untrapped, unfrozen, and empty"
             .into(),

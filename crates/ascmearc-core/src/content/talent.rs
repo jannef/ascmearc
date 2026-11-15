@@ -409,7 +409,7 @@ impl TalentEffect {
             TalentEffect::Faith(FaithEffect::Smite { .. }) => A::Smite,
             TalentEffect::Faith(FaithEffect::SmiteMode { mode, .. }) => mode.active(),
             TalentEffect::Faith(FaithEffect::Radiance { .. }) => A::HolyRadiance,
-            TalentEffect::Martial(MartialEffect::PatientDefence { .. }) => A::PatientDefence,
+            TalentEffect::Martial(MartialEffect::Roundhouse) => A::Roundhouse,
             TalentEffect::Martial(MartialEffect::StunningStrike { .. }) => A::StunningStrike,
             TalentEffect::Martial(MartialEffect::QuiveringPalm { .. }) => A::QuiveringPalm,
             TalentEffect::Martial(MartialEffect::WindStep { .. }) => A::StepOfTheWind,
@@ -567,7 +567,6 @@ impl TalentEffect {
             | TalentEffect::Martial(MartialEffect::WindStep { status: id })
             | TalentEffect::Martial(MartialEffect::QuiveringPalm { status: id, .. })
             | TalentEffect::Martial(MartialEffect::StunningStrike { status: id, .. })
-            | TalentEffect::Martial(MartialEffect::PatientDefence { status: id })
             | TalentEffect::Martial(MartialEffect::WarCry { status: id, .. })
             | TalentEffect::Offence(OffenceEffect::StatusDamage { status: id, .. })
             | TalentEffect::Senses(SensesEffect::Scent { status: id, .. })
@@ -633,7 +632,7 @@ impl TalentEffect {
             TalentEffect::Offence(OffenceEffect::UnarmedDie { sides }) => {
                 nonzero("unarmed_die", "sides", u32::from(*sides))
             }
-            TalentEffect::Offence(OffenceEffect::KickDie { sides }) => {
+            TalentEffect::Offence(OffenceEffect::KickDie { sides, .. }) => {
                 nonzero("kick_die", "sides", u32::from(*sides))
             }
             TalentEffect::Stealth(StealthEffect::ExploitThreat { value, sure_at }) => {

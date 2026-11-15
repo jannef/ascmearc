@@ -441,7 +441,7 @@ owner's rule, #156) get no key of their own: they go into the one abilities menu
   opens the menu when there is none.
 - **Keys**: an ability with an action of its own may have a rebindable `KeyCommand`, left unbound
   by default (`settings/keys.rs::UNBOUND`); never a default key. Shield bash is the first, Steal
-  the second; a style's rank 10 abilities (later) go there too. They stay (the owner, #644), and
+  the second, the ascetic's Roundhouse (#1733) the only class active among them; a style's rank 10 abilities (later) go there too. They stay (the owner, #644), and
   `settings/keys.rs::ABILITY_KEYS` lists them: Controls and the `?` help show them last, below
   every context's group, under "Ability keys" (`controls_screen::Row::AbilityKeys`; text
   snapshot `controls-screen-bottom`).

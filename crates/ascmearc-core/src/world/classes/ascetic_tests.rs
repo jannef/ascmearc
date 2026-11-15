@@ -5,7 +5,7 @@ use super::class_active_tests::{at_normal_speed, beside, reach, suffers, world};
 use crate::ability::{Ability, Unavailable};
 use crate::action::{AttackKind, parse_actions};
 use crate::character::CharacterSpec;
-use crate::combat::{Category, Strike};
+use crate::combat::Strike;
 use crate::content::{ClassActive, ContentFiles, ResourceId};
 use crate::dump::{self, Layer};
 use crate::replay::Replay;
@@ -59,135 +59,173 @@ fn strikes(outcome: &Outcome) -> Vec<(ActorId, ActorId, Option<Strike>)> {
         .collect()
 }
 
-// Patient defence (#849).
+// Roundhouse (#1733).
 
-const PATIENT: ClassActive = ClassActive::PatientDefence;
+const ROUNDHOUSE: ClassActive = ClassActive::Roundhouse;
+
+/// A kobold of `hp` beside the player at `dir`.
+fn kobold_at(w: &mut World, dir: Dir, hp: i32) -> ActorId {
+    let id = beside(w, "kobold", hp);
+    let at = w.player_pos().step(dir);
+    w.state.actors.get_mut(&id).expect("the kobold").pos = at;
+    id
+}
 
 #[test]
-fn patient_defence_comes_at_level_eighteen() {
+fn roundhouse_comes_at_level_eighteen() {
     let w = ascetic(17);
-    assert_eq!(own(&w, PATIENT), None, "not before level 18");
+    assert_eq!(own(&w, ROUNDHOUSE), None, "not before level 18");
     let w = ascetic(18);
-    assert_eq!(own(&w, PATIENT), Some(None), "in the menu, ready");
+    assert_eq!(own(&w, ROUNDHOUSE), Some(None), "in the menu, ready");
     let rows = dump::layer_rows(&w, Layer::Talents);
-    assert!(
-        rows.iter().any(|r| r == "Patient defence (class)"),
-        "{rows:?}"
-    );
+    assert!(rows.iter().any(|r| r == "Roundhouse (class)"), "{rows:?}");
+    assert!(!rows.iter().any(|r| r.starts_with("Patient defence")));
 }
 
 #[test]
-fn patient_defence_is_refused_before_the_spend_without_ki() {
+fn roundhouse_is_refused_before_the_spend_with_nobody_hostile_beside_or_no_ki() {
     let mut w = ascetic(18);
-    let player = w.state.player;
     let (turn, time) = (w.state.turn, w.state.time);
-    set_ki(&mut w, 0);
-    assert_eq!(own(&w, PATIENT), Some(Some(Unavailable::Short(ki(&w)))));
-    run(&mut w, "use:patient_defence");
-    assert_eq!(last(&w), "Your ki is spent.");
-    assert!(!suffers(&w, player, "poised"));
+    let ki_before = held_ki(&w);
+    run(&mut w, "use:roundhouse");
+    assert_eq!(last(&w), "There is nobody beside you to kick.");
+    // A peaceful creature beside the player is no foe to kick.
+    let friend = kobold_at(&mut w, Dir::W, 50);
+    let peaceful = w.content().factions().id("peaceful").expect("peaceful");
+    w.state
+        .actors
+        .get_mut(&friend)
+        .expect("friend")
+        .faction_override = Some(peaceful);
+    run(&mut w, "use:roundhouse");
+    assert_eq!(last(&w), "There is nobody beside you to kick. (×2)");
+    assert_eq!(w.state.actors[&friend].hp, 50, "untouched");
     assert_eq!((w.state.turn, w.state.time), (turn, time), "no time");
+    assert_eq!(held_ki(&w), ki_before, "no ki");
+    // A foe beside, but short of ki.
+    kobold_at(&mut w, Dir::E, 5000);
+    set_ki(&mut w, 1);
+    assert_eq!(own(&w, ROUNDHOUSE), Some(Some(Unavailable::Short(ki(&w)))));
+    run(&mut w, "use:roundhouse");
+    assert_eq!(last(&w), "Your ki is spent.");
+    assert_eq!((w.state.turn, w.state.time), (turn, time), "no time");
+    assert_eq!(held_ki(&w), Some(1));
 }
 
 #[test]
-fn patient_defence_is_a_wait_for_ki_and_poised_lasts_until_the_next_action() {
+fn roundhouse_kicks_every_hostile_beside_once_clockwise_from_the_north_for_one_kicks_time() {
     let mut w = ascetic(18);
     let player = w.state.player;
-    let dodge = w.defence_of(player).bonus(Category::Dodge);
-    let ki_before = held_ki(&w).expect("ki");
-    let wait = {
+    // Placed out of order; kicked clockwise from the north. A peaceful one is left alone.
+    let south = kobold_at(&mut w, Dir::S, 5000);
+    let east = kobold_at(&mut w, Dir::E, 5000);
+    let north = kobold_at(&mut w, Dir::N, 5000);
+    let friend = kobold_at(&mut w, Dir::W, 5000);
+    let peaceful = w.content().factions().id("peaceful").expect("peaceful");
+    w.state
+        .actors
+        .get_mut(&friend)
+        .expect("friend")
+        .faction_override = Some(peaceful);
+    // One kick's time, as `kick:E` at the same foe takes.
+    let kick = {
         let mut other = ascetic(18);
-        other.apply(&Action::Wait).elapsed
+        kobold_at(&mut other, Dir::E, 5000);
+        other
+            .apply(&parse_actions("kick:E").expect("an action")[0])
+            .elapsed
     };
-    let outcome = w.apply(&parse_actions("use:patient_defence").expect("an action")[0]);
-    assert_eq!(outcome.elapsed, wait, "a wait's time");
-    assert_eq!(held_ki(&w), Some(ki_before - 1), "a point of ki");
-    assert_eq!(last(&w), "You settle into your guard.");
-    // The creatures' turns after it meet it: it outlived the action that gave it.
-    assert!(suffers(&w, player, "poised"));
-    assert_eq!(w.defence_of(player).bonus(Category::Dodge), dodge + 4);
-    assert!(w.free_blows_of(w.state.player()).riposte, "the riposte on");
-    // The next action, whatever it is, ends it, silently.
-    w.apply(&Action::Wait);
-    assert!(!suffers(&w, player, "poised"));
-    assert_eq!(w.defence_of(player).bonus(Category::Dodge), dodge);
-    assert!(
-        !w.free_blows_of(w.state.player()).riposte,
-        "the riposte off"
+    let ki_before = held_ki(&w).expect("ki");
+    let outcome = w.apply(&parse_actions("use:roundhouse").expect("an action")[0]);
+    assert_eq!(outcome.elapsed, kick, "the time of one kick");
+    assert_eq!(held_ki(&w), Some(ki_before - 2), "two ki");
+    let kicked: Vec<ActorId> = (strikes(&outcome).into_iter())
+        .filter(|&(by, ..)| by == player)
+        .map(|(_, at, _)| at)
+        .collect();
+    assert_eq!(
+        kicked,
+        [north, east, south],
+        "each once, clockwise from the north"
     );
-    // Taken again and again, it holds through each.
-    run(&mut w, "use:patient_defence use:patient_defence");
-    assert!(suffers(&w, player, "poised"));
+    assert_eq!(
+        w.state.actors[&friend].hp, 5000,
+        "the peaceful one untouched"
+    );
 }
 
 #[test]
-fn poised_a_dodged_or_parried_blow_is_answered_at_once() {
+fn roundhouse_reaches_the_diagonals() {
     let mut w = ascetic(18);
     let player = w.state.player;
-    let kobold = beside(&mut w, "kobold", 5000);
-    let dodged = |s: Option<Strike>| {
-        matches!(
-            s,
-            Some(Strike::Missed {
-                by: Some(Category::Dexterity | Category::Dodge | Category::Parry)
-            })
-        )
-    };
-    // Not Poised, a dodged blow goes unanswered (an ascetic has no riposte of their own).
-    let mut unanswered = 0;
-    for _ in 0..40 {
-        let max = w.state.player().max_hp(w.content());
-        w.player_mut().hp = max;
-        let outcome = w.apply(&Action::Wait);
-        let struck = strikes(&outcome);
-        assert!(struck.iter().all(|&(by, ..)| by == kobold), "{struck:?}");
-        unanswered += struck.iter().filter(|&&(.., s)| dodged(s)).count();
-    }
-    assert!(unanswered > 0, "the kobold missed some");
-    // Poised, every blow dodged is answered by one back, and only those.
-    let mut answered = 0;
-    for _ in 0..60 {
-        let max = w.state.player().max_hp(w.content());
-        w.player_mut().hp = max;
-        set_ki(&mut w, 5);
-        let outcome = w.apply(&parse_actions("use:patient_defence").expect("an action")[0]);
-        let struck = strikes(&outcome);
-        let Some(&(by, at, strike)) = struck.first() else {
-            continue;
-        };
-        assert_eq!((by, at), (kobold, player));
-        if dodged(strike) {
-            assert_eq!(
-                struck.get(1).map(|&(b, a, _)| (b, a)),
-                Some((player, kobold))
-            );
-            answered += 1;
-        } else {
-            assert_eq!(struck.len(), 1, "a hit is not answered: {struck:?}");
-        }
-    }
-    assert!(answered > 0, "the kobold missed some");
+    let a = kobold_at(&mut w, Dir::NE, 5000);
+    let b = kobold_at(&mut w, Dir::SW, 5000);
+    let outcome = w.apply(&parse_actions("use:roundhouse").expect("an action")[0]);
+    assert!(outcome.elapsed > Duration::seconds(0), "it was used");
+    let kicked: Vec<ActorId> = (strikes(&outcome).into_iter())
+        .filter(|&(by, ..)| by == player)
+        .map(|(_, at, _)| at)
+        .collect();
+    assert_eq!(kicked, [a, b]);
 }
 
 #[test]
-fn patient_defence_replays() {
+fn roundhouse_replays() {
     let content = builtin();
     let spec: CharacterSpec = "human,male,ascetic".parse().expect("a character");
     let mut w =
         World::start_run(content, "showcase", Some(7), Some(&spec), None, true).expect("world");
     let mut replay = Replay::new(&w);
-    let text = "xp:200000 levelup:auto use:patient_defence wait use:patient_defence";
+    let text = "xp:200000 levelup:auto use:roundhouse wait use:roundhouse";
     for action in parse_actions(text).expect("actions") {
         w.apply(&action);
         replay.push(&action, &w);
     }
     assert!(w.player_level() >= 18, "level {}", w.player_level());
-    assert!(suffers(&w, w.state.player, "poised"));
+    assert_eq!(own(&w, ROUNDHOUSE), Some(None));
     let verified = Replay::from_json(&replay.to_json())
         .expect("json")
         .run(w.content().clone())
         .expect("the replay verifies");
     assert_eq!(verified.state_hash(), w.state_hash());
+}
+
+// The unarmed die (#1733).
+
+#[test]
+fn the_bare_hand_die_grows_with_the_level_and_mighty_kick_adds_to_it() {
+    let mut w = ascetic(1);
+    let content = w.content().clone();
+    let fists = |w: &World| w.state.player().melee(&content).damage.to_string();
+    let kick = |w: &World| w.state.player().kick(&content).damage.to_string();
+    assert_eq!((fists(&w), kick(&w)), ("1d6".into(), "1d6".into()));
+    // Mighty kick: the bigger die and its bonus on top, so it adds to Martial arts' kick.
+    w.player_mut().talents.take("mighty_kick", None);
+    assert_eq!((fists(&w), kick(&w)), ("1d6".into(), "1d6+2".into()));
+    for (level, die) in [
+        (11, "1d6"),
+        (12, "1d8"),
+        (25, "1d10"),
+        (40, "1d12"),
+        (60, "1d12"),
+    ] {
+        reach(&mut w, level);
+        w.player_mut().equipment = Default::default();
+        assert_eq!(fists(&w), die, "level {level}");
+        assert_eq!(kick(&w), format!("{die}+2"), "level {level}");
+    }
+}
+
+#[test]
+fn mighty_kick_without_martial_arts_rolls_its_own_die() {
+    let mut w = world("warrior");
+    let content = w.content().clone();
+    w.player_mut().equipment = Default::default();
+    let bare = w.state.player().kick(&content).damage.to_string();
+    w.player_mut().talents.take("mighty_kick", None);
+    let kick = w.state.player().kick(&content).damage.to_string();
+    assert_ne!(bare, kick);
+    assert_eq!(kick, "1d6", "no bonus without a bare-hand die of their own");
 }
 
 // Step of the wind (#847).

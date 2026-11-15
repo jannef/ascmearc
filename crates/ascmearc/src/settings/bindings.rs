@@ -88,6 +88,9 @@ pub enum KeyCommand {
     /// Steal from someone in a direction (asked for in the message line).
     /// An ability: unbound by default, as the abilities menu lists it.
     Steal,
+    /// The ascetic's Roundhouse: a kick at every foe beside the player (#1733). An ability:
+    /// unbound by default, as the abilities menu lists it.
+    Roundhouse,
     /// While aiming: the cursor to the creature in view before (no default key: Shift with
     /// the fixed Tab does it, `settings::fixed`).
     PrevTarget,
@@ -232,6 +235,7 @@ impl KeyCommand {
             KeyCommand::Disarm => "Disarm a trap",
             KeyCommand::PickLock => "Pick a lock",
             KeyCommand::Steal => "Steal",
+            KeyCommand::Roundhouse => "Roundhouse",
             KeyCommand::PrevTarget => "Previous target",
             KeyCommand::UseTool => "Use a tool (dig, light)",
             KeyCommand::Chat => "Chat",

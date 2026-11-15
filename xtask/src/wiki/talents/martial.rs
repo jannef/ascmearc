@@ -104,12 +104,12 @@ pub(super) fn text(content: &Content, effect: &MartialEffect) -> String {
                 names.join(", ")
             )
         }
-        MartialEffect::PatientDefence { status: id } => format!(
-            "active (the time of a wait): you are {} until your next action; a melee blow you \
-             dodge (it misses by your Dexterity or Dodge) or parry meanwhile is answered with \
-             your blow at once (a riposte, a free blow)",
-            status(&id)
-        ),
+        MartialEffect::Roundhouse => {
+            "active (the time of one kick), any grip: a kick at every hostile beside you, one \
+             each, clockwise from the north; neutral and peaceful creatures are left alone; \
+             refused with no hostile beside you"
+                .to_string()
+        }
         MartialEffect::RapidShot {
             resource,
             cost,

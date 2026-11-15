@@ -115,8 +115,14 @@ pub enum OffenceEffect {
     },
     /// Throws reach this many cells farther.
     ThrowRange { value: i32 },
-    /// Its kicks at creatures roll one die of this many sides instead of bare hands' dice.
-    KickDie { sides: u8 },
+    /// Its kicks at creatures roll one die of this many sides instead of bare hands' dice; with
+    /// bare hands that roll a die of their own (`unarmed_die`: Martial arts) they roll the bigger
+    /// of the two and add `bonus` (Mighty kick's 2), so the kick still gains by it.
+    KickDie {
+        sides: u8,
+        #[serde(default)]
+        bonus: i32,
+    },
     /// A kick of its that hits drives the foe a cell back, when the cell is free (Breaker;
     /// `World::kick_back`).
     KickBack,
@@ -242,6 +248,9 @@ pub struct OffenceMods {
     pub throw_range: i32,
     /// The sides of the one die its kicks at creatures roll, if any (the most counts).
     pub kick_die: Option<u8>,
+    /// Added to its kicks' damage while its bare hands roll a die of their own too (the
+    /// `bonus` of its `kick_die` effects, summed).
+    pub kick_bonus: i32,
     /// A kick of its that hits drives the foe a cell back, when the cell is free (Breaker).
     pub kick_back: bool,
     /// Percent more its blows with a two-handed weapon cost (negative: cheaper).
@@ -367,8 +376,9 @@ impl OffenceMods {
                 skill: Some(skill),
             } => self.launcher_range_of.push((skill, value)),
             OffenceEffect::ThrowRange { value } => self.throw_range += value,
-            OffenceEffect::KickDie { sides } => {
+            OffenceEffect::KickDie { sides, bonus } => {
                 self.kick_die = Some(self.kick_die.map_or(sides, |s| s.max(sides)));
+                self.kick_bonus += bonus;
             }
             OffenceEffect::KickBack => self.kick_back = true,
             OffenceEffect::TwoHandedPrice { value } => self.two_handed_price += value,

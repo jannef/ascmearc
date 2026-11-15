@@ -1,0 +1,9 @@
+[[talent]]
+id = "roundhouse"
+name = "Roundhouse"
+tree = "class"
+granted = true
+description = "A spinning kick (an ability) for two ki and the time of one kick: every foe beside you takes a kick."
+effects = [{ kind = "roundhouse" }]
+resource = { id = "ki", cost = 2 }
+systems = ["kicks", "combat", "resources"]

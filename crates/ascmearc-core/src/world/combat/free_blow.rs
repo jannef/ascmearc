@@ -94,14 +94,9 @@ pub(in crate::world) enum Cue {
     /// was rolled): the second blow.
     First(Option<Blow>),
     /// The striker's melee attack on the target is over, `parried` if one of its blows missed by
-    /// the target's Parry, `dodged` if one missed by its Dexterity or Dodge, `hit` if one hit: a
-    /// cleave if it killed the target, else the target's Retribution (on a hit), else its
-    /// riposte (a dodged blow is answered only while the target is Poised, `ascetic.rs`).
-    Attacked {
-        parried: bool,
-        dodged: bool,
-        hit: bool,
-    },
+    /// the target's Parry, `hit` if one hit: a cleave if it killed the target, else the target's
+    /// Retribution (on a hit), else its riposte.
+    Attacked { parried: bool, hit: bool },
     /// The striker's cleave at the target is over: another, with great cleave, if it killed.
     Cleaved,
     /// The target is about to step away from beside the striker, out of its reach.
@@ -163,18 +158,6 @@ pub(in crate::world) struct FreeBlow {
     pub(in crate::world) profile: Profile,
 }
 
-/// Whether `blow` missed by its target's Dexterity or Dodge: the blow was dodged.
-pub(super) fn dodged(blow: Option<Blow>) -> bool {
-    blow.is_some_and(|b| {
-        matches!(
-            b.strike,
-            Strike::Missed {
-                by: Some(Category::Dexterity | Category::Dodge)
-            }
-        )
-    })
-}
-
 /// Whether `blow` missed by its target's Parry.
 pub(in crate::world) fn parried(blow: Option<Blow>) -> bool {
     blow.is_some_and(|b| {
@@ -196,8 +179,6 @@ impl World {
         // Lurking, a hostile stepping up beside it takes its blow (`thief.rs`).
         let blows = FreeBlows {
             gatekeeper: blows.gatekeeper || self.lurking(actor),
-            // Poised, a blow it dodges or parries is answered (`ascetic.rs`).
-            riposte: blows.riposte || self.poised(actor),
             ..blows
         };
         // Averted (`avert.rs`), the player strikes no free blow at all.
@@ -232,25 +213,19 @@ impl World {
         events: &mut Vec<Event>,
     ) {
         // The player's attacks are on creatures, whose blows Retribution never answers: no hit.
-        self.after_melee(attacker, target, (parried, false, false), events);
+        self.after_melee(attacker, target, (parried, false), events);
     }
 
-    /// As [`World::after_attack`], with whether a blow of it missed by the target's Parry,
-    /// whether one missed by its Dexterity or Dodge ([`dodged`]), and whether one hit: a dodged
-    /// blow is answered by a Poised target's riposte (`ascetic.rs`), a hit by the player's
-    /// Retribution (`smite.rs`).
+    /// As [`World::after_attack`], with whether a blow of it missed by the target's Parry and
+    /// whether one hit: a hit is answered by the player's Retribution (`smite.rs`).
     pub(super) fn after_melee(
         &mut self,
         attacker: ActorId,
         target: ActorId,
-        (parried, dodged, hit): (bool, bool, bool),
+        (parried, hit): (bool, bool),
         events: &mut Vec<Event>,
     ) {
-        let cue = Cue::Attacked {
-            parried,
-            dodged,
-            hit,
-        };
+        let cue = Cue::Attacked { parried, hit };
         let mut next = self.second_blow(attacker, target, cue, events);
         while let Some(blow) = next {
             let (by, at, kind) = (blow.by, blow.at, blow.kind);
@@ -425,21 +400,17 @@ impl World {
     }
 
     /// Actor `target`'s riposte at `attacker`, whose melee attack on it is over, `parried` if a
-    /// blow of it missed by `target`'s Parry, `dodged` if one missed by its Dexterity or Dodge
-    /// (answered only while `target` is Poised, `ascetic.rs`): a blow back with what it wields.
+    /// blow of it missed by `target`'s Parry: a blow back with what it wields.
     pub(super) fn riposte(
         &self,
         attacker: ActorId,
         target: ActorId,
-        (parried, dodged): (bool, bool),
+        parried: bool,
     ) -> Option<FreeBlow> {
-        if !(parried || dodged) || !self.stands(attacker) || !self.stands(target) {
+        if !parried || !self.stands(attacker) || !self.stands(target) {
             return None;
         }
         let (me, them) = (&self.state.actors[&target], &self.state.actors[&attacker]);
-        if !parried && !self.poised(me) {
-            return None;
-        }
         let beside = me.level == them.level && me.pos.chebyshev(them.pos) == 1;
         (beside && self.free_blows_of(me).riposte).then(|| FreeBlow {
             by: target,

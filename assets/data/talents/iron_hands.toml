@@ -1,0 +1,8 @@
+[[talent]]
+id = "iron_hands"
+name = "Iron hands"
+tree = "class"
+granted = true
+description = "Your hands and feet strike like iron: your bare-handed blows and kicks roll 1d10."
+effects = [{ kind = "unarmed_die", sides = 10 }]
+systems = ["kicks", "combat"]

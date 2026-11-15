@@ -213,6 +213,11 @@ impl Gameplay<'_> {
                 open = Some(ScreenAction::UseAbility(Ability::Steal));
                 InputMode::Normal
             }
+            KeyCommand::Roundhouse => {
+                let roundhouse = ascmearc_core::content::ClassActive::Roundhouse;
+                open = Some(ScreenAction::UseAbility(Ability::Class(roundhouse)));
+                InputMode::Normal
+            }
             // The one creature in view next to the player, at once; among several, ask which way.
             KeyCommand::Chat => self.beside(Beside::Chat, InputMode::Direction(command)),
             KeyCommand::UseTool => {

@@ -25,15 +25,19 @@ kit = [
 # Bonus talents from Finesse and Vigour.
 bonus_talents = { levels = [10, 20, 30, 45, 55], trees = ["finesse", "vigour"] }
 # The level table. Martial arts grants the Ki pool Flurry and
-# Quivering palm spend (the ki tricks design).
+# Quivering palm spend (the ki tricks design); its bare-hand die grows with
+# Hardened hands (1d8), Iron hands (1d10), and Adamant hands (1d12).
 abilities = [
     { level = 1, talent = "martial_arts" },
     { level = 1, talent = "flurry" },
     { level = 6, talent = "step_of_the_wind" },
+    { level = 12, talent = "hardened_hands" },
     { level = 12, talent = "stunning_strike" },
-    { level = 18, talent = "patient_defence" },
+    { level = 18, talent = "roundhouse" },
+    { level = 25, talent = "iron_hands" },
     { level = 25, talent = "still_mind" },
     { level = 32, talent = "purity_of_body" },
+    { level = 40, talent = "adamant_hands" },
     { level = 40, talent = "diamond_soul" },
     { level = 50, talent = "quivering_palm" },
     { level = 60, talent = "perfect_self" },

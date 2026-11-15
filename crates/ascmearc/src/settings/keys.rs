@@ -74,6 +74,7 @@ pub const REBINDABLE: &[KeyCommand] = &[
     KeyCommand::Disarm,
     KeyCommand::PickLock,
     KeyCommand::Steal,
+    KeyCommand::Roundhouse,
     KeyCommand::Pay,
     KeyCommand::PrevTarget,
     KeyCommand::UseTool,
@@ -95,6 +96,7 @@ pub const ABILITY_KEYS: &[KeyCommand] = &[
     KeyCommand::Disarm,
     KeyCommand::PickLock,
     KeyCommand::Steal,
+    KeyCommand::Roundhouse,
 ];
 
 /// Ids of commands that were removed: an old settings or keymap file may still list them, and
@@ -202,6 +204,7 @@ pub const UNBOUND: &[KeyCommand] = &[
     KeyCommand::Disarm,
     KeyCommand::PickLock,
     KeyCommand::Steal,
+    KeyCommand::Roundhouse,
     KeyCommand::Quit,
     KeyCommand::PrevTarget,
     KeyCommand::MoreSkip,
@@ -311,6 +314,7 @@ impl KeyCommand {
             Disarm => "disarm",
             PickLock => "pick_lock",
             Steal => "steal",
+            Roundhouse => "roundhouse",
             PrevTarget => "prev_target",
             UseTool => "use_tool",
             Chat => "chat",

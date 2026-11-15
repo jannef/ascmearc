@@ -1,7 +1,7 @@
 //! The class actives in the world: what a class's level table gives
 //! that is used from the abilities menu ([`crate::ability::Ability::Class`]) as [`Action::Use`]
 //! (`use:rage`, `use:smite:E`): Rage, War cry (for rage, `world/classes/war_cry.rs`), Veteran's wind, Lay on hands, Smite (for zeal, `world/classes/smite.rs`), Holy
-//! radiance, Stunning strike, Quivering palm and Step of the wind (for ki, `world/classes/ascetic.rs`; the last takes no time), the songs (Inspire, for inspiration, `world/classes/song.rs`), the thief's
+//! radiance, Roundhouse, Stunning strike, Quivering palm and Step of the wind (for ki, `world/classes/ascetic.rs`; the last takes no time), the songs (Inspire, for inspiration, `world/classes/song.rs`), the thief's
 //! Lurk (`world/classes/thief.rs`), Exploit and Thrown exploit (for openings,
 //! `world/classes/openings.rs`; the ranger's Volley, aimed at a cell, is `world/classes/volley.rs`, and the
 //! warrior's Charge, aimed at a creature, `world/classes/charge.rs`). The
@@ -66,6 +66,9 @@ impl World {
         if active == ClassActive::StepOfTheWind && !self.may_wind_step() {
             return Spent::Nothing;
         }
+        if active == ClassActive::Roundhouse && !self.may_roundhouse() {
+            return Spent::Nothing;
+        }
         if dir.is_some_and(|d| active.strikes() && self.hostile_toward(d).is_none()) {
             return Spent::Nothing;
         }
@@ -97,7 +100,7 @@ impl World {
             (ClassActive::LayOnHands, _) => self.lay_on_hands(events),
             (ClassActive::HolyRadiance, _) => self.holy_radiance(events),
             (ClassActive::Inspire | ClassActive::Lullaby, _) => self.sing(active, events),
-            (ClassActive::PatientDefence, _) => self.patient_defence(events),
+            (ClassActive::Roundhouse, _) => self.roundhouse(events),
             (ClassActive::Lurk, _) => self.lurk(events),
             (ClassActive::StepOfTheWind, _) => self.wind_step(events),
             (ClassActive::Stillness, _) => self.stillness(events),

@@ -358,7 +358,8 @@
 #   disease_recovery { value }    a disease needs that many fewer checks won in a row to go
 #   disease_interval_percent { value }   a disease's progressions come that percent further
 #                                 apart (100: twice as far)
-#   kick_die { sides }            its kicks at creatures roll one die of that many sides
+#   kick_die { sides, bonus }     its kicks at creatures roll one die of that many sides; with
+#                                 an unarmed_die too, the bigger of the two plus bonus (default 0)
 #   door_kick { value }           its door kicks as if that much stronger
 #   kick_back                     a kick of its that hits drives the foe a cell back, if free
 #   kick_noise_percent { value }  its door kicks that percent louder (negative: quieter)
@@ -472,11 +473,9 @@
 #                                 but never soaked
 #   radiance { status, light }    the active Holy radiance: while it suffers the status it sheds
 #                                 the light
-#   patient_defence { status }    the active Patient defence (`use:patient_defence`, a wait;
-#                                 what it costs is the talent's `resource`: a point of ki): the
-#                                 status (Poised) until its next action; its own `combat` gives
-#                                 the Dodge, and while it lasts a melee blow it dodges or parries
-#                                 is answered with a riposte
+#   roundhouse                    the active Roundhouse (`use:roundhouse`, one kick's time; what
+#                                 it costs is the talent's `resource`: two ki): a kick at every
+#                                 hostile beside it, clockwise from the north
 #   quivering_palm { status, severity }   the active Quivering palm: a bare-handed blow in a
 #                                 direction (what it costs is the talent's `resource`: five ki)
 #                                 that leaves the status

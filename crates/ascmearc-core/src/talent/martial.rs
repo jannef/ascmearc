@@ -44,14 +44,14 @@ pub enum MartialEffect {
     /// Charge also strikes every hostile beside a cell it passes, each once, a free blow (the
     /// warrior's Whirling charge, `world/classes/charge.rs`); the one charged at gets only its own.
     WhirlingCharge,
-    /// The class active Patient defence: a wait, then a degree of `status` (Poised: Dodge up
-    /// and the riposte switched on until the next action; what it costs is the talent's
-    /// `resource`: Ki; `world/classes/ascetic.rs`).
-    PatientDefence { status: String },
     /// The class active Quivering palm: an unarmed blow in a direction; a hit that wounds
     /// leaves the target `severity` degrees of `status` (what it costs is the talent's
     /// `resource`: Ki).
     QuiveringPalm { status: String, severity: u16 },
+    /// The class active Roundhouse (the ascetic's, #1733): a kick at every hostile beside the
+    /// player, clockwise from the north, for the time of one kick (what it costs is the
+    /// talent's `resource`: Ki; `world/classes/ascetic.rs`).
+    Roundhouse,
     /// The class active Stunning strike (the ascetic's, #848): an unarmed blow in a direction;
     /// a hit that wounds leaves the target `severity` degrees of `status` (Stunned; what it
     /// costs is the talent's `resource`: Ki). Quivering palm's blow with another status.
@@ -101,10 +101,10 @@ impl MartialEffect {
         "catch_missiles",
         "charge",
         "flurry_cost",
-        "patient_defence",
         "quivering_palm",
         "rage",
         "rapid_shot",
+        "roundhouse",
         "spirit_weapon",
         "stillness",
         "stunning_strike",
@@ -136,8 +136,8 @@ pub struct MartialMods {
     pub charge: Option<u16>,
     /// Whirling charge: Charge strikes the hostiles beside its way (`world/classes/charge.rs`).
     pub whirling_charge: bool,
-    /// The active Patient defence, if it has it: the status it gives (Poised).
-    pub patient_defence: Option<StatusId>,
+    /// The active Roundhouse, if it has it.
+    pub roundhouse: bool,
     /// The active Stunning strike, if it has it.
     pub stunning_strike: Option<PalmBlow>,
     /// The active Quivering palm, if it has it.
@@ -220,9 +220,7 @@ impl MartialMods {
                     }
                 }
             }
-            MartialEffect::PatientDefence { status } => {
-                self.patient_defence = content.status_id(&status).or(self.patient_defence);
-            }
+            MartialEffect::Roundhouse => self.roundhouse = true,
             MartialEffect::SpiritWeapon {
                 to_hit,
                 threat,

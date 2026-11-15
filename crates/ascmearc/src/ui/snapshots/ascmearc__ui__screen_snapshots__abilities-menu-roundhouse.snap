@@ -1,0 +1,28 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ Your athletics improves. (×60) You learn Deep lungs. You learn Dodge. You learn Inner calm. You
+ learn Light step. You learn Opportunist. You learn Petrifying gaze. You learn Undertow. --more--
+
+
+
+                    ┌─ Abilities ──────────────────────────────────────────────┐
+                    │                                                          │
+                    │ Birth sign                                               │
+                    │   a  Transfixing stare  at a place you see               │
+                    │ Class                                                    │
+                    │ > b  Roundhouse                                          │
+                    │   c  Stunning strike    no foe within reach              │
+                    │   d  Step of the wind                                    │
+                    │ Skills                                                   │
+                    │   e  Salvage            on something you carry           │
+                    │ Weapon skills                                            │
+                    │   f  Shield bash        you hold no shield               │
+                    │                                                          │
+                    │ A spinning kick (an ability) for two ki and the time of  │
+                    │ one kick: every foe beside you takes a kick.             │
+                    │                                                          │
+                    │                                                          │
+                    │ a-f or Enter use   Esc close                             │
+                    └──────────────────────────────────────────────────────────┘
