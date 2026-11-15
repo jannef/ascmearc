@@ -54,7 +54,7 @@ crates/ascmearc-cli    headless dev tool on top of core (no Bevy)
 crates/ascmearc        Bevy app: rendering, input, UI, effects, platform
 crates/workspace-hack no code: pins features so every member shares one ascmearc-core build (docs/dev/merging.md)
 xtask                 dev tasks: captures, goldens, web build, wiki, docs-check, generators, benchmarks
-assets                fonts, keymaps, data definitions, vaults, campaigns (each a world: levels, scenarios, ...)
+assets                fonts, data definitions, vaults, campaigns (each a world: levels, scenarios, ...)
 ```
 
 **Read the `docs/dev/` topic files your task touches before changing code, and update them with

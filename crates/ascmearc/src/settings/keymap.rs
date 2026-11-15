@@ -640,23 +640,4 @@ mod tests {
         assert_eq!(b.to_map(), customized().to_map());
         assert!(KeymapFile::Nowhere.export(&b).is_err());
     }
-
-    #[test]
-    fn the_shipped_default_keymap_is_the_defaults() {
-        // `assets/keymaps/default.toml`: regenerate with
-        // `ASCMEARC_UPDATE_KEYMAPS=1 cargo test -p ascmearc keymap` after changing a default key.
-        let path = concat!(
-            env!("CARGO_MANIFEST_DIR"),
-            "/../../assets/keymaps/default.toml"
-        );
-        let defaults = export(&Bindings::default());
-        if std::env::var_os("ASCMEARC_UPDATE_KEYMAPS").is_some() {
-            std::fs::write(path, &defaults).unwrap();
-        }
-        let shipped = std::fs::read_to_string(path).expect("assets/keymaps/default.toml");
-        // A command added since is not listed (an import keeps its keys); a changed default is.
-        let mut b = Bindings::default();
-        let report = import(&mut b, &shipped).unwrap();
-        assert_eq!(report, Report::default(), "regenerate {path}");
-    }
 }
