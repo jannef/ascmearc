@@ -36,7 +36,7 @@
 //! creature type (`creature`, default the `[keeper]`'s).
 //! Optional `danger = N` (spec §7 "Danger levels"; 0 to 99, or `{ base, player }`) with
 //! `population` (creature ids), `population_count`, `stray`, `stray_pool`, `out_of_depth`,
-//! `deeper`, `deeper_cap`, `dread_one_in`, `neutral`, and `spawn`, as a dungeon branch gives them
+//! `deeper`, `dread_one_in`, `neutral`, and `spawn`, as a dungeon branch gives them
 //! (`super::danger`): creatures of about that danger keep coming while the player is there; none on
 //! the overworld.
 
@@ -154,7 +154,6 @@ struct LevelFile {
     stray_pool: Option<StrayPool>,
     out_of_depth: Option<u8>,
     deeper: Option<u8>,
-    deeper_cap: Option<u8>,
     dread_one_in: Option<u16>,
     neutral: Option<u8>,
     spawn: Option<SpawnSpec>,
@@ -1160,7 +1159,6 @@ pub(super) fn parse_level(
             stray: parsed.stray,
             out_of_depth: parsed.out_of_depth,
             deeper: parsed.deeper,
-            deeper_cap: parsed.deeper_cap,
             dread_one_in: parsed.dread_one_in,
             neutral: parsed.neutral,
         },

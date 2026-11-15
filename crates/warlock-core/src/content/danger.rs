@@ -10,7 +10,6 @@
 //! stray_pool = "populations"            # strays only from the campaign's populations (default "all")
 //! out_of_depth = 5                      # percent of draws made 1 deeper, then perhaps more
 //! deeper = 5                            # percent, again and again, of 1 deeper still
-//! deeper_cap = 10                       # the most dangers past the first one deeper
 //! dread_one_in = 100                    # one draw in this many is among the dread types
 //! spawn = { every = "2m", chance = 60, cap = 40 }
 //! ```
@@ -140,10 +139,9 @@ pub struct Odds {
     pub stray: u8,
     /// Percent of draws made out of depth: one danger deeper, then perhaps more.
     pub out_of_depth: u8,
-    /// Percent, again and again, that an out-of-depth draw goes one danger deeper still.
+    /// Percent, again and again, that an out-of-depth draw goes one danger deeper still, with
+    /// no cap (the owner, #1711: "anything may come at astronomical odds").
     pub deeper: u8,
-    /// The most dangers an out-of-depth draw goes past its first one deeper.
-    pub deeper_cap: u8,
     /// One draw in this many is made among the dread types ([`draw`]); the rest among the
     /// others. 0 (never in data, which gives 1 or more): no roll, the flag ignored (a vault's
     /// monster pool, which places what it places).
@@ -298,14 +296,12 @@ fn pick(
 }
 
 /// The danger an out-of-depth draw at `danger` is made at: one deeper, then with `deeper` %
-/// one deeper still, again and again until the chance misses or `deeper_cap` steps are made.
+/// one deeper still, again and again until the chance misses, with no cap (#1711). Dangers end
+/// at `u8::MAX`, where the steps stop: at most 254 rolls, however sure each one.
 fn deeper(rng: &mut crate::rng::Rng, danger: u8, odds: &Odds) -> u8 {
     let mut at = danger.saturating_add(1);
-    for _ in 0..odds.deeper_cap {
-        if !rng.chance(odds.deeper.into()) {
-            break;
-        }
-        at = at.saturating_add(1);
+    while at < u8::MAX && rng.chance(odds.deeper.into()) {
+        at += 1;
     }
     at
 }
@@ -416,7 +412,6 @@ pub(super) struct OddsSpec {
     pub(super) stray: Option<u8>,
     pub(super) out_of_depth: Option<u8>,
     pub(super) deeper: Option<u8>,
-    pub(super) deeper_cap: Option<u8>,
     pub(super) dread_one_in: Option<u16>,
     pub(super) neutral: Option<u8>,
 }
@@ -426,7 +421,6 @@ impl OddsSpec {
         self.stray.is_some()
             || self.out_of_depth.is_some()
             || self.deeper.is_some()
-            || self.deeper_cap.is_some()
             || self.dread_one_in.is_some()
             || self.neutral.is_some()
     }
@@ -437,7 +431,6 @@ impl OddsSpec {
             stray: self.stray.unwrap_or(defaults.stray),
             out_of_depth: self.out_of_depth.unwrap_or(defaults.out_of_depth),
             deeper: self.deeper.unwrap_or(defaults.deeper),
-            deeper_cap: self.deeper_cap.unwrap_or(defaults.deeper_cap),
             dread_one_in: self.dread_one_in.unwrap_or(defaults.dread_one_in),
             neutral: self.neutral.unwrap_or(defaults.neutral),
         };
@@ -506,7 +499,7 @@ impl SpawningSpec {
             if given {
                 return Err(
                     "`population`, `population_count`, `stray`, `stray_pool`, `out_of_depth`, \
-                            `deeper`, `deeper_cap`, `dread_one_in`, `neutral`, and `spawn` need a \
+                            `deeper`, `dread_one_in`, `neutral`, and `spawn` need a \
                             `danger`"
                         .into(),
                 );
@@ -589,17 +582,15 @@ mod tests {
         stray: 5,
         out_of_depth: 5,
         deeper: 5,
-        deeper_cap: 10,
         dread_one_in: DREAD_ONE_IN,
         neutral: 10,
     };
 
-    /// Every draw two deeper.
-    const TWO_DEEPER: Odds = Odds {
+    /// Every draw one deeper, never more.
+    const ONE_DEEPER: Odds = Odds {
         stray: 0,
         out_of_depth: 100,
-        deeper: 100,
-        deeper_cap: 1,
+        deeper: 0,
         dread_one_in: 0,
         neutral: 100,
     };
@@ -609,7 +600,6 @@ mod tests {
         stray: 0,
         out_of_depth: 0,
         deeper: 0,
-        deeper_cap: 0,
         dread_one_in: 0,
         neutral: 100,
     };
@@ -634,14 +624,14 @@ mod tests {
     #[test]
     fn an_area_may_give_its_own_odds() {
         let (_, s) =
-            rule("danger = 2\npopulation = [\"rat\"]\nstray = 0\ndeeper_cap = 3\nneutral = 20\n")
+            rule("danger = 2\npopulation = [\"rat\"]\nstray = 0\ndeeper = 3\nneutral = 20\n")
                 .unwrap()
                 .unwrap();
         assert_eq!(
             s.odds,
             Odds {
                 stray: 0,
-                deeper_cap: 3,
+                deeper: 3,
                 neutral: 20,
                 ..ODDS
             }
@@ -736,8 +726,8 @@ mod tests {
         for _ in 0..4000 {
             let c = draw(&mut rng, &kinds, &[], 10, &ODDS).expect("a draw");
             let level = kinds[usize::from(c.0) - 1].1.0;
-            // At most one deeper and ten more; nothing more than eight below the danger.
-            assert!((2..=21).contains(&level), "{level}");
+            // Nothing more than eight below the danger; deeper is seldom (no cap, #1711).
+            assert!(level >= 2, "{level}");
             deeper += usize::from(level > 10);
         }
         // Out of depth 5 % of the time, then at D + 1 its own level or the one above it (4 of
@@ -797,14 +787,14 @@ mod tests {
         assert!((4_450..=5_050).contains(&steps[1]), "{steps:?}");
         assert!((170..=310).contains(&steps[2]), "{steps:?}");
         assert!(steps[3..].iter().sum::<u32>() < 40, "{steps:?}");
-        // The cap holds: a sure explosion stops after `deeper_cap` steps.
+        // No cap (#1711), and still bounded: a sure explosion stops at the last danger.
         let sure = Odds {
             deeper: 100,
-            deeper_cap: 10,
             ..ODDS
         };
-        assert_eq!(deeper(&mut rng, 10, &sure), 21);
+        assert_eq!(deeper(&mut rng, 1, &sure), 255);
         assert_eq!(deeper(&mut rng, 250, &sure), 255);
+        assert_eq!(deeper(&mut rng, 255, &sure), 255);
     }
 
     #[test]
@@ -816,25 +806,13 @@ mod tests {
         ];
         let mut rng = Rng::stream(4, "test");
         // One deeper: the own type of level 5 still weighs at 6, so it is drawn.
-        let one = Odds {
-            stray: 0,
-            out_of_depth: 100,
-            deeper: 0,
-            deeper_cap: 0,
-            dread_one_in: 0,
-            neutral: 100,
-        };
+        let one = ONE_DEEPER;
         assert!((0..500).all(|_| draw(&mut rng, &own, &generic, 5, &one) == Some(CreatureId(1))));
-        // Nine deeper, at 14: level 5 is too weak to weigh, so the generic list is drawn.
-        let nine = Odds {
-            deeper: 100,
-            deeper_cap: 8,
-            ..one
-        };
-        assert!((0..500).all(|_| draw(&mut rng, &own, &generic, 5, &nine) == Some(CreatureId(2))));
+        // At 13, one deeper is 14: level 5 is too weak to weigh, so the generic list is drawn.
+        assert!((0..500).all(|_| draw(&mut rng, &own, &generic, 13, &one) == Some(CreatureId(2))));
         // Nothing anywhere that deep: the draw is made at the danger.
         let bare = [(CreatureId(3), (30, 30), 100, false)];
-        assert_eq!(draw(&mut rng, &own, &bare, 5, &nine), Some(CreatureId(1)));
+        assert_eq!(draw(&mut rng, &own, &bare, 13, &one), Some(CreatureId(1)));
     }
 
     #[test]
@@ -887,16 +865,16 @@ mod tests {
             Some(CreatureId(25))
         );
         assert_eq!(draw(&mut rng, &[blades], &[], 30, &PLAIN), None);
-        // Out of depth: two deeper, the member two levels up.
+        // Out of depth: one deeper, the member one level up.
         for _ in 0..50 {
             assert_eq!(
-                draw(&mut rng, &[blades], &[], 8, &TWO_DEEPER),
+                draw(&mut rng, &[blades], &[], 9, &ONE_DEEPER),
                 Some(CreatureId(15))
             );
         }
         // Out of depth past its most: its last member.
         assert_eq!(
-            draw(&mut rng, &[blades], &[], 20, &TWO_DEEPER),
+            draw(&mut rng, &[blades], &[], 20, &ONE_DEEPER),
             Some(CreatureId(25))
         );
         assert_eq!(weight(level_at((5, 20), 30), 100, 30), 0);
@@ -933,7 +911,7 @@ mod tests {
 
     #[test]
     fn out_of_depth_draws_weigh_rarity_too() {
-        // Nothing at the danger but a common type; deeper, a common and a very rare one.
+        // A common type two below the danger; one deeper, a common and a very rare one.
         let kinds = [
             (CreatureId(1), (3, 3), 100, false),
             (CreatureId(2), (5, 5), 100, false),
@@ -942,11 +920,11 @@ mod tests {
         let mut rng = Rng::stream(5, "test");
         let (mut deep, mut very_rare) = (0, 0);
         for _ in 0..4000 {
-            let c = draw(&mut rng, &kinds, &[], 3, &TWO_DEEPER).expect("a draw");
+            let c = draw(&mut rng, &kinds, &[], 4, &ONE_DEEPER).expect("a draw");
             deep += usize::from(c != CreatureId(1));
             very_rare += usize::from(c == CreatureId(3));
         }
-        // Every draw is made two deeper, at 5: the very rare type a tenth as often as the common
+        // Every draw is made one deeper, at 5: the very rare type a tenth as often as the common
         // one of its level.
         assert!(deep > 2400, "{deep}");
         assert!(very_rare * 6 < deep, "{very_rare} of {deep}");

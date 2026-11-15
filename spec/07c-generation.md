@@ -144,8 +144,8 @@ developer notes (CLAUDE.md, `docs/dev/`).
   uses it yet. With a danger come `population` (creature ids; a branch's default its
   `creatures`), `population_count` (a number, or `{ per_1000, least, most }`, default 35 per
   1000 walkable cells, 25 to 80; at most 200), the draw's odds `stray`, `out_of_depth`,
-  `deeper` (percents) and `deeper_cap` (0 to 50), each defaulting to `data/dungeons.toml`'s
-  `[defaults]` (5, 5, 5, 10; required once any area has a danger), and
+  `deeper` (percents), each defaulting to `data/dungeons.toml`'s
+  `[defaults]` (5, 5, 5; required once any area has a danger), and
   `spawn = { every, chance, cap }` (default `2m`, 60 %, cap the population). **Neutral
   animals** (#1195): `neutral` (a percent, `[defaults]`'s, overridable like the odds) is the
   weight a type not hostile to the player by default (its data stance: the `wildlife` faction
@@ -176,7 +176,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
   (the guild's four lairs, whose folk are the design's table); `stray = 0` keeps an area to its
   own.
   With `out_of_depth` % the draw is made at `D + 1`, then with `deeper` % again and again one
-  deeper still, at most `deeper_cap` times (an exploding tail: at the defaults `D + 1` 4.75 % of
+  deeper still, with no cap (#1711; an exploding tail: at the defaults `D + 1` 4.75 % of
   all draws, `D + 2` 0.24 %, `D + 3` 0.012 %); where the drawn pool weighs nothing that deep (its
   types all more than 8 below) the generic list is drawn there instead, and where nothing
   weighs anything there the draw is made at `D` (a stray finding nothing at `D` takes the

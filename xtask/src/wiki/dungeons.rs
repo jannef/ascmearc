@@ -74,9 +74,9 @@ fn spawn_text(content: &Content, s: &Spawning) -> String {
     } else {
         let o = s.odds;
         format!(
-            "{}% strays; {}% of draws deeper, each further step {}%, at most {} more; kinds \
-             not hostile to you at {}% of their weight",
-            o.stray, o.out_of_depth, o.deeper, o.deeper_cap, o.neutral
+            "{}% strays; {}% of draws deeper, each further step {}%; kinds not hostile to you \
+             at {}% of their weight",
+            o.stray, o.out_of_depth, o.deeper, o.neutral
         )
     };
     format!(
@@ -341,7 +341,6 @@ pub(super) fn draw_odds(content: &Content) -> String {
         stray,
         out_of_depth,
         deeper,
-        deeper_cap,
         dread_one_in,
         ..
     }) = content.draw_odds()
@@ -357,13 +356,11 @@ pub(super) fn draw_odds(content: &Content) -> String {
     );
     let _ = writeln!(out, "| out of depth, all told | {out_of_depth}% |");
     let (ood, more) = (f64::from(out_of_depth) / 100.0, f64::from(deeper) / 100.0);
-    let shown = deeper_cap.min(3);
+    // No cap (#1711): the first few steps one by one, then the rest together.
+    let shown = 3;
     for step in 0..=shown {
-        // `step` further steps, then a miss (or the cap reached).
-        let mut chance = ood * more.powi(step.into());
-        if step < deeper_cap {
-            chance *= 1.0 - more;
-        }
+        // `step` further steps, then a miss.
+        let chance = ood * more.powi(step) * (1.0 - more);
         let _ = writeln!(
             out,
             "| {} deeper than the danger | {} |",
@@ -371,16 +368,13 @@ pub(super) fn draw_odds(content: &Content) -> String {
             percent(chance * 100.0)
         );
     }
-    if deeper_cap > shown {
-        let rest = ood * more.powi((shown + 1).into());
-        let _ = writeln!(
-            out,
-            "| {} to {} deeper (the most) | {} |",
-            shown + 2,
-            deeper_cap + 1,
-            percent(rest * 100.0)
-        );
-    }
+    let rest = ood * more.powi(shown + 1);
+    let _ = writeln!(
+        out,
+        "| {} or more deeper, with no limit | {} |",
+        shown + 2,
+        percent(rest * 100.0)
+    );
     out
 }
 

@@ -60,8 +60,8 @@ only as a stray.
 
 Another draw in twenty, again unless a place says otherwise, is made **out of depth**: as if the
 floor were one danger deeper. Then one draw in twenty of those goes one deeper still, and so on,
-up to the limit the table shows. So a careless step on a quiet floor can still meet something it
-should not, and very rarely something far worse.
+with no limit. So a careless step on a quiet floor can still meet something it should not, very
+rarely something far worse, and at astronomical odds even the deadliest creature of all.
 
 If nothing that lives in the place is strong enough to be chosen that deep (every kind more than 8
 below it), the deeper creature comes from the generic list instead. If nothing anywhere is, the
