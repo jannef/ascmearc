@@ -297,7 +297,7 @@ checksum = "175571dd1d178ced59193a6fc02dde1b972eb0bc56c892cde9beeceac5bf0f6b"
 
 [[package]]
 name = "ascmearc"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "ascmearc-assets",
  "ascmearc-core",
@@ -316,14 +316,14 @@ dependencies = [
 
 [[package]]
 name = "ascmearc-assets"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "ascmearc-core",
 ]
 
 [[package]]
 name = "ascmearc-cli"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "ascmearc-assets",
  "ascmearc-core",
@@ -334,7 +334,7 @@ dependencies = [
 
 [[package]]
 name = "ascmearc-core"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "flate2",
  "insta",
@@ -6307,7 +6307,7 @@ dependencies = [
 
 [[package]]
 name = "workspace-hack"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "crc32fast",
  "proc-macro2",
@@ -6391,7 +6391,7 @@ checksum = "b9cc00251562a284751c9973bace760d86c0276c471b4be569fe6b068ee97a56"
 
 [[package]]
 name = "xtask"
-version = "0.17.0"
+version = "0.18.0"
 dependencies = [
  "ascmearc-assets",
  "ascmearc-core",
