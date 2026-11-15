@@ -141,7 +141,7 @@ sound that is no news heard while resting or waiting (`World::waiting` is set ar
 wait); Detect traps also marks on `disarm` and, with Spot, on `search`, as data. Concentration's
 `mana_regen` and `max_mana` (trained only, `Actor::mind`) are read in
 `World::mana_rate` and `Actor::max_mana` (`world/magic/concentration.rs`, docs/dev/mana.md), its `cast`
-use reported by `World::spend_mana` (Spellcraft's `cast` mark, its only one, 25 %, rides the same use, #989, #1270). Spellcraft's `cast` (points on the Spellcraft check every cast with one's own mana makes) and `ward` (points off a miscast's total) are read in `world/magic/miscast.rs` (`Actor::cast_bonus`, `Actor::miscast_ward`; #1271, docs/dev/spells.md "Miscasts"), by anyone: an untrained caster has none of them and checks all the same. Knowledge's `resist` (#667; the owner, 2026-10-28: "know your enemy") is read
+use reported by `World::spend_mana` (Spellcraft's `cast` mark, its only one, 25 %, rides the same use, #989, #1270). Spellcraft's `cast` (points on the Spellcraft check every cast with one's own mana makes) and `ward` (points off a miscast's total) are read in `world/magic/miscast.rs` (`Actor::cast_bonus`, `Actor::miscast_ward`; #1271, docs/dev/spells.md "Miscasts"), by anyone: an untrained caster has none of them and checks all the same. Knowledge (`kind = "passive"`, no menu row: it has no use of its own, #1698) has its `resist` (#667) read
 in `world/skills/knowledge.rs` (`World::resisting`, `resist_bonus`) through `Actor::skill_effect_above`
 (`Skills::effect_above`: each benefit read at the value less the creature's level, nothing at or
 below it), called for the modifier of the player's check against a creature's drain

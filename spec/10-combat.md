@@ -35,7 +35,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 
 - The player chooses one of four stances (aggressive, neutral, defensive, coward). Changing stance takes no time.
 - Frenzy is a fifth stance that only a berserker's rage brings. It cannot be chosen or left while raging.
-- Stances trade to-hit and damage against Defence, attack cost, and fleeing. Aggressive and frenzy make weapon skill marks count for more. The numbers are never shown.
+- Stances trade to-hit and damage against Defence, attack cost, and fleeing. Aggressive and frenzy make the player's weapon skill marks count for more. The numbers are never shown.
 - Creatures keep the neutral stance, except a joined escort, which is a coward.
 
 ## Free blows

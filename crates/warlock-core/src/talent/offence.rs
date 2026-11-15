@@ -448,13 +448,14 @@ impl OffenceMods {
     }
 
     /// `marks` weapon skill marks earned in a skill of `role`, more by its talents' (Weapon
-    /// drill's for its role, Forge-born's for every one).
+    /// drill's for its role, Forge-born's for every one), rounded to the nearest: a blow earns
+    /// only 1 to 3 marks, so rounded down a quarter more would count for nothing (#1704).
     pub fn marks(&self, role: Role, marks: u32) -> u32 {
         let percent: i32 = (self.weapon_marks.iter())
             .filter(|(r, _)| r.is_none_or(|r| r == role))
             .map(|(_, p)| p)
             .sum();
-        u32::try_from(TalentMods::scaled(u64::from(marks), percent)).unwrap_or(u32::MAX)
+        u32::try_from(TalentMods::scaled_nearest(u64::from(marks), percent)).unwrap_or(u32::MAX)
     }
 
     /// The penetration its talents add to a blow that can do damage of `kinds`.

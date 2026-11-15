@@ -1,0 +1,61 @@
+# Līctūn crypt 19, "the river cave" (#1685): the nineteenth crypt under Līctūn, below Līctūn crypt
+# 18, reached by the stairs that open there once its places are filled (`docs/dev/graves.md`). Its
+# stairs up (<) lead back to Līctūn crypt 18. No danger, nobody here.
+#
+# A cave a river runs through: it comes out of the rock in the north and goes back into it in the
+# south, cold and quick, and a ford of flat stones crosses it in the middle. Its dead lie in
+# niches on both banks; one, by the stairs, is sealed (F). Fungus grows by the water. Places for
+# statues on both banks (S). A gap in the east wall is the way down to the next crypt (v), shut
+# until every place here is filled.
+#
+# Places: 24 niches, filled in row order.
+name = "Līctūn crypt 19"
+arrival = "Līctūn crypt 19, the river cave: a black river crosses the cave, and the dead lie on both its banks."
+temperature = 2
+ambient = [6, 6, 8, 0]
+item_level = 1
+map = '''
+################################################################
+################################################################
+################################################################
+#########################N######################################
+####################N####.#####↓↓↓###########N###N###N##########
+#############N###N##.........##↓↓↓########N#...........#N#######
+##########N##..................↓↓↓.#######...............#######
+##########.....................↓↓↓..#####................#######
+#########......................↓↓↓...N##..................N#####
+########....S..................↓↓↓...##...................######
+#######......................f.↓↓↓...#..............S....#######
+####t#.........................↓↓↓f......................N######
+####<...i......................%%%......................v#######
+#####..........................↓↓↓......................i#######
+####F.........................f↓↓↓......................N#######
+######......S..................↓↓↓.f....................########
+#######....................#...↓↓↓..................S...########
+#########................#N##..↓↓↓......................########
+#########N#............#######.↓↓↓.##..................#########
+############..........#########↓↓↓###N#...............##########
+############N#.......##########↓↓↓######............#N##########
+################N###N####################.........##############
+##########################################N#..###N##############
+#############################################N##################
+################################################################
+################################################################
+'''
+
+[burial]
+chain = "lictun"
+depth = 19
+epitaph = "Here lies {name}, {death}. Laid by the river under the hill."
+
+[legend]
+"#" = "granite"
+"N" = "empty_niche"
+"%" = "shallow_water"
+"f" = "fungus"
+"i" = "candles"
+"t" = "sconce"
+"<" = { terrain = "stairs_up", to = "lictun_crypt_18" }
+"S" = { terrain = "floor", statue_place = true }
+"v" = { terrain = "floor", burial_stairs = "stairs_down" }
+"F" = { terrain = "sealed_niche", epitaph = "Sealed with river stones. Pressed into the clay between them, a row of thumbprints." }

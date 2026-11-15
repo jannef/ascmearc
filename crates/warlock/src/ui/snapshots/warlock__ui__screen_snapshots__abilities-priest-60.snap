@@ -22,12 +22,11 @@ expression: "render(case, content.clone())"
               │ Skills                                                              │
               │   l  Decipher           no unknown scroll                           │
               │   m  Heal               nothing to treat                            │
-              │   n  Knowledge          not usable yet                              │
-              │   o  Salvage            on something you carry                      │
+              │   n  Salvage            on something you carry                      │
               │                                                                     │
               │ Everything that ails you is answered at once: wounds, hunger,       │
               │ sickness and poison, hexes and holds, what was taken, and your mana │
               │ and every pool you hold, filled.                                    │
               │                                                                     │
-              │ a-o or Enter use   > < page   Esc close                             │
+              │ a-n or Enter use   > < page   Esc close                             │
               └─────────────────────────────────────────────────────────────────────┘

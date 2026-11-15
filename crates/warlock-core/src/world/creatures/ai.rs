@@ -5,7 +5,8 @@
 //! Each action, in order:
 //! 1. **Look**: the hostile actors it sees, by the player's rules of sight with its own eyes and
 //!    radius (`sight.rs`); the nearest is its target (ties: the lower actor id). The player may
-//!    slip past it (`slip.rs::looks_at`), unseen by its darkvision.
+//!    slip past it (`slip.rs::looks_at`), unseen by its darkvision. An invisible actor it does
+//!    not see at all, unless it is Seeing or eyeless (`unseen.rs`).
 //! 2. **Fight**: a melee creature attacks a target next to it, else steps along a shortest path
 //!    toward it; one that throws (a giant's boulders, `hurl.rs`) throws on the way whenever the
 //!    target is in range with a clear line of fire; one that gazes (`gaze.rs`) looks it in the
@@ -23,7 +24,9 @@
 //! 3. **Search**: with no hostile in sight, it goes to where it last saw one.
 //! 4. **Listen**: failing that, to where it last heard a noise whose source it could not see
 //!    ([`crate::noise`]; what it heard since it last acted, the newest first). Only creatures
-//!    with enemies (a faction hostile to someone) go to look; wildlife does not care.
+//!    with enemies (a faction hostile to someone) go to look; wildlife does not care. A noise
+//!    from the cell of one it does not see for its being invisible is one to look into, and
+//!    beside that cell (or the one it last saw it on) it strikes at it (`unseen.rs`).
 //! 5. **Return**: then back to its post (waiting beside it while someone stands on it), and
 //!    carries on with its patrol route (or waits). A creature the player swapped places with
 //!    (`talk.rs`) has its old cell as its post, so it steps back onto its route.
@@ -44,6 +47,7 @@
 //! it (`sign_picks.rs`).
 
 use super::path::{Cost, Search};
+use super::unseen::invisible_to;
 use crate::action::{AttackKind, Event};
 use crate::content::{ActionKind, Combat, Content, SpellId, Stance};
 use crate::fov::radius2;
@@ -282,7 +286,15 @@ impl World {
         let stops = level.sight_stops(content, me.pos, state.time);
         let los = LineOfSight::compute(me.pos, radius, stops);
         let eye = me.eyes(content, &content.vision_profiles()[def.vision]);
+        // A noise from where one it does not see stands is one to look into (`unseen.rs`).
+        let unseen: Vec<Pos> = (state.actors.on_level(&me.level))
+            .filter(|a| invisible_to(content, me, a))
+            .map(|a| a.pos)
+            .collect();
         (heard.iter().rev()).map(|h| h.at).find(|&at| {
+            if unseen.contains(&at) {
+                return true;
+            }
             match sight::sees_by(state, content, lights, &los, &eye, at) {
                 None => true,
                 Some(By::Light) => false,
@@ -329,6 +341,8 @@ impl World {
             .filter(|a| a.id != id && a.pos.dist2(me.pos) <= reach2)
             // A disguised mimic is a chest to every eye (`mimic.rs`).
             .filter(|a| !a.effects.hides(content))
+            // An invisible one is no one to its eyes (`unseen.rs`).
+            .filter(|a| !invisible_to(content, me, a))
             .filter(|a| wanted(state, content, me, a))
             .map(|a| (a.pos.dist2(me.pos), a.id, a.pos))
             .collect();
@@ -456,9 +470,14 @@ impl World {
     }
 
     /// The way to cell `spot`, to look there; `None` once there, or if it cannot get there.
+    /// A hostile it does not see for its being invisible on the spot, beside it, it strikes at.
     /// When someone it cannot see stands on the spot (perhaps the one it lost in the dark), or
     /// no one can stand there (a door shut or kicked at), next to it will do.
     fn go_look(&self, id: ActorId, spot: Pos) -> Option<Plan> {
+        // One it does not see for its being invisible, it strikes at (`unseen.rs`).
+        if let Some(strike) = self.strike_at_heard(id, spot) {
+            return Some(strike);
+        }
         let taken = self.state.actor_at(&self.state.current_level, spot);
         let solid = !self.state.current().is_walkable(&self.content, spot);
         let reach = i32::from(solid || taken.is_some_and(|a| a.id != id));

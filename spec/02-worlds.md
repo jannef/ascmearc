@@ -23,6 +23,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - In a release, New run has one start, so it skips the scenario list and opens on character creation. Esc goes back to the main menu.
 - The run starts at Beorggeat, a pass through the western wall. The way back is closed: the player can only go forward into the march.
 - The market town Cēaptūn lies a few road cells east. It is the safe hub: shops, a temple that heals for gold, an inn whose rumours mark places on the map but never reveal hidden ones, a guild hall, and quest givers. Everyone in it is peaceful.
+- Under Līctūn, Cēaptūn's churchyard, lie twenty crypts named "Līctūn crypt 1" to "Līctūn crypt 20", each older and rougher than the one above, the twentieth the first grave. The dead of past runs fill the churchyard's plots, then each crypt's places in turn. No danger and nobody is there.
 - Dungeon branches rise in danger. Some are hidden until a quest reveals them.
 - Sites the design reserves stay plain cells until a level is placed there, spaced so a new level can drop in without moving anything.
 - Every walkable overworld cell lies in a region, and the status bar names the one the player is in.

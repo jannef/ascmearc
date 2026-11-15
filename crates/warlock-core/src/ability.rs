@@ -1476,7 +1476,6 @@ mod tests {
                 "heal",
                 "intimidate",
                 "jewelcraft",
-                "knowledge",
                 "listen",
                 "metalcraft",
                 "pick_lock",

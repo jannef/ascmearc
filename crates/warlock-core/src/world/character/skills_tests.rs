@@ -178,10 +178,9 @@ fn the_player_perceives_only_their_own_trained_skills() {
         .collect();
     // Trained at 0 is shown (it is not untrained); in skill order.
     assert_eq!(own, [("stealth".into(), 0), ("tumble".into(), 42)]);
-    // For the abilities menu: passive skills have no active use; a skill used as an action is
-    // an ability, not available yet (no use exists), listed before the shield bash; one whose
-    // use exists is that ability (Open lock: Pick lock).
-    use crate::ability::{Ability, OwnAbility, Unavailable};
+    // For the abilities menu: passive skills have no active use (Knowledge among them, #1698);
+    // a skill used as an action whose use exists is that ability (Open lock: Pick lock).
+    use crate::ability::{Ability, OwnAbility};
     let skill_abilities = |w: &World| -> Vec<OwnAbility> {
         (w.perception().abilities().into_iter())
             .filter(|a| matches!(a.ability, Ability::Skill(_)))
@@ -189,18 +188,10 @@ fn the_player_perceives_only_their_own_trained_skills() {
     };
     assert!(skill_abilities(&w).is_empty());
     set(&mut w, "knowledge", Some(18));
-    assert_eq!(
-        skill_abilities(&w),
-        [OwnAbility {
-            ability: Ability::Skill(skill(&w, "knowledge")),
-            source: crate::ability::Source::Skill,
-            unavailable: Some(Unavailable::NotYet),
-        }]
-    );
+    assert!(skill_abilities(&w).is_empty(), "Knowledge is passive");
     set(&mut w, "open_lock", Some(18));
-    assert_eq!(
-        skill_abilities(&w).len(),
-        1,
+    assert!(
+        skill_abilities(&w).is_empty(),
         "Open lock is no skill ability"
     );
     let own: Vec<Ability> = (w.perception().abilities().into_iter())
@@ -208,12 +199,7 @@ fn the_player_perceives_only_their_own_trained_skills() {
         .collect();
     assert_eq!(
         own,
-        [
-            Ability::Skill(skill(&w, "knowledge")),
-            Ability::PickLock,
-            Ability::Salvage,
-            Ability::ShieldBash
-        ]
+        [Ability::PickLock, Ability::Salvage, Ability::ShieldBash]
     );
     // A creature's skills are never perceived: the arena's shaman has some, the player none of
     // its.

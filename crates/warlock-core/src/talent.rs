@@ -478,6 +478,14 @@ impl TalentMods {
         let factor = u64::try_from((100 + percent).max(0)).unwrap_or(0);
         value.saturating_mul(factor) / 100
     }
+
+    /// `value` scaled by a signed percent like [`TalentMods::scaled`], but rounded to the
+    /// nearest (a half up): for the few weapon skill marks a blow earns, where rounding down
+    /// would keep a small bonus from ever counting (3 marks at +25 % are 4, not 3; #1704).
+    pub fn scaled_nearest(value: u64, percent: i32) -> u64 {
+        let factor = u64::try_from((100 + percent).max(0)).unwrap_or(0);
+        value.saturating_mul(factor).saturating_add(50) / 100
+    }
 }
 
 /// What per-level effects `(per_levels, at_least)` give at character `level`: for each, one per
@@ -791,6 +799,12 @@ mod tests {
         assert_eq!(TalentMods::scaled(300, 10), 330);
         assert_eq!(TalentMods::scaled(300, -15), 255);
         assert_eq!(TalentMods::scaled(300, -150), 0);
+        assert_eq!(TalentMods::scaled(3, 25), 3);
+        assert_eq!(TalentMods::scaled_nearest(3, 25), 4);
+        assert_eq!(TalentMods::scaled_nearest(1, 25), 1);
+        assert_eq!(TalentMods::scaled_nearest(1, 50), 2);
+        assert_eq!(TalentMods::scaled_nearest(3, 75), 5);
+        assert_eq!(TalentMods::scaled_nearest(3, -150), 0);
     }
 
     #[test]

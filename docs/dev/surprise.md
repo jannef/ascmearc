@@ -163,7 +163,9 @@ you." (`say` for an attack, before its line; `news` for a trap, after its line).
 An unseen creature (`world/creatures/unseen.rs`: invisible, or shadowy in the dim) is never in the
 player's perception, so `Mind::noticed` is never set for it: its blow finds the player unaware
 as any unnoticed creature's does. A blow the player lands on one shows it for the turn
-(`Mind::glimpsed`), and it is noticed then.
+(`Mind::glimpsed`), and it is noticed then. The other way round, a creature's eyes miss an
+invisible player (`unseen::invisible_to`, in `sees_now`), so a creature that has not been
+hunting them is unaware of them and their blow may surprise it.
 
 ## Invariants
 

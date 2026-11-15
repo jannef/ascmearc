@@ -235,6 +235,11 @@ fn content_with(map: &str, tables: &str) -> Arc<Content> {
             "[[material]]\nid = \"steel\"\nname = \"steel\"\n",
         ),
         ("data/legend.toml", LEGEND),
+        // Marks only, so the stance moves nothing else a test here counts.
+        (
+            "data/stances.toml",
+            "[[stance]]\nid = \"aggressive\"\nname = \"Aggressive\"\nweapon_mark = 125\n",
+        ),
     ] {
         files.insert(path, text);
     }
@@ -352,6 +357,36 @@ fn blows_earn_marks_more_for_a_hit_and_fewer_as_the_rank_rises() {
     // The dummy fights the player, and creatures do not train.
     let dummy = &w.state.actors[&ActorId(1)];
     assert!(dummy.weapon_skills.is_empty());
+}
+
+#[test]
+fn an_aggressive_stance_counts_a_hits_marks_for_more() {
+    let mut w = world_on(YARD);
+    arm(&mut w, &["sword"]);
+    w.player_mut().stance = crate::content::CombatStance::Aggressive;
+    let rules = *w.content().weapon_skills().marks().expect("marks");
+    let stance = w
+        .content()
+        .stance_def(crate::content::CombatStance::Aggressive)
+        .clone();
+    assert_eq!(stance.weapon_mark, 125);
+    // A hit's 3 marks count 4, a miss's 1 still 1 (rounded to the nearest).
+    assert_eq!(stance.marks(3), 4);
+    assert_eq!(stance.marks(1), 1);
+    let mut hits = 0;
+    for _ in 0..20 {
+        let before = training(&w, "long_blades");
+        let outcome = w.apply(&Action::Move(Dir::E));
+        let strike = players_strike(&w, &outcome).expect("the player struck");
+        let after = training(&w, "long_blades");
+        if after.rank != before.rank {
+            continue;
+        }
+        let earned = stance.marks(rules.earned(strike.is_hit(), UNLEVELLED, before.rank));
+        assert_eq!(after.marks, before.marks + earned, "{strike:?}");
+        hits += i32::from(strike.is_hit());
+    }
+    assert!(hits > 0);
 }
 
 #[test]

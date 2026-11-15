@@ -26,7 +26,9 @@ parry, and the style's `shield` (Sword and Board, Two Shields) to a held shield'
 shield blocking skill, #1093); `World::attack_price` takes `speed` off the cost and
 `World::reload_price` `reload` (`World::attack_cost`: with the weapon's `attack_cost` and magic
 items' speed; a shield bash costs a blow with the shield, never the wielded weapon's cost);
-`World::resolve` (`fight.rs`) earns the player's marks (`practise`; a blow the player's shield
+`World::resolve` (`fight.rs`) earns the player's marks (`practise`, through `practise_at`: the
+earned marks, a dummy's share, the stance's `weapon_mark` (`StanceDef::marks`, rounded to the
+nearest: a hit's 3 marks are 4 aggressive or in a frenzy), then Weapon drill's talents; a blow the player's shield
 blocks trains no weapon skill; `World::level_of` weighs the opponent by its creature type's
 `level`) and pushes "You feel more skilled ..." into the unsaved
 `World::news`, said after the attack's own messages (`say_news`, also at the end of

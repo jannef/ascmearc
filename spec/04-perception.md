@@ -30,7 +30,8 @@ These are gameplay rules in the core: deterministic, integer math, independent o
 
 - Creatures see by exactly the player's rules with their own eyes.
 - A creature carrying a torch is seen and sees. A player in the dark is unseen by eyes without darkvision. Lighting a lantern gets you noticed.
-- A shadowy creature is not seen on a dim cell unless it stands beside the player. An invisible one is not seen at all, by anyone: an invisible player is unseen by creatures the same way. Scent, a companion's nose, and a landed blow reveal the unseen.
+- A shadowy creature is not seen on a dim cell unless it stands beside the player. An invisible one is not seen at all, by anyone: an invisible player is unseen by creatures the same way. Only a creature that is Seeing, or has no eyes, sees the invisible. Scent, a companion's nose, and a landed blow reveal the unseen.
+- A creature that cannot see a hostile still hears it and looks into its noise. Beside the cell it looks into, it strikes at the unseen hostile there at −4.
 
 ## Sky and weather
 

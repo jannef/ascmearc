@@ -69,6 +69,7 @@ The game is played from the keyboard, ADOM-style. Every screen tells the player 
 
 - Messages never carry a number.
 - An attack is reported only if the player perceives it. An end they do not see is "something".
+- A plural noun takes a plural verb: "The flames burn the goblin.", "Your shards glance off its hide."
 - The same message repeated folds into one with a count.
 - When a turn's messages overflow, `--more--` pages them. It is presentation only: the rules, replays, and dumps never see pages.
 - Long actions (rest, dig, run, a meal, a long search) stop for whatever would stop a rest.

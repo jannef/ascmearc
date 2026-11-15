@@ -33,6 +33,7 @@ use crate::rng::draw;
 use crate::sight::{self, LineOfSight};
 use crate::skills::{Effect, Use};
 use crate::stats::Stat;
+use crate::world::creatures::unseen::invisible_to;
 use crate::world::{ActorId, ActorKind, World, WorldState};
 
 /// What counts nothing toward a flat-footed target's Defence: the categories that react.
@@ -78,7 +79,8 @@ fn sees_now(
     let (Some(me), Some(them)) = (state.actors.get(&id), state.actors.get(&other)) else {
         return false;
     };
-    if me.kind != ActorKind::Creature {
+    // An invisible one its eyes miss (`unseen.rs`).
+    if me.kind != ActorKind::Creature || invisible_to(content, me, them) {
         return false;
     }
     let at = them.pos;

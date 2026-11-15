@@ -175,7 +175,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 ## Weapon skills
 
 - ADOM-like categories of weapons. Ranks run 0 to 10. A rank comes only from the skill's own training, starting ranks, and talents: no skill raises another.
-- Only the player trains. Every attack on someone trains its skill, a hit more. Marks shrink against weaker foes and as the rank rises; nothing rolls for marks.
+- Only the player trains. Every attack on someone trains its skill, a hit more. Marks shrink against weaker foes and as the rank rises; nothing rolls for marks. Bonuses to marks (the stance, Weapon drill, Forge-born) round to the nearest mark.
 - Ranks 1 to 5 grow slowly and 6 to 10 much faster in benefit (to-hit, damage, threat, speed, Parry). Ranks 7 to 10 take most of a career.
 - Target dummies train only the first ranks, at half pace, and never die. No daily cap: time is the price.
 - A rank gained is said in words; benefits are never shown, though the character screen's attack line shows the totals.

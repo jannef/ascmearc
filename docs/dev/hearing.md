@@ -32,7 +32,8 @@ every other actor on the level whose `hearing` threshold it reaches (`propagate`
 10 a step, 14 diagonally, plus terrain `muffle`; solid terrain blocks unless it has a muffle),
 pushing a `Heard { kind, at, loudness }` onto `Actor::heard`. A creature's list is what it heard
 since it last acted and is cleared as it acts in `World::creature_turn` (the AI reads it there
-before clearing); the player's is cleared in `World::run_turn` once the player has acted, and
+before clearing: a noise from the cell of an actor invisible to it is looked into though the cell
+is in sight, `docs/dev/creatures.md` "The unseen"); the player's is cleared in `World::run_turn` once the player has acted, and
 becomes `PerceptionView::sounds()` (sources not visible only, the cell of one the player does not
 see for being unseen counting as not visible: an invisible duergar's hobnails, the fighting where
 an unseen blow came from, `world/creatures/unseen.rs`; kind, `Volume`, and `rough_place`, never the actor; a walker's several steps within one turn are one sound; a listener with

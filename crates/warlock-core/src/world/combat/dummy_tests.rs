@@ -158,7 +158,9 @@ fn shots_train_to_rank_four_and_arrows_drop_beside_it_or_break() {
     act(&mut w, &format!("fire:{},{}*{shots}", LANE.x, LANE.y));
     assert_eq!(rank(&w, "bows"), 4, "rank 4 reached");
     let bows = skill(&w, "bows");
-    assert_eq!(w.state.player().weapon_skills.get(bows).marks, 0, "no more");
+    // The shot that reached rank 4 may leave a spare mark (Forge-born's half again, rounded
+    // to the nearest, #1704); none after it adds any.
+    let at_four = w.state.player().weapon_skills.get(bows);
     let left = (w.state.player().inventory.iter())
         .find(|s| s.object == w.content().object_id("arrow").expect("arrow"))
         .map_or(0, |s| s.count);
@@ -168,6 +170,8 @@ fn shots_train_to_rank_four_and_arrows_drop_beside_it_or_break() {
     let broke = shots - beside;
     // A quarter breaks: 75 expected of 300.
     assert!((50..=100).contains(&broke), "{broke} of {shots} broke");
+    act(&mut w, &format!("fire:{},{}*10", LANE.x, LANE.y));
+    assert_eq!(w.state.player().weapon_skills.get(bows), at_four, "no more");
 }
 
 #[test]

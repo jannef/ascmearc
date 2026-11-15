@@ -16,6 +16,9 @@ numbers are below.
   its attacker. So a creature you cannot see surprises you with its first blow only, until you
   have forgotten it again. A creature struck from the dark, on the other hand, stays unaware of
   whoever struck it, so each shot from the dark catches it unawares again.
+- **Invisible**: a creature's eyes do not see you while you are
+  [Invisible](status-list.md#status-invisible), unless it is Seeing or eyeless
+  ([When you are invisible](creature-tricks.md#when-you-are-invisible)).
 - **Slipping past**: in the dark, a creature that would see you only by its darkvision may miss
   you altogether. Your [Dexterity](stats.md#stat-dexterity) and [Stealth](skills.md#skill-stealth)
   are tested against its [Willpower](stats.md#stat-willpower) and [Spot](skills.md#skill-spot).

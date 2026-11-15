@@ -155,7 +155,7 @@ pub struct StanceDef {
     /// How loud a step is while fleeing, in percent.
     #[serde(default = "hundred")]
     pub flee_noise: u32,
-    /// Weapon skill marks count this much (percent): the hook for weapon skills (#134).
+    /// Weapon skill marks count this much (percent; `World::practise_at`).
     #[serde(default = "hundred")]
     pub weapon_mark: u32,
     /// The chance of a gatekeeper's blow by chance (the Gatekeeper gift) counts this much
@@ -205,10 +205,11 @@ impl StanceDef {
             .filter(|&(_, bonus)| bonus != 0)
     }
 
-    /// `marks` weapon skill marks as this stance counts them (the hook for #134: nothing counts
-    /// marks yet).
-    pub fn marks(&self, marks: i32) -> i32 {
-        marks * i32::try_from(self.weapon_mark).unwrap_or(100) / 100
+    /// `marks` weapon skill marks as this stance counts them, rounded to the nearest (a hit's 3
+    /// marks are 4 at ×1.25; truncated, the few marks a blow earns would never move).
+    pub fn marks(&self, marks: u32) -> u32 {
+        let scaled = (u64::from(marks) * u64::from(self.weapon_mark) + 50) / 100;
+        u32::try_from(scaled).unwrap_or(u32::MAX)
     }
 }
 
