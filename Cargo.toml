@@ -64,7 +64,8 @@ insta = "1.49"
 proptest = "1.12"
 rand_chacha = { version = "0.10", features = ["serde"] }
 rand_core = "0.10"
-# xtask's font subsetter (`xtask/src/font_subset.rs`): read-fonts at the version skera uses.
+# The web build's font subsetter (ascmearc-assets' build script, `font-subset` only): read-fonts
+# at the version skera uses.
 read-fonts = { version = "0.47", default-features = false, features = ["std"] }
 # `alloc`: the game's tree (Bevy) turns it on; named here so every tree builds the same serde
 # (#1572).

@@ -22,11 +22,13 @@ builds").
 in `Cargo.lock` (the CLI must match exactly; `cargo xtask web` checks it and prints the command).
 Then `cargo xtask web` builds `target/web/` without the test world (`--no-default-features`;
 it fails if the wasm embeds it) with the size-tuned `[profile.web]` (opt-level `s`, fat LTO,
-1 codegen unit, `panic = "abort"`), with the cut-down font (the `font-subset` feature,
-docs/dev/rendering.md "The font": 3.1 MB less), and then runs binaryen's `wasm-opt -Oz` (`brew install binaryen`;
+1 codegen unit, `panic = "abort"`), with the cut-down font (the `font-subset` feature: the
+build script of ascmearc-assets subsets JuliaMono to the characters the game uses, 3.1 MB less;
+docs/dev/rendering.md "The font"), and then runs binaryen's `wasm-opt -Oz` (`brew install binaryen`;
 locally optional with a warning, required on CI, which installs a pinned binaryen 133 release — not Ubuntu's older apt package, whose `wasm-opt` exported the wrong table as `__wbindgen_externrefs` so the page could not start; `cargo xtask web` now checks that table, `xtask/src/wasm_check.rs`). `multi_threaded` is a
 native-only Bevy feature. Sizes (`ascmearc_bg.wasm`): 45.9 MB raw / 10.1 MB gzip / 5.9 MB brotli
-before, 20.8 MB / 6.8 MB / 4.6 MB after. Do not give wasm-opt `-all`: it emits compact imports
+before, 20.8 MB / 6.8 MB / 4.6 MB after; by v0.18.0 30.4 MB / 9.8 MB / 6.6 MB, and 27.3 MB /
+8.4 MB / 5.4 MB with the font subset (#1719; Cloudflare Pages takes at most 25 MiB a file). Do not give wasm-opt `-all`: it emits compact imports
 that Chromium rejects. After changing the web build run `cargo xtask web-smoke` and read the
 screenshot (the Playwright Chromium under `~/Library/Caches/ms-playwright` works with
 `--use-angle=metal`). The output is `target/web/` (`index.html` from `web/`, `ascmearc.js`,

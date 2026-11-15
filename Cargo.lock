@@ -319,6 +319,8 @@ name = "ascmearc-assets"
 version = "0.18.0"
 dependencies = [
  "ascmearc-core",
+ "read-fonts 0.47.0",
+ "skera",
 ]
 
 [[package]]
@@ -6448,10 +6450,8 @@ dependencies = [
  "ascmearc-assets",
  "ascmearc-core",
  "image",
- "read-fonts 0.47.0",
  "serde",
  "serde_json",
- "skera",
  "toml",
  "workspace-hack",
 ]

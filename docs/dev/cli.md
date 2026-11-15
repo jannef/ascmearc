@@ -37,12 +37,6 @@ metadata`'s `target_directory`) for the build output it reads and the files it w
   Enter) → the run on Beorggeat, checks the new character's save `ascmearc/saves/<id>.sav`, waits
   five turns, reloads, Continue, and checks the run resumed at turn 5; writes
   `target/xtask/web-smoke.png`; fails on logged errors; not run in CI.
-- **Regenerate the web build's font**, `cargo xtask gen-font`: writes
-  `assets/fonts/AscmearcMono-Medium.ttf`, the JuliaMono subset the web build embeds
-  (`xtask/src/font_subset.rs`; what it keeps: docs/dev/rendering.md "The font"); deterministic,
-  never hand-edit. `--check` fails if the file differs from the generator output (the xtask test
-  `committed_subset_is_current` runs it in CI). Run it after adding a character the sources or
-  `assets/` did not use before.
 - **Regenerate the vast level**, `cargo xtask gen-vast`: writes
   `assets/campaigns/showcase/levels/vast.toml`; deterministic, never hand-edit. `--check` fails
   if the file differs from the generator output; run it after touching `xtask/src/vast.rs` (CI runs it).

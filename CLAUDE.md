@@ -25,7 +25,6 @@ Rust is pinned in `rust-toolchain.toml`; cargo is in `~/.cargo/bin` (in a fresh 
 | Screenshot smoke test | `cargo xtask smoke` |
 | Web build | `cargo xtask web` (without the test world; "Releases, web build, logs") |
 | Release configuration | `cargo build --no-default-features -p ascmearc -p ascmearc-cli` (the test world left out, as in a release) |
-| Regenerate the web build's font | `cargo xtask gen-font` (the JuliaMono subset, `--check`; after adding a new character to the sources or assets) |
 | Regenerate the vast level | `cargo xtask gen-vast` (deterministic, never hand-edit; `--check` after touching `xtask/src/vast.rs`) |
 | Check the docs' code paths | `cargo xtask docs-check` |
 | Third-party notices | `cargo xtask licenses`. **Run it after changing dependencies** |
