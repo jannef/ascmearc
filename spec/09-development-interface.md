@@ -60,8 +60,8 @@ cargo xtask golden [--update | --local]                   # compare golden scree
   later), save and load named snapshots (`F5`/`F9`), skip an hour (`F6`, recorded as `skip:1h`),
   set the next weather for three hours (`F7`, recorded as `weather:overcast` and so on), identify
   everything carried (`F8`, recorded as `identify`; §8 "Magic items").
-  They are commands of their own context in the bindings table, read (and listed by Controls
-  and the `?` help, which can rebind them) only where they work. Dev builds (debug, or `--dev`)
+  They are fixed keys, not rebindable and not listed by Controls or the `?` help (#1710), read
+  only where they work. Dev builds (debug, or `--dev`)
   also give New run its seed field (§6 "Main menu"); elsewhere a new run's seed is random.
 - CLAUDE.md documents build commands, architecture notes, pinned documentation references, and
   verification procedures, including the agent workflow guidance from the original brief; the

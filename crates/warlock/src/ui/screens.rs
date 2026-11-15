@@ -460,10 +460,8 @@ impl Screen {
             ScreenName::Summary => Screen::Summary(Box::new(SummaryScreen::new(content, draft))),
             ScreenName::Settings => Screen::Settings(SettingsScreen::default()),
             ScreenName::Files => Screen::Files(FilesScreen::new(crate::paths::locations())),
-            ScreenName::Controls => {
-                Screen::Controls(ControlsScreen::new(launch.dev, launch.keymap.clone()))
-            }
-            ScreenName::Help => Screen::Controls(ControlsScreen::help(launch.dev)),
+            ScreenName::Controls => Screen::Controls(ControlsScreen::new(launch.keymap.clone())),
+            ScreenName::Help => Screen::Controls(ControlsScreen::help()),
             ScreenName::Equipment => Screen::Equipment(EquipmentScreen::new(run)),
             ScreenName::EquipItem => {
                 Screen::EquipItem(ItemScreen::new(run, slot.unwrap_or(SlotId(0))))

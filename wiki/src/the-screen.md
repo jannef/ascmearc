@@ -146,8 +146,8 @@ and using an [ability](abilities.md). Asking about a topic takes none.
 ## Developer keys
 
 Test builds, and desktop builds started with `--dev`, add a few keys for trying things out. They
-are not part of normal play, and the browser version does not have them. `?` lists them, marked
-"(dev)", and Controls can rebind them:
+are not part of normal play, and the browser version does not have them. They are fixed: Controls
+cannot rebind them, and `?` does not list them:
 
 | Key | Does |
 |---|---|

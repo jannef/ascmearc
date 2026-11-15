@@ -9,7 +9,8 @@
 //! holds) are input modes, not screens.
 //!
 //! **Every key read in play is a [`KeyCommand`] in its [`Context`]** (#159), rebindable in
-//! Controls and listed by the `?` help. The keys of menus, text fields, the dialog, the info
+//! Controls and listed by the `?` help, but for the developer keys F2 to F9 ([`dev`], fixed;
+//! #1710). The keys of menus, text fields, the dialog, the info
 //! pages, the rest prompt, and aiming are fixed (#1533, `settings::fixed`), but for the
 //! back-style commands, as are Esc (it always backs out and cancels, so no binding can lock the
 //! player out) and the letters and digits that name the rows of a list.
@@ -21,6 +22,7 @@
 //! press in play goes to its input mode's handler: [`play`] in plain play, [`prompts`] for the
 //! rest.
 
+mod dev;
 mod play;
 mod prompts;
 
@@ -49,8 +51,8 @@ use warlock_core::perception::PerceptionView;
 use warlock_core::{Action, Dir, Pos};
 
 /// Whether the developer keys work in this launch: always in debug builds, with `--dev` in
-/// release builds (spec §9). Their bindings are in every table; only where this is false are
-/// they never read, nor listed by the controls screen and the `?` help. It also gives New run
+/// release builds (spec §9). They are fixed keys (`input::dev`), never read where this is false.
+/// It also gives New run
 /// its seed field (`NewRunScreen`): elsewhere a new run's seed is no one's choice (#256).
 pub fn dev_keys(args: &Args) -> bool {
     cfg!(debug_assertions) || args.dev
@@ -259,7 +261,10 @@ impl Gameplay<'_> {
             return done;
         }
         let mods = self.mods();
-        let command = command_in(*self.mode, key, mods, bindings, dev_keys(&self.args))?;
+        let Some(command) = command_in(*self.mode, key, mods, bindings) else {
+            self.dev_key(key, mods);
+            return None;
+        };
         // Held keys repeat only for movement and waiting (searching), and the aiming cursor's
         // moves.
         let moves = matches!(command, KeyCommand::Move(_) | KeyCommand::Wait);
@@ -559,15 +564,13 @@ fn press_keys_at_startup(args: Res<Args>, mut presses: MessageWriter<KeyboardInp
 }
 
 /// The command a key press stands for in input mode `mode`: `--more--`'s keys and aiming's
-/// before play's, which the other modes read alone; the developer keys last, in plain play,
-/// where they are on (`dev`). The fixed keys of the rest prompt and of aiming are read before
-/// this ([`Gameplay::press`]).
+/// before play's, which the other modes read alone. The fixed keys of the rest prompt and of
+/// aiming are read before this, the developer keys after it ([`Gameplay::press`]).
 fn command_in(
     mode: InputMode,
     key: &KeyboardInput,
     mods: Mods,
     bindings: &Bindings,
-    dev: bool,
 ) -> Option<KeyCommand> {
     let own = match mode {
         InputMode::Aim(_) => Some(Context::Aim),
@@ -582,11 +585,6 @@ fn command_in(
     };
     (own.and_then(|context| bindings.lookup_in(context, key, mods)))
         .or_else(|| bindings.lookup(key, mods))
-        .or_else(|| {
-            let dev = dev && mode == InputMode::Normal;
-            dev.then(|| bindings.lookup_in(Context::Dev, key, mods))
-                .flatten()
-        })
 }
 
 /// Whether Heal asks which way first: more than one kept beast beside the player (`ways`), and
@@ -663,8 +661,8 @@ mod tests {
             .perception(),
             &LastTarget::default(),
         ));
-        let read = |mode, key: &KeyboardInput, dev| command_in(mode, key, Mods::NONE, &b, dev);
-        assert_eq!(read(InputMode::Normal, &d, false), Some(KeyCommand::Drop));
+        let read = |mode, key: &KeyboardInput| command_in(mode, key, Mods::NONE, &b);
+        assert_eq!(read(InputMode::Normal, &d), Some(KeyCommand::Drop));
         // The rest prompt's and aiming's fixed keys are read before this (`fixed_key`).
         let rest = fixed::read(&d, Mods::NONE, |_| None, fixed::rest);
         assert_eq!(rest, Some(Rest::Dawn));
@@ -672,16 +670,13 @@ mod tests {
         assert_eq!(next, Some(AimKey::NextTarget));
         let loose = fixed::read(&enter, Mods::NONE, |_| None, fixed::aim);
         assert_eq!(loose, Some(AimKey::Loose));
-        assert_eq!(read(aim, &west, false), Some(KeyCommand::Move(Dir::W)));
-        assert_eq!(read(InputMode::Normal, &tab, false), None);
-        assert_eq!(read(InputMode::Normal, &enter, false), None);
-        // The developer keys only where they are on, and only in plain play.
+        assert_eq!(read(aim, &west), Some(KeyCommand::Move(Dir::W)));
+        assert_eq!(read(InputMode::Normal, &tab), None);
+        assert_eq!(read(InputMode::Normal, &enter), None);
+        // The developer keys are no command: fixed keys (`input::dev`), read after these.
         let f2 = press(KeyCode::F2, "");
-        assert_eq!(read(InputMode::Normal, &f2, false), None);
-        assert_eq!(
-            read(InputMode::Normal, &f2, true),
-            Some(KeyCommand::RevealMap)
-        );
-        assert_eq!(read(InputMode::Rest, &f2, true), None);
+        assert_eq!(read(InputMode::Normal, &f2), None);
+        let dev = fixed::read(&f2, Mods::NONE, |_| None, fixed::dev);
+        assert_eq!(dev, Some(fixed::DevKey::RevealMap));
     }
 }

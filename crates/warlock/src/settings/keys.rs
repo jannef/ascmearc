@@ -83,14 +83,6 @@ pub const REBINDABLE: &[KeyCommand] = &[
     KeyCommand::Back,
     KeyCommand::TextBack,
     KeyCommand::PrevPage,
-    KeyCommand::RevealMap,
-    KeyCommand::CycleVision,
-    KeyCommand::LightValues,
-    KeyCommand::Snapshot,
-    KeyCommand::SkipHour,
-    KeyCommand::NextWeather,
-    KeyCommand::IdentifyAll,
-    KeyCommand::LoadSnapshot,
 ];
 
 /// The abilities' own keys: play commands that each use one ability, as the abilities menu (`a`)
@@ -107,9 +99,18 @@ pub const ABILITY_KEYS: &[KeyCommand] = &[
 
 /// Ids of commands that were removed: an old settings or keymap file may still list them, and
 /// they are dropped without a warning. Add an id here when a command is deleted. The menu, text
-/// field, dialog, info page, rest prompt, and aiming keys became fixed in #1533.
+/// field, dialog, info page, rest prompt, and aiming keys became fixed in #1533, the developer
+/// keys in #1710.
 pub const RETIRED: &[&str] = &[
     "confirm",
+    "dev_identify_all",
+    "dev_light_values",
+    "dev_load_snapshot",
+    "dev_next_vision",
+    "dev_next_weather",
+    "dev_reveal_map",
+    "dev_skip_hour",
+    "dev_snapshot",
     "erase",
     "fire",
     "hood_lantern",
@@ -144,9 +145,9 @@ pub const RETIRED: &[&str] = &[
     "yes",
 ];
 
-/// The keymap file's context tables that were removed with their commands (#1533): an old file
-/// may still have them, and they are skipped without a warning.
-pub const RETIRED_CONTEXTS: &[&str] = &["dialog", "prompt"];
+/// The keymap file's context tables that were removed with their commands (#1533, `dev` #1710):
+/// an old file may still have them, and they are skipped without a warning.
+pub const RETIRED_CONTEXTS: &[&str] = &["dev", "dialog", "prompt"];
 
 /// Ids of commands merged into another: an old settings or keymap file's keys for one go to the
 /// command that took it over, after that command's own (Search into Wait/search, #1326).
@@ -319,14 +320,6 @@ impl KeyCommand {
             Help => "help",
             Quit => "quit",
             PrevPage => "prev_page",
-            RevealMap => "dev_reveal_map",
-            CycleVision => "dev_next_vision",
-            LightValues => "dev_light_values",
-            Snapshot => "dev_snapshot",
-            SkipHour => "dev_skip_hour",
-            NextWeather => "dev_next_weather",
-            IdentifyAll => "dev_identify_all",
-            LoadSnapshot => "dev_load_snapshot",
             Cancel => return None,
         })
     }
@@ -686,7 +679,8 @@ mod tests {
 
     #[test]
     fn a_retired_command_is_dropped_without_a_warning() {
-        let table: toml::Table = toml::from_str("fire = [\"f\"]\nghost = [\"g\"]").unwrap();
+        let text = "fire = [\"f\"]\ndev_snapshot = [\"F5\"]\nghost = [\"g\"]";
+        let table: toml::Table = toml::from_str(text).unwrap();
         let mut warnings = Vec::new();
         Bindings::from_table(&table, &mut warnings);
         assert_eq!(warnings, ["bindings: unknown command `ghost` ignored"]);

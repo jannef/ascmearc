@@ -252,7 +252,7 @@ logs are, over Settings), `controls`, and `dialog` (the quit dialog).
 - `--dev`: enables the dev keys in release builds (always on in debug: F2 reveal map (ground
   truth), F3 next vision profile, F4 light-value overlay, F5/F9 snapshots, F6 skip an hour
   (recorded as `skip:1h`), F7 next weather (recorded as `weather:KIND`), F8 identify everything
-  carried (recorded as `identify`); all listed by `?`), and New run's seed field (without it New
+  carried (recorded as `identify`); fixed keys, not rebindable, and not listed by `?`), and New run's seed field (without it New
   run draws a random seed and never mentions it, #256).
 
 ### Data, keys, and saves

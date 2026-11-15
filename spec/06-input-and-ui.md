@@ -192,7 +192,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
   look mode), `--more--` (the next messages: Space and Enter; skip the rest: no key of its own,
   as Esc always skips), the back-style commands of aiming (the previous target), menus and
   screens and text fields (back), and info pages (the previous page), all with no key of their own
-  as Esc and Shift do them, and the developer keys (§9). A key is unique within its context only;
+  as Esc and Shift do them (the developer keys are fixed, §9). A key is unique within its context only;
   a mode with a context of its own reads it first (`--more--` and aiming before play's keys).
   **Fixed keys** (#1533): menus and screens (up, down, left, right: the arrows and `k` `j` `h` `l`;
   choose: Enter; erase a character or reset a key: Delete, Backspace; on the pick-up and drop
