@@ -1,4 +1,4 @@
-# A greater potion of will (spec §8 "Potions"): Willpower raised twice as much, easing to a potion of
+# A greater potion of will: Willpower raised twice as much, easing to a potion of
 # will's after ten minutes. Greater boosts are deep orange.
 [[object]]
 id = "greater_potion_of_will"

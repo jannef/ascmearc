@@ -1,4 +1,4 @@
-//! Hunter's bond's shared buffs (spec §8 "Allies": "Hunter's bond"; docs/design/ranger-companion.md
+//! Hunter's bond's shared buffs (docs/design/ranger-companion.md
 //! §11.2, §20; `docs/dev/companion.md`): with `TalentMods::shared_buffs`, a **buff** status that
 //! lands on the player lands on their companion too (on the level or in the retinue), and one
 //! that lands on the companion lands on the player: the same status and severity, each its own

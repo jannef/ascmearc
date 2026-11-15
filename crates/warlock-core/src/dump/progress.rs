@@ -5,7 +5,7 @@ use super::*;
 /// The player's progression (dev): the choices due, the talents they may take now with the
 /// choices each may be taken for, and the creature types whose first kill has paid.
 /// Each calling a run of the campaign may walk through and where the player stands with it
-/// (`progress`, dev-only; spec §8 "Prestige classes").
+/// (`progress`, dev-only).
 pub(super) fn calling_rows(world: &World) -> Vec<String> {
     let content = world.content();
     (content.callings_of(world.campaign()))
@@ -90,8 +90,8 @@ pub(super) fn progress_rows(world: &World) -> Vec<String> {
     if !takeable.is_empty() {
         rows.push(format!("takeable {}", takeable.join(", ")));
     }
-    // The callings of the run's campaign and where the player stands with each (spec §8
-    // "Prestige classes"): `calling hunter: open`, `calling hunter: level 30 not met`,
+    // The callings of the run's campaign and where the player stands with each: `calling hunter:
+    // open`, `calling hunter: level 30 not met`,
     // `calling hunter: not for a thief`, and once called `called hunter at 30`.
     rows.extend(calling_rows(world));
     let kills: Vec<&str> = progress
@@ -181,7 +181,7 @@ pub(super) fn progress_rows(world: &World) -> Vec<String> {
             why.join("; ")
         ));
     }
-    // What a grimoire teaches for certain (spec §8 "Spells": "Learning").
+    // What a grimoire teaches for certain.
     let trained = (player.skills.iter()).find(|&(id, _)| {
         let benefits = &world.content().skill(id).benefits;
         benefits

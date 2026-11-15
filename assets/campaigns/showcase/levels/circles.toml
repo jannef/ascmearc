@@ -1,4 +1,4 @@
-# Spell circles (spec §4.8): a lit hall of peaceful kobolds to buff and hex, each already in
+# Spell circles: a lit hall of peaceful kobolds to buff and hex, each already in
 # one state the circle must show (docs/design/buff-circles.md §13). West, a dark alcove with
 # a bark-skinned kobold archer in it: seen by the faint light its circle sheds, and by nothing
 # else.
@@ -34,6 +34,6 @@ map = '''
 # Many: three buffs, a triangle シ ハ 木 on three rings.
 "m" = { terrain = "floor", creature = "kobold", faction = "peaceful", status = ["blessed", "hasted", "barkskin"] }
 # In the dark alcove, in line with the player through the gap: a bark-skinned kobold, seen by
-# its circle's green glow alone (spec §8 "Status effects"). An archer, which carries no torch: a
+# its circle's green glow alone. An archer, which carries no torch: a
 # kobold's own would light the alcove.
 "d" = { terrain = "floor", creature = "kobold_archer", faction = "peaceful", status = ["barkskin"] }

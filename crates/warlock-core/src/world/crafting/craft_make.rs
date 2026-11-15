@@ -1,4 +1,4 @@
-//! Making a generic recipe (spec §8 "Skills": professions; docs/design/professions.md §7, §8,
+//! Making a generic recipe (professions; docs/design/professions.md §7, §8,
 //! docs/design/recipes.md §4, §6, §10; docs/dev/crafting.md "Making a recipe"): the forge's
 //! weapons and the hand-made ones, the arrowheads, the arrows and bolts, the sling stones, the
 //! flaming arrows, and the brews.

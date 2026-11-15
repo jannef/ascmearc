@@ -1,4 +1,4 @@
-# Haste (spec §8 "Spells", the first spell list): the caster's own quickness a while.
+# Haste (the first spell list): the caster's own quickness a while.
 [[spell]]
 id = "haste"
 name = "Haste"

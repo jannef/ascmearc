@@ -1,4 +1,4 @@
-//! A forgotten altar's great boons and banes (spec §7 "Special rooms"; `world/fixtures/boons.rs`): Gift
+//! A forgotten altar's great boons and banes (`world/fixtures/boons.rs`): Gift
 //! and Wrath of the forgotten, Exalted and Unmade (a level gained again gives no choices),
 //! Chosen and Forsaken (kept for life through a save), the relic, the horde, and the great tier's share of the draw.
 

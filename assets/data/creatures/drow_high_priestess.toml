@@ -36,7 +36,7 @@ name = "scourge"
 verb = "lashes"
 to_hit = 6
 on_hit = [{ status = "poisoned", chance = 30, severity = 4 }, { status = "weakened", chance = 15, severity = 2 }]
-# Its gear (spec §8 "Creature gear"): armour and coins, never a weapon (its venom rides on
+# Its gear: armour and coins, never a weapon (its venom rides on
 # its natural attack, which a wielded weapon would replace).
 [[creature.gear]]
 chance = 90

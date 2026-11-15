@@ -1,4 +1,4 @@
-# The druid's capstone at 60 (spec §8 "Class abilities"; docs/design/druid-and-summons.md §6,
+# The druid's capstone at 60 (docs/design/druid-and-summons.md §6,
 # §14 Q6 and Q8): calls no longer lapse, and one more of each may stay.
 [[talent]]
 id = "lord_of_the_wild"

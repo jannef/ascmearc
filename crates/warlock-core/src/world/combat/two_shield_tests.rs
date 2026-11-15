@@ -1,4 +1,4 @@
-//! Two-shield fighting (spec §8 "Fighting styles", #611): a shield fits either hand, a plain
+//! Two-shield fighting (#611): a shield fits either hand, a plain
 //! attack with two is a bash that trains shield bashing and Two Shields, the other shield
 //! follows up by the style's chance, the banes (to hit, slowness, spell failure) shrink with
 //! the rank to nothing at 9, the style stays hidden until its first marks, and its talents.

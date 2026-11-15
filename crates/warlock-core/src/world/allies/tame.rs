@@ -1,4 +1,4 @@
-//! Taming a beast (spec §8 "Allies": Tame; docs/design/ranger-companion.md §5.3;
+//! Taming a beast (Tame; docs/design/ranger-companion.md §5.3;
 //! `docs/dev/companion.md`): Handle animal's use, [`crate::Action::Tame`] (`tame:DIR`), chosen
 //! from the abilities menu ([`crate::ability::Ability::Tame`]) and aimed in a direction.
 //!

@@ -1,4 +1,4 @@
-//! Keyboard input: bindings, input modes, and the one router of key presses (spec §6).
+//! Keyboard input: bindings, input modes, and the one router of key presses.
 //!
 //! [`route_keys`] reads every key press exactly once. While a screen is open (the screen stack is
 //! not empty) the press goes to the top screen, as a [`Press`] whose menu meaning comes from the
@@ -51,7 +51,7 @@ use warlock_core::perception::PerceptionView;
 use warlock_core::{Action, Dir, Pos};
 
 /// Whether the developer keys work in this launch: always in debug builds, with `--dev` in
-/// release builds (spec §9). They are fixed keys (`input::dev`), never read where this is false.
+/// release builds. They are fixed keys (`input::dev`), never read where this is false.
 /// It also gives New run
 /// its seed field (`NewRunScreen`): elsewhere a new run's seed is no one's choice (#256).
 pub fn dev_keys(args: &Args) -> bool {
@@ -290,7 +290,7 @@ impl Gameplay<'_> {
     }
 
     /// Asks the simulation to apply `action`, chosen on a screen. Dropping in a shop what it
-    /// would buy asks first whether to sell (spec §7 "Shops"): the dialog is returned instead.
+    /// would buy asks first whether to sell: the dialog is returned instead.
     fn act(&mut self, action: Action) -> Option<Dialog> {
         if let (Action::Drop(letters), Some(game)) = (&action, &self.game)
             && let Some(dialog) = sale_dialog(&game.world.perception(), letters)
@@ -457,8 +457,7 @@ impl Gameplay<'_> {
     }
 
     /// Looses what `aim` aims at its cursor; a burst that may catch the player (a scroll of
-    /// fireball read too close) asks first, in the dialog, which is returned to open (spec §6
-    /// "Targeting").
+    /// fireball read too close) asks first, in the dialog, which is returned to open.
     fn release(&mut self, aim: Aim) -> Option<ScreenAction> {
         let dialog = (self.game.as_ref()).and_then(|g| burst_dialog(&g.world.perception(), aim));
         let Some(dialog) = dialog else {
@@ -588,7 +587,7 @@ fn command_in(
 }
 
 /// Whether Heal asks which way first: more than one kept beast beside the player (`ways`), and
-/// something to treat on one of them among `ailments` (spec §8 "Allies"; the owner, #907 Q4:
+/// something to treat on one of them among `ailments` (the owner, #907 Q4:
 /// "need to select direction if both adjacent"). One kept beast beside needs no asking.
 pub(crate) fn tend_way(ways: &[Dir], ailments: &[warlock_core::heal::OwnAilment]) -> bool {
     ways.len() > 1

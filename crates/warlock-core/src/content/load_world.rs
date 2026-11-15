@@ -293,17 +293,17 @@ impl Content {
         Ok(())
     }
 
-    /// Fills every area's generic creature list (spec §7 "Danger levels",
-    /// [`danger::Spawning::generic`]). The populations' list of a campaign is every type that
-    /// lives in some area with a danger (a branch's or a hand-made level's `population`) of that
-    /// campaign or of no campaign, uniques and a portal branch's left out. An area's list is that one
-    /// ([`danger::StrayPool::Populations`]), or by default ([`danger::StrayPool::All`]) that one
-    /// and every type of the campaign or of none that may stray ([`Content::may_stray`]):
-    /// hostile to the player, no unique, no animated object (those come by their own
-    /// populations), and not marked `stray = false` (people, keepers, guardians, test types).
+    /// Fills every area's generic creature list ([`danger::Spawning::generic`]). The populations'
+    /// list of a campaign is every type that lives in some area with a danger (a branch's or a
+    /// hand-made level's `population`) of that campaign or of no campaign, uniques and a portal
+    /// branch's left out. An area's list is that one ([`danger::StrayPool::Populations`]), or by
+    /// default ([`danger::StrayPool::All`]) that one and every type of the campaign or of none that
+    /// may stray ([`Content::may_stray`]): hostile to the player, no unique, no animated object
+    /// (those come by their own populations), and not marked `stray = false` (people, keepers,
+    /// guardians, test types).
     pub(super) fn fill_generic(&mut self) {
         let mut lives: BTreeMap<Option<String>, BTreeSet<CreatureId>> = BTreeMap::new();
-        // A Pit's folk stay in it (spec §7 "The Pits"): though shared, its population is in no
+        // A Pit's folk stay in it: though shared, its population is in no
         // other area's list.
         let branches = (self.dungeons.values())
             .filter(|d| d.portal.is_none())
@@ -463,7 +463,7 @@ struct VisionFile {
     vision: Vec<VisionProfile>,
 }
 
-/// Checks a terrain type's noise fields (spec §5 "Hearing"): loudness within
+/// Checks a terrain type's noise fields: loudness within
 /// [`MAX_LOUDNESS`] (it bounds how far a sound is carried), and a `toggle_noise` only on what
 /// opens and shuts.
 fn check_terrain_noise(spec: &terrain::TerrainSpec) -> Result<(), String> {
@@ -479,7 +479,7 @@ fn check_terrain_noise(spec: &terrain::TerrainSpec) -> Result<(), String> {
     Ok(())
 }
 
-/// Checks a terrain type's ice fields (spec §5 "Ice"): water that freezes or ice, not both; both
+/// Checks a terrain type's ice fields: water that freezes or ice, not both; both
 /// are walkable, transparent, give no light, and are neither doors nor stairs (ice and water
 /// trade places as it freezes and thaws, under whoever stands there, so nothing else may change
 /// with them).
@@ -507,8 +507,8 @@ fn check_terrain_ice(spec: &terrain::TerrainSpec) -> Result<(), String> {
     Ok(())
 }
 
-/// Checks a terrain type's kicking fields (spec §8 "Doors"): only a closed door breaks, and
-/// `breaks_to` and `sturdiness` go together; a statue (spec §8 "Statues") has a `sturdiness`
+/// Checks a terrain type's kicking fields: only a closed door breaks, and
+/// `breaks_to` and `sturdiness` go together; a statue has a `sturdiness`
 /// of its own, and no `breaks_to` or `chest` the kick or the chest code would read instead.
 fn check_kicking(spec: &terrain::TerrainSpec) -> Result<(), String> {
     if spec.statue {
@@ -528,7 +528,7 @@ fn check_kicking(spec: &terrain::TerrainSpec) -> Result<(), String> {
     }
 }
 
-/// The chest terrains (spec §8 "Chests"): at most one each of shut, open, and smashed (the code
+/// The chest terrains: at most one each of shut, open, and smashed (the code
 /// finds each by its state); a shut chest is not walkable (it opens as one walks into it), open
 /// and smashed ones are; none is a door, stairs, or breakable. Deep water (`swim`) is not
 /// walkable: swimming is the way onto it.

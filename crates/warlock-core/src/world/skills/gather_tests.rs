@@ -1,4 +1,4 @@
-//! Gathering herbs from the glowing fungus (spec §8 "Skills": Herbalism; #1340,
+//! Gathering herbs from the glowing fungus (Herbalism; #1340,
 //! `world/skills/gather.rs`): Gather is listed only beside fungus, refused untrained in Herbalism
 //! (#1400), a gather takes its five minutes and finds herbs by the level's depth (`1d2` +
 //! Herbalism ÷ 50), a broken one finds nothing, a refusal takes no time, the fungus never

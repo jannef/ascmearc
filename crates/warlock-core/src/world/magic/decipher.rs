@@ -1,4 +1,4 @@
-//! Making out a scroll (spec §8 "Scrolls"; #1024, the skill uses design §6.6): whether the
+//! Making out a scroll (#1024, the skill uses design §6.6): whether the
 //! reading the player has asked for, with nothing left to refuse it, goes ahead.
 //!
 //! A scroll of a spell the reader knows reads at once: no draw, and [`Use::Decipher`] still marks

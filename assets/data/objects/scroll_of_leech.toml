@@ -1,4 +1,4 @@
-# A scroll of leech (spec §8 "Scrolls", "Spells"): read it (`r`), and it casts Leech, a level-10
+# A scroll of leech: read it (`r`), and it casts Leech, a level-10
 # spell, free of mana; its grimoire teaches the spell for good. Level and frequency by its spell's
 # level (README.toml): the lower, the commoner the scroll.
 [[object]]

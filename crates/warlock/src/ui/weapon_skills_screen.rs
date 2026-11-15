@@ -1,9 +1,8 @@
-//! The weapon skills screen (spec §6; `W`): the player's weapon skills (spec §8 "Weapon
-//! skills") and fighting styles (spec §8 "Fighting styles"), ADOM-like: by section (melee,
-//! missile and thrown, shields, fighting styles), each with its rank, 0 to 10, and a faint bar of
-//! their marks toward the next rank; the styles the player fights in now are marked. Never what a
-//! rank gives: perception has none of it, and the wiki documents the rules. The caster styles
-//! are on the Magic page (`magic_screen`), which the hint line names.
+//! The weapon skills screen (`W`): the player's weapon skills and fighting styles, ADOM-like: by
+//! section (melee, missile and thrown, shields, fighting styles), each with its rank, 0 to 10, and
+//! a faint bar of their marks toward the next rank; the styles the player fights in now are marked.
+//! Never what a rank gives: perception has none of it, and the wiki documents the rules. The caster
+//! styles are on the Magic page (`magic_screen`), which the hint line names.
 //!
 //! Two columns where the console is wide enough (the weapons on the left, shields and styles on
 //! the right), else one. In a console too short for every row the gaps and margins give way,

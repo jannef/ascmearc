@@ -1,6 +1,6 @@
-//! The overworld and its local areas (spec §3, §7).
+//! The overworld and its local areas.
 //!
-//! A campaign's overworld is its one level of kind `overworld` (spec §3): a map of the land at large in the usual
+//! A campaign's overworld is its one level of kind `overworld`: a map of the land at large in the usual
 //! level format, with overworld terrain (each with `travel_minutes`) and locations, which are
 //! stairs down to other levels. Every other overworld cell whose terrain names a `local` ground
 //! leads into a **local area**, an outdoor level generated on the first visit
@@ -104,10 +104,9 @@ impl LocalArea<'_> {
 }
 
 /// Gives every hand-made outdoor level that an overworld location leads into (its stairs down,
-/// or a hidden location's `to`) that location as its edge exit (spec §7 "Leaving an outdoor
-/// area"): walking off its edge, or the quick leave, returns to the location's cell, as from a
-/// local area. The first location in the overworld's order wins; a level with stairs of its own
-/// keeps them as well.
+/// or a hidden location's `to`) that location as its edge exit: walking off its edge, or the quick
+/// leave, returns to the location's cell, as from a local area. The first location in the
+/// overworld's order wins; a level with stairs of its own keeps them as well.
 pub(super) fn link_edge_exits(levels: &mut BTreeMap<String, LevelTemplate>) {
     let mut exits: Vec<(String, EdgeExit)> = Vec::new();
     for overworld in (levels.values()).filter(|l| l.kind == LevelKind::Overworld) {
@@ -136,7 +135,7 @@ pub(super) fn link_edge_exits(levels: &mut BTreeMap<String, LevelTemplate>) {
 }
 
 impl Content {
-    /// The campaign `campaign`'s hidden location `id` and its cell (spec §7 "Hidden locations"),
+    /// The campaign `campaign`'s hidden location `id` and its cell,
     /// if one of its levels has one by that id ([`Content::hidden_locations`]).
     pub fn hidden_location<'a>(
         &'a self,
@@ -149,8 +148,8 @@ impl Content {
     }
 
     /// Every hidden location of campaign `campaign` with its level's id and its cell: its
-    /// overworld's, then those of its other hand-made levels in level id order (spec §7 "Hidden
-    /// locations"; ids are unique within a campaign, `Content::validate`).
+    /// overworld's, then those of its other hand-made levels in level id order (ids are unique
+    /// within a campaign, `Content::validate`).
     pub fn hidden_locations<'a>(
         &'a self,
         campaign: &'a str,

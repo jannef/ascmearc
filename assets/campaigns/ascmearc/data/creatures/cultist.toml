@@ -2,7 +2,7 @@
 # types are numbered after the shared block and only the Ascmearc's files may name them.
 #
 # The fen wave (Fennmynster, §10.1): a cultist of the drowned minster, sworn to whatever sleeps
-# under the black water. They fight with daggers (their racial weapon, spec §8 "Creature gear"),
+# under the black water. They fight with daggers (their racial weapon),
 # open doors, and now and then carry a scroll from the minster's library.
 [[creature]]
 id = "cultist"

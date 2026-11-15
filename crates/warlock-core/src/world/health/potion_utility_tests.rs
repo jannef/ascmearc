@@ -1,4 +1,4 @@
-//! The utility draughts (spec §8 "Potions", the potions wave 2 design §4.2): sustenance
+//! The utility draughts (the potions wave 2 design §4.2): sustenance
 //! (`nourish`), restoration (`restore`, the scroll of restoration's cleanse), blinking
 //! (`blink`, the teleport trap's move), and clear head (a `cure` of the `clear_head` means),
 //! drunk through `eat:`; their content checks.

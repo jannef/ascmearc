@@ -1,8 +1,8 @@
-//! The resource talents (#1495): what a talent does to the holder's alternative resources (spec §8
-//! "Resources"): which it holds and how they build, fill, start, and change over time.
-//! [`ResourceEffect`] is the data (a talent's `[[effect]]` of one of [`ResourceEffect::KINDS`]),
-//! [`ResourceMods`] the sum every rule reads (`TalentMods::resource`). A new effect of the area is
-//! a variant here, its field and its arm in [`ResourceMods::add`] here, its wiki text in
+//! The resource talents (#1495): what a talent does to the holder's alternative resources: which it
+//! holds and how they build, fill, start, and change over time. [`ResourceEffect`] is the data (a
+//! talent's `[[effect]]` of one of [`ResourceEffect::KINDS`]), [`ResourceMods`] the sum every rule
+//! reads (`TalentMods::resource`). A new effect of the area is a variant here, its field and its
+//! arm in [`ResourceMods::add`] here, its wiki text in
 //! `xtask/src/wiki/talents/resource.rs`, and its one read.
 
 use crate::content::{Build, Content, ResourceId};
@@ -27,7 +27,7 @@ pub enum ResourceEffect {
     /// regenerates comes back sooner, one that decays wears off sooner (Steady hand, Patient
     /// blade).
     ResourceRate { resource: String, value: i32 },
-    /// It holds alternative resource `resource` (spec §8 "Resources") from the moment it has the
+    /// It holds alternative resource `resource` from the moment it has the
     /// talent, for good (Rapid shot's Focus).
     GrantsResource { resource: String },
 }

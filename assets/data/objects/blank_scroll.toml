@@ -1,4 +1,4 @@
-# A blank scroll (spec §8 "Scrolls"): paper and nothing on it, until a wizard writes a spell on
+# A blank scroll: paper and nothing on it, until a wizard writes a spell on
 # it (the Scribe ability). Read it (`r`) and nothing happens: there is nothing to read.
 [[object]]
 id = "blank_scroll"

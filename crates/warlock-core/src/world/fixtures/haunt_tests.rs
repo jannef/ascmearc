@@ -1,4 +1,4 @@
-//! Haunted rooms (spec §7 "Special rooms", design §9.8; `world/fixtures/haunt.rs`): a rest inside is
+//! Haunted rooms (design §9.8; `world/fixtures/haunt.rs`): a rest inside is
 //! haunted at every full hour by undead of the floor's danger, out of view where they can be; the
 //! rest stops when one comes into view. Never outside the room, never while not resting, never on
 //! a level without a danger.

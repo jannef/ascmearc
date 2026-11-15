@@ -3,7 +3,7 @@
 #
 # The fen wave (Fennmynster, §10.1): the bog hag, the old power of the great fen, whom the marsh
 # things serve and the cult would bind. There is one: `unique`, so a population draws her at most
-# once in a run (spec §7 "Danger levels"). A caster (her spells announced until magic is
+# once in a run. A caster (her spells announced until magic is
 # designed), she leans on a staff that is often more than it seems.
 [[creature]]
 id = "bog_hag"

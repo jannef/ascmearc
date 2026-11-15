@@ -20,7 +20,7 @@ pub enum MartialEffect {
         at_least: i32,
         cooldown: String,
     },
-    /// The class active Rage: the player is granted `resource` (Rage, spec §8 "Resources") and
+    /// The class active Rage: the player is granted `resource` (Rage) and
     /// suffers its status (Raging) while it lasts; no rage while that or the status it `follows`
     /// into lasts.
     Rage { resource: String },
@@ -82,7 +82,7 @@ pub enum MartialEffect {
     /// the talent's `resource`, if anything).
     Volley { shots: u8 },
     /// The class active Spirit weapon: a melee weapon of spirit-stuff called into the hand in a
-    /// shape chosen (`world/classes/spirit_weapon.rs`; spec §8 "Prestige classes"), which strikes
+    /// shape chosen (`world/classes/spirit_weapon.rs`), which strikes
     /// `to_hit` surer, threatens `threat` lower, and ignores all Protection if
     /// `ignores_protection`; `phrase` is its description's power line.
     SpiritWeapon {
@@ -274,14 +274,14 @@ impl MartialMods {
     }
 }
 
-/// The active Volley (spec §8 "Class abilities"): shots at a cell for the price of one; it costs
+/// The active Volley: shots at a cell for the price of one; it costs
 /// what its talent's `resource` says (Focus).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Volley {
     pub shots: u8,
 }
 
-/// Rapid shot (spec §8 "Resources"): a shot spends `cost` of `resource` (Focus), when there is
+/// Rapid shot: a shot spends `cost` of `resource` (Focus), when there is
 /// that much, and takes `saving` percent less time.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct RapidShot {
@@ -290,7 +290,7 @@ pub struct RapidShot {
     pub saving: u8,
 }
 
-/// The active War cry (spec §8 "Class abilities"): the status a roar leaves on the hostiles who
+/// The active War cry: the status a roar leaves on the hostiles who
 /// hear and see its holder and fail their check, its degrees, and the check's base difficulty.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct WarCry {
@@ -299,7 +299,7 @@ pub struct WarCry {
     pub difficulty: i32,
 }
 
-/// The active Spirit weapon (spec §8 "Prestige classes"; `world/classes/spirit_weapon.rs`): what a
+/// The active Spirit weapon (`world/classes/spirit_weapon.rs`): what a
 /// spirit weapon in the hand gives, more to hit, a threat lower, and Protection ignored.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct SpiritWeapon {
@@ -309,14 +309,14 @@ pub struct SpiritWeapon {
 }
 
 /// A bare-handed blow that leaves a wounded foe `severity` degrees of `status`: the actives
-/// Stunning strike and Quivering palm (spec §8 "Class abilities"; `World::palm_blow`).
+/// Stunning strike and Quivering palm (`World::palm_blow`).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct PalmBlow {
     pub status: StatusId,
     pub severity: u16,
 }
 
-/// Unstoppable (spec §8 "Class abilities"): while raging, the statuses in `numb` tick nothing,
+/// Unstoppable: while raging, the statuses in `numb` tick nothing,
 /// and a blow that would take the last hit point leaves it for `cost` of the rage.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct Unstoppable {

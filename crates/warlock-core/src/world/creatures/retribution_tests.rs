@@ -1,4 +1,4 @@
-//! Retribution (`world/classes/smite.rs::retribution`; spec §8 "Class abilities", "Free blows"; the
+//! Retribution (`world/classes/smite.rs::retribution`; the
 //! paladin design P3, #912): a hostile's blow that lands is answered by the paladin's smite for
 //! four zeal, never as well as a riposte, not outside the bands, and deterministically.
 

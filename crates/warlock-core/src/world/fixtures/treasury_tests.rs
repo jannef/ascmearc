@@ -1,4 +1,4 @@
-//! Treasure rooms in play (spec §7 "Special rooms"; `world/fixtures/treasury.rs`): the hint on every
+//! Treasure rooms in play (`world/fixtures/treasury.rs`): the hint on every
 //! arrival until the room is entered, the enter line, one line however many rooms, and saving.
 
 use crate::action::parse_actions;

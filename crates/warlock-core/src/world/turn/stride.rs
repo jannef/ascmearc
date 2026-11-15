@@ -1,4 +1,4 @@
-//! Coarse turns while the player rests (spec §8 "Rest", #349): a creature away from the player
+//! Coarse turns while the player rests (#349): a creature away from the player
 //! takes its turns in coarse steps, so a night's rest on a floor full of creatures stays fast.
 //! Outside a rest nothing here applies, and near the player a rest is played turn by turn.
 //!

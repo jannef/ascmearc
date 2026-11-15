@@ -1,4 +1,4 @@
-//! Field forge (spec §8 "Class abilities"; the craftsperson design §7.7; `world/crafting/field_forge.rs`):
+//! Field forge (the craftsperson design §7.7; `world/crafting/field_forge.rs`):
 //! the craftsperson's level-32 active sets an ingot on a heap of stones beside them in an hour,
 //! a makeshift anvil for good, which serves every recipe at the anvil, Temper, and the walk-in,
 //! and which a pick clears to floor with nothing mined out of it.

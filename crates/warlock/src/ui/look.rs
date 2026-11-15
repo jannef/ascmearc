@@ -1,4 +1,4 @@
-//! Look mode (spec §6): a cursor the player moves over the map to read what is there. It is a
+//! Look mode: a cursor the player moves over the map to read what is there. It is a
 //! free action — no game time passes — and it only describes what the player perceives.
 
 use crate::render::console::{Cell, Console};
@@ -33,7 +33,7 @@ pub fn describe(view: &PerceptionView<'_>, p: Pos, blood: bool) -> String {
         None => text,
     };
     // Terrain with a description of its own (a forgotten altar) adds it after; a chest its
-    // band's (spec §8 "Chests").
+    // band's.
     let terrain = match view.cell(p) {
         CellView::Visible(t) | CellView::Remembered(t) => Some(t),
         CellView::Unknown => None,
@@ -48,7 +48,7 @@ pub fn describe(view: &PerceptionView<'_>, p: Pos, blood: bool) -> String {
         Some(description) => format!("{text} {description}"),
         None => text,
     };
-    // A gravestone's inscription last (spec §7 "Graves"): "A gravestone. Here lies Ælfric Wudu,
+    // A gravestone's inscription last: "A gravestone. Here lies Ælfric Wudu,
     // 1381–1427."
     match view.epitaph(p) {
         Some(epitaph) => format!("{text} {epitaph}"),
@@ -58,7 +58,7 @@ pub fn describe(view: &PerceptionView<'_>, p: Pos, blood: bool) -> String {
 
 /// What the player's Knowledge tells of the creature at `p`, if it tells anything: "You know the
 /// skeleton is immune to poison, resistant to piercing, and vulnerable to bludgeoning." Words of
-/// the `stats` layer's resistances, never a number (spec §8 "Skills": Knowledge).
+/// the `stats` layer's resistances, never a number (Knowledge).
 pub fn known(view: &PerceptionView<'_>, p: Pos) -> Option<String> {
     let content = view.content();
     let actor = view.actor_at(p)?;
@@ -275,9 +275,8 @@ fn trap_alone(
 }
 
 /// What lies on `p` as look mode names it: "a dagger", "a dagger and 12 arrows", "17 objects";
-/// none for nothing. Each says what it gives in numbers (spec §6 "Item lists",
-/// `magic::numbers`), and goods for sale in a shop their price (spec §7 "Shops"): "a dagger (+0
-/// hit, 1d4, range 5; for sale, 45 gold)".
+/// none for nothing. Each says what it gives in numbers (`magic::numbers`), and goods for sale in a
+/// shop their price: "a dagger (+0 hit, 1d4, range 5; for sale, 45 gold)".
 fn pile(view: &PerceptionView<'_>, p: Pos) -> Option<String> {
     let objects = view.objects(p);
     let tag = |i: usize| {
@@ -302,7 +301,7 @@ fn creature(view: &PerceptionView<'_>, actor: &SeenActor) -> String {
     let name = &content.creature(actor.creature).name;
     // Its type tells the player how it stands toward them (its faction), and they
     // see how hurt it is: in words, never in hit points.
-    // An ally of the player's is theirs (spec §8 "Allies"): "Your wolf (unhurt)", or
+    // An ally of the player's is theirs: "Your wolf (unhurt)", or
     // a named one "(your ally, unhurt)".
     let stance = match view.stance(actor) {
         _ if actor.ally => "",
@@ -355,7 +354,7 @@ fn creature(view: &PerceptionView<'_>, actor: &SeenActor) -> String {
                 .map_or("Your companion", |(_, c)| c.name.as_str()),
             made_of(content, actor).0,
         ),
-        // Its grade, which anyone sees (spec §8 "Grades"): "A big
+        // Its grade, which anyone sees: "A big
         // kobold"; messages name its type alone.
         None => {
             let def = content.creature(actor.creature);
@@ -424,7 +423,7 @@ fn waits(content: &Content, actor: &SeenActor) -> &'static str {
     }
 }
 
-/// What a seen animated thing is made of and how it moves (spec §8 "Animated objects"), as they
+/// What a seen animated thing is made of and how it moves, as they
 /// read after its name and after how hurt it looks: (" of silver", ", rocking"); nothing for any
 /// other creature.
 fn made_of(content: &Content, actor: &SeenActor) -> (String, String) {
@@ -488,7 +487,7 @@ pub fn draw_cursor_on(
 ) {
     let content = view.content();
     let top = view.objects(p).first();
-    // A chest keeps its glyph over its known trap (spec §8 "Chests").
+    // A chest keeps its glyph over its known trap.
     let trap = view.trap(p).filter(|_| view.chest_at(p).is_none());
     let ch = match (view.cell(p), view.actor_at(p), top) {
         (CellView::Visible(_), Some(actor), _) => actor.glyph(content),
@@ -581,7 +580,7 @@ mod tests {
 
     #[test]
     fn a_gravestone_reads_its_inscription() {
-        // Līctūn, Cēaptūn's churchyard (spec §7 "Graves"): four cells down the south road.
+        // Līctūn, Cēaptūn's churchyard: four cells down the south road.
         let content = Arc::new(warlock_assets::content().expect("content"));
         let mut w = World::new(content, "ascmearc", None).expect("the Ascmearc");
         let walk = [(Dir::E, 6), (Dir::S, 4), (Dir::E, 1)];
@@ -651,8 +650,7 @@ mod tests {
         );
     }
 
-    /// A chest goes by its band, with the band's description; open, it is the pile's ground
-    /// (spec §8 "Chests").
+    /// A chest goes by its band, with the band's description; open, it is the pile's ground.
     #[test]
     fn a_chest_goes_by_its_band() {
         let mut files = warlock_assets::files();
@@ -688,8 +686,7 @@ mod tests {
         );
     }
 
-    /// A disguised mimic is a coffer in look mode, word for word; found out, it is the creature
-    /// (spec §8 "Mimics").
+    /// A disguised mimic is a coffer in look mode, word for word; found out, it is the creature.
     /// What a wizard's Knowledge tells, in the stats layer's words; nothing of a creature above
     /// it, nor of what the player cannot see as a creature (a disguised mimic). The core tests
     /// hold the level's edge (`knowledge_tests.rs`).

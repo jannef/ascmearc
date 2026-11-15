@@ -1,4 +1,4 @@
-//! What items give in numbers (spec §6 "Item lists", "Item description"; `magic::numbers`): a
+//! What items give in numbers (`magic::numbers`): a
 //! weapon's to-hit and damage, a launcher's range, what ammunition adds, armour's and a shield's
 //! Dv and Pv; an unidentified item's affixes count for nothing in them until it is identified.
 
@@ -91,8 +91,8 @@ fn an_unidentified_item_shows_its_base_numbers_until_identified() {
     assert_eq!(text(&w, &mail).as_deref(), Some("Dv +2, Pv 3"));
     let pv = w.perception().own_protection();
     wear(&mut w, "body", mail);
-    // Worn, it still shows its base numbers only; its affixes work all the same (spec §8
-    // "Magic items": "Unidentified"), so the player's total, the rules' own, has them.
+    // Worn, it still shows its base numbers only; its affixes work all the same, so the player's
+    // total, the rules' own, has them.
     let view = w.perception();
     let worn = view.inventory().last().expect("mail").clone();
     assert_eq!(text(&w, &worn).as_deref(), Some("Dv +2, Pv 3"));

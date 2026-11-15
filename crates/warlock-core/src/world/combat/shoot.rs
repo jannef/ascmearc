@@ -1,4 +1,4 @@
-//! Ranged combat (spec §8 "Ranged combat"): shooting with a missile weapon, throwing, the flight
+//! Ranged combat: shooting with a missile weapon, throwing, the flight
 //! of a missile, where it comes down, and the fires of burning missiles.
 //!
 //! **Flight**: a missile flies along the integer line from the shooter through the cell aimed at
@@ -26,8 +26,8 @@
 //!
 //! A shot makes the noise of a bowstring and a throw that of fighting (quieter), once, as the
 //! missile is loosed. A shot takes `shoot` (and `reload` too for a missile weapon that needs it),
-//! a throw `throw`, less what the rank in the launcher's skill or in throwing takes off (spec §8
-//! "Weapon skills"), which also adds to their to-hit and damage.
+//! a throw `throw`, less what the rank in the launcher's skill or in throwing takes off, which also
+//! adds to their to-hit and damage.
 
 use super::fight::{End, Guard, Words, attack_message, death_message};
 use crate::action::{AttackKind, Event, MissileEnd, Positions};
@@ -78,7 +78,7 @@ fn ammunition_name(content: &Content, launcher: ObjectId) -> String {
 }
 
 /// The chance in percent that `missile` breaks when it hits: its `breaks`, less what a durability
-/// affix takes off (spec §8 "Magic items").
+/// affix takes off.
 pub(in crate::world) fn break_chance(missile: &Stack, content: &Content) -> u32 {
     let def = content.object(missile.object);
     let sturdier = Mods::local(missile, content).get(Effect::Durability);
@@ -93,11 +93,11 @@ impl World {
             return Spent::Nothing;
         }
         let me = self.state.player();
-        // A wand in the missile weapon slot casts its spell (spec §8 "Magic items": "Wands").
+        // A wand in the missile weapon slot casts its spell.
         if let Some(item) = me.wand_item(&content) {
             return self.zap(item, at, events);
         }
-        // A rod there does its effect for the user's mana (spec §8 "Magic items": "Rods").
+        // A rod there does its effect for the user's mana.
         if let Some(item) = me.rod_item(&content) {
             return self.use_rod(item, at, events);
         }
@@ -373,7 +373,7 @@ impl World {
         }
         let def = content.object(ammo);
         // What is lit flies as another object (a burning arrow), its magic gone; anything else
-        // keeps its magic as it flies and lands (spec §8 "Magic items"), and a durable one breaks
+        // keeps its magic as it flies and lands, and a durable one breaks
         // less often.
         let breaks = break_chance(&missile, &content);
         let lands = match def.lit {
@@ -497,7 +497,7 @@ impl World {
     }
 
     /// What `flight`, loosed from `from`, attacks whoever stands on `cell` with: a shot is less
-    /// sure at long range and at an adjacent target (`data/ranged.toml`, spec §8 "Ranged combat"),
+    /// sure at long range and at an adjacent target (`data/ranged.toml`),
     /// each target by its own distance; a throw is as it is.
     pub(super) fn flight_profile(&self, flight: &Flight, from: Pos, cell: Pos) -> Profile {
         let mut profile = flight.profile.clone();

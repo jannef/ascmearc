@@ -1,4 +1,4 @@
-//! The Scholar, Grit, and Delver talents (spec §8 "Talents"; #240): each changes the one rule it
+//! The Scholar, Grit, and Delver talents (#240): each changes the one rule it
 //! names; Skill focus raises the chosen trained skill, past 100 too; Treasure hunter's
 //! prerequisite is either of two.
 

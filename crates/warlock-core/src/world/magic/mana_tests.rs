@@ -1,4 +1,4 @@
-//! Mana in the world (spec §8 "Mana"): the maximum from data and stats, regeneration exact
+//! Mana in the world: the maximum from data and stats, regeneration exact
 //! however time is cut and changed by resting, statuses, diseases, rooms, and starving (and by
 //! nothing else), the maximum falling, spending, levels, saves, and replays.
 

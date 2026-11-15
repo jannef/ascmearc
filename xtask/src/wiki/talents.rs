@@ -1,4 +1,4 @@
-//! Talents (spec §8 "Talents"): every tree with its talents, their prerequisites and their rules
+//! Talents: every tree with its talents, their prerequisites and their rules
 //! in full (the game says them in words), and the talents by system.
 
 use super::util::{Term, anchored, link, signed};
@@ -158,7 +158,7 @@ fn tree_table(content: &Content, tree: TreeId, out: &mut String) {
     out.push('\n');
 }
 
-/// The talents each class picks at creation (spec §8 "Talents"): everyone's and the class's
+/// The talents each class picks at creation: everyone's and the class's
 /// more, by class name.
 pub(super) fn creation(content: &Content) -> String {
     let base = content.experience().creation_talents();
@@ -289,7 +289,7 @@ fn tools_text(content: &Content, tools: &[KitLineSpec]) -> String {
     }
 }
 
-/// The racial talents (spec §8 "Talents", the Racial tree), race by race: those a race grants,
+/// The racial talents (the Racial tree), race by race: those a race grants,
 /// then those that ask for it, each with what else it needs and its rule. Races and talents
 /// sort by name.
 pub(super) fn racial(content: &Content) -> String {
@@ -333,7 +333,7 @@ pub(super) fn racial(content: &Content) -> String {
     out
 }
 
-/// The classes' level tables (spec §8 "Class abilities"), in the order New run offers them:
+/// The classes' level tables, in the order New run offers them:
 /// each class with a table, its bonus talent picks, and every level's ability with its rule.
 pub(super) fn class_levels(content: &Content) -> String {
     let mut out = String::new();
@@ -346,7 +346,7 @@ pub(super) fn class_levels(content: &Content) -> String {
     out
 }
 
-/// Every prestige class's level table (spec §8 "Prestige classes"), at its own levels, as
+/// Every prestige class's level table, at its own levels, as
 /// [`class_levels`] shows a class's.
 pub(super) fn prestige_levels(content: &Content) -> String {
     let mut out = String::new();

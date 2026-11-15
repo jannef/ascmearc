@@ -3,7 +3,7 @@
 Developer notes for the development interface (moved from CLAUDE.md, #1505): every flag of the
 game (`warlock`), the headless dev tool (`warlock-cli`), the `cargo xtask` commands in detail,
 the replay format, the dump layers, and the action text syntax. What the interface must do is
-spec §9 (`spec/09-development-interface.md`); CLAUDE.md keeps the one-line command table and
+`spec/13-development.md`; CLAUDE.md keeps the one-line command table and
 points here. Keep it current with the code, as CLAUDE.md says: a new flag, `--screen` name,
 scenario, dump layer, or action is added here in the same PR, by its group, never at the end
 (an action's rules belong in its own topic file; here its syntax and a short gloss).
@@ -456,7 +456,7 @@ fight)` while an overworld encounter waits for an answer, the weather under the 
 messages, heard sounds, and, with `--state`, the full world state; and:
 
 - `room`: the special room the player stands in, if they know it (its effect id; else null).
-- `shop`: the open shop they stand in, `{sign, keeper, owed}`, else null (spec §7 "Shops").
+- `shop`: the open shop they stand in, `{sign, keeper, owed}`, else null.
 - `weather`: under the open sky, else null; `temperature`: where the player is, °C to a tenth.
 - Seen actors, each with its `health` (`unhurt`, `lightly_wounded`, `wounded`, `badly_wounded`,
   `nearly_dead`) and `effects` (those that show, by id), `known` (what the player's Knowledge
@@ -585,7 +585,7 @@ thaw:X,Y,R`
 
 - `pickup[:LETTERS]`, `drop[:LETTERS]` (docs/dev/objects.md).
 - `sell:b` sells to the shop the player stands in and `pay` pays it, `pay:DIR` pays and steps
-  out that way (spec §7 "Shops").
+  out that way.
 - `equip:SLOT:LETTER`, `remove:SLOT` (docs/dev/equipment.md).
 - `eat:b` eats one of inventory stack `b`, `eat:floor:a` one of the top stack underfoot (a
   potion is drunk, and a magic crystal consumed, at once: a turn, `[consume]` of
@@ -750,7 +750,7 @@ All in docs/dev/crafting.md unless named.
 - `use:second_wind` uses the Second wind talent (hit points back at once, then Winded) and
   `use:blood_magic` the Blood magic talent (hit points for mana, never the last), a talent's own
   active.
-- `use:rage` uses a class ability (spec §8 "Class abilities"; `use:smite:E` one aimed in a
+- `use:rage` uses a class ability (`use:smite:E` one aimed in a
   direction): rage, veterans_wind, lay_on_hands, smite, holy_radiance, quivering_palm, exploit
   (`use:exploit:E`, the thief's: every opening held spent on one sneak attack,
   `docs/dev/openings.md`), inspire, lullaby (the bard's song over every hostile that hears it,
@@ -831,7 +831,7 @@ None takes game time unless said.
 - `weather:KIND` is the weather override, `KIND` = `clear`, `overcast`, `rain`, `heavy`, for
   three hours of game time.
 - `spawn`: one attempt to bring a creature to the current level now, whatever its cap and chance
-  (refused at danger 0; spec §7 "Danger levels").
+  (refused at danger 0).
 - `ally:wolf`, `ally:wolf:2`, `ally:wolf:2:10m`: N (1 to 12) allies of the type beside the
   player, following, on their side, their stay ending after the duration if given (on the
   overworld they join the retinue at once); refused without `data/allies.toml`, at the cap

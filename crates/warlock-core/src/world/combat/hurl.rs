@@ -1,4 +1,4 @@
-//! Creatures' throws (spec §8 "Ranged combat": "Creatures' throws"): a natural ranged attack
+//! Creatures' throws: a natural ranged attack
 //! with no ammunition, `[creature.throw]` in its type (a giant's boulders).
 //!
 //! **When**: a creature with a throw that is not next to its target throws whenever the target

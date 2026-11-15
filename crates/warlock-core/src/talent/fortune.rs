@@ -30,7 +30,7 @@ pub enum FortuneEffect {
     LootMagicPercent { value: i32 },
     /// The gold a quest gives, this percent more.
     QuestGoldPercent { value: i32 },
-    /// Prices move this many percent more in its favour (spec §7 "Shops"), before the cap.
+    /// Prices move this many percent more in its favour, before the cap.
     FavourPercent { value: i32 },
     /// Item descriptions show what each gem in a thing is worth.
     GemWorth,
@@ -69,7 +69,7 @@ pub enum FortuneEffect {
     /// No one makes way for it (Trusted by none), whatever else would have them.
     Distrusted,
     /// The class active Merchant's eye: a stack the player carries is identified, for the time of
-    /// a reading (`world/classes/merchants_eye.rs`; spec §8 "Class abilities").
+    /// a reading (`world/classes/merchants_eye.rs`).
     MerchantsEye,
 }
 

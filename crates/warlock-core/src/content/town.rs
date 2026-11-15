@@ -1,4 +1,4 @@
-//! Towns (spec §8 "Dialogue": "Goodwill", #1247; each campaign's `data/towns/`, one file per
+//! Towns (#1247; each campaign's `data/towns/`, one file per
 //! town): a town's people, and the goodwill its quests earn. Every quest one of its people gives
 //! that the player completes makes their services `goodwill` percent cheaper (`world/people/goodwill.rs`).
 //! The town's goodwill is derived from the quest records, never saved.

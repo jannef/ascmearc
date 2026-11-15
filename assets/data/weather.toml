@@ -1,4 +1,4 @@
-# Weather (spec §5 "Weather", §7). One weather over every level under the open sky (outdoor areas
+# Weather. One weather over every level under the open sky (outdoor areas
 # and the overworld; never dungeons), changing every three hours or so: clear, overcast, rain, or
 # heavy rain. It follows from the run's seed and the time alone, so it is the same however the
 # time passes. Weather lasts: it mostly changes to a neighboring kind (clear and overcast, overcast
@@ -9,7 +9,7 @@
 # calendar.toml); each month's chances add up to 100. Over many days each weather comes up exactly
 # as often as its chance says. (Snow may come later; for now winter rains too.)
 #
-# Temperature (spec §5 "Temperature"): under the open sky it follows the month, the time of day,
+# Temperature: under the open sky it follows the month, the time of day,
 # and the weather, from the seed and the time alone like the weather itself. Each [[month]] gives
 # its mean `temperature` in °C (-40 to 40; the middle of the month has it, the days between two
 # middles go from one to the other). Over the day it swings around the mean, coldest at 04:00 and

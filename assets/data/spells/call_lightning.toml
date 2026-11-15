@@ -1,4 +1,4 @@
-# The druid's Call lightning (spec §8 "Class abilities"): a line of lightning, under the open sky.
+# The druid's Call lightning: a line of lightning, under the open sky.
 [[spell]]
 id = "call_lightning"
 name = "Call lightning"
@@ -24,7 +24,7 @@ noise = { sound = "thunder", loudness = 140 }
 damage = "willpower 13 6d6, 16 8d6, 19 10d6, 25 10d6+2"
 length = "willpower 14 9, 18 10"
 
-# What rereading its grimoire adds, rank by rank (spec §8 "Spells": "Ranks"; README.toml
+# What rereading its grimoire adds, rank by rank (README.toml
 # `[spell.ranks]`). At rank 10: two cells longer, 1s and 2s rolled again, +2 on the roll,
 # two dice more, a tenth off the mana, and a third off the casting time: the sky answers sooner.
 [spell.ranks]

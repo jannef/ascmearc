@@ -1,4 +1,4 @@
-# The wizard's Arcane bolt (spec §8 "Class abilities"): raw force through everyone on its line.
+# The wizard's Arcane bolt: raw force through everyone on its line.
 [[spell]]
 id = "arcane_bolt"
 name = "Arcane bolt"
@@ -22,7 +22,7 @@ noise = { sound = "explosion", loudness = 40 }
 damage = "intelligence 13 6d6, 19 6d6+2, 25 6d6+4"
 length = "willpower 14 7, 18 8"
 
-# What rereading its grimoire adds, rank by rank (spec §8 "Spells": "Ranks"; README.toml
+# What rereading its grimoire adds, rank by rank (README.toml
 # `[spell.ranks]`). At rank 10: two cells longer, +2 on the roll, 1s rolled again, two dice more, a
 # tenth off the mana, a quarter off the casting time, and d8s for d6s.
 [spell.ranks]

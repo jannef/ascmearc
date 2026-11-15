@@ -1,4 +1,4 @@
-//! Food rots (spec §8 "Hunger"): every food has a shelf life in data ([`Food::keeps`] and
+//! Food rots: every food has a shelf life in data ([`Food::keeps`] and
 //! [`Food::lasts`]: `food` on objects, corpses by their creature's size) and every stack of food
 //! remembers when it was made ([`Stack::died`]; a corpse, when its creature died). Its stage
 //! follows from its age alone ([`Stage`]): fresh, old past half of what it keeps, rotten past

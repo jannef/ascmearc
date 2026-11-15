@@ -1,4 +1,4 @@
-//! Weather through the whole turn pipeline (spec §5 "Weather"): known only under the open sky,
+//! Weather through the whole turn pipeline: known only under the open sky,
 //! clouds dimming the sun, the sky, and the moon, rain shortening overworld sight, messages when
 //! it changes, rests woken by rain, and the dev override in replays and saves.
 
@@ -230,7 +230,7 @@ fn rain_shortens_sight_on_the_overworld() {
 #[test]
 fn each_change_of_weather_is_said_once() {
     // Four days and nights in the courtyard, resting a day at a time (rain wakes the player),
-    // with no need to eat (spec §8 "Hunger": four days without food would starve them).
+    // with no need to eat (four days without food would starve them).
     let mut files = crate::content::ContentFiles::builtin();
     files.remove("data/hunger.toml");
     let content = Arc::new(Content::load(&files).expect("content without hunger"));

@@ -1,4 +1,4 @@
-//! Weapon skills in play (spec §8 "Weapon skills"): an actor's rank and marks in every skill of
+//! Weapon skills in play: an actor's rank and marks in every skill of
 //! `data/weapon_skills.toml` ([`crate::content::WeaponSkillTable`]), and how they grow.
 //!
 //! - **Marks**: each use of a skill earns marks ([`crate::content::MarkRules`]); when they reach
@@ -138,7 +138,7 @@ impl WeaponSkills {
     }
 
     /// `marks` more in skill `id`, never a rank: they stop one short of what the next rank asks
-    /// for (a background story's, spec §8 "Background story"); none at [`MAX_RANK`].
+    /// for (a background story's); none at [`MAX_RANK`].
     pub fn add_marks(&mut self, table: &WeaponSkillTable, id: WeaponSkillId, marks: u32) {
         let now = self.get(id);
         if let Some(need) = table.need(id, now.rank) {

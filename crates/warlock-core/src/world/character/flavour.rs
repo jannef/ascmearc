@@ -1,4 +1,4 @@
-//! The calendar and moon flavour of the birth sign's gifts (spec §8 "Birth sign"; `[flavour]`
+//! The calendar and moon flavour of the birth sign's gifts (`[flavour]`
 //! in `data/horoscope.toml`, none of it without the table): the birthday's faster healing and
 //! its note, the birth month's shorter cooldowns of the sign's actives, and the full moon's
 //! longer reaches (read where each reach is, through [`Content::full_moon_reach`]). Pure

@@ -1,4 +1,4 @@
-//! Danger levels and creatures that keep coming (spec §7 "Danger levels"): every level has a
+//! Danger levels and creatures that keep coming: every level has a
 //! danger that can always be computed ([`World::danger`]), and on a level whose data gives one
 //! creatures of about that danger keep coming while the player is there.
 //!
@@ -59,7 +59,7 @@ impl Spawner {
 }
 
 impl World {
-    /// The danger of level `id` now (spec §7 "Danger levels"): its branch's or its own rule at
+    /// The danger of level `id` now: its branch's or its own rule at
     /// its depth, with the player's level for a player-scaled area; 0 where nothing is given.
     /// Computed when asked, never stored.
     pub fn danger(&self, id: &str) -> u8 {
@@ -103,8 +103,8 @@ impl World {
         u32::try_from(n).unwrap_or(u32::MAX)
     }
 
-    /// The end of a turn: every attempt due on the current level is made (spec §7 "Danger
-    /// levels"). Quiet delver puts each next attempt off longer.
+    /// The end of a turn: every attempt due on the current level is made. Quiet delver puts each
+    /// next attempt off longer.
     pub(in crate::world) fn spawn_tick(&mut self) {
         let id = self.state.current_level.clone();
         let Some((_, _, spawning)) = self.content.spawning(&id) else {

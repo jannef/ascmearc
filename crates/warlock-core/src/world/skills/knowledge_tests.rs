@@ -1,4 +1,4 @@
-//! Knowledge (spec §8 "Skills": Knowledge; #667): know your enemy. It adds to the player's
+//! Knowledge (Knowledge; #667): know your enemy. It adds to the player's
 //! check against a creature's drain, disease, or hold only above the creature's level, a little
 //! and capped; it earns marks from discovery experience and from every such check; creatures
 //! get nothing of it.

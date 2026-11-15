@@ -1,7 +1,7 @@
 # Warlock — Profane gifts: the layer bosses' corpses and the gift table
 
 **Built; this file is history** (P1–P6, #1624–#1629, complete with #1629). The current rules are
-spec §8 "Hunger" (`spec/08h-hunger.md`), `docs/dev/profane-gifts.md`, and the wiki's
+spec §8 "Hunger" (`spec/12-character.md`), `docs/dev/profane-gifts.md`, and the wiki's
 `profane-gifts.md`. One name changed in the building: the design's `thin_skinned` is
 `paper_skinned`.
 

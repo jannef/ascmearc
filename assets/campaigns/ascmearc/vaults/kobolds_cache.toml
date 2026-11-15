@@ -16,6 +16,6 @@ map = '''
 # The cache's keepers: they wake to what they see or hear.
 "k" = { terrain = "floor", creature = "kobold" }
 "$" = { terrain = "floor", objects = ["copper_coin*6"] }
-# Their chest (spec §8 "Chests"): neither locked nor trapped; what it holds is rolled at the
+# Their chest: neither locked nor trapped; what it holds is rolled at the
 # floor's level when the level is made.
 "C" = { terrain = "chest" }

@@ -1,14 +1,13 @@
-//! Unidentified scrolls (spec §8 "Scrolls"): a readable scroll type (an object with `read`) is
+//! Unidentified scrolls: a readable scroll type (an object with `read`) is
 //! unknown to the player until they read one or identify one, and shows meanwhile as "a scroll
 //! labelled ZUNBAR" in one plain colour (`data/scroll_labels.toml`,
-//! [`crate::content::ScrollLabelDef`]). Wands the same (spec §8 "Magic items": "Wands"): a wand
+//! [`crate::content::ScrollLabelDef`]). Wands the same: a wand
 //! type is unknown until one is used or identified, and shows as "an oak wand"
 //! (`data/wand_labels.toml`, the same format); their labels are drawn after the scrolls', from
-//! the same stream, so adding wands changes no scroll's label. Rods too (spec §8 "Magic items":
-//! "Rods"; `data/rod_labels.toml`, "a bone rod"), drawn after the wands'. Potions last (spec §8
-//! "Potions"; `data/potion_labels.toml`, "a fizzy red potion"), drawn after the rods': a word
-//! drawn per type and the type's own colour, which is its effect family's hue, so an unknown
-//! potion shows in its type's colour, not the file's.
+//! the same stream, so adding wands changes no scroll's label. Rods too (`data/rod_labels.toml`, "a
+//! bone rod"), drawn after the wands'. Potions last (`data/potion_labels.toml`, "a fizzy red
+//! potion"), drawn after the rods': a word drawn per type and the type's own colour, which is its
+//! effect family's hue, so an unknown potion shows in its type's colour, not the file's.
 //!
 //! - **Labels** ([`Labels`]) are derived, never saved: one per readable scroll type, all
 //!   different, drawn at once when the world is made or loaded from the run's `identification`

@@ -1,4 +1,4 @@
-//! Herbs (spec §8 "Skills": Herbalism; `data/herbs.toml`, `data/forage.toml`): what gathering
+//! Herbs (Herbalism; `data/herbs.toml`, `data/forage.toml`): what gathering
 //! from the glowing fungus takes and finds, and each herb's share by depth and where it grows on
 //! the surface.
 

@@ -1,4 +1,4 @@
-//! Spell effects (spec §4.8 "Spell effects"): the timeline, strength, darkening, screen shake, and
+//! Spell effects: the timeline, strength, darkening, screen shake, and
 //! shapes of a fireball, a lightning bolt, and later spells, as pure functions of an effect's age
 //! (visual time since it was perceived) and a seed, like particles. They never depend on frame
 //! rate, and frozen-time captures are reproducible. `ui::spells` draws perceived spell events
@@ -348,7 +348,7 @@ pub fn bolt_strokes(
     strokes
 }
 
-/// A ray's line (a bolt with a `head`, spec §4.8): straight from the center of `origin` to the
+/// A ray's line (a bolt with a `head`): straight from the center of `origin` to the
 /// center of the path's last cell, never through the cell centers between (the path may step),
 /// in level cells; `None` without a path.
 pub fn ray_line(origin: Pos, path: &[Pos]) -> Option<(Vec2, Vec2)> {

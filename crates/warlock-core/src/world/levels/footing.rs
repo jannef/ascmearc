@@ -1,4 +1,4 @@
-//! Balance on bad ground and after a stagger (spec §8 "Skills": Balance).
+//! Balance on bad ground and after a stagger (Balance).
 //!
 //! - **Rough ground**: a step onto terrain that slows (`move_cost` over 100) but is not water,
 //!   off the overworld (bush, reeds, rubble, ice), pays less of what it adds by

@@ -1,4 +1,4 @@
-//! The keymap file, `warlock-keys.toml` (spec §6 "Rebinding", #159): every command's keys, by
+//! The keymap file, `warlock-keys.toml` (#159): every command's keys, by
 //! context, with a format version, to back up, share, or carry between installs. It is plain
 //! TOML, readable and editable:
 //!

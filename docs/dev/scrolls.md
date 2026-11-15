@@ -1,10 +1,10 @@
 # Scrolls
 
 Developer notes for working on this part of Warlock (#150); the rules it implements are in
-spec/08g-magic-items.md ("Scrolls") and spec/06-input-and-ui.md. Keep it current with the code,
+spec/11-magic.md ("Scrolls") and spec/05-interface.md. Keep it current with the code,
 as CLAUDE.md says.
 
-Scrolls (spec §8 "Scrolls") are objects with a `read` table (`content/scroll.rs`: `ReadSpec` →
+Scrolls are objects with a `read` table (`content/scroll.rs`: `ReadSpec` →
 `Reading::Cast(SpellScroll { spell, rungs, reach, on_item })`), one file each in
 `data/objects/`: a scroll of every spell of `data/spells/` (`scroll_of_ID`, kind `spell`,
 "Scrolls of spells" below). The three older ones

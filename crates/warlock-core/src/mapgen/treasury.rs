@@ -1,4 +1,4 @@
-//! Treasure rooms in generated levels (spec §7 "Special rooms"; docs/design/chests-and-treasure.md
+//! Treasure rooms in generated levels (docs/design/chests-and-treasure.md
 //! §6; `docs/dev/special-rooms.md`): a special room whose effect has `secret_doors = "all"` hides
 //! every door it has, and one whose effect has `treasure` gets its chests, heaps of gold, and
 //! gems.

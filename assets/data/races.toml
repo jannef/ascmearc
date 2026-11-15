@@ -1,4 +1,4 @@
-# Races (spec §8 "Character creation"): the first choice of a new run, in the order offered.
+# Races: the first choice of a new run, in the order offered.
 #
 # Fields:
 #   id, name      the race's id (for the command line and saves) and its name
@@ -11,9 +11,9 @@
 #                 dice (`"1d2+1"`, `"-1d3"`), rolled when the character is made; the score is
 #                 kept within 1 to 40
 #   potential     adjustments to the potentials, the same way (hidden from the player)
-#   hp            hit points (spec §8 "Combat"; default 0): a character's maximum is their
+#   hp            hit points (default 0): a character's maximum is their
 #                 Toughness plus their race's and their class's (classes/)
-#   mana          mana (spec §8 "Mana"; default 0, at most 1000): a character's maximum is
+#   mana          mana (default 0, at most 1000): a character's maximum is
 #                 their race's and their class's plus the modifiers of their Intelligence,
 #                 Willpower, and Presence
 #   natural       natural armour, as a creature's (creatures/README.toml): { defence = 0,
@@ -23,7 +23,7 @@
 #                 none
 #   resist        what the character resists, in percent per damage type (damage_types.toml),
 #                 as a creature's: { poison = 25 }, -100 (twice the harm) to 100 (immune), added
-#                 to what they wear (spec §8 "Damage types"); the game names it in words only
+#                 to what they wear; the game names it in words only
 #                 ("Resistant to poison"). Default none
 #   light_blind   eyes that strong light dazzles: { glare = 250, sight = 10, to_hit = -1 }.
 #                 While the light on the character's own cell, as their eyes perceive it (the
@@ -31,27 +31,27 @@
 #                 close by), they are dazzled: they see nothing farther than `sight` cells and
 #                 every attack they make is `to_hit` worse. The game says
 #                 when it begins and ends, and shows Dazzled while it lasts. Default none
-#   disease_check points added to the character's checks against diseases (spec §8 "Diseases";
-#                 diseases.toml): resisting one they are exposed to, and each progression (-10 to
+#   disease_check points added to the character's checks against diseases (diseases.toml): resisting
+#                 one they are exposed to, and each progression (-10 to
 #                 10, default 0)
-#   eats_rotten   whether the character eats rotten food without harm (spec §8 "Hunger";
-#                 hunger.toml's [rotten]): it feeds them as plain food would, and never makes them
+#   eats_rotten   whether the character eats rotten food without harm (hunger.toml's [rotten]): it
+#                 feeds them as plain food would, and never makes them
 #                 vomit or sick or carries a disease (default false)
-#   alignment     the race's part of a new character's hidden alignment score (spec §8
-#                 "Alignment"; alignment.toml; -1000 evil to 1000 good, default 0), added to
+#   alignment     the race's part of a new character's hidden alignment score (alignment.toml; -1000
+#                 evil to 1000 good, default 0), added to
 #                 their class's: most races only lean, never alone out of Neutral; the evil
 #                 races start Callous (-200) or Evil (-450)
-#   size         a size in sizes.toml (default "medium"; spec §8 "Burden"): how much the
+#   size         a size in sizes.toml (default "medium"): how much the
 #                 character can carry, 1.5 kg × (2 × Strength + Toughness), is scaled by its carry
 #   ignores_burdened  whether being Burdened, the first level of burden, costs the character
 #                 nothing (no slowdown, no cap on Dexterity in Defence, no louder steps; default
 #                 false); from Strained on they are treated like everyone else
-#   passive_search  which hidden features (secret doors, hidden traps; spec §8 "Searching") the
+#   passive_search  which hidden features (secret doors, hidden traps) the
 #                 character notices in passing without the Spot skill (for traps, Detect
 #                 traps): "all", "stone" (those on stone, terrain/ `stone`), or "traps"
 #                 (hidden traps only); default none: only with the skill trained
 #   search        points added to searching and to noticing in passing alike (default 0)
-#   skills        the skills the race trains (spec §8 "Skills"; skills/), by skill id: dice
+#   skills        the skills the race trains (skills/), by skill id: dice
 #                 (`"1d6+4"`) or a number, rolled when the character is made; added to the
 #                 class's (a skill both train sums the two)
 #   optional_skills  skills a new character of the race may or may not start with, as a
@@ -60,25 +60,25 @@
 #                 trains too, or `skills` does, sums the two (default none; the drow's Sneak attack)
 #   class_skill  dice added to one of the class's skills, picked from the run seed when the
 #                 character is made (default none; humans: one extra class skill)
-#   rolls         skill rolls each level gives beyond the class's (spec §8 "Skills";
-#                 default 0; humans 1). A level-up roll on a skill the race trains (`skills`)
+#   rolls         skill rolls each level gives beyond the class's (default 0; humans 1). A level-up
+#                 roll on a skill the race trains (`skills`)
 #                 adds 1 (classes/README.toml)
-#   talents       talents the race grants (spec §8 "Talents"), by id: `granted` talents of the
+#   talents       talents the race grants, by id: `granted` talents of the
 #                 `racial` tree in talents/, held from the start and never picked (default none;
 #                 humans: Versatile). The race's other talents are picks that ask for the race
-#   hunger       how much the character needs to eat, in percent of a human (spec §8 "Hunger";
-#                 default 100): game time burns their nutrition this much faster
-#   experience    how much experience a level needs, in percent (spec §8 "Experience"; at
+#   hunger       how much the character needs to eat, in percent of a human (default 100): game time
+#   burns their nutrition this much faster experience    how much experience a level needs, in
+#                 percent (at
 #                 most 200, default 100): multiplied with the class's onto every threshold in
 #                 experience.toml. Long-lived races pay more, short-lived ones less
-#   weapon_skills starting ranks in weapon skills (spec §8 "Weapon skills"), by skill id in
+#   weapon_skills starting ranks in weapon skills, by skill id in
 #                 weapon_skills.toml: a number or dice, every result within 0 to 10; added to
 #                 the class's (at most 10)
-#   kit           a few racial items for the starting kit (spec §8 "Character creation"), after
+#   kit           a few racial items for the starting kit, after
 #                 the class's: lines as in classes/README.toml's `kit` (a string is carried; `wield`,
 #                 `wear`, `trained`, `gender`, `magic`, and `"a|b"` work the same, `trained`
 #                 asking what the class trained). Every race without darkvision has a lantern
-#                 ready (`{ wield = "lantern" }`: the Tool slot, unlit; spec §5 "Light sources").
+#                 ready (`{ wield = "lantern" }`: the Tool slot, unlit).
 #                 Every race dresses its folk with `fill` lines (worn only where the class's kit
 #                 left the slot free): everyday clothes for the body and shoes for the feet
 #   bare          slots no kit puts anything in for the race, by id in slots.toml (default

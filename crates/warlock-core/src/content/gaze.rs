@@ -1,4 +1,4 @@
-//! A creature type's gaze (spec §8 "Creature behavior": "Gazes", #1125, design
+//! A creature type's gaze (#1125, design
 //! `docs/design/monster-dread.md` §5.1): `[creature.gaze]`, a rider at sight and not at touch.
 //! The rules are `world/creatures/gaze.rs`; the forced Averted condition a gaze marked `averted` gives is
 //! `world/creatures/avert.rs`.

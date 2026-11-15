@@ -1,4 +1,4 @@
-//! Fire and blood (spec §8 "Blood"): a blow draws blood only of a kind that does (fire sears,
+//! Fire and blood: a blow draws blood only of a kind that does (fire sears,
 //! cold numbs); fire chars the floor it burns and the faces of the walls beside it, more with
 //! every burning; char is perceived and saved as blood is, and never changes what happens.
 

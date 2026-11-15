@@ -1,4 +1,4 @@
-//! The rebindable key commands and their default table (spec §6): what a key does
+//! The rebindable key commands and their default table: what a key does
 //! ([`KeyCommand`]), where it is read ([`Context`]), a key it is bound to ([`KeyBinding`]), and the
 //! binding table ([`Bindings`]). `input::route_keys` reads presses through it; the settings file
 //! (`keys`, `keymap`) and Controls write it.
@@ -16,7 +16,7 @@ pub enum KeyCommand {
     /// `Action::Run`). Alt with a movement key by default.
     Run(Dir),
     /// Wait a turn, which is searching the cells around the player for secret doors and hidden
-    /// traps (spec §8 "Searching"; #1326: one action, `Action::Wait`).
+    /// traps (#1326: one action, `Action::Wait`).
     Wait,
     /// Search turn after turn, up to `data/rules/search.toml`'s `turns`, stopping when something is
     /// found or something interrupts, like a rest.
@@ -68,7 +68,7 @@ pub enum KeyCommand {
     /// Choose something to throw from the pack, aim it, then throw.
     Throw,
     /// Open the abilities menu: racial, class, skill, weapon skill, and item abilities, to
-    /// choose one to use (spec §6 "Abilities", #156).
+    /// choose one to use (#156).
     Abilities,
     /// Use the ability used last again (else open the abilities menu).
     RepeatAbility,
@@ -78,14 +78,14 @@ pub enum KeyCommand {
     /// Throw your voice to a place you see (aimed with a cursor on the map). An ability:
     /// unbound by default.
     ThrowVoice,
-    /// Disarm a trap the player knows of, in a direction (asked for in the message line; spec §8
-    /// "Disarming traps"). An ability: unbound by default, as the abilities menu lists it.
+    /// Disarm a trap the player knows of, in a direction (asked for in the message line). An
+    /// ability: unbound by default, as the abilities menu lists it.
     Disarm,
-    /// Pick the lock of a door, in a direction (asked for in the message line; spec §8
-    /// "Doors"). An ability (`warlock_core::ability`, the Open lock skill's use): unbound by
-    /// default, as the abilities menu lists it (#156).
+    /// Pick the lock of a door, in a direction (asked for in the message line). An ability
+    /// (`warlock_core::ability`, the Open lock skill's use): unbound by default, as the abilities
+    /// menu lists it (#156).
     PickLock,
-    /// Steal from someone in a direction (asked for in the message line; spec §8 "Stealing").
+    /// Steal from someone in a direction (asked for in the message line).
     /// An ability: unbound by default, as the abilities menu lists it.
     Steal,
     /// While aiming: the cursor to the creature in view before (no default key: Shift with
@@ -103,7 +103,7 @@ pub enum KeyCommand {
     /// Chat with someone next to you: the one in view if there is only one, else in a
     /// direction.
     Chat,
-    /// Pay for what the player took in the shop they stand in (spec §7 "Shops"; no time passes).
+    /// Pay for what the player took in the shop they stand in (no time passes).
     Pay,
     /// On a menu or screen: back out, as Esc always does (no default key of its own). The
     /// other menu keys are fixed (`settings::fixed`).

@@ -7,7 +7,7 @@
 # `warlock-cli dump`. Add a golden only when none of those can see the change, and say in the PR
 # why (CLAUDE.md, "Golden screenshots"). When in doubt, do not add one.
 #
-# Golden screenshots (spec §3, §10). `cargo xtask golden` reads every `*.toml` in this directory in
+# Golden screenshots. `cargo xtask golden` reads every `*.toml` in this directory in
 # file-name order (this file holds the defaults; the others hold the entries, one file per showcase
 # room or feature), renders each entry headlessly, and compares it with `tests/golden/<name>.png`.
 # References are produced on Linux CI only (the CI workflow run with "update_golden"); see

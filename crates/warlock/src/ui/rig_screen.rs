@@ -1,4 +1,4 @@
-//! The rig list (spec §6 "Abilities", §8 "Traps": "Rigging traps"; #1423): what the
+//! The rig list (#1423): what the
 //! craftsperson's Trapwright asks before it is used, opened from the abilities menu. The rigs
 //! (`PerceptionView::rigs`), in the one paged list, each row the rig's name, what it takes, and
 //! how long it takes at a normal pace in words; one the player lacks something for is greyed,

@@ -1,7 +1,7 @@
 # Summoning
 
 Developer notes for working on this part of Warlock; the rules it implements are in
-spec/08b-creatures.md ("Summoning", #520). Keep it current with the code, as CLAUDE.md says.
+spec/09-creatures.md ("Gimmicks"). Keep it current with the code, as CLAUDE.md says.
 
 Summoning here is a **creature ability**: a creature type with `[creature.summon]` calls forth
 creatures of its side, with no ability in the abilities menu, no action, no key, and no talents

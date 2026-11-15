@@ -1,4 +1,4 @@
-//! Searing (spec §8 "Blood"): fire leaves char where it burns ([`crate::scorch`]).
+//! Searing: fire leaves char where it burns ([`crate::scorch`]).
 //!
 //! One hook a place fire burns: the shared area code of `spell.rs` (a burst over its cells,
 //! half at its edge, [`World::sear_burst`]; a cone over its cells, [`World::sear_area`]), a fire

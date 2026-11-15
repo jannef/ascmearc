@@ -1,15 +1,13 @@
-//! Races (`assets/data/races.toml`, spec §8 "Character creation"): the first choice of a new
+//! Races (`assets/data/races.toml`): the first choice of a new
 //! run. A race adjusts the starting scores and the potentials (fixed numbers or dice), gives the
 //! player their eyes, sets the range of their starting age, gives the player their size
-//! (spec §8 "Burden": how much they can carry), whether being Burdened costs them nothing, and
-//! how much they need to eat (spec §8 "Hunger"), adds hit points and mana (spec §8 "Mana"), how
-//! much experience their levels need (spec §8 "Experience"), trains them in skills (spec §8
-//! "Skills"; dice, and humans' extra class skill), gives them starting ranks in weapon skills
-//! (spec §8 "Weapon skills"; fixed numbers or dice), says what they notice of hidden features in
-//! passing (spec §8 "Searching"), adds a few things to the starting kit (`kit`,
-//! [`super::kit`]), and may give them natural armour (spec §8 "Combat"), resistances (spec §8
-//! "Damage types"), eyes that strong light dazzles ([`LightBlind`]), a bonus on disease checks
-//! (spec §8 "Diseases"), and a stomach for rotten food (spec §8 "Hunger").
+//! (how much they can carry), whether being Burdened costs them nothing, and
+//! how much they need to eat, adds hit points and mana, how
+//! much experience their levels need, trains them in skills (dice, and humans' extra class skill),
+//! gives them starting ranks in weapon skills (fixed numbers or dice), says what they notice of
+//! hidden features in passing, adds a few things to the starting kit (`kit`,
+//! [`super::kit`]), and may give them natural armour, resistances, eyes that strong light dazzles
+//! ([`LightBlind`]), a bonus on disease checks, and a stomach for rotten food.
 
 use super::kit::{Kit, KitLineSpec};
 use super::skill::{OptionalSkill, OptionalSpec};
@@ -98,7 +96,7 @@ struct RaceSpec {
     bare: Vec<String>,
 }
 
-/// Resolves the races' granted talents against the talents (spec §8 "Talents"): each exists.
+/// Resolves the races' granted talents against the talents: each exists.
 /// Content without the `racial` tree (a fixture's talents) grants nothing, so it checks nothing.
 pub(super) fn check_talents(races: &Races, talents: &TalentBook) -> Result<(), ContentError> {
     if talents.tree_id("racial").is_none() {
@@ -115,7 +113,7 @@ pub(super) fn check_talents(races: &Races, talents: &TalentBook) -> Result<(), C
     Ok(())
 }
 
-/// Eyes that strong light dazzles (spec §8 "Character creation"; drow): `light_blind = { glare
+/// Eyes that strong light dazzles (drow): `light_blind = { glare
 /// = 250, sight = 10, to_hit = -1 }`. While the light on the player's own cell, as their eyes
 /// perceive it, is at least `glare` bright (the sun well up, a bright fire close by), they see no
 /// farther than `sight` cells and their attacks are `to_hit` worse.
@@ -154,68 +152,68 @@ pub struct RaceDef {
     pub stats: PerStat<Dice>,
     /// Adjustments to the potentials on [`Races::base_potential`]; hidden from the player.
     pub potential: PerStat<Dice>,
-    /// What the race adds to the hit points (spec §8 "Combat"): maximum hit points are
+    /// What the race adds to the hit points: maximum hit points are
     /// Toughness plus the race's and the class's.
     pub hp: i32,
-    /// What the race adds to the mana (spec §8 "Mana"): maximum mana is the race's and the
+    /// What the race adds to the mana: maximum mana is the race's and the
     /// class's plus the mental stats' modifiers.
     pub mana: i32,
-    /// Its natural armour (spec §8 "Combat"), as a creature type's: Defence in the Natural
+    /// Its natural armour, as a creature type's: Defence in the Natural
     /// category and Protection, added to what the player wears. Lizardfolk's scales.
     pub natural: Option<Hide>,
-    /// What it resists, in percent per damage type, in damage type order (spec §8 "Damage
-    /// types"), as a creature type's `resist`: added to what the player wears. Drow and poison.
+    /// What it resists, in percent per damage type, in damage type order, as a creature type's
+    /// `resist`: added to what the player wears. Drow and poison.
     pub resist: Vec<(DamageTypeId, i32)>,
     /// Whether strong light dazzles the player, and what that costs them ([`LightBlind`]).
     pub light_blind: Option<LightBlind>,
-    /// Points added to the player's checks against diseases (spec §8 "Diseases"): resisting
+    /// Points added to the player's checks against diseases: resisting
     /// one they are exposed to, and each progression. Ratfolk.
     pub disease_check: i32,
-    /// Whether the player eats rotten food without harm (spec §8 "Hunger"): it feeds them, no
+    /// Whether the player eats rotten food without harm: it feeds them, no
     /// more, as plain food would, and never sickens them or carries a disease. Ratfolk.
     pub eats_rotten: bool,
-    /// Its part of a new character's alignment score (spec §8 "Alignment"), added to the
+    /// Its part of a new character's alignment score, added to the
     /// class's.
     pub alignment: i32,
-    /// Its size (spec §8 "Burden"): an index into [`super::Content::sizes`], which scales how
+    /// Its size: an index into [`super::Content::sizes`], which scales how
     /// much the player can carry.
     pub size: usize,
     /// Whether the player suffers nothing for being Burdened, the first level of burden (no
     /// slowdown, no cap on Dexterity in Defence, no louder steps); from Strained on they are
     /// treated like everyone else. Dwarves.
     pub ignores_burdened: bool,
-    /// Which hidden features the player notices in passing, untrained (spec §8 "Searching"):
+    /// Which hidden features the player notices in passing, untrained:
     /// elves everything, dwarves what is on stone; `None`: only with the Spot skill trained.
     pub passive_search: Option<PassiveSearch>,
-    /// Points added to searching and to noticing in passing alike (spec §8 "Searching").
+    /// Points added to searching and to noticing in passing alike.
     pub search: i32,
-    /// The skills it trains (spec §8 "Skills"), each by dice rolled when the character is made,
+    /// The skills it trains, each by dice rolled when the character is made,
     /// in skill order; added to the class's.
     pub skills: Vec<(SkillId, Dice)>,
-    /// The skills a new character of it may start with, each by a chance (spec §8 "Skills"; the
+    /// The skills a new character of it may start with, each by a chance (the
     /// drow's Sneak attack): rolled after the class's, from the same stream, in skill order.
     pub optional_skills: Vec<OptionalSkill>,
     /// Dice added to one of the class's skills, picked when the character is made (0: none).
     /// Humans: one extra class skill.
     pub class_skill: Dice,
-    /// The skill rolls each level gives beyond the class's (spec §8 "Skills"): humans, 1.
+    /// The skill rolls each level gives beyond the class's: humans, 1.
     pub rolls: u8,
-    /// The talents the race grants (spec §8 "Talents": the humans' Versatile), by id: granted
+    /// The talents the race grants (the humans' Versatile), by id: granted
     /// talents of the `racial` tree ([`check_talents`]), held from the start, never picked.
     pub talents: Vec<String>,
-    /// How much the player needs to eat, in percent of a human (spec §8 "Hunger"): game time
+    /// How much the player needs to eat, in percent of a human: game time
     /// burns their nutrition this much faster (a halfling, 125) or slower (an elf, 80).
     pub hunger: u16,
-    /// How much experience a level needs, in percent (spec §8 "Experience"): multiplied with
+    /// How much experience a level needs, in percent: multiplied with
     /// the class's onto every threshold. Long-lived races pay more (an elf, 140).
     pub experience: u16,
-    /// Starting ranks in weapon skills (spec §8 "Weapon skills"), in skill order: added to the
+    /// Starting ranks in weapon skills, in skill order: added to the
     /// class's.
     pub weapon_skills: Vec<(WeaponSkillId, Dice)>,
     /// The starting kit as written; resolved by the loader into `kit`.
     pub(super) kit_spec: Vec<KitLineSpec>,
-    /// What the race adds to a new character's pack after the class's kit (spec §8 "Character
-    /// creation"); filled in by the loader once objects are known.
+    /// What the race adds to a new character's pack after the class's kit; filled in by the loader
+    /// once objects are known.
     pub kit: Kit,
     /// The slots, by id as written, the race's starting kits leave bare; resolved into `bare`.
     pub(super) bare_spec: Vec<String>,

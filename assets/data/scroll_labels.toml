@@ -1,4 +1,4 @@
-# Unidentified scrolls (spec §8 "Scrolls"), ADOM-like: a scroll type the player has not yet read
+# Unidentified scrolls, ADOM-like: a scroll type the player has not yet read
 # or identified shows as "a scroll labelled ZUNBAR" (and in one plain colour) until they do. Every
 # readable scroll type (an object with `read`) gets its own label at the start of a run, one label
 # per type for the whole run, made of `syllables` (least, most) of `parts`. Changing this file

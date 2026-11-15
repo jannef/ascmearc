@@ -1,4 +1,4 @@
-//! Magic item content, rolls, and names (spec §8 "Magic items").
+//! Magic item content, rolls, and names.
 
 use super::*;
 use crate::content::{Content, ObjectId};

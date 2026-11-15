@@ -144,7 +144,7 @@ pub(super) fn at_normal_pace(price: i64) -> String {
     at_speed(price, NORMAL_SPEED)
 }
 
-/// How long an action of energy price `price` takes an actor of `speed` (spec §8 "Speed": it
+/// How long an action of energy price `price` takes an actor of `speed` (it
 /// gains its speed in energy a second), to a tenth of a second under a minute: `6 seconds`,
 /// `7.5 seconds`, `45 minutes`.
 pub(super) fn at_speed(price: i64, speed: u32) -> String {

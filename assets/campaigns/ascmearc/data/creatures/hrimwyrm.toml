@@ -1,10 +1,10 @@
 # Campaign-owned (docs/design/campaign.md §3.6): the Ascmearc's own type, which only its files
 # may name.
 #
-# The third layer boss of Grundlēas (#1118; spec §7 "The endless branch"): Hrīmwyrm (Old English
+# The third layer boss of Grundlēas (#1118): Hrīmwyrm (Old English
 # hrīm, rime, and wyrm), the White, a wyrm of the cold under the world, the fire drake's pale
 # kin, that keeps the thirtieth floor. Once a run (`unique`), in no population: only its bed, a
-# hall of ice-light, places it. A dragon (#1099, spec §8 "Creature behavior": "Dragons"): it
+# hall of ice-light, places it. A dragon (#1099): it
 # breathes a long cone of frost whenever its breath is ready, and between breaths fights with
 # two claws and a bite. Cold cannot hurt it; fire finds it softer.
 [[creature]]

@@ -285,7 +285,7 @@ impl FaithMods {
     }
 }
 
-/// The priest's prayer (spec §8 "Class abilities"; `world/classes/orison.rs`): what its prayer talents
+/// The priest's prayer (`world/classes/orison.rs`): what its prayer talents
 /// sum to: the uses (their union), the answers a prayer gives (the largest; at least 1), every
 /// problem at once (any), and the highest tier with its titles.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -309,14 +309,14 @@ impl Prayer {
     }
 }
 
-/// The active Consecrate (spec §8 "Class abilities"): its mana and how long the prayer takes.
+/// The active Consecrate: its mana and how long the prayer takes.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Consecrate {
     pub mana: i32,
     pub time: crate::time::Duration,
 }
 
-/// The active Sanctuary (spec §8 "Class abilities", §7 "Special rooms"; `world/classes/sanctuary.rs`):
+/// The active Sanctuary (`world/classes/sanctuary.rs`):
 /// its mana, how long the rite takes, and the hallow it lays: its radius, how long it lasts,
 /// and the healing and mana pace inside it, in percent.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -328,14 +328,14 @@ pub struct Sanctuary {
     pub regen: u16,
 }
 
-/// The active Lay on hands (spec §8 "Class abilities"): hit points a character level; paid for
+/// The active Lay on hands: hit points a character level; paid for
 /// by its talent's `resource` (Zeal).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct LayOnHands {
     pub per_level: u8,
 }
 
-/// The active Smite (spec §8 "Class abilities"; `world/classes/smite.rs`): paid for by its talent's
+/// The active Smite (`world/classes/smite.rs`): paid for by its talent's
 /// `resource` (Zeal).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Smite {

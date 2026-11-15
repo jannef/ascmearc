@@ -1,4 +1,4 @@
-# A potion of sea legs (spec §8 "Potions", the potions wave 2 design §4.1): Water-borne for six minutes, walking on water. Utility draughts are sky blue.
+# A potion of sea legs (the potions wave 2 design §4.1): Water-borne for six minutes, walking on water. Utility draughts are sky blue.
 [[object]]
 id = "potion_of_sea_legs"
 name = "potion of sea legs"

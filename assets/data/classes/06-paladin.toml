@@ -31,7 +31,7 @@ kit = [
 ]
 # Bonus talents from Guard and Vigour.
 bonus_talents = { levels = [10, 20, 30, 45, 55], trees = ["guard", "vigour"] }
-# The level table (spec §8 "Class abilities"). The holy gifts used from the abilities menu work
+# The level table. The holy gifts used from the abilities menu work
 # only for the good side (their talents' `alignment`); they bar nothing. Smite grants zeal, the
 # pool Smite and Lay on hands are paid from (docs/design/paladin-smites.md).
 abilities = [

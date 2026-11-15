@@ -1,4 +1,4 @@
-//! Chests in the world (spec §8 "Chests", [`crate::chest`]): opening (and unlocking), kicking
+//! Chests in the world ([`crate::chest`]): opening (and unlocking), kicking
 //! open, and blowing apart.
 //!
 //! - **Opening** a shut chest (`open:DIR`, or walking into it) lifts its lid (`open_chest`, a
@@ -219,7 +219,7 @@ impl World {
         }
     }
 
-    /// Chest-wise (spec §8 "Chests"): a shut chest's hidden trap in the player's sight gives
+    /// Chest-wise: a shut chest's hidden trap in the player's sight gives
     /// itself away to them, known and remembered at once and said ("You notice that the coffer
     /// is trapped: an arrow trap."). No draw: the talent sees it.
     pub(in crate::world) fn chest_wise_look(&mut self) {

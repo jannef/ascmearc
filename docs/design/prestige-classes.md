@@ -370,10 +370,10 @@ A Hunter 1 (total 31), a bard with Travelled hands' Long blades 1 and whatever r
 | `wiki/src/npcs.md` | a **Saying words** section: how it works, that case and punctuation are ignored, who knows words (generated: every dialogue with words, its speaker, and whom it speaks to; the phrases themselves stated, the owner's rule) |
 | `wiki/src/experience.md` | the curve to 100 (generated), the class caps |
 | `wiki/src/abilities.md`, `encounters.md`, `creatures.md`, `terrain.md` | Spirit weapon's row; the spirit's entries with their condition; the spirit; the statue |
-| `spec/08i-character.md` | "Prestige classes" after "Class abilities": the total level, `max_level`, the calling and `World::call`, the XP given, `class_of`, what a level brings by class; the Hunter's bullet; "Experience": the curve to 100 |
-| `spec/08b-creatures.md` | "Dialogue": words, `speaks_to`, `silent`, `unheard`, `does`; the spirit |
-| `spec/07b-data.md` | `classes/README.toml` `max_level`; `prestige/README.toml`; a campaign's `data/callings/`; dialogue words; encounters' `calling`; terrain `statue`; vault notes; `talents/README.toml` `spirit_weapon` |
-| `spec/06-input-and-ui.md` | the dialogue screen's Say row and field; the shape list |
+| `spec/12-character.md` | "Prestige classes" after "Class abilities": the total level, `max_level`, the calling and `World::call`, the XP given, `class_of`, what a level brings by class; the Hunter's bullet; "Experience": the curve to 100 |
+| `spec/09-creatures.md` | "Dialogue": words, `speaks_to`, `silent`, `unheard`, `does`; the spirit |
+| `spec/06-content.md` | `classes/README.toml` `max_level`; `prestige/README.toml`; a campaign's `data/callings/`; dialogue words; encounters' `calling`; terrain `statue`; vault notes; `talents/README.toml` `spirit_weapon` |
+| `spec/05-interface.md` | the dialogue screen's Say row and field; the shape list |
 | `docs/dev/experience.md` | the cap, `class_of`, `level_for` with a cap, the curve to 100, the XP at the calling |
 | `docs/dev/progression.md` | "Class tables": prestige tables and the calling; the hook row (`spirit_weapon` → `Actor::melee`/`off_hand_blow`); rule 1's wording for a 30-level table (the bard design's Q19) |
 | `docs/dev/npcs.md` | words: `words.rs`, `normalise`, the action, `speaks_to`, `silent`, `unheard`, `does`, the screen's row and field |

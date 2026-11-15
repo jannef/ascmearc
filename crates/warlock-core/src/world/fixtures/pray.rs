@@ -1,4 +1,4 @@
-//! Praying at a forgotten altar (spec §7 "Special rooms"; the design's §7): [`Action::Pray`],
+//! Praying at a forgotten altar (the design's §7): [`Action::Pray`],
 //! the Pray ability of the abilities menu's *Here* group, offered beside a forgotten altar.
 //!
 //! - **Where**: beside a cell whose terrain a room effect's `feature` names and that `offers`

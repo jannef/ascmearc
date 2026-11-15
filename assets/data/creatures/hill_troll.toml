@@ -33,7 +33,7 @@ name = "claws"
 verb = "rakes"
 to_hit = 3
 on_hit = [{ status = "staggered", chance = 15, severity = 1 }]
-# Its gear (spec §8 "Creature gear"): a maul half the time, taken from someone who needed it.
+# Its gear: a maul half the time, taken from someone who needed it.
 [[creature.gear]]
 chance = 50
 one_of = ["maul"]

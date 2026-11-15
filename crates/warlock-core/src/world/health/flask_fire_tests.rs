@@ -1,4 +1,4 @@
-//! Fire and cold (spec §8 "Potions": "Flasks"; the potions wave 2 design §4.4, slice S5): the
+//! Fire and cold (the potions wave 2 design §4.4, slice S5): the
 //! flask of fire, the flask of frost, and pitch fire, each thrown and drunk once from the game's
 //! own data, and the Pitch fire spell its scroll casts. The rules are `flask.rs`'s
 //! (`flask_tests.rs`) and `zone.rs`'s (`zone_tests.rs`); these check that each file does what the

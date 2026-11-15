@@ -1,4 +1,4 @@
-// Free-glyph layer (spec §4.2, layer 2): one quad per glyph, all in one mesh and one draw.
+// Free-glyph layer (layer 2): one quad per glyph, all in one mesh and one draw.
 //
 // Vertex positions are framebuffer pixels; the vertex shader maps them straight to clip space, so
 // glyphs line up with the console grids pixel for pixel. A glyph at rest (whole-pixel position,
@@ -94,7 +94,7 @@ fn band(in: VertexOutput, i: u32) -> vec3<f32> {
     }
 }
 
-// The glyph's colour at this pixel: its own, or for a composite (spec §8 "Animated objects")
+// The glyph's colour at this pixel: its own, or for a composite
 // horizontal bands of its colours over the rows a capital letter covers, top first, with soft
 // borders that the drift moves up and down (the top and bottom bands always stay).
 fn banded(in: VertexOutput) -> vec3<f32> {

@@ -1,6 +1,6 @@
-//! Weapon skills (`assets/data/weapon_skills.toml`, spec §8 "Weapon skills"): the categories of
+//! Weapon skills (`assets/data/weapon_skills.toml`): the categories of
 //! weapons an actor trains with, ADOM-like;
-//! and the fighting styles (spec §8 "Fighting styles"), after AD&D 2e's *Complete Fighter's
+//! and the fighting styles, after AD&D 2e's *Complete Fighter's
 //! Handbook*: skills of how weapons are held and used.
 //!
 //! - **Skills** come in file order, each with an `id`, a `name` for the weapon skills screen, a
@@ -52,7 +52,7 @@ pub enum Role {
     Unarmed,
     /// Bashing with a held shield (the bash attack).
     ShieldBash,
-    /// A fighting style (spec §8 "Fighting styles"): every attack made in its configuration
+    /// A fighting style: every attack made in its configuration
     /// ([`Style`]) trains it, and its benefits add to the weapon skill's.
     Style,
 }
@@ -129,7 +129,7 @@ impl Section {
     }
 }
 
-/// How a fighting style is fought (spec §8 "Fighting styles"): for blows, what the hands hold
+/// How a fighting style is fought: for blows, what the hands hold
 /// (which holds for Defence too); else the kind of attack.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -150,7 +150,7 @@ pub enum Grip {
     Launcher,
     /// Throwing.
     Thrown,
-    /// A spell that rolls to hit at range: a ray or a bolt (spec §8 "Spells").
+    /// A spell that rolls to hit at range: a ray or a bolt.
     RangedSpell,
     /// A touch spell that rolls to hit.
     TouchSpell,
@@ -232,7 +232,7 @@ pub struct Style {
     pub weapons: Vec<WeaponSkillId>,
 }
 
-/// Fighting with a weapon in each hand (spec §8 "Fighting styles"): both hands strike each
+/// Fighting with a weapon in each hand: both hands strike each
 /// melee attack, the main hand's blow with `main` to hit and the off hand's with `off`. A style
 /// eases them (`ease_main`, `ease_off`), never past 0.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
@@ -258,7 +258,7 @@ impl Default for TwoWeapons {
     }
 }
 
-/// Fighting with a shield in each hand (spec §8 "Fighting styles", #611): every blow is a
+/// Fighting with a shield in each hand (#611): every blow is a
 /// shield bash, at `to_hit` (a penalty), each attack `slow` percent dearer, and a spell cast
 /// fails by a chance of `spell_failure` percent. The style eases each (`ease_bash`,
 /// `ease_slow`, `ease_spell`), never past nothing.
@@ -289,7 +289,7 @@ impl Default for TwoShields {
     }
 }
 
-/// Spells that roll to hit (spec §8 "Fighting styles": Sniper): how far is far.
+/// Spells that roll to hit (Sniper): how far is far.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct SpellAttacks {

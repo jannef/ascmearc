@@ -1,4 +1,4 @@
-//! Foraging (`assets/data/forage.toml`, spec §8 "Foraging"; #547): how long a forage takes,
+//! Foraging (`assets/data/forage.toml`; #547): how long a forage takes,
 //! and for each landscape of the wild its chance of finding food, what it finds, and how much.
 //!
 //! The rule itself lives in `world/skills/forage.rs`: who forages (anyone trained in a skill with the

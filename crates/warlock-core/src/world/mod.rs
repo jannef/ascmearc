@@ -1,11 +1,11 @@
-//! The simulation: world state and the turn pipeline (spec §8).
+//! The simulation: world state and the turn pipeline.
 //!
 //! Turn phases, in order: player action → the other actors on the level act in time order until
 //! the player may act again, the clock advancing to the moment of each action (the energy
 //! scheduler, `schedule.rs`; [`World::creature_turn`] is one creature's action) → environment →
 //! perception (sight, light, memory) → perceived events are returned to the caller.
 //!
-//! Time (spec §8): every action that takes time has a cost in energy (`data/actions.toml`, 1000
+//! Time: every action that takes time has a cost in energy (`data/actions.toml`, 1000
 //! for a normal action; [`ActionKind`]) and a base time: 6 s ([`crate::content::BASE_TURN`])
 //! for everything but a step on the overworld, whose base is the terrain's travel time. Its
 //! energy price is the cost times the base in seconds ([`crate::content::price`]; for a step,
@@ -14,32 +14,32 @@
 //! and twice the speed takes half of it. Resting ([`Action::Rest`]) passes many turns in one
 //! action.
 //!
-//! Hearing (spec §5 "Hearing", [`crate::noise`]): steps and doors make noise as they happen, and
+//! Hearing ([`crate::noise`]): steps and doors make noise as they happen, and
 //! every other actor in earshot on the level hears it at once ([`Actor::heard`], until it next
 //! acts). Perception turns what the player heard from unseen sources into perceived sounds, and
 //! news among them into messages ("You hear footsteps to the north-east."), which stop a rest.
 //!
-//! Weather (spec §5 "Weather", [`crate::weather`]) is a pure function of the seed and the time;
+//! Weather ([`crate::weather`]) is a pure function of the seed and the time;
 //! the world only keeps a dev override. Perception knows it under the open sky, and a change seen
 //! there is a message ("It starts to rain."). Rain starting or growing heavier stops a rest; the
 //! rest of the news does not.
 //!
-//! The overworld (spec §3): stairs down on it are locations leading into other levels; `>` on
+//! The overworld: stairs down on it are locations leading into other levels; `>` on
 //! any other cell enters that cell's local area (`local:x,y`, generated on the first visit) on
 //! the side the player walked onto the cell from ([`WorldState`]'s last overworld step), and
 //! walking off a local area's edge leads back to its overworld cell (the level state's edge exit).
 //!
-//! Objects (spec §6): piles lie on cells of a level ([`LevelState`]), actors carry inventories.
+//! Objects: piles lie on cells of a level ([`LevelState`]), actors carry inventories.
 //! Picking up and dropping are actions with their own costs; stepping onto a pile says what lies
 //! there. An actor's weight is its creature's plus what it carries ([`Actor::weight`]), worn and
 //! wielded things included. Wearing and wielding (`equip.rs`) take the time of each slot's
 //! action; dropping something worn takes it off first.
 //!
-//! Combat (spec §8 "Combat", `fight.rs`): attacks are rolled against Defence and take hit
+//! Combat (`fight.rs`): attacks are rolled against Defence and take hit
 //! points; a creature at 0 dies and drops what it carried, and the player's death ends the run
 //! ([`World::death`]): every action after it is refused. Hit points come back with game time.
 //!
-//! Burden (spec §8 "Burden", [`crate::burden`]): what an actor carries against what its
+//! Burden ([`crate::burden`]): what an actor carries against what its
 //! Strength, Toughness, and size let it carry slows every action it takes (in the prices,
 //! `schedule.rs`), caps its Dexterity in Defence, makes its steps louder, and, overloaded, keeps
 //! it from moving. The player is told when their burden changes.
@@ -48,12 +48,12 @@
 //! way, and come down to be picked up again; burning missiles are fires that light the level
 //! until they burn out.
 //!
-//! Special rooms (spec §7 "Special rooms", [`crate::content::RoomEffectDef`]): a level's special
+//! Special rooms ([`crate::content::RoomEffectDef`]): a level's special
 //! rooms change the rules inside them, through one question, [`World::effects_at`]: the
 //! light (and so what the player and creatures see), the noise made there, regeneration, and
 //! whether creatures hostile to the player step in. The first time the player is inside one they
 //! are told what it is.
-//! Weapon skills (spec §8 "Weapon skills", [`crate::weapon_skills`], `fight.rs`): every attack
+//! Weapon skills ([`crate::weapon_skills`], `fight.rs`): every attack
 //! draws on a skill (the weapon's, unarmed, thrown, shield bashing) for its to-hit, damage,
 //! threat, and cost, and the player's attacks and shield blocks earn marks toward its next rank
 //! ("You feel more skilled with daggers."). A shield bash ([`Action::Bash`]) is a blow with a
@@ -63,23 +63,23 @@
 //! Blood (`bleed.rs`, [`crate::blood`]): big hits and kills stain the floor and the walls around
 //! the victim. Presentation state kept with the level; no rule reads it. Char (`sear.rs`,
 //! [`crate::scorch`]): fire scorches the floor and walls it burns, the same way.
-//! Status effects and healing (spec §8 "Status effects", "Healing", `status.rs`): big hits and
+//! Status effects and healing (`status.rs`): big hits and
 //! criticals make their targets bleed, a giant rat's bite may poison; effects cost hit points
 //! and ease as the clock moves, slow healing, and can kill. Hit points come back with game
 //! time, twice as fast while the player rests.
-//! Hunger (spec §8 "Hunger", `hunger.rs`, `eat.rs`): game time burns the player's nutrition, and
+//! Hunger (`hunger.rs`, `eat.rs`): game time burns the player's nutrition, and
 //! the state it leaves them in takes effect (Weak, Fainting, Starving, Bloated); meals pass turns
 //! like a rest and feed at their end. Creatures that die leave corpses, which rot away.
-//! Temperature and ice (spec §5 "Temperature", "Ice"; `ice.rs`): water freezes in the cold and
+//! Temperature and ice (`ice.rs`): water freezes in the cold and
 //! thaws in the warmth, brought up to the clock as it moves on the player's level (and on
 //! arrival), never ticking while nobody is there. Ice holds actors by their weight; one that
 //! breaks through plunges into the freezing water and climbs out onto the ice in a few turns.
 //!
-//! Traps (spec §8 "Traps", `trap.rs`): whoever steps onto a trap sets it off, the player and
+//! Traps (`trap.rs`): whoever steps onto a trap sets it off, the player and
 //! creatures alike: arrows, spears, fireballs, lightning, pits, alarms, and teleports. Traps are
 //! hidden until the player finds one, sets one off, or sees a creature do it; then they are
 //! known and remembered.
-//! Searching (spec §8 "Searching", `search.rs`): secret doors look like walls and hidden traps
+//! Searching (`search.rs`): secret doors look like walls and hidden traps
 //! like the floor until the player finds them, searching (a check of Intelligence) or in passing
 //! (of Willpower, after every turn, for those who notice such things).
 
@@ -273,7 +273,7 @@ pub enum WorldError {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct WorldState {
     pub(crate) scenario: String,
-    /// The campaign the run is of (spec §3): its scenario's. Local areas are its overworld's,
+    /// The campaign the run is of: its scenario's. Local areas are its overworld's,
     /// and saves carry its content fingerprint ([`Content::fingerprint_for`]). A save without
     /// one takes its scenario's ([`World::from_state`]).
     #[serde(default)]
@@ -303,13 +303,13 @@ pub struct WorldState {
     /// betters (`world/turn/eyes.rs`).
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub(crate) vision_dev: bool,
-    /// The player's character (spec §8 "Character creation"): race, gender, and class, the stat
+    /// The player's character: race, gender, and class, the stat
     /// the gender raised, birth date, and birth sign; none when the scenario gives the player's
     /// eyes and stats itself.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) character: Option<Character>,
-    /// Whether the run started with the character's starting kit (a character the player chose;
-    /// spec §8 "Character creation"); replays record it. Left out of saves when false.
+    /// Whether the run started with the character's starting kit (a character the player chose);
+    /// replays record it. Left out of saves when false.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub(crate) kit: bool,
     /// The step that brought the player onto their overworld cell, if they walked there: `>`
@@ -321,7 +321,7 @@ pub struct WorldState {
     /// never in a save.
     #[serde(skip)]
     pub(crate) listening: Option<crate::noise::Listening>,
-    /// The overworld encounters' random stream (spec §7 "Overworld encounters": the rate roll,
+    /// The overworld encounters' random stream (the rate roll,
     /// the entry, the party's dice), made on the first roll (`world/levels/encounter.rs`).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) encounters: Option<Rng>,
@@ -359,20 +359,20 @@ pub struct WorldState {
     /// Sounds the player perceived lately: those like them are no news ([`noise::news`]).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub(crate) recent_sounds: Vec<Recent>,
-    /// The training random stream (spec §8 "Skills"): the chances of training marks, apart from
+    /// The training random stream: the chances of training marks, apart from
     /// the gameplay stream so training never changes a fight's rolls.
     pub(crate) training: Rng,
-    /// The levels random stream (spec §8 "Talents"): what level-ups roll (skill rolls, stat
+    /// The levels random stream: what level-ups roll (skill rolls, stat
     /// checks), apart from the gameplay stream so a level moves no fight. Made on the first
     /// draw ([`Rng::levels`]), so a run that never drew from it hashes as before.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) levels_rng: Option<Rng>,
-    /// The ruin random stream (spec §8 "Spells": "Ruin"): which items lying in an area spell
+    /// The ruin random stream: which items lying in an area spell
     /// are lost. Made on the first draw ([`Rng::ruin`]), so a run that never drew from it hashes
     /// as before.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) ruin_rng: Option<Rng>,
-    /// When the daily stat check comes next (spec §8 "Stats": 06:00 game time;
+    /// When the daily stat check comes next (06:00 game time;
     /// `world/character/stat_training.rs`). `None` while the content has no training rules (so content
     /// without them hashes as before).
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -383,20 +383,20 @@ pub struct WorldState {
     /// How the run ended, once the player has died: nothing more happens.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) death: Option<Death>,
-    /// The player's experience total (spec §8 "Experience"); their level follows from it.
+    /// The player's experience total; their level follows from it.
     #[serde(default, skip_serializing_if = "is_zero")]
     pub(crate) experience: u32,
-    /// What the player has discovered for experience (spec §8 "Experience").
+    /// What the player has discovered for experience.
     #[serde(default, skip_serializing_if = "Progress::is_empty")]
     pub(crate) progress: Progress,
-    /// The player's quests and the kills they count (spec §8 "Quests").
+    /// The player's quests and the kills they count.
     #[serde(default, skip_serializing_if = "Quests::is_empty")]
     pub(crate) quests: Quests,
-    /// The hidden locations revealed so far, by id (spec §7 "Hidden locations"): applied to the
+    /// The hidden locations revealed so far, by id: applied to the
     /// overworld as it is made, if it was not yet when they were revealed.
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
     pub(crate) revealed: BTreeSet<String>,
-    /// The scroll types the player has identified (spec §8 "Scrolls"; [`crate::scroll_label`]):
+    /// The scroll types the player has identified ([`crate::scroll_label`]):
     /// they show by their names, the rest by their labels.
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
     pub(crate) known_scrolls: BTreeSet<ObjectId>,
@@ -438,7 +438,7 @@ impl WorldState {
             .and_then(|c| c.spec.race(content).ok())
     }
 
-    /// What `actor` carries against what it can (spec §8 "Burden"): the player by their race's
+    /// What `actor` carries against what it can: the player by their race's
     /// size (and whether it ignores Burdened) when the run has a character, anyone else by its
     /// creature type's size; inside a special room that scales the limit (a heavy hall), by its
     /// percent. The one place the rules ask for a load.
@@ -653,7 +653,7 @@ impl World {
         Self::with_character(content, scenario, seed, None)
     }
 
-    /// Starts a new run of `scenario` as `character` (spec §8 "Character creation"); without
+    /// Starts a new run of `scenario` as `character`; without
     /// one, as the scenario's character, or if it names none, with the eyes and stats it gives.
     /// `seed` defaults to the scenario's seed. The character's name is the run's default
     /// ([`character::default_name`](crate::character::default_name)).
@@ -680,7 +680,7 @@ impl World {
     }
 
     /// [`World::with_character_named`]; with `kit`, the character starts with their starting
-    /// kit and the scenario's `carry` on top (spec §8 "Character creation"), as a run whose
+    /// kit and the scenario's `carry` on top, as a run whose
     /// character the player chose does (New run, `--character`, `--name`). Without it, with the
     /// scenario's pack alone, as a dev launch on the scenario's own character does (tests,
     /// golden walks, `--scenario` alone). A run without a character has no kit. A run with the
@@ -767,7 +767,7 @@ impl World {
         }
         let with_kit = kit.is_some();
         // Everything a character sets out with is known by type, the kit's and the scenario's
-        // own pack alike (spec §8 "Scrolls", "Potions"). A run without a character (a test's
+        // own pack alike. A run without a character (a test's
         // hall) knows nothing: its pack is as found.
         let known_scrolls: BTreeSet<ObjectId> = match start {
             Some(_) => crate::kit::known_types(&content, &pack.items).collect(),
@@ -910,7 +910,7 @@ impl World {
             stat_marks: Default::default(),
         };
         character::stars::grant(&content, state.character.as_ref(), &[], &mut player.talents);
-        // The class abilities of level 1 (spec §8 "Class abilities").
+        // The class abilities of level 1.
         let given = classes::class::grant(&content, state.character.as_ref(), &mut player, 1);
         player.hp = player.max_hp(&content);
         player.mana = player.max_mana(&content);
@@ -949,7 +949,7 @@ impl World {
             .collect();
         let inherits = !handed.is_empty();
         world.hand_down(handed.into_iter());
-        // Animal companion's beast and the witch's familiar (spec §8 "Allies"; `companion.rs`,
+        // Animal companion's beast and the witch's familiar (`companion.rs`,
         // `familiar.rs`), before the story knows them.
         world.bring_companion();
         world.bring_familiar();
@@ -1063,8 +1063,8 @@ impl World {
                 actor.id
             )));
         }
-        // What the class gives up to the player's level, if its table grew since (spec §8
-        // "Class abilities"); a birth sign's gifts first (spec §8 "Birth sign").
+        // What the class gives up to the player's level, if its table grew since; a birth sign's
+        // gifts first.
         if let Some(player) = state.actors.get_mut(&state.player) {
             let boons = std::mem::take(&mut player.boons);
             character::stars::grant(
@@ -1126,7 +1126,7 @@ impl World {
         &self.content
     }
 
-    /// The campaign the run is of (spec §3).
+    /// The campaign the run is of.
     pub fn campaign(&self) -> &str {
         &self.state.campaign
     }
@@ -1155,13 +1155,13 @@ impl World {
         self.state.seed
     }
 
-    /// The player's quests and the kills they count (spec §8 "Quests"). For dev tools; the
+    /// The player's quests and the kills they count. For dev tools; the
     /// player's quest log reads [`PerceptionView::quests`].
     pub fn quests(&self) -> &Quests {
         &self.state.quests
     }
 
-    /// The player's character, if the run has one (spec §8 "Character creation").
+    /// The player's character, if the run has one.
     pub fn character(&self) -> Option<&Character> {
         self.state.character.as_ref()
     }
@@ -1188,9 +1188,9 @@ impl World {
         self.state.player().pos
     }
 
-    /// How actors `a` and `b` stand toward each other: the stance of their factions (spec §7
-    /// "Factions"): their types' unless a level placed them elsewhere; [`Stance::Neutral`] if either is unknown,
-    /// or if they are a Beast-friend and an animal they befriended ([`allies::beast_friend::befriended`]).
+    /// How actors `a` and `b` stand toward each other: the stance of their factions: their types'
+    /// unless a level placed them elsewhere; [`Stance::Neutral`] if either is unknown, or if they
+    /// are a Beast-friend and an animal they befriended ([`allies::beast_friend::befriended`]).
     pub fn stance(&self, a: ActorId, b: ActorId) -> Stance {
         match (self.state.actors.get(&a), self.state.actors.get(&b)) {
             (Some(a), Some(b)) => stance_between(&self.state, &self.content, a, b),
@@ -1243,7 +1243,7 @@ impl World {
         self.state.actors.get(&id).map(|a| a.weight(&self.content))
     }
 
-    /// What actor `id`, on any level, carries against what it can (spec §8 "Burden"). For the
+    /// What actor `id`, on any level, carries against what it can. For the
     /// rules and dev tools; the player is shown only their own ([`PerceptionView::own_load`]).
     pub fn actor_load(&self, id: ActorId) -> Option<Load> {
         (self.state.actors.get(&id)).map(|a| self.state.load(&self.content, a))
@@ -1266,7 +1266,7 @@ impl World {
         (level, actors)
     }
 
-    /// What the special rooms do at `pos` on level `level` (spec §7 "Special rooms"): the effect
+    /// What the special rooms do at `pos` on level `level`: the effect
     /// of the room there and the one covering the level, none for a level not visited. This is
     /// the one question the rules ask of special rooms (through the level's state inside the
     /// core); ground truth, **for the rules, tests, and developer tools**: the player knows only
@@ -1565,8 +1565,8 @@ impl World {
         self.took(done, kind)
     }
 
-    /// The player takes combat stance `stance` (spec §8 "Stances"). Takes no time, but a wait's
-    /// for those set in their ways (spec §8 "Birth sign").
+    /// The player takes combat stance `stance`. Takes no time, but a wait's
+    /// for those set in their ways.
     /// The frenzy stance is refused, and so is any while rage holds the player in it
     /// (`frenzy.rs`).
     fn set_stance(&mut self, stance: CombatStance) -> Spent {

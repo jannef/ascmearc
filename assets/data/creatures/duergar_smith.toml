@@ -1,6 +1,6 @@
 # The delf wave (Fyrdelf, docs/design/campaign.md §10.1). A master of the grey dwarves' forges:
 # strong as an ox, in chain mail, swinging the war hammer of the craft (the smith's racial
-# weapon, spec §8 "Creature gear"; now and then one better made than any other), and carrying
+# weapon; now and then one better made than any other), and carrying
 # the forge's best work.
 [[creature]]
 id = "duergar_smith"

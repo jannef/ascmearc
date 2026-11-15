@@ -1,9 +1,9 @@
 # The overworld and local areas
 
 Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
-rules it implements are in spec/07c-generation.md. Keep it current with the code, as CLAUDE.md says.
+rules it implements are in spec/07-generation.md. Keep it current with the code, as CLAUDE.md says.
 
-A campaign's overworld (spec §3, §5, §7; the showcase's is
+A campaign's overworld (the showcase's is
 `assets/campaigns/showcase/levels/overworld.toml`) is its one level of kind `overworld`
 (`Content::overworld_of(campaign)`; a run's local areas are its campaign's, `docs/dev/campaign.md`) (`LevelKind::Overworld`: a step's base time is the terrain's `travel_minutes`; every
 other action, waiting and `>` included, the usual 6 s).
@@ -21,7 +21,7 @@ A hand-made `outdoor` level an overworld location leads into (stairs down or a h
 `to`, first in the overworld's order) gets the location as its `exit` when content loads
 (`content/overworld.rs::link_edge_exits`, called once after the levels are parsed; no level-file
 field), so it is left by its edge like a local area (Cēaptūn has no stairs). The quick leave
-(#474, spec §7 "Leaving an outdoor area"; `world/levels/quick_leave.rs`): `Action::Ascend` with no
+(#474; `world/levels/quick_leave.rs`): `Action::Ascend` with no
 stairs up underfoot on an `Outdoor` level with an `exit` goes through `leave_by_edge` (priced as
 `Stairs` by the dispatch) unless `enemies_about`: an actor on the level with
 `Stance::Hostile` toward the player that `Perception::sees_actors_at`, or any within
@@ -47,7 +47,7 @@ files, `LevelTemplate::region_at`, `PerceptionView::region`) show in the status 
 `vast.toml`, the overworld map is hand-authored: edit the file directly (keep every walkable cell
 inside a region; a test checks).
 
-Local areas (spec §3, §7) are generated in `mapgen/local/`: `mod.rs` (`Setting`: the cell's
+Local areas are generated in `mapgen/local/`: `mod.rs` (`Setting`: the cell's
 landscape and its neighbors' roads, rivers, lakes, and land, read from the overworld; per-landscape
 feature chances; the attempt loop, glade, ruins, deer, and each land's wild beast, `Features::beast`:
 a forest's boar, a dense forest's lynx, the hills' badger, none or one, grazed as the deer after
@@ -68,7 +68,7 @@ Tune by eye:
 --nocapture` prints areas with one character per terrain (`WARLOCK_SEED` for the seed), and the
 `forest` scenario or `--content-dir` scenarios with `start_level = "local:x,y"` capture them.
 
-Hidden locations (#327; spec §7 "Hidden locations"; the campaign design §8): a legend's `hidden =
+Hidden locations (#327; the campaign design §8): a legend's `hidden =
 { id, terrain, to, name, opens }` on a plain overworld cell (or on a plain cell of a hand-made level, #1446:
 Gimmwīc's crystal portal; never in a vault, `Vault::new`; ids unique within a campaign,
 `Content::validate`; `Content::hidden_locations` lists a campaign's, its overworld's first, and
@@ -95,7 +95,7 @@ overworld's ways in that the player sees or remembers. Tests: `world/levels/reve
 hiding a barrow in the Wildlands, revealed by the hermit's `depths` quest; the built-in Wildlands
 hide nothing).
 A hidden location's `to` may be left out: it leads nowhere yet, like stairs without one.
-Climbing out reveals (#1117, spec §7 "Ways up"): `take_stairs` (`world/levels/travel.rs`, one line
+Climbing out reveals (#1117): `take_stairs` (`world/levels/travel.rs`, one line
 before `travel`) asks `World::reveal_way_out(from, to)`: when `to` is the campaign's overworld and
 one of its hidden locations, still hidden, has `to == from` (the level being left), it is revealed
 first, so `travel` lands the player on its fresh `StairsLink` (the one leading back to `from`),
@@ -145,7 +145,7 @@ wise-woman's quest to reveal (#1141; `world/campaigns/holtwic_tests.rs`). `g` L�
 `lictun` (`docs/dev/campaign.md` "Līctūn"): with the starter cave, the one location closer than
 six cells to another (`ascmearc_tests`: four from the town, at least five from every other).
 
-Rumoured ways (spec §8 "Dialogue"; `docs/dev/npcs.md`): a dialogue topic's `route` marks the
+Rumoured ways (`docs/dev/npcs.md`): a dialogue topic's `route` marks the
 overworld's memory as day sight along it would (`world/people/rumour.rs`), reading only the terrain
 grid, so hidden locations stay their plain terrain and are never marked or named; a visible
 location (Cealdhlāw) is remembered and then listed by the `locations` layer as when seen.

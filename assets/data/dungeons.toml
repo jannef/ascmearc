@@ -1,6 +1,6 @@
-# Dungeon branches (spec §7): stacks of procedurally generated levels. This file is the field
+# Dungeon branches: stacks of procedurally generated levels. This file is the field
 # reference: the branches are a campaign's, in its data/dungeons/ (the showcase's Depths:
-# campaigns/showcase/data/dungeons/showcase.toml; spec §3), but for the shared portal branch,
+# campaigns/showcase/data/dungeons/showcase.toml), but for the shared portal branch,
 # data/dungeons/hellegeat.toml. Stairs lead into a branch
 # with `to = "<id>:<depth>"` (e.g. `to = "depths:1"`), and a scenario may start in one. Each level
 # is generated on its first visit from the run seed and its id, then persists like a hand-made
@@ -14,7 +14,7 @@
 #   generator  "rooms" (rooms and corridors, ADOM-like) or "caves" (cellular automata)
 #   depth      number of levels
 #   below      a level of another bounded branch of the same campaign (`below = "fyrdelf:12"`):
-#              the branch is a way up (spec §7 "Ways up"); its deepest level's `>` leads there,
+#              the branch is a way up; its deepest level's `>` leads there,
 #              that level gets a `<` back up near a vault it names, and its first level's `<`
 #              climbs out to its way in, however it was entered (default none)
 #   bottom     a hand-made level of the same campaign (`bottom = "gimmwic"`) its deepest level's
@@ -27,30 +27,30 @@
 #              next to stairs nor on a patrol; an id named twice comes up twice as often
 #              (default none)
 #   traps_per_level  [least, most] traps a level gets (default [2, 4])
-#   secret_doors  [least, most] doors the rooms generator hides on a level (secret doors, spec
-#              §8 "Searching"; default none): only doors the stairs and every key are reached
+#   secret_doors  [least, most] doors the rooms generator hides on a level (secret doors; default
+#              none): only doors the stairs and every key are reached
 #              without, so a level may get fewer
 #   hidden_per_depth  how much harder its hidden features (secret doors, hidden traps) are to
 #              find for each level below the first (default 0)
-#   locks_per_depth  how much harder its locks are to pick (spec §8 "Doors") for each level below
+#   locks_per_depth  how much harder its locks are to pick for each level below
 #              the first, on top of the lock's own difficulty (14 unless a vault gives it one;
 #              default 0)
 #   ores       the only ores (metal ids, each with an ore row in data/mining.toml) its walls give
-#              a miner (spec §8 "Digging"); `[]` none; stone and gems are found anyway (default:
+#              a miner; `[]` none; stone and gems are found anyway (default:
 #              every ore of the table)
 #   loot       [fewest, most] items of loot on the floor of each level, rolled at the depth as
-#              item level (spec §8 "Magic items"; default none)
+#              item level (default none)
 #   chests     `{ chance, count }`: percent of its floors with chests and how many such
 #              a floor gets, `[least, most]`, each of the floor's level, locked,
-#              trapped, and filled by its band in data/chests.toml (spec §8 "Chests"; default
+#              trapped, and filled by its band in data/chests.toml (default
 #              `{ chance = 20, count = [1, 1] }`: one floor in five has one)
 #   ambient    [r, g, b, uv] light everywhere (default none)
-#   temperature  °C on its levels (spec §5 "Temperature"; default 10, the dungeon
+#   temperature  °C on its levels (default 10, the dungeon
 #              default): water there freezes below 0
-#   key        a key (objects.toml, spec §8 "Doors"): the rooms generator locks the door of up to
+#   key        a key (objects.toml): the rooms generator locks the door of up to
 #              two rooms that have only one, with the lock this key opens, and leaves the key
 #              where the player reaches it without unlocking anything (default none: no locks)
-#   danger     how dangerous its floors are (spec §7 "Danger levels"; default none: 0, and
+#   danger     how dangerous its floors are (default none: 0, and
 #              nothing comes): `danger = 4` is `{ base = 4, per_depth = 1 }`, the floor at depth d
 #              `base + (d - 1) × per_depth` (at most 99 a floor); `player = {
 #              percent, from, max }` adds percent % of each player level past `from`, at most
@@ -86,12 +86,12 @@
 #   spawn      `{ every = "15m", chance = 60, cap = N }` (the defaults; cap: the population):
 #              while the player is on a floor, every `every` a creature comes with `chance` %
 #              unless the floor holds `cap` creatures hostile to the player
-#   room_effects  the branch's own special-room odds (spec §7 "Special rooms"), a table:
+#   room_effects  the branch's own special-room odds, a table:
 #              `chance` (percent a room is special), `per_level` (at most this many a level),
 #              `favoured` (`{ id = share }`, ids in room_effects/, each its fixed percent of
 #              the draws) and `banned` (ids never drawn); each field defaults to
 #              room_effects/'s, e.g. `room_effects = { chance = 25, favoured = { flooded = 40 } }`
-#   shops      the branch's own shop odds (spec §7 "Shops"), a table: `chance` (percent of its
+#   shops      the branch's own shop odds, a table: `chance` (percent of its
 #              rooms levels with a shop), `kinds` (ids in shops.toml, picked
 #              uniformly; default every kind with `generated`), `names` (the keepers' names), `keeper` (the keepers' creature type;
 #              they carry the shared `[keeper]`'s kit); each field defaults to shops.toml's,
@@ -102,14 +102,14 @@
 #              dread_one_in here needs the branch's danger; a table field by field), and `vaults` (vault ids, shared or the branch's
 #              campaign's: each stamped on every level of the range for certain, and never drawn
 #              at random anywhere, e.g. `vaults = ["drakes_hoard"]`)
-#   [dungeon.portal]  (an empty table, with `depth`; no `endless`, no `below`) a branch of Pits
-#              (spec §7 "The Pits"): it exists only as instances opened by a portal, Pit S's
+#   [dungeon.portal]  (an empty table, with `depth`; no `endless`, no `below`) a branch of Pits: it
+#              exists only as instances opened by a portal, Pit S's
 #              levels "<id>@S:1" to "<id>@S:<depth>", each made from the run seed and its id and
 #              forgotten when left; no stairs, hidden location, or quest may name them
 #
 # [defaults] (this file only; required once any branch or level has a danger): the odds every
 # area with a danger draws by unless it gives its own `stray`, `out_of_depth`, `deeper`,
-# `deeper_cap`, `dread_one_in`, and `neutral` (spec §7 "Danger levels"; `dread_one_in` defaults
+# `deeper_cap`, `dread_one_in`, and `neutral` (`dread_one_in` defaults
 # to 100, `neutral` to 100).
 #
 # Generators build with the terrain void, wall, floor, door_closed, door_open, stairs_up,

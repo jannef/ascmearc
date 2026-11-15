@@ -1,4 +1,4 @@
-//! Char on the map grid (spec §4.8 "Blood", §8 "Blood"): a scorched cell's colours shift toward
+//! Char on the map grid: a scorched cell's colours shift toward
 //! its char ([`warlock_core::scorch`]: brown soot where a little has burned, near black where it
 //! is charred through) by how much has burned there, before the grid shader lights them, as
 //! [`super::blood::stained`] does for blood. A floor's dots darken into the char; a wall's face

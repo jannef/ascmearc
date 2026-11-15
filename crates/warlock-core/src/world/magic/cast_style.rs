@@ -1,4 +1,4 @@
-//! The caster style a spell is cast in (spec §8 "Fighting styles"; #571, #1251): decided by the
+//! The caster style a spell is cast in (#571, #1251): decided by the
 //! spell and the caster's armour, never by where it is aimed.
 //!
 //! Any spell cast in **armour that hinders casting** (`Actor::worn_spell_cost` above 0) is a
@@ -28,7 +28,7 @@ impl Actor {
         }
     }
 
-    /// The skills a cast of `spell` draws on and trains (spec §8 "Fighting styles"): no weapon
+    /// The skills a cast of `spell` draws on and trains: no weapon
     /// skill, only the caster style it is cast in (module docs).
     pub fn spell_skills(&self, content: &Content, spell: &SpellData) -> AttackSkills {
         let table = content.weapon_skills();

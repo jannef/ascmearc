@@ -2,7 +2,7 @@
 //! made of, part by part ([`super::part`]). A material has a name, whether it is `precious` (a gem
 //! or a precious metal: it shows in the names of what it is part of), and its `value` (percent,
 //! steel 100), which weighs it against the others in what an object of other parts is worth;
-//! a gem has a `gem` table besides ([`GemDef`], spec §7 "Gems").
+//! a gem has a `gem` table besides ([`GemDef`]).
 //!
 //! Its properties (#193, #194) are on one scale, steel's: `weight` (percent of steel's for an
 //! item of it), weapon modifiers `to_hit` and `damage` (steel 0 and 0; neither: it cannot be a
@@ -23,7 +23,7 @@ pub struct MaterialId(pub u16);
 
 /// The most a [`Found`] weight counts for, at any level ([`Found::at`] caps it there).
 pub const MAX_FOUND: u32 = 100_000;
-/// The heaviest weight a very rare material is found with (spec §7 "Materials"): a variant
+/// The heaviest weight a very rare material is found with: a variant
 /// worse in a fight than its base item's own material but dearer is found at most this often
 /// ([`crate::variant`]).
 pub const VERY_RARE: u32 = 10;
@@ -36,14 +36,14 @@ pub const ANY: &str = "any";
 pub struct MaterialDef {
     pub id: String,
     pub name: String,
-    /// A gem or a precious metal: names show it (spec §7 "Objects and materials").
+    /// A gem or a precious metal: names show it.
     #[serde(default)]
     pub precious: bool,
     /// What it is worth, in percent of steel (100, the default): an object's value follows its
     /// parts' materials by their shares ([`super::ObjectDef::value_with`]).
     #[serde(default = "steel")]
     pub value: u32,
-    /// A gem (spec §7 "Gems"): its colour, what a plain one is worth, and how often loot finds
+    /// A gem: its colour, what a plain one is worth, and how often loot finds
     /// it. A gem is precious.
     #[serde(default)]
     pub gem: Option<GemDef>,
@@ -99,9 +99,9 @@ pub struct MaterialDef {
     /// default; silver −2, mithril +2.
     #[serde(default)]
     pub binding: i8,
-    /// How it withstands each kind of item damage, in percent (spec §7 "Materials";
-    /// `world/combat/item_damage.rs`): `resists = { acid = 20, rust = 10, fire = 95 }`, every kind
-    /// given. One without withstands nothing.
+    /// How it withstands each kind of item damage, in percent (`world/combat/item_damage.rs`):
+    /// `resists = { acid = 20, rust = 10, fire = 95 }`, every kind given. One without withstands
+    /// nothing.
     #[serde(default)]
     pub(super) resists: Option<Resists>,
     /// Never damaged by anything (`world/combat/item_damage.rs`): acid, rust, heat, a failed working,
@@ -110,7 +110,7 @@ pub struct MaterialDef {
     pub proof: bool,
 }
 
-/// A kind of item damage (spec §7 "Materials", `world/combat/item_damage.rs`): what leaves an item
+/// A kind of item damage (`world/combat/item_damage.rs`): what leaves an item
 /// damaged, the smith's one state ([`crate::magic::Worked`]), and destroys one damaged already.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]

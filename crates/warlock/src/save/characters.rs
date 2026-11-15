@@ -1,4 +1,4 @@
-//! The saved characters (spec §7 "Saves"): each character has a save of its own, named by an id
+//! The saved characters: each character has a save of its own, named by an id
 //! made of a slug of the name and a number (`brakka-1`, `brakka-2`: two Brakkas live side by
 //! side). Beside each save (`saves/<id>.sav`) lies its summary (`saves/<id>.toml`): what the
 //! list of saved characters shows (name, race, class, level, place and campaign, when last
@@ -54,7 +54,7 @@ impl Summary {
             Some(c) => (
                 c.name.clone(),
                 (c.spec.race(content)).map_or(c.spec.race.clone(), |r| r.name.clone()),
-                // `Bard 30, Hunter 4` once called (spec §8 "Prestige classes").
+                // `Bard 30, Hunter 4` once called.
                 c.class_text(content, view.own_experience().level),
             ),
             None => (NAMELESS.to_string(), String::new(), String::new()),

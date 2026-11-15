@@ -1,4 +1,4 @@
-//! The speed system (spec §8 "Speed"): the energy scheduler decides who acts when, in time
+//! The speed system: the energy scheduler decides who acts when, in time
 //! order, so faster creatures act more often in the same game time.
 
 use crate::action::parse_actions;
@@ -123,7 +123,7 @@ grades = false
 faction = "wildlife"
 speed = 900
 
-# The hall's: hostile to the player (only a hostile stops a rest, spec §8 "Rest"), and too
+# The hall's: hostile to the player (only a hostile stops a rest), and too
 # short-sighted and hard of hearing to notice them four cells off: they keep to their rounds.
 [[creature]]
 id = "fast_foe"

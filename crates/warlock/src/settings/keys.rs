@@ -1,4 +1,4 @@
-//! Rebindable commands and their text form in the settings file (spec §6).
+//! Rebindable commands and their text form in the settings file.
 //!
 //! A key is written as the character it produces (`"k"`, `">"`) or as a physical key name
 //! (`"ArrowUp"`, `"Numpad8"`, `"Enter"`, `"F5"`), a play command's perhaps after modifiers

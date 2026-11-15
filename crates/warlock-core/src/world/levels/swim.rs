@@ -1,4 +1,4 @@
-//! Deep water (spec §8 "Skills": Swim; #1019): the one step `walkable = false` lets through, for a
+//! Deep water (Swim; #1019): the one step `walkable = false` lets through, for a
 //! trained swimmer, and what the water asks of them. Everything else keeps out of it because it
 //! is not walkable: paths, travel, spawning, teleports, blinks, and landings.
 //!

@@ -1,6 +1,6 @@
-# Quests (spec §7 "Quests", §8 "Quests"): simple, ADOM-like errands people give you. This file is
+# Quests: simple, ADOM-like errands people give you. This file is
 # the field reference: the quests are a campaign's, in its data/quests/ (the showcase's:
-# campaigns/showcase/data/quests/showcase.toml; spec §3). Chat with
+# campaigns/showcase/data/quests/showcase.toml). Chat with
 # the giver (`C`): each quest they have for you is a topic on the dialogue screen. Asking about it
 # gives it to you: there is no accepting and no declining (a roguelike, not an MMO). The quest
 # log (`q`) lists what you were given, first as "<giver> wants you to ...". Come back once it is
@@ -49,7 +49,7 @@
 #                and no creature of the type is anywhere, one is made on the place `at` of
 #                `waits.level` as the quest is given (if that level exists) and whenever you come
 #                to that level, so one killed forms anew. Hostile, it follows you up and down the
-#                stairs when it is beside you as you take them (spec §8 "Stair followers"); once
+#                stairs when it is beside you as you take them; once
 #                it stands on `level` with you and the giver, the giver binds it and the quest is
 #                done (the giver says `done` and pays). `[quest.binding]` says how: `status` (one
 #                with no `eases`, data/status/: it carries it for good), `faction` (the one it
@@ -73,8 +73,8 @@
 #              delivery, else the giver (an escort's: above)
 #   requires   a quest loaded before this one (earlier in the table), or a list of them
 #              (`["barrow_rats", "barrow_heart"]`), that must all be done first (optional)
-#   requires_alignment  the alignment bands you must be in for it to be offered (spec §8
-#              "Alignment"; optional): { min = "kind" } is Kind or better, { max = "callous" }
+#   requires_alignment  the alignment bands you must be in for it to be offered (optional): { min =
+#              "kind" } is Kind or better, { max = "callous" }
 #              Callous or worse, or both; a quest taken up is done whatever you become
 #   min_level  the character level you must have reached for it to be given (1 to 100;
 #              optional, with `early`): before then it is still a topic, but asked about it the

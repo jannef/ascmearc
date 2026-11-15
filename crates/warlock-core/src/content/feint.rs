@@ -1,4 +1,4 @@
-//! Feinting (`assets/data/rules/feint.toml`, spec §8 "Skills": Bluff; #1016): the numbers of
+//! Feinting (`assets/data/rules/feint.toml`: Bluff; #1016): the numbers of
 //! Bluff's use, a lie in combat.
 //!
 //! The rule itself lives in `world/skills/feint.rs`: who can (anyone trained in a skill with the `feint`

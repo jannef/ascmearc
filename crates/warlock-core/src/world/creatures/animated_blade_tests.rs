@@ -1,4 +1,4 @@
-//! Animated blades (spec §8 "Animated objects", #485): a family of one type per level, its
+//! Animated blades (#485): a family of one type per level, its
 //! numbers by the quick role, what a blade is made of (a melee weapon of its level, made magic
 //! or rare by the tier's odds, wielded with a rank by its level), how it shows, and the family
 //! read as one kind by first kills, kill quests, and tag objectives.

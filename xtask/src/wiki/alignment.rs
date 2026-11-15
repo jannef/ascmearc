@@ -1,4 +1,4 @@
-//! Alignment (spec §8 "Alignment"): the bands with their scores, what moves the score and by how
+//! Alignment: the bands with their scores, what moves the score and by how
 //! much, what reads it, and the score and band each race and class starts with. The game shows
 //! only the band; the wiki states the numbers exactly (the game is vague, the wiki is accurate).
 

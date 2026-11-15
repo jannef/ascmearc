@@ -1,4 +1,4 @@
-//! Picking locks (spec §8 "Doors", #233): only those trained in Open lock may try; a try is a
+//! Picking locks (#233): only those trained in Open lock may try; a try is a
 //! Dexterity check plus Open lock against the lock's difficulty, deeper locks harder; a picked
 //! lock's door opens (and its trap goes off at the picker); every try takes its time and may be
 //! tried again; refusals take none; a status may block it; replays verify.

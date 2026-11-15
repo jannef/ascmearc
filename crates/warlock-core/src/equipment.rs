@@ -1,4 +1,4 @@
-//! Equipment (spec §6, §7): what an actor wears and wields.
+//! Equipment: what an actor wears and wields.
 //!
 //! Equipped things stay in the actor's inventory (they keep their positions and still
 //! count toward its weight); [`Equipment`] records which inventory stack is in which slot

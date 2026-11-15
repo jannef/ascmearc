@@ -1,4 +1,4 @@
-//! Guilds (spec §8 "Quests": "Guilds"; `data/guilds/` and each campaign's `data/guilds/`, one
+//! Guilds (`data/guilds/` and each campaign's `data/guilds/`, one
 //! file per guild): a guild's name, its master (who names the player to a rank), and its ranks,
 //! titles named by a material, each reached as a quest is given or done. A rank is a title only:
 //! the player's is derived from their quest records ([`GuildDef::rank`]), never saved, and no
@@ -167,7 +167,7 @@ fn resolve(spec: GuildSpec, campaign: Option<&str>, content: &Content) -> Result
 }
 
 impl Content {
-    /// The guilds (spec §8 "Quests"), in table order.
+    /// The guilds, in table order.
     pub fn guilds(&self) -> &[GuildDef] {
         &self.guilds
     }

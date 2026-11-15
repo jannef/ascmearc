@@ -1,4 +1,4 @@
-//! A miscast's rank loss and forgetting (spec §8 "Spells": "Miscasts", the miscasts design
+//! A miscast's rank loss and forgetting (the miscasts design
 //! §5.1, #1289): what the `rank_loss` and `forget` kinds of `data/miscasts/` do to the caster.
 //!
 //! - **Rank loss**: the spell cast is known `ranks` ranks lower, never below 1

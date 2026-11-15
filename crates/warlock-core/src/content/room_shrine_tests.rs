@@ -1,4 +1,4 @@
-//! A shrine of a side's data (`shrine = { ... }`, spec §7 "Special rooms"): parsed with its
+//! A shrine of a side's data (`shrine = { ... }`): parsed with its
 //! status resolved, and refused without `sides` or with an unknown status.
 
 use super::{Content, RoomEffectId, RoomEffects};

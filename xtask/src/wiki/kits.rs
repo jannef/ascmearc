@@ -1,4 +1,4 @@
-//! Starting kits (spec §8 "Character creation"): what each class starts with and what each race
+//! Starting kits: what each class starts with and what each race
 //! adds, items as they are named: the classes in the wiki's order, the races in the order New run
 //! offers them.
 

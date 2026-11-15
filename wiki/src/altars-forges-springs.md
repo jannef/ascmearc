@@ -54,7 +54,7 @@ The great banes:
 - mark you with a flaw for life;
 - call a horde around the altar.
 
-Talents an altar gave you are marked "altar" on the Talents page.
+Talents an altar gave you are marked "altar" on the Talents page. No prayer grants a wish.
 
 The outcomes, by kind and tier ("Of its kind" is its share of its kind's draws):
 

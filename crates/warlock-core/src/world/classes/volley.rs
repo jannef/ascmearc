@@ -1,4 +1,4 @@
-//! The ranger's Volley (spec §8 "Class abilities"; #244): a class active aimed at a cell
+//! The ranger's Volley (#244): a class active aimed at a cell
 //! ([`crate::action::Action::UseAt`], `use:volley:12,5`). The readied missile weapon shoots its
 //! `shots` at the cell, one after another, for the price of one shot and one exertion; each is
 //! a shot as `fire` looses it (its own flight, attack, and missile). It stops early when the

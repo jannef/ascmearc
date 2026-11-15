@@ -1,4 +1,4 @@
-//! Alignment's rules (spec §8 "Alignment", #254): what moves the player's score and what reads
+//! Alignment's rules (#254): what moves the player's score and what reads
 //! it. [`World::shift_alignment`] is the one place a score changes (`crate::alignment` holds the
 //! score, the bands, and the diminishing; `content/alignment.rs` the numbers).
 //!
@@ -49,7 +49,7 @@ pub enum Deed {
     Consecrated,
     /// Consumed a magic crystal (docs/design/enchanting.md §5): a soul's husk drunk.
     ConsumedCrystal,
-    /// Prayed at a forgotten altar of this side (spec §7 "Special rooms"): a good altar's
+    /// Prayed at a forgotten altar of this side: a good altar's
     /// prayer is a little good, an evil one's evil, a neutral one's nothing.
     Prayed(Alignment),
 }
@@ -74,8 +74,8 @@ impl Deed {
     }
 }
 
-/// How far a shop's keeper moves its prices in `actor`'s favour for their alignment, in percent
-/// (spec §7 "Shops"): a good keeper by the actor's band (`[shops] favour` in
+/// How far a shop's keeper moves its prices in `actor`'s favour for their alignment, in percent: a
+/// good keeper by the actor's band (`[shops] favour` in
 /// `data/alignment.toml`); others not at all. Every keeper is of the `[keeper]` type.
 pub(in crate::world) fn keeper_favour(content: &Content, shops: &Shops, actor: &Actor) -> i32 {
     let keeper = content.creature(shops.keeper.creature).alignment;
@@ -114,7 +114,7 @@ impl World {
     }
 
     /// A deed of the player's moved them toward evil: the pool `data/rules/smite.toml` names
-    /// (Zeal), if they hold any of it, is emptied, and they are told (spec §8 "Alignment"). It bars
+    /// (Zeal), if they hold any of it, is emptied, and they are told. It bars
     /// nothing: the pool fills again.
     fn sin_empties_zeal(&mut self) {
         let Some(pool) = self.content.smite().and_then(|rules| rules.sin_empties) else {

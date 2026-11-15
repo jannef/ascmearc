@@ -1,4 +1,4 @@
-//! The ascetic's ki tricks (spec §8 "Class abilities"; `docs/design/ki-tricks.md` §6): class
+//! The ascetic's ki tricks (`docs/design/ki-tricks.md` §6): class
 //! actives of the ascetic's table, used from the abilities menu as [`Action::Use`] and paid in
 //! ki by `class_ability.rs::use_class`, which also refuses them (no time, nothing spent) before
 //! the spend. Each trick is its own section below.

@@ -1,4 +1,4 @@
-//! Grimoires in the read list (spec §8 "Spells": "Learning"; #1260): listed with the scrolls, a
+//! Grimoires in the read list (#1260): listed with the scrolls, a
 //! grimoire whose spell could be learned tells the chance in words, and choosing it asks in the
 //! one dialog; one of a spell known below its last rank tells the rank it would bring ("Ranks",
 //! #1264) and the dialog asks about the deepening; one that cannot teach (no Decipher script)

@@ -1,4 +1,4 @@
-//! The caster's ladder (spec §8 "Weapon skills", "Fighting styles"; #571, #1251): the caster
+//! The caster's ladder (#571, #1251): the caster
 //! style a spell is cast in (Sniper for a ray or a bolt that rolls to hit, Toucher for a touch
 //! that does, Battle caster in hindering armour, none for the rest) and the marks every spell
 //! paid in mana earns in it, Sniper's cells and Toucher's bonus, a touch's fixed reach, what the

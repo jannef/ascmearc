@@ -1,4 +1,4 @@
-//! Statuses a special room gives everyone inside (spec §7 "Special rooms"; `World::dwell`): the
+//! Statuses a special room gives everyone inside (`World::dwell`): the
 //! draining room's Ebbing, on the player and on creatures, in a rest, over a whole level, eased
 //! after leaving, and Old delver.
 

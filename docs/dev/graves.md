@@ -1,9 +1,7 @@
 # Graves and burial grounds
 
 The run's dead (the graveyard, `docs/dev/saves.md` "The graveyard") laid to rest in a chain of
-hand-made levels: Līctūn, Cēaptūn's churchyard, then crypt after crypt below it (spec §7
-"Graves"; #1258, #1682). The petrified are statues instead (`world/fixtures/graveyard.rs`, spec §8
-"Statues").
+hand-made levels: Līctūn, Cēaptūn's churchyard, then crypt after crypt below it (#1258, #1682). The petrified are statues instead (`world/fixtures/graveyard.rs`).
 
 ## Modules
 
@@ -68,7 +66,10 @@ fixed graves by the chapel), `lictun_crypt_01` (family vaults, 26 places), `lict
 vault, 26), `_05` (the sexton's store, 26), `_06` (flooded, 25),
 `_07` (the children's, 24), `_08` (its roof fallen in, 31), `_09`
 (a plague pit, 26), `_10` (the monks' cloister, 32), `_11`
-(the old hall the English found, 27); the levels are named "Līctūn crypt N" (N the file's number),
+(the old hall the English found, 27), `_12` (the house of urns, 40), `_13` (a hidden temple, 28),
+`_14` (the well-house, 21), `_15` (the earth-house, 32), `_16` (a barrow, 20), `_17` (a long
+barrow, 36), `_18` (the bone cave, 27), `_19` (the river cave, 24), `_20` (the first grave, 24,
+the deepest); the levels are named "Līctūn crypt N" (N the file's number),
 and each file's header says what it is.
 
 ## Burial

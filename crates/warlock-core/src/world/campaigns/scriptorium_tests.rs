@@ -1,4 +1,4 @@
-//! The scriptorium (spec §7 "Special rooms", design §9.4): Decipher script's training marks come
+//! The scriptorium (design §9.4): Decipher script's training marks come
 //! at twice the chance inside, at most certain (a check to read a scroll is certain anywhere,
 //! #1024), other skills train as anywhere, and look mode and the messages name the room and its shelves.
 

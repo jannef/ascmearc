@@ -1,4 +1,4 @@
-//! Learning spells from grimoires (spec §8 "Spells": "Learning"): refusals, the check by
+//! Learning spells from grimoires: refusals, the check by
 //! overreach and known levels, the time, interruption, the grimoire kept, mishaps by band, saves
 //! and replays. Deepening a known spell by reading its grimoire again ("Ranks", #1264) is
 //! `spell_rank_tests.rs`.

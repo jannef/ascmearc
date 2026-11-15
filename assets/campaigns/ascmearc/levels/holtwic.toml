@@ -3,7 +3,7 @@
 # (sky, sun, weather; the well freezes in a hard winter), entered from its cell on the Ascmearc's
 # overworld (V, at 18, 17), arriving on the lane from the south (@) where the road comes in. It has
 # no stairs: like any outdoor area it is left by walking off its edge (or with `<` when no enemy
-# is about), back to its overworld cell (spec §7 "Leaving an outdoor area"). Everyone here is
+# is about), back to its overworld cell. Everyone here is
 # peaceful, and nothing comes: no danger, no shop.
 #
 # The green in the middle, with the well; six cottages round it; the fields to the north and

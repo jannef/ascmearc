@@ -1,4 +1,4 @@
-//! Hot and cold rooms (spec §7 "Special rooms"; `WorldState::temperature_at`): a room sets its
+//! Hot and cold rooms (`WorldState::temperature_at`): a room sets its
 //! cells' temperature and nothing else; the player feels it where they stand (the status bar
 //! shows it), and the ice follows it: a cold room's pool freezes on a mild level, a hot room's
 //! water stays open in a frost, alike however the time passes.

@@ -1,4 +1,4 @@
-//! The frenzy stance (spec §8 "Stances"; #680): a berserker's rage puts them in it and holds
+//! The frenzy stance (#680): a berserker's rage puts them in it and holds
 //! them there, and nothing else ever does. [`settle`] is the one rule: an actor raging with its
 //! own Rage (the status its Rage ability brings) is in the frenzy stance, and one in the
 //! frenzy stance that is not raging so is put in the aggressive stance. The world settles the

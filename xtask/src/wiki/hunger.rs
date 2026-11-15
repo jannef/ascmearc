@@ -1,4 +1,4 @@
-//! Hunger (spec §8 "Hunger"): the states, the facts, each race's need, food, and corpses.
+//! Hunger: the states, the facts, each race's need, food, and corpses.
 
 use super::order;
 use super::util::{capital, factor, signed};

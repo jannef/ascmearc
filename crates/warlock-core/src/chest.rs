@@ -1,4 +1,4 @@
-//! Chests (spec §8 "Chests"; docs/design/chests-and-treasure.md §3): a chest is a **fixture of
+//! Chests (docs/design/chests-and-treasure.md §3): a chest is a **fixture of
 //! a cell**, as a door is: one of three terrains (shut, open, smashed; their `chest` field in
 //! `data/terrain/`) plus a [`Chest`] on the cell in `LevelState::chests`: its level and what
 //! it holds. Its lock lies in the level's `locks`, as a door's does, so keys, Pick lock, and
@@ -17,8 +17,8 @@
 //! that beats its band's hardness) rolls every stack at the same percent and spares nothing
 //! ([`destroyed`]).
 //!
-//! What a **generated** chest holds is rolled by [`roll_contents`] from its band's loot table
-//! (spec §8 "Chest loot"), on the level's chest stream (`mapgen/chest.rs`).
+//! What a **generated** chest holds is rolled by [`roll_contents`] from its band's loot table, on
+//! the level's chest stream (`mapgen/chest.rs`).
 
 use crate::content::{Content, GOLD, MAX_ITEM_LEVEL, ObjectId};
 use crate::magic::LootGrade;
@@ -62,7 +62,7 @@ impl ChestState {
     }
 }
 
-/// What the player sees of a chest on a cell they see or remember (spec §8 "Chests"): its band
+/// What the player sees of a chest on a cell they see or remember: its band
 /// (an index into [`crate::content::ChestRules::bands`]), its state, and, with Chest-wise, on a
 /// cell in sight, whether a shut one is locked. Never its level or what it holds.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
@@ -126,7 +126,7 @@ pub fn destroyed(
     (kept, lost)
 }
 
-/// What a generated chest of `level` holds (spec §8 "Chest loot"), rolled from its band's loot
+/// What a generated chest of `level` holds, rolled from its band's loot
 /// table with the finder's `luck`, as a pile (the last rolled on top, like stacks joined). Draws, in order: the `items` dice; per item one
 /// `below(100)` for its grade (under `rare` rare, under `magic` at least magic, else any) and
 /// [`loot::roll_with`]'s own at `level + loot_level` (nothing found rolls nothing more); the

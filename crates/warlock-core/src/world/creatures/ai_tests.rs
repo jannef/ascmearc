@@ -1,4 +1,4 @@
-//! Factions and creature behavior (spec §7 "Factions", §8 "Creature behavior"): who is hostile
+//! Factions and creature behavior: who is hostile
 //! to whom, how creatures see, approach, shoot, cast, search, and go back to their routine, and
 //! what the player perceives of it.
 
@@ -759,7 +759,7 @@ fn rest_stops_when_a_hostile_attacks() {
     let start = w.time();
     w.apply(&Action::Rest(Rest::For(Duration::hours(1))));
     // The rat was in view from the start, six cells off: its coming within five stopped the
-    // rest (spec §8 "Rest").
+    // rest.
     let shown = messages(&w);
     assert!(
         (shown.last()).is_some_and(|m| m.starts_with("The giant rat comes close")),
@@ -783,7 +783,7 @@ fn rest_stops_when_a_hostile_attacks() {
 // ---------------------------------------------------------------------------------------------
 // Hearing: creatures look into noises they cannot see the source of; attacks are heard.
 
-/// The fixture with ears: the player's steps and the creatures' ears (spec §5 "Hearing").
+/// The fixture with ears: the player's steps and the creatures' ears.
 fn listening_world(map: &str) -> World {
     let creatures = CREATURES
         .replacen(

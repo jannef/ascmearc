@@ -8,7 +8,7 @@ use warlock_core::content::{
 };
 
 /// The campaigns the wiki describes, in content order: those of kind `campaign`, the test world
-/// left out (spec §3); while content has none, every campaign.
+/// left out; while content has none, every campaign.
 pub(super) fn campaigns(content: &Content) -> Vec<&CampaignDef> {
     let all = content.campaigns();
     let playable: Vec<_> = (all.iter())

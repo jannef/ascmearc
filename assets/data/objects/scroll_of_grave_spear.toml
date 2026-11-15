@@ -1,4 +1,4 @@
-# A scroll of grave spear (spec §8 "Scrolls", "Spells"): read it (`r`), and it casts Grave spear, a
+# A scroll of grave spear: read it (`r`), and it casts Grave spear, a
 # level-14 spell, at its own rungs, free of mana; its grimoire teaches the spell for good. Level and
 # frequency by its spell's level (README.toml): the lower, the commoner the scroll.
 [[object]]

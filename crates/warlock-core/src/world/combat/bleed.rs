@@ -1,4 +1,4 @@
-//! Bleeding (spec §8 "Blood"): big hits and kills leave blood where they land.
+//! Bleeding: big hits and kills leave blood where they land.
 //!
 //! [`World::bleed`] turns a blow about to be dealt into stains on the victim's level
 //! ([`crate::blood::Wound::spatter`], [`crate::world::LevelState::stain`]): how much by the blow and the
@@ -58,7 +58,7 @@ impl World {
     }
 
     /// [`World::bleed`] for any blow: `source` only seeds where the blood lands (the attacker's
-    /// id; a trap's kind for a trap's blow, spec §8 "Traps"), and the blow came from `from`,
+    /// id; a trap's kind for a trap's blow), and the blow came from `from`,
     /// along a missile's flight or not.
     pub(in crate::world) fn spill(
         &mut self,
@@ -84,8 +84,8 @@ impl World {
         };
         let color = self.content.creature(victim.creature).blood;
         let level = victim.level.clone();
-        // Fire sears where it strikes (`sear.rs`); a kind that draws no blood stops here (spec
-        // §8 "Blood": a blow of two kinds draws it if the kind that struck does).
+        // Fire sears where it strikes (`sear.rs`); a kind that draws no blood stops here (a blow of
+        // two kinds draws it if the kind that struck does).
         self.sear_blow(blow.kind, (&level, wound.at), wound.volume());
         let draws = blow.kind.is_none_or(|k| self.content.damage_type(k).blood);
         let Some(color) = color.filter(|_| draws) else {

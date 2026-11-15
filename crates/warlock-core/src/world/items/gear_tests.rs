@@ -1,4 +1,4 @@
-//! Creature gear (spec §8 "Creature gear"): the tables, the rolls, where they are made, and
+//! Creature gear: the tables, the rolls, where they are made, and
 //! what falls where a creature dies.
 
 use crate::content::{ContentFiles, Keep, LevelTemplate, ObjectId, Rarity};

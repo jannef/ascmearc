@@ -1,4 +1,4 @@
-//! Hunger in the world (spec §8 "Hunger"): game time burns nutrition (resting and overworld
+//! Hunger in the world: game time burns nutrition (resting and overworld
 //! journeys too) by the race, exertion burns more, each state does what it does (Weak, Fainting,
 //! Starving, Bloated), meals take their turns and stop like a rest, food feeds and overeating
 //! has its price, creatures leave corpses that rot away, corpses do what their creature's
@@ -503,7 +503,7 @@ fn overeating_may_choke_vomit_or_be_lost() {
     w.apply(&Action::Eat(Meal::Floor(0)));
     assert!(said(&w, "You vomit!"));
     assert_eq!(nutrition(&w), 1000);
-    // A deed: it costs Toughness marks (spec §8 "Stats").
+    // A deed: it costs Toughness marks.
     assert_eq!(w.state.player().stat_marks[Stat::Toughness], -10);
     assert_eq!(hunger(&w), Hunger::Hungry);
     // Neither: what does not fit is lost.
@@ -646,7 +646,7 @@ fn a_rotten_corpse_makes_you_vomit_or_sick() {
             assert_eq!(w.state.player().hp, hp);
             assert!(!sick(&w));
         } else {
-            // Food poisoning: a status (spec §8 "Status effects") that costs hit points as time
+            // Food poisoning: a status that costs hit points as time
             // passes.
             assert!(said(&w, "You feel sick."));
             assert!(sick(&w));
@@ -659,7 +659,7 @@ fn a_rotten_corpse_makes_you_vomit_or_sick() {
 
 #[test]
 fn a_rotten_corpse_kept_down_may_give_grave_rot() {
-    // Rotten food carries grave rot (spec §8 "Diseases"): kept down, the eater makes a check to
+    // Rotten food carries grave rot: kept down, the eater makes a check to
     // resist it; vomited, it never comes to that.
     for (vomit, vomited) in [
         ("[rotten]\nvomit = 100", true),
@@ -824,7 +824,7 @@ fn a_remedy_cures_every_disease_as_it_is_eaten_even_grave_rot() {
 
 #[test]
 fn iron_stomach_keeps_rotten_food_and_too_much_down() {
-    // Both chances to vomit certain: with Iron stomach (spec §8 "Talents") neither comes.
+    // Both chances to vomit certain: with Iron stomach neither comes.
     let content = content_with(&[
         (
             "[overeating]\nchoke = 0\nvomit = 50",

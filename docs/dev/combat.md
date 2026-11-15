@@ -1,9 +1,9 @@
 # Combat
 
 Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
-rules it implements are in spec/08c-combat.md. Keep it current with the code, as CLAUDE.md says.
+rules it implements are in spec/10-combat.md. Keep it current with the code, as CLAUDE.md says.
 
-Combat (spec §8 "Combat"; M16, #116): the pure rules are `warlock-core/src/combat.rs` (2d12
+Combat (M16, #116): the pure rules are `warlock-core/src/combat.rs` (2d12
 `roll_natural`, `hits`, `hit_ways`, `ways`; `FUMBLE` (2) always misses and every natural from
 `SURE_HIT` (22) to `HIGHEST` (24) always hits, #1096; checks keep a natural 24 alone as their sure
 success, `check::makes`, which temper's check shares; `Category` (Dexterity, Armour, Shield, Parry,
@@ -43,13 +43,13 @@ player's instead, `Actor::hide(content, race)`, and a race's `resist` adds to th
 type's, `docs/dev/character-creation.md`); races and classes `hp`; a
 scenario without a character `hp`. Hit points live on `Actor` (`hp`, `hp_base`, `regen`;
 `max_hp(content)`, `health(content)`: the effective Toughness), saved and hashed. A creature's
-grade (`grade.rs`, spec §8 "Grades") is read in the rules' own places only: `Actor::max_hp` and
+grade (`grade.rs`) is read in the rules' own places only: `Actor::max_hp` and
 `lasting_max_hp` (`grade::hp`, ±25 %), `Actor::melee_with` after a companion's growth
 (`grade::sharpen`, ±1 to hit, ±2 damage, melee only), and `Actor::speed` (`grade::speed_percent`,
 ∓10 %), all through `Actor::graded` (0 for a kept beast). Presentation reads only
 `PerceptionView::own_hp`, `own_defence` (the total: its Dexterity part would give a modifier
 away), `SeenActor::health`, and `death`: **never a creature's hit points, a to-hit, a roll, or a
-modifier**, with one exception the owner asked for (spec §6 "Character"): the player's own
+modifier**, with one exception the owner asked for: the player's own
 ready attacks, `PerceptionView::own_attacks` → `Actor::known_attacks` (`world/combat/attacks.rs`,
 `OwnAttack`: source, kind, name, to-hit, damage with the bonus folded in, extra dice, kinds,
 riders, range; `summary`/`damage_text` are the one text form, for the character screen and the
@@ -71,13 +71,12 @@ Critical immunity (#682): `combat::Target::no_criticals`, set by `World::target_
 `ambush.rs::vitals`; `combat::strike_with` then treats a
 threat (and a sure critical) as a plain hit and draws no confirmation.
 
-Creatures' natural Protection follows a rule by body and level (spec §8 "Natural Protection by
-body and level", #563): data only (the body table by
+Creatures' natural Protection follows a rule by body and level (#563): data only (the body table by
 hide name, the peoples and armed types at 0, the exceptions list); `docs/dev/creatures.md`.
 A confirmed critical adds `Profile::critical_penetration` (Armour-breaker's
 `critical_penetration`, set in `Actor::stanced`) to the penetration in `combat::strike`.
 
-Protection (spec §8 "Combat", #192; ADOM's PV): `combat::strike(profile, &Target, rng)` takes
+Protection (#192; ADOM's PV): `combat::strike(profile, &Target, rng)` takes
 the target's Defence, Protection, and resistances (`combat::Target`, `World::target_of(id)`)
 and soaks a hit with `combat::soak` (one draw from
 `soaks(pv)` = ⌈Pv/2⌉..=Pv, **only when the Pv against the blow's kind, less the profile's
@@ -113,7 +112,7 @@ Pv 3`, `magic::numbers`, #552); the dev `actors` layer shows every actor's `pv`.
 Tests: `combat.rs` (soak distribution, draw order, criticals before the soak, penetration),
 `world/combat/protection_tests.rs` (sums, soaked hits, messages, penetration, replay).
 
-Damage types (spec §8 "Damage types", #151): the data is `data/damage_types.toml`
+Damage types (#151): the data is `data/damage_types.toml`
 (`content/damage_type.rs`: `DamageTypeDef { id, name, physical, verb, you, unarmed }`,
 `DamageTypeId` an index in file order, in the content fingerprint; `Content::damage_types`,
 `damage_type`, `damage_type_id`, `unarmed_damage`; the shared resolvers
@@ -144,6 +143,12 @@ there was. Untyped on purpose: starving and choking (`die_of`), a disease's hit 
 every status tick (`live`); the poisoned status is typed through `StatusDef::damage_type`,
 which `World::afflict` reads as a dose (immune: refused; else `resist` on the severity).
 `World::wounded` asks `Wound::caused_by(blow.kind)` (`wound.from`, the kinds that bleed).
+A weapon's or a trap's damage type has no rule of its own beyond resistance and protection: a
+burst melts ice or freezes water because its data says `heat` or `frost`, not by its kind;
+bludgeoning does nothing special to ice or walls (no bludgeoning source reaches either: bursts are
+elemental and digging is by tool); and a weapon's electricity does not arc through water. The
+arcing and melting that a spell's type does are the spell types' alone (docs/dev/spells.md "Spell
+types").
 Messages: `fight::Words::of(actor, kind, with, damage, content)` takes the kind the blow did
 (`Words::blow`: the weapon's `verb`, else the kind's `verb`/`you`, else "hits";
 `second_person` derives "cleave" from "cleaves" for a weapon's own verb); traps and scrolls
@@ -162,7 +167,7 @@ kind, elements unsoaked, riders' draw order, resisted hits), `world/combat/damag
 built-in data names a kind everywhere, verbs, per-kind Protection, resistance sums and words,
 riders, wounds by kind, poison doses, spells, the plunge, descriptions, data checks, replay).
 
-Free blows (spec §8 "Free blows", #228; design `docs/design/progression.md` §4.1 B3) live in
+Free blows (#228; design `docs/design/progression.md` §4.1 B3) live in
 `world/combat/free_blow.rs`. **`World::second_blow(striker, target, Cue)` (`fight.rs`) is the one place
 every blow beyond an attack's first is decided**; a new kind of extra blow is a `Cue` (or a case
 of one) there and a `Free` kind, never a second mechanism. Cues: `First(blow)` (the off hand's or

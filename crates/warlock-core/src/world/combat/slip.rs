@@ -1,4 +1,4 @@
-//! Slipping past (spec §8 "Surprise and sneak attacks"; `docs/dev/surprise.md`): the one
+//! Slipping past (`docs/dev/surprise.md`): the one
 //! contest of hiding, because most creatures see a few cells in any darkness.
 //!
 //! - **The moment** ([`looks_at`]): a creature hunting no one ([`crate::world::Mind::last_seen`] unset)

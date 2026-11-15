@@ -19,37 +19,37 @@ impl Content {
         &self.ids
     }
 
-    /// The numbers of encounters (spec §7 "Leaving an outdoor area"; `data/encounters.toml`,
+    /// The numbers of encounters (`data/encounters.toml`,
     /// else [`EncounterRules::default`]).
     pub fn encounters(&self) -> &EncounterRules {
         &self.encounters
     }
 
-    /// The numbers of searching for hidden features (spec §8 "Searching"; `data/rules/search.toml`,
+    /// The numbers of searching for hidden features (`data/rules/search.toml`,
     /// else [`SearchRules::default`]).
     pub fn search(&self) -> &SearchRules {
         &self.search
     }
 
-    /// The rules of stealing that live in data (spec §8 "Stealing"; `data/rules/steal.toml`);
+    /// The rules of stealing that live in data (`data/rules/steal.toml`);
     /// `None` without the file, when nobody steals.
     pub fn steal(&self) -> Option<&StealRules> {
         self.steal.as_ref()
     }
 
-    /// The rules of surprise that live in data (spec §8 "Surprise and sneak attacks";
-    /// `data/surprise.toml`); `None` without the file, when nobody is surprised.
+    /// The rules of surprise that live in data (`data/surprise.toml`); `None` without the file,
+    /// when nobody is surprised.
     pub fn surprise(&self) -> Option<&SurpriseRules> {
         self.surprise.as_ref()
     }
 
-    /// The rules of smiting that live in data (spec §8 "Class abilities": "Smite";
-    /// `data/rules/smite.toml`); `None` without the file, when nothing is unholy.
+    /// The rules of smiting that live in data (`data/rules/smite.toml`); `None` without the file,
+    /// when nothing is unholy.
     pub fn smite(&self) -> Option<&SmiteRules> {
         self.smite.as_ref()
     }
 
-    /// How arrows and bolts are made (spec §8 "Fletching"; `data/fletch.toml`); `None` without the
+    /// How arrows and bolts are made (`data/fletch.toml`); `None` without the
     /// file, when nobody fletches.
     pub fn fletch(&self) -> Option<&FletchRules> {
         self.fletch.as_ref()
@@ -67,97 +67,96 @@ impl Content {
         self.rigs.as_ref()
     }
 
-    /// What foraging in the wild gives (spec §8 "Foraging"; `data/forage.toml`); `None` without
+    /// What foraging in the wild gives (`data/forage.toml`); `None` without
     /// the file, when nobody forages.
     pub fn forage(&self) -> Option<&ForageRules> {
         self.forage.as_ref()
     }
 
-    /// What the glowing fungus gives a gatherer (spec §8 "Skills": Herbalism; `data/herbs.toml`);
+    /// What the glowing fungus gives a gatherer (Herbalism; `data/herbs.toml`);
     /// `None` without the file, when nobody gathers.
     pub fn herbs(&self) -> Option<&HerbRules> {
         self.herbs.as_ref()
     }
 
-    /// What a wall a miner digs through gives (spec §8 "Digging"; `data/mining.toml`); `None`
+    /// What a wall a miner digs through gives (`data/mining.toml`); `None`
     /// without the file, when nothing is mined.
     pub fn mining(&self) -> Option<&MiningRules> {
         self.mining.as_ref()
     }
 
-    /// The penalties of shots by distance (spec §8 "Ranged combat"; `data/ranged.toml`); none
+    /// The penalties of shots by distance (`data/ranged.toml`); none
     /// without the file.
     pub fn ranged(&self) -> &RangedRules {
         &self.ranged
     }
 
-    /// The numbers of feinting (spec §8 "Skills": Bluff; `data/rules/feint.toml`); `None` without
+    /// The numbers of feinting (Bluff; `data/rules/feint.toml`); `None` without
     /// the file, when nobody feints.
     pub fn feint(&self) -> Option<&FeintRules> {
         self.feint.as_ref()
     }
 
-    /// What an aristocrat's stipend grows by (spec §8 "Class abilities": Stipend;
+    /// What an aristocrat's stipend grows by (Stipend;
     /// `data/rules/stipend.toml`); `None` without the file, when it never grows.
     pub fn stipend(&self) -> Option<&StipendRules> {
         self.stipend.as_ref()
     }
 
-    /// What a merchant's investment pays and costs (spec §8 "Class abilities": Invest;
+    /// What a merchant's investment pays and costs (Invest;
     /// `data/rules/invest.toml`); `None` without the file, when no one invests.
     pub fn invest(&self) -> Option<&InvestRules> {
         self.invest.as_ref()
     }
 
-    /// What a craftsperson's patron pays (spec §8 "Class abilities": Patron;
+    /// What a craftsperson's patron pays (Patron;
     /// `data/rules/patron.toml`); `None` without the file, when no one commissions work.
     pub fn patron(&self) -> Option<&PatronRules> {
         self.patron.as_ref()
     }
 
-    /// The numbers of intimidating (spec §8 "Skills": Intimidate; `data/rules/intimidate.toml`);
+    /// The numbers of intimidating (Intimidate; `data/rules/intimidate.toml`);
     /// `None` without the file, when nobody intimidates.
     pub fn intimidate(&self) -> Option<&IntimidateRules> {
         self.intimidate.as_ref()
     }
 
-    /// What area spells do to the items lying in them (spec §8 "Spells": "Ruin";
-    /// `data/ruin.toml`); no rows without the file.
+    /// What area spells do to the items lying in them (`data/ruin.toml`); no rows without the file.
     pub fn ruin(&self) -> &RuinRules {
         &self.ruin
     }
 
-    /// The numbers of swimming in deep water (spec §8 "Skills": Swim; `data/rules/swim.toml`);
+    /// The numbers of swimming in deep water (Swim; `data/rules/swim.toml`);
     /// `None` without the file, when nobody swims.
     pub fn swim(&self) -> Option<&SwimRules> {
         self.swim.as_ref()
     }
 
-    /// The priest's prayer (spec §8 "Class abilities"; `data/prayer.toml`); `None` without the
+    /// The priest's prayer (`data/prayer.toml`); `None` without the
     /// file, when every prayer is refused.
     pub fn prayer(&self) -> Option<&PrayerRules> {
         self.prayer.as_ref()
     }
 
-    /// The constants of the ally core (spec §8 "Allies"; `data/allies.toml`); `None` without the
+    /// The constants of the ally core (`data/allies.toml`); `None` without the
     /// file, when no ally can be made.
     pub fn allies(&self) -> Option<&AllyRules> {
         self.allies.as_ref()
     }
 
-    /// The animal companion's data (spec §8 "Allies"; `data/companions.toml`); `None` without
+    /// The animal companion's data (`data/companions.toml`); `None` without
     /// the file, when no companion can be made.
     pub fn companions(&self) -> Option<&CompanionRules> {
         self.companions.as_ref()
     }
 
-    /// The witch's familiar's data (spec §8 "Allies"; `data/familiars.toml`); `None` without
+    /// The witch's familiar's data (`data/familiars.toml`); `None` without
     /// the file, when no familiar can be made.
     pub fn familiars(&self) -> Option<&FamiliarRules> {
         self.familiars.as_ref()
     }
 
-    /// The rules of stat training (spec §8 "Stats"; `data/stats.toml`, else
+    /// The rules of stat training (`data/stats.toml`, else
     /// [`StatTraining::default`]: nothing trains).
     pub fn stat_training(&self) -> &StatTraining {
         &self.stat_training
@@ -169,25 +168,24 @@ impl Content {
         &self.tuning
     }
 
-    /// The numbers of working an item at an anvil (spec §7 "Special rooms";
-    /// `data/rules/temper.toml`, else [`TemperRules::default`]).
+    /// The numbers of working an item at an anvil (`data/rules/temper.toml`, else
+    /// [`TemperRules::default`]).
     pub fn temper(&self) -> &TemperRules {
         &self.temper
     }
 
-    /// Material drops by creature tag (`data/drops/`, spec §7 "Material drops"), in path
+    /// Material drops by creature tag (`data/drops/`), in path
     /// order; a creature type's own resolved rows are [`CreatureDef::drops`].
     pub fn tag_drops(&self) -> &[TagDrops] {
         &self.drops
     }
 
-    /// The condition creature gear spawns in (spec §8 "Creature gear";
-    /// `data/gear_condition.toml`, else none: as made).
+    /// The condition creature gear spawns in (`data/gear_condition.toml`, else none: as made).
     pub fn gear_condition(&self) -> &GearConditions {
         &self.gear_condition
     }
 
-    /// How the player hungers, `data/hunger.toml` (spec §8 "Hunger"); `None` without the file:
+    /// How the player hungers, `data/hunger.toml`; `None` without the file:
     /// nobody hungers, nothing is eaten, and food does not rot.
     pub fn hunger(&self) -> Option<&HungerDef> {
         self.hunger.as_ref()

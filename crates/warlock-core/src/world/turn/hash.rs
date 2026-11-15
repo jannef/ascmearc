@@ -1,4 +1,4 @@
-//! Stable state hashing for replays and regression checks (spec §9).
+//! Stable state hashing for replays and regression checks.
 
 use crate::world::{World, WorldState};
 

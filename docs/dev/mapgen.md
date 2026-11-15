@@ -1,10 +1,10 @@
 # Procedural generation and special rooms
 
 Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
-rules it implements are in spec/07c-generation.md and spec/07d-shops-and-rooms.md; special
+rules it implements are in spec/07-generation.md; special
 rooms are in `docs/dev/special-rooms.md`. Keep it current with the code, as CLAUDE.md says.
 
-Procedural generation (spec §7, §8) lives in `warlock-core`: `rng.rs` (ChaCha8 streams derived
+Procedural generation lives in `warlock-core`: `rng.rs` (ChaCha8 streams derived
 from the run seed: `map/<level id>` per generated level; in play every rule draws by a key of its
 own, `<rule>/<decision>/<actor key>@<second>#<n>` (`rng::draw!`, "Keys" in `rng.rs`: no shared
 keyed stream, #1662);
@@ -91,7 +91,7 @@ Wyrtholm and Wulfeshol caves 100×40, Bānfeld and Brocenburg rooms 80×21, four
 name their criminal's vault on floor 4 (`mapgen/lairs_tests.rs`, with a snapshot of each bottom
 floor and a check over four seeds that the criminal is there once and on no floor above).
 
-Ways up (#1117, spec §7 "Ways up"): a branch's `below` (`DungeonDef::below`, checked in
+Ways up (#1117): a branch's `below` (`DungeonDef::below`, checked in
 `Content::validate`: a level of another bounded branch of its campaign) makes `leads_down` true on
 its deepest level, whose `>` leads there (`DungeonDef::down_to`), and its first level's `<` is
 `Content::way_into` whatever it was entered from, as an endless branch's is. The level below gets
@@ -124,12 +124,12 @@ clusters lit red, amber, and green round an uncut amethyst) is pinned on floors 
 `crystal_hollow` on floor 4, with the named place "the crystal hollow" the lure quest's `waits`
 names. Tests: `world/campaigns/crystal_guardian_tests.rs` (the portal, the floors, the hollow).
 
-Special rooms (spec §7 "Special rooms") have their own topic file, `docs/dev/special-rooms.md`:
+Special rooms have their own topic file, `docs/dev/special-rooms.md`:
 the effects' data, the draw (`mapgen/special.rs`, last, from the level's map stream), the whole-level
 version, and what the rules ask of them.
 
 A branch may set its own special-room and shop odds (`room_effects`, `shops` on a `[[dungeon]]`
-or a `[[dungeon.levels]]` range; spec §7, campaign design §7.3). `content/dungeon.rs` resolves
+or a `[[dungeon.levels]]` range; campaign design §7.3). `content/dungeon.rs` resolves
 them once per depth at load, field by field (the range's table, the branch's, the shared
 `room_effects.toml` / `shops.toml`), into `RoomOdds` / `ShopOdds` (`DungeonDef::room_odds`,
 `shop_odds`; the shared ones are `RoomOdds::shared`, `ShopOdds::shared`: every kind in file
@@ -221,7 +221,7 @@ phases; floor `depth` offers only the vaults of phase `depth % 4`. So no vault c
 floors of itself in a branch, and the deal differs by run and branch. A level's own named
 (pinned) vaults are untouched. Adding vaults raises the count a floor may choose from, not the
 chance of one.
-An endless branch (`DungeonDef::endless`, spec §7 "The endless branch", #1010; Grundlēas,
+An endless branch (`DungeonDef::endless`, #1010; Grundlēas,
 `campaigns/ascmearc/data/dungeons/grundleas.toml`) has one row of per-depth tables, read at every
 depth (`DungeonDef::row`), and `depth` 1 for what loops over them; `leads_down` is always true.
 `generate_for` draws the floor's generator and size from stream `floor_kind/<level id>`
@@ -243,7 +243,7 @@ secret, `connect::validate`). Grundlēas gets its draws by `stray = 100` over th
 list and names only the rat as a `population`, which every other branch's strays already hold, so
 none of their lists move.
 
-**The Pits** (#1296; spec §7 "The Pits", docs/design/miscasts-review.md §7): a branch with
+**The Pits** (#1296; docs/design/miscasts-review.md §7): a branch with
 `[dungeon.portal]` (`DungeonDef::portal`, `Portal`; exclusive with `endless` and `below`, its id,
 like every branch's, without `@`) exists only as instances. Hellegeat
 (`data/dungeons/hellegeat.toml`) is the one, shared: `campaign` `None`, so it is in every
@@ -272,7 +272,7 @@ every other area's lists, and `branches_of` (rolled quests) leaves the branch ou
 `mapgen/hellegeat_tests.rs`, `content/hellegeat_tests.rs`, `world/campaigns/hellegeat_tests.rs`; the seeds
 and deep-water tests generate Pit 1's floors for the branch.
 
-**Layer bosses** (#1118; spec §7 "The endless branch"): `[[dungeon.endless.boss]]` rows resolve to
+**Layer bosses** (#1118): `[[dungeon.endless.boss]]` rows resolve to
 `DungeonDef::bosses` (`LayerBoss { depth, creature, vault }`, `boss_at`); `content/layer_boss.rs`
 checks each boss unique and each lair a dungeon vault of the branch's campaign with no `danger`,
 placing its boss once and marking one `>` (`Vault::down`, the one staircase a vault may have:
@@ -285,7 +285,7 @@ the next floor, name the boss's), which `connect::validate` reaches as it does s
 `hide_traps` keeps clear. `world/levels/layer_boss.rs::open_lair` (one line in `fight.rs::creature_dies`)
 turns it into stairs. `warlock-cli gen --level grundleas:10` prints `hidden stairs at ...`.
 
-**A Pit's warden** (#1298; spec §7 "The Pits"): `[dungeon.portal] boss = { depth, creature,
+**A Pit's warden** (#1298): `[dungeon.portal] boss = { depth, creature,
 vault }` resolves into the same `DungeonDef::bosses` (`resolve_bosses` takes the rows of either
 table and refuses a depth the branch has not). `pin_lairs` asks no `unique` of a portal branch's
 boss (every Pit has its own warden: `gatewarden`), and asks the lair's `>` exactly where

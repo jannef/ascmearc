@@ -1,4 +1,4 @@
-# What is left of a door kicked in (spec §8 "Doors"): splinters in the doorway, open for good.
+# What is left of a door kicked in: splinters in the doorway, open for good.
 [[terrain]]
 id = "door_broken"
 name = "broken door"

@@ -1,4 +1,4 @@
-//! Races' gifts and flaws in the world (spec §8 "Character creation"): a race's natural armour
+//! Races' gifts and flaws in the world: a race's natural armour
 //! adds to what the player wears, and so do its resistances; strong light dazzles light-blind
 //! eyes; a disease bonus wins disease checks; a stomach for rotten food eats it unharmed; an
 //! eye for traps notices them in passing.
@@ -137,7 +137,7 @@ fn world_in(scenario: &str, race: &str) -> World {
 }
 
 /// A run of `scenario` as a `race` warrior, from `seed`, born under no sign (so a sign's gifts,
-/// spec §8 "Birth sign", leave the race's rules alone).
+/// leave the race's rules alone).
 fn seeded(scenario: &str, race: &str, seed: u64) -> World {
     let spec: CharacterSpec = format!("{race},male,warrior").parse().expect("spec");
     let w =

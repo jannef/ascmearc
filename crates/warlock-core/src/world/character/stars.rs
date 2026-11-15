@@ -1,4 +1,4 @@
-//! The birth sign's gifts in the world (spec §8 "Birth sign"): the talents a character's sign
+//! The birth sign's gifts in the world: the talents a character's sign
 //! grants ([`crate::character::Character::grants`]) are put into the player's
 //! [`Actor::talents`](crate::world::Actor) when a run starts and again whenever one is restored, so they
 //! are never stored as a choice: a gift added to the data reaches a saved character, one taken
@@ -17,7 +17,7 @@ use crate::world::magic::spell::Caster;
 use crate::world::{ActorId, World};
 
 /// Puts the talents `character`'s race grants (Versatile, `racial.rs`), the gifts of their
-/// sign, and the flaws a forgotten altar marked them with (`boons`, spec §7 "Special rooms":
+/// sign, and the flaws a forgotten altar marked them with (`boons`:
 /// Forsaken) into `talents` in grant order, in place of whatever granted talents it held (none
 /// for a run without a character); an altar's other boons (Chosen) are held too.
 pub(in crate::world) fn grant(
@@ -35,7 +35,7 @@ pub(in crate::world) fn grant(
     }
 }
 
-/// Whether stepping onto `terrain` is wading (spec §8 "Birth sign": Strong swimmer): water
+/// Whether stepping onto `terrain` is wading (Strong swimmer): water
 /// (terrain that freezes) or ground a disease is caught wading in (a marsh).
 pub(in crate::world) fn wading(content: &Content, terrain: &TerrainDef) -> bool {
     if terrain.freeze.is_some() {
@@ -85,7 +85,7 @@ fn rising_sources(actor: &crate::world::Actor, content: &Content) -> (bool, bool
 
 impl World {
     /// The player, about to die of a hit, a trap, or a status, rises from the ashes instead if
-    /// their talents let them and they have not yet (spec §8 "Birth sign": once in a life): the
+    /// their talents let them and they have not yet (once in a life): the
     /// once is spent, they are Ashen and back at a share of their (Ashen) hit points, and flames
     /// burst from them, one roll of their damage for every creature they reach, melting the ice
     /// there. Returns whether they rose. A gameplay draw (the flames' damage) only then.

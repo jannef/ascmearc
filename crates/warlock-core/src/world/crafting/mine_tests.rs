@@ -1,4 +1,4 @@
-//! Mining (spec §8 "Digging"; #1389, `world/crafting/mine.rs`): only the trained break anything out of a
+//! Mining (#1389, `world/crafting/mine.rs`): only the trained break anything out of a
 //! wall they dig through, on a dungeon branch's floor; what comes out is drawn by rarity at the
 //! floor's danger, mithril and adamantium only deeper than any bounded branch goes; a branch's
 //! `ores` leaves out the others; Smelt makes the ore's ingot at an anvil; replays verify.

@@ -1,4 +1,4 @@
-//! Making out a scroll (spec §8 "Scrolls"; #1024): who reads at once and who makes the check,
+//! Making out a scroll (#1024): who reads at once and who makes the check,
 //! what a failure costs and keeps, the marks, and what the rule leaves alone: identify's list,
 //! Scribe, and the study odds.
 

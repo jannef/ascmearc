@@ -1,4 +1,4 @@
-# Potions' statuses (spec §8 "Potions", the combat progression design §10.1): what a drink
+# Potions' statuses (the combat progression design §10.1): what a drink
 # lends for a while. Six boosts, a stat raised by 2 a degree (`per_degree`): ten minutes a degree,
 # a greater potion's two degrees easing to one; a new draught keeps the stronger. A boost is told
 # by name only, never by how much.

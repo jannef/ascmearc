@@ -59,7 +59,7 @@ pub struct Patrol {
     pub step: usize,
 }
 
-/// What a creature remembers between its actions (spec §8 "Creature behavior"); all `None` while
+/// What a creature remembers between its actions; all `None` while
 /// it goes about its routine. The player has none.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Mind {
@@ -74,7 +74,7 @@ pub struct Mind {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub post: Option<Pos>,
     /// The turn the player last saw it (`WorldState::turn`), the player's half of being aware
-    /// of it (spec §8 "Surprise and sneak attacks", `world/combat/surprise.rs`): set by perception in
+    /// of it (`world/combat/surprise.rs`): set by perception in
     /// the turn pipeline, and by an attack that caught the player unawares (never on load). Not part of its routine: [`Mind::is_calm`] ignores it.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub noticed: Option<u64>,
@@ -102,7 +102,7 @@ impl Mind {
     }
 }
 
-/// What an attack draws on and trains (spec §8 "Weapon skills", "Fighting styles"): a weapon
+/// What an attack draws on and trains: a weapon
 /// skill and a fighting style, each if any ([`Actor::attack_skills`]). A kick draws on unarmed
 /// fighting alone: it is made whatever the hands hold, so it is fought in no style.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -139,11 +139,11 @@ pub struct Actor {
     pub level: String,
     pub pos: Pos,
     pub patrol: Option<Patrol>,
-    /// Scheduler energy (spec §8 "Speed", `world/turn/schedule.rs`): the actor may act while this is
+    /// Scheduler energy (`world/turn/schedule.rs`): the actor may act while this is
     /// at least 0. It gains the creature type's speed per second of game time while the actor is
     /// on the current level; an action costs 1000 per second it takes.
     pub energy: i64,
-    /// Noises the actor heard since it last acted, in the order heard (spec §5 "Hearing"; see
+    /// Noises the actor heard since it last acted, in the order heard (see
     /// [`crate::noise`]): where each was made, its kind, and how loud it was here. A creature's
     /// list is what it may react to in its next action ([`crate::World`]'s `creature_turn`, where
     /// the AI reads it) and is cleared as it acts; the player's covers the turn that last passed
@@ -160,24 +160,24 @@ pub struct Actor {
     /// what a creature wears and wields; never what else it carries.
     #[serde(default, skip_serializing_if = "Equipment::is_empty")]
     pub equipment: Equipment,
-    /// Its scores and potentials (spec §8 "Stats"; [`crate::stats`]): from its creature type,
+    /// Its scores and potentials ([`crate::stats`]): from its creature type,
     /// the player's from the scenario. Known to the rules (and dev tools) for every actor; the
     /// player is shown only their own scores. Rules read them through
     /// [`Actor::effective_stats`], which magic items raise and status effects and stat damage
     /// may lower.
     pub stats: Stats,
-    /// Hit points left (spec §8 "Combat"); at 0 or below it is dead.
+    /// Hit points left; at 0 or below it is dead.
     pub hp: i32,
     /// What its maximum hit points add to its Toughness: the creature type's `base_hp`, the
     /// player's race and class (the scenario's `hp`).
     pub hp_base: i32,
     /// Progress toward its next hit point back, while it is hurt, in hundredths of a second of
-    /// game time at the normal pace (spec §8 "Healing"): each second adds its healing rate in
+    /// game time at the normal pace: each second adds its healing rate in
     /// percent (100 normally, 200 resting, less or none while a status slows it), and every
     /// [`combat::regen_seconds`] × 100 of it is a hit point.
     #[serde(default, skip_serializing_if = "is_zero")]
     pub regen: u32,
-    /// Mana left (spec §8 "Mana"): the second pool beside hit points, which magic spends
+    /// Mana left: the second pool beside hit points, which magic spends
     /// (`World::spend_mana`, the one way).
     #[serde(default, skip_serializing_if = "is_nought")]
     pub mana: i32,
@@ -190,53 +190,49 @@ pub struct Actor {
     /// of it is a point.
     #[serde(default, skip_serializing_if = "is_zero")]
     pub mana_regen: u32,
-    /// The alternative resources it holds (spec §8 "Resources"; [`crate::resource`]): pools
+    /// The alternative resources it holds ([`crate::resource`]): pools
     /// beside hit points and mana that something granted it (Rage, Focus), in resource order.
     /// None for most actors (creatures get none); changed only through `World::grant_resource`,
     /// `gain_resource`, `spend_resource`, `end_resource`, and time passing (`World::live`).
     #[serde(default, skip_serializing_if = "Pools::is_empty")]
     pub resources: Pools,
-    /// Its trained skills, with their values and training marks (spec §8 "Skills";
-    /// [`crate::skills`]): its creature type's, the player's from their race and class. Every
-    /// other skill is untrained: it gives nothing. Known to the rules (and dev tools) for every
-    /// actor; the player is shown only their own trained skills' values.
+    /// Its trained skills, with their values and training marks ([`crate::skills`]): its creature
+    /// type's, the player's from their race and class. Every other skill is untrained: it gives
+    /// nothing. Known to the rules (and dev tools) for every actor; the player is shown only their
+    /// own trained skills' values.
     #[serde(default, skip_serializing_if = "Skills::is_empty")]
     pub skills: Skills,
-    /// Its stat training marks, a signed pile per stat (spec §8 "Stats"; `World::train_stat`):
+    /// Its stat training marks, a signed pile per stat (`World::train_stat`):
     /// the player's, paid out by the checks (`World::settle`); creatures earn none. Never shown.
     #[serde(default, skip_serializing_if = "unmarked")]
     pub stat_marks: PerStat<i32>,
-    /// The status effects it suffers (spec §8 "Status effects"; [`crate::status`]).
+    /// The status effects it suffers ([`crate::status`]).
     #[serde(default, skip_serializing_if = "Effects::is_empty")]
     pub effects: Effects,
-    /// The diseases it carries, incubating or showing (spec §8 "Diseases";
-    /// [`crate::disease`]).
+    /// The diseases it carries, incubating or showing ([`crate::disease`]).
     #[serde(default, skip_serializing_if = "Diseases::is_empty")]
     pub diseases: Diseases,
-    /// The points its diseases took off its scores, mending once none shows (spec §8 "Stats";
-    /// [`StatDamage`]).
+    /// The points its diseases took off its scores, mending once none shows ([`StatDamage`]).
     #[serde(default, skip_serializing_if = "StatDamage::is_none")]
     pub damage: StatDamage,
-    /// The points drains took off its scores for good, by stat (spec §8 "Stats": "Drain";
-    /// `World::drain`): already off [`Actor::stats`], counted so a temple's mending can give
-    /// them back.
+    /// The points drains took off its scores for good, by stat (`World::drain`): already off
+    /// [`Actor::stats`], counted so a temple's mending can give them back.
     #[serde(default, skip_serializing_if = "undrained")]
     pub drained: PerStat<u8>,
-    /// Its rank and marks in every weapon skill (spec §8 "Weapon skills";
-    /// [`crate::weapon_skills`]): a creature's from its type, the player's from their race and
-    /// class. Only the player trains. The player is shown their own ranks; what a rank gives
-    /// stays hidden.
+    /// Its rank and marks in every weapon skill ([`crate::weapon_skills`]): a creature's from its
+    /// type, the player's from their race and class. Only the player trains. The player is shown
+    /// their own ranks; what a rank gives stays hidden.
     #[serde(default, skip_serializing_if = "WeaponSkills::is_empty")]
     pub weapon_skills: WeaponSkills,
     /// The faction its level placed it in, if not its type's (`faction` in a level legend entry:
     /// peaceful creatures in the showcase). Read the one that counts with [`Actor::faction`].
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub faction_override: Option<FactionId>,
-    /// Its grade (spec §8 "Grades"; [`crate::grade`]): −1 lesser, +1 greater, 0
+    /// Its grade ([`crate::grade`]): −1 lesser, +1 greater, 0
     /// neither, drawn as it is made. Read through [`Actor::graded`]. Left out of saves at 0.
     #[serde(default, skip_serializing_if = "is_ungraded")]
     pub grade: i8,
-    /// The creature that summoned it (spec §8 "Summoning", `world/creatures/summon.rs`), if one did: it
+    /// The creature that summoned it (`world/creatures/summon.rs`), if one did: it
     /// counts toward that summoner's live summons. Left out of saves while `None`.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub summoner: Option<ActorId>,
@@ -245,7 +241,7 @@ pub struct Actor {
     /// no quest. Left out of saves while `None`.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub split_from: Option<crate::world::creatures::split::Split>,
-    /// Whose ally it is, and what it was told (spec §8 "Allies", `world/allies/ally.rs`): a summon or a
+    /// Whose ally it is, and what it was told (`world/allies/ally.rs`): a summon or a
     /// companion on the player's side. `None` for every other actor, and left out of saves
     /// then, so runs without allies save and hash as before.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -261,7 +257,7 @@ pub struct Actor {
     /// `None`, so runs without a thief save and hash as before.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub mark: Option<ActorId>,
-    /// Its alignment score (spec §8 "Alignment"; [`crate::alignment`]): the player's, when the
+    /// Its alignment score ([`crate::alignment`]): the player's, when the
     /// content has alignment rules; creatures have none, and stand where [`Actor::nature`]
     /// says. Moved only by `World::shift_alignment`; never shown as a number.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -270,29 +266,29 @@ pub struct Actor {
     /// `alignment` in a level legend entry). Read the one that counts with [`Actor::nature`].
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub alignment_override: Option<Alignment>,
-    /// How fed it is (spec §8 "Hunger"): the player's, when the content has hunger; creatures
+    /// How fed it is: the player's, when the content has hunger; creatures
     /// do not hunger (`None`).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub satiation: Option<Satiation>,
-    /// Its combat stance (spec §8 "Stances"): the player chooses theirs; creatures stay neutral.
+    /// Its combat stance: the player chooses theirs; creatures stay neutral.
     #[serde(default, skip_serializing_if = "CombatStance::is_neutral")]
     pub stance: CombatStance,
-    /// The free blows it is given (spec §8 "Free blows"): none until talents and class
+    /// The free blows it is given: none until talents and class
     /// abilities give them. Read through `World::free_blows_of`.
     #[serde(default, skip_serializing_if = "FreeBlows::is_none")]
     pub free_blows: FreeBlows,
-    /// The talents it holds (spec §8 "Talents"; [`crate::talent`]), by id: the player's picks;
+    /// The talents it holds ([`crate::talent`]), by id: the player's picks;
     /// a creature's empty until data gives it some. What they do is read through
     /// [`Actor::talent_mods`].
     #[serde(default, skip_serializing_if = "Talents::is_empty")]
     pub talents: Talents,
-    /// The talents a forgotten altar gave it for life (spec §7 "Special rooms": Chosen, a
+    /// The talents a forgotten altar gave it for life (Chosen, a
     /// talent; Forsaken, a flaw), each also held in [`Actor::talents`]: never a
     /// level's pick, put back with a race's and a birth sign's gifts whenever those are
     /// (`world/character/stars.rs`), and marked as the altar's where talents are shown.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub boons: Vec<crate::talent::Taken>,
-    /// The spells it has learned for good (spec §8 "Spells"; `world/magic/learn.rs`), each with the
+    /// The spells it has learned for good (`world/magic/learn.rs`), each with the
     /// rank it knows it at (1 to `MAX_SPELL_RANK`; `world/magic/spell_rank.rs`): learned from
     /// grimoires, and a class ability's spell once its grimoire has deepened it (at rank 1 a
     /// class's spell is not here: its talents give it); both are what [`Actor::knows_spell`]
@@ -300,7 +296,7 @@ pub struct Actor {
     /// miscast (`world/magic/forget.rs`): not known.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub spells: BTreeMap<SpellId, u8>,
-    /// Its streak of melee blows at one creature (Relentless, spec §8 "Birth sign"): `None`
+    /// Its streak of melee blows at one creature (Relentless): `None`
     /// for an actor without the talent, or before its first blow.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub streak: Option<crate::world::Streak>,
@@ -308,7 +304,7 @@ pub struct Actor {
     /// speaks rather than its type's.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub npc: Option<String>,
-    /// How far its talk has got (spec §8 "Dialogue"): which line comes next, which mutter, and
+    /// How far its talk has got: which line comes next, which mutter, and
     /// whether the player has met it.
     #[serde(default, skip_serializing_if = "Talk::is_new")]
     pub talk: Talk,
@@ -347,7 +343,7 @@ impl Actor {
             .or(content.creature(self.creature).faction)
     }
 
-    /// Which side of good and evil it is on (spec §8 "Alignment"): an actor with a score by its
+    /// Which side of good and evil it is on: an actor with a score by its
     /// band's side, else the one its level placed it on, else its creature type's.
     pub fn nature(&self, content: &Content) -> Alignment {
         match (self.alignment, content.alignment()) {
@@ -356,7 +352,7 @@ impl Actor {
         }
     }
 
-    /// Its alignment band (spec §8 "Alignment"): its score's, or for a creature, which has
+    /// Its alignment band: its score's, or for a creature, which has
     /// none, the band its nature counts as ([`Alignment::band`]). Neutral without alignment
     /// rules.
     pub fn band(&self, content: &Content) -> Band {
@@ -367,14 +363,14 @@ impl Actor {
         }
     }
 
-    /// What everything it wears and wields does to it (spec §8 "Magic items"; their global
+    /// What everything it wears and wields does to it (their global
     /// effects, [`Mods::worn`]).
     pub fn mods(&self, content: &Content) -> Mods {
         Mods::worn(&self.inventory, &self.equipment, content)
     }
 
     /// The vision profile (an index into [`Content::vision_profiles`]) a unique item it wears
-    /// lets it see with (spec §8 "Magic items": Vision), if any: the first.
+    /// lets it see with (Vision), if any: the first.
     pub fn worn_vision(&self, content: &Content) -> Option<usize> {
         crate::magic::worn_powers(&self.inventory, &self.equipment, content).find_map(|p| match p {
             crate::content::Power::Vision(index) => Some(*index),
@@ -382,8 +378,7 @@ impl Actor {
         })
     }
 
-    /// What it is told when a unique item it wears wards off `status` (spec §8 "Magic items":
-    /// Ward), if one does.
+    /// What it is told when a unique item it wears wards off `status` (Ward), if one does.
     pub fn ward<'c>(&'c self, content: &'c Content, status: StatusId) -> Option<&'c str> {
         crate::magic::worn_powers(&self.inventory, &self.equipment, content).find_map(|p| match p {
             crate::content::Power::Ward { status: s, message } if *s == status => {
@@ -393,9 +388,9 @@ impl Actor {
         })
     }
 
-    /// The eyes it sees with (spec §5 "Vision"): `base` (its type's profile, or the player's),
+    /// The eyes it sees with: `base` (its type's profile, or the player's),
     /// with what a unique item it wears gives (Vision) and what its status effects lend (a
-    /// potion's Owl-eyed, spec §8 "Potions"), each where it is better: the lower threshold, the
+    /// potion's Owl-eyed), each where it is better: the lower threshold, the
     /// farther darkvision, ultraviolet if any sees it. Its id and name stay the base's.
     pub fn eyes<'c>(
         &self,
@@ -417,7 +412,7 @@ impl Actor {
         Cow::Owned(eye)
     }
 
-    /// What its talents do to it (spec §8 "Talents"; [`Talents::mods`]), the one aggregation
+    /// What its talents do to it ([`Talents::mods`]), the one aggregation
     /// the rules read, beside [`Actor::mods`]. Without talents (most creatures), nothing; with
     /// them, the sum its talents keep until they change ([`Talents::mods_cached`]): the rules
     /// read it many times a turn, so it is summed once, not on every read.
@@ -430,7 +425,7 @@ impl Actor {
         }
     }
 
-    /// Its speed (spec §8 "Speed"): its creature type's, scaled by its talents' percent (a birth
+    /// Its speed: its creature type's, scaled by its talents' percent (a birth
     /// sign's Fleet, Ponderous) plus its skills' (Athletics, [`Effect::Speed`]), the two added
     /// together; the skills never take the sum past [`MAX_SPEED`] percent. At least 1. Hidden
     /// from the player.
@@ -448,17 +443,16 @@ impl Actor {
         u32::try_from(scaled).unwrap_or(u32::MAX).max(1)
     }
 
-    /// How hungry it is (spec §8 "Hunger"); `None` for an actor that does not hunger.
+    /// How hungry it is; `None` for an actor that does not hunger.
     pub fn hunger(&self, content: &Content) -> Option<Hunger> {
         let def = content.hunger()?;
         self.satiation.map(|s| def.state(s.nutrition))
     }
 
     /// Its stats as the rules read them: its own scores, each raised by what it wears and
-    /// wields (spec §8 "Magic items"), then less what its status effects take from them (spec
-    /// §8 "Status effects": strong poison lowers Strength and Dexterity), what hunger takes
-    /// while it is Weak or worse (spec §8 "Hunger": `[weak]` in `data/hunger.toml`, Strength and
-    /// Dexterity), and its stat damage (spec §8 "Diseases"). The penalties add up; no score goes
+    /// wields, then less what its status effects take from them (strong poison lowers Strength and
+    /// Dexterity), what hunger takes while it is Weak or worse (`[weak]` in `data/hunger.toml`,
+    /// Strength and Dexterity), and its stat damage. The penalties add up; no score goes
     /// below 1. Every rule that reads a score reads these.
     pub fn effective_stats(&self, content: &Content) -> Stats {
         self.stats_with(content, &self.mods(content))
@@ -521,8 +515,8 @@ impl Actor {
         by
     }
 
-    /// What its skills give of `effect` (spec §8 "Skills"), with what the skill affixes of what
-    /// it wears and wields add to their values (spec §8 "Magic items"). Every rule that reads a
+    /// What its skills give of `effect`, with what the skill affixes of what
+    /// it wears and wields add to their values. Every rule that reads a
     /// skill's benefit reads this.
     pub fn skill_effect(&self, content: &Content, effect: Effect) -> i32 {
         self.skill_effect_above(content, effect, 0)
@@ -560,7 +554,7 @@ impl Actor {
 
     /// What its talents and what it wears and wields add to its skills' values.
     fn skill_bonus(&self, content: &Content) -> Vec<(SkillId, i32)> {
-        // Talents (spec §8 "Class abilities": Commanding) raise skills as magic items do.
+        // Talents (Commanding) raise skills as magic items do.
         let talents = match self.talents.is_empty() {
             true => Vec::new(),
             false => {
@@ -586,12 +580,11 @@ impl Actor {
     }
 
     /// Its maximum hit points: its (effective) Toughness plus [`Actor::hp_base`] plus what it
-    /// wears and wields adds, at least 1. Toughness damage lowers it, as in D&D 3.5 (spec §8
-    /// "Diseases").
+    /// wears and wields adds, at least 1. Toughness damage lowers it, as in D&D 3.5.
     pub fn max_hp(&self, content: &Content) -> i32 {
         let mods = self.mods(content);
         let toughness = self.stats_with(content, &mods).score(Stat::Toughness);
-        // A companion's grade above its type (spec §8 "Allies"; `companion.rs`).
+        // A companion's grade above its type (`companion.rs`).
         let grown = self.growth_hp(content);
         let max = self.frail(
             content,
@@ -603,7 +596,7 @@ impl Actor {
         crate::grade::hp(max, self.graded())
     }
 
-    /// Maximum hit points `max` as its talents scale them (spec §8 "Birth sign": Frail), never
+    /// Maximum hit points `max` as its talents scale them (Frail), never
     /// below 1.
     fn frail(&self, content: &Content, max: i32) -> i32 {
         if self.talents.is_empty() {
@@ -620,7 +613,7 @@ impl Actor {
     /// Its maximum hit points as they will be once its penalties pass: its Toughness raised by
     /// what it wears and wields, not lowered by its statuses, hunger, or stat damage. Taking off
     /// something that raised them leaves it no more hit points than this (a penalty passes; the
-    /// hit points it keeps under one stay, spec §8 "Status effects").
+    /// hit points it keeps under one stay).
     pub fn lasting_max_hp(&self, content: &Content) -> i32 {
         let mods = self.mods(content);
         let toughness = self.raised_with(&mods).score(Stat::Toughness);
@@ -647,7 +640,7 @@ impl Actor {
         self.hp >= self.frail(content, max_hp) && self.mana >= max_mana
     }
 
-    /// Its maximum mana (spec §8 "Mana"): [`Actor::mana_base`] plus what it wears and wields
+    /// Its maximum mana: [`Actor::mana_base`] plus what it wears and wields
     /// adds, plus its (effective) mental stats' modifiers, at least 0, scaled by its talents'
     /// percent ([`Actor::mana_scaled`]). Damage to those stats
     /// lowers it, as Toughness damage lowers the hit points.
@@ -687,22 +680,20 @@ impl Actor {
         Health::of(self.hp, self.max_hp(content))
     }
 
-    /// Its natural armour (spec §8 "Combat"): its race's (`race`, the player's when the run has
+    /// Its natural armour: its race's (`race`, the player's when the run has
     /// a character, [`crate::world::WorldState::race_of`]) if it has one, else its creature type's.
     pub fn hide<'c>(&self, content: &'c Content, race: Option<&'c RaceDef>) -> Option<&'c Hide> {
         (race.and_then(|r| r.natural.as_ref())).or(content.creature(self.creature).natural.as_ref())
     }
 
-    /// Its Defence (spec §8 "Combat"): 10 plus its Dexterity modifier (capped by the worn
-    /// armour that allows the least and by its `burden`, the burden it suffers, spec §8
-    /// "Burden": the lowest cap wins), the best armour, shield, and parry of what it wears and
-    /// wields (each with what its own affixes add), its natural armour ([`Actor::hide`]), the Dodge
-    /// its skills give (tumble; spec §8 "Skills"), and the Dodge, Deflection, and natural armour
-    /// its magic items give (spec §8 "Magic items"). Weapon skills add (spec §8 "Weapon skills"):
+    /// Its Defence: 10 plus its Dexterity modifier (capped by the worn
+    /// armour that allows the least and by its `burden`, the burden it suffers: the lowest cap
+    /// wins), the best armour, shield, and parry of what it wears and wields (each with what its
+    /// own affixes add), its natural armour ([`Actor::hide`]), the Dodge its skills give (tumble),
+    /// and the Dodge, Deflection, and natural armour its magic items give. Weapon skills add:
     /// the wielded weapon's skill to its parry; and so does the fighting style its hands are in
-    /// (spec §8 "Fighting styles": a duelist's parry, sword and board's shield, added to a held
-    /// shield's). Its combat stance and its status effects add their Dodge and Parry
-    /// (spec §8 "Stances", "Status effects").
+    /// (a duelist's parry, sword and board's shield, added to a held
+    /// shield's). Its combat stance and its status effects add their Dodge and Parry.
     pub fn defence(&self, content: &Content, burden: Burden, race: Option<&RaceDef>) -> Defence {
         let mods = self.mods(content);
         let weapon = self.weapon_item(content);
@@ -723,7 +714,7 @@ impl Actor {
             })
             .collect();
         let dexterity = self.stats_with(content, &mods).modifier(Stat::Dexterity);
-        // Talents (spec §8 "Talents"): Armour training raises worn armour's cap, Pack mule the burden's.
+        // Talents: Armour training raises worn armour's cap, Pack mule the burden's.
         let talents = self.talent_mods(content);
         let worn = (equipped.iter()).filter_map(|(_, o, m, _)| {
             Some(o.max_dex? + m.get(ItemEffect::MaxDex) + talents.defence.max_dex)
@@ -753,7 +744,7 @@ impl Actor {
                 ),
             ]
         });
-        // Talents (spec §8 "Talents"): Dodge adds up like any Dodge; natural armour (Thick
+        // Talents: Dodge adds up like any Dodge; natural armour (Thick
         // skin) comes on top of whichever natural armour is best, the race's or creature type's
         // hide ([`Actor::hide`]) or a magic item's, or stands alone.
         // A companion's grade adds natural Defence to its hide's, or stands as one (`companion.rs`).
@@ -773,7 +764,7 @@ impl Actor {
                 .map(|n| (Category::Natural, n + added))
                 .collect(),
         };
-        // Mage armour (spec §8 "Class abilities"): Deflection with no body armour on.
+        // Mage armour: Deflection with no body armour on.
         let mage_armour = match talents.defence.deflection_unarmoured {
             0 => 0,
             _ if self.wears_body_armour(content) => 0,
@@ -789,7 +780,7 @@ impl Actor {
                 mods.get(ItemEffect::Deflection) + talents.defence.deflection + mage_armour,
             ),
         ];
-        // Wild guard (spec §8 "Stances") softens a stance's Dodge penalty.
+        // Wild guard softens a stance's Dodge penalty.
         let stance =
             (content.stance_def(self.stance).defence()).map(|(category, bonus)| match category {
                 Category::Dodge => (category, talents.defence.stance_dodge(self.stance, bonus)),
@@ -813,17 +804,17 @@ impl Actor {
         }
     }
 
-    /// Its Protection (spec §8 "Combat"): the damage it soaks off every physical hit, the sum
+    /// Its Protection: the damage it soaks off every physical hit, the sum
     /// of what it wears (each piece's `protection` with what its own affixes add; a shield has
     /// none) and its natural armour ([`Actor::hide`]); against each physical kind, more or less
-    /// by what the pieces say (spec §8 "Damage types": chain mail +1 against slashing, −1
+    /// by what the pieces say (chain mail +1 against slashing, −1
     /// against piercing), and nothing against an element.
     pub fn protection(&self, content: &Content, race: Option<&RaceDef>) -> Protection {
         self.protection_plus(content, race, 0)
     }
 
     /// [`Actor::protection`] with `more` on top against every physical kind: what an ally's
-    /// master gives it (spec §8 "Allies"; `World::protection_of`).
+    /// master gives it (`World::protection_of`).
     pub fn protection_plus(
         &self,
         content: &Content,
@@ -847,8 +838,7 @@ impl Actor {
 
     /// Whether it wears body armour: armour in a slot worn as body armour (`body_armor`, the
     /// Body slot), anything there that defends, protects, or is a base item; clothing (a robe,
-    /// a tunic: none of those, #1173) is no armour. Mage armour and Fleet ask for none (spec §8
-    /// "Class abilities").
+    /// a tunic: none of those, #1173) is no armour. Mage armour and Fleet ask for none.
     pub fn wears_body_armour(&self, content: &Content) -> bool {
         (self.equipment.items().into_iter()).any(|(slot, item)| {
             let armour = |s: &Stack| {
@@ -860,7 +850,7 @@ impl Actor {
         })
     }
 
-    /// The Protection its talents add (spec §8 "Talents": Heavy armour mastery while its body
+    /// The Protection its talents add (Heavy armour mastery while its body
     /// armour, the piece it wears with the most Protection, is heavy; Shield wall while it holds
     /// a shield; the artisan's for every piece of armour worn, anything worn with Protection).
     fn talent_protection(&self, content: &Content) -> i32 {
@@ -888,7 +878,7 @@ impl Actor {
             .protection_with(body, shield, pieces)
     }
 
-    /// What it resists (spec §8 "Damage types"), in percent per kind: what its creature type
+    /// What it resists, in percent per kind: what its creature type
     /// is and its race (`race`, the player's when the run has a character), plus what it wears
     /// and wields (each piece's `resist`, and the resistance affixes of all of it), its talents,
     /// and its status effects (a potion's `resist`), added up uncapped, and its creature type's
@@ -902,7 +892,7 @@ impl Actor {
             .filter_map(|(_, item)| self.inventory.get(item))
             .flat_map(|s| s.resists(content).iter().copied());
         let magic = self.mods(content);
-        // Talents (spec §8 "Talents": Elemental ward) count as gear does.
+        // Talents (Elemental ward) count as gear does.
         let talents = (self
             .talent_mods(content)
             .into_owned()
@@ -910,7 +900,7 @@ impl Actor {
             .resist
             .into_iter())
         .filter_map(|(element, r)| Some((content.damage_type_id(&element)?, r)));
-        // And so do its status effects' (a potion's Warmed, spec §8 "Potions").
+        // And so do its status effects' (a potion's Warmed).
         let lent = (self.effects.iter()).flat_map(|e| content.status(e.status).resist.iter());
         let sources: Vec<(DamageTypeId, i32)> = (innate.chain(worn))
             .chain(magic.resistances().iter().copied())
@@ -920,7 +910,7 @@ impl Actor {
         Resistances::sum(count, def.immune_kinds.iter().copied(), sources)
     }
 
-    /// The side of it an attack strikes (spec §8 "Combat"): its Defence (its `burden` capping
+    /// The side of it an attack strikes: its Defence (its `burden` capping
     /// its Dexterity), its Protection, its resistances, and whether it has no vitals (immune to
     /// criticals, `Content::has_vitals`).
     pub fn target(&self, content: &Content, burden: Burden, race: Option<&RaceDef>) -> Target {
@@ -958,8 +948,8 @@ impl Actor {
         }
     }
 
-    /// The faintest loudness it hears (spec §5 "Hearing"): its creature type's `hearing`, lower
-    /// by what its skills give (listen; spec §8 "Skills"), never below 1; `None`: deaf.
+    /// The faintest loudness it hears: its creature type's `hearing`, lower
+    /// by what its skills give (listen), never below 1; `None`: deaf.
     pub fn hearing(&self, content: &Content) -> Option<u16> {
         let threshold = content.creature(self.creature).hearing?;
         // Its skills (listen), then its talents (Keen ears).
@@ -992,8 +982,8 @@ impl Actor {
         })
     }
 
-    /// The shield it holds that it can bash with, and what a bash with it does (spec §8
-    /// "Weapon skills"): the first hand that holds one.
+    /// The shield it holds that it can bash with, and what a bash with it does: the first hand that
+    /// holds one.
     pub fn shield<'c>(&self, content: &'c Content) -> Option<(ObjectId, &'c Attack)> {
         let stack = self.inventory.get(self.shield_item(content)?)?;
         let def = content.object(stack.object);
@@ -1010,7 +1000,7 @@ impl Actor {
         if self.talents.is_empty() {
             return table.benefit(id, rank);
         }
-        // Talents (spec §8 "Talents"): Stylist reads a style's ranks higher, Weapon focus and
+        // Talents: Stylist reads a style's ranks higher, Weapon focus and
         // its kind add to the chosen skill's benefits, Deadly aim and its kind to a role's; a
         // free bash grows more likely only where there is one.
         let def = table.skill(id);
@@ -1101,7 +1091,7 @@ impl Actor {
             .collect()
     }
 
-    /// The grip its hands are in for a blow (spec §8 "Fighting styles"), and the weapon skills
+    /// The grip its hands are in for a blow, and the weapon skills
     /// of the weapons in them: nothing (unarmed), one one-handed weapon (the other hand empty),
     /// a weapon in each hand, a two-handed weapon, a one-handed weapon and a shield, or a shield
     /// in each hand; `None` for anything else (a shield alone).
@@ -1124,7 +1114,7 @@ impl Actor {
     }
 
     /// The fighting style an attack of `kind` made `with` (as for [`Actor::attack_skill`]) is
-    /// fought in, whatever its rank (spec §8 "Fighting styles"): a blow's, a bash's, or an
+    /// fought in, whatever its rank: a blow's, a bash's, or an
     /// off-hand blow's by the grip of its hands; a shot's by its launcher; a throw's by what is
     /// thrown. A spell has none.
     pub fn style(
@@ -1210,9 +1200,8 @@ impl Actor {
         self.benefit_of(content, self.attack_skills(content, kind, with))
     }
 
-    /// The weapon in its off hand while it holds a weapon in each of two hands (spec §8
-    /// "Fighting styles"): the second, in hand order, where in its inventory it is, and what it
-    /// is.
+    /// The weapon in its off hand while it holds a weapon in each of two hands: the second, in hand
+    /// order, where in its inventory it is, and what it is.
     pub fn off_hand(&self, content: &Content) -> Option<(usize, Attack)> {
         match self.in_hands(content).as_slice() {
             [(_, main), (off, _)] if main.attack.is_some() => {
@@ -1312,7 +1301,7 @@ impl Actor {
         })
     }
 
-    /// The digging tool it has ready (spec §8 "Digging"): the first thing it wears or wields, in
+    /// The digging tool it has ready: the first thing it wears or wields, in
     /// slot order, that digs (a pick-axe in the Tool slot), and its power.
     pub fn dig_tool(&self, content: &Content) -> Option<(ObjectId, u16)> {
         self.equipment.items().into_iter().find_map(|(_, item)| {
@@ -1321,7 +1310,7 @@ impl Actor {
         })
     }
 
-    /// The carried light it has ready (spec §5 "Light sources"): the first thing it wears or
+    /// The carried light it has ready: the first thing it wears or
     /// wields, in slot order, that gives light carried (a lantern in the Tool slot), and where in
     /// its inventory it is. Lit or not.
     pub fn ready_light(&self, content: &Content) -> Option<usize> {
@@ -1331,7 +1320,7 @@ impl Actor {
         })
     }
 
-    /// The key it carries that opens `lock` (spec §8 "Doors"): the first one made for it, else
+    /// The key it carries that opens `lock`: the first one made for it, else
     /// the first skeleton key; `None` if it carries none that fits.
     pub fn key_for(&self, content: &Content, lock: &Lock) -> Option<ObjectId> {
         let fitting = (self.inventory.iter())
@@ -1352,10 +1341,9 @@ impl Actor {
 
     /// What its melee attacks do: with the weapon it wields, else its natural attack, else its
     /// bare hands; Strength to hit and to damage, and what its weapon skill and fighting style
-    /// give; then the weapon's own affixes and those of everything it wears and wields (spec §8
-    /// "Magic items"); and its combat stance. With a weapon in each hand this is the main hand's
-    /// blow, at the main hand's penalty, less what the style eases ([`Actor::off_hand_blow`] is
-    /// the other).
+    /// give; then the weapon's own affixes and those of everything it wears and wields; and its
+    /// combat stance. With a weapon in each hand this is the main hand's blow, at the main hand's
+    /// penalty, less what the style eases ([`Actor::off_hand_blow`] is the other).
     pub fn melee(&self, content: &Content) -> Profile {
         self.melee_with(content, content.creature(self.creature).attack.as_ref())
     }
@@ -1386,7 +1374,7 @@ impl Actor {
         let mods = self.mods(content);
         let weapon = self.weapon_item(content).map(|i| &self.inventory[i]);
         let talents = self.talent_mods(content);
-        // Martial arts (spec §8 "Class abilities"): bare hands roll a bigger die.
+        // Martial arts: bare hands roll a bigger die.
         let unarmed = || {
             let mut fists = Attack::unarmed(content.unarmed_damage());
             if let Some(sides) = talents.offence.unarmed_die {
@@ -1425,7 +1413,7 @@ impl Actor {
         } else if fists {
             profile.on_hit = talents.offence.unarmed_on_hit.clone();
         }
-        // A companion's grade sharpens its blow (spec §8 "Allies"; `companion.rs`).
+        // A companion's grade sharpens its blow (`companion.rs`).
         profile = self.grown(content, profile);
         // A greater or lesser one's blow (`grade.rs`).
         profile = crate::grade::sharpen(profile, self.graded());
@@ -1434,7 +1422,7 @@ impl Actor {
             profile.to_hit += TwoWeapons::eased(main, benefit.ease_main);
         }
         // The weapon's own added damage first, then what its affixes add, then the worn ones',
-        // then its talents' (spec §8 "Talents": Brawn).
+        // then its talents' (Brawn).
         profile.riders.extend(added);
         local.sharpen(&mut profile);
         mods.sharpen(&mut profile);
@@ -1446,7 +1434,7 @@ impl Actor {
         if let Some(stack) = weapon {
             crate::world::classes::spirit_weapon::gifts(&talents, stack, &mut profile);
         }
-        // Brutal critical (spec §8 "Class abilities"): a two-handed weapon's criticals hit harder.
+        // Brutal critical: a two-handed weapon's criticals hit harder.
         if talents.offence.two_handed_crit > 0
             && weapon.is_some_and(|s| content.object(s.object).two_handed)
         {
@@ -1469,11 +1457,11 @@ impl Actor {
     }
 
     /// `profile` with the to-hit and damage of its combat stance, and of its status effects
-    /// (spec §8 "Status effects": a buff's or a hex's `combat`).
+    /// (a buff's or a hex's `combat`).
     pub fn stanced(&self, content: &Content, profile: Profile) -> Profile {
         let stance = content.stance_def(self.stance);
         let mut profile = stance.apply(profile);
-        // Talents (spec §8 "Talents": Stalwart, Unflinching) soften a stance's to-hit penalty;
+        // Talents (Stalwart, Unflinching) soften a stance's to-hit penalty;
         // Peerless (a class ability) confirms criticals more surely.
         if !self.talents.is_empty() {
             let talents = self.talent_mods(content);
@@ -1500,10 +1488,10 @@ impl Actor {
         self.effects.sharpen(content, profile)
     }
 
-    /// The off hand's blow while it holds a weapon in each hand (spec §8 "Fighting styles"):
+    /// The off hand's blow while it holds a weapon in each hand:
     /// that weapon, Strength to hit and to damage, what its own weapon skill and the fighting
     /// style give, at the off hand's penalty less what the style eases; then that weapon's own
-    /// affixes and those of everything it wears and wields (spec §8 "Magic items"); and its
+    /// affixes and those of everything it wears and wields; and its
     /// combat stance. `None` without one.
     pub fn off_hand_blow(&self, content: &Content) -> Option<(ObjectId, Profile)> {
         let (item, attack) = self.off_hand(content)?;
@@ -1579,7 +1567,7 @@ impl Actor {
         Some(self.stanced(content, profile))
     }
 
-    /// What its throw does (spec §8 "Ranged combat": "Creatures' throws"; `None` if its type
+    /// What its throw does (`None` if its type
     /// throws nothing): Dexterity to hit and Strength to damage as for any throw, what its skill
     /// at throwing and its fighting style give, the affixes of everything it wears and wields,
     /// and its combat stance.
@@ -1621,17 +1609,17 @@ impl Actor {
         Some((shield, self.stanced(content, profile)))
     }
 
-    /// What its kicks at a creature do (spec §8 "Doors"): an unarmed blow whatever it wields
+    /// What its kicks at a creature do: an unarmed blow whatever it wields
     /// (bare hands' damage, Strength to hit and to damage), with what its unarmed fighting gives,
-    /// the affixes of everything it wears and wields (spec §8 "Magic items"), and its combat
-    /// stance. Mighty kick (spec §8 "Talents") rolls its one bigger die instead of bare
+    /// the affixes of everything it wears and wields, and its combat
+    /// stance. Mighty kick rolls its one bigger die instead of bare
     /// hands', and Crusher adds its penetration.
     pub fn kick(&self, content: &Content) -> Profile {
         let skill = content.weapon_skills().of_role(Role::Unarmed);
         let mods = self.mods(content);
         let talents = self.talent_mods(content);
         let mut fists = Attack::unarmed(content.unarmed_damage());
-        // Mighty kick's die, or Martial arts' (spec §8 "Class abilities"), the bigger.
+        // Mighty kick's die, or Martial arts', the bigger.
         if let Some(sides) = talents.offence.kick_die.max(talents.offence.unarmed_die) {
             fists.damage = crate::dice::Dice::of(1, u32::from(sides)).into();
         }

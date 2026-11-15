@@ -1,4 +1,4 @@
-//! Potions (spec §8 "Potions"): drunk through the Consume action (`eat:`), each kind through its
+//! Potions: drunk through the Consume action (`eat:`), each kind through its
 //! one path; known by a word and their type's colour until drunk or identified; marks; Thrifty
 //! drinker and Nose for draughts; the content checks.
 

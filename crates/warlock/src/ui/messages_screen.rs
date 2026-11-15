@@ -1,4 +1,4 @@
-//! The message history (spec §6 "Messages", #207; `M` in play, ADOM's Ctrl-P): every message
+//! The message history (#207; `M` in play, ADOM's Ctrl-P): every message
 //! the log keeps, oldest at the top and newest at the bottom, each wrapped to the panel at word
 //! boundaries (its further lines indented). A dim first line says how many messages the log
 //! keeps. It opens on the newest; the menu's up and down keys scroll a line, the list page keys

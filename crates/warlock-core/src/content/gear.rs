@@ -1,4 +1,4 @@
-//! Creature gear tables (spec §8 "Creature gear"): what a creature of a type may spawn carrying,
+//! Creature gear tables: what a creature of a type may spawn carrying,
 //! wielding, and wearing. A type's `racial_weapon` and `[[creature.gear]]` lines
 //! (`data/creatures/README.toml`); [`crate::gear`] rolls them.
 //!

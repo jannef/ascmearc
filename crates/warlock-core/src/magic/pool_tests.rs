@@ -1,4 +1,4 @@
-//! A vault's loot pools (spec §7 "Level file format"): what they roll, and what is refused.
+//! A vault's loot pools: what they roll, and what is refused.
 
 use super::loot::{self, Luck};
 use super::{LootGrade, LootPool, Rarity};

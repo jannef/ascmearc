@@ -1,4 +1,4 @@
-# A greater potion of grace (spec §8 "Potions"): Dexterity raised twice as much, easing to a potion of
+# A greater potion of grace: Dexterity raised twice as much, easing to a potion of
 # grace's after ten minutes. Greater boosts are deep orange.
 [[object]]
 id = "greater_potion_of_grace"

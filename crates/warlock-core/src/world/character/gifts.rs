@@ -1,4 +1,4 @@
-//! The birth sign's gifts that are more than one read at a hook (spec §8 "Birth sign"; the
+//! The birth sign's gifts that are more than one read at a hook (the
 //! talents of the `stars` tree): the two actives, Horn's grace and the Transfixing stare, used
 //! from the abilities menu's Birth sign group ([`crate::ability::Ability::Sign`]) as
 //! [`Action::Gift`]; Relentless's streak of blows at one creature ([`Streak`], on
@@ -133,7 +133,7 @@ impl World {
             .sign
             .petrifying_gaze
             .unwrap_or((stare.severity, stare.degrees));
-        // A full moon lengthens it (spec §8 "Birth sign", the flavour).
+        // A full moon lengthens it (the flavour).
         let Some(range) = ability.reach_at(&content, self.state.time) else {
             return Spent::Nothing;
         };

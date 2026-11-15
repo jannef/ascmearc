@@ -1,4 +1,4 @@
-//! Dice (spec §8 "Dice"): a roll such as `2d3+1`, or a fixed number such as `+2`.
+//! Dice: a roll such as `2d3+1`, or a fixed number such as `+2`.
 //!
 //! One group of dice of one size: the stat adjustments of character creation (races, classes,
 //! the horoscope), weapon and natural attack damage, and every other roll in data. The text form

@@ -1,4 +1,4 @@
-//! Glyph atlas: a monospace TTF rasterized at the exact physical pixel size (spec §4.1).
+//! Glyph atlas: a monospace TTF rasterized at the exact physical pixel size.
 //!
 //! Every glyph occupies one cell-sized slot, so the shader can address a glyph's texels with
 //! integer math and draw it 1:1 without filtering. A second, supersampled copy with the same slot
@@ -402,7 +402,7 @@ mod tests {
         }
     }
 
-    /// The chests' glyphs (shut, open, smashed; spec §8 "Chests") are in the font.
+    /// The chests' glyphs (shut, open, smashed) are in the font.
     #[test]
     fn the_font_draws_the_chests() {
         for c in ['⊟', '⊔', '⊠'] {

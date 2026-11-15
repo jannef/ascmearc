@@ -1,9 +1,9 @@
 # Screens, input, and key commands
 
 Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
-rules it implements are in spec/06-input-and-ui.md. Keep it current with the code, as CLAUDE.md says.
+rules it implements are in spec/05-interface.md. Keep it current with the code, as CLAUDE.md says.
 
-Modal screens (spec §6) — main menu, the saved characters (Characters), new run and character
+Modal screens — main menu, the saved characters (Characters), new run and character
 creation (race, gender, class, talents, name, summary), pause, settings, controls, the `?` help, the inventory (`I`), the equipment screen
 (`i`) and its choice of what goes in a slot, an item's description (a letter in the inventory,
 an upper-case slot letter on the equipment screen), the character screen (`@`), the weapon skills
@@ -74,7 +74,9 @@ to open, read keys for, or draw one:
   (`settings::fixed::menu`, #1533) and `Back`'s bindings (Esc is always `Nav::Back`; see
   `docs/dev/settings.md`: a screen never matches a key code or a character, except list letters
   and digits and the typed seed; a numpad key nothing else claims is the arrows' fixed alias there,
-  `menu::numpad_nav`: 8, 2, 4, 6 are Up, Down, Left, Right, and NumEnter is a fixed Enter, #1197)
+  `menu::numpad_nav`: 8, 2, 4, 6 are Up, Down, Left, Right, and NumEnter is a fixed Enter, #1197;
+  the vi keys `k j h l` are Up, Down, Left, Right in menus and screens too, which play never binds:
+  there ADOM's `k`, `l`, `u` are kick, look, and use a tool, docs/dev/settings.md)
   and whose `edit` comes from the fixed text keys (`settings::fixed::text`) and `TextBack`'s
   bindings (Esc is always `Edit::Back`), for the text field, which reads only
   `edit` and `text` (the key event's text, literal; else the character its key stands for), so
@@ -114,8 +116,8 @@ to open, read keys for, or draw one:
   action closes it and is applied (`play.act`, which may answer with a dialog of its own: the
   sell offer), a follow-up dialog replaces it (`ScreenStack::handle`). Users: every quit path
   (`menu::quit_dialog(saving)` for the pause and main menu Quit and a bound `KeyCommand::Quit`,
-  `save_to_menu_dialog`), the step into deep water (`ui::step_dialogs::deep_water_dialog`, spec §8 "Skills": Swim; first in the step's chain, below), the step onto a known trap (`ui::step_dialogs::trap_dialog`, spec §8 "Traps"), an overworld step while Fainting or Starving (`ui::step_dialogs::hunger_dialog`, spec §8 "Hunger"), a step into a feature that offers an action (`ui::step_dialogs::offer_dialog`, `docs/dev/special-rooms.md`), a burst
-  read so close it may catch the player (`ui::step_dialogs::burst_dialog`, spec §8 "Scrolls"), the shop (`ui/step_dialogs.rs`: `leaving_dialog`, `sale_dialog`; spec §7 "Shops"), and the overworld
+  `save_to_menu_dialog`), the step into deep water (`ui::step_dialogs::deep_water_dialog`; first in the step's chain, below), the step onto a known trap (`ui::step_dialogs::trap_dialog`), an overworld step while Fainting or Starving (`ui::step_dialogs::hunger_dialog`), a step into a feature that offers an action (`ui::step_dialogs::offer_dialog`, `docs/dev/special-rooms.md`), a burst
+  read so close it may catch the player (`ui::step_dialogs::burst_dialog`), the shop (`ui/step_dialogs.rs`: `leaving_dialog`, `sale_dialog`), and the overworld
   encounter (`ui/encounter.rs`: `on_encounter`, after `on_death` and before `on_level_up`, opens
   `dialog(view)` from `PerceptionView::encounter()` whenever the run changed with one pending and
   none is open, so after the step and on load; a plain row per choice, `Action::Encounter`;
@@ -153,20 +155,20 @@ to open, read keys for, or draw one:
   or answers; a text field types the digit's text (Num Lock on). The look and aiming cursors
   read play's `Move` bindings, so they take all eight numpad directions.
 - **The Magic page** (`ui/magic_screen.rs`, `MagicScreen`, `ScreenName::Magic`, `--screen
-  magic`; spec §6 "Magic"; the spell scaling design §11): page 6, no `KeyCommand` of its own
+  magic`; the spell scaling design §11): page 6, no `KeyCommand` of its own
   (reached by its number or Tab; the weapon skills screen's footer names it with
   `info_tabs::hint`). One column of rows built once when it opens (`rows`): `Mana a/b`, the
   caster styles (the styles whose `Grip::casts`; only for a player who
   knows a spell or has a rank or marks in one), and the spells, filtered from
   `PerceptionView::abilities` in its order, each with its rank (`PerceptionView::own_spell_rank`,
-  `rank 3` in a column of `RANK_W`; spec §8 "Spells": "Ranks", #1264) and
+  `rank 3` in a column of `RANK_W`; #1264) and
   `abilities_screen::spell_head` (the menu's row,
   "2d4 force, 4 mana", plus ", aimed" where `needs(aim)` says anything). Scrolls as the weapon
   skills screen does (gaps give way, then ↑↓, `most` stored at draw). The weapon skills screen
   leaves the caster styles out. Snapshots `magic-screen` (the showcase wizard at level 1),
   `-trained` (level 18, `rank:sniper:5 rank:toucher:3`), `-armoured` (a paladin in the
   forge's chain mail: Battle caster marked), `-none` (a warrior), `-short` (80 × 20: the scroll).
-- **The story** (`ui/story_screen.rs`, `StoryScreen`, `ScreenName::Story`; spec §6 "Your story",
+- **The story** (`ui/story_screen.rs`, `StoryScreen`, `ScreenName::Story`;
   #703; `docs/dev/background.md` "Shown"): the paragraphs of `PerceptionView::story`, wrapped,
   scrolled a line by `Nav::Up`/`Down` when the console is short (the stack calls its `fit` before
   a press, the message history's way); Enter and Esc close it. Two looks of one screen:
@@ -182,7 +184,7 @@ to open, read keys for, or draw one:
   resume. Nothing is saved: a run resumed on turn 0 reads it on page 9. Snapshots
   `story-screen` (the summary's Enter: the real opening), `story-page` (112 wide: the full tab
   line), `story-page-none`; the opening rule's tests are in `ui/screens.rs` and `game.rs`.
-- **Item lists** (`ui/paged_list.rs`, spec §6 "Item lists", #188, #189): **every lettered list
+- **Item lists** (`ui/paged_list.rs`, #188, #189): **every lettered list
   of stacks is the one `PagedList`** (the inventory, pick up, drop, throw, eat, read, identify, the
   equip choice;
   sell is a drop in a shop, identify a dev action): never a list or scrolling of its own. The
@@ -217,7 +219,7 @@ to open, read keys for, or draw one:
   With no dialog, a walk into an anvil opens a screen instead (`ui::step_dialogs::step_screen`, #1387):
   Metalcraft's profession screen for one with its row, at once and with no time; untrained, the
   step goes to the rules, which say what it needs.
-- **The message line and `--more--`** (`ui/more.rs`, spec §6 "Messages", #207): `Game::read` is
+- **The message line and `--more--`** (`ui/more.rs`, #207): `Game::read` is
   the message log as it was when the player last acted (`Game::apply` takes it before applying;
   a new run starts with nothing read, so its welcome is news; `Game::from_world`, a resumed run,
   has read everything; a replay's last step is news, `play_replay`; a loaded snapshot calls
@@ -356,7 +358,7 @@ asking in the one dialog before its `Action::Read`; there is no Study command of
 (`KeyCommand::Steal`, unbound), and throwing one's voice
 (`KeyCommand::ThrowVoice`, unbound) are in `settings/bindings.rs` and `settings/keys.rs`; their default keys are ADOM's (#350, `docs/dev/settings.md`).
 
-**Abilities** (spec §6 "Abilities"; racial, class, skill, weapon skill and style, item; the
+**Abilities** (racial, class, skill, weapon skill and style, item; the
 owner's rule, #156) get no key of their own: they go into the one abilities menu.
 - **Registry**: `warlock_core::ability` is the one place they are registered. A new ability is
   a variant of `Ability` (id, name, description, `Source`, `Aim`, cost `ActionKind`, the `Action`

@@ -1,4 +1,4 @@
-//! Traps (spec §8 "Traps").
+//! Traps.
 
 use super::util::{Term, anchored, article, capital, percent_of, signed};
 use std::fmt::Write as _;
@@ -9,7 +9,7 @@ use warlock_core::stats::modifier;
 use warlock_core::time::Duration;
 use warlock_core::world::takes_words;
 
-/// The traps (spec §8 "Traps"): what each does, its damage dice, how often it goes off, and what
+/// The traps: what each does, its damage dice, how often it goes off, and what
 /// it sounds like. Never a to-hit, which the player does not know.
 pub(super) fn traps(content: &Content) -> String {
     let mut out = String::from(
@@ -67,7 +67,7 @@ pub(super) fn traps(content: &Content) -> String {
     out
 }
 
-/// The rigs (spec §8 "Traps": "Rigging traps", `data/rigs.toml`): the craftsperson's
+/// The rigs (`data/rigs.toml`): the craftsperson's
 /// Trapwright, each rig with the trap it places, what it takes, how long it takes, how often the
 /// trap goes off, and its damage; then the check.
 pub(super) fn rigs(content: &Content) -> String {
@@ -118,9 +118,9 @@ pub(super) fn rigs(content: &Content) -> String {
     out
 }
 
-/// Each damaging trap's damage by the danger of the level it lies on (spec §8 "Traps",
-/// `[trap.grows]`): a column for each band between the rungs any trap has, from 0 (a place with
-/// no danger) on, the trap's roll at that band's start.
+/// Each damaging trap's damage by the danger of the level it lies on (`[trap.grows]`): a column for
+/// each band between the rungs any trap has, from 0 (a place with no danger) on, the trap's roll at
+/// that band's start.
 pub(super) fn by_danger(content: &Content) -> String {
     let damaging: Vec<_> = (content.trap_defs().iter())
         .filter(|t| t.effect.damage().is_some())
@@ -167,7 +167,7 @@ pub(super) fn by_danger(content: &Content) -> String {
     out
 }
 
-/// Disarming each trap (spec §8 "Disarming traps"), by name: its difficulty (the one finding it
+/// Disarming each trap, by name: its difficulty (the one finding it
 /// takes, before a dungeon's depth adds to it) and how often a try disarms it and how often it
 /// sets it off, at Dexterity 10 untrained, at Dexterity 14, and at Dexterity 14 with Disable
 /// device at 100.
@@ -206,7 +206,7 @@ pub(super) fn disarming(content: &Content) -> String {
     out
 }
 
-/// Stepping past a known trap (spec §8 "Traps", `[avoid]` in `data/traps.toml`): the chance by
+/// Stepping past a known trap (`[avoid]` in `data/traps.toml`): the chance by
 /// dodge (the Dexterity modifier as armour and burden leave it, plus Dodge), from the floor to
 /// the ceiling, with the Dexterity that gives each dodge alone and the Tumble that gives it at
 /// Dexterity 10.

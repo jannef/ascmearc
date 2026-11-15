@@ -1,4 +1,4 @@
-//! Animated objects in play (spec §8 "Animated objects", #483): a household thing made of its
+//! Animated objects in play (#483): a household thing made of its
 //! body (placed by a legend, or composed from its own stream), what it shows, its immunities,
 //! stealing refused, the drop rule with Salvager, Unbinder, saves, and replays.
 

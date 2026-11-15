@@ -1,4 +1,4 @@
-//! Dragons (spec §8 "Creature behavior": "Dragons", `breath.rs`, `natural.rs`): a dragon
+//! Dragons (`breath.rs`, `natural.rs`): a dragon
 //! breathes its cone whenever its breath is ready and the hostile it sees stands in reach with a
 //! clear line, and between breaths closes in and strikes with each of its natural attacks.
 

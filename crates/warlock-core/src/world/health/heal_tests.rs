@@ -1,4 +1,4 @@
-//! Treating oneself with the Heal skill (spec §8 "Skills", #549): only those trained in Heal may
+//! Treating oneself with the Heal skill (#549): only those trained in Heal may
 //! try, and only with something to treat; a try is an Intelligence check plus Heal against the
 //! data's difficulty; bleeding stops and may be tried again after a failure; a poison eases a
 //! degree and a disease is eased, each once only, the mark clearing as they end; refusals take

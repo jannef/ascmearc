@@ -1,7 +1,7 @@
 //! Per-level mutable state: terrain, locks, secret doors, piles of objects, traps, and blood as
 //! they are now, and what the player remembers of them; fires, and the walls dug into; the
-//! level's special rooms (spec §7 "Special rooms") and whether the player has been inside each;
-//! its shops (spec §7 "Shops").
+//! level's special rooms and whether the player has been inside each;
+//! its shops.
 
 use crate::blood::{Spatter, Stain};
 use crate::chest::Chest;
@@ -25,7 +25,7 @@ use crate::world::people::shop::Shop;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 
-/// Something burning on a cell (spec §8 "Ranged combat"): a burning object landed there (a
+/// Something burning on a cell: a burning object landed there (a
 /// flaming arrow), giving light until it burns out and is gone.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Fire {
@@ -63,7 +63,7 @@ pub struct LevelState {
     /// Piles of objects lying on cells, by position, each top first and never empty.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty", with = "by_pos")]
     pub(crate) objects: BTreeMap<Pos, Vec<Stack>>,
-    /// Piles as the player last saw them, by position (spec §5 "Memory"): a pile seen taken
+    /// Piles as the player last saw them, by position: a pile seen taken
     /// away is forgotten, one that changed out of sight is remembered as it was.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty", with = "by_pos")]
     pub(crate) object_memory: BTreeMap<Pos, Vec<Stack>>,
@@ -71,26 +71,26 @@ pub struct LevelState {
     /// burning objects themselves lie in the pile there.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty", with = "by_pos")]
     pub(crate) fires: BTreeMap<Pos, Fire>,
-    /// Locks on closed doors, by position (spec §8 "Doors"): gone once the door is unlocked or
+    /// Locks on closed doors, by position: gone once the door is unlocked or
     /// broken. Ground truth: a locked door looks like any closed door.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty", with = "by_pos")]
     pub(crate) locks: BTreeMap<Pos, Lock>,
-    /// Doors wedged shut, by position (spec §8 "Doors"): the points the wedger's Woodcraft adds
+    /// Doors wedged shut, by position: the points the wedger's Woodcraft adds
     /// to the door's sturdiness against a kick. A creature that opens doors kicks one in instead;
     /// the player pulls it free as they open it. Gone with the closed door. Ground truth.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty", with = "by_pos")]
     pub(crate) wedged: BTreeMap<Pos, u8>,
-    /// Chests, by position (spec §8 "Chests"): on every chest terrain cell, shut, open, or
+    /// Chests, by position: on every chest terrain cell, shut, open, or
     /// smashed, its level (its band follows) and, while shut, what it holds. Ground truth.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty", with = "by_pos")]
     pub(crate) chests: BTreeMap<Pos, Chest>,
-    /// Statues of the stoned, by position (spec §8 "Statues"; `world/creatures/statue.rs`): on every cell
+    /// Statues of the stoned, by position (`world/creatures/statue.rs`): on every cell
     /// of the statue terrain a stoned creature left, what it was and what it held. Gone (what it
     /// held spilt) once the statue breaks. Ground truth but for what it was, which the player
     /// sees.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty", with = "by_pos")]
     pub(crate) statues: BTreeMap<Pos, crate::world::creatures::statue::Statue>,
-    /// What is cut in its graves, by position (spec §7 "Graves"; `world/fixtures/graves.rs`): a burial
+    /// What is cut in its graves, by position (`world/fixtures/graves.rs`): a burial
     /// ground's fixed graves and the run's dead laid there. Decoration, read by no rule and left
     /// out of the state hash; the player reads one in look mode.
     #[serde(
@@ -99,7 +99,7 @@ pub struct LevelState {
         with = "by_pos"
     )]
     pub(crate) graves: BTreeMap<Pos, String>,
-    /// The cells the run's dead changed (spec §7 "Graves"; `world/fixtures/graves.rs`): each place
+    /// The cells the run's dead changed (`world/fixtures/graves.rs`): each place
     /// filled and the way down opened, with the terrain it had before. Decoration like
     /// `graves`: the state hash sees the level as without them ([`LevelState::unburied`]).
     #[serde(
@@ -108,11 +108,11 @@ pub struct LevelState {
         with = "by_pos"
     )]
     pub(crate) buried: BTreeMap<Pos, TerrainId>,
-    /// Secret doors not yet found, by position (spec §8 "Searching"): the cell's terrain is the
+    /// Secret doors not yet found, by position: the cell's terrain is the
     /// wall each looks like; found, it becomes its door and is gone from here. Ground truth.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty", with = "by_pos")]
     pub(crate) secrets: BTreeMap<Pos, Secret>,
-    /// Hidden locations not yet revealed, by position (spec §7 "Hidden locations"; the
+    /// Hidden locations not yet revealed, by position (the
     /// overworld only): the cell's terrain is the plain terrain each shows; revealed, it becomes
     /// its entrance and is gone from here. Ground truth.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty", with = "by_pos")]
@@ -121,41 +121,41 @@ pub struct LevelState {
     /// A hand-made level's stay in its template ([`Self::place`] reads both).
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty", with = "by_pos")]
     pub(crate) places: BTreeMap<Pos, Place>,
-    /// The breaches of sealed rooms the player has found (spec §7 "Special rooms": a greater
+    /// The breaches of sealed rooms the player has found (a greater
     /// treasure room's), by position: walls that sound hollow, which look mode names. Gone once
     /// the wall is broken.
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
     pub(crate) hollows: BTreeSet<Pos>,
-    /// Blood on cells, by position (spec §8 "Blood"). Presentation-only: no rule reads it.
+    /// Blood on cells, by position. Presentation-only: no rule reads it.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty", with = "by_pos")]
     pub(crate) blood: BTreeMap<Pos, Stain>,
     /// Blood as the player last saw it, by position (like remembered piles).
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty", with = "by_pos")]
     pub(crate) blood_memory: BTreeMap<Pos, Stain>,
-    /// Char on cells, by position (spec §8 "Blood", [`crate::scorch`]). Presentation-only: no
+    /// Char on cells, by position ([`crate::scorch`]). Presentation-only: no
     /// rule reads it.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty", with = "by_pos")]
     pub(crate) scorch: BTreeMap<Pos, Stain>,
     /// Char as the player last saw it, by position (as blood's).
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty", with = "by_pos")]
     pub(crate) scorch_memory: BTreeMap<Pos, Stain>,
-    /// Walls dug into and still standing, by position (spec §8 "Digging"): the work done on each,
+    /// Walls dug into and still standing, by position: the work done on each,
     /// in [`crate::world::crafting::dig::WORK_SCALE`]ths of the work its hardness counts.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty", with = "by_pos")]
     pub(crate) dug: BTreeMap<Pos, u32>,
-    /// Special rooms (spec §7 "Special rooms"), none overlapping another, each with whether the
+    /// Special rooms, none overlapping another, each with whether the
     /// player has been inside it.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub(crate) rooms: Vec<SpecialRoom>,
-    /// The effect that covers the whole level, if one does (spec §7 "Special rooms": a level
+    /// The effect that covers the whole level, if one does (a level
     /// file's `effect`, or a generated level's rare draw).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) pervading: Option<RoomEffectId>,
-    /// The dead due to rise from their corpses (spec §7 "Special rooms": a cursed room;
+    /// The dead due to rise from their corpses (a cursed room;
     /// `world/fixtures/curse.rs`), in the order they died.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub(crate) risings: Vec<Rising>,
-    /// The ground hallowed by Sanctuary (spec §7 "Special rooms": hallowed ground;
+    /// The ground hallowed by Sanctuary (hallowed ground;
     /// `world/classes/sanctuary.rs`), in the order laid; one past its end is dropped at the end of a turn.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub(crate) hallows: Vec<crate::world::Hallow>,
@@ -166,7 +166,7 @@ pub struct LevelState {
     /// The zones as the player last saw them, by position: a cell seen clear is forgotten.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty", with = "by_pos")]
     pub(crate) zone_memory: BTreeMap<Pos, crate::content::ZoneKind>,
-    /// Traps, by position (spec §8 "Traps"), hidden or known; a spent one is gone.
+    /// Traps, by position, hidden or known; a spent one is gone.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty", with = "by_pos")]
     pub(crate) traps: BTreeMap<Pos, Trap>,
     /// Known traps as the player last saw them, by position: a trap seen gone is forgotten.
@@ -176,17 +176,17 @@ pub struct LevelState {
     /// the month, the time of day, and the weather ([`crate::temperature`]).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) temperature: Option<Temperature>,
-    /// Ice on water, by position (spec §5 "Ice"; [`crate::ice`]): its thickness and the water
+    /// Ice on water, by position ([`crate::ice`]): its thickness and the water
     /// beneath. A cell shows the ice terrain its thickness reaches, else the water.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty", with = "by_pos")]
     pub(crate) ice: BTreeMap<Pos, Ice>,
     /// When the ice was last brought up to date: a tick of the clock ([`crate::ice::TICK`]).
     pub(crate) ice_until: GameTime,
-    /// Shops (spec §7 "Shops"), none overlapping another: who keeps each, what the player owes
+    /// Shops, none overlapping another: who keeps each, what the player owes
     /// there, and how its keeper stands toward them.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub(crate) shops: Vec<Shop>,
-    /// What comes to the level over time (spec §7 "Danger levels"; `world/creatures/spawn.rs`): only on a
+    /// What comes to the level over time (`world/creatures/spawn.rs`): only on a
     /// level with a danger rule, so every other level's state is as it was.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) spawner: Option<Spawner>,
@@ -293,7 +293,7 @@ impl LevelState {
 
     /// The energy price of stepping onto `terrain` here for an actor whose step costs `step`
     /// (its cost of [`crate::content::ActionKind::Step`]). This is how the rules decide movement
-    /// time (spec §8 "Time"; [`TerrainDef::step_price`]): on local levels a step is the step's
+    /// time ([`TerrainDef::step_price`]): on local levels a step is the step's
     /// cost scaled by the terrain's `move_cost` percent over the 6-second base; on the overworld
     /// it is the step's cost over the terrain's `travel_minutes` (content validation guarantees
     /// walkable overworld terrain has them). The actor's speed then decides how long it takes.
@@ -339,7 +339,7 @@ impl LevelState {
         &self.statues
     }
 
-    /// What is cut in its gravestones, by position (spec §7 "Graves"; `world/fixtures/graves.rs`).
+    /// What is cut in its gravestones, by position (`world/fixtures/graves.rs`).
     pub fn graves(&self) -> &BTreeMap<Pos, String> {
         &self.graves
     }
@@ -351,7 +351,7 @@ impl LevelState {
         self.secrets.get(&p)
     }
 
-    /// Whether `p` is a sealed room's breach still standing (spec §7 "Special rooms"): the wall a
+    /// Whether `p` is a sealed room's breach still standing: the wall a
     /// greater treasure room is guaranteed to open by, found or not. Ground truth.
     pub fn breach_at(&self, content: &Content, p: Pos) -> bool {
         self.rooms.iter().any(|r| r.breach == Some(p)) && !self.is_walkable(content, p)
@@ -370,7 +370,7 @@ impl LevelState {
     }
 
     /// Blood of `color` lands here at `now`: on a cell whose terrain holds it, it adds to the
-    /// stain there (spec §8 "Blood"); water, lava, and the like take none.
+    /// stain there; water, lava, and the like take none.
     pub(crate) fn stain(&mut self, content: &Content, spatter: Spatter, color: Rgb, now: GameTime) {
         let holds = (self.terrain.get(spatter.at)).is_some_and(|t| content.terrain(*t).stains);
         if !holds || spatter.amount == 0 {
@@ -383,7 +383,7 @@ impl LevelState {
             .or_insert_with(|| Stain::new(amount, color, now, face));
     }
 
-    /// Char of `colors` lands here at `now` (spec §8 "Blood", [`crate::scorch`]): on a cell whose
+    /// Char of `colors` lands here at `now` ([`crate::scorch`]): on a cell whose
     /// terrain holds stains, it adds to the char there; water, lava, and the like take none.
     pub(crate) fn char(
         &mut self,
@@ -437,7 +437,7 @@ impl LevelState {
         self.pervading
     }
 
-    /// What the special rooms do at `p` (spec §7 "Special rooms"): the effect of the room there,
+    /// What the special rooms do at `p`: the effect of the room there,
     /// then the level's. The one question the rules ask of special rooms (light, creature sight,
     /// noise, regeneration, creatures that shun a sanctuary). [`crate::World::effects_at`] asks
     /// it of any level.
@@ -450,9 +450,9 @@ impl LevelState {
         Here { room, level }
     }
 
-    /// `light` at `p` as the special rooms there leave it: a shadowed room keeps only part of it
-    /// (spec §5 "Special rooms"). Every part of a cell's light goes through this: its base light
-    /// and each source's contribution, so they still add up to the whole.
+    /// `light` at `p` as the special rooms there leave it: a shadowed room keeps only part of it.
+    /// Every part of a cell's light goes through this: its base light and each source's
+    /// contribution, so they still add up to the whole.
     pub(crate) fn room_shade(&self, content: &Content, p: Pos, light: Light) -> Light {
         self.effects_at(content, p).shade(light)
     }

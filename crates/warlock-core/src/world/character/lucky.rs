@@ -1,4 +1,4 @@
-//! The lucky days' gifts that are more than one read at a hook (spec §8 "Birth sign"; the
+//! The lucky days' gifts that are more than one read at a hook (the
 //! `stars` tree's talents a `[[lucky]]` grants): the Firebird's Reborn whole, read as the Phoenix
 //! rises (`stars.rs`), and the Deep One's Drowning grip, the hold a melee hit puts on a creature
 //! ([`crate::talent::OffenceMods::grip`]). The Iron Scourge's and the Gate Warden's gifts are

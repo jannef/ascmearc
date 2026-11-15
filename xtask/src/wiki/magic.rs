@@ -1,4 +1,4 @@
-//! Magic items (spec §8 "Magic items"): rarity, base items, prefixes, suffixes, and rare names.
+//! Magic items: rarity, base items, prefixes, suffixes, and rare names.
 
 use super::order;
 use super::util::{capital, percent_of};
@@ -20,8 +20,7 @@ pub(super) fn suffixes(content: &Content) -> String {
     affix_table(content, AffixKind::Suffix)
 }
 
-/// How often loot is normal, magic, or rare, and how many affixes magic and rare items roll
-/// (spec §8 "Magic items").
+/// How often loot is normal, magic, or rare, and how many affixes magic and rare items roll.
 pub(super) fn magic_rarity(content: &Content) -> String {
     let affixes = content.affixes();
     let total: u32 = Rarity::ALL.iter().map(|&r| affixes.rarity_weight(r)).sum();

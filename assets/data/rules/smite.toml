@@ -1,4 +1,4 @@
-# Smiting (spec §8 "Class abilities": "Smite"; docs/design/paladin-smites.md). Optional: without
+# Smiting (docs/design/paladin-smites.md). Optional: without
 # it nothing is unholy and no sin empties a pool (fixtures).
 [smite]
 # What holy wrath falls hardest on: a creature type carrying any of these tags takes the smite's

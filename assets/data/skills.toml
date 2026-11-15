@@ -1,4 +1,4 @@
-# Skills (spec §8 "Skills"; #132), ADOM-like: what a character or creature has trained in. The
+# Skills (#132), ADOM-like: what a character or creature has trained in. The
 # Skills screen lists them in the order they are read, by id. Adding a skill is one file in skills/.
 #
 # An actor is trained in some skills, each with a value (0 to 999; 100 is a master, and points
@@ -10,7 +10,7 @@
 #
 # The skills themselves are one file each under skills/ (fields: skills/README.toml).
 
-# How skills grow (spec §8 "Skills", ADOM-like): by skill rolls. Every level gives skill rolls
+# How skills grow (ADOM-like): by skill rolls. Every level gives skill rolls
 # (the class's `rolls`, classes/README.toml; the race's, races.toml; and Intelligence's, below),
 # each spent by the player on a trained skill of their choice (`advance:SKILL`). A roll throws the
 # die its skill's training marks have reached on the ladder, one step up for a skill the class is

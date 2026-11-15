@@ -1,4 +1,4 @@
-//! Ruin (spec §8 "Spells": "Ruin"; #1100): an area spell's damage type ruins the items lying in
+//! Ruin (#1100): an area spell's damage type ruins the items lying in
 //! it by `data/ruin.toml`; quest objects, uniques, and what is carried are spared; the draws are
 //! the ruin stream's alone.
 

@@ -1,4 +1,4 @@
-//! How often items are made of each material (#1191, spec §7 "Materials"): the base material
+//! How often items are made of each material (#1191): the base material
 //! dominates, a material that suits the item poorly is rare and an odd one very rare, and a
 //! creature's faction favours its own materials within the item's construction list.
 

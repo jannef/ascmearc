@@ -1,4 +1,4 @@
-//! Spells in data (spec §8 "Traps", "Spells"): the bursts and bolts that traps
+//! Spells in data: the bursts and bolts that traps
 //! (`data/traps.toml`) cast, with the rules and checks the spells of `data/spells/` share (their
 //! bursts and lines go off through the same code). Who casts one decides only who deals its harm
 //! (`world/magic/spell.rs`).
@@ -13,7 +13,7 @@
 //!
 //! Both name the `spell` effect presentation shows (`data/effects.toml`), which must be an
 //! effect of their shape when that file exists ([`check_effect`]), and the kind of damage they
-//! do (`damage_type`, spec §8 "Damage types": the fireball fire, the frost cold, the lightning
+//! do (`damage_type`: the fireball fire, the frost cold, the lightning
 //! electricity), which the targets resist and no armour soaks.
 
 use super::effect::EffectShape;
@@ -21,7 +21,7 @@ use super::{Content, DamageTypeId};
 use crate::dice::{Dice, Roll};
 use crate::ice;
 
-/// What a burst does to the ice and the water it reaches (spec §5 "Ice").
+/// What a burst does to the ice and the water it reaches.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum BurstIce {
     /// Heat (a fireball): it melts all the ice, and whoever stood on it falls in.
@@ -41,12 +41,12 @@ pub struct Burst {
     /// A die of its roll showing this or less is drawn once more (a caster's roll hook; a
     /// trap's 0).
     pub reroll: u32,
-    /// The kind of damage it does (spec §8 "Damage types"); `None` without damage types.
+    /// The kind of damage it does; `None` without damage types.
     pub kind: Option<DamageTypeId>,
-    /// What it does to walls (spec §8 "Digging"): it breaks those in the blast whose hardness is
+    /// What it does to walls: it breaks those in the blast whose hardness is
     /// below this; 0 breaks none.
     pub blast: u16,
-    /// What it does to the ice and water it reaches (spec §5 "Ice"), if anything.
+    /// What it does to the ice and water it reaches, if anything.
     pub ice: Option<BurstIce>,
 }
 
@@ -60,7 +60,7 @@ pub struct Bolt {
     /// A die of its roll showing this or less is drawn once more (a caster's roll hook; a
     /// trap's 0).
     pub reroll: u32,
-    /// The kind of damage it does (spec §8 "Damage types"); `None` without damage types.
+    /// The kind of damage it does; `None` without damage types.
     pub kind: Option<DamageTypeId>,
 }
 

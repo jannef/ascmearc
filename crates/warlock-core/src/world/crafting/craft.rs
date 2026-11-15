@@ -1,4 +1,4 @@
-//! Crafting by recipe (spec §8 "Skills": professions; docs/design/professions.md §6, §8;
+//! Crafting by recipe (professions; docs/design/professions.md §6, §8;
 //! docs/dev/crafting.md): what a profession's screen lists, and [`Action::Craft`].
 //!
 //! - **The rows** ([`recipe_rows`], what [`PerceptionView::recipes`] reads): a profession's

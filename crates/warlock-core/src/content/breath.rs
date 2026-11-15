@@ -1,4 +1,4 @@
-//! A dragon's breath (spec §8 "Creature behavior": "Dragons", #1099): `[creature.breath]`, the
+//! A dragon's breath (#1099): `[creature.breath]`, the
 //! enemy-only cone of its element that a `combat = "dragon"` type breathes whenever it is ready.
 //! The rules are `world/creatures/breath.rs`.
 //!

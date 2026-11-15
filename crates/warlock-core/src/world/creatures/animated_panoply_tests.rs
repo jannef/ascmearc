@@ -1,4 +1,4 @@
-//! Hollow armour and panoplies (spec §8 "Animated objects", #486): the composites. Their
+//! Hollow armour and panoplies (#486): the composites. Their
 //! families and numbers by the hollow and standard roles; what they are made of (slot lines tried
 //! from their level, a line tried twice for the rings, the shield passed over beside a two-handed
 //! weapon, ranks in the weapon's skill and in Sword and board); the powers of what they wear and

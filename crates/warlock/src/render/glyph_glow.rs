@@ -1,4 +1,4 @@
-//! The circled actors' glyphs (spec §4.8 "Spell circles": a circled actor's glyph glows and
+//! The circled actors' glyphs (a circled actor's glyph glows and
 //! glints): each glyph a circled actor shows, rasterised once from the map font into a square
 //! slot a cell height wide, ink centred, so the circle shader can draw its halo and its glints
 //! about the glyph the free-glyph layer draws.

@@ -26,9 +26,9 @@ pub(super) fn zone_rows(world: &World) -> Vec<String> {
         .collect()
 }
 
-/// Dev: the header of the `truth` and `actors` layers on a level with a danger rule (spec §7
-/// "Danger levels"): `danger 3 population 2/6 spawn next 08:15:00`, its creatures hostile to
-/// the player against its cap; none elsewhere.
+/// Dev: the header of the `truth` and `actors` layers on a level with a danger rule: `danger 3
+/// population 2/6 spawn next 08:15:00`, its creatures hostile to the player against its cap; none
+/// elsewhere.
 pub(super) fn spawn_header(world: &World) -> Vec<String> {
     let Some((danger, hostiles, cap, next)) = world.spawn_status() else {
         return Vec::new();
@@ -44,9 +44,9 @@ pub(super) fn spawn_header(world: &World) -> Vec<String> {
     )]
 }
 
-/// Dev: the header of the `truth` layer on the overworld where encounters are rolled (spec §7
-/// "Overworld encounters"): `encounter rate here 300 bp/h, tables: roads, vale`, the rate with
-/// the phase of the day and the matching tables' percents; none elsewhere.
+/// Dev: the header of the `truth` layer on the overworld where encounters are rolled: `encounter
+/// rate here 300 bp/h, tables: roads, vale`, the rate with the phase of the day and the matching
+/// tables' percents; none elsewhere.
 pub(super) fn encounter_header(world: &World) -> Vec<String> {
     let Some(rate) = world.encounter_rate_here() else {
         return Vec::new();
@@ -60,7 +60,7 @@ pub(super) fn encounter_header(world: &World) -> Vec<String> {
     vec![format!("encounter rate here {rate} bp/h, tables: {tables}")]
 }
 
-/// Dev: the risings due on the current level (spec §7 "Special rooms": a cursed room), one a
+/// Dev: the risings due on the current level (a cursed room), one a
 /// line in the order they died: `rising goblin at (12, 5) as zombie at 08:15:00`.
 pub(super) fn rising_rows(world: &World) -> Vec<String> {
     let content = world.content();
@@ -94,9 +94,9 @@ pub(super) fn truth_rows(world: &World) -> Vec<String> {
             (None, Some(trap), _) => content.trap(trap.kind).glyph,
             (None, None, Some(top)) => content.object(top.object).glyph,
             (None, None, None) if level.secret_at(p).is_some() => 'S',
-            // A sealed room's breach while it stands (spec §7 "Special rooms").
+            // A sealed room's breach while it stands.
             (None, None, None) if level.breach_at(content, p) => 'H',
-            // A hidden location by its entrance's glyph (spec §7 "Hidden locations").
+            // A hidden location by its entrance's glyph.
             (None, None, None) => (level.hidden_at(p).map(|h| h.terrain))
                 .or(level.terrain_at(p))
                 .map_or(' ', |t| content.terrain(t).glyph),
@@ -123,7 +123,7 @@ pub(super) fn hallow_rows(world: &World) -> Vec<String> {
         .collect()
 }
 
-/// Dev: the chests on the current level (spec §8 "Chests"; ground truth), one a line by
+/// Dev: the chests on the current level (ground truth), one a line by
 /// position: `chest 7 (hutch) at (12, 5): shut, locked, trapped (arrow), holds 3 stacks`.
 pub(super) fn chest_rows(world: &World) -> Vec<String> {
     let content = world.content();
@@ -180,8 +180,8 @@ pub(super) fn statue_rows(world: &World) -> Vec<String> {
         .collect()
 }
 
-/// Dev: a line per Pit the run keeps a record of, wherever the player is (spec §7 "The Pits";
-/// `world/levels/pit.rs`): `pit 7 from depths:3: open` (`sealed` once its warden is dead).
+/// Dev: a line per Pit the run keeps a record of, wherever the player is (`world/levels/pit.rs`):
+/// `pit 7 from depths:3: open` (`sealed` once its warden is dead).
 pub(super) fn pit_rows(world: &World) -> Vec<String> {
     (world.state().pits().iter())
         .map(|(s, pit)| {
@@ -191,7 +191,7 @@ pub(super) fn pit_rows(world: &World) -> Vec<String> {
         .collect()
 }
 
-/// A line per gravestone on the level with what is cut in it (spec §7 "Graves"; ground truth
+/// A line per gravestone on the level with what is cut in it (ground truth
 /// for every stone, read or not): `grave at (12, 5): Here lies Ælfric Wudu, 1381–1427.`
 pub(super) fn grave_rows(world: &World) -> Vec<String> {
     let (level, _) = world.ground_truth();

@@ -1,4 +1,4 @@
-# An elixir of wit (spec §8 "Potions"): intelligence +1 for good, its potential +1d2. Elixirs are gold.
+# An elixir of wit: intelligence +1 for good, its potential +1d2. Elixirs are gold.
 [[object]]
 id = "elixir_of_wit"
 name = "elixir of wit"

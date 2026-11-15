@@ -27,7 +27,7 @@ damage = "intelligence 13 8d6, 16 10d6, 19 12d6, 25 12d6+3"
 range = "willpower 14 9, 18 10"
 count = "willpower 14 4, 18 5, 22 6"
 
-# What rereading its grimoire adds, rank by rank (spec §8 "Spells": "Ranks"; README.toml
+# What rereading its grimoire adds, rank by rank (README.toml
 # `[spell.ranks]`). At rank 10: +2 on the roll, two cells farther, 1s rolled again, two dice
 # more, a fifth off the mana, and a third off the casting time. Its leaps grow with Willpower
 # alone ([spell.grows] `count`): a rank adds no leap.

@@ -1,6 +1,6 @@
 # Potions
 
-Spec §8 "Potions" (`spec/08g-magic-items.md`); the combat progression design §10
+The rules are `spec/11-magic.md` "Potions and flasks"; the combat progression design §10
 (`docs/design/combat-progression.md`); #565 (Q1: the kinds `heal`, `cure`, `mana`, `harm`); #567
 (Q2: `boost`, `vision`, `haste`, `resistance`, their thirteen statuses, Lasting draughts);
 #568 (Q3: `elixir`); the potions wave 2 design (`docs/design/potions-wave-2.md`) S2, #1224:

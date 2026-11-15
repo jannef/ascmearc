@@ -1,4 +1,4 @@
-# Unidentified rods (spec §8 "Magic items": "Rods"), as unidentified wands are (the format of
+# Unidentified rods, as unidentified wands are (the format of
 # scroll_labels.toml): a rod type the player has not yet used or identified shows as "a pewter
 # rod" (and in one plain colour) until they do. Every rod type gets its own label at the start of
 # a run, drawn after the wands' labels from the same stream, so this file never changes a

@@ -1,4 +1,4 @@
-//! Animated objects (spec §8 "Animated objects"; docs/dev/animated.md): `data/animated.toml` (the
+//! Animated objects (docs/dev/animated.md): `data/animated.toml` (the
 //! tiers, the drop rule, what every animated type is) and `data/animated/` (the household bodies,
 //! one file each). Each body becomes an ordinary creature type when content loads,
 //! `animated_<body>`, at the body's level, and each tier without bodies one type per level of
@@ -61,7 +61,7 @@ pub struct Animated {
     pub lines: Vec<Vec<Line>>,
 }
 
-/// What becomes of what an animated thing is made of when it falls (spec §8 "Animated objects").
+/// What becomes of what an animated thing is made of when it falls.
 #[derive(Clone, Copy, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Drops {
@@ -170,7 +170,7 @@ pub struct Tier {
     /// Whether its types open doors (gauntlets).
     #[serde(default)]
     pub opens_doors: bool,
-    /// The words of its lesser and greater grade (spec §8 "Grades"; the blades' "notched" and
+    /// The words of its lesser and greater grade (the blades' "notched" and
     /// "keen"): with them its types are graded, without them never (the household things, the
     /// composites).
     pub grade_words: Option<[String; 2]>,
@@ -684,7 +684,7 @@ fn family_lines(tier: &Tier, content: &Content) -> Result<Vec<Line>, String> {
 }
 
 impl Content {
-    /// The first type of creature type `creature`'s family (spec §8 "Animated objects"): the
+    /// The first type of creature type `creature`'s family: the
     /// first of an animated tier's run of levels (`animated_blade_5` for every blade); any other
     /// type is its own.
     pub fn family(&self, creature: CreatureId) -> CreatureId {

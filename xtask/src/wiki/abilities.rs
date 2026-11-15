@@ -1,4 +1,4 @@
-//! Abilities (spec §6 "Abilities"): every ability the abilities menu can list, from the one
+//! Abilities: every ability the abilities menu can list, from the one
 //! registry (`warlock_core::ability`).
 
 use super::util::{Term, anchored, at_normal_pace, link, percent_of};
@@ -406,7 +406,7 @@ fn aim(aim: Aim) -> &'static str {
     }
 }
 
-/// The songs (spec §8 "Class abilities", the bard's songs): every talent with a `song` effect,
+/// The songs (the bard's songs): every talent with a `song` effect,
 /// by name, with who sings it, what it is paid in, whom it is sung over, the status it brings,
 /// and the check its hearers make.
 pub(super) fn songs(content: &Content) -> String {

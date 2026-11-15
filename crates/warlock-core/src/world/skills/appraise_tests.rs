@@ -1,4 +1,4 @@
-//! Appraise (spec §8 "Skills"; #666): each game hour a player trained in it may tell one
+//! Appraise (#666): each game hour a player trained in it may tell one
 //! unidentified thing they carry or wear for what it is, by a chance its value sets; Negotiation
 //! has the shops' prices it once had.
 

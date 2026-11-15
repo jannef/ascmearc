@@ -37,8 +37,7 @@ pub enum Layer {
     Equipment,
     /// Not a map: the player's character (`Race Dwarf`, `Gender Female`, `Class Warrior`), if
     /// any, then their own scores, one stat a line (`Strength 12`, lowered while a status effect
-    /// or stat damage lowers it), then their alignment band (`Alignment Kind`; spec §8
-    /// "Alignment", never the score), then their status effects by name (`Effects Bleeding,
+    /// or stat damage lowers it), then their alignment band (`Alignment Kind`, never the score), then their status effects by name (`Effects Bleeding,
     /// Diseased`), the creature their openings are in (`Mark the kobold`), and the diseases they know they have (`Diseases filth fever`) if any; never
     /// potentials, modifiers, how severe an effect is, or a disease's timers.
     Stats,
@@ -61,12 +60,12 @@ pub enum Layer {
     /// source and what it asks for, or why it cannot be used now (`Shield bash (weapon skill):
     /// a direction`, `Steal (skill): not usable yet`).
     Abilities,
-    /// Not a map: every profession's recipes as its screen lists them for the player (spec §8
-    /// "Skills"; `world/crafting/craft.rs`), a `Metalcraft:` line per profession they have, then one a
-    /// line with what each takes and why it cannot be made now (`Temper: a metal weapon or
-    /// armour, an anvil, about 10 minutes (no anvil beside you)`).
+    /// Not a map: every profession's recipes as its screen lists them for the player
+    /// (`world/crafting/craft.rs`), a `Metalcraft:` line per profession they have, then one a line
+    /// with what each takes and why it cannot be made now (`Temper: a metal weapon or armour, an
+    /// anvil, about 10 minutes (no anvil beside you)`).
     Recipes,
-    /// Not a map: the spells the player knows (spec §8 "Spells"), one a line in menu order with
+    /// Not a map: the spells the player knows, one a line in menu order with
     /// its tier and what it costs them now (`Frost: tier 2, 14 mana`), then the scrolls they
     /// could study, by position, with the chance in words (`study c, scroll of fireball: Fire
     /// burst, far beyond you`); never the number.
@@ -78,10 +77,10 @@ pub enum Layer {
     /// The Hall`), from what they see and remember (a hidden location only once revealed);
     /// `no known locations` elsewhere or when there are none.
     Locations,
-    /// Not a map: the player's background story (spec §8 "Background story"), a paragraph a
+    /// Not a map: the player's background story, a paragraph a
     /// line as the story screen tells it, a blank line between; `no story` without one.
     Story,
-    /// The player's companion as they know it (spec §8 "Allies"): its name, type, grade, cell
+    /// The player's companion as they know it: its name, type, grade, cell
     /// (where seen), health in words, and order; `no companion` without one.
     Companion,
     /// The player's familiar, as the companion layer says a companion (`world/allies/familiar.rs`);
@@ -101,7 +100,7 @@ pub enum Layer {
     /// the player's nutrition, then every corpse on the level and in the player's pack with its
     /// age (ground truth). **Dev-only.**
     Actors,
-    /// Not a map: the player's progression (spec §8 "Talents"): the choices a level still asks
+    /// Not a map: the player's progression: the choices a level still asks
     /// for (`due level 3: 3 skill rolls, 1 talent`), where a level's skill rolls come from
     /// (`rolls a level 3 (class 2, race 1, intelligence 0, talents 0)`) and the dice a roll on
     /// each trained skill adds (`roll dice athletics 1d3, balance +2`; `/2` past the soft cap),
@@ -116,7 +115,7 @@ pub enum Layer {
     /// patron (`patron 3 taken, open long_sword`), and the named monsters dead
     /// (`slain fire_drake`). **Dev-only.**
     Progress,
-    /// The level's special rooms (spec §7 "Special rooms"; ground truth): the terrain, with the
+    /// The level's special rooms (ground truth): the terrain, with the
     /// plain ground of each special room drawn as its effect's `mark`, then a line per room
     /// (`s shadowed room at (12, 3)-(20, 9), entered`). **Dev-only.**
     Rooms,

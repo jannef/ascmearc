@@ -1,4 +1,4 @@
-//! The unstable room (spec §7 "Special rooms", design §9.6; `world/fixtures/warp.rs`): every step inside,
+//! The unstable room (design §9.6; `world/fixtures/warp.rs`): every step inside,
 //! the player's or a creature's, has a tenth's chance to move the stepper elsewhere on the level
 //! as a teleport trap does, said with the trap's own lines; steps outside never do.
 

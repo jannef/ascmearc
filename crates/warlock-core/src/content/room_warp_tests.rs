@@ -1,4 +1,4 @@
-//! A special room's `warp` (spec §7 "Special rooms"): parsed, defaulted, refused below 0, and
+//! A special room's `warp`: parsed, defaulted, refused below 0, and
 //! folded by [`Here::warp`].
 
 use super::{Here, RoomEffectId, RoomEffects};

@@ -1,4 +1,4 @@
-//! Scriptoria in generated levels (spec §7 "Special rooms", `room_loot.rs`): shelves at the
+//! Scriptoria in generated levels (`room_loot.rs`): shelves at the
 //! room's middle, two to four scrolls on its floor from the swarm stream, and the rest of the
 //! level the same as without them.
 

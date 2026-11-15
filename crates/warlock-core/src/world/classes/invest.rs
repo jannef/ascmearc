@@ -1,4 +1,4 @@
-//! The merchant's investment (spec §8 "Class abilities": Invest; #1407).
+//! The merchant's investment (Invest; #1407).
 //!
 //! A character with the Invest class ability (`FortuneMods::invest`, the merchant's from level 1)
 //! has a business partner in town: a town's class helper for `invest` (`content/town.rs`),

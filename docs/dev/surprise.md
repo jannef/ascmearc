@@ -1,7 +1,7 @@
 # Surprise
 
 Developer notes for working on this part of Warlock; the rules it implements are in
-spec/08c-combat.md ("Surprise and sneak attacks"), the design in
+spec/10-combat.md ("Surprise and sneak attacks"), the design in
 `docs/design/surprise-and-sneak-attacks.md` (its slices: #681 S1, then #682–#688, all landed).
 Keep it current with the code, as CLAUDE.md says.
 

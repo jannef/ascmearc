@@ -1,4 +1,4 @@
-//! Chests on generated floors (spec §8 "Chests", `chest.rs`; docs/design/chests-and-treasure.md
+//! Chests on generated floors (`chest.rs`; docs/design/chests-and-treasure.md
 //! §3.3, §4, §8): one floor in five, on open floor that stays joined, from the level's own chest
 //! stream, so the rest of the level is the same without them; their loot as the bands' tables
 //! say.

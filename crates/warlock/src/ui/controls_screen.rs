@@ -1,4 +1,4 @@
-//! The controls screen and rebinding UI (spec §6): select a command, press a key to bind it.
+//! The controls screen and rebinding UI: select a command, press a key to bind it.
 //!
 //! Commands are listed by context (`input::Context`: in play, aiming, `--more--`, menus and
 //! screens, text fields, info pages; the developer keys F2 to F9 are fixed, `input::dev`), then, at

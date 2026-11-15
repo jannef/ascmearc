@@ -1,4 +1,4 @@
-# A scroll of unbinding (spec §8 "Scrolls", "Spells"): read it (`r`), and it casts Unbinding, a
+# A scroll of unbinding: read it (`r`), and it casts Unbinding, a
 # level-8 spell, at its own rungs, free of mana; its grimoire teaches the spell for good. Level and
 # frequency by its spell's level (README.toml): the lower, the commoner the scroll.
 [[object]]

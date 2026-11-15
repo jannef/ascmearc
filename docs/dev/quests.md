@@ -1,9 +1,9 @@
 # Quests
 
 Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
-rules it implements are in spec/08b-creatures.md. Keep it current with the code, as CLAUDE.md says.
+rules it implements are in spec/09-creatures.md. Keep it current with the code, as CLAUDE.md says.
 
-Quests (spec §8 "Quests", #148): `content/quest.rs` loads the `quests` table (`data/quests.toml`, the field reference, and each
+Quests (#148): `content/quest.rs` loads the `quests` table (`data/quests.toml`, the field reference, and each
 campaign's `data/quests/`; the showcase's four in `campaigns/showcase/data/quests/showcase.toml`) after levels and
 dungeons (`QuestDef`: `giver` a `DialogueId`, `Goal::{Kill, Bring, Reach, Deliver}`, `Reward`,
 `QuestTexts`, `requires` (a list: every quest named must be done; the file takes one id or a

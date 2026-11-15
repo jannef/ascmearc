@@ -1,4 +1,4 @@
-//! A skill taught for gold (`does = "train_skill"`, #1391; spec §8 "Dialogue": "Services"): a
+//! A skill taught for gold (`does = "train_skill"`, #1391): a
 //! fixture teacher who trains Mining, the skill digging needs. Listed while the player is
 //! untrained, the price paid, the skill at the data's value, gone once trained, refusals for
 //! nothing, digging refused before and allowed after, saves and replays, and the load checks.

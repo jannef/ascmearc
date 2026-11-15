@@ -1,4 +1,4 @@
-//! Temperature (spec §5 "Temperature") and ice (spec §5 "Ice"): the months, the weather, what
+//! Temperature and ice: the months, the weather, what
 //! freezes, what ice holds, and how fast it grows.
 
 use super::util::{at_normal_pace, capital};
@@ -16,7 +16,7 @@ fn degrees(t: Temperature) -> String {
 }
 
 /// Each month's mean temperature under the open sky, and how cold a clear night and how warm a
-/// clear afternoon get in the middle of it (spec §5 "Temperature").
+/// clear afternoon get in the middle of it.
 pub(super) fn temperatures(content: &Content) -> String {
     let climate = content.climate();
     let half_swing = i32::from(climate.swing()) * 5;
@@ -64,7 +64,7 @@ pub(super) fn temperature_weather(content: &Content) -> String {
     out
 }
 
-/// What water freezes and how (spec §5 "Ice").
+/// What water freezes and how.
 pub(super) fn freezing(content: &Content) -> String {
     let mut out = String::from(
         "| Water | Ice grows below | How fast | A fall through the ice |\n|---|---:|---:|---|\n",
@@ -93,7 +93,7 @@ pub(super) fn freezing(content: &Content) -> String {
     out
 }
 
-/// What ice looks like by its thickness, and what it holds (spec §5 "Ice").
+/// What ice looks like by its thickness, and what it holds.
 pub(super) fn ice_thickness(content: &Content) -> String {
     let step = content.action_costs().cost(ActionKind::Step);
     let tiers = content.ice_terrain();
@@ -130,7 +130,7 @@ pub(super) fn ice_thickness(content: &Content) -> String {
 }
 
 /// How long still water takes to freeze over to each thickness of ice at a few steady
-/// temperatures (spec §5 "Ice").
+/// temperatures.
 pub(super) fn ice_growth(content: &Content) -> String {
     let Some(still) = content
         .terrain_defs()

@@ -1,4 +1,4 @@
-//! Services (spec §8 "Services"; the campaign design §6.1, #329, #432, #1391): a cure, a
+//! Services (the campaign design §6.1, #329, #432, #1391): a cure, a
 //! mending, an identification, or a skill taught, sold for gold by someone whose dialogue has a
 //! `[[dialogue.service]]`.
 //!
@@ -15,7 +15,7 @@
 //!   (`data/diseases.toml`), incubating ones too: the speaker sees what the player does not
 //!   yet. The cure events say what ended.
 //! - **`mend`**: [`World::mend`]: every point of stat damage comes back at once, and every point
-//!   drains took (spec §8 "Stats": "Drain"; asked for with only drained points, it mends too).
+//!   drains took (asked for with only drained points, it mends too).
 //! - **`identify`** (#432): every inventory stack the player does not fully know
 //!   ([`World::unidentified`]: unknown magic, or an unidentified scroll type) is identified in
 //!   one go through [`World::identify`], each saying what it turned out to be. Its price is per

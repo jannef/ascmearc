@@ -1,7 +1,7 @@
 # Settings
 
 Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
-rules it implements are in spec/06-input-and-ui.md. Keep it current with the code, as CLAUDE.md says.
+rules it implements are in spec/05-interface.md. Keep it current with the code, as CLAUDE.md says.
 
 Settings (`crates/warlock/src/settings/`): `settings.toml` in the config dir, schema in the `settings/mod.rs` module docs (the config dir also keeps `graveyard.toml`, the dead, append-only and unpinned: `docs/dev/saves.md` "The graveyard"). Changes
 apply live and are written at once; a bad file means defaults plus a warning, per value. A file
@@ -25,7 +25,7 @@ in the UI (`Clock::format`: status bar, death screen); dumps stay 24-hour. Palet
 (`settings/palette.rs`) are applied only when cells are uploaded to the GPU (`render::upload`) and
 in `ui/glyphs.rs`, never to content colors.
 
-Key bindings (spec §6 "Rebinding", #159) are the `Bindings` resource (`settings/bindings.rs`; text forms,
+Key bindings (#159) are the `Bindings` resource (`settings/bindings.rs`; text forms,
 ids, and the rules in `settings/keys.rs`). **Only play-context commands are rebindable by
 design; the keys of menus, menu lists, screens, info pages, prompts, dialogs, text fields, and the
 targeting mode are fixed** (owner, 2026-10-26; #1533), plain keys in `settings/fixed.rs`, which
@@ -121,7 +121,9 @@ and Throw is Missile's `t` in capitals, Wait/search numpad `5` and `s` (ADOM's s
 is no longer bound, #1326), Search for a while Alt with either (Quit has no default key, the
 pause menu quits). Movement is the
 numpad and the arrows only (ADOM's `k`, `l`, `u` are kick, look, use a tool). A new default
-key must not be an ADOM key of another command. Changing defaults never rewrites a player's file:
+key must not be an ADOM key of another command. The symbol commands (`<`, `>`, `?`) are bound as
+`KeyBinding::Char`, the character the active layout produces (the logical key), not a physical
+key, so they work on non-US layouts. Changing defaults never rewrites a player's file:
 `settings.toml` lists every command's keys once written, so an old file keeps its old keymap, and
 `Bindings::from_table` gives a command the file does not list (new, or unbound when the file was
 written, like Search for a while before its Ctrl keys) its defaults minus any key a listed command of its context has. A command merged into another

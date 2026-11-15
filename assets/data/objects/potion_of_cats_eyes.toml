@@ -1,4 +1,4 @@
-# A potion of cat's eyes (spec §8 "Potions"): low-light eyes for half an hour. Vision potions are violet.
+# A potion of cat's eyes: low-light eyes for half an hour. Vision potions are violet.
 [[object]]
 id = "potion_of_cats_eyes"
 name = "potion of cat's eyes"

@@ -1,4 +1,4 @@
-# The horoscope (spec §8 "Character creation"): the sign a character is born under.
+# The horoscope: the sign a character is born under.
 #
 # Every year has an animal and an element. Both advance one step a year, in the order below, on
 # the 1st of Frostmere: the animals in the order they finished the Great Race (the legend is on
@@ -21,8 +21,8 @@
 #                   shown in this order on the reveal and the Talents page (the animal's, the
 #                   element's, then a lucky day's). Gifts whose rules have not landed yet are
 #                   left out until they do.
-#     alignment     an animal's nudge to a new character's hidden alignment score (spec §8
-#                   "Alignment"; alignment.toml; default 0), added to the race's and the
+#     alignment     an animal's nudge to a new character's hidden alignment score (alignment.toml;
+#                   default 0), added to the race's and the
 #                   class's; small against the bands' width, never shown. Elements have none.
 #   [[lucky]]     a lucky day: born in the year of `animal` and `element` AND on day `day` of
 #                 any month (1 to 30), a character has a lucky sign. `title` follows their name

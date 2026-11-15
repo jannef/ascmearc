@@ -1,4 +1,4 @@
-//! Special rooms (`assets/data/room_effects/`, spec §7 "Special rooms"), ADOM-like: a room of
+//! Special rooms (`assets/data/room_effects/`), ADOM-like: a room of
 //! a generated level, or an area a hand-made level marks, can carry an effect that changes the
 //! rules while one is inside it.
 //!
@@ -160,7 +160,7 @@ struct DressingSpec {
     most: u8,
 }
 
-/// A room's dressing (spec §7 "Special rooms": an armoury's weapon racks, a workshop's
+/// A room's dressing (an armoury's weapon racks, a workshop's
 /// benches): pieces of terrain generators stand along its walls (`mapgen/dress.rs`), one per
 /// `per_cells` floor cells, at least one and at most `most`.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -186,7 +186,7 @@ struct OffersSpec {
     drink: Option<String>,
 }
 
-/// An ability a place offers beside its feature (spec §7 "Special rooms": the abilities menu's
+/// An ability a place offers beside its feature (the abilities menu's
 /// *Here* group, [`crate::ability::Ability::Pray`], [`crate::ability::Ability::Drink`]).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Offer {
@@ -209,7 +209,7 @@ impl Offer {
     }
 
     /// What a step into its feature asks after, before the feature's name: "Would you like to
-    /// pray at the forgotten altar?" (spec §6 "The dialog").
+    /// pray at the forgotten altar?".
     pub const fn asks(self) -> &'static str {
         match self {
             Offer::Pray => "pray at",
@@ -226,8 +226,8 @@ struct RiseSpec {
     after: String,
 }
 
-/// A cursed room's risings (`rise = { faction = "undead", after = "2m" }`, spec §7 "Special
-/// rooms"; `world/fixtures/curse.rs`): a creature not of `faction` that dies inside and leaves a corpse
+/// A cursed room's risings (`rise = { faction = "undead", after = "2m" }`;
+/// `world/fixtures/curse.rs`): a creature not of `faction` that dies inside and leaves a corpse
 /// rises from it as a creature of `faction` `after` its death.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Rise {
@@ -238,8 +238,8 @@ pub struct Rise {
     pub after: Duration,
 }
 
-/// A collapsed floor's numbers (`collapse = { chance = 15, damage = "2d6" }`, spec §7 "Special
-/// rooms"; `world/fixtures/collapse.rs`): a step of the player onto a cell inside may give way, and they
+/// A collapsed floor's numbers (`collapse = { chance = 15, damage = "2d6" }`;
+/// `world/fixtures/collapse.rs`): a step of the player onto a cell inside may give way, and they
 /// fall to the level below.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -256,7 +256,7 @@ struct MirrorsSpec {
     images: u8,
 }
 
-/// A hall of mirrors' reflections (spec §7 "Special rooms"; `world/fixtures/mirrors.rs`): every actor
+/// A hall of mirrors' reflections (`world/fixtures/mirrors.rs`): every actor
 /// inside is shown to the player with this many images of it on free floor of the room.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Mirrors {
@@ -264,7 +264,7 @@ pub struct Mirrors {
     pub images: u8,
 }
 
-/// A tempting hoard's numbers (`hoard = { items = 3, ... }`, spec §7 "Special rooms"): the
+/// A tempting hoard's numbers (`hoard = { items = 3, ... }`): the
 /// generator lays `items` items on the room's floor (`mapgen/hoard.rs`); the first lifted seals the
 /// room, locking its doors and bringing guardians (`world/fixtures/hoard.rs`).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
@@ -292,7 +292,7 @@ impl Treasure {
     }
 }
 
-/// A teeming den's numbers (`swarm = { per_cells = 4, ... }`, spec §7 "Special rooms"): the
+/// A teeming den's numbers (`swarm = { per_cells = 4, ... }`): the
 /// generator fills such a room with sleepers of the floor's danger and their hoard
 /// (`mapgen/den.rs`); they wake by noise, a blow, or a cry (`world/creatures/den.rs`).
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
@@ -416,7 +416,7 @@ pub struct RoomEffectDef {
     pub level_chance: u8,
     /// Said each time the player arrives on a level it covers whole.
     pub pervade: Option<String>,
-    /// Drawn only on a level with a danger (spec §7 "Danger levels").
+    /// Drawn only on a level with a danger.
     pub needs_danger: bool,
     /// Drawn only on a branch level with another below it.
     pub needs_below: bool,
@@ -424,17 +424,17 @@ pub struct RoomEffectDef {
     pub min_cells: u16,
     /// Drawn only for a room of at most this many floor cells.
     pub max_cells: Option<u16>,
-    /// Percent of all light kept inside (spec §5 "Special rooms"): 100 leaves it as it is.
+    /// Percent of all light kept inside: 100 leaves it as it is.
     pub light: u16,
     /// Light added over the room, like ambient light (a sanctuary's warm glow).
     pub glow: Light,
-    /// Percent of the loudness of every noise made inside (spec §5 "Hearing").
+    /// Percent of the loudness of every noise made inside.
     pub noise: u16,
-    /// Percent of the usual pace at which hit points come back inside (spec §8 "Combat").
+    /// Percent of the usual pace at which hit points come back inside.
     pub regen: u16,
-    /// Percent of the usual pace at which mana comes back inside (spec §8 "Mana").
+    /// Percent of the usual pace at which mana comes back inside.
     pub mana_regen: u16,
-    /// Creatures hostile to the player do not step into it (spec §8 "Creature behavior").
+    /// Creatures hostile to the player do not step into it.
     pub shunned: bool,
     /// The floor generators lay over the room's floor (a flooded room's shallow water).
     pub floor: Option<TerrainId>,
@@ -446,8 +446,8 @@ pub struct RoomEffectDef {
     /// Degrees Celsius added to the level's temperature inside (a hot room's +25, a cold room's
     /// -25); `WorldState::temperature_at` is the one place it is read.
     pub temperature: i8,
-    /// Percent of everyone's carrying limit inside (a heavy hall's 50 halves it; spec §8
-    /// "Burden"); `WorldState::load` is the one place it is read.
+    /// Percent of everyone's carrying limit inside (a heavy hall's 50 halves it);
+    /// `WorldState::load` is the one place it is read.
     pub burden: u16,
     /// The reflections a hall of mirrors shows of everyone inside (`World::images`).
     pub mirrors: Option<Mirrors>,
@@ -550,7 +550,7 @@ impl RoomEffectDef {
     }
 }
 
-/// What the special rooms at a cell do (spec §7 "Special rooms"): the effect of the room there,
+/// What the special rooms at a cell do: the effect of the room there,
 /// then the one that covers the level, folded the same way by every reader: percents multiply,
 /// light added adds up, flags hold if either holds.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]

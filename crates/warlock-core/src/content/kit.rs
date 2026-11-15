@@ -1,4 +1,4 @@
-//! Starting kits (spec §8 "Character creation"): what a new character carries, wields, and wears
+//! Starting kits: what a new character carries, wields, and wears
 //! at the start of a run. A class's `kit` (`data/classes/`) comes first, then the race's
 //! (`data/races.toml`), then their birth sign's animal's and element's (`data/horoscope.toml`;
 //! a hook, empty so far). [`crate::kit`] rolls one for a character.

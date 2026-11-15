@@ -1,9 +1,9 @@
 # Searching
 
 Developer notes for working on this part of Warlock; the rules it implements are in
-spec/08d-traps-doors-digging.md ("Searching"). Keep it current with the code, as CLAUDE.md says.
+spec/10-combat.md ("Searching"). Keep it current with the code, as CLAUDE.md says.
 
-Searching (spec §8 "Searching", #140) finds **hidden features**, secret doors and hidden traps,
+Searching (#140) finds **hidden features**, secret doors and hidden traps,
 with one check for all of them. Sealed rooms' breaches are hidden features too
 (`Hidden::Hollow`, #618: a greater treasure room's thin wall, found as a hollow wall,
 `LevelState::hollows`; `docs/dev/special-rooms.md` "Greater treasure rooms").

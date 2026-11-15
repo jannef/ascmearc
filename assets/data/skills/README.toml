@@ -1,4 +1,4 @@
-# Skills (spec §8 "Skills"): the fields of a skill file.
+# Skills: the fields of a skill file.
 # One file per skill, `<id>.toml`: the skills are read in path order, so by id (their ids are
 # indices in that order, and the Skills screen lists them so).
 #
@@ -49,24 +49,22 @@
 #                 between them, rounded down, level after the last). Effects: "dodge" (Defence in
 #                 the Dodge category, whose bonuses add up), "quiet" (percent less noise from your
 #                 steps and doors), "hearing" (you hear sounds this much fainter: your hearing
-#                 threshold, lower), "search" (points added to searching for hidden features,
-#                 spec §8 "Searching", not traps; at most 20), "search_reach" (cells farther a search reaches
-#                 than the cells around you; at most 2), "spot" (points added to noticing hidden
-#                 features in passing, not traps, at most 20; trained, a skill with it lets you
-#                 notice them at all), "detect_traps" (points added to finding hidden traps,
-#                 searching and in passing alike, in place of "search" and "spot", at most 20;
-#                 trained, a skill with it lets you notice traps in passing at all), "disarm" (points added to disarming a trap, spec §8 "Disarming
-#                 traps", at most 20; trained, a skill with it lets you disarm traps at all),
-#                 "burden" (percent less of your burden's slowdown), "footing" (percent of what
-#                 rough ground adds to a step that is spared), "steady_ease" (percent of
-#                 Staggered's extra cost that is spared), "travel"
-#                 (percent less time a journey on the overworld takes), "wade" (percent of what
-#                 wading adds to a step that is spared), "swim" (points added to a Swim check, at
-#                 most 20; only trained is one asked), "wedge" (points added
-#                 to the sturdiness of a door wedged shut, at most 12; trained, a skill with it
-#                 lets you wedge doors at all),"forage" (percent added
-#                 to a forage's chance of finding food, at most 30; trained, a skill with it lets
-#                 you forage at all: forage.toml), "bargain" (percent better
+#                 threshold, lower), "search" (points added to searching for hidden features, not
+#                 traps; at most 20), "search_reach" (cells farther a search reaches than the cells
+#                 around you; at most 2), "spot" (points added to noticing hidden features in
+#                 passing, not traps, at most 20; trained, a skill with it lets you notice them at
+#                 all), "detect_traps" (points added to finding hidden traps, searching and in
+#                 passing alike, in place of "search" and "spot", at most 20; trained, a skill with
+#                 it lets you notice traps in passing at all), "disarm" (points added to disarming a
+#                 trap, at most 20; trained, a skill with it lets you disarm traps at all), "burden"
+#                 (percent less of your burden's slowdown), "footing" (percent of what rough ground
+#                 adds to a step that is spared), "steady_ease" (percent of Staggered's extra cost
+#                 that is spared), "travel" (percent less time a journey on the overworld takes),
+#                 "wade" (percent of what wading adds to a step that is spared), "swim" (points
+#                 added to a Swim check, at most 20; only trained is one asked), "wedge" (points
+#                 added to the sturdiness of a door wedged shut, at most 12; trained, a skill with
+#                 it lets you wedge doors at all),"forage" (percent added to a forage's chance of
+#                 finding food, at most 30; trained, a skill with it lets you forage at all: forage.toml), "bargain" (percent better
 #                 prices in shops, together with Presence at most half; shops.toml), "identify"
 #                 (percent chance, each game hour, of telling one unidentified thing you carry or
 #                 wear for what it is; trained only), "identify_potion" (the same, of a potion or
@@ -93,7 +91,7 @@
 #                 up to the status's own most, at most 10), "song_craft" (points added to the
 #                 difficulty of the check your songs ask of those who hear them against them, at
 #                 most 20), "study"(points off the
-#                 difficulty of studying a spell, spec §8 "Spells", at most 20). The percent effects stay
+#                 difficulty of studying a spell, at most 20). The percent effects stay
 #                 within 0 to 100.
 #
 # The player sees their own trained skills and their values, never a benefit's number, a mark, or

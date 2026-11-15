@@ -1,4 +1,4 @@
-//! War cry, the berserker's class active at 25 (spec §8 "Class abilities"; `use:war_cry`;
+//! War cry, the berserker's class active at 25 (`use:war_cry`;
 //! docs/design/berserker.md §6.4): a roar, for 4 rage (its talent's `resource`, spent by
 //! `World::use_class`) and the time of a wait, as loud as a howl ([`Act::Howl`]: heard across
 //! the floor, it wakes a den's sleepers and sends patrols to look, by the rules of every noise).

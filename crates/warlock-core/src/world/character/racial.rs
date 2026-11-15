@@ -1,4 +1,4 @@
-//! The racial talents in the world (spec §8 "Talents", the Racial tree): what a race grants
+//! The racial talents in the world (the Racial tree): what a race grants
 //! (Versatile, the humans'), put into the player's talents with the birth sign's gifts
 //! (`stars.rs`), and Small target, the one racial rule that needs two actors. The others are
 //! effects read where their rules live, as every talent's are.
