@@ -1,16 +1,12 @@
-//! Key presses in plain play (`Gameplay::press` with no prompt open): every play command, and
-//! the developer keys where they are on.
+//! Key presses in plain play (`Gameplay::press` with no prompt open): every play command. The
+//! developer keys are `input::dev`.
 
 use super::{Gameplay, InputMode, KeyCommand, Pressed};
 use crate::game::PlayerAction;
-use crate::save::SaveCommand;
 use crate::ui::step_dialogs::{step_dialog, step_screen};
 use crate::ui::{Aim, AimKind, ScreenAction, ScreenName, quit_dialog};
 use warlock_core::ability::Ability;
 use warlock_core::beside::Beside;
-use warlock_core::content::VisionProfile;
-use warlock_core::time::Duration;
-use warlock_core::weather::Weather;
 use warlock_core::{Action, Dir, Positions};
 
 impl Gameplay<'_> {
@@ -180,36 +176,6 @@ impl Gameplay<'_> {
                 open = Some(ScreenAction::Open(ScreenName::Messages));
                 InputMode::Normal
             }
-            KeyCommand::CycleVision => {
-                let view = game.world.perception();
-                let next = next_vision(view.content().vision_profiles(), &view.vision().id);
-                self.actions.write(PlayerAction(Action::SetVision(next)));
-                InputMode::Normal
-            }
-            KeyCommand::SkipHour => {
-                self.actions
-                    .write(PlayerAction(Action::SkipTime(Duration::hours(1))));
-                InputMode::Normal
-            }
-            KeyCommand::NextWeather => {
-                let now = game.world.perception().weather();
-                self.actions
-                    .write(PlayerAction(Action::SetWeather(next_weather(now))));
-                InputMode::Normal
-            }
-            KeyCommand::IdentifyAll => {
-                self.actions
-                    .write(PlayerAction(Action::Identify(Positions::default())));
-                InputMode::Normal
-            }
-            KeyCommand::RevealMap => {
-                self.overlays.reveal = !self.overlays.reveal;
-                InputMode::Normal
-            }
-            KeyCommand::LightValues => {
-                self.overlays.light_values = !self.overlays.light_values;
-                InputMode::Normal
-            }
             // Kick asks always: any way may be kicked.
             KeyCommand::Kick => InputMode::Direction(command),
             KeyCommand::Open => self.beside(Beside::Open, InputMode::Direction(command)),
@@ -276,14 +242,6 @@ impl Gameplay<'_> {
                 open = Some(quit_dialog(true).into());
                 InputMode::Normal
             }
-            KeyCommand::Snapshot => {
-                self.saves.write(SaveCommand::Snapshot);
-                InputMode::Normal
-            }
-            KeyCommand::LoadSnapshot => {
-                self.saves.write(SaveCommand::LoadSnapshot);
-                InputMode::Normal
-            }
             // Other contexts' commands (aiming's, `--more--`'s, the screens'): `command_in`
             // never finds them here.
             KeyCommand::PrevTarget
@@ -294,41 +252,5 @@ impl Gameplay<'_> {
             | KeyCommand::PrevPage => InputMode::Normal,
         };
         Some((next, open))
-    }
-}
-
-/// The weather after `now` (clear when it is not known, underground), wrapping around.
-fn next_weather(now: Option<Weather>) -> Weather {
-    let i = now.map_or(0, |w| (w.index() + 1) % Weather::ALL.len());
-    Weather::ALL[i]
-}
-
-/// The id of the profile after `current` in `profiles`, wrapping around.
-fn next_vision(profiles: &[VisionProfile], current: &str) -> String {
-    let i = profiles.iter().position(|p| p.id == current).unwrap_or(0);
-    profiles
-        .get((i + 1) % profiles.len().max(1))
-        .map_or_else(|| current.to_string(), |p| p.id.clone())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn weather_cycles_from_clear_to_heavy_rain() {
-        assert_eq!(next_weather(None), Weather::Clear);
-        assert_eq!(next_weather(Some(Weather::Clear)), Weather::Overcast);
-        assert_eq!(next_weather(Some(Weather::Rain)), Weather::HeavyRain);
-        assert_eq!(next_weather(Some(Weather::HeavyRain)), Weather::Clear);
-    }
-
-    #[test]
-    fn vision_cycles_through_profiles() {
-        let content = warlock_assets::content().unwrap();
-        let profiles = content.vision_profiles();
-        assert_eq!(next_vision(profiles, "normal"), "low_light");
-        let last = &profiles[profiles.len() - 1].id;
-        assert_eq!(next_vision(profiles, last), "normal");
     }
 }

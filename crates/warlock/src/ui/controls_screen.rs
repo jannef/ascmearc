@@ -1,7 +1,7 @@
 //! The controls screen and rebinding UI: select a command, press a key to bind it.
 //!
 //! Commands are listed by context (`input::Context`: in play, aiming, `--more--`, menus and
-//! screens, text fields, info pages, and in builds that have them the developer keys), then, at
+//! screens, text fields, info pages; the developer keys F2 to F9 are fixed, `input::dev`), then, at
 //! the very bottom, the abilities' own keys (play commands, unbound by default: the abilities
 //! menu has them all; #644); a key is unique within its context only. Enter on a command opens
 //! its keys as a sub-list under it (#1324): each key, the first the one hints name, then "Add a
@@ -133,8 +133,6 @@ pub struct ControlsScreen {
     mode: Mode,
     /// The command whose keys are open under it, if one is.
     open: Option<Open>,
-    /// Whether the developer keys are listed (they work in this launch).
-    dev: bool,
     /// Result of the last action, a line or a few; a leading `!` marks a refusal (never color
     /// alone).
     message: Vec<String>,
@@ -143,14 +141,12 @@ pub struct ControlsScreen {
 }
 
 impl ControlsScreen {
-    /// The rebinding screen; `dev`: list the developer keys too; `keymap`: where Export keys and
-    /// Import keys go.
-    pub fn new(dev: bool, keymap: KeymapFile) -> Self {
+    /// The rebinding screen; `keymap`: where Export keys and Import keys go.
+    pub fn new(keymap: KeymapFile) -> Self {
         let mut screen = Self {
             selected: 0,
             mode: Mode::Browse,
             open: None,
-            dev,
             message: Vec::new(),
             keymap,
         };
@@ -159,12 +155,11 @@ impl ControlsScreen {
     }
 
     /// The `?` help: every command, read-only.
-    pub fn help(dev: bool) -> Self {
+    pub fn help() -> Self {
         Self {
             selected: 0,
             mode: Mode::ReadOnly,
             open: None,
-            dev,
             message: Vec::new(),
             keymap: KeymapFile::Nowhere,
         }
@@ -182,9 +177,6 @@ impl ControlsScreen {
         let read_only = self.mode == Mode::ReadOnly;
         let mut rows: Vec<Row> = NOTES.iter().map(|note| Row::Note(note)).collect();
         for &context in Context::ALL {
-            if context == Context::Dev && !self.dev {
-                continue;
-            }
             rows.extend([Row::Blank, Row::Header(context)]);
             let commands =
                 (REBINDABLE.iter()).filter(|c| c.context() == context && !ABILITY_KEYS.contains(c));
@@ -718,7 +710,7 @@ mod tests {
     #[test]
     fn rebinding_replaces_the_primary_key() {
         let (mut screen, mut b) = (
-            ControlsScreen::new(false, KeymapFile::Nowhere),
+            ControlsScreen::new(KeymapFile::Nowhere),
             Bindings::default(),
         );
         // The first row selected is the first command, under its heading; Enter opens its keys
@@ -738,7 +730,7 @@ mod tests {
     #[test]
     fn a_key_is_added_replaced_and_removed_in_the_sub_list() {
         let (mut screen, mut b) = (
-            ControlsScreen::new(false, KeymapFile::Nowhere),
+            ControlsScreen::new(KeymapFile::Nowhere),
             Bindings::default(),
         );
         let north = KeyCommand::Move(Dir::N);
@@ -798,7 +790,7 @@ mod tests {
     #[test]
     fn a_used_key_moves_and_the_message_says_what_moved() {
         let (mut screen, mut b) = (
-            ControlsScreen::new(false, KeymapFile::Nowhere),
+            ControlsScreen::new(KeymapFile::Nowhere),
             Bindings::default(),
         );
         open(&mut screen, &mut b, KeyCommand::Move(Dir::N));
@@ -823,7 +815,7 @@ mod tests {
     #[test]
     fn a_key_moves_only_within_its_context() {
         let (mut screen, mut b) = (
-            ControlsScreen::new(false, KeymapFile::Nowhere),
+            ControlsScreen::new(KeymapFile::Nowhere),
             Bindings::default(),
         );
         // `q` for Back on the menus leaves play's keys alone: it stays the quest log in play.
@@ -846,7 +838,7 @@ mod tests {
     #[test]
     fn a_modified_key_binds_in_play_and_is_refused_elsewhere() {
         let (mut screen, mut b) = (
-            ControlsScreen::new(false, KeymapFile::Nowhere),
+            ControlsScreen::new(KeymapFile::Nowhere),
             Bindings::default(),
         );
         open(&mut screen, &mut b, KeyCommand::Read);
@@ -868,7 +860,7 @@ mod tests {
     #[test]
     fn shift_counts_with_a_physical_key_in_play() {
         let (mut screen, mut b) = (
-            ControlsScreen::new(false, KeymapFile::Nowhere),
+            ControlsScreen::new(KeymapFile::Nowhere),
             Bindings::default(),
         );
         open(&mut screen, &mut b, KeyCommand::Look);
@@ -888,7 +880,7 @@ mod tests {
     #[test]
     fn a_fixed_commands_key_is_refused() {
         let (mut screen, mut b) = (
-            ControlsScreen::new(false, KeymapFile::Nowhere),
+            ControlsScreen::new(KeymapFile::Nowhere),
             Bindings::default(),
         );
         let before = b.0.clone();
@@ -914,7 +906,7 @@ mod tests {
     #[test]
     fn escape_cancels_a_capture_without_leaving() {
         let (mut screen, mut b) = (
-            ControlsScreen::new(false, KeymapFile::Nowhere),
+            ControlsScreen::new(KeymapFile::Nowhere),
             Bindings::default(),
         );
         // Esc backs out a step at a time: the capture, the command's keys, then the screen.
@@ -931,7 +923,7 @@ mod tests {
     #[test]
     fn delete_resets_one_command_and_reset_row_resets_all() {
         let (mut screen, mut b) = (
-            ControlsScreen::new(false, KeymapFile::Nowhere),
+            ControlsScreen::new(KeymapFile::Nowhere),
             Bindings::default(),
         );
         let before = b.to_map();
@@ -955,7 +947,7 @@ mod tests {
         let dir = std::env::temp_dir().join(format!("warlock-controls-{}", std::process::id()));
         let _ = std::fs::remove_dir_all(&dir);
         let path = dir.join(keymap::FILE_NAME);
-        let mut screen = ControlsScreen::new(false, KeymapFile::Path(path.clone()));
+        let mut screen = ControlsScreen::new(KeymapFile::Path(path.clone()));
         let mut b = Bindings::default();
         // Nothing to import yet: said, nothing changes.
         select(&mut screen, Row::Import);
@@ -983,7 +975,7 @@ mod tests {
             "Imported warlock-keys.toml: Go down stairs changed."
         );
         // Where keys are not stored, both say so.
-        let mut nowhere = ControlsScreen::new(false, KeymapFile::Nowhere);
+        let mut nowhere = ControlsScreen::new(KeymapFile::Nowhere);
         select(&mut nowhere, Row::Export);
         nav(&mut nowhere, &mut b, Nav::Enter);
         assert!(message(&nowhere).starts_with('!'));
@@ -992,7 +984,7 @@ mod tests {
     #[test]
     fn the_selection_skips_headings_and_wraps_around() {
         let (mut screen, mut b) = (
-            ControlsScreen::new(false, KeymapFile::Nowhere),
+            ControlsScreen::new(KeymapFile::Nowhere),
             Bindings::default(),
         );
         let first = screen.selected;
@@ -1015,17 +1007,16 @@ mod tests {
     }
 
     #[test]
-    fn commands_are_grouped_by_context_and_dev_keys_only_where_they_work() {
-        let plain = ControlsScreen::new(false, KeymapFile::Nowhere).rows();
+    fn commands_are_grouped_by_context_with_the_ability_keys_last() {
+        let plain = ControlsScreen::new(KeymapFile::Nowhere).rows();
         let headers: Vec<Context> = (plain.iter())
             .filter_map(|r| match r {
                 Row::Header(c) => Some(*c),
                 _ => None,
             })
             .collect();
-        assert_eq!(headers, Context::ALL[..Context::ALL.len() - 1]);
-        assert!(!plain.contains(&Row::Command(KeyCommand::RevealMap)));
-        // Every rebindable command but the developer keys, each under its context's heading,
+        assert_eq!(headers, Context::ALL);
+        // Every rebindable command, each under its context's heading,
         // and the abilities' own keys (play commands) last, under theirs.
         let mut context = None;
         for row in &plain {
@@ -1045,15 +1036,9 @@ mod tests {
         let last_group = plain.iter().rposition(|r| *r == Row::AbilityKeys);
         let last_header = plain.iter().rposition(|r| matches!(r, Row::Header(_)));
         assert!(last_group > last_header, "the ability keys come last");
-        for command in REBINDABLE.iter().filter(|c| c.context() != Context::Dev) {
+        for command in REBINDABLE {
             assert!(plain.contains(&Row::Command(*command)), "{command:?}");
         }
-        let dev = ControlsScreen::new(true, KeymapFile::Nowhere).rows();
-        assert!(dev.contains(&Row::Header(Context::Dev)));
-        assert!(dev.contains(&Row::Command(KeyCommand::RevealMap)));
-        let last_group = dev.iter().rposition(|r| *r == Row::AbilityKeys);
-        let dev_header = dev.iter().position(|r| *r == Row::Header(Context::Dev));
-        assert!(last_group > dev_header, "below the developer keys too");
     }
 
     #[test]
@@ -1063,8 +1048,8 @@ mod tests {
             let mut console = Console::default();
             console.resize(70, rows);
             for mut screen in [
-                ControlsScreen::new(true, KeymapFile::Nowhere),
-                ControlsScreen::help(true),
+                ControlsScreen::new(KeymapFile::Nowhere),
+                ControlsScreen::help(),
             ] {
                 let last = screen.rows().len() - 1;
                 for selected in [0, 7, 40, last] {
@@ -1093,7 +1078,7 @@ mod tests {
             let text: Vec<String> = (0..44).map(|y| line(&console, y)).collect();
             text.into_iter().find(|l| l.contains("Move north")).unwrap()
         };
-        let screen = ControlsScreen::new(false, KeymapFile::Nowhere);
+        let screen = ControlsScreen::new(KeymapFile::Nowhere);
         let narrow = draw(&b, &screen);
         for text in ["Ctrl+e", "Ctrl+f", "Ctrl+g", "Ctrl+h"] {
             b.bind_at(north, KeyBinding::from_text(text).unwrap(), None)
@@ -1114,15 +1099,9 @@ mod tests {
     #[test]
     fn help_lists_every_command_by_context_and_changes_nothing() {
         let mut b = Bindings::default();
-        let mut help = ControlsScreen::help(true);
+        let mut help = ControlsScreen::help();
         let rows = help.rows();
-        for extra in [
-            KeyCommand::Cancel,
-            KeyCommand::RevealMap,
-            KeyCommand::Snapshot,
-            KeyCommand::Back,
-            KeyCommand::PrevTarget,
-        ] {
+        for extra in [KeyCommand::Cancel, KeyCommand::Back, KeyCommand::PrevTarget] {
             assert!(rows.contains(&Row::Command(extra)), "{extra:?}");
         }
         assert!(!rows.contains(&Row::Reset) && !rows.contains(&Row::Back));
@@ -1171,16 +1150,16 @@ mod tests {
             text: Some('?'),
             shift: false,
         };
-        assert!(ControlsScreen::help(false).handle(&question, &mut b));
-        assert!(ControlsScreen::help(false).handle(&Press::nav(Nav::Back), &mut b));
+        assert!(ControlsScreen::help().handle(&question, &mut b));
+        assert!(ControlsScreen::help().handle(&Press::nav(Nav::Back), &mut b));
         // The rebinding screen takes `?` as an ordinary key.
-        assert!(!ControlsScreen::new(false, KeymapFile::Nowhere).handle(&question, &mut b));
+        assert!(!ControlsScreen::new(KeymapFile::Nowhere).handle(&question, &mut b));
     }
 
     #[test]
     fn help_scrolls_within_the_list() {
         let mut b = Bindings::default();
-        let mut help = ControlsScreen::help(false);
+        let mut help = ControlsScreen::help();
         nav(&mut help, &mut b, Nav::Up);
         assert_eq!(help.selected, 0);
         for _ in 0..200 {

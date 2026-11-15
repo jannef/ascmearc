@@ -262,7 +262,7 @@ to open, read keys for, or draw one:
   one, Delete (the `Erase` keys) removes it, Esc closes; Delete on a command resets it; the panel
   widens from 60 up to 80 cells for a long key list and cuts a longer one short with `…`, each key
   whole in the sub-list; also the `?` help: the same list,
-  read-only, the developer keys only where they work), `ui/shape_screen.rs` (the shape list of the Hunter's Spirit weapon, `Aim::Shape`, opened by
+  read-only; the developer keys are fixed and listed by neither), `ui/shape_screen.rs` (the shape list of the Hunter's Spirit weapon, `Aim::Shape`, opened by
   `use_ability`: every melee weapon, `PerceptionView::weapon_shapes`, in a `PagedList` grouped by
   weapon skill; a letter or Enter sends `Action::Shape`; `--screen shape`),
   `ui/craft_pick_screen.rs` (the forging wizard, `ScreenName::CraftPick(RecipeId)`: a paged list

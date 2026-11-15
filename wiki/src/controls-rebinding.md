@@ -7,10 +7,9 @@ the [rest prompt](resting.md#how-resting-works) (`h`, `d`, `n`), and [aiming](co
 `Enter`) are fixed. The hints on screen name them.
 
 Controls lists the commands in groups, by where they are used: in play, while aiming, at
-`--more--`, on menus and screens, in text fields, on the info pages, and (in builds that have
-them) the developer keys. Outside play, each group holds only a "back" or "previous" command. It
-has no key until you give it one, since `Esc` and `Shift` already do it, and it cannot take a key
-that is fixed there. Last come the [ability](abilities.md#keys-of-their-own) keys, which have
+`--more--`, on menus and screens, in text fields, and on the info pages. Outside play, each group
+holds only a "back" or "previous" command. It has no key until you give it one, since `Esc` and
+`Shift` already do it, and it cannot take a key that is fixed there. Last come the [ability](abilities.md#keys-of-their-own) keys, which have
 no key until you give them one.
 
 A command can have several keys: moving north is numpad `8` and Up. To change them, select the

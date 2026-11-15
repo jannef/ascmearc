@@ -494,6 +494,8 @@ mod tests {
             yes = ["j"]
             [prompt]
             rest_hour = ["F1"]
+            [dev]
+            dev_reveal_map = ["F2"]
         "#;
         let report = import(&mut b, text).unwrap();
         assert_eq!(report.changed, [KeyCommand::Open]);
@@ -513,8 +515,10 @@ mod tests {
                 report.warnings
             );
         }
-        // The commands that became fixed keys, and their tables, go without a word (#1533).
-        for quiet in ["menu_up", "yes", "rest_hour", "dialog", "prompt"] {
+        // The commands that became fixed keys, and their tables, go without a word (#1533,
+        // #1710).
+        let quiet = ["menu_up", "yes", "rest_hour", "dialog", "prompt", "dev"];
+        for quiet in quiet {
             assert!(
                 !report.warnings.iter().any(|w| w.contains(quiet)),
                 "{quiet}: {:?}",

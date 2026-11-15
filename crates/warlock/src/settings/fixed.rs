@@ -1,5 +1,5 @@
 //! The fixed keys (#1533): the keys of menus and screens, text fields, the dialog, the info
-//! pages, the rest prompt, and aiming. Only play commands are rebindable (CLAUDE.md, "Hard
+//! pages, the rest prompt, and aiming, and the developer keys F2 to F9 (#1710). Only play commands are rebindable (CLAUDE.md, "Hard
 //! rules"); these keys are the same for everyone, so every hint line names them as written here.
 //! The back-style commands of those places (`Back`, `TextBack`, `PrevPage`, `PrevTarget`) stay
 //! rebindable, unbound by default, and may not take a key that is fixed where they are read
@@ -39,6 +39,28 @@ pub enum AimKey {
     Loose,
     /// The cursor to the next creature in view (with Shift, the one before).
     NextTarget,
+}
+
+/// A developer key (debug builds, or `--dev`; `input::dev_keys`), read in plain play after
+/// play's own commands (`input::dev`).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum DevKey {
+    /// F2: show ground truth where the player does not see.
+    RevealMap,
+    /// F3: switch to the next vision profile.
+    CycleVision,
+    /// F4: show perceived light values on visible cells.
+    LightValues,
+    /// F5: write the quick snapshot.
+    Snapshot,
+    /// F6: move the clock an hour ahead at once.
+    SkipHour,
+    /// F7: set the next weather (clear, overcast, rain, heavy rain) for three hours.
+    NextWeather,
+    /// F8: identify everything the player carries (the scroll of identify does it in play).
+    IdentifyAll,
+    /// F9: replace the world with the quick snapshot.
+    LoadSnapshot,
 }
 
 /// The menu keys as hint lines name them.
@@ -152,6 +174,24 @@ pub fn aim(key: &KeyBinding) -> Option<AimKey> {
     }
 }
 
+/// The developer key a key is: F2 to F9.
+pub fn dev(key: &KeyBinding) -> Option<DevKey> {
+    let KeyBinding::Code(code) = key else {
+        return None;
+    };
+    Some(match code {
+        KeyCode::F2 => DevKey::RevealMap,
+        KeyCode::F3 => DevKey::CycleVision,
+        KeyCode::F4 => DevKey::LightValues,
+        KeyCode::F5 => DevKey::Snapshot,
+        KeyCode::F6 => DevKey::SkipHour,
+        KeyCode::F7 => DevKey::NextWeather,
+        KeyCode::F8 => DevKey::IdentifyAll,
+        KeyCode::F9 => DevKey::LoadSnapshot,
+        _ => return None,
+    })
+}
+
 /// The rest prompt's answer a key gives.
 pub fn rest(key: &KeyBinding) -> Option<Rest> {
     (REST.iter())
@@ -166,7 +206,7 @@ pub fn taken(context: Context, key: &KeyBinding) -> bool {
         Context::Text => text(key).is_some(),
         Context::Pages => page(key).is_some(),
         Context::Aim => aim(key).is_some(),
-        Context::Play | Context::More | Context::Dev => false,
+        Context::Play | Context::More => false,
     }
 }
 

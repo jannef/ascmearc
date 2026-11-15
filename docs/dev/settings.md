@@ -48,8 +48,10 @@ a press may stand for, most specific first, against the place's own command, the
 keys. **Every rebindable key is a `KeyCommand` in its `settings::bindings::Context`**: `Play` (the map,
 direction prompts, look mode), `Aim` (`PrevTarget`), `More` (at `--more--`: `MoreNext`, Space and
 Enter; `MoreSkip`, unbound, as Esc always skips; `ui/more.rs`), `Menu` (`Back`), `Text`
-(`TextBack`), `Pages` (`PrevPage`), and `Dev` (the developer keys: in every table, read by
-`input::command_in` and listed by Controls only where `input::dev_keys` is true). Keys are unique
+(`TextBack`), and `Pages` (`PrevPage`). The developer keys F2 to F9 are fixed
+(`fixed::DevKey`, #1710): read by `input/dev.rs` in plain play after play's own commands, only
+where `input::dev_keys` is true, and listed by neither Controls nor `?`; their old ids and the
+keymap's `[dev]` table are in `RETIRED` and `RETIRED_CONTEXTS`. Keys are unique
 within a context; a mode with its own context reads it before play's (`command_in`). Nothing else
 matches a `KeyCode` or a character directly but Esc (fixed: Cancel in play, which skips the rest at
 `--more--`, `Nav::Back` on every screen) and the letters and digits that name list rows (and the

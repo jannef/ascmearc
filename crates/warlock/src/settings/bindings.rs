@@ -111,24 +111,9 @@ pub enum KeyCommand {
     /// In a text field: back out, as Esc always does (no default key of its own). The other
     /// text field keys are fixed.
     TextBack,
-    /// Dev: switch to the next vision profile.
-    CycleVision,
-    /// Dev: move the clock an hour ahead at once.
-    SkipHour,
-    /// Dev: set the next weather (clear, overcast, rain, heavy rain) for three hours.
-    NextWeather,
-    /// Dev: identify everything the player carries (magic items' affixes; the scroll of identify
-    /// does it in play).
-    IdentifyAll,
-    /// Dev: show ground truth where the player does not see.
-    RevealMap,
-    /// Dev: show perceived light values on visible cells.
-    LightValues,
     Help,
     Cancel,
     Quit,
-    Snapshot,
-    LoadSnapshot,
     /// On an info screen: the previous page (no default key: Shift with the fixed Tab does
     /// it; the digits and Tab are fixed).
     PrevPage,
@@ -155,8 +140,6 @@ pub enum Context {
     Text,
     /// On an info screen ([`crate::ui`]'s numbered pages).
     Pages,
-    /// The developer keys (debug builds, or `--dev`), read in play after play's own.
-    Dev,
 }
 
 impl Context {
@@ -168,7 +151,6 @@ impl Context {
         Context::Menu,
         Context::Text,
         Context::Pages,
-        Context::Dev,
     ];
 
     /// The heading of its group on the controls screen.
@@ -180,7 +162,6 @@ impl Context {
             Context::Menu => "Menus and screens",
             Context::Text => "Text fields",
             Context::Pages => "Info pages",
-            Context::Dev => "Developer",
         }
     }
 
@@ -193,7 +174,6 @@ impl Context {
             Context::Menu => "menu",
             Context::Text => "text",
             Context::Pages => "pages",
-            Context::Dev => "dev",
         }
     }
 }
@@ -207,8 +187,6 @@ impl KeyCommand {
             MoreNext | MoreSkip => Context::More,
             Back => Context::Menu,
             TextBack => Context::Text,
-            CycleVision | SkipHour | NextWeather | IdentifyAll | RevealMap | LightValues
-            | Snapshot | LoadSnapshot => Context::Dev,
             _ => Context::Play,
         }
     }
@@ -260,17 +238,9 @@ impl KeyCommand {
             KeyCommand::Pay => "Pay the shopkeeper",
             KeyCommand::Back => "Back (Esc always works)",
             KeyCommand::TextBack => "Back (Esc always works)",
-            KeyCommand::CycleVision => "Next vision profile (dev)",
-            KeyCommand::SkipHour => "Skip an hour (dev)",
-            KeyCommand::NextWeather => "Next weather (dev)",
-            KeyCommand::IdentifyAll => "Identify what you carry (dev)",
-            KeyCommand::RevealMap => "Reveal map (dev)",
-            KeyCommand::LightValues => "Light values (dev)",
             KeyCommand::Help => "Show / hide controls",
             KeyCommand::Cancel => "Cancel",
             KeyCommand::Quit => "Save and quit",
-            KeyCommand::Snapshot => "Save snapshot (dev)",
-            KeyCommand::LoadSnapshot => "Load snapshot (dev)",
             KeyCommand::PrevPage => "Previous info page",
         }
     }
@@ -436,17 +406,6 @@ impl Default for Bindings {
             (ch("?"), Help),
             (Code(KeyCode::Escape), Cancel),
         ]);
-        // The developer keys: in every build's table, read only where they are on (`dev_keys`).
-        table.0.extend([
-            (Code(KeyCode::F2), RevealMap),
-            (Code(KeyCode::F3), CycleVision),
-            (Code(KeyCode::F4), LightValues),
-            (Code(KeyCode::F5), Snapshot),
-            (Code(KeyCode::F6), SkipHour),
-            (Code(KeyCode::F7), NextWeather),
-            (Code(KeyCode::F8), IdentifyAll),
-            (Code(KeyCode::F9), LoadSnapshot),
-        ]);
         table
     }
 }
@@ -550,18 +509,5 @@ mod tests {
         for (_, command) in &b.0 {
             assert!(Context::ALL.contains(&command.context()), "{command:?}");
         }
-    }
-
-    #[test]
-    fn dev_keys_are_in_every_table() {
-        let b = Bindings::default();
-        assert_eq!(keys(&b, KeyCommand::Snapshot), ["F5"]);
-        assert_eq!(keys(&b, KeyCommand::LoadSnapshot), ["F9"]);
-        assert_eq!(keys(&b, KeyCommand::CycleVision), ["F3"]);
-        assert_eq!(keys(&b, KeyCommand::RevealMap), ["F2"]);
-        assert_eq!(keys(&b, KeyCommand::LightValues), ["F4"]);
-        assert_eq!(keys(&b, KeyCommand::SkipHour), ["F6"]);
-        assert_eq!(keys(&b, KeyCommand::NextWeather), ["F7"]);
-        assert_eq!(keys(&b, KeyCommand::IdentifyAll), ["F8"]);
     }
 }
