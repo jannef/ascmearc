@@ -47,6 +47,12 @@
 #                           down, wherever the player is
 #     full_moon_light       the light preset (lights.toml) Inner light burns as while a full
 #                           moon is up (default: its own)
+#     seasons.ELEMENT       an element's season: `from` and `to` name months of calendar.toml,
+#                           both in (counted on past the year's end when `to` comes first);
+#                           while the calendar is in it, the element's first gift (`grants[0]`)
+#                           is `more` stronger (0 to 10), in its own unit: Supple's Dodge,
+#                           Blaze's dice, Stone hide's Protection, Keen edge's threat, Always a
+#                           way's ease of finding what is hidden. No season, no change
 #
 # Talents may ask for a sign (`needs = { animal = "roc" }`, `element = "fire"`, `lucky = true`).
 # Signs are also flags later rules may ask about: "is this character Fire-born?", "born in the
@@ -59,6 +65,11 @@ birthday_healing = 125
 birth_month_cooldown = 50
 full_moon_reach = 2
 full_moon_light = "ember_full"
+seasons.wood = { from = "Seedtide", to = "Greenleaf", more = 1 }
+seasons.fire = { from = "Highsun", to = "Emberheat", more = 1 }
+seasons.earth = { from = "Harvestide", to = "Harvestide", more = 1 }
+seasons.metal = { from = "Leaffall", to = "Mistmoon", more = 1 }
+seasons.water = { from = "Darkening", to = "Thawmonth", more = 2 }
 
 # The animals, in the order of the Great Race.
 

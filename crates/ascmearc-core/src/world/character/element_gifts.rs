@@ -18,6 +18,7 @@
 use crate::action::{Event, SpellShape};
 use crate::content::SignActive;
 use crate::damage::Damage;
+use crate::dice::Dice;
 use crate::geom::Pos;
 use crate::ice::Shock;
 use crate::rng::draw;
@@ -37,6 +38,12 @@ impl World {
         // Wildfire (a Fire-born's pick): hotter, and farther.
         if let Some((radius, damage)) = mods.sign.wildfire {
             (blaze.radius, blaze.damage) = (radius, damage);
+        }
+        // In Fire's season, a die more (`flavour.rs`).
+        let more = self.in_season(player, "blaze");
+        if more > 0 && blaze.damage.count() > 0 {
+            let die = Dice::of(more.unsigned_abs(), blaze.damage.sides());
+            blaze.damage = blaze.damage.and(die);
         }
         if !self.can_loose_here() {
             return Spent::Nothing;

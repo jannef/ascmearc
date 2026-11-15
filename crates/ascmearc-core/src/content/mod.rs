@@ -294,7 +294,9 @@ pub use gem::{
 };
 pub use guild::{GuildDef, RankBy, RankDef};
 pub use herbs::{Herb, HerbRules};
-pub use horoscope::{FULL_MOON_WITHIN, Flavour, Horoscope, Lucky, Sign, SignActive, SignPart};
+pub use horoscope::{
+    FULL_MOON_WITHIN, Flavour, Horoscope, Lucky, Season, Sign, SignActive, SignPart,
+};
 pub use hunger::{
     Corpses, EXERTIONS, Faint, Food, HungerDef, MAX_NUTRITION, Overeating, Rotten, Starve, States,
 };
@@ -956,6 +958,7 @@ impl Content {
         if let Some(text) = files.get_optional(path) {
             let mut horoscope = Horoscope::parse(path, text)?;
             horoscope::resolve_flavour(&mut horoscope, |name| content.light_id(name))?;
+            horoscope::resolve_seasons(&mut horoscope, &content.calendar)?;
             content.horoscope = Some(horoscope);
         }
         // The signs' gifts are talents, and talents may ask for a sign: checked both ways.

@@ -181,6 +181,8 @@ impl World {
         };
         own.saturating_add(talents.delving.search)
             .saturating_add(race)
+            // Always a way in Water's season (`flavour.rs`).
+            .saturating_add(self.in_season(self.state.player, "always_a_way"))
     }
 
     /// Whether the player notices `hidden`, the hidden feature at `at`, in passing at all:
