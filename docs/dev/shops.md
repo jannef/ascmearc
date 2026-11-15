@@ -14,7 +14,7 @@ in `data/item_classes.toml`, `docs/dev/objects.md`), `items`, `markup`, `pays`, 
 `ShopOdds::shared`, so the shared odds and a branch without its own `kinds` never draw them:
 Cēaptūn's `smithy` and `town_store`, #1248, laid out by its level file; a branch's `kinds` may
 still name one); `Shops::price`/`offer` are the one place
-prices are made, from `Stack::value` (an item worked at an anvil by its `Worked::value`, and a
+prices are made, from `Stack::worth` (`Stack::value` with the magic as the player knows it, below), and that from `Stack::value` (an item worked at an anvil by its `Worked::value`, and a
 bill's `same_goods` and `goods` keep it apart, at its worth; docs/dev/special-rooms.md), the value
 of what the stack is made of: its parts, a gem
 by its size and cut, `docs/dev/objects.md`; `Shops::trades`/`buys` take the stack, so a loose gem,
@@ -33,12 +33,14 @@ draw, so spell scrolls come by spell level, #397) whose keeper is spawned at its
 instantiation it becomes a `world::Shop` in `LevelState::shops` (saved, hashed; format 30): the
 keeper's actor id, its `exits` (the cells around the floor that could be walked onto or were
 doors when the level was made: the door), `unpaid` (what the player owes, counted by goods: an
-object and its own parts, `Stack::same_goods`/`goods`, so a gem is owed at its gem's price;
+object, its own parts, and its magic as it was known when taken, `Stack::bill_line`/`billed_as`
+(`Magic::same_roll`: identified since or not, it is the same line, still priced as taken), so a gem is owed at its gem's price;
 `unpaid_parts` assigns the counts to the last stacks of the same goods; only `pay`, `put_back`,
 `outrage`, and `keeper_died` take anything off it, so whatever uses unpaid goods up (eating,
 a quest hand-in, rotting away) leaves their price on the bill with no hook of its own; it may
 hold more of an object than the pack does; its lines are counts by object, not stacks lying
-anywhere, so `Shop::is_valid_for` checks them as such: any count, no magic, no food age), and
+anywhere, so `Shop::is_valid_for` checks them as such: any count, magic that `Magic::check`s with
+nothing `carried`, no food age), and
 `ShopStatus` (Open, Outraged, Abandoned). Rotten food (#195) is worth
 nothing: `World::spoilt` (by `rot::stage`) makes `asking_price` and `picked_up_goods` free and
 `deal` refuse it (`Deal::spoilt`: "Grimbold sniffs at ... and says: \"Not at any price.\"");
@@ -60,8 +62,16 @@ it does not notice takes its purse and leaves the shop open), `keeper_died` from
 keeper gets the `outraged` faction as its `faction_override`, so the AI and stance need nothing
 new. Keepers are NPCs: `budge = "off_post"` (no swapping at the post), one-liners in
 `data/dialogue.toml`, and `World::called` names them by their shop ("Grimbold says: ...").
-Prices are by the goods, never their magic (`Stack::magic` is kept on what is sold and put back, never
-priced; keys and quest letters are worth 0). Generated shops avoid locked rooms and rooms with
+**Magic's worth** (#1709): `Stack::worth` is each one's value as made (parts, then
+`Worked::made`, an anvil's grade), then `MagicWorth::add` (`content/magic_worth.rs`,
+`data/rules/magic_worth.toml`, optional: without it magic adds nothing): the rarity's percent
+always (the rarity shows at once), plus, once identified, each affix's `each` + `per_level` × its
+tier's item level; then `Worked::with_mark` (a maker's mark on top of it all), times the count. It
+reads only what the player knows, so a price leaks nothing; `Stack::value` stays the make alone
+(what a trader's offer, `wares.rs`, adds its own affix price to, and the tithe's choice).
+`Shops::trades` still asks `value > 0`, so magic never makes worthless goods traded. The
+craftsperson's patron pays by `worth` too. Tests: `world/people/magic_price_tests.rs`.
+Keys and quest letters are worth 0. Generated shops avoid locked rooms and rooms with
 something lying in them, and `hide_traps`/`place_loot` leave shop floors alone. A service's price (`world/people/service.rs`) follows `shop::haggling` (the same without a keeper's alignment) unless the
 service is `temple = true` (a temple's cure and mending stay flat, Pious aside), and a service paid reports `Use::Deal`
 (#1031). The player's `favour` (Presence modifier × `presence` + the Negotiation `Effect::Bargain` (Appraise's until #666), through `Actor::skill_effect` so of Haggling and skill talents count, + what

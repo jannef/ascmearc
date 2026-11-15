@@ -106,6 +106,7 @@ mod load_status;
 mod load_world;
 #[cfg(test)]
 mod loader_check_tests;
+mod magic_worth;
 mod material;
 pub mod mimic;
 #[cfg(test)]
@@ -311,6 +312,7 @@ pub use level::{
     parse_route,
 };
 pub use light::{Dips, Drift, HueDrift, LightId, LightPreset, Stability};
+pub use magic_worth::{AffixWorth, MagicWorth, RarityWorth};
 pub use material::{
     ANY, Fit, Fits, Found, ItemHarm, MaterialDef, MaterialId, ODD, POOR, Resists, VERY_RARE,
 };
@@ -634,6 +636,9 @@ pub struct Content {
     /// What a craftsperson's patron pays for a commission (`data/rules/patron.toml`: Patron); none
     /// without the file, when no one commissions work.
     patron: Option<PatronRules>,
+    /// What magic adds to an item's worth (`data/rules/magic_worth.toml`); none
+    /// without the file, when magic adds nothing.
+    magic_worth: Option<MagicWorth>,
     /// The numbers of intimidating (`data/rules/intimidate.toml`: Intimidate);
     /// none without the file, when nobody intimidates.
     intimidate: Option<IntimidateRules>,
@@ -1056,6 +1061,7 @@ impl Content {
         content.stipend = content.load_optional(files)?;
         content.invest = content.load_optional(files)?;
         content.patron = content.load_optional(files)?;
+        content.magic_worth = content.load_optional(files)?;
         content.intimidate = content.load_optional(files)?;
         content.ruin = content.load_or_default(files)?;
         content.swim = content.load_optional(files)?;

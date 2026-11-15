@@ -19,6 +19,7 @@ cfg_if! {
         mod guild_tests;
         mod guild_wanted_tests;
         mod identify_service_tests;
+        mod magic_price_tests;
         mod outlaw_tests;
         mod quest_roll_tests;
         mod quest_tests;

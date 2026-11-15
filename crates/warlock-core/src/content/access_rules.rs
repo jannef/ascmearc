@@ -2,10 +2,10 @@
 
 use super::{
     AllyRules, CompanionRules, Content, EncounterRules, FamiliarRules, FeintRules, FletchRules,
-    ForageRules, GearConditions, HerbRules, HungerDef, IntimidateRules, InvestRules, MiningRules,
-    PatronRules, PrayerRules, RangedRules, RequiredIds, RigRules, RuinRules, SalvageRules,
-    SearchRules, SmiteRules, StatTraining, StealRules, StipendRules, SurpriseRules, SwimRules,
-    TagDrops, TemperRules, Tuning,
+    ForageRules, GearConditions, HerbRules, HungerDef, IntimidateRules, InvestRules, MagicWorth,
+    MiningRules, PatronRules, PrayerRules, RangedRules, RequiredIds, RigRules, RuinRules,
+    SalvageRules, SearchRules, SmiteRules, StatTraining, StealRules, StipendRules, SurpriseRules,
+    SwimRules, TagDrops, TemperRules, Tuning,
 };
 
 impl Content {
@@ -113,6 +113,12 @@ impl Content {
     /// `data/rules/patron.toml`); `None` without the file, when no one commissions work.
     pub fn patron(&self) -> Option<&PatronRules> {
         self.patron.as_ref()
+    }
+
+    /// What magic adds to an item's worth (`data/rules/magic_worth.toml`);
+    /// `None` without the file, when magic adds nothing.
+    pub fn magic_worth(&self) -> Option<&MagicWorth> {
+        self.magic_worth.as_ref()
     }
 
     /// The numbers of intimidating (Intimidate; `data/rules/intimidate.toml`);

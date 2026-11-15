@@ -158,12 +158,14 @@ impl Shop {
             && inside(self.min)
             && inside(self.max)
             && self.exits.iter().all(|&p| inside(p))
-            // The bill counts goods (an object and what it is made of): no stacks lying
-            // anywhere, so no magic and no age.
+            // The bill counts goods (an object, what it is made of, and its magic as it was
+            // known when taken): no stacks lying anywhere, so no age.
             && self.unpaid.iter().all(|s| {
                 usize::from(s.object.0) < content.object_defs().len()
                     && s.count >= 1
-                    && s.magic().is_none()
+                    && (s.magic()).is_none_or(|m| {
+                        m.check(content.object(s.object), content).is_ok() && m.carried == 0
+                    })
                     && s.died.is_none()
                     && (s.own_parts()).is_none_or(|own| {
                         crate::item_parts::check(content.object(s.object), own, content).is_ok()
@@ -171,18 +173,19 @@ impl Shop {
             })
     }
 
-    /// Adds `stack` to what the player owes, counted by goods: its object and what it is made
-    /// of (a magic item is priced as its base item, food whatever its age, a gem by its gem).
+    /// Adds `stack` to what the player owes, counted by goods: its object, what it is made of,
+    /// and its magic as the player knows it now, which it stays priced by (#1709: identifying it
+    /// later does not change the bill); food whatever its age, a gem by its gem.
     fn owe(&mut self, stack: &Stack) {
-        match self.unpaid.iter_mut().find(|s| s.same_goods(stack)) {
+        match self.unpaid.iter_mut().find(|s| stack.billed_as(s)) {
             Some(same) => same.count += stack.count,
-            None => self.unpaid.push(stack.goods(stack.count)),
+            None => self.unpaid.push(stack.bill_line(stack.count)),
         }
     }
 
     /// Takes `stack` off what the player owes: they put it back.
     fn put_back(&mut self, stack: &Stack) {
-        if let Some(same) = self.unpaid.iter_mut().find(|s| s.same_goods(stack)) {
+        if let Some(same) = self.unpaid.iter_mut().find(|s| stack.billed_as(s)) {
             same.count = same.count.saturating_sub(stack.count);
         }
         self.unpaid.retain(|s| s.count > 0);
@@ -203,7 +206,7 @@ pub fn unpaid_parts(inventory: &[Stack], unpaid: &[Stack]) -> Vec<u32> {
     for owed in unpaid {
         let mut left = owed.count;
         for (i, stack) in inventory.iter().enumerate().rev() {
-            if stack.same_goods(owed) && left > 0 {
+            if stack.billed_as(owed) && left > 0 {
                 parts[i] = stack.count.min(left);
                 left -= parts[i];
             }

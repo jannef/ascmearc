@@ -153,6 +153,9 @@ that glows lights your way. Wearing it for a while does not tell you what it is.
 Once identified, an item stays known wherever it goes: "This is a Sharp long sword of the
 Bear!"
 
+Shops pay more for an identified item: until then they price it by its rarity alone (see
+[Magic items](shops.md#magic-items) in Shops).
+
 ## What their magic does
 
 Magic works while the item is **[worn or wielded](equipment.md#what-fits-where)**, not while it is

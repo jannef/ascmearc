@@ -95,6 +95,24 @@ pub struct Rolled<'a> {
 }
 
 impl Magic {
+    /// The same roll as `other`, whatever the player knows of either (a shop's bill matches the
+    /// item taken however much of it has been learnt since).
+    pub fn same_roll(&self, other: &Magic) -> bool {
+        (
+            self.rarity,
+            self.level,
+            &self.affixes,
+            &self.name,
+            &self.unique,
+        ) == (
+            other.rarity,
+            other.level,
+            &other.affixes,
+            &other.name,
+            &other.unique,
+        )
+    }
+
     /// Its affixes with their definitions, prefixes first (unknown ids, which a checked item does
     /// not have, are left out).
     pub fn rolled<'c>(&self, content: &'c Content) -> Vec<Rolled<'c>> {

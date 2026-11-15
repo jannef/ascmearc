@@ -2,7 +2,8 @@
 //! and specialty shops), what each sells and buys by item class ([`ItemClassId`]), its prices,
 //! the shopkeeper every shop has, and how often generated levels get one.
 //!
-//! Prices are a stack's value (`Stack::value`: its object's `value`, made of its parts) times a
+//! Prices are a stack's worth (`Stack::worth`: its object's `value`, made of its parts, with its
+//! magic as the player knows it, `data/rules/magic_worth.toml`) times a
 //! shop's `markup` (what it asks) or `pays` (what it offers for what it buys), in percent, moved
 //! in the player's favour (or against it) by their *favour*: their Presence and their Negotiation
 //! skill ([`Shops::price`], [`Shops::offer`]; the favour itself is `world/people/shop.rs`'s). A shop
@@ -257,9 +258,10 @@ impl Shops {
         offer.min(self.price(content, kind, stack, favour))
     }
 
-    /// The value of `stack`: each one's, by what it is made of, times how many.
+    /// The worth of `stack`: each one's, by what it is made of and its magic as the player
+    /// knows it ([`Stack::worth`]), times how many.
     fn base(&self, content: &Content, stack: &Stack) -> u64 {
-        stack.value(content)
+        stack.worth(content)
     }
 
     /// The keeper of a shop, to spawn at `post` with the level's creatures.

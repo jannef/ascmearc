@@ -259,8 +259,9 @@ impl World {
                     Some(item) => {
                         let (taken, stack) = self.hand_over_one(item, ActionKind::Chat);
                         spent = taken;
-                        // A maker's mark is in the worth, paid for once (#1489).
-                        let gold = rules.paid(stack.value(&content));
+                        // A maker's mark is in the worth, paid for once (#1489); so is its
+                        // magic as the player knows it (#1709).
+                        let gold = rules.paid(stack.worth(&content));
                         let gold = u32::try_from(gold).unwrap_or(u32::MAX);
                         let what = self.lore().describe(&stack);
                         self.say(format!("You hand over {what}."));

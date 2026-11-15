@@ -248,6 +248,7 @@ fn generate(content: &Content) -> Vec<(String, String)> {
         ("objects.md", objects::objects),
         ("item-classes.md", objects::item_classes),
         ("shops.md", objects::shops),
+        ("magic-worth.md", objects::magic_worth),
         ("equipment.md", objects::equipment),
         ("materials.md", materials::materials),
         ("material-arms.md", materials::material_arms),
