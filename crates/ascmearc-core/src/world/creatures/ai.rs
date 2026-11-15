@@ -263,8 +263,11 @@ impl World {
     }
 
     /// Step 4: where creature `id` goes to look into what it heard: the newest noise whose source
-    /// it does not see (by the rules of sight), if it has enemies at all.
-    fn noise_to_look_into(&mut self, id: ActorId, heard: &[Heard]) -> Option<Pos> {
+    /// it does not see (by the rules of sight), if it has enemies at all. Line of sight is
+    /// computed lazily, as [`World::nearest_in_sight`] does: only out to the noise being checked,
+    /// widened only when a farther one must be, and not at all for a noise beyond its sight or
+    /// from where one it does not see stands.
+    pub(super) fn noise_to_look_into(&mut self, id: ActorId, heard: &[Heard]) -> Option<Pos> {
         // Slipped past (`slip.rs`), what it sees only by darkvision it does not see.
         let slipped = self.slipped_past(id, self.state.player);
         let World {
@@ -281,28 +284,46 @@ impl World {
         if heard.is_empty() || !has_enemies {
             return None;
         }
-        let radius = sight::sight_radius(state, content, def.sight);
-        let level = state.current();
-        let stops = level.sight_stops(content, me.pos, state.time);
-        let los = LineOfSight::compute(me.pos, radius, stops);
+        let radius = sight::sight_radius(state, content, def.sight).max(0);
+        let reach2 = radius2(radius);
+        let from = me.pos;
         let eye = me.eyes(content, &content.vision_profiles()[def.vision]);
         // A noise from where one it does not see stands is one to look into (`unseen.rs`).
         let unseen: Vec<Pos> = (state.actors.on_level(&me.level))
             .filter(|a| invisible_to(content, me, a))
             .map(|a| a.pos)
             .collect();
-        (heard.iter().rev()).map(|h| h.at).find(|&at| {
+        let mut los: Option<LineOfSight> = None;
+        for at in heard.iter().rev().map(|h| h.at) {
             if unseen.contains(&at) {
-                return true;
+                return Some(at);
             }
-            match sight::sees_by(state, content, lights, &los, &eye, at) {
+            let d2 = at.dist2(from);
+            // Beyond its sight radius no line of sight reaches: it does not see the cell.
+            if d2 > reach2 {
+                return Some(at);
+            }
+            let reach = LineOfSight::radius_for(d2).min(radius);
+            let los = match los.take() {
+                Some(l) if l.radius() >= reach => los.insert(l),
+                _ => {
+                    let level = state.current();
+                    let stops = level.sight_stops(content, from, state.time);
+                    los.insert(LineOfSight::compute(from, reach, stops))
+                }
+            };
+            let looks = match sight::sees_by(state, content, lights, los, &eye, at) {
                 None => true,
                 Some(By::Light) => false,
                 Some(By::Darkvision) => {
                     slipped && !sight::lit_for(state, content, lights, &eye, at)
                 }
+            };
+            if looks {
+                return Some(at);
             }
-        })
+        }
+        None
     }
 
     /// The nearest hostile actor creature `id` sees (ties: the lower id), and where it stands.

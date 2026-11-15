@@ -838,6 +838,72 @@ fn creatures_with_enemies_go_to_look_where_they_heard_something_unseen() {
 }
 
 #[test]
+fn line_of_sight_to_noises_is_computed_lazily_with_the_same_answers() {
+    // A rat west of a pillar in a hall wider than its sight: noises near, far, hidden, and out
+    // of reach. Each answer is the one a full-radius line of sight gives, and a list of two is
+    // its newest noise if that one is to look into, else the older one (the sweep widened).
+    let mut w = listening_world(
+        "##########################\n#........................#\n\
+         #.r.#.@..................#\n#.d.#....................#\n\
+         #........................#\n##########################\n",
+    );
+    let rat = ActorId(1);
+    let (from, radius, cells) = {
+        let state = w.state();
+        let content = &w.content;
+        let me = &state.actors[&rat];
+        let radius =
+            crate::sight::sight_radius(state, content, content.creature(me.creature).sight);
+        let level = state.current();
+        let cells: Vec<Pos> = (0..level.height())
+            .flat_map(|y| (0..level.width()).map(move |x| Pos::new(x, y)))
+            .collect();
+        (me.pos, radius, cells)
+    };
+    let full = {
+        let level = w.state.current();
+        let stops = level.sight_stops(&w.content, from, w.state.time);
+        crate::sight::LineOfSight::compute(from, radius, stops)
+    };
+    let heard = |at| crate::noise::Heard {
+        kind: crate::noise::SoundKind::Footsteps,
+        at,
+        loudness: 1,
+    };
+    let mut alone = Vec::new();
+    let (mut seen, mut beyond) = (0, 0);
+    for &at in &cells {
+        let got = w.noise_to_look_into(rat, &[heard(at)]);
+        let World {
+            state,
+            content,
+            lights,
+            ..
+        } = &mut w;
+        let me = &state.actors[&rat];
+        let eye = me.eyes(
+            content,
+            &content.vision_profiles()[content.creature(me.creature).vision],
+        );
+        let sees = crate::sight::sees(state, content, lights, &full, &eye, at);
+        assert_eq!(got, (!sees).then_some(at), "{at:?}");
+        seen += usize::from(sees);
+        beyond += usize::from(at.dist2(from) > crate::fov::radius2(radius));
+        alone.push(got);
+    }
+    assert!(
+        seen > 0 && beyond > 0,
+        "the hall has cells seen and out of reach"
+    );
+    for (i, &old) in cells.iter().enumerate() {
+        for (j, &new) in cells.iter().enumerate() {
+            let got = w.noise_to_look_into(rat, &[heard(old), heard(new)]);
+            assert_eq!(got, alone[j].or(alone[i]), "{old:?} then {new:?}");
+        }
+    }
+}
+
+#[test]
 fn a_fight_out_of_sight_is_heard() {
     // A kobold and a rat fighting round a corner from the player.
     let mut w = listening_world("#####\n#@..#\n###.#\n#kr.#\n#####\n");
