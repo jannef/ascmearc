@@ -392,6 +392,7 @@ impl World {
                 return Err(WorldError::NoPlayerStart(to.to_string()));
             }
             instantiate_level(&mut self.state, &content, &template);
+            self.restock_shops();
         }
         let target = &self.state.levels[to];
         let arrival = at
@@ -463,6 +464,7 @@ impl World {
         let content = self.content.clone();
         if let Some(template) = self.unmade_template(&content, id, from)? {
             instantiate_level(&mut self.state, &content, &template);
+            self.restock_shops();
         }
         Ok(&self.state.levels[id])
     }

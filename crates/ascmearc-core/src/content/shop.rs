@@ -224,6 +224,46 @@ impl Shops {
             && !self.get(kind).never.contains(&object)
     }
 
+    /// What a shop of kind `kind` draws its goods from ([`Shops::stocks`]), each weighed by its
+    /// loot `frequency` (100 for what is never loot: a low tier's spell scroll lies there more
+    /// often), by object id (the string): the same draw lays out the same goods however the
+    /// object files are ordered (docs/dev/content.md).
+    pub fn goods(&self, content: &Content, kind: ShopId) -> Vec<(ObjectId, u32)> {
+        let mut goods: Vec<ObjectId> = (0..content.object_defs().len())
+            .map(|o| ObjectId(o as u16))
+            .filter(|&o| self.stocks(content, kind, o))
+            .collect();
+        goods.sort_by(|a, b| content.object(*a).id.cmp(&content.object(*b).id));
+        (goods.into_iter())
+            .map(|o| match content.object(o).frequency {
+                0 => (o, 100),
+                f => (o, f),
+            })
+            .collect()
+    }
+
+    /// One stack of `object` as a shop of kind `kind` lays it out, made at item level `level`:
+    /// a spell scroll may be its grimoire, a stackable object comes in a bundle, and anything
+    /// that may be magic draws its magic (and an ornament) as loot of that level does
+    /// ([`crate::magic::loot::make`]). It stays of its base material (spec/06-content.md).
+    pub fn lay_out(
+        &self,
+        content: &Content,
+        rng: &mut crate::rng::Rng,
+        object: ObjectId,
+        level: u8,
+    ) -> Stack {
+        use crate::magic::loot::{LootGrade, make};
+        let object = content.grimoire_or(rng, object);
+        let count = if content.object(object).stackable {
+            let (lo, hi) = self.bundle;
+            rng.range(lo as i32, hi as i32) as u32
+        } else {
+            1
+        };
+        make(content, rng, object, count, level, LootGrade::Any)
+    }
+
     /// Whether a shop of kind `kind` buys `stack`.
     pub fn buys(&self, content: &Content, kind: ShopId, stack: &Stack) -> bool {
         let def = content.object(stack.object);

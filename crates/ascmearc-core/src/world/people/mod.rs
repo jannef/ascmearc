@@ -7,6 +7,7 @@ pub(in crate::world) mod guild;
 mod lure;
 pub(in crate::world) mod quest;
 mod quest_roll;
+mod restock;
 pub(in crate::world) mod rumour;
 mod service;
 pub(in crate::world) mod shop;
@@ -23,6 +24,7 @@ cfg_if! {
         mod outlaw_tests;
         mod quest_roll_tests;
         mod quest_tests;
+        mod restock_tests;
         mod rumour_tests;
         mod service_haggle_tests;
         mod service_tests;

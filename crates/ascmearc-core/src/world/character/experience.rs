@@ -229,6 +229,7 @@ impl World {
         self.news.push(format!("Welcome to level {after}."));
         self.level_up(before, after);
         self.grow_stipend(before, after);
+        self.restock_shops();
     }
 
     /// What total level `level` adds to the player's hit points: half the hit points of the

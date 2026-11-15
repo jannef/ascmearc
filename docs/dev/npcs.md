@@ -17,7 +17,11 @@ and a service needs `data/shops.toml` for its currency), and `mutter` (chance pe
 lines), and `[[dialogue.after]]` (`quest`, `lines`: one-liners that join the rotation once the
 player has done that quest, `World::one_liner` reading `QuestRecord::completed`; the quest ids
 are checked as the quests load, `content/quest.rs::parse`; #1446: Kerensa's and Ysella's about
-the bound crystal guardian). The loader checks only what resolves and what the code needs (#1205): ids once and
+the bound crystal guardian; #1735: Cēaptūn's villagers' and Gimmwīc's deep gnomes' about the
+mines and the trade with the deep), and `[dialogue.economy]` (`hard`, `better`: one-liners that
+join the rotation in a town, `Content::town_at` of the current level, the `better` ones while
+`World::restock_bonus` of the town is above 0, `world/people/restock.rs::economy_lines`; the
+town's trade, docs/dev/shops.md "Restocking"). The loader checks only what resolves and what the code needs (#1205): ids once and
 without `:` or whitespace (`ask:E:ID`), at least one line to rotate and to mutter, `silent` with
 `speaks_to`; no length, count, or style limits (the dialogue screen asks topics past nine by the
 arrow keys and cuts what overflows). `world/people/talk.rs` is the one place talk happens: `World::chat` (`Action::Chat`, cost
@@ -96,7 +100,7 @@ gives no quests). Test: `world/campaigns/ceaptun_tests.rs`
 (`ceolred_the_apprentice_stands_in_the_smithy_at_peace_and_keeps_no_shop`).
 The third is **Old Tregear** (#1434; `npc = "tregear"`, `campaigns/ascmearc/data/dialogue/
 gimmwic.toml`, in the deep gnomes' Cornish), on Gimmwīc's cutting floor: Jewelcraft for 1500
-gold, at 5. Gimmwīc has no `data/towns/` entry, so no goodwill moves its prices.
+gold, at 5. Gimmwīc's `data/towns/` entry names no `people` and no `goodwill` (only its level and its shops' restocking), so no goodwill moves its prices.
 Tests: `world/people/train_service_tests.rs` (a fixture teacher: listed while untrained, bought, gone,
 refusals, digging before and after, the replay and the save, the load checks),
 `mapgen/fyrdelf_tests.rs::alberich_keeps_his_delving_on_the_fifth_floor`.

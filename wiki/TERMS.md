@@ -179,6 +179,7 @@ above.
 | Gold, money | `shops.md#money` |
 | A magic item's worth, its price in shops | `shops.md#magic-items` |
 | Theft from a shop | `shops.md#theft` |
+| A shop's new goods (restocking), a town's trade | `shops.md#new-goods` |
 | **Your character** | |
 | Character, character creation | `character.md` |
 | Name, gender | `character.md#name`, `character.md#gender` |

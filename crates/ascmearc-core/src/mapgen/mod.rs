@@ -215,6 +215,8 @@ pub(crate) struct Canvas<'a> {
     pub rooms: Vec<SpecialRoom>,
     /// The effect covering the whole level, if one drawn for a room does (`special.rs`).
     pub pervading: Option<RoomEffectId>,
+    /// The level's item level: a shop's goods are made at it (`shop.rs`).
+    pub item_level: u8,
     /// Whether the level has a danger (some effects need one) and another level below it.
     pub danger: bool,
     pub below: bool,
@@ -266,6 +268,7 @@ impl<'a> Canvas<'a> {
             creatures: Vec::new(),
             rooms: Vec::new(),
             pervading: None,
+            item_level: 1,
             danger: false,
             below: false,
             least: 0,
@@ -546,6 +549,7 @@ pub fn generate_for(
         let size = (plan.width, plan.height);
         let mut canvas = Canvas::new(content, pal, odds, vaults, size);
         canvas.danger = content.spawning(id).is_some();
+        canvas.item_level = content.item_level(id);
         canvas.least = content
             .spawning(id)
             .map_or(0, |(rule, depth, _)| rule.at(depth, 1));

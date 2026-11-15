@@ -52,7 +52,10 @@ pub(super) fn services(content: &Content) -> String {
 /// The towns (a campaign's `data/towns/`): their people, the percent their services cost less
 /// per quest of theirs completed, and how many quests make them free, sorted by name.
 pub(super) fn towns(content: &Content) -> String {
-    let mut rows: Vec<_> = content.towns().iter().collect();
+    // A town that keeps no goodwill (Gimmwīc names only its level and its trade) is left out.
+    let mut rows: Vec<_> = (content.towns().iter())
+        .filter(|t| t.goodwill > 0)
+        .collect();
     if rows.is_empty() {
         return "No town keeps goodwill yet.\n".to_string();
     }

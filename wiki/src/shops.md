@@ -108,6 +108,38 @@ class](objects.md#item-classes):
 
 {{#include generated/shops.md}}
 
+## New goods
+
+Every time you gain a [level](experience.md#when-you-level-up), every shop gets some new goods.
+A few things leave its floor and new ones are laid out in their place. A shop keeps its kind: a
+smithy still sells arms and armour. The general store's scrolls of identify never leave, and
+come back if you have bought them all.
+
+The new goods are a little better each time, on average. Their magic is made like
+[loot](magic-items.md#finding-them)'s, at an item level that climbs slowly with your level, so
+stronger [magic items](magic-items.md) turn up more often. Shop goods are always of their usual
+material. A shop deep in a [dungeon](dungeons.md) has better goods from the start, and its new
+goods are better too.
+
+It does not matter where you are when you gain the level. A shop in a town you are far from gets
+its new goods at once, the same as if you were standing in it. A level you lose and gain again
+brings nothing new. A shop whose keeper is angry or dead gets nothing.
+
+Some towns' shops get better goods as their trade picks up:
+
+- In Cēaptūn, once the fire drake is dead and the mines are open again
+  ([Fire in the deep](quests.md#who-gives-quests)).
+- In Cēaptūn and in [Gimmwīc](ascmearc.md#gimmwīc), once Factor Wulfrun's letter has reached the
+  deep gnomes (A letter for the deep).
+- In Cēaptūn, the more gold a merchant has put with their [business
+  partner](class-merchant.md#invest). Once the letter has reached the deep gnomes, half of that
+  counts in Gimmwīc too.
+
+The game never shows these numbers. Listen to the townsfolk instead: they grumble about hard
+times, and talk of better times once trade picks up, and sometimes say why.
+
+{{#include generated/restock.md}}
+
 ## Theft
 
 Walking out of the door can never be theft. Leaving a shop owing anything any other way is, for

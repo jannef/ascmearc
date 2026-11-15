@@ -399,8 +399,9 @@ impl World {
         }));
     }
 
-    /// The `k`-th one-liner of `d` for creature `id`: of its `lines`, and of its lines after each
-    /// quest the player has done (`[[dialogue.after]]`).
+    /// The `k`-th one-liner of `d` for creature `id`: of its `lines`, of its lines after each
+    /// quest the player has done (`[[dialogue.after]]`), and in a town of its lines about the
+    /// town's trade (`[dialogue.economy]`, [`World::economy_lines`]).
     pub(in crate::world) fn one_liner(&self, id: ActorId, d: &Dialogue, k: u32) -> String {
         let key = self.rotation_key(id, b"lines");
         let done =
@@ -411,6 +412,7 @@ impl World {
                     .filter(|a| done(&a.quest))
                     .flat_map(|a| &a.lines),
             )
+            .chain(self.economy_lines(d))
             .collect();
         lines[rotation(key, k, lines.len())].clone()
     }

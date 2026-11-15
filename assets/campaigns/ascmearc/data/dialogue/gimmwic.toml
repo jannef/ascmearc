@@ -35,6 +35,26 @@ mutter = { chance = 2, lines = [
     "Dreckly. I'll do 'un dreckly.",
 ] }
 
+# The town's trade (#1735; data/towns/gimmwic.toml `[town.restock]`): hard times while nothing
+# raises the shops' restocking, better times once anything does (the letter from up top delivered,
+# and with it a share of a merchant's stake).
+[dialogue.economy]
+hard = [
+    "Stock's thin at Jory's, my 'ansum. Nothin' comes down, nothin' goes up.",
+    "No trade with up top. We sell to ourselves, an' that's no trade at all.",
+]
+better = [
+    "Jory's shelves is fuller'n I've seen 'em in years. Proper job.",
+    "Coin's comin' down the Deep Way again. Good for the wheel, good for all.",
+]
+
+[[dialogue.after]]
+quest = "gnome_letter"
+lines = [
+    "Emmets an' gnomes tradin' fair. Peran says 'twas the letter done it.",
+    "Cēaptūn silver for our stones, an' their iron for our settin's. Who'd 'ave thought it?",
+]
+
 # The traders (the `deep_gnome_trader` type), in Gimmwīc's outfitters and on Dēopgang's gallery
 # floors: trade talk, no topics.
 [[dialogue]]
