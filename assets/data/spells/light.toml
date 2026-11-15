@@ -1,4 +1,4 @@
-# Light (spec §8 "Spells", "Scrolls"): a cantrip, a pale light about the caster a while. The
+# Light: a cantrip, a pale light about the caster a while. The
 # scroll of light casts it.
 [[spell]]
 id = "light"
@@ -14,7 +14,7 @@ effect = { status = "lit" }
 [spell.grows]
 degrees = "presence 14 2, 18 3"
 
-# What rereading its grimoire adds, rank by rank (spec §8 "Spells": "Ranks"; README.toml
+# What rereading its grimoire adds, rank by rank (README.toml
 # `[spell.ranks]`): a cantrip's ease. At rank 10 two degrees more (the full hour and a half at
 # any Presence), three quarters off the mana, and four fifths off the casting time.
 [spell.ranks]

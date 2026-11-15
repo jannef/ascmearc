@@ -1,4 +1,4 @@
-//! Overworld encounters (spec §7 "Overworld encounters"; `data/encounters.toml` and each
+//! Overworld encounters (`data/encounters.toml` and each
 //! campaign's `data/encounters/`; `docs/dev/encounters.md`): the rates by landscape and phase, the
 //! checks and their odds, the skill ladders, where everyone stands, and each campaign's tables.
 

@@ -1,0 +1,64 @@
+# Līctūn crypt 20, "the first grave" (#1685): the twentieth crypt under Līctūn, below Līctūn crypt
+# 19, reached by the stairs that open there once its places are filled (`docs/dev/graves.md`). Its
+# stairs up (<) lead back to Līctūn crypt 19. No danger, nobody here. The deepest of the chain.
+#
+# A cavern wider than any light reaches, its roof lost in the dark. Niches are cut
+# round its wall at long intervals. In its middle a ring of standing stones stands about a single
+# stone, the grave of the first of the dead of this place (F), a candle each side, places for
+# statues within the ring (S). A cleft in the east wall (v) is where a way down would be; it
+# leads nowhere, and never opens.
+#
+# Places: 24 niches, filled in row order.
+name = "Līctūn crypt 20"
+arrival = "Līctūn crypt 20, the first grave: a cavern deeper than any light, and a ring of stones in the dark."
+temperature = 2
+ambient = [6, 6, 8, 0]
+item_level = 1
+map = '''
+######################################################################
+######################################################################
+#########################N####N####N####N#############################
+####################N####.................##N#########################
+####################..........f................#N#####################
+###############N#................................#####################
+###############...................................f###################
+##############......................................##################
+############N.f......................................#################
+#############.........................................################
+############.....................●...●.................###############
+###########..................●...........●..............#N############
+###########....................S.......S..................############
+#########t.................●...............●...............#N#########
+#########<.......................i.F.i.......................#########
+##########.................●...............●..................v#######
+##########.....................S.......S......................########
+##########...................●...........●.....................N######
+###########......................●...●.........................#######
+############..................................................########
+############N#..........................................f....#########
+################N#....f....................................#N#########
+####################N#...................................#############
+########################N#............................##N#############
+############################N#.....................#N#################
+#################################N#...........##N#####################
+#######################################N####N#########################
+######################################################################
+######################################################################
+'''
+
+[burial]
+chain = "lictun"
+depth = 20
+epitaph = "Here lies {name}, {death}. Laid with the first of the dead."
+
+[legend]
+"#" = "granite"
+"N" = "empty_niche"
+"●" = "standing_stone"
+"f" = "fungus"
+"i" = "candles"
+"t" = "sconce"
+"<" = { terrain = "stairs_up", to = "lictun_crypt_19" }
+"S" = { terrain = "floor", statue_place = true }
+"v" = { terrain = "floor", burial_stairs = "stairs_down" }
+"F" = { terrain = "gravestone", epitaph = "No letters: a hand pressed in red on the stone, and beside it a smaller one." }

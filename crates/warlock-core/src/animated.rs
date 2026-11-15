@@ -1,4 +1,4 @@
-//! Animated objects as they are made (spec §8 "Animated objects"; docs/dev/animated.md): what a
+//! Animated objects as they are made (docs/dev/animated.md): what a
 //! creature of an animated type is made of, rolled when it spawns.
 //!
 //! - A household type's creature is its body: one stack of its body's object (a clatter of

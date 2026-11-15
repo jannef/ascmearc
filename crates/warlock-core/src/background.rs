@@ -1,4 +1,4 @@
-//! Background stories (spec §8 "Background story"; docs/dev/background.md): a chosen character's
+//! Background stories (docs/dev/background.md): a chosen character's
 //! youth, told in eight chapters of one line each (the last the campaign's own), with what it
 //! left them. [`tell`] is pure: given the content, the run seed, and what the conditions may read
 //! of the finished character ([`Witness`]), it draws each chapter from its own stream,
@@ -66,14 +66,14 @@ pub struct Witness<'a> {
     pub trained: &'a [WeaponSkillId],
     /// The run's campaign (`""` outside every campaign).
     pub campaign: &'a str,
-    /// The type of the companion at their side as the run begins, if any (spec §8 "Allies":
-    /// made before the story is told).
+    /// The type of the companion at their side as the run begins, if any (made before the story is
+    /// told).
     pub companion: Option<CreatureId>,
-    /// The type of the familiar at their side as the run begins, if any (spec §8 "Allies": the
+    /// The type of the familiar at their side as the run begins, if any (the
     /// witch's, made before the story is told).
     pub familiar: Option<CreatureId>,
-    /// A kept beast at their side as the run begins, a companion or a familiar (spec §8
-    /// "Allies"): what the companion chapter's `when` reads.
+    /// A kept beast at their side as the run begins, a companion or a familiar: what the companion
+    /// chapter's `when` reads.
     pub kept: bool,
 }
 

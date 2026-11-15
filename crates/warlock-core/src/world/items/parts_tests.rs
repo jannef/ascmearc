@@ -1,4 +1,4 @@
-//! Objects made of parts (spec §7 "Objects and materials", #199): every built-in object's parts
+//! Objects made of parts (#199): every built-in object's parts
 //! are valid, the main part is what a single material was, names show the gems and precious
 //! metals, descriptions every part, before identification too, and value follows the parts'
 //! materials by their shares. Items carry their base item's parts, with their own gems in place

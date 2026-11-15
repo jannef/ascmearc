@@ -1,4 +1,4 @@
-//! Miscasts (spec §8 "Spells": "Miscasts", #1271, `miscast.rs`): every cast with one's own mana
+//! Miscasts (#1271, `miscast.rs`): every cast with one's own mana
 //! makes a Spellcraft check after it has gone off in full; the 1 and 1 always fails; a failure
 //! rolls on the one ordered table, and each entry does what it says. The check and the total of
 //! the miscasts design (#1288): the rank eases the check, the miss carries the total, and the

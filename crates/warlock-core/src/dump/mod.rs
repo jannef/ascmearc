@@ -1,4 +1,4 @@
-//! Text and JSON dumps of the simulation for developers and agents (spec §9).
+//! Text and JSON dumps of the simulation for developers and agents.
 //!
 //! Every layer except [`Layer::Truth`], [`Layer::Actors`], and [`Layer::Rooms`] is built from
 //! [`World::perception`] only, so dumps cannot leak information the player does not have.
@@ -120,7 +120,7 @@ fn summary(world: &World) -> String {
     let temperature = view.temperature();
     let (hp, max) = view.own_hp();
     let (mp, max_mp) = view.own_mana();
-    // The resources the player holds, as the status bar shows them (spec §8 "Resources").
+    // The resources the player holds, as the status bar shows them.
     let resources: String = (view.own_resources().iter())
         .map(|r| {
             let id = &view.content().resource(r.resource).id;
@@ -135,12 +135,12 @@ fn summary(world: &World) -> String {
     let dazzled = if view.dazzled() { " dazzled" } else { "" };
     // Averted eyes (`world/creatures/avert.rs`), as the status bar shows them.
     let averted = if view.averted() { " averted" } else { "" };
-    // The allies with the player: on the level or in the retinue (spec §8 "Allies").
+    // The allies with the player: on the level or in the retinue.
     let allies = match view.allies_with() {
         0 => String::new(),
         n => format!(" allies {n}"),
     };
-    // An overworld encounter to answer (spec §7 "Overworld encounters").
+    // An overworld encounter to answer.
     let encounter = view.encounter().map_or(String::new(), |e| {
         let choices: Vec<&str> = e.choices.iter().map(|(_, c)| c.id()).collect();
         format!(" encounter pending: {} ({})", e.name, choices.join(", "))

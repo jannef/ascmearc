@@ -1,4 +1,4 @@
-# A potion of glamour (spec §8 "Potions", the potions wave 2 design §4.1): Glamoured for two minutes, a seeming to one side of where one stands. Wards are bronze.
+# A potion of glamour (the potions wave 2 design §4.1): Glamoured for two minutes, a seeming to one side of where one stands. Wards are bronze.
 [[object]]
 id = "potion_of_glamour"
 name = "potion of glamour"

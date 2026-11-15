@@ -1,4 +1,4 @@
-//! Traps in the world (spec §8 "Traps"): hidden until sprung, then known and remembered; arrows,
+//! Traps in the world: hidden until sprung, then known and remembered; arrows,
 //! spears, fireballs, lightning, pits, alarms, and teleports; charges; deaths; saves; replays.
 
 use crate::action::{MissileEnd, SpellShape, parse_actions};

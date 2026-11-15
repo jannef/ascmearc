@@ -33,7 +33,7 @@ damage_type = "slashing"
 name = "claws"
 verb = "claws"
 to_hit = 9
-# Its gear (spec §8 "Creature gear"): a sword and the mail of its command.
+# Its gear: a sword and the mail of its command.
 [[creature.gear]]
 chance = 80
 one_of = ["long_sword", "great_sword"]

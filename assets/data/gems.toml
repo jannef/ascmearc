@@ -1,4 +1,4 @@
-# Gems (spec §7 "Gems", #191): what every gem shares. The gems themselves are materials with a
+# Gems (#191): what every gem shares. The gems themselves are materials with a
 # `gem` table (materials/diamond.toml, ...): their colour, what a plain one is worth in gold, and
 # how often loot finds them. A gem is worth its value × its size's × its cut's multiplier.
 #

@@ -1,4 +1,4 @@
-//! Learning spells (spec §8 "Spells", the magic design §4, the spell scaling design §5.4): reading
+//! Learning spells (the magic design §4, the spell scaling design §5.4): reading
 //! a grimoire ([`Action::Read`](crate::Action::Read) of one, `read.rs`; #1260).
 //!
 //! A character knows a set of spells for good: their class abilities' (talents) and those
@@ -97,7 +97,7 @@ impl Odds {
 }
 
 impl Actor {
-    /// Whether it knows `spell` (spec §8 "Spells"): learned, or its class abilities give it,
+    /// Whether it knows `spell`: learned, or its class abilities give it,
     /// and not forgotten (rank 0 in [`Actor::spells`], `spell_rank.rs`).
     pub fn knows_spell(&self, content: &Content, spell: SpellId) -> bool {
         match self.spells.get(&spell) {
@@ -141,7 +141,7 @@ impl Actor {
     }
 }
 
-/// The class's affinity with the school of `spell` (spec §8 "Spells"): study check points; 0
+/// The class's affinity with the school of `spell`: study check points; 0
 /// without a class.
 fn affinity(content: &Content, character: Option<&Character>, spell: SpellId) -> i32 {
     let Some(def) = content.spell_of(spell) else {

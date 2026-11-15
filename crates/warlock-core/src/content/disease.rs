@@ -1,4 +1,4 @@
-//! Diseases (`assets/data/diseases.toml`, spec §8 "Diseases"): the pathologies behind the one
+//! Diseases (`assets/data/diseases.toml`): the pathologies behind the one
 //! status a sufferer shows, "Diseased" (the file's `status`, a status in `data/status/`).
 //!
 //! A disease is data, modelled on D&D 3.5's diseases: how hard it is to resist (its
@@ -63,7 +63,7 @@ pub struct DiseaseDef {
     /// How fast hit points come back while it shows, in percent of normal, if it slows them
     /// more than its status does (the slowest counts).
     pub regen: Option<u16>,
-    /// How fast mana comes back while it shows, the same way (spec §8 "Mana").
+    /// How fast mana comes back while it shows, the same way.
     pub mana_regen: Option<u16>,
     /// The ways rules may expose someone to it ([`SOURCES`]): `rotten_food`.
     pub caught: Vec<String>,

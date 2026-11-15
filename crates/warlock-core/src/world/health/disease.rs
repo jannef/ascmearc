@@ -1,4 +1,4 @@
-//! Diseases in the world (spec §8 "Diseases"); the rules of one actor's infections are
+//! Diseases in the world; the rules of one actor's infections are
 //! [`crate::disease`], the diseases data ([`crate::content::DiseaseDef`]).
 //!
 //! - **Exposure** ([`World::expose`]): a bite whose `on_hit` names a disease (its chance drawn
@@ -52,11 +52,11 @@ impl World {
         if actor.diseases.has(disease) {
             return false;
         }
-        // Purity of body (spec §8 "Class abilities"): never caught, nothing rolled.
+        // Purity of body: never caught, nothing rolled.
         if actor.talent_mods(&self.content).vigour.disease_immune {
             return false;
         }
-        // Immune by its type (spec §8 "Status effects"): nothing lives in it to sicken.
+        // Immune by its type: nothing lives in it to sicken.
         let immune = &self.content.creature(actor.creature).immune;
         if (self.content.disease_status()).is_some_and(|s| immune.contains(&s)) {
             return false;
@@ -77,8 +77,8 @@ impl World {
     }
 
     /// What `actor` adds to a check against a disease whose `check` stat is `stat`: its
-    /// modifier in the stat (of the effective score, spec §8 "Stats"), its talents' bonus
-    /// (Strong constitution, and what adds to every check of the stat: Iron will; spec §8 "Talents"), and the player's race's `disease_check`
+    /// modifier in the stat (of the effective score), its talents' bonus
+    /// (Strong constitution, and what adds to every check of the stat: Iron will), and the player's race's `disease_check`
     /// (ratfolk shrug diseases off).
     pub(in crate::world) fn disease_modifier(&self, actor: &Actor, stat: Stat) -> i32 {
         let race = self.state.race_of(&self.content, actor);
@@ -126,7 +126,7 @@ impl World {
         if self.wading_step(def) && !def.swim && self.trains(Use::Wade) {
             self.train(Use::Wade);
         }
-        // A strong swimmer (spec §8 "Birth sign") never catches anything wading, nor does a
+        // A strong swimmer never catches anything wading, nor does a
         // druid with Nature's ward.
         let mods = self.state.player().talent_mods(&content);
         if mods.movement.swimmer || mods.movement.wading_proof {
@@ -246,7 +246,7 @@ impl World {
             return false;
         };
         actor.hp = actor.hp.min(actor.max_hp(&content));
-        // Damage to the mental stats lowers the most mana the same way (spec §8 "Mana").
+        // Damage to the mental stats lowers the most mana the same way.
         actor.mana = actor.mana.min(actor.max_mana(&content));
         if def.kills && no_toughness {
             self.dies(id, by, of, when, events);
@@ -311,7 +311,7 @@ impl World {
 }
 
 /// How many checks won in a row shake `def` off a sufferer with `talents`: its `recovery`, less
-/// what Fever-proof takes off (spec §8 "Talents"), never under 1.
+/// what Fever-proof takes off, never under 1.
 pub(super) fn recovery_of(def: &crate::content::DiseaseDef, talents: &TalentMods) -> u8 {
     let recovery = i32::from(def.recovery) - talents.vigour.disease_recovery;
     u8::try_from(recovery.max(1)).unwrap_or(def.recovery)

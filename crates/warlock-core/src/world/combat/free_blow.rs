@@ -1,9 +1,9 @@
-//! Free blows (spec §8 "Free blows"): the blows a melee attack may bring beyond its first, and
+//! Free blows: the blows a melee attack may bring beyond its first, and
 //! the blows others get in. [`World::second_blow`] (`fight.rs`) is the one place each is
 //! decided, on its [`Cue`]:
 //!
 //! - the **second blow** of an attack, at its target: the off hand's, or Sword and Board's
-//!   shield bash after a hit (spec §8 "Fighting styles");
+//!   shield bash after a hit;
 //! - a **cleave**: when an attack's blows kill its target, a blow at another hostile beside the
 //!   striker, the next clockwise from where the target fell; one per attack, or with great
 //!   cleave another after each cleave that kills;
@@ -39,7 +39,7 @@ use crate::rng::Rng;
 use crate::world::{Actor, ActorId, World};
 use serde::{Deserialize, Serialize};
 
-/// The free blows an actor is given (spec §8 "Free blows"): the switches talents and class
+/// The free blows an actor is given: the switches talents and class
 /// abilities turn on. None by default.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct FreeBlows {
@@ -287,9 +287,8 @@ impl World {
         self.stands(id)
     }
 
-    /// Actor `id` has just stepped from `from` up beside a hostile gatekeeper (spec §8 "Birth
-    /// sign": Gatekeeper): each one it was not beside before strikes it as it comes, in actor
-    /// order, while it stands.
+    /// Actor `id` has just stepped from `from` up beside a hostile gatekeeper (Gatekeeper): each
+    /// one it was not beside before strikes it as it comes, in actor order, while it stands.
     pub(in crate::world) fn step_up(&mut self, id: ActorId, from: Pos, events: &mut Vec<Event>) {
         let Some(me) = self.state.actors.get(&id) else {
             return;
@@ -378,7 +377,7 @@ impl World {
     }
 
     /// Whether `me` stepping to `to` takes it out of the reach of `other`, a hostile beside it
-    /// now (spec §8 "Stances": the coward's flight; "Free blows": the opportunist's blow).
+    /// now (the coward's flight; "Free blows": the opportunist's blow).
     pub(in crate::world) fn leaves(&self, me: &Actor, other: &Actor, to: Pos) -> bool {
         other.id != me.id
             && other.level == me.level
@@ -451,9 +450,9 @@ impl World {
         })
     }
 
-    /// The flurry's second blow of actor `striker` at `target` (spec §8 "Class abilities":
-    /// Flurry): with nothing in hand, its bare hands again at −2 to hit, spending what it costs
-    /// (a point of Ki, `flurry_cost`; holding less, no blow). No draw.
+    /// The flurry's second blow of actor `striker` at `target` (Flurry): with nothing in hand, its
+    /// bare hands again at −2 to hit, spending what it costs (a point of Ki, `flurry_cost`; holding
+    /// less, no blow). No draw.
     pub(in crate::world) fn flurry(
         &mut self,
         striker: ActorId,

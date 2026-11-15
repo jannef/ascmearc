@@ -1,8 +1,7 @@
-//! The rank tables of the abjuration, enchantment, and restoration spells (#1269; spec §8
-//! "Spells": "Ranks"): every rank from 2 to 10 adds something, no degree a rank adds is lost to
-//! its status's most for a caster at the base severity, and rank 10 gains what each spell's
-//! role wants (a roll on a heal or a damage spell, reach on an aimed one, a longer stay on a
-//! call).
+//! The rank tables of the abjuration, enchantment, and restoration spells (#1269): every rank from
+//! 2 to 10 adds something, no degree a rank adds is lost to its status's most for a caster at the
+//! base severity, and rank 10 gains what each spell's role wants (a roll on a heal or a damage
+//! spell, reach on an aimed one, a longer stay on a call).
 
 use warlock_core::content::{Content, ContentFiles, MAX_SPELL_RANK, SpellData};
 

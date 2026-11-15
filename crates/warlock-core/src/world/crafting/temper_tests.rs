@@ -1,4 +1,4 @@
-//! The anvil (spec §7 "Special rooms"; `world/crafting/temper.rs`, `magic/worked.rs`): Temper listed only
+//! The anvil (`world/crafting/temper.rs`, `magic/worked.rs`): Temper listed only
 //! beside an anvil and only for metal arms and armour, ten minutes' work that an interruption
 //! spoils, every row of the one action's table, the rising difficulty, the numbers, the names and
 //! the worth of a worked item, identification, the mark, and an anvil that is never spent.

@@ -1,4 +1,4 @@
-//! Creatures' throws (spec §8 "Ranged combat": "Creatures' throws", `hurl.rs`): a giant hurls
+//! Creatures' throws (`hurl.rs`): a giant hurls
 //! boulders from afar, fights in melee up close, closes in when out of range or blocked, and
 //! nothing it throws lands.
 

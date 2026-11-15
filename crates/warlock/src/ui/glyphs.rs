@@ -1,16 +1,16 @@
-//! Map content on the free-glyph layer (spec §4.2): creatures at their sliding positions, and
+//! Map content on the free-glyph layer: creatures at their sliding positions, and
 //! visible terrain whose animation outgrows its cell (`pulse`). Rebuilt every frame.
 //!
 //! Each glyph is lit by sampling the visual light at its center (`VisualLight::sample`), the
 //! same interpolated light the grid shader uses there, so a sliding creature's light changes
 //! smoothly and flickers with the torches around it.
 //!
-//! The unaware mark (spec §4.2; Stalker's eye): a creature the snapshot says has not noticed
+//! The unaware mark (Stalker's eye): a creature the snapshot says has not noticed
 //! the player (`SeenActor::unaware`) is drawn a shade cooler, its colour mixed toward
 //! [`UNAWARE_TINT`] before lighting, the mix breathing slowly with glyph animation on and
 //! standing still without it.
 //!
-//! The ally mark (spec §8 "Allies"): a creature the snapshot says is the player's ally
+//! The ally mark: a creature the snapshot says is the player's ally
 //! (`SeenActor::ally`) has a short, faint sage underline beneath its glyph ([`ALLY_MARK`]),
 //! sliding and lit with it; still, so the same with effects on or off.
 
@@ -150,7 +150,7 @@ const ALLY_MARK_GLYPH: char = '_';
 const ALLY_MARK_SCALE: f32 = 0.8;
 const ALLY_MARK_DROP: f32 = 0.1;
 
-/// The ally mark (spec §8 "Allies"): a short, faint underline beneath a creature the snapshot
+/// The ally mark: a short, faint underline beneath a creature the snapshot
 /// says is the player's ally (`SeenActor::ally`), at level position `at`, coloured `fg`. Still:
 /// it neither breathes nor flickers, so it is the same with effects on or off.
 fn ally_mark(grid: &MapGrid, at: Vec2, fg: Rgb) -> FreeGlyph {

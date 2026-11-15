@@ -1,4 +1,4 @@
-//! Smiting (`assets/data/rules/smite.toml`, spec §8 "Class abilities": "Smite"): what holy wrath
+//! Smiting (`assets/data/rules/smite.toml`): what holy wrath
 //! falls hardest on, and what a sin does to the smiter's zeal.
 //!
 //! The rule itself lives in `world/classes/smite.rs` (the blow) and `world/character/alignment.rs` (the sin). The
@@ -64,7 +64,7 @@ impl super::RulesFile for SmiteRules {
 }
 
 impl Content {
-    /// Whether creature type `id` is unholy (spec §8 "Class abilities": "Smite"): it carries a
+    /// Whether creature type `id` is unholy: it carries a
     /// tag of `data/rules/smite.toml`'s `unholy` list. The one reader of the list; nothing is
     /// unholy without the file (fixtures). Read by tags, never by a creature's hidden alignment.
     pub fn unholy(&self, id: CreatureId) -> bool {

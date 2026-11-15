@@ -1,4 +1,4 @@
-//! What stops a rest (spec §8 "Rest", `rest.rs`, #1216): a hostile coming within
+//! What stops a rest (`rest.rs`, #1216): a hostile coming within
 //! [`World::stop_within`] in view, an attack on the player (a shot or a spell, missed or
 //! resisted too), a message that stops a rest (hunger worsening); never a hostile farther off
 //! in view, nor a neutral creature however close. Long actions through `keep_at` (eating,

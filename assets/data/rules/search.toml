@@ -1,5 +1,5 @@
-# Searching (spec §8 "Searching"): finding hidden features, secret doors and hidden traps, with
-# one check for all of them (spec §8 "Checks": 2d12 plus a modifier against a difficulty).
+# Searching: finding hidden features, secret doors and hidden traps, with
+# one check for all of them (2d12 plus a modifier against a difficulty).
 #
 # A secret door looks and acts like the wall around it until it is found; a hidden trap looks
 # like the floor. Each has a difficulty: a trap's comes from its type (traps.toml `difficulty`),

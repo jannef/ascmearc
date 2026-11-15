@@ -1,4 +1,4 @@
-//! A special room's `haunt` (spec §7 "Special rooms"): parsed, refused without `needs_danger` or
+//! A special room's `haunt`: parsed, refused without `needs_danger` or
 //! a period, never over a whole level, and read by [`Here::haunt`] of the room only.
 
 use super::{Here, RoomEffectId, RoomEffects};

@@ -1,4 +1,4 @@
-//! Spell effects (`assets/data/effects.toml`, spec §4.8 "Spell effects", §7): what a fireball, a
+//! Spell effects (`assets/data/effects.toml`): what a fireball, a
 //! lightning bolt, and later other spells look like.
 //!
 //! **Presentation only**, like particles: the core loads and checks the file so all content

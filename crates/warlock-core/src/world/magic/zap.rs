@@ -1,4 +1,4 @@
-//! Using a wand (spec §8 "Magic items": "Wands", the magic design §9): a wand in the missile
+//! Using a wand (the magic design §9): a wand in the missile
 //! weapon slot is used as a missile weapon is (`t`, `fire:X,Y`), and casts the spell it holds
 //! through the one cast path ([`World::wand_cast`]):
 //!

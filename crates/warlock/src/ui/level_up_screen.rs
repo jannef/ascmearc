@@ -1,4 +1,4 @@
-//! The level-up screen (spec §6 "Level-up", §8 "Talents"; #236): it opens by itself at the end
+//! The level-up screen (#236): it opens by itself at the end
 //! of the turn in which a level came (`screens::on_level_up`; the death screen wins) and walks
 //! that level's choices, one step at a time, skipping steps with nothing to choose: the **skill
 //! rolls** (the trained skills, each with its value and its meter), then a **bonus pick** of the

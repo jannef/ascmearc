@@ -1,4 +1,4 @@
-//! Danger levels and what comes to a level over time (spec §7 "Danger levels"): the data of a
+//! Danger levels and what comes to a level over time: the data of a
 //! dungeon branch (`data/dungeons.toml`) or a hand-made level that says how dangerous it is and
 //! which creatures live there.
 //!
@@ -129,8 +129,8 @@ impl Count {
     }
 }
 
-/// The odds of a draw's departures from an area's own folk at its danger (spec §7 "Danger
-/// levels"): `data/dungeons.toml`'s `[defaults]`, each overridable by a branch or a level (and
+/// The odds of a draw's departures from an area's own folk at its danger: `data/dungeons.toml`'s
+/// `[defaults]`, each overridable by a branch or a level (and
 /// `dread_one_in` by a branch's depths, `[[dungeon.levels]]`).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -173,7 +173,7 @@ impl Odds {
     }
 }
 
-/// Where an area's strays come from (spec §7 "Danger levels"): `stray_pool` in its file.
+/// Where an area's strays come from: `stray_pool` in its file.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum StrayPool {
@@ -187,7 +187,7 @@ pub enum StrayPool {
     Populations,
 }
 
-/// What lives on the levels of an area and how it comes back (spec §7 "Danger levels").
+/// What lives on the levels of an area and how it comes back.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Spawning {
     /// The creature types that live there, sorted by id (each draw goes by
@@ -218,7 +218,7 @@ impl Spawning {
     }
 }
 
-/// The weight a type's level gives it in a draw at `danger` (spec §7 "Danger levels"): 4 at the
+/// The weight a type's level gives it in a draw at `danger`: 4 at the
 /// danger or one below, 2 two or three below, 1 down to [`TOO_WEAK`] below, else 0 (above the
 /// danger too; out-of-depth draws are made at a higher danger instead).
 pub fn level_weight(level: u8, danger: u8) -> u32 {
@@ -241,9 +241,9 @@ pub fn weight(level: u8, factor: u16, danger: u8) -> u32 {
 }
 
 /// A type that may be drawn: its id, its levels, its rarity's factor, and whether it is dread
-/// (`dread = true`). An ordinary type's levels are its own level twice; a family's (spec §8
-/// "Animated objects": `animated_blade`) are its range, its id its first member's, the others
-/// numbered after it in a row.
+/// (`dread = true`). An ordinary type's levels are its own level twice; a family's
+/// (`animated_blade`) are its range, its id its first member's, the others numbered after it in a
+/// row.
 pub type Candidate = (CreatureId, (u8, u8), u16, bool);
 
 /// The level candidate levels `(from, to)` stand at in a draw at `danger`: the danger, kept
@@ -306,7 +306,7 @@ fn deeper(rng: &mut crate::rng::Rng, danger: u8, odds: &Odds) -> u8 {
     at
 }
 
-/// Draws a type at `danger` (spec §7 "Danger levels"): from `own` (the population), or with
+/// Draws a type at `danger`: from `own` (the population), or with
 /// `odds.stray` % from `generic` (the generic creature list), both sorted by type, by
 /// [`weight`]. With `odds.out_of_depth` % the draw is made deeper ([`deeper`]); where the own
 /// folk weigh nothing at that depth (all too weak for it), the generic list is drawn there
@@ -839,7 +839,7 @@ mod tests {
         assert!(deep < 40, "{deep}");
     }
 
-    /// A family (spec §8 "Animated objects": `animated_blade`, levels 5 to 20, numbered from 10)
+    /// A family (`animated_blade`, levels 5 to 20, numbered from 10)
     /// is one candidate: it weighs as its member at the danger, kept within its levels, and
     /// gives that member, out of depth too.
     #[test]

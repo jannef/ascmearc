@@ -1,4 +1,4 @@
-//! Ways up (spec §7 "Ways up", #1117): Ūtgang, the three rooms floors between the bottom of
+//! Ways up (#1117): Ūtgang, the three rooms floors between the bottom of
 //! Fyrdelf and the overworld. Its floors and their links, the staircase up that Fyrdelf 12 gains
 //! beside the drake's hoard (and no other floor does), and the content check on `below`.
 

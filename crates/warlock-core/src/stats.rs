@@ -1,18 +1,18 @@
-//! Stats (spec §8 "Stats"): Strength, Dexterity, Toughness, Intelligence, Willpower, and
+//! Stats: Strength, Dexterity, Toughness, Intelligence, Willpower, and
 //! Presence, inspired by D&D (Toughness is its Constitution, Willpower its Wisdom, Presence its
 //! Charisma).
 //!
 //! Every actor has a **score** in each stat, [`AVERAGE`] (10) unless its creature type (or, for
 //! the player, the scenario) says otherwise, and a **potential**: the natural ceiling the score
 //! could grow towards, ADOM-like. Only eating a corpse raises a score yet ([`Stats::raise`], up
-//! to the potential; spec §8 "Hunger"), and status effects and hunger lower the scores the rules
+//! to the potential), and status effects and hunger lower the scores the rules
 //! use for a while ([`Stats::adjusted_by`]: strong poison, Weak).
 //!
 //! The **modifier** of a score follows D&D 3.5: `floor((score − 10) / 2)` ([`modifier`]). It is
 //! for the rules only. The player sees their own scores
 //! ([`PerceptionView::own_scores`](crate::perception::PerceptionView::own_scores)) and nothing
 //! else: never a modifier, never a potential, never a creature's stats. Combat and burden use
-//! them (spec §8 "Combat", "Burden").
+//! them.
 //!
 //! Adding a stat is one entry in the `stats!` list below; saves then change (the format version
 //! is bumped per release, see `save.rs`).
@@ -30,11 +30,11 @@ pub const AVERAGE: u8 = 10;
 /// The scores and potentials content may give an actor.
 pub const SCORES: RangeInclusive<u8> = 1..=40;
 
-/// The adjustments a race, class, or birth sign may make to a stat (spec §8 "Character
-/// creation"): every result a rolled adjustment can have lies within.
+/// The adjustments a race, class, or birth sign may make to a stat: every result a rolled
+/// adjustment can have lies within.
 pub const ADJUSTMENTS: RangeInclusive<i8> = -10..=10;
 
-/// The lowest score a drain leaves (spec §8 "Stats": "Drain"; `World::drain`).
+/// The lowest score a drain leaves (`World::drain`).
 pub const DRAIN_FLOOR: u8 = 3;
 
 /// Defines [`Stat`] from one entry per stat: the variant, its id in data files and saves, its
@@ -283,7 +283,7 @@ impl Stats {
     }
 
     /// These stats with each score changed by `by` of its stat (what an actor wears and wields
-    /// adds, spec §8 "Magic items"), kept within [`SCORES`]; the potentials as they are.
+    /// adds), kept within [`SCORES`]; the potentials as they are.
     pub fn raised(&self, by: impl Fn(Stat) -> i32) -> Self {
         let mut out = *self;
         for stat in Stat::ALL {
@@ -313,7 +313,7 @@ impl Stats {
         modifier(i32::from(self.score(stat)))
     }
 
-    /// Raises the score in `stat` by 1 by training (spec §8 "Stats": a check), past its
+    /// Raises the score in `stat` by 1 by training (a check), past its
     /// potential too, which stays where it is (nature: only elixirs, corpses, and gifts move
     /// it); never past [`SCORES`]. Returns whether it rose.
     pub fn train(&mut self, stat: Stat) -> bool {
@@ -324,7 +324,7 @@ impl Stats {
         rises
     }
 
-    /// Lowers the score in `stat` by 1 by neglect (spec §8 "Stats": a drop at a check), never
+    /// Lowers the score in `stat` by 1 by neglect (a drop at a check), never
     /// below [`DRAIN_FLOOR`] nor below `floor` (the stat damage on it plus one: a score carries
     /// its damage); the potential stays. Returns whether it fell.
     pub fn untrain(&mut self, stat: Stat, floor: u8) -> bool {
@@ -335,8 +335,8 @@ impl Stats {
         falls
     }
 
-    /// Raises the potential in `stat` by up to `by`, never past [`SCORES`] (spec §8 "Potions":
-    /// an elixir); the score stays. Returns the points it rose.
+    /// Raises the potential in `stat` by up to `by`, never past [`SCORES`] (an elixir); the score
+    /// stays. Returns the points it rose.
     pub fn widen(&mut self, stat: Stat, by: u8) -> u8 {
         let before = self.potential[stat];
         self.potential[stat] = before.saturating_add(by).min(*SCORES.end());
@@ -344,7 +344,7 @@ impl Stats {
     }
 
     /// Changes the score in `stat` by `by` and its potential with it, kept within [`SCORES`]: a
-    /// gift (spec §8 "Class abilities": Iron will's Presence +1), past the potential too.
+    /// gift (Iron will's Presence +1), past the potential too.
     pub fn gift(&mut self, stat: Stat, by: i32) {
         let score = adjusted(self.score[stat], by);
         let potential = adjusted(self.potential[stat], by);
@@ -352,7 +352,7 @@ impl Stats {
         self.potential[stat] = potential.max(score);
     }
 
-    /// Takes up to `points` off the score in `stat` for good (spec §8 "Stats": "Drain"), never
+    /// Takes up to `points` off the score in `stat` for good, never
     /// below `floor` (nor below 1); the potential stays where it was. Returns the points it
     /// took: none when the score is at the floor already.
     pub fn drain(&mut self, stat: Stat, points: u8, floor: u8) -> u8 {
@@ -363,7 +363,7 @@ impl Stats {
     }
 
     /// Takes up to `points` off the potential in `stat` and as many off its score, for good
-    /// (spec §7 "Special rooms": Wrath of the forgotten), neither below `floor` (nor below 1).
+    /// (Wrath of the forgotten), neither below `floor` (nor below 1).
     /// Returns whether either fell.
     pub fn lessen(&mut self, stat: Stat, points: u8, floor: u8) -> bool {
         let floor = floor.max(1);
@@ -382,8 +382,7 @@ impl Stats {
     }
 
     /// These stats with every score adjusted by `by` (kept within [`SCORES`]; a potential below
-    /// its score is raised to it): the scores the rules read while a status effect lowers some
-    /// (spec §8 "Status effects").
+    /// its score is raised to it): the scores the rules read while a status effect lowers some.
     pub fn adjusted_by(&self, by: &PerStat<i32>) -> Self {
         let mut score = self.score;
         for stat in Stat::ALL {
@@ -397,8 +396,8 @@ fn is_zero(n: &u32) -> bool {
     *n == 0
 }
 
-/// **Stat damage** (spec §8 "Stats"): points taken off an actor's scores for a while, by a
-/// disease's failed checks (spec §8 "Diseases"). Every rule reads the scores less it
+/// **Stat damage**: points taken off an actor's scores for a while, by a
+/// disease's failed checks. Every rule reads the scores less it
 /// ([`crate::world::Actor::effective_stats`]): Toughness damage lowers the most hit points, as
 /// in D&D 3.5. It never takes a score below 1 ([`StatDamage::take`] says when it would have:
 /// a disease that kills, kills then). Once no disease shows, a point of each damaged stat mends

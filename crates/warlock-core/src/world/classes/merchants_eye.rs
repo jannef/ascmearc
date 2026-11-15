@@ -1,4 +1,4 @@
-//! Merchant's eye (spec §8 "Class abilities"; #816): the merchant's class active,
+//! Merchant's eye (#816): the merchant's class active,
 //! `use:merchants_eye:c` ([`crate::action::Action::UseOn`]), from the abilities menu's Class group
 //! through the identify list. It tells one stack the player carries for what it is, as the
 //! scroll of identify and the Identify spell do ([`World::identify`]: its magic, a labelled

@@ -1,4 +1,4 @@
-# Fletching (spec §8 "Fletching"; docs/dev/crafting.md "Arrows and bolts"): what the arrows and
+# Fletching (docs/dev/crafting.md "Arrows and bolts"): what the arrows and
 # bolts recipes (recipes/woodcraft/arrows.toml, bolts.toml, `count = "fletch"`) read beyond the
 # recipe itself. Their time, difficulty, and stock are the recipes'; the margin's bands are
 # data/recipes.toml's.

@@ -33,7 +33,7 @@ cases! {
         screen: Some("temper"),
         ..BASE
     },
-    // An attempt made and one failed (spec §7 "Special rooms"): the name and numbers follow.
+    // An attempt made and one failed: the name and numbers follow.
     temper_list_fine: Case {
         name: "temper-list-fine",
         scenario: "forge",
@@ -59,7 +59,7 @@ cases! {
         screen: Some("make-do"),
         ..BASE
     },
-    // A ranger in the Thornwood after a forage (spec §8 "Foraging"): Survival listed as its
+    // A ranger in the Thornwood after a forage: Survival listed as its
     // use, Forage, usable; the message line says what came of it.
     abilities_menu_forage: Case {
         name: "abilities-menu-forage",
@@ -76,8 +76,8 @@ cases! {
         screen: Some("abilities"),
         ..BASE
     },
-    // A ranger after a batch in the forest area's glade, where wood is free (spec §8
-    // "Fletching"; #1336): Woodcraft… in the skill's place; the message line says what was made.
+    // A ranger after a batch in the forest area's glade, where wood is free (#1336): Woodcraft… in
+    // the skill's place; the message line says what was made.
     abilities_menu_fletch: Case {
         name: "abilities-menu-fletch",
         scenario: "forest",

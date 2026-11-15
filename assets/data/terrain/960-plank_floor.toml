@@ -1,4 +1,4 @@
-# A shop's timber hut in the courtyard (levels/courtyard.toml; spec §7 "Shops"): plank walls under
+# A shop's timber hut in the courtyard (levels/courtyard.toml): plank walls under
 # a roof, and a plank floor the roof shades from the sun and the sky. (Last in the file, so the
 # ids before them stay put.)
 [[terrain]]

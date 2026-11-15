@@ -1,4 +1,4 @@
-//! Outcomes in play (spec §7 "Special rooms"; the tables are `content/outcome.rs`): drawing one
+//! Outcomes in play (the tables are `content/outcome.rs`): drawing one
 //! from a table, leaned by a place's side, and applying it to the player. Each field of an
 //! [`OutcomeEffect`] is one hook into a system that already exists (healing, statuses, hunger,
 //! loot, traps, identification, harm, the player's light, spawning, diseases, stat damage, experience,
@@ -32,10 +32,10 @@ use crate::world::levels::travel::make_creature;
 use crate::world::magic::spell::Caster;
 use crate::world::{ActorId, World};
 
-/// The kinds' weights of `table` for a player of side `player` at a place of side `place`
-/// (spec §7 "Special rooms"): agreement (both good, or both evil) moves its `lean` from the bane
-/// to the boon, opposition (good against evil) from the boon to the bane; a neutral place or
-/// player leans nothing. Pious (`devout`) doubles an agreeing lean and takes an opposed one away.
+/// The kinds' weights of `table` for a player of side `player` at a place of side `place`:
+/// agreement (both good, or both evil) moves its `lean` from the bane to the boon, opposition (good
+/// against evil) from the boon to the bane; a neutral place or player leans nothing. Pious
+/// (`devout`) doubles an agreeing lean and takes an opposed one away.
 pub fn leaned_kinds(
     table: &OutcomeTable,
     place: Alignment,
@@ -528,7 +528,7 @@ impl World {
     }
 
     /// `summon.count` hostile creatures of the floor's danger plus `summon.danger` come, awake,
-    /// where `summon.near` says (module docs; spec §7 "Special rooms"). Nothing comes on a level
+    /// where `summon.near` says (module docs). Nothing comes on a level
     /// without a danger, or where no cell is free.
     fn summon_hostiles(&mut self, summon: OutcomeSummon, feature: Pos) {
         let id = self.state.current_level.clone();
@@ -638,7 +638,7 @@ impl World {
     }
 
     /// A place (`Caster::Place`: an altar's fire) does `damage` to `target`, with no roll to hit,
-    /// less what it resists (spec §7 "Special rooms"): the player is told when they are hit, or
+    /// less what it resists: the player is told when they are hit, or
     /// see who is; a kill is no one's.
     pub(in crate::world) fn place_hurts(
         &mut self,

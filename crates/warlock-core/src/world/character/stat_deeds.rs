@@ -1,4 +1,4 @@
-//! Deeds that cost the player's stats marks (spec §8 "Stats"; the rules are
+//! Deeds that cost the player's stats marks (the rules are
 //! [`crate::content::StatDeed`] and `[[training.deed]]`; the design's §7): few, and deliberate.
 //! Each is reported at the one hook that already knows the event, through
 //! [`World::stat_deed`]:

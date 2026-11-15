@@ -1,4 +1,4 @@
-//! Forgotten altars in generated levels (spec §7 "Special rooms", `special.rs`): one altar a
+//! Forgotten altars in generated levels (`special.rs`): one altar a
 //! room at the free floor nearest its middle, never beside a door, the room still whole; its
 //! side drawn one good to two neutral to one evil, shown by its light.
 

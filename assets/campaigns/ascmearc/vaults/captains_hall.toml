@@ -22,7 +22,7 @@ map = '''
 "H" = { terrain = "floor", creature = "herrick" }
 # His hired goblins at the door.
 "g" = { terrain = "floor", creature = "goblin" }
-# The fort's pay chest behind the captain's place (spec §8 "Chests"), still locked; what it
+# The fort's pay chest behind the captain's place, still locked; what it
 # holds is rolled when the level is made.
 "C" = { terrain = "chest", locked = true }
 # The captain's grave: a cairn of the fort's stones, his bones, and his helm on top.

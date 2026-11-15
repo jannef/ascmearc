@@ -1,5 +1,5 @@
 # The delf wave (Fyrdelf, docs/design/campaign.md §10.1). The grey dwarves' fighters, who guard
-# the delf's halls: a hand axe (their racial weapon, spec §8 "Creature gear"), a small shield,
+# the delf's halls: a hand axe (their racial weapon), a small shield,
 # and chain mail, now and then of a better make than it looks.
 [[creature]]
 id = "duergar_warrior"

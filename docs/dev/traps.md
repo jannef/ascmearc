@@ -1,20 +1,34 @@
 # Traps
 
 Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
-rules it implements are in spec/08d-traps-doors-digging.md. Keep it current with the code, as CLAUDE.md says.
+rules it implements are in spec/10-combat.md. Keep it current with the code, as CLAUDE.md says.
 
-Traps (spec §8 "Traps") are data (`data/traps.toml`, `content/trap.rs`: `TrapDef`, `TrapEffect`
+Traps are data (`data/traps.toml`, `content/trap.rs`: `TrapDef`, `TrapEffect`
 shot / strike / burst / bolt / pit / alarm / teleport, and the instance `Trap` with `known`,
 `charges`, `dir`) placed by level legends (`trap = "id"`, `known = true`, `dir`), dungeon vaults,
 and branches (`traps`, `traps_per_level` in `data/dungeons.toml`); the showcase has none, the
-trap hall (`levels/trap_hall.toml`, scenario `traps`) has one of each. They live in
+trap hall (`levels/trap_hall.toml`, scenario `traps`) has one of each. **The data per trap**
+(`TrapSpec::resolve`): `id`, `name` ("fireball trap", said in "Really step onto the fireball
+trap?"), `glyph` (default `^`) and `fg` (how it shows once known), an optional `message` said when
+the player perceives it go off, `difficulty` (how hard to find, default 15) and `sign` (what gives
+it away, default "a pressure plate"), optional `charges` (none: every time), an optional `noise`
+(`{ sound, loudness }`, loudness at most `noise::MAX_LOUDNESS` 300), and its `kind` with the
+fields that kind takes (any other is a content error, `allowed`): `shot` (`object`, the missile,
+which lands as that object; `damage`, `to_hit`), `strike` (`noun`, `damage`, `to_hit`), `burst`
+(`radius`, `damage`, `spell`, `noun`; an optional `blast`, the walls whose hardness is below it
+break, `u16`, the data file documents 0 to 10000; and `heat = true` or `frost = MM`, never both,
+`frost` at most `ice::MAX_MM` 1000), `bolt` (`length`, `damage`, `spell`, `noun`), `pit`
+(`damage`), `alarm` (its `noise` alone), `teleport` (nothing). `noun` and `verb` (default: the
+damage type's verb) make the messages; `spell` names an effect of the kind's shape in
+`data/effects.toml`; `damage` is dice that never roll below 0 and comes with one `damage_type`;
+`to_hit` is never shown. No bound is checked on `radius` or `length` (the shipped traps use
+radius 2 and length 12; keep a burst within 1 to 5 and a bolt within 1 to 40). They live in
 `LevelState::traps` (and `trap_memory`, what the player remembers). `World::spring_trap(at,
 victim)` in `world/fixtures/trap.rs` is the one way a trap goes off: stepping onto a cell calls it through
 `World::step_onto_trap` (the player in `player_moves`, creatures in `ai.rs::creature_steps`, one
 who makes way for the player onto their old cell in `talk.rs::swap_places`, its pit's climb taken
 off its energy), and returns the extra energy a pit costs; a hidden trap (any for a creature, an
-unknown one for the player) that sprang then `startle`s its victim alone (docs/dev/surprise.md). **Sidestepping** (spec §8 "Traps",
-#476) is `world/skills/sidestep.rs`: `player_moves` calls `World::step_willingly` instead (not when
+unknown one for the player) that sprang then `startle`s its victim alone (docs/dev/surprise.md). **Sidestepping** (#476) is `world/skills/sidestep.rs`: `player_moves` calls `World::step_willingly` instead (not when
 `turned_back` changed the cell), which first gives a **known** trap off a door the chance
 `Content::trap_avoid()` (`content::TrapAvoid`, `[avoid]` in `data/traps.toml`: `base` +
 `per_point` × dodge within `min`..`max`) at `World::trap_dodge` (the Dexterity plus Dodge
@@ -22,8 +36,7 @@ categories of `defence_of`, so armour, burden, talents, magic, stance, and statu
 one `rng.chance` draw of its keyed stream; avoided, the trap is left untouched, the player told,
 and `Use::Dodge` reported for marks; else `step_onto_trap` as before (with the Light step talent's
 own check, `steps_lightly`). Tests: `world/skills/sidestep_tests.rs`; the wiki's `trap-avoid.md` table
-(`xtask/src/wiki/traps.rs::avoiding`) reads `TrapAvoid::chance`. **Trapped doors** (spec §8 "Trapped
-doors", #174): a trap may lie on a door, closed or open (`TerrainDef::is_door`,
+(`xtask/src/wiki/traps.rs::avoiding`) reads `TrapAvoid::chance`. **Trapped doors** (#174): a trap may lie on a door, closed or open (`TerrainDef::is_door`,
 `LevelState::is_door`), of any kind but a pit (`TrapEffect::fits_fixture`, checked by
 `content/level.rs::parse_trap`, which also refuses a trapped secret door; `mapgen::hide_secrets`
 never hides a trapped door). `step_onto_trap` skips door cells, so the step trigger never sets one
@@ -81,7 +94,7 @@ trap, no ice) with no one there (`World::may_land`), shared with the blink dog's
 perceives every turn in which a trap went off (`World::sprung`), besides those in which the player
 heard something.
 
-**Disarming** (spec §8 "Disarming traps", #232) is `world/skills/disarm.rs`: `Action::Disarm(dir)`
+**Disarming** (#232) is `world/skills/disarm.rs`: `Action::Disarm(dir)`
 (`disarm:DIR`, `ActionKind::Disarm`, `disarm = 2000` in `data/actions.toml`; `buff.rs::kind_of`
 maps it for statuses that block) → `World::disarm`, one arm in `player_acts`. It refuses (no
 time, no draw) a player without the ability (`Ability::Disarm.had_by`: trained in the skill with
@@ -100,7 +113,7 @@ the abilities menu or `KeyCommand::Disarm` (unbound). The wiki's `trap-disarm.md
 `world/skills/disarm_tests.rs` (rigged streams for each outcome, the pit's climb, a door's trap,
 refusals, the modifier, marks, the menu, saves and replays), `check.rs`, `ability.rs`.
 
-**Rigging** (spec §8 "Traps": "Rigging traps", #1423; the craftsperson design §7.6) is
+**Rigging** (#1423; the craftsperson design §7.6) is
 `world/crafting/rig.rs`: the craftsperson's Trapwright (`data/talents/trapwright.toml`, `effects = [{
 kind = "rigs" }]` → `CraftMods::rigs` → `ClassActive::Rig`, id `trapwright`, `Aim::Rig`).
 The rigs are `data/rigs.toml` (`content/rig.rs`: `RigRules { difficulty, skill, rigs }`,

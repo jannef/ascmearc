@@ -1,12 +1,12 @@
-//! Action costs (spec §8 "Time"), how long an action takes at a normal pace, and everyone's
-//! speed (spec §8 "Speed").
+//! Action costs, how long an action takes at a normal pace, and everyone's
+//! speed.
 
 use super::order;
 use super::util::{at_normal_pace, at_speed, capital};
 use std::fmt::Write as _;
 use warlock_core::content::{ActionKind, BASE_TURN, Content, NORMAL_COST, price};
 
-/// What each action costs and how long it takes at a normal pace (spec §8 "Time"), and the
+/// What each action costs and how long it takes at a normal pace, and the
 /// creature types whose attacks cost something else.
 pub(super) fn action_costs(content: &Content) -> String {
     let mut out = String::from("| Action | Cost | Takes at a normal pace |\n|---|---:|---:|\n");
@@ -112,7 +112,7 @@ pub(super) fn action_costs(content: &Content) -> String {
     out
 }
 
-/// Everyone's speed (spec §8 "Speed"): yours, whatever your race, then every creature's, the
+/// Everyone's speed: yours, whatever your race, then every creature's, the
 /// quickest first (then by name), with how long a normal action takes each.
 pub(super) fn speeds(content: &Content) -> String {
     let mut out = String::from("| Who | Speed | A normal action takes |\n|---|---:|---:|\n");

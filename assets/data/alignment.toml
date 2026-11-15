@@ -1,4 +1,4 @@
-# Alignment (spec §8 "Alignment"; #254): good against evil, as ADOM has law against chaos. Every
+# Alignment (#254): good against evil, as ADOM has law against chaos. Every
 # character has a hidden alignment score from -1000 (as evil as can be) to 1000 (as good), never
 # shown as a number: the character screen, the character creation summary, and the `stats` dump
 # name the band it falls in. A new character starts at their race's `alignment` plus their
@@ -37,7 +37,7 @@
 #   consecrate         consecrating an unholy place (the class ability Consecrate); default 0
 #   consume_crystal    consuming a magic crystal (from the Consume list, `e`; crystals.toml), a
 #                      crystal; default 0
-#   prayed_good        praying at a good forgotten altar (spec §7 "Special rooms"; a neutral
+#   prayed_good        praying at a good forgotten altar (a neutral
 #   prayed_evil        altar's prayer moves nothing), and at an evil one
 #
 # [shops]  favour: how much better a good shopkeeper's prices are for a customer of each band,

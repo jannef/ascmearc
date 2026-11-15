@@ -1,4 +1,4 @@
-//! The birth signs' picks that are more than one read at a hook (spec §8 "Birth sign"; the
+//! The birth signs' picks that are more than one read at a hook (the
 //! sign-limited talents of the `stars` tree, offered on the level-up screen and the creation
 //! Talents step only to those born under their sign): the two new actives, **Fire breath** (the
 //! Wyvern's, `use:fire_breath:X,Y`) and **Hound's bay** (the Barghest's, `use:hounds_bay`), used

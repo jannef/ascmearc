@@ -1,9 +1,9 @@
 # Character creation
 
 Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
-rules it implements are in spec/08i-character.md. Keep it current with the code, as CLAUDE.md says.
+rules it implements are in spec/12-character.md. Keep it current with the code, as CLAUDE.md says.
 
-Character creation (spec §8 "Character creation"; M15) lives in `warlock-core/src/character.rs`:
+Character creation (M15) lives in `warlock-core/src/character.rs`:
 `CharacterSpec` (race id, `Gender`, class id; `FromStr`/`Display` as `dwarf,female,warrior`;
 serialized as `{race, gender, class}`) and `CharacterSpec::start(content, seed, start_date)` →
 `Start` (starting `Stats`, the race's vision, and a `Character`: the spec, `raised` (the stat the
@@ -138,7 +138,7 @@ one chose (`new_run_screen::fresh_seed`; see `docs/dev/screens.md`); developer b
 seed field, and only they show the seed on the summary. Code comments, data comments, the spec, and
 these notes keep explaining the determinism exactly.
 
-**Starting kits** (spec §8 "Character creation", #257; the ranger's has a knife, carried, not
+**Starting kits** (#257; the ranger's has a knife, carried, not
 wielded, for Fletching, #1021): the data side is `content/kit.rs`
 (`KitLineSpec`, parsed with the race, class, or sign as written, a string or a table;
 `Content::load_kits` resolves them into `Kit` (`KitItem { keep: Keep, one_of, trained,

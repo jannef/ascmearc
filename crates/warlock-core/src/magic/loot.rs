@@ -1,7 +1,7 @@
-//! Loot (spec §8 "Magic items"): rolling a random item at an item level.
+//! Loot: rolling a random item at an item level.
 //!
 //! [`roll`] draws, in this order, from the stream it is given (a level's `loot/<level id>` while
-//! it is generated, `drop/<actor id>` for what a creature drops; spec §8 "Determinism"):
+//! it is generated, `drop/<actor id>` for what a creature drops):
 //!
 //! 0. **a loose gem**: a find that may be anything (grade `any`) is a gem by the gems' `chance`
 //!    (one draw, then the gem's draws: [`crate::gem::find`]), and that is all;
@@ -92,7 +92,7 @@ impl LootGrade {
     }
 }
 
-/// What a vault's `loot` cell may hold (spec §7 "Level file format"): `loot = "magic"`, or
+/// What a vault's `loot` cell may hold: `loot = "magic"`, or
 /// `loot = { pool = ["armour", "rings"], grade = "magic" }`.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct LootPool {
@@ -134,7 +134,7 @@ impl From<LootGrade> for LootPool {
     }
 }
 
-/// A finder's luck (spec §8 "Talents", "Birth sign"): their talents make the magic and rare
+/// A finder's luck: their talents make the magic and rare
 /// rarities `magic` percent more likely (Treasure hunter), and a loose gem `gems` percent more
 /// likely (Hoard sense). The same draws either way.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -218,7 +218,7 @@ fn drawn(
     (level, grade, luck): (u8, LootGrade, Luck),
     source: Source,
 ) -> Option<Stack> {
-    // A spell scroll may be its grimoire (spec §8 "Spells": "Learning"): one draw, a scroll's.
+    // A spell scroll may be its grimoire: one draw, a scroll's.
     let object = *pick_weighted(rng, bases)?;
     let object = content.grimoire_or(rng, object);
     let count = if content.object(object).kind == Some(ItemKind::Ammo) {
@@ -302,8 +302,7 @@ pub fn roll_pool(
 
 /// A base item of one of `classes` that is loot at item level `level` (its `level` at most it,
 /// a `frequency`), by frequency, ordered by object id as [`roll`]'s are: one draw of `rng`.
-/// `None` when there is none. An animated blade's weapon is drawn so (spec §8 "Animated
-/// objects").
+/// `None` when there is none. An animated blade's weapon is drawn so.
 pub fn base_in(
     content: &Content,
     rng: &mut Rng,
@@ -321,7 +320,7 @@ pub fn base_in(
 /// `count` of `object` made as loot makes its base item at item level `level`, at least of
 /// `grade`: draws 3 to 7 of [`roll`] (the rarity, the affixes, a rare item's name, an ornament),
 /// then 9 and 10 (a wand's rung, the trim), unidentified. What is never magic (no `kind`) draws no rarity and stays normal. A starting
-/// kit's magic items are made so (spec §8 "Character creation").
+/// kit's magic items are made so.
 pub fn make(
     content: &Content,
     rng: &mut Rng,
@@ -334,7 +333,7 @@ pub fn make(
     finished(content, rng, made)
 }
 
-/// [`make`] for a creature's gear (spec §8 "Creature gear"): its material drawn as `source` has
+/// [`make`] for a creature's gear: its material drawn as `source` has
 /// it (a creature's, by its level) after the rest.
 pub fn make_as(
     content: &Content,
@@ -519,7 +518,7 @@ fn affixed(
     })
 }
 
-/// An heirloom (spec §8 "Talents": Father's sword): `object` with `count` affixes rolled at item
+/// An heirloom (Father's sword): `object` with `count` affixes rolled at item
 /// level `level`, from `rng`: two are a magic item's prefix and suffix, one a prefix, and more a
 /// rare item's, split as a rare item's are and named (fewer when nothing more may roll on it).
 /// Unidentified, like any loot; no ornament and no other material; of `quality` if given
@@ -548,7 +547,7 @@ pub fn heirloom(
     finished(content, rng, stack)
 }
 
-/// A favoured find (spec §8 "Overworld encounters": the pedlar's offer, #808): a base item
+/// A favoured find (the pedlar's offer, #808): a base item
 /// that can be magic at item level `level` (not ammunition: one item), by frequency, ordered by
 /// object id as [`roll`]'s are (one draw); how many affixes it has by `counts`' weights (one
 /// draw); then it is made as an [`heirloom`] of that many at `level`. Better than loot: never

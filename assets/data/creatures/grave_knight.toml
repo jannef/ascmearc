@@ -26,7 +26,7 @@ immune = ["poison"]
 weapon_skills = { long_blades = 7, sword_and_board = 2 }
 on_eat = { message = "Old meat, kept too long in iron.", vomit = 80, harm = "1d4" }
 blood = "#3a3030"
-# Its gear (spec §8 "Creature gear"): the arms it was buried in.
+# Its gear: the arms it was buried in.
 [[creature.gear]]
 chance = 90
 one_of = ["long_sword"]

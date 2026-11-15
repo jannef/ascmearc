@@ -1,4 +1,4 @@
-//! The horoscope (`assets/data/horoscope.toml`, spec §8 "Character creation"): the sign a
+//! The horoscope (`assets/data/horoscope.toml`): the sign a
 //! character is born under, from their birth year.
 //!
 //! Every year has an **animal** and an **element**. Both advance one step a year, in file order,
@@ -8,7 +8,7 @@
 //! (the animal's and the element's adjustments both apply), and it is a flag later rules may ask
 //! about ([`Sign::is_element`], [`Sign::is_animal`]).
 //!
-//! A sign **gives** (spec §8 "Birth sign"): an animal and an element each name talents of the
+//! A sign **gives**: an animal and an element each name talents of the
 //! `stars` tree in `grants` (an animal's flaw among them), given at birth and never picked
 //! ([`Horoscope::grants`]). A **lucky day** (`[[lucky]]`, [`Lucky`]) is an animal–element pair
 //! and a day of the month: born in that year and on that day, a character has a title and one
@@ -92,13 +92,13 @@ pub struct SignPart {
     /// The talents those born under it are given (gifts, and an animal's flaw), by id, in
     /// order.
     pub grants: Vec<String>,
-    /// An animal's part of a new character's hidden alignment score (spec §8 "Alignment"),
+    /// An animal's part of a new character's hidden alignment score,
     /// added to the race's and the class's; 0 for an element (elements have none).
     pub alignment: i32,
     /// The starting kit as written; resolved by the loader into `kit`.
     pub(super) kit_spec: Vec<KitLineSpec>,
     /// What those born under it add to their starting kit, after the class's and the race's
-    /// (spec §8 "Character creation"; [`super::kit`]); filled in by the loader.
+    /// ([`super::kit`]); filled in by the loader.
     pub kit: Kit,
 }
 
@@ -131,7 +131,7 @@ pub struct Horoscope {
     pub flavour: Option<Flavour>,
 }
 
-/// The calendar and moon flavour of the gifts (`[flavour]`, spec §8 "Birth sign"): pure
+/// The calendar and moon flavour of the gifts (`[flavour]`): pure
 /// functions of the time and the birth date, read at one hook each (`world/character/flavour.rs`).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Flavour {
@@ -154,7 +154,7 @@ pub struct Flavour {
 /// side of the moment for the built-in 30-day moon).
 pub const FULL_MOON_WITHIN: u32 = super::sky::PHASE_ONE / 60;
 
-/// Whether a full moon is up at `time` (spec §8 "Birth sign", the flavour): some moon of
+/// Whether a full moon is up at `time` (the flavour): some moon of
 /// `moons` within [`FULL_MOON_WITHIN`] of full, above the horizon, and the sun down. Wherever
 /// the player is, under the sky, under clouds, or underground: the moon pulls all the same.
 pub fn full_moon_up(time: crate::time::GameTime, moons: &[super::MoonDef]) -> bool {
@@ -338,7 +338,7 @@ impl Horoscope {
         }
     }
 
-    /// What `sign` adds to a new character's alignment score (spec §8 "Alignment"): its
+    /// What `sign` adds to a new character's alignment score: its
     /// animal's nudge (elements have none); 0 if this horoscope lacks the animal.
     pub fn alignment(&self, sign: &Sign) -> i32 {
         (self.animals.iter().find(|a| a.id == sign.animal)).map_or(0, |a| a.alignment)
@@ -381,7 +381,7 @@ pub(super) fn resolve_flavour(
     Ok(())
 }
 
-/// Resolves the horoscope and the talents against each other (spec §8 "Birth sign"): every
+/// Resolves the horoscope and the talents against each other: every
 /// talent a sign or a lucky day grants exists, and every sign a talent asks for (`animal`,
 /// `element`) is in the horoscope. Without a horoscope a talent that asks for a sign is never
 /// taken; without talents, nothing is granted.
@@ -571,7 +571,7 @@ mod tests {
     }
 }
 
-/// A birth sign's active gift (spec §8 "Birth sign"): a talent of the `stars` tree with an
+/// A birth sign's active gift: a talent of the `stars` tree with an
 /// active effect, used from the abilities menu's Birth sign group as
 /// [`crate::action::Action::Gift`] (`use:horns_grace`, `use:transfixing_stare:12,5`, `use:blaze`).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, Serialize, Deserialize)]

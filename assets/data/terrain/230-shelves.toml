@@ -1,4 +1,4 @@
-# A scriptorium's shelves (spec §7 "Special rooms"): the feature of the room, scenery the player
+# A scriptorium's shelves: the feature of the room, scenery the player
 # cannot pass. Its own terrain, so look mode tells it from a wall.
 [[terrain]]
 id = "shelves"

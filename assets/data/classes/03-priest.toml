@@ -32,7 +32,7 @@ kit = [
 random_scrolls = { count = "1d2", below_level = 10 }
 # Bonus talents from Vigour and Grit.
 bonus_talents = { levels = [10, 20, 30, 45, 55], trees = ["vigour", "grit"] }
-# The level table (spec §8 "Class abilities"; docs/design/priest.md). Mend, Blessing, and Cure
+# The level table (docs/design/priest.md). Mend, Blessing, and Cure
 # wounds are spells, paid in mana; the rest is the one prayer (`use:orison`, docs/dev/prayer.md)
 # deepening: its tiers (Orison, Prayer, Litany, Benediction, Miracle) and the uses between them.
 # Consecrate is shared with the paladin; Communion with the dark is its dark twin, a passive

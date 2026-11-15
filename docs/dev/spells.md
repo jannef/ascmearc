@@ -1,7 +1,7 @@
 # Spells
 
 Developer notes for working on this part of Warlock; the rules it implements are in
-spec/08e-blood-and-status.md ("Spells"), the approved magic design `docs/design/magic.md`, and
+spec/11-magic.md ("Spells"), the approved magic design `docs/design/magic.md`, and
 the spell scaling design `docs/design/spell-scaling.md` (its slices S0 to S6, tracker #759).
 Keep it current with the code, as CLAUDE.md says.
 
@@ -239,7 +239,7 @@ cast path shares.
   pushes, charms, ground- or tag-bound hexes, heals not by touch, summons, cleansings, and
   utilities.
 - **Miscasts** (#1271, #1288; `world/magic/miscast.rs`, `content/miscast.rs`, tests
-  `world/magic/miscast_tests.rs`; spec §8 "Spells": "Casting"; the design
+  `world/magic/miscast_tests.rs`; the design
   `docs/design/miscasts-review.md`, of which #1288 is §10 PR 1):
   - **Data**: `data/miscast.toml` (`MiscastRules`: `stat`, `base`, `per_level`, `armour_percent`,
     `rank_ease`, `die` (a `Dice`, `"2d12"`), `per_margin`, `safe_below`; optional: without it
@@ -703,7 +703,9 @@ cast path shares.
     roll ladder). A wand has a `slot`, is not `stackable`, and has no attack, `launches`, range,
     food, `read`, or `kind`; it may have `level` and `frequency` (loot). Class `wands`
     (`item_classes.toml`). Seven wands in `data/objects/wand_of_*.toml`; general stores stock
-    and buy them.
+    and buy them. Wands are never recharged (the owner); there is no Use magic device skill, so
+    no skill or stat enters a zap, and there are no magic staffs (effects no spell has belong to
+    rods).
   - **Instances**: `Stack::charges` (private `Charges { used, known, carried }`; `None` = as
     made: full, unknown; saved and hashed, left out while `None`, so other stacks save as
     before; saves change). `charges_left` (rules, dev), `known_charges` / `charges_known`
@@ -902,7 +904,7 @@ cast path shares.
 
 ## Ruin
 
-What an area spell does to the items lying in it (#1100; spec §8 "Spells", "Ruin").
+What an area spell does to the items lying in it (#1100).
 
 - **Data**: `assets/data/ruin.toml` (optional; without it nothing is ruined), parsed by
   `content/ruin.rs` (`RuinRules`, `Content::ruin`): rows of a damage type and one of an item

@@ -31,7 +31,7 @@ pub fn json(world: &World, layers: &[Layer], include_state: bool) -> Value {
                 "id": a.id, "kind": a.kind, "creature": def.id, "glyph": a.glyph(content).to_string(),
                 "fg": a.fg(content).to_string(), "pos": a.pos, "health": a.health, "effects": effects,
             });
-            // What the player's Knowledge tells of it, in words (spec §8 "Skills").
+            // What the player's Knowledge tells of it, in words.
             let known = view.known_resistances(a);
             if !known.is_empty() {
                 let known: serde_json::Map<String, Value> = (known.into_iter())
@@ -39,13 +39,13 @@ pub fn json(world: &World, layers: &[Layer], include_state: bool) -> Value {
                     .collect();
                 seen["known"] = Value::Object(known);
             }
-            // A composite's colours, top band first (spec §8 "Animated objects").
+            // A composite's colours, top band first.
             let bands = a.shape.as_ref().map_or(&[][..], |s| s.bands());
             if !bands.is_empty() {
                 let bands: Vec<String> = bands.iter().map(ToString::to_string).collect();
                 seen["bands"] = json!(bands);
             }
-            // Its grade, the word (spec §8 "Grades").
+            // Its grade, the word.
             if let Some(word) = crate::grade::word(def, a.grade) {
                 seen["grade"] = json!(word);
             }
@@ -57,7 +57,7 @@ pub fn json(world: &World, layers: &[Layer], include_state: bool) -> Value {
             if a.marked {
                 seen["marked"] = json!(true);
             }
-            // An ally of the player's (spec §8 "Allies").
+            // An ally of the player's.
             if a.ally {
                 seen["ally"] = json!(true);
             }
@@ -178,7 +178,7 @@ pub fn json(world: &World, layers: &[Layer], include_state: bool) -> Value {
     let locations: Vec<Value> = (view.known_locations().into_iter())
         .map(|(p, name)| json!({ "pos": p, "name": name }))
         .collect();
-    // The chests the player sees or remembers (spec §8 "Chests"), as they see them.
+    // The chests the player sees or remembers, as they see them.
     let chests: Vec<Value> = (view.known_chests().into_iter())
         .map(|(p, look)| {
             let band = (content.chests().bands.get(look.band)).map(|b| b.id.as_str());
@@ -246,12 +246,11 @@ pub fn json(world: &World, layers: &[Layer], include_state: bool) -> Value {
                 "born": c.born,
                 "sign": c.sign,
             });
-            // A lucky day's title (spec §8 "Birth sign"), only for one born on it.
+            // A lucky day's title, only for one born on it.
             if let Some(title) = c.title(content) {
                 character["lucky"] = json!(title);
             }
-            // The prestige class once called, and every class with its own level (spec §8
-            // "Prestige classes").
+            // The prestige class once called, and every class with its own level.
             if let Some(prestige) = &c.prestige {
                 character["prestige"] = json!(prestige);
             }
@@ -260,7 +259,7 @@ pub fn json(world: &World, layers: &[Layer], include_state: bool) -> Value {
                 .map(|(table, own)| json!({ "class": table.id(), "level": own }))
                 .collect();
             character["classes"] = json!(classes);
-            // The background story's lines by id (spec §8 "Background story"), if told.
+            // The background story's lines by id, if told.
             if !c.story.is_empty() {
                 character["story"] = c.story.iter().map(|t| t.id()).collect();
             }
@@ -306,7 +305,7 @@ pub fn json(world: &World, layers: &[Layer], include_state: bool) -> Value {
         "stance": view.own_stance().id(),
         "dazzled": view.dazzled(),
         "averted": view.averted(),
-        // The player's allies, wherever they are (spec §8 "Allies").
+        // The player's allies, wherever they are.
         "allies": (view.allies().iter())
             .map(|a| json!({
                 "id": a.id,
@@ -321,11 +320,11 @@ pub fn json(world: &World, layers: &[Layer], include_state: bool) -> Value {
                 "here": a.here,
             }))
             .collect::<Vec<_>>(),
-        // The player's companion (spec §8 "Allies"; `world/allies/companion.rs`), or null.
+        // The player's companion (`world/allies/companion.rs`), or null.
         "companion": kept_json(&view, Kept::Companion),
         // The player's familiar (`world/allies/familiar.rs`), or null.
         "familiar": kept_json(&view, Kept::Familiar),
-        // The overworld encounter to answer (spec §7 "Overworld encounters"), or null.
+        // The overworld encounter to answer, or null.
         "encounter": view.encounter().map(|e| {
             let (entry, outcome) = view.encounter_pending().expect("pending");
             json!({
@@ -356,7 +355,7 @@ pub fn json(world: &World, layers: &[Layer], include_state: bool) -> Value {
     }
     if include_state {
         out["state"] = serde_json::to_value(world.state()).expect("state serializes");
-        // The current level's danger (spec §7 "Danger levels"): ground truth, never stored.
+        // The current level's danger: ground truth, never stored.
         let level = &world.state().current_level;
         out["danger"] = json!(world.content().floor_danger(level, world.player_level()));
         // The encounter tables matching the player's overworld cell (ground truth).

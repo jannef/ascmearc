@@ -1,4 +1,4 @@
-//! A trap's damage by the level's danger (spec §8 "Traps", `[trap.grows]` in `data/traps.toml`,
+//! A trap's damage by the level's danger (`[trap.grows]` in `data/traps.toml`,
 //! `content::TrapGrows`, #1165): each trap's rungs by danger band; a level without a danger, and
 //! every level below the first rung, the base; the base never kills a level-1 character at full
 //! hit points; a door's and a chest's trap read the same rungs.

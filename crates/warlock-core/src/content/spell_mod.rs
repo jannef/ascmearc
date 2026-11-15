@@ -1,4 +1,4 @@
-//! What talents and items do to a spell (spec §8 "Spells": "Hooks"; the spell scaling design
+//! What talents and items do to a spell (the spell scaling design
 //! `docs/design/spell-scaling.md` §7.1): six named hooks, the fields of one [`SpellMods`], summed
 //! once a cast from the caster's talents and worn items, each source filtered by the spell's tags
 //! (`world/magic/spell_mods.rs`, `Actor::spell_mods`), and read by the cast path in one order: the

@@ -67,7 +67,7 @@ impl<'a> PerceptionView<'a> {
         (self.content.crystals()).is_some_and(|c| c.colour_of_object(stack.object).is_some())
     }
 
-    /// What the player knows of scroll types (spec §8 "Scrolls"): every name presentation shows
+    /// What the player knows of scroll types: every name presentation shows
     /// of a stack goes through it ([`crate::scroll_label::Lore::describe`]), so an unidentified
     /// scroll shows by its label.
     pub fn lore(&self) -> crate::scroll_label::Lore<'a> {
@@ -136,13 +136,13 @@ impl<'a> PerceptionView<'a> {
         self.snapshot.sees_actors_at(p)
     }
 
-    /// The item class `stack` shows as (spec §7 "Objects and materials"): its base item's, which
+    /// The item class `stack` shows as: its base item's, which
     /// the player knows of anything they see, identified or not.
     pub fn item_class(&self, stack: &Stack) -> ItemClassId {
         self.content.object(stack.object).class
     }
 
-    /// The positions of `stacks` as item lists show them (spec §6 "Item lists"): grouped by item
+    /// The positions of `stacks` as item lists show them: grouped by item
     /// class in class order, each class in the stacks' own order.
     pub fn by_class(&self, stacks: &[Stack]) -> Vec<usize> {
         let mut order: Vec<usize> = (0..stacks.len()).collect();
@@ -150,14 +150,14 @@ impl<'a> PerceptionView<'a> {
         order
     }
 
-    /// Who the player is (spec §8 "Character creation"): their race, gender, and class, the
+    /// Who the player is: their race, gender, and class, the
     /// stat their gender raised, their birth date, and their birth sign; `None` when the
     /// scenario gave no character.
     pub fn character(&self) -> Option<&'a Character> {
         self.character
     }
 
-    /// The player's background story (spec §8 "Background story"), which they know: its
+    /// The player's background story, which they know: its
     /// paragraphs, told again from the content with the slots filled; empty for a character
     /// without one (a scenario's own, an old save) or a run without a character.
     pub fn story(&self) -> Vec<String> {
@@ -247,11 +247,11 @@ impl<'a> PerceptionView<'a> {
     }
 
     /// The player's level, experience total, and the total at which the next level comes (none
-    /// at the highest level) (spec §8 "Experience"). All of it is shown to the player.
+    /// at the highest level). All of it is shown to the player.
     pub fn own_experience(&self) -> Progress {
         let rules = self.content.experience();
         let factor = Factor::of(self.content, self.character.map(|c| &c.spec));
-        // The level stops at the classes' cap (spec §8 "Prestige classes"): no next level
+        // The level stops at the classes' cap: no next level
         // there, as at the curve's top.
         let cap = (self.character).map_or(rules.class_max(), |c| c.level_cap(self.content));
         let level = rules.level_for(self.experience, factor, cap);
@@ -263,13 +263,12 @@ impl<'a> PerceptionView<'a> {
     }
 
     /// The level whose choices the level-up screen spends now: the first due's, else the
-    /// player's own (the class of that level sets the rolls and the bonus trees, spec §8
-    /// "Prestige classes").
+    /// player's own (the class of that level sets the rolls and the bonus trees).
     pub(super) fn due_level(&self) -> u8 {
         (self.due()).map_or_else(|| self.own_experience().level, |d| d.level)
     }
 
-    /// The choices a level still asks of the player (spec §8 "Talents"), if any: the level and
+    /// The choices a level still asks of the player, if any: the level and
     /// how many talent picks are left. Nothing else may be done until they are made.
     pub fn due(&self) -> Option<Due> {
         self.progress.due.first().copied()
@@ -293,7 +292,7 @@ impl<'a> PerceptionView<'a> {
         self.character.and_then(|c| c.spec.race(self.content).ok())
     }
 
-    /// What the player resists (spec §8 "Damage types"), in words only: each kind they resist,
+    /// What the player resists, in words only: each kind they resist,
     /// are vulnerable to, or are immune to, in damage type order; never a percentage, and never
     /// a creature's.
     pub fn own_resistances(&self) -> Vec<(DamageTypeId, crate::damage::ResistanceWord)> {
@@ -334,7 +333,7 @@ impl<'a> PerceptionView<'a> {
         self.snapshot.averted
     }
 
-    /// The player's allies (spec §8 "Allies"), wherever they are, in actor id order.
+    /// The player's allies, wherever they are, in actor id order.
     pub fn allies(&self) -> &[AllyView] {
         &self.snapshot.allies
     }
@@ -364,7 +363,7 @@ impl<'a> PerceptionView<'a> {
     }
 
     /// The ways to the player's kept beasts and escorts beside them, in direction order: with
-    /// two or more, tending one or giving one something asks which way (spec §8 "Allies"; the
+    /// two or more, tending one or giving one something asks which way (the
     /// owner, #907 Q4).
     pub fn kept_beside(&self) -> &[crate::geom::Dir] {
         &self.snapshot.kept_beside
@@ -414,7 +413,7 @@ impl<'a> PerceptionView<'a> {
         self.snapshot.weather()
     }
 
-    /// The temperature of the air where the player is (spec §5 "Temperature"), which they feel,
+    /// The temperature of the air where the player is, which they feel,
     /// in dungeons and under the open sky alike, a hot or a cold room's included (the status bar
     /// shows it).
     pub fn temperature(&self) -> Temperature {
@@ -429,10 +428,10 @@ impl<'a> PerceptionView<'a> {
         self.snapshot.is_visible(p).then(|| self.snapshot.base[p])
     }
 
-    /// Sounds the player heard during the last turn from sources they do not see (spec §5
-    /// "Hearing"), in the order heard: the kind, how loud, and roughly where (a cell the player
-    /// does not see) — never who or what made them. Sounds whose source the player sees are not
-    /// here: the player sees what happens.
+    /// Sounds the player heard during the last turn from sources they do not see, in the order
+    /// heard: the kind, how loud, and roughly where (a cell the player does not see) — never who or
+    /// what made them. Sounds whose source the player sees are not here: the player sees what
+    /// happens.
     pub fn sounds(&self) -> &'a [PerceivedSound] {
         &self.snapshot.sounds
     }

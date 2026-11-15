@@ -29,7 +29,7 @@ fn fingerprint_is_stable_and_tracks_ids() {
     files.insert("campaigns/showcase/levels/hub_copy.toml", &hub);
     let other = Content::load(&files).expect("loads");
     assert_ne!(a, other.fingerprint_for("showcase"));
-    // Spells enter it: saves will name them by index (spec §8 "Spells").
+    // Spells enter it: saves will name them by index.
     let mut files = ContentFiles::builtin();
     files.insert(
         "data/spells/zzz_zap.toml",
@@ -519,7 +519,7 @@ fn creature_skills_must_exist_and_the_player_lists_none() {
 
 #[test]
 fn every_drawn_creature_has_a_rarity() {
-    // Spec §7 "Danger levels": the shipped tiers, commonest first, and every type that a
+    // The shipped tiers, commonest first, and every type that a
     // population draws names one; the more dangerous and rewarding, the rarer.
     let content = builtin();
     let tiers: Vec<(&str, u16)> = (content.creature_rarities().iter())
@@ -554,7 +554,7 @@ fn every_drawn_creature_has_a_rarity() {
     }
 }
 
-/// The generic creature list strays come from (spec §7 "Danger levels"): every type the
+/// The generic creature list strays come from: every type the
 /// campaign knows that may stray, whether a population names it or not, and what lives in
 /// its dungeons; never a unique, a person, a keeper, a hand-placed guardian, or an animated
 /// object outside the populations.
@@ -774,7 +774,7 @@ fn builtin_races_and_classes_load_in_the_order_offered() {
         content.race("dwarf").map(|r| r.vision.as_str()),
         Some("darkvision")
     );
-    // Sizes (spec §8 "Burden"): halflings and gnomes are small; dwarves shrug off Burdened.
+    // Sizes: halflings and gnomes are small; dwarves shrug off Burdened.
     let size = |race: &str| {
         let race = content.race(race).expect(race);
         let size = content.size(race.size);

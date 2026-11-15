@@ -1,4 +1,4 @@
-# A brewer's blunder's drink (spec §8 "Potions", the potions wave 2 design §4.3;
+# A brewer's blunder's drink (the potions wave 2 design §4.3;
 # content/outcome.rs has the fields): as likely a stat raised greatly for a while (a greater
 # boost) as a point of one drained for good (a potion or scroll of restoration, or a temple's
 # mending, gives it back). A potion has no side, so nothing leans, and nothing is spent

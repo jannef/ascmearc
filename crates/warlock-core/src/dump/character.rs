@@ -15,8 +15,8 @@ pub(super) fn stat_rows(view: &PerceptionView<'_>) -> Vec<String> {
         let race = spec
             .race(content)
             .map_or(spec.race.as_str(), |r| r.name.as_str());
-        // The classes as the character screen's Class row says them (spec §8 "Prestige
-        // classes"): `Bard`, `Bard 30` at the cap, `Bard 30, Hunter 4` once called.
+        // The classes as the character screen's Class row says them: `Bard`, `Bard 30` at the cap,
+        // `Bard 30, Hunter 4` once called.
         let class = c.class_text(content, view.own_experience().level);
         rows.push(format!("Race {race}"));
         rows.push(match spec.gender {
@@ -39,7 +39,7 @@ pub(super) fn stat_rows(view: &PerceptionView<'_>) -> Vec<String> {
     if !stance.is_neutral() {
         rows.push(format!("Stance {}", content.stance_def(stance).name));
     }
-    // The guilds they belong to and their ranks (spec §8 "Quests": "Guilds"), a title only.
+    // The guilds they belong to and their ranks, a title only.
     for g in view.own_guilds() {
         rows.push(format!("Guild {}, {}", g.guild.bare_name(), g.title()));
     }
@@ -63,7 +63,7 @@ pub(super) fn stat_rows(view: &PerceptionView<'_>) -> Vec<String> {
     rows
 }
 
-/// The player's resistances in words (spec §8 "Damage types"), a row per word: `Resistant to
+/// The player's resistances in words, a row per word: `Resistant to
 /// fire, cold`, `Vulnerable to acid`, `Immune to poison`; never a percentage.
 pub(super) fn resistance_rows(view: &PerceptionView<'_>) -> Vec<String> {
     use crate::damage::ResistanceWord;

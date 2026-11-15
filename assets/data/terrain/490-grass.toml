@@ -1,4 +1,4 @@
-# Under the open sky (spec §5 "Sunlight"): outdoor levels are lit by the sun and the sky by day.
+# Under the open sky: outdoor levels are lit by the sun and the sky by day.
 # Tall terrain casts shadows that turn and stretch with the sun (`height`); roofed floor never
 # gets sun or sky light.
 

@@ -1,4 +1,4 @@
-# A flask of holy water (spec §8 "Potions": "Flasks"; the potions wave 2 design §4.4): thrown, it shatters
+# A flask of holy water (the potions wave 2 design §4.4): thrown, it shatters
 # into the Rebuke spell where it breaks, searing and frightening the undead and harming nothing
 # living; drunk, it washes a hex off (`holy_water`, a means in Hexed's and Branded's
 # `cured_by`). The holy is silver.

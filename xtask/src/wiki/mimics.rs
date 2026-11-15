@@ -1,4 +1,4 @@
-//! Mimics (spec §8 "Mimics"): the family's bands and their numbers, stated exactly from
+//! Mimics: the family's bands and their numbers, stated exactly from
 //! `data/mimics.toml` and the chest bands, read through the generated creature types themselves.
 
 use std::fmt::Write as _;

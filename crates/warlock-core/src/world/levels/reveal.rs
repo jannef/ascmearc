@@ -1,4 +1,4 @@
-//! Hidden locations (spec §7 "Hidden locations"): a location on the overworld (or a hand-made
+//! Hidden locations: a location on the overworld (or a hand-made
 //! level: Gimmwīc's crystal portal) that is, until a quest reveals it, the plain terrain its cell
 //! shows, in every way (as a secret door is the wall it looks like). Revealing it turns the cell into its entrance, links the entrance to the
 //! level it leads to, and marks it on the player's map (their memory of the overworld), wherever
@@ -36,7 +36,7 @@ impl World {
         true
     }
 
-    /// Climbing out through a hidden way reveals it (spec §7 "Ways up"): before the stairs from
+    /// Climbing out through a hidden way reveals it: before the stairs from
     /// level `from` take the player to `to`, a hidden location of the overworld `to` that leads
     /// to `from` and is still hidden is revealed, so they arrive on it. Returns its name.
     pub(super) fn reveal_way_out(&mut self, from: &str, to: &str) -> Option<String> {

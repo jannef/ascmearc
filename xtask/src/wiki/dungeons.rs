@@ -1,4 +1,4 @@
-//! Dungeons and danger levels (spec §7 "Dungeon branches", "Danger levels"): every branch's
+//! Dungeons and danger levels: every branch's
 //! floors with their danger, who lives there, and how they come back.
 
 use super::util::percent;
@@ -85,7 +85,7 @@ fn spawn_text(content: &Content, s: &Spawning) -> String {
     )
 }
 
-/// Every dungeon branch and every hand-made level with a danger (spec §7 "Danger levels"): the
+/// Every dungeon branch and every hand-made level with a danger: the
 /// danger of its floors, who lives there, how many, and how they come back. Branches by id, then
 /// levels by id.
 pub(super) fn dungeons(content: &Content) -> String {

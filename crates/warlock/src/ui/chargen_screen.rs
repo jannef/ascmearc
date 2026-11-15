@@ -1,10 +1,10 @@
-//! Character creation (spec §6 "New run", §8 "Character creation"): after the scenario and the
+//! Character creation: after the scenario and the
 //! seed, New run asks for a race, reveals the birth sign (`sign_screen`), asks for a gender and a
 //! class, one screen each ([`ChoiceScreen`]), then a name (`name_screen`), then shows the
 //! character ([`SummaryScreen`]): the name, age, birthday,
 //! and birth sign, the final scores (the dice already rolled), the starting trained skills with
-//! their values, the starting kit in words, the alignment band they start in (spec §8
-//! "Alignment"), and a way back to any step.
+//! their values, the starting kit in words, the alignment band they start in, and a way back to any
+//! step.
 //!
 //! The steps are screens on the stack, in order (New run, race, the sign, gender, class, name,
 //! summary), so
@@ -226,7 +226,7 @@ impl Draft {
     }
 }
 
-/// The classes the Class step lists for a race and gender (spec §8 "Character creation"): those
+/// The classes the Class step lists for a race and gender: those
 /// offered to them; without a race, every class not hidden.
 fn classes_offered<'c>(content: &'c Content, who: Option<(&str, Gender)>) -> Vec<&'c ClassDef> {
     match who {
@@ -452,7 +452,7 @@ const SKILL_GAP: i32 = 3;
 /// the scenario's values do.
 const KIT_X: i32 = 12;
 
-/// What the summary says a character starts with (spec §8 "Character creation"): every stack
+/// What the summary says a character starts with: every stack
 /// of the starting pack as named, their kit (a run started here always has it) and the
 /// scenario's own pack on top; "nothing" for nothing.
 fn kit_words(content: &Content, draft: &Draft, start: &Result<Start, String>) -> Vec<String> {
@@ -514,12 +514,12 @@ pub struct SummaryScreen {
     /// scenario's own pack included.
     kit: Vec<String>,
     eyes: String,
-    /// The band the character starts in (spec §8 "Alignment"); empty without alignment rules.
+    /// The band the character starts in; empty without alignment rules.
     alignment: String,
     /// The talents picked, by name (`Healthy, Lean`); "chosen by chance" for none marked.
     talents: String,
-    /// The line under the kit that a background story will be told (spec §8 "Background
-    /// story"), with content that tells them; empty without.
+    /// The line under the kit that a background story will be told, with content that tells them;
+    /// empty without.
     fate: &'static str,
     selected: usize,
 }

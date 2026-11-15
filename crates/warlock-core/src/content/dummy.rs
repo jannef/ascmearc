@@ -1,4 +1,4 @@
-//! Target dummies (spec §8 "Weapon skills": "Target dummies", #1199): a creature type's
+//! Target dummies (#1199): a creature type's
 //! `training` table makes it a dummy, a thing to practise on that never acts, never dies, and
 //! teaches weapon skills and fighting styles slowly up to a rank (`world/combat/dummy.rs`).
 //!

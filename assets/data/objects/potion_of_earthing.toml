@@ -1,4 +1,4 @@
-# A potion of earthing (spec §8 "Potions"): electricity resisted for half an hour, as gear resists it.
+# A potion of earthing: electricity resisted for half an hour, as gear resists it.
 # Resistance potions are teal.
 [[object]]
 id = "potion_of_earthing"

@@ -26,7 +26,7 @@ noise = { sound = "explosion", loudness = 100 }
 damage = "intelligence 13 6d6, 19 6d6+2, 25 6d6+4"
 range = "willpower 14 9, 18 10"
 
-# What rereading its grimoire adds, rank by rank (spec §8 "Spells": "Ranks"; README.toml
+# What rereading its grimoire adds, rank by rank (README.toml
 # `[spell.ranks]`): the blast's reach is its craft: at rank 10 a cell wider (more wall,
 # ice, doors, and chests cracked; its price still a radius of 1's), two cells farther, two dice
 # more, every die a side bigger, 1s rolled again, +1 on the roll, and a fifth off the mana.

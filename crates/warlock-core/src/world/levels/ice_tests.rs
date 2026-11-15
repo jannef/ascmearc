@@ -1,4 +1,4 @@
-//! Temperature and ice through the whole turn pipeline (spec §5 "Temperature", "Ice"): dungeon
+//! Temperature and ice through the whole turn pipeline: dungeon
 //! temperatures and the sky's, water freezing and thawing lazily with game time however it
 //! passes, ice holding by weight (what is carried included), falling through and climbing out,
 //! holes refreezing, objects sinking, creatures falling in, the instant frost and heat bursts,

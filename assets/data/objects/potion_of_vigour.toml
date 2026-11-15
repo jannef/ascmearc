@@ -1,4 +1,4 @@
-# A potion of vigour (spec §8 "Potions"): Toughness raised for ten minutes. Stat boosts are orange.
+# A potion of vigour: Toughness raised for ten minutes. Stat boosts are orange.
 [[object]]
 id = "potion_of_vigour"
 name = "potion of vigour"

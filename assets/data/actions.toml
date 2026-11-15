@@ -1,4 +1,4 @@
-# What actions cost, in energy (spec §8 "Time"). 1000 is a normal action: it takes a creature of
+# What actions cost, in energy. 1000 is a normal action: it takes a creature of
 # normal speed (the player's) 6 seconds; a cost of 1400 would take it 8.4 seconds. How long an
 # action takes is cost / 1000 × 1000 / speed × 6 s, so a creature twice as fast takes half as
 # long. An action left out costs 1000. Creature types may give their
@@ -13,19 +13,19 @@ step = 1000
 wait = 1000
 open_door = 1000
 close_door = 1000
-# Lifting the lid of a shut chest (spec §8 "Chests"); a locked one opened with its key takes
+# Lifting the lid of a shut chest; a locked one opened with its key takes
 # unlock + open_chest, a picked one pick_lock + open_chest.
 open_chest = 1000
 # Unlocking a locked door with a key, on top of opening it: opening a locked door you have the
 # key for takes unlock + open_door.
 unlock = 1000
-# A try at picking a lock without a key (the Pick lock ability, spec §8 "Doors"): it takes this
+# A try at picking a lock without a key (the Pick lock ability): it takes this
 # whatever comes of it; a lock that gives opens its door on top of it (pick_lock + open_door).
 pick_lock = 2000
 # A kick (`K`): at a door, to break it in, or at a creature, an unarmed blow.
 kick = 1000
 # Lighting or dousing a light ready in the Tool slot (a lantern: `u`, the use-tool command, turns
-# it from unlit to lit to hooded and back to unlit; spec §5 "Light sources").
+# it from unlit to lit to hooded and back to unlit).
 light = 1000
 # Lowering a lit lantern's hood: a flick of its shutter. Dousing a hooded lantern takes `light`.
 hood = 500
@@ -53,49 +53,49 @@ wear = 1000
 body_armor = 3000
 # Readying a missile weapon, missiles, or a tool (a pick-axe), or putting them away.
 ready = 1000
-# A turn of eating (spec §8 "Hunger"): a meal takes as many turns as the food says (`food` in
+# A turn of eating: a meal takes as many turns as the food says (`food` in
 # objects.toml; corpses by their creature's size, hunger.toml).
 eat = 1000
-# Reading a scroll (`r`; spec §8 "Scrolls"): casting the spell written on it, or identifying an
+# Reading a scroll (`r`): casting the spell written on it, or identifying an
 # item. The scroll is used up, unless the reader fails to make it out (rules/decipher.toml): the time is
 # spent all the same.
 read = 1000
-# A turn of reading a grimoire to learn its spell (spec §8 "Spells"): a study takes study.toml's
+# A turn of reading a grimoire to learn its spell: a study takes study.toml's
 # turns_base of them and turns_per_level more for each level of the spell (100 and 20: 10
 # minutes and 2 a level).
 study = 1000
-# A turn of writing a scroll (the wizard's Scribe ability; spec §8 "Scrolls"): a scroll takes as
+# A turn of writing a scroll (the wizard's Scribe ability): a scroll takes as
 # many turns as reading its spell's grimoire would (study.toml's turns_base and turns_per_level).
 scribe = 1000
-# A turn of calling a familiar (the witch's Call familiar; spec §8 "Class abilities"): the ritual
+# A turn of calling a familiar (the witch's Call familiar): the ritual
 # takes familiars.toml's call_turns of these.
 call_familiar = 1000
-# A turn of digging into a wall with a digging tool ready (spec §8 "Digging"): digging goes on
+# A turn of digging into a wall with a digging tool ready: digging goes on
 # turn after turn until the wall gives way or something interrupts it.
 dig = 1000
 # A turn of searching for secret doors and hidden traps around you (`s` or numpad 5: waiting is
-# searching; spec §8 "Searching"): searching for a while (Alt+s) goes on turn after turn until something is found or interrupts it.
+# searching): searching for a while (Alt+s) goes on turn after turn until something is found or interrupts it.
 search = 1000
-# A turn of making out a labelled scroll without reading it (the Decipher ability; spec §8
-# "Scrolls"): a try takes rules/decipher.toml's `seconds`, a turn of this after another.
+# A turn of making out a labelled scroll without reading it (the Decipher ability): a try takes
+# rules/decipher.toml's `seconds`, a turn of this after another.
 decipher = 1000
-# A turn of praying at a forgotten altar (the Pray ability; spec §7 "Special rooms"): a prayer
+# A turn of praying at a forgotten altar (the Pray ability): a prayer
 # takes its outcome table's `seconds` (data/outcomes/), a turn of this after another.
 pray = 1000
-# A turn of drinking at a healing spring (the Drink ability; spec §7 "Special rooms"): a drink
+# A turn of drinking at a healing spring (the Drink ability): a drink
 # takes its outcome table's `seconds` (data/outcomes/spring.toml), a turn of this after another.
-# Drinking a potion (spec §8 "Potions", from the Consume list) takes one.
+# Drinking a potion (from the Consume list) takes one.
 drink = 1000
 
-# A turn of foraging in the wild (the Forage ability; spec §8 "Foraging"): a forage takes
+# A turn of foraging in the wild (the Forage ability): a forage takes
 # forage.toml's `seconds` (10 minutes), a turn of this after another.
 forage = 1000
 
-# A turn of gathering herbs from the glowing fungus (the Gather ability; spec §8 "Skills":
+# A turn of gathering herbs from the glowing fungus (the Gather ability;
 # Herbalism): a gather takes herbs.toml's `seconds` (5 minutes), a turn of this after another.
 gather = 1000
 
-# A turn of working an item at a forge's anvil (the Temper ability; spec §7 "Special rooms"): an
+# A turn of working an item at a forge's anvil (the Temper ability): an
 # attempt takes `seconds` (data/rules/temper.toml), a turn of this after another.
 temper = 1000
 # A turn of whittling a wooden item with a knife (the Whittle ability): an attempt takes
@@ -107,32 +107,32 @@ craft = 1000
 # A turn of salvaging an item for its materials (the Salvage ability): an attempt takes
 # rules/salvage.toml's `seconds`, a turn of this after another.
 salvage = 1000
-# Trying to disarm a trap you know of next to you (the Disarm ability; spec §8 "Disarming traps"):
+# Trying to disarm a trap you know of next to you (the Disarm ability):
 # careful work, whether it comes off, fails, or sets the trap off.
 disarm = 2000
-# Treating yourself (the Heal ability; spec §8 "Skills"): binding a wound, or tending a poison or a
+# Treating yourself (the Heal ability): binding a wound, or tending a poison or a
 # disease, about a quarter of a minute, whatever comes of it.
 heal = 2500
 # Chatting with someone (`C`): a few words. Asking about a topic on the dialogue screen takes no
 # time.
 chat = 500
-# Singing a song (a bard's Inspire; spec §8 "Class abilities"): a verse, as long as a chat, and
+# Singing a song (a bard's Inspire): a verse, as long as a chat, and
 # heard well beyond it.
 song = 500
-# Trying to steal from someone next to you (the abilities menu's Steal; spec §8 "Stealing"),
+# Trying to steal from someone next to you (the abilities menu's Steal),
 # whether it works or you are caught.
 steal = 1000
-# Feinting at a foe next to you (the abilities menu's Feint; spec §8 "Skills": Bluff), whether it
+# Feinting at a foe next to you (the abilities menu's Feint; Bluff), whether it
 # is fooled or not.
 feint = 1000
-# One turn of taming a beast beside you (the abilities menu's Tame; spec §8 "Allies"): a try
+# One turn of taming a beast beside you (the abilities menu's Tame): a try
 # takes companions.toml's [tame] turns of them.
 tame = 1000
-# Threatening a foe you see (the abilities menu's Intimidate; spec §8 "Skills"), whether it quails or
+# Threatening a foe you see (the abilities menu's Intimidate), whether it quails or
 # not.
 intimidate = 1000
 # Throwing your voice to a place you see: a voice sounds there.
 throw_voice = 1000
-# Climbing out of the water onto ice (spec §5 "Ice"), on top of the step onto the ice: hauling
+# Climbing out of the water onto ice, on top of the step onto the ice: hauling
 # oneself up out of a hole takes a few turns.
 climb = 2000

@@ -1,4 +1,4 @@
-//! Beast dens (spec §7 "Special rooms"; `mapgen/den.rs`): a teeming den whose sleepers are only
+//! Beast dens (`mapgen/den.rs`): a teeming den whose sleepers are only
 //! of its factions (wildlife, vermin, marsh), drawn only where the branch's population holds one,
 //! with a hoard of bones and fresh corpses instead of items.
 

@@ -1,4 +1,4 @@
-//! A room's own loot (spec §7 "Special rooms"; `docs/dev/special-rooms.md`): a generated
+//! A room's own loot (`docs/dev/special-rooms.md`): a generated
 //! floor's special room whose effect has a `loot` (a scriptorium's scrolls) gets between its
 //! fewest and its most items of that class on its plain floor (no stairs, light, or trap), each
 //! a base item of the class that is loot at the floor's item level, by frequency, made as loot

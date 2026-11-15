@@ -1,4 +1,4 @@
-//! Burden in the world (spec §8 "Burden"): carrying limits from Strength, Toughness, and size;
+//! Burden in the world: carrying limits from Strength, Toughness, and size;
 //! every action slowed ×1.25 Burdened and ×1.5 Strained, overworld journeys included, exactly over
 //! any run; overloaded actors cannot move but do everything else; Dexterity capped in Defence;
 //! louder steps; dwarves shrugging off Burdened; messages when the burden changes; creatures by

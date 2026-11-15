@@ -1,4 +1,4 @@
-//! Magic item content (spec §7 "Magic items"): the prefixes and suffixes magic and rare items
+//! Magic item content: the prefixes and suffixes magic and rare items
 //! roll, how often loot is normal, magic, or rare, how many affixes each rolls, and the words
 //! rare names are made of. The table is a directory (docs/dev/content.md): the settings
 //! (`[rarity]`, `[magic]`, `[rare]`, `[names]`) in `assets/data/affixes.toml`, one `[[prefix]]`
@@ -27,7 +27,7 @@ use crate::stats::Stat;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
-/// The highest item level: dungeon depth gives it (spec §8 "Magic items").
+/// The highest item level: dungeon depth gives it.
 pub const MAX_ITEM_LEVEL: u8 = 99;
 /// The most prefixes, and the most suffixes, an item may have (a rare: three of each).
 pub const MAX_PER_KIND: usize = 3;
@@ -153,7 +153,7 @@ impl AffixKind {
     }
 }
 
-/// What an affix does: one effect, mapped onto a rule that exists (spec §8 "Magic items").
+/// What an affix does: one effect, mapped onto a rule that exists.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Effect {
     /// To hit.
@@ -162,8 +162,8 @@ pub enum Effect {
     Damage,
     /// Adds 1dN to every roll of the damage (the value is N).
     ExtraDamage,
-    /// Adds 1dN of the affix's damage type (`damage_type`, an element; spec §8 "Damage
-    /// types") to every roll of the damage (the value is N).
+    /// Adds 1dN of the affix's damage type (`damage_type`, an element) to every roll of the damage
+    /// (the value is N).
     Elemental,
     /// Widens the critical threat range by this many natural rolls.
     Threat,
@@ -189,7 +189,7 @@ pub enum Effect {
     MaxDex,
     /// Percent off its weight.
     Weight,
-    /// Proof against item damage: no source of it harms the item (spec §7 "Materials"; a value
+    /// Proof against item damage: no source of it harms the item (a value
     /// of 1, no more).
     Proof,
     /// Defence: Dodge (stacks).
@@ -202,19 +202,19 @@ pub enum Effect {
     MaxHp,
     /// Percent faster hit point regeneration.
     Regeneration,
-    /// Maximum mana (spec §8 "Mana").
+    /// Maximum mana.
     MaxMana,
     /// Percent faster mana regeneration.
     ManaRegeneration,
-    /// Percent off every mana cost (spec §8 "Mana").
+    /// Percent off every mana cost.
     ManaCost,
     /// Points off this piece's spell cost surcharge (its `spell_cost_percent`; local).
     SpellEase,
-    /// To hit with one's own spells (spec §8 "Spells").
+    /// To hit with one's own spells.
     SpellToHit,
     /// Widens one's own spells' critical threat range by this many natural rolls.
     SpellThreat,
-    /// Rungs higher on one's own spells' damage and heal ladders (spec §8 "Spells": "Hooks").
+    /// Rungs higher on one's own spells' damage and heal ladders.
     SpellRungs,
     /// Added to one's spells' rolls, harm or healing (Potent).
     SpellBonus,
@@ -232,7 +232,7 @@ pub enum Effect {
     ManaOnKill,
     /// Rungs higher for the wands one uses (of Wands).
     WandRungs,
-    /// Added to a resource's maximum (the affix's `resource`; spec §8 "Resources").
+    /// Added to a resource's maximum (the affix's `resource`).
     ResourceMax,
     /// Percent faster a resource comes back.
     ResourceRate,
@@ -240,7 +240,7 @@ pub enum Effect {
     ActiveStamina,
     /// Points of the affix's resource on a kill close by.
     ResourceOnKill,
-    /// Percent resistance to the affix's damage type (`damage_type`; spec §8 "Damage types").
+    /// Percent resistance to the affix's damage type (`damage_type`).
     Resistance,
     /// A stat's score.
     Stat(Stat),
@@ -264,7 +264,7 @@ pub enum Effect {
     PotionKept,
     /// It glows: its wearer carries a light (a preset per tier, no value).
     Light,
-    /// Added to a skill's value (the affix's `skill`; spec §8 "Skills") for what the skill gives.
+    /// Added to a skill's value (the affix's `skill`) for what the skill gives.
     Skill,
 }
 
@@ -465,7 +465,7 @@ impl Effect {
     }
 
     /// Whether it names a resource (`resource` in its affix): the pool whose maximum, pace,
-    /// costs, or gains it changes (spec §8 "Resources").
+    /// costs, or gains it changes.
     pub const fn is_pooled(self) -> bool {
         matches!(
             self,

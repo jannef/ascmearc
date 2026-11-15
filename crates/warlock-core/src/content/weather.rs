@@ -1,4 +1,4 @@
-//! The climate (`assets/data/weather.toml`, spec §5 "Weather", "Temperature", §7): how likely each
+//! The climate (`assets/data/weather.toml`): how likely each
 //! weather is in each month, how warm each month is, how each weather changes the light from the
 //! sky, the temperature, and sight on the overworld, and how rain looks. What the weather is at a
 //! moment is [`crate::weather`], the temperature [`crate::temperature`]. Without the file the sky

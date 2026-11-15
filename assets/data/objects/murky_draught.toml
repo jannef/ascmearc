@@ -1,4 +1,4 @@
-# A murky draught (spec §8 "Potions"): a bad potion, it makes its drinker sick as rotten food
+# A murky draught: a bad potion, it makes its drinker sick as rotten food
 # does, so an unknown potion is a gamble. Harm is brown; it gives no marks.
 [[object]]
 id = "murky_draught"

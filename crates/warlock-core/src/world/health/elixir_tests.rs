@@ -1,4 +1,4 @@
-//! Elixirs (spec §8 "Potions"; `world/health/elixir.rs`): drunk through the Consume action (`eat:`),
+//! Elixirs (`world/health/elixir.rs`): drunk through the Consume action (`eat:`),
 //! the stat +1 for good and its potential +1d2, the hit points and mana that follow, the marks
 //! of the `elixir` use, Quick study of the body, and where elixirs come from.
 

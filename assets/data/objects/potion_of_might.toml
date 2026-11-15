@@ -1,4 +1,4 @@
-# A potion of might (spec §8 "Potions"): Strength raised for ten minutes. Stat boosts are orange.
+# A potion of might: Strength raised for ten minutes. Stat boosts are orange.
 [[object]]
 id = "potion_of_might"
 name = "potion of might"

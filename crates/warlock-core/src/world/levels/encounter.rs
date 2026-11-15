@@ -1,4 +1,4 @@
-//! Overworld encounters (spec §7 "Overworld encounters"; `docs/dev/encounters.md`; the design
+//! Overworld encounters (`docs/dev/encounters.md`; the design
 //! `docs/design/overworld-encounters.md`, its §15 the owner's decisions): the roll after an
 //! overworld step, the two lookouts, the four outcomes, the pending choice that must be answered
 //! ([`crate::action::Action::Encounter`]), evading, and the dev `meet`. Where everyone stands

@@ -1,5 +1,4 @@
-//! Saving and resuming: one save per character, autosave, dev snapshots, and quit handling
-//! (spec §7).
+//! Saving and resuming: one save per character, autosave, dev snapshots, and quit handling.
 //!
 //! The core turns a world into bytes (`warlock_core::save`); this module owns where they live.
 //! Every character has its own save, `saves/<id>.sav` in the data folder (`paths::SAVES_DIR`),

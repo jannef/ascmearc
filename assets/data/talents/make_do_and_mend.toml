@@ -1,4 +1,4 @@
-# The craftsperson's class ability from level 18 (spec §8 "Class abilities": Make do and mend;
+# The craftsperson's class ability from level 18 (Make do and mend;
 # the craftsperson design §7.5): an active on a damaged thing carried, `use:make_do_and_mend:c`,
 # `world/crafting/make_do.rs`.
 [[talent]]

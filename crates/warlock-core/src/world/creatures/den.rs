@@ -1,4 +1,4 @@
-//! Sleepers (spec §7 "Special rooms": teeming dens; `docs/dev/special-rooms.md`): a creature
+//! Sleepers (teeming dens; `docs/dev/special-rooms.md`): a creature
 //! with a status that `sleeps` (Asleep; a den's sleepers are placed with it, `mapgen/den.rs`)
 //! takes no turn ([`World::slumbers`], at the top of `creature_turn`) and is unaware of everyone
 //! (`ambush.rs`: a sneak attack lands). Nothing wakes it with time; it wakes when

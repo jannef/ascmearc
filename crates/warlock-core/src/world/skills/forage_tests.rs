@@ -1,4 +1,4 @@
-//! Foraging (spec §8 "Foraging", #547): only those trained in Survival may forage, only in the
+//! Foraging (#547): only those trained in Survival may forage, only in the
 //! wild (the overworld's land and its local areas, never water, a town, or a dungeon); a forage
 //! takes its time, then finds food by the ground's chance plus Survival, fresh, into the pack;
 //! refusals take none; it trains Survival; replays verify.

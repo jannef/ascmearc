@@ -1,4 +1,4 @@
-//! Creatures' spells (spec §8 "Creature behavior": "Casters", #1102): a `combat = "caster"`
+//! Creatures' spells (#1102): a `combat = "caster"`
 //! creature casts the spells of its type's `spells` list (`content/creature_spells.rs`) through
 //! the player's spell code: the same reach, roll, and degrees at its own stats
 //! ([`Cast::by_creature`]), the same areas, blows, spell types, and riders (`spell.rs`,
@@ -246,9 +246,9 @@ impl World {
             return price;
         }
         self.make_noise(id, Act::Attack(AttackKind::Spell));
-        // A spell at the player or cast near them stops a rest; one farther off is only told
-        // (spec §8 "Rest"): what it says meanwhile is held, then logged. A hurt to the player
-        // stops a rest all the same (`rest.rs`, `World::stirs`).
+        // A spell at the player or cast near them stops a rest; one farther off is only told: what
+        // it says meanwhile is held, then logged. A hurt to the player stops a rest all the same
+        // (`rest.rs`, `World::stirs`).
         let far = on != self.state.player && !self.near_player(id) && !self.near_player(on);
         let outer = far.then(|| self.held.replace(Vec::new()));
         self.say_cast(id, def, on);

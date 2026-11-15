@@ -1,4 +1,4 @@
-# Prestige classes (spec §8 "Prestige classes"; docs/design/prestige-classes.md): one file per
+# Prestige classes (docs/design/prestige-classes.md): one file per
 # class holding one `[[prestige]]`. This file holds only the notes below: a file of comments
 # defines nothing. The game ships one, the Hunter (hunter.toml), whose door is a campaign's
 # calling.

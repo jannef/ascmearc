@@ -1,4 +1,4 @@
-//! War cry (spec §8 "Class abilities"; #844; `world/classes/war_cry.rs`): the berserker's roar at 25,
+//! War cry (#844; `world/classes/war_cry.rs`): the berserker's roar at 25,
 //! for 4 rage and a wait; the hostiles that hear and see the berserker and have vitals check
 //! their nerve against Strength and Intimidate, and the failed flee; never refused but for want
 //! of rage; each cry a mark of Intimidate.

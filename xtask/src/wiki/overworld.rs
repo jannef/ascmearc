@@ -38,7 +38,7 @@ pub(super) fn locations(content: &Content) -> String {
         for (pos, hidden) in &map.hidden {
             let terrain = content.terrain(hidden.terrain).name.clone();
             let to = leads(hidden.to.as_deref());
-            // A way up's mouth is found by climbing out of it (spec §7 "Ways up").
+            // A way up's mouth is found by climbing out of it.
             let way_up = (hidden.to.as_deref())
                 .and_then(|to| content.branch_level(to))
                 .is_some_and(|(def, depth)| depth == 1 && def.below.is_some());

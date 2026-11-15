@@ -1,4 +1,4 @@
-//! Still and running water in the grid shader (spec §4.3).
+//! Still and running water in the grid shader.
 //!
 //! Both are terrain animations evaluated in `console.wesl`:
 //! - **Still water** is a `wave`: a faint, slow swell whose phase travels across the pool.

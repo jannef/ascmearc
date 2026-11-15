@@ -1,4 +1,4 @@
-//! Talents (spec §8 "Talents"; one file per talent
+//! Talents (one file per talent
 //! under `assets/data/talents/`, one per tree and system under its `trees/` and `systems/`): what a character may pick as they level up. A talent has a
 //! tree, prerequisites ([`Needs`]) that must all hold when it is chosen, and typed effects ([`TalentEffect`]) summed by [`crate::talent::TalentMods`] and
 //! read where the rules already read what magic items do. A talent may name the systems it
@@ -42,7 +42,7 @@ pub struct TreeDef {
     pub name: String,
     /// One line: what the tree is about.
     pub description: String,
-    /// Its talents are class abilities (spec §8 "Class abilities"): given by the class tables
+    /// Its talents are class abilities: given by the class tables
     /// (`data/classes/`), never picked.
     pub class: bool,
 }
@@ -208,7 +208,7 @@ pub enum TalentEffect {
     Ally(AllyEffect),
 }
 
-/// A talent's own active (spec §8 "Talents"; the abilities menu's Talents group), used as
+/// A talent's own active (the abilities menu's Talents group), used as
 /// [`crate::action::Action::UseTalent`] with the one verb every ability use has
 /// (`use:second_wind`, `use:blood_magic`; #644).
 #[derive(
@@ -382,7 +382,7 @@ impl TalentEffect {
 }
 
 impl TalentEffect {
-    /// The birth sign's active it is, if it is one (spec §8 "Birth sign").
+    /// The birth sign's active it is, if it is one.
     pub fn sign_active(&self) -> Option<super::SignActive> {
         use super::SignActive as A;
         Some(match self {
@@ -395,7 +395,7 @@ impl TalentEffect {
         })
     }
 
-    /// The class active it is, if it is one (spec §8 "Class abilities").
+    /// The class active it is, if it is one.
     pub fn active(&self) -> Option<super::ClassActive> {
         use super::ClassActive as A;
         Some(match self {
@@ -821,7 +821,7 @@ pub enum Need {
     Eyes(Vec<String>),
     /// A class, by id.
     Class(String),
-    /// A birth sign's animal, by id (spec §8 "Birth sign").
+    /// A birth sign's animal, by id.
     Animal(String),
     /// A birth sign's element, by id.
     Element(String),
@@ -900,7 +900,7 @@ pub struct AnyWeaponSkill {
     pub words: String,
 }
 
-/// The prerequisites of a talent (spec §8 "Talents"): all must hold
+/// The prerequisites of a talent: all must hold
 /// when it is chosen; none is checked again later.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct Needs {
@@ -999,17 +999,17 @@ pub struct TalentDef {
     pub granted: bool,
     /// A birth sign's flaw: granted, shown with "but" and dimmed, never a prerequisite.
     pub flaw: bool,
-    /// What using its class active costs of an alternative resource (spec §8 "Resources"):
+    /// What using its class active costs of an alternative resource:
     /// `resource = { id = "focus", cost = 6 }` (0 asks only that it is held), if anything.
     pub resource: Option<ResourceCost>,
-    /// The alignment bands its class active works for (spec §8 "Alignment"; `alignment = { min
+    /// The alignment bands its class active works for (`alignment = { min
     /// = "kind" }` in data: the paladin's holy gifts), or its band-gated passive (Communion), if
     /// any. It bars nothing: the ability is had, listed, and used whatever the band, and outside
     /// these bands it does nothing (`World::answered`, `World::communes`).
     pub alignment: Option<Requirement>,
 }
 
-/// An ability's cost in an alternative resource (spec §8 "Resources"): unavailable while the
+/// An ability's cost in an alternative resource: unavailable while the
 /// user holds less, and spent as it is used.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct ResourceCost {

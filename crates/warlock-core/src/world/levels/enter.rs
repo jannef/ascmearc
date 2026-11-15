@@ -83,7 +83,7 @@ impl World {
         // Entering a shop the keeper greets the player; leaving it owing is theft.
         self.shop_step(from, to);
         self.tell_cell(to);
-        // A trap there goes off (spec §8 "Traps"), unless the player knew of it and stepped
+        // A trap there goes off, unless the player knew of it and stepped
         // past it of their own will (`sidestep.rs`); a pit costs the next action too.
         let climb = if willing {
             self.step_willingly(to, events)
@@ -114,7 +114,7 @@ impl World {
         }
         // A feature of the ground there ("There is an altar here."), before what lies on it.
         self.announce_feature();
-        // Goods for sale say their price (spec §7 "Shops").
+        // Goods for sale say their price.
         let text = match self.state.current().objects_at(to) {
             [] => None,
             [one] => Some(match self.asking_price(to, one) {

@@ -1,15 +1,15 @@
-//! The item description (spec §6 "Item description"): one stack the player carries, as they know
+//! The item description: one stack the player carries, as they know
 //! it. Opened from the inventory (a stack's letter) or the equipment screen (a slot's upper-case
 //! letter), over the screen it came from.
 //!
-//! It names the item (in its rarity's color, spec §8 "Magic items"), says what it is (rarity,
-//! base, every part it is made of, weight; and to a player with an eye for it, spec §8 "Class
-//! abilities", what it and its gems are worth) and whether it is worn or wielded, then its base
-//! stats in words (`warlock_core::magic::describe`): how it is held or worn, its damage dice and
-//! criticals, how far it shoots or is thrown, what it needs, its Defence. A magic or rare item that is
-//! identified lists its item level and its affixes in plain language ("Sharp: +2 damage", "of
-//! Celerity: attacks faster"); one that is not says its magic is unknown. Speed is said in words;
-//! nothing about the player's own to-hit or modifiers is shown.
+//! It names the item (in its rarity's color), says what it is (rarity,
+//! base, every part it is made of, weight; and to a player with an eye for it, what it and its gems
+//! are worth) and whether it is worn or wielded, then its base stats in words
+//! (`warlock_core::magic::describe`): how it is held or worn, its damage dice and criticals, how
+//! far it shoots or is thrown, what it needs, its Defence. A magic or rare item that is identified
+//! lists its item level and its affixes in plain language ("Sharp: +2 damage", "of Celerity:
+//! attacks faster"); one that is not says its magic is unknown. Speed is said in words; nothing
+//! about the player's own to-hit or modifiers is shown.
 //!
 //! Read-only: Esc, Enter, or Back closes it. It is read from the perception snapshot when it
 //! opens; no game time passes while it is open.

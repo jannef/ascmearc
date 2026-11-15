@@ -24,7 +24,7 @@ kit = [
 ]
 # Bonus talents from Finesse and Vigour.
 bonus_talents = { levels = [10, 20, 30, 45, 55], trees = ["finesse", "vigour"] }
-# The level table (spec §8 "Class abilities"). Martial arts grants the Ki pool Flurry and
+# The level table. Martial arts grants the Ki pool Flurry and
 # Quivering palm spend (the ki tricks design).
 abilities = [
     { level = 1, talent = "martial_arts" },

@@ -1,4 +1,4 @@
-//! Rods (spec §8 "Magic items": "Rods", the magic design §9): an object with an `[object.rod]`
+//! Rods (the magic design §9): an object with an `[object.rod]`
 //! table holds an effect no spell has, of the rod effects (`data/rod_effects/`, one
 //! `[[rod_effect]]` a file), and costs its user mana for each use instead of charges; its reach
 //! grows on a ladder of the user's stats as a spell's does (`grows.range`, the spell scaling
@@ -86,7 +86,7 @@ pub struct RodEffect {
     pub shape: RodShape,
     /// How far it reaches for anyone, in cells: the base.
     pub range: u8,
-    /// Its reach's ladder (`grows.range`, cells; spec §8 "Spells": "Ladders"), if it grows.
+    /// Its reach's ladder (`grows.range`, cells), if it grows.
     pub grows: Option<Ladder>,
     /// A burst's radius (0 for the other shapes).
     pub radius: u8,

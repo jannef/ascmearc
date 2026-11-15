@@ -1,4 +1,4 @@
-# Stat training (spec §8 "Stats"; the design is docs/design/stat-training.md): using your stats
+# Stat training (the design is docs/design/stat-training.md): using your stats
 # earns them training marks, a signed pile per stat, and at every level you gain and every day at
 # 06:00 each stat gets one check to move by a point. Nothing here is shown in the game: a rise
 # says "You feel stronger." and nothing of why.

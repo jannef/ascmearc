@@ -1,4 +1,4 @@
-# Hunger and food (spec §8 "Hunger"), ADOM-like. Without this file nobody hungers, nothing can be
+# Hunger and food, ADOM-like. Without this file nobody hungers, nothing can be
 # eaten, food does not rot, and creatures leave no corpses.
 #
 # Nutrition is counted in points. A race of hunger 100 % (`hunger` in races.toml: a human) burns

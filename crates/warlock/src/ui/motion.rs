@@ -1,4 +1,4 @@
-//! Motion and time (spec §4.6): creatures slide between cells, lunge at what they attack in
+//! Motion and time: creatures slide between cells, lunge at what they attack in
 //! melee, and the map camera eases toward its target.
 //!
 //! Motion starts from the turn's perceived events (`Outcome.events`) and is a pure function of

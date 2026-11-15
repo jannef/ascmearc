@@ -1,4 +1,4 @@
-//! Movement and travel (spec §3, §8 "Time"): the player's step ([`crate::action::Action::Move`]),
+//! Movement and travel: the player's step ([`crate::action::Action::Move`]),
 //! stairs and the ways between levels ([`crate::action::Action::Descend`], `Ascend`), the edge
 //! of a local area, arriving on a level (generated on the first visit) and spawning what lives
 //! there, special rooms entered, and terrain changing under the light. `world/mod.rs` has only
@@ -26,7 +26,7 @@ use crate::world::{
 use std::borrow::Cow;
 
 impl World {
-    /// Whether the player can move under their load; if not, says so (spec §8 "Burden").
+    /// Whether the player can move under their load; if not, says so.
     pub(in crate::world) fn can_move(&mut self) -> bool {
         let movable = self.load_of(self.state.player).penalty().can_move();
         if !movable {
@@ -36,8 +36,8 @@ impl World {
     }
 
     /// Whether the player can step onto `to` under their load as it would be there: a heavy
-    /// hall halves the limit, so one may be unable to go in, yet always able to step out
-    /// (spec §7 "Special rooms"). If not, says so.
+    /// hall halves the limit, so one may be unable to go in, yet always able to step out. If not,
+    /// says so.
     fn can_step_to(&mut self, to: Pos) -> bool {
         let player = &self.state.actors[&self.state.player];
         let there = self.state.load_at(&self.content, player, to).penalty();
@@ -56,7 +56,7 @@ impl World {
     /// door is gone with the wall it looked like.
     pub(in crate::world) fn set_terrain(&mut self, p: Pos, terrain: TerrainId) {
         let def = self.content.terrain(terrain);
-        // A lock stays on a closed door or a shut chest (spec §8 "Chests").
+        // A lock stays on a closed door or a shut chest.
         let (closed_door, door) = (def.is_closed_door() || def.is_shut_chest(), def.is_door());
         let closed_only = def.is_closed_door();
         let was_door = self.state.current().is_door(&self.content, p);
@@ -71,13 +71,12 @@ impl World {
         if !closed_only {
             level.wedged.remove(&p);
         }
-        // A trap on a door is part of it (spec §8 "Trapped doors"): it opens and shuts with the
+        // A trap on a door is part of it: it opens and shuts with the
         // door, and is gone when the door is.
         if was_door && !door {
             level.traps.remove(&p);
         }
-        // A chest's trap goes with its lid, opened or broken, and is forgotten with it (spec §8
-        // "Chests").
+        // A chest's trap goes with its lid, opened or broken, and is forgotten with it.
         if was_chest && !def.is_shut_chest() {
             level.traps.remove(&p);
             level.trap_memory.remove(&p);
@@ -191,9 +190,8 @@ impl World {
         if let Some(price) = self.stroke_fails(events) {
             return Spent::Turn(price);
         }
-        // Out of a shop's door owing anything: the keeper turns the player back (spec §7
-        // "Shops"), a step the other way, or none at all if the shop floor is full; whoever
-        // stood in the door stays there.
+        // Out of a shop's door owing anything: the keeper turns the player back, a step the other
+        // way, or none at all if the shop floor is full; whoever stood in the door stays there.
         // Turned back, the player did not choose the cell they step onto: no sidestepping a
         // trap there (`sidestep.rs`).
         let mut willing = true;
@@ -215,7 +213,7 @@ impl World {
         let footing = self.tread(player, from, to);
         let onto = self.state.current().terrain[to];
         let step = self.step_price(player, self.content.terrain(onto), fleeing);
-        // Slip away (spec §8 "Birth sign"): a step out of reach, cheaper.
+        // Slip away: a step out of reach, cheaper.
         let step = self.slipped(player, to, step) + self.tread_price(player, footing);
         let overworld = self.state.current().kind == LevelKind::Overworld;
         self.state.overworld_step = overworld.then_some(dir);
@@ -355,7 +353,7 @@ impl World {
             to,
         });
         let level = self.state.current();
-        // A revealed location goes by its own name (spec §7 "Hidden locations").
+        // A revealed location goes by its own name.
         let name = link.name.unwrap_or_else(|| level.name.clone());
         let text = match (kind, level.kind, dir) {
             (LevelKind::Overworld, _, _) => format!("You enter {name}."),
@@ -422,8 +420,7 @@ impl World {
         if new {
             self.discover_level(to);
         }
-        // Floors the player was not on stay frozen: what comes, comes from now on (spec §7
-        // "Danger levels").
+        // Floors the player was not on stay frozen: what comes, comes from now on.
         self.arrive_spawner(to);
         // The player's allies beside them come along, and the retinue steps out (`ally.rs`).
         self.follow_along(&from, to, old, arrival);
@@ -558,7 +555,7 @@ impl World {
     }
 }
 
-/// The first time the player is inside a special room (spec §7 "Special rooms"): marks it
+/// The first time the player is inside a special room: marks it
 /// entered and returns what they are told; from then on they know it (look mode names it).
 pub(in crate::world) fn enter_room(state: &mut WorldState, content: &Content) -> Option<String> {
     let here = state.player().pos;
@@ -616,7 +613,7 @@ pub(in crate::world) fn instantiate_level(
     for stack in level.objects.values_mut().flatten().chain(held) {
         stack.draw_wand_rung(content, &mut rng);
     }
-    // What the chests hold is made now too (spec §8 "Chests").
+    // What the chests hold is made now too.
     let held = level.chests.values_mut().flat_map(|c| c.holds.iter_mut());
     crate::rot::made_at(held, content, state.time);
     let first = state.next_actor_id;
@@ -628,7 +625,7 @@ pub(in crate::world) fn instantiate_level(
             level.shops.push(shop);
         }
     }
-    // A level with a danger rule keeps what comes to it (spec §7 "Danger levels").
+    // A level with a danger rule keeps what comes to it.
     if let Some((_, _, spawning)) = content.spawning(id) {
         level.spawner = Some(Spawner::new(seed, id, state.time, spawning.every));
     }
@@ -636,7 +633,7 @@ pub(in crate::world) fn instantiate_level(
     state.endless.made(content, id);
     crate::world::fixtures::graveyard::name_statues(state, content, id);
     crate::world::fixtures::graves::bury(state, content, id);
-    // The hidden locations revealed before the level was made (spec §7 "Hidden locations").
+    // The hidden locations revealed before the level was made.
     super::reveal::apply_revealed(state, id);
     // Under the open sky its water has frozen and thawed with the weather of the last weeks.
     state.pre_roll_ice(content, id);
@@ -667,12 +664,12 @@ pub(in crate::world) fn make_creature(
     // Its key for keyed draws: where and when it was made (`rng.rs`, "Actor keys").
     let key = (state.draws).actor_key(state.seed, state.time.seconds(), id, spawn.pos);
     let def = content.creature(spawn.creature);
-    // A unique type comes once a run, however it came (spec §7 "Danger levels").
+    // A unique type comes once a run, however it came.
     if def.unique {
         state.progress.uniques.insert(def.id.clone());
     }
     let (carry, equipment) = placed_gear(content, state.seed, id, &key, spawn);
-    // An animated thing is made of its body or its pieces (spec §8 "Animated objects").
+    // An animated thing is made of its body or its pieces.
     let mut rng = crate::animated::stream(state.seed, &key);
     let (carry, equipment) =
         crate::animated::kit(content, &mut rng, spawn.creature, (carry, equipment));
@@ -766,7 +763,7 @@ pub(in crate::world) fn make_creature(
 
 /// What creature `spawn`, placed on level `level` as the actor keyed `key`, carries and of that
 /// wears and wields: its fixed kit (or the gear its generated level rolled), or else its type's
-/// gear, rolled now from `gear/<actor key>` at the level's item level (spec §8 "Creature gear").
+/// gear, rolled now from `gear/<actor key>` at the level's item level.
 fn placed_gear(
     content: &Content,
     seed: u64,

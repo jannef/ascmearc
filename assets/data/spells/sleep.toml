@@ -1,4 +1,4 @@
-# Sleep (spec §8 "Spells", the first spell list): a burst of drowsiness; everyone it reaches but
+# Sleep (the first spell list): a burst of drowsiness; everyone it reaches but
 # the caster, friend or foe, does everything three times as slowly a while.
 [[spell]]
 id = "sleep"
@@ -20,7 +20,7 @@ noise = { sound = "chanting", loudness = 20 }
 range = "willpower 14 9, 18 10"
 degrees = "presence 14 3"
 
-# What rereading its grimoire adds, rank by rank (spec §8 "Spells": "Ranks"; README.toml
+# What rereading its grimoire adds, rank by rank (README.toml
 # `[spell.ranks]`). Drowsy holds three degrees at most, so a degree is all its ranks add to the
 # drowse. At rank 10: a degree longer, a cell wider, three cells farther, 30 percent off the mana,
 # and a quarter off the casting time.

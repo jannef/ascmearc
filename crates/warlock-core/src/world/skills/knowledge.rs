@@ -1,4 +1,4 @@
-//! Knowledge (spec §8 "Skills": Knowledge; #667): know your enemy.
+//! Knowledge (Knowledge; #667): know your enemy.
 //!
 //! - **The bonus**: the player's check to resist a creature's ability (a drain, exposure to a
 //!   disease a creature's attack carries, struggling free of a creature's hold) adds what the

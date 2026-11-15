@@ -1,7 +1,6 @@
 # The layer bosses of Grundlēas (#1118)
 
-The unique bosses that keep every tenth floor of Grundlēas, the endless branch (spec §7 "The
-endless branch"). The rules (the boss rows, the lair, the hidden stairs, made again until slain)
+The unique bosses that keep every tenth floor of Grundlēas, the endless branch. The rules (the boss rows, the lair, the hidden stairs, made again until slain)
 are in `docs/dev/mapgen.md` ("Layer bosses") and `crates/warlock-core/src/world/levels/layer_boss.rs`;
 this file holds the roster.
 
@@ -42,7 +41,7 @@ among them; the depths list runs to 100), `summoner_roster_tests`
 
 ## The Pits' warden (#1298)
 
-Every Pit (spec §7 "The Pits", `docs/dev/mapgen.md` "A Pit's warden", `world/levels/pit.rs`) has its own
+Every Pit (`docs/dev/mapgen.md` "A Pit's warden", `world/levels/pit.rs`) has its own
 warden on its fifth floor, so the type is **no unique** (`content/layer_boss.rs` asks `unique` only
 of an endless branch's bosses), and is shared (`assets/data/creatures/gatewarden.toml`, the lair
 `assets/vaults/wardens_hall.toml`, `dungeons = ["hellegeat"]`, pinned by the boss row). It is

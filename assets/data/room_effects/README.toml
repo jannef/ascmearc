@@ -1,4 +1,4 @@
-# Special rooms (spec §7 "Special rooms"): the fields of an effect file.
+# Special rooms: the fields of an effect file.
 # One file per entity, `NNN-<id>.toml`: the number keeps the order the game reads them in
 # (their ids are indices in that order), in steps of 10 so a new one fits between two.
 #
@@ -56,7 +56,7 @@
 #            drawn this many dangers deeper than the floor's (default 0)
 #   temperature  degrees Celsius added to the level's temperature inside; default 0.
 #            The room sets its cells' temperature and nothing else: what the temperature does
-#            (ice today) is the environment's (spec §5 "Temperature"); the status bar shows it
+#            (ice today) is the environment's; the status bar shows it
 #   burden   percent of everyone's carrying limit inside; default 100 (a heavy
 #            hall's 50 halves it: what is carried weighs on one as if it were twice as heavy)
 #   mirrors  a hall of mirrors: `{ images = N }` reflections of everyone inside the player
@@ -91,7 +91,7 @@
 #            file's `[[room]]` gives it: `side = "evil"`), which its feature shows by its light:
 #            { good = LIGHT, evil = LIGHT } (lights.toml; a side left out keeps the terrain's)
 #   offers   what the player may do beside the feature, in the abilities menu's Here group:
-#            { pray = TABLE }, an outcome table in data/outcomes/ (Pray: spec §7 "Special rooms"),
+#            { pray = TABLE }, an outcome table in data/outcomes/ (Pray),
 #            or { drink = TABLE } (Drink at a healing spring); one of them
 #   dressing pieces of a terrain (not walkable, transparent) generators stand along the room's
 #            walls: { terrain, per_cells, most }, one per `per_cells` floor cells, at least one

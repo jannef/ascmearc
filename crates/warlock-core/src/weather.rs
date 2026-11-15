@@ -1,4 +1,4 @@
-//! Weather (spec §5 "Weather"): one weather over every level under the open sky, changing every
+//! Weather: one weather over every level under the open sky, changing every
 //! few hours, a pure function of the run seed and the time.
 //!
 //! **Blocks**: time is cut into blocks of about [`BLOCK`] (three hours). Block `k` starts at

@@ -19,7 +19,7 @@ hearing = 18
 weight = 60000
 stats = { strength = 15, dexterity = 17, toughness = 14, intelligence = 4, willpower = 11, presence = 4 }
 base_hp = 9
-# A warg caught unaware may be tamed (spec §8 "Allies"); its nose is a wolf's.
+# A warg caught unaware may be tamed; its nose is a wolf's.
 tameable = true
 nose = 6
 on_eat = { message = "Tough, gamy wolf meat.", vomit = 10 }

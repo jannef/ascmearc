@@ -1,4 +1,4 @@
-//! Material drops (spec §7 "Material drops"; the design: docs/design/recipes.md §9, §10; #1341):
+//! Material drops (the design: docs/design/recipes.md §9, §10; #1341):
 //! what a creature's body leaves of crafting stock where it dies, by creature tag. One file per
 //! tag, `data/drops/<tag>.toml` (its file name is the tag), with `bodiless` and `[[drop]]` rows;
 //! a creature's own `[[creature.drops]]` rows add to its tags', and `drops_from_tags = false`

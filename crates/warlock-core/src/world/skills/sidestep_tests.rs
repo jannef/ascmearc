@@ -1,4 +1,4 @@
-//! Sidestepping a known trap (spec §8 "Traps", #476): a willing step onto a trap the player
+//! Sidestepping a known trap (#476): a willing step onto a trap the player
 //! knows of may avoid it, by their dodge (Dexterity capped by armour, plus Dodge), within a floor
 //! and a ceiling; a hidden trap, a step the player did not choose, and creatures keep the old
 //! rules; an avoided trap stays, trains Dodge, and replays.

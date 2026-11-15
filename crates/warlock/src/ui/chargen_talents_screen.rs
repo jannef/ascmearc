@@ -1,4 +1,4 @@
-//! Character creation's Talents step (spec §6 "New run", §8 "Talents"; #236): after the class
+//! Character creation's Talents step (#236): after the class
 //! and before the name, the character picks its creation talents, two for most (the bard, the
 //! lucky class, three). It lists the talents the drafted character may take (the run as it
 //! would start, `World::draft`: its scores, skills, class abilities, and sign), grouped by tree,

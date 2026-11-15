@@ -31,8 +31,8 @@ kit = [
 random_scrolls = { count = "1d3", below_level = 10 }
 # Bonus talents from Scholar.
 bonus_talents = { levels = [10, 20, 30, 45, 55], trees = ["scholar", "spellcraft"] }
-# The level table (spec §8 "Class abilities").
-# The spells (spec §8 "Spells"): Ray of frost, Magic missile, Burning hands, and Arcane bolt are
+# The level table.
+# The spells: Ray of frost, Magic missile, Burning hands, and Arcane bolt are
 # the guaranteed spells, paid in mana; the rest come from scrolls.
 abilities = [
     { level = 1, talent = "scroll_adept" },

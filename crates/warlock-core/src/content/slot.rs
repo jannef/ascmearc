@@ -1,4 +1,4 @@
-//! Equipment slots (`assets/data/slots.toml`, spec §7): where actors wear and wield things, in
+//! Equipment slots (`assets/data/slots.toml`): where actors wear and wield things, in
 //! the order the equipment screen lists them (lettered `a` on), as in ADOM.
 //!
 //! Every slot has an `id` (objects say where they go with `slot = "<id>"`, replays name slots

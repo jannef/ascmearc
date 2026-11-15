@@ -1,17 +1,17 @@
-//! Magic items in play (spec §8 "Magic items"): identifying them, what creatures drop, and the
+//! Magic items in play: identifying them, what creatures drop, and the
 //! hit points an actor keeps when what it wears changes.
 //!
 //! **Identify** ([`World::identify`]): the core API the scroll of identify (#150) calls from its
 //! action. It reveals an inventory stack's affixes ("This is a Sharp long sword of the Bear!").
 //! Wearing or wielding an item for a while does not identify it; carrying one for a day does,
-//! for a player with Lore ([`World::lore`], spec §8 "Talents").
+//! for a player with Lore ([`World::lore`]).
 //!
 //! **Drops**: a creature type with `loot` (a chance in percent) drops a magic or rare item where
-//! it dies, besides what it carried, or now and then a loose gem instead (by the gems' `chance`,
-//! spec §7 "Gems"). The roll draws from the stream `drop/<actor id>` (spec §8 "Determinism"),
-//! never the gameplay stream, so a kill changes no later roll of a fight; its item level is the
-//! creature's level, at least the level's item level ([`drop_level`]: an out-of-depth creature
-//! drops a deeper item). What it drops is its gear: its material is drawn by the materials'
+//! it dies, besides what it carried, or now and then a loose gem instead (by the gems' `chance`).
+//! The roll draws from the stream `drop/<actor id>`, never the gameplay stream, so a kill changes
+//! no later roll of a fight; its item level is the creature's level, at least the level's item
+//! level ([`drop_level`]: an out-of-depth creature drops a deeper item). What it drops is its gear:
+//! its material is drawn by the materials'
 //! `gear` at the creature's level (#193: primitive for kobolds, steel only for tougher
 //! creatures).
 
@@ -36,10 +36,10 @@ pub enum Identified {
 }
 
 impl World {
-    /// Identifies the player's inventory stack `item` (spec §8 "Magic items", "Scrolls"): its
+    /// Identifies the player's inventory stack `item`: its
     /// affixes are known from now on, wherever it goes, and so is its type if it is an
     /// unidentified scroll's or wand's (every one of that type shows by its name from now on),
-    /// and a wand's charges left (spec §8 "Magic items": "Wands"). Says
+    /// and a wand's charges left. Says
     /// "This is a Sharp long sword of the Bear!" when there was something to learn. Takes no
     /// time of its own: the action that calls it (reading the scroll of identify, #150) is what
     /// takes time.
@@ -51,8 +51,7 @@ impl World {
         learned
     }
 
-    /// [`World::identify`] without a word: the caller says it its own way (Appraise, spec §8
-    /// "Skills").
+    /// [`World::identify`] without a word: the caller says it its own way (Appraise).
     pub(crate) fn learn_item(&mut self, item: usize) -> Identified {
         let Some(object) = self.state.player().inventory.get(item).map(|s| s.object) else {
             return Identified::NoSuchItem;
@@ -67,7 +66,7 @@ impl World {
         Identified::Now(self.lore().describe(&self.state.player().inventory[item]))
     }
 
-    /// The player identifies scroll type `object` (spec §8 "Scrolls"): from now on every scroll
+    /// The player identifies scroll type `object`: from now on every scroll
     /// of it shows by its name. Whether there was anything to learn (false for a type already
     /// known, or one without a label). Says nothing.
     pub(crate) fn learn_scroll(&mut self, object: ObjectId) -> bool {
@@ -105,7 +104,7 @@ impl World {
             level: self.content.creature(actor.creature).level,
             faction: actor.faction(&self.content),
         };
-        // Treasure hunter (spec §8 "Talents"), Hoard sense (spec §8 "Birth sign"): the player's
+        // Treasure hunter, Hoard sense: the player's
         // luck, whoever made the kill.
         let talents = self.state.player().talent_mods(&self.content);
         let luck = loot::Luck::of(&talents);

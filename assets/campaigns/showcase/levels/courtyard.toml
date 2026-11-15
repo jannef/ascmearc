@@ -1,5 +1,5 @@
-# The courtyard (spec §3): a walled garden under the open sky, up the stairs from the hub's stairs
-# nook. It shows sunlight (spec §5 "Sunlight"): by day the sun lights every cell no taller terrain
+# The courtyard: a walled garden under the open sky, up the stairs from the hub's stairs
+# nook. It shows sunlight: by day the sun lights every cell no taller terrain
 # shades and the sky lights the rest a dim blue; shadows turn and stretch with the sun (long to the
 # west at dawn, short to the north at noon, long to the east at dusk), warm and orange low in the
 # sky; at night there is neither (a lamp still burns in the gazebo).
@@ -12,10 +12,10 @@
 # to themselves now and then, and swap places with you when they are in your way (#147).
 #
 # East of the gazebo a flagstone path leads to a small timber hut (W, roof 2 tall) with a door in
-# its west wall: Grimbold's General Store (spec §7 "Shops"), lit by a hanging lamp. Grimbold stands
+# its west wall: Grimbold's General Store, lit by a hanging lamp. Grimbold stands
 # by the door; everything on the plank floor (p) is for sale. A merchant fights no one, so the
 # courtyard stays safe unless the player steals. A purse of gold lies in the gazebo, enough for
-# the store's angelica root, the cure for diseases (spec §8 "Diseases").
+# the store's angelica root, the cure for diseases.
 name = "The Courtyard"
 kind = "outdoor"
 map = '''

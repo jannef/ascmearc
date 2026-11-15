@@ -10,7 +10,7 @@ use std::collections::BTreeSet;
 
 impl Content {
     /// Whether creature type `c` may come as a stray to an area whose population does not name
-    /// it (spec §7 "Danger levels"): hostile to the player, no unique, no animated object, and
+    /// it: hostile to the player, no unique, no animated object, and
     /// not marked `stray = false`.
     pub fn may_stray(&self, c: CreatureId) -> bool {
         let def = self.creature(c);
@@ -33,7 +33,7 @@ impl Content {
         &self.creatures
     }
 
-    /// Animated objects (spec §8 "Animated objects"): the tiers, the drop rule, and the bodies
+    /// Animated objects: the tiers, the drop rule, and the bodies
     /// their household types are generated from; empty without `data/animated.toml`.
     pub fn animated(&self) -> &Animated {
         &self.animated
@@ -49,8 +49,8 @@ impl Content {
         &self.factions
     }
 
-    /// How creatures of types `a` and `b` stand toward each other: their factions' stance
-    /// (spec §7 "Factions"); neutral without factions. The player is the creature `player`.
+    /// How creatures of types `a` and `b` stand toward each other: their factions' stance; neutral
+    /// without factions. The player is the creature `player`.
     pub fn stance(&self, a: CreatureId, b: CreatureId) -> Stance {
         match (self.creature(a).faction, self.creature(b).faction) {
             (Some(a), Some(b)) => self.factions.stance(a, b),
@@ -88,8 +88,7 @@ impl Content {
         &self.creature_rarities[index]
     }
 
-    /// The default odds of a draw (`data/dungeons.toml`'s `[defaults]`; spec §7 "Danger
-    /// levels"), if given.
+    /// The default odds of a draw (`data/dungeons.toml`'s `[defaults]`), if given.
     pub fn draw_odds(&self) -> Option<danger::Odds> {
         self.draw_odds
     }
@@ -181,9 +180,9 @@ impl Content {
     }
 
     /// What action `kind` costs a creature of type `creature`: its type's own attack cost for an
-    /// attack, if it has one, else the action's cost (spec §8 "Time").
+    /// attack, if it has one, else the action's cost.
     pub fn action_cost(&self, creature: CreatureId, kind: ActionKind) -> u32 {
-        // A throw of its own (spec §8 "Ranged combat": "Creatures' throws") costs its own.
+        // A throw of its own costs its own.
         let throw = self.creature(creature).throw.as_ref().and_then(|t| t.cost);
         if let Some(cost) = throw.filter(|_| kind == ActionKind::Throw) {
             return cost;

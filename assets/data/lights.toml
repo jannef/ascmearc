@@ -1,4 +1,4 @@
-# Light presets (spec §5). Referenced by terrain (`light = "..."`), level legends, creatures,
+# Light presets. Referenced by terrain (`light = "..."`), level legends, creatures,
 # and objects (a lantern's `light`: what it gives ready in the Tool slot and lit).
 #
 # Fields:
@@ -7,11 +7,11 @@
 #             Brightness for vision thresholds is luma (54r + 183g + 19b) / 256, plus UV for eyes
 #             that see UV.
 #   radius  = reach in cells; light falls off as color · (R² − d²) / R² with R² = radius² + radius.
-#   hooded  = the light this one burns as with its hood lowered (a lantern's, spec §5): a
+#   hooded  = the light this one burns as with its hood lowered (a lantern's): a
 #             light id here, itself without a hood. Optional: without it the light has no hood.
 #   hollow  = true: its own cell gets none of its light (a hooded lantern lights the cells around
 #             its bearer but not them). Default false.
-#   stability.* — how the drawn light varies over time (spec §4.4). Visual only (renderer);
+#   stability.* — how the drawn light varies over time. Visual only (renderer);
 #             gameplay never reads it, and the `flicker` effect switch turns it off. Every part is
 #             optional; a light without any is perfectly stable (constant hue and intensity), as
 #             magical light should be. Keep it subtle: felt more than noticed, nothing strobing.
@@ -116,7 +116,7 @@ id = "altar_glow"
 color = [220, 180, 90, 0]
 radius = 5
 
-# Forgotten altars (spec §7 "Special rooms"): steady like every magical light; the colour shows
+# Forgotten altars: steady like every magical light; the colour shows
 # the altar's hidden side (gold good, grey neutral, red evil). The terrain gives the neutral one;
 # a good or an evil altar's cell carries its own as a placed light.
 [[light]]
@@ -199,7 +199,7 @@ stability.hue = { degrees = 6, speed = 0.2 }
 stability.dips = { depth = 0.08, every = 15, length = 1.6 }
 
 # Ember: a dim light about its bearer, enough to make out the cells beside them in the dark; a
-# soft flicker, as a banked fire. A birth sign's inner light (spec §8 "Birth sign") and the
+# soft flicker, as a banked fire. A birth sign's inner light and the
 # burning status's (status/).
 [[light]]
 id = "ember"
@@ -251,7 +251,7 @@ id = "spell_light"
 color = [235, 235, 250, 0]
 radius = 6
 
-# Spell circles (spec §4.8, §8 "Status effects"; circles.toml): a buffed or hexed actor sheds its
+# Spell circles (circles.toml): a buffed or hexed actor sheds its
 # status's school's light, `circle_<school>`, one a school. Faint and steady (magic): just over
 # normal eyes' threshold (40) on the actor's own cell and under it a cell away, bright to eyes that
 # see UV.

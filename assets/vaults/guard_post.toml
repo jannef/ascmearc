@@ -1,6 +1,6 @@
 # Vault: a guard post. A kobold paces the front room with two of the floor's own for company,
 # drawn at its danger when the level is generated; a locked door hides a lamp-lit store room.
-# The guard carries the brass key to it (spec §8 "Doors"): kobolds open doors, and a locked one
+# The guard carries the brass key to it: kobolds open doors, and a locked one
 # only with its key. Take the key from the guard, or kick the door in.
 name = "Guard post"
 map = '''
@@ -17,10 +17,10 @@ map = '''
 # floor without a danger).
 "g" = { terrain = "floor", monsters = { pool = "level", count = 2 } }
 "*" = { terrain = "floor", light = "lamp" }
-# A reward (spec §8 "Magic items"): something magic or rare left in the store room, rolled when
+# A reward: something magic or rare left in the store room, rolled when
 # the level is generated.
 "m" = { terrain = "floor", loot = "magic" }
-# The store (spec §8 "Magic items"): spare arms rolled when the level is generated, food and a
+# The store: spare arms rolled when the level is generated, food and a
 # skeleton key (which opens every lock) left as they are: food is no loot class, and the key is
 # the way past the lock when the guard is dead or its key lost.
 "a" = { terrain = "floor", loot = { pool = ["weapons", "armour"] } }

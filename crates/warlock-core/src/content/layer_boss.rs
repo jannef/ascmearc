@@ -1,5 +1,4 @@
-//! The checks of a branch's bosses (spec §7 "The endless branch", "The Pits";
-//! `world/levels/layer_boss.rs`, `world/levels/pit.rs`): an endless branch's layer bosses, each a unique type
+//! The checks of a branch's bosses (`world/levels/layer_boss.rs`, `world/levels/pit.rs`): an endless branch's layer bosses, each a unique type
 //! that leaves an everlasting, profane corpse, and a portal branch's warden, of any type (every Pit has its own); each lair a dungeon vault of
 //! the branch's campaign (or shared) that places its boss once, stamps nowhere else (it is
 //! pinned), and marks the hidden stairs, `>`, exactly where the floor leads down (a Pit's last

@@ -1,4 +1,4 @@
-//! Elixirs (spec §8 "Potions"; the combat progression design §10.5): a potion of kind
+//! Elixirs (the combat progression design §10.5): a potion of kind
 //! `elixir`, drunk through [`World::drink_potion`] as any potion, raises its stat for good.
 //!
 //! - **The score**: `points` trained rises ([`Stats::train`]): the score +1 each, never past

@@ -1,4 +1,4 @@
-//! Glyph animation (spec §4.3): the curves, per-cell phases, and the table of terrain animations
+//! Glyph animation: the curves, per-cell phases, and the table of terrain animations
 //! the grid shader reads.
 //!
 //! Everything here is a pure function of visual time, so `--freeze-time` makes frames

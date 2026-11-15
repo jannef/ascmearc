@@ -13,7 +13,7 @@ size = "small"
 light = "torch"
 faction = "kobolds"
 tags = ["kobold"]
-# Its grades (spec §8 "Grades"): the lesser and the greater.
+# Its grades: the lesser and the greater.
 grade_words = ["scrawny", "big"]
 alignment = "evil"
 vision = "darkvision"
@@ -24,7 +24,7 @@ hearing = 15
 stats = { strength = 9, dexterity = 13, toughness = 6, intelligence = 10, willpower = 9, presence = 8 }
 on_eat = { message = "This kobold meat tastes terrible!", vomit = 40 }
 weapon_skills = { spears = 1 }
-# Its gear (spec §8 "Creature gear"): a spear as a rule, now and then a cap or a coat.
+# Its gear: a spear as a rule, now and then a cap or a coat.
 racial_weapon = "spear"
 
 [[creature.gear]]

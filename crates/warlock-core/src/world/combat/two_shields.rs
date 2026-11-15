@@ -1,4 +1,4 @@
-//! Two-shield fighting (spec §8 "Fighting styles", #611): a shield in each hand
+//! Two-shield fighting (#611): a shield in each hand
 //! ([`Grip::TwoShields`]), every blow a shield bash, fought in the Two Shields style, with
 //! boons that grow with its rank and banes that shrink with it, as two-weapon fighting's
 //! penalties do (`[two_shields]` in `data/weapon_skills.toml`, [`TwoShields`]):

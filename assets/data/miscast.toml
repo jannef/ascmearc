@@ -1,4 +1,4 @@
-# Miscasts (#1271, #1288; spec §8 "Spells": "Miscasts"; `world/magic/miscast.rs`; the miscasts design
+# Miscasts (#1271, #1288; "Miscasts"; `world/magic/miscast.rs`; the miscasts design
 # docs/design/miscasts-review.md): every spell cast with the caster's own mana, the player's or a
 # creature's, makes a Spellcraft check once it has gone off. Scrolls, wands, and flasks make none:
 # their magic is the item's.

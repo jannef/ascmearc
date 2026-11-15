@@ -1,4 +1,4 @@
-//! Danger levels and creatures that keep coming (spec §7 "Danger levels", `spawn.rs`): the
+//! Danger levels and creatures that keep coming (`spawn.rs`): the
 //! danger of a level, where and what comes, the cap, uniques, frozen floors, the talents, and
 //! determinism.
 
@@ -128,9 +128,9 @@ fn others(world: &World) -> BTreeSet<ActorId> {
         .collect()
 }
 
-/// Strays come from every hostile type that may stray, named by a population or not (spec §7
-/// "Danger levels"); a type marked `stray = false` comes only where a population names it, and
-/// one neutral to the player never strays.
+/// Strays come from every hostile type that may stray, named by a population or not; a type marked
+/// `stray = false` comes only where a population names it, and one neutral to the player never
+/// strays.
 #[test]
 fn strays_come_from_every_hostile_type_but_those_kept_out() {
     let warden = "[[creature]]\nid = \"warden\"\nname = \"barrow warden\"\nglyph = \"W\"\n\

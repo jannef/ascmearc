@@ -1,4 +1,4 @@
-# A scroll of scorching ray (spec §8 "Scrolls", "Spells"): read it (`r`), and it casts Scorching
+# A scroll of scorching ray: read it (`r`), and it casts Scorching
 # ray, a level-7 spell, at its own rungs, free of mana; its grimoire teaches the spell for good.
 # Level and frequency by its spell's level (README.toml): the lower, the commoner the scroll.
 [[object]]

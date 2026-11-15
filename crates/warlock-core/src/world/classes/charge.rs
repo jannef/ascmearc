@@ -1,4 +1,4 @@
-//! The warrior's Charge (spec §8 "Class abilities"; #1466): a class active aimed at a hostile
+//! The warrior's Charge (#1466): a class active aimed at a hostile
 //! creature the player sees ([`crate::action::Action::UseAt`], `use:charge:12,5`). The player
 //! rushes along the straight line to it ([`Pos::line_between`], the line a missile flies) and
 //! ends in the last cell before it, then strikes it once, as a step into it would

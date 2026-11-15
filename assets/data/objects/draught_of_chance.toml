@@ -1,4 +1,4 @@
-# A draught of chance (spec §8 "Potions", the potions wave 2 design §4.3): a gamble, one outcome
+# A draught of chance (the potions wave 2 design §4.3): a gamble, one outcome
 # drawn from data/outcomes/draught_of_chance.toml when drunk: mostly good, sometimes nothing,
 # sometimes a sickness. Gambles are iridescent.
 [[object]]

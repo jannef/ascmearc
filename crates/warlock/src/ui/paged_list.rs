@@ -1,8 +1,7 @@
-//! The one paged list of items (spec §6 "Item lists"; #188, #189): every lettered list of stacks
+//! The one paged list of items (#188, #189): every lettered list of stacks
 //! (the inventory, picking up, dropping, what to throw or eat, what goes in an equipment slot)
-//! is a [`PagedList`]; never a list of its own. So is the abilities menu's list (spec §6
-//! "Abilities"), grouped by where each ability comes from instead of by item class
-//! ([`PagedList::grouped`]).
+//! is a [`PagedList`]; never a list of its own. So is the abilities menu's list, grouped by where
+//! each ability comes from instead of by item class ([`PagedList::grouped`]).
 //!
 //! Items are grouped by item class in class order (`data/item_classes.toml`), each class under a
 //! header row with its name, and keep their own order within a class. A page holds as many rows

@@ -1,4 +1,4 @@
-//! Starting kits (spec §8 "Character creation"): what a new character carries, wields, and wears
+//! Starting kits: what a new character carries, wields, and wears
 //! when a run starts. The data is [`crate::content::Kit`]: the class's kit, then the race's, then
 //! the birth sign's animal's and element's (a hook for the horoscope; none give anything yet).
 //!
@@ -12,7 +12,7 @@
 //! scrolls, if it has any (`random_scrolls`, the casters'): its count rolled, then one draw per
 //! scroll among the spells below its level, each carried. Every spell scroll a kit gives, a
 //! line's or a random one, is its grimoire instead by the grimoires' chance (one draw a scroll,
-//! after the scroll is made; spec §8 "Spells": "Learning"). Last the `fill` lines, the kits in the
+//! after the scroll is made). Last the `fill` lines, the kits in the
 //! same order: a fill line that applies draws its alternative, and its item is made and worn or
 //! wielded only if a slot it fits is still free, else left out (a race's everyday clothes and
 //! shoes, which yield to the class's). Nothing of any kit is worn or wielded in a slot the race
@@ -180,7 +180,7 @@ fn give(
     }
 }
 
-/// `stack` as a kit gives it (spec §8 "Spells": "Learning"): each spell scroll in it is its
+/// `stack` as a kit gives it: each spell scroll in it is its
 /// grimoire with the grimoires' chance, one draw a scroll, so a stack may part in two (the
 /// scrolls, then the grimoires); anything else as it is, with no draw.
 fn with_grimoires(content: &Content, rng: &mut Rng, stack: Stack) -> Vec<Stack> {
@@ -198,7 +198,7 @@ fn with_grimoires(content: &Content, rng: &mut Rng, stack: Stack) -> Vec<Stack> 
         .collect()
 }
 
-/// The types a run starts knowing (spec §8 "Scrolls", "Potions"): every type with a label that
+/// The types a run starts knowing: every type with a label that
 /// the starting pack `items` holds, kit or scenario's alike (scrolls, potions, wands, rods), so
 /// whatever the player sets out with shows by its name.
 pub fn known_types<'a>(

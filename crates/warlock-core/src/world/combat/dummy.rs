@@ -1,4 +1,4 @@
-//! Target dummies (spec §8 "Weapon skills": "Target dummies", #1199): a creature whose type has
+//! Target dummies (#1199): a creature whose type has
 //! a `training` table ([`DummyTraining`]). It is a creature so that every attack (a blow, a
 //! bash, a kick, a shot, a throw) finds it as it finds anyone, through `World::resolve`; the
 //! rest is a hook each:

@@ -1,6 +1,5 @@
-# Traps (spec §7, §8 "Traps"). A trap lies on a cell, hidden until the player finds it (spec §8
-# "Searching"), sets it off, or sees a creature do it; from then on it shows as its glyph and
-# stays in memory. Whoever steps onto a
+# Traps. A trap lies on a cell, hidden until the player finds it, sets it off, or sees a creature do
+# it; from then on it shows as its glyph and stays in memory. Whoever steps onto a
 # trap sets it off, the player and creatures alike (creatures know nothing of traps). Stepping
 # onto a known trap asks first. Levels place traps with `trap = "id"` in a legend entry (`known
 # = true` to show it from the start; `dir` for a bolt's direction); dungeon branches hide a few
@@ -10,7 +9,7 @@
 #   id, name     the trap's id and what it is called ("Really step onto the fireball trap?")
 #   glyph, fg    how it shows once known (glyph default "^")
 #   message      said when the player perceives it go off (optional)
-#   difficulty   how hard it is to find while hidden (spec §8 "Searching"): what a search must
+#   difficulty   how hard it is to find while hidden: what a search must
 #                reach (default 15); on a dungeon branch its `hidden_per_depth` adds to it
 #                (data/dungeons.toml)
 #   sign         what gives it away to whoever finds it: "You notice a tripwire: an alarm trap."
@@ -25,21 +24,20 @@
 #     burst      everyone within `radius` the blast reaches (walls stop it) takes `damage`, half
 #                beyond radius - 1; no roll to hit; presentation shows the `spell` effect. With a
 #                `blast` (0 to 10000), the walls it reaches whose hardness (terrain/) is
-#                below that break into rubble (spec §8 "Digging"). With `heat = true` it melts
+#                below that break into rubble. With `heat = true` it melts
 #                all the ice it reaches, and whoever stood on it falls in; with `frost` (1 to
-#                1000 mm) the water it reaches freezes at once to at least that thick (spec §5
-#                "Ice")
+#                1000 mm) the water it reaches freezes at once to at least that thick
 #     bolt       a line from the trap until a wall, at most `length` cells: everyone on it takes
 #                `damage`; presentation shows the `spell` effect
 #     pit        `damage`, and the next action is lost climbing out
 #     alarm      only its noise, which draws creatures that hear it
 #     teleport   whoever steps on it is moved to a free cell of the level
-#   damage_type  the kind of damage it does (an id in damage_types.toml, spec §8 "Damage types"):
+#   damage_type  the kind of damage it does (an id in damage_types.toml):
 #                the arrow and the spears piercing, the fireball fire, the frost cold, the
 #                lightning electricity, the pit bludgeoning; what the victim resists of it
 #   noun, verb   what hits and what it does, for messages ("The fireball burns you."; verb
 #                default: the damage type's); a shot uses its object's name
-#   [trap.grows] damage by the danger of the level the trap lies on (spec §7 "Danger levels"),
+#   [trap.grows] damage by the danger of the level the trap lies on,
 #                in the style of a spell's [spell.grows]: `damage = "danger 3 1d4, 6 1d6"`,
 #                rungs `AT ROLL`, AT 1 to 99 rising strictly; a level of danger D
 #                deals the last rung at or below D, and below the first (a level without a
@@ -190,9 +188,9 @@ sign = "faint runes"
 fg = "#c890ff"
 kind = "teleport"
 
-# Rigged traps (data/rigs.toml; the craftsperson's Trapwright, spec §8 "Traps": "Rigging
-# traps"): placed only by a rigger, known to them, with the charges the rig gives. Their damage
-# is their own, never grown by danger. Kept last, so the traps above keep their ids.
+# Rigged traps (data/rigs.toml; the craftsperson's Trapwright): placed only by a rigger, known to
+# them, with the charges the rig gives. Their damage is their own, never grown by danger. Kept last,
+# so the traps above keep their ids.
 [[trap]]
 id = "rigged_arrows"
 name = "tripwire"

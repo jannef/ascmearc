@@ -1,4 +1,4 @@
-# Alternative resources (spec §8 "Resources", #225): integer pools beside hit points and mana
+# Alternative resources (#225): integer pools beside hit points and mana
 # that a character holds once something grants them (a class ability, a talent; the class
 # features of docs/design/progression.md §4.18 move onto these in follow-up changes). A character
 # may hold any number of them at once; creatures hold none. The player sees each one they hold in

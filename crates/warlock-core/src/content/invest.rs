@@ -1,4 +1,4 @@
-//! The merchant's investment (`assets/data/rules/invest.toml`, spec §8 "Class abilities": Invest;
+//! The merchant's investment (`assets/data/rules/invest.toml`: Invest;
 //! #1407): the fees on putting gold in and taking it out, the weekly return and its bonuses, and
 //! the amounts the business partner's topics offer (`world/classes/invest.rs`).
 //!

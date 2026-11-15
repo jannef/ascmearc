@@ -1,6 +1,6 @@
-//! Item classes (`assets/data/item_classes.toml`, spec §7 "Objects and materials"), ADOM-like:
+//! Item classes (`assets/data/item_classes.toml`), ADOM-like:
 //! what kind of thing an object is (melee weapons, body armour, food, ...), in the order every
-//! item list groups by (spec §6 "Item lists"). Shops sell and buy by class (spec §7 "Shops").
+//! item list groups by. Shops sell and buy by class.
 //!
 //! Every object names its class (`class` in `data/objects/`). A class lists the magic item kinds
 //! its objects may be (`kinds`, [`ItemKind`]), and each kind belongs to one class at most, so an

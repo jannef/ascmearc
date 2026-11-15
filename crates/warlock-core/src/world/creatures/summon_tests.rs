@@ -1,4 +1,4 @@
-//! Summoning (spec §8 "Summoning", `summon.rs`): a summoner that sees a hostile calls forth
+//! Summoning (`summon.rs`): a summoner that sees a hostile calls forth
 //! creatures of its side around itself, within its dice, its mana, its cooldown, and its cap;
 //! Silence stops it; what comes is a creature like any other.
 

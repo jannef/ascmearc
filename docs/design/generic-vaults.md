@@ -1037,7 +1037,7 @@ In order; each a PR; content only where it can be.
 |---|---|---|---|---|
 | 1 | Convert the six (§5) | content | Guard post, Shrine, Ruined chapel, Ruined tower to pools; a `name` on the Stone circle's altar; the `README.toml` with §7's rules | — (#959 has landed, #1035) |
 | 2 | Batch 1: eight any-depth dungeon vaults | content | The Kennels, The Reeve's Strong-room, The Spiteful Coffer, The Sealed Barrow (+ `lead_key`), The Gauntlet, The Catacomb, The Wights' Niches, The Ossuary | 1; a test that each stamps at least once in 100 seeds of a rooms branch and a caves branch (the outdoor vaults have this in `mapgen/local/tests.rs`; the dungeon ones do not) |
-| 3 | F1: a vault's `danger` | core, small | §6 F1; `spec/07c-generation.md`, docs/dev/mapgen.md, docs/dev/content.md | — |
+| 3 | F1: a vault's `danger` | core, small | §6 F1; `spec/07-generation.md`, docs/dev/mapgen.md, docs/dev/content.md | — |
 | 4 | Batch 2: the depth vaults | content | The Troll-bridge, The Mere, The Archers' Walk, The Mead-hall, The Bell and the Barracks, The Delving, Dead Men's Gear, The Reliquary, The Lectern, The Champion's Ring, The Rune-stone, The Dark Chapel, Old Enemies, The Conventicle, each with its `danger` | 3 |
 | 5 | Batch 3: six outdoor vaults (§4) | content | O3 The Burnt Steading, O4 The Old Battle, O6 The Fairy Ring, O7 The Hermit's Hut, O8 The Drowned Mill, O9 The Hoar-stone; O1, O2, and O5 are optional and not in it | 1 |
 | 6 | F2 + F3 + F4: statuses, a carried key, and a route on a pool cell | core, small ×3 | one PR: the three fields are read in the same two places | — |

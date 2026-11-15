@@ -1,4 +1,4 @@
-//! The shape list (spec §6 "Abilities"; #881): what the Hunter's Spirit weapon asks before it
+//! The shape list (#881): what the Hunter's Spirit weapon asks before it
 //! is used, opened from the abilities menu. Every melee weapon there is
 //! (`PerceptionView::weapon_shapes`), in the one paged list grouped by weapon skill, each row its
 //! glyph, its name with its numbers as a plain one would have them (`Lore::listed`: the gifts are

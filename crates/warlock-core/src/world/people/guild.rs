@@ -1,4 +1,4 @@
-//! Guild ranks (spec §8 "Quests": "Guilds"; the guild design §7.6): the player's rank in each
+//! Guild ranks (the guild design §7.6): the player's rank in each
 //! guild is derived from their quest records, never saved, and is a title only. The master names
 //! the player to a new rank as the quest that reaches it is given or done, once.
 

@@ -1,4 +1,4 @@
-//! Daylight on the overworld (spec §5): how far the traveller sees by time of day, moonlight, and
+//! Daylight on the overworld: how far the traveller sees by time of day, moonlight, and
 //! rain, and the faint night light the overworld is drawn by. The sun, the moons, and the sky
 //! themselves are [`crate::light::Sky`], which lights the overworld like any level under the open
 //! sky. Integer math only.

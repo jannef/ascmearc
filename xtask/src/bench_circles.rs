@@ -1,8 +1,8 @@
-//! The `circles` row of `cargo xtask bench-frames`: fifty spell circles in view (spec §4.8 "Spell
-//! circles", docs/design/buff-circles.md §10.3's stress case). A hall of 48 peaceful kobolds, each
-//! already buffed, hexed, or both (a spawn's `status`), every combination the design sketches,
-//! and the player blessed, hasted, ill-wished, and weakened (`afflict`, a replay): a buffs'
-//! circle and a hexes' about them, fifty circles in all.
+//! The `circles` row of `cargo xtask bench-frames`: fifty spell circles in view
+//! (docs/design/buff-circles.md §10.3's stress case). A hall of 48 peaceful kobolds, each already
+//! buffed, hexed, or both (a spawn's `status`), every combination the design sketches, and the
+//! player blessed, hasted, ill-wished, and weakened (`afflict`, a replay): a buffs' circle and a
+//! hexes' about them, fifty circles in all.
 //!
 //! The fixture is the built-in content with the hall added: the game reads it with
 //! `--content-dir` from a copy of `assets/`'s TOML under `target/xtask/bench-circles/`, so

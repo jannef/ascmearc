@@ -76,9 +76,9 @@ pub enum VigourEffect {
     PenaltyPercent { value: i32 },
     /// Added to its disease checks: catching one and every progression.
     DiseaseChecks { value: i32 },
-    /// Added to its checks against a drain (spec §8 "Stats": "Drain").
+    /// Added to its checks against a drain.
     DrainChecks { value: i32 },
-    /// Added to every check of stat `stat` it makes (spec §8 "Checks").
+    /// Added to every check of stat `stat` it makes.
     Checks { stat: Stat, value: i32 },
     /// A disease's progressions come this percent further apart (negative: closer; Ageless).
     DiseaseIntervalPercent { value: i32 },
@@ -168,7 +168,7 @@ pub struct VigourMods {
     pub penalty_percent: i32,
     /// Added to its disease checks.
     pub disease_checks: i32,
-    /// Added to its checks against a drain (spec §8 "Stats": "Drain").
+    /// Added to its checks against a drain.
     pub drain_checks: i32,
     /// Added to its checks, by the stat checked.
     pub checks: PerStat<i32>,
@@ -366,7 +366,7 @@ pub struct Reprieve {
     pub message: String,
 }
 
-/// Rise from the ashes (spec §8 "Birth sign"): what rising gives back, the burst it rises in,
+/// Rise from the ashes: what rising gives back, the burst it rises in,
 /// and the status it is left with.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Rise {

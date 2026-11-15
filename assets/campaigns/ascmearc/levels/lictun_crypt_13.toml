@@ -1,0 +1,45 @@
+# Līctūn crypt 13, "the hidden temple" (#1685): the thirteenth crypt under Līctūn, below Līctūn
+# crypt 12, reached by the stairs that open there once its places are filled (`docs/dev/graves.md`).
+# Its stairs up (<) lead back to Līctūn crypt 12. No danger, nobody here.
+#
+# A temple of the old people's, dug in secret for a god whose name has been cut away: a small
+# antechamber, then a long low nave with a stone bench down each side where the faithful lay at
+# their feasts. Stone coffins stand on the benches now. The nave's floor is cracked. Past it a
+# narrow way leads to the sanctum: the god's altar and, before it, the tomb of its last priest
+# (F), places for statues in its corners (S). The way down to the next crypt (v) is in the
+# antechamber's south corner, shut until every place here is filled.
+#
+# Places: 28 stone coffins, filled in row order.
+name = "Līctūn crypt 13"
+arrival = "Līctūn crypt 13, the hidden temple: a long low nave, coffins down both sides, an altar at its end."
+temperature = 4
+ambient = [6, 6, 8, 0]
+item_level = 1
+map = '''
+##############################################
+##############################################
+###t##########################################
+##<..#########################################
+###...#########################S.....S########
+##i...OOOOOOOOOOOOOO###########.......########
+##....:.........::................F_.i########
+##....OOOOOOOOOOOOOO###########.......########
+###...#########################S.....S########
+####v.########################################
+##############################################
+'''
+
+[burial]
+chain = "lictun"
+depth = 13
+epitaph = "Here lies {name}, {death}. Laid at the feast of a forgotten god."
+
+[legend]
+":" = "cracked_floor"
+"O" = "open_sarcophagus"
+"i" = "candles"
+"t" = "sconce"
+"<" = { terrain = "stairs_up", to = "lictun_crypt_12" }
+"S" = { terrain = "floor", statue_place = true }
+"v" = { terrain = "floor", burial_stairs = "stairs_down" }
+"F" = { terrain = "sarcophagus", epitaph = "Beneath a carved bull: HIC·IACET·PATER. The god's name above it is chiselled away." }

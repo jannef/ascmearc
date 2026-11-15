@@ -1,4 +1,4 @@
-//! Alternative resources in the world (spec §8 "Resources"): granting, decay and regeneration
+//! Alternative resources in the world: granting, decay and regeneration
 //! exact however time is cut, resting, ending at zero (and the bar going with it), several at
 //! once, building from events, spending, abilities' costs, what the player is shown, saves,
 //! and replays.

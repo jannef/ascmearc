@@ -1,14 +1,14 @@
 # Sunlight, moonlight, and weather outdoors.
 
-# The courtyard up the stairs nook's `<` (spec §5 "Sunlight"): short shadows due north at noon.
+# The courtyard up the stairs nook's `<`: short shadows due north at noon.
 # `skip` moves the clock without turns passing; the outdoor entries set the weather
-# (`weather:KIND`, spec §5 "Weather"), whatever the weather of the day.
+# (`weather:KIND`), whatever the weather of the day.
 [[golden]]
 name = "courtyard-noon"
 scenario = "showcase"
 actions = "move:N*3 open:N move:N*2 move:E*67 open:S move:S*4 move:E*2 move:NE ascend move:E*22 skip:230m weather:clear"
 
-# The courtyard scenario at midnight under the full moon (spec §5 "Moonlight"; the 16th at
+# The courtyard scenario at midnight under the full moon (the 16th at
 # 00:00): faint, slightly purple moonlight on open ground, short moon shadows due north.
 [[golden]]
 name = "courtyard-full-moon"
@@ -17,7 +17,7 @@ actions = "move:E*20 skip:113h skip:28m weather:clear"
 # Wide enough for the moon's glyph: at 960 the status bar drops it for the weather.
 window = "1280x720"
 
-# Weather (spec §5 "Weather", §4.8): the forest glade at noon in heavy rain (darker, denser
+# Weather: the forest glade at noon in heavy rain (darker, denser
 # slanted drops, splashes).
 [[golden]]
 name = "forest-heavy-rain"

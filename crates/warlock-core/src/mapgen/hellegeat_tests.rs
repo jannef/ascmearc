@@ -1,4 +1,4 @@
-//! Hellegeat, the shared portal branch (#1296; spec §7 "The Pits"): a Pit's floors are
+//! Hellegeat, the shared portal branch (#1296): a Pit's floors are
 //! `hellegeat@S:N`, a pure function of the run seed and that id; their stairs lead only within
 //! their own Pit; two Pits differ; the branch's own ids without a Pit name nothing; its folk are
 //! fiends.

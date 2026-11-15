@@ -18,7 +18,7 @@ effect = { charm = { minutes = 5, mindless = ["undead", "construct", "vermin"], 
 range = "willpower 14 7, 18 8"
 degrees = "presence 14 8, 18 12, 22 16"
 
-# What rereading its grimoire adds, rank by rank (spec §8 "Spells": "Ranks"; README.toml
+# What rereading its grimoire adds, rank by rank (README.toml
 # `[spell.ranks]`). At rank 10: the charm eight minutes longer, three cells farther, 20 percent
 # off the mana, and a fifth off the casting time.
 [spell.ranks]

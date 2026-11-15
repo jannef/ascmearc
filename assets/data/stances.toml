@@ -1,4 +1,4 @@
-# Combat stances (spec §8 "Stances"): how the player holds themselves in a fight, as in ADOM.
+# Combat stances: how the player holds themselves in a fight, as in ADOM.
 # The numbers are first guesses, kept here to tune after playtesting. None is shown in the game:
 # only the stance's name is. Creatures stay neutral. A stance left out is plain.
 # The frenzy is never chosen: a berserker's rage puts them in it and holds them there, and
@@ -17,7 +17,7 @@
 #   weapon_mark  weapon skill marks count this much (percent, rounded to the nearest)
 #   gatekeeper   the Gatekeeper gift's chance of a blow at a foe stepping up counts this much
 #                (percent; the talent's one in four, so 400 is always, and more is still always)
-#   miscast      taken off a miscast's total on the miscast table (spec §8 "Spells": "Miscasts"):
+#   miscast      taken off a miscast's total on the miscast table:
 #                a calm stance softens a miscast, a wild one worsens it (negative)
 
 [[stance]]

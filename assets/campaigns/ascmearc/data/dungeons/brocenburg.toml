@@ -17,7 +17,7 @@ hidden_per_depth = 1
 locks_per_depth = 1
 loot = [2, 4]
 key = "iron_key"
-# Danger 6 on the first floor to 9 on the fourth (spec §7 "Danger levels"): the goblins he hires
+# Danger 6 on the first floor to 9 on the fourth: the goblins he hires
 # out to and their chiefs, footpads who ran with him, bats in the broken roof, and the ogres he
 # brings in, which come only out of depth (level 12): that is the point of hiring them.
 # Under the forest: iron and copper in the cellars' rock (#1389, data/mining.toml).
@@ -26,10 +26,10 @@ danger = 6
 population = [
     "bat", "goblin", "goblin_archer", "footpad", "goblin_chief", "footpad_archer", "ogre",
 ]
-# Its strays come only from what lives in the campaign's populations (spec §7 "Danger
-# levels"): its folk are the guild design's table (docs/design/adventurers-guild.md §8.2).
+# Its strays come only from what lives in the campaign's populations: its folk are the guild
+# design's table (docs/design/adventurers-guild.md §8.2).
 stray_pool = "populations"
-# No one trades in the broken fort (spec §7 "Shops").
+# No one trades in the broken fort.
 shops = { chance = 0 }
 
 # The bottom: the captain's hall.

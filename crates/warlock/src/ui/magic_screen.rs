@@ -1,10 +1,10 @@
-//! The Magic page (spec §6; page 6 of the info pages; the spell scaling design §11): what the
+//! The Magic page (page 6 of the info pages; the spell scaling design §11): what the
 //! player has trained of magic and what they cast with it, read, never used. One column that
 //! scrolls (↑↓) on every console, in order: their mana as the status bar shows it; the caster
-//! styles (Sniper, Toucher, Battle caster; spec §8 "Fighting styles"), each with its rank and the
+//! styles (Sniper, Toucher, Battle caster), each with its rank and the
 //! faint bar of its marks toward the next, as the Weapons page draws a skill, the one cast in now
 //! marked; and the spells known, by level then name (the abilities
-//! menu's order), each with its rank (spec §8 "Spells": "Ranks", `rank 3`) and the roll it makes
+//! menu's order), each with its rank (`rank 3`) and the roll it makes
 //! now and its mana as the menu's row says them ("4d6 fire, 26 mana, aimed"). Never what a rank
 //! gives: perception has none of it, and the wiki documents the rules.
 //!

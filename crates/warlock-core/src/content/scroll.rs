@@ -1,4 +1,4 @@
-//! What reading does (`read` in an object's file, spec §8 "Scrolls"): a scroll casts a spell
+//! What reading does (`read` in an object's file): a scroll casts a spell
 //! of `data/spells/` through the one cast path at its own rungs, free of mana. A scroll teaches
 //! nothing: its spell's grimoire does (`grimoire.rs`). The one other kind, `cleanse`, has no
 //! spell behind it: the scroll of restoration mends the reader's stat damage and gives back what
@@ -65,7 +65,7 @@ pub struct Cleansing {
     pub restores: bool,
 }
 
-/// A scroll of a spell of `data/spells/` (spec §8 "Scrolls", "Spells"): read, it casts the
+/// A scroll of a spell of `data/spells/`: read, it casts the
 /// spell at its `rungs`, free of mana.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct SpellScroll {

@@ -1,4 +1,4 @@
-//! Lurking (spec §8 "Creature behavior"; `world/combat/lurk.rs`): a lurker that sees a hostile waits
+//! Lurking (`world/combat/lurk.rs`): a lurker that sees a hostile waits
 //! where it stands, aware of it, attacks it once it is beside it, hunts it once hurt, and waits
 //! out a rest the same way; a creature that does not lurk closes in.
 

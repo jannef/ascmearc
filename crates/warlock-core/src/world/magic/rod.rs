@@ -1,4 +1,4 @@
-//! Using a rod (spec §8 "Magic items": "Rods", the magic design §9): a rod in the missile weapon
+//! Using a rod (the magic design §9): a rod in the missile weapon
 //! slot is used as a missile weapon is (`t`, `fire:X,Y`), as a wand is, and does the effect it
 //! holds (`data/rod_effects/`, [`crate::content::RodEffect`]):
 //!

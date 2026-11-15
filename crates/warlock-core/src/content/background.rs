@@ -1,4 +1,4 @@
-//! Background stories' data (spec §8 "Background story"; docs/dev/background.md): the settings
+//! Background stories' data (docs/dev/background.md): the settings
 //! in `data/background.toml` (`[tiers]`, the odds per mille of the luckier tiers, and
 //! `[points]`, what each kind of effect is worth for the load-time tier check and the wiki) and
 //! the chapters, one file each: `data/background/NN-<chapter>.toml`, then a campaign's own in
@@ -253,7 +253,7 @@ pub struct When {
     pub age: Option<AgeRange>,
     /// The run's campaign (any of them).
     pub campaign: Vec<String>,
-    /// A companion of one of these types as the run begins (any of them; spec §8 "Allies").
+    /// A companion of one of these types as the run begins (any of them).
     pub companion: Vec<CreatureId>,
     /// A familiar of one of these types as the run begins (any of them; the witch's).
     pub familiar: Vec<CreatureId>,

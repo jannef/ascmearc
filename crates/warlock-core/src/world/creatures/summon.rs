@@ -1,4 +1,4 @@
-//! Summoning (spec §8 "Summoning", #520): a creature with `[creature.summon]` in its type
+//! Summoning (#520): a creature with `[creature.summon]` in its type
 //! (`content/summon.rs`) calls forth creatures of its side. Enemy-only: no player ability.
 //!
 //! **When** ([`World::summons_at`], asked first in `ai.rs::fight`): it sees a hostile within its

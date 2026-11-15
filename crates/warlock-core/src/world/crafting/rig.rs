@@ -1,4 +1,4 @@
-//! Rigging traps (spec §8 "Traps": "Rigging traps"; the craftsperson design §7.6): the
+//! Rigging traps (the craftsperson design §7.6): the
 //! craftsperson's Trapwright, [`Action::Rig`](crate::Action::Rig) (`rig:tripwire:E`), from the
 //! abilities menu's Class group through the rig list and a direction. The rigs are
 //! `data/rigs.toml` ([`crate::content::RigRules`]); the traps they place are rows of

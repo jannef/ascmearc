@@ -1,4 +1,4 @@
-# Reading a scroll one cannot simply read (#1024; spec §8 "Scrolls"; `world/magic/decipher.rs`).
+# Reading a scroll one cannot simply read (#1024; `world/magic/decipher.rs`).
 #
 # Whoever is trained in Spellcraft, with a learning (skills/: `learn`, at least 1) of at least
 # the scroll's spell level, reads it at once, with no check; a scroll with no spell behind it

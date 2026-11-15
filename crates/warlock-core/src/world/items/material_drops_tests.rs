@@ -1,4 +1,4 @@
-//! Material drops (spec §7 "Material drops"; #1341): every tag's rows apply in path order, then a
+//! Material drops (#1341): every tag's rows apply in path order, then a
 //! creature's own; bodiless rows reach the skeleton and the elementals, a spirit leaves nothing;
 //! a small body rolls at half; the roll has its own stream, so loot and gems never move; rows of
 //! one material join one stack; the loader refuses what would drop nothing or the wrong thing;

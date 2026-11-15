@@ -1,11 +1,11 @@
-//! Stealing (`assets/data/rules/steal.toml`, spec §8 "Stealing"): what becomes of a creature that
+//! Stealing (`assets/data/rules/steal.toml`): what becomes of a creature that
 //! catches the player stealing from it.
 //!
 //! The rule itself lives in `world/skills/steal.rs`: who can steal (anyone trained in a skill with the
 //! `steal` benefit, `data/skills/`), from whom (a creature next to them that is not hostile),
-//! the contest (their Dexterity and Steal against its Willpower, spec §8 "Checks"), and what is
+//! the contest (their Dexterity and Steal against its Willpower), and what is
 //! taken. A creature that catches them joins the faction named here and turns on them; a
-//! shopkeeper is outraged as a robbed one is (`data/shops.toml`'s `outraged`, spec §7 "Shops").
+//! shopkeeper is outraged as a robbed one is (`data/shops.toml`'s `outraged`).
 //!
 //! The file is optional: without it nobody steals, and the Steal skill stays a skill whose use
 //! is not in the game yet (the abilities menu's "not usable yet").

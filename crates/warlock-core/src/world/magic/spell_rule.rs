@@ -1,4 +1,4 @@
-//! The spells that each need one small rule (spec §8 "Spells"; the spell types design
+//! The spells that each need one small rule (the spell types design
 //! `docs/design/spell-types-and-new-spells.md` §7), each from its one hook on the cast path:
 //!
 //! - **Leech** ([`World::leech`], from `spell_attack`): a share of the harm done comes back.

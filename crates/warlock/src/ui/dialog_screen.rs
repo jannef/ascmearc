@@ -1,4 +1,4 @@
-//! The dialog (spec §6): the one modal question screen, shown over the screen that asked or over
+//! The dialog: the one modal question screen, shown over the screen that asked or over
 //! the map. Everything that asks first uses it with its own parameters, a [`Dialog`]: a title,
 //! the question, and its options, each with a label, a [`Role`], and an outcome (a
 //! [`ScreenAction`]: a menu choice such as quitting, a gameplay action such as paying or selling,

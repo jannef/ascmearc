@@ -1,4 +1,4 @@
-//! Stair followers (spec §8 "Creature behavior", #985): stairs are no free escape. A creature
+//! Stair followers (#985): stairs are no free escape. A creature
 //! beside the player as they take a staircase, hostile to them and aware of them, comes along
 //! and arrives beside them, by the way allies cross levels (`travel.rs::cross_to`). Only
 //! `World::take_stairs` asks: a fall, an edge, and the overworld's ways bring no one.

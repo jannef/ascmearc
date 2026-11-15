@@ -1,4 +1,4 @@
-# What the local area generators grow and strew on the ground (mapgen/local; spec §3).
+# What the local area generators grow and strew on the ground (mapgen/local).
 
 [[terrain]]
 id = "tall_grass"

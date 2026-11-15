@@ -1,4 +1,4 @@
-//! Fletching (`assets/data/fletch.toml`, spec §8 "Fletching"; #1021, #1336): what the arrows and
+//! Fletching (`assets/data/fletch.toml`; #1021, #1336): what the arrows and
 //! bolts recipes (`recipes/woodcraft/arrows.toml`, `bolts.toml`, `count = "fletch"`) read beyond
 //! the recipe: the batch's count, what is a knife, and what each launcher is called.
 //!

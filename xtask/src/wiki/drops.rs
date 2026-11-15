@@ -1,4 +1,4 @@
-//! Material drops (spec §7 "Material drops"; #1341): what each creature's body leaves of
+//! Material drops (#1341): what each creature's body leaves of
 //! crafting stock, its rows resolved as the game rolls them (its tags' and its own, corpse and
 //! size applied), and the rows of each tag's file as written.
 

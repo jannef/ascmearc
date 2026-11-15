@@ -118,8 +118,8 @@ fn caves_snapshot() {
     insta::assert_snapshot!("caves_seed_1_depth_3", describe(&level(1, 3)));
 }
 
-/// A rooms level with a flooded room and a caves level with a shadowed chamber (spec §7 "Special
-/// rooms"), their plain ground drawn as the effect's mark.
+/// A rooms level with a flooded room and a caves level with a shadowed chamber, their plain ground
+/// drawn as the effect's mark.
 #[test]
 fn special_room_snapshots() {
     let flooded = level(33, 2);
@@ -214,7 +214,7 @@ fn check(level: &LevelTemplate, depth: u32) -> Result<(), TestCaseError> {
         prop_assert!(!edge || !def.walkable, "walkable edge at {}", p);
     }
 
-    // Secret doors (spec §8 "Searching"): closed doors hidden in a wall, never locked, and only
+    // Secret doors: closed doors hidden in a wall, never locked, and only
     // where the stairs are reached without finding them.
     let plain = player_reach_unlocked(level, level.stairs[0].pos);
     for s in &level.stairs {
@@ -249,7 +249,7 @@ fn check(level: &LevelTemplate, depth: u32) -> Result<(), TestCaseError> {
         crate::content::validate_route(level, content, spawn).map_err(TestCaseError::fail)?;
     }
 
-    // Special rooms (spec §7 "Special rooms"): at most `per_level`, apart, never where the
+    // Special rooms: at most `per_level`, apart, never where the
     // player arrives; a room's floor is its effect's floor, and creatures do not patrol through
     // one they shun.
     let effects = content.room_effects();
@@ -298,7 +298,7 @@ fn check(level: &LevelTemplate, depth: u32) -> Result<(), TestCaseError> {
         prop_assert!(!pile.is_empty());
     }
 
-    // Traps (spec §8 "Traps") are hidden, on walkable ground that is not stairs, never next to
+    // Traps are hidden, on walkable ground that is not stairs, never next to
     // stairs (the player arrives there), and never on a patrol (creatures would spring them
     // every round).
     let mut patrolled = Vec::new();
@@ -318,7 +318,7 @@ fn check(level: &LevelTemplate, depth: u32) -> Result<(), TestCaseError> {
             "a known trap at {}",
             p
         );
-        // A chest's trap lies in the chest (spec §8 "Chests").
+        // A chest's trap lies in the chest.
         if ground.is_shut_chest() && level.chests.contains_key(p) {
             prop_assert!(content.trap(trap.kind).effect.fits_fixture());
             continue;
@@ -335,12 +335,12 @@ fn check(level: &LevelTemplate, depth: u32) -> Result<(), TestCaseError> {
         );
         prop_assert!(!patrolled.contains(p), "trap at {} on a patrol", p);
     }
-    // Locks (spec §8 "Doors"): only on closed doors, and never in the way of the stairs or of a
+    // Locks: only on closed doors, and never in the way of the stairs or of a
     // key to every lock, which the player reaches without unlocking anything (the level is
     // solvable without kicking a door in).
     let unlocked = player_reach_unlocked(level, level.stairs[0].pos);
     for (p, lock) in &level.locks {
-        // A chest's lock wants no key (spec §8 "Chests"): Pick lock, Knock, or a kick.
+        // A chest's lock wants no key: Pick lock, Knock, or a kick.
         if content.terrain(terrain[*p]).is_shut_chest() && level.chests.contains_key(p) {
             continue;
         }
@@ -362,7 +362,7 @@ fn check(level: &LevelTemplate, depth: u32) -> Result<(), TestCaseError> {
     Ok(())
 }
 
-/// Rooms levels hide a door or two (spec §8 "Searching") from a stream of their own: with its
+/// Rooms levels hide a door or two from a stream of their own: with its
 /// secret doors opened, a level is the one generated without any, and every one of them hides a
 /// way the level can do without (`check`).
 #[test]
@@ -537,10 +537,9 @@ fn shops_come_about_one_level_in_seven() {
     );
 }
 
-/// The built-in content plus two branches with odds of their own (spec §7 "Shops", "Special
-/// rooms"): one whose special rooms are only ever flooded and that has no shops, rooms on top
-/// and caves below; one that always tries for a general store kept by a kobold, Durin, and has
-/// no special rooms.
+/// The built-in content plus two branches with odds of their own: one whose special rooms are only
+/// ever flooded and that has no shops, rooms on top and caves below; one that always tries for a
+/// general store kept by a kobold, Durin, and has no special rooms.
 static FIXTURE: LazyLock<Content> = LazyLock::new(|| {
     let mut files = ContentFiles::builtin();
     let fixture = "\n\
@@ -719,7 +718,7 @@ fn generated_levels_hide_a_few_traps_of_their_own() {
                     }
                 }
             }
-            // A chest's trap is its own (spec §8 "Chests").
+            // A chest's trap is its own.
             let own = (level.traps.keys())
                 .filter(|p| !from_vaults.contains(*p) && !level.chests.contains_key(*p))
                 .count();

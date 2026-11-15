@@ -1,4 +1,4 @@
-//! Creature tags (spec §8 "Quests", #441): plain words on creature types, one flat pool, as a
+//! Creature tags (#441): plain words on creature types, one flat pool, as a
 //! card game has creature types. A creature file says `tags = ["goblin", "archer"]`; nothing
 //! declares a tag: it exists because a creature carries it. A kill quest asks for one as
 //! `target = "tag:goblin"`, and any type that carries it counts.

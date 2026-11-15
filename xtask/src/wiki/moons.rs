@@ -1,4 +1,4 @@
-//! The moons (spec §5 "Moonlight").
+//! The moons.
 
 use super::sight::percent_of_full;
 use std::fmt::Write as _;

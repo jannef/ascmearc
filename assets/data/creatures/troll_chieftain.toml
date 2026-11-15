@@ -35,7 +35,7 @@ name = "claws"
 verb = "rakes"
 to_hit = 9
 on_hit = [{ status = "frightened", chance = 15, severity = 1 }]
-# Its gear (spec §8 "Creature gear"): a great axe, mail, and a helm, the best of them magic.
+# Its gear: a great axe, mail, and a helm, the best of them magic.
 [[creature.gear]]
 chance = 80
 one_of = ["great_axe"]

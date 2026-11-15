@@ -23,7 +23,7 @@ kit = [
 ]
 # Bonus talents from Weaponcraft and Guard, every sixth level from 4.
 bonus_talents = { levels = [4, 10, 16, 22, 28, 34, 46, 58], trees = ["weaponcraft", "guard"] }
-# The level table (spec §8 "Class abilities").
+# The level table.
 abilities = [
     { level = 1, talent = "weapon_drill" },
     { level = 1, talent = "charge" },

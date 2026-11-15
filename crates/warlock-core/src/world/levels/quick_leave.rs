@@ -1,4 +1,4 @@
-//! The quick leave (spec §7 "Leaving an outdoor area"): the ascend command on an outdoor level
+//! The quick leave: the ascend command on an outdoor level
 //! with an edge exit, off any stairs up, leaves it back to the overworld cell as walking off its
 //! edge would, unless a hostile creature is about: one the player sees, or one they do not see
 //! within the `[quick_leave]` reach of `data/rules/tuning.toml`. The check reads ground truth (it

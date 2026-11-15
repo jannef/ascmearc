@@ -310,9 +310,9 @@ systems = ["weapon_skills", "combat"]
 | `wiki/src/skills.md` | Music's row gains its two ladders (generated) |
 | `wiki/src/resources.md` | Inspiration spent by Inspire alone |
 | `wiki/src/status-effects.md` | Drowsy's causes gain the Lullaby; Inspired's degrees |
-| `spec/08i-character.md` | the bard's table bullet rewritten (the nine rows at 1 to 30, the two ranks, the class-table `rank` field, `max_level`); Skills: Music's benefits and mark; Talents: `take_up_skills`, `weapon_ranks`, `song`, `virtuoso` widened |
-| `spec/07b-data.md` | `classes/README.toml`'s `abilities` row gains `rank`, a `max_level` row; `talents/README.toml` the three kinds |
-| `spec/08c-combat.md` or `08e-blood-and-status.md` | songs beside the class abilities' statuses |
+| `spec/12-character.md` | the bard's table bullet rewritten (the nine rows at 1 to 30, the two ranks, the class-table `rank` field, `max_level`); Skills: Music's benefits and mark; Talents: `take_up_skills`, `weapon_ranks`, `song`, `virtuoso` widened |
+| `spec/06-content.md` | `classes/README.toml`'s `abilities` row gains `rank`, a `max_level` row; `talents/README.toml` the three kinds |
+| `spec/10-combat.md` or `08e-blood-and-status.md` | songs beside the class abilities' statuses |
 | `docs/dev/progression.md` | the hook table rows (`song` → `world/classes/song.rs`; `weapon_ranks`, `take_up_skills` → handed out, not read; `virtuoso` widened), "Class tables" gains ranks and the per-class cap; rule 1's wording ("the last third of a class's table") |
 | `docs/dev/experience.md` | `ClassDef::max_level` and `Character::level_cap` (with the prestige design's P1) |
 | `docs/dev/resources.md`, `hearing.md`, `skills.md`, `weapon-skills.md`, `status-effects.md` | one line each: Inspire's spending, `Act::Sing` and `SONG_NOISE`, Music's effects and `Use::Song`, `raise_to`, Inspired's `max` |

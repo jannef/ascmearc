@@ -1,7 +1,7 @@
 # Allies
 
 Developer notes for working on this part of Warlock; the rules it implements are in
-spec/08b-creatures.md ("Allies"), the design is `docs/design/druid-and-summons.md` (§4 the ally
+spec/09-creatures.md ("Allies"), the design is `docs/design/druid-and-summons.md` (§4 the ally
 core, §14 the owner's decisions, which override the rest). Slices: **A1** (#836, this file: the
 core), A2 (#837, "Summons" below: the spell kind, `Ally::until` set from the spell's degrees), A3 (the UI: the
 Allies group's rows, Set on's aim, the friendly mark, look mode's "(your wolf)"), D1 (#839, "The druid's
@@ -296,7 +296,7 @@ All read from the perception snapshot; nothing in core.
 - **Look mode**: `ui/look.rs` says "Your dire warg (unhurt), on stone floor." (no stance word);
   a proper-named one "(your ally, unhurt)".
 - **The ally mark**: `ui/glyphs.rs::ally_mark`, a short faint sage underline beneath the glyph
-  (`docs/dev/rendering.md`; spec §4.2).
+  (`docs/dev/rendering.md`).
 - The words of orders, arrivals, departures, and fights are core's (`world/allies/ally.rs`,
   `fight::attack_message`); the app shows them as any message.
 - Tests: the screen snapshots `abilities-menu-allies`, `abilities-menu-allies-none` (an ally in

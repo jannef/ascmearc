@@ -1,4 +1,4 @@
-# The spring (spec §7 "Special rooms"): a healing spring in a cave room. Stand beside its basin and
+# The spring: a healing spring in a cave room. Stand beside its basin and
 # choose Drink from the abilities menu (its Here group); a drink takes ten seconds, and the spring
 # never runs dry. data/outcomes/spring.toml has what a drink draws.
 arrival = "Somewhere ahead, water trickles over stone."

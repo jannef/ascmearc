@@ -1,4 +1,4 @@
-//! Abilities (spec §6 "Abilities", #156): what a character can do beyond the commands every run
+//! Abilities (#156): what a character can do beyond the commands every run
 //! has, because of who they are — racial, class, skill, weapon skill and fighting style, and
 //! item abilities. Unlike ADOM, they do not get a key each: they all go into one abilities menu,
 //! which lists [`PerceptionView::abilities`] grouped by [`Source`], asks for what each needs
@@ -11,12 +11,11 @@
 //! lists it, and who has it ([`Ability::had_by`]); [`Ability::unavailable`] says when it cannot
 //! be used now and why (the menu greys it out with the reason; one aimed in a direction with
 //! nothing beside the player to act on, [`crate::beside`], is greyed by the perception). Nothing
-//! else gets a key of its own. A limit on how often an ability may be used is a **cooldown status** (spec §8 "Status
-//! effects": Winded, with `eases` and no tick) given as it is used: while it lasts the ability is
-//! [`Unavailable::While`] it, and so is one whose kind of action a status `blocks`; nothing
-//! counts uses.
+//! else gets a key of its own. A limit on how often an ability may be used is a **cooldown status**
+//! (Winded, with `eases` and no tick) given as it is used: while it lasts the ability is
+//! [`Unavailable::While`] it, and so is one whose kind of action a status `blocks`; nothing counts uses.
 //!
-//! Alignment never makes an ability unavailable (spec §8 "Alignment"): a holy gift whose band
+//! Alignment never makes an ability unavailable: a holy gift whose band
 //! the user is outside of is listed and used like any other, and does nothing
 //! (`World::unanswered`).
 //!
@@ -38,68 +37,67 @@ use std::borrow::Cow;
 /// An ability, as the abilities menu lists it.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Ability {
-    /// Throw your voice (spec §5 "Hearing"; #235): [`Action::ThrowVoice`] at a cell the player
+    /// Throw your voice (#235): [`Action::ThrowVoice`] at a cell the player
     /// sees. The bard's (design §4.8, at level 16): had by whoever holds a talent with the
     /// `throw_voice` effect.
     ThrowVoice,
-    /// A birth sign's active gift (spec §8 "Birth sign"): [`Action::Gift`], had by whoever's
+    /// A birth sign's active gift: [`Action::Gift`], had by whoever's
     /// sign grants its talent; unavailable while its cooldown lasts.
     Sign(SignActive),
-    /// A class's active (spec §8 "Class abilities"): [`Action::Use`], had by whoever's class
+    /// A class's active: [`Action::Use`], had by whoever's class
     /// gives it at their level; unavailable while its cooldown lasts (Rage: while raging and
     /// exhausted).
     Class(ClassActive),
-    /// A caster's spell (spec §8 "Class abilities", "Spells"): [`Action::Cast`], had by
+    /// A caster's spell: [`Action::Cast`], had by
     /// whoever's class gives the ability that names it; unavailable without the mana it costs
     /// (that check is [`spell_unavailable`]'s).
     Spell(SpellId),
     /// A skill used as an action (`kind = "action"` in `data/skills/`) that the actor is
-    /// trained in, whose use is not in the game yet: listed, never available (spec §8
-    /// "Skills"). A use, when it comes, is a variant of its own with its action, and its skill
-    /// is no longer listed as this.
+    /// trained in, whose use is not in the game yet: listed, never available. A use, when it comes,
+    /// is a variant of its own with its action, and its skill is no longer listed as this.
     Skill(SkillId),
-    /// Disarm a trap the actor knows of, next to them (spec §8 "Disarming traps"):
+    /// Disarm a trap the actor knows of, next to them:
     /// [`Action::Disarm`], the use of Disable device (the skill with the disarm effect, listed as
     /// this in its place). Had by whoever is trained in it; usable whenever they have it (the
     /// rules refuse, taking no time, where they know of no trap).
     Disarm,
-    /// Listen at a closed door next to the actor (spec §5 "Hearing"; `world/skills/listen.rs`):
+    /// Listen at a closed door next to the actor (`world/skills/listen.rs`):
     /// [`Action::Listen`], the use of Listen (the skill with the hearing effect, listed as this
     /// in its place). Had by whoever is trained in it; listed only while a closed door is beside
     /// them (the owner, #1327; [`crate::beside`]).
     Listen,
-    /// Pick the lock of a door next to the actor (spec §8 "Doors"): [`Action::PickLock`], the
+    /// Pick the lock of a door next to the actor: [`Action::PickLock`], the
     /// use of Open lock (the skill with the pick effect, listed as this in its place). Had by
     /// whoever is trained in it; usable whenever they have it (the rules refuse, taking no time,
     /// where there is no lock).
     PickLock,
-    /// Steal from someone next to you (spec §8 "Stealing"): [`Action::Steal`], the Steal
+    /// Steal from someone next to you: [`Action::Steal`], the Steal
     /// skill's use. Whoever is trained in a skill with the `steal` benefit has it, in that
     /// skill's place among the skills.
     Steal,
-    /// Wedge shut the closed door next to the actor (spec §8 "Doors"; `world/skills/wedge.rs`):
+    /// Wedge shut the closed door next to the actor (`world/skills/wedge.rs`):
     /// [`Action::Wedge`], Woodcraft's second use (the skill with the `wedge` effect). Had by
     /// whoever is trained in it; listed only while a closed door not wedged already is beside
     /// them (the owner, #1327; [`crate::beside`]).
     Wedge,
-    /// Feint at a foe next to you (spec §8 "Skills": Bluff; #1016): [`Action::Feint`], Bluff's
+    /// Feint at a foe next to you (Bluff; #1016): [`Action::Feint`], Bluff's
     /// use (the skill with the `feint` benefit, listed as this in its place while
     /// `data/rules/feint.toml` exists). Had by whoever is trained in it; usable whenever they have
     /// it (the rules refuse, taking no time, where there is no foe with a mind to fool).
     Feint,
-    /// Tame a beast next to you (spec §8 "Allies": Tame; `world/allies/tame.rs`): [`Action::Tame`],
+    /// Tame a beast next to you (Tame; `world/allies/tame.rs`): [`Action::Tame`],
     /// Handle animal's use (the skill with the `tame` benefit, listed as this in its place while
     /// `data/companions.toml` and `data/allies.toml` exist). Had by whoever is trained in it, at
     /// any level; unavailable ([`Unavailable::HaveCompanion`]) while the player has a companion
     /// (the perception knows); otherwise the rules refuse, taking no time, without a beast there
     /// that may be tamed now.
     Tame,
-    /// Threaten a foe you see (spec §8 "Skills": Intimidate; #868): [`Action::Intimidate`] at
+    /// Threaten a foe you see (Intimidate; #868): [`Action::Intimidate`] at
     /// its cell, the Intimidate skill's use (the skill with the `intimidate` benefit, listed as
     /// this in its place while `data/rules/intimidate.toml` exists). Had by whoever is trained in
     /// it; usable whenever they have it (the rules refuse, taking no time, without a foe there).
     Intimidate,
-    /// A profession (spec §8 "Skills"; docs/design/professions.md §8): a skill with a directory
+    /// A profession (docs/design/professions.md §8): a skill with a directory
     /// of recipes (`data/recipes/<skill>/`), listed in that skill's place as "Metalcraft…". Had
     /// by whoever is trained in the skill (every recipe is its skill's, #1387); never unavailable: it opens the profession's screen
     /// ([`Aim::Recipes`]), which says why each recipe cannot be made now.
@@ -108,38 +106,38 @@ pub enum Ability {
     /// [`Action::Salvage`], every profession's at once, listed after the skills' own uses while
     /// `data/rules/salvage.toml` exists. Everyone has it; it asks which item ([`Aim::Item`]).
     Salvage,
-    /// Forage for food in the wild (spec §8 "Foraging"): [`Action::Forage`], Survival's use (the
+    /// Forage for food in the wild: [`Action::Forage`], Survival's use (the
     /// skill with the `forage` benefit, listed as this in its place, while `data/forage.toml`
     /// exists). Had by whoever is trained in it; unavailable ([`Unavailable::NotHere`]) anywhere
     /// but on land of the overworld or a local area of it.
     Forage,
-    /// Treat oneself or an ally beside one (spec §8 "Skills": Heal): [`Action::Heal`], the Heal
+    /// Treat oneself or an ally beside one (Heal): [`Action::Heal`], the Heal
     /// skill's use (the skill with the `heal` effect, listed as this in its place). Had by
     /// whoever is trained in it; unavailable while there is nothing to treat on either
     /// ([`crate::heal::treatable`]). It asks which ailment when there are several
     /// ([`Aim::Ailment`]).
     Heal,
-    /// Make out a scroll without reading it (spec §8 "Scrolls", "Skills": Decipher script;
+    /// Make out a scroll without reading it (Decipher script;
     /// `world/magic/decipher.rs`): [`Action::Decipher`] on a scroll of a type not yet identified, the
     /// skill's use (the skill with the `decipher` effect, listed as this in its place while
     /// `data/rules/decipher.toml` exists). Had by whoever is trained in it; unavailable
     /// ([`Unavailable::NoUnknownScroll`], the perception knows) while the pack holds none. It
     /// asks which scroll ([`Aim::Item`]).
     Decipher,
-    /// Catch a second wind (spec §8 "Talents"): [`Action::UseTalent`], the active of the
+    /// Catch a second wind: [`Action::UseTalent`], the active of the
     /// Second wind talent (a talent with the `second_wind` effect). Had by whoever holds it;
     /// unavailable while its cooldown (Winded) lasts.
     SecondWind,
-    /// Blood magic (spec §8 "Talents"): [`Action::UseTalent`], the active of the Blood magic
+    /// Blood magic: [`Action::UseTalent`], the active of the Blood magic
     /// talent (a talent with the `blood_magic` effect): hit points given for mana. Had by
     /// whoever holds it; usable whenever they have it (the rules refuse, taking no time, when
     /// it would cost their last hit point or their mana is full).
     BloodMagic,
-    /// Bash with the shield held (spec §8 "Weapon skills"): [`Action::Bash`]. Everyone can bash
+    /// Bash with the shield held: [`Action::Bash`]. Everyone can bash
     /// with a shield (at shield bashing's rank 0 too), so everyone has it; it is available while
     /// a shield to bash with is held.
     ShieldBash,
-    /// A weapon ability (spec §8 "Weapon skills", "Fighting styles"; `data/weapon_abilities/`),
+    /// A weapon ability (`data/weapon_abilities/`),
     /// listed under the weapon skill or style named first whose rank teaches it ("Long blades:
     /// Deep cut"). Had by whoever's ranks teach it ([`Actor::weapon_abilities`]); a triggered one
     /// fires by itself and is never used ([`Unavailable::FiresByItself`]). An active one (#564)
@@ -148,32 +146,32 @@ pub enum Ability {
     /// time; unavailable while what the actor holds is not for it ([`Unavailable::NotSoHeld`])
     /// or its stamina is short ([`Unavailable::Short`]).
     Weapon(WeaponSkillId, WeaponAbilityId),
-    /// Pray at a forgotten altar (spec §7 "Special rooms"): [`Action::Pray`]. A place offers
+    /// Pray at a forgotten altar: [`Action::Pray`]. A place offers
     /// it ([`Ability::here`]): listed only while the player stands next to such an altar (never
     /// a spent one), absent elsewhere.
     Pray,
-    /// Drink at a healing spring (spec §7 "Special rooms"): [`Action::Drink`]. A place offers
+    /// Drink at a healing spring: [`Action::Drink`]. A place offers
     /// it, as Pray: listed only while the player stands next to a spring.
     Drink,
-    /// Gather herbs from the glowing fungus (spec §8 "Skills": Herbalism; `world/skills/gather.rs`):
+    /// Gather herbs from the glowing fungus (Herbalism; `world/skills/gather.rs`):
     /// [`Action::Gather`] in a direction. The fungus offers it to everyone ([`Ability::here`]):
     /// listed only while the player stands next to fungus, while `data/herbs.toml` exists. It
     /// asks for the way only when fungus stands on more than one cell beside the player
     /// ([`crate::beside`], by [`crate::perception::PerceptionView::gather_ways`]).
     Gather,
-    /// Come to heel (spec §8 "Allies"): [`Action::Order`] with [`Command::Heel`], every ally of
+    /// Come to heel: [`Action::Order`] with [`Command::Heel`], every ally of
     /// the player's on the level follows. The Allies group ([`Ability::orders`]): listed while
     /// the player has an ally anywhere, unavailable ([`Unavailable::NoAllies`]) with none on the
     /// level. No time, a voice's noise.
     Heel,
-    /// Hold here (spec §8 "Allies"): [`Action::Order`] with [`Command::Hold`], every ally holds
+    /// Hold here: [`Action::Order`] with [`Command::Hold`], every ally holds
     /// the cell it stands on. Listed and available as [`Ability::Heel`].
     Hold,
-    /// Set on (spec §8 "Allies"): [`Action::Order`] with [`Command::SetOn`] a cell the player
+    /// Set on: [`Action::Order`] with [`Command::SetOn`] a cell the player
     /// sees, every ally goes there and fights what is near it. Listed and available as
     /// [`Ability::Heel`]; it asks for the cell in the aiming mode.
     SetOn,
-    /// Give (spec §8 "Allies"): [`Action::Give`], a stack the player carries for the neck of a
+    /// Give: [`Action::Give`], a stack the player carries for the neck of a
     /// kept beast of theirs (`world/allies/collar.rs`). Not an order, it takes a `wear`'s time; the Allies
     /// group all the same, listed while the player keeps a beast ([`Ability::orders`]),
     /// unavailable ([`Unavailable::NotBeside`]) with none beside them.
@@ -185,28 +183,28 @@ pub enum Ability {
 pub enum Source {
     /// The character's race (none yet).
     Race,
-    /// The character's birth sign (spec §8 "Birth sign"): its active gifts.
+    /// The character's birth sign: its active gifts.
     Sign,
     /// A profane gift (`docs/dev/profane-gifts.md`): a sign's active a gift gives and no sign
     /// talent of theirs does (Hate-wyrm's heart's Fire breath; [`Ability::source_for`]).
     Profane,
-    /// The character's class (spec §8 "Class abilities"): its actives, and throwing one's voice
+    /// The character's class: its actives, and throwing one's voice
     /// (everyone's until the class tables give it to the bard alone).
     Class,
-    /// The spells the character casts (spec §8 "Spells"), paid in mana.
+    /// The spells the character casts, paid in mana.
     Spell,
-    /// A talent the character took (spec §8 "Talents"): its active ones.
+    /// A talent the character took: its active ones.
     Talent,
-    /// A trained skill used as an action (spec §8 "Skills").
+    /// A trained skill used as an action.
     Skill,
-    /// A weapon skill or a fighting style (spec §8 "Weapon skills", "Fighting styles").
+    /// A weapon skill or a fighting style.
     WeaponSkill,
     /// Something worn or carried (none yet: a lantern is used as a tool, `u`).
     Item,
-    /// The place the character stands in (spec §7 "Special rooms"): what a special room's
+    /// The place the character stands in: what a special room's
     /// feature offers next to it (Pray at a forgotten altar, Drink at a spring).
     Place,
-    /// The character's allies (spec §8 "Allies"): the orders given to them.
+    /// The character's allies: the orders given to them.
     Ally,
 }
 
@@ -309,16 +307,16 @@ pub enum Unavailable {
     NotYet,
     /// Decipher with no scroll of an unidentified type in the pack.
     NoUnknownScroll,
-    /// While a status lasts (spec §8 "Status effects"): one that blocks the kind of action the
+    /// While a status lasts: one that blocks the kind of action the
     /// ability is (a raging berserker cannot read), or the ability's cooldown, which the class
     /// abilities bring (Winded: "you are winded"). Only time lifts it.
     While(StatusId),
     /// One that costs an alternative resource the character does not hold, or holds too little
-    /// of (spec §8 "Resources"): "not enough focus".
+    /// of: "not enough focus".
     Short(ResourceId),
-    /// One that costs more mana than the actor has (spec §8 "Mana"): time brings it back.
+    /// One that costs more mana than the actor has: time brings it back.
     NoMana,
-    /// One the place does not allow: foraging anywhere but in the wild (spec §8 "Foraging").
+    /// One the place does not allow: foraging anywhere but in the wild.
     NotHere,
     /// One a place offers that asks for a skill the actor is not trained in: Gather without
     /// Herbalism (#1400, `world/skills/gather.rs`).
@@ -333,9 +331,9 @@ pub enum Unavailable {
     /// An active weapon ability while the actor does not hold what it is for: a weapon of its
     /// skill, the grip of its style ("your hands are not so held").
     NotSoHeld,
-    /// An order with no ally of the player's on the level to hear it (spec §8 "Allies").
+    /// An order with no ally of the player's on the level to hear it.
     NoAllies,
-    /// Give with the player's companion not beside them (spec §8 "Allies").
+    /// Give with the player's companion not beside them.
     NotBeside,
     /// Sic 'em with no companion of the player's on the level (`world/allies/sic.rs`).
     NoCompanion,
@@ -345,7 +343,7 @@ pub enum Unavailable {
     FamiliarLives,
     /// Call familiar with a hostile in sight.
     Watched,
-    /// Tame with a companion already (spec §8 "Allies": a companion is for good, and one at a
+    /// Tame with a companion already (a companion is for good, and one at a
     /// time).
     HaveCompanion,
     /// One aimed in a direction with nothing beside the player it may act on, as they know it
@@ -554,9 +552,9 @@ impl Ability {
             })
     }
 
-    /// The abilities the place offers to whoever stands at `at` on `level` (spec §7 "Special
-    /// rooms"): what the feature on a cell next to it offers (Pray beside a forgotten altar, Drink beside a spring), in
-    /// menu order. A spent altar is another terrain, which offers nothing.
+    /// The abilities the place offers to whoever stands at `at` on `level`: what the feature on a
+    /// cell next to it offers (Pray beside a forgotten altar, Drink beside a spring), in menu
+    /// order. A spent altar is another terrain, which offers nothing.
     pub(crate) fn here(level: &LevelState, content: &Content, at: Pos) -> Vec<Ability> {
         let mut found: Vec<Ability> = (Dir::ALL.iter().map(|&d| at.step(d)))
             .filter_map(|p| level.terrain_at(p))
@@ -582,7 +580,7 @@ impl Ability {
         }
     }
 
-    /// The Allies group (spec §8 "Allies"), in menu order: the orders while `any`, the player has
+    /// The Allies group, in menu order: the orders while `any`, the player has
     /// an ally anywhere (the perception knows), and Give while `kept`, they have a companion; none
     /// otherwise, as a place's abilities are absent away from the place.
     pub(crate) fn orders(any: bool, kept: bool) -> Vec<Ability> {
@@ -937,7 +935,7 @@ impl Ability {
     }
 
     /// What it costs, as an action of this kind (`data/actions.toml`; the rules then price it as
-    /// that action, spec §8 "Time"); `None` for one with no use yet.
+    /// that action); `None` for one with no use yet.
     pub const fn cost(self) -> Option<ActionKind> {
         match self {
             Ability::Sign(active) => Some(active.cost()),
@@ -966,7 +964,7 @@ impl Ability {
             Ability::Give => Some(ActionKind::Wear),
             Ability::Drink => Some(ActionKind::Drink),
             Ability::Gather => Some(ActionKind::Gather),
-            // An order takes no time (spec §8 "Allies"): it is priced as nothing.
+            // An order takes no time: it is priced as nothing.
             Ability::Heel | Ability::Hold | Ability::SetOn => None,
         }
     }
@@ -993,8 +991,8 @@ impl Ability {
         }
     }
 
-    /// [`Ability::reach`] at `time`: a full moon lengthens the Transfixing stare's (spec §8
-    /// "Birth sign", the flavour; [`Content::full_moon_reach`]).
+    /// [`Ability::reach`] at `time`: a full moon lengthens the Transfixing stare's (the flavour;
+    /// [`Content::full_moon_reach`]).
     pub fn reach_at(self, content: &Content, time: crate::time::GameTime) -> Option<i32> {
         let reach = self.reach(content)?;
         Some(match self {
@@ -1378,7 +1376,7 @@ pub fn spell_unavailable(actor: &Actor, content: &Content, spell: SpellId) -> Op
     })
 }
 
-/// What class active `active` costs `actor` in an alternative resource (spec §8 "Resources"):
+/// What class active `active` costs `actor` in an alternative resource:
 /// its talent's `resource`, with Avatar's share of it for Lay on hands (`percent_of`, at least
 /// 1), and for Exploit and Thrown exploit every one held (its talent's cost the least it
 /// needs); `None` when it costs none. The one reading of the cost: `use_class` (and
@@ -1402,7 +1400,7 @@ pub(crate) fn class_cost(
     Some(cost)
 }
 
-/// Why `actor` cannot use an ability that costs `cost` (spec §8 "Resources"):
+/// Why `actor` cannot use an ability that costs `cost`:
 /// [`Unavailable::Short`] while they do not hold the resource or hold less than it costs.
 fn short_of(actor: &Actor, cost: ResourceCost) -> Option<Unavailable> {
     let held = actor.resources.get(cost.resource).map(|p| p.value);

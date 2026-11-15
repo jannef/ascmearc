@@ -1,4 +1,4 @@
-# A rod of teleport other (spec §8 "Magic items": "Rods"): ready it in the missile weapon slot and
+# A rod of teleport other: ready it in the missile weapon slot and
 # use it as a missile weapon (`t`), and the first creature its bolt meets is sent elsewhere on the
 # level (data/rod_effects/teleport_other.toml). Each use costs you mana; it never runs out.
 [[object]]

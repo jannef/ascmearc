@@ -1,4 +1,4 @@
-//! Statues of the stoned as level data (spec §8 "Statues"): a [`Statue`] is what a statue cell
+//! Statues of the stoned as level data: a [`Statue`] is what a statue cell
 //! holds, and the [`Fallen`] it may be named for. Plain data, so both a hand-made or generated
 //! level's template (`content::LevelTemplate::statues`, laid by `mapgen/leavings.rs`) and the
 //! running level (`world::LevelState::statues`) hold it; the rules that lay, kick, and name

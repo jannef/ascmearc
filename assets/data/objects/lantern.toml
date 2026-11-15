@@ -1,4 +1,4 @@
-# A lantern: an iron and brass lamp with a hood (spec §5 "Light sources"). Ready in the Tool slot
+# A lantern: an iron and brass lamp with a hood. Ready in the Tool slot
 # it gives the `lantern` light while lit; `u` (the use-tool command) turns it from unlit to lit,
 # lit to hooded (lights.toml's `lantern_hooded`: dim, half the reach, the carrier's own cell
 # dark), and back to unlit. Races without darkvision start with one (races.toml). Also the

@@ -1,4 +1,4 @@
-//! Vision profiles (`assets/data/vision.toml`, spec §5): how the player's eyes respond to light.
+//! Vision profiles (`assets/data/vision.toml`): how the player's eyes respond to light.
 
 use crate::fov::radius2;
 use crate::light::Light;

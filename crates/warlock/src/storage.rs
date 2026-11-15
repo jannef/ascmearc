@@ -1,5 +1,5 @@
-//! Where the game's persistent files live: a directory natively, `window.localStorage` on the web
-//! (spec §7). Callers name files relative to the backend (`saves/tamsin-1.sav`,
+//! Where the game's persistent files live: a directory natively, `window.localStorage` on the web.
+//! Callers name files relative to the backend (`saves/tamsin-1.sav`,
 //! `snapshots/tamsin-1.sav`, `settings.toml`); the backend decides what that means, and lists
 //! the files in a folder. Errors are plain `io::Error`s with `NotFound` for a missing file, so
 //! callers treat both backends alike.

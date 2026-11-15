@@ -1,4 +1,4 @@
-//! The graveyard (spec §7 "The graveyard"; #1137, design `docs/design/monster-dread.md` §9.5):
+//! The graveyard (#1137, design `docs/design/monster-dread.md` §9.5):
 //! `graveyard.toml` beside `settings.toml` in the config folder (portable mode's `warlock-data`
 //! too; the web build's `localStorage` key `warlock/graveyard.toml`), one `[[fallen]]` table a
 //! character who has died.

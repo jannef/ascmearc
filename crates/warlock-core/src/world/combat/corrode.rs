@@ -1,4 +1,4 @@
-//! Harm to gear (spec §8 "Creature gimmicks"; the dread design §5.8): a creature type's
+//! Harm to gear (the dread design §5.8): a creature type's
 //! `corrodes = { chance, what, kind }` damages the player's gear in melee by item damage of
 //! `kind` (acid, rust, or fire; `item_damage.rs`, the one damaged state the smith mends at an
 //! anvil, `world/crafting/temper.rs`).

@@ -1,4 +1,4 @@
-//! The profane gifts (docs/design/profane-gifts.md; spec §8 "Hunger"): what each keeper's corpse
+//! The profane gifts (docs/design/profane-gifts.md): what each keeper's corpse
 //! gives (its signature gift, its rolls, and their tier odds) and every gift a roll may draw,
 //! with its odds within its tier, what it does, its relations, and the races it is never drawn
 //! for.

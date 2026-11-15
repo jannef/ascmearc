@@ -83,8 +83,7 @@ impl Content {
 
     /// Whether `object` goes in `slot` by its own `slot`, not as a weapon some slot takes too:
     /// its `slot` is what the slot fits, or it is a light weapon or a shield (anything it can
-    /// bash with) and the slot is a hand (two-weapon and two-shield fighting, spec §8
-    /// "Fighting styles").
+    /// bash with) and the slot is a hand (two-weapon and two-shield fighting).
     pub fn fits_properly(&self, object: ObjectId, slot: SlotId) -> bool {
         let (def, slot) = (self.object(object), self.slot(slot));
         def.slot.as_ref() == Some(&slot.fits)
@@ -115,7 +114,7 @@ impl Content {
         &self.traps[usize::from(id.0)]
     }
 
-    /// The chest bands (spec §7 "Chests"; empty without `data/chests.toml`).
+    /// The chest bands (empty without `data/chests.toml`).
     pub fn chests(&self) -> &ChestRules {
         &self.chests
     }
@@ -129,19 +128,19 @@ impl Content {
         &self.traps
     }
 
-    /// The chance of stepping onto a known trap without setting it off (spec §8 "Traps";
-    /// `[avoid]` in `data/traps.toml`, else [`TrapAvoid::default`]).
+    /// The chance of stepping onto a known trap without setting it off (`[avoid]` in
+    /// `data/traps.toml`, else [`TrapAvoid::default`]).
     pub fn trap_avoid(&self) -> &TrapAvoid {
         &self.trap_avoid
     }
 
-    /// Disarming a known trap (spec §8 "Traps"; `[disarm]` in `data/traps.toml`, else
+    /// Disarming a known trap (`[disarm]` in `data/traps.toml`, else
     /// [`TrapDisarm::default`]).
     pub fn trap_disarm(&self) -> &TrapDisarm {
         &self.trap_disarm
     }
 
-    /// What a trap's damage may be cut by (spec §8 "Traps"; `[harm]` in `data/traps.toml`, else
+    /// What a trap's damage may be cut by (`[harm]` in `data/traps.toml`, else
     /// [`TrapHarm::default`]).
     pub fn trap_harm(&self) -> &TrapHarm {
         &self.trap_harm
@@ -167,7 +166,7 @@ impl Content {
         &self.materials
     }
 
-    /// Gem sizes, cuts, and ornaments (`data/gems.toml`, spec §7 "Gems"); `None` without the
+    /// Gem sizes, cuts, and ornaments (`data/gems.toml`); `None` without the
     /// file: no gems are found or set.
     pub fn gems(&self) -> Option<&Gems> {
         self.gems.as_ref()
@@ -188,7 +187,7 @@ impl Content {
         &self.recipes.list[usize::from(id.0)]
     }
 
-    /// The unique items (spec §8 "Magic items"), in table order.
+    /// The unique items, in table order.
     pub fn uniques(&self) -> impl Iterator<Item = &UniqueDef> {
         self.uniques.iter()
     }
@@ -214,8 +213,7 @@ impl Content {
         Some(PartId(u8::try_from(i).ok()?))
     }
 
-    /// `parts` in words, every part, the main one first: "steel blade, leather grip", "iron"
-    /// (spec §6 "Item description").
+    /// `parts` in words, every part, the main one first: "steel blade, leather grip", "iron".
     pub fn describe_parts(&self, parts: &[Part]) -> String {
         part::phrase(parts, &self.materials, &self.parts)
     }
@@ -240,7 +238,7 @@ impl Content {
         self.potion_labels.as_ref()
     }
 
-    /// The scroll of `spell` (spec §8 "Scrolls"): the first object, by id, whose `read` casts it
+    /// The scroll of `spell`: the first object, by id, whose `read` casts it
     /// (`scroll_of_ID`; every shipped spell has one). What the wizard's Scribe writes.
     pub fn scroll_of(&self, spell: SpellId) -> Option<ObjectId> {
         let i = (self.objects.iter()).position(
@@ -249,19 +247,19 @@ impl Content {
         Some(ObjectId(u16::try_from(i).ok()?))
     }
 
-    /// The blank scroll (`blank_scroll`, spec §8 "Scrolls"): what a scroll is written on, and
+    /// The blank scroll (`blank_scroll`): what a scroll is written on, and
     /// nothing to read.
     pub fn blank_scroll(&self) -> Option<ObjectId> {
         self.object_id("blank_scroll")
     }
 
-    /// Prefixes and suffixes, and how loot rolls them (spec §8 "Magic items"); empty without
+    /// Prefixes and suffixes, and how loot rolls them; empty without
     /// `data/affixes.toml`.
     pub fn affixes(&self) -> &Affixes {
         &self.affixes
     }
 
-    /// The item level of loot on level `id` (spec §8 "Magic items"): a dungeon branch level's
+    /// The item level of loot on level `id`: a dungeon branch level's
     /// depth, a hand-made level's `item_level` (default 1), else 1.
     pub fn item_level(&self, id: &str) -> u8 {
         if let Some(template) = self.levels.get(id) {

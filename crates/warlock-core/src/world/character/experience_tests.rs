@@ -1,4 +1,4 @@
-//! Experience in the world (spec §8 "Experience"): only the player's own kills are worth
+//! Experience in the world: only the player's own kills are worth
 //! anything, levels follow from the total and the character's factor, each level up to the cap
 //! grows the hit points, and the first kill of a type and the first arrival on a level are worth
 //! a little more.

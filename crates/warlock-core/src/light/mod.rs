@@ -1,4 +1,4 @@
-//! Gameplay light (spec §5): integer RGB + UV values, falloff, and per-source shadow masks.
+//! Gameplay light: integer RGB + UV values, falloff, and per-source shadow masks.
 //!
 //! **Units.** Every channel is a `u16`; 255 means "fully lit" (a surface shows its base color) and
 //! larger values are overbright. A cell's light is the level's ambient light plus the sum of every
@@ -15,7 +15,7 @@
 //! player's line of sight, adds one weak bounce ([`bounce`]), and applies the wall-face rule (see
 //! [`crate::perception`]). On levels under the open sky the sun and the sky add their light by
 //! day ([`Sun`]), and the moons by night ([`Moon`]); [`Sky`] puts them together. A special room
-//! changes the light inside it (spec §5 "Special rooms"): a shadowed room keeps only part of every
+//! changes the light inside it: a shadowed room keeps only part of every
 //! bit of it, a sanctuary adds a glow; perception and creature sight apply that to each part of a
 //! cell's light alike ([`Light::percent`]).
 
@@ -79,8 +79,8 @@ impl Light {
         self.zip(other, u16::max)
     }
 
-    /// `percent` of the light, channel by channel, rounded down (a shadowed room's, spec §5
-    /// "Special rooms"); 100 leaves it as it is.
+    /// `percent` of the light, channel by channel, rounded down (a shadowed room's); 100 leaves it
+    /// as it is.
     pub fn percent(self, percent: u16) -> Light {
         if percent == 100 {
             return self;

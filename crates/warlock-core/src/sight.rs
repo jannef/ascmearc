@@ -1,4 +1,4 @@
-//! Creature sight (spec §5 "Creature sight"): what a creature sees, by the player's rules.
+//! Creature sight: what a creature sees, by the player's rules.
 //!
 //! A creature sees an actor iff the actor's cell is visible to it as the player's rules would
 //! have it (see [`crate::perception`]): in line of sight (symmetric shadowcasting from the

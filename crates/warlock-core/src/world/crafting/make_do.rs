@@ -1,4 +1,4 @@
-//! Make do and mend (spec §8 "Class abilities"; the craftsperson design §7.5; #1422): the
+//! Make do and mend (the craftsperson design §7.5; #1422): the
 //! craftsperson's class active at level 18, `use:make_do_and_mend:c`
 //! ([`crate::action::Action::UseOn`]), from the abilities menu's Class group through the mend
 //! list ([`mendable`]). It mends a damaged thing the player carries, anywhere, with no anvil and

@@ -1,4 +1,4 @@
-//! Fighting (spec §8 "Combat"): attacks between actors, hit points, regeneration, and death.
+//! Fighting: attacks between actors, hit points, regeneration, and death.
 //!
 //! An attack ([`World::attack`]) is resolved by the rules in [`crate::combat`] with the
 //! attacker's [`Profile`] (its weapon, natural attack, or bare hands in melee; its missile weapon
@@ -7,12 +7,12 @@
 //! an attack of kind `Spell` here is an intent only: nothing is rolled or damaged. Every attack is an
 //! [`Event::Attacked`] with what came of it, and a noise.
 //!
-//! Protection (spec §8 "Combat"): what the target wears and its hide soak damage off every hit
+//! Protection: what the target wears and its hide soak damage off every hit
 //! ([`World::protection_of`], less the attack's penetration). A hit soaked to nothing
 //! ([`Strike::Soaked`]) glances off ("Your sword glances off the cave beetle's shell.") and does
 //! nothing else, no blood and no wound, but it landed: it trains as a hit does.
 //!
-//! Damage types (spec §8 "Damage types"): every blow is of a kind (a sword slashes or pierces,
+//! Damage types: every blow is of a kind (a sword slashes or pierces,
 //! whichever is better against its target; bare hands and bashes bludgeon), said with the
 //! kind's verb ("The kobold stabs you.", "You cleave the giant rat."); Protection soaks only
 //! the physical kinds, and the target's resistances ([`World::resistances_of`]) take their
@@ -30,19 +30,18 @@
 //! every actor on the current level (`status.rs`, as the scheduler moves the clock), at the rate
 //! [`World::healing_rate`] decides (three times as fast in a sanctuary).
 //!
-//! Messages (spec §6 "Attacks") never carry numbers: "The kobold hits you.", "…hits you hard!" for
+//! Messages never carry numbers: "The kobold hits you.", "…hits you hard!" for
 //! a critical, "You block the kobold's spear with your shield.", "The giant rat dies." The
 //! player's own attacks are said as they are made, a creature's when the turn is perceived (it is
 //! said if the player saw either end of it, or was its target).
 //!
-//! Weapon skills (spec §8 "Weapon skills"): every attack draws on a skill ([`Actor::attack_skill`];
+//! Weapon skills: every attack draws on a skill ([`Actor::attack_skill`];
 //! its profile and price carry what the rank gives), and each attack the player makes earns
-//! marks in it, more for a hit, more against a stronger opponent (by level, spec §8
-//! "Experience"; [`World::practise`]). A rank gained is said after the attack that earned it: "You feel more
-//! skilled with daggers." A shield bash ([`World::bash`]) is a blow with a held shield, its own
-//! damage, and its own skill.
+//! marks in it, more for a hit, more against a stronger opponent (by level; [`World::practise`]). A
+//! rank gained is said after the attack that earned it: "You feel more skilled with daggers." A
+//! shield bash ([`World::bash`]) is a blow with a held shield, its own damage, and its own skill.
 //!
-//! Fighting styles (spec §8 "Fighting styles"): every attack is also fought in a style
+//! Fighting styles: every attack is also fought in a style
 //! ([`Actor::style`]) whose rank adds to the weapon skill's, and the player's attacks earn marks
 //! in it too. A melee attack is a round of blows ([`World::second_blow`]): with a weapon in each
 //! hand the off hand strikes after the main hand, both at a penalty; with a weapon and a shield
@@ -50,7 +49,7 @@
 //! resolved on its own: its weapon's skill and affixes, its blood, and the bleeding of a big hit.
 //! A kick is made whatever the hands hold: it draws on unarmed fighting and no style.
 //!
-//! Free blows (spec §8 "Free blows", `free_blow.rs`): the end of a melee attack may bring a
+//! Free blows (`free_blow.rs`): the end of a melee attack may bring a
 //! cleave (it killed) or the target's riposte (its Parry made a blow miss), and a step away from
 //! beside an opportunist its blow; [`World::second_blow`] decides each.
 
@@ -72,7 +71,7 @@ use crate::time::GameTime;
 use crate::world::{Actor, ActorId, AttackSkills, Spent, World, WorldState};
 use serde::{Deserialize, Serialize};
 
-/// How the player's run ended (spec §6 "Death").
+/// How the player's run ended.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Death {
     /// The turn it happened in.
@@ -88,7 +87,7 @@ pub struct Death {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub of: Option<StatusId>,
     /// What killed them when it was neither a creature's attack nor a status effect: starving,
-    /// or choking on a meal (spec §8 "Hunger"), or a trap (spec §8 "Traps").
+    /// or choking on a meal, or a trap.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cause: Option<Cause>,
 }
@@ -103,17 +102,17 @@ pub enum Cause {
     Choked(ObjectId),
     /// A trap of this kind killed them.
     Trap(TrapId),
-    /// The spell of a scroll of this kind they read caught them (spec §8 "Scrolls").
+    /// The spell of a scroll of this kind they read caught them.
     Scroll(ObjectId),
-    /// The splash of a flask of this kind they threw caught them (spec §8 "Potions": "Flasks").
+    /// The splash of a flask of this kind they threw caught them.
     Flask(ObjectId),
-    /// They fell through a collapsed floor (spec §7 "Special rooms").
+    /// They fell through a collapsed floor.
     Fall,
-    /// A spell of their own caught them (spec §8 "Class abilities").
+    /// A spell of their own caught them.
     Spell(crate::content::SpellId),
-    /// A spell of their own they miscast tore through them (spec §8 "Spells": "Miscasts").
+    /// A spell of their own they miscast tore through them.
     Miscast(crate::content::SpellId),
-    /// A forgotten altar they prayed at struck them down (spec §7 "Special rooms").
+    /// A forgotten altar they prayed at struck them down.
     Altar,
 }
 
@@ -172,14 +171,14 @@ impl Cause {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(in crate::world) enum Harm {
     /// Another actor's blow, shot, or kick: it killed, and a kill by the player earns them its
-    /// experience (spec §8 "Experience").
+    /// experience.
     Actor(ActorId),
-    /// A trap (spec §8 "Traps"): no one killed, and no one earns anything.
+    /// A trap: no one killed, and no one earns anything.
     Trap(TrapId),
-    /// Barbed hide's barbs (spec §8 "Birth sign"): not a blow, and a death of them earns no one
+    /// Barbed hide's barbs: not a blow, and a death of them earns no one
     /// anything.
     Barbs,
-    /// A status effect's ticks or a disease (spec §8 "Status effects", "Diseases"): a death is
+    /// A status effect's ticks or a disease: a death is
     /// of status `of`, caused by `by` if anyone (a wound they dealt bled it to death), at the
     /// moment `when` of the time passing.
     Status {
@@ -187,16 +186,16 @@ pub(in crate::world) enum Harm {
         by: Option<ActorId>,
         when: GameTime,
     },
-    /// Starving at the moment `when` (spec §8 "Hunger").
+    /// Starving at the moment `when`.
     Starving(GameTime),
-    /// A place (spec §7 "Special rooms": a forgotten altar's fire, its bolt from above): no one
+    /// A place (a forgotten altar's fire, its bolt from above): no one
     /// killed, and no one earns anything.
     Place,
-    /// A fall through a collapsed floor (spec §7 "Special rooms"): no one killed, and no one
+    /// A fall through a collapsed floor: no one killed, and no one
     /// earns anything.
     Fall,
-    /// What never kills: it leaves the last hit point (the plunge into freezing water, spec §5
-    /// "Ice"; a disease that does not kill).
+    /// What never kills: it leaves the last hit point (the plunge into freezing water; a disease
+    /// that does not kill).
     Spared,
 }
 
@@ -230,12 +229,12 @@ impl Words {
         Self::new(noun, verb)
     }
 
-    /// A kick (spec §8 "Doors"): "You kick the giant rat.", "The giant rat dodges your kick."
+    /// A kick: "You kick the giant rat.", "The giant rat dodges your kick."
     pub(super) fn kick() -> Self {
         Self::new("kick", "kicks")
     }
 
-    /// What a weapon's blow does (spec §8 "Damage types"): the weapon's own `verb` ("cleaves"),
+    /// What a weapon's blow does: the weapon's own `verb` ("cleaves"),
     /// else the verb of `damage`, the kind it did ("slashes", "slash"), else "hits".
     fn blow(weapon: &ObjectDef, damage: Option<DamageTypeId>, content: &Content) -> Self {
         match (&weapon.verb, damage) {
@@ -304,7 +303,7 @@ pub(in crate::world) enum End<'a> {
     /// Something the player does not see.
     Unseen,
     /// A trap's missile, blades, or blast, by what hits ("arrow", "fireball"): it attacks by
-    /// itself (spec §8 "Traps").
+    /// itself.
     Trap(&'a str),
 }
 
@@ -389,7 +388,7 @@ pub(super) fn second_person(verb: &str) -> String {
     }
 }
 
-/// What a target's armour is called in the messages of the blows it turns (spec §6 "Attacks").
+/// What a target's armour is called in the messages of the blows it turns.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub(in crate::world) struct Guard<'a> {
     /// Its natural armour, for a blow that missed because of it: "shell".
@@ -618,9 +617,8 @@ impl World {
         blow
     }
 
-    /// A blow more, by actor `striker` at `target`, on `cue` (spec §8 "Fighting styles", "Free
-    /// blows"), if any: who strikes whom, and with what. The one place every blow beyond an
-    /// attack's first is decided (`free_blow.rs`):
+    /// A blow more, by actor `striker` at `target`, on `cue`, if any: who strikes whom, and with
+    /// what. The one place every blow beyond an attack's first is decided (`free_blow.rs`):
     /// - [`Cue::First`]: the second blow of `striker`'s melee attack on `target` (below);
     /// - [`Cue::Attacked`]: its end: a cleave if it killed `target`, else `target`'s
     ///   Retribution (on a hit), else its riposte;
@@ -678,11 +676,11 @@ impl World {
         }
     }
 
-    /// The blow after the first of actor `attacker`'s melee attack on `target` (spec §8
-    /// "Fighting styles"), if any, and what it is made with: with a weapon in each hand the off
-    /// hand's ([`Actor::off_hand_blow`]); with a weapon and a shield, after a `first` that hit, a
-    /// shield bash by the style's `bash` chance (one draw, `fight/bash/<attacker>`, only when
-    /// the chance is above 0). None once the target is gone.
+    /// The blow after the first of actor `attacker`'s melee attack on `target`, if any, and what it
+    /// is made with: with a weapon in each hand the off hand's ([`Actor::off_hand_blow`]); with a
+    /// weapon and a shield, after a `first` that hit, a shield bash by the style's `bash` chance
+    /// (one draw, `fight/bash/<attacker>`, only when the chance is above 0). None once the target
+    /// is gone.
     fn off_hand_or_bash(
         &mut self,
         attacker: ActorId,
@@ -712,7 +710,7 @@ impl World {
         bashes.then_some((shield, profile))
     }
 
-    /// The Defence of actor `id`, its burden capping its Dexterity (spec §8 "Burden"), and the
+    /// The Defence of actor `id`, its burden capping its Dexterity, and the
     /// wall around an incorporeal creature inside one adding its Wall bonus
     /// (`incorporeal.rs`), and averted eyes halving the player's Dodge (`avert.rs`).
     pub(crate) fn defence_of(&self, id: ActorId) -> combat::Defence {
@@ -725,7 +723,7 @@ impl World {
         self.averted_defence(id, self.wall_defence(id, defence))
     }
 
-    /// The Protection of actor `id` (spec §8 "Combat"): what it wears and its hide soak off
+    /// The Protection of actor `id`: what it wears and its hide soak off
     /// every physical hit, by kind; none for one that is gone.
     pub(crate) fn protection_of(&self, id: ActorId) -> Protection {
         (self.state.actors.get(&id)).map_or_else(
@@ -737,7 +735,7 @@ impl World {
         )
     }
 
-    /// What actor `id` resists (spec §8 "Damage types"): its creature type's, the player's
+    /// What actor `id` resists: its creature type's, the player's
     /// race's, what it wears and wields, and its talents' (Elemental ward); nothing for one that
     /// is gone.
     pub(crate) fn resistances_of(&self, id: ActorId) -> Resistances {
@@ -759,14 +757,14 @@ impl World {
     }
 
     /// The side of actor `id` an attack strikes, a `missile` (a shot, a throw, a trap's) or
-    /// not: Deflect missiles (spec §8 "Talents") adds its Dodge against missiles, and Parry
+    /// not: Deflect missiles adds its Dodge against missiles, and Parry
     /// counts against blows only, but for one with Measure (a weapon ability).
     pub(crate) fn target_against(&self, id: ActorId, missile: bool) -> Target {
         self.target_shot(id, missile, false)
     }
 
     /// [`World::target_against`], for a shot from beside it if `close`: within a blade's reach,
-    /// its Parry counts too (spec §8 "Ranged combat").
+    /// its Parry counts too.
     fn target_shot(&self, id: ActorId, missile: bool, close: bool) -> Target {
         let mut target = self.target_of(id);
         let deflects = (self.state.actors.get(&id))
@@ -868,11 +866,11 @@ impl World {
         let profile = profile.map(|p| self.glared(attacker, p));
         // Averted eyes (`avert.rs`): a fight half-blind.
         let profile = profile.map(|p| self.averted_blow(attacker, p));
-        // Relentless (spec §8 "Birth sign"): a streak of blows at one creature.
+        // Relentless: a streak of blows at one creature.
         let profile = profile.map(|p| self.relentless(attacker, target, kind, p));
-        // Favoured prey and a sneak attack (spec §8 "Class abilities").
+        // Favoured prey and a sneak attack.
         let profile = profile.map(|p| self.favoured(attacker, target, p));
-        // An ally's master's gifts to it (spec §8 "Allies": Beast-bond).
+        // An ally's master's gifts to it (Beast-bond).
         let profile = profile.map(|p| self.ally_blow(attacker, p));
         // Pack tactics: a flanked creature, the companion's share of the prey (`pack.rs`).
         let profile = profile.map(|p| self.pack_blow(attacker, target, kind, p));
@@ -966,7 +964,7 @@ impl World {
         if noisy && !dummy {
             self.make_noise(attacker, Act::Attack(kind));
         }
-        // A shopkeeper the player attacks turns on them (spec §7 "Shops").
+        // A shopkeeper the player attacks turns on them.
         if attacker == self.state.player && !dummy {
             self.provoke(target);
             self.provoke_court(target);
@@ -995,7 +993,7 @@ impl World {
                 self.practise_on(target, (kind, skill), blow.strike.is_hit(), level);
             }
         }
-        // Resources built by blows (spec §8 "Resources"): a hit and a critical that do harm
+        // Resources built by blows: a hit and a critical that do harm
         // build the attacker's; being hit at all, soaked or resisted to nothing too, the
         // target's (the berserker's rage: hits taken before mitigation).
         if let Some(Strike::Hit { critical }) = blow.map(|b| b.strike) {
@@ -1057,13 +1055,13 @@ impl World {
             // Acid on gear, either way round (`corrode.rs`).
             self.corrode((attacker, target), (kind, with));
         }
-        // Drowning grip (spec §8 "Birth sign"): a hit holds, a miss or another target lets go.
+        // Drowning grip: a hit holds, a miss or another target lets go.
         self.grip(attacker, target, kind, blow.as_ref(), events);
         blow
     }
 
-    /// The level of actor `id` as weapon marks weigh it (spec §8 "Weapon skills"): a
-    /// creature's type's (spec §8 "Experience"), the player's own.
+    /// The level of actor `id` as weapon marks weigh it: a
+    /// creature's type's, the player's own.
     pub(in crate::world) fn level_of(&self, id: ActorId) -> u32 {
         if id == self.state.player {
             return u32::from(self.player_level());
@@ -1097,9 +1095,9 @@ impl World {
         let me = self.player_mut();
         let marks = rules.earned(success, level, me.weapon_skills.rank(skill));
         let marks = (marks * percent + 50) / 100;
-        // The stance (spec §8 "Stances": aggressive and frenzy ×1.25).
+        // The stance: aggressive and frenzy ×1.25.
         let marks = content.stance_def(me.stance).marks(marks);
-        // Weapon drill (spec §8 "Class abilities"): more marks in a role's skills.
+        // Weapon drill: more marks in a role's skills.
         let marks = (me.talent_mods(&content))
             .offence
             .marks(table.skill(skill).role, marks);
@@ -1183,7 +1181,7 @@ impl World {
             self.reveal_mimic(id, crate::world::creatures::mimic::Reveal::Struck, events);
         }
         self.end_slip(id);
-        // Talents (spec §8 "Talents": Immune to pain): a hit does less after the soak, never
+        // Talents (Immune to pain): a hit does less after the soak, never
         // below 1; what is not a hit (a status, starving) is not eased.
         let damage = match harm {
             Harm::Actor(_) | Harm::Trap(_) | Harm::Place if damage > 1 => {
@@ -1210,7 +1208,7 @@ impl World {
             self.wake(id);
             return false;
         }
-        // Rise from the ashes (spec §8 "Birth sign"): once in a life, but never from starving.
+        // Rise from the ashes: once in a life, but never from starving.
         if id == self.state.player
             && !matches!(harm, Harm::Starving(_))
             && (self.rise_from_ashes(events) || self.reprieve(events))
@@ -1239,7 +1237,7 @@ impl World {
                 }
             }
             Harm::Trap(trap) => {
-                // No creature and no status: the trap is what killed them (spec §8 "Traps"),
+                // No creature and no status: the trap is what killed them,
                 // and a trap's kill earns no one anything.
                 self.dies(id, None, None, self.state.time, events);
                 if id == self.state.player
@@ -1254,7 +1252,7 @@ impl World {
 
     /// Actor `id` dies at moment `when`: killed by actor `by` (if anyone), of status `of` (if
     /// one did it). A creature leaves the world; the player's run ends. A creature killed by the
-    /// player earns them its experience (spec §8 "Experience"), and so does one that dies of a
+    /// player earns them its experience, and so does one that dies of a
     /// status effect the player caused (`by`: a wound they dealt bleeds it to death).
     pub(in crate::world) fn dies(
         &mut self,
@@ -1291,11 +1289,11 @@ impl World {
         } else {
             // The break lines are said with the death, before what the kill earned.
             let earned = self.news.len();
-            // An ally's kill is its master's (spec §8 "Allies"; `ally.rs`).
+            // An ally's kill is its master's (`ally.rs`).
             let player = self.state.player;
             let master = by.and_then(|b| self.master_of(b)).filter(|&m| m == player);
             let credited = by == Some(player) || master.is_some();
-            // A kill builds the killer's resources (spec §8 "Resources").
+            // A kill builds the killer's resources.
             if let Some(by) = master.or(by) {
                 self.gain_resource(by, Build::Kill);
             }
@@ -1339,7 +1337,7 @@ impl World {
 
     /// Creature `id` dies: it leaves the world, and what it carried (worn and wielded things
     /// too) falls on its cell, on top of what lies there, in the order it carried them, and its
-    /// corpse on top of that (spec §8 "Hunger"); `stoned`, it is a statue instead (`statue.rs`);
+    /// corpse on top of that; `stoned`, it is a statue instead (`statue.rs`);
     /// struck dead by Soulglass, crystals take the corpse's and its stock's place (`crystal.rs`).
     /// `by_player`: the player killed it. Returns the lines for an animated thing's components that
     /// broke as they fell, if the player saw it ([`World::break_lines`]).
@@ -1357,7 +1355,7 @@ impl World {
         }
         // A Pit's warden's death seals its own Pit, never the slain list (`pit.rs`).
         self.seal_pit(&actor.level, actor.creature);
-        // A summoned ally leaves nothing: no corpse, no pile (spec §8 "Allies": "Summons"). Nor
+        // A summoned ally leaves nothing: no corpse, no pile. Nor
         // does one risen berserk (`corpse_spell.rs`).
         if actor.risen.is_some()
             || (actor.ally.as_ref())
@@ -1366,7 +1364,7 @@ impl World {
             self.fallen.push(actor);
             return Vec::new();
         }
-        // An animated thing's body falls whole or not at all (spec §8 "Animated objects").
+        // An animated thing's body falls whole or not at all.
         let (mut dropped, broken) = self.remains(&actor);
         let mut lines = self.break_lines(&actor.level, actor.pos, &broken);
         dropped.extend(self.loot_of(&actor));
@@ -1396,10 +1394,10 @@ impl World {
         }
         if !stoned && !glassed {
             self.leave_corpse(&actor);
-            // In a cursed room the dead rise (spec §7 "Special rooms"; `curse.rs`).
+            // In a cursed room the dead rise (`curse.rs`).
             lines.extend(self.curse_corpse(&actor, by_player));
         }
-        // A dead shopkeeper's goods are free to take (spec §7 "Shops").
+        // A dead shopkeeper's goods are free to take.
         self.keeper_died(id, &actor.level);
         // A dead escort fails its quest (`escort.rs`).
         lines.extend(self.escort_dies(&actor));
@@ -1489,7 +1487,7 @@ impl World {
         )
     }
 
-    /// The player kicks `target` (spec §8 "Doors"): an unarmed blow in melee, whatever they
+    /// The player kicks `target`: an unarmed blow in melee, whatever they
     /// wield ([`Actor::kick`]: it draws on and trains unarmed fighting, and no fighting style),
     /// said and shown like any blow, with the free blows the end of an attack brings
     /// ([`World::after_attack`]).
@@ -1524,12 +1522,11 @@ impl World {
         }
     }
 
-    /// The player bashes whoever stands in `dir` with the shield they hold (spec §8 "Weapon
-    /// skills"): a blow like any other ([`World::player_attacks`]), with the shield's `bash`
-    /// dice and shield bashing's benefits, for the price of a blow with the shield (`melee`, its
-    /// own affixes and what the player wears, never the wielded weapon's cost or affixes:
-    /// [`World::attack_cost`]), and the free blows the end of an attack brings
-    /// ([`World::after_attack`]). Refused (no time) without a
+    /// The player bashes whoever stands in `dir` with the shield they hold: a blow like any other
+    /// ([`World::player_attacks`]), with the shield's `bash` dice and shield bashing's benefits,
+    /// for the price of a blow with the shield (`melee`, its own affixes and what the player wears,
+    /// never the wielded weapon's cost or affixes: [`World::attack_cost`]), and the free blows the
+    /// end of an attack brings ([`World::after_attack`]). Refused (no time) without a
     /// shield to bash with, with nobody there, and against someone not hostile.
     pub(in crate::world) fn bash(&mut self, dir: Dir, events: &mut Vec<Event>) -> Spent {
         let content = self.content.clone();

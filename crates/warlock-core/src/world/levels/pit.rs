@@ -1,4 +1,4 @@
-//! The Pits' records and the `portal` miscast (spec §7 "The Pits", #1297; the miscasts design
+//! The Pits' records and the `portal` miscast (#1297; the miscasts design
 //! §7.2–§7.3). A Pit is an instance of the portal branch (Hellegeat), its floors
 //! `hellegeat@S:N` made from the run seed and the id alone (`mapgen`, `endless.rs`), so all a run
 //! keeps of one is its record here and the mouth on the level it opened on.

@@ -1,4 +1,4 @@
-//! Burden (spec §8 "Burden"): its levels, the races' sizes, and sample carrying limits.
+//! Burden: its levels, the races' sizes, and sample carrying limits.
 
 use super::util::{at_normal_pace, factor};
 use std::fmt::Write as _;
@@ -6,7 +6,7 @@ use warlock_core::burden::{self, Burden, Load};
 use warlock_core::content::{BASE_TURN, Content, price};
 use warlock_core::object::format_weight;
 
-/// What each level of burden costs (spec §8 "Burden"), from the rules' own numbers.
+/// What each level of burden costs, from the rules' own numbers.
 pub(super) fn burden_levels(_content: &Content) -> String {
     let mut out = String::from(
         "| Burden | You carry | Every action takes | Dexterity adds to Defence | Your steps |\n\

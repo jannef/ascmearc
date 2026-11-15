@@ -1,4 +1,4 @@
-//! Malison (spec §8 "Class abilities"; #905; `world/magic/malison.rs`, `caster.rs::lore_blow`): the
+//! Malison (#905; `world/magic/malison.rs`, `caster.rs::lore_blow`): the
 //! witch's at 18. The bite: a creature under a hex takes 3 more from her blows and her spells
 //! (Poison lore's +2 on the poisoned lands with spells too); none on an unhexed one. The tithe:
 //! a creature dying under a hex of hers, by any cause and anyone's hand, pays her half its level

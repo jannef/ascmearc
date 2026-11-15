@@ -1,4 +1,4 @@
-//! Protection in the world (spec §8 "Combat"): what is worn and a hide add up (a shield adds
+//! Protection in the world: what is worn and a hide add up (a shield adds
 //! none), a hit soaked to nothing does nothing else and glances off what soaked it, weapons and
 //! missiles carry their penetration, and fights against protected targets still replay.
 

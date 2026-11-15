@@ -1,4 +1,4 @@
-//! The screen stack (spec §6): every modal screen — main menu, new run and character creation,
+//! The screen stack: every modal screen — main menu, new run and character creation,
 //! pause, settings, controls, the `?` help, the inventory, the equipment screen and its choice of
 //! what goes in a slot, the character screen, the weapon skills screen, choosing what to pick up,
 //! drop, or throw, the abilities menu, and the dialogue screen — lives on one stack, bottom to
@@ -165,7 +165,7 @@ pub enum ScreenName {
     /// the place of the read list where that scroll was chosen (as `--screen`, the first stack's
     /// scroll).
     Identify,
-    /// Choose what to temper at a forge's anvil (the Temper ability, spec §7 "Special rooms"):
+    /// Choose what to temper at a forge's anvil (the Temper ability):
     /// the weapons and armour carried.
     Temper,
     /// Choose a wooden weapon to whittle with a knife (the Whittle ability).
@@ -177,11 +177,11 @@ pub enum ScreenName {
     MakeDo,
     /// Choose a loose gem to cut (Jewelcraft's Cut recipe, from its profession's screen).
     Cut,
-    /// Choose a scroll to make out unread (the Decipher ability, spec §8 "Scrolls"): those of a
+    /// Choose a scroll to make out unread (the Decipher ability): those of a
     /// type not yet identified.
     Decipher,
-    /// Choose what to give a kept beast of the player's for its neck (the Give ability, spec §8
-    /// "Allies"): what fits a neck, carried.
+    /// Choose what to give a kept beast of the player's for its neck (the Give ability): what fits
+    /// a neck, carried.
     Give,
     /// The abilities menu (`a` in play): racial, class, skill, weapon skill, and item
     /// abilities, to choose one to use.
@@ -1053,7 +1053,7 @@ fn startup_screens(screen: Option<ScreenName>, in_run: bool) -> Vec<ScreenName> 
     }
 }
 
-/// Opens the story screen once as a new run begins (spec §8 "Background story"): over its
+/// Opens the story screen once as a new run begins: over its
 /// first turn, before any input, when the run was made here ([`Game::story_due`]: New run's
 /// Start, or a windowed start that makes a run; never Continue, Resume, `--capture`, or
 /// `--replay`), nothing else is open (`--screen` opened its own), and the character has a story.
@@ -1914,7 +1914,7 @@ mod tests {
         );
     }
 
-    /// In Grimbold's store in the courtyard (spec §7 "Shops") with 60 gold (a), a scroll of light
+    /// In Grimbold's store in the courtyard with 60 gold (a), a scroll of light
     /// (b), and an unpaid dagger (c), on the cell inside the door (to the west).
     fn in_the_shop(content: Arc<Content>) -> warlock_core::World {
         let mut world = warlock_core::World::new(content, "courtyard", None).expect("run");

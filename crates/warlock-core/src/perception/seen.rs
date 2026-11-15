@@ -36,35 +36,35 @@ pub struct SeenActor {
     #[serde(skip)]
     pub faction: Option<FactionId>,
     pub pos: Pos,
-    /// How hurt it looks: words, never hit points (spec §8 "Combat").
+    /// How hurt it looks: words, never hit points.
     pub health: Health,
-    /// How it looks when not as its type does: an animated thing by what it is made of (spec §8
-    /// "Animated objects"), which anyone sees.
+    /// How it looks when not as its type does: an animated thing by what it is made of, which
+    /// anyone sees.
     #[serde(skip)]
     pub shape: Option<Shape>,
     /// It has not noticed the player (`World::unaware`: asleep, disguised, slipped past, or
     /// hunting no one and not seeing them), told only to a player with Stalker's eye; false
-    /// for everyone otherwise (spec §8 "Surprise and sneak attacks": the unaware mark).
+    /// for everyone otherwise (the unaware mark).
     #[serde(skip)]
     pub unaware: bool,
     /// It is the player's mark, the creature their openings are in (`world/classes/mark.rs`): their
     /// own choice, so they know it.
     #[serde(skip)]
     pub marked: bool,
-    /// It is an ally of the player's (spec §8 "Allies"), which they know by sight.
+    /// It is an ally of the player's, which they know by sight.
     #[serde(skip)]
     pub ally: bool,
     /// It is the player's kept beast, a companion or a familiar (`world/allies/companion.rs`,
     /// `familiar.rs`): its name is in [`PerceptionView::allies`] under its id.
     #[serde(skip)]
     pub companion: bool,
-    /// Its grade (spec §8 "Grades"), which anyone sees: −1 lesser, +1 greater, 0
+    /// Its grade, which anyone sees: −1 lesser, +1 greater, 0
     /// neither ([`crate::grade::word`] names it).
     #[serde(skip)]
     pub grade: i8,
 }
 
-/// One of the player's allies as they know it (spec §8 "Allies"): never a number.
+/// One of the player's allies as they know it: never a number.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct AllyView {
     pub id: ActorId,
@@ -115,7 +115,7 @@ pub(super) fn allies_of(state: &WorldState, content: &Content) -> Vec<AllyView> 
         .collect()
 }
 
-/// How a creature looks by what it is made of (spec §8 "Animated objects"): an animated
+/// How a creature looks by what it is made of: an animated
 /// candlestick of silver is drawn in silver's colour.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Shape {
@@ -123,7 +123,7 @@ pub struct Shape {
     pub fg: Rgb,
     /// The material its main component is made of (look mode: "of silver").
     pub material: MaterialId,
-    /// A composite's colours (spec §8 "Animated objects"): the distinct material colours of
+    /// A composite's colours: the distinct material colours of
     /// what it wears and wields, in slot order, the first [`Shape::BANDS`]; the first `count`
     /// are used, and fewer than two mean it shows `fg` alone (a one-item thing).
     pub bands: [Rgb; Shape::BANDS],

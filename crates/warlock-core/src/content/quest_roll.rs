@@ -1,4 +1,4 @@
-//! Rolled quests (spec §8 "Quests", docs/design/adventurers-guild.md §5, #422): a `[[quest]]`
+//! Rolled quests (docs/design/adventurers-guild.md §5, #422): a `[[quest]]`
 //! whose target is drawn as the quest is given, from a **`pick`** (a pool drawn by a rule from
 //! data that already exists) or a list of authored **`[[quest.variant]]`**s. The quest stays one
 //! template in data; what was drawn is a [`Roll`], kept in the quest's record (saved), and
@@ -186,8 +186,7 @@ impl Rolled {
 
 impl Content {
     /// The dungeon branches of campaign `campaign`'s runs (its own and those outside every
-    /// campaign), in table order; no portal branch, where no quest sends anyone (spec §7 "The
-    /// Pits").
+    /// campaign), in table order; no portal branch, where no quest sends anyone.
     fn branches_of<'a>(&'a self, campaign: Option<&'a str>) -> impl Iterator<Item = &'a str> + 'a {
         (self.dungeons())
             .filter(|d| d.portal.is_none())

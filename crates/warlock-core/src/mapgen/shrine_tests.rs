@@ -1,4 +1,4 @@
-//! Shrines of a side in generated levels (spec §7 "Special rooms", `special.rs`): one stone a
+//! Shrines of a side in generated levels (`special.rs`): one stone a
 //! room, its side drawn good or evil one to one (never neutral), shown by its light.
 
 use super::*;

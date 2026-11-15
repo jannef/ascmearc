@@ -1,4 +1,4 @@
-//! The professions' recipes (spec §8 "Skills": professions; docs/dev/crafting.md): every generic
+//! The professions' recipes (professions; docs/dev/crafting.md): every generic
 //! recipe from `data/recipes/<skill>/`, a table a profession, the grades a made item comes out at,
 //! from `data/recipes.toml`'s bands and the 2d12 rules (`world/crafting/craft_make.rs::grade`), and gem
 //! cutting (`world/crafting/cut.rs`: the cut bands, a large uncut ruby's fates, the odds), and gem setting

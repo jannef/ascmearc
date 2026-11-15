@@ -1,7 +1,7 @@
-//! The spell circles' test scenario (spec §4.8 "Spell circles", docs/design/buff-circles.md §13):
+//! The spell circles' test scenario (docs/design/buff-circles.md §13):
 //! a scenario's `spells` are known from the start, a spawn's `status` is on the creature, and
-//! what the circles are drawn from shows in perception. And the circle's light (spec §8 "Status
-//! effects", the design's §8): a circled status sheds its school's faint light.
+//! what the circles are drawn from shows in perception. And the circle's light (the design's §8): a
+//! circled status sheds its school's faint light.
 
 use crate::content::SpellPurpose;
 use crate::test_support::{CONTENT, run};

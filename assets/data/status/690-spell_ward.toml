@@ -1,4 +1,4 @@
-# Battle caster's Spell guard (spec §8 "Fighting styles"): a spell that lands while its caster
+# Battle caster's Spell guard: a spell that lands while its caster
 # fights in armour leaves a ward about them, a Defence point, until their next action.
 [[status]]
 id = "spell_ward"

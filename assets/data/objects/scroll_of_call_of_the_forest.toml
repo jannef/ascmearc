@@ -1,4 +1,4 @@
-# A scroll of call of the forest (spec §8 "Scrolls", "Spells"): read it (`r`), and it casts Call of
+# A scroll of call of the forest: read it (`r`), and it casts Call of
 # the forest, a level-20 spell, at its own rungs, free of mana; its grimoire teaches the spell for
 # good, though it is very hard to learn (`study_difficulty`). Level and frequency by its spell's
 # level (README.toml): the lower, the commoner the scroll.

@@ -1,4 +1,4 @@
-# A campaign (spec §3, docs/dev/campaign.md): a world of its own, with its overworld and levels
+# A campaign (docs/dev/campaign.md): a world of its own, with its overworld and levels
 # (levels/), the scenarios that start in it (scenarios/), its dungeon branches, quests, dialogue,
 # and its own creature types (data/dungeons/, data/quests/, data/dialogue/, data/creatures/), and
 # any vaults only it stamps (vaults/). Everything else under assets/ is shared by every campaign.
@@ -10,7 +10,7 @@
 #   kind         "campaign" (the default) or "test": a test world, whose scenarios New run lists
 #                in developer builds only, and which the player wiki leaves out
 #
-# The showcase: the test world, a hand-made tour of every engine capability (spec §3).
+# The showcase: the test world, a hand-made tour of every engine capability.
 id = "showcase"
 name = "The Showcase"
 description = "A small world that shows everything the game can do, one room per feature."

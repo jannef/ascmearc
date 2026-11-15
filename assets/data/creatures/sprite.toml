@@ -21,7 +21,7 @@ size = "small"
 stats = { strength = 8, dexterity = 14, toughness = 5, intelligence = 11, willpower = 11, presence = 13 }
 base_hp = 1
 weapon_skills = { bows = 1 }
-# Its gear (spec §8 "Creature gear"): a short bow, as a rule, and arrows.
+# Its gear: a short bow, as a rule, and arrows.
 racial_weapon = "short_bow"
 [creature.attack]
 damage = "1d4"

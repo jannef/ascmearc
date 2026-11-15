@@ -1,4 +1,4 @@
-//! Teeming dens (spec §7 "Special rooms"; `docs/dev/special-rooms.md`): a generated floor's
+//! Teeming dens (`docs/dev/special-rooms.md`): a generated floor's
 //! special room whose effect has a `swarm` is filled with sleeping creatures and their hoard.
 //!
 //! Nothing about a particular den is hand-made. Its sleepers are drawn by the floor's danger from

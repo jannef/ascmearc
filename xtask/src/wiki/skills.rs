@@ -1,7 +1,6 @@
-//! Skills (spec §8 "Skills"): what each does and trains on, what it gives by value, who trains
-//! it, the provisional increase curve, the odds of stealing (spec §8 "Stealing"), how long an
-//! intimidated foe flees (spec §8 "Skills": Intimidate), and what foraging finds (spec §8
-//! "Foraging").
+//! Skills: what each does and trains on, what it gives by value, who trains
+//! it, the provisional increase curve, the odds of stealing, how long an
+//! intimidated foe flees (Intimidate), and what foraging finds.
 
 use super::util::{Term, anchored, capital, factor, link, percent_of};
 use std::fmt::Write as _;
@@ -313,7 +312,7 @@ fn benefit_cell(b: &warlock_core::skills::Benefit, value: u16) -> String {
 /// The margins the resist table shows: how far a skill's value stands above a creature's level.
 const RESIST_MARGINS: [u16; 12] = [0, 1, 4, 5, 10, 15, 20, 25, 30, 35, 40, 60];
 
-/// What the skills with the resist benefit (Knowledge, spec §8 "Skills") add to your check
+/// What the skills with the resist benefit (Knowledge) add to your check
 /// against a creature's drain, a disease its attack carries, or its hold, by how far the skill's
 /// value stands above the creature's level.
 pub(super) fn skill_resist(content: &Content) -> String {
@@ -410,7 +409,7 @@ pub(super) fn skill_grants(content: &Content) -> String {
     out
 }
 
-/// How often a theft goes unnoticed (spec §8 "Stealing"), by the thief's edge: their Dexterity
+/// How often a theft goes unnoticed, by the thief's edge: their Dexterity
 /// modifier plus what their Steal skill gives, less the victim's Willpower modifier. The
 /// contest's dice are the same on both sides, so only the difference counts.
 pub(super) fn stealing(_content: &Content) -> String {
@@ -429,7 +428,7 @@ pub(super) fn stealing(_content: &Content) -> String {
     out
 }
 
-/// How often a foe is fooled by the player's feint (spec §8 "Skills": Bluff;
+/// How often a foe is fooled by the player's feint (Bluff;
 /// `data/rules/feint.toml`), by the edge of their Presence modifier and what Bluff adds over its
 /// Willpower modifier.
 pub(super) fn feinting(content: &Content) -> String {
@@ -457,9 +456,9 @@ pub(super) fn feinting(content: &Content) -> String {
     out
 }
 
-/// How long a foe that fails to keep its nerve against the player's Intimidate flees (spec §8
-/// "Skills": Intimidate; `data/rules/intimidate.toml`): each rung of the ladder, by the points
-/// Intimidate adds and the lowest value of the skill that adds them.
+/// How long a foe that fails to keep its nerve against the player's Intimidate flees (Intimidate;
+/// `data/rules/intimidate.toml`): each rung of the ladder, by the points Intimidate adds and the
+/// lowest value of the skill that adds them.
 pub(super) fn intimidating(content: &Content) -> String {
     let Some(rules) = content.intimidate() else {
         return "Nobody intimidates anyone.\n".into();
@@ -483,10 +482,10 @@ pub(super) fn intimidating(content: &Content) -> String {
     out
 }
 
-/// How often the player slips past a creature that would see them by darkvision alone (spec §8
-/// "Surprise and sneak attacks"; `data/surprise.toml` `[slip]`), by their edge: their Dexterity
-/// modifier plus Stealth's `slip`, less the creature's Willpower modifier and Spot. The same
-/// contest as a theft's: only the difference counts.
+/// How often the player slips past a creature that would see them by darkvision alone
+/// (`data/surprise.toml` `[slip]`), by their edge: their Dexterity modifier plus Stealth's `slip`,
+/// less the creature's Willpower modifier and Spot. The same contest as a theft's: only the
+/// difference counts.
 pub(super) fn slipping_past(content: &Content) -> String {
     let Some(turns) = content.surprise().and_then(|r| r.slip_turns) else {
         return "Nobody slips past anyone.\n".into();
@@ -509,7 +508,7 @@ pub(super) fn slipping_past(content: &Content) -> String {
     out
 }
 
-/// What a forage finds on each land (spec §8 "Foraging"; `data/forage.toml`), by landscape:
+/// What a forage finds on each land (`data/forage.toml`), by landscape:
 /// the chance before Survival, how many of a find, and each find's share, by name.
 pub(super) fn foraging(content: &Content) -> String {
     let Some(rules) = content.forage() else {
@@ -555,7 +554,7 @@ pub(super) fn foraging(content: &Content) -> String {
     out
 }
 
-/// Fletching's numbers (spec §8 "Fletching"; the `count = "fletch"` recipes, `data/fletch.toml`,
+/// Fletching's numbers (the `count = "fletch"` recipes, `data/fletch.toml`,
 /// `data/recipes.toml`'s bands, and Fletcher's effect): the time, the check, the count, the
 /// margin's bands, and what each head makes.
 pub(super) fn fletching(content: &Content) -> String {
@@ -619,7 +618,7 @@ pub(super) fn fletching(content: &Content) -> String {
     out
 }
 
-/// What the Heal skill treats (spec §8 "Treating oneself"): each status with a `treat` table at
+/// What the Heal skill treats: each status with a `treat` table at
 /// its least and most degrees, then each disease, with the check's difficulty, the chance of
 /// making it at a modifier of +0 and of +8 (Intelligence modifier plus Heal), and what comes of
 /// a made and a failed try. Statuses in file order, diseases by name.

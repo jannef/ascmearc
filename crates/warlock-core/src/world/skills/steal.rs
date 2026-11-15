@@ -1,9 +1,9 @@
-//! Stealing (spec §8 "Stealing"; #234): the Steal skill's use, [`crate::Action::Steal`]
+//! Stealing (#234): the Steal skill's use, [`crate::Action::Steal`]
 //! (`steal:DIR`), chosen from the abilities menu ([`crate::ability::Ability::Steal`]).
 //!
 //! The player, trained in a skill with the `steal` benefit (`data/skills/`: Steal), tries to
 //! lift something from a creature next to them that they see and that is not hostile to them.
-//! It is a **contest** (spec §8 "Checks", [`check::contest`]): their Dexterity modifier plus what
+//! It is a **contest** ([`check::contest`]): their Dexterity modifier plus what
 //! the Steal skill gives against the victim's Willpower modifier (both of the effective scores),
 //! four draws of the gameplay stream. It takes the `steal` action's time whatever comes of it and
 //! may earn the skill a training mark ([`Use::Steal`]).
@@ -54,7 +54,7 @@ impl World {
             return Spent::Nothing;
         };
         let name = capitalized(&self.called(&self.state.actors[&victim]));
-        // An animated thing (spec §8 "Animated objects"): what it carries is what it is.
+        // An animated thing: what it carries is what it is.
         if (content
             .creature(self.state.actors[&victim].creature)
             .animated)
@@ -63,7 +63,7 @@ impl World {
             self.say("It is all of a piece.");
             return Spent::Nothing;
         }
-        // A mimic (spec §8 "Mimics"): what it carries is inside it.
+        // A mimic: what it carries is inside it.
         if content.is_mimic(self.state.actors[&victim].creature) {
             self.say("It has no pockets.");
             return Spent::Nothing;
@@ -74,7 +74,7 @@ impl World {
             ));
             return Spent::Nothing;
         }
-        // Priced before anything changes hands (spec §8 "Burden").
+        // Priced before anything changes hands.
         let price = self.price_of(player, ActionKind::Steal);
         let thief = self.state.player();
         let modifier = thief.effective_stats(&content).modifier(Stat::Dexterity)

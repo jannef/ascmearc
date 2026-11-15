@@ -1,4 +1,4 @@
-# A scroll of rebuke (spec §8 "Scrolls", "Spells"): read it (`r`), and it casts Rebuke, a level-14
+# A scroll of rebuke: read it (`r`), and it casts Rebuke, a level-14
 # spell, free of mana; its grimoire teaches the spell for good. Level and frequency by its spell's
 # level (README.toml): the lower, the commoner the scroll.
 [[object]]

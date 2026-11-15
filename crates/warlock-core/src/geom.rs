@@ -64,7 +64,7 @@ impl Pos {
 
     /// The cells from `self` through `through` and on beyond it, endlessly (the caller bounds
     /// it): the same line as [`Pos::line_between`] up to `through`, then on along it. Empty if
-    /// the two are the same cell. The line a missile flies (spec §8 "Ranged combat").
+    /// the two are the same cell. The line a missile flies.
     pub fn ray(self, through: Self) -> impl Iterator<Item = Pos> {
         let (dx, dy) = ((through.x - self.x).abs(), -(through.y - self.y).abs());
         let (sx, sy) = ((through.x - self.x).signum(), (through.y - self.y).signum());

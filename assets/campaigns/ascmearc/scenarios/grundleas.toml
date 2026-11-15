@@ -1,4 +1,4 @@
-# A dev scenario of the Ascmearc (spec §7 "The endless branch"): straight onto the first floor of
+# A dev scenario of the Ascmearc: straight onto the first floor of
 # Grundlēas. Unlike the other branches' scenarios its `<` leads out: an endless branch's first
 # floor always climbs out to the overworld.
 name = "Grundlēas"

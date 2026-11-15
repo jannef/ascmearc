@@ -1,4 +1,4 @@
-# The witch's familiar (spec §8 "Class abilities", "Allies"; docs/design/witch-familiar.md,
+# The witch's familiar (docs/design/witch-familiar.md,
 # §16 the owner's round; docs/dev/familiar.md): a small beast of the old craft at her heel, a
 # kept beast of the ally core as the ranger's companion is. This file holds only the familiar's
 # own data; the allies' rules are allies.toml, the kept beasts' growth companions.toml. Without

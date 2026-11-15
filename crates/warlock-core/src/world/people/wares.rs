@@ -1,4 +1,4 @@
-//! A trader's one offer (spec §8 "Dialogue": "An offer"; the pedlar, #808,
+//! A trader's one offer (the pedlar, #808,
 //! docs/design/overworld-encounters.md §15 Q7): one item at a fixed price, take it or leave it.
 //!
 //! - **Its making**: the first time the player chats with or asks a creature whose dialogue has

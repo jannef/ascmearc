@@ -1,4 +1,4 @@
-# Foraging (spec §8 "Foraging"; #547): living off the land, the Survival skill's use, chosen
+# Foraging (#547): living off the land, the Survival skill's use, chosen
 # from the abilities menu (`a`, Forage). Whoever is trained in Survival (skills/: the skill
 # with the `forage` benefit) can forage in the wild: on the overworld, or in a local area of it,
 # wherever the land has a row below, and never standing in water (or on ice).

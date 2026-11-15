@@ -4,7 +4,7 @@ name = "Music"
 description = "Singing: how far your songs carry into a heart, and how long they stay there."
 kind = "rules"
 mark = [{ on = "song", chance = 100 }]
-# A song's degrees (spec §8 "Class abilities", the bard's songs): one more at 50 and at 100,
+# A song's degrees (the bard's songs): one more at 50 and at 100,
 # then one more for every 100 past it, up to what the status takes. And how hard those who hear a
 # song against them find it to resist: +4 to the check's difficulty at 100, +8 at 200.
 benefit = [

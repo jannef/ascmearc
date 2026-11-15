@@ -7,7 +7,7 @@ use super::{
 use std::collections::BTreeMap;
 
 impl Content {
-    /// The damage types (spec §8 "Damage types"), in file order (by [`DamageTypeId`]); empty
+    /// The damage types, in file order (by [`DamageTypeId`]); empty
     /// without `data/damage_types.toml`, and then nothing is typed.
     pub fn damage_types(&self) -> &[DamageTypeDef] {
         &self.damage_types
@@ -22,7 +22,7 @@ impl Content {
         u8::try_from(i).ok().map(DamageTypeId)
     }
 
-    /// The alternative resources (spec §8 "Resources"), in file order (by [`ResourceId`]);
+    /// The alternative resources, in file order (by [`ResourceId`]);
     /// empty without `data/resources.toml`.
     pub fn resources(&self) -> &[ResourceDef] {
         &self.resources
@@ -112,7 +112,7 @@ impl Content {
     }
 
     /// The first status that hides its sufferer (`hides`: Disguised), if any: the one a mimic is
-    /// placed with (spec §8 "Mimics").
+    /// placed with.
     pub fn disguise_status(&self) -> Option<StatusId> {
         (self.status_ids()).find_map(|(id, def)| def.hides.then_some(id))
     }
