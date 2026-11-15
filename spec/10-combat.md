@@ -52,6 +52,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - Surprised is flat-footed: no Dexterity or Dodge in Defence, no free blows, and a slower next action.
 - Sneak dice land on a hit against an unaware or flat-footed target. They come after Protection and are never multiplied by a critical. Missiles and spells count as sneak attacks only at short range.
 - Creatures without vitals take no sneak dice.
+- An invisible player can surprise a creature with every blow, unless that creature was already hunting them.
 - Slipping past: a creature that would see the player only by darkvision makes one contest against them, once. If the player wins, it treats them as unseen until the light, an attack, harm, or time ends the slip.
 - Surprise is told after the fact, in words, never as a roll.
 - Stalker's eye shows which creatures are unaware. That is computed only for a player who has it, so nothing leaks.

@@ -9,7 +9,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - Dumps show the perception snapshot only. Ground-truth layers are developer-only and marked so.
 - Captures are reproducible: frozen visual time, a fixed window size and scale, and flags that open a screen, press keys, or aim.
 - Developer builds add in-game developer commands (reveal the map, switch vision, a light overlay, snapshots, skip time, set the weather, identify all) and a seed field on New run. Elsewhere the seed is random and never mentioned to the player.
-- The developer commands have keys of their own in a context of their own, and Controls rebinds them in developer builds.
+- The developer commands (F2 to F9) have fixed keys of their own in a context of their own. They are not rebindable, in developer builds too.
 - The command-line reference (flags, layers, action syntax) is `docs/dev/cli.md`.
 - A successful compile verifies nothing visual: verify with tests, dumps, logs, and screenshots, and look at them.
 

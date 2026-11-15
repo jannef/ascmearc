@@ -79,7 +79,7 @@ Only enemies have these; the player never does.
 - Services (cure, mend, identify, training) cost gold and are refused at no cost when there is nothing to do. A town's goodwill, earned by its quests, lowers their price.
 - A rumour marks the way on the overworld map. It never reveals a hidden location: quests stay the only key.
 - A muttering creature is heard only when its voice reaches the player.
-- Moving into a hostile creature attacks it. Moving into any other creature swaps places with it. A creature too big to squeeze past, or a shopkeeper, refuses; refusals take no time. An Escape artist may wriggle past a creature that refuses, never a shopkeeper (the owner).
+- Moving into a hostile creature attacks it. Moving into any other creature swaps places with it. A shopkeeper refuses, and so does any creature set as unmovable by hand; refusals take no time. An Escape artist may wriggle past a creature that refuses, never a shopkeeper (the owner).
 
 ## Quests
 

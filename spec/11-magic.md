@@ -94,7 +94,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - Found unidentified: rarity shows, affixes and rare names do not, but magic works all the same while worn or wielded. Wearing never identifies.
 - Presentation reaches affixes only once identified; nothing can leak them.
 - Effects apply only while worn or wielded, never while carried. Attack effects are local on weapons, global elsewhere.
-- Magic does not change an item's worth: it is priced as its base item.
+- Magic raises an item's worth: a magic or rare item is priced above its base item, and the price follows what the magic is.
 - Each unique is placed by content once; loot never makes one.
 
 ## Scrolls

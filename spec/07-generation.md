@@ -32,7 +32,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 ## Danger and spawning
 
 - Every level has a danger, 0 where none is given. Nothing is drawn or spawns at 0.
-- A draw weighs creature types by how near their level is to the danger, times their rarity. Some draws are strays (from anything the campaign knows) or out of depth (deeper than the floor, reaching further at lower odds, up to a cap).
+- A draw weighs creature types by how near their level is to the danger, times their rarity. Some draws are strays (from anything the campaign knows) or out of depth (deeper than the floor, reaching further at lower odds, with no cap).
 - The owner's rule: "anything may come at astronomical odds; that is where the stories come from."
 - Dread monsters come at one draw in N, set by the place and rising deeper.
 - A unique type is met once a run.
@@ -61,7 +61,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - A keeper who is robbed, attacked, or catches the player stealing joins `outraged` and comes after them. That shop never trades again.
 - A dead keeper's shop is abandoned: its goods and purse are free.
 - The only number the player sees is the price. Presence, Negotiation, talents, and a good keeper's view of the player's alignment move prices within a cap. The player never sees by how much.
-- Magic items are priced as their base item. Rotten food, junk, keys, and quest letters are never traded.
+- A magic item is priced for its magic, above its base item. Rotten food, junk, keys, and quest letters are never traded.
 - Unpaid goods cannot be shot or thrown.
 - The Steal skill takes from a keeper's pack, never from the shop floor.
 - Generated shops appear only on rooms levels, in a single-door room off the arrival room. Each branch has its own odds, kinds, and keepers. A town's own kinds are never generated.
