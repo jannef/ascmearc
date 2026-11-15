@@ -1217,9 +1217,12 @@ impl<'a> PerceptionView<'a> {
         let Some(view) = self.shop_here() else {
             return vec![None; inventory.len()];
         };
-        let parts = unpaid_parts(inventory, &view.shop.unpaid);
+        let unpaid = &view.shop.unpaid;
+        let parts = unpaid_parts(inventory, unpaid);
+        // Priced as the bill keeps it: as it was known when taken.
+        let line = |s: &'a Stack| unpaid.iter().find(|l| s.billed_as(l)).unwrap_or(s);
         (inventory.iter().zip(parts))
-            .map(|(s, n)| (n > 0).then(|| view.bill(&part_of(s, n))))
+            .map(|(s, n)| (n > 0).then(|| view.bill(&part_of(line(s), n))))
             .collect()
     }
 

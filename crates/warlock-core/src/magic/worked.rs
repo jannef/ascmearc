@@ -183,13 +183,22 @@ impl Worked {
     /// then, marked, `mark_percent` % more (rounded down;
     /// [`TalentBook::mark_percent`](crate::content::TalentBook::mark_percent)).
     pub fn value(&self, worth: u64, mark_percent: u32) -> u64 {
-        let worth = if self.damaged {
+        self.with_mark(self.made(worth), mark_percent)
+    }
+
+    /// `worth` by its grade: multiplied by it, or halved (rounded up) while damaged.
+    pub fn made(&self, worth: u64) -> u64 {
+        if self.damaged {
             worth.div_ceil(2)
         } else {
             let grade = self.improved.len().checked_sub(1);
             let times = grade.and_then(|g| GRADES.get(g)).map_or(1, |&(_, by)| by);
             worth.saturating_mul(times)
-        };
+        }
+    }
+
+    /// `worth` with its maker's mark: `mark_percent` % more (rounded down) if marked.
+    pub fn with_mark(&self, worth: u64, mark_percent: u32) -> u64 {
         match self.marked {
             true => worth.saturating_mul(100 + u64::from(mark_percent)) / 100,
             false => worth,

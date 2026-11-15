@@ -126,9 +126,9 @@ developer notes (CLAUDE.md, `docs/dev/`).
     character (`npc`, below: Cēaptūn's smith, Eadric, who teaches Metalcraft, §8 "Dialogue"), and
     messages call it by its name ("Grimbold says: ...";
     `World::called`); an outraged keeper is in no mood to talk.
-  - **Magic items** (§8 "Magic items") are priced as their base item, identified or not, and
-    sold to a shop they lie on its floor, magic and all, for sale at that price. Keys and quest
-    letters are worth nothing and never traded.
+  - **Magic items** (§8 "Magic items") cost more: their rarity raises the price at once, and
+    their affixes once identified (#1709, `data/rules/magic_worth.toml`); the bill keeps an item
+    as it was known when taken. Keys and quest letters are worth nothing and never traded.
   - **Generation** (`mapgen/shop.rs`): after special rooms, last of all, with `chance` a rooms
     level picks one of its rooms (not the arrival room, not a vault, not a locked room) with a
     single door, no stairs, nothing lying in it, no special room, and no patrol in it,

@@ -228,6 +228,30 @@ pub(super) fn shops(content: &Content) -> String {
     out
 }
 
+/// What magic adds to an item's worth (`data/rules/magic_worth.toml`): by rarity, then by each
+/// identified affix's tier level (the affixes' tiers run to item level 12).
+pub(super) fn magic_worth(content: &Content) -> String {
+    let mut out = String::from("| Rarity | Worth added |\n|---|---:|\n");
+    let Some(rules) = content.magic_worth() else {
+        return out;
+    };
+    let _ = writeln!(out, "| Magic | {}% |", rules.rarity.magic);
+    let _ = writeln!(out, "| Rare | {}% |", rules.rarity.rare);
+    out.push_str("\n| Tier's item level |");
+    let levels = 1..=12u8;
+    for level in levels.clone() {
+        let _ = write!(out, " {level} |");
+    }
+    out.push_str("\n|---|");
+    out.push_str(&"---:|".repeat(levels.clone().count()));
+    out.push_str("\n| Gold per affix |");
+    for level in levels {
+        let _ = write!(out, " {} |", rules.affix_worth(level));
+    }
+    out.push('\n');
+    out
+}
+
 /// The player's own weight (the pack holds any number of stacks: weight is its only limit).
 pub(super) fn pack(content: &Content) -> String {
     let player = content

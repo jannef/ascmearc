@@ -38,6 +38,8 @@ one three times, a Masterwork five times. A shop pays far less. Every delivery t
 A piece that bears your [maker's mark](class-craftsperson.md#makers-mark) is worth half again, so it is
 paid **50 % more** than the same piece unmarked.
 
+Magic you know of counts as it does in a shop (see [Magic items](shops.md#magic-items)).
+
 The patron never asks who made it: a Fine piece you found will do. A plain one will not ("I asked
 for Fine work"), and a damaged one is no better than plain.
 

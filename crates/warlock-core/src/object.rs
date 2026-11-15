@@ -473,14 +473,37 @@ impl Stack {
     /// What it is worth, in gold coins: each one's value, made of its [`Stack::parts`]
     /// ([`crate::content::ObjectDef::value_with`]: a gem by its size and cut; a piece times its
     /// unit, [`crate::piece::unit`]), times the count.
-    /// Magic does not change it; an anvil's work and a maker's mark do ([`Worked::value`]).
+    /// Magic does not change it (a shop's price does: [`Stack::worth`]); an anvil's work and a
+    /// maker's mark do ([`Worked::value`]).
     pub fn value(&self, content: &Content) -> u64 {
-        let def = content.object(self.object);
-        let each = u64::from(def.value_with(&self.parts(content), content))
-            * u64::from(crate::piece::unit(content, def, self));
+        let each = self.each_of_parts(content);
         let mark = content.talents().mark_percent();
         let each = self.worked().map_or(each, |w| w.value(each, mark));
         each * u64::from(self.count)
+    }
+
+    /// What it is worth to a shop or a patron, in gold coins (spec §7 "Shops"; #1709): each one's
+    /// value as made ([`Stack::value`]: its parts, an anvil's grade), its magic as the player
+    /// knows it added ([`crate::content::MagicWorth`]: the rarity always, the affixes once
+    /// identified), then a maker's mark's percent on top of it all, times the count. A plain item
+    /// is worth its value.
+    pub fn worth(&self, content: &Content) -> u64 {
+        let (Some(magic), Some(rules)) = (self.magic(), content.magic_worth()) else {
+            return self.value(content);
+        };
+        let made = self.each_of_parts(content);
+        let made = self.worked().map_or(made, |w| w.made(made));
+        let each = rules.add(content, made, magic);
+        let mark = content.talents().mark_percent();
+        let each = self.worked().map_or(each, |w| w.with_mark(each, mark));
+        each * u64::from(self.count)
+    }
+
+    /// One's value by what it is made of alone: its parts, a piece times its unit.
+    fn each_of_parts(&self, content: &Content) -> u64 {
+        let def = content.object(self.object);
+        u64::from(def.value_with(&self.parts(content), content))
+            * u64::from(crate::piece::unit(content, def, self))
     }
 
     /// What it is called as it is made, singular and plural, without an article, a count, or
@@ -645,6 +668,28 @@ impl Stack {
             worked: self.worked.clone(),
             ..Stack::new(self.object, count)
         }
+    }
+
+    /// `count` of it as a shop's bill keeps it (#1709): its goods with its magic as the player
+    /// knew it when it was taken, which the bill is priced by.
+    pub(crate) fn bill_line(&self, count: u32) -> Stack {
+        let mut line = self.goods(count);
+        line.magic = self.magic.clone().map(|mut m| {
+            m.carried = 0;
+            m
+        });
+        line
+    }
+
+    /// Whether it is what a shop's bill line `line` counts: the same goods with the same magic,
+    /// identified since or not.
+    pub fn billed_as(&self, line: &Stack) -> bool {
+        self.same_goods(line)
+            && match (self.magic(), line.magic()) {
+                (None, None) => true,
+                (Some(a), Some(b)) => a.same_roll(b),
+                _ => false,
+            }
     }
 }
 

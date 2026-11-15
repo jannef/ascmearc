@@ -177,6 +177,7 @@ above.
 | Signature gift (a keeper's own, sure) | `profane-gifts.md#each-keepers-own-gift` |
 | Shop, buying, selling, prices | `shops.md#buying`, `shops.md#selling`, `shops.md#prices` |
 | Gold, money | `shops.md#money` |
+| A magic item's worth, its price in shops | `shops.md#magic-items` |
 | Theft from a shop | `shops.md#theft` |
 | **Your character** | |
 | Character, character creation | `character.md` |

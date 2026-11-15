@@ -1,0 +1,22 @@
+# What magic adds to an item's worth (spec §7 "Shops"; #1709; crates/warlock-core/src/content/
+# magic_worth.rs, read by `Stack::worth` in object.rs). A shop's prices (asking and paying) and
+# the craftsperson's patron read the worth: the item as it is made (its parts, an anvil's grade),
+# then its magic, then a maker's mark's half again on top of it all.
+#
+# Only what the player knows is priced (the keeper knows no more): the rarity always (it shows
+# at once), the affixes once the item is identified. A shop's bill keeps an item as it was when
+# it was taken (docs/dev/shops.md).
+#
+# Fields:
+#   rarity   percent added to the item's worth as made: `magic`, `rare` (a unique is rare)
+#   affix    gold added for each identified affix: `each`, plus `per_level` times the item level
+#            its tier is found from (data/affixes/: Sharp's top tier, level 12, adds
+#            50 + 25 × 12 = 350)
+#
+# Tuned so that magic clearly pays: a dagger (worth 30) is worth 45 as a magic item unidentified
+# and 45 + 75 = 120 identified with Sharp's first tier (level 1), four times its base; a rare long
+# sword (worth 80) with four affixes of level 8 tiers is worth 160 + 4 × 250 = 1160, about what an
+# aristocrat's stipend has put by at level 5.
+
+rarity = { magic = 50, rare = 100 }
+affix = { each = 50, per_level = 25 }

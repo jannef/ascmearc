@@ -25,8 +25,9 @@ rooms](special-rooms.md#by-dungeon)).
 [Gold](objects.md#class-coins) coins (`$`) are the money. Every [object](objects.md#what-an-object-is)
 is worth some gold, given in the "Worth" column of the [objects table](objects.md#the-objects).
 A gem, or an item set with one, is also worth what the gem is worth (see [Gems](gems.md)). Junk
-such as rocks is worth nothing, and nobody buys or sells it. Prices are the only numbers a shop
-tells you.
+such as rocks is worth nothing, and nobody buys or sells it. A [magic item](magic-items.md) is
+worth more than a plain one (see [Magic items](#magic-items) below). Prices are the only numbers
+a shop tells you.
 
 ## Buying
 
@@ -129,6 +130,28 @@ While you owe for something, you cannot [shoot or throw](ranged.md#shooting-and-
 
 When a shopkeeper dies, the shop is abandoned. What lies on its floor is free for the taking,
 and so is the keeper's purse.
+
+## Magic items
+
+Magic makes an item worth more, so shops ask more for it and pay more for it. A keeper knows
+only what you know:
+
+- An item's [rarity](magic-items.md#rarity) shows at once, so a magic or rare item is worth a
+  share more than the plain item, identified or not.
+- Each affix adds gold once the item is [identified](magic-items.md#unidentified-items). The
+  higher the item level its tier is found from, the more it adds.
+
+Identifying an item before you sell it gets you a better offer. What you pick up in a shop stays
+on your bill at the price it had when you took it, even if you identify it before paying.
+
+The share is added first, then the affixes' gold, then a [maker's mark](class-craftsperson.md#makers-mark)'s half again on top. A dagger is worth 30 gold. As a magic item it is
+worth 45 unidentified, and 45 + 75 = 120 once you know it is Sharp with its first tier.
+
+The first table gives the share by rarity. The second gives the gold each identified affix adds,
+by the item level its tier is found from ([Prefixes and suffixes](affixes.md) lists each
+affix's tiers).
+
+{{#include generated/magic-worth.md}}
 
 See also: [People and talk](npcs.md), [Objects and your pack](objects.md), and
 [the merchant](class-merchant.md).

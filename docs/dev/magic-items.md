@@ -3,6 +3,9 @@
 Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
 rules it implements are in spec/08g-magic-items.md. Keep it current with the code, as CLAUDE.md says.
 
+What magic adds to an item's shop price (`Stack::worth`, `data/rules/magic_worth.toml`, #1709)
+is in `docs/dev/shops.md`.
+
 Affix capacity and the trim that holds every item made to it (`magic/capacity.rs`,
 `loot::finished`, `quality` on hand-made items) are in `docs/dev/enchanting.md`, and so is the
 better make, gems, and materials of deeper finds (#1436: `gear_condition.toml`'s `[[depth]]`,
