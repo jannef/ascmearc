@@ -16,7 +16,9 @@ The [pause menu](the-screen.md#menus) (`Esc`) tells the date and the phase of th
 
 ## The calendar
 
-A year has 12 months of 30 days each: a 360-day year. There are no weeks. Months have names:
+A year has 12 months of 30 days each: a 360-day year. There are no weeks. Months have names, and
+each is in the season of an [element](horoscope.md#the-elements-seasons), when that element's
+first gift is a little stronger:
 
 {{#include generated/calendar.md}}
 

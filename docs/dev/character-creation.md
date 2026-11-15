@@ -338,6 +338,18 @@ in `world/character/gifts.rs` and the targeting mode); `LightCache::sources` swa
 for `Flavour::inner_light_at`. Tests: `world/character/flavour_tests.rs` (the birthday's pace and its
 exactness over splits, the note, the halved cooldown, the moon's reaches, the content checks),
 `world/character/land_talent_tests.rs::a_full_moon_lets_hounds_nose_smell_blood_two_cells_farther`.
+The elements' seasons (#1732): `[flavour] seasons.ELEMENT = { from, to, more }` names two months
+of `data/calendar.toml` by name (`Calendar::month_number`), resolved after the calendar loads
+(`content/horoscope.rs::resolve_seasons`) into `Flavour::seasons` (`Season::holds` wraps past the
+year's end); `Flavour::season_more(element, time)` is the one read. `World::in_season(id, gift)`
+(`world/character/flavour.rs`) gives it for the player when `gift` is their element's
+`grants[0]` and they hold it, read at the five hooks: Supple in `World::defence_of` (Dodge),
+Blaze in `World::blaze` (dice of the same size), Stone hide in `World::protection_of`, Keen edge
+in `World::resolve` (`World::season_threat`, after the gift's own threat in `Actor::stanced`),
+Always a way in `World::search_modifier`. Combat-time reads only: the status bar's Dv and Pv
+(`perception/truth.rs::own_defence`) leave the season out, so the game shows no number for it.
+Tests: `flavour_tests.rs` (every month of every season, the year's end, each hook in and out,
+the checks), `element_gift_tests.rs::in_fires_season_a_blaze_burns_a_die_hotter`.
 
 Shown: the reveal (`ui/sign_screen.rs`, `--screen sign`, after the race), the summary's Sign row,
 the character screen's dimmed Stars line (gift names, two lines at most) and the title after the
