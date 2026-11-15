@@ -79,7 +79,7 @@ search, nor do creatures' waits or the abilities priced as a wait. Treading deep
 passes the turn without the checks (`search_turn`), and searching for a while is refused. The
 app binds Num5 and `s` (`KeyCommand::Wait`, "Wait/search", `wait`) and Alt+Num5 and Alt+s
 (`KeyCommand::SearchLong`, `search:N` with `SearchRules::turns`); basic commands, not
-abilities. `dump`'s `truth` layer and `ascmearc-cli gen` mark secret doors `S`; `truth` marks a
+abilities. `dump`'s `truth` layer and `cargo dev-cli gen` mark secret doors `S`; `truth` marks a
 standing breach `H`.
 
 **Tests**: `world/skills/search_tests.rs` (looks, finding, waiting is searching (`waiting_is_searching`), draws, who notices, traps and the skill each

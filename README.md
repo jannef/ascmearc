@@ -87,9 +87,9 @@ Run from source with a recent Rust toolchain (the exact version is pinned in
 ```sh
 cargo run --release -p ascmearc                           # play
 cargo test --workspace                                   # tests
-cargo run -p ascmearc -- --scale 1 --capture shot.png     # render offscreen, save a screenshot
-cargo run -p ascmearc -- --scenario depths --character dwarf,female,warrior   # start as a dwarf
-cargo run -p ascmearc-cli -- dump --scenario showcase --actions "move:N move:N" --layers view
+cargo dev --scale 1 --capture shot.png                    # with the test world: render offscreen, save a screenshot
+cargo dev --scenario depths --character dwarf,female,warrior   # start as a dwarf in the test world
+cargo dev-cli dump --scenario showcase --actions "move:N move:N" --layers view
 ```
 
 Feature work changes the wiki, the spec, and the developer notes, not this file.
@@ -99,11 +99,11 @@ Feature work changes the wiki, the spec, and the developer notes, not this file.
 To play a locked release from source, install it with `cargo install` (a tag picks the version):
 
 ```sh
-cargo install --git https://github.com/jannef/ascmearc --tag v0.18.0 --locked --no-default-features ascmearc
+cargo install --git https://github.com/jannef/ascmearc --tag v0.18.0 --locked ascmearc
 ```
 
-- `--locked` uses the release's `Cargo.lock`. `--no-default-features` leaves out the test world,
-  as the release builds do. Add `ascmearc-cli` after `ascmearc` for the headless tool too.
+- `--locked` uses the release's `Cargo.lock`. Add `ascmearc-cli` after `ascmearc` for the
+  headless tool too.
 - It needs a Rust toolchain of at least 1.99 (`rust-version`); outside the repository,
   `rust-toolchain.toml` does not apply.
 - The result is a bare binary in `~/.cargo/bin`, not a macOS `.app`; a local build has no

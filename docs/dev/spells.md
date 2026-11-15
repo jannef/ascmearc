@@ -485,7 +485,7 @@ cast path shares.
       armour's percent still added), and the talents' percents and
       Frugal caster still apply (`Actor::spell_base`, `Actor::mana_cost`). Identify's is **60**
       (the owner, 2026-10-28: a large cost, not coupled with its difficulty). Measured with
-      `ascmearc-cli dump --character human,male,CLASS --actions "xp:N levelup:auto"`: a wizard
+      `cargo dev-cli dump --character human,male,CLASS --actions "xp:N levelup:auto"`: a wizard
       has 47 mana at level 5, 55 at 6, 63 at 7, 71 at 8; a priest 42 at 5, 49 at 6–7, 63 at 8;
       a druid 47 at 6. So no caster of level 1 to 6 can cast it, a wizard can from level 7
       and a priest or druid from about 8. Its level, 6, is how hard it is to learn (study's
@@ -819,7 +819,7 @@ cast path shares.
   Spellcraft. Empower, Archmage, and Frugal caster name `spells` beside `mana` (Empower and
   Archmage do not touch scrolls, so not `scrolls`); Scroll savant (#775) is `scrolls` only. Wand mastery is in #398's wands; Channeler
   (`rod_cost_percent`, level 5) is in #399's rods.
-- **Balance** (#401; design §12, run against the data on 2026-10-27; `ascmearc-cli dump
+- **Balance** (#401; design §12, run against the data on 2026-10-27; `cargo dev-cli dump
   --character human,male,CLASS --actions "xp:N levelup:auto" --format json`, N the human
   threshold times the class's experience factor):
   1. **Pools** (the stats the seed rolls, so a +1 or +2 mental modifier; `levelup:auto` may

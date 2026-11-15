@@ -67,7 +67,7 @@ CI compares every entry in `tests/golden/manifest/*.toml` with `tests/golden/<na
    --all-targets -- -D warnings`, `cargo test --workspace`, `cargo xtask wiki` (then read the
    pages you changed); core tests for the new rules (unit, property, or snapshot; read insta
    diffs before accepting); a replay that exercises the feature, created and verified with
-   `ascmearc-cli replay --create/--verify`, and a `dump` that shows it; for anything visible,
+   `cargo dev-cli replay --create/--verify`, and a `dump` that shows it; for anything visible,
    captures at `--scale 1`, and **look at the PNGs**.
 3. Commit (messages end with the `Co-Authored-By:` line for the model you run on), push, and open
    the PR with `gh pr create`: `Closes #N` per issue, what you verified and how, the golden entries
@@ -91,7 +91,7 @@ CI compares every entry in `tests/golden/manifest/*.toml` with `tests/golden/<na
    touched), commit and push at once. Do not run clippy, tests, replays, or goldens before that
    push, and do not re-merge main just before pushing. If CI fails, it fails. Then keep verifying
    in the session and push each follow-up fix as soon as it is made: the PR's own replays with
-   `ascmearc-cli replay --verify` (CI doesn't run them; re-created with `replay --create` if hashes
+   `cargo dev-cli replay --verify` (CI doesn't run them; re-created with `replay --create` if hashes
    moved for a reason the merge explains; say so), and after a merge with conflicts in code,
    snapshots, or registries, or a fix of your own, `cargo clippy --workspace --all-targets -- -D
    warnings` and `cargo test --workspace`, plus `cargo xtask wiki` if content or
