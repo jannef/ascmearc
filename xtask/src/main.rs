@@ -5,6 +5,8 @@
 //! - `smoke`: run the game with `--capture` and check that something was rendered.
 //! - `web`: build the WebGPU site into `target/web` (needs `wasm-bindgen-cli`, see CLAUDE.md).
 //! - `web-smoke [CHROME]`: load `target/web` in headless Chromium, start a run, screenshot it.
+//! - `gen-font [--check]`: regenerate the web build's font, `assets/fonts/AscmearcMono-Medium.ttf`
+//!   (`font_subset.rs`; `--check` fails if it is stale).
 //! - `gen-vast [--check]`: regenerate `assets/campaigns/showcase/levels/vast.toml` (`--check` fails if it is stale).
 //! - `licenses [--check]`: regenerate `THIRD_PARTY_LICENSES.html` (needs `cargo-about`).
 //! - `golden [--update | --local]`: compare headless captures with `tests/golden/*.png`.
@@ -21,6 +23,7 @@
 mod bench;
 mod bench_circles;
 mod docs_check;
+mod font_subset;
 mod golden;
 mod licenses;
 mod vast;
@@ -38,6 +41,7 @@ fn main() -> ExitCode {
         Some("smoke") => smoke(),
         Some("web") => web(),
         Some("web-smoke") => web_smoke(&args[1..]),
+        Some("gen-font") => font_subset::run(args.get(1).is_some_and(|a| a == "--check")),
         Some("gen-vast") => gen_vast(args.get(1).is_some_and(|a| a == "--check")),
         Some("licenses") => licenses::run(args.get(1).is_some_and(|a| a == "--check")),
         Some("golden") => golden::parse_mode(&args[1..]).and_then(golden::run),
@@ -46,7 +50,7 @@ fn main() -> ExitCode {
         Some("bench-frames") => bench::frames(args.get(1).map_or("2560x1440", String::as_str)),
         _ => {
             eprintln!(
-                "usage: cargo xtask <docs-check | smoke | web | web-smoke [CHROME] | gen-vast [--check] | licenses [--check] | golden [--update | --local] | wiki [--build | --check-links] | bench-turns [ROW...] | bench-frames [WxH]>"
+                "usage: cargo xtask <docs-check | smoke | web | web-smoke [CHROME] | gen-font [--check] | gen-vast [--check] | licenses [--check] | golden [--update | --local] | wiki [--build | --check-links] | bench-turns [ROW...] | bench-frames [WxH]>"
             );
             return ExitCode::from(2);
         }
@@ -213,6 +217,9 @@ fn web() -> Result<(), String> {
             "--locked",
             // A release artifact: without the test world (`showcase`, docs/dev/campaign.md).
             "--no-default-features",
+            // The cut-down font (`font_subset.rs`, docs/dev/rendering.md "The font").
+            "--features",
+            "font-subset",
             "--package",
             "ascmearc",
             "--target",

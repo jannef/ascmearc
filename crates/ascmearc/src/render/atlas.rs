@@ -11,7 +11,19 @@ use bevy::prelude::*;
 use bevy::render::render_resource::{Extent3d, TextureDimension, TextureFormat};
 use std::collections::BTreeMap;
 
-const FONT_BYTES: &[u8] = include_bytes!("../../../../assets/fonts/JuliaMono-Medium.ttf");
+/// JuliaMono, whole (3.3 MB).
+#[cfg(any(test, not(feature = "font-subset")))]
+const FULL_FONT: &[u8] = include_bytes!("../../../../assets/fonts/JuliaMono-Medium.ttf");
+/// JuliaMono cut down to the characters the game uses (`cargo xtask gen-font`, about 170 kB).
+#[cfg(any(test, feature = "font-subset"))]
+const SUBSET_FONT: &[u8] = include_bytes!("../../../../assets/fonts/AscmearcMono-Medium.ttf");
+
+/// The font the game draws with: the subset in the web build (the `font-subset` feature, #1719),
+/// the whole font elsewhere.
+#[cfg(feature = "font-subset")]
+const FONT_BYTES: &[u8] = SUBSET_FONT;
+#[cfg(not(feature = "font-subset"))]
+const FONT_BYTES: &[u8] = FULL_FONT;
 
 /// Linear size of the supersampled atlas relative to the 1:1 atlas.
 pub const SUPERSAMPLE: u32 = 2;
@@ -19,7 +31,8 @@ pub const SUPERSAMPLE: u32 = 2;
 /// Glyphs the UI may draw in addition to printable ASCII and content glyphs.
 /// Unicode ranges always in the atlas besides printable ASCII and content glyphs, so UI text and
 /// messages never fall back to `?` (e.g. `×`, `—`, arrows, box drawing). Characters the font lacks
-/// are skipped when rasterizing.
+/// are skipped when rasterizing. The web build's font subset keeps them all (`SAFETY_RANGES` in
+/// `xtask/src/font_subset.rs`: change both together).
 const GLYPH_RANGES: &[(char, char)] = &[
     ('\u{00A1}', '\u{017F}'), // Latin-1 Supplement, Latin Extended-A
     ('\u{0391}', '\u{03C9}'), // Greek
@@ -399,6 +412,28 @@ mod tests {
         }
         for c in ['\n', '\u{7}', '日', '😀'] {
             assert!(!draws(c), "{c:?}");
+        }
+    }
+
+    /// The web build's subset draws exactly what the whole font draws, pixel for pixel: every
+    /// character of the glyph set with the built-in content's glyphs (`cargo xtask gen-font`
+    /// makes it; a stale one fails here when a new glyph is missing).
+    #[test]
+    fn the_subset_draws_what_the_full_font_draws() {
+        let load = |bytes| fontdue::Font::from_bytes(bytes, fontdue::FontSettings::default());
+        let (full, subset) = (load(FULL_FONT).unwrap(), load(SUBSET_FONT).unwrap());
+        let content = ascmearc_assets::content().expect("content");
+        let px = 16.0;
+        assert_eq!(
+            full.horizontal_line_metrics(px),
+            subset.horizontal_line_metrics(px)
+        );
+        for c in glyph_set(content.glyphs()) {
+            let has = |font: &fontdue::Font| font.lookup_glyph_index(c) != 0;
+            assert_eq!(has(&full), has(&subset), "{c:?} (U+{:04X})", c as u32);
+            if has(&full) {
+                assert_eq!(full.rasterize(c, px), subset.rasterize(c, px), "{c:?}");
+            }
         }
     }
 

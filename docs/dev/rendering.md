@@ -162,6 +162,26 @@ Rendering is three layers, bottom to top, all positioned in framebuffer pixels:
 3. **UI console**: the same console material over the whole window; unwritten cells are
    transparent.
 
+**The font** (`render/atlas.rs`): JuliaMono Medium (`assets/fonts/JuliaMono-Medium.ttf`, 3.3 MB,
+about 11 000 glyphs), rasterized by fontdue into the atlases. The atlas holds printable ASCII,
+the content's glyphs, and the fixed `GLYPH_RANGES`; any other character draws as `?`, and text
+fields refuse it (`atlas::draws`). The web build embeds a **subset** instead (#1719): the Cargo
+feature `font-subset` of `crates/ascmearc` swaps in `assets/fonts/AscmearcMono-Medium.ttf`
+(about 170 kB), and `cargo xtask web` turns it on; native builds keep the whole font. The subset
+is a committed file made by `cargo xtask gen-font` (`xtask/src/font_subset.rs`, pure Rust: the
+fontations project's skera crate), never in a build. It keeps every character written in the
+text files under `crates/` and `assets/` (Rust, TOML, Markdown, snapshots, shaders) plus a fixed **safety set**, the
+atlas's `GLYPH_RANGES` again (`SAFETY_RANGES`: Latin-1 and Latin Extended-A, so typed names keep
+working, Greek, general punctuation, arrows, mathematical operators, box drawing, blocks,
+geometric shapes, miscellaneous symbols): change the two lists together. It drops hinting and
+OpenType layout (fontdue reads neither) and the family names: JuliaMono's licence reserves its
+name, so the modified copy is renamed and keeps only the copyright and licence records. Two
+tests keep it honest: `xtask`'s `committed_subset_is_current` (what `gen-font --check` does) fails
+when a new character appears in the sources or assets without a regenerated subset, and
+`the_subset_draws_what_the_full_font_draws` (`render/atlas.rs`) checks that the subset rasterizes
+every atlas character exactly as the whole font does. After adding a glyph or text with a new
+character: `cargo xtask gen-font` and commit the font.
+
 **Visual lighting** (`render/lighting.rs` + `lighting.wesl`, imported by
 `console.wesl`): every frame `lighting::update` composites the perceived light for the map grid's
 cells plus a one-cell margin, from `PerceptionView::base_light` (ambient plus gameplay bounce light,
