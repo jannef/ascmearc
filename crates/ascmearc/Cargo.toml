@@ -48,6 +48,9 @@ showcase = ["ascmearc-assets/showcase"]
 # `cargo xtask web` for the wasm's size; such a build reads no `--content-dir` (docs/dev/content.md,
 # "Packed content").
 packed = ["ascmearc-assets/packed"]
+# Embeds JuliaMono cut down at build time to the characters the game uses in place of the whole
+# font: about 3.1 MB less. `cargo xtask web` turns it on (docs/dev/rendering.md, "The font").
+font-subset = ["ascmearc-assets/font-subset"]
 
 [lints]
 workspace = true

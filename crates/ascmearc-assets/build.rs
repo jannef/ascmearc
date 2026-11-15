@@ -11,7 +11,12 @@
 //!
 //! With the `packed` feature (the web build) each file is embedded packed, parsed here once, in
 //! place of its TOML text (`build/packed.rs`; docs/dev/content.md, "Packed content").
+//!
+//! With the `font-subset` feature (the web build) it also cuts the font down to the characters
+//! the game uses (`font_subset.rs`, docs/dev/rendering.md "The font").
 
+#[cfg(feature = "font-subset")]
+mod font_subset;
 #[path = "../ascmearc-core/src/content/walk.rs"]
 #[allow(dead_code)]
 mod walk;
@@ -52,4 +57,11 @@ fn main() {
     out.push_str("];\n");
 
     std::fs::write(out_dir.join("builtin_assets.rs"), out).expect("write builtin_assets.rs");
+
+    #[cfg(feature = "font-subset")]
+    font_subset::write(
+        &assets.join("fonts/JuliaMono-Medium.ttf"),
+        &[&assets, &manifest.join("..")],
+        &out_dir.join("font-subset.ttf"),
+    );
 }

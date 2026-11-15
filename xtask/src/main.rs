@@ -213,9 +213,11 @@ fn web() -> Result<(), String> {
             "--locked",
             // A release artifact: without the test world (`showcase`, docs/dev/campaign.md).
             "--no-default-features",
-            // The content packed, its TOML reader left out, for the size (docs/dev/content.md).
+            // The cut-down font, made by ascmearc-assets' build script (docs/dev/rendering.md,
+            // "The font"), and the content packed, its TOML reader left out (docs/dev/content.md,
+            // "Packed content"): both for the size.
             "--features",
-            "packed",
+            "font-subset,packed",
             "--package",
             "ascmearc",
             "--target",
