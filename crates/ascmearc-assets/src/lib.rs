@@ -15,6 +15,17 @@ mod embedded {
 /// in a release; docs/dev/campaign.md).
 pub const SHOWCASE: bool = cfg!(feature = "showcase");
 
+/// The game's font, JuliaMono Medium, whole (3.3 MB).
+pub const FULL_FONT: &[u8] = include_bytes!("../../../assets/fonts/JuliaMono-Medium.ttf");
+
+/// The font the game draws with: with the `font-subset` feature (the web build) the build
+/// script's subset of [`FULL_FONT`], holding the characters the sources and assets use and a
+/// safety set (about 170 kB; docs/dev/rendering.md, "The font"); else [`FULL_FONT`].
+#[cfg(feature = "font-subset")]
+pub const FONT: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/font-subset.ttf"));
+#[cfg(not(feature = "font-subset"))]
+pub const FONT: &[u8] = FULL_FONT;
+
 /// The content compiled into the binary from `assets/`.
 pub fn files() -> ContentFiles {
     let mut files = ContentFiles::default();

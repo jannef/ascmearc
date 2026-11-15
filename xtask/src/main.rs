@@ -213,6 +213,10 @@ fn web() -> Result<(), String> {
             "--locked",
             // A release artifact: without the test world (`showcase`, docs/dev/campaign.md).
             "--no-default-features",
+            // The cut-down font, made by ascmearc-assets' build script (docs/dev/rendering.md,
+            // "The font").
+            "--features",
+            "font-subset",
             "--package",
             "ascmearc",
             "--target",

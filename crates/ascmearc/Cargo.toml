@@ -44,6 +44,9 @@ insta.workspace = true
 # `--no-default-features` (docs/dev/campaign.md, "The test world in release builds").
 default = ["showcase"]
 showcase = ["ascmearc-assets/showcase"]
+# Embeds JuliaMono cut down at build time to the characters the game uses in place of the whole
+# font: about 3.1 MB less. `cargo xtask web` turns it on (docs/dev/rendering.md, "The font").
+font-subset = ["ascmearc-assets/font-subset"]
 
 [lints]
 workspace = true

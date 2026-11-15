@@ -9,6 +9,12 @@
 //! default, off in release builds and the web build): without it a build embeds no file of
 //! it (docs/dev/campaign.md, "The test world in release builds").
 
+//!
+//! With the `font-subset` feature (the web build) it also cuts the font down to the characters
+//! the game uses (`font_subset.rs`, docs/dev/rendering.md "The font").
+
+#[cfg(feature = "font-subset")]
+mod font_subset;
 #[path = "../ascmearc-core/src/content/walk.rs"]
 #[allow(dead_code)]
 mod walk;
@@ -42,4 +48,11 @@ fn main() {
 
     let out_dir = PathBuf::from(std::env::var("OUT_DIR").expect("set by cargo"));
     std::fs::write(out_dir.join("builtin_assets.rs"), out).expect("write builtin_assets.rs");
+
+    #[cfg(feature = "font-subset")]
+    font_subset::write(
+        &assets.join("fonts/JuliaMono-Medium.ttf"),
+        &[&assets, &manifest.join("..")],
+        &out_dir.join("font-subset.ttf"),
+    );
 }

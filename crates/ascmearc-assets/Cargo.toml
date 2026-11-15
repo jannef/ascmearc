@@ -12,6 +12,11 @@ repository.workspace = true
 [dependencies]
 ascmearc-core.workspace = true
 
+# The font subsetter, built and run only with `font-subset` (`font_subset.rs`).
+[build-dependencies]
+read-fonts = { workspace = true, optional = true }
+skera = { workspace = true, optional = true }
+
 [features]
 # The test world (`assets/campaigns/showcase/`), embedded only with this feature: on for every
 # dev command, test, and benchmark; release builds and `cargo xtask web` turn it off with
@@ -19,6 +24,10 @@ ascmearc-core.workspace = true
 # in release builds").
 default = ["showcase"]
 showcase = []
+# `FONT` is JuliaMono cut down at build time to the characters the game uses (about 170 kB in
+# place of 3.3 MB); the web build turns it on through the game's own `font-subset` feature
+# (docs/dev/rendering.md, "The font").
+font-subset = ["dep:read-fonts", "dep:skera"]
 
 [lints]
 workspace = true
