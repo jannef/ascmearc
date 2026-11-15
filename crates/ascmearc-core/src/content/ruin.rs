@@ -63,7 +63,8 @@ impl RuinRules {
     /// material, or material group (a group no material has matches nothing).
     pub(super) fn parse(file: &str, text: &str, content: &Content) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: RuinFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: RuinFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         let mut rows = Vec::new();
         for (i, row) in parsed.ruin.into_iter().enumerate() {
             let at = |m: String| err(format!("ruin {}: {m}", i + 1));

@@ -284,7 +284,8 @@ fn level_xp(kills: &Kills, early: &[u8], n: u8) -> u128 {
 impl Experience {
     pub(super) fn parse(file: &str, text: &str) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let p: ExperienceFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let p: ExperienceFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         // Every character is at least level 1, on the curve.
         if p.max_level == 0 {
             return Err(err("max_level must be at least 1".into()));

@@ -175,7 +175,7 @@ mod tests {
     use super::*;
 
     fn table(text: &str) -> BTreeMap<String, RankSpec> {
-        toml::from_str(text).expect("a table")
+        crate::content::de::from_str(text).expect("a table")
     }
 
     const ALL: RankBases = RankBases {

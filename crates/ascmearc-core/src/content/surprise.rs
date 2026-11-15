@@ -60,7 +60,8 @@ impl SurpriseRules {
     /// Parses `data/surprise.toml`: the status must be known, and each tag of the tag form.
     pub(super) fn parse(file: &str, text: &str, content: &Content) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: SurpriseFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: SurpriseFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         let table = &parsed.surprise;
         let status = (content.status_id(&table.status))
             .ok_or_else(|| err(format!("unknown status `{}`", table.status)))?;

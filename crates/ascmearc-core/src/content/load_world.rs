@@ -207,7 +207,8 @@ impl Content {
             return Ok(());
         };
         let err = |m: String| ContentError::new(path, m);
-        let parsed: LightFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: LightFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         for (i, preset) in parsed.light.into_iter().enumerate() {
             let id = LightId(u16::try_from(i).map_err(|_| err("too many lights".into()))?);
             preset
@@ -246,8 +247,8 @@ impl Content {
     pub(super) fn load_dungeons(&mut self, files: &ContentFiles) -> Result<(), ContentError> {
         let mut seen: BTreeMap<String, &str> = BTreeMap::new();
         for (path, text) in files.table("dungeons") {
-            let parsed: dungeon::DungeonFile =
-                toml::from_str(text).map_err(|e| ContentError::new(path, e.to_string()))?;
+            let parsed: dungeon::DungeonFile = crate::content::de::from_str(text)
+                .map_err(|e| ContentError::new(path, e.to_string()))?;
             if parsed.defaults.is_some() && path != "data/dungeons.toml" {
                 return Err(ContentError::new(
                     path,
@@ -413,7 +414,8 @@ impl Content {
         let err = |m: String| ContentError::new(path, m);
         let profiles = match files.get_optional(path) {
             Some(text) => {
-                let parsed: VisionFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+                let parsed: VisionFile =
+                    crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
                 parsed.vision
             }
             None => vec![VisionProfile::needs_no_light()],

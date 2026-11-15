@@ -22,7 +22,7 @@ impl DecipherRules {
     /// Parses `data/rules/decipher.toml`: `levels_per_point` must be positive.
     pub(super) fn parse(file: &str, text: &str) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: Self = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: Self = crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         if parsed.seconds < 1 {
             return Err(err("`seconds` must be at least 1".into()));
         }

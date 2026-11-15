@@ -40,6 +40,7 @@ mod creature_spells;
 mod crystal;
 mod damage_type;
 pub mod danger;
+pub(crate) mod de;
 mod decipher;
 #[cfg(test)]
 mod demon_roster_tests;
@@ -121,6 +122,9 @@ mod offer;
 mod orc_roster_tests;
 mod outcome;
 mod overworld;
+// Its `pack` is for the build script and the tests; `de` reads its `MARK`.
+#[cfg_attr(not(test), allow(dead_code))]
+mod pack;
 pub(crate) mod part;
 mod particles;
 mod patron;
@@ -213,6 +217,7 @@ mod tuning;
 mod unique;
 mod unseen;
 mod validate;
+pub(crate) mod value;
 mod vault;
 mod vault_turn;
 mod vision;
@@ -469,7 +474,8 @@ fn load_table<'a, F: serde::de::DeserializeOwned, T>(
 ) -> Result<Vec<(&'a str, T)>, ContentError> {
     let mut all = Vec::new();
     for (path, text) in files.table(name) {
-        let parsed: F = toml::from_str(text).map_err(|e| ContentError::new(path, e.to_string()))?;
+        let parsed: F = crate::content::de::from_str(text)
+            .map_err(|e| ContentError::new(path, e.to_string()))?;
         all.extend(entries(parsed).into_iter().map(|e| (path, e)));
     }
     Ok(all)
@@ -1090,8 +1096,8 @@ impl Content {
         content.room_effects = rooms;
 
         let path = "data/legend.toml";
-        let legend_file: LegendFile =
-            toml::from_str(files.get(path)?).map_err(|e| ContentError::new(path, e.to_string()))?;
+        let legend_file: LegendFile = crate::content::de::from_str(files.get(path)?)
+            .map_err(|e| ContentError::new(path, e.to_string()))?;
         let mut default_legend = BTreeMap::new();
         for (key, entry) in legend_file.legend {
             default_legend.insert(legend_char(path, &key)?, entry);

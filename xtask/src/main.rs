@@ -213,6 +213,9 @@ fn web() -> Result<(), String> {
             "--locked",
             // A release artifact: without the test world (`showcase`, docs/dev/campaign.md).
             "--no-default-features",
+            // The content packed, its TOML reader left out, for the size (docs/dev/content.md).
+            "--features",
+            "packed",
             "--package",
             "ascmearc",
             "--target",

@@ -660,7 +660,8 @@ impl WeaponSkillTable {
     /// Parses `data/weapon_skills.toml`.
     pub(super) fn parse(file: &str, text: &str) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: SkillFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: SkillFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         let marks = parsed.marks;
         // `MarkRules::earned` multiplies a use's marks by a percent (at most 100) in a `u32`.
         let most = (u32::MAX - 50) / MOST_PERCENT;

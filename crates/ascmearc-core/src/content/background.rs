@@ -474,8 +474,8 @@ impl Content {
             files.table("background").for_each(drop);
             return Ok(());
         };
-        let settings: SettingsFile =
-            toml::from_str(text).map_err(|e| ContentError::new(SETTINGS, e.to_string()))?;
+        let settings: SettingsFile = crate::content::de::from_str(text)
+            .map_err(|e| ContentError::new(SETTINGS, e.to_string()))?;
         let total = settings.tiers.uncommon + settings.tiers.rare + settings.tiers.fateful;
         // The tiers' draw is out of 1000, the common tier the rest.
         if total > 1000 {
@@ -486,8 +486,8 @@ impl Content {
         }
         let mut chapters = Vec::new();
         for (path, text) in files.table("background").filter(|(p, _)| *p != SETTINGS) {
-            let file: ChapterFile =
-                toml::from_str(text).map_err(|e| ContentError::new(path, e.to_string()))?;
+            let file: ChapterFile = crate::content::de::from_str(text)
+                .map_err(|e| ContentError::new(path, e.to_string()))?;
             let owner = campaign::of_path(path).map(str::to_string);
             let chapter = self
                 .story_chapter(file, owner)

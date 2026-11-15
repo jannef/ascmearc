@@ -133,7 +133,8 @@ fn default_time() -> String {
 impl ScenarioDef {
     pub(super) fn parse(file: &str, id: &str, text: &str) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let mut def: ScenarioDef = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let mut def: ScenarioDef =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         def.id = id.to_string();
         let of_day =
             parse_time_of_day(&def.start_time).map_err(|m| err(format!("start_time: {m}")))?;

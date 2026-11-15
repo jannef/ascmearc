@@ -83,8 +83,8 @@ struct StudyFile {
 
 impl StudyRules {
     pub(super) fn parse(path: &str, text: &str) -> Result<Self, ContentError> {
-        let f: StudyFile =
-            toml::from_str(text).map_err(|e| ContentError::new(path, e.to_string()))?;
+        let f: StudyFile = crate::content::de::from_str(text)
+            .map_err(|e| ContentError::new(path, e.to_string()))?;
         // A divisor of the difficulty.
         if f.known_per_point < 1 {
             let why = "`known_per_point` is at least 1";
@@ -347,8 +347,8 @@ pub(super) fn parse<'a>(
     let mut all: Vec<Mishap> = Vec::new();
     let mut seen: BTreeMap<String, String> = BTreeMap::new();
     for (path, text) in files {
-        let file: MishapFile =
-            toml::from_str(text).map_err(|e| ContentError::new(path, e.to_string()))?;
+        let file: MishapFile = crate::content::de::from_str(text)
+            .map_err(|e| ContentError::new(path, e.to_string()))?;
         for spec in file.mishap {
             if let Some(first) = seen.get(&spec.id) {
                 return Err(duplicate_id("mishap", &spec.id, path, first));

@@ -149,7 +149,8 @@ impl Default for Climate {
 impl Climate {
     pub(super) fn parse(file: &str, text: &str) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: WeatherFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: WeatherFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         if parsed.month.len() as u64 != MONTHS_PER_YEAR {
             return Err(err(format!(
                 "expected {MONTHS_PER_YEAR} [[month]] entries, found {}",

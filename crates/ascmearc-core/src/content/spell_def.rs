@@ -341,7 +341,7 @@ pub struct SpellRules {
 impl SpellRules {
     pub(super) fn parse(path: &str, text: &str) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(path, m);
-        let file: RulesFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let file: RulesFile = crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         let s = &file.shapes;
         let shapes = [s.ray, s.bolt, s.touch, s.myself, s.cone, s.line];
         // `shape_cost` indexes it, and its length is the largest radius (a clamp's top).
@@ -973,7 +973,8 @@ pub(super) fn parse<'a>(
     let mut seen: BTreeMap<String, &str> = BTreeMap::new();
     for (file, text) in files {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: SpellFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: SpellFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         for spec in parsed.spell {
             let Some(rules) = &rules else {
                 return Err(err("spells need data/spells.toml".into()));

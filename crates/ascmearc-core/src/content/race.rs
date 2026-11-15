@@ -259,7 +259,8 @@ impl Races {
         resist: impl Fn(&BTreeMap<String, i32>) -> Result<Vec<(DamageTypeId, i32)>, String>,
     ) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: RaceFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: RaceFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         if parsed.race.is_empty() {
             return Err(err("at least one race is required".into()));
         }

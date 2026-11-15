@@ -84,7 +84,7 @@ impl SlotDef {
 /// Parses `data/slots.toml`.
 pub(super) fn parse(file: &str, text: &str) -> Result<Vec<SlotDef>, ContentError> {
     let err = |m: String| ContentError::new(file, m);
-    let parsed: SlotFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+    let parsed: SlotFile = crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
     if parsed.slot.len() > MAX_SLOTS {
         return Err(err(format!(
             "at most {MAX_SLOTS} slots (one per letter), not {}",

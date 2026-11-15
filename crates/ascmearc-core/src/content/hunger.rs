@@ -305,7 +305,8 @@ impl HungerDef {
         size_index: impl Fn(&str) -> Option<usize>,
     ) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: HungerFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: HungerFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         // A point burned every 0 seconds would never let time pass.
         if parsed.burn_seconds == 0 {
             return Err(err("burn_seconds must be at least 1".into()));
@@ -508,7 +509,7 @@ mod tests {
         let food = |keeps: &str, lasts: &str| {
             let text =
                 format!("nutrition = 1\nturns = 1\nkeeps = \"{keeps}\"\nlasts = \"{lasts}\"\n");
-            toml::from_str::<Food>(&text).map_err(|e| e.to_string())
+            crate::content::de::from_str::<Food>(&text).map_err(|e| e.to_string())
         };
         let f = food("8h", "30d").expect("valid");
         assert_eq!(

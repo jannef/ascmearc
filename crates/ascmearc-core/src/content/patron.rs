@@ -20,7 +20,8 @@ impl PatronRules {
     /// Parses `data/rules/patron.toml`: it pays something.
     pub(super) fn parse(file: &str, text: &str) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let rules: PatronRules = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let rules: PatronRules =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         if rules.pays == 0 {
             return Err(err("`pays` must be above 0".into()));
         }

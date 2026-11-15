@@ -59,7 +59,8 @@ impl StipendRules {
     /// Parses `data/rules/stipend.toml`: the classes kept must be known.
     pub(super) fn parse(file: &str, text: &str, content: &Content) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: StipendFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: StipendFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         let keep = (parsed.loot.keep.iter())
             .map(|name| {
                 (content.item_class_id(name))

@@ -606,7 +606,7 @@ pub(super) fn parse(
     content: &Content,
 ) -> Result<ParsedTraps, ContentError> {
     let err = |m: String| ContentError::new(path, m);
-    let parsed: TrapFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+    let parsed: TrapFile = crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
     parsed.avoid.check().map_err(err)?;
     if parsed.disarm.springs_short_by < 1 {
         return Err(err("[disarm]: springs_short_by must be at least 1".into()));

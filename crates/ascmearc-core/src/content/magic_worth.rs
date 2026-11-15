@@ -69,7 +69,7 @@ impl super::RulesFile for MagicWorth {
     const PATH: &'static str = "data/rules/magic_worth.toml";
 
     fn parse(path: &str, text: &str, _content: &Content) -> Result<Self, ContentError> {
-        toml::from_str(text).map_err(|e| ContentError::new(path, e.to_string()))
+        crate::content::de::from_str(text).map_err(|e| ContentError::new(path, e.to_string()))
     }
 }
 

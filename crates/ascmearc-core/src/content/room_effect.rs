@@ -846,7 +846,8 @@ impl RoomEffects {
         let mut specs: Vec<(&str, RoomEffectSpec)> = Vec::new();
         for (file, text) in files {
             let err = |m: String| ContentError::new(file, m);
-            let parsed: RoomEffectFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+            let parsed: RoomEffectFile =
+                crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
             for (key, value, set) in [
                 ("chance", parsed.chance, &mut chance),
                 ("per_level", parsed.per_level, &mut per_level),

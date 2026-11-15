@@ -130,6 +130,36 @@ Creature types made in code (the animated objects, the mimics) are `CreatureSpec
 with `..CreatureSpec::default()` (#1552), whose `Default` is serde's field defaults (a test in
 `content/creature.rs` holds them together), and go through `load_creatures` like a file's.
 
+## Packed content (the web build)
+
+Every loader reads a file's text with `content::de::from_str` (`content/de.rs`), never with
+`toml` itself, and a loader that edits a document before reading it (a grimoire's object table,
+a mimic's creature table, the miscast rules' `backfire_faction`) builds a `content::value::Table`,
+not a `toml::Table` (`content/value.rs`). That text is TOML, or the **packed form**
+(`content/pack.rs`): the file parsed once into a compact tree, ASCII but for its strings (so it
+travels as a `&str` like the TOML), marked by a leading NUL. `from_str` reads TOML with `toml`
+(its errors point at the line) and the packed form with the one serde deserializer of
+`content/value.rs`, which reads every shape as `toml` does.
+
+The `packed` Cargo feature (#1720; `ascmearc/packed` → `ascmearc-assets/packed` →
+`ascmearc-core/packed`) is for the size of the web build, which `cargo xtask web` turns it on for:
+- `ascmearc-assets`' `build.rs` (`build/packed.rs`, with `toml` an optional build-dependency
+  only this feature compiles) packs each file into `OUT_DIR/packed/` and embeds that in place of
+  the TOML. Nothing generated is committed; a file that is no good TOML fails the build.
+- The core's TOML arm of `from_str` is compiled out (but for the core's own tests), so no `toml`
+  deserializer is built for any of the content's ~400 types (they were most of the wasm's toml
+  code), only the value reader once per type.
+- Such a build loads only the packed built-in content: a TOML file, from `--content-dir` or laid
+  over the set with `ContentFiles::insert` (mods, later: #196), is refused at load. Mods for the
+  web build would have to be packed first (`content/pack.rs`, which needs `toml`, not in the
+  wasm); that is accepted (the owner, #1720).
+
+TOML stays the source format, and every desktop build and every test reads it.
+`the_packed_built_in_content_loads_equal_to_its_toml` (`content/de.rs`) packs every built-in
+file and checks that the whole `Content` loads equal (its `Debug` text) to the TOML-loaded one;
+`cargo test -p ascmearc-assets --features packed` checks the embedded files are the packed forms
+and that they load.
+
 ## Content directories
 
 The tables that grow entry by entry are directories, so two PRs adding an entity never touch

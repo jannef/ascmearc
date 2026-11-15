@@ -31,7 +31,8 @@ impl Default for Calendar {
 impl Calendar {
     pub(super) fn parse(file: &str, text: &str) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: CalendarFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: CalendarFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         if parsed.months.len() as u64 != MONTHS_PER_YEAR {
             return Err(err(format!(
                 "expected {MONTHS_PER_YEAR} month names, found {}",

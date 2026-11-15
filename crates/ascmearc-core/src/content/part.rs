@@ -72,7 +72,7 @@ pub struct PartDef {
 /// Parses `data/parts.toml`.
 pub(super) fn parse(file: &str, text: &str) -> Result<Vec<PartDef>, ContentError> {
     let err = |m: String| ContentError::new(file, m);
-    let parsed: PartFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+    let parsed: PartFile = crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
     if parsed.part.len() > MAX_PARTS {
         return Err(err(format!("at most {MAX_PARTS} parts")));
     }
@@ -519,7 +519,7 @@ mod tests {
         struct Object {
             materials: Vec<PartEntry>,
         }
-        let object: Object = toml::from_str(text).map_err(|e| e.to_string())?;
+        let object: Object = crate::content::de::from_str(text).map_err(|e| e.to_string())?;
         let (materials, kinds) = (materials(), kinds());
         resolve(
             &object.materials,

@@ -69,7 +69,7 @@ pub struct MimicDef {
 #[serde(deny_unknown_fields)]
 struct FamilyFile {
     family: FamilySpec,
-    creature: toml::Table,
+    creature: crate::content::value::Table,
     band: Vec<MimicBand>,
 }
 
@@ -99,7 +99,8 @@ impl Mimics {
             return Ok(Self::default());
         };
         let err = |m: String| ContentError::new(RULES, m);
-        let file: FamilyFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let file: FamilyFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         if let Some(key) = OWN.iter().find(|k| file.creature.contains_key(**k)) {
             return Err(err(format!(
                 "[creature]: `{key}` is each member's own, not the family's"
@@ -130,18 +131,19 @@ impl Mimics {
     /// The fields `[creature]` gives every member, read as a creature file: each member's own
     /// (`OWN`, and the slam's damage) are written over by [`Mimics::member`], so they parse
     /// empty here.
-    fn shared(mut table: toml::Table) -> Result<CreatureSpec, String> {
-        let Some(toml::Value::Table(attack)) = table.get_mut("attack") else {
+    fn shared(mut table: crate::content::value::Table) -> Result<CreatureSpec, String> {
+        let Some(crate::content::value::Value::Table(attack)) = table.get_mut("attack") else {
             return Err("needs an `attack` table".into());
         };
-        attack.entry("damage").or_insert_with(|| "1d2".into());
+        attack
+            .entry("damage".into())
+            .or_insert_with(|| "1d2".into());
         for (key, value) in [("id", ""), ("name", ""), ("fg", "#000000")] {
             table.insert(key.into(), value.into());
         }
         table.insert("weight".into(), 0.into());
-        toml::Value::Table(table)
-            .try_into()
-            .map_err(|e: toml::de::Error| e.to_string())
+        CreatureSpec::deserialize(crate::content::value::Value::Table(table))
+            .map_err(|e| e.to_string())
     }
 
     /// Whether there is a family.

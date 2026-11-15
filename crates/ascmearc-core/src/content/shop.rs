@@ -284,7 +284,8 @@ impl Shops {
     /// Parses `data/shops.toml` once objects, creatures, and factions are known.
     pub(super) fn parse(file: &str, text: &str, content: &Content) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: ShopFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: ShopFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         let currency = content
             .object_id(&parsed.currency)
             .ok_or_else(|| err(format!("unknown currency object `{}`", parsed.currency)))?;

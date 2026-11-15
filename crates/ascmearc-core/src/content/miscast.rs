@@ -78,16 +78,18 @@ impl MiscastRules {
     /// 1 to 40, a `backfire_faction` that is a known faction.
     pub(super) fn parse(file: &str, text: &str, factions: &Factions) -> Result<Self, ContentError> {
         let err = |m: &str| ContentError::new(file, m);
-        let mut table: toml::Table = toml::from_str(text).map_err(|e| err(&e.to_string()))?;
+        let mut table: crate::content::value::Table =
+            crate::content::de::from_str(text).map_err(|e| err(&e.to_string()))?;
         let faction = match table.remove("backfire_faction") {
             None => None,
-            Some(toml::Value::String(name)) => Some(
+            Some(crate::content::value::Value::String(name)) => Some(
                 (factions.id(&name))
                     .ok_or_else(|| err(&format!("unknown `backfire_faction` `{name}`")))?,
             ),
             Some(_) => return Err(err("`backfire_faction` must be a faction id")),
         };
-        let mut parsed: Self = table.try_into().map_err(|e| err(&e.to_string()))?;
+        let mut parsed = Self::deserialize(crate::content::value::Value::Table(table))
+            .map_err(|e| err(&e.to_string()))?;
         parsed.backfire_faction = faction;
         if parsed.armour_percent < 1 {
             return Err(err("`armour_percent` must be at least 1"));
@@ -171,8 +173,8 @@ pub(super) fn parse<'a>(
     let mut all: Vec<Miscast> = Vec::new();
     let mut seen: BTreeMap<String, String> = BTreeMap::new();
     for (path, text) in files {
-        let file: MiscastFile =
-            toml::from_str(text).map_err(|e| ContentError::new(path, e.to_string()))?;
+        let file: MiscastFile = crate::content::de::from_str(text)
+            .map_err(|e| ContentError::new(path, e.to_string()))?;
         for spec in file.miscast {
             if let Some(first) = seen.get(&spec.id) {
                 return Err(duplicate_id("miscast", &spec.id, path, first));

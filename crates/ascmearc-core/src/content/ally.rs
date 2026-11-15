@@ -73,7 +73,8 @@ struct Xp {
 impl AllyRules {
     pub(super) fn parse(file: &str, text: &str) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: AllyFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: AllyFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         Ok(AllyRules {
             heel: parsed.follow.heel,
             leash: parsed.follow.leash,

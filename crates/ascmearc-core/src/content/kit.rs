@@ -302,7 +302,7 @@ mod tests {
 
     /// The kit written in `text` (`kit = [...]`), resolved.
     fn kit(text: &str) -> Result<Kit, String> {
-        let lines: Lines = toml::from_str(text).map_err(|e| e.to_string())?;
+        let lines: Lines = crate::content::de::from_str(text).map_err(|e| e.to_string())?;
         resolve(&lines.kit, &CONTENT)
     }
 

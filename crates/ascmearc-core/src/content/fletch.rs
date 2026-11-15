@@ -63,7 +63,8 @@ impl FletchRules {
         content: &super::Content,
     ) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: FletchFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: FletchFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         if parsed.value_per_count == 0 {
             return Err(err("`value_per_count` must be 1 or more".into()));
         }

@@ -124,7 +124,8 @@ impl SkillBook {
         let mut paths: Vec<&str> = Vec::new();
         for (file, text) in files {
             let err = |m: String| ContentError::new(file, m);
-            let parsed: SkillFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+            let parsed: SkillFile =
+                crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
             if let Some(l) = parsed.ladder {
                 l.check().map_err(err)?;
                 if let Some((first, _)) = ladder {

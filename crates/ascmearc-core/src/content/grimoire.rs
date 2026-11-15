@@ -47,7 +47,7 @@ pub struct Grimoires {
 struct RulesFile {
     chance: u8,
     value: u32,
-    object: toml::Table,
+    object: crate::content::value::Table,
 }
 
 /// What [`specs`] read: the rules and, for each grimoire generated, its scroll's id.
@@ -68,7 +68,7 @@ pub(super) fn specs<'a>(
         return Ok(None);
     };
     let err = |m: String| ContentError::new(RULES, m);
-    let rules: RulesFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+    let rules: RulesFile = crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
     let mut specs = Vec::new();
     let mut pairs = Vec::new();
     for (_, scroll) in objects.iter().filter(|(_, o)| o.casts_spell()) {
@@ -86,8 +86,7 @@ pub(super) fn specs<'a>(
         if let Some(level) = scroll.level {
             table.insert("level".into(), i64::from(level).into());
         }
-        let spec: ObjectSpec = toml::Value::Table(table)
-            .try_into()
+        let spec = ObjectSpec::deserialize(crate::content::value::Value::Table(table))
             .map_err(|e| err(format!("grimoire `{id}`: {e}")))?;
         pairs.push((id, scroll.id.clone()));
         specs.push((RULES, spec));

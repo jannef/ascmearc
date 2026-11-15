@@ -70,7 +70,7 @@ impl FamiliarRules {
     /// naming known creatures.
     pub(super) fn parse(path: &str, text: &str, content: &Content) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(path, m);
-        let file: File = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let file: File = crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         let bargain_kinds = (file.bargain_kinds.iter())
             .map(|n| race_beasts::beast(path, content, "`bargain_kinds`", n))
             .collect::<Result<Vec<_>, _>>()?;

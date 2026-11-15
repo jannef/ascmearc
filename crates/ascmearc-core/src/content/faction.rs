@@ -370,7 +370,7 @@ hostile_to_all = true
     }
 
     fn resolve(text: &str) -> Result<Factions, String> {
-        let file: FactionFile = toml::from_str(text).map_err(|e| e.to_string())?;
+        let file: FactionFile = crate::content::de::from_str(text).map_err(|e| e.to_string())?;
         Factions::resolve(file.faction)
     }
 

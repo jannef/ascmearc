@@ -27,7 +27,7 @@ impl ScrollLabelDef {
     /// Parses `data/scroll_labels.toml`. The draw tolerates any syllable counts and parts: two
     /// labels drawn the same are told apart by a number (`scroll_label::draw_into`).
     pub(super) fn parse(path: &str, text: &str) -> Result<Self, ContentError> {
-        toml::from_str(text).map_err(|e| ContentError::new(path, e.to_string()))
+        crate::content::de::from_str(text).map_err(|e| ContentError::new(path, e.to_string()))
     }
 
     /// `label`'s scroll's names, singular and plural: "scroll labelled ZUNBAR".

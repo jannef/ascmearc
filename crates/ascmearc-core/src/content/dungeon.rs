@@ -1032,8 +1032,8 @@ mod tests {
     use super::*;
 
     fn resolve(text: &str) -> Result<Vec<DungeonDef>, ContentError> {
-        let file: DungeonFile =
-            toml::from_str(text).map_err(|e| ContentError::new("d", e.to_string()))?;
+        let file: DungeonFile = crate::content::de::from_str(text)
+            .map_err(|e| ContentError::new("d", e.to_string()))?;
         file.resolve(
             "d",
             |c| (c == "rat").then_some((CreatureId(1), 1)),

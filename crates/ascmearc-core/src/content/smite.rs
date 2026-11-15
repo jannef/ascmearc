@@ -36,7 +36,8 @@ impl SmiteRules {
     /// resource.
     pub(super) fn parse(file: &str, text: &str, content: &Content) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: SmiteFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: SmiteFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         let table = parsed.smite;
         for tag in &table.unholy {
             super::tag::check(tag).map_err(|m| err(format!("`unholy`: {m}")))?;

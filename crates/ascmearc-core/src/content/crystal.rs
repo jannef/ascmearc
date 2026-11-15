@@ -116,7 +116,7 @@ impl EnchantingRules {
     /// at least 1.
     pub(super) fn parse(file: &str, text: &str, content: &Content) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let spec: RulesFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let spec: RulesFile = crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         let skill = (content.skill_id(&spec.skill))
             .ok_or_else(|| err(format!("unknown skill `{}`", spec.skill)))?;
         if spec.salvage_tier_step == 0 || spec.level_step == 0 {
@@ -196,7 +196,7 @@ impl Crystals {
     /// docs: the refusals).
     pub(super) fn parse(file: &str, text: &str, content: &Content) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let spec: File = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let spec: File = crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         let object = |id: &str| -> Result<ObjectId, ContentError> {
             content
                 .object_id(id)

@@ -478,7 +478,8 @@ impl OutcomeTables {
                 .unwrap_or(path)
                 .to_string();
             let err = |m: String| ContentError::new(path, m);
-            let spec: TableSpec = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+            let spec: TableSpec =
+                crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
             if tables.contains_key(&id) {
                 return Err(err(format!("duplicate outcome table `{id}`")));
             }

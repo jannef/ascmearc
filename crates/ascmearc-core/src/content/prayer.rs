@@ -175,7 +175,8 @@ impl PrayerRules {
     /// each use named at most once (a second's words would never be read).
     pub(super) fn parse(file: &str, text: &str, content: &Content) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: PrayerFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: PrayerFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         let decay: Duration = parsed.decay.parse().map_err(err)?;
         let mut release = Vec::new();
         for id in &parsed.release {

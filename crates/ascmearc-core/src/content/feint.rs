@@ -32,7 +32,8 @@ impl FeintRules {
     /// Parses `data/rules/feint.toml`: the status must be known.
     pub(super) fn parse(file: &str, text: &str, content: &Content) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: FeintFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: FeintFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         let status = (content.status_id(&parsed.status))
             .ok_or_else(|| err(format!("unknown status `{}`", parsed.status)))?;
         Ok(Self {

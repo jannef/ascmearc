@@ -189,7 +189,7 @@ impl Tuning {
     /// Parses `data/rules/tuning.toml`, each number within its bounds.
     pub(super) fn parse(file: &str, text: &str) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let t: Tuning = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let t: Tuning = crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         let within = |name: &str, v: i32, lo: i32, hi: i32| {
             if (lo..=hi).contains(&v) {
                 Ok(())

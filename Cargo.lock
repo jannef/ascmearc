@@ -319,6 +319,7 @@ name = "ascmearc-assets"
 version = "0.18.0"
 dependencies = [
  "ascmearc-core",
+ "toml",
 ]
 
 [[package]]

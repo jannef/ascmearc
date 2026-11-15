@@ -15,7 +15,8 @@ mod embedded {
 /// in a release; docs/dev/campaign.md).
 pub const SHOWCASE: bool = cfg!(feature = "showcase");
 
-/// The content compiled into the binary from `assets/`.
+/// The content compiled into the binary from `assets/`: its TOML, or with the `packed` feature
+/// its packed form (docs/dev/content.md, "Packed content").
 pub fn files() -> ContentFiles {
     let mut files = ContentFiles::default();
     for (path, text) in embedded::FILES {
@@ -41,7 +42,8 @@ mod tests {
     use super::*;
 
     /// The embedded set is exactly what is on disk under `assets/` (with the `showcase` feature
-    /// or without): the same paths, each with the same text.
+    /// or without): the same paths, each with the same text, or with the `packed` feature its
+    /// packed form (the core's tests check that it loads equal to the text).
     #[test]
     fn the_embedded_copy_is_the_assets_directory() {
         let assets = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../assets");
@@ -49,6 +51,10 @@ mod tests {
         let embedded: Vec<&str> = embedded::FILES.iter().map(|(p, _)| *p).collect();
         assert_eq!(on_disk.paths().collect::<Vec<_>>(), embedded);
         for (path, text) in embedded::FILES {
+            if cfg!(feature = "packed") {
+                assert!(text.starts_with('\0'), "{path} is packed");
+                continue;
+            }
             let disk = std::fs::read_to_string(assets.join(path)).expect("read");
             assert_eq!(disk, *text, "{path}");
         }

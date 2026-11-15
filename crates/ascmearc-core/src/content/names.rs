@@ -36,7 +36,7 @@ impl Names {
     ) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(path, m);
         let by_race: BTreeMap<String, NameLists> =
-            toml::from_str(text).map_err(|e| err(e.to_string()))?;
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         for (race, lists) in &by_race {
             if !is_race(race) {
                 return Err(err(format!("unknown race `{race}`")));

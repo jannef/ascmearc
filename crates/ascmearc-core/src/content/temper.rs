@@ -34,7 +34,7 @@ impl Default for TemperRules {
 impl TemperRules {
     pub(super) fn parse(file: &str, text: &str) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let rules: Self = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let rules: Self = crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         // No time would pass.
         if rules.seconds == 0 {
             return Err(err("`seconds` must be at least 1".into()));

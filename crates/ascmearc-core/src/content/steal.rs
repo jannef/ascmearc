@@ -35,7 +35,8 @@ impl StealRules {
         factions: &super::Factions,
     ) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: StealFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: StealFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         let caught = (factions.id(&parsed.caught))
             .ok_or_else(|| err(format!("unknown faction `{}`", parsed.caught)))?;
         Ok(Self { caught })

@@ -35,7 +35,7 @@ impl Plurals {
     pub(super) fn add(&mut self, path: &str, text: &str) -> Result<(), ContentError> {
         let err = |m: String| ContentError::new(path, m);
         let words: BTreeMap<String, String> =
-            toml::from_str(text).map_err(|e| err(e.to_string()))?;
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         for (word, plural) in words {
             match self.words.get(&word) {
                 Some(had) if *had != plural => {

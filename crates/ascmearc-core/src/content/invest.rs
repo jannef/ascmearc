@@ -65,7 +65,8 @@ impl InvestRules {
     /// Parses `data/rules/invest.toml`: the fees below 100 %, and the steps rising and above 0.
     pub(super) fn parse(file: &str, text: &str) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: InvestFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: InvestFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         if parsed.fees.invest >= 100 || parsed.fees.withdraw >= 100 {
             return Err(err("a fee must be below 100 percent".into()));
         }

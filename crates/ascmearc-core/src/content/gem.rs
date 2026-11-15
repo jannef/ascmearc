@@ -193,7 +193,8 @@ impl Gems {
     /// Parses `data/gems.toml`.
     pub(super) fn parse(file: &str, text: &str, known: &Known<'_>) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: GemsFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: GemsFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         let object = (known.object_id)(&parsed.object)
             .ok_or_else(|| err(format!("`object = \"{}\"`: no such object", parsed.object)))?;
         let def = &known.objects[usize::from(object.0)];

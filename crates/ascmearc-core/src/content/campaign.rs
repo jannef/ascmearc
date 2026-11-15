@@ -81,7 +81,7 @@ impl ContentFiles {
         }
         let test = |id: &&str| {
             (self.get_optional(&format!("{CAMPAIGNS}/{id}/campaign.toml")))
-                .and_then(|text| toml::from_str::<KindOnly>(text).ok())
+                .and_then(|text| crate::content::de::from_str::<KindOnly>(text).ok())
                 .is_some_and(|k| k.kind == CampaignKind::Test)
         };
         let (tests, mut order): (Vec<&str>, Vec<&str>) = ids.into_iter().partition(test);
@@ -96,8 +96,8 @@ pub(super) fn parse(files: &ContentFiles) -> Result<Vec<CampaignDef>, ContentErr
     for dir in files.campaign_order() {
         let path = format!("{CAMPAIGNS}/{dir}/campaign.toml");
         let text = files.get(&path)?;
-        let def: CampaignDef =
-            toml::from_str(text).map_err(|e| ContentError::new(&path, e.to_string()))?;
+        let def: CampaignDef = crate::content::de::from_str(text)
+            .map_err(|e| ContentError::new(&path, e.to_string()))?;
         if def.id != dir {
             return Err(ContentError::new(
                 &path,

@@ -82,8 +82,8 @@ pub(super) fn parse<'a>(
 ) -> Result<Vec<TownDef>, ContentError> {
     let mut towns = Vec::new();
     for (path, text) in table {
-        let parsed: TownFile =
-            toml::from_str(text).map_err(|e| ContentError::new(path, e.to_string()))?;
+        let parsed: TownFile = crate::content::de::from_str(text)
+            .map_err(|e| ContentError::new(path, e.to_string()))?;
         for town in &parsed.town {
             for servant in &town.servants {
                 check_servant(servant, content).map_err(|m| {

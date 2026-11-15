@@ -432,7 +432,8 @@ fn parse_file<'a>(
     files: &mut Vec<&'a str>,
 ) -> Result<(), ContentError> {
     let err = |m: String| ContentError::new(file, m);
-    let parsed: DialogueFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+    let parsed: DialogueFile =
+        crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
     let campaign = super::campaign::of_path(file).map(str::to_string);
     for spec in parsed.dialogue {
         let speaker = match (spec.creature, spec.npc) {

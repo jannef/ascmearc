@@ -34,8 +34,8 @@ impl RangedRules {
     /// Parses `data/ranged.toml`: the bands rise in `beyond` ([`Self::to_hit_at`] reads them in
     /// order).
     pub(super) fn parse(file: &str, text: &str) -> Result<Self, ContentError> {
-        let parsed: Self =
-            toml::from_str(text).map_err(|e| ContentError::new(file, e.to_string()))?;
+        let parsed: Self = crate::content::de::from_str(text)
+            .map_err(|e| ContentError::new(file, e.to_string()))?;
         if !parsed.bands.windows(2).all(|w| w[0].beyond < w[1].beyond) {
             return Err(ContentError::new(file, "the bands rise in `beyond`"));
         }

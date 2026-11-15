@@ -123,7 +123,8 @@ pub struct AlignmentRules {
 impl AlignmentRules {
     pub(super) fn parse(file: &str, text: &str) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let p: AlignmentFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let p: AlignmentFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         let ids: Vec<Band> = p.band.iter().map(|b| b.id).collect();
         if ids != Band::ALL {
             return Err(err(

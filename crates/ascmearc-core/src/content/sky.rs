@@ -61,7 +61,7 @@ struct SkyFile {
 /// Parses and checks `data/sky.toml`: the moons in file order.
 pub(super) fn parse(file: &str, text: &str) -> Result<Vec<MoonDef>, ContentError> {
     let err = |m: String| ContentError::new(file, m);
-    let parsed: SkyFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+    let parsed: SkyFile = crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
     // The phase is the time modulo the period.
     if let Some((i, moon)) = (parsed.moon.iter().enumerate()).find(|(_, m)| m.period_days == 0) {
         return Err(err(format!(

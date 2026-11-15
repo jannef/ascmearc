@@ -216,7 +216,7 @@ struct EffectFile {
 /// Parses and checks `data/effects.toml`: the effects in file order, ids unique.
 pub(super) fn parse(file: &str, text: &str) -> Result<Vec<EffectDef>, ContentError> {
     let err = |m: String| ContentError::new(file, m);
-    let parsed: EffectFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+    let parsed: EffectFile = crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
     for (i, effect) in parsed.effect.iter().enumerate() {
         effect
             .check()

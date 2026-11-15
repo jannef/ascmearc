@@ -448,7 +448,7 @@ pub(super) struct DefaultsFile {
 impl DefaultsFile {
     /// The default odds of `text` (`data/dungeons.toml`); `None` without `[defaults]`.
     pub(super) fn parse(text: &str) -> Result<Option<Odds>, String> {
-        let file: DefaultsFile = toml::from_str(text).map_err(|e| e.to_string())?;
+        let file: DefaultsFile = crate::content::de::from_str(text).map_err(|e| e.to_string())?;
         Ok(file.defaults)
     }
 }
@@ -605,7 +605,7 @@ mod tests {
     };
 
     fn rule(text: &str) -> Result<Option<(DangerRule, Spawning)>, String> {
-        let spec: SpawningSpec = toml::from_str(text).map_err(|e| e.to_string())?;
+        let spec: SpawningSpec = crate::content::de::from_str(text).map_err(|e| e.to_string())?;
         let known = |n: &str| match n {
             "rat" => Some((CreatureId(3), 1)),
             "kobold" => Some((CreatureId(1), 2)),
@@ -637,7 +637,8 @@ mod tests {
             }
         );
         // Without the defaults a danger is refused.
-        let spec: SpawningSpec = toml::from_str("danger = 2\npopulation = [\"rat\"]\n").unwrap();
+        let spec: SpawningSpec =
+            crate::content::de::from_str("danger = 2\npopulation = [\"rat\"]\n").unwrap();
         let known = |_: &str| Some((CreatureId(3), 1));
         assert!(spec.resolve(true, &[], known, None).is_err());
     }

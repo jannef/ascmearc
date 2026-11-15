@@ -343,7 +343,8 @@ impl Default for ActionCosts {
 impl ActionCosts {
     pub(super) fn parse(file: &str, text: &str) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: BTreeMap<String, u32> = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: BTreeMap<String, u32> =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         let mut costs = Self::default();
         for (id, cost) in parsed {
             let kind = ActionKind::ALL

@@ -83,7 +83,7 @@ mod tests {
     use super::*;
 
     fn curve(text: &str) -> Result<DreadCurve, String> {
-        let spec: DreadCurveSpec = toml::from_str(text).map_err(|e| e.to_string())?;
+        let spec: DreadCurveSpec = crate::content::de::from_str(text).map_err(|e| e.to_string())?;
         spec.resolve()
     }
 

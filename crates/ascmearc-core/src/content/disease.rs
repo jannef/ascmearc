@@ -171,7 +171,7 @@ pub(super) fn parse(
     terrain_id: impl Fn(&str) -> Option<TerrainId>,
 ) -> Result<(Option<StatusId>, Vec<DiseaseDef>), ContentError> {
     let err = |m: String| ContentError::new(file, m);
-    let parsed: DiseaseFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+    let parsed: DiseaseFile = crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
     let status = match &parsed.status {
         Some(id) => {
             Some(status_id(id).ok_or_else(|| err(format!("status: unknown status `{id}`")))?)

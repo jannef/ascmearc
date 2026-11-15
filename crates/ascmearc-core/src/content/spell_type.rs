@@ -150,7 +150,7 @@ pub(super) fn parse(
     content: &Content,
 ) -> Result<BTreeMap<DamageTypeId, SpellType>, ContentError> {
     let file: TypesFile =
-        toml::from_str(text).map_err(|e| ContentError::new(path, e.to_string()))?;
+        crate::content::de::from_str(text).map_err(|e| ContentError::new(path, e.to_string()))?;
     let mut types = BTreeMap::new();
     for (name, spec) in file.types {
         let kind = content.damage_type_id(&name).ok_or_else(|| {

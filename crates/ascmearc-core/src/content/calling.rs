@@ -60,8 +60,8 @@ pub(super) fn parse<'a>(
     let mut callings: Vec<CallingDef> = Vec::new();
     let mut seen: BTreeMap<(Option<String>, String), &str> = BTreeMap::new();
     for (path, text) in table {
-        let parsed: CallingFile =
-            toml::from_str(text).map_err(|e| ContentError::new(path, e.to_string()))?;
+        let parsed: CallingFile = crate::content::de::from_str(text)
+            .map_err(|e| ContentError::new(path, e.to_string()))?;
         for spec in parsed.calling {
             let campaign = super::campaign::of_path(path).map(str::to_string);
             let key = (campaign.clone(), spec.class.clone());

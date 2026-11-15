@@ -697,7 +697,7 @@ pub(super) fn parse_level(
     default_legend: &BTreeMap<char, LegendEntry>,
 ) -> Result<LevelTemplate, ContentError> {
     let err = |msg: String| ContentError::new(file, msg);
-    let parsed: LevelFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+    let parsed: LevelFile = crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
 
     let mut legend = default_legend.clone();
     for (key, entry) in parsed.legend {

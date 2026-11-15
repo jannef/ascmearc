@@ -107,7 +107,8 @@ pub(super) fn parse<'a>(
         if out.iter().any(|t| t.tag == tag) {
             return Err(err(format!("the tag `{tag}` has a drops file already")));
         }
-        let spec: TagFileSpec = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let spec: TagFileSpec =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         let rows = (spec.drop.iter())
             .map(|r| resolve_row(r, content, DropFrom::Tag(tag.clone())))
             .collect::<Result<Vec<_>, _>>()

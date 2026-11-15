@@ -639,7 +639,8 @@ pub(super) fn parse<'a>(
     for (file, text) in table {
         last = file;
         let err = |m: String| ContentError::new(file, m);
-        let parsed: QuestFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: QuestFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         for spec in parsed.quest {
             let id = spec.id.clone();
             let bad = |m: String| err(format!("quest `{id}`: {m}"));

@@ -97,7 +97,8 @@ impl HerbRules {
         content: &super::Content,
     ) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: HerbsFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: HerbsFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         let terrain = (content.terrain_id(&parsed.terrain))
             .ok_or_else(|| err(format!("unknown terrain `{}`", parsed.terrain)))?;
         let skill = (content.skill_id(&parsed.skill))

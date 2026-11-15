@@ -837,8 +837,8 @@ pub(super) fn parse<'a>(
     let mut specs = Vec::new();
     for (file, text) in files {
         first_file.get_or_insert(file);
-        let parsed: AffixFile =
-            toml::from_str(text).map_err(|e| ContentError::new(file, e.to_string()))?;
+        let parsed: AffixFile = crate::content::de::from_str(text)
+            .map_err(|e| ContentError::new(file, e.to_string()))?;
         rarity_spec.take(file, parsed.rarity)?;
         magic_spec.take(file, parsed.magic)?;
         rare_spec.take(file, parsed.rare)?;

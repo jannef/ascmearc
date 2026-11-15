@@ -47,7 +47,7 @@ impl SearchRules {
     /// Parses `data/rules/search.toml`: `turns` within [`SEARCH_TURNS`].
     pub(super) fn parse(file: &str, text: &str) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let rules: Self = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let rules: Self = crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         if !SEARCH_TURNS.contains(&rules.turns) {
             return Err(err(format!(
                 "turns {} is out of range ({} to {})",

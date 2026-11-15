@@ -111,7 +111,7 @@ pub(super) fn parse(
     content: &Content,
 ) -> Result<CircleStatuses, ContentError> {
     let err = |m: String| ContentError::new(path, m);
-    let file: File = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+    let file: File = crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
     let mut colors: [Option<Rgb>; 7] = [None; 7];
     let mut lights: [Option<LightId>; 7] = [None; 7];
     for row in &file.school {

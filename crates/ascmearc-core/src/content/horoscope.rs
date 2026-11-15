@@ -225,7 +225,8 @@ impl Horoscope {
     /// Parses `data/horoscope.toml`.
     pub(super) fn parse(file: &str, text: &str) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: HoroscopeFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: HoroscopeFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         // A year's sign indexes both lists.
         let parts = |kind: &str, specs: Vec<SignSpec>| -> Result<Vec<SignPart>, ContentError> {
             if specs.is_empty() {

@@ -122,7 +122,8 @@ impl Stock {
     /// left out.
     pub(super) fn parse(file: &str, text: &str, content: &Content) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: StockFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: StockFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         let mut stock = Stock::default();
         // Content without skills (a fixture) has no professions.
         let skills = !content.skills().is_empty();

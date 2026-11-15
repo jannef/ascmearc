@@ -114,7 +114,8 @@ impl RigRules {
     /// Parses `data/rigs.toml` against `content`'s traps, objects, and stock.
     pub(super) fn parse(file: &str, text: &str, content: &Content) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: RigsFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: RigsFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         if parsed.rig.is_empty() {
             return Err(err("there must be at least one `[[rig]]`".into()));
         }

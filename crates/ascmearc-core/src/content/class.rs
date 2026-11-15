@@ -310,7 +310,8 @@ impl ClassDef {
         for (file, text) in files {
             last = file;
             let err = |m: String| ContentError::new(file, m);
-            let parsed: ClassFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+            let parsed: ClassFile =
+                crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
             for spec in parsed.class {
                 if let Some(first) = seen.insert(spec.id.clone(), file) {
                     return Err(duplicate_id("class", &spec.id, file, first));

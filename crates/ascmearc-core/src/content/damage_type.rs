@@ -89,7 +89,8 @@ pub struct DamageTypeDef {
 /// unique ids, at most one of them `unarmed` (the one bare hands do).
 pub(super) fn parse(file: &str, text: &str) -> Result<Vec<DamageTypeDef>, ContentError> {
     let err = |m: String| ContentError::new(file, m);
-    let parsed: DamageTypeFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+    let parsed: DamageTypeFile =
+        crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
     if parsed.types.len() > MAX_DAMAGE_TYPES {
         return Err(err(format!("at most {MAX_DAMAGE_TYPES} damage types")));
     }

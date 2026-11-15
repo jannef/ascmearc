@@ -106,8 +106,8 @@ pub(super) fn parse<'a>(
     let mut guilds = Vec::new();
     let mut seen: BTreeMap<String, &str> = BTreeMap::new();
     for (path, text) in table {
-        let parsed: GuildFile =
-            toml::from_str(text).map_err(|e| ContentError::new(path, e.to_string()))?;
+        let parsed: GuildFile = crate::content::de::from_str(text)
+            .map_err(|e| ContentError::new(path, e.to_string()))?;
         for spec in parsed.guild {
             if let Some(first) = seen.insert(spec.id.clone(), path) {
                 return Err(super::duplicate_id("guild", &spec.id, path, first));

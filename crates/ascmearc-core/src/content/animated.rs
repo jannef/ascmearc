@@ -344,7 +344,8 @@ impl Animated {
             };
         };
         let err = |m: String| ContentError::new(RULES, m);
-        let rules: RulesFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let rules: RulesFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         let mut lines = Vec::new();
         let mut tiers = rules.tier;
         for tier in &mut tiers {
@@ -389,7 +390,8 @@ impl Animated {
             if super::campaign::of_path(path).is_some() {
                 return Err(err("animated bodies are shared: data/animated/ only".into()));
             }
-            let file: BodyFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+            let file: BodyFile =
+                crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
             for spec in file.body {
                 let tier = household.ok_or_else(|| err("no tier of bodies".into()))?;
                 if let Some(first) = seen.insert(spec.id.clone(), path.to_string()) {
@@ -739,7 +741,7 @@ impl Content {
 
 /// Whether a body file's text defines anything (not a file of notes only).
 fn has_body(text: &str) -> bool {
-    toml::from_str::<BodyFile>(text).is_ok_and(|f| !f.body.is_empty())
+    crate::content::de::from_str::<BodyFile>(text).is_ok_and(|f| !f.body.is_empty())
 }
 
 /// An animated type's numbers at level L by its tier (the undead roster's formulas, #383, rounded

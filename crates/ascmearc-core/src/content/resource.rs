@@ -259,7 +259,8 @@ pub(super) fn parse(
     status: impl Fn(&str) -> Option<(StatusId, bool)>,
 ) -> Result<Vec<ResourceDef>, ContentError> {
     let err = |m: String| ContentError::new(file, m);
-    let parsed: ResourceFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+    let parsed: ResourceFile =
+        crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
     let mut list: Vec<ResourceDef> = Vec::new();
     for spec in parsed.resource {
         let id = spec.id.clone();

@@ -84,7 +84,8 @@ impl ForageRules {
         content: &super::Content,
     ) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: ForageFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: ForageFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         if parsed.seconds == 0 {
             return Err(err("`seconds` must be at least 1".into()));
         }

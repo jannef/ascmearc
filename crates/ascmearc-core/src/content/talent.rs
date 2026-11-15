@@ -292,8 +292,11 @@ pub enum SongOn {
 impl<'de> Deserialize<'de> for TalentEffect {
     fn deserialize<D: Deserializer<'de>>(d: D) -> Result<Self, D::Error> {
         use serde::de::Error;
-        let value = toml::Value::deserialize(d)?;
-        let Some(kind) = value.get("kind").and_then(toml::Value::as_str) else {
+        let value = crate::content::value::Value::deserialize(d)?;
+        let Some(kind) = value
+            .get("kind")
+            .and_then(crate::content::value::Value::as_str)
+        else {
             // No kind, or one that is no string: the derived enum's own words for it.
             return BeastEffect::deserialize(value)
                 .map(TalentEffect::Beast)
@@ -1532,8 +1535,8 @@ pub(super) fn parse<'a>(
     let mut pending: Vec<Pending<'a>> = Vec::new();
     for (file, text) in files {
         first_file.get_or_insert(file);
-        let parsed: TalentFile =
-            toml::from_str(text).map_err(|e| ContentError::new(file, e.to_string()))?;
+        let parsed: TalentFile = crate::content::de::from_str(text)
+            .map_err(|e| ContentError::new(file, e.to_string()))?;
         trees.extend(parsed.tree.into_iter().map(|t| (file, t)));
         systems.extend(parsed.system.into_iter().map(|s| (file, s)));
         pending.extend(parsed.talent.into_iter().map(|spec| Pending { file, spec }));

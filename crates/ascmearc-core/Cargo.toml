@@ -22,5 +22,11 @@ toml.workspace = true
 insta.workspace = true
 proptest.workspace = true
 
+[features]
+# The built-in content is read only in its packed form (`content/de.rs`): the TOML reader is
+# compiled out, so no `toml` deserializer is built for a content type. For the web build, through
+# `ascmearc-assets/packed` (docs/dev/content.md, "Packed content").
+packed = []
+
 [lints]
 workspace = true

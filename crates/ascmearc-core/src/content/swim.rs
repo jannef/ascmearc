@@ -33,7 +33,8 @@ impl SwimRules {
     /// and the damage type must exist.
     pub(super) fn parse(file: &str, text: &str, content: &Content) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: SwimFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: SwimFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         if parsed.cold < 0 {
             return Err(err("`cold` must not be negative".into()));
         }

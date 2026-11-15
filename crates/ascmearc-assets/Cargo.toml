@@ -12,6 +12,10 @@ repository.workspace = true
 [dependencies]
 ascmearc-core.workspace = true
 
+[build-dependencies]
+# Only to pack the content (the `packed` feature); a build without it compiles none.
+toml = { workspace = true, optional = true }
+
 [features]
 # The test world (`assets/campaigns/showcase/`), embedded only with this feature: on for every
 # dev command, test, and benchmark; release builds and `cargo xtask web` turn it off with
@@ -19,6 +23,11 @@ ascmearc-core.workspace = true
 # in release builds").
 default = ["showcase"]
 showcase = []
+# The content embedded packed: parsed by `build.rs` into the compact form of
+# `ascmearc-core/src/content/pack.rs` in place of its TOML text, and the core's TOML reader compiled
+# out (the web build, for its size; docs/dev/content.md, "Packed content"). Such a build loads no
+# TOML content: not `--content-dir`, not a mod.
+packed = ["ascmearc-core/packed", "dep:toml"]
 
 [lints]
 workspace = true

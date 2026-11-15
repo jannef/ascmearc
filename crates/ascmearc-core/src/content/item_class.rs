@@ -62,7 +62,8 @@ pub struct ItemClassDef {
 /// Parses `data/item_classes.toml`.
 pub(super) fn parse(file: &str, text: &str) -> Result<Vec<ItemClassDef>, ContentError> {
     let err = |m: String| ContentError::new(file, m);
-    let parsed: ItemClassFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+    let parsed: ItemClassFile =
+        crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
     if parsed.class.len() > MAX_ITEM_CLASSES {
         return Err(err(format!("at most {MAX_ITEM_CLASSES} classes")));
     }

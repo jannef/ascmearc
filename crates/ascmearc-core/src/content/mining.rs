@@ -214,7 +214,8 @@ impl MiningRules {
         content: &mut super::Content,
     ) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: MiningFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: MiningFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         let skill = (content.skill_id(&parsed.skill))
             .ok_or_else(|| err(format!("unknown skill `{}`", parsed.skill)))?;
         let stat = Stat::from_id(&parsed.stat)

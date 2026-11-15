@@ -535,7 +535,8 @@ pub(super) fn parse<'a>(
     }
     if let Some((path, text)) = settings {
         let err = |m: String| ContentError::new(path, m);
-        let file: RecipesFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let file: RecipesFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         for row in &file.profession {
             let skill = (content.skill_id(&row.skill))
                 .ok_or_else(|| err(format!("profession: unknown skill `{}`", row.skill)))?;
@@ -569,7 +570,8 @@ pub(super) fn parse<'a>(
             continue;
         }
         let err = |m: String| ContentError::new(path, m);
-        let file: RecipeFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let file: RecipeFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         if file.recipe.len() > 1 {
             return Err(err("one `[[recipe]]` a file".into()));
         }

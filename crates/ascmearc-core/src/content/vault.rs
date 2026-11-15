@@ -98,7 +98,7 @@ struct VaultFields {
     dungeons: Vec<String>,
     turns: Option<bool>,
     /// A vault's `{ from, to }`, or a level's danger rule (the level parser reads that one).
-    danger: Option<toml::Value>,
+    danger: Option<crate::content::value::Value>,
 }
 
 /// The `dungeons` a vault file (or a level file, which may not give it) names.
@@ -120,7 +120,7 @@ pub(super) fn parse_danger(path: &str, text: &str) -> Result<Option<DangerRange>
         return Ok(None);
     };
     let rule = match &value {
-        toml::Value::Table(table) => {
+        crate::content::value::Value::Table(table) => {
             !table.is_empty()
                 && (table.keys()).all(|k| ["base", "per_depth", "player"].contains(&k.as_str()))
         }
@@ -130,12 +130,12 @@ pub(super) fn parse_danger(path: &str, text: &str) -> Result<Option<DangerRange>
         return Ok(None);
     }
     let range = DangerRange::deserialize(value)
-        .map_err(|e| ContentError::new(path, format!("`danger`: {}", e.message())))?;
+        .map_err(|e| ContentError::new(path, format!("`danger`: {}", e)))?;
     Ok(Some(range).filter(DangerRange::is_given))
 }
 
 fn parse_fields(path: &str, text: &str) -> Result<VaultFields, ContentError> {
-    toml::from_str(text).map_err(|e| ContentError::new(path, e.to_string()))
+    crate::content::de::from_str(text).map_err(|e| ContentError::new(path, e.to_string()))
 }
 
 impl Vault {

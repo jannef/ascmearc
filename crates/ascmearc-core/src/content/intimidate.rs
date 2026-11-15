@@ -41,7 +41,8 @@ impl IntimidateRules {
     /// ([`Self::degrees_at`] reads the rungs in order).
     pub(super) fn parse(file: &str, text: &str, content: &Content) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: IntimidateFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: IntimidateFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         let status = (content.status_id(&parsed.status))
             .ok_or_else(|| err(format!("unknown status `{}`", parsed.status)))?;
         if !parsed.degrees.windows(2).all(|w| w[0].0 < w[1].0) {

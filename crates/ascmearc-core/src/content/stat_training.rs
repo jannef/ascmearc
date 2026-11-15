@@ -390,7 +390,8 @@ impl StatTraining {
     /// Parses `data/stats.toml`.
     pub(super) fn parse(file: &str, text: &str) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let File { training } = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let File { training } =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         // The divisors of the prices, and the power the odds raise within `u128`.
         for (name, value) in [
             ("ramp_divisor", training.ramp_divisor),

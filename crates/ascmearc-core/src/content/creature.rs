@@ -1250,7 +1250,8 @@ mod tests {
     fn creature_spec_defaults_are_serdes() {
         // The required fields at their empty values; everything else left to serde.
         let text = "id = \"\"\nname = \"\"\nglyph = \"\\u0000\"\nfg = \"#000000\"\nweight = 0\n";
-        let parsed: CreatureSpec = toml::from_str(text).expect("a bare creature parses");
+        let parsed: CreatureSpec =
+            crate::content::de::from_str(text).expect("a bare creature parses");
         let built = CreatureSpec::default();
         assert_eq!(format!("{parsed:?}"), format!("{built:?}"));
     }

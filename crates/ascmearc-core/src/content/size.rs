@@ -61,7 +61,7 @@ impl SizeDef {
 /// Parses `data/sizes.toml`.
 pub(super) fn parse(file: &str, text: &str) -> Result<Vec<SizeDef>, ContentError> {
     let err = |m: String| ContentError::new(file, m);
-    let parsed: SizeFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+    let parsed: SizeFile = crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
     let mut sizes: Vec<SizeDef> = Vec::new();
     for size in parsed.size {
         if sizes.iter().any(|s| s.id == size.id) {

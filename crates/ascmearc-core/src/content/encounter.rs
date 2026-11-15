@@ -207,7 +207,8 @@ impl EncounterRules {
     /// meetings' tables all given or none ([`Meetings::parse`]).
     pub(super) fn parse(file: &str, text: &str) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: RulesFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: RulesFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         let edge_reach = parsed.edge_reach;
         let meetings = match parsed {
             RulesFile {
@@ -518,7 +519,8 @@ pub(super) fn parse<'a>(
                 "encounter tables belong to a campaign's `data/encounters/`".into(),
             ));
         };
-        let parsed: TableFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: TableFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         for spec in parsed.table {
             let id = spec.id.clone();
             let bad = |m: String| err(format!("encounter table `{id}`: {m}"));

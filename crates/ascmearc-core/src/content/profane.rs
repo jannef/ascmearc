@@ -218,8 +218,8 @@ pub(super) fn parse<'a>(
 ) -> Result<ProfaneTable, ContentError> {
     let mut specs: Vec<(&str, GiftSpec)> = Vec::new();
     for (file, text) in files {
-        let parsed: GiftFile =
-            toml::from_str(text).map_err(|e| ContentError::new(file, e.to_string()))?;
+        let parsed: GiftFile = crate::content::de::from_str(text)
+            .map_err(|e| ContentError::new(file, e.to_string()))?;
         specs.extend(parsed.gift.into_iter().map(|g| (file, g)));
     }
     let mut table = ProfaneTable::default();

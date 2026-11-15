@@ -173,7 +173,7 @@ mod tests {
     use super::*;
 
     fn spec(text: &str) -> Result<(), String> {
-        let spec: SummonSpec = toml::from_str(text).map_err(|e| e.to_string())?;
+        let spec: SummonSpec = crate::content::de::from_str(text).map_err(|e| e.to_string())?;
         spec.check()
     }
 

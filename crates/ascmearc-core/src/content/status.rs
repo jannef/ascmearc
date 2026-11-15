@@ -747,7 +747,8 @@ pub(super) fn parse_table<'a>(
     let mut follows = Vec::new();
     for (file, text) in files {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: StatusFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: StatusFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         if let Some(h) = parsed.healing {
             if let Some((first, _)) = healing {
                 return Err(err(format!("`[healing]` is set in {first} too")));

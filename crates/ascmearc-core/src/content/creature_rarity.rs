@@ -43,7 +43,7 @@ impl CreatureRarity {
 /// Parses `data/creature_rarities.toml`.
 pub(super) fn parse(file: &str, text: &str) -> Result<Vec<CreatureRarity>, ContentError> {
     let err = |m: String| ContentError::new(file, m);
-    let parsed: RarityFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+    let parsed: RarityFile = crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
     let mut tiers: Vec<CreatureRarity> = Vec::new();
     for tier in parsed.rarity {
         if tiers.iter().any(|t| t.id == tier.id) {

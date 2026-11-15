@@ -90,7 +90,7 @@ impl ChestRules {
     /// Parses and checks `data/chests.toml`.
     pub(super) fn parse(path: &str, text: &str) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(path, m);
-        let file: ChestFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let file: ChestFile = crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         for (i, band) in file.band.iter().enumerate() {
             band.check(i, &file.band)
                 .map_err(|m| err(format!("band `{}`: {m}", band.id)))?;

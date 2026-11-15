@@ -8,10 +8,17 @@
 //! The test world, `campaigns/showcase/`, is embedded only with the `showcase` feature (on by
 //! default, off in release builds and the web build): without it a build embeds no file of
 //! it (docs/dev/campaign.md, "The test world in release builds").
+//!
+//! With the `packed` feature (the web build) each file is embedded packed, parsed here once, in
+//! place of its TOML text (`build/packed.rs`; docs/dev/content.md, "Packed content").
 
 #[path = "../ascmearc-core/src/content/walk.rs"]
 #[allow(dead_code)]
 mod walk;
+
+#[cfg(feature = "packed")]
+#[path = "build/packed.rs"]
+mod packed;
 
 use std::fmt::Write as _;
 use std::path::PathBuf;
@@ -27,10 +34,14 @@ fn main() {
     let mut watch = |dir: &std::path::Path| println!("cargo:rerun-if-changed={}", dir.display());
     let files = walk::walk(&assets, showcase, &mut watch).expect("read assets/");
 
+    let out_dir = PathBuf::from(std::env::var("OUT_DIR").expect("set by cargo"));
     let mut out = String::from("pub(crate) const FILES: &[(&str, &str)] = &[\n");
     for (rel, path) in &files {
         let abs = path.canonicalize().unwrap_or(path.clone());
         println!("cargo:rerun-if-changed={}", abs.display());
+        // With the `packed` feature, the file's packed form in place of its TOML (#1720).
+        #[cfg(feature = "packed")]
+        let abs = packed::embedded(&out_dir, rel, &abs);
         writeln!(
             out,
             "    ({rel:?}, include_str!({:?})),",
@@ -40,6 +51,5 @@ fn main() {
     }
     out.push_str("];\n");
 
-    let out_dir = PathBuf::from(std::env::var("OUT_DIR").expect("set by cargo"));
     std::fs::write(out_dir.join("builtin_assets.rs"), out).expect("write builtin_assets.rs");
 }

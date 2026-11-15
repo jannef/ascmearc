@@ -447,8 +447,8 @@ pub(super) fn parse<'a>(
     let mut all = Vec::new();
     let mut seen: BTreeMap<String, String> = BTreeMap::new();
     for (path, text) in files {
-        let file: WeaponAbilityFile =
-            toml::from_str(text).map_err(|e| ContentError::new(path, e.to_string()))?;
+        let file: WeaponAbilityFile = crate::content::de::from_str(text)
+            .map_err(|e| ContentError::new(path, e.to_string()))?;
         for spec in file.weapon_ability {
             if let Some(first) = seen.get(&spec.id) {
                 return Err(duplicate_id("weapon ability", &spec.id, path, first));

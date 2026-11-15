@@ -242,7 +242,8 @@ impl Stances {
     /// Parses `data/stances.toml`: at most one entry for each stance; one left out is plain.
     pub(super) fn parse(file: &str, text: &str) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: StanceFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: StanceFile =
+            crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         let mut stances = Self::default();
         let mut seen = Vec::new();
         for def in parsed.stance {

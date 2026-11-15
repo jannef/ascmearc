@@ -157,7 +157,7 @@ struct File {
     #[serde(default)]
     tribe: Vec<TribeSpec>,
     #[serde(default)]
-    kinds: toml::Table,
+    kinds: crate::content::value::Table,
     #[serde(default)]
     depth: Vec<Depth>,
 }
@@ -203,7 +203,7 @@ impl GearConditions {
     /// improvements with any table's within [`PER_MILLE`], its `ornament` at most 100.
     fn parse_text(file: &str, text: &str) -> Result<Self, ContentError> {
         let err = |m: String| ContentError::new(file, m);
-        let parsed: File = toml::from_str(text).map_err(|e| err(e.to_string()))?;
+        let parsed: File = crate::content::de::from_str(text).map_err(|e| err(e.to_string()))?;
         let check = |name: &str, odds: &Odds| {
             (odds.total() <= PER_MILLE).then_some(()).ok_or_else(|| {
                 err(format!(
@@ -225,9 +225,8 @@ impl GearConditions {
         }
         let mut kinds = Vec::new();
         for (group, list) in parsed.kinds {
-            let list: Vec<ItemHarm> = list
-                .try_into()
-                .map_err(|e: toml::de::Error| err(format!("kinds of `{group}`: {e}")))?;
+            let list = Vec::<ItemHarm>::deserialize(list)
+                .map_err(|e| err(format!("kinds of `{group}`: {e}")))?;
             kinds.push((group, list));
         }
         let mut last = 0;

@@ -154,7 +154,7 @@ mod tests {
     use super::*;
 
     fn parse(text: &str) -> ParticleEmitter {
-        toml::from_str(text).expect("emitter parses")
+        crate::content::de::from_str(text).expect("emitter parses")
     }
 
     #[test]
@@ -177,6 +177,8 @@ mod tests {
         let no_colors = "glyphs = \".\"\ncolors = []\nlife = 1\nrate = 1\n";
         assert!(parse(no_colors).check().is_err());
         assert!(parse(&format!("{base}rate = nan\n")).check().is_err());
-        assert!(toml::from_str::<ParticleEmitter>(&format!("{base}speed = 1\n")).is_err());
+        assert!(
+            crate::content::de::from_str::<ParticleEmitter>(&format!("{base}speed = 1\n")).is_err()
+        );
     }
 }

@@ -136,8 +136,8 @@ pub(super) fn parse<'a>(
     let mut uniques = Uniques::default();
     let mut seen: BTreeMap<String, &str> = BTreeMap::new();
     for (path, text) in table {
-        let parsed: UniqueFile =
-            toml::from_str(text).map_err(|e| ContentError::new(path, e.to_string()))?;
+        let parsed: UniqueFile = crate::content::de::from_str(text)
+            .map_err(|e| ContentError::new(path, e.to_string()))?;
         for spec in parsed.unique {
             if let Some(first) = seen.insert(spec.id.clone(), path) {
                 return Err(super::duplicate_id("unique item", &spec.id, path, first));
