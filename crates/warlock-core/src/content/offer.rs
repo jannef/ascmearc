@@ -1,4 +1,4 @@
-//! A trader's one offer (spec §8 "Dialogue": "An offer"; the pedlar of the Ascmearc's roads,
+//! A trader's one offer (the pedlar of the Ascmearc's roads,
 //! #808, docs/design/overworld-encounters.md §15 Q7): a dialogue's `[dialogue.offer]`. Asked for
 //! like a topic (its `id` in the speaker's topic namespace), it is one item at a fixed price,
 //! taken or left (`world/people/wares.rs`). The item is a favoured roll

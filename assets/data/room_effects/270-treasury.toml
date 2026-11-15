@@ -1,4 +1,4 @@
-# A treasure room (spec §7 "Special rooms"): its doors all secret, chests, gold, and gems inside,
+# A treasure room: its doors all secret, chests, gold, and gems inside,
 # and a hint on every arrival until it is entered. Not a tempting hoard: nothing seals, nothing
 # guards it; finding it is the work.
 [[effect]]

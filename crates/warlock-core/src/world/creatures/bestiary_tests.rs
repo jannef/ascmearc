@@ -662,7 +662,7 @@ fn the_delf_humanoids_wield_their_weapons() {
     }
 }
 
-/// The creatures of surprise (spec §8 "Surprise and sneak attacks", #686): the eight that
+/// The creatures of surprise (#686): the eight that
 /// sneak-attack, with their Initiative and, for the drow, a sharp eye for those who would slip
 /// past them; and the two that lurk, the only ones.
 #[test]

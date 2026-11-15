@@ -1,7 +1,7 @@
-//! The plural dictionary (`assets/data/plurals.toml`, and a campaign's `data/plurals.toml`;
-//! spec §7 "Data"): the plurals of words that do not take a plain "s", kept by hand, one line
-//! each (`wolf = "wolves"`). [`Plurals::plural`] is the one place a plural is made when content
-//! gives none: a creature's or an object's name, a gem's material, a tag ("Kill 100 goblins.").
+//! The plural dictionary (`assets/data/plurals.toml`, and a campaign's `data/plurals.toml`): the
+//! plurals of words that do not take a plain "s", kept by hand, one line each (`wolf = "wolves"`).
+//! [`Plurals::plural`] is the one place a plural is made when content gives none: a creature's or
+//! an object's name, a gem's material, a tag ("Kill 100 goblins.").
 //!
 //! A word is looked up whole, then by its last word (after a space or a hyphen: "giant wolf" is
 //! "giant wolves", "marsh-thing" "marsh-things"), else it takes an "s".

@@ -1,4 +1,4 @@
-# Rod effects (spec §8 "Magic items": "Rods", the magic design §9): what a rod does, effects no
+# Rod effects (the magic design §9): what a rod does, effects no
 # spell has. One `[[rod_effect]]` per file; a campaign's data/rod_effects/ may add more. A rod
 # (an object's `[object.rod]`, data/objects/) names one and the mana a use costs its user.
 #

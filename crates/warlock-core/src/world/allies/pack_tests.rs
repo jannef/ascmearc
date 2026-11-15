@@ -1,4 +1,4 @@
-//! Pack tactics (`pack.rs`; spec §8 "Class abilities"): the ranger's level 18, flanking for the
+//! Pack tactics (`pack.rs`): the ranger's level 18, flanking for the
 //! ranger's melee and the companion's blows, never for a shot; the companion's share of the
 //! favoured prey; the table's row.
 

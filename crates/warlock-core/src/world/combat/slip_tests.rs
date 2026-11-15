@@ -1,4 +1,4 @@
-//! Slipping past (spec §8 "Surprise and sneak attacks"; `world/combat/slip.rs`): the one moment (dark
+//! Slipping past (`world/combat/slip.rs`): the one moment (dark
 //! or lit, hunting or not, by darkvision or by light or not at all, another hostile never), the
 //! contest's two outcomes and its four draws, no second roll in a stalk, each ending, the
 //! creature that came to look and was caught unawares, saves and replays, and no draw where

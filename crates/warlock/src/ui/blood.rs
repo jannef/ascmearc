@@ -1,4 +1,4 @@
-//! Blood on the map grid (spec §4.8 "Blood", §8 "Blood"): a stained cell's colours shift toward
+//! Blood on the map grid: a stained cell's colours shift toward
 //! the blood's by how much lies there, before the grid shader lights them like the terrain they
 //! lie on, so stains darken in the dark, show in darkvision's monochrome, and dim with the cell
 //! when it is remembered. A floor's glyph and background give way to the blood (a soaked cell is

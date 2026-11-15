@@ -1,5 +1,4 @@
-//! Game content: definitions, levels, scenarios, dungeon branches, and vaults loaded from TOML
-//! (spec §7).
+//! Game content: definitions, levels, scenarios, dungeon branches, and vaults loaded from TOML.
 //!
 //! Content is read from a [`ContentFiles`] set: the built-in set compiled into the binary (so every
 //! build, including the web build, is self-contained) or a directory on disk for development.
@@ -544,10 +543,10 @@ pub struct Content {
     ice: Vec<(u16, TerrainId)>,
     creatures: Vec<CreatureDef>,
     creature_ids: BTreeMap<String, CreatureId>,
-    /// Animated objects (`data/animated.toml`, `data/animated/`; spec §8 "Animated objects"):
+    /// Animated objects (`data/animated.toml`, `data/animated/`):
     /// their creature types are generated into [`Content::creatures`].
     animated: Animated,
-    /// Mimics (`data/mimics.toml`; spec §8 "Mimics"): a family generated into
+    /// Mimics (`data/mimics.toml`): a family generated into
     /// [`Content::creatures`] after the animated types.
     mimics: mimic::Mimics,
     /// Damage types (`data/damage_types.toml`), in file order; none without the file.
@@ -560,7 +559,7 @@ pub struct Content {
     item_classes: Vec<ItemClassDef>,
     objects: Vec<ObjectDef>,
     object_ids: BTreeMap<String, ObjectId>,
-    /// Grimoires (`data/grimoires.toml`, spec §8 "Spells": "Learning"): generated into
+    /// Grimoires (`data/grimoires.toml`): generated into
     /// [`Content::objects`] after every object file, one for each spell scroll.
     grimoires: grimoire::Grimoires,
     /// Gem sizes, cuts, and ornaments (`data/gems.toml`); none without the file.
@@ -569,7 +568,7 @@ pub struct Content {
     stock: Stock,
     /// The professions' recipes (`data/recipes/<skill>/`, `data/recipes.toml`); none without them.
     recipes: Recipes,
-    /// Unique items (`data/uniques/`, each campaign's too; spec §8 "Magic items").
+    /// Unique items (`data/uniques/`, each campaign's too).
     uniques: Uniques,
     /// Equipment slots, in display order.
     slots: Vec<SlotDef>,
@@ -584,89 +583,87 @@ pub struct Content {
     trap_disarm: TrapDisarm,
     /// What a trap's damage may be cut by (`[harm]` in `data/traps.toml`).
     trap_harm: TrapHarm,
-    /// The numbers of searching for hidden features (`data/rules/search.toml`, spec §8
-    /// "Searching").
+    /// The numbers of searching for hidden features (`data/rules/search.toml`).
     search: SearchRules,
-    /// The numbers of working an item at an anvil (`data/rules/temper.toml`, spec §7 "Special
-    /// rooms").
+    /// The numbers of working an item at an anvil (`data/rules/temper.toml`).
     temper: TemperRules,
-    /// The condition creature gear spawns in (`data/gear_condition.toml`, spec §8 "Creature
-    /// gear"); without the file, as made.
+    /// The condition creature gear spawns in (`data/gear_condition.toml`); without the file, as
+    /// made.
     gear_condition: GearConditions,
     /// Material drops by creature tag (`data/drops/`, `content/drops.rs`); each creature type's
     /// resolved rows are on it ([`CreatureDef::drops`]).
     drops: Vec<TagDrops>,
-    /// The numbers of encounters (`data/encounters.toml`, spec §7 "Leaving an outdoor area").
+    /// The numbers of encounters (`data/encounters.toml`).
     encounters: EncounterRules,
-    /// What becomes of a creature that catches the player stealing (`data/rules/steal.toml`, spec
-    /// §8 "Stealing"); none without the file.
+    /// What becomes of a creature that catches the player stealing (`data/rules/steal.toml`); none
+    /// without the file.
     steal: Option<StealRules>,
-    /// The numbers of being caught unawares (`data/surprise.toml`, spec §8 "Surprise and sneak
-    /// attacks"); none without the file, when nobody is surprised.
+    /// The numbers of being caught unawares (`data/surprise.toml`); none without the file, when
+    /// nobody is surprised.
     surprise: Option<SurpriseRules>,
-    /// What holy wrath falls hardest on, and the pool a sin empties (`data/rules/smite.toml`, spec
-    /// §8 "Class abilities": "Smite"); none without the file, when nothing is unholy.
+    /// What holy wrath falls hardest on, and the pool a sin empties (`data/rules/smite.toml`); none
+    /// without the file, when nothing is unholy.
     smite: Option<SmiteRules>,
     /// The campaigns' encounter tables (`campaigns/<id>/data/encounters/`), by campaign and id.
     encounter_tables: Vec<EncounterTable>,
-    /// How arrows and bolts are made (`data/fletch.toml`, spec §8 "Fletching"); without it
+    /// How arrows and bolts are made (`data/fletch.toml`); without it
     /// nobody fletches.
     fletch: Option<FletchRules>,
     /// The numbers of salvaging an item for its materials (`data/rules/salvage.toml`); without it
     /// nobody salvages.
     salvage: Option<SalvageRules>,
-    /// The traps the craftsperson's Trapwright rigs (`data/rigs.toml`, spec §8 "Traps"); none
+    /// The traps the craftsperson's Trapwright rigs (`data/rigs.toml`); none
     /// without the file, when Trapwright is not usable yet.
     rigs: Option<RigRules>,
-    /// What foraging in the wild gives (`data/forage.toml`, spec §8 "Foraging"); none without
+    /// What foraging in the wild gives (`data/forage.toml`); none without
     /// the file.
     forage: Option<ForageRules>,
-    /// What the glowing fungus gives a gatherer (`data/herbs.toml`, spec §8 "Skills": Herbalism);
+    /// What the glowing fungus gives a gatherer (`data/herbs.toml`: Herbalism);
     /// none without the file, when nobody gathers.
     herbs: Option<HerbRules>,
-    /// What a wall a miner digs through gives (`data/mining.toml`, spec §8 "Digging"); none
+    /// What a wall a miner digs through gives (`data/mining.toml`); none
     /// without the file, when nothing is mined.
     mining: Option<MiningRules>,
-    /// The numbers of feinting (`data/rules/feint.toml`, spec §8 "Skills": Bluff); none without the
+    /// The numbers of feinting (`data/rules/feint.toml`: Bluff); none without the
     /// file, when nobody feints.
     feint: Option<FeintRules>,
-    /// What an aristocrat's stipend grows by with each level (`data/rules/stipend.toml`, spec §8
-    /// "Class abilities": Stipend); none without the file, when it never grows.
+    /// What an aristocrat's stipend grows by with each level (`data/rules/stipend.toml`: Stipend);
+    /// none without the file, when it never grows.
     stipend: Option<StipendRules>,
-    /// What a merchant's investment pays and costs (`data/rules/invest.toml`, spec §8 "Class
-    /// abilities": Invest); none without the file, when no one invests.
+    /// What a merchant's investment pays and costs (`data/rules/invest.toml`: Invest); none without
+    /// the file, when no one invests.
     invest: Option<InvestRules>,
-    /// What a craftsperson's patron pays for a commission (`data/rules/patron.toml`, spec §8 "Class
-    /// abilities": Patron); none without the file, when no one commissions work.
+    /// What a craftsperson's patron pays for a commission (`data/rules/patron.toml`: Patron); none
+    /// without the file, when no one commissions work.
     patron: Option<PatronRules>,
-    /// What magic adds to an item's worth (`data/rules/magic_worth.toml`, spec §7 "Shops"); none
+    /// What magic adds to an item's worth (`data/rules/magic_worth.toml`); none
     /// without the file, when magic adds nothing.
     magic_worth: Option<MagicWorth>,
-    /// The numbers of intimidating (`data/rules/intimidate.toml`, spec §8 "Skills": Intimidate);
+    /// The numbers of intimidating (`data/rules/intimidate.toml`: Intimidate);
     /// none without the file, when nobody intimidates.
     intimidate: Option<IntimidateRules>,
-    /// What area spells do to the items lying in them (`data/ruin.toml`, spec §8 "Spells":
-    /// "Ruin"); empty without the file, when nothing is ruined.
+    /// What area spells do to the items lying in them (`data/ruin.toml`); empty without the file,
+    /// when nothing is ruined.
     ruin: RuinRules,
-    /// The numbers of swimming in deep water (`data/rules/swim.toml`, spec §8 "Skills": Swim); none
+    /// The numbers of swimming in deep water (`data/rules/swim.toml`: Swim); none
     /// without the file, when nobody swims.
     swim: Option<SwimRules>,
-    /// The penalties of shots by distance (`data/ranged.toml`, spec §8 "Ranged combat"); none
+    /// The penalties of shots by distance (`data/ranged.toml`); none
     /// without the file.
     ranged: RangedRules,
-    /// The priest's prayer (`data/prayer.toml`, spec §8 "Class abilities"): the strain, the
+    /// The priest's prayer (`data/prayer.toml`): the strain, the
     /// faces, the uses in their order; none without the file, when every prayer is refused.
     prayer: Option<PrayerRules>,
-    /// The constants of the ally core (`data/allies.toml`, spec §8 "Allies"); none without the
+    /// The constants of the ally core (`data/allies.toml`); none without the
     /// file, when no ally can be made.
     allies: Option<AllyRules>,
-    /// The animal companion's data (`data/companions.toml`, spec §8 "Allies"); none without
+    /// The animal companion's data (`data/companions.toml`); none without
     /// the file, when no companion can be made.
     companions: Option<CompanionRules>,
-    /// The witch's familiar's data (`data/familiars.toml`, spec §8 "Allies"); none without the
+    /// The witch's familiar's data (`data/familiars.toml`); none without the
     /// file, when no familiar can be made.
     familiars: Option<FamiliarRules>,
-    /// The rules of stat training (`data/stats.toml`, spec §8 "Stats").
+    /// The rules of stat training (`data/stats.toml`).
     stat_training: StatTraining,
     /// The tuning numbers of rules without a file of their own (`data/rules/tuning.toml`, #1541).
     tuning: Tuning,
@@ -679,17 +676,17 @@ pub struct Content {
     sizes: Vec<SizeDef>,
     /// In `data/creature_rarities.toml` order.
     creature_rarities: Vec<CreatureRarity>,
-    /// The campaigns (spec §3), in [`ContentFiles::campaign_order`].
+    /// The campaigns, in [`ContentFiles::campaign_order`].
     campaigns: Vec<CampaignDef>,
     levels: BTreeMap<String, LevelTemplate>,
     /// The campaign of each hand-made level: `None` for one outside every campaign.
     level_campaigns: BTreeMap<String, Option<String>>,
-    /// The burial chains (spec §7 "Graves"; `burial.rs`), each its levels from the churchyard
+    /// The burial chains (`burial.rs`), each its levels from the churchyard
     /// down, by the chain's id.
     burial_chains: BTreeMap<String, Vec<String>>,
     scenarios: BTreeMap<String, ScenarioDef>,
     dungeons: BTreeMap<String, DungeonDef>,
-    /// The default odds of a draw (spec §7 "Danger levels"), `data/dungeons.toml`'s
+    /// The default odds of a draw, `data/dungeons.toml`'s
     /// `[defaults]`; `None` without them (then no area may give a danger).
     draw_odds: Option<danger::Odds>,
     /// Sorted by id.
@@ -704,7 +701,7 @@ pub struct Content {
     /// Names offered to new characters, by race (`data/names.toml`): flavour, not fingerprinted.
     names: Names,
     classes: Vec<ClassDef>,
-    /// The prestige classes (`data/prestige/`), in table order (spec §8 "Prestige classes").
+    /// The prestige classes (`data/prestige/`), in table order.
     prestige: Vec<PrestigeDef>,
     /// The alignment rules (`data/alignment.toml`): none without it.
     alignment: Option<AlignmentRules>,
@@ -724,11 +721,11 @@ pub struct Content {
     /// What weapon skill and style ranks teach (`data/weapon_abilities/`, the combat
     /// progression design §4), in path order.
     weapon_abilities: Vec<WeaponAbility>,
-    /// The spells' cost table (`data/spells.toml`, spec §8 "Spells"); none without the file.
+    /// The spells' cost table (`data/spells.toml`); none without the file.
     spell_rules: Option<SpellRules>,
-    /// The study check and its time (`data/study.toml`, spec §8 "Spells"); none without it.
+    /// The study check and its time (`data/study.toml`); none without it.
     study: Option<StudyRules>,
-    /// The check of reading a scroll (`data/rules/decipher.toml`, spec §8 "Scrolls"); none without
+    /// The check of reading a scroll (`data/rules/decipher.toml`); none without
     /// it.
     decipher: Option<DecipherRules>,
     /// The magic crystals' colours (`data/crystals.toml`, docs/dev/enchanting.md); none without
@@ -738,18 +735,18 @@ pub struct Content {
     enchanting: Option<EnchantingRules>,
     /// What a failed study may bring (`data/mishaps/`), in path order.
     mishaps: Vec<Mishap>,
-    /// The Spellcraft check every cast makes (`data/miscast.toml`, spec §8 "Spells": "Miscasts");
+    /// The Spellcraft check every cast makes (`data/miscast.toml`);
     /// none without it, and then no cast miscasts.
     miscast: Option<MiscastRules>,
     /// The miscast table (`data/miscasts/`), ordered by its totals.
     miscasts: Vec<Miscast>,
-    /// What rods do (`data/rod_effects/`, spec §8 "Magic items": "Rods"), in path order.
+    /// What rods do (`data/rod_effects/`), in path order.
     rod_effects: Vec<RodEffect>,
-    /// Spells (`data/spells/`, spec §8 "Spells"), in path order; none without the files.
+    /// Spells (`data/spells/`), in path order; none without the files.
     spells: Vec<SpellData>,
     /// The statuses `kind = "hex"` spells lay, in status order (computed from `spells`).
     hex_statuses: Vec<StatusId>,
-    /// Talents (`data/talents/`, its trees and systems too, spec §8 "Talents"); none without the
+    /// Talents (`data/talents/`, its trees and systems too); none without the
     /// files.
     talents: TalentBook,
     /// The profane gifts (`data/profane/`, docs/design/profane-gifts.md), talents of the
@@ -757,7 +754,7 @@ pub struct Content {
     profane: ProfaneTable,
     /// Special rooms' effects (`data/room_effects/`).
     room_effects: RoomEffects,
-    /// What a place's ability draws (`data/outcomes/`, spec §7 "Special rooms"), by id.
+    /// What a place's ability draws (`data/outcomes/`), by id.
     outcomes: OutcomeTables,
     /// Prefixes, suffixes, and how loot rolls them (`data/affixes.toml`).
     affixes: Affixes,
@@ -776,7 +773,7 @@ pub struct Content {
     potion_labels: Option<ScrollLabelDef>,
     /// In `data/status/` order: most important first.
     statuses: Vec<StatusDef>,
-    /// Alternative resources (`data/resources.toml`, spec §8 "Resources"), in file order; none
+    /// Alternative resources (`data/resources.toml`), in file order; none
     /// without the file.
     resources: Vec<ResourceDef>,
     status_ids: BTreeMap<String, StatusId>,
@@ -876,7 +873,7 @@ impl Content {
         if let Some(text) = files.get_optional(path) {
             content.names = Names::parse(path, text, |id| content.race(id).is_some())?;
         }
-        // The class table (spec §8 "Character creation"): optional, so fixtures may go without.
+        // The class table: optional, so fixtures may go without.
         if files.table("classes").next().is_some() {
             let skill_id = |id: &str| content.skill_id(id);
             let table = files.table("classes");
@@ -885,7 +882,7 @@ impl Content {
                 class.check_races(|id| content.race(id).is_some())?;
             }
         }
-        // Prestige classes (spec §8 "Prestige classes"): a class in what a level reads.
+        // Prestige classes: a class in what a level reads.
         {
             let skill_id = |id: &str| content.skill_id(id);
             let is_class = |id: &str| content.class(id).is_some();
@@ -928,7 +925,7 @@ impl Content {
             content.affixes = affix::parse(files.table("affixes"), &lookups)?;
         }
         content.check_follows_end()?;
-        // Spells (spec §8 "Spells") after damage types and statuses, which they name.
+        // Spells after damage types and statuses, which they name.
         let path = "data/spells.toml";
         let rules = files.get_optional(path).map(|text| (path, text));
         let table = files.table("spells").filter(|(p, _)| *p != path);
@@ -939,9 +936,9 @@ impl Content {
             .collect::<BTreeSet<_>>()
             .into_iter()
             .collect();
-        // Rod effects (spec §8 "Magic items": "Rods") name statuses; rods (objects) name them.
+        // Rod effects name statuses; rods (objects) name them.
         content.rod_effects = rod::parse(files.table("rod_effects"), &content)?;
-        // The talent table (spec §8 "Talents"): optional, so no level asks for a pick without it.
+        // The talent table: optional, so no level asks for a pick without it.
         if files.table("talents").next().is_some() {
             content.talents = talent::parse(files.table("talents"), &content)?;
         }
@@ -1040,10 +1037,10 @@ impl Content {
             (content.traps, content.trap_ids) = (traps, ids);
             (content.trap_avoid, content.trap_disarm, content.trap_harm) = rules;
         }
-        // Learning spells (spec §8 "Spells"): mishaps name statuses and creatures.
+        // Learning spells: mishaps name statuses and creatures.
         content.study = content.load_optional(files)?;
         content.mishaps = learning::parse(files.table("mishaps"), &content)?;
-        // Miscasts (spec §8 "Spells": "Miscasts"): the table names statuses, creatures, and damage
+        // Miscasts: the table names statuses, creatures, and damage
         // types.
         content.miscast = content.load_optional(files)?;
         content.miscasts = miscast::parse(files.table("miscasts"), &content)?;
@@ -1076,7 +1073,7 @@ impl Content {
         content.dialogues = dialogue::parse(files.table("dialogue"), &content)?;
         content.load_hunger(files)?;
         profane::check_signatures(&content)?;
-        // Outcome tables (spec §7 "Special rooms") last of the rules' data: they name terrain,
+        // Outcome tables last of the rules' data: they name terrain,
         // statuses, objects, damage types, and spell effects; then the rooms that offer them.
         content.outcomes = OutcomeTables::parse(files.table("outcomes"), &content)?;
         potion::check_gambles(&content)?;

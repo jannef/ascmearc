@@ -175,7 +175,7 @@ fn effects(content: &Content, seen: &[&Actor], images: &[Image]) -> Vec<(ActorId
         .collect()
 }
 
-/// How actor `a` looks by what it is made of (spec §8 "Animated objects"): a household thing by
+/// How actor `a` looks by what it is made of: a household thing by
 /// its body, its object's glyph in its material's colour; one of a family by the piece in its
 /// tier's `shown_by` slot, in that piece's colour (and by its glyph with `item_glyph`: a blade
 /// by its weapon's); `None` for any other, or one whose piece is gone.

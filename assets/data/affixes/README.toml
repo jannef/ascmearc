@@ -86,7 +86,7 @@
 #
 # Suffixes: mostly utility and stats, speed, criticals, and regeneration.
 #
-# Skill suffixes (spec §8 "Skills"): `effect = "skill"` with the `skill` (an id in skills/)
+# Skill suffixes: `effect = "skill"` with the `skill` (an id in skills/)
 # whose value it raises for what the skill gives, trained or not (untrained, from 0).
 # The skills whose benefit is gated on being trained at all (Spot, Open lock, Disable device,
 # Heal, Steal, Survival's foraging: `Skills::trains_effect`) give the untrained nothing, so their

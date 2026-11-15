@@ -1,4 +1,4 @@
-//! Healing harms the undead (#1278; spec §8 "Spells"): a healing spell
+//! Healing harms the undead (#1278): a healing spell
 //! ([`SpellData::heals_wounds`]: a `heal` that does not feed on a corpse, so Cure wounds, Mend,
 //! and Benison, never Grave feast) that lands on a creature tagged [`UNDEAD`] does its roll as
 //! harm instead of hit points back.

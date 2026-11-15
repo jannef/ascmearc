@@ -1,4 +1,4 @@
-//! Wands (spec §8 "Magic items": "Wands"; #398): a wand in the missile weapon slot casts its
+//! Wands (#398): a wand in the missile weapon slot casts its
 //! spell through the one cast path at its own rung, drawn as it was made (the spell scaling
 //! design §7.4), a charge a cast; an empty wand does nothing; a wand type is unknown until used
 //! or identified, its charges until identified, its rung with its type; a wand and a launcher

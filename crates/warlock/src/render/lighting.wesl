@@ -1,4 +1,4 @@
-// Visual lighting of the map grid (spec §4.4), imported by the console shader. Mirrors
+// Visual lighting of the map grid, imported by the console shader. Mirrors
 // `render/lighting.rs`: change both together.
 //
 // `light_values` holds each cell's light (red, green, blue: 1.0 = fully lit, more = overbright)

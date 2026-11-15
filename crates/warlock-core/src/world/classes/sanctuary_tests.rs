@@ -1,4 +1,4 @@
-//! Sanctuary (`world/classes/sanctuary.rs`, spec §8 "Class abilities", §7 "Special rooms": hallowed
+//! Sanctuary (`world/classes/sanctuary.rs`: hallowed
 //! ground; the priest design §6.4, §7): the rite and its refusals, who keeps out, the pace, the
 //! break, the fade, and saves and replays.
 

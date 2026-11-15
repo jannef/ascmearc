@@ -1,4 +1,4 @@
-# Gathering herbs (spec §8 "Skills": Herbalism; #1340, docs/design/recipes.md §8): the dungeon's
+# Gathering herbs (Herbalism; #1340, docs/design/recipes.md §8): the dungeon's
 # glowing fungus can be gathered for herbs, the inputs of Alchemy. Only one trained in `skill` may
 # gather (the Gather ability, the abilities menu's Here group, beside the fungus; #1400): anyone
 # else is refused, taking no time.

@@ -1,4 +1,4 @@
-//! The endless branch (spec §7 "The endless branch", #1010): a dungeon branch with no last floor
+//! The endless branch (#1010): a dungeon branch with no last floor
 //! whose floors are never remembered. Level ids stay `branch:N`, the depth, so everything that
 //! reads a depth from an id (danger, item level, locks, names, the stairs' links) works as on any
 //! branch; only one floor is ever there, so an id comes back as a different floor.
@@ -25,7 +25,7 @@
 //! floor deeper than any reached before pays ([`EndlessFloors::pays`]), or going up and down one
 //! staircase, which always arrives on the way back, would pay for every step.
 //!
-//! **A Pit's floors** (spec §7 "The Pits", `hellegeat@S:N`) are forgotten and paid the same way
+//! **A Pit's floors** (`hellegeat@S:N`) are forgotten and paid the same way
 //! ([`Content::is_endless_floor`] is true of them), `deepest` kept per Pit (`hellegeat@S`, the
 //! parsed branch), so each Pit pays its floors once. They are not made from the `endless/<n>`
 //! stream: a Pit's floor is a pure function of the run seed and its id, the same each time it is

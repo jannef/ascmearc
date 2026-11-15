@@ -1,4 +1,4 @@
-//! Cackle, the witch's class active at 6 (spec §8 "Class abilities"; `use:cackle`;
+//! Cackle, the witch's class active at 6 (`use:cackle`;
 //! docs/design/witch-and-wizard.md §5.1): a cackle, for the time of a cast and nothing else (no
 //! mana, no cooldown), as loud as its talent's `noise` ([`Act::Cackle`], a voice: those who hear
 //! it come to look, by the rules of every noise).

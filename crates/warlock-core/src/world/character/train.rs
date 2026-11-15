@@ -1,4 +1,4 @@
-//! Training (spec §8 "Skills"): meaningful uses of the player's skills earn training marks,
+//! Training: meaningful uses of the player's skills earn training marks,
 //! which gather until a skill roll spends them (`world/character/skill_roll.rs`): a level-up's, or the
 //! automatic one when they reach `[rolls] auto_at`. The more marks, the bigger the roll's die.
 //!

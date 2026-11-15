@@ -1,4 +1,4 @@
-//! Freshness (spec §8 "Hunger"; #1031): a player trained in Appraise or Survival may tell, in
+//! Freshness (#1031): a player trained in Appraise or Survival may tell, in
 //! words, how fresh a corpse or food is: the eat list and look mode say `fresh`, `old`, or
 //! `rotten` (the names of [`Stage`], which food otherwise never shows).
 //!

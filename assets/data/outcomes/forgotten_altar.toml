@@ -1,4 +1,4 @@
-# A forgotten altar's prayer (spec §7 "Special rooms"; content/outcome.rs has the fields): ADOM's
+# A forgotten altar's prayer (content/outcome.rs has the fields): ADOM's
 # pool with another flavour. A prayer takes a minute; at its end one draw of the kinds (leaned by
 # the altar's hidden side against the player's band: agreement moves `lean` points from bane to
 # boon, opposition from boon to bane), then one by weight among that kind's outcomes. After a
@@ -218,7 +218,7 @@ weight = 1
 effect = { loot = 10, rarity = "rare" }
 message = "Something gleams at the foot of the altar."
 
-# An elixir (spec §8 "Potions"): one of the six, a stat for good.
+# An elixir: one of the six, a stat for good.
 [[outcome]]
 kind = "boon"
 tier = "great"

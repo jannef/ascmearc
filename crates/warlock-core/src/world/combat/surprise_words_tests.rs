@@ -1,7 +1,7 @@
-//! How the player's attack found its target, told in the attack's own words (spec §8 "Surprise
-//! and sneak attacks"; `surprise.rs::caught_by`, `caught_name`): asleep, unaware and surprised
-//! by it, already Surprised or Stunned, the blow after the surprise, a shot and a spell; nothing
-//! for an aware target or one the player does not see, and one line an attack.
+//! How the player's attack found its target, told in the attack's own words
+//! (`surprise.rs::caught_by`, `caught_name`): asleep, unaware and surprised by it, already
+//! Surprised or Stunned, the blow after the surprise, a shot and a spell; nothing for an aware
+//! target or one the player does not see, and one line an attack.
 
 use super::surprise_tests::{Rules, goblin, lull, surprised_status, world};
 use crate::action::{AttackKind, Caught};

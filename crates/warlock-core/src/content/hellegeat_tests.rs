@@ -1,4 +1,4 @@
-//! Hellegeat, the shared portal branch (#1296; spec §7 "The Pits"): nothing in the content leads
+//! Hellegeat, the shared portal branch (#1296): nothing in the content leads
 //! into a Pit (stairs, a hidden location, a quest), and its folk stay in it.
 
 use super::{Content, ContentFiles};

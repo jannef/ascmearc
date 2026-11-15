@@ -1,4 +1,4 @@
-//! Drinking at a healing spring (spec §7 "Special rooms"; the design's §9.10): [`Action::Drink`],
+//! Drinking at a healing spring (the design's §9.10): [`Action::Drink`],
 //! the Drink ability of the abilities menu's *Here* group, offered beside a spring.
 //!
 //! - **Where**: beside a cell whose terrain a room effect's `feature` names and that `offers`

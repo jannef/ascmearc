@@ -1,4 +1,4 @@
-//! Stealing in play (spec §8 "Stealing", #234): a stack lifted unnoticed (never what is worn or
+//! Stealing in play (#234): a stack lifted unnoticed (never what is worn or
 //! wielded), empty pockets, a caught thief turned on, a robbed shopkeeper, the refusals, the
 //! draws it makes, training, the abilities menu, saves, and replays.
 
@@ -180,7 +180,7 @@ fn a_caught_thief_is_turned_on_and_cannot_steal_from_them_again() {
     assert_eq!(w.state.actors[&kobold].faction_override, Some(caught));
     assert_eq!(w.stance(w.player_id(), kobold), Stance::Hostile);
     assert!(w.state.player().inventory.is_empty(), "nothing taken");
-    // Caught: a deed that costs Presence marks (spec §8 "Stats").
+    // Caught: a deed that costs Presence marks.
     assert_eq!(w.state.player().stat_marks[Stat::Presence], -20);
     assert_eq!(names(&w, kobold).len(), 3);
     // Now hostile, it lets no one near its pack: refused, no time.

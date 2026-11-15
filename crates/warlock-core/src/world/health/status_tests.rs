@@ -1,4 +1,4 @@
-//! Status effects and healing in the world (spec §8 "Status effects", "Healing"): wounds bleed,
+//! Status effects and healing in the world: wounds bleed,
 //! bites poison, effects tick and ease by game time however it is cut up, slow healing, lower
 //! stats, kill, and are said, saved, and replayed.
 

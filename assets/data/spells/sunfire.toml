@@ -25,7 +25,7 @@ noise = { sound = "explosion", loudness = 200 }
 damage = "intelligence 16 12d6, 19 14d6, 22 16d6, 25 16d6+4"
 range = "willpower 14 11, 18 12"
 
-# What rereading its grimoire adds, rank by rank (spec §8 "Spells": "Ranks"; README.toml
+# What rereading its grimoire adds, rank by rank (README.toml
 # `[spell.ranks]`): its great price is what eases most: at rank 10 three tenths off the
 # mana, two dice more, every die a side bigger, 1s rolled again, +2 on the roll, and a cell
 # farther (its radius is the bursts' widest already).

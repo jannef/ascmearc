@@ -1,4 +1,4 @@
-# Classes (spec §8 "Character creation"): the third choice of a new run, one file per class
+# Classes: the third choice of a new run, one file per class
 # holding one `[[class]]`. A class adjusts the starting scores (see ../races.toml for how they add
 # up), gives hit points, trains the character in skills and weapon skills, and gives a starting
 # kit: no spells come with it. This file holds only the notes below: a file of comments defines nothing.
@@ -25,27 +25,27 @@
 #                 dice (`"1d3+1"`, `"-1d2"`), rolled in the background when the character is made,
 #                 ADOM-like; the score is kept within 1 to 40. Each class rolls its key stats;
 #                 penalties may be rolled too
-#   hp            what the class adds to the hit points (spec §8 "Combat"; default 0): a
+#   hp            what the class adds to the hit points (default 0): a
 #                 character's maximum is their Toughness plus their race's (races.toml) and their
 #                 class's
-#   mana          what the class adds to the mana (spec §8 "Mana"; default 0, at most 1000): a
+#   mana          what the class adds to the mana (default 0, at most 1000): a
 #                 character's maximum is their race's and their class's plus the modifiers of their
 #                 Intelligence, Willpower, and Presence, and each level up to experience.toml's
 #                 mana_level adds half the class's mana plus the better of the Intelligence and
 #                 Willpower modifiers
-#   affinity      the class's affinity with the schools of magic (spec §8 "Spells"): a table of
+#   affinity      the class's affinity with the schools of magic: a table of
 #                 school = points (-10 to 10), taken off the difficulty of studying a spell of
 #                 that school (a malus when negative); schools left out are 0
-#   experience   how much experience a level needs, in percent (spec §8 "Experience"; 50 to 200,
+#   experience   how much experience a level needs, in percent (50 to 200,
 #                 default 100), multiplied with the race's onto every threshold in
 #                 experience.toml: the patient callings pay more, everyday folk less
-#   ally_share    what an ally's kill pays a character of the class (spec §8 "Allies"), in percent
+#   ally_share    what an ally's kill pays a character of the class, in percent
 #                 of their own kill, 0 to 100: the pet classes' 100 (the ranger, the druid);
 #                 default `[xp] ally_percent` of ../allies.toml (50)
-#   alignment     the class's part of a new character's hidden alignment score (spec §8
-#                 "Alignment"; alignment.toml; -1000 evil to 1000 good, default 0), added to the
+#   alignment     the class's part of a new character's hidden alignment score (alignment.toml;
+#                 -1000 evil to 1000 good, default 0), added to the
 #                 race's: paladins start Good, thieves and witches Callous, everyone else Neutral
-#   skills        the skills the class trains (spec §8 "Skills"; skills/), by skill id: dice
+#   skills        the skills the class trains (skills/), by skill id: dice
 #                 (`"2d6+10"`) or a number, rolled when the character is made; added to the
 #                 race's. Each class has a few skills it is known
 #                 for (2d6+10) and a few more (2d4+4); every other skill is untrained
@@ -64,7 +64,7 @@
 #                 stream after the optional skills, so no other roll moves; added to the race's
 #                 (the commoner's one profession; default none). Like an optional skill, a
 #                 level-up roll on it adds nothing for the class
-#   rolls         the skill rolls each level gives (spec §8 "Skills"; default 2): the
+#   rolls         the skill rolls each level gives (default 2): the
 #                 race's (races.toml) and Intelligence's (skills.toml `[rolls]`) are added. Most
 #                 classes 2, the thief, the ranger, and the craftsperson 3, the bard 4: learning is
 #                 the bard's gift
@@ -73,15 +73,15 @@
 #   creation_bonus  `{ count = 2, trees = ["crafts"] }`: that many bonus talent picks at
 #                 creation (1 to 8), from those trees, spent before the ordinary ones (the
 #                 craftsperson's two trades; default none)
-#   weapon_skills starting ranks in weapon skills (spec §8 "Weapon skills"), by skill id in
+#   weapon_skills starting ranks in weapon skills, by skill id in
 #                 weapon_skills.toml, a number or dice (every result within 0 to 10), added to the
 #                 race's (at most 10)
 #   weapon_skill_choice  two or more such sets, of which one is picked at random when the
 #                 character is made (the berserker's axes or great blades)
-#   styles, style_choice  the same for fighting styles (spec §8 "Fighting styles"; the styles in
+#   styles, style_choice  the same for fighting styles (the styles in
 #                 weapon_skills.toml), rolled after everything else (the thief's Twin Blades or
 #                 Duelist)
-#   kit           what the class starts with (spec §8 "Character creation"), first in the pack;
+#   kit           what the class starts with, first in the pack;
 #                 the race's kit (races.toml) and any the birth sign gives (horoscope.toml) come
 #                 after it, and a scenario's `carry` on top. Each line is one item, or a few of
 #                 one, as level files place objects (`"ration*2"`, `"gem:ruby"`): a string is
@@ -118,7 +118,7 @@
 #                 when the character is made, each the scroll of a spell of a spell level below
 #                 `below_level`, drawn uniformly among them (duplicates stack); carried, after
 #                 every kit line (the casters'; default none)
-#   abilities     the level table (spec §8 "Class abilities"): `{ level = 6, talent = "fencing" }`
+#   abilities     the level table: `{ level = 6, talent = "fencing" }`
 #                 rows, lowest level first, each a talent the class gives at that level (a talent
 #                 of the `class` tree, ../talents/, or an ordinary one it hands out: the
 #                 aristocrat's Riposte); given as the level comes, never picked, and not given
@@ -126,7 +126,7 @@
 #   bonus_talents `{ levels = [10, 20, 30, 45, 55], trees = ["guard", "vigour"] }`: a bonus talent
 #                 pick at each of those levels besides the usual ones, of a talent from those
 #                 trees (no `trees`: any tree, the commoner's gift; default none)
-#   max_level     the class's last level (spec §8 "Prestige classes"): 2 to the curve's top
+#   max_level     the class's last level: 2 to the curve's top
 #                 (../experience.toml), default `[levels] class_max` (60); every `abilities` row
 #                 and bonus level within it. Experience past it counts and buys nothing until a
 #                 calling opens a prestige class (the bard's 30)

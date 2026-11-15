@@ -1,4 +1,4 @@
-//! The ascetic's ki tricks (spec §8 "Class abilities"; the ki tricks design §6.2, §9): each
+//! The ascetic's ki tricks (the ki tricks design §6.2, §9): each
 //! refused before its ki is spent, the spend, and what it gives.
 
 use super::class_active_tests::{at_normal_speed, beside, reach, suffers, world};

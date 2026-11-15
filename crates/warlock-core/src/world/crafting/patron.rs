@@ -1,4 +1,4 @@
-//! The craftsperson's patron (spec §8 "Class abilities": Patron; #1421, the craftsperson design
+//! The craftsperson's patron (Patron; #1421, the craftsperson design
 //! §7.4).
 //!
 //! A character with the Patron class ability (`FortuneMods::patron`, the craftsperson's from

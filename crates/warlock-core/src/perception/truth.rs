@@ -1,13 +1,13 @@
 //! The accessors of [`PerceptionView`] that read **ground truth**: each reads the live level
 //! (`self.level`) or the player's actor (`self.player`), not only the snapshot.
 //!
-//! **Review note.** Rendering, UI, and dumps read the perception snapshot only (spec §5,
-//! CLAUDE.md "Hard rules"), and nothing in these types enforces it: a `Stack` or a cell handed
-//! out here is safe because `Stack`'s sensitive fields are `pub(crate)` and each accessor checks
-//! what the player sees, remembers, or holds before it reads. A change here is a change to what
-//! the player may know, so review each one for that: the player's own actor gives what they
-//! carry, wear, and know of themselves (never a modifier, a potential, or a mark), and the level
-//! only cells the snapshot shows or memory keeps. A new accessor that reads `self.level` or
+//! **Review note.** Rendering, UI, and dumps read the perception snapshot only (CLAUDE.md "Hard
+//! rules"), and nothing in these types enforces it: a `Stack` or a cell handed out here is safe
+//! because `Stack`'s sensitive fields are `pub(crate)` and each accessor checks what the player
+//! sees, remembers, or holds before it reads. A change here is a change to what the player may
+//! know, so review each one for that: the player's own actor gives what they carry, wear, and know
+//! of themselves (never a modifier, a potential, or a mark), and the level only cells the snapshot
+//! shows or memory keeps. A new accessor that reads `self.level` or
 //! `self.player` goes in this file, so `view.rs` and `shop.rs` keep to the snapshot. Features
 //! that extend the view in their own modules and read ground truth too: `beside.rs` (`ways`),
 //! `world/crafting/rig.rs` (`rigged`, `rigs`), `world/crafting/patron.rs` (`commission`), and `world/people/quest.rs`
@@ -53,7 +53,7 @@ impl<'a> PerceptionView<'a> {
 
     /// The named region the player is in: on a level with regions (the overworld), the one
     /// around the viewer; in a local area, the one around its overworld cell.
-    /// The overworld encounter the player must answer now (spec §7 "Overworld encounters"),
+    /// The overworld encounter the player must answer now,
     /// as the one dialog asks it: its title, text, and rows; `None` while none is pending. The
     /// app opens the dialog from it after any action and on load, and it cannot be closed
     /// without an answer (the owner, #796 Q9).
@@ -81,13 +81,13 @@ impl<'a> PerceptionView<'a> {
         self.content.level(level)?.region_at(at)
     }
 
-    /// The effect covering the whole level (spec §7 "Special rooms"), which the player was told
+    /// The effect covering the whole level, which the player was told
     /// of on arrival.
     pub fn pervading(&self) -> Option<&'a RoomEffectDef> {
         (self.level.pervading).map(|id| self.content.room_effect(id))
     }
 
-    /// The special room at `p` (spec §7 "Special rooms"), if the player knows it: they have been
+    /// The special room at `p`, if the player knows it: they have been
     /// inside it, and `p` is a cell they see or remember.
     pub fn room(&self, p: Pos) -> Option<&'a RoomEffectDef> {
         if matches!(self.cell(p), CellView::Unknown) {
@@ -135,7 +135,7 @@ impl<'a> PerceptionView<'a> {
         }
         let link = self.level.stairs_at(p)?;
         // A named location (a legend's `name`, a revealed hidden location's) goes by its own
-        // name, even while it leads nowhere yet (spec §7 "Hidden locations").
+        // name, even while it leads nowhere yet.
         (link.name.clone()).or_else(|| self.content.level_display_name(link.to.as_deref()?))
     }
 
@@ -214,7 +214,7 @@ impl<'a> PerceptionView<'a> {
         cells
     }
 
-    /// The blood at `p` as the player knows it (spec §8 "Blood"): what is there now where they
+    /// The blood at `p` as the player knows it: what is there now where they
     /// see it (an open cell in sight, a wall's stained face), as last seen on a cell out of
     /// sight; `None` where they know of none (a visible wall seen only from its clean side
     /// shows none).
@@ -228,7 +228,7 @@ impl<'a> PerceptionView<'a> {
         }
     }
 
-    /// The char at `p` as the player knows it (spec §8 "Blood", [`crate::scorch`]): by
+    /// The char at `p` as the player knows it ([`crate::scorch`]): by
     /// [`Self::blood`]'s rules.
     pub fn scorch(&self, p: Pos) -> Option<&'a Stain> {
         if self.snapshot.sees_scorch_at(p) {
@@ -240,7 +240,7 @@ impl<'a> PerceptionView<'a> {
         }
     }
 
-    /// The chest at `p` as the player sees or remembers it (spec §8 "Chests"): its band and
+    /// The chest at `p` as the player sees or remembers it: its band and
     /// whether it is shut, open, or smashed (as the cell looks to them), and, with Chest-wise,
     /// on a cell in sight, whether a shut one is locked. Never its level or what it holds.
     /// `None` where they know no chest (or without chest bands).
@@ -272,7 +272,7 @@ impl<'a> PerceptionView<'a> {
         })
     }
 
-    /// What the statue at `p` was, as the player sees or remembers it (spec §8 "Statues"): the
+    /// What the statue at `p` was, as the player sees or remembers it: the
     /// creature type a stoned statue shows (its shape is plain to see), never what it holds.
     /// `None` where they know no statue of the stoned.
     pub fn statue_at(&self, p: Pos) -> Option<crate::content::CreatureId> {
@@ -284,7 +284,7 @@ impl<'a> PerceptionView<'a> {
         self.level.statues.get(&p).map(|s| s.of)
     }
 
-    /// What is cut in the gravestone at `p` (spec §7 "Graves"; `world/fixtures/graves.rs`), where the
+    /// What is cut in the gravestone at `p` (`world/fixtures/graves.rs`), where the
     /// player sees or remembers one: "Here lies Ælfric Wudu, 1381–1427." `None` elsewhere, or
     /// on a blank stone.
     pub fn epitaph(&self, p: Pos) -> Option<&'a str> {
@@ -321,7 +321,7 @@ impl<'a> PerceptionView<'a> {
             .collect()
     }
 
-    /// The trap the player knows at `p` (spec §8 "Traps"): on a cell in sight, a known trap lying
+    /// The trap the player knows at `p`: on a cell in sight, a known trap lying
     /// there now; anywhere else, the trap remembered there. Hidden traps are never here.
     pub fn trap(&self, p: Pos) -> Option<TrapId> {
         if self.snapshot.sees_actors_at(p) {
@@ -333,7 +333,7 @@ impl<'a> PerceptionView<'a> {
         }
     }
 
-    /// Whether the wall at `p` is one the player found sounds hollow (spec §7 "Special rooms": a
+    /// Whether the wall at `p` is one the player found sounds hollow (a
     /// greater treasure room's breach, found by searching), until it is broken.
     pub fn hollow(&self, p: Pos) -> bool {
         self.level.hollows.contains(&p)
@@ -361,7 +361,7 @@ impl<'a> PerceptionView<'a> {
         &self.player.inventory
     }
 
-    /// What item descriptions show the player of worth (spec §8 "Talents": Gem lore) and of
+    /// What item descriptions show the player of worth (Gem lore) and of
     /// make (an item's capacity, to a holder of Eye for the make or one trained in Appraise:
     /// docs/dev/enchanting.md), by their own abilities.
     pub fn appraisal(&self) -> crate::magic::describe::Appraisal {
@@ -374,7 +374,7 @@ impl<'a> PerceptionView<'a> {
         }
     }
 
-    /// `stack`'s description as the player knows it (spec §6 "Item description"):
+    /// `stack`'s description as the player knows it:
     /// [`crate::magic::describe::appraised`] with their eye for worth, a wand whose type they
     /// know saying what it does in their hands ([`PerceptionView::wand_does`]).
     /// With Eye for the make (the craftsperson's), what it reads of the item's make follows
@@ -421,7 +421,7 @@ impl<'a> PerceptionView<'a> {
         &self.player.equipment
     }
 
-    /// What the player has ready to shoot (spec §8 "Ranged combat"): their missile weapon, where
+    /// What the player has ready to shoot: their missile weapon, where
     /// in their inventory the ammunition for it is, and how far it shoots; `None` unless they
     /// have both.
     pub fn ready_to_fire(&self) -> Option<(ObjectId, usize, i32)> {
@@ -436,21 +436,18 @@ impl<'a> PerceptionView<'a> {
         self.player.ready_to_throw(self.content)
     }
 
-    /// Where in their inventory the wand the player has ready is (spec §8 "Magic items":
-    /// "Wands"), if any.
+    /// Where in their inventory the wand the player has ready is, if any.
     pub fn ready_wand(&self) -> Option<usize> {
         self.player.wand_item(self.content)
     }
 
-    /// Where in their inventory the rod the player has ready is (spec §8 "Magic items":
-    /// "Rods"), if any.
+    /// Where in their inventory the rod the player has ready is, if any.
     pub fn ready_rod(&self) -> Option<usize> {
         self.player.rod_item(self.content)
     }
 
     /// What a use of the rod in inventory stack `item` would cost the player in mana and how
-    /// far it would reach for them, if it is a rod whose type they know (spec §8 "Magic items":
-    /// "Rods").
+    /// far it would reach for them, if it is a rod whose type they know.
     pub fn own_rod(&self, item: usize) -> Option<(i32, i32)> {
         let stack = self.player.inventory.get(item)?;
         if !self.lore.is_identified(stack.object) {
@@ -462,7 +459,7 @@ impl<'a> PerceptionView<'a> {
         Some((cost, self.player.rod_reach(self.content, effect)))
     }
 
-    /// The digging tool the player has ready (spec §8 "Digging"), if any.
+    /// The digging tool the player has ready, if any.
     #[cfg(test)]
     pub fn ready_to_dig(&self) -> Option<ObjectId> {
         self.player.dig_tool(self.content).map(|(tool, _)| tool)
@@ -474,7 +471,7 @@ impl<'a> PerceptionView<'a> {
         crate::world::dig_refusal(self.player, self.content)
     }
 
-    /// The carried light the player has ready (spec §5 "Light sources": a lantern in the Tool
+    /// The carried light the player has ready (a lantern in the Tool
     /// slot), by its inventory position, lit or not: `u` uses it at once, without a direction.
     pub fn ready_light(&self) -> Option<usize> {
         self.player.ready_light(self.content)
@@ -498,7 +495,7 @@ impl<'a> PerceptionView<'a> {
     }
 
     /// Whether inventory stack `item` is made for throwing (what the throw choice lists): a
-    /// throwing weapon, or a potion, which shatters where it lands (spec §8 "Potions": "Flasks").
+    /// throwing weapon, or a potion, which shatters where it lands.
     pub fn is_throwing_weapon(&self, item: usize) -> bool {
         (self.player.inventory.get(item)).is_some_and(|s| {
             let def = self.content.object(s.object);
@@ -506,16 +503,16 @@ impl<'a> PerceptionView<'a> {
         })
     }
 
-    /// The player's own scores, by stat (spec §8 "Stats"), as the rules read them: raised by
-    /// what they wear and wield (spec §8 "Magic items"), lowered while a status effect or stat
-    /// damage lowers them (spec §8 "Status effects", "Diseases") and while hunger leaves them
-    /// Weak or worse (spec §8 "Hunger"). That is all the player
+    /// The player's own scores, by stat, as the rules read them: raised by
+    /// what they wear and wield, lowered while a status effect or stat
+    /// damage lowers them and while hunger leaves them
+    /// Weak or worse. That is all the player
     /// knows of stats: never their potentials or modifiers, and nothing of a creature's.
     pub fn own_scores(&self) -> PerStat<u8> {
         self.player.effective_stats(self.content).scores()
     }
 
-    /// How hungry the player is (spec §8 "Hunger"): the state, never the nutrition counter;
+    /// How hungry the player is: the state, never the nutrition counter;
     /// `None` when nobody hungers.
     pub fn own_hunger(&self) -> Option<Hunger> {
         self.player.hunger(self.content)
@@ -528,7 +525,7 @@ impl<'a> PerceptionView<'a> {
         self.player.raised_stats(self.content).scores()
     }
 
-    /// The player's own trained skills, in skill order (spec §8 "Skills"): each one's value and
+    /// The player's own trained skills, in skill order: each one's value and
     /// how practised it is, coarsely. Untrained skills are not here; nor is anything of a
     /// creature's skills, a mark, or a benefit.
     pub fn own_skills(&self) -> Vec<OwnSkill> {
@@ -542,20 +539,20 @@ impl<'a> PerceptionView<'a> {
             .collect()
     }
 
-    /// The player's own status effects, the most important first (spec §8 "Status effects"):
+    /// The player's own status effects, the most important first:
     /// what they suffer, never how badly or for how long.
     pub fn own_effects(&self) -> impl Iterator<Item = StatusId> + 'a {
         self.player.effects.iter().map(|e| e.status)
     }
 
-    /// The diseases the player knows they have, in disease order (spec §8 "Diseases"): those
+    /// The diseases the player knows they have, in disease order: those
     /// that have progressed at least once. One that incubates, or has only just shown, is not
     /// here (a showing one makes the player Diseased, [`PerceptionView::own_effects`]).
     pub fn own_diseases(&self) -> impl Iterator<Item = DiseaseId> + 'a {
         self.player.diseases.known()
     }
 
-    /// What the player may treat now with the Heal skill (spec §8 "Skills"), each by how they
+    /// What the player may treat now with the Heal skill, each by how they
     /// know it ("Sickness" for a disease they cannot name yet) and the action that treats it:
     /// the Heal ability's choice. Their own first, then their allies' beside them ("Your
     /// wolf's bleeding").
@@ -618,7 +615,7 @@ impl<'a> PerceptionView<'a> {
         companion_here: bool,
     ) -> Option<crate::ability::Unavailable> {
         match ability {
-            // An order needs someone on the level to hear it (spec §8 "Allies").
+            // An order needs someone on the level to hear it.
             Ability::Heel | Ability::Hold | Ability::SetOn if !allies_here => {
                 Some(crate::ability::Unavailable::NoAllies)
             }
@@ -650,7 +647,7 @@ impl<'a> PerceptionView<'a> {
                         .then_some(crate::ability::Unavailable::NotHere)
                 })
             }
-            // A companion is one at a time (spec §8 "Allies": Tame).
+            // A companion is one at a time (Tame).
             Ability::Tame if self.companion().is_some() => {
                 Some(crate::ability::Unavailable::HaveCompanion)
             }
@@ -671,7 +668,7 @@ impl<'a> PerceptionView<'a> {
             {
                 Some(crate::ability::Unavailable::NotHere)
             }
-            // Foraging asks for the wild underfoot (spec §8 "Foraging").
+            // Foraging asks for the wild underfoot.
             Ability::Forage
                 if crate::world::forage_ground(self.content, self.level, self.player.pos)
                     .is_none() =>
@@ -716,13 +713,13 @@ impl<'a> PerceptionView<'a> {
         }
     }
 
-    /// The spells the player knows (spec §8 "Spells": learned, or their class gives them), in
+    /// The spells the player knows (learned, or their class gives them), in
     /// menu order.
     pub fn own_spells(&self) -> Vec<crate::content::SpellId> {
         self.player.known_spells(self.content)
     }
 
-    /// The grimoires the player could learn from now (spec §8 "Spells": "Learning"), in pack
+    /// The grimoires the player could learn from now, in pack
     /// order: those that teach a spell they do not know, and those of a spell they know below
     /// its last rank ("Ranks": a reading would deepen it), each with its chance in words; none
     /// for a character not trained in Decipher script. What the read list tells of a grimoire.
@@ -745,13 +742,13 @@ impl<'a> PerceptionView<'a> {
             .collect()
     }
 
-    /// The rank the player knows `spell` at (spec §8 "Spells": "Ranks"; they know their own
+    /// The rank the player knows `spell` at (they know their own
     /// spells), 1 to `MAX_SPELL_RANK`; `None` for a spell they do not know.
     pub fn own_spell_rank(&self, spell: crate::content::SpellId) -> Option<u8> {
         self.player.spell_rank(self.content, spell)
     }
 
-    /// The spells the player could write a scroll of (spec §8 "Scrolls": Scribe), in menu
+    /// The spells the player could write a scroll of (Scribe), in menu
     /// order: those they know that a scroll holds, each with its price and time; empty without
     /// Scribe. What the scribe list offers.
     pub fn scribes(&self) -> Vec<OwnScribe> {
@@ -776,7 +773,7 @@ impl<'a> PerceptionView<'a> {
             .collect()
     }
 
-    /// How many blank scrolls the player carries (spec §8 "Scrolls"): what Scribe writes on.
+    /// How many blank scrolls the player carries: what Scribe writes on.
     pub fn blank_scrolls(&self) -> u32 {
         let blank = self.content.blank_scroll();
         (self.player.inventory.iter())
@@ -832,7 +829,7 @@ impl<'a> PerceptionView<'a> {
         )
     }
 
-    /// What the player's spell `spell` costs them now, in mana (spec §8 "Spells": they know
+    /// What the player's spell `spell` costs them now, in mana (they know
     /// what their own spells cost); `None` for a spell they cannot cast.
     pub fn own_spell_cost(&self, spell: crate::content::SpellId) -> Option<i32> {
         let def = self.content.spell_of(spell)?;
@@ -877,20 +874,20 @@ impl<'a> PerceptionView<'a> {
         Some(self.player.spell_reach(self.content, def))
     }
 
-    /// The player's ranks and marks in weapon skills (spec §8 "Weapon skills"): they know their
+    /// The player's ranks and marks in weapon skills: they know their
     /// ranks, and see their marks as a bar toward the next. Never what a rank gives.
     pub fn own_weapon_skills(&self) -> &'a WeaponSkills {
         &self.player.weapon_skills
     }
 
-    /// The fighting styles the player fights in now (spec §8 "Fighting styles"), in skill
+    /// The fighting styles the player fights in now, in skill
     /// order: their hands', their readied missile weapon's, and throwing's while something is
     /// ready to throw. They know how they hold their weapons.
     pub fn own_styles_in_use(&self) -> Vec<WeaponSkillId> {
         self.player.styles_in_use(self.content)
     }
 
-    /// The attacks the player has ready (spec §6 "Character screen"): the main hand's blow, the
+    /// The attacks the player has ready: the main hand's blow, the
     /// off hand's with two weapons, and the missile weapon's shot or throw, each with its to-hit,
     /// damage, and range, from the profile a strike would roll now in the fighting style in use.
     /// The one place the game shows a to-hit (the owner's exception to hidden numbers: the
@@ -900,20 +897,20 @@ impl<'a> PerceptionView<'a> {
     }
 
     /// The player's hit points: what they have left (at most their maximum, never below 0) and
-    /// their maximum (spec §8 "Combat").
+    /// their maximum.
     pub fn own_hp(&self) -> (i32, i32) {
         let max = self.player.max_hp(self.content);
         (self.player.hp.clamp(0, max), max)
     }
 
     /// The player's mana: what they have left (at most their maximum, never below 0) and their
-    /// maximum (spec §8 "Mana"). Never how fast it comes back.
+    /// maximum. Never how fast it comes back.
     pub fn own_mana(&self) -> (i32, i32) {
         let max = self.player.max_mana(self.content);
         (self.player.mana.clamp(0, max), max)
     }
 
-    /// The player's alternative resources (spec §8 "Resources"), in resource order: each one
+    /// The player's alternative resources, in resource order: each one
     /// they hold, what it holds now (at most its maximum), and its maximum. Never how fast it
     /// changes.
     pub fn own_resources(&self) -> Vec<OwnResource> {
@@ -943,7 +940,7 @@ impl<'a> PerceptionView<'a> {
         ))
     }
 
-    /// Where a level's skill rolls come from now (spec §8 "Skills"): the level-up screen names
+    /// Where a level's skill rolls come from now: the level-up screen names
     /// it (the owner's call: numbers on that screen).
     pub fn roll_count(&self) -> RollCount {
         world::roll_count(self.content, self.player, self.character, self.due_level())
@@ -963,7 +960,7 @@ impl<'a> PerceptionView<'a> {
         ))
     }
 
-    /// Whether the player's own bursts spare them (spec §8 "Talents": Scroll savant), so a
+    /// Whether the player's own bursts spare them (Scroll savant), so a
     /// scroll read close needs no warning.
     pub fn bursts_spare_me(&self) -> bool {
         self.player.talent_mods(self.content).magic.spares_self
@@ -975,7 +972,7 @@ impl<'a> PerceptionView<'a> {
         Candidate::player(self.content, self.player, self.character, level)
     }
 
-    /// The player's own talents, in the order taken (spec §8 "Talents"): each by its name for
+    /// The player's own talents, in the order taken: each by its name for
     /// its choice, its tree, the rank held of how many, and what it does in the game's words;
     /// never a rule's number.
     pub fn own_talents(&self) -> Vec<OwnTalent> {
@@ -1039,8 +1036,7 @@ impl<'a> PerceptionView<'a> {
 
     /// Every talent of the game, tree by tree in display order (the Talents page and the pick
     /// list): whether the player holds it, its prerequisites with whether each holds, and the ways it may be taken now (none: not now). A birth sign's pick for another
-    /// sign is left out: the stars a character was born under never change (spec §8 "Birth
-    /// sign"); so is one that asks for a hidden weapon skill or style (Two Shields) the player
+    /// sign is left out: the stars a character was born under never change; so is one that asks for a hidden weapon skill or style (Two Shields) the player
     /// has no marks in yet.
     pub fn talents(&self) -> Vec<TalentView> {
         use crate::content::Need;
@@ -1082,20 +1078,20 @@ impl<'a> PerceptionView<'a> {
             .collect()
     }
 
-    /// The player's alignment band (spec §8 "Alignment"), which they know; `None` without
+    /// The player's alignment band, which they know; `None` without
     /// alignment rules. Never the score.
     pub fn own_alignment(&self) -> Option<crate::alignment::Band> {
         (self.content.alignment()).map(|_| self.player.band(self.content))
     }
 
-    /// What the player carries against what they can (spec §8 "Burden"): their burden, and the
+    /// What the player carries against what they can: their burden, and the
     /// weights at which it changes, which follow from scores they know.
     pub fn own_load(&self) -> Load {
         let room = (self.level.effects_at(self.content, self.player.pos)).burden();
         burden::load(self.player, self.own_race(), self.content, room)
     }
 
-    /// The player's combat stance (spec §8 "Stances"): only its name is ever shown.
+    /// The player's combat stance: only its name is ever shown.
     pub fn own_stance(&self) -> CombatStance {
         self.player.stance
     }
@@ -1115,7 +1111,7 @@ impl<'a> PerceptionView<'a> {
         self.player.protection(self.content, self.own_race()).base
     }
 
-    /// What the player's Knowledge tells of a creature they see (spec §8 "Skills": Knowledge),
+    /// What the player's Knowledge tells of a creature they see (Knowledge),
     /// in words only: what its kind resists, is immune to, or is vulnerable to, in damage type
     /// order; nothing while their Knowledge does not stand above its level, and never what it
     /// wears or what has been done to it.
@@ -1129,9 +1125,9 @@ impl<'a> PerceptionView<'a> {
         }
     }
 
-    /// How a seen creature stands toward the player: its faction's stance (spec §7 "Factions"),
+    /// How a seen creature stands toward the player: its faction's stance,
     /// which the player knows from its type; neutral for an animal a Beast-friend has not
-    /// attacked one of, or a kin of a `kin_to` talent's (spec §8 "Talents"). Nothing else about factions is perceived.
+    /// attacked one of, or a kin of a `kin_to` talent's. Nothing else about factions is perceived.
     pub fn stance(&self, actor: &SeenActor) -> Stance {
         if actor.kind == ActorKind::Creature
             && crate::world::calms(self.content, self.player, actor.creature)
@@ -1165,8 +1161,8 @@ impl<'a> PerceptionView<'a> {
         })
     }
 
-    /// How fresh `stack` smells to the player, if it is food and they can tell by smell (spec §8
-    /// "Birth sign": Hound's nose); `None` otherwise.
+    /// How fresh `stack` smells to the player, if it is food and they can tell by smell (Hound's
+    /// nose); `None` otherwise.
     pub fn smell(&self, stack: &Stack) -> Option<Freshness> {
         if self.player.talents.is_empty() || !self.player.talent_mods(self.content).hunger.smell_rot
         {
@@ -1180,7 +1176,7 @@ impl<'a> PerceptionView<'a> {
     }
 
     /// How fresh `stack`, a corpse or food the player has in front of them, looks to an eye
-    /// trained in Appraise or Survival (spec §8 "Hunger"; `world/health/freshness.rs`): `fresh`, `old`,
+    /// trained in Appraise or Survival (`world/health/freshness.rs`): `fresh`, `old`,
     /// or `rotten` when their check passes, `None` otherwise.
     pub fn judge(&self, stack: &Stack) -> Option<&'static str> {
         let stage = crate::world::health::freshness::judged(
@@ -1211,7 +1207,7 @@ impl<'a> PerceptionView<'a> {
     }
 
     /// What the player has not paid for of each inventory stack, priced, in the shop they stand
-    /// in (`None` for what is theirs; spec §7 "Shops").
+    /// in (`None` for what is theirs).
     pub fn unpaid(&self) -> Vec<Option<u32>> {
         let inventory = &self.player.inventory;
         let Some(view) = self.shop_here() else {
@@ -1226,7 +1222,7 @@ impl<'a> PerceptionView<'a> {
             .collect()
     }
 
-    /// Whether a step onto `to` would dive into deep water (spec §8 "Skills": Swim): from anything
+    /// Whether a step onto `to` would dive into deep water (Swim): from anything
     /// else, into water the player sees or remembers where no one they see is, and open to them:
     /// an untrained or a Strained player is refused by the rules, with no question to ask. Water
     /// they do not know is never stepped into: the rules stop them at it first (`world/levels/swim.rs`).

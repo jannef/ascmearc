@@ -1,4 +1,4 @@
-//! Local areas of the overworld (`local:x,y`, spec §3): the outdoor level behind one overworld
+//! Local areas of the overworld (`local:x,y`): the outdoor level behind one overworld
 //! cell, entered with `>` there and left by walking off any edge, which leads back to the cell.
 //!
 //! An area is generated from its own random stream, [`Rng::map`]`(seed, id, attempt)`, so it
@@ -229,7 +229,7 @@ pub(super) fn generate(
             burial: None,
         };
         if reach::validate(&template, content).is_ok() {
-            // Ruins may hold loot (spec §8 "Magic items"); the land holds none of its own.
+            // Ruins may hold loot; the land holds none of its own.
             super::place_loot(&mut template, content, seed, &land.loot, (None, luck));
             crate::gear::arm(&mut template, content, seed);
             crate::animated::arm(&mut template, content, seed);

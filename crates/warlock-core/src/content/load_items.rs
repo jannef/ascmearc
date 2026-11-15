@@ -74,7 +74,7 @@ impl Content {
         Ok(())
     }
 
-    /// `data/gems.toml` (spec §7 "Gems"), once the objects, item classes, and part names it
+    /// `data/gems.toml`, once the objects, item classes, and part names it
     /// names are known.
     pub(super) fn load_gems(&mut self, files: &ContentFiles) -> Result<(), ContentError> {
         let path = "data/gems.toml";
@@ -224,7 +224,7 @@ impl Content {
             }
             self.grimoires = grimoire::Grimoires::new(generated.chance, of);
         }
-        // Potions of one colour show in one colour (spec §8 "Potions": the colour is the hint).
+        // Potions of one colour show in one colour (the colour is the hint).
         for (o, path) in self.objects.iter().zip(&paths) {
             let Some(drink) = &o.drink else { continue };
             let other = (self.objects.iter())
@@ -242,7 +242,7 @@ impl Content {
         Ok(())
     }
 
-    /// `data/hunger.toml` (spec §8 "Hunger"), then a corpse object for each creature type that
+    /// `data/hunger.toml`, then a corpse object for each creature type that
     /// leaves one (not the player), after the objects of `data/objects.toml`, in creature order.
     pub(super) fn load_hunger(&mut self, files: &ContentFiles) -> Result<(), ContentError> {
         self.corpses = vec![None; self.creatures.len()];
@@ -297,7 +297,7 @@ impl Content {
                 self.objects.push(def);
             }
         }
-        // Harm from eating is degrees of a status (spec §8 "Status effects").
+        // Harm from eating is degrees of a status.
         let harms = def.rotten.harm.max() > 0
             || (def.corpses.is_some()
                 && (self.creatures.iter())

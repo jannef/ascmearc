@@ -1,4 +1,4 @@
-//! Skills in the world (spec §8 "Skills"): what trained skills give (tumble, stealth, listen,
+//! Skills in the world: what trained skills give (tumble, stealth, listen,
 //! balance, survival), that untrained ones give nothing and are never perceived, training marks
 //! on use, saves, and replays.
 

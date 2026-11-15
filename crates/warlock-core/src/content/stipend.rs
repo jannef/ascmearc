@@ -1,4 +1,4 @@
-//! The aristocrat's stipend (`assets/data/rules/stipend.toml`, spec §8 "Class abilities": Stipend;
+//! The aristocrat's stipend (`assets/data/rules/stipend.toml`: Stipend;
 //! #1405): what each level-up of a character with the Stipend class ability adds to what their
 //! family holds for them, until their servant hands it over (`world/classes/stipend.rs`).
 //!

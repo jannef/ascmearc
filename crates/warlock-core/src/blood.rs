@@ -1,4 +1,4 @@
-//! Blood (spec §8 "Blood"): the stains big hits and kills leave on floors and walls.
+//! Blood: the stains big hits and kills leave on floors and walls.
 //!
 //! Stains are presentation data the rules keep, like the flow of water: they live per level
 //! ([`crate::world::LevelState`], sparse, by cell), are saved and hashed, and **no rule reads

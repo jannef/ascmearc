@@ -1,4 +1,4 @@
-//! Ice (spec §5 "Ice"): how it grows on water in the cold, melts in the warmth, and what it holds.
+//! Ice: how it grows on water in the cold, melts in the warmth, and what it holds.
 //!
 //! Every cell of water that freezes (terrain with a `freeze` table: still water, and running
 //! water in a harder frost) has an ice thickness, kept sparsely with the level

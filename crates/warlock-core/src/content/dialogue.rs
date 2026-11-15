@@ -1,4 +1,4 @@
-//! Dialogue (`assets/data/dialogue.toml` and the campaigns' `data/dialogue/`, spec §7 "Dialogue", #146): what creatures say when the
+//! Dialogue (`assets/data/dialogue.toml` and the campaigns' `data/dialogue/`, #146): what creatures say when the
 //! player chats with them (`C`), and what some of them mutter to themselves.
 //!
 //! Each `[[dialogue]]` belongs to a creature type (`creature = "gardener"`) or to one unique
@@ -7,7 +7,7 @@
 //! look mode, and the dialogue screen call it, without an article). It has one-liners (`lines`)
 //! that rotate, an optional `greet` said the first time the player chats with it, optional cold greetings (`greet_evil`, said by a
 //! good speaker to an Evil or Wicked character in place of its greeting and lines, and
-//! `greet_good`, by an evil one to a Good or Saintly character; spec §8 "Alignment"), optional `[[dialogue.topic]]`s (`id`, `name`,
+//! `greet_good`, by an evil one to a Good or Saintly character), optional `[[dialogue.topic]]`s (`id`, `name`,
 //! `reply`, an optional `route`: the way it describes, marked on the player's overworld map
 //! as they ask, and an optional `calls`: a calling of its campaign, the topic offered only while
 //! the calling is open and asking it calling the player, with `departs` the speaker then leaving;
@@ -102,14 +102,14 @@ pub struct Topic {
     pub name: String,
     /// What the speaker answers.
     pub reply: String,
-    /// The way the speaker describes, as waypoints `[x, y]` on the campaign's overworld (spec §8
-    /// "Dialogue", "Rumoured ways"): asking marks on the player's map what they would have seen
-    /// walking it by day ([`crate::world`]'s `world/people/rumour.rs`). Empty for most topics.
+    /// The way the speaker describes, as waypoints `[x, y]` on the campaign's overworld: asking
+    /// marks on the player's map what they would have seen walking it by day ([`crate::world`]'s
+    /// `world/people/rumour.rs`). Empty for most topics.
     #[serde(default)]
     pub route: Vec<[i32; 2]>,
-    /// A calling of the dialogue's campaign, by its prestige class's id (spec §8 "Prestige
-    /// classes"): the topic is offered only while the calling is open to the player, and asking
-    /// it calls them (`world/classes/calling.rs`).
+    /// A calling of the dialogue's campaign, by its prestige class's id: the topic is offered only
+    /// while the calling is open to the player, and asking it calls them
+    /// (`world/classes/calling.rs`).
     pub calls: Option<String>,
     /// The speaker leaves the level once it has answered (a creature's dialogue only).
     #[serde(default)]
@@ -286,7 +286,7 @@ pub struct Dialogue {
     /// Said the first time the player chats with it, instead of a line.
     pub greet: Option<String>,
     /// What a good speaker says to an Evil or Wicked character instead of its greeting and
-    /// lines, in turn (spec §8 "Alignment"); none: its usual words.
+    /// lines, in turn; none: its usual words.
     pub greet_evil: Vec<String>,
     /// What an evil speaker says to a Good or Saintly character, the same way.
     pub greet_good: Vec<String>,
@@ -339,7 +339,7 @@ impl Content {
         }
     }
 
-    /// Checks every topic's `route` (spec §8 "Dialogue", "Rumoured ways"): only in a campaign's
+    /// Checks every topic's `route`: only in a campaign's
     /// dialogue with an overworld, the map it is marked on.
     pub(super) fn check_topic_routes(&self) -> Result<(), ContentError> {
         for dialogue in &self.dialogues {

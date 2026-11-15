@@ -1,4 +1,4 @@
-//! The endless branch (`endless.rs`; spec §7 "The endless branch"): depth and danger, floors made
+//! The endless branch (`endless.rs`): depth and danger, floors made
 //! anew by every staircase, what crosses and what is gone, the save, and replays.
 
 use crate::action::Action;

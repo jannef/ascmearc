@@ -1,4 +1,4 @@
-//! The witch's familiar (`familiar.rs`; spec §8 "Allies"): the starting beast by race and the
+//! The witch's familiar (`familiar.rs`): the starting beast by race and the
 //! rares, the name and the arrival, the touch (her hex, her the giver, her other hexes kept
 //! going), the harrying, the shared kept-beast rules (growth, always along, the words, the
 //! dumps), a companion beside it, and saves.

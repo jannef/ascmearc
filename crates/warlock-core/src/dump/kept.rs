@@ -31,7 +31,7 @@ impl Kept {
     }
 }
 
-/// The player's companion or familiar as they know it (spec §8 "Allies"): `Snel, a hound
+/// The player's companion or familiar as they know it: `Snel, a hound
 /// (grade 12) at (12, 5): unhurt, order follow`, `Snel, a hound (grade 12): with you` in the
 /// retinue (a cell only where the player sees it); `no companion` (`no familiar`) without one.
 pub(super) fn kept_json(view: &PerceptionView<'_>, kept: Kept) -> Value {

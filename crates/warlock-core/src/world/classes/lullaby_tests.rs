@@ -1,4 +1,4 @@
-//! The Lullaby (spec §8 "Class abilities", the bard's songs; #873; `world/classes/song.rs`): the bard's
+//! The Lullaby (the bard's songs; #873; `world/classes/song.rs`): the bard's
 //! song at 20, for 6 mana and a song's time; every hostile that hears it, seen or not, checks
 //! Willpower against 13 plus Music's craft, and the failed are Drowsy; friends and the peaceful
 //! draw nothing; sung to an empty room all the same.

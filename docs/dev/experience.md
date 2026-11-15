@@ -1,9 +1,9 @@
 # Experience
 
 Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
-rules it implements are in spec/08c-combat.md. Keep it current with the code, as CLAUDE.md says.
+rules it implements are in spec/10-combat.md. Keep it current with the code, as CLAUDE.md says.
 
-Experience (spec §8 "Experience", M21; to 60 in M30, #226, design `docs/design/progression.md`
+Experience (M21; to 60 in M30, #226, design `docs/design/progression.md`
 §3; to 100 in #877, `docs/design/prestige-classes.md` §5, `max_level` 100 = `MAX_LEVEL`, the
 classes' default cap `class_max` 60): `content/experience.rs` holds the rules from `data/experience.toml`: the level curve in
 kills (`[kills]`: `plateau`, `ramp`, `slope_per_100`, and the creature XP `guideline`), turned

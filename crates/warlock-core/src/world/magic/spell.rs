@@ -1,4 +1,4 @@
-//! Spell effects in the rules (spec §4.8 "Spell effects"): the shapes they take, what the player
+//! Spell effects in the rules: the shapes they take, what the player
 //! perceives of one ([`Event::Spell`]), and the dev action that shows one
 //! (`effect:ID@X,Y[>X,Y]`).
 //!
@@ -13,10 +13,10 @@
 //! of a bolt's path seen); an event with no cell seen is dropped.
 //!
 //! **Casting** ([`World::cast_burst`], [`World::cast_bolt`], [`World::cast_cone`]): the one
-//! place a burst, a bolt, or a cone does what it does, for traps (spec §8 "Traps"), scrolls
-//! (spec §8 "Scrolls"), spells, and a dragon's breath alike: the
-//! effect's event, one roll of its damage for everyone it reaches (in ascending actor id order),
-//! then a burst's blast against walls and its heat or frost (its own, else its spell type's,
+//! place a burst, a bolt, or a cone does what it does, for traps, scrolls, spells, and a dragon's
+//! breath alike: the effect's event, one roll of its damage for everyone it reaches (in ascending
+//! actor id order), then a burst's blast against walls and its heat or frost (its own, else its
+//! spell type's,
 //! `spell_type.rs`, for an actor's); an actor's ruins what lies on the floor it reached
 //! (`ruin.rs`). Only who cast it differs
 //! ([`Caster`]): a trap's blows are its own and its kills no one's; an actor's (the player
@@ -47,7 +47,7 @@ pub(in crate::world) enum Caster {
     /// An actor (the player reading a scroll): its blows are theirs ([`Event::Attacked`], a
     /// spell, with no roll to hit), and so are its kills.
     Actor(ActorId),
-    /// A place (spec §7 "Special rooms": a forgotten altar blowing apart): its kills earn no one
+    /// A place (a forgotten altar blowing apart): its kills earn no one
     /// anything, as a trap's.
     Place,
 }
@@ -95,10 +95,10 @@ pub(crate) fn burst_cells(center: Pos, radius: i32, opaque: impl Fn(Pos) -> bool
     cells
 }
 
-/// The cells a cone from `from` toward `toward` reaches, `length` cells long (spec §8
-/// "Spells"): within that distance (rounded, like every radius), in line of sight from `from`,
-/// not opaque, and within 45° either side of the way to `toward` (a quarter turn in all, by
-/// integers: the angle's cosine squared at least a half). Never `from` itself; none when
+/// The cells a cone from `from` toward `toward` reaches, `length` cells long: within that distance
+/// (rounded, like every radius), in line of sight from `from`, not opaque, and within 45° either
+/// side of the way to `toward` (a quarter turn in all, by integers: the angle's cosine squared at
+/// least a half). Never `from` itself; none when
 /// `toward` is `from`. In row order.
 pub fn cone_cells(from: Pos, toward: Pos, length: i32, opaque: impl Fn(Pos) -> bool) -> Vec<Pos> {
     let (dx, dy) = (i64::from(toward.x - from.x), i64::from(toward.y - from.y));
@@ -308,7 +308,7 @@ impl World {
         let inner = radius2(radius - 1);
         let level = self.state.current_level.clone();
         let reached: BTreeSet<Pos> = cells.iter().copied().collect();
-        // Scroll savant (spec §8 "Talents"): a caster's own burst may spare it.
+        // Scroll savant: a caster's own burst may spare it.
         let spared = |a: &Actor| {
             matches!(caster, Caster::Actor(id) if id == a.id)
                 && a.talent_mods(&self.content).magic.spares_self
@@ -446,8 +446,8 @@ impl World {
         roll
     }
 
-    /// What of a burst's or a bolt's `damage` reaches actor `id`: with Evasion (spec §8
-    /// "Talents") its share, rounded down (a spell that does nothing more is resisted).
+    /// What of a burst's or a bolt's `damage` reaches actor `id`: with Evasion its share, rounded
+    /// down (a spell that does nothing more is resisted).
     pub(in crate::world) fn evaded(&self, id: ActorId, damage: Damage) -> Damage {
         let percent = (self.state.actors.get(&id)).map_or(0, |a| {
             a.talent_mods(&self.content).defence.spell_damage_percent
@@ -462,9 +462,9 @@ impl World {
 
     /// `caster`'s spell does `damage` to `target` from `source` (a cell, and whether it flew
     /// along a line from it), with no roll to hit, less what Evasion spares it ([`World::evaded`])
-    /// and what the target resists of its kind (spec §8 "Damage types"): a trap's blow
+    /// and what the target resists of its kind: a trap's blow
     /// ([`World::trap_hurts`]), or an actor's, dealt
-    /// the way every blow is (spec §8 "Blood", "Status effects"): the event, a big hit's blood,
+    /// the way every blow is: the event, a big hit's blood,
     /// the damage, which may kill (a kill by the player earns its experience), and if it lives
     /// the statuses its wound causes. A shopkeeper the player's spell reaches turns on them, as
     /// one they strike does.
@@ -490,11 +490,10 @@ impl World {
     /// Actor `by`'s spell strikes `target` from `source` (a cell, and whether it flew along a
     /// line from it) as `strike` says (a miss, or a hit, a critical one perhaps, of an attack
     /// roll; a hit for a spell with no roll), doing `damage` less what the target resists of
-    /// its kind (spec §8 "Damage types"), dealt the way every blow is (spec §8 "Blood",
-    /// "Status effects"): the event, a big hit's blood, the damage, which may kill (a kill by
-    /// the player earns its experience), and if it lives the statuses its wound causes. A
-    /// shopkeeper the player's spell reaches turns on them, as one they strike does; a miss
-    /// provokes too. No Evasion here: [`World::spell_hurts`] takes it off an area's first. The
+    /// its kind, dealt the way every blow is: the event, a big hit's blood, the damage, which may
+    /// kill (a kill by the player earns its experience), and if it lives the statuses its wound
+    /// causes. A shopkeeper the player's spell reaches turns on them, as one they strike does; a
+    /// miss provokes too. No Evasion here: [`World::spell_hurts`] takes it off an area's first. The
     /// hit points it took (a Leech's share is of them).
     pub(in crate::world) fn spell_strikes(
         &mut self,

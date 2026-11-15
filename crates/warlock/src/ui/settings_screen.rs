@@ -1,5 +1,5 @@
 //! The settings screen: font size, reduced effects and its per-effect switches, blood, color
-//! palette (spec §4.7), the clock, and the temperature unit (°C or °F, spec §6). Changes apply
+//! palette, the clock, and the temperature unit (°C or °F). Changes apply
 //! live, because the screen edits the [`Settings`] resource that rendering reads.
 
 use super::cursor;

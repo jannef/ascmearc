@@ -1,15 +1,15 @@
 //! Vaults (`assets/vaults/*.toml`): hand-made map pieces in the level-file format that generators
-//! stamp into generated levels where they fit (spec §7).
+//! stamp into generated levels where they fit.
 //!
 //! A vault is a rectangle copied verbatim: terrain, placed lights, objects, traps, chests, and
 //! creatures with their patrols. A dungeon vault's chests are of the floor's item level (no
 //! `chest` level or band of their own, no mimic), and one given no `objects` is filled by its
 //! band's loot table when the level is made (`mapgen/chest.rs::fill_vaults`). Its outer edge must be solid (non-walkable terrain such as walls) except for its
 //! **entrances**: doors on the edge, never on a corner. Generators join every entrance to the rest
-//! of the level. A vault has no stairs and no player start. The one exception is a layer boss's lair (spec §7 "The endless branch"): one `>`, its
+//! of the level. A vault has no stairs and no player start. The one exception is a layer boss's lair: one `>`, its
 //! [`Vault::down`], which the stamp lays as plain floor and the level keeps hidden until the boss
 //! dies (`world/levels/layer_boss.rs`); only a vault an endless branch's boss row names may have it.
-//! Its author places the keys to its locks (spec §8 "Doors"). A legend's `loot` is
+//! Its author places the keys to its locks. A legend's `loot` is
 //! rolled when it is stamped: a grade, or a pool of item classes (`magic/loot.rs`, [`LootPool`]),
 //! at the floor's item level. A legend's `monsters` draws creatures at the floor's danger
 //! ([`VaultMonsters`], `mapgen/population.rs`), on top of its population and outside the cap.
@@ -50,7 +50,7 @@ pub struct Vault {
     /// Entrance doors on the edge (outdoor vaults: every open edge cell), each with the
     /// direction leading out of the vault.
     pub entrances: Vec<(Pos, Dir)>,
-    /// The campaign whose `vaults/` it is in (spec §3); `None` for a shared one.
+    /// The campaign whose `vaults/` it is in; `None` for a shared one.
     pub campaign: Option<String>,
     /// The branches (`"cealdhlaw"`) and branch levels (`"cealdhlaw:2"`) it stamps in; empty:
     /// every branch it may (its campaign's, or all of them for a shared vault).
@@ -166,7 +166,7 @@ impl Vault {
         if let Some(at) = template.hidden.keys().next() {
             return Err(format!("a vault cannot hide a location (at {at})"));
         }
-        // A vault's chests are of the floor it is stamped on (spec §8 "Chests"): no level or
+        // A vault's chests are of the floor it is stamped on: no level or
         // band of their own, and no mimic (its type is its level).
         if let (LevelKind::Outdoor, Some(at)) = (template.kind, template.chests.keys().next()) {
             return Err(format!("an outdoor vault cannot hold chests (at {at})"));

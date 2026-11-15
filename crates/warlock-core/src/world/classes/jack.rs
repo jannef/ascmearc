@@ -1,4 +1,4 @@
-//! Jack of all trades (spec §8 "Class abilities", the bard's; the bard design §7): the
+//! Jack of all trades (the bard's; the bard design §7): the
 //! `take_up_skills` hand-out. Every skill of the content the player is not trained in, but
 //! those the effect excepts (Sneak attack, the thief's), is taken up at the effect's dice,
 //! rolled from the `levels` stream in skill file order: whatever skills the content holds, never

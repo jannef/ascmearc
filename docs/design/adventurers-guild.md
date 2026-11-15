@@ -448,13 +448,13 @@ Two talents meet the bar (`min_talents = 2`). **Class abilities**: none (`min_cl
 
 | File | Change |
 |---|---|
-| `spec/08b-creatures.md` §8 "Quests" | **giving**: the quest topic gives the quest, no accepting or declining, the first breadcrumb "X wants you to Y."; rolled quests (pick, variants, the roll at the giving, no rerolls, counting from the giving); a named monster's death counts at any hand and any time; tribes and their counting |
-| `spec/03b-campaign.md` | Cēaptūn's Gildhalle and Wat; the chain, standing alone, and its ranks; the four lairs among the locations; the chain as the road to an ultimate ending (to come) |
-| `spec/07a-levels.md` "Hidden locations" | the four lairs, revealed by a variant |
-| `spec/08g-magic-items.md` | unique items and powers |
-| `spec/07b-data.md` | `tribes`, `uniques`, `guilds` (the rank titles); the quest fields (`pick`, variants, `decline` retired, `reveals.when = "given"`) |
-| `spec/06-input-and-ui.md` | the quest log's breadcrumb and rolled objectives; the character screen's guild line; one quest topic per quest |
-| `spec/09-development-interface.md`, CLAUDE.md | the `quest_roll` dev action; the dump fields; `accept-ID`/`decline-ID` gone from the action text syntax |
+| `spec/09-creatures.md` §8 "Quests" | **giving**: the quest topic gives the quest, no accepting or declining, the first breadcrumb "X wants you to Y."; rolled quests (pick, variants, the roll at the giving, no rerolls, counting from the giving); a named monster's death counts at any hand and any time; tribes and their counting |
+| `spec/02-worlds.md` | Cēaptūn's Gildhalle and Wat; the chain, standing alone, and its ranks; the four lairs among the locations; the chain as the road to an ultimate ending (to come) |
+| `spec/06-content.md` "Hidden locations" | the four lairs, revealed by a variant |
+| `spec/11-magic.md` | unique items and powers |
+| `spec/06-content.md` | `tribes`, `uniques`, `guilds` (the rank titles); the quest fields (`pick`, variants, `decline` retired, `reveals.when = "given"`) |
+| `spec/05-interface.md` | the quest log's breadcrumb and rolled objectives; the character screen's guild line; one quest topic per quest |
+| `spec/13-development.md`, CLAUDE.md | the `quest_roll` dev action; the dump fields; `accept-ID`/`decline-ID` gone from the action text syntax |
 | `docs/dev/quests.md` | giving, rolls, the stream, tribes, `slain`; a new `docs/dev/guild.md` only if the code earns a module of its own (`world/people/guild.rs` for ranks) |
 | `docs/dev/magic-items.md` | uniques and powers |
 | `docs/dev/campaign.md`, `overworld.md`, `mapgen.md` | the Gildhalle; the lairs' hidden entries; the four branches |

@@ -1,4 +1,4 @@
-//! Magic items in play (spec §8 "Magic items"): every effect applies through the rules while
+//! Magic items in play: every effect applies through the rules while
 //! the item is worn or wielded, identified or not; identifying reveals the affixes and nothing
 //! else leaks them; items survive saves and replays; creatures drop loot and generated levels hold
 //! it, deterministically.
@@ -606,7 +606,7 @@ fn creatures_drop_loot_deterministically() {
     // From its own stream: the same actor drops the same thing.
     assert_eq!(w.loot_of(&kobold), w.loot_of(&kobold));
     // Over many actors about 6 % drop something, always magic or rare, at the level's item
-    // level (3), or now and then a loose gem (spec §7 "Gems").
+    // level (3), or now and then a loose gem.
     let mut drops = 0;
     for id in 1..400 {
         let mut a = kobold.clone();
@@ -668,7 +668,7 @@ fn generated_levels_hold_floor_and_vault_loot() {
         let a = crate::mapgen::generate(&content, ("showcase", 42), &id, None).expect("level");
         let b = crate::mapgen::generate(&content, ("showcase", 42), &id, None).expect("level");
         assert_eq!(a, b, "deterministic");
-        // Loot: base items and scrolls (spec §8 "Scrolls"), what has a loot frequency.
+        // Loot: base items and scrolls, what has a loot frequency.
         let loot: Vec<&Stack> = (a.objects.values().flatten())
             .filter(|s| content.object(s.object).frequency > 0)
             .collect();

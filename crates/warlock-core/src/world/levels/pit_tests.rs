@@ -1,4 +1,4 @@
-//! The `portal` miscast and the Pits' records (#1297; `pit.rs`, spec §7 "The Pits"): a Pit opened
+//! The `portal` miscast and the Pits' records (#1297; `pit.rs`): a Pit opened
 //! with its gate, refused on the overworld and a Pit's floor, taken in a town and on an endless
 //! floor; two Pits apart; the first floor's `<` to the mouth after a climb; the orphan rule; the
 //! dev scenario.

@@ -1,4 +1,4 @@
-# A rod of terror (spec §8 "Magic items": "Rods"): ready it in the missile weapon slot and use it
+# A rod of terror: ready it in the missile weapon slot and use it
 # as a missile weapon (`t`), and creatures where you aim of the rod's level or less flee
 # from you a while (data/rod_effects/terror.toml). Each use costs you mana; it never runs out.
 [[object]]

@@ -1,4 +1,4 @@
-//! Freshness (spec §8 "Hunger"; #1031): Appraise and Survival, summed, let the player tell how
+//! Freshness (#1031): Appraise and Survival, summed, let the player tell how
 //! fresh a corpse or food is, in words, when a check passes; one who fails or is untrained is
 //! told nothing; eating food told trains Appraise.
 

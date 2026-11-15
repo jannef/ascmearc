@@ -1,4 +1,4 @@
-//! Lurking (spec §8 "Creature behavior"; `docs/dev/surprise.md`): a creature type with
+//! Lurking (`docs/dev/surprise.md`): a creature type with
 //! `lurks = true` that sees a hostile does not close in. It waits where it stands, aware of the
 //! hostile (`ai.rs::decide` sets its `last_seen` as for anyone), until the hostile is beside it
 //! (then it attacks as usual) or it has been harmed (hit points below its maximum: then it

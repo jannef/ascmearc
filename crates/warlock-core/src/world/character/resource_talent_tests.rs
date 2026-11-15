@@ -1,4 +1,4 @@
-//! The resource talents (spec §8 "Talents" and "Resources"; #253): Battle trance's higher start
+//! The resource talents (#253): Battle trance's higher start
 //! and slower decay of rage, Inner calm's larger and quicker ki, Steady hand's quicker focus,
 //! Patient blade's slower openings and the second opening of a sneak attack that kills, and
 //! Zealot's second zeal a blow taken (#914).

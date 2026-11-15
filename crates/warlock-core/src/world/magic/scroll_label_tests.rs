@@ -1,4 +1,4 @@
-//! Unidentified scrolls (spec §8 "Scrolls"): labels per run, identified by reading or by the
+//! Unidentified scrolls: labels per run, identified by reading or by the
 //! scroll of identify, known from a starting kit, saved and hashed; the scroll of identify in
 //! loot and in the general store.
 

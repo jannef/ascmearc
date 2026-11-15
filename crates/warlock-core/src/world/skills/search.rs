@@ -1,13 +1,13 @@
-//! Searching (spec §8 "Searching"): finding hidden features, with one check for all of them.
+//! Searching: finding hidden features, with one check for all of them.
 //!
 //! Hidden features are **secret doors**, which look and act like the wall around them (the cell's
 //! terrain is that wall; [`crate::content::Secret`] keeps the door), and **hidden traps**, which
-//! look like the floor or the door they lie on (spec §8 "Traps", "Trapped doors"), and the
-//! **breaches** of sealed rooms (a greater treasure room's, spec §7 "Special rooms"), a wall like
+//! look like the floor or the door they lie on, and the
+//! **breaches** of sealed rooms (a greater treasure room's), a wall like
 //! any other until found, at the secret doors' difficulty. Each has a
 //! **difficulty**: the trap type's, or the secret door's own, plus on a dungeon branch its
-//! `hidden_per_depth` for each level below the first. Two checks find them (spec §8 "Checks",
-//! [`crate::check`]: 2d12 plus a modifier against the difficulty):
+//! `hidden_per_depth` for each level below the first. Two checks find them ([`crate::check`]: 2d12
+//! plus a modifier against the difficulty):
 //!
 //! - **Searching** ([`crate::Action::Search`]): each turn of it (the `search` action, and the
 //!   `wait` action, which is a turn of searching: #1326, waiting and searching are one) checks
@@ -60,9 +60,9 @@ pub(in crate::world) enum Hidden {
     Door(u8),
     /// A hidden trap of this type.
     Trap(TrapId),
-    /// A disguised mimic (spec §8 "Mimics", `mimic.rs`): its grip's difficulty, 12 + L ÷ 5.
+    /// A disguised mimic (`mimic.rs`): its grip's difficulty, 12 + L ÷ 5.
     Mimic(ActorId),
-    /// A sealed room's breach not yet found (spec §7 "Special rooms": a greater treasure room's),
+    /// A sealed room's breach not yet found (a greater treasure room's),
     /// at the branch's secret-door difficulty.
     Hollow,
 }
@@ -116,7 +116,7 @@ impl World {
         hidden
     }
 
-    /// What finding `hidden` takes (spec §8 "Searching"): its own difficulty, plus on a branch
+    /// What finding `hidden` takes: its own difficulty, plus on a branch
     /// level the branch's `hidden_per_depth` for each level below the first.
     pub(in crate::world) fn difficulty_of(&self, hidden: Hidden) -> i32 {
         let own = match hidden {
@@ -133,7 +133,7 @@ impl World {
     }
 
     /// What finding `hidden` takes the player: its difficulty, a hidden trap less the
-    /// talents' `trap_ease` (spec §8 "Class abilities"; disarming is not eased).
+    /// talents' `trap_ease` (disarming is not eased).
     pub(super) fn finding(&self, hidden: Hidden) -> i32 {
         let ease = match hidden {
             Hidden::Trap(_) => {
@@ -149,9 +149,9 @@ impl World {
     }
 
     /// What the player adds to a check of `look` for `hidden`: the stat's modifier (of the
-    /// effective score, spec §8 "Stats"), the skill's benefit (Search's or Spot's; for a hidden
+    /// effective score), the skill's benefit (Search's or Spot's; for a hidden
     /// trap Detect traps' in their place, both looks), and the race's bonus; less the passive
-    /// penalty in passing. Then their talents (spec §8 "Talents"): Keen searcher's to searching,
+    /// penalty in passing. Then their talents: Keen searcher's to searching,
     /// Alert's in passing, the search of Trap sense and the birth signs' (Always a way,
     /// Heedless) to both, and what they add to checks of the stat.
     pub(in crate::world) fn search_modifier(&self, look: Look, hidden: Hidden) -> i32 {
@@ -165,7 +165,7 @@ impl World {
             true => player.skill_effect(content, Effect::DetectTraps),
             false => general,
         };
-        // Talents that add to every check of a stat (spec §8 "Class abilities": Iron will).
+        // Talents that add to every check of a stat (Iron will).
         let own = match look {
             Look::Active => {
                 player.check_modifier(content, Stat::Intelligence)
@@ -231,7 +231,7 @@ impl World {
         }
     }
 
-    /// Searching for up to `turns` turns (spec §8 "Searching"): a turn of the `search` action
+    /// Searching for up to `turns` turns: a turn of the `search` action
     /// after another through [`World::keep_at`], stopping when something is found, like a rest
     /// otherwise. A search of more than one turn that finds nothing says how it ended.
     pub(in crate::world) fn search(&mut self, turns: u8, events: &mut Vec<Event>) {

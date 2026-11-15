@@ -1,4 +1,4 @@
-//! The collapsed floor (spec §7 "Special rooms", design §9.13; `world/fixtures/collapse.rs`): a step of the
+//! The collapsed floor (design §9.13; `world/fixtures/collapse.rs`): a step of the
 //! player onto its cracked floor gives way with 15 % (doubled while Burdened), and they fall to
 //! the level below, hurt (a fall can kill) and Staggered; Old delver never falls; creatures
 //! never do; no draw anywhere else. A generated one keeps a sound rim round its cracks.

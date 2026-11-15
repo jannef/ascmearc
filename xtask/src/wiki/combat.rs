@@ -1,4 +1,4 @@
-//! Combat (spec §8 "Combat"): weapons, missile weapons, ammunition, armour, stances, the 2d12
+//! Combat: weapons, missile weapons, ammunition, armour, stances, the 2d12
 //! odds and what adds to them, Protection's soak, hit points, and regeneration.
 
 use super::objects::goes_on;
@@ -99,7 +99,7 @@ pub(super) fn weapon_handling(content: &Content) -> String {
 }
 
 /// The light weapons, in name order, as a sentence: "The light weapons are the dagger, ... and
-/// the stiletto." (spec §7: `light_weapon`).
+/// the stiletto." (`light_weapon`).
 pub(super) fn light_weapons(content: &Content) -> String {
     let mut names: Vec<&str> = (order::objects(content).into_iter())
         .filter(|(_, o)| o.light_weapon)
@@ -114,7 +114,7 @@ pub(super) fn light_weapons(content: &Content) -> String {
     }
 }
 
-/// The finesse weapons, in name order, as a sentence (spec §7: `finesse`).
+/// The finesse weapons, in name order, as a sentence (`finesse`).
 pub(super) fn finesse_weapons(content: &Content) -> String {
     let mut names: Vec<&str> = (order::objects(content).into_iter())
         .filter(|(_, o)| o.attack.is_some_and(|attack| attack.finesse))
@@ -350,7 +350,7 @@ pub(super) fn piercing(content: &Content) -> String {
     }
 }
 
-/// What Protection takes off a hit that lands (spec §8 "Combat": one draw from ⌈Pv/2⌉ to Pv,
+/// What Protection takes off a hit that lands (one draw from ⌈Pv/2⌉ to Pv,
 /// [`combat::soaks`]), and on average.
 pub(super) fn protection(_content: &Content) -> String {
     let mut out = String::from("| Protection | A hit loses | On average |\n|:---:|:---:|:---:|\n");
@@ -372,7 +372,7 @@ pub(super) fn protection(_content: &Content) -> String {
     out
 }
 
-/// How an attack roll works, exactly (spec §8 "Combat"): 2d12 plus the to-hit against Defence,
+/// How an attack roll works, exactly: 2d12 plus the to-hit against Defence,
 /// the sure miss and hit, criticals and their limits, and every part of the to-hit and damage,
 /// by kind of attack, from the rules' constants and the content.
 pub(super) fn to_hit(content: &Content) -> String {
@@ -616,8 +616,8 @@ pub(super) fn hit_points(content: &Content) -> String {
     out
 }
 
-/// How long a hit point takes to come back, by Toughness (spec §8 "Healing":
-/// [`combat::regen_seconds`]), with the formula from its constants.
+/// How long a hit point takes to come back, by Toughness ([`combat::regen_seconds`]), with the
+/// formula from its constants.
 pub(super) fn regeneration(_content: &Content) -> String {
     // The lowest Toughness at which a hit point comes back as fast as it ever does.
     let fastest =

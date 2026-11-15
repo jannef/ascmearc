@@ -1,7 +1,7 @@
 # Campaign-owned (docs/design/campaign.md §3.6): the Ascmearc's own type, which only its files
 # may name.
 #
-# The Strange Spirit (docs/design/prestige-classes.md §7; spec §8 "Prestige classes"): a pale
+# The Strange Spirit (docs/design/prestige-classes.md §7): a pale
 # figure that stands on the march's roads and waits for one who knows the old oath. Met only by a
 # bard whose class is full and who has not been called (the encounter entries
 # `strange_spirit_*`, `when = { calling = "hunter" }`); it talks only to the good (its dialogue's

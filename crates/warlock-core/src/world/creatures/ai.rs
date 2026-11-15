@@ -1,4 +1,4 @@
-//! Creature behavior (spec §8 "Creature behavior"): what a creature does with each action the
+//! Creature behavior: what a creature does with each action the
 //! scheduler gives it. Deterministic, no randomness but the player's one contest to slip past
 //! it in the dark (`slip.rs`, at the look); outplayable by design.
 //!
@@ -34,10 +34,10 @@
 //! Paths (`path.rs`) go over walkable cells, for an incorporeal creature solid ones too
 //! (`incorporeal.rs`, at a step's extra cost), and, for creatures that open doors, closed doors (it
 //! opens the door, then steps in); a locked door only for one carrying a key that fits it (it
-//! unlocks the door as it opens it; spec §8 "Doors"), else it is a wall to it. Other actors
+//! unlocks the door as it opens it), else it is a wall to it. Other actors
 //! block: a path may lead through one only when the way around is much longer, and then the
 //! creature waits behind it. A creature hostile to the player never steps into a sanctuary (a
-//! special room its effect makes creatures shun, spec §7 "Special rooms"): its paths go around
+//! special room its effect makes creatures shun): its paths go around
 //! it, and it waits when the only way leads in. Melee attacks and shots are real (`fight.rs`,
 //! `shoot.rs`: rolled against Defence, they hurt and kill; a shot spends an arrow, which flies
 //! and comes down to lie where it fell); a ranged creature with nothing left to shoot fights in
@@ -573,9 +573,9 @@ impl World {
     }
 
     /// Which cells creature `id` keeps out of on the current level: a creature hostile to the
-    /// player does not step into a special room whose effect it shuns (a sanctuary, spec §7
-    /// "Special rooms") from outside it; one already inside may move about in it, and leave.
-    /// Hallowed ground (Sanctuary, `sanctuary.rs`) is shunned the same way.
+    /// player does not step into a special room whose effect it shuns (a sanctuary) from outside
+    /// it; one already inside may move about in it, and leave. Hallowed ground (Sanctuary,
+    /// `sanctuary.rs`) is shunned the same way.
     pub(in crate::world) fn shuns(&self, id: ActorId) -> impl Fn(Pos) -> bool + '_ {
         let level = self.state.current();
         let hostile = self.stance(id, self.state.player) == Stance::Hostile;
@@ -637,7 +637,7 @@ impl World {
             self.swing_open(id, to, events);
             return stepped;
         }
-        // An overloaded creature cannot move (spec §8 "Burden"): it waits.
+        // An overloaded creature cannot move: it waits.
         let overloaded = !self.load_of(id).penalty().can_move();
         if !(def.walkable || through) || overloaded || self.state.actor_at(&level.id, to).is_some()
         {
@@ -649,7 +649,7 @@ impl World {
         if !self.step_away(id, to, events) {
             return Stepped::Blocked;
         }
-        // Ice there may give way under it (spec §5 "Ice"); never under an incorporeal one.
+        // Ice there may give way under it; never under an incorporeal one.
         let footing = if phases {
             crate::world::levels::ice::Footing::Plain
         } else {
@@ -667,7 +667,7 @@ impl World {
         });
         self.after_tread(id, (from, to), footing, events);
         self.make_step_noise(id, to, fleeing);
-        // It knows nothing of traps (spec §8 "Traps"): one there goes off; a pit costs it its
+        // It knows nothing of traps: one there goes off; a pit costs it its
         // next action. Nothing of an incorporeal one presses down.
         let climb = if phases {
             0

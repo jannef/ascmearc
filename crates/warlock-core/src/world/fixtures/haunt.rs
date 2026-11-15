@@ -1,4 +1,4 @@
-//! Haunted rooms (spec §7 "Special rooms", design §9.8): no place to sleep. While the player
+//! Haunted rooms (design §9.8): no place to sleep. While the player
 //! rests inside a room whose effect haunts ([`crate::content::Here::haunt`]), each time the clock
 //! passes a full multiple of the haunt's `every` (every full hour of the day) a creature of the
 //! haunt's faction comes inside: of the floor's danger, drawn as a cursed room's dead rise

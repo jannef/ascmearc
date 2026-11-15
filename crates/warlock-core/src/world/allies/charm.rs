@@ -1,4 +1,4 @@
-//! Charmed allies (spec §8 "Allies"; the spell types design §7 entry 34; `docs/dev/allies.md`
+//! Charmed allies (the spell types design §7 entry 34; `docs/dev/allies.md`
 //! "Charmed"): a hex with `[spell.effect] charm` (Beguile) makes the creature it falls on the
 //! player's ally for a while, against its own band, and then it is itself again where it stands.
 //!

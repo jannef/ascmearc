@@ -1,4 +1,4 @@
-//! Kill quests after a creature tag (spec §8 "Quests", #421, #441): the player's kills of any
+//! Kill quests after a creature tag (#421, #441): the player's kills of any
 //! type carrying it count, on every level summed; one bled to death of the player's wound
 //! counts, one killed by a trap or another creature does not; an actor's `faction_override`
 //! changes nothing; the objective names the tag's types; `what` renames the noun.

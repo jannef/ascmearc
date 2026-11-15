@@ -1,4 +1,4 @@
-//! Surprise and sneak attacks (spec §8 "Surprise and sneak attacks"; `data/surprise.toml`): the
+//! Surprise and sneak attacks (`data/surprise.toml`): the
 //! rules' numbers and the two statuses, the skill ladders, the initiative check's odds, and what
 //! has no vitals. The slip contest's odds are `skills::slipping_past`, the creatures' craft
 //! `creatures::creature_surprise`.

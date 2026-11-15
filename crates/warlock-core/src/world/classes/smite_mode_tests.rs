@@ -1,4 +1,4 @@
-//! The modes of smiting (`world/classes/smite.rs`; spec §8 "Class abilities"; the paladin design P2,
+//! The modes of smiting (`world/classes/smite.rs`; the paladin design P2,
 //! #911): Branding smite and Wrathful smite, their riders, their cost, and their refusals.
 
 use super::class_active_tests::{at_normal_speed, beside, reach, world};

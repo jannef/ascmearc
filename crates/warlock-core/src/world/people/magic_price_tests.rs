@@ -1,4 +1,4 @@
-//! Magic raises an item's shop price (spec §7 "Shops"; #1709, `data/rules/magic_worth.toml`):
+//! Magic raises an item's shop price (#1709, `data/rules/magic_worth.toml`):
 //! the worth by rarity and identified affixes, a price that tells nothing unidentified, the bill
 //! keeping an item as it was taken, and selling.
 

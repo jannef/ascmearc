@@ -1,4 +1,4 @@
-//! Grimoires (spec §8 "Spells": "Learning"; #1260): the books spells are learned from. A
+//! Grimoires (#1260): the books spells are learned from. A
 //! grimoire is generated for every scroll of a spell (an object whose `read` is of kind
 //! `spell`) when content loads, from `data/grimoires.toml`: `grimoire_of_X` beside
 //! `scroll_of_X`, named "grimoire of X" (the scroll's name with "grimoire" for "scroll"), worth
@@ -112,7 +112,7 @@ impl Grimoires {
 }
 
 impl Content {
-    /// What a spell scroll made at random turns out to be (spec §8 "Spells": "Learning"):
+    /// What a spell scroll made at random turns out to be:
     /// `object` itself, or with [`Grimoires::chance`] its grimoire. One draw of `rng`, and only
     /// for a scroll that has a grimoire, so nothing else made draws more.
     pub fn grimoire_or(&self, rng: &mut Rng, object: ObjectId) -> ObjectId {

@@ -1,9 +1,9 @@
 # Ranged combat
 
 Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
-rules it implements are in spec/08c-combat.md. Keep it current with the code, as CLAUDE.md says.
+rules it implements are in spec/10-combat.md. Keep it current with the code, as CLAUDE.md says.
 
-Ranged combat (spec §8 "Ranged combat"; keys: `t` shoots or throws the Missile weapon slot's contents, `T` is the throw chooser; the slot `takes_weapons`) lives in `warlock-core/src/world/combat/shoot.rs`: `fire`,
+Ranged combat (keys: `t` shoots or throws the Missile weapon slot's contents, `T` is the throw chooser; the slot `takes_weapons`) lives in `warlock-core/src/world/combat/shoot.rs`: `fire`,
 `throw` (a potion it hands to `World::throw_flask`, `world/health/flask.rs`: it flies and shatters, docs/dev/potions.md "Flasks"), and `creature_shoots` loose one missile (`loose`): it leaves its stack, makes its noise
 once, flies along `Pos::ray` (the line the AI's `clear_shot` checks) over transparent cells as far
 as the weapon's `range`, attacks whoever stands in its way (`World::missile_hits`, no noise) until
@@ -41,7 +41,7 @@ A target dummy (`world/combat/dummy.rs`, docs/dev/weapon-skills.md "Target dummi
 0), else down on a walkable cell beside it holding no actor (one keyed draw), or on its own
 cell when there is none. Tests: `world/combat/dummy_tests.rs`.
 
-Shots by distance (spec §8 "Ranged combat": "Distance", #956): `data/ranged.toml` (optional;
+Shots by distance (#956): `data/ranged.toml` (optional;
 `content/ranged.rs`, `RangedRules`, `Content::ranged`) holds the `adjacent` penalty and the
 `[[band]]`s. `World::fly` asks `flight_profile` for the profile it attacks each creature with, by
 that creature's cell, so bystanders are judged by their own distance; only `AttackKind::Ranged`
@@ -56,7 +56,7 @@ hobgoblin archer, `range` 8 with a long bow of 15, only ever pays the first band
 Tests: `world/combat/shot_range_tests.rs` (with the same draws, a shot at a band strikes as one at a clean
 distance with the penalty added to its to-hit), `content/ranged.rs`.
 
-Creatures' throws (spec §8 "Ranged combat": "Creatures' throws", #457) live in
+Creatures' throws (#457) live in
 `warlock-core/src/world/combat/hurl.rs` (the earth elementals' stones too, the dread design §5.3): a
 creature type's `[creature.throw]` (`content/throw.rs`:
 `ThrowSpec` resolved like a natural attack, its `object` once objects are known,

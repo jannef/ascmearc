@@ -1,4 +1,4 @@
-//! Prestige classes (`assets/data/prestige/`, one file per class, spec §8 "Prestige classes"):
+//! Prestige classes (`assets/data/prestige/`, one file per class):
 //! a second class table a character's levels go into once their own class is full
 //! (`ClassDef::max_level`) and they have been **called** ([`super::CallingDef`]). A prestige
 //! class is a class in everything a level reads (hit points, mana, skill rolls, the skills it is
@@ -47,7 +47,7 @@ struct PrestigeSpec {
     bonus_talents: Option<class::BonusSpec>,
 }
 
-/// A prestige class (spec §8 "Prestige classes").
+/// A prestige class.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct PrestigeDef {
     pub id: String,
@@ -63,7 +63,7 @@ pub struct PrestigeDef {
     pub mana: i32,
     /// The skill rolls each of its levels gives, before the race's and Intelligence's.
     pub rolls: u8,
-    /// The skills it is known for (spec §8 "Skills"), in skill order: a level-up roll on one
+    /// The skills it is known for, in skill order: a level-up roll on one
     /// throws the die one step up the ladder, as the base class's do.
     pub known_for: Vec<SkillId>,
     /// Its class abilities: at each of its own levels, the talent it gives, by id, ascending
@@ -149,7 +149,7 @@ impl PrestigeDef {
     }
 }
 
-/// A class table a level reads (spec §8 "Prestige classes"): the character's own class, or
+/// A class table a level reads: the character's own class, or
 /// their prestige class once called. Every per-level rule (hit points, mana, skill rolls, the
 /// known-for step, bonus picks, class abilities) reads the class of the level through this, so
 /// neither kind is a special case.

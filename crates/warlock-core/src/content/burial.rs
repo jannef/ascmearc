@@ -1,4 +1,4 @@
-//! Burial grounds as level data (spec §7 "Graves"; #1682; `docs/dev/graves.md`): a hand-made
+//! Burial grounds as level data (#1682; `docs/dev/graves.md`): a hand-made
 //! level's `[burial]` table puts it in a chain (`chain`, its first level's id; `depth`, 0 the
 //! churchyard, 1 the first crypt below it, ...), and its legend marks what the rules fill:
 //!

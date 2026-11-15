@@ -47,10 +47,20 @@ words.
 | 9. Līctūn crypt 9 | a pit dug in a year of plague | 26 |
 | 10. Līctūn crypt 10 | the first monks' cloister, cut in the rock round their saint's shrine | 32 |
 | 11. Līctūn crypt 11 | a hall on columns, built before the English came | 27 |
+| 12. Līctūn crypt 12 | a house for the ashes of the people before the English, its walls full of little niches | 40 |
+| 13. Līctūn crypt 13 | a temple dug in secret for a god whose name is lost | 28 |
+| 14. Līctūn crypt 14 | a round chamber about a spring | 21 |
+| 15. Līctūn crypt 15 | an earth-house: a long low passage dug in the clay | 32 |
+| 16. Līctūn crypt 16 | the inside of a round barrow, coffins in a ring | 20 |
+| 17. Līctūn crypt 17 | a long barrow of great stones, chambers off its passage | 36 |
+| 18. Līctūn crypt 18 | a cave where the first people of the place laid their dead | 27 |
+| 19. Līctūn crypt 19 | a cave with a river running through it | 24 |
+| 20. Līctūn crypt 20 | the deepest: a great cavern, and a ring of stones in the dark | 24 |
 
 Nothing lives in the crypts, and they are lit only by a few candles and torches, so bring a
 light. Some of the deeper ones stand in water or are half filled with fallen earth and
-[rubble](terrain.md), which is slow to cross.
+[rubble](terrain.md), which is slow to cross. The deepest are natural caves, one with a river
+running through it. Crypt 20 is the last: when it is full, nothing opens below it.
 
 See also: [The Ascmearc](ascmearc.md),
 [Your characters and the graveyard](saving.md#your-characters-and-the-graveyard), and

@@ -1,4 +1,4 @@
-//! Trapped doors (spec §8 "Trapped doors"): a trap on a door goes off at whoever opens, unlocks,
+//! Trapped doors: a trap on a door goes off at whoever opens, unlocks,
 //! or kicks the door, never at whoever walks through the doorway; it opens and shuts with the
 //! door and goes when the door is kicked in; its blast and its bolt start at the door, its arrow
 //! and its blade at the victim; creatures set it off as they open the door; searching finds it;

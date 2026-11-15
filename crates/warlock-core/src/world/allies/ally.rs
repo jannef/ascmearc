@@ -1,4 +1,4 @@
-//! Allies (spec §8 "Allies"; docs/design/druid-and-summons.md §4 and §14; `docs/dev/allies.md`):
+//! Allies (docs/design/druid-and-summons.md §4 and §14; `docs/dev/allies.md`):
 //! creatures on the player's side. An ally is an ordinary [`Actor`] with [`Actor::ally`] set:
 //! its type's stats, speed, eyes, and attacks, scheduled, hurt, and killed as any creature. Its
 //! **side** is its master's: it is made with the player's faction as its `faction_override`, so
@@ -226,8 +226,8 @@ impl World {
         self.state.actors.get(&id).and_then(Actor::master)
     }
 
-    /// What an ally's kill pays the player, in percent of their own kill (spec §8 "Allies";
-    /// design ranger-companion.md §9): their class's `ally_share` (the pet classes' 100), else
+    /// What an ally's kill pays the player, in percent of their own kill (design
+    /// ranger-companion.md §9): their class's `ally_share` (the pet classes' 100), else
     /// `[xp] ally_percent` (50), else, with no allies data, in full. The rule is the master's
     /// class, whatever the ally's source.
     pub(in crate::world) fn ally_share(&self) -> u8 {

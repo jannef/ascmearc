@@ -182,7 +182,7 @@ fn every_floor_of_the_three_dungeons_has_folk_at_its_danger() {
         for depth in 1..=def.depth {
             let (rule, at, spawning) = CONTENT.spawning(&def.level_id(depth)).expect("a danger");
             let danger = rule.at(at, 1);
-            // A family weighs from its first member's level up (spec §7 "Danger levels").
+            // A family weighs from its first member's level up.
             let weighing = (spawning.population.iter())
                 .filter(|&&c| {
                     let level = CONTENT.creature(c).level.min(danger);

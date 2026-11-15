@@ -1,4 +1,4 @@
-//! Creation picks (spec §8 "Talents"): a character the player chose (a run that starts with its
+//! Creation picks: a character the player chose (a run that starts with its
 //! starting kit: New run, `--character`) takes `[levels] creation_talents` talents at creation
 //! (`data/experience.toml`), and its class's `creation_talents` more (the bard's one). They are
 //! a choice due at level 1 ([`Due`]) for as long as the run is being made: [`World::start_run`]

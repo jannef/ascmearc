@@ -1,4 +1,4 @@
-//! The priest's prayer (spec §8 "Class abilities"; `docs/dev/prayer.md`): the strain and the
+//! The priest's prayer (`docs/dev/prayer.md`): the strain and the
 //! fizzle, the uses in their priority order with both faces' answers, the prayer's growth by the
 //! priest's levels with its titles, and the priest's rites beside it (Consecrate, Communion with
 //! the dark, Sanctuary). Every number here is hidden in the game.

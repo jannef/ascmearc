@@ -1,4 +1,4 @@
-# A potion of quickness (spec §8 "Potions"): Hasted, as the spell makes its caster, for a minute.
+# A potion of quickness: Hasted, as the spell makes its caster, for a minute.
 # Speed is yellow.
 [[object]]
 id = "potion_of_quickness"

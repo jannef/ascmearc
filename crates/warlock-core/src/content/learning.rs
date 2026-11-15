@@ -1,4 +1,4 @@
-//! Learning spells as data (spec §8 "Spells", the magic design §4, the spell scaling design
+//! Learning spells as data (the magic design §4, the spell scaling design
 //! §5.4): the study check and its
 //! time (`data/study.toml`, [`StudyRules`]) and the mishaps a failed study draws
 //! (`data/mishaps/`, one `[[mishap]]` file each, [`Mishap`]). The rules are `world/magic/learn.rs`.

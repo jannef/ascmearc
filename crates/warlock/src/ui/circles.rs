@@ -1,4 +1,4 @@
-//! Spell circles from the perception snapshot (spec §4.8 "Spell circles"): which seen actors
+//! Spell circles from the perception snapshot: which seen actors
 //! are circled and with what, and where each circle stands and how far it has turned this frame.
 //! `render/circles.rs` draws them.
 //!

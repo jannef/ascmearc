@@ -1,4 +1,4 @@
-//! A fresh corpse's gifts to the stats (spec §8 "Hunger"; `world/health/eat.rs::corpse_gifts`, design
+//! A fresh corpse's gifts to the stats (`world/health/eat.rs::corpse_gifts`, design
 //! `docs/design/stat-training.md` §8): sure training marks into the pile, a rare chance to widen
 //! the potential, never a score; the tags' defaults under each creature's own `on_eat`; the
 //! words; Gourmand's doubling; and nothing from a rotten or vomited corpse.

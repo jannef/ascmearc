@@ -8,7 +8,7 @@ use crate::object::Stack;
 use crate::time::GameTime;
 use crate::world::Shop;
 
-/// A shop as the player knows it (spec §7 "Shops"): its sign, its keeper's name, and its prices
+/// A shop as the player knows it: its sign, its keeper's name, and its prices
 /// for them, in gold. Never the value, the markup, or how their Presence or skills move the
 /// prices.
 #[derive(Clone, Copy, Debug)]
@@ -18,7 +18,7 @@ pub struct ShopView<'a> {
     pub(super) content: &'a Content,
     /// The player's favour (`world::favour`), hidden: only prices come of it.
     pub(super) favour: i32,
-    /// The moment it is: rotten food is worth nothing (spec §8 "Hunger"), which only the
+    /// The moment it is: rotten food is worth nothing, which only the
     /// prices tell.
     pub(super) now: GameTime,
 }
@@ -81,8 +81,8 @@ impl<'a> ShopView<'a> {
     }
 }
 
-/// What a shop would pay for the player's own things among the stacks they chose to drop there
-/// (spec §7 "Shops"): the offer and what it is for.
+/// What a shop would pay for the player's own things among the stacks they chose to drop there: the
+/// offer and what it is for.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Sale {
     pub offer: u32,

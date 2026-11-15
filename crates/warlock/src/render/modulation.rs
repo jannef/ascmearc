@@ -1,4 +1,4 @@
-//! Light stability (spec §4.4): how each light source's drawn light varies over time, from its
+//! Light stability: how each light source's drawn light varies over time, from its
 //! preset's [`Stability`]. Visual only; gameplay light stays steady.
 //!
 //! A source's [`Modulation`] at a moment is a pure function of its stable key, its preset, and

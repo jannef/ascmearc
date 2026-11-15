@@ -1,4 +1,4 @@
-//! Intimidating (`assets/data/rules/intimidate.toml`, spec §8 "Skills": Intimidate; #868): the
+//! Intimidating (`assets/data/rules/intimidate.toml`: Intimidate; #868): the
 //! numbers of the Intimidate skill's use, a threat at one foe.
 //!
 //! The rule itself lives in `world/skills/intimidate.rs`, on War cry's check (`world/classes/war_cry.rs`): who

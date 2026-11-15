@@ -154,7 +154,7 @@ cases! {
         screen: Some("eat"),
         ..BASE
     },
-    // Potions (spec §8 "Potions"): the Consume list with food (the bread carried) and potions
+    // Potions: the Consume list with food (the bread carried) and potions
     // (the hub's pile underfoot) together, unknown ones by their word and colour.
     consume_list: Case {
         name: "consume-list",
@@ -177,7 +177,7 @@ cases! {
         screen: Some("describe"),
         ..BASE
     },
-    // Flasks (spec §8 "Potions": "Flasks", #1223): the throw choice lists potions beside
+    // Flasks (#1223): the throw choice lists potions beside
     // throwing weapons, and a known flask says what its throw does.
     throw_list_flasks: Case {
         name: "throw-list-flasks",

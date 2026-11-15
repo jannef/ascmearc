@@ -1,4 +1,4 @@
-# The druid's Flame (Flame and frost, spec §8 "Class abilities"): a ball of flame.
+# The druid's Flame (Flame and frost): a ball of flame.
 [[spell]]
 id = "flame"
 name = "Flame"
@@ -25,7 +25,7 @@ noise = { sound = "explosion", loudness = 150 }
 damage = "intelligence 16 8d6, 19 10d6, 25 10d6+2"
 range = "willpower 14 11, 18 12"
 
-# What rereading its grimoire adds, rank by rank (spec §8 "Spells": "Ranks"; README.toml
+# What rereading its grimoire adds, rank by rank (README.toml
 # `[spell.ranks]`). Fireball's twin, quicker where Fireball reaches wider. At rank 10: 1s rolled
 # again, a cell farther, +2 on the roll, two dice more, 15 % off the mana, 35 % off the
 # casting time, and d8s for d6s.

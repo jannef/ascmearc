@@ -1,4 +1,4 @@
-//! The identification service (#432; spec §8 "Services"): a fixture appraiser who identifies
+//! The identification service (#432): a fixture appraiser who identifies
 //! everything the player carries for 100 gold per unidentified stack; the count, the refusals,
 //! magic items and scroll types identified, Pious left out, saves, and replays.
 

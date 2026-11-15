@@ -1,6 +1,6 @@
 # The orc tribe (#455; content::orc_roster_tests checks the numbers). The least of a war band,
-# half-grown or stunted, kicked to the front with a knife (its racial weapon, spec §8 "Creature
-# gear") and whatever cap it could steal.
+# half-grown or stunted, kicked to the front with a knife (its racial weapon) and whatever cap it
+# could steal.
 [[creature]]
 id = "orc_runt"
 level = 3

@@ -45,7 +45,7 @@ pub struct Game {
     /// that makes a run (not resumed, replayed, or captured). The app opens the story screen
     /// over its first turn once (`ui::screens::on_run_start`); nothing of it is saved.
     pub story_due: bool,
-    /// The last action left the player hungrier, in Hungry or worse (spec §8 "Hunger"): its
+    /// The last action left the player hungrier, in Hungry or worse: its
     /// message waits at `--more--` however short (`ui::more`), and input queued behind it is
     /// dropped ([`apply_queued`]). Presentation only; nothing of it is saved.
     pub hunger_stop: bool,
@@ -60,7 +60,7 @@ impl Game {
     /// A fresh run of `scenario` as `character` (the scenario's if `None`) named `name` (the
     /// run's default if `None`), e.g. from the main menu, with a new save id from `store`: it
     /// never touches another character's save. The player chose this character, so it starts
-    /// with its starting kit (spec §8 "Character creation").
+    /// with its starting kit.
     pub fn new_run(
         content: Arc<Content>,
         store: &SaveStore,
@@ -315,7 +315,7 @@ fn apply_actions(mut actions: MessageReader<PlayerAction>, mut game: ResMut<Game
 }
 
 /// Applies the actions input asked for this frame (the game is changed only if there are any). A
-/// worsening hunger state stops the player (spec §8 "Hunger"): the actions after it, a held key's
+/// worsening hunger state stops the player: the actions after it, a held key's
 /// repeats, are dropped. So does a step behind another that would ask first from where the first
 /// left the player (a known trap, deep water: `input::asks_first`): input asked about it from the
 /// cell before, as the frame's presses are all read before any is applied (#1538).

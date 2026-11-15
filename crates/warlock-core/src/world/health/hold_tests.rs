@@ -1,4 +1,4 @@
-//! Holds (spec §8 "Status effects"; #431): a bite's hold ties the held to its holder, ends as the
+//! Holds (#431): a bite's hold ties the held to its holder, ends as the
 //! holder dies, leaves, or is held or slowed, lasts a few turns at most, and the held player's
 //! step is a struggle to break free.
 

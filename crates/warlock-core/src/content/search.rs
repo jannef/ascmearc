@@ -1,4 +1,4 @@
-//! Searching (`assets/data/rules/search.toml`, spec §8 "Searching"): the numbers of the one
+//! Searching (`assets/data/rules/search.toml`): the numbers of the one
 //! perception check every hidden feature is found with, and secret doors as levels place them.
 //!
 //! Hidden features are secret doors and hidden traps. A **secret door** is a closed door that
@@ -23,7 +23,7 @@ pub const SEARCH_TURNS: RangeInclusive<u8> = 1..=crate::action::MAX_SEARCH;
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct SearchRules {
-    /// What a passive check loses against an active search (spec §8 "Searching": you notice
+    /// What a passive check loses against an active search (you notice
     /// less in passing than where you look): 4.
     pub passive_penalty: i32,
     /// How many turns searching for a while lasts at most: 10.
@@ -68,7 +68,7 @@ impl super::RulesFile for SearchRules {
     }
 }
 
-/// Which hidden features a race notices in passing, untrained (spec §8 "Searching"; races'
+/// Which hidden features a race notices in passing, untrained (races'
 /// `passive_search`): elves everything, dwarves what is on stone (terrain with `stone`),
 /// kobolds hidden traps.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
@@ -79,13 +79,13 @@ pub enum PassiveSearch {
     Traps,
 }
 
-/// A secret door on a cell (ground truth, spec §8 "Searching"): the closed door it is, and how
+/// A secret door on a cell (ground truth): the closed door it is, and how
 /// hard it is to find. The cell's terrain is the wall it looks like until it is found.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Secret {
     /// The closed door it becomes once found.
     pub door: TerrainId,
-    /// Its difficulty (spec §8 "Checks"): what a search must reach.
+    /// Its difficulty: what a search must reach.
     pub difficulty: u8,
 }
 

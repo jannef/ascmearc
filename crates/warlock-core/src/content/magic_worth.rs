@@ -1,4 +1,4 @@
-//! What magic adds to an item's worth (`assets/data/rules/magic_worth.toml`, spec §7 "Shops";
+//! What magic adds to an item's worth (`assets/data/rules/magic_worth.toml`;
 //! #1709): a percent of the item as made by its rarity, and gold for each identified affix by
 //! the item level of its tier. Read by `Stack::worth` (`object.rs`), which shops and the
 //! craftsperson's patron price by.

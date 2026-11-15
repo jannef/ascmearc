@@ -1,4 +1,4 @@
-# Vision profiles (spec §5). A cell in line of sight is visible if its perceived brightness is at
+# Vision profiles. A cell in line of sight is visible if its perceived brightness is at
 # least `threshold`, or it lies within the `darkvision` radius. Brightness is the luma of the
 # cell's light (255 = fully lit white), plus its UV light if `sees_uv`.
 #

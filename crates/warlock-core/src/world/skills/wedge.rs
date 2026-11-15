@@ -1,4 +1,4 @@
-//! Wedging a door shut (spec §8 "Doors"; #1027): Woodcraft's second use, the Wedge ability
+//! Wedging a door shut (#1027): Woodcraft's second use, the Wedge ability
 //! ([`crate::ability::Ability::Wedge`], [`crate::Action::Wedge`]).
 //!
 //! The player spends a turn driving a wedge under the closed door next to them. The door is

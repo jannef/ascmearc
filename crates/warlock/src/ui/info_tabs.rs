@@ -1,4 +1,4 @@
-//! The info-screen group (spec §6): the screens that show what the player knows about themselves
+//! The info-screen group: the screens that show what the player knows about themselves
 //! are numbered pages of one set. While one is the top screen, the top-row digits `1`..`9`
 //! (fixed keys, `settings::fixed::page`) replace it with the numbered page ([`ScreenAction::Replace`], not a push), so Esc still
 //! returns to wherever the first one was opened from. Each page keeps its own opening key in play.

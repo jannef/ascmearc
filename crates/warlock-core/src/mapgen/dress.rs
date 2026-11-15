@@ -1,4 +1,4 @@
-//! A special room's dressing (spec §7 "Special rooms"; `docs/dev/special-rooms.md`): an
+//! A special room's dressing (`docs/dev/special-rooms.md`): an
 //! armoury's weapon racks, a workshop's benches. Pieces of a terrain that is seen through but
 //! not walked, stood along the room's walls when the room is made, from the level's map stream
 //! (only for an effect with `dressing`, so other levels draw as before).

@@ -1,4 +1,4 @@
-//! Rendering: the glyph atlas, console buffers, and the layers they are drawn in (spec §4).
+//! Rendering: the glyph atlas, console buffers, and the layers they are drawn in.
 //!
 //! Layers, bottom to top: the map grid (terrain, in-cell animation; [`grid`]), the spell
 //! circles about buffed and hexed actors ([`circles`], their glyphs' glow from [`glyph_glow`]), the free-glyph
@@ -100,7 +100,7 @@ pub struct VisualTime {
     pub frozen: bool,
 }
 
-/// The effective visual effect switches (spec §4.7): the settings' per-effect switches with the
+/// The effective visual effect switches: the settings' per-effect switches with the
 /// reduced-effects preset and `--reduced-effects` applied.
 pub use crate::settings::EffectSwitches as Effects;
 

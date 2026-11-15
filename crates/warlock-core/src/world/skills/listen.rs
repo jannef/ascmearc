@@ -1,4 +1,4 @@
-//! Listening at a door (spec §5 "Hearing"; #1026): the use of the Listen skill, the Listen
+//! Listening at a door (#1026): the use of the Listen skill, the Listen
 //! ability ([`crate::ability::Ability::Listen`], [`crate::Action::Listen`]).
 //!
 //! The player stops at a closed door next to them for a turn. During it their hearing threshold

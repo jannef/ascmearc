@@ -1,4 +1,4 @@
-//! Where an encounter's fight opens (spec §7 "Overworld encounters"; `docs/dev/encounters.md`):
+//! Where an encounter's fight opens (`docs/dev/encounters.md`):
 //! the cell's local area, as `>` would open it, the player and the party placed by outcome.
 //!
 //! The **way in** is the straight line from the arrival cell **A** (the edge cell

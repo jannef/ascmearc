@@ -1,4 +1,4 @@
-# Experience (spec §8 "Experience"): the player's levels and what a kill is worth. XP numbers and
+# Experience: the player's levels and what a kill is worth. XP numbers and
 # the level are shown (ADOM-like); nothing else here is.
 #
 # Thresholds, in kills (the [kills] table): with m = n − 1, a level n costs
@@ -39,12 +39,12 @@
 # item level (a dungeon level's depth; a hand-made level's `item_level`, default 1). The level a
 # run starts on, the overworld, and its local areas give none. Neither draws anything at random.
 #
-# Levels (the [levels] table; spec §8 "Talents"): every talent_every-th level (3: levels 3, 6,
+# Levels (the [levels] table): every talent_every-th level (3: levels 3, 6,
 # 9, ...) brings a talent pick (talents/), chosen on the spot: nothing is banked. 0, or no
 # table: never. A character the player chose (New run, `--character`) takes creation_talents
 # picks at creation (a class may add more: classes/), on the creation Talents step or at random.
 # class_max is the highest level a class reaches unless its file says otherwise (classes/
-# `max_level`; spec §8 "Prestige classes"): a character's level is read off the curve as ever but
+# `max_level`): a character's level is read off the curve as ever but
 # stops at their class's cap, plus a prestige class's levels once they are called; 0, or none,
 # is max_level. A run without a character stops at class_max too.
 

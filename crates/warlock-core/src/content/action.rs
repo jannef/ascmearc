@@ -1,4 +1,4 @@
-//! What actions cost (`assets/data/actions.toml`, spec §8 "Time").
+//! What actions cost (`assets/data/actions.toml`).
 //!
 //! Every action that takes time has a cost in energy, [`NORMAL_COST`] (1000) for a normal action.
 //! How long it takes an actor follows from the cost, the action's base time, and the actor's
@@ -23,7 +23,7 @@ pub const NORMAL_COST: u32 = 1000;
 /// ([`crate::magic`]); data is not held to it.
 pub const COSTS: RangeInclusive<u32> = 100..=10_000;
 /// How long a normal action takes at normal speed: the base time of every action but a step on
-/// the overworld (spec §8 "Time").
+/// the overworld.
 pub const BASE_TURN: Duration = Duration::seconds(6);
 
 // A cost of 1000 at speed 1000 takes exactly the base time, so an action's energy price is its
@@ -40,19 +40,19 @@ pub enum ActionKind {
     Wait,
     OpenDoor,
     CloseDoor,
-    /// Lifting the lid of a shut chest (spec §8 "Chests"); a locked one's key costs `unlock` on
+    /// Lifting the lid of a shut chest; a locked one's key costs `unlock` on
     /// top.
     OpenChest,
     /// Unlocking a locked door with a key: part of opening it, so it costs this plus `open_door`.
     Unlock,
-    /// A try at picking a lock without a key (spec §8 "Doors"): it takes this whatever comes of
+    /// A try at picking a lock without a key: it takes this whatever comes of
     /// it, and a picked lock's door then opens on top of it (`open_door`).
     PickLock,
     /// A kick (`K`): at a door, to break it, or at a creature, an unarmed blow.
     Kick,
-    /// Lighting or dousing a light ready in the Tool slot (a lantern; spec §5 "Light sources").
+    /// Lighting or dousing a light ready in the Tool slot (a lantern).
     Light,
-    /// Lowering a lantern's hood (spec §5 "Light sources").
+    /// Lowering a lantern's hood.
     Hood,
     /// Taking stairs: also entering a location or a local area from the overworld, and walking
     /// off the edge of a local area back to it.
@@ -79,69 +79,69 @@ pub enum ActionKind {
     BodyArmor,
     /// Readying a missile weapon, missiles, or a tool, or putting them away.
     Ready,
-    /// A turn of eating (spec §8 "Hunger"): a meal takes as many as the food's `turns`.
+    /// A turn of eating: a meal takes as many as the food's `turns`.
     Eat,
-    /// Reading a scroll (spec §8 "Scrolls"): casting its spell, or identifying an item.
+    /// Reading a scroll: casting its spell, or identifying an item.
     Read,
-    /// A turn of studying a spell from a scroll (spec §8 "Spells"): a study takes many of them,
+    /// A turn of studying a spell from a scroll: a study takes many of them,
     /// by the spell's level (`data/study.toml`).
     Study,
-    /// A turn of writing a scroll of a spell one knows (spec §8 "Scrolls": the wizard's Scribe):
+    /// A turn of writing a scroll of a spell one knows (the wizard's Scribe):
     /// a scroll takes as many of them as a study of its spell.
     Scribe,
-    /// A turn of calling a familiar (spec §8 "Class abilities": the witch's Call familiar): the
+    /// A turn of calling a familiar (the witch's Call familiar): the
     /// ritual takes `data/familiars.toml`'s `call_turns` of them.
     CallFamiliar,
-    /// A turn of digging into a wall with a digging tool (spec §8 "Digging"): a dig takes many
+    /// A turn of digging into a wall with a digging tool: a dig takes many
     /// of them.
     Dig,
-    /// A turn of searching for hidden features (spec §8 "Searching"): searching for a while
+    /// A turn of searching for hidden features: searching for a while
     /// takes several.
     Search,
-    /// A turn of making out a labelled scroll (spec §8 "Scrolls": the Decipher ability): a
+    /// A turn of making out a labelled scroll (the Decipher ability): a
     /// try takes many.
     Decipher,
-    /// A turn of praying at a forgotten altar (spec §7 "Special rooms"): a prayer takes several.
+    /// A turn of praying at a forgotten altar: a prayer takes several.
     Pray,
-    /// A turn of drinking at a healing spring (spec §7 "Special rooms"): a drink takes one or
-    /// two. Drinking a potion (spec §8 "Potions") takes one.
+    /// A turn of drinking at a healing spring: a drink takes one or
+    /// two. Drinking a potion takes one.
     Drink,
-    /// A turn of foraging in the wild (spec §8 "Foraging"): a forage takes several.
+    /// A turn of foraging in the wild: a forage takes several.
     Forage,
-    /// A turn of gathering herbs from the glowing fungus (spec §8 "Skills": Herbalism): a
+    /// A turn of gathering herbs from the glowing fungus (Herbalism): a
     /// gather takes several.
     Gather,
-    /// A turn of working an item at a forge's anvil (spec §7 "Special rooms"): an attempt
+    /// A turn of working an item at a forge's anvil: an attempt
     /// takes many.
     Temper,
     /// A turn of whittling a wooden item with a knife: an attempt takes many.
     Whittle,
-    /// A turn of making a recipe (a profession's, spec §8 "Skills"): the work takes many.
+    /// A turn of making a recipe (a profession's): the work takes many.
     Craft,
     /// A turn of salvaging an item for its materials (`world/crafting/salvage.rs`): an attempt takes
     /// many.
     Salvage,
-    /// Trying to disarm a trap (spec §8 "Disarming traps"), whatever comes of it.
+    /// Trying to disarm a trap, whatever comes of it.
     Disarm,
-    /// Treating oneself (spec §8 "Skills": the Heal ability): binding a wound, easing a poison
+    /// Treating oneself (the Heal ability): binding a wound, easing a poison
     /// or a disease, whatever comes of it.
     Heal,
-    /// Chatting with a creature (spec §8 "Dialogue"): a short action.
+    /// Chatting with a creature: a short action.
     Chat,
-    /// Singing a song (spec §8 "Class abilities", the bard's songs; `world/classes/song.rs`): Inspire.
+    /// Singing a song (the bard's songs; `world/classes/song.rs`): Inspire.
     Song,
-    /// Trying to steal from a creature (spec §8 "Stealing"), whatever comes of it.
+    /// Trying to steal from a creature, whatever comes of it.
     Steal,
-    /// Feinting at a foe (spec §8 "Skills": Bluff), whatever comes of it.
+    /// Feinting at a foe (Bluff), whatever comes of it.
     Feint,
-    /// One turn of taming a beast (spec §8 "Allies": Tame): the try takes `[tame] turns` of
+    /// One turn of taming a beast (Tame): the try takes `[tame] turns` of
     /// them.
     Tame,
-    /// Threatening a foe (spec §8 "Skills": Intimidate), whatever comes of it.
+    /// Threatening a foe (Intimidate), whatever comes of it.
     Intimidate,
-    /// Throwing one's voice to a cell (spec §5 "Hearing").
+    /// Throwing one's voice to a cell.
     ThrowVoice,
-    /// Climbing out of the water onto ice (spec §5 "Ice"): on top of the step onto it.
+    /// Climbing out of the water onto ice: on top of the step onto it.
     Climb,
 }
 
@@ -270,7 +270,7 @@ impl ActionKind {
     }
 
     /// What an actor does in it, after "cannot" ("You cannot read while raging.": a status that
-    /// `blocks` it, spec §8 "Status effects").
+    /// `blocks` it).
     pub const fn doing(self) -> &'static str {
         match self {
             ActionKind::Step => "move",

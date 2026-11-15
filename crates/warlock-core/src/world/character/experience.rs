@@ -1,4 +1,4 @@
-//! Experience (spec §8 "Experience"): the player's XP total and level. Kills the player makes
+//! Experience: the player's XP total and level. Kills the player makes
 //! with their own attacks (melee, shots, throws) are worth the creature type's XP scaled by the
 //! difference in levels ([`Experience::kill_xp`](crate::content::Experience::kill_xp)); kills by
 //! traps or by other creatures are worth nothing. The level follows from the total and the
@@ -22,7 +22,7 @@ use crate::world::{Due, Spent, World};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
 
-/// The player's progression beyond the XP total (spec §8 "Experience", "Talents"): what they
+/// The player's progression beyond the XP total: what they
 /// have discovered, and what their levels still ask them to choose. Left out of the saved state
 /// while empty.
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -32,7 +32,7 @@ pub struct Progress {
     /// The choices levels still ask for, the lowest level's first (`world/character/talent.rs`).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub(crate) due: Vec<Due>,
-    /// The highest level the player has lost (spec §7 "Special rooms": Unmade,
+    /// The highest level the player has lost (Unmade,
     /// `World::lose_level`): a level up to it, gained again, gives back its hit points and mana
     /// but not its choices, which were made the first time. 0: none lost.
     #[serde(default, skip_serializing_if = "is_zero")]
@@ -41,12 +41,12 @@ pub struct Progress {
     /// toward them as their faction does again (`world/allies/beast_friend.rs`).
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
     pub(crate) empathy_broken: BTreeSet<String>,
-    /// What may happen once in a life and has (spec §8 "Birth sign": `risen`, the Phoenix's
+    /// What may happen once in a life and has (`risen`, the Phoenix's
     /// rising; `world/character/stars.rs`).
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
     pub(crate) once: BTreeSet<String>,
-    /// The unique creature types (by id) a population has brought, never again (spec §7
-    /// "Danger levels"; `world/creatures/spawn.rs`).
+    /// The unique creature types (by id) a population has brought, never again
+    /// (`world/creatures/spawn.rs`).
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
     pub(crate) uniques: BTreeSet<String>,
     /// The creature types (by id) with a first-sight line the player has seen, whose line was
@@ -95,14 +95,14 @@ impl Discovered {
 }
 
 impl World {
-    /// The player's level (spec §8 "Experience"): off the curve, at most their classes' cap
+    /// The player's level: off the curve, at most their classes' cap
     /// ([`World::level_cap`]).
     pub fn player_level(&self) -> u8 {
         let factor = self.experience_factor();
         (self.content.experience()).level_for(self.state.experience, factor, self.level_cap())
     }
 
-    /// The highest level the player may reach now (spec §8 "Prestige classes"): their class's
+    /// The highest level the player may reach now: their class's
     /// `max_level` plus a prestige class's levels once called; the default class cap
     /// (`[levels] class_max`) without a character.
     pub fn level_cap(&self) -> u8 {
@@ -133,7 +133,7 @@ impl World {
     }
 
     /// [`World::earn_kill`] at `percent` of what the player's own blow would have paid (the
-    /// first-kill bonus and the level scaling included): an ally's kill (spec §8 "Allies").
+    /// first-kill bonus and the level scaling included): an ally's kill.
     pub(in crate::world) fn earn_kill_at(&mut self, creature: CreatureId, percent: u8) {
         let content = self.content.clone();
         let def = content.creature(creature);
@@ -184,9 +184,8 @@ impl World {
         Spent::NoTime
     }
 
-    /// The player gains `gain` experience (more by the talents that teach quicker, spec §8
-    /// "Talents": Good learner), and any levels that earns, each handing out what it brings
-    /// ([`World::level_up`]).
+    /// The player gains `gain` experience (more by the talents that teach quicker: Good learner),
+    /// and any levels that earns, each handing out what it brings ([`World::level_up`]).
     pub(in crate::world) fn grant_xp(&mut self, gain: u32) {
         let content = self.content.clone();
         if gain == 0 {
@@ -233,7 +232,7 @@ impl World {
     }
 
     /// What total level `level` adds to the player's hit points: half the hit points of the
-    /// class the level falls in (spec §8 "Prestige classes"; the scenario's `hp` without a
+    /// class the level falls in (the scenario's `hp` without a
     /// character) plus the Toughness modifier, at least 1.
     pub(in crate::world) fn level_hp(&self, content: &Content, level: u8) -> i32 {
         let class_hp = match &self.state.character {

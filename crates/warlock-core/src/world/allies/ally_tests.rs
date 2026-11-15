@@ -1,4 +1,4 @@
-//! Allies (spec §8 "Allies", `ally.rs`): the side, the mind, the three orders, following across
+//! Allies (`ally.rs`): the side, the mind, the three orders, following across
 //! levels and the retinue, the clock, experience, Beast-bond, saves, and replays.
 
 use crate::action::{Command, parse_actions};

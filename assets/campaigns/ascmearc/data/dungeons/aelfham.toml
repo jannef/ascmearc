@@ -20,7 +20,7 @@ temperature = 4
 # Light from nowhere: just over normal eyes' threshold (data/vision.toml), so a cave is seen dimly
 # as far as the eye reaches, a little violet.
 ambient = [44, 38, 80, 0]
-# Danger 4 on the first floor to 6 on the third (spec §7 "Danger levels"): between the land
+# Danger 4 on the first floor to 6 on the third: between the land
 # round Cēaptūn and the first dungeons' depths. The fey of the dark court and its hangers-on, the
 # sprites and pixies from the first floor, quicklings at the bottom; the boggle, the darkling, and
 # the redcap come only out of depth. The fey of both courts
@@ -37,7 +37,7 @@ stray = 0
 # The fey neutral to the player are its folk, not wildlife: they keep their whole weight (#1195).
 neutral = 100
 population_count = { per_1000 = 15, least = 8, most = 16 }
-# No one trades under the hill (spec §7 "Shops"), and its rooms are its own.
+# No one trades under the hill, and its rooms are its own.
 shops = { chance = 0 }
 room_effects = { chance = 0 }
 

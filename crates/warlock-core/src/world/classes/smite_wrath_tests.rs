@@ -1,4 +1,4 @@
-//! Holy wrath, Banishing smite, and Avatar's wrath (`world/classes/smite.rs`; spec §8 "Class abilities";
+//! Holy wrath, Banishing smite, and Avatar's wrath (`world/classes/smite.rs`;
 //! the paladin design P4, #913).
 
 use super::class_active_tests::{at_normal_speed, beside, reach, world};

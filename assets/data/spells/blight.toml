@@ -1,4 +1,4 @@
-# The witch's Blight (spec §8 "Class abilities"): a burst that withers and poisons.
+# The witch's Blight: a burst that withers and poisons.
 [[spell]]
 id = "blight"
 name = "Blight"

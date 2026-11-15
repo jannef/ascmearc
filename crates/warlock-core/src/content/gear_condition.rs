@@ -1,8 +1,8 @@
-//! The condition creature gear spawns in (`assets/data/gear_condition.toml`, spec §8 "Creature
-//! gear"; #1193): the chances in per mille that a piece is damaged, or Fine, Marvellous, or
-//! Masterwork, by default and by tribe (a creature tag), and what damaged gear of each material
-//! group is called; and by item level (`[[depth]]`, #1436), the better make every source's arms
-//! and armour take deeper, and the more often loot is set with a gem. The rule itself is
+//! The condition creature gear spawns in (`assets/data/gear_condition.toml`; #1193): the chances in
+//! per mille that a piece is damaged, or Fine, Marvellous, or Masterwork, by default and by tribe
+//! (a creature tag), and what damaged gear of each material group is called; and by item level
+//! (`[[depth]]`, #1436), the better make every source's arms and armour take deeper, and the more
+//! often loot is set with a gem. The rule itself is
 //! `crate::world::items::gear_condition`. Without the file every piece spawns as made.
 
 use super::{Content, ContentError, ItemHarm};

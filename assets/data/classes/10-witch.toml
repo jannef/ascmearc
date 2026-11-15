@@ -32,7 +32,7 @@ kit = [
 random_scrolls = { count = "1d3", below_level = 10 }
 # Bonus talents from Scholar and Grit.
 bonus_talents = { levels = [10, 20, 30, 45, 55], trees = ["scholar", "grit"] }
-# The level table (spec §8 "Class abilities").
+# The level table.
 # The hexes and Blight are spells paid in mana (the placeholders until the spell system).
 abilities = [
     { level = 1, talent = "herb_lore" },

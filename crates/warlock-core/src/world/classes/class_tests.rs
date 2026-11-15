@@ -1,4 +1,4 @@
-//! Class abilities (spec §8 "Class abilities"; #246): the level tables of the everyday folk
+//! Class abilities (#246): the level tables of the everyday folk
 //! (aristocrat, commoner, craftsperson, merchant) give their talents as the levels come, at
 //! creation, and again on a restore; bonus picks come from the class's trees; and each ability
 //! changes the one rule it names.

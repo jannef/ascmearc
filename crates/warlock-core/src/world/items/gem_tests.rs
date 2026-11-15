@@ -1,4 +1,4 @@
-//! Gems (spec §7 "Gems", #191): the data is checked; a gem is worth its value × size × cut, and
+//! Gems (#191): the data is checked; a gem is worth its value × size × cut, and
 //! an ornament adds its gem's worth to its item; names, descriptions, colours, and weights follow
 //! the gems; identical gems stack; loot finds gems and sets items with them, rarely and
 //! deterministically, larger and finer deeper; gems survive saves and replays; shops price them

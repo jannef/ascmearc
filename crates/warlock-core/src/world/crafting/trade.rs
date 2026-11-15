@@ -1,4 +1,4 @@
-//! The Crafts trades (spec §8 "Talents"; the craftsperson design §3): Smith, Wright, Gemcutter,
+//! The Crafts trades (the craftsperson design §3): Smith, Wright, Gemcutter,
 //! Brewster, Pitman, Wortcunner, and Spellwright, each a `trade` hand-out
 //! ([`CraftEffect::Trade`](crate::talent::CraftEffect::Trade)), taken as a creation pick by a
 //! craftsperson alone (`needs = { creation = true, class = "craftsperson", race_lacks = "..." }`).

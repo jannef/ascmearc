@@ -25,7 +25,7 @@ immune = ["poison"]
 weapon_skills = { long_blades = 2, spears = 1 }
 corpse = false
 blood = "none"
-# Its gear (spec §8 "Creature gear"): the arms it was buried with.
+# Its gear: the arms it was buried with.
 [[creature.gear]]
 chance = 80
 one_of = ["long_sword", "spear"]

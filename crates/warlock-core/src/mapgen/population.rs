@@ -1,4 +1,4 @@
-//! The initial population of a generated floor (spec §7 "Danger levels"): a floor whose branch
+//! The initial population of a generated floor: a floor whose branch
 //! gives a danger is laid down full, its creatures drawn by the danger from the branch's
 //! population, now and then a stray from the generic creature list or one from deeper
 //! ([`danger::draw`]).

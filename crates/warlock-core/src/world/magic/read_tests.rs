@@ -1,4 +1,4 @@
-//! Reading scrolls (spec §8 "Scrolls"): spell scrolls cast with the traps' rules, aimed by the
+//! Reading scrolls: spell scrolls cast with the traps' rules, aimed by the
 //! reader, whose kills are theirs; the scroll of identify; refusals that keep the scroll; deaths
 //! by one's own scroll; loot; saves and replays.
 
@@ -467,7 +467,7 @@ fn frost_freezes_water_and_bites() {
 #[test]
 fn refused_readings_take_no_time_and_keep_the_scroll() {
     let mut w = world("##########\n#@.......#\n##########\n");
-    // Fireballs known (spec §8 "Scrolls"): identify has nothing to learn about them.
+    // Fireballs known: identify has nothing to learn about them.
     let fire = w.content.object_id("scroll_of_fireball").expect("fireball");
     w.state.known_scrolls.insert(fire);
     let refusals = [

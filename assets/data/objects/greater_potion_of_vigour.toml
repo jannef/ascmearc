@@ -1,4 +1,4 @@
-# A greater potion of vigour (spec §8 "Potions"): Toughness raised twice as much, easing to a potion of
+# A greater potion of vigour: Toughness raised twice as much, easing to a potion of
 # vigour's after ten minutes. Greater boosts are deep orange.
 [[object]]
 id = "greater_potion_of_vigour"

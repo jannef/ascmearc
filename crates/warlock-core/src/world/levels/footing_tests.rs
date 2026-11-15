@@ -1,4 +1,4 @@
-//! Balance on rough ground and when Staggered (spec §8 "Skills"; `world/levels/footing.rs`).
+//! Balance on rough ground and when Staggered (`world/levels/footing.rs`).
 
 use crate::content::ContentFiles;
 use crate::skills::{SkillId, Trained, Use};

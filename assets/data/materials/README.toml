@@ -3,8 +3,8 @@
 # new material is a new file, a renamed id is a renamed file, and the same id in two files is a
 # load error naming both (docs/dev/content.md).
 #
-# Materials objects are made of, part by part (spec §7; objects/README.toml, `materials`), and
-# what an item made of another material than its base item is like (spec §7 "Materials", #193,
+# Materials objects are made of, part by part (objects/README.toml, `materials`), and
+# what an item made of another material than its base item is like (#193,
 # #194: "a bronze long sword"). Every property is on one scale, steel's (steel = weight 100, to
 # hit 0, damage 0, protection 100, value 100).
 # Fields:
@@ -83,7 +83,7 @@
 #             mithril, dragonbone, and dragonscale +2. Deeper finds
 #             come of the high-binding materials more often (#1436): their `rarity` starts
 #             shallower than their worth alone would and grows by `deeper`
-#   gem      makes it a gem (spec §7 "Gems"; precious, with no group): an inline
+#   gem      makes it a gem (precious, with no group): an inline
 #             table of
 #               color   "#rrggbb": a loose gem's glyph, and a ring set with it
 #               value   what a plain one (of the plain size and cut in gems.toml) is worth, in

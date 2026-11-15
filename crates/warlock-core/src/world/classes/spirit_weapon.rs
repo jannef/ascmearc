@@ -1,4 +1,4 @@
-//! Spirit weapon (spec §8 "Prestige classes"; #881): the Hunter's level-1 class ability,
+//! Spirit weapon (#881): the Hunter's level-1 class ability,
 //! `use:spirit_weapon:long_sword` ([`crate::action::Action::Shape`]), from the abilities menu's
 //! Class group through the shape list. It calls a weapon of spirit-stuff into the main hand in
 //! the shape chosen, one of the [`shapes`]: every melee weapon of the objects, by weapon skill

@@ -1,4 +1,4 @@
-//! Creature rarities (`assets/data/creature_rarities.toml`, spec §7 "Danger levels"): how often a
+//! Creature rarities (`assets/data/creature_rarities.toml`): how often a
 //! creature type is drawn for a level's population or a spawn, beside its level. A tier's
 //! `factor` (in percent of a common type's) multiplies the type's weight in a draw
 //! ([`super::danger::weight`]): the dangerous and rewarding types are fewer.

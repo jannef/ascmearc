@@ -1,4 +1,4 @@
-//! The birth signs' picks (spec §8 "Birth sign"; #270): the fifteen sign-limited talents of
+//! The birth signs' picks (#270): the fifteen sign-limited talents of
 //! the `stars` tree are offered only to those born under their sign (and with their other
 //! prerequisites), and each changes the one rule it names, the two new actives (Fire breath and
 //! Hound's bay) with their cooldowns in the abilities menu.

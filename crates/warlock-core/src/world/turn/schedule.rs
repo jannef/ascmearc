@@ -1,4 +1,4 @@
-//! The energy scheduler (spec §8 "Speed"), ADOM-like: who acts when.
+//! The energy scheduler, ADOM-like: who acts when.
 //!
 //! Every actor has a speed (its creature type's [`crate::content::CreatureDef::speed`];
 //! [`crate::content::NORMAL_SPEED`], 1000, for the player and normal creatures) and energy
@@ -9,15 +9,14 @@
 //! act while its energy is at least 0, and whatever is left over carries on, so over any span the
 //! actions an actor takes stay proportional to its speed and their costs while the clock keeps
 //! whole seconds: a run of actions takes their exact total time, up to the next whole second,
-//! with no drift. An actor's burden (spec §8 "Burden", [`crate::burden`]) raises every price it
+//! with no drift. An actor's burden ([`crate::burden`]) raises every price it
 //! pays, ×1.25 Burdened and ×1.5 Strained or Overloaded, as a lower speed would: the prices
 //! here ([`World::price_of`], [`World::step_price`], [`World::attack_price`],
 //! [`World::reload_price`]) are the one place that happens, so it covers every action, overworld
-//! journeys included; being Bloated (spec §8 "Hunger") raises
-//! them the same way, after the burden, and so do slowing status effects (spec §8 "Status
-//! effects": `cost`), after both. Creatures on other levels are frozen (they
-//! gain nothing until the player is back), so coming back to a level never sets off a burst of
-//! actions; the dev time skip gives nobody energy either.
+//! journeys included; being Bloated raises
+//! them the same way, after the burden, and so do slowing status effects (`cost`), after both.
+//! Creatures on other levels are frozen (they gain nothing until the player is back), so coming
+//! back to a level never sets off a burst of actions; the dev time skip gives nobody energy either.
 //!
 //! After the player acts, the other actors on the level act in time order until the player may
 //! act again ([`World::run_turn`]): next is whoever reaches 0 soonest, the clock moves to that
@@ -92,8 +91,8 @@ impl World {
         (full * i64::from(100 + percent) / 100).max(1)
     }
 
-    /// What action `kind` costs actor `id`: its creature type's cost of it (spec §8 "Time"); a
-    /// step is faster by the moving speed of what it wears (spec §8 "Magic items"). Attacks
+    /// What action `kind` costs actor `id`: its creature type's cost of it; a
+    /// step is faster by the moving speed of what it wears. Attacks
     /// cost what [`World::attack_cost`] says.
     pub(super) fn cost_of(&self, id: ActorId, kind: ActionKind) -> u32 {
         let content = &self.content;
@@ -113,9 +112,9 @@ impl World {
     /// What attack `kind` costs actor `id` made `with` the object at that position in its
     /// inventory (the weapon it wields for a blow, the shield it bashes with, the missile weapon
     /// it shoots), or with nothing (bare hands, a kick, a throw): its creature type's cost of
-    /// the attack (spec §8 "Time"), or the object's own `attack_cost` unless the creature type
+    /// the attack, or the object's own `attack_cost` unless the creature type
     /// gives its attacks a cost of their own, and then faster by the attack speed of what it
-    /// wears and wields and of the object's own affixes (spec §8 "Magic items"). So a shield
+    /// wears and wields and of the object's own affixes. So a shield
     /// bash costs what a blow with the shield does, never what one with the wielded weapon
     /// would.
     pub(super) fn attack_cost(&self, id: ActorId, kind: ActionKind, with: Option<usize>) -> u32 {
@@ -138,7 +137,7 @@ impl World {
     }
 
     /// Whether actor `id` stepping to `to` flees: some hostile creature stands next to it now and
-    /// the step takes it out of that creature's reach ([`World::leaves`]; spec §8 "Stances": a
+    /// the step takes it out of that creature's reach ([`World::leaves`]; a
     /// coward's flight is cheaper and quieter).
     pub(in crate::world) fn flees(&self, id: ActorId, to: Pos) -> bool {
         let Some(me) = self.state.actors.get(&id) else {
@@ -153,9 +152,9 @@ impl World {
 
     /// The energy price of attack `kind` (a blow, a bash, a kick, a shot, a throw, a spell) for
     /// actor `id`, made `with` the object at that position in its inventory, if any, drawing on
-    /// weapon skill and fighting style `skills` (spec §8 "Weapon skills", "Fighting styles"):
+    /// weapon skill and fighting style `skills`:
     /// its cost ([`World::attack_cost`]) less what the ranks of both take off (`speed`), as dear
-    /// as the actor's combat stance makes every attack (spec §8 "Stances"), slowed by its burden
+    /// as the actor's combat stance makes every attack, slowed by its burden
     /// ([`World::burdened`]). Every attack is priced as it begins, before it is made: a rank its
     /// marks raise, a load it lightens (a throw), or a kill changes the price of the next one,
     /// never its own.
@@ -174,7 +173,7 @@ impl World {
         );
         let stance = self.content.stance_def(actor.stance).attack_cost;
         let base = percent_of(base, stance);
-        // Iron grip (spec §8 "Talents"): blows with a two-handed weapon cost less.
+        // Iron grip: blows with a two-handed weapon cost less.
         let two_handed = (with.and_then(|i| actor.inventory.get(i)))
             .is_some_and(|s| self.content.object(s.object).two_handed);
         let base = match actor.talent_mods(&self.content).offence.two_handed_price {
@@ -182,7 +181,7 @@ impl World {
             _ if kind != ActionKind::Melee || !two_handed => base,
             percent => percent_of(base, u32::try_from((100 + percent).max(0)).unwrap_or(0)),
         };
-        // Blood frenzy (spec §8 "Class abilities"; while raging, the sum's `while`): every
+        // Blood frenzy (while raging, the sum's `while`): every
         // melee attack costs less.
         let base = match actor
             .talent_mods(&self.content)
@@ -214,7 +213,7 @@ impl World {
     /// stance says. Terrain its talents price as another's (`terrain_as`: Pathfinder's forest,
     /// Swimmer's water) costs that terrain's step. Off the overworld wading is spared by Swim's
     /// percent ([`Effect::Wade`]), all of it by the talents that spare it. On the overworld its
-    /// skills (survival; spec §8 "Skills") take their percent off the journey, rounded up (at
+    /// skills (survival) take their percent off the journey, rounded up (at
     /// least 1).
     pub(in crate::world) fn step_price(&self, id: ActorId, to: &TerrainDef, fleeing: bool) -> i64 {
         let actor = &self.state.actors[&id];
@@ -229,7 +228,7 @@ impl World {
             None => to,
         };
         let mut price = level.step_price(to, step);
-        // A strong swimmer (spec §8 "Birth sign") wades as if on dry land, and so does one
+        // A strong swimmer wades as if on dry land, and so does one
         // Undertow (a Water-born's pick) or Water walking bears. Swim spares a part of it, never
         // more.
         if self.wading_step(to) {
@@ -255,7 +254,7 @@ impl World {
                 price = percent_of(price, u32::try_from((100 + percent).max(1)).unwrap_or(1));
             }
         }
-        // Fleet and Headlong (spec §8 "Class abilities"): lighter steps, Fleet's unarmoured,
+        // Fleet and Headlong: lighter steps, Fleet's unarmoured,
         // Headlong's while raging (the sum's `while`).
         let talents = actor.talent_mods(&self.content);
         if !talents.movement.step_percent.is_empty() {
@@ -281,17 +280,16 @@ impl World {
             && (to.swim || crate::world::character::stars::wading(&self.content, to))
     }
 
-    /// `price` as actor `id` pays it now: ×1.25 Burdened, ×1.5 Strained or Overloaded (spec §8
-    /// "Burden"; [`crate::burden::Burden::slow`]), nothing more for a race that ignores Burdened
-    /// while it is Burdened, and less of the slowdown for its skills (balance; spec §8
-    /// "Skills"); and then, while it is Bloated, by `[bloated] slow` (spec §8 "Hunger",
-    /// [`World::bloated`]); and then by the `cost` of each of its status effects (spec §8
-    /// "Status effects": Slowed). An action is priced at the burden, hunger, and statuses its
-    /// actor has as it begins.
+    /// `price` as actor `id` pays it now: ×1.25 Burdened, ×1.5 Strained or Overloaded
+    /// ([`crate::burden::Burden::slow`]), nothing more for a race that ignores Burdened while it is
+    /// Burdened, and less of the slowdown for its skills (balance); and then, while it is Bloated,
+    /// by `[bloated] slow` ([`World::bloated`]); and then by the `cost` of each of its status
+    /// effects (Slowed). An action is priced at the burden, hunger, and statuses its actor has as
+    /// it begins.
     fn burdened(&self, id: ActorId, price: i64) -> i64 {
         let actor = &self.state.actors[&id];
         let talents = actor.talent_mods(&self.content);
-        // The burden line (Pack mule; spec §8 "Talents") eases the burden's slowdown on top of
+        // The burden line (Pack mule) eases the burden's slowdown on top of
         // Balance.
         let ease = actor.skill_effect(&self.content, Effect::Burden) + talents.movement.burden_ease;
         let price = self.bloated(id, self.load_of(id).penalty().slow_eased(price, ease));
@@ -327,7 +325,7 @@ impl World {
         // muttered too: said only if heard this turn).
         self.player_mut().heard.clear();
         self.mutters.clear();
-        // What the player notices in passing where their turn left them (spec §8 "Searching").
+        // What the player notices in passing where their turn left them.
         self.notice_hidden();
         let price = price.saturating_add(self.faint());
         let player = self.state.player;
@@ -408,11 +406,11 @@ impl World {
         // The player's next action is under way from here.
         self.acting = Some(player);
         self.fresh.clear();
-        // What comes to the level meanwhile (spec §7 "Danger levels").
+        // What comes to the level meanwhile.
         self.spawn_tick();
-        // The dead that rise meanwhile (spec §7 "Special rooms": a cursed room).
+        // The dead that rise meanwhile (a cursed room).
         self.rise_tick();
-        // What haunts a rest (spec §7 "Special rooms": a haunted room).
+        // What haunts a rest (a haunted room).
         self.haunt_tick(began);
         // Hallowed ground that fades meanwhile (`sanctuary.rs`).
         self.hallows_fade(began);
@@ -425,13 +423,12 @@ impl World {
     /// How long from now no creature on the current level that disturbs a rest
     /// ([`World::disturbs_rest`], one hostile to the player) could come within
     /// [`World::stop_within`] of them, so a rest need not look after turns that end by then and
-    /// in which the player heard nothing and nothing happened but creatures moving (spec §8
-    /// "Rest"). Only one that close stops a rest, and every step costs at least the level's
-    /// cheapest step: before its first step that could bring it that close, it needs the energy
-    /// for all the steps that cannot. (Creature
-    /// types give only their attacks costs of their own, so a step costs every creature the same
-    /// but for what magic items it wears take off; a burden only makes it dearer, and an
-    /// overloaded creature cannot step at all.) The others (neutral and peaceful ones) never
+    /// in which the player heard nothing and nothing happened but creatures moving. Only one that
+    /// close stops a rest, and every step costs at least the level's cheapest step: before its
+    /// first step that could bring it that close, it needs the energy for all the steps that
+    /// cannot. (Creature types give only their attacks costs of their own, so a step costs every
+    /// creature the same but for what magic items it wears take off; a burden only makes it dearer,
+    /// and an overloaded creature cannot step at all.) The others (neutral and peaceful ones) never
     /// stop a rest by coming into view, and what they do that the player could notice is heard
     /// (their steps, their muttering) or an event that ends the stretch (`keep_at`).
     pub(super) fn out_of_view_for(&self) -> Duration {

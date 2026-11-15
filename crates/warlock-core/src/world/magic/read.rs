@@ -1,4 +1,4 @@
-//! Reading scrolls (spec §8 "Scrolls"): [`Action::Read`](crate::Action::Read).
+//! Reading scrolls: [`Action::Read`](crate::Action::Read).
 //!
 //! The player reads one of a stack they carry whose object says what reading does (`read`,
 //! [`Reading`]); it takes the `read` action's time and uses the scroll up. A reading that cannot
@@ -121,7 +121,7 @@ impl World {
 
     /// Says that the player reads `scroll`, by what they knew it as ("You read the scroll
     /// labelled ZUNBAR."), and, if they did not know its type, what it turned out to be ("It is
-    /// a scroll of fireball."): reading a scroll identifies its type (spec §8 "Scrolls").
+    /// a scroll of fireball."): reading a scroll identifies its type.
     pub(super) fn say_read(&mut self, scroll: &Stack) {
         let title = self.lore().title(scroll);
         self.say(format!("You read the {title}."));
@@ -264,10 +264,10 @@ impl World {
     }
 
     /// Takes one of inventory stack `item` from the pack (the last empties it, and what was worn
-    /// follows its letters); returns it, and whether it was kept instead: with Scroll savant
-    /// (spec §8 "Talents") a read keeps its scroll by the talent's chance, one draw of the
-    /// gameplay stream a read (none without it). The read marks Intelligence and the skills that
-    /// mark on `read` (Decipher script; #1270).
+    /// follows its letters); returns it, and whether it was kept instead: with Scroll savant a read
+    /// keeps its scroll by the talent's chance, one draw of the gameplay stream a read (none
+    /// without it). The read marks Intelligence and the skills that mark on `read` (Decipher
+    /// script; #1270).
     pub(super) fn use_up(&mut self, item: usize) -> Option<(Stack, bool)> {
         self.train_stat(StatUse::Read);
         self.train(Use::Read);

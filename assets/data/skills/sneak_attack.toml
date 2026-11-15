@@ -3,7 +3,7 @@ id = "sneak_attack"
 name = "Sneak attack"
 description = "Finding the telling spot in a foe that has not seen you coming."
 kind = "rules"
-# Sneak attacks (#682; spec §8 "Surprise and sneak attacks", surprise.toml): a blow, or a shot, a
+# Sneak attacks (#682, surprise.toml): a blow, or a shot, a
 # throw, or a spell that rolls to hit within `missile_reach` cells, at a foe unaware of you or
 # Surprised; never on a thing without vitals. Marked by "sneak_attack" (a sneak attack that hits).
 # Effect "sneak_dice": that many d6 added after Protection to such a hit, 1d6 trained at all, +1d6

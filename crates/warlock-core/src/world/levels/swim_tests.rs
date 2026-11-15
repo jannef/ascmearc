@@ -1,4 +1,4 @@
-//! Swim (spec §8 "Skills"; `step_price`, `wade`, `world/levels/ice.rs`): wading made cheaper, and a
+//! Swim (`step_price`, `wade`, `world/levels/ice.rs`): wading made cheaper, and a
 //! plunge through the ice halved by a check.
 
 use crate::check::check;

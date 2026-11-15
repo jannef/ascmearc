@@ -1,4 +1,4 @@
-//! Skill rolls at level-up (spec §8 "Skills", "Talents"): every level gives the player a number
+//! Skill rolls at level-up: every level gives the player a number
 //! of rolls ([`roll_count`]: the class's, the race's, one more for every `intelligence_every`
 //! points of Intelligence from `intelligence_from`, and the talents'), kept in the level's `Due`
 //! until spent. Each is spent with `advance:SKILL` ([`crate::action::Action::Advance`]) on a
@@ -53,7 +53,7 @@ impl RollCount {
 }
 
 /// The skill rolls total level `level` gives `player` (of `character`): the `rolls` of the
-/// class the level falls in (spec §8 "Prestige classes"), their race's, Intelligence's (the
+/// class the level falls in, their race's, Intelligence's (the
 /// score as the character screen shows it without status effects), and their talents' (Quick
 /// learner); none while they are trained in no skill.
 pub fn roll_count(
@@ -119,9 +119,9 @@ impl SkillRoll {
 
 /// The level-up roll on `skill`, trained as `trained`, of a player of `character` whose trades
 /// are `trades` (`CraftMods::trades`): the die the skill's marks set on the ladder, one step up
-/// for a skill the class is known for (or the prestige class, once called: the union of both;
-/// spec §8 "Prestige classes") or a trade (the step is one, whatever gives it), +1 for any other
-/// skill the class trains or a skill the race trains, halved from the soft cap on.
+/// for a skill the class is known for (or the prestige class, once called: the union of both) or a
+/// trade (the step is one, whatever gives it), +1 for any other skill the class trains or a skill
+/// the race trains, halved from the soft cap on.
 pub fn skill_roll(
     content: &Content,
     character: Option<&Character>,

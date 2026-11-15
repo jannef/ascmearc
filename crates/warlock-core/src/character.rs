@@ -1,4 +1,4 @@
-//! Character creation (spec §8 "Character creation"): who the player is, made when a run
+//! Character creation: who the player is, made when a run
 //! starts. A [`CharacterSpec`] is the choice — a race (`data/races.toml`), a gender, and a class
 //! (`data/classes/`) — written `dwarf,female,warrior` on the command line. A [`Character`]
 //! is what came of it in a run: the name, the choice, the stat the gender raised, the birth
@@ -26,7 +26,7 @@
 //!   `character/rolls/<race>,<gender>,<class>` in this order: the race's scores, the class's,
 //!   the animal's, the element's (each in stat order), then the race's potentials, then the
 //!   skills (below). Fixed numbers draw nothing.
-//! - **Skills** (spec §8 "Skills"): the race's and the class's skills, each by its dice, rolled
+//! - **Skills**: the race's and the class's skills, each by its dice, rolled
 //!   after everything above (so they never change a score) in this order: the race's skills, the
 //!   class's (each in skill order), then the race's extra class skill (`class_skill`, humans):
 //!   one of the class's skills picked uniformly, then its dice. A skill both train sums the two.
@@ -39,18 +39,18 @@
 //!   commoner's one profession): one of its skills picked uniformly, then its dice, from its own
 //!   stream, `character/skill-choice/<race>,<gender>,<class>`, so again nothing else moves.
 //! - **Eyes**: the player's vision profile is the race's.
-//! - **Weapon skills** (spec §8 "Weapon skills"): the race's starting ranks plus the class's,
+//! - **Weapon skills**: the race's starting ranks plus the class's,
 //!   and one set of the class's `weapon_skill_choice` if it has one, at most 10 each. Dice
 //!   among them are rolled from their own stream,
 //!   `character/weapon-skills/<race>,<gender>,<class>`, in this order: the race's (in skill
 //!   order), the class's, the pick of the choice (one draw), then the chosen set's; so the
 //!   stat rolls above never move.
-//! - **Fighting styles** (spec §8 "Fighting styles"): the class's starting ranks in styles, and
+//! - **Fighting styles**: the class's starting ranks in styles, and
 //!   one set of its `style_choice` if it has one, from yet another stream,
 //!   `character/styles/<race>,<gender>,<class>`: the class's (in skill order), the pick of the
 //!   choice, then the chosen set's; so neither the stats nor the weapon skills move. Styles
 //!   raise the styles they default to, like weapon skills.
-//! - **Starting kit** (spec §8 "Character creation"): what the class gives, then the race, then
+//! - **Starting kit**: what the class gives, then the race, then
 //!   the birth sign, from yet another stream, `character/kit/<race>,<gender>,<class>`
 //!   ([`crate::kit`]); a line may go only with a weapon skill or style the class trained (the
 //!   picked choice included), so the kit follows those rolls without moving them.
@@ -136,7 +136,7 @@ pub struct CharacterSpec {
     pub race: String,
     pub gender: Gender,
     pub class: String,
-    /// The talents picked at creation (spec §8 "Talents"), in the order taken, each `id` or
+    /// The talents picked at creation, in the order taken, each `id` or
     /// `id:choice` (`weapon_focus:long_blades`). Empty: none chosen, so a run that starts with
     /// the character's kit takes the Random picks (`world/character/creation.rs`) and records them here.
     /// Left out of the JSON while empty, so replays and saves from before creation picks load.
@@ -179,7 +179,7 @@ impl BirthDate {
     }
 }
 
-/// Who the player is in a run (spec §8 "Character creation"): the choice and what came of it.
+/// Who the player is in a run: the choice and what came of it.
 /// Saved with the run; the player knows all of it.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -195,17 +195,17 @@ pub struct Character {
     /// The birth sign; `None` for content without a horoscope.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub sign: Option<Sign>,
-    /// The background story told when the run began (spec §8 "Background story"), by ids: the
+    /// The background story told when the run began, by ids: the
     /// text is told again from the content (`background::retell`). Empty for a character
     /// nobody chose.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub story: Vec<crate::background::Told>,
-    /// The prestige class the character has been called into (spec §8 "Prestige classes"), by
+    /// The prestige class the character has been called into, by
     /// id (`data/prestige/`): set once by the calling (`World::call`), never cleared. Left out
     /// of the JSON while none.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub prestige: Option<String>,
-    /// The witch's familiar as she remembers it (spec §8 "Allies": "The familiar"): the kind
+    /// The witch's familiar as she remembers it: the kind
     /// and name of the first that came to her, set as it comes (`World::make_familiar`) and
     /// kept after it dies, so a calling brings that one back. Left out of the JSON while none.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -238,7 +238,7 @@ impl Character {
             .map_or_else(|_| content.experience().max_level(), |c| c.max_level)
     }
 
-    /// The highest level the character may reach now (spec §8 "Prestige classes"): their
+    /// The highest level the character may reach now: their
     /// class's `max_level`, plus their prestige class's `levels` once called, never past the
     /// curve's top.
     pub fn level_cap(&self, content: &Content) -> u8 {
@@ -325,7 +325,7 @@ impl Character {
         ))
     }
 
-    /// The lucky day the character was born on (spec §8 "Birth sign"), if they were.
+    /// The lucky day the character was born on, if they were.
     pub fn lucky<'c>(&self, content: &'c Content) -> Option<&'c crate::content::Lucky> {
         content.lucky(self.sign.as_ref()?, &self.born)
     }
@@ -354,7 +354,7 @@ impl Character {
         })
     }
 
-    /// The talents the character's sign gives them (spec §8 "Birth sign"), by id: the animal's,
+    /// The talents the character's sign gives them, by id: the animal's,
     /// the element's, then a lucky day's. None without a sign or a horoscope.
     pub fn grants<'c>(&self, content: &'c Content) -> Vec<&'c str> {
         match (&self.sign, content.horoscope()) {
@@ -446,15 +446,15 @@ pub struct Start {
     pub stats: Stats,
     /// The player's vision profile: the race's.
     pub vision: String,
-    /// What the race and the class add to the hit points (spec §8 "Combat").
+    /// What the race and the class add to the hit points.
     pub hp: i32,
-    /// What the race and the class add to the mana (spec §8 "Mana").
+    /// What the race and the class add to the mana.
     pub mana: i32,
-    /// The trained skills, with their starting values (spec §8 "Skills").
+    /// The trained skills, with their starting values.
     pub skills: Skills,
-    /// Starting ranks in weapon skills (spec §8 "Weapon skills").
+    /// Starting ranks in weapon skills.
     pub weapon_skills: WeaponSkills,
-    /// The starting alignment score (spec §8 "Alignment"): the race's plus the class's plus the
+    /// The starting alignment score: the race's plus the class's plus the
     /// birth animal's nudge, kept on the scale.
     pub alignment: Score,
     pub character: Character,
@@ -504,9 +504,9 @@ impl CharacterSpec {
         self.race(content).and(self.class(content)).map(|_| ())
     }
 
-    /// [`CharacterSpec::check`], and that the class is open to the race and gender (spec §8
-    /// "Character creation": no goblin paladin): what `--character` asks of a character. A
-    /// hidden class passes (the everyday folk stay usable there, for development and tests).
+    /// [`CharacterSpec::check`], and that the class is open to the race and gender (no goblin
+    /// paladin): what `--character` asks of a character. A hidden class passes (the everyday folk
+    /// stay usable there, for development and tests).
     pub fn check_open(&self, content: &Content) -> Result<(), String> {
         let race = self.race(content)?;
         let class = self.class(content)?;

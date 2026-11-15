@@ -715,10 +715,10 @@ stays even.
 
 | File | Change |
 |---|---|
-| `spec/08b-creatures.md` | a section "Animated objects": tiers, generated types and families, composition, inherited powers, drops, immunities; the faction |
-| `spec/07b-data.md` | `data/animated.toml`, `data/animated/`, generated creature types, the creature field `immune`, the legend's `animated` |
-| `spec/07c-generation.md` "Danger levels" | family candidates in the draw |
-| `spec/03b-campaign.md` | the populations (Cealdhlāw, Fennmynster, Fyrdelf) |
+| `spec/09-creatures.md` | a section "Animated objects": tiers, generated types and families, composition, inherited powers, drops, immunities; the faction |
+| `spec/06-content.md` | `data/animated.toml`, `data/animated/`, generated creature types, the creature field `immune`, the legend's `animated` |
+| `spec/07-generation.md` "Danger levels" | family candidates in the draw |
+| `spec/02-worlds.md` | the populations (Cealdhlāw, Fennmynster, Fyrdelf) |
 | `spec/07*` objects | household objects, the `piece` object, `break_up` |
 | `docs/dev/animated.md` (new topic) | generation (ids, order, the fingerprint), families and their four reads, `compose`, presentation, drops; it earns `content/animated.rs` and `world/creatures/animated.rs` |
 | `docs/dev/content.md` | generated creature types beside generated corpses: where they are numbered |

@@ -1,4 +1,4 @@
-//! The equipment screen (spec §6; `e`), as in ADOM: every slot the player has by its letter (`a`
+//! The equipment screen (`e`), as in ADOM: every slot the player has by its letter (`a`
 //! Head to `m` Tool, from `data/slots.toml`; an aristocrat's three extra ring slots too, after the
 //! hands' rings, to `p`; a slot a talent opens, Many-fingered's ring, the same way) with what is in
 //! it, or `—`; a slot a talent bars shows `— (horns)`, and its choice the talent's words.
@@ -12,7 +12,7 @@
 //! ([`EquipmentScreen::refresh`]), as in ADOM. Esc closes either screen; on the equipment screen
 //! letters name slots, so its own key closes it only when it is not a slot's letter. A slot's
 //! upper-case letter (`A` to `L`) opens the description of what is in it (`describe_screen`).
-//! Names are in their rarity's color (spec §8 "Magic items").
+//! Names are in their rarity's color.
 //!
 //! Both are read from the perception snapshot: the player's own inventory and equipment.
 
@@ -113,8 +113,8 @@ pub struct EquipmentScreen {
     cursor: usize,
     /// The player's weight, worn things included.
     weight: Weight,
-    /// The player's Defence and Protection in all, as the character screen shows them (spec
-    /// §6 "Equipment"; `PerceptionView::own_defence`, `own_protection`).
+    /// The player's Defence and Protection in all, as the character screen shows them
+    /// (`PerceptionView::own_defence`, `own_protection`).
     totals: (i32, i32),
 }
 

@@ -1,4 +1,4 @@
-//! Incorporeal creatures (spec §8 "Incorporeal creatures", `incorporeal.rs`): through walls and
+//! Incorporeal creatures (`incorporeal.rs`): through walls and
 //! closed doors but never the level's edge or lava, sheltered by the wall in Defence, struck at
 //! there when seen, striking out of it, setting off no trap, dropping what it carried outside,
 //! and replaying exactly.

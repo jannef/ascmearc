@@ -1,4 +1,4 @@
-//! Typed damage (spec §8 "Damage types"): what kind of harm an amount of damage is, what a
+//! Typed damage: what kind of harm an amount of damage is, what a
 //! target resists of it, and how its Protection stands against each physical kind. The pure
 //! model; `combat::strike` and the world's blows, bursts, falls, and plunges apply it.
 //!
@@ -218,7 +218,7 @@ impl Resistances {
     }
 }
 
-/// How a resistance reads to the player: never a number (spec §6 "Character screen").
+/// How a resistance reads to the player: never a number.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ResistanceWord {
@@ -260,7 +260,7 @@ impl ResistanceWord {
     }
 }
 
-/// A target's Protection (spec §8 "Combat", "Pv") as each kind of damage meets it.
+/// A target's Protection as each kind of damage meets it.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct Protection {
     /// The total, as the player is shown it: what every piece worn and the hide give.

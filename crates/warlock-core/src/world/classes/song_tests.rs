@@ -1,4 +1,4 @@
-//! Songs (spec §8 "Class abilities", the bard's songs; #870): Inspire paid in inspiration alone
+//! Songs (the bard's songs; #870): Inspire paid in inspiration alone
 //! and refused without it, its degrees by Music, the noise, the overworld and Silenced refused,
 //! Virtuoso on every song, Music's marks, and a replay.
 

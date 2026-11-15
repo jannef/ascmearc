@@ -1,4 +1,4 @@
-//! Learning spells (spec §8 "Spells"): Decipher script's curve, the study check's chances by overreach
+//! Learning spells: Decipher script's curve, the study check's chances by overreach
 //! and bonus, how long a study takes by spell level, what a deepening to each rank adds to the
 //! time and the check, the classes' affinities with the schools, and the mishaps.
 
@@ -104,7 +104,7 @@ pub(super) fn times(content: &Content) -> String {
     out
 }
 
-/// What reading a grimoire again for each rank asks (spec §8 "Spells": "Ranks"): the time, as a
+/// What reading a grimoire again for each rank asks: the time, as a
 /// multiple of the learning time, and what the rank adds to the check's difficulty.
 pub(super) fn deepening(content: &Content) -> String {
     let Some(rules) = content.study_rules() else {

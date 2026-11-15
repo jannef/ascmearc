@@ -1,4 +1,4 @@
-//! Healing springs (spec §7 "Special rooms"; the design's §9.10; `world/fixtures/drink.rs`): Drink is
+//! Healing springs (the design's §9.10; `world/fixtures/drink.rs`): Drink is
 //! listed only beside a spring, a drink takes ten seconds, a broken one gives nothing, each
 //! outcome's hook, the shares of the draw, and a spring that never runs dry.
 

@@ -1,4 +1,4 @@
-//! The silent vault (spec §7 "Special rooms", design §9.1): every noise inside at 1 %, and
+//! The silent vault (design §9.1): every noise inside at 1 %, and
 //! Silenced on everyone inside, which refuses casting, reading, and throwing one's voice, a
 //! creature's spells too; it eases soon after leaving.
 

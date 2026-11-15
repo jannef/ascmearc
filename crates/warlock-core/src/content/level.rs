@@ -1,4 +1,4 @@
-//! Hand-authored level files (`levels/*.toml` of each campaign, `assets/campaigns/<id>/levels/`, spec §7).
+//! Hand-authored level files (`levels/*.toml` of each campaign, `assets/campaigns/<id>/levels/`).
 //!
 //! A level is a multiline ASCII `map` plus a `legend` mapping characters to terrain and to things
 //! placed on that terrain (player start, creatures with patrol routes, what they carry, and what
@@ -6,35 +6,33 @@
 //! are placed in, and the unique character they are (`npc = "hermit"`, whose dialogue they
 //! speak), stair links, lights, the flow of running water, objects, locks on closed doors:
 //! `lock = "pantry"`, a lock its keys open, or `locked = true`, one only a skeleton key opens,
-//! and `lock_difficulty = N`, how hard it is to pick (default 14); spec §8 "Doors", chests on
+//! and `lock_difficulty = N`, how hard it is to pick (default 14), chests on
 //! the shut chest terrain: `chest = "kist"` (a band, its least level) or `chest = 7` (default
-//! the level's `item_level`), locked as a door, its `objects` what it holds; spec §8 "Chests",
+//! the level's `item_level`), locked as a door, its `objects` what it holds,
 //! and `mimic = true` beside `chest` on the floor a mimic stands on: the chest is a mimic of its
-//! level, disguised, carrying the `objects`; spec §8 "Mimics",
+//! level, disguised, carrying the `objects`,
 //! traps: `trap = "fireball"`, hidden unless `known = true`, a bolt trap's
-//! direction with `dir`; spec §8 "Traps", and secret doors: `secret = true` or `secret = N` (a
-//! difficulty) on a closed door, which looks like the wall around it until it is found; spec §8
-//! "Searching", and on the overworld hidden locations: `hidden = { id, terrain, to, name }` on a
-//! plain cell, which shows that cell until a quest reveals it; spec §7 "Hidden locations").
-//! Characters not in the level's legend fall back to the shared default legend
-//! (`assets/data/legend.toml`, which has arrows for running water). Objects
+//! direction with `dir`, and secret doors: `secret = true` or `secret = N` (a
+//! difficulty) on a closed door, which looks like the wall around it until it is found, and on the
+//! overworld hidden locations: `hidden = { id, terrain, to, name }` on a plain cell, which shows
+//! that cell until a quest reveals it). Characters not in the level's legend fall back to the
+//! shared default legend (`assets/data/legend.toml`, which has arrows for running water). Objects
 //! may also be placed without a legend character: `[[pile]]` tables with `at = [x, y]` and
 //! `objects`. Objects are written as ids with an optional count, top of the pile first:
 //! `objects = ["dagger", "arrow*12"]`. An optional
 //! `ambient = [r, g, b, uv]` lights the whole level. `kind` (`dungeon`, the default, `outdoor`,
-//! or `overworld`) decides what a step there takes (spec §8 "Time"); outdoor levels and the
-//! overworld are lit by the sun and the sky by day (spec §5). Optional
+//! or `overworld`) decides what a step there takes; outdoor levels and the
+//! overworld are lit by the sun and the sky by day. Optional
 //! `[[region]]` tables name areas of the level (`name`, `area = [x0, y0, x1, y1]`, inclusive; the
-//! first match wins), shown in the status bar. Optional `[[room]]` tables mark special rooms
-//! (spec §7 "Special rooms"): `effect` (an id in `data/room_effects/`) over `area = [x0, y0,
-//! x1, y1]` (inclusive, walls and doors included); rooms do not overlap; a top-level `effect`
-//! (one that can, never on the overworld) covers the whole level. Optional `[[shop]]`
-//! tables mark shops (spec §7 "Shops"): `kind` (an id in `data/shops.toml`), the `keeper`'s
-//! name, the shop floor's `area` (inclusive: everything lying there is for sale), and the
-//! keeper's `post` on it, where the keeper (`data/shops.toml`'s `[keeper]`) is spawned, and
-//! optionally the unique character the keeper is (`npc`, whose dialogue it speaks) and its
-//! creature type (`creature`, default the `[keeper]`'s).
-//! Optional `danger = N` (spec §7 "Danger levels"; 0 to 99, or `{ base, player }`) with
+//! first match wins), shown in the status bar. Optional `[[room]]` tables mark special rooms:
+//! `effect` (an id in `data/room_effects/`) over `area = [x0, y0, x1, y1]` (inclusive, walls and
+//! doors included); rooms do not overlap; a top-level `effect` (one that can, never on the
+//! overworld) covers the whole level. Optional `[[shop]]` tables mark shops: `kind` (an id in
+//! `data/shops.toml`), the `keeper`'s name, the shop floor's `area` (inclusive: everything lying
+//! there is for sale), and the keeper's `post` on it, where the keeper (`data/shops.toml`'s
+//! `[keeper]`) is spawned, and optionally the unique character the keeper is (`npc`, whose dialogue
+//! it speaks) and its creature type (`creature`, default the `[keeper]`'s).
+//! Optional `danger = N` (0 to 99, or `{ base, player }`) with
 //! `population` (creature ids), `population_count`, `stray`, `stray_pool`, `out_of_depth`,
 //! `deeper`, `deeper_cap`, `dread_one_in`, `neutral`, and `spawn`, as a dungeon branch gives them
 //! (`super::danger`): creatures of about that danger keep coming while the player is there; none on
@@ -71,7 +69,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::btree_map::Entry;
 use std::collections::{BTreeMap, BTreeSet};
 
-/// What kind of place a level is (spec §8 "Time"). It decides what a step there takes and
+/// What kind of place a level is. It decides what a step there takes and
 /// whether the sun shines on it.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -82,15 +80,14 @@ pub enum LevelKind {
     /// Under the open sky.
     Outdoor,
     /// The map of the land at large: a step is a journey of the terrain's `travel_minutes`, sight
-    /// reaches as far as daylight allows (spec §5), and cells that are not locations lead into
+    /// reaches as far as daylight allows, and cells that are not locations lead into
     /// outdoor local areas.
     Overworld,
 }
 
 impl LevelKind {
-    /// Whether the level lies under the open sky, lit by the sun and the sky by day (spec §5
-    /// "Sunlight"): outdoor levels and the overworld; never dungeons. Terrain with `roofed` is
-    /// covered even here.
+    /// Whether the level lies under the open sky, lit by the sun and the sky by day: outdoor levels
+    /// and the overworld; never dungeons. Terrain with `roofed` is covered even here.
     pub const fn is_sky_exposed(self) -> bool {
         match self {
             LevelKind::Dungeon => false,
@@ -119,7 +116,7 @@ struct LevelFile {
     ambient: Light,
     #[serde(default)]
     kind: LevelKind,
-    /// The temperature underground, in °C (spec §5 "Temperature"); default the dungeon default.
+    /// The temperature underground, in °C; default the dungeon default.
     /// Under the open sky it follows the weather, so outdoor levels have none.
     temperature: Option<i8>,
     map: String,
@@ -127,23 +124,23 @@ struct LevelFile {
     legend: BTreeMap<String, LegendEntry>,
     #[serde(default)]
     region: Vec<RegionSpec>,
-    /// Special rooms (spec §7 "Special rooms").
+    /// Special rooms.
     #[serde(default)]
     room: Vec<RoomSpec>,
-    /// A special room's effect covering the whole level (spec §7 "Special rooms"); default none.
+    /// A special room's effect covering the whole level; default none.
     effect: Option<String>,
     /// Objects placed by position rather than by a legend character.
     #[serde(default)]
     pile: Vec<PileSpec>,
-    /// Magic and rare items placed by position, each with its affixes (spec §8 "Magic items").
+    /// Magic and rare items placed by position, each with its affixes.
     #[serde(default)]
     item: Vec<ItemSpec>,
-    /// The item level of the creatures' drops here (default 1; spec §8 "Magic items").
+    /// The item level of the creatures' drops here (default 1).
     item_level: Option<u8>,
-    /// Shops (spec §7 "Shops").
+    /// Shops.
     #[serde(default)]
     shop: Vec<ShopSpec>,
-    /// How dangerous it is (spec §7 "Danger levels"); none: 0, nothing comes. A vault's is a
+    /// How dangerous it is; none: 0, nothing comes. A vault's is a
     /// range of floors instead (read by `vault::parse_danger`; refused on a level).
     danger: Option<DangerField>,
     /// The creature types that live there (needed with a `danger`).
@@ -166,7 +163,7 @@ struct LevelFile {
     /// `vault::parse_turns`; refused on a level).
     #[serde(rename = "turns")]
     _turns: Option<bool>,
-    /// Its place in a burial chain (spec §7 "Graves"; `burial.rs`); default none.
+    /// Its place in a burial chain (`burial.rs`); default none.
     burial: Option<super::burial::BurialSpec>,
 }
 
@@ -201,7 +198,7 @@ struct PileSpec {
 /// affixes = ["sharp:2", "of_the_bear"]`, each affix an id with an optional tier (default 1)
 /// whose value is the top of the tier's range (a rare one has a `name`); and an item set with a
 /// gem or a loose gem, `parts = [{ part = "pommel", of = "emerald", size = "small", cut = "fine"
-/// }]` (spec §7 "Gems"; a loose gem's gem is its main part, no `part`), or made of another
+/// }]` (a loose gem's gem is its main part, no `part`), or made of another
 /// material, `parts = [{ of = "bronze" }]` (a variant, #193: no size or cut), with affixes or
 /// without; of a `quality` (`"masterwork"`) or plain. Trimmed to its capacity at load like any
 /// item made ([`hand_made`]).
@@ -309,7 +306,7 @@ pub(super) struct LegendDetail {
     /// "peaceful"`); an id in `data/factions/`.
     faction: Option<String>,
     /// Where the creature on this cell stands between good and evil instead of its type's
-    /// (`alignment = "good"`, spec §8 "Alignment").
+    /// (`alignment = "good"`).
     alignment: Option<Alignment>,
     /// The unique character the creature on this cell is (`npc = "hermit"`): it says what the
     /// npc's dialogue in `data/dialogue.toml` says, not its type's.
@@ -325,12 +322,12 @@ pub(super) struct LegendDetail {
     flow: Option<Dir>,
     /// Flow speed in percent of the terrain's (default 100).
     flow_speed: Option<u16>,
-    /// Ice on the water of this cell, in mm (spec §5 "Ice"); only on water that freezes.
+    /// Ice on the water of this cell, in mm; only on water that freezes.
     ice: Option<u16>,
     /// Objects lying on this cell, top first, e.g. `["dagger", "arrow*12"]`.
     objects: Option<Vec<String>>,
     /// Vaults only: an item of loot rolled here when a level is generated: at least of a grade
-    /// (`any`, `magic`, `rare`; spec §8 "Magic items"), or from a pool of item classes.
+    /// (`any`, `magic`, `rare`), or from a pool of item classes.
     loot: Option<LootSpec>,
     /// Vaults only: a cell of a pool of monsters drawn when a level is generated
     /// (`monsters = { pool = "level", count = 20 }`, [`MonsterPoolSpec`]).
@@ -345,21 +342,21 @@ pub(super) struct LegendDetail {
     /// Statuses the creature on this cell is placed with, by status id, `*N` for N degrees
     /// (`status = ["blessed", "weakened*2"]`; default one).
     status: Option<Vec<String>>,
-    /// An animated household thing's body (spec §8 "Animated objects"): `animated = { material =
+    /// An animated household thing's body: `animated = { material =
     /// "silver" }` makes the animated candlestick on this cell of silver (else of its object's
     /// own material); it carries its body from the start, nothing drawn.
     animated: Option<AnimatedPlacement>,
-    /// A trap on this cell (spec §8 "Traps"): an id in `data/traps.toml`.
+    /// A trap on this cell: an id in `data/traps.toml`.
     trap: Option<String>,
     /// Whether the player knows the trap from the start (default: hidden).
     known: Option<bool>,
     /// The way a bolt trap's bolt runs (default: along the longest clear line from it).
     dir: Option<Dir>,
-    /// The chest on this cell (spec §8 "Chests"; only on a shut chest's terrain): its band by
+    /// The chest on this cell (only on a shut chest's terrain): its band by
     /// id (`chest = "kist"`: that band's least level) or its level (`chest = 7`); default the
     /// level's `item_level`. Its `objects` are what it holds.
     chest: Option<ChestSpec>,
-    /// The chest on this cell is a mimic (spec §8 "Mimics"): with `chest` (its level) on the
+    /// The chest on this cell is a mimic: with `chest` (its level) on the
     /// walkable terrain it stands on, the family's member of the chest's level is placed there
     /// disguised, carrying the entry's `objects`; never locked, trapped, or with a creature.
     mimic: Option<bool>,
@@ -368,14 +365,14 @@ pub(super) struct LegendDetail {
     locked: Option<bool>,
     /// The closed door on this cell is locked, with this lock id: keys of that id open it.
     lock: Option<String>,
-    /// How hard the lock on this cell is to pick (spec §8 "Doors"; default
+    /// How hard the lock on this cell is to pick (default
     /// [`crate::door::LOCK_DIFFICULTY`]); only with `lock` or `locked = true`.
     lock_difficulty: Option<u8>,
-    /// The closed door on this cell is secret (spec §8 "Searching"): `true` (the default
+    /// The closed door on this cell is secret: `true` (the default
     /// difficulty) or its difficulty. It looks like the wall around it until it is found.
     secret: Option<SecretSpec>,
     /// A location hidden on this cell (of the overworld or a hand-made level) until a quest
-    /// reveals it (spec §7 "Hidden locations"): `hidden = { id, terrain, to, name, opens }`.
+    /// reveals it: `hidden = { id, terrain, to, name, opens }`.
     /// Until then the cell is the plain terrain it shows, in every way.
     hidden: Option<HiddenSpec>,
     /// The name of the place on this cell (`name = "Beorggeat"`): a location's, or a landmark's;
@@ -383,7 +380,7 @@ pub(super) struct LegendDetail {
     name: Option<String>,
     /// A sentence look mode adds about the named place on this cell; only with `name`.
     note: Option<String>,
-    /// What the grave on this cell says (spec §7 "Graves"; a burial ground's fixed grave, one
+    /// What the grave on this cell says (a burial ground's fixed grave, one
     /// of the town's own dead): only on a `grave` terrain, with `[burial]`.
     epitaph: Option<String>,
     /// This cell is kept for a statue (a burial ground's; nothing is placed yet).
@@ -519,11 +516,11 @@ pub struct CreatureSpawn {
     pub carry: Vec<Stack>,
     /// What of that it wears and wields.
     pub equipment: Equipment,
-    /// Whether its gear is still to be rolled by its type's table (spec §8 "Creature gear"):
+    /// Whether its gear is still to be rolled by its type's table:
     /// true for a creature placed without a fixed kit (`carry`, `wield`, or `wear`), until a
     /// generated level rolls it ([`crate::gear::arm`]) or the creature is placed in play.
     pub rolls_gear: bool,
-    /// Whether it is placed asleep (a teeming den's sleeper, spec §7 "Special rooms": the
+    /// Whether it is placed asleep (a teeming den's sleeper: the
     /// `asleep` status).
     pub asleep: bool,
     /// The statuses it is placed with, at their degrees (`status = ["blessed", "weakened*2"]`;
@@ -539,13 +536,13 @@ pub struct StairsLink {
     /// Target level id; `None` for stairs that lead nowhere yet.
     pub to: Option<String>,
     /// What the place it leads to is called, when not its level's name: a revealed hidden
-    /// location's `name` (spec §7 "Hidden locations").
+    /// location's `name`.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
 }
 
-/// A location hidden on a cell of the overworld or a hand-made level until a quest reveals it
-/// (spec §7 "Hidden locations"): until then the cell is the plain terrain it shows. Ground truth.
+/// A location hidden on a cell of the overworld or a hand-made level until a quest reveals it:
+/// until then the cell is the plain terrain it shows. Ground truth.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct HiddenLocation {
     /// The location's id: what a quest's `reveals` names.
@@ -597,19 +594,18 @@ pub struct LevelTemplate {
     pub objects: BTreeMap<Pos, Vec<Stack>>,
     /// Traps, by position; only on walkable terrain that is not stairs.
     pub traps: BTreeMap<Pos, Trap>,
-    /// Locks, by position: only on closed doors (spec §8 "Doors") and shut chests (spec §8
-    /// "Chests").
+    /// Locks, by position: only on closed doors and shut chests.
     pub locks: BTreeMap<Pos, Lock>,
-    /// Chests, by position (spec §8 "Chests"): one on every chest terrain cell, its level and
+    /// Chests, by position: one on every chest terrain cell, its level and
     /// what it holds.
     pub chests: BTreeMap<Pos, Chest>,
-    /// Statues of the stoned, by position (spec §8 "Statues"): one on every statue terrain cell
+    /// Statues of the stoned, by position: one on every statue terrain cell
     /// the generator laid as a leaving (`mapgen/leavings.rs`); none in a level file.
     pub statues: BTreeMap<Pos, crate::statue::Statue>,
-    /// Secret doors, by position (spec §8 "Searching"): the terrain there is the wall each
+    /// Secret doors, by position: the terrain there is the wall each
     /// looks like until it is found.
     pub secrets: BTreeMap<Pos, Secret>,
-    /// Hidden locations, by position (spec §7 "Hidden locations"; the overworld only): the
+    /// Hidden locations, by position (the overworld only): the
     /// terrain there is the plain terrain each shows until a quest reveals it.
     pub hidden: BTreeMap<Pos, HiddenLocation>,
     /// Named places, by position (a legend's `name`); a way in on such a cell goes by its name.
@@ -617,17 +613,17 @@ pub struct LevelTemplate {
     pub places: BTreeMap<Pos, Place>,
     /// Named areas, first match wins.
     pub regions: Vec<Region>,
-    /// Special rooms (spec §7 "Special rooms"), none overlapping another.
+    /// Special rooms, none overlapping another.
     pub rooms: Vec<SpecialRoom>,
-    /// The effect covering the whole level, if one does (spec §7 "Special rooms").
+    /// The effect covering the whole level, if one does.
     pub pervading: Option<RoomEffectId>,
-    /// Shops (spec §7 "Shops"), none overlapping another; each keeper is among `creatures`, at
+    /// Shops, none overlapping another; each keeper is among `creatures`, at
     /// the shop's post.
     pub shops: Vec<ShopPlan>,
     /// Where walking off the edge leads (local areas, and hand-made outdoor levels an overworld
     /// location leads into); `None`: the edge cannot be crossed.
     pub exit: Option<EdgeExit>,
-    /// The item level of loot here (spec §8 "Magic items"): a hand-made level's `item_level`
+    /// The item level of loot here: a hand-made level's `item_level`
     /// (default 1), a branch level's depth.
     pub item_level: u8,
     /// Vaults: cells where loot is rolled when they are stamped into a generated level, each
@@ -639,23 +635,23 @@ pub struct LevelTemplate {
     /// A generated level: the cells of the creatures the spawner's cap does not count (those of
     /// its vaults' monster pools, `world/creatures/spawn.rs`).
     pub outside_cap: BTreeSet<Pos>,
-    /// The temperature underground (spec §5 "Temperature"); `None`: the dungeon default (or,
+    /// The temperature underground; `None`: the dungeon default (or,
     /// under the open sky, the weather's).
     pub temperature: Option<Temperature>,
-    /// Ice on water, by position, in µm (spec §5 "Ice"); only on water that freezes.
+    /// Ice on water, by position, in µm; only on water that freezes.
     pub ice: BTreeMap<Pos, u32>,
-    /// A hand-made level's danger and what lives there (spec §7 "Danger levels"); `None`:
+    /// A hand-made level's danger and what lives there; `None`:
     /// danger 0, nothing comes. A generated level's is its branch's
     /// ([`Content::spawning`]).
     pub spawning: Option<(DangerRule, Spawning)>,
-    /// A hand-made level's burial ground (spec §7 "Graves"; `burial.rs`); `None`: none.
+    /// A hand-made level's burial ground (`burial.rs`); `None`: none.
     pub burial: Option<super::burial::Burial>,
 }
 
 impl LevelTemplate {
     /// Whether a key that opens `lock` lies in a pile, or is carried by a creature placed, on a
     /// cell `within` accepts, or by a monster pool's draw when `within` accepts every cell it
-    /// marks (spec §8 "Doors").
+    /// marks.
     pub fn has_key_for(
         &self,
         content: &Content,
@@ -734,7 +730,7 @@ pub(super) fn parse_level(
     let mut loot = Vec::new();
     let mut monsters: BTreeMap<char, VaultMonsters> = BTreeMap::new();
     let mut locks = BTreeMap::new();
-    // Chests (spec §8 "Chests"): the level a legend gives each, and what each holds.
+    // Chests: the level a legend gives each, and what each holds.
     let mut chest_levels: BTreeMap<Pos, u8> = BTreeMap::new();
     let mut chest_holds: BTreeMap<Pos, Vec<Stack>> = BTreeMap::new();
     let mut secret_doors: Vec<(Pos, TerrainId, u8)> = Vec::new();
@@ -883,7 +879,7 @@ pub(super) fn parse_level(
             if let Some(specs) = detail.objects.as_ref().filter(|_| !mimic) {
                 let pile = parse_stacks(specs, content)
                     .map_err(|m| err(format!("legend `{ch}`: objects: {m}")))?;
-                // A shut chest holds them (spec §8 "Chests").
+                // A shut chest holds them.
                 let into = match content.terrain(terrain).is_shut_chest() {
                     true => &mut chest_holds,
                     false => &mut objects,
@@ -1249,7 +1245,7 @@ fn parse_place(detail: &LegendDetail) -> Result<Option<Place>, String> {
     }))
 }
 
-/// A legend entry's hidden location on a cell of `terrain` (spec §7 "Hidden locations"): on
+/// A legend entry's hidden location on a cell of `terrain`: on
 /// the overworld or a hand-made level (never a vault: `Vault::new`), on a walkable cell that is
 /// no location already, becoming stairs down. Where it leads is checked with the other stairs'
 /// targets.
@@ -1290,7 +1286,7 @@ fn parse_hidden(
     })
 }
 
-/// A level file's shops (spec §7 "Shops"): each of a kind `data/shops.toml` has, over an area
+/// A level file's shops: each of a kind `data/shops.toml` has, over an area
 /// inside the map that overlaps no other shop, with a named keeper, spawned into `creatures` at
 /// its post (walkable, on the shop floor, where no other creature, nor the player, starts).
 fn parse_shops(
@@ -1354,8 +1350,8 @@ fn speaks(content: &Content, npc: &str) -> bool {
 
 /// The trap a legend entry places on a cell of `terrain` (`trap = "fireball"`, optionally `known
 /// = true` and, for a bolt, `dir = "E"`): only on walkable terrain that is not stairs, on a
-/// door, closed or open (any trap but a pit: spec §8 "Trapped doors"), but never on a secret one,
-/// or on a shut chest (the same traps: spec §8 "Chests"), never on an open or smashed one.
+/// door, closed or open (any trap but a pit), but never on a secret one,
+/// or on a shut chest (the same traps), never on an open or smashed one.
 fn parse_trap(
     detail: &LegendDetail,
     terrain: TerrainId,
@@ -1381,7 +1377,7 @@ fn parse_trap(
             ));
         }
     } else if ground.chest.is_some() {
-        // An open or smashed chest's trap went with its lid (spec §8 "Chests").
+        // An open or smashed chest's trap went with its lid.
         return Err(format!(
             "places a trap on terrain `{}`: only a shut chest is trapped",
             ground.id
@@ -1434,7 +1430,7 @@ fn parse_flow(
 
 /// The item an `[[item]]` table places: magic with affixes (rare with a `name`), each affix's
 /// value the top of its tier's range, its item level that of its highest tier unless given; it
-/// must be an item its affixes may roll on (spec §8 "Magic items"). Its `parts` are gems
+/// must be an item its affixes may roll on. Its `parts` are gems
 /// ([`item_parts`]) it is set with, a loose gem's gem, or other materials it is made of.
 fn parse_item(spec: &ItemSpec, content: &Content) -> Result<Stack, String> {
     let object = content
@@ -1622,7 +1618,7 @@ fn parse_ice(ch: char, entry: &LegendEntry, terrain: &TerrainDef) -> Result<Opti
 /// The lock a legend entry puts on its cell: `lock = "id"` (a lock of that id) or `locked =
 /// true` (a lock only a skeleton key opens), with its `lock_difficulty` if it gives one; none for
 /// neither or `locked = false` alone.
-/// The mimic a legend entry with `mimic = true` places (spec §8 "Mimics"): the family's member of
+/// The mimic a legend entry with `mimic = true` places: the family's member of
 /// its `chest`'s level, on walkable terrain that is no chest, with no lock,
 /// trap, or creature beside it.
 fn parse_mimic(
@@ -1675,7 +1671,7 @@ fn parse_lock(detail: &LegendDetail) -> Result<Option<Lock>, String> {
     }))
 }
 
-/// Hides the secret doors a legend placed (spec §8 "Searching"): each cell's terrain becomes the
+/// Hides the secret doors a legend placed: each cell's terrain becomes the
 /// wall around it ([`secret_look`], read before any of them changes), and the door it is goes
 /// into the secrets. A secret door with no wall beside it is refused.
 fn hide_secret_doors(
@@ -1699,7 +1695,7 @@ fn hide_secret_doors(
 }
 
 /// A legend entry's monster pool with what its draws are given: its `status`, `carry`, and
-/// `route` (spec §7 "Level file format").
+/// `route`.
 fn pool_cell(
     detail: &LegendDetail,
     spec: &MonsterPoolSpec,

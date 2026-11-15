@@ -1,8 +1,8 @@
-//! Material drops (spec §7 "Material drops"; the design: docs/design/recipes.md §9; #1341): the
+//! Material drops (the design: docs/design/recipes.md §9; #1341): the
 //! crafting stock a creature's body leaves where it dies, rolled from its type's resolved rows
 //! (`content/drops.rs`: its tags' and its own, its size applied) after its carried gear falls
 //! and [`World::loot_of`] rolls. Each row is its own chance draw and dice, from the stream
-//! `materials/<actor id>` (spec §8 "Determinism"): never the gameplay, loot (`drop/`), or gem
+//! `materials/<actor id>`: never the gameplay, loot (`drop/`), or gem
 //! streams, so a kill moves no other roll. Pieces of one material from several rows join one
 //! stack. Whoever made the kill: the body's, not a reward.
 

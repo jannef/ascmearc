@@ -1,7 +1,7 @@
 # Mimics
 
-General conventions: `docs/dev/creatures.md`. The rules are spec/08b-creatures.md "Mimics", the
-data spec/07b-data.md "Mimics", the design docs/design/chests-and-treasure.md §5 (slice C4,
+General conventions: `docs/dev/creatures.md`. The rules are spec/09-creatures.md "What creatures are
+made of", the design docs/design/chests-and-treasure.md §5 (slice C4,
 #616). Chests themselves: `docs/dev/chests.md`.
 
 ## The family (`content/mimic.rs`, `data/mimics.toml`)

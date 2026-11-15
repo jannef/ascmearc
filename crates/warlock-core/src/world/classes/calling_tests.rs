@@ -1,4 +1,4 @@
-//! Prestige classes and the calling (spec §8 "Prestige classes"; #876): a class's cap holds the
+//! Prestige classes and the calling (#876): a class's cap holds the
 //! level, a calling opens to the right class at the right level, `World::call` gives the class
 //! and exactly the experience the first prestige level costs, and every level past the cap is
 //! the prestige class's: its hit points, rolls, bonus picks, and class abilities. On a fixture

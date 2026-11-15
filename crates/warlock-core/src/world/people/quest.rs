@@ -1,4 +1,4 @@
-//! Quests (spec §8 "Quests", #148): simple, ADOM-like errands people give the player through
+//! Quests (#148): simple, ADOM-like errands people give the player through
 //! their dialogue topics ([`World::topics`], answered in [`World::ask`]).
 //!
 //! **Flow**: a giver lists each quest it has for the player as a topic (`quest-ID`, named after
@@ -92,7 +92,7 @@ pub struct Quests {
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     kills: BTreeMap<String, BTreeMap<String, u32>>,
     /// The creature type the player has killed most, the first to get there of those tied
-    /// (the ranger's Favoured prey, spec §8 "Class abilities"); `None` before the first kill.
+    /// (the ranger's Favoured prey); `None` before the first kill.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     prey: Option<String>,
     /// The unique creature types (named monsters) that have died, at any hand (design §8.4):
@@ -285,7 +285,7 @@ pub struct QuestView {
 }
 
 impl PerceptionView<'_> {
-    /// The player's quests (spec §8 "Quests"): the active ones, then the done ones, each in the
+    /// The player's quests: the active ones, then the done ones, each in the
     /// order of `data/quests.toml`. Offers not yet answered are not here.
     pub fn quests(&self) -> Vec<QuestView> {
         let content = self.content;
@@ -729,9 +729,9 @@ impl World {
         })
     }
 
-    /// Quest `def` (as given) reached stage `when`: if it reveals its hidden location then
-    /// (spec §7 "Hidden locations"), creature `id`, who speaks for it, marks the location on the
-    /// player's map. A location revealed before is not marked again.
+    /// Quest `def` (as given) reached stage `when`: if it reveals its hidden location then,
+    /// creature `id`, who speaks for it, marks the location on the player's map. A location
+    /// revealed before is not marked again.
     fn reveal_at(&mut self, id: ActorId, def: &QuestDef, when: RevealWhen) {
         let Some(reveal) = def.reveals.as_ref().filter(|r| r.when == when) else {
             return;
@@ -867,7 +867,7 @@ impl World {
         self.tell_goodwill(def.giver);
         self.train_stat(StatUse::Quest);
         let who = capitalized(&self.called(&self.state.actors[&id]));
-        // A talent (spec §8 "Talents": the half-elf's Diplomat) makes a quest pay more gold.
+        // A talent (the half-elf's Diplomat) makes a quest pay more gold.
         let talents = self.state.player().talent_mods(&content);
         let mut stacks = def.reward.stacks(&content);
         if let Some(gold) = (content.object_id(crate::content::GOLD))

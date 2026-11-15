@@ -1,4 +1,4 @@
-//! Appraise (spec §8 "Skills"; #666): now and then a player trained in Appraise tells one
+//! Appraise (#666): now and then a player trained in Appraise tells one
 //! unidentified thing they carry or wear for what it is.
 //!
 //! The check comes on every whole game hour the clock passes ([`World::appraise_hours`], from

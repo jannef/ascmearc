@@ -1,20 +1,19 @@
-//! Noise and hearing (spec §5 "Hearing").
+//! Noise and hearing.
 //!
 //! **Noise**: actions make noise. A step makes the walker's `footsteps` (creature data) scaled by
 //! the `step_noise` percent of the terrain stepped onto (water splashes, grass is soft) and by its
-//! burden (×1.25 Burdened, ×1.5 Strained; spec §8 "Burden": a heavy load is noisy), less what a
-//! stealth affix takes off (spec §8 "Magic items"); opening or
-//! closing a door makes the door's `toggle_noise` (terrain data); an attack (spec §8 "Combat")
+//! burden (×1.25 Burdened, ×1.5 Strained; a heavy load is noisy), less what a
+//! stealth affix takes off; opening or
+//! closing a door makes the door's `toggle_noise` (terrain data); an attack
 //! makes fighting, a bowstring, fighting more quietly (a throw), or chanting where the attacker
 //! stands ([`MELEE_NOISE`], [`SHOT_NOISE`], [`THROW_NOISE`], [`SPELL_NOISE`]); a kick at a door
-//! is a loud banging on the door ([`KICK_NOISE`], spec §8 "Doors"); a turn of digging makes
-//! digging where the digger stands ([`DIG_NOISE`]); a creature muttering to itself (spec §8
-//! "Dialogue") is a voice ([`VOICE_NOISE`]), and so is the player's voice thrown to a cell they
-//! see (#235): there, not where they stand. A special room scales every noise made inside it by
-//! its effect's `noise` percent (spec §7 "Special rooms": an echoing hall doubles it, a hushed
-//! chamber takes it down to two fifths). [`noise`] is the one function that decides how loud an
-//! action is: the actor's skills (stealth; spec §8 "Skills") make its steps and doors quieter
-//! there ([`plain_noise`] is the noise without them). A trap going off (spec §8 "Traps") makes
+//! is a loud banging on the door ([`KICK_NOISE`]); a turn of digging makes
+//! digging where the digger stands ([`DIG_NOISE`]); a creature muttering to itself is a voice
+//! ([`VOICE_NOISE`]), and so is the player's voice thrown to a cell they see (#235): there, not
+//! where they stand. A special room scales every noise made inside it by its effect's `noise`
+//! percent (an echoing hall doubles it, a hushed chamber takes it down to two fifths). [`noise`] is
+//! the one function that decides how loud an action is: the actor's skills (stealth) make its steps
+//! and doors quieter there ([`plain_noise`] is the noise without them). A trap going off makes
 //! its own noise on its cell, as its data says (an alarm's bell, a fireball's explosion, a
 //! lightning bolt's thunderclap), heard by everyone in earshot (no actor made it).
 //! Loudness is an integer, at most [`MAX_LOUDNESS`]; a creature or door without the field is
@@ -37,7 +36,7 @@
 //! ([`Heard`]: kind, where, how loud) in [`crate::world::Actor::heard`] until it next acts: a
 //! creature as its turn starts (the input the creature AI reads, #77), the player when the next
 //! turn starts passing. `World::spread_noise` (`world/creatures/den.rs`) keeps them, and wakes the sleepers a
-//! noise is loud enough for (spec §7 "Special rooms": teeming dens).
+//! noise is loud enough for (teeming dens).
 //!
 //! **The player** perceives heard sounds whose source they do not see through
 //! [`crate::perception::PerceptionView::sounds`]: the kind, how loud ([`Volume`]), and roughly
@@ -93,13 +92,13 @@ pub enum SoundKind {
     Chanting,
     /// A door kicked.
     Banging,
-    /// Digging into a wall (spec §8 "Digging").
+    /// Digging into a wall.
     Digging,
-    /// Someone muttering to themselves (spec §8 "Dialogue").
+    /// Someone muttering to themselves.
     Voice,
-    /// A howl: a Barghest's Hound's bay (spec §8 "Birth sign").
+    /// A howl: a Barghest's Hound's bay.
     Howl,
-    /// A roar: a dragon's breath (spec §8 "Creature behavior": "Dragons").
+    /// A roar: a dragon's breath.
     Roar,
     /// A creature's cries (`world/creatures/aura.rs`): a buzzing (the chasme's drone).
     Buzzing,
@@ -113,12 +112,12 @@ pub enum SoundKind {
     Scream,
     /// A wail (the banshee: her aura too).
     Wail,
-    /// A crash of glass: a flask shattering where it was thrown (spec §8 "Potions").
+    /// A crash of glass: a flask shattering where it was thrown.
     Shatter,
-    /// A heartbeat: Sense the quick's, a living creature near (spec §8 "Spells"). No noise anyone
+    /// A heartbeat: Sense the quick's, a living creature near. No noise anyone
     /// makes: only the player hears one, and never its exact place.
     Heartbeat,
-    /// A bell: an alarm trap (spec §8 "Traps").
+    /// A bell: an alarm trap.
     Bell,
     /// An explosion: a fireball trap.
     Explosion,
@@ -184,29 +183,28 @@ impl SoundKind {
     }
 }
 
-/// How loud an attack is where the attacker stands, hit or miss (spec §8 "Combat"): a scuffle, a
+/// How loud an attack is where the attacker stands, hit or miss: a scuffle, a
 /// bowstring, a throw (heard as fighting, quieter), a chant.
 pub const MELEE_NOISE: u16 = 60;
 pub const SHOT_NOISE: u16 = 40;
 pub const THROW_NOISE: u16 = 30;
-/// How loud a flask shattering is where it breaks, unless its `noise` says otherwise (spec §8
-/// "Potions"): as loud as the throw.
+/// How loud a flask shattering is where it breaks, unless its `noise` says otherwise: as loud as
+/// the throw.
 pub const SHATTER_NOISE: u16 = 30;
 pub const SPELL_NOISE: u16 = 50;
 /// How loud a kick at a door is on the door, whether it breaks or holds: loud.
 pub const KICK_NOISE: u16 = 100;
-/// How loud a turn of digging is where the digger stands (spec §8 "Digging"): iron on stone.
+/// How loud a turn of digging is where the digger stands: iron on stone.
 pub const DIG_NOISE: u16 = 80;
-/// How loud a creature muttering to itself is where it stands (spec §8 "Dialogue"): heard a few
+/// How loud a creature muttering to itself is where it stands: heard a few
 /// cells away, by those who listen. A voice thrown to a cell is as loud there.
 pub const VOICE_NOISE: u16 = 50;
-/// How loud a howl is where the howler stands (spec §8 "Birth sign": Hound's bay): it carries
+/// How loud a howl is where the howler stands (Hound's bay): it carries
 /// well beyond a fight's noise.
 pub const HOWL_NOISE: u16 = 150;
-/// How loud a dragon's breath is where the dragon stands (spec §8 "Creature behavior":
-/// "Dragons"): a roar, heard as far as a howl.
+/// How loud a dragon's breath is where the dragon stands: a roar, heard as far as a howl.
 pub const ROAR_NOISE: u16 = 150;
-/// How loud a song is where the singer stands (spec §8 "Class abilities", the bard's songs):
+/// How loud a song is where the singer stands (the bard's songs):
 /// farther than a voice, well short of a howl.
 pub const SONG_NOISE: u16 = 80;
 
@@ -241,7 +239,7 @@ pub enum Act {
     Cry(SoundKind),
     /// Sings a song, where it stands (the bard's songs, `world/classes/song.rs`): a voice.
     Sing,
-    /// Calls an order to its allies, where it stands (spec §8 "Allies"): a voice, as loud as
+    /// Calls an order to its allies, where it stands: a voice, as loud as
     /// `[orders] noise` of `data/allies.toml` says.
     Order,
 }
@@ -324,8 +322,8 @@ pub struct Recent {
 /// ([`crate::burden::Load::penalty`]), in the special room where it is made, if any
 /// ([`plain_noise`]): the one place an action's noise is decided. The actor's skills (stealth,
 /// [`Effect::Quiet`]) take their percent off its steps and doors (not its attacks or its voice,
-/// thrown or not), rounded down, and the stealth affixes of what it wears off its steps (spec §8
-/// "Magic items"), rounded down; then its talents' percents (attacks too: Hide in plain sight).
+/// thrown or not), rounded down, and the stealth affixes of what it wears off its steps, rounded
+/// down; then its talents' percents (attacks too: Hide in plain sight).
 /// `None` if it is silent.
 pub fn noise(
     content: &Content,
@@ -358,7 +356,7 @@ pub fn noise(
     }
     let quiet = actor.skill_effect(content, Effect::Quiet).clamp(0, 100) as u16;
     let loudness = u32::from(plain.loudness) * u32::from(100 - quiet) / 100;
-    // Then its talents (spec §8 "Talents": Light step's quieter steps and silent doors,
+    // Then its talents (Light step's quieter steps and silent doors,
     // Lockbreaker's quieter kicks).
     let talents = actor.talent_mods(content);
     let loudness = match act {
@@ -441,7 +439,7 @@ pub fn plain_noise(
         Act::Kick(p) => (SoundKind::Banging, p, u32::from(KICK_NOISE)),
         Act::Dig => (SoundKind::Digging, actor.pos, u32::from(DIG_NOISE)),
     };
-    // A special room scales every noise made inside it (spec §7 "Special rooms"): an echoing
+    // A special room scales every noise made inside it: an echoing
     // hall makes it louder, so it carries farther; a hushed chamber quieter.
     let loudness = loudness * level.effects_at(content, at).noise() / 100;
     let loudness = loudness.min(u32::from(MAX_LOUDNESS)) as u16;

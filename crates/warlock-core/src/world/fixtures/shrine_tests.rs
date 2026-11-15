@@ -1,4 +1,4 @@
-//! Shrines of a side (spec §7 "Special rooms", design §9.3): a hidden side, good or evil; one of
+//! Shrines of a side (design §9.3): a hidden side, good or evil; one of
 //! its side heals twice as fast inside, one of the other side is Unwelcome (half the healing, a
 //! point off to-hit) until half a minute after leaving, a neutral one is ignored; creatures too,
 //! by their own side; the first entry's line says which.

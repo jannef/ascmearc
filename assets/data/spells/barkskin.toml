@@ -1,4 +1,4 @@
-# Barkskin (spec §8 "Spells"): the druid's and the ranger's boon, skin hard as bark a while.
+# Barkskin: the druid's and the ranger's boon, skin hard as bark a while.
 [[spell]]
 id = "barkskin"
 name = "Barkskin"

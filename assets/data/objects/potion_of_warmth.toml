@@ -1,4 +1,4 @@
-# A potion of warmth (spec §8 "Potions"): fire resisted for half an hour, as gear resists it.
+# A potion of warmth: fire resisted for half an hour, as gear resists it.
 # Resistance potions are teal.
 [[object]]
 id = "potion_of_warmth"

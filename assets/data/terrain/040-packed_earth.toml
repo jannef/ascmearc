@@ -1,4 +1,4 @@
-# Walls that dig easily or hardly at all (spec §8 "Digging"; the quarry shows them).
+# Walls that dig easily or hardly at all (the quarry shows them).
 [[terrain]]
 id = "packed_earth"
 name = "packed earth"

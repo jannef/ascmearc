@@ -47,10 +47,9 @@ impl Gameplay<'_> {
             KeyCommand::Look => InputMode::Look(game.world.player_pos()),
             KeyCommand::Rest => InputMode::Rest,
             KeyCommand::Move(dir) => {
-                // Diving into deep water (spec §8 "Skills": Swim), leaving a shop owing anything
-                // (spec §7 "Shops"), stepping onto a known trap (spec §8 "Traps"), setting out on
-                // the overworld Fainting or Starving (spec §8 "Hunger"), or walking into something
-                // that offers an action (spec §7 "Special rooms") asks first, in the dialog: one
+                // Diving into deep water (Swim), leaving a shop owing anything, stepping onto a
+                // known trap, setting out on the overworld Fainting or Starving, or walking into
+                // something that offers an action asks first, in the dialog: one
                 // dialog a step, the first that applies. The dive comes first because it always
                 // asks (the owner's rule), and any other dialog's "go on" would step in unasked;
                 // its own "Dive in" is a plain move, which the rules still judge (the keeper turns

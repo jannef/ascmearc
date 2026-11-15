@@ -1,7 +1,6 @@
-//! The rung a caster casts a spell at, and what the spell is then (spec §8 "Spells": "Ladders";
-//! the spell scaling design §4.3, §7.1): derived at cast time from
-//! [`Actor::effective_stats`], its talents, and its worn items ([`Actor::spell_mods`]); nothing
-//! is saved.
+//! The rung a caster casts a spell at, and what the spell is then (the spell scaling design §4.3,
+//! §7.1): derived at cast time from [`Actor::effective_stats`], its talents, and its worn items
+//! ([`Actor::spell_mods`]); nothing is saved.
 //!
 //! - **The rung**: `by_stats` is how many rungs of a ladder the caster's effective score in the
 //!   ladder's stat reaches; `rung = min(by_stats + rungs, ladder length)`, never below 0 (the

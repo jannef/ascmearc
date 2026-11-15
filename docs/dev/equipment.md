@@ -1,9 +1,9 @@
 # Equipment
 
 Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
-rules it implements are in spec/07b-data.md and spec/06-input-and-ui.md. Keep it current with the code, as CLAUDE.md says.
+rules it implements are in spec/06-content.md and spec/05-interface.md. Keep it current with the code, as CLAUDE.md says.
 
-Equipment (spec §6 "Equipment", §7; M16): slots are data, `data/slots.toml`
+Equipment (M16): slots are data, `data/slots.toml`
 (`content/slot.rs`: `SlotDef` with `id`, `name`, `fits`, `action`, `mark`, `hand`, `class`; `SlotId` is an
 index in screen order, in the content fingerprint), so **a new slot is one entry there** (saves
 change). **A class's own slots** (#1404: the aristocrat's `extra_ring_1` to `_3`, after the hands'

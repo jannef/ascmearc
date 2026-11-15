@@ -1,4 +1,4 @@
-//! Alternative resources (spec §8 "Resources"): each resource's maximum (with what a stat and
+//! Alternative resources: each resource's maximum (with what a stat and
 //! the level add), its start, how it changes over time, what builds it, and whether it ends at
 //! zero.
 
@@ -74,7 +74,7 @@ pub(super) fn resources(content: &Content) -> String {
     out
 }
 
-/// Exploit's ladder (spec §8 "Class abilities"; the openings design §6): every class talent on a
+/// Exploit's ladder (the openings design §6): every class talent on a
 /// class's level table that adds to an exploit, by level, what it adds per opening spent, and
 /// the ladder from that level on.
 pub(super) fn exploit_ladder(content: &Content) -> String {

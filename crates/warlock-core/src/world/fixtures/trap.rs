@@ -1,10 +1,10 @@
-//! Traps (spec §8 "Traps"): what a trap does when it goes off.
+//! Traps: what a trap does when it goes off.
 //!
 //! A trap lies on a cell of a level ([`crate::content::Trap`], in the level state), hidden until
 //! the player sets it off or sees a creature do it; then it is known, shown, and remembered.
 //! Whoever steps onto a trap sets it off, the player and creatures alike (creatures know nothing
 //! of traps yet, so they walk onto them, and luring them is a tactic): [`World::step_onto_trap`].
-//! A trap on a door (spec §8 "Trapped doors") is the door's, not the floor's: walking through
+//! A trap on a door is the door's, not the floor's: walking through
 //! the doorway never sets it off; opening the door does, and kicking it (`world/fixtures/door.rs`), at
 //! whoever opened or kicked it from the next cell. [`World::spring_trap`] is the one way a trap
 //! goes off: it spends a charge (a trap with none left is spent and gone), makes the trap's noise
@@ -20,9 +20,9 @@
 //!   (shadowcast: walls stop it, but not the trap's own cell, so a door's blast bursts out on
 //!   both sides of it, shut or open) takes one roll of the damage, half of it (at least 1) beyond
 //!   radius − 1; no roll to hit; then the walls it reaches that are softer than its `blast` break
-//!   ([`World::blast`], spec §8 "Digging"); then a hot one melts the ice it reaches, and whoever
+//!   ([`World::blast`]); then a hot one melts the ice it reaches, and whoever
 //!   stood on it falls in ([`World::shock`]), and a cold one freezes the water it reaches
-//!   ([`World::frost`], spec §5 "Ice"). The same burst a scroll casts ([`World::cast_burst`]);
+//!   ([`World::frost`]). The same burst a scroll casts ([`World::cast_burst`]);
 //! - **bolt**: a line from the trap in its direction (the level's `dir`; else, set off from the
 //!   next cell (a door's), toward the victim; else the longest clear line from it, ties to the
 //!   earlier of N, NE, ... NW) until a wall, at most its length: everyone on it takes one roll of
@@ -31,7 +31,7 @@
 //!   price is a `wait` more);
 //! - **alarm**: only its noise;
 //! - **teleport**: the victim is moved to a free cell of the level (walkable, no one there, no
-//!   trap, no ice: spec §5 "Ice"), picked by a hash of the seed, the level, the turn, the victim, and the trap's cell,
+//!   trap, no ice), picked by a hash of the seed, the level, the turn, the victim, and the trap's cell,
 //!   never by the gameplay random stream. A creature goes on from where it lands.
 //!
 //! Every roll comes from the gameplay random stream. Events say what happened
@@ -62,9 +62,9 @@ const OVERSHOOT: usize = 8;
 
 impl World {
     /// Actor `victim` has just stepped onto `at`: a trap there goes off ([`World::spring_trap`]),
-    /// unless it is on a door or a chest, which only opening or kicking it sets off (spec §8
-    /// "Trapped doors", "Chests"). Returns the energy a pit's climb costs on top of the step. Last, an unstable
-    /// room may move the stepper ([`World::warp_step`]).
+    /// unless it is on a door or a chest, which only opening or kicking it sets off. Returns the
+    /// energy a pit's climb costs on top of the step. Last, an unstable room may move the stepper
+    /// ([`World::warp_step`]).
     pub(in crate::world) fn step_onto_trap(
         &mut self,
         at: Pos,
@@ -110,7 +110,7 @@ impl World {
     }
 
     /// Whether the player, `victim`, steps onto the trap at `at` without setting it off (Light
-    /// step, spec §8 "Talents"): a pit never catches them; else a Dexterity
+    /// step): a pit never catches them; else a Dexterity
     /// check against the trap's difficulty (two draws of the gameplay stream, only with the
     /// talent and a trap there). Either way the trap stays, and is found.
     fn steps_lightly(&mut self, at: Pos, victim: ActorId) -> bool {
@@ -285,7 +285,7 @@ impl World {
     }
 
     /// Trap `trap` does `damage` to `target` from `source` with no roll to hit (a blast, a bolt,
-    /// a fall), less what the target resists of its kind (spec §8 "Damage types"; nothing left
+    /// a fall), less what the target resists of its kind (nothing left
     /// of it is [`Strike::Resisted`]).
     pub(in crate::world) fn trap_hurts(
         &mut self,
@@ -312,13 +312,12 @@ impl World {
         self.trap_deals(trap, target, source, blow, events);
     }
 
-    /// Trap `trap` deals `blow` to `target`, from `source`, the way every blow is dealt (spec
-    /// §8 "Blood", "Status effects"): a big hit's blood, the damage, which may kill (a trap's
-    /// kill earns no one anything, but a rigged trap's is its rigger's, the player's, unless it
-    /// is the rigger it kills), and if it lives the statuses its wound causes. The target's
-    /// talents and what it wears scale the damage first (Trap sense: half; of Wariness: its percent
-    /// less; together at most the `[harm]` `most_cut` of `data/traps.toml`
-    /// off; rounded down, at least 1).
+    /// Trap `trap` deals `blow` to `target`, from `source`, the way every blow is dealt: a big
+    /// hit's blood, the damage, which may kill (a trap's kill earns no one anything, but a rigged
+    /// trap's is its rigger's, the player's, unless it is the rigger it kills), and if it lives the
+    /// statuses its wound causes. The target's talents and what it wears scale the damage first
+    /// (Trap sense: half; of Wariness: its percent less; together at most the `[harm]` `most_cut`
+    /// of `data/traps.toml` off; rounded down, at least 1).
     fn trap_deals(
         &mut self,
         trap: TrapId,
@@ -411,7 +410,7 @@ impl World {
     /// Where a shot trap on `at` shoots from: the nearest opaque cell in the eight directions
     /// (outside the level counts), within [`VIEW_RADIUS`]; ties go to the direction a hash of the
     /// level and the cell picks first. With none, the cell that far in that direction. A chest's
-    /// trap shoots out of the chest itself (spec §8 "Chests").
+    /// trap shoots out of the chest itself.
     fn slit(&self, at: Pos) -> Pos {
         let level = self.state.current();
         if level.is_shut_chest(&self.content, at) {
@@ -548,7 +547,7 @@ impl World {
         });
     }
 
-    /// Traps the player saw go off are known from now on (spec §8 "Traps"): those they set off
+    /// Traps the player saw go off are known from now on: those they set off
     /// themselves, and those set off where they see (a creature they see stepping onto one).
     pub(in crate::world) fn learn_traps(&mut self, events: &[Event]) {
         let player = self.state.player;
@@ -562,7 +561,7 @@ impl World {
     }
 
     /// The trap at `at` on the current level is known from now on: the player saw it go off
-    /// ([`World::learn_traps`]) or found it (spec §8 "Searching"). Returns its type, if a trap
+    /// ([`World::learn_traps`]) or found it. Returns its type, if a trap
     /// lies there.
     pub(in crate::world) fn know_trap(&mut self, at: Pos) -> Option<TrapId> {
         let trap = self.state.current_mut().traps.get_mut(&at)?;

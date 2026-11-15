@@ -1,4 +1,4 @@
-//! Procedural level generation (spec §2, §7, §8 Determinism).
+//! Procedural level generation.
 //!
 //! [`generate`] builds the [`LevelTemplate`] of a dungeon-branch level such as `depths:3` (see
 //! [`crate::content::DungeonDef`]), or of a local area of the overworld such as `local:12,30`
@@ -12,15 +12,15 @@
 //!    [vaults](crate::content::Vault) where they fit (with their locks and keys), place the
 //!    stairs, light sources (torches in rooms; lamps and glowing fungus in caves), and a few
 //!    patrolling creatures, and last now and then make a room (a cave chamber) special
-//!    (`special.rs`, spec §7 "Special rooms") and, rarer, a room of a rooms level a shop
-//!    (`shop.rs`, spec §7 "Shops").
+//!    (`special.rs`) and, rarer, a room of a rooms level a shop
+//!    (`shop.rs`).
 //! 3. Turn rock that touches open ground into walls.
 //! 4. Validate (`connect::validate`): every stair, door, and walkable cell is reachable from the
 //!    up staircase (flood fill), the stairs and a key to every lock without unlocking a door,
 //!    patrols are valid, and something emits light. A failed attempt is discarded and the next
 //!    attempt's stream is used, so retries are deterministic too.
-//! 5. Hide the branch's traps (spec §8 "Traps") from the level's trap stream ([`Rng::traps`]),
-//!    then a few of its doors (secret doors, spec §8 "Searching") from its secret stream
+//! 5. Hide the branch's traps from the level's trap stream ([`Rng::traps`]),
+//!    then a few of its doors (secret doors) from its secret stream
 //!    ([`Rng::secrets`]), only where the stairs and every key are still reached without them,
 //!    then roll its loot from its loot stream ([`Rng::loot`]), then, on a branch with a danger,
 //!    lay its initial population down from its population stream ([`Rng::population`],
@@ -202,16 +202,16 @@ pub(crate) struct Canvas<'a> {
     pub loot: Vec<(Pos, LootPool)>,
     /// Where vaults stamped monster pools to draw, and who may come.
     pub monsters: Vec<VaultMonsters>,
-    /// Locks on closed doors: stamped from vaults, and on locked rooms (spec §8 "Doors").
+    /// Locks on closed doors: stamped from vaults, and on locked rooms.
     pub locks: BTreeMap<Pos, Lock>,
-    /// Secret doors stamped from vaults (spec §8 "Searching").
+    /// Secret doors stamped from vaults.
     pub secrets: BTreeMap<Pos, Secret>,
-    /// Chests stamped from vaults (spec §8 "Chests"), their level the floor's once it is known.
+    /// Chests stamped from vaults, their level the floor's once it is known.
     pub chests: BTreeMap<Pos, Chest>,
     /// Named places stamped from vaults (a legend's `name` and `note`: an inscribed statue).
     pub places: BTreeMap<Pos, Place>,
     pub creatures: Vec<CreatureSpawn>,
-    /// Special rooms (spec §7 "Special rooms"; `special.rs`).
+    /// Special rooms (`special.rs`).
     pub rooms: Vec<SpecialRoom>,
     /// The effect covering the whole level, if one drawn for a room does (`special.rs`).
     pub pervading: Option<RoomEffectId>,
@@ -224,7 +224,7 @@ pub(crate) struct Canvas<'a> {
     /// The branch's own population: a den kind that names factions needs one of them in it
     /// (`den::peopled`).
     pub population: &'a [CreatureId],
-    /// Shops (spec §7 "Shops"; `shop.rs`), their keepers among `creatures`.
+    /// Shops (`shop.rs`), their keepers among `creatures`.
     pub shops: Vec<ShopPlan>,
     /// Cells stamped from vaults; later passes leave them alone.
     pub stamped: Grid<bool>,
@@ -505,9 +505,9 @@ pub fn generate_for(
         (def.room_odds(depth)).ok_or_else(|| GenError::NotAGeneratedLevel(id.to_string()))?;
     let odds = (room_odds, def.shop_odds(depth));
     // A layer boss not yet slain keeps its lair here, with the floor's way down hidden in it
-    // (spec §7 "The endless branch", `world/levels/layer_boss.rs`).
+    // (`world/levels/layer_boss.rs`).
     // A Pit's warden's hall is stamped whether the warden lives or not; slain (its Pit sealed),
-    // the hall is made without it (spec §7 "The Pits", `world/levels/pit.rs`).
+    // the hall is made without it (`world/levels/pit.rs`).
     let slain = |b: &&crate::content::LayerBoss| {
         let id = &content.creature(b.creature).id;
         visit.slain.is_some_and(|s| s.contains(id))
@@ -522,12 +522,12 @@ pub fn generate_for(
         key: def.key,
         vaults: boss.map_or(def.vaults(depth), |b| std::slice::from_ref(&b.vault)),
     };
-    // A Pit's floors lead only to its own (spec §7 "The Pits"): the neighbours are the floor's
+    // A Pit's floors lead only to its own: the neighbours are the floor's
     // siblings, and its first floor's `<` is where it was entered from.
     let up_to = match (depth > 1, def.endless.is_some() || def.below.is_some()) {
         (true, _) => Some(sibling(id, depth - 1)),
         // However the first floor was reached (from the second, it may be), it climbs out: an
-        // endless branch's, and a way up's (spec §7 "Ways up").
+        // endless branch's, and a way up's.
         (false, true) => content.way_into(id).map(str::to_string),
         (false, false) => entered_from.map(str::to_string),
     };
@@ -590,7 +590,7 @@ pub fn generate_for(
         }
         stairs.extend(extra);
         let item_level = content.item_level(id);
-        // A vault's chests are of the floor's level (spec §8 "Chests").
+        // A vault's chests are of the floor's level.
         let chests = (canvas.chests.into_iter())
             .map(|(p, chest)| {
                 (
@@ -723,7 +723,7 @@ fn layer_boss_stairs(
 }
 
 /// The generator and size of a floor of an endless branch, drawn as it is made from its own
-/// stream `floor_kind/<level id>` (spec §7 "The endless branch"), so the draw moves nothing else.
+/// stream `floor_kind/<level id>`, so the draw moves nothing else.
 fn endless_plan(
     plan: crate::content::LevelPlan,
     endless: crate::content::Endless,
@@ -742,7 +742,7 @@ fn endless_plan(
     }
 }
 
-/// Hides the branch's traps on a generated level (spec §8 "Traps"): `traps_per_level` of them,
+/// Hides the branch's traps on a generated level: `traps_per_level` of them,
 /// each of a kind from the branch's list, all hidden. They are drawn from the level's own trap
 /// stream ([`Rng::traps`]), so the rest of the level is the same with or without them. A trap
 /// lies on plain floor that nothing else claims: never on or next to a staircase (the player
@@ -811,7 +811,7 @@ fn patrolled(template: &LevelTemplate) -> std::collections::BTreeSet<Pos> {
     patrolled
 }
 
-/// Hides a few of a generated level's doors (spec §8 "Searching"): `secret_doors` of them, drawn
+/// Hides a few of a generated level's doors: `secret_doors` of them, drawn
 /// from the level's own secret stream ([`Rng::secrets`]), so the rest of the level is the same
 /// with or without them. A door is hidden only if it is closed and nothing else claims it (no
 /// lock, no trap, no patrol through it, no shop it leads into, no vault it was `stamped` from: vaults
@@ -874,7 +874,7 @@ pub(crate) struct Floor {
     pub count: [u8; 2],
 }
 
-/// Rolls a generated level's loot (spec §8 "Magic items") at its item level, from its own
+/// Rolls a generated level's loot at its item level, from its own
 /// stream `loot/<level id>` so that the map is the same with or without it: first an item on
 /// each of `markers` (vaults' loot cells, from their pools), then the floor loot, one draw
 /// for how many (between the fewest and the most) and, for each, one for a cell of `floor`
@@ -929,7 +929,7 @@ pub fn ascii(template: &LevelTemplate, content: &Content) -> String {
     draw(template, content, false)
 }
 
-/// [`ascii`] with the plain ground of each special room (spec §7 "Special rooms") drawn as its
+/// [`ascii`] with the plain ground of each special room drawn as its
 /// effect's mark, under creatures, traps, objects, and lights. Used by `warlock-cli gen`.
 pub fn ascii_with_rooms(template: &LevelTemplate, content: &Content) -> String {
     draw(template, content, true)

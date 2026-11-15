@@ -1,7 +1,7 @@
 # Progression: talents and level-up choices
 
 Developer notes for working on this part of Warlock; the rules it implements are in
-spec/08i-character.md ("Talents") and the design is `docs/design/progression.md` (§7, §10).
+spec/12-character.md ("Talents") and the design is `docs/design/progression.md` (§7, §10).
 Keep it current with the code, as CLAUDE.md says. Experience itself (the curve, kill XP, the
 hit points a level gives) is `docs/dev/experience.md`.
 

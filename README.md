@@ -73,8 +73,8 @@ screenshots and a tour of every feature.
 Warlock is written in Rust. The simulation lives in `warlock-core` (plain Rust, deterministic, no
 engine); the game is a [Bevy](https://bevy.org) 0.20 app on top of it.
 
-- What we are building: [`specification.md`](specification.md) (the index; the sections are in
-  [`spec/`](spec/))
+- What we are building: the design document, [`specification.md`](specification.md) (the index;
+  the sections are in [`spec/`](spec/))
 - How to build, test, verify, and contribute: [`CLAUDE.md`](CLAUDE.md); notes per subsystem in
   [`docs/dev/`](docs/dev/), the merging playbook in [`docs/dev/merging.md`](docs/dev/merging.md),
   the command-line reference (flags, dump layers, action text) in

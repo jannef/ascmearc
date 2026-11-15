@@ -1,4 +1,4 @@
-# The miscast table (#1271; spec §8 "Spells": "Miscasts"): what befalls a caster whose
+# The miscast table (#1271): what befalls a caster whose
 # Spellcraft check failed (miscast.toml), after the spell has gone off in full. One `[[miscast]]`
 # per file; a campaign's data/miscasts/ may add more. The total rolled (miscast.toml) picks the
 # one entry whose range holds it: higher is worse. Boons stop at 16; the rows ending below
@@ -48,7 +48,7 @@
 #             zone       a zone of kind `zone` (fire, fouled, slick, dark, smoke) around the
 #                        caster, within `radius` (0 to 20) in its line of sight, for `turns`; no
 #                        harm, and none on the overworld (docs/dev/spells.md "Zones")
-#             portal     stairs down into a Pit of its own (Hellegeat, spec §7 "The Pits") open
+#             portal     stairs down into a Pit of its own (Hellegeat) open
 #                        beside the caster, and a `gate` (an id of creatures/) comes beside them;
 #                        on the overworld or a Pit's own floor, or with no plain cell within 3,
 #                        the gate alone

@@ -1,4 +1,4 @@
-# A healing spring's basin (spec §7 "Special rooms"): the feature of the spring room, where Drink
+# A healing spring's basin: the feature of the spring room, where Drink
 # (the abilities menu's Here group) is offered beside it. It never runs dry.
 [[terrain]]
 id = "spring"

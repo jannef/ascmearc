@@ -1,4 +1,4 @@
-# A potion of full healing (spec §8 "Potions"): most wounds closed, bleeding stopped, and poison
+# A potion of full healing: most wounds closed, bleeding stopped, and poison
 # drawn out. Healing and cures mixed: a deep russet.
 [[object]]
 id = "potion_of_full_healing"

@@ -1,4 +1,4 @@
-//! The racial talents (spec §8 "Talents", the Racial tree; #241): each asks for its race and
+//! The racial talents (the Racial tree; #241): each asks for its race and
 //! changes the one rule it names; Versatile, the humans', is granted and adds a pick at
 //! creation and at level 30.
 

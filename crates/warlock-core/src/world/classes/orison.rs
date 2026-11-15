@@ -1,4 +1,4 @@
-//! The priest's prayer (spec §8 "Class abilities"; the priest design, `docs/design/priest.md`
+//! The priest's prayer (the priest design, `docs/design/priest.md`
 //! §6.1; `docs/dev/prayer.md`): the class active Orison, `use:orison` at every tier. A prayer
 //! answers what ails the player most, as far as their prayer talents reach
 //! ([`crate::talent::Prayer`]: the uses, how many answers, all at once), in the priority order

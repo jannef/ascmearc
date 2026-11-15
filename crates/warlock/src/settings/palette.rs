@@ -1,4 +1,4 @@
-//! Color palettes (spec §4.7): a transform applied to colors when they are written to the
+//! Color palettes: a transform applied to colors when they are written to the
 //! console, so content colors (terrain, creatures, UI constants) stay untouched.
 
 use warlock_core::color::Rgb;

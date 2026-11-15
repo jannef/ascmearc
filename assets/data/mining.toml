@@ -1,4 +1,4 @@
-# Mining (spec §8 "Digging" and "Skills": Mining; #1389, docs/design/professions.md §9): what a
+# Mining (Mining; #1389, docs/design/professions.md §9): what a
 # wall a miner digs through gives. Only one trained in `skill` gets anything, and only on a floor
 # of a dungeon branch (data/dungeons.toml), never on a hand-made level or the overworld; a wall a
 # blast or a rod breaks gives nothing, nor does a statue.
@@ -8,7 +8,7 @@
 # held anything; if it did, the miner makes a check: 2d12 + the `stat`'s modifier + the skill's
 # `craft` benefit (skills/) against the band's `difficulty` (a natural 2 fails, a natural 24
 # succeeds). Failed, nothing, and nothing is said. Made, one draw by weight from the `[[find]]`
-# rows at the floor's danger (spec §7 "Danger levels"; an endless branch's keeps rising floor by
+# rows at the floor's danger (an endless branch's keeps rising floor by
 # floor): an ore or stone row gives one lump (or block), one more for every `more_every` the check
 # was made by, at most `most`; the gem row one uncut loose gem, its gem by rarity and its size by
 # the floor's depth as gems.toml finds them. What is found lies on the rubble.

@@ -34,7 +34,7 @@ name = "slam"
 verb = "slams"
 to_hit = 14
 on_hit = [{ status = "frightened", chance = 20, severity = 2 }]
-# Its gear (spec §8 "Creature gear"): the black plate and great sword of a knight sworn to the dark.
+# Its gear: the black plate and great sword of a knight sworn to the dark.
 [[creature.gear]]
 chance = 95
 one_of = ["great_sword"]

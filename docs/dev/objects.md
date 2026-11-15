@@ -1,9 +1,9 @@
 # Objects, piles, and inventories
 
 Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
-rules it implements are in spec/07b-data.md and spec/06-input-and-ui.md. Keep it current with the code, as CLAUDE.md says.
+rules it implements are in spec/06-content.md and spec/05-interface.md. Keep it current with the code, as CLAUDE.md says.
 
-Objects (spec §5, §6, §7; M11): every object in `data/objects/` (one file per object, named by
+Objects (M11): every object in `data/objects/` (one file per object, named by
 its id; a family file only for variants always edited together, `arrows.toml`) defines its glyph,
 color, item class (`class`, below), what it is made of (`materials`, its parts, below; materials
 in `data/materials/`, one file per material), and weight in grams (a scroll also what reading it
@@ -32,7 +32,7 @@ of their own cost (`pick_up`, `drop`); a refused one takes no time, and no messa
 letter (a screen's letters change with its page). The map grid draws the top object
 in place of the terrain glyph (no terrain animation or glow there); look mode names piles.
 
-Item classes (spec §7 "Objects and materials", #189): `data/item_classes.toml`
+Item classes (#189): `data/item_classes.toml`
 (`content/item_class.rs`: `ItemClassDef` with `id`, `name` (the header item lists show), `kinds`,
 `corpses`, `group` (the word a vault's loot pool names it by with its fellows, `Content::pool_classes`,
 `docs/dev/content.md`; never a class's id); `ItemClassId` an index in list order, not saved, so not in the fingerprint) is the
@@ -53,7 +53,7 @@ lines, positions as action text). Storage order never changes: positions stay st
 equipment, and action text keep working. The UI's one paged list is `ui/paged_list.rs`
 (`docs/dev/screens.md`).
 
-Parts (spec §7 "Objects and materials", #199): an object is made of parts, each of one material
+Parts (#199): an object is made of parts, each of one material
 (`content/part.rs`). `materials` in an object file is the ordered list (`PartEntry`: a plain
 material id is one unnamed part, the shorthand `materials = ["steel"]`; a table is `{ part, of,
 share }`), resolved by `part::resolve` into `ObjectDef::parts` (`Part { part: Option<PartId>,
@@ -112,7 +112,7 @@ intermediate: one object for arrows and bolts, its main part its metal.
 
 Whittle (#1028) works the same `Stack::worked` state as Temper, on a weapon, launcher, shield, or armour whose main part is of a material of `group = "wood"` (`world/crafting/temper.rs`).
 
-**Materials and variants** (spec §7 "Materials", #193, #194). `content/material.rs`:
+**Materials and variants** (#193, #194). `content/material.rs`:
 `MaterialDef` gains `group`, `color`, `weight` (percent of steel's), `to_hit` and `damage`
 (`MaterialDef::weapon`: `None` when neither is given, it cannot be a weapon's working part),
 `protection` (`None`: cannot be armour), and `rarity` and `gear` (`Found { weight, deeper, level
@@ -212,7 +212,7 @@ no draw, `ruin.rs` spares it, and `gear::condition::apply` leaves a piece drawn 
 (its draws unchanged). It is not `protected`: salvage and Set still take it. Armour of it keeps
 200 % (`protection`), twice a steel piece's Protection.
 
-**Gems** (spec §7 "Gems", #191): a gem is a material with a `gem` table (`content/gem.rs`,
+**Gems** (#191): a gem is a material with a `gem` table (`content/gem.rs`,
 `GemDef`: `color`, `value` in gold for the plain size and cut, `rarity`, `plural`; a gem is
 precious, checked), one file each in `data/materials/` (diamond, ruby, emerald, sapphire, topaz,
 heliodor, amethyst, zircon, garnet, smokestone; amber is no gem). `data/gems.toml` (`Gems`,
@@ -237,7 +237,7 @@ Loot, drops, and the item description are in `docs/dev/magic-items.md`. Tests:
 `world/items/gem_tests.rs` (data, value, names, naming order, colour, stacking, placements, loot
 frequency across seeds, drops, saves and a replay, the general store).
 
-**Carried lights** (spec §5 "Light sources", #643; `world/items/lamp.rs`): an object with a `light`
+**Carried lights** (#643; `world/items/lamp.rs`): an object with a `light`
 and a `slot` but no `burns` is a carried light (`ObjectDef::carried_light`; the lantern,
 `objects/lantern.toml`, a tool). Its mode is the stack's `light` (`object::LightMode`: unlit,
 lit, hooded; saved, left out while unlit, and named after the item, "a lantern (lit)"), kept
@@ -248,7 +248,7 @@ while lit, the preset's `hooded` while hooded): the light cache's player source.
 on the ground it gives no light. Tests: `world/items/lamp_tests.rs` (`with_lantern` gives fixture
 content one), the light itself in `light_tests.rs`.
 
-**Pieces and breaking** (spec §7 "Pieces and breaking", #484; `piece.rs`): `objects/piece.toml`
+**Pieces and breaking** (#484; `piece.rs`): `objects/piece.toml`
 (`piece::ID`) is the one object for raw material, `made_of = ["any"]`, its own material steel. A
 piece of another material is a stack with that material as its main part (`piece::make`, `None`
 for a material without a group); a piece of steel has no own parts. `Stack::names` names any
@@ -317,8 +317,7 @@ Cēaptūn lays out steel and iron ingots in its smithy (a wood billet is worth n
 `content/stock.rs` (professions, overrides, the loader's refusals), `world/items/stock.rs`
 (`profession_of`, Cēaptūn's piles through a save, the shops, herbs and essences, the alchemist).
 
-**Material drops** (#1341, P15; the design: docs/design/recipes.md §9, §10; spec §7 "Material
-drops"): a dead creature's body leaves stock on its cell. `data/drops/<tag>.toml`, one file per
+**Material drops** (#1341, P15; the design: docs/design/recipes.md §9, §10): a dead creature's body leaves stock on its cell. `data/drops/<tag>.toml`, one file per
 creature tag (the file name is the tag; `README.toml` skipped), holds `bodiless` (default false)
 and `[[drop]]` rows `{ material | object, count (dice), chance (percent) }`; a creature's own
 `[[creature.drops]]` rows (the same shape) add to its tags', and `drops_from_tags = false`

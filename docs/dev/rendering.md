@@ -1,14 +1,14 @@
 # Rendering, visual lighting, and effects
 
 Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
-rules it implements are in spec/04-rendering.md. Keep it current with the code, as CLAUDE.md says.
+rules it implements are in spec/03-rendering.md. Keep it current with the code, as CLAUDE.md says.
 
 Stairs and locations (terrain with `stairs`) under a pile: `ui/mod.rs::draw_map` draws the
 terrain's glyph in the top object's colour (remembered cells dimmed as any), and the dump's
 `view`/`memory` layers (`dump/map.rs::perceived_glyph`) show the stairs' glyph; a known trap still wins
 over both (#983).
 
-Rendering (spec §4.2) is three layers, bottom to top, all positioned in framebuffer pixels:
+Rendering is three layers, bottom to top, all positioned in framebuffer pixels:
 1. **Map grid** (`render/grid.rs`): a `Console` (`render/console.rs`) drawn by one quad with the
    console `Material2d` (`render/console.wesl`). Each fragment finds its cell from its framebuffer
    position and reads glyph coverage from the 1:1 font atlas (`render/atlas.rs`) with integer
@@ -58,7 +58,7 @@ Rendering (spec §4.2) is three layers, bottom to top, all positioned in framebu
    kind's colour in `draw_map`, after blood, for what `PerceptionView::zone_at` shows, on seen and
    remembered cells alike. Still: no particles, no animation, so reduced effects show the same. A
    fire zone's light is an ordinary point source and flickers by its preset (`arrow_fire`).
-   **Spell circles** (spec §4.8 "Spell circles", `docs/design/buff-circles.md`; between the map
+   **Spell circles** (`docs/design/buff-circles.md`; between the map
    grid and the free glyphs, `render/circles.rs::LAYER_Z` 0.5): `ui/circles.rs::emit` (in the
    map chain after `lighting::update`) builds, when `Game` changes, the list of circled actors
    from the snapshot (the player's `own_effects`, a seen creature's `effects_of`, through
@@ -162,7 +162,7 @@ Rendering (spec §4.2) is three layers, bottom to top, all positioned in framebu
 3. **UI console**: the same console material over the whole window; unwritten cells are
    transparent.
 
-**Visual lighting** (spec §4.4, `render/lighting.rs` + `lighting.wesl`, imported by
+**Visual lighting** (`render/lighting.rs` + `lighting.wesl`, imported by
 `console.wesl`): every frame `lighting::update` composites the perceived light for the map grid's
 cells plus a one-cell margin, from `PerceptionView::base_light` (ambient plus gameplay bounce light,
 steady, never shadowed by creatures) and `light_sources()` contributions, less creature shadows,
@@ -193,8 +193,10 @@ is a pure function of its key, preset, and `VisualTime` (steady with the `flicke
 Its hue `tint` multiplies the source's contributions on the CPU (exact; drawn light =
 Σ tinted contributions · shadow keep + base light, while darkvision still measures the perceived
 light); its intensity `gain` becomes the per-cell brightness gain (drawn-light-weighted mean,
-base light = 1) applied after shading. Tune with captures at several `--freeze-time` values;
-the crystals, fungus, runes, and altar must stay constant. Two textures on the map material:
+base light = 1) applied after shading. Subtle by design, felt more than noticed, never a strobe:
+the shipped presets keep `amount` and `depth` at most 0.25 each and `degrees` at most 30 (the
+loader asks only finite numbers and a dip no longer than its slot). Tune with captures at several
+`--freeze-time` values; the crystals, fungus, runes, and altar must stay constant. Two textures on the map material:
 `light` (`Rgba32Float`: rgb light, 1.0 = fully lit, and saturation) and `light_flags`
 (`Rgba8Uint`: lit/opaque/occupied flags, intensity gain byte; the spell circles read the flags
 too). The shader
@@ -208,7 +210,7 @@ water's glint and flow, the light flags and floors, the circles' sizes and glint
 checked by a `shader_constants_match` test in each Rust module, which reads the shader with
 `include_str!` and `render::wesl_const` (#1561): a one-sided edit fails `cargo test`.
 
-Effects (spec §4.8), each off with its own switch (`particles`, `glow`, `distortion`,
+Effects, each off with its own switch (`particles`, `glow`, `distortion`,
 `screen_fades`, `screen_shake`, `weather`) and all off with reduced effects (but `blood` and
 `circles`, which reduced effects leaves as set):
 - **Particles** (`render/particles.rs`): stateless, a pure function of visual time and a seed via
@@ -237,7 +239,7 @@ Effects (spec §4.8), each off with its own switch (`particles`, `glow`, `distor
   texel a cell, the same cells, its origin following the camera's slide each frame), so a streak
   falling across a cell boundary never shows over a roof or a wall (#1691). Drops are `│` sheared along their velocity (`FreeGlyph::slant`, pixels
   across per pixel down, applied in `free_glyph::glyph_mesh`) and faint (`ParticleEmitter::opacity`).
-- **Spell effects** (spec §4.8 "Spell effects"): `Event::Spell { effect, origin, shape:
+- **Spell effects**: `Event::Spell { effect, origin, shape:
   SpellShape::{Burst { center, radius }, Bolt { path }}, cells }` in `warlock-core/src/action.rs`
   (traps emit it; `perceive_events` cuts it with `world/magic/spell.rs::perceive_spell` to the cells the
   player sees or has in line of sight). Data: `data/effects.toml` (`content/effect.rs`,

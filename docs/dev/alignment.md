@@ -1,7 +1,7 @@
 # Alignment
 
 Developer notes for working on this part of Warlock (#254); the rules it implements are in
-spec/08i-character.md ("Alignment"). Keep it current with the code, as CLAUDE.md says.
+spec/12-character.md ("Alignment"). Keep it current with the code, as CLAUDE.md says.
 
 Alignment is good against evil, ADOM's law and chaos turned. Three modules:
 
@@ -74,10 +74,11 @@ use: `World::communes` (`world/classes/dark_face.rs`) asks the talent's bands (a
 where it would act, and outside them the passive does nothing, saying nothing
 (`docs/dev/prayer.md`). Retribution (the paladin's at 25, `alignment = { min = "kind" }`, #912) is
 the other: `World::retribution` (`world/classes/smite.rs`) asks its talent's bands at each blow it would
-answer, and outside them answers none, saying nothing and spending no zeal. The alignment talents proposed in the spec (Righteous fury, Hardened heart, The middle
-way) would work the same way, by band at the moment of use, hooking into `attack_with` (the
-target's `nature`), `shift_alignment` (by `cause`), and `Actor::defence`/`check`. Mana reads
-nothing of alignment.
+answer, and outside them answers none, saying nothing and spending no zeal. No other talent reads
+the band: the alignment talents once proposed (Righteous fury, Hardened heart, The middle way)
+were never built and sit on the deferred list, #196; one would work the same way, by band at the
+moment of use, hooking into `attack_with` (the target's `nature`), `shift_alignment` (by
+`cause`), or `Actor::defence`/`check`. Mana reads nothing of alignment.
 
 **A sin empties zeal** (#910, the paladin design §4.3): `World::shift_alignment`, after the score
 moves, calls `sin_empties_zeal` when the player's score went down (a deed toward evil that

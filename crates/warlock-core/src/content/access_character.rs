@@ -50,7 +50,7 @@ impl Content {
     }
 
     /// The classes character creation offers a character of race `race` and `gender`, in the
-    /// order offered: none hidden or refused to them (spec §8 "Character creation"); none for
+    /// order offered: none hidden or refused to them; none for
     /// an unknown race.
     pub fn classes_offered(&self, race: &str, gender: crate::character::Gender) -> Vec<&ClassDef> {
         let Some(race) = self.race(race) else {
@@ -61,7 +61,7 @@ impl Content {
             .collect()
     }
 
-    /// The prestige classes of `data/prestige/`, in table order (spec §8 "Prestige classes").
+    /// The prestige classes of `data/prestige/`, in table order.
     pub fn prestiges(&self) -> &[PrestigeDef] {
         &self.prestige
     }
@@ -72,7 +72,7 @@ impl Content {
     }
 
     /// The birth sign's gift that is active `active`: the talent of the stars tree with its
-    /// effect (its name and description are the abilities menu's; spec §8 "Birth sign").
+    /// effect (its name and description are the abilities menu's).
     pub fn sign_active(&self, active: SignActive) -> Option<&TalentDef> {
         (self.talents.iter())
             .map(|(_, def)| def)
@@ -106,15 +106,15 @@ impl Content {
         })
     }
 
-    /// The caster's spell `spell` (spec §8 "Class abilities", "Spells"): the spell of its id in
+    /// The caster's spell `spell`: the spell of its id in
     /// `data/spells/`, when a class ability gives it (its `spell` effect names it); `None`
     /// otherwise.
     pub fn class_spell(&self, spell: SpellId) -> Option<&SpellData> {
         self.spell_of(spell).filter(|_| self.class_gives(spell))
     }
 
-    /// The spell `spell` names in `data/spells/`, whoever has it (a class ability, or study:
-    /// spec §8 "Spells"); `None` without its file.
+    /// The spell `spell` names in `data/spells/`, whoever has it (a class ability, or study);
+    /// `None` without its file.
     pub fn spell_of(&self, spell: SpellId) -> Option<&SpellData> {
         self.spells.get(usize::from(spell.0))
     }
@@ -131,13 +131,13 @@ impl Content {
         })
     }
 
-    /// The alignment rules of `data/alignment.toml` (spec §8 "Alignment"); `None` without the
+    /// The alignment rules of `data/alignment.toml`; `None` without the
     /// file: nobody has a score and nothing moves it.
     pub fn alignment(&self) -> Option<&AlignmentRules> {
         self.alignment.as_ref()
     }
 
-    /// The experience rules of `data/experience.toml` (spec §8 "Experience").
+    /// The experience rules of `data/experience.toml`.
     pub fn experience(&self) -> &Experience {
         &self.experience
     }
@@ -187,7 +187,7 @@ impl Content {
             .map(|(i, a)| (WeaponAbilityId(i as u16), a))
     }
 
-    /// The talents (`data/talents/`, its trees and systems too, spec §8 "Talents"): none without
+    /// The talents (`data/talents/`, its trees and systems too): none without
     /// the files.
     pub fn talents(&self) -> &TalentBook {
         &self.talents
@@ -199,7 +199,7 @@ impl Content {
     }
 
     /// The skill ladder: the die a level-up roll throws by the skill's marks (`[ladder]` in
-    /// `data/skills.toml`, spec §8 "Skills").
+    /// `data/skills.toml`).
     pub fn ladder(&self) -> &Ladder {
         &self.skills.ladder
     }
@@ -220,13 +220,13 @@ impl Content {
         self.horoscope.as_ref()?.flavour.as_ref()
     }
 
-    /// The cells a full moon adds at `time` to the reaches of a birth sign's gifts (spec §8
-    /// "Birth sign"): the flavour's `full_moon_reach` while one is up, else 0. The one read.
+    /// The cells a full moon adds at `time` to the reaches of a birth sign's gifts: the flavour's
+    /// `full_moon_reach` while one is up, else 0. The one read.
     pub fn full_moon_reach(&self, time: crate::time::GameTime) -> i32 {
         self.flavour().map_or(0, |f| f.reach_at(time, &self.moons))
     }
 
-    /// The lucky day of those born under `sign` on `born` (spec §8 "Birth sign"), if it is
+    /// The lucky day of those born under `sign` on `born`, if it is
     /// one.
     pub fn lucky(&self, sign: &Sign, born: &crate::character::BirthDate) -> Option<&Lucky> {
         self.horoscope()?.lucky(sign, born.day)

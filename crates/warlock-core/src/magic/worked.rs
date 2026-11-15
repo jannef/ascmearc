@@ -1,4 +1,4 @@
-//! What an anvil's work has done to one item (spec §7 "Special rooms": Temper; the rules are
+//! What an anvil's work has done to one item (Temper; the rules are
 //! `world/crafting/temper.rs`): the state a [`Stack`](crate::object::Stack) keeps, and its pure rules.
 //!
 //! An item is improved up to three times, each time in an [`Aspect`] its base item has, and the

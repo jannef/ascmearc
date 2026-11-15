@@ -109,9 +109,8 @@ fn range(v: &Viewing) -> i32 {
     match &v.sky {
         Some(sky) if v.overworld => {
             let range = daylight::sight_under(state.time, sky, content.climate());
-            // Moon-eyed (spec §8 "Talents"): farther at night; Eyes of the heights (spec §8
-            // "Birth sign"): farther by day too.
-            // A full moon lengthens a gift's (spec §8 "Birth sign", the flavour).
+            // Moon-eyed: farther at night; Eyes of the heights: farther by day too.
+            // A full moon lengthens a gift's (the flavour).
             let moon = if talents.gift_reach.night_sight {
                 content.full_moon_reach(state.time)
             } else {
@@ -233,7 +232,7 @@ impl Seeing {
                 seen.push(p);
             }
         }
-        // Blood scent (spec §8 "Talents"): creatures suffering a status, in line of sight within
+        // Blood scent: creatures suffering a status, in line of sight within
         // its radius, however dark their cells.
         for (id, p) in scented(v, los) {
             seeing.scented.push(id);
@@ -337,14 +336,14 @@ impl Seeing {
     }
 }
 
-/// The creatures Blood scent finds (spec §8 "Talents"): those suffering a status of the talent's,
+/// The creatures Blood scent finds: those suffering a status of the talent's,
 /// in line of sight within its radius, in actor id order.
 fn scented(v: &Viewing, los: &Los) -> Vec<(ActorId, Pos)> {
     let (state, content, talents, viewer) = (v.state, v.content, v.talents, v.viewer);
     if v.overworld || talents.senses.scent.is_empty() {
         return Vec::new();
     }
-    // A full moon lengthens a gift's (Hound's nose; spec §8 "Birth sign").
+    // A full moon lengthens a gift's (Hound's nose).
     let moon = if talents.gift_reach.scent.is_empty() {
         0
     } else {

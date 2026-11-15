@@ -1,4 +1,4 @@
-//! Sight on the overworld (spec §5): by daylight, twilight, moonlight, and weather.
+//! Sight on the overworld: by daylight, twilight, moonlight, and weather.
 
 use std::fmt::Write as _;
 use warlock_core::content::Content;

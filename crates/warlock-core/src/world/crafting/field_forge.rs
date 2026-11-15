@@ -1,4 +1,4 @@
-//! Field forge (spec §8 "Class abilities", §7 "Special rooms"; the craftsperson design §7.7):
+//! Field forge (the craftsperson design §7.7):
 //! the craftsperson's level-32 active, [`ClassActive::FieldForge`], aimed in a direction
 //! (`use:field_forge:E`).
 //!

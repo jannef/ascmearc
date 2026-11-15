@@ -1,4 +1,4 @@
-//! The birth sign's gifts from the Roc to the Barghest (spec §8 "Birth sign"): each changes the
+//! The birth sign's gifts from the Roc to the Barghest: each changes the
 //! one rule it names, and the Phoenix rises from its ashes once in a life.
 
 use crate::character::CharacterSpec;

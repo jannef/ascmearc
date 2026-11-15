@@ -1,8 +1,8 @@
-//! Skills (`assets/data/skills/`, one file per skill, spec §8 "Skills"): what can be trained, how
+//! Skills (`assets/data/skills/`, one file per skill): what can be trained, how
 //! it trains, and what it gives. Adding a skill is one file; what an actor has of them is
 //! [`crate::skills::Skills`].
 //!
-//! `assets/data/skills.toml` holds how skills grow at level-up (spec §8 "Skills"): the ladder of dice their
+//! `assets/data/skills.toml` holds how skills grow at level-up: the ladder of dice their
 //! marks set ([`Ladder`], `[ladder]`) and the rolls' rules ([`RollRules`], `[rolls]`).
 
 use super::ContentError;
@@ -20,7 +20,7 @@ pub(super) struct OptionalSpec {
     dice: Dice,
 }
 
-/// A skill a new character of a class or a race may start with (spec §8 "Skills", ADOM-like):
+/// A skill a new character of a class or a race may start with (ADOM-like):
 /// rolled once when the character is made.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct OptionalSkill {

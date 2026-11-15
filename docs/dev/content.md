@@ -1,7 +1,7 @@
 # Content files and levels
 
 Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
-rules it implements are in spec/07a-levels.md and spec/07b-data.md. Keep it current with the code, as CLAUDE.md says.
+rules it implements are in spec/06-content.md. Keep it current with the code, as CLAUDE.md says.
 
 Content (`assets/campaigns`, `assets/data`, `assets/vaults`; test fixtures may also insert
 `levels/` and `scenarios/` at the top) is TOML. `warlock-core` embeds none of it: it takes the
@@ -18,15 +18,28 @@ warlock-core's own tests read `assets/` from disk instead (`ContentFiles::builti
 `ContentFiles::insert` before the load, which checks the whole set ("The loader's whole-set
 checks" below). A world's levels, scenarios, branches, quests, dialogue, and own creature types live
 in its campaign, `assets/campaigns/<id>/` (`docs/dev/campaign.md`). Level maps are ASCII with a
-legend; see `assets/campaigns/showcase/levels/hub.toml` and spec §7. A legend entry with a `creature` may set `faction = "peaceful"` (any id in
+legend; see `assets/campaigns/showcase/levels/hub.toml`. A legend entry with a `creature` may set `faction = "peaceful"` (any id in
 `data/factions/`) to override its type's faction for that spawn (`Actor::faction_override`; read it with
 `Actor::faction`, never the creature type's, when computing stance), and `alignment = "good"`
 to override its type's alignment the same way (`Actor::alignment_override`, read with
 `Actor::nature`; `docs/dev/alignment.md`), and `status = ["blessed", "weakened*2"]` to place it
 with statuses (`CreatureSpawn::status`, `level.rs::parse_statuses`: a status id, `*N` degrees,
 default one; unknown or over its `max` refused; added in `travel.rs::make_creature`
-beside a den's `asleep`; the test world's `circles` hall, spec §4.8 "Spell circles"). The showcase (hub, vast, courtyard) is safe
-this way: `xtask/src/vast.rs` emits it for its rats and kobolds; fighting is the arena's and the Depths'. A level
+beside a den's `asleep`; the test world's `circles` hall). The showcase (hub, vast, courtyard) is safe
+this way: `xtask/src/vast.rs` emits it for its rats and kobolds; fighting is the arena's and the Depths'.
+**Objects in level files**: a legend entry places a pile with `objects = ["dagger", "arrow*12"]`
+(top first; `*N` places N, one stack if the object is stackable, else N stacks of one; a loose
+gem names its gem, `"gem:ruby*3"`, of the plain size and cut; anything else may name a material
+its construction list allows, `"great_sword:bronze"`; `parse_stacks`, docs/dev/objects.md), and
+`[[pile]] at = [x, y] objects = [...]` places one without a legend character (on top of the
+legend's there). A creature's entry gives what it carries with `carry = ["spear",
+"copper_coin*7"]` (any number of stacks) and what of that it wields and wears with `wield =
+"spear"` and `wear = ["leather_jerkin"]` (an object id or a list; `level.rs::equip`): each the
+first carried stack of that object not yet equipped, in the first free slot that fits it (a
+second ring on the other hand). `wield` takes what goes in a slot of action `wield` or `ready`
+(weapons, shields, missile weapons and missiles), `wear` the rest; an object it does not carry,
+one with no free slot, or the wrong one of the two is a content error. Objects lie only on
+walkable terrain; vaults place them the same way and generators stamp them with the vault. A level
 file's optional `arrival = "..."` line is said when the player arrives by stairs (a dungeon
 branch's on its first level, `Content::arrival`; a scenario's `arrival` once, as a run of it
 starts). A legend entry's `name` (and `note`) names the place on

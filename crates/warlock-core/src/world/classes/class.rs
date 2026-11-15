@@ -1,4 +1,4 @@
-//! Class abilities in the world (spec §8 "Class abilities"; `data/classes/`'s level tables). A
+//! Class abilities in the world (`data/classes/`'s level tables). A
 //! class gives the talents its table names as the player reaches their levels: at creation
 //! (level 1's), as each level comes ([`World::level_up`] calls [`World::grant_class`] with its
 //! news), and again when a run is restored, so a table that grew reaches saved characters (never
@@ -70,7 +70,7 @@ fn handed_news(def: &TalentDef) -> Vec<String> {
 
 /// Gives `actor` (of `character`; none without one) the talents their classes give up to total
 /// level `level` that it does not hold yet, table by table (the class's to its cap, a prestige
-/// class's to its own level; spec §8 "Prestige classes"), each with what it hands out; returns
+/// class's to its own level), each with what it hands out; returns
 /// each talent given, in table order.
 pub(in crate::world) fn grant(
     content: &Content,
@@ -129,7 +129,7 @@ impl World {
         let given = grant(&content, character.as_ref(), self.player_mut(), level);
         // A town helper the ability brings, in a town made already (a patron, `stipend.rs`).
         super::stipend::place_given(&mut self.state, &content, &given);
-        // A run restored keeps what its talents grant (spec §8 "Resources").
+        // A run restored keeps what its talents grant.
         let grants = self
             .state
             .player()
@@ -167,7 +167,7 @@ impl World {
         table.bonus_trees(self.content.talents())
     }
 
-    /// `seconds` of carrying pass for the player (spec §8 "Class abilities": Connoisseur): with
+    /// `seconds` of carrying pass for the player (Connoisseur): with
     /// the ability, each unidentified magic item they carry counts them, and one carried long
     /// enough is identified ("This is ...!"). Nothing without it.
     pub(in crate::world) fn appraise_carried(&mut self, seconds: u64) {

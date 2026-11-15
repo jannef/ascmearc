@@ -1,9 +1,9 @@
 # Digging
 
 Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
-rules it implements are in spec/08d-traps-doors-digging.md. Keep it current with the code, as CLAUDE.md says.
+rules it implements are in spec/10-combat.md. Keep it current with the code, as CLAUDE.md says.
 
-Digging (spec §8 "Digging"; M19, #131) lives in `warlock-core/src/world/crafting/dig.rs`. Terrain that
+Digging (M19, #131) lives in `warlock-core/src/world/crafting/dig.rs`. Terrain that
 breaks has `hardness` and `becomes` (`TerrainDef::breaks: Option<Breakable>`; the data breaks only
 solid terrain, into walkable, transparent, plain ground); `void` (solid rock) has a `face`
 (`wall`) it turns into when a cell next to it opens, as mapgen walls open ground. Cells on a
@@ -33,7 +33,8 @@ breaks (`Breach::Blast`; `perceive_events` says "The wall collapses!" for those 
 Perception sees and remembers the rubble like any terrain; `PerceptionView::dig_refusal` and
 `is_dug` (a visible wall with progress: look mode's "partly dug") are all presentation gets. The
 app bursts the new terrain's `toggle` particles (rubble's dust) on `WallBroken`, like a door's.
-Creatures do not dig. Times are in the wiki's generated `digging.md` tables.
+Creatures do not dig, and no one digs down or up: digging is sideways, into a wall, and the only
+way between levels is the stairs. Times are in the wiki's generated `digging.md` tables.
 A blast also blows apart a shut chest whose band's hardness is below it (`World::blast`;
 `docs/dev/chests.md`); digging at a chest is refused, a chest having no `hardness` as terrain.
 A statue of the stoned (`petrified`, #1126, `world/creatures/statue.rs`) is a breaking wall of hardness 1500

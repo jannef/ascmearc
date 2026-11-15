@@ -8,7 +8,7 @@ use super::{
 };
 
 impl Content {
-    /// The spells' cost table (`data/spells.toml`, spec §8 "Spells"): none without the file.
+    /// The spells' cost table (`data/spells.toml`): none without the file.
     pub fn spell_rules(&self) -> Option<&SpellRules> {
         self.spell_rules.as_ref()
     }
@@ -19,13 +19,13 @@ impl Content {
         self.spell_rules.as_ref()?.types.get(&kind?)
     }
 
-    /// The study check and its time (`data/study.toml`, spec §8 "Spells"): none without it,
+    /// The study check and its time (`data/study.toml`): none without it,
     /// and then nothing can be studied.
     pub fn study_rules(&self) -> Option<&StudyRules> {
         self.study.as_ref()
     }
 
-    /// The check of reading a scroll (`data/rules/decipher.toml`, spec §8 "Scrolls"): none without
+    /// The check of reading a scroll (`data/rules/decipher.toml`): none without
     /// it, and then every scroll simply reads.
     pub fn decipher(&self) -> Option<&DecipherRules> {
         self.decipher.as_ref()
@@ -74,7 +74,7 @@ impl Content {
         self.rod_effects.iter().position(|e| e.id == id)
     }
 
-    /// The spells (`data/spells/`, spec §8 "Spells"), in path order: a [`SpellId`] is an index.
+    /// The spells (`data/spells/`), in path order: a [`SpellId`] is an index.
     pub fn spells(&self) -> &[SpellData] {
         &self.spells
     }
@@ -83,7 +83,7 @@ impl Content {
         &self.spells[usize::from(id.0)]
     }
 
-    /// The statuses a hex lays (spec §8 "Status effects"): those of every `kind = "hex"` spell,
+    /// The statuses a hex lays: those of every `kind = "hex"` spell,
     /// in status order. An actor with one of them is "under a hex" (the witch's Cackle reads it,
     /// `world/classes/witch.rs`).
     pub fn hex_statuses(&self) -> &[StatusId] {

@@ -1,4 +1,4 @@
-# Mimics (spec §8 "Mimics"; docs/dev/creatures/mimics.md; the design:
+# Mimics (docs/dev/creatures/mimics.md; the design:
 # docs/design/chests-and-treasure.md §5): a thing that sits shaped as a chest until something
 # touches it. One creature type a level, `mimic_<L>` for L in `levels`, generated when content
 # loads; a generated chest (data/chests.toml `mimic`, its band's chance) is a mimic of the floor's

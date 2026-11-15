@@ -1,4 +1,4 @@
-//! Combat stances (`assets/data/stances.toml`, spec §8 "Stances"): how the player holds
+//! Combat stances (`assets/data/stances.toml`): how the player holds
 //! themselves in a fight, as in ADOM. A stance trades to-hit and damage against Defence, and the
 //! coward's trades speed for flight. Every number is data, tuned by playtesting, and none is
 //! shown to the player: only the stance's name is.
@@ -162,8 +162,8 @@ pub struct StanceDef {
     /// (percent), at most always (`world/combat/free_blow.rs::gatekeeper_odds`).
     #[serde(default = "hundred")]
     pub gatekeeper: u32,
-    /// Taken off a miscast's total on the miscast table (spec §8 "Spells": "Miscasts";
-    /// `world/magic/miscast.rs`): a calm stance softens a miscast, a wild one worsens it.
+    /// Taken off a miscast's total on the miscast table (`world/magic/miscast.rs`): a calm stance
+    /// softens a miscast, a wild one worsens it.
     #[serde(default)]
     pub miscast: i32,
 }

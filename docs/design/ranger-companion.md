@@ -718,7 +718,7 @@ the generated table of every race's beasts and the rare list with the odds
 (`companion-taming.md`). The Classes page's ranger row links it; the creatures table marks
 tameable types and the nose; the background page gains the chapter's table; `TERMS.md` gains
 "companion", "tame", "grade", "collar", "nose". The spec gains "The animal companion" in
-`spec/08i-character.md` under "Class abilities" and the companion's lines in `spec/08b-creatures.md`
+`spec/12-character.md` under "Class abilities" and the companion's lines in `spec/09-creatures.md`
 "Allies"; `docs/dev/companion.md` is the topic file (`docs/dev/allies.md` the core's, with
 changes B–E noted in it).
 

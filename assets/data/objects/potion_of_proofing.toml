@@ -1,4 +1,4 @@
-# A potion of proofing (spec §8 "Potions"): poison resisted for half an hour, as gear resists it.
+# A potion of proofing: poison resisted for half an hour, as gear resists it.
 # Resistance potions are teal.
 [[object]]
 id = "potion_of_proofing"

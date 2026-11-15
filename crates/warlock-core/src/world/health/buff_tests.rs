@@ -1,4 +1,4 @@
-//! Status effects as buffs, hexes, and cooldowns (spec §8 "Status effects", #227): their combat
+//! Status effects as buffs, hexes, and cooldowns (#227): their combat
 //! fields join attacks and Defence, `cost` slows every action, `blocks` refuses actions and greys
 //! out abilities, `follows` begins a status as another ends, and all of it saves and replays.
 
@@ -275,7 +275,7 @@ fn the_built_in_rage_raises_and_lowers_scores_blocks_reading_and_is_followed_by_
     let scores = |w: &World| w.state.actors[&player].effective_stats(&content);
     let calm = scores(&w);
     let lasting = w.state.player().lasting_max_hp(&content);
-    // Raging comes of the Rage resource (spec §8 "Resources"), not of `afflict`.
+    // Raging comes of the Rage resource, not of `afflict`.
     run(&mut w, "afflict:raging");
     assert_eq!(
         last_message(&w),

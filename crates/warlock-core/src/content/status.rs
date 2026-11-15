@@ -1,4 +1,4 @@
-//! Status effects (`assets/data/status/`, spec §8 "Status effects"): what can ail an actor,
+//! Status effects (`assets/data/status/`): what can ail an actor,
 //! such as bleeding or poison, and the passive healing rules (`[healing]`).
 //!
 //! A status is data: its name, how strong it can get (`max` degrees of severity), how a new dose
@@ -33,7 +33,7 @@ use std::collections::BTreeMap;
 /// The most degrees of severity a status may have.
 pub const MAX_SEVERITY: u16 = 100;
 
-/// What makes a status a **hold** (`hold` in data; Held, spec §8 "Status effects"): the actor
+/// What makes a status a **hold** (`hold` in data; Held): the actor
 /// that caused it (its effect's `by`) holds the sufferer, and the hold ends when the holder dies,
 /// leaves its side, or is held or slowed itself (`world/health/hold.rs`); the player breaks free by a
 /// check of `check` against the holder's grip as they try to step.
@@ -56,7 +56,7 @@ fn strength() -> Stat {
     Stat::Strength
 }
 
-/// How the Heal skill treats a status (`treat` in data; spec §8 "Skills": the Heal ability,
+/// How the Heal skill treats a status (`treat` in data; the Heal ability,
 /// `world/health/heal.rs`): an Intelligence check plus Heal against `difficulty` and `per_degree` for
 /// each of its degrees. A status that `stops` (bleeding) ends when the check is made, and a
 /// failed try may be made again at once; any other (poison) eases a degree when it is made, and
@@ -129,7 +129,7 @@ pub struct Penalty {
 }
 
 /// What a status adds to the fighting of an actor who suffers it, while it lasts, as a combat
-/// stance does (spec §8 "Stances"): `combat = { to_hit = 1, dodge = 1 }` (Inspired), each -20
+/// stance does: `combat = { to_hit = 1, dodge = 1 }` (Inspired), each -20
 /// to 20 and 0 when left out. Several statuses add up, but in the Parry category only the highest
 /// bonus counts, as always (`crate::combat::Defence`).
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Deserialize)]
@@ -155,10 +155,10 @@ impl CombatBonus {
     }
 }
 
-/// Which blows cause a status, and how many degrees of it (spec §8 "Status effects"): a big hit
+/// Which blows cause a status, and how many degrees of it: a big hit
 /// (damage of at least a third of the target's most hit points, [`crate::combat::big_hit`]) or
 /// a confirmed critical. A blow that is both causes the more of the two. `from` names the kinds
-/// of damage that wound this way (spec §8 "Damage types": bleeding from slashing and piercing);
+/// of damage that wound this way (bleeding from slashing and piercing);
 /// none named: every kind.
 #[derive(Clone, Debug, Default, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -171,13 +171,13 @@ struct WoundSpec {
     from: Vec<String>,
 }
 
-/// Which blows cause a status, and how many degrees of it (spec §8 "Status effects"): a big hit
+/// Which blows cause a status, and how many degrees of it: a big hit
 /// or a confirmed critical, of one of `kinds` (every kind when none are named).
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct Wound {
     pub big_hit: u16,
     pub critical: u16,
-    /// The kinds of damage that wound this way; empty: every kind (spec §8 "Damage types").
+    /// The kinds of damage that wound this way; empty: every kind.
     pub kinds: Vec<DamageTypeId>,
 }
 
@@ -202,11 +202,10 @@ impl Wound {
 
 /// What an attack may cause when it hits and the target lives (`on_hit` on a creature's natural
 /// attack): a status, `{ status = "poisoned", chance = 10, severity = 2 }`, exposure to a
-/// disease, `{ disease = "filth_fever", chance = 10 }` (spec §8 "Diseases"), a hold,
+/// disease, `{ disease = "filth_fever", chance = 10 }`, a hold,
 /// `{ status = "held", chance = 10, difficulty = 15 }` (a status with a [`Hold`]: no severity,
 /// its turns are drawn; `difficulty` the grip's, the status's own without one), or a drain,
-/// `{ drain = "strength", points = 1, chance = 100, check = "willpower", difficulty = 14 }`
-/// (spec §8 "Stats": "Drain").
+/// `{ drain = "strength", points = 1, chance = 100, check = "willpower", difficulty = 14 }`.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct OnHit {
     pub what: Affliction,
@@ -240,7 +239,7 @@ pub enum Affliction {
     Drain(Drain),
 }
 
-/// What a drain does (spec §8 "Stats": "Drain"): unless the target makes a check of `check`
+/// What a drain does: unless the target makes a check of `check`
 /// against `difficulty`, `points` come off its score in `stat` for good (`World::drain`).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Drain {
@@ -385,7 +384,7 @@ impl OnHitSpec {
     }
 }
 
-/// What a status lets its bearer feel (`senses`; spec §8 "Spells", Sense the quick): every living
+/// What a status lets its bearer feel (`senses`, Sense the quick): every living
 /// creature within `reach` cells it does not see, as a sound of `kind` at a rough place
 /// (`World::heartbeats`).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
@@ -395,7 +394,7 @@ pub struct Senses {
     pub kind: crate::noise::SoundKind,
 }
 
-/// The passive healing rules (spec §8 "Healing", "Mana"): `[healing]` in the file.
+/// The passive healing rules: `[healing]` in the file.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Healing {
@@ -475,7 +474,7 @@ struct StatusSpec {
     follows: Option<String>,
     wound: Option<WoundSpec>,
     /// The kind of damage it is (poison): a target immune to it never suffers it, and a
-    /// resistance shrinks every dose (spec §8 "Damage types").
+    /// resistance shrinks every dose.
     damage_type: Option<String>,
     #[serde(default)]
     cured_by: Vec<String>,
@@ -557,10 +556,10 @@ pub struct StatusDef {
     /// How fast hit points come back while it lasts, in percent of normal: 0 not at all, 100 as
     /// usual. With several statuses the slowest counts.
     pub regen: u16,
-    /// How fast mana comes back while it lasts, in percent of normal (spec §8 "Mana"), the same
+    /// How fast mana comes back while it lasts, in percent of normal, the same
     /// way.
     pub mana_regen: u16,
-    /// Mana each tick drains (spec §8 "Mana"): none below 0, and never a death.
+    /// Mana each tick drains: none below 0, and never a death.
     pub mana_damage: u16,
     pub penalty: Option<Penalty>,
     /// What it adds to the actor's fighting while it lasts.
@@ -579,26 +578,24 @@ pub struct StatusDef {
     /// read); an ability that costs one of them cannot be used.
     pub blocks: Vec<ActionKind>,
     /// A creature suffering it runs from the one who gave it, or from the nearest foe it sees,
-    /// instead of fighting, while a step takes it farther away (Frightened; spec §8 "Birth
-    /// sign": Hound's bay).
+    /// instead of fighting, while a step takes it farther away (Frightened; Hound's bay).
     pub flees: bool,
-    /// A creature suffering it sleeps (Asleep, a teeming den's; spec §7 "Special rooms"): it
+    /// A creature suffering it sleeps (Asleep, a teeming den's): it
     /// takes no turn and is unaware of everyone until noise, a blow, or a cry wakes it, which
     /// ends the status (`world/creatures/den.rs`).
     pub sleeps: bool,
-    /// A creature suffering it hides as something else (Disguised, a mimic's; spec §8
-    /// "Mimics"): it takes no turn, is unaware of everyone, no creature sets on it, and the
-    /// perception snapshot shows a shut chest in its place, never it (`world/creatures/mimic.rs`). Nothing
-    /// ends it but being found out.
+    /// A creature suffering it hides as something else (Disguised, a mimic's): it takes no turn, is
+    /// unaware of everyone, no creature sets on it, and the perception snapshot shows a shut chest
+    /// in its place, never it (`world/creatures/mimic.rs`). Nothing ends it but being found out.
     pub hides: bool,
     /// Its sufferer is unseen by the player whatever the light (Invisible; docs/dev/creatures.md
     /// "The unseen"): perception leaves it out of the snapshot, and it sheds no light of its own.
     pub unseen: bool,
     /// Its bearer, the player, sees the unseen and the shadowy while it lasts (Seeing).
     pub sees_unseen: bool,
-    /// Its sufferer is flat-footed while it lasts (Surprised, Stunned; spec §8 "Surprise and
-    /// sneak attacks"): its Dexterity and Dodge count nothing toward its Defence, it makes no
-    /// free blow out of its turn, and sneak dice land on it (`world/combat/surprise.rs`).
+    /// Its sufferer is flat-footed while it lasts (Surprised, Stunned): its Dexterity and Dodge
+    /// count nothing toward its Defence, it makes no free blow out of its turn, and sneak dice land
+    /// on it (`world/combat/surprise.rs`).
     pub flat_footed: bool,
     /// Its sufferer's blows that hit are criticals without the confirmation roll, and each such
     /// hit spends a degree (Savage, Sic 'em's; `world/allies/sic.rs`).
@@ -613,7 +610,7 @@ pub struct StatusDef {
     pub follows: Option<StatusId>,
     /// The blows that cause it, if any.
     pub wound: Option<Wound>,
-    /// The kind of damage it is (poison; spec §8 "Damage types"): a resistance to it shrinks
+    /// The kind of damage it is (poison): a resistance to it shrinks
     /// every dose, immunity refuses it. `None`: nothing resists it (bleeding).
     pub damage_type: Option<DamageTypeId>,
     /// The means that cure it (`bandage`): [`crate::World`]'s cure takes one of these.
@@ -644,7 +641,7 @@ pub struct StatusDef {
     pub escape: Option<i32>,
     /// How the Heal skill treats it, if it can (bleeding, poison).
     pub treat: Option<Treat>,
-    /// The light its bearer sheds while it lasts (Lit, the Light spell's; spec §5), if any.
+    /// The light its bearer sheds while it lasts (Lit, the Light spell's), if any.
     pub light: Option<LightId>,
     /// A step or a fall into water ends it (Burning).
     pub quenched: bool,
@@ -661,7 +658,7 @@ pub struct StatusDef {
     /// Ice never gives way under its sufferer, however thin, and a burst that would melt or
     /// shatter it leaves the ice it stands on (Water walking's; `Actor::ice_holds`).
     pub ice_holds: bool,
-    /// The eyes it lends while it lasts (a potion's Owl-eyed; spec §8 "Potions"): an index into
+    /// The eyes it lends while it lasts (a potion's Owl-eyed): an index into
     /// [`super::Content::vision_profiles`], bettering its sufferer's eyes part by part as a
     /// unique item's Vision power does (`Actor::eyes`).
     pub vision: Option<usize>,

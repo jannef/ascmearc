@@ -1,4 +1,4 @@
-//! Unidentified scrolls' labels (`assets/data/scroll_labels.toml`, spec §8 "Scrolls"): the
+//! Unidentified scrolls' labels (`assets/data/scroll_labels.toml`): the
 //! syllables labels are made of, how many a label has, what a labelled scroll is called, and the
 //! colour it shows in. Which label each scroll type gets in a run is drawn by
 //! [`crate::scroll_label::Labels::draw`]. Without the file every scroll is known on sight.

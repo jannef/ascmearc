@@ -1,4 +1,4 @@
-//! Sidestepping a known trap (spec §8 "Traps", #476): the player who steps onto a trap they know
+//! Sidestepping a known trap (#476): the player who steps onto a trap they know
 //! of, of their own will (a move onto it, not a step they were turned into), may avoid it. The
 //! chance is `[avoid]` in `data/traps.toml` ([`crate::content::TrapAvoid`]) at their dodge: the
 //! Dexterity and Dodge parts of their Defence ([`World::trap_dodge`]), so worn armour and burden
@@ -19,7 +19,7 @@ use crate::world::World;
 
 impl World {
     /// The player's dodge against a known trap: the Dexterity and Dodge categories of their
-    /// Defence (spec §8 "Combat").
+    /// Defence.
     pub(crate) fn trap_dodge(&self) -> i32 {
         let defence = self.defence_of(self.state.player);
         defence.bonus(Category::Dexterity) + defence.bonus(Category::Dodge)

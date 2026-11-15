@@ -1,4 +1,4 @@
-//! The quick leave (spec §7 "Leaving an outdoor area", #474): `<` off any stairs in an outdoor
+//! The quick leave (#474): `<` off any stairs in an outdoor
 //! area with an overworld cell leaves it as walking off the edge does, unless a hostile creature
 //! is seen, or unseen within 10 cells (Chebyshev); refused, it takes no time and names nobody.
 //! The fixture is Cēaptūn (no stairs, peaceful townsfolk) with a kobold placed where each case

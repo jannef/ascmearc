@@ -1,7 +1,7 @@
-//! Sizes (`assets/data/sizes.toml`, spec §8 "Burden"): how big a race or a creature type is,
+//! Sizes (`assets/data/sizes.toml`): how big a race or a creature type is,
 //! and so how much it can carry. A size scales the carrying limit by its `carry` percent: small
 //! races (halflings, gnomes) carry three quarters of what a medium one does. Its `blood` percent
-//! scales how much blood it spills (spec §8 "Blood"; presentation only).
+//! scales how much blood it spills (presentation only).
 //!
 //! Every race and creature type has a size, [`MEDIUM`] unless it names another. Without the file
 //! there is only [`SizeDef::medium`].
@@ -25,14 +25,14 @@ pub struct SizeDef {
     pub id: String,
     /// Its name, as the wiki shows it ("Small").
     pub name: String,
-    /// How much it carries, in percent of what a medium one does (spec §8 "Burden").
+    /// How much it carries, in percent of what a medium one does.
     pub carry: u16,
-    /// How much blood it spills, in percent of what a medium one does (spec §8 "Blood"); 100 by
+    /// How much blood it spills, in percent of what a medium one does; 100 by
     /// default.
     #[serde(default = "full_blood")]
     pub blood: u16,
-    /// The chance its material drops are rolled at, in percent of what is written (spec §7
-    /// "Material drops"; `content/drops.rs`); 100 by default.
+    /// The chance its material drops are rolled at, in percent of what is written
+    /// (`content/drops.rs`); 100 by default.
     #[serde(default = "full_drops")]
     pub drops: u16,
 }

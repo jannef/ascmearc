@@ -1,8 +1,8 @@
-//! The ascetic's Stunning strike and the Stunned status (spec §8 "Class abilities", "Surprise
-//! and sneak attacks"; the ki tricks design §6, #848): the trick comes at level 12, is refused
-//! (no time, no ki) before the spend, spends a point of ki on a bare-handed blow, and a wounding
-//! hit leaves the foe Stunned: flat-footed by the status's `flat_footed` field (as Surprised
-//! is), no free blows, sneak dice land, and its next action is slowed and ends it.
+//! The ascetic's Stunning strike and the Stunned status (the ki tricks design §6, #848): the trick
+//! comes at level 12, is refused (no time, no ki) before the spend, spends a point of ki on a
+//! bare-handed blow, and a wounding hit leaves the foe Stunned: flat-footed by the status's
+//! `flat_footed` field (as Surprised is), no free blows, sneak dice land, and its next action is
+//! slowed and ends it.
 
 use crate::ability::{Ability, Unavailable};
 use crate::action::parse_actions;

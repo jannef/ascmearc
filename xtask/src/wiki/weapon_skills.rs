@@ -1,6 +1,6 @@
-//! The weapon skills tables (spec §8 "Weapon skills"), from `data/weapon_skills.toml`: the
+//! The weapon skills tables, from `data/weapon_skills.toml`: the
 //! skills and what trains them, the marks each rank asks for, and what each rank gives; the
-//! fighting styles (spec §8 "Fighting styles"): their configurations and what each rank gives (two-weapon penalties included); and the
+//! fighting styles: their configurations and what each rank gives (two-weapon penalties included); and the
 //! starting ranks of races and classes, as data writes them.
 
 use super::order;
@@ -143,7 +143,7 @@ pub fn marks(content: &Content) -> String {
     out
 }
 
-/// The target dummies (spec §8 "Weapon skills": "Target dummies"): every creature type with a
+/// The target dummies: every creature type with a
 /// `training` table, by name, with what it teaches and what becomes of missiles at it.
 pub fn dummies(content: &Content) -> String {
     let mut rows: Vec<_> = (content.creature_defs().iter())

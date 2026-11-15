@@ -1,4 +1,4 @@
-//! Talk (spec §8 "Dialogue", #146) and making way (spec §8 "Displacement", #147).
+//! Talk (#146) and making way (#147).
 //!
 //! **Chatting** ([`Action::Chat`](crate::Action::Chat)) with a creature the player sees next to
 //! them takes the time of `chat`. A creature with a dialogue (`data/dialogue.toml`, by its `npc`
@@ -158,8 +158,8 @@ impl World {
     }
 
     /// What `actor` is called in messages: "the gardener", a shop's keeper by its name
-    /// ("Grimbold"; spec §7 "Shops"), a unique character by its proper name ("Sister Hild"), or
-    /// a kept beast (a companion, a familiar) by its own ("Snel"; spec §8 "Allies").
+    /// ("Grimbold"), a unique character by its proper name ("Sister Hild"), or
+    /// a kept beast (a companion, a familiar) by its own ("Snel").
     pub(in crate::world) fn called(&self, actor: &Actor) -> String {
         if let Some(data) = actor.kept() {
             return data.name.clone();
@@ -198,7 +198,7 @@ impl World {
             .then_some(actor.id)
     }
 
-    /// Whether `actor` stops a rest by coming close in view (spec §8 "Rest", `rest.rs`): a
+    /// Whether `actor` stops a rest by coming close in view (`rest.rs`): a
     /// creature hostile to the player. Neutral and peaceful ones (the showcase's people, a deer)
     /// and the player's allies never do; the player sees who they are.
     pub(in crate::world) fn disturbs_rest(&self, actor: &Actor) -> bool {
@@ -495,10 +495,9 @@ impl World {
         }
     }
 
-    /// Why creature `id` would not make way for the player, if it would not (spec §8
-    /// "Displacement"): it keeps its post or never gives way (its type's `budge`), it cannot
-    /// move (overloaded), or it is two sizes or more larger than the player. For one Trusted by
-    /// none (spec §8 "Birth sign") no one budges.
+    /// Why creature `id` would not make way for the player, if it would not: it keeps its post or
+    /// never gives way (its type's `budge`), it cannot move (overloaded), or it is two sizes or
+    /// more larger than the player. For one Trusted by none no one budges.
     pub fn refusal(&self, id: ActorId) -> Option<Refusal> {
         let actor = self.state.actors.get(&id)?;
         let mods = self.state.player().talent_mods(&self.content);
@@ -540,9 +539,9 @@ impl World {
     /// Creature `id` steps from `from` onto `to`, where the player stood, making way for them:
     /// it remembers where it stood (unless it already has a post to return to), which it walks
     /// back to before it carries on. Says so, and makes its noise. It lands there as any step
-    /// lands: ice there may give way under it (spec §5 "Ice"), and a trap there goes off (spec §8
-    /// "Traps"). Its own turn is unaffected but for what that costs it on top (climbing out of a
-    /// pit or onto the ice), which comes off its energy.
+    /// lands: ice there may give way under it, and a trap there goes off. Its own turn is
+    /// unaffected but for what that costs it on top (climbing out of a pit or onto the ice), which
+    /// comes off its energy.
     pub(in crate::world) fn swap_places(
         &mut self,
         id: ActorId,

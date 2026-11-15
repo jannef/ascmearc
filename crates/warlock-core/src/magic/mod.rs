@@ -1,4 +1,4 @@
-//! Magic items (spec §8 "Magic items"), after Path of Exile: base items roll prefixes and
+//! Magic items, after Path of Exile: base items roll prefixes and
 //! suffixes (`data/affixes.toml`, [`crate::content::Affixes`]).
 //!
 //! - **Rarity**: a *normal* item has no affixes; a *magic* item a prefix, a suffix, or one of
@@ -53,7 +53,7 @@ pub struct Affix {
     pub value: i32,
 }
 
-/// What a magic or rare item rolled (spec §8 "Magic items").
+/// What a magic or rare item rolled.
 #[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct Magic {
     /// Magic or rare (a normal item has no `Magic`).
@@ -68,11 +68,11 @@ pub struct Magic {
     /// Whether the player knows its affixes.
     #[serde(default, skip_serializing_if = "is_false")]
     pub identified: bool,
-    /// The seconds the player has carried it unidentified while carrying taught them (spec §8
-    /// "Class abilities": Connoisseur), up to what that asks.
+    /// The seconds the player has carried it unidentified while carrying taught them (Connoisseur),
+    /// up to what that asks.
     #[serde(default, skip_serializing_if = "is_zero")]
     pub carried: u32,
-    /// The unique item it is (an id in `data/uniques/`; spec §8 "Magic items"), by which its
+    /// The unique item it is (an id in `data/uniques/`), by which its
     /// power and lore are found: a rare item with its set name and affixes.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub unique: Option<String>,
@@ -195,8 +195,8 @@ impl Magic {
     }
 }
 
-/// The powers of the unique items among the things in `inventory` that `equipment` holds (spec
-/// §8 "Magic items": a power works while its item is worn or wielded), in equipment order.
+/// The powers of the unique items among the things in `inventory` that `equipment` holds (a power
+/// works while its item is worn or wielded), in equipment order.
 pub fn worn_powers<'c>(
     inventory: &'c [crate::object::Stack],
     equipment: &'c crate::equipment::Equipment,

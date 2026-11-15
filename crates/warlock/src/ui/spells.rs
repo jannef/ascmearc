@@ -1,4 +1,4 @@
-//! Spell effects on screen (spec §4.8 "Spell effects"): each perceived spell event
+//! Spell effects on screen: each perceived spell event
 //! ([`Event::Spell`]: a trap's fireball or lightning bolt, later spells) plays its effect from
 //! `data/effects.toml` over the cells the event says the player saw, never more.
 //!

@@ -27,7 +27,7 @@ impl Content {
         &self.terrain
     }
 
-    /// The terrain ice looks like (thin ice, ice, thick ice; spec §5 "Ice"), each with the
+    /// The terrain ice looks like (thin ice, ice, thick ice), each with the
     /// thinnest ice that looks like it in mm, thinnest first; empty if nothing freezes.
     pub fn ice_terrain(&self) -> &[(u16, TerrainId)] {
         &self.ice
@@ -42,7 +42,7 @@ impl Content {
     }
 
     /// The terrain of a chest in `state` (the one whose `chest` field says so), if there is one.
-    /// The statue a stoned creature leaves (spec §8 "Statues"), if the terrain has one.
+    /// The statue a stoned creature leaves, if the terrain has one.
     pub fn statue_terrain(&self) -> Option<TerrainId> {
         (self.terrain.iter())
             .position(|d| d.statue.is_some())
@@ -119,8 +119,8 @@ impl Content {
     }
 
     /// The branch and depth of a generated level id such as `depths:3`, if the branch exists and
-    /// has that depth. A portal branch's levels are a Pit's, `hellegeat@7:3` (spec §7 "The
-    /// Pits"), and only those: `hellegeat:3` is no level, nor is `depths@7:3`.
+    /// has that depth. A portal branch's levels are a Pit's, `hellegeat@7:3`, and only those:
+    /// `hellegeat:3` is no level, nor is `depths@7:3`.
     pub fn branch_level(&self, id: &str) -> Option<(&DungeonDef, u32)> {
         let (branch, depth) = parse_branch_level(id)?;
         let (branch, pit) = match parse_instance(branch) {
@@ -132,7 +132,7 @@ impl Content {
         def.plan(depth).map(|_| (def, depth))
     }
 
-    /// How dangerous level `id` is and what lives there (spec §7 "Danger levels"): its danger
+    /// How dangerous level `id` is and what lives there: its danger
     /// rule, the depth to read it at (1 on a hand-made level), and its spawning rules. `None`:
     /// danger 0, nothing comes (the overworld, local areas, every level that gives no `danger`).
     pub fn spawning(&self, id: &str) -> Option<(DangerRule, u32, &Spawning)> {
@@ -142,8 +142,8 @@ impl Content {
         }
         let (branch, depth) = self.branch_level(id)?;
         let rule = branch.plan(depth)?.danger?;
-        // Past the roster's top, an endless branch draws as at its top (spec §7 "The endless
-        // branch"): nothing above a danger is drawn, and nothing far below it.
+        // Past the roster's top, an endless branch draws as at its top: nothing above a danger is
+        // drawn, and nothing far below it.
         let depth = (branch.endless).map_or(depth, |e| depth.min(e.roster_depth));
         Some((rule, depth, branch.spawning.as_ref()?))
     }
@@ -178,13 +178,13 @@ impl Content {
 
     /// Whether `id` is a floor that is gone when it is left (`world/levels/endless.rs`): an endless
     /// branch's, made anew from a stream of its own on every arrival, or a Pit's, made the same
-    /// again from its id (spec §7 "The Pits").
+    /// again from its id.
     pub fn is_endless_floor(&self, id: &str) -> bool {
         self.branch_level(id)
             .is_some_and(|(def, _)| def.endless.is_some() || def.portal.is_some())
     }
 
-    /// Whether `id` is a floor of a Pit, an instance of a portal branch (spec §7 "The Pits").
+    /// Whether `id` is a floor of a Pit, an instance of a portal branch.
     pub fn is_portal_floor(&self, id: &str) -> bool {
         self.branch_level(id)
             .is_some_and(|(def, _)| def.portal.is_some())
@@ -201,9 +201,9 @@ impl Content {
             .map(|(from, _)| from.as_str())
     }
 
-    /// The levels whose stairs down lead to level `id` from below its own branch (spec §7 "Ways
-    /// up"): the deepest level of each branch whose `below` is `id`, in id order. Level `id` gets
-    /// a staircase up to each (`mapgen/way_up.rs`).
+    /// The levels whose stairs down lead to level `id` from below its own branch: the deepest level
+    /// of each branch whose `below` is `id`, in id order. Level `id` gets a staircase up to each
+    /// (`mapgen/way_up.rs`).
     pub fn ways_up_from(&self, id: &str) -> Vec<String> {
         (self.dungeons.values())
             .filter(|d| d.below.as_deref() == Some(id))
@@ -236,13 +236,13 @@ impl Content {
         self.scenarios.values()
     }
 
-    /// The outcome tables (`data/outcomes/`, spec §7 "Special rooms"): what a place's ability
+    /// The outcome tables (`data/outcomes/`): what a place's ability
     /// draws.
     pub fn outcomes(&self) -> &OutcomeTables {
         &self.outcomes
     }
 
-    /// What a place offers beside a cell of terrain `terrain` (spec §7 "Special rooms": Pray at
+    /// What a place offers beside a cell of terrain `terrain` (Pray at
     /// a forgotten altar), and the outcome table it draws on: the first effect whose `feature`
     /// it is and that `offers` something. `None` for any other terrain (a spent altar).
     pub fn offer_at(&self, terrain: TerrainId) -> Option<(Offer, &OutcomeTable)> {
@@ -294,7 +294,7 @@ impl Content {
     }
 
     /// The effect `id` of a special room.
-    /// The shops of `data/shops.toml` (spec §7 "Shops"); `None` without the file.
+    /// The shops of `data/shops.toml`; `None` without the file.
     pub fn shops(&self) -> Option<&Shops> {
         self.shops.as_ref()
     }

@@ -1,4 +1,4 @@
-//! Creation picks (spec §8 "Talents"): a character the player chose takes its talents at
+//! Creation picks: a character the player chose takes its talents at
 //! creation, named or at random, and records them; nothing is said and nothing waits.
 
 use crate::character::CharacterSpec;

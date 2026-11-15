@@ -1,4 +1,4 @@
-//! Weather (spec §5 "Weather"): the chances by month and what each weather does.
+//! Weather: the chances by month and what each weather does.
 
 use std::fmt::Write as _;
 use warlock_core::content::Content;

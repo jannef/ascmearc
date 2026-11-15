@@ -1,4 +1,4 @@
-//! Mana (spec §8 "Mana"): what races and classes give, how fast it comes back by Willpower, and
+//! Mana: what races and classes give, how fast it comes back by Willpower, and
 //! what changes the pace.
 
 use super::healing::pace;

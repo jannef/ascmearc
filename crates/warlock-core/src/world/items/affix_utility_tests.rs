@@ -1,4 +1,4 @@
-//! The utility affixes' hooks (spec §8 "Magic items"; docs/design/affixes-systems.md §6): a
+//! The utility affixes' hooks (docs/design/affixes-systems.md §6): a
 //! worn `door_kick` joins the kick's Strength, `dig_percent` the work a turn, `hunger` the pace
 //! of hunger, `trap_damage` the cut of a trap's blow (with Trap sense at most 75 % off), and
 //! `disease_check` every disease check. Each applies unidentified, stops when taken off, and

@@ -1,4 +1,4 @@
-//! The element gifts that are more than one read at a hook (spec §8 "Birth sign"; the talents of
+//! The element gifts that are more than one read at a hook (the talents of
 //! the `stars` tree): Fire's active, **Blaze**, used from the abilities menu's Birth sign group
 //! ([`crate::ability::Ability::Sign`]) as [`Action::Gift`] (`use:blaze`), dispatched with the
 //! other actives by `World::use_gift` in `gifts.rs`. The passive gifts

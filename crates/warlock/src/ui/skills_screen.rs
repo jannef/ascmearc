@@ -1,9 +1,9 @@
-//! The Skills screen (spec §6; `S`, or `S` on the character screen): the player's trained skills
-//! (spec §8 "Skills"), in skill order, each with its value and, dimmer, a short meter of how
-//! practised it is (its training marks' step on the skill ladder, in quarters: `━━──`): how big
-//! its next level-up roll is. Untrained skills are not there: they do not exist for
-//! the player. Never a benefit's number, a mark, or a chance: perception has none of them. The
-//! selected skill's one-line description shows at the bottom.
+//! The Skills screen (`S`, or `S` on the character screen): the player's trained skills, in skill
+//! order, each with its value and, dimmer, a short meter of how practised it is (its training
+//! marks' step on the skill ladder, in quarters: `━━──`): how big its next level-up roll is.
+//! Untrained skills are not there: they do not exist for the player. Never a benefit's number, a
+//! mark, or a chance: perception has none of them. The selected skill's one-line description shows
+//! at the bottom.
 //!
 //! Read-only: ↑↓ choose a skill; Esc, Enter, or its own key closes it. It is read from the
 //! perception snapshot when it opens; no game time passes while it is open, so it cannot go

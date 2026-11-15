@@ -1,4 +1,4 @@
-//! Objects in the world (spec §5, §6): stacks lying in piles on cells and carried in
+//! Objects in the world: stacks lying in piles on cells and carried in
 //! inventories, and what things weigh.
 //!
 //! A **pile** is the ordered list of stacks on a cell, the top first: the top is what the map
@@ -11,19 +11,19 @@
 //! Weights are integer grams. An actor weighs its creature's base weight plus everything it
 //! carries ([`Weight`]).
 //!
-//! A magic or rare item (spec §8 "Magic items", [`crate::magic`]) is a stack that carries what it
+//! A magic or rare item ([`crate::magic`]) is a stack that carries what it
 //! rolled ([`Magic`]); it joins only a stack with the very same magic (arrows shot from a magic
 //! stack and picked up again). What the player is shown of it goes through
 //! [`Stack::describe`] and [`Stack::known_magic`], which keep an unidentified item's affixes
 //! hidden.
 //!
-//! An item made of other parts than its base item (spec §7 "Gems": a loose gem, an item set
+//! An item made of other parts than its base item (a loose gem, an item set
 //! with a gem; "Materials": an item of another material, a bronze long sword) carries them
 //! ([`crate::item_parts`]); its name, value, weight, colour, and what it does in a fight follow
 //! from them ([`crate::variant`]), and it joins only a stack made the same way. Materials are not
 //! hidden: the player sees them at once.
 //!
-//! Food (spec §8 "Hunger") remembers when it was made ([`Stack::died`]; a corpse, a stack of one,
+//! Food remembers when it was made ([`Stack::died`]; a corpse, a stack of one,
 //! when its creature died): it rots from then on, and is gone in the end ([`crate::rot`]). Food
 //! joins a stack of the same food whatever its age, and the stack keeps the oldest.
 
@@ -61,35 +61,35 @@ pub struct Stack {
     /// ([`crate::rot::made_at`]).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) died: Option<GameTime>,
-    /// A wand's charges used and what the player knows of them (spec §8 "Magic items":
-    /// "Wands"); `None` for everything else, and for a wand as it is made: full, its charges
-    /// unknown. Ground truth: presentation reads them only through [`Stack::known_charges`].
+    /// A wand's charges used and what the player knows of them; `None` for everything else, and for
+    /// a wand as it is made: full, its charges unknown. Ground truth: presentation reads them only
+    /// through [`Stack::known_charges`].
     #[serde(default, skip_serializing_if = "Option::is_none")]
     charges: Option<Charges>,
-    /// A wand's rung on its spell's damage ladder (spec §8 "Magic items": "Wands"; the spell
+    /// A wand's rung on its spell's damage ladder (the spell
     /// scaling design §7.4), drawn evenly in its kind's `rungs` as it is made
     /// ([`Stack::draw_wand_rung`]); `None` for everything else. A wand without one casts at rung
     /// 0. Ground truth: presentation reads it only through [`Stack::known_wand_rung`].
     #[serde(default, skip_serializing_if = "Option::is_none")]
     wand_rung: Option<u8>,
-    /// A carried light's mode (spec §5 "Light sources": a lantern unlit, lit, or hooded), kept
+    /// A carried light's mode (a lantern unlit, lit, or hooded), kept
     /// with the item wherever it goes; it gives light only ready in the Tool slot
     /// (`WorldState::carried_light`). Unlit for everything else.
     #[serde(default, skip_serializing_if = "LightMode::is_unlit")]
     light: LightMode,
-    /// A weapon of spirit-stuff (spec §8 "Prestige classes": the Hunter's Spirit weapon), made
+    /// A weapon of spirit-stuff (the Hunter's Spirit weapon), made
     /// only by `World::call_weapon` and only ever in a hand: it fades the moment it leaves one
     /// (`world/classes/spirit_weapon.rs`). Otherwise it is its base object in every rule.
     #[serde(default, skip_serializing_if = "is_false")]
     spirit: bool,
-    /// What an anvil's work has done to it (spec §7 "Special rooms": Temper; [`Worked`]); `None`
+    /// What an anvil's work has done to it (Temper; [`Worked`]); `None`
     /// for an item no one has worked. Boxed: most stacks have none. A worked item is like no
     /// other and never stacks. Its attempts are ground truth, for the rules and the dev dump.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     worked: Option<Box<Worked>>,
 }
 
-/// The mode of a carried light ([`Stack`]'s `light`; spec §5 "Light sources"): what `u`, the
+/// The mode of a carried light ([`Stack`]'s `light`): what `u`, the
 /// use-tool command (`World::use_tool`), turns a lantern ready in the Tool slot through.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -281,7 +281,7 @@ impl Stack {
     }
 
     /// Counts `seconds` more of it carried by someone who learns magic items by carrying them
-    /// (spec §8 "Class abilities": Connoisseur), if it is magic and unidentified, or a wand
+    /// (Connoisseur), if it is magic and unidentified, or a wand
     /// whose charges they do not know; returns whether it has now been carried `needed` seconds.
     pub(crate) fn carry_for(&mut self, content: &Content, seconds: u64, needed: u64) -> bool {
         let carried = match self.magic.as_mut() {
@@ -376,7 +376,7 @@ impl Stack {
         }
     }
 
-    /// Forgets what it is (spec §7 "Special rooms": a prayer's Muddled): an identified magic
+    /// Forgets what it is (a prayer's Muddled): an identified magic
     /// item is unidentified again, and what carrying it taught is lost. Whether it was known.
     pub(crate) fn forget(&mut self) -> bool {
         match self.magic.as_mut() {
@@ -408,7 +408,7 @@ impl Stack {
         crate::magic::mods::less(each, lighter).max(1) * u64::from(self.count)
     }
 
-    /// Its Protection while worn (spec §8 "Combat"): its object's (scaled by another material,
+    /// Its Protection while worn: its object's (scaled by another material,
     /// [`Stack::base_protection`]), plus what a Protection affix adds (the one reader of that
     /// effect; rules only, as the player knows it only once identified).
     pub(crate) fn protection(&self, content: &Content) -> i32 {
@@ -431,7 +431,7 @@ impl Stack {
     }
 
     /// How its Protection stands against each physical kind, more or less than its total
-    /// (spec §8 "Damage types": its object's `protects`).
+    /// (its object's `protects`).
     pub(crate) fn protects<'c>(&self, content: &'c Content) -> &'c [(DamageTypeId, i32)] {
         &content.object(self.object).protects
     }
@@ -448,7 +448,7 @@ impl Stack {
         self.parts.as_deref()
     }
 
-    /// What it is made of, part by part, the main part first (spec §7 "Objects and materials"):
+    /// What it is made of, part by part, the main part first:
     /// its base item's parts with its own in their place ([`item_parts::resolve`]). Materials are
     /// not hidden: the player sees them, identified or not.
     pub fn parts<'a>(&self, content: &'a Content) -> Cow<'a, [Part]> {
@@ -459,7 +459,7 @@ impl Stack {
         }
     }
 
-    /// The gem it is, if it is a loose gem (the gems' object, spec §7 "Gems"): its material and
+    /// The gem it is, if it is a loose gem (the gems' object): its material and
     /// its size and cut.
     pub fn gem(&self, content: &Content) -> Option<(MaterialId, Cutting)> {
         let gems = content.gems()?;
@@ -482,7 +482,7 @@ impl Stack {
         each * u64::from(self.count)
     }
 
-    /// What it is worth to a shop or a patron, in gold coins (spec §7 "Shops"; #1709): each one's
+    /// What it is worth to a shop or a patron, in gold coins (#1709): each one's
     /// value as made ([`Stack::value`]: its parts, an anvil's grade), its magic as the player
     /// knows it added ([`crate::content::MagicWorth`]: the rarity always, the affixes once
     /// identified), then a maker's mark's percent on top of it all, times the count. A plain item
@@ -533,7 +533,7 @@ impl Stack {
     }
 
     /// The colour its glyph is drawn in: its object's, a loose gem's own (duller uncut), its
-    /// gem's on an item that takes its gem's colour (a ring set with one; spec §7 "Gems"), or
+    /// gem's on an item that takes its gem's colour (a ring set with one), or
     /// else its main part's material's where that is not its base item's (a bronze long sword,
     /// [`variant::color`]).
     pub fn fg(&self, content: &Content) -> Rgb {

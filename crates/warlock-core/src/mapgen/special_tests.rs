@@ -1,4 +1,4 @@
-//! The special-room draw (spec §7 "Special rooms", `special.rs`): the features' shares by their
+//! The special-room draw (`special.rs`): the features' shares by their
 //! weights, a dungeon's favoured and banned features, a feature added to the data turning up
 //! where no dungeon names it, the whole-level version, and eligibility.
 

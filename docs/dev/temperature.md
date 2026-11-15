@@ -1,9 +1,9 @@
 # Temperature and ice
 
 Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
-rules it implements are in spec/05-visibility.md. Keep it current with the code, as CLAUDE.md says.
+rules it implements are in spec/04-perception.md. Keep it current with the code, as CLAUDE.md says.
 
-**Temperature** (spec §5 "Temperature", `temperature.rs`; M26): `Temperature` is tenths of a
+**Temperature** (`temperature.rs`; M26): `Temperature` is tenths of a
 degree Celsius (`celsius()`/`fahrenheit()` round to whole degrees for display). Underground it is
 fixed per level (`LevelState::temperature`, from the level file's `temperature`, else the
 branch plan's in `data/dungeons.toml`, else `UNDERGROUND` 10 °C; refused on sky-exposed
@@ -20,15 +20,22 @@ player feels it where they stand) read it. The pause menu's line on the world te
 4 °C`, out of the weather `the air at 10 °C`), in the settings' unit.
 Nothing feels the cold yet.
 
-**Ice** (spec §5 "Ice", `ice.rs` the model, `world/levels/ice.rs` the rules; M26): water terrain with a
+**Ice** (`ice.rs` the model, `world/levels/ice.rs` the rules; M26): water terrain with a
 `freeze` table grows ice; terrain with `ice = MM` is what ice of at least that thickness looks
 like (`Content::ice_terrain`, `ice_look`). Ice is kept per level, sparsely, in µm
 (`LevelState::ice`: `Ice { water, um }`), and the terrain grid shows its look (the water when
 too thin), so sight, memory, look mode, and noise just follow; ice and freezing water are
 transparent and lightless (validated), so light masks never need invalidating. **Never tick
 ice per cell per second**: `LevelState::advance_ice` brings a level up to a time in fixed
-10-minute ticks of the clock (`ice::ticks`, each at its middle's temperature plus a special
-room's warmth at the cell; `ice_until` the last tick done), grouping cells by (water, thickness,
+10-minute ticks of the clock. The numbers are physical: growth follows Stefan's law (the square of
+the thickness grows by 400 000 µm² per tick per tenth of a degree below the water's freezing
+point, times the terrain's rate: 2.4 cm per √(°C·day), about 5 cm in a day at −5 °C and 13 cm
+in three days at −10 °C, quickly at first and ever more slowly; above 0 °C it melts 5 µm a tick
+per tenth of a degree, 7.2 mm a day per degree; at most `ice::MAX_MM` 1 m), and what ice holds is
+Gold's formula with `A` = 3.5 kg/cm², 35 g per mm² of thickness squared (5 cm holds 87.5 kg, a
+person with a pack; 15 cm 787.5 kg), an actor's weight being its creature's base weight plus
+everything it carries (`ice::gives_way`, below). The ticks (`ice::ticks`, each at its middle's temperature plus a special
+room's warmth at the cell; `ice_until` the last tick done) group cells by (water, thickness,
 warmth), so it is exact however time passed (rests,
 skips, journeys) and a year away is cheap. It runs on the current level as the clock moves
 (`run_turn`) and as perception begins, and for a new sky-exposed level over `ice::PRE_ROLL` (30

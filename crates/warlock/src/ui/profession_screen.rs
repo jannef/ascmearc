@@ -1,4 +1,4 @@
-//! A profession's screen (spec §8 "Skills"; docs/design/professions.md §8; #1334): what its row
+//! A profession's screen (docs/design/professions.md §8; #1334): what its row
 //! in the abilities menu ("Metalcraft…") opens. The recipes the player sees
 //! (`PerceptionView::recipes`), in the one paged list grouped by the result's item class, the
 //! built-in recipes (Temper, Whittle) first under "Work". A row is the recipe's name and

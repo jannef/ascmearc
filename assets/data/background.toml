@@ -1,4 +1,4 @@
-# Background stories (spec §8 "Background story"; docs/dev/background.md): a chosen character's
+# Background stories (docs/dev/background.md): a chosen character's
 # youth, told when the run begins in eight chapters of one line each, with what it left them.
 # The chapters are `background/NN-<chapter>.toml`, told in file-name order, then a campaign's own
 # (`campaigns/<id>/data/background/`, after these; never a shared chapter's id).

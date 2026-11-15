@@ -1,4 +1,4 @@
-//! Collapsed floors (spec §7 "Special rooms", design §9.13): every step of the **player** onto a
+//! Collapsed floors (design §9.13): every step of the **player** onto a
 //! cell of a collapsed floor (a room whose effect has a `collapse`, `Here::collapse`; its cracked
 //! floor terrain, where the room lays one) has the effect's chance, doubled while they are
 //! Burdened or worse, to give way: one draw of the gameplay stream, made only on such a cell, and

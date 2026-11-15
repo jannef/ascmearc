@@ -1,4 +1,4 @@
-# The druid's Frost (Flame and frost, spec §8 "Class abilities"): a burst of bitter cold.
+# The druid's Frost (Flame and frost): a burst of bitter cold.
 [[spell]]
 id = "frost"
 name = "Frost"
@@ -23,7 +23,7 @@ message = "Bitter cold bursts from your hands!"
 damage = "intelligence 13 6d6, 19 6d6+2, 25 6d6+4"
 range = "willpower 14 11, 18 12"
 
-# What rereading its grimoire adds, rank by rank (spec §8 "Spells": "Ranks"; README.toml
+# What rereading its grimoire adds, rank by rank (README.toml
 # `[spell.ranks]`). At rank 10: +2 on the roll, two cells farther, 1s rolled again, two dice more, a
 # quarter off the mana, and d8s for d6s.
 [spell.ranks]

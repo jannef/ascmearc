@@ -1,4 +1,4 @@
-//! Layer bosses (spec §7 "The endless branch", #1118): an endless branch's `[[dungeon.endless.boss]]`
+//! Layer bosses (#1118): an endless branch's `[[dungeon.endless.boss]]`
 //! rows give some depths a unique boss of its own and its lair, a vault (`content/layer_boss.rs`
 //! checks them).
 //!

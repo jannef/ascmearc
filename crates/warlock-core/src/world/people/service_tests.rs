@@ -1,4 +1,4 @@
-//! Services (spec §8 "Services"; the campaign design §6.1): a fixture sister who cures and mends
+//! Services (the campaign design §6.1): a fixture sister who cures and mends
 //! for gold, asked for like topics; the price, the refusals, Pious, saves, and replays.
 
 use crate::action::parse_actions;

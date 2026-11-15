@@ -1,4 +1,4 @@
-# A scroll of reek (spec §8 "Scrolls", "Spells"): read it (`r`) and aim, and it casts Reek, free of
+# A scroll of reek: read it (`r`) and aim, and it casts Reek, free of
 # mana, at its base: a foul cloud hangs where it was aimed. Its grimoire teaches the spell for good.
 [[object]]
 id = "scroll_of_reek"

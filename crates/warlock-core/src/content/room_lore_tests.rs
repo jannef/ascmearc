@@ -1,4 +1,4 @@
-//! A special room's `loot` and `train` (spec §7 "Special rooms", a scriptorium's): parsed and
+//! A special room's `loot` and `train` (a scriptorium's): parsed and
 //! checked, resolved once the objects and skills are known, refused when they name nothing, never
 //! over a whole level, and `train` multiplied by [`Here::train`].
 

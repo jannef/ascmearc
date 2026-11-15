@@ -1,4 +1,4 @@
-//! Hunter's bond (spec §8 "Allies"; docs/design/ranger-companion.md §11.2): the shared sight
+//! Hunter's bond (docs/design/ranger-companion.md §11.2): the shared sight
 //! (the second viewpoint in `Perception::compute`: the companion's eyes plus its nose, memory,
 //! the retinue) and the shared buffs (`bond.rs`: a buff both ways, a hex and a harm never, the
 //! retinue, no echo). The witch's Familiar's sight (#932): the same viewpoint on the familiar, a

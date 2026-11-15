@@ -1,4 +1,4 @@
-//! The class actives in the world (spec §8 "Class abilities"): what a class's level table gives
+//! The class actives in the world: what a class's level table gives
 //! that is used from the abilities menu ([`crate::ability::Ability::Class`]) as [`Action::Use`]
 //! (`use:rage`, `use:smite:E`): Rage, War cry (for rage, `world/classes/war_cry.rs`), Veteran's wind, Lay on hands, Smite (for zeal, `world/classes/smite.rs`), Holy
 //! radiance, Stunning strike, Quivering palm and Step of the wind (for ki, `world/classes/ascetic.rs`; the last takes no time), the songs (Inspire, for inspiration, `world/classes/song.rs`), the thief's
@@ -11,7 +11,7 @@
 //! blow) with nobody hostile there, before anything is spent. Nothing here draws at random but
 //! the blows themselves.
 //!
-//! Alignment bars none of them (spec §8 "Alignment"). A holy gift (Lay on hands, Smite, Holy
+//! Alignment bars none of them. A holy gift (Lay on hands, Smite, Holy
 //! radiance, Consecrate: [`ClassActive::holy`]) whose talent names the bands it works for
 //! (`alignment = { min = "kind" }` in data) asks [`World::answered`] after its free refusals:
 //! outside those bands it is used and does nothing ([`World::unanswered`]: its line, the time of
@@ -77,7 +77,7 @@ impl World {
             self.say("Your hands are not free.");
             return Spent::Nothing;
         }
-        // Its cost in an alternative resource (spec §8 "Resources"), if it has one: what
+        // Its cost in an alternative resource, if it has one: what
         // `unavailable` checked is there to spend. A holy gift paid so is asked the bands first:
         // unanswered, it spends nothing.
         let player = self.state.player;

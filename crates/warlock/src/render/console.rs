@@ -44,7 +44,7 @@ impl CellAnim {
     };
 }
 
-/// Visual effects of one console cell (spec §4.8), stored next to its animation.
+/// Visual effects of one console cell, stored next to its animation.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct CellFx {
     /// How much the glyph glows (HDR, picked up by bloom), in 1/255.

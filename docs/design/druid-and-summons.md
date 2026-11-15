@@ -512,8 +512,8 @@ calls are in the **Spells** group with the roll shown as the owner's exception a
 | `class-spells.md` | the druid's three calls "(level 5, from 6)" as every class spell |
 
 Prose: what an ally is, the side, the orders, following and the retinue, experience, that area
-spells hurt them, that summons leave nothing. The spec gains "Allies" in spec/08b-creatures.md
-after "Summoning", and "Summon spells" in spec/08e-blood-and-status.md's "Spells";
+spells hurt them, that summons leave nothing. The spec gains "Allies" in spec/09-creatures.md
+after "Summoning", and "Summon spells" in spec/11-magic.md's "Spells";
 `docs/dev/allies.md` is the topic file; `summoning.md` loses its "enemy-only" sentence and
 points at it; CLAUDE.md's action text and dump layers get their lines.
 

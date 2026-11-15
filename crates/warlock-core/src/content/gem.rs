@@ -1,4 +1,4 @@
-//! Gems (spec §7 "Gems", #191): ten gems from smokestone to diamond, each with a size and a cut.
+//! Gems (#191): ten gems from smokestone to diamond, each with a size and a cut.
 //!
 //! A gem is a material of its own (`assets/data/materials/emerald.toml`) with a `gem` table: its
 //! colour, what a plain one is worth in gold, and how often loot finds it ([`GemDef`]). What
@@ -27,7 +27,7 @@ use std::collections::BTreeSet;
 pub const ROUGH_SATURATION: u32 = 50;
 
 /// What makes a material a gem: `gem = { color = "#2ea05a", value = 300, rarity = 5 }` in its
-/// file (spec §7 "Gems").
+/// file.
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct GemDef {

@@ -52,7 +52,7 @@ cases! {
         screen: Some("abilities"),
         ..BASE
     },
-    // A wizard at level 4 (spec §8 "Chests"): Knock among the class abilities, asking for a
+    // A wizard at level 4: Knock among the class abilities, asking for a
     // direction, paid in mana.
     abilities_menu_knock: Case {
         name: "abilities-menu-knock",
@@ -165,7 +165,7 @@ cases! {
         keys: Some("Down Down"),
         ..BASE
     },
-    // Beside a forgotten altar (spec §7 "Special rooms"): Pray in the Here group, last.
+    // Beside a forgotten altar: Pray in the Here group, last.
     abilities_menu_here: Case {
         name: "abilities-menu-here",
         scenario: "shrine",
@@ -173,7 +173,7 @@ cases! {
         screen: Some("abilities"),
         ..BASE
     },
-    // Beside a healing spring (spec §7 "Special rooms"): Drink in the Here group, last.
+    // Beside a healing spring: Drink in the Here group, last.
     abilities_menu_spring: Case {
         name: "abilities-menu-spring",
         scenario: "spring",
@@ -181,7 +181,7 @@ cases! {
         screen: Some("abilities"),
         ..BASE
     },
-    // Beside the darkness chamber's glowing fungus after a gather (spec §8 "Gathering herbs"):
+    // Beside the darkness chamber's glowing fungus after a gather:
     // Gather in the Here group, greyed out for Tamsin, untrained in Herbalism (#1400); the
     // message line says why she was refused.
     abilities_menu_gather: Case {
@@ -190,7 +190,7 @@ cases! {
         screen: Some("abilities"),
         ..BASE
     },
-    // Two allies beside the player (spec §8 "Allies"): the Allies group's three orders, Set on
+    // Two allies beside the player: the Allies group's three orders, Set on
     // asking for a place.
     abilities_menu_allies: Case {
         name: "abilities-menu-allies",

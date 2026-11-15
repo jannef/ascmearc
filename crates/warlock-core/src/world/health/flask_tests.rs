@@ -1,4 +1,4 @@
-//! Flasks (spec §8 "Potions": "Flasks"; `flask.rs`): a potion thrown shatters where it breaks,
+//! Flasks (`flask.rs`): a potion thrown shatters where it breaks,
 //! a flask casting its spell there; who stands in the way catches it; the splash's kills are the
 //! thrower's; an unknown flask is learned only when its breaking is seen; refusals; saves and
 //! replays; the content checks.

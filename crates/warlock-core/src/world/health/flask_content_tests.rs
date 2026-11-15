@@ -1,4 +1,4 @@
-//! The flasks on existing spells (spec §8 "Potions": "Flasks"; the potions wave 2 design §4.4,
+//! The flasks on existing spells (the potions wave 2 design §4.4,
 //! slice S4): each one's throw and drink once, from the game's own data. The rules are
 //! `flask.rs`'s (`flask_tests.rs`); these check that each file casts what it says and harms its
 //! drinker as the design's §6 table says.

@@ -1,4 +1,4 @@
-//! A spell's ladders (`[spell.grows]`; spec §8 "Spells", the spell scaling design
+//! A spell's ladders (`[spell.grows]`, the spell scaling design
 //! `docs/design/spell-scaling.md` §4.3, §6.1): what a spell does as its caster's stats rise,
 //! written in its own file as one string a dimension and printed as written in its wiki row.
 //!

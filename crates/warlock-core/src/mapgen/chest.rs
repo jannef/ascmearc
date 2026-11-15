@@ -1,4 +1,4 @@
-//! A generated floor's chests (spec §8 "Chests"; docs/design/chests-and-treasure.md §3.3,
+//! A generated floor's chests (docs/design/chests-and-treasure.md §3.3,
 //! `docs/dev/chests.md`): with the branch's `chests.chance` percent a floor gets between
 //! `count`'s least and most, each on a cell of open floor, of the floor's item level, locked and
 //! trapped by its band's chances, holding what its band's loot table rolls
@@ -10,7 +10,7 @@
 //! (`chance(locked)`), the trap (`chance(trapped)`, then one draw for which of the branch's
 //! traps that fit a fixture, made even when none fits, so a branch without traps draws the
 //! same), its contents, and last the mimic draw (`chance(mimic)`): a mimic of the floor's item
-//! level stands there instead (spec §8 "Mimics"; `docs/dev/creatures/mimics.md`), disguised,
+//! level stands there instead (`docs/dev/creatures/mimics.md`), disguised,
 //! carrying exactly what the chest would have held; the lock and the trap drawn for it are
 //! dropped (a mimic is neither), and nothing more is drawn, so the stream is the same either
 //! way.

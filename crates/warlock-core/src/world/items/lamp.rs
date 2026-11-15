@@ -1,4 +1,4 @@
-//! Carried lights (spec §5 "Light sources"; #643): a lantern is an item, and a light-giving item
+//! Carried lights (#643): a lantern is an item, and a light-giving item
 //! ready in the Tool slot gives the player light by its data (its object's `light`).
 //!
 //! Its mode is item state ([`LightMode`], saved with the stack wherever it goes): unlit, lit, or
@@ -18,7 +18,7 @@ use crate::world::{Spent, World, WorldState};
 
 impl WorldState {
     /// The light the player's ready light gives now: its object's preset while lit (a
-    /// Lamplighter's brighter one instead, spec §8 "Talents"), the preset's `hooded` one while
+    /// Lamplighter's brighter one instead), the preset's `hooded` one while
     /// hooded; none while unlit, or without a light ready in the Tool slot. The one place the
     /// player's carried light is decided.
     pub(crate) fn carried_light(&self, content: &Content) -> Option<LightId> {
