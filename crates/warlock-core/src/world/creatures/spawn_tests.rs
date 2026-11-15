@@ -510,12 +510,8 @@ fn a_generated_floor_is_laid_down_full_and_nothing_else_moves() {
         // On top of it, a vault's monster pool (the guard post's two), drawn first.
         let pools = with.outside_cap.len();
         assert_eq!(population.len(), count as usize + pools, "seed {seed}");
-        let danger = 2;
         let mut cells: BTreeSet<_> = own.iter().map(|s| s.pos).collect();
         for spawn in population {
-            let def = content.creature(spawn.creature);
-            let deepest = danger + 1 + spawning.odds.deeper_cap;
-            assert!(def.level <= deepest, "seed {seed}: {}", def.id);
             let kinds = [&spawning.population, &spawning.generic];
             assert!(kinds.iter().any(|k| k.contains(&spawn.creature)));
             // A vault's crowd stands where its map says, by the stairs or in water as may be.

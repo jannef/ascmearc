@@ -662,10 +662,11 @@ fn a_lair_draws_its_strays_from_the_populations_only() {
     assert_eq!(spawning("cealdhlaw").pool, danger::StrayPool::All);
 }
 
-/// The owner's rule (2026-10-27): with the exploding out-of-depth draw, anything the
-/// campaign knows may come to a level-1 floor, even a type no population names.
+/// The owner's rules (2026-10-27, #1711): with the exploding out-of-depth draw, uncapped,
+/// anything the campaign knows may come to a level-1 floor at astronomical odds: a type no
+/// population names, and the deepest type of all.
 #[test]
-fn a_first_floor_draw_gone_far_out_of_depth_brings_a_type_of_no_population() {
+fn a_first_floor_draw_gone_far_out_of_depth_may_bring_anything() {
     let content = builtin();
     let barrow = (content
         .dungeon("cealdhlaw")
@@ -678,22 +679,30 @@ fn a_first_floor_draw_gone_far_out_of_depth_brings_a_type_of_no_population() {
     let once = BTreeSet::new();
     let own = content.candidates(&barrow.population, &once);
     let generic = content.candidates(&barrow.generic, &once);
-    // Every roll deeper hits, as the 5 % may again and again: 51 dangers past the first.
+    // Every draw out of depth, each step deeper at 95 % (the shipped 5 % would take seeds past
+    // counting): the first of 10 000 seeds whose draw on a danger-1 floor gives `wanted`.
     let odds = danger::Odds {
         stray: 0,
         out_of_depth: 100,
-        deeper: 100,
-        deeper_cap: 50,
+        deeper: 95,
         dread_one_in: 0,
         neutral: 100,
     };
-    let mut rng = crate::rng::Rng::stream(1, "test");
-    for _ in 0..50 {
-        let c = danger::draw(&mut rng, &own, &generic, 1, &odds).expect("a draw");
-        let def = content.creature(c);
-        assert!(def.level >= 40, "{} at level {}", def.id, def.level);
-        assert!(!lives.contains(&c), "{} lives in no population", def.id);
-    }
+    let first = |wanted: &dyn Fn(CreatureId) -> bool| {
+        (0..10_000u64).find_map(|seed| {
+            let mut rng = crate::rng::Rng::stream(seed, "test");
+            let c = danger::draw(&mut rng, &own, &generic, 1, &odds).expect("a draw");
+            wanted(c).then_some(c)
+        })
+    };
+    let far = first(&|c| content.creature(c).level >= 40 && !lives.contains(&c));
+    assert!(far.is_some(), "no deep type of no population");
+    // The deepest type that may come there at all, drawn on a danger-1 floor.
+    let deepest = generic.iter().map(|&(_, levels, _, _)| levels.1).max();
+    let deepest = deepest.expect("a generic list");
+    assert!(deepest >= 40, "{deepest}");
+    let c = first(&|c| content.creature(c).level == deepest).expect("the deepest type drawn");
+    assert_eq!(content.creature(c).level, deepest);
 }
 
 #[test]

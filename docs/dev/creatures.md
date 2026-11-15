@@ -391,10 +391,10 @@ uniques left out) for `World::draw_spawn` and `mapgen::population::populate`, an
 Strays and exploding out-of-depth draws (#375): `danger::draw(rng, own, generic, danger, odds)`
 rolls, in order, the stray chance (`odds.stray`: the pick goes to `generic`), the out-of-depth
 chance, and each further step (`danger::deeper`: `D + 1`, then `odds.deeper` % again and again
-one more, at most `odds.deeper_cap`), then one `below(total)` per pick that finds something
+one more, with no cap since #1711, the loop ending at danger `u8::MAX` so it stays bounded), then one `below(total)` per pick that finds something
 (`danger::pick`): at the deeper danger the chosen pool, else the generic list (the own folk all
 too weak), then at `D` the chosen pool, else the own folk. `danger::Odds` is
-`Spawning::odds`: each of `stray`, `out_of_depth`, `deeper`, `deeper_cap` as a branch or level
+`Spawning::odds`: each of `stray`, `out_of_depth`, `deeper` as a branch or level
 gives it, else `data/dungeons.toml`'s `[defaults]` (`danger::DefaultsFile`, read into
 `Content::draw_odds` before the levels; a `danger` without it is a load error, and `[defaults]`
 in any other dungeons file is refused). The generic creature list is derived

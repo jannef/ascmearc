@@ -51,7 +51,6 @@
 //! stray_pool = "populations"    # strays only from populations; default "all"
 //! out_of_depth = 5             # data/dungeons.toml's `[defaults]`
 //! deeper = 5
-//! deeper_cap = 10
 //! dread_one_in = 100            # one draw in this many among the dread types
 //! spawn = { every = "15m", chance = 60 }
 //!
@@ -199,7 +198,6 @@ struct DungeonSpec {
     stray_pool: Option<StrayPool>,
     out_of_depth: Option<u8>,
     deeper: Option<u8>,
-    deeper_cap: Option<u8>,
     dread_one_in: Option<u16>,
     /// Neutral animals' weight in percent; default `[defaults]`'s.
     neutral: Option<u8>,
@@ -848,7 +846,6 @@ impl DungeonFile {
                     stray: spec.stray,
                     out_of_depth: spec.out_of_depth,
                     deeper: spec.deeper,
-                    deeper_cap: spec.deeper_cap,
                     dread_one_in: spec.dread_one_in,
                     neutral: spec.neutral,
                 },
@@ -1048,7 +1045,6 @@ mod tests {
                 stray: 5,
                 out_of_depth: 5,
                 deeper: 5,
-                deeper_cap: 10,
                 dread_one_in: 100,
                 neutral: 100,
             }),
