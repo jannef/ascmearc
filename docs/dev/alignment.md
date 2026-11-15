@@ -1,11 +1,11 @@
 # Alignment
 
-Developer notes for working on this part of Warlock (#254); the rules it implements are in
+Developer notes for working on this part of Ascmearc (#254); the rules it implements are in
 spec/12-character.md ("Alignment"). Keep it current with the code, as CLAUDE.md says.
 
 Alignment is good against evil, ADOM's law and chaos turned. Three modules:
 
-- `crates/warlock-core/src/alignment.rs`, pure: `Score` (−1000 to 1000, `MAX`; serde through
+- `crates/ascmearc-core/src/alignment.rs`, pure: `Score` (−1000 to 1000, `MAX`; serde through
   `i32` with `try_from`, so a save with a score off the scale does not load), `Score::shifted`
   (the one diminishing rule: a deed in the direction the score leans counts its worth times
   `(MAX − |s|) / MAX`, rounded toward 0; the other way, or from 0, in full), `Band` (Wicked up to

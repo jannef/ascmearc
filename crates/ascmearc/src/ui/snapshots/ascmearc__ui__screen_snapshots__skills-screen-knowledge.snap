@@ -1,0 +1,26 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ Welcome to Showcase. Press ? for controls.
+
+
+
+
+
+
+
+┌─ Skills ─────────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                                  │
+│   Concentration      26  ────                                                                    │
+│   Decipher script    20  ────                                                                    │
+│ > Heal                4  ────                                                                    │
+│   Knowledge          17  ────                                                                    │
+│   Mining              2  ────                                                                    │
+│   Spellcraft         13  ────                                                                    │
+│                                                                                                  │
+│ Binding wounds and tending the sick.                                                             │
+│                                                                                                  │
+│                                                                                                  │
+│ ↑↓ choose   A or Esc close                                                                       │
+└─ 1 Char · 2 Inv · 3 Eqp · 4 Skl · 5 Weap · 6 Mag · 7 Qst · 8 Tal · 9 Story ──────────────────────┘

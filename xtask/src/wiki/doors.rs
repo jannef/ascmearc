@@ -2,10 +2,10 @@
 
 use super::order;
 use super::util::{capital, glyph, percent_of};
+use ascmearc_core::check;
+use ascmearc_core::content::Content;
+use ascmearc_core::door;
 use std::fmt::Write as _;
-use warlock_core::check;
-use warlock_core::content::Content;
-use warlock_core::door;
 
 /// The Strength scores the door table shows, and the last column's "and up".
 const KICK_STRENGTHS: [u8; 8] = [3, 6, 9, 10, 12, 15, 18, 20];

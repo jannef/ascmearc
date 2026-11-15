@@ -1,9 +1,9 @@
 # Settings
 
-Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
+Developer notes for working on this part of Ascmearc (moved from CLAUDE.md, #185); the
 rules it implements are in spec/05-interface.md. Keep it current with the code, as CLAUDE.md says.
 
-Settings (`crates/warlock/src/settings/`): `settings.toml` in the config dir, schema in the `settings/mod.rs` module docs (the config dir also keeps `graveyard.toml`, the dead, append-only and unpinned: `docs/dev/saves.md` "The graveyard"). Changes
+Settings (`crates/ascmearc/src/settings/`): `settings.toml` in the config dir, schema in the `settings/mod.rs` module docs (the config dir also keeps `graveyard.toml`, the dead, append-only and unpinned: `docs/dev/saves.md` "The graveyard"). Changes
 apply live and are written at once; a bad file means defaults plus a warning, per value. A file
 that does not read at all (not TOML, not UTF-8) is renamed `settings.toml.bad`, as an unusable
 save is, so the first change does not write the defaults over the player's keys (#1576). Startup
@@ -136,14 +136,14 @@ bindings the way rebinding does (only the listed commands change, keys move with
 first listed in `REBINDABLE` order wins a key, unknown ids and keys are warnings, except the ids in `keys::RETIRED` (deleted commands such as `fire`, and the menu, dialog, text field, info page, rest prompt, and aiming commands that became fixed keys in #1533, dropped silently, in `from_table` too) and the context tables in `keys::RETIRED_CONTEXTS` (`[dialog]`, `[prompt]`), the lockout rules
 hold) and returns a `Report`; version 0 is a flat table of ids or a settings file's `[bindings]`.
 `KeymapFile` (from `SettingsStore::keymap`) is where Controls' Export keys and Import keys go:
-`warlock-keys.toml` beside `settings.toml` (desktop), the browser (a blob download; a file input
+`ascmearc-keys.toml` beside `settings.toml` (desktop), the browser (a blob download; a file input
 whose file arrives through `keymap::take_picked`, applied by `controls_screen::receive_keymap`),
 or nowhere (captures). `--export-keys FILE` / `--import-keys FILE` are file commands
 (`keymap::command`, from `main.rs::file_command`). The web build's `web-sys` features for them:
 `Blob`, `BlobPropertyBag`, `Element`, `File`, `FileList`, `HtmlAnchorElement`, `HtmlElement`,
 `HtmlInputElement`, `Url`. `assets/keymaps/default.toml` is the defaults as a file (shipped in the
 desktop archives); after changing a default key, regenerate it with
-`WARLOCK_UPDATE_KEYMAPS=1 cargo test -p warlock keymap` (a test fails until then).
+`ASCMEARC_UPDATE_KEYMAPS=1 cargo test -p ascmearc keymap` (a test fails until then).
 
 `Game` exists only during a run (the menu runs without
 it): gate systems that read it with `run_if(resource_exists::<Game>)`; content is the

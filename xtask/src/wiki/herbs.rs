@@ -3,8 +3,8 @@
 //! the surface.
 
 use super::util::{Term, anchored, capital, percent_of};
+use ascmearc_core::content::Content;
 use std::fmt::Write as _;
-use warlock_core::content::Content;
 
 /// The depths the herb table shows shares at.
 const DEPTHS: [u8; 4] = [1, 3, 6, 10];

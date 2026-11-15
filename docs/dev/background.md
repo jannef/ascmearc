@@ -15,7 +15,7 @@ effects B5 (#707). Keep it current with the code, as CLAUDE.md says.
 | `world/character/background.rs` | `World::tell_background` (from `start_run`), `apply_story` (one arm per effect kind), `story_gold`, `story_item`. Tests: `world/character/background_tests.rs`. |
 | `rng.rs` | `Rng::background(seed, spec, chapter)`: `background/<race>,<gender>,<class>/<chapter>`. |
 | `dump/story.rs`, `dump/json.rs` | The `story` layer, JSON `story` and `character.story`, the `actors` layer's `story …`. |
-| `crates/warlock/src/ui/chargen_screen.rs` | The summary's dim line under the kit, `FATE`: "Fate will have its say when you set out." (only with content that tells stories). |
+| `crates/ascmearc/src/ui/chargen_screen.rs` | The summary's dim line under the kit, `FATE`: "Fate will have its say when you set out." (only with content that tells stories). |
 
 ## The data
 
@@ -104,7 +104,7 @@ Beorggeat (`World::start_run`, so the witness is the real one, picks and all), t
 pinned as text: Edwin (human commoner, seed 85, eight common lines; 72 until B4's talents moved his Random pick), Brakka (dwarf warrior,
 seed 24, the rare heirloom), Tamsin (halfling thief, seed 21, a grim one). A pool edit that
 moves a sample's lines fails it: pick new seeds from `find_samples` (ignored; `cargo test -p
-warlock-core find_samples -- --ignored --nocapture` prints 300 stories of each with every
+ascmearc-core find_samples -- --ignored --nocapture` prints 300 stories of each with every
 line's kind and worth) and read the new stories before pinning them.
 
 ## The wiki (B3, #704)
@@ -195,7 +195,7 @@ and are never applied again. Every kit run's hash changed once with B1 (the scre
 
 The story is shown, never told in messages: `PerceptionView::story()` (the paragraphs of
 `retell`, from the perception's character and campaign; empty without a story) feeds the
-story screen (`crates/warlock/src/ui/story_screen.rs`), the `story` dump layer, and nothing
+story screen (`crates/ascmearc/src/ui/story_screen.rs`), the `story` dump layer, and nothing
 else. The app opens it once as a run begins (`screens::on_run_start` on `Game::story_due`: New
 run's Start, a windowed `--character`/`--name`/`--talents`/`--new` start; never Continue, Resume,
 `--capture`, `--replay`, beneath a `--screen`, or for a run without a story), 72 wide; afterwards

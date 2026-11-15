@@ -2,10 +2,10 @@
 //! floors with their danger, who lives there, and how they come back.
 
 use super::util::percent;
+use ascmearc_core::content::danger::{self, Odds, StrayPool, TOO_WEAK};
+use ascmearc_core::content::{Content, Count, DangerRule, Generator, Spawning, Stance};
 use std::collections::BTreeSet;
 use std::fmt::Write as _;
-use warlock_core::content::danger::{self, Odds, StrayPool, TOO_WEAK};
-use warlock_core::content::{Content, Count, DangerRule, Generator, Spawning, Stance};
 
 /// A danger rule in words: `4`, `2 + 1 a floor down`, with a player-scaled part.
 fn rule_text(rule: DangerRule, branch: bool) -> String {

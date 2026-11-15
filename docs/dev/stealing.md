@@ -1,6 +1,6 @@
 # Stealing
 
-Developer notes for working on this part of Warlock; the rules it implements are in
+Developer notes for working on this part of Ascmearc; the rules it implements are in
 spec/12-character.md ("Stealing"). Keep it current with the code, as CLAUDE.md says.
 
 Stealing (#234; the progression design's B7, `docs/design/progression.md`)
@@ -14,7 +14,7 @@ is the Steal skill's use: `Action::Steal(Dir)` (replay text `steal:DIR`, cost `s
   `Ability::had_by`), while
   the content has `data/rules/steal.toml` (`content/steal.rs`, `StealRules`, `Content::steal`;
   optional: without it nobody steals). The thief's class trains Steal.
-- **The ability**: `Ability::Steal` in `warlock_core::ability` (`Source::Skill`, `Aim::Direction`,
+- **The ability**: `Ability::Steal` in `ascmearc_core::ability` (`Source::Skill`, `Aim::Direction`,
   cost `ActionKind::Steal`, no `Unavailable` of its own beyond a blocking status).
   `Ability::every` lists it in the Steal skill's place (`Ability::use_of`: a skill whose benefit
   is read by an ability's action is listed as that ability, not as `Ability::Skill`). The app's

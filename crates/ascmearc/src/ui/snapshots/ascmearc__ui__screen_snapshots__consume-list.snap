@@ -1,0 +1,24 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ You pick up 2 loaves of bread.
+ There are several objects here.
+
+
+
+
+
+
+
+           ┌─ Consume what? ────────────────────────────────────────────────────────────┐
+           │                                                                            │
+           │ Food                                                                       │
+           │ > a - % 2 loaves of bread                                           800 g  │
+           │ Potions                                                                    │
+           │   b - ! 2 sandy red potions (lying here)                            500 g  │
+           │   c - ! a viscous blue potion (lying here)                          250 g  │
+           │   d - ! a sticky gold potion (lying here)                           250 g  │
+           │                                                                            │
+           │ a-d or Enter consume   Esc cancel                                          │
+           └────────────────────────────────────────────────────────────────────────────┘

@@ -1,6 +1,6 @@
-# CLAUDE.md — working on Warlock
+# CLAUDE.md — working on Ascmearc
 
-Warlock is a GPU-rendered ASCII roguelike in Rust + Bevy. **`specification.md` is the design
+Ascmearc is a GPU-rendered ASCII roguelike in Rust + Bevy. **`specification.md` is the design
 document** for what to build (an index over `spec/`); this file is about *how* to work on it, and
 `docs/dev/` holds the notes per subsystem (index: `docs/dev/README.md`). Each kind of fact has one
 home and the others link to it (`docs/dev/merging.md` "One home per fact"): a change edits the
@@ -16,15 +16,15 @@ Rust is pinned in `rust-toolchain.toml`; cargo is in `~/.cargo/bin` (in a fresh 
 | Task | Command |
 |---|---|
 | Build everything | `cargo build --workspace` |
-| Run the game | `cargo run -p warlock` |
-| Run the headless CLI | `cargo run -p warlock-cli -- --help` |
+| Run the game | `cargo run -p ascmearc` |
+| Run the headless CLI | `cargo run -p ascmearc-cli -- --help` |
 | Tests | `cargo test --workspace` |
 | Lint | `cargo fmt --all --check && cargo clippy --workspace --all-targets --locked -- -D warnings` |
-| WASM check | `cargo check -p warlock -p warlock-core --target wasm32-unknown-unknown` |
+| WASM check | `cargo check -p ascmearc -p ascmearc-core --target wasm32-unknown-unknown` |
 | Dependency audit | `cargo deny --all-features check` |
 | Screenshot smoke test | `cargo xtask smoke` |
 | Web build | `cargo xtask web` (without the test world; "Releases, web build, logs") |
-| Release configuration | `cargo build --no-default-features -p warlock -p warlock-cli` (the test world left out, as in a release) |
+| Release configuration | `cargo build --no-default-features -p ascmearc -p ascmearc-cli` (the test world left out, as in a release) |
 | Regenerate the vast level | `cargo xtask gen-vast` (deterministic, never hand-edit; `--check` after touching `xtask/src/vast.rs`) |
 | Check the docs' code paths | `cargo xtask docs-check` |
 | Third-party notices | `cargo xtask licenses`. **Run it after changing dependencies** |
@@ -35,24 +35,24 @@ Rust is pinned in `rust-toolchain.toml`; cargo is in `~/.cargo/bin` (in a fresh 
 Each row in detail: `docs/dev/cli.md` "`cargo xtask` commands in detail".
 
 **The CLI reference is `docs/dev/cli.md`**: every game flag (`--scenario` names, `--screen`
-names, the capture and dev flags), `warlock-cli`'s commands, the replay format, the dump layers,
+names, the capture and dev flags), `ascmearc-cli`'s commands, the replay format, the dump layers,
 and the action text syntax. Read it before scripting a run; add to it when you add a flag, a
 screen, a scenario, a dump layer, or an action. For example:
 
-- `cargo run -p warlock -- --scenario showcase --scale 1 --freeze-time 1 --capture target/shot.png`
+- `cargo run -p ascmearc -- --scenario showcase --scale 1 --freeze-time 1 --capture target/shot.png`
   starts a run, renders it offscreen, and exits.
-- `warlock-cli dump --scenario showcase --actions "move:N wait" --layers view,fov,memory` prints
+- `ascmearc-cli dump --scenario showcase --actions "move:N wait" --layers view,fov,memory` prints
   the simulation as text; `replay --create` and `replay --verify` check determinism.
 - Action text is whitespace-separated `verb:args` words: `move:N open:E pickup:a fire:12,5 wait*10`.
 
 ## Architecture
 
 ```
-crates/warlock-core   plain Rust, no Bevy, deterministic simulation; takes its content as input
-crates/warlock-assets the content under assets/ embedded for the binaries (#1587)
-crates/warlock-cli    headless dev tool on top of core (no Bevy)
-crates/warlock        Bevy app: rendering, input, UI, effects, platform
-crates/workspace-hack no code: pins features so every member shares one warlock-core build (docs/dev/merging.md)
+crates/ascmearc-core   plain Rust, no Bevy, deterministic simulation; takes its content as input
+crates/ascmearc-assets the content under assets/ embedded for the binaries (#1587)
+crates/ascmearc-cli    headless dev tool on top of core (no Bevy)
+crates/ascmearc        Bevy app: rendering, input, UI, effects, platform
+crates/workspace-hack no code: pins features so every member shares one ascmearc-core build (docs/dev/merging.md)
 xtask                 dev tasks: captures, goldens, web build, wiki, docs-check, generators, benchmarks
 assets                fonts, keymaps, data definitions, vaults, campaigns (each a world: levels, scenarios, ...)
 ```
@@ -62,7 +62,7 @@ it** (index in `docs/dev/README.md`; nothing about one subsystem goes in this fi
 `docs/dev/merging.md` is the merging playbook.
 
 Hard rules:
-- `warlock-core` never depends on Bevy, never reads wall-clock time, and never does platform I/O
+- `ascmearc-core` never depends on Bevy, never reads wall-clock time, and never does platform I/O
   inside the rules. Iteration order in core must be deterministic (no `HashMap` iteration).
 - Rendering, UI, and dumps read the per-turn **perception snapshot** only — never ground truth —
   so hidden information cannot leak. The only exception is an explicit dev "reveal" mode.
@@ -77,7 +77,7 @@ Hard rules:
   The back-style ones (`Back`, `TextBack`, `MoreSkip`, `PrevPage`,
   `PrevTarget`, unbound) stay exactly as they are (owner, #644).
 - Abilities (racial, class, skill, weapon skill and style, item; #156) register in
-  `warlock_core::ability`, the one registry, and are used from the one abilities menu (`a`):
+  `ascmearc_core::ability`, the one registry, and are used from the one abilities menu (`a`):
   never a default key of their own (an ability's own `KeyCommand` stays unbound by default,
   `settings/keys.rs::UNBOUND`, and Controls lists it last, `ABILITY_KEYS`). Basic commands keep their keys (`docs/dev/screens.md`).
 - Keep modules small with clear responsibilities. No speculative abstractions, no premature
@@ -144,15 +144,15 @@ A successful compile does not verify anything visual. Before opening a PR:
 1. `cargo fmt`, clippy with `-D warnings`, `cargo test --workspace`, and `cargo xtask
    docs-check` (every code path named in CLAUDE.md, `spec/`, and `docs/dev/` exists: run it after
    moving a file); `cargo xtask wiki --check-links` when `wiki/` or `xtask/src/wiki/` changed.
-2. Simulation changes: add or update unit, property, or snapshot tests in `warlock-core` (its
+2. Simulation changes: add or update unit, property, or snapshot tests in `ascmearc-core` (its
    shared helpers, `crate::test_support`: the built-in content, `world`, `run`, the message readers)
-   (`insta` snapshots live in `crates/warlock-core/src/snapshots/`, `src/dump/snapshots/`, `src/mapgen/snapshots/`, and
-   `src/mapgen/local/snapshots/`, the screens' in `crates/warlock/src/ui/snapshots/`; review with `cargo insta review` or `INSTA_UPDATE=always`, and read the diff). Look at the
-   result with `warlock-cli dump` (or `gen` for a generated level), and check determinism with
+   (`insta` snapshots live in `crates/ascmearc-core/src/snapshots/`, `src/dump/snapshots/`, `src/mapgen/snapshots/`, and
+   `src/mapgen/local/snapshots/`, the screens' in `crates/ascmearc/src/ui/snapshots/`; review with `cargo insta review` or `INSTA_UPDATE=always`, and read the diff). Look at the
+   result with `ascmearc-cli dump` (or `gen` for a generated level), and check determinism with
    `replay --create` then `replay --verify`.
 3. Rendering changes: capture a screenshot with `--capture` and **look at it** (read the PNG).
    UI changes (screens, prompts, the message line, the status bar): add or update a case in
-   `crates/warlock/src/ui/screen_snapshots.rs` and read the text diff.
+   `crates/ascmearc/src/ui/screen_snapshots.rs` and read the text diff.
    Golden images are updated deliberately, never to make a failing check pass.
 4. Note in the PR what you verified and how.
 
@@ -180,9 +180,9 @@ Goldens are reserved for what only the GPU produces: lighting regimes, sun, moon
 glow and heat haze, animated water, blood tint, spell effects, a missile in flight, and one
 overlay over a run (#56's guard; #301). Check the cheaper tools first:
 - a screen, list, dialog, prompt, message line, or status bar → a **text snapshot**: a case in
-  `crates/warlock/src/ui/screen_snapshots.rs` (the UI console as text, `insta`; docs/dev/screens.md);
+  `crates/ascmearc/src/ui/screen_snapshots.rs` (the UI console as text, `insta`; docs/dev/screens.md);
 - what is on the map, who is where, what happened → a core test, an `insta` snapshot, or a
-  `warlock-cli dump`;
+  `ascmearc-cli dump`;
 - a one-off visual check → `--capture`, looked at, and noted in the PR (not kept).
 
 A PR that adds a golden says in its description why none of these can see the change; reviewers

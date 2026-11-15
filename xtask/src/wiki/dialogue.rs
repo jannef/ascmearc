@@ -1,9 +1,9 @@
 //! Dialogue and quests: who talks and who gives quests.
 
 use super::util::{capital, yes};
+use ascmearc_core::content::{Content, Dialogue, Reward, Speaker};
+use ascmearc_core::world::quest_asks;
 use std::fmt::Write as _;
-use warlock_core::content::{Content, Dialogue, Reward, Speaker};
-use warlock_core::world::quest_asks;
 
 /// Who talks (`data/dialogue.toml` and the campaigns' `data/dialogue/`, those the wiki
 /// describes, by name): each speaker, whether they greet you, how many one-liners

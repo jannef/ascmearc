@@ -2,8 +2,8 @@
 
 use super::order;
 use super::util::table_text;
+use ascmearc_core::content::Content;
 use std::fmt::Write as _;
-use warlock_core::content::Content;
 
 /// The scenarios a new run can start, as a release build's New run starts them: per campaign the
 /// wiki describes (`order::campaigns`), its name and description and its start scenario, with
@@ -28,7 +28,7 @@ pub(super) fn scenarios(content: &Content) -> String {
 }
 
 /// The rows of `list`.
-fn table(content: &Content, list: &[&warlock_core::content::ScenarioDef], out: &mut String) {
+fn table(content: &Content, list: &[&ascmearc_core::content::ScenarioDef], out: &mut String) {
     for s in list {
         let _ = writeln!(
             out,

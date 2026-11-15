@@ -1,9 +1,9 @@
-//! What the sign talents do, in the wiki's words (`warlock_core::talent::SignEffect`, #1495): one
-//! arm a variant, beside the area's enum and sum in `warlock-core/src/talent/sign.rs`.
+//! What the sign talents do, in the wiki's words (`ascmearc_core::talent::SignEffect`, #1495): one
+//! arm a variant, beside the area's enum and sum in `ascmearc-core/src/talent/sign.rs`.
 
 use super::{cooldown_for, sign_cooldown};
-use warlock_core::content::{Content, SignActive};
-use warlock_core::talent::SignEffect;
+use ascmearc_core::content::{Content, SignActive};
+use ascmearc_core::talent::SignEffect;
 
 /// What `effect` does, as the talents' tables say it.
 pub(super) fn text(content: &Content, effect: &SignEffect) -> String {
@@ -117,7 +117,7 @@ pub(super) fn text(content: &Content, effect: &SignEffect) -> String {
                  every hostile that hears it and whose level is below yours suffers {} at \
                  {severity} degrees (it runs from you while a step takes it farther{eases}); \
                  no check; then {}",
-                warlock_core::noise::HOWL_NOISE,
+                ascmearc_core::noise::HOWL_NOISE,
                 status(&id),
                 cooldown_for(content, &cooldown, 1)
             )

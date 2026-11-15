@@ -1,0 +1,48 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ Welcome to Showcase. Press ┌─ Controls ───────────────────────────────────────────────────┐
+                            │                                                            ↑ │
+                            │   Use the last ability again           X                     │
+                            │   Pay the shopkeeper                   p                     │
+                            │   Use a tool (dig, light)              u                     │
+                            │   Chat                                 C                     │
+                            │   Show / hide controls                 ?                     │
+                            │   Save and quit                        (none)                │
+                            │                                                              │
+                            │ Aiming                                                       │
+                            │   Previous target                      (none)                │
+                            │                                                              │
+                            │ More messages (--more--)                                     │
+                            │   Show the next messages               Space Enter NumEnter  │
+                            │   Skip the rest (Esc always works)     (none)                │
+                            │                                                              │
+                            │ Menus and screens                                            │
+                            │   Back (Esc always works)              (none)                │
+                            │                                                              │
+                            │ Text fields                                                  │
+                            │   Back (Esc always works)              (none)                │
+                            │                                                              │
+                            │ Info pages                                                   │
+                            │   Previous info page                   (none)                │
+                            │                                                              │
+                            │ Ability keys (all in the abilities menu too)                 │
+                            │   Bash with your shield                (none)                │
+                            │   Throw your voice                     (none)                │
+                            │   Disarm a trap                        (none)                │
+                            │   Pick a lock                          (none)                │
+                            │   Steal                                (none)                │
+                            │                                                              │
+                            │   Reset all keys                                             │
+                            │   Export keys…                                               │
+                            │   Import keys…                                               │
+                            │ > Back                                                       │
+                            │                                                              │
+                            │                                                              │
+                            │                                                              │
+                            │                                                              │
+                            │                                                              │
+                            │                                                              │
+                            │ Enter keys   Del reset   Esc back                            │
+ The Hub  HP 18/18  MP 2/2  └──────────────────────────────────────────────────────────────┘n  Seed 1        ? controls

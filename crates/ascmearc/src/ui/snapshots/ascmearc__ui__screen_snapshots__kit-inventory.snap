@@ -1,0 +1,33 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ Welcome to World. Press ? for controls.
+┌─ Inventory ──────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                                  │
+│ Melee weapons                                                                                    │
+│   a - ) a short sword (+0 hit, 1d6) (wielded)                                            1.1 kg  │
+│   b - ) a knife (+0 hit, 1d3)                                                             200 g  │
+│ Missile weapons                                                                                  │
+│   c - } a short bow (+0 hit, 1d6, range 10) (readied)                                     700 g  │
+│ Missiles                                                                                         │
+│   d - / 24 arrows (quivered)                                                              720 g  │
+│ Body armour                                                                                      │
+│   e - [ a leather jerkin (Dv +1, Pv 1) (being worn)                                      3.5 kg  │
+│ Boots                                                                                            │
+│   f - [ a pair of leather boots (Dv +0, Pv 0) (being worn)                                 1 kg  │
+│ Tools                                                                                            │
+│   g - ( a lantern (in use)                                                                400 g  │
+│ Food                                                                                             │
+│   h - % 3 strips of dried meat                                                            450 g  │
+│   i - % 2 loaves of bread                                                                 800 g  │
+│ Scrolls                                                                                          │
+│   j - ? a scroll of mesmerise                                                              50 g  │
+│ Coins                                                                                            │
+│   k - $ 36 gold coins                                                                     360 g  │
+│                                                                                                  │
+│ Carrying 9.3 kg   ·   Your weight 79.3 kg (you 70 kg)                                            │
+│ Burdened over 17.5 kg, strained over 35 kg, overloaded over 52.5 kg                              │
+│                                                                                                  │
+│ a-k look   D drop   I or Esc close                                                               │
+└─ 1 Char · 2 Inv · 3 Eqp · 4 Skl · 5 Weap · 6 Mag · 7 Qst · 8 Tal · 9 Story ──────────────────────┘

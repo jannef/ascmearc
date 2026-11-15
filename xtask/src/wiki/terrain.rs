@@ -1,9 +1,9 @@
 //! Terrain: the local and overworld terrain tables and how loud footsteps are on each.
 
 use super::util::{Term, anchored, at_normal_pace, capital, glyph, yes};
+use ascmearc_core::content::{ActionKind, BASE_TURN, Content, LevelKind, TerrainDef, price};
 use std::collections::BTreeSet;
 use std::fmt::Write as _;
-use warlock_core::content::{ActionKind, BASE_TURN, Content, LevelKind, TerrainDef, price};
 
 /// The ids of the terrain the overworld map is drawn with (it has its own table).
 fn overworld_ids(content: &Content) -> BTreeSet<String> {
@@ -56,8 +56,8 @@ pub(super) fn local_terrain(content: &Content) -> String {
             notes.push("door: can be closed".to_string());
         }
         match t.stairs {
-            Some(warlock_core::content::StairsDir::Down) => notes.push("stairs down".into()),
-            Some(warlock_core::content::StairsDir::Up) => notes.push("stairs up".into()),
+            Some(ascmearc_core::content::StairsDir::Down) => notes.push("stairs down".into()),
+            Some(ascmearc_core::content::StairsDir::Up) => notes.push("stairs up".into()),
             None => {}
         }
         if t.light.is_some() {

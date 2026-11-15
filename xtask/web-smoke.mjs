@@ -4,7 +4,7 @@
 // class -> talents -> name -> summary -> start, the scenario's character preselected, the name
 // left empty: a random one; then the story, which opens once as the run begins),
 // check the new
-// character's save is in localStorage (`warlock/saves/<id>.sav`, written as the run starts), wait
+// character's save is in localStorage (`ascmearc/saves/<id>.sav`, written as the run starts), wait
 // five turns, reload the page (its pagehide hook must write the run to that save), choose Continue
 // and check the run resumed at turn 5; then pause, Quit and confirm: the page must reload to the
 // main menu (a web page cannot quit), where Continue resumes the run again; screenshot, and fail if
@@ -52,9 +52,9 @@ await key('Enter', 'Enter', 13);   // start from the summary
 await sleep(4000);
 await key('Enter', 'Enter', 13);   // the story, read once as the run begins: on into the run
 await sleep(500);
-// The characters' saves: [key, length] of each `warlock/saves/*.sav`, and every key.
+// The characters' saves: [key, length] of each `ascmearc/saves/*.sav`, and every key.
 const stored = async () => (await send('Runtime.evaluate', {
-  expression: "JSON.stringify([Object.keys(localStorage).filter((k) => /^warlock\\/saves\\/[^/]+\\.sav$/.test(k)).map((k) => [k, localStorage.getItem(k).length]), Object.keys(localStorage)])",
+  expression: "JSON.stringify([Object.keys(localStorage).filter((k) => /^ascmearc\\/saves\\/[^/]+\\.sav$/.test(k)).map((k) => [k, localStorage.getItem(k).length]), Object.keys(localStorage)])",
   returnByValue: true })).result.result.value;
 const before = JSON.parse(await stored());
 const failures = [];

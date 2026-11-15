@@ -1,6 +1,6 @@
 # Weapon abilities
 
-Developer notes for working on this part of Warlock (#561, slice W2, and #564, slice W3 (the
+Developer notes for working on this part of Ascmearc (#561, slice W2, and #564, slice W3 (the
 actives), of the combat progression design, `docs/design/combat-progression.md` §4, §6, §11);
 the rules it implements are in
 spec/12-character.md "Weapon abilities". Keep it current with the code, as CLAUDE.md says.

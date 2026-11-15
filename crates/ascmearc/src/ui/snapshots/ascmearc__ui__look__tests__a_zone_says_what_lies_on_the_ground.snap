@@ -1,0 +1,26 @@
+---
+source: crates/ascmearc/src/ui/look.rs
+expression: words
+---
+[
+    (
+        Fire,
+        "A scorched stone floor wreathed in fire.",
+    ),
+    (
+        Fouled,
+        "A scorched stone floor under a foul reek.",
+    ),
+    (
+        Slick,
+        "A scorched stone floor slick underfoot.",
+    ),
+    (
+        Dark,
+        "You remember a scorched stone floor here, slick underfoot.",
+    ),
+    (
+        Smoke,
+        "A scorched stone floor in thick smoke.",
+    ),
+]

@@ -1,0 +1,27 @@
+[package]
+name = "ascmearc-cli"
+description = "Headless Ascmearc developer tool: scenarios, replays, state dumps. Does not link Bevy."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[dependencies]
+clap.workspace = true
+serde_json.workspace = true
+ascmearc-assets.workspace = true
+ascmearc-core.workspace = true
+workspace-hack.workspace = true
+
+[features]
+# The test world (`assets/campaigns/showcase/`), embedded only with this feature: on for every
+# dev command, test, and benchmark; release builds and `cargo xtask web` turn it off with
+# `--no-default-features` (docs/dev/campaign.md, "The test world in release builds").
+default = ["showcase"]
+showcase = ["ascmearc-assets/showcase"]
+
+[lints]
+workspace = true

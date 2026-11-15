@@ -1,9 +1,9 @@
-//! What the stealth talents do, in the wiki's words (`warlock_core::talent::StealthEffect`, #1495):
-//! one arm a variant, beside the area's enum and sum in `warlock-core/src/talent/stealth.rs`.
+//! What the stealth talents do, in the wiki's words (`ascmearc_core::talent::StealthEffect`, #1495):
+//! one arm a variant, beside the area's enum and sum in `ascmearc-core/src/talent/stealth.rs`.
 
 use crate::wiki::util::signed;
-use warlock_core::content::Content;
-use warlock_core::talent::StealthEffect;
+use ascmearc_core::content::Content;
+use ascmearc_core::talent::StealthEffect;
 
 /// What `effect` does, as the talents' tables say it.
 pub(super) fn text(content: &Content, effect: &StealthEffect) -> String {

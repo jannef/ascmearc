@@ -1,6 +1,6 @@
 [package]
 name = "xtask"
-description = "Developer automation for Warlock (screenshot capture, golden images)."
+description = "Developer automation for Ascmearc (screenshot capture, golden images)."
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -15,8 +15,8 @@ serde.workspace = true
 serde_json.workspace = true
 toml.workspace = true
 # The wiki, the goldens, and the benchmarks read the test world.
-warlock-assets = { workspace = true, features = ["showcase"] }
-warlock-core.workspace = true
+ascmearc-assets = { workspace = true, features = ["showcase"] }
+ascmearc-core.workspace = true
 workspace-hack.workspace = true
 
 [lints]

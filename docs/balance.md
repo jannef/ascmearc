@@ -48,7 +48,7 @@ hand-kept tables, "Before #1200" under Starters and the design's under Stat trai
 ## How to run it
 
 ```text
-cargo test --release -p warlock-core balance_probe -- --ignored --nocapture
+cargo test --release -p ascmearc-core balance_probe -- --ignored --nocapture
 ```
 
 It takes about three minutes in release (most of it the stat training's sweep, a hundred and
@@ -56,7 +56,7 @@ seventy careers to level 60). It prints the Markdown tables of the sections from
 "Ki" below, and those of "Stat training", and the same content always prints the same tables (fixed seeds and streams).
 After a PR that tunes combat data (weapon skills, creatures, classes, spells, stats, items), run
 it again and replace those sections, then revisit the tuning notes. The code is
-`crates/warlock-core/src/world/combat/balance_probe.rs` (the measuring, with the method in its module
+`crates/ascmearc-core/src/world/combat/balance_probe.rs` (the measuring, with the method in its module
 docs), `balance_probe/training.rs` (the trained careers' days), `balance_probe/ranger.rs`
 (the ranger and their companion), `balance_probe/familiar.rs` (the witch's familiar),
 `balance_probe/caster_pace.rs` (the casters' caster style pace), `balance_probe/exploits.rs`
@@ -1443,7 +1443,7 @@ for its own issue.
 5 %), some 25 faints an hour of play. At T3's 10 Willpower marks a faint, an afternoon of
 fainting took about a thousand marks: fifteen drops' worth at Willpower 12 (drop price 65), so
 one fast meant a Willpower point lost at nearly every check for two weeks after it ended. `fainted`
-is now a mark at 20 % a faint (about 5 marks an hour; measured with `warlock-cli dump`: 28
+is now a mark at 20 % a faint (about 5 marks an hour; measured with `ascmearc-cli dump`: 28
 marks over six hours of fainting and starving to the edge of death), so an afternoon of it
 warns and a day or two of it costs a point, like a few dawns met Weak (15 a dawn).
 

@@ -2,13 +2,13 @@
 //! freezes, what ice holds, and how fast it grows.
 
 use super::util::{at_normal_pace, capital};
+use ascmearc_core::content::{ActionKind, Content, LevelKind};
+use ascmearc_core::ice;
+use ascmearc_core::object::format_weight;
+use ascmearc_core::temperature::{self, Temperature};
+use ascmearc_core::time::GameTime;
+use ascmearc_core::weather::Weather;
 use std::fmt::Write as _;
-use warlock_core::content::{ActionKind, Content, LevelKind};
-use warlock_core::ice;
-use warlock_core::object::format_weight;
-use warlock_core::temperature::{self, Temperature};
-use warlock_core::time::GameTime;
-use warlock_core::weather::Weather;
 
 /// A temperature in whole degrees, both ways: `-7 °C (19 °F)`.
 fn degrees(t: Temperature) -> String {

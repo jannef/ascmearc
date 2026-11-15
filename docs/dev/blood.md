@@ -1,9 +1,9 @@
 # Blood
 
-Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
+Developer notes for working on this part of Ascmearc (moved from CLAUDE.md, #185); the
 rules it implements are in spec/11-magic.md. Keep it current with the code, as CLAUDE.md says.
 
-Blood (M17): the pure pattern is `warlock-core/src/blood.rs` (`Wound`:
+Blood (M17): the pure pattern is `ascmearc-core/src/blood.rs` (`Wound`:
 `volume` by kill or big hit (a third of the maximum, or a critical), size `blood` percent,
 overkill, critical, missile; `spatter`: pool, fan away from the attacker (±45° melee, ±30°
 missiles), kill flecks, stopped by opaque cells, walls next to the victim stained on their face;
@@ -25,7 +25,7 @@ sword's two), so one hook covers melee, missiles, spells, and traps. False: fire
 electricity, poison, necrotic.
 
 **Char** (#1255): fire's sibling of blood. The pure pattern is
-`warlock-core/src/scorch.rs` (`area`: each open cell its jittered share, walls beside on the face
+`ascmearc-core/src/scorch.rs` (`area`: each open cell its jittered share, walls beside on the face
 toward it at `WALL` percent, half across a corner; `blow`: a struck creature's cell; `add`: amount
 to the cap, faces joined, colour from the type's `char.light` to `char.heavy` by amount; `word`;
 `seed` hashes turn, time, and the centre cell with a salt apart from blood's: **no keyed

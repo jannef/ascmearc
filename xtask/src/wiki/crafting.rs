@@ -3,9 +3,9 @@
 //! odds and numbers of a salvage (`data/rules/salvage.toml` and the 2d12 rules).
 
 use super::util::capital;
+use ascmearc_core::combat::{FUMBLE, HIGHEST};
+use ascmearc_core::content::Content;
 use std::fmt::Write as _;
-use warlock_core::combat::{FUMBLE, HIGHEST};
-use warlock_core::content::Content;
 
 /// The check modifiers the salvage odds table has a row for.
 const MODIFIERS: [i32; 5] = [0, 4, 8, 12, 16];
@@ -33,7 +33,7 @@ pub(super) fn crafting_groups(content: &Content) -> String {
     );
     let mut groups: Vec<_> = stock.groups.iter().collect();
     groups.sort_by(|a, b| a.group.cmp(&b.group));
-    let worked = |p: Option<&warlock_core::content::Profession>| match p {
+    let worked = |p: Option<&ascmearc_core::content::Profession>| match p {
         Some(p) => (content.skill(p.skill).name.clone(), capital(p.stat.name())),
         None => ("nothing yet".to_string(), "-".to_string()),
     };

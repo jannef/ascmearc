@@ -1,13 +1,13 @@
 //! Digging: the walls that break and how long each tool takes through them.
 
 use super::util::{article, capital, glyph, yes};
-use std::fmt::Write as _;
-use warlock_core::content::{
+use ascmearc_core::content::{
     ActionKind, BASE_TURN, Content, NORMAL_SPEED, TerrainDef, TrapEffect, price,
 };
-use warlock_core::stats::AVERAGE;
-use warlock_core::time::Duration;
-use warlock_core::world::digs_to_break;
+use ascmearc_core::stats::AVERAGE;
+use ascmearc_core::time::Duration;
+use ascmearc_core::world::digs_to_break;
+use std::fmt::Write as _;
 
 /// How long digging through a wall of `hardness` takes with a tool of `power` at Strength
 /// `strength`, at a normal pace: to the second under ten minutes, else to the nearest minute.

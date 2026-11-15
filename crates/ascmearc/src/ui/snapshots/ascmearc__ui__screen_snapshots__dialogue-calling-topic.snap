@@ -1,0 +1,26 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(&case, content)"
+---
+ You learn Sworn foe (demon).
+ The old hermit says: "Hm? A visitor. Sit, if you can find a stone nobody's sitting on."
+
+
+
+
+
+                  ┌─ The old hermit ─────────────────────────────────────────────┐
+                  │                                                              │
+                  │ "Hm? A visitor. Sit, if you can find a stone nobody's        │
+                  │ sitting on."                                                 │
+                  │                                                              │
+                  │ > 1  Rats in the arena                                       │
+                  │   2  This hall                                               │
+                  │   3  The dark chamber                                        │
+                  │   4  The gallery                                             │
+                  │   5  The water garden                                        │
+                  │   6  These stairs                                            │
+                  │   7  Life before death                                       │
+                  │                                                              │
+                  │ 1-7 or Enter  ask    Esc  leave                              │
+                  └──────────────────────────────────────────────────────────────┘

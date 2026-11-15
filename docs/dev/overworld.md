@@ -1,6 +1,6 @@
 # The overworld and local areas
 
-Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
+Developer notes for working on this part of Ascmearc (moved from CLAUDE.md, #185); the
 rules it implements are in spec/07-generation.md. Keep it current with the code, as CLAUDE.md says.
 
 A campaign's overworld (the showcase's is
@@ -64,8 +64,8 @@ circle; `docs/design/generic-vaults.md` §4). The generator joins what it cannot
 cannot hold a shut door (a closed door is not walkable: the Hermit's Hut's stands open), and a
 ruin's own water is laid for good (`cover::shores` leaves it, so a mill-pond keeps its shape).
 Tune by eye:
-`WARLOCK_AREAS="25,20 60,44" cargo test -p warlock-core --lib print_areas -- --ignored
---nocapture` prints areas with one character per terrain (`WARLOCK_SEED` for the seed), and the
+`ASCMEARC_AREAS="25,20 60,44" cargo test -p ascmearc-core --lib print_areas -- --ignored
+--nocapture` prints areas with one character per terrain (`ASCMEARC_SEED` for the seed), and the
 `forest` scenario or `--content-dir` scenarios with `start_level = "local:x,y"` capture them.
 
 Hidden locations (#327; the campaign design §8): a legend's `hidden =

@@ -3,10 +3,10 @@
 //! from `magic/worked.rs`.
 
 use super::util::capital;
+use ascmearc_core::combat::{FUMBLE, HIGHEST};
+use ascmearc_core::content::Content;
+use ascmearc_core::magic::worked::{DAMAGED, GRADES, SIDES_PER_DIE};
 use std::fmt::Write as _;
-use warlock_core::combat::{FUMBLE, HIGHEST};
-use warlock_core::content::Content;
-use warlock_core::magic::worked::{DAMAGED, GRADES, SIDES_PER_DIE};
 
 /// The modifiers the odds table has a row for.
 const MODIFIERS: [i32; 4] = [0, 4, 8, 12];

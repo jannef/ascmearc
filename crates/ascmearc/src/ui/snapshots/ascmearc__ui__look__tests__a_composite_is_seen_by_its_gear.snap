@@ -1,0 +1,6 @@
+---
+source: crates/ascmearc/src/ui/look.rs
+expression: "said.join(\"\\n\")"
+---
+An animated armour (hostile, unhurt), wearing a great helm and a suit of banded mail, on stone floor.
+An animated panoply (hostile, unhurt), wielding a battle axe and a small shield, wearing a great helm, a suit of scale mail, and a wool cloak, on stone floor.

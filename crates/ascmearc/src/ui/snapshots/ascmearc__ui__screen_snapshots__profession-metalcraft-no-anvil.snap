@@ -1,0 +1,33 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ Welcome to ┌─ Metalcraft: recipes ───────────────────────────────────────── Page 1/3 ─┐
+            │                                                                          │
+            │ Work                                                                     │
+            │ > a - Temper          no anvil beside you                                │
+            │ Melee weapons                                                            │
+            │   b - Battle axe      beyond your skill                                  │
+            │   c - Dagger          no anvil beside you                                │
+            │   d - Glaive          beyond your skill                                  │
+            │   e - Great axe       beyond your skill                                  │
+            │   f - Great sword     beyond your skill                                  │
+            │   g - Halberd         beyond your skill                                  │
+            │   h - Hand axe        no anvil beside you                                │
+            │   i - Javelin         no anvil beside you                                │
+            │   j - Knife           no anvil beside you                                │
+            │   k - Long sword      beyond your skill                                  │
+            │   l - Mace            no anvil beside you                                │
+            │   m - Maul            beyond your skill                                  │
+            │   n - Morning star    no anvil beside you                                │
+            │   o - Rapier          beyond your skill                                  │
+            │   p - Scimitar        beyond your skill                                  │
+            │   q - Short sword     no anvil beside you                                │
+            │   r - Spear           no anvil beside you                                │
+            │   s - Stiletto        no anvil beside you                                │
+            │   t - Trident         beyond your skill                                  │
+            │                                                                          │
+            │ Takes a metal weapon or armour, an anvil, about 10 minutes.              │
+            │                                                                          │
+            │ a-t or Enter make   > < page   Esc back                                  │
+            └──────────────────────────────────────────────────────────────────────────┘

@@ -7,7 +7,7 @@ here, in its group.
 ## Working on the project
 
 - [merging.md](merging.md): the merging playbook, hot files, one home per fact, design documents
-- [cli.md](cli.md): the CLI reference: game flags, `warlock-cli`, the xtask commands, replays, dumps, action text
+- [cli.md](cli.md): the CLI reference: game flags, `ascmearc-cli`, the xtask commands, replays, dumps, action text
 - [golden.md](golden.md): golden screenshots: the manifest, the compare, updating references
 - [releases.md](releases.md): cutting a release, the web build, GitHub Pages, logs and crash reports
 - [wiki.md](wiki.md): writing the player wiki: pages, generated tables, layout, tests

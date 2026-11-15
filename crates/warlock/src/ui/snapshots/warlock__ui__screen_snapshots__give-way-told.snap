@@ -1,6 +1,0 @@
----
-source: crates/warlock/src/ui/screen_snapshots.rs
-expression: "render(&case, content.clone())"
----
- The hound comes to your hand. You call it Græg.
- You fasten the jade amulet about Græg's neck.

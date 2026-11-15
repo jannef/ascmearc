@@ -9,10 +9,10 @@
 use super::character::class_page;
 use super::kits;
 use super::util::stat_link;
+use ascmearc_core::content::{ClassDef, Content, TalentEffect};
+use ascmearc_core::stats::Stat;
+use ascmearc_core::talent::MagicEffect;
 use std::fmt::Write as _;
-use warlock_core::content::{ClassDef, Content, TalentEffect};
-use warlock_core::stats::Stat;
-use warlock_core::talent::MagicEffect;
 
 /// The four kinds of class, in the wiki's order.
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]

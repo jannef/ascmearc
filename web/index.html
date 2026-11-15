@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Warlock: a GPU-rendered ASCII roguelike. Play it in your browser.">
+  <meta name="description" content="Ascmearc: a GPU-rendered ASCII roguelike. Play it in your browser.">
   <meta name="color-scheme" content="dark">
-  <title>Warlock @VERSION@</title>
+  <title>Ascmearc @VERSION@</title>
   <style>
     :root {
       --bg: #08080c;
@@ -38,7 +38,7 @@
     #fullscreen[hidden] { display: none; }
 
     #stage { position: relative; flex: 1 1 auto; min-height: 0; background: #000; }
-    #warlock-canvas { display: block; width: 100%; height: 100%; outline: none; }
+    #ascmearc-canvas { display: block; width: 100%; height: 100%; outline: none; }
 
     #message {
       position: absolute; inset: 0; display: flex; flex-direction: column;
@@ -64,31 +64,31 @@
 </head>
 <body>
   <header>
-    <span class="name">Warlock</span>
+    <span class="name">Ascmearc</span>
     <span class="version">Version @VERSION@</span>
     <nav>
       <a href="wiki/">Wiki</a>
-      <a href="https://github.com/jannef/warlock">Source</a>
-      <a href="https://github.com/jannef/warlock/releases/latest">Downloads</a>
-      <a href="https://github.com/jannef/warlock/blob/main/LICENSE">GPL-3.0</a>
+      <a href="https://github.com/jannef/ascmearc">Source</a>
+      <a href="https://github.com/jannef/ascmearc/releases/latest">Downloads</a>
+      <a href="https://github.com/jannef/ascmearc/blob/main/LICENSE">GPL-3.0</a>
       <button id="fullscreen" type="button" hidden>Fullscreen</button>
     </nav>
   </header>
   <main id="stage">
-    <canvas id="warlock-canvas" tabindex="0" aria-label="Warlock game"></canvas>
-    <div id="message" class="loading" role="status"><p id="status">Loading Warlock @VERSION@...</p></div>
+    <canvas id="ascmearc-canvas" tabindex="0" aria-label="Ascmearc game"></canvas>
+    <div id="message" class="loading" role="status"><p id="status">Loading Ascmearc @VERSION@...</p></div>
   </main>
   <footer>
-    <p id="touch-note">Warlock is played with a keyboard; on a phone or tablet you can look around, but not play.</p>
-    Warlock @VERSION@ · Click the game to give it the keyboard · press ? for controls ·
+    <p id="touch-note">Ascmearc is played with a keyboard; on a phone or tablet you can look around, but not play.</p>
+    Ascmearc @VERSION@ · Click the game to give it the keyboard · press ? for controls ·
     <a href="THIRD_PARTY_LICENSES.html">Third-party licenses</a>
   </footer>
   <script type="module">
     const message = document.getElementById("message");
-    const canvas = document.getElementById("warlock-canvas");
+    const canvas = document.getElementById("ascmearc-canvas");
     const stage = document.getElementById("stage");
     const fsButton = document.getElementById("fullscreen");
-    const DOWNLOADS = "https://github.com/jannef/warlock/releases/latest";
+    const DOWNLOADS = "https://github.com/jannef/ascmearc/releases/latest";
 
     function fail(title, detail) {
       message.hidden = false;
@@ -139,14 +139,14 @@
     if (!("gpu" in navigator)) {
       fail(
         "WebGPU is not available",
-        "Warlock needs WebGPU. Use a recent Chrome, Edge, or Safari (or Firefox on a " +
+        "Ascmearc needs WebGPU. Use a recent Chrome, Edge, or Safari (or Firefox on a " +
           "platform where WebGPU is enabled), over HTTPS or localhost."
       );
     } else {
       try {
         const adapter = await navigator.gpu.requestAdapter();
         if (!adapter) throw new Error("no suitable GPU adapter was found");
-        const { default: init } = await import("./warlock.js");
+        const { default: init } = await import("./ascmearc.js");
         await init();
         message.hidden = true;
         canvas.focus();
@@ -157,7 +157,7 @@
           canvas.focus();
         } else {
           console.error(err);
-          fail("Warlock could not start", String(err));
+          fail("Ascmearc could not start", String(err));
         }
       }
     }

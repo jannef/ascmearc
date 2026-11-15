@@ -1,0 +1,34 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+        ┌─ Your character ─────────────────────────────────────────────────────────────────┐
+        │                                                                                  │
+        │ > Start the run                                                                  │
+        │   Name      Isolde                                                               │
+        │   Race      Human                                                                │
+        │   Sign      Water Basilisk                                                       │
+        │   Gender    Other                                                                │
+        │   Class     Thief                                                                │
+        │   Talents   Far shot, School focus (evocation), Tunneler                         │
+        │                                                                                  │
+        │   Age 34 · born 29 Greenleaf 1410 · year of the Water Basilisk                   │
+        │   St  Strength       9    Appraise        12   Negotiation      7                │
+        │   Dx  Dexterity     14    Balance          5   Open lock       19                │
+        │   To  Toughness     10    Bluff            5   Search           9                │
+        │   In  Intelligence  12    Detect traps    20   Sneak attack    18                │
+        │   Wi  Willpower     11    Disable device  17   Spot             9                │
+        │   Pr  Presence       9    Escape artist    9   Steal           25                │
+        │                           Initiative       8   Stealth         18                │
+        │                           Listen           4   Tumble          14                │
+        │   Kit       a dagger (wielded), a dagger (in off hand),                          │
+        │             a leather jerkin (being worn), a wool cloak (being worn),            │
+        │             a pair of leather gloves (being worn), 3 loaves of bread,            │
+        │             30 gold coins, a lantern (in use), a pair of turnshoes (being worn)  │
+        │             Fate will have its say when you set out.                             │
+        │   Alignment Callous                                                              │
+        │   Vision    Normal                                                               │
+        │   Scenario  The Ascmearc, seed 1                                                 │
+        │                                                                                  │
+        │ ↑↓ choose   Enter start or change   Esc back                                     │
+        └──────────────────────────────────────────────────────────────────────────────────┘

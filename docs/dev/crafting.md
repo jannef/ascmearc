@@ -423,7 +423,7 @@ the cells beside the player, and the skills: presentation never decides availabi
 
 ## The profession screen
 
-`crates/warlock/src/ui/profession_screen.rs`, `ScreenName::Profession(SkillId)` (skipped by
+`crates/ascmearc/src/ui/profession_screen.rs`, `ScreenName::Profession(SkillId)` (skipped by
 `--screen`; `--screen profession` is `ScreenName::FirstProfession`, the first profession with a
 recipe the player sees: Metalcraft for most, Alchemy for one trained in it). The name column
 widens to the longest name ("Greater potion of presence"). A `PagedList` grouped by the result's item class, the built-in recipes first under
@@ -698,7 +698,7 @@ refused), `content/fletch.rs` (the trimmed file's refusals).
 
 ## The forging wizard
 
-`crates/warlock/src/ui/craft_pick_screen.rs`, `ScreenName::CraftPick(RecipeId)` (skipped by
+`crates/ascmearc/src/ui/craft_pick_screen.rs`, `ScreenName::CraftPick(RecipeId)` (skipped by
 `--screen`; `--screen craft-pick` is `ScreenName::FirstCraftPick`, the first recipe with a
 choice: the amber amulet). The profession screen opens it for a generic recipe with steps
 (`Entry::wizard`; one without steps is applied at once, the rules saying why). One `PagedList`

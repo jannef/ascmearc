@@ -1,8 +1,8 @@
 //! The calendar: the months.
 
+use ascmearc_core::content::Content;
+use ascmearc_core::time::GameTime;
 use std::fmt::Write as _;
-use warlock_core::content::Content;
-use warlock_core::time::GameTime;
 
 pub(super) fn months(content: &Content) -> String {
     let mut out = String::from("| Month | Name |\n|---:|---|\n");

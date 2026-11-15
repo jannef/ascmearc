@@ -1,8 +1,8 @@
-# Warlock keymap: every command's keys, by where they are read. A key is the character it
+# Ascmearc keymap: every command's keys, by where they are read. A key is the character it
 # types ("k", ">", "?") or a key name ("ArrowUp", "Numpad8", "Enter", "F5"); in play
 # it may be held with Ctrl, Alt, Super, or Shift ("Ctrl+r", "Alt+ArrowUp", "Super+s").
 # An empty list leaves a command without a key. Import it in Controls or with
-# `warlock --import-keys FILE`: commands it does not list keep their keys. Esc is fixed.
+# `ascmearc --import-keys FILE`: commands it does not list keep their keys. Esc is fixed.
 version = 1
 
 [play] # In play

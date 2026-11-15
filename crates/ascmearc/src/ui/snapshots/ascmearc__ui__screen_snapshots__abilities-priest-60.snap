@@ -1,0 +1,32 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ Your athletics improves. (×177) You learn Deep lungs. You learn Healthy. You learn Cool head. You
+ learn Iron wi┌─ Abilities ────────────────────────────────────────────── Page 1/2 ─┐earn --more--
+              │                                                                     │
+              │ Birth sign                                                          │
+              │   a  Transfixing stare  at a place you see                          │
+              │ Class                                                               │
+              │   b  Consecrate                                                     │
+              │ > c  Miracle                                                        │
+              │   d  Sanctuary                                                      │
+              │ Spells                                                              │
+              │   e  Mend               1d4 healed, 3 mana, aimed                   │
+              │   f  Blessing           4 mana                                      │
+              │   g  Cure wounds        3d6 healed, 3 mana, aimed                   │
+              │   h  Renewal            10 mana                                     │
+              │   i  Silence            20 mana, aimed                              │
+              │   j  Benison            3d6 healed, 22 mana                         │
+              │   k  Rebuke             8d6 fire, burns one in four, 34 mana, aimed │
+              │ Skills                                                              │
+              │   l  Decipher           no unknown scroll                           │
+              │   m  Heal               nothing to treat                            │
+              │   n  Salvage            on something you carry                      │
+              │                                                                     │
+              │ Everything that ails you is answered at once: wounds, hunger,       │
+              │ sickness and poison, hexes and holds, what was taken, and your mana │
+              │ and every pool you hold, filled.                                    │
+              │                                                                     │
+              │ a-n or Enter use   > < page   Esc close                             │
+              └─────────────────────────────────────────────────────────────────────┘

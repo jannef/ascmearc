@@ -2,10 +2,10 @@
 //! level and its chance of a miscast by bonus, what Spellcraft gives it, and the whole miscast
 //! table with its exact ranges.
 
+use ascmearc_core::check;
+use ascmearc_core::content::{Content, MishapEffect, ZoneKind};
+use ascmearc_core::skills::Effect;
 use std::fmt::Write as _;
-use warlock_core::check;
-use warlock_core::content::{Content, MishapEffect, ZoneKind};
-use warlock_core::skills::Effect;
 
 /// The bonuses the chance table shows a column for.
 const BONUSES: [i32; 8] = [0, 3, 6, 10, 15, 20, 30, 40];

@@ -5,17 +5,17 @@
 //! (`world/crafting/set.rs`: the odds).
 
 use super::util::{Term, anchored, capital, link};
-use std::fmt::Write as _;
-use warlock_core::combat::HIGHEST;
-use warlock_core::content::{
+use ascmearc_core::combat::HIGHEST;
+use ascmearc_core::content::{
     Content, CutId, Cutting, InputKind, MaterialId, PartSource, RecipeCount, RecipeInput,
     RecipeUse, counted,
 };
-use warlock_core::dice::Dice;
-use warlock_core::skills::Effect;
-use warlock_core::talent::CraftEffect;
-use warlock_core::time::Duration;
-use warlock_core::world::{CutBand, Grade, SetBand, cut_band, cut_outcome, grade, set_band};
+use ascmearc_core::dice::Dice;
+use ascmearc_core::skills::Effect;
+use ascmearc_core::talent::CraftEffect;
+use ascmearc_core::time::Duration;
+use ascmearc_core::world::{CutBand, Grade, SetBand, cut_band, cut_outcome, grade, set_band};
+use std::fmt::Write as _;
 
 /// The bonuses (the stat modifier, the skill, and the talents together) the odds table has a row
 /// for, and what reaches each.
@@ -33,7 +33,7 @@ fn grade_ease(content: &Content) -> i32 {
         .map(|id| content.talents().get(id))
         .and_then(|t| {
             t.effects.iter().find_map(|e| match e {
-                warlock_core::content::TalentEffect::Craft(CraftEffect::GradeEase { value }) => {
+                ascmearc_core::content::TalentEffect::Craft(CraftEffect::GradeEase { value }) => {
                     Some(*value)
                 }
                 _ => None,
@@ -107,7 +107,7 @@ pub(super) fn recipes_of(content: &Content, skill: &str) -> String {
         .filter(|r| r.result.is_some() && r.skill == skill_id)
         .collect();
     rows.sort_by(|a, b| (a.from, &a.name, &a.id).cmp(&(b.from, &b.name, &b.id)));
-    let piece = (content.object_id(warlock_core::piece::ID)).map(|o| content.object(o));
+    let piece = (content.object_id(ascmearc_core::piece::ID)).map(|o| content.object(o));
     let fletch = content.fletch();
     for r in rows {
         let Some(result) = r.result.as_ref() else {
@@ -196,9 +196,9 @@ pub(super) fn recipes_of(content: &Content, skill: &str) -> String {
                 let grams = u64::from(def.weight) * u64::from(base.share) * weight(m)
                     / weight(base.material)
                     / 100;
-                let count = warlock_core::piece::count_for(content, grams * u64::from(most), m);
+                let count = ascmearc_core::piece::count_for(content, grams * u64::from(most), m);
                 if let (Some(count), Some(piece)) = (count, piece) {
-                    let (one, many) = warlock_core::piece::names(content, piece, m);
+                    let (one, many) = ascmearc_core::piece::names(content, piece, m);
                     words.push(counted(&one, &many, count));
                 }
             }
@@ -286,7 +286,7 @@ pub(super) fn recipes_of(content: &Content, skill: &str) -> String {
 /// An input in words: "a length of sinew", "an ingot of any metal", "20 arrowheads".
 fn input_words(
     content: &Content,
-    piece: Option<&warlock_core::content::ObjectDef>,
+    piece: Option<&ascmearc_core::content::ObjectDef>,
     input: &RecipeInput,
 ) -> Option<String> {
     let (one, many) = match &input.kind {
@@ -294,7 +294,7 @@ fn input_words(
             let def = content.object(*o);
             (def.name.clone(), def.plural.clone())
         }
-        InputKind::Material(m) => warlock_core::piece::names(content, piece?, *m),
+        InputKind::Material(m) => ascmearc_core::piece::names(content, piece?, *m),
         InputKind::Group(group) => {
             let first = (content.materials().iter())
                 .position(|m| m.group.as_deref() == Some(group.as_str()))?;
@@ -321,7 +321,7 @@ pub(super) fn brews(content: &Content) -> String {
         return String::new();
     };
     let craft = (content.skill(alchemy).benefits.iter())
-        .find(|b| b.effect == warlock_core::skills::Effect::Craft);
+        .find(|b| b.effect == ascmearc_core::skills::Effect::Craft);
     let bonus = |value: u16| craft.map_or(0, |b| b.at(value));
     let settings = content.recipes().settings.as_ref();
     let mut out = String::from("| Potion | Takes | Listed from | Time | Difficulty |");
@@ -386,7 +386,7 @@ pub(super) fn brews(content: &Content) -> String {
 /// potion row, an essence to the materials page's essences.
 fn brew_input(
     content: &Content,
-    object: warlock_core::content::ObjectId,
+    object: ascmearc_core::content::ObjectId,
     id: &str,
     name: &str,
 ) -> String {
@@ -404,9 +404,9 @@ fn brew_input(
 /// what profession `skill` works, a table's what it lists.
 fn materials(
     content: &Content,
-    skill: warlock_core::skills::SkillId,
-    def: &warlock_core::content::ObjectDef,
-    part: &warlock_core::content::RecipePart,
+    skill: ascmearc_core::skills::SkillId,
+    def: &ascmearc_core::content::ObjectDef,
+    part: &ascmearc_core::content::RecipePart,
 ) -> Vec<MaterialId> {
     match &part.source {
         PartSource::Sources { stock, .. } => stock.clone(),
@@ -434,7 +434,7 @@ fn source_words(input: Option<&str>, of: &str, optional: bool) -> String {
 /// by the group's name, the rest by their own ("metal", "bone or stone", "ironwood").
 fn of_words(
     content: &Content,
-    def: &warlock_core::content::ObjectDef,
+    def: &ascmearc_core::content::ObjectDef,
     part: usize,
     materials: &[MaterialId],
 ) -> String {
@@ -671,7 +671,7 @@ pub(super) fn gem_cutting(content: &Content) -> String {
     };
     let start = Cutting {
         size,
-        cut: warlock_core::content::CutId(0),
+        cut: ascmearc_core::content::CutId(0),
     };
     let words = |c: Cutting| {
         format!(

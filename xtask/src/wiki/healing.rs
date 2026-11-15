@@ -2,16 +2,16 @@
 
 use super::order;
 use super::util::{Term, anchored, capital, link, percent_of, signed, stat_link, yes};
-use std::fmt::Write as _;
-use warlock_core::check;
-use warlock_core::content::{
+use ascmearc_core::check;
+use ascmearc_core::content::{
     Affliction, Content, DiseaseDef, DiseaseId, PrayerUse, StatusDef, StatusId, TalentEffect,
 };
-use warlock_core::dice::Dice;
-use warlock_core::hunger::Hunger;
-use warlock_core::stats;
-use warlock_core::talent::{FaithEffect, MartialEffect, SignEffect, SongEffect};
-use warlock_core::time::Duration;
+use ascmearc_core::dice::Dice;
+use ascmearc_core::hunger::Hunger;
+use ascmearc_core::stats;
+use ascmearc_core::talent::{FaithEffect, MartialEffect, SignEffect, SongEffect};
+use ascmearc_core::time::Duration;
+use std::fmt::Write as _;
 
 /// A pace of healing in percent of normal, in words: `twice as fast`, `half as fast`, `not at
 /// all`.
@@ -92,7 +92,7 @@ fn exactly(seconds: u32) -> String {
 /// A creature's attack (or gaze) a hit with which may cause something: the creature, the
 /// attack's name, the chance a hit has, and what the matcher added after the chance.
 struct Causing<'a> {
-    creature: &'a warlock_core::content::CreatureDef,
+    creature: &'a ascmearc_core::content::CreatureDef,
     attack: String,
     chance: u8,
     detail: String,
@@ -220,7 +220,7 @@ fn causes(content: &Content, status: usize, def: &StatusDef) -> String {
     causes.extend(
         (content.weapon_abilities().iter())
             .filter(|a| {
-                matches!(a.effect, warlock_core::content::WeaponDoes::Status { status: s, .. }
+                matches!(a.effect, ascmearc_core::content::WeaponDoes::Status { status: s, .. }
                     if usize::from(s.0) == status)
             })
             .map(|a| format!("{} (a weapon ability)", a.name)),
@@ -240,10 +240,10 @@ fn causes(content: &Content, status: usize, def: &StatusDef) -> String {
             .map(|(_, t)| t)
             .filter(|t| {
                 t.effects.iter().any(|e| match e {
-                    warlock_core::content::TalentEffect::Martial(
+                    ascmearc_core::content::TalentEffect::Martial(
                         MartialEffect::StunningStrike { status: s, .. },
                     )
-                    | warlock_core::content::TalentEffect::Martial(
+                    | ascmearc_core::content::TalentEffect::Martial(
                         MartialEffect::QuiveringPalm { status: s, .. },
                     ) => content
                         .status_id(s)
@@ -256,7 +256,7 @@ fn causes(content: &Content, status: usize, def: &StatusDef) -> String {
     // The modes of smiting (the paladin's): a wounding smite, with a check failed for fear.
     for (_, t) in content.talents().iter() {
         for e in &t.effects {
-            if let warlock_core::content::TalentEffect::Faith(FaithEffect::SmiteMode {
+            if let ascmearc_core::content::TalentEffect::Faith(FaithEffect::SmiteMode {
                 status: s,
                 check,
                 ..
@@ -280,8 +280,8 @@ fn causes(content: &Content, status: usize, def: &StatusDef) -> String {
     // The songs sung over their hearers (the bard's Lullaby): a check failed.
     for (_, t) in content.talents().iter() {
         for e in &t.effects {
-            if let warlock_core::content::TalentEffect::Song(SongEffect::Song {
-                on: warlock_core::content::SongOn::Hearers,
+            if let ascmearc_core::content::TalentEffect::Song(SongEffect::Song {
+                on: ascmearc_core::content::SongOn::Hearers,
                 status: s,
                 check: Some(stat),
                 difficulty,
@@ -413,8 +413,9 @@ fn also(content: &Content, status: usize, def: &StatusDef) -> Vec<String> {
             hold.difficulty
         ));
     }
-    let rider =
-        |r: warlock_core::damage::Rider| format!("{} {}", r.dice, content.damage_type(r.kind).name);
+    let rider = |r: ascmearc_core::damage::Rider| {
+        format!("{} {}", r.dice, content.damage_type(r.kind).name)
+    };
     if let Some(r) = def.blows {
         parts.push(format!(
             "your melee blows do {} besides, in either hand (no spell type's rule)",

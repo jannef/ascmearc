@@ -1,9 +1,9 @@
 # Combat
 
-Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
+Developer notes for working on this part of Ascmearc (moved from CLAUDE.md, #185); the
 rules it implements are in spec/10-combat.md. Keep it current with the code, as CLAUDE.md says.
 
-Combat (M16, #116): the pure rules are `warlock-core/src/combat.rs` (2d12
+Combat (M16, #116): the pure rules are `ascmearc-core/src/combat.rs` (2d12
 `roll_natural`, `hits`, `hit_ways`, `ways`; `FUMBLE` (2) always misses and every natural from
 `SURE_HIT` (22) to `HIGHEST` (24) always hits, #1096; checks keep a natural 24 alone as their sure
 success, `check::makes`, which temper's check shares; `Category` (Dexterity, Armour, Shield, Parry,
@@ -118,7 +118,7 @@ Damage types (#151): the data is `data/damage_types.toml`
 `damage_type`, `damage_type_id`, `unarmed_damage`; the shared resolvers
 `Content::resolve_kinds` (`damage_type`, one or two names → `Kinds`) and `resolve_per_kind`
 (`resist`/`protects` maps) are what objects, creatures, affixes, traps, scrolls, statuses, and
-terrain parse with). The model is `warlock-core/src/damage.rs`: `Damage { amount, kind:
+terrain parse with). The model is `ascmearc-core/src/damage.rs`: `Damage { amount, kind:
 Option<DamageTypeId> }` (`None` untyped), `Kinds` (at most `MAX_KINDS` 2; `best(resistance,
 protection)` picks the kind a blow does, no draw), `Rider { kind, dice }` (added damage),
 `Resistances` (a total per type and the immune types; `sum(count, immune, sources)` adds every

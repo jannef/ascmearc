@@ -2,8 +2,8 @@
 //! `data/gear_condition.toml`, exactly, and what damaged gear of each material is called.
 
 use super::util::per_mille;
+use ascmearc_core::content::{Content, ItemHarm, Odds, PER_MILLE};
 use std::fmt::Write as _;
-use warlock_core::content::{Content, ItemHarm, Odds, PER_MILLE};
 
 /// One row of odds.
 fn row(out: &mut String, who: &str, odds: &Odds) {

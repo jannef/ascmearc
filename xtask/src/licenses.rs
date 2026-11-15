@@ -27,7 +27,7 @@ pub(crate) fn run(check: bool) -> Result<(), String> {
     std::fs::create_dir_all(tmp_dir)
         .map_err(|e| format!("cannot create {}: {e}", tmp_dir.display()))?;
     // `--workspace` scans every member, including xtask; its dependencies (image, serde,
-    // serde_json, toml, warlock-core) are a subset of the game's, so the shipped set is unchanged. If xtask ever
+    // serde_json, toml, ascmearc-core) are a subset of the game's, so the shipped set is unchanged. If xtask ever
     // gains a dependency the game lacks, it would be listed here too: keep that in mind.
     let status = Command::new(env!("CARGO"))
         .current_dir(&root)

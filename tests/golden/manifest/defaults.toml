@@ -3,8 +3,8 @@
 # over a run. They were cut from 103 to 16 (#301) because nearly every difference they reported
 # was an intended change that cost an update pass, and none caught an unintended regression.
 # A screen, a list, a dialog, a prompt, the message line, or the status bar is a text snapshot
-# (`crates/warlock/src/ui/screen_snapshots.rs`); what is on the map is a core test or a
-# `warlock-cli dump`. Add a golden only when none of those can see the change, and say in the PR
+# (`crates/ascmearc/src/ui/screen_snapshots.rs`); what is on the map is a core test or a
+# `ascmearc-cli dump`. Add a golden only when none of those can see the change, and say in the PR
 # why (CLAUDE.md, "Golden screenshots"). When in doubt, do not add one.
 #
 # Golden screenshots. `cargo xtask golden` reads every `*.toml` in this directory in

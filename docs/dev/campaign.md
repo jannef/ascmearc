@@ -29,7 +29,7 @@ starts, one of the campaign's own), and `kind`, `campaign` (default) or `test`.
 
 ## Loading (`content/campaign.rs`, `content/files.rs`, `content/mod.rs`)
 
-- `warlock-assets`' `build.rs` embeds and `ContentFiles::from_dir` reads `assets/campaigns/`
+- `ascmearc-assets`' `build.rs` embeds and `ContentFiles::from_dir` reads `assets/campaigns/`
   with the rest (docs/dev/content.md).
 - `ContentFiles::campaign_order`: the campaign directories, those of kind `campaign` in path
   order, then the test ones. Every table and directory reads in this order.
@@ -84,7 +84,7 @@ campaign, `""` for a fixture outside every campaign. `World::campaign`, `World::
 
 - **Local areas** belong to the campaign's overworld: `Content::overworld_of(campaign)`,
   `Content::local_area(campaign, id)`, `Content::has_level(campaign, id)`, and
-  `mapgen::generate(content, (campaign, seed), id, ..)` take it. `warlock-cli gen` has
+  `mapgen::generate(content, (campaign, seed), id, ..)` take it. `ascmearc-cli gen` has
   `--campaign` (default `showcase`).
 - **The fingerprint** is `Content::fingerprint_for(campaign)`: the shared groups, the levels
   and branches of that campaign (and of none), and the creature types up to the last the run
@@ -93,7 +93,7 @@ campaign, `""` for a fixture outside every campaign. `World::campaign`, `World::
   that also holds the test world. `save::decode` reads the campaign from the saved state (or
   its scenario's) before comparing.
 
-## New run (`crates/warlock/src/ui/new_run_screen.rs::rows_of`)
+## New run (`crates/ascmearc/src/ui/new_run_screen.rs::rows_of`)
 
 A release build lists the start scenario of every campaign of kind `campaign` (while there is
 none, every campaign's start: the showcase's). A developer build (debug or `--dev`) lists every
@@ -150,34 +150,34 @@ and the overworld (the Wildlands), with the Depths as the generated branch. Each
 
 Test content never appears in a release. The cargo feature `showcase` holds it:
 
-- `warlock-assets`, the crate that embeds the content (#1587), has `[features] default =
-  ["showcase"]`; `warlock` and `warlock-cli` have the same default and forward it (`showcase =
-  ["warlock-assets/showcase"]`); the workspace table takes `warlock-assets` with
+- `ascmearc-assets`, the crate that embeds the content (#1587), has `[features] default =
+  ["showcase"]`; `ascmearc` and `ascmearc-cli` have the same default and forward it (`showcase =
+  ["ascmearc-assets/showcase"]`); the workspace table takes `ascmearc-assets` with
   `default-features = false`, so each member's own feature decides. `xtask` asks for it
   (`features = ["showcase"]`): the wiki, the goldens, and the benchmarks read the test world.
-  `warlock-core` has no feature: it embeds nothing, so it is one build with the test world or
+  `ascmearc-core` has no feature: it embeds nothing, so it is one build with the test world or
   without, and its own tests read all of `assets/` from disk.
-- `warlock-assets`' `build.rs` leaves out every file under `campaigns/showcase/` without the
+- `ascmearc-assets`' `build.rs` leaves out every file under `campaigns/showcase/` without the
   feature (`CARGO_FEATURE_SHOWCASE`), so such a build embeds no file of the test world, and
-  `warlock_assets::from_dir` leaves it out too (`--content-dir assets` on a release build).
+  `ascmearc_assets::from_dir` leaves it out too (`--content-dir assets` on a release build).
 - Every documented command (`cargo build`, `test`, `run`, the xtask commands but `web`) has the
   feature on and is unchanged. Release artifacts turn it off: the `Release` workflow builds with
   `--no-default-features`, and `cargo xtask web` passes it itself.
 - Without a scenario named (`--new`, a bare `--capture`), the game starts
   `Content::default_scenario`: the showcase where it is built in, else the first campaign's
-  start. `warlock-cli` keeps its default `showcase` and, in a release build, refuses it as an
+  start. `ascmearc-cli` keeps its default `showcase` and, in a release build, refuses it as an
   unknown scenario.
-- **Guards**: the test `release_content` (an integration test of warlock-assets,
+- **Guards**: the test `release_content` (an integration test of ascmearc-assets,
   `tests/release_content.rs`, empty unless built without the feature: one small harness, #1593)
-  checks that `warlock_assets::content()` loads and holds no campaign of kind `test` and nothing of one
+  checks that `ascmearc_assets::content()` loads and holds no campaign of kind `test` and nothing of one
   (scenario, level, dungeon, quest, dialogue, creature type, vault), so New run lists nothing of
   the test world, also with `--dev`, and that there is one campaign. CI's `release-config` job
   builds the release configuration, checks it for wasm32, runs
-  `cargo test --no-default-features -p warlock-assets --test release_content`,
-  and expects `warlock-cli dump --scenario showcase` to fail with "unknown scenario". The
+  `cargo test --no-default-features -p ascmearc-assets --test release_content`,
+  and expects `ascmearc-cli dump --scenario showcase` to fail with "unknown scenario". The
   `Release` workflow does the last on each platform's binary and checks the game binary holds
   no `campaigns/showcase/campaign.toml` (the key of the embedded file), and `cargo xtask web`
-  checks `warlock_bg.wasm` the same way.
+  checks `ascmearc_bg.wasm` the same way.
 - A release build holds one campaign, the Ascmearc (#332): New run goes straight to the race
   ("New run" above). Without any campaign it would say "No scenarios are installed." 
 
@@ -294,7 +294,7 @@ campaigns it does not describe (`order::described`).
 numbering, a run of each, the fingerprint and a save across a build without the test world, the
 cross-campaign refusals, the id clashes, one overworld a campaign), `new_run_screen.rs` (the
 order in release and developer builds), the `new-run-screen` text snapshot, and
-`crates/warlock-assets/tests/release_content.rs` (compiled only in the release configuration).
+`crates/ascmearc-assets/tests/release_content.rs` (compiled only in the release configuration).
 
 Vaults (#337): `Vault::stamps_on(def, depth)` keeps a campaign's vaults to its own branches, and
 to the branches or branch levels its file's `dungeons` names (`vault::parse_dungeons`, checked by

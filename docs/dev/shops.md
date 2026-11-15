@@ -1,6 +1,6 @@
 # Shops
 
-Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
+Developer notes for working on this part of Ascmearc (moved from CLAUDE.md, #185); the
 rules it implements are in spec/07-generation.md. Keep it current with the code, as CLAUDE.md says.
 
 Shops (M27, #145) are data: `data/shops.toml` (`content/shop.rs`: `Shops` with

@@ -1,9 +1,9 @@
 //! Special rooms.
 
 use super::util::{Term, anchored, article, capital};
+use ascmearc_core::content::{Content, Hoard, Offer, StatusId};
+use ascmearc_core::world::rise_candidates;
 use std::fmt::Write as _;
-use warlock_core::content::{Content, Hoard, Offer, StatusId};
-use warlock_core::world::rise_candidates;
 
 /// How many times as much `percent` is, in words: "twice", "two fifths", "30% of".
 fn times(percent: u16) -> String {
@@ -312,7 +312,7 @@ pub(super) fn special_rooms(content: &Content) -> String {
 }
 
 /// What a shrine of a side does, exactly: "It is good or evil, one to one, ..."
-fn shrine_does(content: &Content, shrine: &warlock_core::content::Shrine) -> String {
+fn shrine_does(content: &Content, shrine: &ascmearc_core::content::Shrine) -> String {
     let def = content.status(shrine.status);
     let c = def.combat;
     let mut hinders = vec![format!("wounds heal at {}% of the pace", def.regen)];

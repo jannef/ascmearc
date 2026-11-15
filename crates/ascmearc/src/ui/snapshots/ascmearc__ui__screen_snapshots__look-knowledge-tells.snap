@@ -1,0 +1,8 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content)"
+---
+ A withered skeleton (hostile, unhurt), on stone floor.
+ You know the skeleton is immune to poison and necrotic, resistant to piercing, and vulnerable to bl
+
+ z

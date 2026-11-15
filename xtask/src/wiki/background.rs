@@ -4,9 +4,9 @@
 
 use super::kits::line_text;
 use super::util::{Term, link, percent, signed, signed_or_zero, stat_link, table_text};
+use ascmearc_core::content::{Content, Marks, StoryEffect, StoryLine, StoryTier};
+use ascmearc_core::text::or_list;
 use std::fmt::Write as _;
-use warlock_core::content::{Content, Marks, StoryEffect, StoryLine, StoryTier};
-use warlock_core::text::or_list;
 
 /// The campaign whose own chapter (the road) the wiki lists: the first campaign's.
 const CAMPAIGN: &str = "ascmearc";
@@ -17,7 +17,7 @@ const CAMPAIGN: &str = "ascmearc";
 fn chapters(content: &Content) -> usize {
     content.background().map_or(0, |b| {
         (b.chapters_for(CAMPAIGN))
-            .filter(|c| c.when == warlock_core::content::ChapterWhen::default())
+            .filter(|c| c.when == ascmearc_core::content::ChapterWhen::default())
             .count()
     })
 }

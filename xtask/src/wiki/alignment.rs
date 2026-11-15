@@ -3,9 +3,9 @@
 //! only the band; the wiki states the numbers exactly (the game is vague, the wiki is accurate).
 
 use super::util::{capital, signed, signed_or_zero};
+use ascmearc_core::alignment::{Band, Score};
+use ascmearc_core::content::{AlignmentRules, ClassActive, Content};
 use std::fmt::Write as _;
-use warlock_core::alignment::{Band, Score};
-use warlock_core::content::{AlignmentRules, ClassActive, Content};
 
 /// What a deed of worth `amount` does to the score, in words: "very strongly evil", "a little
 /// good", "nothing".
@@ -31,7 +31,7 @@ pub(super) fn alignment_bands(content: &Content) -> String {
         return "There is no alignment.\n".into();
     };
     let mut out = String::from("| Band | Scores | What it means |\n|---|:---:|---|\n");
-    let mut top = warlock_core::alignment::MAX;
+    let mut top = ascmearc_core::alignment::MAX;
     for def in rules.bands() {
         let scores = format!("{} to {}", signed_or_zero(def.from), signed_or_zero(top));
         let _ = writeln!(
@@ -238,7 +238,7 @@ mod tests {
         assert_eq!(worth(5), "a little good");
         assert_eq!(worth(-100), "strongly evil");
         assert_eq!(worth(-200), "very strongly evil");
-        let content = warlock_assets::content().expect("content");
+        let content = ascmearc_assets::content().expect("content");
         let start = alignment_start(&content);
         // Drow and duergar first (by name): a paladin of either starts Neutral, a dwarf Good.
         assert!(

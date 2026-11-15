@@ -2,11 +2,11 @@
 //! what changes the pace.
 
 use super::healing::pace;
+use ascmearc_core::content::Content;
+use ascmearc_core::hunger::Hunger;
+use ascmearc_core::mana;
+use ascmearc_core::time::Duration;
 use std::fmt::Write as _;
-use warlock_core::content::Content;
-use warlock_core::hunger::Hunger;
-use warlock_core::mana;
-use warlock_core::time::Duration;
 
 /// What each race and each class adds to the mana, sorted by mana, most first, then by name.
 pub(super) fn races_and_classes(content: &Content) -> String {

@@ -2,12 +2,12 @@
 //! and bonus, how long a study takes by spell level, what a deepening to each rank adds to the
 //! time and the check, the classes' affinities with the schools, and the mishaps.
 
+use ascmearc_core::check;
+use ascmearc_core::content::{Band, Content, MishapEffect};
+use ascmearc_core::skills::Effect;
+use ascmearc_core::talent::MagicEffect;
+use ascmearc_core::time::Duration;
 use std::fmt::Write as _;
-use warlock_core::check;
-use warlock_core::content::{Band, Content, MishapEffect};
-use warlock_core::skills::Effect;
-use warlock_core::talent::MagicEffect;
-use warlock_core::time::Duration;
 
 /// The bonuses the chance table shows a column for.
 const BONUSES: [i32; 7] = [-2, 0, 2, 4, 6, 8, 10];
@@ -83,7 +83,7 @@ pub(super) fn times(content: &Content) -> String {
         .find(|(_, t)| t.id == "quick_study")
         .and_then(|(_, t)| {
             t.effects.iter().find_map(|e| match e {
-                warlock_core::content::TalentEffect::Magic(MagicEffect::Study {
+                ascmearc_core::content::TalentEffect::Magic(MagicEffect::Study {
                     percent, ..
                 }) => Some(*percent),
                 _ => None,
@@ -94,10 +94,10 @@ pub(super) fn times(content: &Content) -> String {
     );
     let took = |turns: u32| Duration::seconds(u64::from(turns) * 6).spoken();
     for level in LEVELS {
-        let turns = warlock_core::world::study_turns(rules, level, 0);
+        let turns = ascmearc_core::world::study_turns(rules, level, 0);
         let quick = quick.map_or_else(
             || "—".to_string(),
-            |p| took(warlock_core::world::study_turns(rules, level, p)),
+            |p| took(ascmearc_core::world::study_turns(rules, level, p)),
         );
         let _ = writeln!(out, "| {level} | {turns} | {} | {quick} |", took(turns));
     }
@@ -112,7 +112,7 @@ pub(super) fn deepening(content: &Content) -> String {
     };
     let mut out =
         String::from("| Rank sought | Time | Added to the difficulty |\n|:---:|:---:|:---:|\n");
-    for rank in 2..=warlock_core::content::MAX_SPELL_RANK {
+    for rank in 2..=ascmearc_core::content::MAX_SPELL_RANK {
         let _ = writeln!(
             out,
             "| {rank} | {rank} × the learning time | +{} |",
@@ -174,7 +174,7 @@ pub(super) fn mishaps(content: &Content) -> String {
 
 /// `weight`'s share of `band`'s draw (its mishaps and the lucky ones), in percent.
 fn percent_in(content: &Content, band: Band, weight: u16) -> String {
-    let total: u32 = warlock_core::content::drawn_among(content.mishaps(), band)
+    let total: u32 = ascmearc_core::content::drawn_among(content.mishaps(), band)
         .map(|m| u32::from(m.weight))
         .sum();
     if total == 0 {
@@ -230,7 +230,7 @@ fn effect_text(content: &Content, effect: MishapEffect) -> String {
 /// A drain in words: `points` off a stat for good unless a Willpower check against `difficulty`
 /// is made, `times` over (a mishap's and a miscast's).
 pub(super) fn drain_words(
-    stat: Option<warlock_core::stats::Stat>,
+    stat: Option<ascmearc_core::stats::Stat>,
     points: u8,
     difficulty: i32,
     times: u8,

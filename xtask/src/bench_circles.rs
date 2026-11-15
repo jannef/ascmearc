@@ -9,13 +9,13 @@
 //! nothing of the bench ships.
 
 use crate::{target_dir, workspace_root};
+use ascmearc_core::World;
+use ascmearc_core::action::parse_actions;
+use ascmearc_core::content::Content;
+use ascmearc_core::replay::Replay;
+use ascmearc_core::world::ActorKind;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
-use warlock_core::World;
-use warlock_core::action::parse_actions;
-use warlock_core::content::Content;
-use warlock_core::replay::Replay;
-use warlock_core::world::ActorKind;
 
 /// The kobolds' grid: columns and rows, and the cells between them (a double figure is about
 /// nine columns by four rows; these overlap a little, as a crowd does).
@@ -108,7 +108,7 @@ pub fn fixture() -> Result<(PathBuf, PathBuf), String> {
     };
     write(campaign.join("levels/bench_circles.toml"), &level())?;
     write(campaign.join("scenarios/bench_circles.toml"), SCENARIO)?;
-    let files = warlock_assets::from_dir(&content).map_err(|e| e.to_string())?;
+    let files = ascmearc_assets::from_dir(&content).map_err(|e| e.to_string())?;
     let content_data = Arc::new(Content::load(&files).map_err(|e| e.to_string())?);
     let mut world = World::new(content_data, "bench_circles", None).map_err(|e| e.to_string())?;
     let mut replay = Replay::new(&world);
@@ -148,7 +148,7 @@ mod tests {
     // kinds: fifty circles.
     #[test]
     fn the_hall_holds_fifty_circles() {
-        let mut files = warlock_assets::files();
+        let mut files = ascmearc_assets::files();
         files.insert("campaigns/showcase/levels/bench_circles.toml", &level());
         files.insert("campaigns/showcase/scenarios/bench_circles.toml", SCENARIO);
         let content = Arc::new(Content::load(&files).expect("the fixture loads"));

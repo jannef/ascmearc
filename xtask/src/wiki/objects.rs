@@ -2,10 +2,10 @@
 
 use super::order;
 use super::util::{Term, anchored, article, at_normal_pace, capital, glyph, yes};
+use ascmearc_core::content::{BASE_TURN, Content, ItemClassId, ObjectDef, ObjectId, price};
+use ascmearc_core::object::format_weight;
+use ascmearc_core::text::and_list;
 use std::fmt::Write as _;
-use warlock_core::content::{BASE_TURN, Content, ItemClassId, ObjectDef, ObjectId, price};
-use warlock_core::object::format_weight;
-use warlock_core::text::and_list;
 
 /// The equipment slots in the order the screen lists them, with their letters, what goes in
 /// each, and how long putting a thing on there or taking it off takes. A class's own slot (the
@@ -161,7 +161,7 @@ pub(super) fn objects(content: &Content) -> String {
         // A loose gem is made of its gem, which weighs and prices it (Gems has the tables).
         let (made, weight, worth) = match (loose == Some(id), content.gems()) {
             (true, Some(gems)) => {
-                let grams = |s: Option<&warlock_core::content::GemSize>| s.map_or(0, |s| s.weight);
+                let grams = |s: Option<&ascmearc_core::content::GemSize>| s.map_or(0, |s| s.weight);
                 let (least, most) = (grams(gems.sizes().first()), grams(gems.sizes().last()));
                 (
                     "its gem".to_string(),

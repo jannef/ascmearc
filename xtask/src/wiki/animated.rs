@@ -4,11 +4,11 @@
 
 use super::creatures::on_hit;
 use super::util::{capital, damage_link, glyph, signed};
+use ascmearc_core::content::{Content, CreatureDef, Numbers};
+use ascmearc_core::item_parts::ItemPart;
+use ascmearc_core::object::{Stack, break_up};
+use ascmearc_core::stats::Stat;
 use std::fmt::Write as _;
-use warlock_core::content::{Content, CreatureDef, Numbers};
-use warlock_core::item_parts::ItemPart;
-use warlock_core::object::{Stack, break_up};
-use warlock_core::stats::Stat;
 
 /// The tiers: their levels, what they add to the base stats, their hit point factor and dice
 /// steps, size and footsteps; then what every animated type is, and the drop rule.
@@ -134,7 +134,7 @@ pub(super) fn animated_families(content: &Content) -> String {
          Dies |\n|---|---|---|---|---|---|---|---:|---|---|\n",
     );
     let animated = content.animated();
-    let families: Vec<(usize, &warlock_core::content::animated::Tier)> = (animated.tiers.iter())
+    let families: Vec<(usize, &ascmearc_core::content::animated::Tier)> = (animated.tiers.iter())
         .enumerate()
         .filter(|(_, t)| t.is_family())
         .collect();
@@ -206,7 +206,8 @@ pub(super) fn animated_families(content: &Content) -> String {
          board beside a shield |\n|---|---:|---:|---:|---:|---:|\n",
     );
     for (_, tier) in families {
-        let at = |ramp: Option<warlock_core::content::Ramp>, level| ramp.map_or(0, |r| r.at(level));
+        let at =
+            |ramp: Option<ascmearc_core::content::Ramp>, level| ramp.map_or(0, |r| r.at(level));
         for level in tier.levels[0]..=tier.levels[1] {
             let _ = writeln!(
                 out,
@@ -261,7 +262,7 @@ pub(super) fn animated_loot(content: &Content) -> String {
                 }
                 pieces += odds;
             }
-            let at = |ramp: Option<warlock_core::content::Ramp>| ramp.map_or(0, |r| r.at(level));
+            let at = |ramp: Option<ascmearc_core::content::Ramp>| ramp.map_or(0, |r| r.at(level));
             let _ = writeln!(
                 out,
                 "| {} | {level} | {pieces:.1} | {:.1} | {} % | {} % |",
@@ -279,7 +280,7 @@ pub(super) fn animated_loot(content: &Content) -> String {
 /// two-handed (as `loot::base_in` draws them).
 fn two_handed_share(
     content: &Content,
-    classes: &[warlock_core::content::ItemClassId],
+    classes: &[ascmearc_core::content::ItemClassId],
     level: u8,
 ) -> f64 {
     let (mut two, mut all) = (0u64, 0u64);
@@ -305,7 +306,7 @@ pub(super) fn animated_bodies(content: &Content) -> String {
         "| Creature | Glyph | Level | Rarity | Made of | Speed | Attack | Protection | \
          Resists | Dies |\n|---|:---:|---:|---|---|---:|---|---:|---|---|\n",
     );
-    let mut bodies: Vec<(&CreatureDef, &warlock_core::content::Body)> = (content.creature_defs())
+    let mut bodies: Vec<(&CreatureDef, &ascmearc_core::content::Body)> = (content.creature_defs())
         .iter()
         .filter_map(|d| {
             content
@@ -364,7 +365,7 @@ pub(super) fn animated_bodies(content: &Content) -> String {
 pub(super) fn animated_parts(content: &Content) -> String {
     let mut out = String::from("| Creature | Made of | Breaks into |\n|---|---|---|\n");
     let percent = content.animated().drops.pieces;
-    let mut bodies: Vec<(&CreatureDef, &warlock_core::content::Body)> = (content.creature_defs())
+    let mut bodies: Vec<(&CreatureDef, &ascmearc_core::content::Body)> = (content.creature_defs())
         .iter()
         .filter_map(|d| {
             content

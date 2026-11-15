@@ -4,17 +4,17 @@
 //! `creatures::creature_surprise`.
 
 use super::util::{Term, link, percent_of};
+use ascmearc_core::check;
+use ascmearc_core::content::{Content, CreatureDef, CreatureId, TalentEffect};
+use ascmearc_core::skills::Effect;
+use ascmearc_core::talent::StealthEffect;
 use std::fmt::Write as _;
-use warlock_core::check;
-use warlock_core::content::{Content, CreatureDef, CreatureId, TalentEffect};
-use warlock_core::skills::Effect;
-use warlock_core::talent::StealthEffect;
 
 /// A skill's benefit of `effect`, with the skill's id and name, if any skill gives it.
 fn benefit(
     content: &Content,
     effect: Effect,
-) -> Option<(&str, &str, &warlock_core::skills::Benefit)> {
+) -> Option<(&str, &str, &ascmearc_core::skills::Benefit)> {
     (content.skills().iter()).find_map(|s| {
         (s.benefits.iter())
             .find(|b| b.effect == effect)
@@ -213,7 +213,7 @@ mod tests {
 
     #[test]
     fn the_ladders_and_odds_read_the_data() {
-        let content = warlock_assets::content().expect("content");
+        let content = ascmearc_assets::content().expect("content");
         let ladders = surprise_ladders(&content);
         assert!(
             ladders.contains("| 100 | 5d6 | +8 | +8 | 50% | 125% | +8 |"),

@@ -1,0 +1,28 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ You pick up Dread Visage, a Masterwork iron helm and a Sharp emerald-pommelled long sword of the Be
+ You put on Dread Visage, a Masterwork iron helm.
+
+
+
+
+┌─ Inventory ──────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                                  │
+│ Melee weapons                                                                                    │
+│   a - ) a Sharp emerald-pommelled long sword of the Bear (+0 hit, 1d9+2)                 1.8 kg  │
+│ Missile weapons                                                                                  │
+│   b - } a Marvellous short bow (rare) (+1 hit, 1d8, range 10)                             700 g  │
+│ Helmets                                                                                          │
+│   c - [ Dread Visage, a Masterwork iron helm (+1 hit, Dv +0, Pv 4) (being worn)          1.5 kg  │
+│ Rings                                                                                            │
+│   d - = a silver ring (magic)                                                              10 g  │
+│ Tools                                                                                            │
+│   e - ( a lantern (in use)                                                                400 g  │
+│                                                                                                  │
+│ Carrying 4.4 kg   ·   Your weight 74.4 kg (you 70 kg)                                            │
+│ Burdened over 14 kg, strained over 28 kg, overloaded over 42 kg                                  │
+│                                                                                                  │
+│ a-e look   D drop   I or Esc close                                                               │
+└─ 1 Char · 2 Inv · 3 Eqp · 4 Skl · 5 Weap · 6 Mag · 7 Qst · 8 Tal · 9 Story ──────────────────────┘

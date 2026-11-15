@@ -1,6 +1,6 @@
 # Summoning
 
-Developer notes for working on this part of Warlock; the rules it implements are in
+Developer notes for working on this part of Ascmearc; the rules it implements are in
 spec/09-creatures.md ("Gimmicks"). Keep it current with the code, as CLAUDE.md says.
 
 Summoning here is a **creature ability**: a creature type with `[creature.summon]` calls forth

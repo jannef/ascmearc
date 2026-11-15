@@ -1,10 +1,10 @@
 //! Weather: the chances by month and what each weather does.
 
+use ascmearc_core::content::Content;
+use ascmearc_core::light::{Sky, Sun};
+use ascmearc_core::time::GameTime;
+use ascmearc_core::weather::{Clouds, Conditions, Weather};
 use std::fmt::Write as _;
-use warlock_core::content::Content;
-use warlock_core::light::{Sky, Sun};
-use warlock_core::time::GameTime;
-use warlock_core::weather::{Clouds, Conditions, Weather};
 
 /// The chance of each weather in each month.
 pub(super) fn weather_chances(content: &Content) -> String {

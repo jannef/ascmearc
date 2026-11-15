@@ -51,41 +51,48 @@ list of characters shows. A second Brakka is `brakka-2`. Your [settings](setting
 
 | System | Data folder (`saves` is in it) | Settings (configuration folder) |
 |---|---|---|
-| macOS | `~/Library/Application Support/warlock` | `~/Library/Application Support/warlock` |
-| Linux | `~/.local/share/warlock` | `~/.config/warlock` |
-| Windows | `%APPDATA%\warlock\data` | `%APPDATA%\warlock\config` |
+| macOS | `~/Library/Application Support/ascmearc` | `~/Library/Application Support/ascmearc` |
+| Linux | `~/.local/share/ascmearc` | `~/.config/ascmearc` |
+| Windows | `%APPDATA%\ascmearc\data` | `%APPDATA%\ascmearc\config` |
 
 Logs and crash reports are in a `logs` folder: on macOS and Linux inside the data folder, on Windows
-in `%LOCALAPPDATA%\warlock\data\logs`.
+in `%LOCALAPPDATA%\ascmearc\data\logs`.
 
-To see the exact folders for your launch, and why they are there, run `warlock --paths`, or open
+To see the exact folders for your launch, and why they are there, run `ascmearc --paths`, or open
 **Settings**, then **Where are my files?**, which also has an **Open folder** action for each.
 
 ### Portable mode
 
 To keep everything with the game, for a USB stick or a game folder you can copy, make an empty
-folder named **`warlock-data`** next to the game (on macOS, next to `Warlock.app`, not inside it).
+folder named **`ascmearc-data`** next to the game (on macOS, next to `Ascmearc.app`, not inside it).
 The game then keeps its [settings](settings.md), [key bindings](controls-rebinding.md), saves, and logs in it:
 
-| Inside `warlock-data` | What |
+| Inside `ascmearc-data` | What |
 |---|---|
 | `config/` | `settings.toml` (settings and key bindings) |
 | `data/` | `saves/` (one save per character), and `snapshots/` |
 | `logs/` | logs and crash reports |
 
-`warlock --portable` does the same, and makes the folder if it is missing. `warlock --portable
+`ascmearc --portable` does the same, and makes the folder if it is missing. `ascmearc --portable
 DIR` uses the folder DIR instead. When several apply, the first of these wins: `--config-dir` and
-`--save-dir` (each for its own folder), then `--portable DIR`, then a `warlock-data` folder next to
+`--save-dir` (each for its own folder), then `--portable DIR`, then an `ascmearc-data` folder next to
 the game, then the standard folders above. If a portable folder cannot be written to (a read-only
 disk), the game says so and carries on. It reads what is there but does not save.
 
-`warlock --move-data native` moves a portable folder's files into the standard folders and renames
-the emptied folder to `warlock-data.moved-<date>`. `warlock --move-data portable [DIR]` does the
+`ascmearc --move-data native` moves a portable folder's files into the standard folders and renames
+the emptied folder to `ascmearc-data.moved-<date>`. `ascmearc --move-data portable [DIR]` does the
 reverse. Add `--dry-run` to see the plan first. Nothing is overwritten: a file already there is
 kept as `NAME.bak-<time>`. It will not run while the game is running.
 
+**From Warlock.** The game was called Warlock before version 0.18. The first time the new
+version starts, it moves your files from the old folders (`warlock` in place of `ascmearc` above,
+or a `warlock-data` folder next to the game) to the new ones, and in the browser from the old
+storage. Your settings, keys, and graveyard carry over. Saves from before 0.18 do not load, as
+after any update. The game only moves files where the new place is still empty, and notes each
+move in its log.
+
 **Browser.** Saves and settings are kept in your browser's local storage for the
-page, under `warlock/saves/` (`warlock/saves/brakka-1.sav`). They survive reloads. If the browser
+page, under `ascmearc/saves/` (`ascmearc/saves/brakka-1.sav`). They survive reloads. If the browser
 blocks storage (some private modes do), the game runs but cannot save, and writes a warning to its
 log. If the browser runs out of room, a message appears on the [message
 line](the-screen.md#messages).

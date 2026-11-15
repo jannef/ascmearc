@@ -3,13 +3,13 @@
 
 use super::util::{Term, anchored, damage_link, signed, table_text};
 use super::weapon_skills;
+use ascmearc_core::character::Gender;
+use ascmearc_core::content::Content;
+use ascmearc_core::dice::Dice;
+use ascmearc_core::object::format_weight;
+use ascmearc_core::stats::{self, AVERAGE, PerStat, SCORES, Stat};
+use ascmearc_core::{burden, combat};
 use std::fmt::Write as _;
-use warlock_core::character::Gender;
-use warlock_core::content::Content;
-use warlock_core::dice::Dice;
-use warlock_core::object::format_weight;
-use warlock_core::stats::{self, AVERAGE, PerStat, SCORES, Stat};
-use warlock_core::{burden, combat};
 
 /// The stats in the order the character screen lists them, with their abbreviations.
 pub(super) fn stats(_content: &Content) -> String {
@@ -513,7 +513,7 @@ mod tests {
 
     #[test]
     fn the_prestige_tables_read_the_data() {
-        let content = warlock_assets::content().expect("content");
+        let content = ascmearc_assets::content().expect("content");
         let classes = prestige_classes(&content);
         assert!(
             classes.contains("<a id=\"prestige-hunter\"></a>Hunter | 30 | 7 |"),

@@ -6,11 +6,11 @@
 
 use super::util::{Term, anchored, link, table_text};
 use super::weapon_skills::is_caster_style;
-use std::fmt::Write as _;
-use warlock_core::content::{
+use ascmearc_core::content::{
     ActiveAim, Content, ExtraDice, FreeBlowKind, On, Role, WeaponAbility, WeaponDoes,
     WeaponSkillId, WeaponSkillTable,
 };
+use std::fmt::Write as _;
 
 /// Whose abilities a table lists.
 #[derive(Clone, Copy, PartialEq, Eq)]

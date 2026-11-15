@@ -4,8 +4,8 @@
 
 use super::companions::{growth_table, starts_table};
 use super::util::{Term, at_normal_pace, link};
+use ascmearc_core::content::{ActionKind, BASE_TURN, Content, CreatureId, price};
 use std::fmt::Write as _;
-use warlock_core::content::{ActionKind, BASE_TURN, Content, CreatureId, price};
 
 /// Every race's starting beasts, then the rares with the odds.
 pub(super) fn starts(content: &Content) -> String {

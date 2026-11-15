@@ -2,12 +2,12 @@
 //! adds, items as they are named: the classes in the wiki's order, the races in the order New run
 //! offers them.
 
+use ascmearc_core::content::{ClassDef, Content, Keep, Kit, KitItem};
+use ascmearc_core::equipment::{self, Equipment};
+use ascmearc_core::magic::LootGrade;
+use ascmearc_core::object::Stack;
+use ascmearc_core::text::or_list;
 use std::fmt::Write as _;
-use warlock_core::content::{ClassDef, Content, Keep, Kit, KitItem};
-use warlock_core::equipment::{self, Equipment};
-use warlock_core::magic::LootGrade;
-use warlock_core::object::Stack;
-use warlock_core::text::or_list;
 
 /// The classes' kits, one row each, in the wiki's order of the classes.
 pub(super) fn class_kits(content: &Content) -> String {
@@ -35,10 +35,10 @@ pub(super) fn class_kit(content: &Content, c: &ClassDef) -> String {
 }
 
 /// The highest spell level among the spells `scrolls` cast.
-fn highest_level(content: &Content, scrolls: &[warlock_core::content::ObjectId]) -> u8 {
+fn highest_level(content: &Content, scrolls: &[ascmearc_core::content::ObjectId]) -> u8 {
     (scrolls.iter())
         .filter_map(|&o| match &content.object(o).read {
-            Some(warlock_core::content::Reading::Cast(cast)) => {
+            Some(ascmearc_core::content::Reading::Cast(cast)) => {
                 Some(content.spell(cast.spell).level)
             }
             _ => None,

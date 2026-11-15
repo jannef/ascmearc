@@ -4,13 +4,13 @@
 //! each gamble potion may bring, per draught.
 
 use super::util::{capital, percent};
-use std::fmt::Write as _;
-use warlock_core::alignment::Alignment;
-use warlock_core::content::{
+use ascmearc_core::alignment::Alignment;
+use ascmearc_core::content::{
     Amount, Content, Draught, Near, OutcomeDef, OutcomeEffect, OutcomeKind, OutcomeTable,
     OutcomeTier,
 };
-use warlock_core::magic::loot::LootGrade;
+use ascmearc_core::magic::loot::LootGrade;
+use std::fmt::Write as _;
 
 /// The forgotten altar's table, if the content has it.
 fn altar(content: &Content) -> Option<&OutcomeTable> {
@@ -29,7 +29,7 @@ fn does(content: &Content, effect: &OutcomeEffect) -> String {
         Amount::Half => "half the maximum of".to_string(),
         Amount::Full => "all".to_string(),
     };
-    let damage = |kind: Option<warlock_core::content::DamageTypeId>| {
+    let damage = |kind: Option<ascmearc_core::content::DamageTypeId>| {
         kind.map_or(String::new(), |k| format!(" {}", content.damage_type(k).id))
     };
     let mut out: Vec<String> = Vec::new();

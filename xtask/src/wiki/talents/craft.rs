@@ -1,9 +1,9 @@
-//! What the craft talents do, in the wiki's words (`warlock_core::talent::CraftEffect`, #1495): one
-//! arm a variant, beside the area's enum and sum in `warlock-core/src/talent/craft.rs`.
+//! What the craft talents do, in the wiki's words (`ascmearc_core::talent::CraftEffect`, #1495): one
+//! arm a variant, beside the area's enum and sum in `ascmearc-core/src/talent/craft.rs`.
 
 use crate::wiki::util::signed;
-use warlock_core::content::Content;
-use warlock_core::talent::CraftEffect;
+use ascmearc_core::content::Content;
+use ascmearc_core::talent::CraftEffect;
 
 /// What `effect` does, as the talents' tables say it.
 pub(super) fn text(content: &Content, effect: &CraftEffect) -> String {
@@ -103,7 +103,7 @@ pub(super) fn text(content: &Content, effect: &CraftEffect) -> String {
              It never destroys anything. Refused, with no time spent, for something worn or \
              wielded, [protected](materials.md#protected-items), unpaid, or of a material no \
              craft works (cloth, glass)",
-            warlock_core::time::Duration::seconds(u64::from(seconds)).spoken()
+            ascmearc_core::time::Duration::seconds(u64::from(seconds)).spoken()
         ),
         CraftEffect::Rigs => "active (a rig from the rig list, then a direction): a trap is \
             rigged on the cell beside you, from arrows, a billet of wood, or a pit dug with the \

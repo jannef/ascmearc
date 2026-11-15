@@ -1,9 +1,9 @@
 # Time, action costs, and speed
 
-Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
+Developer notes for working on this part of Ascmearc (moved from CLAUDE.md, #185); the
 rules it implements are in spec/08-architecture.md. Keep it current with the code, as CLAUDE.md says.
 
-Time lives in `warlock-core`: `time.rs` (`GameTime` = seconds since the
+Time lives in `ascmearc-core`: `time.rs` (`GameTime` = seconds since the
 calendar epoch with calendar fields, minute of day, and 16-bit day fraction; `Duration`; 12×30-day
 calendar math; `DAWN`/`DUSK`), `content/calendar.rs` (month names from `data/calendar.toml`),
 `content/action.rs` (action costs, below), and the turn pipeline in `world/mod.rs`.

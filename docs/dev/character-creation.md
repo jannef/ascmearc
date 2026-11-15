@@ -1,9 +1,9 @@
 # Character creation
 
-Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
+Developer notes for working on this part of Ascmearc (moved from CLAUDE.md, #185); the
 rules it implements are in spec/12-character.md. Keep it current with the code, as CLAUDE.md says.
 
-Character creation (M15) lives in `warlock-core/src/character.rs`:
+Character creation (M15) lives in `ascmearc-core/src/character.rs`:
 `CharacterSpec` (race id, `Gender`, class id; `FromStr`/`Display` as `dwarf,female,warrior`;
 serialized as `{race, gender, class}`) and `CharacterSpec::start(content, seed, start_date)` →
 `Start` (starting `Stats`, the race's vision, and a `Character`: the spec, `raised` (the stat the
@@ -39,7 +39,7 @@ and `data/horoscope.toml` (`content/horoscope.rs`: `Horoscope` with `anchor_year
 Adjustments are `PerStat<Dice>` (`stats::adjustments`, 0 for a stat not named; `stats::roll`
 rolls them in stat order, and every score is kept within 1 to 40) and are rolled from `character/rolls/<spec>` in a fixed
 order (race, class, animal, element, race potentials): **adding a die to data changes later
-rolls** of every character with that race or class. `Dice` (`warlock-core/src/dice.rs`) is the
+rolls** of every character with that race or class. `Dice` (`ascmearc-core/src/dice.rs`) is the
 one dice type (parse `2d3+1`/`-1d2`/`+2`, `Display`, `min`/`max`, `roll(&mut Rng)`); combat
 uses it for damage. Scenarios name their character (`character = { race, gender, class, name }`,
 `ScenarioDef::character` and `character_name`; the `name` optional); with one, `vision`, `stats`,
@@ -78,13 +78,13 @@ paladin`, `a drow may be a priest only if female`); `ClassDef::offered_to` adds 
 (`ui/chargen_screen.rs::classes_offered`; its Random rolls among the rows, so it never draws a
 closed or hidden class). `Draft::spec` falls back from a preselected class not offered (the
 scenario's, or one remembered before the race or gender changed) to the first offered.
-`CharacterSpec::check_open` (`check` plus `refuses`) is what the game's and `warlock-cli`'s
+`CharacterSpec::check_open` (`check` plus `refuses`) is what the game's and `ascmearc-cli`'s
 `--character` ask; hidden classes pass it (no class is hidden now: the commoner is offered again
 since #1406, the merchant since #1407, the craftsperson since #1419). A scenario's own character,
 a replay, and a save are never checked. Tests: `character.rs`
 (`classes_are_closed_to_some_races_and_genders`, `class_limits_name_known_races`),
 `chargen_screen.rs` (`the_class_step_lists_and_draws_only_classes_open_to_the_race_and_gender`),
-`warlock-cli`'s `characters_are_race_gender_class`, the text snapshots `class-screen-drow-male`
+`ascmearc-cli`'s `characters_are_race_gender_class`, the text snapshots `class-screen-drow-male`
 and `class-screen-dwarf`; the wiki's `class-limits.md` (`xtask/src/wiki/character.rs`).
 
 **Races in the rules** (#255). `WorldState::race_of(content, actor)` is the one lookup of the
@@ -146,7 +146,7 @@ gender, magic, prefer_trained, fill }`) and a race's `bare`
 slot ids into `RaceDef::bare: Vec<SlotId>` once objects, gems, slots, and weapon skills are known, resolving each
 alternative with `object::parse_stacks` (what a line keeps is the author's: something worn or
 wielded where no slot takes it stays carried, `Pack::equip`); `RaceDef::kit`, `ClassDef::kit`, and
-`SignPart::kit` (the horoscope's hook, empty in data). The rules are `warlock-core/src/kit.rs`:
+`SignPart::kit` (the horoscope's hook, empty in data). The rules are `ascmearc-core/src/kit.rs`:
 `kit::roll(content, character, trained, seed)` → `Pack { items, equipment }` from the stream
 `character/kit/<spec>`, the kits in `kits_of` order (class, race, animal, element), a line
 drawing only if `KitItem::applies` (one `rng.index` among alternatives, then
@@ -174,7 +174,7 @@ gauntlets and a dwarven ranger keeps the ranger's bow; `Pack::put` joins stackab
 (`weapon_skills` now also returns the class-trained set: its fixed ranks and the picked
 choice sets). **Who gets it**: `World::start_run(content, scenario, seed, character, name,
 kit)` is the full constructor; `kit` is true for a run whose character the player chose:
-`Game::new_run` (New run's character creation), the game and `warlock-cli` when `--character` or
+`Game::new_run` (New run's character creation), the game and `ascmearc-cli` when `--character` or
 `--name` is given, and `Replay::start` when the replay says `kit`. Everything else
 (`World::new`, `with_character`, `with_character_named`, `--scenario` alone, tests, golden
 walks, old replays) starts with the scenario's pack alone, as before kits: what the scenario
@@ -219,7 +219,7 @@ the halfling with a sling, and the dwarf in steel; materials are named as placem
 (`"long_bow:hardwood"`, `"bolt:steel*12"`).
 The wiki's tables are `xtask/src/wiki/kits.rs` (`class-kits.md`, `race-kits.md`). The screen
 snapshots' `kit: true` starts a case's run with the kit (`kit-equipment`, `kit-inventory`, and
-`kit-summary` in `crates/warlock/src/ui/screen_snapshots.rs`); the golden manifest's `kit = true`
+`kit-summary` in `crates/ascmearc/src/ui/screen_snapshots.rs`); the golden manifest's `kit = true`
 does the same for an entry.
 
 **Background story** (#702; docs/dev/background.md): a run with the kit is told a story in

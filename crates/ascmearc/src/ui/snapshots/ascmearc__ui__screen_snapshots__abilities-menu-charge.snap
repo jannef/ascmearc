@@ -1,0 +1,28 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ Welcome to Showcase. Press ? for controls.
+
+
+
+
+                ┌─ Abilities ──────────────────────────────────────────────────────┐
+                │                                                                  │
+                │ Birth sign                                                       │
+                │ > a  Transfixing stare  at a place you see                       │
+                │ Class                                                            │
+                │   b  Charge             1 stamina + 1 a pace, at a place you see │
+                │ Skills                                                           │
+                │   c  Heal               nothing to treat                         │
+                │   d  Intimidate         at a place you see                       │
+                │   e  Salvage            on something you carry                   │
+                │ Weapon skills                                                    │
+                │   f  Shield bash        no foe within reach                      │
+                │                                                                  │
+                │ The basilisk's stare: a foe nearby that sees you slows to a      │
+                │ crawl a moment; your eyes then rest two hours.                   │
+                │                                                                  │
+                │                                                                  │
+                │ a-f or Enter use   Esc close                                     │
+                └──────────────────────────────────────────────────────────────────┘

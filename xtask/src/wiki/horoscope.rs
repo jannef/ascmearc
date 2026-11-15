@@ -3,11 +3,11 @@
 
 use super::talents::{effects_text, needs_text, talent_link};
 use super::util::{Term, anchored, signed, table_text};
+use ascmearc_core::character::BirthDate;
+use ascmearc_core::content::{Content, Horoscope, Need, TalentDef};
+use ascmearc_core::time::{DAYS_PER_MONTH, MONTHS_PER_YEAR};
 use std::collections::BTreeMap;
 use std::fmt::Write as _;
-use warlock_core::character::BirthDate;
-use warlock_core::content::{Content, Horoscope, Need, TalentDef};
-use warlock_core::time::{DAYS_PER_MONTH, MONTHS_PER_YEAR};
 
 /// Where a gift of the stars is defined on the horoscope page (#1554): the first of the
 /// animals' gifts, the elements', the picks, and the lucky days' that holds it. Its name is
@@ -176,7 +176,7 @@ pub(super) fn flavour(content: &Content) -> String {
          second; Ashen is no cooldown and is untouched |",
         f.birth_month_cooldown
     );
-    let parts = warlock_core::content::PHASE_ONE / warlock_core::content::FULL_MOON_WITHIN;
+    let parts = ascmearc_core::content::PHASE_ONE / ascmearc_core::content::FULL_MOON_WITHIN;
     let example = (content.moons().first())
         .map(|m| {
             format!(
@@ -239,7 +239,7 @@ pub(super) fn lucky(content: &Content) -> String {
          |\n|---|---:|---|---|---|\n",
     );
     for l in &h.lucky {
-        let sign = warlock_core::content::Sign {
+        let sign = ascmearc_core::content::Sign {
             animal: l.animal.clone(),
             element: l.element.clone(),
         };

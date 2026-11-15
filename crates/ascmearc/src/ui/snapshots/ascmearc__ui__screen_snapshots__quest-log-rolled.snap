@@ -1,0 +1,25 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ The gardener says: "My old master swore that the words of a spell, said over a bed, kept the slugs
+ off. Bring me a scroll of spark, would you? I'll only read the first line. Probably."
+
+
+
+
+
+
+┌─ Quests ─────────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                                  │
+│ Active                                                                                           │
+│ > Words for the beds                                                                             │
+│                                                                                                  │
+│ The gardener wants you to bring a scroll of spark.                                               │
+│ You carry 0 / 1.                                                                                 │
+│                                                                                                  │
+│ The gardener: "My old master swore that the words of a spell, said over a bed, kept the slugs    │
+│ off. Bring me a scroll of spark, would you? I'll only read the first line. Probably."            │
+│                                                                                                  │
+│ ↑↓ choose   q or Esc close                                                                       │
+└─ 1 Char · 2 Inv · 3 Eqp · 4 Skl · 5 Weap · 6 Mag · 7 Qst · 8 Tal · 9 Story ──────────────────────┘

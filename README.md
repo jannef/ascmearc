@@ -1,4 +1,4 @@
-# Warlock
+# Ascmearc
 
 **A turn-based fantasy roguelike drawn entirely in glyphs, with real light and shadow.**
 
@@ -8,7 +8,7 @@
 
 ![Cēaptūn's market square at seven in the evening: torches and braziers light the square, the lanes beyond fade into the dark](docs/screenshots/ceaptun-night.png)
 
-Warlock is a classic roguelike in the spirit of ADOM: every turn is yours to think about, the
+Ascmearc is a classic roguelike in the spirit of ADOM: every turn is yours to think about, the
 world is full of things to find, and death is permanent. It looks like an old terminal game, but
 the GPU gives every glyph colored light, soft shadows, and a gentle touch of animation, so a
 torchlit square at dusk or a dragon's breath in a lava hall looks the part, and every character
@@ -70,7 +70,7 @@ screenshots and a tour of every feature.
 
 ## For developers
 
-Warlock is written in Rust. The simulation lives in `warlock-core` (plain Rust, deterministic, no
+Ascmearc is written in Rust. The simulation lives in `ascmearc-core` (plain Rust, deterministic, no
 engine); the game is a [Bevy](https://bevy.org) 0.20 app on top of it.
 
 - What we are building: the design document, [`specification.md`](specification.md) (the index;
@@ -85,11 +85,11 @@ Run from source with a recent Rust toolchain (the exact version is pinned in
 `rust-toolchain.toml`):
 
 ```sh
-cargo run --release -p warlock                           # play
+cargo run --release -p ascmearc                           # play
 cargo test --workspace                                   # tests
-cargo run -p warlock -- --scale 1 --capture shot.png     # render offscreen, save a screenshot
-cargo run -p warlock -- --scenario depths --character dwarf,female,warrior   # start as a dwarf
-cargo run -p warlock-cli -- dump --scenario showcase --actions "move:N move:N" --layers view
+cargo run -p ascmearc -- --scale 1 --capture shot.png     # render offscreen, save a screenshot
+cargo run -p ascmearc -- --scenario depths --character dwarf,female,warrior   # start as a dwarf
+cargo run -p ascmearc-cli -- dump --scenario showcase --actions "move:N move:N" --layers view
 ```
 
 Feature work changes the wiki, the spec, and the developer notes, not this file.
@@ -99,11 +99,11 @@ Feature work changes the wiki, the spec, and the developer notes, not this file.
 To play a locked release from source, install it with `cargo install` (a tag picks the version):
 
 ```sh
-cargo install --git https://github.com/jannef/ascmearc --tag v0.17.0 --locked --no-default-features warlock
+cargo install --git https://github.com/jannef/ascmearc --tag v0.17.0 --locked --no-default-features ascmearc
 ```
 
 - `--locked` uses the release's `Cargo.lock`. `--no-default-features` leaves out the test world,
-  as the release builds do. Add `warlock-cli` after `warlock` for the headless tool too.
+  as the release builds do. Add `ascmearc-cli` after `ascmearc` for the headless tool too.
 - It needs a Rust toolchain of at least 1.99 (`rust-version`); outside the repository,
   `rust-toolchain.toml` does not apply.
 - The result is a bare binary in `~/.cargo/bin`, not a macOS `.app`; a local build has no
@@ -111,13 +111,13 @@ cargo install --git https://github.com/jannef/ascmearc --tag v0.17.0 --locked --
 - It shares settings and saves with the downloaded game, which use the same data folder. Saves are
   shared between builds of the same major.minor version, and an older tag cannot load newer saves;
   `--portable DIR` keeps an old version's saves and settings apart.
-- `cargo install warlock` from crates.io is not offered: the crates are not published.
+- `cargo install ascmearc` from crates.io is not offered: the crates are not published.
 
 ## License
 
 Copyright © 2026 Janne Lê Forsell.
 
-Warlock is free software: you can redistribute it and/or modify it under the terms of the
+Ascmearc is free software: you can redistribute it and/or modify it under the terms of the
 [GNU General Public License, version 3](LICENSE), as published by the Free Software Foundation.
 It is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
 implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the license for
@@ -128,7 +128,7 @@ details.
 Font: [JuliaMono](https://github.com/cormullion/juliamono) by cormullion, SIL Open Font License 1.1
 (`assets/fonts/JuliaMono-OFL.txt`).
 
-Dependencies: Warlock is built on Bevy, wgpu, and several hundred other open-source Rust crates.
+Dependencies: Ascmearc is built on Bevy, wgpu, and several hundred other open-source Rust crates.
 Their copyright notices and license texts are in
 [`THIRD_PARTY_LICENSES.html`](THIRD_PARTY_LICENSES.html) (generated with `cargo xtask licenses`),
 which also ships in every release archive and the web build.

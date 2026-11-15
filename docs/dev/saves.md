@@ -1,13 +1,13 @@
 # Saves, storage, and file locations
 
-Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
+Developer notes for working on this part of Ascmearc (moved from CLAUDE.md, #185); the
 rules it implements are in spec/06-content.md. Keep it current with the code, as CLAUDE.md says.
 
-Storage backends (`crates/warlock/src/storage.rs`): `Backend::Dir` (native files, atomic writes) or
-`Backend::Browser` (wasm `localStorage`, keys `warlock/<name>`, e.g. `warlock/saves/brakka-1.sav`,
-`warlock/saves/brakka-1.toml`, `warlock/saves/brakka-1.sav.bad`, `warlock/snapshots/brakka-1.sav`,
-`warlock/settings.toml`; bytes base64). `Backend::list(dir)` names the files in a folder (the
-browser's from the keys under `warlock/<dir>/`, `storage::files_in`, tested natively).
+Storage backends (`crates/ascmearc/src/storage.rs`): `Backend::Dir` (native files, atomic writes) or
+`Backend::Browser` (wasm `localStorage`, keys `ascmearc/<name>`, e.g. `ascmearc/saves/brakka-1.sav`,
+`ascmearc/saves/brakka-1.toml`, `ascmearc/saves/brakka-1.sav.bad`, `ascmearc/snapshots/brakka-1.sav`,
+`ascmearc/settings.toml`; bytes base64). `Backend::list(dir)` names the files in a folder (the
+browser's from the keys under `ascmearc/<dir>/`, `storage::files_in`, tested natively).
 `SaveStore` and `SettingsStore` hold an `Option<Backend>`; new persistent files go through it, never
 `std::fs` directly. On the web the page-hide save cannot ask the world for a save (a hidden tab runs
 no frames), so `save.rs::web_hooks` keeps a clone of the state and the character's summary after
@@ -19,11 +19,11 @@ natively, browser storage on the web). Unavailable storage means no saving plus 
 naming what is lost; failed writes (quota) are messages, never
 panics. A page-hide save that fails is only a warning in the browser console (nothing better can
 be done once the page is going), so what can be lost is the turns since the last autosave: at
-most `AUTOSAVE_TURNS` (50) turns, or the last change of level (#1591). Only the `web-sys` features in `crates/warlock/Cargo.toml` are enabled (size).
+most `AUTOSAVE_TURNS` (50) turns, or the last change of level (#1591). Only the `web-sys` features in `crates/ascmearc/Cargo.toml` are enabled (size).
 
 **Saves are pinned to the game version that wrote them** (#840; owner, 2026-11-02: "we do not
-need to preserve saves"). The envelope (`warlock-core/src/save.rs`) is `magic`, `game_version`
-(`warlock_core::GAME_VERSION`, the workspace version), `content_fingerprint`, and the state;
+need to preserve saves"). The envelope (`ascmearc-core/src/save.rs`) is `magic`, `game_version`
+(`ascmearc_core::GAME_VERSION`, the workspace version), `content_fingerprint`, and the state;
 `save::decode` refuses a save whose `game_version` is not this build's (`SaveError::OtherVersion`,
 before the state is read; a save that names none, from before the pin, is "an older version"),
 then one whose fingerprint differs (`ContentMismatch`), then one that does not read (`Corrupt`).
@@ -87,7 +87,7 @@ failure (`Replay::version_note`).
 **One save per character** (#218; `save.rs`, `save/characters.rs`): every character has a save id,
 a slug of its name and the lowest free number (`characters::fresh_id`: `brakka-1`, then
 `brakka-2`; an id is taken while any file of it is left: its save, a kept `.sav.bad`, its summary,
-its snapshot), and the files `saves/<id>.sav` (the world, `warlock_core::save`) and, beside it,
+its snapshot), and the files `saves/<id>.sav` (the world, `ascmearc_core::save`) and, beside it,
 `saves/<id>.toml` (`save::Summary`: name, race and class names, level, place, the campaign's name
 (`docs/dev/campaign.md`), and when it was last
 saved, wall-clock seconds since 1970, shown in UTC by `save::played_text`), so the list of saved
@@ -109,7 +109,7 @@ the characters in a folder (`tests/golden/saved-characters`, whose saves are pla
 summaries are read; the screen snapshots' `main-menu-saved` and `characters-screen` read it too). A pre-#218 `run.sav` is left alone: not read, listed, or deleted (its
 version is not this one's, and its character has no name).
 
-The envelope lives in `warlock-core/src/save.rs`, `Content::fingerprint` in the content. There
+The envelope lives in `ascmearc-core/src/save.rs`, `Content::fingerprint` in the content. There
 is no format number to bump: a release's new workspace version is what retires the saves of the
 last (`docs/dev/merging.md`). An incompatible `WorldState` change, or adding or reordering
 terrain, creatures, lights, levels, objects, equipment slots, skills, weapon skills (fighting
@@ -129,10 +129,10 @@ and opens the death screen; `SaveStore::save_run` never writes a dead run (it de
 autosave, quitting, and closing the window cannot bring it back, and the web build parks no state
 for the page being hidden.
 
-**The graveyard** (#1137, `crates/warlock/src/graveyard.rs`, design `monster-dread.md` §9.5):
+**The graveyard** (#1137, `crates/ascmearc/src/graveyard.rs`, design `monster-dread.md` §9.5):
 `on_death` also appends the character to `graveyard.toml` beside `settings.toml` (the config
-folder; portable mode's `warlock-data/config`; the web's `localStorage` key
-`warlock/graveyard.toml`), one `[[fallen]]` table each (`name`, `race`, `gender`, `class`,
+folder; portable mode's `ascmearc-data/config`; the web's `localStorage` key
+`ascmearc/graveyard.toml`), one `[[fallen]]` table each (`name`, `race`, `gender`, `class`,
 `prestige`, `level`, `xp` (the experience total at death, #1252; 0 in older entries), `cause` (`stone`, a status id, `starved`, a trap's id, a creature's id, ...),
 `killer`, `place`, `turn`, `age`, `when`, `version`), through `Backend::append`: the file is
 never rewritten, and the death screen says "Remembered in the graveyard." when the entry went in.
@@ -155,21 +155,30 @@ the levels made already). The list, `Statue::name`, `LevelState::graves`, and
 `LevelState::buried` are left out of the state hash (`world/turn/hash.rs::unhashed_vec`/
 `unhashed_option`/`unhashed_map`, skipped while `WorldState::hash` serializes, and
 `hash.rs::levels`), so a replay verifies under any graveyard; saves keep them.
-`warlock-cli --fallen NAME:RACE[:CLASS][:stone],...` gives a dev run one.
+`ascmearc-cli --fallen NAME:RACE[:CLASS][:stone],...` gives a dev run one.
 
-**File locations** (`crates/warlock/src/paths.rs`, the one place that decides; never call
+**File locations** (`crates/ascmearc/src/paths.rs`, the one place that decides; never call
 `ProjectDirs` elsewhere): `paths::init(&args, check_only)` runs first in `main`, before logging,
 and `paths::locations()` is what stores, logging, and the Files screen ask (it carries each
 folder's `Reason`, shown by `--paths`). Precedence per folder: `--config-dir` / `--save-dir`, then
-`--portable [DIR]`, then a `warlock-data` folder next to the game (`paths::game_folder`: the
+`--portable [DIR]`, then an `ascmearc-data` folder next to the game (`paths::game_folder`: the
 executable's folder; on macOS next to the `.app`, never inside it), then the platform dirs
-(`directories`, app name "warlock"; macOS `~/Library/Application Support/warlock`). Portable
-layout `warlock-data/{config,data,logs}`; `Locations::prepare` creates it and warns (never
+(`directories`, app name "ascmearc"; macOS `~/Library/Application Support/ascmearc`). Portable
+layout `ascmearc-data/{config,data,logs}`; `Locations::prepare` creates it and warns (never
 fails) when it is unwritable. `resolve` is pure over `Inputs` and tested without a filesystem; new
 files go in the folder `Locations` gives (`saves_dir()` and
 `snapshots_dir()`, from `paths::SAVES_DIR` and `SNAPSHOTS_DIR`, which the save store names its files
-under). `warlock --paths`
-prints the report and exits; `warlock --move-data native|portable [DIR] [--dry-run]`
+under). `ascmearc --paths`
+prints the report and exits; `ascmearc --move-data native|portable [DIR] [--dry-run]`
 (`move_data.rs`: copy, compare, rename, remove; `*.bak-<time>` for conflicts; refuses while a game
 holds the shared lock on `logs/.in-use`) moves files between the two layouts. Settings > Files
 (`ui/files_screen.rs`, `ScreenName::Files`, `--screen files`) shows the report with Open folder.
+
+**The old name** (`crates/ascmearc/src/old_name.rs`, #1680): the game was called Warlock until
+0.18. `paths::init` first moves the old places to the new ones, once: the platform folders (app
+name "warlock", each of config, data, and logs; one inside another moves with it), a
+`warlock-data` folder next to the game, then `warlock-keys.toml` in the new config folders; on
+the web, every `warlock/…` key to `ascmearc/…` (`storage::web::rename_raw`). A place moves only
+when the old one exists and the new one is missing or an empty folder, so nothing is overwritten.
+Each move is a note logged at startup (`logging::note_early`; a failure is a warning). `plan`,
+`plan_keys`, and `browser_moves` are pure and tested without a filesystem.

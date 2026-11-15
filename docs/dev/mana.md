@@ -1,6 +1,6 @@
 # Mana
 
-Developer notes for working on this part of Warlock; the rules it implements are in
+Developer notes for working on this part of Ascmearc; the rules it implements are in
 spec/11-magic.md ("Mana"). Keep it current with the code, as CLAUDE.md says.
 
 Mana (#223) is a second pool beside hit points, built the same way, for magic to
@@ -9,7 +9,7 @@ cost or raise it, #242). Spells (`world/magic/cast.rs`, docs/dev/spells.md), rod
 (the Lullaby's, `world/classes/song.rs`, #873), and creatures' summons and spells spend it, all through `World::spend_mana`. **Every new system says in its
 issue how it interacts with mana**, and hooks in at the one place below.
 
-- **Pure rules**: `warlock-core/src/mana.rs`: `max_mana(stats, base)` (base plus the mental
+- **Pure rules**: `ascmearc-core/src/mana.rs`: `max_mana(stats, base)` (base plus the mental
   stats' modifiers, `MENTAL` = Intelligence, Willpower, Presence, at least 0),
   `mental_modifier`, `regen_seconds(willpower)` (`max(60, 360 − 12 × Willpower)`, its own
   constants beside combat's), `MAX_BASE_MANA` (1000).

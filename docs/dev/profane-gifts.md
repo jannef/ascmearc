@@ -151,7 +151,7 @@ load, as any unknown talent does.
 
 ## What is shown
 
-- The Talents page (`crates/warlock/src/ui/talents_screen.rs`): the Profane group last among the
+- The Talents page (`crates/ascmearc/src/ui/talents_screen.rs`): the Profane group last among the
   player's own, each gift "(profane)", a bane "(profane, flaw)" (`OwnTalent::profane`, the kind;
   `OwnTalent::boon` stays the altar's). A screen snapshot: `talents-screen-profane`. The
   character screen's Stars line lists the sign's gifts only, never a profane gift.

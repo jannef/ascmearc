@@ -1,0 +1,24 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ The gardener says: "My old master swore that the words of a spell, said over a bed, kept the slugs
+ off. Bring me a scroll of spark, would you? I'll only read the first line. Probably."
+
+
+
+
+
+
+
+                  ┌─ The gardener ───────────────────────────────────────────────┐
+                  │                                                              │
+                  │ "My old master swore that the words of a spell, said over a  │
+                  │ bed, kept the slugs off. Bring me a scroll of spark, would   │
+                  │ you? I'll only read the first line. Probably."               │
+                  │                                                              │
+                  │   1  Three apples                                            │
+                  │ > 2  Words for the beds                                      │
+                  │                                                              │
+                  │ 1-2 or Enter  ask    Esc  leave                              │
+                  └──────────────────────────────────────────────────────────────┘

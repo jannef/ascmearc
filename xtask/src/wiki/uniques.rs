@@ -3,9 +3,9 @@
 
 use super::order;
 use super::util::capital;
+use ascmearc_core::content::{Affliction, Content, DialogueId, ItemKind, Power, UniqueDef};
+use ascmearc_core::magic::describe;
 use std::fmt::Write as _;
-use warlock_core::content::{Affliction, Content, DialogueId, ItemKind, Power, UniqueDef};
-use warlock_core::magic::describe;
 
 /// Every unique item of the campaigns the wiki describes, by name.
 pub(super) fn uniques(content: &Content) -> String {

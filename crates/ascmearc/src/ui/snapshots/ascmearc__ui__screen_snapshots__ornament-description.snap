@@ -1,0 +1,29 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ There are several objects here.
+ You pick up a Sharp emerald-pommelled long sword of the Bear.
+
+
+
+                  ┌─ Item ───────────────────────────────────────────────────────┐
+                  │                                                              │
+                  │ ) Sharp emerald-pommelled long sword of the Bear             │
+                  │                                                              │
+                  │ Magic emerald-pommelled long sword · steel blade, leather    │
+                  │ grip, emerald pommel · 1.8 kg                                │
+                  │ Pommel: small emerald, fine cut                              │
+                  │                                                              │
+                  │ Long blade, for the main hand                                │
+                  │ Damage 1d9; criticals on 20–24, ×2 damage                    │
+                  │ Slashing or piercing damage                                  │
+                  │ To hit +0, damage 1d9+2                                      │
+                  │                                                              │
+                  │ Prefix  Sharp: +2 damage                                     │
+                  │ Suffix  of the Bear: +2 to Strength                          │
+                  │                                                              │
+                  │ It bears two enchantments and could bear one more.           │
+                  │                                                              │
+                  │ Esc close                                                    │
+                  └──────────────────────────────────────────────────────────────┘

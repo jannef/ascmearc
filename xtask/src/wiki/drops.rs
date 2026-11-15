@@ -4,13 +4,13 @@
 
 use super::order;
 use super::util::{Term, capital, link, per_mille};
+use ascmearc_core::content::{Content, Drop, DropFrom, DropGoods, TagDrops};
 use std::fmt::Write as _;
-use warlock_core::content::{Content, Drop, DropFrom, DropGoods, TagDrops};
 
 /// What a row gives, by the name the game shows it by: "leather hide", "essence of fire".
 fn goods(content: &Content, row: &Drop) -> String {
     match row.goods {
-        DropGoods::Material(m) => (warlock_core::piece::make(content, m, 1))
+        DropGoods::Material(m) => (ascmearc_core::piece::make(content, m, 1))
             .map_or_else(|| content.material(m).name.clone(), |s| s.names(content).0),
         DropGoods::Object(o) => content.object(o).name.clone(),
     }

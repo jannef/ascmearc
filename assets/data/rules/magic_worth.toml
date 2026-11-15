@@ -1,4 +1,4 @@
-# What magic adds to an item's worth (#1709; crates/warlock-core/src/content/
+# What magic adds to an item's worth (#1709; crates/ascmearc-core/src/content/
 # magic_worth.rs, read by `Stack::worth` in object.rs). A shop's prices (asking and paying) and
 # the craftsperson's patron read the worth: the item as it is made (its parts, an anvil's grade),
 # then its magic, then a maker's mark's half again on top of it all.

@@ -2,8 +2,8 @@
 //! much.
 
 use super::util::capital;
+use ascmearc_core::content::{Content, DialogueId, ServiceKind};
 use std::fmt::Write as _;
-use warlock_core::content::{Content, DialogueId, ServiceKind};
 
 /// The services (`[[dialogue.service]]` in the dialogue data): who sells each, what it does, and
 /// its price before Pious, sorted by who sells it and then by the service's name.

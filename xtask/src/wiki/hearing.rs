@@ -2,12 +2,12 @@
 //! what muffles it, from the rules' constants and the content.
 
 use super::util::{article, capital};
-use std::fmt::Write as _;
-use warlock_core::content::Content;
-use warlock_core::noise::{
+use ascmearc_core::content::Content;
+use ascmearc_core::noise::{
     self, DIAGONAL_LOSS, DIG_NOISE, KICK_NOISE, MAX_REACH, MELEE_NOISE, ROAR_NOISE, SHOT_NOISE,
     SONG_NOISE, SPELL_NOISE, STEP_LOSS, SoundKind, THROW_NOISE, VOICE_NOISE,
 };
+use std::fmt::Write as _;
 
 /// How far a noise of `loudness` carries to a listener whose threshold is `hearing`, in open
 /// space: `5 cells (3 diagonally)`; `-` if it never does.

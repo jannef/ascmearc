@@ -80,4 +80,4 @@ JSON `seen_actors` and `chests` show the chest the player sees.
 population), `world/creatures/mimic_tests.rs` (the legend, the snapshot equal to a real chest's, touch,
 Knock, a blow, searching and Spot, Chest-wise seeing it and slipping its grip, no turn and no foe, the drop, unaware, a
 save and a replay, the dumps), and
-`warlock/src/ui/look.rs` (`a_disguised_mimic_looks_like_a_chest`).
+`ascmearc/src/ui/look.rs` (`a_disguised_mimic_looks_like_a_chest`).

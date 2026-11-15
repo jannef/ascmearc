@@ -1,0 +1,23 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ Your appraise improves. (×236) You learn Clear mind. You learn Deep well. You learn Meditation.
+ You learn Skill focus (appraise). You learn Skill focus (enchanting). You learn Skill --more--
+
+
+
+
+
+
+
+
+            ┌─ Trapwright: which trap? ────────────────────────────────────────────────┐
+            │                                                                          │
+            │ Traps                                                                    │
+            │ > a - Tripwire    up to 3 arrows               (nothing to rig it with)  │
+            │   b - Stakes      a wood billet and a knife             about 5 minutes  │
+            │   c - Pitfall     a digging tool ready          (no digging tool ready)  │
+            │                                                                          │
+            │ a-c or Enter rig   Esc back                                              │
+            └──────────────────────────────────────────────────────────────────────────┘

@@ -4,10 +4,10 @@
 //! the dark, Sanctuary). Every number here is hidden in the game.
 
 use super::util::{Term, anchored, capital, link, ordinal};
+use ascmearc_core::content::{Content, PrayerRules, PrayerUse, TalentDef, TalentEffect};
+use ascmearc_core::talent::FaithEffect;
+use ascmearc_core::time::Duration;
 use std::fmt::Write as _;
-use warlock_core::content::{Content, PrayerRules, PrayerUse, TalentDef, TalentEffect};
-use warlock_core::talent::FaithEffect;
-use warlock_core::time::Duration;
 
 /// The gaps between prayers the fizzle table measures, in seconds (with the gap that lets one
 /// prayer's strain pass whole, added from the data).

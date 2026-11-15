@@ -3,10 +3,10 @@
 //! zero.
 
 use super::util::{Term, anchored, link, signed};
+use ascmearc_core::content::{Build, Content, OverTime, ResourceDef, TalentEffect};
+use ascmearc_core::dice::Dice;
+use ascmearc_core::talent::StealthEffect;
 use std::fmt::Write as _;
-use warlock_core::content::{Build, Content, OverTime, ResourceDef, TalentEffect};
-use warlock_core::dice::Dice;
-use warlock_core::talent::StealthEffect;
 
 /// Every resource, by name.
 pub(super) fn resources(content: &Content) -> String {

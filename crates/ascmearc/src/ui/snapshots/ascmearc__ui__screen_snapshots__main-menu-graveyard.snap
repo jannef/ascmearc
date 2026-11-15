@@ -1,0 +1,34 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+
+
+
+
+
+
+                        ┌──────────────────────────────────────────────────┐
+                        │                                                  │
+                        │                 A S C M E A R C                  │
+                        │                 ═══════════════                  │
+                        │                an ASCII roguelike                │
+                        │                                                  │
+                        │                                                  │
+                        │ > Graveyard                                      │
+                        │   New run                                        │
+                        │   Settings                                       │
+                        │   Controls                                       │
+                        │   Quit                                           │
+                        │                                                  │
+                        │                                                  │
+                        │                                                  │
+                        │ ↑↓ select   Enter choose                         │
+                        └──────────────────────────────────────────────────┘
+
+
+
+
+
+
+                  Ascmearc [version] · © 2026 Janne Lê Forsell · GPL-3.0, no warranty

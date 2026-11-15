@@ -1,6 +1,6 @@
 # Spells
 
-Developer notes for working on this part of Warlock; the rules it implements are in
+Developer notes for working on this part of Ascmearc; the rules it implements are in
 spec/11-magic.md ("Spells"), the approved magic design `docs/design/magic.md`, and
 the spell scaling design `docs/design/spell-scaling.md` (its slices S0 to S6, tracker #759).
 Keep it current with the code, as CLAUDE.md says.
@@ -217,7 +217,7 @@ cast path shares.
     death by it is put down to the spell, as a death by one's own spell is. A caster's rays and
     bolts (`world/creatures/creature_cast.rs`, through `cast_single`) are reflected the same way.
   - **Geometry**: `spell::cone_cells(from, toward, length, opaque)` (exported as
-    `warlock_core::world::cone_cells` for the aiming mode): cells within the rounded radius, in
+    `ascmearc_core::world::cone_cells` for the aiming mode): cells within the rounded radius, in
     line of sight from `from`, not opaque, `dot > 0` and `2·dot² ≥ |v|²·|d|²` (45° either side),
     never `from`; drawn as `SpellShape::Burst { center: caster, radius: length }` over those
     cells (the renderer draws only an event's cells). A ray or a bolt is `bolt_line` cut at the
@@ -485,7 +485,7 @@ cast path shares.
       armour's percent still added), and the talents' percents and
       Frugal caster still apply (`Actor::spell_base`, `Actor::mana_cost`). Identify's is **60**
       (the owner, 2026-10-28: a large cost, not coupled with its difficulty). Measured with
-      `warlock-cli dump --character human,male,CLASS --actions "xp:N levelup:auto"`: a wizard
+      `ascmearc-cli dump --character human,male,CLASS --actions "xp:N levelup:auto"`: a wizard
       has 47 mana at level 5, 55 at 6, 63 at 7, 71 at 8; a priest 42 at 5, 49 at 6–7, 63 at 8;
       a druid 47 at 6. So no caster of level 1 to 6 can cast it, a wizard can from level 7
       and a priest or druid from about 8. Its level, 6, is how hard it is to learn (study's
@@ -819,7 +819,7 @@ cast path shares.
   Spellcraft. Empower, Archmage, and Frugal caster name `spells` beside `mana` (Empower and
   Archmage do not touch scrolls, so not `scrolls`); Scroll savant (#775) is `scrolls` only. Wand mastery is in #398's wands; Channeler
   (`rod_cost_percent`, level 5) is in #399's rods.
-- **Balance** (#401; design §12, run against the data on 2026-10-27; `warlock-cli dump
+- **Balance** (#401; design §12, run against the data on 2026-10-27; `ascmearc-cli dump
   --character human,male,CLASS --actions "xp:N levelup:auto" --format json`, N the human
   threshold times the class's experience factor):
   1. **Pools** (the stats the seed rolls, so a +1 or +2 mental modifier; `levelup:auto` may

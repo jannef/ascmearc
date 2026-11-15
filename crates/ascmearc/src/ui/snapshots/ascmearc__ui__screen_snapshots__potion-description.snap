@@ -1,0 +1,24 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ You pick up 5 objects.
+ You drink the sandy red potion. It is a potion of healing. You feel healthy.
+
+
+
+
+
+
+
+
+                  ┌─ Item ───────────────────────────────────────────────────────┐
+                  │                                                              │
+                  │ ! Potion of healing                                          │
+                  │                                                              │
+                  │ Potion of healing · glass · 250 g                            │
+                  │                                                              │
+                  │ Heals wounds at once                                         │
+                  │                                                              │
+                  │ Esc close                                                    │
+                  └──────────────────────────────────────────────────────────────┘

@@ -21,7 +21,7 @@ what they held (`statue_gone`).
 
 | Module | What |
 |---|---|
-| `warlock-core/src/chest.rs` | `Chest { level, holds }` (the per-cell state), `ChestState` (shut, open, smashed: a terrain's `chest` field), `ChestLook` (what perception shows: band index, state, `locked` with Chest-wise; `name`), `Breaking` and `destroyed` (the per-stack draw, coins and gems spared on a smash) |
+| `ascmearc-core/src/chest.rs` | `Chest { level, holds }` (the per-cell state), `ChestState` (shut, open, smashed: a terrain's `chest` field), `ChestLook` (what perception shows: band index, state, `locked` with Chest-wise; `name`), `Breaking` and `destroyed` (the per-stack draw, coins and gems spared on a smash) |
 | `content/chest.rs` | `ChestRules` (`data/chests.toml`: `bands`, `destroyed`), `ChestBand`, `ChestLoot`, `ChestGold`; `band_of(level)` / `band_index` (the last band whose `from` the level reaches, the first below them all), `band(id)`; the checks |
 | `content/terrain.rs`, `content/load_world.rs`, `content/access_items.rs` | `TerrainDef::chest`, `is_shut_chest`; `check_chests` (one terrain per state, shut not walkable, the others walkable, none a door, stairs, or breakable); a shut chest may have a `toggle_noise`; `Content::chests()`, `chest_terrain(state)` |
 | `content/level.rs` | the legend's `chest` (`ChestSpec`: a band id or a level), locks on shut chests, a trap on a shut chest (`parse_trap`: `TrapEffect::fits_fixture`, no pit; none on an open or smashed chest), a shut chest's `objects` into its `holds`; a `Chest` on every chest terrain cell (`LevelTemplate::chests`), of the legend's level else the level's `item_level` |
@@ -39,7 +39,7 @@ what they held (`statue_gone`).
 | `world/levels/travel.rs` | `instantiate_level` makes the food chests hold now (`rot::made_at`), as a level's piles |
 | `perception/truth.rs` | `PerceptionView::chest_at(p)` (cells seen or remembered; `locked` only with Chest-wise on a shut chest in sight), `known_chests()` |
 | `dump/truth.rs`, `dump/json.rs` | `truth`'s chest lines (`chest_rows`: `trapped (arrow)`), JSON `chests`; `view` and `memory` keep a chest's glyph over its known trap |
-| `warlock/src/ui/mod.rs`, `ui/look.rs`, `ui/effects.rs` | the band's colour on the map, the chest's glyph over its known trap; look mode's band name, its known trap after it ("A coffer, trapped: an arrow trap."), and the description; `ChestBroken` bursts the smashed chest's splinters |
+| `ascmearc/src/ui/mod.rs`, `ui/look.rs`, `ui/effects.rs` | the band's colour on the map, the chest's glyph over its known trap; look mode's band name, its known trap after it ("A coffer, trapped: an arrow trap."), and the description; `ChestBroken` bursts the smashed chest's splinters |
 
 ## Content
 
@@ -107,7 +107,7 @@ save and replays, the dumps), `world/fixtures/chest_trap_tests.rs` (C2: legends,
 on a bump, a fireball blowing a coffer apart and a frost trap a kist, a kick that holds springing
 nothing and one that breaks springing the trap, a fireball kicked, Pick lock, Disarm made and
 failed badly, searching with the chest's sign and the `view` glyph, Chest-wise, Trap sense's half,
-a blast from afar springing nothing, the `truth` line, replays), `warlock/src/ui/look.rs`
+a blast from afar springing nothing, the `truth` line, replays), `ascmearc/src/ui/look.rs`
 (`a_chest_goes_by_its_band`, with a known trap), the
 `abilities-menu-knock` screen snapshot, `render/atlas.rs` (the font has `⊟ ⊔ ⊠`), and `mapgen/chest_tests.rs` (C3: one floor in five,
 cells clear, the level the same without chests, locks and traps by the band, a branch without

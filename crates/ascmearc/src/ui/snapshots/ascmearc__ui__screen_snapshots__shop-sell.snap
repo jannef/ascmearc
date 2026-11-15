@@ -1,0 +1,23 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ You see here a dagger (for sale, 47 gold).
+ You pick up a dagger (unpaid, 47 gold).
+
+
+
+
+
+
+
+
+                             ┌─ Grimbold's General Store ────────────┐
+                             │                                       │
+                             │ Grimbold offers 1 gold for a lantern. │
+                             │                                       │
+                             │          Sell for 1 gold  (y)         │
+                             │        > Keep it  (n, Esc)            │
+                             │                                       │
+                             │ ↑/↓ choose  Enter select              │
+                             └───────────────────────────────────────┘

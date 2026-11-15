@@ -1,0 +1,24 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ You are bleeding.
+ You feel sick.
+
+
+
+
+
+
+
+
+                                    ┌─ Heal ───────────────────┐
+                                    │                          │
+                                    │   What do you tend to?   │
+                                    │                          │
+                                    │    Bleeding              │
+                                    │    Poisoned              │
+                                    │  > Never mind  (n, Esc)  │
+                                    │                          │
+                                    │ ↑/↓ choose  Enter select │
+                                    └──────────────────────────┘

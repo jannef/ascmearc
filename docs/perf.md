@@ -6,12 +6,12 @@ turn processing at most 5 ms in the hub and 16 ms in the vast level.
 ## Methodology
 
 - **Turn time**: `cargo xtask bench-turns` (release build). Scripted walk of 400 turns per level
-  through `warlock-core` only (no rendering); each `World::apply` that takes a turn is timed. The
+  through `ascmearc-core` only (no rendering); each `World::apply` that takes a turn is timed. The
   verdict compares the **max** turn time with the budget; the command fails when over budget.
   After the walk it skips (dev `skip`) to 18:00 and times one `rest:dawn`: 7200 six-second turns
   through the normal pipeline unless a creature interrupts it (budget 500 ms).
 - **Frame time**: `cargo xtask bench-frames [WxH]` (release build, default `2560x1440`, scale 1).
-  Runs the game offscreen with `WARLOCK_UNPACED=1` (removes the 60 Hz capture-mode pacing) and
+  Runs the game offscreen with `ASCMEARC_UNPACED=1` (removes the 60 Hz capture-mode pacing) and
   `--capture-after-frames` 10 and 2010, 5 runs each, takes the best run of each, and divides the
   wall-clock difference by 2000. Startup, asset loading and the screenshot cancel out. The
   command fails if a level exceeds 1000/60 ms.

@@ -1,13 +1,13 @@
 //! Traps.
 
 use super::util::{Term, anchored, article, capital, percent_of, signed};
+use ascmearc_core::check;
+use ascmearc_core::content::{Bolt, Burst, BurstIce, Content, RigTakes, TrapEffect, TrapNoise};
+use ascmearc_core::skills::Effect;
+use ascmearc_core::stats::modifier;
+use ascmearc_core::time::Duration;
+use ascmearc_core::world::takes_words;
 use std::fmt::Write as _;
-use warlock_core::check;
-use warlock_core::content::{Bolt, Burst, BurstIce, Content, RigTakes, TrapEffect, TrapNoise};
-use warlock_core::skills::Effect;
-use warlock_core::stats::modifier;
-use warlock_core::time::Duration;
-use warlock_core::world::takes_words;
 
 /// The traps: what each does, its damage dice, how often it goes off, and what
 /// it sounds like. Never a to-hit, which the player does not know.

@@ -3,8 +3,8 @@
 
 use super::order;
 use super::util::{Term, anchored, capital, yes};
+use ascmearc_core::content::{Content, DamageTypeId, Effect};
 use std::fmt::Write as _;
-use warlock_core::content::{Content, DamageTypeId, Effect};
 
 /// The damage types, in content order: whether armour (Protection) soaks the kind, whether its
 /// big hits and criticals bleed, whether it spills blood and leaves char, and how a blow of it is

@@ -1,6 +1,6 @@
-# Warlock
+# Ascmearc
 
-Warlock is a turn-based roguelike played on a grid, in the spirit of the classic ASCII game
+Ascmearc is a turn-based roguelike played on a grid, in the spirit of the classic ASCII game
 ADOM. Everything on screen is a glyph: creatures, terrain, and the menus too. The glyphs are drawn
 on the GPU with colored light, real shadows, and gently animated terrain.
 
@@ -29,9 +29,9 @@ things are, what a [rank](weapon-skills.md#raising-a-weapon-skill) gives, and ev
 attacks, and senses ([Creatures in numbers](creature-numbers.md)).
 
 - **Play in your browser:** <https://ascmearc.com/> (needs a browser with WebGPU)
-- **Download for Windows, macOS, and Linux:** <https://github.com/jannef/warlock/releases>
-- **Build a version from source:** {{#include generated/install.md:install}} (details in the [README](https://github.com/jannef/warlock#install-a-specific-version-from-source))
-- **Source and issues:** <https://github.com/jannef/warlock>
+- **Download for Windows, macOS, and Linux:** <https://github.com/jannef/ascmearc/releases>
+- **Build a version from source:** {{#include generated/install.md:install}} (details in the [README](https://github.com/jannef/ascmearc#install-a-specific-version-from-source))
+- **Source and issues:** <https://github.com/jannef/ascmearc>
 
 ## Where to start
 

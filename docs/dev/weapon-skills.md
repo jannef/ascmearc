@@ -1,6 +1,6 @@
 # Weapon skills and fighting styles
 
-Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
+Developer notes for working on this part of Ascmearc (moved from CLAUDE.md, #185); the
 rules it implements are in spec/12-character.md. Keep it current with the code, as CLAUDE.md says.
 
 Weapon skills (M22, #134): data is `data/weapon_skills.toml`

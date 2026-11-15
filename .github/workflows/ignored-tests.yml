@@ -1,8 +1,8 @@
-# The `#[ignore]`d tests of warlock-core, weekly (#1537): the long seed sweeps the default run
+# The `#[ignore]`d tests of ascmearc-core, weekly (#1537): the long seed sweeps the default run
 # shortens (#1514), and the tools run by hand (the balance probe, the light stress benchmark, the
 # tuning printouts). They are not run on pull requests; here they run so they cannot rot: each
 # must finish without a panic. Run it by hand from Actions > Ignored tests > Run workflow, or
-# locally with `cargo test -p warlock-core -- --ignored`.
+# locally with `cargo test -p ascmearc-core -- --ignored`.
 name: Ignored tests
 
 on:
@@ -16,7 +16,7 @@ env:
 
 jobs:
   ignored:
-    name: warlock-core --ignored
+    name: ascmearc-core --ignored
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
@@ -25,4 +25,4 @@ jobs:
         run: rustup toolchain install
       - uses: Swatinem/rust-cache@v2
       - name: Ignored tests
-        run: cargo test --package warlock-core --locked -- --ignored
+        run: cargo test --package ascmearc-core --locked -- --ignored

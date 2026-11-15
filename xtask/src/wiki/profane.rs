@@ -5,8 +5,8 @@
 
 use super::talents::{effects_text, talent_link};
 use super::util::{Term, anchored, link, percent_of};
+use ascmearc_core::content::{Content, GiftDef, GiftTier, TalentId};
 use std::fmt::Write as _;
-use warlock_core::content::{Content, GiftDef, GiftTier, TalentId};
 
 /// A gift's name, linked to its row.
 fn gift_link(content: &Content, talent: TalentId) -> String {

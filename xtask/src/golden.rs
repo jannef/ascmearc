@@ -3,7 +3,7 @@
 //! The manifest is the directory `tests/golden/manifest/`: every `*.toml` directly in it, read in
 //! file-name order (one file per showcase room or feature, so feature branches add entries without
 //! conflicting). Exactly one file may set `[defaults]` (`defaults.toml`); each `[[golden]]` entry
-//! names a scenario plus either a text action sequence (turned into a replay with `warlock-core`)
+//! names a scenario plus either a text action sequence (turned into a replay with `ascmearc-core`)
 //! or an existing replay file, and its name is unique across the files. The game renders each
 //! entry headlessly (`--replay … --capture …`) and the result is compared with
 //! `tests/golden/<name>.png`.
@@ -17,15 +17,15 @@
 //! drivers rasterize slightly differently. On other platforms use `--local` to just capture.
 
 use crate::{run_game, target_dir, workspace_root};
+use ascmearc_core::action::parse_actions;
+use ascmearc_core::character::CharacterSpec;
+use ascmearc_core::content::Content;
+use ascmearc_core::replay::Replay;
+use ascmearc_core::{Action, Event, World};
 use serde::Deserialize;
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
-use warlock_core::action::parse_actions;
-use warlock_core::character::CharacterSpec;
-use warlock_core::content::Content;
-use warlock_core::replay::Replay;
-use warlock_core::{Action, Event, World};
 
 /// One manifest file: optional defaults and any number of entries.
 #[derive(Deserialize)]
@@ -273,7 +273,7 @@ pub fn run(mode: Mode) -> Result<(), String> {
     std::fs::create_dir_all(&out_dir).map_err(|e| format!("cannot create out dir: {e}"))?;
     let manifest = load_manifest(&golden_dir.join("manifest"))?;
     let d = &manifest.defaults.unwrap_or_default();
-    let content = Arc::new(warlock_assets::content().map_err(|e| e.to_string())?);
+    let content = Arc::new(ascmearc_assets::content().map_err(|e| e.to_string())?);
 
     if !cfg!(target_os = "linux") && mode == Mode::Compare {
         eprintln!(

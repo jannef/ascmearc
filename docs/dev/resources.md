@@ -1,6 +1,6 @@
 # Resources
 
-Developer notes for working on this part of Warlock; the rules it implements are in
+Developer notes for working on this part of Ascmearc; the rules it implements are in
 spec/11-magic.md ("Resources"). Keep it current with the code, as CLAUDE.md says.
 
 Alternative resources (#225) are integer pools beside hit points and mana that a character holds

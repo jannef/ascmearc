@@ -3,10 +3,10 @@
 
 use super::order;
 use super::util::capital;
+use ascmearc_core::Pos;
+use ascmearc_core::content::Content;
 use std::collections::BTreeMap;
 use std::fmt::Write as _;
-use warlock_core::Pos;
-use warlock_core::content::Content;
 
 /// Per campaign the wiki describes, its overworld's named places by name: the cell, the region,
 /// what the cell is, and where it leads (a hidden location: what reveals it is the quests'

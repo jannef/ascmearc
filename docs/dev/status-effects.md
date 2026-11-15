@@ -1,6 +1,6 @@
 # Status effects, healing, and diseases
 
-Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
+Developer notes for working on this part of Ascmearc (moved from CLAUDE.md, #185); the
 rules it implements are in spec/11-magic.md. Keep it current with the code, as CLAUDE.md says.
 
 **Three fields of buffs** (#1002, `world/health/buff_field_tests.rs`; the spell types design §7 entries

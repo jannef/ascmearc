@@ -1,0 +1,22 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ You, on stone floor.
+ Set on: Tab or direction keys aim, Enter or a uses it, Esc cancels.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       @

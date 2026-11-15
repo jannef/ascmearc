@@ -11,11 +11,11 @@
 //! the overworld's too). Fights are real: a walk that gets the player killed starts over from
 //! the scenario's start, untimed.
 
+use ascmearc_core::content::Content;
+use ascmearc_core::time::{DAWN, DUSK, Duration};
+use ascmearc_core::{Action, Dir, Rest, World};
 use std::sync::Arc;
 use std::time::Instant;
-use warlock_core::content::Content;
-use warlock_core::time::{DAWN, DUSK, Duration};
-use warlock_core::{Action, Dir, Rest, World};
 
 const TURNS: usize = 400;
 /// Longest a rest from dusk to dawn may take, in ms.
@@ -148,7 +148,7 @@ const CASES: [(&str, &str, f64, u64); 15] = [
 
 /// The builtin content with the bench's cave branch and its scenario.
 fn content() -> Result<Content, String> {
-    let mut files = warlock_assets::files();
+    let mut files = ascmearc_assets::files();
     let dungeons = format!(
         "{}{DELF_BRANCH}{HEXED_BRANCH}{PANOPLY_BRANCH}{LONG_BRANCH}",
         include_str!("../../assets/data/dungeons.toml")
@@ -243,8 +243,8 @@ fn measure(
     }
     if scenario == "bench_hexed" {
         // How many are circled: all but the kobolds (the dev `actors` layer, a row an actor).
-        let layer = warlock_core::dump::parse_layers("actors")?;
-        let rows = warlock_core::dump::layer_rows(&world, layer[0]);
+        let layer = ascmearc_core::dump::parse_layers("actors")?;
+        let rows = ascmearc_core::dump::layer_rows(&world, layer[0]);
         let actors: Vec<&String> = (rows.iter()).filter(|r| r.contains(" at (")).collect();
         let kobolds = (actors.iter())
             .filter(|r| r.contains(" kobold at ("))
@@ -381,7 +381,7 @@ pub fn run(rows: &[String]) -> Result<(), String> {
 fn fight_rest(content: &Arc<Content>) -> Result<(u64, f64), String> {
     let mut world = World::new(content.clone(), "arena", None).map_err(|e| e.to_string())?;
     let walk = "move:W*5 move:NW*4 move:N open:W move:W*2 close:E";
-    for action in warlock_core::action::parse_actions(walk)? {
+    for action in ascmearc_core::action::parse_actions(walk)? {
         world.apply(&action);
     }
     let to_dusk = world.time().next_at(DUSK).since(world.time());
@@ -397,7 +397,7 @@ const CIRCLES_BUDGET: f64 = 0.2;
 
 /// Frame-time measurement: runs the release game offscreen with `--capture-after-frames` N and
 /// M, and divides the wall-clock difference by M - N, which cancels startup and capture cost.
-/// `WARLOCK_UNPACED=1` removes the game's 60 Hz capture-mode pacing, so this measures CPU + GPU
+/// `ASCMEARC_UNPACED=1` removes the game's 60 Hz capture-mode pacing, so this measures CPU + GPU
 /// throughput per frame (offscreen render, no presentation).
 pub fn frames(window: &str) -> Result<(), String> {
     use crate::{target_dir, workspace_root};
@@ -406,14 +406,14 @@ pub fn frames(window: &str) -> Result<(), String> {
     let root = workspace_root();
     let status = Command::new(env!("CARGO"))
         .current_dir(&root)
-        .args(["build", "--quiet", "--release", "--package", "warlock"])
+        .args(["build", "--quiet", "--release", "--package", "ascmearc"])
         .status()
         .map_err(|e| format!("failed to run cargo: {e}"))?;
     if !status.success() {
         return Err(format!("release build failed: {status}"));
     }
     let target = target_dir()?;
-    let exe = target.join("release/warlock");
+    let exe = target.join("release/ascmearc");
     let out = target.join("xtask/bench-frame.png");
     std::fs::create_dir_all(out.parent().expect("has parent")).map_err(|e| e.to_string())?;
     const LOW: u32 = 10;
@@ -467,7 +467,7 @@ pub fn frames(window: &str) -> Result<(), String> {
                 let start = Instant::now();
                 let status = Command::new(&exe)
                     .current_dir(&root)
-                    .env("WARLOCK_UNPACED", "1")
+                    .env("ASCMEARC_UNPACED", "1")
                     .args(args)
                     .args(["--window", window, "--scale", "1"])
                     .args(["--capture-after-frames", &frames.to_string(), "--capture"])

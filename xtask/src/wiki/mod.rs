@@ -91,9 +91,9 @@ mod weapon_skills;
 mod weather;
 
 use crate::workspace_root;
+use ascmearc_core::content::Content;
 use std::path::PathBuf;
 use std::process::Command;
-use warlock_core::content::Content;
 
 /// What to do with the generated files.
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -118,7 +118,7 @@ fn generated_dir() -> PathBuf {
 }
 
 pub fn run(mode: Mode) -> Result<(), String> {
-    let content = warlock_assets::content().map_err(|e| format!("cannot load content: {e}"))?;
+    let content = ascmearc_assets::content().map_err(|e| format!("cannot load content: {e}"))?;
     let files = generate(&content);
     let dir = generated_dir();
     std::fs::create_dir_all(&dir).map_err(|e| format!("{}: {e}", dir.display()))?;
@@ -571,7 +571,7 @@ mod tests {
     /// in its one page (#1171: the paladin and the bard had two sections; #1540: a page each).
     #[test]
     fn every_class_page_includes_its_table_once() {
-        let content = warlock_assets::content().expect("content loads");
+        let content = ascmearc_assets::content().expect("content loads");
         let table = talents::class_levels(&content);
         let overview = std::fs::read_to_string(workspace_root().join("wiki/src/classes.md"))
             .expect("classes.md");
@@ -605,7 +605,7 @@ mod tests {
     /// data/circles.toml) says it sheds one, and a circle's is named as the circle's.
     #[test]
     fn only_statuses_with_a_light_shed_one() {
-        let content = warlock_assets::content().expect("content loads");
+        let content = ascmearc_assets::content().expect("content loads");
         let table = healing::status_effects(&content);
         let rows = (table.lines()).filter(|l| l.starts_with("| <a id="));
         assert_eq!(rows.count(), content.status_defs().len());
@@ -629,7 +629,7 @@ mod tests {
     /// Rows that define a term carry the anchor prose links to (`wiki/TERMS.md`).
     #[test]
     fn rows_have_anchors() {
-        let content = warlock_assets::content().expect("content loads");
+        let content = ascmearc_assets::content().expect("content loads");
         let files = generate(&content);
         let text = |name: &str| &files.iter().find(|(n, _)| n == name).expect("file").1;
         assert!(text("traps.md").contains("| <a id=\"trap-pit\"></a>Pit `^` |"));
@@ -657,7 +657,7 @@ mod tests {
     /// the affix tables: the shipped files (#635), every tier on its ladder.
     #[test]
     fn system_affixes_have_words_in_the_tables() {
-        let content = warlock_assets::content().expect("content loads");
+        let content = ascmearc_assets::content().expect("content loads");
         let prefixes = magic::prefixes(&content);
         let suffixes = magic::suffixes(&content);
         for row in [
@@ -690,7 +690,7 @@ mod tests {
     /// beside it, named as the game names them.
     #[test]
     fn the_systems_table_has_every_affix() {
-        let content = warlock_assets::content().expect("content loads");
+        let content = ascmearc_assets::content().expect("content loads");
         let table = magic::systems(&content);
         let rows = table.lines().filter(|l| l.starts_with("| ")).count() - 1;
         assert_eq!(rows, content.affixes().all().len(), "{table}");
@@ -711,7 +711,7 @@ mod tests {
     fn the_story_tables_list_every_line() {
         // Every line of every chapter of a story in the Ascmearc in its chapter's table, its
         // effects exact; the tiers' odds as the data has them.
-        let content = warlock_assets::content().expect("content loads");
+        let content = ascmearc_assets::content().expect("content loads");
         let files = generate(&content);
         let text = |name: &str| {
             let file = format!("background-{name}.md");
@@ -738,7 +738,7 @@ mod tests {
 
     #[test]
     fn hidden_numbers_are_exact() {
-        let content = warlock_assets::content().expect("content loads");
+        let content = ascmearc_assets::content().expect("content loads");
         let files = plain(&content);
         let text = |name: &str| &files.iter().find(|(n, _)| n == name).expect("file").1;
         let has = |name: &str, row: &str| {
@@ -897,7 +897,7 @@ mod tests {
 
     #[test]
     fn tables_are_deterministic_and_list_the_data() {
-        let content = warlock_assets::content().expect("content loads");
+        let content = ascmearc_assets::content().expect("content loads");
         let files = plain(&content);
         assert_eq!(generate(&content), generate(&content));
         let text = |name: &str| &files.iter().find(|(n, _)| n == name).expect("file").1;

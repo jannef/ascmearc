@@ -1,6 +1,6 @@
 //! The worked examples on the wiki's pages (`> **Example: ...**` boxes on Combat, Stats, Burden,
 //! Skills, Mana, and Enchanting; #1578, #1669) are hand-written. These tests rebuild each
-//! example's character through `warlock-core`, as `warlock-cli dump --character ... --layers
+//! example's character through `ascmearc-core`, as `ascmearc-cli dump --character ... --layers
 //! stats,attacks` does, or its hypothetical one through the same rules, and check that every
 //! number the box states is the number the game computes: each check is a phrase the box must
 //! contain with the computed number in it. Editing an example, or the rules or data under it,
@@ -8,16 +8,16 @@
 
 use std::sync::Arc;
 
-use warlock_core::burden::Burden;
-use warlock_core::character::CharacterSpec;
-use warlock_core::check;
-use warlock_core::combat;
-use warlock_core::content::Content;
-use warlock_core::mana;
-use warlock_core::object::format_weight;
-use warlock_core::skills::Effect;
-use warlock_core::stats::{self, Stat};
-use warlock_core::world::World;
+use ascmearc_core::burden::Burden;
+use ascmearc_core::character::CharacterSpec;
+use ascmearc_core::check;
+use ascmearc_core::combat;
+use ascmearc_core::content::Content;
+use ascmearc_core::mana;
+use ascmearc_core::object::format_weight;
+use ascmearc_core::skills::Effect;
+use ascmearc_core::stats::{self, Stat};
+use ascmearc_core::world::World;
 
 use super::util::signed;
 use crate::workspace_root;
@@ -66,11 +66,11 @@ fn word(n: i32) -> &'static str {
 }
 
 fn content() -> Arc<Content> {
-    Arc::new(warlock_assets::content().expect("content"))
+    Arc::new(ascmearc_assets::content().expect("content"))
 }
 
 /// A fresh run of the first campaign's start as `character` with its starting kit, as
-/// `warlock-cli dump --scenario ascmearc --character CHARACTER` starts it.
+/// `ascmearc-cli dump --scenario ascmearc --character CHARACTER` starts it.
 fn run(content: &Arc<Content>, character: &str) -> World {
     let spec: CharacterSpec = character.parse().expect("character");
     World::start_run(content.clone(), "ascmearc", None, Some(&spec), None, true)

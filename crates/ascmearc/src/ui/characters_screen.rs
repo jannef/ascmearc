@@ -1,0 +1,371 @@
+//! The Characters screen, from the main menu: every saved
+//! character, the one played last first, with its race, class, and level, and for the selected
+//! one where it is (and in which campaign, when more than one is installed: a developer build)
+//! and when it was last played. Choose one to resume it; the Erase key deletes
+//! the selected one, through the one dialog. A save without a readable summary is listed by its
+//! id. A save another version of the game made (saves are pinned to their version) is listed
+//! as that, and cannot be chosen; it can be deleted.
+//!
+//! Like every screen it is a plain state machine, testable without a window. What the list
+//! shows comes from the saves' summaries (`save::Summary`), read when the screen opens.
+
+use super::cursor;
+use super::dialog_screen::Dialog;
+use super::menu::{HINTS, Nav, Panel, Press};
+use super::screens::{MenuChoice, ScreenAction};
+use super::{TEXT, TEXT_DIM};
+use crate::render::console::Console;
+use crate::save::{SavedCharacter, Summary, played_text};
+use crate::settings::Clock;
+
+/// The panel's width.
+const WIDTH: i32 = 72;
+/// Where the race and class column begins (from the panel's inner edge).
+const RACE_X: i32 = 24;
+/// Where the level column ends.
+const LEVEL_END: i32 = 66;
+/// What the level column says of a save another version of the game made.
+const OTHER_VERSION: &str = "other version";
+
+/// The saved characters.
+#[derive(Debug)]
+pub struct CharactersScreen {
+    characters: Vec<SavedCharacter>,
+    selected: usize,
+    /// More than one campaign is installed (a developer build, with the test world): the place
+    /// is named with its campaign.
+    campaigns: bool,
+    /// How many characters have died (the graveyard, `graveyard.rs`): "Twelve characters have
+    /// died." under the list, none while none has.
+    died: usize,
+}
+
+impl CharactersScreen {
+    /// The list of `characters`; `campaigns` when more than one campaign is installed.
+    pub fn new(characters: Vec<SavedCharacter>, campaigns: bool) -> Self {
+        Self {
+            characters,
+            selected: 0,
+            campaigns,
+            died: 0,
+        }
+    }
+
+    /// The screen, saying that `died` characters have died.
+    pub fn died(self, died: usize) -> Self {
+        Self { died, ..self }
+    }
+
+    /// "Twelve characters have died.", "One character has died."; `None` while none has.
+    fn died_line(&self) -> Option<String> {
+        const WORDS: [&str; 21] = [
+            "No",
+            "One",
+            "Two",
+            "Three",
+            "Four",
+            "Five",
+            "Six",
+            "Seven",
+            "Eight",
+            "Nine",
+            "Ten",
+            "Eleven",
+            "Twelve",
+            "Thirteen",
+            "Fourteen",
+            "Fifteen",
+            "Sixteen",
+            "Seventeen",
+            "Eighteen",
+            "Nineteen",
+            "Twenty",
+        ];
+        let count = WORDS
+            .get(self.died)
+            .map_or_else(|| self.died.to_string(), |w| (*w).to_string());
+        match self.died {
+            0 => None,
+            1 => Some("One character has died.".into()),
+            _ => Some(format!("{count} characters have died.")),
+        }
+    }
+
+    /// Where a character is: `In Cēaptūn.`, or with more than one campaign installed and the
+    /// summary's campaign known, `In Cēaptūn (The Ascmearc).`
+    fn place(&self, summary: &Summary) -> String {
+        if self.campaigns && !summary.campaign.is_empty() {
+            format!("In {} ({}).", summary.place, summary.campaign)
+        } else {
+            format!("In {}.", summary.place)
+        }
+    }
+
+    /// Why a save of another version cannot be played: `Made by version 0.8.0 of the game: it
+    /// cannot be continued here.` (a summary from before saves were pinned names none).
+    fn made_by(summary: &Summary) -> String {
+        let version = if summary.version.is_empty() {
+            "an older version".to_string()
+        } else {
+            format!("version {}", summary.version)
+        };
+        format!("Made by {version} of the game: it cannot be continued here.")
+    }
+
+    /// The dialog deleting `character` asks first.
+    fn delete_dialog(character: &SavedCharacter) -> Dialog {
+        let text = format!(
+            "Delete {}'s save? The character is gone for good.",
+            character.name()
+        );
+        Dialog::yes_no(
+            "Delete character",
+            text,
+            "Delete",
+            MenuChoice::DeleteCharacter(character.id.clone()),
+            "Keep",
+        )
+    }
+
+    pub fn handle(&mut self, press: &Press) -> ScreenAction {
+        let count = self.characters.len();
+        match press.nav {
+            Nav::Back => return ScreenAction::Close,
+            Nav::Up => self.selected = cursor::up(self.selected, count),
+            Nav::Down => self.selected = cursor::down(self.selected, count),
+            Nav::Enter => {
+                // A save of another version cannot be continued: the details say so.
+                if let Some(character) = self.characters.get(self.selected)
+                    && character.playable()
+                {
+                    return ScreenAction::Choose(MenuChoice::Resume(character.id.clone()));
+                }
+            }
+            Nav::Erase => {
+                if let Some(character) = self.characters.get(self.selected) {
+                    return Self::delete_dialog(character).into();
+                }
+            }
+            _ => {}
+        }
+        ScreenAction::Stay
+    }
+
+    pub fn draw(&self, console: &mut Console, clock: Clock) {
+        // Rows: margin, the list, a gap, where and when, a gap, the dead and a gap if any have
+        // died, the footer, the frame.
+        let rows = self.characters.len().max(1) as i32;
+        let died = self.died_line();
+        let below = if died.is_some() { 11 } else { 9 };
+        let panel = Panel::new(console, " Characters ", WIDTH, rows + below);
+        let x = panel.inner_x();
+        let visible = (panel.h - below).clamp(1, rows);
+        let first = (self.selected as i32 - visible + 1).clamp(0, rows - visible);
+        if self.characters.is_empty() {
+            console.print(x + 2, panel.y + 2, "No saved characters.", TEXT_DIM);
+        }
+        for row in first..(first + visible).min(self.characters.len() as i32) {
+            let character = &self.characters[row as usize];
+            let y = panel.y + 2 + row - first;
+            panel.row(
+                console,
+                y,
+                row as usize == self.selected,
+                character.name(),
+                "",
+                0,
+            );
+            if let Some(summary) = &character.summary {
+                let colour = if summary.this_version() {
+                    TEXT
+                } else {
+                    TEXT_DIM
+                };
+                console.print(x + RACE_X, y, &summary.race_and_class(), colour);
+                let level = if summary.this_version() {
+                    format!("level {}", summary.level)
+                } else {
+                    OTHER_VERSION.to_string()
+                };
+                let lx = x + LEVEL_END - level.chars().count() as i32;
+                console.print(lx, y, &level, TEXT);
+            }
+        }
+        if first > 0 {
+            console.print(panel.x + panel.w - 3, panel.y + 1, "↑", TEXT_DIM);
+        }
+        if first + visible < rows {
+            console.print(panel.x + panel.w - 3, panel.y + 2 + visible, "↓", TEXT_DIM);
+        }
+        let details = match self.characters.get(self.selected) {
+            Some(SavedCharacter {
+                summary: Some(summary),
+                ..
+            }) => {
+                let mut lines = Vec::new();
+                if !summary.this_version() {
+                    lines.push(Self::made_by(summary));
+                }
+                lines.push(self.place(summary));
+                lines.push(format!(
+                    "Last played {}.",
+                    played_text(summary.played, clock)
+                ));
+                lines
+            }
+            Some(_) => vec!["Nothing is known of this save until it is played.".into()],
+            None => Vec::new(),
+        };
+        let bottom = panel.y + panel.h - (below - 7);
+        for (y, line) in (panel.y + 3 + visible..).zip(details) {
+            if y < bottom {
+                console.print(x + 2, y, &line, TEXT_DIM);
+            }
+        }
+        if let Some(line) = died
+            && bottom < panel.y + panel.h - 2
+        {
+            console.print(x + 2, bottom, &line, TEXT_DIM);
+        }
+        let keys = HINTS;
+        let footer = format!(
+            "{} choose   {} play   {} delete   Esc back",
+            keys.up_down(),
+            keys.confirm,
+            keys.erase
+        );
+        panel.footer(console, &footer);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn saved(id: &str, name: &str, level: u32) -> SavedCharacter {
+        SavedCharacter {
+            id: id.into(),
+            summary: Some(Summary {
+                name: name.into(),
+                race: "Dwarf".into(),
+                class: "Warrior".into(),
+                level,
+                place: "the Hub".into(),
+                campaign: "The Showcase".into(),
+                played: 1_781_654_400,
+                version: ascmearc_core::GAME_VERSION.into(),
+            }),
+        }
+    }
+
+    fn screen() -> CharactersScreen {
+        let characters = vec![
+            saved("brakka-2", "Brakka", 3),
+            saved("brakka-1", "Brakka", 1),
+            SavedCharacter {
+                id: "tamsin-1".into(),
+                summary: None,
+            },
+        ];
+        CharactersScreen::new(characters, false)
+    }
+
+    fn drawn(screen: &CharactersScreen) -> String {
+        let mut console = Console::default();
+        console.resize(80, 24);
+        screen.draw(&mut console, Clock::H24);
+        (0..console.rows() as i32)
+            .map(|y| {
+                (0..console.cols() as i32)
+                    .map(|x| console.get(x, y).map_or(' ', |c| c.ch))
+                    .collect::<String>()
+            })
+            .collect::<Vec<_>>()
+            .join("\n")
+    }
+
+    #[test]
+    fn choosing_a_character_resumes_it() {
+        let mut s = screen();
+        s.handle(&Press::nav(Nav::Down));
+        assert_eq!(
+            s.handle(&Press::nav(Nav::Enter)),
+            ScreenAction::Choose(MenuChoice::Resume("brakka-1".into()))
+        );
+        assert_eq!(s.handle(&Press::nav(Nav::Back)), ScreenAction::Close);
+    }
+
+    #[test]
+    fn deleting_asks_the_one_dialog_first() {
+        let mut s = screen();
+        let ScreenAction::Dialog(dialog) = s.handle(&Press::nav(Nav::Erase)) else {
+            panic!("a dialog");
+        };
+        assert_eq!(
+            *dialog,
+            CharactersScreen::delete_dialog(&saved("brakka-2", "Brakka", 3))
+        );
+        let text = format!("{dialog:?}");
+        assert!(text.contains("Delete Brakka's save?"), "{text}");
+        assert!(text.contains("DeleteCharacter(\"brakka-2\")"), "{text}");
+    }
+
+    #[test]
+    fn the_list_shows_who_and_where_and_when() {
+        let mut s = screen();
+        let text = drawn(&s);
+        assert!(text.contains("> Brakka"), "{text}");
+        assert!(text.contains("Dwarf Warrior"), "{text}");
+        assert!(text.contains("level 3"), "{text}");
+        assert!(text.contains("In the Hub."), "{text}");
+        assert!(text.contains("Last played 2026-06-17 00:00 UTC."), "{text}");
+        assert!(text.contains("Del delete"), "{text}");
+        // A save without its summary is listed by its id.
+        s.handle(&Press::nav(Nav::Up));
+        let text = drawn(&s);
+        assert!(text.contains("> tamsin-1"), "{text}");
+        assert!(text.contains("Nothing is known"), "{text}");
+        assert!(drawn(&CharactersScreen::new(Vec::new(), false)).contains("No saved characters."));
+    }
+
+    /// A save another version made is listed as that, says why it cannot be continued, and is
+    /// never chosen; it can still be deleted.
+    #[test]
+    fn a_save_of_another_version_is_listed_but_not_continued() {
+        let mut old = saved("osric-1", "Osric", 5);
+        if let Some(summary) = &mut old.summary {
+            summary.version = "0.1.0".into();
+        }
+        let mut s = CharactersScreen::new(vec![old.clone()], false);
+        let text = drawn(&s);
+        assert!(text.contains("Dwarf Warrior"), "{text}");
+        assert!(text.contains("other version"), "{text}");
+        assert!(!text.contains("level 5"), "{text}");
+        assert!(
+            text.contains("Made by version 0.1.0 of the game: it cannot be continued here."),
+            "{text}"
+        );
+        assert_eq!(s.handle(&Press::nav(Nav::Enter)), ScreenAction::Stay);
+        assert!(matches!(
+            s.handle(&Press::nav(Nav::Erase)),
+            ScreenAction::Dialog(_)
+        ));
+        if let Some(summary) = &mut s.characters[0].summary {
+            summary.version.clear();
+        }
+        assert!(drawn(&s).contains("Made by an older version of the game"));
+    }
+
+    /// With more than one campaign installed (a developer build) the place names its campaign;
+    /// a summary from before campaigns were kept just its place.
+    #[test]
+    fn the_place_names_its_campaign_when_there_are_several() {
+        let mut s = screen();
+        s.campaigns = true;
+        assert!(drawn(&s).contains("In the Hub (The Showcase)."));
+        if let Some(summary) = &mut s.characters[0].summary {
+            summary.campaign.clear();
+        }
+        assert!(drawn(&s).contains("In the Hub."));
+    }
+}

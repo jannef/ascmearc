@@ -1,10 +1,10 @@
-//! What the magic talents do, in the wiki's words (`warlock_core::talent::MagicEffect`, #1495): one
-//! arm a variant, beside the area's enum and sum in `warlock-core/src/talent/magic.rs`.
+//! What the magic talents do, in the wiki's words (`ascmearc_core::talent::MagicEffect`, #1495): one
+//! arm a variant, beside the area's enum and sum in `ascmearc-core/src/talent/magic.rs`.
 
 use super::{spell_mod_text, spell_text};
 use crate::wiki::util::signed;
-use warlock_core::content::Content;
-use warlock_core::talent::MagicEffect;
+use ascmearc_core::content::Content;
+use ascmearc_core::talent::MagicEffect;
 
 /// What `effect` does, as the talents' tables say it.
 pub(super) fn text(content: &Content, effect: &MagicEffect) -> String {

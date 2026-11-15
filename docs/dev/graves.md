@@ -107,5 +107,5 @@ graveyard given late and taken away, a save, the view snapshot `lictun_arrival`,
 verified without the graveyard. `content/tests.rs`: the loader's refusals. `ui/look.rs`:
 `a_gravestone_reads_its_inscription`.
 
-Dev: `warlock-cli dump --fallen Name:race:class,...` (docs/dev/cli.md) lays a long list; the
+Dev: `ascmearc-cli dump --fallen Name:race:class,...` (docs/dev/cli.md) lays a long list; the
 `truth` layer lists every grave's words.

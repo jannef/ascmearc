@@ -4,9 +4,9 @@
 //! `data/rules/enchanting.toml`.
 
 use super::util::{Term, anchored, capital};
+use ascmearc_core::combat::{FUMBLE, HIGHEST};
+use ascmearc_core::content::Content;
 use std::fmt::Write as _;
-use warlock_core::combat::{FUMBLE, HIGHEST};
-use warlock_core::content::Content;
 
 /// Each colour in its order: its nature, the [creature tags](creatures.md) whose nature it is (in the
 /// order they are matched), and its families in words, by name.

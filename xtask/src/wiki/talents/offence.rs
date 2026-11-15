@@ -1,9 +1,9 @@
-//! What the offence talents do, in the wiki's words (`warlock_core::talent::OffenceEffect`, #1495):
-//! one arm a variant, beside the area's enum and sum in `warlock-core/src/talent/offence.rs`.
+//! What the offence talents do, in the wiki's words (`ascmearc_core::talent::OffenceEffect`, #1495):
+//! one arm a variant, beside the area's enum and sum in `ascmearc-core/src/talent/offence.rs`.
 
 use crate::wiki::util::signed;
-use warlock_core::content::{Content, Role};
-use warlock_core::talent::OffenceEffect;
+use ascmearc_core::content::{Content, Role};
+use ascmearc_core::talent::OffenceEffect;
 
 /// What `effect` does, as the talents' tables say it.
 pub(super) fn text(content: &Content, effect: &OffenceEffect) -> String {
@@ -29,14 +29,14 @@ pub(super) fn text(content: &Content, effect: &OffenceEffect) -> String {
                                        once per surprise; it brings no free blows of its own)"
             .to_string(),
         OffenceEffect::FreeBlow {
-            trigger: warlock_core::content::FreeBlowTrigger::Gatekeeper,
+            trigger: ascmearc_core::content::FreeBlowTrigger::Gatekeeper,
             one_in: Some(n),
         } => format!(
             "free blow: a hostile that steps up beside you takes one, one time in {n} in the \
              neutral stance, more often the bolder your stance (the stances table)"
         ),
         OffenceEffect::FreeBlow { trigger, .. } => {
-            use warlock_core::content::FreeBlowTrigger as T;
+            use ascmearc_core::content::FreeBlowTrigger as T;
             match trigger {
                 T::Cleave => {
                     "free blow: a melee blow that kills gives one at another hostile beside you \

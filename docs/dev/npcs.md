@@ -1,6 +1,6 @@
 # NPCs, dialogue, and making way
 
-Developer notes for working on this part of Warlock (moved from CLAUDE.md, #185); the
+Developer notes for working on this part of Ascmearc (moved from CLAUDE.md, #185); the
 rules it implements are in spec/09-creatures.md. Keep it current with the code, as CLAUDE.md says.
 
 NPCs, dialogue, and making way (#146, #147):

@@ -1,10 +1,10 @@
 //! Potions.
 
 use super::util::{Term, anchored, capital, damage_link, link};
+use ascmearc_core::combat::IMPROVISED_RANGE;
+use ascmearc_core::content::{Content, Draught, ObjectDef, SpellPurpose, StatusId};
+use ascmearc_core::noise::SoundKind;
 use std::fmt::Write as _;
-use warlock_core::combat::IMPROVISED_RANGE;
-use warlock_core::content::{Content, Draught, ObjectDef, SpellPurpose, StatusId};
-use warlock_core::noise::SoundKind;
 
 /// The potions: what drinking each does in numbers, its colour, the training marks it gives,
 /// what throwing it does (a flask's splash), from which item level

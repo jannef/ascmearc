@@ -3,8 +3,8 @@
 //! dungeon's ores.
 
 use super::util::{capital, percent_of};
+use ascmearc_core::content::{Content, MAX_LEVEL, Mined};
 use std::fmt::Write as _;
-use warlock_core::content::{Content, MAX_LEVEL, Mined};
 
 /// The dangers the finds table shows shares at.
 const DANGERS: [u32; 8] = [1, 5, 10, 15, 30, 60, 80, 100];
@@ -14,7 +14,7 @@ fn find_name(content: &Content, what: Mined) -> String {
     match what {
         Mined::Ore(m) => format!("{} ore", capital(&content.material(m).name)),
         Mined::Piece(m) => {
-            let (one, _) = warlock_core::piece::names(
+            let (one, _) = ascmearc_core::piece::names(
                 content,
                 content.object(content.object_id("piece").expect("the piece object")),
                 m,
@@ -42,7 +42,7 @@ pub(super) fn mining_walls(content: &Content) -> String {
     let mut walls: Vec<_> = (content.terrain_defs().iter())
         .enumerate()
         .filter(|(i, t)| {
-            let id = warlock_core::content::TerrainId(*i as u16);
+            let id = ascmearc_core::content::TerrainId(*i as u16);
             t.statue.is_none() && rules.vein_of(id).is_none()
         })
         .filter_map(|(_, t)| Some((t, t.breaks?.hardness)))
