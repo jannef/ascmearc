@@ -213,4 +213,135 @@ fn the_flavour_table_is_checked() {
         (125, 50, 2)
     );
     assert!(PLAIN.flavour().is_none());
+    // The seasons name elements and months, and are small.
+    let season = |line: &str| format!("[flavour]\nseasons.{line}");
+    bad(
+        &season("ice = { from = \"Seedtide\", to = \"Greenleaf\", more = 1 }"),
+        "unknown element `ice`",
+    );
+    bad(
+        &season("wood = { from = \"Spring\", to = \"Greenleaf\", more = 1 }"),
+        "unknown month `Spring`",
+    );
+    bad(
+        &season("wood = { from = \"Seedtide\", to = \"Greenleaf\", more = 11 }"),
+        "`more` must be 0 to 10",
+    );
+}
+
+/// `month`/`day` 1444 at `hour`:`minute`.
+fn on(month: u32, day: u32, hour: u32, minute: u32) -> GameTime {
+    GameTime::from_calendar(1444, month, day, hour, minute).expect("a date")
+}
+
+#[test]
+fn each_elements_season_holds_its_months_and_wraps_the_years_end() {
+    let flavour = BUILTIN.flavour().expect("the table");
+    // The months in season, by element, and how much stronger the first gift is in them.
+    let seasons: [(&str, &[u32], i32); 5] = [
+        ("wood", &[3, 4, 5], 1),
+        ("fire", &[6, 7], 1),
+        ("earth", &[8], 1),
+        ("metal", &[9, 10], 1),
+        ("water", &[11, 12, 1, 2], 2),
+    ];
+    for (element, months, more) in seasons {
+        for month in 1..=12 {
+            let want = if months.contains(&month) { more } else { 0 };
+            // The first moment of the month and the last minute of its last day.
+            for time in [on(month, 1, 0, 0), on(month, 30, 23, 59)] {
+                assert_eq!(
+                    flavour.season_more(element, time),
+                    want,
+                    "{element} in month {month}"
+                );
+            }
+        }
+    }
+    // Water's season wraps the year's end: the last minute of Deepwinter and the first of
+    // Frostmere are both in it, and the first of Seedtide is not.
+    let new_year = on(12, 30, 23, 59) + Duration::minutes(1);
+    assert_eq!((new_year.month(), new_year.day()), (1, 1));
+    assert_eq!(flavour.season_more("water", new_year), 2);
+    assert_eq!(flavour.season_more("water", on(3, 1, 0, 0)), 0);
+    assert_eq!(flavour.season_more("nothing", on(3, 1, 0, 0)), 0);
+    // The game says it in words: each first gift's description names its season's months.
+    let horoscope = BUILTIN.horoscope().expect("a horoscope");
+    for element in &horoscope.elements {
+        let season = flavour.seasons[&element.id];
+        let talents = BUILTIN.talents();
+        let gift = talents.get(talents.id(&element.grants[0]).expect("the gift"));
+        for month in [season.from, season.to] {
+            let name = BUILTIN.calendar().month(month);
+            assert!(gift.description.contains(name), "{}: {name}", gift.id);
+        }
+    }
+}
+
+#[test]
+fn in_its_season_an_elements_first_gift_is_a_little_stronger() {
+    use crate::combat::Category;
+    use crate::world::skills::search::{Hidden, Look};
+    let me = |w: &World| w.state.player;
+    let sign = |element| move |time| born(&BUILTIN, (element, "salamander"), 1, 2, time);
+    // Wood, Supple: Dodge 1 more from Seedtide to Greenleaf.
+    let dodge = |w: &World| w.defence_of(me(w)).bonus(Category::Dodge);
+    let wood = sign("wood");
+    let out = dodge(&wood(on(2, 30, 23, 59)));
+    assert_eq!(dodge(&wood(on(3, 1, 0, 0))), out + 1);
+    assert_eq!(dodge(&wood(on(5, 30, 23, 59))), out + 1);
+    assert_eq!(dodge(&wood(on(6, 1, 0, 0))), out);
+    // Earth, Stone hide: Protection 1 more in Harvestide.
+    let pv = |w: &World| w.protection_of(me(w)).base;
+    let earth = sign("earth");
+    let out = pv(&earth(on(7, 30, 23, 59)));
+    assert_eq!(pv(&earth(on(8, 1, 0, 0))), out + 1);
+    assert_eq!(pv(&earth(on(8, 30, 23, 59))), out + 1);
+    assert_eq!(pv(&earth(on(9, 1, 0, 0))), out);
+    // Metal, Keen edge: threat 1 lower from Leaffall to Mistmoon.
+    let threat = |w: &World| {
+        let blow = w.state.player().melee(w.content());
+        w.season_threat(me(w), blow).threat
+    };
+    let metal = sign("metal");
+    let out = threat(&metal(on(8, 30, 23, 59)));
+    assert_eq!(threat(&metal(on(9, 1, 0, 0))), out - 1);
+    assert_eq!(threat(&metal(on(10, 30, 23, 59))), out - 1);
+    assert_eq!(threat(&metal(on(11, 1, 0, 0))), out);
+    // Water, Always a way: hidden things 2 easier to find from Darkening to Thawmonth, over
+    // the year's end.
+    let search = |w: &World| w.search_modifier(Look::Active, Hidden::Door(0));
+    let water = sign("water");
+    let out = search(&water(on(10, 30, 23, 59)));
+    assert_eq!(search(&water(on(11, 1, 0, 0))), out + 2);
+    assert_eq!(search(&water(on(1, 1, 0, 0))), out + 2);
+    assert_eq!(search(&water(on(2, 30, 23, 59))), out + 2);
+    assert_eq!(search(&water(on(3, 1, 0, 0))), out);
+    // Fire, Blaze: a die more from Highsun to Emberheat (`element_gift_tests.rs` rolls it).
+    let fire = sign("fire");
+    for (time, more) in [
+        (on(5, 30, 23, 59), 0),
+        (on(6, 1, 0, 0), 1),
+        (on(8, 1, 0, 0), 0),
+    ] {
+        let w = fire(time);
+        assert_eq!(w.in_season(me(&w), "blaze"), more);
+    }
+    // Only the player's own element's first gift, and only in its season.
+    let w = wood(on(6, 1, 0, 0));
+    assert_eq!(w.in_season(me(&w), "supple"), 0, "Wood in Fire's season");
+    let w = fire(on(3, 1, 0, 0));
+    assert_eq!(w.in_season(me(&w), "supple"), 0, "Fire in Wood's season");
+    let w = wood(on(3, 1, 0, 0));
+    assert_eq!(w.in_season(me(&w), "evergreen"), 0, "the second gift");
+    let other = (w.state.actors.keys())
+        .find(|&&id| id != me(&w))
+        .copied()
+        .expect("a creature");
+    assert_eq!(w.in_season(other, "supple"), 0, "not the player");
+    // Without the table, no season.
+    let plain = |time| born(&PLAIN, ("wood", "salamander"), 1, 2, time);
+    let spring = plain(on(3, 1, 0, 0));
+    assert_eq!(spring.in_season(me(&spring), "supple"), 0);
+    assert_eq!(dodge(&spring), dodge(&plain(on(6, 1, 0, 0))));
 }

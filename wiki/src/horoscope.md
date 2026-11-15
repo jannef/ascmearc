@@ -167,6 +167,17 @@ moon's [phase](sun.md#phases). Here are the exact rules.
 
 {{#include generated/horoscope-flavour.md}}
 
+## The elements' seasons
+
+Each [element](#what-a-sign-does) has a season: a few [months](time.md#the-calendar) of the
+year. While the calendar is in your element's season, your element's first gift is a little
+stronger. The game says so in the gift's description, in words.
+
+Water's season runs over the turn of the year, from Darkening to Thawmonth. A new run starts in
+Darkening by default, so the Water-born start in season.
+
+{{#include generated/horoscope-seasons.md}}
+
 ## Your age and birthday
 
 Your starting age depends on your race. A [human](races.md#race-human) starts between 16 and 35

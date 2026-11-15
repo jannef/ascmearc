@@ -29,7 +29,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - Some gifts are actives, used from the abilities menu's Birth sign group, each with a cooldown.
 - Each animal and element also has one talent that is picked, not granted, offered only to those born under it.
 - Lucky days: five animal–element pairs each have a day of the month. A character born in that year and on that day gets a title and one more gift. The game never mentions lucky days until a character is born on one.
-- Calendar flavour: the birthday heals faster; a sign active's cooldown is shorter in the birth month; under the full moon the gifts that reach (scent, stare, night sight) reach farther. It draws nothing and shows nothing new.
+- Calendar flavour: the birthday heals faster; a sign active's cooldown is shorter in the birth month; under the full moon the gifts that reach (scent, stare, night sight) reach farther; in an element's season (months by element, in data) its first gift is a little stronger, said in the gift's words only. It draws nothing and shows no numbers.
 
 ## Background story
 

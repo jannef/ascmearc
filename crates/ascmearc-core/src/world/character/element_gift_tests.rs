@@ -157,6 +157,37 @@ fn blaze_burns_everyone_beside_but_the_player_then_burns_them_out() {
 }
 
 #[test]
+fn in_fires_season_a_blaze_burns_a_die_hotter() {
+    // The least and the most a blaze does to a kobold over twenty uses, its cooldown cleared, on
+    // the 1st of `month`: 3d6 in Fire's season (Highsun and Emberheat), 2d6 out of it.
+    let most = |month: u32| {
+        let fire = born("fire");
+        let mut state = fire.state().clone();
+        state.time = crate::time::GameTime::from_calendar(1444, month, 1, 12, 0).expect("a date");
+        let mut w = World::from_state(BUILTIN.clone(), state).expect("restores");
+        let (mut least, mut most) = (i32::MAX, 0);
+        for _ in 0..20 {
+            let kobold = beside(&mut w, Dir::E, 500);
+            assert!(w.apply(&BLAZE).took_turn, "{:?}", said(&w));
+            let lost = 500 - w.state.actors[&kobold].hp;
+            (least, most) = (least.min(lost), most.max(lost));
+            w.state.actors.remove(&kobold);
+            w.perceive(&mut Vec::new());
+            w.player_mut().effects = Default::default();
+            run(&mut w, "wait");
+        }
+        (least, most)
+    };
+    let (least, hottest) = most(6);
+    assert!(
+        least >= 3 && hottest > 12 && hottest <= 18,
+        "{least}..{hottest}"
+    );
+    let (least, hottest) = most(5);
+    assert!(least >= 2 && hottest <= 12, "{least}..{hottest}");
+}
+
+#[test]
 fn blaze_is_the_fire_borns_alone_and_not_on_the_overworld() {
     let mut w = born("wood");
     assert_eq!(blaze_row(&w), None, "not in the menu");

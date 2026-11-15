@@ -3,6 +3,6 @@ id = "keen_edge"
 name = "Keen edge"
 tree = "stars"
 granted = true
-description = "Your blows bite deep: criticals come more often."
+description = "Your blows bite deep: criticals come more often, and more often still in Metal's season, Leaffall to Mistmoon."
 effects = [{ kind = "threat", value = 1 }]
 systems = ["combat"]

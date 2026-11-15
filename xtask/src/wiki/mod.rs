@@ -291,6 +291,7 @@ fn generate(content: &Content) -> Vec<(String, String)> {
         ("horoscope-animals.md", horoscope::animals),
         ("horoscope-elements.md", horoscope::elements),
         ("horoscope-flavour.md", horoscope::flavour),
+        ("horoscope-seasons.md", horoscope::seasons),
         ("horoscope-lucky.md", horoscope::lucky),
         ("horoscope-talents.md", horoscope::talents),
         ("background-tiers.md", background::tiers),
@@ -901,7 +902,7 @@ mod tests {
         let files = plain(&content);
         assert_eq!(generate(&content), generate(&content));
         let text = |name: &str| &files.iter().find(|(n, _)| n == name).expect("file").1;
-        assert!(text("calendar.md").contains("| 4 | Rainmoon |"));
+        assert!(text("calendar.md").contains("| 4 | Rainmoon | Wood |"));
         let traps = text("traps.md");
         assert!(
             traps.contains("| Fireball trap `^` | A blast 2 cells around it"),

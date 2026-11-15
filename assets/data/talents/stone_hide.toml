@@ -3,6 +3,6 @@ id = "stone_hide"
 name = "Stone hide"
 tree = "stars"
 granted = true
-description = "Protection +1."
+description = "Protection +1, and more in Earth's season, Harvestide."
 effects = [{ kind = "protection", value = 1 }]
 systems = ["protection"]

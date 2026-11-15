@@ -12,6 +12,10 @@ you have is money: plenty of gold at the start, a magic ring, a gem, and a
 at the Gæsthūs to collect it, and spend it on the best arms, armour, and
 [potions](potions.md) the [shops](shops.md) sell.
 
+An aristocrat alone has three more [ring slots](equipment.md#the-equipment-screen), Extra ring 1
+to 3. A [ring](objects.md#class-rings) worn in one works just as it does on either hand, so you
+can wear five in all.
+
 ## Levels
 
 {{#include generated/class-levels.md:aristocrat}}
