@@ -37,12 +37,15 @@ web-sys = { version = "0.3", default-features = false, features = [
 [dev-dependencies]
 flate2.workspace = true
 insta.workspace = true
+# The tests (the screen snapshots) read the test world: a dev-dependency's features reach only
+# the builds that compile the tests (docs/dev/campaign.md, "The test world in release builds").
+ascmearc-assets = { workspace = true, features = ["showcase"] }
 
 [features]
-# The test world (`assets/campaigns/showcase/`), embedded only with this feature: on for every
-# dev command, test, and benchmark; release builds and `cargo xtask web` turn it off with
-# `--no-default-features` (docs/dev/campaign.md, "The test world in release builds").
-default = ["showcase"]
+# The test world (`assets/campaigns/showcase/`), embedded only with this feature: off by default,
+# so a plain build is a release build; `cargo dev`, the tests, and xtask turn it on
+# (docs/dev/campaign.md, "The test world in release builds").
+default = []
 showcase = ["ascmearc-assets/showcase"]
 # Embeds JuliaMono cut down at build time to the characters the game uses in place of the whole
 # font: about 3.1 MB less. `cargo xtask web` turns it on (docs/dev/rendering.md, "The font").

@@ -56,10 +56,9 @@ on one (#1537): its test run records every snapshot file a test reads
 
 ## One build of ascmearc-core
 
-Cargo resolves features per command, so `cargo test --workspace`, `cargo run -p ascmearc`,
-`cargo run -p ascmearc-cli`, and `cargo xtask` each see their own tree. A crate whose features
-differ anywhere below it gets another fingerprint, so before #1572 ascmearc-core (300k lines) was
-built once per tree: twice in a CI job, and again on every switch between the tests, the CLI,
+Cargo resolves features per command, so `cargo test --workspace`, `cargo dev`, `cargo dev-cli`,
+and `cargo xtask` each see their own tree. A crate whose features differ anywhere below it gets
+another fingerprint, so before #1572 ascmearc-core (300k lines) was built once per tree: twice in a CI job, and again on every switch between the tests, the CLI,
 and xtask after an edit to core. Three things keep the trees equal below ascmearc-core (it has no
 features of its own: the test world's `showcase` feature is `ascmearc-assets`', #1587):
 
@@ -72,13 +71,13 @@ features of its own: the test world's `showcase` feature is `ascmearc-assets`', 
   also uses at runtime (`unicode-ident`) with debug info, and without it in a tree that does not.
 
 After a Bevy or dependency update, check it: after `cargo test --workspace --no-run`, each of
-`cargo build -p xtask`, `-p ascmearc-cli`, and `-p ascmearc` compiles no ascmearc-core. Where one
-does, compare the trees: `cargo tree -p <member> -e normal,build -f '{p} {f}'`, or, for
+`cargo build -p xtask`, `-p ascmearc-cli --features showcase`, and `-p ascmearc --features
+showcase` compiles no ascmearc-core. Where one does, compare the trees: `cargo tree -p <member> -e normal,build -f '{p} {f}'`, or, for
 everything Cargo hashes (features, profile, host or target), `RUSTC_BOOTSTRAP=1 cargo build -p
 <member> --unit-graph -Z unstable-options`; the difference goes into
-`crates/workspace-hack/Cargo.toml`. Release builds are other trees by design; a
-`--no-default-features` build (the release configuration, the web build) changes only
-`ascmearc-assets` and the binaries above it.
+`crates/workspace-hack/Cargo.toml`. Release builds are other trees by design; a build without
+the `showcase` feature (the plain `cargo build`, the release configuration, the web build)
+changes only `ascmearc-assets` and the binaries above it.
 
 ## Hot registries: insert by group, never append
 
@@ -271,7 +270,7 @@ they were, and PRs in flight no longer conflict over them. The scheme is `rng.rs
 `serde_json` encoding of `WorldState`, streamed into the hasher. It therefore also depends on
 `serde_json`'s output and on `rand_chacha`'s serde format for every kept stream (`rng.rs`): a
 dependency bump that changes either changes every replay's recorded hashes with no rule change.
-Such a bump says so in its PR and re-creates the test replays (`ascmearc-cli replay --create`,
+Such a bump says so in its PR and re-creates the test replays (`cargo dev-cli replay --create`,
 then `--verify`); old replay files then warn on load, as any divergence does.
 
 ## Design documents

@@ -406,7 +406,15 @@ pub fn frames(window: &str) -> Result<(), String> {
     let root = workspace_root();
     let status = Command::new(env!("CARGO"))
         .current_dir(&root)
-        .args(["build", "--quiet", "--release", "--package", "ascmearc"])
+        .args([
+            "build",
+            "--quiet",
+            "--release",
+            "--package",
+            "ascmearc",
+            "--features",
+            "showcase",
+        ])
         .status()
         .map_err(|e| format!("failed to run cargo: {e}"))?;
     if !status.success() {

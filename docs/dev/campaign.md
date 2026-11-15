@@ -84,7 +84,7 @@ campaign, `""` for a fixture outside every campaign. `World::campaign`, `World::
 
 - **Local areas** belong to the campaign's overworld: `Content::overworld_of(campaign)`,
   `Content::local_area(campaign, id)`, `Content::has_level(campaign, id)`, and
-  `mapgen::generate(content, (campaign, seed), id, ..)` take it. `ascmearc-cli gen` has
+  `mapgen::generate(content, (campaign, seed), id, ..)` take it. `cargo dev-cli gen` has
   `--campaign` (default `showcase`).
 - **The fingerprint** is `Content::fingerprint_for(campaign)`: the shared groups, the levels
   and branches of that campaign (and of none), and the creature types up to the last the run
@@ -148,32 +148,42 @@ and the overworld (the Wildlands), with the Depths as the generated branch. Each
 
 ## The test world in release builds (#331, design §4)
 
-Test content never appears in a release. The cargo feature `showcase` holds it:
+Test content never appears in a release. The cargo feature `showcase` holds it, and it is off
+by default (#1728): a plain build, `cargo install` included, is a release build, and dev commands
+opt in.
 
-- `ascmearc-assets`, the crate that embeds the content (#1587), has `[features] default =
-  ["showcase"]`; `ascmearc` and `ascmearc-cli` have the same default and forward it (`showcase =
-  ["ascmearc-assets/showcase"]`); the workspace table takes `ascmearc-assets` with
+- `ascmearc-assets`, the crate that embeds the content (#1587), has `[features] default = []`
+  and `showcase = []`; `ascmearc` and `ascmearc-cli` have the same empty default and forward it
+  (`showcase = ["ascmearc-assets/showcase"]`); the workspace table takes `ascmearc-assets` with
   `default-features = false`, so each member's own feature decides. `xtask` asks for it
   (`features = ["showcase"]`): the wiki, the goldens, and the benchmarks read the test world.
   `ascmearc-core` has no feature: it embeds nothing, so it is one build with the test world or
   without, and its own tests read all of `assets/` from disk.
+- The tests of `ascmearc` and `ascmearc-cli` (the screen snapshots, the CLI's) read the test
+  world: both take `ascmearc-assets` again as a dev-dependency with `features = ["showcase"]`.
+  A dev-dependency's features reach only a build that compiles the tests (`cargo test`, `clippy
+  --all-targets`), so plain `cargo test --workspace` has the test world and `cargo build -p
+  ascmearc` has none.
 - `ascmearc-assets`' `build.rs` leaves out every file under `campaigns/showcase/` without the
   feature (`CARGO_FEATURE_SHOWCASE`), so such a build embeds no file of the test world, and
   `ascmearc_assets::from_dir` leaves it out too (`--content-dir assets` on a release build).
-- Every documented command (`cargo build`, `test`, `run`, the xtask commands but `web`) has the
-  feature on and is unchanged. Release artifacts turn it off: the `Release` workflow builds with
-  `--no-default-features`, and `cargo xtask web` passes it itself.
+- By hand, `--features showcase` turns it on; `.cargo/config.toml` has the two aliases,
+  `cargo dev` (the game) and `cargo dev-cli` (the CLI), each `cargo run` with the feature. The
+  xtask commands that run the game (`smoke`, `golden`, `bench-frames`) pass it themselves;
+  `cargo xtask web` does not. The `Release` workflow and `cargo xtask web` build the plain
+  default.
 - Without a scenario named (`--new`, a bare `--capture`), the game starts
   `Content::default_scenario`: the showcase where it is built in, else the first campaign's
-  start. `ascmearc-cli` keeps its default `showcase` and, in a release build, refuses it as an
-  unknown scenario.
+  start. `ascmearc-cli` keeps its default `showcase` and, in a build without the feature, refuses
+  it as an unknown scenario (name a scenario, or use `cargo dev-cli`).
 - **Guards**: the test `release_content` (an integration test of ascmearc-assets,
-  `tests/release_content.rs`, empty unless built without the feature: one small harness, #1593)
+  `tests/release_content.rs`, empty when built with the feature: one small harness, #1593)
   checks that `ascmearc_assets::content()` loads and holds no campaign of kind `test` and nothing of one
   (scenario, level, dungeon, quest, dialogue, creature type, vault), so New run lists nothing of
   the test world, also with `--dev`, and that there is one campaign. CI's `release-config` job
-  builds the release configuration, checks it for wasm32, runs
-  `cargo test --no-default-features -p ascmearc-assets --test release_content`,
+  builds the release configuration (the plain `cargo build -p ascmearc -p ascmearc-cli`; the
+  `wasm32 check` job checks the same for the web), runs
+  `cargo test -p ascmearc-assets --test release_content`,
   and expects `ascmearc-cli dump --scenario showcase` to fail with "unknown scenario". The
   `Release` workflow does the last on each platform's binary and checks the game binary holds
   no `campaigns/showcase/campaign.toml` (the key of the embedded file), and `cargo xtask web`

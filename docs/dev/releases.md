@@ -12,7 +12,7 @@ x86_64 (`.zip`), macOS arm64 (`.zip` with an unsigned `Ascmearc.app` plus the ba
 generated notes, to a GitHub Release; `v0.x` tags are published as pre-releases. Run the workflow
 by hand (Actions > Release > Run workflow) to get the archives as workflow artifacts without
 publishing. Releases are the only place macOS and Windows runners are used. Every release
-artifact is built with `--no-default-features`: the test world (the `showcase` feature) is never
+artifact is a plain build: the test world (the `showcase` feature, off by default) is never
 in a release, and the workflow checks it (docs/dev/campaign.md, "The test world in release
 builds").
 
@@ -20,7 +20,7 @@ builds").
 `std::fs`): one-time setup is `rustup target add wasm32-unknown-unknown` and
 `cargo install wasm-bindgen-cli --version <X> --locked`, where `<X>` is the `wasm-bindgen` version
 in `Cargo.lock` (the CLI must match exactly; `cargo xtask web` checks it and prints the command).
-Then `cargo xtask web` builds `target/web/` without the test world (`--no-default-features`;
+Then `cargo xtask web` builds `target/web/` without the test world (the plain default;
 it fails if the wasm embeds it) with the size-tuned `[profile.web]` (opt-level `s`, fat LTO,
 1 codegen unit, `panic = "abort"`), with the cut-down font (the `font-subset` feature: the
 build script of ascmearc-assets subsets JuliaMono to the characters the game uses, 3.1 MB less;

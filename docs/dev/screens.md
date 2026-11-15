@@ -460,7 +460,7 @@ place of golden screenshots. Each `Case` starts a run the way a golden entry doe
 console `size`). It runs the real systems headlessly (`open_startup_screens`, `route_keys`,
 `apply_choice`, `refresh`, `converse`, `on_death`, `more::wait`, `draw`) and snapshots the UI
 console with `insta` (`ui/snapshots/`, one file per case). The map layer and colors aren't part
-of it: map content is `ascmearc-cli dump`. The harness is `screen_snapshots.rs`; the cases
+of it: map content is `cargo dev-cli dump`. The harness is `screen_snapshots.rs`; the cases
 are in `ui/screen_snapshots/`, a file per group of screens (`menus`, `creation`, `pages`,
 `abilities`, `crafting`, `progression`, `items`, `magic_items`, `talk`, `shops`, and `play`
 for the map view's prompts), so UI PRs touch different files (#1504). Every snapshot is

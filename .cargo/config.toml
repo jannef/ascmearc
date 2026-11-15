@@ -1,5 +1,9 @@
 [alias]
 xtask = "run --package xtask --"
+# The game and the CLI with the test world (the `showcase` feature, off in a plain build:
+# docs/dev/campaign.md, "The test world in release builds").
+dev = "run --package ascmearc --features showcase --"
+dev-cli = "run --package ascmearc-cli --features showcase --"
 
 # Bevy's wasm build needs getrandom's web backend.
 [target.wasm32-unknown-unknown]
