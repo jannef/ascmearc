@@ -245,8 +245,6 @@ A few will not make way. Then the move takes no time, and the message says why:
   [Escape artist](skills.md#skill-escape-artist) can [wriggle past](#getting-past) most of these,
   but never a shop's keeper.
 - Someone who cannot move at all, under too heavy a [load](burden.md), does not budge either.
-- A creature two sizes or more larger than you is too big to squeeze past ("The giant is too big
-  to squeeze past."). No creature in the game is that big yet.
 
 **Wriggling past.** If you are trained in [Escape artist](skills.md#skill-escape-artist), someone
 who keeps their post or never budges does not stop you. The step becomes a check, with no action
@@ -257,7 +255,7 @@ places ("You wriggle past Eadric."). If you fail, the step's time is spent and y
 are. Each try may train the skill (half the time).
 
 Wriggling does not help with a [shop's](shops.md) keeper, who never lets you by, with someone who
-cannot move at all, with a creature too big to squeeze past, or while swimming.
+cannot move at all, or while swimming.
 
 If you cannot see what is in your way, you only learn that "Something is in the way.", or that you
 swapped places with something.

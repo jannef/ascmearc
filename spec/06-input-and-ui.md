@@ -795,7 +795,7 @@ developer notes (CLAUDE.md, `docs/dev/`).
   hostile creature attacks it in melee ("You hit the giant rat.", "You miss something."; it
   takes a turn); into any other one swaps places with it ("You swap places with the deer.", "You
   swap places with something."; the player's step), or, if it will not make way, stops ("The
-  sentry doesn't budge.", "The giant is too big to squeeze past.", "Something is in the way.";
+  sentry doesn't budge.", "Something is in the way.";
   no time passes; §8 "Displacement").
 - **Targeting** (ADOM-like; `ui/target.rs`): `t` aims what is in the Missile weapon slot: a launcher
   shoots its readied ammunition, a throwing weapon or a stack (rocks) is thrown one at a time,

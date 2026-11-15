@@ -632,18 +632,16 @@ fn some_creatures_do_not_make_way_and_refusing_takes_no_time() {
     assert!(w.apply(&Action::Move(Dir::SW)).took_turn);
     assert!(texts(&w).contains(&"You swap places with the warden.".to_string()));
     assert_eq!(w.player_pos(), Pos::new(2, 3));
-    // One size larger: squeezed past; two sizes: too big.
+    // However large, a creature that is free to move makes way.
     let mut w = world("yard");
     assert!(w.apply(&Action::Move(Dir::SE)).took_turn);
     assert_eq!(last_message(&w), "You swap places with the ogre.");
     let mut w = world("yard");
     run(&mut w, "move:N move:E*2 move:SE");
     assert_eq!(w.player_pos(), Pos::new(6, 2));
-    let at = w.player_pos();
     let out = w.apply(&Action::Move(Dir::S));
-    assert!(!out.took_turn);
-    assert_eq!(last_message(&w), "The giant is too big to squeeze past.");
-    assert_eq!(w.player_pos(), at);
+    assert!(out.took_turn);
+    assert_eq!(last_message(&w), "You swap places with the giant.");
 }
 
 #[test]
