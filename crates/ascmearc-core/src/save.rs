@@ -5,7 +5,7 @@
 //! version): a save from another version, a build with different content, or a damaged file is
 //! rejected with a clear error and never misread. Nothing carries a save across versions.
 
-use crate::content::Content;
+use crate::content::{Content, ModStamp, describe_mods};
 use crate::world::{World, WorldState};
 use flate2::Compression;
 use flate2::read::GzDecoder;
@@ -29,6 +29,12 @@ pub enum SaveError {
     /// Made by another version of the game (`found`; empty when the save does not say).
     #[error("this save was made by {}, and only that version can continue it", version_words(.found))]
     OtherVersion { found: String },
+    /// Made with another set of mods (#1731): `found` and `active` in words
+    /// ([`describe_mods`]).
+    #[error(
+        "this save was made {found}, and the game now runs {active}: turn on the same mods, in the same order, to continue it"
+    )]
+    OtherMods { found: String, active: String },
     #[error("this save was made with different game content and cannot be loaded")]
     ContentMismatch,
     #[error("the save file is damaged: {0}")]
@@ -53,6 +59,9 @@ struct EnvelopeOut<'a> {
     magic: &'static str,
     game_version: &'a str,
     content_fingerprint: u64,
+    /// The mods the run was played with, in order (#1731); left out without any.
+    #[serde(skip_serializing_if = "<[ModStamp]>::is_empty")]
+    mods: &'a [ModStamp],
     state: &'a WorldState,
 }
 
@@ -64,25 +73,29 @@ struct EnvelopeIn {
     game_version: String,
     #[serde(default)]
     content_fingerprint: u64,
+    #[serde(default)]
+    mods: Vec<ModStamp>,
     state: serde_json::Value,
 }
 
 /// Serializes the world's state into save bytes.
 pub fn try_encode(world: &World) -> Result<Vec<u8>, SaveError> {
-    try_encode_state(world.state(), world.fingerprint())
+    try_encode_state(world.state(), world.fingerprint(), world.content().mods())
 }
 
-/// Serializes a state (for example a clone taken earlier) with the content fingerprint of the
-/// content it was played with. An error (a map keyed by a struct, say: JSON keys are strings)
+/// Serializes a state (for example a clone taken earlier) with the content fingerprint and the
+/// mods of the content it was played with. An error (a map keyed by a struct, say: JSON keys are strings)
 /// is returned, never an empty save that would be written over a good one (#1580).
 pub fn try_encode_state(
     state: &WorldState,
     content_fingerprint: u64,
+    mods: &[ModStamp],
 ) -> Result<Vec<u8>, SaveError> {
     compress(&EnvelopeOut {
         magic: MAGIC,
         game_version: crate::GAME_VERSION,
         content_fingerprint,
+        mods,
         state,
     })
 }
@@ -96,7 +109,7 @@ pub fn encode(world: &World) -> Vec<u8> {
 /// [`try_encode_state`] for tests, which may panic.
 #[cfg(test)]
 pub fn encode_state(state: &WorldState, content_fingerprint: u64) -> Vec<u8> {
-    try_encode_state(state, content_fingerprint).expect("the state serializes")
+    try_encode_state(state, content_fingerprint, &[]).expect("the state serializes")
 }
 
 /// `value` as gzip-compressed JSON.
@@ -142,6 +155,12 @@ pub fn decode(bytes: &[u8], content: Arc<Content>) -> Result<World, SaveError> {
     if envelope.game_version != crate::GAME_VERSION {
         return Err(SaveError::OtherVersion {
             found: envelope.game_version,
+        });
+    }
+    if envelope.mods != content.mods() {
+        return Err(SaveError::OtherMods {
+            found: describe_mods(&envelope.mods),
+            active: describe_mods(content.mods()),
         });
     }
     if envelope.content_fingerprint
@@ -265,6 +284,43 @@ mod tests {
             decode(&gz(&json), content()).err(),
             Some(SaveError::ContentMismatch)
         );
+    }
+
+    /// The content with the repository's example mod, `mods/pride_month/`, laid over.
+    fn with_pride_month() -> Arc<Content> {
+        let mut files = crate::content::ContentFiles::builtin();
+        let mod_files = crate::content::pride_month();
+        let stamp = ModStamp {
+            id: "pride_month".into(),
+            version: "1.0.0".into(),
+        };
+        files.overlay(
+            stamp,
+            mod_files.iter().map(|(p, t)| (p.as_str(), t.as_str())),
+        );
+        Arc::new(Content::load(&files).expect("the mod loads"))
+    }
+
+    /// A save records its mods (#1731): one made without the mod is refused with it, one made
+    /// with it is refused without it, each saying why; with the same mods it loads.
+    #[test]
+    fn rejects_another_set_of_mods() {
+        let plain = encode(&world());
+        let err = decode(&plain, with_pride_month()).err().expect("refused");
+        assert_eq!(
+            err.to_string(),
+            "this save was made without mods, and the game now runs with the mod pride_month \
+             1.0.0: turn on the same mods, in the same order, to continue it"
+        );
+        let mut modded = World::new(with_pride_month(), "showcase", None).expect("world");
+        modded.apply(&Action::Wait);
+        let bytes = encode(&modded);
+        assert!(matches!(
+            decode(&bytes, content()),
+            Err(SaveError::OtherMods { .. })
+        ));
+        let restored = decode(&bytes, with_pride_month()).expect("the same mods");
+        assert_eq!(restored.state(), modded.state());
     }
 
     #[test]

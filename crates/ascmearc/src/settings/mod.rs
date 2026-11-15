@@ -11,6 +11,7 @@
 //! palette = "default"     # "default", "high-contrast", "colorblind"
 //! clock = "24h"           # "24h" (14:32) or "12h" (2:32 PM)
 //! temperature = "celsius" # the status bar's unit: "celsius" (°C) or "fahrenheit" (°F)
+//! mods = ["pride_month"]  # desktop: the mods turned on, folder names under mods/, in load order
 //!
 //! [effects]               # per-effect switches, all on by default
 //! glyph_animation = true  # wave, pulse, shimmer, cycle; heard sounds ripple in
@@ -65,6 +66,9 @@ pub struct Settings {
     pub clock: Clock,
     /// The unit the status bar shows the temperature in (applied only when it is shown).
     pub temperature: TemperatureUnit,
+    /// The mods turned on, by folder name, in the order they are laid (desktop; `mods.rs`,
+    /// #1731). Set by the Mods screen's Apply once the content has loaded with them.
+    pub mods: Vec<String>,
 }
 
 /// How temperatures are shown: degrees Celsius (the default) or
@@ -257,6 +261,7 @@ impl Default for Settings {
             palette: Palette::Default,
             clock: Clock::H24,
             temperature: TemperatureUnit::Celsius,
+            mods: Vec::new(),
         }
     }
 }
@@ -311,6 +316,7 @@ pub fn parse(text: &str) -> Loaded {
             "palette",
             "clock",
             "temperature",
+            "mods",
             "bindings",
         ]
         .contains(&key.as_str())
@@ -374,6 +380,17 @@ pub fn parse(text: &str) -> Loaded {
             )),
         }
     }
+    if let Some(value) = table.get("mods") {
+        let ids = (value.as_array()).and_then(|a| {
+            a.iter()
+                .map(|v| v.as_str().map(String::from))
+                .collect::<Option<Vec<_>>>()
+        });
+        match ids {
+            Some(ids) => settings.mods = ids,
+            None => warnings.push("mods must be a list of folder names; no mods are on".into()),
+        }
+    }
     let bindings = match table.get("bindings") {
         Some(toml::Value::Table(t)) => Bindings::from_table(t, &mut warnings),
         Some(_) => {
@@ -397,6 +414,8 @@ struct FileOut<'a> {
     palette: &'a str,
     clock: &'a str,
     temperature: &'a str,
+    #[serde(skip_serializing_if = "<[String]>::is_empty")]
+    mods: &'a [String],
     effects: std::collections::BTreeMap<&'static str, bool>,
     bindings: std::collections::BTreeMap<String, Vec<String>>,
 }
@@ -409,6 +428,7 @@ pub fn to_toml(settings: &Settings, bindings: &Bindings) -> String {
         palette: settings.palette.id(),
         clock: settings.clock.id(),
         temperature: settings.temperature.id(),
+        mods: &settings.mods,
         effects: settings.effects.to_map(),
         bindings: bindings.to_map(),
     };
@@ -581,6 +601,7 @@ mod tests {
             palette: Palette::Colorblind,
             clock: Clock::H12,
             temperature: TemperatureUnit::Fahrenheit,
+            mods: vec!["pride_month".into(), "other".into()],
         };
         let mut bindings = Bindings::default();
         bindings
@@ -595,6 +616,18 @@ mod tests {
         assert!(loaded.warnings.is_empty(), "{:?}", loaded.warnings);
         assert_eq!(loaded.settings, settings);
         assert_eq!(loaded.bindings.to_map(), bindings.to_map());
+    }
+
+    #[test]
+    fn the_mods_are_a_list_of_names() {
+        let loaded = parse("mods = [\"b\", \"a\"]\n");
+        assert!(loaded.warnings.is_empty(), "{:?}", loaded.warnings);
+        assert_eq!(loaded.settings.mods, ["b", "a"]);
+        let bad = parse("mods = \"a\"\n");
+        assert_eq!(bad.warnings.len(), 1);
+        assert!(bad.settings.mods.is_empty());
+        let none = to_toml(&Settings::default(), &Bindings::default());
+        assert!(!none.contains("mods"), "{none}");
     }
 
     #[test]

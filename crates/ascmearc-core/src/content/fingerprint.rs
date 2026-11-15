@@ -6,7 +6,7 @@ use std::collections::BTreeSet;
 impl Content {
     /// A stable hash (64-bit FNV-1a) of the ordered terrain, creature, level, light, dungeon,
     /// object, slot, skill, room effect, weapon skill, status, disease, trap, damage type,
-    /// resource, and shop ids, as a run of campaign `campaign` sees them: the levels
+    /// resource, and shop ids, and the mods laid over the files with what they hold (#1731), as a run of campaign `campaign` sees them: the levels
     /// and dungeon branches of other campaigns left out, and so are the creature types of other
     /// campaigns numbered after every one the run may meet, with their corpses (the objects
     /// after every other). A save of a campaign then loads in a build that holds more campaigns
@@ -90,6 +90,7 @@ impl Content {
             // Group separator, so an id cannot migrate between groups unnoticed.
             feed(&[1]);
         }
+        self.feed_mods(&mut feed);
         hash
     }
 }

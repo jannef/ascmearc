@@ -46,6 +46,7 @@ use super::magic_screen::MagicScreen;
 use super::menu::{MainMenu, Press, quit_dialog};
 use super::messages_screen::MessagesScreen;
 use super::modal::{Keys, ModalScreen, Show};
+use super::mods_screen::ModsScreen;
 use super::motion::Motion;
 use super::name_screen::NameScreen;
 use super::new_run_screen::{self, NewRunScreen};
@@ -111,6 +112,8 @@ pub enum ScreenName {
     /// Where the settings, saves, and logs are, over Settings.
     Files,
     Controls,
+    /// The mods in the mods folder, to turn on and order (the main menu, desktop only; #1731).
+    Mods,
     /// The pause menu over a run (Esc in play).
     Pause,
     /// The controls list over a run, read-only (`?` in play).
@@ -253,6 +256,7 @@ impl ScreenName {
                 | ScreenName::Settings
                 | ScreenName::Files
                 | ScreenName::Controls
+                | ScreenName::Mods
                 | ScreenName::Dialog
         )
     }
@@ -281,6 +285,9 @@ pub enum MenuChoice {
     LeaveRun,
     /// Quit the game; from the pause menu, the run is saved first.
     Quit,
+    /// The Mods screen's Apply: load the content with these mods, in order (`crate::mods::apply`,
+    /// desktop only; #1731).
+    ApplyMods(Vec<String>),
 }
 
 /// What a key press asks for: of a screen, or (only `Open`) of gameplay.
@@ -337,6 +344,11 @@ struct Launch {
     dev: bool,
     /// Where the controls' Export keys and Import keys go.
     keymap: KeymapFile,
+    /// The mods folder and the folders in it (desktop); only read for the Mods screen.
+    mods: (
+        Option<std::path::PathBuf>,
+        Vec<ascmearc_assets::mods::Found>,
+    ),
 }
 
 /// A modal screen.
@@ -361,6 +373,7 @@ enum Screen {
     Summary(Box<SummaryScreen>),
     Settings(SettingsScreen),
     Files(FilesScreen),
+    Mods(ModsScreen),
     /// The controls screen, or the read-only `?` help.
     Controls(ControlsScreen),
     /// The inventory, or choosing what to pick up or drop.
@@ -461,6 +474,10 @@ impl Screen {
             ScreenName::Settings => Screen::Settings(SettingsScreen::default()),
             ScreenName::Files => Screen::Files(FilesScreen::new(crate::paths::locations())),
             ScreenName::Controls => Screen::Controls(ControlsScreen::new(launch.keymap.clone())),
+            ScreenName::Mods => {
+                let (folder, found) = launch.mods.clone();
+                Screen::Mods(ModsScreen::new(found, folder, content.mods()))
+            }
             ScreenName::Help => Screen::Controls(ControlsScreen::help()),
             ScreenName::Equipment => Screen::Equipment(EquipmentScreen::new(run)),
             ScreenName::EquipItem => {
@@ -545,6 +562,7 @@ dispatch!(
     Summary,
     Settings,
     Files,
+    Mods,
     Controls,
     Objects,
     Equipment,
@@ -821,6 +839,13 @@ impl ScreenStack {
         action
     }
 
+    /// Tells the Mods screen, if open, how its Apply went.
+    pub fn mods_applied(&mut self, result: Result<Vec<String>, String>) {
+        if let Some(Screen::Mods(screen)) = self.screens.last_mut() {
+            screen.applied(result);
+        }
+    }
+
     /// Shows why a menu choice failed, on the menu it was made from (closing New run).
     fn fail(&mut self, message: String) {
         while self.screens.len() > 1 && !matches!(self.screens.last(), Some(Screen::Menu(_))) {
@@ -904,11 +929,19 @@ impl Screens<'_> {
             }
             _ => Vec::new(),
         };
+        #[cfg(not(target_arch = "wasm32"))]
+        let mods = match name {
+            ScreenName::Mods => crate::mods::found(&self.args),
+            _ => (None, Vec::new()),
+        };
+        #[cfg(target_arch = "wasm32")]
+        let mods = (None, Vec::new());
         let launch = Launch {
             characters,
             fallen,
             dev: dev_keys(&self.args),
             keymap: self.settings.keymap(),
+            mods,
         };
         let content = &self.content.0;
         let screen = Screen::new(name, content, &launch, view.as_ref(), &draft, beneath, talk);
@@ -1005,8 +1038,19 @@ pub(super) fn show_identified(
     }
 }
 
-/// Opens the screens the command line asks for (see [`startup_screens`]).
-pub(super) fn open_startup_screens(args: Res<Args>, game: Option<Res<Game>>, mut screens: Screens) {
+/// What the main menu tells as the game starts, if anything: the mods turned on that could not
+/// be used (`game::load_content`).
+#[derive(Resource, Debug, Default)]
+pub struct StartupNotice(pub Option<String>);
+
+/// Opens the screens the command line asks for (see [`startup_screens`]), the main menu with
+/// the [`StartupNotice`].
+pub(super) fn open_startup_screens(
+    args: Res<Args>,
+    game: Option<Res<Game>>,
+    notice: Option<Res<StartupNotice>>,
+    mut screens: Screens,
+) {
     for name in startup_screens(args.screen, game.is_some()) {
         // A skipped New run has opened the race step already.
         if screens.stack.top() == Some(name) {
@@ -1017,6 +1061,9 @@ pub(super) fn open_startup_screens(args: Res<Args>, game: Option<Res<Game>>, mut
             screens.open_story();
         } else {
             screens.open(name);
+        }
+        if name == ScreenName::Main {
+            screens.stack.notice = notice.as_ref().and_then(|n| n.0.clone());
         }
     }
 }
@@ -1037,7 +1084,10 @@ fn startup_screens(screen: Option<ScreenName>, in_run: bool) -> Vec<ScreenName> 
                 .chain([s])
                 .collect()
         }
-        (false, Some(s @ (Characters | Graveyard | NewRun | Settings | Controls | Dialog))) => {
+        (
+            false,
+            Some(s @ (Characters | Graveyard | NewRun | Settings | Controls | Mods | Dialog)),
+        ) => {
             vec![Main, s]
         }
         (false, Some(Files)) => vec![Main, Settings, Files],
@@ -1157,6 +1207,8 @@ pub(super) fn apply_choice(
                 None => screens.back_to_main(Some("There is no saved character.".into()), false),
             },
             MenuChoice::Resume(id) => resume(&mut commands, &mut screens, id),
+            // Applied by `crate::mods::apply`.
+            MenuChoice::ApplyMods(_) => {}
             MenuChoice::DeleteCharacter(id) => {
                 let notice = screens.store.delete_character(id).err();
                 screens.back_to_main(notice, true);
@@ -1258,6 +1310,7 @@ mod tests {
                 fallen: Vec::new(),
                 dev: true,
                 keymap: KeymapFile::Nowhere,
+                mods: (None, Vec::new()),
             };
             let screen = Screen::new(*name, &content, &launch, run, &draft, beneath, None);
             stack.screens.push(screen);

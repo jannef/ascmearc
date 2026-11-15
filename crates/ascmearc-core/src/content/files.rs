@@ -1,6 +1,6 @@
 //! The raw content files a [`Content`] is loaded from, and which of them were read.
 
-use super::{CAMPAIGNS, ContentError, walk};
+use super::{CAMPAIGNS, ContentError, ModStamp, walk};
 use std::cell::RefCell;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
@@ -13,6 +13,10 @@ pub struct ContentFiles {
     /// The paths a loader has looked up (#1530): [`Content::load`] fails on any file it was
     /// given that is not among them ([`ContentFiles::check_all_read`]).
     pub(super) read: RefCell<BTreeSet<String>>,
+    /// The mods laid over the files ([`ContentFiles::overlay`]), in order (#1731).
+    pub(super) mods: Vec<ModStamp>,
+    /// Each file a mod supplied, with the index in `mods` of the last that did.
+    pub(super) origin: BTreeMap<String, usize>,
 }
 
 impl ContentFiles {
@@ -28,7 +32,7 @@ impl ContentFiles {
         });
         Self {
             files: files.clone(),
-            read: RefCell::default(),
+            ..Self::default()
         }
     }
 

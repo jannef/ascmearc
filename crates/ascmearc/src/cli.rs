@@ -58,6 +58,12 @@ pub struct Args {
     #[arg(long)]
     pub content_dir: Option<PathBuf>,
 
+    /// Lay the mod in this folder over the content (repeatable: in order, the last one wins), in
+    /// place of the mods turned on in the Mods screen; a mod that does not load stops the game.
+    /// Desktop only.
+    #[arg(long = "mod", value_name = "DIR")]
+    pub mods: Vec<PathBuf>,
+
     /// Freeze visual time at this many seconds (reproducible screenshots). Glyph animations and
     /// particles show that moment; slides, camera moves, and fades complete instantly.
     #[arg(long)]

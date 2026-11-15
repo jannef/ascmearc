@@ -274,6 +274,7 @@ enum MainItem {
     NewRun,
     Settings,
     Controls,
+    Mods,
     Quit,
 }
 
@@ -288,6 +289,7 @@ impl MainItem {
             MainItem::NewRun => "New run",
             MainItem::Settings => "Settings",
             MainItem::Controls => "Controls",
+            MainItem::Mods => "Mods",
             MainItem::Quit => "Quit",
         }
     }
@@ -368,9 +370,10 @@ impl MainMenu {
             items.push(MainItem::Graveyard);
         }
         items.extend([MainItem::NewRun, MainItem::Settings, MainItem::Controls]);
-        // A web page cannot quit: closing the tab is the browser's job.
+        // The web has no mods (#1731), and a web page cannot quit: closing the tab is the
+        // browser's job.
         if !cfg!(target_arch = "wasm32") {
-            items.push(MainItem::Quit);
+            items.extend([MainItem::Mods, MainItem::Quit]);
         }
         items
     }
@@ -392,6 +395,7 @@ impl MainMenu {
                     MainItem::NewRun => ScreenAction::Open(ScreenName::NewRun),
                     MainItem::Settings => ScreenAction::Open(ScreenName::Settings),
                     MainItem::Controls => ScreenAction::Open(ScreenName::Controls),
+                    MainItem::Mods => ScreenAction::Open(ScreenName::Mods),
                     MainItem::Quit => quit_dialog(self.pause).into(),
                 };
             }

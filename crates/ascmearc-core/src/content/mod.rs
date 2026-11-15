@@ -113,6 +113,7 @@ pub mod mimic;
 mod mimic_roster_tests;
 mod mining;
 mod miscast;
+mod mods;
 mod monster_pool;
 mod names;
 mod object;
@@ -318,6 +319,9 @@ pub use material::{
 };
 pub use mining::{Mined, MiningBand, MiningFind, MiningRules, Vein, Veins};
 pub use miscast::{Miscast, MiscastRules};
+#[cfg(test)]
+pub(crate) use mods::pride_month;
+pub use mods::{ModStamp, describe as describe_mods};
 pub use monster_pool::{MonsterPool, VaultMonsters};
 pub use names::{NameLists, Names};
 pub use object::{MAX_VALUE, ObjectDef, ObjectId, counted, weapon_noun};
@@ -799,6 +803,10 @@ pub struct Content {
     shops: Option<Shops>,
     /// The ids the engine names in code, resolved at load (`content/required.rs`).
     ids: RequiredIds,
+    /// The mods laid over the files it was loaded from, in order (`content/mods.rs`, #1731).
+    mods: Vec<ModStamp>,
+    /// A hash of the files those mods supplied, for the fingerprint.
+    mod_digest: u64,
 }
 
 impl Content {
@@ -808,7 +816,15 @@ impl Content {
         Self::load(&ContentFiles::builtin())
     }
 
+    /// Loads `files`, checked whole: an error in a file a mod supplied names the mod
+    /// (`ContentFiles::overlay`).
     pub fn load(files: &ContentFiles) -> Result<Self, ContentError> {
+        let mut content = Self::load_files(files).map_err(|e| files.blame(e))?;
+        content.take_mods(files);
+        Ok(content)
+    }
+
+    fn load_files(files: &ContentFiles) -> Result<Self, ContentError> {
         files.read.borrow_mut().clear();
         // Without their files, everything is medium and every type common.
         let mut content = Content {

@@ -15,11 +15,13 @@
 //! before characters existed still load. `name` is the character's name, left out with the
 //! character; a replay without it gives the character the run's default name
 //! ([`default_name`](crate::character::default_name)), so replays recorded before names
-//! existed still load.
+//! existed still load. `mods` lists the mods the run was played with (#1731; `{ "id":
+//! "pride_month", "version": "1.0.0" }` each, in order), left out without any: a replay plays
+//! only on content with the same mods ([`Replay::check_mods`]).
 
 use crate::action::Action;
 use crate::character::CharacterSpec;
-use crate::content::Content;
+use crate::content::{Content, ModStamp, describe_mods};
 use crate::world::{World, WorldError};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::fmt;
@@ -34,6 +36,9 @@ pub enum ReplayError {
     World(#[from] WorldError),
     #[error("{0}")]
     Diverged(Divergence),
+    /// Recorded with other mods than the content has (#1731), each set in words.
+    #[error("the replay was recorded {recorded}, but the content was loaded {loaded}")]
+    OtherMods { recorded: String, loaded: String },
 }
 
 /// The first step whose resulting state hash differs from the recorded one.
@@ -81,6 +86,9 @@ pub struct Replay {
     /// chose; [`World::start_run`]); left out when false, so replays from before kits load.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub kit: bool,
+    /// The mods laid over the content, in order (#1731); left out without any.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub mods: Vec<ModStamp>,
     pub steps: Vec<Step>,
 }
 
@@ -95,6 +103,7 @@ impl Replay {
             character: world.character().map(|c| c.spec.clone()),
             name: world.character().map(|c| c.name.clone()),
             kit: world.started_with_kit(),
+            mods: world.content().mods().to_vec(),
             steps: Vec::new(),
         }
     }
@@ -129,6 +138,17 @@ impl Replay {
                 self.game_version,
                 crate::GAME_VERSION
             )
+        })
+    }
+
+    /// Whether `content` was loaded with the mods this replay was recorded with.
+    pub fn check_mods(&self, content: &Content) -> Result<(), ReplayError> {
+        if self.mods == content.mods() {
+            return Ok(());
+        }
+        Err(ReplayError::OtherMods {
+            recorded: describe_mods(&self.mods),
+            loaded: describe_mods(content.mods()),
         })
     }
 
@@ -171,6 +191,7 @@ impl Replay {
 
     /// Plays the replay and verifies every hash.
     pub fn run(&self, content: Arc<Content>) -> Result<World, ReplayError> {
+        self.check_mods(&content)?;
         match self.play(content)? {
             (world, None) => Ok(world),
             (_, Some(divergence)) => Err(ReplayError::Diverged(divergence)),
@@ -232,6 +253,39 @@ mod tests {
         assert_eq!(parsed, replay);
         let world = parsed.run(content()).expect("verifies");
         assert_eq!(world.state_hash(), replay.steps[3].hash);
+    }
+
+    /// A replay records its mods (#1731), plays with the same, and is refused with others.
+    #[test]
+    fn replays_record_their_mods() {
+        let plain = recorded("wait");
+        assert!(!plain.to_json().contains("\"mods\""));
+        let stamp = ModStamp {
+            id: "pride_month".into(),
+            version: "1.0.0".into(),
+        };
+        let mod_files = crate::content::pride_month();
+        let mut files = crate::content::ContentFiles::builtin();
+        files.overlay(
+            stamp,
+            mod_files.iter().map(|(p, t)| (p.as_str(), t.as_str())),
+        );
+        let modded = Arc::new(Content::load(&files).expect("the mod loads"));
+        let err = plain.run(modded.clone()).expect_err("other mods");
+        assert_eq!(
+            err.to_string(),
+            "the replay was recorded without mods, but the content was loaded with the mod \
+             pride_month 1.0.0"
+        );
+        let mut world = World::new(modded.clone(), "showcase", None).expect("world");
+        let mut replay = Replay::new(&world);
+        world.apply(&Action::Wait);
+        replay.push(&Action::Wait, &world);
+        let json: serde_json::Value = serde_json::from_str(&replay.to_json()).expect("json");
+        assert_eq!(json["mods"][0]["id"], "pride_month");
+        assert_eq!(json["mods"][0]["version"], "1.0.0");
+        replay.run(modded).expect("the same mods");
+        assert!(replay.run(content()).is_err());
     }
 
     #[test]

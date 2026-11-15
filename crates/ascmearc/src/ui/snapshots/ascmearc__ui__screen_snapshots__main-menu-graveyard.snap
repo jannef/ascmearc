@@ -19,13 +19,13 @@ expression: "render(case, content.clone())"
                         │   New run                                        │
                         │   Settings                                       │
                         │   Controls                                       │
+                        │   Mods                                           │
                         │   Quit                                           │
                         │                                                  │
                         │                                                  │
                         │                                                  │
                         │ ↑↓ select   Enter choose                         │
                         └──────────────────────────────────────────────────┘
-
 
 
 

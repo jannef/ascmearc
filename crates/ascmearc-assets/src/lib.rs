@@ -1,11 +1,14 @@
 //! The content under `assets/` for the binaries (#1587): `build.rs` embeds it here, and
 //! ascmearc-core takes it as input, [`ContentFiles`], so a data edit rebuilds this crate and the
 //! binaries above it, never the core. The game, the CLI, and xtask load the built-in copy with
-//! [`files`] (or [`content`]) and a content directory (`--content-dir`) with [`from_dir`]; a set
-//! of extra files (mods, later: #196) would be laid over either with [`ContentFiles::insert`].
+//! [`files`] (or [`content`]) and a content directory (`--content-dir`) with [`from_dir`]; the
+//! desktop's mods are laid over either ([`mods`], #1731).
 
 use ascmearc_core::content::{Content, ContentError, ContentFiles};
 use std::path::Path;
+
+#[cfg(not(target_arch = "wasm32"))]
+pub mod mods;
 
 mod embedded {
     include!(concat!(env!("OUT_DIR"), "/builtin_assets.rs"));

@@ -1,0 +1,8 @@
+# The example mod (#1731; the wiki's Mods page tells how to make one). Each file beside this one
+# replaces the game's file at the same path whole: here the five creature types only Cēaptūn's
+# townsfolk use, each with only its colour (`fg`) changed. Eadric (a shopkeeper) and Ceolred (a
+# villager) are left alone: their types live outside the town too.
+name = "Pride month"
+description = "Five of Cēaptūn's townsfolk in bright colours (not Eadric or Ceolred)."
+version = "1.0.0"
+game_version = "0.18.0"

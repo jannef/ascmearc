@@ -320,7 +320,9 @@ version = "0.18.0"
 dependencies = [
  "ascmearc-core",
  "read-fonts 0.47.0",
+ "serde",
  "skera",
+ "toml",
 ]
 
 [[package]]

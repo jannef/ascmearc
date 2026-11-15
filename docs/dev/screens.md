@@ -314,7 +314,11 @@ to open, read keys for, or draw one:
   what fits the console, the pages counted as last drawn; Up/Down and the list page keys turn the
   page, Esc or Enter closes; "No one lies here yet." with none); the death screen's "Remembered in the
   graveyard." is `DeathScreen::remembered`, set by `on_death` once the entry is written,
-  `docs/dev/saves.md` "The graveyard"),
+  `docs/dev/saves.md` "The graveyard"), `ui/mods_screen.rs` (`ModsScreen`, `ScreenName::Mods`,
+  `--screen mods`: the Mods screen, on the main menu after Controls on the desktop only; the
+  folders of the mods folder, `Launch::mods`, read as it opens; its Apply is
+  `MenuChoice::ApplyMods`, applied by `crate::mods::apply`, which answers through
+  `ScreenStack::mods_applied`; docs/dev/mods.md),
   `ui/quest_screen.rs`
   (the quest log from `PerceptionView::quests`: active then done, the selected one's objective,
   status, and the giver's offer; read-only), `ui/messages_screen.rs` (`MessagesScreen`,
