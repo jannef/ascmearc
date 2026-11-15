@@ -18,11 +18,10 @@ read-fonts = { workspace = true, optional = true }
 skera = { workspace = true, optional = true }
 
 [features]
-# The test world (`assets/campaigns/showcase/`), embedded only with this feature: on for every
-# dev command, test, and benchmark; release builds and `cargo xtask web` turn it off with
-# `--no-default-features` in the binaries that forward it (docs/dev/campaign.md, "The test world
-# in release builds").
-default = ["showcase"]
+# The test world (`assets/campaigns/showcase/`), embedded only with this feature: off by default,
+# so a plain build is a release build; the binaries forward it, and their tests and xtask turn it
+# on (docs/dev/campaign.md, "The test world in release builds").
+default = []
 showcase = []
 # `FONT` is JuliaMono cut down at build time to the characters the game uses (about 170 kB in
 # place of 3.3 MB); the web build turns it on through the game's own `font-subset` feature

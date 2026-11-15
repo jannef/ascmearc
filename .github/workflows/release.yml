@@ -59,10 +59,10 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           save-if: ${{ github.ref_type != 'tag' }}
-      # Without the test world: `--no-default-features` leaves out the `showcase` feature
-      # (docs/dev/campaign.md, "The test world in release builds").
+      # Without the test world: the `showcase` feature is off by default (docs/dev/campaign.md,
+      # "The test world in release builds").
       - name: Release build
-        run: cargo build --release --locked --no-default-features --package ascmearc --package ascmearc-cli
+        run: cargo build --release --locked --package ascmearc --package ascmearc-cli
       - name: No test world in the release
         run: |
           exe=""

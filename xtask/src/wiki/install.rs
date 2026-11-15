@@ -9,7 +9,7 @@ pub(super) fn install(_: &Content) -> String {
     // Between anchors, so the page includes the one line inline, without the file's header.
     format!(
         "<!-- ANCHOR: install -->\n`cargo install --git https://github.com/jannef/ascmearc --tag v{} \
-         --locked --no-default-features ascmearc`\n<!-- ANCHOR_END: install -->\n",
+         --locked ascmearc`\n<!-- ANCHOR_END: install -->\n",
         env!("CARGO_PKG_VERSION")
     )
 }

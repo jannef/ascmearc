@@ -9,9 +9,9 @@ scenario, dump layer, or action is added here in the same PR, by its group, neve
 (an action's rules belong in its own topic file; here its syntax and a short gloss).
 
 Where the lists come from: `--scenario` names are the files of `assets/campaigns/*/scenarios/`,
-`--screen` names are `ui/screens.rs::ScreenName` (clap lists them: `cargo run -p ascmearc --
---help`), dump layers are `dump/layer.rs::Layer`, and action verbs are `action/text.rs`'s `VERBS` table
-(read by `Action::from_str`).
+`--screen` names are `ui/screens.rs::ScreenName` (clap lists them: `cargo dev --help`), dump
+layers are `dump/layer.rs::Layer`, and action verbs are `action/text.rs`'s `VERBS` table (read by
+`Action::from_str`).
 
 ## `cargo xtask` commands in detail
 
@@ -26,10 +26,9 @@ metadata`'s `target_directory`) for the build output it reads and the files it w
   fails: #669.
 - **Web build**, `cargo xtask web`: writes `target/web/`, without the test world (CLAUDE.md
   "Releases, web build, logs").
-- **Release configuration**, `cargo build --no-default-features -p ascmearc -p ascmearc-cli`: no
-  `showcase` feature, the test world left out, as in a release; `cargo test
-  --no-default-features -p ascmearc-assets --test release_content` checks it; CI's
-  `release-config` job; docs/dev/campaign.md.
+- **Release configuration**, `cargo build -p ascmearc -p ascmearc-cli`: the plain build, no
+  `showcase` feature, the test world left out, as in a release; `cargo test -p ascmearc-assets
+  --test release_content` checks it; CI's `release-config` job; docs/dev/campaign.md.
 - **Web smoke test**, `cargo xtask web-smoke <chrome>`: serves `target/web`, drives headless
   Chromium through menu → New run (skipped: the web build lists one scenario, the Ascmearc's
   start, so it opens on the race) → race, the stars, gender, class (preselected) → talents
@@ -94,12 +93,18 @@ metadata`'s `target_directory`) for the build output it reads and the files it w
 
 ## The game: `ascmearc`
 
-`cargo run -p ascmearc -- --help` lists the flags and the values clap accepts.
+`cargo dev --help` lists the flags and the values clap accepts.
+
+**With the test world**: a plain build (`cargo run -p ascmearc`) is the release build, without
+the test world (the `showcase` feature, off by default; docs/dev/campaign.md "The test world in
+release builds"). The aliases in `.cargo/config.toml` turn it on: `cargo dev ARGS` is `cargo run
+-p ascmearc --features showcase -- ARGS`, and `cargo dev-cli ARGS` the same for `ascmearc-cli`.
+Every example here uses them; the tests and the xtask commands turn the feature on themselves.
 
 ### Scenarios: `--scenario NAME`
 
-Default `showcase`; without the test world, the first campaign's start. The names are the
-scenario files of `assets/campaigns/<id>/scenarios/`.
+Default `showcase`; without the test world (a plain build), the first campaign's start. The
+names are the scenario files of `assets/campaigns/<id>/scenarios/`.
 
 The Ascmearc (`assets/campaigns/ascmearc/`):
 
@@ -151,7 +156,7 @@ The test world (`assets/campaigns/showcase/`, the `showcase` feature):
   ascmearc`.
 - `--character RACE,GENDER,CLASS` (e.g. `dwarf,female,warrior`; default: the scenario's
   character): like `--seed` it shapes the run other flags start (`--scenario`, `--new`, `--record`,
-  `--capture`, and `ascmearc-cli dump` and `replay --create`) and alone does not skip the menu;
+  `--capture`, and `cargo dev-cli dump` and `replay --create`) and alone does not skip the menu;
   a class closed to the race and gender, `drow,male,priest`, is refused, while a class hidden
   from New run (none is now) is taken; `assets/data/classes/README.toml`.
 - `--name NAME`: the character's name, up to 20 characters; default: the scenario's for its own
@@ -274,7 +279,7 @@ No window, no Bevy; `--content-dir` works here too.
 
 | Task | Command |
 |---|---|
-| ASCII dump after actions | `cargo run -p ascmearc-cli -- dump --scenario showcase --actions "move:N move:N" --layers view,fov,memory` |
+| ASCII dump after actions | `cargo dev-cli dump --scenario showcase --actions "move:N move:N" --layers view,fov,memory` |
 | Dump a replay's end state | `... dump --replay runs/x.json [--actions "wait"] --format ascii\|json [--state]` |
 | Create a replay | `... replay --create --scenario showcase --actions "move:N wait" -o runs/x.json` |
 | Verify a replay | `... replay --verify runs/x.json` (exit 1 and first diverging step on mismatch) |

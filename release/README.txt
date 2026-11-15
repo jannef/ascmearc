@@ -11,7 +11,7 @@ Run
   Security and choose Open Anyway, or run `xattr -dr com.apple.quarantine Ascmearc.app`.
 
 To build a version from source instead, see the README on GitHub ("Install a specific version
-from source": `cargo install --git ... --tag vX.Y.Z --locked --no-default-features ascmearc`).
+from source": `cargo install --git ... --tag vX.Y.Z --locked ascmearc`).
 
 Run `ascmearc --help` for command-line options. `ascmearc-cli` is the headless development tool.
 

@@ -14,7 +14,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - The showcase is the test campaign: one hand-made place per engine capability, and the regression scene for golden screenshots, replays, and snapshot tests.
 - Each room or level shows one system and says what it shows in its level file's header. Scenarios start a run in the room that shows a system.
 - The hub, its upper levels, and the courtyard are safe: creatures that would hunt by type stand in the peaceful faction there, and they hold no traps. Fighting happens in the arena and in the generated dungeons.
-- **Test content never appears in a release.** It is compiled in only for developer builds, tests, and benchmarks. A release refuses its scenarios as unknown.
+- **Test content never appears in a release.** It is compiled in only for developer builds, tests, and benchmarks, which opt in: a plain build is a release build. A release refuses its scenarios as unknown.
 - New run lists the test scenarios in developer builds only. The player wiki never describes the test world.
 
 ## The Ascmearc

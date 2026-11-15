@@ -16,15 +16,15 @@ Rust is pinned in `rust-toolchain.toml`; cargo is in `~/.cargo/bin` (in a fresh 
 | Task | Command |
 |---|---|
 | Build everything | `cargo build --workspace` |
-| Run the game | `cargo run -p ascmearc` |
-| Run the headless CLI | `cargo run -p ascmearc-cli -- --help` |
+| Run the game | `cargo dev` (with the test world; plain `cargo run -p ascmearc` is the release build) |
+| Run the headless CLI | `cargo dev-cli --help` (with the test world) |
 | Tests | `cargo test --workspace` |
 | Lint | `cargo fmt --all --check && cargo clippy --workspace --all-targets --locked -- -D warnings` |
 | WASM check | `cargo check -p ascmearc -p ascmearc-core --target wasm32-unknown-unknown` |
 | Dependency audit | `cargo deny --all-features check` |
 | Screenshot smoke test | `cargo xtask smoke` |
 | Web build | `cargo xtask web` (without the test world; "Releases, web build, logs") |
-| Release configuration | `cargo build --no-default-features -p ascmearc -p ascmearc-cli` (the test world left out, as in a release) |
+| Release configuration | `cargo build -p ascmearc -p ascmearc-cli` (the plain build: the test world, the `showcase` feature, is opt-in) |
 | Regenerate the vast level | `cargo xtask gen-vast` (deterministic, never hand-edit; `--check` after touching `xtask/src/vast.rs`) |
 | Check the docs' code paths | `cargo xtask docs-check` |
 | Third-party notices | `cargo xtask licenses`. **Run it after changing dependencies** |
@@ -39,9 +39,9 @@ names, the capture and dev flags), `ascmearc-cli`'s commands, the replay format,
 and the action text syntax. Read it before scripting a run; add to it when you add a flag, a
 screen, a scenario, a dump layer, or an action. For example:
 
-- `cargo run -p ascmearc -- --scenario showcase --scale 1 --freeze-time 1 --capture target/shot.png`
+- `cargo dev --scenario showcase --scale 1 --freeze-time 1 --capture target/shot.png`
   starts a run, renders it offscreen, and exits.
-- `ascmearc-cli dump --scenario showcase --actions "move:N wait" --layers view,fov,memory` prints
+- `cargo dev-cli dump --scenario showcase --actions "move:N wait" --layers view,fov,memory` prints
   the simulation as text; `replay --create` and `replay --verify` check determinism.
 - Action text is whitespace-separated `verb:args` words: `move:N open:E pickup:a fire:12,5 wait*10`.
 
@@ -148,7 +148,7 @@ A successful compile does not verify anything visual. Before opening a PR:
    shared helpers, `crate::test_support`: the built-in content, `world`, `run`, the message readers)
    (`insta` snapshots live in `crates/ascmearc-core/src/snapshots/`, `src/dump/snapshots/`, `src/mapgen/snapshots/`, and
    `src/mapgen/local/snapshots/`, the screens' in `crates/ascmearc/src/ui/snapshots/`; review with `cargo insta review` or `INSTA_UPDATE=always`, and read the diff). Look at the
-   result with `ascmearc-cli dump` (or `gen` for a generated level), and check determinism with
+   result with `cargo dev-cli dump` (or `gen` for a generated level), and check determinism with
    `replay --create` then `replay --verify`.
 3. Rendering changes: capture a screenshot with `--capture` and **look at it** (read the PNG).
    UI changes (screens, prompts, the message line, the status bar): add or update a case in
@@ -182,7 +182,7 @@ overlay over a run (#56's guard; #301). Check the cheaper tools first:
 - a screen, list, dialog, prompt, message line, or status bar → a **text snapshot**: a case in
   `crates/ascmearc/src/ui/screen_snapshots.rs` (the UI console as text, `insta`; docs/dev/screens.md);
 - what is on the map, who is where, what happened → a core test, an `insta` snapshot, or a
-  `ascmearc-cli dump`;
+  `cargo dev-cli dump`;
 - a one-off visual check → `--capture`, looked at, and noted in the PR (not kept).
 
 A PR that adds a golden says in its description why none of these can see the change; reviewers
@@ -194,7 +194,7 @@ advisory: use `--local`), and the deliberate update procedure are in `docs/dev/g
 ## Releases, web build, logs
 
 Cutting a release (tag `v*` on a green `main`; the `Release` workflow builds every platform and
-the web build, always `--no-default-features`, without the test world), the web build's setup and
+the web build, plain builds and so without the test world), the web build's setup and
 size tuning, GitHub Pages, and the desktop logs and crash reports are in `docs/dev/releases.md`.
 Nothing on the web build's startup path may touch `std::fs`; after changing the web build run
 `cargo xtask web-smoke` and read the screenshot.

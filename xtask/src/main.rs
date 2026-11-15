@@ -101,7 +101,15 @@ fn metadata_target_dir() -> Result<PathBuf, String> {
 pub(crate) fn run_game(extra: &[&str]) -> Result<(), String> {
     let status = Command::new(env!("CARGO"))
         .current_dir(workspace_root())
-        .args(["run", "--quiet", "--package", "ascmearc", "--"])
+        .args([
+            "run",
+            "--quiet",
+            "--package",
+            "ascmearc",
+            "--features",
+            "showcase",
+            "--",
+        ])
         .args(extra)
         .status()
         .map_err(|e| format!("failed to run cargo: {e}"))?;
@@ -211,10 +219,9 @@ fn web() -> Result<(), String> {
             "--profile",
             "web",
             "--locked",
-            // A release artifact: without the test world (`showcase`, docs/dev/campaign.md).
-            "--no-default-features",
-            // The cut-down font, made by ascmearc-assets' build script (docs/dev/rendering.md,
-            // "The font").
+            // A release artifact: without the test world (`showcase` is off by default,
+            // docs/dev/campaign.md). The cut-down font, made by ascmearc-assets' build script
+            // (docs/dev/rendering.md, "The font").
             "--features",
             "font-subset",
             "--package",
