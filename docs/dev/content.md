@@ -14,9 +14,9 @@ test world, `campaigns/showcase/`, only with its `showcase` feature: never in a 
 ascmearc-core's own tests read `assets/` from disk instead (`ContentFiles::builtin` and
 `Content::builtin`, test-only, once per test binary; the tests share one parsed copy,
 `test_support::CONTENT`, #1509), and its integration tests do the same with
-`ContentFiles::from_dir`. Extra files laid over a set (mods, later: #196) go in with
-`ContentFiles::insert` before the load, which checks the whole set ("The loader's whole-set
-checks" below). A world's levels, scenarios, branches, quests, dialogue, and own creature types live
+`ContentFiles::from_dir`. The desktop's mods are laid over a set with `ContentFiles::overlay`
+before the load, which checks the whole set ("The loader's whole-set checks" below;
+docs/dev/mods.md). A world's levels, scenarios, branches, quests, dialogue, and own creature types live
 in its campaign, `assets/campaigns/<id>/` (`docs/dev/campaign.md`). Level maps are ASCII with a
 legend; see `assets/campaigns/showcase/levels/hub.toml`. A legend entry with a `creature` may set `faction = "peaceful"` (any id in
 `data/factions/`) to override its type's faction for that spawn (`Actor::faction_override`; read it with
@@ -190,7 +190,7 @@ the kind by id. A new list over one of these tables gets a sort key too.
 ## The loader's whole-set checks
 
 `Content::load` checks the set of files it was given, whichever it is (the built-in copy,
-`--content-dir`, or files a test or, later, a mod lays over it), so none of these depends on the
+`--content-dir`, or files a test or a mod lays over it), so none of these depends on the
 embedded copy:
 
 - **Every file is read** (#1530). `ContentFiles` records each path a loader looks up

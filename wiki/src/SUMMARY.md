@@ -14,6 +14,7 @@
   - [Prompts, looking, and aiming](controls-prompts.md)
 - [Settings](settings.md)
 - [Saving](saving.md)
+- [Mods](mods.md)
 
 # Making a character
 

@@ -101,6 +101,29 @@ cases! {
         screen: Some("graveyard"),
         ..BASE
     },
+    // The mods in the repository's `mods/` folder, all off (#1731).
+    mods_screen: Case {
+        name: "mods-screen",
+        screen: Some("mods"),
+        config_dir: Some("."),
+        ..BASE
+    },
+    // The example mod turned on, not yet applied.
+    mods_screen_on: Case {
+        name: "mods-screen-on",
+        screen: Some("mods"),
+        config_dir: Some("."),
+        keys: Some("Enter"),
+        ..BASE
+    },
+    // Turned on and applied: the content is loaded with it.
+    mods_screen_applied: Case {
+        name: "mods-screen-applied",
+        screen: Some("mods"),
+        config_dir: Some("."),
+        keys: Some("Enter Down Enter"),
+        ..BASE
+    },
     // Every scenario under its campaign's name (a developer build), the start first.
     new_run_screen: Case {
         name: "new-run-screen",

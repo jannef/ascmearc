@@ -23,9 +23,11 @@ most `AUTOSAVE_TURNS` (50) turns, or the last change of level (#1591). Only the 
 
 **Saves are pinned to the game version that wrote them** (#840; owner, 2026-11-02: "we do not
 need to preserve saves"). The envelope (`ascmearc-core/src/save.rs`) is `magic`, `game_version`
-(`ascmearc_core::GAME_VERSION`, the workspace version), `content_fingerprint`, and the state;
-`save::decode` refuses a save whose `game_version` is not this build's (`SaveError::OtherVersion`,
-before the state is read; a save that names none, from before the pin, is "an older version"),
+(`ascmearc_core::GAME_VERSION`, the workspace version), `content_fingerprint`, `mods` (the mods
+the run was played with, `[{id, version}]` in load order, left out without any; #1731,
+docs/dev/mods.md), and the state; `save::decode` refuses a save whose `game_version` is not this
+build's (`SaveError::OtherVersion`, before the state is read; a save that names none, from before
+the pin, is "an older version"), then one made with other mods (`OtherMods`, saying both sets),
 then one whose fingerprint differs (`ContentMismatch`), then one that does not read (`Corrupt`).
 Nothing carries a save across versions: no format number, no id maps, no lenient reads.
 `save::try_encode`/`try_encode_state` return `Result` (`SaveError::Unwritable`, #1580): a state

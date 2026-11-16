@@ -1,0 +1,26 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+
+
+
+
+
+
+
+
+          ┌─ Mods ───────────────────────────────────────────────────────────────────────┐
+          │                                                                              │
+          │   [1] Pride month  1.0.0                                                     │
+          │       Five of Cēaptūn's townsfolk in bright colours (not Eadric or Ceolred). │
+          │                                                                              │
+          │ > Apply                                                                      │
+          │   Open the mods folder                                                       │
+          │   Back                                                                       │
+          │                                                                              │
+          │ Applied: 1 mod is on.                                                        │
+          │                                                                              │
+          │                                                                              │
+          │ ↑↓ select   Enter/Space on/off   Shift+↑↓ order   Esc back                   │
+          └──────────────────────────────────────────────────────────────────────────────┘

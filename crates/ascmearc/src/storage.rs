@@ -347,7 +347,8 @@ pub mod web {
             let Some(pending) = p.borrow().as_ref().map(|pending| {
                 // A state that cannot be encoded writes nothing: the old save is kept (#1580).
                 let bytes =
-                    ascmearc_core::save::try_encode_state(&pending.state, pending.fingerprint)
+                    // The web has no mods (#1731).
+                    ascmearc_core::save::try_encode_state(&pending.state, pending.fingerprint, &[])
                         .map_err(|e| std::io::Error::other(e.to_string()))?;
                 let (beside, text) = &pending.beside;
                 set(&pending.file, &super::encode_base64(&bytes))

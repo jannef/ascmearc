@@ -287,7 +287,8 @@ fn sync_effects(settings: Res<Settings>, args: Res<Args>, mut effects: ResMut<Ef
 }
 
 /// Fits the console to the viewport; rebuilds the atlas when the font size or display scale
-/// changes, and the animation table when glyph animation or the palette changes.
+/// changes or the content does (the Mods screen's Apply, #1731: its glyphs may differ), and the
+/// animation table then and when glyph animation or the palette changes.
 fn layout(
     viewport: Res<Viewport>,
     mut layout: ResMut<ConsoleLayout>,
@@ -307,14 +308,16 @@ fn layout(
     let state = (animate, settings.palette);
     let animation_changed = animated.replace(state).is_some_and(|was| was != state);
     let font_changed = (px - atlas.px).abs() > f32::EPSILON;
-    if size == layout.window && scale == layout.scale && !font_changed && !animation_changed {
+    let content_changed = content.is_changed() && !content.is_added();
+    let rebuild = font_changed || content_changed;
+    if size == layout.window && scale == layout.scale && !rebuild && !animation_changed {
         return;
     }
     let content = &content.0;
-    if font_changed {
+    if rebuild {
         *atlas = GlyphAtlas::new(&font.0, px, &glyph_set(content.glyphs()), &mut images);
     }
-    if font_changed || animation_changed {
+    if rebuild || animation_changed {
         *anims = AnimTable::new(content, |c| atlas.glyph(c), animate, settings.palette);
     }
     let cell = atlas.cell;

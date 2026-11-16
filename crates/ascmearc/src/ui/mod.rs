@@ -55,6 +55,7 @@ mod menu;
 mod messages_screen;
 mod missiles;
 mod modal;
+mod mods_screen;
 pub(crate) mod more;
 mod motion;
 mod name_screen;
@@ -89,7 +90,7 @@ mod zone_tint;
 pub use dialog_screen::Dialog;
 pub use menu::{Edit, Nav, Press, quit_dialog};
 pub use object_screen::{IdentifyBy, ObjectList};
-pub use screens::{MenuChoice, ScreenAction, ScreenName, ScreenStack, Screens};
+pub use screens::{MenuChoice, ScreenAction, ScreenName, ScreenStack, Screens, StartupNotice};
 
 pub use dev::DevOverlays;
 pub use target::{Aim, AimKind, LastTarget};
@@ -204,6 +205,8 @@ impl Plugin for UiPlugin {
                     draw.after(draw_map_layer).after(screens::apply_choice),
                 ),
             );
+        #[cfg(not(target_arch = "wasm32"))]
+        app.add_systems(Update, crate::mods::apply.after(route_keys).before(draw));
     }
 }
 

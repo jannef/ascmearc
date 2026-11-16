@@ -17,6 +17,7 @@ here, in its group.
 - [content.md](content.md): TOML content, level files and legends
 - [campaign.md](campaign.md): campaigns, what each owns, a run's campaign
 - [saves.md](saves.md): storage, one save per character, autosave, permadeath
+- [mods.md](mods.md): desktop mods: whole files laid over the content, the Mods screen
 - [settings.md](settings.md): settings, effect switches, palettes, key bindings
 - [screens.md](screens.md): the screen stack, prompts, dialogs, the abilities menu
 - [rendering.md](rendering.md): the console shader, lighting, particles, glow, post effects

@@ -10,6 +10,8 @@ mod graveyard;
 mod input;
 mod logging;
 #[cfg(not(target_arch = "wasm32"))]
+mod mods;
+#[cfg(not(target_arch = "wasm32"))]
 mod move_data;
 mod old_name;
 mod paths;
@@ -88,15 +90,15 @@ fn main() -> AppExit {
     }
     logging::init();
     logging::maybe_crash_test();
-    let content = match game::load_content(&args) {
-        Ok(content) => content,
+    let (settings_store, settings, bindings) = settings::load_for(&args);
+    let (content, notice) = match game::load_content(&args, &settings) {
+        Ok(loaded) => loaded,
         Err(err) => {
             logging::print_early_warnings();
             eprintln!("ascmearc: {err}");
             return AppExit::error();
         }
     };
-    let (settings_store, settings, bindings) = settings::load_for(&args);
     // Flags that name what to run skip the menu; otherwise the game starts when the player picks.
     // The main menu and `--screen` are opened at startup (`ui::screens`).
     let game = if !args.starts_in_menu() {
@@ -156,6 +158,7 @@ fn main() -> AppExit {
     let graveyard = graveyard::GraveyardStore::from_args(&args);
     app.insert_resource(args)
         .insert_resource(game::GameContent(content))
+        .insert_resource(ui::StartupNotice(notice))
         .insert_resource(graveyard)
         .insert_resource(settings)
         .insert_resource(settings_store)

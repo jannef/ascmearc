@@ -49,6 +49,8 @@ pub(super) struct Case {
     pub(super) keys: Option<&'static str>,
     /// `--save-dir`, relative to the workspace root.
     pub(super) save_dir: Option<&'static str>,
+    /// `--config-dir`, relative to the workspace root (the root itself: its `mods/` folder).
+    pub(super) config_dir: Option<&'static str>,
     /// The graveyard file's text (`graveyard.rs`), kept in a folder of the case's own; none
     /// keeps no graveyard, as a capture does.
     pub(super) graveyard: Option<&'static str>,
@@ -70,6 +72,7 @@ pub(super) const BASE: Case = Case {
     screen: None,
     keys: None,
     save_dir: None,
+    config_dir: None,
     graveyard: None,
     status_bar: false,
     size: (100, 30),
@@ -228,6 +231,7 @@ fn fixture(dir: &str) -> String {
 /// The app of `case` started, its screens open, no keys pressed yet.
 pub(super) fn start(case: &Case, content: Arc<Content>) -> App {
     let save_dir = case.save_dir.map(fixture);
+    let config_dir = case.config_dir.map(fixture);
     let mut argv = vec![
         "ascmearc",
         "--capture",
@@ -238,6 +242,7 @@ pub(super) fn start(case: &Case, content: Arc<Content>) -> App {
     argv.extend(case.screen.iter().flat_map(|s| ["--screen", s]));
     argv.extend(case.character.iter().flat_map(|c| ["--character", c]));
     argv.extend(save_dir.iter().flat_map(|d| ["--save-dir", d.as_str()]));
+    argv.extend(config_dir.iter().flat_map(|d| ["--config-dir", d.as_str()]));
     let args = Args::parse_from(argv);
 
     let game = (case.run || !case.actions.is_empty()).then(|| {
@@ -292,6 +297,7 @@ pub(super) fn start(case: &Case, content: Arc<Content>) -> App {
             (
                 route_keys,
                 screens::apply_choice,
+                crate::mods::apply,
                 apply_actions.run_if(resource_exists::<Game>),
                 (
                     screens::refresh,

@@ -3,7 +3,7 @@
 use crate::cli::Args;
 use crate::save::{Resume, SaveStore};
 use ascmearc_core::character::CharacterSpec;
-use ascmearc_core::content::Content;
+use ascmearc_core::content::{Content, ContentFiles};
 use ascmearc_core::hunger::Hunger;
 use ascmearc_core::messages::{Message, MessageLog};
 use ascmearc_core::replay::{Divergence, Replay};
@@ -17,16 +17,33 @@ use std::sync::Arc;
 #[derive(Resource, Debug, Clone)]
 pub struct GameContent(pub Arc<Content>);
 
-/// Loads the content named by the command line (the built-in copy unless `--content-dir`).
-pub fn load_content(args: &Args) -> Result<Arc<Content>, String> {
-    let files = match &args.content_dir {
+/// The content files named by the command line, before any mod: the built-in copy unless
+/// `--content-dir`.
+pub fn base_files(args: &Args) -> Result<ContentFiles, String> {
+    match &args.content_dir {
         Some(dir) => ascmearc_assets::from_dir(dir)
-            .map_err(|e| format!("cannot read content from {}: {e}", dir.display()))?,
-        None => ascmearc_assets::files(),
-    };
-    Content::load(&files)
-        .map(Arc::new)
-        .map_err(|e| format!("invalid content: {e}"))
+            .map_err(|e| format!("cannot read content from {}: {e}", dir.display())),
+        None => Ok(ascmearc_assets::files()),
+    }
+}
+
+/// Loads the content named by the command line, with the mods of `--mod`, or else those turned
+/// on in `settings` (desktop, `mods.rs`). The second value is a notice for the main menu: the
+/// mods turned on that could not be used, the game starting without them.
+pub fn load_content(
+    args: &Args,
+    settings: &crate::settings::Settings,
+) -> Result<(Arc<Content>, Option<String>), String> {
+    let files = base_files(args)?;
+    #[cfg(not(target_arch = "wasm32"))]
+    return crate::mods::load_at_startup(args, &settings.mods, files);
+    #[cfg(target_arch = "wasm32")]
+    {
+        let _ = settings;
+        Content::load(&files)
+            .map(|content| (Arc::new(content), None))
+            .map_err(|e| format!("invalid content: {e}"))
+    }
 }
 
 /// The simulation as an ECS resource. It exists only while a run is in progress: the main menu
@@ -141,6 +158,7 @@ impl Game {
                 if let Some(note) = replay.version_note() {
                     eprintln!("ascmearc: warning: {}: {note}", path.display());
                 }
+                (replay.check_mods(&content)).map_err(|e| format!("{}: {e}", path.display()))?;
                 // The dead lie in its graves as in a run's (`graveyard.rs`), out of the hashes.
                 let dead = crate::graveyard::GraveyardStore::from_args(args).dead(&content);
                 let (world, divergence, outcome, before) = play_replay(&replay, content, dead)

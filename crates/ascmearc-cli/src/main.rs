@@ -7,8 +7,10 @@
 //! ascmearc-cli replay --create --scenario showcase --actions "move:N wait" -o run.json
 //! ascmearc-cli replay --verify run.json
 //! ascmearc-cli gen --level depths:3 --seed ascmearc
+//! ascmearc-cli dump --mod mods/pride_month --scenario ceaptun --layers view
 //! ```
 
+use ascmearc_assets::mods::{self, Mod};
 use ascmearc_core::action::parse_actions;
 use ascmearc_core::character::CharacterSpec;
 use ascmearc_core::content::Content;
@@ -30,6 +32,11 @@ struct Cli {
     /// the built-in copy.
     #[arg(long, global = true)]
     content_dir: Option<PathBuf>,
+
+    /// Lay the mod in this folder over the content (repeatable: in order, the last one wins;
+    /// docs/dev/mods.md). Replays record the mods and play only with the same ones.
+    #[arg(long = "mod", value_name = "DIR", global = true)]
+    mods: Vec<PathBuf>,
 
     #[command(subcommand)]
     command: Command,
@@ -161,7 +168,7 @@ fn main() -> ExitCode {
 }
 
 fn run(cli: Cli) -> Result<(), String> {
-    let content = load_content(cli.content_dir.as_deref())?;
+    let content = load_content(cli.content_dir.as_deref(), &cli.mods)?;
     match cli.command {
         Command::Dump(args) => dump_command(content, args),
         Command::Replay(args) => replay_command(content, args),
@@ -169,15 +176,24 @@ fn run(cli: Cli) -> Result<(), String> {
     }
 }
 
-fn load_content(dir: Option<&Path>) -> Result<Arc<Content>, String> {
+/// The content: `--content-dir`'s or the built-in copy, with each `--mod` laid over it.
+fn load_content(dir: Option<&Path>, mod_dirs: &[PathBuf]) -> Result<Arc<Content>, String> {
     let files = match dir {
         Some(dir) => ascmearc_assets::from_dir(dir)
             .map_err(|e| format!("cannot read content from {}: {e}", dir.display()))?,
         None => ascmearc_assets::files(),
     };
-    Content::load(&files)
-        .map(Arc::new)
-        .map_err(|e| format!("invalid content: {e}"))
+    let mods = (mod_dirs.iter())
+        .map(|dir| Mod::read(dir))
+        .collect::<Result<Vec<_>, _>>()?;
+    let mods: Vec<&Mod> = mods.iter().collect();
+    for (path, ids) in mods::clashes(&mods) {
+        eprintln!(
+            "note: {path} is in the mods {}: the last one's is used",
+            ids.join(", ")
+        );
+    }
+    mods::load(files, &mods).map(Arc::new)
 }
 
 fn read_replay(path: &Path) -> Result<Replay, String> {
@@ -257,6 +273,7 @@ fn dump_command(content: Arc<Content>, args: DumpArgs) -> Result<(), String> {
         // hashes leave them out.
         Some(path) => {
             let replay = read_replay(path)?;
+            replay.check_mods(&content).map_err(|e| e.to_string())?;
             let mut start = replay.start(content).map_err(|e| e.to_string())?;
             start.set_graveyard(fallen(&args.run));
             match replay.play_from(start) {
@@ -404,7 +421,7 @@ mod tests {
             Ok::<_, clap::Error>(args.run)
         };
         let args = run(&["--character", "dwarf,female,warrior"]).expect("parses");
-        let content = load_content(None).expect("content");
+        let content = load_content(None, &[]).expect("content");
         let world = start(content.clone(), &args).expect("starts");
         assert_eq!(
             world.character().map(|c| c.spec.to_string()).as_deref(),
@@ -442,9 +459,21 @@ mod tests {
         assert!(err.contains("takes 2 at creation"), "{err}");
     }
 
+    /// `--mod` lays the example mod over the content, and its replay plays only with it.
+    #[test]
+    fn mods_are_laid_and_recorded() {
+        let pride = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../mods/pride_month");
+        let content = load_content(None, std::slice::from_ref(&pride)).expect("loads");
+        assert_eq!(content.mods()[0].id, "pride_month");
+        let cli = Cli::try_parse_from(["ascmearc-cli", "dump", "--mod", "a", "--mod", "b"]);
+        assert_eq!(cli.expect("parses").mods, [PathBuf::from("a"), "b".into()]);
+        let err = load_content(None, &[pride.join("campaigns")]).expect_err("no mod.toml");
+        assert!(err.contains("mod.toml"), "{err}");
+    }
+
     #[test]
     fn gen_prints_a_generated_level() {
-        let content = load_content(None).expect("content");
+        let content = load_content(None, &[]).expect("content");
         let args = GenArgs {
             level: "depths:2".into(),
             seed: 1,

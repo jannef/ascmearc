@@ -176,6 +176,10 @@ The test world (`assets/campaigns/showcase/`, the `showcase` feature):
 
 - `--content-dir assets`: read content from disk instead of the copy built into the binary
   (`ascmearc-cli` takes it too).
+- `--mod DIR` (repeatable, in order, the last one winning; desktop): lay the mod in DIR over the
+  content, in place of the mods turned on in the Mods screen, e.g. `--mod mods/pride_month`; a
+  mod that does not load stops the game with the loader's error, naming the mod
+  (`ascmearc-cli` takes it too; docs/dev/mods.md).
 - `--window WxH` (physical pixels), `--scale F` (display scale; `1` for reproducible captures).
 - `--capture out.png`: render **offscreen** (no window), save a screenshot, exit.
   `--capture-after-frames N` (default 10), `--freeze-time SECONDS` pins animation time (glyph
@@ -202,8 +206,10 @@ On the main menu:
   saved characters; a capture reads them, never writes, from `--save-dir`, e.g.
   `tests/golden/saved-characters`, whose summaries say `@VERSION@` (#1649: the screen snapshots
   write it as this version), so read straight from there they all list as another version's;
-  docs/dev/saves.md), and `graveyard` (the fallen, most experienced first; a
-  capture reads `graveyard.toml` from `--config-dir`).
+  docs/dev/saves.md), `graveyard` (the fallen, most experienced first; a
+  capture reads `graveyard.toml` from `--config-dir`), and `mods` (the Mods screen; a capture
+  lists the mods in `--config-dir`'s `mods/`, none without it: `--config-dir .` shows the
+  repository's).
 - Character creation over New run and the steps before them, each on its preselection (the
   first scenario's character, the Ascmearc's, an empty name): `race`, `sign` (the birth sign's
   reveal), `gender`, `class`, `chargen-talents` (the creation picks), `name`, and `summary`.
@@ -275,7 +281,9 @@ logs are, over Settings), `controls`, and `dialog` (the quit dialog).
 
 ## The headless dev loop: `ascmearc-cli`
 
-No window, no Bevy; `--content-dir` works here too.
+No window, no Bevy; `--content-dir` and `--mod DIR` work here too (`cargo dev-cli dump --mod
+mods/pride_month ...`; `replay --create` records the mods, and `replay --verify` and `dump
+--replay` refuse a replay whose mods are not the ones given).
 
 | Task | Command |
 |---|---|
@@ -299,13 +307,15 @@ No window, no Bevy; `--content-dir` works here too.
 
 ## Replay files
 
-JSON `{game_version, scenario, seed, character, name, kit, steps:[{action, hash}]}`:
+JSON `{game_version, scenario, seed, character, name, kit, mods, steps:[{action, hash}]}`:
 
 - `character` = `{race, gender, class, talents}`, `talents` the creation picks (left out while
   none), left out for a run without one; a replay without it starts as the scenario's, so old
   replays load.
 - `name` the character's name; a replay without it gives the run's default name.
 - `kit` true when the run started with the character's starting kit, left out otherwise.
+- `mods` the mods laid over the content, in order, `[{id, version}]` (#1731), left out without
+  any; a replay plays only on content with the same mods (`Replay::check_mods`).
 - `hash` is the FNV-1a 64 state hash (`World::state_hash`, of the canonical JSON encoding of
   `WorldState`) after the step, as 16 hex digits. Verification reports the first diverging step.
 
