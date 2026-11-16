@@ -1,6 +1,6 @@
 # Creature tricks
 
-Some creatures have more than claws and breath. They steal from your pack, blink from place to place, go unseen, give themselves away by signs, cast spells, or carry an aura. Their blows and their attacking powers are on [Creatures in numbers](creature-numbers.md) and [Creature powers](creature-powers.md).
+Some creatures have more than claws and breath. They steal from your pack, blink from place to place, spin webs, go unseen, give themselves away by signs, cast spells, or carry an aura. Their blows and their attacking powers are on [Creatures in numbers](creature-numbers.md) and [Creature powers](creature-powers.md).
 
 ## Thieves
 
@@ -33,6 +33,19 @@ It never blinks away. It blinks only to where it sees, so a closed door between 
 door.
 
 {{#include generated/creature-blinks.md}}
+
+## Spinners
+
+Spiders spin [webs](terrain.md#webs). On a turn when a spider has nothing better to do (it waits
+for prey, or goes about its business), it may spin a web on a free cell beside it, by the chance
+below. If it has seen a foe, it spins on the cell nearest that foe, so the web goes up between
+you. A web is never spun on anyone. You see it happen: "The large spider spins a web."
+
+After spinning, a spider must wait the time below before it spins again. It also stops while
+enough webs already lie within two cells of it, so a spider left alone webs its own corner and no
+more. A spider that is your ally spins nothing. Its webs catch and burn like any other.
+
+{{#include generated/creature-spinners.md}}
 
 ## The unseen
 

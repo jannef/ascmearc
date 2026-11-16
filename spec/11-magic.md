@@ -42,6 +42,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - Area spells may destroy items lying on the floor by type and material. Carried, worn, chest-held, unique, proof, and quest items are never touched.
 - Zones (fire, fouled, slick, dark, smoke) lie on the floor for some turns and never spread. Smoke blocks all sight.
 - Webs are terrain: a spider's webs and the Web spell's are the same, and the spell lays webs rather than a status. A web may catch whoever walks into it or stands where it appears (a check of Strength or Dexterity, Escape artist, and size); spiders are never caught. Web spell webs stay until burned.
+- Spiders spin webs: an idle spider now and then spins a web on a free cell beside it (toward a foe it has seen), on a cooldown, and never while enough webs already lie around it, so it webs its corner and does not fill a level. An ally spins none.
 - Fire burns webs: any fire area sets the webs it reaches burning. A burning web gives a lot of light, burns whoever is in it, spreads to the webs beside it after a few seconds, and soon after is gone, all in game time. Dousing puts it out.
 - Healing spells sear the undead instead. No player race is undead.
 - Every spell a player knows has a rank, 1 to 10. Rank comes only from rereading its grimoire; casting trains no rank. Only an own cast of a known spell reads rank; scrolls, wands, and creatures cast at rank 1.

@@ -305,6 +305,13 @@
 #             `blink` status is off, moves at once to a free cell beside the target within range
 #             (2 to 12, Chebyshev) and in its own line of sight, and takes the status for
 #             cooldown seconds (6 to 600). It never blinks away
+#   spins     a spinner (#1746; the spiders'; world/creatures/spin.rs): { chance = 15,
+#             cooldown = 60, most = 4 }. On a turn it would wait or patrol (never an ally's),
+#             while the `spun` status of status/ is off and fewer than `most` (at least 1) webs
+#             lie within 2 cells of it, it spins a web by its chance (1 to 100) on an open cell
+#             beside it with no one on it (the one nearest the foe it last saw, else a random
+#             one), and takes the status for cooldown seconds (6 to 600). The web is
+#             rules/webs.toml's: it catches and burns as any
 #   disarms   a duellist's disarming blow (#1166; enemy-only; world/combat/knock_away.rs):
 #             { chance = 15, difficulty = 18 }. A melee hit on the player that leaves them alive,
 #             with a weapon in their main hand and an open cell beside them, tries by its chance

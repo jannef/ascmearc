@@ -25,7 +25,7 @@ immune to the status. A burning web catches no one.
 
 ## Laying
 
-`World::lay_web(p, by, events)` lays one web, reusable for a creature spinning (#1746);
+`World::lay_web(p, by, events)` lays one web (a spider's spinning uses it, below);
 `World::lay_webs(cells, by, events)` lays several and reports who stood there and whether each
 was caught. `World::holds_web` takes only plain open ground: walkable and transparent, no door,
 stairs, chest, statue, light, ice, water that freezes, station, grave, or announced feature; no
@@ -42,6 +42,25 @@ player's path. The webs stay until fire burns them. The spell grows by its reach
 (`range`, a `radius` ladder on Presence; ranks add cells, cut mana and time, and widen the burst
 at 10); it has no degrees. Webbed has no spell circle (`data/circles.toml`): webs are strands, not
 a spell on the creature.
+
+## Spinning
+
+A creature type with `spins = { chance, cooldown, most }` (#1746; `content/spin.rs`,
+`CreatureDef::spins: Option<Spins>`; the barrow spider and the large spider, the spiders whose
+leaving is a web; the duergar spider rider spins none) spins a web beside it now and then. The
+rule is `world/creatures/spin.rs`: `World::spin_plan`, one line in `ai.rs::creature_turn` after
+`rooted_plan`, turns an idle plan (`Plan::Wait` or `Plan::Patrol`, so a waiting lurker too, never
+a fight or a step after someone) into `Plan::Spin(at)` when the creature is no ally, its cooldown
+status (`spun`, `data/status/225-spun.toml`, a degree per 6 s; resolved by
+`theft.rs::cooldown`) is off, fewer than `most` webs (burning ones count) lie within
+`Spins::NEAR` (2) cells, and a neighbour `holds_web` with no one on it; then one `chance` draw
+(`spin/<actor key>`). The cell: the one nearest `Mind::last_seen` in `Dir::ALL` order, else
+`index(len)` on the same stream. `World::creature_spins` lays it (`lay_web`, by no one), puts the
+cooldown on, says "The large spider spins a web." where the player sees the spider, and costs a
+wait. The cap is the long-rest guard; besides, a creature away from a resting player takes
+coarse turns (`stride.rs`), which never spin. Nothing draws before the chance, so a spider
+crowded by webs or on its cooldown draws nothing. Tests: `world/creatures/spin_tests.rs`. Wiki:
+`creature_spinners` (`creature-spinners.md`, "Spinners" in `creature-tricks.md`).
 
 ## Burning
 

@@ -188,6 +188,7 @@ mod spell_ladder;
 mod spell_mod;
 mod spell_rank;
 mod spell_type;
+mod spin;
 mod split;
 mod stance;
 pub mod starter;
@@ -394,6 +395,7 @@ pub use spell_ladder::{Ladder as SpellLadder, MAX_SCORE, RungValue, Unit as Ladd
 pub use spell_mod::{SpellMod, SpellModSpec, SpellMods, merge_rider};
 pub use spell_rank::{MAX_SPELL_RANK, RankSpec, Ranks};
 pub use spell_type::{SpellType, TypeBite, TypeRider};
+pub use spin::Spins;
 pub use split::{CORPSE_SHARE, DiesInto, HALF_SHARE, Splits};
 pub use stance::{CombatStance, StanceDef, Stances, percent_of};
 pub use stat_training::{

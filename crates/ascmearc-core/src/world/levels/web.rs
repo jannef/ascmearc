@@ -9,7 +9,7 @@
 //!   free by that status's own rules (`world/health/hold.rs`). A creature of an `at_home` tag
 //!   (spiders), one already caught, and an incorporeal one are never caught; a burning web
 //!   catches no one.
-//! - **Laying** ([`World::lay_web`], reusable for a spider spinning): only on plain open ground
+//! - **Laying** ([`World::lay_web`], as a spider spins, `spin.rs`): only on plain open ground
 //!   ([`World::holds_web`]), never on the overworld. The ground it covers is kept
 //!   ([`Web::under`]) and comes back when it burns.
 //! - **Burning** ([`World::ignite_webs`], from `sear.rs`'s shared hook, so every fire area: a

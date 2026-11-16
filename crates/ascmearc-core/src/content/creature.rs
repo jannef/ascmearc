@@ -13,6 +13,7 @@ use super::gaze::{Gaze, GazeSpec};
 use super::gear::{Gear, GearLineSpec, GearSpec};
 use super::light::LightId;
 use super::particles::ParticleEmitter;
+use super::spin::{Spins, SpinsSpec};
 use super::split::{DiesInto, DiesIntoSpec, Splits, SplitsSpec};
 use super::status::{OnHit, OnHitSpec, StatusId};
 use super::summon::{Summon, SummonSpec};
@@ -344,6 +345,8 @@ pub(super) struct CreatureSpec {
     /// Its blink (docs/design/monster-dread.md §5.6): to the target's side when its path is
     /// blocked.
     pub blinks: Option<BlinksSpec>,
+    /// Its spinning (#1746): a web now and then on a cell beside it.
+    pub spins: Option<SpinsSpec>,
     /// Its natural armour: hide, shell, or scales.
     pub natural: Option<Hide>,
     /// Whether it passes through solid terrain, and its Defence inside it.
@@ -491,6 +494,7 @@ impl Default for CreatureSpec {
             dies_into: None,
             steals: None,
             blinks: None,
+            spins: None,
             natural: None,
             incorporeal: None,
             vitals: true,
@@ -790,6 +794,7 @@ pub(super) struct Resolved {
     pub presence: super::aura::Presence,
     pub steals: Option<Steals>,
     pub blinks: Option<Blinks>,
+    pub spins: Option<Spins>,
     pub invisible: Option<super::Invisible>,
     pub weapon_skills: WeaponSkills,
     pub resist: Vec<(DamageTypeId, i32)>,
@@ -888,6 +893,7 @@ impl CreatureSpec {
             split_spec: (self.splits, self.dies_into),
             steals: r.steals,
             blinks: r.blinks,
+            spins: r.spins,
             natural: self.natural,
             incorporeal: self.incorporeal,
             vitals: self.vitals,
@@ -1130,6 +1136,10 @@ pub struct CreatureDef {
     /// to its target blocked, it moves to a free cell beside the target in its line of sight;
     /// `None`: it walks. Rules only (the wiki states it).
     pub blinks: Option<Blinks>,
+    /// Gameplay: its spinning (#1746, `world/creatures/spin.rs`): on an idle turn, with the
+    /// cooldown off, it may spin a web on a cell beside it; `None`: it spins none. Rules only
+    /// (the wiki states it).
+    pub spins: Option<Spins>,
     /// Gameplay: its natural armour, if any.
     pub natural: Option<Hide>,
     /// Gameplay: whether it passes through solid terrain and stands inside it, and its Defence

@@ -1,0 +1,9 @@
+# A spider's spinning spent (the creatures' `spins`, world/creatures/spin.rs): a degree for every
+# six seconds of its `cooldown`; while it lasts the spider spins no web. Creatures only: no one
+# sees it on them.
+[[status]]
+id = "spun"
+name = "Web spun"
+max = 100
+stacking = "refresh"
+eases = 6

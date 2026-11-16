@@ -118,6 +118,7 @@ above.
 | Terrain, walls, water, stairs, creatures following you on stairs | `terrain.md#walls`, `terrain.md#water`, `terrain.md#stairs` |
 | Deep water, swimming | `terrain.md#deep-water` |
 | Webs, getting caught, burning webs | `terrain.md#webs` |
+| Spiders spinning webs | `creature-tricks.md#spinners` |
 | Digging, wall hardness | `digging.md#digging`, `digging.md#what-breaks-and-what-does-not` |
 | Explosions, blasts | `digging.md#explosions` |
 | Mining, ore, smelting, veins, each dungeon's ores | `mining.md` (a find: `mining.md#mined-ID`, `mining.md#mined-iron`; a vein: `mining.md#vein-ID`, `mining.md#veins`) |
