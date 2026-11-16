@@ -229,8 +229,8 @@ mod webs;
 
 pub use action::{ActionCosts, ActionKind, BASE_TURN, COSTS, NORMAL_COST, price};
 pub use affix::{
-    AffixDef, AffixKind, Affixes, Effect, Group, ItemKind, MAX_ITEM_LEVEL, MAX_PER_KIND, MAX_SPEED,
-    Rarity, Tier,
+    AffixDef, AffixKind, Affixes, Effect, Group, ItemKind, MAX_HINDRANCE, MAX_ITEM_LEVEL,
+    MAX_PER_KIND, MAX_SPEED, Rarity, Tier,
 };
 pub use alignment::{AlignmentRules, BandDef, ByAlignment, Shifts};
 pub use ally::AllyRules;

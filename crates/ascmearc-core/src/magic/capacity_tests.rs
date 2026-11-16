@@ -228,6 +228,7 @@ fn rare(affixes: Vec<Affix>) -> Magic {
         name: Some("Grim Bite".into()),
         identified: false,
         carried: 0,
+        curse_known: false,
         unique: None,
     }
 }

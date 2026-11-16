@@ -138,3 +138,10 @@ object = "gold_amulet"
 name = "Hollow Charm"
 affixes = ["of_sustenance:3", "of_health:2", "of_the_alchemist:2"]
 identified = true
+
+# A cursed ring (#1754), unidentified, past a gap east of the amulet: put on, it shows its curse
+# and will not come off; a temple would free the finger, the ring cursed still.
+[[item]]
+at = [46, 19]
+object = "iron_ring"
+affixes = ["of_hunger:2"]

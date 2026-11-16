@@ -223,6 +223,7 @@ fn sword(w: &World, rarity: Rarity, level: u8, affixes: &[(&str, u8)], known: bo
         name: (rarity == Rarity::Rare).then(|| "Grim Bite".into()),
         identified: known,
         carried: 0,
+        curse_known: false,
         unique: None,
     };
     Stack::with_magic(object(w, "long_sword"), 1, magic)

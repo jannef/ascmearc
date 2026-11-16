@@ -139,6 +139,7 @@ fn cause_id(world: &World, cause: ascmearc_core::world::Cause) -> String {
         Cause::Fall => "fell".into(),
         Cause::Fire => "burned".into(),
         Cause::Choked(_) => "choked".into(),
+        Cause::Drowned => "drowning".into(),
         Cause::Trap(t) => content.trap(t).id.clone(),
         Cause::Scroll(o) | Cause::Flask(o) => content.object(o).id.clone(),
         Cause::Spell(_) => "own_spell".into(),

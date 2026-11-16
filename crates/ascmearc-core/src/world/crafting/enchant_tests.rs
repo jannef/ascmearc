@@ -113,6 +113,7 @@ fn magic_sword(w: &mut World, affixes: &[&str], rare: bool, identified: bool) {
         name: rare.then(|| "Grim Bite".to_string()),
         identified,
         carried: 0,
+        curse_known: false,
         unique: None,
     };
     let sword = content.object_id("long_sword").expect("sword");
@@ -588,6 +589,7 @@ fn a_colour_with_nothing_left_to_bind_is_refused() {
         name: None,
         identified: true,
         carried: 0,
+        curse_known: false,
         unique: None,
     };
     w.player_mut()

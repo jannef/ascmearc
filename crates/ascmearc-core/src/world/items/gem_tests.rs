@@ -321,6 +321,7 @@ fn ornaments_go_in_the_naming_order_and_the_description() {
         name: None,
         identified: true,
         carried: 0,
+        curse_known: false,
         unique: None,
     };
     let own = sword().own_parts().expect("its pommel").to_vec();
@@ -337,6 +338,7 @@ fn ornaments_go_in_the_naming_order_and_the_description() {
     let unknown = Magic {
         identified: false,
         carried: 0,
+        curse_known: false,
         unique: None,
         ..magic.clone()
     };

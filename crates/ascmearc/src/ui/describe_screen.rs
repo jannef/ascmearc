@@ -38,6 +38,8 @@ pub struct DescribeScreen {
     /// What it is called, as the player knows it.
     title: String,
     rarity: Rarity,
+    /// Whether the player knows it is cursed: its name's color then.
+    cursed: bool,
     /// What the inventory says of it if it is worn or wielded: "wielded".
     mark: Option<String>,
     lines: Vec<Line>,
@@ -52,6 +54,7 @@ impl DescribeScreen {
             fg: TEXT,
             title: String::new(),
             rarity: Rarity::Normal,
+            cursed: false,
             mark: None,
             lines: Vec::new(),
         };
@@ -66,6 +69,7 @@ impl DescribeScreen {
             fg: view.lore().fg(stack),
             title: capitalized(&view.lore().title(stack)),
             rarity: stack.rarity(),
+            cursed: stack.known_cursed(content),
             mark: equipment::mark(content, view.equipment(), item),
             lines: view.describe_item(stack),
         }
@@ -133,7 +137,12 @@ impl DescribeScreen {
                 .chars()
                 .take((width - 2).max(0) as usize)
                 .collect();
-            console.print(x + 2, panel.y + 2, &name, rarity_color(self.rarity, TEXT));
+            console.print(
+                x + 2,
+                panel.y + 2,
+                &name,
+                rarity_color(self.rarity, self.cursed, TEXT),
+            );
         }
         for (i, row) in rows.iter().enumerate() {
             let y = panel.y + 4 + i as i32;

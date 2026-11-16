@@ -69,6 +69,7 @@ fn magic(content: &Content, object: &str, affixes: &[(&str, u8, i32)]) -> Stack 
         name: None,
         identified: false,
         carried: 0,
+        curse_known: false,
         unique: None,
     };
     let object = content.object_id(object).expect(object);

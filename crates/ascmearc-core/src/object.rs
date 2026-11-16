@@ -275,6 +275,30 @@ impl Stack {
         self.magic.as_ref().is_none_or(|m| m.identified)
     }
 
+    /// Whether it is cursed (#1754), whatever the player knows: for the rules.
+    pub(crate) fn is_cursed(&self, content: &Content) -> bool {
+        self.magic().is_some_and(|m| m.cursed(content))
+    }
+
+    /// Whether the player knows it is cursed: identified, or its curse shown by wearing or
+    /// throwing it ([`Magic::curse_known`]). What presentation may know of a curse.
+    pub fn known_cursed(&self, content: &Content) -> bool {
+        self.magic()
+            .is_some_and(|m| (m.identified || m.curse_known) && m.cursed(content))
+    }
+
+    /// Makes its curse known to the player, if it has one (#1754): put on or thrown. Whether it
+    /// is cursed.
+    pub(crate) fn show_curse(&mut self, content: &Content) -> bool {
+        let cursed = self.is_cursed(content);
+        if let Some(magic) = self.magic.as_deref_mut()
+            && cursed
+        {
+            magic.curse_known = true;
+        }
+        cursed
+    }
+
     /// What it rolled, if the player has identified it: all presentation may know of its magic.
     pub fn known_magic(&self) -> Option<&Magic> {
         self.magic().filter(|m| m.identified)
@@ -564,7 +588,15 @@ impl Stack {
         let names = self.names(content);
         let known = self.is_identified();
         let word = self.worked_word();
-        let text = name::describe(&names, word, self.count, self.magic(), known, content);
+        let cursed = self.known_cursed(content);
+        let text = name::describe(
+            &names,
+            word,
+            self.count,
+            self.magic(),
+            (known, cursed),
+            content,
+        );
         match self.light.word() {
             Some(mode) => format!("{text} ({mode})"),
             None => text,
@@ -602,7 +634,15 @@ impl Stack {
     pub(crate) fn describe_truth(&self, content: &Content) -> String {
         let names = self.names(content);
         let word = self.worked_word();
-        let mut text = name::describe(&names, word, self.count, self.magic(), true, content);
+        let cursed = self.is_cursed(content);
+        let mut text = name::describe(
+            &names,
+            word,
+            self.count,
+            self.magic(),
+            (true, cursed),
+            content,
+        );
         if let Some(mode) = self.light.word() {
             text += &format!(" ({mode})");
         }

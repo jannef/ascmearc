@@ -3,7 +3,7 @@
 use super::{
     Breakable, Burn, Content, ContentError, ContentFiles, CreatureId, DungeonDef, Landscape,
     LightId, LightPreset, TerrainDef, TerrainId, VisionProfile, campaign, danger, dungeon,
-    duplicate_id, load_table, terrain, validate::check_effects,
+    duplicate_id, level, load_table, terrain, validate::check_effects,
 };
 use crate::noise::MAX_LOUDNESS;
 use serde::Deserialize;
@@ -275,6 +275,7 @@ impl Content {
                 |name| (self.creature_id(name)).map(|c| (c, self.creature(c).level)),
                 key_id,
                 |name| self.trap_id(name),
+                |spec| level::parse_generated_hidden(spec, self),
                 &self.room_effects,
                 self.shops.as_ref(),
                 self.draw_odds,

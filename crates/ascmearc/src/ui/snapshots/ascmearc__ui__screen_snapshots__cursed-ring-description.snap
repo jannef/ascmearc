@@ -1,0 +1,26 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content)"
+---
+ You pick up an iron ring (magic).
+ You put on an iron ring (magic). It is cursed! It will not come off.
+
+
+
+
+
+
+                  ┌─ Item ───────────────────────────────────────────────────────┐
+                  │                                                              │
+                  │ = Iron ring (on left hand)                                   │
+                  │                                                              │
+                  │ Magic iron ring · iron · 10 g                                │
+                  │                                                              │
+                  │ Worn on a finger                                             │
+                  │                                                              │
+                  │ Cursed: once worn or wielded, it will not come off.          │
+                  │ Unidentified: what its magic does is unknown, though it      │
+                  │ works all the same.                                          │
+                  │                                                              │
+                  │ Esc close                                                    │
+                  └──────────────────────────────────────────────────────────────┘

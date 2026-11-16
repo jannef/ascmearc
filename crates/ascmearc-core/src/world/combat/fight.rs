@@ -100,6 +100,8 @@ pub enum Cause {
     Starvation,
     /// They choked to death on this, overeating.
     Choked(ObjectId),
+    /// They drowned in deep water (`world/levels/swim.rs`).
+    Drowned,
     /// A trap of this kind killed them.
     Trap(TrapId),
     /// The spell of a scroll of this kind they read caught them.
@@ -128,6 +130,7 @@ impl Cause {
             Cause::Fall => "Fell through a collapsed floor".into(),
             Cause::Fire => "Burned to death".into(),
             Cause::Choked(o) => format!("Choked to death on {}", what(o)),
+            Cause::Drowned => "Drowned in deep water".into(),
             Cause::Trap(t) => {
                 let name = &content.trap(t).name;
                 format!("Killed by {} {name}", article(name))
@@ -158,6 +161,7 @@ impl Cause {
             Cause::Choked(o) => {
                 format!("You choke to death on {}...", crate::content::the(&name(o)))
             }
+            Cause::Drowned => "You drown...".into(),
             Cause::Trap(_)
             | Cause::Scroll(_)
             | Cause::Flask(_)
@@ -198,6 +202,8 @@ pub(in crate::world) enum Harm {
     /// A fall through a collapsed floor: no one killed, and no one
     /// earns anything.
     Fall,
+    /// Deep water (`world/levels/swim.rs`): no one killed, and no one earns anything.
+    Drowning,
     /// Fire on the ground (`world/levels/fire.rs`): no one killed, and no one earns anything.
     Fire,
     /// What never kills: it leaves the last hit point (the plunge into freezing water; a disease
@@ -1229,6 +1235,10 @@ impl World {
             }
             Harm::Starving(when) => self.dies(id, None, None, when, events),
             Harm::Barbs => self.dies(id, None, None, self.state.time, events),
+            Harm::Drowning if id == self.state.player => {
+                self.die_of(Cause::Drowned, self.state.time);
+            }
+            Harm::Drowning => self.dies(id, None, None, self.state.time, events),
             Harm::Place | Harm::Fall | Harm::Fire => {
                 self.dies(id, None, None, self.state.time, events);
                 if id == self.state.player

@@ -144,7 +144,7 @@ The issue's list, each system with the hook it has, the candidate it would take,
 | Shops and favour | `appraise` (the one trade skill: `bargain` in `shop.rs`) | of Appraisal (§7) | **data** |
 | Stealing | `skill = steal` (trained gates it) | of the Cutpurse (§7) | **data** (helps the trained only) |
 | Damage types on weapons | Flaming, Freezing, Venomous (`elemental`, local) | the missing elements (§7) | **yes, data** (W1, decision 11) |
-| Negative affixes (cursed, of Hunger) | none exist; identification and the lists' colours would need them | — | **deferred to #196** (decision 8) |
+| Negative affixes (cursed, of Hunger) | none exist; identification and the lists' colours would need them | — | **deferred to #196** (decision 8); built as curses in #1754 |
 | Weather, sun, moon; wading and ice; travel; special rooms; prayer; services; bounties; talk; summoning; creature gear; danger; gems | no number of theirs is the wearer's | — | **no** |
 
 ## 7. The data-only batches: skill suffixes, elemental weapons, typed resistances
@@ -282,7 +282,7 @@ The owner answered the first draft's open questions q1 to q16, numbered as its �
 | 5 | A spell critical multiplier beside Baleful? | "no" | §4 |
 | 6 | Potent: as Keen mind (raising the tier's `max_lift`)? | "sure" | §4 |
 | 7 | of Siphoning for creatures' kills too? | "needs some limitations, like range or something". Read as a limit on the affix: a kill by the wearer's own blow, shot, or spell, the slain within **three cells** (`SIPHON_RANGE`); never a status tick's, a trap's, or a summon's kill. The same limit on its twin, of the Hunt, so the on-kill affixes have one rule. Creatures' own kills count under it. | §1, §4, §5, §8, §11, §13 (E1) |
-| 8 | Negative affixes now that categories exist? | "defer this idea to the deferred issue": a checklist line on #196. | §6 |
+| 8 | Negative affixes now that categories exist? | "defer this idea to the deferred issue": a checklist line on #196. Built later as curses (#1754, 2026-11-16): of Hunger, Leaden, Plodding, very rare, binding once worn, freed at a temple per slot (spec/11-magic.md "Curses", docs/dev/magic-items.md "Curses"). | §6 |
 | 9 | A `tool` item kind so pick-axes roll Delving themselves? | "sure, why not": `ItemKind::Tool` in F1, the pick-axe a base item with loot numbers in D1, Delving and Featherweight on tools, rare names for tools. | §1, §3, §6, §8, §13 |
 | 10 | A darkvision affix? | "no" | §6 |
 | 11 | Elemental weapon prefixes for electricity and acid? | "elemental damage should be implemented. i do not care how you schedule it, but it needs to be in some issue." Its own issue, W1: Shocking, Corrosive, Withering (force left as a resistance only, said why), the five typed resistances with them, the three old elemental prefixes regraded to the same ladder. | §1, §6, §7, §13 (W1) |

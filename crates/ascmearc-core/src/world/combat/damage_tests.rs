@@ -132,6 +132,7 @@ fn magic(id: &str, affix: &str, tier: u8, value: i32, identified: bool) -> Stack
         name: None,
         identified,
         carried: 0,
+        curse_known: false,
         unique: None,
     };
     let object = CONTENT.object_id(id).expect(id);

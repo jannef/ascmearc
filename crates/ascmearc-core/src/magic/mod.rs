@@ -72,6 +72,10 @@ pub struct Magic {
     /// up to what that asks.
     #[serde(default, skip_serializing_if = "is_zero")]
     pub carried: u32,
+    /// Whether the player knows it is cursed without having identified it (#1754): put on or
+    /// thrown, its curse showed itself. Which affix is the curse, and the rest, stay unknown.
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub curse_known: bool,
     /// The unique item it is (an id in `data/uniques/`), by which its
     /// power and lore are found: a rare item with its set name and affixes.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -111,6 +115,12 @@ impl Magic {
             &other.name,
             &other.unique,
         )
+    }
+
+    /// Whether it has a cursed affix (`AffixDef::cursed`, #1754): the truth, for the rules; what
+    /// the player knows of it is [`crate::object::Stack::known_cursed`].
+    pub fn cursed(&self, content: &Content) -> bool {
+        (self.affixes.iter()).any(|a| content.affixes().get(&a.id).is_some_and(|d| d.cursed))
     }
 
     /// Its affixes with their definitions, prefixes first (unknown ids, which a checked item does

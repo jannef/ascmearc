@@ -72,6 +72,7 @@ fn wear(w: &mut World, slot: &str, object: &str, id: &str, value: i32) {
         name: None,
         identified: false,
         carried: 0,
+        curse_known: false,
         unique: None,
     };
     let content = w.content().clone();

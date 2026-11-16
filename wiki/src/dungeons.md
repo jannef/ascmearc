@@ -147,6 +147,12 @@ On its third floor there is always the **kobolds' cache**: two
 [locked](chests.md#locked-chests) nor [trapped](chests.md#trapped-chests), filled as any chest of
 that floor would be. On the first floor the cave smells of wet stone and rats.
 
+Somewhere on its second floor, on a spot of plain cave floor, lies the top of the deep gnomes'
+**Skeul Hir**, a long stair down to [Gimmwīc](ascmearc.md#gimmwīc). It stays hidden until
+Headman Peran opens it for you ([quests](quests.md#who-gives-quests)); from then on it is stairs
+down there, and the floor shows it on your map. The spot differs from game to game, but in one
+game it never moves.
+
 **Cealdhlāw**, the cold barrow, is the first of the Ascmearc's deeper dungeons. Its way in is on the
 downs of Hlāwdūn, east of Cēaptūn. Its first two floors are the barrow's passages and chambers; the
 four below are the hollows of the hill, wide caves. It is [cold](temperature.md) (8 °C). Its traps

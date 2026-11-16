@@ -165,6 +165,7 @@ above.
 | Loot, item level | `magic-items.md#finding-them` |
 | Looking at an item, its description | `magic-items.md#looking-at-an-item` |
 | Unidentified, identify | `magic-items.md#unidentified-items` |
+| Cursed item, curse, of Hunger, Leaden, Plodding | `magic-items.md#cursed-items` |
 | Capacity, enchantments an item can bear, the trim | `magic-items.md#capacity` |
 | Deeper finds, better make and gems by item level | `magic-items.md#deeper-finds` |
 | Binding (a material's) | `magic-items.md#capacity`, `materials.md` |
@@ -346,7 +347,7 @@ above.
 | Familiar's sight | `familiars.md#familiars-sight` |
 | Hunter's bond, shared sight, shared buffs | `companions.md#hunters-bond` |
 | People, townsfolk, chatting, topics | `npcs.md#chatting` |
-| Services (cure, mending, identification, training) | `npcs.md#services` |
+| Services (cure, mending, identification, freedom from a curse, training) | `npcs.md#services` |
 | Alberich (teaches Mining) | `npcs.md#alberich` |
 | Eadric the smith (teaches Metalcraft) | `npcs.md#eadric-the-smith` |
 | Ceolred, the smith's apprentice (explains the materials) | `npcs.md#ceolred-the-smiths-apprentice` |

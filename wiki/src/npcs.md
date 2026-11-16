@@ -89,7 +89,7 @@ them all.
 ## Services
 
 A few people sell a **service** for [gold](shops.md#money): a cure, a mending, an
-identification, or training in a [skill](skills.md). Services are listed on their screen after their topics, with the price:
+identification, freedom from a curse, or training in a [skill](skills.md). Services are listed on their screen after their topics, with the price:
 `A cure for what ails you (60 gold)`. Pick one as you would a topic. If there is something to do
 and you carry the gold, you pay (the coins go into their purse) and they do it. It takes the time
 of a chat.
@@ -114,6 +114,12 @@ Negotiation now and then.
   many are in it, so three unknown things cost 300 gold. The list shows the price per thing, and
   before you pay a dialog tells you the total. You pay for all or nothing: with too little gold
   for the whole lot, nothing is identified. Each thing's true name is told as it is learned.
+- **Freedom from a curse** (the temples: Sister Hild in Cēaptūn, Mother Senara in Gimmwīc)
+  takes off every [cursed item](magic-items.md#cursed-items) you wear or wield, all at once, and
+  lays them at your feet. It looks only at what you wear and wield, never at your pack. It costs
+  **500 gold per cursed item** you wear or wield: a cursed ring and cursed boots cost 1000, and a
+  cursed two-handed weapon counts once. You pay for all or nothing. The items stay cursed:
+  put one on again and it binds you again.
 - **Training** teaches you a [skill](skills.md) you do not have yet. You start it at a low value
   (5), as if you had just picked it up, and it grows by use like any other. It is offered only
   while you are untrained in that skill: once you have it, it is gone from the list.
@@ -122,7 +128,7 @@ Negotiation now and then.
   [Metalcraft](skills.md#skill-metalcraft), which every smithing
   [recipe](skill-uses.md#professions) needs. [Old Tregear](#old-tregear), in Gimmwīc, teaches
   [Jewelcraft](skills.md#skill-jewelcraft).
-- With nothing to cure, mend, or identify, or a skill you already have, they tell you so, and you
+- With nothing to cure, mend, identify, or free, or a skill you already have, they tell you so, and you
   keep your gold. Without
   enough gold you are told "You cannot pay." Neither takes any time.
 - The **[Pious](talents-exploring.md#talent-pious)** talent ([Wayfarer](talents-exploring.md#wayfarer)) halves a

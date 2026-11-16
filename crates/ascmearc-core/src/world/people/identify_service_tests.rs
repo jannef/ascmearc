@@ -87,6 +87,7 @@ fn carry_ring(w: &mut World) {
         name: None,
         identified: false,
         carried: 0,
+        curse_known: false,
         unique: None,
     };
     w.player_mut()

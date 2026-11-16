@@ -167,7 +167,9 @@ impl World {
             if self.stance(player, target) == Stance::Hostile || self.dummy(target).is_some() {
                 return self.strike_at(target, seen, events);
             }
-            let refusal = (self.refusal(target)).or(self.swimming().then_some(Refusal::Water));
+            // One that swims may take the swimmer's place in the water (`swim.rs`).
+            let water = self.swimming() && !self.swims(target);
+            let refusal = (self.refusal(target)).or(water.then_some(Refusal::Water));
             if let Some(why) = refusal {
                 match self.wriggle(target, why, to, seen) {
                     Wriggled::No => {
@@ -636,7 +638,7 @@ pub(in crate::world) fn instantiate_level(
     crate::world::fixtures::graveyard::name_statues(state, content, id);
     crate::world::fixtures::graves::bury(state, content, id);
     // The hidden locations revealed before the level was made.
-    super::reveal::apply_revealed(state, id);
+    super::reveal::apply_revealed(state, content, id);
     // Under the open sky its water has frozen and thawed with the weather of the last weeks.
     state.pre_roll_ice(content, id);
     for spawn in &template.creatures {

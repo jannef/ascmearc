@@ -417,7 +417,7 @@ pub(super) struct AnimatedPlacement {
 }
 
 /// A legend entry's hidden location: the location's `id` (what quests' `reveals` name), the
-/// `terrain` the cell becomes (stairs down), the level `to` it leads, its `name`, and what the
+/// `terrain` the cell becomes (stairs), the level `to` it leads, its `name`, and what the
 /// player is told as a quest opens it (`opens`; default: the giver marks it on their map).
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -1245,13 +1245,44 @@ fn parse_place(detail: &LegendDetail) -> Result<Option<Place>, String> {
 
 /// A legend entry's hidden location on a cell of `terrain`: on
 /// the overworld or a hand-made level (never a vault: `Vault::new`), on a walkable cell that is
-/// no location already, becoming stairs down. Where it leads is checked with the other stairs'
-/// targets.
+/// no location already, becoming stairs (down, or up: Gimmwīc's long stair). Where it leads is
+/// checked with the other stairs' targets.
 fn parse_hidden(
     spec: &HiddenSpec,
     terrain: TerrainId,
     content: &Content,
 ) -> Result<HiddenLocation, String> {
+    let shown = content.terrain(terrain);
+    if !shown.walkable || shown.stairs.is_some() {
+        return Err(format!(
+            "hidden location `{}` lies on terrain `{}`: only on walkable terrain that is no \
+             location already",
+            spec.id, shown.id
+        ));
+    }
+    parse_hidden_way(spec, content)
+}
+
+/// A `[[dungeon.levels]]` row's `hidden` (`content/dungeon.rs`): a generated level's hidden
+/// location, on a cell of plain floor its generator picks (`mapgen/hidden.rs`). It is the far
+/// end of a hand-made level's hidden way (`Content::validate`), whose `opens` is the one said,
+/// so it has none of its own.
+pub(super) fn parse_generated_hidden(
+    spec: &HiddenSpec,
+    content: &Content,
+) -> Result<HiddenLocation, String> {
+    if spec.opens.is_some() {
+        return Err(format!(
+            "hidden location `{}`: a generated level's has no `opens` (its hand-made end's is \
+             said)",
+            spec.id
+        ));
+    }
+    parse_hidden_way(spec, content)
+}
+
+/// What a hidden location is, wherever it lies: an id, and stairs (up or down) it becomes.
+fn parse_hidden_way(spec: &HiddenSpec, content: &Content) -> Result<HiddenLocation, String> {
     let id = &spec.id;
     if !super::dialogue::is_id(id) {
         return Err(format!(
@@ -1259,19 +1290,11 @@ fn parse_hidden(
             super::dialogue::ID_SHAPE
         ));
     }
-    let shown = content.terrain(terrain);
-    if !shown.walkable || shown.stairs.is_some() {
-        return Err(format!(
-            "hidden location `{id}` lies on terrain `{}`: only on walkable terrain that is no \
-             location already",
-            shown.id
-        ));
-    }
     let entrance = (content.terrain_id(&spec.terrain))
         .ok_or_else(|| format!("hidden location `{id}`: unknown terrain `{}`", spec.terrain))?;
-    if content.terrain(entrance).stairs != Some(StairsDir::Down) {
+    if content.terrain(entrance).stairs.is_none() {
         return Err(format!(
-            "hidden location `{id}`: terrain `{}` is no way down",
+            "hidden location `{id}`: terrain `{}` is no way up or down",
             spec.terrain
         ));
     }
@@ -1538,6 +1561,7 @@ pub(super) fn magic_of(
         name,
         identified: false,
         carried: 0,
+        curse_known: false,
         unique: None,
     };
     magic.check(def, content)?;

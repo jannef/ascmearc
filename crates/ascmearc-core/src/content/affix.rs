@@ -34,6 +34,8 @@ pub const MAX_PER_KIND: usize = 3;
 /// The most an item's attack speed or its wearer's moving speed may be raised, in percent off
 /// the cost.
 pub const MAX_SPEED: i32 = 50;
+/// The most a curse may slow or weigh down (#1754), in percent more: at most double.
+pub const MAX_HINDRANCE: i32 = 100;
 
 /// What kind of item an object is, for magic (`kind` in `data/objects.toml`).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
@@ -464,6 +466,13 @@ impl Effect {
         matches!(self, Effect::Elemental | Effect::Resistance)
     }
 
+    /// Whether a curse may have it (`cursed = true`, #1754): an effect whose reader takes it the
+    /// other way, as a hindrance: hunger comes faster, the piece is heavier, its wearer steps
+    /// slower.
+    pub const fn may_be_cursed(self) -> bool {
+        matches!(self, Effect::Hunger | Effect::Weight | Effect::MoveSpeed)
+    }
+
     /// Whether it names a resource (`resource` in its affix): the pool whose maximum, pace,
     /// costs, or gains it changes.
     pub const fn is_pooled(self) -> bool {
@@ -574,6 +583,10 @@ pub struct AffixDef {
     pub bases: Vec<ItemKind>,
     /// How often it rolls among those that may (default 100).
     pub weight: u32,
+    /// Whether it is a curse (#1754): its effect works the other way (hunger comes faster, the
+    /// piece is heavier, its wearer slower: [`Effect::may_be_cursed`]), only found loot rolls it,
+    /// and what has one will not come off once worn or wielded.
+    pub cursed: bool,
     /// Tier 1 first, by item level.
     pub tiers: Vec<Tier>,
 }
@@ -787,6 +800,9 @@ struct AffixSpec {
     category: String,
     bases: Vec<String>,
     weight: Option<u32>,
+    /// Whether it is a curse: its effect the other way (`AffixDef::cursed`).
+    #[serde(default)]
+    cursed: bool,
     /// The skill an affix of effect `skill` adds to (an id in `data/skills/`).
     skill: Option<String>,
     /// The damage type an affix of effect `elemental` adds or one of effect `resistance`
@@ -949,6 +965,9 @@ impl AffixSpec {
             }
             (false, None) => None,
         };
+        if self.cursed && !effect.may_be_cursed() {
+            return Err(format!("effect `{}` cannot be a curse", effect.id()));
+        }
         let mut bases = Vec::new();
         for base in &self.bases {
             let k = ItemKind::from_id(base).ok_or_else(|| format!("unknown kind `{base}`"))?;
@@ -1012,6 +1031,7 @@ impl AffixSpec {
             resource,
             bases,
             weight: self.weight.unwrap_or(100),
+            cursed: self.cursed,
             tiers,
         })
     }

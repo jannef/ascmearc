@@ -158,6 +158,7 @@ fn protected_items_are_untouched() {
         name: unique.map(|_| "Widowmaker".into()),
         identified: false,
         carried: 0,
+        curse_known: false,
         unique: unique.map(String::from),
     };
     let unique = Stack::with_magic(sword, 1, magic(Some("widowmaker"), &[]));

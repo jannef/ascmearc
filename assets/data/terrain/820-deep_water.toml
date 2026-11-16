@@ -1,5 +1,5 @@
 # Deep water (Swim): not walkable, so it stays out of paths, travel, spawning,
-# teleports, and landings; `swim` lets a trained swimmer dive in, and nothing else. The overworld's
+# teleports, and landings; `swim` lets the player dive in, and a creature that `swims`. The overworld's
 # `lake` looks the same and stays as it is: nobody swims at map scale. It does not freeze.
 [[terrain]]
 id = "deep_water"

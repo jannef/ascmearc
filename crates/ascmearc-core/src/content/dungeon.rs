@@ -63,6 +63,10 @@
 //! danger = { base = 9, per_depth = 2 }   # default: the branch's (which it needs)
 //! room_effects = { chance = 40 } # default: the branch's (below), field by field
 //! dread_one_in = 50             # default: the branch's (which needs a `danger`)
+//! hidden = { id = "way", terrain = "stairs_down", to = "town", name = "The Way" }
+//!                               # a row of one level only: a hidden location on a cell of
+//!                               # floor its generator picks (`mapgen/hidden.rs`), the far end
+//!                               # of a hand-made level's hidden way of the same id
 //!
 //! [dungeon.endless]             # instead of `depth`: floors without end (`generator` is "rooms")
 //! caves = 15                    # percent of floors that are caves, the rest rooms
@@ -105,6 +109,7 @@ use super::danger::{
     CountSpec, DangerRule, DangerSpec, Odds, OddsSpec, SpawnSpec, Spawning, SpawningSpec, StrayPool,
 };
 use super::dread::{DreadCurve, DreadCurveSpec};
+use super::level::{HiddenLocation, HiddenSpec};
 use super::object::ObjectId;
 use super::room_effect::{RoomEffectId, RoomEffects};
 use super::shop::{ShopId, Shops};
@@ -488,6 +493,9 @@ struct LevelsSpec {
     /// Vaults (by id) stamped on each of these levels, and nowhere else.
     #[serde(default)]
     vaults: Vec<String>,
+    /// A hidden location the level keeps on a cell its generator picks (`mapgen/hidden.rs`); a
+    /// row of one level only.
+    hidden: Option<HiddenSpec>,
 }
 
 /// A branch's `[dungeon.portal]` table.
@@ -584,6 +592,9 @@ pub struct DungeonDef {
     /// The vaults (ids) each depth stamps for certain, index `depth - 1` (checked against the
     /// vaults by `Content::load_dungeons`).
     vaults: Vec<Vec<String>>,
+    /// The hidden location each depth keeps, by depth (a `[[dungeon.levels]]` row's `hidden`):
+    /// the far end of a hand-made level's hidden way (`Content::validate`).
+    hidden: BTreeMap<u32, HiddenLocation>,
 }
 
 impl DungeonDef {
@@ -643,6 +654,17 @@ impl DungeonDef {
         (self.row(depth))
             .and_then(|i| self.vaults.get(i))
             .map_or(&[], Vec::as_slice)
+    }
+
+    /// The hidden location level `depth` (1-based) keeps on a cell its generator picks
+    /// (`mapgen/hidden.rs`), if it keeps one.
+    pub fn hidden_location(&self, depth: u32) -> Option<&HiddenLocation> {
+        self.hidden.get(&depth)
+    }
+
+    /// Every hidden location of its levels, with its level's id, in depth order.
+    pub fn hidden_locations(&self) -> impl Iterator<Item = (String, &HiddenLocation)> {
+        (self.hidden.iter()).map(|(depth, h)| (self.level_id(*depth), h))
     }
 
     /// The layer boss of floor `depth`, if it has one (slain or not).
@@ -752,7 +774,8 @@ pub fn parse_branch_level(id: &str) -> Option<(&str, u32)> {
 impl DungeonFile {
     /// Validates every branch; `creature_id` resolves creature names (with their levels),
     /// `key_id` the names of keys (objects that open a lock), `trap_id` trap names; `rooms` and
-    /// `shops` are the shared special-room and shop odds a branch's own tables fall back to.
+    /// `shops` are the shared special-room and shop odds a branch's own tables fall back to;
+    /// `hidden` resolves a level's hidden location (`level.rs::parse_generated_hidden`).
     #[allow(clippy::too_many_arguments)]
     pub(super) fn resolve(
         self,
@@ -760,6 +783,7 @@ impl DungeonFile {
         creature_id: impl Fn(&str) -> Option<(CreatureId, u8)>,
         key_id: impl Fn(&str) -> Option<ObjectId>,
         trap_id: impl Fn(&str) -> Option<TrapId>,
+        hidden: impl Fn(&HiddenSpec) -> Result<HiddenLocation, String>,
         rooms: &RoomEffects,
         shops: Option<&Shops>,
         defaults: Option<Odds>,
@@ -929,6 +953,7 @@ impl DungeonFile {
                     None => {}
                 }
             }
+            let mut hidden_locations = BTreeMap::new();
             for l in &spec.levels {
                 let to = l.to.unwrap_or(l.from);
                 if l.from < 1 || to < l.from || to > depth_of {
@@ -937,6 +962,16 @@ impl DungeonFile {
                         l.from, depth_of
                     )));
                 }
+                // One cell on one level: a Pit's floors have none (nothing leads into a Pit).
+                let Some(h) = &l.hidden else { continue };
+                if to != l.from || spec.portal.is_some() {
+                    return Err(err(format!(
+                        "dungeon `{id}`: `hidden` belongs on a row of one level, not of a portal \
+                         branch"
+                    )));
+                }
+                let location = hidden(h).map_err(|m| err(format!("dungeon `{id}`: {m}")))?;
+                hidden_locations.insert(l.from, location);
             }
             let traps = (spec.traps.iter())
                 .map(|t| {
@@ -1021,6 +1056,7 @@ impl DungeonFile {
                 room_odds,
                 shop_odds,
                 vaults,
+                hidden: hidden_locations,
             });
         }
         Ok(defs)
@@ -1039,6 +1075,7 @@ mod tests {
             |c| (c == "rat").then_some((CreatureId(1), 1)),
             |k| (k == "key").then_some(ObjectId(2)),
             |t| (t == "pit").then_some(TrapId(0)),
+            |_| Err("no hidden locations here".into()),
             &rooms(),
             None,
             Some(Odds {

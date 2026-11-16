@@ -1224,7 +1224,7 @@ impl<'a> PerceptionView<'a> {
 
     /// Whether a step onto `to` would dive into deep water (Swim): from anything
     /// else, into water the player sees or remembers where no one they see is, and open to them:
-    /// an untrained or a Strained player is refused by the rules, with no question to ask. Water
+    /// a Strained player is refused by the rules, with no question to ask. Water
     /// they do not know is never stepped into: the rules stop them at it first (`world/levels/swim.rs`).
     pub fn dives_at(&self, to: Pos) -> bool {
         let swim = |p: Pos| match self.cell(p) {
@@ -1234,8 +1234,7 @@ impl<'a> PerceptionView<'a> {
         swim(to)
             && !swim(self.viewer())
             && self.actor_at(to).is_none()
-            && crate::world::shore_refusal(self.content, self.player, self.own_load().penalty())
-                .is_none()
+            && crate::world::shore_refusal(self.content, self.own_load().penalty()).is_none()
     }
 
     /// What the shop the player stands in offers for their own things among the inventory stacks

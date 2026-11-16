@@ -128,10 +128,15 @@ const MAGIC: Rgb = Rgb::new(0x96, 0xaa, 0xe6);
 /// ...and of rare ones, a pale yellow (paler than the accent, so a selection still stands out).
 const RARE: Rgb = Rgb::new(0xe6, 0xd8, 0x8c);
 
-/// The color of an item's name by its rarity, which the player always sees: `normal` for a
-/// normal one. The object's glyph keeps its own color.
-fn rarity_color(rarity: ascmearc_core::content::Rarity, normal: Rgb) -> Rgb {
+/// ...and of cursed ones the player knows of (#1754), whatever their rarity, a dull red.
+const CURSED: Rgb = Rgb::new(0xd0, 0x68, 0x60);
+
+/// The color of an item's name by its rarity, which the player always sees, or its curse once
+/// they know of it (`cursed`, `Stack::known_cursed`): `normal` for a normal one. The object's
+/// glyph keeps its own color.
+fn rarity_color(rarity: ascmearc_core::content::Rarity, cursed: bool, normal: Rgb) -> Rgb {
     match rarity {
+        _ if cursed => CURSED,
         ascmearc_core::content::Rarity::Normal => normal,
         ascmearc_core::content::Rarity::Magic => MAGIC,
         ascmearc_core::content::Rarity::Rare => RARE,

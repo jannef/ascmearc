@@ -29,6 +29,7 @@ fn magic_dagger(content: &Content, rarity: Rarity, identified: bool) -> Stack {
         name: (rarity == Rarity::Rare).then(|| "Grim Bite".into()),
         identified,
         carried: 0,
+        curse_known: false,
         unique: None,
     };
     Stack::with_magic(content.object_id("dagger").expect("dagger"), 1, magic)

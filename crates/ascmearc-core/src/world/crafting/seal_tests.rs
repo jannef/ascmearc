@@ -103,6 +103,7 @@ fn sword(w: &mut World, affixes: &[&str], rare: bool) {
         name: rare.then(|| "Grim Bite".to_string()),
         identified: true,
         carried: 0,
+        curse_known: false,
         unique: None,
     };
     let id = content.object_id("long_sword").expect("sword");

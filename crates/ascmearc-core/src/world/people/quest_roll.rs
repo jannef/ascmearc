@@ -27,10 +27,16 @@ use crate::world::{Spent, World, allies::beast_friend};
 
 impl World {
     /// Whether the player can enter dungeon branch `branch`: no hidden location of the run's
-    /// campaign leads into it, or each that does has been revealed.
+    /// campaign leads into it (to the level `branch`, or to its first floor), or each that does
+    /// has been revealed. A hidden way to a deeper floor (Gimmwīc's long stair to Lytelscræf 2)
+    /// is a shortcut, not the way in.
     pub(super) fn branch_open(&self, branch: &str) -> bool {
+        let way_in = |to: &str| {
+            to == branch
+                || (self.content.branch_level(to)).is_some_and(|(d, n)| d.id == branch && n == 1)
+        };
         (self.content.hidden_locations(&self.state.campaign)).all(|(_, _, h)| {
-            let into = (h.to.as_deref()).is_some_and(|to| self.content.is_in(to, branch));
+            let into = h.to.as_deref().is_some_and(way_in);
             !into || self.state.revealed.contains(&h.id)
         })
     }

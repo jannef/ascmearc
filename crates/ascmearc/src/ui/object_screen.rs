@@ -370,8 +370,9 @@ struct Entry {
     mark: Option<String>,
     /// Grams.
     weight: u64,
-    /// Its name's color: by its rarity.
+    /// Its name's color: by its rarity, or its curse once known.
     rarity: Rarity,
+    cursed: bool,
     /// A scroll read at a cell (a spell): choosing it to read aims it.
     aimed: bool,
     /// The scroll of identify: choosing it to read asks what to read it on (any other scroll
@@ -505,6 +506,7 @@ impl ObjectScreen {
                     mark: (!marks.is_empty()).then(|| marks.join(") (")),
                     weight: s.weight(content),
                     rarity: s.rarity(),
+                    cursed: s.known_cursed(content),
                     aimed: reading(s).is_some_and(|r| r.aimed()),
                     identify: reading(s).is_some_and(|r| r.on_item()),
                     study,
@@ -888,7 +890,12 @@ impl ObjectScreen {
             let room = (weight_x - name_x - 1).max(0) as usize;
             let mark = (entry.mark.as_ref()).map_or(String::new(), |m| format!(" ({m})"));
             let name: String = format!("{}{mark}", entry.name).chars().take(room).collect();
-            console.print(name_x, y, &name, rarity_color(entry.rarity, color));
+            console.print(
+                name_x,
+                y,
+                &name,
+                rarity_color(entry.rarity, entry.cursed, color),
+            );
             console.print(weight_x, y, &weight, TEXT_DIM);
         }
         let below = panel.y + panel.h - 2 - gap - summary.len() as i32;

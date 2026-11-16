@@ -369,7 +369,7 @@ fn content_checks_hidden_locations_and_reveals() {
             hidden("mountains", "dungeon_entrance", "depths:1"),
             "only on walkable",
         ),
-        (hidden("swamp", "swamp", "depths:1"), "is no way down"),
+        (hidden("swamp", "swamp", "depths:1"), "is no way up or down"),
         (
             hidden("swamp", "nothing", "depths:1"),
             "unknown terrain `nothing`",

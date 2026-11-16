@@ -1,4 +1,4 @@
-//! Deep water (Swim; `world/levels/swim.rs`, #1019).
+//! Deep water (Swim; `world/levels/swim.rs`, #1019, #1752).
 
 use crate::burden::Burden;
 use crate::content::ContentFiles;
@@ -149,7 +149,15 @@ fn the_terrain_loads_as_the_issue_has_it_and_a_walkable_one_is_refused() {
     assert!(!lake.swim, "the overworld's lake is unchanged");
     assert_eq!((def.fg, def.bg), (lake.fg, lake.bg));
     let rules = content.swim().expect("data/rules/swim.toml");
-    assert_eq!((rules.difficulty, rules.per_burden, rules.cold), (11, 2, 1));
+    assert_eq!(
+        (
+            rules.difficulty,
+            rules.untrained,
+            rules.per_burden,
+            rules.worn
+        ),
+        (11, 3, 6, 2000)
+    );
 
     let mut files = files();
     files.replace_in_table(
@@ -162,11 +170,16 @@ fn the_terrain_loads_as_the_issue_has_it_and_a_walkable_one_is_refused() {
 }
 
 #[test]
-fn the_shore_refuses_the_untrained_and_the_strained_with_no_time() {
+fn the_shore_asks_the_untrained_too_and_refuses_the_strained_with_no_time() {
     let mut w = swimmer(1);
     set_swim(&mut w, None);
-    refused(&mut w, Action::Move(Dir::E), "You cannot swim.");
-    assert!(!w.perception().dives_at(Pos::new(3, 2)), "nothing to ask");
+    hardy(&mut w);
+    assert!(
+        w.perception().dives_at(Pos::new(3, 2)),
+        "it asks the untrained"
+    );
+    assert!(w.apply(&Action::Move(Dir::E)).took_turn);
+    assert_eq!(w.player_pos(), Pos::new(3, 2), "anyone may go in");
 
     let mut w = swimmer(1);
     assert!(w.perception().dives_at(Pos::new(3, 2)), "it asks");
@@ -177,8 +190,9 @@ fn the_shore_refuses_the_untrained_and_the_strained_with_no_time() {
 }
 
 #[test]
-fn going_in_needs_no_check_and_a_step_in_the_water_asks_none_of_the_shore() {
+fn going_in_always_goes_in_and_a_step_in_the_water_asks_none_of_the_shore() {
     let mut w = swimmer(1);
+    hardy(&mut w);
     let out = w.apply(&Action::Move(Dir::E));
     assert!(out.took_turn);
     assert_eq!(w.player_pos(), Pos::new(3, 2));
@@ -214,8 +228,22 @@ fn water_found_in_the_dark_stops_the_player_so_the_next_step_can_ask() {
     assert_eq!(w.player_pos(), east);
 }
 
+/// Hit points the player cannot run out of in a test's few turns of failed checks.
+fn hardy(w: &mut World) {
+    w.player_mut().hp = 100_000;
+}
+
+/// A failed check's harm: from 10 % to 34 % of maximum hit points, rounded up.
+#[track_caller]
+fn harmed_by_degree(w: &World, before: i32) {
+    let max = w.state.player().max_hp(w.content());
+    let lost = before - w.state.player().hp;
+    let (least, most) = ((max * 10 + 99) / 100, (max * 34 + 99) / 100);
+    assert!((least..=most).contains(&lost), "{lost} of {max}");
+}
+
 #[test]
-fn a_made_step_moves_at_its_price_and_a_failed_one_costs_the_turn_and_a_hit_point() {
+fn a_made_step_moves_at_its_price_and_a_failed_one_costs_the_turn_and_hit_points() {
     let mut made = seed_where(true, in_water);
     let hp = made.state.player().hp;
     let time = made.state.time;
@@ -229,13 +257,13 @@ fn a_made_step_moves_at_its_price_and_a_failed_one_costs_the_turn_and_a_hit_poin
     let time = failed.state.time;
     assert!(failed.apply(&Action::Move(Dir::E)).took_turn);
     assert_eq!(failed.player_pos(), Pos::new(5, 3));
-    assert_eq!(failed.state.player().hp, hp - 1);
+    harmed_by_degree(&failed, hp);
     assert!(failed.state.time > time);
     assert!(
         failed
             .messages()
             .iter()
-            .any(|m| m.text.contains("tread water"))
+            .any(|m| m.text.contains("make no headway"))
     );
 }
 
@@ -255,12 +283,14 @@ fn a_step_out_of_the_water_is_a_stroke_too() {
 }
 
 #[test]
-fn the_cold_never_takes_the_last_hit_point() {
+fn a_failed_check_can_drown_the_player() {
     let mut w = seed_where(false, in_water);
     w.player_mut().hp = 1;
     w.apply(&Action::Move(Dir::E));
-    assert_eq!(w.state.player().hp, 1);
-    assert!(w.state.death.is_none());
+    let death = w.state.death.clone().expect("drowned");
+    assert_eq!(death.cause, Some(Cause::Drowned));
+    assert_eq!(Cause::Drowned.epitaph(w.content()), "Drowned in deep water");
+    assert!(w.messages().iter().any(|m| m.text == "You drown..."));
 }
 
 /// How many of `seeds` strokes are made under `burden`.
@@ -277,32 +307,114 @@ fn made_of(burden: Burden, seeds: u64) -> u64 {
 }
 
 #[test]
-fn each_level_of_burden_makes_a_stroke_harder_and_a_strained_swimmer_can_still_swim() {
-    let (free, burdened, strained) = (
+fn each_level_of_burden_makes_a_stroke_much_harder() {
+    let (free, burdened) = (
         made_of(Burden::Unburdened, 300),
         made_of(Burden::Burdened, 300),
-        made_of(Burden::Strained, 300),
     );
-    assert!(
-        free > burdened && burdened > strained,
-        "{free} {burdened} {strained}"
-    );
-    assert!(strained > 0, "harder, but they still swim");
+    assert!(free > burdened + 60, "{free} {burdened}");
 }
 
 #[test]
-fn a_step_in_the_water_draws_only_its_check_and_a_wait_asks_none() {
+fn the_difficulty_grows_untrained_burdened_and_by_the_weight_worn() {
+    let mut w = in_water(1);
+    let content = w.content().clone();
+    let rules = content.swim().expect("rules").clone();
+    let worn = |w: &World| {
+        let me = w.state.player();
+        let grams: u64 = (me.equipment.items().into_iter())
+            .map(|(_, at)| me.inventory[at].weight(&content))
+            .sum();
+        i32::try_from(grams / 2000).expect("grams")
+    };
+    let of =
+        |w: &World, burden| super::swim::difficulty(&content, &rules, w.state.player(), burden);
+    let dressed = worn(&w);
+    assert_eq!(of(&w, Burden::Unburdened), 11 + dressed);
+    assert_eq!(of(&w, Burden::Burdened), 17 + dressed);
+    set_swim(&mut w, None);
+    assert_eq!(of(&w, Burden::Unburdened), 14 + dressed, "untrained");
+    set_swim(&mut w, Some(50));
+    // Plate (22 kg) adds 11 by itself.
+    let plate = content.object_id("plate_armour").expect("plate");
+    let me = w.player_mut();
+    me.inventory.push(Stack::new(plate, 1));
+    let item = me.inventory.len() - 1;
+    hardy(&mut w);
+    w.apply(&format!("equip:body:{item}").parse().expect("equip"));
+    assert!(worn(&w) >= dressed + 11, "{}", worn(&w));
+    assert_eq!(of(&w, Burden::Unburdened), 11 + worn(&w));
+}
+
+#[test]
+fn the_untrained_fail_far_more_often() {
+    let made = |swim: Option<u16>| {
+        (0..300)
+            .filter(|&seed| {
+                let mut w = in_water(seed);
+                set_swim(&mut w, swim);
+                let from = w.player_pos();
+                w.apply(&Action::Move(Dir::E));
+                w.player_pos() != from
+            })
+            .count()
+    };
+    let (trained, untrained) = (made(Some(50)), made(None));
+    assert!(trained > untrained + 50, "{trained} {untrained}");
+}
+
+#[test]
+fn every_turn_in_the_water_is_one_check_and_a_step_is_not_checked_twice() {
     for seed in 0..20 {
         let mut w = in_water(seed);
+        hardy(&mut w);
         let expected = draws(&w) + 1;
-        w.stroke_fails(&mut Vec::new());
-        assert_eq!(draws(&w), expected, "seed {seed}");
+        w.apply(&Action::Move(Dir::E));
+        assert_eq!(draws(&w), expected, "a stroke: seed {seed}");
+        let expected = draws(&w) + 1;
+        let at = w.player_pos();
+        assert!(w.apply(&Action::Wait).took_turn);
+        assert_eq!(draws(&w), expected, "a wait: seed {seed}");
+        assert_eq!(w.player_pos(), at);
     }
-    let mut w = in_water(7);
+    // A wait whose check fails hurts by its degree, and the player stays where they are.
+    let mut w = (0..2000)
+        .map(in_water)
+        .find(|w| {
+            let mut w = w.clone();
+            let hp = w.state.player().hp;
+            w.apply(&Action::Wait);
+            w.state.player().hp < hp
+        })
+        .expect("a seed");
     let hp = w.state.player().hp;
-    assert!(w.apply(&Action::Wait).took_turn);
-    assert_eq!(w.state.player().hp, hp, "a wait asks no check");
+    w.apply(&Action::Wait);
+    harmed_by_degree(&w, hp);
     assert_eq!(w.player_pos(), Pos::new(5, 3));
+    assert!(
+        (w.messages().iter())
+            .any(|m| m.text == "You swallow water." || m.text == "You go under and choke."),
+        "{}",
+        last(&w)
+    );
+}
+
+#[test]
+fn water_walking_asks_no_check() {
+    let mut w = in_water(1);
+    water_borne(&mut w);
+    for _ in 0..30 {
+        let (hp, rng) = (w.state.player().hp, draws(&w));
+        w.apply(&Action::Wait);
+        assert_eq!((w.state.player().hp, draws(&w)), (hp, rng));
+    }
+}
+
+/// The player borne up by Water walking's status: no checks for as long as a test needs.
+fn water_borne(w: &mut World) {
+    let status = w.content().status_id("water_borne").expect("water_borne");
+    let player = w.state.player;
+    w.afflict(player, status, 6, None, &mut Vec::new());
 }
 
 #[test]
@@ -323,16 +435,17 @@ fn marks_fall_on_steps_in_the_water_and_never_on_wade() {
     let kobold = (w.state.actors.keys().copied()).find(|id| *id != w.state.player);
     w.state.actors.remove(&kobold.expect("the kobold"));
     set_swim(&mut w, Some(50));
+    hardy(&mut w);
     let marks = |w: &World| {
         (w.state.player().skills.iter())
             .find(|(id, _)| *id == swim(w))
             .map_or(0, |(_, t)| t.marks)
     };
-    // Going in is no step in it.
+    // Going in earns no wading mark; its turn in the water is a check, which earns its own.
     w.apply(&Action::Move(Dir::E));
-    assert_eq!(marks(&w), 0);
-    // Made or not, a stroke earns its mark.
-    for n in 1..=6 {
+    assert_eq!(marks(&w), 1);
+    // Made or not, a stroke earns its mark, once.
+    for n in 2..=7 {
         let from = w.player_pos();
         w.apply(&Action::Move(Dir::SE));
         assert_eq!(marks(&w), n, "a stroke from {from:?}");
@@ -372,7 +485,9 @@ fn in_the_water_nothing_is_dropped_or_taken_and_no_one_rests_or_searches_or_digs
         "You cannot search in deep water.",
     );
     refused(&mut w, Action::Dig(Dir::E), "You cannot dig in deep water.");
-    // A wait (a turn of searching, #1326) goes on, treading water, without looking around.
+    // A wait (a turn of searching, #1326) goes on, treading water, without looking around (borne
+    // up, so that no Swim check trains either).
+    water_borne(&mut w);
     let training = w.state.training.clone();
     assert!(w.apply(&Action::Wait).took_turn, "a wait goes on");
     assert!(
@@ -435,6 +550,7 @@ fn a_creature_goes_around_and_waits_on_the_shore_and_strikes_only_from_beside() 
         w.content().terrain(t).swim
     };
     place(&mut w, Pos::new(5, 3));
+    water_borne(&mut w);
     w.player_mut().hp = 100;
     for _ in 0..40 {
         w.apply(&Action::Wait);
@@ -460,6 +576,7 @@ fn an_ally_stays_ashore_and_will_not_be_swapped_into_the_water() {
         w.content().terrain(t).swim
     };
     place(&mut w, Pos::new(5, 3));
+    water_borne(&mut w);
     for _ in 0..30 {
         w.apply(&Action::Wait);
         assert!(!water(&w, w.state.actors[&wolf].pos));

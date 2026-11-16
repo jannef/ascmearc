@@ -300,7 +300,7 @@ mods/pride_month ...`; `replay --create` records the mods, and `replay --verify`
   named from the petrified, the rest laid in Līctūn's graves and crypts; out of the state hash;
   docs/dev/saves.md "The graveyard", docs/dev/graves.md).
 - `gen` prints ground truth: `*` = light placed on floor, `&` = locked door, `S` = secret door;
-  `^` = a trap, hidden ones too; a layer boss's lair prints its `hidden stairs` line; `⊟` = a
+  `^` = a trap, hidden ones too; a layer boss's lair and a hidden way's far end print a `hidden stairs` line; `⊟` = a
   chest, locked or trapped or not; `V` = an ore vein, hidden in the rock too; a special room's
   floor by its effect's letter. It previews local areas of a campaign's overworld too, `--level
   local:49,23`, `--campaign showcase` the default.

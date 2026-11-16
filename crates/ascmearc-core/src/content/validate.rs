@@ -40,6 +40,7 @@ impl Content {
                 }
             }
         }
+        self.check_generated_hidden(&hidden_ids)?;
         for level in self.levels.values() {
             let campaign = self.level_campaign(&level.id).unwrap_or_default();
             // Nothing leads into a Pit but a portal.
@@ -146,6 +147,42 @@ impl Content {
                 character
                     .check(self)
                     .map_err(|m| ContentError::new(&file, format!("character: {m}")))?;
+            }
+        }
+        Ok(())
+    }
+
+    /// A generated level's hidden location (`[[dungeon.levels]]`'s `hidden`) is the far end of a
+    /// hidden way: a hand-made level of its campaign hides one of the same id (`placed`, by
+    /// campaign and id), the two lead to each other's levels, and no other generated level
+    /// hides that id. One reveal opens both ends (`world/levels/reveal.rs`).
+    fn check_generated_hidden(
+        &self,
+        placed: &BTreeMap<(&str, &str), &str>,
+    ) -> Result<(), ContentError> {
+        let mut seen: BTreeMap<(&str, &str), String> = BTreeMap::new();
+        for def in self.dungeons.values() {
+            let campaign = def.campaign.as_deref().unwrap_or_default();
+            for (level, hidden) in def.hidden_locations() {
+                let err = |m: String| {
+                    ContentError::new(
+                        "data/dungeons/",
+                        format!("dungeon `{}`: hidden location `{}` {m}", def.id, hidden.id),
+                    )
+                };
+                if let Some(first) = seen.insert((campaign, &hidden.id), level.clone()) {
+                    return Err(err(format!("is kept on level `{first}` already")));
+                }
+                let twin = placed.get(&(campaign, hidden.id.as_str())).copied();
+                let back = twin.and_then(|l| self.levels.get(l)).and_then(|l| {
+                    (l.hidden.values()).find(|h| h.id == hidden.id && h.to.as_ref() == Some(&level))
+                });
+                if back.is_none() || twin != hidden.to.as_deref() {
+                    return Err(err(format!(
+                        "is no far end: a hand-made level of its campaign hides the same id, \
+                         leading to `{level}`, and it leads there"
+                    )));
+                }
             }
         }
         Ok(())

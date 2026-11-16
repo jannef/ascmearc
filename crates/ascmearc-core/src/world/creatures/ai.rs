@@ -512,7 +512,8 @@ impl World {
             return Some(strike);
         }
         let taken = self.state.actor_at(&self.state.current_level, spot);
-        let solid = !self.state.current().is_walkable(&self.content, spot);
+        let solid = (self.state.current().terrain.get(spot))
+            .is_none_or(|t| !self.open_to(id, self.content.terrain(*t)));
         let reach = i32::from(solid || taken.is_some_and(|a| a.id != id));
         match self.route(id, spot, reach, |q| q.chebyshev(spot) <= reach) {
             Route::Step(dir) => Some(Plan::Step(dir)),
@@ -570,6 +571,8 @@ impl World {
         let fire = (self.content.fire())
             .filter(|_| !level.burning.is_empty() && !self.fireproof(id))
             .map_or(0, |rules| rules.avoid);
+        // One that swims goes through deep water as over ground (`swim.rs`).
+        let open = |def: &crate::content::TerrainDef| self.open_to(id, def);
         let cost = |p: Pos| {
             let Some(def) = level.terrain.get(p).map(|t| self.content.terrain(*t)) else {
                 return Cost::Impassable;
@@ -577,7 +580,7 @@ impl World {
             if shuns(p) {
                 return Cost::Impassable;
             }
-            let enter = if def.walkable {
+            let enter = if open(def) {
                 1
             } else if phaseable(p) {
                 1 + super::incorporeal::WALL
@@ -605,7 +608,8 @@ impl World {
             bound: (me.pos.chebyshev(target) + SEARCH_MARGIN).min(SEARCH_LIMIT),
         };
         let free_goal = |p: Pos| {
-            goal(p) && !occupied(p) && (level.is_walkable(&self.content, p) || phaseable(p))
+            let def = level.terrain.get(p).map(|t| self.content.terrain(*t));
+            goal(p) && !occupied(p) && (def.is_some_and(open) || phaseable(p))
         };
         match search.first_step(cost, free_goal) {
             Some(dir) if occupied(me.pos.step(dir)) => Route::Wait,
@@ -681,7 +685,9 @@ impl World {
         }
         // An overloaded creature cannot move: it waits.
         let overloaded = !self.load_of(id).penalty().can_move();
-        if !(def.walkable || through) || overloaded || self.state.actor_at(&level.id, to).is_some()
+        if !(self.open_to(id, def) || through)
+            || overloaded
+            || self.state.actor_at(&level.id, to).is_some()
         {
             return Stepped::Blocked;
         }

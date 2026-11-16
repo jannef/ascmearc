@@ -37,8 +37,12 @@ pub struct AffixWorth {
 
 impl MagicWorth {
     /// `worth` (one item as made) with its magic added, as the player knows it: the rarity's
-    /// percent (rounded down) always, and each affix's gold once `magic` is identified.
+    /// percent (rounded down) always, and each affix's gold once `magic` is identified. A
+    /// curse the player knows of (#1754) makes the magic worth nothing: the item as made.
     pub fn add(&self, content: &Content, worth: u64, magic: &Magic) -> u64 {
+        if (magic.identified || magic.curse_known) && magic.cursed(content) {
+            return worth;
+        }
         let percent = match magic.rarity {
             Rarity::Normal => 0,
             Rarity::Magic => self.rarity.magic,

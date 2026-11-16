@@ -83,6 +83,7 @@ fn amulet(w: &mut World, who: ActorId, affix: Option<(&str, i32)>) {
                 name: None,
                 identified: true,
                 carried: 0,
+                curse_known: false,
                 unique: None,
             },
         ),

@@ -89,9 +89,11 @@ impl World {
             return;
         };
         let held = self.state.player().equipment.get(hand);
+        // A cursed weapon will not leave the hand (`curse.rs`).
         let Some(item) = held.filter(|&i| {
             (self.state.player().inventory.get(i))
                 .is_some_and(|s| content.object(s.object).attack.is_some())
+                && !self.bound(i)
         }) else {
             return;
         };

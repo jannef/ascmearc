@@ -45,6 +45,9 @@
 #   mana         mana beyond its mental stats' modifiers (default 0): a caster's and a
 #                summoner's pool, spent by each spell or summoning and back at the usual pace
 #   opens_doors  whether it opens closed doors in its way (default false)
+#   swims        whether it swims (default false): it goes into deep water, chasing, fleeing,
+#                and pathing through it as over ground, and always makes its Swim checks; it
+#                spawns and wanders on land like any other. Without it, it never goes in
 #   lurks        whether it lurks (default false): a hostile it
 #                sees, it waits for where it stands (shooting from there if it can) until the
 #                hostile is beside it or it has been harmed, then fights as any creature

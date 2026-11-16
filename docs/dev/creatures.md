@@ -114,7 +114,8 @@ without it everyone is neutral, but then no creature may name a faction; monster
 player but for the two story feuds, Seelie and wrathful fey against the Unseelie and demons
 against devils, #612, the tribes' old feuds kept as comments; a level that wants a brawl gives
 one side a faction of its own by a legend override, as the arena's rats are `arena_rats`) and per creature type
-`faction`, `vision`, `sight`, `combat` (`melee`/`ranged`/`caster`/`dragon`), `range`, `opens_doors`, `lurks`
+`faction`, `vision`, `sight`, `combat` (`melee`/`ranged`/`caster`/`dragon`), `range`, `opens_doors`,
+`swims` (deep water is open to its steps and paths; `docs/dev/skills.md` "Deep water"), `lurks`
 (unharmed, it waits where it stands for a hostile it sees to come beside it; `world/combat/lurk.rs`, one
 branch on `ai.rs::fight`'s plan; the meenlock and the barrow spider),
 `alignment` and `race` (`docs/dev/alignment.md`; read a creature's with `Actor::nature`, never the

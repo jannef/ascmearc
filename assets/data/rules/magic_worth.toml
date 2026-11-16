@@ -5,7 +5,8 @@
 #
 # Only what the player knows is priced (the keeper knows no more): the rarity always (it shows
 # at once), the affixes once the item is identified. A shop's bill keeps an item as it was when
-# it was taken (docs/dev/shops.md).
+# it was taken (docs/dev/shops.md). A curse the player knows of (#1754) makes the magic worth
+# nothing: a cursed item sells for what it is made of alone.
 #
 # Fields:
 #   rarity   percent added to the item's worth as made: `magic`, `rare` (a unique is rare)

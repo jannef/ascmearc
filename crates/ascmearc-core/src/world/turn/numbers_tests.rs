@@ -27,6 +27,7 @@ fn magic(w: &World, object: &str, affixes: &[(&str, i32)], identified: bool) -> 
         name: None,
         identified,
         carried: 0,
+        curse_known: false,
         unique: None,
     };
     Stack::with_magic(w.content().object_id(object).expect("object"), 1, magic)

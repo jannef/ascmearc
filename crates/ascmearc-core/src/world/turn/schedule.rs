@@ -232,7 +232,10 @@ impl World {
         // Undertow (a Water-born's pick) or Water walking bears. Swim spares a part of it, never
         // more.
         if self.wading_step(to) {
-            let free = talents.movement.swimmer || actor.wades_free(&self.content);
+            // A creature that swims swims deep water at a plain step's price (`swim.rs`).
+            let free = talents.movement.swimmer
+                || actor.wades_free(&self.content)
+                || (to.swim && self.content.creature(actor.creature).swims);
             let spared = if free {
                 100
             } else {
@@ -327,6 +330,8 @@ impl World {
         self.mutters.clear();
         // What the player notices in passing where their turn left them.
         self.notice_hidden();
+        // A turn in deep water is a Swim check (`swim.rs`).
+        self.afloat(events);
         let price = price.saturating_add(self.faint());
         let player = self.state.player;
         let level = &self.state.current_level;

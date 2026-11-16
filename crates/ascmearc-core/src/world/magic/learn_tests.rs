@@ -510,6 +510,7 @@ fn wear_scholar(w: &mut World, value: i32) {
         name: None,
         identified: false,
         carried: 0,
+        curse_known: false,
         unique: None,
     };
     let object = content.object_id("iron_ring").expect("object");

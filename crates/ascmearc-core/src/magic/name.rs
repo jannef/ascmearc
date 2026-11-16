@@ -3,7 +3,9 @@
 //! - normal: "a long sword";
 //! - magic: its prefix and suffix around the base name, "a Sharp long sword of the Bear";
 //! - rare: its name, then the base, "Grim Bite, a long sword";
-//! - unidentified: the base and the rarity, "a long sword (magic)", "12 arrows (rare)".
+//! - unidentified: the base and the rarity, "a long sword (magic)", "12 arrows (rare)";
+//! - cursed, once the player knows it (#1754): "cursed" after it, "a long sword (magic,
+//!   cursed)", "a Leaden long sword (cursed)".
 //!
 //! The base is the item as it is made (`Stack::names`): its gems and precious metals show,
 //! identified or not, between the prefix and the base ("a Sharp emerald-pommelled long sword of
@@ -20,13 +22,13 @@ use crate::text::article;
 
 /// `count` of an item called `names` (singular and plural, as it is made) with `magic` in
 /// words, as the player knows it: with `known` false (not identified) only its rarity shows;
-/// `word` is what an anvil's work calls it.
+/// `word` is what an anvil's work calls it; `cursed` marks a curse the player knows of.
 pub(crate) fn describe(
     names: &(String, String),
     word: Option<&str>,
     count: u32,
     magic: Option<&Magic>,
-    known: bool,
+    (known, cursed): (bool, bool),
     content: &Content,
 ) -> String {
     // A proper name ("Gnægan the Rat King's corpse") takes no article.
@@ -38,9 +40,10 @@ pub(crate) fn describe(
         return base;
     };
     if !known {
-        return format!("{base} ({})", magic.rarity.word());
+        let curse = if cursed { ", cursed" } else { "" };
+        return format!("{base} ({}{curse})", magic.rarity.word());
     }
-    match (magic.rarity, &magic.name) {
+    let named = match (magic.rarity, &magic.name) {
         (Rarity::Rare, Some(name)) => format!("{name}, {base}"),
         _ => {
             let name = ahead(word, &magic_name(names, count, magic, content));
@@ -50,6 +53,10 @@ pub(crate) fn describe(
                 format!("{count} {name}")
             }
         }
+    };
+    match cursed {
+        true => format!("{named} (cursed)"),
+        false => named,
     }
 }
 
