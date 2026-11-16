@@ -1,5 +1,5 @@
-//! Services: who sells a cure, a mending, an identification, or a skill's training, and for how
-//! much.
+//! Services: who sells a cure, a mending, an identification, a curse lifted, or a skill's
+//! training, and for how much.
 
 use super::util::capital;
 use ascmearc_core::content::{Content, DialogueId, ServiceKind};
@@ -14,6 +14,12 @@ pub(super) fn services(content: &Content) -> String {
         for s in &d.services {
             let does = match (s.does, &s.train) {
                 (ServiceKind::Cure, _) => "ends every disease, even one not yet broken out".into(),
+                (ServiceKind::Decurse, _) => {
+                    "takes off every [cursed](magic-items.md#cursed-items) \
+                                              thing you wear or wield and lays it at your feet, \
+                                              still cursed"
+                        .into()
+                }
                 (ServiceKind::Identify, _) => "identifies everything carried that is not yet \
                                                known: magic items and scroll types"
                     .into(),
@@ -33,6 +39,7 @@ pub(super) fn services(content: &Content) -> String {
             };
             let price = match s.does {
                 ServiceKind::Identify => format!("{} gold per unidentified stack", s.price),
+                ServiceKind::Decurse => format!("{} gold per slot a cursed thing holds", s.price),
                 _ => format!("{} gold", s.price),
             };
             rows.push((who.clone(), s.name.clone(), does, price));

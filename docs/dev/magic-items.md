@@ -204,6 +204,40 @@ Featherweight, and of the Bear roll on tools (P1, #635), so loot finds a magic p
 that must be magic draws only bases some affix rolls on (`loot::can_be_magic`), and a magic
 item's shape only among those its base can take (`loot::rolls_any`).
 
+## Curses
+
+Curses (#1754; spec/11-magic.md "Curses"). A cursed affix is an `[[prefix]]`/`[[suffix]]` with
+`cursed = true` (`AffixDef::cursed`): only of an effect `Effect::may_be_cursed` names (`hunger`,
+`weight`, `move_speed`; the loader refuses the rest), in its good twin's category (of Hunger
+`hunger`, Leaden `weight`, Plodding `movement_speed`), weight 4. **Effects**: `Mods::add_magic`
+adds a curse's value negated, so each reader takes it the other way with no reader of its own:
+`World::hunger_percent` (subtracted: faster), `Stack::weight` through `mods::less` and steps
+through `mods::faster`, both taking a negative percent as that much more, at most
+`MAX_HINDRANCE` (100: double). A creature's slower steps keep `World::out_of_view_for` exact (it
+reads each creature's own step cost; only a hastening would break the rest batching).
+**Rolling**: only what is found: `make_from` lets curses in when it has a `Source` (floor and vault
+loot, creature gear, animated things), never for `loot::make` (a shop's `lay_out`, starting kits,
+the background's gifts, the crafting trade), `heirloom`/`favoured` (`affixed` with curses off),
+or enchanting (`roll_affix_within` and `rolls_within` leave curses out; `roll_affix` is loot's).
+About 0.4% of magic-or-rare finds carry one (`world/items/curse_tests.rs` measures it).
+**Knowledge**: `Magic::cursed` is the truth (`Stack::is_cursed`, crate-private); `Magic::curse_known`
+(saved, skipped when false) is the perceived fact that it is cursed without its affixes, set by
+`Stack::show_curse` when it is put on or thrown; `Stack::known_cursed` (identified or
+`curse_known`, and cursed) is what presentation reads: `name::describe` adds `cursed` ("(magic,
+cursed)", "... of Hunger (cursed)"), `describe::lines` a `Note` ("Cursed: ..."), `describe::phrase`
+the hindrance's words (`hindrance`), the UI's `rarity_color` its `CURSED` red, and
+`MagicWorth::add` makes known-cursed magic worth nothing. **Binding** (`world/items/curse.rs`):
+`World::bound` (worn or wielded and cursed); `refuse_bound` refuses, no time, in `equip_saying`
+(what would come off, the thing moved included), `remove`, `give_collar`; `without_bound` keeps
+bound stacks out of a drop (`drop_objects`) and a sale (`trade`); `knock_away` skips a bound
+weapon; `bind_if_cursed` shows the curse after `equip_saying` puts a thing on. **Throwing**:
+`World::throw` hands a cursed thing that fits the main hand to `throw_cursed`, which moves it into
+the main hand (`slots_taken`), what held it back to the pack, for the throw's price, or fails
+for nothing while a bound thing holds the hand. **Decursing**: `ServiceKind::Decurse`
+(docs/dev/npcs.md "Services"), `World::cursed_slots` and `World::decurse` (every bound stack off
+and onto the player's cell, still cursed, as `shed_unworn` drops). Shops never stock one
+(`lay_out` is `loot::make`). Tests: `world/items/curse_tests.rs`.
+
 ## Unique items
 
 Unique items (#423, docs/design/adventurers-guild.md §9) are data in

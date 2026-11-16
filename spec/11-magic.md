@@ -99,6 +99,14 @@ Part of the design document; the index is [`specification.md`](../specification.
 - Magic raises an item's worth: a magic or rare item is priced above its base item, and the price follows what the magic is.
 - Each unique is placed by content once; loot never makes one.
 
+### Curses
+
+- A few affixes are curses (#1754): of Hunger (hunger comes faster), Leaden (a heavier piece), Plodding (slower steps), each its good twin's effect the other way and of its category, so an item is never both. They are very rare, and only on what is found (loot, creature gear): never a shop's goods, a starting kit, an heirloom, a trader's offer, or enchanting.
+- A cursed item, once worn or wielded, will not come off: it cannot be taken off, swapped out, moved, dropped, sold, given, or knocked away ("Your iron ring will not come off.", no time). Everything else about it works.
+- A curse is hidden like any affix until identified; putting the item on (or trying to throw it) shows only that it is cursed, not which affix nor the rest. Known, it says "cursed" in its name and description and shows in a colour of its own; its magic adds nothing to its worth.
+- A cursed weapon is never thrown: it leaps into the main hand and binds there (what held the hand goes back to the pack), for the throw's time; with a bound thing in that hand already, the throw fails for nothing.
+- A temple frees what a curse holds: one price per slot a cursed item holds, worn and wielded things only, all at once or nothing. The items fall at the player's feet, still cursed: worn again, they bind again. No prayer or spell lifts a curse.
+
 ## Scrolls
 
 - Scrolls are read, used up, and cast their spell through the one cast path, free of mana. They never teach.

@@ -64,6 +64,10 @@ impl World {
             }
             return Spent::Nothing;
         };
+        // A cursed thing worn stays on (`curse.rs`).
+        if self.refuse_bound([item]) {
+            return Spent::Nothing;
+        }
         // An escort takes anything it can put on (`escort.rs`).
         if self.state.actors[&beast].escorting().is_some() {
             return self.give_escort(item, beast);

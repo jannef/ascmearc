@@ -455,6 +455,13 @@ fn lines_named(
     if stack.rarity() == Rarity::Normal {
         return out;
     }
+    // A curse the player knows of (#1754), identified or shown by wearing or throwing it.
+    if stack.known_cursed(content) {
+        out.push(line(
+            LineKind::Note,
+            "Cursed: once worn or wielded, it will not come off.",
+        ));
+    }
     match stack.known_magic() {
         None => out.push(line(
             LineKind::Note,
@@ -486,6 +493,9 @@ fn lines_named(
 pub fn phrase(rolled: &Rolled<'_>, kind: ItemKind, content: &Content) -> String {
     let effect = rolled.def.effect;
     let v = rolled.value;
+    if rolled.def.cursed {
+        return hindrance(effect, v);
+    }
     let local = effect.is_local_on(kind);
     let every = |text: String| {
         if local {
@@ -565,6 +575,25 @@ pub fn phrase(rolled: &Rolled<'_>, kind: ItemKind, content: &Content) -> String 
             Some(id) => format!("+{v} to {}", content.skill(id).name),
             None => format!("+{v} to a skill"),
         },
+    }
+}
+
+/// What a curse's effect `effect` of value `v` does (#1754): the effect the other way.
+fn hindrance(effect: Effect, v: i32) -> String {
+    match effect {
+        Effect::Weight => format!("{v}% heavier"),
+        Effect::MoveSpeed => format!("you move {}", slower(v)),
+        Effect::Hunger => format!("hunger comes {v}% faster"),
+        _ => format!("hinders you ({})", effect.id()),
+    }
+}
+
+/// How much slower, in words: speed numbers stay hidden.
+fn slower(percent: i32) -> &'static str {
+    match percent {
+        ..=7 => "a little slower",
+        8..=15 => "slower",
+        _ => "much slower",
     }
 }
 

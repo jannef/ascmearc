@@ -63,7 +63,11 @@ or, for `identify` (#432), `World::identify` on each of `World::unidentified` (t
 `Lore::knows` does not), priced per stack: `service_price` (Pious only for `cure`/`mend`; moved by `shop::haggling` unless the service is `temple = true`, #1031) times
 `service_items`, which `World::topics` also puts in `TopicView::items`; the dialogue screen
 lists such a service "(N gold each)" and, with things to pay for, asks first in the one dialog
-with the total (`DialogueScreen::pay_dialog`). The reply goes through `World::answer`, so the
+with the total (`DialogueScreen::pay_dialog`). `decurse` (#1754) is priced the same way per slot a
+cursed thing holds (`World::cursed_slots`, worn and wielded only) and does `World::decurse`
+(`world/items/curse.rs`, docs/dev/magic-items.md "Curses"); the screen words its dialog by
+slots for a speaker's service of that kind (`DialogueScreen::per_slot`); the temples of
+Cēaptūn and Gimmwīc sell it at 500. The reply goes through `World::answer`, so the
 dialogue screen reopens on the service. Refusals take no time; a service done takes `chat`'s.
 Nothing is saved that was not before, and no stream is drawn. Tests: `world/people/service_tests.rs`
 (a fixture sister on the built-in content; prices, refusals, Pious, the replay and the save),

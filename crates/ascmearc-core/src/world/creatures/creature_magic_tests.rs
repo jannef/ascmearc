@@ -37,6 +37,7 @@ fn wear(w: &mut World, actor: ActorId, (object, slot): (&str, &str), (id, value)
         name: None,
         identified: false,
         carried: 0,
+        curse_known: false,
         unique: None,
     };
     let object = content.object_id(object).expect("an object");

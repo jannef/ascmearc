@@ -111,6 +111,7 @@ fn hardened(id: &str, value: i32) -> Stack {
         name: None,
         identified: false,
         carried: 0,
+        curse_known: false,
         unique: None,
     };
     let object = CONTENT.object_id(id).expect(id);

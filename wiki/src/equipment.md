@@ -169,6 +169,10 @@ still counts toward the weight you carry, and so toward your [burden](burden.md)
 leather jerkin.") and then drops it, which takes the time of both. Everything else you wear
 stays on.
 
+A [cursed item](magic-items.md#cursed-items) is the exception: once on, it will not come off,
+not to swap, drop, or sell it ("Your iron ring will not come off.", no time). A temple can free
+the slot for gold (see [Services](npcs.md#services)).
+
 ## Creatures
 
 [Creatures](creatures.md) wear and wield some of what they carry, and you can see it. [Look

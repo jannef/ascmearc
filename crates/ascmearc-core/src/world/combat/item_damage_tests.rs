@@ -149,6 +149,7 @@ fn make_magic(w: &mut World, unique: Option<&str>, affixes: &[&str]) {
         name: unique.map(|_| "Widowmaker".into()),
         identified: false,
         carried: 0,
+        curse_known: false,
         unique: unique.map(String::from),
     };
     let sword = w.content().object_id("long_sword").expect("sword");

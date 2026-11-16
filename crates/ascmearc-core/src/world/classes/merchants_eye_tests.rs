@@ -43,6 +43,7 @@ fn ring(w: &mut World) -> usize {
         name: None,
         identified: false,
         carried: 0,
+        curse_known: false,
         unique: None,
     };
     let pack = &mut w.player_mut().inventory;

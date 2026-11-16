@@ -19,7 +19,9 @@
 //!    each, so prefixes and suffixes are alike);
 //! 5. **each affix**, prefixes first: one draw among those that may roll on the item (its kind
 //!    in the affix's `bases`, something for the effect to change, a tier at the item level, and
-//!    a `category` the item has no affix of yet), weighted by their `weight`; one draw for the tier
+//!    a `category` the item has no affix of yet; a curse, #1754, only for what is found: loot and
+//!    creature gear, never a shop's goods, a starting kit, an heirloom, a trader's offer, or
+//!    enchanting), weighted by their `weight`; one draw for the tier
 //!    among those of the window at the item level ([`tier_window`]: the tiers found there whose
 //!    level is within [`TIER_WINDOW`] of it, or the top one found alone past the last tier or
 //!    when none is that close); one draw for the value in the tier's range (none when the range
@@ -382,9 +384,12 @@ fn make_from(
         Some(_) => roll_rarity(content, rng, grade, luck),
         None => Rarity::Normal,
     };
+    // Only what is found may be cursed (#1754): made with a source (loot, a creature's gear),
+    // never plainly (a shop's goods, a starting kit).
+    let curses = source.is_some();
     let magic = match rarity {
         Rarity::Normal => None,
-        rarity => roll_magic(content, rng, def, level, rarity),
+        rarity => roll_magic(content, rng, def, (level, curses), rarity),
     };
     let stack = match magic {
         Some(magic) => Stack::with_magic(object, count, magic),
@@ -448,7 +453,7 @@ fn roll_magic(
     content: &Content,
     rng: &mut Rng,
     def: &ObjectDef,
-    level: u8,
+    (level, curses): (u8, bool),
     rarity: Rarity,
 ) -> Option<Magic> {
     let affixes = content.affixes();
@@ -473,7 +478,14 @@ fn roll_magic(
             *pick_weighted(rng, &shapes).unwrap_or(&(1, 0))
         }
     };
-    affixed(content, rng, def, level, rarity, (prefixes, suffixes))
+    affixed(
+        content,
+        rng,
+        def,
+        (level, curses),
+        rarity,
+        (prefixes, suffixes),
+    )
 }
 
 /// How many of a rare item's `count` affixes are prefixes and how many suffixes: one draw,
@@ -485,19 +497,24 @@ pub(crate) fn rare_split(rng: &mut Rng, count: i32) -> (i32, i32) {
 }
 
 /// The affixes of a `rarity` item of `def` at `level`, `prefixes` then `suffixes` (fewer when
-/// nothing more may roll), and a rare one's name; `None` if it rolled no affix.
+/// nothing more may roll; curses among them only with `curses`), and a rare one's name; `None`
+/// if it rolled no affix.
 fn affixed(
     content: &Content,
     rng: &mut Rng,
     def: &ObjectDef,
-    level: u8,
+    (level, curses): (u8, bool),
     rarity: Rarity,
     (prefixes, suffixes): (i32, i32),
 ) -> Option<Magic> {
     let mut rolled: Vec<Affix> = Vec::new();
     for (kind, count) in [(AffixKind::Prefix, prefixes), (AffixKind::Suffix, suffixes)] {
         for _ in 0..count {
-            match roll_affix(content, rng, def, level, kind, &rolled) {
+            let affix = match curses {
+                true => roll_affix(content, rng, def, level, kind, &rolled),
+                false => roll_affix_within(content, rng, def, level, kind, &rolled, None),
+            };
+            match affix {
                 Some(affix) => rolled.push(affix),
                 None => break,
             }
@@ -514,6 +531,7 @@ fn affixed(
         name,
         identified: false,
         carried: 0,
+        curse_known: false,
         unique: None,
     })
 }
@@ -537,7 +555,7 @@ pub fn heirloom(
         2 => (Rarity::Magic, (1, 1)),
         _ => (Rarity::Rare, rare_split(rng, count)),
     };
-    let mut stack = match affixed(content, rng, def, level.max(1), rarity, split) {
+    let mut stack = match affixed(content, rng, def, (level.max(1), false), rarity, split) {
         Some(magic) => Stack::with_magic(object, 1, magic),
         None => Stack::one(object),
     };
@@ -588,7 +606,8 @@ fn can_be_magic(content: &Content, def: &ObjectDef, level: u8) -> bool {
         || rolls_any(content, def, level, AffixKind::Suffix)
 }
 
-/// One affix of `kind` for `def` at `level` of a category none of `rolled` is of.
+/// One affix of `kind` for `def` at `level` of a category none of `rolled` is of, a curse among
+/// them as loot rolls them (#1754).
 pub(crate) fn roll_affix(
     content: &Content,
     rng: &mut Rng,
@@ -597,7 +616,7 @@ pub(crate) fn roll_affix(
     kind: AffixKind,
     rolled: &[Affix],
 ) -> Option<Affix> {
-    roll_affix_within(content, rng, def, level, kind, rolled, None)
+    pick(content, rng, def, (level, kind), (rolled, None, true))
 }
 
 /// The affixes [`roll_affix_within`] draws among, as indices into the affixes with their
@@ -609,6 +628,7 @@ fn candidates(
     kind: AffixKind,
     rolled: &[Affix],
     families: Option<&[String]>,
+    curses: bool,
 ) -> Vec<(usize, u32)> {
     let Some(item) = def.kind else {
         return Vec::new();
@@ -624,6 +644,7 @@ fn candidates(
                 && a.tiers_at(level) > 0
                 && !taken.contains(&a.category.as_str())
                 && families.is_none_or(|f| f.contains(&a.category))
+                && (curses || !a.cursed)
                 && may_roll(a, item, def)
         })
         .map(|(i, a)| (i, a.weight))
@@ -641,12 +662,13 @@ pub(crate) fn rolls_within(
     rolled: &[Affix],
     families: Option<&[String]>,
 ) -> bool {
-    !candidates(content, def, level, kind, rolled, families).is_empty()
+    !candidates(content, def, level, kind, rolled, families, false).is_empty()
 }
 
 /// [`roll_affix`] with the candidates narrowed to the affix categories `families` holds (a
 /// crystal's colour, docs/design/enchanting.md §8; `None`: every category): the affix by weight,
-/// then its tier in the window at `level`, then its value in the tier (three draws).
+/// then its tier in the window at `level`, then its value in the tier (three draws). Never a
+/// curse: enchanting makes none (#1754).
 pub(crate) fn roll_affix_within(
     content: &Content,
     rng: &mut Rng,
@@ -656,8 +678,19 @@ pub(crate) fn roll_affix_within(
     rolled: &[Affix],
     families: Option<&[String]>,
 ) -> Option<Affix> {
+    pick(content, rng, def, (level, kind), (rolled, families, false))
+}
+
+/// The draws of [`roll_affix_within`], curses among the candidates with `curses`.
+fn pick(
+    content: &Content,
+    rng: &mut Rng,
+    def: &ObjectDef,
+    (level, kind): (u8, AffixKind),
+    (rolled, families, curses): (&[Affix], Option<&[String]>, bool),
+) -> Option<Affix> {
     let affixes = content.affixes();
-    let candidates = candidates(content, def, level, kind, rolled, families);
+    let candidates = candidates(content, def, level, kind, rolled, families, curses);
     let a = &affixes.all()[*pick_weighted(rng, &candidates)?];
     let window = tier_window(a, level);
     let tier = window.start + rng.index(window.len());

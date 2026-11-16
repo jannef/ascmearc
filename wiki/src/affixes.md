@@ -21,6 +21,8 @@ Prefixes are mostly offensive, or give flat [Defence](combat.md#defence) and lif
 - *Hobnailed* [boots](objects.md#class-boots) [kick doors](doors.md#kicking-a-door-open) in more easily.
 - A *Delving* tool or pair of gloves [digs](digging.md#digging) faster. Magic pick-axes do turn up
   in loot.
+- *Leaden* and *Plodding* are [curses](magic-items.md#cursed-items): a heavier piece, slower
+  steps. Once worn, the item will not come off.
 
 {{#include generated/magic-prefixes.md}}
 
@@ -59,6 +61,8 @@ utility, and [skills](skills.md).
   softens [traps](traps.md#finding-traps), *of Health* helps against
   [disease](diseases.md#how-a-disease-goes), and *of the Alchemist* sometimes leaves a
   [potion](potions.md) undrunk.
+- *Of Hunger* is a [curse](magic-items.md#cursed-items): hunger comes faster, and once worn the
+  item will not come off.
 
 The skill suffixes raise one [skill](skills.md) each:
 

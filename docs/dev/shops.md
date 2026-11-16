@@ -68,7 +68,8 @@ new. Keepers are NPCs: `budge = "off_post"` (no swapping at the post), one-liner
 `Worked::made`, an anvil's grade), then `MagicWorth::add` (`content/magic_worth.rs`,
 `data/rules/magic_worth.toml`, optional: without it magic adds nothing): the rarity's percent
 always (the rarity shows at once), plus, once identified, each affix's `each` + `per_level` × its
-tier's item level; then `Worked::with_mark` (a maker's mark on top of it all), times the count. It
+tier's item level (a curse the player knows of, #1754, makes the magic add nothing: docs/dev/magic-items.md
+"Curses"); then `Worked::with_mark` (a maker's mark on top of it all), times the count. It
 reads only what the player knows, so a price leaks nothing; `Stack::value` stays the make alone
 (what a trader's offer, `wares.rs`, adds its own affix price to, and the tithe's choice).
 `Shops::trades` still asks `value > 0`, so magic never makes worthless goods traded. The

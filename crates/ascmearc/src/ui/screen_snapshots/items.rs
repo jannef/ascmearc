@@ -253,3 +253,53 @@ cases! {
         ..BASE
     },
 }
+
+/// A cell holding a cursed iron ring of Hunger (#1754), unidentified.
+const CURSED_CELL: &str = r##"
+name = "Cursed cell"
+ambient = [255, 255, 255, 0]
+map = '''
+#####
+#@..#
+#####
+'''
+[legend]
+"#" = "wall"
+"." = "floor"
+"@" = { terrain = "floor", spawn = "player" }
+
+[[item]]
+at = [1, 1]
+object = "iron_ring"
+affixes = ["of_hunger"]
+"##;
+
+/// #1754: a cursed ring put on shows its curse but not its affix, in its name and description;
+/// identified, it names the affix and says what it hinders.
+#[test]
+fn a_cursed_ring_as_text() {
+    let mut files = ascmearc_assets::files();
+    files.insert("levels/cursed_cell.toml", CURSED_CELL);
+    files.insert(
+        "scenarios/cursed_cell.toml",
+        "name = \"cursed cell\"\nstart_level = \"cursed_cell\"\n",
+    );
+    let content = Arc::new(Content::load(&files).expect("content"));
+    let cases = [
+        ("cursed-ring-description", "pickup equip:left_ring:a"),
+        (
+            "cursed-ring-identified",
+            "pickup equip:left_ring:a identify",
+        ),
+    ];
+    for (name, actions) in cases {
+        let case = Case {
+            name,
+            scenario: "cursed_cell",
+            actions,
+            screen: Some("describe"),
+            ..BASE
+        };
+        check_with(&case, content.clone());
+    }
+}

@@ -136,6 +136,7 @@ fn an_unknown_affix_moves_nothing_until_identified() {
         name: None,
         identified: false,
         carried: 0,
+        curse_known: false,
         unique: None,
     };
     magic

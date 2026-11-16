@@ -85,6 +85,7 @@ fn a_failed_attempt_never_harms_a_sword_of_proof() {
         name: None,
         identified: false,
         carried: 0,
+        curse_known: false,
         unique: None,
     };
     (w.player_mut().inventory).insert(0, Stack::with_magic(id, 1, magic));
@@ -141,6 +142,7 @@ fn magic_sword(w: &mut World) {
         name: None,
         identified: false,
         carried: 0,
+        curse_known: false,
         unique: None,
     };
     w.player_mut()

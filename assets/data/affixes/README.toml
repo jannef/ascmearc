@@ -72,6 +72,11 @@
 #           for (range without a range, draw without a Strength to draw, durability on what never
 #           breaks, armour, shield, or max_dex on what has none) does not roll on it
 #   weight  how often it rolls among those that may (default 100)
+#   cursed  true for a curse (#1754; default false): its effect works the other way (hunger
+#           faster, a heavier piece, slower steps: only `hunger`, `weight`, and `move_speed` may
+#           be cursed), it shares its good twin's category, it rolls only on what is found (loot
+#           and creature gear, never a shop's goods, a starting kit, an heirloom, a trader's
+#           offer, or enchanting), and what has one will not come off once worn
 #   tiers   from the lowest item level (`level`, the dungeon depth) each is found at, the range
 #           its value is rolled in (`min`, `max`); a light's tiers name a `light` preset instead.
 #           Levels rise from tier to tier, and `min` is at most `max`. Shipped as a ladder of up

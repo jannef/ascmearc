@@ -122,7 +122,7 @@ fn affix_table(content: &Content, kind: AffixKind) -> String {
     for a in order::affixes(content, kind) {
         let bases: Vec<&str> = a.bases.iter().map(|k| k.plural()).collect();
         let tiers: Vec<String> = (a.tiers.iter())
-            .map(|t| format!("{}: {}", t.level, tier_value(a.effect, t, content)))
+            .map(|t| format!("{}: {}", t.level, tier_value(a, t, content)))
             .collect();
         let _ = writeln!(
             out,
@@ -139,8 +139,17 @@ fn affix_table(content: &Content, kind: AffixKind) -> String {
 }
 
 /// What affix `a` does, in words, without its value: its effect's words, the skill it adds to,
-/// or the resource it changes.
+/// or the resource it changes; a curse's hindrance (#1754).
 fn effect_text(content: &Content, a: &AffixDef) -> String {
+    if a.cursed {
+        let words = match a.effect {
+            ItemEffect::Hunger => "hunger comes faster",
+            ItemEffect::Weight => "heavier",
+            ItemEffect::MoveSpeed => "you move slower",
+            _ => "hinders you",
+        };
+        return format!("[cursed](magic-items.md#cursed-items): {words}");
+    }
     if let Some(id) = a.resource {
         let pool = content.resource(id).name.to_lowercase();
         let siphon = content.tuning().siphon.range;
@@ -229,13 +238,10 @@ fn effect_words(content: &Content, effect: ItemEffect) -> String {
     }
 }
 
-/// What a tier rolls, exactly: `+1–2`, `1d3–1d4`, `20–35%`, `5–8% less time` (speed takes its
-/// percent off the cost, `magic::mods::faster`).
-fn tier_value(
-    effect: ItemEffect,
-    tier: &ascmearc_core::content::Tier,
-    content: &Content,
-) -> String {
+/// What a tier of affix `a` rolls, exactly: `+1–2`, `1d3–1d4`, `20–35%`, `5–8% less time`
+/// (speed takes its percent off the cost, `magic::mods::faster`); a curse's the other way, `20–25%
+/// more time`.
+fn tier_value(a: &AffixDef, tier: &ascmearc_core::content::Tier, content: &Content) -> String {
     let range = |prefix: &str, suffix: &str| {
         if tier.min == tier.max {
             format!("{prefix}{}{suffix}", tier.min)
@@ -243,7 +249,15 @@ fn tier_value(
             format!("{prefix}{}–{}{suffix}", tier.min, tier.max)
         }
     };
-    match effect {
+    if a.cursed {
+        return match a.effect {
+            ItemEffect::MoveSpeed => range("", "% more time"),
+            ItemEffect::Hunger => range("", "% faster"),
+            ItemEffect::Weight => range("", "% heavier"),
+            _ => range("", ""),
+        };
+    }
+    match a.effect {
         ItemEffect::ExtraDamage | ItemEffect::Elemental if tier.min == tier.max => {
             format!("1d{}", tier.min)
         }

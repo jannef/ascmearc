@@ -229,6 +229,50 @@ So a Sharp sword may also be Heavy, or Flaming, but never both Heavy and of Woun
 and a suffix of the same category do the same thing (Glinting and of Precision both add to hit),
 so an item has one or the other.
 
+## Cursed items
+
+A few affixes are **curses**. Each one works like a good affix turned the other way:
+
+- *of Hunger* makes [hunger](hunger.md#how-hungry-you-are) come faster (the reverse of *of
+  Sustenance*);
+- *Leaden* makes the piece heavier (the reverse of *Featherweight*), at most twice its weight;
+- *Plodding* [boots](objects.md#class-boots) make every [step](turns.md#speed) slower (the
+  reverse of *Fleet*), at most twice as slow.
+
+A curse shares its good twin's [category](#categories), so an item is never both of Hunger and
+of Sustenance. The exact values are in the [prefix and suffix tables](affixes.md#prefixes).
+
+**How rare.** Curses turn up only in what you find: loot, and what creatures carry and drop.
+Shops never sell a cursed item, and starting kits, heirlooms, traders' offers, and
+[enchanting](enchanting.md) never make one. About 0.4% of found magic and rare items carry a
+curse, roughly one in 240. Each curse has a weight of 4 in its table, against 60 to 100 for most
+affixes.
+
+**It will not come off.** Once you wear or wield a cursed item, you cannot take it off, swap it
+for something else, move it to another slot, [drop](objects.md#dropping) it, sell it, or give it
+away. Trying says "Your iron ring will not come off." and takes no time. A creature cannot knock
+a cursed weapon from your hand either. Everything else about the item works as usual, good
+affixes included.
+
+**Knowing a curse.** A curse is hidden like any other affix until the item is
+[identified](#unidentified-items). Its rarity colour gives nothing away. Putting the item on
+shows the curse at once ("It is cursed! It will not come off."), but only that it is cursed:
+which affix is the curse, and what else the item does, stay unknown until you identify it. A
+cursed item you know of says so in its name, "an iron ring (magic, cursed)" or "an iron ring of
+Hunger (cursed)", and in its description, and its name shows in a dull red in every list.
+
+**Throwing one.** A cursed weapon will not be [thrown](ranged.md#shooting-and-throwing). It
+leaps into your main hand instead and stays there, cursed: "The dagger twists in your grip and
+will not leave your hand." Whatever was in your main hand goes back to your pack. This shows the
+curse and takes as long as a throw. If a cursed thing already holds your main hand, the throw
+simply fails, and takes no time.
+
+**Getting free.** A temple can free you for gold (see [Services](npcs.md#services)): it takes
+off every cursed thing you wear or wield and lays it at your feet. The items stay cursed: put one
+on again and it binds you again. A cursed item you know of is worth only what it is made of to
+a [shop](shops.md#magic-items): its magic adds nothing to the price. No prayer or spell lifts a
+curse.
+
 ## Looking at an item
 
 To look at an item, press its letter in your [pack](objects.md#your-pack) (`I`), or press a

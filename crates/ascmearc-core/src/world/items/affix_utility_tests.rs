@@ -133,6 +133,7 @@ fn magic(object: &str, id: &str, value: i32, identified: bool) -> Stack {
         name: None,
         identified,
         carried: 0,
+        curse_known: false,
         unique: None,
     };
     Stack::with_magic(CONTENT.object_id(object).expect("object"), 1, magic)

@@ -400,6 +400,7 @@ fn services(content: &Content, actor: &SeenActor) -> String {
     for service in &content.dialogue(dialogue).services {
         let verb = match service.does {
             ServiceKind::Cure => "cures",
+            ServiceKind::Decurse => "frees the cursed",
             ServiceKind::Identify => "identifies",
             ServiceKind::Mend => "mends",
             ServiceKind::TrainSkill => "teaches",
@@ -779,7 +780,8 @@ mod tests {
         assert_eq!(w.player_pos(), Pos::new(26, 24), "inside the Mynster");
         assert_eq!(
             describe(&w.perception(), Pos::new(27, 25), true),
-            "Sister Hild (unhurt), who cures and mends for gold, on plank floor in a sanctuary."
+            "Sister Hild (unhurt), who cures, mends, and frees the cursed for gold, on plank floor in a \
+             sanctuary."
         );
     }
 

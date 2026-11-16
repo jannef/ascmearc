@@ -901,6 +901,7 @@ impl World {
             name,
             identified: true,
             carried: 0,
+            curse_known: false,
             unique: None,
         };
         match kind {

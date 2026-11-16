@@ -169,6 +169,13 @@ impl World {
             self.say("It will not leave your hand.");
             return Spent::Nothing;
         }
+        // A cursed weapon is never thrown: it leaps into the main hand (`curse.rs`).
+        let main = content.hand_slots().next();
+        if stack.is_cursed(&content) && main.is_some_and(|s| content.fits(stack.object, s)) {
+            let throwing = me.attack_skills(&content, AttackKind::Thrown, Some(stack.object));
+            let price = self.attack_price(self.state.player, ActionKind::Throw, None, throwing);
+            return self.throw_cursed(item, price);
+        }
         // A potion shatters where it lands: a flask casts its splash there (`flask.rs`).
         if content.object(stack.object).shatters() {
             return self.throw_flask(item, at, events);

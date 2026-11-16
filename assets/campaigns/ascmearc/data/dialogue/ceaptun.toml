@@ -117,6 +117,17 @@ temple = true
 reply = "There. Whole again, as you were made."
 nothing = "You are whole, child. Go with my blessing."
 
+# Freeing what a curse holds on the player (#1754, world/items/curse.rs): per slot held, worn
+# and wielded things only; the things fall at their feet, still cursed.
+[[dialogue.service]]
+id = "decurse"
+name = "Freedom from a curse"
+price = 500
+does = "decurse"
+temple = true
+reply = "There. It has let go of you. Leave it where it lies, child: it is cursed still."
+nothing = "Nothing cursed clings to you, child."
+
 # Godgifu, the innkeeper of the Gæsthūs: rumours of the march. She knows what the quest-givers
 # know, in her own words, and tells the way: each topic's `route` (waypoints on the overworld,
 # from the town's gate) marks on the player's map what walking it by day would show. Only terrain:
