@@ -3,6 +3,8 @@
 [[terrain]]
 id = "cracked_floor"
 name = "cracked floor"
+announce = true
+noun = "mass"
 stone = true
 glyph = ":"
 fg = "#6e665c"

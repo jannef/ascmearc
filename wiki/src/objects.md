@@ -67,10 +67,15 @@ When you step onto a pile, the [message line](the-screen.md#messages) tells you 
 `You see here a dagger.` for a single stack, `There are several objects here.` for more.
 
 If you arrive on a special feature of the ground, such as an
-[altar](altars-forges-springs.md#forgotten-altars) or a faint rune, it is named first, once each
-time you come to it: `There is an altar here.` A feature you cannot stand on, such as a [worn
-statue](terrain.md#terrain-statue), is named when you come beside it, and not again while you
-walk around it. Whatever is written on it is read out after.
+[altar](altars-forges-springs.md#forgotten-altars), a faint rune, an old web, glowing fungus, an
+open or smashed chest, acid-pitted floor, or cracked floor, it is named first, once each time you
+come to it: `There is an altar here.` Plain ground, grass and flowers, doors, and candles say
+nothing. A feature you cannot stand on, such as a [worn statue](terrain.md#terrain-statue), is
+named when you come beside it, and not again while you walk around it. Whatever is written on it
+is read out after.
+
+All of it comes in one line, with what lies there last: `There is an altar here. You see here a
+silver chalice.`
 
 [Look mode](controls-prompts.md#look-mode) (`l`) names what lies on any cell you see or remember: up to
 three stacks by name ("a dagger and 12 arrows"), or a count for more ("17 objects").

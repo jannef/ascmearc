@@ -415,7 +415,7 @@ pub use talent::{
     TreeId,
 };
 pub use temper::TemperRules;
-pub use terrain::{Breakable, Freeze, FreezeSpec, StairsDir, TerrainDef, TerrainId};
+pub use terrain::{Breakable, Freeze, FreezeSpec, Noun, StairsDir, TerrainDef, TerrainId};
 pub use theft::{Blinks, SMALL as SMALL_LOOT, Steals, Takes};
 pub use throw::Throw;
 pub use town::{InvestShare, TownDef, TownRestock, TownServant};

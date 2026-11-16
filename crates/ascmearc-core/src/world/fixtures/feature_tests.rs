@@ -91,17 +91,18 @@ fn stepping_onto_an_altar_names_it_once() {
 }
 
 #[test]
-fn an_altar_is_named_before_what_lies_on_it() {
+fn an_altar_is_named_before_what_lies_on_it_in_one_line() {
     let mut w = world_with("floor");
     step(&mut w, 5);
     w.apply(&Action::Move(Dir::SE));
     let texts: Vec<&str> = w.messages().iter().map(|m| m.text.as_str()).collect();
-    let n = texts.len();
     assert_eq!(
-        texts[n - 2..],
-        [ALTAR, "You see here a silver chalice."],
+        texts.last(),
+        Some(&"There is an altar here. You see here a silver chalice."),
         "{texts:?}"
     );
+    // Only the first altar, passed on the way, was named on its own.
+    assert_eq!(times(&w, ALTAR), 1, "not said again on its own");
 }
 
 #[test]
@@ -220,4 +221,70 @@ fn the_hunters_statue_on_fyrdelf_reads_its_inscription() {
     assert!(said[0].contains("LĪF ÆR DĒAÞE"), "{}", said[0]);
     let place = w.perception().place(at).expect("look mode names it");
     assert_eq!(place.name, "a hooded figure");
+}
+
+/// A row of walkable cells: an old web (`W`), glowing fungus (`F`), a test terrain named in the
+/// plural (`B`), an open chest with a dagger in it (`C`), stairs down with a dagger on them
+/// (`>`), and plain floor with a dagger (`d`).
+const ROW: &str = "\
+#########
+#@WFBC>d#
+#########
+";
+
+/// A terrain whose name is a plural.
+const BELLS: &str = "[[terrain]]\nid = \"test_bells\"\nname = \"bluebells\"\nannounce = true\n\
+                     noun = \"plural\"\nglyph = 'b'\nfg = \"#6060ff\"\n";
+
+fn row_world() -> World {
+    let mut files = ContentFiles::builtin();
+    files.insert("data/terrain/999-test_bells.toml", BELLS);
+    files.insert(
+        "levels/test_row.toml",
+        &format!(
+            "name = \"Row\"\nambient = [120, 120, 120, 0]\nmap = '''\n{ROW}'''\n[legend]\n\
+             \"W\" = \"web\"\n\"F\" = \"fungus\"\n\"B\" = \"test_bells\"\n\
+             \"C\" = {{ terrain = \"chest_open\", objects = [\"dagger\"] }}\n\
+             \">\" = {{ terrain = \"stairs_down\", to = \"test_row\", objects = [\"dagger\"] }}\n\
+             \"d\" = {{ terrain = \"floor\", objects = [\"dagger\"] }}\n\
+             \"@\" = {{ terrain = \"floor\", spawn = \"player\" }}\n"
+        ),
+    );
+    files.insert(
+        "scenarios/test_row.toml",
+        "name = \"T\"\nstart_level = \"test_row\"\n",
+    );
+    let content = Arc::new(Content::load(&files).expect("fixture content is valid"));
+    World::new(content, "test_row", None).expect("world")
+}
+
+/// What one step east says: one line.
+fn step_says(w: &mut World) -> String {
+    let before = w.messages().len();
+    step(w, 1);
+    let said: Vec<&str> = (w.messages().iter().skip(before))
+        .map(|m| m.text.as_str())
+        .collect();
+    assert_eq!(said.len(), 1, "one line per arrival: {said:?}");
+    said[0].to_string()
+}
+
+#[test]
+fn each_feature_is_named_by_its_noun_with_what_lies_there_on_the_same_line() {
+    let mut w = row_world();
+    assert_eq!(
+        step_says(&mut w),
+        "There is an old web here. Grey strands, thick as rope in places, hang from wall to floor."
+    );
+    assert_eq!(step_says(&mut w), "There is glowing fungus here.");
+    assert_eq!(step_says(&mut w), "There are bluebells here.");
+    assert_eq!(
+        step_says(&mut w),
+        "There is an open chest here. You see here a dagger."
+    );
+    assert_eq!(
+        step_says(&mut w),
+        "There is a staircase down here. You see here a dagger."
+    );
+    assert_eq!(step_says(&mut w), "You see here a dagger.");
 }

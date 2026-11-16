@@ -1,6 +1,7 @@
 [[terrain]]
 id = "chest_open"
 name = "open chest"
+announce = true
 chest = "open"
 glyph = "⊔"
 fg = "#9a7a48"

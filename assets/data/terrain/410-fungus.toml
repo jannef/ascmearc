@@ -2,6 +2,8 @@
 id = "fungus"
 plants = true
 name = "glowing fungus"
+announce = true
+noun = "mass"
 glyph = '"'
 fg = "#70e8a8"
 bg = "#0d0d10"

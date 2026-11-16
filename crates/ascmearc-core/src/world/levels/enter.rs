@@ -95,27 +95,26 @@ impl World {
         climb
     }
 
-    /// What the player finds at `to`, just entered: stairs, a feature of the ground, then
-    /// what lies there (with its price, for sale).
+    /// What the player finds at `to`, just entered, in one line: stairs, a feature of the ground
+    /// ("There is an altar here."), then what lies there (with its price, for sale).
     fn tell_cell(&mut self, to: Pos) {
+        let mut parts = Vec::new();
         let level = self.state.current();
         if let Some(stairs) = level.stairs_at(to) {
             // A location goes by its name, even while it leads nowhere yet.
             let named =
                 (stairs.name.clone()).or_else(|| Some(self.place_name(stairs.to.as_ref()?)));
-            let text = match (level.kind, stairs.dir, named) {
+            parts.push(match (level.kind, stairs.dir, named) {
                 (LevelKind::Overworld, StairsDir::Down, Some(name)) => {
                     format!("The way into {name} is here.")
                 }
                 (_, StairsDir::Down, _) => "There is a staircase down here.".into(),
                 (_, StairsDir::Up, _) => "There is a staircase up here.".into(),
-            };
-            self.say(text);
+            });
         }
-        // A feature of the ground there ("There is an altar here."), before what lies on it.
-        self.announce_feature();
+        parts.extend(self.arrival_features());
         // Goods for sale say their price.
-        let text = match self.state.current().objects_at(to) {
+        parts.extend(match self.state.current().objects_at(to) {
             [] => None,
             [one] => Some(match self.asking_price(to, one) {
                 Some(price) => format!(
@@ -125,9 +124,9 @@ impl World {
                 None => format!("You see here {}.", self.lore().describe(one)),
             }),
             _ => Some("There are several objects here.".to_string()),
-        };
-        if let Some(text) = text {
-            self.say(text);
+        });
+        if !parts.is_empty() {
+            self.say(parts.join(" "));
         }
     }
 }
