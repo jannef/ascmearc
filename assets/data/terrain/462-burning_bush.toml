@@ -1,0 +1,30 @@
+# A bush on fire (`world/levels/fire.rs`, docs/dev/fire.md): what a bush is while it burns (its
+# `burn` table). Never laid by a generator.
+[[terrain]]
+id = "burning_bush"
+name = "burning bush"
+description = "The bush crackles and roars, its twigs glowing red."
+glyph = "♧"
+fg = "#ffb050"
+bg = "#2a0c04"
+move_cost = 200
+step_noise = 150
+height = 1
+light = "burning_grass"
+glow = 0.5
+haze = 0.7
+stains = false
+flames = "blaze"
+
+[[terrain.particles]]
+glyphs = "'`.·"
+colors = ["#ffeab0", "#ffa040", "#c04010", "#501408"]
+rate = 2
+life = 0.9
+velocity = [0.0, -1.3]
+spread = [0.4, 0.4]
+gravity = 0.4
+area = [0.35, 0.2]
+sway = 0.15
+scale = 0.55
+glow = 0.6

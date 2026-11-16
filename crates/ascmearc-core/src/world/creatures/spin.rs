@@ -74,11 +74,13 @@ impl World {
         };
         let level = self.state.current();
         let near = Spins::NEAR;
+        let web = |p: Pos| {
+            level.terrain_at(p) == Some(rules.web)
+                || level.burning.get(&p).is_some_and(|b| b.from == rules.web)
+        };
         let webs = (-near..=near)
             .flat_map(|dy| (-near..=near).map(move |dx| Pos::new(at.x + dx, at.y + dy)))
-            .filter(
-                |&p| matches!(level.terrain_at(p), Some(t) if t == rules.web || t == rules.burning),
-            )
+            .filter(|&p| web(p))
             .count();
         webs >= usize::from(spins.most)
     }

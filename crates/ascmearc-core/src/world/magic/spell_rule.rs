@@ -179,7 +179,7 @@ impl World {
                     self.put_out(p);
                 }
             }
-            self.douse_webs(&path);
+            self.douse_fires(&path);
         }
         // Clouds are torn away: the zones it clears lose the cells of its line (`zone.rs`).
         let clears = &cast.def.effect.clears;

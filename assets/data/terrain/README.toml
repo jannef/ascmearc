@@ -52,6 +52,12 @@
 # that looks like it in mm (the next one's takes over from its thickness; each its own): it lies on
 # water, which it thaws back into, so levels lay it with `ice = MM` on a water cell, never by
 # itself. Both are walkable and transparent, without a light, and neither doors nor stairs.
+# Fire (gameplay; rules/fire.toml, docs/dev/fire.md): terrain that burns has a `burn` table:
+# `burns` (how long it burns, in seconds of game time), `spreads` (how long after it caught it
+# sets the burnable terrain on its eight neighbours alight, in seconds; above 0 and below
+# `burns`), `burning` (the terrain it is while it burns: one that sheds a light, has no `burn`,
+# and is walkable just when this one is), and `leaves` (what it is once burnt out; walkable if
+# this one is). Terrain without one never burns; the overworld never burns.
 # Overworld terrain: travel_minutes (an overworld step onto it at normal speed: the
 # step's base time instead of 6 seconds; required for walkable terrain on the
 # overworld), local (the ground of the local area entered with `>` from a cell of it; none:

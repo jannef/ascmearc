@@ -6,3 +6,9 @@ fg = "#a08e6c"
 bg = "#14120c"
 walkable = false
 height = 2
+
+[terrain.burn]
+burns = 60
+spreads = 12
+leaves = "burnt_tree"
+burning = "burning_tree"

@@ -8,3 +8,9 @@ bg = "#2a2612"
 bounce = "#dcd098"
 # It rustles.
 step_noise = 120
+
+[terrain.burn]
+burns = 12
+spreads = 6
+leaves = "scorched_earth"
+burning = "burning_grass"

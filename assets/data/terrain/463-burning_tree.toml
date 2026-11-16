@@ -1,0 +1,30 @@
+# A tree on fire (`world/levels/fire.rs`, docs/dev/fire.md): what a tree, a pine, or a dead tree
+# is while it burns (their `burn` tables). Its crown is flame and smoke: seen through, as every
+# light-giving terrain is. Never laid by a generator.
+[[terrain]]
+id = "burning_tree"
+name = "burning tree"
+description = "Fire climbs the trunk and roars in the branches."
+glyph = "♣"
+fg = "#ffb050"
+bg = "#2a0c04"
+walkable = false
+height = 2
+light = "burning_wood"
+glow = 0.5
+haze = 0.8
+stains = false
+flames = "blaze"
+
+[[terrain.particles]]
+glyphs = "'`.·"
+colors = ["#ffeab0", "#ffa040", "#c04010", "#501408"]
+rate = 3
+life = 1.2
+velocity = [0.0, -1.5]
+spread = [0.5, 0.4]
+gravity = 0.3
+area = [0.4, 0.3]
+sway = 0.2
+scale = 0.55
+glow = 0.6

@@ -12,63 +12,41 @@
 //! - **Laying** ([`World::lay_web`], as a spider spins, `spin.rs`): only on plain open ground
 //!   ([`World::holds_web`]), never on the overworld. The ground it covers is kept
 //!   ([`Web::under`]) and comes back when it burns.
-//! - **Burning** ([`World::ignite_webs`], from `sear.rs`'s shared hook, so every fire area: a
-//!   burst, a cone, a fire zone as it is laid): a web a fire reaches turns the rules' `burning`
-//!   terrain, whose light is its own (`LightCache` re-derives it as the terrain changes), and
-//!   [`Web::lit`] is the moment. [`World::webs_burn`], at the end of every turn, sets the webs
-//!   beside one burning `spreads` seconds burning at that very moment (a chain keeps its own
-//!   time however long the turn), and turns one burning `burns` seconds into its ground; whoever
-//!   it held there is free. A creature that starts its turn in a burning web
-//!   ([`World::web_turn_start`]) or steps into one takes the rules' `harm`, as a place's harm: a
-//!   kill is no one's. A spell that douses fire puts it out ([`World::douse_webs`]): a web again.
+//! - **Burning**: a web burns as any burnable terrain does, by its `burn` table
+//!   (`world/levels/fire.rs`, docs/dev/fire.md); as it burns out, [`World::web_burnt`] gives
+//!   back the ground it covered and frees whoever it held.
 //!
 //! Saves: a web is terrain; what more a cell needs is [`LevelState::webs`], left out while empty.
-//! Determinism: the burning is game time; one check per catch (`web/catch/<actor>`), one roll
-//! per burn (`web/burn/<actor>`); nothing else draws, and a level without webs costs a look at
-//! its terrain on a step.
+//! Determinism: one check per catch (`web/catch/<actor>`); nothing else draws, and a level
+//! without webs costs a look at its terrain on a step.
 
 use crate::action::{Event, SpellShape};
 use crate::check::check;
-use crate::combat::Blow;
-use crate::content::{DamageTypeId, LevelKind, WebRules};
-use crate::damage::Damage;
-use crate::geom::{Dir, Pos};
+use crate::content::{LevelKind, TerrainId, WebRules};
+use crate::geom::Pos;
 use crate::rng::draw;
 use crate::skills::Effect as SkillEffect;
 use crate::stats::Stat;
 use crate::text::capitalized;
-use crate::time::{Duration, GameTime};
-use crate::world::combat::fight::Harm;
 use crate::world::magic::cast::Cast;
 use crate::world::magic::spell::burst_cells;
 use crate::world::{ActorId, LevelState, World};
 use serde::{Deserialize, Serialize};
 
-/// What a level keeps of a web cell beyond its terrain (module docs): only a laid web's or a
-/// burning one's.
+/// What a level keeps of a web cell beyond its terrain (module docs): only a laid web's, burning
+/// or not.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Web {
-    /// The ground a laid web covers, which it leaves when it burns; none: the rules' `burnt`
+    /// The ground a laid web covers, which it leaves when it burns; none: what its `burn` leaves
     /// (a generator's web).
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub(crate) under: Option<crate::content::TerrainId>,
-    /// When it caught fire, while it burns.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub(crate) lit: Option<GameTime>,
-    /// Whether, burning, it has set the webs beside it burning.
-    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
-    pub(crate) spread: bool,
+    pub(crate) under: Option<TerrainId>,
 }
 
 impl LevelState {
     /// Whether cell `p` is a web that catches (not burning).
     fn is_web(&self, rules: &WebRules, p: Pos) -> bool {
         self.terrain_at(p) == Some(rules.web)
-    }
-
-    /// Whether cell `p` is a burning web.
-    fn is_burning_web(&self, rules: &WebRules, p: Pos) -> bool {
-        self.terrain_at(p) == Some(rules.burning)
     }
 }
 
@@ -88,7 +66,7 @@ impl World {
         let def = content.terrain(t);
         level.kind != LevelKind::Overworld
             && t != rules.web
-            && t != rules.burning
+            && !level.is_burning(p)
             && def.walkable
             && def.transparent
             && !def.is_door()
@@ -124,12 +102,10 @@ impl World {
             return false;
         };
         let under = self.state.current().terrain_at(p);
+        let burnt = content.terrain(rules.web).burn.map(|b| b.leaves);
         self.set_terrain(p, rules.web);
-        if let Some(under) = under.filter(|&u| u != rules.burnt) {
-            let web = Web {
-                under: Some(under),
-                ..Web::default()
-            };
+        if let Some(under) = under.filter(|&u| Some(u) != burnt) {
+            let web = Web { under: Some(under) };
             self.state.current_mut().webs.insert(p, web);
         }
         let level = self.state.current_level.clone();
@@ -228,179 +204,41 @@ impl World {
         self.webbed(id)
     }
 
-    /// Actor `id` stepped onto `to`: a web there may catch it, a burning one burns it.
+    /// Actor `id` stepped onto `to`: a web there may catch it.
     pub(in crate::world) fn web_tread(&mut self, id: ActorId, to: Pos, events: &mut Vec<Event>) {
-        let content = self.content.clone();
-        let Some(rules) = content.webs() else {
+        let Some(rules) = self.content.webs() else {
             return;
         };
-        let level = self.state.current();
-        if level.is_web(rules, to) {
+        if self.state.current().is_web(rules, to) {
             self.web_catch(id, None, events);
-        } else if level.is_burning_web(rules, to) {
-            self.web_burns(id, events);
         }
     }
 
-    /// Actor `id`'s turn starts where it stands: a burning web there burns it.
-    pub(in crate::world) fn web_turn_start(&mut self, id: ActorId, events: &mut Vec<Event>) {
+    /// The fire on `p` has burned out, and `from` is what burned there (`fire.rs`): if it was a
+    /// web, whoever it held there is free, and the ground a laid web covered is given back.
+    pub(in crate::world) fn web_burnt(
+        &mut self,
+        p: Pos,
+        from: TerrainId,
+        events: &mut Vec<Event>,
+    ) -> Option<TerrainId> {
         let content = self.content.clone();
-        let Some(rules) = content.webs() else {
-            return;
-        };
-        let level = self.state.current();
-        if level.webs.is_empty() {
-            return;
-        }
-        let Some(pos) = self.state.actors.get(&id).map(|a| a.pos) else {
-            return;
-        };
-        if level.is_burning_web(rules, pos) {
-            self.web_burns(id, events);
-        }
-    }
-
-    /// The burning web on actor `id`'s cell burns it: the rules' harm, less what it resists, as
-    /// a place's harm (a kill is no one's).
-    fn web_burns(&mut self, id: ActorId, events: &mut Vec<Event>) {
-        let content = self.content.clone();
-        let Some(rules) = content.webs() else {
-            return;
-        };
-        let Some(actor) = self.state.actors.get(&id) else {
-            return;
-        };
-        let pos = actor.pos;
-        let rolled = rules.harm.roll(&mut draw!(self, "web/burn/{}", actor.key));
-        let damage = Damage::new(rolled, Some(rules.damage_type));
-        let taken = self.resisted(id, damage);
-        let verb = content.damage_type(rules.damage_type).verb.clone();
-        if id == self.state.player {
-            self.say(match taken {
-                t if t <= 0 => "The burning web flares about you harmlessly.".to_string(),
-                _ => format!("The burning web {verb} you!"),
-            });
-        } else if self.perception.sees_actors_at(pos) {
-            let name = self.creature_called(id).to_lowercase();
-            self.say(format!("The burning web {verb} {name}."));
-        }
-        if taken <= 0 {
-            return;
-        }
-        if !self.hurt(id, taken, Harm::Web, events) {
-            self.wounded(id, &Blow::plain(taken, damage.kind), None, events);
-        }
-    }
-
-    /// A fire area of `kind` reached `cells` of the current level: the webs among them catch
-    /// fire now, if it is the webs' damage type (fire).
-    pub(in crate::world) fn ignite_webs(&mut self, kind: Option<DamageTypeId>, cells: &[Pos]) {
-        let content = self.content.clone();
-        let Some(rules) = content.webs() else {
-            return;
-        };
-        if kind != Some(rules.damage_type) {
-            return;
-        }
-        let now = self.state.time;
-        for &p in cells {
-            if self.state.current().is_web(rules, p) {
-                self.ignite(rules, p, now);
-            }
-        }
-    }
-
-    /// The web on `p` catches fire at `at`.
-    fn ignite(&mut self, rules: &WebRules, p: Pos, at: GameTime) {
-        self.set_terrain(p, rules.burning);
-        let web = self.state.current_mut().webs.entry(p).or_default();
-        web.lit = Some(at);
-        web.spread = false;
-    }
-
-    /// The end of a turn (module docs): on the current level, every web burning `spreads`
-    /// seconds sets the webs beside it burning at that moment, earliest first, and every web
-    /// burning `burns` seconds is gone, its ground back and whoever it held free.
-    pub(in crate::world) fn webs_burn(&mut self, events: &mut Vec<Event>) {
-        let content = self.content.clone();
-        let Some(rules) = content.webs() else {
-            return;
-        };
-        if self.state.current().webs.is_empty() {
-            return;
-        }
-        let now = self.state.time;
-        let spreads = Duration::seconds(rules.spreads);
-        loop {
-            let due = (self.state.current().webs.iter())
-                .filter(|(_, w)| !w.spread)
-                .filter_map(|(&p, w)| w.lit.map(|t| (t + spreads, p)))
-                .filter(|&(t, _)| t <= now)
-                .min();
-            let Some((when, p)) = due else {
-                break;
-            };
-            if let Some(web) = self.state.current_mut().webs.get_mut(&p) {
-                web.spread = true;
-            }
-            for d in Dir::ALL {
-                let q = p.step(d);
-                if self.state.current().is_web(rules, q) {
-                    self.ignite(rules, q, when);
-                }
-            }
-        }
-        let burns = Duration::seconds(rules.burns);
-        let out: Vec<(Pos, Web)> = (self.state.current().webs.iter())
-            .filter(|(_, w)| w.lit.is_some_and(|t| t + burns <= now))
-            .map(|(&p, &w)| (p, w))
-            .collect();
+        let rules = content.webs().filter(|r| r.web == from)?;
+        let under = self
+            .state
+            .current_mut()
+            .webs
+            .remove(&p)
+            .and_then(|w| w.under);
         let level = self.state.current_level.clone();
-        for (p, web) in out {
-            self.state.current_mut().webs.remove(&p);
-            self.set_terrain(p, web.under.unwrap_or(rules.burnt));
-            let Some(id) = self.state.actor_at(&level, p).map(|a| a.id) else {
-                continue;
-            };
+        if let Some(id) = self.state.actor_at(&level, p).map(|a| a.id) {
             let effect = self.state.actors[&id].effects.get(rules.status).copied();
             if let Some(effect) = effect {
-                self.state
-                    .actors
-                    .get_mut(&id)
-                    .map(|a| a.effects.remove(rules.status));
+                (self.state.actors.get_mut(&id)).map(|a| a.effects.remove(rules.status));
                 self.ended(id, &[effect], events);
             }
         }
-    }
-
-    /// A spell that douses fire reached `cells` of the current level: the burning webs among
-    /// them go out, webs again.
-    pub(in crate::world) fn douse_webs(&mut self, cells: &[Pos]) {
-        let content = self.content.clone();
-        let Some(rules) = content.webs() else {
-            return;
-        };
-        for &p in cells {
-            if !self.state.current().is_burning_web(rules, p) {
-                continue;
-            }
-            self.set_terrain(p, rules.web);
-            let webs = &mut self.state.current_mut().webs;
-            match webs.get(&p).and_then(|w| w.under) {
-                Some(under) => {
-                    webs.insert(
-                        p,
-                        Web {
-                            under: Some(under),
-                            ..Web::default()
-                        },
-                    );
-                }
-                None => {
-                    webs.remove(&p);
-                }
-            }
-        }
+        under
     }
 
     /// The cells a web spell `cast` by `by` from `here` at `at` goes off over: a burst about the

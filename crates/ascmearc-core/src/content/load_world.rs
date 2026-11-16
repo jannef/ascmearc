@@ -1,9 +1,9 @@
 //! Loading terrain, lights, sight, and dungeon branches.
 
 use super::{
-    Breakable, Content, ContentError, ContentFiles, CreatureId, DungeonDef, Landscape, LightId,
-    LightPreset, TerrainDef, TerrainId, VisionProfile, campaign, danger, dungeon, duplicate_id,
-    load_table, terrain, validate::check_effects,
+    Breakable, Burn, Content, ContentError, ContentFiles, CreatureId, DungeonDef, Landscape,
+    LightId, LightPreset, TerrainDef, TerrainId, VisionProfile, campaign, danger, dungeon,
+    duplicate_id, load_table, terrain, validate::check_effects,
 };
 use crate::noise::MAX_LOUDNESS;
 use serde::Deserialize;
@@ -104,6 +104,15 @@ impl Content {
                 stone: spec.stone,
                 works_as: resolve(file, &spec.works_as)?,
                 plants: spec.plants,
+                burn: match &spec.burn {
+                    None => None,
+                    Some(b) => Some(Burn {
+                        burns: b.burns,
+                        spreads: b.spreads,
+                        leaves: resolve(file, &Some(b.leaves.clone()))?.expect("given"),
+                        burning: resolve(file, &Some(b.burning.clone()))?.expect("given"),
+                    }),
+                },
                 step_noise: spec.step_noise,
                 toggle_noise: spec.toggle_noise,
                 // Solid terrain blocks sound unless it muffles it; everything else passes it.
@@ -140,6 +149,7 @@ impl Content {
             });
         }
         check_chests(&defs).map_err(err)?;
+        check_burning(&defs).map_err(err)?;
         super::burial::check_terrain(&defs).map_err(err)?;
         if let Some(def) = (defs.iter()).find(|d| {
             d.works_as
@@ -477,6 +487,41 @@ fn check_terrain_noise(spec: &terrain::TerrainSpec) -> Result<(), String> {
     let shut_chest = spec.chest == Some(crate::chest::ChestState::Shut);
     if spec.toggle_noise > 0 && spec.opens_to.is_none() && spec.closes_to.is_none() && !shut_chest {
         return Err("only doors and shut chests have a `toggle_noise`".into());
+    }
+    Ok(())
+}
+
+/// Checks the terrain that burns (`burn`): it spreads after more than 0 seconds and before it
+/// burns out; what it burns as sheds a light, burns no further, and is walkable just when it is
+/// (no one is stranded or let through as it catches); what it leaves is walkable if it was.
+fn check_burning(defs: &[TerrainDef]) -> Result<(), String> {
+    for def in defs {
+        let Some(burn) = def.burn else {
+            continue;
+        };
+        let (burning, leaves) = (
+            &defs[usize::from(burn.burning.0)],
+            &defs[usize::from(burn.leaves.0)],
+        );
+        let wrong = if burn.spreads == 0 || burn.spreads >= burn.burns {
+            Some("`spreads` is above 0 and below `burns`".to_string())
+        } else if burning.light.is_none() {
+            Some(format!("`{}` must shed a light", burning.id))
+        } else if burning.burn.is_some() {
+            Some(format!(
+                "`{}` burns already: it burns no further",
+                burning.id
+            ))
+        } else if burning.walkable != def.walkable {
+            Some(format!("`{}` must be walkable just when it is", burning.id))
+        } else if def.walkable && !leaves.walkable {
+            Some(format!("`{}` must be walkable, as it is", leaves.id))
+        } else {
+            None
+        };
+        if let Some(wrong) = wrong {
+            return Err(format!("terrain `{}`: `burn`: {wrong}", def.id));
+        }
     }
     Ok(())
 }

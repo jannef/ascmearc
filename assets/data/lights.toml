@@ -90,6 +90,26 @@ stability.intensity = { amount = 0.14, speed = 1.6 }
 stability.hue = { degrees = 10, speed = 0.6 }
 stability.dips = { depth = 0.12, every = 4, length = 0.5 }
 
+# Burning grass and a burning bush (terrain/461-burning_grass.toml, 462-burning_bush.toml): low
+# flames, many of them, so a smaller light each than a burning web's.
+[[light]]
+id = "burning_grass"
+color = [360, 210, 100, 0]
+radius = 6
+stability.intensity = { amount = 0.14, speed = 1.6 }
+stability.hue = { degrees = 10, speed = 0.6 }
+stability.dips = { depth = 0.12, every = 4, length = 0.5 }
+
+# A burning tree, door, or piece of furniture (terrain/463-burning_tree.toml, 464-burning_wood.toml,
+# 466-burning_doorway.toml): a tall, steady blaze.
+[[light]]
+id = "burning_wood"
+color = [400, 220, 100, 0]
+radius = 8
+stability.intensity = { amount = 0.1, speed = 1.2 }
+stability.hue = { degrees = 8, speed = 0.5 }
+stability.dips = { depth = 0.1, every = 5, length = 0.6 }
+
 # A lantern (objects/lantern.toml): what it gives ready in the Tool slot and lit.
 [[light]]
 id = "lantern"

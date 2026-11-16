@@ -167,9 +167,17 @@ pub struct LevelState {
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty", with = "by_pos")]
     pub(crate) zone_memory: BTreeMap<Pos, crate::content::ZoneKind>,
     /// What web cells keep beyond their terrain, by position (`world/levels/web.rs`): the ground
-    /// a laid web covers, and when a burning one caught fire. Ground truth.
+    /// a laid web covers. Ground truth.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty", with = "by_pos")]
     pub(crate) webs: BTreeMap<Pos, crate::world::Web>,
+    /// The cells on fire, by position (`world/levels/fire.rs`): what each was and when it
+    /// caught. Ground truth.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty", with = "by_pos")]
+    pub(crate) burning: BTreeMap<Pos, crate::world::Blaze>,
+    /// The next event of each burning cell, by when it is due, then by position: its spread,
+    /// then its burn-out (`world/levels/fire.rs`).
+    #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
+    pub(crate) burn_due: BTreeSet<(GameTime, Pos)>,
     /// Traps, by position, hidden or known; a spent one is gone.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty", with = "by_pos")]
     pub(crate) traps: BTreeMap<Pos, Trap>,
@@ -252,6 +260,8 @@ impl LevelState {
             zones: Vec::new(),
             zone_memory: BTreeMap::new(),
             webs: BTreeMap::new(),
+            burning: BTreeMap::new(),
+            burn_due: BTreeSet::new(),
             shops: Vec::new(),
             traps: template.traps.clone(),
             trap_memory: BTreeMap::new(),
@@ -546,6 +556,8 @@ impl LevelState {
             })
             && (self.webs.iter())
                 .all(|(p, w)| self.terrain.in_bounds(*p) && w.under.is_none_or(|t| known(&t)))
+            && (self.burning.iter()).all(|(p, b)| self.terrain.in_bounds(*p) && known(&b.from))
+            && (self.burn_due.iter()).all(|(_, p)| self.burning.contains_key(p))
             && (self.chests.keys()).all(|p| self.terrain.in_bounds(*p))
             && (self.statues.iter())
                 .all(|(p, s)| self.terrain.in_bounds(*p) && s.is_valid_for(content))

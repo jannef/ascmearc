@@ -108,8 +108,8 @@ pub enum Cause {
     Flask(ObjectId),
     /// They fell through a collapsed floor.
     Fall,
-    /// A burning web burned them (`world/levels/web.rs`).
-    Web,
+    /// Fire on the ground burned them (`world/levels/fire.rs`): a burning web, grass, a tree.
+    Fire,
     /// A spell of their own caught them.
     Spell(crate::content::SpellId),
     /// A spell of their own they miscast tore through them.
@@ -126,7 +126,7 @@ impl Cause {
         match self {
             Cause::Starvation => "Starved to death".into(),
             Cause::Fall => "Fell through a collapsed floor".into(),
-            Cause::Web => "Burned to death in a web".into(),
+            Cause::Fire => "Burned to death".into(),
             Cause::Choked(o) => format!("Choked to death on {}", what(o)),
             Cause::Trap(t) => {
                 let name = &content.trap(t).name;
@@ -165,7 +165,7 @@ impl Cause {
             | Cause::Miscast(_)
             | Cause::Altar
             | Cause::Fall
-            | Cause::Web => "You die...".into(),
+            | Cause::Fire => "You die...".into(),
         }
     }
 }
@@ -198,8 +198,8 @@ pub(in crate::world) enum Harm {
     /// A fall through a collapsed floor: no one killed, and no one
     /// earns anything.
     Fall,
-    /// A burning web (`world/levels/web.rs`): no one killed, and no one earns anything.
-    Web,
+    /// Fire on the ground (`world/levels/fire.rs`): no one killed, and no one earns anything.
+    Fire,
     /// What never kills: it leaves the last hit point (the plunge into freezing water; a disease
     /// that does not kill).
     Spared,
@@ -1229,14 +1229,14 @@ impl World {
             }
             Harm::Starving(when) => self.dies(id, None, None, when, events),
             Harm::Barbs => self.dies(id, None, None, self.state.time, events),
-            Harm::Place | Harm::Fall | Harm::Web => {
+            Harm::Place | Harm::Fall | Harm::Fire => {
                 self.dies(id, None, None, self.state.time, events);
                 if id == self.state.player
                     && let Some(death) = &mut self.state.death
                 {
                     death.cause = Some(match harm {
                         Harm::Fall => Cause::Fall,
-                        Harm::Web => Cause::Web,
+                        Harm::Fire => Cause::Fire,
                         _ => Cause::Altar,
                     });
                 }

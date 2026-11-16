@@ -890,7 +890,8 @@ None takes game time unless said.
   melts the ice and whoever stood on it falls in (docs/dev/temperature.md).
 - `web:X,Y,R` lays webs on the plain ground within radius 0 to 20 of level cell (X, Y), in its
   line of sight, by no one; whoever stands there makes the catch check (docs/dev/webs.md). A
-  `zone:fire@...` over them sets them burning.
+  `zone:fire@...` over them, as over any burnable terrain (grass, trees, doors; docs/dev/fire.md),
+  sets them burning.
 - `zone:KIND@X,Y,R` (`KIND` = `fire`, `fouled`, `slick`, `dark`, `smoke`; by the player, for ten
   turns, a fire's harm 4, within radius 0 to 20 in its line of sight; refused on the overworld;
   `docs/dev/spells.md` "Zones").

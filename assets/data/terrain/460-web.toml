@@ -13,3 +13,9 @@ glyph = "\""
 fg = "#a8a8a0"
 bg = "#0d0d10"
 step_noise = 80
+
+[terrain.burn]
+burns = 12
+spreads = 6
+leaves = "floor"
+burning = "burning_web"

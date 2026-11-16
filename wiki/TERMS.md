@@ -117,7 +117,8 @@ above.
 | Līctūn, your dead's graves, the crypts | `lictun.md`, `lictun.md#the-crypts` |
 | Terrain, walls, water, stairs, creatures following you on stairs | `terrain.md#walls`, `terrain.md#water`, `terrain.md#stairs` |
 | Deep water, swimming | `terrain.md#deep-water` |
-| Webs, getting caught, burning webs | `terrain.md#webs` |
+| Webs, getting caught | `terrain.md#webs` |
+| Fire, burning grass and trees, burning webs, what burns | `fire.md`, `fire.md#how-it-spreads` |
 | Spiders spinning webs | `creature-tricks.md#spinners` |
 | Digging, wall hardness | `digging.md#digging`, `digging.md#what-breaks-and-what-does-not` |
 | Explosions, blasts | `digging.md#explosions` |

@@ -7,3 +7,9 @@ fg = "#f2d653"
 bg = "#22401a"
 bounce = "#e8dca0"
 step_noise = 70
+
+[terrain.burn]
+burns = 24
+spreads = 12
+leaves = "scorched_earth"
+burning = "burning_grass"

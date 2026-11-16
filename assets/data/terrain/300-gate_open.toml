@@ -6,3 +6,9 @@ fg = "#a07a4a"
 bg = "#22401a"
 closes_to = "gate_closed"
 toggle_noise = 30
+
+[terrain.burn]
+burns = 48
+spreads = 18
+leaves = "door_broken"
+burning = "burning_doorway"

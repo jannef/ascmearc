@@ -1,5 +1,6 @@
 //! Webs (`world/levels/web.rs`, `data/rules/webs.toml`): the catch, who is never caught, the
-//! Web spell's webs, fire setting them burning, the spread, the harm, the burn-out, and a douse.
+//! Web spell's webs, and a web's fire (`fire.rs`, by the web's own `burn`): the spread, the harm,
+//! the burn-out, and a douse.
 
 use crate::combat::{FUMBLE, HIGHEST, roll_natural};
 use crate::content::StatusId;
@@ -56,14 +57,16 @@ fn spin(w: &mut World, p: Pos) {
 fn the_shipped_rules_load() {
     let content = crate::test_support::builtin();
     let rules = content.webs().expect("data/rules/webs.toml");
-    assert_eq!((rules.burns, rules.spreads), (12, 6));
+    let burn = content.terrain(rules.web).burn.expect("a web burns");
+    assert_eq!((burn.burns, burn.spreads), (12, 6));
     assert_eq!(content.terrain(rules.web).id, "web");
-    assert_eq!(content.terrain(rules.burning).id, "burning_web");
+    assert_eq!(content.terrain(burn.burning).id, "burning_web");
+    assert_eq!(content.terrain(burn.leaves).id, "floor");
     assert!(
-        content.terrain(rules.burning).light.is_some(),
+        content.terrain(burn.burning).light.is_some(),
         "it sheds light"
     );
-    let flames = content.terrain(rules.burning).flames.as_deref();
+    let flames = content.terrain(burn.burning).flames.as_deref();
     assert_eq!(flames, Some("blaze"), "Burning hands' flames burn on it");
     assert_eq!(content.status(rules.status).id, "webbed");
 }
@@ -191,10 +194,10 @@ fn fire_sets_a_web_burning_it_spreads_after_six_seconds_and_burns_out_after_twel
         spin(&mut w, cell(x, 1));
     }
     let start = w.time();
-    w.ignite_webs(w.content().damage_type_id("fire"), &[cell(12, 1)]);
+    w.ignite(w.content().damage_type_id("fire"), &[cell(12, 1)]);
     assert_eq!(terrain(&w, cell(12, 1)), "burning_web");
     assert_eq!(terrain(&w, cell(13, 1)), "web");
-    let lit = |w: &World, p: Pos| w.webs().find(|(q, _)| *q == p).and_then(|(_, web)| web.lit);
+    let lit = |w: &World, p: Pos| w.burning().find(|(q, _)| *q == p).map(|(_, b)| b.lit);
     assert_eq!(lit(&w, cell(12, 1)), Some(start));
 
     // Run whole turns until the chain has burned through; the times are the rule's, exactly.
@@ -203,6 +206,7 @@ fn fire_sets_a_web_burning_it_spreads_after_six_seconds_and_burns_out_after_twel
         assert_eq!(terrain(&w, cell(x, 1)), "floor", "burned away at {x}");
     }
     assert!(w.webs().next().is_none(), "nothing kept");
+    assert!(w.burning().next().is_none(), "no fire left");
 }
 
 #[test]
@@ -212,11 +216,11 @@ fn the_chain_keeps_its_own_time_however_the_turns_fall() {
         spin(&mut w, cell(x, 1));
     }
     let start = w.time();
-    w.ignite_webs(w.content().damage_type_id("fire"), &[cell(12, 1)]);
+    w.ignite(w.content().damage_type_id("fire"), &[cell(12, 1)]);
     // Ten seconds on: the first spread at 6 s, its neighbour's own spread is due at 12 s.
     w.state.time = start + crate::time::Duration::seconds(10);
-    w.webs_burn(&mut Vec::new());
-    let lit = |w: &World, p: Pos| w.webs().find(|(q, _)| *q == p).and_then(|(_, web)| web.lit);
+    w.fires_burn(&mut Vec::new());
+    let lit = |w: &World, p: Pos| w.burning().find(|(q, _)| *q == p).map(|(_, b)| b.lit);
     let six = start + crate::time::Duration::seconds(6);
     assert_eq!(
         lit(&w, cell(13, 1)),
@@ -226,7 +230,7 @@ fn the_chain_keeps_its_own_time_however_the_turns_fall() {
     assert_eq!(terrain(&w, cell(14, 1)), "web", "not yet");
     // A long gap: everything has burned out in order.
     w.state.time = start + crate::time::Duration::seconds(60);
-    w.webs_burn(&mut Vec::new());
+    w.fires_burn(&mut Vec::new());
     for x in 12..=14 {
         assert_eq!(terrain(&w, cell(x, 1)), "floor");
     }
@@ -253,13 +257,13 @@ fn a_burning_web_burns_who_starts_a_turn_in_it_and_frees_them_as_it_burns_away()
     spin(&mut w, at);
     let webbed_status = status(&w, "webbed");
     w.afflict(id, webbed_status, 6, None, &mut Vec::new());
-    w.ignite_webs(w.content().damage_type_id("fire"), &[at]);
+    w.ignite(w.content().damage_type_id("fire"), &[at]);
     let hp = w.state.actors[&id].hp;
     let mut events = Vec::new();
-    w.web_turn_start(id, &mut events);
+    w.fire_turn_start(id, &mut events);
     assert!(w.state.actors[&id].hp < hp, "the fire burns it");
     w.state.time += crate::time::Duration::seconds(12);
-    w.webs_burn(&mut events);
+    w.fires_burn(&mut events);
     assert_eq!(terrain(&w, at), "floor");
     assert!(!webbed(&w, id), "nothing holds it any more");
 }
@@ -268,12 +272,12 @@ fn a_burning_web_burns_who_starts_a_turn_in_it_and_frees_them_as_it_burns_away()
 fn a_burning_web_burns_the_player_who_steps_in_and_a_death_by_it_is_said() {
     let mut w = hall();
     spin(&mut w, cell(3, 3));
-    w.ignite_webs(w.content().damage_type_id("fire"), &[cell(3, 3)]);
+    w.ignite(w.content().damage_type_id("fire"), &[cell(3, 3)]);
     w.player_mut().hp = 1;
     run(&mut w, "move:E");
     let death = w.state.death.as_ref().expect("burned to death");
-    assert_eq!(death.cause, Some(Cause::Web));
-    assert_eq!(Cause::Web.epitaph(w.content()), "Burned to death in a web");
+    assert_eq!(death.cause, Some(Cause::Fire));
+    assert_eq!(Cause::Fire.epitaph(w.content()), "Burned to death");
 }
 
 #[test]
@@ -281,7 +285,7 @@ fn a_burning_web_catches_no_one_and_a_douse_makes_it_a_web_again() {
     let mut w = hall();
     let at = cell(12, 3);
     spin(&mut w, at);
-    w.ignite_webs(w.content().damage_type_id("fire"), &[at]);
+    w.ignite(w.content().damage_type_id("fire"), &[at]);
     let id = kobold(&mut w, (10, 0));
     assert_eq!(w.state.actors[&id].pos, at);
     let before = draws(&w);
@@ -289,7 +293,7 @@ fn a_burning_web_catches_no_one_and_a_douse_makes_it_a_web_again() {
     assert_eq!(draws(&w), before, "no check in a burning web");
     cast(&mut w, "frost", at, None);
     assert_eq!(terrain(&w, at), "web", "put out");
-    assert!(w.webs().next().is_none(), "no fire kept");
+    assert!(w.burning().next().is_none(), "no fire kept");
 }
 
 #[test]
@@ -306,8 +310,13 @@ fn a_laid_web_leaves_the_ground_it_covered_and_webs_save_and_hash() {
     let state: WorldState = serde_json::from_str(&saved).expect("loads");
     let again = World::from_state(w.content.clone(), state).expect("restores");
     assert_eq!(again.state.current().webs, w.state.current().webs);
-    w.ignite_webs(w.content().damage_type_id("fire"), &[p]);
+    w.ignite(w.content().damage_type_id("fire"), &[p]);
     w.state.time += crate::time::Duration::seconds(12);
-    w.webs_burn(&mut Vec::new());
-    assert_eq!(terrain(&w, p), "grass");
+    w.fires_burn(&mut Vec::new());
+    assert_eq!(
+        terrain(&w, p),
+        "burning_grass",
+        "its ground is back, and catches"
+    );
+    assert!(w.webs().next().is_none(), "nothing kept of the web");
 }

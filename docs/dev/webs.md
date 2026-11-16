@@ -1,10 +1,10 @@
 # Webs
 
-The `web` terrain catches whoever walks into it, and fire burns it away (#1745). A spider's
-leaving (`mapgen/leavings.rs`, docs/dev/creatures.md "Warning signs") and the Web spell's strands
-are the same web on the map, by the same rules. The rule is `world/levels/web.rs`; its numbers
-are `assets/data/rules/webs.toml` (`content/webs.rs`, `WebRules`, `Content::webs()`; optional:
-without the file no web catches or burns). The spec's bullets: `spec/11-magic.md` "Spells".
+The `web` terrain catches whoever walks into it, and fire burns it away (#1745; the fire is
+docs/dev/fire.md's). A spider's leaving (`mapgen/leavings.rs`, docs/dev/creatures.md "Warning
+signs") and the Web spell's strands are the same web on the map, by the same rules. The rule is
+`world/levels/web.rs`; its numbers are `assets/data/rules/webs.toml` (`content/webs.rs`,
+`WebRules`, `Content::webs()`; optional: without the file no web catches). The spec's bullets: `spec/11-magic.md` "Spells".
 
 ## The catch
 
@@ -64,30 +64,19 @@ crowded by webs or on its cooldown draws nothing. Tests: `world/creatures/spin_t
 
 ## Burning
 
-- **Lit**: `World::ignite_webs(kind, cells)`, called from `sear.rs::sear`, the hook every fire
-  area passes through (a burst, a cone, a fire zone as it is laid), for the rules' `damage_type`
-  (fire). A web there turns the rules' `burning` terrain (`terrain/465-burning_web.toml`), whose
-  `light` (`burning_web` in `lights.toml`) the light cache re-derives as `set_terrain` changes it;
-  `Web::lit` is the moment. On screen it burns with Blaze's flames (Burning hands' look,
-  `flames = "blaze"` on the terrain), drawn over the cell while it burns by
-  `crates/ascmearc/src/ui/flames.rs` from the perception's visible cells, in visual time only.
-- **Spread and burn-out**: `World::webs_burn`, at the end of every turn (`schedule.rs`, after
-  `zones_fade`), on the current level: each burning web `spreads` seconds old sets the webs on
-  its eight neighbours burning at that moment (earliest first, so a chain keeps its own game
-  time however long a turn or a rest was), and each `burns` seconds old becomes its `under`
-  terrain, else the rules' `burnt`; whoever stood there loses the status (`World::ended`).
-- **Harm**: a creature that starts its turn in a burning web (`World::web_turn_start`, from
-  `schedule.rs` for the player and `ai.rs::creature_turn`) or steps into one takes the rules'
-  `harm` (`web/burn/<actor key>`) of its damage type, less resistance (`World::resisted`), as
-  `Harm::Web`: a kill is no one's, and the player's death is `Cause::Web` ("Burned to death in a
-  web"; the graveyard's cause id `burning_web`).
-- **Douse**: a spell that douses fire (`spell_type.rs::douse`, Gale's line) calls
-  `World::douse_webs`: a burning web is a web again.
+A web burns as any burnable terrain does (docs/dev/fire.md): its `burn` table
+(`terrain/460-web.toml`) turns it `burning_web` (`terrain/465-burning_web.toml`, the
+`burning_web` light) for its seconds, spreading to its neighbours on the way, and the fire's
+harm, douse, and creatures' detour are the fire's. As it burns out, `World::web_burnt` (from
+`fire.rs::fire_out`) gives back the ground a laid web covered (`Web::under`; a generator's web
+leaves its `burn`'s `floor`), which catches in turn if it burns, and whoever it held loses the
+status (`World::ended`). A burning web catches no one, and a spider's spinning counts it among
+the webs around it (`spin.rs::webbed_around`, by `Blaze::from`).
 
 ## State, determinism, tests
 
 `LevelState::webs` (`BTreeMap<Pos, Web>`, saved and hashed, left out while empty) holds only
-laid and burning webs; everything else is terrain. Draws: one check per catch and one roll per
-burn, keyed as above; the burning is game time only. Tests: `world/levels/web_tests.rs`;
+laid webs, burning or not; everything else is terrain and the fire's state. Draws: one check per
+catch, keyed as above. Tests: `world/levels/web_tests.rs`;
 `world/health/flask_content_tests.rs` (tar), `world/magic/spell_list_tests.rs` (the scroll),
 `content/spell_def.rs` (the ladders).

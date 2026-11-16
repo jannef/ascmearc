@@ -1,0 +1,13 @@
+# Fire on the ground (`world/levels/fire.rs`; docs/dev/fire.md): what every burning cell shares.
+# How long each terrain burns, how soon it spreads, and what it leaves are its own: the `burn`
+# table of its terrain file (terrain/README.toml).
+#
+# A fire area of `damage_type` (a burst, a cone, a breath, a fire zone as it is laid, a fire left
+# burning on a cell) sets the burnable terrain it reaches alight. A burning cell does `harm` of
+# `damage_type`, less what is resisted, to whoever starts a turn in it or steps into it.
+# Creatures go round burning cells where they can: one adds `avoid` steps to a path through it
+# (unless the creature shrugs off fire entirely), and one standing in fire steps out of it.
+
+damage_type = "fire"
+harm = "2d4"
+avoid = 8

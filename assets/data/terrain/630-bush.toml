@@ -10,3 +10,9 @@ move_cost = 200
 step_noise = 150
 height = 1
 bounce = "#98c878"
+
+[terrain.burn]
+burns = 36
+spreads = 12
+leaves = "scorched_earth"
+burning = "burning_bush"

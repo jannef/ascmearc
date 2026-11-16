@@ -126,6 +126,8 @@ pub(super) struct TerrainSpec {
     /// Whether things grow on it (Bramble calls them up).
     #[serde(default)]
     pub plants: bool,
+    /// How it burns (`world/levels/fire.rs`); none: fire never takes it.
+    pub burn: Option<BurnSpec>,
     /// How loud steps onto it are, in percent of the walker's footsteps.
     #[serde(default = "full_noise")]
     pub step_noise: u16,
@@ -162,6 +164,33 @@ pub(super) struct TerrainSpec {
 
 fn yes() -> bool {
     true
+}
+
+/// The `burn` table of a terrain that burns, as data writes it: [`Burn`] with its terrains by
+/// id.
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct BurnSpec {
+    pub burns: u32,
+    pub spreads: u32,
+    pub leaves: String,
+    pub burning: String,
+}
+
+/// How a terrain burns (`world/levels/fire.rs`; docs/dev/fire.md): set alight, it turns
+/// `burning` for `burns` seconds of game time, then `leaves`; `spreads` seconds after it caught,
+/// it sets its burnable neighbours alight.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Burn {
+    /// How long it burns, in seconds of game time.
+    pub burns: u32,
+    /// How long after it caught it sets the burnable terrain on its eight neighbours alight, in
+    /// seconds; below `burns`.
+    pub spreads: u32,
+    /// What it leaves once burnt out (scorched earth, a charred tree, a broken door).
+    pub leaves: TerrainId,
+    /// What it is while it burns: a terrain that sheds light, walkable as it is.
+    pub burning: TerrainId,
 }
 
 /// The `freeze` table of a water terrain as data writes it: [`Freeze`] with
@@ -297,6 +326,8 @@ pub struct TerrainDef {
     /// Gameplay: things grow on it: a spell with `only_terrain = "plants"`
     /// takes only those standing on it (Bramble).
     pub plants: bool,
+    /// Gameplay: how fire takes it ([`Burn`]); `None`: it never burns.
+    pub burn: Option<Burn>,
     /// Gameplay: how loud steps onto it are, in percent of the walker's footsteps
     /// ([`crate::noise::noise`]): water splashes (200), grass is soft (70).
     pub step_noise: u16,

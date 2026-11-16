@@ -20,3 +20,9 @@ gravity = 0.4
 area = [0.35, 0.4]
 scale = 0.7
 fade = 0.6
+
+[terrain.burn]
+burns = 60
+spreads = 24
+leaves = "door_broken"
+burning = "burning_doorway"
