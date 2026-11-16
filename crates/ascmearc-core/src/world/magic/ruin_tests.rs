@@ -135,6 +135,7 @@ fn quest_objects_and_uniques_survive_any_number_of_casts() {
         name: Some("Widowmaker".into()),
         identified: false,
         carried: 0,
+        curse_known: false,
         unique: Some("widowmaker".into()),
     };
     let proof = Magic {
@@ -148,6 +149,7 @@ fn quest_objects_and_uniques_survive_any_number_of_casts() {
         name: None,
         identified: false,
         carried: 0,
+        curse_known: false,
         unique: None,
     };
     let mut pile = w.state.current().objects[&at].clone();

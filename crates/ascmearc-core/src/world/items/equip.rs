@@ -5,7 +5,8 @@
 //! `body_armor`, or `ready` in `data/actions.toml`): a swap pays for both, and a two-handed
 //! weapon taking the place of a sword and a shield pays for all three. Taking something off
 //! costs what putting it on does. A refused attempt takes no time. What is worn and wielded
-//! fights and protects (`fight.rs`); it weighs what it weighs, worn or not.
+//! fights and protects (`fight.rs`); it weighs what it weighs, worn or not. A cursed thing, once
+//! on, will not come off (`curse.rs`).
 
 use crate::content::{ActionKind, SlotId};
 use crate::equipment::{self, verbs};
@@ -70,6 +71,12 @@ impl World {
                 off.push(other);
             }
         }
+        // A cursed thing on already will not come off to make room (`curse.rs`).
+        if self.refuse_bound(off.iter().copied()) {
+            return Spent::Nothing;
+        }
+        let player = self.state.player();
+        let worn = &player.equipment;
         let action = |i: usize| content.slot(worn.slots_of(i)[0]).action;
         let mut kinds: Vec<ActionKind> = off.iter().map(|&i| action(i)).collect();
         let mut said: Vec<String> = off
@@ -85,6 +92,7 @@ impl World {
             .collect();
         let kind = content.slot(slot).action;
         kinds.push(kind);
+        let quiet = put_on.is_some();
         let hands = if taken.len() > 1 {
             " in both hands"
         } else {
@@ -102,6 +110,7 @@ impl World {
         for text in said {
             self.say(text);
         }
+        self.bind_if_cursed(item, quiet);
         self.fade_spirit();
         self.price_for(&kinds)
     }
@@ -121,6 +130,10 @@ impl World {
             ));
             return Spent::Nothing;
         };
+        if self.refuse_bound([item]) {
+            return Spent::Nothing;
+        }
+        let player = self.state.player();
         let kind = self.first_action(item);
         let (_, take_off) = verbs(kind);
         let what = self.lore().describe(&player.inventory[item]);

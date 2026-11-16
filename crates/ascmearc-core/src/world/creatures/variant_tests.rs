@@ -384,6 +384,7 @@ fn a_variant_is_named_and_drawn_by_its_material() {
         name: None,
         identified: true,
         carried: 0,
+        curse_known: false,
         unique: None,
     };
     let sword = Stack::with_magic(object(&content, "long_sword"), 1, magic)

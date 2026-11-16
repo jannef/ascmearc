@@ -1,0 +1,16 @@
+# A curse (#1754): hunger comes faster, the reverse of of Sustenance (one category, so an item is
+# never both). Rolled only on found loot and creature gear, very rarely; once worn it will not
+# come off (crates/ascmearc-core/src/world/items/curse.rs).
+[[suffix]]
+id = "of_hunger"
+name = "of Hunger"
+effect = "hunger"
+category = "hunger"
+cursed = true
+bases = ["body", "cloak", "ring", "amulet"]
+weight = 4
+tiers = [
+  { level = 1, min = 15, max = 25 },
+  { level = 6, min = 25, max = 35 },
+  { level = 12, min = 35, max = 50 },
+]

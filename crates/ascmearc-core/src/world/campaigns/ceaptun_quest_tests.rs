@@ -69,7 +69,14 @@ fn each_giver_offers_the_first_quest_of_their_chain() {
     let w = town();
     assert_eq!(
         topics(&w, HILD),
-        ["quest-grave_goods", "mynster", "fen", "cure", "mend"]
+        [
+            "quest-grave_goods",
+            "mynster",
+            "fen",
+            "cure",
+            "mend",
+            "decurse"
+        ]
     );
     assert_eq!(topics(&w, LEOFRIC), ["quest-barrow_rats", "town", "barrow"]);
     // Wulfrun's chain waits for the barrow's heart.

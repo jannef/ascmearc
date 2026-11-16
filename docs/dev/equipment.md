@@ -41,6 +41,7 @@ slot, item }` / `Action::Remove(slot)` take off what is in the way (a swap) and 
 action (`wield`, `wear`, `body_armor`, `ready` in `data/actions.toml`) of everything put on or
 taken off (`World::price_for`); dropping takes off first (`take_off_before_dropping`) and
 `Equipment::after_removal` follows the positions (past the 26th too: the pack has no count limit).
+A cursed thing once on will not come off (`World::bound`, `world/items/curse.rs`; docs/dev/magic-items.md "Curses").
 **Clothing** (#1173): item class `clothing` (`data/item_classes.toml`), everyday garments in the
 Body slot (tunic, kirtle, robe, ...) and shoes in the Feet slot (shoes, clogs, sandals, ...), one
 object file each; no `armour`, `protection`, or `kind` (never loot or magic), and the Body slot's

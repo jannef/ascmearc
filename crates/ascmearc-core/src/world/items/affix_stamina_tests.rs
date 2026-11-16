@@ -121,6 +121,7 @@ fn magic(w: &World, object: &str, id: &str, value: i32, identified: bool) -> Sta
         name: None,
         identified,
         carried: 0,
+        curse_known: false,
         unique: None,
     };
     let object = w.content().object_id(object).expect("object");

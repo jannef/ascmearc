@@ -108,6 +108,11 @@ impl World {
         let Some(chosen) = self.chosen(positions, len, "You carry no such thing.") else {
             return Spent::Nothing;
         };
+        // A cursed thing worn stays on (`curse.rs`).
+        let chosen = self.without_bound(&chosen);
+        if chosen.is_empty() {
+            return Spent::Nothing;
+        }
         // A spirit weapon is not let go: it fades (`spirit_weapon.rs`).
         let (chosen, mut kinds) = self.release_spirit(&chosen);
         if chosen.is_empty() {

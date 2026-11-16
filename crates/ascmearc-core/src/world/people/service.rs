@@ -20,6 +20,10 @@
 //!   ([`World::unidentified`]: unknown magic, or an unidentified scroll type) is identified in
 //!   one go through [`World::identify`], each saying what it turned out to be. Its price is per
 //!   such stack (not per piece), so the total is the data's price times their count.
+//! - **`decurse`** (#1754): every cursed thing the player wears or wields comes off and falls
+//!   at their feet, still cursed ([`World::decurse`], `world/items/curse.rs`); the pack is never
+//!   looked at. Its price is per such thing ([`World::cursed_worn`]: a two-handed one counts
+//!   once), all at once or nothing.
 //! - **`train_skill`** (#1391): the player, untrained in the skill its `train` names, is trained
 //!   in it at `train.value` ([`crate::skills::Skills::add`]; a fixed number, no roll), and told
 //!   "Alberich trains you in mining." Offered only while they are untrained in it
@@ -91,10 +95,16 @@ impl World {
     }
 
     /// How many things `service` would be paid for now: the player's unidentified stacks for an
-    /// identification, `None` for a service paid once.
+    /// identification, the slots their cursed things hold for a decursing, `None` for a service
+    /// paid once.
     pub fn service_items(&self, service: &Service) -> Option<u32> {
-        (service.does == ServiceKind::Identify)
-            .then(|| u32::try_from(self.unidentified().len()).unwrap_or(u32::MAX))
+        match service.does {
+            ServiceKind::Identify => {
+                Some(u32::try_from(self.unidentified().len()).unwrap_or(u32::MAX))
+            }
+            ServiceKind::Decurse => Some(self.cursed_worn()),
+            _ => None,
+        }
     }
 
     /// Whether `service` is offered to the player now: a training only while they are untrained
@@ -147,6 +157,7 @@ impl World {
             ServiceKind::Identify if self.unidentified().is_empty() => {
                 Some(service.nothing.clone())
             }
+            ServiceKind::Decurse if self.cursed_worn() == 0 => Some(service.nothing.clone()),
             ServiceKind::TrainSkill if !self.service_offered(&service) => {
                 Some(service.nothing.clone())
             }
@@ -187,6 +198,7 @@ impl World {
                     actor.damage.mend_point();
                 }
             }
+            ServiceKind::Decurse => self.decurse(),
             ServiceKind::Mend => self.mend(player),
             ServiceKind::Identify => {
                 for item in self.unidentified() {

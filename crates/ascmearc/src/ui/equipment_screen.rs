@@ -45,8 +45,9 @@ struct Item {
     name: String,
     /// Grams.
     weight: u64,
-    /// Its name's color: by its rarity.
+    /// Its name's color: by its rarity, or its curse once known.
     rarity: Rarity,
+    cursed: bool,
 }
 
 impl Item {
@@ -60,6 +61,7 @@ impl Item {
             name: view.lore().listed(stack),
             weight: stack.weight(content),
             rarity: stack.rarity(),
+            cursed: stack.known_cursed(content),
         }
     }
 
@@ -75,7 +77,12 @@ impl Item {
             .chars()
             .take(room)
             .collect();
-        console.print(x + 2, y, &name, rarity_color(self.rarity, text.color));
+        console.print(
+            x + 2,
+            y,
+            &name,
+            rarity_color(self.rarity, self.cursed, text.color),
+        );
         if weighed {
             console.print(weight_x, y, &weight, TEXT_DIM);
         }

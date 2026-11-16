@@ -368,6 +368,7 @@ fn the_mynster_is_a_sanctuary_where_sister_hild_cures_and_mends() {
             ("fen".to_string(), None),
             ("cure".to_string(), Some(60)),
             ("mend".to_string(), Some(40)),
+            ("decurse".to_string(), Some(500)),
         ]
     );
     put_player(&mut w, HILD.step(Dir::W));

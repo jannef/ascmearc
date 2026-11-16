@@ -20,7 +20,8 @@ use super::worked::{Aspect, Worked};
 use super::{Effect, Magic};
 use crate::combat::{CRITS, Profile, THREATS};
 use crate::content::{
-    COSTS, Content, DamageTypeId, Group, LightId, MAX_SPEED, OnHit, Power, ResourceId,
+    COSTS, Content, DamageTypeId, Group, LightId, MAX_HINDRANCE, MAX_SPEED, OnHit, Power,
+    ResourceId,
 };
 use crate::damage::Rider;
 use crate::dice::Dice;
@@ -178,7 +179,12 @@ impl Mods {
         for rolled in magic.rolled(content) {
             if rolled.def.effect.is_local_on(kind) == local {
                 let light = (rolled.def.tier(rolled.tier)).and_then(|t| t.light);
-                self.add(rolled.def.group(), rolled.value, light, content);
+                // A curse works its effect the other way (#1754): hunger faster, heavier, slower.
+                let value = match rolled.def.cursed {
+                    true => -rolled.value,
+                    false => rolled.value,
+                };
+                self.add(rolled.def.group(), value, light, content);
             }
         }
     }
@@ -299,15 +305,18 @@ fn clamp_u8(value: i32, lo: u8, hi: u8) -> u8 {
 }
 
 /// What an action of `cost` costs `percent` faster: that much off (at most [`MAX_SPEED`]),
-/// never below the cheapest action.
+/// never below the cheapest action. A negative `percent` (a curse's, #1754) is slower: that
+/// much more, at most [`MAX_HINDRANCE`] (double).
 pub fn faster(cost: u32, percent: i32) -> u32 {
-    let off = u32::try_from(percent.clamp(0, MAX_SPEED)).unwrap_or(0);
-    (cost * (100 - off) / 100).max(*COSTS.start())
+    let percent = percent.clamp(-MAX_HINDRANCE, MAX_SPEED);
+    let paid = u64::from(cost) * u64::from((100 - percent).unsigned_abs()) / 100;
+    u32::try_from(paid).unwrap_or(u32::MAX).max(*COSTS.start())
 }
 
 /// `value` less by `percent` (at most 90 %), rounded down: a lighter weight, a smaller chance to
-/// break, quieter footsteps.
+/// break, quieter footsteps. A negative `percent` (a curse's heavier piece, #1754) is more: that
+/// much more, at most [`MAX_HINDRANCE`] (double).
 pub fn less(value: u64, percent: i32) -> u64 {
-    let off = u64::try_from(percent.clamp(0, 90)).unwrap_or(0);
-    value * (100 - off) / 100
+    let percent = percent.clamp(-MAX_HINDRANCE, 90);
+    value * u64::from((100 - percent).unsigned_abs()) / 100
 }

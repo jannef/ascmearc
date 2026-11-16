@@ -1,0 +1,16 @@
+# A curse (#1754): its wearer steps slower, the reverse of Fleet (one category, so boots are
+# never both). Rolled only on found loot and creature gear, very rarely; once worn it will not
+# come off (crates/ascmearc-core/src/world/items/curse.rs).
+[[prefix]]
+id = "plodding"
+name = "Plodding"
+effect = "move_speed"
+category = "movement_speed"
+cursed = true
+bases = ["boots"]
+weight = 4
+tiers = [
+  { level = 1, min = 8, max = 12 },
+  { level = 6, min = 12, max = 18 },
+  { level = 12, min = 18, max = 25 },
+]

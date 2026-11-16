@@ -144,6 +144,7 @@ fn materials_show_before_the_item_is_identified() {
         name: None,
         identified: false,
         carried: 0,
+        curse_known: false,
         unique: None,
     };
     let amulet = Stack::with_magic(object(&content, "gold_amulet"), 1, magic);

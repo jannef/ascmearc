@@ -207,6 +207,16 @@ temple = true
 reply = "There. Whole again, as 'ee was made."
 nothing = "'Ee're whole, child. Go with the light."
 
+# Freeing what a curse holds on the player (#1754, world/items/curse.rs), as Sister Hild does.
+[[dialogue.service]]
+id = "decurse"
+name = "Freedom from a curse"
+price = 500
+does = "decurse"
+temple = true
+reply = "There. 'Tis let go of 'ee. Leave 'un where 'un lies, child: 'tis cursed still."
+nothing = "Nothin' cursed clings to 'ee, child."
+
 # Ysella the Binder (#1446), who keeps to the garden at the town's east edge: she binds the deep's
 # crystal to the gnomes' work, and gives the quest for the crystal guardian of Meyn Bew
 # (data/quests/ysella.toml), opening the crystal portal beside her as she gives it.

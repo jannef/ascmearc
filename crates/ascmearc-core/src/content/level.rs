@@ -1538,6 +1538,7 @@ pub(super) fn magic_of(
         name,
         identified: false,
         carried: 0,
+        curse_known: false,
         unique: None,
     };
     magic.check(def, content)?;

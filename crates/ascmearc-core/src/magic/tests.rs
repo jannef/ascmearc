@@ -33,6 +33,7 @@ fn item(c: &Content, id: &str, affixes: &[(&str, u8, i32)], name: Option<&str>) 
         name: name.map(String::from),
         identified: false,
         carried: 0,
+        curse_known: false,
         unique: None,
     };
     magic
@@ -316,6 +317,7 @@ fn bad_items_are_refused() {
         name: name.map(String::from),
         identified: false,
         carried: 0,
+        curse_known: false,
         unique: None,
     };
     let bad = [
@@ -679,6 +681,7 @@ fn tiers_roll_from_a_window_below_the_item_level() {
         resource: None,
         bases: vec![ItemKind::Weapon],
         weight: 100,
+        cursed: false,
         tiers: (levels.iter())
             .map(|&level| Tier {
                 level,

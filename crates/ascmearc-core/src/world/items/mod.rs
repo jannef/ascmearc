@@ -2,6 +2,7 @@
 
 pub(in crate::world) mod body_slots;
 mod carry;
+mod curse;
 mod equip;
 mod lamp;
 pub(in crate::world) mod loot;
@@ -15,6 +16,7 @@ cfg_if! {
         mod affix_stamina_tests;
         mod affix_utility_tests;
         mod body_slots_tests;
+        mod curse_tests;
         mod equip_tests;
         pub(in crate::world) mod gear_tests;
         mod gem_tests;
