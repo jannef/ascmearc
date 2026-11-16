@@ -156,7 +156,8 @@ fn the_grimoire_of_identify_teaches_identify() {
     );
     assert!(out[0].took_turn);
     assert!(w.state.player().knows_spell(&w.content, id), "{}", last(&w));
-    assert_eq!(w.state.player().inventory[at].count, 1, "the grimoire kept");
+    let left = (w.state.player().inventory.iter()).filter(|s| s.object == grimoire);
+    assert_eq!(left.count(), 0, "the grimoire crumbled");
 }
 
 #[test]

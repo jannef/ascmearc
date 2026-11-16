@@ -512,7 +512,7 @@ cast path shares.
     most two boons of level 5 or less. Every class has `mana`
     at least 1 (the berserker and the warrior too); races keep their own.
   - **Choices** (design §14, the defaults): q1, q2, q3, q5, q7 as above (interrupted study
-    keeps the grimoire, which is never used up, #1260; Dexterity aims; no talent lifts a cap (there is none); `force` and `necrotic` stay; Scroll savant
+    keeps the grimoire, #1260 (used up since #1742 by a read that teaches, or by chance on a failure); Dexterity aims; no talent lifts a cap (there is none); `force` and `necrotic` stay; Scroll savant
     never keeps a studied scroll); q4: the guaranteed lists as §8, the paladin's and ranger's boons Blessing and Barkskin at 6, the bard's Mend and
     Blessing; q6: the mishap table unchanged. Sleep has no level limit (the design's "creatures
     of low level"): it slows rather than stops, so any creature may be caught.
@@ -620,15 +620,17 @@ cast path shares.
     `MagicMods::study_percent`), times the rank sought for a deepening; interrupted (`Ended::Came`/`Said`): "…you stop reading.",
     time lost (design §14 q1, the default). Done: the grimoire is found again by object
     (positions may shift; gone, nothing), the `study` use is trained, the odds are taken now,
-    then the check. The grimoire is kept either way (#1260: read again after a failure, no
-    limit but the time; kept after it taught, to sell).
+    then the check. Then `World::crumble` (#1742): a read that taught (a spell learned, the
+    `learn` mishap's too, a rank gained) takes one of the grimoire's stack ("The grimoire
+    crumbles to dust."); a failure does by `StudyRules::crumble` percent (`data/study.toml`),
+    one draw (`learn/crumble/player`) after the mishap, none for a dead reader.
   - **Deepening** (#1264, "Ranks" above): the grimoire of a spell known below `MAX_SPELL_RANK`
     is read for its next rank (`Lesson::rank: Some(sought)`, `Actor::rank_sought`): the same
     reading, `sought` times as long, and `study_odds` makes it a check at any learning
     (`Odds::rank: Some(sought)`; the overreach counted as at least 0, `StudyRules::rank_difficulty`
     added). Made: `deepen_spell` ("The words settle deeper: you know Frost at rank 3 of 10."),
-    no experience. Failed: "The words add nothing new.", no mishap (the issue: the time is the
-    cost), read again at once. A class's spell is deepened like any other (it enters the map
+    no experience. Failed: "The words add nothing new.", no mishap, the grimoire crumbling by
+    chance as above (read again at once if it did not). A class's spell is deepened like any other (it enters the map
     at rank 2). `PerceptionView::studies` lists such a grimoire with `OwnStudy::rank:
     Some(sought)` (a spell to learn: `None`).
   - **Experience** (#1212): `learn_spell` pays `Experience::spell_xp(level)` (`[spell] per_level`

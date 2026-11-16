@@ -12,6 +12,7 @@
 //! turns_per_level = 20  # and more per spell level (2 minutes each)
 //! bad_from = 6          # the overreach a failure's mishap is bad from (slight below)
 //! terrible_from = 15    # and terrible from
+//! crumble = 25          # percent: the chance a failed read uses the grimoire up (#1742)
 //! easy = 96             # ways of 144 at least this many: "easy"
 //! struggle = 36         # at least this many: "a struggle"; fewer: "far beyond you"
 //! ```
@@ -22,7 +23,7 @@
 //! id = "fizzle"
 //! band = "slight"       # slight, bad, terrible, or lucky (drawn beside any band)
 //! weight = 40           # its share of its band's draw
-//! message = "The words crumble to dust as you read them."
+//! message = "The words fade from the page before you can grasp them."
 //! effect = { kind = "nothing" }
 //! ```
 //!
@@ -61,6 +62,9 @@ pub struct StudyRules {
     /// The overreach a failure's mishap is bad from, and terrible from.
     pub bad_from: i32,
     pub terrible_from: i32,
+    /// The chance in percent that a failed read uses its grimoire up (#1742; a read that
+    /// teaches always does).
+    pub crumble: u8,
     /// The ways of 144 a study is "easy" from, and "a struggle" from.
     pub easy: u32,
     pub struggle: u32,
@@ -77,6 +81,7 @@ struct StudyFile {
     turns_per_level: u32,
     bad_from: i32,
     terrible_from: i32,
+    crumble: u8,
     easy: u32,
     struggle: u32,
 }
@@ -90,6 +95,10 @@ impl StudyRules {
             let why = "`known_per_point` is at least 1";
             return Err(ContentError::new(path, why.to_string()));
         }
+        if f.crumble > 100 {
+            let why = "`crumble` is a percent, at most 100";
+            return Err(ContentError::new(path, why.to_string()));
+        }
         Ok(Self {
             base: f.base,
             per_overreach: f.per_overreach,
@@ -99,6 +108,7 @@ impl StudyRules {
             turns_per_level: f.turns_per_level,
             bad_from: f.bad_from,
             terrible_from: f.terrible_from,
+            crumble: f.crumble,
             easy: f.easy,
             struggle: f.struggle,
         })
@@ -583,8 +593,8 @@ mod tests {
     use super::*;
 
     const RULES: &str = "base = 12\nper_overreach = 1\nknown_per_point = 20\nper_rank = 2\n\
-        turns_base = 100\nturns_per_level = 20\nbad_from = 6\nterrible_from = 15\neasy = 96\n\
-        struggle = 36\n";
+        turns_base = 100\nturns_per_level = 20\nbad_from = 6\nterrible_from = 15\ncrumble = 25\n\
+        easy = 96\nstruggle = 36\n";
 
     #[test]
     fn the_rules_parse_and_say_the_difficulty_band_and_words() {
@@ -602,6 +612,7 @@ mod tests {
         assert_eq!(r.words(96), "easy");
         assert_eq!(r.words(40), "a struggle");
         assert_eq!(r.words(35), "far beyond you");
+        assert_eq!(r.crumble, 25);
     }
 
     #[test]
@@ -609,6 +620,7 @@ mod tests {
         for bad in [
             RULES.replace("known_per_point = 20", "known_per_point = 0"),
             RULES.replace("easy = 96\n", ""),
+            RULES.replace("crumble = 25", "crumble = 101"),
         ] {
             assert!(StudyRules::parse("study.toml", &bad).is_err(), "{bad}");
         }

@@ -45,8 +45,8 @@ Part of the design document; the index is [`specification.md`](../specification.
 - Every spell a player knows has a rank, 1 to 10. Rank comes only from rereading its grimoire; casting trains no rank. Only an own cast of a known spell reads rank; scrolls, wands, and creatures cast at rank 1.
 - Spells are learned only from grimoires, never from scrolls. A scroll casts its spell; a grimoire teaches it.
 - Learning comes from Decipher script alone; the untrained cannot learn from a grimoire at all. A class's spells need no skill: "A class row is a way to meet a spell, not part of it" (the owner).
-- Studying takes long game time. Within reach the spell is learned; past it a check, and failure brings a mishap. The grimoire is kept whatever comes of it.
-- Rereading for the next rank is always a check. Failure costs only the time: "no limit but the time" (the owner's rule).
+- Studying takes long game time. Within reach the spell is learned; past it a check, and failure brings a mishap. A read that teaches (a spell learned, a rank gained) crumbles the grimoire to dust, one of a stack: one grimoire gives at most one step. A failed read crumbles it by a chance in the study data (#1742; the owner: "the grimoire is the resource, and time alone was not enough of a cost").
+- Rereading for the next rank is always a check. Failure costs the time, no mishap, and the grimoire by that chance; one that survives may be read again at once.
 - Every cast with own mana makes a Spellcraft check. A failure never cancels the spell but rolls on one ordered miscast table, mostly harmless or boons at small misses, worse with the miss. Entries below the safe line cannot kill. A cast can always miscast.
 - A miscast may forget spells, a class's too; a forgotten spell is learned again only from its grimoire, "no guard against it" (the owner).
 - The player sees learning odds in words only, never numbers.

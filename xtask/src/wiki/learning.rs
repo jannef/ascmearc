@@ -1,6 +1,7 @@
 //! Learning spells: Decipher script's curve, the study check's chances by overreach
 //! and bonus, how long a study takes by spell level, what a deepening to each rank adds to the
-//! time and the check, the classes' affinities with the schools, and the mishaps.
+//! time and the check, how often a failure crumbles the grimoire, the classes' affinities with
+//! the schools, and the mishaps.
 
 use ascmearc_core::check;
 use ascmearc_core::content::{Band, Content, MishapEffect};
@@ -72,6 +73,18 @@ pub(super) fn chances(content: &Content) -> String {
         rules.known_per_point, rules.bad_from, rules.bad_from, rules.terrible_from
     );
     out
+}
+
+/// How often a failed reading crumbles its grimoire (#1742; one that teaches always does).
+pub(super) fn crumble(content: &Content) -> String {
+    let Some(rules) = content.study_rules() else {
+        return String::new();
+    };
+    format!(
+        "When a reading fails, the grimoire crumbles to dust {} % of the time. If it does not, \
+         you keep it and may read it again at once.\n",
+        rules.crumble
+    )
 }
 
 /// How long studying a spell takes by its spell level, and with Quick study's time.

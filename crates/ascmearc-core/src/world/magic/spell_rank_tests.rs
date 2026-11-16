@@ -1,12 +1,13 @@
 //! Spell ranks (#1264): a known spell's grimoire read again deepens
 //! it, rank by rank, in rank times the learning time and against a check harder per rank; a
-//! failure costs the time alone; the last rank is refused; a class's spell is deepened like any
+//! failure costs the time, and the grimoire by chance (a rank gained always uses it up; #1742);
+//! the last rank is refused; a class's spell is deepened like any
 //! other; what a rank gives joins an own cast's hooks and no scroll's or wand's; the rank is
 //! saved, hashed, shown by the dumps, the read list, and the grimoire's description.
 
 use super::caster_tests::{kobold_at, sp};
 use super::learn_tests::{
-    HALL, count, given, identified, kitted, seeded, set_decipher, world_with,
+    HALL, count, crumbling, given, identified, kitted, seeded, set_decipher, world_with,
 };
 use crate::character::CharacterSpec;
 use crate::content::MAX_SPELL_RANK;
@@ -73,14 +74,19 @@ fn a_known_spells_grimoire_deepens_it_in_rank_times_the_time() {
         let out = run(&mut w, "read:c").remove(0);
         // Frost's learning takes 22 minutes; rank 2 twice that.
         assert_eq!(out.elapsed, Duration::minutes(44));
-        assert_eq!(count(&w, "grimoire_of_frost"), 2, "kept");
         assert_eq!(w.state.experience, xp, "no experience for a rank");
         if w.state.player().spell_rank(&w.content, sp("frost")) == Some(2) {
             deepened += 1;
-            assert_eq!(
-                last(&w),
-                "The words settle deeper: you know Frost at rank 2 of 10."
+            let said: Vec<String> = w.messages().iter().map(|m| m.display()).collect();
+            assert!(
+                said.ends_with(&[
+                    "The words settle deeper: you know Frost at rank 2 of 10.".to_string(),
+                    "The grimoire crumbles to dust.".to_string(),
+                ]),
+                "{said:?}"
             );
+            // A rank gained uses the grimoire up: one of the stack of two (#1742).
+            assert_eq!(count(&w, "grimoire_of_frost"), 1, "one crumbled");
         }
     }
     assert!(deepened >= 5, "{deepened}");
@@ -91,9 +97,11 @@ fn a_known_spells_grimoire_deepens_it_in_rank_times_the_time() {
 }
 
 #[test]
-fn a_failed_deepening_costs_the_time_and_nothing_else() {
+fn a_failed_deepening_costs_the_time_and_the_grimoire_by_chance() {
     // Learning 1 against Frost's level 6, at rank 9: difficulty 12 + 5 + 18 = 35, past the dice.
-    let mut w = knowing_frost(0, 9);
+    // A failure that never crumbles its grimoire (#1742; one that always does below).
+    let mut w = identified(crumbling(HALL, 10, None, Some(0)));
+    w.player_mut().spells.insert(sp("frost"), 9);
     let (hp, mana) = (w.state.player().hp, w.state.player().mana);
     let before = w.state.player().clone();
     let out = run(&mut w, "read:c").remove(0);
@@ -112,6 +120,18 @@ fn a_failed_deepening_costs_the_time_and_nothing_else() {
     );
     // It may be read again at once: no limit but the time.
     assert!(run(&mut w, "read:c")[0].took_turn);
+    // One that always does: one of the stack of two goes, then the other.
+    let mut w = identified(crumbling(HALL, 10, None, Some(100)));
+    w.player_mut().spells.insert(sp("frost"), 9);
+    run(&mut w, "read:c");
+    assert_eq!(last(&w), "The grimoire crumbles to dust.");
+    assert_eq!(count(&w, "grimoire_of_frost"), 1, "one crumbled");
+    assert_eq!(
+        w.state.player().spell_rank(&w.content, sp("frost")),
+        Some(9)
+    );
+    run(&mut w, "read:c");
+    assert_eq!(count(&w, "grimoire_of_frost"), 0, "the other too");
 }
 
 #[test]
@@ -273,7 +293,7 @@ fn ranks_are_saved_hashed_and_replayed() {
     let loaded = crate::save::decode(&crate::save::encode(&w), content.clone()).expect("loads");
     assert_eq!(loaded.state(), w.state());
     // A replay with a deepening in it plays back to the same state: a wizard (Ray of frost her
-    // class's) with its grimoire in her pack, read twice.
+    // class's) with two of its grimoire in her pack, read one after the other.
     let mut files = crate::content::ContentFiles::builtin();
     files.insert(
         "levels/hall.toml",
@@ -284,7 +304,7 @@ fn ranks_are_saved_hashed_and_replayed() {
     );
     files.insert(
         "scenarios/hall.toml",
-        "name = \"Hall\"\nstart_level = \"hall\"\ncarry = [\"grimoire_of_ray_of_frost\"]\n",
+        "name = \"Hall\"\nstart_level = \"hall\"\ncarry = [\"grimoire_of_ray_of_frost*2\"]\n",
     );
     let content = Arc::new(Content::load(&files).expect("test content is valid"));
     let wizard: CharacterSpec = "human,female,wizard".parse().expect("a character");
@@ -337,9 +357,7 @@ fn the_dumps_the_read_list_and_the_description_say_the_rank() {
         "{lines:?}"
     );
     assert!(
-        lines.contains(
-            &"You know it at rank 3 of 10: reading it again would deepen it.".to_string()
-        ),
+        lines.contains(&"You know it at rank 3 of 10: reading it would deepen it.".to_string()),
         "{lines:?}"
     );
     let lines = text(&w, 0);

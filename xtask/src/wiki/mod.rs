@@ -424,6 +424,7 @@ fn generate(content: &Content) -> Vec<(String, String)> {
         ),
         ("learning.md", learning::curve),
         ("study-chances.md", learning::chances),
+        ("study-crumble.md", learning::crumble),
         ("study-times.md", learning::times),
         ("deepening.md", learning::deepening),
         ("study-affinities.md", learning::affinities),

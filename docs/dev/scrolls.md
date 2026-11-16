@@ -204,7 +204,7 @@ aims it as the spell (`ui/target.rs::spell_of`, the player's own reach).
 learned from its grimoire (`grimoire_of_X`, generated from `scroll_of_X` by
 `content/grimoire.rs`; `ObjectDef::grimoire`, no `read`). `World::read` sends a grimoire, read
 with no target, to `World::start_study` before anything about `read` (a target: "A grimoire is
-read, not aimed: `read:a`."); the study keeps the grimoire, and a mishap's backfire casts the
+read, not aimed: `read:a`."); a read that teaches crumbles the grimoire, a failed one by chance (#1742), and a mishap's backfire casts the
 grimoire's damage spell as a burst around the reader (its own radius or 1) at the spell's base,
 no rung and no hooks; any other kind fizzles. A grimoire is never labelled (known on sight: the
 title is plain words), so `Lore`, `kit::is_labelled`, decipher, and the identify list never see

@@ -1,6 +1,6 @@
 //! Learning spells from grimoires: refusals, the check by
-//! overreach and known levels, the time, interruption, the grimoire kept, mishaps by band, saves
-//! and replays. Deepening a known spell by reading its grimoire again ("Ranks", #1264) is
+//! overreach and known levels, the time, interruption, the grimoire crumbling (#1742), mishaps by
+//! band, saves and replays. Deepening a known spell by reading its grimoire again ("Ranks", #1264) is
 //! `spell_rank_tests.rs`.
 
 use super::caster_tests::sp;
@@ -23,7 +23,17 @@ pub(super) fn world_with(map: &str, mana: u16) -> World {
 }
 
 pub(super) fn seeded(map: &str, mana: u16, seed: Option<u64>) -> World {
+    crumbling(map, mana, seed, None)
+}
+
+/// [`seeded`], a failed read crumbling its grimoire `crumble` percent of the time (`None`: the
+/// study rules' own).
+pub(super) fn crumbling(map: &str, mana: u16, seed: Option<u64>, crumble: Option<u8>) -> World {
     let mut files = ContentFiles::builtin();
+    if let Some(crumble) = crumble {
+        let to = format!("crumble = {crumble}\n");
+        files.replace_in_table("study", "crumble = 25\n", &to);
+    }
     files.insert(
         "levels/hall.toml",
         &format!(
@@ -183,7 +193,8 @@ fn a_spell_within_reach_is_learned_for_certain_in_its_time() {
     // Frost is level 6: 100 + 6 × 20 = 220 turns, 22 minutes.
     assert_eq!(out.elapsed, crate::time::Duration::minutes(22));
     assert!(w.state.player().spells.contains_key(&sp("frost")));
-    assert_eq!(count(&w, "grimoire_of_frost"), 2, "kept");
+    // A read that teaches uses its grimoire up: one of the stack of two (#1742).
+    assert_eq!(count(&w, "grimoire_of_frost"), 1, "one crumbled");
     let said: Vec<String> = w.messages().iter().map(|m| m.display()).collect();
     assert!(
         said.iter()
@@ -193,6 +204,7 @@ fn a_spell_within_reach_is_learned_for_certain_in_its_time() {
         said.iter().any(|m| m.ends_with("you have learned Frost.")),
         "{said:?}"
     );
+    assert!(said.iter().any(|m| m == "The grimoire crumbles to dust."));
     // It is in the abilities menu at rank 1, and the grimoire now deepens it (a reading twice as
     // long, for rank 2; `spell_rank_tests.rs`).
     let abilities = w.perception().abilities();
@@ -241,7 +253,6 @@ fn far_beyond_the_reader_a_study_fails_into_a_mishap() {
     for seed in 0..8 {
         let mut w = identified(seeded(HALL, 10, Some(seed)));
         run(&mut w, "read:b");
-        assert_eq!(count(&w, "grimoire_of_lightning"), 1, "kept either way");
         let said: Vec<String> = w.messages().iter().map(|m| m.display()).collect();
         if said.iter().any(|m| m == "The words twist away from you.") {
             failed += 1;
@@ -256,6 +267,59 @@ fn far_beyond_the_reader_a_study_fails_into_a_mishap() {
         }
     }
     assert!(failed >= 6, "{failed}");
+}
+
+/// What `w` said, oldest first.
+fn said(w: &World) -> Vec<String> {
+    w.messages().iter().map(|m| m.display()).collect()
+}
+
+#[test]
+fn a_failed_read_crumbles_its_grimoire_by_the_study_rules_chance() {
+    // Lightning bolt at learning 1, far beyond the reader: nearly always a failure.
+    const CRUMBLES: &str = "The grimoire crumbles to dust.";
+    let (mut crumbled, mut kept) = (0, 0);
+    for seed in 0..8 {
+        // Always: the grimoire is gone whatever comes of the read, the stack of one with it.
+        let mut w = identified(crumbling(HALL, 10, Some(seed), Some(100)));
+        run(&mut w, "read:b");
+        assert_eq!(count(&w, "grimoire_of_lightning"), 0, "always crumbles");
+        assert!(said(&w).iter().any(|m| m == CRUMBLES));
+        if said(&w)
+            .iter()
+            .any(|m| m == "The words twist away from you.")
+        {
+            crumbled += 1;
+        }
+        // Never: a failure that taught nothing keeps it, to be read again at once.
+        let mut w = identified(crumbling(HALL, 10, Some(seed), Some(0)));
+        run(&mut w, "read:b");
+        if !w
+            .state
+            .player()
+            .knows_spell(&w.content, sp("lightning_bolt"))
+        {
+            kept += 1;
+            assert_eq!(count(&w, "grimoire_of_lightning"), 1, "kept");
+            assert!(said(&w).iter().all(|m| m != CRUMBLES));
+            assert!(run(&mut w, "read:b")[0].took_turn, "read again");
+        }
+    }
+    assert!(crumbled >= 6 && kept >= 6, "{crumbled} {kept}");
+    // By the study rules' own chance, a failure crumbles the grimoire sometimes, not always.
+    let mut gone = 0;
+    for seed in 0..40 {
+        let mut w = identified(seeded(HALL, 10, Some(seed)));
+        run(&mut w, "read:b");
+        if !w
+            .state
+            .player()
+            .knows_spell(&w.content, sp("lightning_bolt"))
+        {
+            gone += 1 - count(&w, "grimoire_of_lightning");
+        }
+    }
+    assert!((2..=25).contains(&gone), "{gone}");
 }
 
 #[test]

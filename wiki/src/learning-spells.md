@@ -1,6 +1,6 @@
 # Learning spells
 
-You learn a spell from its grimoire, and deepen it by reading the grimoire again. Your class's own
+You learn a spell from its grimoire, and deepen it by reading another copy of the grimoire. Your class's own
 spells come at their levels instead (see [What your class gives](magic.md#what-your-class-gives)).
 
 ## Learning a spell
@@ -19,10 +19,15 @@ scroll.
 A grimoire is written in plain words, so you know which spell it teaches as soon as you see it.
 
 **Reading** a grimoire (`r`, then the grimoire) is how you learn from it. The read list shows your
-chance beside each grimoire you could learn from, and asks before you begin. You keep the grimoire
-whatever comes of it: read it again after a failure, or keep it to deepen the spell (see
-[Spell ranks](#spell-ranks)), or sell it. Reading the grimoire of a spell you know at rank 10
-only tells you so, and takes no time.
+chance beside each grimoire you could learn from, and asks before you begin. Reading the grimoire
+of a spell you know at rank 10 only tells you so, and takes no time.
+
+**A grimoire teaches you once.** When a reading succeeds, the grimoire crumbles to dust: "The
+grimoire crumbles to dust." That goes for a spell learned and for a [rank](#spell-ranks) gained.
+If you carry a stack of the same grimoire, one of them goes. A reading that fails may crumble it
+too, by a chance given below the table of chances. So once you know a spell, a spare copy of
+its grimoire is worth keeping to deepen the spell, or worth selling. A reading you stop, or one
+the game refuses, never harms the grimoire.
 
 To learn at all you need some [mana](mana.md#how-much-mana-you-have), and training in
 [Decipher script](skills.md#skill-decipher-script). Without the training, reading a grimoire is refused and
@@ -58,12 +63,13 @@ The game tells you the chance in words: *certain*, *easy*, *a struggle*, or *far
 
 {{#include generated/study-chances.md}}
 
+{{#include generated/study-crumble.md}}
+
 {{#include generated/study-affinities.md}}
 
 If you fail, a **mishap** befalls you. The farther the spell was beyond you, the worse it is:
 *slight* below 6 levels of overreach, *bad* from 6, and *terrible* from 15. A few lucky mishaps can
-come with any of them. A failure costs only the time and the mishap: you keep the grimoire, and may
-read it again.
+come with any of them. A failure costs the time and the mishap, and the grimoire may crumble.
 
 {{#include generated/mishaps.md}}
 
@@ -120,8 +126,9 @@ Every spell you know has a **rank**, from 1 to 10. You know a spell at rank 1 wh
 or when your class gives it to you. The [Magic page](schools.md#the-magic-page) shows each spell's
 rank, and so does the grimoire's description.
 
-**Reading a spell's grimoire again raises its rank.** Nothing else does: casting a spell a thousand
-times leaves it where it was. Reading for rank 2 takes twice the
+**Reading a spell's grimoire again raises its rank.** Each rank takes a grimoire of its own,
+since a reading that succeeds uses the grimoire up. Nothing else raises a rank: casting a spell a
+thousand times leaves it where it was. Reading for rank 2 takes twice the
 [learning time](#learning-a-spell), rank 3 three times, and so on to rank 10, and the
 check is always made, however high your [learning](#your-learning): the same 2d12 check as learning the
 spell, 2 harder for every rank you already hold (the overreach counts as 0 when the spell is within
@@ -130,9 +137,11 @@ your learning). The read list shows the rank a grimoire would bring you to and y
 
 {{#include generated/deepening.md}}
 
-If you fail, you lose only the time. There is no mishap, and you may read the book again at once,
-as often as you like. If you succeed, the spell is yours at the next rank: "The words settle
-deeper: you know Frost at rank 3 of 10." A rank brings no experience. A
+If you fail, you lose the time, and the book may crumble by the
+same chance as a failed learning (see [Learning a spell](#learning-a-spell)). There is no mishap. A book that
+survives may be read again at once. If you succeed, the spell is yours at the next rank: "The
+words settle deeper: you know Frost at rank 3 of 10." Then the book crumbles. A rank brings no
+experience. A
 [miscast](miscasts.md#forgotten-spells) can cost you ranks, never below rank 1; you win them back
 the same way.
 

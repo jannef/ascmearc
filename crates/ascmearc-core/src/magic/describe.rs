@@ -148,7 +148,7 @@ fn enchantments(n: usize) -> String {
 
 /// What a grimoire teaches: its spell and level, then
 /// where `user` stands with it: a spell they know at its rank and that reading it would
-/// deepen (`You know it at rank 3 of 10: reading it again would deepen it.`), one known at the
+/// deepen (`You know it at rank 3 of 10: reading it would deepen it.`), one known at the
 /// last rank, or one they could learn. Nothing for anything else.
 fn grimoire_lines(stack: &Stack, lore: Lore<'_>, user: Option<&Actor>) -> Vec<Line> {
     let content = lore.content;
@@ -166,7 +166,7 @@ fn grimoire_lines(stack: &Stack, lore: Lore<'_>, user: Option<&Actor>) -> Vec<Li
     let most = crate::content::MAX_SPELL_RANK;
     let standing = match user.and_then(|u| u.spell_rank(content, spell)) {
         Some(rank) if rank < most => {
-            format!("You know it at rank {rank} of {most}: reading it again would deepen it.")
+            format!("You know it at rank {rank} of {most}: reading it would deepen it.")
         }
         Some(_) => format!("You know it at rank {most} of {most}: it has nothing more to teach."),
         None => "You do not know it: reading it is a study.".to_string(),
