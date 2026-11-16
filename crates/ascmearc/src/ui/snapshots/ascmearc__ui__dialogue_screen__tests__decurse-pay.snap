@@ -12,13 +12,13 @@ expression: text(&console)
                                                                                 
                                                                                 
                                                                                 
-                    ┌─ The old hermit ────────────────────┐                     
-                    │                                     │                     
-                    │ 500 gold for each of the 2 places a │                     
-                    │ curse holds you: 1000 gold in all.  │                     
-                    │                                     │                     
-                    │          Pay 1000 gold  (y)         │                     
-                    │        > Not now  (n, Esc)          │                     
-                    │                                     │                     
-                    │ ↑/↓ choose  Enter select            │                     
-                    └─────────────────────────────────────┘
+                  ┌─ The old hermit ─────────────────────────┐                  
+                  │                                          │                  
+                  │ 500 gold for each of the 2 cursed things │                  
+                  │       you wear: 1000 gold in all.        │                  
+                  │                                          │                  
+                  │             Pay 1000 gold  (y)           │                  
+                  │           > Not now  (n, Esc)            │                  
+                  │                                          │                  
+                  │ ↑/↓ choose  Enter select                 │                  
+                  └──────────────────────────────────────────┘
