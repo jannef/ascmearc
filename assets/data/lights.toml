@@ -80,6 +80,16 @@ stability.intensity = { amount = 0.12, speed = 1.4 }
 stability.hue = { degrees = 9, speed = 0.5 }
 stability.dips = { depth = 0.12, every = 5, length = 0.6 }
 
+# A burning web (terrain/465-burning_web.toml): a sheet of dry silk going up at once, brighter
+# and wider than a brazier, and restless.
+[[light]]
+id = "burning_web"
+color = [400, 230, 110, 0]
+radius = 9
+stability.intensity = { amount = 0.14, speed = 1.6 }
+stability.hue = { degrees = 10, speed = 0.6 }
+stability.dips = { depth = 0.12, every = 4, length = 0.5 }
+
 # A lantern (objects/lantern.toml): what it gives ready in the Tool slot and lit.
 [[light]]
 id = "lantern"

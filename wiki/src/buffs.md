@@ -58,7 +58,7 @@ gives the song.
 
 A **hex** is a status that a [hex spell](spellcasting.md#shapes) lays: [Hexed](status-list.md#status-ill-wished),
 [Weakened](status-list.md#status-weakened), [Sluggish](status-list.md#status-sluggish), Drowsy, and
-[Webbed](status-list.md#status-webbed). A [witch](class-witch.md) can feed her hexes:
+[Webbed](status-list.md#status-webbed) (a [web](terrain.md#webs) her Web spell lays catches one as it appears). A [witch](class-witch.md) can feed her hexes:
 
 - Her [cackle](abilities.md#ability-cackle) makes each hex she laid on a creature she sees grow a
   degree, up to its maximum, and starts its degree's time again.

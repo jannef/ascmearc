@@ -197,6 +197,7 @@ impl fmt::Display for Action {
             Action::QuestRoll { quest, target } => write!(f, "quest_roll:{quest}:{target}"),
             Action::Freeze { at, radius } => write!(f, "freeze:{},{},{radius}", at.x, at.y),
             Action::Thaw { at, radius } => write!(f, "thaw:{},{},{radius}", at.x, at.y),
+            Action::Web { at, radius } => write!(f, "web:{},{},{radius}", at.x, at.y),
             Action::Zone { kind, at, radius } => {
                 write!(f, "zone:{}@{},{},{radius}", kind.id(), at.x, at.y)
             }
@@ -320,6 +321,7 @@ static VERBS: &[(&str, Shape)] = &[
     ("rank", Shape::Own(rank)),
     ("freeze", Shape::Own(freeze)),
     ("thaw", Shape::Own(thaw)),
+    ("web", Shape::Own(web)),
     ("zone", Shape::Own(zone)),
 ];
 
@@ -937,6 +939,11 @@ fn radius_of(words: &Words, radius: &str) -> Result<i32, String> {
     }
 }
 
+/// `web:X,Y,R`.
+fn web(words: &Words) -> Result<Action, String> {
+    burst(words).map(|(at, radius)| Action::Web { at, radius })
+}
+
 /// `zone:KIND@X,Y,R`.
 fn zone(words: &Words) -> Result<Action, String> {
     let usage = "`zone` needs a kind, a cell, and a radius, e.g. `zone:fire@12,5,3`";
@@ -1265,6 +1272,10 @@ mod tests {
             Action::Thaw {
                 at: Pos::new(0, 7),
                 radius: 0,
+            },
+            Action::Web {
+                at: Pos::new(12, 5),
+                radius: 1,
             },
             Action::Zone {
                 kind: ZoneKind::Fouled,
@@ -1949,6 +1960,9 @@ mod tests {
                         true => Action::Freeze { at, radius },
                         false => Action::Thaw { at, radius },
                     })
+                    .boxed(),
+                (cell(), 0..=MAX_BURST)
+                    .prop_map(|(at, radius)| Action::Web { at, radius })
                     .boxed(),
                 (select(ZoneKind::ALL.to_vec()), cell(), 0..=MAX_BURST)
                     .prop_map(|(kind, at, radius)| Action::Zone { kind, at, radius })

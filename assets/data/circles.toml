@@ -139,10 +139,8 @@ school = "transmutation"
 status = "drowsy"
 school = "enchantment"
 
-# Web.
-[[status]]
-status = "webbed"
-school = "transmutation"
+# Webbed has no circle: webs are strands on the ground (data/rules/webs.toml), a spider's or the
+# Web spell's alike, and Bramble's thorns hold as they do.
 
 # Bind.
 [[status]]

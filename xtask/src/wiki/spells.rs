@@ -529,6 +529,14 @@ pub(super) fn does(content: &Content, spell: &SpellData) -> String {
             u32::from(zone.turns) * 6
         );
     }
+    if spell.effect.web {
+        let then = if text.is_empty() { "" } else { "; then " };
+        let _ = write!(
+            text,
+            "{then}[webs](terrain.md#webs) on every cell it reaches, which stay; anyone \
+             there may be caught at once"
+        );
+    }
     if spell.kind == SpellPurpose::Damage
         && let Some((s, n)) = spell.effect.status
     {

@@ -43,6 +43,7 @@ mod effects;
 mod encounter;
 mod equipment_screen;
 mod files_screen;
+mod flames;
 mod glyphs;
 pub(crate) mod graveyard_screen;
 #[cfg(test)]
@@ -179,6 +180,8 @@ impl Plugin for UiPlugin {
                         sounds::emit,
                         glyphs::emit,
                         (missiles::emit, target::emit_path),
+                        // A burning web's standing flames (`flames.rs`), under the spells.
+                        flames::emit,
                         // Spell effects are light themselves: on top of everything on the map.
                         spells::emit,
                     )

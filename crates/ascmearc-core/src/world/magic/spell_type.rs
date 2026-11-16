@@ -239,6 +239,8 @@ impl World {
             }
         }
         (self.state.current_mut()).clear_zone_cells(&cells, &[ZoneKind::Fire]);
+        // A burning web goes out, a web again (`world/levels/web.rs`).
+        self.douse_webs(&cells);
     }
 
     /// A fire on `cell` of the current level, if it is walkable, burning `seconds` with light

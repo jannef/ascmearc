@@ -203,6 +203,7 @@ pub use levels::pit::Pit;
 pub(crate) use levels::swim::shore_refusal;
 pub(crate) use levels::talk_past::offered as encounter_choices;
 use levels::travel::{enter_room, instantiate_level, level_template};
+pub use levels::web::Web;
 pub use magic::cast::Reach;
 pub use magic::decipher::undeciphered;
 pub use magic::learn::{Odds, UNTRAINED, study_odds, study_turns};
@@ -1545,6 +1546,7 @@ impl World {
             Action::Identify(positions) => return self.identify_dev(positions),
             Action::Freeze { at, radius } => return self.freeze_dev(*at, *radius, events),
             Action::Thaw { at, radius } => return self.thaw_dev(*at, *radius, events),
+            Action::Web { at, radius } => return self.web_dev(*at, *radius, events),
             Action::Zone { kind, at, radius } => {
                 return self.zone_dev(*kind, *at, *radius, events);
             }

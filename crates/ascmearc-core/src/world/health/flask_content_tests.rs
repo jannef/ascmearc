@@ -125,9 +125,13 @@ fn the_stinking_flask_poisons_and_fouls_the_air() {
 
 #[test]
 fn the_flask_of_tar_webs() {
+    // The tar sets into webs where it breaks (`world/levels/web.rs`): the webs do the catching.
     let (w, dummy) = thrown('c');
-    // Webbed 3, a degree perhaps gone with the dummy's turn since (it eases every 6 s).
-    assert!(matches!(suffers(&w, dummy, "webbed"), Some(2..=3)));
+    let web = w.content.terrain_id("web");
+    assert_eq!(w.state.current().terrain_at(Pos::new(7, 1)), web);
+    assert_eq!(w.state.current().terrain_at(Pos::new(6, 1)), web);
+    // Caught as the web appeared or not, by the check: never more than the rules' degrees.
+    assert!(matches!(suffers(&w, dummy, "webbed"), None | Some(1..=3)));
 }
 
 #[test]

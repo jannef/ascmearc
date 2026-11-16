@@ -123,6 +123,37 @@ holds only so much weight. Thin ice gives way under a person, and ice may under 
 [Falling through](temperature.md#falling-in) hurts a little, and climbing back out takes a few
 turns. See [Temperature and ice](temperature.md).
 
+## Webs
+
+A [web](#terrain-web) (`"`, grey) is sticky strands strung across the floor. Spiders leave them
+near where they live, and the [Web](magic.md#spell-web) spell lays the same webs where it bursts.
+Webs stay until fire burns them.
+
+**Getting caught.** Each time you step into a web, you may be caught. The same goes for anyone
+standing where a web appears, and for creatures walking into one. It is a check: 2d12, rolled
+like an [attack](combat.md#hitting), plus the better of your [Strength](stats.md#stat-strength)
+and [Dexterity](stats.md#stat-dexterity) modifiers, plus what
+[Escape artist](skills.md#skill-escape-artist) gives, plus a size modifier, against the number in
+the table below. Fail it and you are [Webbed](status-list.md#status-webbed): you cannot step away
+until you [break free](held.md#slipping-bonds) or it wears off. You can still fight, cast, and
+shoot. Spiders, and the duergar who ride them, are never caught, and neither is anything that
+passes through walls. You are never caught twice at once.
+
+**Burning webs.** Any fire that spreads over an area, such as a [Fireball](magic.md#spell-fireball),
+a dragon's breath, burning oil, or a pool of burning pitch, sets every web it reaches alight. A
+[burning web](#terrain-burning-web) blazes orange and lights up the whole area around it, far
+brighter than a torch. After a few seconds it sets the webs touching it alight, so fire races
+down a webbed passage. Soon after, it burns away to bare floor, and whoever it held is free.
+
+While it burns, it hurts anyone in it: at the start of each of their turns, and on every step
+into it. [Fire resistance](damage-types.md) takes its share. A creature caught in a web cannot
+easily step out, which is the point of setting it alight. A burning web catches no one new.
+Frost and wind put a burning web out, and it is a plain web again.
+
+All of this runs on game time, not on your turns:
+
+{{#include generated/webs.md}}
+
 ## Plants and rock outdoors
 
 [Trees](#terrain-tree), [pines](#terrain-pine), [dead trees](#terrain-dead-tree),

@@ -1,5 +1,5 @@
 //! Travel, levels, and the overworld (docs/dev/overworld.md, encounters.md, mapgen.md,
-//! temperature.md).
+//! temperature.md, webs.md).
 
 mod edge_leave;
 pub(in crate::world) mod encounter;
@@ -16,6 +16,7 @@ mod stair_followers;
 pub(in crate::world) mod swim;
 pub(in crate::world) mod talk_past;
 pub(in crate::world) mod travel;
+pub(in crate::world) mod web;
 mod wriggle;
 cfg_if! {
     if #[cfg(test)] {
@@ -39,6 +40,7 @@ cfg_if! {
         mod swim_deep_tests;
         mod swim_tests;
         mod way_out_tests;
+        mod web_tests;
         mod wriggle_tests;
     }
 }

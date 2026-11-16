@@ -27,7 +27,9 @@
 # stands on it; default false), works_as (gameplay: a terrain id it serves as a station of, one
 # that works as nothing itself: a makeshift anvil works as the anvil, for every recipe made there
 # and for Temper, and walking into it is walking into the anvil; default none),
-# anim (presentation-only, §4.3).
+# anim (presentation-only, §4.3), flames (presentation-only: a burst effect of ../effects.toml whose
+# flames burn on every cell of it in sight, over its glyph, while it is this terrain: the burning
+# web's Blaze; `ui/flames.rs`).
 # Noise (gameplay): step_noise (how loud steps onto it are, in percent of the
 # walker's footsteps; default 100), toggle_noise (doors and shut chests only: how loud
 # opening the closed door or chest or closing the open door is, at most 300; default 0, silent),

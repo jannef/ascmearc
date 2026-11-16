@@ -544,7 +544,7 @@ stance:NAME vision:PROFILE talent:ID[:CHOICE] advance:SKILL levelup:auto xp:N ca
 rank:SKILL:N skip:DURATION weather:KIND spawn ally:CREATURE[:N[:DURATION]] meet:ENTRY[:OUTCOME]
 effect:ID@X,Y[>X,Y] zone:KIND@X,Y,R identify[:LETTERS] afflict:STATUS drain:N resource:ID
 infect:DISEASE reveal:ID lure:ID gift:ID rescind:ID quest_roll:ID:TARGET freeze:X,Y,R
-thaw:X,Y,R`
+thaw:X,Y,R web:X,Y,R`
 
 ### Arguments
 
@@ -888,6 +888,9 @@ None takes game time unless said.
 - `freeze:X,Y,R` and `thaw:X,Y,R` are the frost and heat bursts (radius 0 to 20 around level
   cell (X, Y), in its line of sight): the frost freezes the water there to 10 cm of ice, the heat
   melts the ice and whoever stood on it falls in (docs/dev/temperature.md).
+- `web:X,Y,R` lays webs on the plain ground within radius 0 to 20 of level cell (X, Y), in its
+  line of sight, by no one; whoever stands there makes the catch check (docs/dev/webs.md). A
+  `zone:fire@...` over them sets them burning.
 - `zone:KIND@X,Y,R` (`KIND` = `fire`, `fouled`, `slick`, `dark`, `smoke`; by the player, for ten
   turns, a fire's harm 4, within radius 0 to 20 in its line of sight; refused on the overworld;
   `docs/dev/spells.md` "Zones").

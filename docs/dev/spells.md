@@ -432,7 +432,7 @@ cast path shares.
     missile (bolt, auto, force, 1d4 to 2d4); 4 Cause wounds (touch,
     necrotic); 6 Arcane bolt, Frost, Identify (#592, below), Sleep (area hex, burst radius 1);
     7 Blight, Scorching ray (ray, attack, 1d6 to 3d6, the design's "one to three rays" as
-    dice), Web (area hex); 11 Call lightning, Fireball (2d6 to 3d6), Haste (buff), Lightning
+    dice), Web (burst hex that lays webs, docs/dev/webs.md); 11 Call lightning, Fireball (2d6 to 3d6), Haste (buff), Lightning
     bolt (line), Remove disease; 12 Flame. The druid's calls (#839; summons, `docs/dev/allies.md`
     "The druid's calls"): 5 Call of the wild, 20 Call of the forest, 35 Call the elements, each
     with a scroll at the README's convention carried past level 12 (item level about half the

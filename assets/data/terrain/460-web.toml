@@ -1,11 +1,13 @@
 # Leavings (docs/design/monster-dread.md §9, `content/leaving.rs`): what a creature leaves about
-# it, laid by the generator near where one is placed. Old webs, that catch no one, and floor
-# eaten into pits by acid.
+# it, laid by the generator near where one is placed. Webs, which catch whoever walks into them
+# and burn away in fire (data/rules/webs.toml, `world/levels/web.rs`); the Web spell lays the
+# same web. And floor eaten into pits by acid.
 [[terrain]]
 id = "web"
-name = "old web"
+name = "webs"
+noun = "plural"
 announce = true
-description = "Grey strands, thick as rope in places, hang from wall to floor."
+description = "Grey strands, thick as rope in places, hang from wall to floor. They cling to whatever brushes them, and would burn like tinder."
 stone = true
 glyph = "\""
 fg = "#a8a8a0"

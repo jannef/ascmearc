@@ -97,3 +97,4 @@ here, in its group.
 - [chests.md](chests.md): chests, opening, picking, smashing
 - [digging.md](digging.md): digging, wall hardness, mining
 - [traps.md](traps.md): trap data, triggering, known traps
+- [webs.md](webs.md): webs that catch, the Web spell's webs, burning webs

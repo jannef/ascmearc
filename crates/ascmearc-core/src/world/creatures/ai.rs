@@ -140,6 +140,10 @@ impl World {
         // A zone where it stands does what it does first, awake or not (`zone.rs`); it may not
         // live to act.
         self.zone_turn_start(id, events);
+        // So does a burning web (`web.rs`).
+        if self.state.actors.contains_key(&id) {
+            self.web_turn_start(id, events);
+        }
         if !self.state.actors.contains_key(&id) {
             return 0;
         }

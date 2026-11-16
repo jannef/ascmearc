@@ -5,8 +5,8 @@
 //!
 //! Checks: a `combat = "caster"` type names at least one spell, and no other type names any;
 //! every id is a spell; and each is one a creature can cast: a damage spell (no zone, no corpse,
-//! no open sky), a hex that lays a plain status (no zone, no push, no charm, no ground it needs),
-//! a heal by touch, or a buff that lays a status. Summons, cleansing, and utilities are the
+//! no open sky), a hex that lays a plain status (no zone, no push, no charm, no ground it needs)
+//! or webs (Web: `world/levels/web.rs`), a heal by touch, or a buff that lays a status. Summons, cleansing, and utilities are the
 //! player's (a summoner has its own `[creature.summon]`).
 
 use super::creature::{Combat, CreatureSpec};
@@ -44,6 +44,7 @@ pub fn castable(def: &SpellData) -> Result<(), &'static str> {
     match def.kind {
         SpellPurpose::Damage if plain => Ok(()),
         SpellPurpose::Damage => Err("lays a zone, needs a corpse or the open sky"),
+        SpellPurpose::Hex if plain && e.web => Ok(()),
         SpellPurpose::Hex
             if plain
                 && e.status.is_some()

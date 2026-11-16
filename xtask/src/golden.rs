@@ -207,6 +207,7 @@ fn make_replay(
                 | Action::Infect(_)
                 | Action::Freeze { .. }
                 | Action::Thaw { .. }
+                | Action::Web { .. }
                 | Action::Zone { .. }
                 | Action::GrantXp(_)
                 | Action::SetRank { .. }

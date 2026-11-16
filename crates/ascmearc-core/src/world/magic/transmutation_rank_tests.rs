@@ -96,5 +96,5 @@ fn ranks_cut_the_mana_and_widen_the_reach() {
     assert_eq!((b.range, b.radius), (Some(12), Some(2)));
     let (a, b) = (reach(&low, "web"), reach(&high, "web"));
     assert_eq!((a.range, a.radius), (Some(9), Some(1)));
-    assert_eq!((b.range, b.radius), (Some(11), Some(2)));
+    assert_eq!((b.range, b.radius), (Some(12), Some(2)));
 }

@@ -121,13 +121,16 @@ fn haste_read_on_oneself_makes_everything_quicker() {
 fn an_area_hex_falls_on_everyone_it_reaches_but_the_caster() {
     let mut w = world();
     let player = w.state.player;
-    let target = rat(&mut w);
-    // Aimed at the cell between them: the burst of radius 1 reaches both, the reader spared.
+    rat(&mut w);
+    // Web, aimed at the cell between them: its burst of radius 1 lays webs under both, which do
+    // the catching (`world/levels/web.rs`), the reader's own cell too.
     let here = w.player_pos();
     run(&mut w, &format!("read:c:{},{}", here.x + 1, here.y));
-    assert!(suffers(&w, target, "webbed"));
-    assert!(!suffers(&w, player, "webbed"));
-    assert!(said(&w).iter().any(|m| m.ends_with("is caught in a web.")));
+    let web = w.content.terrain_id("web");
+    for x in [here.x, here.x + 1] {
+        let laid = w.state.current().terrain_at(Pos::new(x, here.y));
+        assert_eq!(laid, web, "a web at {x}");
+    }
     let target = rat(&mut w);
     run(&mut w, &format!("read:c:{},{}", here.x + 2, here.y));
     // The web is gone (read), so Sleep: it is now c.

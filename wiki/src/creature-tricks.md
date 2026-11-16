@@ -89,7 +89,7 @@ away quietly.
 Some creatures leave signs around where they are found:
 
 - a [basilisk](creatures.md#creature-basilisk) stands among statues of what it has stoned;
-- spiders live among old webs, which catch no one;
+- spiders live among [webs](terrain.md#webs), which catch whoever walks in;
 - acid-hided things leave the floor eaten into pits;
 - torn cloth lies where a light-fingered thing has been.
 

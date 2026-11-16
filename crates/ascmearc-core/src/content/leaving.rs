@@ -5,14 +5,14 @@
 //!
 //! - `statue`: a statue of the stoned (`data/terrain/`'s `statue = true`), a nobody of the
 //!   floor's own population, holding nothing;
-//! - `web`: the [`WEB`] terrain, old webs, which catch no one;
+//! - `web`: the [`WEB`] terrain, webs that catch whoever walks in and burn (`world/levels/web.rs`);
 //! - `acid_pit`: the [`ACID_PIT`] terrain, floor eaten into pits;
 //! - `torn_cloth`: the [`TORN_CLOTH`] object, worth nothing.
 
 use super::{Content, ObjectId, TerrainId};
 use serde::{Deserialize, Serialize};
 
-/// The terrain id of old webs.
+/// The terrain id of webs.
 pub const WEB: &str = "web";
 /// The terrain id of acid-pitted floor.
 pub const ACID_PIT: &str = "acid_pit";

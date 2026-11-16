@@ -478,6 +478,13 @@ pub enum Action {
         at: Pos,
         radius: i32,
     },
+    /// Dev command: webs (`world/levels/web.rs`) on the cells around cell `at`, within `radius`
+    /// in its line of sight, laid by no one: whoever stands there makes the catch check. Takes no
+    /// game time; recorded in replays.
+    Web {
+        at: Pos,
+        radius: i32,
+    },
     /// Dev command: a zone (`world/magic/zone.rs`) of `kind` around cell `at`, within `radius` in its
     /// line of sight, by the player, for ten turns. Takes no game time; recorded in replays.
     Zone {

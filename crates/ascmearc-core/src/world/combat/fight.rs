@@ -108,6 +108,8 @@ pub enum Cause {
     Flask(ObjectId),
     /// They fell through a collapsed floor.
     Fall,
+    /// A burning web burned them (`world/levels/web.rs`).
+    Web,
     /// A spell of their own caught them.
     Spell(crate::content::SpellId),
     /// A spell of their own they miscast tore through them.
@@ -124,6 +126,7 @@ impl Cause {
         match self {
             Cause::Starvation => "Starved to death".into(),
             Cause::Fall => "Fell through a collapsed floor".into(),
+            Cause::Web => "Burned to death in a web".into(),
             Cause::Choked(o) => format!("Choked to death on {}", what(o)),
             Cause::Trap(t) => {
                 let name = &content.trap(t).name;
@@ -161,7 +164,8 @@ impl Cause {
             | Cause::Spell(_)
             | Cause::Miscast(_)
             | Cause::Altar
-            | Cause::Fall => "You die...".into(),
+            | Cause::Fall
+            | Cause::Web => "You die...".into(),
         }
     }
 }
@@ -194,6 +198,8 @@ pub(in crate::world) enum Harm {
     /// A fall through a collapsed floor: no one killed, and no one
     /// earns anything.
     Fall,
+    /// A burning web (`world/levels/web.rs`): no one killed, and no one earns anything.
+    Web,
     /// What never kills: it leaves the last hit point (the plunge into freezing water; a disease
     /// that does not kill).
     Spared,
@@ -1223,15 +1229,15 @@ impl World {
             }
             Harm::Starving(when) => self.dies(id, None, None, when, events),
             Harm::Barbs => self.dies(id, None, None, self.state.time, events),
-            Harm::Place | Harm::Fall => {
+            Harm::Place | Harm::Fall | Harm::Web => {
                 self.dies(id, None, None, self.state.time, events);
                 if id == self.state.player
                     && let Some(death) = &mut self.state.death
                 {
-                    death.cause = Some(if matches!(harm, Harm::Fall) {
-                        Cause::Fall
-                    } else {
-                        Cause::Altar
+                    death.cause = Some(match harm {
+                        Harm::Fall => Cause::Fall,
+                        Harm::Web => Cause::Web,
+                        _ => Cause::Altar,
                     });
                 }
             }
