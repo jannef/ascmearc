@@ -38,6 +38,7 @@ cfg_if! {
         mod room_temperature_tests;
         mod stair_followers_tests;
         mod swim_deep_tests;
+        mod swim_drown_tests;
         mod swim_tests;
         mod way_out_tests;
         mod web_tests;

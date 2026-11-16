@@ -118,7 +118,7 @@ mark**. The chance is in the table of skills above. Skills you use all the time,
   [gather](herbs.md#gathering) that runs its time.
 - **[Mining](skills.md#skill-mining)**: every wall you dig through.
 - **[Swim](skills.md#skill-swim)**: a step wading through [water](terrain.md#water) or [marsh](terrain.md#terrain-marsh) now and then (10 %), every [plunge through the ice](temperature.md#falling-in), and a
-  quarter of the steps in [deep water](terrain.md#deep-water), made or not.
+  quarter of the checks in [deep water](terrain.md#deep-water) (one every turn you spend there), made or not.
 - **[Steal](skills.md#skill-steal)**: every attempt to steal, whatever comes of it.
 - **[Bluff](skills.md#skill-bluff)**: half of your feints, and every try at [talking your way past](encounters.md#talking-past) a party, whatever comes of
   them.

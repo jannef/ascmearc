@@ -17,6 +17,7 @@ vision = "low_light"
 sight = 6
 hearing = 15
 weight = 300
+swims = true
 size = "small"
 stats = { strength = 2, dexterity = 15, toughness = 4, intelligence = 2, willpower = 14, presence = 4 }
 depart = "crawls away under a stone"

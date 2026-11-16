@@ -263,27 +263,43 @@ talent spares still trains. `Effect::Swim` is read in `World::keeps_afloat` (`wo
 `docs/dev/temperature.md`), which marks `swim` once a check; it is `Skills::trains_effect`-gated, so
 an item's Swim bonus alone asks no check. Tests `world/levels/swim_tests.rs`.
 
-**Deep water** (#1019; design §6.4 S2) is `world/levels/swim.rs`, one line each
-in `player_moves`, the refused actions (`pick_up_objects`, `drop_objects`, `start_rest`, the
-search dispatch, `start_dig`, lighting in `use_tool`), and `equip`. The terrain's `swim = true`
-with `walkable = false` (`content/load_world.rs` checks the pair) is why nothing else needs to know of it:
-paths, travel, spawning, teleports, blinks, and landings treat it as impassable. `at_the_shore`
-stops a step from anything else: water not in the level's memory is written there, with no time, so
-the step cannot go in unasked (presentation asks only of what the player knows,
-`PerceptionView::dives_at`); then `shore_refusal`, shared with `dives_at`. `stroke_fails` is the
-check of a step that starts in deep water, wherever it ends (**the dive itself asks none**: a
-"Dive in" that left you on the shore, cold, would make no sense; the issue left this open): two
-keyed draws (the 2d12), `Use::Stroke` whatever came of it (a use of its own, as `swim` is 100 %
-for a plunge), then `Harm::Spared`. `data/rules/swim.toml` has the numbers (`content/swim.rs`, optional:
-without it nobody swims); burden goes by `Load::penalty`, as every burden hook does. `dive_in` and
+**Deep water** (#1019, #1752, #1753; design §6.4 S2) is `world/levels/swim.rs` (its module docs
+hold the rule), one line each in `player_moves`, `run_turn` (`afloat`), the refused actions
+(`pick_up_objects`, `drop_objects`, `start_rest`, the search dispatch, `start_dig`, lighting in
+`use_tool`), and `equip`. The terrain's `swim = true` with `walkable = false`
+(`content/load_world.rs` checks the pair) is why nothing else needs to know of it: paths, travel,
+spawning, teleports, blinks, pushes, and landings treat it as impassable. Creature movement asks
+`World::open_to` instead (`route`'s cost and goal, `go_look`, `creature_steps`, and fear's step in
+`sign_picks.rs::frightened`): walkable, or deep water for a creature whose type `swims`
+(`content/creature.rs`; the fen's and the water's: crocodile, giant frog and leech, toad, hydra,
+the drowned and their king, the sea hag, the water elementals and mote). Such a creature rolls no
+check and swims at a plain step's price (`step_price`); spawning and patrol routes stay on
+walkable ground. `at_the_shore` stops a step from anything else: water not in the level's memory
+is written there, with no time, so the step cannot go in unasked (presentation asks only of what
+the player knows, `PerceptionView::dives_at`); then `shore_refusal` (Strained or worse), shared
+with `dives_at`. The check, `swim_check`, comes once a turn: before a step that starts in deep
+water (`stroke_fails`, which sets `World::stroked`, so `afloat` in `run_turn` does not check that
+turn again), else as the turn is run, if the player stands in deep water then (the dive's turn
+too). `apply` clears `stroked` first, so a step checked and then refused leaves no flag behind.
+`difficulty` adds `untrained`, `per_burden` a level, and 1 per `worn` grams equipped
+(`Equipment::items`, each stack's weight). Two keyed draws (`swim/player`, `check::roll`, whose
+`by` sets the harm by `SwimHarm::percent`), `Use::Stroke` whatever came of it, then
+`Harm::Drowning` (`fight.rs`: the player `die_of(Cause::Drowned)`, "You drown...", graveyard id
+`drowning`). `soak_paper` draws once (`swim/paper/player`) only when a stack qualifies: main part
+of material `paper`, not `item_protected`. A status with `ice_holds` (Water walking) skips it all.
+`data/rules/swim.toml` has the numbers (`content/swim.rs`, optional: without it nobody swims), and
+the wiki's tables (`xtask/src/wiki/swimming.rs`) show them and the odds; burden goes by
+`Load::penalty`, as every burden hook does. `dive_in` and
 `equip` put out the ready light (`douse_afloat`), so a second lantern, lit in the pack, cannot be
 made ready to cheat it. Prices: `wading_step` is true of `swim` terrain, so Wade, Swimmer
 (`terrain_as`), Strong swimmer, and Undertow apply; `World::wade` marks no `wade` for it.
 `route_to_shore` (close-in in `ai.rs`, Follow in `ally.rs`) widens a ring at a time up to
 `SHORE_REACH` when the target is afloat with no ground in reach, so creatures wait on the nearest
-shore; only then does it search more than once. A swimmer swaps with no one (`Refusal::Water`). An
+shore; only then does it search more than once. A swimmer swaps with none but a creature that
+swims (`Refusal::Water`). An
 Overloaded swimmer cannot step (`can_step_to`, as anywhere) and cannot drop: they can still throw
-things away, eat, or teleport, so it is no trap. Tests `world/levels/swim_deep_tests.rs`; the showcase's
+things away, eat, or teleport, so it is no trap. Tests `world/levels/swim_deep_tests.rs` and
+`swim_drown_tests.rs` (paper, and a pond a kobold goes around and a crocodile swims); the showcase's
 quarry pit holds a pool to try it in (the test world only; #1020 places it in the world).
 
 **Foraging** (#547; the owner, 2026-10-27: "survival can be used on

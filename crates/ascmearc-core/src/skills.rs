@@ -317,8 +317,8 @@ pub enum Effect {
     /// [`MAX_ENCHANT_LEVEL`].
     EnchantLevel,
     /// Points added to a Swim check (Swim; `world/levels/ice.rs`, a plunge through the
-    /// ice; `world/levels/swim.rs`, a step in deep water); only a skill with it, trained, asks the check
-    /// at all.
+    /// ice, asked only of one trained; `world/levels/swim.rs`, every turn in deep water, asked of
+    /// anyone).
     Swim,
     /// Percent faster the actor regains mana (`World::mana_rate`), added to its
     /// items' and talents' percent; only a trained skill gives it ([`crate::world::Actor::mind`]).
@@ -484,7 +484,7 @@ pub enum Use {
     Staggered,
     /// A Swim check, whatever comes of it (Swim; a plunge through the ice).
     Swim,
-    /// A step in deep water, whatever comes of it (Swim; `world/levels/swim.rs`).
+    /// A Swim check in deep water, whatever comes of it (Swim; `world/levels/swim.rs`).
     Stroke,
     /// A deal made in a shop: goods paid for, or the player's own sold.
     Deal,
