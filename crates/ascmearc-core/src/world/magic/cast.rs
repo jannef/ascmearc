@@ -308,7 +308,7 @@ impl World {
         };
         let done = match cast.def.kind {
             SpellPurpose::Buff => self.cast_buff(cast, events),
-            SpellPurpose::Heal if cast.def.aims_corpse() => self.cast_feast(cast, at),
+            SpellPurpose::Heal if cast.def.aims_corpse() => self.cast_feast(cast, at, events),
             SpellPurpose::Heal => self.cast_heal(cast, at, events),
             SpellPurpose::Cleanse => self.cleanse(cast, events),
             SpellPurpose::Hex => self.cast_hex(cast, at, events),
@@ -492,7 +492,7 @@ impl World {
         let Some(actor) = self.state.actors.get(&target) else {
             return false;
         };
-        if actor.hp >= actor.max_hp(&content) {
+        if actor.hp >= actor.max_hp(&content) && self.cured_by_magic(target).is_empty() {
             self.say(if target == player {
                 "You are not hurt.".to_string()
             } else {
@@ -513,24 +513,29 @@ impl World {
             self.state.actors.key(target)
         );
         let back = heal.roll(&mut rng, cast.reroll).max(0);
-        self.spell_heals(target, back);
+        self.spell_heals(target, back, events);
         self.spell_landed(cast, target, back > 0);
         true
     }
 
-    /// `target` gets `back` hit points of a heal, never past its maximum; said.
-    pub(in crate::world) fn spell_heals(&mut self, target: ActorId, back: i32) {
+    /// `target` gets `back` hit points of a heal by magic ([`World::heal_by_magic`]: its
+    /// bleeding stops too), never past its maximum; said.
+    pub(in crate::world) fn spell_heals(
+        &mut self,
+        target: ActorId,
+        back: i32,
+        events: &mut Vec<Event>,
+    ) {
+        if !self.state.actors.contains_key(&target) {
+            return;
+        }
         if target == self.state.player {
-            self.heal_player(back);
             self.say("Your wounds close.");
-        } else if self.state.actors.contains_key(&target) {
-            let content = self.content.clone();
-            let actor = self.state.actors.get_mut(&target).expect("there");
-            let max = actor.max_hp(&content);
-            actor.hp = (actor.hp + back).min(max).max(actor.hp);
+        } else {
             let who = capitalized(&self.called(&self.state.actors[&target]));
             self.say(format!("{who} looks better."));
         }
+        self.heal_by_magic(target, back, events);
     }
 
     /// A cleanse: the statuses it cures end, and with `diseases` every disease the player
@@ -1102,7 +1107,7 @@ impl World {
         let harm = self.spell_strikes(by, target, source, (damage, strike), made);
         self.glassing = None;
         crate::world::combat::surprise::mark_caught(&mut made[start..], (by, target), caught);
-        self.leech(by, def, harm);
+        self.leech(by, def, harm, made);
         (strike, amount + sneak)
     }
 }

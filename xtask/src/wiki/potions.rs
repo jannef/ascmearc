@@ -21,7 +21,9 @@ pub(super) fn potions(content: &Content) -> String {
     for (o, drink) in potions {
         // What its cures end, by the statuses' names.
         let cured: Vec<String> = (content.status_ids())
-            .filter(|(_, s)| drink.does.cures().iter().any(|c| s.cured_by.contains(c)))
+            .filter(|(_, s)| {
+                (drink.does.cure_means().iter()).any(|c| s.cured_by.iter().any(|b| b == c))
+            })
             .map(|(_, s)| s.name.clone())
             .collect();
         let also = match cured.is_empty() {

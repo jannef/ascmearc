@@ -103,13 +103,16 @@ impl World {
             return Spent::Nothing;
         }
         self.say("A clean warmth runs through your blood.");
-        self.player_mut().hp += heal;
         for e in &ended {
             self.player_mut().effects.remove(e.status);
         }
         self.ended(player, &ended, events);
         for disease in diseases {
             self.end_disease(player, disease, events);
+        }
+        // Horn of plenty's hit points are a heal by magic (`magic_heal.rs`).
+        if heal > 0 {
+            self.heal_by_magic(player, heal, events);
         }
         self.gift_cooldown(grace.cooldown, degrees, events);
         Spent::Turn(self.price_of(player, ActionKind::Wait))

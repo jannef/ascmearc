@@ -39,8 +39,14 @@ const LIFELESS: [&str; 3] = ["undead", "construct", "elemental"];
 
 impl World {
     /// `by`'s single-target spell `def` took `harm` hit points: its `leech` share, rounded down,
-    /// comes back to `by`, never past their maximum.
-    pub(super) fn leech(&mut self, by: ActorId, def: &SpellData, harm: i32) {
+    /// comes back to `by` by magic ([`World::heal_by_magic`]), never past their maximum.
+    pub(super) fn leech(
+        &mut self,
+        by: ActorId,
+        def: &SpellData,
+        harm: i32,
+        events: &mut Vec<Event>,
+    ) {
         let Some(percent) = def.effect.leech else {
             return;
         };
@@ -48,13 +54,7 @@ impl World {
         if back <= 0 || self.state.death.is_some() {
             return;
         }
-        let content = self.content.clone();
-        let Some(actor) = self.state.actors.get_mut(&by) else {
-            return;
-        };
-        let before = actor.hp;
-        actor.hp = (actor.hp + back).min(actor.max_hp(&content)).max(actor.hp);
-        if by == self.state.player && self.state.actors[&by].hp > before {
+        if self.heal_by_magic(by, back, events) > 0 && by == self.state.player {
             self.say("What it takes mends you.");
         }
     }
@@ -103,7 +103,8 @@ impl World {
             .collect();
         let hurt: Vec<ActorId> = (within.iter())
             .filter(|a| a.id == player || a.ally.as_ref().is_some_and(|x| x.master == player))
-            .filter(|a| a.hp < a.max_hp(&content) && !undead.contains(&a.id))
+            .filter(|a| a.hp < a.max_hp(&content) || !self.cured_by_magic(a.id).is_empty())
+            .filter(|a| !undead.contains(&a.id))
             .map(|a| a.id)
             .collect();
         if hurt.is_empty() && undead.is_empty() {
@@ -121,7 +122,7 @@ impl World {
             .roll(&mut draw!(self, "spell_rule/heal_all/player"), cast.reroll)
             .max(0);
         for id in hurt {
-            self.spell_heals(id, back);
+            self.spell_heals(id, back, events);
             self.spell_landed(cast, id, back > 0);
         }
         self.heal_sears_about(cast, (&undead, back, here), events);

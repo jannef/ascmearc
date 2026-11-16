@@ -68,7 +68,7 @@ impl World {
                 (Some(roll), Some(on)) => {
                     let mut rng = draw!(self, "backfire/heal/{}", self.state.actors.key(caster));
                     let back = roll.roll(&mut rng, reroll).max(0);
-                    self.rebound_heal(caster, on, back);
+                    self.rebound_heal(caster, on, back, events);
                     true
                 }
                 _ => false,
@@ -123,17 +123,13 @@ impl World {
         None
     }
 
-    /// `back` hit points of `caster`'s rebounding heal go to `on`, never past its maximum;
+    /// `back` hit points of `caster`'s rebounding heal go to `on` by magic, never past its maximum;
     /// said by name to the caster that is the player, else as a heal is seen.
-    fn rebound_heal(&mut self, caster: ActorId, on: ActorId, back: i32) {
+    fn rebound_heal(&mut self, caster: ActorId, on: ActorId, back: i32, events: &mut Vec<Event>) {
         let player = self.state.player;
-        let content = self.content.clone();
-        let Some(them) = self.state.actors.get_mut(&on) else {
+        let Some(them) = self.state.actors.get(&on) else {
             return;
         };
-        let max = them.max_hp(&content);
-        them.hp = (them.hp + back).min(max).max(them.hp);
-        let them = &self.state.actors[&on];
         if caster == player {
             let who = self.called(them);
             self.say(format!("Your healing flows into {who}."));
@@ -143,6 +139,7 @@ impl World {
             let who = capitalized(&self.called(them));
             self.say(format!("{who} looks better."));
         }
+        self.heal_by_magic(on, back, events);
     }
 
     /// `caster`'s summon `cast` backfires (module docs): its creatures come beside it hostile.

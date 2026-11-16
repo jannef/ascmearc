@@ -286,7 +286,7 @@ impl World {
                     self.afflict(id, status, degrees, Some(id), events);
                 }
             }
-            SpellPurpose::Heal => self.creature_heals(cast, on),
+            SpellPurpose::Heal => self.creature_heals(cast, on, events),
             SpellPurpose::Hex => self.creature_hexes(id, cast, (here, at), events),
             SpellPurpose::Damage => self.creature_harms(id, cast, (here, at), events),
             _ => {}
@@ -325,7 +325,7 @@ impl World {
     }
 
     /// A heal by touch: hit points back to `on`, said as the player sees it.
-    fn creature_heals(&mut self, cast: &Cast<'_>, on: ActorId) {
+    fn creature_heals(&mut self, cast: &Cast<'_>, on: ActorId, events: &mut Vec<Event>) {
         let Some(heal) = cast.roll else {
             return;
         };
@@ -337,20 +337,17 @@ impl World {
         );
         let back = heal.roll(&mut rng, cast.reroll).max(0);
         if on == self.state.player {
-            self.spell_heals(on, back);
+            self.spell_heals(on, back, events);
             return;
         }
-        let content = self.content.clone();
-        let Some(actor) = self.state.actors.get_mut(&on) else {
+        let Some(actor) = self.state.actors.get(&on) else {
             return;
         };
-        let max = actor.max_hp(&content);
-        actor.hp = (actor.hp + back).min(max).max(actor.hp);
-        let actor = &self.state.actors[&on];
         if self.perception.sees_actors_at(actor.pos) {
             let who = capitalized(&self.called(actor));
             self.say(format!("{who} looks better."));
         }
+        self.heal_by_magic(on, back, events);
     }
 
     /// A hex at the hostile on `at`: its status on it, or on everyone in a burst's cells but

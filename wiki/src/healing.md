@@ -25,14 +25,41 @@ and disease is in the second section.
   heal you when you drink at it, and in a [sanctuary](special-rooms.md#room-sanctuary) wounds heal
   three times as fast.
 
+## Magical healing
+
+Any healing by magic stops [bleeding](status-effects.md#bleeding) at once, however deep the wound.
+It does so even when it gives back no hit points, so it works when you are at full health too.
+"The bleeding stops."
+
+Magical healing is every way of getting hit points back by magic:
+
+- a healing [potion](potions.md) (of healing, greater healing, or full healing);
+- a healing spell: [Mend](magic.md#spell-mend), [Cure wounds](magic.md#spell-cure-wounds),
+  [Benison](magic.md#spell-benison), [Grave feast](magic.md#spell-grave-feast), and the hit points
+  a draining spell gives back to its caster;
+- a priest's prayer for [wounds](prayer.md#prayer-wounds), and a paladin's
+  [Lay on hands](abilities.md#ability-lay-on-hands);
+- the healing of a [spring](altars-forges-springs.md#healing-springs) or a
+  [forgotten altar](altars-forges-springs.md#forgotten-altars);
+- the hit points [Horn of plenty](horoscope.md#talent-horn-of-plenty) adds to Horn's grace;
+- rising from the ashes: the Phoenix's [Rise from the ashes](horoscope.md#talent-rise-from-ashes)
+  and the profane gift [Twice-born](profane-gifts.md#talent-twice-born).
+
+It works on others too. A heal you lay on an ally, or one a creature casts on its friend, stops
+their bleeding as well, and you see it: "The kobold is no longer bleeding."
+
+Healing that is not magic leaves bleeding as it is: resting, waiting,
+[Second wind](abilities.md#ability-second-wind) and Veteran's wind, and what eating gives back.
+Binding the wound with the [Heal](skill-uses.md#treating-yourself) skill still stops it, as before.
+
 ## Curing bleeding, poison, and disease
 
 Each of these slows or stops your healing until it ends, and each ends by itself in time
 (see [Status effects](status-effects.md) and [Diseases](diseases.md)). To end one sooner:
 
 - **[Bleeding](status-effects.md#bleeding)**: bind the wound with the
-  [Heal](skill-uses.md#treating-yourself) skill, drink a greater healing potion or one of full
-  healing, or a priest's prayer for [wounds](prayer.md#prayer-wounds).
+  [Heal](skill-uses.md#treating-yourself) skill, or any [magical healing](#magical-healing): a
+  healing potion or spell, a priest's prayer for [wounds](prayer.md#prayer-wounds), and the rest.
 - **[Poison](status-effects.md#poisoned)**: a [potion of antidote](potions.md#potion-of-antidote)
   or of full healing, the spell [Remove disease](magic.md#spell-remove-disease), the Heal skill (it
   draws out some of a dose), or a priest's prayer against [poison](prayer.md#prayer-poison).

@@ -50,7 +50,8 @@
 #   damage_type the kind of damage the status is (poison): a target immune to it never suffers
 #              it, and a resistance shrinks each dose it is given
 #   cured_by   what cures it at once (a bandage, an antidote, a potion of clear head's
-#              `clear_head`)
+#              `clear_head`); `magical_healing`: every heal of hit points by magic, and the
+#              Phoenix's rising (spells, prayers, potions, altars, springs; Bleeding)
 #   treat      how the Heal skill treats it (the Heal ability): an Intelligence
 #              check plus Heal against { difficulty = 6, per_degree = 2 } (the difficulty,
 #              plus `per_degree` for each degree); `stops = true`: made, it ends, and a failed try may

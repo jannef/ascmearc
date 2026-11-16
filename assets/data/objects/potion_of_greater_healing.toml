@@ -1,4 +1,5 @@
-# A potion of greater healing: more wounds closed, and bleeding stopped.
+# A potion of greater healing: more wounds closed, and bleeding stopped (as every healing
+# potion: a heal by magic).
 # Healing and a cure mix their hues, red and green: russet.
 [[object]]
 id = "potion_of_greater_healing"
@@ -17,6 +18,5 @@ frequency = 30
 [object.drink]
 kind = "heal"
 dice = "4d8"
-cures = ["bandage"]
 colour = "russet"
 marks = { toughness = 30 }

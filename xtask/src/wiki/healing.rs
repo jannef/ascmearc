@@ -9,6 +9,7 @@ use ascmearc_core::content::{
 use ascmearc_core::dice::Dice;
 use ascmearc_core::hunger::Hunger;
 use ascmearc_core::stats;
+use ascmearc_core::status::MAGICAL_HEALING;
 use ascmearc_core::talent::{FaithEffect, MartialEffect, SignEffect, SongEffect};
 use ascmearc_core::time::Duration;
 use std::fmt::Write as _;
@@ -701,13 +702,17 @@ fn status_ends(content: &Content, status: usize, def: &StatusDef) -> String {
 }
 
 /// Every way to end status `status` sooner than it wears off (#1563), from the data: what you
-/// drink or eat that names one of its `cured_by` means, the scroll of restoration and a
+/// drink or eat that names one of its `cured_by` means, any magical healing, the scroll of restoration and a
 /// temple's cure by theirs, the spells that cleanse it, a priest's prayer, the Heal skill's
 /// treatment, the talents' actives that end it, and the forgotten altar's answers.
 fn status_cures(content: &Content, status: usize, def: &StatusDef) -> Vec<String> {
     let id = StatusId(status as u16);
     let named = |cures: &[String]| cures.iter().any(|c| def.cured_by.contains(c));
     let mut out = Vec::new();
+    // Every heal by magic (a healing potion's among them, so those are not named again).
+    if def.cured_by.iter().any(|c| c == MAGICAL_HEALING) {
+        out.push("any [magical healing](healing.md#magical-healing)".into());
+    }
     for object in content.object_defs() {
         if (object.drink.as_ref()).is_some_and(|d| named(d.does.cures())) {
             out.push(link(Term::Potion, &object.id, &object.name));

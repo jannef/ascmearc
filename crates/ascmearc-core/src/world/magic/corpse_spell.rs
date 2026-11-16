@@ -75,7 +75,12 @@ impl World {
 
     /// Grave feast at `at` (module docs); whether it went off. Refused, said, beyond a touch,
     /// with no corpse there, and with nothing to give back.
-    pub(super) fn cast_feast(&mut self, cast: &Cast<'_>, at: Option<Pos>) -> bool {
+    pub(super) fn cast_feast(
+        &mut self,
+        cast: &Cast<'_>,
+        at: Option<Pos>,
+        events: &mut Vec<Event>,
+    ) -> bool {
         let (Some(at), Some(heal)) = (at, cast.roll) else {
             return false;
         };
@@ -91,7 +96,8 @@ impl World {
         let me = self.state.player();
         let (max_hp, max_mana) = (me.max_hp(&content), me.max_mana(&content));
         let gives_mana = cast.def.effect.mana.is_some() && me.mana < max_mana;
-        if me.hp >= max_hp && !gives_mana {
+        let bleeds = !self.cured_by_magic(self.state.player).is_empty();
+        if me.hp >= max_hp && !gives_mana && !bleeds {
             self.say("You are not hurt.");
             return false;
         }
@@ -103,7 +109,7 @@ impl World {
         let mut rng = draw!(self, "corpse_spell/feast/player");
         let back = heal.roll(&mut rng, cast.reroll).max(0);
         let mana = (cast.def.effect.mana).map_or(0, |m| m.roll(&mut rng, 0).max(0));
-        self.heal_player(back);
+        self.heal_by_magic(self.state.player, back, events);
         let me = self.player_mut();
         me.mana = (me.mana + mana).min(max_mana).max(me.mana);
         let name = crate::content::the(&content.object(corpse).name);

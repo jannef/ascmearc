@@ -1,4 +1,5 @@
-# A potion of full healing: most wounds closed, bleeding stopped, and poison
+# A potion of full healing: most wounds closed, bleeding stopped (as every healing potion: a
+# heal by magic), and poison
 # drawn out. Healing and cures mixed: a deep russet.
 [[object]]
 id = "potion_of_full_healing"
@@ -17,6 +18,6 @@ frequency = 10
 [object.drink]
 kind = "heal"
 dice = "8d8"
-cures = ["bandage", "antidote"]
+cures = ["antidote"]
 colour = "deep russet"
 marks = { toughness = 30 }

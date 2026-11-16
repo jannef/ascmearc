@@ -7,7 +7,8 @@
 //! kind = "heal"              # heal, cure, mana, elixir, harm, boost, vision, haste, resistance,
 //!                            # nourish, restore, blink, status, gamble
 //! dice = "2d8"               # heal: hit points back; mana: mana back; harm: degrees of sickness
-//! cures = ["bandage"]        # heal, cure: means named in the statuses' and diseases' `cured_by`
+//! cures = ["antidote"]       # heal, cure: means named in the statuses' and diseases' `cured_by`
+//!                            # (a heal cures `magical_healing`'s besides: bleeding)
 //! diseases = true            # cure: ends every disease the drinker has
 //! status = "poisoned"        # harm: the status it gives, `dice` degrees of it; boost, vision,
 //!                            # resistance: the status it gives (a raise, eyes, a `resist`);
@@ -150,6 +151,16 @@ impl Draught {
             Draught::Heal { cures, .. } | Draught::Cure { cures, .. } => cures,
             _ => &[],
         }
+    }
+
+    /// Every means it cures by: its [`Draught::cures`], and a healing potion's
+    /// [`crate::status::MAGICAL_HEALING`] (it heals by magic, #1741).
+    pub fn cure_means(&self) -> Vec<&str> {
+        let healing =
+            matches!(self, Draught::Heal { .. }).then_some(crate::status::MAGICAL_HEALING);
+        (self.cures().iter().map(String::as_str))
+            .chain(healing)
+            .collect()
     }
 }
 

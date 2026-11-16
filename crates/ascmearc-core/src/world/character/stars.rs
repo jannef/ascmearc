@@ -86,7 +86,8 @@ fn rising_sources(actor: &crate::world::Actor, content: &Content) -> (bool, bool
 impl World {
     /// The player, about to die of a hit, a trap, or a status, rises from the ashes instead if
     /// their talents let them and they have not yet (once in a life): the
-    /// once is spent, they are Ashen and back at a share of their (Ashen) hit points, and flames
+    /// once is spent, they are Ashen and back at a share of their (Ashen) hit points, every
+    /// degree of bleeding gone (what magical healing cures, `magic_heal.rs`), and flames
     /// burst from them, one roll of their damage for every creature they reach, melting the ice
     /// there. Returns whether they rose. A gameplay draw (the flames' damage) only then.
     pub(in crate::world) fn rise_from_ashes(&mut self, events: &mut Vec<Event>) -> bool {
@@ -119,6 +120,8 @@ impl World {
             me.hp = i32::try_from(max * i64::from(rise.hp_percent) / 100)
                 .unwrap_or(i32::MAX)
                 .max(1);
+            // Risen by fire, as by a heal of magic: the bleeding stops (#1741).
+            self.cure_by_magic(player, events);
         }
         let center = self.player_pos();
         let burst = &rise.burst;

@@ -43,7 +43,7 @@ list refuses its statuses first, nothing drawn: the animated objects' poisoned a
 creature type with blood: `CreatureDef::blood` `None` (`blood = "none"`) refuses it, the one
 rule that reads blood, the spell types design Q7, `world/magic/spell_data_tests.rs`), `World::cure(actor, means, events)` (eating
 a remedy, an object with `cures`, `world/health/eat.rs::remedy`, which says what ended at once; the Heal
-skill's bandage, #132), `World::after_blow` (wounds by `combat::big_hit` and criticals, of the
+skill's bandage, #132; magical healing, below), `World::after_blow` (wounds by `combat::big_hit` and criticals, of the
 kinds the status's `wound.from` names, `Wound::caused_by(blow.kind)`: bleeding from slashing
 and piercing; then `on_hit`
 with one keyed draw per chance below 100), `World::healing_rate` (the slowest of the statuses'
@@ -262,3 +262,20 @@ disease is treated against its own `difficulty`: made, `streak + 1` while that s
 `Ability::Heal` (`Aim::Ailment`, `Unavailable::NothingToTreat`); the game's choice of what to
 treat is the one dialog (`ui/step_dialogs.rs::treat_dialog`). Tests: `world/health/heal_tests.rs`, the parse
 cases in `content/status.rs`.
+
+Magical healing (#1741): every heal of hit points by magic goes through
+`World::heal_by_magic(id, back, events)` (`world/health/magic_heal.rs`): the hit points, never past
+the maximum, then `World::cure_by_magic`, which is `World::cure` with `status::MAGICAL_HEALING`
+(Bleeding's `cured_by` lists `magical_healing`), so every degree ends even when the heal gives back
+nothing; the player hears the status's `end` line through its event, a creature the player sees
+is said by its `seen` word ("The kobold is no longer bleeding."). Its callers: `spell_heals`
+(Cure wounds, Mend, Benison, a creature's heal on the player), `creature_heals`, `rebound_heal`
+(a heal's backfire), `leech`, `cast_feast` (Grave feast), `lay_on_hands`, Horn of plenty's hit
+points (`horns_grace`), the healing potions (`Draught::Heal`; `Draught::cure_means` adds the means
+for the item text and the wiki), and an outcome's `heal` (springs, altars). A heal that would find
+the target whole still goes on while `World::cured_by_magic` has something to end (Cure wounds,
+Benison, Grave feast). The Phoenix's rising (`World::rise_from_ashes`, the sign's and Twice-born's)
+calls `cure_by_magic` itself, and the priest's prayer for wounds ends Bleeding by its own rule.
+Mundane healing is not routed there: resting and natural healing, a creature's `regen`, the Heal
+skill, Second wind, Veteran's wind (`World::heal_player`), and what eating gives back. Tests:
+`world/health/magic_heal_tests.rs`.
