@@ -69,6 +69,14 @@ Your own spells that harm an area hurt your allies in it too.
 [learning it from its grimoire](learning-spells.md#learning-a-spell). The calls are very hard to
 learn, even for a caster well above their level.
 
+Calling up a fiend breaks an old law (the sort *fiend* in the
+[table of sorts](quests.md#sorts-of-creatures)). Every fiend that comes by your own doing
+counts: one your summon spell calls, or a scroll or item that casts one, one that comes when such
+a spell goes wrong, a [gate](miscasts.md#gates) your miscast tears open, and one a
+[forgotten altar](altars-forges-springs.md#forgotten-altars) you pray at calls up. The first
+time: "Your crime is witnessed." The game counts every one, but nothing else comes of it yet.
+What a creature or a gate calls up is not your doing.
+
 ### The risen
 
 [Rouse the dead](magic.md#spell-rouse-the-dead) is aimed at a [corpse](food.md#corpses) you see,

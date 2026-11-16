@@ -258,8 +258,8 @@ impl World {
             MishapEffect::StatDamage { stat, points } => {
                 self.miscast_stat_damage(caster, stat, points);
             }
-            MishapEffect::Summon { creature } => self.miscast_summon(here, creature, None),
-            MishapEffect::Portal { gate } if in_play => self.open_pit(here, gate),
+            MishapEffect::Summon { creature } => self.miscast_summon(caster, here, creature, None),
+            MishapEffect::Portal { gate } if in_play => self.open_pit(caster, here, gate),
             MishapEffect::Harm { dice, damage } => {
                 let amount = dice
                     .roll(&mut draw!(
@@ -434,9 +434,10 @@ impl World {
     }
 
     /// A `creature` comes to the first free cell around `here` but `besides`, of its own kind's
-    /// faction.
+    /// faction, by `caster`'s miscast (counted against the player's, `world/character/laws.rs`).
     pub(in crate::world) fn miscast_summon(
         &mut self,
+        caster: ActorId,
         here: Pos,
         creature: CreatureId,
         besides: Option<Pos>,
@@ -466,5 +467,8 @@ impl World {
         };
         crate::world::levels::travel::make_creature(&mut self.state, &self.content, &id, &spawn);
         self.spawned += 1;
+        if caster == self.state.player {
+            self.player_summoned(creature);
+        }
     }
 }

@@ -4,6 +4,7 @@
 [[creature]]
 id = "villager"
 name = "villager"
+tags = ["sapient"]
 glyph = "@"
 fg = "#b0946c"
 faction = "peaceful"

@@ -11,6 +11,7 @@ id = "pedlar"
 level = 3
 xp = 15
 name = "pedlar"
+tags = ["sapient"]
 glyph = "@"
 fg = "#b88a4a"
 faction = "merchants"

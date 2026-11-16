@@ -10,7 +10,7 @@ glyph = "f"
 fg = "#8a7040"
 speed = 1150
 factions = { seelie = 50, unseelie = 50 }
-tags = ["fey"]
+tags = ["fey", "sapient"]
 vision = "darkvision"
 sight = 10
 opens_doors = true

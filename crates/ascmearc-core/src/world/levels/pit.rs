@@ -43,7 +43,7 @@ use crate::content::{
     Content, CreatureId, LevelKind, StairsDir, StairsLink, parse_branch_level, parse_instance,
 };
 use crate::geom::Pos;
-use crate::world::{World, WorldState};
+use crate::world::{ActorId, World, WorldState};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
 
@@ -180,9 +180,9 @@ impl World {
         self.free_cell_within(&level.id, here, reach, plain)
     }
 
-    /// A `portal` miscast by a caster at `here` (module docs): a Pit opened with `gate` at its
+    /// A `portal` miscast by `caster` at `here` (module docs): a Pit opened with `gate` at its
     /// mouth, or the gate alone where it is refused.
-    pub(in crate::world) fn open_pit(&mut self, here: Pos, gate: CreatureId) {
+    pub(in crate::world) fn open_pit(&mut self, caster: ActorId, here: Pos, gate: CreatureId) {
         let mouth = match self.pit_refused(here) {
             Some(_) => None,
             None => self.pit_mouth(here),
@@ -212,7 +212,7 @@ impl World {
                 name: Some("the Pit".into()),
             });
         }
-        self.miscast_summon(here, gate, mouth);
+        self.miscast_summon(caster, here, gate, mouth);
     }
 
     /// Creature type `creature` died on level `level`: if it is the warden of the Pit that level

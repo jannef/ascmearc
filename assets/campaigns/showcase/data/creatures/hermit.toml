@@ -2,6 +2,7 @@
 [[creature]]
 id = "hermit"
 name = "old hermit"
+tags = ["sapient"]
 glyph = "@"
 fg = "#b9b09c"
 speed = 800

@@ -87,6 +87,22 @@ moved it: a diminished one that moved 0 empties nothing). It sets the pool `data
 the deed's own lines. One `if`; without the file nothing happens. The only reading of the score
 in the smiting rules (`smite_tests.rs::a_sin_empties_zeal`).
 
+**The two laws** (#1764; `world/character/laws.rs`, `data/rules/laws.toml`, `content/laws.rs`,
+`LawRules`, `Content::laws()`; optional: without the file nothing is counted). Not deeds: they
+move no score. `World::ate_flesh` (called beside `ate_corpse` in `world/health/eat.rs::finish`, a
+corpse fresh or rotten) counts a corpse whose creature carries the eat law's tag (`sapient`,
+`data/creatures/README.toml`); `World::player_summoned` counts a creature carrying the summon
+law's tag (`fiend`) made by the player's own act, called where each such path makes it: the
+summon spell (`magic/summon_spell.rs`, after "... come to your call."), its backfire
+(`magic/backfire.rs`), the player's miscast summon and portal gate (`magic/miscast.rs::miscast_summon`,
+which takes the caster, and `levels/pit.rs::open_pit`), a study mishap's summon (`magic/learn.rs`),
+and a feature outcome's summon (`fixtures/outcome.rs::summon_hostiles`, the forgotten altar's). A
+new player summoning path calls `player_summoned` for each creature it makes. The counts live in
+`Progress::laws` (`Broken`: `eaten`, `summoned`, saved, left out while 0); the first of each says
+the law's `first` line. Read by `World::laws_broken()`: the `progress` dump layer's `laws broken:
+ate N sapient, summoned N fiend`. No screen shows them yet; nothing else reads them. Tests:
+`world/character/laws_tests.rs`.
+
 **Tests.** `alignment.rs` (diminishing, bands, scorn, requirements, loading), `content/alignment.rs`
 (the built-in bands cover the scale, news, bad files), `world/character/alignment_tests.rs` (starting bands, the birth animal's nudge, a paladin of a race not
 evil starting Good under the worst animal (#317: the class's 550 is set for it), each deed, diminishing in play, notes

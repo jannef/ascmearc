@@ -2,6 +2,7 @@
 [[creature]]
 id = "bard"
 name = "wandering bard"
+tags = ["sapient"]
 glyph = "@"
 fg = "#d7a8e6"
 faction = "peaceful"

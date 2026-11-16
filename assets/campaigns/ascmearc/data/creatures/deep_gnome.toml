@@ -12,7 +12,7 @@ name = "deep gnome"
 glyph = "@"
 fg = "#9c9cb0"
 faction = "peaceful"
-tags = ["deep-gnome"]
+tags = ["deep-gnome", "sapient"]
 # One of the people: never greater or lesser than their kind.
 grades = false
 alignment = "good"

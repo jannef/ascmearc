@@ -9,7 +9,7 @@ name = "satyr"
 glyph = "F"
 fg = "#b88a5a"
 factions = { seelie = 50, unseelie = 50 }
-tags = ["fey"]
+tags = ["fey", "sapient"]
 vision = "low_light"
 sight = 10
 opens_doors = true

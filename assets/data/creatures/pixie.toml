@@ -15,7 +15,7 @@ glyph = "f"
 fg = "#c890f0"
 speed = 1400
 factions = { seelie = 50, unseelie = 50 }
-tags = ["fey", "caster"]
+tags = ["fey", "caster", "sapient"]
 vision = "low_light"
 sight = 12
 combat = "caster"

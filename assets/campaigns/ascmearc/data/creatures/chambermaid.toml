@@ -5,6 +5,7 @@
 [[creature]]
 id = "chambermaid"
 name = "chambermaid"
+tags = ["sapient"]
 glyph = "@"
 fg = "#c8b8e0"
 faction = "peaceful"

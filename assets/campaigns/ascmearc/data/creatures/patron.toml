@@ -6,6 +6,7 @@
 [[creature]]
 id = "patron"
 name = "patron"
+tags = ["sapient"]
 glyph = "@"
 fg = "#c8a0d8"
 faction = "peaceful"

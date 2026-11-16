@@ -2,10 +2,10 @@
 
 use super::{
     AllyRules, CompanionRules, Content, EncounterRules, FamiliarRules, FeintRules, FletchRules,
-    ForageRules, GearConditions, HerbRules, HungerDef, IntimidateRules, InvestRules, MagicWorth,
-    MiningRules, PatronRules, PrayerRules, RangedRules, RequiredIds, RestockRules, RigRules,
-    RuinRules, SalvageRules, SearchRules, SmiteRules, StatTraining, StealRules, StipendRules,
-    SurpriseRules, SwimRules, TagDrops, TemperRules, Tuning, WebRules,
+    ForageRules, GearConditions, HerbRules, HungerDef, IntimidateRules, InvestRules, LawRules,
+    MagicWorth, MiningRules, PatronRules, PrayerRules, RangedRules, RequiredIds, RestockRules,
+    RigRules, RuinRules, SalvageRules, SearchRules, SmiteRules, StatTraining, StealRules,
+    StipendRules, SurpriseRules, SwimRules, TagDrops, TemperRules, Tuning, WebRules,
 };
 
 impl Content {
@@ -131,6 +131,11 @@ impl Content {
     /// `None` without the file, when nobody intimidates.
     pub fn intimidate(&self) -> Option<&IntimidateRules> {
         self.intimidate.as_ref()
+    }
+
+    /// The two laws (`data/rules/laws.toml`); `None` without the file, when nothing is counted.
+    pub fn laws(&self) -> Option<&LawRules> {
+        self.laws.as_ref()
     }
 
     /// What area spells do to the items lying in them (`data/ruin.toml`); no rows without the file.

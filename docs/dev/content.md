@@ -104,7 +104,7 @@ takes its type's impl, a `Content` field, an accessor, and one line in `Content:
 
 The small rules files of one system each live in **`assets/data/rules/`**, one file per system,
 named by it (`steal`, `feint`, `patron`, `stipend`, `decipher`, `salvage`, `search`, `smite`,
-`enchanting`, `intimidate`, `invest`, `magic_worth`, `swim`, `temper`, `tuning`; the owner, #1541): one folder
+`enchanting`, `intimidate`, `invest`, `laws`, `magic_worth`, `swim`, `temper`, `tuning`; the owner, #1541): one folder
 keeps them together while two PRs adding a system still touch different files, and a mod may
 override one file. A new one goes there; a rules file that is a table (`data/status/`) or that
 several systems read (`data/actions.toml`, `data/traps.toml`) stays where it is.

@@ -50,6 +50,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - Good creatures scorn Evil or Wicked characters, and evil creatures scorn Good or Saintly ones: a cold greeting, but their quests are still offered. A good shopkeeper's prices move with the band.
 - **Alignment bars nothing**: no class, talent, or ability is refused or greyed by band, and nothing remembers a drop. A holy gift outside its bands is still listed and used, and does nothing. The owner's exceptions: the Hunter's calling spirit speaks only to the Kind or better, and a quest may name the bands it is offered to.
 - A sin empties the paladin's zeal; it bars nothing.
+- **The two laws** (#1764): never eat the flesh of a thinking creature (one tagged `sapient`), never call up a fiend (`fiend`) by your own act. Each is counted on the player and told once, the first time, in words from data; nothing else follows yet.
 
 ## Stats
 

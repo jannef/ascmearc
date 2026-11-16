@@ -81,6 +81,19 @@ for a corpse of any age, and each one uses it up. [Charnel burst](magic.md#spell
 blows it apart, [Grave feast](magic.md#spell-grave-feast) draws out what life is left, and
 [Rouse the dead](allies.md#the-risen) stands it up again.
 
+### Eating those who think
+
+Some creatures think and speak. They are the folk of every race and their kin: goblins,
+hobgoblins, kobolds, orcs, the drow, the duergar, and the deep gnomes. They are every named
+person and every townsfolk, the giants, ogres, trolls, and hags, the fey who talk, and the
+fiends who speak. The sort *sapient* in the [table of sorts](quests.md#sorts-of-creatures) lists
+every one.
+
+Eating one of their corpses, fresh or rotten, breaks an old law. The first time, you feel it:
+"You feel as if you have gone against something fundamental." The game counts every one you
+eat, but nothing else comes of it yet. Beasts, vermin, the undead, spirits, oozes, elementals,
+and animated things are not counted.
+
 ### What a corpse gives you
 
 Eating a fresh corpse may do more than feed you. Some taste terrible and may come back up. Some
