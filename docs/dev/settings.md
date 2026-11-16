@@ -88,8 +88,8 @@ Cmd+Space; Windows and Linux: Alt+F4, Alt+Tab, Ctrl+Alt+Delete, Super+D/E/L/R/Ta
 Ctrl or Cmd with N/Q/T/W, Ctrl+Tab, Alt+F4), in Controls' capture (with the reason) and when a
 settings file or keymap is read (a warning; the key is skipped). The default keys with
 modifiers all hold Alt, on every platform and the web alike (#1385): Search for a while is Alt+Num5
-and Alt+s (#1323's comment, #1326); Run is Alt with each movement key, Alt+Num1-9 and Alt+arrows
-(`Bindings::default` derives them from the moves; #1325), none refused on any platform
+(#1323's comment, #1326; and `S`, not Alt+s, since #1750); Run is Alt with each movement key,
+Alt+Num1-9 and Alt+arrows (`Bindings::default` derives them from the moves; #1325), none refused on any platform
 (`mods::tests::default_runs_are_never_refused`). They were Ctrl until #1385: macOS keeps
 Ctrl+arrows for Mission Control and Spaces, so they never reached the game there. Alt is Option on
 a Mac, named `Alt` there too (`Mods::display_on`; only Super is `Cmd`), and Option+letter is read
@@ -97,6 +97,14 @@ from the physical key (`Alt+s`, never `Alt+ß`). In a browser, Alt+Left/Right (B
 Windows and Linux) never leave the canvas: winit cancels every keydown on it
 (`prevent_default_event_handling`, `main.rs`). A settings file written before #1385 lists the
 old Ctrl keys and keeps them (Controls' reset gives the new ones).
+A separate numpad on macOS never carries the Option held on the laptop's keyboard (modifier state
+is per device: Alt+Num8 arrives as Num8), so a run also has ADOM's run prefix (#1750):
+`KeyCommand::RunPrefix` (`run_prefix`), `.` and the numpad's decimal key by default (bound as
+`NumpadDecimal`, so it works whatever that key types), asks the way in the direction prompt
+(`InputMode::Direction`, "Run in which direction?") and answers a movement key as `Run(dir)`'s
+own key does (`Gameplay::direction`). A settings file lists every command's keys, so one written
+before #1750 keeps `Alt+s` for Search for a while (Controls' reset gives `S`), and gets the run
+prefix's defaults unless a command it lists has `.` or the decimal key.
 Core knows no bindings, so a message names a key by its command's id (`messages::key("help")`
 writes `{key:help}`, as the welcome line does) and the message line fills it in as bound
 (`Message::display_with` with `ui::message_key`; dumps show the token).

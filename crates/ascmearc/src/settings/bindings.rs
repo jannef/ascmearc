@@ -15,6 +15,10 @@ pub enum KeyCommand {
     /// Run in a direction: step after step until something worth stopping for (#1325,
     /// `Action::Run`). Alt with a movement key by default.
     Run(Dir),
+    /// Run, the way asked next (ADOM's run prefix, #1750): `.` then a movement key runs as
+    /// `Run(dir)` would. For a numpad on its own device, whose keys never carry the Alt held on
+    /// another keyboard.
+    RunPrefix,
     /// Wait a turn, which is searching the cells around the player for secret doors and hidden
     /// traps (#1326: one action, `Action::Wait`).
     Wait,
@@ -201,6 +205,7 @@ impl KeyCommand {
         match self {
             KeyCommand::Move(_) => "Move",
             KeyCommand::Run(_) => "Run",
+            KeyCommand::RunPrefix => "Run (then a direction)",
             KeyCommand::Wait => "Wait/search",
             KeyCommand::SearchLong => "Search for a while",
             KeyCommand::Open => "Open a door",
@@ -324,6 +329,7 @@ impl KeyBinding {
                 KeyCode::Numpad8 => "Num8".into(),
                 KeyCode::Numpad9 => "Num9".into(),
                 KeyCode::NumpadEnter => "NumEnter".into(),
+                KeyCode::NumpadDecimal => "Num.".into(),
                 KeyCode::Delete => "Del".into(),
                 other => format!("{other:?}"),
             },
@@ -368,13 +374,16 @@ impl Default for Bindings {
             .collect();
         table.0.extend(runs);
         table.0.extend([
+            // ADOM's run prefix (#1750); the numpad's decimal key whatever it types.
+            (ch("."), RunPrefix),
+            (Code(KeyCode::NumpadDecimal), RunPrefix),
             (Code(KeyCode::Numpad5), Wait),
             (ch("s"), Wait),
             (
                 KeyBinding::chord(Mods::ALT, Code(KeyCode::Numpad5)),
                 SearchLong,
             ),
-            (KeyBinding::chord(Mods::ALT, ch("s")), SearchLong),
+            (ch("S"), SearchLong),
             (ch("o"), Open),
             (ch("c"), Close),
             (ch("k"), Kick),
@@ -456,7 +465,8 @@ mod tests {
         assert_eq!(keys(&b, KeyCommand::Cancel), ["Esc"]);
         assert_eq!(keys(&b, KeyCommand::Rest), ["b"]);
         assert_eq!(keys(&b, KeyCommand::Wait), ["Num5", "s"]);
-        assert_eq!(keys(&b, KeyCommand::SearchLong), ["Alt+Num5", "Alt+s"]);
+        assert_eq!(keys(&b, KeyCommand::SearchLong), ["Alt+Num5", "S"]);
+        assert_eq!(keys(&b, KeyCommand::RunPrefix), [".", "Num."]);
         assert_eq!(keys(&b, KeyCommand::PickUp), [",", ";"]);
         assert_eq!(keys(&b, KeyCommand::Drop), ["d"]);
         assert_eq!(keys(&b, KeyCommand::Inventory), ["I"]);

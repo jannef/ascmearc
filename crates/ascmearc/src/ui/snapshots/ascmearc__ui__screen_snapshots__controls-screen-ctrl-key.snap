@@ -29,15 +29,15 @@ expression: "render(case, content.clone())"
                             │   Run southwest                        Alt+Num1              │
                             │   Run west                             Alt+Num4 Alt+←        │
                             │   Run northwest                        Alt+Num7              │
+                            │   Run (then a direction)               . Num.                │
                             │   Wait/search                          Num5 s                │
-                            │   Search for a while                   Alt+Num5 Alt+s        │
+                            │   Search for a while                   Alt+Num5 S            │
                             │   Open a door                          o                     │
                             │   Close a door                         c                     │
                             │   Kick                                 k                     │
                             │   Go down stairs                       >                     │
                             │   Go up stairs                         <                     │
                             │   Pick up                              , ;                   │
-                            │   Drop                                 d                     │
                             │                                                              │
                             │ Move north: Num8 is now Ctrl+k.                              │
                             │                                                              │

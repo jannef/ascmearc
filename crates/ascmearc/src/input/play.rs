@@ -176,8 +176,8 @@ impl Gameplay<'_> {
                 open = Some(ScreenAction::Open(ScreenName::Messages));
                 InputMode::Normal
             }
-            // Kick asks always: any way may be kicked.
-            KeyCommand::Kick => InputMode::Direction(command),
+            // Kick asks always: any way may be kicked; so does the run prefix.
+            KeyCommand::Kick | KeyCommand::RunPrefix => InputMode::Direction(command),
             KeyCommand::Open => self.beside(Beside::Open, InputMode::Direction(command)),
             KeyCommand::Close => self.beside(Beside::Close, InputMode::Direction(command)),
             KeyCommand::Abilities => {

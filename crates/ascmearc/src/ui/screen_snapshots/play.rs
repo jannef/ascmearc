@@ -37,6 +37,42 @@ fn looking_with_knowledge() {
     }
 }
 
+/// #1750: the run prefix asks the way on the message line.
+#[test]
+fn the_run_prefix_asks_the_way_as_text() {
+    let case = Case {
+        name: "run-prefix-prompt",
+        run: true,
+        keys: Some("."),
+        ..BASE
+    };
+    check_with(
+        &case,
+        Arc::new(ascmearc_assets::content().expect("content")),
+    );
+}
+
+/// #1750: `.` and a direction run as Alt with it does; so does the numpad's decimal key,
+/// whatever it types. Esc at the prompt takes no time.
+#[test]
+fn the_run_prefix_runs_as_alt_does() {
+    let content = Arc::new(ascmearc_assets::content().expect("content"));
+    let case = Case { run: true, ..BASE };
+    let after = |keys: &str| {
+        let mut app = start(&case, content.clone());
+        press_keys(&mut app, keys);
+        assert_eq!(*app.world().resource::<InputMode>(), InputMode::Normal);
+        let game = app.world().resource::<Game>();
+        (game.world.player_pos(), game.world.time())
+    };
+    let still = after("");
+    let alt = after("Alt+Down");
+    assert_ne!(alt.0, still.0, "the run goes somewhere");
+    assert_eq!(after(". Down"), alt);
+    assert_eq!(after("NumDecimal Down"), alt);
+    assert_eq!(after(". Esc"), still);
+}
+
 /// A run on the overworld beside the Hall that starts with `nutrition`, or if
 /// that is below 0 (no run starts so hungry), has just begun to starve.
 fn on_the_road(nutrition: i32) -> (Case, Arc<Content>) {

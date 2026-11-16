@@ -40,6 +40,7 @@ pub const REBINDABLE: &[KeyCommand] = &[
     KeyCommand::Run(Dir::SW),
     KeyCommand::Run(Dir::W),
     KeyCommand::Run(Dir::NW),
+    KeyCommand::RunPrefix,
     KeyCommand::Wait,
     KeyCommand::SearchLong,
     KeyCommand::Open,
@@ -280,6 +281,7 @@ impl KeyCommand {
             Run(Dir::SW) => "run_sw",
             Run(Dir::W) => "run_w",
             Run(Dir::NW) => "run_nw",
+            RunPrefix => "run_prefix",
             Wait => "wait",
             SearchLong => "search_long",
             Open => "open",
@@ -916,8 +918,7 @@ mod tests {
     #[test]
     fn an_old_files_keys_win_over_new_defaults() {
         // A file written before #350: the old keys, and no `quit` (unbound then). Its keys stay
-        // the player's own; Search for a while, unlisted, gives up its new default `Alt+s` to
-        // Skills.
+        // the player's own; Search for a while, unlisted, gives up its default `S` to Skills.
         let table: toml::Table = toml::from_str(
             r#"
             move_n = ["k", "Numpad8", "ArrowUp"]
@@ -989,7 +990,7 @@ mod tests {
         let text = toml::to_string(&b.to_map()).unwrap();
         assert!(text.contains(r#"look = ["Ctrl+Alt+ArrowUp"]"#), "{text}");
         assert!(
-            text.contains(r#"search_long = ["Alt+Numpad5", "Alt+s"]"#),
+            text.contains(r#"search_long = ["Alt+Numpad5", "S"]"#),
             "{text}"
         );
         let table: toml::Table = toml::from_str(&text).unwrap();

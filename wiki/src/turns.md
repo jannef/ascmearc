@@ -53,7 +53,10 @@ your step's time ("You swap places with the deer."). If it will not make way, th
 ## Running
 
 Running moves you step after step in one direction, so you need not press a key for every step.
-Hold `Alt` (`Option` on a Mac) and press a movement key ([Controls](controls.md)). Each step takes a step's time, as
+Hold `Alt` (`Option` on a Mac) and press a movement key ([Controls](controls.md)), or press `.`
+(or the numpad's decimal key) and then a movement key: the game asks `Run in which direction?`, and
+`Esc` there cancels and takes no time. The second way works on a separate numpad, which may not
+see the `Alt` held on another keyboard. Each step takes a step's time, as
 if you had walked it, and you can stop only where the run stops.
 
 **In the open**, you keep going the same way until the next step cannot be made: a

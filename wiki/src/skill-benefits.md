@@ -63,7 +63,7 @@ The passive skills help you more the higher they are:
 - **[Herbalism](skills.md#skill-herbalism)** may find a herb besides on a forage that finds something (see
   Foraging). You need it to [gather](herbs.md#gathering) herbs from
   the glowing fungus, and it finds one more herb there for every 50.
-- **[Search](skills.md#skill-search)** helps you find [secret doors](doors.md#secret-doors) and other hidden things when you search (`s`, `Alt+s`). A
+- **[Search](skills.md#skill-search)** helps you find [secret doors](doors.md#secret-doors) and other hidden things when you search (`s`, `S`). A
   master's search reaches one cell farther (see [Searching](searching.md)).
 - **[Spot](skills.md#skill-spot)** lets you [notice hidden things in passing](searching.md#noticing-in-passing) at all, except traps. The higher it is, the more you
   notice.

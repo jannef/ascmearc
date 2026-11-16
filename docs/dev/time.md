@@ -52,7 +52,7 @@ stops the long action. A turn in which the player moved is
 always perceived (a run's step, below; a push).
 
 **Running** (`world/turn/run.rs`, #1325; `Action::Run(dir)`, `run:DIR`, `KeyCommand::Run`, Alt with a
-movement key by default) is one more long action through `keep_at`: `act` is a plain step
+movement key by default, or the run prefix `.` then a direction, `KeyCommand::RunPrefix`) is one more long action through `keep_at`: `act` is a plain step
 (`player_moves`, with the per-step training `apply` gives a step), and `more` says whether there is
 a next step and which, a pure function of the perception (what the player sees and remembers,
 `PerceptionView::cell`, the creatures seen, the traps known; never ground truth), looked at after

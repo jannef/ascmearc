@@ -63,7 +63,7 @@ pub fn dev_keys(args: &Args) -> bool {
 pub enum InputMode {
     #[default]
     Normal,
-    /// Waiting for a direction for `Open`, `Close`, `Kick`, `UseTool`, or `Chat`.
+    /// Waiting for a direction for `Open`, `Close`, `Kick`, `UseTool`, `Chat`, or `RunPrefix`.
     Direction(KeyCommand),
     /// Waiting for a direction to use an ability in (one whose [`ability::Aim`] is a direction:
     /// a shield bash).
@@ -279,7 +279,7 @@ impl Gameplay<'_> {
             InputMode::Ability(ability) => self.ability_way(ability, command)?,
             InputMode::GiveWay(item) => (self.give_way(item, command), None),
             InputMode::RigWay(rig) => (self.rig_way(rig, command)?, None),
-            InputMode::Direction(cmd) => (self.direction(cmd, command), None),
+            InputMode::Direction(cmd) => self.direction(cmd, command)?,
             // Any other command (Esc, or `R` again) cancels the rest prompt.
             InputMode::Rest => (InputMode::Normal, None),
         };

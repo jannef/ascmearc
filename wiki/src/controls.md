@@ -27,12 +27,12 @@ bar, and the info pages.
 |---|---|
 | Move (numpad) | `8` `9` `6` `3` `2` `1` `4` `7` |
 | Move (arrows) | Up, Right, Down, Left (four directions) |
-| [Run](turns.md#running) (step after step until something stops you) | `Alt` with a movement key (`Option` on a Mac) |
+| [Run](turns.md#running) (step after step until something stops you) | `Alt` with a movement key (`Option` on a Mac), or `.` (or the numpad's decimal key) then a direction |
 | Attack | move into a [hostile](creatures.md#factions) [creature](creatures.md) |
 | [Swap places](npcs.md#getting-past) | move into any other creature |
 | [Chat](npcs.md#chatting) with someone next to you | `C` (then a direction, if several are near; see [Something beside you](controls-prompts.md#something-beside-you)) |
 | Wait a [turn](time.md#what-takes-time), [searching](searching.md#how-to-search) the cells around you | numpad `5` or `s` |
-| Search for a while (up to 10 turns, stops when something turns up) | `Alt` with `s` or numpad `5` (`Option` on a Mac) |
+| Search for a while (up to 10 turns, stops when something turns up) | `S`, or `Alt` with numpad `5` (`Option` on a Mac) |
 | Open a [door](doors.md) or a [chest](chests.md) | `o` (then a direction, if several are beside you; or walk into the door) |
 | Close a door | `c` (then a direction, if several are beside you) |
 | [Kick](doors.md#kicking-a-door-open) (a door, to break it in, or a creature) | `k`, then a direction, always |

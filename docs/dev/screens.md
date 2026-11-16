@@ -435,7 +435,7 @@ owner's rule, #156) get no key of their own: they go into the one abilities menu
   cleared with the stack when a run ends, like the creation picks), and calls
   `Gameplay::use_ability`: `Aim::Direction` goes through `Gameplay::beside` (above): with
   several targets it enters `InputMode::Ability(ability)` (the message
-  line's "In which direction? (Esc to cancel)", disarming's "Disarm in which direction?",
+  line's "In which direction? (Esc to cancel)", the run prefix's "Run in which direction?", disarming's "Disarm in which direction?",
   `ui/mod.rs`; a direction applies `ability.action(Some(dir))`),
   `Aim::Cell` starts aiming (`InputMode::Aim`, `AimKind::Ability`), `Aim::Nothing` applies it
   at once, and one that cannot be used now is applied at once toward `PerceptionView::blank_way`
