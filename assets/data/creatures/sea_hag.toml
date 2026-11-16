@@ -24,6 +24,7 @@ opens_doors = true
 footsteps = 40
 hearing = 15
 weight = 70000
+swims = true
 stats = { strength = 21, dexterity = 16, toughness = 22, intelligence = 20, willpower = 25, presence = 20 }
 base_hp = 65
 natural = { defence = 1, protection = 2, name = "barnacled hide" }

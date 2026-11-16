@@ -17,6 +17,7 @@ sight = 5
 footsteps = 10
 hearing = 10
 weight = 6000
+swims = true
 size = "small"
 stats = { strength = 11, dexterity = 9, toughness = 13, intelligence = 1, willpower = 10, presence = 2 }
 base_hp = 5

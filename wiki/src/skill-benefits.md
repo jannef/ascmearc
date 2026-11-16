@@ -34,7 +34,8 @@ The passive skills help you more the higher they are:
 - **[Swim](skills.md#skill-swim)** makes you quicker through [water](terrain.md#water) and [marsh](terrain.md#terrain-marsh): of what wading adds to a step, 60 % is
   saved at 100 and all of it at 200. The [Swimmer](talents-exploring.md#talent-swimmer) talent saves all of it at once. When you
   [plunge through the ice](temperature.md#falling-in), you make a check on your [Toughness](stats.md#stat-toughness) plus the table's points against 11; if you
-  make it, you lose half the hit points. Swim is also what lets you into [deep water](terrain.md#deep-water) at all.
+  make it, you lose half the hit points. In [deep water](terrain.md#deep-water) the table's points are added to every turn's check,
+  and anyone not trained in Swim at all finds that check much harder.
 - **[Negotiation](skills.md#skill-negotiation)** gets you better prices in [shops](shops.md): you pay less and are offered more. A healer
   or a sage who sells a [service](npcs.md#services) asks less too, though a temple never haggles. A deal made (goods
   paid for, your own sold, or a service paid) trains it now and then.

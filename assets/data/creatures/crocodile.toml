@@ -16,6 +16,7 @@ sight = 8
 footsteps = 50
 hearing = 12
 weight = 200000
+swims = true
 stats = { strength = 18, dexterity = 9, toughness = 16, intelligence = 2, willpower = 10, presence = 3 }
 base_hp = 12
 natural = { defence = 2, protection = 1, name = "scales" }

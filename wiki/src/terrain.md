@@ -77,38 +77,52 @@ splashes just as loudly.
 
 ### Deep water
 
-[Deep water](#terrain-deep-water) is too deep to wade. Only someone trained in
-[Swim](skills.md#skill-swim) may go in, and never while [Strained](burden.md) or worse. "You cannot
-swim." and "You would sink." take no time. The game always asks before you step in from anything
-else, and no setting turns the question off. Staying back takes no time. Water you did not know
-was there (in the dark) stops you at its edge and tells you so, also taking no time, so that the
-next step can ask.
+[Deep water](#terrain-deep-water) is too deep to wade: you swim it, and you can drown in it.
+Anyone may go in, but never while [Strained](burden.md) or worse ("You would sink.", which takes
+no time). The game always asks before you step in from anything else, and no setting turns the
+question off. Staying back takes no time. Water you did not know was there (in the dark) stops
+you at its edge and tells you so, also taking no time, so that the next step can ask.
 
-Going in takes twice a plain step's time, is as [loud](hearing.md#how-loud) as any water, and needs
-no check. It puts out your ready [lantern](light.md#what-light-is), and no light can be lit while
-you swim. Spells' light and everything else goes on.
+Going in takes twice a plain step's time and is as [loud](hearing.md#how-loud) as any water. It
+puts out your ready [lantern](light.md#what-light-is), and no light can be lit while you swim.
+Spells' light and everything else goes on.
 
-Every step that *starts* in the water is a [check](skills.md#skill-swim), the step out onto the
-shore included. You roll 2d12 plus your [Toughness](stats.md#stat-toughness) modifier, your talents'
-Toughness checks, and Swim's points (the skills table's Swim check), against 11, plus 2 for each
-level of [burden](burden.md) above Unburdened.
+**Every turn you spend in deep water is a [Swim](skills.md#skill-swim) check**: the turn you dive
+in, every step, and every wait, blow, shot, spell, or read. A step that starts in the water is
+checked before you move, the step out onto the shore included. You roll 2d12 plus your
+[Toughness](stats.md#stat-toughness) modifier, your talents' Toughness checks, and Swim's points
+(the skills table's Swim check). It is much harder if you are not trained in Swim, for each level
+of burden, and for the weight of everything you wear and wield, armour above all.
 
-- **Made**, you take the step. Its time gets wading's discounts ([Swim](skills.md#skill-swim) and
-  the [Swimmer](talents-exploring.md#talent-swimmer), [Strong swimmer](horoscope.md#talent-strong-swimmer), and
-  [Undertow](horoscope.md#talent-undertow) talents).
-- **Failed**, you spend the turn treading water and do not move. The cold takes 1 hit point,
-  resisted as any [cold](damage-types.md), but never your last: nobody drowns.
+- **Made**, you take the step, or the turn goes on. A step's time gets wading's discounts
+  (Swim and the [Swimmer](talents-exploring.md#talent-swimmer),
+  [Strong swimmer](horoscope.md#talent-strong-swimmer), and [Undertow](horoscope.md#talent-undertow)
+  talents).
+- **Failed**, you swallow water or go under. A step makes no headway. The water takes a tenth to a
+  third of your maximum hit points, more the worse you missed. No resistance helps, and it can
+  kill you: you drown.
 
-With a Toughness modifier of +0 and no Swim points, the check succeeds 69 % of the time unburdened
-and 54 % Burdened; with +4, 90 % and 81 %. Waiting needs no check.
+[Water walking](magic.md#spell-water-walking) bears you up: while it lasts there is no check at
+all, and nothing you carry gets wet.
+
+{{#include generated/swim-rules.md}}
+
+The chance to make the check, at a Toughness modifier of +0 (Swim +4 and +8 are trained):
+
+{{#include generated/swim-odds.md}}
+
+**Paper gets wet.** After each check, every stack of [scrolls](scrolls.md), grimoires, books, or
+letters you carry may lose one of its items, soaked through and ruined; far more likely when you
+went under. Something a quest asks for is never ruined.
 
 In the water you cannot drop or pick up anything ("It would sink."), rest, search, or dig. All of
-that is refused and takes no time. You can still fight, shoot, cast, read, and wait, and you lose
-nothing you carry. Your burden is all that matters.
+that is refused and takes no time. You can still fight, shoot, cast, read, and wait.
 
-No creature goes in. They walk around it, wait on the shore nearest you, shoot and cast from
-there, and strike you if you swim beside them. Your allies wait ashore too, and none will swap
-places with you into the water. Deep water never freezes.
+Most creatures never go in. They walk around it, wait on the shore nearest you, shoot and cast
+from there, and strike you if you swim beside them. Your allies wait ashore too, and none will swap
+places with you into the water. Creatures that swim (the table above lists them) are the
+exception: they chase you through the water, flee across it, and never fail their checks, and an
+ally that swims follows you in. Deep water never freezes.
 
 Deep water is rarer than pools of shallow water. About one cave floor in six has a pool with a
 deep middle (its shore stays shallow), and the middle of a lake beside a wilderness area is deep.

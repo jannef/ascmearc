@@ -78,6 +78,7 @@ mod skills;
 mod spells;
 mod stats;
 mod surprise;
+mod swimming;
 mod talents;
 mod temper;
 mod temperature;
@@ -165,6 +166,8 @@ fn generate(content: &Content) -> Vec<(String, String)> {
         ("calendar.md", calendar::months),
         ("actions.md", actions::action_costs),
         ("speeds.md", actions::speeds),
+        ("swim-rules.md", swimming::swim_rules),
+        ("swim-odds.md", swimming::swim_odds),
         ("terrain-local.md", terrain::local_terrain),
         ("terrain-overworld.md", terrain::overworld_terrain),
         ("webs.md", terrain::webs),

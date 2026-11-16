@@ -228,6 +228,14 @@ Choose one, and you write its scroll on the first blank scroll you carry.
 Each scroll written always trains [Intelligence](stats.md#raising-your-stats), as reading a grimoire does, besides
 what spending the mana trains. There is no roll: a scroll begun and finished is a scroll made.
 
+## Scrolls and water
+
+Scrolls are paper. Swimming in [deep water](terrain.md#deep-water) may ruin them, one from a stack
+at a time: "Your scroll of light is soaked through and ruined." The chance is small each turn you
+stay afloat, and much larger each time you go under. Nothing keeps them dry yet but staying out of
+the water, or [Water walking](magic.md#spell-water-walking). Blank scrolls and grimoires soak the
+same way.
+
 ## Where scrolls are
 
 - **Loot**: scrolls lie about as [loot](magic-items.md#finding-them) on the floors of generated

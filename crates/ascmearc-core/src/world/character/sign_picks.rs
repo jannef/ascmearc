@@ -152,7 +152,13 @@ impl World {
         let shuns = self.shuns(id);
         let best = (Dir::ALL.iter().copied())
             .map(|dir| (dir, me.pos.step(dir)))
-            .filter(|&(_, to)| level.is_walkable(content, to) && !shuns(to))
+            .filter(|&(_, to)| {
+                let open = level
+                    .terrain
+                    .get(to)
+                    .is_some_and(|t| self.open_to(id, content.terrain(*t)));
+                open && !shuns(to)
+            })
             .filter(|&(_, to)| self.state.actor_at(&me.level, to).is_none())
             .filter(|&(_, to)| away(to) > away(me.pos))
             .fold(None::<(Dir, Pos)>, |best, step| match best {
