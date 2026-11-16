@@ -9,7 +9,7 @@ dungeons (`QuestDef`: `giver` a `DialogueId`, `Goal::{Kill, Bring, Reach, Delive
 `QuestTexts`, `requires` (a list: every quest named must be done; the file takes one id or a
 list), `requires_alignment`, `min_level` (with its `early` refusal: `ask_quest` says it and
 gives nothing while `World::player_level` is below it; the topic is still listed), `alignment`, `repeatable`, `reveals` (a hidden
-location of the overworld and the `RevealWhen` stage it is revealed at, `docs/dev/overworld.md`),
+location, of the overworld or a hand-made level, both ends of a hidden way, and the `RevealWhen` stage it is revealed at, `docs/dev/overworld.md`),
 `where_` (`where`, appended to the log's objective); validation including everyone's topic budget of nine;
 `Content::speaker_name` names a giver without an actor). `world/people/quest.rs` is the rules: quest
 topics come first in `World::topics` (`quest_topics`: one `quest-ID` a quest) and

@@ -20,6 +20,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - A legend entry may place on its cell: objects, a creature (its pack, gear, statuses, faction, alignment, and unique identity overrides, patrol), a lock, a trap, a chest, a secret door, ice, a water flow, a named place with a look-mode note, or a hidden location.
 - In a vault a legend entry may also roll loot or draw monsters when the level is generated.
 - A hidden location is its plain terrain in every way until a quest reveals it. Climbing out through one also reveals it. There is no search for one on the overworld.
+- A hidden way may have two ends: one on a hand-made level, the other on a generated level, which picks its cell of floor as it is made (the same for the same seed). One reveal opens both, whether the generated level was made before or after it.
 - A secret door looks like the wall around it until found.
 - Underground levels may set a temperature. Under the open sky, temperature follows the weather.
 - Graves are decoration: no rule reads them, and the state hash ignores the graveyard, so replays verify under any graveyard.

@@ -70,8 +70,11 @@ target = "sealed_letter"
 to = "wulfrun"
 reward = { gold = 300, xp = 300 }
 alignment = 10
+# Given, it opens the Skeul Hir (#1760): the gnomes' old long stair from Gimmwīc's arrival cave
+# up to Lytelscræf 2, a shortcut home, both its ends hidden until now (levels/gimmwic.toml's `H`).
+reveals = { location = "skeul_hir" }
 offer = "The moot's sat on yer Factor's letter, my 'ansum, an' sat long. 'Ere's our answer, sealed proper. Carry 'un back up to 'er, would 'ee? A stone for a sack, fair weights, an' no emmets down the Deep Way without they're asked."
-accept = "Mind it don't get wet. Ink runs, an' then where's we to?"
+accept = "Mind it don't get wet. Ink runs, an' then where's we to? An' don't 'ee go back up the Deep Way, my 'ansum. Take the Skeul Hir, our old long stair. 'Tis a fair old climb, but it comes out in Lytelscræf, by the mountain's foot. Quicker by a long chalk."
 reminder = "Our answer goes up to yer Factor Wulfrun, in the market town. Dreckly'll do. Not too dreckly, mind."
 done = "From the gnomes? Sealed with a garnet, of all things. Fair weights, a stone for a sack, no visitors unasked... I can live with every word of it. The town owes you, and so do I. Here."
 where = "Factor Wulfrun keeps her office in Cēaptūn."

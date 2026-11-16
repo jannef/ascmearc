@@ -32,6 +32,14 @@ population_count = { per_1000 = 15, least = 8, most = 16 }
 shops = { chance = 0 }
 room_effects = { chance = 0 }
 
+# The second floor keeps the far end of the Skeul Hir, the deep gnomes' old long stair down to
+# Gimmwīc (#1760; levels/gimmwic.toml's `H`): a cell of plain floor its generation picks
+# (mapgen/hidden.rs), the same for the same seed, that turns to stairs down when Peran gives the
+# moot's answer (data/quests/wulfrun.toml `gnome_reply`).
+[[dungeon.levels]]
+from = 2
+hidden = { id = "skeul_hir", terrain = "stairs_down", to = "gimmwic", name = "the Skeul Hir" }
+
 # The bottom: the kobolds' cache, with its chest.
 [[dungeon.levels]]
 from = 3

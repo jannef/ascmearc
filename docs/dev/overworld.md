@@ -70,7 +70,7 @@ Tune by eye:
 
 Hidden locations (#327; the campaign design §8): a legend's `hidden =
 { id, terrain, to, name, opens }` on a plain overworld cell (or on a plain cell of a hand-made level, #1446:
-Gimmwīc's crystal portal; never in a vault, `Vault::new`; ids unique within a campaign,
+Gimmwīc's crystal portal; its `terrain` any stairs, up or down; never in a vault, `Vault::new`; ids unique within a campaign,
 `Content::validate`; `Content::hidden_locations` lists a campaign's, its overworld's first, and
 `hidden_location` finds one by id; `opens`, optional, is what the player is told as a quest
 reveals it, instead of "<Giver> marks … on your map.") (`content/level.rs::parse_hidden`; `to` is
@@ -84,12 +84,26 @@ dev views (`dump/truth.rs::truth_rows`, the F2 overlay in `ui/dev.rs`) read `hid
 `quest_roll` choosing a variant, by the dev action `reveal:ID`, and by
 `World::reveal_way_out`, the climb-out trigger below) records the id in
 `WorldState::revealed` (which also opens the branch behind it to rolled quests' picks,
-`World::branch_open`); if the
-overworld is instantiated, `reveal_on` takes the entry out of `hidden`, sets the terrain and the
+`World::branch_open`, when it leads to the branch's first floor); on each of its levels that is
+instantiated, `reveal_on` takes the entry out of `hidden`, sets the terrain and the
 player's memory of the cell (the map is marked wherever they are), and pushes a `StairsLink`
-with the location's `name` (`StairsLink::name`, preferred by `PerceptionView::leads_to` and the
-"The way into … is here." and "You enter …" messages); otherwise `instantiate_level` applies
-every revealed id as the overworld is made (`reveal::apply_revealed`). No stream is drawn.
+(up or down as the terrain's `stairs` is) with the location's `name` (`StairsLink::name`,
+preferred by `PerceptionView::leads_to` and the "The way into … is here." and "You enter …"
+messages); otherwise `instantiate_level` applies every revealed id as the level is made
+(`reveal::apply_revealed`). No stream is drawn.
+A hidden way with two ends (#1760): a `[[dungeon.levels]]` row of one level may give `hidden =
+{ id, terrain, to, name }` (no `opens`; `content/level.rs::parse_generated_hidden`,
+`DungeonDef::hidden_location`, `Content::generated_hidden_locations`), the far end of a hand-made
+level's hidden location of the same id: `Content::validate` (`check_generated_hidden`) asks that
+twin, each leading to the other's level, and one far end an id. The generator picks its cell as
+the level is made, revealed or not (`mapgen/hidden.rs`, `docs/dev/mapgen.md`), and keeps it in
+the template's `hidden`, so the one reveal by id opens both ends, a far end on a level made before
+it too, and a level made after it has it open from the start. The two ends' links carry no
+name: they go by the levels they lead to ("You climb the stairs to Lytelscræf 2."). The
+Ascmearc's one is the Skeul Hir, Gimmwīc's `H` (stairs up, `to = "lytelscraef:2"`) and
+Lytelscræf 2's end (stairs down to `gimmwic`), revealed by `gnome_reply` as given. Tests:
+`world/campaigns/skeul_hir_tests.rs` (both ends before and after, a floor made before and after
+the reveal on the same cell, both directions, the content checks).
 `PerceptionView::known_locations` (the `locations` dump layer, JSON `known_locations`) lists the
 overworld's ways in that the player sees or remembers. Tests: `world/levels/reveal_tests.rs` (a fixture
 hiding a barrow in the Wildlands, revealed by the hermit's `depths` quest; the built-in Wildlands

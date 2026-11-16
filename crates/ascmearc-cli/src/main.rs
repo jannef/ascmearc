@@ -353,13 +353,15 @@ fn gen_command(content: &Content, args: &GenArgs) -> Result<(), String> {
         let to = stairs.to.as_deref().unwrap_or("nowhere");
         println!("stairs {:?} at {} -> {to}", stairs.dir, stairs.pos);
     }
-    // A layer boss's lair hides the way down until the boss dies.
+    // A layer boss's lair hides the way down until the boss dies; a hidden way's far end
+    // (Lytelscræf 2's end of the Skeul Hir) until its quest reveals it.
     for (p, hidden) in &level.hidden {
         let to = hidden.to.as_deref().unwrap_or("nowhere");
-        println!(
-            "hidden stairs at {p} -> {to} (opens when {} dies)",
-            hidden.id
-        );
+        let opens = match content.creature_id(&hidden.id) {
+            Some(_) => format!("opens when {} dies", hidden.id),
+            None => format!("opens when `{}` is revealed", hidden.id),
+        };
+        println!("hidden stairs at {p} -> {to} ({opens})");
     }
     if let Some(exit) = &level.exit {
         println!("edges -> {} at {}", exit.to, exit.pos);

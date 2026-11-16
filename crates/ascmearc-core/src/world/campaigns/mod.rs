@@ -15,6 +15,7 @@ cfg_if! {
         mod lictun_tests;
         mod pit_warden_tests;
         mod scriptorium_tests;
+        mod skeul_hir_tests;
         mod strange_spirit_tests;
         mod wynflaed_quest_tests;
     }

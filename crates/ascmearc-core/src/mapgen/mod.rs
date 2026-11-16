@@ -39,6 +39,7 @@ mod connect;
 mod deep;
 mod den;
 mod dress;
+mod hidden;
 mod hoard;
 mod leavings;
 pub mod local;
@@ -645,7 +646,12 @@ pub fn generate_for(
             spawning: None,
             burial: None,
         };
-        if connect::validate(&template, content).is_ok() {
+        // A level that keeps a hidden way's far end picks its cell now (`hidden.rs`).
+        let hides = |t: &mut LevelTemplate| {
+            (def.hidden_location(depth))
+                .is_none_or(|h| hidden::place(t, content, (seed, pal), h, &canvas.stamped))
+        };
+        if connect::validate(&template, content).is_ok() && hides(&mut template) {
             treasury::seal(&mut template, content, pal);
             hide_traps(&mut template, content, pal, seed, def);
             hide_secrets(&mut template, content, seed, def, &canvas.stamped);

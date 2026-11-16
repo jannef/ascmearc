@@ -638,7 +638,7 @@ pub(in crate::world) fn instantiate_level(
     crate::world::fixtures::graveyard::name_statues(state, content, id);
     crate::world::fixtures::graves::bury(state, content, id);
     // The hidden locations revealed before the level was made.
-    super::reveal::apply_revealed(state, id);
+    super::reveal::apply_revealed(state, content, id);
     // Under the open sky its water has frozen and thawed with the weather of the last weeks.
     state.pre_roll_ice(content, id);
     for spawn in &template.creatures {
