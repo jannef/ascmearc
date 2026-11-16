@@ -394,6 +394,8 @@ fn press(key: &str) -> KeyboardInput {
         "Down" => (KeyCode::ArrowDown, Key::ArrowDown),
         "Left" => (KeyCode::ArrowLeft, Key::ArrowLeft),
         "Right" => (KeyCode::ArrowRight, Key::ArrowRight),
+        // The numpad's decimal key on a layout where it types a comma (German, #1750).
+        "NumDecimal" => (KeyCode::NumpadDecimal, Key::Character(",".into())),
         ch => (
             KeyCode::Unidentified(NativeKeyCode::Unidentified),
             Key::Character(ch.into()),

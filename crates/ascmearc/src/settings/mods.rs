@@ -620,12 +620,16 @@ mod tests {
             "no Ctrl default"
         );
         // Option+s on a Mac types `ß` (a dead key on some layouts), Windows' Alt+s an `s`:
-        // both are Search for a while, read from the physical key.
+        // both are an `Alt+s` binding, read from the physical key (Search for a while's default
+        // until #1750 made it `S`).
+        let mut alt_s = b.clone();
+        let chord = KeyBinding::from_text("Alt+s").unwrap();
+        alt_s.bind_primary(KeyCommand::SearchLong, chord).unwrap();
         let search = Some(KeyCommand::SearchLong);
-        assert_eq!(b.lookup(&typed(KeyCode::KeyS, "ß"), Mods::ALT), search);
-        assert_eq!(b.lookup(&typed(KeyCode::KeyS, "s"), Mods::ALT), search);
+        assert_eq!(alt_s.lookup(&typed(KeyCode::KeyS, "ß"), Mods::ALT), search);
+        assert_eq!(alt_s.lookup(&typed(KeyCode::KeyS, "s"), Mods::ALT), search);
         let dead = input(KeyCode::KeyS, Key::Dead(None));
-        assert_eq!(b.lookup(&dead, Mods::ALT), search);
+        assert_eq!(alt_s.lookup(&dead, Mods::ALT), search);
         for platform in [Platform::Mac, Platform::Desktop, Platform::Web] {
             for (key, command) in &b.0 {
                 assert_eq!(refusal(key, *command, platform), None, "{key:?}");

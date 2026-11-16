@@ -573,7 +573,7 @@ thaw:X,Y,R`
 - `search` searches the cells around the player for secret doors and hidden traps for a turn,
   and `wait` is another spelling of it (waiting is searching, one action: #1326; the game's
   Wait/search, Num5 or `s`); `search:N` for up to N turns (1 to 100), stopping when something is
-  found (Alt+Num5 or Alt+s).
+  found (Alt+Num5 or `S`).
 - `rest:GOAL` rests until dawn, dusk, or for a duration (`rest:1h`, `rest:dawn`).
 - `open:DIR`, `close:DIR` a door; `kick:DIR` kicks that way (docs/dev/doors.md).
 - `pick:DIR` picks the lock of the door that way (the Pick lock ability: Open lock trained;

@@ -117,8 +117,12 @@ impl Gameplay<'_> {
         Some(InputMode::Normal)
     }
 
-    /// The way for `cmd`: open, close, kick, dig (use a tool), or chat.
-    pub(super) fn direction(&mut self, cmd: KeyCommand, command: KeyCommand) -> InputMode {
+    /// The way for `cmd`: open, close, kick, dig (use a tool), chat, or run (the run prefix: as
+    /// `Run(dir)`'s own key would, its first step's dialog and all).
+    pub(super) fn direction(&mut self, cmd: KeyCommand, command: KeyCommand) -> Option<Pressed> {
+        if let (KeyCommand::RunPrefix, KeyCommand::Move(dir)) = (cmd, command) {
+            return self.play(KeyCommand::Run(dir), false, None);
+        }
         if let KeyCommand::Move(dir) = command {
             let action = match cmd {
                 KeyCommand::Open => Action::Open(dir),
@@ -129,6 +133,6 @@ impl Gameplay<'_> {
             };
             self.actions.write(PlayerAction(action));
         }
-        InputMode::Normal
+        Some((InputMode::Normal, None))
     }
 }

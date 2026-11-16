@@ -26,8 +26,9 @@ expression: "render(case, content.clone())"
                             │   Run southwest                        Alt+Num1              │
                             │   Run west                             Alt+Num4 Alt+←        │
                             │   Run northwest                        Alt+Num7              │
+                            │   Run (then a direction)               . Num.                │
                             │   Wait/search                          Num5 s                │
-                            │   Search for a while                   Alt+Num5 Alt+s        │
+                            │   Search for a while                   Alt+Num5 S            │
                             │   Open a door                          o                     │
                             │   Close a door                         c                     │
                             │   Kick                                 k                     │
@@ -43,6 +44,5 @@ expression: "render(case, content.clone())"
                             │   Quest log                            q                     │
                             │   Talents                              G                     │
                             │   Message history                      v                     │
-                            │   Rest                                 b                     │
                             │ ↑↓ scroll   ? or Esc close                                 ↓ │
  The Hub  HP 18/18  MP 2/2  └──────────────────────────────────────────────────────────────┘n  Seed 1        ? controls
