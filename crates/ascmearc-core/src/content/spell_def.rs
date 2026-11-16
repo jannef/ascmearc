@@ -511,6 +511,9 @@ struct EffectSpec {
     blink: Option<BlinkSpec>,
     weather: Option<WeatherSpec>,
     zone: Option<SpellZone>,
+    /// A burst hex's: it lays webs on its cells (Web; `world/levels/web.rs`).
+    #[serde(default)]
+    web: bool,
     arcs: Option<u8>,
 }
 
@@ -684,6 +687,9 @@ pub struct SpellEffect {
     pub weather: Option<SpellWeather>,
     /// The zone it leaves on its cells (`world/magic/zone.rs`).
     pub zone: Option<SpellZone>,
+    /// A burst hex lays webs on its cells, the spiders' own web terrain (Web;
+    /// `world/levels/web.rs`): the webs catch, the spell gives no status.
+    pub web: bool,
     /// A `damage` spell's jumps taken without a draw, each up to [`ARC_REACH`] cells (its `count`
     /// ladder grows them; Chain lightning; `world/magic/spell_arc.rs`).
     pub arcs: Option<u8>,
@@ -1425,6 +1431,11 @@ fn effect(
     only("mana", e.mana.is_some(), &[SpellPurpose::Heal])?;
     let lays = [SpellPurpose::Damage, SpellPurpose::Hex];
     only("zone", e.zone.is_some(), &lays)?;
+    only("web", e.web, &[SpellPurpose::Hex])?;
+    shaped("web", e.web, &[Shape::Burst])?;
+    if e.web && (e.status.is_some() || e.zone.is_some()) {
+        return Err("a `web` hex has no `status` or `zone`: the webs do the catching".into());
+    }
     let summon = match e.summon {
         Some(s) => Some(summon_call(s)?),
         None => None,
@@ -1511,6 +1522,7 @@ fn effect(
         blink,
         weather,
         zone: e.zone,
+        web: e.web,
         arcs: e.arcs,
     })
 }
@@ -2482,10 +2494,7 @@ damage = "2d6"
                 ],
             ),
             ("water_walking", &[("degrees", p23)]),
-            (
-                "web",
-                &[("range", w910), ("degrees", "presence 14 4, 18 5, 22 6")],
-            ),
+            ("web", &[("range", w910), ("radius", "presence 18 2")]),
         ];
         for (id, ladders) in table {
             let spell = content.spell(content.spell_id(id).expect("shipped"));

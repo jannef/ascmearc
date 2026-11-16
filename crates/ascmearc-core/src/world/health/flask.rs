@@ -198,6 +198,10 @@ impl World {
                     (None, Some((status, _)), Some(degrees)) => {
                         self.splash_hex(cast, &cells, (status, degrees), events);
                     }
+                    // Web: tar that sets into webs (`world/levels/web.rs`).
+                    _ if def.effect.web => {
+                        self.lay_webs(&cells, Some(cast.by), events);
+                    }
                     _ => {}
                 }
             }

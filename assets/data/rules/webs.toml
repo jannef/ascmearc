@@ -1,0 +1,32 @@
+# Webs (`world/levels/web.rs`; docs/dev/webs.md): the `web` terrain catches whoever walks into it,
+# and fire burns it away. A spider's leaving and the Web spell's strands are the same web.
+#
+# The catch: a creature stepping into a web, or standing where a web appears, makes a check: 2d12
+# + the better of its Strength and Dexterity modifiers (with what talents add to those checks)
+# + Escape artist's points + its size's row below, against `difficulty`. Failed, it is `status`
+# at `severity` degrees, and breaks free by the status's own rules (a struggle, Escape artist).
+# A creature with a tag of `at_home` (spiders, and those who ride them), one already caught, and
+# an incorporeal one are never caught. A burning web catches no one.
+#
+# The fire: a fire area (a burst, a cone, a fire zone as it is laid) that reaches a web sets it
+# burning: it turns `burning` (whose light it sheds) for `burns` seconds of game time, then is
+# gone (`burnt`, or the ground a laid web covered). After `spreads` seconds of burning it sets the
+# webs beside it burning (the eight neighbours). A creature that starts its turn in a burning
+# web, or steps into one, takes `harm` of `damage_type`, less what it resists. A spell that
+# douses fire (cold, Gale) puts a burning web out: it is a web again.
+
+web = "web"
+burning = "burning_web"
+burnt = "floor"
+status = "webbed"
+severity = 3
+difficulty = 12
+at_home = ["spider"]
+burns = 12
+spreads = 6
+harm = "2d4"
+damage_type = "fire"
+
+# What each size adds to the catch check (a size not listed adds 0).
+[size]
+small = -2

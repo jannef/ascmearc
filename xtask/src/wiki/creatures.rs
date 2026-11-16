@@ -1083,7 +1083,7 @@ pub(super) fn creature_signs(content: &Content) -> String {
         let leaves: Vec<String> = (c.leavings.iter())
             .map(|l| match l {
                 Leaving::Statue => "statues",
-                Leaving::Web => "old webs",
+                Leaving::Web => "webs",
                 Leaving::AcidPit => "acid-pitted floor",
                 Leaving::TornCloth => "torn cloth",
             })

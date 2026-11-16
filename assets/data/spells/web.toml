@@ -1,9 +1,11 @@
-# Web (the first spell list): sticky strands burst where it is aimed; everyone
-# they reach but the caster is held where they stand a few turns.
+# Web (the first spell list): sticky strands burst where it is aimed and stay there, the same
+# webs as a spider's (data/rules/webs.toml, `world/levels/web.rs`): everyone they reach, the
+# caster too, may be caught at once, and whoever walks in later may be; fire burns them away.
+# Its growth is its reach and its spread: more cells, a wider burst.
 [[spell]]
 id = "web"
 name = "Web"
-description = "Sticky strands burst where you aim them: everyone they reach is held where they stand a few turns."
+description = "Sticky strands burst where you aim them and stay, clinging to the ground: whoever stands in them or walks into them may be caught fast. Fire burns them away."
 level = 7
 school = "transmutation"
 kind = "hex"
@@ -11,22 +13,22 @@ shape = "burst"
 resolution = "area"
 range = 8
 radius = 1
-effect = { status = "webbed", severity = 3 }
+effect = { web = true }
 
 [spell.cast]
 noise = { sound = "chanting", loudness = 20 }
 
 [spell.grows]
 range = "willpower 14 9, 18 10"
-degrees = "presence 14 4, 18 5, 22 6"
+radius = "presence 18 2"
 
 [spell.ranks]
 2 = { cells = 1 }
 3 = { mana_off = 10 }
-4 = { degrees = 1 }
-5 = { time_off = 15 }
-6 = { cells = 1 }
-7 = { degrees = 1 }
-8 = { mana_off = 10 }
-9 = { time_off = 15 }
+4 = { time_off = 15 }
+5 = { cells = 1 }
+6 = { mana_off = 10 }
+7 = { time_off = 15 }
+8 = { cells = 1 }
+9 = { mana_off = 10 }
 10 = { radius = 1 }

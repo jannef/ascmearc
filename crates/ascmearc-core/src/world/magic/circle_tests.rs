@@ -183,24 +183,24 @@ fn a_cast_lights_its_target_and_the_light_ends_with_the_status() {
     );
     run(&mut world, "use:light");
     assert_eq!(source_at(&world, player).as_deref(), Some("spell_light"));
-    run(&mut world, "use:web:13,2");
+    run(&mut world, "use:sleep:13,2");
     let kobold = actor_at(&world, Pos::new(13, 2));
-    let webbed = status("webbed");
-    assert!(kobold.effects.has(webbed), "the web holds it (seed 1)");
+    let drowsy = status("drowsy");
+    assert!(kobold.effects.has(drowsy), "the sleep takes it");
     assert_eq!(
         source_at(&world, Pos::new(13, 2)).as_deref(),
-        Some("circle_transmutation")
+        Some("circle_enchantment")
     );
-    // Web wears off in a few turns, and its light goes with it.
+    // The drowsiness wears off in time, and its light goes with it.
     let id = kobold.id;
     for _ in 0..40 {
         run(&mut world, "wait");
-        if !world.state.actors[&id].effects.has(webbed) {
+        if !world.state.actors[&id].effects.has(drowsy) {
             break;
         }
     }
     let kobold = &world.state.actors[&id];
-    assert!(!kobold.effects.has(webbed), "the web is gone");
+    assert!(!kobold.effects.has(drowsy), "the drowsiness is gone");
     assert_eq!(source_at(&world, kobold.pos), None, "no light without it");
 }
 

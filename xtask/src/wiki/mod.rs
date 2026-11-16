@@ -167,6 +167,7 @@ fn generate(content: &Content) -> Vec<(String, String)> {
         ("speeds.md", actions::speeds),
         ("terrain-local.md", terrain::local_terrain),
         ("terrain-overworld.md", terrain::overworld_terrain),
+        ("webs.md", terrain::webs),
         ("overworld-sight.md", sight::overworld_sight_table),
         ("overworld-places.md", overworld::locations),
         ("overworld-map.md", overworld::map),

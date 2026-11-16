@@ -78,6 +78,14 @@ pub(super) fn local_terrain(content: &Content) -> String {
         if t.ice.is_some() {
             notes.push("ice on water: holds by its thickness".into());
         }
+        if let Some(rules) = content.webs() {
+            let id = content.terrain_id(&t.id);
+            if id == Some(rules.web) {
+                notes.push("may catch who walks in; fire burns it ([Webs](#webs))".into());
+            } else if id == Some(rules.burning) {
+                notes.push("burns who is in it, then is gone ([Webs](#webs))".into());
+            }
+        }
         match t.muffle {
             None => {}
             Some(0) if t.walkable || t.transparent => {}
@@ -101,6 +109,63 @@ pub(super) fn local_terrain(content: &Content) -> String {
             t.height,
             notes.join("; ")
         );
+    }
+    out
+}
+
+/// The webs' numbers (`data/rules/webs.toml`): the catch and the burning.
+pub(super) fn webs(content: &Content) -> String {
+    let Some(rules) = content.webs() else {
+        return "Webs do nothing in this content.\n".into();
+    };
+    let status = content.status(rules.status);
+    let damage = content.damage_type(rules.damage_type);
+    let mut sizes: Vec<String> = (content.sizes().iter().enumerate())
+        .filter(|&(i, _)| rules.size_bonus(i) != 0)
+        .map(|(i, s)| format!("{} {:+}", s.name, rules.size_bonus(i)))
+        .collect();
+    if sizes.is_empty() {
+        sizes.push("none".into());
+    }
+    let mut home: Vec<String> = (content.creature_defs().iter())
+        .filter(|c| rules.at_home.iter().any(|t| c.tags.contains(t)))
+        .map(|c| c.name.clone())
+        .collect();
+    home.sort();
+    let rows = [
+        (
+            "The catch check",
+            format!(
+                "2d12 + the better of Strength and Dexterity + Escape artist, against {}",
+                rules.difficulty
+            ),
+        ),
+        ("What size adds to it", sizes.join(", ")),
+        (
+            "Caught",
+            format!("{} {} degrees", status.name, rules.severity),
+        ),
+        ("Never caught", capital(&home.join(", "))),
+        (
+            "A burning web spreads to the webs beside it after",
+            format!("{} seconds", rules.spreads),
+        ),
+        (
+            "A burning web is gone after",
+            format!("{} seconds", rules.burns),
+        ),
+        (
+            "A burning web's harm",
+            format!(
+                "{} {}, each turn you start in it and each step into it",
+                rules.harm,
+                damage.name.to_lowercase()
+            ),
+        ),
+    ];
+    let mut out = String::from("| Rule | Value |\n|---|---|\n");
+    for (rule, value) in rows {
+        let _ = writeln!(out, "| {rule} | {value} |");
     }
     out
 }

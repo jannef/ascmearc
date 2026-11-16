@@ -182,13 +182,14 @@ fn step_towards(world: &World, target: Pos, fight: bool) -> Action {
 
 /// Applies `action` (a wait when it is refused), logging what was applied; the player must live.
 fn apply(world: &mut World, action: Action, log: &mut Vec<Action>) {
-    let action = if world.apply(&action).took_turn {
-        action
-    } else {
-        world.apply(&Action::Wait);
-        Action::Wait
-    };
+    // A refused action is logged too: it may say why (a web holds the player), and the replay
+    // must say it as well.
+    let took_turn = world.apply(&action).took_turn;
     log.push(action);
+    if !took_turn {
+        world.apply(&Action::Wait);
+        log.push(Action::Wait);
+    }
     assert!(
         world.state.death.is_none(),
         "the player died on {} after {} actions: {:?}\n{}",

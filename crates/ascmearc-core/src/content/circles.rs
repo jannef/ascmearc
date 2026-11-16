@@ -234,12 +234,12 @@ mod tests {
         };
         assert_eq!(row("lit"), Some((School::Evocation, false)));
         assert_eq!(row("blessed"), Some((School::Abjuration, false)));
-        assert_eq!(row("webbed"), Some((School::Transmutation, true)));
+        assert_eq!(row("webbed"), None, "webs are strands on the ground");
         assert_eq!(row("ill_wished"), Some((School::Enchantment, true)));
         assert_eq!(row("fortified"), None, "a potion's boost has no circle");
         // No spell lays a lure quest's binding: its row names its kind (#1446).
         assert_eq!(row("bound"), Some((School::Enchantment, false)));
-        assert_eq!(circles.rows().len(), 23);
+        assert_eq!(circles.rows().len(), 22);
         assert_eq!(circles.color(School::Abjuration).to_string(), "#80b4e0");
     }
 

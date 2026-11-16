@@ -5,7 +5,7 @@ use super::{
     ForageRules, GearConditions, HerbRules, HungerDef, IntimidateRules, InvestRules, MagicWorth,
     MiningRules, PatronRules, PrayerRules, RangedRules, RequiredIds, RestockRules, RigRules,
     RuinRules, SalvageRules, SearchRules, SmiteRules, StatTraining, StealRules, StipendRules,
-    SurpriseRules, SwimRules, TagDrops, TemperRules, Tuning,
+    SurpriseRules, SwimRules, TagDrops, TemperRules, Tuning, WebRules,
 };
 
 impl Content {
@@ -142,6 +142,12 @@ impl Content {
     /// `None` without the file, when nobody swims.
     pub fn swim(&self) -> Option<&SwimRules> {
         self.swim.as_ref()
+    }
+
+    /// The webs' catch and burning (`data/rules/webs.toml`); `None` without the file, when no
+    /// web catches or burns.
+    pub fn webs(&self) -> Option<&WebRules> {
+        self.webs.as_ref()
     }
 
     /// The priest's prayer (`data/prayer.toml`); `None` without the

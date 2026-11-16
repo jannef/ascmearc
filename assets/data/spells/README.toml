@@ -87,6 +87,9 @@
 #                 spell of poison: poisons who starts a turn in it), `slick` and `dark` (by
 #                 custom a `hex` with no `status`: trips who steps on it or off it; no light
 #                 reaches it)
+#     web         `true`: a burst `hex` with no `status` or `zone` lays webs on its cells, the
+#                 spiders' own (../rules/webs.toml, docs/dev/webs.md): they stay until fire
+#                 burns them, and catch whoever stands in them as they appear or walks in later
 #   [spell.cast]  how it shows and sounds (needed by a `damage` spell cast at a distance):
 #     effect      the effect presentation shows (../effects.toml): a burst's for a burst or a
 #                 cone, a bolt's for a ray, a bolt, or a line; none for touch or self

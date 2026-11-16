@@ -223,6 +223,7 @@ mod wand;
 mod weapon_ability;
 mod weapon_skill;
 mod weather;
+mod webs;
 
 pub use action::{ActionCosts, ActionKind, BASE_TURN, COSTS, NORMAL_COST, price};
 pub use affix::{
@@ -436,6 +437,7 @@ pub use weapon_skill::{
     TwoShields, TwoWeapons, WeaponSkillDef, WeaponSkillId, WeaponSkillTable,
 };
 pub use weather::{Climate, MILD, MILD_SWING, WeatherDef};
+pub use webs::WebRules;
 
 use crate::skills::SkillId;
 use level::{LegendEntry, legend_char};
@@ -659,6 +661,9 @@ pub struct Content {
     /// The numbers of swimming in deep water (`data/rules/swim.toml`: Swim); none
     /// without the file, when nobody swims.
     swim: Option<SwimRules>,
+    /// The webs' catch and burning (`data/rules/webs.toml`); none without the file, when no
+    /// web catches or burns.
+    webs: Option<WebRules>,
     /// The penalties of shots by distance (`data/ranged.toml`); none
     /// without the file.
     ranged: RangedRules,
@@ -1090,6 +1095,7 @@ impl Content {
         content.intimidate = content.load_optional(files)?;
         content.ruin = content.load_or_default(files)?;
         content.swim = content.load_optional(files)?;
+        content.webs = content.load_optional(files)?;
         content.ranged = content.load_or_default(files)?;
         content.prayer = content.load_optional(files)?;
         content.allies = content.load_optional(files)?;

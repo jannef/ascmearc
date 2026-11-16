@@ -104,7 +104,9 @@
 #            beast (the wild animals the druid calls, wildlife: the wolf and the bear, #839;
 #            content::beast_roster_tests checks them; and the warg, the dire warg, the deer,
 #            and the bat, #1341, animals the druid does not call)
-#   roles    archer (shoots: the goblin, kobold, and skeleton archers), caster (every
+#            spider (every spider, and the duergar who ride them: at home in webs, which never
+#            catch them, data/rules/webs.toml's `at_home`)
+#   roles   archer (shoots: the goblin, kobold, and skeleton archers), caster (every
 #            combat = "caster" type), cultist (the minster's cult, and the necromancer and dark
 #            wizard of its kind), skeleton (walking bones), spirit (the incorporeal dead), troll
 #            (every troll: the tribe, the marsh troll, and the rotting troll), construct (things

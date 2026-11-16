@@ -81,7 +81,7 @@ it. **Circled statuses**: `data/circles.toml` (`content/circles.rs`,
 buff and hex spell's status a school, whose colour its spell circle about the actor is drawn in:
 `lit` (evocation), `hasted`, `barkskin`, `branded_blade`, `water_borne` (transmutation), `blessed`,
 `fire_cloaked` (abjuration); `ill_wished`,
-`drowsy` (enchantment), `weakened` (necromancy), `sluggish`, `webbed` (transmutation). A circled
+`drowsy` (enchantment), `weakened` (necromancy), `sluggish` (transmutation); `webbed` has none (webs are strands, docs/dev/webs.md). A circled
 status must have `seen` (a load-time check: the circle shows only what look mode may say) and be
 laid by a buff or hex spell (which makes its circle a buff's or a hex's), or name its own `kind`
 (`"buff"` or `"hex"`) when no spell lays it: the lure quest's `bound` (enchantment, a buff; #1446,

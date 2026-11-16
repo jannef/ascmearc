@@ -192,7 +192,7 @@ generator lays leavings (`mapgen/leavings.rs`, docs/dev/mapgen.md); `world/creat
 (`World::first_sight`, the last line of `perceive.rs::perceive`) says a type's line once a run
 when one is first among the perception's actors, remembering the type's id in
 `Progress::sighted` (saved). **Content**: every dread type has a `first_sight` and nothing else
-does (`dread_roster_tests.rs`); statues on the basilisk, webs on the barrow and large spiders,
+does (`dread_roster_tests.rs`); statues on the basilisk, webs (which catch, docs/dev/webs.md) on the barrow and large spiders,
 acid pits on the hezrou and ember beetle, torn cloth on the imp and nymph. **Dumps**: `truth`
 `leavings web: (12, 5), ...` a line per kind; JSON `leavings` (`pos`, `kind`) the ones the player
 sees or remembers (`PerceptionView::known_leavings`). **Wiki**: `creature_signs`

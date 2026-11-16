@@ -134,6 +134,7 @@ impl World {
             | Action::SetRank { .. }
             | Action::Freeze { .. }
             | Action::Thaw { .. }
+            | Action::Web { .. }
             | Action::Zone { .. } => return None,
         })
     }

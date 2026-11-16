@@ -41,6 +41,8 @@ Part of the design document; the index is [`specification.md`](../specification.
 - Each damage type has an always-on rule beyond its damage: fire burns and melts ice, cold slows and douses, force shoves and shatters, electricity spreads through water and arcs, necrotic bites the weak, acid corrodes the player's armour, poison poisons. Weapons never read these.
 - Area spells may destroy items lying on the floor by type and material. Carried, worn, chest-held, unique, proof, and quest items are never touched.
 - Zones (fire, fouled, slick, dark, smoke) lie on the floor for some turns and never spread. Smoke blocks all sight.
+- Webs are terrain: a spider's webs and the Web spell's are the same, and the spell lays webs rather than a status. A web may catch whoever walks into it or stands where it appears (a check of Strength or Dexterity, Escape artist, and size); spiders are never caught. Web spell webs stay until burned.
+- Fire burns webs: any fire area sets the webs it reaches burning. A burning web gives a lot of light, burns whoever is in it, spreads to the webs beside it after a few seconds, and soon after is gone, all in game time. Dousing puts it out.
 - Healing spells sear the undead instead. No player race is undead.
 - Every spell a player knows has a rank, 1 to 10. Rank comes only from rereading its grimoire; casting trains no rank. Only an own cast of a known spell reads rank; scrolls, wands, and creatures cast at rank 1.
 - Spells are learned only from grimoires, never from scrolls. A scroll casts its spell; a grimoire teaches it.

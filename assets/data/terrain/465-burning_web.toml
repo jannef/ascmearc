@@ -1,0 +1,29 @@
+# A web on fire (`world/levels/web.rs`, data/rules/webs.toml): what a `web` turns into when a
+# fire area reaches it, for a few seconds of game time, before it is gone. Never laid by a
+# generator.
+[[terrain]]
+id = "burning_web"
+name = "burning web"
+description = "Strands of web curl and blaze, dropping burning threads."
+glyph = "\""
+fg = "#ffb050"
+bg = "#2a0c04"
+step_noise = 80
+light = "burning_web"
+glow = 0.5
+haze = 0.6
+stains = false
+
+# Sparks drifting up from the burning strands.
+[[terrain.particles]]
+glyphs = "'`.·"
+colors = ["#ffeab0", "#ffa040", "#c04010", "#501408"]
+rate = 2
+life = 0.8
+velocity = [0.0, -1.2]
+spread = [0.4, 0.4]
+gravity = 0.4
+area = [0.35, 0.2]
+sway = 0.15
+scale = 0.55
+glow = 0.6

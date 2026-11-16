@@ -137,10 +137,14 @@ impl World {
     }
 
     /// Whether aiming `def` at `target` would do anything: a damage spell always; a hex only
-    /// at one without its status whose type is not immune to it.
+    /// at one without its status whose type is not immune to it; Web at one a web could catch
+    /// (`world/levels/web.rs`).
     fn worth_aiming(&self, def: &SpellData, target: ActorId) -> bool {
         if def.kind != SpellPurpose::Hex {
             return true;
+        }
+        if def.effect.web {
+            return self.catchable(target);
         }
         let (Some((status, _)), Some(them)) = (def.effect.status, self.state.actors.get(&target))
         else {
@@ -361,6 +365,11 @@ impl World {
         events: &mut Vec<Event>,
     ) {
         let def = cast.def;
+        // Web lays its webs, which do the catching (`world/levels/web.rs`).
+        if def.effect.web {
+            self.creature_webs(id, cast, (here, at), events);
+            return;
+        }
         let (Some((status, _)), Some(severity)) = (def.effect.status, cast.degrees) else {
             return;
         };

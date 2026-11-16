@@ -5,7 +5,7 @@ use crate::render::console::{Cell, Console};
 use ascmearc_core::Pos;
 use ascmearc_core::color::Rgb;
 use ascmearc_core::content::{
-    ActionKind, Content, ServiceKind, Stance, TerrainId, ZoneKind, is_proper,
+    ActionKind, Content, Noun, ServiceKind, Stance, TerrainId, ZoneKind, is_proper,
 };
 use ascmearc_core::damage::ResistanceWord;
 use ascmearc_core::magic::Numbers;
@@ -124,6 +124,12 @@ fn describe_cell(view: &PerceptionView<'_>, p: Pos, blood: bool) -> String {
         Some(trap) => format!("{} on {}", with_article(trap), ground(t)),
         None => ground(t),
     };
+    // Ground named in the plural ("webs") takes no article.
+    let plural = |t: TerrainId| trap.is_none() && content.terrain(t).noun == Noun::Plural;
+    let named = |t: TerrainId, phrase: String| match plural(t) {
+        true => phrase,
+        false => with_article(&phrase),
+    };
     // Nothing but a trap there: the trap first ("A pit, on stone floor.").
     if let Some(trap) = trap
         && view.actor_at(p).is_none()
@@ -140,7 +146,7 @@ fn describe_cell(view: &PerceptionView<'_>, p: Pos, blood: bool) -> String {
     // What the player remembers at a cell out of sight.
     let memory = |t| match &things {
         Some(things) => format!("{things} on {}", terrain(t)),
-        None => with_article(&terrain(t)),
+        None => named(t, terrain(t)),
     };
     match (view.cell(p), heard) {
         (CellView::Visible(t), _) => match (view.actor_at(p), &things) {
@@ -151,7 +157,7 @@ fn describe_cell(view: &PerceptionView<'_>, p: Pos, blood: bool) -> String {
             }
             (Some(actor), _) => format!("{}, on {}{here}.", creature(view, actor), terrain(t)),
             (None, Some(things)) => format!("{}, on {}.", capitalized(things), terrain(t)),
-            (None, None) => format!("{}.", capitalized(&with_article(&terrain(t)))),
+            (None, None) => format!("{}.", capitalized(&named(t, terrain(t)))),
         },
         (CellView::Remembered(t), Some(heard)) => {
             format!("{heard} here, where you remember {}.", memory(t))
@@ -160,7 +166,7 @@ fn describe_cell(view: &PerceptionView<'_>, p: Pos, blood: bool) -> String {
             Some(things) => format!("You remember {things} here, on {}.", terrain(t)),
             None => format!(
                 "You remember {} here{room_here}.",
-                with_article(&fixture(view, p, t, blood))
+                named(t, fixture(view, p, t, blood))
             ),
         },
         (CellView::Unknown, Some(heard)) => format!("{heard} here."),
@@ -619,7 +625,7 @@ mod tests {
         let w = World::new(content, "leavings", None).expect("world");
         let view = w.perception();
         let at = |x| describe(&view, Pos::new(x, 1), false);
-        assert!(at(2).starts_with("An old web."), "{}", at(2));
+        assert!(at(2).starts_with("Webs."), "{}", at(2));
         assert!(at(3).starts_with("An acid-pitted floor."), "{}", at(3));
         assert!(at(4).contains("scrap of torn cloth"), "{}", at(4));
     }

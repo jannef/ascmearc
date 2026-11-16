@@ -223,7 +223,7 @@ fn the_hunters_statue_on_fyrdelf_reads_its_inscription() {
     assert_eq!(place.name, "a hooded figure");
 }
 
-/// A row of walkable cells: an old web (`W`), glowing fungus (`F`), a test terrain named in the
+/// A row of walkable cells: webs (`W`; here they catch no one, `data/rules/webs.toml` left out), glowing fungus (`F`), a test terrain named in the
 /// plural (`B`), an open chest with a dagger in it (`C`), stairs down with a dagger on them
 /// (`>`), and plain floor with a dagger (`d`).
 const ROW: &str = "\
@@ -239,6 +239,7 @@ const BELLS: &str = "[[terrain]]\nid = \"test_bells\"\nname = \"bluebells\"\nann
 fn row_world() -> World {
     let mut files = ContentFiles::builtin();
     files.insert("data/terrain/999-test_bells.toml", BELLS);
+    files.remove("data/rules/webs.toml");
     files.insert(
         "levels/test_row.toml",
         &format!(
@@ -274,7 +275,8 @@ fn each_feature_is_named_by_its_noun_with_what_lies_there_on_the_same_line() {
     let mut w = row_world();
     assert_eq!(
         step_says(&mut w),
-        "There is an old web here. Grey strands, thick as rope in places, hang from wall to floor."
+        "There are webs here. Grey strands, thick as rope in places, hang from wall to floor. \
+         They cling to whatever brushes them, and would burn like tinder."
     );
     assert_eq!(step_says(&mut w), "There is glowing fungus here.");
     assert_eq!(step_says(&mut w), "There are bluebells here.");

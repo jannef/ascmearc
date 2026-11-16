@@ -117,6 +117,7 @@ fn cause_words(fallen: &Fallen, content: &Content) -> String {
         STONE => return "Turned to stone".into(),
         "starved" => return "Starved to death".into(),
         "fell" => return "Fell through a collapsed floor".into(),
+        "burning_web" => return "Burned to death in a web".into(),
         "choked" => return "Choked to death".into(),
         "altar" => return "Struck down at a forgotten altar".into(),
         "own_spell" => return "Killed by their own spell".into(),

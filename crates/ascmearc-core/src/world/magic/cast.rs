@@ -615,6 +615,16 @@ impl World {
             cast.outcome.set(landed);
             return done;
         }
+        if let (Some(at), true) = (at, cast.def.effect.web) {
+            let done = self.cast_web(cast, at, events);
+            // Webs laid are its work done, as a zone's (`world/levels/web.rs`).
+            let landed = Outcome {
+                landed: done,
+                ..cast.outcome.get()
+            };
+            cast.outcome.set(landed);
+            return done;
+        }
         let (Some(at), Some((status, _)), Some(severity)) =
             (at, cast.def.effect.status, cast.degrees)
         else {
@@ -639,7 +649,7 @@ impl World {
         true
     }
 
-    /// A hex over an area (Sleep, Web): it flies as a burst does and goes off around the
+    /// A hex over an area (Sleep, Bramble): it flies as a burst does and goes off around the
     /// first creature in its way or the cell aimed at, and its status, at its degrees, falls on
     /// everyone it reaches but the caster, friend or foe; each the player sees is
     /// named. It goes off whether or not it finds anyone.
