@@ -3,15 +3,12 @@
 //! ki by `class_ability.rs::use_class`, which also refuses them (no time, nothing spent) before
 //! the spend. Each trick is its own section below.
 //!
-//! - **Patient defence** (`use:patient_defence`, level 18, for a point of ki and a wait's
-//!   price): a degree of its status (Poised) on the player until their next action. The status's
-//!   own `combat` gives Dodge +4, and while it lasts [`World::free_blows_of`] switches the
-//!   riposte on, which answers a melee blow missed by the player's Parry **or dodged** (missed by
-//!   their Dexterity or Dodge, [`World::poised`]). Given during the player's own priced action,
-//!   the status sits on `World::fresh`, so that action does not ease it: the creatures' turns in
-//!   between meet it, and the player's next action, whatever it is, ends it. Refused, no time and
-//!   no ki, only by `may_use_class` with no ki; never for "nobody near", and a second use while
-//!   Poised keeps it for one more action.
+//! - **Roundhouse** (`use:roundhouse`, level 18, for two ki and one kick's price): a kick
+//!   ([`World::player_kicks`], the kick's profile, `Actor::kick`) at every hostile beside the
+//!   player, one each, clockwise from the north ([`World::hostiles_beside`]'s order, so the
+//!   same every time). Neutral and peaceful creatures beside them are left alone. Any grip will
+//!   do: a kick is a kick whatever the hands hold. Refused, no time and no ki, with nobody
+//!   hostile beside them.
 //! - **Step of the wind** (`use:step_of_the_wind`, level 6, for a point of ki): a degree of its
 //!   status (Light-footed) on the player, **taking no time**: the next action they take, whatever
 //!   it is, costs half its price and ends it. Refused, no time and no ki, while they are
@@ -27,36 +24,46 @@
 
 use crate::action::{AttackKind, Event};
 use crate::combat::Blow;
-use crate::content::{ActionKind, ObjectId, TrapId, the};
+use crate::content::{ActionKind, ObjectId, Role, TrapId, the};
 use crate::geom::Dir;
 use crate::talent::PalmBlow;
-use crate::world::{Actor, ActorId, Spent, World};
+use crate::world::{ActorId, AttackSkills, Spent, World};
 
-// Patient defence (#849).
+// --- Roundhouse (#1733) -------------------------------------------------------------------------
+
 impl World {
-    /// Patient defence: the player waits in their guard (a degree of its status, Poised), for
-    /// the time of a wait; its ki was spent by `use_class`.
-    pub(super) fn patient_defence(&mut self, events: &mut Vec<Event>) -> Spent {
-        let player = self.state.player;
-        let Some(status) = self
-            .state
-            .player()
-            .talent_mods(&self.content)
-            .martial
-            .patient_defence
-        else {
-            return Spent::Nothing;
-        };
-        self.afflict(player, status, 1, Some(player), events);
-        Spent::Turn(self.price_of(player, ActionKind::Wait))
+    /// Roundhouse's refusal before its ki is spent (no time; said): nobody hostile stands beside
+    /// the player.
+    pub(super) fn may_roundhouse(&mut self) -> bool {
+        if self.hostiles_beside().is_empty() {
+            self.say("There is nobody beside you to kick.");
+            return false;
+        }
+        true
     }
 
-    /// Whether `actor` is Poised: it suffers the status of its Patient defence. Its riposte is
-    /// on ([`World::free_blows_of`]) and answers a blow it dodged as well as one it parried.
-    pub(in crate::world) fn poised(&self, actor: &Actor) -> bool {
-        !actor.talents.is_empty()
-            && (actor.talent_mods(&self.content).martial.patient_defence)
-                .is_some_and(|s| actor.effects.has(s))
+    /// Roundhouse: a kick at every hostile beside the player, clockwise from the north, each
+    /// with what the end of an attack brings (`player_kicks`), for the price of one kick; its ki
+    /// was spent by `use_class`. One felled or moved off before its turn is skipped; the kicks
+    /// stop if the player falls.
+    pub(super) fn roundhouse(&mut self, events: &mut Vec<Event>) -> Spent {
+        let player = self.state.player;
+        let unarmed = self.content.weapon_skills().of_role(Role::Unarmed);
+        let price = self.attack_price(player, ActionKind::Kick, None, AttackSkills::only(unarmed));
+        for (target, seen) in self.hostiles_beside() {
+            if self.state.death.is_some() {
+                break;
+            }
+            let here = self.player_pos();
+            let Some(at) = self.state.actors.get(&target).map(|a| a.pos) else {
+                continue;
+            };
+            let Some(dir) = Dir::from_delta(at.x - here.x, at.y - here.y) else {
+                continue;
+            };
+            self.player_kicks(target, dir, seen, events);
+        }
+        Spent::Turn(price)
     }
 }
 

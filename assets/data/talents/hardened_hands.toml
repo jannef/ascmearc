@@ -1,0 +1,8 @@
+[[talent]]
+id = "hardened_hands"
+name = "Hardened hands"
+tree = "class"
+granted = true
+description = "Years of striking post and stone have hardened your hands and feet: your bare-handed blows and kicks roll 1d8."
+effects = [{ kind = "unarmed_die", sides = 8 }]
+systems = ["kicks", "combat"]

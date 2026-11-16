@@ -1613,15 +1613,19 @@ impl Actor {
     /// (bare hands' damage, Strength to hit and to damage), with what its unarmed fighting gives,
     /// the affixes of everything it wears and wields, and its combat
     /// stance. Mighty kick rolls its one bigger die instead of bare
-    /// hands', and Crusher adds its penetration.
+    /// hands'; with Martial arts' die too, the bigger of the two and Mighty kick's bonus
+    /// (`kick_die`'s `bonus`). Crusher adds its penetration.
     pub fn kick(&self, content: &Content) -> Profile {
         let skill = content.weapon_skills().of_role(Role::Unarmed);
         let mods = self.mods(content);
         let talents = self.talent_mods(content);
         let mut fists = Attack::unarmed(content.unarmed_damage());
-        // Mighty kick's die, or Martial arts', the bigger.
-        if let Some(sides) = talents.offence.kick_die.max(talents.offence.unarmed_die) {
-            fists.damage = crate::dice::Dice::of(1, u32::from(sides)).into();
+        // Mighty kick's die, or Martial arts', the bigger; with both, Mighty kick's bonus on top.
+        let offence = &talents.offence;
+        if let Some(sides) = offence.kick_die.max(offence.unarmed_die) {
+            let both = offence.kick_die.is_some() && offence.unarmed_die.is_some();
+            let bonus = if both { offence.kick_bonus } else { 0 };
+            fists.damage = (crate::dice::Dice::of(1, u32::from(sides)).plus(bonus)).into();
         }
         let mut profile = Profile::melee(&fists, &self.stats_with(content, &mods))
             .with(&self.benefit(content, skill));

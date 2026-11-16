@@ -4,7 +4,6 @@ expression: "render(case, content.clone())"
 ---
  Welcome to Showcase. Press ┌─ Controls ───────────────────────────────────────────────────┐
                             │                                                            ↑ │
-                            │   Use the last ability again           X                     │
                             │   Pay the shopkeeper                   p                     │
                             │   Use a tool (dig, light)              u                     │
                             │   Chat                                 C                     │
@@ -33,6 +32,7 @@ expression: "render(case, content.clone())"
                             │   Disarm a trap                        (none)                │
                             │   Pick a lock                          (none)                │
                             │   Steal                                (none)                │
+                            │   Roundhouse                           (none)                │
                             │                                                              │
                             │   Reset all keys                                             │
                             │   Export keys…                                               │

@@ -137,12 +137,12 @@ statuses).
   carries `resource_rate` +100 (read in `World::resource_rate`). Flurry (level 1) carries
   `MartialEffect::FlurryCost { resource, cost }` (`MartialMods::flurry_cost`), read in one place,
   `World::flurry` (`free_blow.rs`, from `second_blow` on `Cue::First`, which now takes `events`
-  for the spend): the second blow is decided only once its cost is spent; short, none. Patient
-  defence (level 18, S5, #849) costs `resource = { id = "ki", cost = 1 }` on its talent
-  (`MartialEffect::PatientDefence { status }`, `MartialMods::patient_defence`): `World::patient_defence`
-  (`world/classes/ascetic.rs`) gives a degree of Poised for a wait's price; refused only by
-  `may_use_class` with no ki. Given during the priced action, the status sits on `World::fresh`,
-  so the creatures' turns meet it and the next action eases it. Tests: `world/classes/ascetic_tests.rs`.
+  for the spend): the second blow is decided only once its cost is spent; short, none.
+  Roundhouse (level 18, #1733, in Patient defence's place) costs `resource = { id = "ki", cost =
+  2 }` on its talent (`MartialEffect::Roundhouse`, `MartialMods::roundhouse`):
+  `World::roundhouse` (`world/classes/ascetic.rs`) kicks every hostile beside the player for one
+  kick's price; `World::may_roundhouse` refuses it before the spend with no hostile beside them.
+  Tests: `world/classes/ascetic_tests.rs`.
   Quivering
   palm costs `resource = { id = "ki", cost = 5 }` on its talent and lost its cooldown
   (`MartialEffect::QuiveringPalm { status, severity }`); `use_class` refuses it with a weapon in

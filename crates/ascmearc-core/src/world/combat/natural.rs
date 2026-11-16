@@ -13,18 +13,18 @@ use crate::world::{ActorId, World};
 
 impl World {
     /// The natural attacks after the first of `attacker`'s melee attack on `target` (module
-    /// docs): whether any of them was parried, dodged, or hit.
+    /// docs): whether any of them was parried, or hit.
     pub(super) fn more_natural_blows(
         &mut self,
         attacker: ActorId,
         target: ActorId,
         events: &mut Vec<Event>,
-    ) -> (bool, bool, bool) {
+    ) -> (bool, bool) {
         let content = self.content.clone();
         let Some(me) = self.state.actors.get(&attacker) else {
-            return (false, false, false);
+            return (false, false);
         };
-        let mut made = (false, false, false);
+        let mut made = (false, false);
         for (index, profile) in me.more_natural_blows(&content) {
             let standing = |w: &World, id| w.state.actors.contains_key(&id);
             if self.state.death.is_some() || !standing(self, attacker) || !standing(self, target) {
@@ -40,8 +40,7 @@ impl World {
                 *natural = Some(index);
             }
             made.0 |= free_blow::parried(blow);
-            made.1 |= free_blow::dodged(blow);
-            made.2 |= blow.is_some_and(|b| b.strike.is_hit());
+            made.1 |= blow.is_some_and(|b| b.strike.is_hit());
         }
         made
     }

@@ -64,6 +64,7 @@ bar, and the info pages.
 | [Throw your voice](hearing.md#throwing-your-voice) (an ability: also in the abilities menu) | no key until you bind one, then aim |
 | [Disarm a trap](traps.md#disarming-traps) (an ability: also in the abilities menu) | no key until you bind one, then a direction |
 | [Steal](abilities.md#ability-steal) (an ability: also in the abilities menu) | no key until you bind one, then a direction |
+| [Roundhouse](abilities.md#ability-roundhouse), the [ascetic](class-ascetic.md)'s (an ability: also in the abilities menu) | no key until you bind one |
 | Next target while aiming (with Shift: the one before) | `Tab` |
 | Use a tool: light, hood, or douse a [lantern](lantern.md) ready in the Tool slot; else [dig](digging.md) into a wall with a pick-axe | `u` (to dig, then a direction) |
 | Show or hide the controls | `?` |

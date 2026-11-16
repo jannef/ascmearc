@@ -143,6 +143,17 @@ cases! {
         screen: Some("abilities"),
         ..BASE
     },
+    // An ascetic past level 18 (#1733): Roundhouse, in Patient defence's place, chosen, its
+    // description below.
+    abilities_menu_roundhouse: Case {
+        name: "abilities-menu-roundhouse",
+        character: Some("human,male,ascetic"),
+        kit: true,
+        actions: "xp:200000 levelup:auto",
+        screen: Some("abilities"),
+        keys: Some("Down"),
+        ..BASE
+    },
     // A priest at level 1 (#886): the prayer by its first tier's title, Orison, chosen, its
     // description below.
     abilities_priest_1: Case {

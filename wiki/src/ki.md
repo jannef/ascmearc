@@ -15,8 +15,8 @@ every 9 seconds. What spends it:
   left, the attack is a single blow.
 - [Step of the wind](abilities.md#ability-step-of-the-wind) (level 6) spends 1 and takes no time.
 - [Stunning strike](class-ascetic.md#talent-stunning-strike) (level 12) spends 1.
-- [Patient defence](abilities.md#ability-patient-defence) (level 18) spends 1 and takes a wait's
-  time.
+- [Roundhouse](abilities.md#ability-roundhouse) (level 18) spends 2 and takes the time of one
+  kick.
 - [Stillness](abilities.md#ability-stillness) (level 25) spends 2 and takes no time.
 - [Diamond soul](class-ascetic.md#talent-diamond-soul) (level 40) spends 1 by itself on each missile it
   catches.

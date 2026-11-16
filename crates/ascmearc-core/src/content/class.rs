@@ -605,10 +605,9 @@ pub enum ClassActive {
     BanishingSmite,
     /// A light of your own, on and off (a status that sheds light while it lasts).
     HolyRadiance,
-    /// A breath taken in the guard, for ki and a wait: Poised until the next action, Dodge up
-    /// and a blow dodged or parried answered at once (the ascetic's Patient defence,
-    /// `world/classes/ascetic.rs`).
-    PatientDefence,
+    /// A kick at every hostile beside the player for the time of one, for ki (the ascetic's
+    /// Roundhouse, `world/classes/ascetic.rs`).
+    Roundhouse,
     /// An unarmed blow in a direction that leaves a wounded foe Stunned, for ki (the
     /// ascetic's Stunning strike).
     StunningStrike,
@@ -693,7 +692,7 @@ impl ClassActive {
         ClassActive::WrathfulSmite,
         ClassActive::BanishingSmite,
         ClassActive::HolyRadiance,
-        ClassActive::PatientDefence,
+        ClassActive::Roundhouse,
         ClassActive::StunningStrike,
         ClassActive::QuiveringPalm,
         ClassActive::StepOfTheWind,
@@ -732,7 +731,7 @@ impl ClassActive {
             ClassActive::WrathfulSmite => "wrathful_smite",
             ClassActive::BanishingSmite => "banishing_smite",
             ClassActive::HolyRadiance => "holy_radiance",
-            ClassActive::PatientDefence => "patient_defence",
+            ClassActive::Roundhouse => "roundhouse",
             ClassActive::StunningStrike => "stunning_strike",
             ClassActive::QuiveringPalm => "quivering_palm",
             ClassActive::StepOfTheWind => "step_of_the_wind",
@@ -867,7 +866,6 @@ impl ClassActive {
             ClassActive::Rage
             | ClassActive::WarCry
             | ClassActive::VeteransWind
-            | ClassActive::PatientDefence
             | ClassActive::Lurk
             | ClassActive::Sic
             // It takes no time (`takes_no_time`): none block a wait.
@@ -880,6 +878,7 @@ impl ClassActive {
             | ClassActive::StunningStrike
             | ClassActive::QuiveringPalm
             | ClassActive::Exploit => ActionKind::Melee,
+            ClassActive::Roundhouse => ActionKind::Kick,
             ClassActive::LayOnHands
             | ClassActive::HolyRadiance
             | ClassActive::Consecrate

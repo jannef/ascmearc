@@ -57,8 +57,6 @@ ranks of weapon skills and fighting styles teach them (see
   attack it answers is not also riposted.
 - **[Riposte](talents-body.md#talent-riposte)**: when your Parry turns a blow aside, you strike back once the attack is over. That
   is once per attack, however many of its blows you parried. Shots and throws are never riposted.
-  While you are [poised](status-list.md#status-poised) (the [ascetic](class-ascetic.md)'s [patient defence](abilities.md#ability-patient-defence)), you riposte whatever your talents,
-  and a blow that misses because of your Dexterity or Dodge is answered too.
 - **[Opportunist](talents-body.md#talent-opportunist)**: a hostile creature that steps away from beside you is struck as it turns to go.
   It may not live to take the step. A creature that fights this way strikes you the same way when
   you step away from it.

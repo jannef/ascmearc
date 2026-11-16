@@ -90,7 +90,7 @@ you never choose them, they work by themselves as you fight. They have their own
   table's last column links. A skill whose use is not in the game yet is listed too, greyed out
   (`not usable yet`).
 - **[Class abilities](classes.md#levels)** ([Rage](abilities.md#ability-rage), [War cry](abilities.md#ability-war-cry), [Charge](abilities.md#ability-charge), [Lullaby](abilities.md#ability-lullaby), [Cackle](abilities.md#ability-cackle), [Veteran's wind](abilities.md#ability-veterans-wind), [Lay on hands](abilities.md#ability-lay-on-hands), [Smite](abilities.md#ability-smite), [Holy radiance](abilities.md#ability-holy-radiance),
-  [Step of the wind](abilities.md#ability-step-of-the-wind), [Stunning strike](abilities.md#ability-stunning-strike), [Patient defence](abilities.md#ability-patient-defence), [Stillness](abilities.md#ability-stillness), [Quivering palm](abilities.md#ability-quivering-palm), [Consecrate](abilities.md#ability-consecrate), [Orison](abilities.md#ability-orison), [Sanctuary](abilities.md#ability-sanctuary), [Knock](abilities.md#ability-knock)) come
+  [Step of the wind](abilities.md#ability-step-of-the-wind), [Stunning strike](abilities.md#ability-stunning-strike), [Roundhouse](abilities.md#ability-roundhouse), [Stillness](abilities.md#ability-stillness), [Quivering palm](abilities.md#ability-quivering-palm), [Consecrate](abilities.md#ability-consecrate), [Orison](abilities.md#ability-orison), [Sanctuary](abilities.md#ability-sanctuary), [Knock](abilities.md#ability-knock)) come
   from your [class](classes.md)'s level table (see [Classes](classes.md#levels)). Each is under Class from the level that brings
   it.
   - Some leave you [winded](status-list.md#status-winded) for a while afterwards, and are greyed out until it passes.

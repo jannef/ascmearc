@@ -7,14 +7,42 @@ See also: [Ki](ki.md).
 ## How to play
 
 You fight with bare hands and kicks, in light clothes. [Martial arts](#talent-martial-arts) makes
-your bare blows roll 1d6 and gives you [ki](ki.md), and [Flurry](#talent-flurry) spends a point of
-it on a second blow with every attack. Ki comes back by itself, a point every 18 seconds. Keep your
+your bare blows roll 1d6, a die that grows with your level (see
+[Unarmed damage](#unarmed-damage)), and gives you [ki](ki.md). [Flurry](#talent-flurry) spends a
+point of it on a second blow with every attack. Ki comes back by itself, a point every 18 seconds. Keep your
 hands empty, and wear no body armour or shield: much of what your levels bring works only so.
 You are hard to pin down but not hard to hurt, so do not let a crowd surround you.
 
 ## Levels
 
 {{#include generated/class-levels.md:ascetic}}
+
+## Unarmed damage
+
+A blow with nothing in your hands, and a [kick](doors.md#kicking-a-door-open) at a creature,
+rolls one die. As an ascetic, your level picks the die:
+
+| Level | Die | Average | From |
+|---|---|---|---|
+| 1 | 1d6 | 3.5 | [Martial arts](#talent-martial-arts) |
+| 12 | 1d8 | 4.5 | [Hardened hands](#talent-hardened-hands) |
+| 25 | 1d10 | 5.5 | [Iron hands](#talent-iron-hands) |
+| 40 | 1d12 | 6.5 | [Adamant hands](#talent-adamant-hands) |
+
+On top of the die, every blow and kick adds:
+
+- your [Strength](stats.md#stat-strength) [modifier](stats.md#modifiers);
+- the damage of your [Unarmed](weapon-skills.md#what-a-rank-gives) rank, from +0 at rank 1 to +8 at rank 10, and of
+  the [Brawler](fighting-styles.md#what-a-rank-gives) style if you fight in it (+1 at rank 1 to +10 at rank 10;
+  kicks are fought in no style);
+- your [combat stance](stances.md#stances).
+
+A kicking talent adds to this. [Mighty kick](talents-body.md#talent-mighty-kick) makes a kick
+roll the bigger of its own 1d6 and your die, +2. So at level 12 your kick rolls 1d8+2. Without the
+ascetic's die, Mighty kick's kick rolls 1d6.
+
+[Flurry](#talent-flurry) gives each attack a second blow, so with ki to spend you do about twice
+this a turn. [Roundhouse](abilities.md#ability-roundhouse) kicks every foe beside you at once.
 
 ## Abilities
 
@@ -40,15 +68,14 @@ cannot be stacked. While you are light-footed already it is refused and costs no
 your bare hand that leaves a foe it wounds [stunned](status-list.md#status-stunned): caught
 [flat-footed](surprise.md#stunned) and slow to act. It cannot be used with a weapon in hand.
 
-**[Patient defence](abilities.md#ability-patient-defence)** (level 18) costs a point of ki and the
-[time](turns.md#what-actions-cost) of a wait. It leaves you [poised](status-list.md#status-poised)
-until your next action, whatever it is. While poised you have +4 [Dodge](combat.md#defence), and
-you answer at once with a blow of your own, a [riposte](stances.md#free-blows), every melee blow you
-dodge (it misses by your Dexterity or Dodge) or parry. Used again while poised, it holds for one
-action more. It works with any grip, a staff too.
+**[Roundhouse](abilities.md#ability-roundhouse)** (level 18) costs 2 ki and the
+[time](turns.md#what-actions-cost) of one kick. You kick every hostile creature beside you once,
+going round clockwise from the north. Each kick is a normal kick, with your
+[unarmed damage](#unarmed-damage). Creatures that are not hostile are left alone. It works with
+any grip, a staff too. With no foe beside you it is refused and costs nothing.
 
-**[Stillness](abilities.md#ability-stillness)** (level 25, with
-[still mind](#talent-still-mind)):
+**[Still mind](#talent-still-mind)** (level 25) gives you +4
+[Willpower](stats.md#stat-willpower). It also brings **[Stillness](abilities.md#ability-stillness)**:
 
 - **Cost:** 2 ki, and no time at all. Any grip will do.
 - **Effect:** it ends at once whichever of these you suffer, so you act this very turn:

@@ -109,7 +109,6 @@ fn one_free_blow_an_attack_retribution_before_the_riposte() {
     // A parried blow and one that hit: Retribution's smite alone.
     let both = Cue::Attacked {
         parried: true,
-        dodged: false,
         hit: true,
     };
     let blow = w.second_blow(kobold, player, both, &mut events);
@@ -118,7 +117,6 @@ fn one_free_blow_an_attack_retribution_before_the_riposte() {
     // Parried and nothing hit: the riposte, nothing spent.
     let parried = Cue::Attacked {
         parried: true,
-        dodged: false,
         hit: false,
     };
     let blow = w.second_blow(kobold, player, parried, &mut events);
@@ -140,7 +138,6 @@ fn not_for_a_neutral_paladin_and_not_said() {
     w.news.clear();
     let hit = Cue::Attacked {
         parried: false,
-        dodged: false,
         hit: true,
     };
     let mut events = Vec::new();
@@ -160,7 +157,6 @@ fn creatures_and_those_without_it_never_retribute() {
     set(&mut w, 10);
     let hit = Cue::Attacked {
         parried: false,
-        dodged: false,
         hit: true,
     };
     let mut events = Vec::new();

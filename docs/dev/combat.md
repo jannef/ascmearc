@@ -177,10 +177,7 @@ their Retribution (`World::retribution`, `world/classes/smite.rs`, the paladin's
 back for its zeal, `Free::Retribution`, held as a riposte is and said "You answer the blow with
 holy wrath!"; an attack it answers is not also riposted: one free blow an attack), else
 `World::riposte`; `hit` is raised only by `World::attack`, a creature's or the player's melee
-attack, never by `after_attack`; `dodged`, a blow
-missed by the target's Dexterity or Dodge, is answered only while the target is Poised, the
-ascetic's Patient defence, `world/classes/ascetic.rs`, #849, and is raised only by `World::attack`, through
-`World::after_melee`: the player's attacks call `after_attack`, never dodged), `Cleaved` (great
+attack, never by `after_attack`), `Cleaved` (great
 cleave's next), `Leaves` (`World::opportunist`), `Approaches` (`World::gatekeeper`, #267: a
 hostile that steps up beside a gatekeeper, from `World::step_up(id, from)` at the end of
 `ai.rs::creature_steps`, after the trap; each gatekeeper it was not beside before strikes;

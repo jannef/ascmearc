@@ -1,0 +1,8 @@
+[[talent]]
+id = "adamant_hands"
+name = "Adamant hands"
+tree = "class"
+granted = true
+description = "Nothing is harder than your hands and feet: your bare-handed blows and kicks roll 1d12."
+effects = [{ kind = "unarmed_die", sides = 12 }]
+systems = ["kicks", "combat"]

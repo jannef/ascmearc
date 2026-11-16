@@ -10,7 +10,7 @@ effects = [
     { kind = "bars_slot", slot = "feet", mark = "hooves", refused = "Your hooves will not go into anything." },
     { kind = "speed_percent", value = 5 },
     { kind = "footsteps_percent", value = 50 },
-    { kind = "kick_die", sides = 8 },
+    { kind = "kick_die", sides = 8, bonus = 2 },
 ]
 # Written here, on the later of the two (docs/design/profane-gifts.md §6.5): made symmetric at
 # load.

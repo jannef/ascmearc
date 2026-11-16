@@ -673,7 +673,7 @@ fn martial_arts_flurry_still_mind_and_quivering_palm() {
         flurry.profile.to_hit,
         w.state.player().melee(&content).to_hit - 2
     );
-    // Still mind: a status's lowering of Intelligence never applies.
+    // Still mind: Willpower +4, and a status's lowering of Intelligence never applies.
     reach(&mut w, 25);
     // Still mind's own effects (the picks levelup:auto made may touch statuses too).
     let book = content.talents();
@@ -682,7 +682,8 @@ fn martial_arts_flurry_still_mind_and_quivering_palm() {
     let poisoned = status(&w, "poisoned");
     assert_eq!(mods.vigour.penalty(poisoned, Stat::Intelligence, -2), 0);
     assert_eq!(mods.vigour.penalty(poisoned, Stat::Strength, -2), -2);
-    assert_eq!(mods.vigour.check(Stat::Willpower), 2);
+    assert_eq!(mods.vigour.check(Stat::Willpower), 0, "no bonus to checks");
+    assert_eq!(mods.vigour.stats[Stat::Willpower], 4);
     // Quivering palm: a wounding blow leaves the foe bleeding three degrees.
     reach(&mut w, 50);
     run(&mut w, "use:quivering_palm:E");
@@ -693,9 +694,9 @@ fn martial_arts_flurry_still_mind_and_quivering_palm() {
         Some((hp, severity)) if hp < 500 => assert!(severity >= Some(3), "{severity:?}"),
         _ => {}
     }
-    // Perfect self: a bigger die.
+    // The die grew with the level (Adamant hands at 40); Perfect self keeps it.
     reach(&mut w, 60);
-    assert_eq!(fists(&w), "1d8");
+    assert_eq!(fists(&w), "1d12");
 }
 
 #[test]

@@ -597,22 +597,19 @@ impl World {
         };
         if kind == AttackKind::Melee {
             let mut parried = free_blow::parried(blow);
-            let mut dodged = free_blow::dodged(blow);
             let mut hit = blow.is_some_and(|b| b.strike.is_hit());
             if let Some(second) = self.second_blow(attacker, target, Cue::First(blow), events) {
                 let with = second.with;
                 let struck = self.strike_free(second, events);
                 parried |= free_blow::parried(struck);
-                dodged |= free_blow::dodged(struck);
                 hit |= struck.is_some_and(|b| b.strike.is_hit());
                 self.both_hands(attacker, target, (blow, struck), with, events);
             }
             // Its natural attacks after the first: a dragon's claws and bite (`natural.rs`).
             let more = self.more_natural_blows(attacker, target, events);
-            (parried, dodged, hit) = (parried | more.0, dodged | more.1, hit | more.2);
-            // A blow dodged is answered by a Poised target (`ascetic.rs`), one that hit the
-            // player by their Retribution (`smite.rs`).
-            self.after_melee(attacker, target, (parried, dodged, hit), events);
+            (parried, hit) = (parried | more.0, hit | more.1);
+            // A blow that hit the player is answered by their Retribution (`smite.rs`).
+            self.after_melee(attacker, target, (parried, hit), events);
         }
         blow
     }
@@ -646,11 +643,7 @@ impl World {
                     profile,
                 })
                 .or_else(|| self.flurry(striker, target, events)),
-            Cue::Attacked {
-                parried,
-                dodged,
-                hit,
-            } => {
+            Cue::Attacked { parried, hit } => {
                 // A parry fires the target's weapon abilities (Staggering block) as the attack
                 // ends, before the free blows it may bring.
                 let stand =
@@ -667,7 +660,7 @@ impl World {
                 // One free blow an attack: Retribution's smite, else the riposte.
                 (self.cleave(striker, target, false))
                     .or_else(|| self.retribution(striker, target, hit, events))
-                    .or_else(|| self.riposte(striker, target, (parried, dodged)))
+                    .or_else(|| self.riposte(striker, target, parried))
             }
             Cue::Cleaved => self.cleave(striker, target, true),
             Cue::Leaves => self.opportunist(striker, target),
