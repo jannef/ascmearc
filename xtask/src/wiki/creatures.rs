@@ -1050,6 +1050,28 @@ pub(super) fn creature_blinks(content: &Content) -> String {
     out
 }
 
+/// Each spinner's spinning (#1746): its chance on an idle turn, how long before it spins again,
+/// and how many webs around it stop it.
+pub(super) fn creature_spinners(content: &Content) -> String {
+    let mut out = String::from(
+        "| Creature | Chance on an idle turn | Again after | Stops at |\n|---|---:|---:|---:|\n",
+    );
+    for (_, c) in listed(content) {
+        let Some(spins) = &c.spins else {
+            continue;
+        };
+        let _ = writeln!(
+            out,
+            "| {} | {}% | {} s | {} webs |",
+            link(Term::Creature, &c.id, &capital(&c.name)),
+            spins.chance,
+            spins.cooldown,
+            spins.most
+        );
+    }
+    out
+}
+
 /// Each duellist's disarming blow (#1166): its chance on a hit, and the difficulty of the
 /// Dexterity check that keeps the weapon in hand.
 pub(super) fn creature_disarmers(content: &Content) -> String {

@@ -100,7 +100,7 @@ impl BlinksSpec {
 
 /// The cooldown status `id` and the degrees of it `seconds` take, checked: a status that eases
 /// and never ticks, long enough to hold them.
-fn cooldown(
+pub(super) fn cooldown(
     content: &Content,
     field: &str,
     id: &str,
