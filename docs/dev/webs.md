@@ -49,7 +49,9 @@ a spell on the creature.
   area passes through (a burst, a cone, a fire zone as it is laid), for the rules' `damage_type`
   (fire). A web there turns the rules' `burning` terrain (`terrain/465-burning_web.toml`), whose
   `light` (`burning_web` in `lights.toml`) the light cache re-derives as `set_terrain` changes it;
-  `Web::lit` is the moment.
+  `Web::lit` is the moment. On screen it burns with Blaze's flames (Burning hands' look,
+  `flames = "blaze"` on the terrain), drawn over the cell while it burns by
+  `crates/ascmearc/src/ui/flames.rs` from the perception's visible cells, in visual time only.
 - **Spread and burn-out**: `World::webs_burn`, at the end of every turn (`schedule.rs`, after
   `zones_fade`), on the current level: each burning web `spreads` seconds old sets the webs on
   its eight neighbours burning at that moment (earliest first, so a chain keeps its own game

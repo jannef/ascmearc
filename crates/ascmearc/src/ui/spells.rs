@@ -520,7 +520,7 @@ pub(super) fn emit(
 
 /// Draws one cell of a burst at `heat` (1 white-hot, toward 0 as it cools) and opacity `alpha`:
 /// its glowing body (`fill`, a shade cooler and thinner toward the edge), then its glyph by heat.
-fn burst_cell(
+pub(super) fn burst_cell(
     put: &mut impl FnMut(Vec2, char, LinearRgba, f32, f32),
     p: Pos,
     heat: f32,

@@ -136,6 +136,7 @@ impl Content {
                 glow: spec.glow,
                 haze: spec.haze,
                 particles: spec.particles.clone(),
+                flames: spec.flames.clone(),
             });
         }
         check_chests(&defs).map_err(err)?;

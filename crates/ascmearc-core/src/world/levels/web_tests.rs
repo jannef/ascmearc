@@ -63,6 +63,8 @@ fn the_shipped_rules_load() {
         content.terrain(rules.burning).light.is_some(),
         "it sheds light"
     );
+    let flames = content.terrain(rules.burning).flames.as_deref();
+    assert_eq!(flames, Some("blaze"), "Burning hands' flames burn on it");
     assert_eq!(content.status(rules.status).id, "webbed");
 }
 

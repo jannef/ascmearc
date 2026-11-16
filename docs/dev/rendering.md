@@ -279,7 +279,10 @@ Effects, each off with its own switch (`particles`, `glow`, `distortion`,
   `ui/spells.rs` (`Spells`) starts casts (one after another; frozen time: all at visual time 0, so
   `--freeze-time T` shows T s after), writes `render::lighting::SpellLights` (lights, `dim`, and
   the cells seen, which spell light passes even when unknown), and draws glyphs and particles last
-  (on top, unlit, undimmed). **Darkening** happens where the light is made: `VisualLight` scales
+  (on top, unlit, undimmed). **Standing flames**: a terrain with `flames` (a burning web) is drawn
+  each frame by `ui/flames.rs` as a burst's cell of that effect (`spells::burst_cell`) on every
+  visible cell of it, its heat flickering with visual time (still with `motion` off), just
+  before the spells. **Darkening** happens where the light is made: `VisualLight` scales
   everything but spell light by `SpellLights::keep()` (`(1 − dim)^2.2`, so `darken.amount` is how
   much darker it looks), free glyphs scale their floor (`glyphs::lit`) and emissive particles and
   burning missiles their color (`glyphs::darkened`) by `VisualLight::keep()`, and the map shader

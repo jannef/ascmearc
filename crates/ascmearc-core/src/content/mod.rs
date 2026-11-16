@@ -1046,6 +1046,17 @@ impl Content {
         if let Some(text) = files.get_optional(path) {
             content.effects = effect::parse(path, text)?;
         }
+        // A terrain's flames are a burst effect's.
+        for t in content.terrain_defs() {
+            if let Some(id) = &t.flames
+                && !(content.effects.iter()).any(|e| &e.id == id && e.shape == EffectShape::Burst)
+            {
+                return Err(ContentError::new(
+                    "data/terrain/",
+                    format!("terrain `{}`: `flames` names no burst effect `{id}`", t.id),
+                ));
+            }
+        }
         // Spell circles name statuses and the spells that lay them.
         let path = "data/circles.toml";
         if let Some(text) = files.get_optional(path) {

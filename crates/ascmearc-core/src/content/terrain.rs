@@ -157,6 +157,7 @@ pub(super) struct TerrainSpec {
     pub haze: f32,
     #[serde(default)]
     pub particles: Vec<ParticleEmitter>,
+    pub flames: Option<String>,
 }
 
 fn yes() -> bool {
@@ -330,6 +331,9 @@ pub struct TerrainDef {
     pub haze: f32,
     /// Presentation-only: glyph particle emitters.
     pub particles: Vec<ParticleEmitter>,
+    /// Presentation-only: the spell effect (`data/effects.toml`, a burst's) whose flames burn on
+    /// every cell of it the player sees, for as long as it is this terrain (a burning web).
+    pub flames: Option<String>,
 }
 
 /// How a wall breaks: dug through with a tool, or blasted open by an
