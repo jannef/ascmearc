@@ -164,6 +164,19 @@ impl Content {
             .flat_map(|l| (l.hidden.iter()).map(move |(p, h)| (l.id.as_str(), *p, h)))
     }
 
+    /// Every hidden location the generated levels of campaign `campaign` keep (a
+    /// `[[dungeon.levels]]` row's `hidden`, its cell picked as the level is made:
+    /// `mapgen/hidden.rs`), with its level's id, by branch id and depth. Each is the far end of
+    /// one of [`Content::hidden_locations`] with the same id (`Content::validate`).
+    pub fn generated_hidden_locations<'a>(
+        &'a self,
+        campaign: &'a str,
+    ) -> impl Iterator<Item = (String, &'a HiddenLocation)> + 'a {
+        (self.dungeons.values())
+            .filter(move |d| d.campaign.as_deref().unwrap_or_default() == campaign)
+            .flat_map(|d| d.hidden_locations())
+    }
+
     /// The local area with level id `id` (`local:x,y`) of campaign `campaign`'s overworld
     /// ([`Content::overworld_of`]), if it has an explorable cell there: in bounds, walkable,
     /// with a `local` ground, and not a location.

@@ -1,7 +1,8 @@
 //! A letter for the deep (#1435; `campaigns/ascmearc/data/quests/wulfrun.toml`): once Fire in
 //! the deep is done, Factor Wulfrun gives a sealed letter for the deep gnomes; handed to Headman
 //! Peran in Gimmwīc it is done, and he pays with a cut stone and gives the moot's answer, which
-//! Wulfrun takes back in Cēaptūn. Dēopgang is never hidden, so neither quest reveals anything.
+//! Wulfrun takes back in Cēaptūn. Dēopgang is never hidden, so the letter reveals nothing; the
+//! answer opens the Skeul Hir, a shortcut home (`skeul_hir_tests.rs`).
 
 use crate::content::ContentFiles;
 use crate::test_support::{run as act, texts};

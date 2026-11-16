@@ -95,6 +95,13 @@ Their talk turns to their work, and they speak the Cornish of the deep: "my 'ans
 
 Its stairs up lead back to Dēopgang's eleventh floor.
 
+There is a quicker way home. The **Skeul Hir**, the gnomes' old long stair, climbs from a corner
+of the arrival cave all the way up to the second floor of
+[Lytelscræf](dungeons.md#the-dungeons), by the pass. Both ends look like plain floor until Headman
+Peran gives you the moot's answer to carry up ([quests](quests.md#who-gives-quests)). Then he has
+it opened, and it stays open both ways for good: stairs up in Gimmwīc, stairs down on Lytelscræf's
+second floor. Nothing else ever uses it while it is shut, and searching will not find it.
+
 ### The dungeons
 
 A little cave, **[Lytelscræf](dungeons.md#the-dungeons)**, opens two cells from the pass where you

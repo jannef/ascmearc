@@ -311,4 +311,19 @@ caves floors of 60×30 at danger 1 to 3, 8 to 16 creatures of five level-1 and l
 `stray = 0` and `out_of_depth = 0`, no shop or special room, and the kobolds' cache named by
 floor 3's `vaults` (two kobolds and one shut chest, neither locked nor trapped, filled by
 `chest::fill_vaults` at the floor's item level). Tests: `mapgen/lytelscraef_tests.rs` (the cache
-on floor 3 over ten seeds, the folk, the way in and back as a replay).
+on floor 3 over ten seeds, the folk, the way in and back as a replay). Floor 2's row gives
+`hidden`, the far end of Gimmwīc's Skeul Hir (#1760, `docs/dev/overworld.md` "A hidden way with
+two ends").
+
+**A generated level's hidden location** (#1760, `mapgen/hidden.rs`): for a level whose
+`DungeonDef::hidden_location` is set, `generate_for` calls `hidden::place` once the attempt has
+passed `connect::validate` (a failed pick, no cell at all, fails the attempt): from its own stream
+`hidden/<level id>` it picks a cell of `pal.floor` reachable from the `<` (on no vault cell,
+room, shop, light, object, or creature, and not beside a staircase), from those at least half
+the farthest walk from the `<` and more than `AWAY` (5) cells from every staircase when there
+are any, and keeps the location there in the template's `hidden`, shown as floor. It is placed
+whether its way is revealed or not, so the cell is a pure function of the seed and the level;
+the reveal turns it into the stairs (`world/levels/reveal.rs`). Only what comes after it and
+keeps off stairs moves (`hide_traps` keeps clear of it): Lytelscræf 2's traps.
+`cargo dev-cli gen --level lytelscraef:2` prints `hidden stairs at ... (opens when `skeul_hir`
+is revealed)`.
