@@ -1,6 +1,8 @@
 [[terrain]]
 id = "acid_pit"
 name = "acid-pitted floor"
+announce = true
+noun = "mass"
 description = "The stone is eaten into little pits, and smells sour."
 stone = true
 glyph = "."

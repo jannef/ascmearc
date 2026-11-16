@@ -764,15 +764,19 @@ saved beyond the level change; the cracked floor stays.
 `world/fixtures/rooms.rs`: `glimpse_rooms` (in `perceive`, before `enter_room`) marks each room of which
 the player sees a cell `glimpsed` and says its `near` line, unless they are inside it;
 `enter_room` (`world/levels/travel.rs`) says `enter` once per room and marks it entered and glimpsed;
-A feature of the ground (terrain with `announce`, `data/terrain/`: `altar`, `uv_rune`,
-`statue`) is named by `world/fixtures/feature.rs`: `World::announce_feature` says `There is an altar
-here.` (and the terrain's `description`, if any, then the note of the place on the cell,
+A feature of the ground (terrain with `announce`, `data/terrain/`: `altar`, `uv_rune`, `web`,
+`fungus`, `chest_open`, `chest_smashed`, `acid_pit`, `cracked_floor`, and the unwalkable `statue`;
+plain ground, plants of the wild, doors, decoration such as candles, and a special room's
+feature its `enter` line already tells, the `spring`, are left out, #1747) is named by `world/fixtures/feature.rs`: `World::announce_feature` says `There is an altar
+here.` (by the terrain's `noun`: `There are bluebells here.` for `plural`, `There is glowing
+fungus here.` for `mass`; and the terrain's `description`, if any, then the note of the place on the cell,
 `LevelState::place`) when the player stands on another cell or level than at its last call
 (`World::stood_on`, not saved; a loaded world starts where it stands). A walkable one is named
 when the player stands on it; one that is not (the `statue`) when they stand beside it and the
 cell they came from on the same level was not beside it (`feature_lines`: the one underfoot,
-then those beside in `Dir::ALL` order), so walking round a statue says it once. A step calls it before the objects line
-(`travel.rs`), so it comes after the staircase line and before `You see here ...`, and before a
+then those beside in `Dir::ALL` order), so walking round a statue says it once. A step tells
+its arrival in one line (`World::tell_cell`, `world/levels/enter.rs`, taking the lines from
+`World::arrival_features`): the staircase, then the features, then `You see here ...`, before a
 room's `enter` line (said in `perceive`); `perceive` calls it after `enter_room` for every other
 arrival (stairs, falls, teleports), and `World::new` says it at the start of a run. Blood is
 left out of it (look mode's blood word follows the blood effect switch, a presentation setting;

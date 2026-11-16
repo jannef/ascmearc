@@ -4,6 +4,7 @@
 [[terrain]]
 id = "web"
 name = "old web"
+announce = true
 description = "Grey strands, thick as rope in places, hang from wall to floor."
 stone = true
 glyph = "\""

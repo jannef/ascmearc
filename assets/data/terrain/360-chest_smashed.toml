@@ -2,6 +2,7 @@
 [[terrain]]
 id = "chest_smashed"
 name = "smashed chest"
+announce = true
 chest = "smashed"
 glyph = "⊠"
 fg = "#9a7a48"

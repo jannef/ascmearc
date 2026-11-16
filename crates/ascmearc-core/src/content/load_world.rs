@@ -74,6 +74,7 @@ impl Content {
                 name: spec.name.clone(),
                 description: spec.description.clone(),
                 announce: spec.announce,
+                noun: spec.noun,
                 glyph: spec.glyph,
                 variants: spec.variants.chars().collect(),
                 fg: spec.fg,

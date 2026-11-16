@@ -27,6 +27,17 @@ pub enum StairsDir {
     Down,
 }
 
+/// How a terrain's name is said in a sentence: with `a`/`an` and `is` (the default), as a plural
+/// with `are`, or as a mass noun with `is` and no article.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum Noun {
+    #[default]
+    One,
+    Plural,
+    Mass,
+}
+
 /// A terrain type as written in content files.
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -40,6 +51,10 @@ pub(super) struct TerrainSpec {
     /// cannot be stood on, says so (`world/fixtures/feature.rs`).
     #[serde(default)]
     pub announce: bool,
+    /// How its name is said on arrival: one thing ("There is an altar here."), several
+    /// ("There are buttercups here."), or a mass ("There is glowing fungus here.").
+    #[serde(default)]
+    pub noun: Noun,
     pub glyph: char,
     /// Presentation-only: glyphs the map draws instead of `glyph`, one per cell picked by its
     /// position (a space draws none), e.g. hairline cracks in thin ice.
@@ -214,6 +229,8 @@ pub struct TerrainDef {
     /// A special feature of the ground (an altar, a faint rune, a statue): arriving
     /// on it, or beside it if it is not walkable, says so (`world/fixtures/feature.rs`).
     pub announce: bool,
+    /// How its name is said on arrival ([`Noun`]).
+    pub noun: Noun,
     pub glyph: char,
     /// Presentation-only: glyphs the map draws in place of `glyph`, one per cell
     /// ([`TerrainDef::glyph_at`]); empty: always `glyph`.

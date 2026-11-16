@@ -2,8 +2,10 @@
 # Fields: id, name, description (what look mode adds after the name; optional), announce (a special
 # feature of the ground, an altar: arriving on it says so, "There is an altar here.", with its
 # description and the note of a place on the cell after; one that is not walkable, a statue, is
-# told on arriving beside it; default false), glyph, fg, bg (default black), walkable (default true),
-# transparent (default true), move_cost (what a step onto it costs, in percent of a normal step,
+# told on arriving beside it; default false; set on features worth naming, never on plain ground),
+# noun (how an announced name is said: "one", the default, "There is an altar here."; "plural",
+# "There are buttercups here."; "mass", "There is glowing fungus here."), glyph, fg, bg (default
+# black), walkable (default true), transparent (default true), move_cost (what a step onto it costs, in percent of a normal step,
 # the `step` cost in actions.toml; default 100; local levels only), opens_to / closes_to (doors),
 # breaks_to and sturdiness (closed doors: a kick breaks the door into this
 # terrain with a chance of the kicker's Strength score in its sturdiness; both or

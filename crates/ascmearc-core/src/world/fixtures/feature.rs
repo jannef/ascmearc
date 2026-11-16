@@ -6,7 +6,7 @@
 //! beside it.
 
 use crate::Pos;
-use crate::content::Content;
+use crate::content::{Content, Noun};
 use crate::geom::Dir;
 use crate::world::{World, WorldState};
 
@@ -20,7 +20,7 @@ pub(in crate::world) fn standing(state: &WorldState) -> StoodOn {
 }
 
 /// What the player is told of the feature at `p`, if the ground there is one: "There is an
-/// altar here.", with its look-mode description after, if it has one, and the note of the place
+/// altar here." (by its [`Noun`]: "There are buttercups here.", "There is glowing fungus here."), with its look-mode description after, if it has one, and the note of the place
 /// there, if any (an inscription).
 fn feature_at(state: &WorldState, content: &Content, p: Pos) -> Option<String> {
     let level = state.current();
@@ -30,8 +30,11 @@ fn feature_at(state: &WorldState, content: &Content, p: Pos) -> Option<String> {
         return None;
     }
     let name = &def.name;
-    let a = crate::text::article(name);
-    let mut line = format!("There is {a} {name} here.");
+    let mut line = match def.noun {
+        Noun::One => format!("There is {} {name} here.", crate::text::article(name)),
+        Noun::Plural => format!("There are {name} here."),
+        Noun::Mass => format!("There is {name} here."),
+    };
     let note = level
         .place(content, p)
         .and_then(|place| place.note.as_deref());
@@ -70,17 +73,23 @@ pub(in crate::world) fn feature_lines(
 
 impl World {
     /// If the player has come to another cell (or level) since it was last called, names the
-    /// features they arrive at. A step calls it before saying what lies there (`travel.rs`);
-    /// `perceive` calls it after every action for every other way of arriving.
+    /// features they arrive at. `perceive` calls it after every action for every way of arriving
+    /// a step has not already told (a step tells them in its one arrival line, `enter.rs`).
     pub(in crate::world) fn announce_feature(&mut self) {
+        for text in self.arrival_features() {
+            self.say(text);
+        }
+    }
+
+    /// The lines [`World::announce_feature`] says, marking the arrival told: none if the player
+    /// stands where they stood at the last call.
+    pub(in crate::world) fn arrival_features(&mut self) -> Vec<String> {
         let here = standing(&self.state);
         if self.stood_on == here {
-            return;
+            return Vec::new();
         }
         let from = (self.stood_on.0 == here.0).then_some(self.stood_on.1);
         self.stood_on = here;
-        for text in feature_lines(&self.state, &self.content, from) {
-            self.say(text);
-        }
+        feature_lines(&self.state, &self.content, from)
     }
 }
