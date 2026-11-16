@@ -278,7 +278,9 @@ fn potion_lines(stack: &Stack, lore: Lore<'_>) -> Vec<Line> {
     }
     // What its cures end, by the statuses' names ("Bleeding").
     let cured: Vec<String> = (content.status_ids())
-        .filter(|(_, s)| drink.does.cures().iter().any(|c| s.cured_by.contains(c)))
+        .filter(|(_, s)| {
+            (drink.does.cure_means().iter()).any(|c| s.cured_by.iter().any(|b| b == c))
+        })
         .map(|(_, s)| s.name.to_lowercase())
         .collect();
     let cures = crate::text::and_list(&cured.iter().map(String::as_str).collect::<Vec<_>>());

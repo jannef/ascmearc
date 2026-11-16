@@ -128,7 +128,7 @@ impl World {
         };
         let mut done = false;
         if let Some(heal) = effect.heal {
-            self.restore_hp(heal);
+            self.restore_hp(heal, events);
             done = true;
         }
         if !effect.cure.is_empty() {
@@ -297,17 +297,17 @@ impl World {
         done
     }
 
-    /// Hit points back: `heal`'s roll, half the maximum, or all of them, never past it.
-    fn restore_hp(&mut self, heal: Amount) {
+    /// Hit points back by magic ([`World::heal_by_magic`]: bleeding stops too): `heal`'s roll,
+    /// half the maximum, or all of them, never past it.
+    fn restore_hp(&mut self, heal: Amount, events: &mut Vec<Event>) {
         let content = self.content.clone();
         let roll = match heal {
             Amount::Dice(d) => d.roll(&mut draw!(self, "outcome/restore_hp/player")),
             Amount::Half => self.state.player().max_hp(&content) / 2,
             Amount::Full => i32::MAX,
         };
-        let me = self.player_mut();
-        let max = me.max_hp(&content);
-        me.hp = me.hp.saturating_add(roll.max(0)).min(max).max(me.hp);
+        let player = self.state.player;
+        self.heal_by_magic(player, roll, events);
     }
 
     /// Mana back: `mana`'s roll, half the maximum, or all of it, never past it.

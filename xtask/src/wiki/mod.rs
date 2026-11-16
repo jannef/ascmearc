@@ -956,7 +956,7 @@ mod tests {
         assert!(
             potions.contains(
                 "| Potion of healing `!` | heal | 2d8 hit points back at once, never past your \
-                 maximum | spills uselessly; range 3 | red (`#c83c3c`) | 15 Toughness | item \
+                 maximum; ends Bleeding | spills uselessly; range 3 | red (`#c83c3c`) | 15 Toughness | item \
                  level 1, frequency 60 | 40 gold |"
             ),
             "{potions}"
@@ -1752,8 +1752,8 @@ mod tests {
                 "| Costs a hit point every 40 seconds, faster the worse it is; hit points do not \
                  come back; shows on others as \"bleeding\" | ",
                 "| Big hits and confirmed criticals; the attacks of 11 creatures; ",
-                "| A degree a minute; ended at once by potion of full healing, potion of greater \
-                 healing, a priest's prayer, the Heal skill (binds it), ",
+                "| A degree a minute; ended at once by any magical healing, a priest's prayer, the \
+                 Heal skill (binds it), ",
             ],
         );
         for row in [

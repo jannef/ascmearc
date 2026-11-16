@@ -1,4 +1,5 @@
-# Wounds bleed: a hit point every 40 seconds for each degree, easing a degree a minute.
+# Wounds bleed: a hit point every 40 seconds for each degree, easing a degree a minute. A
+# bandage stops it, and so does any heal of hit points by magic (`magical_healing`, #1741).
 [[status]]
 id = "bleeding"
 name = "Bleeding"
@@ -10,7 +11,7 @@ damage = 1
 eases = 60
 regen = 0
 wound = { big_hit = 1, critical = 2, from = ["slashing", "piercing"] }
-cured_by = ["bandage"]
+cured_by = ["bandage", "magical_healing"]
 # Bound with the Heal skill: easy for a scratch, hard for a deep wound; try again as often as you
 # like, a quarter of a minute each.
 treat = { difficulty = 6, per_degree = 2, stops = true, made = "You bind the wound.", failed = "The blood still runs." }

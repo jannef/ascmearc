@@ -293,6 +293,7 @@ above.
 | Every status effect, who causes it | `status-list.md`, `status-list.md#who-causes-it` |
 | Disease, incubation, checks | `diseases.md#how-a-disease-goes`, `diseases.md#checks` |
 | Healing, healing paces | `healing.md#how-fast-you-heal` |
+| Magical healing (stops bleeding) | `healing.md#magical-healing` |
 | Getting your health back, every way; curing bleeding, poison, and disease | `healing.md#getting-your-health-back`, `healing.md#curing-bleeding-poison-and-disease` |
 | Mana, mana regeneration | `mana.md#how-much-mana-you-have`, `mana.md#how-fast-it-comes-back` |
 | Mana on a kill | `mana.md#mana-on-a-kill` |

@@ -82,9 +82,9 @@ stop it sooner, trying as often as it takes (see
 **Getting rid of it:** it stops by itself in time. Sooner:
 
 - bind the wound with the Heal skill;
-- drink a [potion of greater healing](potions.md#potion-of-greater-healing) or of
-  [full healing](potions.md#potion-of-full-healing);
-- a [priest](class-priest.md)'s prayer for [wounds](prayer.md#prayer-wounds);
+- any [magical healing](healing.md#magical-healing), even at full health and however deep the
+  wound: a healing potion or spell, a [priest](class-priest.md)'s prayer for
+  [wounds](prayer.md#prayer-wounds), Lay on hands, a healing spring, or rising from the ashes;
 - [Horn's grace](abilities.md#ability-horns-grace), if you were born in the year of the Unicorn;
 - now and then, an answer at a [forgotten altar](altars-forges-springs.md#forgotten-altars).
 

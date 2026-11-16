@@ -56,8 +56,9 @@ pub(super) fn text(content: &Content, effect: &VigourEffect) -> String {
         } => format!(
             "once in your life, a hit, a trap, or a status that would kill you does not (starving \
              and choking still do): you rise with {hp_percent} % of your maximum hit points \
-             (Ashen ones), {damage} {damage_type} damage strikes every creature within {radius} \
-             cell (one roll; no roll to hit) and the ice there melts, and you are {}",
+             (Ashen ones) and any bleeding stops, {damage} {damage_type} damage strikes every \
+             creature within {radius} cell (one roll; no roll to hit) and the ice there melts, \
+             and you are {}",
             status(&id)
         ),
         VigourEffect::RebornWhole => "rising from the ashes brings you back whole: every hit \

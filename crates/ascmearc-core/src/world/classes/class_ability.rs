@@ -216,7 +216,8 @@ impl World {
         Spent::Turn(self.price_of(player, ActionKind::Wait))
     }
 
-    /// Lay on hands: hit points back by the level; with Avatar every hit point, every status
+    /// Lay on hands: hit points back by the level, by magic ([`World::heal_by_magic`]: bleeding
+    /// stops); with Avatar every hit point, every status
     /// that harms as it ticks and every disease cured. Its zeal (Avatar's share of it) was spent
     /// by `use_class`. Takes the time of a `cast`.
     fn lay_on_hands(&mut self, events: &mut Vec<Event>) -> Spent {
@@ -230,14 +231,14 @@ impl World {
             return self.unanswered(ClassActive::LayOnHands);
         }
         if mods.faith.avatar.is_some() {
+            let max = self.state.player().max_hp(&content);
+            self.heal_by_magic(player, max, events);
             let me = self.state.player();
-            let max = me.max_hp(&content);
             let harms: Vec<Effect> = (me.effects.iter())
                 .filter(|e| content.status(e.status).tick.is_some())
                 .copied()
                 .collect();
             let diseases: Vec<_> = me.diseases.iter().map(|i| i.disease).collect();
-            self.heal_player(max);
             for e in &harms {
                 self.player_mut().effects.remove(e.status);
             }
@@ -247,7 +248,7 @@ impl World {
             }
         } else {
             let back = i32::from(hands.per_level) * i32::from(self.player_level());
-            self.heal_player(back);
+            self.heal_by_magic(player, back, events);
         }
         self.say("Warmth flows from your hands.");
         Spent::Turn(self.price_of(player, ActionKind::Cast))
@@ -358,7 +359,8 @@ impl World {
         Spent::Turn(self.price_of(self.state.player, ActionKind::Cast))
     }
 
-    /// The player gets `back` hit points, never past their maximum (nor fewer than they have).
+    /// The player gets `back` hit points, never past their maximum (nor fewer than they have):
+    /// a mundane heal (Veteran's wind); a heal by magic is [`World::heal_by_magic`].
     pub(in crate::world) fn heal_player(&mut self, back: i32) {
         let max = self.state.player().max_hp(&self.content);
         let me = self.player_mut();

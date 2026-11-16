@@ -91,17 +91,14 @@ impl World {
         match &drink.does {
             Draught::Heal { dice, cures } => {
                 let points = dice.roll(&mut draw!(self, "potion/heal/player")).max(0);
-                let max = self.state.player().max_hp(&content);
-                let me = self.player_mut();
-                let before = me.hp;
-                me.hp = me.hp.saturating_add(points).min(max).max(me.hp);
-                let healed = me.hp > before;
+                let player = self.state.player;
+                // A heal by magic (`magic_heal.rs`): bleeding stops too.
+                let healed = self.heal_by_magic(player, points, events) > 0;
                 self.say(if healed {
                     "You feel your wounds close."
                 } else {
                     "You feel healthy."
                 });
-                let player = self.state.player;
                 for cure in cures {
                     self.cure(player, cure, events);
                 }

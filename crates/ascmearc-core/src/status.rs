@@ -41,6 +41,12 @@ use crate::talent::TalentMods;
 use crate::world::ActorId;
 use serde::{Deserialize, Serialize};
 
+/// The means magical healing cures by, named in a status's `cured_by` (#1741): every heal of hit
+/// points by magic (spells, prayers, potions, an altar's or a spring's healing, the Phoenix's
+/// rising) ends every status that lists it, whatever its degree, even when it gives back no hit
+/// point. Bleeding lists it. `world/health/magic_heal.rs` applies it.
+pub const MAGICAL_HEALING: &str = "magical_healing";
+
 fn is_zero(n: &u32) -> bool {
     *n == 0
 }
