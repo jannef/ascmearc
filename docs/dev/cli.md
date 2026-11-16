@@ -609,7 +609,7 @@ thaw:X,Y,R`
 - `read:b:12,5` reads scroll stack `b` at level cell (12, 5) (a spell scroll: fireball,
   lightning, frost, or any scroll of an aimed spell), `read:b` a scroll of a spell on oneself
   (haste) or the scroll of restoration, `read:b:c` reads it on inventory stack `c` (the scroll of
-  identify), and `read:c` on a grimoire is a study of the spell it teaches, the grimoire kept,
+  identify), and `read:c` on a grimoire is a study of the spell it teaches (the grimoire crumbles when it teaches, by chance when not),
   or, for a spell known below rank 10, a deepening to its next rank (rank times the learning
   time, always a check; docs/dev/spells.md "Ranks") (refused, with no time, for a spell known at
   rank 10 or a character not trained in Decipher script; docs/dev/spells.md "Learning").

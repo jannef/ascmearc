@@ -35,20 +35,24 @@ fn begun(app: &App) -> usize {
         .count()
 }
 
-/// A cantrip learned: the list beneath is read again and tells the rank the grimoire would now
-/// deepen the spell to (#1264), and picking it again asks about the deepening, not the learning.
+/// A cantrip learned from one of two grimoires (the read one crumbles, #1742): the list beneath is
+/// read again and tells the rank the other would now deepen the spell to (#1264), and picking it
+/// asks about the deepening, not the learning.
 #[test]
 fn the_list_after_a_grimoire_is_read_tells_what_is_known_now() {
-    let mut app = reading("[\"grimoire_of_light\", \"candle*3\"]");
+    let mut app = reading("[\"grimoire_of_light*2\", \"candle*3\"]");
     press_keys(&mut app, "r");
     assert!(
-        screen(&app).contains("a - ? a grimoire of light (learning: certain)"),
+        screen(&app).contains("a - ? 2 grimoires of light (learning: certain)"),
         "{}",
         screen(&app)
     );
     press_keys(&mut app, "a y");
     let shown = screen(&app);
-    assert!(shown.contains("a - ? a grimoire of light"), "kept: {shown}");
+    assert!(
+        shown.contains("a - ? a grimoire of light"),
+        "one left: {shown}"
+    );
     assert!(!shown.contains("(learning:"), "{shown}");
     assert!(shown.contains("(rank 2 of 10:"), "{shown}");
     insta::assert_snapshot!("grimoire-read-list-after", shown);

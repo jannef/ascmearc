@@ -23,7 +23,7 @@
 //! scroll of fireball."), the scroll of identify's own too.
 //!
 //! **Grimoires** (`learn.rs`) are read too, with no target: the reading is a study of the spell
-//! the grimoire teaches, and the grimoire is kept.
+//! the grimoire teaches; a read that teaches uses the grimoire up, a failed one by chance.
 //!
 //! **The scroll of restoration** casts no spell ([`Reading::Cleanse`], `restore.rs`): read on
 //! oneself, it mends every point of stat damage and gives back every point drains took.

@@ -2,8 +2,8 @@
 source: crates/ascmearc/src/ui/stale_list_tests.rs
 expression: shown
 ---
- Welcome to Hall. Press ? for controls.
  You begin to read the grimoire of light. The words settle in your mind: you have learned Light.
+ The grimoire crumbles to dust.
 
 
 

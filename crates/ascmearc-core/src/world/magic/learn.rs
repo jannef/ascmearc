@@ -29,23 +29,28 @@
 //!   them; a death by it is [`Cause::Scroll`], the grimoire's), mana lost, a teleport (the trap's),
 //!   a stat training mark lost or won, a drain ([`World::drain`]: a Willpower check), a hostile
 //!   summoned next to the reader, or the spell learned anyway.
-//! - **The grimoire is kept** whatever comes of it: it may be read again after a failure (no
-//!   limit but the time), and sold or kept after it taught.
+//! - **The grimoire crumbles** (#1742, [`World::crumble`]): a read that teaches uses it up,
+//!   one of its stack ("The grimoire crumbles to dust."): a spell learned (the "learned anyway"
+//!   mishap too) or a rank gained, so one grimoire gives at most one step. A failed read uses it
+//!   up by [`StudyRules::crumble`] percent, one draw; else it may be read again at once (no
+//!   limit but the time). A refusal or an interrupted study keeps it.
 //! - **Deepening** (#1264, `spell_rank.rs`): the grimoire of a spell already known, below
 //!   [`MAX_SPELL_RANK`], is read for the next rank. The same reading, `rank` times as long (the
 //!   rank sought) and always a check, [`StudyRules::rank_difficulty`] harder (`per_rank` for
 //!   each rank held); the overreach counts as at least 0. Made: the rank is one higher ("The
 //!   words settle deeper: you know Frost at rank 3 of 10."). Failed: "The words add nothing
-//!   new.", the time gone, no mishap, and it may be read again at once (no limit but the
-//!   time). A spell a class gives is deepened like any other.
+//!   new.", the time gone, no mishap, and the grimoire crumbles by chance as above. A spell a
+//!   class gives is deepened like any other.
 //!
 //! Determinism: the check's two draws only when there is a check, the mishap's one draw only on
-//! a failure, then the effect's own (a backfire's damage roll, a drain's, a teleport's hash).
+//! a failure, then the effect's own (a backfire's damage roll, a drain's, a teleport's hash),
+//! then the crumbling's one draw (`learn/crumble/player`) on a failure the reader survives that
+//! taught nothing.
 //! Training: the `study` use (Decipher script, Intelligence) at the end, whatever comes of it;
 //! casting, not learning, trains Spellcraft (#1270).
 
 use super::spell::Caster;
-use crate::action::Event;
+use crate::action::{Event, Positions};
 use crate::character::Character;
 use crate::check;
 use crate::content::{
@@ -278,7 +283,7 @@ impl World {
     }
 
     /// The last turn of a study is done: the check, and the spell learned or a mishap (a
-    /// deepening: the rank gained, or nothing); the grimoire is kept.
+    /// deepening: the rank gained, or nothing); then the grimoire crumbles, or may.
     fn finish_study(&mut self, lesson: Lesson, events: &mut Vec<Event>) {
         let pack = &self.state.player().inventory;
         let at = match pack.get(lesson.item) {
@@ -305,10 +310,12 @@ impl World {
             } else {
                 self.say("The words add nothing new.");
             }
+            self.crumble(lesson, learned);
             return;
         }
         if learned {
             self.learn_spell(lesson.spell);
+            self.crumble(lesson, true);
             return;
         }
         self.say("The words twist away from you.");
@@ -320,6 +327,39 @@ impl World {
         if let Some(mishap) = self.draw_mishap(band) {
             self.mishap(&mishap, lesson, events);
         }
+        // Learned anyway, it taught all the same.
+        let taught = (self.state.player()).knows_spell(&self.content, lesson.spell);
+        self.crumble(lesson, taught);
+    }
+
+    /// The grimoire of `lesson` is used up when its read `taught`, else by the study rules'
+    /// `crumble` chance (one draw): one of its stack goes, "The grimoire crumbles to dust."
+    /// Nothing happens to a dead reader's, or to one no longer carried (module docs).
+    fn crumble(&mut self, lesson: Lesson, taught: bool) {
+        if self.state.death.is_some() {
+            return;
+        }
+        let pack = &self.state.player().inventory;
+        let Some(at) = (match pack.get(lesson.item) {
+            Some(s) if s.object == lesson.object => Some(lesson.item),
+            _ => pack.iter().position(|s| s.object == lesson.object),
+        }) else {
+            return;
+        };
+        if !taught {
+            let chance = self.content.study_rules().map_or(0, |r| r.crumble);
+            if !draw!(self, "learn/crumble/player").chance(u32::from(chance)) {
+                return;
+            }
+        }
+        let player = self.player_mut();
+        let stack = &mut player.inventory[at];
+        stack.count -= 1;
+        if stack.count == 0 {
+            player.inventory.remove(at);
+            player.equipment.after_removal(&Positions::of([at]));
+        }
+        self.say("The grimoire crumbles to dust.");
     }
 
     /// The player knows `spell` at `rank` from now on (module docs: "Deepening").
