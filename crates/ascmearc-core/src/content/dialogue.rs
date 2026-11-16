@@ -155,7 +155,7 @@ pub enum ServiceKind {
     /// Ends every status and disease that prayer cures (`cured_by` lists `prayer`).
     Cure,
     /// Takes off every cursed thing the player wears or wields and lays it at their feet, still
-    /// cursed, paid per slot held (`world/items/curse.rs`, #1754).
+    /// cursed, paid per such thing (`world/items/curse.rs`, #1754).
     Decurse,
     /// Identifies everything the player carries that is not yet identified, paid per stack.
     Identify,
@@ -189,7 +189,7 @@ pub struct Service {
     /// What the player picks: "A cure for what ails you" (the screen adds the price).
     pub name: String,
     /// What it costs, in the shops' currency, before talents; for `identify`, per unidentified
-    /// stack carried; for `decurse`, per slot a cursed thing holds.
+    /// stack carried; for `decurse`, per cursed thing worn or wielded.
     pub price: u32,
     /// What it does.
     pub does: ServiceKind,

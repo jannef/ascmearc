@@ -234,7 +234,7 @@ weapon; `bind_if_cursed` shows the curse after `equip_saying` puts a thing on. *
 `World::throw` hands a cursed thing that fits the main hand to `throw_cursed`, which moves it into
 the main hand (`slots_taken`), what held it back to the pack, for the throw's price, or fails
 for nothing while a bound thing holds the hand. **Decursing**: `ServiceKind::Decurse`
-(docs/dev/npcs.md "Services"), `World::cursed_slots` and `World::decurse` (every bound stack off
+(docs/dev/npcs.md "Services"), `World::cursed_worn` and `World::decurse` (every bound stack off
 and onto the player's cell, still cursed, as `shed_unworn` drops). Shops never stock one
 (`lay_out` is `loot::make`). Tests: `world/items/curse_tests.rs`.
 

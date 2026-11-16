@@ -117,7 +117,7 @@ temple = true
 reply = "There. Whole again, as you were made."
 nothing = "You are whole, child. Go with my blessing."
 
-# Freeing what a curse holds on the player (#1754, world/items/curse.rs): per slot held, worn
+# Freeing what a curse holds on the player (#1754, world/items/curse.rs): per cursed thing, worn
 # and wielded things only; the things fall at their feet, still cursed.
 [[dialogue.service]]
 id = "decurse"

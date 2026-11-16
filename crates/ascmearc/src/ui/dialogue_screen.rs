@@ -38,9 +38,9 @@ pub struct DialogueScreen {
     topics: Vec<(String, String)>,
     /// Per topic, for a service paid per thing: its price per thing and how many things now.
     per_item: Vec<Option<(u32, u32)>>,
-    /// Per topic, whether the things it is paid per are slots a curse holds (a temple's
+    /// Per topic, whether the things it is paid per are cursed things worn (a temple's
     /// decursing, `world/items/curse.rs`), not things the player does not know.
-    per_slot: Vec<bool>,
+    per_cursed: Vec<bool>,
     /// Per topic, for a trader's offer for sale: its price and the item in words.
     wares: Vec<Option<(u32, String)>>,
     /// The gold the player carries.
@@ -59,7 +59,7 @@ impl DialogueScreen {
             line: "There is no one to talk to.".into(),
             topics: Vec::new(),
             per_item: Vec::new(),
-            per_slot: Vec::new(),
+            per_cursed: Vec::new(),
             wares: Vec::new(),
             gold: 0,
             selected: 0,
@@ -90,7 +90,7 @@ impl DialogueScreen {
             .collect();
         let per_item = (talk.topics.iter()).map(|t| t.price.zip(t.items)).collect();
         let services = (actor.dialogue).map(|d| &content.dialogue(d).services);
-        let per_slot = (talk.topics.iter())
+        let per_cursed = (talk.topics.iter())
             .map(|t| {
                 (services.into_iter().flatten())
                     .any(|s| s.id == t.id && s.does == ServiceKind::Decurse)
@@ -108,7 +108,7 @@ impl DialogueScreen {
             line: talk.line.clone(),
             topics,
             per_item,
-            per_slot,
+            per_cursed,
             wares,
             gold: view.own_gold(),
             selected,
@@ -161,8 +161,8 @@ impl DialogueScreen {
         }
         match self.per_item.get(i).copied().flatten() {
             Some((price, items)) if items > 0 && price > 0 => {
-                let slots = self.per_slot.get(i).copied().unwrap_or(false);
-                ScreenAction::Dialog(Box::new(self.pay_dialog(price, (items, slots), ask)))
+                let cursed = self.per_cursed.get(i).copied().unwrap_or(false);
+                ScreenAction::Dialog(Box::new(self.pay_dialog(price, (items, cursed), ask)))
             }
             _ => ScreenAction::Act(ask),
         }
@@ -170,13 +170,13 @@ impl DialogueScreen {
 
     /// The dialog a service paid per thing opens: what it costs in all for the `items` things at
     /// `price` each, and pay (`ask`) or not; without the gold, only going back.
-    /// The things are slots a curse holds with `slots`.
-    fn pay_dialog(&self, price: u32, (items, slots): (u32, bool), ask: Action) -> Dialog {
+    /// The things are cursed things worn with `cursed`.
+    fn pay_dialog(&self, price: u32, (items, cursed): (u32, bool), ask: Action) -> Dialog {
         let total = price.saturating_mul(items);
-        let text = match (slots, items) {
-            (true, 1) => format!("{price} gold to free the one place a curse holds you."),
+        let text = match (cursed, items) {
+            (true, 1) => format!("{price} gold to free you of the one cursed thing you wear."),
             (true, n) => format!(
-                "{price} gold for each of the {n} places a curse holds you: {total} gold in all."
+                "{price} gold for each of the {n} cursed things you wear: {total} gold in all."
             ),
             (false, 1) => format!(
                 "{price} gold for each of the one thing you carry and do not know: {total} gold \
@@ -432,7 +432,7 @@ mod tests {
         assert_eq!(appraisal(0, 500), Err(Box::new(ScreenAction::Act(ask))));
     }
 
-    /// A temple's decursing (#1754) asks first too, in slots a curse holds.
+    /// A temple's decursing (#1754) asks first too, by the cursed things worn.
     #[test]
     fn a_decursing_asks_first_with_the_total_by_slots() {
         let (world, outcome) = at_the_hermit();
@@ -448,7 +448,7 @@ mod tests {
         let mut screen = DialogueScreen::new(Some(&talk), Some(&view));
         screen.gold = 1200;
         // The hermit sells no decursing: say the topic is one, as a temple's is.
-        if let Some(last) = screen.per_slot.last_mut() {
+        if let Some(last) = screen.per_cursed.last_mut() {
             *last = true;
         }
         let ScreenAction::Dialog(dialog) = screen.handle(&Press::typed('7'), &Bindings::default())

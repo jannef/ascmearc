@@ -13,7 +13,7 @@
 //!   nothing falls), for the throw's time. With a bound thing in the main hand already (itself or
 //!   another), the throw fails, taking no time.
 //! - **Released**: a temple's `decurse` service ([`World::decurse`], `world/people/service.rs`)
-//!   takes every bound thing off and lays it at the player's feet, paid per slot held. The items
+//!   takes every bound thing off and lays it at the player's feet, paid per such thing. The items
 //!   stay cursed: put on again, they bind again.
 
 use super::carry::split;
@@ -117,11 +117,11 @@ impl World {
         Spent::Turn(price)
     }
 
-    /// How many slots the player's bound things hold (a two-handed one, both hands): what a
-    /// `decurse` service is paid for.
-    pub fn cursed_slots(&self) -> u32 {
+    /// How many bound things the player wears and wields (a two-handed one once, the owner on
+    /// #1758): what a `decurse` service is paid for.
+    pub fn cursed_worn(&self) -> u32 {
         let me = self.state.player();
-        let held = (me.equipment.iter())
+        let held = (me.equipment.items().into_iter())
             .filter(|&(_, i)| (me.inventory.get(i)).is_some_and(|s| s.is_cursed(&self.content)));
         u32::try_from(held.count()).unwrap_or(u32::MAX)
     }

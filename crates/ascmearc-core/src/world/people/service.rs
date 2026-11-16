@@ -22,8 +22,8 @@
 //!   such stack (not per piece), so the total is the data's price times their count.
 //! - **`decurse`** (#1754): every cursed thing the player wears or wields comes off and falls
 //!   at their feet, still cursed ([`World::decurse`], `world/items/curse.rs`); the pack is never
-//!   looked at. Its price is per slot such a thing holds ([`World::cursed_slots`]: a two-handed
-//!   one counts both hands), all at once or nothing.
+//!   looked at. Its price is per such thing ([`World::cursed_worn`]: a two-handed one counts
+//!   once), all at once or nothing.
 //! - **`train_skill`** (#1391): the player, untrained in the skill its `train` names, is trained
 //!   in it at `train.value` ([`crate::skills::Skills::add`]; a fixed number, no roll), and told
 //!   "Alberich trains you in mining." Offered only while they are untrained in it
@@ -102,7 +102,7 @@ impl World {
             ServiceKind::Identify => {
                 Some(u32::try_from(self.unidentified().len()).unwrap_or(u32::MAX))
             }
-            ServiceKind::Decurse => Some(self.cursed_slots()),
+            ServiceKind::Decurse => Some(self.cursed_worn()),
             _ => None,
         }
     }
@@ -157,7 +157,7 @@ impl World {
             ServiceKind::Identify if self.unidentified().is_empty() => {
                 Some(service.nothing.clone())
             }
-            ServiceKind::Decurse if self.cursed_slots() == 0 => Some(service.nothing.clone()),
+            ServiceKind::Decurse if self.cursed_worn() == 0 => Some(service.nothing.clone()),
             ServiceKind::TrainSkill if !self.service_offered(&service) => {
                 Some(service.nothing.clone())
             }

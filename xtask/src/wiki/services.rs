@@ -39,7 +39,9 @@ pub(super) fn services(content: &Content) -> String {
             };
             let price = match s.does {
                 ServiceKind::Identify => format!("{} gold per unidentified stack", s.price),
-                ServiceKind::Decurse => format!("{} gold per slot a cursed thing holds", s.price),
+                ServiceKind::Decurse => {
+                    format!("{} gold per cursed thing worn or wielded", s.price)
+                }
                 _ => format!("{} gold", s.price),
             };
             rows.push((who.clone(), s.name.clone(), does, price));

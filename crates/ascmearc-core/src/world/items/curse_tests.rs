@@ -11,7 +11,7 @@ use crate::rng::Rng;
 use crate::test_support::texts;
 use crate::world::*;
 
-/// A priest who frees what a curse holds, at 500 gold a slot.
+/// A priest who frees what a curse holds, at 500 gold a cursed thing worn.
 const PRIEST: &str = r##"
 [[dialogue]]
 npc = "priest"
@@ -280,7 +280,7 @@ fn a_cursed_weapon_thrown_leaps_into_the_main_hand() {
 }
 
 #[test]
-fn the_temple_frees_every_slot_for_its_price_and_the_things_stay_cursed() {
+fn the_temple_frees_every_cursed_thing_for_its_price_and_they_stay_cursed() {
     let mut w = world();
     let content = w.content().clone();
     let topic = |w: &World| {
@@ -296,7 +296,7 @@ fn the_temple_frees_every_slot_for_its_price_and_the_things_stay_cursed() {
         last(&w),
         "The old hermit says: \"Nothing cursed clings to you.\""
     );
-    // A cursed ring and cursed boots: two slots, 1000 gold.
+    // A cursed ring and cursed boots: two things, 1000 gold.
     let ring = carry_cursed(&mut w, "iron_ring", "of_hunger", 25);
     let boots = carry_cursed(&mut w, "leather_boots", "plodding", 10);
     run(
@@ -308,7 +308,7 @@ fn the_temple_frees_every_slot_for_its_price_and_the_things_stay_cursed() {
         ),
     );
     assert_eq!(topic(&w), ("decurse".into(), Some(500), Some(2)));
-    assert_eq!(w.cursed_slots(), 2);
+    assert_eq!(w.cursed_worn(), 2);
     let out = run(&mut w, "ask:E:decurse");
     assert!(out.took_turn);
     assert_eq!(gold(&w), 700);
@@ -320,7 +320,7 @@ fn the_temple_frees_every_slot_for_its_price_and_the_things_stay_cursed() {
     ] {
         assert!(said.iter().any(|s| s == t), "{t}: {said:?}");
     }
-    assert_eq!(w.cursed_slots(), 0);
+    assert_eq!(w.cursed_worn(), 0);
     // At the player's feet, still cursed; the pack's cursed ring stays.
     let here = w.player_pos();
     let pile = w.state().current().objects_at(here).to_vec();
@@ -409,7 +409,7 @@ fn curses_are_saved_and_replayed() {
         said.iter().any(|t| t == "What it held falls at your feet."),
         "{said:?}"
     );
-    assert_eq!(w.cursed_slots(), 0);
+    assert_eq!(w.cursed_worn(), 0);
     let played = replay.run(content()).expect("replay verifies");
     assert_eq!(played.state(), w.state());
     let loaded = crate::save::decode(&crate::save::encode(&w), content()).expect("loads");
@@ -418,4 +418,22 @@ fn curses_are_saved_and_replayed() {
     let content = w.content().clone();
     let pile = w.state().current().objects_at(w.player_pos()).to_vec();
     assert!(pile.iter().all(|s| s.known_cursed(&content)), "{pile:?}");
+}
+
+/// A cursed two-handed weapon counts once (the owner, #1758).
+#[test]
+fn a_cursed_two_hander_is_paid_for_once() {
+    let mut w = world();
+    let sword = carry_cursed(&mut w, "great_sword", "leaden", 30);
+    run(&mut w, &format!("equip:main_hand:{}", letter(sword)));
+    let main = w.content().hand_slots().collect::<Vec<_>>();
+    assert!(
+        main.iter()
+            .all(|&s| w.state().player().equipment.get(s) == Some(sword))
+    );
+    assert_eq!(w.cursed_worn(), 1);
+    let out = run(&mut w, "ask:E:decurse");
+    assert!(out.took_turn);
+    assert_eq!(gold(&w), 1200);
+    assert_eq!(w.cursed_worn(), 0);
 }

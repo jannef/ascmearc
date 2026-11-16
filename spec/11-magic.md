@@ -106,7 +106,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - A cursed item, once worn or wielded, will not come off: it cannot be taken off, swapped out, moved, dropped, sold, given, or knocked away ("Your iron ring will not come off.", no time). Everything else about it works.
 - A curse is hidden like any affix until identified; putting the item on (or trying to throw it) shows only that it is cursed, not which affix nor the rest. Known, it says "cursed" in its name and description and shows in a colour of its own; its magic adds nothing to its worth.
 - A cursed weapon is never thrown: it leaps into the main hand and binds there (what held the hand goes back to the pack), for the throw's time; with a bound thing in that hand already, the throw fails for nothing.
-- A temple frees what a curse holds: one price per slot a cursed item holds, worn and wielded things only, all at once or nothing. The items fall at the player's feet, still cursed: worn again, they bind again. No prayer or spell lifts a curse.
+- A temple frees what a curse holds: one price per cursed item worn or wielded (a two-hander counts once), never the pack, all at once or nothing. The items fall at the player's feet, still cursed: worn again, they bind again. No prayer or spell lifts a curse.
 
 ## Scrolls
 

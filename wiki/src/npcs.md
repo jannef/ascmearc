@@ -117,8 +117,8 @@ Negotiation now and then.
 - **Freedom from a curse** (the temples: Sister Hild in Cēaptūn, Mother Senara in Gimmwīc)
   takes off every [cursed item](magic-items.md#cursed-items) you wear or wield, all at once, and
   lays them at your feet. It looks only at what you wear and wield, never at your pack. It costs
-  **500 gold per slot** a cursed item holds: a cursed ring and cursed boots cost 1000, and a
-  cursed two-handed weapon counts both hands. You pay for all or nothing. The items stay cursed:
+  **500 gold per cursed item** you wear or wield: a cursed ring and cursed boots cost 1000, and a
+  cursed two-handed weapon counts once. You pay for all or nothing. The items stay cursed:
   put one on again and it binds you again.
 - **Training** teaches you a [skill](skills.md) you do not have yet. You start it at a low value
   (5), as if you had just picked it up, and it grows by use like any other. It is offered only
