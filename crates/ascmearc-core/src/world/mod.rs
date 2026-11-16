@@ -572,6 +572,9 @@ pub struct World {
     /// Whether the player is waiting, which is searching (#1326; not saved): sounds heard then
     /// train Listen.
     waiting: bool,
+    /// Whether the player's step this turn was a Swim check already (not saved; `swim.rs`): the
+    /// turn asks no second.
+    stroked: bool,
     /// Whether the player is running ([`World::run`]; not saved: a run is one action): a run
     /// seen through to its end trains no Willpower (`keep_at`).
     running: bool,
@@ -1112,6 +1115,7 @@ impl World {
             mutters: Vec::new(),
             resting: false,
             waiting: false,
+            stroked: false,
             running: false,
             perceived_at: time,
             stood_on,
@@ -1284,6 +1288,7 @@ impl World {
             return Outcome::default();
         }
         self.fallen.clear();
+        self.stroked = false;
         let (turn, time) = (self.state.turn, self.state.time);
         let mut events = Vec::new();
         let load = self.load_of(self.state.player);

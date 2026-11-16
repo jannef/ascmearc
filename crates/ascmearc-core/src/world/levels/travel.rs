@@ -167,7 +167,9 @@ impl World {
             if self.stance(player, target) == Stance::Hostile || self.dummy(target).is_some() {
                 return self.strike_at(target, seen, events);
             }
-            let refusal = (self.refusal(target)).or(self.swimming().then_some(Refusal::Water));
+            // One that swims may take the swimmer's place in the water (`swim.rs`).
+            let water = self.swimming() && !self.swims(target);
+            let refusal = (self.refusal(target)).or(water.then_some(Refusal::Water));
             if let Some(why) = refusal {
                 match self.wriggle(target, why, to, seen) {
                     Wriggled::No => {

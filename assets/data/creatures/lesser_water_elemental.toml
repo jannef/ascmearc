@@ -17,6 +17,7 @@ sight = 10
 footsteps = 30
 hearing = 10
 weight = 150000
+swims = true
 stats = { strength = 14, dexterity = 12, toughness = 15, intelligence = 2, willpower = 18, presence = 2 }
 base_hp = 18
 resist = { fire = 50, piercing = 50, electricity = -50 }

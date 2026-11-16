@@ -25,7 +25,8 @@ of a spell you know at rank 10 only tells you so, and takes no time.
 **A grimoire teaches you once.** When a reading succeeds, the grimoire crumbles to dust: "The
 grimoire crumbles to dust." That goes for a spell learned and for a [rank](#spell-ranks) gained.
 If you carry a stack of the same grimoire, one of them goes. A reading that fails may crumble it
-too, by a chance given below the table of chances. So once you know a spell, a spare copy of
+too, by a chance given below the table of chances. A swim in [deep water](terrain.md#deep-water)
+may ruin a grimoire as it does a scroll ([Scrolls and water](scrolls.md#scrolls-and-water)). So once you know a spell, a spare copy of
 its grimoire is worth keeping to deepen the spell, or worth selling. A reading you stop, or one
 the game refuses, never harms the grimoire.
 

@@ -17,6 +17,7 @@ sight = 10
 footsteps = 30
 hearing = 10
 weight = 1000000
+swims = true
 stats = { strength = 21, dexterity = 17, toughness = 22, intelligence = 20, willpower = 25, presence = 20 }
 base_hp = 65
 natural = { defence = 1, protection = 0, name = "flowing body" }

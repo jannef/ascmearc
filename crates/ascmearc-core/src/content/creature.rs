@@ -228,6 +228,9 @@ pub(super) struct CreatureSpec {
     /// Whether it opens closed doors in its way.
     #[serde(default)]
     pub opens_doors: bool,
+    /// Whether it swims: it goes into deep water, and always makes its Swim checks.
+    #[serde(default)]
+    pub swims: bool,
     /// Whether it lurks: waits where it stands for a hostile it sees to come beside it.
     #[serde(default)]
     pub lurks: bool,
@@ -453,6 +456,7 @@ impl Default for CreatureSpec {
             range: None,
             spells: Vec::new(),
             opens_doors: false,
+            swims: false,
             lurks: false,
             hunts: false,
             shadowy: false,
@@ -847,6 +851,7 @@ impl CreatureSpec {
             range: self.range.unwrap_or(1),
             spells: r.spells,
             opens_doors: self.opens_doors,
+            swims: self.swims,
             lurks: self.lurks,
             hunts: self.hunts,
             shadowy: self.shadowy,
@@ -1001,6 +1006,9 @@ pub struct CreatureDef {
     pub spells: Vec<super::SpellId>,
     /// Whether it opens closed doors in its way.
     pub opens_doors: bool,
+    /// Gameplay: whether it swims: deep water is open to its steps and paths, as ground is
+    /// (`world/levels/swim.rs`). Rules only.
+    pub swims: bool,
     /// Whether it lurks (`ai.rs::fight`): a hostile it sees, it
     /// waits for where it stands until the hostile is beside it or it has been harmed. Rules only.
     pub lurks: bool,

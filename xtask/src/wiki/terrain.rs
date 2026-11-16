@@ -44,7 +44,8 @@ pub(super) fn local_terrain(content: &Content) -> String {
             notes.push("door: walking into it opens it".to_string());
         }
         if t.swim {
-            notes.push("only a swimmer goes in, after being asked; no creature does".to_string());
+            notes
+                .push("you swim it, after being asked; only creatures that swim go in".to_string());
         }
         if let Some((to, sturdiness)) = t.kicked_in {
             let broken = content.terrain(to).name.to_lowercase();
