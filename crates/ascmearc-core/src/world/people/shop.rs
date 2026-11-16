@@ -85,6 +85,13 @@ pub struct Shop {
     pub unpaid: Vec<Stack>,
     #[serde(default, skip_serializing_if = "ShopStatus::is_open")]
     pub status: ShopStatus,
+    /// The player level its goods are restocked up to (`restock.rs`); 0 until the first.
+    #[serde(default, skip_serializing_if = "is_zero")]
+    pub stocked: u8,
+}
+
+fn is_zero(n: &u8) -> bool {
+    *n == 0
 }
 
 impl Shop {
@@ -117,6 +124,7 @@ impl Shop {
             exits,
             unpaid: Vec::new(),
             status: ShopStatus::Open,
+            stocked: 0,
         }
     }
 

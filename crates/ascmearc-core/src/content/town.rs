@@ -10,6 +10,13 @@
 //! servant (Stipend; `[dialogue.stipend]` words), a merchant's business partner (Invest,
 //! `world/classes/invest.rs`; `[dialogue.partner]` words), a craftsperson's patron (Patron,
 //! `world/crafting/patron.rs`; `[dialogue.patron]` words).
+//!
+//! A town's `levels` are its own (Cēaptūn's market, Gimmwīc's streets): their shops are its
+//! shops, and their folk talk of its trade. Its `[town.restock]` (#1735; `world/people/restock.rs`)
+//! raises the item level its shops restock at: `quests`, hundredths of an item level for each
+//! quest named once it is done (Fire in the deep, A letter for the deep), and `invest`, the
+//! percent of a merchant's stake's bonus (`data/rules/restock.toml`) it gets, with `after` a
+//! quest that must be done first. Every id is checked as the towns load.
 
 use super::dialogue::Speaker;
 use super::{Content, ContentError, DialogueId};
@@ -25,11 +32,20 @@ pub struct TownDef {
     pub name: String,
     /// Its people: who speaks for it, by npc or creature id (as a quest's `giver` names them).
     /// Their quests earn its goodwill, and their services are cheaper for it.
+    #[serde(default)]
     pub people: Vec<String>,
     /// How much cheaper, in percent, its people's services are per quest of theirs completed.
+    #[serde(default)]
     pub goodwill: u32,
     /// Said as a quest of its people's is completed: "Cēaptūn's folk think the better of you."
+    #[serde(default)]
     pub told: String,
+    /// Its own levels, by id: their shops are its shops, their folk talk of its trade.
+    #[serde(default)]
+    pub levels: Vec<String>,
+    /// What raises its shops' restocking (see the module docs).
+    #[serde(default)]
+    pub restock: Option<TownRestock>,
     /// The class helpers kept here (`world/classes/stipend.rs`): an aristocrat's servant, a merchant's
     /// business partner.
     #[serde(default, rename = "servant")]
@@ -54,6 +70,29 @@ pub struct TownServant {
     /// by quest id (`world/classes/invest.rs`; Fire in the deep); none for anyone else.
     #[serde(default)]
     pub bonus: std::collections::BTreeMap<String, i32>,
+}
+
+/// What raises a town's restocking (`[town.restock]`; see the module docs).
+#[derive(Clone, Debug, Default, PartialEq, Eq, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct TownRestock {
+    /// Hundredths of an item level for each quest named, by id, once it is done.
+    #[serde(default)]
+    pub quests: std::collections::BTreeMap<String, u32>,
+    /// The share of a merchant's stake's bonus it gets, if any.
+    #[serde(default)]
+    pub invest: Option<InvestShare>,
+}
+
+/// The share of a merchant's stake's bonus a town gets (`invest = { share = 50, after = "..." }`).
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct InvestShare {
+    /// In percent.
+    pub share: u32,
+    /// A quest that must be done first, by id; none: always.
+    #[serde(default)]
+    pub after: Option<String>,
 }
 
 impl TownServant {
@@ -85,6 +124,8 @@ pub(super) fn parse<'a>(
         let parsed: TownFile =
             toml::from_str(text).map_err(|e| ContentError::new(path, e.to_string()))?;
         for town in &parsed.town {
+            check_restock(town, content)
+                .map_err(|m| ContentError::new(path, format!("town `{}`: {m}", town.id)))?;
             for servant in &town.servants {
                 check_servant(servant, content).map_err(|m| {
                     ContentError::new(path, format!("town `{}`: servant: {m}", town.id))
@@ -94,6 +135,21 @@ pub(super) fn parse<'a>(
         towns.extend(parsed.town);
     }
     Ok(towns)
+}
+
+/// A town's levels must be known, and every quest its `[town.restock]` names.
+fn check_restock(town: &TownDef, content: &Content) -> Result<(), String> {
+    if let Some(l) = (town.levels.iter()).find(|l| content.level(l).is_none()) {
+        return Err(format!("unknown level `{l}` in `levels`"));
+    }
+    let Some(restock) = &town.restock else {
+        return Ok(());
+    };
+    let after = (restock.invest.iter()).filter_map(|i| i.after.as_ref());
+    if let Some(q) = (restock.quests.keys().chain(after)).find(|q| content.quest_id(q).is_none()) {
+        return Err(format!("unknown quest `{q}` in `restock`"));
+    }
+    Ok(())
 }
 
 fn check_servant(servant: &TownServant, content: &Content) -> Result<(), String> {
@@ -150,6 +206,13 @@ impl Content {
     /// The towns, in table order.
     pub fn towns(&self) -> &[TownDef] {
         &self.towns
+    }
+
+    /// The town level `level` belongs to (its `levels`), if any (the first).
+    pub fn town_at(&self, level: &str) -> Option<&TownDef> {
+        self.towns
+            .iter()
+            .find(|t| t.levels.iter().any(|l| l == level))
     }
 
     /// The town whose people include whoever speaks dialogue `id`, if any (the first).

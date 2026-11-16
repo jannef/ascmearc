@@ -228,6 +228,96 @@ pub(super) fn shops(content: &Content) -> String {
     out
 }
 
+/// How shops restock as the player gains levels (`data/rules/restock.toml`, #1735): what goes and
+/// comes, the item level of the new goods by the player's level, and each town's bonuses
+/// (`data/towns/`, `[town.restock]`).
+pub(super) fn restock(content: &Content) -> String {
+    let Some(rules) = content.restock() else {
+        return "Shops never restock.\n".to_string();
+    };
+    let hundredths = |n: u32| {
+        let whole = format!("{}.{:02}", n / 100, n % 100);
+        whole
+            .trim_end_matches('0')
+            .trim_end_matches('.')
+            .to_string()
+    };
+    let range = |(lo, hi): (u8, u8)| match lo == hi {
+        true => lo.to_string(),
+        false => format!("{lo} to {hi}"),
+    };
+    let mut out = String::from("| Each level you gain | How much |\n|---|---|\n");
+    let _ = writeln!(out, "| Stacks of goods that go | {} |", range(rules.gone));
+    let _ = writeln!(
+        out,
+        "| New stacks that come | {}, plus anything the shop always has that is gone |",
+        range(rules.come)
+    );
+    let _ = writeln!(
+        out,
+        "| Item level of the new goods | 1, plus {} for each of your levels beyond the first |",
+        hundredths(rules.per_level)
+    );
+    let _ = writeln!(
+        out,
+        "| A shop outside a town | plus {}% of its level's item level |",
+        rules.danger
+    );
+    let scale = rules.invest;
+    let _ = writeln!(
+        out,
+        "| A merchant's stake | plus {} for each {} gold it is worth, at most {} |",
+        hundredths(scale.step),
+        scale.per,
+        hundredths(scale.most)
+    );
+    out.push_str("\nThe item level of a town shop's new goods with no bonus, rounded down:\n\n");
+    let levels = [1u8, 5, 10, 20, 30, 40, 50];
+    out.push_str("| Your level |");
+    for level in levels {
+        let _ = write!(out, " {level} |");
+    }
+    out.push_str("\n|---|");
+    out.push_str(&"---:|".repeat(levels.len()));
+    out.push_str("\n| Item level |");
+    for level in levels {
+        let _ = write!(out, " {} |", rules.item_level(level, 0, 0));
+    }
+    out.push_str("\n\nWhat raises a town's restocking, in item levels:\n\n");
+    out.push_str("| Town | What | Item levels |\n|---|---|---|\n");
+    for town in content.towns() {
+        let Some(restock) = &town.restock else {
+            continue;
+        };
+        for (quest, &bonus) in &restock.quests {
+            let name = (content.quest_id(quest)).map_or(quest.as_str(), |q| &content.quest(q).name);
+            let _ = writeln!(
+                out,
+                "| {} | {name} done | plus {} |",
+                town.name,
+                hundredths(bonus)
+            );
+        }
+        if let Some(invest) = &restock.invest {
+            let after = (invest.after.as_deref())
+                .and_then(|q| content.quest_id(q))
+                .map(|q| format!(", once {} is done", content.quest(q).name))
+                .unwrap_or_default();
+            let share = match invest.share {
+                100 => "all of it".to_string(),
+                50 => "half of it".to_string(),
+                n => format!("{n}% of it"),
+            };
+            let _ = writeln!(
+                out,
+                "| {} | A merchant's stake | {share}{after} |",
+                town.name
+            );
+        }
+    }
+    out
+}
+
 /// What magic adds to an item's worth (`data/rules/magic_worth.toml`): by rarity, then by each
 /// identified affix's tier level (the affixes' tiers run to item level 12).
 pub(super) fn magic_worth(content: &Content) -> String {

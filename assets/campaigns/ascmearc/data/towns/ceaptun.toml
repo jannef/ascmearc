@@ -11,6 +11,15 @@ name = "Cēaptūn"
 people = ["eadric", "godgifu", "hild", "leofric", "wat", "wulfrun"]
 goodwill = 5
 told = "Cēaptūn's folk think the better of you."
+levels = ["ceaptun"]
+
+# Its shops' restocking (#1735; data/rules/restock.toml, world/people/restock.rs): hundredths of
+# an item level more for each quest named once it is done (Fire in the deep: the drake dealt with
+# and the mines open again; A letter for the deep: trade with Gimmwīc's deep gnomes), and the
+# whole of a merchant's stake's bonus.
+[town.restock]
+quests = { fire_deep = 200, gnome_letter = 100 }
+invest = { share = 100 }
 
 # Class helpers (`[[town.servant]]`, world/classes/stipend.rs), each in the run of a character with the
 # class ability `talent` only: the creature type for the player's gender (`creature`), of their

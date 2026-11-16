@@ -140,6 +140,7 @@ mod recipe;
 mod recipe_tests;
 pub mod required;
 mod resource;
+mod restock;
 mod rig;
 mod rod;
 #[cfg(test)]
@@ -262,8 +263,8 @@ pub use damage_type::{CharColors, DamageTypeDef, DamageTypeId, MAX_DAMAGE_TYPES}
 pub use danger::{Count, DangerRule, PlayerScale, Spawning};
 pub use decipher::DecipherRules;
 pub use dialogue::{
-    AfterLines, Dialogue, DialogueId, GenderWords, Mutter, PartnerWords, PatronWords, ServantWords,
-    Service, ServiceKind, ServiceTraining, Speaker, Topic,
+    AfterLines, Dialogue, DialogueId, EconomyLines, GenderWords, Mutter, PartnerWords, PatronWords,
+    ServantWords, Service, ServiceKind, ServiceTraining, Speaker, Topic,
 };
 pub use disease::{DiseaseDef, DiseaseId, SOURCES, Wading};
 pub use drops::{Drop, DropFrom, DropGoods, TagDrops};
@@ -356,6 +357,7 @@ pub use recipe::{
 };
 pub use required::RequiredIds;
 pub use resource::{Build, MAX_RESOURCE, MaxFrom, OverTime, ResourceDef, ResourceId};
+pub use restock::{InvestScale, RestockRules};
 pub use rig::{RigDef, RigId, RigRules, RigTakes};
 pub use rod::{Rod, RodDoes, RodEffect, RodShape};
 pub use room_effect::{
@@ -416,7 +418,7 @@ pub use temper::TemperRules;
 pub use terrain::{Breakable, Freeze, FreezeSpec, StairsDir, TerrainDef, TerrainId};
 pub use theft::{Blinks, SMALL as SMALL_LOOT, Steals, Takes};
 pub use throw::Throw;
-pub use town::{TownDef, TownServant};
+pub use town::{InvestShare, TownDef, TownRestock, TownServant};
 pub use trap::{Trap, TrapAvoid, TrapDef, TrapDisarm, TrapEffect, TrapHarm, TrapId, TrapNoise};
 pub use tuning::Tuning;
 pub use unique::{Power, UNIQUE, UniqueDef, Uniques};
@@ -645,6 +647,9 @@ pub struct Content {
     /// What magic adds to an item's worth (`data/rules/magic_worth.toml`); none
     /// without the file, when magic adds nothing.
     magic_worth: Option<MagicWorth>,
+    /// How shops restock as the player gains levels (`data/rules/restock.toml`); none without
+    /// the file, when no shop restocks.
+    restock: Option<RestockRules>,
     /// The numbers of intimidating (`data/rules/intimidate.toml`: Intimidate);
     /// none without the file, when nobody intimidates.
     intimidate: Option<IntimidateRules>,
@@ -1081,6 +1086,7 @@ impl Content {
         content.invest = content.load_optional(files)?;
         content.patron = content.load_optional(files)?;
         content.magic_worth = content.load_optional(files)?;
+        content.restock = content.load_optional(files)?;
         content.intimidate = content.load_optional(files)?;
         content.ruin = content.load_or_default(files)?;
         content.swim = content.load_optional(files)?;

@@ -36,6 +36,35 @@ mutter = { chance = 2, lines = [
     "Cart's late. Cart's always late.",
 ] }
 
+# The town's trade (#1735; data/towns/ceaptun.toml `[town.restock]`): hard times while nothing
+# raises the shops' restocking, better times once anything does (the drake dealt with, the letter
+# to the deep gnomes delivered, a merchant's stake).
+[dialogue.economy]
+hard = [
+    "Shelves 'alf bare at Ælfric's, an' what's there is tat. 'Ard times, innit.",
+    "Nuffink new in the shops since the mines shut. Same old rubbish, week on week.",
+    "Coin's tight all over. Nobody's buyin', so nobody's sellin'.",
+]
+better = [
+    "Trade's pickin' up, ain't it. Proper goods in the shops again.",
+    "Eadric's 'ad a cartload o' good iron in. First in months, that.",
+    "Money's movin' again. Even the reeve's smilin', an' 'e never smiles.",
+]
+
+[[dialogue.after]]
+quest = "fire_deep"
+lines = [
+    "Mines are open again! Me cousin's back down the shaft, an' glad of the work.",
+    "That drake's done for, they say. Ore's comin' up, an' coin wiv it.",
+]
+
+[[dialogue.after]]
+quest = "gnome_letter"
+lines = [
+    "Gnomes up from the deep, tradin' stones in the square. Never fought I'd see it.",
+    "Them deep gnomes drive a 'ard bargain, but their goods is lovely.",
+]
+
 # Sister Hild of the Mynster, Cēaptūn's temple: she heals, for gold.
 [[dialogue]]
 npc = "hild"

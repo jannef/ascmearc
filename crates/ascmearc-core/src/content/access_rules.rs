@@ -3,9 +3,9 @@
 use super::{
     AllyRules, CompanionRules, Content, EncounterRules, FamiliarRules, FeintRules, FletchRules,
     ForageRules, GearConditions, HerbRules, HungerDef, IntimidateRules, InvestRules, MagicWorth,
-    MiningRules, PatronRules, PrayerRules, RangedRules, RequiredIds, RigRules, RuinRules,
-    SalvageRules, SearchRules, SmiteRules, StatTraining, StealRules, StipendRules, SurpriseRules,
-    SwimRules, TagDrops, TemperRules, Tuning,
+    MiningRules, PatronRules, PrayerRules, RangedRules, RequiredIds, RestockRules, RigRules,
+    RuinRules, SalvageRules, SearchRules, SmiteRules, StatTraining, StealRules, StipendRules,
+    SurpriseRules, SwimRules, TagDrops, TemperRules, Tuning,
 };
 
 impl Content {
@@ -119,6 +119,12 @@ impl Content {
     /// `None` without the file, when magic adds nothing.
     pub fn magic_worth(&self) -> Option<&MagicWorth> {
         self.magic_worth.as_ref()
+    }
+
+    /// How shops restock as the player gains levels (`data/rules/restock.toml`); `None` without
+    /// the file, when no shop restocks.
+    pub fn restock(&self) -> Option<&RestockRules> {
+        self.restock.as_ref()
     }
 
     /// The numbers of intimidating (Intimidate; `data/rules/intimidate.toml`);

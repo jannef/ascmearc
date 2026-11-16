@@ -44,7 +44,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - A material's properties are measured against steel's: weight, weapon and armour modifiers, worth, how often it is found, how hard it is to work, how well it holds magic, and how it stands up to acid, rust, and fire. A proof material is never damaged.
 - Uniques, items of proof, and objects a quest asks for are never damaged.
 - An item may be made of another material from its part's list. That changes its weight, combat numbers, Protection, worth, colour, and name. The base material dominates; another is rare, weighted by how well it suits the item. A faction may favour materials for its gear.
-- Shop stock is always plain. A hand-made level keeps its legend's gear as written unless a placement names a material.
+- Shop stock is always of its base material. A hand-made level keeps its legend's gear as written unless a placement names a material.
 - Gems are materials. A loose gem has a size and a cut that set its worth. A gem set in an item adds only worth, no rules effect.
 - Pieces (ingots, billets, hides, and the like) are the only raw material. The professions use them as stock. Breaking an item gives its parts back as pieces and loose gems and loses its magic.
 - A creature's body leaves crafting stock decided by its tags. A body turned to stone and a summoned ally leave none.

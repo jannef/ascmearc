@@ -12,14 +12,16 @@
 //! is laid with stock: between the kind's least and most stacks (as many as there are free
 //! cells), one a cell, first what its kind always lays out (`always`: the general store's
 //! scrolls of identify), then each drawn from what it stocks by its loot `frequency` (100 for
-//! what is never loot), so a spell scroll of a low tier lies there more often than one of a high
-//! tier, a stackable one in a bundle.
+//! what is never loot, `Shops::goods`), so a spell scroll of a low tier lies there more often
+//! than one of a high tier, a stackable one in a bundle. Each is made as loot is at the item
+//! level `data/rules/restock.toml` gives a level-1 player on a floor this deep (`Shops::lay_out`:
+//! its magic and an ornament, never another material), so a shop deep down lays out better goods
+//! (#1735).
 
 use super::Canvas;
-use crate::content::{ObjectId, ShopPlan};
+use crate::content::ShopPlan;
 use crate::geom::{Dir, Pos};
 use crate::magic::loot::pick_weighted;
-use crate::object::Stack;
 use crate::rng::Rng;
 
 /// A room the rooms generator offers for a shop: its interior corners (inclusive) and its one
@@ -76,20 +78,8 @@ pub(super) fn place(canvas: &mut Canvas, rng: &mut Rng, candidates: &[Candidate]
     };
     light(canvas, room, front, post);
     let content = canvas.content;
-    // The stock to draw from, by object id (the string): the same draw lays out the same stock
-    // however the object files are ordered (docs/dev/content.md).
-    let mut goods: Vec<ObjectId> = (0..content.object_defs().len())
-        .map(|o| ObjectId(o as u16))
-        .filter(|&o| shops.stocks(content, kind, o))
-        .collect();
-    goods.sort_by(|a, b| content.object(*a).id.cmp(&content.object(*b).id));
-    // Weighed by loot frequency: a low tier's spell scroll lies there more often.
-    let goods: Vec<(ObjectId, u32)> = (goods.into_iter())
-        .map(|o| match content.object(o).frequency {
-            0 => (o, 100),
-            f => (o, f),
-        })
-        .collect();
+    let goods = shops.goods(content, kind);
+    let made_at = (content.restock()).map_or(1, |r| r.item_level(1, canvas.item_level, 0));
     let mut cells: Vec<Pos> = (room.cells())
         .filter(|&p| p != front && p != post && canvas.is_free_floor(p))
         .filter(|p| !canvas.objects.contains_key(p))
@@ -102,20 +92,12 @@ pub(super) fn place(canvas: &mut Canvas, rng: &mut Rng, candidates: &[Candidate]
     for (i, &p) in cells.iter().take(count).enumerate() {
         let object = match always.get(i) {
             Some(&object) => object,
-            // A spell scroll drawn may be its grimoire.
             None => match pick_weighted(rng, &goods) {
-                Some(&object) => content.grimoire_or(rng, object),
+                Some(&object) => object,
                 None => break,
             },
         };
-        let count = if content.object(object).stackable {
-            let (lo, hi) = shops.bundle;
-            rng.range(lo as i32, hi as i32) as u32
-        } else {
-            1
-        };
-        let mut stack = Stack::new(object, count);
-        stack.draw_wand_rung(content, rng);
+        let stack = shops.lay_out(content, rng, object, made_at);
         canvas.objects.insert(p, vec![stack]);
     }
     let mut spawn = shops.keeper_spawn(post);

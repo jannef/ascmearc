@@ -1,0 +1,26 @@
+# Shops restock as the player gains levels (#1735; crates/ascmearc-core/src/content/restock.rs,
+# world/people/restock.rs). Each level the player gains for the first time, every shop whose
+# keeper still trades takes some of its goods off the floor and lays out new ones, drawn from
+# what its kind stocks (data/shops.toml) and made at an item level that climbs slowly with the
+# player's level. A shop on a level not yet visited catches up as the level is first made. A
+# general store's scrolls of identify (a kind's `always`) never go, and come back first when sold.
+#
+# Fields:
+#   gone       [least, most]: how many stacks of goods go, each level gained
+#   come       [least, most]: how many new stacks come (as many as the free shop floor holds)
+#   per_level  hundredths of an item level for each player level beyond the first
+#   danger     percent of the level's item level (a dungeon floor's depth) added for a shop in
+#              no town: a shop deep down stocks better, as it is made and at each restock
+#   invest     a merchant's stake with their business partner (Invest) raises the restocking of
+#              the towns that name it (data/towns/, `[town.restock] invest`): `step` hundredths
+#              for each `per` gold it is worth, at most `most`
+#
+# The item level is 1 + per_level × (player level − 1) / 100 + danger × the level's item level /
+# 100 + the town's bonus / 100, rounded down: a level-10 character's Cēaptūn restocks at item
+# level 4, a level-30 one's at 12; a shop ten floors down restocks at 9 for the level-10 one.
+
+gone = [1, 3]
+come = [1, 3]
+per_level = 40
+danger = 50
+invest = { per = 1000, step = 50, most = 300 }

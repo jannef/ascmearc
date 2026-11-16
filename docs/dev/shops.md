@@ -28,8 +28,10 @@ dialogue it then speaks, #1394, and an optional `creature`, the keeper's creatur
 the `[keeper]`'s, with its kit, Gimmwīc's deep gnomes, #1434; generated: `mapgen/shop.rs`, last after special
 rooms, rooms levels only, from the map stream, by the branch's `ShopOdds`: its own `shops` table
 or the shared odds, docs/dev/mapgen.md; each stack after `always` drawn from what the kind
-stocks by its loot `frequency`, 100 for what is never loot, `magic::loot::pick_weighted`, one
-draw, so spell scrolls come by spell level, #397) whose keeper is spawned at its post; at
+stocks by its loot `frequency`, 100 for what is never loot, `Shops::goods` and
+`magic::loot::pick_weighted`, one draw, so spell scrolls come by spell level, #397, then made by
+`Shops::lay_out` at the item level "Restocking" below gives a level-1 player on the floor,
+`Canvas::item_level`) whose keeper is spawned at its post; at
 instantiation it becomes a `world::Shop` in `LevelState::shops` (saved, hashed; format 30): the
 keeper's actor id, its `exits` (the cells around the floor that could be walked onto or were
 doors when the level was made: the door), `unpaid` (what the player owes, counted by goods: an
@@ -79,3 +81,25 @@ a good keeper makes of their alignment band, `world/character/alignment.rs::keep
 `MAX_FAVOUR`) is never shown: presentation reads only prices
 (`PerceptionView::shop_at`/`shop_here`, `price_tag`, `unpaid`, `owed_on_leaving`, `sale`,
 `own_gold`; look mode, the object screens, and the shop's dialogs in `ui/step_dialogs.rs`).
+
+## Restocking
+
+Shops restock as the player gains levels (#1735). The numbers are `data/rules/restock.toml`
+(`content/restock.rs`, `RestockRules`, optional: without it nothing restocks and generated stock
+is made at item level 1); the rules are `world/people/restock.rs` (its module docs say each step).
+`World::restock_shops` is called from `experience.rs::rise_from` and after a level is first
+made in `travel.rs` (`travel`, `visit`): every shop of every level in `WorldState::levels` (all
+levels made are kept there, so none waits on a visit) catches up from `Shop::stocked` (saved,
+hashed, left out while 0, so a level-1 run hashes as before) to the player's level, one
+`World::restock` per level, each from its own stream `restock/<level>/<shop index>/<player
+level>`. A level made later catches up as it is made, with the bonuses of that moment; a level
+lost and regained restocks nothing. Only an open shop restocks (its `stocked` still moves).
+The item level is `RestockRules::item_level(player level, danger, bonus)`: `danger` is
+`Content::item_level` of a level in no town, 0 in one; `bonus` is `World::restock_bonus(town)`,
+derived from the quest records and `WorldState::fund` (never saved): the town file's
+`[town.restock]` (`content/town.rs`, `TownRestock`: `quests` in hundredths, `invest = { share,
+after }`), and a town's level is `TownDef::levels` (`Content::town_at`). Every id is checked at
+load; the Rust names no town or quest. Goods are made by `Shops::lay_out` (`magic::loot::make`:
+magic and an ornament, never another material, spec/06-content.md). The townsfolk's talk of it
+is `[dialogue.economy]` (docs/dev/npcs.md). The wiki's table is `xtask/src/wiki/objects.rs::restock`.
+Tests: `world/people/restock_tests.rs`, `content/restock.rs`.

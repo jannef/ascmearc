@@ -1,0 +1,17 @@
+# Gimmwīc, the deep gnomes' town at the bottom of Dēopgang (levels/gimmwic.toml; #1434). It keeps
+# no goodwill of its own; it names its level, so its shops are its own and its folk talk of its
+# trade (data/dialogue/gimmwic.toml).
+#
+# Fields: id, name, levels (its own levels), and [town.restock] (#1735; data/rules/restock.toml,
+# world/people/restock.rs): hundredths of an item level more on its shops' restocking for each
+# quest named once it is done, and the share of a merchant's stake's bonus it gets, in percent,
+# once its `after` quest is done. A letter for the deep opens trade with Cēaptūn: Gimmwīc restocks
+# better, and half of a merchant's Cēaptūn stake works for it too.
+[[town]]
+id = "gimmwic"
+name = "Gimmwīc"
+levels = ["gimmwic"]
+
+[town.restock]
+quests = { gnome_letter = 100 }
+invest = { share = 50, after = "gnome_letter" }

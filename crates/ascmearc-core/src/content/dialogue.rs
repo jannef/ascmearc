@@ -20,7 +20,11 @@
 //! action that it mutters one of the mutter's `lines` (with a `verb`, "mutters" by default) while
 //! the player is near enough to hear it. `[[dialogue.after]]` (`quest`, `lines`): one-liners
 //! that join its `lines` once the player has done that quest (Kerensa's about the bound crystal
-//! guardian; the quest ids are checked as the quests load).
+//! guardian; the quest ids are checked as the quests load). `[dialogue.economy]` (`hard`,
+//! `better`): one-liners that join its `lines` while it is in a town (`content/town.rs`, its
+//! `levels`), the `better` ones while anything raises the town's restocking beyond the player's
+//! level (its `[town.restock]`: a quest done, a merchant's stake; `world/people/restock.rs`),
+//! the `hard` ones while nothing does (#1735).
 
 use super::creature::CreatureId;
 use super::{Content, ContentError};
@@ -64,6 +68,18 @@ struct DialogueSpec {
     patron: Option<PatronWords>,
     #[serde(default)]
     after: Vec<AfterLines>,
+    economy: Option<EconomyLines>,
+}
+
+/// One-liners about a town's trade (`[dialogue.economy]`, #1735): said in a town, the `better`
+/// ones while anything raises its shops' restocking, the `hard` ones while nothing does.
+#[derive(Clone, Debug, Default, PartialEq, Eq, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct EconomyLines {
+    #[serde(default)]
+    pub hard: Vec<String>,
+    #[serde(default)]
+    pub better: Vec<String>,
 }
 
 /// One-liners a speaker adds to its own once the player has done a quest (`[[dialogue.after]]`).
@@ -295,6 +311,8 @@ pub struct Dialogue {
     pub lines: Vec<String>,
     /// One-liners that join `lines` once the player has done a quest, in file order.
     pub after: Vec<AfterLines>,
+    /// One-liners about the town's trade that join `lines` in a town.
+    pub economy: Option<EconomyLines>,
     /// What the player may ask about; with any, chatting opens the dialogue screen.
     pub topics: Vec<Topic>,
     /// What the speaker sells as a service, listed after the topics.
@@ -548,6 +566,7 @@ fn parse_file<'a>(
             greet_good: spec.greet_good,
             lines: spec.lines,
             after: spec.after,
+            economy: spec.economy,
             topics: spec.topic,
             services: spec.service,
             offer,
