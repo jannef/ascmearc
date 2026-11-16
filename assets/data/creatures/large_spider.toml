@@ -23,6 +23,8 @@ size = "small"
 stats = { strength = 10, dexterity = 14, toughness = 6, intelligence = 1, willpower = 10, presence = 3 }
 base_hp = 1
 tameable = true
+# Idle, it webs its corner now and then (world/creatures/spin.rs); a tamed one spins nothing.
+spins = { chance = 10, cooldown = 90, most = 4 }
 depart = "scuttles back into the dark"
 on_eat = { message = "Bitter, and it disagrees with you.", vomit = 25 }
 # Greenish ichor.

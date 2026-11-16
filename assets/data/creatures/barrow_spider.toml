@@ -24,6 +24,8 @@ size = "small"
 stats = { strength = 8, dexterity = 16, toughness = 5, intelligence = 1, willpower = 10, presence = 3 }
 # It bites the unwary from where it lurks.
 skills = { sneak_attack = 10, initiative = 20 }
+# Idle, it webs its corner now and then (world/creatures/spin.rs).
+spins = { chance = 15, cooldown = 60, most = 4 }
 on_eat = { message = "Bitter, and your tongue goes numb.", vomit = 30, harm = "1d3" }
 blood = "#3a4a2a"
 [creature.attack]

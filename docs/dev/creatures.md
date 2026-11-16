@@ -278,6 +278,8 @@ from you!" ("Something" unseen); "The blink dog is suddenly beside you." where t
 it land, nothing unseen. **Wiki**: `creature_thieves` and `creature_blinks`
 (`creature-thieves.md`, `creature-blinks.md`, "Thieves" and "Blinkers" in
 `creature-numbers.md`). **Tests**: `world/skills/theft_tests.rs`. No talent (design §11).
+Spinning (#1746): `spins = { chance, cooldown, most }`, `Plan::Spin(at)`; docs/dev/webs.md
+"Spinning".
 The disarming blow (#1166). **Data**: `disarms = { chance, difficulty }` on a type
 (`CreatureSpec::disarms`, `CreatureDef::disarms: Option<Disarms>`, `content/creature.rs`).
 **Rules**:

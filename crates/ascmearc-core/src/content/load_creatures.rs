@@ -156,6 +156,10 @@ impl Content {
                 .map(|b| b.resolve(self))
                 .transpose()
                 .map_err(|m| err(format!("creature `{}`: {m}", spec.id)))?;
+            let spins = (spec.spins.as_ref())
+                .map(|s| s.resolve(self))
+                .transpose()
+                .map_err(|m| err(format!("creature `{}`: {m}", spec.id)))?;
             let invisible = (spec.invisible.map(|i| i.resolve(self)))
                 .transpose()
                 .map_err(|m| err(format!("creature `{}`: {m}", spec.id)))?
@@ -209,6 +213,7 @@ impl Content {
                 presence: aura::resolve(self, &spec).map_err(err)?,
                 steals,
                 blinks,
+                spins,
                 invisible,
                 weapon_skills,
                 resist,

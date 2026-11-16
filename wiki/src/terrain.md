@@ -126,8 +126,9 @@ turns. See [Temperature and ice](temperature.md).
 ## Webs
 
 A [web](#terrain-web) (`"`, grey) is sticky strands strung across the floor. Spiders leave them
-near where they live, and the [Web](magic.md#spell-web) spell lays the same webs where it bursts.
-Webs stay until fire burns them.
+near where they live and [spin new ones](creature-tricks.md#spinners) beside them now and then,
+and the [Web](magic.md#spell-web) spell lays the same webs where it bursts. Webs stay until fire
+burns them.
 
 **Getting caught.** Each time you step into a web, you may be caught. The same goes for anyone
 standing where a web appears, and for creatures walking into one. It is a check: 2d12, rolled

@@ -21,6 +21,7 @@
 //!    melee otherwise. Leaving its routine, it remembers where it was (its post).
 //!    An unharmed lurker waits where it stands instead of stepping toward it (`lurk.rs`).
 //!    A blinker whose way to it is blocked blinks to its side (`blink.rs`).
+//!    On a turn it would idle (wait or patrol), a spider may spin a web beside it (`spin.rs`).
 //! 3. **Search**: with no hostile in sight, it goes to where it last saw one.
 //! 4. **Listen**: failing that, to where it last heard a noise whose source it could not see
 //!    ([`crate::noise`]; what it heard since it last acted, the newest first). Only creatures
@@ -86,6 +87,8 @@ pub(in crate::world) enum Plan {
     Gaze(ActorId),
     /// Blink to the side of the hostile on this cell, its path there blocked (`blink.rs`).
     Blink(Pos),
+    /// Spin a web on this cell beside it (`spin.rs`).
+    Spin(Pos),
     /// Cast a spell of its list on someone (`creature_cast.rs`).
     Cast {
         spell: SpellId,
@@ -171,6 +174,8 @@ impl World {
         let plan = self.held_back(id, plan);
         // Rooted, it never moves (`rooted.rs`).
         let plan = self.rooted_plan(id, plan);
+        // Idle, a spider may spin a web (`spin.rs`).
+        let plan = self.spin_plan(id, plan);
         let price = match plan {
             Plan::Attack {
                 target,
@@ -197,6 +202,7 @@ impl World {
             Plan::Breathe(at) => self.creature_breathes(id, at, events),
             Plan::Gaze(target) => self.creature_gazes(id, target, events),
             Plan::Blink(at) => self.creature_blinks(id, at, events),
+            Plan::Spin(at) => self.creature_spins(id, at, events),
             Plan::Cast { spell, on } => self.creature_casts(id, (spell, on), events),
             Plan::Step(dir) => self.step_or_wait(id, dir, events).1,
             Plan::Patrol => self.patrol(id, events),

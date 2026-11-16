@@ -18,6 +18,7 @@ mod path;
 mod rooted;
 mod snatch;
 pub(in crate::world) mod spawn;
+mod spin;
 pub(in crate::world) mod split;
 pub(in crate::world) mod statue;
 mod summon;
@@ -48,6 +49,7 @@ cfg_if! {
         mod retribution_tests;
         mod rooted_tests;
         mod spawn_tests;
+        mod spin_tests;
         mod split_tests;
         mod statue_tests;
         mod summon_tests;
