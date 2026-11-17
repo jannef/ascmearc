@@ -806,7 +806,7 @@ impl Benefit {
 
 /// The skill ladder (ADOM's): the die a level-up roll on a skill throws, set by
 /// the training marks it has gathered since its last roll. `dice[i]` is thrown from `marks[i]`
-/// marks on (`[ladder]` in `data/skills.toml`: `+1` at 0 marks, `1d3` at 5, … `4d5` at 800).
+/// marks on (`[ladder]` in `data/skills.toml`: `1d2` at 0 marks, `1d3` at 5, … `4d5` at 800).
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct Ladder {
@@ -817,11 +817,11 @@ pub struct Ladder {
 }
 
 impl Default for Ladder {
-    /// ADOM's ladder: `+1`, `1d3`, `1d5`, `2d4`, `3d3`, `3d4`, `3d5`, `4d4`, `4d5`, the marks
-    /// roughly doubling from step to step.
+    /// ADOM's ladder with a die at the bottom (#1766): `1d2`, `1d3`, `1d5`, `2d4`, `3d3`, `3d4`,
+    /// `3d5`, `4d4`, `4d5`, the marks roughly doubling from step to step.
     fn default() -> Self {
         let dice = [
-            (0, 1),
+            (1, 2),
             (1, 3),
             (1, 5),
             (2, 4),
@@ -832,15 +832,7 @@ impl Default for Ladder {
             (4, 5),
         ];
         Self {
-            dice: (dice.iter())
-                .map(|&(n, s)| {
-                    if n == 0 {
-                        Dice::fixed(s)
-                    } else {
-                        Dice::of(n as u32, s as u32)
-                    }
-                })
-                .collect(),
+            dice: (dice.iter()).map(|&(n, s)| Dice::of(n, s)).collect(),
             marks: vec![0, 5, 12, 25, 50, 100, 200, 400, 800],
         }
     }
@@ -934,7 +926,7 @@ fn is_zero(n: &u32) -> bool {
 }
 
 /// How practised a skill of `trained` is, in [`PROGRESS_STEPS`]: its marks' step on the ladder,
-/// scaled to the meter (0 at `+1`, 2 at `2d4`, full near the top). What the player senses of
+/// scaled to the meter (0 at `1d2`, 2 at `2d4`, full near the top). What the player senses of
 /// how big their next roll on it is, never the marks or the die.
 pub fn progress(trained: Trained, ladder: &Ladder) -> u8 {
     let top = ladder.top().max(1);
@@ -1239,7 +1231,7 @@ mod tests {
         assert_eq!(
             [0, 4, 5, 11, 12, 25, 50, 99, 100, 200, 400, 799, 800, 9000].map(die),
             [
-                "+1", "+1", "1d3", "1d3", "1d5", "2d4", "3d3", "3d3", "3d4", "3d5", "4d4", "4d4",
+                "1d2", "1d2", "1d3", "1d3", "1d5", "2d4", "3d3", "3d3", "3d4", "3d5", "4d4", "4d4",
                 "4d5", "4d5"
             ]
         );

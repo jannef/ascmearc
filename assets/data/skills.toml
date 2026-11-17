@@ -24,7 +24,7 @@
 # [ladder]  dice   the die of each step, lowest first (each adds at least 1)
 #           marks  the marks each step starts at: 0 first, rising
 [ladder]
-dice = [1, "1d3", "1d5", "2d4", "3d3", "3d4", "3d5", "4d4", "4d5"]
+dice = ["1d2", "1d3", "1d5", "2d4", "3d3", "3d4", "3d5", "4d4", "4d5"]
 marks = [0, 5, 12, 25, 50, 100, 200, 400, 800]
 
 # [rolls]   intelligence_from, intelligence_every  one more roll a level at Intelligence

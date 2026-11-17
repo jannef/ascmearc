@@ -16,16 +16,16 @@ expression: "render(case, content.clone())"
             │                                                                          │
             │ Skills                                                                   │
             │ > a  Athletics     26  ────  1d3                                         │
-            │   b  Balance        9  ────  +2                                          │
-            │   c  Heal           8  ────  +1                                          │
-            │   d  Initiative     8  ────  +2                                          │
-            │   e  Intimidate    11  ────  +2                                          │
-            │   f  Negotiation    1  ────  +1                                          │
-            │   g  Swim          10  ────  +2                                          │
+            │   b  Balance        9  ────  1d2+1                                       │
+            │   c  Heal           8  ────  1d2                                         │
+            │   d  Initiative     8  ────  1d2+1                                       │
+            │   e  Intimidate    11  ────  1d2+1                                       │
+            │   f  Negotiation    1  ────  1d2                                         │
+            │   g  Swim          10  ────  1d2+1                                       │
             │                                                                          │
             │ 3 skill rolls a level: class 2, race 1                                   │
             │                                                                          │
-            │ Rolls 1d3: practice (no marks) gives +1, one die up to 1d3 as your       │
+            │ Rolls 1d3: practice (no marks) gives 1d2, one die up to 1d3 as your      │
             │ class's own skill. Running, jumping, climbing, and kicking: strength put │
             │ to use.                                                                  │
             │                                                                          │
