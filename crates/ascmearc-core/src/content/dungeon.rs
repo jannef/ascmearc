@@ -131,6 +131,8 @@ pub enum Generator {
     Rooms,
     /// Cellular-automata caverns.
     Caves,
+    /// The cellars and crypts under a great church, drowning deeper (`mapgen/minster.rs`).
+    Minster,
     /// A worked mine that opens up and grows lava the deeper it lies (`mapgen/mines.rs`).
     Mines,
     /// A tower's floor: a ring wall with windows round a winding hall (`mapgen/tower.rs`); only
@@ -144,6 +146,7 @@ impl Generator {
         match self {
             Generator::Rooms => ([40, 15], [200, 100]),
             Generator::Caves => ([40, 30], [400, 300]),
+            Generator::Minster => ([90, 36], [200, 100]),
             Generator::Mines => ([40, 20], [400, 300]),
             // A tower's floors are its clearing's size, which a hand-made level may have.
             Generator::Tower => ([1, 1], [400, 300]),

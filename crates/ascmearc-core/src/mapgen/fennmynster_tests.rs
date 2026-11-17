@@ -1,9 +1,8 @@
 //! Fennmynster, the Ascmearc's first hidden dungeon (#338; docs/design/campaign.md §7): the
-//! branch's floors and danger, its population, its first level (a snapshot), its raised odds of
+//! branch's floors and danger, its population (its floors' snapshots are the minster's, `minster_tests.rs`), its raised odds of
 //! flooded rooms and its lack of shops, the hidden way in in Micelfenn, and the sunken crypt its
 //! bottom names, stamped there for certain and nowhere else.
 
-use super::tests::describe;
 use super::*;
 use crate::World;
 use crate::action::parse_actions;
@@ -41,19 +40,15 @@ fn crypt_altar(level: &LevelTemplate) -> Option<Pos> {
 }
 
 #[test]
-fn first_level_snapshot() {
-    insta::assert_snapshot!("fennmynster_seed_1_depth_1", describe(&level(1, 1)));
-}
-
-#[test]
 fn eight_cellar_floors_of_danger_three_to_ten() {
     let def = CONTENT.dungeon("fennmynster").expect("Fennmynster");
     assert_eq!((def.name.as_str(), def.depth), ("Fennmynster", 8));
     assert_eq!(def.campaign.as_deref(), Some("ascmearc"));
     for depth in 1..=8 {
         let plan = def.plan(depth).expect("a floor");
-        assert_eq!(plan.generator, Generator::Rooms, "depth {depth}");
-        assert_eq!((plan.width, plan.height), (80, 21), "depth {depth}");
+        // The drowned church's plan (`minster_tests.rs`).
+        assert_eq!(plan.generator, Generator::Minster, "depth {depth}");
+        assert_eq!((plan.width, plan.height), (100, 40), "depth {depth}");
         assert_eq!(plan.temperature.map(|t| t.celsius()), Some(6));
         let (rule, at, _) = CONTENT.spawning(&def.level_id(depth)).expect("a danger");
         // Nothing here grows with the player (the design's decision 13).

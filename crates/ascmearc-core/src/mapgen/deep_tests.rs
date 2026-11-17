@@ -1,4 +1,5 @@
-//! Deep water in caves (#1020): about one `caves` floor in six, never unreachable stairs.
+//! Deep water in caves (#1020): about one `caves` floor in six, never unreachable stairs; none on
+//! a rooms floor (a minster's floors drown on their own: `minster_tests.rs`).
 
 use super::*;
 use crate::content::ContentFiles;
@@ -62,7 +63,10 @@ fn rooms_floors_have_none() {
                 Some(_) => def.pit_level_id(1, depth),
                 None => def.level_id(depth),
             };
-            if caves.iter().any(|(_, c)| *c == id) {
+            let minster = def
+                .plan(depth)
+                .is_some_and(|p| p.generator == Generator::Minster);
+            if minster || caves.iter().any(|(_, c)| *c == id) {
                 continue;
             }
             for seed in 0..10 {

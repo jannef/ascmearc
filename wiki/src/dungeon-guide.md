@@ -60,6 +60,46 @@ Micelfenn: eight floors of its cellars and crypts, at 6 °C. No road leads there
 cannot be found by looking. Sister Hild marks it on your map as you take up her
 [quest](quests.md) **The fen minster**, the one after she has her chalice back.
 
+Every floor is built to the same church plan. A long crypt with two rows of pillars runs east to
+west down the middle, with a narrow aisle on each side and chapels off the aisles. A passage
+crosses the plan near the east end, and past it the chancel ends in a rounded apse. West of the
+crypt lie the monks' cellars: a pillared undercroft, a cloister walk round an open garth, the
+chapter house, an ossuary walled with bones, tombs of [sarcophagi](terrain.md#terrain-sarcophagus),
+and stores. Some chapels hold a statue, and now and then one holds a
+[forgotten altar](terrain.md#terrain-forgotten-altar).
+
+One end of each floor lies lower than the other, and the water gathers there. On the first floor
+only the lowest corners stand in [shallow water](terrain.md#terrain-shallow-water). Each floor
+down, the water rises: from the third floor a channel of
+[running water](terrain.md#terrain-running-water) runs down the middle of the crypt, and from
+about the fifth the low end holds [deep water](terrain.md#deep-water), with broken drains as deep pits.
+The plan falls apart as you go down too: pillars and walls lie in
+[rubble](terrain.md#terrain-rubble), and the fen pushes in, with [marsh](terrain.md#terrain-marsh)
+and [reeds](terrain.md#terrain-reeds) in the garth and where an outer wall gave way. However deep
+the water, there is always a way between the stairs that needs no swimming, though you may have
+to wade.
+
+How high the water stands and how far each floor has fallen, on a scale of 0 to 100:
+
+| Floor | Water | Ruin |
+|---|---|---|
+| 1 | 10 | 5 |
+| 2 | 20 | 14 |
+| 3 | 31 | 23 |
+| 4 | 42 | 32 |
+| 5 | 52 | 42 |
+| 6 | 63 | 51 |
+| 7 | 74 | 60 |
+| 8 | 85 | 70 |
+
+Along a floor, the ground sinks from 0 at its high end to 100 at its low end. Each room sits up
+to 12 higher or lower than that, and each spot up to 5 lower still. Floor stands in shallow water
+where it lies lower than 100 less the floor's water. Where it lies lower than 145 less the water,
+the water is deep, but only away from every edge, and only in the crypt, the crossing, the
+chancel, the undercroft, the chapels, the tombs, and the garth: never in an aisle, the cloister
+walk, a store, the chapter house, or the ossuary. The channel starts on floors with water 30 or
+more and ends in a deep drain from 50.
+
 The fen seeps into its rooms. One room in four is out of the ordinary (most floors have one or
 two): [flooded](special-rooms.md#room-flooded) ankle-deep, slow and loud to wade,
 [hushed](special-rooms.md#room-hushed), or [shadowed](special-rooms.md#room-shadowed). Its traps are
@@ -97,7 +137,7 @@ Who lives there:
   [lesser ice elementals](creatures.md#creature-lesser-ice-elemental).
 
 At the very bottom lies the **sunken crypt**: a nave of
-[shallow water](terrain.md#terrain-shallow-water) between the monks' tombs, where two of the
+shallow water between the monks' tombs, where two of the
 [drowned](creatures.md#creature-drowned) still stand guard. At its far end a dry dais holds an
 altar with the minster reliquary on it, which Sister Hild's last quest asks for. The crypt is on
 the eighth floor and nowhere else.
