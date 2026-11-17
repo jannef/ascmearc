@@ -636,6 +636,19 @@ impl ScreenStack {
         }
     }
 
+    /// Closes the screen that chose a gameplay action, and the crafting screens it was opened
+    /// from (#1769): a craft confirmed in the wizard's dialog, a brew's, or a stack chosen on a
+    /// profession's list closes every wizard step and the profession's recipes, back to the map.
+    pub fn close_acted(&mut self) {
+        self.close();
+        while matches!(
+            self.screens.last(),
+            Some(Screen::CraftPick(_) | Screen::Profession(_))
+        ) {
+            self.screens.pop();
+        }
+    }
+
     /// The top screen's name, if any screen is open.
     fn top(&self) -> Option<ScreenName> {
         self.screens.last().map(Screen::name)
@@ -2529,6 +2542,54 @@ mod tests {
         assert!(actions(&app).is_empty());
         frame(&mut app, &[ESC]);
         assert!(names(&app).is_empty());
+    }
+
+    /// #1769: a craft confirmed closes every crafting screen, the wizard's and the profession's
+    /// recipes beneath it, back to the map, with or without the optional pommel; declined, the
+    /// dialog closes back to the wizard's last step.
+    #[test]
+    fn a_craft_confirmed_closes_the_wizard_and_the_recipes() {
+        const C: (KeyCode, &str) = (KeyCode::KeyC, "c");
+        const MINUS: (KeyCode, &str) = (KeyCode::Minus, "-");
+        let (yes, no) = ((KeyCode::KeyY, "y"), (KeyCode::KeyN, "n"));
+        let content = content();
+        let metal = content.skill_id("metalcraft").expect("metalcraft");
+        let dagger = content.recipes().id("dagger").expect("dagger");
+        let forge = || {
+            let mut world = ascmearc_core::World::new(content.clone(), "forge", None).expect("run");
+            for action in ascmearc_core::action::parse_actions("move:E pickup").expect("parses") {
+                world.apply(&action);
+            }
+            let game = Game::from_world(world, "tamsin-1".into());
+            let mut app = app_with(content.clone(), Some(game));
+            frame(&mut app, &[(KeyCode::KeyA, "a"), (KeyCode::KeyB, "b")]);
+            assert_eq!(names(&app), [ScreenName::Profession(metal)]);
+            // The dagger (`c`), its metal (`c`): the pommel step.
+            frame(&mut app, &[C, C]);
+            assert_eq!(
+                names(&app),
+                [ScreenName::Profession(metal), ScreenName::CraftPick(dagger)]
+            );
+            app
+        };
+        for pommel in [(KeyCode::KeyA, "a"), MINUS] {
+            let mut app = forge();
+            frame(&mut app, &[pommel]);
+            assert_eq!(names(&app).last(), Some(&ScreenName::Dialog));
+            frame(&mut app, &[no]);
+            assert_eq!(
+                names(&app),
+                [ScreenName::Profession(metal), ScreenName::CraftPick(dagger)],
+                "declined: back to the last step"
+            );
+            frame(&mut app, &[pommel, yes]);
+            assert!(names(&app).is_empty(), "{:?}", names(&app));
+            assert!(
+                matches!(actions(&app)[..], [Action::Craft { .. }]),
+                "{:?}",
+                actions(&app)
+            );
+        }
     }
 
     #[test]

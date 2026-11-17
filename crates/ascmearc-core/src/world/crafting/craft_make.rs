@@ -73,7 +73,7 @@ use super::craft::{
 };
 use super::fletch;
 use super::work::{Job, Task, Work};
-use crate::action::Event;
+use crate::action::{Event, Positions};
 use crate::combat;
 use crate::content::{
     Content, InputKind, MaterialId, ObjectId, PartSource, RecipeCount, RecipeDef, RecipeId,
@@ -1091,16 +1091,19 @@ impl World {
     }
 
     /// Gives up what `spends` take when `made` are made (none: a failure), highest position
-    /// first, so a stack used up leaves the others where they were.
+    /// first, so a stack used up leaves the others where they were; what is worn and wielded
+    /// follows the stacks after it up a place (#1770).
     fn spend_out(&mut self, mut spends: Vec<Spend>, made: u32) {
         let content = self.content.clone();
         spends.sort_by_key(|s| std::cmp::Reverse(s.at));
         for spend in spends {
             let gone = spend.gone(&content, made);
-            let pack = &mut self.player_mut().inventory;
-            pack[spend.at].count -= gone.min(pack[spend.at].count);
-            if pack[spend.at].count == 0 {
-                pack.remove(spend.at);
+            let me = self.player_mut();
+            let stack = &mut me.inventory[spend.at];
+            stack.count -= gone.min(stack.count);
+            if stack.count == 0 {
+                me.inventory.remove(spend.at);
+                me.equipment.after_removal(&Positions::of([spend.at]));
             }
         }
     }

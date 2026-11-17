@@ -5,13 +5,13 @@ expression: "render(case, content.clone())"
  Y┌─ Level 2 · Skill rolls 4 ───────────────────────────────────── Page 1/2 ─┐
  Y│                                                                          │
   │ Skills                                                                   │
-  │ > a  Appraise         11  ────  +2                                       │
+  │ > a  Appraise         11  ────  1d2+1                                    │
   │   b  Detect traps     14  ━───  1d5                                      │
   │   c  Disable device   14  ────  1d3                                      │
-  │   d  Escape artist    10  ────  +2                                       │
-  │   e  Initiative        9  ────  +2                                       │
-  │   f  Listen            6  ────  +1                                       │
-  │   g  Negotiation      10  ────  +2                                       │
+  │   d  Escape artist    10  ────  1d2+1                                    │
+  │   e  Initiative        9  ────  1d2+1                                    │
+  │   f  Listen            6  ────  1d2                                      │
+  │   g  Negotiation      10  ────  1d2+1                                    │
   │   h  Open lock        21  ────  1d3                                      │
   │   i  Search           10  ━───  1d5+1                                    │
   │   j  Sneak attack     25  ────  1d3                                      │
@@ -20,7 +20,7 @@ expression: "render(case, content.clone())"
   │                                                                          │
   │ 4 skill rolls a level: class 3, race 1                                   │
   │                                                                          │
-  │ Rolls +2: practice (no marks) gives +1, +1 as your class trains it.      │
+  │ Rolls 1d2+1: practice (no marks) gives 1d2, +1 as your class trains it.  │
   │ Judging what a thing is worth and what it is made of.                    │
   │                                                                          │
   │                                                                          │

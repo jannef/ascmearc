@@ -296,6 +296,15 @@ cases! {
         keys: Some("c c a"),
         ..BASE
     },
+    // Confirmed, the dagger is made and every crafting screen closes, back to the map (#1769).
+    craft_pick_done: Case {
+        name: "craft-pick-done",
+        scenario: "forge",
+        actions: "move:E pickup",
+        screen: Some("profession"),
+        keys: Some("c c a y"),
+        ..BASE
+    },
     // A witch's Alchemy (#1357; `--screen profession`, the first profession she has recipes of)
     // after three gathers at the hub's fungus: the brews, those from a higher Alchemy greyed
     // "beyond your skill", those short of herbs "not enough".

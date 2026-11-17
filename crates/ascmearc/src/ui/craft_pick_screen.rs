@@ -10,8 +10,8 @@
 //! where a step allows it; Esc goes back a step, its pick kept (the list opens on
 //! it), and closes the wizard from the first. The last pick opens the one dialog
 //! (`ScreenName::CraftConfirm`), which asks with what the rules say of the picks; declined, it
-//! closes back to the last step; accepted, it applies `Action::Craft`. After the work the
-//! wizard opens again on its first step with the pack as it is now. Every key is fixed.
+//! closes back to the last step; accepted, it applies `Action::Craft` and closes the wizard and the profession's screen
+//! beneath, back to the map (#1769). Every key is fixed.
 //!
 //! An enchanting's later steps follow its earlier picks (`PerceptionView::craft_steps_given`,
 //! read again after each pick, [`CraftPickScreen::reread`]): the seals list the families of the

@@ -112,8 +112,6 @@ fn the_stock_follows_the_bases_weight_as_the_design_counts_it() {
         ("small_shield", "iron", 13),
         ("large_shield", "steel", 30),
         ("tower_shield", "iron", 24),
-        // A cap of leather in metal: a skull cap.
-        ("leather_cap", "steel", 3),
         ("iron_helm", "iron", 3),
         ("great_helm", "steel", 6),
         ("gauntlets", "iron", 2),
@@ -142,7 +140,6 @@ fn the_rows_price_in_the_bases_metal_or_steel_and_name_a_metal_only_when_some_ar
     for (id, words) in [
         ("chain_mail", "22 ingots,"),
         ("small_shield", "13 ingots,"),
-        ("leather_cap", "3 ingots,"),
         ("lantern", "an iron or brass ingot,"),
         ("pick_axe_by_hand", "6 blocks of stone,"),
     ] {

@@ -296,7 +296,7 @@ mod tests {
         let shaman = actors.iter().find(|a| a.contains(" kobold_shaman at "));
         assert!(
             shaman.is_some_and(|s| s.ends_with(
-                "; skills concentration 20 (0 +1), spellcraft 25 (0 +1); unaware of player; \
+                "; skills concentration 20 (0 1d2), spellcraft 25 (0 1d2); unaware of player; \
                  resists fire 25"
             )),
             "{actors:#?}"
@@ -360,7 +360,7 @@ mod tests {
         // Every actor's stats, then its trained skills with their marks and the ladder's die.
         assert!(
             actors[0].contains(
-                "stats St 9/16 Dx 13/16 To 10/16 In 12/16 Wi 11/16 Pr 9/16; skills appraise 11 (0 +1), detect_traps 14 (0 +1), disable_device 14 (0 +1), escape_artist 10 (0 +1), initiative 9 (0 +1), listen 6 (0 +1), negotiation 10 (0 +1), open_lock 17 (0 +1), search 10 (0 +1), sneak_attack 25 (0 +1), spot 9 (0 +1), steal 12 (0 +1), stealth 16 (0 +1), tumble 15 (0 +1); \
+                "stats St 9/16 Dx 13/16 To 10/16 In 12/16 Wi 11/16 Pr 9/16; skills appraise 11 (0 1d2), detect_traps 14 (0 1d2), disable_device 14 (0 1d2), escape_artist 10 (0 1d2), initiative 9 (0 1d2), listen 6 (0 1d2), negotiation 10 (0 1d2), open_lock 17 (0 1d2), search 10 (0 1d2), sneak_attack 25 (0 1d2), spot 9 (0 1d2), steal 12 (0 1d2), stealth 16 (0 1d2), tumble 15 (0 1d2); \
                  nutrition 3600 (not_hungry)"
             ),
             "{}",
