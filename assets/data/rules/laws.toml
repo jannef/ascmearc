@@ -1,18 +1,18 @@
 # The two laws (`world/character/laws.rs`; docs/dev/alignment.md "The two laws"; #1764): the
-# first, never to eat the flesh of a thinking, speaking creature; the second, never to call up a
-# fiend. The game counts each time the player breaks one and says `first` the first time only
-# (no other effect yet).
+# First Law, never to call up a fiend; the Second Law, never to eat the flesh of a thinking,
+# speaking creature. The game counts each time the player breaks one and says `first` the first
+# time only (no other effect yet).
 #
-# [eat]     a corpse the player eats (fresh or rotten) whose creature carries `tag`
-#           (data/creatures/README.toml: the sapient kinds)
 # [summon]  a creature that comes by the player's own act (their summoning spell, a scroll or
 #           item that casts one, the backfire or miscast of their spell, a scroll that calls a
 #           creature as they learn from it, an altar outcome they trigger) and carries `tag`
-
-[eat]
-tag = "sapient"
-first = "You feel as if you have gone against something fundamental."
+# [eat]     a corpse the player eats (fresh or rotten) whose creature carries `tag`
+#           (data/creatures/README.toml: the sapient kinds)
 
 [summon]
 tag = "fiend"
 first = "Your crime is witnessed."
+
+[eat]
+tag = "sapient"
+first = "You feel as if you have gone against something fundamental."

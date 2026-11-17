@@ -451,7 +451,7 @@ immunities in words. The `talents` dump lists the
 Craving talents `(craving)` as it lists gifts `(profane)`.
 
 The wiki (same PR as each slice): a section **The ratfolk's craving** on `food.md` under
-"Eating those who think" (the term map's home for the first law), linked once from the ratfolk
+"Eating those who think" (the term map's home for the Second Law; it was numbered the first when this was written), linked once from the ratfolk
 line on `races.md` and from `hunger.md` "Races" (and a line under its Lean paragraph), with a
 generated table (`xtask/src/wiki/craving.rs` → `generated/craving.md`, from `craving.toml` and
 the talents), a plain introduction above it, five columns:

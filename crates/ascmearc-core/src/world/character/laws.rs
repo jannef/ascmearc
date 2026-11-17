@@ -1,5 +1,5 @@
 //! The two laws (#1764; `data/rules/laws.toml`, `content/laws.rs`; docs/dev/alignment.md "The
-//! two laws"): never eat the flesh of a thinking creature, never call up a fiend. Each time the
+//! two laws"): the First Law, never call up a fiend; the Second Law, never eat the flesh of a thinking creature. Each time the
 //! player breaks one is counted in [`Progress`](super::experience::Progress), and the first time
 //! the law's `first` message is said. A player who craves (`craving.rs`, the ratfolk craving)
 //! hears the craving's first line instead, and the craving runs on every sapient corpse.
