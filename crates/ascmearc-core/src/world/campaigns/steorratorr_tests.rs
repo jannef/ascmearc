@@ -547,7 +547,16 @@ fn up_steorratorr_to_his_side_and_his_pay_replays_exactly() {
     assert_eq!(side(&w, "sigeric"), Some(Side::Allied), "{:#?}", texts(&w));
     // The other two, each on their own top floor.
     for (top, npc) in [("drytorr_top", "ordgar"), ("wedertorr_top", "aelfswith")] {
-        play(&mut w, &mut replay, &format!("rest:2h travel:{top}"));
+        // Whole again before the next wizard: the walker rests an hour at a time.
+        play(&mut w, &mut replay, "rest:2h");
+        for _ in 0..12 {
+            let me = w.state.player();
+            if me.hp >= me.max_hp(w.content()) {
+                break;
+            }
+            play(&mut w, &mut replay, "rest:1h");
+        }
+        play(&mut w, &mut replay, &format!("travel:{top}"));
         assert!(hostile(&w, npc), "{npc}");
         kill(&mut w, &mut replay, npc);
     }
