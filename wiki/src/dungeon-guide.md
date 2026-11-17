@@ -236,8 +236,11 @@ into **Ūtgang**, the way out.
 
 ## Ūtgang
 
-**Ūtgang**, the way out, is the duergar's old air-shaft workings: three floors of hewn rooms and
-passages, with no caves, cut from the drake's deep up through the volcano's flank. Its bottom
+**Ūtgang**, the way out, is the duergar's old air-shaft workings: three floors cut from the drake's
+deep up through the volcano's flank, with no caves. Each floor is one long hewn shaft from the
+stairs at one end to the stairs at the other, turning at sharp corners, widening into a hewn hall
+here and there, with short dead-end cuts off it. There is never a second way through: to cross a
+floor you go down its one shaft, past whatever stands in it. Its bottom
 floor's stairs down lead to the bottom of [Fyrdelf](#fyrdelf), beside the drake's hoard. Its top
 floor's stairs up lead out onto the overworld.
 

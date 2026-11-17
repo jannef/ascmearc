@@ -1,6 +1,8 @@
 # Ūtgang, "the way out" (#1117; the fields: data/dungeons.toml): the duergar's old air-shaft
 # workings, cut from the drake's deep up through the volcano's flank to let the heat out. Three
-# floors of hewn halls, no caverns. Its stairs up from the bottom of Fyrdelf (`below`) stand near
+# floors of one hewn shaft each (`passage`, #1839): a single winding way from stair to stair,
+# turning at right angles, opening into a hewn hall here and there, with dead-end side cuts and
+# no second route; no caverns. Its stairs up from the bottom of Fyrdelf (`below`) stand near
 # the drake's hoard; its top floor climbs out on the slopes of Fyrbeorg, at a place hidden on the
 # overworld until the player first comes out there, and from then on it is a
 # quick way back down to the drake.
@@ -9,7 +11,7 @@
 id = "utgang"
 name = "Ūtgang"
 arrival = "Warm air breathes up the shaft from far below."
-generator = "rooms"
+generator = "passage"
 depth = 3
 size = [80, 21]
 below = "fyrdelf:12"

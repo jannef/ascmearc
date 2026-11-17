@@ -8,7 +8,8 @@
 //! 1. Draw from the level's own stream, [`Rng::map`]`(seed, id, attempt)`.
 //! 2. Build the map with the branch's generator for that depth: `rooms` (rooms joined by
 //!    corridors, doors at room entrances; with the branch's `key`, a few rooms locked and the
-//!    key left where the player can reach it) or `caves` (cellular automata). Both stamp
+//!    key left where the player can reach it), `caves` (cellular automata), `tunnels` (caverns
+//!    joined by narrow winding tunnels), or `passage` (one long way between the stairs). All stamp
 //!    [vaults](crate::content::Vault) where they fit (with their locks and keys), place the
 //!    stairs, light sources (torches in rooms; lamps and glowing fungus in caves), and a few
 //!    patrolling creatures, and last now and then make a room (a cave chamber) special
@@ -52,6 +53,7 @@ mod shop;
 mod special;
 mod tower;
 mod treasury;
+mod tunnels;
 mod vault;
 mod vein;
 mod way_up;
@@ -573,6 +575,8 @@ pub fn generate_for(
         let built = match plan.generator {
             Generator::Rooms => rooms::build(&mut canvas, &mut rng, needs),
             Generator::Caves => caves::build(&mut canvas, &mut rng, needs),
+            Generator::Tunnels => tunnels::build(&mut canvas, &mut rng, needs),
+            Generator::Passage => tunnels::build_passage(&mut canvas, &mut rng, needs),
             Generator::Minster => minster::build(
                 &mut canvas,
                 &mut rng,
@@ -1100,6 +1104,8 @@ mod tests;
 mod tower_tests;
 #[cfg(test)]
 mod treasury_tests;
+#[cfg(test)]
+mod tunnels_tests;
 #[cfg(test)]
 mod vault_danger_tests;
 #[cfg(test)]
