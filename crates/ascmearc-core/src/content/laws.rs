@@ -1,5 +1,5 @@
 //! The two laws (`assets/data/rules/laws.toml`; #1764, `docs/dev/alignment.md` "The two laws"):
-//! what the player's eating of a thinking creature and summoning of a fiend are counted by, and
+//! what the player's summoning of a fiend (the First Law) and eating of a thinking creature (the Second) are counted by, and
 //! what is said the first time. The rule itself lives in `world/character/laws.rs`.
 //!
 //! The file is optional: without it nothing is counted.
@@ -11,10 +11,11 @@ use serde::Deserialize;
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct LawRules {
-    /// Eating the flesh of a thinking creature: a corpse whose creature carries the tag.
-    pub eat: Law,
-    /// Calling up a fiend: a creature the player summons that carries the tag.
+    /// The First Law, calling up a fiend: a creature the player summons that carries the tag.
     pub summon: Law,
+    /// The Second Law, eating the flesh of a thinking creature: a corpse whose creature carries
+    /// the tag.
+    pub eat: Law,
 }
 
 /// One law: the creature tag that breaks it, and what is said the first time it is broken.

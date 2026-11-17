@@ -47,7 +47,7 @@ craving's, or `craving_from` is some. `World::ate_flesh` (`laws.rs`, from `world
 `ate_corpse`, before the corpse's own gifts and its vomit roll) counts the sapient corpse, then
 `World::craved(count)`: one mark (`mark`) into a stat drawn evenly among the six (the keyed draw
 `craving/mark/player`, nothing said; saturating, as a corpse's `train`); at count 1 the craving's
-`first` in place of the eat law's (one line, not two); at a row's exact count, unless its talent is
+`first` in place of the Second Law's (`[eat]`) (one line, not two); at a row's exact count, unless its talent is
 held, the talent given by `World::bestow` (its `stat` effects handed out), the row's message,
 `player_did(Deed::CravingThreshold)` (`[shift] craving_threshold = -100` in
 `data/alignment.toml`, diminishing as every deed does), the stance settled, the softeners
