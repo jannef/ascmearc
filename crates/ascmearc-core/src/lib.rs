@@ -55,6 +55,7 @@ pub mod rng;
 pub mod rot;
 pub mod save;
 pub mod scorch;
+pub mod scrap;
 pub mod scroll_label;
 mod sight;
 pub mod skills;

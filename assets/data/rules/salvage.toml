@@ -8,9 +8,12 @@
 # a profession works (stock.toml), in part order: 2d12 + the profession's stat modifier + the
 # talents' checks of that stat + the profession's `craft` points (skills/) against
 # `difficulty` + the material's `work` (materials/). A natural 2 always fails, a natural 24
-# always succeeds. A made check gives `yield` % of the material's grams back as stock (at least
-# one piece); a gem comes out whole. A failed check loses the material; a failed gem loses a cut
-# (down to crude) or else a size (down to tiny) instead, and is lost only when it has neither to
+# always succeeds. A made check gives `yield` % of the material's grams back as stock, never
+# more pieces than the grams hold whole; a material with less than one piece's worth gives its
+# grams as scrap instead (objects/scrap.toml, a gram each); a gem comes out whole. A stackable
+# thing gives up as many as make a piece (72 copper coins for a copper ingot, 500 steel scraps
+# for a steel ingot; #1777), and is refused with fewer. A failed check loses the material; a
+# failed gem loses a cut (down to crude) or else a size (down to tiny) instead, and is lost only when it has neither to
 # lose or on a natural 2, which shatters it.
 #
 # Fields:

@@ -841,7 +841,8 @@ fn how_held(def: &ObjectDef, content: &Content) -> Option<String> {
 
 /// What the craftsperson's Eye for the make reads of `stack` (the
 /// craftsperson design §7.2), in words and never a number, as `lore` names things: what salvage
-/// would give of one if every check went well, at `percent` of each material's grams, a gem whole
+/// would give of one (or of as many as salvage takes at once, "enough of them") if every check
+/// went well, at `percent` of each material's grams, a gem whole
 /// ("Taken apart, it would give 2 steel ingots and a small ruby."; "Nothing in it is worth
 /// saving."; "It would not come apart." for one `protected` from harm); for arms or armour an
 /// anvil or a knife betters, the improvements it will still take, or that it is damaged (never
@@ -858,14 +859,19 @@ pub fn make_lines(
 ) -> Vec<Line> {
     let content = lore.content;
     let mut out = Vec::new();
-    let mut one = stack.clone();
-    one.count = 1;
     let worked = |s: &Stack| {
         (s.parts(content).first())
             .is_some_and(|p| content.stock().profession_of(content, p.material).is_some())
     };
-    let saved: Vec<Stack> = match crate::world::salvageable(content, &one) {
-        true => crate::piece::break_up(&one, content, percent)
+    // Salvage takes as many as make a piece (#1777): "enough of them", never the number.
+    let batch = (crate::world::salvageable(content, stack))
+        .then(|| crate::piece::salvage_batch(stack, content, percent))
+        .flatten()
+        .map_or(1, |(n, _)| n);
+    let mut some = stack.clone();
+    some.count = batch;
+    let saved: Vec<Stack> = match crate::world::salvageable(content, &some) {
+        true => crate::piece::salvage(&some, content, percent)
             .into_iter()
             .filter(worked)
             .collect(),
@@ -874,8 +880,12 @@ pub fn make_lines(
     let apart = match () {
         () if protected => "It would not come apart.".to_string(),
         () if saved.is_empty() => "Nothing in it is worth saving.".to_string(),
-        () => format!(
+        () if batch == 1 => format!(
             "Taken apart, it would give {}.",
+            crate::object::phrase(&saved, lore)
+        ),
+        () => format!(
+            "Taken apart, enough of them would give {}.",
             crate::object::phrase(&saved, lore)
         ),
     };

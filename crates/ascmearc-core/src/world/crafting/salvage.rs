@@ -7,19 +7,29 @@
 //!   ([`salvageable`]: `data/stock.toml`, [`World::profession_of`]), not a spirit weapon.
 //!   Refused, taking no time: one worn or wielded ("Take it off first."), one protected from
 //!   harm ([`World::item_protected`]: a quest's, a unique, of Proof; "It will not come apart."),
-//!   unpaid shop goods (`may_loose`), and one with nothing a profession works.
+//!   unpaid shop goods (`may_loose`), and one with nothing a profession works. Stock (a piece:
+//!   an ingot, a billet, a hide; a loose gem) is never salvageable, so never listed (#1777);
+//!   scrap is, as that is how it becomes stock.
 //! - **Time**: `seconds` (ten minutes), in turns of the `salvage` action ([`World::work`], as
 //!   Temper): interrupted, nothing happens to the item, but the time is spent.
-//! - **The checks**: done, one check for each distinct material among the item's resolved parts
-//!   ([`Stack::parts`], gems included) that a profession works, in first-seen order: two gameplay
-//!   draws each, the natural roll plus the profession's stat modifier, the talents' checks of
-//!   that stat, and the profession's own [`Effect::Craft`] ([`Actor::skill_effect_of`]), against
-//!   `difficulty` + the material's `work`. A natural 2 always fails, a natural 24 always succeeds.
-//!   Untrained, the check is made all the same.
-//! - **The outcome**: the one item (a stack of several gives up one, set apart first, as Temper
-//!   sets it apart) is destroyed whatever comes of the checks: its magic, improvements, rung, and
-//!   charges are gone. A made material gives its stock, `yield` % of its grams, or the
-//!   holder's Waste not's where that is more ([`salvage_percent`]; [`crate::piece::break_up`]); a gem comes out whole, its size and cut kept. A failed
+//! - **The checks**: done, one check for each distinct material that gives something
+//!   ([`crate::piece::salvage`] of the items taken, gems and scrap included) that a profession
+//!   works, in part order: two gameplay draws each, the natural roll plus the profession's stat
+//!   modifier, the talents' checks of that stat, and the profession's own [`Effect::Craft`]
+//!   ([`Actor::skill_effect_of`]), against `difficulty` + the material's `work`. A natural 2
+//!   always fails, a natural 24 always succeeds. Untrained, the check is made all the same.
+//! - **How many** (#1777, [`crate::piece::salvage_batch`]): one of anything not stackable; of a
+//!   stackable thing as many as make a piece of stock (72 copper coins for a copper ingot, 100
+//!   arrowheads for an iron ingot, 500 steel scraps for a steel ingot), taken from the stack at the end;
+//!   with fewer, refused with no time ("You have too few copper coins to make a copper ingot."),
+//!   but a magic one is taken apart alone for its magic whatever its materials give.
+//! - **The outcome**: the items taken are destroyed whatever comes of the checks: their magic,
+//!   improvements, rung, and charges are gone. A made material gives its stock, `yield` % of its
+//!   grams, or the holder's Waste not's where that is more ([`salvage_percent`];
+//!   [`crate::piece::salvage`]), never more than its grams hold whole; a material too little for
+//!   one piece (a dagger's steel, a long sword's leather grip) gives its grams as scrap instead,
+//!   a gram each ([`crate::scrap`]). So nothing saved outweighs what was taken apart. A gem comes
+//!   out whole, its size and cut kept. A failed
 //!   material is lost, but a failed gem only drops a cut (while above the roughest true cut) or
 //!   else a size (while above the smallest) ([`chipped`]); a natural 2, or a gem with nothing to
 //!   lose, shatters it. A material no profession works gives nothing and is not mentioned.
@@ -47,13 +57,18 @@ use crate::stats::Stat;
 use crate::world::{Spent, World};
 
 /// Whether `stack` has anything to salvage: not a spirit weapon, with a part of a material some
-/// profession works, and not money (coins are never melted down: gold ingots come from salvaged
-/// gold, never from coins, docs/design/recipes.md). Worn, protected, and unpaid stacks are the
-/// rules' to refuse.
+/// profession works, not money (the currency is never melted down: gold ingots come from salvaged
+/// gold, never from gold coins, docs/design/recipes.md; copper coins are not money), and not
+/// stock already (#1777): a piece (an ingot, a billet, a hide) or a loose gem would only come
+/// back as itself, less the yield. Scrap is the one stock salvage takes, as that is how it
+/// becomes ingots and billets. Worn, protected, and unpaid stacks are the rules' to refuse.
 pub fn salvageable(content: &Content, stack: &Stack) -> bool {
     let money = content.shops().is_some_and(|s| s.currency == stack.object);
+    let stock = content.object(stack.object).id == crate::piece::ID
+        || content.gems().is_some_and(|g| g.object == stack.object);
     !stack.is_spirit()
         && !money
+        && !stock
         && (stack.parts(content).iter())
             .any(|p| content.stock().profession_of(content, p.material).is_some())
 }
@@ -146,12 +161,53 @@ impl World {
             return Spent::Nothing;
         }
         let stack = &self.state.player().inventory[item];
-        let name = self.lore().title(stack);
-        self.say(format!("You set to taking the {name} apart."));
+        let taken = match self.salvage_take(stack) {
+            Ok(n) => n,
+            Err(refusal) => {
+                self.say(refusal);
+                return Spent::Nothing;
+            }
+        };
+        let name = self.salvage_name(stack, taken);
+        self.say(format!("You set to taking {name} apart."));
         self.craft_work(Task::Salvage(Salvaging { item }), rules.seconds)
     }
 
-    /// The attempt on the stack at `item` is done: the checks, the stock, the item gone, the
+    /// How many of `stack` salvage takes apart at once (#1777, [`crate::piece::salvage_batch`]):
+    /// one of anything not stackable; of a stackable thing the fewest that make a piece, so a
+    /// copper ingot takes 72 copper coins; one of a magic stack whatever its materials give, for
+    /// its magic. With fewer, the refusal's words.
+    fn salvage_take(&self, stack: &Stack) -> Result<u32, String> {
+        let content = &self.content;
+        let percent = salvage_percent(content, self.state.player());
+        match crate::piece::salvage_batch(stack, content, percent) {
+            Some((n, _)) if n <= stack.count => Ok(n),
+            _ if stack.magic().is_some() => Ok(1),
+            Some((_, material)) => {
+                let piece = crate::piece::make(content, material, 1).map_or_else(
+                    || "anything".to_string(),
+                    |p| object::phrase(&[p], self.lore()),
+                );
+                let (_, plural) = self.lore().names(stack);
+                Err(format!("You have too few {plural} to make {piece}."))
+            }
+            None => Err("There is nothing in it worth saving.".into()),
+        }
+    }
+
+    /// What the lines call `count` of `stack` taken apart: "the quarterstaff", "72 copper coins".
+    fn salvage_name(&self, stack: &Stack, count: u32) -> String {
+        match count {
+            1 => format!("the {}", self.lore().title(stack)),
+            _ => {
+                let mut some = stack.clone();
+                some.count = count;
+                object::phrase(&[some], self.lore())
+            }
+        }
+    }
+
+    /// The attempt on the stack at `item` is done: the checks, the stock, the items gone, the
     /// marks (module docs).
     fn salvaged(&mut self, item: usize) {
         let content = self.content.clone();
@@ -166,17 +222,30 @@ impl World {
             self.say("You have nothing left to work on.");
             return;
         };
-        let stack = stack.single();
+        let taken = match self.salvage_take(stack) {
+            Ok(n) => n,
+            Err(refusal) => {
+                self.say(refusal);
+                return;
+            }
+        };
+        let mut batch = stack.clone();
+        batch.count = taken;
+        let percent = salvage_percent(&content, self.state.player());
+        let falls = crate::piece::salvage(&batch, &content, percent);
         // Enchanting's checks on its affixes first (`crystal.rs`), drawn before the materials'.
-        let caught = self.catch_magic(&stack);
-        // Each distinct material a profession works, in first-seen order.
+        let caught = self.catch_magic(&batch.single());
+        // Each distinct material a profession works among what it falls to, in part order.
         let mut works: Vec<(MaterialId, SkillId, Stat)> = Vec::new();
-        for part in stack.parts(&content).iter() {
-            if works.iter().any(|&(m, _, _)| m == part.material) {
+        for fall in &falls {
+            let Some(material) = fall.parts(&content).first().map(|p| p.material) else {
+                continue;
+            };
+            if works.iter().any(|&(m, _, _)| m == material) {
                 continue;
             }
-            if let Some((skill, stat)) = self.profession_of(part.material) {
-                works.push((part.material, skill, stat));
+            if let Some((skill, stat)) = self.profession_of(material) {
+                works.push((material, skill, stat));
             }
         }
         let mut checks = Vec::with_capacity(works.len());
@@ -193,18 +262,21 @@ impl World {
                 natural,
             });
         }
-        let percent = salvage_percent(&content, self.state.player());
-        let at = self.set_apart(item);
-        let one = self.state.player().inventory[at].clone();
-        crate::world::fixtures::outcome::remove_stacks(self.player_mut(), &[at]);
-        let name = self.lore().title(&one);
-        self.say(format!("You take the {name} apart."));
+        let name = self.salvage_name(&batch, taken);
+        let me = self.player_mut();
+        if me.inventory[item].count > taken {
+            me.inventory[item].count -= taken;
+        } else {
+            crate::world::fixtures::outcome::remove_stacks(me, &[item]);
+        }
+        let one = batch;
+        self.say(format!("You take {name} apart."));
         for line in caught.lines {
             self.say(line);
         }
         // What it falls to, each fall by its material, kept, chipped, or lost by its check.
         let mut saved: Vec<Stack> = Vec::new();
-        for fall in crate::piece::break_up(&one, &content, percent) {
+        for fall in falls {
             let Some(material) = fall.parts(&content).first().map(|p| p.material) else {
                 continue;
             };

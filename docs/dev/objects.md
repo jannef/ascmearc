@@ -261,7 +261,11 @@ one, `count` of them), a grouped material its grams (the base part's share of `d
 scaled by material weight as `variant::weight` scales it, times the count) summed per material
 in first-seen order, then `max(1, round(grams × percent / 100 / one piece's grams))` pieces; a
 material without a group and a non-gem part beyond the base parts give nothing. No magic
-survives. Tests: `piece.rs` (names, weight, value, colour, stacking, the dagger with a ruby, the
+survives. Salvage counts the same falls with `piece::salvage` instead (#1777): no floor of one,
+never more pieces than the grams hold whole, `min(round(share), floor(grams / piece))`, and a
+material that makes none gives its grams as scrap (`scrap.rs`, the `scrap` object: a gram each,
+any grouped material, worth nothing), so what is saved never outweighs the items;
+`piece::salvage_batch` is how many of a stack make a piece (docs/dev/crafting.md "Salvage"). Tests: `piece.rs` (names, weight, value, colour, stacking, the dagger with a ruby, the
 long sword, a stack, paper, the one-piece floor).
 
 **Stock** (#1332; the design: docs/design/professions.md §3, §4): the piece is the professions'

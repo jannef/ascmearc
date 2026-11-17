@@ -256,12 +256,12 @@ fn ten_minutes_destroy_the_item_and_the_untrained_still_roll() {
 #[test]
 fn one_of_a_stack_is_salvaged_and_the_rest_is_kept() {
     let mut w = world(false, 2);
-    let mut daggers = Stack::one(object(&w, "dagger"));
-    daggers.count = 3;
-    give(&mut w, |_| daggers);
+    let mut swords = Stack::one(object(&w, "long_sword"));
+    swords.count = 3;
+    give(&mut w, |_| swords);
     w.apply(&Action::Salvage { item: 0 });
     let left = (w.state.player().inventory.iter())
-        .find(|s| s.object == object(&w, "dagger"))
+        .find(|s| s.object == object(&w, "long_sword"))
         .map(|s| s.count);
     assert_eq!(left, Some(2));
 }
@@ -473,4 +473,228 @@ fn a_stack_gone_ahead_of_the_work_never_turns_it_on_the_next() {
     let pack = &w.state.player().inventory;
     assert!(pack.iter().all(|s| s.object != sword), "{:?}", texts(&w));
     assert_eq!(pack[0], Stack::one(staff), "untouched, first now");
+}
+
+/// How many of `id` the pack holds, its stacks summed.
+fn held(w: &World, id: &str) -> u32 {
+    let id = object(w, id);
+    (w.state.player().inventory.iter())
+        .filter(|s| s.object == id)
+        .map(|s| s.count)
+        .sum()
+}
+
+#[test]
+fn copper_coins_are_melted_by_the_ingot_not_by_the_coin() {
+    // #1777: an ingot of copper is 570 g, a coin 8 g: 72 coins (576 g) go into one ingot.
+    let w = world(false, 4);
+    let coins = Stack::new(object(&w, "copper_coin"), 100);
+    let batch = crate::piece::salvage_batch(&coins, &w.content, 50);
+    let copper = w.content.material_id("copper").expect("copper");
+    assert_eq!(batch, Some((72, copper)));
+    // Whatever comes of the check, 72 of the 100 are gone and 28 are kept.
+    for seed in 0..20 {
+        let mut w = world(false, seed);
+        give(&mut w, |w| Stack::new(object(w, "copper_coin"), 100));
+        w.apply(&Action::Salvage { item: 0 });
+        assert!(said(&w, "You set to taking 72 copper coins apart."));
+        assert!(
+            said(&w, "You take 72 copper coins apart."),
+            "{:?}",
+            texts(&w)
+        );
+        assert_eq!(held(&w, "copper_coin"), 28);
+        let ingot = said(&w, "You save a copper ingot.");
+        let lost = said(&w, "The copper cracks and is good for nothing.");
+        assert!(ingot != lost, "{:?}", texts(&w));
+    }
+    // Exactly 72 leave none behind.
+    let mut w = world(false, 4);
+    give(&mut w, |w| Stack::new(object(w, "copper_coin"), 72));
+    w.apply(&Action::Salvage { item: 0 });
+    assert_eq!(held(&w, "copper_coin"), 0);
+}
+
+#[test]
+fn too_few_coins_are_refused_with_no_time() {
+    let mut w = world(false, 4);
+    give(&mut w, |w| Stack::new(object(w, "copper_coin"), 71));
+    let before = w.state.time;
+    w.apply(&Action::Salvage { item: 0 });
+    assert!(
+        said(&w, "You have too few copper coins to make a copper ingot."),
+        "{:?}",
+        texts(&w)
+    );
+    assert_eq!(w.state.time, before);
+    assert_eq!(held(&w, "copper_coin"), 71);
+}
+
+/// Salvages the stack in the pack's first place under fates 0 to 39 until the check is made, and
+/// returns that world (every material check is made with some fate).
+fn salvaged_well(make: impl Fn(&World) -> Stack, saved: &str) -> World {
+    for seed in 0..40 {
+        let mut w = world(false, seed);
+        give(&mut w, &make);
+        w.apply(&Action::Salvage { item: 0 });
+        if said(&w, saved) {
+            return w;
+        }
+    }
+    panic!("never: {saved}");
+}
+
+#[test]
+fn arrowheads_are_salvaged_by_the_ingot() {
+    // #1777: an iron arrowhead is 5 g, an iron ingot 500 g: 100 of them.
+    let mut w = world(false, 4);
+    give(&mut w, |w| Stack::new(object(w, "arrowhead"), 99));
+    let before = w.state.time;
+    w.apply(&Action::Salvage { item: 0 });
+    assert!(
+        said(&w, "You have too few arrowheads to make an iron ingot."),
+        "{:?}",
+        texts(&w)
+    );
+    assert_eq!(w.state.time, before);
+    assert_eq!(held(&w, "arrowhead"), 99);
+    let w = salvaged_well(
+        |w| Stack::new(object(w, "arrowhead"), 120),
+        "You save an iron ingot.",
+    );
+    assert!(
+        said(&w, "You take 100 arrowheads apart."),
+        "{:?}",
+        texts(&w)
+    );
+    assert_eq!(held(&w, "arrowhead"), 20);
+}
+
+#[test]
+fn a_lone_item_too_light_for_stock_gives_scrap() {
+    // A dagger's steel is less than a steel ingot's 500 g: it comes out as steel scraps, a gram
+    // each, as many as the steel weighs.
+    let w = world(false, 4);
+    let dagger = Stack::one(object(&w, "dagger"));
+    let fell = crate::piece::salvage(&dagger, &w.content, 50);
+    assert_eq!(fell.len(), 1);
+    assert_eq!(fell[0].object, object(&w, "scrap"));
+    let grams = fell[0].weight(&w.content);
+    assert_eq!(u64::from(fell[0].count), grams, "a gram a scrap");
+    assert!(grams > 300 && grams <= dagger.weight(&w.content), "{grams}");
+    let w = salvaged_well(
+        |w| Stack::one(object(w, "dagger")),
+        &format!("You save {grams} steel scraps."),
+    );
+    assert!(said(&w, "You take the dagger apart."));
+    assert_eq!(held(&w, "dagger"), 0);
+    // A long sword: two steel ingots, and its leather grip as leather scraps, not a 1.4 kg hide.
+    let sword = Stack::one(object(&w, "long_sword"));
+    let fell: Vec<String> = (crate::piece::salvage(&sword, &w.content, 50).iter())
+        .map(|s| s.describe(&w.content))
+        .collect();
+    assert_eq!(fell, ["2 steel ingots", "180 leather scraps"]);
+    // A gold ring: gold scraps, as many as the ring weighs; scrap of gold weighs a gram too.
+    let ring = Stack::one(object(&w, "gold_ring"));
+    let fell = crate::piece::salvage(&ring, &w.content, 50);
+    assert_eq!(fell[0].describe(&w.content), "10 gold scraps");
+    assert_eq!(fell[0].weight(&w.content), 10);
+}
+
+#[test]
+fn scrap_gathered_is_salvaged_into_stock() {
+    // 500 steel scraps (500 g) make a steel ingot; 499 are too few.
+    let mut w = world(false, 4);
+    give(&mut w, |w| Stack::new(object(w, "scrap"), 499));
+    let before = w.state.time;
+    w.apply(&Action::Salvage { item: 0 });
+    assert!(
+        said(&w, "You have too few steel scraps to make a steel ingot."),
+        "{:?}",
+        texts(&w)
+    );
+    assert_eq!(w.state.time, before);
+    let w = salvaged_well(
+        |w| Stack::new(object(w, "scrap"), 600),
+        "You save a steel ingot.",
+    );
+    assert!(
+        said(&w, "You take 500 steel scraps apart."),
+        "{:?}",
+        texts(&w)
+    );
+    assert_eq!(held(&w, "scrap"), 100);
+    // Scrap of another metal by its own ingot: a copper ingot is 570 g.
+    let copper = w.content.material_id("copper").expect("copper");
+    let scraps = crate::scrap::make(&w.content, copper, 1).expect("scrap");
+    assert_eq!(
+        crate::piece::salvage_batch(&scraps, &w.content, 50),
+        Some((570, copper))
+    );
+}
+
+#[test]
+fn stock_is_never_salvaged_but_scrap_is() {
+    // #1777: an ingot, a billet, a hide, or a loose gem is stock already: never listed, and
+    // refused with no time. Scrap is listed: salvage is how it becomes stock.
+    let w = world(false, 4);
+    let c = &w.content;
+    let m = |id: &str| c.material_id(id).expect(id);
+    let gems = c.gems().expect("gems");
+    let ruby = ItemPart::gem(c, None, m("ruby"), cutting(&w, "medium", "fine"));
+    for stock in [
+        crate::piece::make(c, m("steel"), 3).expect("ingots"),
+        crate::piece::make(c, m("hardwood"), 2).expect("billets"),
+        crate::piece::make(c, m("leather"), 1).expect("a hide"),
+        Stack::new(gems.object, 1).with_parts(vec![ruby]),
+    ] {
+        assert!(!salvageable(c, &stock), "{}", stock.describe(c));
+        let mut w = world(false, 4);
+        give(&mut w, |_| stock.clone());
+        let before = w.state.time;
+        w.apply(&Action::Salvage { item: 0 });
+        assert!(said(&w, "There is nothing in it worth saving."));
+        assert_eq!(w.state.time, before);
+    }
+    let scrap = crate::scrap::make(c, m("iron"), 40).expect("scrap");
+    assert!(salvageable(c, &scrap));
+}
+
+#[test]
+fn salvage_never_saves_more_than_it_takes_apart() {
+    // #1777: for every object salvage takes, at the base yield and at Waste not's, what one
+    // batch gives weighs no more than the batch (gems aside: they come out whole), and of a
+    // stackable thing one fewer makes no stock.
+    let w = world(false, 4);
+    let content = &w.content;
+    let piece = object(&w, "piece");
+    for (i, def) in content.object_defs().iter().enumerate() {
+        let id = ObjectId(i as u16);
+        let one = Stack::one(id);
+        if !salvageable(content, &one) {
+            continue;
+        }
+        for percent in [50, 75, 100] {
+            let Some((n, _)) = crate::piece::salvage_batch(&one, content, percent) else {
+                continue;
+            };
+            let batch = Stack::new(id, n);
+            let saved = crate::piece::salvage(&batch, content, percent);
+            assert!(!saved.is_empty(), "{} × {n} gives something", def.id);
+            let grams: u64 = (saved.iter())
+                .filter(|s| s.gem(content).is_none())
+                .map(|s| s.weight(content))
+                .sum();
+            assert!(
+                grams <= batch.weight(content),
+                "{} × {n} at {percent}%",
+                def.id
+            );
+            if def.stackable && n > 1 {
+                let fewer = Stack::new(id, n - 1);
+                let fell = crate::piece::salvage(&fewer, content, percent);
+                assert!(fell.iter().all(|s| s.object != piece), "{}", def.id);
+            }
+        }
+    }
 }

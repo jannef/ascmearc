@@ -1,0 +1,19 @@
+# Scrap (#1777; crate::scrap): what salvage gives of a material too little to make one piece of
+# stock (piece.toml), a gram a scrap, whatever the material: a dagger's 450 g of steel too little
+# for a steel ingot is 450 steel scraps, a long sword's leather grip leather scraps. One object
+# for every material with a group, as the piece is: its material names it ("an iron scrap",
+# "40 hardwood scraps") and colours it, but never weighs it (a gram each) or makes it worth
+# anything. Gathered, scrap is salvaged into stock like any small stackable thing: as many as
+# one piece weighs (500 steel scraps for a steel ingot). It is never loot (no `kind`), and no
+# shop lays it out (shops.toml `never`).
+[[object]]
+id = "scrap"
+name = "scrap"
+glyph = ","
+fg = "#8a8a80"
+class = "materials"
+materials = ["steel"]
+made_of = ["any"]
+weight = 1
+value = 0
+stackable = true

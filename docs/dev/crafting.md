@@ -848,26 +848,46 @@ is not listed): `seconds = 600`, `difficulty = 12`, `yield = 50`.
   not worn or wielded). `Action::Salvage { item }`, text `salvage:LETTER`; `ActionKind::Salvage`
   (`salvage = 1000`).
 - **Refused, no time** (in this order): no such stack; nothing a profession works, or a spirit
-  weapon, or the currency (coins are never melted down) ("There is nothing in it worth saving."); worn or wielded ("Take it off first.");
+  weapon, or the currency (gold coins are never melted down), or stock (a piece, a loose gem:
+  it would only come back as itself less the yield; scrap is the exception, #1777) ("There is
+  nothing in it worth saving.", and `world::salvageable` keeps them off the list); worn or wielded ("Take it off first.");
   protected (`World::item_protected`: a quest's object, a unique, of Proof; "It will not come
-  apart."); unpaid shop goods (`may_loose`: "You have not paid for X.").
+  apart."); unpaid shop goods (`may_loose`: "You have not paid for X."); a stackable thing
+  short of one batch (below; "You have too few copper coins to make a copper ingot."), unless
+  it is magic.
+- **How many** (#1777, `World::salvage_take`): the batch, `piece::salvage_batch`: 1 of anything
+  not stackable; of a stackable thing the fewest whose `piece::salvage` makes a piece of stock,
+  per material `max(ceil(p / g), ceil(50 p / (g × yield)))` for `g` grams an item and `p` a
+  piece, the least over the materials, 1 with a gem: 72 copper coins (8 g) to a copper ingot
+  (570 g), 100 arrowheads to an iron ingot, 500 steel scraps to a steel ingot. A magic one short
+  of a batch is taken alone for its magic. The batch is taken from the stack at the end (none
+  set apart); the lines name it ("You take 72 copper coins apart.").
+- **Scrap** (#1777; `scrap.rs`, `data/objects/scrap.toml`): the one generic object for a
+  material too little for one piece, as the piece is for stock: made of any grouped material,
+  stacking by it, named "{material} scrap(s)" (`scrap::names`, special-cased in `Stack::names`
+  after the piece), a gram each whatever the material (`scrap::is` in `variant::weight` and
+  `piece::grams`, as jewellery), worth nothing, no `kind`, in every shop's `never`. Salvaged,
+  it is a stackable thing like any other.
 - **Time**: `seconds` by `keep_at`, as Temper; interrupted, nothing happens and the time is spent
   ("...; you leave off your work.").
-- **The checks**, at the end, re-checking the stack first: one per distinct material among
-  `Stack::parts(content)` (resolved, gems included) that `profession_of` maps, in first-seen
-  order; each two keyed draws (`combat::roll_natural`), all drawn before anything changes:
+- **The checks**, at the end, re-checking the stack and the batch first: one per distinct
+  material among the batch's falls (`piece::salvage`, gems and scrap included) that
+  `profession_of` maps, in part order; each two keyed draws (`combat::roll_natural`), all drawn before anything changes:
   natural + the stat's modifier + `VigourMods::check(stat)` + `skill_effect_of(skill, Craft)`
   against `difficulty + work`, `check::makes` (a natural 2 fails, a 24 succeeds). Untrained, the
   check is made the same.
-- **The outcome**: one item is set apart (`World::set_apart`, Temper's) and removed
-  (`outcome::remove_stacks`); `piece::break_up(item, yield)` gives its falls, each kept by its
-  material's check. A made material: its pieces (`yield` % of its grams, at least one), or the
+- **The outcome**: the batch is taken from the stack (the stack removed with
+  `outcome::remove_stacks` when it is all of it); `piece::salvage(batch, yield)` gives its
+  falls, each kept by its material's check. A made material: its pieces (`min(round(grams ×
+  yield %, in pieces), floor(grams in pieces))`: never more than the grams hold whole; where
+  that is none, its grams as scrap, `scrap::make`; so nothing saved outweighs what was taken
+  apart; `break_up`'s floor of one piece is for breakage, not salvage), or the
   loose gem with its size and cut. A failed material is lost ("The blade cracks and is good for
   nothing.": the part's name, else the material's); a failed gem is `salvage::chipped` (the
   integrator's answer 4 on #1337): one cut rougher while the cut below is a true cut (above
   crude), else one size smaller while above tiny ("The ruby chips."); with neither to lose, or on
   a natural 2, it shatters ("The ruby shatters."). A material no profession works gives nothing
-  and is not mentioned (a long sword's leather grip is Woodcraft's now: hide). Affixes,
+  and is not mentioned (a long sword's leather grip is Woodcraft's now: 180 leather scraps). Affixes,
   improvements, rung, and charges go with the item; its name is the lore's title, so an
   unidentified item is never named. What is saved joins the pack ("You save X and Y.", or
   "Nothing is left worth keeping.").
@@ -882,7 +902,10 @@ is not listed): `seconds = 600`, `difficulty = 12`, `yield = 50`.
 - **Tests**: `world/crafting/salvage_tests.rs` (the owner's ruby-tipped hardwood quarterstaff over many
   fates: both, wood only, ruby only, neither, the shattering; the cut kept; `chipped`'s ladder;
   ten minutes; one of a stack; every refusal with no time, unpaid goods in Grimbold's shop; an
-  interruption; the marks; `skill_effect_of` not summing; the ability; a replay),
+  interruption; the marks; `skill_effect_of` not summing; the ability; a replay; #1777: 72
+  copper coins to an ingot and 71 refused, 100 arrowheads and 99 refused, a dagger to steel
+  scraps, a long sword's grip and a gold ring to scrap, 500 steel scraps to an ingot and 499
+  refused, and every salvageable object's batch weighing at least what it gives),
   `content/salvage.rs` (the loader), the `Salvage` screen snapshot (`screen_snapshots.rs`).
 
 ## Waste not (the craftsperson's)
@@ -893,7 +916,7 @@ where the rule already reads its number:
 
 - **`waste_not { salvage, failed }`** (`CraftMods::salvage_percent`, `failed_percent`, the most
   held of each). `salvage`: `world::salvage_percent(content, actor)` is `data/rules/salvage.toml`'s
-  `yield` or the holder's, whichever is more, read by `salvaged` for `piece::break_up` and by
+  `yield` or the holder's, whichever is more, read by `salvaged` for `piece::salvage` and by
   Eye for the make's line (`PerceptionView::describe_item`), so the description counts what the
   work would give. 75: a quarterstaff gives 8 billets for 5, chain mail 17 iron ingots for 11. A
   gem's fate (chipped, shattered) is unchanged. `failed`: `craft_make.rs::failed_percent`, the
