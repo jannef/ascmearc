@@ -375,3 +375,23 @@ fn an_interrupted_work_spends_only_time() {
     assert!(w.state.time.since(start).as_seconds() < 3600);
     assert_eq!(pack(&w), ["2 steel ingots"]);
 }
+
+/// #1770: stock used up from before what is worn leaves the worn thing where it was: the
+/// equipment follows the stacks moving up a place, never pointing at the next stack along.
+#[test]
+fn stock_used_up_leaves_what_is_worn_on() {
+    let mut w = world(false);
+    ingots(&mut w, "steel", 2);
+    gem(&mut w, "ruby", "fair");
+    let dagger = w.content.object_id("dagger").expect("dagger");
+    w.player_mut().inventory.push(Stack::one(dagger));
+    apply(&mut w, "equip:main_hand:c");
+    let main = w.content.slot_id("main_hand").expect("main hand");
+    assert_eq!(w.state.player().equipment.get(main), Some(2));
+    apply(&mut w, "craft:short_sword:a,b");
+    let me = w.state.player();
+    assert!(me.inventory.len() < 3, "{:?}", pack(&w));
+    let held = me.equipment.get(main).map(|i| me.inventory[i].object);
+    assert_eq!(held, Some(dagger), "{:?}", pack(&w));
+    assert!(me.equipment.is_valid_for(&me.inventory, &w.content));
+}

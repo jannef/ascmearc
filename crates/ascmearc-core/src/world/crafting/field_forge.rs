@@ -147,10 +147,12 @@ impl World {
             self.say(why);
             return;
         }
-        let pack = &mut self.player_mut().inventory;
-        pack[item].count -= 1;
-        if pack[item].count == 0 {
-            pack.remove(item);
+        let me = self.player_mut();
+        me.inventory[item].count -= 1;
+        if me.inventory[item].count == 0 {
+            me.inventory.remove(item);
+            me.equipment
+                .after_removal(&crate::action::Positions::of([item]));
         }
         self.set_terrain(at, anvil);
         self.say("You set the block on a heap of stones: a makeshift anvil.");
