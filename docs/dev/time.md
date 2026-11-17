@@ -29,7 +29,7 @@ act)`: turn after turn of `act` while `more` holds, stopping on a creature hosti
 `World::came_line` says "comes into view" or, seen farther off before, "comes close"), on a
 perceived attack on the player or a shot or a spell within `stop_within` of them (`World::stirs`, so a
 miss or a resisted spell stops it whatever is said), a message (`say`; `note` does not stop it;
-hunger worsening, a hurt, an attack said; others' attacks and deaths stop it only within `stop_within`,
+hunger worsening, a hurt, an attack said, a sound heard but a calm one, `SoundKind::calm`, #1779; others' attacks and deaths stop it only within `stop_within`,
 `perceive_events`, and a creature's spell only at the player or cast by or at one within
 `stop_within`, its lines held and noted otherwise, `creature_cast.rs`), or death (`Ended`). The same rule holds for every long
 action through `keep_at` (dig, meals, search, study, ...), and so for a wait, which is a turn of

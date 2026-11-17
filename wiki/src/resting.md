@@ -58,9 +58,11 @@ A rest stops early when:
   death you see within 5 steps. A fight you watch farther off is written to the message line,
   and you rest on.
 - A message is written to the [message line](the-screen.md#messages), such as a new
-  [sound](hearing.md#what-you-hear) ("You hear footsteps to the north-east.") or an attack you
+  [sound](hearing.md#what-you-hear) ("You hear fighting to the north-east.") or an attack you
   notice ("The kobold hits you."). A sound you have already been hearing does not stop you; see
-  [Hearing](hearing.md). Nor does a [status effect](status-effects.md#how-they-work) wearing off
+  [Hearing](hearing.md). Nor do the calm sounds of creatures going about: footsteps, a [door](doors.md)
+  opening or closing, a heartbeat. They are written to the message line, and you rest on, whoever
+  made them. Nor does a [status effect](status-effects.md#how-they-work) wearing off
   ("The bleeding stops.", "The poison wears off.") or a disease leaving you ("Your fever
   breaks."); see [Status effects](status-effects.md) and [Diseases](diseases.md).
 - Under the open sky, [rain](weather.md) starts or grows heavier ("It starts to rain.", "It
@@ -76,8 +78,8 @@ A rest stops early when:
 - On the [overworld](overworld.md#travel), someone finds your camp (see [Camping and
   foraging](encounters.md#camping-and-foraging)).
 
-So resting next to a creature that walks back and forth behind a [door](doors.md) is interrupted
-each time it comes back into [earshot](hearing.md). A hostile already within 5 steps and in view
+So a fight behind a door interrupts a rest each time it comes back into [earshot](hearing.md);
+a creature that only walks there does not. A hostile already within 5 steps and in view
 when you start does not stop the rest just by being there. It stops the rest only by leaving your
 [sight](sight.md#line-of-sight) (or going farther than 5 steps) and coming back, or by attacking
 you.

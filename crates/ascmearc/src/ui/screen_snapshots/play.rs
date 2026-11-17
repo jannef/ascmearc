@@ -1,5 +1,5 @@
 //! Screen snapshot cases (`super`): the map view: look mode, the questions a step asks, hunger's
-//! stops, and overworld encounters.
+//! stops, overworld encounters, and the message line after long work.
 
 use super::*;
 
@@ -392,4 +392,39 @@ fn an_encounter_row_answers_it() {
             .map(|m| m.text.as_str())
             .collect::<Vec<_>>()
     );
+}
+
+/// #1789: a witch brews a potion of healing in a crowd of muttering townsfolk. Their chatter,
+/// noted while the work went on, is in the log and passes the message line by: no `--more--`,
+/// the brew's own lines shown with the latest chatter above them.
+#[test]
+fn a_long_craft_amid_chatter_asks_for_no_more() {
+    let mut files = ascmearc_assets::files();
+    files.insert(
+        "levels/chatter.toml",
+        "name = \"Chatter\"\nambient = [255, 255, 255, 0]\nmap = '''\n\
+         #########\n#v.v.v.v#\n#.......#\n#v..@..v#\n#.......#\n#v.v.v.v#\n#########\n'''\n\
+         [legend]\n\".\" = \"floor\"\n\"#\" = \"wall\"\n\
+         \"@\" = { terrain = \"floor\", spawn = \"player\", objects = [\"moonwort*2\"] }\n\
+         \"v\" = { terrain = \"floor\", creature = \"villager\" }\n",
+    );
+    files.insert(
+        "scenarios/chatter.toml",
+        "name = \"C\"\nstart_level = \"chatter\"\n",
+    );
+    let content = Arc::new(Content::load(&files).expect("content"));
+    let case = Case {
+        name: "long-craft-amid-chatter",
+        scenario: "chatter",
+        character: Some("human,female,witch"),
+        actions: "pickup craft:potion_of_healing",
+        ..BASE
+    };
+    let app = start(&case, content.clone());
+    assert_eq!(*app.world().resource::<InputMode>(), InputMode::Normal);
+    let game = app.world().resource::<Game>();
+    let texts: Vec<&str> = game.unread().iter().map(|m| m.text.as_str()).collect();
+    let chatter = game.unread().iter().filter(|m| m.passing).count();
+    assert!(chatter >= 3, "chatter during the work: {texts:?}");
+    check_with(&case, content);
 }

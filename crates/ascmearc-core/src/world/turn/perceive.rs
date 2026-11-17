@@ -464,7 +464,8 @@ impl World {
     }
 
     /// A message for each sound the player perceives that is news ([`noise::news`]): a patrol
-    /// heard turn after turn is said once, not every turn. Messages stop a rest. A voice is said
+    /// heard turn after turn is said once, not every turn. Messages stop a rest, but a calm sound's
+    /// ([`noise::SoundKind::calm`]: footsteps, a door) is a note that does not. A voice is said
     /// with its words, if any ([`World::say_mutters`]).
     pub(in crate::world) fn hear(&mut self) {
         let turn = self.state.turn;
@@ -488,7 +489,10 @@ impl World {
         for sound in told.iter().filter(|s| s.kind != noise::SoundKind::Voice) {
             let text = sound.message(viewer);
             if !said.contains(&text) {
-                self.say(text.clone());
+                match sound.kind.calm() {
+                    true => self.note(text.clone()),
+                    false => self.say(text.clone()),
+                }
                 said.push(text);
             }
         }

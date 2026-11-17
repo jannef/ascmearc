@@ -234,7 +234,11 @@ to open, read keys for, or draw one:
   has read everything; a replay's last step is news, `play_replay`; a loaded snapshot calls
   `Game::mark_read`), and `Game::unread` lines it up with the log (which only grows at its end,
   folds repeats into its last entry, and drops its oldest beyond `messages::CAPACITY`) to give
-  this turn's messages. `more::pages` runs them on in rows of the console's width less a margin
+  this turn's messages. Those noted during a long action (`Message::passing`: `World::note` while
+  `World::keep_at` runs, its `working`, but for its last stretch's, cleared by `MessageLog::settle`
+  so what came with the end is read with it; presentation only, not saved or hashed; #1789) are not
+  paged: `more::draw` shows them among the earlier messages in the rows left free, so a craft amid
+  chatter never waits at `--more--` for it. `more::pages` runs the others on in rows of the console's width less a margin
   either side, split at word boundaries, in pages of `MESSAGE_ROWS`, every page but the last
   leaving room for ` --more--`. `more::wait` (after `SimSet`, before `draw`) enters
   `InputMode::More(0)` when a new action (`Game::applied`, or a new run) needs more than one

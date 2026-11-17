@@ -15,6 +15,11 @@ pub struct Message {
     /// How many times in a row it was logged (1 for a single message).
     #[serde(default = "one", skip_serializing_if = "is_one")]
     pub count: u32,
+    /// Whether it was noted while a long action went on and did not stop it (a calm sound,
+    /// chatter, a status wearing off; #1789): the message line passes over it without asking for
+    /// `--more--`, and the log keeps it. Presentation only (not saved, not hashed).
+    #[serde(skip)]
+    pub passing: bool,
 }
 
 fn one() -> u32 {
@@ -69,12 +74,19 @@ pub struct MessageLog {
 
 impl MessageLog {
     pub fn push(&mut self, turn: u64, text: impl Into<String>) {
+        self.push_as(turn, text, false);
+    }
+
+    /// Logs `text`, [`Message::passing`] if `passing` (a repeat folded into the last entry takes
+    /// the latest's).
+    pub fn push_as(&mut self, turn: u64, text: impl Into<String>, passing: bool) {
         let text = text.into();
         if let Some(last) = self.entries.back_mut()
             && last.text == text
         {
             last.count = last.count.saturating_add(1);
             last.turn = turn;
+            last.passing = passing;
             return;
         }
         if self.entries.len() == CAPACITY {
@@ -84,7 +96,19 @@ impl MessageLog {
             turn,
             text,
             count: 1,
+            passing,
         });
+    }
+
+    /// Clears [`Message::passing`] on the messages logged on turn `since` or later: the last
+    /// stretch of a long action, read with its end (#1789).
+    pub fn settle(&mut self, since: u64) {
+        for msg in self.entries.iter_mut().rev() {
+            if msg.turn < since {
+                break;
+            }
+            msg.passing = false;
+        }
     }
 
     pub fn iter(&self) -> impl DoubleEndedIterator<Item = &Message> {
@@ -139,6 +163,7 @@ mod tests {
             turn: 0,
             text: "No {keys} here, {key:open".into(),
             count: 1,
+            passing: false,
         };
         assert_eq!(plain.display_with(bound), plain.text);
     }

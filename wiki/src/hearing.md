@@ -130,8 +130,11 @@ hear.
 
 ## Resting
 
-A message stops a [rest](resting.md), so a new sound wakes you. A sound you already know about,
-such as footsteps you have been hearing for a few turns, does not.
+A new sound stops a [rest](resting.md), or any other long work such as crafting, unless it is a
+calm one: footsteps, a door opening or closing, a heartbeat, or a voice. Those are written to the
+message line and you work on, whoever made them, so a busy town does not keep you from your work.
+Fighting, a scream, banging, an explosion, and every other sound stop you. A sound you already
+know about, such as fighting you have been hearing for a few turns, does not.
 
 ## Creatures hear you
 

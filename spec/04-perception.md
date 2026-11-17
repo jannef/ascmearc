@@ -55,7 +55,7 @@ These are gameplay rules in the core: deterministic, integer math, independent o
 
 - Actions make noise. Noise spreads around corners, never through walls, and is muffled by doors.
 - Creatures with enemies hear and go to look. Wildlife does not care.
-- The player hears only sounds whose source they cannot see: the kind, how loud, and roughly where, never who made them. Only news gets a message.
+- The player hears only sounds whose source they cannot see: the kind, how loud, and roughly where, never who made them. Only news gets a message. News stops a rest unless it is a calm sound (footsteps, a door, a heartbeat), told without stopping it whoever made it.
 
 ## The perception snapshot
 

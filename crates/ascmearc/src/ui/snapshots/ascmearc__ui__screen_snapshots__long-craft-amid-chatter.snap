@@ -1,0 +1,6 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content)"
+---
+ The villager mutters: "Who'd pay that for an onion, eh?" (×2)
+ You set to work on the potion of healing. You have made a potion of healing.

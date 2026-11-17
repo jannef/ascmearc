@@ -528,6 +528,9 @@ pub struct World {
     /// Messages logged since this world was created or loaded (not saved): resting stops when it
     /// changes.
     said: u64,
+    /// Whether a long action is under way ([`World::keep_at`]; not saved): the notes logged
+    /// meanwhile are [`crate::messages::Message::passing`].
+    working: bool,
     /// Creatures that died during the current action, as they were (not saved): what they did
     /// that turn is said when it is perceived.
     fallen: Vec<Actor>,
@@ -1101,6 +1104,7 @@ impl World {
             lights,
             labels,
             said: 0,
+            working: false,
             fallen: Vec::new(),
             news: Vec::new(),
             notes: Vec::new(),
@@ -1400,10 +1404,11 @@ impl World {
         self.said += 1;
     }
 
-    /// Logs a message that does not stop a rest.
+    /// Logs a message that does not stop a rest; logged during a long action, the message line
+    /// passes over it ([`crate::messages::Message::passing`]).
     fn note(&mut self, text: impl Into<String>) {
         let turn = self.state.turn;
-        self.state.messages.push(turn, text);
+        self.state.messages.push_as(turn, text, self.working);
     }
 
     /// A turn of the player's action `kind` if they did it, else nothing.

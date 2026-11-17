@@ -53,8 +53,11 @@ waits. `Space` or `Enter` shows the rest, a page at a time, and `Esc` skips the 
 messages. Until then no other key does anything, and a key you hold down never turns the page, so
 nothing happens that you have not read.
 
-A [rest](resting.md#how-resting-works) or a long [dig](digging.md) counts as one turn here: what was
-said during it, and what stopped it, shows the same way. Both keys can be rebound in their own
+A [rest](resting.md#how-resting-works), a long [dig](digging.md), or any other long work counts as
+one turn here: what stopped it shows the same way. What was only written down while you worked,
+without stopping you (footsteps, someone muttering, a status wearing off), never waits at
+`--more--`: the line passes over it, showing the latest of it in the rows left free, and the
+message history keeps all of it. Both keys can be rebound in their own
 group in Controls. Skipping has no key until you bind one, but `Esc` always skips. A screen that
 opens by itself, such as someone answering you, comes first: `--more--` waits beneath it until it
 closes.
