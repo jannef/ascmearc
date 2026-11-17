@@ -348,6 +348,10 @@ pub struct WorldState {
     /// The unique items traders' offers have made in the run (`world/people/wares.rs`): each once.
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
     pub(crate) uniques_offered: BTreeSet<String>,
+    /// Every profane gift the player has ever taken, by talent id, held or lost since: none is
+    /// given twice (`world/character/profane.rs`, #1805).
+    #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
+    pub(crate) gifts_received: BTreeSet<String>,
     /// What an aristocrat's family has put by for them, until their servant hands it over
     /// (`world/classes/stipend.rs`).
     #[serde(default, skip_serializing_if = "classes::stipend::Stipend::is_empty")]
@@ -618,6 +622,8 @@ enum Spent {
     Rest(GameTime, Rest),
     /// Running in this direction (see [`World::run`]).
     Run(Dir),
+    /// Running to the nearest known stairs going this way (see [`World::run_to_stairs`]).
+    RunToStairs(StairsDir),
     /// A meal (see [`World::dine`]).
     Meal(health::eat::Dish),
     /// Digging into the wall at this cell (see [`World::dig`]).
@@ -725,10 +731,7 @@ impl World {
             world.player_mut().mana = world.state.player().max_mana(&world.content);
             *world.perception =
                 Perception::compute(&world.state, &world.content, &mut world.lights);
-            let current = world.state.current_level.clone();
-            if let Some(level) = world.state.levels.get_mut(&current) {
-                world.perception.remember(level);
-            }
+            world.perception.remember_in(&mut world.state);
         }
         Ok(world)
     }
@@ -855,6 +858,7 @@ impl World {
             parties: Vec::new(),
             wares: BTreeMap::new(),
             uniques_offered: BTreeSet::new(),
+            gifts_received: BTreeSet::new(),
             stipend: classes::stipend::Stipend::default(),
             fund: classes::invest::Fund::default(),
             patron: crafting::patron::Patron::default(),
@@ -1092,7 +1096,7 @@ impl World {
         character::stat_training::schedule(&mut state, &content);
         let mut lights = LightCache::default();
         let perception = Box::new(Perception::compute(&state, &content, &mut lights));
-        perception.remember(state.current_mut());
+        perception.remember_in(&mut state);
         let time = state.time;
         let player = state.player;
         let stood_on = fixtures::feature::standing(&state);
@@ -1217,6 +1221,7 @@ impl World {
         PerceptionView {
             content: &self.content,
             level: self.state.current(),
+            below: (self.state.current().below.as_deref()).and_then(|id| self.state.levels.get(id)),
             player: self.state.player(),
             character: self.state.character.as_ref(),
             campaign: &self.state.campaign,
@@ -1334,6 +1339,7 @@ impl World {
             }
             Spent::Rest(until, goal) => self.rest(until, goal, &mut events),
             Spent::Run(dir) => self.run(dir, &mut events),
+            Spent::RunToStairs(way) => self.run_to_stairs(way, &mut events),
             Spent::Meal(dish) => self.dine(dish, &mut events),
             Spent::Dig(at) => self.dig(at, &mut events),
             Spent::Search(turns) => {
@@ -1441,6 +1447,7 @@ impl World {
         let (done, kind) = match action {
             Action::Move(dir) => return self.player_moves(*dir, events),
             Action::Run(dir) => return self.start_running(*dir, events),
+            Action::RunToStairs(way) => return self.start_running_to_stairs(*way),
             Action::Open(dir) => return self.open_door(here.step(*dir), events),
             Action::Kick(dir) => return self.kick(*dir, events),
             Action::PickLock(dir) => return self.pick_lock(*dir, events),

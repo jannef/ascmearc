@@ -54,15 +54,16 @@ unseen; its spark sets the struck one's mana ebbing (`ebbing`, 30 % of hits).
 
 The potions wave 2 design §7 (#1230): three bombers, each a `[creature.throw]` whose `object` is
 a flask (no `damage`: the splash is the attack, `docs/dev/potions.md` "Flasks"), `range` 6,
-`verb = "hurls"`, the default throw cost; each carries one or two of its flask (a gear line)
-and a racial weapon for up close. Numbers on the living base: XP `5L + 10`, `base_hp`
+`verb = "hurls"`, the default throw cost, a `cooldown` and a `supply` of its flask (#1794,
+#1795: made with them, a flask spent a throw, none left none thrown, the rest dropped where it
+dies), and a racial weapon for up close. Numbers on the living base: XP `5L + 10`, `base_hp`
 `2.5 × L × 0.5` (quick).
 
-| L | id | faction | flask (spell) | gear | rarity | where |
+| L | id | faction | flask (spell) | supply, cooldown | rarity | where |
 |---|---|---|---|---|---|---|
-| 3 | `kobold_alchemist` | kobolds | `flask_of_oil` (Slick) | 70 %: 1 or 2 | uncommon | Cealdhlāw, Fyrdelf (with the kobolds) |
-| 6 | `goblin_firebomber` | goblins | `flask_of_fire` (Fireball) | 60 %: 1 or 2 | rare | Cealdhlāw, Fyrdelf (beside the goblin wizard) |
-| 8 | `cult_chymist` | cult | `stinking_flask` (Reek) | 60 %: 1 or 2 | uncommon | Fennmynster (with the cultists), the showcase's summoning hall (beside the necromancer) |
+| 3 | `kobold_alchemist` | kobolds | `flask_of_oil` (Slick) | 1d3, 24 s | uncommon | Cealdhlāw, Fyrdelf (with the kobolds) |
+| 6 | `goblin_firebomber` | goblins | `flask_of_fire` (Fireball) | 2d3, 30 s | rare | Cealdhlāw, Fyrdelf (beside the goblin wizard) |
+| 8 | `cult_chymist` | cult | `stinking_flask` (Reek) | 1d3+1, 36 s | uncommon | Fennmynster (with the cultists), the showcase's summoning hall (beside the necromancer) |
 
 The chymist is a shared type (not the
 Ascmearc's `cultist`, which is campaign-owned) so the showcase's hall may place it; it resists

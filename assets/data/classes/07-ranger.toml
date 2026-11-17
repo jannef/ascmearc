@@ -2,7 +2,7 @@
 id = "ranger"
 name = "Ranger"
 description = "A hunter and tracker of the borderlands: sharp-eyed, sure-footed, and easier with beasts than people."
-stats = { dexterity = "1d3", toughness = 1, willpower = "1d2", presence = -1 }
+stats = { dexterity = "1d3", toughness = 1, willpower = "1d2" }
 hp = 5
 mana = 2
 experience = 105

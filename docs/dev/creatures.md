@@ -303,10 +303,15 @@ order; spells load before creatures). Refused: a caster without a list, a list o
 type (never read), an unknown id, and a spell no creature casts (`creature_spells::castable`:
 zones, corpses, the open sky, pushes, charms, ground- or tag-bound hexes, heals not by touch,
 summons, cleansings, utilities). A caster's `mana` is its pool (summoners' summons share it).
+Its harmful area spells (`creature_spells::harms_an_area`: a damage spell of `area` resolution,
+or with `arcs`) share a cooldown (#1795): `area_cooldown` seconds (default
+`DEFAULT_AREA_COOLDOWN`, 18), resolved for every type with spells into `CreatureDef::area_cooldown`
+(the `area_spell` status's degrees through `theft::cooldown`; refused on a type without spells).
 **Rules**: `world/creatures/creature_cast.rs`: `World::creature_spell` (one branch in `ai.rs::fight`
 after the breath, `Plan::Cast { spell, on }`), `World::spell_reach_at` (how far the AI closes
-in; `None` sends it to a launcher or to melee: never idle), `World::creature_casts` (mana
-through `World::spend_mana`, a spell's noise, the words, then by kind: a buff or a hex through
+in; `None` sends it to a launcher or to melee: never idle; both pass over an area spell while
+its cooldown status is on, `affords`), `World::creature_casts` (mana
+through `World::spend_mana`, an area spell's cooldown status, a spell's noise, the words, then by kind: a buff or a hex through
 `World::afflict`, a heal, or harm through the shared `cast_burst_at`, `cast_bolt`, `cast_cone`,
 and `cast.rs::cast_single`, which now takes its caster's id, then `spell_type_spreads` and
 `spell_lands`, the by-kind part split out as `World::creature_spell_does`), then its Spellcraft check and perhaps a miscast (`World::after_cast`, #1271, docs/dev/spells.md "Miscasts": its own Spellcraft and Intelligence; the player told by the entry's `seen` line when they see it). `Cast::by_creature` settles reach, roll, and degrees at the creature's stats

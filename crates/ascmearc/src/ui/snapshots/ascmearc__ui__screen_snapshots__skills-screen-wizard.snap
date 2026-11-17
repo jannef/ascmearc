@@ -11,13 +11,13 @@ expression: "render(case, content.clone())"
 
 ┌─ Skills ─────────────────────────────────────────────────────────────────────────────────────────┐
 │                                                                                                  │
-│ > Concentration      21  ────                                                                    │
-│   Decipher script    21  ────                                                                    │
+│ > Concentration      20  ────                                                                    │
+│   Decipher script    20  ────                                                                    │
 │   Enchanting         11  ────                                                                    │
 │   Knowledge          21  ────                                                                    │
 │   Listen              7  ────                                                                    │
-│   Spellcraft         15  ────                                                                    │
-│   Spot                8  ────                                                                    │
+│   Spellcraft         17  ────                                                                    │
+│   Spot                7  ────                                                                    │
 │   Survival            3  ────                                                                    │
 │                                                                                                  │
 │ Keeping your mind on the task, whatever happens around you: your mana comes back faster, and     │

@@ -24,13 +24,15 @@
 //! ([`World::clear_shot`]); a touch beside it; a burst within its range with a clear line, the
 //! caster outside its cells; a burst about the caster with the hostile in its cells; a cone or
 //! a line whose cells hold the hostile, with a clear line to it. An area spell is never cast
-//! where its cells hold a friend of the caster's (anyone not hostile to it). Deciding draws
+//! where its cells hold a friend of the caster's (anyone not hostile to it), and a harmful area
+//! spell (a burst, a cone, a line, or Chain lightning's arcs; `creature_spells.rs::harms_an_area`)
+//! not while its area cooldown status is on (#1795). Deciding draws
 //! nothing. Otherwise the AI closes to the farthest reach of the aimed spells it could cast at
 //! the hostile ([`World::spell_reach_at`], at most its type's `range`), and with none, fights
 //! as a melee creature.
 //!
-//! **What** ([`World::creature_casts`]): the mana is spent, the chanting heard (a spell's
-//! noise), and the cast said; then the spell does what the player's would. Then its Spellcraft
+//! **What** ([`World::creature_casts`]): the mana is spent, a harmful area spell's cooldown taken
+//! (its type's `area_cooldown`), the chanting heard (a spell's noise), and the cast said; then the spell does what the player's would. Then its Spellcraft
 //! check, as the player's: a failure miscasts (`miscast.rs`). An `attack` spell's
 //! roll adds its level's quarter, as its natural attacks do ([`World::creature_aim`]). A cast
 //! trains nothing. The action costs a `cast`.
@@ -43,6 +45,7 @@
 use crate::action::{AttackKind, Event, SpellShape};
 use crate::content::{
     ActionKind, Bolt, Burst, LevelKind, Shape, SpellData, SpellId, SpellPurpose, Stance,
+    harms_an_area,
 };
 use crate::fov::radius2;
 use crate::geom::Pos;
@@ -73,10 +76,15 @@ impl World {
             && (me.effects.blocking(&self.content, ActionKind::Cast)).is_none()
     }
 
-    /// Whether creature `id` has the mana for `def`.
+    /// Whether creature `id` has the mana for `def`, and, a harmful area spell, its area
+    /// cooldown is off.
     fn affords(&self, id: ActorId, def: &SpellData) -> bool {
         let me = &self.state.actors[&id];
-        me.mana >= me.spell_cost(&self.content, def)
+        let cooling = || {
+            let cooldown = self.content.creature(me.creature).area_cooldown;
+            harms_an_area(def) && cooldown.is_some_and(|(_, s, _)| me.effects.has(s))
+        };
+        me.mana >= me.spell_cost(&self.content, def) && !cooling()
     }
 
     /// The spell creature `id` casts now, fighting `target` on `at`, and on whom (module docs).
@@ -246,8 +254,12 @@ impl World {
         };
         let here = me.pos;
         let cast = Cast::by_creature(me, &content, (spell, def));
+        let cooldown = content.creature(me.creature).area_cooldown;
         if !self.spend_mana(id, me.spell_base(&content, def)) {
             return price;
+        }
+        if let Some((_, status, degrees)) = cooldown.filter(|_| harms_an_area(def)) {
+            self.afflict(id, status, degrees, None, events);
         }
         self.make_noise(id, Act::Attack(AttackKind::Spell));
         // A spell at the player or cast near them stops a rest; one farther off is only told: what

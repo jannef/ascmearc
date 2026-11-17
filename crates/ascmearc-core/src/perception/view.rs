@@ -24,6 +24,9 @@ use crate::world::{Actor, ActorId, ActorKind, Death, Due, LevelState};
 pub struct PerceptionView<'a> {
     pub(crate) content: &'a Content,
     pub(crate) level: &'a LevelState,
+    /// The level below (`level.below`), once it exists: what the air cells show
+    /// (`PerceptionView::below`, docs/dev/towers.md).
+    pub(crate) below: Option<&'a LevelState>,
     /// The player, for what they carry.
     pub(crate) player: &'a Actor,
     /// The player's character, which they know.

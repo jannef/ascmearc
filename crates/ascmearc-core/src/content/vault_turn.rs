@@ -150,6 +150,8 @@ fn turned_template(template: &LevelTemplate, turn: Turn) -> LevelTemplate {
         ice,
         spawning,
         burial: _,
+        below: _,
+        storey: _,
     } = template;
     let (w, h) = (terrain.width(), terrain.height());
     let at = |p: Pos| turn.pos(p, w, h);
@@ -219,8 +221,10 @@ fn turned_template(template: &LevelTemplate, turn: Turn) -> LevelTemplate {
         temperature: *temperature,
         ice: moved(ice, at),
         spawning: spawning.clone(),
-        // A vault is no burial ground (refused at load).
+        // A vault is no burial ground (refused at load), and no floor above the ground.
         burial: None,
+        below: None,
+        storey: 0,
     }
 }
 

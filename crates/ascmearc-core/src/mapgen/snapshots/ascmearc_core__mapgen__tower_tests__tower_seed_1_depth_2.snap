@@ -1,0 +1,23 @@
+---
+source: crates/ascmearc-core/src/mapgen/tower_tests.rs
+expression: "describe(&floor(1, 2))"
+---
+The Test Tower 3 (tower_climb_floors:2) 48x20
+stairs Up at (32, 14) -> tower_climb_top
+stairs Down at (15, 5) -> tower_climb_floors:1
+
+
+
+
+              #########=##=##=##=#
+              #>.#.¡#.......#¡...#
+              #..#..#....#..#....#
+              =.....#....#..#....=
+              #..#..#....#..#....#
+              #..#..#....#..#....#
+              =..#..#....#..#....=
+              #..#..#.⊟..#..#....#
+              #..#.......#.......#
+              =..#..#....#..#....=
+              #.¡#..#...¡#¡.#...<#
+              #########=##=##=##=#

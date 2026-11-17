@@ -29,6 +29,9 @@ pub enum Layer {
     /// Char the player sees or remembers ([`blood_digit`]: `1` a little soot to `9` charred
     /// through), over the view.
     Scorch,
+    /// On a floor above the ground (docs/dev/towers.md): the storey digit on every air cell
+    /// whose ground below the player sees now, `.` elsewhere.
+    Below,
     /// Not a map: the player's inventory, one line per stack (marked when worn or wielded), then
     /// what they carry and weigh.
     Inventory,
@@ -135,6 +138,7 @@ impl Layer {
         Layer::Sound,
         Layer::Blood,
         Layer::Scorch,
+        Layer::Below,
         Layer::Inventory,
         Layer::Equipment,
         Layer::Stats,
@@ -168,6 +172,7 @@ impl Layer {
             Layer::Sound => "sound",
             Layer::Blood => "blood",
             Layer::Scorch => "scorch",
+            Layer::Below => "below",
             Layer::Inventory => "inventory",
             Layer::Equipment => "equipment",
             Layer::Stats => "stats",
@@ -212,7 +217,7 @@ impl FromStr for Layer {
             .ok_or_else(|| {
                 format!(
                     "unknown layer `{s}` (expected view, fov, memory, light, sound, blood, \
-                     scorch, inventory, equipment, stats, skills, weapon_skills, attacks, talents, \
+                     scorch, below, inventory, equipment, stats, skills, weapon_skills, attacks, talents, \
                      abilities, recipes, traps, locations, quests, story, companion, familiar, \
                      truth, actors, progress, rooms, ice)"
                 )

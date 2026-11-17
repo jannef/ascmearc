@@ -37,6 +37,37 @@ fn looking_with_knowledge() {
     }
 }
 
+/// #1781: look mode on a floor above the ground names what is far below an air cell: the ground
+/// seen through the west window ("Open air. Far below: grass."), the deer grazing there as it
+/// stood, and the dagger in the grass; over the window itself, the window.
+#[test]
+fn looking_far_below() {
+    for (name, keys) in [
+        (
+            "look-below-ground",
+            "l Left Left Left Left Left Left Left Left",
+        ),
+        (
+            "look-below-deer",
+            "l Left Left Left Left Left Left Left Left Left Left Left Left Left Left Down",
+        ),
+        (
+            "look-below-dagger",
+            "l Left Left Left Left Left Left Left Left Left Left Left Left Left",
+        ),
+        ("look-below-window", "l Left Left Left Left Left Left Left"),
+    ] {
+        let case = Case {
+            name,
+            scenario: "tower",
+            actions: "ascend",
+            keys: Some(keys),
+            ..BASE
+        };
+        check(&case);
+    }
+}
+
 /// #1750: the run prefix asks the way on the message line.
 #[test]
 fn the_run_prefix_asks_the_way_as_text() {
@@ -71,6 +102,34 @@ fn the_run_prefix_runs_as_alt_does() {
     assert_eq!(after(". Down"), alt);
     assert_eq!(after("NumDecimal Down"), alt);
     assert_eq!(after(". Esc"), still);
+}
+
+/// #1801: `.` then a stairs key runs to the nearest known stairs that way, as the core action
+/// does; the decimal key does the same.
+#[test]
+fn the_run_prefix_then_a_stairs_key_runs_to_the_stairs() {
+    use ascmearc_core::content::StairsDir;
+    let content = Arc::new(ascmearc_assets::content().expect("content"));
+    let case = Case { run: true, ..BASE };
+    let state = |app: &App| {
+        let game = app.world().resource::<Game>();
+        let log: Vec<String> = game
+            .world
+            .messages()
+            .iter()
+            .map(|m| m.text.clone())
+            .collect();
+        (game.world.player_pos(), game.world.time(), log)
+    };
+    for (keys, way) in [(". >", StairsDir::Down), ("NumDecimal <", StairsDir::Up)] {
+        let mut app = start(&case, content.clone());
+        press_keys(&mut app, keys);
+        assert_eq!(*app.world().resource::<InputMode>(), InputMode::Normal);
+        let mut core = start(&case, content.clone());
+        let mut game = core.world_mut().resource_mut::<Game>();
+        game.world.apply(&ascmearc_core::Action::RunToStairs(way));
+        assert_eq!(state(&app), state(&core), "{keys}");
+    }
 }
 
 /// A run on the overworld beside the Hall that starts with `nutrition`, or if

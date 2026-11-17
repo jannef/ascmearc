@@ -187,6 +187,63 @@ fn an_area_spell_spares_the_casters_friends() {
 }
 
 #[test]
+fn an_area_spell_waits_out_its_cooldown_the_rest_of_the_list_meanwhile() {
+    // The warcaster's list: frost (a burst), arcane bolt (a line), magic missile (a bolt).
+    let mut w = world(HALL, "hobgoblin_warcaster", "kobold");
+    let caster = of(&w, "hobgoblin_warcaster");
+    w.state.actors.get_mut(&caster).expect("there").mana = 1000;
+    let cooling = status(&w, "area_spell");
+    let spell = |name| w.content.spell_id(name).expect("a spell");
+    let (frost, missile) = (spell("frost"), spell("magic_missile"));
+    run(&mut w, "wait");
+    assert!(said(&w, "casts frost at you!"), "{:?}", w.messages());
+    assert!(w.state.actors[&caster].effects.has(cooling));
+    // Cooling, neither frost nor the arcane bolt: the magic missile.
+    let at = w.player_pos();
+    let cast = w.creature_spell(caster, w.state.player, at);
+    assert_eq!(cast.map(|(s, _)| s), Some(missile));
+    // Its cooldown over, frost again.
+    let me = w.state.actors.get_mut(&caster).expect("there");
+    me.effects.remove(cooling);
+    let cast = w.creature_spell(caster, w.state.player, at);
+    assert_eq!(cast.map(|(s, _)| s), Some(frost));
+    // Over a fight, never two area spells in a row.
+    let mut w = world(HALL, "hobgoblin_warcaster", "kobold");
+    let caster = of(&w, "hobgoblin_warcaster");
+    w.state.actors.get_mut(&caster).expect("there").mana = 1000;
+    let outs = run(&mut w, "wait*12");
+    let casts: Vec<bool> = (w.messages().iter())
+        .filter(|m| m.text.starts_with("The hobgoblin warcaster casts"))
+        .map(|m| !m.text.contains("magic missile"))
+        .collect();
+    assert!(casts.len() >= 6, "{casts:?}");
+    assert!(casts.windows(2).all(|p| !(p[0] && p[1])), "{casts:?}");
+    assert!(casts.iter().filter(|&&a| a).count() >= 2, "{casts:?}");
+    assert!(!attacks_by(&outs, caster).is_empty());
+}
+
+#[test]
+fn every_caster_has_an_area_cooldown_and_only_a_caster() {
+    let content = crate::test_support::builtin();
+    for def in content.creature_defs() {
+        assert_eq!(
+            def.area_cooldown.is_some(),
+            !def.spells.is_empty(),
+            "{}",
+            def.id
+        );
+    }
+    let mut files = ContentFiles::builtin();
+    files.insert(
+        "data/creatures/odd.toml",
+        "[[creature]]\nid = \"odd\"\nname = \"odd\"\nglyph = \"o\"\nfg = \"#808080\"\n\
+         weight = 30000\narea_cooldown = 30\n",
+    );
+    let err = Content::load(&files).expect_err("no spells").to_string();
+    assert!(err.contains("`area_cooldown` needs `spells`"), "{err}");
+}
+
+#[test]
 fn silenced_it_casts_nothing() {
     let mut w = world(HALL, "kobold_shaman", "kobold");
     let shaman = of(&w, "kobold_shaman");

@@ -6,7 +6,7 @@ use super::{Bindings, Gameplay, InputMode, KeyCommand, Pressed};
 use crate::game::PlayerAction;
 use crate::ui::{Aim, more};
 use ascmearc_core::ability::Ability;
-use ascmearc_core::content::RigId;
+use ascmearc_core::content::{RigId, StairsDir};
 use ascmearc_core::{Action, Pos};
 
 impl Gameplay<'_> {
@@ -118,10 +118,20 @@ impl Gameplay<'_> {
     }
 
     /// The way for `cmd`: open, close, kick, dig (use a tool), chat, or run (the run prefix: as
-    /// `Run(dir)`'s own key would, its first step's dialog and all).
+    /// `Run(dir)`'s own key would, its first step's dialog and all; the stairs keys run to the
+    /// nearest known stairs that way, #1801).
     pub(super) fn direction(&mut self, cmd: KeyCommand, command: KeyCommand) -> Option<Pressed> {
-        if let (KeyCommand::RunPrefix, KeyCommand::Move(dir)) = (cmd, command) {
-            return self.play(KeyCommand::Run(dir), false, None);
+        if cmd == KeyCommand::RunPrefix {
+            let stairs = match command {
+                KeyCommand::Move(dir) => return self.play(KeyCommand::Run(dir), false, None),
+                KeyCommand::Ascend => Some(StairsDir::Up),
+                KeyCommand::Descend => Some(StairsDir::Down),
+                _ => None,
+            };
+            if let Some(way) = stairs {
+                self.actions.write(PlayerAction(Action::RunToStairs(way)));
+            }
+            return Some((InputMode::Normal, None));
         }
         if let KeyCommand::Move(dir) = command {
             let action = match cmd {

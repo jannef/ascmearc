@@ -1,10 +1,32 @@
-//! The map layers: a glyph per cell of the perceived level (view, fov, memory, light, sound, blood, scorch, ice).
+//! The map layers: a glyph per cell of the perceived level (view, fov, memory, light, sound, blood, scorch, below, ice).
 
 use super::*;
+
+/// The ground below as an air cell shows it (docs/dev/towers.md): who stands there, else the
+/// top of the pile there, else its terrain; `None` off the air, and on the ground.
+fn below_glyph(view: &PerceptionView<'_>, p: Pos) -> Option<char> {
+    let content = view.content();
+    Some(match view.below(p)? {
+        BelowView::Visible(cell) => match (&cell.actor, &cell.pile) {
+            (Some(actor), _) => actor.glyph(content),
+            (None, Some(top)) if content.terrain(cell.terrain).stairs.is_none() => {
+                content.object(top.object).glyph
+            }
+            _ => content.terrain(cell.terrain).glyph,
+        },
+        BelowView::Remembered(t) => content.terrain(t).glyph,
+    })
+}
 
 pub(super) fn perceived_glyph(view: &PerceptionView<'_>, layer: Layer, p: Pos) -> char {
     let content = view.content();
     let cell = view.cell(p);
+    // Over the air, the ground below in its place.
+    if matches!(layer, Layer::View | Layer::Memory)
+        && let Some(glyph) = below_glyph(view, p)
+    {
+        return glyph;
+    }
     let terrain_glyph = |cell: CellView| match cell {
         CellView::Unknown => ' ',
         CellView::Remembered(t) | CellView::Visible(t) => content.terrain(t).glyph,
@@ -47,6 +69,12 @@ pub(super) fn perceived_glyph(view: &PerceptionView<'_>, layer: Layer, p: Pos) -
         Layer::Scorch => match view.scorch(p) {
             Some(stain) => blood_digit(stain),
             None => perceived_glyph(view, Layer::View, p),
+        },
+        Layer::Below => match (view.below(p), view.below_level()) {
+            (Some(BelowView::Visible(_)), Some((_, storey))) => {
+                char::from_digit(u32::from(storey).min(9), 10).unwrap_or('9')
+            }
+            _ => '.',
         },
         Layer::Inventory
         | Layer::Equipment

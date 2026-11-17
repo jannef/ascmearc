@@ -3,7 +3,8 @@
 Eating the corpse of a [keeper of Grundlēas](dungeon-guide.md#the-keepers-of-the-layers) changes
 your body for good. You get the keeper's own gift for certain, then one or more gifts drawn at
 random from a table of good, bad, and mixed changes, and the meal pulls you hard toward evil.
-Nothing takes a profane gift away again except another gift.
+Nothing takes a profane gift away again except another gift, and no gift is ever given to you
+twice, even one you have lost.
 
 Every keeper's corpse gives profane gifts, from [Gnægan the Rat King](creatures.md#creature-gnaegan)
 on the tenth floor to [Nīðdraca the Hate-Wyrm](creatures.md#creature-nithdraca) on the hundredth.
@@ -36,7 +37,9 @@ bad, nor any of their numbers; this page does.
 
 ## Each keeper's own gift
 
-Each keeper's corpse gives its signature gift for certain, never drawn by anyone else. The rolls
+Each keeper's corpse gives its signature gift for certain, never drawn by anyone else. If you
+once had that gift and lost it, a second corpse of the same keeper does not give it again, and
+says nothing of it; its rolls still happen. The rolls
 column is how many gifts the meal draws; the last three columns are each roll's chance of each
 tier of the table.
 
@@ -59,15 +62,15 @@ Each roll works the same way:
 
 1. **The tier.** The keeper's odds pick the lesser, greater, or dire tier.
 2. **The gift.** One gift of that tier is picked by its weight, among the gifts you may take:
-   ones you do not hold, that no gift you hold rules out, and that are not barred to your
-   [race](races.md).
+   ones you have never had (held now or lost since), that no gift you hold rules out, and that
+   are not barred to your [race](races.md).
 3. **An empty tier.** If you may take none of that tier, the roll moves to the next tier up, then
    down: lesser, then greater, then dire; dire, then greater, then lesser. If all three are empty,
    "Nothing more of it will take in you." and the roll gives nothing.
 
 Each gift is given in full before the next roll, so a roll never draws what the one before it
-ruled out. The odds in the table below are a tier's odds while none of its gifts is held or
-barred. As you gather gifts the rest of the tier shares the odds, by the same weights.
+ruled out. The odds in the table below are a tier's odds while none of its gifts is held, lost,
+or barred. As you gather gifts the rest of the tier shares the odds, by the same weights.
 
 For example, the lesser tier's weights add up to 124, and [Hungering](#talent-hungering) weighs
 12: 9.7 % of a lesser roll. Hold [Thick-blooded](#talent-thick-blooded) (weight 10), which also
@@ -108,6 +111,15 @@ holding neither lesser form is simply taken, and the lesser forms can still be d
 
 There is no cure. No temple, potion, scroll, or prayer removes a profane gift. Only a later
 gift that replaces or undoes it takes it away.
+
+## Never twice
+
+Each gift comes to you at most once. A gift taken away by a gift that
+[replaces or undoes it](#gifts-with-other-gifts) is gone for good: no roll draws it again, and no
+[keeper's corpse](#each-keepers-own-gift) gives it again. [Withered](#talent-withered) over
+[Oak-hearted](#talent-oak-hearted) leaves you with neither, and Oak-hearted never comes back.
+
+A gift that undoes another is not given when it does so, so it can still come to you later.
 
 ## Gifts that change your body
 

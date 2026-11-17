@@ -81,13 +81,19 @@
 //! is not visible are perceived with their kind, volume, and a rough place (a cell the player
 //! does not see, near the source); never with who made them.
 //!
+//! **The below view** (`below.rs`, docs/dev/towers.md): on a floor above the ground, a seen cell
+//! of open air shows the cell of the level below at the same coordinates, and looking down
+//! writes that level's memory.
+//!
 //! **Layout.** This module holds the snapshot ([`Perception`]), its computation, and what the
-//! rules ask of it; `seeing.rs` the bond's viewpoint, `actors.rs` how a seen creature looks;
+//! rules ask of it; `seeing.rs` the bond's viewpoint, `actors.rs` how a seen creature looks,
+//! `below.rs` the level below as the air shows it;
 //! `own.rs` and `seen.rs` the types the view hands out (what the player knows of themselves, and
 //! of the world); `view.rs` [`PerceptionView`] and its accessors that read only the snapshot,
 //! `truth.rs` those that read ground truth (with its review note), and `shop.rs` shops.
 
 mod actors;
+mod below;
 mod lighting;
 mod own;
 mod seeing;
@@ -96,6 +102,7 @@ mod shop;
 mod truth;
 mod view;
 
+pub use below::{BelowActor, BelowCell, BelowView};
 pub use own::{
     Freshness, NeedView, OwnResource, OwnScribe, OwnSkill, OwnStudy, OwnTalent, Progress,
     TalentView,
@@ -200,6 +207,9 @@ pub(crate) struct Perception {
     /// An escort of the player's stands beside them (`world/people/escort.rs`): the Give list holds
     /// anything one could put on.
     escort_beside: bool,
+    /// The level below as the air cells in sight show it (`below.rs`): on a floor above the
+    /// ground whose level below exists.
+    below: Option<below::Below>,
 }
 
 /// A disguised mimic as the snapshot hides it: a shut chest of its level's band at its cell.
@@ -344,6 +354,7 @@ impl Perception {
         let blood = stained(&v, &seeing, &level.blood);
         let scorch = stained(&v, &seeing, &level.scorch);
         let sounds = heard(&v, &seeing, &seen.concealed);
+        let below = below::see(&v, &seeing);
         // The player feels the air where they stand: fixed underground, the weather's under the
         // open sky, and what a hot or a cold room adds.
         let temperature = state.temperature_at(level, content, state.time, v.viewer);
@@ -379,6 +390,27 @@ impl Perception {
                 .collect(),
             escort_beside: (crate::world::allies_beside(state).into_iter())
                 .any(|(_, a)| a.escorting().is_some()),
+            below,
+        }
+    }
+
+    /// The level below as the air shows it, if the player stands on a floor above the ground
+    /// whose level below exists.
+    pub(crate) fn below(&self) -> Option<&below::Below> {
+        self.below.as_ref()
+    }
+
+    /// Writes what the player sees into memory: the current level's ([`Perception::remember`])
+    /// and, from a floor above the ground, the level below's ([`below::Below::remember`]).
+    pub(crate) fn remember_in(&self, state: &mut WorldState) {
+        let current = state.current_level.clone();
+        if let Some(level) = state.levels.get_mut(&current) {
+            self.remember(level);
+        }
+        if let Some(below) = &self.below
+            && let Some(under) = state.levels.get_mut(&below.level)
+        {
+            below.remember(under);
         }
     }
 

@@ -165,14 +165,16 @@ every later flask (smoke, fire, frost, acid, the bombers) builds on.
   potion that spills, refusals, a death by one's own flask, saves and replays, the loader's
   one refusal.
 - **Bombers** (S8, #1230): `hurl.rs::creature_hurls` sees a throw whose object has a `flask`
-  and calls `shatter_flask` with the creature as `by` (no `fly`, no attack roll, endless, Q9; the
-  pack's flasks never thrown or drunk, Q10); `docs/dev/ranged-combat.md` has the hook. The
+  and calls `shatter_flask` with the creature as `by` (no `fly`, no attack roll); since #1794 each
+  bomber's throw has a `cooldown` and a `supply` of its flask it is made with, spent a throw (Q9's
+  endless supply is gone; the pack's flasks are thrown only as that supply, never drunk, Q10);
+  `docs/dev/ranged-combat.md` has the hook. The
   three types (`docs/dev/creatures/campaign-waves.md` "Bombers"): `kobold_alchemist`
   (`flask_of_oil`), `goblin_firebomber` (`flask_of_fire`),
   `cult_chymist` (`stinking_flask`). Tests: `world/creatures/creature_flask_tests.rs` (the oil's slick
   zone by the kobold and learned on sight, the blast with no `Attacked` event and nothing
-  landing, melee up close, the three's throws and gear, the loader's damage-less throw rule, a
-  replay).
+  landing, melee up close, the three's throws, supplies, and cooldowns, the firebomber's cooldown,
+  its spent supply and dropped leftovers, the loader's damage-less throw rule, a replay).
 
 ## Labels and colours
 

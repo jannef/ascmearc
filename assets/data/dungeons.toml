@@ -11,7 +11,10 @@
 #   id         branch id; its levels are "<id>:1" to "<id>:<depth>"
 #   name       level names are "<name> <depth>" (default: the id)
 #   arrival    a line said each time the player arrives on the first level by stairs (optional)
-#   generator  "rooms" (rooms and corridors, ADOM-like) or "caves" (cellular automata)
+#   generator  "rooms" (rooms and corridors, ADOM-like) or "caves" (cellular automata), or a
+#              tower's "tower"
+#   kind       "dungeon" (the default) or "tower": floors that go up from a hand-made clearing,
+#              with `floors`, `clearing`, and `top` instead of `depth` and `size` (below)
 #   depth      number of levels
 #   below      a level of another bounded branch of the same campaign (`below = "fyrdelf:12"`):
 #              the branch is a way up; its deepest level's `>` leads there,
@@ -101,6 +104,23 @@
 #              dread_one_in here needs the branch's danger; a table field by field), and `vaults` (vault ids, shared or the branch's
 #              campaign's: each stamped on every level of the range for certain, and never drawn
 #              at random anywhere, e.g. `vaults = ["drakes_hoard"]`)
+#   kind = "tower"  a wizard's tower (docs/dev/mapgen.md "Towers"): its levels go up,
+#              "<id>:1" the floor above the ground. With it, and only with it:
+#     floors   the tower's floors, its ground floor and top included (at least 3): the
+#              branch's levels are "<id>:1" to "<id>:<floors - 2>", named "<name> 2" up
+#     clearing an outdoor level of the same campaign, the ground floor: the tower stands in it
+#              as the box of its tower wall (timber_wall until #1781 brings tower_wall), its
+#              `<` inside leading to "<id>:1"; every floor is its size, built on that box
+#     top      a hand-made level of the same campaign and the clearing's size, the top floor:
+#              the highest level's `<` leads there, and its own `>` must lead back from the
+#              cell of that `<` (the load error says which)
+#     generator = "tower" (a ring wall with windows round a hall that winds between two to
+#              four partitions); each level's `<` climbs to the next (the highest's to `top`),
+#              its `>` goes down (the first's to the clearing's `<`); the traps, danger,
+#              population, loot, and chests as any branch's. Refused beside it: depth, size,
+#              below, bottom, endless, portal, secret_doors, key, ores (nothing is mined:
+#              a tower has none), temperature, and a level row's generator, size,
+#              temperature, vaults, and hidden
 #   [dungeon.portal]  (an empty table, with `depth`; no `endless`, no `below`) a branch of Pits: it
 #              exists only as instances opened by a portal, Pit S's
 #              levels "<id>@S:1" to "<id>@S:<depth>", each made from the run seed and its id and

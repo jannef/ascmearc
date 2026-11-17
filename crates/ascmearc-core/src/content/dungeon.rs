@@ -20,6 +20,9 @@
 //! as it is made. It has one row of per-depth tables, read at every depth, and so no
 //! `[[dungeon.levels]]`, and with them no pinned vault.
 //!
+//! A branch of `kind = "tower"` goes up from a hand-made clearing instead of down
+//! (`super::tower`: `floors`, `clearing`, `top`, the `tower` generator, and what it refuses).
+//!
 //! A branch with `[dungeon.portal]` (Hellegeat) exists only as instances: a
 //! Pit `S` (a positive integer) has the levels `id@S:1` … `id@S:depth`, each a pure function of
 //! the run seed and its id, forgotten when left as an endless branch's floors are
@@ -113,6 +116,7 @@ use super::level::{HiddenLocation, HiddenSpec};
 use super::object::ObjectId;
 use super::room_effect::{RoomEffectId, RoomEffects};
 use super::shop::{ShopId, Shops};
+use super::tower::{self, BranchKind, Tower};
 use super::trap::TrapId;
 use crate::light::Light;
 use crate::temperature::Temperature;
@@ -127,6 +131,9 @@ pub enum Generator {
     Rooms,
     /// Cellular-automata caverns.
     Caves,
+    /// A tower's floor: a ring wall with windows round a winding hall (`mapgen/tower.rs`); only
+    /// a tower's ([`super::tower`]).
+    Tower,
 }
 
 impl Generator {
@@ -135,6 +142,8 @@ impl Generator {
         match self {
             Generator::Rooms => ([40, 15], [200, 100]),
             Generator::Caves => ([40, 30], [400, 300]),
+            // A tower's floors are its clearing's size, which a hand-made level may have.
+            Generator::Tower => ([1, 1], [400, 300]),
         }
     }
 }
@@ -157,7 +166,16 @@ struct DungeonSpec {
     /// A line said each time the player arrives on its first level; default none.
     arrival: Option<String>,
     generator: Generator,
-    /// How many levels it has; left out of a branch with `endless`.
+    /// `"tower"`: floors that go up from a clearing (`super::tower`); default `"dungeon"`.
+    #[serde(default)]
+    kind: BranchKind,
+    /// A tower's floors, its ground floor and top included.
+    floors: Option<u32>,
+    /// A tower's clearing level, its ground floor.
+    clearing: Option<String>,
+    /// A tower's hand-made top floor.
+    top: Option<String>,
+    /// How many levels it has; left out of a branch with `endless`, and of a tower.
     depth: Option<u32>,
     /// The level (another branch's) its deepest level's stairs down lead to; default none.
     below: Option<String>,
@@ -167,7 +185,8 @@ struct DungeonSpec {
     endless: Option<EndlessSpec>,
     /// A branch of Pits, opened only by a portal.
     portal: Option<PortalSpec>,
-    size: [i32; 2],
+    /// Left out of a tower: its clearing's.
+    size: Option<[i32; 2]>,
     #[serde(default)]
     ambient: Light,
     #[serde(default)]
@@ -546,6 +565,8 @@ pub struct DungeonDef {
     pub endless: Option<Endless>,
     /// A branch of Pits: its levels are `id@S:N`, never `id:N`.
     pub portal: Option<Portal>,
+    /// A tower: its floors go up from its clearing ([`super::tower`]).
+    pub tower: Option<Tower>,
     /// An endless branch's layer bosses, by depth, or a portal branch's one (every Pit's
     /// warden); none for any other branch.
     pub bosses: Vec<LayerBoss>,
@@ -695,9 +716,18 @@ impl DungeonDef {
         per_level_below(self.locks_per_depth, depth)
     }
 
-    /// The display name of level `depth`, e.g. `The Depths 3`.
+    /// The display name of level `depth`, e.g. `The Depths 3`; a tower's floors count from its
+    /// ground floor, the clearing, so its depth 1 is `Drȳtorr 2`.
     pub fn level_name(&self, depth: u32) -> String {
-        format!("{} {depth}", self.name)
+        let floor = depth + u32::from(self.tower.is_some());
+        format!("{} {floor}", self.name)
+    }
+
+    /// Sets every level's size: a tower's, its clearing's (`Content::fit_tower`).
+    pub(super) fn fit_size(&mut self, (width, height): (i32, i32)) {
+        for plan in &mut self.plans {
+            (plan.width, plan.height) = (width, height);
+        }
     }
 }
 
@@ -800,10 +830,34 @@ impl DungeonFile {
             if defs.iter().any(|d| d.id == id) {
                 return Err(err(format!("duplicate dungeon id `{id}`")));
             }
-            let depth_of = match (spec.depth, &spec.endless) {
-                (Some(depth), None) => depth,
+            let refused = [
+                ("depth", spec.depth.is_some()),
+                ("size", spec.size.is_some()),
+                ("bottom", spec.bottom.is_some()),
+                ("below", spec.below.is_some()),
+                ("endless", spec.endless.is_some()),
+                ("portal", spec.portal.is_some()),
+                ("secret_doors", spec.secret_doors != [0, 0]),
+                ("key", spec.key.is_some()),
+                ("ores", spec.ores.is_some()),
+                ("temperature", spec.temperature.is_some()),
+                ("vaults", spec.levels.iter().any(|l| !l.vaults.is_empty())),
+                ("hidden", spec.levels.iter().any(|l| l.hidden.is_some())),
+                (
+                    "[[dungeon.levels]] generator, size, or temperature",
+                    (spec.levels.iter()).any(|l| {
+                        l.generator.is_some() || l.size.is_some() || l.temperature.is_some()
+                    }),
+                ),
+            ];
+            let fields = (spec.floors, spec.clearing.take(), spec.top.take());
+            let tower = tower::resolve(spec.kind, fields, spec.generator, &refused)
+                .map_err(|m| err(format!("dungeon `{id}`: {m}")))?;
+            let depth_of = match (spec.depth, &spec.endless, &tower) {
+                (None, None, Some(t)) => t.depth(),
+                (Some(depth), None, None) => depth,
                 // One row of tables: every floor's.
-                (None, Some(_)) => 1,
+                (None, Some(_), None) => 1,
                 _ => {
                     return Err(err(format!(
                         "dungeon `{id}`: give `depth` or `endless`, one of them"
@@ -839,7 +893,13 @@ impl DungeonFile {
                     )))
                 }
             };
-            check_size(spec.generator, spec.size)?;
+            // A tower's size is its clearing's, fitted once the levels are known.
+            let size = match (spec.size, &tower) {
+                (Some(size), _) => size,
+                (None, Some(_)) => [1, 1],
+                (None, None) => return Err(err(format!("dungeon `{id}` needs a `size`"))),
+            };
+            check_size(spec.generator, size)?;
             if let Some(e) = &spec.endless {
                 check_size(Generator::Caves, e.caves_size)?;
                 if spec.generator != Generator::Rooms {
@@ -895,10 +955,10 @@ impl DungeonFile {
                 let (generator, [width, height], temperature) = match over {
                     Some(l) => (
                         l.generator.unwrap_or(spec.generator),
-                        l.size.unwrap_or(spec.size),
+                        l.size.unwrap_or(size),
                         l.temperature.or(spec.temperature),
                     ),
-                    None => (spec.generator, spec.size, spec.temperature),
+                    None => (spec.generator, size, spec.temperature),
                 };
                 let danger = match over.and_then(|l| l.danger) {
                     Some(_) if branch_danger.is_none() => {
@@ -1039,6 +1099,13 @@ impl DungeonFile {
                     roster_depth: u32::MAX,
                 }),
                 portal: spec.portal.map(|_| Portal),
+                // Nothing is mined in a tower: nothing breaks there.
+                ores: if tower.is_some() {
+                    Some(Vec::new())
+                } else {
+                    spec.ores
+                },
+                tower,
                 ambient: spec.ambient,
                 creatures,
                 traps,
@@ -1046,7 +1113,6 @@ impl DungeonFile {
                 secret_doors: spec.secret_doors,
                 hidden_per_depth: spec.hidden_per_depth,
                 locks_per_depth: spec.locks_per_depth,
-                ores: spec.ores,
                 loot: spec.loot,
                 chests: spec.chests,
                 key,

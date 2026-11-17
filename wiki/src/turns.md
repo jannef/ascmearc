@@ -77,6 +77,18 @@ you step.
 If your first step is not one a run can take, you take a plain step instead: into a door, it opens
 the door, and into a hostile creature, it attacks.
 
+### Running to the stairs
+
+Press `.` and then `>` to run to the nearest stairs down you know of on the level, or `.` and then
+`<` for the nearest stairs up. Nearest means the shortest walk there, not the straight line. Only
+[stairs](terrain.md#stairs) you have found count, and the way is found over the cells you have seen,
+so a run never takes a path you could not know.
+
+You stop on the stairs and do not take them: press `>` or `<` again to go. On the way, the run
+steps only where a run in the open would, goes around a creature in the way, and stops for
+everything above that stops a run. If you know of no such stairs, or of no way to reach them, the
+game says so and no time passes.
+
 ## Creatures act at their own pace
 
 Every [creature](creatures.md) has its own pace, its **[speed](#speed)** (below). The game does

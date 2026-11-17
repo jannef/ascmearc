@@ -186,6 +186,26 @@ fn each_corpse_gives_its_signature_its_stats_and_its_resistances() {
 }
 
 #[test]
+fn a_signature_once_had_is_not_given_again() {
+    let mut w = eater();
+    empty_the_table(&mut w);
+    eat(&mut w, "gnaegan");
+    assert!(holds(&w, "rat_kings_court"));
+    let court = w.content.talents().id("rat_kings_court").expect("the gift");
+    assert!(w.rescind(court));
+    let said = |w: &World| {
+        (w.messages().iter())
+            .filter(|m| m.text == "You are Rat-king's court.")
+            .count()
+    };
+    assert_eq!(said(&w), 1);
+    // A second corpse: the signature is lost for good, and nothing is said of it.
+    eat(&mut w, "gnaegan");
+    assert!(!holds(&w, "rat_kings_court"));
+    assert_eq!(said(&w), 1);
+}
+
+#[test]
 fn the_storm_wrights_corpse_teaches_decipher_script_beside_its_gift() {
     let mut w = eater();
     let id = w.content().skill_id("decipher_script").expect("the skill");

@@ -69,6 +69,15 @@ its direction until the next cell is not `steppable`. A first step that is not `
 plain `Move` (`start_running`); the client asks the step's dialogs first (`ui/step_dialogs.rs::step_dialog`).
 A creature coming close says "{came}; you stop running."; a run's end trains no Willpower
 (`World::running`). Tests: `world/turn/run_tests.rs`.
+**Running to the stairs** (`world/turn/run_stairs.rs`, #1801; `Action::RunToStairs(StairsDir)`,
+`run:<` and `run:>`, the run prefix then `KeyCommand::Ascend` or `Descend`) shares the run's loop
+(`World::keep_running`, the step chooser its argument): each step is the first of a shortest
+path, a breadth-first search in `Dir::ALL` order over `steppable` cells of the perception, to the
+nearest cell the player knows as terrain whose `stairs` is that way (`toward_stairs`), found again
+after every perceived step, so a creature seen in the way is walked round and nearer stairs come
+into view are made for. It stops on the stairs without taking them. Standing on such stairs,
+knowing of none, or knowing of no walk to any is refused with a message and no time
+(`start_running_to_stairs`). Tests: `world/turn/run_stairs_tests.rs`.
 
 A new action that takes time
 needs an `ActionKind` (with its id and a line in `data/actions.toml`) and must return its price

@@ -15,7 +15,8 @@ Some commands ask a question on the [message line](the-screen.md#messages) befor
 - [Disarming a trap](traps.md#disarming-traps), with more than one known trap beside you, asks
   `Disarm in which direction? (Esc to cancel)`
   (see [Traps](traps.md#disarming-traps)).
-- [Running](turns.md#running) with `.` asks `Run in which direction? (Esc to cancel)`.
+- [Running](turns.md#running) with `.` asks `Run in which direction, or to which stairs? (Esc to
+  cancel)`: a movement key runs that way, and `>` or `<` [runs to the stairs](turns.md#running-to-the-stairs).
 - [Resting](resting.md#how-resting-works) asks how long (see [Resting](resting.md)).
 
 Answer with a direction or the key shown, or press `Esc` to cancel. Pressing any other command also

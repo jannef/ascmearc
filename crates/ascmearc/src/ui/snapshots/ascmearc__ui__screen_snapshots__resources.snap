@@ -13,17 +13,17 @@ expression: "render(case, content.clone())"
 │ Age 34 · born 29 Greenleaf 1410 · year of the Water Basilisk                                     │
 │ Stars   Unblinking, Transfixing stare, Trusted by none, Always a way, Tidal                      │
 │                                                                                                  │
-│ St  Strength      11   Main hand  bare hands                                                     │
-│ Dx  Dexterity     13              +0 to hit, 1d3 bludgeoning                                     │
+│ St  Strength      12   Main hand  bare hands                                                     │
+│ Dx  Dexterity     13              +1 to hit, 1d3+1 bludgeoning                                   │
 │ To  Toughness     12                                                                             │
 │ In  Intelligence  10                                                                             │
-│ Wi  Willpower     11                                                                             │
+│ Wi  Willpower     12                                                                             │
 │ Pr  Presence       9                                                                             │
 │                                                                                                  │
 │ Lv  Level         1                                                                              │
 │ XP  Experience    0 / 122                                                                        │
 │     Talents       6                                                                              │
-│ HP  Hit points    18/20   MP  Mana       1/1                                                     │
+│ HP  Hit points    18/20   MP  Mana       2/2                                                     │
 │ Dv  Defence       11      Pv  Protection  0                                                      │
 │     Stance        Neutral                                                                        │
 │     Rage          11/20                                                                          │
@@ -33,8 +33,8 @@ expression: "render(case, content.clone())"
 │     Status        Raging                                                                         │
 │                                                                                                  │
 │ Weight 70.4 kg (you 70 kg, carrying 400 g)                                                       │
-│ Burdened over 17 kg, strained over 34 kg, overloaded over 51 kg                                  │
+│ Burdened over 18 kg, strained over 36 kg, overloaded over 54 kg                                  │
 │                                                                                                  │
 │ @ or Esc close   A skills                                                                        │
 └─ 1 Char · 2 Inv · 3 Eqp · 4 Skl · 5 Weap · 6 Mag · 7 Qst · 8 Tal · 9 Story ──────────────────────┘
- The Hub  HP 18/20  MP 1/1  Rage 11  Focus 10/10  Openings 0/5  Raging  Lv 1  08:00      ? controls
+ The Hub  HP 18/20  MP 2/2  Rage 11  Focus 10/10  Openings 0/5  Raging  Lv 1  08:00      ? controls

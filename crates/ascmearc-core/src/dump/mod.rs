@@ -15,7 +15,7 @@ use crate::hunger::Hunger;
 use crate::ice::Ice;
 use crate::noise::{PerceivedSound, SoundKind, Volume};
 use crate::object::{Stack, format_weight};
-use crate::perception::{CellView, PerceivedLight, PerceptionView};
+use crate::perception::{BelowView, CellView, PerceivedLight, PerceptionView};
 use crate::stats::Stat;
 use crate::text::article;
 use crate::weather::Weather;
@@ -251,8 +251,8 @@ mod tests {
         );
         assert_eq!(
             value["stats"],
-            json!({ "strength": 9, "dexterity": 13, "toughness": 10, "intelligence": 12,
-                    "willpower": 11, "presence": 9 })
+            json!({ "strength": 10, "dexterity": 13, "toughness": 10, "intelligence": 12,
+                    "willpower": 12, "presence": 9 })
         );
         // Their own trained skills by skill id, with their values: no marks, nothing untrained.
         assert_eq!(
@@ -336,11 +336,11 @@ mod tests {
                 "Age 34",
                 "Born 29 Greenleaf 1410",
                 "Sign Water Basilisk",
-                "Strength 9",
+                "Strength 10",
                 "Dexterity 13",
                 "Toughness 10",
                 "Intelligence 12",
-                "Willpower 11",
+                "Willpower 12",
                 "Presence 9",
                 "Alignment Callous"
             ]
@@ -360,7 +360,7 @@ mod tests {
         // Every actor's stats, then its trained skills with their marks and the ladder's die.
         assert!(
             actors[0].contains(
-                "stats St 9/16 Dx 13/16 To 10/16 In 12/16 Wi 11/16 Pr 9/16; skills appraise 11 (0 1d2), detect_traps 14 (0 1d2), disable_device 14 (0 1d2), escape_artist 10 (0 1d2), initiative 9 (0 1d2), listen 6 (0 1d2), negotiation 10 (0 1d2), open_lock 17 (0 1d2), search 10 (0 1d2), sneak_attack 25 (0 1d2), spot 9 (0 1d2), steal 12 (0 1d2), stealth 16 (0 1d2), tumble 15 (0 1d2); \
+                "stats St 10/16 Dx 13/16 To 10/16 In 12/16 Wi 12/16 Pr 9/16; skills appraise 11 (0 1d2), detect_traps 14 (0 1d2), disable_device 14 (0 1d2), escape_artist 10 (0 1d2), initiative 9 (0 1d2), listen 6 (0 1d2), negotiation 10 (0 1d2), open_lock 17 (0 1d2), search 10 (0 1d2), sneak_attack 25 (0 1d2), spot 9 (0 1d2), steal 12 (0 1d2), stealth 16 (0 1d2), tumble 15 (0 1d2); \
                  nutrition 3600 (not_hungry)"
             ),
             "{}",

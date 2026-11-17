@@ -212,6 +212,9 @@ mod terrain;
 mod tests;
 mod theft;
 mod throw;
+pub(crate) mod tower;
+#[cfg(test)]
+mod tower_tests;
 mod town;
 mod trap;
 mod tuning;
@@ -262,6 +265,7 @@ pub use creature::{
     possessive, the, the_start,
 };
 pub use creature_rarity::{COMMON, CreatureRarity};
+pub use creature_spells::{DEFAULT_AREA_COOLDOWN, harms_an_area};
 pub use crystal::{CrystalColour, Crystals, EnchantingRules, RareMaterials};
 pub use damage_type::{CharColors, DamageTypeDef, DamageTypeId, MAX_DAMAGE_TYPES};
 pub use danger::{Count, DangerRule, PlayerScale, Spawning};
@@ -427,6 +431,7 @@ pub use terrain::{
 };
 pub use theft::{Blinks, SMALL as SMALL_LOOT, Steals, Takes};
 pub use throw::Throw;
+pub use tower::Tower;
 pub use town::{InvestShare, TownDef, TownRestock, TownServant};
 pub use trap::{Trap, TrapAvoid, TrapDef, TrapDisarm, TrapEffect, TrapHarm, TrapId, TrapNoise};
 pub use tuning::Tuning;

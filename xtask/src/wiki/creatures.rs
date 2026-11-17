@@ -12,8 +12,8 @@ use ascmearc_core::burden::{self, Burden};
 use ascmearc_core::combat::Category;
 use ascmearc_core::content::{
     ActionKind, Affliction, BASE_TURN, Benefit, BurstWhen, Combat, Content, CorrodesWhat,
-    CreatureDef, CreatureId, FactionId, Invisible, Leaving, NORMAL_COST, NaturalAttack, OnHit,
-    Stance, Takes, price, spoken,
+    CreatureDef, CreatureId, DEFAULT_AREA_COOLDOWN, FactionId, Invisible, Leaving, NORMAL_COST,
+    NaturalAttack, OnHit, Stance, Takes, harms_an_area, price, spoken,
 };
 use ascmearc_core::geom::Pos;
 use ascmearc_core::object::format_weight;
@@ -748,7 +748,8 @@ pub(super) fn creature_attacks(content: &Content) -> String {
 
 /// What each creature that throws throws: what,
 /// the damage (its Strength modifier and its ranks counted), the to-hit (its Dexterity's), the
-/// critical, how far, how long a throw takes it, and what a hit may cause.
+/// critical, how far, how long a throw takes it (and how long before the next, with a cooldown),
+/// and what a hit may cause; a limited supply is said beside what it throws.
 pub(super) fn creature_throws(content: &Content) -> String {
     let mut out = String::from(
         "| Creature | Throws | Damage | To hit | Critical | Range | A throw takes | On a hit |\n\
@@ -769,13 +770,19 @@ pub(super) fn creature_throws(content: &Content) -> String {
         let takes = price(Benefit::saving(cost, saving), BASE_TURN);
         let creature = link(Term::Creature, &c.id, &capital(&c.name));
         let range = throw.range;
-        let takes = at_speed(takes, c.speed);
+        let mut takes = at_speed(takes, c.speed);
+        if let Some((seconds, _, _)) = throw.cooldown {
+            let _ = write!(takes, ", then none for {seconds} s");
+        }
+        let carried = throw
+            .supply
+            .map_or(String::new(), |d| format!(", {d} carried"));
         // A bomber's flask has no blow of its own: its splash, the flask's spell, is the attack.
         if let Some(flask) = &content.object(throw.object).flask {
             let spell = content.spell(flask.spell);
             let _ = writeln!(
                 out,
-                "| {creature} | {} | its splash: {} (rung {}) | - | - | {range} cells | {takes} | - |",
+                "| {creature} | {}{carried} | its splash: {} (rung {}) | - | - | {range} cells | {takes} | - |",
                 link(
                     Term::Potion,
                     &content.object(throw.object).id,
@@ -796,7 +803,7 @@ pub(super) fn creature_throws(content: &Content) -> String {
         );
         let _ = writeln!(
             out,
-            "| {creature} | {} | {} | {} | {} ×{} | {range} cells | {takes} | {} |",
+            "| {creature} | {}{carried} | {} | {} | {} ×{} | {range} cells | {takes} | {} |",
             throw.attack.name,
             damage.trim_end(),
             signed(profile.to_hit),
@@ -1159,7 +1166,8 @@ pub(super) fn creature_unseen(content: &Content) -> String {
 }
 
 /// What each caster casts, in the order it prefers
-/// them, with what each costs it, and its pool of mana; how rare it is beside it.
+/// them, with what each costs it (and "area" by those its area cooldown holds back, with the
+/// cooldown when it is not the usual), and its pool of mana; how rare it is beside it.
 pub(super) fn creature_spells(content: &Content) -> String {
     let mut out = String::from(
         "| Creature | Level | Rarity | Mana | Spells (mana each), first preferred |\n|---|---:|---|---:|---|\n",
@@ -1174,7 +1182,17 @@ pub(super) fn creature_spells(content: &Content) -> String {
             .map(|&s| {
                 let spell = content.spell(s);
                 let cost = actor.spell_cost(content, spell);
-                format!("{} ({cost})", link(Term::Spell, &spell.id, &spell.name))
+                let area = match (harms_an_area(spell), c.area_cooldown) {
+                    (false, _) => String::new(),
+                    (true, Some((s, _, _))) if s != DEFAULT_AREA_COOLDOWN => {
+                        format!(", area, once in {s} s")
+                    }
+                    (true, _) => ", area".into(),
+                };
+                format!(
+                    "{} ({cost}{area})",
+                    link(Term::Spell, &spell.id, &spell.name)
+                )
             })
             .collect();
         let _ = writeln!(
