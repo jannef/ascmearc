@@ -7,8 +7,10 @@
 id = "lytelscraef"
 name = "Lytelscræf"
 arrival = "The cave smells of wet stone and rats."
-generator = "caves"
 depth = 3
+
+[dungeon.level]
+generator = { kind = "caves" }
 # Short floors: the smallest caves the generator makes are 40x30.
 size = [60, 30]
 traps = ["pit", "arrow"]

@@ -9,8 +9,10 @@
 id = "fyrdelf"
 name = "Fyrdelf"
 arrival = "The galleries smell of sulphur."
-generator = "mines"
 depth = 12
+
+[dungeon.level]
+generator = { kind = "mines" }
 size = [100, 36]
 traps = ["arrow", "spear", "fireball", "lightning_bolt", "alarm"]
 # Few secret doors (the duergar dig, they do not hide), hidden things harder to find deeper down,

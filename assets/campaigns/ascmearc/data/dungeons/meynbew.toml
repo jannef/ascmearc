@@ -11,8 +11,10 @@
 id = "meynbew"
 name = "Meyn Bew"
 arrival = "The air hums. Every wall here is crystal, and every crystal is listening."
-generator = "rooms"
 depth = 4
+
+[dungeon.level]
+generator = { kind = "rooms" }
 size = [80, 21]
 traps = ["pit", "lightning_bolt", "frost"]
 traps_per_level = [1, 3]

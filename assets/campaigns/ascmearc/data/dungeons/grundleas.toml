@@ -7,7 +7,9 @@
 id = "grundleas"
 name = "Grundlēas"
 arrival = "Words are cut over the stair: no stair goes twice to one place."
-generator = "rooms"
+
+[dungeon.level]
+generator = { kind = "rooms" }
 size = [80, 21]
 traps = ["arrow", "spear", "pit", "alarm"]
 secret_doors = [1, 2]
@@ -30,7 +32,7 @@ shops = { chance = 0 }
 # Rooms most of the time, caves rarely; drawn as each floor is made.
 [dungeon.endless]
 caves = 15
-caves_size = [100, 40]
+caves_level = { generator = { kind = "caves" }, size = [100, 40] }
 # The dread come oftener the deeper it goes (docs/design/monster-dread.md §8; the owner: "Below
 # 70, keep drastically increasing dread monster chance deeper you go"): one draw in 100 above
 # floor 30 (the default), 80 from 30, 60 from 50, 40 from 70, the roster's top; past it, halved

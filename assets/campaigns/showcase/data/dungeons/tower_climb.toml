@@ -8,10 +8,12 @@
 id = "tower_climb_floors"
 name = "The Test Tower"
 kind = "tower"
-generator = "tower"
 floors = 4
 clearing = "tower_climb"
 top = "tower_climb_top"
+
+[dungeon.level]
+generator = { kind = "tower" }
 traps = ["arrow", "spear", "alarm", "pit"]
 traps_per_level = [3, 5]
 hidden_per_depth = 2
