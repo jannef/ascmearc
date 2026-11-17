@@ -43,6 +43,7 @@ mod hidden;
 mod hoard;
 mod leavings;
 pub mod local;
+mod minster;
 mod population;
 mod room_loot;
 mod rooms;
@@ -571,6 +572,12 @@ pub fn generate_for(
         let built = match plan.generator {
             Generator::Rooms => rooms::build(&mut canvas, &mut rng, needs),
             Generator::Caves => caves::build(&mut canvas, &mut rng, needs),
+            Generator::Minster => minster::build(
+                &mut canvas,
+                &mut rng,
+                needs,
+                minster::MinsterParams::at(depth, def.depth),
+            ),
             Generator::Tower => {
                 (def.tower.as_ref()).and_then(|t| tower::build(&mut canvas, &mut rng, t, depth))
             }
@@ -1069,6 +1076,8 @@ mod lairs_tests;
 mod leavings_tests;
 #[cfg(test)]
 mod lytelscraef_tests;
+#[cfg(test)]
+mod minster_tests;
 #[cfg(test)]
 mod neutral_share_tests;
 #[cfg(test)]

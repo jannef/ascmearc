@@ -11,8 +11,9 @@
 #   id         branch id; its levels are "<id>:1" to "<id>:<depth>"
 #   name       level names are "<name> <depth>" (default: the id)
 #   arrival    a line said each time the player arrives on the first level by stairs (optional)
-#   generator  "rooms" (rooms and corridors, ADOM-like) or "caves" (cellular automata), or a
-#              tower's "tower"
+#   generator  "rooms" (rooms and corridors, ADOM-like), "caves" (cellular automata),
+#              "minster" (a drowned church's cellars and crypts, flooding and falling deeper down
+#              the branch, at least 90x36; docs/dev/mapgen.md "The minster"), or a tower's "tower"
 #   kind       "dungeon" (the default) or "tower": floors that go up from a hand-made clearing,
 #              with `floors`, `clearing`, and `top` instead of `depth` and `size` (below)
 #   depth      number of levels

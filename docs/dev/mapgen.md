@@ -143,6 +143,57 @@ air shows the clearing (#1781). Tests:
 scenario `tower_climb`: both floors' snapshots, the footprint and swapped stairs over twelve
 seeds, the partitions, a climb to the top and down again as a replay).
 
+**The minster** (#1837; `mapgen/minster.rs`, Fennmynster's eight floors, 100×40): the cellars
+and crypts under a great church, built to a plan and drowned deeper. Sizes from 90×36 to
+200×100. The plan, on an east–west axis through the middle row: the hall (the crypt under the
+nave, three bays across between two rows of pillars, each pillar one wall cell), an aisle either
+side with an arch every other bay, side chapels off the aisles (widths, depths, and doors
+mirrored north and south; the southern one's kind is its mirror's seven times in ten), the
+crossing (a three-wide passage across), the chancel with a rounded apse (a tomb or statue at its
+end) and its own chapels; west of it the undercroft (vaulted bays behind the hall's west door),
+the cloister walk round its garth (an arcade, a pillar every other cell), the chapter house over
+the cloister (a middle pillar, statues), the ossuary under it, and ranges of stores, tombs, and
+bones over and under the undercroft. Each side room has one door onto the core space it faces
+(stores shut, so the branch's secret doors and locks fall mostly on them; tombs shut or open;
+chapels an open door or a bare arch), and a door through a wall two rooms share comes one time
+in five, for loops. Vaults (the floor's named ones, then one floor in five a random one) are
+stamped before the plan is laid, at least two cells off the core (hall, aisles, crossing,
+chancel, cloister, undercroft); the side rooms within two cells of one are left out and each
+entrance is joined to the nearest floor by the cheapest passage through the rock. Then the
+fittings (chapels' statues, at most one `forgotten_altar` a floor, one floor in three; tombs'
+`sarcophagus` rows, more `open_sarcophagus` the more ruin; the ossuary's walls `bone_wall`), the
+**ruin** and the **flood**, set per floor by `MinsterParams { flood, ruin }` (0–100), on a line
+from the first floor's to the bottom's (`minster::FLOOD` 10 to 85, `RUIN` 5 to 70: constants at
+the top of the module until #1834 moves generator parameters into data). Ruin: each pillar falls
+to `rubble` with ruin/2 %, ruin/20 walls between two rooms fall (rubble, both rooms then counted
+open, never locked), ruin/8 heaps of rubble (2 to 3 + ruin/6 cells each), the garth's floor `marsh` with ruin % (`reeds` with
+ruin − 30 % of those), and from 35 one or two outer walls broken by the fen (marsh, a pocket of
+reeds in the rock, marsh spilling in). Flood: one end lies lower (one draw); a cell lies at its
+place on that slope (0 at the high end, 100 at the low), plus its room's tilt (−12 to 12) and
+0 to 6 of unevenness; plain floor below 100 − flood becomes `shallow_water`, and in a basin (the
+hall, crossing, chancel, undercroft, chapels, tombs, and the garth, never an aisle, the cloister
+walk, a store, the chapter house, or an ossuary) below 145 − flood `deep_water`, but only with
+water or solid ground all eight ways round (no deep shore). From flood 30 a culvert of
+`running_water` (flowing toward the low end) runs down the hall's axis from the low end, a share
+of its length (flood − 20)/80; from 50 it ends in a sunk drain (3×3 deep) and (flood − 40)/25
+broken drains (2×2 deep) open in chapels and tombs. Last `rejoin` makes everything walkable one
+piece again without deep water: while a walkable cell is cut off from the hall, the cheapest way
+to it through deep water (deep costs 4, dry 1) is made shallow, so the stairs are always joined
+without a swim (#1752: deep water is a choice, never a toll). Then the stairs (up in a room among
+the highest third on the slope, down among the third farthest from it), the lights (the arrival
+room always; a side room with 35 − flood/3 %, candles beside a chapel's statue or altar, else a
+`sconce` in a corner, else a lamp; candles in the apse; two lamps over the hall's dry middle, one
+from flood 50), patrols (the branch's `creatures`), up to two stores or tombs with one door and
+no fallen wall locked with the branch's `key` (the key on free floor elsewhere), and the special
+rooms over the side rooms as on a rooms floor. All of it draws from the floor's map stream, in
+that order. A floor has about 2,000 walkable cells to the old rooms floors' 350 to 700: at
+the default 35 a thousand walkable cells it would have held about 70 creatures where it held 25,
+and the long open hall brought them at a newcomer all at once, so the branch's
+`population_count` is 20 a thousand (about 40 a floor), and the floor loot, a count a floor, went from `[2, 4]` to `[5, 10]` to keep
+roughly its density too. Tests: `mapgen/minster_tests.rs` (snapshots of seed 1's floors 1, 4,
+and 8; every floor joined and the stairs without a swim, as a proptest; the sunken crypt whole;
+water and ruin rising with depth; the parameters' line), `mapgen/fennmynster_tests.rs`.
+
 **Meyn Bew** (#1446; `campaigns/ascmearc/data/dungeons/meynbew.toml`): a pocket of the plane of
 earth under Gimmwīc, entered only through the crystal portal Ysella the Binder's quest reveals
 in the town (a hidden location of a hand-made level, `docs/dev/overworld.md`), so its first
