@@ -65,7 +65,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - Unpaid goods cannot be shot or thrown.
 - The Steal skill takes from a keeper's pack, never from the shop floor.
 - Generated shops appear only on rooms and mines levels, in a single-door room (a mine's worked chamber) other than the arrival's. Each branch has its own odds, kinds, and keepers. A town's own kinds are never generated.
-- Every shop restocks as the player gains a level: a few goods go, a few of its kind come, their magic made at an item level that climbs slowly with the player's level, the depth of a shop outside a town, and its town's trade (quests done, a merchant's stake). Each level gained counts once, wherever the player is, and the result does not depend on when they look. The game says it only through the townsfolk's talk of hard and better times (#1735).
+- Every shop restocks as the player gains a level: a few goods go, a few of its kind come, their magic made at an item level that climbs slowly with the player's level, the item level (the danger) of a shop's floor outside a town, and its town's trade (quests done, a merchant's stake). Each level gained counts once, wherever the player is, and the result does not depend on when they look. The game says it only through the townsfolk's talk of hard and better times (#1735).
 
 ## Special rooms
 

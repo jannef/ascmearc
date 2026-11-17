@@ -148,7 +148,8 @@ fn the_guardian_waits_in_the_hollow_and_follows_up_every_stair_and_through_the_p
         let up = stairs(&w, &level, StairsDir::Up);
         put_player(&mut w, up);
         beside_player(&mut w, g);
-        act(&mut w, "ascend");
+        // The levels each first arrival's XP gave are taken first (#1850).
+        act(&mut w, "levelup:auto ascend");
         let to = w.state.current_level.clone();
         let want = if floor == 1 {
             "gimmwic".to_string()
@@ -203,13 +204,14 @@ fn left_behind_it_stays_and_nothing_is_bound() {
     let g = guardian(&w);
     let up = stairs(&w, BOTTOM, StairsDir::Up);
     put_player(&mut w, up);
-    act(&mut w, "ascend");
+    // The levels each first arrival's XP gave are taken first (#1850).
+    act(&mut w, "levelup:auto ascend");
     assert_eq!(w.state.actors[&g].level, BOTTOM, "not beside the player");
     // Brought up by the dev action and out through the portal.
     w.travel("meynbew:1", None).expect("the first floor");
     let up = stairs(&w, "meynbew:1", StairsDir::Up);
     put_player(&mut w, up);
-    act(&mut w, &format!("lure:{QUEST} ascend"));
+    act(&mut w, &format!("levelup:auto lure:{QUEST} ascend"));
     assert_eq!(w.state.current_level, "gimmwic");
     assert_eq!(stage(&w), Some(Stage::Done));
     assert_eq!(guardians(&w).len(), 1, "the same one, never a second");

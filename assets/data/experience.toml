@@ -36,8 +36,9 @@
 # Discovery (the [discovery] table; optional, none without it): the player's first kill of each
 # creature type gives first_kill percent of the type's XP once more, whatever their levels ("You
 # learn something of kobolds."), and their first arrival on a level gives arrival × the level's
-# item level (a dungeon level's depth; a hand-made level's `item_level`, default 1). The level a
-# run starts on, the overworld, and its local areas give none. Neither draws anything at random.
+# item level (a dungeon level's danger, or its depth without one; a hand-made level's
+# `item_level`, default 1). The level a run starts on, the overworld, and its local areas give
+# none. Neither draws anything at random.
 #
 # Levels (the [levels] table): every talent_every-th level (3: levels 3, 6,
 # 9, ...) brings a talent pick (talents/), chosen on the spot: nothing is banked. 0, or no

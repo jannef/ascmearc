@@ -116,12 +116,13 @@ pub(super) fn experience_discovery(content: &Content) -> String {
         p => format!("{p} % of its XP once more, whatever your levels"),
     };
     let _ = writeln!(out, "| Your first kill of each kind of creature | {kill} |");
-    let arrival = |depth: u8| rules.arrival_xp(depth);
+    let arrival = |item_level: u8| rules.arrival_xp(item_level);
     let depths = if found.arrival == 0 {
         "nothing".to_string()
     } else {
         format!(
-            "{} × its depth: {} on the first level, {} on the fifth, {} on the tenth",
+            "{} × its [item level](magic-items.md#finding-them) (its danger): {} at danger 1, {} at \
+             danger 5, {} at danger 10",
             found.arrival,
             arrival(1),
             arrival(5),
@@ -133,7 +134,7 @@ pub(super) fn experience_discovery(content: &Content) -> String {
         "nothing".to_string()
     } else {
         format!(
-            "{} × its [item level](magic-items.md): {} on most, {} in the arena",
+            "{} × its item level: {} on most, {} in the arena",
             found.arrival,
             arrival(1),
             arrival(content.item_level("arena"))

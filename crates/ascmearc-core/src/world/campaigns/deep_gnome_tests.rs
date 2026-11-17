@@ -17,7 +17,8 @@ fn the_deepest_floor_leads_down_to_the_town_and_back() {
     assert_eq!(down.to.as_deref(), Some("gimmwic"));
     let player = w.state.player;
     w.state.actors.get_mut(&player).expect("the player").pos = down.pos;
-    step(&mut w, "descend");
+    // The levels the first arrivals' XP gave are taken first (#1850).
+    step(&mut w, "levelup:auto descend");
     assert_eq!(w.perception().level_id(), "gimmwic");
     let up = (w.state.levels["gimmwic"].stairs.iter())
         .find(|s| s.dir == StairsDir::Up)
@@ -25,7 +26,7 @@ fn the_deepest_floor_leads_down_to_the_town_and_back() {
         .expect("a way up");
     assert_eq!(up.to.as_deref(), Some("deopgang:11"));
     assert_eq!(w.player_pos(), up.pos, "arrived on the stairs up");
-    step(&mut w, "ascend");
+    step(&mut w, "levelup:auto ascend");
     assert_eq!(w.perception().level_id(), "deopgang:11");
     assert_eq!(w.player_pos(), down.pos, "back on the stairs down");
 }

@@ -274,17 +274,23 @@ impl Content {
         &self.affixes
     }
 
-    /// The item level of loot on level `id`: a dungeon branch level's
-    /// depth, a hand-made level's `item_level` (default 1), else 1.
+    /// The item level of loot on level `id`: a dungeon branch level's danger
+    /// ([`Content::floor_danger`], its fixed part where it grows with the player; still rising on
+    /// an endless branch), or its depth on a branch with no danger (#1850); a hand-made level's
+    /// `item_level` (default 1); else 1. Kept within 1 to [`MAX_ITEM_LEVEL`].
     pub fn item_level(&self, id: &str) -> u8 {
         if let Some(template) = self.levels.get(id) {
             return template.item_level;
         }
-        match self.branch_level(id) {
-            Some((_, depth)) => u8::try_from(depth)
-                .unwrap_or(MAX_ITEM_LEVEL)
-                .clamp(1, MAX_ITEM_LEVEL),
-            None => 1,
-        }
+        let Some((_, depth)) = self.branch_level(id) else {
+            return 1;
+        };
+        let level = match self.floor_danger(id, 0) {
+            0 => depth,
+            danger => danger,
+        };
+        u8::try_from(level)
+            .unwrap_or(MAX_ITEM_LEVEL)
+            .clamp(1, MAX_ITEM_LEVEL)
     }
 }
