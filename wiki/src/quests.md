@@ -237,7 +237,9 @@ Ordgar teaches [Decipher script](skills.md#skill-decipher-script) and gives a gr
 missile. Ælfswīð teaches [Concentration](skills.md#skill-concentration) and gives a wand of
 lightning bolt. A skill you have not got starts at 1d4; one you already have gets 100
 [skill marks](skills.md#improving-a-skill) instead. The skills stay yours whatever happens to
-the teacher. The exact pay of each wizard is in the table above.
+the teacher. The exact pay of each wizard is in the table above. A dead wizard's corpse
+teaches Spellcraft too, if you eat it (see [what a corpse gives
+you](food.md#what-a-corpse-gives-you)).
 
 **The parting.** Right after paying, the wizard asks you once whether you leave or betray them.
 Leave, and that is the end of it. Betray them, and they turn on you, there on their top floor.

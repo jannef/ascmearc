@@ -18,7 +18,7 @@
 //! flicker = true          # light flicker: firelight varies in intensity and hue
 //! motion = true           # movement slides and camera easing
 //! glow = true             # bloom and glyph glow
-//! distortion = true       # heat haze
+//! distortion = true       # heat haze; the depth blur of a tower window's view
 //! particles = true
 //! circles = true          # spell circles about buffed and hexed creatures; still, not off, with reduced effects
 //! screen_fades = true     # level-change fade, flashes, and spell effects darkening the view
@@ -133,7 +133,7 @@ pub struct EffectSwitches {
     pub motion: bool,
     /// Bloom and glyph glow.
     pub glow: bool,
-    /// Heat haze.
+    /// Heat haze, and the depth blur of a tower window's view of the ground.
     pub distortion: bool,
     pub particles: bool,
     /// Spell circles: a turning circle about every seen

@@ -435,6 +435,8 @@ fn draw_map(
     let covered = &key.covered;
     let content = view.content();
     let (ox, oy) = (grid.level_origin.x, grid.level_origin.y);
+    // How far below the ground lies: the depth blur of the cells drawn from it.
+    let storey = view.below_level().map_or(0, |(_, storey)| storey);
     grid.free_terrain.clear();
     for sy in 0..grid.console.rows() as i32 {
         for sx in 0..grid.console.cols() as i32 {
@@ -479,9 +481,11 @@ fn draw_map(
                 };
                 (ch, fg, zone.map_or(bg, |kind| zone_tint::tinted(bg, kind)))
             };
-            // Over the air, the ground below in its place: lit as the air cell is.
+            // Over the air, the ground below in its place: lit as the air cell is, blurred by
+            // its depth (`Console::set_blur`).
             if let Some(below) = view.below(p) {
                 grid.console.put(sx, sy, below_cell(view, p, below));
+                grid.console.set_blur(sx, sy, storey);
                 continue;
             }
             let cell = match seen {
@@ -535,7 +539,7 @@ fn draw_map(
 /// standing there as it stood, else the top of the pile there (known stairs keep their glyph
 /// over a pile, as on the ground), else its terrain, over that terrain's background, in base
 /// colours (the shader lights it as the air cell is lit); remembered, its terrain dimmed like any
-/// remembered cell. Not blurred yet (#1781); never animated.
+/// remembered cell. Never animated; `draw_map` blurs it by the storey (`Console::set_blur`).
 fn below_cell(view: &PerceptionView<'_>, p: Pos, below: BelowView<'_>) -> Cell {
     let content = view.content();
     match below {
