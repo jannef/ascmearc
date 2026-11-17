@@ -191,7 +191,7 @@ pub(super) fn recipes_of(content: &Content, skill: &str) -> String {
                     work = content.material(m).work;
                 }
                 // The part's grams in `m`, as the made item weighs it (a wooden shield's weight
-                // in metal, a leather cap's in steel), for a batch at its most.
+                // in metal), for a batch at its most.
                 let weight = |m: MaterialId| u64::from(content.material(m).weight).max(1);
                 let grams = u64::from(def.weight) * u64::from(base.share) * weight(m)
                     / weight(base.material)
