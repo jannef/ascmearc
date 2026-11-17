@@ -1,0 +1,10 @@
+# What a burnt tree leaves (`world/levels/fire.rs`, docs/dev/fire.md): a black trunk that burns
+# no more.
+[[terrain]]
+id = "burnt_tree"
+name = "charred tree"
+glyph = "ψ"
+fg = "#5e544a"
+bg = "#100c08"
+walkable = false
+height = 2

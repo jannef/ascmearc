@@ -7,8 +7,8 @@
 //! it chars and in what colours. Where and how much comes from [`crate::scorch::seed`], never the
 //! gameplay random stream, and no rule reads char. Not on the overworld, a map of the land.
 //!
-//! The area hook also sets the webs a fire area reaches burning ([`World::ignite_webs`],
-//! `world/levels/web.rs`): a rule, which reads the cells, never the char.
+//! The area hook also sets the burnable terrain a fire area reaches alight ([`World::ignite`],
+//! `world/levels/fire.rs`): a rule, which reads the cells, never the char.
 
 use crate::content::{CharColors, DamageTypeId, LevelKind};
 use crate::fov::radius2;
@@ -55,10 +55,10 @@ impl World {
     }
 
     fn sear(&mut self, kind: Option<DamageTypeId>, center: Pos, shares: &[(Pos, u32)]) {
-        // The one place every fire area reaches its cells: the webs there catch fire, a rule
-        // of its own (`world/levels/web.rs`).
+        // The one place every fire area reaches its cells: what burns there catches fire, a
+        // rule of its own (`world/levels/fire.rs`).
         let cells: Vec<Pos> = shares.iter().map(|&(p, _)| p).collect();
-        self.ignite_webs(kind, &cells);
+        self.ignite(kind, &cells);
         let Some(colors) = self.chars(kind) else {
             return;
         };

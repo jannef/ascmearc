@@ -1,11 +1,12 @@
 //! Travel, levels, and the overworld (docs/dev/overworld.md, encounters.md, mapgen.md,
-//! temperature.md, webs.md).
+//! temperature.md, fire.md, webs.md).
 
 mod edge_leave;
 pub(in crate::world) mod encounter;
 mod encounter_area;
 pub(in crate::world) mod endless;
 pub(in crate::world) mod enter;
+pub(in crate::world) mod fire;
 mod footing;
 pub(in crate::world) mod ice;
 mod layer_boss;
@@ -27,6 +28,7 @@ cfg_if! {
         mod endless_tests;
         mod escape_tests;
         mod everlasting_tests;
+        mod fire_tests;
         mod footing_tests;
         mod gate_tests;
         mod ice_tests;

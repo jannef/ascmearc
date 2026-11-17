@@ -239,14 +239,16 @@ impl World {
             }
         }
         (self.state.current_mut()).clear_zone_cells(&cells, &[ZoneKind::Fire]);
-        // A burning web goes out, a web again (`world/levels/web.rs`).
-        self.douse_webs(&cells);
+        // Burning terrain goes out, what it was again (`world/levels/fire.rs`).
+        self.douse_fires(&cells);
     }
 
     /// A fire on `cell` of the current level, if it is walkable, burning `seconds` with light
     /// `light`, or the fire there burning on until then (as a burning missile's, `come_down`).
-    /// Light only: no rule reads it, and it never spreads.
+    /// The fire itself is light only and never spreads, but what burns on its cell catches
+    /// (`world/levels/fire.rs`).
     pub(in crate::world) fn lay_fire(&mut self, cell: Pos, light: LightId, seconds: u32) {
+        self.catch_fire(&[cell]);
         let until = self.state.time + Duration::seconds(u64::from(seconds));
         let content = self.content.clone();
         let level = self.state.current_mut();

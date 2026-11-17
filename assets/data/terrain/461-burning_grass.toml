@@ -1,0 +1,31 @@
+# Grass on fire (`world/levels/fire.rs`, docs/dev/fire.md): what grass, flowers, and the forest
+# floor are while they burn (their `burn` tables). Never laid by a generator.
+[[terrain]]
+id = "burning_grass"
+name = "burning grass"
+noun = "mass"
+description = "Flames run through the stalks, leaving black stubble behind."
+glyph = ","
+fg = "#ffb050"
+bg = "#2a0c04"
+step_noise = 80
+light = "burning_grass"
+glow = 0.5
+haze = 0.6
+stains = false
+# Blaze's flames burn on it while it burns, over its glyph.
+flames = "blaze"
+
+# Sparks drifting up from the burning stalks.
+[[terrain.particles]]
+glyphs = "'`.·"
+colors = ["#ffeab0", "#ffa040", "#c04010", "#501408"]
+rate = 1
+life = 0.8
+velocity = [0.0, -1.2]
+spread = [0.4, 0.4]
+gravity = 0.4
+area = [0.35, 0.2]
+sway = 0.15
+scale = 0.55
+glow = 0.6

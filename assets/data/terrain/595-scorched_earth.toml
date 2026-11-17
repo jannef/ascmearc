@@ -1,0 +1,11 @@
+# What burnt grass, bushes, and fences leave (`world/levels/fire.rs`, docs/dev/fire.md): bare
+# black ground that burns no more.
+[[terrain]]
+id = "scorched_earth"
+name = "scorched earth"
+noun = "mass"
+glyph = "."
+fg = "#6a5e50"
+bg = "#14100c"
+bounce = "#a09080"
+step_noise = 90

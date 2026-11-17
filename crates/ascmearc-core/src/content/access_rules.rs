@@ -1,11 +1,11 @@
 //! Content's accessors for the rules files: the numbers of one system each, most of them optional.
 
 use super::{
-    AllyRules, CompanionRules, Content, EncounterRules, FamiliarRules, FeintRules, FletchRules,
-    ForageRules, GearConditions, HerbRules, HungerDef, IntimidateRules, InvestRules, LawRules,
-    MagicWorth, MiningRules, PatronRules, PrayerRules, RangedRules, RequiredIds, RestockRules,
-    RigRules, RuinRules, SalvageRules, SearchRules, SmiteRules, StatTraining, StealRules,
-    StipendRules, SurpriseRules, SwimRules, TagDrops, TemperRules, Tuning, WebRules,
+    AllyRules, CompanionRules, Content, EncounterRules, FamiliarRules, FeintRules, FireRules,
+    FletchRules, ForageRules, GearConditions, HerbRules, HungerDef, IntimidateRules, InvestRules,
+    LawRules, MagicWorth, MiningRules, PatronRules, PrayerRules, RangedRules, RequiredIds,
+    RestockRules, RigRules, RuinRules, SalvageRules, SearchRules, SmiteRules, StatTraining,
+    StealRules, StipendRules, SurpriseRules, SwimRules, TagDrops, TemperRules, Tuning, WebRules,
 };
 
 impl Content {
@@ -95,6 +95,12 @@ impl Content {
     /// the file, when nobody feints.
     pub fn feint(&self) -> Option<&FeintRules> {
         self.feint.as_ref()
+    }
+
+    /// Fire on the ground (`data/rules/fire.toml`); `None` without the file, when nothing
+    /// catches fire.
+    pub fn fire(&self) -> Option<&FireRules> {
+        self.fire.as_ref()
     }
 
     /// What an aristocrat's stipend grows by (Stipend;

@@ -6,3 +6,9 @@ glyph = "π"
 fg = "#9a7048"
 bg = "#0d0d10"
 walkable = false
+
+[terrain.burn]
+burns = 90
+spreads = 30
+leaves = "floor"
+burning = "burning_wood"

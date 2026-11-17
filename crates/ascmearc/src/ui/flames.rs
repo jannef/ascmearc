@@ -1,4 +1,4 @@
-//! Standing flames: a terrain with `flames` (a burning web, `data/terrain/465-burning_web.toml`)
+//! Standing flames: a terrain with `flames` (burning terrain, `data/terrain/461-burning_grass.toml`)
 //! burns with that spell effect's look (`data/effects.toml`, Blaze's: Burning hands' and a
 //! drake's breath's fire) on every cell of it the player sees, for as long as the cell is that
 //! terrain. Drawn as a burst's cell is (`spells::burst_cell`), at a heat that flickers with

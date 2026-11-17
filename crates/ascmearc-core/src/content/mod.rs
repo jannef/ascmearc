@@ -71,6 +71,7 @@ mod fey_roster_tests;
 mod fiend_roster_tests;
 mod files;
 mod fingerprint;
+mod fire;
 mod fletch;
 mod flow;
 mod forage;
@@ -288,6 +289,7 @@ pub use faction::{FactionDef, FactionId, Factions, PLAYER_FACTION, Stance};
 pub use familiar::FamiliarRules;
 pub use feint::FeintRules;
 pub use files::ContentFiles;
+pub use fire::FireRules;
 pub use fletch::{FletchMakes, FletchRules};
 pub use flow::{FLOW_SPEEDS, Flow};
 pub use forage::{ForageGround, ForageRules};
@@ -420,7 +422,9 @@ pub use talent::{
     TreeId,
 };
 pub use temper::TemperRules;
-pub use terrain::{Breakable, Freeze, FreezeSpec, Noun, StairsDir, TerrainDef, TerrainId};
+pub use terrain::{
+    Breakable, Burn, BurnSpec, Freeze, FreezeSpec, Noun, StairsDir, TerrainDef, TerrainId,
+};
 pub use theft::{Blinks, SMALL as SMALL_LOOT, Steals, Takes};
 pub use throw::Throw;
 pub use town::{InvestShare, TownDef, TownRestock, TownServant};
@@ -641,6 +645,9 @@ pub struct Content {
     /// The numbers of feinting (`data/rules/feint.toml`: Bluff); none without the
     /// file, when nobody feints.
     feint: Option<FeintRules>,
+    /// Fire on the ground (`data/rules/fire.toml`): its harm and the damage type that lights it;
+    /// none without the file, when nothing catches fire.
+    fire: Option<FireRules>,
     /// What an aristocrat's stipend grows by with each level (`data/rules/stipend.toml`: Stipend);
     /// none without the file, when it never grows.
     stipend: Option<StipendRules>,
@@ -1105,6 +1112,7 @@ impl Content {
         content.forage = content.load_optional(files)?;
         content.herbs = content.load_optional(files)?;
         content.feint = content.load_optional(files)?;
+        content.fire = content.load_optional(files)?;
         content.stipend = content.load_optional(files)?;
         content.invest = content.load_optional(files)?;
         content.patron = content.load_optional(files)?;

@@ -381,8 +381,9 @@ impl World {
             self.quench(id, events);
         }
         self.zone_tread(id, (from, at), events);
-        // A web there may catch it, a burning one burns it (`web.rs`).
+        // A web there may catch it (`web.rs`), a fire burns it (`fire.rs`).
         self.web_tread(id, at, events);
+        self.fire_tread(id, at, events);
     }
 
     /// The price of what `footing` adds to a step: climbing out of the water onto ice (less

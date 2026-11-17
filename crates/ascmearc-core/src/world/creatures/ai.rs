@@ -143,9 +143,9 @@ impl World {
         // A zone where it stands does what it does first, awake or not (`zone.rs`); it may not
         // live to act.
         self.zone_turn_start(id, events);
-        // So does a burning web (`web.rs`).
+        // So does a fire (`fire.rs`).
         if self.state.actors.contains_key(&id) {
-            self.web_turn_start(id, events);
+            self.fire_turn_start(id, events);
         }
         if !self.state.actors.contains_key(&id) {
             return 0;
@@ -172,6 +172,8 @@ impl World {
         let plan = self.decide(id, &heard);
         let plan = self.frightened(id, plan);
         let plan = self.held_back(id, plan);
+        // In fire, it steps out of it (`fire.rs`).
+        let plan = self.flee_fire(id, plan);
         // Rooted, it never moves (`rooted.rs`).
         let plan = self.rooted_plan(id, plan);
         // Idle, a spider may spin a web (`spin.rs`).
@@ -565,6 +567,10 @@ impl World {
             return Route::There;
         }
         let shuns = self.shuns(id);
+        // Fire costs a detour, unless it cannot hurt it (`fire.rs`).
+        let fire = (self.content.fire())
+            .filter(|_| !level.burning.is_empty() && !self.fireproof(id))
+            .map_or(0, |rules| rules.avoid);
         // One that swims goes through deep water as over ground (`swim.rs`).
         let open = |def: &crate::content::TerrainDef| self.open_to(id, def);
         let cost = |p: Pos| {
@@ -587,6 +593,11 @@ impl World {
                 }
             } else {
                 return Cost::Impassable;
+            };
+            let enter = if fire > 0 && level.is_burning(p) {
+                enter + fire
+            } else {
+                enter
             };
             Cost::Steps(if occupied(p) { enter + CROWD } else { enter })
         };

@@ -12,3 +12,9 @@ opens_to = "gate_open"
 toggle_noise = 30
 breaks_to = "door_broken"
 sturdiness = 20
+
+[terrain.burn]
+burns = 72
+spreads = 24
+leaves = "door_broken"
+burning = "burning_wood"

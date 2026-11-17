@@ -9,3 +9,9 @@ walkable = false
 glyph = "≡"
 fg = "#a08458"
 bg = "#0d0d10"
+
+[terrain.burn]
+burns = 72
+spreads = 24
+leaves = "floor"
+burning = "burning_wood"

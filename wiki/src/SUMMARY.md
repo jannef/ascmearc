@@ -150,6 +150,7 @@
   - [Cursed, haunted, and hallowed rooms](cursed-and-hallowed.md)
 - [Terrain](terrain.md)
   - [Digging and walls](digging.md)
+  - [Fire](fire.md)
 - [Doors](doors.md)
   - [Chests](chests.md)
 - [Traps](traps.md)

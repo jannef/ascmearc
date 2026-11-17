@@ -39,6 +39,7 @@ mod encounters;
 mod examples;
 mod experience;
 mod familiars;
+mod fire;
 mod gear_condition;
 mod gems;
 mod guild;
@@ -171,6 +172,8 @@ fn generate(content: &Content) -> Vec<(String, String)> {
         ("terrain-local.md", terrain::local_terrain),
         ("terrain-overworld.md", terrain::overworld_terrain),
         ("webs.md", terrain::webs),
+        ("fire-burnable.md", fire::burnable),
+        ("fire-harm.md", fire::harm),
         ("overworld-sight.md", sight::overworld_sight_table),
         ("overworld-places.md", overworld::locations),
         ("overworld-map.md", overworld::map),

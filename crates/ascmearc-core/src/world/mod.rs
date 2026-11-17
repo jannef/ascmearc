@@ -199,6 +199,7 @@ pub use levels::encounter::{
     Choice as EncounterChoice, EncounterView, Forced as EncounterForced, KNOWN_LINE,
     Outcome as EncounterOutcome, PENDING_REFUSED, Party, Pending,
 };
+pub use levels::fire::Blaze;
 pub use levels::pit::Pit;
 pub(crate) use levels::swim::shore_refusal;
 pub(crate) use levels::talk_past::offered as encounter_choices;

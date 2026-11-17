@@ -154,20 +154,15 @@ until you [break free](held.md#slipping-bonds) or it wears off. You can still fi
 shoot. Spiders, and the duergar who ride them, are never caught, and neither is anything that
 passes through walls. You are never caught twice at once.
 
-**Burning webs.** Any fire that spreads over an area, such as a [Fireball](magic.md#spell-fireball),
-a dragon's breath, burning oil, or a pool of burning pitch, sets every web it reaches alight. A
-[burning web](#terrain-burning-web) blazes orange and lights up the whole area around it, far
-brighter than a torch. After a few seconds it sets the webs touching it alight, so fire races
-down a webbed passage. Soon after, it burns away to bare floor, and whoever it held is free.
-
-While it burns, it hurts anyone in it: at the start of each of their turns, and on every step
-into it. [Fire resistance](damage-types.md) takes its share. A creature caught in a web cannot
-easily step out, which is the point of setting it alight. A burning web catches no one new.
-Frost and wind put a burning web out, and it is a plain web again.
-
-All of this runs on game time, not on your turns:
-
 {{#include generated/webs.md}}
+
+**Burning webs.** Webs burn like tinder: any [fire](fire.md) that reaches a web sets it alight. A
+[burning web](#terrain-burning-web) blazes orange and lights up the whole area around it, far
+brighter than a torch. After a few seconds it sets the webs and anything else burnable touching
+it alight, so fire races down a webbed passage. Soon after, it burns away, and whoever it held is
+free. While it burns, it hurts anyone in it, and a creature caught in it cannot easily step out,
+which is the point of setting it alight. A burning web catches no one new. Frost and wind put it
+out, and it is a plain web again. How long it all takes is in the fire page's table.
 
 ## Plants and rock outdoors
 
@@ -176,6 +171,7 @@ All of this runs on game time, not on your turns:
 block your way, and all but dead trees block [sight](sight.md#line-of-sight) too. You can push
 through [bushes](#terrain-bush), but slowly. [Reeds](#terrain-reeds), [marsh](#terrain-marsh), and
 [rubble](#terrain-rubble) slow you a little. Their heights set how long their [shadows](sun.md) are.
+Grass, bushes, and trees [burn](fire.md); reeds and marsh are too wet to.
 
 Anything you can neither walk on nor see through blocks [sound](hearing.md): walls, solid rock, and
 the trees, boulders, crags, and stones above. Sound has to go around them. A

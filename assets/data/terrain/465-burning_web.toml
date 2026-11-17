@@ -1,4 +1,4 @@
-# A web on fire (`world/levels/web.rs`, data/rules/webs.toml): what a `web` turns into when a
+# A web on fire (`world/levels/fire.rs`, docs/dev/fire.md): what a `web` turns into when a
 # fire area reaches it, for a few seconds of game time, before it is gone. Never laid by a
 # generator.
 [[terrain]]

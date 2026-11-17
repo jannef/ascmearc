@@ -402,12 +402,12 @@ impl World {
                 actor.energy = s.energy;
             }
         }
-        // The player's next turn starts where they stand (`zone.rs`, `web.rs`).
+        // The player's next turn starts where they stand (`zone.rs`, `fire.rs`).
         if self.state.death.is_none() {
             self.zone_turn_start(player, events);
         }
         if self.state.death.is_none() {
-            self.web_turn_start(player, events);
+            self.fire_turn_start(player, events);
         }
         // Allies whose time has run out depart (`ally.rs`).
         self.allies_lapse(events);
@@ -426,8 +426,8 @@ impl World {
         self.heartbeats();
         // Zones past their end are dropped (`zone.rs`).
         self.zones_fade();
-        // Burning webs spread and burn out (`web.rs`).
-        self.webs_burn(events);
+        // Fires spread and burn out (`fire.rs`).
+        self.fires_burn(events);
     }
 
     /// How long from now no creature on the current level that disturbs a rest

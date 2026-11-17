@@ -8,3 +8,9 @@ glyph = "‡"
 fg = "#a07850"
 bg = "#0d0d10"
 walkable = false
+
+[terrain.burn]
+burns = 60
+spreads = 24
+leaves = "floor"
+burning = "burning_wood"

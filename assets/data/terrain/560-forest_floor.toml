@@ -11,3 +11,9 @@ bg = "#2a2314"
 bounce = "#c8b48c"
 # Moss and needles, with a twig now and then.
 step_noise = 80
+
+[terrain.burn]
+burns = 30
+spreads = 18
+leaves = "scorched_earth"
+burning = "burning_grass"

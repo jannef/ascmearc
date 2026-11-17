@@ -9,3 +9,9 @@ walkable = false
 transparent = false
 height = 3
 bounce = "#88b890"
+
+[terrain.burn]
+burns = 90
+spreads = 18
+leaves = "burnt_tree"
+burning = "burning_tree"

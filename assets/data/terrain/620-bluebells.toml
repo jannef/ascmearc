@@ -6,3 +6,9 @@ glyph = "*"
 fg = "#9a9cf4"
 bg = "#1a2a16"
 step_noise = 70
+
+[terrain.burn]
+burns = 24
+spreads = 12
+leaves = "scorched_earth"
+burning = "burning_grass"
