@@ -100,6 +100,9 @@ where a dungeon favours or bans nothing. "Only" says where it can come at all.
 - **Frigid hall.** Bitter cold: 25 °C colder than the level around it, with a faint blue glow. Its
   [water](terrain.md#water) freezes even on a mild level, so a pool in it is usually solid
   [ice](temperature.md#walking-on-ice). The cold does nothing to you.
+- **Hearth-warmed room.** Rooms kept warm by braziers: 12 °C warmer than the level around them.
+  You never find one on a new floor. They are the wizards' homes at the tops of the
+  [towers](ascmearc.md#drȳtorr), whose balconies outside stand in the weather.
 - **Silent vault.** A dead silence. Every [noise](hearing.md#what-makes-noise) made inside is a
   hundredth as loud, so a fight there is barely heard even next door (see [Hearing](hearing.md)).
   Everyone inside, you and creatures alike, is [Silenced](status-list.md#status-silenced) (see

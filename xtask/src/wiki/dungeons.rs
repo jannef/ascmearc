@@ -1,9 +1,9 @@
 //! Dungeons and danger levels: every branch's
 //! floors with their danger, who lives there, and how they come back.
 
-use super::util::percent;
+use super::util::{Term, link, percent};
 use ascmearc_core::content::danger::{self, Odds, StrayPool, TOO_WEAK};
-use ascmearc_core::content::{Content, Count, DangerRule, Generator, Spawning, Stance};
+use ascmearc_core::content::{Content, Count, DangerRule, Generator, Spawning, Stance, TrapId};
 use std::collections::BTreeSet;
 use std::fmt::Write as _;
 
@@ -253,6 +253,94 @@ pub(super) fn dungeon_floors(content: &Content) -> String {
     }
     if !any {
         out.push_str("| (no branch has a danger yet) | | | | |\n");
+    }
+    out
+}
+
+/// Trap types by name, each linked to its row: `[arrow trap](traps.md#trap-arrow), [pit](...)`.
+fn trap_names(content: &Content, traps: impl IntoIterator<Item = TrapId>) -> String {
+    let mut defs: Vec<_> = traps.into_iter().map(|t| content.trap(t)).collect();
+    defs.sort_by(|a, b| a.name.cmp(&b.name));
+    defs.dedup_by(|a, b| a.id == b.id);
+    let names: Vec<String> = (defs.iter())
+        .map(|t| link(Term::Trap, &t.id, &t.name))
+        .collect();
+    names.join(", ")
+}
+
+/// The wizards' towers floor by floor (#1788): each floor's danger (the ground floor's is its
+/// clearing's, for its traps; the floors above by the branch's rule; the top has none), its
+/// traps, and who keeps it. Towers by their ground floor's danger, floors from the ground up;
+/// a test tower without a danger (the showcase's) is left out.
+pub(super) fn towers(content: &Content) -> String {
+    let mut out = String::from("| Floor | Danger | Traps | Who is there |\n|---|:---:|---|---|\n");
+    let mut towers: Vec<_> = (content.dungeons())
+        .filter(|d| d.spawning.is_some())
+        .filter_map(|d| Some((d, d.tower.as_ref()?)))
+        .collect();
+    let ground_danger = |clearing: &str| {
+        (content.spawning(clearing)).map_or(0, |(rule, depth, _)| rule.at(depth, 1))
+    };
+    towers.sort_by_key(|(d, t)| (ground_danger(&t.clearing), d.name.clone()));
+    for (d, t) in towers {
+        // The ground floor: the clearing's hand-placed traps and its comers.
+        let ground = content.level(&t.clearing).expect("a tower's clearing");
+        let hidden = ground.traps.values().filter(|tr| !tr.known).count();
+        let seen = ground.traps.len() - hidden;
+        let kinds = trap_names(content, ground.traps.values().map(|tr| tr.kind));
+        let comers = match content.spawning(&t.clearing) {
+            Some((_, _, s)) => {
+                format!("now and then from outside: {}", population_text(content, s))
+            }
+            None => "nobody".into(),
+        };
+        let _ = writeln!(
+            out,
+            "| {} 1, the ground floor | {} | {seen} in sight and {hidden} hidden, laid by hand: \
+             {kinds} | {comers} |",
+            d.name,
+            ground_danger(&t.clearing)
+        );
+        // The floors above, new each run.
+        let [least, most] = d.traps_per_level;
+        let kinds = trap_names(content, d.traps.iter().copied());
+        for depth in 1..=d.depth {
+            let Some(rule) = d.plan(depth).and_then(|p| p.danger) else {
+                continue;
+            };
+            // Who they are is said once, on the first floor above the ground.
+            let folk = match &d.spawning {
+                Some(s) if depth == 1 => format!(
+                    "the household, {}: {}",
+                    count_text(s.count),
+                    population_text(content, s)
+                ),
+                Some(s) => format!("the same household, {}", count_text(s.count)),
+                None => "nobody".into(),
+            };
+            let _ = writeln!(
+                out,
+                "| {} | {} | {least} to {most}, all hidden: {kinds} | {folk} |",
+                d.level_name(depth),
+                rule.at(depth, 1)
+            );
+        }
+        // The top: a home, with no danger, no traps, and its wizard.
+        let top = content.level(&t.top).expect("a tower's top");
+        let wizards: Vec<String> = (top.creatures.iter())
+            .filter(|c| content.has_tag(c.creature, "tower_wizard"))
+            .map(|c| {
+                let def = content.creature(c.creature);
+                format!("{} (level {})", def.name, def.level)
+            })
+            .collect();
+        let _ = writeln!(
+            out,
+            "| {} {}, the top | none | none | {}, at home |",
+            d.name,
+            t.floors,
+            wizards.join(", ")
+        );
     }
     out
 }

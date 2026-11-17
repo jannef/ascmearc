@@ -17,7 +17,8 @@ big, the generator's inside rooms and halls, and gave the tower its folk ("A tow
 below). **C2** (#1786, "Wedertorr" below) is the second tower, Mistress Ælfswīð's, and her side.
 **C3** (#1787, "Steorratorr" below) is
 the third, Master Sigeric's, and his side, with which the quarrel can be finished. All three
-towers are built.
+towers are built. **P1** (#1788, "Polish" below) loses missiles out of a window, warms the top
+floors, and puts the towers' danger per floor in the wiki.
 
 ## The idea
 
@@ -87,8 +88,8 @@ Looking down from the window teaches the clearing's map; nothing else crosses le
 
 What is not seen or done: below creatures are not in `actors()`, so they cannot be targeted,
 examined, or hit (look mode names them in words and that is all), and they stand still (other
-levels do not tick, `docs/dev/time.md`); no sound comes up; missiles over the air land by today's
-rule (`docs/dev/ranged-combat.md`; P1 may lose them out of the window); nothing falls, and the
+levels do not tick, `docs/dev/time.md`); no sound comes up; a missile that ends over the air is
+lost far below ("Polish" below); nothing else falls, and the
 only way between floors is the stairs. Teleports and the blink pick walkable cells (`lands_on`),
 so nobody lands on the air.
 
@@ -396,6 +397,31 @@ every field.
 cargo dev-cli dump --scenario quarrel --actions "ask:E:quest-quarrel move:N move:W*2 move:N ascend move:N ask:N:side-quarrel" --layers quests
 ```
 
+## Polish (P1, #1788)
+
+- **Missiles out of a window** (`world/combat/shoot.rs::missile_ends`, the one place a missile
+  that did not break ends: a shot, a throw, `fly`, and a trap's shot, `trap.rs`): on a walkable
+  cell it comes down (`come_down`) as ever; on an `air` cell (`Content::air`) it falls to the
+  ground far below and is lost, and `Event::FellBelow { object, at }` is pushed after the flight
+  and its attacks; anywhere else it is lost silently, as before (a chasm, a window's sill).
+  Nothing reaches the level below: it does not tick, and the missile is gone, not moved.
+  `perceive_events` keeps the event when the player sees the cell and says "The arrow falls away
+  to the ground far below." (the kind as the player knows it, `Lore::title` of `Stack::one`; not
+  stopping a rest). A creature's thrown stone (`hurl.rs`) never lands anyway; a flask shatters
+  where it ends, over the air too (`flask.rs`, unchanged).
+- **The hearth** (`assets/data/room_effects/290-hearth.toml`): the room effect `hearth`,
+  "hearth-warmed room", `temperature = 12`, `weight = 0` (never drawn for a generated room: only
+  a level file's `[[room]]` places it; `mapgen/special_tests.rs` and `mapgen/tests.rs` skip a
+  weight of 0). Each wizard's top floor has one `[[room]]` over its tower's footprint, walls and
+  doors included, the balcony left out: inside, the day's temperature plus 12 degrees
+  (`WorldState::temperature_at`, `docs/dev/temperature.md`; warmth adds, so a summer noon is hot
+  inside), and "Braziers keep these rooms warm." the first time in.
+- **The wiki table** `dungeon-towers.md` (`xtask/src/wiki/dungeons.rs::towers`, included in
+  `wiki/src/dungeons.md` "The wizards' towers floor by floor"): every tower, by its ground
+  floor's danger, floor by floor: the ground floor's danger (the clearing's) and its hand-laid
+  traps, the floors above with the branch's danger rule, traps, and household count, and the top
+  with its wizard's level.
+
 ## Tests
 
 - `content/tower_tests.rs`: the six terrain types' flags (nothing of the shell breaks, air and
@@ -408,7 +434,9 @@ cargo dev-cli dump --scenario quarrel --actions "ask:E:quest-quarrel move:N move
   `tower_top_night`: the `view` and `below` layers); looking down writes the clearing's memory
   (`clearing_memory_after_a_climb`) and the memory shows through the air at night; a run started
   on the tower top shows nothing until the clearing exists; a teleport beside a window never lands
-  on the air (`lands_on` false on every air cell); a replay over the climb verifies.
+  on the air (`lands_on` false on every air cell); a replay over the climb verifies; a dagger
+  thrown out of the west window is lost far below and said, one thrown across the hall lands
+  (P1).
 - `ui/screen_snapshots/play.rs::looking_far_below`: look mode over the ground, the deer, the
   dagger, and a window.
 - `mapgen/tower_tests.rs::drytorrs_floors_are_many_rooms_and_halls`: 5 to 24 rooms and halls a
@@ -418,7 +446,7 @@ cargo dev-cli dump --scenario quarrel --actions "ask:E:quest-quarrel move:N move
   stair it climbs, anywhere else it leaves: the design's §12 risk), the wise-woman's word and her
   rowan (not before the escort, the sprig handed over, the tower marked), Ordgar's topics and the
   hand-in (experience only), then his quarrel given, and a replay from Holtwīc to the top and
-  the hand-in.
+  the hand-in; every wizard's top warm by its hearth under the roof, the balcony not (P1).
 - `world/people/quarrel_tests.rs`, on the test quarrel: the offer on the first arrival only and
   not before the quest; refusing; taking a side (the giver turned at once, the unmet rival
   turned and still offering); a rival met and left undecided turned for good; attacking; the

@@ -391,9 +391,9 @@ impl World {
             && breaks > 0
             && draw!(self, "trap/shot_breaks/{}", self.state.actors.key(victim))
                 .chance(u32::from(breaks));
-        if !broke && self.state.current().is_walkable(&content, end) {
-            self.come_down(end, Stack::one(object));
-        }
+        let fell = (!broke)
+            .then(|| self.missile_ends(end, Stack::one(object)))
+            .flatten();
         events.push(Event::Missile {
             object,
             from: Some(slit),
@@ -405,6 +405,7 @@ impl World {
             },
         });
         events.extend(struck_events);
+        events.extend(fell);
     }
 
     /// Where a shot trap on `at` shoots from: the nearest opaque cell in the eight directions

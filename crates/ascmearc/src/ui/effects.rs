@@ -221,6 +221,7 @@ pub(super) fn track(
             | Event::Talked(_)
             | Event::Identified { .. }
             | Event::FellThroughIce { .. }
+            | Event::FellBelow { .. }
             | Event::TrapSprung { .. }
             | Event::TrapStruck { .. }
             | Event::VoiceThrown { .. }

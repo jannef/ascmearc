@@ -219,3 +219,44 @@ fn the_climb_replays() {
         .expect("the replay verifies");
     assert_eq!(verified.state_hash(), w.state_hash());
 }
+
+/// P1 (#1788): a dagger thrown out of the west window flies over the air, falls to the ground far
+/// below, and is lost (said, and on neither level); one thrown across the hall comes down on its
+/// floor as ever.
+#[test]
+fn a_missile_out_of_a_window_is_lost_far_below_and_one_inside_lands() {
+    let mut w = tower();
+    let dagger = w.content().object_id("dagger").expect("dagger");
+    (w.player_mut().inventory).push(crate::object::Stack::new(dagger, 2));
+    let item = w.state.player().inventory.len() - 1;
+    run(&mut w, "move:W move:W move:W move:W");
+    assert_eq!(w.player_pos(), Pos::new(25, 7));
+    let (window, out) = (Pos::new(22, 7), Pos::new(21, 7));
+    let air = w.content().air().expect("air");
+    assert_eq!(w.state.current().terrain[out], air);
+    let sill = w.state.current().terrain[window];
+    assert_eq!(w.content().terrain(sill).id, "window");
+    let thrown = w.apply(&Action::Throw { item, at: out });
+    assert!(thrown.took_turn);
+    assert!(
+        (thrown.events.iter()).any(|e| matches!(e, Event::FellBelow { at, .. } if *at == out)),
+        "{:?}",
+        thrown.events
+    );
+    assert!(crate::test_support::said_text(
+        &w,
+        "The dagger falls away to the ground far below."
+    ));
+    // Lost: on neither the floor nor the clearing below.
+    let on = |w: &World, level: &str, p: Pos| w.state.levels[level].objects_at(p).len();
+    assert_eq!((on(&w, "tower_top", out), on(&w, "clearing", out)), (0, 0));
+    // Thrown across the hall, it comes down on the floor, and nothing falls.
+    let inside = Pos::new(27, 7);
+    let thrown = w.apply(&Action::Throw { item, at: inside });
+    assert!(!(thrown.events.iter()).any(|e| matches!(e, Event::FellBelow { .. })));
+    assert_eq!(on(&w, "tower_top", inside), 1);
+    let falls = (w.messages().iter())
+        .filter(|m| m.text.contains("far below"))
+        .count();
+    assert_eq!(falls, 1);
+}

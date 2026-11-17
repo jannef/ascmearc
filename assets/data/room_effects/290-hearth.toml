@@ -1,0 +1,11 @@
+# A hearth-warmed room: a home's rooms kept warm by its braziers and fires, a wizard's at the top of
+# a tower (#1788; docs/dev/towers.md). Only a hand-made level's `[[room]]` places it: weight 0,
+# never drawn for a generated room. Warmer than the air outside by `temperature`, as every room's
+# warmth adds to the level's (docs/dev/temperature.md).
+[[effect]]
+id = "hearth"
+name = "hearth-warmed room"
+mark = "H"
+enter = "Braziers keep these rooms warm."
+weight = 0
+temperature = 12

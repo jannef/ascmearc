@@ -236,6 +236,7 @@ fn generate(content: &Content) -> Vec<(String, String)> {
         ("mimic-bands.md", mimics::mimic_bands),
         ("dungeons.md", dungeons::dungeons),
         ("dungeon-floors.md", dungeons::dungeon_floors),
+        ("dungeon-towers.md", dungeons::towers),
         ("dungeon-endless.md", dungeons::endless_branches),
         ("layer-bosses.md", dungeons::layer_bosses),
         ("danger-weights.md", dungeons::danger_weights),

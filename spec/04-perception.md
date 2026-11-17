@@ -31,6 +31,7 @@ These are gameplay rules in the core: deterministic, integer math, independent o
 - A level may stand over another of its size (a tower's floor over its clearing): outside the tower's footprint it is open air, see-through, never walked, unroofed, undiggable, lit by the sky like any open cell.
 - A seen cell of open air shows the cell of the level below at the same coordinates: its terrain, the top of its pile, and the creature standing there as it stood. It is seen only when the air cell is: by day, dimly by moonlight, not on a dark night.
 - Looking down writes the level below's memory. A creature seen below is named in words only: it cannot be targeted, examined, or hit, and nothing from below is heard. With no level below yet, the air shows nothing.
+- A missile that comes down over the open air falls to the ground far below and is lost; the player who sees it is told so.
 
 ## Creature sight
 

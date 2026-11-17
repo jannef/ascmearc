@@ -69,7 +69,10 @@ the top. He is a scholar, dry and exact, and he is friendly.
 The tower has four floors, and you climb it by its [stairs](terrain.md#stairs). Its walls are
 dressed stone that no pick, blast, or rod can break
 ([digging](digging.md#what-breaks-and-what-does-not)), and every floor has windows. A window is
-an open gap in the wall: you can see, hear, and shoot through it, but not climb through it.
+an open gap in the wall: you can see, hear, and shoot through it, but not climb through it. From
+the floors above, an arrow, a bolt, or anything you throw that comes down outside the tower falls
+to the ground far below and is lost. Every floor's danger, traps, and folk are listed under
+[the wizards' towers floor by floor](dungeons.md#the-wizards-towers-floor-by-floor).
 
 - **The ground floor** is the inside of the tower in the clearing. It is big: three bands of
   rooms, one above the other. Through the windows you can see into the halls before you open
@@ -93,7 +96,9 @@ an open gap in the wall: you can see, hear, and shoot through it, but not climb 
   stands, lanterns, and rugs ([animated objects](animated.md)). The tower's folk are found in
   the towers and nowhere else.
 - **The top floor** is the wizard's study and his quarters, with no traps and nobody to fight.
-  Two doors lead out onto a balcony open to the sky, with a low wall round it. Rain falls on it.
+  His braziers keep the rooms 12 °C warmer than the day outside
+  ([hearth-warmed room](special-rooms.md#room-hearth)). Two doors lead out onto a balcony open to
+  the sky, with a low wall round it. Rain falls on it, and it is as cold as the day.
 
 From the floors above, the windows look out over the wood far below. You see the clearing and
 whatever stands in it as it stood when you climbed: the land below does not move while you are
@@ -135,7 +140,8 @@ hear, and shoot through, as at Drȳtorr.
   lanterns, and books gone lively ([animated objects](animated.md)). None of them ever leaves the
   tower. The floors are danger 8, 9, and 10.
 - **The top floor** is her workroom, her library, and her quarters, with no traps and nobody to
-  fight. Two doors lead out onto a balcony that runs the whole width of the tower.
+  fight. Her braziers keep the rooms warm, as at Drȳtorr. Two doors lead out onto a balcony
+  that runs the whole width of the tower.
 
 From the floors above, the windows look out over the down far below, as they do at Drȳtorr.
 
@@ -172,8 +178,8 @@ hear, and shoot through, as at Drȳtorr.
   has bound; and teapots, cutlery, and books gone lively ([animated objects](animated.md)). None
   of them ever leaves the tower. The floors are danger 10 to 14.
 - **The top floor** is his workshop, his quarters, and the landing at the top of the stair, with
-  no traps and nobody to fight. Two doors lead out onto a balcony down the whole east side of
-  the tower, over the sea.
+  no traps and nobody to fight. His braziers keep the rooms warm, as at Drȳtorr. Two doors lead
+  out onto a balcony down the whole east side of the tower, over the sea.
 
 From the floors above, the windows look out over the plain and the sea far below.
 

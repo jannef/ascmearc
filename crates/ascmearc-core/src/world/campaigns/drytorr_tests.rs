@@ -142,6 +142,31 @@ fn the_tower_is_four_floors_on_the_clearings_footprint() {
     assert_eq!((placed.creature, placed.pos), (ordgar, ORDGAR));
 }
 
+/// P1 (#1788): on each wizard's top floor the rooms under the roof are a hearth room, warmer than
+/// the day by its 12 degrees, and the balcony outside stands at the day's temperature.
+#[test]
+fn every_wizards_top_is_warm_under_the_roof_and_the_balcony_is_not() {
+    let hearth = CONTENT.room_effects().id("hearth").expect("the hearth");
+    let flagstones = CONTENT.terrain_id("flagstones").expect("flagstones");
+    for branch in ["drytorr_tower", "wedertorr_tower", "steorratorr_tower"] {
+        let t = (CONTENT.dungeon(branch).and_then(|d| d.tower.as_ref())).expect("a tower");
+        let mut w = World::new(CONTENT.clone(), "holtwic", None).expect("a run");
+        let stair = *t.stairs.last().expect("the top's stair");
+        w.travel(&t.top, Some(stair)).expect("the top");
+        put_player(&mut w, stair);
+        assert_eq!(w.state.current_level, t.top);
+        assert!(heard(&w, "Braziers keep these rooms warm."), "{branch}");
+        let level = w.state.current();
+        assert_eq!(level.rooms.len(), 1, "{branch}");
+        assert_eq!(level.rooms[0].effect, hearth, "{branch}");
+        let balcony = (level.terrain.iter())
+            .find_map(|(p, &t)| (t == flagstones).then_some(p))
+            .expect("a balcony");
+        let (inside, outside) = (w.temperature_at(stair), w.temperature_at(balcony));
+        assert_eq!(inside.tenths() - outside.tenths(), 120, "{branch}");
+    }
+}
+
 /// The design's §12 risk: an outdoor level with stairs. Standing on the clearing's `<`, `ascend`
 /// climbs the tower; anywhere else, with no enemy about, it leaves to the overworld.
 #[test]

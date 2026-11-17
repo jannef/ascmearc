@@ -493,9 +493,11 @@ fn special_rooms_come_about_three_levels_in_five() {
         (50..=70).contains(&percent),
         "{special} of {levels} levels ({percent} %) have a special room"
     );
-    // The Depths have no danger: a teeming den never comes there.
+    // The Depths have no danger: a teeming den never comes there; a hearth (weight 0) is
+    // placed only by hand.
     let defs = CONTENT.room_effects().defs();
-    let common = |(n, e): (&i32, &crate::content::RoomEffectDef)| e.needs_danger || *n > 10;
+    let common =
+        |(n, e): (&i32, &crate::content::RoomEffectDef)| e.needs_danger || e.weight == 0 || *n > 10;
     assert!(by_effect.iter().zip(defs).all(common), "{by_effect:?}");
     assert!(by_generator.iter().all(|n| *n > 30), "{by_generator:?}");
 }

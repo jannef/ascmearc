@@ -10,7 +10,8 @@ as the weapon's `range`, attacks whoever stands in its way (`World::missile_hits
 one is hit (or caught: Diamond soul's catch sets `World::caught` and the flight ends on that
 cell, a miss; `world/classes/ascetic.rs`, a trap's `trap_shot` alike), and comes down (`come_down`) on
 top of the pile, unless it broke (`breaks`, one keyed draw on a hit) or the cell is not
-walkable. What is `lit` flies as its burning object and
+walkable (`missile_ends`: over a tower's open air it falls far below, lost, with
+`Event::FellBelow` and a line when seen, `docs/dev/towers.md` "Polish"). What is `lit` flies as its burning object and
 starts a fire (`LevelState::fires`, saved): a light source in `LightCache::sources` while the clock
 is before its end, cleaned up by `World::burn_out` at the start of `perceive`. Prices go through
 `attack_price` (shoot with the missile weapon, throw with nothing; priced as the shot begins, so

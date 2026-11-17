@@ -42,8 +42,9 @@ fn features_are_drawn_by_their_weights() {
     let by = tally(&CONTENT, &RoomOdds::shared(effects), n);
     for (e, got) in effects.defs().iter().zip(&by) {
         let want = n * u32::from(e.weight) / total;
+        // Weight 0 (a hearth): only a hand-made level places it, never a draw.
         assert!(
-            got.abs_diff(want) * 100 < want * 8,
+            got.abs_diff(want) * 100 < want * 8 || (want, *got) == (0, 0),
             "{}: {got} of {want}",
             e.id
         );

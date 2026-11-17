@@ -12,7 +12,9 @@
 //! **Where it comes down**: on the cell of whom it hit, else the last cell it flew over (at the end
 //! of its range, before something solid, or the cell aimed at). It lies there on top of the pile,
 //! to be picked up again, unless it broke (on a hit, by its `breaks` chance: one draw of the
-//! gameplay stream) or the cell is no floor (not walkable): then it is lost.
+//! gameplay stream) or the cell is no floor (not walkable): then it is lost. Over the open air
+//! outside a tower (out of a window, docs/dev/towers.md) it falls to the ground far below and is
+//! lost too, and the player who sees the cell is told so ([`Event::FellBelow`]).
 //!
 //! **Ammunition**: a shot takes one from the readied ammunition, a throw one from the stack
 //! thrown; the last one empties its slot.
@@ -482,13 +484,13 @@ impl World {
             && struck
             && flight.breaks > 0
             && draw!(self, "shoot/breaks/{}", self.state.actors.key(shooter)).chance(flight.breaks);
+        let mut fell = None;
         if let Some((target, cell)) = dummy {
             self.dummy_catches(target, cell, (flight.lands, flight.breaks));
         } else if let Some(lands) = flight.lands
             && !broke
-            && self.state.current().is_walkable(&content, end)
         {
-            self.come_down(end, lands);
+            fell = self.missile_ends(end, lands);
         }
         events.push(Event::Missile {
             object: flight.flies,
@@ -501,6 +503,24 @@ impl World {
             },
         });
         events.extend(attacks);
+        events.extend(fell);
+    }
+
+    /// Where a missile that did not break ends on cell `p` of the current level (module docs):
+    /// on a floor it comes down ([`World::come_down`]); over the open air, out of a tower's
+    /// window, it falls to the ground far below and is lost, the [`Event::FellBelow`] returned
+    /// to be pushed after its flight and its attacks; anywhere else it is lost.
+    pub(in crate::world) fn missile_ends(&mut self, p: Pos, missile: Stack) -> Option<Event> {
+        let level = self.state.current();
+        if level.is_walkable(&self.content, p) {
+            self.come_down(p, missile);
+            return None;
+        }
+        let air = self.content.air()?;
+        (level.terrain.get(p) == Some(&air)).then_some(Event::FellBelow {
+            object: missile.object,
+            at: p,
+        })
     }
 
     /// What `flight`, loosed from `from`, attacks whoever stands on `cell` with: a shot is less

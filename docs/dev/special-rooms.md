@@ -62,7 +62,9 @@ same.
 Features today: shadowed (10), echoing (8), hushed (8), sanctuary (6), flooded (8), black chamber
 (5, `light = 0`), draining (6, `status = "ebbing"`, `level_chance` 5, #403), teeming den (8,
 `needs_danger`, `min_cells` 16, `swarm`, #405), hot (5, "sweltering chamber", `temperature = 25`,
-#404), cold (5, "frigid hall", `temperature = -25`), silent vault
+#404), cold (5, "frigid hall", `temperature = -25`), hearth (0, "hearth-warmed room",
+`temperature = 12`, placed only by a level file's `[[room]]`: the wizards' tops, #1788,
+`docs/dev/towers.md` "Polish"), silent vault
 (5, `silent`, `noise = 1`, `status = "silenced"`, #409), heavy (4, "heavy hall", `burden = 50`,
 #412), mirrors (3, "hall of mirrors", `max_cells = 80`, `mirrors = { images = 2 }`, #419), unstable (4, "unstable room", `warp = 10`, `max_cells = 60`, #411), beast den (5, mark `n`, `needs_danger`, `min_cells` 16, `swarm` with
 `factions = ["wildlife", "vermin", "marsh"]` and `hoard = "corpses"`, #410), collapsed (3, "collapsed
