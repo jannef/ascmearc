@@ -24,7 +24,7 @@ const SEEDS: u64 = 600;
 /// The default run's seeds: every stamp they make is checked, not that every vault stamps.
 const SHORT_SEEDS: u64 = 40;
 /// Deeper floors for a vault whose `danger` keeps it off some of [`BRANCHES`]': the endless
-/// branch's rooms floors (its danger is its depth) and Fyrdelf's caves, each of dangers 9 to 16.
+/// branch's rooms floors (its danger is its depth) and Fyrdelf's mines floors, each of dangers 9 to 16.
 const DEEP: [(&str, RangeInclusive<u32>); 2] = [("grundleas", 9..=16), ("fyrdelf", 5..=12)];
 /// Fewer seeds there: eight floors a seed, and only the deep vaults looked for.
 const DEEP_SEEDS: u64 = 100;
