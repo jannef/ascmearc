@@ -38,4 +38,4 @@ Two small extensions of what D1–D9 built, each for one of these types:
 
 The hydra's heads: `world/creatures/split_tests.rs::heads_crawl_out_of_a_dead_hydra`.
 
-**Material drops** (#1341; `data/drops/`, docs/dev/objects.md "Material drops"): own rows on the cockatrice, gorgon, and hydra (and the basilisk): bone 1d2 (50 %), hardened leather 1 (40 %). The gorgon (`combat = "dragon"`) carries `dragon` since, as every dragon type does, and rolls `dragon.toml` before its own. The black pudding (`eyeless`, no corpse) and the hydra's heads (untagged) leave nothing; the rust monster stays untagged.
+**Material drops** (#1341; `data/drops/`, docs/dev/objects.md "Material drops"): own rows on the cockatrice, gorgon, and hydra (and the basilisk): hardened leather 1 (40 %) (no bone since #1792). The gorgon (`combat = "dragon"`) carries `dragon` since, as every dragon type does, and rolls `dragon.toml` before its own. The black pudding (`eyeless`, no corpse) and the hydra's heads (untagged) leave nothing; the rust monster stays untagged.
