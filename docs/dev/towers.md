@@ -131,7 +131,8 @@ The first of the three towers (design §9, §10): Master Ordgar's, in Holegnwudu
 - **The cell**: the overworld legend's `I` at (19, 11), a forest cell at the wood's western
   edge north-west of the fairy mound (six from it and from Holtwīc), hidden (`hidden = { id =
   "drytorr", terrain = "tower", to = "drytorr" }`) until Gammer Wynflæd's second quest marks it.
-  (The design named the legend's `"8"`, but that is Lytelscræf's.)
+  (The design named the legend's `"8"`, but that is Lytelscræf's; it spelled the name Drȳtorr,
+  but the game's font has no ȳ, which draws as `?`, so the player sees Drytorr.)
 - **The clearing**, `levels/drytorr.toml` (60×24, `kind = "outdoor"`, `arrival`): the wood round a
   grass clearing, a track from the south edge (the arrival, (30, 22)) to the tower's door. The
   tower is 21×13 at (20, 4)–(40, 16): the ground floor, a south hall with two hidden traps (an
@@ -139,8 +140,10 @@ The first of the three towers (design §9, §10): Master Ordgar's, in Holegnwudu
   at the partition's west end, and a north hall with three one-cell bays in the partition, each
   a known trap (arrow, spear, pit) with a potion, a scroll, or 25 gold behind it; the `<` at
   (30, 5) to `drytorr_tower:1`; a named place, "a brass plaque", on the wall east of the door.
-  `danger = 5` (the traps' growth) needs a population (`content/danger.rs`): wolves and boar,
-  `stray = 0`, a cap of three, a try every 30 minutes. Left by its edge or `<` off the stair,
+  `danger = 5` (the traps' growth) needs a population (`content/danger.rs`): Ælfhām's sprites and
+  pixies, already in every Ascmearc stray list (`Content::fill_generic` adds a level's population
+  to its campaign's, so new wildlife would stray into every branch; a tower branch's household it
+  leaves out, as a portal branch's), `stray = 0`, a cap of three, a try every 30 minutes. Left by its edge or `<` off the stair,
   back to the tower's cell.
 - **The floors**, `data/dungeons/drytorr_tower.toml`: `floors = 4`, so `drytorr_tower:1` and `:2`
   ("Drytorr 2" and "3", danger 6 and 7), the stair (30, 5) → (39, 15) → (21, 5); the household

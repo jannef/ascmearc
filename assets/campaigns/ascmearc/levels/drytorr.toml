@@ -14,12 +14,14 @@
 # of the north wall. Wall torches (t) light it; a brass plaque by the door is Ordgar's.
 #
 # The level's danger (5) is for the traps' growth (`TrapDef::effect_at`); a level's danger needs
-# a population, so the wood keeps a few wolves and boar, coming now and then (the design's §12).
+# a population, so the wood sends a few of the fair folk's small fey, sprites and pixies, now and
+# then (the design's §12 fallback). They are Ælfhām's own: every level's population joins its
+# campaign's stray lists (`Content::fill_generic`), and these add nothing new to any branch's.
 name = "Drytorr"
 kind = "outdoor"
 arrival = "A clearing in the holly wood, and a tower of dressed grey stone standing in it, taller than the trees."
 danger = 5
-population = ["boar", "wolf"]
+population = ["sprite", "pixie"]
 population_count = 3
 stray = 0
 spawn = { every = "30m", chance = 40, cap = 3 }

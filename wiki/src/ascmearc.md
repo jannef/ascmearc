@@ -76,8 +76,8 @@ an open gap in the wall: you can see, hear, and shoot through it, but not climb 
   [hidden traps](traps.md#finding-traps) lie across the south hall, and three bays in the wall of
   the north hall each hold a trap you can see, with something left behind it to tempt you: a
   potion, a scroll, and 25 gold. The traps there hit as hard as on a
-  [danger](dungeons.md#who-lives-there-and-how-many) 5 floor. Now and then a wolf or a boar
-  comes out of the wood.
+  [danger](dungeons.md#who-lives-there-and-how-many) 5 floor. Now and then a sprite or a pixie
+  of the fair folk comes out of the wood.
 - **The second and third floors** are new each run: a hall winding between walls, with hidden
   traps (arrow and spear traps, pits, and alarms; three to five a floor) and the wizard's
   household gone lively and hostile: books, brooms, candlesticks, chairs, coat stands, lanterns,

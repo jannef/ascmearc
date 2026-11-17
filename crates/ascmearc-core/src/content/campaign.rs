@@ -374,6 +374,7 @@ mod tests {
                 "cealdhlaw",
                 "deopgang",
                 "drake",
+                "drytorr",
                 "fennmynster",
                 "fyrdelf",
                 "gimmwic",

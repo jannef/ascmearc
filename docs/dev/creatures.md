@@ -409,7 +409,8 @@ in any other dungeons file is refused). The generic creature list is derived
 (the owner, 2026-10-27: anything the campaign knows may come, the exploding out-of-depth draw
 bringing even the deepest to a first floor at astronomical odds): `Content::fill_generic`
 (after `load_dungeons`) gives every `Spawning::generic` the union of the populations of the
-areas with a danger of its campaign and of no campaign, uniques left out, and, unless the area's
+areas with a danger of its campaign and of no campaign, uniques left out (and a portal branch's
+or a tower's population: the Pit's folk and a tower's household stay at home), and, unless the area's
 `Spawning::pool` is `danger::StrayPool::Populations` (`stray_pool = "populations"`: the guild's
 four lairs, whose folk are the design's table), every type of its campaign or of none that
 `Content::may_stray`: hostile to the player (`Content::stance` with `player`), no unique, no
