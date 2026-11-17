@@ -618,6 +618,8 @@ enum Spent {
     Rest(GameTime, Rest),
     /// Running in this direction (see [`World::run`]).
     Run(Dir),
+    /// Running to the nearest known stairs going this way (see [`World::run_to_stairs`]).
+    RunToStairs(StairsDir),
     /// A meal (see [`World::dine`]).
     Meal(health::eat::Dish),
     /// Digging into the wall at this cell (see [`World::dig`]).
@@ -1334,6 +1336,7 @@ impl World {
             }
             Spent::Rest(until, goal) => self.rest(until, goal, &mut events),
             Spent::Run(dir) => self.run(dir, &mut events),
+            Spent::RunToStairs(way) => self.run_to_stairs(way, &mut events),
             Spent::Meal(dish) => self.dine(dish, &mut events),
             Spent::Dig(at) => self.dig(at, &mut events),
             Spent::Search(turns) => {
@@ -1441,6 +1444,7 @@ impl World {
         let (done, kind) = match action {
             Action::Move(dir) => return self.player_moves(*dir, events),
             Action::Run(dir) => return self.start_running(*dir, events),
+            Action::RunToStairs(way) => return self.start_running_to_stairs(*way),
             Action::Open(dir) => return self.open_door(here.step(*dir), events),
             Action::Kick(dir) => return self.kick(*dir, events),
             Action::PickLock(dir) => return self.pick_lock(*dir, events),

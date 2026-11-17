@@ -73,6 +73,34 @@ fn the_run_prefix_runs_as_alt_does() {
     assert_eq!(after(". Esc"), still);
 }
 
+/// #1801: `.` then a stairs key runs to the nearest known stairs that way, as the core action
+/// does; the decimal key does the same.
+#[test]
+fn the_run_prefix_then_a_stairs_key_runs_to_the_stairs() {
+    use ascmearc_core::content::StairsDir;
+    let content = Arc::new(ascmearc_assets::content().expect("content"));
+    let case = Case { run: true, ..BASE };
+    let state = |app: &App| {
+        let game = app.world().resource::<Game>();
+        let log: Vec<String> = game
+            .world
+            .messages()
+            .iter()
+            .map(|m| m.text.clone())
+            .collect();
+        (game.world.player_pos(), game.world.time(), log)
+    };
+    for (keys, way) in [(". >", StairsDir::Down), ("NumDecimal <", StairsDir::Up)] {
+        let mut app = start(&case, content.clone());
+        press_keys(&mut app, keys);
+        assert_eq!(*app.world().resource::<InputMode>(), InputMode::Normal);
+        let mut core = start(&case, content.clone());
+        let mut game = core.world_mut().resource_mut::<Game>();
+        game.world.apply(&ascmearc_core::Action::RunToStairs(way));
+        assert_eq!(state(&app), state(&core), "{keys}");
+    }
+}
+
 /// A run on the overworld beside the Hall that starts with `nutrition`, or if
 /// that is below 0 (no run starts so hungry), has just begun to starve.
 fn on_the_road(nutrition: i32) -> (Case, Arc<Content>) {
