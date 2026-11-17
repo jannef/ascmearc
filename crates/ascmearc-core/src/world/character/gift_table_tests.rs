@@ -89,7 +89,7 @@ fn the_pools_after_each_of_ten_meals() {
     let mut w = eater();
     assert_eq!(
         profane_row(&w),
-        "profane 0 held; pool lesser 14/14, greater 13/13, dire 15/15"
+        "profane 0 held; pool lesser 17/17, greater 15/15, dire 18/18"
     );
     let mut rows = Vec::new();
     for keeper in KEEPERS {
@@ -250,9 +250,9 @@ fn scaled_excludes_the_brittle_and_the_hollow() {
         assert!(!w.may_take_gift(gift), "{other}");
     }
     // The pools: the one held, and the lesser and the two dire it excludes.
-    assert_eq!(w.gift_pool(GiftTier::Lesser).0, 13);
-    assert_eq!(w.gift_pool(GiftTier::Greater).0, 12);
-    assert_eq!(w.gift_pool(GiftTier::Dire).0, 13);
+    assert_eq!(w.gift_pool(GiftTier::Lesser).0, 16);
+    assert_eq!(w.gift_pool(GiftTier::Greater).0, 14);
+    assert_eq!(w.gift_pool(GiftTier::Dire).0, 16);
 }
 
 #[test]

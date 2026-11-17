@@ -389,7 +389,9 @@ impl TalentEffect {
             TalentEffect::Sign(SignEffect::HornsGrace { .. }) => A::HornsGrace,
             TalentEffect::Sign(SignEffect::Stare { .. }) => A::TransfixingStare,
             TalentEffect::Sign(SignEffect::Blaze { .. }) => A::Blaze,
-            TalentEffect::Sign(SignEffect::FireBreath { .. }) => A::FireBreath,
+            TalentEffect::Sign(SignEffect::FireBreath { damage_type, .. }) => {
+                return A::breath_of(damage_type);
+            }
             TalentEffect::Sign(SignEffect::HoundsBay { .. }) => A::HoundsBay,
             _ => return None,
         })
@@ -436,12 +438,15 @@ impl TalentEffect {
         })
     }
 
-    /// The name of the class active it is, where that is not its talent's (Stillness, on Still
-    /// mind; Call familiar, on Familiar).
+    /// The name of the active it is, where that is not its talent's (Stillness, on Still mind;
+    /// Call familiar, on Familiar; a profane gift's breath, Frost breath on Frost-breathed).
     pub fn active_name(&self) -> Option<&str> {
         match self {
             TalentEffect::Martial(MartialEffect::Stillness { name, .. }) => Some(name),
             TalentEffect::Beast(BeastEffect::Familiar) => Some("Call familiar"),
+            TalentEffect::Sign(SignEffect::FireBreath {
+                name: Some(name), ..
+            }) => Some(name),
             _ => None,
         }
     }
@@ -732,6 +737,9 @@ impl TalentEffect {
                 ..
             }) => {
                 damage_type(kind)?;
+                if super::SignActive::breath_of(kind).is_none() {
+                    return Err(format!("no breath does `{kind}` damage"));
+                }
                 super::spell::check_effect(content, spell, super::effect::EffectShape::Bolt)?;
                 status(cooldown)
             }

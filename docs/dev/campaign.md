@@ -283,6 +283,11 @@ him, and her second quest, `rowan_for_the_wizard` (a delivery of the `rowan_spri
 quarrel"). Tests:
 `world/campaigns/drytorr_tests.rs`. Its dev scenario is `drytorr`.
 
+**Wedertorr** (#1786; `docs/dev/towers.md` "Wedertorr", where the whole tower is): Mistress
+Ælfswīð's wizard's tower, its way in the hidden `W` at (42, 23) (hills → `tower`, `to =
+"wedertorr"`) on Hlāwdūn, east of Cealdhlāw and north of Bānfeld. Ordgar's quarrel reveals it as
+given. Tests: `world/campaigns/wedertorr_tests.rs`. Its dev scenario is `wedertorr`.
+
 ## Līctūn, Cēaptūn's churchyard (#1258)
 
 `campaigns/ascmearc/levels/lictun.toml` (52×27, `kind = "outdoor"`, `item_level = 1`, no

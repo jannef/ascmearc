@@ -1,0 +1,47 @@
+# Wedertorr's people (#1786; docs/design/wizard-tower.md §10): Mistress Ælfswīð, the wizard who
+# keeps the top floor of the tower on the downs, placed by its legend (levels/wedertorr_top.toml)
+# with `npc = "aelfswith"`. She speaks posh, as the better-off do (docs/dev/npcs.md "Speech by race
+# and station"): the storm-caller of the three, her sentences short and imperative. Her side of
+# the wizards' quarrel is in data/quests/wynflaed_ordgar.toml.
+
+[[dialogue]]
+npc = "aelfswith"
+name = "Mistress Ælfswīð"
+greet = "Shut the door. You're letting the weather in, and it is mine."
+greet_evil = [
+    "No. Down the stair. Now, before I find out how far you bounce.",
+    "I know what you are. So does the weather. Go.",
+]
+lines = [
+    "Don't touch the glass. It's reading.",
+    "Wind's backing west. Rain by the evening. I'll allow it.",
+    "Sit if you must. Not there. That one's for the cat.",
+    "Thunder's only noise. The flash is the part that counts.",
+    "I've no patience. I've lightning instead. It's quicker.",
+    "Mind the balcony rail. It's the only thing up here I don't mend.",
+]
+mutter = { chance = 2, verb = "mutters", lines = [
+    "...three points east, and falling. Good...",
+    "...no, no, no. Hold. Hold it. There...",
+    "...if Sigeric moves that star-glass once more I'll fetch it down myself...",
+] }
+
+[[dialogue.topic]]
+id = "wedertorr"
+name = "The tower"
+reply = "Wedertorr. The weather tower. Highest ground on the downs, so the storms come here first and I don't have to go looking for them. The stair's mine, and so is what lives on it. You'll have met it."
+
+[[dialogue.topic]]
+id = "downs"
+name = "The downs"
+reply = "Hlāwdūn. Old dead under every hump of it, and none of them my business. Grass, wind, and a long view. The view is for weather. The barrows are for fools with shovels."
+
+[[dialogue.topic]]
+id = "learning"
+name = "Magic and its learning"
+reply = "Anyone can start a spell. Holding one is the trick: in a gale, with your hands cold and something trying to eat you. That's concentration. Ordgar will give you books. Books don't stand on a roof in a thunderstorm."
+
+[[dialogue.topic]]
+id = "wizards"
+name = "The other wizards"
+reply = "Ordgar reads. Sigeric preens. I work. Three towers in one small country is two too many, and the country knows it. So do they."

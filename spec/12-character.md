@@ -50,7 +50,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - Good creatures scorn Evil or Wicked characters, and evil creatures scorn Good or Saintly ones: a cold greeting, but their quests are still offered. A good shopkeeper's prices move with the band.
 - **Alignment bars nothing**: no class, talent, or ability is refused or greyed by band, and nothing remembers a drop. A holy gift outside its bands is still listed and used, and does nothing. The owner's exceptions: the Hunter's calling spirit speaks only to the Kind or better, and a quest may name the bands it is offered to.
 - A sin empties the paladin's zeal; it bars nothing.
-- **The two laws** (#1764): never eat the flesh of a thinking creature (one tagged `sapient`), never call up a fiend (`fiend`) by your own act. Each is counted on the player and told once, the first time, in words from data; nothing else follows yet.
+- **The two laws** (#1764): never eat the flesh of a thinking creature (one tagged `sapient`), never call up a fiend (`fiend`) by your own act. Each is counted on the player and told once, the first time, in words from data. **The ratfolk craving** (#1804, docs/dev/craving.md): a ratfolk who eats the thinking hears "The ancient craving awakens in you." in place of the law's line; each such corpse trains a random stat by a mark, and at counts set in data (10, 25, and more to come) a granted talent of the Craving tree changes them for good, each a step toward evil.
 
 ## Stats
 
@@ -84,7 +84,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - Meals take turns and can be interrupted; nothing is eaten until the last turn. Overeating may make the player vomit.
 - Food rots by its age alone: fresh, old, rotten, gone. Rotten food may sicken and expose to disease.
 - The player never sees food's age or stage: "eating stays a gamble" (the owner). Only a trained eye (Appraise, Survival) judges freshness in words.
-- Corpses are food that rots. Eating a fresh corpse may give training marks, rarely widen a potential, or teach Decipher script, by creature tags. The effects are never shown before trying; the wiki states them.
+- Corpses are food that rots. Eating a fresh corpse may give training marks, rarely widen a potential, or teach a skill (literate casters Decipher script, the quest wizards Spellcraft), by creature tags and type. The effects are never shown before trying; the wiki states them.
 - Everlasting corpses (the unique layer bosses) never rot. Eating a profane corpse grants its signature gift and drawn profane gifts and is the gravest sin; no profane gift is ever given twice, even after it is lost; nothing asks and nothing marks it.
 
 ## Skills

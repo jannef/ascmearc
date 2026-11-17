@@ -692,7 +692,10 @@ impl Ability {
             }
             // It opens a list: "Metalcraft…".
             Ability::Profession(id) => return format!("{}…", content.skill(id).name).into(),
-            Ability::Sign(active) => content.sign_active(active).map_or("", |a| &a.name),
+            Ability::Sign(active) => content.sign_active(active).map_or("", |a| {
+                // A gift's breath is named apart from its gift (Frost breath, Frost-breathed).
+                (a.effects.iter().find_map(TalentEffect::active_name)).unwrap_or(&a.name)
+            }),
             Ability::Class(active) => content.class_active(active).map_or("", |a| {
                 // Stillness is named apart from Still mind, its talent.
                 (a.effects.iter().find_map(TalentEffect::active_name)).unwrap_or(&a.name)

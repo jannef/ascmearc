@@ -7,14 +7,15 @@ code, as CLAUDE.md says.
 
 Built so far: **F1** (#1781), the foundation: the terrain, the level fields `below` and `storey`,
 the below view in perception and memory, look mode, the `view` and `below` dump layers, the map
-drawing the ground below (not blurred yet: F2), and the showcase's two-storey test tower. **T1**
+drawing the ground below, and the showcase's two-storey test tower. **F2** (#1782) blurs that
+ground by its depth (`docs/dev/rendering.md` "Depth blur"). **T1**
 (#1783, `docs/dev/mapgen.md` "Towers") builds the generated floors of this terrain, each with
 `below = clearing` and `storey = depth`. **C1** (#1784, "Drȳtorr" below) is the first tower, its
 wizard, and the wise-woman's quest that sends the player to him. **W1** (#1785, "The quarrel"
 below) is the quarrel's machinery and Ordgar's side of it. **#1823** made Drȳtorr's footprint
-big, the generator's inside rooms and halls, and gave the tower its folk ("The tower folk" below).
-Not yet: the blur (F2) and the two
-rival towers (C2, C3).
+big, the generator's inside rooms and halls, and gave the tower its folk ("A tower's household"
+below). **C2** (#1786, "Wedertorr" below) is the second tower, Mistress Ælfswīð's, and her side.
+Not yet: the third tower (C3).
 
 ## The idea
 
@@ -96,8 +97,8 @@ so nobody lands on the air.
   if it has one), else the top object's (known stairs keep their glyph over a pile, as on the
   ground), else the terrain's `glyph_at(p)` and `fg`, over the below terrain's `bg`; remembered,
   the terrain dimmed through `remembered()`. Base colours: the shader lights the cell as the air
-  cell is lit, so the ground reads sunlit by day. Never animated, and not blurred (F2 adds the
-  blur byte). Below creatures are grid cells, not free glyphs: `covered` comes from `actors()`.
+  cell is lit, so the ground reads sunlit by day. Never animated; blurred by the floor's
+  storey (`Console::set_blur`, `docs/dev/rendering.md` "Depth blur"). Below creatures are grid cells, not free glyphs: `covered` comes from `actors()`.
 - **Look mode** (`ui/look.rs::describe`, `far_below`): "Open air. Far below: grass." / "Open air.
   Far below: a deer, on grass." / "... a dagger, on grass." (the pile phrase through the lore, so
   an unidentified scroll shows by its label); remembered, "You remember open air here. Far below:
@@ -152,7 +153,7 @@ The first of the three towers (design §9, §10): Master Ordgar's, in Holegnwudu
   back to the tower's cell.
 - **The floors**, `data/dungeons/drytorr_tower.toml`: `floors = 4`, so `drytorr_tower:1` and `:2`
   ("Drȳtorr 2" and "3", danger 6 and 7), the stair (40, 7) → (59, 23) → (21, 7); the tower folk
-  as population ("The tower folk" below), `{ per_1000 = 20, least = 8, most = 14 }`; arrow,
+  as population ("A tower's household" below), `{ per_1000 = 20, least = 8, most = 14 }`; arrow,
   spear, alarm, and pit traps, `[5, 8]` a floor, all hidden.
 - **The top**, `levels/drytorr_top.toml` (`below = "drytorr"`, `storey = 3`): the `>` at (21, 7);
   under the roof, the study in the west (shelves, the reading table, a brazier, a lamp beside
@@ -179,16 +180,21 @@ cargo dev --scenario drytorr --scale 1 --capture target/drytorr.png
 cargo dev-cli dump --scenario holtwic --actions "move:N*8 move:E*11 move:NE move:N*3 move:E*11 quest_done:taken_under_the_hill ask:SE:quest-rowan_for_the_wizard" --layers quests
 ```
 
-## The tower folk
+## A tower's household
 
-What lives on a tower's trap floors (#1823): the wizard's own creations and servants, wards, and
-bound things, with some of the household gone lively. **The rule for every tower** (C2 #1786, C3
-#1787 build to it): the footprint about 41×19, as Drȳtorr's and Wedertorr's (so each generated floor is
-many rooms and halls, lit by the generator's sconces), and a population of the tower's folk at its danger, in the
-wizard's bent, never a stray: campaign creatures with `stray = false`, in no population but a
-tower's, so `Content::fill_generic` (which leaves a tower's population out of the stray lists)
-keeps them off every other level. A sapient caster among them leaves a corpse that teaches
-Decipher script, as every literate caster's.
+The owner's rule (2026-11-17, #1823): **a wizard's tower is big, and its folk are a wizard's**.
+The rule for every tower (Drȳtorr brought to it by #1823; Wedertorr, C2, and Steorratorr, C3,
+built to it):
+
+- **The footprint** about 41×19 (Drȳtorr's and Wedertorr's), so each generated floor is many
+  rooms and halls, lit by the generator's sconces (`docs/dev/mapgen.md` "Towers").
+- **The trap floors' population** is the wizard's own, at the floors' danger and in the wizard's
+  bent: constructs and wards, bound and summoned things, the wizard's made servants, and some of
+  the household gone lively. Where no creature in data fits, the tower brings its own as campaign
+  creatures with `stray = false`, named in no population but a tower's; a tower branch's
+  population joins no stray list (`Content::fill_generic`), so nothing of it leaves the tower.
+- **A sapient caster** among them leaves a corpse that teaches Decipher script, as every literate
+  caster's.
 
 Drȳtorr's (danger 6 and 7; Ordgar's bent is wards), all `faction = "animated"`, tag
 `construct`, no corpse (`assets/campaigns/ascmearc/data/creatures/`):
@@ -203,6 +209,61 @@ Drȳtorr's (danger 6 and 7; Ordgar's bent is wards), all `faction = "animated"`,
 and of the base types the lesser earth elemental and the household (animated books, brooms,
 candlesticks, chairs, coat stands, lanterns, rugs). Tests: `world/campaigns/drytorr_folk_tests.rs`
 (the floors draw only these, 8 to 14 a floor, the four new ones met; none strays anywhere else).
+
+## Wedertorr (`assets/campaigns/ascmearc/`)
+
+The second of the three towers (design §9, §10): Mistress Ælfswīð's, the storm-caller's, on
+Hlāwdūn.
+
+- **The cell**: the overworld legend's `W` at (42, 23), a hill cell of the barrow downs east of
+  Cealdhlāw and north of Bānfeld (eight from each), hidden (`hidden = { id = "wedertorr", terrain
+  = "tower", to = "wedertorr" }`) until Ordgar's quarrel marks it as given (the quest's
+  `reveals`).
+- **The down**, `levels/wedertorr.toml` (72×30, `kind = "outdoor"`, `arrival`): grass, tall and
+  dry grass, rock, boulders, a ring of standing stones east, a track from the south edge (the
+  arrival, (35, 27)) to the door. The tower is 41×19 at (15, 4)–(55, 22): the ground floor, a
+  south hall with two hidden traps (lightning (30, 18), frost (42, 17)), the way through the
+  partition at its east end, the north hall with three pillars a side and three one-cell bays in
+  the north wall, each a known trap (lightning, frost, pit) with a potion, a scroll, or 40 gold
+  behind it, a cloak room to the west (a scroll of lightning on its floor), the `<` at (17, 7) to
+  `wedertorr_tower:1`; a brass plaque east of the door. `danger = 7` with a population of
+  will-o'-wisps and barrow spiders (both already in Ascmearc branches: nothing new strays),
+  `stray = 0`, a cap of two.
+- **The floors**, `data/dungeons/wedertorr_tower.toml`: `floors = 5`, so `:1` to `:3`
+  ("Wedertorr 2" to "4", danger 8, 9, 10), the stair (17, 7) → (54, 21) → (16, 5) → (54, 21);
+  lightning, frost, alarm, and pit traps, `[5, 8]` a floor, all hidden; the household ("A
+  tower's household"): her own `galvanic_homunculus` (8), `bound_squall` (9, uncommon), and
+  `storm_gargoyle` (10, uncommon) (`campaigns/ascmearc/data/creatures/`, `faction = "animated"`,
+  `stray = false`), the `spark_mote` and `lesser_air_elemental` she calls, and four animated
+  household things (bellows, kettle, lantern, book); 6 to 10 a floor.
+- **The top**, `levels/wedertorr_top.toml` (`below = "wedertorr"`, `storey = 4`): the `>` at
+  (54, 21) in her workroom (east: tables, a brazier, lamps, the storm-glass, a named place, and
+  Ælfswīð at (47, 13)); her library in the middle; her quarters west (bed, table, stool, brazier,
+  lamp, a cat); and north through two doors the balcony along the whole tower, a parapet round
+  it. No traps, no population.
+- **Ælfswīð**: `data/creatures/aelfswith.toml` (unique, peaceful, level 13, tags `tower_wizard`,
+  `caster`, `sapient`; `combat = "caster"` with `lightning_bolt`, `frost`, `rime`,
+  `magic_missile`; a quarterstaff; her corpse teaches Spellcraft, 10 up to 60, and Decipher
+  script, 7 up to 50, the words in `hunger.toml`'s `[corpses.skills]`), placed with `npc =
+  "aelfswith"`, whose dialogue is `data/dialogue/wedertorr.toml` (posh, short and imperative: the
+  tower, the downs, magic and its learning, the other wizards).
+- **Her side** of the quarrel (`data/quests/wynflaed_ordgar.toml`): her `[[quest.taker]]` (250
+  gold, 900 experience, a wand of lightning bolt, Spellcraft and Concentration, `start = "1d4"`,
+  `marks = 100`; her own `parting` and `betrayed`), her `[[quest.side]]` (`offer`, `join`,
+  `refuse`), and `wedertorr` in the quest's `reveals`.
+
+The dev scenario `wedertorr` starts on the track at 10:00, its own character with a long sword, a
+shield, mail, and a lantern ready. The dev action `quest_given:ID` (`world/people/quest_done.rs`)
+gives a quest as its giver would, with no words, so a replay can start on the quarrel without
+climbing Drȳtorr:
+
+```sh
+cargo dev --scenario wedertorr --scale 1 --capture target/wedertorr.png
+cargo dev-cli dump --scenario wedertorr --actions "quest_given:the_wizards_quarrel" --layers quests
+```
+
+The generated floors are dark but for a sconce a stretch: a climber needs a light (the replay
+lights the lantern with `use_tool`).
 
 ## The quarrel
 
@@ -256,8 +317,9 @@ The data is `content/quarrel.rs` (`QuestDef::quarrel`, a `Quarrel`; the fields i
 `tag:tower_wizard` uniques, `feud = "feuding_wizards"`, Ordgar's taker (gold, experience, a
 grimoire of magic missile, Spellcraft and Decipher script), the parting, and the hoard (6d100
 gold, two rare items at item level 14, a grimoire). The rivals' takers, sides, and reveals come
-with their towers (C2 #1786, C3 #1787): until then only Ordgar carries the tag, and the quest
-cannot be completed.
+with their towers: Ælfswīð's with C2 (#1786, "Wedertorr" above), Sigeric's with C3 (#1787).
+Until C3, the two of the three are Ordgar and Ælfswīð, so the quest is done only by killing both,
+with nobody left to pay.
 
 **The test quarrel** (`--scenario quarrel`, `assets/campaigns/showcase/`): `levels/quarrel_hall.toml`
 with the scholar (npc `scholar`, east of the start), its west stair (2, 2) to
@@ -304,3 +366,10 @@ cargo dev-cli dump --scenario quarrel --actions "ask:E:quest-quarrel move:N move
   `world/levels/reveal_tests.rs::a_quest_reveals_every_location_of_its_list`.
 - `ui/screen_snapshots/talk.rs`: `quarrel-offer` (the screen on arrival), `quarrel-parting`
   (the dialog, Esc doing nothing), and `the_parting_opens_once_the_thanks_are_read`.
+- `world/campaigns/wedertorr_tests.rs`: the hidden cell on Hlāwdūn marked by Ordgar's quarrel and
+  the way in, the five floors on the down's footprint and their dangers, Ælfswīð on the top, the
+  `<` on the down; her topics and no offer before the quarrel; her offer on the first arrival
+  only, taking her side (Ordgar turned), refusing her; her pay (Spellcraft and Concentration, the
+  wand, 250 gold, 900 experience) and her parting words, betrayed; her corpse's Spellcraft and
+  Decipher script; her household in no other population and never a stray; `quest_given`; and
+  a replay up the tower from `--scenario wedertorr` to her side, verified.

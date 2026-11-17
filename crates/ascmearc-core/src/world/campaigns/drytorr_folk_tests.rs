@@ -1,4 +1,4 @@
-//! Drȳtorr's tower folk (#1823; docs/dev/towers.md "The tower folk"): the trap floors draw only
+//! Drȳtorr's tower folk (#1823; docs/dev/towers.md "A tower's household"): the trap floors draw only
 //! the tower's roster (and a chest's mimic), 8 to 14 a floor, the wizard's creations among them; and none of the
 //! new folk strays into another branch or level (`Content::fill_generic` leaves a tower's
 //! population out, and they are `stray = false`).

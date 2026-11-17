@@ -676,6 +676,15 @@ pub enum SignActive {
     Blaze,
     /// The Wyvern's pick (Fire breath): a bolt of fire toward a cell, then a cooldown.
     FireBreath,
+    /// A profane gift's breath of another damage type (#1828; [`SignActive::breath_of`]): a
+    /// bolt toward a cell, as Fire breath is, then a cooldown. Frost-breathed's cold.
+    FrostBreath,
+    /// Bile-spitting's acid.
+    BileSpit,
+    /// Rot-breathed's necrotic.
+    RotBreath,
+    /// Thunder-throated's electricity.
+    ThunderBreath,
     /// The Barghest's pick (Hound's bay): a howl that sends lesser foes who hear it fleeing,
     /// then a cooldown.
     HoundsBay,
@@ -688,6 +697,10 @@ impl SignActive {
         SignActive::TransfixingStare,
         SignActive::Blaze,
         SignActive::FireBreath,
+        SignActive::FrostBreath,
+        SignActive::BileSpit,
+        SignActive::RotBreath,
+        SignActive::ThunderBreath,
         SignActive::HoundsBay,
     ];
 
@@ -698,6 +711,10 @@ impl SignActive {
             SignActive::TransfixingStare => "transfixing_stare",
             SignActive::Blaze => "blaze",
             SignActive::FireBreath => "fire_breath",
+            SignActive::FrostBreath => "frost_breath",
+            SignActive::BileSpit => "bile_spit",
+            SignActive::RotBreath => "rot_breath",
+            SignActive::ThunderBreath => "thunder_breath",
             SignActive::HoundsBay => "hounds_bay",
         }
     }
@@ -707,9 +724,35 @@ impl SignActive {
         Self::ALL.iter().copied().find(|a| a.id() == id)
     }
 
+    /// The breath of damage type `damage_type` (an id in `data/damage_types.toml`): a
+    /// `fire_breath` talent effect is the active of its damage type, one breath per type (#1828);
+    /// `None` for a type no breath has.
+    pub fn breath_of(damage_type: &str) -> Option<Self> {
+        Some(match damage_type {
+            "fire" => SignActive::FireBreath,
+            "cold" => SignActive::FrostBreath,
+            "acid" => SignActive::BileSpit,
+            "necrotic" => SignActive::RotBreath,
+            "electricity" => SignActive::ThunderBreath,
+            _ => return None,
+        })
+    }
+
+    /// Whether it is a breath ([`SignActive::breath_of`]).
+    pub const fn breath(self) -> bool {
+        matches!(
+            self,
+            SignActive::FireBreath
+                | SignActive::FrostBreath
+                | SignActive::BileSpit
+                | SignActive::RotBreath
+                | SignActive::ThunderBreath
+        )
+    }
+
     /// Whether it asks for a cell before it is used.
     pub const fn aimed(self) -> bool {
-        matches!(self, SignActive::TransfixingStare | SignActive::FireBreath)
+        matches!(self, SignActive::TransfixingStare) || self.breath()
     }
 
     /// What it costs, as an action of this kind (`data/actions.toml`).
@@ -718,7 +761,12 @@ impl SignActive {
             SignActive::HornsGrace | SignActive::TransfixingStare | SignActive::HoundsBay => {
                 super::ActionKind::Wait
             }
-            SignActive::Blaze | SignActive::FireBreath => super::ActionKind::Cast,
+            SignActive::Blaze
+            | SignActive::FireBreath
+            | SignActive::FrostBreath
+            | SignActive::BileSpit
+            | SignActive::RotBreath
+            | SignActive::ThunderBreath => super::ActionKind::Cast,
         }
     }
 }

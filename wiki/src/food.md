@@ -91,8 +91,32 @@ every one.
 
 Eating one of their corpses, fresh or rotten, breaks an old law. The first time, you feel it:
 "You feel as if you have gone against something fundamental." The game counts every one you
-eat, but nothing else comes of it yet. Beasts, vermin, the undead, spirits, oozes, elementals,
-and animated things are not counted.
+eat. For most folk nothing else comes of it yet; for a ratfolk it wakes [the
+craving](#the-ratfolks-craving). Beasts, vermin, the undead, spirits, oozes, elementals, and
+animated things are not counted.
+
+### The ratfolk's craving
+
+A [ratfolk](races.md#race-ratfolk) who eats those who think grows stronger for it, and hungrier.
+The first such corpse does not bring the old law's feeling. Instead you hear "The ancient craving
+awakens in you."
+
+Every such corpse you eat, fresh or rotten, puts one [training
+mark](stats.md#raising-your-stats) into one of your six stats, picked at random. Nothing is said.
+The mark comes even if the corpse comes back up.
+
+As the count grows, the craving changes you for good. At each count below you hear its line and
+gain its talent, which you keep among your other talents. The last column is how
+fast you get [hungry](hunger.md#races), against a human's 100%. A ratfolk starts at 110%, and
+each step adds a tenth of that.
+
+{{#include generated/craving.md}}
+
+From the tenth corpse on, the tenth included, a fresh corpse never comes back up and its own
+harm never [sickens](status-effects.md#poisoned) you. Its other gifts stay. Each step is also a
+step toward evil: see the deeds table on the [alignment](alignment.md#what-moves-you) page.
+
+Only ratfolk feel the craving. Other races just keep count.
 
 ### What a corpse gives you
 
@@ -113,6 +137,14 @@ script](skills.md#skill-decipher-script). The first one teaches the skill if you
 ("Strange letters swim before your eyes, and settle into sense."). Each one after that adds to
 it ("The letters come clearer."), but never past a value set by the creature, and deeper
 casters set it higher. Past that value, the corpse teaches nothing.
+
+The corpses of the wizards in the march's towers teach [Spellcraft](skills.md#skill-spellcraft)
+the same way. Master Ordgar's teaches it at 5 if you lack it ("Something stirs behind your eyes,
+and the shape of a spell makes sense."). If you have it, it adds 5 ("The shapes of spells come
+clearer."), but not past 40. His corpse also teaches Decipher script, like any literate caster's,
+at 5 a meal and not past 40. Mistress Ælfswīð's gives 10 Spellcraft, up to 60, and 7 Decipher
+script, up to 50. A wizard is a person, so eating one also breaks the [old
+law](#eating-those-who-think) against eating those who think.
 
 In the game you find all this out by eating. Here it is in the order it happens, each chance
 rolled on its own. A rotten corpse has lost all of it.

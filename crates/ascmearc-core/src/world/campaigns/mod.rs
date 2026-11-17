@@ -19,6 +19,7 @@ cfg_if! {
         mod scriptorium_tests;
         mod skeul_hir_tests;
         mod strange_spirit_tests;
+        mod wedertorr_tests;
         mod wynflaed_quest_tests;
     }
 }

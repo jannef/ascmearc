@@ -34,6 +34,8 @@
 #                      creature who talks (has a dialogue) and is not hostile to you
 #   eat_profane        eating a profane corpse (a layer boss's, its gifts taken:
 #                      docs/design/profane-gifts.md); default 0
+#   craving_threshold  a row of the ratfolk craving crossed, its talent given (rules/craving.toml,
+#                      docs/design/ratfolk-craving.md); default 0
 #   consecrate         consecrating an unholy place (the class ability Consecrate); default 0
 #   consume_crystal    consuming a magic crystal (from the Consume list, `e`; crystals.toml), a
 #                      crystal; default 0
@@ -100,6 +102,7 @@ theft = -100
 pay_debt = 5
 eat_kin = -200
 eat_profane = -300
+craving_threshold = -100
 consecrate = 20
 consume_crystal = -20
 prayed_good = 5

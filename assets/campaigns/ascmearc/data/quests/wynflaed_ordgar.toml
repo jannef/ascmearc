@@ -5,10 +5,10 @@
 # parting asks, once, whether the player leaves them or betrays them. The file is named for the
 # chain it continues, so it loads after wynflaed.toml (`requires` names a quest loaded before).
 #
-# Built so far: Ordgar's side. Mistress Ælfswīð of Wedertorr and Master Sigeric of Steorratorr
-# come with their towers (#1786, #1787): each adds their `[[quest.taker]]`, their
-# `[[quest.side]]`, and their tower to `reveals`. Until then the quest cannot be completed: two of
-# the three must die, and only Ordgar is in the march.
+# Built so far: Ordgar's side and Mistress Ælfswīð's of Wedertorr (#1786). Master Sigeric of
+# Steorratorr comes with his tower (#1787): he adds his `[[quest.taker]]`, his `[[quest.side]]`,
+# and his tower to `reveals`. Until then two of the three are only Ordgar and Ælfswīð, so the
+# quest is done only by killing both, with nobody left to pay.
 [[quest]]
 id = "the_wizards_quarrel"
 name = "The wizards' quarrel"
@@ -19,6 +19,8 @@ target = "tag:tower_wizard"
 count = 2
 what = "wizards"
 alignment = 0
+# The rivals' towers, marked on the map as the quest is given.
+reveals = [{ location = "wedertorr" }]
 feud = "feuding_wizards"
 offer = "There are three of us in this country who may call ourselves wizards, and that is two too many. Mistress Ælfswīð and Master Sigeric want my books, my tower, and very likely my head. Two of us must fall. I should prefer it were not me."
 accept = "Their towers are taller than mine and their stairs no kinder. They will offer you terms; they always do. Drink their tea if you must, but sign nothing."
@@ -29,6 +31,19 @@ where = "Mistress Ælfswīð keeps a tower on the downs, Master Sigeric another 
 npc = "ordgar"
 done = "Two of us, then, and I am the one still talking. I promised you the grammar, and here it is. Sit down; this will take some time, and none of it may be skipped."
 reward = { gold = 200, xp = 900, items = ["grimoire_of_magic_missile"], skills = { spellcraft = { start = "1d4", marks = 100, taught = "Ordgar sits you down with a primer and does not let you up until the first page makes sense.", more = "You learn more of the weaving of spells." }, decipher_script = { start = "1d4", marks = 100, taught = "He shows you how a grimoire is read: slowly, and twice.", more = "You read the old hands more easily." } } }
+
+[[quest.taker]]
+npc = "aelfswith"
+done = "Two down, and I'm still standing. Good. Sit. You'll learn to make a spell, and then you'll learn to keep one when the wind's trying to take it off you. Take the wand as well; it's quicker than either."
+reward = { gold = 250, xp = 900, items = ["wand_of_lightning_bolt"], skills = { spellcraft = { start = "1d4", marks = 100, taught = "Ælfswīð shows you the shape of a spell once, quickly, and makes you do it until you have it.", more = "You learn more of the weaving of spells." }, concentration = { start = "1d4", marks = 100, taught = "She sends you out onto the balcony in a squall to hold a spell together until your hands stop shaking.", more = "You hold your mind steadier under strain." } } }
+parting = "That's the end of it. You're paid, and I'm busy. Out you go, unless you've a better idea."
+betrayed = "I wondered when you'd try. Come on, then. The weather's on my side."
+
+[[quest.side]]
+npc = "aelfswith"
+offer = "Ordgar sent you. Of course he did; he never climbs anything. Here's a better offer. Take my side, finish the other two, and I'll teach you more than he can. Well?"
+join = "Good. Quick, too. Ordgar will hear of it before the rain does, and so will Sigeric. Go and see to them."
+refuse = "Then you're weather, and I deal with weather."
 
 [quest.parting]
 text = "Well. That is the end of it, and you have what you came for. Unless you think you have not."

@@ -382,6 +382,7 @@ mod tests {
                 "holtwic",
                 "rat_king",
                 "utgang",
+                "wedertorr",
             ]
             .contains(&scenario.id.as_str())
             {

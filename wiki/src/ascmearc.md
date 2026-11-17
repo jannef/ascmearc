@@ -104,6 +104,41 @@ attacked or targeted: look at it, and you are told only what it is.
 You leave the clearing by walking off its edge, or by going up with `<` anywhere but on the
 stair when nothing hostile is near.
 
+### Wedertorr
+
+**Wedertorr**, the weather tower, stands alone on the bare top of a down on Hlāwdūn, east of
+Cealdhlāw. It is a [hidden location](overworld.md#hidden-locations): Master Ordgar marks it on
+your map when he gives you [the wizards' quarrel](quests.md#the-wizards-quarrel). **Mistress
+Ælfswīð**, the wizard, lives at the top. She calls storms, she is short with callers, and she is
+friendly until the quarrel says otherwise. The first time you climb to her during the quarrel,
+she offers you her side.
+
+The tower has five floors, and it is much bigger than Drȳtorr. Its walls cannot be dug
+([digging](digging.md#what-breaks-and-what-does-not)), and its windows are open gaps you can see,
+hear, and shoot through, as at Drȳtorr.
+
+- **The ground floor** is the inside of the tower on the down. Two
+  [hidden traps](traps.md#finding-traps) lie across the south hall: a lightning trap and a frost
+  trap. The way on is at the hall's east end. In the north hall, three bays in the wall each hold
+  a trap you can see (lightning, frost, and a pit) with something behind it: a potion, a scroll,
+  and 40 gold. A small room off the hall's west end has a scroll of lightning lying in it. The
+  traps hit as hard as on a [danger](dungeons.md#who-lives-there-and-how-many) 7 floor. Now and
+  then a will-o'-wisp or a barrow spider comes up onto the down.
+- **The second, third, and fourth floors** are new each run and dark but for a torch here and
+  there, so bring a light. They hold hidden traps (lightning and frost traps, pits, and alarms;
+  five to eight a floor) and the wizard's household, six to ten a floor: her own
+  [galvanic homunculi](creatures.md#creature-galvanic-homunculus) (little men of wax and copper
+  whose touch jolts), [bound squalls](creatures.md#creature-bound-squall) (scraps of storm tied
+  to the tower, which knock you off your feet and burst when they die), and
+  [storm gargoyles](creatures.md#creature-storm-gargoyle) (slow stone wards with lightning in
+  their claws); spark motes and lesser air elementals she has called; and bellows, kettles,
+  lanterns, and books gone lively ([animated objects](animated.md)). None of them ever leaves the
+  tower. The floors are danger 8, 9, and 10.
+- **The top floor** is her workroom, her library, and her quarters, with no traps and nobody to
+  fight. Two doors lead out onto a balcony that runs the whole width of the tower.
+
+From the floors above, the windows look out over the down far below, as they do at Drȳtorr.
+
 ### Līctūn
 
 Four cells down the south road from the town is **Līctūn**, Cēaptūn's churchyard, where your

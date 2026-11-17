@@ -34,6 +34,7 @@ mod chest;
 mod circles;
 mod class;
 mod companion;
+mod craving;
 mod creature;
 mod creature_rarity;
 mod creature_spells;
@@ -262,6 +263,7 @@ pub use class::{BonusTalents, ClassActive, ClassDef};
 pub use companion::{
     CHAPTER as COMPANION_CHAPTER, CompanionRules, Growth as CompanionGrowth, TameRules,
 };
+pub use craving::{CravingRules, TREE as CRAVING_TREE, Threshold as CravingThreshold};
 pub use creature::{
     Budge, Combat, CorpseGifts, Corrodes, CorrodesWhat, CreatureDef, CreatureId, DEFAULT_SIGHT,
     Disarms, Hide, Incorporeal, NORMAL_SPEED, NaturalAttack, OnEat, SkillGift, is_proper,
@@ -678,6 +680,9 @@ pub struct Content {
     /// The two laws, what breaks them and what is said the first time (`data/rules/laws.toml`);
     /// none without the file, when nothing is counted.
     laws: Option<LawRules>,
+    /// The ratfolk craving (`data/rules/craving.toml`): the race that craves and its rows; none
+    /// without the file, when no race craves.
+    craving: Option<CravingRules>,
     /// What area spells do to the items lying in them (`data/ruin.toml`); empty without the file,
     /// when nothing is ruined.
     ruin: RuinRules,
@@ -1129,6 +1134,7 @@ impl Content {
         content.restock = content.load_optional(files)?;
         content.intimidate = content.load_optional(files)?;
         content.laws = content.load_optional(files)?;
+        content.craving = content.load_optional(files)?;
         content.ruin = content.load_or_default(files)?;
         content.swim = content.load_optional(files)?;
         content.webs = content.load_optional(files)?;

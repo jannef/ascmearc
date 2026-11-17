@@ -1,0 +1,37 @@
+# Wedertorr, "the weather tower" (#1786; docs/design/wizard-tower.md §3, §8, §9; the fields:
+# data/dungeons.toml): Mistress Ælfswīð's tower on Hlāwdūn. Five floors: the ground floor inside
+# the tower on its down (levels/wedertorr.toml), three generated trap floors above it
+# (`wedertorr_tower:1` to `:3`, "Wedertorr 2" to "4"), and the hand-made top, the wizard's
+# workroom, library, and quarters with the balcony (levels/wedertorr_top.toml). Each floor's `<`
+# climbs, its `>` goes back down; the floors are the clearing's tower, 41×19, the tower on the
+# same cells, and their windows look out over the downs below (docs/dev/towers.md).
+#
+# Pitched between the wanted lairs (6) and Fennmynster's bottom (10): the ground floor's traps at
+# danger 7, the trap floors at 8, 9, and 10. A wizard's household keeps them (#1823's rule,
+# docs/dev/towers.md "A tower's household"): her own made and bound things, the galvanic
+# homunculi, the bound squalls, and the storm gargoyles (campaigns/ascmearc/data/creatures/, in no
+# other population and never strays); the motes and lesser air elementals she calls; and a little
+# of her household gone lively, bellows, kettles, lanterns, and books. Lightning and frost traps,
+# alarms, and pits, all hidden. Nothing of hers strays out, and nothing from outside comes in.
+
+[[dungeon]]
+id = "wedertorr_tower"
+name = "Wedertorr"
+kind = "tower"
+generator = "tower"
+floors = 5
+clearing = "wedertorr"
+top = "wedertorr_top"
+traps = ["lightning_bolt", "frost", "alarm", "pit"]
+traps_per_level = [5, 8]
+hidden_per_depth = 2
+danger = { base = 8, per_depth = 1 }
+population = [
+    "galvanic_homunculus", "bound_squall", "storm_gargoyle", "spark_mote", "lesser_air_elemental",
+    "animated_bellows", "animated_kettle", "animated_lantern", "animated_book",
+]
+population_count = { per_1000 = 15, least = 6, most = 10 }
+# Only her household: nothing from outside finds its way up the stair.
+stray = 0
+shops = { chance = 0 }
+room_effects = { chance = 0 }

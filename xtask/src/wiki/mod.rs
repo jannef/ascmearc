@@ -25,6 +25,7 @@ mod class_guide;
 mod combat;
 mod companions;
 mod crafting;
+mod craving;
 mod creatures;
 mod crystals;
 mod damage;
@@ -466,6 +467,7 @@ fn generate(content: &Content) -> Vec<(String, String)> {
         ("food.md", hunger::food),
         ("corpses.md", hunger::corpses),
         ("corpse-effects.md", hunger::corpse_effects),
+        ("craving.md", craving::craving),
         ("profane-corpses.md", profane::profane_corpses),
         ("profane-gifts.md", profane::profane_gifts),
         ("digging.md", digging::digging),

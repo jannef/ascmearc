@@ -80,6 +80,10 @@ pub struct Shifts {
     /// Eating a profane corpse (a layer boss's, docs/design/profane-gifts.md §9).
     #[serde(default)]
     pub eat_profane: i32,
+    /// A row of the ratfolk craving crossed, its talent given (docs/design/ratfolk-craving.md
+    /// §8.1).
+    #[serde(default)]
+    pub craving_threshold: i32,
     /// Consecrating an unholy place (Consecrate).
     #[serde(default)]
     pub consecrate: i32,
@@ -162,6 +166,7 @@ impl AlignmentRules {
             s.pay_debt,
             s.eat_kin,
             s.eat_profane,
+            s.craving_threshold,
             s.consecrate,
             s.consume_crystal,
         ];

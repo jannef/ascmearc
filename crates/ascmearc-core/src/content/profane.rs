@@ -567,7 +567,7 @@ mod tests {
         );
     }
 
-    /// The whole table (P6, #1629; the limbs, #1808): 42 drawn gifts, 14 lesser, 13 greater, 15
+    /// The whole table (P6, #1629; the limbs, #1808; #1828): 50 drawn gifts, 17 lesser, 15 greater, 18
     /// dire, every
     /// tier holding each kind, the excludes symmetric, and the signatures never drawn.
     #[test]
@@ -575,9 +575,9 @@ mod tests {
         let content = crate::test_support::builtin();
         let table = content.profane();
         let drawn: Vec<_> = table.iter().filter(|g| g.drawn()).collect();
-        assert_eq!(drawn.len(), 42);
+        assert_eq!(drawn.len(), 50);
         let count = |tier: GiftTier| drawn.iter().filter(|g| g.tier == tier).count();
-        assert_eq!(GiftTier::ALL.map(count), [14, 13, 15]);
+        assert_eq!(GiftTier::ALL.map(count), [17, 15, 18]);
         for tier in GiftTier::ALL {
             for kind in GiftKind::ALL {
                 assert!(
@@ -661,6 +661,13 @@ mod tests {
         refused(
             "{ kind = \"unarmed_on_hit\", status = \"bleeding\", chance = 0, severity = 1 }",
             "not 1 to 100",
+        );
+        // One breath per damage type (#1828): a type with no breath is refused.
+        refused(
+            "{ kind = \"fire_breath\", range = 8, length = 4, damage = \"2d6\", \
+             damage_type = \"poison\", spell = \"fire_breath\", cooldown = \"drained\", \
+             degrees = 1 }",
+            "no breath does `poison` damage",
         );
         let head = gift("a", &format!("effects = [{}]\n", bars("head")));
         assert!(load(&[("a", &head)]).is_ok());

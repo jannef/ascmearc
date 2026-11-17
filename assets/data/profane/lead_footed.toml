@@ -1,0 +1,15 @@
+[[gift]]
+id = "lead_footed"
+name = "Lead-footed"
+kind = "bane"
+tier = "lesser"
+weight = 8
+description = "Heavy feet: your footsteps are louder, and you are slower to act when a fight finds you unready."
+line = "Your feet grow heavy as lead."
+effects = [
+    { kind = "footsteps_percent", value = 50 },
+    { kind = "initiative_bonus", value = -2 },
+]
+# Written here, on the later of the two (docs/design/profane-gifts.md §6.5): made symmetric at
+# load. Soft soles and leaden feet would undo each other.
+excludes = ["soft_footed"]

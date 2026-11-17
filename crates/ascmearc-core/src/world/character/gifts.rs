@@ -66,12 +66,13 @@ impl World {
                 Spent::Nothing
             }
             (SignActive::Blaze, _) => self.blaze(events),
-            (SignActive::FireBreath, Some(at)) => self.fire_breath(at, events),
-            (SignActive::FireBreath, None) => {
+            (SignActive::HoundsBay, _) => self.hounds_bay(events),
+            // The rest are the breaths, one per damage type (`sign_picks.rs`).
+            (breath, Some(at)) => self.breathe(breath, at, events),
+            (_, None) => {
                 self.say("Where to?");
                 Spent::Nothing
             }
-            (SignActive::HoundsBay, _) => self.hounds_bay(events),
         }
     }
 

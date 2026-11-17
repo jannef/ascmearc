@@ -114,6 +114,9 @@ The Ascmearc (`assets/campaigns/ascmearc/`):
 - `aelfham`: on the first floor of Ælfhām, the hidden fey hall under the mound near it.
 - `drytorr`: on the track into Drȳtorr's clearing at 10:00, Master Ordgar's tower before you
   (its `<` climbs the tower's trap floors to the wizard's top floor).
+- `wedertorr`: on the track up to Wedertorr on the downs at 10:00, Mistress Ælfswīð's tower
+  before you; the scenario's own character has a long sword, a small shield, mail, and a lantern
+  ready (unlit: `use_tool` lights it).
 - `cealdhlaw`: on the first floor of Cealdhlāw, the Ascmearc's first dungeon.
 - `deopgang`: on the first floor of Dēopgang, the deep way down from the south-west corner.
 - `gimmwic`: in Gimmwīc, the deep gnomes' town at its bottom.
@@ -457,7 +460,8 @@ On a level with a danger, `truth` and `actors` start with `danger 3 population 2
   run's campaign and where the player stands with it, `calling hunter: open`, `calling hunter:
   level 30 not met`, `calling hunter: not for a thief`, `called hunter at 30`; the named monsters
   dead, `slain fire_drake`; the two laws broken (`docs/dev/alignment.md`), once either is,
-  `laws broken: ate 1 sapient, summoned 0 fiend`; what an aristocrat's stipend holds, `stipend 412 gold: a fizzy pink
+  `laws broken: ate 1 sapient, summoned 0 fiend`, and for a ratfolk the craving's rows crossed
+  (`docs/dev/craving.md`), `...; craving 1 threshold`; what an aristocrat's stipend holds, `stipend 412 gold: a fizzy pink
   potion`; a merchant's stake with their partner in hundredths, its last week, and the weekly
   bonus in basis points, `invest 98.24 gold, week 74260, bonus 0 bp`; the stat training marks
   with the price in force (the drop's for a negative pile), `stat marks St 120/160, To -30/75`;
@@ -560,7 +564,7 @@ steal:DIR tame:DIR throw_voice:X,Y order:follow|stay|hunt:X,Y rest:GOAL encounte
 parting:CHOICE stance:NAME vision:PROFILE talent:ID[:CHOICE] advance:SKILL levelup:auto xp:N call:ID
 rank:SKILL:N skip:DURATION weather:KIND spawn ally:CREATURE[:N[:DURATION]] meet:ENTRY[:OUTCOME]
 effect:ID@X,Y[>X,Y] zone:KIND@X,Y,R identify[:LETTERS] afflict:STATUS drain:N resource:ID
-infect:DISEASE reveal:ID lure:ID quest_done:ID gift:ID rescind:ID quest_roll:ID:TARGET freeze:X,Y,R
+infect:DISEASE reveal:ID lure:ID quest_done:ID quest_given:ID gift:ID rescind:ID quest_roll:ID:TARGET freeze:X,Y,R
 thaw:X,Y,R web:X,Y,R`
 
 ### Arguments
@@ -808,7 +812,8 @@ All in docs/dev/crafting.md unless named.
   Thrown exploit, from 18: Exploit's blow as a throw at the creature there, within the throw's
   range and the sneak dice's reach, `docs/dev/openings.md`).
 - A birth sign's active the same way, `use:horns_grace`, `use:blaze`, `use:hounds_bay`, or aimed
-  at a cell, `use:transfixing_stare:12,5`, `use:fire_breath:12,5`.
+  at a cell, `use:transfixing_stare:12,5`, `use:fire_breath:12,5`; a profane gift's breath likewise,
+  `use:frost_breath:12,5`, `use:bile_spit:12,5`, `use:rot_breath:12,5`, `use:thunder_breath:12,5`.
 - A spell the player knows too, by its id in `assets/data/spells/`, paid in mana, `use:haste`,
   or aimed at a cell, `use:magic_missile:12,5`, or cast on inventory stack `c`,
   `use:identify:c` (any `use:ID` that is no class or birth sign ability is a spell).
@@ -905,6 +910,11 @@ None takes game time unless said.
   words, reward, or reveal, so what requires it may be offered: a replay or capture that starts
   a chain past its earlier quests, e.g. `quest_done:taken_under_the_hill` before Gammer
   Wynflæd's rowan (`world/people/quest_done.rs`).
+- `quest_given:ID` quest `ID` is given as if asked of its giver, with no words: active, a kill
+  quest counting every kill (only those from now on for a repeat), and the hidden locations it
+  reveals as given marked on the map; refused for a rolled quest (its draw is its giver's). A
+  replay or capture that starts a quest without walking to its giver, e.g.
+  `quest_given:the_wizards_quarrel` on `--scenario wedertorr` (`world/people/quest_done.rs`).
 - `gift:ID` the player is given profane gift `ID`, an id in `assets/data/profane/`, as a meal's
   draw would give it, its relations applied (`replaces`, `undoes`); refused for one ever had (held,
   or lost since: #1805), one a gift held excludes, or one barred to the race. `rescind:ID` takes a gift held away again, its

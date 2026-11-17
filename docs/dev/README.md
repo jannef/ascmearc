@@ -58,6 +58,7 @@ here, in its group.
 - [burden.md](burden.md): load, limits, sizes, penalties
 - [hunger.md](hunger.md): satiation, eating, corpses, starving
 - [alignment.md](alignment.md): the good–evil score and the deeds that move it
+- [craving.md](craving.md): the ratfolk craving, what eating the thinking makes of them
 - [skills.md](skills.md): trained skills and training marks
 - [experience.md](experience.md): the level curve, kill experience, level-ups
 - [progression.md](progression.md): talents and the picks a level brings

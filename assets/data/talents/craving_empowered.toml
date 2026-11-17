@@ -1,0 +1,8 @@
+[[talent]]
+id = "craving_empowered"
+name = "Empowered"
+tree = "craving"
+granted = true
+description = "You move quicker for it, and hunger quicker."
+effects = [{ kind = "speed_percent", value = 5 }, { kind = "hunger_percent", value = 10 }]
+systems = ["speed", "hunger"]

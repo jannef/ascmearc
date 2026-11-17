@@ -85,6 +85,7 @@ pub(super) fn text(content: &Content, effect: &SignEffect) -> String {
             format!("Blaze bursts out to radius {radius} and does {damage} instead")
         }
         SignEffect::FireBreath {
+            name,
             range,
             length,
             damage,
@@ -96,8 +97,10 @@ pub(super) fn text(content: &Content, effect: &SignEffect) -> String {
             let kind = (content.damage_type_id(&damage_type)).map_or(damage_type.clone(), |d| {
                 content.damage_type(d).name.to_lowercase()
             });
+            // A gift's breath named apart from its gift: "Frost breath: active ...".
+            let named = name.map_or_else(String::new, |n| format!("{n}: "));
             format!(
-                "active (the time of a cast; not on the overworld), aimed at a cell within {} \
+                "{named}active (the time of a cast; not on the overworld), aimed at a cell within {} \
                  cells: a bolt along the line toward it and on, {length} cells long or to the \
                  first wall, {damage} {kind} damage (one roll) to everyone on it; then {}",
                 range,

@@ -1,0 +1,31 @@
+# The ratfolk craving (`world/character/craving.rs`, `content/craving.rs`; docs/dev/craving.md;
+# docs/design/ratfolk-craving.md; #1804): a ratfolk who eats the flesh of the thinking (the eat
+# law's corpses, laws.toml) grows in power and loses themselves. Optional: without this file no
+# race craves.
+#
+# race       the race that craves (../races.toml)
+# first      said at the first such corpse, in place of the eat law's `first`
+# mark       training marks each such corpse puts into one stat, drawn evenly among the six
+#
+# [[threshold]]  one per row, in rising order of `eaten`; crossed once, as the count of such
+#                corpses eaten reaches it:
+#   eaten    the count
+#   talent   a granted talent of the `craving` tree (../talents/trees/180-craving.toml), given
+#            then; it may never slow or soften hunger (no negative `hunger_percent`, no
+#            `no_hunger_weakness`, no `no_exertion`)
+#   message  said as it is given
+# Each row given is also the deed `craving_threshold` (../alignment.toml).
+
+race = "ratfolk"
+first = "The ancient craving awakens in you."
+mark = 1
+
+[[threshold]]
+eaten = 10
+talent = "craving_nourished"
+message = "The flesh nourishes you."
+
+[[threshold]]
+eaten = 25
+talent = "craving_empowered"
+message = "The flesh empowers you."

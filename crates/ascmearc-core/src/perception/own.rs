@@ -84,6 +84,9 @@ pub struct OwnTalent {
     /// A profane gift, of this kind (docs/design/profane-gifts.md §11): "(profane)", "(profane,
     /// bane)" in the dump; never an altar's or a story's.
     pub profane: Option<crate::content::GiftKind>,
+    /// A row of the ratfolk craving gave it (docs/dev/craving.md): "(craving)"; never an
+    /// altar's.
+    pub craving: bool,
 }
 
 /// How fresh food smells to those who can tell (Hound's nose): a word,

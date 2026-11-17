@@ -1,0 +1,17 @@
+[[gift]]
+id = "rot_breathed"
+name = "Rot-breathed"
+kind = "mixed"
+tier = "dire"
+weight = 6
+description = "The barrow's breath: you can breathe a long gust of rot that withers what it touches, and the grave's touch troubles you less, but your wounds close slowly."
+line = "Your breath goes cold and foul, as from an opened barrow."
+# A breath of its own (one per damage type): Rot breath, long.
+effects = [
+    { kind = "fire_breath", name = "Rot breath", range = 8, length = 6, damage = "5d8", damage_type = "necrotic", spell = "rot_breath", cooldown = "drained", degrees = 2 },
+    { kind = "resist", damage = "necrotic", value = 50 },
+    { kind = "healing_percent", value = -25 },
+]
+# Written here, on the later of the two (docs/design/profane-gifts.md §6.5): made symmetric at
+# load. Rotting flesh does not knit.
+excludes = ["quick_knit"]
