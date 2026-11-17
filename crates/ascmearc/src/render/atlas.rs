@@ -23,7 +23,7 @@ pub const SUPERSAMPLE: u32 = 2;
 /// are skipped when rasterizing. The web build's font subset keeps them all (`SAFETY_RANGES` in
 /// ascmearc-assets' `font_subset.rs`: change both together).
 const GLYPH_RANGES: &[(char, char)] = &[
-    ('\u{00A1}', '\u{017F}'), // Latin-1 Supplement, Latin Extended-A
+    ('\u{00A1}', '\u{024F}'), // Latin-1 Supplement, Latin Extended-A and -B
     ('\u{0391}', '\u{03C9}'), // Greek
     ('\u{2010}', '\u{205E}'), // General Punctuation
     ('\u{2190}', '\u{21FF}'), // Arrows
@@ -386,6 +386,106 @@ mod tests {
         }
     }
 
+    /// The characters the game's atlas draws as themselves: the glyph set with the built-in
+    /// content's glyphs, less what the font lacks.
+    fn drawn() -> std::collections::BTreeSet<char> {
+        let font = Font::load().unwrap();
+        let content = ascmearc_assets::content().unwrap();
+        let atlas = rasterize(&font.0, 18.0, &glyph_set(content.glyphs()), 1);
+        atlas.index.keys().copied().collect()
+    }
+
+    /// The characters of `text` the atlas would draw as `?`, each with where it is.
+    fn undrawn(drawn: &std::collections::BTreeSet<char>, text: &str, at: &str, out: &mut String) {
+        for c in text
+            .chars()
+            .filter(|c| !c.is_whitespace() && !drawn.contains(c))
+        {
+            out.push_str(&format!("{c:?} (U+{:04X}) in {at}\n", c as u32));
+        }
+    }
+
+    /// Every string in the built-in content (names, messages, notes, descriptions, the test world
+    /// included) draws without a `?` (#1816: `ȳ` in "Līgetdrȳ" did not).
+    #[test]
+    fn every_content_string_draws() {
+        fn strings<'a>(value: &'a toml::Value, out: &mut Vec<&'a str>) {
+            match value {
+                toml::Value::String(s) => out.push(s),
+                toml::Value::Array(items) => items.iter().for_each(|v| strings(v, out)),
+                toml::Value::Table(table) => table.values().for_each(|v| strings(v, out)),
+                _ => {}
+            }
+        }
+        fn walk(dir: &std::path::Path, files: &mut Vec<std::path::PathBuf>) {
+            for entry in std::fs::read_dir(dir).unwrap() {
+                let path = entry.unwrap().path();
+                if path.is_dir() {
+                    walk(&path, files);
+                } else if path.extension().is_some_and(|e| e == "toml") {
+                    files.push(path);
+                }
+            }
+        }
+        let drawn = drawn();
+        let mut files = Vec::new();
+        walk(
+            &std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../assets"),
+            &mut files,
+        );
+        assert!(files.len() > 100, "found the content files");
+        let mut missing = String::new();
+        for path in files {
+            let text = std::fs::read_to_string(&path).unwrap();
+            let value: toml::Value = toml::from_str(&text).unwrap();
+            let mut found = Vec::new();
+            strings(&value, &mut found);
+            for s in found {
+                undrawn(&drawn, s, &path.display().to_string(), &mut missing);
+            }
+        }
+        assert!(missing.is_empty(), "drawn as `?`:\n{missing}");
+    }
+
+    /// Every string literal in the game's and the core's code outside their test modules (the UI
+    /// text and the messages) draws without a `?`. A plain scan: lines that are comments are
+    /// skipped, and a file's tests are taken to start at its first `#[cfg(test)]`.
+    #[test]
+    fn every_ui_string_draws() {
+        fn walk(dir: &std::path::Path, files: &mut Vec<std::path::PathBuf>) {
+            for entry in std::fs::read_dir(dir).unwrap() {
+                let path = entry.unwrap().path();
+                if path.is_dir() {
+                    walk(&path, files);
+                } else if path.extension().is_some_and(|e| e == "rs") {
+                    files.push(path);
+                }
+            }
+        }
+        let drawn = drawn();
+        let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("..");
+        let mut files = Vec::new();
+        walk(&root.join("ascmearc/src"), &mut files);
+        walk(&root.join("ascmearc-core/src"), &mut files);
+        let mut missing = String::new();
+        for path in files {
+            let text = std::fs::read_to_string(&path).unwrap();
+            let code = text.split("#[cfg(test)]").next().unwrap_or_default();
+            for (n, line) in code.lines().enumerate() {
+                if line.trim_start().starts_with("//") {
+                    continue;
+                }
+                // The text between quotes, a character literal of a quote left out.
+                let line = line.replace("'\"'", "").replace("'\\\"'", "");
+                let at = format!("{}:{}", path.display(), n + 1);
+                for literal in line.split('"').skip(1).step_by(2) {
+                    undrawn(&drawn, literal, &at, &mut missing);
+                }
+            }
+        }
+        assert!(missing.is_empty(), "drawn as `?`:\n{missing}");
+    }
+
     #[test]
     fn glyph_set_has_no_duplicates() {
         let set = glyph_set(['#', 'é']);
@@ -396,7 +496,10 @@ mod tests {
 
     #[test]
     fn text_fields_take_what_the_font_draws() {
-        for c in ['a', 'Z', '7', ' ', '\'', '-', 'é', 'Å', 'ß', 'ł', 'Ω'] {
+        for c in [
+            'a', 'Z', '7', ' ', '\'', '-', 'é', 'Å', 'ß', 'ł', 'Ω', 'ā', 'ȳ', 'ǣ', 'Ǣ', 'þ', 'ð',
+            'ƿ',
+        ] {
             assert!(draws(c), "{c:?}");
         }
         for c in ['\n', '\u{7}', '日', '😀'] {

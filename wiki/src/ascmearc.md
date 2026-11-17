@@ -236,7 +236,7 @@ The guild is younger than the town, so its names are Middle English, not Old. It
 One-Eye, is a commoner, called by a short name and a byname. The guild's [ranks](guild.md#ranks)
 (Tin to Gold) are plain English.
 
-The game writes *ǣ* as **æ** and *ȳ* as **y** (Græg-, Fyr-), as its font draws them.
+Most names write *ǣ* as **æ** and *ȳ* as **y** (Græg-, Fyr-).
 
 The language has moved on since the old places were named. People of the march's own day go by
 the later forms of the old names. The outlaws go by the bynames the broadsheets give them, in the

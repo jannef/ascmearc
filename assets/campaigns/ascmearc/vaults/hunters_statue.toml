@@ -19,5 +19,5 @@ map = '''
 "¡" = "sconce"
 "f" = "flagstones"
 # The inscription, in the old tongue with its sense below, as the campaign's names are given
-# (`ÆR` for ǣr: the font has no Ǣ).
+# (`ÆR` for ǣr, as the campaign's names write ǣ as æ).
 "S" = { terrain = "statue", name = "a hooded figure", note = "Its empty hands are held as if about a hilt that is not there. Letters are cut deep into the plinth, in the old tongue: LĪF ÆR DĒAÞE. Below, in a later hand: 'Life before death. So the hunters swore, to the one who waited for them on the road; and the road gave them each a blade.'" }
