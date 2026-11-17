@@ -1,11 +1,14 @@
 //! The ratfolk craving (`data/rules/craving.toml`; docs/dev/craving.md): its first line, then
 //! each row with its count, message, talent, what the talent and the row do (the stance floor
 //! and shift, the softeners stripped, the profane gift drawn), and the hunger pace from then on,
-//! against a human's; then the draw made again past the last row (`[again]`).
+//! against a human's; then the draw made again past the last row (`[again]`). With
+//! `[surrender]`, each count is followed by a surrendered character's in brackets.
 
 use super::talents::{effects_text, talent_link};
 use super::util::{Term, anchored, link};
-use ascmearc_core::content::{CombatStance, Content, CravingThreshold, GiftTier, ProfaneRolls};
+use ascmearc_core::content::{
+    CombatStance, Content, CravingRules, CravingThreshold, GiftTier, ProfaneRolls,
+};
 use ascmearc_core::talent::TalentMods;
 use std::fmt::Write as _;
 
@@ -19,12 +22,22 @@ pub(super) fn craving(content: &Content) -> String {
         1 => "1 training mark".to_string(),
         n => format!("{n} training marks"),
     };
-    let mut out = String::from(
-        "| Eaten | You feel | Talent | What it does | Hunger |\n|:---:|---|---|---|:---:|\n",
+    // A count, and a surrendered character's in brackets (Surrender to hunger's scale).
+    let scale = rules.surrender.as_ref().map(|s| s.scale);
+    let count = |n: u32| match scale {
+        Some(scale) => format!("{n} ({})", CravingRules::at(n, scale)),
+        None => n.to_string(),
+    };
+    let (eaten, first) = match scale {
+        Some(_) => ("Eaten (surrendered)", "1 (the pick)"),
+        None => ("Eaten", "1"),
+    };
+    let mut out = format!(
+        "| {eaten} | You feel | Talent | What it does | Hunger |\n|:---:|---|---|---|:---:|\n"
     );
     let _ = writeln!(
         out,
-        "| 1 | \"{}\" | | {marks} in a random stat, for every one you eat | {race}% |",
+        "| {first} | \"{}\" | | {marks} in a random stat, for every one you eat | {race}% |",
         rules.first
     );
     let book = content.talents();
@@ -41,7 +54,7 @@ pub(super) fn craving(content: &Content) -> String {
         let _ = writeln!(
             out,
             "| {} | \"{}\" | {} | {does} | {}% |",
-            row.eaten,
+            count(row.eaten),
             row.message,
             anchored(Term::Talent, &def.id, &def.name),
             TalentMods::scaled(u64::from(race), percent)
@@ -52,7 +65,7 @@ pub(super) fn craving(content: &Content) -> String {
             out,
             "| every {} more | \"{}\" | | {}; \"Nothing more of it will take in you.\" when none \
              is left to give | {}% |",
-            again.every,
+            count(again.every),
             again.message,
             gift_text(&again.profane, "one more"),
             TalentMods::scaled(u64::from(race), percent)

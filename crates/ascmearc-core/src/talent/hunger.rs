@@ -32,6 +32,9 @@ pub enum HungerEffect {
     /// A fresh corpse's stat training marks and chances to widen a potential, this percent more
     /// (Gourmand).
     CorpseStatsPercent { value: i32 },
+    /// The holder craves as a ratfolk does from the pick on (Surrender to hunger; read once, at
+    /// the pick: `World::learn`, `world/character/craving.rs`).
+    Craves,
     /// Rotten food never makes it vomit and sickens it half as much; overeating never makes it
     /// vomit (Iron stomach).
     IronStomach,
@@ -55,9 +58,10 @@ pub enum HungerEffect {
 impl HungerEffect {
     /// The `kind`s of the data that are effects of the area, one a variant (`TalentEffect`'s
     /// deserializer hands these to [`HungerEffect`]).
-    pub const KINDS: [&'static str; 13] = [
+    pub const KINDS: [&'static str; 14] = [
         "corpse_harmless",
         "corpse_stats_percent",
+        "craves",
         "eats_rotten",
         "hunger_harm",
         "hunger_percent",
@@ -95,6 +99,8 @@ pub struct HungerMods {
     /// Percent more of a fresh corpse's stat training marks and its chances to widen a
     /// potential (`on_eat` `train` and `widen`).
     pub corpse_stats_percent: i32,
+    /// It craves as a ratfolk does (Surrender to hunger).
+    pub craves: bool,
     /// Rotten food and overeating never make it vomit, and rotten food sickens it half as much.
     pub iron_stomach: bool,
     /// Rotten food neither sickens it nor exposes it to a disease.
@@ -122,6 +128,7 @@ impl HungerMods {
             HungerEffect::IronStomach => self.iron_stomach = true,
             HungerEffect::Purify => self.purify = true,
             HungerEffect::CorpseHarmless => self.corpse_harmless = true,
+            HungerEffect::Craves => self.craves = true,
             HungerEffect::MealHeals { object, dice } => match object {
                 None => self.meal_heals.push((None, dice)),
                 Some(name) => {

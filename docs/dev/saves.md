@@ -40,7 +40,9 @@ naming something the content does not have (a talent, a story line, an affix val
 tier, ...) is refused by `World::from_state`'s checks, never dropped or mapped.
 `#[serde(default)]` on new fields stays (harmless, and it keeps replays readable). What a run remembers once and for all lives in `Progress` and is saved with it: the first kills
 that paid, the uniques met, and the creature types whose first-sight line was said
-(`Progress::sighted`, `world/creatures/first_sight.rs`). Between two
+(`Progress::sighted`, `world/creatures/first_sight.rs`), and the ratfolk craving's state
+(`Progress::stripped`, `Progress::laws`: `craving_gifts` and a surrendered character's base,
+`craving_from`; docs/dev/craving.md). Between two
 releases every development build shares the version, so there the content fingerprint and the
 decoder are what refuse a save a build cannot read (a renamed `.sav.bad`, as below); saves are
 not promised across development builds.

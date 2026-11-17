@@ -146,9 +146,11 @@ pub(super) fn progress_rows(world: &World) -> Vec<String> {
                 if dry { " dry" } else { "" }
             ),
         };
+        // A surrendered character's base: the count at the pick, counted from.
+        let from = (laws.craving_from()).map_or(String::new(), |n| format!(" from {n}"));
         let craving = (world.craving_crossed()).map_or(String::new(), |n| {
             format!(
-                "; craving {n} threshold{}{gifts}{stripped}",
+                "; craving {n} threshold{}{from}{gifts}{stripped}",
                 if n == 1 { "" } else { "s" }
             )
         });

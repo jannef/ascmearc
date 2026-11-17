@@ -53,6 +53,10 @@ pub(super) fn text(content: &Content, effect: &HungerEffect) -> String {
             "a fresh corpse's own harm (its sickness and its vomiting) never touches you"
                 .to_string()
         }
+        HungerEffect::Craves => "from the pick on you crave the flesh of those who think as a \
+             ratfolk does, counted from the pick and half again as far: see [the \
+             craving](food.md#the-ratfolks-craving)"
+            .to_string(),
         HungerEffect::MealHeals { object, dice } => {
             let what = object.map_or_else(
                 || "a fresh corpse".to_string(),

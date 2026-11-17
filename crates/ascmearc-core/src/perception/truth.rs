@@ -997,6 +997,7 @@ impl<'a> PerceptionView<'a> {
         let level = self.own_experience().level;
         Candidate {
             stripped: &self.progress.stripped,
+            eaten: self.progress.laws.eaten(),
             ..Candidate::player(self.content, self.player, self.character, level)
         }
     }

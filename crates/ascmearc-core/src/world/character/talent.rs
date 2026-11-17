@@ -63,6 +63,7 @@ impl World {
     pub(crate) fn candidate(&self) -> Candidate<'_> {
         Candidate {
             stripped: &self.state.progress.stripped,
+            eaten: self.state.progress.laws.eaten(),
             ..Candidate::player(
                 &self.content,
                 self.state.player(),
@@ -239,9 +240,14 @@ impl World {
     /// one of the picks due (a bonus pick first, if it is of the class's bonus trees), if its
     /// prerequisites hold; else why not, and nothing changes. Takes no time.
     pub(in crate::world) fn take_talent(&mut self, id: &str, choice: Option<&str>) -> Spent {
+        let craved = self.craves();
         match self.learn(id, choice) {
             Ok(news) => {
                 self.say(news);
+                // Surrender to hunger's own line (`craving.rs`).
+                if !craved && self.craves() {
+                    self.surrender_line();
+                }
                 self.settle_due();
                 Spent::NoTime
             }
@@ -297,6 +303,7 @@ impl World {
         class::hand_out(&content, player, def, level);
         self.take_up_skills(def.effects.iter().cloned());
         self.hand_down(def.effects.iter().cloned());
+        self.surrender(def);
         let due = &mut self.state.progress.due[at];
         if as_bonus {
             due.bonus -= 1;

@@ -3,7 +3,9 @@
 //! rows, each a count of sapient corpses eaten, a granted talent of the `craving` tree, and a
 //! message, and what the row does to the stance (`stance_floor`, `stance_shift`), to hunger's
 //! softeners (`strip_softeners`), and the profane gift it draws (`profane`); and the draw made
-//! again every so many corpses past the last row (`[again]`). The rule itself lives in
+//! again every so many corpses past the last row (`[again]`); and how it comes to one of another
+//! race who takes Surrender to hunger (`[surrender]`: their pick's line, and the scale every
+//! count is read at for them). The rule itself lives in
 //! `world/character/craving.rs`.
 //!
 //! The file is optional: without it no race craves.
@@ -28,7 +30,23 @@ pub struct CravingRules {
     pub thresholds: Vec<Threshold>,
     /// The draw made again past the last row, if any.
     pub again: Option<Again>,
+    /// How the craving comes to one who surrenders to it, if it does.
+    pub surrender: Option<Surrender>,
 }
+
+/// The craving of one of another race who takes Surrender to hunger (the talent with `craves`).
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Surrender {
+    /// Every count (each row's `eaten`, `[again]`'s `every`) read at this percent of itself,
+    /// rounded half up: 150, half again as far. At least 100, so no two rows meet.
+    pub scale: u32,
+    /// Said at the pick, in place of `first`.
+    pub first: String,
+}
+
+/// The percent every count is read at for a character of the craving's race.
+pub const UNSCALED: u32 = 100;
 
 /// The draw made again every `every` corpses past the last row, for ever.
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
@@ -61,6 +79,25 @@ pub struct Threshold {
 }
 
 impl CravingRules {
+    /// Count `n` read at `scale` percent of itself, rounded half up (`(n × scale + 50) / 100`):
+    /// at 150, 25 is 38.
+    pub fn at(n: u32, scale: u32) -> u32 {
+        let scaled = (u64::from(n) * u64::from(scale) + 50) / 100;
+        u32::try_from(scaled).unwrap_or(u32::MAX)
+    }
+
+    /// The scale a surrendered character's counts are read at (100 without `[surrender]`).
+    pub fn surrender_scale(&self) -> u32 {
+        self.surrender.as_ref().map_or(UNSCALED, |s| s.scale)
+    }
+
+    /// The rows crossed at `count` corpses, the counts read at `scale`.
+    pub fn crossed_by(&self, count: u32, scale: u32) -> usize {
+        (self.thresholds.iter())
+            .filter(|t| Self::at(t.eaten, scale) <= count)
+            .count()
+    }
+
     /// The rows whose talent `talents` holds: the rows the holder has crossed (a row's talent is
     /// given at its count and never taken away).
     fn held<'a>(
@@ -90,27 +127,30 @@ impl CravingRules {
         self.held(content, talents).any(|t| t.strip_softeners)
     }
 
-    /// The profane draws made at exactly `count` corpses: a row's (`threshold.profane`), or
-    /// `[again]`'s at every `every` past the last row.
-    pub fn draws_at(&self, count: u32) -> Option<&ProfaneRolls> {
-        if let Some(row) = self.thresholds.iter().find(|t| t.eaten == count) {
+    /// The profane draws made at exactly `count` corpses, the counts read at `scale`: a row's
+    /// (`threshold.profane`), or `[again]`'s at every `every` past the last row.
+    pub fn draws_at(&self, count: u32, scale: u32) -> Option<&ProfaneRolls> {
+        if let Some(row) = (self.thresholds.iter()).find(|t| Self::at(t.eaten, scale) == count) {
             return row.profane.as_ref();
         }
-        let (again, last) = (self.again.as_ref()?, self.thresholds.last()?.eaten);
-        (count > last && (count - last).is_multiple_of(again.every)).then_some(&again.profane)
+        let again = self.again.as_ref()?;
+        let last = Self::at(self.thresholds.last()?.eaten, scale);
+        let every = Self::at(again.every, scale).max(1);
+        (count > last && (count - last).is_multiple_of(every)).then_some(&again.profane)
     }
 
-    /// How many profane draws the craving has made by `count` corpses (each row's and
-    /// `[again]`'s rolls up to it).
-    pub fn draws_by(&self, count: u32) -> u32 {
+    /// How many profane draws the craving has made by `count` corpses, the counts read at
+    /// `scale` (each row's and `[again]`'s rolls up to it).
+    pub fn draws_by(&self, count: u32, scale: u32) -> u32 {
         let rows: u32 = (self.thresholds.iter())
-            .filter(|t| t.eaten <= count)
+            .filter(|t| Self::at(t.eaten, scale) <= count)
             .filter_map(|t| t.profane.as_ref())
             .map(|p| u32::from(p.rolls))
             .sum();
-        let again = match (&self.again, self.thresholds.last()) {
-            (Some(a), Some(last)) if count > last.eaten => {
-                (count - last.eaten) / a.every * u32::from(a.profane.rolls)
+        let last = self.thresholds.last().map(|t| Self::at(t.eaten, scale));
+        let again = match (&self.again, last) {
+            (Some(a), Some(last)) if count > last => {
+                (count - last) / Self::at(a.every, scale).max(1) * u32::from(a.profane.rolls)
             }
             _ => 0,
         };
@@ -128,6 +168,8 @@ struct CravingFile {
     threshold: Vec<ThresholdSpec>,
     #[serde(default)]
     again: Option<Again>,
+    #[serde(default)]
+    surrender: Option<Surrender>,
 }
 
 #[derive(Deserialize)]
@@ -251,12 +293,25 @@ impl super::RulesFile for CravingRules {
                 .check()
                 .map_err(|m| err(format!("[again]: {m}")))?;
         }
+        if let Some(surrender) = &parsed.surrender {
+            if surrender.scale < UNSCALED {
+                return Err(err(format!(
+                    "[surrender]: `scale` is at least {UNSCALED}, so no two rows meet"
+                )));
+            }
+            if surrender.first.is_empty() {
+                return Err(err(
+                    "[surrender]: `first` is said: it may not be empty".into()
+                ));
+            }
+        }
         Ok(Self {
             race: parsed.race,
             first: parsed.first,
             mark: parsed.mark,
             thresholds,
             again,
+            surrender: parsed.surrender,
         })
     }
 }

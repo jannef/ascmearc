@@ -263,7 +263,10 @@ pub use class::{BonusTalents, ClassActive, ClassDef};
 pub use companion::{
     CHAPTER as COMPANION_CHAPTER, CompanionRules, Growth as CompanionGrowth, TameRules,
 };
-pub use craving::{CravingRules, TREE as CRAVING_TREE, Threshold as CravingThreshold};
+pub use craving::{
+    CravingRules, Surrender as CravingSurrender, TREE as CRAVING_TREE,
+    Threshold as CravingThreshold, UNSCALED as CRAVING_UNSCALED,
+};
 pub use creature::{
     Budge, Combat, CorpseGifts, Corrodes, CorrodesWhat, CreatureDef, CreatureId, DEFAULT_SIGHT,
     Disarms, Hide, Incorporeal, NORMAL_SPEED, NaturalAttack, OnEat, SkillGift, is_proper,

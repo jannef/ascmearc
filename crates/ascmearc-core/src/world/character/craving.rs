@@ -1,6 +1,9 @@
 //! The ratfolk craving (#1804; docs/design/ratfolk-craving.md, `docs/dev/craving.md`;
 //! `data/rules/craving.toml`, `content/craving.rs`): a player of the race that craves who eats
-//! the flesh of the thinking grows in power and loses themselves.
+//! the flesh of the thinking grows in power and loses themselves; and one of another race who
+//! takes Surrender to hunger (the talent with `craves`) likewise from the pick on, the corpses
+//! counted from it (`laws.craving_from`, [`World::surrender`]) and every count read half again
+//! as far (`[surrender] scale`, [`CravingRules::at`]).
 //!
 //! [`World::craved`] runs from [`World::ate_flesh`](super::laws) after the eat law has counted
 //! the corpse, before the corpse's own gifts and its vomit roll: one training mark into a stat
@@ -21,7 +24,9 @@
 //! `Progress::stripped`, which no grant, pick, or gift gives back, and the draws made.
 
 use super::alignment::Deed;
-use crate::content::{CombatStance, Content, DamageTypeId, Effect, GiftTier};
+use crate::content::{
+    CombatStance, Content, CravingRules, DamageTypeId, Effect, GiftTier, TalentDef,
+};
 use crate::rng::draw;
 use crate::stats::Stat;
 use crate::talent::{Taken, TalentMods};
@@ -53,18 +58,50 @@ impl Actor {
 }
 
 impl World {
-    /// Whether the player craves: their race is the craving's.
+    /// Whether the player craves: their race is the craving's, or they surrendered to it.
     pub(crate) fn craves(&self) -> bool {
         let race = (self.state.character.as_ref()).map(|c| c.spec.race.as_str());
-        (self.content.craving()).is_some_and(|c| race == Some(c.race.as_str()))
+        let surrendered = self.state.progress.laws.craving_from.is_some();
+        (self.content.craving()).is_some_and(|c| surrendered || race == Some(c.race.as_str()))
+    }
+
+    /// The player's craving count with `eaten` sapient corpses eaten (those since the pick, for
+    /// one who surrendered), and the scale the craving's counts are read at for them.
+    fn craving_count(&self, rules: &CravingRules, eaten: u32) -> (u32, u32) {
+        match self.state.progress.laws.craving_from {
+            Some(from) => (eaten.saturating_sub(from), rules.surrender_scale()),
+            None => (eaten, crate::content::CRAVING_UNSCALED),
+        }
     }
 
     /// How many of the craving's rows the player has crossed; `None` while they do not crave
     /// (the `progress` dump's laws row).
     pub fn craving_crossed(&self) -> Option<usize> {
         let rules = self.content.craving().filter(|_| self.craves())?;
-        let eaten = self.state.progress.laws.eaten;
-        Some(rules.thresholds.iter().filter(|t| t.eaten <= eaten).count())
+        let (count, scale) = self.craving_count(rules, self.state.progress.laws.eaten);
+        Some(rules.crossed_by(count, scale))
+    }
+
+    /// The player took `def`: if it is the one with `craves` (Surrender to hunger) and they do
+    /// not crave yet, the craving counts from the corpses eaten now.
+    pub(in crate::world) fn surrender(&mut self, def: &TalentDef) {
+        let craves = TalentMods::of(&self.content, def.effects.iter().cloned())
+            .hunger
+            .craves;
+        if craves && !self.craves() {
+            let laws = &mut self.state.progress.laws;
+            laws.craving_from = Some(laws.eaten);
+        }
+    }
+
+    /// The line said at Surrender to hunger's pick (`[surrender] first`).
+    pub(in crate::world) fn surrender_line(&mut self) {
+        let line = (self.content.craving())
+            .and_then(|c| c.surrender.as_ref())
+            .map(|s| s.first.clone());
+        if let Some(line) = line {
+            self.say(line);
+        }
     }
 
     /// Whether the craving has drawn and the profane table has nothing left to give the player:
@@ -92,9 +129,9 @@ impl World {
             .is_some_and(|r| r.unshielded(&self.content, &self.state.player().talents))
     }
 
-    /// The player, who has now eaten `count` sapient corpses, ate one more (module docs).
+    /// The player, who has now eaten `eaten` sapient corpses, ate one more (module docs).
     /// Whether the craving said the first line, in place of the law's.
-    pub(in crate::world) fn craved(&mut self, count: u32) -> bool {
+    pub(in crate::world) fn craved(&mut self, eaten: u32) -> bool {
         if !self.craves() {
             return false;
         }
@@ -102,15 +139,18 @@ impl World {
         let Some(rules) = content.craving() else {
             return false;
         };
+        // One who surrendered heard the pick's line, not `first`; the law's they heard long ago.
+        let first = eaten == 1 && self.state.progress.laws.craving_from.is_none();
+        let (count, scale) = self.craving_count(rules, eaten);
         let stat = Stat::ALL[draw!(self, "craving/mark/player").index(Stat::ALL.len())];
         let pile = &mut self.player_mut().stat_marks[stat];
         *pile = pile.saturating_add(i32::from(rules.mark));
-        if count == 1 {
+        if first {
             self.say(rules.first.clone());
         }
         let book = content.talents();
         let mut crossed = false;
-        for row in rules.thresholds.iter().filter(|t| t.eaten == count) {
+        for row in (rules.thresholds.iter()).filter(|t| CravingRules::at(t.eaten, scale) == count) {
             let id = &book.get(row.talent).id;
             if self.state.player().talents.has(id) {
                 continue;
@@ -124,37 +164,37 @@ impl World {
                 self.strip_softeners();
             }
         }
-        let drew = self.craving_draws(count);
+        let drew = self.craving_draws(count, scale);
         // The Profane took them (`profane_taken.rs`): the meal ends with them.
         if self.state.death.is_some() {
-            return count == 1;
+            return first;
         }
         if crossed || drew {
             // The band crossed, said with the meal, before the hunger news.
             self.say_news();
         }
-        count == 1
+        first
     }
 
-    /// The profane draws due at `count` corpses ([`CravingRules::draws_at`], each made once:
+    /// The profane draws due at `count` corpses, read at `scale` ([`CravingRules::draws_at`], each made once:
     /// `laws.craving_gifts` counts them): `[again]`'s message, then each draw ([`World::draw_gift`])
     /// given ([`World::bestow_gift`], which may end the character, `profane_taken.rs`) and the
     /// deed [`Deed::CravingGift`], or "Nothing more of it will take in you." and no deed.
     /// Whether any draw was made.
-    fn craving_draws(&mut self, count: u32) -> bool {
+    fn craving_draws(&mut self, count: u32, scale: u32) -> bool {
         let content = self.content.clone();
         let Some(rules) = content.craving() else {
             return false;
         };
-        let Some(rolls) = rules.draws_at(count) else {
+        let Some(rolls) = rules.draws_at(count, scale) else {
             return false;
         };
         let made = u32::from(self.state.progress.laws.craving_gifts);
-        let due = rules.draws_by(count).saturating_sub(made);
+        let due = rules.draws_by(count, scale).saturating_sub(made);
         if due == 0 {
             return false;
         }
-        if !rules.thresholds.iter().any(|t| t.eaten == count)
+        if !(rules.thresholds.iter()).any(|t| CravingRules::at(t.eaten, scale) == count)
             && let Some(again) = &rules.again
         {
             self.say(again.message.clone());

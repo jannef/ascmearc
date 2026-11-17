@@ -834,6 +834,9 @@ pub enum Need {
     Level(u8),
     /// A race, by id.
     Race(String),
+    /// Not of this race, by id (`not_race`: Surrender to hunger is not for a ratfolk, who craves
+    /// already).
+    NotRace(String),
     /// Not of a race whose people all have this skill (`skills` in `races.toml`: a dwarf's
     /// Metalcraft): a Crafts trade is never one the race teaches everyone.
     RaceLacks(SkillId),
@@ -849,6 +852,9 @@ pub enum Need {
     Lucky,
     /// A new character: taken only at character creation (level 1's creation picks).
     Creation,
+    /// At least this many corpses of those who think eaten (`eaten`, the eat law's count,
+    /// `Progress::laws.eaten`; `world/character/laws.rs`).
+    Eaten(u32),
     /// Any one of these ("Intelligence 12 or Appraise 20").
     Either(Vec<Need>),
 }
@@ -870,6 +876,10 @@ impl Need {
             Need::Race(id) => {
                 let name = content.race(id).map_or(id.as_str(), |r| r.name.as_str());
                 format!("to be {} {}", article(name), name.to_lowercase())
+            }
+            Need::NotRace(id) => {
+                let name = content.race(id).map_or(id.as_str(), |r| r.name.as_str());
+                format!("not to be {} {}", article(name), name.to_lowercase())
             }
             Need::Class(id) => {
                 let name = content.class(id).map_or(id.as_str(), |c| c.name.as_str());
@@ -902,6 +912,7 @@ impl Need {
             }
             Need::Lucky => "to be born on a lucky day".into(),
             Need::Creation => "to be a new character".into(),
+            Need::Eaten(n) => format!("to have eaten {n} sapients"),
             Need::Either(needs) => (needs.iter())
                 .map(|n| n.words(content))
                 .collect::<Vec<_>>()
@@ -934,6 +945,8 @@ pub struct Needs {
     /// 0 asks nothing.
     pub level: u8,
     pub race: Option<String>,
+    /// A race the character must not be (`not_race`).
+    pub not_race: Option<String>,
     /// A skill the race must not teach everyone (`race_lacks`); left out when no race does.
     pub race_lacks: Option<SkillId>,
     /// The race's vision profiles, any one of which will do; empty asks nothing.
@@ -945,6 +958,8 @@ pub struct Needs {
     pub lucky: bool,
     /// Only at character creation (`creation = true`).
     pub creation: bool,
+    /// Sapient corpses eaten (`eaten`); 0 asks nothing.
+    pub eaten: u32,
     /// Any one of these, if set (`either`): at least two.
     pub either: Vec<Need>,
 }
@@ -956,7 +971,8 @@ impl Needs {
     }
 
     /// Every prerequisite, in the order they are shown: talents, stats, skills, weapon skills,
-    /// the choice, the level, the race, the eyes, the class, the sign, then any one of the
+    /// the choice, the level, the race (and the one not to be), the eyes, the class, the sign,
+    /// creation, the sapients eaten, then any one of the
     /// alternatives.
     pub fn iter(&self) -> impl Iterator<Item = Need> + '_ {
         let talents = self.talents.iter().map(|&t| Need::Talent(t));
@@ -969,6 +985,7 @@ impl Needs {
         let chosen = self.chosen.map(Need::Chosen);
         let level = (self.level > 0).then_some(Need::Level(self.level));
         let race = self.race.clone().map(Need::Race);
+        let not_race = self.not_race.clone().map(Need::NotRace);
         let race_lacks = self.race_lacks.map(Need::RaceLacks);
         let eyes = (!self.eyes.is_empty()).then(|| Need::Eyes(self.eyes.clone()));
         let class = self.class.clone().map(Need::Class);
@@ -976,6 +993,7 @@ impl Needs {
         let element = self.element.clone().map(Need::Element);
         let lucky = self.lucky.then_some(Need::Lucky);
         let creation = self.creation.then_some(Need::Creation);
+        let eaten = (self.eaten > 0).then_some(Need::Eaten(self.eaten));
         let either = (!self.either.is_empty()).then(|| Need::Either(self.either.clone()));
         talents
             .chain(stats)
@@ -985,6 +1003,7 @@ impl Needs {
             .chain(chosen)
             .chain(level)
             .chain(race)
+            .chain(not_race)
             .chain(race_lacks)
             .chain(eyes)
             .chain(class)
@@ -992,6 +1011,7 @@ impl Needs {
             .chain(element)
             .chain(lucky)
             .chain(creation)
+            .chain(eaten)
             .chain(either)
     }
 }
@@ -1281,6 +1301,8 @@ struct NeedsSpec {
     chosen: Option<u8>,
     level: u8,
     race: Option<String>,
+    /// A race the character must not be.
+    not_race: Option<String>,
     /// A skill the race must not teach everyone (a Crafts trade's own).
     race_lacks: Option<String>,
     /// One vision profile or several, any one of which will do.
@@ -1291,6 +1313,8 @@ struct NeedsSpec {
     lucky: bool,
     /// Only at character creation: never a level's pick.
     creation: bool,
+    /// Sapient corpses eaten, at least.
+    eaten: u32,
     /// Alternatives: any one of what it asks will do (`either = { stats = { intelligence = 12
     /// }, skills = { appraise = 20 } }`).
     either: Option<Box<NeedsSpec>>,
@@ -1393,11 +1417,10 @@ fn resolve_needs(
     };
     // A race, class, or eyes is checked against its table when the content has one; without
     // (a fixture), the need stays and is simply never met.
-    if let Some(race) = &spec.race
-        && !content.races().list.is_empty()
-        && content.race(race).is_none()
-    {
-        return Err(format!("needs an unknown race `{race}`"));
+    for race in spec.race.iter().chain(&spec.not_race) {
+        if !content.races().list.is_empty() && content.race(race).is_none() {
+            return Err(format!("needs an unknown race `{race}`"));
+        }
     }
     if let Some(class) = &spec.class
         && !content.classes().is_empty()
@@ -1436,6 +1459,7 @@ fn resolve_needs(
         chosen: spec.chosen,
         level: spec.level,
         race: spec.race,
+        not_race: spec.not_race,
         race_lacks,
         eyes,
         class: spec.class,
@@ -1443,6 +1467,7 @@ fn resolve_needs(
         element: spec.element,
         lucky: spec.lucky,
         creation: spec.creation,
+        eaten: spec.eaten,
         either,
     })
 }

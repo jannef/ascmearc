@@ -1,12 +1,12 @@
 # The ratfolk craving
 
 A ratfolk who eats the flesh of the thinking grows in power and loses themselves (#1804; the
-design, `docs/design/ratfolk-craving.md`, is the plan for the slices still to come; this file says
-what is built). Built: slice S1 (#1824), the mark, the first line, the rows at 10 and 25, and
+design, `docs/design/ratfolk-craving.md`, is history now; this file says what is built). Built: slice S1 (#1824), the mark, the first line, the rows at 10 and 25, and
 their deed; slice S2 (#1825), the rows at 50 to 400, the stance floor and shift, hunger's harm,
 the stripping of hunger's softeners, and the immunities; slice S3 (#1826), the row at 500 and
-the profane draws from it on, their deed, the dry line, and the thirteenth gift mid-meal. The
-player-facing truth is the wiki's
+the profane draws from it on, their deed, the dry line, and the thirteenth gift mid-meal; slice
+S4 (#1827), Surrender to hunger, the craving for the other races. The design is built in full.
+The player-facing truth is the wiki's
 `food.md` "The ratfolk's craving".
 
 **Data.** `data/rules/craving.toml` (`content/craving.rs`, `CravingRules`, `Content::craving()`;
@@ -15,7 +15,9 @@ optional: without it no race craves): `race` (the race that craves), `first` (it
 the optional `stance_floor`, `stance_shift`, `strip_softeners`, and `profane`, a draw on the
 profane table as a keeper's corpse's, `ProfaneRolls`), the counts strictly rising, and the
 optional `[again]` (`every`, `message`, `profane`: the draw made again every `every` corpses past
-the last row, for ever; dropped with the rows when the Craving tree is missing). Each
+the last row, for ever; dropped with the rows when the Craving tree is missing), and the optional
+`[surrender]` (`CravingSurrender`: `scale`, the percent a surrendered character's counts are read
+at, at least 100 so no two rows meet, and `first`, said at the pick). Each
 row's talent is a granted talent of the `craving` tree (`data/talents/trees/180-craving.toml`,
 after Profane, never offered: one file per talent, `data/talents/craving_*.toml`), and the loader
 refuses one that slows or softens hunger (`HungerMods::softens`: a negative `hunger_percent`,
@@ -24,8 +26,24 @@ chosen stance or does not rise above the floor before it, `strip_softeners` on m
 row, a `profane` that fails `ProfaneRolls::check`, and an `[again]` with `every = 0` or no
 message.
 
+**Surrender to hunger** (#1827). `data/talents/surrender_to_hunger.toml`, a pick of the Grit
+tree: `needs = { eaten = 100, not_race = "ratfolk" }` (`Need::Eaten`, met by
+`Candidate::eaten`, the player's `Progress::laws.eaten`; `Need::NotRace`; in words "to have eaten
+100 sapients", "not to be a ratfolk", so the pick list names them unmet), its one effect the
+marker `craves` (`HungerEffect::Craves`, read only at the pick). `World::learn` calls
+`World::surrender`: for the talent with `craves`, and a player who does not crave yet,
+**`Progress::laws.craving_from = Some(laws.eaten)`**, the base; `World::take_talent` then says
+`[surrender] first` after "You learn ...". From then on `craves()` holds, and the craving runs on
+the **craving count** `eaten − craving_from` with every count read at `scale` percent, rounded
+half up (`CravingRules::at`, `(n × scale + 50) / 100`; 150: 15, 38, 75, 150, 300, 450, 600, 750,
+then `[again]` every 150), through `World::craving_count`; a ratfolk's scale is 100
+(`CRAVING_UNSCALED`), their count `eaten`. The craving's `first` is never said to them. Each
+row's talent adds its `hunger_percent` to their own race's pace, as for a ratfolk (a halfling 125
+→ 250 at 750). Everything else, the floor, the shift, the harm, the stripping, the immunities, the
+draws and both deeds, reads the talents held or the count and is the same.
+
 **The rule** (`world/character/craving.rs`). `World::craves()`: the player's race is the
-craving's. `World::ate_flesh` (`laws.rs`, from `world/health/eat.rs::finish`, beside
+craving's, or `craving_from` is some. `World::ate_flesh` (`laws.rs`, from `world/health/eat.rs::finish`, beside
 `ate_corpse`, before the corpse's own gifts and its vomit roll) counts the sapient corpse, then
 `World::craved(count)`: one mark (`mark`) into a stat drawn evenly among the six (the keyed draw
 `craving/mark/player`, nothing said; saturating, as a corpse's `train`); at count 1 the craving's
@@ -106,18 +124,21 @@ says "Immune to poison"), the statuses are refused in `status.rs::afflict_one` b
 (nothing rolled). Food's sickness is `poisoned` (`data/hunger.toml` `sickness`), so from 400
 rotten food never sickens a ratfolk either. `profane::forbidden` bars `immune` from every gift.
 
-**Saved.** `Progress::stripped` and `Progress::laws.craving_gifts`. The rows crossed are `Progress::laws.eaten` against the table
-(`World::craving_crossed()`), the talents held are `Actor::boons`, put back by `stars::grant`, and
+**Saved.** `Progress::stripped`, `Progress::laws.craving_gifts`, and `Progress::laws.craving_from`
+(left out while `None`). The rows crossed are the craving count against the table, scaled
+(`World::craving_crossed()`, `CravingRules::crossed_by`), the talents held are `Actor::boons`, put back by `stars::grant`, and
 the floor, the shift, the harm, and Sustenance's silence follow from the talents held.
 
 **Dumps.** The `progress` layer's laws row adds the rows crossed and the talents stripped for a
 player who craves, the draws made once there are any, `dry` when nothing is left: `laws broken:
 ate 100 sapient, summoned 0 fiend; craving 4 thresholds, stripped evergreen, lean, long_fast`;
-`…; craving 8 thresholds, 2 gifts dry`. A row's talent is marked `(craving)` in the `talents` layer and on the
+`…; craving 8 thresholds, 2 gifts dry`; a surrendered character's adds the base after the
+rows, `…; craving 3 thresholds from 100`. A row's talent is marked `(craving)` in the `talents` layer and on the
 Talents page (`OwnTalent::craving`, the tree's id; never `(altar)`, though it is kept among the
 boons).
 
-**Wiki.** `food.md` "The ratfolk's craving" with the generated table `generated/craving.md`
+**Wiki.** `food.md` "The ratfolk's craving" and its "Surrender to hunger" with the generated
+table `generated/craving.md` (each count followed by the surrendered's in brackets)
 (`xtask/src/wiki/craving.rs`: the first line, then each row's count, message, talent, what the
 talent and the row do (the floor, the shift, the softeners by name, the draw's odds), and the
 hunger pace; then `[again]`'s row); the deeds table (`xtask/src/wiki/alignment.rs`) has both rows.
@@ -143,4 +164,9 @@ row), a ratfolk with none, never Bloated and no disease drawn at 200, poison `IM
 between, a count reached twice drawing once, a gift once received never drawn, a dry table (the
 line after the row's, no deed, every hundred again, the dump's `dry`), the save and the dump, a
 twelve-gift ratfolk taken at 500 mid-meal (the Profane's lines after the gift's name, no gift
-deed, no food), and the loader refusing a bad `[again]`.
+deed, no food), and the loader refusing a bad `[again]`. `world/character/craving_surrender_tests.rs`
+(S4): the scaled counts, the needs (refused below 100 and for a ratfolk, in words), the pick (the
+base, its line after "You learn ...", a mark per corpse after it, never the ratfolk's first, the
+save and the dump), the rows at 15, 38, 75 and not at 10, 37, 50, the deeds, a halfling's pace
+125 → 137 → 250 at 750 with the first gift there and the next at 900, and the loader refusing a
+scale below 100.

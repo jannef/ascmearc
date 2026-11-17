@@ -1,0 +1,7 @@
+[[talent]]
+id = "surrender_to_hunger"
+name = "Surrender to hunger"
+tree = "grit"
+description = "You stop fighting the hunger for the flesh of the thinking. It will make you more than you are, and less."
+needs = { eaten = 100, not_race = "ratfolk" }
+effects = [{ kind = "craves" }]
