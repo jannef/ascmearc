@@ -502,8 +502,9 @@ impl Actor {
             && !mods.hunger.no_hunger_weakness
         {
             let by = by.get_or_insert_with(|| PerStat::splat(0));
+            // Hunger's harm (the ratfolk craving's doubled).
             for stat in Stat::ALL {
-                by[stat] += def.weak[stat];
+                by[stat] += mods.hunger.harm(def.weak[stat]);
             }
         }
         if self.damage.is_damaged() {
@@ -782,9 +783,10 @@ impl Actor {
             ),
         ];
         // Wild guard softens a stance's Dodge penalty.
+        let fought = self.fought_as(content);
         let stance =
-            (content.stance_def(self.stance).defence()).map(|(category, bonus)| match category {
-                Category::Dodge => (category, talents.defence.stance_dodge(self.stance, bonus)),
+            (content.stance_def(fought).defence()).map(|(category, bonus)| match category {
+                Category::Dodge => (category, talents.defence.stance_dodge(fought, bonus)),
                 _ => (category, bonus),
             });
         let defence = Defence::from_bonuses(
@@ -908,7 +910,9 @@ impl Actor {
             .chain(talents)
             .chain(lent.copied())
             .collect();
-        Resistances::sum(count, def.immune_kinds.iter().copied(), sources)
+        // The kinds it is immune to: its type's, and a talent's (the ratfolk craving's).
+        let immune = (def.immune_kinds.iter().copied()).chain(self.talent_immune_kinds(content));
+        Resistances::sum(count, immune, sources)
     }
 
     /// The side of it an attack strikes: its Defence (its `burden` capping
@@ -1472,13 +1476,14 @@ impl Actor {
     /// `profile` with the to-hit and damage of its combat stance, and of its status effects
     /// (a buff's or a hex's `combat`).
     pub fn stanced(&self, content: &Content, profile: Profile) -> Profile {
-        let stance = content.stance_def(self.stance);
+        let fought = self.fought_as(content);
+        let stance = content.stance_def(fought);
         let mut profile = stance.apply(profile);
         // Talents (Stalwart, Unflinching) soften a stance's to-hit penalty;
         // Peerless (a class ability) confirms criticals more surely.
         if !self.talents.is_empty() {
             let talents = self.talent_mods(content);
-            let softened = talents.defence.stance_to_hit(self.stance, stance.to_hit);
+            let softened = talents.defence.stance_to_hit(fought, stance.to_hit);
             profile.to_hit += softened - stance.to_hit;
             profile.confirm += talents.offence.critical_confirm;
             // Armour-breaker: a confirmed critical ignores more Protection.

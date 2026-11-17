@@ -1,0 +1,14 @@
+[[talent]]
+id = "craving_unleashed"
+name = "Unleashed"
+tree = "craving"
+granted = true
+description = "You cannot cower, and you cannot fight as calmly as you mean to."
+effects = [
+    { kind = "stat", stat = "strength", value = 1 },
+    { kind = "stat", stat = "dexterity", value = 1 },
+    { kind = "stat", stat = "toughness", value = 1 },
+    { kind = "speed_percent", value = 5 },
+    { kind = "hunger_percent", value = 10 },
+]
+systems = ["stances", "speed", "hunger"]

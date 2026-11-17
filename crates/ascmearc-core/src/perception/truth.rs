@@ -995,7 +995,10 @@ impl<'a> PerceptionView<'a> {
     /// The player as prerequisites see them.
     fn candidate(&self) -> Candidate<'a> {
         let level = self.own_experience().level;
-        Candidate::player(self.content, self.player, self.character, level)
+        Candidate {
+            stripped: &self.progress.stripped,
+            ..Candidate::player(self.content, self.player, self.character, level)
+        }
     }
 
     /// The player's own talents, in the order taken: each by its name for
@@ -1085,12 +1088,19 @@ impl<'a> PerceptionView<'a> {
         (content.talents().by_tree())
             .filter(|(_, def)| born_for(def) && found(def))
             .map(|(id, def)| {
-                let needs = (def.needs.iter())
+                let mut needs: Vec<NeedView> = (def.needs.iter())
                     .map(|need| NeedView {
                         met: who.meets(content, &need, def.choice, None),
                         words: need.words(content),
                     })
                     .collect();
+                // Taken for good by the ratfolk craving: a need never met again.
+                if who.stripped.contains(&def.id) {
+                    needs.push(NeedView {
+                        met: false,
+                        words: "not taken by the craving".into(),
+                    });
+                }
                 TalentView {
                     id,
                     name: def.name.clone(),

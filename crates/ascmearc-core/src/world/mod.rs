@@ -926,7 +926,13 @@ impl World {
             boons: Vec::new(),
             stat_marks: Default::default(),
         };
-        character::stars::grant(&content, state.character.as_ref(), &[], &mut player.talents);
+        character::stars::grant(
+            &content,
+            state.character.as_ref(),
+            &[],
+            &Default::default(),
+            &mut player.talents,
+        );
         // The class abilities of level 1.
         let given = classes::class::grant(&content, state.character.as_ref(), &mut player, 1);
         player.hp = player.max_hp(&content);
@@ -1088,6 +1094,7 @@ impl World {
                 &content,
                 state.character.as_ref(),
                 &boons,
+                &state.progress.stripped,
                 &mut player.talents,
             );
             player.boons = boons;

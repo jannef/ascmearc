@@ -14,7 +14,8 @@ what eating rotten food of any kind does, `vomit` and `harm`), optional `corpses
 `Food` per size);
 `Content::hunger()`; without the file nobody hungers, food does not rot, and there are no
 corpses), races' `hunger` percent (`World::hunger_percent`: then the talents' signed
-`hunger_percent` (Lean) less the worn `hunger` affix effect, at least 1), objects' `food = { nutrition, turns, keeps, lasts }` (`Food`;
+`hunger_percent` (Lean) less the worn `hunger` affix effect, at least 1; a worn slowing one is 0
+for a ratfolk the craving has stripped, docs/dev/craving.md), objects' `food = { nutrition, turns, keeps, lasts }` (`Food`;
 the shelf life is whole hours or days, `"8h"`, `"30d"`) and `cures` (a remedy: the means it applies with
 `World::cure` as it is eaten, `World::remedy`, checked against the statuses' and diseases'
 `cured_by` at load; the angelica root cures diseases), creatures' `corpse` (default true) and `on_eat`
@@ -90,7 +91,11 @@ effects' `penalty`, `Stats::adjusted_by`), which combat profiles, `Actor::defenc
 `burden::load`, and `own_scores` read; never `actor.stats` directly in a rule that hunger
 should touch. Long fast (`HungerMods::no_hunger_weakness`, #775's rework) is read in those two
 places only: `Actor::penalty` leaves Weak's stats out, and `World::faint` returns before its
-draw. Eating (`world/health/eat.rs`): `Action::Eat(Meal::Pack|Floor)` (a potion goes to
+draw. Hunger's harm (`HungerMods::hunger_harm`, `HungerMods::harm`: the ratfolk craving's ×2
+from 100, docs/dev/craving.md) scales Weak's stats in `Actor::penalty`, the faint chance in
+`World::faint`, and starving's damage in `World::digest`; Bloated, the states, and exertion are
+not harm. A talent that slows or softens hunger (`HungerMods::softens`) is what the craving
+strips for good (`Progress::stripped`). Eating (`world/health/eat.rs`): `Action::Eat(Meal::Pack|Floor)` (a potion goes to
 `World::drink_potion` instead, before any hunger check: docs/dev/potions.md) → `Spent::Meal(Dish)` →
 `dine` (turns of `eat` through `World::keep_at`, stopping like a rest; the food stays until the
 last turn) → `finish` (take one, with its age; then rotten food of any kind (`eat_rotten`:

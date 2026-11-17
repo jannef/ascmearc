@@ -104,7 +104,11 @@ impl World {
         let wound = self.content.status(status).wound.is_some();
         if (self.state.actors.get(&id)).is_some_and(|a| {
             let def = self.content.creature(a.creature);
-            def.immune.contains(&status) || (wound && def.blood.is_none())
+            def.immune.contains(&status)
+                || (wound && def.blood.is_none())
+                // A talent's immunity (the ratfolk craving's): as its type's.
+                || (!a.talents.is_empty()
+                    && (a.talent_mods(&self.content).vigour.immune_statuses).contains(&status))
         }) {
             return;
         }

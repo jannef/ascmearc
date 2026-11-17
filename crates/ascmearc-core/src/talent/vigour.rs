@@ -6,7 +6,7 @@
 //! and its one read.
 
 use super::{SecondWind, per_levels_at};
-use crate::content::{Content, StatusId};
+use crate::content::{Content, DamageTypeId, StatusId};
 use crate::dice::Dice;
 use crate::stats::{PerStat, Stat};
 use serde::Deserialize;
@@ -86,6 +86,10 @@ pub enum VigourEffect {
     DiseaseRecovery { value: i32 },
     /// It never catches a disease (Divine health, Purity of body): no check, no infection.
     DiseaseImmune,
+    /// It is immune to `to`, a status id or a damage type id, as a creature's `immune` list
+    /// takes them: a damage type never hurts it (above every resistance's cap) and a status never
+    /// takes (the ratfolk craving's; never a profane gift's).
+    Immune { to: String },
     /// No status lowers its score in `stat` (Still mind).
     NoPenaltyTo { stat: Stat },
     /// What status `status` raises its scores by, this percent more (Mighty rage: Raging's
@@ -108,7 +112,7 @@ pub enum VigourEffect {
 impl VigourEffect {
     /// The `kind`s of the data that are effects of the area, one a variant (`TalentEffect`'s
     /// deserializer hands these to [`VigourEffect`]).
-    pub const KINDS: [&'static str; 26] = [
+    pub const KINDS: [&'static str; 27] = [
         "checks",
         "clotting",
         "disease_checks",
@@ -118,6 +122,7 @@ impl VigourEffect {
         "drain_checks",
         "hardened",
         "healing_percent",
+        "immune",
         "max_hp_per_levels",
         "max_hp_percent",
         "no_penalty",
@@ -178,6 +183,10 @@ pub struct VigourMods {
     pub disease_interval_percent: i32,
     /// It never catches a disease.
     pub disease_immune: bool,
+    /// The damage types that never hurt it.
+    pub immune_kinds: Vec<DamageTypeId>,
+    /// The statuses it never suffers.
+    pub immune_statuses: Vec<StatusId>,
     /// The stats no status lowers.
     pub no_penalty_to: Vec<Stat>,
     /// Percent more of what a status raises its scores by: `(status, percent)`.
@@ -291,6 +300,13 @@ impl VigourMods {
             VigourEffect::SecondRising => self.second_rising = true,
             VigourEffect::StarvingHeals => self.starving_heals = true,
             VigourEffect::DiseaseImmune => self.disease_immune = true,
+            VigourEffect::Immune { to } => {
+                if let Some(status) = content.status_id(&to) {
+                    self.immune_statuses.push(status);
+                } else if let Some(kind) = content.damage_type_id(&to) {
+                    self.immune_kinds.push(kind);
+                }
+            }
             VigourEffect::NoPenaltyTo { stat } => self.no_penalty_to.push(stat),
             VigourEffect::RaisePercent { status, value } => {
                 if let Some(status) = content.status_id(&status) {

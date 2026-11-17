@@ -14,6 +14,9 @@ use serde::Deserialize;
 pub enum HungerEffect {
     /// Hunger burns this percent faster (negative: slower).
     HungerPercent { value: i32 },
+    /// Hunger's harm, this percent of the data's (200: twice): Weak's stat loss, the chance to
+    /// faint, and starving's damage (the ratfolk craving's; below 100 it would soften hunger).
+    HungerHarm { value: i32 },
     /// The sickness rotten food gives, this percent more (negative: less), rounded down.
     RotHarmPercent { value: i32 },
     /// It smells how fresh food is: the eat list says fresh, turning, or rotten (Hound's nose).
@@ -52,10 +55,11 @@ pub enum HungerEffect {
 impl HungerEffect {
     /// The `kind`s of the data that are effects of the area, one a variant (`TalentEffect`'s
     /// deserializer hands these to [`HungerEffect`]).
-    pub const KINDS: [&'static str; 12] = [
+    pub const KINDS: [&'static str; 13] = [
         "corpse_harmless",
         "corpse_stats_percent",
         "eats_rotten",
+        "hunger_harm",
         "hunger_percent",
         "iron_stomach",
         "meal_heals",
@@ -74,6 +78,9 @@ impl HungerEffect {
 pub struct HungerMods {
     /// Percent faster hunger burns (negative: slower).
     pub hunger_percent: i32,
+    /// Percent more harm hunger does (each `hunger_harm`'s value less 100, summed; 0: the
+    /// data's own): [`HungerMods::harm`].
+    pub hunger_harm: i32,
     /// Percent more sickness from rotten food (negative: less).
     pub rot_harm_percent: i32,
     /// It smells how fresh food is.
@@ -105,6 +112,7 @@ impl HungerMods {
     pub(crate) fn add(&mut self, content: &Content, effect: HungerEffect) {
         match effect {
             HungerEffect::HungerPercent { value } => self.hunger_percent += value,
+            HungerEffect::HungerHarm { value } => self.hunger_harm += value - 100,
             HungerEffect::RotHarmPercent { value } => self.rot_harm_percent += value,
             HungerEffect::SmellRot => self.smell_rot = true,
             HungerEffect::NoExertion => self.no_exertion = true,
@@ -124,5 +132,28 @@ impl HungerMods {
             },
             HungerEffect::EatsRotten => self.eats_rotten = true,
         }
+    }
+
+    /// Whether these effects slow or soften hunger (a **hunger softener**, the ratfolk
+    /// craving's word; `world/character/craving.rs`): a pace below the race's, no weakness, no
+    /// exertion, or less harm. Bloating is overeating, not hunger, and stays.
+    pub fn softens(&self) -> bool {
+        self.hunger_percent < 0
+            || self.no_hunger_weakness
+            || self.no_exertion
+            || self.hunger_harm < 0
+    }
+
+    /// One of hunger's harms, `by` in the data (Weak's stat loss, the faint chance, starving's
+    /// damage), as it falls on the holder: scaled by `hunger_harm`, rounded down toward 0, and
+    /// never below the data's own 1 when the data is not 0.
+    pub fn harm(&self, by: i32) -> i32 {
+        if by == 0 || self.hunger_harm == 0 {
+            return by;
+        }
+        let scaled =
+            i64::from(by.unsigned_abs()) * i64::from((100 + self.hunger_harm).max(0)) / 100;
+        let scaled = i32::try_from(scaled.max(1)).unwrap_or(i32::MAX);
+        if by < 0 { -scaled } else { scaled }
     }
 }
