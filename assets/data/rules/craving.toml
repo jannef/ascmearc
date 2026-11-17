@@ -33,6 +33,14 @@
 #   message  said each time, before the draw
 #   profane  as a row's
 #
+# [surrender]  optional: the craving of one of another race who takes Surrender to hunger (the
+#              talent with `craves`, ../talents/surrender_to_hunger.toml): the same rows and
+#              `[again]`, the corpses counted from the pick, and every count (a row's `eaten`,
+#              `[again]`'s `every`) read at `scale` percent of itself, rounded half up
+#              ((n x scale + 50) / 100: at 150, 25 is 38); `first` is not said to them
+#   scale    at least 100
+#   first    said at the pick
+#
 # Each row given is also the deed `craving_threshold`, and each profane gift the craving gives
 # is the deed `craving_gift` (../alignment.toml). A draw that finds nothing left to give says
 # "Nothing more of it will take in you." and is no deed. Every craving draw made, given or not,
@@ -92,3 +100,7 @@ profane = { rolls = 1, tiers = { lesser = 20, greater = 50, dire = 30 } }
 every = 100
 message = "The flesh gives again."
 profane = { rolls = 1, tiers = { lesser = 20, greater = 50, dire = 30 } }
+
+[surrender]
+scale = 150
+first = "You stop fighting it. The ancient craving awakens in you."

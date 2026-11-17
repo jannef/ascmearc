@@ -1,5 +1,7 @@
 # Ascmearc — The ratfolk craving: eating the thinking trains the body and eats the mind
 
+**Built; this file is history.** Current behaviour is in spec §12 "The two laws" and `docs/dev/craving.md`.
+
 Design document (2026-11-17) for #1804, **approved by the owner on 2026-11-17** (§12 records
 the answers; merging this PR records the approval). Written against `origin/main` at 9a766c171
 and revised against 11d9e27cd (#1805's record, `WorldState::gifts_received`; #1809's thirteenth

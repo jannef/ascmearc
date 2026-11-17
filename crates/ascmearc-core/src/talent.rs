@@ -516,6 +516,8 @@ pub struct Candidate<'a> {
     pub lucky: bool,
     /// The talents the ratfolk craving has taken for good (`Progress::stripped`): refused.
     pub stripped: &'a BTreeSet<String>,
+    /// The sapient corpses eaten (`Progress::laws.eaten`).
+    pub eaten: u32,
 }
 
 /// No talent stripped (a candidate without a run's progress).
@@ -544,6 +546,7 @@ impl<'a> Candidate<'a> {
             sign: character.and_then(|c| c.sign.as_ref()),
             lucky: character.is_some_and(|c| c.lucky(content).is_some()),
             stripped: &NONE_STRIPPED,
+            eaten: 0,
         }
     }
 
@@ -580,6 +583,7 @@ impl<'a> Candidate<'a> {
             },
             Need::Level(level) => self.level >= *level,
             Need::Race(id) => self.race == Some(id.as_str()),
+            Need::NotRace(id) => self.race != Some(id.as_str()),
             // No race (a run without a character) has no skill of its people's to lack.
             Need::RaceLacks(skill) => (self.race)
                 .and_then(|r| content.race(r))
@@ -591,6 +595,7 @@ impl<'a> Candidate<'a> {
             Need::Lucky => self.lucky,
             // Creation picks are level 1's; every later pick is a later level's.
             Need::Creation => self.level <= 1,
+            Need::Eaten(n) => self.eaten >= *n,
             Need::Either(needs) => (needs.iter()).any(|n| self.meets(content, n, choice, chosen)),
         }
     }

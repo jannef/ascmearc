@@ -45,7 +45,9 @@ However much of it you wear, you still get a little hungry.
 A ratfolk who eats those who think gets hungry faster as [the
 craving](food.md#the-ratfolks-craving) grows. From their hundredth such meal hunger hurts them
 twice as hard, the craving takes Lean and every other talent that eases hunger from them for
-good, and magic that sustains them does nothing.
+good, and magic that sustains them does nothing. One of another race who [surrenders to the
+hunger](food.md#surrender-to-hunger) goes the same way from their own race's pace, half again as
+slowly: a halfling ends at two and a half times a human's.
 
 Fighting burns a little more. Each [blow](combat.md#hitting), [shot, or
 throw](ranged.md#shooting-and-throwing) costs a few points (see the facts above).

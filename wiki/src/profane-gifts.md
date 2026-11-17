@@ -12,7 +12,8 @@ The deeper the keeper, the more gifts its meal draws, and the more of them come 
 tiers.
 
 A [ratfolk's craving](food.md#the-ratfolks-craving) draws them too: one gift at 500 people
-eaten, and one more at every 100 after.
+eaten, and one more at every 100 after (750 and every 150 for one who [surrendered to
+it](food.md#surrender-to-hunger)).
 
 > **Warning: the thirteenth gift kills you.** When you receive your 13th profane gift, the
 > Profane takes you and your character dies at once. Every gift you have ever received counts,
@@ -152,7 +153,9 @@ Profane; ones you have lost are not, so remember them.
 
 The [ratfolk's craving](food.md#the-ratfolks-craving) counts too. A ratfolk with no gifts from
 keepers dies of the gift drawn at 1,700 people eaten. Each gift from elsewhere brings that 100
-sooner: with twelve already received, the first draw at 500 is the last.
+sooner: with twelve already received, the first draw at 500 is the last. For one who
+surrendered to the craving the draws come at 750 and every 150 after, so with no other gifts the
+thirteenth comes at 2,550 since the pick.
 
 Your [graveyard](saving.md#your-characters-and-the-graveyard) records such a character as "Taken
 by the Profane".

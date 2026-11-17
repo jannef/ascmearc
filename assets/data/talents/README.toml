@@ -41,6 +41,9 @@
 #                   race_lacks = "metalcraft"            not of a race whose `skills`
 #                                                        (../races.toml) name that skill;
 #                                                        asks nothing when no race's do
+#                   not_race = "ratfolk"                 not of that race
+#                   eaten = 100                          that many sapient corpses eaten (the
+#                                                        eat law's count, ../rules/laws.toml)
 #                   any_weapon_skill = { roles = ["melee"], of = ["unarmed"], rank = 3 }
 #                                                        any one of the weapon skills of those
 #                                                        roles or named, at that rank
@@ -530,6 +533,9 @@
 #   purify                        rotten food neither sickens it nor exposes it to a disease
 #   corpse_harmless               a fresh corpse's own harm (on_eat sickness, vomiting) never
 #   meal_heals { object, dice }   eating that object (no object: a fresh corpse) heals dice too
+#   craves                        from the pick on it craves as the ratfolk do, counted from
+#                                 then and the counts scaled (../rules/craving.toml
+#                                 `[surrender]`; Surrender to hunger)
 #   status_damage { status, value }   its hits and its spells' damage on a creature suffering
 #                                 that status do value more
 #   hex_tithe { per_levels }      a creature dying under a hex it laid (any kill, any cause)

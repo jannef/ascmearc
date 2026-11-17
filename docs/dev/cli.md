@@ -464,7 +464,8 @@ On a level with a danger, `truth` and `actors` start with `danger 3 population 2
   level 30 not met`, `calling hunter: not for a thief`, `called hunter at 30`; the named monsters
   dead, `slain fire_drake`; the two laws broken (`docs/dev/alignment.md`), once either is,
   `laws broken: ate 1 sapient, summoned 0 fiend`, and for a ratfolk the craving's rows crossed
-  (`docs/dev/craving.md`), `...; craving 1 threshold`; what an aristocrat's stipend holds, `stipend 412 gold: a fizzy pink
+  (`docs/dev/craving.md`), `...; craving 1 threshold` (a surrendered character's with its base,
+`...; craving 0 thresholds from 120`); what an aristocrat's stipend holds, `stipend 412 gold: a fizzy pink
   potion`; a merchant's stake with their partner in hundredths, its last week, and the weekly
   bonus in basis points, `invest 98.24 gold, week 74260, bonus 0 bp`; the stat training marks
   with the price in force (the drop's for a negative pile), `stat marks St 120/160, To -30/75`;

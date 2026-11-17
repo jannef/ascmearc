@@ -91,7 +91,7 @@ every one.
 
 Eating one of their corpses, fresh or rotten, breaks an old law. The first time, you feel it:
 "You feel as if you have gone against something fundamental." The game counts every one you
-eat. For most folk nothing else comes of it yet; for a ratfolk it wakes [the
+eat. For most folk nothing else comes of it unless they choose it; for a ratfolk it wakes [the
 craving](#the-ratfolks-craving). Beasts, vermin, the undead, spirits, oozes, elementals, and
 animated things are not counted.
 
@@ -109,7 +109,8 @@ As the count grows, the craving changes you for good. At each count below you he
 gain its talent, which you keep among your other talents. The stat changes add up: by 400 you
 have +5 Strength, Dexterity, and Toughness, −2 Intelligence, and −4 Presence. The last column is
 how fast you get [hungry](hunger.md#races), against a human's 100%. A ratfolk starts at 110%, and
-each step adds a tenth of that (the steps at 400 and 500 add two).
+each step adds a tenth of that (the steps at 400 and 500 add two). The counts in brackets are for
+those of other races who [surrender to the hunger](#surrender-to-hunger).
 
 {{#include generated/craving.md}}
 
@@ -159,7 +160,32 @@ will take in you." You get nothing, and it costs you nothing.
 > gift you have from elsewhere brings it 100 sooner: it comes at 500, plus 100 for every gift
 > you are short of twelve. It takes you in the middle of the meal, and the meal never feeds you.
 
-Only ratfolk feel the craving. Other races just keep count.
+#### Surrender to hunger
+
+Anyone else just keeps count, until they have eaten 100 [who think](#eating-those-who-think).
+Then they may take the talent [Surrender to hunger](talents-body.md#talent-surrender-to-hunger)
+at a level's [talent pick](talents.md#when-you-get-a-talent). Until then the pick list shows it
+with what it needs. A [ratfolk](races.md#race-ratfolk) never may: they crave already.
+
+When you take it you hear "You stop fighting it. The ancient craving awakens in you." From then
+on everything above is yours, with two differences:
+
+- **The count starts at the pick.** The hundred or more you ate before only opened the door.
+  Each one you eat after it gives its [training mark](stats.md#raising-your-stats) and counts
+  toward the steps.
+- **Every step is half again as far**, rounded up at the half: 15, 38, 75, 150, 300, 450, 600,
+  and 750, the bracketed counts in the table. After 750 a [profane gift](profane-gifts.md) comes
+  every 150 more: 900, 1,050, and so on. With no gifts from elsewhere, the thirteenth comes at
+  2,550.
+
+The [stances](stances.md#stances), the harm of [hunger](hunger.md#how-hungry-you-are), the
+talents taken, the immunities, the gifts, and the [steps toward evil](alignment.md#what-moves-you)
+are all as for a ratfolk. The table's hunger column is a ratfolk's. Yours starts from your [own
+race's pace](hunger.md#races) and grows by the same tenths, so it doubles by 750: a human goes
+from 100% to 200%, an elf from 80% to 160%, and a halfling from 125% to 250%. Halflings are
+gluttons, and the craving makes them more so.
+
+The talent is for life: once taken, it never leaves you.
 
 ### What a corpse gives you
 

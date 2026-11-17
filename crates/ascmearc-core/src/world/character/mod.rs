@@ -31,6 +31,7 @@ cfg_if! {
         mod character_tests;
         mod craving_gifts_tests;
         mod craving_rows_tests;
+        mod craving_surrender_tests;
         mod craving_tests;
         mod creation_tests;
         mod damage_talent_tests;

@@ -34,11 +34,18 @@ pub struct Broken {
     /// made twice.
     #[serde(default, skip_serializing_if = "is_zero_u16")]
     pub(crate) craving_gifts: u16,
+    /// The count of `eaten` at Surrender to hunger's pick, for one who took it (`craving.rs`):
+    /// their craving counts the corpses eaten since.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) craving_from: Option<u32>,
 }
 
 impl Broken {
     pub fn is_empty(&self) -> bool {
-        self.eaten == 0 && self.summoned == 0 && self.craving_gifts == 0
+        self.eaten == 0
+            && self.summoned == 0
+            && self.craving_gifts == 0
+            && self.craving_from.is_none()
     }
 
     /// Corpses of thinking creatures the player has eaten.
@@ -49,6 +56,11 @@ impl Broken {
     /// Fiends the player has summoned.
     pub fn summoned(&self) -> u32 {
         self.summoned
+    }
+
+    /// The count of `eaten` at Surrender to hunger's pick, for one who took it.
+    pub fn craving_from(&self) -> Option<u32> {
+        self.craving_from
     }
 
     /// The ratfolk craving's profane draws made so far.
