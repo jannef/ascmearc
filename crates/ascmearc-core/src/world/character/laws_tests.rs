@@ -220,3 +220,28 @@ fn master_ordgars_corpse_teaches_spellcraft_and_is_a_sapient_eaten() {
     assert!(told(&w, LEARN).is_empty());
     assert_eq!(w.laws_broken().eaten(), 3);
 }
+
+#[test]
+fn master_ordgars_corpse_teaches_decipher_script_too() {
+    const LEARN: &str = "Strange letters swim before your eyes, and settle into sense.";
+    const RISE: &str = "The letters come clearer.";
+    let mut w = world_of(&files(), "pantry");
+    let id = w.content().skill_id("decipher_script").expect("the skill");
+    let mut skills = crate::skills::Skills::default();
+    for (other, trained) in w.state.player().skills.iter().filter(|(s, _)| *s != id) {
+        skills.add(other, i32::from(trained.value));
+    }
+    w.player_mut().skills = skills;
+    eat(&mut w, "ordgar");
+    assert_eq!(w.state.player().skills.value(id), Some(5));
+    assert_eq!(told(&w, LEARN), [LEARN]);
+    for _ in 0..8 {
+        eat(&mut w, "ordgar");
+    }
+    assert_eq!(
+        w.state.player().skills.value(id),
+        Some(40),
+        "never past the cap"
+    );
+    assert_eq!(told(&w, RISE).len(), 7, "10 to 40, then nothing");
+}

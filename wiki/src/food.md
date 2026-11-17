@@ -117,7 +117,8 @@ casters set it higher. Past that value, the corpse teaches nothing.
 The corpses of the wizards in the march's towers teach [Spellcraft](skills.md#skill-spellcraft)
 the same way. Master Ordgar's teaches it at 5 if you lack it ("Something stirs behind your eyes,
 and the shape of a spell makes sense."). If you have it, it adds 5 ("The shapes of spells come
-clearer."), but not past 40. A wizard is a person, so eating one also breaks the [old
+clearer."), but not past 40. His corpse also teaches Decipher script, like any literate caster's,
+at 5 a meal and not past 40. A wizard is a person, so eating one also breaks the [old
 law](#eating-those-who-think) against eating those who think.
 
 In the game you find all this out by eating. Here it is in the order it happens, each chance
