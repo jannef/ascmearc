@@ -128,6 +128,11 @@ impl Job for GemWork {
         self.item = super::work::one(now);
     }
 
+    fn stat(&self, w: &World) -> Option<Stat> {
+        let stack = w.state.player().inventory.get(self.item)?;
+        stack.gem(&w.content).map(|(gem, _)| w.gem_stat(gem))
+    }
+
     fn done(&self, w: &mut World, _: &mut Vec<Event>) {
         w.gem_cut(*self);
     }
@@ -179,6 +184,11 @@ impl World {
         self.craft_work(Task::Cut(GemWork { recipe: id, item }), def.seconds)
     }
 
+    /// The stat of a check on gem `gem`: its profession's, Dexterity without one.
+    pub(super) fn gem_stat(&self, gem: MaterialId) -> Stat {
+        (self.profession_of(gem)).map_or(Stat::Dexterity, |(_, stat)| stat)
+    }
+
     /// The modifier and the target of the player's check on gem `gem` by recipe `def`, Cut's
     /// and Set's alike (the module docs): the gem's profession's stat (Dexterity without one)
     /// in [`Actor::craft_modifier`] with the recipe's skill, plus the binding's boon, against
@@ -187,7 +197,7 @@ impl World {
     /// [`Actor::craft_modifier`]: crate::world::Actor::craft_modifier
     pub(super) fn gem_check(&self, def: &RecipeDef, gem: MaterialId) -> (i32, i32) {
         let content = &self.content;
-        let stat = (self.profession_of(gem)).map_or(Stat::Dexterity, |(_, stat)| stat);
+        let stat = self.gem_stat(gem);
         let modifier = (self.state.player()).craft_modifier(content, stat, def.skill)
             + self.binding_boon(def.skill);
         (modifier, def.difficulty + content.material(gem).work)

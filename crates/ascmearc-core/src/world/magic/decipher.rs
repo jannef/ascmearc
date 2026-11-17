@@ -103,6 +103,10 @@ impl Job for Deciphering {
         "You have nothing left to make out."
     }
 
+    fn stat(&self, _: &World) -> Option<Stat> {
+        Some(Stat::Intelligence)
+    }
+
     fn done(&self, w: &mut World, _: &mut Vec<Event>) {
         w.deciphered(self.item);
     }

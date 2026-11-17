@@ -243,6 +243,18 @@ fn sure_batch(w: &mut World, text: &str) {
 }
 
 #[test]
+fn fletching_trains_dexterity() {
+    let mut w = equipped(false, 2, "short_bow");
+    let c = arrowheads(&mut w, "steel", 20);
+    let d = pieces(&mut w, "hardwood", 1);
+    let spent = w.start_craft("arrows", &[Some(c), Some(d)]);
+    assert_eq!(
+        super::work::stat_of(&w, spent),
+        Some(crate::stats::Stat::Dexterity)
+    );
+}
+
+#[test]
 fn a_metal_arrowhead_heads_one_arrow_and_gives_it_its_metal() {
     let mut w = equipped(false, 2, "short_bow");
     arrowheads(&mut w, "steel", 20); // c

@@ -992,6 +992,13 @@ impl Job for Crafting {
         "You have nothing left to work with."
     }
 
+    fn stat(&self, w: &World) -> Option<Stat> {
+        let def = w.content.recipe(self.recipe);
+        let (level, me) = (w.state.current(), w.state.player());
+        let resolved = resolve(&w.content, w.lore(), level, me, def, self.picks()).ok()?;
+        Some(profession_stat(&w.content, def, resolved.main))
+    }
+
     fn done(&self, w: &mut World, _: &mut Vec<Event>) {
         w.crafted(*self);
     }

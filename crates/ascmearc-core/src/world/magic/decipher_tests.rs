@@ -230,6 +230,16 @@ fn a_scroll_with_no_spell_counts_as_level_0() {
 }
 
 #[test]
+fn making_a_scroll_out_trains_intelligence() {
+    let mut w = world(HASTE, Some(10), 0);
+    let spent = w.start_decipher(0);
+    assert_eq!(
+        crate::world::crafting::work::stat_of(&w, spent),
+        Some(Stat::Intelligence)
+    );
+}
+
+#[test]
 fn every_check_marks_decipher_script_and_spellcraft_gets_nothing() {
     let reader = Some(10);
     for failed in [true, false] {

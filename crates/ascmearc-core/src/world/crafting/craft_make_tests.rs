@@ -343,6 +343,32 @@ fn forging_takes_its_time_spends_the_stock_at_the_end_and_may_mark_metalcraft() 
 }
 
 #[test]
+fn forging_trains_strength_at_the_end_of_the_work_and_nothing_when_interrupted() {
+    use crate::stats::Stat;
+    let mut w = world(false);
+    ingots(&mut w, "steel", 1);
+    let spent = w.start_craft("ring", &[Some(0)]);
+    assert_eq!(super::work::stat_of(&w, spent), Some(Stat::Strength));
+    // End to end: forging after forging, Strength earns marks (40 % a time), Dexterity none.
+    let marks = |w: &World| w.state.player().stat_marks;
+    let before = marks(&w);
+    for _ in 0..6 {
+        w.player_mut().inventory.clear();
+        ingots(&mut w, "steel", 1);
+        apply(&mut w, "craft:ring:a");
+    }
+    assert!(marks(&w)[Stat::Strength] > before[Stat::Strength]);
+    assert_eq!(marks(&w)[Stat::Dexterity], before[Stat::Dexterity]);
+    // Cut short, the work trains nothing.
+    let mut w = world(true);
+    ingots(&mut w, "steel", 1);
+    let before = marks(&w);
+    apply(&mut w, "craft:ring:a");
+    assert!(said(&w).contains("put down your work"), "{}", said(&w));
+    assert_eq!(marks(&w)[Stat::Strength], before[Stat::Strength]);
+}
+
+#[test]
 fn a_craft_is_refused_with_no_time_beyond_skill_away_from_the_anvil_or_without_the_stock() {
     let mut w = world(false);
     train(&mut w, 30);
