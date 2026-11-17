@@ -34,6 +34,11 @@ fn terrain(id: &str) -> TerrainId {
 fn snapshots_of_the_two_floors() {
     insta::assert_snapshot!("tower_seed_1_depth_1", describe(&floor(1, 1)));
     insta::assert_snapshot!("tower_seed_1_depth_2", describe(&floor(1, 2)));
+    let drytorr = generate(&CONTENT, ("ascmearc", 1), "drytorr_tower:1", None);
+    insta::assert_snapshot!(
+        "drytorr_seed_1_depth_1",
+        describe(&drytorr.expect("generates"))
+    );
 }
 
 #[test]
@@ -138,29 +143,90 @@ fn every_floor_stands_on_the_footprint_with_its_stairs_swapped() {
     }
 }
 
-#[test]
-fn the_hall_winds_between_two_to_four_partitions() {
-    let t = tower();
+/// The rooms and halls of tower floor `level` inside `t`: the stretches of floor its doorways (a
+/// door, or a gap with wall or window on two opposite sides) part, each a count of cells; panics unless
+/// every cell is reached from the `>`, doors and doorways passed.
+fn rooms(level: &LevelTemplate, t: &Tower, at: &str) -> Vec<usize> {
     let (lo, hi) = t.interior();
-    let wall = terrain(kind::WALL);
+    let shell = [terrain(kind::WALL), terrain(kind::WINDOW)];
+    let passable = |p: Pos| {
+        let def = CONTENT.terrain(level.terrain[p]);
+        def.walkable || def.is_closed_door()
+    };
+    let walled = |p: Pos| level.terrain.get(p).is_some_and(|c| shell.contains(c));
+    let doorway = |p: Pos| {
+        CONTENT.terrain(level.terrain[p]).is_door()
+            || (walled(p.step(Dir::W)) && walled(p.step(Dir::E)))
+            || (walled(p.step(Dir::N)) && walled(p.step(Dir::S)))
+    };
+    let cells: BTreeSet<Pos> = (lo.y..=hi.y)
+        .flat_map(|y| (lo.x..=hi.x).map(move |x| Pos::new(x, y)))
+        .filter(|p| passable(*p))
+        .collect();
+    let fill = |from: Pos, through: &dyn Fn(Pos) -> bool| {
+        let mut seen = BTreeSet::from([from]);
+        let mut queue = VecDeque::from([from]);
+        while let Some(p) = queue.pop_front() {
+            for dir in [Dir::N, Dir::E, Dir::S, Dir::W] {
+                let q = p.step(dir);
+                if cells.contains(&q) && through(q) && seen.insert(q) {
+                    queue.push_back(q);
+                }
+            }
+        }
+        seen
+    };
+    let (down, _) = t.stairs_at(1).expect("stairs");
+    let down = (level.stairs.iter())
+        .find(|s| s.dir == StairsDir::Down)
+        .map_or(down, |s| s.pos);
+    assert_eq!(fill(down, &|_| true), cells, "{at}: every cell is reached");
+    let mut left: BTreeSet<Pos> = cells.iter().copied().filter(|p| !doorway(*p)).collect();
+    let mut sizes = Vec::new();
+    while let Some(&p) = left.first() {
+        let room = fill(p, &|q| !doorway(q));
+        left.retain(|q| !room.contains(q));
+        sizes.push(room.len());
+    }
+    sizes
+}
+
+#[test]
+fn the_inside_is_rooms_and_halls_every_one_reached() {
+    let t = tower();
     let mut counts = BTreeSet::new();
     for seed in 1..=20 {
         for depth in 1..=2 {
-            let level = floor(seed, depth);
-            // The inside is wider than tall: partitions are columns of wall with one doorway.
-            let partitions: Vec<i32> = (lo.x..=hi.x)
-                .filter(|&x| {
-                    let walls = (lo.y..=hi.y)
-                        .filter(|&y| level.terrain[Pos::new(x, y)] == wall)
-                        .count();
-                    walls as i32 == hi.y - lo.y
-                })
-                .collect();
+            let at = format!("seed {seed} depth {depth}");
+            let sizes = rooms(&floor(seed, depth), t, &at);
+            assert!(sizes.len() >= 2, "{at}: {sizes:?}");
+            assert!(sizes.iter().all(|&n| n >= 6), "{at}: {sizes:?}");
+            counts.insert(sizes.len());
+        }
+    }
+    assert!(counts.len() > 1, "the count varies: {counts:?}");
+}
+
+/// Drȳtorr's floors (#1823), on its big footprint: many rooms and halls.
+#[test]
+fn drytorrs_floors_are_many_rooms_and_halls() {
+    let def = CONTENT.dungeon("drytorr_tower").expect("Drȳtorr");
+    let t = def.tower.as_ref().expect("a tower");
+    let mut counts = BTreeSet::new();
+    for seed in 1..=12 {
+        for depth in 1..=2 {
+            let at = format!("seed {seed} depth {depth}");
+            let id = format!("drytorr_tower:{depth}");
+            let level = generate(&CONTENT, ("ascmearc", seed), &id, None).expect("generates");
+            let sizes = rooms(&level, t, &at);
+            assert!((5..=24).contains(&sizes.len()), "{at}: {sizes:?}");
+            assert!(sizes.iter().all(|&n| n >= 6), "{at}: {sizes:?}");
+            counts.insert(sizes.len());
             assert!(
-                (2..=4).contains(&partitions.len()),
-                "seed {seed} depth {depth}: {partitions:?}"
+                (5..=8).contains(&level.traps.len()),
+                "{at}: {}",
+                level.traps.len()
             );
-            counts.insert(partitions.len());
         }
     }
     assert!(counts.len() > 1, "the count varies: {counts:?}");

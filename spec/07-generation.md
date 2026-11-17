@@ -9,7 +9,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - Every walkable cell, stair, and door can be reached from the arrival. No level needs a key it does not give. A secret door only hides a way the player can do without. A level that fails these checks is made again.
 - Generators: *rooms* (rooms and corridors, doors, torches; with the branch's key a few single-door rooms are locked), *caves* (cellular caverns, pools, fungus), and *outdoor* (local areas: woods, meadows, water, a road and ruins, every side open, a few grazing beasts).
 - A branch may climb out to the overworld from another branch's floor, or end in a hand-made level.
-- A tower is a branch whose floors go up: from a hand-made clearing, its ground floor, to a hand-made top. Every floor stands on the clearing's footprint, the same stair running through it, its hall winding between partitions to the next stair up; danger rises floor by floor (docs/design/wizard-tower.md §8).
+- A tower is a branch whose floors go up: from a hand-made clearing, its ground floor, to a hand-made top. Every floor stands on the clearing's footprint, the same stair running through it, divided into rooms and halls between its stairs, and kept by the tower's own folk, who stray nowhere else; danger rises floor by floor (docs/design/wizard-tower.md §8).
 
 ## Vaults
 

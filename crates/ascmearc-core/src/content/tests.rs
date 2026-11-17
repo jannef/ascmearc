@@ -586,8 +586,8 @@ fn the_generic_list_is_every_hostile_type_without_uniques_or_people() {
             .any(|d| d.dies_into.as_ref().is_some_and(|i| i.pool.contains(&c)));
         // A Pit's warden only through its hall (#1298).
         let gate = (def.tags.iter().any(|t| t == "gate") || content.is_layer_boss(c)) && !def.stray;
-        // A wizard's tower's own household only on its floors (#1786; docs/dev/towers.md "A
-        // tower's household").
+        // A wizard's tower's own household only on its floors (#1786, #1823; docs/dev/towers.md
+        // "A tower's household").
         let household = !def.stray
             && (content.dungeons()).any(|d| {
                 d.tower.is_some()
