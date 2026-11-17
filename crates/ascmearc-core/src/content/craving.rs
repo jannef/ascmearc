@@ -1,12 +1,14 @@
 //! The ratfolk craving (`assets/data/rules/craving.toml`; #1804, docs/design/ratfolk-craving.md,
 //! `docs/dev/craving.md`): the race that craves, its first line, the marks per corpse, and the
 //! rows, each a count of sapient corpses eaten, a granted talent of the `craving` tree, and a
-//! message, and what the row does to the stance (`stance_floor`, `stance_shift`) and to hunger's
-//! softeners (`strip_softeners`). The rule itself lives in `world/character/craving.rs`.
+//! message, and what the row does to the stance (`stance_floor`, `stance_shift`), to hunger's
+//! softeners (`strip_softeners`), and the profane gift it draws (`profane`); and the draw made
+//! again every so many corpses past the last row (`[again]`). The rule itself lives in
+//! `world/character/craving.rs`.
 //!
 //! The file is optional: without it no race craves.
 
-use super::{CombatStance, Content, ContentError, TalentId};
+use super::{CombatStance, Content, ContentError, ProfaneRolls, TalentId};
 use crate::talent::{TalentMods, Talents};
 use serde::Deserialize;
 
@@ -24,6 +26,18 @@ pub struct CravingRules {
     pub mark: u16,
     /// The rows, in rising order of `eaten`.
     pub thresholds: Vec<Threshold>,
+    /// The draw made again past the last row, if any.
+    pub again: Option<Again>,
+}
+
+/// The draw made again every `every` corpses past the last row, for ever.
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Again {
+    pub every: u32,
+    /// Said each time, before the draw.
+    pub message: String,
+    pub profane: ProfaneRolls,
 }
 
 /// One row: crossed once, as the count of sapient corpses eaten reaches `eaten`.
@@ -42,6 +56,8 @@ pub struct Threshold {
     /// At this row every hunger softener held is taken for good, and worn Sustenance does
     /// nothing from then on.
     pub strip_softeners: bool,
+    /// The profane gift table drawn on as the row is crossed, after its talent.
+    pub profane: Option<ProfaneRolls>,
 }
 
 impl CravingRules {
@@ -73,6 +89,33 @@ impl CravingRules {
     pub fn unshielded(&self, content: &Content, talents: &Talents) -> bool {
         self.held(content, talents).any(|t| t.strip_softeners)
     }
+
+    /// The profane draws made at exactly `count` corpses: a row's (`threshold.profane`), or
+    /// `[again]`'s at every `every` past the last row.
+    pub fn draws_at(&self, count: u32) -> Option<&ProfaneRolls> {
+        if let Some(row) = self.thresholds.iter().find(|t| t.eaten == count) {
+            return row.profane.as_ref();
+        }
+        let (again, last) = (self.again.as_ref()?, self.thresholds.last()?.eaten);
+        (count > last && (count - last).is_multiple_of(again.every)).then_some(&again.profane)
+    }
+
+    /// How many profane draws the craving has made by `count` corpses (each row's and
+    /// `[again]`'s rolls up to it).
+    pub fn draws_by(&self, count: u32) -> u32 {
+        let rows: u32 = (self.thresholds.iter())
+            .filter(|t| t.eaten <= count)
+            .filter_map(|t| t.profane.as_ref())
+            .map(|p| u32::from(p.rolls))
+            .sum();
+        let again = match (&self.again, self.thresholds.last()) {
+            (Some(a), Some(last)) if count > last.eaten => {
+                (count - last.eaten) / a.every * u32::from(a.profane.rolls)
+            }
+            _ => 0,
+        };
+        rows + again
+    }
 }
 
 #[derive(Deserialize)]
@@ -83,6 +126,8 @@ struct CravingFile {
     mark: u16,
     #[serde(default)]
     threshold: Vec<ThresholdSpec>,
+    #[serde(default)]
+    again: Option<Again>,
 }
 
 #[derive(Deserialize)]
@@ -97,6 +142,8 @@ struct ThresholdSpec {
     stance_shift: bool,
     #[serde(default)]
     strip_softeners: bool,
+    #[serde(default)]
+    profane: Option<ProfaneRolls>,
 }
 
 impl super::RulesFile for CravingRules {
@@ -174,6 +221,11 @@ impl super::RulesFile for CravingRules {
                 }
                 stripped = true;
             }
+            if let Some(rolls) = &spec.profane {
+                rolls
+                    .check()
+                    .map_err(|m| err(format!("threshold {}: {m}", spec.eaten)))?;
+            }
             thresholds.push(Threshold {
                 eaten: spec.eaten,
                 talent,
@@ -181,13 +233,30 @@ impl super::RulesFile for CravingRules {
                 stance_floor: spec.stance_floor,
                 stance_shift: spec.stance_shift,
                 strip_softeners: spec.strip_softeners,
+                profane: spec.profane,
             });
+        }
+        // Counted from the last row: without rows (no Craving tree) there is nothing to count
+        // from, and no draw.
+        let again = parsed.again.filter(|_| !thresholds.is_empty());
+        if let Some(again) = &again {
+            if again.every == 0 {
+                return Err(err("[again]: `every` is at least 1".into()));
+            }
+            if again.message.is_empty() {
+                return Err(err("[again]: a `message`".into()));
+            }
+            again
+                .profane
+                .check()
+                .map_err(|m| err(format!("[again]: {m}")))?;
         }
         Ok(Self {
             race: parsed.race,
             first: parsed.first,
             mark: parsed.mark,
             thresholds,
+            again,
         })
     }
 }

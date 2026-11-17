@@ -1,10 +1,11 @@
 //! The ratfolk craving (`data/rules/craving.toml`; docs/dev/craving.md): its first line, then
 //! each row with its count, message, talent, what the talent and the row do (the stance floor
-//! and shift, the softeners stripped), and the hunger pace from then on, against a human's.
+//! and shift, the softeners stripped, the profane gift drawn), and the hunger pace from then on,
+//! against a human's; then the draw made again past the last row (`[again]`).
 
 use super::talents::{effects_text, talent_link};
 use super::util::{Term, anchored, link};
-use ascmearc_core::content::{CombatStance, Content, CravingThreshold};
+use ascmearc_core::content::{CombatStance, Content, CravingThreshold, GiftTier, ProfaneRolls};
 use ascmearc_core::talent::TalentMods;
 use std::fmt::Write as _;
 
@@ -46,7 +47,32 @@ pub(super) fn craving(content: &Content) -> String {
             TalentMods::scaled(u64::from(race), percent)
         );
     }
+    if let Some(again) = &rules.again {
+        let _ = writeln!(
+            out,
+            "| every {} more | \"{}\" | | {}; \"Nothing more of it will take in you.\" when none \
+             is left to give | {}% |",
+            again.every,
+            again.message,
+            gift_text(&again.profane, "one more"),
+            TalentMods::scaled(u64::from(race), percent)
+        );
+    }
     out
+}
+
+/// A row's profane draws: how many, and each one's odds of each tier.
+fn gift_text(rolls: &ProfaneRolls, one: &str) -> String {
+    let count = match rolls.rolls {
+        1 => format!("{one} [profane gift](profane-gifts.md)"),
+        n => format!("{n} [profane gifts](profane-gifts.md)"),
+    };
+    format!(
+        "{count} (lesser {}%, greater {}%, dire {}%)",
+        rolls.weight(GiftTier::Lesser),
+        rolls.weight(GiftTier::Greater),
+        rolls.weight(GiftTier::Dire)
+    )
 }
 
 /// What a row does besides its talent: the stance floor and shift, the softeners stripped.
@@ -75,6 +101,9 @@ fn row_text(content: &Content, row: &CravingThreshold) -> Vec<String> {
     }
     if row.stance_shift {
         parts.push("every stance fights as the next more aggressive one".into());
+    }
+    if let Some(rolls) = &row.profane {
+        parts.push(gift_text(rolls, "one"));
     }
     if row.strip_softeners {
         let book = content.talents();

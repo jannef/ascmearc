@@ -8,16 +8,20 @@
 //! corpse the craving's `first` line in place of the law's; and at each row's count its talent
 //! given ([`World::bestow`]), its message said, the deed [`Deed::CravingThreshold`], the stance
 //! settled up to the row's floor ([`World::settle_craving_stance`]), the softeners stripped at the
-//! row that strips them ([`World::strip_softeners`]), and the band's news said with the meal.
+//! row that strips them ([`World::strip_softeners`]); at a row that draws (500), and at every
+//! `[again]` past the last row (600, 700, ...), a profane gift drawn and given, and the deed
+//! [`Deed::CravingGift`] ([`World::craving_draws`], each draw made once: `laws.craving_gifts`);
+//! and the band's news said with the meal. A gift that is the thirteenth ever received ends the
+//! character there (`bestow_gift`, `profane_taken.rs`), and the meal with them.
 //!
 //! What a row does later is read off the rows whose talent the player holds (a row's talent is
 //! given at its count and never taken): the stance floor that [`World::set_stance`] keeps
 //! ([`World::craving_refuses`]), the shift every fight rule reads ([`Actor::fought_as`]), and
 //! Sustenance doing nothing ([`World::unshielded`]). What is saved: the stripped talents,
-//! `Progress::stripped`, which no grant, pick, or gift gives back.
+//! `Progress::stripped`, which no grant, pick, or gift gives back, and the draws made.
 
 use super::alignment::Deed;
-use crate::content::{CombatStance, Content, DamageTypeId, Effect};
+use crate::content::{CombatStance, Content, DamageTypeId, Effect, GiftTier};
 use crate::rng::draw;
 use crate::stats::Stat;
 use crate::talent::{Taken, TalentMods};
@@ -63,6 +67,13 @@ impl World {
         Some(rules.thresholds.iter().filter(|t| t.eaten <= eaten).count())
     }
 
+    /// Whether the craving has drawn and the profane table has nothing left to give the player:
+    /// every draw from now on finds nothing (the dump's `dry`).
+    pub fn craving_dry(&self) -> bool {
+        self.state.progress.laws.craving_gifts > 0
+            && GiftTier::ALL.iter().all(|&t| self.gift_pool(t).0 == 0)
+    }
+
     /// The talents the craving has taken from the player for good, in id order (the dump).
     pub fn stripped(&self) -> impl Iterator<Item = &str> {
         self.state.progress.stripped.iter().map(String::as_str)
@@ -98,11 +109,13 @@ impl World {
             self.say(rules.first.clone());
         }
         let book = content.talents();
+        let mut crossed = false;
         for row in rules.thresholds.iter().filter(|t| t.eaten == count) {
             let id = &book.get(row.talent).id;
             if self.state.player().talents.has(id) {
                 continue;
             }
+            crossed = true;
             self.bestow(id, None);
             self.say(row.message.clone());
             self.player_did(Deed::CravingThreshold);
@@ -110,10 +123,58 @@ impl World {
             if row.strip_softeners {
                 self.strip_softeners();
             }
+        }
+        let drew = self.craving_draws(count);
+        // The Profane took them (`profane_taken.rs`): the meal ends with them.
+        if self.state.death.is_some() {
+            return count == 1;
+        }
+        if crossed || drew {
             // The band crossed, said with the meal, before the hunger news.
             self.say_news();
         }
         count == 1
+    }
+
+    /// The profane draws due at `count` corpses ([`CravingRules::draws_at`], each made once:
+    /// `laws.craving_gifts` counts them): `[again]`'s message, then each draw ([`World::draw_gift`])
+    /// given ([`World::bestow_gift`], which may end the character, `profane_taken.rs`) and the
+    /// deed [`Deed::CravingGift`], or "Nothing more of it will take in you." and no deed.
+    /// Whether any draw was made.
+    fn craving_draws(&mut self, count: u32) -> bool {
+        let content = self.content.clone();
+        let Some(rules) = content.craving() else {
+            return false;
+        };
+        let Some(rolls) = rules.draws_at(count) else {
+            return false;
+        };
+        let made = u32::from(self.state.progress.laws.craving_gifts);
+        let due = rules.draws_by(count).saturating_sub(made);
+        if due == 0 {
+            return false;
+        }
+        if !rules.thresholds.iter().any(|t| t.eaten == count)
+            && let Some(again) = &rules.again
+        {
+            self.say(again.message.clone());
+        }
+        for _ in 0..due.min(u32::from(rolls.rolls)) {
+            let laws = &mut self.state.progress.laws;
+            laws.craving_gifts = laws.craving_gifts.saturating_add(1);
+            match self.draw_gift(rolls) {
+                Some(gift) => {
+                    if self.bestow_gift(gift) && self.state.death.is_none() {
+                        self.player_did(Deed::CravingGift);
+                    }
+                }
+                None => self.say("Nothing more of it will take in you."),
+            }
+            if self.state.death.is_some() {
+                break;
+            }
+        }
+        true
     }
 
     /// Why the player may not take `stance`, said, if the craving's floor forbids it: one below

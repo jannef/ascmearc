@@ -1,0 +1,8 @@
+[[talent]]
+id = "craving_consumed"
+name = "Consumed"
+tree = "craving"
+granted = true
+description = "Whatever you were is eaten. The flesh gives what the flesh gives."
+effects = [{ kind = "speed_percent", value = 5 }, { kind = "hunger_percent", value = 20 }]
+systems = ["speed", "hunger"]

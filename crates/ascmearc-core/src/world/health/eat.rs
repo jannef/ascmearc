@@ -168,6 +168,11 @@ impl World {
         if let Some(creature) = def.corpse {
             self.ate_corpse(creature);
             self.ate_flesh(creature);
+            // The craving's thirteenth gift took them (`profane_taken.rs`): nothing more of the
+            // meal.
+            if self.state.death.is_some() {
+                return;
+            }
         }
         let nutrition = def.food.map_or(0, |f| f.nutrition) as i32;
         let rotten = self.stage(&food).is_some_and(|s| s.is_rotten());

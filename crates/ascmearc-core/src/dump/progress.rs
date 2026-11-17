@@ -137,9 +137,18 @@ pub(super) fn progress_rows(world: &World) -> Vec<String> {
             true => String::new(),
             false => format!(", stripped {}", stripped.join(", ")),
         };
+        // Its profane draws made (from 500), and `dry` once the table has nothing left.
+        let gifts = match (laws.craving_gifts(), world.craving_dry()) {
+            (0, _) => String::new(),
+            (n, dry) => format!(
+                ", {n} gift{}{}",
+                if n == 1 { "" } else { "s" },
+                if dry { " dry" } else { "" }
+            ),
+        };
         let craving = (world.craving_crossed()).map_or(String::new(), |n| {
             format!(
-                "; craving {n} threshold{}{stripped}",
+                "; craving {n} threshold{}{gifts}{stripped}",
                 if n == 1 { "" } else { "s" }
             )
         });

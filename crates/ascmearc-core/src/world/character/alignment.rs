@@ -47,6 +47,8 @@ pub enum Deed {
     /// Crossed a row of the ratfolk craving: its talent given (docs/design/ratfolk-craving.md
     /// §8.1).
     CravingThreshold,
+    /// Took a profane gift the ratfolk craving drew (docs/design/ratfolk-craving.md §8.1).
+    CravingGift,
     /// Completed a quest that moves the score.
     Quest,
     /// Consecrated an unholy place (Consecrate).
@@ -69,6 +71,7 @@ impl Deed {
             Deed::AteKin => Some(shift.eat_kin),
             Deed::EatProfane => Some(shift.eat_profane),
             Deed::CravingThreshold => Some(shift.craving_threshold),
+            Deed::CravingGift => Some(shift.craving_gift),
             Deed::Consecrated => Some(shift.consecrate),
             Deed::ConsumedCrystal => Some(shift.consume_crystal),
             Deed::Prayed(Alignment::Good) => Some(shift.prayed_good),

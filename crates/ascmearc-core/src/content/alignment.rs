@@ -84,6 +84,9 @@ pub struct Shifts {
     /// §8.1).
     #[serde(default)]
     pub craving_threshold: i32,
+    /// A profane gift the ratfolk craving gives (docs/design/ratfolk-craving.md §8.1).
+    #[serde(default)]
+    pub craving_gift: i32,
     /// Consecrating an unholy place (Consecrate).
     #[serde(default)]
     pub consecrate: i32,
@@ -167,6 +170,7 @@ impl AlignmentRules {
             s.eat_kin,
             s.eat_profane,
             s.craving_threshold,
+            s.craving_gift,
             s.consecrate,
             s.consume_crystal,
         ];

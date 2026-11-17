@@ -184,7 +184,9 @@ degrees; electricity resistance 50). The breaths' looks are `data/effects.toml`'
   lost ones counting, its two lines are said and the run ends, `die_of(Cause::Profane)` ("The
   Profane takes you, and nothing of you is left...", the epitaph "Taken by the Profane"). Not a
   harm: no Rise from the ashes, no reprieve, no Twice-born. A meal stops with it: no more draws,
-  no deed, no feeding. The graveyard records it as `cause = "profane"` and keeps every death's
+  no deed, no feeding; the ratfolk craving's draws (docs/dev/craving.md, from 500 sapient corpses)
+  are gifts like any and stop the meal the same way (`eat.rs::finish` returns after `ate_flesh`).
+  The graveyard records it as `cause = "profane"` and keeps every death's
   held gifts in `gifts` (`docs/dev/saves.md` "The graveyard").
 
 Saves: a gift held rides in `Actor::boons`; `stars::grant` puts it back on every restore and the

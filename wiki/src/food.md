@@ -109,7 +109,7 @@ As the count grows, the craving changes you for good. At each count below you he
 gain its talent, which you keep among your other talents. The stat changes add up: by 400 you
 have +5 Strength, Dexterity, and Toughness, −2 Intelligence, and −4 Presence. The last column is
 how fast you get [hungry](hunger.md#races), against a human's 100%. A ratfolk starts at 110%, and
-each step adds a tenth of that (the step at 400 adds two).
+each step adds a tenth of that (the steps at 400 and 500 add two).
 
 {{#include generated/craving.md}}
 
@@ -145,6 +145,19 @@ leaves you Bloated: what does not fit is lost. **From 400** [poison](damage-type
 does you no harm at all, and you are never [poisoned](status-list.md#status-poisoned). Both
 immunities are whole: no cap, as a creature's. Since food's sickness is being poisoned, rotten
 food no longer sickens you either.
+
+**From 500** the craving hands your body to the [profane gifts](profane-gifts.md). One gift is
+drawn at 500, and one more at every 100 after: 600, 700, and so on, with no end. Each draw has the
+same odds: lesser 20%, greater 50%, and dire 30%. A gift is drawn and given just as a keeper's meal
+gives one, so you never get the same gift twice. Each gift is also a deed toward evil, as heavy
+as eating a keeper (−300). If nothing is left that you may take, you hear "Nothing more of it
+will take in you." You get nothing, and it costs you nothing.
+
+> **Warning: the craving's gifts count toward the thirteenth.** The [thirteenth profane
+> gift](profane-gifts.md#the-thirteenth-gift) you ever receive kills you, and the craving's gifts
+> count like any other. With no gifts from keepers, the one at 1,700 is your thirteenth. Each
+> gift you have from elsewhere brings it 100 sooner: it comes at 500, plus 100 for every gift
+> you are short of twelve. It takes you in the middle of the meal, and the meal never feeds you.
 
 Only ratfolk feel the craving. Other races just keep count.
 
