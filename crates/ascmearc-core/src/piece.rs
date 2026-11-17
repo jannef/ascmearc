@@ -44,6 +44,68 @@ pub fn names(content: &Content, def: &ObjectDef, material: MaterialId) -> (Strin
     }
 }
 
+/// What a piece of any one of `materials`, all of one group, is called, singular and plural, as
+/// a recipe that takes any of them says it (#1767). The whole group is its form word alone, for
+/// the stack spent may be of any of it ("ingot"/"ingots"; "block of stone", by the group, where
+/// the material comes after the word; "hide or pelt" where its materials' words differ); some of
+/// it names them ("iron or brass ingot", "block of flint or obsidian", "leather hide or fur
+/// pelt"); one is [`names`]. `None` for none.
+pub fn any_names(
+    content: &Content,
+    def: &ObjectDef,
+    materials: &[MaterialId],
+) -> Option<(String, String)> {
+    let (&first, rest) = materials.split_first()?;
+    if rest.is_empty() {
+        return Some(names(content, def, first));
+    }
+    let group = content.material(first).group.as_deref();
+    let whole = (content.materials().iter().enumerate())
+        .filter(|(_, m)| m.group.as_deref() == group)
+        .all(|(i, _)| materials.iter().any(|m| usize::from(m.0) == i));
+    let forms: Option<Vec<(&str, &str, bool)>> = (materials.iter())
+        .map(|&m| content.stock().form_of(content, m))
+        .collect();
+    let pairs: Vec<(String, String)> = match (forms, group) {
+        // The whole group: its form words, without a material.
+        (Some(forms), Some(group)) if whole => (forms.into_iter())
+            .map(|(name, plural, of)| match of {
+                true => (format!("{name} of {group}"), format!("{plural} of {group}")),
+                false => (name.to_string(), plural.to_string()),
+            })
+            .collect(),
+        // Some of it, all under one word: the materials named before or after it.
+        (Some(forms), _) if forms.iter().all(|f| *f == forms[0]) => {
+            let (name, plural, of) = forms[0];
+            let named: Vec<String> = (materials.iter())
+                .map(|&m| content.material(m).name.clone())
+                .collect();
+            let named = or_joined(&named);
+            return Some(match of {
+                true => (format!("{name} of {named}"), format!("{plural} of {named}")),
+                false => (format!("{named} {name}"), format!("{named} {plural}")),
+            });
+        }
+        // Else each material by its own name.
+        _ => (materials.iter())
+            .map(|&m| names(content, def, m))
+            .collect(),
+    };
+    let (one, many): (Vec<String>, Vec<String>) = pairs.into_iter().unzip();
+    Some((or_joined(&one), or_joined(&many)))
+}
+
+/// `words` joined with "or", each once, in order.
+fn or_joined(words: &[String]) -> String {
+    let mut once: Vec<&str> = Vec::new();
+    for w in words {
+        if !once.contains(&w.as_str()) {
+            once.push(w);
+        }
+    }
+    once.join(" or ")
+}
+
 /// How many pieces of `material` `grams` of it make: `max(1, round(grams / one piece's
 /// grams))`, the rule salvage and recipes share, one piece's grams being 500 × its `weight` % ×
 /// its group's `unit` ([`unit`]); `None` for a material no piece is made of.
@@ -192,6 +254,45 @@ mod tests {
 
     fn object(content: &Content, id: &str) -> Stack {
         Stack::one(content.object_id(id).unwrap_or_else(|| panic!("{id}")))
+    }
+
+    #[test]
+    fn any_of_a_whole_group_is_its_form_word_and_some_of_it_names_them() {
+        // #1767: a recipe that takes any metal never names one.
+        let content = content();
+        let piece = content.object(content.object_id(ID).expect("piece"));
+        let said = |ids: &[&str]| {
+            let of: Vec<MaterialId> = ids.iter().map(|id| material(&content, id)).collect();
+            any_names(&content, piece, &of).expect("named")
+        };
+        let group = |g: &str| -> Vec<&str> {
+            (content.materials().iter())
+                .filter(|m| m.group.as_deref() == Some(g))
+                .map(|m| m.id.as_str())
+                .collect()
+        };
+        let pair = |a: &str, b: &str| (a.to_string(), b.to_string());
+        assert_eq!(said(&group("metal")), pair("ingot", "ingots"));
+        assert_eq!(said(&group("wood")), pair("billet", "billets"));
+        assert_eq!(
+            said(&group("cloth")),
+            pair("bolt of cloth", "bolts of cloth")
+        );
+        assert_eq!(said(&group("hide")), pair("hide or pelt", "hides or pelts"));
+        assert_eq!(
+            said(&["iron", "brass"]),
+            pair("iron or brass ingot", "iron or brass ingots")
+        );
+        assert_eq!(
+            said(&["flint", "obsidian"]),
+            pair("block of flint or obsidian", "blocks of flint or obsidian")
+        );
+        assert_eq!(
+            said(&["leather", "fur"]),
+            pair("leather hide or fur pelt", "leather hides or fur pelts")
+        );
+        assert_eq!(said(&["steel"]), pair("steel ingot", "steel ingots"));
+        assert_eq!(any_names(&content, piece, &[]), None);
     }
 
     #[test]

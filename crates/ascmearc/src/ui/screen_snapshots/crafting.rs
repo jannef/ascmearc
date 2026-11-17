@@ -259,7 +259,8 @@ cases! {
         ..BASE
     },
     // The forge's stock picked up beside the anvil: the weapons under "Melee weapons", those from
-    // a higher Metalcraft greyed "beyond your skill".
+    // a higher Metalcraft greyed "beyond your skill". A recipe of any metal names none: "3
+    // ingots", never "3 steel ingots" (#1767).
     profession_metalcraft_stock: Case {
         name: "profession-metalcraft-stock",
         scenario: "forge",

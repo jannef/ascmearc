@@ -8,23 +8,23 @@ expression: "render(case, content.clone())"
             │ > a - Temper          a metal weapon or armour, an anvil, about 10 minut │
             │ Melee weapons                                                            │
             │   b - Battle axe      beyond your skill                                  │
-            │   c - Dagger          a steel ingot, an anvil, about 30 minutes          │
+            │   c - Dagger          an ingot, an anvil, about 30 minutes               │
             │   d - Glaive          beyond your skill                                  │
             │   e - Great axe       beyond your skill                                  │
             │   f - Great sword     beyond your skill                                  │
             │   g - Halberd         beyond your skill                                  │
-            │   h - Hand axe        3 iron ingots, an anvil, about 30 minutes          │
-            │   i - Javelin         an iron ingot, 4 wood billets, an anvil, about 20  │
-            │   j - Knife           a steel ingot, an anvil, about 20 minutes          │
+            │   h - Hand axe        3 ingots, an anvil, about 30 minutes               │
+            │   i - Javelin         an ingot, 4 wood billets, an anvil, about 20 minut │
+            │   j - Knife           an ingot, an anvil, about 20 minutes               │
             │   k - Long sword      beyond your skill                                  │
-            │   l - Mace            5 iron ingots, an anvil, about 1 hour              │
+            │   l - Mace            5 ingots, an anvil, about 1 hour                   │
             │   m - Maul            beyond your skill                                  │
-            │   n - Morning star    6 iron ingots, an anvil, about 1 hour              │
+            │   n - Morning star    6 ingots, an anvil, about 1 hour                   │
             │   o - Rapier          beyond your skill                                  │
             │   p - Scimitar        beyond your skill                                  │
-            │   q - Short sword     2 steel ingots, an anvil, about 1 hour             │
-            │   r - Spear           an iron ingot, 7 wood billets, an anvil, about 30  │
-            │   s - Stiletto        a steel ingot, an anvil, about 30 minutes          │
+            │   q - Short sword     2 ingots, an anvil, about 1 hour                   │
+            │   r - Spear           an ingot, 7 wood billets, an anvil, about 30 minut │
+            │   s - Stiletto        an ingot, an anvil, about 30 minutes               │
             │   t - Trident         beyond your skill                                  │
             │                                                                          │
             │ Takes a metal weapon or armour, an anvil, about 10 minutes.              │
