@@ -1548,7 +1548,7 @@ mod tests {
         ));
         let ladder = text("skill-ladder.md");
         assert!(
-            ladder.contains("| 0 | `+1` | 1.0 | `1d3` | 2.0 |"),
+            ladder.contains("| 0 | `1d2` | 1.5 | `1d3` | 2.0 |"),
             "{ladder}"
         );
         assert!(
