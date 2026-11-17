@@ -23,56 +23,32 @@
 //! 8. The stairs (the up in the hall at its end, the down at the other), lamps and fungus,
 //!    patrols, now and then a special chamber. No pools (an air shaft).
 //!
-//! The tunables are grouped here at the top (#1834 moves generators' parameters into data).
+//! The tunables are [`PassageParams`] (`content/generator.rs`, `data/generators.toml`, #1834).
 
-use super::{Bore, bore};
+use super::bore;
+use crate::content::PassageParams;
 use crate::content::StairsDir;
 use crate::geom::{Dir, Pos};
 use crate::grid::Grid;
 use crate::mapgen::{CARDINALS, Canvas, Needs, caves, special, vault};
 use crate::rng::Rng;
 
-/// How the way is carved: steadier than the tunnels'.
-const PASSAGE: Bore = Bore {
-    widths: [(22, 1), (63, 2), (15, 3)],
-    stretch: (4, 10),
-    squeeze: (2, 3),
-    squeeze_within: 2,
-    nibble: 2,
-};
-/// How far from the map's side the first and last waypoints stand.
-const END: i32 = 5;
-/// How far along the width each waypoint is from the last.
-const LEG: (i32, i32) = (7, 14);
-/// Chance (percent) that a waypoint between the ends gets a hall.
-const HALL_CHANCE: u32 = 35;
-/// A hall's half-width and half-height.
-const HALL_X: (i32, i32) = (2, 4);
-const HALL_Y: (i32, i32) = (1, 2);
-/// Chance (percent) that each corner of a hall is left as rock.
-const CHIP: u32 = 50;
-/// Dead-end pockets tried for, and how far one runs.
-const POCKETS: (i32, i32) = (3, 6);
-const POCKET_LEN: (i32, i32) = (2, 5);
-/// Tries at each pocket before it is given up.
-const POCKET_TRIES: u32 = 20;
-/// The most rock the way may ring round (a pillar a hall or a wide stretch leaves); more is a
-/// second route, and the attempt fails.
-pub(in crate::mapgen) const PILLAR: usize = 4;
-/// The kept way must cover at least this percent of the inner area.
-const MIN_FLOOR: i32 = 5;
-
-pub(in crate::mapgen) fn build(canvas: &mut Canvas, rng: &mut Rng, needs: Needs) -> Option<()> {
+pub(in crate::mapgen) fn build(
+    canvas: &mut Canvas,
+    rng: &mut Rng,
+    needs: Needs,
+    params: &PassageParams,
+) -> Option<()> {
     let (w, h) = (canvas.width(), canvas.height());
-    if w < 2 * END + LEG.0 || h < 2 * HALL_Y.1 + 5 {
+    if w < 2 * params.end + params.leg.0 || h < 2 * params.hall_y.1 + 5 {
         return None;
     }
-    let mut points = vec![Pos::new(END, rng.range(3, h - 4))];
+    let mut points = vec![Pos::new(params.end, rng.range(3, h - 4))];
     loop {
-        let x = points[points.len() - 1].x + rng.range(LEG.0, LEG.1);
+        let x = points[points.len() - 1].x + rng.range(params.leg.0, params.leg.1);
         let y = rng.range(3, h - 4);
-        if x >= w - 1 - END - LEG.0 / 2 {
-            points.push(Pos::new(w - 1 - END, y));
+        if x >= w - 1 - params.end - params.leg.0 / 2 {
+            points.push(Pos::new(w - 1 - params.end, y));
             break;
         }
         points.push(Pos::new(x, y));
@@ -93,33 +69,43 @@ pub(in crate::mapgen) fn build(canvas: &mut Canvas, rng: &mut Rng, needs: Needs)
         };
         legs.extend([corner, b]);
     }
-    bore(canvas, rng, &PASSAGE, &legs);
+    bore(canvas, rng, &params.bore, &legs);
     let last = points.len() - 1;
     for (i, &p) in points.iter().enumerate() {
-        if i == 0 || i == last || rng.chance(HALL_CHANCE) {
-            hall(canvas, rng, p);
+        if i == 0 || i == last || rng.chance(params.hall_chance) {
+            hall(canvas, rng, p, params);
         }
     }
-    pockets(canvas, rng);
-    caves::keep_largest_cave(canvas, MIN_FLOOR)?;
+    pockets(canvas, rng, params);
+    // Where a hall comes too near another leg the way rings round rock: a second route.
+    if largest_ring(canvas) > params.pillar {
+        return None;
+    }
+    caves::keep_largest_cave(canvas, params.min_floor)?;
     for v in vault::named(canvas, needs.vaults) {
         if vault::spots(canvas, v).is_empty() {
-            caves::make_room(canvas, rng, v, MIN_FLOOR)?;
+            caves::make_room(canvas, rng, v, params.min_floor)?;
         }
-        if caves::place_vaults(canvas, rng, &[v], 1) < 1 {
+        if caves::place_vaults(canvas, rng, &[v], 1, params.max_tunnel) < 1 {
             return None;
         }
     }
-    let [fewest, most] = needs.random_vaults;
+    let [fewest, most] = params.random_vaults;
     if most > 0 {
         let count = rng.range(i32::from(fewest), i32::from(most));
         let mut vaults = vault::shuffled(canvas, rng);
         vaults.retain(|v| v.entrances.len() == 1);
-        caves::place_vaults(canvas, rng, &vaults, usize::try_from(count).unwrap_or(0));
+        caves::place_vaults(
+            canvas,
+            rng,
+            &vaults,
+            usize::try_from(count).unwrap_or(0),
+            params.max_tunnel,
+        );
     }
     // Where a hall comes too near another leg, or a vault's cut grazes the way, the way rings
     // round rock: a second route.
-    if largest_ring(canvas) > PILLAR {
+    if largest_ring(canvas) > params.pillar {
         return None;
     }
     let up = roomy_nearest(canvas, points[0])?;
@@ -128,16 +114,19 @@ pub(in crate::mapgen) fn build(canvas: &mut Canvas, rng: &mut Rng, needs: Needs)
         let down = roomy_nearest(canvas, points[last])?;
         canvas.place_stairs(down, StairsDir::Down);
     }
-    caves::light(canvas, rng, up);
+    caves::light(canvas, rng, up, params.lamp_block);
     caves::patrols(canvas, rng, up, needs);
     special::cave_rooms(canvas, rng, up);
     Some(())
 }
 
 /// A hewn hall round `c`: a box of drawn size, each corner now and then left as rock.
-fn hall(canvas: &mut Canvas, rng: &mut Rng, c: Pos) {
-    let (hx, hy) = (rng.range(HALL_X.0, HALL_X.1), rng.range(HALL_Y.0, HALL_Y.1));
-    let chipped: Vec<bool> = (0..4).map(|_| rng.chance(CHIP)).collect();
+fn hall(canvas: &mut Canvas, rng: &mut Rng, c: Pos, params: &PassageParams) {
+    let (hx, hy) = (
+        rng.range(params.hall_x.0, params.hall_x.1),
+        rng.range(params.hall_y.0, params.hall_y.1),
+    );
+    let chipped: Vec<bool> = (0..4).map(|_| rng.chance(params.chip)).collect();
     for y in c.y - hy..=c.y + hy {
         for x in c.x - hx..=c.x + hx {
             let corner = match (x == c.x - hx || x == c.x + hx, y == c.y - hy, y == c.y + hy) {
@@ -155,18 +144,18 @@ fn hall(canvas: &mut Canvas, rng: &mut Rng, c: Pos) {
 
 /// Dead ends dug straight out from the way into rock, each through cells whose every neighbour
 /// but the cell before is rock, so a pocket never reaches other floor.
-fn pockets(canvas: &mut Canvas, rng: &mut Rng) {
+fn pockets(canvas: &mut Canvas, rng: &mut Rng, params: &PassageParams) {
     let floor: Vec<Pos> = canvas
         .cells()
         .filter(|p| canvas.get(*p) == canvas.pal.floor)
         .collect();
-    for _ in 0..rng.range(POCKETS.0, POCKETS.1) {
-        for _ in 0..POCKET_TRIES {
+    for _ in 0..rng.range(params.pockets.0, params.pockets.1) {
+        for _ in 0..params.pocket_tries {
             let Some(&from) = rng.pick(&floor) else {
                 return;
             };
             let dir = CARDINALS[rng.index(CARDINALS.len())];
-            let len = rng.range(POCKET_LEN.0, POCKET_LEN.1);
+            let len = rng.range(params.pocket_len.0, params.pocket_len.1);
             let cells: Vec<Pos> = (1..=len)
                 .scan(from, |p, _| {
                     *p = p.step(dir);

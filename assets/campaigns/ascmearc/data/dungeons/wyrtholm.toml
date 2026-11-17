@@ -8,8 +8,10 @@
 id = "wyrtholm"
 name = "Wyrtholm"
 arrival = "The air under the islet is thick with rot, and with something sweeter."
-generator = "caves"
 depth = 4
+
+[dungeon.level]
+generator = { kind = "caves" }
 size = [100, 40]
 traps = ["pit", "alarm"]
 hidden_per_depth = 1

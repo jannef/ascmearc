@@ -6,8 +6,10 @@
 id = "cealdhlaw"
 name = "Cealdhlāw"
 arrival = "Cold air breathes up from the mound."
-generator = "rooms"
 depth = 6
+
+[dungeon.level]
+generator = { kind = "rooms" }
 size = [80, 21]
 traps = ["arrow", "spear", "pit", "alarm"]
 # As the Depths: a secret door or two a rooms level, hidden things and locks harder deeper down.
@@ -53,5 +55,5 @@ vaults = ["barrow_chamber"]
 [[dungeon.levels]]
 from = 3
 to = 6
-generator = "tunnels"
+generator = { kind = "tunnels" }
 size = [120, 48]

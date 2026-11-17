@@ -269,11 +269,11 @@ fn the_stairs_floor_needs_its_two_ends() {
             "bottom = \"ceaptun\"",
             "with a `<` back",
         ),
-        // Only a passage reads `random_vaults`.
+        // Only a passage has `random_vaults` (a parameter of its generator, #1834).
         (
-            "generator = \"passage\"",
-            "generator = \"caves\"",
-            "`random_vaults`",
+            "generator = { kind = \"passage\", random_vaults = [2, 3] }",
+            "generator = { kind = \"caves\", random_vaults = [2, 3] }",
+            "unknown field `random_vaults`",
         ),
     ] {
         let mut files = ContentFiles::builtin();

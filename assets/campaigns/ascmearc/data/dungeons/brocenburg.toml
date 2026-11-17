@@ -8,8 +8,10 @@
 id = "brocenburg"
 name = "Brocenburg"
 arrival = "Goblin marks on the old fort's stones, and a soldier's boot-prints among them."
-generator = "rooms"
 depth = 4
+
+[dungeon.level]
+generator = { kind = "rooms" }
 size = [80, 21]
 traps = ["arrow", "spear", "alarm"]
 secret_doors = [0, 1]

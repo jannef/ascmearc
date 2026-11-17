@@ -10,7 +10,7 @@ use crate::test_support::CONTENT;
 fn content(chance: u8, danger: u8, ores: &str) -> Content {
     let mut files = ContentFiles::builtin();
     let branch = format!(
-        "\n[[dungeon]]\nid = \"mine\"\nname = \"Mine\"\ngenerator = \"rooms\"\ndepth = 1\n\
+        "\n[[dungeon]]\nid = \"mine\"\nname = \"Mine\"\ndepth = 1\n[dungeon.level]\ngenerator = {{ kind = \"rooms\" }}\n\
          size = [60, 30]\n{ores}\ndanger = {danger}\npopulation = [\"rat\"]\n\
          population_count = 0\n"
     );
@@ -61,7 +61,11 @@ fn veins_are_of_the_branch_s_ores_at_their_dangers() {
                 with += usize::from(!found.is_empty());
                 for (p, metal, first) in found {
                     assert!(
-                        def.ores.as_ref().is_none_or(|o| o.contains(&metal)),
+                        def.plan(depth)
+                            .expect("a floor")
+                            .ores
+                            .as_ref()
+                            .is_none_or(|o| o.contains(&metal)),
                         "{id} seed {seed} {p}: {metal} is not of its ores"
                     );
                     assert!(first <= danger, "{id} seed {seed} {p}: {metal} at {danger}");

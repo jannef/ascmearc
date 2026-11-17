@@ -88,8 +88,9 @@ types, #487), treasure room (4, `treasury`, mark `$`, `min_cells = 9`, `secret_d
 `min_cells = 9`, `sealed = "dig"`, `treasure`, `arrive`, #618; the last effect). Draining (also `unholy`) and cursed are the ones with a `level_chance`. Fyrdelf
 favours the armoury at 20.
 
-A dungeon's `room_effects` (on a branch or a `[[dungeon.levels]]` range; `content/dungeon.rs`,
-`RoomOddsSpec::layer`/`resolve`, field by field: the range's, the branch's, the shared file's)
+A dungeon's `room_effects` (in a `[dungeon.level]` template or a `[[dungeon.levels]]` row;
+`content/dungeon.rs`, `RoomOddsSpec::over`/`resolve`, field by field: the row's, the template's, the
+shared file's)
 sets `chance`, `per_level`, `favoured = { id = share, ... }` (fixed shares in percent) and
 `banned = [ids]`, resolved into `RoomOdds { chance, per_level, favoured, banned }`
 (`RoomOdds::shared` has neither list). Content errors: unknown ids (the numbers are the

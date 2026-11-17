@@ -8,8 +8,10 @@
 id = "fennmynster"
 name = "Fennmynster"
 arrival = "The water is up to the third step."
-generator = "minster"
 depth = 8
+
+[dungeon.level]
+generator = { kind = "minster" }
 size = [100, 40]
 traps = ["pit", "frost", "alarm", "teleport"]
 # The monks hid their stores: more secret doors than the other dungeons, hidden things one harder

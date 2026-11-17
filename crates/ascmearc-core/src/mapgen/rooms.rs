@@ -19,21 +19,14 @@
 
 use super::connect::cheapest_path;
 use super::{Canvas, Needs, shop, special, vault};
-use crate::content::{ObjectId, RoomEffectDef, SpecialRoom, StairsDir, Vault};
+use crate::content::{ObjectId, RoomEffectDef, RoomsParams, SpecialRoom, StairsDir, Vault};
 use crate::door::{Key, Lock};
 use crate::geom::{Dir, Pos};
 use crate::object::Stack;
 use crate::rng::Rng;
 use std::collections::BTreeMap;
 
-/// Rock between rooms, so walls are never shared and corridors fit between them.
-const GAP: i32 = 2;
-/// The most rooms a level locks (with the branch's key).
-const MAX_LOCKED: usize = 2;
-/// Chance (percent) that a level gets a vault.
-const VAULT_CHANCE: u32 = 20;
-/// Chance (percent) that a room other than the arrival room has torches.
-const LIT_CHANCE: u32 = 80;
+// The tunables are [`RoomsParams`] (`content/generator.rs`, `data/generators.toml`, #1834).
 
 #[derive(Clone, Debug)]
 struct Room {
@@ -67,12 +60,12 @@ impl Room {
         p.x >= self.x && p.y >= self.y && p.x < self.x + self.w && p.y < self.y + self.h
     }
 
-    /// Whether the rooms are closer than `GAP` cells of rock.
-    fn crowds(&self, o: &Room) -> bool {
-        self.x - GAP < o.x + o.w
-            && o.x - GAP < self.x + self.w
-            && self.y - GAP < o.y + o.h
-            && o.y - GAP < self.y + self.h
+    /// Whether the rooms are closer than `gap` cells of rock.
+    fn crowds(&self, o: &Room, gap: i32) -> bool {
+        self.x - gap < o.x + o.w
+            && o.x - gap < self.x + self.w
+            && self.y - gap < o.y + o.h
+            && o.y - gap < self.y + self.h
     }
 
     /// Where a corridor may enter: existing doors, and wall cells that are neither at nor next to
@@ -109,15 +102,20 @@ fn manhattan(a: Pos, b: Pos) -> i32 {
     (a.x - b.x).abs() + (a.y - b.y).abs()
 }
 
-pub(super) fn build(canvas: &mut Canvas, rng: &mut Rng, needs: Needs) -> Option<()> {
+pub(super) fn build(
+    canvas: &mut Canvas,
+    rng: &mut Rng,
+    needs: Needs,
+    p: &RoomsParams,
+) -> Option<()> {
     let mut rooms = Vec::new();
     for v in vault::named(canvas, needs.vaults) {
         place_named(canvas, rng, &mut rooms, v)?;
     }
-    if rng.chance(VAULT_CHANCE) {
+    if rng.chance(p.vault_chance) {
         place_vault(canvas, rng, &mut rooms);
     }
-    place_rooms(canvas, rng, &mut rooms);
+    place_rooms(canvas, rng, &mut rooms, p);
     if rooms.iter().filter(|r| !r.vault).count() < 3 {
         return None;
     }
@@ -141,22 +139,28 @@ pub(super) fn build(canvas: &mut Canvas, rng: &mut Rng, needs: Needs) -> Option<
         }
     }
     let up_room = place_stairs(canvas, rng, &rooms, needs)?;
-    light_rooms(canvas, rng, &rooms, up_room);
+    light_rooms(canvas, rng, &rooms, up_room, p.lit_chance);
     patrols(canvas, rng, &rooms, up_room, needs);
     if let Some(key) = needs.key {
-        lock_rooms(canvas, rng, &rooms, up_room, key);
+        lock_rooms(canvas, rng, &rooms, up_room, (key, p.max_locked));
     }
     special_rooms(canvas, rng, &rooms, up_room);
     shops(canvas, rng, &rooms, up_room);
     Some(())
 }
 
-/// Locks the door of up to [`MAX_LOCKED`] rooms that have only one (not the arrival room, not a
+/// Locks the door of up to `max_locked` rooms that have only one (not the arrival room, not a
 /// room with stairs, not a vault) with the lock `key` opens, and leaves the key on a free spot
 /// in a room that is not locked, so the player can always reach it. A
 /// doorway or an open door becomes a closed door to be locked. Whatever lies or walks in a
 /// locked room stays there.
-fn lock_rooms(canvas: &mut Canvas, rng: &mut Rng, rooms: &[Room], up_room: usize, key: ObjectId) {
+fn lock_rooms(
+    canvas: &mut Canvas,
+    rng: &mut Rng,
+    rooms: &[Room],
+    up_room: usize,
+    (key, max_locked): (ObjectId, usize),
+) {
     let lock = match canvas.content.object(key).key {
         Some(Key::Lock(ref id)) => Lock::new(Some(id)),
         _ => Lock::new(None),
@@ -172,7 +176,7 @@ fn lock_rooms(canvas: &mut Canvas, rng: &mut Rng, rooms: &[Room], up_room: usize
         })
         .collect();
     rng.shuffle(&mut dead_ends);
-    let count = rng.range(0, MAX_LOCKED as i32) as usize;
+    let count = rng.range(0, max_locked as i32) as usize;
     let locked: Vec<usize> = dead_ends.into_iter().take(count).collect();
     let open: Vec<usize> = (0..rooms.len())
         .filter(|i| !rooms[*i].vault && !locked.contains(i))
@@ -295,7 +299,7 @@ fn place_named(canvas: &mut Canvas, rng: &mut Rng, rooms: &mut Vec<Room>, v: &Va
 }
 
 /// Scatters rooms by random attempts until the target count (about one per 200 cells).
-fn place_rooms(canvas: &Canvas, rng: &mut Rng, rooms: &mut Vec<Room>) {
+fn place_rooms(canvas: &Canvas, rng: &mut Rng, rooms: &mut Vec<Room>, p: &RoomsParams) {
     let (w, h) = (canvas.width(), canvas.height());
     let max_iw = (w / 5).clamp(4, 16);
     let max_ih = (h / 3).clamp(3, 8);
@@ -316,7 +320,7 @@ fn place_rooms(canvas: &Canvas, rng: &mut Rng, rooms: &mut Vec<Room>) {
             doors: Vec::new(),
             vault: false,
         };
-        if rooms.iter().all(|r| !r.crowds(&room)) {
+        if rooms.iter().all(|r| !r.crowds(&room, p.gap)) {
             rooms.push(room);
         }
     }
@@ -457,9 +461,15 @@ fn place_stairs(canvas: &mut Canvas, rng: &mut Rng, rooms: &[Room], needs: Needs
 
 /// Sconces in the interior corners of most rooms (one in small rooms, two in opposite corners of
 /// large ones); a room that should be lit but has no free corner gets a lamp instead.
-fn light_rooms(canvas: &mut Canvas, rng: &mut Rng, rooms: &[Room], up_room: usize) {
+fn light_rooms(
+    canvas: &mut Canvas,
+    rng: &mut Rng,
+    rooms: &[Room],
+    up_room: usize,
+    lit_chance: u32,
+) {
     for (i, room) in rooms.iter().enumerate() {
-        if room.vault || (i != up_room && !rng.chance(LIT_CHANCE)) {
+        if room.vault || (i != up_room && !rng.chance(lit_chance)) {
             continue;
         }
         let (x0, y0, x1, y1) = room.interior();

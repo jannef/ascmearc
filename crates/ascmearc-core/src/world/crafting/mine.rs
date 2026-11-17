@@ -52,7 +52,7 @@ impl World {
             return;
         };
         let here = self.state.current_level.clone();
-        let Some((branch, _)) = content.branch_level(&here) else {
+        let Some((branch, depth)) = content.branch_level(&here) else {
             return;
         };
         let def = content.terrain(wall);
@@ -87,7 +87,7 @@ impl World {
         if !made {
             return;
         }
-        let ores: Option<Vec<MaterialId>> = (branch.ores.as_ref())
+        let ores: Option<Vec<MaterialId>> = (branch.plan(depth).and_then(|p| p.ores.as_ref()))
             .map(|list| list.iter().filter_map(|m| content.material_id(m)).collect());
         let danger = content.floor_danger(&here, self.player_level());
         let table = rules.at(danger, ores.as_deref());

@@ -17,7 +17,7 @@
 //! (a sealed room's breach is one of its walls).
 
 use super::{CARDINALS, Palette};
-use crate::content::{Content, DungeonDef, LevelTemplate, MaterialId};
+use crate::content::{Content, LevelPlan, LevelTemplate, MaterialId};
 use crate::geom::Pos;
 use crate::grid::Grid;
 use crate::magic::loot::pick_weighted;
@@ -31,7 +31,7 @@ pub(super) fn lay(
     template: &mut LevelTemplate,
     content: &Content,
     (seed, pal): (u64, Palette),
-    (def, danger): (&DungeonDef, u32),
+    (plan, danger): (&LevelPlan, u32),
     stamped: &Grid<bool>,
 ) {
     let Some(rules) = content.mining() else {
@@ -44,7 +44,7 @@ pub(super) fn lay(
     if !rng.chance(u32::from(veins.chance)) {
         return;
     }
-    let ores: Option<Vec<MaterialId>> = (def.ores.as_ref())
+    let ores: Option<Vec<MaterialId>> = (plan.ores.as_ref())
         .map(|list| list.iter().filter_map(|m| content.material_id(m)).collect());
     let table = rules.vein_table(danger, ores.as_deref());
     if table.is_empty() {

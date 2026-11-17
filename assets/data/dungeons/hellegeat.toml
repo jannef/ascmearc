@@ -11,8 +11,10 @@
 id = "hellegeat"
 name = "Hellegeat"
 arrival = "The heat hits you like a door. The air stinks of brimstone."
-generator = "caves"
 depth = 5
+
+[dungeon.level]
+generator = { kind = "caves" }
 size = [80, 40]
 temperature = 45
 # A dull red glow everywhere.

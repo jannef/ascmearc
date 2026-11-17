@@ -173,7 +173,7 @@ pub(super) fn mining_dungeons(content: &Content) -> String {
                 }
             }
         };
-        let ores = match &def.ores {
+        let ores = match def.plan(1).and_then(|p| p.ores.as_ref()) {
             None => {
                 let all: Vec<String> = rules
                     .ores()

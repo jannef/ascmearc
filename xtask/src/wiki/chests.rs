@@ -130,12 +130,13 @@ pub(super) fn chest_places(content: &Content) -> String {
     let mut branches: Vec<_> = content.dungeons().collect();
     branches.sort_by(|a, b| a.id.cmp(&b.id));
     for d in branches {
-        let [least, most] = d.chests.count;
+        let chests = d.plan(1).map(|p| p.chests).unwrap_or_default();
+        let [least, most] = chests.count;
         let count = match least == most {
             true => least.to_string(),
             false => format!("{least} to {most}"),
         };
-        let _ = writeln!(out, "| {} | {}% | {count} |", d.name, d.chests.chance);
+        let _ = writeln!(out, "| {} | {}% | {count} |", d.name, chests.chance);
     }
     out
 }

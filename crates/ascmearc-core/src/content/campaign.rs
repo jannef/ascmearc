@@ -214,8 +214,10 @@ impl Content {
         }
         for dungeon in self.dungeons.values() {
             let file = table_file(dungeon.campaign.as_deref(), "dungeons");
-            let lives = dungeon.spawning.iter().flat_map(|s| &s.population);
-            for &creature in dungeon.creatures.iter().chain(lives) {
+            let lives = (dungeon.plans()).flat_map(|p| {
+                (p.creatures.iter()).chain(p.spawning.iter().flat_map(|s| &s.population))
+            });
+            for &creature in lives {
                 self.check_creature(&file, dungeon.campaign.as_deref(), creature)?;
             }
         }
@@ -527,7 +529,7 @@ mod tests {
         );
         refused(
             &format!("{ASH}/data/dungeons/barrow.toml"),
-            "[[dungeon]]\nid = \"barrow\"\ngenerator = \"rooms\"\ndepth = 2\nsize = [80, 21]\n\
+            "[[dungeon]]\nid = \"barrow\"\ndepth = 2\n[dungeon.level]\ngenerator = { kind = \"rooms\" }\nsize = [80, 21]\n\
              creatures = [\"bard\"]\n",
             "names creature `bard`, a creature of campaign `showcase`",
         );
@@ -582,7 +584,7 @@ mod tests {
         );
         clash(
             &format!("{ASH}/data/dungeons/depths.toml"),
-            "[[dungeon]]\nid = \"depths\"\ngenerator = \"rooms\"\ndepth = 2\nsize = [80, 21]\n",
+            "[[dungeon]]\nid = \"depths\"\ndepth = 2\n[dungeon.level]\ngenerator = { kind = \"rooms\" }\nsize = [80, 21]\n",
             "duplicate dungeon id `depths`",
         );
         clash(

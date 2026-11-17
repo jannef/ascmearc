@@ -355,7 +355,7 @@ impl MiningRules {
             veins,
         };
         for def in content.dungeons() {
-            for name in def.ores.iter().flatten() {
+            for name in def.plans().flat_map(|p| p.ores.iter().flatten()) {
                 let known =
                     (content.material_id(name)).is_some_and(|m| rules.ores().any(|o| o == m));
                 if !known {

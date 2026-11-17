@@ -13,8 +13,9 @@ fn branch(population: &str) -> Content {
 [[dungeon]]
 id = "lair"
 name = "Lair"
-generator = "rooms"
 depth = 1
+[dungeon.level]
+generator = {{ kind = "rooms" }}
 size = [80, 21]
 danger = 3
 population = [{population}]

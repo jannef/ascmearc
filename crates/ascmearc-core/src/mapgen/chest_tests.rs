@@ -19,8 +19,10 @@ fn content(odds: Option<&str>) -> Content {
             let own: Vec<&str> = (text.lines())
                 .filter(|l| !l.starts_with("chests = "))
                 .collect();
-            (own.join("\n") + "\n")
-                .replace("[[dungeon]]\n", &format!("[[dungeon]]\nchests = {odds}\n"))
+            (own.join("\n") + "\n").replace(
+                "[dungeon.level]\n",
+                &format!("[dungeon.level]\nchests = {odds}\n"),
+            )
         });
     }
     Content::load(&files).expect("fixture content")

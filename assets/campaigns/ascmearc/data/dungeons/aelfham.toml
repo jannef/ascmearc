@@ -9,8 +9,10 @@
 id = "aelfham"
 name = "Ælfhām"
 arrival = "The mound's dark gives onto a dim, violet place. Somewhere far off, pipes are playing."
-generator = "caves"
 depth = 3
+
+[dungeon.level]
+generator = { kind = "caves" }
 size = [70, 30]
 # Fey tricks, not soldiers' traps.
 traps = ["pit", "alarm"]

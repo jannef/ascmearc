@@ -6,11 +6,13 @@
 //! id = "drytorr_tower"
 //! name = "Drȳtorr"
 //! kind = "tower"            # default "dungeon"
-//! generator = "tower"       # the only generator a tower takes, and only a tower takes it
 //! floors = 4                # ground and top included: the branch's depths are 1 to floors − 2
 //! clearing = "drytorr"      # the ground floor: an outdoor level of its campaign
 //! top = "drytorr_top"       # the hand-made top floor the highest depth's `<` leads to
-//! traps = ["arrow", "pit"]  # and the rest of a branch's fields: danger, population, ...
+//!
+//! [dungeon.level]
+//! generator = { kind = "tower" }  # the only generator a tower takes, and only a tower takes it
+//! traps = ["arrow", "pit"]  # and the rest of a level's fields: danger, population, ...
 //! ```
 //!
 //! The clearing gives every floor its size and the tower's **footprint**, the box of its
@@ -19,13 +21,13 @@
 //! whose own `>` must lead back there and stand where that `<` stands). The same stair runs
 //! through the tower: depth `d`'s `>` is on the cell of the `<` below it, and its `<` in the
 //! interior corner farthest from that `>` ([`far_corner`]), so the cells are known at load
-//! ([`Tower::stairs`]) and the floors are made in any order. Refused beside `kind = "tower"`:
-//! `depth` (it is `floors − 2`), `size` (the clearing's), `bottom`, `below`, `endless`, `portal`,
-//! `vaults`, `hidden`, `secret_doors`, `key`, `ores` (nothing is mined: a tower has none),
-//! `temperature` (a tower is an outdoor level), and a `[[dungeon.levels]]` row's `generator`,
-//! `size`, or `temperature`.
+//! ([`Tower::stairs`]) and the floors are made in any order. Refused beside `kind = "tower"`
+//! (`content/dungeon.rs`): the branch fields `depth` (it is `floors − 2`), `bottom`, `below`,
+//! `endless`, and `portal`, and in the template or any row the level fields `size` (the
+//! clearing's), `vaults`, `hidden`, `secret_doors`, `key`, `ores` (nothing is mined: a tower
+//! has none), `temperature` (a tower is an outdoor level), and a `generator` of any other kind.
 
-use super::{Content, DungeonDef, Generator, LevelKind, StairsDir};
+use super::{Content, DungeonDef, LevelKind, StairsDir};
 use crate::geom::Pos;
 use serde::Deserialize;
 
@@ -119,29 +121,18 @@ pub fn far_corner((min, max): (Pos, Pos), p: Pos) -> Pos {
 }
 
 /// A branch's tower fields, checked: `Some` for `kind = "tower"`, which must give `floors` (at
-/// least 3), `clearing`, and `top`, use the `tower` generator, and none of `refused` (each a
-/// field's name and whether the branch gives it); `None` for any other branch, which gives none of
-/// the three and another generator.
+/// least 3), `clearing`, and `top`; `None` for any other branch, which gives none of the three.
+/// The generator and the level fields a tower refuses are checked on each depth's plan
+/// (`content/dungeon.rs`).
 pub(super) fn resolve(
     kind: BranchKind,
     (floors, clearing, top): (Option<u32>, Option<String>, Option<String>),
-    generator: Generator,
-    refused: &[(&str, bool)],
 ) -> Result<Option<Tower>, String> {
     if kind == BranchKind::Dungeon {
         if floors.is_some() || clearing.is_some() || top.is_some() {
             return Err("`floors`, `clearing`, and `top` belong to `kind = \"tower\"`".into());
         }
-        if generator == Generator::Tower {
-            return Err("only `kind = \"tower\"` takes the `tower` generator".into());
-        }
         return Ok(None);
-    }
-    if generator != Generator::Tower {
-        return Err("a tower's `generator` is \"tower\"".into());
-    }
-    if let Some((field, _)) = refused.iter().find(|(_, given)| *given) {
-        return Err(format!("a tower has no `{field}`"));
     }
     let (Some(floors), Some(clearing), Some(top)) = (floors, clearing, top) else {
         return Err("a tower needs `floors`, `clearing`, and `top`".into());

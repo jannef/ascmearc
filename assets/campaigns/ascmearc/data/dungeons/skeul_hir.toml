@@ -16,12 +16,14 @@
 id = "skeul_hir"
 name = "Skeul Hir"
 arrival = "Steps cut for small feet climb away into the dark, worn hollow in the middle."
-generator = "passage"
 depth = 1
-# Long and winding: half again as wide as Ūtgang's shaft, and taller.
-size = [120, 30]
 above = "lytelscraef:2"
 bottom = "gimmwic"
+
+[dungeon.level]
+generator = { kind = "passage", random_vaults = [2, 3] }
+# Long and winding: half again as wide as Ūtgang's shaft, and taller.
+size = [120, 30]
 # The gnomes hide their ways and guard them: Dēopgang's gallery traps, few secret doors.
 traps = ["arrow", "spear", "pit", "alarm"]
 secret_doors = [0, 1]
@@ -29,7 +31,6 @@ secret_doors = [0, 1]
 # beside the waystation (only vaults with one entrance, so no vault opens a second route).
 loot = [6, 10]
 chests = { chance = 100, count = [1, 2] }
-random_vaults = [2, 3]
 temperature = 9
 # Between the deep's silver and gold and the mountain's foot's common ores.
 ores = ["copper", "tin", "silver"]

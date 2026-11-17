@@ -15,7 +15,7 @@ static FIXTURE: LazyLock<Content> = LazyLock::new(|| {
     let mut files = ContentFiles::builtin();
     let branch = |id: &str, danger: u8| {
         format!(
-            "\n[[dungeon]]\nid = \"{id}\"\ngenerator = \"rooms\"\ndepth = 1\nsize = [80, 21]\n\
+            "\n[[dungeon]]\nid = \"{id}\"\ndepth = 1\n[dungeon.level]\ngenerator = {{ kind = \"rooms\" }}\nsize = [80, 21]\n\
              danger = {danger}\npopulation = [\"kobold\"]\n\
              room_effects = {{ chance = 100, per_level = 3, favoured = {{ armoury = 50, \
              workshop = 50 }} }}\nshops = {{ chance = 0 }}\n"

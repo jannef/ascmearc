@@ -6,6 +6,14 @@
 //! to `depths:N-1` (on depth 1: back to the level it was first entered from) and its `>` to
 //! `depths:N+1` (the deepest level has none).
 //!
+//! A `[[dungeon]]` table holds the **branch** fields: its id and name, how deep it goes and where
+//! it leads. Its `[dungeon.level]` table is the **level template**: how every level is made, from
+//! its generator and size to who lives there. `[[dungeon.levels]]` rows (`from`, `to`) give
+//! the same fields, each optional, layered field by field over the template for the depths of
+//! their range (first match wins), so any level field may vary by depth. A table field (the
+//! generator of the template's kind, `chests`, `spawn`, `room_effects`, `shops`) layers field by
+//! field too; `danger` is one value. The resolved result is one [`LevelPlan`] per depth.
+//!
 //! A branch with `below` (a level of another branch, `below = "fyrdelf:12"`) is a way between
 //! that level and the overworld: its deepest level's `>` leads there, that
 //! level gets a `<` back up (`mapgen/way_up.rs`), and its first level's `<` climbs out to its way
@@ -23,8 +31,9 @@
 //! A branch of one floor calls it by its own name alone ("Skeul Hir", not "Skeul Hir 1").
 //!
 //! A branch with `endless` instead of `depth` has no last floor (`world/levels/endless.rs`): every
-//! staircase makes a new floor, only the current one exists, and each floor is drawn rooms or caves
-//! as it is made. It has one row of per-depth tables, read at every depth, and so no
+//! staircase makes a new floor, only the current one exists, and each floor is drawn as it is
+//! made: the template's plan, or with `caves` percent the `caves_level` plan (the template with
+//! that table's fields over it). It has one plan, read at every depth, and so no
 //! `[[dungeon.levels]]`, and with them no pinned vault.
 //!
 //! A branch of `kind = "tower"` goes up from a hand-made clearing instead of down
@@ -40,10 +49,13 @@
 //! [[dungeon]]
 //! id = "depths"
 //! name = "The Depths"          # level names: "The Depths 3"; default: the id
-//! generator = "rooms"          # "rooms" (rooms and corridors), "caves" (cellular automata),
-//!                               # "tunnels" (caverns joined by narrow tunnels), or "passage"
-//!                               # (one long hewn way between the stairs, for shortcuts)
+//! arrival = "It is cold."      # said each time the player arrives on depth 1; optional
 //! depth = 8                     # or, instead: [dungeon.endless] (below)
+//!
+//! [dungeon.level]               # the template: every level unless a row says otherwise
+//! generator = { kind = "rooms" } # "rooms", "caves", "tunnels", "passage", "minster", "mines",
+//!                               # or a tower's "tower", with any of the kind's parameters
+//!                               # (`super::generator`, data/generators.toml)
 //! size = [80, 21]
 //! creatures = ["rat", "kobold"] # patrolling creatures generators may place; default none
 //! traps = ["arrow", "pit"]      # traps generators may hide; default none
@@ -52,13 +64,12 @@
 //! hidden_per_depth = 1          # hidden features this much harder to find per level down
 //! locks_per_depth = 1           # locks this much harder to pick per level down
 //! loot = [2, 4]                 # items of loot on each level's floor; default none
-//! random_vaults = [2, 3]        # passage floors only: random vaults (one entrance); default none
 //! chests = { chance = 20, count = [1, 1] } # chests a floor gets; the default
 //! ambient = [0, 0, 0, 0]        # optional
 //! temperature = 9               # °C; default the dungeon default (10)
 //! key = "rusty_key"             # optional: rooms levels lock a few rooms with its lock
-//! danger = 4                    # optional (`super::danger`): its
-//! population = ["rat"]          # floors' danger, who lives there, how many, and how they
+//! danger = 4                    # optional (`super::danger`): the
+//! population = ["rat"]          # level's danger, who lives there, how many, and how they
 //! population_count = 40         # come back; none: danger 0, nothing comes
 //! stray = 5                    # the draws' odds (`super::danger::Odds`); default
 //! stray_pool = "populations"    # strays only from populations; default "all"
@@ -66,24 +77,26 @@
 //! deeper = 5
 //! dread_one_in = 100            # one draw in this many among the dread types
 //! spawn = { every = "15m", chance = 60 }
+//! vaults = ["guard_post"]       # vaults (ids) stamped on every level of the range for certain
 //!
-//! [[dungeon.levels]]            # optional per-depth overrides, first match wins
-//! from = 3
+//! [[dungeon.levels]]            # optional per-depth rows, first match wins: the template's
+//! from = 3                      # fields, each optional, over the template
 //! to = 5                        # inclusive; default: just `from`
-//! generator = "caves"           # default: the branch's generator
-//! size = [120, 60]              # default: the branch's size
-//! temperature = 7               # default: the branch's temperature
-//! danger = { base = 9, per_depth = 2 }   # default: the branch's (which it needs)
-//! room_effects = { chance = 40 } # default: the branch's (below), field by field
-//! dread_one_in = 50             # default: the branch's (which needs a `danger`)
+//! generator = { kind = "caves", rock = 50 }  # or { kind = "passage", random_vaults = [2, 3] }
+//! size = [120, 60]
+//! temperature = 7
+//! danger = { base = 9, per_depth = 2 }
+//! room_effects = { chance = 40 } # field by field over the template's (below)
+//! dread_one_in = 50
 //! hidden = { id = "way", terrain = "stairs_down", to = "town", name = "The Way" }
 //!                               # a row of one level only: a hidden location on a cell of
 //!                               # floor its generator picks (`mapgen/hidden.rs`), the far end
 //!                               # of a hand-made level's hidden way of the same id
 //!
-//! [dungeon.endless]             # instead of `depth`: floors without end (`generator` is "rooms")
-//! caves = 15                    # percent of floors that are caves, the rest rooms
-//! caves_size = [100, 40]        # the caves' size; the rooms' is the branch's `size`
+//! [dungeon.endless]             # instead of `depth`: floors without end
+//! caves = 15                    # percent of floors made by `caves_level`, the rest the template
+//! caves_level = { generator = { kind = "caves" }, size = [100, 40] }  # the level fields the
+//!                               # caves floors change, over the template
 //! dread = { steps = [[70, 40]], halves = 10, least = 5 }   # `dread_one_in` by depth
 //!                               # (`super::dread`), as `[[dungeon.levels]]` give it elsewhere
 //!
@@ -98,23 +111,28 @@
 //! creature = "gnaegan"          # a unique type, placed by the lair alone
 //! vault = "gnaegans_midden"     # the lair: a vault placing the boss, with a `>` (hidden)
 //!
-//! [dungeon.room_effects]        # optional: the branch's own special-room odds
+//! [dungeon.level.room_effects]  # optional: the level's own special-room odds
 //! chance = 25                   # percent a room is special; default the shared `chance`
 //! per_level = 2                 # at most this many a level (1 to 8); default the shared
 //! favoured = { flooded = 40 }   # effects with a fixed share of the draws, in percent
 //! banned = ["sanctuary"]        # effects never drawn here; the rest by their own `weight`
 //!
-//! [dungeon.shops]               # optional: the branch's own shop odds
+//! [dungeon.level.shops]         # optional: the level's own shop odds
 //! chance = 100                  # percent of rooms levels with a shop; default the shared
 //! kinds = ["general_store"]     # ids in shops.toml, picked uniformly; default all generated
 //! names = ["Durin"]             # the keepers' names; default the shared `names`
 //! keeper = "shopkeeper"         # the keepers' creature type; default the shared `[keeper]`'s
 //! ```
 //!
-//! A branch without the tables gets the shared odds of `room_effects.toml` and `shops.toml`
+//! A level without the tables gets the shared odds of `room_effects.toml` and `shops.toml`
 //! ([`RoomOdds::shared`]: no favoured or banned effects; [`ShopOdds::shared`]), resolved here
 //! once per depth ([`DungeonDef::room_odds`], [`DungeonDef::shop_odds`]); the generators draw
 //! the same way whichever odds they read. The old `effects` list is refused.
+//!
+//! What is checked is the resolved plan of each depth, not which table gave a field: a plan
+//! with `dread_one_in` or a `population` but no `danger` is refused wherever they came from, as
+//! is a size its generator does not build, a hidden location on more than one depth, or a tower
+//! plan with what a tower has not.
 
 use super::ContentError;
 use super::creature::CreatureId;
@@ -122,6 +140,7 @@ use super::danger::{
     CountSpec, DangerRule, DangerSpec, Odds, OddsSpec, SpawnSpec, Spawning, SpawningSpec, StrayPool,
 };
 use super::dread::{DreadCurve, DreadCurveSpec};
+use super::generator::{GeneratorDefaults, GeneratorKind, GeneratorSpec};
 use super::level::{HiddenLocation, HiddenSpec};
 use super::object::ObjectId;
 use super::room_effect::{RoomEffectId, RoomEffects};
@@ -131,45 +150,10 @@ use super::trap::TrapId;
 use crate::light::Light;
 use crate::temperature::Temperature;
 use serde::Deserialize;
+use serde::de::Error as _;
 use std::collections::BTreeMap;
 
-/// Which generator builds a level.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
-#[serde(rename_all = "lowercase")]
-pub enum Generator {
-    /// Rooms joined by corridors, with doors at room entrances (ADOM-like).
-    Rooms,
-    /// Cellular-automata caverns.
-    Caves,
-    /// Natural caverns of varied size joined by narrow winding tunnels (`mapgen/tunnels/`).
-    Tunnels,
-    /// One long hewn way from the stairs up at one end to the stairs down at the other, with no
-    /// second route: the tunnels' linear mode, for shortcuts (`mapgen/tunnels/passage.rs`).
-    Passage,
-    /// The cellars and crypts under a great church, drowning deeper (`mapgen/minster.rs`).
-    Minster,
-    /// A worked mine that opens up and grows lava the deeper it lies (`mapgen/mines.rs`).
-    Mines,
-    /// A tower's floor: a ring wall with windows round a winding hall (`mapgen/tower.rs`); only
-    /// a tower's ([`super::tower`]).
-    Tower,
-}
-
-impl Generator {
-    /// Smallest and largest supported `[width, height]`.
-    fn size_limits(self) -> ([i32; 2], [i32; 2]) {
-        match self {
-            Generator::Rooms => ([40, 15], [200, 100]),
-            Generator::Caves => ([40, 30], [400, 300]),
-            Generator::Tunnels => ([40, 20], [400, 300]),
-            Generator::Passage => ([40, 15], [400, 300]),
-            Generator::Minster => ([90, 36], [200, 100]),
-            Generator::Mines => ([40, 20], [400, 300]),
-            // A tower's floors are its clearing's size, which a hand-made level may have.
-            Generator::Tower => ([1, 1], [400, 300]),
-        }
-    }
-}
+pub use super::generator::Generator;
 
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -181,6 +165,7 @@ pub(super) struct DungeonFile {
     pub(super) defaults: Option<Odds>,
 }
 
+/// A `[[dungeon]]` table: the branch's fields, its level template, and its rows.
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct DungeonSpec {
@@ -188,7 +173,6 @@ struct DungeonSpec {
     name: Option<String>,
     /// A line said each time the player arrives on its first level; default none.
     arrival: Option<String>,
-    generator: Generator,
     /// `"tower"`: floors that go up from a clearing (`super::tower`); default `"dungeon"`.
     #[serde(default)]
     kind: BranchKind,
@@ -211,34 +195,35 @@ struct DungeonSpec {
     endless: Option<EndlessSpec>,
     /// A branch of Pits, opened only by a portal.
     portal: Option<PortalSpec>,
+    /// The level template.
+    level: Option<LevelSpec>,
+    #[serde(default)]
+    levels: Vec<LevelRow>,
+}
+
+/// The level fields, each optional: the `[dungeon.level]` template, a `[[dungeon.levels]]` row's,
+/// or an endless branch's `caves_level`.
+#[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct LevelSpec {
+    generator: Option<GeneratorSpec>,
     /// Left out of a tower: its clearing's.
     size: Option<[i32; 2]>,
-    #[serde(default)]
-    ambient: Light,
-    #[serde(default)]
-    creatures: Vec<String>,
+    ambient: Option<Light>,
+    creatures: Option<Vec<String>>,
     /// How many items of loot lie on the floor of each level, `[fewest, most]`.
-    #[serde(default)]
-    loot: [u8; 2],
-    /// How many random vaults a passage floor stamps, `[fewest, most]`; default none.
-    #[serde(default)]
-    random_vaults: [u8; 2],
+    loot: Option<[u8; 2]>,
     /// How often its floors get chests; default one floor in five, one chest.
-    #[serde(default)]
-    chests: ChestOdds,
+    chests: Option<ChestOddsSpec>,
     /// The temperature on its levels, in °C; default the dungeon default.
     temperature: Option<i8>,
     /// The key (an object) to the rooms the generators lock; none: no locked rooms.
     key: Option<String>,
-    #[serde(default)]
-    traps: Vec<String>,
+    traps: Option<Vec<String>>,
     traps_per_level: Option<[u32; 2]>,
-    #[serde(default)]
-    secret_doors: [u32; 2],
-    #[serde(default)]
-    hidden_per_depth: u8,
-    #[serde(default)]
-    locks_per_depth: u8,
+    secret_doors: Option<[u32; 2]>,
+    hidden_per_depth: Option<u8>,
+    locks_per_depth: Option<u8>,
     /// The only ores its walls give a miner (`data/mining.toml`); none: every ore.
     ores: Option<Vec<String>>,
     /// How dangerous its floors are; none: 0, nothing comes.
@@ -257,16 +242,101 @@ struct DungeonSpec {
     spawn: Option<SpawnSpec>,
     room_effects: Option<RoomOddsSpec>,
     shops: Option<ShopOddsSpec>,
-    #[serde(default)]
-    levels: Vec<LevelsSpec>,
+    /// Vaults (by id) stamped on each of these levels, and nowhere else.
+    vaults: Option<Vec<String>>,
+    /// A hidden location the level keeps on a cell its generator picks (`mapgen/hidden.rs`); on
+    /// one level only.
+    hidden: Option<HiddenSpec>,
+}
+
+impl LevelSpec {
+    /// `self`'s fields where given, else `under`'s; the tables field by field.
+    fn over(&self, under: &Self) -> Self {
+        let table = |a: &Option<RoomOddsSpec>, b: &Option<RoomOddsSpec>| match (a, b) {
+            (Some(a), Some(b)) => Some(a.over(b)),
+            (a, b) => a.clone().or_else(|| b.clone()),
+        };
+        let shops = |a: &Option<ShopOddsSpec>, b: &Option<ShopOddsSpec>| match (a, b) {
+            (Some(a), Some(b)) => Some(a.over(b)),
+            (a, b) => a.clone().or_else(|| b.clone()),
+        };
+        Self {
+            generator: match (&self.generator, &under.generator) {
+                (Some(a), Some(b)) => Some(a.over(b)),
+                (a, b) => a.clone().or_else(|| b.clone()),
+            },
+            size: self.size.or(under.size),
+            ambient: self.ambient.or(under.ambient),
+            creatures: self.creatures.clone().or_else(|| under.creatures.clone()),
+            loot: self.loot.or(under.loot),
+            chests: match (self.chests, under.chests) {
+                (Some(a), Some(b)) => Some(a.over(&b)),
+                (a, b) => a.or(b),
+            },
+            temperature: self.temperature.or(under.temperature),
+            key: self.key.clone().or_else(|| under.key.clone()),
+            traps: self.traps.clone().or_else(|| under.traps.clone()),
+            traps_per_level: self.traps_per_level.or(under.traps_per_level),
+            secret_doors: self.secret_doors.or(under.secret_doors),
+            hidden_per_depth: self.hidden_per_depth.or(under.hidden_per_depth),
+            locks_per_depth: self.locks_per_depth.or(under.locks_per_depth),
+            ores: self.ores.clone().or_else(|| under.ores.clone()),
+            danger: self.danger.or(under.danger),
+            population: self.population.clone().or_else(|| under.population.clone()),
+            population_count: self.population_count.or(under.population_count),
+            stray: self.stray.or(under.stray),
+            stray_pool: self.stray_pool.or(under.stray_pool),
+            out_of_depth: self.out_of_depth.or(under.out_of_depth),
+            deeper: self.deeper.or(under.deeper),
+            dread_one_in: self.dread_one_in.or(under.dread_one_in),
+            neutral: self.neutral.or(under.neutral),
+            spawn: match (&self.spawn, &under.spawn) {
+                (Some(a), Some(b)) => Some(a.over(b)),
+                (a, b) => a.clone().or_else(|| b.clone()),
+            },
+            room_effects: table(&self.room_effects, &under.room_effects),
+            shops: shops(&self.shops, &under.shops),
+            vaults: self.vaults.clone().or_else(|| under.vaults.clone()),
+            hidden: self.hidden.clone().or_else(|| under.hidden.clone()),
+        }
+    }
+}
+
+/// A `[[dungeon.levels]]` row: its range and the [`LevelSpec`] fields beside it. Read by hand so
+/// the fields stay one struct and an unknown one is still refused (serde's `flatten` would let
+/// it through).
+#[derive(Debug)]
+struct LevelRow {
+    from: u32,
+    to: Option<u32>,
+    level: LevelSpec,
+}
+
+impl<'de> Deserialize<'de> for LevelRow {
+    fn deserialize<D: serde::Deserializer<'de>>(d: D) -> Result<Self, D::Error> {
+        let mut table = toml::Table::deserialize(d)?;
+        let from = table
+            .remove("from")
+            .ok_or_else(|| D::Error::missing_field("from"))?
+            .try_into::<u32>()
+            .map_err(D::Error::custom)?;
+        let to = (table.remove("to"))
+            .map(|v| v.try_into::<u32>())
+            .transpose()
+            .map_err(D::Error::custom)?;
+        let level: LevelSpec = table.try_into().map_err(D::Error::custom)?;
+        Ok(Self { from, to, level })
+    }
 }
 
 /// A branch's `[dungeon.endless]` table.
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct EndlessSpec {
+    /// Percent of floors made by `caves_level`.
     caves: u8,
-    caves_size: [i32; 2],
+    /// The level fields a caves floor changes, over the template.
+    caves_level: Option<LevelSpec>,
     #[serde(default)]
     boss: Vec<BossSpec>,
     /// `dread_one_in` by depth (`super::dread`).
@@ -294,22 +364,21 @@ pub struct LayerBoss {
     pub vault: String,
 }
 
-/// What makes a branch endless: the odds of a floor's generator,
+/// What makes a branch endless: the odds of a floor's plan,
 /// and how deep its danger still finds anything to draw.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Endless {
-    /// Percent of floors that are caves; the rest are rooms, of the branch's size.
+    /// Percent of floors made by the caves plan ([`DungeonDef::caves_plan`]); the rest by the
+    /// template's.
     pub caves: u8,
-    /// The width and height of a caves floor.
-    pub caves_size: (i32, i32),
     /// The deepest floor whose danger the branch's roster still reaches: floors below it draw as
     /// it does ([`crate::content::Content::spawning`]). Filled once everything is loaded
     /// (`Content::fill_generic`).
     pub roster_depth: u32,
 }
 
-/// A branch's (or a range of its depths') `room_effects` table: each field left out falls back
-/// to the branch's table, then to the shared `room_effects/`.
+/// A level's `room_effects` table: each field left out falls back to the template's, then to
+/// the shared `room_effects/`.
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct RoomOddsSpec {
@@ -319,7 +388,7 @@ struct RoomOddsSpec {
     banned: Option<Vec<String>>,
 }
 
-/// A branch's (or a range of its depths') `shops` table, falling back as [`RoomOddsSpec`] does.
+/// A level's `shops` table, falling back as [`RoomOddsSpec`] does.
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct ShopOddsSpec {
@@ -409,20 +478,18 @@ impl ShopOdds {
 }
 
 impl RoomOddsSpec {
-    /// A depth's table: `over`'s fields (its `[[dungeon.levels]]` entry), else `branch`'s.
-    fn layer(over: Option<&Self>, branch: Option<&Self>) -> Self {
-        let over = over.cloned().unwrap_or_default();
-        let branch = branch.cloned().unwrap_or_default();
+    /// `self`'s fields where given, else `under`'s.
+    fn over(&self, under: &Self) -> Self {
         Self {
-            chance: over.chance.or(branch.chance),
-            per_level: over.per_level.or(branch.per_level),
-            favoured: over.favoured.or(branch.favoured),
-            banned: over.banned.or(branch.banned),
+            chance: self.chance.or(under.chance),
+            per_level: self.per_level.or(under.per_level),
+            favoured: self.favoured.clone().or_else(|| under.favoured.clone()),
+            banned: self.banned.clone().or_else(|| under.banned.clone()),
         }
     }
 
     /// The odds, the shared ones filling in what the table leaves out.
-    fn resolve(self, rooms: &RoomEffects) -> Result<RoomOdds, String> {
+    fn resolve(&self, rooms: &RoomEffects) -> Result<RoomOdds, String> {
         let shared = RoomOdds::shared(rooms);
         let id =
             |e: &str| (rooms.id(e)).ok_or_else(|| format!("unknown effect `{e}` (room_effects/)"));
@@ -446,27 +513,25 @@ impl RoomOddsSpec {
 }
 
 impl ShopOddsSpec {
-    /// A depth's table: `over`'s fields (its `[[dungeon.levels]]` entry), else `branch`'s.
-    fn layer(over: Option<&Self>, branch: Option<&Self>) -> Self {
-        let over = over.cloned().unwrap_or_default();
-        let branch = branch.cloned().unwrap_or_default();
+    /// `self`'s fields where given, else `under`'s.
+    fn over(&self, under: &Self) -> Self {
         Self {
-            chance: over.chance.or(branch.chance),
-            kinds: over.kinds.or(branch.kinds),
-            names: over.names.or(branch.names),
-            keeper: over.keeper.or(branch.keeper),
+            chance: self.chance.or(under.chance),
+            kinds: self.kinds.clone().or_else(|| under.kinds.clone()),
+            names: self.names.clone().or_else(|| under.names.clone()),
+            keeper: self.keeper.clone().or_else(|| under.keeper.clone()),
         }
     }
 
     /// The odds, the shared ones filling in what the table leaves out; `creature_id` resolves
     /// the keeper's creature type.
     fn resolve(
-        self,
+        &self,
         shops: &Shops,
         creature_id: impl Fn(&str) -> Option<CreatureId>,
     ) -> Result<ShopOdds, String> {
         let shared = ShopOdds::shared(shops);
-        let kinds = match self.kinds {
+        let kinds = match &self.kinds {
             Some(names) => (names.iter())
                 .map(|k| {
                     shops
@@ -476,8 +541,8 @@ impl ShopOddsSpec {
                 .collect::<Result<Vec<_>, _>>()?,
             None => shared.kinds,
         };
-        let keeper = match self.keeper {
-            Some(k) => (creature_id(&k))
+        let keeper = match &self.keeper {
+            Some(k) => (creature_id(k))
                 .filter(|_| k != "player")
                 .ok_or_else(|| format!("unknown keeper creature `{k}`"))?,
             None => shared.keeper,
@@ -485,7 +550,7 @@ impl ShopOddsSpec {
         Ok(ShopOdds {
             chance: self.chance.unwrap_or(shared.chance),
             kinds,
-            names: self.names.unwrap_or(shared.names),
+            names: self.names.clone().unwrap_or(shared.names),
             keeper,
         })
     }
@@ -497,53 +562,44 @@ const TRAPS_PER_LEVEL: [u32; 2] = [2, 4];
 /// How often a branch's floors get chests (`mapgen/chest.rs`): with `chance`
 /// percent a floor has some, between `count`'s least and most. One floor in five has one unless
 /// the branch says otherwise (docs/design/chests-and-treasure.md decision 12).
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct ChestOdds {
-    #[serde(default = "ChestOdds::default_chance")]
     pub chance: u8,
-    #[serde(default = "ChestOdds::default_count")]
     pub count: [u8; 2],
-}
-
-impl ChestOdds {
-    const fn default_chance() -> u8 {
-        20
-    }
-
-    const fn default_count() -> [u8; 2] {
-        [1, 1]
-    }
 }
 
 impl Default for ChestOdds {
     fn default() -> Self {
         Self {
-            chance: Self::default_chance(),
-            count: Self::default_count(),
+            chance: 20,
+            count: [1, 1],
         }
     }
 }
 
-#[derive(Debug, Deserialize)]
+/// A level's `chests` table, each field optional.
+#[derive(Clone, Copy, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
-struct LevelsSpec {
-    from: u32,
-    to: Option<u32>,
-    generator: Option<Generator>,
-    size: Option<[i32; 2]>,
-    temperature: Option<i8>,
-    danger: Option<DangerSpec>,
-    /// One draw in this many among the dread types on these levels; default the branch's.
-    dread_one_in: Option<u16>,
-    room_effects: Option<RoomOddsSpec>,
-    shops: Option<ShopOddsSpec>,
-    /// Vaults (by id) stamped on each of these levels, and nowhere else.
-    #[serde(default)]
-    vaults: Vec<String>,
-    /// A hidden location the level keeps on a cell its generator picks (`mapgen/hidden.rs`); a
-    /// row of one level only.
-    hidden: Option<HiddenSpec>,
+struct ChestOddsSpec {
+    chance: Option<u8>,
+    count: Option<[u8; 2]>,
+}
+
+impl ChestOddsSpec {
+    fn over(&self, under: &Self) -> Self {
+        Self {
+            chance: self.chance.or(under.chance),
+            count: self.count.or(under.count),
+        }
+    }
+
+    fn resolve(&self) -> ChestOdds {
+        let default = ChestOdds::default();
+        ChestOdds {
+            chance: self.chance.unwrap_or(default.chance),
+            count: self.count.unwrap_or(default.count),
+        }
+    }
 }
 
 /// A branch's `[dungeon.portal]` table.
@@ -560,18 +616,56 @@ struct PortalSpec {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Portal;
 
-/// How one level of a branch is generated.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+/// How one level of a branch is generated and what it holds: the template with its depth's row
+/// over it, resolved.
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct LevelPlan {
+    /// Which generator builds it, with its parameters.
     pub generator: Generator,
     pub width: i32,
     pub height: i32,
     /// Its temperature; `None`: the dungeon default.
     pub temperature: Option<Temperature>,
+    pub ambient: Light,
+    /// Creatures generators may place on patrol.
+    pub creatures: Vec<CreatureId>,
+    /// Traps generators may hide on the level; none: it has none.
+    pub traps: Vec<TrapId>,
+    /// How many traps it gets, at least and at most.
+    pub traps_per_level: [u32; 2],
+    /// How many of its doors are hidden (secret doors), at least and
+    /// at most: only doors the level can do without, so it may get fewer.
+    pub secret_doors: [u32; 2],
+    /// How much harder its hidden features (secret doors, hidden traps) are to find
+    /// for each level below the first ([`DungeonDef::hidden_at`]).
+    pub hidden_per_depth: u8,
+    /// How much harder its locks are to pick for each level below the first
+    /// ([`DungeonDef::locks_at`]).
+    pub locks_per_depth: u8,
+    /// The only ores (metal ids) its walls give a miner (`world/crafting/mine.rs`;
+    /// checked against `data/mining.toml`'s ore rows); `None`: every ore of the table.
+    pub ores: Option<Vec<String>>,
+    /// How many items of loot lie on its floor, fewest and most (item level: the depth).
+    pub loot: [u8; 2],
+    /// How often it gets chests.
+    pub chests: ChestOdds,
+    /// The key to the rooms its generator locks: it locks them with the
+    /// lock this key opens and leaves one where the player can reach it. `None`: no locked rooms.
+    pub key: Option<ObjectId>,
     /// How dangerous it is; `None`: danger 0, nothing comes.
     pub danger: Option<DangerRule>,
-    /// Its own `dread_one_in` (a `[[dungeon.levels]]` entry's); `None`: the branch's.
-    pub dread_one_in: Option<u16>,
+    /// What lives there and how it comes back; `None` with `danger`.
+    pub spawning: Option<Spawning>,
+    /// Its special-room odds.
+    pub room_odds: RoomOdds,
+    /// Its shop odds; `None` without `shops.toml`.
+    pub shop_odds: Option<ShopOdds>,
+    /// The vaults (ids) it stamps for certain (checked against the vaults by
+    /// `Content::load_dungeons`).
+    pub vaults: Vec<String>,
+    /// The hidden location it keeps: the far end of a hand-made level's hidden way
+    /// (`Content::validate`).
+    pub hidden: Option<HiddenLocation>,
 }
 
 /// A validated dungeon branch.
@@ -582,7 +676,7 @@ pub struct DungeonDef {
     /// A line said each time the player arrives on its first level (`id:1`).
     pub arrival: Option<String>,
     /// Number of levels: `id:1` to `id:depth`. An endless branch has no last floor and 1 here:
-    /// the one row of its tables, which is every floor's.
+    /// its one plan, which is every floor's.
     pub depth: u32,
     /// The level of another branch its first level's `<` leads to, however the branch was
     /// entered: a level that keeps the far end of a hidden way down into it (checked by
@@ -605,68 +699,45 @@ pub struct DungeonDef {
     pub bosses: Vec<LayerBoss>,
     /// An endless branch's `dread_one_in` by depth (`[dungeon.endless.dread]`), if it gives one.
     pub dread: Option<DreadCurve>,
-    pub ambient: Light,
-    /// Creatures generators may place on patrol.
-    pub creatures: Vec<CreatureId>,
-    /// Traps generators may hide on a level; none: the branch has none.
-    pub traps: Vec<TrapId>,
-    /// How many traps a level gets, at least and at most.
-    pub traps_per_level: [u32; 2],
-    /// How many of a level's doors are hidden (secret doors), at least and
-    /// at most: only doors the level can do without, so a level may get fewer.
-    pub secret_doors: [u32; 2],
-    /// How much harder the hidden features on a level (secret doors, hidden traps) are to find
-    /// for each level below the first ([`DungeonDef::hidden_at`]).
-    pub hidden_per_depth: u8,
-    /// How much harder the locks on a level are to pick for each level below the first
-    /// ([`DungeonDef::locks_at`]).
-    pub locks_per_depth: u8,
-    /// The only ores (metal ids) its walls give a miner (`world/crafting/mine.rs`;
-    /// checked against `data/mining.toml`'s ore rows); `None`: every ore of the table.
-    pub ores: Option<Vec<String>>,
-    /// How many items of loot lie on the floor of each level, fewest and most (item level: the
-    /// depth).
-    pub loot: [u8; 2],
-    /// How many random vaults a passage floor stamps, fewest and most (`mapgen/tunnels/
-    /// passage.rs`: only vaults with one entrance); none on other generators, which draw their own.
-    pub random_vaults: [u8; 2],
-    /// How often its floors get chests.
-    pub chests: ChestOdds,
-    /// The key to the rooms the rooms generator locks: it locks them with the
-    /// lock this key opens and leaves one where the player can reach it. `None`: no locked rooms.
-    pub key: Option<ObjectId>,
-    /// What lives on its floors and how it comes back; `None`: its
-    /// floors have danger 0 and only the generator's patrols.
+    /// The branch's folk as its template gives them: what lives on its floors unless a row says
+    /// otherwise (a floor's own, a row's, is its plan's, [`LevelPlan::spawning`], which
+    /// [`crate::content::Content::spawning`] reads); `None`: the template has no `danger`.
     pub spawning: Option<Spawning>,
     /// One plan per depth, index `depth - 1`.
     plans: Vec<LevelPlan>,
+    /// An endless branch's caves floors' plan.
+    caves_plan: Option<LevelPlan>,
     /// The campaign whose `data/dungeons/` it is in; `None` outside every campaign.
     pub campaign: Option<String>,
-    /// The special-room odds per depth, index `depth - 1`.
-    room_odds: Vec<RoomOdds>,
-    /// The shop odds per depth, index `depth - 1`; empty without `shops.toml`.
-    shop_odds: Vec<ShopOdds>,
-    /// The vaults (ids) each depth stamps for certain, index `depth - 1` (checked against the
-    /// vaults by `Content::load_dungeons`).
-    vaults: Vec<Vec<String>>,
-    /// The hidden location each depth keeps, by depth (a `[[dungeon.levels]]` row's `hidden`):
-    /// the far end of a hand-made level's hidden way (`Content::validate`).
-    hidden: BTreeMap<u32, HiddenLocation>,
 }
 
 impl DungeonDef {
-    /// The row of the per-depth tables level `depth` (1-based) reads: an endless branch's one row
-    /// at every depth.
+    /// The plan level `depth` (1-based) reads: an endless branch's one plan at every depth.
     fn row(&self, depth: u32) -> Option<usize> {
         let i = usize::try_from(depth.checked_sub(1)?).ok()?;
         Some(if self.endless.is_some() { 0 } else { i })
     }
 
     /// The plan for level `depth` (1-based), if the branch has that level. On an endless branch
-    /// its generator and size are the rooms': a floor's own are drawn as it is made
-    /// (`mapgen::generate_for`).
-    pub fn plan(&self, depth: u32) -> Option<LevelPlan> {
-        self.plans.get(self.row(depth)?).copied()
+    /// the template's: a floor's own is drawn as it is made (`mapgen::generate_for`,
+    /// [`DungeonDef::caves_plan`]).
+    pub fn plan(&self, depth: u32) -> Option<&LevelPlan> {
+        self.plans.get(self.row(depth)?)
+    }
+
+    /// An endless branch's caves floors' plan (`[dungeon.endless] caves_level` over the
+    /// template); `None` on any other branch.
+    pub fn caves_plan(&self) -> Option<&LevelPlan> {
+        self.caves_plan.as_ref()
+    }
+
+    /// Every plan of the branch: each depth's and an endless branch's caves plan.
+    pub fn plans(&self) -> impl Iterator<Item = &LevelPlan> {
+        self.plans.iter().chain(self.caves_plan.as_ref())
+    }
+
+    pub(super) fn plans_mut(&mut self) -> impl Iterator<Item = &mut LevelPlan> {
+        self.plans.iter_mut().chain(self.caves_plan.as_mut())
     }
 
     /// Whether level `depth` (1-based) has a way down.
@@ -686,42 +757,42 @@ impl DungeonDef {
         Some(sibling(id, depth + 1))
     }
 
-    /// Level `depth`'s own `dread_one_in` (1-based): an endless branch's curve there, else its
-    /// `[[dungeon.levels]]` entry's; `None`: the branch's (docs/design/monster-dread.md §8).
+    /// Level `depth`'s `dread_one_in` (1-based): an endless branch's curve there, else its
+    /// plan's (its row's over the template's over `[defaults]`'); `None` without a danger
+    /// (docs/design/monster-dread.md §8).
     pub fn dread_one_in(&self, depth: u32) -> Option<u16> {
         match &self.dread {
-            Some(curve) => curve.at(depth),
-            None => self.plan(depth)?.dread_one_in,
+            Some(curve) if curve.at(depth).is_some() => curve.at(depth),
+            _ => Some(self.plan(depth)?.spawning.as_ref()?.odds.dread_one_in),
         }
     }
 
     /// The special-room odds of level `depth` (1-based), if the branch has that level.
     pub fn room_odds(&self, depth: u32) -> Option<&RoomOdds> {
-        self.room_odds.get(self.row(depth)?)
+        self.plan(depth).map(|p| &p.room_odds)
     }
 
     /// The shop odds of level `depth` (1-based); `None` without `shops.toml`.
     pub fn shop_odds(&self, depth: u32) -> Option<&ShopOdds> {
-        self.shop_odds.get(self.row(depth)?)
+        self.plan(depth)?.shop_odds.as_ref()
     }
 
-    /// The vaults (ids) level `depth` (1-based) stamps for certain: a `[[dungeon.levels]]`
-    /// entry's `vaults`. A vault named by any branch level is stamped only where it is named.
+    /// The vaults (ids) level `depth` (1-based) stamps for certain: its plan's `vaults`. A vault
+    /// named by any branch level is stamped only where it is named.
     pub fn vaults(&self, depth: u32) -> &[String] {
-        (self.row(depth))
-            .and_then(|i| self.vaults.get(i))
-            .map_or(&[], Vec::as_slice)
+        self.plan(depth).map_or(&[], |p| p.vaults.as_slice())
     }
 
     /// The hidden location level `depth` (1-based) keeps on a cell its generator picks
     /// (`mapgen/hidden.rs`), if it keeps one.
     pub fn hidden_location(&self, depth: u32) -> Option<&HiddenLocation> {
-        self.hidden.get(&depth)
+        self.plan(depth)?.hidden.as_ref()
     }
 
     /// Every hidden location of its levels, with its level's id, in depth order.
     pub fn hidden_locations(&self) -> impl Iterator<Item = (String, &HiddenLocation)> {
-        (self.hidden.iter()).map(|(depth, h)| (self.level_id(*depth), h))
+        (self.plans.iter().enumerate())
+            .filter_map(|(i, p)| Some((self.level_id(i as u32 + 1), p.hidden.as_ref()?)))
     }
 
     /// The layer boss of floor `depth`, if it has one (slain or not).
@@ -740,16 +811,16 @@ impl DungeonDef {
         format!("{}@{pit}:{depth}", self.id)
     }
 
-    /// What finding a hidden feature on level `depth` takes beyond its own difficulty:
-    /// [`DungeonDef::hidden_per_depth`] for each level below the first.
+    /// What finding a hidden feature on level `depth` takes beyond its own difficulty: its
+    /// plan's [`LevelPlan::hidden_per_depth`] for each level below the first.
     pub fn hidden_at(&self, depth: u32) -> i32 {
-        per_level_below(self.hidden_per_depth, depth)
+        per_level_below(self.plan(depth).map_or(0, |p| p.hidden_per_depth), depth)
     }
 
-    /// What picking a lock on level `depth` takes beyond the lock's own difficulty:
-    /// [`DungeonDef::locks_per_depth`] for each level below the first.
+    /// What picking a lock on level `depth` takes beyond the lock's own difficulty: its plan's
+    /// [`LevelPlan::locks_per_depth`] for each level below the first.
     pub fn locks_at(&self, depth: u32) -> i32 {
-        per_level_below(self.locks_per_depth, depth)
+        per_level_below(self.plan(depth).map_or(0, |p| p.locks_per_depth), depth)
     }
 
     /// The display name of level `depth`, e.g. `The Depths 3`; a tower's floors count from its
@@ -845,27 +916,205 @@ pub fn parse_branch_level(id: &str) -> Option<(&str, u32)> {
     (depth >= 1).then_some((branch, depth))
 }
 
+/// What [`DungeonFile::resolve`] resolves names with: the lookups and the shared tables.
+pub(super) struct Lookups<'a, C, K, T, H> {
+    /// A creature's id and level by name.
+    pub creature_id: C,
+    /// A key's (an object that opens a lock) id by name.
+    pub key_id: K,
+    /// A trap's id by name.
+    pub trap_id: T,
+    /// A level's hidden location (`level.rs::parse_generated_hidden`).
+    pub hidden: H,
+    /// The shared special-room and shop odds a level's own tables fall back to.
+    pub rooms: &'a RoomEffects,
+    pub shops: Option<&'a Shops>,
+    /// `data/dungeons.toml`'s `[defaults]`.
+    pub defaults: Option<Odds>,
+    /// `data/generators.toml`.
+    pub generators: &'a GeneratorDefaults,
+}
+
+/// What a depth's plan is resolved for: its generator's place among the branch's floors of that
+/// kind (`(along, span)`), and whether it is a tower's or a Pit's.
+struct Place {
+    place: (u32, u32),
+    tower: bool,
+}
+
+impl LevelSpec {
+    /// The level fields a tower's plan has not: it is sized by its clearing, nothing is mined or
+    /// hidden there, and it stands under the sky.
+    fn tower_refuses(&self) -> Option<&'static str> {
+        [
+            ("size", self.size.is_some()),
+            ("secret_doors", self.secret_doors.is_some()),
+            ("key", self.key.is_some()),
+            ("ores", self.ores.is_some()),
+            ("temperature", self.temperature.is_some()),
+            ("vaults", self.vaults.is_some()),
+            ("hidden", self.hidden.is_some()),
+        ]
+        .into_iter()
+        .find_map(|(field, given)| given.then_some(field))
+    }
+
+    /// The plan of one depth from these (layered) fields.
+    fn resolve<C, K, T, H>(
+        &self,
+        at: Place,
+        look: &Lookups<'_, C, K, T, H>,
+    ) -> Result<LevelPlan, String>
+    where
+        C: Fn(&str) -> Option<(CreatureId, u8)>,
+        K: Fn(&str) -> Option<ObjectId>,
+        T: Fn(&str) -> Option<TrapId>,
+        H: Fn(&HiddenSpec) -> Result<HiddenLocation, String>,
+    {
+        let generator = self.generator.as_ref().ok_or("needs a `generator`")?;
+        if (generator.kind() == GeneratorKind::Tower) != at.tower {
+            return Err(if at.tower {
+                "a tower's `generator` is \"tower\"".into()
+            } else {
+                "only `kind = \"tower\"` takes the `tower` generator".into()
+            });
+        }
+        if at.tower
+            && let Some(field) = self.tower_refuses()
+        {
+            return Err(format!("a tower has no `{field}`"));
+        }
+        // A tower's size is its clearing's, fitted once the levels are known.
+        let size = match (self.size, at.tower) {
+            (Some(size), _) => size,
+            (None, true) => [1, 1],
+            (None, false) => return Err("needs a `size`".into()),
+        };
+        generator.kind().check_size(size)?;
+        let creatures = (self.creatures.iter().flatten())
+            .map(|c| {
+                (look.creature_id)(c)
+                    .map(|(c, _)| c)
+                    .ok_or_else(|| format!("unknown creature `{c}`"))
+            })
+            .collect::<Result<Vec<_>, _>>()?;
+        let spawning = SpawningSpec {
+            danger: self.danger,
+            population: self.population.clone(),
+            population_count: self.population_count,
+            odds: OddsSpec {
+                stray: self.stray,
+                out_of_depth: self.out_of_depth,
+                deeper: self.deeper,
+                dread_one_in: self.dread_one_in,
+                neutral: self.neutral,
+            },
+            stray_pool: self.stray_pool,
+            spawn: self.spawn.clone(),
+        }
+        .resolve(true, &creatures, &look.creature_id, look.defaults)?;
+        let traps = (self.traps.iter().flatten())
+            .map(|t| (look.trap_id)(t).ok_or_else(|| format!("unknown trap `{t}`")))
+            .collect::<Result<Vec<_>, _>>()?;
+        let traps_per_level = self.traps_per_level.unwrap_or(TRAPS_PER_LEVEL);
+        // Each `[least, most]` is a range a draw is made in: never empty.
+        let [least, most] = traps_per_level;
+        if least > most {
+            return Err("traps_per_level is [least, most]".into());
+        }
+        if self.traps_per_level.is_some() && traps.is_empty() {
+            return Err("traps_per_level but no `traps`".into());
+        }
+        let secret_doors = self.secret_doors.unwrap_or([0, 0]);
+        if secret_doors[0] > secret_doors[1] {
+            return Err("secret_doors is [least, most]".into());
+        }
+        let loot = self.loot.unwrap_or([0, 0]);
+        if loot[0] > loot[1] {
+            return Err("`loot` is [fewest, most]".into());
+        }
+        let chests = self.chests.unwrap_or_default().resolve();
+        if chests.count[0] > chests.count[1] {
+            return Err("`chests.count` is [least, most]".into());
+        }
+        let key = match &self.key {
+            Some(k) => Some(
+                (look.key_id)(k)
+                    .ok_or_else(|| format!("`key = \"{k}\"` is no key (objects.toml)"))?,
+            ),
+            None => None,
+        };
+        let room_odds = (self.room_effects.clone().unwrap_or_default())
+            .resolve(look.rooms)
+            .map_err(|m| format!("room_effects: {m}"))?;
+        let shop_odds = match look.shops {
+            Some(shops) => Some(
+                (self.shops.clone().unwrap_or_default())
+                    .resolve(shops, |name| (look.creature_id)(name).map(|(id, _)| id))
+                    .map_err(|m| format!("shops: {m}"))?,
+            ),
+            None if self.shops.is_some() => return Err("`shops` needs data/shops.toml".into()),
+            None => None,
+        };
+        let hidden = match &self.hidden {
+            Some(h) => Some((look.hidden)(h)?),
+            None => None,
+        };
+        let (danger, spawning) = match spawning {
+            Some((rule, s)) => (Some(rule), Some(s)),
+            None => (None, None),
+        };
+        let generator = generator.resolve(look.generators, at.place);
+        generator.check()?;
+        Ok(LevelPlan {
+            generator,
+            width: size[0],
+            height: size[1],
+            temperature: self.temperature.map(|c| Temperature::degrees(c.into())),
+            ambient: self.ambient.unwrap_or_default(),
+            creatures,
+            traps,
+            traps_per_level,
+            secret_doors,
+            hidden_per_depth: self.hidden_per_depth.unwrap_or(0),
+            locks_per_depth: self.locks_per_depth.unwrap_or(0),
+            // Nothing is mined in a tower: nothing breaks there.
+            ores: if at.tower {
+                Some(Vec::new())
+            } else {
+                self.ores.clone()
+            },
+            loot,
+            chests,
+            key,
+            danger,
+            spawning,
+            room_odds,
+            shop_odds,
+            vaults: self.vaults.clone().unwrap_or_default(),
+            hidden,
+        })
+    }
+}
+
 impl DungeonFile {
-    /// Validates every branch; `creature_id` resolves creature names (with their levels),
-    /// `key_id` the names of keys (objects that open a lock), `trap_id` trap names; `rooms` and
-    /// `shops` are the shared special-room and shop odds a branch's own tables fall back to;
-    /// `hidden` resolves a level's hidden location (`level.rs::parse_generated_hidden`).
-    #[allow(clippy::too_many_arguments)]
-    pub(super) fn resolve(
+    /// Validates every branch with `look`'s lookups and tables.
+    pub(super) fn resolve<C, K, T, H>(
         self,
         file: &str,
-        creature_id: impl Fn(&str) -> Option<(CreatureId, u8)>,
-        key_id: impl Fn(&str) -> Option<ObjectId>,
-        trap_id: impl Fn(&str) -> Option<TrapId>,
-        hidden: impl Fn(&HiddenSpec) -> Result<HiddenLocation, String>,
-        rooms: &RoomEffects,
-        shops: Option<&Shops>,
-        defaults: Option<Odds>,
-    ) -> Result<Vec<DungeonDef>, ContentError> {
+        look: &Lookups<'_, C, K, T, H>,
+    ) -> Result<Vec<DungeonDef>, ContentError>
+    where
+        C: Fn(&str) -> Option<(CreatureId, u8)>,
+        K: Fn(&str) -> Option<ObjectId>,
+        T: Fn(&str) -> Option<TrapId>,
+        H: Fn(&HiddenSpec) -> Result<HiddenLocation, String>,
+    {
         let err = |m: String| ContentError::new(file, m);
         let mut defs: Vec<DungeonDef> = Vec::new();
         for mut spec in self.dungeon {
             let id = spec.id;
+            let at = |m: String| err(format!("dungeon `{id}`: {m}"));
             if id.is_empty() || id.contains([':', '@']) || id.chars().any(char::is_whitespace) {
                 return Err(err(format!(
                     "dungeon id `{id}` must be non-empty, without `:`, `@`, or spaces"
@@ -874,45 +1123,34 @@ impl DungeonFile {
             if defs.iter().any(|d| d.id == id) {
                 return Err(err(format!("duplicate dungeon id `{id}`")));
             }
-            let refused = [
-                ("depth", spec.depth.is_some()),
-                ("size", spec.size.is_some()),
-                ("bottom", spec.bottom.is_some()),
-                ("below", spec.below.is_some()),
-                ("above", spec.above.is_some()),
-                ("endless", spec.endless.is_some()),
-                ("portal", spec.portal.is_some()),
-                ("secret_doors", spec.secret_doors != [0, 0]),
-                ("key", spec.key.is_some()),
-                ("ores", spec.ores.is_some()),
-                ("temperature", spec.temperature.is_some()),
-                ("vaults", spec.levels.iter().any(|l| !l.vaults.is_empty())),
-                ("hidden", spec.levels.iter().any(|l| l.hidden.is_some())),
-                (
-                    "[[dungeon.levels]] generator, size, or temperature",
-                    (spec.levels.iter()).any(|l| {
-                        l.generator.is_some() || l.size.is_some() || l.temperature.is_some()
-                    }),
-                ),
-            ];
+            let template =
+                (spec.level.take()).ok_or_else(|| at("needs a `[dungeon.level]`".into()))?;
             let fields = (spec.floors, spec.clearing.take(), spec.top.take());
-            let tower = tower::resolve(spec.kind, fields, spec.generator, &refused)
-                .map_err(|m| err(format!("dungeon `{id}`: {m}")))?;
+            let tower = tower::resolve(spec.kind, fields).map_err(at)?;
+            if tower.is_some() {
+                let refused = [
+                    ("depth", spec.depth.is_some()),
+                    ("bottom", spec.bottom.is_some()),
+                    ("below", spec.below.is_some()),
+                    ("above", spec.above.is_some()),
+                    ("endless", spec.endless.is_some()),
+                    ("portal", spec.portal.is_some()),
+                ];
+                if let Some((field, _)) = refused.iter().find(|(_, given)| *given) {
+                    return Err(at(format!("a tower has no `{field}`")));
+                }
+            }
             let depth_of = match (spec.depth, &spec.endless, &tower) {
                 (None, None, Some(t)) => t.depth(),
                 (Some(depth), None, None) => depth,
-                // One row of tables: every floor's.
+                // One plan: every floor's.
                 (None, Some(_), None) => 1,
-                _ => {
-                    return Err(err(format!(
-                        "dungeon `{id}`: give `depth` or `endless`, one of them"
-                    )));
-                }
+                _ => return Err(at("give `depth` or `endless`, one of them".into())),
             };
             if spec.bottom.is_some() && (spec.below.is_some() || spec.endless.is_some()) {
-                return Err(err(format!(
-                    "dungeon `{id}`: `bottom` has neither `below` nor `endless` beside it"
-                )));
+                return Err(at(
+                    "`bottom` has neither `below` nor `endless` beside it".into()
+                ));
             }
             // A floor's own `<` leads where its branch says, and only a bounded one's.
             if spec.above.is_some() && (spec.endless.is_some() || spec.portal.is_some()) {
@@ -921,229 +1159,133 @@ impl DungeonFile {
                 )));
             }
             if spec.below.is_some() && spec.endless.is_some() {
-                return Err(err(format!(
-                    "dungeon `{id}`: an endless branch has no deepest level for `below`"
-                )));
+                return Err(at(
+                    "an endless branch has no deepest level for `below`".into()
+                ));
             }
             // Nothing leads out of a Pit but its own `<`, and it ends.
             if spec.portal.is_some()
                 && (spec.endless.is_some() || spec.below.is_some() || spec.bottom.is_some())
             {
-                return Err(err(format!(
-                    "dungeon `{id}`: a portal branch has neither `endless`, `below`, nor `bottom`"
-                )));
+                return Err(at(
+                    "a portal branch has neither `endless`, `below`, nor `bottom`".into(),
+                ));
             }
-            let check_size = |generator: Generator, [w, h]: [i32; 2]| {
-                let (min, max) = generator.size_limits();
-                if (min[0]..=max[0]).contains(&w) && (min[1]..=max[1]).contains(&h) {
-                    Ok(())
-                } else {
-                    Err(err(format!(
-                        "dungeon `{id}`: size {w}x{h} is outside {}x{} to {}x{} for {generator:?}",
-                        min[0], min[1], max[0], max[1]
-                    )))
-                }
-            };
-            // A tower's size is its clearing's, fitted once the levels are known.
-            let size = match (spec.size, &tower) {
-                (Some(size), _) => size,
-                (None, Some(_)) => [1, 1],
-                (None, None) => return Err(err(format!("dungeon `{id}` needs a `size`"))),
-            };
-            check_size(spec.generator, size)?;
-            if let Some(e) = &spec.endless {
-                check_size(Generator::Caves, e.caves_size)?;
-                if spec.generator != Generator::Rooms {
-                    return Err(err(format!(
-                        "dungeon `{id}`: an endless branch's `generator` is \"rooms\""
-                    )));
-                }
-                if !spec.levels.is_empty() {
-                    return Err(err(format!(
-                        "dungeon `{id}`: an endless branch has no `[[dungeon.levels]]`"
-                    )));
-                }
+            if spec.endless.is_some() && !spec.levels.is_empty() {
+                return Err(at("an endless branch has no `[[dungeon.levels]]`".into()));
             }
-            let creatures = spec
-                .creatures
-                .iter()
-                .map(|c| {
-                    creature_id(c)
-                        .map(|(c, _)| c)
-                        .ok_or_else(|| err(format!("dungeon `{id}` uses unknown creature `{c}`")))
-                })
-                .collect::<Result<Vec<_>, _>>()?;
-            let spawning = SpawningSpec {
-                danger: spec.danger,
-                population: spec.population,
-                population_count: spec.population_count,
-                odds: OddsSpec {
-                    stray: spec.stray,
-                    out_of_depth: spec.out_of_depth,
-                    deeper: spec.deeper,
-                    dread_one_in: spec.dread_one_in,
-                    neutral: spec.neutral,
-                },
-                stray_pool: spec.stray_pool,
-                spawn: spec.spawn,
-            }
-            .resolve(true, &creatures, &creature_id, defaults)
-            .map_err(|m| err(format!("dungeon `{id}`: {m}")))?;
-            let branch_danger = spawning.as_ref().map(|(rule, _)| *rule);
-            if spec.endless.is_some() && branch_danger.is_none_or(|r| r.scales()) {
-                return Err(err(format!(
-                    "dungeon `{id}`: an endless branch needs a `danger`, without `player`"
-                )));
-            }
-            let mut plans = Vec::new();
-            let (mut room_odds, mut shop_odds) = (Vec::new(), Vec::new());
-            let mut vaults = Vec::new();
-            for depth in 1..=depth_of {
-                let over = spec
-                    .levels
-                    .iter()
-                    .find(|l| (l.from..=l.to.unwrap_or(l.from)).contains(&depth));
-                let (generator, [width, height], temperature) = match over {
-                    Some(l) => (
-                        l.generator.unwrap_or(spec.generator),
-                        l.size.unwrap_or(size),
-                        l.temperature.or(spec.temperature),
-                    ),
-                    None => (spec.generator, size, spec.temperature),
-                };
-                let danger = match over.and_then(|l| l.danger) {
-                    Some(_) if branch_danger.is_none() => {
-                        return Err(err(format!(
-                            "dungeon `{id}`: a level's `danger` needs the branch's"
-                        )));
-                    }
-                    Some(d) => Some(
-                        d.resolve(1, true)
-                            .map_err(|m| err(format!("dungeon `{id}`: {m}")))?,
-                    ),
-                    None => branch_danger,
-                };
-                let dread_one_in = over.and_then(|l| l.dread_one_in);
-                if dread_one_in.is_some() && branch_danger.is_none() {
-                    return Err(err(format!(
-                        "dungeon `{id}`: a level's `dread_one_in` needs the branch's `danger`"
-                    )));
-                }
-                check_size(generator, [width, height])?;
-                plans.push(LevelPlan {
-                    generator,
-                    width,
-                    height,
-                    temperature: temperature.map(|c| Temperature::degrees(c.into())),
-                    danger,
-                    dread_one_in,
-                });
-                vaults.push(over.map(|l| l.vaults.clone()).unwrap_or_default());
-                let room_spec = RoomOddsSpec::layer(
-                    over.and_then(|l| l.room_effects.as_ref()),
-                    spec.room_effects.as_ref(),
-                );
-                room_odds.push(
-                    room_spec
-                        .resolve(rooms)
-                        .map_err(|m| err(format!("dungeon `{id}`: room_effects: {m}")))?,
-                );
-                let shop_spec =
-                    ShopOddsSpec::layer(over.and_then(|l| l.shops.as_ref()), spec.shops.as_ref());
-                match shops {
-                    Some(shops) => shop_odds.push(
-                        shop_spec
-                            .resolve(shops, |name| creature_id(name).map(|(id, _)| id))
-                            .map_err(|m| err(format!("dungeon `{id}`: shops: {m}")))?,
-                    ),
-                    None if spec.shops.is_some() || over.is_some_and(|l| l.shops.is_some()) => {
-                        return Err(err(format!(
-                            "dungeon `{id}`: `shops` needs data/shops.toml"
-                        )));
-                    }
-                    None => {}
-                }
-            }
-            let mut hidden_locations = BTreeMap::new();
             for l in &spec.levels {
                 let to = l.to.unwrap_or(l.from);
                 if l.from < 1 || to < l.from || to > depth_of {
-                    return Err(err(format!(
-                        "dungeon `{id}`: levels {}..={to} are outside 1..={}",
-                        l.from, depth_of
+                    return Err(at(format!(
+                        "levels {}..={to} are outside 1..={depth_of}",
+                        l.from
                     )));
                 }
-                // One cell on one level: a Pit's floors have none (nothing leads into a Pit).
-                let Some(h) = &l.hidden else { continue };
-                if to != l.from || spec.portal.is_some() {
-                    return Err(err(format!(
-                        "dungeon `{id}`: `hidden` belongs on a row of one level, not of a portal \
-                         branch"
-                    )));
-                }
-                let location = hidden(h).map_err(|m| err(format!("dungeon `{id}`: {m}")))?;
-                hidden_locations.insert(l.from, location);
             }
-            let traps = (spec.traps.iter())
-                .map(|t| {
-                    trap_id(t).ok_or_else(|| err(format!("dungeon `{id}` uses unknown trap `{t}`")))
+            // Each depth's fields: its row's over the template's.
+            let layered: Vec<LevelSpec> = (1..=depth_of)
+                .map(|depth| {
+                    let row = (spec.levels.iter())
+                        .find(|l| (l.from..=l.to.unwrap_or(l.from)).contains(&depth));
+                    row.map_or_else(|| template.clone(), |l| l.level.over(&template))
                 })
-                .collect::<Result<Vec<_>, _>>()?;
-            let traps_per_level = spec.traps_per_level.unwrap_or(TRAPS_PER_LEVEL);
-            // Each `[least, most]` is a range a draw is made in: never empty.
-            let [least, most] = traps_per_level;
-            if least > most {
-                return Err(err(format!(
-                    "dungeon `{id}`: traps_per_level is [least, most]"
-                )));
+                .collect();
+            let caves_spec = (spec.endless.as_ref())
+                .and_then(|e| e.caves_level.as_ref())
+                .map(|c| c.over(&template));
+            // A ramp runs from the branch's first floor of its generator's kind to its last.
+            let kinds: Vec<Option<GeneratorKind>> = layered
+                .iter()
+                .map(|l| l.generator.as_ref().map(GeneratorSpec::kind))
+                .collect();
+            let place = |depth: u32| {
+                let kind = kinds[depth as usize - 1];
+                let mine = |d: &u32| kinds[*d as usize - 1] == kind;
+                let first = (1..=depth_of).find(mine).unwrap_or(depth);
+                let last = (1..=depth_of).rev().find(mine).unwrap_or(depth);
+                (depth - first, last - first)
+            };
+            let mut plans = Vec::new();
+            for (i, level) in layered.iter().enumerate() {
+                let depth = i as u32 + 1;
+                let where_ = Place {
+                    place: place(depth),
+                    tower: tower.is_some(),
+                };
+                let plan = level
+                    .resolve(where_, look)
+                    .map_err(|m| at(format!("depth {depth}: {m}")))?;
+                plans.push(plan);
             }
-            if spec.traps_per_level.is_some() && traps.is_empty() {
-                return Err(err(format!(
-                    "dungeon `{id}` has traps_per_level but no `traps`"
-                )));
-            }
-            if spec.secret_doors[0] > spec.secret_doors[1] {
-                return Err(err(format!(
-                    "dungeon `{id}`: secret_doors is [least, most]"
-                )));
-            }
-            if spec.loot[0] > spec.loot[1] {
-                return Err(err(format!("dungeon `{id}`: `loot` is [fewest, most]")));
-            }
-            // Only a passage reads it (the other generators draw their own random vaults).
-            let passages = plans.iter().all(|p| p.generator == Generator::Passage);
-            if spec.random_vaults[0] > spec.random_vaults[1]
-                || (spec.random_vaults != [0, 0] && !passages)
-            {
-                return Err(err(format!(
-                    "dungeon `{id}`: `random_vaults` is [fewest, most], on passage floors only"
-                )));
-            }
-            if spec.chests.count[0] > spec.chests.count[1] {
-                return Err(err(format!(
-                    "dungeon `{id}`: `chests.count` is [least, most]"
-                )));
-            }
-            let key = match &spec.key {
-                Some(k) => Some(key_id(k).ok_or_else(|| {
-                    err(format!(
-                        "dungeon `{id}`: `key = \"{k}\"` is no key (objects.toml)"
-                    ))
-                })?),
+            let caves_plan = match &caves_spec {
+                Some(c) => Some(
+                    c.resolve(
+                        Place {
+                            place: (0, 0),
+                            tower: false,
+                        },
+                        look,
+                    )
+                    .map_err(|m| at(format!("caves_level: {m}")))?,
+                ),
                 None => None,
             };
+            // What the resolved plans must agree on.
+            if let Some(h) = plans.iter().filter_map(|p| p.hidden.as_ref()).next()
+                && (plans
+                    .iter()
+                    .filter(|p| p.hidden.as_ref() == Some(h))
+                    .count()
+                    > 1
+                    || spec.portal.is_some()
+                    || spec.endless.is_some())
+            {
+                return Err(at(
+                    "`hidden` belongs on a row of one level, not of a portal or an endless branch"
+                        .into(),
+                ));
+            }
+            if spec.endless.is_some()
+                && (plans.iter().chain(&caves_plan)).any(|p| !p.vaults.is_empty())
+            {
+                return Err(at("an endless branch names no `vaults`".into()));
+            }
+            if spec.endless.is_some()
+                && (plans.iter().chain(&caves_plan)).any(|p| p.danger.is_none_or(|r| r.scales()))
+            {
+                return Err(at(
+                    "an endless branch needs a `danger`, without `player`".into()
+                ));
+            }
             let rows = match (&spec.endless, &spec.portal) {
                 (Some(e), _) => e.boss.as_slice(),
                 (None, Some(p)) => p.boss.as_slice(),
                 (None, None) => &[],
             };
             let deepest = spec.endless.is_none().then_some(depth_of);
-            let bosses = resolve_bosses(&id, rows, deepest, &creature_id).map_err(err)?;
+            let bosses = resolve_bosses(&id, rows, deepest, &look.creature_id).map_err(err)?;
             let dread = (spec.endless.as_mut())
                 .and_then(|e| e.dread.take())
                 .map(DreadCurveSpec::resolve)
                 .transpose()
-                .map_err(|m| err(format!("dungeon `{id}`: {m}")))?;
+                .map_err(at)?;
+            // The template's own folk: what the branch's floors have unless a row says otherwise.
+            let spawning = match spec.endless {
+                Some(_) => plans[0].spawning.clone(),
+                None => {
+                    template
+                        .resolve(
+                            Place {
+                                place: (0, 0),
+                                tower: tower.is_some(),
+                            },
+                            look,
+                        )
+                        .map_err(|m| at(format!("[dungeon.level]: {m}")))?
+                        .spawning
+                }
+            };
             defs.push(DungeonDef {
                 name: spec.name.unwrap_or_else(|| id.clone()),
                 arrival: spec.arrival,
@@ -1156,35 +1298,14 @@ impl DungeonFile {
                 bottom: spec.bottom,
                 endless: spec.endless.map(|e| Endless {
                     caves: e.caves,
-                    caves_size: (e.caves_size[0], e.caves_size[1]),
                     roster_depth: u32::MAX,
                 }),
                 portal: spec.portal.map(|_| Portal),
-                // Nothing is mined in a tower: nothing breaks there.
-                ores: if tower.is_some() {
-                    Some(Vec::new())
-                } else {
-                    spec.ores
-                },
                 tower,
-                ambient: spec.ambient,
-                creatures,
-                traps,
-                traps_per_level,
-                secret_doors: spec.secret_doors,
-                hidden_per_depth: spec.hidden_per_depth,
-                locks_per_depth: spec.locks_per_depth,
-                loot: spec.loot,
-                random_vaults: spec.random_vaults,
-                chests: spec.chests,
-                key,
-                spawning: spawning.map(|(_, s)| s),
+                spawning,
                 plans,
+                caves_plan,
                 campaign: None,
-                room_odds,
-                shop_odds,
-                vaults,
-                hidden: hidden_locations,
             });
         }
         Ok(defs)
@@ -1195,25 +1316,34 @@ impl DungeonFile {
 mod tests {
     use super::*;
 
+    fn generators() -> GeneratorDefaults {
+        let files = super::super::ContentFiles::builtin();
+        GeneratorDefaults::parse(files.get("data/generators.toml").expect("the file"))
+            .expect("parses")
+    }
+
     fn resolve(text: &str) -> Result<Vec<DungeonDef>, ContentError> {
         let file: DungeonFile =
             toml::from_str(text).map_err(|e| ContentError::new("d", e.to_string()))?;
-        file.resolve(
-            "d",
-            |c| (c == "rat").then_some((CreatureId(1), 1)),
-            |k| (k == "key").then_some(ObjectId(2)),
-            |t| (t == "pit").then_some(TrapId(0)),
-            |_| Err("no hidden locations here".into()),
-            &rooms(),
-            None,
-            Some(Odds {
+        let rooms = rooms();
+        let generators = generators();
+        let look = Lookups {
+            creature_id: |c: &str| (c == "rat").then_some((CreatureId(1), 1)),
+            key_id: |k: &str| (k == "key").then_some(ObjectId(2)),
+            trap_id: |t: &str| (t == "pit").then_some(TrapId(0)),
+            hidden: |_: &HiddenSpec| Err("no hidden locations here".into()),
+            rooms: &rooms,
+            shops: None,
+            defaults: Some(Odds {
                 stray: 5,
                 out_of_depth: 5,
                 deeper: 5,
                 dread_one_in: 100,
                 neutral: 100,
             }),
-        )
+            generators: &generators,
+        };
+        file.resolve("d", &look)
     }
 
     /// Three effects, a 7 % chance, one a level.
@@ -1232,10 +1362,18 @@ mod tests {
         RoomEffects::parse("r", &text, |_| None).expect("room effects")
     }
 
+    /// A rooms branch of `depth` levels: its branch fields and a `[dungeon.level]` with `more`
+    /// after the generator and size.
+    fn branch(id: &str, depth: u32, more: &str) -> String {
+        format!(
+            "[[dungeon]]\nid = \"{id}\"\ndepth = {depth}\n[dungeon.level]\n\
+             generator = {{ kind = \"rooms\" }}\nsize = [80, 21]\n{more}"
+        )
+    }
+
     #[test]
     fn branches_and_depths_set_their_special_room_odds() {
-        let base = "[[dungeon]]\nid = \"a\"\ngenerator = \"rooms\"\ndepth = 4\nsize = [80, 21]\n";
-        let shared = resolve(base).unwrap();
+        let shared = resolve(&branch("a", 4, "")).unwrap();
         for depth in 1..=4 {
             assert_eq!(
                 shared[0].room_odds(depth),
@@ -1245,11 +1383,13 @@ mod tests {
         }
         assert_eq!(shared[0].room_odds(5), None);
         assert_eq!(shared[0].shop_odds(1), None, "no shops.toml");
-        let own = resolve(&format!(
-            "{base}room_effects = {{ chance = 25, per_level = 2, favoured = {{ echoing = 40 }}, \
-             banned = [\"hushed\"] }}\n\
-             [[dungeon.levels]]\nfrom = 3\nto = 4\nroom_effects = {{ favoured = {{ shadowed = 30, \
-             hushed = 20 }}, banned = [] }}\n"
+        let own = resolve(&branch(
+            "a",
+            4,
+            "room_effects = { chance = 25, per_level = 2, favoured = { echoing = 40 }, \
+             banned = [\"hushed\"] }\n\
+             [[dungeon.levels]]\nfrom = 3\nto = 4\nroom_effects = { favoured = { shadowed = 30, \
+             hushed = 20 }, banned = [] }\n",
         ))
         .unwrap();
         let odds = |depth| own[0].room_odds(depth).cloned().unwrap();
@@ -1262,7 +1402,7 @@ mod tests {
                 banned: vec![RoomEffectId(0)],
             }
         );
-        // A depth's table overrides the branch's field by field; favoured in effect order.
+        // A depth's table overrides the template's field by field; favoured in effect order.
         assert_eq!(
             odds(3),
             RoomOdds {
@@ -1274,7 +1414,7 @@ mod tests {
         );
         assert_eq!(odds(3).share(RoomEffectId(1)), Some(30));
         assert!(odds(1).bans(RoomEffectId(0)) && !odds(1).bans(RoomEffectId(2)));
-        let only_chance = resolve(&format!("{base}room_effects = {{ chance = 40 }}\n")).unwrap();
+        let only_chance = resolve(&branch("a", 4, "room_effects = { chance = 40 }\n")).unwrap();
         let odds = only_chance[0].room_odds(2).unwrap();
         assert_eq!((odds.chance, odds.per_level), (40, 1));
         assert!(odds.favoured.is_empty() && odds.banned.is_empty());
@@ -1291,15 +1431,15 @@ mod tests {
             ("room_effects = { odds = 3 }\n", "unknown field"),
             ("shops = { chance = 0 }\n", "shops.toml"),
         ] {
-            let e = resolve(&format!("{base}{bad}")).unwrap_err().message;
+            let e = resolve(&branch("a", 4, bad)).unwrap_err().message;
             assert!(e.contains(says), "{bad}: {e}");
         }
     }
 
     #[test]
     fn branches_say_how_often_their_floors_get_chests() {
-        let base = "[[dungeon]]\nid = \"a\"\ngenerator = \"rooms\"\ndepth = 2\nsize = [80, 21]\n";
-        let odds = |text: &str| resolve(&format!("{base}{text}")).map(|d| d[0].chests);
+        let odds =
+            |text: &str| resolve(&branch("a", 2, text)).map(|d| d[0].plan(1).unwrap().chests);
         let default = ChestOdds {
             chance: 20,
             count: [1, 1],
@@ -1316,55 +1456,83 @@ mod tests {
         for bad in ["chests = { count = [2, 1] }\n", "chests = { often = 3 }\n"] {
             assert!(odds(bad).is_err(), "{bad}");
         }
+        // A row's table layers over the template's field by field.
+        let rows = resolve(&branch(
+            "a",
+            2,
+            "chests = { chance = 50, count = [1, 3] }\n[[dungeon.levels]]\nfrom = 2\n\
+             chests = { chance = 0 }\n",
+        ))
+        .unwrap();
+        assert_eq!(
+            rows[0].plan(2).unwrap().chests,
+            ChestOdds {
+                chance: 0,
+                count: [1, 3]
+            }
+        );
     }
 
     #[test]
     fn branches_name_the_traps_their_levels_hide() {
-        let base = "[[dungeon]]\nid = \"a\"\ngenerator = \"rooms\"\ndepth = 2\nsize = [80, 21]\n";
-        let none = resolve(base).unwrap();
-        assert!(none[0].traps.is_empty());
-        let pits = resolve(&format!("{base}traps = [\"pit\"]\n")).unwrap();
+        let none = resolve(&branch("a", 2, "")).unwrap();
+        assert!(none[0].plan(1).unwrap().traps.is_empty());
+        let pits = resolve(&branch("a", 2, "traps = [\"pit\"]\n")).unwrap();
+        let plan = pits[0].plan(2).unwrap();
         assert_eq!(
-            (pits[0].traps.as_slice(), pits[0].traps_per_level),
+            (plan.traps.as_slice(), plan.traps_per_level),
             ([TrapId(0)].as_slice(), [2, 4])
         );
-        let more = resolve(&format!(
-            "{base}traps = [\"pit\"]\ntraps_per_level = [5, 5]\n"
+        let more = resolve(&branch(
+            "a",
+            2,
+            "traps = [\"pit\"]\ntraps_per_level = [5, 5]\n",
         ));
-        assert_eq!(more.unwrap()[0].traps_per_level, [5, 5]);
+        assert_eq!(more.unwrap()[0].plan(1).unwrap().traps_per_level, [5, 5]);
         for bad in [
             "traps = [\"dragon_trap\"]\n",
             "traps = [\"pit\"]\ntraps_per_level = [3, 1]\n",
             "traps_per_level = [1, 2]\n",
         ] {
-            assert!(resolve(&format!("{base}{bad}")).is_err(), "{bad}");
+            assert!(resolve(&branch("a", 2, bad)).is_err(), "{bad}");
         }
+        // Any level field may vary by depth: the traps too.
+        let deeper = resolve(&branch(
+            "a",
+            3,
+            "traps = [\"pit\"]\n[[dungeon.levels]]\nfrom = 3\ntraps_per_level = [6, 6]\n",
+        ))
+        .unwrap();
+        let per = |depth| deeper[0].plan(depth).unwrap().traps_per_level;
+        assert_eq!((per(2), per(3)), ([2, 4], [6, 6]));
     }
 
     #[test]
     fn a_portal_branch_ends_and_leads_nowhere_else() {
-        let base = "[[dungeon]]\nid = \"p\"\ngenerator = \"rooms\"\nsize = [80, 21]\n";
-        let pits = resolve(&format!("{base}depth = 5\n[dungeon.portal]\n")).unwrap();
+        let level = "[dungeon.level]\ngenerator = { kind = \"rooms\" }\nsize = [80, 21]\n";
+        let base = "[[dungeon]]\nid = \"p\"\n";
+        let pits = resolve(&format!("{base}depth = 5\n[dungeon.portal]\n{level}")).unwrap();
         assert_eq!((pits[0].portal, pits[0].depth), (Some(Portal), 5));
         assert_eq!(
-            resolve(&format!("{base}depth = 5\n")).unwrap()[0].portal,
+            resolve(&format!("{base}depth = 5\n{level}")).unwrap()[0].portal,
             None
         );
         for bad in [
             "depth = 5\nbelow = \"d:3\"\n[dungeon.portal]\n",
-            "[dungeon.endless]\ncaves = 0\ncaves_size = [100, 40]\n[dungeon.portal]\n",
+            "[dungeon.endless]\ncaves = 0\n[dungeon.portal]\n",
             "depth = 5\n[dungeon.portal]\nboss = 1\n",
         ] {
-            assert!(resolve(&format!("{base}{bad}")).is_err(), "{bad}");
+            assert!(resolve(&format!("{base}{bad}{level}")).is_err(), "{bad}");
         }
-        let at = "[[dungeon]]\nid = \"p@1\"\ngenerator = \"rooms\"\ndepth = 1\nsize = [80, 21]\n";
-        assert!(resolve(at).is_err(), "`@` belongs to a Pit's levels");
+        let at = format!("[[dungeon]]\nid = \"p@1\"\ndepth = 1\n{level}");
+        assert!(resolve(&at).is_err(), "`@` belongs to a Pit's levels");
     }
 
     #[test]
     fn a_bottom_is_where_the_deepest_level_leads_and_stands_alone() {
-        let base = "[[dungeon]]\nid = \"d\"\ngenerator = \"rooms\"\nsize = [80, 21]\n";
-        let d = resolve(&format!("{base}depth = 3\nbottom = \"town\"\n")).unwrap();
+        let level = "[dungeon.level]\ngenerator = { kind = \"rooms\" }\nsize = [80, 21]\n";
+        let base = "[[dungeon]]\nid = \"d\"\n";
+        let d = resolve(&format!("{base}depth = 3\nbottom = \"town\"\n{level}")).unwrap();
         let d = &d[0];
         assert_eq!(d.bottom.as_deref(), Some("town"));
         assert!(d.leads_down(3));
@@ -1372,10 +1540,10 @@ mod tests {
         assert_eq!(d.down_to("d:2", 2).as_deref(), Some("d:3"));
         for bad in [
             "depth = 3\nbottom = \"town\"\nbelow = \"e:2\"\n",
-            "bottom = \"town\"\n[dungeon.endless]\ncaves = 0\ncaves_size = [100, 40]\n",
+            "bottom = \"town\"\n[dungeon.endless]\ncaves = 0\n",
             "depth = 3\nbottom = \"town\"\n[dungeon.portal]\n",
         ] {
-            assert!(resolve(&format!("{base}{bad}")).is_err(), "{bad}");
+            assert!(resolve(&format!("{base}{bad}{level}")).is_err(), "{bad}");
         }
     }
 
@@ -1412,64 +1580,134 @@ mod tests {
     }
 
     #[test]
-    fn per_depth_overrides_pick_generator_and_size() {
-        let defs = resolve(
-            "[[dungeon]]\nid = \"d\"\ngenerator = \"rooms\"\ndepth = 4\nsize = [80, 21]\n\
-             creatures = [\"rat\"]\n\
-             [[dungeon.levels]]\nfrom = 2\nto = 3\ngenerator = \"caves\"\nsize = [120, 60]\n",
-        )
+    fn per_depth_rows_pick_generator_and_size() {
+        let defs = resolve(&branch(
+            "d",
+            4,
+            "creatures = [\"rat\"]\n\
+             [[dungeon.levels]]\nfrom = 2\nto = 3\ngenerator = { kind = \"caves\", rock = 50 }\n\
+             size = [120, 60]\n",
+        ))
         .unwrap();
         let d = &defs[0];
         assert_eq!(d.name, "d");
-        assert_eq!(d.plan(1).map(|p| p.generator), Some(Generator::Rooms));
         assert_eq!(
-            d.plan(3),
-            Some(LevelPlan {
-                generator: Generator::Caves,
-                width: 120,
-                height: 60,
-                temperature: None,
-                danger: None,
-                dread_one_in: None,
-            })
+            d.plan(1).map(|p| p.generator.kind()),
+            Some(GeneratorKind::Rooms)
         );
+        let caves = d.plan(3).unwrap();
+        assert_eq!(
+            (caves.width, caves.height, caves.temperature),
+            (120, 60, None)
+        );
+        // The row's parameter over the kind's defaults, the rest the defaults'.
+        let Generator::Caves(p) = &caves.generator else {
+            panic!("{:?}", caves.generator);
+        };
+        assert_eq!((p.rock, p.smoothing), (50, 5));
         assert_eq!(d.plan(4).map(|p| p.width), Some(80));
-        assert_eq!(d.plan(5), None);
-        assert_eq!(d.plan(0), None);
+        assert!(d.plan(5).is_none() && d.plan(0).is_none());
         assert_eq!(d.level_id(2), "d:2");
+        assert_eq!(
+            d.plan(1).unwrap().creatures,
+            [CreatureId(1)],
+            "the template's"
+        );
+        assert_eq!(d.plan(3).unwrap().creatures, [CreatureId(1)], "layered");
+    }
+
+    #[test]
+    fn a_rows_generator_of_the_templates_kind_layers_over_it() {
+        let defs = resolve(
+            "[[dungeon]]\nid = \"d\"\ndepth = 3\n[dungeon.level]\nsize = [80, 21]\n\
+             generator = { kind = \"rooms\", gap = 3, lit_chance = 50 }\n\
+             [[dungeon.levels]]\nfrom = 2\ngenerator = { kind = \"rooms\", lit_chance = 10 }\n\
+             [[dungeon.levels]]\nfrom = 3\ngenerator = { kind = \"caves\" }\nsize = [80, 30]\n",
+        )
+        .unwrap();
+        let rooms = |depth| match &defs[0].plan(depth).unwrap().generator {
+            Generator::Rooms(p) => (p.gap, p.lit_chance),
+            g => panic!("{g:?}"),
+        };
+        assert_eq!(rooms(1), (3, 50));
+        assert_eq!(rooms(2), (3, 10), "the row's field over the template's");
+        // Another kind starts from its own defaults.
+        assert!(matches!(
+            &defs[0].plan(3).unwrap().generator,
+            Generator::Caves(p) if p.rock == 45
+        ));
+        let bad = branch(
+            "d",
+            3,
+            "[[dungeon.levels]]\nfrom = 2\ngenerator = { kind = \"rooms\", rock = 3 }\n",
+        );
+        assert!(resolve(&bad).unwrap_err().message.contains("unknown field"));
+    }
+
+    #[test]
+    fn ramps_run_over_the_branchs_floors_of_their_kind_and_a_row_pins_one() {
+        let text = "[[dungeon]]\nid = \"m\"\ndepth = 6\n[dungeon.level]\n\
+                    generator = { kind = \"rooms\" }\nsize = [100, 40]\n\
+                    [[dungeon.levels]]\nfrom = 5\ngenerator = { kind = \"mines\", lava = 7 }\n\
+                    [[dungeon.levels]]\nfrom = 3\nto = 6\ngenerator = { kind = \"mines\" }\n";
+        let defs = resolve(text).unwrap();
+        let mines = |depth| match &defs[0].plan(depth).unwrap().generator {
+            Generator::Mines(p) => (p.openness, p.lava),
+            g => panic!("{g:?}"),
+        };
+        // Depths 3 to 6 are the mines floors: openness 0, 33, 66, 100.
+        assert_eq!(mines(3), (0, 0));
+        assert_eq!(mines(4), (33, 10));
+        assert_eq!(mines(5), (66, 7), "the row pins the lava");
+        assert_eq!(mines(6), (100, 100));
+        let minster = resolve(
+            "[[dungeon]]\nid = \"m\"\ndepth = 8\n[dungeon.level]\n\
+             generator = { kind = \"minster\" }\nsize = [100, 40]\n",
+        )
+        .unwrap();
+        let flood: Vec<i32> = (1..=8)
+            .map(|d| match &minster[0].plan(d).unwrap().generator {
+                Generator::Minster(p) => p.flood,
+                g => panic!("{g:?}"),
+            })
+            .collect();
+        assert_eq!(flood, [10, 20, 31, 42, 52, 63, 74, 85]);
     }
 
     #[test]
     fn branches_and_depths_set_the_temperature() {
-        let defs = resolve(
-            "[[dungeon]]\nid = \"d\"\ngenerator = \"rooms\"\ndepth = 4\nsize = [80, 21]\n\
-             temperature = 9\n\
-             [[dungeon.levels]]\nfrom = 3\nto = 4\ntemperature = -2\n",
-        )
+        let defs = resolve(&branch(
+            "d",
+            4,
+            "temperature = 9\n[[dungeon.levels]]\nfrom = 3\nto = 4\ntemperature = -2\n",
+        ))
         .unwrap();
         let t = |depth| defs[0].plan(depth).and_then(|p| p.temperature);
         assert_eq!(t(1), Some(Temperature::degrees(9)));
         assert_eq!(t(3), Some(Temperature::degrees(-2)));
-        // The override keeps the branch's generator and size.
-        assert_eq!(defs[0].plan(4).map(|p| p.generator), Some(Generator::Rooms));
-        let plain = "[[dungeon]]\nid = \"d\"\ngenerator = \"rooms\"\ndepth = 1\nsize = [80, 21]\n";
+        // The row keeps the template's generator and size.
         assert_eq!(
-            resolve(plain).unwrap()[0].plan(1).unwrap().temperature,
+            defs[0].plan(4).map(|p| p.generator.kind()),
+            Some(GeneratorKind::Rooms)
+        );
+        assert_eq!(
+            resolve(&branch("d", 1, "")).unwrap()[0]
+                .plan(1)
+                .unwrap()
+                .temperature,
             None
         );
     }
 
     #[test]
     fn a_depths_dread_one_in_wins_over_the_branchs_over_the_defaults() {
-        let base = "[[dungeon]]\nid = \"d\"\ngenerator = \"rooms\"\ndepth = 3\nsize = [80, 21]\n\
-                    creatures = [\"rat\"]\ndanger = 2\n";
+        let base = "creatures = [\"rat\"]\ndanger = 2\n";
         let odds = |text: &str| {
-            let defs = resolve(&format!("{base}{text}")).unwrap();
-            let branch = defs[0].spawning.as_ref().unwrap().odds.dread_one_in;
-            [1, 2, 3].map(|depth| defs[0].dread_one_in(depth).unwrap_or(branch))
+            let defs = resolve(&branch("d", 3, &format!("{base}{text}"))).unwrap();
+            [1, 2, 3].map(|depth| defs[0].dread_one_in(depth).unwrap())
         };
         assert_eq!(odds(""), [100, 100, 100], "the defaults'");
-        assert_eq!(odds("dread_one_in = 60\n"), [60, 60, 60], "the branch's");
+        assert_eq!(odds("dread_one_in = 60\n"), [60, 60, 60], "the template's");
         assert_eq!(
             odds("dread_one_in = 60\n[[dungeon.levels]]\nfrom = 2\nto = 3\ndread_one_in = 20\n"),
             [60, 20, 20],
@@ -1479,23 +1717,25 @@ mod tests {
             odds("[[dungeon.levels]]\nfrom = 3\ndread_one_in = 20\n"),
             [100, 100, 20]
         );
-        let no_danger = "[[dungeon]]\nid = \"d\"\ngenerator = \"rooms\"\ndepth = 3\n\
-                         size = [80, 21]\n[[dungeon.levels]]\nfrom = 3\ndread_one_in = 20\n";
+        let no_danger = branch("d", 3, "[[dungeon.levels]]\nfrom = 3\ndread_one_in = 20\n");
+        let err = resolve(&no_danger).unwrap_err().message;
         assert!(
-            resolve(no_danger).is_err(),
-            "a depth's needs the branch's danger"
+            err.contains("depth 3") && err.contains("need a `danger`"),
+            "a depth's needs a danger: {err}"
         );
     }
 
     #[test]
     fn an_endless_branch_reads_its_dread_curve_at_the_true_depth() {
-        let text = "[[dungeon]]\nid = \"g\"\ngenerator = \"rooms\"\nsize = [80, 21]\n\
+        let text = "[[dungeon]]\nid = \"g\"\n\
+                    [dungeon.level]\ngenerator = { kind = \"rooms\" }\nsize = [80, 21]\n\
                     creatures = [\"rat\"]\ndanger = 1\n\
-                    [dungeon.endless]\ncaves = 0\ncaves_size = [100, 40]\n\
+                    [dungeon.endless]\ncaves = 20\n\
+                    caves_level = { generator = { kind = \"caves\" }, size = [100, 40] }\n\
                     dread = { steps = [[30, 80], [70, 40]], halves = 10, least = 5 }\n";
         let defs = resolve(text).unwrap();
         let at = |depth| defs[0].dread_one_in(depth);
-        assert_eq!(at(1), None, "above the first step: the branch's");
+        assert_eq!(at(1), Some(100), "above the first step: the plan's");
         assert_eq!((at(30), at(69)), (Some(80), Some(80)));
         assert_eq!(
             (at(70), at(80), at(90), at(100), at(500)),
@@ -1503,16 +1743,38 @@ mod tests {
         );
         let bad = text.replace("halves = 10", "halves = 0");
         assert!(resolve(&bad).is_err());
+        // The caves plan: the template with the table's fields over it.
+        let caves = defs[0].caves_plan().unwrap();
+        assert_eq!(
+            (caves.generator.kind(), caves.width, caves.height),
+            (GeneratorKind::Caves, 100, 40)
+        );
+        assert_eq!(caves.creatures, [CreatureId(1)]);
+        assert_eq!(defs[0].endless.map(|e| e.caves), Some(20));
+        for bad in [
+            text.replace("danger = 1\n", ""),
+            text.replace(
+                "danger = 1\n",
+                "danger = { base = 1, player = { percent = 50, from = 1, max = 9 } }\n",
+            ),
+            text.replace(
+                "creatures = [\"rat\"]\n",
+                "creatures = [\"rat\"]\nvaults = [\"v\"]\n",
+            ),
+        ] {
+            assert!(resolve(&bad).is_err(), "{bad}");
+        }
     }
 
     #[test]
-    fn floors_take_the_branch_danger_or_their_own() {
-        let base = "[[dungeon]]\nid = \"d\"\ngenerator = \"rooms\"\ndepth = 3\nsize = [80, 21]\n\
-                    creatures = [\"rat\"]\n";
-        let none = resolve(base).unwrap();
+    fn floors_take_the_templates_danger_or_their_own() {
+        let base = "creatures = [\"rat\"]\n";
+        let none = resolve(&branch("d", 3, base)).unwrap();
         assert!(none[0].spawning.is_none() && none[0].plan(1).unwrap().danger.is_none());
-        let defs = resolve(&format!(
-            "{base}danger = 2\n[[dungeon.levels]]\nfrom = 3\ndanger = {{ base = 9, per_depth = 0 }}\n"
+        let defs = resolve(&branch(
+            "d",
+            3,
+            &format!("{base}danger = 2\n[[dungeon.levels]]\nfrom = 3\ndanger = {{ base = 9, per_depth = 0 }}\n"),
         ))
         .unwrap();
         let at = |depth| defs[0].plan(depth).unwrap().danger.unwrap().at(depth, 1);
@@ -1522,32 +1784,76 @@ mod tests {
             defs[0].spawning.as_ref().unwrap().population,
             [CreatureId(1)]
         );
-        let lone = format!("{base}[[dungeon.levels]]\nfrom = 3\ndanger = 4\n");
-        assert!(
-            resolve(&lone)
-                .unwrap_err()
-                .message
-                .contains("needs the branch")
-        );
+        // A row's population is its depths' own; the template's stays the branch's.
+        let own = resolve(&branch(
+            "d",
+            3,
+            &format!("{base}danger = 2\n[[dungeon.levels]]\nfrom = 3\npopulation = [\"rat\"]\nstray = 0\n"),
+        ))
+        .unwrap();
+        let stray = |depth| {
+            own[0]
+                .plan(depth)
+                .unwrap()
+                .spawning
+                .as_ref()
+                .unwrap()
+                .odds
+                .stray
+        };
+        assert_eq!((stray(1), stray(3)), (5, 0));
+        assert_eq!(own[0].spawning.as_ref().unwrap().odds.stray, 5);
+        // A danger on a row alone is that depth's.
+        let lone = resolve(&branch(
+            "d",
+            3,
+            &format!("{base}[[dungeon.levels]]\nfrom = 3\ndanger = 4\n"),
+        ))
+        .unwrap();
+        assert!(lone[0].spawning.is_none() && lone[0].plan(2).unwrap().danger.is_none());
+        assert_eq!(lone[0].plan(3).unwrap().danger.unwrap().at(3, 1), 6);
     }
 
     #[test]
     fn rejects_bad_branches() {
-        let base = "[[dungeon]]\ngenerator = \"rooms\"\ndepth = 2\nsize = [80, 21]\n";
-        assert!(resolve(&format!("{base}id = \"a:b\"\n")).is_err());
-        assert!(resolve(&format!("{base}id = \"a\"\ncreatures = [\"dragon\"]\n")).is_err());
-        assert!(resolve(&format!("{base}id = \"a\"\nkey = \"dagger\"\n")).is_err());
+        assert!(resolve(&branch("a:b", 2, "")).is_err());
+        assert!(resolve(&branch("a", 2, "creatures = [\"dragon\"]\n")).is_err());
+        assert!(resolve(&branch("a", 2, "key = \"dagger\"\n")).is_err());
         assert_eq!(
-            resolve(&format!("{base}id = \"a\"\nkey = \"key\"\n")).unwrap()[0].key,
+            resolve(&branch("a", 2, "key = \"key\"\n")).unwrap()[0]
+                .plan(1)
+                .unwrap()
+                .key,
             Some(ObjectId(2))
         );
-        let tiny = "[[dungeon]]\nid = \"a\"\ngenerator = \"caves\"\ndepth = 2\nsize = [80, 21]\n";
+        let tiny = "[[dungeon]]\nid = \"a\"\ndepth = 2\n[dungeon.level]\n\
+                    generator = { kind = \"caves\" }\nsize = [80, 21]\n";
         assert!(resolve(tiny).unwrap_err().message.contains("outside"));
-        let range = format!(
-            "{base}id = \"a\"\n[[dungeon.levels]]\nfrom = 2\nto = 3\ngenerator = \"rooms\"\n"
-        );
+        let range = branch("a", 2, "[[dungeon.levels]]\nfrom = 2\nto = 3\n");
         assert!(resolve(&range).is_err());
-        let dup = format!("{base}id = \"a\"\n{base}id = \"a\"\n");
+        let dup = format!("{}{}", branch("a", 2, ""), branch("a", 2, ""));
         assert!(resolve(&dup).unwrap_err().message.contains("duplicate"));
+        let bare = "[[dungeon]]\nid = \"a\"\ndepth = 2\n[dungeon.level]\ngenerator = \"rooms\"\nsize = [80, 21]\n";
+        assert!(
+            resolve(bare).is_err(),
+            "a generator is a table with a `kind`"
+        );
+        let no_template = "[[dungeon]]\nid = \"a\"\ndepth = 2\n";
+        assert!(
+            resolve(no_template)
+                .unwrap_err()
+                .message
+                .contains("[dungeon.level]")
+        );
+        // A branch field on the template, a level field on the branch, a row without `from`.
+        for (bad, says) in [
+            (branch("a", 2, "depth = 3\n"), "unknown field"),
+            ("[[dungeon]]\nid = \"a\"\ndepth = 2\nsize = [80, 21]\n[dungeon.level]\ngenerator = { kind = \"rooms\" }\n".to_string(), "unknown field"),
+            (branch("a", 2, "[[dungeon.levels]]\nto = 2\n"), "missing field `from`"),
+            (branch("a", 2, "[[dungeon.levels]]\nfrom = 2\nid = \"x\"\n"), "unknown field"),
+        ] {
+            let e = resolve(&bad).unwrap_err().message;
+            assert!(e.contains(says), "{bad}: {e}");
+        }
     }
 }

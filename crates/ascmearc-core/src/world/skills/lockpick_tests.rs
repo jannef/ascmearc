@@ -286,13 +286,19 @@ fn trying_trains_open_lock() {
 fn locks_are_harder_to_pick_deeper_in_a_branch() {
     let content = content(false);
     let depths = content.dungeon("depths").expect("the Depths");
-    assert!(depths.locks_per_depth > 0, "the Depths' locks harden");
+    assert!(
+        depths.plan(8).expect("a floor").locks_per_depth > 0,
+        "the Depths' locks harden"
+    );
     assert_eq!(depths.locks_at(1), 0);
-    assert_eq!(depths.locks_at(8), 7 * i32::from(depths.locks_per_depth));
+    assert_eq!(
+        depths.locks_at(8),
+        7 * i32::from(depths.plan(8).expect("a floor").locks_per_depth)
+    );
     // A lock on the Depths 2: its own difficulty and one level's worth; the usual one too.
     let mut w = World::new(content.clone(), "deep", None).expect("world");
     let here = w.player_pos();
-    let plus = i32::from(depths.locks_per_depth);
+    let plus = i32::from(depths.plan(8).expect("a floor").locks_per_depth);
     let hard = Lock {
         difficulty: Some(20),
         ..Lock::new(None)

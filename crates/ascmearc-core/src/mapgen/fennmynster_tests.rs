@@ -47,7 +47,11 @@ fn eight_cellar_floors_of_danger_three_to_ten() {
     for depth in 1..=8 {
         let plan = def.plan(depth).expect("a floor");
         // The drowned church's plan (`minster_tests.rs`).
-        assert_eq!(plan.generator, Generator::Minster, "depth {depth}");
+        assert_eq!(
+            plan.generator.kind(),
+            GeneratorKind::Minster,
+            "depth {depth}"
+        );
         assert_eq!((plan.width, plan.height), (100, 40), "depth {depth}");
         assert_eq!(plan.temperature.map(|t| t.celsius()), Some(6));
         let (rule, at, _) = CONTENT.spawning(&def.level_id(depth)).expect("a danger");
@@ -56,7 +60,10 @@ fn eight_cellar_floors_of_danger_three_to_ten() {
             assert_eq!(rule.at(at, player_level), depth as u8 + 2, "depth {depth}");
         }
     }
-    assert_eq!(def.key, CONTENT.object_id("iron_key"));
+    assert_eq!(
+        def.plan(1).expect("a floor").key,
+        CONTENT.object_id("iron_key")
+    );
 }
 
 #[test]

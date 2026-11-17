@@ -26,12 +26,20 @@ fn refused(path: &str, from: &str, to: &str) -> String {
 
 #[test]
 fn a_tower_refuses_what_belongs_to_a_dungeon() {
-    let generator = "generator = \"tower\"\n";
+    // The branch fields, after `kind`.
+    let kind = "kind = \"tower\"\n";
     for (field, line) in [
         ("depth", "depth = 2"),
-        ("size", "size = [48, 20]"),
         ("bottom", "bottom = \"tower_climb_top\""),
         ("below", "below = \"depths:3\""),
+    ] {
+        let err = refused(BRANCH, kind, &format!("{kind}{line}\n"));
+        assert!(err.contains(&format!("a tower has no `{field}`")), "{err}");
+    }
+    // The level fields, in the template.
+    let generator = "generator = { kind = \"tower\" }\n";
+    for (field, line) in [
+        ("size", "size = [48, 20]"),
         ("secret_doors", "secret_doors = [1, 2]"),
         ("key", "key = \"rusty_key\""),
         ("ores", "ores = []"),
@@ -40,18 +48,24 @@ fn a_tower_refuses_what_belongs_to_a_dungeon() {
         let err = refused(BRANCH, generator, &format!("{generator}{line}\n"));
         assert!(err.contains(&format!("a tower has no `{field}`")), "{err}");
     }
-    // A row of the floors' own, after the branch's fields.
+    // And in a row of the floors' own, after the template's fields.
     let last = "room_effects = { chance = 0 }\n";
     let row = |text: &str| format!("{last}[[dungeon.levels]]\nfrom = 1\n{text}\n");
     let err = refused(BRANCH, last, &row("vaults = [\"barrow_chamber\"]"));
     assert!(err.contains("a tower has no `vaults`"), "{err}");
-    let err = refused(BRANCH, last, &row("generator = \"rooms\""));
-    assert!(err.contains("a tower has no `[[dungeon.levels]]"), "{err}");
+    let err = refused(BRANCH, last, &row("temperature = 9"));
+    assert!(err.contains("a tower has no `temperature`"), "{err}");
+    let err = refused(BRANCH, last, &row("generator = { kind = \"rooms\" }"));
+    assert!(err.contains("a tower's `generator` is \"tower\""), "{err}");
 }
 
 #[test]
 fn a_tower_takes_the_tower_generator_and_only_a_tower_does() {
-    let err = refused(BRANCH, "generator = \"tower\"", "generator = \"rooms\"");
+    let err = refused(
+        BRANCH,
+        "generator = { kind = \"tower\" }",
+        "generator = { kind = \"rooms\" }",
+    );
     assert!(err.contains("a tower's `generator` is \"tower\""), "{err}");
     let err = refused(BRANCH, "kind = \"tower\"\n", "");
     assert!(err.contains("belong to `kind = \"tower\"`"), "{err}");
@@ -67,7 +81,11 @@ fn a_tower_takes_the_tower_generator_and_only_a_tower_does() {
     );
     // The Depths are no tower.
     let depths = "campaigns/showcase/data/dungeons/showcase.toml";
-    let err = refused(depths, "generator = \"rooms\"", "generator = \"tower\"");
+    let err = refused(
+        depths,
+        "generator = { kind = \"rooms\" }",
+        "generator = { kind = \"tower\" }",
+    );
     assert!(err.contains("only `kind = \"tower\"` takes"), "{err}");
 }
 

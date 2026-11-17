@@ -18,57 +18,51 @@
 
 use super::connect::{cheapest_path, distances, flood};
 use super::{Canvas, Needs, out_and_back, special, vault};
-use crate::content::{StairsDir, Vault};
+use crate::content::{CavesParams, StairsDir, Vault};
 use crate::geom::{Dir, Pos};
 use crate::grid::Grid;
 use crate::rng::Rng;
 
-/// Percent of inner cells that start as rock.
-const ROCK: u32 = 45;
-const SMOOTHING: usize = 5;
-/// The kept cave must cover at least this percent of the inner area.
-const MIN_CAVE: i32 = 30;
-/// Side of the blocks lamps are scattered over.
-const LAMP_BLOCK: i32 = 16;
-/// Chance (percent) that a cave level gets a vault (besides the ones its branch level names).
-const VAULT_CHANCE: u32 = 40;
-/// Chance (percent) that a cave level with a vault gets a second.
-const SECOND_VAULT_CHANCE: u32 = 15;
-/// Longest tunnel from a vault entrance to the cave.
-const MAX_TUNNEL: usize = 40;
+// The tunables are [`CavesParams`] (`content/generator.rs`, `data/generators.toml`, #1834); the
+// helpers the tunnels and the passage share (`place_vaults`, `light`) take theirs as arguments.
 
-pub(super) fn build(canvas: &mut Canvas, rng: &mut Rng, needs: Needs) -> Option<()> {
-    noise(canvas, rng);
-    for _ in 0..SMOOTHING {
+pub(super) fn build(
+    canvas: &mut Canvas,
+    rng: &mut Rng,
+    needs: Needs,
+    p: &CavesParams,
+) -> Option<()> {
+    noise(canvas, rng, p.rock);
+    for _ in 0..p.smoothing {
         smooth(canvas);
     }
-    keep_largest_cave(canvas, MIN_CAVE)?;
+    keep_largest_cave(canvas, p.min_cave)?;
     for v in vault::named(canvas, needs.vaults) {
         if vault::spots(canvas, v).is_empty() {
-            make_room(canvas, rng, v, MIN_CAVE)?;
+            make_room(canvas, rng, v, p.min_cave)?;
         }
-        if place_vaults(canvas, rng, &[v], 1) < 1 {
+        if place_vaults(canvas, rng, &[v], 1, p.max_tunnel) < 1 {
             return None;
         }
     }
-    let vaults = if rng.chance(VAULT_CHANCE) {
-        1 + usize::from(rng.chance(SECOND_VAULT_CHANCE))
+    let vaults = if rng.chance(p.vault_chance) {
+        1 + usize::from(rng.chance(p.second_vault_chance))
     } else {
         0
     };
     let shuffled = vault::shuffled(canvas, rng);
-    place_vaults(canvas, rng, &shuffled, vaults);
+    place_vaults(canvas, rng, &shuffled, vaults, p.max_tunnel);
     pools(canvas, rng);
     let up = place_stairs(canvas, rng, needs)?;
-    light(canvas, rng, up);
+    light(canvas, rng, up, p.lamp_block);
     patrols(canvas, rng, up, needs);
     special::cave_rooms(canvas, rng, up);
     Some(())
 }
 
-fn noise(canvas: &mut Canvas, rng: &mut Rng) {
+fn noise(canvas: &mut Canvas, rng: &mut Rng, rock: u32) {
     for p in canvas.cells() {
-        if canvas.is_inner(p) && !rng.chance(ROCK) {
+        if canvas.is_inner(p) && !rng.chance(rock) {
             canvas.set(p, canvas.pal.floor);
         }
     }
@@ -172,6 +166,7 @@ pub(super) fn place_vaults(
     rng: &mut Rng,
     vaults: &[&Vault],
     count: usize,
+    max_tunnel: usize,
 ) -> usize {
     let mut placed = 0;
     for &v in vaults {
@@ -190,7 +185,7 @@ pub(super) fn place_vaults(
                 .iter()
                 .map(|(door, out)| {
                     let start = Pos::new(at.x + door.x, at.y + door.y).step(*out);
-                    tunnel(canvas, start, inside)
+                    tunnel(canvas, start, inside, max_tunnel)
                 })
                 .collect();
             let Some(tunnels) = tunnels else { continue };
@@ -207,9 +202,14 @@ pub(super) fn place_vaults(
     placed
 }
 
-/// The cells from `start` through rock to the nearest open cave cell (at most `MAX_TUNNEL` long),
+/// The cells from `start` through rock to the nearest open cave cell (at most `max_tunnel` long),
 /// never entering cells `avoid` accepts or stamped ones.
-fn tunnel(canvas: &Canvas, start: Pos, avoid: impl Fn(Pos) -> bool) -> Option<Vec<Pos>> {
+fn tunnel(
+    canvas: &Canvas,
+    start: Pos,
+    avoid: impl Fn(Pos) -> bool,
+    max_tunnel: usize,
+) -> Option<Vec<Pos>> {
     let open = |p: Pos| canvas.is_walkable(p) && !canvas.is_stamped(p);
     let cost = |p: Pos| {
         if !canvas.is_inner(p) || canvas.is_stamped(p) || avoid(p) {
@@ -228,7 +228,7 @@ fn tunnel(canvas: &Canvas, start: Pos, avoid: impl Fn(Pos) -> bool) -> Option<Ve
         open,
         1,
     )?;
-    (path.len() <= MAX_TUNNEL).then_some(path)
+    (path.len() <= max_tunnel).then_some(path)
 }
 
 /// One to three pools of shallow water grown from random floor cells.
@@ -283,7 +283,7 @@ pub(super) fn place_stairs(canvas: &mut Canvas, rng: &mut Rng, needs: Needs) -> 
     Some(up)
 }
 
-pub(super) fn light(canvas: &mut Canvas, rng: &mut Rng, up: Pos) {
+pub(super) fn light(canvas: &mut Canvas, rng: &mut Rng, up: Pos, lamp_block: i32) {
     let lamp = canvas.pal.lamp;
     let mut beside: Vec<Pos> = Dir::ALL.iter().map(|d| up.step(*d)).collect();
     rng.shuffle(&mut beside);
@@ -291,15 +291,15 @@ pub(super) fn light(canvas: &mut Canvas, rng: &mut Rng, up: Pos) {
         canvas.lights.insert(p, lamp);
     }
     let (w, h) = (canvas.width(), canvas.height());
-    for by in (0..h).step_by(LAMP_BLOCK as usize) {
-        for bx in (0..w).step_by(LAMP_BLOCK as usize) {
+    for by in (0..h).step_by(lamp_block as usize) {
+        for bx in (0..w).step_by(lamp_block as usize) {
             if !rng.chance(50) {
                 continue;
             }
             for _ in 0..8 {
                 let p = Pos::new(
-                    (bx + rng.below(LAMP_BLOCK as u32) as i32).min(w - 1),
-                    (by + rng.below(LAMP_BLOCK as u32) as i32).min(h - 1),
+                    (bx + rng.below(lamp_block as u32) as i32).min(w - 1),
+                    (by + rng.below(lamp_block as u32) as i32).min(h - 1),
                 );
                 if canvas.is_free_floor(p) {
                     canvas.lights.insert(p, lamp);

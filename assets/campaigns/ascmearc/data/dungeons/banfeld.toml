@@ -9,8 +9,10 @@
 id = "banfeld"
 name = "Bānfeld"
 arrival = "Fresh earth on old graves. Someone has been digging."
-generator = "rooms"
 depth = 4
+
+[dungeon.level]
+generator = { kind = "rooms" }
 size = [80, 21]
 traps = ["arrow", "spear", "pit", "alarm"]
 secret_doors = [1, 2]

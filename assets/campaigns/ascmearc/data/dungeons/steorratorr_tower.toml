@@ -20,10 +20,12 @@
 id = "steorratorr_tower"
 name = "Steorratorr"
 kind = "tower"
-generator = "tower"
 floors = 7
 clearing = "steorratorr"
 top = "steorratorr_top"
+
+[dungeon.level]
+generator = { kind = "tower" }
 traps = ["fireball", "lightning_bolt", "teleport", "pit"]
 traps_per_level = [5, 8]
 hidden_per_depth = 2

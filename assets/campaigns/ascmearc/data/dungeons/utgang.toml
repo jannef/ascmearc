@@ -11,10 +11,12 @@
 id = "utgang"
 name = "Ūtgang"
 arrival = "Warm air breathes up the shaft from far below."
-generator = "passage"
 depth = 3
-size = [80, 21]
 below = "fyrdelf:12"
+
+[dungeon.level]
+generator = { kind = "passage" }
+size = [80, 21]
 traps = ["arrow", "spear", "fireball", "lightning_bolt", "alarm"]
 # As Fyrdelf's deep workings: few secret doors, hidden things and locks as hard as there at about
 # the same depth (Fyrdelf's per-depth step counted from its ninth floor).

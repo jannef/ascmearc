@@ -251,13 +251,14 @@ const CRUMBLING: &str = r#"
 [[dungeon]]
 id = "test_crumbling"
 name = "Crumbling"
-generator = "rooms"
 depth = 3
+[dungeon.level]
+generator = { kind = "rooms" }
 size = [80, 21]
 room_effects = { chance = 100, per_level = 3, favoured = { collapsed = 100 } }
 [[dungeon.levels]]
 from = 2
-generator = "caves"
+generator = { kind = "caves" }
 size = [100, 40]
 "#;
 

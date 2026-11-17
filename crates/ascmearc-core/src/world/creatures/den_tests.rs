@@ -255,8 +255,9 @@ const WARREN: &str = r#"
 [[dungeon]]
 id = "warren"
 name = "Warren"
-generator = "rooms"
 depth = 1
+[dungeon.level]
+generator = { kind = "rooms" }
 size = [80, 21]
 danger = 3
 population = ["kobold", "kobold_archer", "kobold_shaman", "rat"]

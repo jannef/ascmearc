@@ -8,8 +8,10 @@
 id = "wulfeshol"
 name = "Wulfeshol"
 arrival = "Somebody has swept the cave mouth. Somebody keeps a watch."
-generator = "caves"
 depth = 4
+
+[dungeon.level]
+generator = { kind = "caves" }
 size = [100, 40]
 traps = ["pit", "arrow", "alarm"]
 hidden_per_depth = 1

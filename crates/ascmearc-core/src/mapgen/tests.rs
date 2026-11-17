@@ -373,7 +373,12 @@ fn rooms_levels_hide_a_few_doors_of_their_own() {
     let mut files = ContentFiles::builtin();
     files.insert("campaigns/showcase/data/dungeons/showcase.toml", &without);
     let plain = Content::load(&files).expect("content");
-    let [_, most] = CONTENT.dungeon("depths").expect("depths").secret_doors;
+    let [_, most] = CONTENT
+        .dungeon("depths")
+        .expect("depths")
+        .plan(1)
+        .expect("a floor")
+        .secret_doors;
     let (mut levels, mut doors) = (0, 0);
     for seed in 0..10 {
         for depth in [1, 2, 6, 7, 8] {
@@ -545,12 +550,12 @@ fn shops_come_about_one_level_in_seven() {
 static FIXTURE: LazyLock<Content> = LazyLock::new(|| {
     let mut files = ContentFiles::builtin();
     let fixture = "\n\
-         [[dungeon]]\nid = \"fixture_flooded\"\ngenerator = \"rooms\"\ndepth = 2\n\
+         [[dungeon]]\nid = \"fixture_flooded\"\ndepth = 2\n[dungeon.level]\ngenerator = { kind = \"rooms\" }\n\
          size = [80, 21]\n\
          room_effects = { chance = 60, per_level = 3, favoured = { flooded = 100 } }\n\
          shops = { chance = 0 }\n\
-         [[dungeon.levels]]\nfrom = 2\ngenerator = \"caves\"\nsize = [100, 40]\n\
-         [[dungeon]]\nid = \"fixture_traders\"\ngenerator = \"rooms\"\ndepth = 1\n\
+         [[dungeon.levels]]\nfrom = 2\ngenerator = { kind = \"caves\" }\nsize = [100, 40]\n\
+         [[dungeon]]\nid = \"fixture_traders\"\ndepth = 1\n[dungeon.level]\ngenerator = { kind = \"rooms\" }\n\
          size = [80, 21]\nroom_effects = { chance = 0 }\n\
          shops = { chance = 100, kinds = [\"general_store\"], names = [\"Durin\"], \
          keeper = \"kobold\" }\n";
@@ -704,7 +709,7 @@ fn seeds_and_levels_give_different_maps() {
 #[test]
 fn generated_levels_hide_a_few_traps_of_their_own() {
     let def = CONTENT.dungeon("depths").expect("depths");
-    let [least, most] = def.traps_per_level;
+    let [least, most] = def.plan(1).expect("a floor").traps_per_level;
     let mut kinds = std::collections::BTreeSet::new();
     for seed in 0..10 {
         for depth in 1..=8 {

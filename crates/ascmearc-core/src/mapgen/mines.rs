@@ -31,91 +31,12 @@
 
 use super::connect::{cheapest_path, distances, flood};
 use super::{CARDINALS, Canvas, Needs, out_and_back, shop, special, vault};
-use crate::content::{
-    DungeonDef, Generator, ObjectId, RoomEffectDef, SpecialRoom, StairsDir, TerrainId,
-};
+use crate::content::{MinesParams, ObjectId, RoomEffectDef, SpecialRoom, StairsDir, TerrainId};
 use crate::door::{Key, Lock};
 use crate::geom::{Dir, Pos};
 use crate::grid::Grid;
 use crate::object::Stack;
 use crate::rng::Rng;
-
-/// A mines floor's parameters, each 0 to 100.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct MinesParams {
-    /// How open it is: tight galleries and small worked chambers at 0; wide galleries, wide
-    /// stopes, and big natural hollows at 100.
-    pub openness: u8,
-    /// How much lava: none at 0; pools, then channels, more and wider, up to 100.
-    pub lava: u8,
-}
-
-/// The first mines floor of a branch: a tight worked mine, no lava.
-pub const START: MinesParams = MinesParams {
-    openness: 0,
-    lava: 0,
-};
-
-/// The last mines floor of a branch: wide open, the most lava.
-pub const END: MinesParams = MinesParams {
-    openness: 100,
-    lava: 100,
-};
-
-/// The parameters of `def`'s floor at `depth`, by its place among the branch's mines floors:
-/// `openness` from [`START`]'s to [`END`]'s evenly, `lava` by the square of the way down, so it
-/// comes late and grows fast. (Until generator parameters move into data, #1834.)
-pub(super) fn params(def: &DungeonDef, depth: u32) -> MinesParams {
-    let mines: Vec<u32> = (1..=def.depth)
-        .filter(|&d| def.plan(d).is_some_and(|p| p.generator == Generator::Mines))
-        .collect();
-    let (first, last) = (mines.first().copied(), mines.last().copied());
-    let t = match (first, last) {
-        (Some(first), Some(last)) if last > first => {
-            (depth.clamp(first, last) - first) * 100 / (last - first)
-        }
-        _ => 0,
-    };
-    let lerp = |a: u8, b: u8, t: u32| {
-        let (a, b) = (i64::from(a), i64::from(b));
-        (a + (b - a) * i64::from(t) / 100).clamp(0, 100) as u8
-    };
-    MinesParams {
-        openness: lerp(START.openness, END.openness, t),
-        lava: lerp(START.lava, END.lava, t * t / 100),
-    }
-}
-
-/// Rows per drive: a level gets one drive for each this many rows.
-const DRIVE_EVERY: i32 = 12;
-/// The dearness of a bend in a gallery (a cell of rock costs 3): galleries run straight.
-const TURN: u32 = 12;
-/// Cells of level per worked chamber tried for (more, less this per point of openness).
-const CHAMBER_AREA: i32 = 160;
-/// Cells of level per hollow at openness 100 (fewer, the less open).
-const HOLLOW_AREA: i32 = 800;
-/// Percent of cells that start as rock in a hollow's caverns, and the smoothing passes.
-const HOLLOW_ROCK: u32 = 44;
-const SMOOTHING: usize = 4;
-/// A pocket cut off with fewer cells than this is filled in rather than tunnelled to.
-const MIN_POCKET: usize = 8;
-/// Chance (percent) of a random vault, and then of a second.
-const VAULT_CHANCE: u32 = 40;
-const SECOND_VAULT_CHANCE: u32 = 15;
-/// The most chambers a level locks (with the branch's key).
-const MAX_LOCKED: usize = 2;
-/// Chance (percent) that a chamber other than the arrival's has torches.
-const LIT_CHANCE: u32 = 80;
-/// A lamp hangs on about every this many cells of gallery, with one chance in two.
-const LAMP_EVERY: usize = 12;
-/// Walkable cells per cell of lava at `lava` 100 (more, the less lava).
-const LAVA_SHARE: i64 = 5;
-/// The smallest pool of lava.
-const MIN_POOL: i32 = 8;
-/// Lava keeps this far (Chebyshev) from a staircase.
-const LAVA_STAIRS: i32 = 2;
-/// Features of lava a level tries.
-const LAVA_TRIES: usize = 60;
 
 /// A worked chamber: its interior (inclusive) and its one way in, with the way out of it.
 #[derive(Clone, Copy, Debug)]
@@ -153,11 +74,14 @@ struct Mine {
     chambers: Vec<Chamber>,
     /// The cells just outside the stamped vaults' entrances.
     entrances: Vec<Pos>,
+    /// The floor's parameters.
+    p: MinesParams,
 }
 
 impl Mine {
-    fn new(w: i32, h: i32) -> Self {
+    fn new(w: i32, h: i32, p: MinesParams) -> Self {
         Self {
+            p,
             worked: Grid::new(w, h, false),
             walled: Grid::new(w, h, false),
             hollow: Grid::new(w, h, false),
@@ -173,16 +97,16 @@ pub(super) fn build(
     canvas: &mut Canvas,
     rng: &mut Rng,
     needs: Needs,
-    params: MinesParams,
+    p: &MinesParams,
 ) -> Option<()> {
-    let open = u32::from(params.openness);
-    let mut mine = Mine::new(canvas.width(), canvas.height());
+    let open = u32::from(p.openness);
+    let mut mine = Mine::new(canvas.width(), canvas.height(), p.clone());
     for v in vault::named(canvas, needs.vaults) {
         let at = *rng.pick(&vault::spots(canvas, v))?;
         stamp_vault(canvas, &mut mine, v, at);
     }
-    let count = if rng.chance(VAULT_CHANCE) {
-        1 + usize::from(rng.chance(SECOND_VAULT_CHANCE))
+    let count = if rng.chance(mine.p.vault_chance) {
+        1 + usize::from(rng.chance(mine.p.second_vault_chance))
     } else {
         0
     };
@@ -215,7 +139,7 @@ pub(super) fn build(
     hollows(canvas, rng, &mut mine, open);
     join_all(canvas, &mut mine)?;
     let up = place_stairs(canvas, rng, &mine, needs)?;
-    lava(canvas, rng, &mut mine, params.lava, up);
+    lava(canvas, rng, &mut mine, p.lava, up);
     light(canvas, rng, &mine, up);
     patrols(canvas, rng, up, needs);
     let arrival = mine.chambers.iter().position(|c| c.contains(up));
@@ -256,7 +180,7 @@ fn carve(canvas: &mut Canvas, mine: &mut Mine, p: Pos, drive: u8) {
 
 /// Digs a gallery `width` cells wide along the cheapest way from `starts` to a cell `goal`
 /// accepts, through rock (3 a cell) and floor (1), never through a vault or a chamber, a bend
-/// costing [`TURN`]; a wide one widens to the south of an east-west stretch, to the east of a
+/// costing `turn`; a wide one widens to the south of an east-west stretch, to the east of a
 /// north-south one. Returns its line; `None` if no way fits.
 fn dig(
     canvas: &mut Canvas,
@@ -275,7 +199,14 @@ fn dig(
             canvas.is_walkable(p).then_some(1)
         }
     };
-    let path = cheapest_path(canvas.width(), canvas.height(), starts, cost, goal, TURN)?;
+    let path = cheapest_path(
+        canvas.width(),
+        canvas.height(),
+        starts,
+        cost,
+        goal,
+        mine.p.turn,
+    )?;
     for (i, &p) in path.iter().enumerate() {
         carve(canvas, mine, p, drive);
         let along = path
@@ -303,11 +234,11 @@ fn gallery_width(rng: &mut Rng, open: u32) -> i32 {
     1 + i32::from(rng.chance(open)) + i32::from(open >= 60 && rng.chance(open - 50))
 }
 
-/// The drives: one for each [`DRIVE_EVERY`] rows, spread down the level, each across most of
+/// The drives: one for each `drive_every` rows, spread down the level, each across most of
 /// its width through waypoints that jog a little (more, the more open). Returns how many.
 fn drives(canvas: &mut Canvas, rng: &mut Rng, mine: &mut Mine, open: u32) -> Option<u8> {
     let (w, h) = (canvas.width(), canvas.height());
-    let n = ((h - 4) / DRIVE_EVERY).clamp(1, 8);
+    let n = ((h - 4) / mine.p.drive_every).clamp(1, 8);
     let jog = 1 + open as i32 / 40;
     for i in 0..n {
         let drive = u8::try_from(i + 1).ok()?;
@@ -417,7 +348,7 @@ fn headings(canvas: &mut Canvas, rng: &mut Rng, mine: &mut Mine) {
 fn chambers(canvas: &mut Canvas, rng: &mut Rng, mine: &mut Mine, open: u32) {
     let (w, h) = (canvas.width(), canvas.height());
     let open = open as i32;
-    let target = (w * h / (CHAMBER_AREA + 3 * open)).clamp(3, 40) as usize;
+    let target = (w * h / (mine.p.chamber_area + 3 * open)).clamp(3, 40) as usize;
     let galleries: Vec<Pos> = (canvas.cells())
         .filter(|p| mine.worked[*p] && canvas.get(*p) == canvas.pal.floor)
         .collect();
@@ -487,17 +418,17 @@ fn chambers(canvas: &mut Canvas, rng: &mut Rng, mine: &mut Mine, open: u32) {
 /// the more open; never in a chamber or a vault.
 fn hollows(canvas: &mut Canvas, rng: &mut Rng, mine: &mut Mine, open: u32) {
     let (w, h) = (canvas.width(), canvas.height());
-    let count = open as i32 * w * h / (100 * HOLLOW_AREA);
+    let count = open as i32 * w * h / (100 * mine.p.hollow_area);
     if count == 0 {
         return;
     }
     let mut cave = Grid::new(w, h, false);
     for p in canvas.cells() {
-        if canvas.is_inner(p) && !rng.chance(HOLLOW_ROCK) {
+        if canvas.is_inner(p) && !rng.chance(mine.p.hollow_rock) {
             cave[p] = true;
         }
     }
-    for _ in 0..SMOOTHING {
+    for _ in 0..mine.p.smoothing {
         let next: Vec<bool> = (cave.iter())
             .map(|(p, &o)| {
                 let rock = (Dir::ALL.iter())
@@ -539,7 +470,7 @@ fn join_all(canvas: &mut Canvas, mine: &mut Mine) -> Option<()> {
         };
         let part = flood(w, h, stray, |p| canvas.is_passable(p));
         let cells: Vec<Pos> = part.iter().filter(|(_, r)| **r).map(|(p, _)| p).collect();
-        if cells.len() < MIN_POCKET && !cells.iter().any(|p| canvas.is_stamped(*p)) {
+        if cells.len() < mine.p.min_pocket && !cells.iter().any(|p| canvas.is_stamped(*p)) {
             for p in cells {
                 canvas.set(p, canvas.pal.void);
                 mine.hollow[p] = false;
@@ -602,7 +533,7 @@ fn place_stairs(canvas: &mut Canvas, rng: &mut Rng, mine: &Mine, needs: Needs) -
     Some(up)
 }
 
-/// Lava pools and channels (see the module docs), about one cell for every [`LAVA_SHARE`]
+/// Lava pools and channels (see the module docs), about one cell for every `lava_share`
 /// walkable cells at `lava` 100. The rock beside a feature opens into banks of floor (a natural
 /// hollow round it); banks cut off from the up staircase are rock again, and a feature that
 /// cuts anything else off is undone.
@@ -614,9 +545,9 @@ fn lava(canvas: &mut Canvas, rng: &mut Rng, mine: &mut Mine, lava: u8, up: Pos) 
         return;
     }
     let walkable = canvas.cells().filter(|p| canvas.is_walkable(*p)).count() as i64;
-    let mut budget = walkable * i64::from(lava) / (100 * LAVA_SHARE);
+    let mut budget = walkable * i64::from(lava) / (100 * mine.p.lava_share);
     let stairs: Vec<Pos> = [canvas.up, canvas.down].into_iter().flatten().collect();
-    let near_stairs = |p: Pos| stairs.iter().any(|s| s.chebyshev(p) <= LAVA_STAIRS);
+    let near_stairs = |p: Pos| stairs.iter().any(|s| s.chebyshev(p) <= mine.p.lava_stairs);
     let free = |canvas: &Canvas, mine: &Mine, p: Pos| {
         canvas.is_inner(p)
             && !canvas.is_stamped(p)
@@ -632,8 +563,8 @@ fn lava(canvas: &mut Canvas, rng: &mut Rng, mine: &mut Mine, lava: u8, up: Pos) 
         .filter(|&p| mine.hollow[p] || CARDINALS.iter().any(|d| canvas.is_walkable(p.step(*d))))
         .collect();
     let lava = i32::from(lava);
-    for _ in 0..LAVA_TRIES {
-        if budget < i64::from(MIN_POOL) {
+    for _ in 0..mine.p.lava_tries {
+        if budget < i64::from(mine.p.min_pool) {
             break;
         }
         let Some(&start) = rng.pick(&seeds) else {
@@ -672,7 +603,9 @@ fn lava(canvas: &mut Canvas, rng: &mut Rng, mine: &mut Mine, lava: u8, up: Pos) 
             }
         } else {
             // A pool grown from its seed.
-            let size = rng.range(MIN_POOL, MIN_POOL + lava / 4).min(budget as i32);
+            let size = rng
+                .range(mine.p.min_pool, mine.p.min_pool + lava / 4)
+                .min(budget as i32);
             let mut frontier = vec![start];
             let mut count = 0;
             while count < size && !frontier.is_empty() {
@@ -738,7 +671,7 @@ fn lava(canvas: &mut Canvas, rng: &mut Rng, mine: &mut Mine, lava: u8, up: Pos) 
 /// and patches of glowing fungus in the hollows.
 fn light(canvas: &mut Canvas, rng: &mut Rng, mine: &Mine, up: Pos) {
     for chamber in &mine.chambers {
-        if !chamber.contains(up) && !rng.chance(LIT_CHANCE) {
+        if !chamber.contains(up) && !rng.chance(mine.p.lit_chance) {
             continue;
         }
         let (min, max) = (chamber.min, chamber.max);
@@ -767,7 +700,11 @@ fn light(canvas: &mut Canvas, rng: &mut Rng, mine: &Mine, up: Pos) {
         }
     }
     for run in &mine.runs {
-        for p in run.iter().skip(LAMP_EVERY / 2).step_by(LAMP_EVERY) {
+        for p in run
+            .iter()
+            .skip(mine.p.lamp_every / 2)
+            .step_by(mine.p.lamp_every)
+        {
             if rng.chance(50) && canvas.is_free_floor(*p) {
                 canvas.lights.insert(*p, canvas.pal.lamp);
             }
@@ -822,7 +759,7 @@ fn patrols(canvas: &mut Canvas, rng: &mut Rng, up: Pos, needs: Needs) {
     }
 }
 
-/// Locks the way into up to [`MAX_LOCKED`] chambers (not the arrival's, none with a staircase)
+/// Locks the way into up to `max_locked` chambers (not the arrival's, none with a staircase)
 /// with the lock `key` opens, and leaves the key on a free cell of a chamber not locked, so the
 /// player can always reach it. A doorway or an open door becomes a closed door to be locked.
 fn lock_chambers(
@@ -847,7 +784,7 @@ fn lock_chambers(
         })
         .collect();
     rng.shuffle(&mut candidates);
-    let count = rng.range(0, MAX_LOCKED as i32) as usize;
+    let count = rng.range(0, mine.p.max_locked as i32) as usize;
     let locked: Vec<usize> = candidates.into_iter().take(count).collect();
     if locked.is_empty() {
         return;

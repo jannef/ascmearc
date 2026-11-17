@@ -19,8 +19,8 @@ use crate::world::*;
 fn content(generator: &str, danger: u8, ores: &str) -> Arc<Content> {
     let mut files = ContentFiles::builtin();
     let branch = format!(
-        "\n[[dungeon]]\nid = \"mine\"\nname = \"Mine\"\ngenerator = \"{generator}\"\ndepth = 1\n\
-         size = [60, 30]\n{ores}\ndanger = {danger}\npopulation = [\"rat\"]\n\
+        "\n[[dungeon]]\nid = \"mine\"\nname = \"Mine\"\ndepth = 1\n[dungeon.level]\n\
+         generator = {{ kind = \"{generator}\" }}\nsize = [60, 30]\n{ores}\ndanger = {danger}\npopulation = [\"rat\"]\n\
          population_count = 0\n"
     );
     let dungeons = format!(
@@ -195,7 +195,7 @@ fn mithril_and_adamantium_lie_deeper_than_any_bounded_branch() {
         .map(|m| content.material(m).id.clone())
         .collect();
     for def in content.dungeons() {
-        for m in def.ores.iter().flatten() {
+        for m in def.plans().flat_map(|p| p.ores.iter().flatten()) {
             assert!(names.contains(m), "{}: {m}", def.id);
         }
     }
@@ -254,7 +254,7 @@ fn bad_files_are_refused() {
     // A branch naming an ore the table has no row for.
     let mut files = ContentFiles::builtin();
     let dungeons = format!(
-        "{}\n[[dungeon]]\nid = \"bad\"\ngenerator = \"rooms\"\ndepth = 1\nsize = [40, 20]\n\
+        "{}\n[[dungeon]]\nid = \"bad\"\ndepth = 1\n[dungeon.level]\ngenerator = {{ kind = \"rooms\" }}\nsize = [40, 20]\n\
          ores = [\"steel\"]\n",
         include_str!("../../../../../assets/data/dungeons.toml")
     );

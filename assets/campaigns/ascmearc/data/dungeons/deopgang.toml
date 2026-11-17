@@ -9,10 +9,12 @@
 id = "deopgang"
 name = "Dēopgang"
 arrival = "Cut steps, worn hollow, go down into still, cold air. Far below, a hammer rings."
-generator = "rooms"
 depth = 11
-size = [80, 21]
 bottom = "gimmwic"
+
+[dungeon.level]
+generator = { kind = "rooms" }
+size = [80, 21]
 traps = ["arrow", "spear", "pit", "frost", "lightning_bolt", "alarm", "teleport"]
 # The gnomes hide their ways as well as they cut them: more secret doors than the duergar's mine,
 # harder to find the deeper they go, and locks as hard as Fyrdelf's.
@@ -67,13 +69,13 @@ to = 4
 [[dungeon.levels]]
 from = 5
 to = 8
-generator = "caves"
+generator = { kind = "caves" }
 size = [120, 60]
 
 [[dungeon.levels]]
 from = 9
 to = 11
-generator = "caves"
+generator = { kind = "caves" }
 size = [120, 60]
 temperature = 14
 dread_one_in = 40

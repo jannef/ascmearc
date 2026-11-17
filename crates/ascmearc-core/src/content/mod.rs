@@ -84,6 +84,7 @@ mod gaze;
 mod gear;
 mod gear_condition;
 mod gem;
+mod generator;
 pub mod grimoire;
 mod guild;
 #[cfg(test)]
@@ -288,7 +289,7 @@ pub use disease::{DiseaseDef, DiseaseId, SOURCES, Wading};
 pub use drops::{Drop, DropFrom, DropGoods, TagDrops};
 pub use dummy::DummyTraining;
 pub use dungeon::{
-    ChestOdds, DungeonDef, Endless, Generator, LayerBoss, LevelPlan, Portal, RoomOdds, ShopOdds,
+    ChestOdds, DungeonDef, Endless, LayerBoss, LevelPlan, Portal, RoomOdds, ShopOdds,
     parse_branch_level, parse_instance, sibling,
 };
 pub use effect::{Darken, EffectDef, EffectLight, EffectShape, FILL_GLYPH, MAX_DARKEN, Shake};
@@ -312,6 +313,11 @@ pub use gear::{Gear, GearLine, RACIAL_CHANCE};
 pub use gear_condition::{Depth, GearConditions, Odds, PER_MILLE, TribeOdds};
 pub use gem::{
     Cut, CutId, Cutting, GemDef, GemSize, GemSizeId, Gems, Ornament, ROUGH_SATURATION, dull,
+};
+pub use generator::{
+    Bore, CavesParams, Curve, Generator, GeneratorDefaults, GeneratorKind, MinesParams, MinesSpec,
+    MinsterParams, MinsterSpec, ParamRamp, PassageParams, RampCurve, RoomsParams, TowerParams,
+    TunnelsParams,
 };
 pub use guild::{GuildDef, RankBy, RankDef};
 pub use herbs::{Herb, HerbRules};
@@ -738,6 +744,9 @@ pub struct Content {
     /// The default odds of a draw, `data/dungeons.toml`'s
     /// `[defaults]`; `None` without them (then no area may give a danger).
     draw_odds: Option<danger::Odds>,
+    /// The generators' configured parameters, `data/generators.toml`; `None` without it (then
+    /// no dungeon branch loads).
+    generators: Option<GeneratorDefaults>,
     /// Sorted by id.
     vaults: Vec<Vault>,
     calendar: Calendar,
@@ -1179,6 +1188,11 @@ impl Content {
         if let Some(text) = files.get_optional(path) {
             content.draw_odds =
                 danger::DefaultsFile::parse(text).map_err(|m| ContentError::new(path, m))?;
+        }
+        let path = "data/generators.toml";
+        if let Some(text) = files.get_optional(path) {
+            content.generators =
+                Some(GeneratorDefaults::parse(text).map_err(|m| ContentError::new(path, m))?);
         }
         let mut seen: BTreeMap<String, &str> = BTreeMap::new();
         for (path, id, text) in files.in_dir("levels") {

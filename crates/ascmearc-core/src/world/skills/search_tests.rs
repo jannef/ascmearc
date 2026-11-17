@@ -349,7 +349,10 @@ fn hidden_features_are_harder_deeper_down() {
     let content = builtin();
     let def = content.dungeon("depths").expect("depths");
     assert_eq!(def.hidden_at(1), 0);
-    assert_eq!(def.hidden_at(8), 7 * i32::from(def.hidden_per_depth));
+    assert_eq!(
+        def.hidden_at(8),
+        7 * i32::from(def.plan(8).expect("a floor").hidden_per_depth)
+    );
     let w = World::new(content, "depths", None).expect("world");
     assert_eq!(w.difficulty_of(super::search::Hidden::Door(14)), 14);
 }

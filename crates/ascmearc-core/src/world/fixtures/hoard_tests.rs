@@ -293,8 +293,9 @@ const HOARDS: &str = r#"
 [[dungeon]]
 id = "hoards"
 name = "Hoards"
-generator = "rooms"
 depth = 1
+[dungeon.level]
+generator = { kind = "rooms" }
 size = [80, 21]
 danger = 3
 population = ["kobold", "rat"]

@@ -1,0 +1,215 @@
+# The generators of dungeon branch levels and their parameters (#1834; `content/generator.rs`,
+# docs/dev/mapgen.md "Generator parameters"): one table per kind, every parameter given. A
+# dungeon file picks a kind and overrides any of these, just those, in its `[dungeon.level]`
+# template or a `[[dungeon.levels]]` row: `generator = { kind = "caves", rock = 50 }`. A row's
+# `generator` of the template's kind layers over the template's field by field; one of another
+# kind starts from that kind's table here.
+#
+# A range is `[least, most]`, inclusive. A chance is in percent. The mines' `openness` and `lava`
+# and the minster's `flood` and `ruin` are ramps over the branch's floors of that kind, from its
+# first such floor to its last: `[first, last]` on a line (rounded toward zero), `{ from, to,
+# curve = "square" }` by the square of the way down in whole percent (`t = along × 100 / span`,
+# then `from + (to − from) × (t² / 100) / 100`), and a plain number pins the value on every floor
+# (a row may pin one: `generator = { kind = "mines", lava = 0 }`). Every ramp's ends are 0 to 100.
+
+# Rooms joined by corridors, with doors at room entrances (`mapgen/rooms.rs`).
+[rooms]
+# Rock between rooms, so walls are never shared and corridors fit between them.
+gap = 2
+# The most rooms a level locks (with the branch's key).
+max_locked = 2
+# Chance that a level gets a vault.
+vault_chance = 20
+# Chance that a room other than the arrival room has torches.
+lit_chance = 80
+
+# Cellular-automata caverns (`mapgen/caves.rs`).
+[caves]
+# Percent of inner cells that start as rock, and the smoothing passes with the 4-5 rule.
+rock = 45
+smoothing = 5
+# The kept cave must cover at least this percent of the inner area.
+min_cave = 30
+# Side of the blocks lamps are scattered over.
+lamp_block = 16
+# Chance that a cave level gets a vault (besides the ones its branch level names), and that one
+# with a vault gets a second.
+vault_chance = 40
+second_vault_chance = 15
+# Longest tunnel from a vault entrance to the cave.
+max_tunnel = 40
+
+# Natural caverns of varied size joined by narrow winding tunnels (`mapgen/tunnels/mod.rs`).
+[tunnels]
+# The kinds of cavern, each `[weight, half-width range, half-height range]`: small chambers,
+# caverns, and a few large halls.
+cavern_kinds = [[40, [3, 5], [2, 3]], [42, [6, 9], [3, 5]], [18, [10, 14], [5, 7]]]
+# The map is cut into zones about this big, `[width, height]`, and a cavern is tried for in each
+# but about `zone_skip` percent of them.
+zone = [14, 9]
+zone_skip = 5
+# Then a small chamber is tried for anywhere per this many zones, to fill the gaps.
+fill_per = 2
+# Rock kept between the boxes of two caverns.
+cavern_gap = 2
+# Spots tried for a cavern before it is given up.
+place_tries = 60
+# A cavern is this many overlapping ellipses, each but the first at least `lobe_least` percent of
+# the cavern's size.
+lobes = [1, 4]
+lobe_least = 60
+# Percent of a cavern's cells that start as rock at its middle, and at its rim.
+rock_middle = 10
+rock_rim = 45
+# Smoothing passes over each cavern.
+cavern_smoothing = 3
+# A cavern's kept piece must have at least this many cells; it is drawn `carve_tries` times.
+min_cavern = 8
+carve_tries = 3
+# Fewest caverns a level needs.
+min_caverns = 3
+# Chance that a pair of caverns not on the spanning tree is linked too, if near: at most this
+# percent of the longest spanning-tree link apart, and at most one loop per `caverns_per_loop`
+# caverns (and one at least).
+loop_chance = 45
+loop_reach = 110
+caverns_per_loop = 3
+# How far (percent of a stretch's length) a tunnel's midpoint is pushed aside; stretches no
+# longer than `bend_segment` are not bent further.
+bend = 50
+bend_segment = 5
+# How the tunnels are carved: `widths` each `[weight, width]` (1 to 3), `stretch` the cells a
+# width holds before the next is drawn, `squeeze` the cells a 1-wide squeeze holds, a squeeze for
+# certain after `squeeze_within` stretches without one, and `nibble` the chance that a cell of a
+# wider stretch gets one more cell of floor beside it.
+bore = { widths = [[20, 1], [65, 2], [15, 3]], stretch = [3, 8], squeeze = [2, 3], squeeze_within = 6, nibble = 6 }
+# Dead-end spurs a level gets, and how far one runs.
+spurs = [1, 3]
+spur_reach = [6, 14]
+# The kept cave must cover at least this percent of the inner area.
+min_floor = 15
+# Chance that a level gets a random vault, and that one with a vault gets a second.
+vault_chance = 40
+second_vault_chance = 15
+# Longest tunnel from a vault entrance to the cave, and the side of the blocks lamps are scattered
+# over (as the caves').
+max_tunnel = 40
+lamp_block = 16
+
+# One long hewn way between the stairs, no second route (`mapgen/tunnels/passage.rs`).
+[passage]
+# How the way is carved (as the tunnels' `bore`): steadier than the tunnels'.
+bore = { widths = [[22, 1], [63, 2], [15, 3]], stretch = [4, 10], squeeze = [2, 3], squeeze_within = 2, nibble = 2 }
+# How far from the map's side the first and last waypoints stand.
+end = 5
+# How far along the width each waypoint is from the last.
+leg = [7, 14]
+# Chance that a waypoint between the ends gets a hall, a hall's half-width and half-height, and
+# the chance that each of its corners is left as rock.
+hall_chance = 35
+hall_x = [2, 4]
+hall_y = [1, 2]
+chip = 50
+# Dead-end pockets tried for, how far one runs, and the tries at each before it is given up.
+pockets = [3, 6]
+pocket_len = [2, 5]
+pocket_tries = 20
+# The most rock the way may ring round (a pillar a hall or a wide stretch leaves); more is a
+# second route, and the attempt fails.
+pillar = 4
+# The kept way must cover at least this percent of the inner area.
+min_floor = 5
+# Random vaults a floor stamps, `[fewest, most]`, only those with one entrance (two would open a
+# second route), each dug to from the nearest floor by a cut of its own (#1849); none by default:
+# a branch gives its own, `generator = { kind = "passage", random_vaults = [2, 3] }`.
+random_vaults = [0, 0]
+# Longest tunnel from a vault entrance to the way, and the side of the blocks lamps are scattered
+# over (as the caves').
+max_tunnel = 40
+lamp_block = 16
+
+# A worked mine that opens up and grows lava the deeper it lies (`mapgen/mines.rs`).
+[mines]
+# How open a floor is: tight galleries and small worked chambers at 0; wide galleries, wide
+# stopes, and big natural hollows at 100. Evenly from the first mines floor to the last.
+openness = [0, 100]
+# How much lava: none at 0; pools, then channels, more and wider, up to 100. By the square of the
+# way down, so it comes late and grows fast (Fyrdelf: 0, 0, 3, 7, 12, 20, 29, 39, 51, 65, 81, 100).
+lava = { from = 0, to = 100, curve = "square" }
+# Rows per drive: a level gets one drive for each this many rows.
+drive_every = 12
+# The dearness of a bend in a gallery (a cell of rock costs 3): galleries run straight.
+turn = 12
+# Cells of level per worked chamber tried for (more, less this per point of openness).
+chamber_area = 160
+# Cells of level per hollow at openness 100 (fewer, the less open).
+hollow_area = 800
+# Percent of cells that start as rock in a hollow's caverns, and the smoothing passes.
+hollow_rock = 44
+smoothing = 4
+# A pocket cut off with fewer cells than this is filled in rather than tunnelled to.
+min_pocket = 8
+# Chance of a random vault, and then of a second.
+vault_chance = 40
+second_vault_chance = 15
+# The most chambers a level locks (with the branch's key).
+max_locked = 2
+# Chance that a chamber other than the arrival's has torches.
+lit_chance = 80
+# A lamp hangs on about every this many cells of gallery, with one chance in two.
+lamp_every = 12
+# Walkable cells per cell of lava at `lava` 100 (more, the less lava).
+lava_share = 5
+# The smallest pool of lava.
+min_pool = 8
+# Lava keeps this far (Chebyshev) from a staircase.
+lava_stairs = 2
+# Features of lava a level tries.
+lava_tries = 60
+
+# The cellars and crypts under a great church, drowning deeper (`mapgen/minster.rs`).
+[minster]
+# How high the water stands: low, only the low points hold shallow water; high, whole aisles
+# stand in it, with deep water in the sunk end and its drains. From the first minster floor to
+# the last.
+flood = [10, 85]
+# How far the plan has fallen: rubble, fallen pillars and walls, the fen pushing in.
+ruin = [5, 70]
+# Chance that a floor gets a random vault, as on a rooms floor.
+vault_chance = 20
+# Chance of a door between two neighbouring rooms that have none, for loops.
+loop_chance = 20
+# Chance that a south nave chapel is of its northern mirror's kind.
+mirror_chance = 70
+# Chance that a floor has a forgotten altar (in a chapel or the apse).
+altar_chance = 35
+# Chance that a side room is lit, less a third of the flood.
+lit_chance = 35
+# The most stores and tombs a floor locks (with the branch's key).
+max_locked = 2
+# Water stands deep where the floor lies this much lower than where it stands shallow.
+deep_margin = 45
+# The hall's culvert runs from this flood up; the sunk drain at its end and the broken drains
+# from `drain_flood`.
+culvert_flood = 30
+drain_flood = 50
+
+# A tower's floor: a ring wall with windows round rooms and halls (`mapgen/tower.rs`).
+[tower]
+# The least a room is across, each way: a wall leaves this much floor on each side.
+least_side = 3
+# A stretch whose sides are both at most `room_side` is a room, never divided; one with a side
+# longer than `hall_side` is always divided; between the two, by `split_odds` percent.
+room_side = 9
+hall_side = 15
+split_odds = 55
+# A wall at least `long_wall` long gets a second doorway by `second_door_odds` percent.
+long_wall = 10
+second_door_odds = 50
+# Of the doorways, percent closed doors and open doors; the rest are open gaps.
+closed_door_odds = 30
+open_door_odds = 20
+# Every room has a sconce; one of `lit_area` cells or more a second, and one with a side
+# `lit_side` long or longer one more (in its corners, then the middles of its long sides).
+lit_area = 40
+lit_side = 14
