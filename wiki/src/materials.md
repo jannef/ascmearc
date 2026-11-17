@@ -159,11 +159,11 @@ item](magic-items.md#looking-at-an-item), but its to-hit does not.
 
 ### How often each material is found
 
-Most items are made of their usual material: a long sword is steel, a cloak wool. At depth 1, an
-item that could be made of something else is its usual material 90% of the time. The chance of
-another material grows by half a point with each depth, to 20% from depth 21 on. A
-[creature](creatures.md)'s gear, and what it drops, goes by the creature's level instead of the
-depth.
+Most items are made of their usual material: a long sword is steel, a cloak wool. At [item
+level](magic-items.md#finding-them) 1, an item that could be made of something else is its usual
+material 90% of the time. The chance of another material grows by half a point with each item
+level, to 20% from item level 21 on. A [creature](creatures.md)'s gear, and what it drops, goes by
+the creature's level instead of the item level.
 
 When an item is made of another material, that material is picked from the item's list by the
 weights in the table further down. The weights compare only the other materials, not the usual one.
@@ -187,7 +187,7 @@ material's fit for weapons (anything that strikes or is shot), armour (shields t
 
 An odd material is never ruled out, but it is very rare: a wool ring or a tin long sword is
 found well under once in a thousand of those items. How often a few items turn up in each kind
-of material, at depths 1, 10, and 21:
+of material, at item levels 1, 10, and 21:
 
 {{#include generated/material-odds.md}}
 
@@ -201,7 +201,7 @@ an item of a material it could not otherwise be made of: no tribe carries a bone
 {{#include generated/material-tribes.md}}
 
 Chromium, nicrosil, dragonbone, and dragonscale appear only deep. Mithril appears only from
-depth 20 and adamantium from depth 30 (on creatures, from levels 30 and 40).
+item level 20 and adamantium from item level 30 (on creatures, from levels 30 and 40).
 
 - **Mithril** is half the weight of steel and quicker in the hand (+1 to hit).
 - **Adamantium** is a little heavier than steel and the best metal to fight with. A weapon of it

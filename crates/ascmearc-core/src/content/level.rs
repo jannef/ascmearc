@@ -629,7 +629,7 @@ pub struct LevelTemplate {
     /// location leads into); `None`: the edge cannot be crossed.
     pub exit: Option<EdgeExit>,
     /// The item level of loot here: a hand-made level's `item_level`
-    /// (default 1), a branch level's depth.
+    /// (default 1), a branch level's danger (`Content::item_level`).
     pub item_level: u8,
     /// Vaults: cells where loot is rolled when they are stamped into a generated level, each
     /// with what it may be. Empty on levels.

@@ -96,6 +96,8 @@ mod hunger;
 mod intimidate;
 mod invest;
 mod item_class;
+#[cfg(test)]
+mod item_level_tests;
 mod kit;
 mod laws;
 mod layer_boss;

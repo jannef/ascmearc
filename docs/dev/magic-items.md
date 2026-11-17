@@ -189,7 +189,13 @@ the base and the rest of `roll_with`'s draws among the class's objects, with the
 `Luck::magic`. Tests: `magic/pool_tests.rs`. The aristocrat's stipend (`world/classes/stipend.rs`, #1405) rolls `roll_with` once a level-up, by `data/rules/stipend.toml`'s chance, at the level, with its `Luck` from data (plus Landed noble's), on the stream `stipend/<level>`, keeping only magic and rare finds and the `keep` classes. **A drop's item level**
 (`world/items/loot.rs::drop_level`): the creature type's level, at least the floor's item level, at
 most `MAX_ITEM_LEVEL`; floor loot keeps the floor's (`world/magic/magic_tests.rs`,
-`a_drop_rolls_at_the_creatures_level_at_least_the_floors`).
+`a_drop_rolls_at_the_creatures_level_at_least_the_floors`). **The floor's item level**
+(`Content::item_level`, #1850): a branch floor's danger (`Content::floor_danger` at player level
+0, so a danger that grows with the player gives its fixed part; an endless branch's keeps rising),
+or its depth on a branch with no danger; a hand-made level's `item_level` (default 1); 1
+elsewhere; within 1 to `MAX_ITEM_LEVEL`. Everything that reads it follows: floor loot, vault
+`loot` cells, chests, hoards, creature gear and drops, a generated shop's stock and restocking,
+herbs gathered, gems mined, a fixture's loot, and the arrival XP (`content/item_level_tests.rs`).
 
 **The utility hooks** (D1, #631): each worn effect joins its talent's term at the one line that
 reads it, through `Actor::mods` (so unidentified gear works, and a creature's gear wherever the
