@@ -9,7 +9,7 @@ Built so far: **F1** (#1781), the foundation: the terrain, the level fields `bel
 the below view in perception and memory, look mode, the `view` and `below` dump layers, the map
 drawing the ground below (not blurred yet: F2), and the showcase's two-storey test tower. **T1**
 (#1783, `docs/dev/mapgen.md` "Towers") builds the generated floors of this terrain, each with
-`below = clearing` and `storey = depth`. **C1** (#1784, "Drytorr" below) is the first tower, its
+`below = clearing` and `storey = depth`. **C1** (#1784, "Drȳtorr" below) is the first tower, its
 wizard, and the wise-woman's quest that sends the player to him. Not yet: the blur (F2), the
 quarrel's machinery (W1), and the two rival towers (C2, C3).
 
@@ -124,15 +124,14 @@ cargo dev-cli dump --scenario tower --actions "ascend" --layers view,below
 cargo dev-cli dump --scenario tower --actions "ascend descend" --layers memory
 ```
 
-## Drytorr (`assets/campaigns/ascmearc/`)
+## Drȳtorr (`assets/campaigns/ascmearc/`)
 
 The first of the three towers (design §9, §10): Master Ordgar's, in Holegnwudu.
 
 - **The cell**: the overworld legend's `I` at (19, 11), a forest cell at the wood's western
   edge north-west of the fairy mound (six from it and from Holtwīc), hidden (`hidden = { id =
   "drytorr", terrain = "tower", to = "drytorr" }`) until Gammer Wynflæd's second quest marks it.
-  (The design named the legend's `"8"`, but that is Lytelscræf's; it spelled the name Drȳtorr,
-  but the game's font has no ȳ, which draws as `?`, so the player sees Drytorr.)
+  (The design named the legend's `"8"`, but that is Lytelscræf's.)
 - **The clearing**, `levels/drytorr.toml` (60×24, `kind = "outdoor"`, `arrival`): the wood round a
   grass clearing, a track from the south edge (the arrival, (30, 22)) to the tower's door. The
   tower is 21×13 at (20, 4)–(40, 16): the ground floor, a south hall with two hidden traps (an
@@ -146,7 +145,7 @@ The first of the three towers (design §9, §10): Master Ordgar's, in Holegnwudu
   leaves out, as a portal branch's), `stray = 0`, a cap of three, a try every 30 minutes. Left by its edge or `<` off the stair,
   back to the tower's cell.
 - **The floors**, `data/dungeons/drytorr_tower.toml`: `floors = 4`, so `drytorr_tower:1` and `:2`
-  ("Drytorr 2" and "3", danger 6 and 7), the stair (30, 5) → (39, 15) → (21, 5); the household
+  ("Drȳtorr 2" and "3", danger 6 and 7), the stair (30, 5) → (39, 15) → (21, 5); the household
   as population (animated books, brooms, candlesticks, chairs, coat stands, lanterns, rugs) and
   the lesser earth elemental; arrow, spear, alarm, and pit traps, `[3, 5]` a floor, all hidden.
 - **The top**, `levels/drytorr_top.toml` (`below = "drytorr"`, `storey = 3`): the `>` at (21, 5);

@@ -21,7 +21,7 @@ const BARROW: Pos = Pos::new(34, 25);
 const VILLAGE: Pos = Pos::new(18, 17);
 /// Ælfhām's fairy mound, hidden in the wood beside the village (#1140; `holtwic_tests`).
 const MOUND: Pos = Pos::new(25, 13);
-/// Drytorr, Master Ordgar's tower, hidden in the wood north-west of the mound (#1784).
+/// Drȳtorr, Master Ordgar's tower, hidden in the wood north-west of the mound (#1784).
 const DRYTORR: Pos = Pos::new(19, 11);
 /// Lytelscræf, the starter cave (#792): two cells from the pass, in sight of the start.
 const CAVE: Pos = Pos::new(14, 27);

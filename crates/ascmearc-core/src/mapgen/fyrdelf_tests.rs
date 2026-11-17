@@ -91,7 +91,7 @@ fn the_hunters_statue_stands_inscribed_on_the_eleventh_floor() {
         let place = floor.places.get(&at).expect("the statue's place");
         assert_eq!(place.name, "a hooded figure");
         let note = place.note.as_deref().expect("its note");
-        assert!(note.contains("LĪF ÆR DĒAÞE"), "{note}");
+        assert!(note.contains("LĪF ǢR DĒAÞE"), "{note}");
         assert!(note.contains("'Life before death."), "{note}");
         assert_eq!(floor.places.len(), 1, "seed {seed}");
         for depth in [10, 12] {

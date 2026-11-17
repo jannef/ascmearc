@@ -274,7 +274,7 @@ peace, the wise-woman's name and topics with no reveal, the hidden mound until `
 and the way down, the three floors and the moss bed on the third, the view snapshot
 `holtwic_start`, a replay).
 
-**Drytorr** (#1784; `docs/dev/towers.md` "Drytorr", where the whole tower is): Master Ordgar's
+**Drȳtorr** (#1784; `docs/dev/towers.md` "Drȳtorr", where the whole tower is): Master Ordgar's
 wizard's tower, its way in the hidden `I` at (19, 11) (forest → `tower`, `to = "drytorr"`), at
 the wood's western edge north-west of the mound. Wynflæd's escort's `done` ends with a word about
 him, and her second quest, `rowan_for_the_wizard` (a delivery of the `rowan_sprig` to npc

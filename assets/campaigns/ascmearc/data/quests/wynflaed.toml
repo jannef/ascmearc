@@ -3,7 +3,7 @@
 # hall. Asked, the wise-woman marks Ælfhām on the player's map (the reveal), and the girl is made
 # on the moss bed at its bottom (`waits`, world/people/escort_waits.rs); spoken with, she follows, and
 # home in Holtwīc with the player she says her thanks and the wise-woman pays. Her thanks end with
-# a word about the wizard of Drytorr, whom her second quest sends the player to.
+# a word about the wizard of Drȳtorr, whom her second quest sends the player to.
 
 [[quest]]
 id = "taken_under_the_hill"
@@ -25,7 +25,7 @@ done = "Bless you, bless you. Home, and herself still. Take these, my own brewin
 where = "Ælfhām lies in the holly wood, north-east of Holtwīc."
 
 # The wise-woman's second (#1784; docs/design/wizard-tower.md §11): her token, a sprig of rowan tied
-# with red thread, carried to Master Ordgar at the top of his tower, Drytorr, in the holly wood.
+# with red thread, carried to Master Ordgar at the top of his tower, Drȳtorr, in the holly wood.
 # She cannot write, and a wise-woman's token is better than a letter. Asked, she marks the tower on
 # the map (the reveal); handed over, Ordgar says his piece and pays. Experience only: Spellcraft is
 # taught at the end of the wizards' quarrel, not here.
@@ -44,4 +44,4 @@ offer = "There's a learned man keeps a tower in the wood, my dear, Master Ordgar
 accept = "Here, I'll mark the tower for you. Mind the stair: he keeps it hard on callers, and he's not one for visitors."
 reminder = "My rowan's for Master Ordgar, my dear, at the top of his tower in the wood."
 done = "Rowan and red thread. Wynflæd's, and sent with a purpose; she does nothing idly. Then you are what she thinks you are. Do sit. The tea is cold, but it is tea, and you have earned it on my stair."
-where = "Drytorr stands in Holegnwudu, north-west of the fairy mound; the wizard keeps the top floor."
+where = "Drȳtorr stands in Holegnwudu, north-west of the fairy mound; the wizard keeps the top floor."

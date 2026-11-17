@@ -1,4 +1,4 @@
-# Drytorr's clearing and ground floor (#1784; docs/design/wizard-tower.md §3; docs/dev/towers.md):
+# Drȳtorr's clearing and ground floor (#1784; docs/design/wizard-tower.md §3; docs/dev/towers.md):
 # a hand-made outdoor level, a clearing in Holegnwudu with Master Ordgar's tower standing in it,
 # entered from its hidden cell on the Ascmearc's overworld (I, at 19, 11; revealed by Gammer
 # Wynflæd's "A sprig of rowan"), arriving on the track from the south (@). Like any outdoor area
@@ -17,7 +17,7 @@
 # a population, so the wood sends a few of the fair folk's small fey, sprites and pixies, now and
 # then (the design's §12 fallback). They are Ælfhām's own: every level's population joins its
 # campaign's stray lists (`Content::fill_generic`), and these add nothing new to any branch's.
-name = "Drytorr"
+name = "Drȳtorr"
 kind = "outdoor"
 arrival = "A clearing in the holly wood, and a tower of dressed grey stone standing in it, taller than the trees."
 danger = 5

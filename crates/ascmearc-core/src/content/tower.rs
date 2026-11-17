@@ -4,7 +4,7 @@
 //! ```toml
 //! [[dungeon]]
 //! id = "drytorr_tower"
-//! name = "Drytorr"
+//! name = "Drȳtorr"
 //! kind = "tower"            # default "dungeon"
 //! generator = "tower"       # the only generator a tower takes, and only a tower takes it
 //! floors = 4                # ground and top included: the branch's depths are 1 to floors − 2

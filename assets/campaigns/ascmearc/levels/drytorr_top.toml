@@ -1,4 +1,4 @@
-# The top of Drytorr (#1784; docs/design/wizard-tower.md §3, §7, §10.2; docs/dev/towers.md): Master
+# The top of Drȳtorr (#1784; docs/design/wizard-tower.md §3, §7, §10.2; docs/dev/towers.md): Master
 # Ordgar's study and quarters, the hand-made level the highest trap floor's `<` leads to
 # (data/dungeons/drytorr_tower.toml's `top`). The clearing's size, the tower on the same cells,
 # and its `>` back down in the north-west corner, where the stair through the tower ends
@@ -10,7 +10,7 @@
 # wall torches by the door. East, his quarters: a bed (b), a table and a stool, more shelves, and
 # his cat. South, through either door, the balcony: flagstones open to the sky and the weather,
 # a parapet round it, and the wood falling away below. No traps and no population: a home.
-name = "The Top of Drytorr"
+name = "The Top of Drȳtorr"
 kind = "outdoor"
 below = "drytorr"
 storey = 3
