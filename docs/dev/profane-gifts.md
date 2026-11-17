@@ -115,6 +115,13 @@ longer fits, and falls to the floor." for a slot barred, "Your silver ring slips
 that is no longer there." for a slot no longer the player's (only rings are gated to a class
 today; an aristocrat's own extra ring stays when Many-fingered goes).
 
+**The limbs** (#1808): two drawn gifts past the design's forty, both `opens_slot` on a grown
+slot (`docs/dev/equipment.md` "Grown slots") and a mental stat's price: `extra_arm` (Three-armed,
+dire, mixed, weight 6: the third hand, Presence −2) and `prehensile_tail` (Prehensile-tailed,
+greater, mixed, weight 6: the tail, a light weapon only, Willpower −1; excludes `tailed`, one tail
+to a body). How the limbs fight: `docs/dev/weapon-skills.md` "Extra limbs". So the table holds 42
+drawn gifts, 14 lesser, 13 greater, 15 dire.
+
 ## In the world: `world/character/profane.rs`
 
 - **Never twice** (#1805, the owner's rule): `WorldState::gifts_received` records the talent id
@@ -173,7 +180,7 @@ load, as any unknown talent does.
 - `talents` dump: `Oak-hearted (profane)`, `Withered (profane, bane)`, `Twice-born (profane,
   spent)`; JSON `talents[].profane`,
   `"boon" | "mixed" | "bane"`, left out otherwise.
-- `progress` dump (dev): `profane 1 held; pool lesser 14/14, greater 11/12, dire 14/14` (each tier's
+- `progress` dump (dev): `profane 1 held; pool lesser 14/14, greater 12/13, dire 15/15` (each tier's
   gifts a draw may give now, of all it holds).
 - Dev actions (no time; `docs/dev/cli.md`): `gift:ID` gives a gift as a draw would (refused for
   one ever had, excluded, or barred to the race), `rescind:ID` takes one away (it stays had).

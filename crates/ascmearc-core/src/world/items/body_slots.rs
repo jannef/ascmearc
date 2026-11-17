@@ -50,19 +50,21 @@ impl World {
 
     /// What the player wears in a slot that is barred to them now, or no longer theirs, comes
     /// off and falls to their cell: "Your iron helm no longer fits, and falls to the floor.", or
-    /// for a slot gone, "Your gold ring slips from a finger that is no longer there.". Takes no
+    /// for a slot gone, "Your gold ring slips from a finger that is no longer there.", or for a
+    /// grown hand gone, "Your dagger falls from a grip that is no longer there.". Takes no
     /// time (a gift taking or going, `profane.rs`).
     pub(in crate::world) fn shed_unworn(&mut self) {
         let content = self.content.clone();
         let class = self.state.character.as_ref().map(|c| c.spec.class.clone());
         let me = self.state.player();
         let mods = me.talent_mods(&content);
-        let mut shed: Vec<(usize, bool)> = Vec::new();
+        // What falls, and whether its slot is gone: a finger, or a grown hand (`None`: barred).
+        let mut shed: Vec<(usize, Option<bool>)> = Vec::new();
         for (slot, item) in me.equipment.iter() {
             let gone = !has_slot(&content, class.as_deref(), &mods, slot);
             if (gone || mods.slots.barred(slot).is_some()) && !shed.iter().any(|&(i, _)| i == item)
             {
-                shed.push((item, gone));
+                shed.push((item, gone.then(|| content.slot(slot).hand)));
             }
         }
         if shed.is_empty() {
@@ -71,10 +73,10 @@ impl World {
         let inventory = self.state.player().inventory.clone();
         for &(item, gone) in &shed {
             let title = self.lore().title(&inventory[item]);
-            self.say(if gone {
-                format!("Your {title} slips from a finger that is no longer there.")
-            } else {
-                format!("Your {title} no longer fits, and falls to the floor.")
+            self.say(match gone {
+                Some(true) => format!("Your {title} falls from a grip that is no longer there."),
+                Some(false) => format!("Your {title} slips from a finger that is no longer there."),
+                None => format!("Your {title} no longer fits, and falls to the floor."),
             });
         }
         let chosen = Positions::of(shed.iter().map(|&(i, _)| i));

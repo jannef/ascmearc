@@ -1,0 +1,16 @@
+[[gift]]
+id = "prehensile_tail"
+name = "Prehensile-tailed"
+kind = "mixed"
+tier = "greater"
+weight = 6
+description = "A long tail that grips: it holds a light weapon, a dagger or a knife, and strikes with it beside your hands. Your mind wanders after it."
+line = "A tail uncoils behind you, and closes on nothing, and on nothing again."
+undone = "Your tail goes limp, and falls away."
+effects = [
+    { kind = "opens_slot", slot = "tail" },
+    { kind = "stat", stat = "willpower", value = -1 },
+]
+# Written here, on the later of the two (docs/design/profane-gifts.md §6.5): made symmetric at
+# load. One tail to a body: Tailed's is a tail that does not grip.
+excludes = ["tailed"]

@@ -1,0 +1,30 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ You are Three-armed.
+ You wield a small shield.
+
+
+┌─ Equipment ──────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                                  │
+│ > a  Head             —                                                                          │
+│   b  Neck             —                                                                          │
+│   c  Body             —                                                                          │
+│   d  Cloak            —                                                                          │
+│   e  Main hand      ) a quarterstaff (+0 hit, 1d6, Dv +1) (both hands)                     2 kg  │
+│   f  Off hand       ) a quarterstaff (+0 hit, 1d6, Dv +1) (both hands)                           │
+│   g  Third hand     [ a small shield (Dv +1)                                             2.5 kg  │
+│   h  Hands            —                                                                          │
+│   i  Left ring        —                                                                          │
+│   j  Right ring       —                                                                          │
+│   k  Feet             —                                                                          │
+│   l  Missile weapon   —                                                                          │
+│   m  Missiles         —                                                                          │
+│   n  Tool           ( a lantern                                                           400 g  │
+│                                                                                                  │
+│ Defence (Dv) 13   ·   Protection (Pv) 0                                                          │
+│ Carrying 21.3 kg   ·   Your weight 91.3 kg (you 70 kg)                                           │
+│                                                                                                  │
+│ a-n choose a slot   A-N look   Esc close                                                         │
+└─ 1 Char · 2 Inv · 3 Eqp · 4 Skl · 5 Weap · 6 Mag · 7 Qst · 8 Tal · 9 Story ──────────────────────┘

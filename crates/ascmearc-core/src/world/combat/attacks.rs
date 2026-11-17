@@ -1,5 +1,6 @@
 //! The player's attacks as the character screen shows them: for each attack they have ready — the
-//! main hand's blow (or bare hands'), the off hand's while they fight with two weapons, and a shot
+//! main hand's blow (or bare hands'), the off hand's while they fight with two weapons, a grown
+//! hand's weapon's (the third hand's, the tail's; `extra_limbs.rs`), and a shot
 //! or throw with what the Missile weapon slot holds — its to-hit, damage, and reach, taken from the
 //! very [`Profile`] a strike would roll ([`Actor::melee`], [`Actor::off_hand_blow`],
 //! [`Actor::ranged`], [`Actor::thrown`], with the fighting style in use and everything else those
@@ -24,6 +25,10 @@ pub enum AttackSource {
     MainHand,
     /// The second blow of two weapons.
     OffHand,
+    /// The blow of a weapon in Three-armed's third hand (`extra_limbs.rs`).
+    ThirdHand,
+    /// The blow of a light weapon in the tail (Prehensile-tailed).
+    Tail,
     /// A shot with the readied launcher, or a throw of what the Missile weapon slot holds.
     Missile,
 }
@@ -34,6 +39,8 @@ impl AttackSource {
         match self {
             AttackSource::MainHand => "Main hand",
             AttackSource::OffHand => "Off hand",
+            AttackSource::ThirdHand => "Third hand",
+            AttackSource::Tail => "Tail",
             AttackSource::Missile => "Missile",
         }
     }
@@ -43,6 +50,8 @@ impl AttackSource {
         match self {
             AttackSource::MainHand => "main_hand",
             AttackSource::OffHand => "off_hand",
+            AttackSource::ThirdHand => "third_hand",
+            AttackSource::Tail => "tail",
             AttackSource::Missile => "missile",
         }
     }
@@ -168,6 +177,28 @@ impl Actor {
             let name = self.inventory[item].title(content);
             attacks.push(OwnAttack::of(
                 AttackSource::OffHand,
+                AttackKind::Melee,
+                name,
+                profile,
+                None,
+            ));
+        }
+        // A weapon in a grown hand strikes too (a shield there only bashes by chance).
+        for (slot, item, def) in me.extra_held(content) {
+            if def.bash.is_some() {
+                continue;
+            }
+            let Some((_, profile)) = me.held_blow(content, item) else {
+                continue;
+            };
+            let source = if content.slot(slot).light_only {
+                AttackSource::Tail
+            } else {
+                AttackSource::ThirdHand
+            };
+            let name = self.inventory[item].title(content);
+            attacks.push(OwnAttack::of(
+                source,
                 AttackKind::Melee,
                 name,
                 profile,

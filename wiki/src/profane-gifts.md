@@ -83,8 +83,8 @@ rules out [Paper-skinned](#talent-paper-skinned) (weight 8), and the tier's open
 106: Hungering is then 12 in 106, 11.3 %.
 
 Every tier holds good, bad, and mixed gifts, so no roll is ever safe. By weight the lesser tier is
-45 % good, 27 % mixed, and 27 % bad; the greater 45 %, 28 %, and 26 %; the dire 37 %, 25 %, and
-38 %.
+45 % good, 27 % mixed, and 27 % bad; the greater 43 %, 32 %, and 25 %; the dire 35 %, 29 %, and
+36 %.
 
 ## Gifts with other gifts
 
@@ -108,6 +108,7 @@ Every such link in the table:
 | [Dim-eyed](#talent-dim-eyed) | never with [Barrow-eyed](#talent-barrow-eyed), [Mere-eyed](#talent-mere-eyed), or [Deep-eyed](#talent-deep-eyed) |
 | [Hoofed](#talent-hoofed) | never with [Soft-footed](#talent-soft-footed) |
 | [Many-fingered](#talent-many-fingered) | never with [Clawed](#talent-clawed) |
+| [Prehensile-tailed](#talent-prehensile-tail) | never with [Tailed](#talent-tailed) |
 | [Thick-blooded](#talent-thick-blooded) | never with [Paper-skinned](#talent-paper-skinned) or [Glass-boned](#talent-glass-boned) |
 | [Scaled](#talent-scaled) | never with [Paper-skinned](#talent-paper-skinned), [Glass-boned](#talent-glass-boned), or [Hollowed](#talent-hollowed) |
 
@@ -151,8 +152,14 @@ by the Profane".
 Some gifts change more than your numbers:
 
 - **Slots.** Horns, hooves, claws, and wing stubs bar the helm, boot, glove, and cloak slots; a
-  sixth finger opens a ring slot. What no longer fits falls to the floor as the gift takes (see [Barred and opened
+  sixth finger opens a ring slot, and a third arm or a gripping tail a hand. What no longer fits falls to the floor as the gift takes (see [Barred and opened
   slots](equipment.md#barred-and-opened-slots)).
+- **Limbs.** [Three-armed](#talent-extra-arm) grows a third arm, and
+  [Prehensile-tailed](#talent-prehensile-tail) a tail that grips: each is a new place to hold
+  something, shown on the Equipment page only while you have the gift. The third hand holds what
+  an off hand holds, a light weapon or a shield; the tail holds a light weapon and nothing else.
+  How they fight beside your two hands: [More than two hands](fighting-styles.md#more-than-two-hands).
+  If the gift is ever taken away, what the limb held falls to the floor.
 - **Claws.** [Clawed](#talent-clawed) bare hands hit harder and can make a foe
   [bleed](status-effects.md#bleeding). With a weapon in your hand the claws do nothing.
 - **Eyes.** [Deep-eyed](#talent-deep-eyed) gives you the eyes of the

@@ -252,7 +252,7 @@ fn the_progress_dump_counts_the_gifts_and_the_pools() {
     give(&mut w, "oak_hearted");
     let rows = crate::dump::layer_rows(&w, crate::dump::Layer::Progress).join("\n");
     assert!(
-        rows.contains("profane 1 held; pool lesser 14/14, greater 11/12, dire 14/14"),
+        rows.contains("profane 1 held; pool lesser 14/14, greater 12/13, dire 15/15"),
         "{rows}"
     );
 }
