@@ -31,7 +31,11 @@ fn receive_up_to(w: &mut World, n: usize) {
             w.apply(&Action::Profane(id));
         }
     }
-    assert_eq!(w.state.gifts_received.len(), n, "the table holds enough gifts");
+    assert_eq!(
+        w.state.gifts_received.len(),
+        n,
+        "the table holds enough gifts"
+    );
 }
 
 /// The profane gifts the player holds now.
@@ -58,7 +62,10 @@ fn the_twelfth_gift_leaves_the_character_be() {
 #[test]
 fn the_thirteenth_gift_ends_the_character() {
     let mut w = world();
+    receive_up_to(&mut w, TAKEN_AT - 1);
+    let before = w.state.gifts_received.clone();
     receive_up_to(&mut w, TAKEN_AT);
+    let last = (w.state.gifts_received.difference(&before).next().cloned()).expect("a 13th");
     let death = w.death().expect("taken");
     assert_eq!(death.cause, Some(Cause::Profane));
     assert_eq!((death.by, death.of), (None, None));
@@ -73,7 +80,7 @@ fn the_thirteenth_gift_ends_the_character() {
     ));
     assert_eq!(Cause::Profane.epitaph(w.content()), "Taken by the Profane");
     // The gift itself took before the end.
-    assert_eq!(held(&w).len(), TAKEN_AT);
+    assert!(w.state.player().boons.iter().any(|b| b.id == last));
 }
 
 #[test]

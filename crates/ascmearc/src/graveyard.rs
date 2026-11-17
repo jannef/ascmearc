@@ -454,4 +454,30 @@ version = "0.14.0"
         assert_eq!(fallen.cause, STONE, "{fallen:?}");
         assert_eq!(parse(&fallen.to_text()), [fallen]);
     }
+
+    #[test]
+    fn a_character_the_profane_took_is_written_with_the_gifts_they_held() {
+        let content = Arc::new(ascmearc_assets::content().expect("content"));
+        let spec = "human,male,warrior".parse().expect("spec");
+        let mut w = World::start_run(content.clone(), "showcase", None, Some(&spec), None, true)
+            .expect("world");
+        let gifts: Vec<String> = (content.profane().iter())
+            .filter(|g| g.drawn())
+            .map(|g| content.talents().get(g.talent).id.clone())
+            .collect();
+        for id in gifts {
+            if w.death().is_some() {
+                break;
+            }
+            w.apply(&Action::Profane(id));
+        }
+        let fallen = Fallen::of_death(&w, 1_793_318_400).expect("taken");
+        assert_eq!(fallen.cause, PROFANE, "{fallen:?}");
+        assert!(!fallen.gifts.is_empty());
+        for id in &fallen.gifts {
+            let talent = content.talents().id(id).expect("a talent");
+            assert!(content.profane().gift(talent).is_some(), "{id}");
+        }
+        assert_eq!(parse(&fallen.to_text()), [fallen]);
+    }
 }

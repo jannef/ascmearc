@@ -103,8 +103,14 @@ fn the_pools_after_each_of_ten_meals() {
         .collect();
     rows.push(format!("held: {}", held.join(", ")));
     let death = w.death().expect("the Profane took them");
-    rows.push(format!("died: {}", death.cause.expect("a cause").epitaph(w.content())));
-    assert_eq!(w.state.gifts_received.len(), crate::world::character::profane_taken::TAKEN_AT);
+    rows.push(format!(
+        "died: {}",
+        death.cause.expect("a cause").epitaph(w.content())
+    ));
+    assert_eq!(
+        w.state.gifts_received.len(),
+        crate::world::character::profane_taken::TAKEN_AT
+    );
     insta::with_settings!({ snapshot_path => "../../snapshots" }, {
         insta::assert_snapshot!("profane_ten_meals", rows.join("\n"));
     });
