@@ -11,7 +11,9 @@ drawing the ground below (not blurred yet: F2), and the showcase's two-storey te
 (#1783, `docs/dev/mapgen.md` "Towers") builds the generated floors of this terrain, each with
 `below = clearing` and `storey = depth`. **C1** (#1784, "Drȳtorr" below) is the first tower, its
 wizard, and the wise-woman's quest that sends the player to him. **W1** (#1785, "The quarrel"
-below) is the quarrel's machinery and Ordgar's side of it. Not yet: the blur (F2) and the two
+below) is the quarrel's machinery and Ordgar's side of it. **#1823** made Drȳtorr's footprint
+big, the generator's inside rooms and halls, and gave the tower its folk ("The tower folk" below).
+Not yet: the blur (F2) and the two
 rival towers (C2, C3).
 
 ## The idea
@@ -133,26 +135,30 @@ The first of the three towers (design §9, §10): Master Ordgar's, in Holegnwudu
   edge north-west of the fairy mound (six from it and from Holtwīc), hidden (`hidden = { id =
   "drytorr", terrain = "tower", to = "drytorr" }`) until Gammer Wynflæd's second quest marks it.
   (The design named the legend's `"8"`, but that is Lytelscræf's.)
-- **The clearing**, `levels/drytorr.toml` (60×24, `kind = "outdoor"`, `arrival`): the wood round a
-  grass clearing, a track from the south edge (the arrival, (30, 22)) to the tower's door. The
-  tower is 21×13 at (20, 4)–(40, 16): the ground floor, a south hall with two hidden traps (an
-  arrow trap at (21, 11), a spear trap at (26, 13)) across the way from the door to the way on
-  at the partition's west end, and a north hall with three one-cell bays in the partition, each
-  a known trap (arrow, spear, pit) with a potion, a scroll, or 25 gold behind it; the `<` at
-  (30, 5) to `drytorr_tower:1`; a named place, "a brass plaque", on the wall east of the door.
+- **The clearing**, `levels/drytorr.toml` (80×32, `kind = "outdoor"`, `arrival`): the wood round a
+  grass clearing, a track from the south edge (the arrival, (40, 30)) to the tower's door. The
+  tower is 41×19 at (20, 6)–(60, 24) (#1823; it was 21×13): the ground floor in three bands. The
+  south, the entrance hall, with two hidden traps (an arrow trap at (36, 21), a spear trap at
+  (33, 20)) across the way from the door to the way on at its west end, the porter's lodge west
+  of it and a store east; the middle, the long gallery, statues and two hand-placed gargoyles
+  (lurking, at (35, 14) and (45, 17)); the north, the north hall with three one-cell bays in its
+  south side, each a known trap (arrow, spear, pit) with a potion, a scroll, or 25 gold behind it,
+  the library west of it and a workshop east; the `<` at (40, 7) to `drytorr_tower:1`; a named
+  place, "a brass plaque", on the wall east of the door.
   `danger = 5` (the traps' growth) needs a population (`content/danger.rs`): Ælfhām's sprites and
   pixies, already in every Ascmearc stray list (`Content::fill_generic` adds a level's population
   to its campaign's, so new wildlife would stray into every branch; a tower branch's household it
   leaves out, as a portal branch's), `stray = 0`, a cap of three, a try every 30 minutes. Left by its edge or `<` off the stair,
   back to the tower's cell.
 - **The floors**, `data/dungeons/drytorr_tower.toml`: `floors = 4`, so `drytorr_tower:1` and `:2`
-  ("Drȳtorr 2" and "3", danger 6 and 7), the stair (30, 5) → (39, 15) → (21, 5); the household
-  as population (animated books, brooms, candlesticks, chairs, coat stands, lanterns, rugs) and
-  the lesser earth elemental; arrow, spear, alarm, and pit traps, `[3, 5]` a floor, all hidden.
-- **The top**, `levels/drytorr_top.toml` (`below = "drytorr"`, `storey = 3`): the `>` at (21, 5);
-  the study west of a partition (shelves, the reading table, a brazier, a lamp, Ordgar at
-  (26, 8)), his quarters east (bed, table, stool, shelves, a cat), and south through two doors
-  the balcony (flagstones, unroofed) with a parapet round it. No traps, no population.
+  ("Drȳtorr 2" and "3", danger 6 and 7), the stair (40, 7) → (59, 23) → (21, 7); the tower folk
+  as population ("The tower folk" below), `{ per_1000 = 20, least = 8, most = 14 }`; arrow,
+  spear, alarm, and pit traps, `[5, 8]` a floor, all hidden.
+- **The top**, `levels/drytorr_top.toml` (`below = "drytorr"`, `storey = 3`): the `>` at (21, 7);
+  under the roof, the study in the west (shelves, the reading table, a brazier, a lamp beside
+  him, Ordgar at (27, 11)), his library in the middle (rows of shelves), his quarters east (bed,
+  table, stool, shelves, a cat); south through two doors the balcony (flagstones, unroofed,
+  39×4) with a parapet round it. No traps, no population.
 - **Ordgar**: the campaign creature `ordgar` (`data/creatures/ordgar.toml`: unique, peaceful,
   level 10, tags `tower_wizard`, `caster`, `sapient`; `combat = "caster"` with `magic_missile`,
   `web`, `haste`, `silence`; a quarterstaff), placed with `npc = "ordgar"`, whose dialogue is
@@ -172,6 +178,31 @@ can start the rowan from Holtwīc.
 cargo dev --scenario drytorr --scale 1 --capture target/drytorr.png
 cargo dev-cli dump --scenario holtwic --actions "move:N*8 move:E*11 move:NE move:N*3 move:E*11 quest_done:taken_under_the_hill ask:SE:quest-rowan_for_the_wizard" --layers quests
 ```
+
+## The tower folk
+
+What lives on a tower's trap floors (#1823): the wizard's own creations and servants, wards, and
+bound things, with some of the household gone lively. **The rule for every tower** (C2 #1786, C3
+#1787 build to it): the footprint about 41×19, as Drȳtorr's and Wedertorr's (so each generated floor is
+many rooms and halls, lit by the generator's sconces), and a population of the tower's folk at its danger, in the
+wizard's bent, never a stray: campaign creatures with `stray = false`, in no population but a
+tower's, so `Content::fill_generic` (which leaves a tower's population out of the stray lists)
+keeps them off every other level. A sapient caster among them leaves a corpse that teaches
+Decipher script, as every literate caster's.
+
+Drȳtorr's (danger 6 and 7; Ordgar's bent is wards), all `faction = "animated"`, tag
+`construct`, no corpse (`assets/campaigns/ascmearc/data/creatures/`):
+
+| Id | Level | What it is |
+|---|---|---|
+| `mannikin` | 3 | his little man of clay and blood: quick, small, opens doors, a bite that makes drowsy |
+| `ward_stone` | 5 | a stone cut with a ward: `rooted`, its gaze makes sluggish, sparks at whoever is beside it |
+| `gargoyle` | 6 | carved stone: `lurks` until a caller is beside it, then rakes |
+| `loam_man` | 7 | the guardian golem: slow, heavy fists that stagger |
+
+and of the base types the lesser earth elemental and the household (animated books, brooms,
+candlesticks, chairs, coat stands, lanterns, rugs). Tests: `world/campaigns/drytorr_folk_tests.rs`
+(the floors draw only these, 8 to 14 a floor, the four new ones met; none strays anywhere else).
 
 ## The quarrel
 
@@ -255,6 +286,8 @@ cargo dev-cli dump --scenario quarrel --actions "ask:E:quest-quarrel move:N move
   on the air (`lands_on` false on every air cell); a replay over the climb verifies.
 - `ui/screen_snapshots/play.rs::looking_far_below`: look mode over the ground, the deer, the
   dagger, and a window.
+- `mapgen/tower_tests.rs::drytorrs_floors_are_many_rooms_and_halls`: 5 to 24 rooms and halls a
+  floor, every cell reached, 5 to 8 traps; insta `drytorr_seed_1_depth_1`.
 - `world/campaigns/drytorr_tests.rs`: the hidden cell and the way in, the four floors on the
   clearing's footprint and their dangers, Ordgar on the top, the `<` on the clearing (on the
   stair it climbs, anywhere else it leaves: the design's §12 risk), the wise-woman's word and her

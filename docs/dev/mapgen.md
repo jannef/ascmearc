@@ -126,11 +126,17 @@ cell the top's `>`, which must name the highest floor and stand there (the error
 `DungeonDef::tower_ways` swaps the links `generate_for` writes: the `<` to depth + 1 (the highest
 to `top`), the `>` to depth − 1 (the first to the clearing); both are on every floor, and
 `World::travel` arrives as ever on the staircase that leads back. The `tower` generator (only a
-tower's, and a tower takes only it) draws from the floor's map stream: the ring wall, two to four
-partitions across the longer way (fewer where there is no room, never through a stair's line,
-two cells of floor apart at least) with one doorway each at alternate ends so the hall winds, a
-window every third ring cell (never a corner, never a partition's end), the stairs, a sconce in a
-corner of each stretch (a lamp if none fits). `generate_for` builds a tower with its own palette
+tower's, and a tower takes only it) draws from the floor's map stream: the ring wall; the inside
+divided into rooms and halls (#1823; `tower::divide`): a wall across the longer way of a stretch
+(the other way where that has no room), with a doorway (a closed door 30%, an open one 20%, else a
+gap; a wall of 10 or more cells a second one by half), then each side again; a stretch with a
+side over 15 is always divided, one with both sides 9 or less never, between by 55%; a wall leaves
+three cells of floor each side, never runs through a staircase, and never ends against a
+doorway, so every room is reached; a window every third ring cell (never a corner, never an
+inside wall's end), the stairs, and the light (wizards light their towers): a sconce in a corner
+of every room, a second (the corner across) in one of 40 cells or more, one more (a long side's
+middle) where a side is 14 or longer, none beside a doorway (a lamp if none is lit). On
+Drȳtorr's 39×17 inside that is many rooms and halls (docs/dev/towers.md). `generate_for` builds a tower with its own palette
 (`tower::palette`: the wall, the floor, and the outside in place of rock, so `hide_traps`, loot,
 chests, and the population go on its floor), skips `build_walls`, and makes the floor
 `LevelKind::Outdoor` (§7: sky, weather, and light come with the kind). No vaults, shops, special
@@ -141,7 +147,8 @@ air shows the clearing (#1781). Tests:
 `content/tower_tests.rs` (what is refused, the clearing's and the top's checks),
 `mapgen/tower_tests.rs` (the showcase's test tower, `campaigns/showcase/data/dungeons/tower_climb.toml`,
 scenario `tower_climb`: both floors' snapshots, the footprint and swapped stairs over twelve
-seeds, the partitions, a climb to the top and down again as a replay).
+seeds, the rooms every cell reached, a climb to the top and down again as a replay; Drȳtorr's
+floors' rooms and a snapshot).
 
 **Meyn Bew** (#1446; `campaigns/ascmearc/data/dungeons/meynbew.toml`): a pocket of the plane of
 earth under Gimmwīc, entered only through the crystal portal Ysella the Binder's quest reveals

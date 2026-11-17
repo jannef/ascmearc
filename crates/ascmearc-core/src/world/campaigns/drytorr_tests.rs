@@ -20,11 +20,11 @@ const VILLAGE_CELL: Pos = Pos::new(18, 17);
 /// The fairy mound over Ælfhām.
 const MOUND: Pos = Pos::new(25, 13);
 /// Where the player comes into the clearing: the track from the south.
-const ARRIVAL: Pos = Pos::new(30, 22);
+const ARRIVAL: Pos = Pos::new(40, 30);
 /// The clearing's `<`, inside the tower: the stair through every floor starts here.
-const STAIR: Pos = Pos::new(30, 5);
+const STAIR: Pos = Pos::new(40, 7);
 /// Master Ordgar at his reading table, on the top floor.
-const ORDGAR: Pos = Pos::new(26, 8);
+const ORDGAR: Pos = Pos::new(27, 11);
 const WYNFLAED: Pos = Pos::new(54, 13);
 const ROWAN: &str = "rowan_for_the_wizard";
 const BRANCH: &str = "drytorr_tower";
@@ -118,10 +118,10 @@ fn the_tower_is_four_floors_on_the_clearings_footprint() {
     assert_eq!(def.campaign.as_deref(), Some("ascmearc"));
     let t = tower();
     assert_eq!((t.floors, t.depth()), (4, 2));
-    assert_eq!((t.min, t.max), (Pos::new(20, 4), Pos::new(40, 16)));
+    assert_eq!((t.min, t.max), (Pos::new(20, 6), Pos::new(60, 24)));
     assert_eq!(
         t.stairs,
-        [STAIR, Pos::new(39, 15), Pos::new(21, 5)],
+        [STAIR, Pos::new(59, 23), Pos::new(21, 7)],
         "the stair through the tower"
     );
     // The ground floor's traps grow with danger 5; the trap floors are 6 and 7.

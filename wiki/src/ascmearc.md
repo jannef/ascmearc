@@ -71,18 +71,27 @@ dressed stone that no pick, blast, or rod can break
 ([digging](digging.md#what-breaks-and-what-does-not)), and every floor has windows. A window is
 an open gap in the wall: you can see, hear, and shoot through it, but not climb through it.
 
-- **The ground floor** is the inside of the tower in the clearing. Through the windows you can
-  see into the hall before you open the door. The wizard keeps it hard on callers: two
-  [hidden traps](traps.md#finding-traps) lie across the south hall, and three bays in the wall of
-  the north hall each hold a trap you can see, with something left behind it to tempt you: a
-  potion, a scroll, and 25 gold. The traps there hit as hard as on a
-  [danger](dungeons.md#who-lives-there-and-how-many) 5 floor. Now and then a sprite or a pixie
-  of the fair folk comes out of the wood.
-- **The second and third floors** are new each run: a hall winding between walls, with hidden
-  traps (arrow and spear traps, pits, and alarms; three to five a floor) and the wizard's
-  household gone lively and hostile: books, brooms, candlesticks, chairs, coat stands, lanterns,
-  and rugs ([animated objects](animated.md)), and now and then a lesser earth elemental. They
-  are danger 6 and 7.
+- **The ground floor** is the inside of the tower in the clearing. It is big: three bands of
+  rooms, one above the other. Through the windows you can see into the halls before you open
+  the door. The wizard keeps it hard on callers. Two [hidden traps](traps.md#finding-traps) lie
+  across the entrance hall. In the long gallery behind it, among the statues, two
+  [gargoyles](creatures.md#creature-gargoyle) sit as still as stone until you pass beside them.
+  In the north hall, three bays each hold a trap you can see, with something left behind it to
+  tempt you: a potion, a scroll, and 25 gold. The stair up is in the middle of the north wall.
+  The traps there hit as hard as on a [danger](dungeons.md#who-lives-there-and-how-many) 5
+  floor. Now and then a sprite or a pixie of the fair folk comes out of the wood.
+- **The second and third floors** are new each run: many rooms and halls, some behind doors,
+  lit by wall torches, with hidden traps (arrow and spear traps, pits, and alarms; five to eight
+  a floor). They are danger 6 and 7, and 8 to 14 of the tower's folk keep each one. These are the wizard's
+  own making: [mannikins](creatures.md#creature-mannikin), his quick little men of clay, whose
+  bite makes you drowsy and who open doors; [ward-stones](creatures.md#creature-ward-stone),
+  which never move, slow whoever they look at, and spark at whoever comes beside them;
+  gargoyles; and [loam men](creatures.md#creature-loam-man), slow and heavy guardians whose
+  fists stagger. Besides them, a
+  [lesser earth elemental](creatures.md#creature-lesser-earth-elemental) bound to the stones,
+  and the wizard's household gone lively and hostile: books, brooms, candlesticks, chairs, coat
+  stands, lanterns, and rugs ([animated objects](animated.md)). The tower's folk are found in
+  the towers and nowhere else.
 - **The top floor** is the wizard's study and his quarters, with no traps and nobody to fight.
   Two doors lead out onto a balcony open to the sky, with a low wall round it. Rain falls on it.
 
