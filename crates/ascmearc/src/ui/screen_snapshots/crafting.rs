@@ -88,7 +88,8 @@ cases! {
         ..BASE
     },
     // The arrows' wizard in the forest area's glade (#1336): the head step alone (the shaft is
-    // cut from the trees), nothing carried to head them, None on `-` for brittle arrows.
+    // cut from the trees), nothing carried to head them, the cursor on None (Enter or `-`) for
+    // brittle arrows (#1778).
     craft_pick_arrows_head: Case {
         name: "craft-pick-arrows-head",
         scenario: "forest",
@@ -278,13 +279,22 @@ cases! {
         keys: Some("c"),
         ..BASE
     },
-    // Its second, the pommel: None on `-`, the cut gems; the running choice in the header.
+    // Its second, the pommel: the None row (`-`), the cut gems; the running choice in the header.
     craft_pick_pommel: Case {
         name: "craft-pick-pommel",
         scenario: "forge",
         actions: "move:E pickup",
         screen: Some("profession"),
         keys: Some("c c"),
+        ..BASE
+    },
+    // Up from the first gem puts the cursor on the None row, which Enter picks (#1778).
+    craft_pick_pommel_none: Case {
+        name: "craft-pick-pommel-none",
+        scenario: "forge",
+        actions: "move:E pickup",
+        screen: Some("profession"),
+        keys: Some("c c Up"),
         ..BASE
     },
     // The last pick asks in the one dialog, with the item named as it will be made.

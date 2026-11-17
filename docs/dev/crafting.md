@@ -707,7 +707,9 @@ choice: the amber amulet). The profession screen opens it for a generic recipe w
 (`Entry::wizard`; one without steps is applied at once, the rules saying why). One `PagedList`
 per step, grouped by the stacks' item class, read from `craft_steps` when it opens: a row is
 `letter - name` with "uses 3" ("uses 1 each" for a `per_made` input), greyed "too few" and unpickable when the stack holds too few; an
-optional step draws "- - None" above the list, picked by `-` (an empty one says "None leaves it
+optional step draws "- - None" above the list, a cursor row like the others (Up from the list's
+first row, Down from its last; the cursor starts on it when it is the only row, and on it again
+going back to a step where None was picked), picked by Enter on it or `-` (#1778; an empty one says "None leaves it
 plain." for the ornament, "None makes them brittle." for the arrows' head). The header is the recipe's name and
 the picks so far ("Short sword — metal: mithril"), the title the recipe and the step's label. A
 letter or Enter picks and goes on; Esc goes back a step, its pick kept (the cursor on it), and

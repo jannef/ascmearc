@@ -25,7 +25,7 @@ a time:
 2. **The haft**, for a spear or a javelin: billets of wood. A smith needs wood for these too, so
    the recipe is greyed out "no wood to hand" without it.
 3. **A gem for the ornament** (a pommel, an inlay), if the recipe has one: a cut gem you carry, or
-   **None** (press `-`). An uncut gem cannot be set.
+   **None** (choose its row, or press `-`). An uncut gem cannot be set.
 
 Esc goes back a step and keeps what you chose there. After the last choice you are asked to
 confirm, with the weapon named as it will be made: "Forge a ruby-pommelled mithril short sword? It
