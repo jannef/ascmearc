@@ -17,7 +17,7 @@ expression: "render(case, content.clone())"
 │ St  Strength      14   Main hand  long sword                                                     │
 │ Dx  Dexterity     12              +3 to hit, 1d9+3 slashing or piercing                          │
 │ To  Toughness     14                                                                             │
-│ In  Intelligence  10                                                                             │
+│ In  Intelligence  11                                                                             │
 │ Wi  Willpower     13                                                                             │
 │ Pr  Presence       9                                                                             │
 │                                                                                                  │

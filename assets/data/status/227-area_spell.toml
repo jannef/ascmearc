@@ -1,0 +1,9 @@
+# An area spell spent (a caster's, world/creatures/creature_cast.rs): a degree for every six
+# seconds of its type's `area_cooldown`; while it lasts the caster casts no harmful area spell,
+# only the rest of its list. Creatures only: no one sees it on them.
+[[status]]
+id = "area_spell"
+name = "Area spell spent"
+max = 100
+stacking = "refresh"
+eases = 6

@@ -23,7 +23,7 @@ expression: "render(case, content.clone())"
               │                                                                      │
               │   A cutpurse, burglar, and picker of locks who lives by nimble       │
               │   fingers and a quick wit.                                           │
-              │   St −1  Dx 1d3+1  In 1d2−1  Wi −1                                   │
+              │   Dx 1d3+1  In 1d2−1                                                 │
               │   Levels come quickly.                                               │
               │                                                                      │
               │                                                                      │

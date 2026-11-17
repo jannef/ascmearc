@@ -42,7 +42,7 @@ fn open(view: &PerceptionView, p: Pos) -> bool {
 }
 
 /// The terrain the player knows at `p`: inside the level, seen or remembered.
-fn terrain_at(view: &PerceptionView, p: Pos) -> Option<crate::content::TerrainId> {
+pub(crate) fn terrain_at(view: &PerceptionView, p: Pos) -> Option<crate::content::TerrainId> {
     if p.x < 0 || p.y < 0 || p.x >= view.width() || p.y >= view.height() {
         return None;
     }
@@ -142,11 +142,44 @@ impl World {
     /// creature coming close, it says so ("A kobold comes into view; you stop running."); ended
     /// by a message, that message says why; ended where the way gives out, nothing more is said.
     pub(in crate::world) fn run(&mut self, dir: Dir, events: &mut Vec<Event>) {
+        let mode = Cell::new(None::<Mode>);
+        self.keep_running(events, Some(dir), |view, at, from, heading| {
+            let mode = match mode.get() {
+                Some(mode) => mode,
+                None => {
+                    let found = match way_on(view, at, from) {
+                        Some(_) => Mode::Corridor,
+                        None => Mode::Open,
+                    };
+                    mode.set(Some(found));
+                    found
+                }
+            };
+            match mode {
+                Mode::Open => Some(dir).filter(|&d| steppable(view, at.step(d))),
+                Mode::Corridor => corridor_step(view, at, from, heading),
+            }
+        });
+    }
+
+    /// The steps of a run (this one's, or one to the stairs, `run_stairs.rs`) through
+    /// [`World::keep_at`]: `first` the first step if it is known already, then each step the one
+    /// `next` gives from the perception at the player's cell (`at`, come from `from`, heading
+    /// `heading`), until it gives none. Ended by a creature coming close, it says so.
+    pub(in crate::world) fn keep_running(
+        &mut self,
+        events: &mut Vec<Event>,
+        first: Option<Dir>,
+        next_step: impl Fn(&PerceptionView, Pos, Pos, Dir) -> Option<Dir>,
+    ) {
         let player = self.state.player;
         let (steps, stuck) = (Cell::new(0u32), Cell::new(false));
-        let (mode, next) = (Cell::new(None::<Mode>), Cell::new(None::<Dir>));
+        let next = Cell::new(None::<Dir>);
         // Where the player stood before their last step, and the way it went.
-        let (from, heading) = (Cell::new(self.player_pos()), Cell::new(dir));
+        let (from, heading) = (
+            Cell::new(self.player_pos()),
+            Cell::new(first.unwrap_or(Dir::N)),
+        );
         self.running = true;
         let ended = self.keep_at(
             events,
@@ -156,7 +189,9 @@ impl World {
                 }
                 let view = w.perception();
                 let at = w.player_pos();
-                if steps.get() == 0 {
+                if steps.get() == 0
+                    && let Some(dir) = first
+                {
                     next.set(Some(dir));
                     return true;
                 }
@@ -165,21 +200,7 @@ impl World {
                 if view.viewer() != at {
                     return true;
                 }
-                let mode = match mode.get() {
-                    Some(mode) => mode,
-                    None => {
-                        let found = match way_on(&view, at, from.get()) {
-                            Some(_) => Mode::Corridor,
-                            None => Mode::Open,
-                        };
-                        mode.set(Some(found));
-                        found
-                    }
-                };
-                let step = match mode {
-                    Mode::Open => Some(dir).filter(|&d| steppable(&view, at.step(d))),
-                    Mode::Corridor => corridor_step(&view, at, from.get(), heading.get()),
-                };
+                let step = next_step(&view, at, from.get(), heading.get());
                 next.set(step);
                 step.is_some()
             },

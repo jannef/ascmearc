@@ -11,6 +11,7 @@ pub(in crate::world) mod level;
 mod perceive;
 pub(in crate::world) mod rest;
 mod run;
+mod run_stairs;
 mod schedule;
 pub(in crate::world) mod stride;
 mod voice;
@@ -22,6 +23,7 @@ cfg_if! {
         mod moon_tests;
         mod numbers_tests;
         mod rest_close_tests;
+        mod run_stairs_tests;
         mod run_tests;
         mod speed_tests;
         mod stamina_tests;

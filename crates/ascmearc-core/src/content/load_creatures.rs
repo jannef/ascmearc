@@ -167,7 +167,7 @@ impl Content {
             let throw = (spec.throw.clone())
                 .map(|t| {
                     let kinds = self.resolve_kinds(t.damage_type.as_ref())?;
-                    t.resolve(status, |id| self.disease_id(id), kinds)
+                    t.resolve(self, status, |id| self.disease_id(id), kinds)
                 })
                 .transpose()
                 .map_err(|m| err(format!("creature `{}`: {m}", spec.id)))?;
@@ -220,6 +220,7 @@ impl Content {
                 immune,
                 immune_kinds,
                 spells: creature_spells::resolve(self, &spec).map_err(err)?,
+                area_cooldown: creature_spells::area_cooldown(self, &spec).map_err(err)?,
                 faction: self.creature_faction(&spec).map_err(err)?,
                 factions: self.creature_factions(&spec).map_err(err)?,
                 vision: self.vision_index(&spec.vision).ok_or_else(|| {

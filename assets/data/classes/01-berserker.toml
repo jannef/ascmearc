@@ -2,7 +2,7 @@
 id = "berserker"
 name = "Berserker"
 description = "A warrior of the wild lands who fights in a fury: mighty and hardy, quicker to rage than to read."
-stats = { strength = "1d3+1", dexterity = 1, toughness = "1d3", intelligence = "-1d2", presence = -1 }
+stats = { strength = "1d3+1", dexterity = 1, toughness = "1d3" }
 hp = 8
 mana = 1
 experience = 90

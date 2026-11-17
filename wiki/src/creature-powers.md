@@ -12,8 +12,8 @@ Giants hurl boulders. A throw flies like any missile, along its line as far as i
 strikes the first one in its way (see [Ranged combat](ranged.md)).
 
 A creature that throws does so whenever you are in range with nobody between you, until it is
-next to you. Then it fights up close. Its throws never run out, but each takes it the time below,
-and what it throws breaks where it lands.
+next to you. Then it fights up close. A giant's boulders never run out, but each throw takes it the
+time below, and what it throws breaks where it lands.
 
 A throw adds the thrower's [Dexterity](stats.md#stat-dexterity) modifier [to hit](combat.md#hitting)
 and its [Strength](stats.md#stat-strength) modifier to the [damage](combat.md#damage), as yours do.
@@ -24,8 +24,12 @@ goblin firebomber flasks of fire, a cult chymist stinking flasks. A bomber's fla
 to [hit](combat.md#hitting): it breaks where a flask you throw would, on the first one in its
 way, and its spell's splash is the attack (the table names the spell). Whoever else stands in the
 splash catches it too, the bomber's own kind and the bomber itself. If you see where it breaks,
-you learn what the flask was, as when you throw one. Its flasks never run out either, but it
-carries one or two, which fall where it dies.
+you learn what the flask was, as when you throw one.
+
+A bomber's flasks do run out. It carries the number of flasks shown beside them in the table, and
+each throw uses one. After a throw it waits the time shown before it throws again, and it fights up
+close or comes for you meanwhile. With none left it only fights up close. Whatever flasks it has
+left fall where it dies.
 
 {{#include generated/creature-throws.md}}
 

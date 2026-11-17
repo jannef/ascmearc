@@ -1632,9 +1632,10 @@ mod tests {
                 }
             }
         }
-        // Some characters are poor on purpose, some strong.
-        assert!(lowest.values().all(|&s| s <= 8), "{lowest:?}");
-        assert!(lowest.values().any(|&s| s <= 5), "{lowest:?}");
+        // Some characters are poor on purpose (by race, as classes lower no stat, #1800), some
+        // strong.
+        assert!(lowest.values().all(|&s| s <= 9), "{lowest:?}");
+        assert!(lowest.values().any(|&s| s <= 6), "{lowest:?}");
         assert!(highest.values().all(|&s| s >= 13), "{highest:?}");
         assert!(highest.values().any(|&s| s >= 18), "{highest:?}");
     }

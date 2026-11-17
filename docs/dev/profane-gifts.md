@@ -117,14 +117,21 @@ today; an aristocrat's own extra ring stays when Many-fingered goes).
 
 ## In the world: `world/character/profane.rs`
 
-- `World::may_take_gift(gift)`: §7.2's pool, what a draw may give: not held, not `excludes`-related
-  to a gift held, not `not_for` the player's race. `World::gift_pool(tier)` counts it (open, all).
-- `World::bestow_gift(talent)` (§7.3): a gift held is refused. An `undoes` with a gift it names
+- **Never twice** (#1805, the owner's rule): `WorldState::gifts_received` records the talent id
+  of every gift ever taken (inserted by `bestow_gift`; `rescind`, a `replaces`, an `undoes` never
+  take one out). `World::had_gift(talent)` is "in the record, or held". Every source obeys it:
+  draws, signatures, the dev `gift:` command, and any later source that goes through
+  `bestow_gift` or `may_take_gift`. A gift that undoes another and so is not taken is not
+  recorded: it was never had, and may still come later.
+- `World::may_take_gift(gift)`: §7.2's pool, what a draw may give: never had (`had_gift`), not
+  `excludes`-related to a gift held, not `not_for` the player's race. `World::gift_pool(tier)` counts it (open, all).
+- `World::bestow_gift(talent)` (§7.3): a gift ever had is refused with nothing said (a second
+  keeper's corpse of a signature lost gives nothing of it, and the meal goes on with its draws). An `undoes` with a gift it names
   held rescinds that gift and is **not** taken (the undone gift's `undone` line, then this one's
   `instead`); else every held gift its `replaces` names is rescinded, then it is taken: pushed
   into `Actor::boons`, the granted talents put back (`stars::grant`, as a restore does), its
-  `stat` effects handed out, its `line` said, then "You are <name>.". Excludes and races are the
-  pool's business, not this (a signature is sure, §7.3).
+  `stat` effects handed out, its `line` said, then "You are <name>.", and its id recorded. Excludes and races are the
+  pool's business, not this (a signature is sure, §7.3, unless once had).
 - `World::rescind(talent)` (§7.4): out of `Actor::boons` and `Actor::talents`, each `stat` effect
   given back in the negative, the `undone` line said, then what is worn in a slot no longer the
   player's falls (`shed_unworn`: an `opens_slot` gone; a `bars_slot` gone frees its slot, nothing
@@ -145,8 +152,9 @@ today; an aristocrat's own extra ring stays when Many-fingered goes).
   `None`, and the meal says "Nothing more of it will take in you.".
 - A forgotten altar's Forsaken never draws a profane bane (`bestow_flaw` skips the gifts).
 
-Saves: a gift rides in `Actor::boons` with no new field; `stars::grant` puts it back on every
-restore and the state hash covers both lists. A save naming a gift the content lacks fails to
+Saves: a gift held rides in `Actor::boons`; `stars::grant` puts it back on every restore and the
+state hash covers both lists. `WorldState::gifts_received` is saved and hashed (left out while
+empty, so runs that never took a gift hash as before). A save naming a gift the content lacks fails to
 load, as any unknown talent does.
 
 ## What is shown
@@ -161,7 +169,7 @@ load, as any unknown talent does.
 - `progress` dump (dev): `profane 1 held; pool lesser 14/14, greater 11/12, dire 14/14` (each tier's
   gifts a draw may give now, of all it holds).
 - Dev actions (no time; `docs/dev/cli.md`): `gift:ID` gives a gift as a draw would (refused for
-  one held, excluded, or barred to the race), `rescind:ID` takes one away.
+  one ever had, excluded, or barred to the race), `rescind:ID` takes one away (it stays had).
 
 ## Tests
 
@@ -170,13 +178,14 @@ load, as any unknown talent does.
 table, the deed in full and diminished, a paladin's zeal, the loader's profane-corpse and
 signature refusals), `world/character/signature_tests.rs` (each of the nine corpses: its gift, its stats, its resistance totals;
 Līgetdrȳ's Decipher script; the two wyrms summed and capped; one breath, the larger; the
-`Fire breath (profane)` row), `world/levels/layer_boss_tests.rs` (every keeper's profane corpse, the
+`Fire breath (profane)` row; a signature once had and lost not given by a second corpse), `world/levels/layer_boss_tests.rs` (every keeper's profane corpse, the
 campaign check), `world/items/body_slots_tests.rs` (P5: Horned's helm falls and the equip is refused
 with no time; Many-fingered's ring, and its fall when the gift goes, an aristocrat's kept;
 Clawed's bleeding; Rat-king's court's vermin neutral until struck; Deep-eyed's darkvision eyes
 on a human, replacing Barrow-eyed; Fell-minded's quarter more mana), `content/profane.rs`'s
 `the_loader_refuses_a_bad_body_effect`, the screen snapshot `equipment-horned`, `world/character/profane_tests.rs` (bestow; rescind reversing `stat` exactly; Withered at the floor;
-`replaces`; `undoes` with and without the boon; `excludes` both ways; `not_for`; a save; the
+`replaces`; `undoes` with and without the boon; a gift replaced, undone, or rescinded never drawn nor
+bestowed again, the record saved; `excludes` both ways; `not_for`; a save; the
 `progress` row), `world/character/gift_table_tests.rs` (P6: the fixture run that eats all ten keepers, its
 `progress` pools after each meal as the insta snapshot `profane_ten_meals`; a Phoenix who is
 Twice-born rises twice, Twice-born alone once; Wyrm-blooded over Ember-veined and its glow;

@@ -1596,12 +1596,11 @@ mod tests {
         assert!(traits.contains("| +4 | eaten unharmed |"), "{traits}");
         assert!(!traits.contains("| Human |"), "{traits}");
         assert!(
-            text("classes.md")
-                .contains("| Wizard | \u{2212}2 | 0 | \u{2212}1d2 | 2d2+1 | +1 | 0 |"),
+            text("classes.md").contains("| Wizard | 0 | 0 | 0 | 2d2+1 | +1 | 0 |"),
             "{}",
             text("classes.md")
         );
-        assert!(text("classes.md").contains("| Warrior | 1d3+1 | +1 | 1d3 | \u{2212}1 | 0 | 0 |"));
+        assert!(text("classes.md").contains("| Warrior | 1d3+1 | +1 | 1d3 | 0 | 0 | 0 |"));
         assert!(text("classes.md").contains("- **Merchant**: A trader"));
         // Combat: race and class hit points, weapons, armour, the rules' odds.
         assert!(text("races.md").contains("| Normal | 16–35 | 4 |"));

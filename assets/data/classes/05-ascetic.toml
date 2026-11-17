@@ -2,7 +2,7 @@
 id = "ascetic"
 name = "Ascetic"
 description = "A wandering ascetic of the old discipline, body and breath trained as one: quick, enduring, inward-turned."
-stats = { dexterity = "1d3", toughness = 1, willpower = "1d3", presence = -1 }
+stats = { dexterity = "1d3", toughness = 1, willpower = "1d3" }
 hp = 5
 mana = 4
 experience = 120

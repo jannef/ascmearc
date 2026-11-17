@@ -47,6 +47,7 @@ impl World {
     pub(super) fn kind_of(&self, action: &Action) -> Option<ActionKind> {
         Some(match action {
             Action::Move(dir) | Action::Run(dir) | Action::Pay(Some(dir)) => self.move_kind(*dir),
+            Action::RunToStairs(_) => ActionKind::Step,
             Action::Rest(_) | Action::UseTalent(_) => ActionKind::Wait,
             Action::Open(_) => ActionKind::OpenDoor,
             Action::Close(_) => ActionKind::CloseDoor,

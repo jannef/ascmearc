@@ -144,8 +144,10 @@ from where it stands:
 - harm within reach, with nothing solid and nobody between you for a ray, a bolt, a cone, or a
   line.
 
-It never casts an area spell that would catch a friend of its own. Failing all that, it comes
-closer, to where its longest spell would reach.
+It never casts an area spell that would catch a friend of its own. After an area spell that
+harms (marked "area" in the table: a burst, a cone, or a line, and chain lightning), it casts no
+other such spell for 18 seconds, three turns at a normal pace. Meanwhile it casts the rest of its
+list, or fights. Failing all that, it comes closer, to where its longest spell would reach.
 [Spell reflection](fighting-styles.md#style-ability-spell-reflection) turns its rays and bolts
 back at it, as it turns anyone's. Casters up to level 10 know only the weakest spells and are very
 rare. Unseen, a caster is heard chanting.

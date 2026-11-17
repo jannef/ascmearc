@@ -2,7 +2,7 @@
 id = "warrior"
 name = "Warrior"
 description = "A trained fighter of the shield wall and the dueling ground: strong, steady, and well drilled."
-stats = { strength = "1d3+1", dexterity = 1, toughness = "1d3", intelligence = -1 }
+stats = { strength = "1d3+1", dexterity = 1, toughness = "1d3" }
 hp = 7
 mana = 1
 experience = 100

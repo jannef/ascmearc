@@ -21,10 +21,11 @@
 #                 class keeps its data and stays usable through `--character` and a scenario's
 #                 own character, for development and tests (default false)
 #   stats         adjustments to the starting scores by stat id (strength, dexterity, toughness,
-#                 intelligence, willpower, presence; a missing one 0): a number (`1`, `-2`) or
-#                 dice (`"1d3+1"`, `"-1d2"`), rolled in the background when the character is made,
-#                 ADOM-like; the score is kept within 1 to 40. Each class rolls its key stats;
-#                 penalties may be rolled too
+#                 intelligence, willpower, presence; a missing one 0): a number (`1`) or
+#                 dice (`"1d3+1"`), rolled in the background when the character is made,
+#                 ADOM-like; the score is kept within 1 to 40. Each class rolls its key stats.
+#                 Classes give no stat penalties (#1800): no negative number or dice, and no
+#                 dice that can roll below zero (`"1d2-1"`, not `"1d3-2"`)
 #   hp            what the class adds to the hit points (default 0): a
 #                 character's maximum is their Toughness plus their race's (races.toml) and their
 #                 class's

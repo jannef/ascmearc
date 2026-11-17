@@ -646,16 +646,16 @@ mod tests {
             "Class   Thief",
             "Age 34 · born 29 Greenleaf 1410",
             "year of the Water Basilisk",
-            "St  Strength       9",
+            "St  Strength      10",
             "Dx  Dexterity     13",
             "To  Toughness     10",
             "In  Intelligence  12",
-            "Wi  Willpower     11",
+            "Wi  Willpower     12",
             "Pr  Presence       9",
             // Toughness 10 and a human's 4 and a thief's 4; Defence 10 and Dexterity's share,
             // and no Protection beside it.
-            // Beside them a human's 1 mana and a thief's 1, and the mental stats' +1, 0, and -1.
-            "HP  Hit points    18/18   MP  Mana       2/2",
+            // Beside them a human's 1 mana and a thief's 1, and the mental stats' +1, +1, and -1.
+            "HP  Hit points    18/18   MP  Mana       3/3",
             "Dv  Defence       11      Pv  Protection  0",
             "Lv  Level         1",
             // A human thief's level 2: 192 × 95 %.
@@ -674,9 +674,9 @@ mod tests {
             "{text:#?}"
         );
         row("Weight 73.9 kg (you 70 kg, carrying 3.9 kg)");
-        // St 9 To 10: a limit of 42 kg, by thirds; the line right below the weight.
+        // St 10 To 10: a limit of 45 kg, by thirds; the line right below the weight.
         let at = |needle: &str| text.iter().position(|l| l.contains(needle));
-        let thresholds = "Burdened over 14 kg, strained over 28 kg, overloaded over 42 kg";
+        let thresholds = "Burdened over 15 kg, strained over 30 kg, overloaded over 45 kg";
         assert_eq!(at(thresholds), at("Weight 73.9 kg").map(|y| y + 1));
         row("@ or Esc close   A skills");
         let empty_handed = drawn(&showcase(), 80, 30);
@@ -717,13 +717,13 @@ mod tests {
         let load = world.perception().own_load();
         assert_eq!(
             thresholds(&load, 68),
-            ["Burdened over 14 kg, strained over 28 kg, overloaded over 42 kg"]
+            ["Burdened over 15 kg, strained over 30 kg, overloaded over 45 kg"]
         );
         assert_eq!(
             thresholds(&load, 44),
             [
-                "Burdened over 14 kg, strained over 28 kg,",
-                "overloaded over 42 kg"
+                "Burdened over 15 kg, strained over 30 kg,",
+                "overloaded over 45 kg"
             ]
         );
         // Two chain mails (22 kg) for average scores (St 10 To 10: burdened over 15 kg).
@@ -749,7 +749,7 @@ mod tests {
         let text = drawn(&world, 80, 30);
         let joined = text.join("\n");
         for expected in [
-            "St  Strength       8",
+            "St  Strength       9",
             "Dx  Dexterity     12",
             "To  Toughness     10",
             "Status        Bleeding, Poisoned",
@@ -767,7 +767,7 @@ mod tests {
             .expect("St");
         let score = (0..80)
             .filter_map(|x| console.get(x, y as i32))
-            .find(|c| c.ch == '8')
+            .find(|c| c.ch == '9')
             .expect("the score");
         assert_eq!(score.fg, LOWERED);
     }

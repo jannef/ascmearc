@@ -18,14 +18,21 @@ use crate::talent::{Taken, VigourEffect};
 use crate::world::{Spent, World};
 
 impl World {
-    /// Whether a draw may give the player `gift` (§7.2's pool): not held, not excluded by a gift
-    /// held, not barred to their race.
+    /// Whether the player has ever taken gift `gift`, held now or lost since (#1805): such a gift
+    /// is never given again, whatever gives it.
+    pub(crate) fn had_gift(&self, gift: TalentId) -> bool {
+        let id = &self.content.talents().get(gift).id;
+        self.state.gifts_received.contains(id) || self.state.player().talents.has(id)
+    }
+
+    /// Whether a draw may give the player `gift` (§7.2's pool): never had ([`World::had_gift`]),
+    /// not excluded by a gift held, not barred to their race.
     pub(crate) fn may_take_gift(&self, gift: &GiftDef) -> bool {
         let me = self.state.player();
         let book = self.content.talents();
         let holds = |t: TalentId| me.talents.has(&book.get(t).id);
         let race = self.state.character.as_ref().map(|c| c.spec.race.as_str());
-        !holds(gift.talent)
+        !self.had_gift(gift.talent)
             && !gift.excludes.iter().any(|&t| holds(t))
             && !race.is_some_and(|r| gift.not_for.iter().any(|n| n == r))
     }
@@ -96,8 +103,9 @@ impl World {
     /// Gives the player `gift` (§7.3): an `undoes` with a gift it names held takes that away and
     /// is not taken (that gift's `undone` line, then this one's `instead`); else every gift its
     /// `replaces` names is taken away (each one's `undone` line), and it is taken with its `stat`
-    /// handed out (its `line`, then "You are <name>."). Whether it was taken. Excludes and races
-    /// are the pool's business ([`World::may_take_gift`]), not this.
+    /// handed out (its `line`, then "You are <name>."), and recorded for good. Whether it was
+    /// taken. A gift ever had ([`World::had_gift`]) is refused, silently; excludes and races are
+    /// the pool's business ([`World::may_take_gift`]), not this.
     pub(in crate::world) fn bestow_gift(&mut self, gift: TalentId) -> bool {
         let content = self.content.clone();
         let Some(def) = content.profane().gift(gift) else {
@@ -105,7 +113,7 @@ impl World {
         };
         let book = content.talents();
         let holds = |w: &Self, t: TalentId| w.state.player().talents.has(&book.get(t).id);
-        if holds(self, gift) {
+        if self.had_gift(gift) {
             return false;
         }
         let undone: Vec<TalentId> = (def.undoes.iter().copied())
@@ -125,6 +133,7 @@ impl World {
             self.rescind(t);
         }
         let id = book.get(gift).id.clone();
+        self.state.gifts_received.insert(id.clone());
         self.player_mut().boons.push(Taken {
             id: id.clone(),
             choice: None,
@@ -205,7 +214,7 @@ impl World {
     }
 
     /// The dev action `gift:ID`: the player is given gift `id` as a draw would give it, refused
-    /// (no time) for no gift, one held, or one a draw would not offer them. Takes no time.
+    /// (no time) for no gift, one ever had, or one a draw would not offer them. Takes no time.
     pub(in crate::world) fn gift_dev(&mut self, id: &str) -> Spent {
         let content = self.content.clone();
         let gift = (content.talents().id(id)).and_then(|t| content.profane().gift(t));

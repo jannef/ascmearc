@@ -36,6 +36,8 @@ impl fmt::Display for Action {
         match self {
             Action::Move(d) => write!(f, "move:{d}"),
             Action::Run(d) => write!(f, "run:{d}"),
+            Action::RunToStairs(StairsDir::Up) => f.write_str("run:<"),
+            Action::RunToStairs(StairsDir::Down) => f.write_str("run:>"),
             Action::Wait => f.write_str("wait"),
             Action::Open(d) => write!(f, "open:{d}"),
             Action::Close(d) => write!(f, "close:{d}"),
@@ -247,7 +249,7 @@ impl FromStr for Action {
 #[rustfmt::skip]
 static VERBS: &[(&str, Shape)] = &[
     ("move", Shape::Dir(Action::Move)),
-    ("run", Shape::Dir(Action::Run)),
+    ("run", Shape::Own(run)),
     ("wait", Shape::Bare(|| Action::Wait)),
     ("open", Shape::Dir(Action::Open)),
     ("close", Shape::Dir(Action::Close)),
@@ -407,6 +409,15 @@ impl Shape {
 /// Whether `id` is an id of lower-case letters, digits, and `_`: a recipe's, a rig's, a spell's.
 fn plain_id(id: &str) -> bool {
     !id.is_empty() && (id.chars()).all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '_')
+}
+
+/// `run:DIR`, and `run:<` or `run:>` to the nearest known stairs that way.
+fn run(words: &Words) -> Result<Action, String> {
+    match words.arg {
+        Some("<") => Ok(Action::RunToStairs(StairsDir::Up)),
+        Some(">") => Ok(Action::RunToStairs(StairsDir::Down)),
+        _ => words.dir().map(Action::Run),
+    }
 }
 
 /// `pay`, `pay:DIR`.
@@ -1056,6 +1067,8 @@ mod tests {
             Action::Wait,
             Action::Ascend,
             Action::Descend,
+            Action::RunToStairs(StairsDir::Up),
+            Action::RunToStairs(StairsDir::Down),
             Action::UseTool,
             Action::ThrowVoice(Pos::new(12, 5)),
             Action::ThrowVoice(Pos::new(0, 40)),
@@ -1773,6 +1786,8 @@ mod tests {
                 Action::Wait,
                 Action::Ascend,
                 Action::Descend,
+                Action::RunToStairs(StairsDir::Up),
+                Action::RunToStairs(StairsDir::Down),
                 Action::UseTool,
                 Action::Pray,
                 Action::Drink,
