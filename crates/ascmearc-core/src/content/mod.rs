@@ -212,6 +212,7 @@ mod terrain;
 mod tests;
 mod theft;
 mod throw;
+pub(crate) mod tower;
 #[cfg(test)]
 mod tower_tests;
 mod town;
@@ -429,6 +430,7 @@ pub use terrain::{
 };
 pub use theft::{Blinks, SMALL as SMALL_LOOT, Steals, Takes};
 pub use throw::Throw;
+pub use tower::Tower;
 pub use town::{InvestShare, TownDef, TownRestock, TownServant};
 pub use trap::{Trap, TrapAvoid, TrapDef, TrapDisarm, TrapEffect, TrapHarm, TrapId, TrapNoise};
 pub use tuning::Tuning;

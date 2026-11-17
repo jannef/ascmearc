@@ -7,9 +7,10 @@ code, as CLAUDE.md says.
 
 Built so far: **F1** (#1781), the foundation: the terrain, the level fields `below` and `storey`,
 the below view in perception and memory, look mode, the `view` and `below` dump layers, the map
-drawing the ground below (not blurred yet: F2), and the showcase's two-storey test tower. Not yet:
-the blur (F2), the `tower` branch kind and its generator (T1), the towers themselves, the wizards,
-and their quests (C1, W1, C2, C3).
+drawing the ground below (not blurred yet: F2), and the showcase's two-storey test tower. **T1**
+(#1783, `docs/dev/mapgen.md` "Towers") builds the generated floors of this terrain, each with
+`below = clearing` and `storey = depth`. Not yet: the blur (F2), the towers themselves, the
+wizards, and their quests (C1, W1, C2, C3).
 
 ## The idea
 
