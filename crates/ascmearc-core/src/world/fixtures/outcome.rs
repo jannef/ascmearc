@@ -591,6 +591,7 @@ impl World {
             };
             make_creature(&mut self.state, &self.content, &id, &spawn);
             self.spawned += 1;
+            self.player_summoned(creature);
         }
     }
 

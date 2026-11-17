@@ -6,6 +6,7 @@ id = "shopkeeper"
 level = 18
 xp = 400
 name = "shopkeeper"
+tags = ["sapient"]
 glyph = "@"
 fg = "#e0c070"
 speed = 1200

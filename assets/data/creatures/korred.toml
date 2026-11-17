@@ -10,7 +10,7 @@ name = "korred"
 glyph = "F"
 fg = "#7a6038"
 factions = { seelie = 50, unseelie = 50 }
-tags = ["fey"]
+tags = ["fey", "sapient"]
 vision = "darkvision"
 sight = 10
 opens_doors = true

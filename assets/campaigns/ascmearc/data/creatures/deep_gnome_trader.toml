@@ -15,7 +15,7 @@ glyph = "@"
 fg = "#b4a8d0"
 speed = 1150
 faction = "merchants"
-tags = ["deep-gnome"]
+tags = ["deep-gnome", "sapient"]
 # One of the people: never greater or lesser than their kind.
 grades = false
 alignment = "good"

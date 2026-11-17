@@ -21,8 +21,12 @@ fn world(seed: u64) -> World {
     let mut files = files();
     let kobold = include_str!("../../../../../assets/data/creatures/kobold.toml");
     let shaman = include_str!("../../../../../assets/data/creatures/kobold_shaman.toml");
-    let wight = undead_kobold(kobold, ("kobold", "kobold_wight"), "tags = [\"kobold\"]");
-    let tags = "tags = [\"kobold\", \"caster\"]";
+    let wight = undead_kobold(
+        kobold,
+        ("kobold", "kobold_wight"),
+        "tags = [\"kobold\", \"sapient\"]",
+    );
+    let tags = "tags = [\"kobold\", \"caster\", \"sapient\"]";
     let wight_shaman = undead_kobold(shaman, ("kobold_shaman", "wight_shaman"), tags);
     files.insert("data/creatures/kobold_wight.toml", &wight);
     files.insert("data/creatures/wight_shaman.toml", &wight_shaman);

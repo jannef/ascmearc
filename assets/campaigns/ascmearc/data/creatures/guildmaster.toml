@@ -5,6 +5,7 @@
 [[creature]]
 id = "guildmaster"
 name = "guildmaster"
+tags = ["sapient"]
 glyph = "@"
 fg = "#a88a5c"
 faction = "peaceful"

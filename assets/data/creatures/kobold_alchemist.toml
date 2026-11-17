@@ -14,7 +14,7 @@ glyph = "k"
 fg = "#a0c860"
 speed = 900
 faction = "kobolds"
-tags = ["kobold"]
+tags = ["kobold", "sapient"]
 # Its grades: the lesser and the greater.
 grade_words = ["scrawny", "big"]
 alignment = "evil"

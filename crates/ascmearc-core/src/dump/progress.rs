@@ -128,6 +128,15 @@ pub(super) fn progress_rows(world: &World) -> Vec<String> {
     if !slain.is_empty() {
         rows.push(format!("slain {}", slain.join(", ")));
     }
+    // The two laws broken (`world/character/laws.rs`): sapient corpses eaten, fiends summoned.
+    let laws = world.laws_broken();
+    if !laws.is_empty() {
+        rows.push(format!(
+            "laws broken: ate {} sapient, summoned {} fiend",
+            laws.eaten(),
+            laws.summoned()
+        ));
+    }
     // The prayer's strain (the priest's, hidden in the game), its face, and what it answers.
     if let Some(prayer) = world.prayer_state() {
         let locked = if prayer.locked { " (locked)" } else { "" };

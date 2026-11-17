@@ -3,6 +3,7 @@
 [[creature]]
 id = "reeve"
 name = "reeve"
+tags = ["sapient"]
 glyph = "@"
 fg = "#7c98c8"
 faction = "peaceful"

@@ -16,6 +16,7 @@ rarity = "very_rare"
 loot = 100
 unique = true
 name = "Wælcyrge the Chooser"
+tags = ["sapient"]
 glyph = "A"
 fg = "#e8d8a0"
 speed = 1900

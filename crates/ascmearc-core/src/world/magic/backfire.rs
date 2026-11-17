@@ -210,6 +210,9 @@ impl World {
         let me = &self.state.actors[&caster];
         if caster == player {
             self.say(format!("{list} {verb} to your call, but not to your side!"));
+            for &(creature, n) in &came {
+                (0..n).for_each(|_| self.player_summoned(creature));
+            }
         } else if self.perception.sees_actors_at(me.pos) {
             let who = self.called(me);
             self.say(format!(

@@ -10,6 +10,7 @@ id = "duergar_trader"
 level = 18
 xp = 400
 name = "duergar trader"
+tags = ["sapient"]
 glyph = "h"
 fg = "#c8a070"
 speed = 1100
