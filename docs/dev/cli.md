@@ -891,8 +891,8 @@ None takes game time unless said.
   is nowhere), e.g. `ask:E:quest-crystal_guardian` on Ysella then `descend
   lure:crystal_guardian ascend` (`docs/dev/quests.md` "Lure quests").
 - `gift:ID` the player is given profane gift `ID`, an id in `assets/data/profane/`, as a meal's
-  draw would give it, its relations applied (`replaces`, `undoes`); refused for one held, one a
-  gift held excludes, or one barred to the race. `rescind:ID` takes a gift held away again, its
+  draw would give it, its relations applied (`replaces`, `undoes`); refused for one ever had (held,
+  or lost since: #1805), one a gift held excludes, or one barred to the race. `rescind:ID` takes a gift held away again, its
   `stat` given back (`docs/dev/profane-gifts.md`).
 - `quest_roll:ID:TARGET` active rolled quest `ID`, with no progress yet, draws `TARGET` instead (a
   creature, `tag:` a tag, or an object id its pool can hold, wherever the player can go, or a

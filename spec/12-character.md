@@ -85,7 +85,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - Food rots by its age alone: fresh, old, rotten, gone. Rotten food may sicken and expose to disease.
 - The player never sees food's age or stage: "eating stays a gamble" (the owner). Only a trained eye (Appraise, Survival) judges freshness in words.
 - Corpses are food that rots. Eating a fresh corpse may give training marks, rarely widen a potential, or teach Decipher script, by creature tags. The effects are never shown before trying; the wiki states them.
-- Everlasting corpses (the unique layer bosses) never rot. Eating a profane corpse grants its signature gift and drawn profane gifts and is the gravest sin; nothing asks and nothing marks it.
+- Everlasting corpses (the unique layer bosses) never rot. Eating a profane corpse grants its signature gift and drawn profane gifts and is the gravest sin; no profane gift is ever given twice, even after it is lost; nothing asks and nothing marks it.
 
 ## Skills
 
