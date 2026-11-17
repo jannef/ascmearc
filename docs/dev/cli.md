@@ -542,7 +542,7 @@ messages, heard sounds, and, with `--state`, the full world state; and:
 
 Actions are whitespace-separated words; `ACTION*N` repeats one, e.g. `wait*10` (N at most 100,000, `action::MOST_REPEATS`; more is a parse error). The verbs:
 
-`move:DIR run:DIR wait open:DIR close:DIR kick:DIR pick:DIR ascend descend use_tool
+`move:DIR run:DIR run:< run:> wait open:DIR close:DIR kick:DIR pick:DIR ascend descend use_tool
 pickup[:LETTERS] drop[:LETTERS] sell[:LETTERS] pay[:DIR] equip:SLOT:LETTER remove:SLOT bash:DIR
 fire:X,Y throw:LETTER:X,Y eat:LETTER eat:floor:LETTER craft:ID[:POS,...] give:LETTER[:DIR]
 read:LETTER[:X,Y|:LETTER] scribe:SPELL dig:DIR search search:N disarm:DIR listen:DIR gather:DIR
@@ -579,6 +579,9 @@ thaw:X,Y,R web:X,Y,R`
   along a corridor through its bends to a branch, a side door, a dead end, or a room; it stops
   for whatever stops a rest; a first step a run cannot take is a plain `move`; docs/dev/time.md
   "Running").
+- `run:>` and `run:<` run to the nearest stairs down or up the player knows of (#1801,
+  `Action::RunToStairs`): by the shortest walk over the perception, stopping on the stairs
+  without taking them; with none to walk to, a message and no time (docs/dev/time.md "Running").
 - `search` searches the cells around the player for secret doors and hidden traps for a turn,
   and `wait` is another spelling of it (waiting is searching, one action: #1326; the game's
   Wait/search, Num5 or `s`); `search:N` for up to N turns (1 to 100), stopping when something is
