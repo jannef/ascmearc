@@ -433,6 +433,11 @@ pub enum Action {
     /// (`world/people/lure.rs`). For replays, tests, and captures that skip the walk. Takes no game
     /// time; recorded in replays.
     Lure(String),
+    /// Dev command: quest `ID` is marked done, as if handed in, with no words and no reward
+    /// (given first if it was not): what it is required by may be offered. For replays, tests,
+    /// and captures that skip a chain's earlier quests (`world/people/quest_done.rs`). Takes no
+    /// game time; recorded in replays.
+    QuestDone(String),
     /// Dev command: the player is given profane gift `ID` (an id in `data/profane/`) as a draw
     /// would give it, its relations applied (`world/character/profane.rs`); refused for one a draw would
     /// not offer. For tests and captures. Takes no game time; recorded in replays.

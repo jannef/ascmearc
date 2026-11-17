@@ -201,7 +201,11 @@ offered one after the other.
 In [Holtwīc](ascmearc.md#the-places), at the end of the north road,
 **[Gammer Wynflæd](creatures.md#creature-wise-woman)** the wise-woman asks you to bring home a girl
 the fair folk took. She marks [Ælfhām](dungeon-guide.md#ælfhām), their hall in the holly wood, on
-your map. The girl waits at its very bottom.
+your map. The girl waits at its very bottom. Once she is home, the wise-woman tells you of a
+learned man in a tower, and sends him a sprig of rowan by your hand. She marks
+[Drytorr](ascmearc.md#drytorr), his tower in the wood, on your map as she gives it to you. Carry
+it up to Master Ordgar at the top of his tower: he pays you in
+[experience](experience.md) only, 150 of it.
 
 The table lists every quest in its chain's order: what it asks, what it pays, what must be done
 first, the level you must have reached for it to be given, and the

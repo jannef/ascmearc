@@ -1,0 +1,13 @@
+# The rowan sprig (Gammer Wynflæd's "A sprig of rowan", in the Ascmearc; #1784): the wise-woman's
+# token for Master Ordgar of Drytorr, a sprig tied with red thread. A quest object she hands over
+# as she gives the quest, never traded.
+[[object]]
+id = "rowan_sprig"
+name = "sprig of rowan"
+plural = "sprigs of rowan"
+glyph = ","
+fg = "#c8402c"
+class = "miscellaneous"
+materials = ["plant"]
+weight = 5
+value = 0

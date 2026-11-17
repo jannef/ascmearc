@@ -21,6 +21,8 @@ const BARROW: Pos = Pos::new(34, 25);
 const VILLAGE: Pos = Pos::new(18, 17);
 /// Ælfhām's fairy mound, hidden in the wood beside the village (#1140; `holtwic_tests`).
 const MOUND: Pos = Pos::new(25, 13);
+/// Drytorr, Master Ordgar's tower, hidden in the wood north-west of the mound (#1784).
+const DRYTORR: Pos = Pos::new(19, 11);
 /// Lytelscræf, the starter cave (#792): two cells from the pass, in sight of the start.
 const CAVE: Pos = Pos::new(14, 27);
 /// Līctūn, Cēaptūn's churchyard (#1258): beside the south road, four cells out of town.
@@ -246,7 +248,16 @@ fn the_locations_are_named_and_six_cells_apart() {
         (CONTENT.terrain(fyr.terrain).id.as_str(), fyr.name.as_str()),
         ("mine", "Fyrdelf")
     );
-    let mut all = vec![PASS, TOWN, BARROW, FENNMYNSTER, FYRDELF, VILLAGE, MOUND];
+    let mut all = vec![
+        PASS,
+        TOWN,
+        BARROW,
+        FENNMYNSTER,
+        FYRDELF,
+        VILLAGE,
+        MOUND,
+        DRYTORR,
+    ];
     for (id, at) in LAIRS {
         let (pos, _) = CONTENT.hidden_location("ascmearc", id).expect(id);
         assert_eq!(pos, at, "{id}");
@@ -273,7 +284,7 @@ fn the_locations_are_named_and_six_cells_apart() {
         );
     }
     // No road leads to a hidden dungeon.
-    for hidden in [FENNMYNSTER, FYRDELF]
+    for hidden in [FENNMYNSTER, FYRDELF, DRYTORR]
         .into_iter()
         .chain(LAIRS.map(|(_, at)| at))
     {

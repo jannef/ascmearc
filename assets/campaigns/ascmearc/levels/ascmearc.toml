@@ -12,7 +12,9 @@
 # crosses Beorhtburna by the bridge (b) and follows its south bank to Fennhām's
 # site (the road's end at 62, 43); north, it runs to Holtwīc (V, #1140), the village at its end
 # on the edge of Holegnwudu. In the wood seven cells north-east of the village, hidden until the
-# village's wise-woman tells of it, is the fairy mound over Ælfhām (E), the Unseelie court's hall.
+# village's wise-woman tells of it, is the fairy mound over Ælfhām (E), the Unseelie court's hall;
+# north-west of it, at the wood's western edge, Master Ordgar's tower, Drytorr (I), hidden until
+# she sends the player to him.
 #
 # Rivers (arrows, the way they flow), two cells wide so only a bridge or the ford crosses them:
 # Blæcwæter from the foot of Rēcbeorgas south through Micelfenn into Grægsæ (w), and Beorhtburna
@@ -53,9 +55,9 @@ MMMMMMMMMMMMMMMMMM..M.....MfffffffffFfFFFFfFFFFFFFFFFFfffffffff.................
 MMMMMMMMMMMMMMMMM.........ffffffffffFFFFFFFFFFFFFFFFFFffffFffffff...............MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 MMMMMMMMMMMMMMMMMM.....f.f.ffffFFFFFFFFFFFFFFFFFFFFFFFFFFfFfffffffff...........MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 MMMMMMMMMMMMMMMMMMM...ffffffffffFFFFFFFFFFFFFFFFFFFFFFFFFFFfffffffff.f........MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMM....ffffffffffFFFFFFFFFFFFFFFFFFFFFFFFFFFFFffffffffff..........MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMM.MMMMM..ffffffffffFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFffFffffffff.........MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMM..M......ffffffffFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFfffff7fff...........M.MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMM..f.ffffffffffFFFFFFFFFFFFFFFFFFFFFFFFFFFFFffffffffff..........MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMM.MMMMM.IffffffffffFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFffFffffffff.........MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMM..M.....fffffffffFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFfffff7fff...........M.MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 MMMMMMMMMMM.........fffffEffFFfFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFffffffffff...........M..MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 MMMMMMMMMM........fffffffffffFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFfffffffffff............MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 MMMMMMMMMM........ffffffffffffFFFFFFFFFFFFFFFFFFFFFFFFFFFFFfffffffffff.f.............M.MMMMMM↓↓MMMMM^^MMMMMM.MMMMMMMMMMM
@@ -144,6 +146,10 @@ MMMMMMMMMMMMMMMMMMM.ff..................................."......................
 # The fairy mound in the holly wood over Ælfhām, the Unseelie court's hall (#1140): hidden until
 # Holtwīc's wise-woman tells of it (her quest, #1141).
 "E" = { terrain = "forest", hidden = { id = "aelfham", terrain = "barrow", to = "aelfham:1", name = "Ælfhām" } }
+# Drytorr, Master Ordgar's tower (#1784; docs/design/wizard-tower.md), at the holly wood's western
+# edge north-west of the mound: hidden until the wise-woman sends her rowan to him (her second
+# quest). It leads into the tower's clearing, whose tower is the ground floor.
+"I" = { terrain = "forest", hidden = { id = "drytorr", terrain = "tower", to = "drytorr", name = "Drytorr" } }
 # The way out from the drake's deep (#1117), on the volcano's south foot: hidden until the player
 # first climbs out of it, never by a quest.
 "0" = { terrain = "hills", hidden = { id = "utgang", terrain = "cave_mouth", to = "utgang:1", name = "Ūtgang" } }

@@ -1,0 +1,82 @@
+# Drytorr's clearing and ground floor (#1784; docs/design/wizard-tower.md §3; docs/dev/towers.md):
+# a hand-made outdoor level, a clearing in Holegnwudu with Master Ordgar's tower standing in it,
+# entered from its hidden cell on the Ascmearc's overworld (I, at 19, 11; revealed by Gammer
+# Wynflæd's "A sprig of rowan"), arriving on the track from the south (@). Like any outdoor area
+# it is left by walking off its edge (or with `<` when no enemy is about and not on the stair).
+#
+# The tower (W, 21×13 at (20, 4)–(40, 16)) is dressed stone no pick or blast breaks, roofed, with
+# unglazed windows (=): from outside they show the hall, from inside the wood. The box of its walls
+# is the footprint every floor above is built on (data/dungeons/drytorr_tower.toml). Its inside
+# is the ground floor, the first of the wizard's trap halls: in through the door (+) from the
+# track, the south hall, with two hidden traps across it (A, S); the way on at its west end; the
+# north hall, where three bays in the partition hold a known trap each (an arrow trap, a spear
+# trap, a pit) with something left behind it to tempt a caller; and the stair up (<) in the middle
+# of the north wall. Wall torches (t) light it; a brass plaque by the door is Ordgar's.
+#
+# The level's danger (5) is for the traps' growth (`TrapDef::effect_at`); a level's danger needs
+# a population, so the wood sends a few of the fair folk's small fey, sprites and pixies, now and
+# then (the design's §12 fallback). They are Ælfhām's own: every level's population joins its
+# campaign's stray lists (`Content::fill_generic`), and these add nothing new to any branch's.
+name = "Drytorr"
+kind = "outdoor"
+arrival = "A clearing in the holly wood, and a tower of dressed grey stone standing in it, taller than the trees."
+danger = 5
+population = ["sprite", "pixie"]
+population_count = 3
+stray = 0
+spawn = { every = "30m", chance = 40, cap = 3 }
+map = '''
+FTbPbTTTTTTTFPTFPTT.TTF..FT*.*..PFT.TbFb..TFTFTPTPFFFTPTTTTb
+bFFFFFTPTTFbFTTPPTbF.PF.*..........FP*FPb*.bFFTTTTFTTFFTTFFT
+FbPTTTTFPTTPTFTTPFTbP.F...*.*........*T..P*PPFbFFbTPPFPTFPTF
+PPFFFFTFTTPTTbPP.F*.......*..*.............P*PFTFTPTTFTTPTPb
+TFFTTTFTTPTbFbP*T...WWW=WW=WW=W=WW=WW=WWW.FFFTbTTPTTTTTTTTTF
+TTFFTPTTTTTF.FbF.*..Wt::::::::<::::::::tW...PT*FTTPTTFTFPFTT
+PTTbTPPFFFPFT*PT....=:::::::::::::::::::=....F*.TFTTPTbTbTbF
+TbFTPFFbFTT*F.FP....W:::::::::::::::::::W.....T*FTPTFbFPTTPT
+TPTTFTFTTbTF*FT*....W::::WaW::WsW::WpW::W....*bbFbT.TPFPTTTb
+TPTFTFTTFTTPFF......W::::W!W::W?W::W$W::W......TFbTPbFFTFTbT
+FTTbPbTFTFbP.Tb.....W::WWWWWWWWWWWWWWWWWW...F.FTbTFTbTTPTPTT
+PTFFPTFPPFF.FFP..*F.WA:::::::::::::::::tW....bTFFbFFTPTTFFFT
+TTTbPFTTTF*TFTP.....=:::::::::::::::::::=.....bTPT*PTTTTFTPF
+FFTTTPbPTTbTP*......W:::::S:::::::::::::W..*.F.*b.FbFFbPTTFP
+bPTFTTPPFTbTT.PT....W:::::::::::::::::::W...bF.FPFbTPPTTPTFb
+TTTTFbPPTFT.P*.F....Wt::::::::::::::::::W*..TbFPFFFTTFPFFTbT
+PbFTPFbTTTPT*F.bFT..WWW=WW=WWW+QWW=WW=WWW.*....F.bPbTPTFFTTP
+FPFTTFTTPTFTPFF*TF.*.........*,....*......TFbFTTTTbTbPFTFTTP
+TTPTPPbTFbTPFTFF*PFT.b..F.....,......*.PFFFTFTTbPbPFTTFTFTPT
+TPTTFTbTTTTTTFFFPFFT*FT..*....,......***Tb*.FFTFPFTbTTbPTTTT
+TTTTPFTbTTTTTTTTPFPbFFFTFb*..*,FFFFTFbbTb*bPTPTTTTPTTFTFTTPP
+FTFTFFFTTTTbTPPTTTTb.TFb.FPF.F,..TF..F*TFTTPFPTTbbbFPTbTTPTT
+bFFbPPPFbTTPTPTbTPTPTTFT..Fb..@.FFbFTFFTbFPTTTTPFTPTTTTFPTFb
+FPTTTFTPTTTPTbTPTFTTbFTTPbPF*.,..TTFTPPPFTPTFTFTTbFPTPTFTFFT
+'''
+
+[legend]
+"." = "grass"
+"*" = "flowers"
+"," = "dirt_road"
+"b" = "bush"
+"T" = "tree"
+"P" = "pine"
+"F" = "forest_floor"
+"W" = "tower_wall"
+":" = "tower_floor"
+"=" = "window"
+"+" = "door_closed"
+"t" = "sconce"
+"@" = { terrain = "dirt_road", spawn = "player" }
+# The stair up, through every floor of the tower (data/dungeons/drytorr_tower.toml).
+"<" = { terrain = "stairs_up", to = "drytorr_tower:1" }
+# Ordgar's plaque, on the wall east of the door (a named place: look mode reads it).
+"Q" = { terrain = "tower_wall", name = "a brass plaque", note = "Polished brass: DRYTORR. M. ORDGAR. CALLERS ARE ASKED TO USE THE STAIR. Under it, smaller: Do mind the third flagstone." }
+# The bays: a known trap in each, and behind it what a caller is meant to want.
+"a" = { terrain = "tower_floor", trap = "arrow", known = true }
+"s" = { terrain = "tower_floor", trap = "spear", known = true }
+"p" = { terrain = "tower_floor", trap = "pit", known = true }
+"!" = { terrain = "tower_floor", objects = ["potion_of_healing"] }
+"?" = { terrain = "tower_floor", objects = ["scroll_of_identify"] }
+"$" = { terrain = "tower_floor", objects = ["gold_coin*25"] }
+# The south hall's hidden traps, across the way from the door to the way on.
+"A" = { terrain = "tower_floor", trap = "arrow" }
+"S" = { terrain = "tower_floor", trap = "spear" }

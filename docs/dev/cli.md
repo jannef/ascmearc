@@ -112,6 +112,8 @@ The Ascmearc (`assets/campaigns/ascmearc/`):
 - `ceaptun`: on the market square of its town, Cēaptūn, with 60 gold.
 - `holtwic`: on the lane into Holtwīc, the village at the north road's end, with its wise-woman.
 - `aelfham`: on the first floor of Ælfhām, the hidden fey hall under the mound near it.
+- `drytorr`: on the track into Drytorr's clearing at 10:00, Master Ordgar's tower before you
+  (its `<` climbs the tower's trap floors to the wizard's top floor).
 - `cealdhlaw`: on the first floor of Cealdhlāw, the Ascmearc's first dungeon.
 - `deopgang`: on the first floor of Dēopgang, the deep way down from the south-west corner.
 - `gimmwic`: in Gimmwīc, the deep gnomes' town at its bottom.
@@ -552,7 +554,7 @@ steal:DIR tame:DIR throw_voice:X,Y order:follow|stay|hunt:X,Y rest:GOAL encounte
 stance:NAME vision:PROFILE talent:ID[:CHOICE] advance:SKILL levelup:auto xp:N call:ID
 rank:SKILL:N skip:DURATION weather:KIND spawn ally:CREATURE[:N[:DURATION]] meet:ENTRY[:OUTCOME]
 effect:ID@X,Y[>X,Y] zone:KIND@X,Y,R identify[:LETTERS] afflict:STATUS drain:N resource:ID
-infect:DISEASE reveal:ID lure:ID gift:ID rescind:ID quest_roll:ID:TARGET freeze:X,Y,R
+infect:DISEASE reveal:ID lure:ID quest_done:ID gift:ID rescind:ID quest_roll:ID:TARGET freeze:X,Y,R
 thaw:X,Y,R web:X,Y,R`
 
 ### Arguments
@@ -890,6 +892,10 @@ None takes game time unless said.
 - `lure:ID` active lure quest `ID`'s creature comes beside the player, aware of them (made if it
   is nowhere), e.g. `ask:E:quest-crystal_guardian` on Ysella then `descend
   lure:crystal_guardian ascend` (`docs/dev/quests.md` "Lure quests").
+- `quest_done:ID` quest `ID` is marked done as if handed in (given first if it was not), with no
+  words, reward, or reveal, so what requires it may be offered: a replay or capture that starts
+  a chain past its earlier quests, e.g. `quest_done:taken_under_the_hill` before Gammer
+  Wynflæd's rowan (`world/people/quest_done.rs`).
 - `gift:ID` the player is given profane gift `ID`, an id in `assets/data/profane/`, as a meal's
   draw would give it, its relations applied (`replaces`, `undoes`); refused for one ever had (held,
   or lost since: #1805), one a gift held excludes, or one barred to the race. `rescind:ID` takes a gift held away again, its

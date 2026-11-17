@@ -717,7 +717,7 @@ impl DungeonDef {
     }
 
     /// The display name of level `depth`, e.g. `The Depths 3`; a tower's floors count from its
-    /// ground floor, the clearing, so its depth 1 is `Drȳtorr 2`.
+    /// ground floor, the clearing, so its depth 1 is `Drytorr 2`.
     pub fn level_name(&self, depth: u32) -> String {
         let floor = depth + u32::from(self.tower.is_some());
         format!("{} {floor}", self.name)

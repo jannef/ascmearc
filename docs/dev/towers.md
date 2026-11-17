@@ -9,8 +9,9 @@ Built so far: **F1** (#1781), the foundation: the terrain, the level fields `bel
 the below view in perception and memory, look mode, the `view` and `below` dump layers, the map
 drawing the ground below (not blurred yet: F2), and the showcase's two-storey test tower. **T1**
 (#1783, `docs/dev/mapgen.md` "Towers") builds the generated floors of this terrain, each with
-`below = clearing` and `storey = depth`. Not yet: the blur (F2), the towers themselves, the
-wizards, and their quests (C1, W1, C2, C3).
+`below = clearing` and `storey = depth`. **C1** (#1784, "Drytorr" below) is the first tower, its
+wizard, and the wise-woman's quest that sends the player to him. Not yet: the blur (F2), the
+quarrel's machinery (W1), and the two rival towers (C2, C3).
 
 ## The idea
 
@@ -123,6 +124,54 @@ cargo dev-cli dump --scenario tower --actions "ascend" --layers view,below
 cargo dev-cli dump --scenario tower --actions "ascend descend" --layers memory
 ```
 
+## Drytorr (`assets/campaigns/ascmearc/`)
+
+The first of the three towers (design §9, §10): Master Ordgar's, in Holegnwudu.
+
+- **The cell**: the overworld legend's `I` at (19, 11), a forest cell at the wood's western
+  edge north-west of the fairy mound (six from it and from Holtwīc), hidden (`hidden = { id =
+  "drytorr", terrain = "tower", to = "drytorr" }`) until Gammer Wynflæd's second quest marks it.
+  (The design named the legend's `"8"`, but that is Lytelscræf's; it spelled the name Drȳtorr,
+  but the game's font has no ȳ, which draws as `?`, so the player sees Drytorr.)
+- **The clearing**, `levels/drytorr.toml` (60×24, `kind = "outdoor"`, `arrival`): the wood round a
+  grass clearing, a track from the south edge (the arrival, (30, 22)) to the tower's door. The
+  tower is 21×13 at (20, 4)–(40, 16): the ground floor, a south hall with two hidden traps (an
+  arrow trap at (21, 11), a spear trap at (26, 13)) across the way from the door to the way on
+  at the partition's west end, and a north hall with three one-cell bays in the partition, each
+  a known trap (arrow, spear, pit) with a potion, a scroll, or 25 gold behind it; the `<` at
+  (30, 5) to `drytorr_tower:1`; a named place, "a brass plaque", on the wall east of the door.
+  `danger = 5` (the traps' growth) needs a population (`content/danger.rs`): Ælfhām's sprites and
+  pixies, already in every Ascmearc stray list (`Content::fill_generic` adds a level's population
+  to its campaign's, so new wildlife would stray into every branch; a tower branch's household it
+  leaves out, as a portal branch's), `stray = 0`, a cap of three, a try every 30 minutes. Left by its edge or `<` off the stair,
+  back to the tower's cell.
+- **The floors**, `data/dungeons/drytorr_tower.toml`: `floors = 4`, so `drytorr_tower:1` and `:2`
+  ("Drytorr 2" and "3", danger 6 and 7), the stair (30, 5) → (39, 15) → (21, 5); the household
+  as population (animated books, brooms, candlesticks, chairs, coat stands, lanterns, rugs) and
+  the lesser earth elemental; arrow, spear, alarm, and pit traps, `[3, 5]` a floor, all hidden.
+- **The top**, `levels/drytorr_top.toml` (`below = "drytorr"`, `storey = 3`): the `>` at (21, 5);
+  the study west of a partition (shelves, the reading table, a brazier, a lamp, Ordgar at
+  (26, 8)), his quarters east (bed, table, stool, shelves, a cat), and south through two doors
+  the balcony (flagstones, unroofed) with a parapet round it. No traps, no population.
+- **Ordgar**: the campaign creature `ordgar` (`data/creatures/ordgar.toml`: unique, peaceful,
+  level 10, tags `tower_wizard`, `caster`, `sapient`; `combat = "caster"` with `magic_missile`,
+  `web`, `haste`, `silence`; a quarterstaff), placed with `npc = "ordgar"`, whose dialogue is
+  `data/dialogue/drytorr.toml` (posh: four topics, the tower, the holly wood, magic and its
+  learning, the other wizards).
+- **The quests** (`data/quests/wynflaed.toml`): *Taken under the hill*'s `done` ends with a word
+  about him; `rowan_for_the_wizard`, "A sprig of rowan", needs it done, is a delivery of the
+  shared `rowan_sprig` (`assets/data/objects/rowan_sprig.toml`) to `ordgar`, reveals `drytorr`
+  as given, and pays 150 experience only (Spellcraft is taught at the end of the quarrel, W1).
+
+The dev scenario `drytorr` starts on the clearing's track at 10:00. The dev action
+`quest_done:ID` (`world/people/quest_done.rs`) marks a chain's earlier quest done, so a replay
+can start the rowan from Holtwīc.
+
+```sh
+cargo dev --scenario drytorr --scale 1 --capture target/drytorr.png
+cargo dev-cli dump --scenario holtwic --actions "move:N*8 move:E*11 move:NE move:N*3 move:E*11 quest_done:taken_under_the_hill ask:SE:quest-rowan_for_the_wizard" --layers quests
+```
+
 ## Tests
 
 - `content/tower_tests.rs`: the six terrain types' flags (nothing of the shell breaks, air and
@@ -138,3 +187,8 @@ cargo dev-cli dump --scenario tower --actions "ascend descend" --layers memory
   on the air (`lands_on` false on every air cell); a replay over the climb verifies.
 - `ui/screen_snapshots/play.rs::looking_far_below`: look mode over the ground, the deer, the
   dagger, and a window.
+- `world/campaigns/drytorr_tests.rs`: the hidden cell and the way in, the four floors on the
+  clearing's footprint and their dangers, Ordgar on the top, the `<` on the clearing (on the
+  stair it climbs, anywhere else it leaves: the design's §12 risk), the wise-woman's word and her
+  rowan (not before the escort, the sprig handed over, the tower marked), Ordgar's topics and the
+  hand-in (experience only), and a replay from Holtwīc to the top and the hand-in.
