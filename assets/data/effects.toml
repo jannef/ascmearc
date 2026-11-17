@@ -208,6 +208,52 @@ glow = 0.8
 branches = 0.0
 light = { color = [800, 420, 130], radius = 3 }
 
+# The profane gifts' breaths (#1828): Fire breath's gout in other colours, dimmer. Frost breath
+# (Frost-breathed): a white-blue blast of rime.
+[[effect]]
+id = "frost_breath"
+shape = "bolt"
+speed = 40
+impact = 0.18
+flashes = 1
+linger = 0.4
+flicker = 0.05
+glyphs = "▓▒"
+colors = ["#ffffff", "#e4f4ff", "#b4daf6", "#82b0dc", "#4e74a6", "#22344a"]
+glow = 0.5
+branches = 0.0
+light = { color = [340, 420, 580], radius = 2 }
+
+# Bile spit (Bile-spitting): a short, sickly green gobbet.
+[[effect]]
+id = "bile_spit"
+shape = "bolt"
+speed = 60
+impact = 0.16
+flashes = 1
+linger = 0.3
+flicker = 0.06
+glyphs = "▒░"
+colors = ["#f0ffd0", "#d0f090", "#a8d070", "#78a040", "#4a6824", "#24340e"]
+glow = 0.4
+branches = 0.0
+light = { color = [380, 520, 240], radius = 1 }
+
+# Rot breath (Rot-breathed): a slow grey-green reek, the barrow's, hardly lit.
+[[effect]]
+id = "rot_breath"
+shape = "bolt"
+speed = 30
+impact = 0.16
+flashes = 1
+linger = 0.5
+flicker = 0.04
+glyphs = "▒░"
+colors = ["#d8dcc0", "#a8b090", "#7a8a68", "#566448", "#3a4430", "#1c2218"]
+glow = 0.2
+branches = 0.0
+light = { color = [200, 240, 180], radius = 1 }
+
 # The gorgon's breath (#1138): a grey vapour rolling out over the cone, slow and dim, no glow to
 # speak of; no projectile, darkening, or shake.
 [[effect]]

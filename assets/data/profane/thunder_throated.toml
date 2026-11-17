@@ -1,0 +1,13 @@
+[[gift]]
+id = "thunder_throated"
+name = "Thunder-throated"
+kind = "boon"
+tier = "dire"
+weight = 6
+description = "A storm in your chest: you can breathe a long crack of lightning, and lightning troubles you less."
+line = "Your chest rumbles like weather far off."
+# A breath of its own (one per damage type): Thunder breath, the longest.
+effects = [
+    { kind = "fire_breath", name = "Thunder breath", range = 8, length = 8, damage = "6d8", damage_type = "electricity", spell = "lightning_bolt", cooldown = "drained", degrees = 2 },
+    { kind = "resist", damage = "electricity", value = 50 },
+]

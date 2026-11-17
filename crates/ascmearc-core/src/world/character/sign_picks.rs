@@ -14,7 +14,9 @@
 //! **Fire breath** is a bolt cast with the scrolls' shared code ([`World::cast_bolt`]): from the
 //! player along the line toward the cell aimed at (within its talent's `range`) and on, as far as
 //! its length or the first opaque cell, one gameplay roll of its damage for everyone on it; its
-//! noise is a spell's; then its cooldown. Refused, taking no time, without the pick, while the
+//! noise is a spell's; then its cooldown. The profane gifts' breaths of other damage types
+//! (Frost breath, Bile spit, Rot breath, Thunder breath; #1828) are the same code, one breath
+//! per type ([`SignActive::breath_of`]), each with its own words ([`breath_words`]). Refused, taking no time, without the pick, while the
 //! cooldown lasts, at the player's own cell, out of range, and on the overworld.
 //!
 //! **Hound's bay** is a howl ([`Act::Howl`], [`crate::noise::HOWL_NOISE`]): every hostile that
@@ -51,38 +53,36 @@ impl World {
         (heal.min(missing), fewer)
     }
 
-    /// Fire breath at `at` (module docs), for the time of a `cast`.
-    pub(super) fn fire_breath(&mut self, at: Pos, events: &mut Vec<Event>) -> Spent {
+    /// Breath `active` (Fire breath, or a profane gift's of another type) at `at` (module docs),
+    /// for the time of a `cast`.
+    pub(super) fn breathe(
+        &mut self,
+        active: SignActive,
+        at: Pos,
+        events: &mut Vec<Event>,
+    ) -> Spent {
         let content = self.content.clone();
         let player = self.state.player;
-        let Some(breath) = self
-            .state
-            .player()
-            .talent_mods(&content)
-            .into_owned()
-            .sign
-            .fire_breath
-        else {
+        let mods = self.state.player().talent_mods(&content);
+        let Some(breath) = mods.sign.breaths.get(&active).cloned() else {
             return Spent::Nothing;
         };
         // The cell aimed at is within the talent's `range`; the bolt runs its own length.
-        let range = Ability::Sign(SignActive::FireBreath).reach(&content);
-        let Some(range) = range else {
+        let Some(range) = Ability::Sign(active).reach(&content) else {
             return Spent::Nothing;
         };
-        if !self.can_loose_here() || !self.within_reach(at, range, "breathe fire") {
+        let (verb, line) = breath_words(active);
+        if !self.can_loose_here() || !self.within_reach(at, range, verb) {
             return Spent::Nothing;
         }
-        let price = self.price_of(player, SignActive::FireBreath.cost());
+        let price = self.price_of(player, active.cost());
         let here = self.player_pos();
         let path = self.bolt_line(here, at, breath.bolt.length);
-        self.say("Fire roars from your throat!");
+        self.say(line);
         self.make_noise(player, Act::Attack(AttackKind::Spell));
         let mut made = Vec::new();
         self.cast_bolt(Caster::Actor(player), here, &path, &breath.bolt, &mut made);
-        let noun = content
-            .sign_active(SignActive::FireBreath)
-            .map_or_else(|| "fire breath".to_string(), |def| def.name.to_lowercase());
+        let noun = Ability::Sign(active).name(&content).to_lowercase();
         let verb = (breath.bolt.kind).map_or("burns", |k| content.damage_type(k).verb.as_str());
         self.say_spell((&noun, verb), made, events);
         if self.state.death.is_none() {
@@ -166,5 +166,23 @@ impl World {
                 _ => Some(step),
             });
         best.map_or(plan, |(dir, _)| Plan::Step(dir))
+    }
+}
+
+/// A breath's words: what the player cannot do at themselves ("You cannot breathe fire at
+/// yourself."), and what is said as it is loosed.
+fn breath_words(active: SignActive) -> (&'static str, &'static str) {
+    match active {
+        SignActive::FrostBreath => (
+            "breathe frost",
+            "Rime and bitter cold pour from your throat!",
+        ),
+        SignActive::BileSpit => ("spit", "You hawk up a gobbet of bile and spit it!"),
+        SignActive::RotBreath => (
+            "breathe rot",
+            "The barrow's breath rolls out of your throat!",
+        ),
+        SignActive::ThunderBreath => ("breathe thunder", "Thunder cracks out of your throat!"),
+        _ => ("breathe fire", "Fire roars from your throat!"),
     }
 }

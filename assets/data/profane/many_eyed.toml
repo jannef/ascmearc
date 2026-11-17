@@ -1,0 +1,17 @@
+[[gift]]
+id = "many_eyed"
+name = "Many-eyed"
+kind = "mixed"
+tier = "dire"
+weight = 6
+description = "Eyes open all over your skin: you see who has not seen you, and a fight seldom finds you unready, but no one can bear to look at you, and no one makes way for you."
+line = "Eyes open along your arms and your neck, and blink, and look about."
+effects = [
+    { kind = "sees_unaware" },
+    { kind = "initiative_bonus", value = 2 },
+    { kind = "stat", stat = "presence", value = -2 },
+    { kind = "distrusted" },
+]
+# Written here, on the later of the two (docs/design/profane-gifts.md §6.5): made symmetric at
+# load. A skin full of eyes is not filmed over.
+excludes = ["dim_eyed"]
