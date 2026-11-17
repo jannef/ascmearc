@@ -1,6 +1,6 @@
 # The Ascmearc
 
-The Ascmearc, "the ash march", is the world you play in. Every new run starts there. **New run**
+The Ascmearc is the world you play in. Every new run starts there. **New run**
 goes straight on to creating your character (see [Your character](character.md)), and the run
 begins at eight in the morning on **Beorggeat**, the pass in the mountain wall on the march's
 western edge: "The pass opens on the Ascmearc. Far to the east, Fyrbeorg smokes." Snow closes the
@@ -196,7 +196,7 @@ Far below the south-west corner, at the bottom of [Dēopgang](dungeon-guide.md#d
 gemstones and making things more than anything else. They are friendly, and nothing comes there to
 fight you. You cannot play one yet.
 
-Their talk turns to their work, and they speak the Cornish of the deep: "my 'ansum", "dreckly"
+Their talk turns to their work, and their speech is their own: "my 'ansum", "dreckly"
 (some day), "proper job" (well done). To them you are an *emmet*, someone from up top.
 
 - **Headman Peran** speaks for the town in its moot hall. He will [talk](npcs.md) of the town, the
@@ -220,12 +220,14 @@ Their talk turns to their work, and they speak the Cornish of the deep: "my 'ans
 
 Its stairs up lead back to Dēopgang's eleventh floor.
 
-There is a quicker way home. The **Skeul Hir**, the gnomes' old long stair, climbs from a corner
-of the arrival cave all the way up to the second floor of
-[Lytelscræf](dungeons.md#the-dungeons), by the pass. Both ends look like plain floor until Headman
-Peran gives you the moot's answer to carry up ([quests](quests.md#who-gives-quests)). Then he has
-it opened, and it stays open both ways for good: stairs up in Gimmwīc, stairs down on Lytelscræf's
-second floor. Nothing else ever uses it while it is shut, and searching will not find it.
+There is a quicker way home. The **[Skeul Hir](dungeon-guide.md#skeul-hir)**, the gnomes' old
+long stair, climbs from a corner of the arrival cave all the way up to the second floor of
+[Lytelscræf](dungeons.md#the-dungeons), by the pass. It is one long floor of its own, a single
+winding way with the stair-cutters' old waystation and their hidden cache on it. Both ends look
+like plain floor until Headman Peran gives you the moot's answer to carry up
+([quests](quests.md#who-gives-quests)). Then he has it opened, and it stays open both ways for
+good: stairs up in Gimmwīc, stairs down on Lytelscræf's second floor, both into the stair.
+Nothing else ever uses it while it is shut, and searching will not find it.
 
 ### The dungeons
 
@@ -263,80 +265,6 @@ The map below shows them all anyway. A few places lead "nowhere yet": `>` there 
 ## The places
 
 {{#include generated/overworld-places.md}}
-
-## The names
-
-Every name in the Ascmearc is a plain description of the place, put into Old English, so the name
-tells you what you will find: a fen minster stands in the fen. The people have names of the same
-kind. Creatures keep their plain English names.
-
-| Name | Old English | Meaning | What it is |
-|---|---|---|---|
-| the Ascmearc | *asce* "ash, cinders" + *mearc* "march, borderland" | the ash march | the land |
-| Beorggeat | *beorg* "mountain" + *geat* "gate, gap" | the mountain gate | the pass where you come in |
-| Grægweall | *grǣg* "grey" + *weall* "wall" | the grey wall | the western range |
-| Cēaptūn | *cēap* "trade, market" + *tūn* "enclosure, town" | the market town | the town |
-| Cēapdenu | *cēap* + *denu* "valley" | the market vale | the town's country |
-| Hlāwdūn | *hlāw* "burial mound" + *dūn* "hill, down" | the barrow downs | the hills east of the town |
-| Lytelscræf | *lȳtel* "little" + *scræf* "cave, hollow" | the little cave | the starter dungeon, by the pass |
-| Cealdhlāw | *ceald* "cold" + *hlāw* | the cold barrow | the first dungeon |
-| Holegnwudu | *holegn* "holly" + *wudu* "wood" | the holly wood | the northern forest |
-| Dēopholt | *dēop* "deep" + *holt* "wood, thicket" | the deep holt | its heart |
-| Lindwudu | *lind* "lime tree" + *wudu* | the lime wood | the south-western forest |
-| Deorcholt | *deorc* "dark" + *holt* | the dark holt | its heart |
-| Beorhtburna | *beorht* "bright" + *burna* "stream" | the bright stream | the western river |
-| Burnadenu | *burna* + *denu* | the stream vale | its valley and the river road |
-| Blæcwæter | *blæc* "black" + *wæter* "water" | the black water | the big river, grey with ash |
-| Micelfenn | *micel* "great" + *fenn* "fen, marsh" | the great fen | the marsh |
-| Fennmynster | *fenn* + *mynster* "minster, abbey" | the fen minster | the second dungeon |
-| Grundlēas | *grundlēas* "without ground" | the groundless | the dungeon without a bottom |
-| Fennhām | *fenn* + *hām* "home, village" | the fen village | the marsh village |
-| Ascdūn | *asce* + *dūn* | the ash downs | the hills under the volcano |
-| Fyrdelf | *fȳr* "fire" + *gedelf* "digging, mine" | the fire diggings | the third dungeon |
-| Fyrbeorg | *fȳr* + *beorg* | the fire mountain | the volcano |
-| Ūtgang | *ūtgang* "going out, exit" | the way out | the way up from the drake's deep |
-| Holtwīc | *holt* "wood" + *wīc* "dwelling" | the dwelling at the wood | the village at the north road's end |
-| Līctūn | *līc* "body, corpse" + *tūn* "enclosure" | the corpse-yard | Cēaptūn's churchyard |
-| Ælfhām | *ælf* "elf" + *hām* "home" | the elves' home | the fey hall under the mound |
-| Dēopgang | *dēop* "deep" + *gang* "way, passage" | the deep way | the deep gnomes' road down |
-| Gimmwīc | *gimm* "gem" + *wīc* "dwelling" | the gem dwelling | the deep gnomes' town |
-| Wyrtholm | *wyrt* "herb, root" + *holm* "islet" | the herb islet | Mother Sallow's lair |
-| Wulfeshol | *wulfes* "wolf's" + *hol* "hole, den" | the wolf's hole | Black Wystan's lair |
-| Bānfeld | *bān* "bone" + *feld* "field" | the bone field | Brother Osrick's lair |
-| Brocenburg | *brocen* "broken" + *burg* "fort" | the broken fort | Sergeant Herrick's lair |
-| Rēcbeorgas | *rēc* "smoke, reek" + *beorgas* "mountains" | the smoking mountains | the volcano's range |
-| Fordwīc | *ford* + *wīc* "dwelling, trading place" | the ford village | the village at the ford |
-| Ēastmearc | *ēast* + *mearc* | the east march | the eastern grassland |
-| Grægsæ | *grǣg* + *sǣ* "sea" | the grey sea | the sea |
-| the Mynster | *mynster* | the minster | Cēaptūn's temple |
-| the Gæsthūs | *gæst* "guest" + *hūs* "house" | the guest house | Cēaptūn's inn |
-| the Gildhalle | Middle English *gild* + *halle* | the guildhall | the guild's hall in Cēaptūn |
-| the Weyfarers' Gilde | Middle English *weyfarere* "traveller" + *gilde* | the Wayfarers' Guild | [the adventurers' guild](guild.md) |
-| Leofric | *lēof* "dear" + *rīc* "ruler" | | the reeve of Cēaptūn |
-| Hild | *hild* "battle" | | the sister of the Mynster |
-| Wulfrun | *wulf* "wolf" + *rūn* "secret, counsel" | | the mine-factor |
-| Godgifu | *god* + *gifu* "gift" | | the innkeeper |
-| Wynflæd | *wynn* "joy" + *flǣd* "beauty" | | the wise-woman of Holtwīc |
-| Ælfrun | *ælf* "elf" + *rūn* "secret, counsel" | | the girl the fair folk took |
-| Dudda | an old short name, a commoner's | | the sexton of Līctūn |
-
-The guild is younger than the town, so its names are Middle English, not Old. Its master, Wat
-One-Eye, is a commoner, called by a short name and a byname. The guild's [ranks](guild.md#ranks)
-(Tin to Gold) are plain English.
-
-Most names write *ǣ* as **æ** and *ȳ* as **y** (Græg-, Fyr-).
-
-The language has moved on since the old places were named. People of the march's own day go by
-the later forms of the old names. The outlaws go by the bynames the broadsheets give them, in the
-English of the day:
-
-| Name | From | Register | Who |
-|---|---|---|---|
-| Mother Sallow, the Fennhām Poisoner | *sallow*, the willow of the fens | a commoner's byname | a [wanted](guild.md#the-wanted) poisoner |
-| Black Wystan, the Gentleman of the Road | Wystan, from *Wulfstān* "wolf stone" | the later form; a Victorian byname | a [wanted](guild.md#the-wanted) highwayman |
-| Brother Osrick, the Resurrection Man | Osrick, from *Ōsrīc* "god ruler" | the later form; a Victorian byname | a [wanted](guild.md#the-wanted) grave robber |
-| Sergeant Herrick, the Deserter | Herrick, from *Hererīc* "army ruler" | the later form; a Victorian byname | a [wanted](guild.md#the-wanted) deserter |
-| [footpad](creatures.md#creature-footpad) | *foot* + *pad* "road" | Victorian, as the commons say it | a robber on foot |
 
 ## Regions
 

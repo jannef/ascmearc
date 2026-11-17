@@ -13,11 +13,15 @@
 //!    a corner or two left as rock.
 //! 5. A few dead-end pockets off the way, each dug straight out into rock that touches no other
 //!    floor, so it leads nowhere.
-//! 6. A way that rings round more rock than a pillar (a hall come too near another leg) fails
-//!    the attempt: there would be a second route.
-//! 7. Keep the largest cave, then the named vaults, the stairs (the up in the hall at its end,
-//!    the down at the other), lamps and fungus, patrols, now and then a special chamber. No random
-//!    vault (one with two entrances would open a second route) and no pools (an air shaft).
+//! 6. Keep the largest cave, then the named vaults and as many random ones as the branch's
+//!    `random_vaults` draws (none by default), each dug to from the nearest floor by a cut of its
+//!    own: a pocket that ends at the vault's door. Only vaults with one entrance are drawn (one
+//!    with two would open a second route); a vault the branch names should have one too.
+//! 7. A way that rings round more rock than a pillar (a hall come too near another leg, a vault's
+//!    cut grazing the way) fails the attempt: there would be a second route. A vault's own cells
+//!    count as outside, so the pillars and rooms inside one are no ring.
+//! 8. The stairs (the up in the hall at its end, the down at the other), lamps and fungus,
+//!    patrols, now and then a special chamber. No pools (an air shaft).
 //!
 //! The tunables are grouped here at the top (#1834 moves generators' parameters into data).
 
@@ -97,10 +101,6 @@ pub(in crate::mapgen) fn build(canvas: &mut Canvas, rng: &mut Rng, needs: Needs)
         }
     }
     pockets(canvas, rng);
-    // Where a hall comes too near another leg the way rings round rock: a second route.
-    if largest_ring(canvas) > PILLAR {
-        return None;
-    }
     caves::keep_largest_cave(canvas, MIN_FLOOR)?;
     for v in vault::named(canvas, needs.vaults) {
         if vault::spots(canvas, v).is_empty() {
@@ -109,6 +109,18 @@ pub(in crate::mapgen) fn build(canvas: &mut Canvas, rng: &mut Rng, needs: Needs)
         if caves::place_vaults(canvas, rng, &[v], 1) < 1 {
             return None;
         }
+    }
+    let [fewest, most] = needs.random_vaults;
+    if most > 0 {
+        let count = rng.range(i32::from(fewest), i32::from(most));
+        let mut vaults = vault::shuffled(canvas, rng);
+        vaults.retain(|v| v.entrances.len() == 1);
+        caves::place_vaults(canvas, rng, &vaults, usize::try_from(count).unwrap_or(0));
+    }
+    // Where a hall comes too near another leg, or a vault's cut grazes the way, the way rings
+    // round rock: a second route.
+    if largest_ring(canvas) > PILLAR {
+        return None;
     }
     let up = roomy_nearest(canvas, points[0])?;
     canvas.place_stairs(up, StairsDir::Up);
@@ -183,7 +195,8 @@ fn pockets(canvas: &mut Canvas, rng: &mut Rng) {
 }
 
 /// The most rock in one piece the floor rings round: rock a 4-way flood from the map's edge
-/// never reaches (a king's move of floor stops it, as the player walks it).
+/// never reaches (a king's move of floor stops it, as the player walks it). The flood passes
+/// through a vault's cells, so what a vault holds inside is no ring.
 fn largest_ring(canvas: &Canvas) -> usize {
     let (w, h) = (canvas.width(), canvas.height());
     let mut seen = Grid::new(w, h, false);
@@ -195,7 +208,7 @@ fn largest_ring(canvas: &Canvas) -> usize {
             size += 1;
             for d in CARDINALS {
                 let q = p.step(d);
-                if seen.get(q) == Some(&false) && canvas.is_rock(q) {
+                if seen.get(q) == Some(&false) && (canvas.is_rock(q) || canvas.is_stamped(q)) {
                     seen[q] = true;
                     stack.push(q);
                 }
@@ -211,7 +224,7 @@ fn largest_ring(canvas: &Canvas) -> usize {
     }
     let mut most = 0;
     for p in canvas.cells() {
-        if !seen[p] && canvas.is_rock(p) {
+        if !seen[p] && canvas.is_rock(p) && !canvas.is_stamped(p) {
             most = most.max(fill(&mut seen, p));
         }
     }

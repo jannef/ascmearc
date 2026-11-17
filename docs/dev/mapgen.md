@@ -114,15 +114,35 @@ for the shortcuts (Ūtgang): waypoints from one side of the map to the other, ne
 along the width, joined by right-angled hewn legs and bored steadier (longer stretches, hardly a
 nibble, a squeeze after two stretches without one); a hewn hall (a box, corners now and then left)
 at both ends and at about a third of the waypoints; three to six straight dead-end pockets, each
-dug only through rock no other floor touches; an attempt whose floor rings round more than
-`PILLAR` (4) cells of rock (a hall come too near another leg: a second route) fails; the stairs in
-the roomy spots nearest the two ends (which end is up is drawn). No random vault (two entrances
-would open a second route) and no pools. Both keep every tunable as a named
+dug only through rock no other floor touches; the named vaults, then as many random ones as the
+branch's `random_vaults` draws (`[fewest, most]`, default none; refused on a branch with floors of
+another generator), only vaults with one entrance (two would open a second route; a vault a
+passage names should have one too), each dug to from the nearest floor by a cut of its own, a
+pocket ending at its door; an attempt whose floor rings round more than `PILLAR` (4) cells of
+rock (a hall come too near another leg, a vault's cut grazing the way: a second route) fails,
+a vault's own cells counted as outside, so what a vault holds is no ring; the stairs in the roomy
+spots nearest the two ends (which end is up is drawn). No pools. Both keep every tunable as a named
 constant at the top of their file (#1834 moves them into data). Tests: `mapgen/tunnels_tests.rs`
 (snapshots of both at a few seeds and sizes; proptests: every tunnels floor connected and
 deterministic, a passage's stairs more than half the width apart and its floor ringing round no
-more rock than a pillar, `holes`; chokepoints, `cut_cells`, the cells whose loss parts the stairs,
-on most floors of both, and loops round rock on most tunnels floors).
+more rock than a pillar, `holes`, and the Skeul Hir's too with its vaults, `way_holes`, the holes
+of the way between the stairs once every piece hanging off one cell is taken away; chokepoints,
+`cut_cells`, the cells whose loss parts the stairs, on most floors of both, loops round rock on
+most tunnels floors, and the Skeul Hir's waystation on every floor).
+
+**The Skeul Hir** (#1760, #1840; `campaigns/ascmearc/data/dungeons/skeul_hir.toml`), the deep
+gnomes' old long stair: a branch of one passage floor, 120×30, between Gimmwīc (its `bottom`)
+and Lytelscræf 2 (its `above`: `DungeonDef::above`, its first floor's `<` leads there however it
+was entered, `generate_for`), both ends hidden until Peran's reveal (`docs/dev/overworld.md` "A
+hidden way with two ends"). Its floor is called "Skeul Hir" (`DungeonDef::level_name`: a branch
+of one floor goes by its name alone). Rewarding: `random_vaults = [2, 3]`, `loot = [6, 10]`, a
+chest or two on every floor (`chests = { chance = 100, count = [1, 2] }`), and Powesva an Skeul
+(`campaigns/ascmearc/vaults/powesva_an_skeul.toml`), the stair-cutters' waystation, named by its
+one floor: a hall with Jacca's stone (a named place), two of the floor's pool, a bunk room, a
+tool store (a pick-axe, a mattock), and behind a secret door their cache: a rod of digging, a
+heart-crystal, four gems, a `rare` find, and a chest. Danger 14 (Dēopgang's first floor): the way
+opens only to a player who has been to Gimmwīc; its folk are the deep's lurkers, the stone's own,
+trolls, and the dead, `stray = 0`, 25 a thousand walkable cells.
 
 Ways up (#1117): a branch's `below` (`DungeonDef::below`, checked in
 `Content::validate`: a level of another bounded branch of its campaign) makes `leads_down` true on
@@ -464,8 +484,8 @@ caves floors of 60×30 at danger 1 to 3, 8 to 16 creatures of five level-1 and l
 floor 3's `vaults` (two kobolds and one shut chest, neither locked nor trapped, filled by
 `chest::fill_vaults` at the floor's item level). Tests: `mapgen/lytelscraef_tests.rs` (the cache
 on floor 3 over ten seeds, the folk, the way in and back as a replay). Floor 2's row gives
-`hidden`, the far end of Gimmwīc's Skeul Hir (#1760, `docs/dev/overworld.md` "A hidden way with
-two ends").
+`hidden`, the top of the Skeul Hir (#1760, `docs/dev/overworld.md` "A hidden way with
+two ends"), stairs down to its floor (`skeul_hir:1`).
 
 **A generated level's hidden location** (#1760, `mapgen/hidden.rs`): for a level whose
 `DungeonDef::hidden_location` is set, `generate_for` calls `hidden::place` once the attempt has
