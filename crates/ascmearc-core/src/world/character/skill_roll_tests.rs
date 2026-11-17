@@ -112,12 +112,12 @@ fn the_screen_shows_the_dice_the_rule_rolls_and_where_the_rolls_come_from() {
         (roll.dice().to_string(), roll.bonus, roll.halved)
     };
     let w = "human,male,warrior";
-    assert_eq!(dice(w, "stealth", 10, 0), ("+1".into(), None, false));
+    assert_eq!(dice(w, "stealth", 10, 0), ("1d2".into(), None, false));
     assert_eq!(dice(w, "athletics", 10, 0), ("1d3".into(), None, false));
     let balance = dice(w, "balance", 10, 0);
-    assert_eq!(balance, ("+2".into(), Some(RollBonus::Class), false));
+    assert_eq!(balance, ("1d2+1".into(), Some(RollBonus::Class), false));
     let search = dice("dwarf,male,warrior", "search", 10, 0);
-    assert_eq!(search, ("+2".into(), Some(RollBonus::Race), false));
+    assert_eq!(search, ("1d2+1".into(), Some(RollBonus::Race), false));
     let stealth = dice("halfling,female,thief", "stealth", 10, 0);
     assert_eq!(stealth, ("1d3+1".into(), Some(RollBonus::Race), false));
     assert_eq!(dice(w, "stealth", 10, 50), ("3d3".into(), None, false));
@@ -213,15 +213,15 @@ fn reach_after_rolls(world: &mut World, level: u8) {
 
 #[test]
 fn the_die_follows_the_marks_and_the_class_and_race() {
-    // No marks and no affinity: +1. A human warrior trained in stealth by hand.
-    assert_eq!(gains("human,male,warrior", "stealth", 10, 0, 6), (1, 1));
+    // No marks and no affinity: 1d2 (#1766). A human warrior trained in stealth by hand.
+    assert_eq!(gains("human,male,warrior", "stealth", 10, 0, 12), (1, 2));
     // Known for (athletics): one step up, 1d3.
     let (low, high) = gains("human,male,warrior", "athletics", 10, 0, 12);
     assert!(low >= 1 && high <= 3 && high > low, "{low}..{high}");
-    // One of the class's other skills (balance): +1 and 1.
-    assert_eq!(gains("human,male,warrior", "balance", 10, 0, 6), (2, 2));
+    // One of the class's other skills (balance): 1d2 + 1.
+    assert_eq!(gains("human,male,warrior", "balance", 10, 0, 12), (2, 3));
     // The race's (a dwarf's search): +1 too.
-    assert_eq!(gains("dwarf,male,warrior", "search", 10, 0, 6), (2, 2));
+    assert_eq!(gains("dwarf,male,warrior", "search", 10, 0, 12), (2, 3));
     // Known for and racial stack: a halfling thief's stealth, 1d3 + 1.
     let (low, high) = gains("halfling,female,thief", "stealth", 10, 0, 12);
     assert!(low >= 2 && high <= 4, "{low}..{high}");

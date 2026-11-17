@@ -156,6 +156,29 @@ fn buying_pays_takes_the_time_and_he_has_nothing_more() {
     assert_eq!((gold(&w, w.state.player), w.state.time), (7, before));
 }
 
+/// A second purchase is refused by the rules themselves, whatever a stale screen still offers
+/// (#1772): with gold for two, the ware is sold once and paid for once.
+#[test]
+fn a_second_purchase_is_refused() {
+    let (mut w, pedlar, dir) = beside_the_pedlar(&CONTENT);
+    act(&mut w, &format!("chat:{dir:?}"));
+    let wares = w.state.wares[&pedlar].clone();
+    let item = wares.item.clone().expect("for sale");
+    set_gold(&mut w, wares.price * 2);
+    let pack = |w: &World| {
+        w.state
+            .player()
+            .inventory
+            .iter()
+            .filter(|s| **s == item)
+            .count()
+    };
+    act(&mut w, &format!("ask:{dir:?}:wares ask:{dir:?}:wares"));
+    assert_eq!(pack(&w), 1, "one ware");
+    assert_eq!(gold(&w, w.state.player), wares.price, "paid once");
+    assert_eq!(w.state.wares[&pedlar].item, None);
+}
+
 #[test]
 fn without_the_gold_nothing_changes_hands() {
     let (mut w, pedlar, dir) = beside_the_pedlar(&CONTENT);

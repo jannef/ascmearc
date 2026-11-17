@@ -96,6 +96,7 @@ mod intimidate;
 mod invest;
 mod item_class;
 mod kit;
+mod laws;
 mod layer_boss;
 mod learning;
 pub mod leaving;
@@ -312,6 +313,7 @@ pub use invest::InvestRules;
 pub(crate) use item_class::BUILTIN as BUILTIN_ITEM_CLASSES;
 pub use item_class::{ItemClassDef, ItemClassId, MAX_ITEM_CLASSES};
 pub use kit::{Keep, Kit, KitItem, KitLineSpec, RandomScrolls};
+pub use laws::{Law, LawRules};
 pub use learning::{Band, Mishap, MishapEffect, StudyRules, drawn_among};
 pub use leaving::{Laid, Leaving};
 pub(crate) use level::validate_route;
@@ -664,6 +666,9 @@ pub struct Content {
     /// The numbers of intimidating (`data/rules/intimidate.toml`: Intimidate);
     /// none without the file, when nobody intimidates.
     intimidate: Option<IntimidateRules>,
+    /// The two laws, what breaks them and what is said the first time (`data/rules/laws.toml`);
+    /// none without the file, when nothing is counted.
+    laws: Option<LawRules>,
     /// What area spells do to the items lying in them (`data/ruin.toml`); empty without the file,
     /// when nothing is ruined.
     ruin: RuinRules,
@@ -1114,6 +1119,7 @@ impl Content {
         content.magic_worth = content.load_optional(files)?;
         content.restock = content.load_optional(files)?;
         content.intimidate = content.load_optional(files)?;
+        content.laws = content.load_optional(files)?;
         content.ruin = content.load_or_default(files)?;
         content.swim = content.load_optional(files)?;
         content.webs = content.load_optional(files)?;

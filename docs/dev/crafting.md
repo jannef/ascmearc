@@ -308,7 +308,6 @@ P8's hide routes (#1353) and the stone tools take `<base>_by_hand`.
 | small_shield | Metalcraft | | — | 12 | 3600 | 10 | 13 (wooden base: steel) |
 | large_shield | Metalcraft | | — | 13 | 5400 | 20 | 30 (wooden base) |
 | tower_shield | Metalcraft | | inlay | 14 | 7200 | 30 | 24 iron |
-| leather_cap | Metalcraft | | — | 11 | 1800 | 0 | 3 (leather base: "a steel cap") |
 | iron_helm | Metalcraft | | studs | 12 | 3600 | 10 | 3 iron |
 | great_helm | Metalcraft | | studs | 14 | 5400 | 30 | 6 steel |
 | gauntlets | Metalcraft | Gauntlets | — | 12 | 3600 | 10 | 2 iron |
@@ -322,8 +321,7 @@ P8's hide routes (#1353) and the stone tools take `<base>_by_hand`.
 - **No new code but the words**: the generic recipe already handles them. Grades follow the
   base's aspects (`magic::aspects`): armour and shields improve in Defence and Protection; the
   lantern, pick-axe, and mattock (no attack, no Defence) come out plain.
-- **A base of a material the recipe cannot take** (a wooden small shield forged in metal, a
-  leather cap in metal) is priced in the piece object's own material (steel), never the first of
+- **A base of a material the recipe cannot take** (a wooden small shield forged in metal) is priced in the piece object's own material (steel), never the first of
   the group in file order (adamantium): `craft::stock_words` and the wiki's
   `xtask/src/wiki/recipes.rs` both fall back base material, then the piece's, then the first.
   The count is the same whatever the metal (a piece weighs by its material).
@@ -714,9 +712,9 @@ and picks, `ScreenStack::craft_chosen`) and the view's `craft_plan`: `Dialog::ye
 a ruby-pommelled mithril short sword? It uses 2 mithril ingots and the ruby, at the anvil, and
 takes about 1 hour.", verb, Action::Craft, "Not now")`; declined, it closes back to the last
 step; a plan the rules refuse is a dialog with the reason and Back. Accepted, the action applies
-and the wizard stays open beneath (as object lists do, #591): its `refresh` reads the steps again
-and, when they changed, starts over on its first step; the profession screen beneath refreshes
-its rows too. Every key is fixed and named in the footer ("a-c or Enter choose   - none   Esc
+and every crafting screen closes, back to the map (#1769): `ScreenStack::close_acted` closes the
+screen that acted and the wizard's and profession's screens beneath it (a brew's dialog and the
+Temper, Whittle, and Cut lists too), so none is left over a pack the work has changed. Every key is fixed and named in the footer ("a-c or Enter choose   - none   Esc
 back"): no `KeyCommand`, no `Context` entry. Tests: the module's own (picking, `-` only where
 optional, Esc back keeping the pick, the dialog's words) and the text snapshots `craft-pick-*`
 (each step, the dialog, `--screen craft-pick`) and `profession-metalcraft-stock`.

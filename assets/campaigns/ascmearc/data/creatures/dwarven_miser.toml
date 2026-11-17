@@ -8,6 +8,7 @@
 [[creature]]
 id = "dwarven_miser"
 name = "dwarven miser"
+tags = ["sapient"]
 glyph = "h"
 fg = "#d4b048"
 faction = "peaceful"

@@ -3,6 +3,7 @@
 [[creature]]
 id = "innkeeper"
 name = "innkeeper"
+tags = ["sapient"]
 glyph = "@"
 fg = "#d8a868"
 faction = "peaceful"

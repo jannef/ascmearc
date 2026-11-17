@@ -5,6 +5,7 @@
 [[creature]]
 id = "business_partner"
 name = "business partner"
+tags = ["sapient"]
 glyph = "@"
 fg = "#d8c070"
 faction = "peaceful"

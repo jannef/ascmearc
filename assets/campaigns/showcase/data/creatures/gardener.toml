@@ -2,6 +2,7 @@
 [[creature]]
 id = "gardener"
 name = "gardener"
+tags = ["sapient"]
 glyph = "@"
 fg = "#9cc46a"
 faction = "peaceful"

@@ -238,8 +238,8 @@ fn tag_targets_are_checked_at_load() {
     let mut files = ContentFiles::builtin();
     files.edit_table("creatures", |text| {
         text.replace(
-            "id = \"hermit\"\n",
-            "id = \"hermit\"\ntags = [\"hermit\"]\n",
+            "name = \"old hermit\"\ntags = [\"sapient\"]\n",
+            "name = \"old hermit\"\ntags = [\"sapient\", \"hermit\"]\n",
         )
     });
     let quest = first_quest().replace("tag:kobold", "tag:hermit");
@@ -255,7 +255,10 @@ fn tag_targets_are_checked_at_load() {
 fn bad_creature_tags_are_refused() {
     let mut files = ContentFiles::builtin();
     files.edit_table("creatures", |text| {
-        text.replace("tags = [\"goblin\"]\n", "tags = [\"gob lin\"]\n")
+        text.replace(
+            "tags = [\"goblin\", \"sapient\"]\n",
+            "tags = [\"gob lin\"]\n",
+        )
     });
     let error = Content::load(&files).map(|_| ()).expect_err("refused");
     assert!(error.to_string().contains("a word without"), "{error}");

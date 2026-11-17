@@ -115,7 +115,12 @@
 #            (every troll: the tribe, the marsh troll, and the rotting troll), construct (things
 #            made, not born: the mud golem and every animated object), summoner (every type with
 #            a summoning, #520: the goblin wizard, the necromancer, the dark wizard; each of some
-#            other tribe too), dragon (every combat = "dragon" type, #1099: the fire drake)
+#            other tribe too), dragon (every combat = "dragon" type, #1099: the fire drake),
+#            sapient (thinking, speaking kinds, #1764: the people and their kin, the goblins,
+#            kobolds, orcs, drow, duergar, and deep gnomes, every named person, the giants,
+#            ogres, trolls, and hags, the talking fey, and the fiends who speak; never a beast,
+#            vermin, an undead or spirit, an ooze, an elemental, or an animated thing: eating its
+#            corpse is counted, data/rules/laws.toml)
 # A creature may carry several: the kobold shaman is ["kobold", "caster"].
 #
 # Alignment (never shown to the player): alignment, where it stands between

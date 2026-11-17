@@ -119,6 +119,9 @@ impl World {
         let list = and_list(&words.iter().map(String::as_str).collect::<Vec<_>>());
         let verb = if count == 1 { "comes" } else { "come" };
         self.say(format!("{} {verb} to your call.", capitalized(&list)));
+        for &(creature, n) in &came {
+            (0..n).for_each(|_| self.player_summoned(creature));
+        }
         self.spell_landed(cast, player, true);
         true
     }

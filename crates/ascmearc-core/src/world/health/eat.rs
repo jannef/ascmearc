@@ -167,6 +167,7 @@ impl World {
         self.ate_goods(dish.meal, &food);
         if let Some(creature) = def.corpse {
             self.ate_corpse(creature);
+            self.ate_flesh(creature);
         }
         let nutrition = def.food.map_or(0, |f| f.nutrition) as i32;
         let rotten = self.stage(&food).is_some_and(|s| s.is_rotten());

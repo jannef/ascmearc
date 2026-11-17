@@ -141,9 +141,9 @@ roll into one skill.
 
 A roll throws the die the skill's marks have reached on the ladder, adds it to the skill, and
 spends half of the skill's marks (rounded up). So a second roll on the same skill that level is a
-step or two smaller (50 marks → 25 → 12 → 6 → 3: `3d3`, `2d4`, `1d5`, `1d3`, `+1`). A skill with no
-marks still gains 1. Past 100, a roll adds half its result, rounded up. The game says "Your stealth
-improves."
+step or two smaller (50 marks → 25 → 12 → 6 → 3: `3d3`, `2d4`, `1d5`, `1d3`, `1d2`). A skill with
+no marks still gains 1 or 2. Past 100, a roll adds half its result, rounded up. The game says "Your
+stealth improves."
 
 - A skill your **[class](classes.md) is known for** throws the die one step up the ladder. So does a **[trade](talents-origins.md#crafts-a-craftspersons-trades)** of yours; a skill that is both still goes up one step, not two.
 - Any **other skill your class trains**, or a skill **your [race](races.md) trains**, adds 1 to the roll.
@@ -151,7 +151,7 @@ improves."
 Both stack: a [halfling](races.md#race-halfling) [thief](class-thief.md)'s stealth is both a class specialty and racial, so it rolls one step up and +1.
 
 The level-up screen shows these numbers before you choose. Beside each skill it shows the dice a
-roll on it adds (`1d3`, `+2`, `1d5+1`; `(1d3)/2` past 100). For the selected skill it explains how
+roll on it adds (`1d3`, `1d2+1`, `1d5+1`; `(1d3)/2` past 100). For the selected skill it explains how
 they came about (`Rolls 1d5+1: practice (20 marks) gives 1d5, +1 as your class trains it.`), with a
 line saying where your rolls come from (`4 skill rolls a level: class 3, race 1`). The roll itself
 is thrown only when you choose.

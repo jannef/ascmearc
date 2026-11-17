@@ -12,7 +12,7 @@ name = "dryad"
 glyph = "n"
 fg = "#6aa04a"
 factions = { seelie = 90, unseelie = 10 }
-tags = ["fey", "caster"]
+tags = ["fey", "caster", "sapient"]
 alignment = "good"
 vision = "low_light"
 sight = 10
