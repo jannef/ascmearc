@@ -92,7 +92,58 @@ Wyrtholm and Wulfeshol caves 100×40, Bānfeld and Brocenburg rooms 80×21, four
 name their criminal's vault on floor 4 (`mapgen/lairs_tests.rs`, with a snapshot of each bottom
 floor and a check over four seeds that the criminal is there once and on no floor above).
 
-**Tunnels** (#1835; `mapgen/tunnels/mod.rs`, `Generator::Tunnels`): caverns joined by narrow
+**Branches and level plans** (#1834; `content/dungeon.rs`, the field reference
+`data/dungeons.toml`): a `[[dungeon]]` table holds only the branch fields (id, name, arrival,
+depth, kind with floors/clearing/top, below, bottom, `[dungeon.endless]`, `[dungeon.portal]`); its
+`[dungeon.level]` table is the level template (`LevelSpec`, every field optional), and
+`[[dungeon.levels]]` rows (`from`, `to`) give the same struct, layered field by field over the
+template for their depths (`LevelSpec::over`; a table field layers field by field too, `danger`
+is one value; a row is read by hand, `LevelRow`, so `from`/`to` sit beside the level fields and an
+unknown field is still refused: serde's `flatten` would let it through). Each depth resolves to
+one `LevelPlan` (`LevelSpec::resolve`): the generator with its parameters, the size,
+temperature, ambient, patrols, traps, secret doors, hidden and lock ramps, ores, loot, chests,
+key, danger and `Spawning`, room and shop odds, vaults, and hidden location, so any level field
+may vary by depth; the generators, `generate_for`, `Content::spawning`, and the wiki read
+`def.plan(depth)`. `DungeonDef::spawning` is the template's folk (what the branch's floors have
+unless a row says otherwise), which the encounter pools, the quests, and the branch tables of the
+wiki read; `Content::fill_generic` fills the template's and every plan's generic list. The checks
+are on the resolved plan, not on which table gave a field: a `dread_one_in` or `population`
+without a `danger`, a size its generator does not build (`GeneratorKind::size_limits`), a
+`hidden` on more than one depth or on a portal or endless branch, `vaults` on an endless branch,
+and a tower plan with `size`, `secret_doors`, `key`, `ores`, `temperature`, `vaults`, `hidden`,
+or a generator of another kind. Endless branches and towers are branch rules that pick or size a
+plan: `[dungeon.endless] caves_level` is a second overlay resolved to `DungeonDef::caves_plan`,
+drawn per floor by `endless_plan`; `Content::fit_tower` sizes every plan of a tower to its
+clearing. Saves are unaffected: plans are derived at load.
+
+**Generator parameters** (`content/generator.rs`, `data/generators.toml`): a level's `generator`
+is a table with its `kind` (`GeneratorSpec`, a serde internally tagged enum, `deny_unknown_fields`,
+no `flatten`) and any of the kind's parameters, each optional (`RoomsOver`, `CavesOver`, ...,
+made by the `params!` macro beside the full structs `RoomsParams`, `CavesParams`, `TunnelsParams`,
+`PassageParams`, `TowerParams`, and the mines' and minster's `MinesSpec`/`MinsterSpec`).
+`data/generators.toml` gives every kind's full table (`GeneratorDefaults`, every field required);
+a dungeon file's table overrides just the fields it names; a row's generator of the template's
+kind layers over the template's field by field (`GeneratorSpec::over`), one of another kind starts
+from that kind's defaults. The resolved `Generator` enum (`Rooms(RoomsParams)`, ...) is on the
+plan, and each builder takes its own (`rooms::build(.., p: &RoomsParams)`; the mines keep theirs
+on the `Mine` under construction; the caves helpers the tunnels and passage share, `place_vaults`
+and `light`, take `max_tunnel` and `lamp_block` as arguments, so those two are fields of the
+tunnels' and passage's tables too). What moved out of the modules' constants: every tunable at
+the top of `rooms.rs`, `caves.rs`, `tunnels/mod.rs` (the `Bore` struct included, now
+`content::Bore`), `tunnels/passage.rs`, `mines.rs`, `minster.rs` (not the plan's dimensions:
+`CLOISTER`, `CHAPEL_DEPTH`, `RANGE_DEPTH`, `CHANCEL`), and `tower.rs`. The mines' `openness` and
+`lava` and the minster's `flood` and `ruin` are `ParamRamp`s (`MinesSpec::at`, `MinsterSpec::at`):
+a number pins the value on every floor, `[first, last]` runs it on a line from the branch's first
+floor of that kind to its last (`first + (last − first) × along / span`, rounded toward zero; a
+lone floor gets `first`), and `{ from, to, curve = "square" }` by the square of the way down in
+whole percent (`t = along × 100 / span`, then `from + (to − from) × (t² / 100) / 100`); the
+two arithmetics are what the mines and the minster computed before (#1836, #1837), so the moved
+defaults make every floor exactly as before (checked by `generator::tests` and the floors'
+snapshots). `content/dungeon.rs` finds each depth's place among the branch's floors of its
+generator's kind before resolving. Changing a default in `generators.toml` changes every branch
+of that kind; the snapshots in `src/mapgen/snapshots/` and `cargo xtask gen-vast --check` catch it.
+
+**Tunnels** (#1835; `mapgen/tunnels/mod.rs`, `GeneratorKind::Tunnels`): caverns joined by narrow
 tunnels, between `rooms` and `caves`, for floors where open caves would give archers too long a
 line of fire (Cealdhlāw 3 to 6, 120×48: tunnels leave more rock than caves, about 1 500 walkable
 cells to the caves' 2 300 at 100×40, so the branch's `per_1000` population gives about 45 a floor
@@ -109,13 +160,13 @@ wider stretches' sides now and then nibbled. One to three dead-end spurs end in 
 Then `caves.rs`'s steps (now `pub(super)`): keep the largest cave (at least 15 % of the inner area),
 named vaults (`make_room` takes the floor share it keeps), 40 % a random vault (15 % a second),
 pools, stairs, lamps and fungus, patrols, special chambers. No deep water (`deep::lay` stays caves
-only). **Passage** (#1839; `mapgen/tunnels/passage.rs`, `Generator::Passage`) is its linear mode,
+only). **Passage** (#1839; `mapgen/tunnels/passage.rs`, `GeneratorKind::Passage`) is its linear mode,
 for the shortcuts (Ūtgang): waypoints from one side of the map to the other, never turning back
 along the width, joined by right-angled hewn legs and bored steadier (longer stretches, hardly a
 nibble, a squeeze after two stretches without one); a hewn hall (a box, corners now and then left)
 at both ends and at about a third of the waypoints; three to six straight dead-end pockets, each
 dug only through rock no other floor touches; an attempt whose floor rings round more than
-`PILLAR` (4) cells of rock (a hall come too near another leg: a second route) fails; the stairs in
+`pillar` (4) cells of rock (a hall come too near another leg: a second route) fails; the stairs in
 the roomy spots nearest the two ends (which end is up is drawn). No random vault (two entrances
 would open a second route) and no pools. Both keep every tunable as a named
 constant at the top of their file (#1834 moves them into data). Tests: `mapgen/tunnels_tests.rs`
@@ -184,22 +235,23 @@ seeds, the rooms every cell reached, a climb to the top and down again as a repl
 floors' rooms and a snapshot).
 
 **Mines** (#1836; `mapgen/mines.rs`, tests `mapgen/mines_tests.rs`): a worked mine that opens up
-and grows lava the deeper it lies. `MinesParams` drives it, two numbers 0 to 100: `openness`
-(gallery width, chamber size, how many and how big the natural hollows) and `lava` (how many
-lava cells: one per `LAVA_SHARE` walkable cells at 100; pools from a budget of `MIN_POOL`, channels
-from `lava` 31). Until #1834 moves generator parameters into data, `mines::params` derives them per
-floor from its place among the branch's `mines` floors, between the constants `START` (0, 0) and
-`END` (100, 100) at the top of the module: `openness` evenly, `lava` by the square of the way down
-(Fyrdelf: 0, 0, 3, 7, 13, 20, 29, 39, 51, 65, 81, 100). Everything draws from the level's map
-stream, in the order the module docs list: named and random vaults (40 %, then 15 %, as caves)
+and grows lava the deeper it lies. `MinesParams` (`content/generator.rs`, the `[mines]` table of
+`data/generators.toml`) drives it, led by two numbers 0 to 100: `openness` (gallery width, chamber
+size, how many and how big the natural hollows) and `lava` (how many lava cells: one per
+`lava_share` walkable cells at 100; pools from a budget of `min_pool`, channels from `lava` 31).
+Both are ramps over the branch's `mines` floors ("Generator parameters" below): `openness =
+[0, 100]` evenly from its first mines floor to its last, `lava = { from = 0, to = 100, curve =
+"square" }` by the square of the way down (Fyrdelf: 0, 0, 3, 7, 12, 20, 29, 39, 51, 65, 81, 100);
+a row pins either (`generator = { kind = "mines", lava = 0 }`). Everything draws from the level's
+map stream, in the order the module docs list: named and random vaults (40 %, then 15 %, as caves)
 into untouched rock; one drive per 12 rows (`cheapest_path` between waypoints 10 to 20 cells apart,
-bends dear, `TURN`), cross-cuts between neighbouring drives, a tunnel from every vault entrance,
+bends dear, `turn`), cross-cuts between neighbouring drives, a tunnel from every vault entrance,
 dead-end headings (rubble at the face, one in two); walled chambers beside the galleries, one way
 in each (a doorway, or with `40 − 0.3 × openness` % a door); hollows (cellular automata, 44 %
 rock, four passes, inside `openness × area / 80 000` ellipses), never into a chamber's box or a
 vault; every cut-off part tunnelled to the first drive (under 8 cells, filled in); the stairs in
 chambers' roomy spots (the `>` among the farthest 30 % by walking); lava, never on a worked cell
-(gallery, tunnel, heading, chamber), a vault, an object, or within `LAVA_STAIRS` (2) of a stair,
+(gallery, tunnel, heading, chamber), a vault, an object, or within `lava_stairs` (2) of a stair,
 its banks opened into floor, banks unreached filled again and a feature that cuts anything else
 off undone; lava touching no walkable cell (nor lava that does) rock again; light (chamber
 torches as rooms', a lamp on about every 12th gallery cell with one chance in two, fungus in the
@@ -233,9 +285,10 @@ chancel, cloister, undercroft); the side rooms within two cells of one are left 
 entrance is joined to the nearest floor by the cheapest passage through the rock. Then the
 fittings (chapels' statues, at most one `forgotten_altar` a floor, one floor in three; tombs'
 `sarcophagus` rows, more `open_sarcophagus` the more ruin; the ossuary's walls `bone_wall`), the
-**ruin** and the **flood**, set per floor by `MinsterParams { flood, ruin }` (0–100), on a line
-from the first floor's to the bottom's (`minster::FLOOD` 10 to 85, `RUIN` 5 to 70: constants at
-the top of the module until #1834 moves generator parameters into data). Ruin: each pillar falls
+**ruin** and the **flood**, set per floor by `MinsterParams` (`content/generator.rs`, the
+`[minster]` table of `data/generators.toml`): `flood` and `ruin` (0–100) are ramps on a line from
+the branch's first minster floor to its last (`flood = [10, 85]`, `ruin = [5, 70]`; "Generator
+parameters" below), which a row may pin. Ruin: each pillar falls
 to `rubble` with ruin/2 %, ruin/20 walls between two rooms fall (rubble, both rooms then counted
 open, never locked), ruin/8 heaps of rubble (2 to 3 + ruin/6 cells each), the garth's floor `marsh` with ruin % (`reeds` with
 ruin − 30 % of those), and from 35 one or two outer walls broken by the fen (marsh, a pocket of
@@ -280,8 +333,8 @@ Special rooms have their own topic file, `docs/dev/special-rooms.md`:
 the effects' data, the draw (`mapgen/special.rs`, last, from the level's map stream), the whole-level
 version, and what the rules ask of them.
 
-A branch may set its own special-room and shop odds (`room_effects`, `shops` on a `[[dungeon]]`
-or a `[[dungeon.levels]]` range; campaign design §7.3). `content/dungeon.rs` resolves
+A level may set its own special-room and shop odds (`room_effects`, `shops` in a `[dungeon.level]`
+template or a `[[dungeon.levels]]` row; campaign design §7.3). `content/dungeon.rs` resolves
 them once per depth at load, field by field (the range's table, the branch's, the shared
 `room_effects.toml` / `shops.toml`), into `RoomOdds` / `ShopOdds` (`DungeonDef::room_odds`,
 `shop_odds`; the shared ones are `RoomOdds::shared`, `ShopOdds::shared`: every kind in file
@@ -374,10 +427,12 @@ floors of itself in a branch, and the deal differs by run and branch. A level's 
 (pinned) vaults are untouched. Adding vaults raises the count a floor may choose from, not the
 chance of one.
 An endless branch (`DungeonDef::endless`, #1010; Grundlēas,
-`campaigns/ascmearc/data/dungeons/grundleas.toml`) has one row of per-depth tables, read at every
-depth (`DungeonDef::row`), and `depth` 1 for what loops over them; `leads_down` is always true.
-`generate_for` draws the floor's generator and size from stream `floor_kind/<level id>`
-(`endless_plan`), and its first floor's `<` is `Content::way_into`, not `entered_from`. The whole
+`campaigns/ascmearc/data/dungeons/grundleas.toml`) has one plan, read at every depth
+(`DungeonDef::row`), and `depth` 1 for what loops over it; `leads_down` is always true.
+`generate_for` draws the floor's plan from stream `floor_kind/<level id>` (`endless_plan`): with
+`[dungeon.endless] caves` percent the caves plan (`DungeonDef::caves_plan`: the `caves_level`
+fields over the template, so it may change the generator, the size, or anything the generator
+reads; `Content::spawning` reads the template's plan either way), else the template's; and its first floor's `<` is `Content::way_into`, not `entered_from`. The whole
 generation runs under the floor's own seed (`world/levels/endless.rs::floor_seed`) with the usual stream
 labels, so `cargo dev-cli gen --level grundleas:3 --seed S` shows what that seed makes, not what the
 run of seed S makes on its third floor (that depends on how many floors it has made). Spaced

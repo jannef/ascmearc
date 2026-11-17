@@ -152,12 +152,12 @@ fn twelve_floors_of_danger_five_to_sixteen_hotter_downwards() {
     for depth in 1..=12 {
         let plan = def.plan(depth).expect("a floor");
         let (generator, size, celsius) = match depth {
-            1..=4 => (Generator::Mines, (100, 36), 10),
-            5..=8 => (Generator::Mines, (120, 60), 16),
-            9..=11 => (Generator::Mines, (120, 60), 20),
-            _ => (Generator::Mines, (120, 60), 24),
+            1..=4 => (GeneratorKind::Mines, (100, 36), 10),
+            5..=8 => (GeneratorKind::Mines, (120, 60), 16),
+            9..=11 => (GeneratorKind::Mines, (120, 60), 20),
+            _ => (GeneratorKind::Mines, (120, 60), 24),
         };
-        assert_eq!(plan.generator, generator, "depth {depth}");
+        assert_eq!(plan.generator.kind(), generator, "depth {depth}");
         assert_eq!((plan.width, plan.height), size, "depth {depth}");
         assert_eq!(
             plan.temperature.map(|t| t.celsius()),
@@ -171,7 +171,7 @@ fn twelve_floors_of_danger_five_to_sixteen_hotter_downwards() {
         }
     }
     let key = CONTENT.object_id("brass_key");
-    assert_eq!(def.key, key);
+    assert_eq!(def.plan(1).expect("a floor").key, key);
 }
 
 /// The squish (#534): every floor of the Ascmearc's three dungeons, the shallowest above all, has

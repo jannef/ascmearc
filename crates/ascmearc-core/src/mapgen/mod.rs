@@ -60,10 +60,10 @@ mod way_up;
 
 use crate::chest::Chest;
 use crate::content::{
-    Content, CreatureId, CreatureSpawn, DungeonDef, Flow, Generator, LevelKind, LevelTemplate,
-    LightId, ObjectId, Place, RoomEffectId, RoomOdds, Secret, ShopOdds, ShopPlan, Spawning,
-    SpecialRoom, StairsDir, StairsLink, TerrainId, Trap, Vault, VaultMonsters, secret_look,
-    sibling,
+    Content, CreatureId, CreatureSpawn, DungeonDef, Flow, Generator, GeneratorKind, LevelKind,
+    LevelPlan, LevelTemplate, LightId, ObjectId, Place, RoomEffectId, RoomOdds, Secret, ShopOdds,
+    ShopPlan, Spawning, SpecialRoom, StairsDir, StairsLink, TerrainId, Trap, Vault, VaultMonsters,
+    secret_look, sibling,
 };
 use crate::door::Lock;
 use crate::geom::{Dir, Pos};
@@ -506,18 +506,14 @@ pub fn generate_for(
     let plan = def
         .plan(depth)
         .ok_or_else(|| GenError::NotAGeneratedLevel(id.to_string()))?;
-    let plan = def
-        .endless
-        .map_or(plan, |e| endless_plan(plan, e, seed, id));
+    let plan = endless_plan(def, plan, seed, id);
     let pal = Palette::resolve(content).map_err(GenError::Content)?;
     // A tower is built of its own terrain (`tower.rs`).
     let pal = match def.tower {
         Some(_) => tower::palette(content, pal).map_err(GenError::Content)?,
         None => pal,
     };
-    let room_odds =
-        (def.room_odds(depth)).ok_or_else(|| GenError::NotAGeneratedLevel(id.to_string()))?;
-    let odds = (room_odds, def.shop_odds(depth));
+    let odds = (&plan.room_odds, plan.shop_odds.as_ref());
     // A layer boss not yet slain keeps its lair here, with the floor's way down hidden in it
     // (`world/levels/layer_boss.rs`).
     // A Pit's warden's hall is stamped whether the warden lives or not; slain (its Pit sealed),
@@ -533,9 +529,9 @@ pub fn generate_for(
     let needs = Needs {
         // A tower's every floor has both: its `>` down, its `<` up.
         down: (def.leads_down(depth) && boss.is_none()) || def.tower.is_some(),
-        creatures: &def.creatures,
-        key: def.key,
-        vaults: boss.map_or(def.vaults(depth), |b| std::slice::from_ref(&b.vault)),
+        creatures: &plan.creatures,
+        key: plan.key,
+        vaults: boss.map_or(plan.vaults.as_slice(), |b| std::slice::from_ref(&b.vault)),
     };
     // A Pit's floors lead only to its own: the neighbours are the floor's
     // siblings, and its first floor's `<` is where it was entered from.
@@ -572,23 +568,15 @@ pub fn generate_for(
             .map_or(0, |(rule, depth, _)| rule.at(depth, 1));
         canvas.population = content.spawning(id).map_or(&[], |(_, _, s)| &s.population);
         canvas.below = needs.down;
-        let built = match plan.generator {
-            Generator::Rooms => rooms::build(&mut canvas, &mut rng, needs),
-            Generator::Caves => caves::build(&mut canvas, &mut rng, needs),
-            Generator::Tunnels => tunnels::build(&mut canvas, &mut rng, needs),
-            Generator::Passage => tunnels::build_passage(&mut canvas, &mut rng, needs),
-            Generator::Minster => minster::build(
-                &mut canvas,
-                &mut rng,
-                needs,
-                minster::MinsterParams::at(depth, def.depth),
-            ),
-            Generator::Mines => {
-                mines::build(&mut canvas, &mut rng, needs, mines::params(def, depth))
-            }
-            Generator::Tower => {
-                (def.tower.as_ref()).and_then(|t| tower::build(&mut canvas, &mut rng, t, depth))
-            }
+        let built = match &plan.generator {
+            Generator::Rooms(p) => rooms::build(&mut canvas, &mut rng, needs, p),
+            Generator::Caves(p) => caves::build(&mut canvas, &mut rng, needs, p),
+            Generator::Tunnels(p) => tunnels::build(&mut canvas, &mut rng, needs, p),
+            Generator::Passage(p) => tunnels::build_passage(&mut canvas, &mut rng, needs, p),
+            Generator::Minster(p) => minster::build(&mut canvas, &mut rng, needs, p),
+            Generator::Mines(p) => mines::build(&mut canvas, &mut rng, needs, p),
+            Generator::Tower(p) => (def.tower.as_ref())
+                .and_then(|t| tower::build(&mut canvas, &mut rng, (t, p), depth)),
         };
         if built.is_none() {
             continue;
@@ -596,11 +584,11 @@ pub fn generate_for(
         let Some(extra) = way_up::place(&mut canvas, &ways_up) else {
             continue;
         };
-        if plan.generator == Generator::Caves {
+        if plan.generator.kind() == GeneratorKind::Caves {
             deep::lay(&mut canvas, seed, id);
         }
         // A tower's walls are built, and its outside is no rock to wall in.
-        if plan.generator != Generator::Tower {
+        if plan.generator.kind() != GeneratorKind::Tower {
             canvas.build_walls();
         }
         let (Some(up), down) = (canvas.up, canvas.down) else {
@@ -644,7 +632,7 @@ pub fn generate_for(
             id: id.to_string(),
             name: def.level_name(depth),
             arrival: None,
-            ambient: def.ambient,
+            ambient: plan.ambient,
             // A tower's floors stand under the sky (docs/design/wizard-tower.md §7).
             kind: match def.tower {
                 Some(_) => LevelKind::Outdoor,
@@ -697,11 +685,11 @@ pub fn generate_for(
         };
         if connect::validate(&template, content).is_ok() && hides(&mut template) {
             treasury::seal(&mut template, content, pal);
-            hide_traps(&mut template, content, pal, seed, def);
-            hide_secrets(&mut template, content, seed, def, &canvas.stamped);
+            hide_traps(&mut template, content, pal, seed, plan);
+            hide_secrets(&mut template, content, seed, plan, &canvas.stamped);
             let floor = Floor {
                 terrain: pal.floor,
-                count: def.loot,
+                count: plan.loot,
             };
             place_loot(
                 &mut template,
@@ -736,10 +724,10 @@ pub fn generate_for(
                 &mut template,
                 content,
                 (seed, luck),
-                (pal, def),
+                (pal, plan),
                 &canvas.stamped,
             );
-            treasury::fill(&mut template, content, (seed, luck), (pal, def));
+            treasury::fill(&mut template, content, (seed, luck), (pal, plan));
             crate::gear::arm(&mut template, content, seed);
             crate::animated::arm(&mut template, content, seed);
             // Last, from its own stream: only walls change (`vein.rs`).
@@ -748,7 +736,7 @@ pub fn generate_for(
                 &mut template,
                 content,
                 (seed, pal),
-                (def, danger),
+                (plan, danger),
                 &canvas.stamped,
             );
             return Ok(template);
@@ -776,23 +764,23 @@ fn layer_boss_stairs(
     (at, hidden)
 }
 
-/// The generator and size of a floor of an endless branch, drawn as it is made from its own
-/// stream `floor_kind/<level id>`, so the draw moves nothing else.
-fn endless_plan(
-    plan: crate::content::LevelPlan,
-    endless: crate::content::Endless,
+/// The plan of a floor of an endless branch, drawn as it is made from its own stream
+/// `floor_kind/<level id>`, so the draw moves nothing else: with the branch's `caves` percent
+/// its caves plan ([`DungeonDef::caves_plan`]), else `plan`, the template's. Any other branch's
+/// floor keeps `plan`.
+fn endless_plan<'a>(
+    def: &'a DungeonDef,
+    plan: &'a LevelPlan,
     seed: u64,
     id: &str,
-) -> crate::content::LevelPlan {
-    if !Rng::stream(seed, &format!("floor_kind/{id}")).chance(endless.caves.into()) {
+) -> &'a LevelPlan {
+    let (Some(endless), Some(caves)) = (def.endless, def.caves_plan()) else {
         return plan;
-    }
-    let (width, height) = endless.caves_size;
-    crate::content::LevelPlan {
-        generator: Generator::Caves,
-        width,
-        height,
-        ..plan
+    };
+    if Rng::stream(seed, &format!("floor_kind/{id}")).chance(endless.caves.into()) {
+        caves
+    } else {
+        plan
     }
 }
 
@@ -808,13 +796,13 @@ fn hide_traps(
     content: &Content,
     pal: Palette,
     seed: u64,
-    def: &crate::content::DungeonDef,
+    plan: &LevelPlan,
 ) {
-    if def.traps.is_empty() {
+    if plan.traps.is_empty() {
         return;
     }
     let mut rng = Rng::traps(seed, &template.id);
-    let [least, most] = def.traps_per_level;
+    let [least, most] = plan.traps_per_level;
     let count = least + rng.below(most - least + 1);
     let patrolled = patrolled(template);
     // A lair's hidden way down counts: it will be stairs.
@@ -846,7 +834,7 @@ fn hide_traps(
             break;
         }
         let at = free.swap_remove(rng.index(free.len()));
-        let kind = def.traps[rng.index(def.traps.len())];
+        let kind = plan.traps[rng.index(plan.traps.len())];
         (template.traps).insert(at, Trap::new(kind, content.trap(kind), false, None));
     }
 }
@@ -878,10 +866,10 @@ fn hide_secrets(
     template: &mut LevelTemplate,
     content: &Content,
     seed: u64,
-    def: &crate::content::DungeonDef,
+    plan: &LevelPlan,
     stamped: &Grid<bool>,
 ) {
-    let [least, most] = def.secret_doors;
+    let [least, most] = plan.secret_doors;
     if most == 0 {
         return;
     }

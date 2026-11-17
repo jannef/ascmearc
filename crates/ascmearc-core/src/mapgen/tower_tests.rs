@@ -59,8 +59,8 @@ fn the_branch_is_fitted_to_its_clearing() {
     for depth in 1..=2 {
         let plan = def.plan(depth).expect("a floor");
         assert_eq!(
-            (plan.generator, plan.width, plan.height),
-            (Generator::Tower, 48, 20)
+            (plan.generator.kind(), plan.width, plan.height),
+            (GeneratorKind::Tower, 48, 20)
         );
     }
     assert_eq!(
@@ -68,7 +68,11 @@ fn the_branch_is_fitted_to_its_clearing() {
         "The Test Tower 2",
         "the clearing is floor 1"
     );
-    assert_eq!(def.ores.as_deref(), Some(&[][..]), "nothing is mined");
+    assert_eq!(
+        def.plan(1).expect("a floor").ores.as_deref(),
+        Some(&[][..]),
+        "nothing is mined"
+    );
 }
 
 #[test]

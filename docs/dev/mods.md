@@ -7,8 +7,12 @@ Keep it current with the code, as CLAUDE.md says.
 `description`, its own `version`, the `game_version` it was made for) and content files at the
 paths they have under `assets/` (`campaigns/ascmearc/data/creatures/reeve.toml`). The same path
 replaces the game's file whole; a new path adds one. There is no per-field merge and no way to
-delete a game file. Mods are data, never code. Every other `.toml` file under the folder is
-content; other files (a README, a picture) are left alone.
+delete a game file. A dungeon file is replaced whole too: a mod that changes one branch field
+ships the whole file in the `[[dungeon]]` / `[dungeon.level]` shape of `data/dungeons.toml`, and
+one that tunes a generator ships `data/generators.toml` whole (every kind, every parameter) or
+overrides the parameters it wants in the branch's `generator` table instead. Mods are data, never
+code. Every other `.toml` file under the folder is content; other files (a README, a picture) are
+left alone.
 
 **The overlay** (`ascmearc-assets/src/mods.rs`): `Mod::read` reads a folder, `scan` the mods
 folder (each sub-folder a `Found`, the mod or why it does not read), `overlay` lays mods over

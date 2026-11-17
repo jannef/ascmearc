@@ -394,6 +394,17 @@ pub(super) struct SpawnSpec {
     cap: Option<u32>,
 }
 
+impl SpawnSpec {
+    /// `self`'s fields where given, else `under`'s (a row's table over the template's).
+    pub(super) fn over(&self, under: &Self) -> Self {
+        Self {
+            every: self.every.clone().or_else(|| under.every.clone()),
+            chance: self.chance.or(under.chance),
+            cap: self.cap.or(under.cap),
+        }
+    }
+}
+
 /// The danger fields of a branch or a level file, as written.
 #[derive(Clone, Debug, Default, Deserialize)]
 pub(super) struct SpawningSpec {

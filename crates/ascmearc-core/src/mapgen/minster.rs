@@ -31,68 +31,23 @@
 //!    lit), patrols, locked stores (the branch's key), and last the special rooms
 //!    (`special.rs`), as the rooms generator does.
 //!
-//! Everything draws from the level's map stream, in that order. The parameters come from the
-//! floor's place in its branch ([`MinsterParams::at`]) until #1834 moves generator parameters
-//! into data.
+//! Everything draws from the level's map stream, in that order. The parameters are
+//! [`MinsterParams`] (`content/generator.rs`, `data/generators.toml`, #1834): the flood and the ruin
+//! run from the branch's first minster floor to its last.
 
 use super::connect::{cheapest_path, flood};
 use super::{CARDINALS, Canvas, Needs, special, treasury, vault};
-use crate::content::{Flow, ObjectId, RoomEffectDef, SpecialRoom, StairsDir, TerrainId, Vault};
+use crate::content::{
+    Flow, MinsterParams, ObjectId, RoomEffectDef, SpecialRoom, StairsDir, TerrainId, Vault,
+};
 use crate::door::{Key, Lock};
 use crate::geom::{Dir, Pos};
 use crate::grid::Grid;
 use crate::object::Stack;
 use crate::rng::Rng;
 
-/// The flood on a branch's first floor and on its bottom, in percent (#1834 moves these to data).
-pub(super) const FLOOD: (i32, i32) = (10, 85);
-/// The ruin on a branch's first floor and on its bottom, in percent (#1834 moves these to data).
-pub(super) const RUIN: (i32, i32) = (5, 70);
+// The tunables are [`MinsterParams`]; the plan's dimensions below are not.
 
-/// How drowned and how broken one floor of the minster is.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(super) struct MinsterParams {
-    /// 0–100: how high the water stands. Low, only the low points hold shallow water; high,
-    /// whole aisles stand in it, with deep water in the sunk end and its drains.
-    pub flood: i32,
-    /// 0–100: how far the plan has fallen: rubble, fallen pillars and walls, the fen pushing in.
-    pub ruin: i32,
-}
-
-impl MinsterParams {
-    /// Floor `depth` of a branch of `floors`: on the line from the first floor's ([`FLOOD`],
-    /// [`RUIN`]) to the bottom's.
-    pub(super) fn at(depth: u32, floors: u32) -> Self {
-        let span = i64::from(floors.max(2) - 1);
-        let along = i64::from(depth.clamp(1, floors.max(1)) - 1);
-        let lerp = |(top, bottom): (i32, i32)| {
-            (i64::from(top) + (i64::from(bottom) - i64::from(top)) * along / span) as i32
-        };
-        Self {
-            flood: lerp(FLOOD),
-            ruin: lerp(RUIN),
-        }
-    }
-}
-
-/// Chance (percent) that a floor gets a random vault, as on a rooms floor.
-const VAULT_CHANCE: u32 = 20;
-/// Chance (percent) of a door between two neighbouring rooms that have none, for loops.
-const LOOP_CHANCE: u32 = 20;
-/// Chance (percent) that a south nave chapel is of its northern mirror's kind.
-const MIRROR_CHANCE: u32 = 70;
-/// Chance (percent) that a floor has a forgotten altar (in a chapel or the apse).
-const ALTAR_CHANCE: u32 = 35;
-/// Chance (percent) that a side room is lit, less a third of the flood.
-const LIT_CHANCE: i32 = 35;
-/// The most stores and tombs a floor locks (with the branch's key).
-const MAX_LOCKED: usize = 2;
-/// Water stands deep where the floor lies this much lower than where it stands shallow.
-const DEEP_MARGIN: i32 = 45;
-/// The hall's culvert runs from this flood up; the sunk drain at its end and the broken drains
-/// from [`DRAIN_FLOOD`].
-const CULVERT_FLOOD: i32 = 30;
-const DRAIN_FLOOD: i32 = 50;
 /// The cloister's side, walk and garth (odd, so its arcade has a pillar at each corner).
 const CLOISTER: i32 = 15;
 /// The deepest a chapel reaches from its aisle, and a range from its walk.
@@ -311,29 +266,29 @@ pub(super) fn build(
     canvas: &mut Canvas,
     rng: &mut Rng,
     needs: Needs,
-    params: MinsterParams,
+    p: &MinsterParams,
 ) -> Option<()> {
     let stones = Stones::resolve(canvas)?;
-    let mut plan = lay_out(canvas, rng)?;
+    let mut plan = lay_out(canvas, rng, p)?;
     for v in vault::named(canvas, needs.vaults) {
         place_named(canvas, rng, &mut plan, v)?;
     }
-    if rng.chance(VAULT_CHANCE) {
+    if rng.chance(p.vault_chance) {
         place_random(canvas, rng, &mut plan);
     }
     carve(canvas, &plan);
-    join_rooms(canvas, rng, &mut plan);
+    join_rooms(canvas, rng, &mut plan, p);
     join_vaults(canvas, &mut plan)?;
-    furnish(canvas, rng, &plan, stones, params.ruin);
-    ruin(canvas, rng, &mut plan, stones, params.ruin);
+    furnish(canvas, rng, &plan, stones, p);
+    ruin(canvas, rng, &mut plan, stones, p.ruin);
     plan.low_east = rng.chance(50);
-    drown(canvas, rng, &plan, stones, params.flood);
+    drown(canvas, rng, &plan, stones, p);
     rejoin(canvas, &plan, stones)?;
     let up_room = place_stairs(canvas, rng, &plan, needs)?;
-    light(canvas, rng, &plan, (up_room, stones), params.flood);
+    light(canvas, rng, &plan, (up_room, stones), p);
     patrols(canvas, rng, &plan, up_room, needs);
     if let Some(key) = needs.key {
-        lock_stores(canvas, rng, &plan, up_room, key);
+        lock_stores(canvas, rng, &plan, up_room, (key, p.max_locked));
     }
     special_rooms(canvas, rng, &plan, up_room);
     Some(())
@@ -359,7 +314,7 @@ fn split(rng: &mut Rng, (x0, x1): (i32, i32), (least, most): (i32, i32)) -> Vec<
 
 /// The plan of a floor the size of `canvas` (module docs, step 1); `None` when it is too small
 /// for one.
-fn lay_out(canvas: &Canvas, rng: &mut Rng) -> Option<Plan> {
+fn lay_out(canvas: &Canvas, rng: &mut Rng, p: &MinsterParams) -> Option<Plan> {
     let (w, h) = (canvas.width(), canvas.height());
     let cy = h / 2;
     let east = w - 3;
@@ -410,7 +365,7 @@ fn lay_out(canvas: &Canvas, rng: &mut Rng) -> Option<Plan> {
         let depth = rng.range(3, CHAPEL_DEPTH);
         let door = rng.range(a, b);
         let north = chapel_kind(rng);
-        let south = match rng.chance(MIRROR_CHANCE) {
+        let south = match rng.chance(p.mirror_chance) {
             true => north,
             false => chapel_kind(rng),
         };
@@ -588,7 +543,7 @@ fn door_for(canvas: &Canvas, rng: &mut Rng, kind: Kind) -> TerrainId {
 
 /// Joins the plan: the core's arches and doorways, each side room's door onto the core space
 /// it faces, and a few doors between neighbours for loops.
-fn join_rooms(canvas: &mut Canvas, rng: &mut Rng, plan: &mut Plan) {
+fn join_rooms(canvas: &mut Canvas, rng: &mut Rng, plan: &mut Plan, p: &MinsterParams) {
     let cy = plan.axis;
     let hall = plan.rooms[HALL].clone();
     let (x0, x1) = (hall.min.x, hall.max.x);
@@ -671,7 +626,7 @@ fn join_rooms(canvas: &mut Canvas, rng: &mut Rng, plan: &mut Plan) {
                         && canvas.is_walkable(p.step(out.opposite()))
                 })
                 .collect();
-            if spots.is_empty() || !rng.chance(LOOP_CHANCE) {
+            if spots.is_empty() || !rng.chance(p.loop_chance) {
                 continue;
             }
             let spot = spots[rng.index(spots.len())];
@@ -728,7 +683,8 @@ fn free_cells(canvas: &Canvas, room: &Room) -> Vec<Pos> {
 }
 
 /// The fittings (module docs, step 3); more tombs stand open the more ruin.
-fn furnish(canvas: &mut Canvas, rng: &mut Rng, plan: &Plan, stones: Stones, ruin: i32) {
+fn furnish(canvas: &mut Canvas, rng: &mut Rng, plan: &Plan, stones: Stones, p: &MinsterParams) {
+    let ruin = p.ruin;
     let (cy, east) = (plan.axis, plan.east);
     // At most one forgotten altar a floor: in a chapel, or in the apse.
     let mut shrines: Vec<Option<usize>> = vec![None];
@@ -738,7 +694,7 @@ fn furnish(canvas: &mut Canvas, rng: &mut Rng, plan: &Plan, stones: Stones, ruin
             .map(Some),
     );
     let altar = rng
-        .chance(ALTAR_CHANCE)
+        .chance(p.altar_chance)
         .then(|| shrines[rng.index(shrines.len())]);
     let apse = Pos::new(east, cy);
     canvas.set(
@@ -976,7 +932,9 @@ fn fen_breaches(canvas: &mut Canvas, rng: &mut Rng, plan: &mut Plan, stones: Sto
 }
 
 /// The flood (module docs, step 5).
-fn drown(canvas: &mut Canvas, rng: &mut Rng, plan: &Plan, stones: Stones, flood: i32) {
+fn drown(canvas: &mut Canvas, rng: &mut Rng, plan: &Plan, stones: Stones, p: &MinsterParams) {
+    let flood = p.flood;
+    let (culvert_flood, drain_flood, deep_margin) = (p.culvert_flood, p.drain_flood, p.deep_margin);
     let (floor, deep) = (canvas.pal.floor, canvas.pal.deep_water);
     let cy = plan.axis;
     let hall = &plan.rooms[HALL];
@@ -992,7 +950,7 @@ fn drown(canvas: &mut Canvas, rng: &mut Rng, plan: &Plan, stones: Stones, flood:
         }
     }
     // The culvert down the hall's axis to the low end, and the sunk drain it ends in.
-    if flood >= CULVERT_FLOOD {
+    if flood >= culvert_flood {
         let length = ((h1 - h0 + 1) * (flood - 20) / 80).clamp(4, h1 - h0 + 1);
         let (from, to, dir) = match plan.low_east {
             true => (h1 - length + 1, h1, Dir::E),
@@ -1005,7 +963,7 @@ fn drown(canvas: &mut Canvas, rng: &mut Rng, plan: &Plan, stones: Stones, flood:
                 canvas.flow.insert(p, Flow::new(dir, 100));
             }
         }
-        if flood >= DRAIN_FLOOD {
+        if flood >= drain_flood {
             let sump = match plan.low_east {
                 true => h1 - 3..=h1 - 1,
                 false => h0 + 1..=h0 + 3,
@@ -1020,7 +978,7 @@ fn drown(canvas: &mut Canvas, rng: &mut Rng, plan: &Plan, stones: Stones, flood:
         }
     }
     // Broken drains: deep pits in chapels and tombs.
-    if flood >= DRAIN_FLOOD {
+    if flood >= drain_flood {
         let pits: Vec<&Room> = (plan.rooms.iter())
             .filter(|r| matches!(r.kind, Kind::Chapel | Kind::Tomb) && r.size().0 >= 4)
             .collect();
@@ -1047,7 +1005,7 @@ fn drown(canvas: &mut Canvas, rng: &mut Rng, plan: &Plan, stones: Stones, flood:
             continue;
         }
         canvas.set(p, stones.shallow);
-        if basin && lies > 100 + DEEP_MARGIN - flood {
+        if basin && lies > 100 + deep_margin - flood {
             deeps.push(p);
         }
     }
@@ -1141,9 +1099,10 @@ fn light(
     rng: &mut Rng,
     plan: &Plan,
     (up_room, stones): (usize, Stones),
-    flood: i32,
+    p: &MinsterParams,
 ) {
-    let lit = (LIT_CHANCE - flood / 3).max(5) as u32;
+    let flood = p.flood;
+    let lit = (p.lit_chance - flood / 3).max(5) as u32;
     let (cy, east) = (plan.axis, plan.east);
     for i in 0..plan.rooms.len() {
         let room = &plan.rooms[i];
@@ -1231,10 +1190,16 @@ fn patrols(canvas: &mut Canvas, rng: &mut Rng, plan: &Plan, up_room: usize, need
     }
 }
 
-/// Locks up to [`MAX_LOCKED`] stores and tombs with one door and no fallen wall (not the
+/// Locks up to `max_locked` stores and tombs with one door and no fallen wall (not the
 /// arrival room, none with stairs) with the lock `key` opens, and leaves the key on free floor
 /// in a room not locked, as the rooms generator does.
-fn lock_stores(canvas: &mut Canvas, rng: &mut Rng, plan: &Plan, up_room: usize, key: ObjectId) {
+fn lock_stores(
+    canvas: &mut Canvas,
+    rng: &mut Rng,
+    plan: &Plan,
+    up_room: usize,
+    (key, max_locked): (ObjectId, usize),
+) {
     let lock = match canvas.content.object(key).key {
         Some(Key::Lock(ref id)) => Lock::new(Some(id)),
         _ => Lock::new(None),
@@ -1251,7 +1216,7 @@ fn lock_stores(canvas: &mut Canvas, rng: &mut Rng, plan: &Plan, up_room: usize, 
         })
         .collect();
     rng.shuffle(&mut dead_ends);
-    let count = rng.range(0, MAX_LOCKED as i32) as usize;
+    let count = rng.range(0, max_locked as i32) as usize;
     let locked: Vec<usize> = dead_ends.into_iter().take(count).collect();
     if locked.is_empty() {
         return;

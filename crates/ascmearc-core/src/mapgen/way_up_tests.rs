@@ -25,7 +25,11 @@ fn three_passage_floors_from_the_overworld_down_to_the_drakes_deep() {
     assert_eq!(def.below.as_deref(), Some("fyrdelf:12"));
     for depth in 1..=3 {
         let plan = def.plan(depth).expect("a floor");
-        assert_eq!(plan.generator, Generator::Passage, "one shaft ({depth})");
+        assert_eq!(
+            plan.generator.kind(),
+            GeneratorKind::Passage,
+            "one shaft ({depth})"
+        );
     }
     assert!(def.plan(4).is_none());
     for seed in 1..=4 {

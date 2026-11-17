@@ -3,7 +3,7 @@
 
 use super::util::{Term, link, percent};
 use ascmearc_core::content::danger::{self, Odds, StrayPool, TOO_WEAK};
-use ascmearc_core::content::{Content, Count, DangerRule, Generator, Spawning, Stance, TrapId};
+use ascmearc_core::content::{Content, Count, DangerRule, Spawning, Stance, TrapId};
 use std::collections::BTreeSet;
 use std::fmt::Write as _;
 
@@ -153,7 +153,7 @@ pub(super) fn endless_branches(content: &Content) -> String {
     let mut branches: Vec<_> = content.dungeons().collect();
     branches.sort_by(|a, b| a.id.cmp(&b.id));
     for d in branches {
-        let (Some(e), Some(plan)) = (d.endless, d.plan(1)) else {
+        let (Some(e), Some(plan), Some(caves)) = (d.endless, d.plan(1), d.caves_plan()) else {
             continue;
         };
         let _ = writeln!(
@@ -164,8 +164,8 @@ pub(super) fn endless_branches(content: &Content) -> String {
             plan.width,
             plan.height,
             e.caves,
-            e.caves_size.0,
-            e.caves_size.1,
+            caves.width,
+            caves.height,
             e.roster_depth
         );
     }
@@ -216,15 +216,7 @@ pub(super) fn dungeon_floors(content: &Content) -> String {
             let Some(rule) = plan.danger else { continue };
             any = true;
             let danger = rule.at(depth, 1);
-            let generator = match plan.generator {
-                Generator::Rooms => "rooms",
-                Generator::Caves => "caves",
-                Generator::Tunnels => "tunnels",
-                Generator::Passage => "passage",
-                Generator::Minster => "minster",
-                Generator::Mines => "mines",
-                Generator::Tower => "tower",
-            };
+            let generator = plan.generator.kind().name();
             let mut kinds: Vec<_> = (s.population.iter())
                 .map(|&c| {
                     let def = content.creature(c);
@@ -306,8 +298,9 @@ pub(super) fn towers(content: &Content) -> String {
             ground_danger(&t.clearing)
         );
         // The floors above, new each run.
-        let [least, most] = d.traps_per_level;
-        let kinds = trap_names(content, d.traps.iter().copied());
+        let Some(first) = d.plan(1) else { continue };
+        let [least, most] = first.traps_per_level;
+        let kinds = trap_names(content, first.traps.iter().copied());
         for depth in 1..=d.depth {
             let Some(rule) = d.plan(depth).and_then(|p| p.danger) else {
                 continue;

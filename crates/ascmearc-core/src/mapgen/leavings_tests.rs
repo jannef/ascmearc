@@ -23,7 +23,7 @@ fn content(population: &str, danger: u8, one_in: u16, vault: Option<&str>) -> Co
         levels = "[[dungeon.levels]]\nfrom = 1\nvaults = [\"den\"]\n".into();
     }
     let branch = format!(
-        "\n[[dungeon]]\nid = \"lair\"\nname = \"Lair\"\ngenerator = \"rooms\"\ndepth = 1\n\
+        "\n[[dungeon]]\nid = \"lair\"\nname = \"Lair\"\ndepth = 1\n[dungeon.level]\ngenerator = {{ kind = \"rooms\" }}\n\
          size = [80, 40]\ndanger = {danger}\npopulation = [{population}]\n\
          dread_one_in = {one_in}\nspawn = {{ every = \"1m\", chance = 100 }}\n{levels}"
     );

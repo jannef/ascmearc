@@ -28,7 +28,7 @@
 use super::{Canvas, Palette, connect};
 use crate::chest::ChestState;
 use crate::content::{
-    Content, DungeonDef, GOLD, LevelTemplate, RoomEffectDef, RoomEffectId, Secret, SpecialRoom,
+    Content, GOLD, LevelPlan, LevelTemplate, RoomEffectDef, RoomEffectId, Secret, SpecialRoom,
     secret_look,
 };
 use crate::geom::{Dir, Pos};
@@ -281,13 +281,13 @@ pub(super) fn seal(template: &mut LevelTemplate, content: &Content, pal: Palette
     }
 }
 
-/// Lays what every treasure room of generated level `template` of branch `def` holds (see the
+/// Lays what every treasure room of generated level `template` of plan `plan` holds (see the
 /// module docs), the finder's `luck` reaching its chests.
 pub(super) fn fill(
     template: &mut LevelTemplate,
     content: &Content,
     (seed, luck): (u64, Luck),
-    (pal, def): (Palette, &DungeonDef),
+    (pal, plan): (Palette, &LevelPlan),
 ) {
     let rooms: Vec<(usize, crate::content::Treasury)> = (template.rooms.iter().enumerate())
         .filter_map(|(i, r)| Some((i, content.room_effect(r.effect).treasure?)))
@@ -296,7 +296,7 @@ pub(super) fn fill(
         return;
     }
     let mut rng = Rng::treasure(seed, &template.id);
-    let traps: Vec<_> = (def.traps.iter().copied())
+    let traps: Vec<_> = (plan.traps.iter().copied())
         .filter(|&t| content.trap(t).effect.fits_fixture())
         .collect();
     let shut = content.chest_terrain(ChestState::Shut);

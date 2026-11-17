@@ -17,133 +17,61 @@
 //!    named vaults, perhaps a random one, pools, the stairs, lamps and fungus, patrols, and now
 //!    and then a special chamber.
 //!
-//! The tunables are grouped here at the top (#1834 moves generators' parameters into data).
+//! The tunables are [`TunnelsParams`] (`content/generator.rs`, `data/generators.toml`, #1834).
 
 mod passage;
 
-#[cfg(test)]
-pub(super) use passage::PILLAR;
 pub(super) use passage::build as build_passage;
 
 use super::connect::flood;
 use super::{CARDINALS, Canvas, Needs, caves, special, vault};
+use crate::content::{Bore, TunnelsParams};
 use crate::geom::{Dir, Pos};
 use crate::grid::Grid;
 use crate::rng::Rng;
 
 /// A range, least and most, inclusive.
-type Span = (i32, i32);
-
-/// The kinds of cavern, each `(weight, half-width range, half-height range)`: small chambers,
-/// caverns, and a few large halls.
-const CAVERN_KINDS: [(u32, Span, Span); 3] = [
-    (40, (3, 5), (2, 3)),
-    (42, (6, 9), (3, 5)),
-    (18, (10, 14), (5, 7)),
-];
-/// The map is cut into zones about this big, `(width, height)`, and a cavern is tried for in
-/// each but about this percent of them.
-const ZONE: (i32, i32) = (14, 9);
-const ZONE_SKIP: u32 = 5;
-/// Then a small chamber is tried for anywhere per this many zones, to fill the gaps.
-const FILL_PER: i32 = 2;
-/// Rock kept between the boxes of two caverns.
-const CAVERN_GAP: i32 = 2;
-/// Spots tried for a cavern before it is given up.
-const PLACE_TRIES: u32 = 60;
-/// A cavern is this many overlapping ellipses, each but the first at least this percent of the
-/// cavern's size.
-const LOBES: (i32, i32) = (1, 4);
-const LOBE_LEAST: i32 = 60;
-/// Percent of a cavern's cells that start as rock at its middle, and at its rim.
-const ROCK_MIDDLE: i32 = 10;
-const ROCK_RIM: i32 = 45;
-/// Smoothing passes over each cavern.
-const CAVERN_SMOOTHING: usize = 3;
-/// A cavern's kept piece must have at least this many cells; it is drawn this many times.
-const MIN_CAVERN: usize = 8;
-const CARVE_TRIES: usize = 3;
-/// Fewest caverns a level needs.
-const MIN_CAVERNS: usize = 3;
-/// Chance (percent) that a pair of caverns not on the spanning tree is linked too, if near.
-const LOOP_CHANCE: u32 = 45;
-/// A pair is near enough for a loop when its distance is at most this percent of the longest
-/// spanning-tree link.
-const LOOP_REACH: i32 = 110;
-/// At most one loop per this many caverns (and one at least).
-const CAVERNS_PER_LOOP: usize = 3;
-/// How far (percent of a stretch's length) a tunnel's midpoint is pushed aside.
-const BEND: i32 = 50;
-/// Stretches no longer than this are not bent further.
-const BEND_SEGMENT: i32 = 5;
-/// How the tunnels are carved: mostly 2 wide, now and then 3, now and then a 1-wide squeeze.
-const TUNNELS: Bore = Bore {
-    widths: [(20, 1), (65, 2), (15, 3)],
-    stretch: (3, 8),
-    squeeze: (2, 3),
-    squeeze_within: 6,
-    nibble: 6,
-};
-/// Dead-end spurs a level gets, and how far one runs.
-const SPURS: (i32, i32) = (1, 3);
-const SPUR_REACH: (i32, i32) = (6, 14);
-/// The kept cave must cover at least this percent of the inner area.
-const MIN_FLOOR: i32 = 15;
-/// Chance (percent) that a level gets a random vault, and that one with a vault gets a second.
-const VAULT_CHANCE: u32 = 40;
-const SECOND_VAULT_CHANCE: u32 = 15;
-
-/// How a tunnel is carved along its line.
-pub(super) struct Bore {
-    /// Its widths, each `(weight, width)`, 1 to 3.
-    pub widths: [(u32, i32); 3],
-    /// Cells a width holds before the next is drawn, and a squeeze (width 1) holds: two at
-    /// least, as the first cell after a 3-wide stretch has floor beside it.
-    pub stretch: (i32, i32),
-    pub squeeze: (i32, i32),
-    /// Stretches at most between two squeezes: the next one is a squeeze for certain.
-    pub squeeze_within: u32,
-    /// Chance (percent) that a cell of a stretch 2 or 3 wide gets one more cell of floor beside
-    /// it, for a rougher wall.
-    pub nibble: u32,
-}
-
 /// A cavern: its middle and the floor cells it kept.
 struct Cavern {
     middle: Pos,
     cells: Vec<Pos>,
 }
 
-pub(super) fn build(canvas: &mut Canvas, rng: &mut Rng, needs: Needs) -> Option<()> {
-    let caverns = caverns(canvas, rng);
-    if caverns.len() < MIN_CAVERNS {
+pub(super) fn build(
+    canvas: &mut Canvas,
+    rng: &mut Rng,
+    needs: Needs,
+    p: &TunnelsParams,
+) -> Option<()> {
+    let caverns = caverns(canvas, rng, p);
+    if caverns.len() < p.min_caverns {
         return None;
     }
-    for (a, b) in links(&caverns, rng) {
+    for (a, b) in links(&caverns, rng, p) {
         let from = nearest(&caverns[a].cells, caverns[b].middle);
         let to = nearest(&caverns[b].cells, from);
-        tunnel(canvas, rng, from, to);
+        tunnel(canvas, rng, from, to, p);
     }
-    spurs(canvas, rng, &caverns);
-    caves::keep_largest_cave(canvas, MIN_FLOOR)?;
+    spurs(canvas, rng, &caverns, p);
+    caves::keep_largest_cave(canvas, p.min_floor)?;
     for v in vault::named(canvas, needs.vaults) {
         if vault::spots(canvas, v).is_empty() {
-            caves::make_room(canvas, rng, v, MIN_FLOOR)?;
+            caves::make_room(canvas, rng, v, p.min_floor)?;
         }
-        if caves::place_vaults(canvas, rng, &[v], 1) < 1 {
+        if caves::place_vaults(canvas, rng, &[v], 1, p.max_tunnel) < 1 {
             return None;
         }
     }
-    let vaults = if rng.chance(VAULT_CHANCE) {
-        1 + usize::from(rng.chance(SECOND_VAULT_CHANCE))
+    let vaults = if rng.chance(p.vault_chance) {
+        1 + usize::from(rng.chance(p.second_vault_chance))
     } else {
         0
     };
     let shuffled = vault::shuffled(canvas, rng);
-    caves::place_vaults(canvas, rng, &shuffled, vaults);
+    caves::place_vaults(canvas, rng, &shuffled, vaults, p.max_tunnel);
     caves::pools(canvas, rng);
     let up = caves::place_stairs(canvas, rng, needs)?;
-    caves::light(canvas, rng, up);
+    caves::light(canvas, rng, up, p.lamp_block);
     caves::patrols(canvas, rng, up, needs);
     special::cave_rooms(canvas, rng, up);
     Some(())
@@ -151,24 +79,24 @@ pub(super) fn build(canvas: &mut Canvas, rng: &mut Rng, needs: Needs) -> Option<
 
 /// Spreads caverns of drawn sizes over the map, one tried for in each zone (most of them), then
 /// small chambers anywhere in the rock left, the boxes apart, and carves them.
-fn caverns(canvas: &mut Canvas, rng: &mut Rng) -> Vec<Cavern> {
+fn caverns(canvas: &mut Canvas, rng: &mut Rng, p: &TunnelsParams) -> Vec<Cavern> {
     let (w, h) = (canvas.width(), canvas.height());
-    let (cols, rows) = (((w - 2) / ZONE.0).max(1), ((h - 2) / ZONE.1).max(1));
+    let (cols, rows) = (((w - 2) / p.zone.0).max(1), ((h - 2) / p.zone.1).max(1));
     let (zw, zh) = ((w - 2) / cols, (h - 2) / rows);
     let mut placed = Placed::default();
     for (zx, zy) in (0..rows).flat_map(|y| (0..cols).map(move |x| (x, y))) {
-        if rng.chance(ZONE_SKIP) {
+        if rng.chance(p.zone_skip) {
             continue;
         }
-        let Some(&(_, xs, ys)) = rng.weighted(&CAVERN_KINDS, |k| k.0) else {
+        let Some(&(_, xs, ys)) = rng.weighted(&p.cavern_kinds, |k| k.0) else {
             break;
         };
         let zone = (1 + zx * zw, 1 + zy * zh, zw, zh);
-        placed.try_cavern(canvas, rng, (xs, ys), zone);
+        placed.try_cavern(canvas, rng, (xs, ys), zone, p);
     }
-    let (_, xs, ys) = CAVERN_KINDS[0];
-    for _ in 0..cols * rows / FILL_PER {
-        placed.try_cavern(canvas, rng, (xs, ys), (1, 1, w - 2, h - 2));
+    let (_, xs, ys) = p.cavern_kinds[0];
+    for _ in 0..cols * rows / p.fill_per {
+        placed.try_cavern(canvas, rng, (xs, ys), (1, 1, w - 2, h - 2), p);
     }
     placed.caverns
 }
@@ -187,30 +115,32 @@ impl Placed {
         &mut self,
         canvas: &mut Canvas,
         rng: &mut Rng,
-        (xs, ys): (Span, Span),
+        (xs, ys): ((i32, i32), (i32, i32)),
         (zx, zy, zw, zh): (i32, i32, i32, i32),
+        p: &TunnelsParams,
     ) {
         let (w, h) = (canvas.width(), canvas.height());
         // Never wider or taller than the map leaves room for.
         let rx = rng.range(xs.0, xs.1).min((w - 6) / 2);
         let ry = rng.range(ys.0, ys.1).min((h - 6) / 2);
-        for _ in 0..PLACE_TRIES {
+        for _ in 0..p.place_tries {
             let x = zx + rng.below(zw as u32) as i32;
             let y = zy + rng.below(zh as u32) as i32;
             let c = Pos::new(x.clamp(rx + 2, w - 3 - rx), y.clamp(ry + 2, h - 3 - ry));
             let b = (c.x - rx, c.y - ry, c.x + rx, c.y + ry);
             let clear = self.boxes.iter().all(|o| {
-                b.0 > o.2 + CAVERN_GAP
-                    || o.0 > b.2 + CAVERN_GAP
-                    || b.1 > o.3 + CAVERN_GAP
-                    || o.1 > b.3 + CAVERN_GAP
+                b.0 > o.2 + p.cavern_gap
+                    || o.0 > b.2 + p.cavern_gap
+                    || b.1 > o.3 + p.cavern_gap
+                    || o.1 > b.3 + p.cavern_gap
             });
             if !clear {
                 continue;
             }
             // A blob the noise left too small is drawn again; one never big enough leaves its
             // box free.
-            if let Some(cells) = (0..CARVE_TRIES).find_map(|_| carve_cavern(canvas, rng, c, rx, ry))
+            if let Some(cells) =
+                (0..p.carve_tries).find_map(|_| carve_cavern(canvas, rng, c, (rx, ry), p))
             {
                 self.boxes.push(b);
                 self.caverns.push(Cavern { middle: c, cells });
@@ -222,13 +152,19 @@ impl Placed {
 
 /// Carves a blob of floor in the ellipse of half-sizes `rx`, `ry` round `c`: noise, smoothed,
 /// the largest 4-connected piece kept. Its cells in row order, or `None` if too small.
-fn carve_cavern(canvas: &mut Canvas, rng: &mut Rng, c: Pos, rx: i32, ry: i32) -> Option<Vec<Pos>> {
+fn carve_cavern(
+    canvas: &mut Canvas,
+    rng: &mut Rng,
+    c: Pos,
+    (rx, ry): (i32, i32),
+    p: &TunnelsParams,
+) -> Option<Vec<Pos>> {
     let (bw, bh) = (2 * rx + 3, 2 * ry + 3);
     let origin = Pos::new(c.x - rx - 1, c.y - ry - 1);
     // Overlapping ellipses inside the box, the first the largest, so the blob is irregular.
-    let lobes: Vec<(i32, i32, i32, i32)> = (0..rng.range(LOBES.0, LOBES.1))
+    let lobes: Vec<(i32, i32, i32, i32)> = (0..rng.range(p.lobes.0, p.lobes.1))
         .map(|i| {
-            let least = if i == 0 { 70 } else { LOBE_LEAST };
+            let least = if i == 0 { 70 } else { p.lobe_least };
             let lx = (rx * rng.range(least, 100) / 100).max(3).min(rx);
             let ly = (ry * rng.range(least, 100) / 100).max(2).min(ry);
             (
@@ -255,12 +191,12 @@ fn carve_cavern(canvas: &mut Canvas, rng: &mut Rng, c: Pos, rx: i32, ry: i32) ->
         for x in 0..bw {
             let r = reach(x, y);
             if r <= 10000 {
-                let rock = ROCK_MIDDLE + (ROCK_RIM - ROCK_MIDDLE) * r / 10000;
+                let rock = p.rock_middle + (p.rock_rim - p.rock_middle) * r / 10000;
                 open[Pos::new(x, y)] = !rng.chance(rock as u32);
             }
         }
     }
-    for _ in 0..CAVERN_SMOOTHING {
+    for _ in 0..p.cavern_smoothing {
         let mut next = Grid::new(bw, bh, false);
         for y in 0..bh {
             for x in 0..bw {
@@ -295,7 +231,7 @@ fn carve_cavern(canvas: &mut Canvas, rng: &mut Rng, c: Pos, rx: i32, ry: i32) ->
             }
         }
     }
-    if best.len() < MIN_CAVERN {
+    if best.len() < p.min_cavern {
         return None;
     }
     let cells: Vec<Pos> = (best.into_iter())
@@ -310,7 +246,7 @@ fn carve_cavern(canvas: &mut Canvas, rng: &mut Rng, c: Pos, rx: i32, ry: i32) ->
 
 /// The pairs of caverns to join: a spanning tree, nearest first (Prim's, ties to the lower
 /// index), then some near pairs off it for loops.
-fn links(caverns: &[Cavern], rng: &mut Rng) -> Vec<(usize, usize)> {
+fn links(caverns: &[Cavern], rng: &mut Rng, p: &TunnelsParams) -> Vec<(usize, usize)> {
     let n = caverns.len();
     let dist = |a: usize, b: usize| caverns[a].middle.dist2(caverns[b].middle);
     let mut joined = vec![false; n];
@@ -332,7 +268,7 @@ fn links(caverns: &[Cavern], rng: &mut Rng) -> Vec<(usize, usize)> {
     }
     let longest = tree.iter().map(|&(a, b)| dist(a, b)).max().unwrap_or(0);
     // Squared distances: the reach's percent squared.
-    let reach = i64::from(longest) * i64::from(LOOP_REACH * LOOP_REACH) / 10000;
+    let reach = i64::from(longest) * i64::from(p.loop_reach * p.loop_reach) / 10000;
     let mut others: Vec<(i32, usize, usize)> = (0..n)
         .flat_map(|a| (a + 1..n).map(move |b| (a, b)))
         .filter(|&(a, b)| !tree.contains(&(a, b)) && !tree.contains(&(b, a)))
@@ -340,13 +276,13 @@ fn links(caverns: &[Cavern], rng: &mut Rng) -> Vec<(usize, usize)> {
         .filter(|&(d, _, _)| i64::from(d) <= reach)
         .collect();
     others.sort_unstable();
-    let most = (n / CAVERNS_PER_LOOP).max(1);
+    let most = (n / p.caverns_per_loop).max(1);
     let mut loops = 0;
     for (_, a, b) in others {
         if loops == most {
             break;
         }
-        if rng.chance(LOOP_CHANCE) {
+        if rng.chance(p.loop_chance) {
             tree.push((a, b));
             loops += 1;
         }
@@ -366,10 +302,10 @@ fn nearest(cells: &[Pos], to: Pos) -> Pos {
 }
 
 /// Carves a winding tunnel from `from` to `to`.
-fn tunnel(canvas: &mut Canvas, rng: &mut Rng, from: Pos, to: Pos) {
+fn tunnel(canvas: &mut Canvas, rng: &mut Rng, from: Pos, to: Pos, p: &TunnelsParams) {
     let mut points = vec![from];
-    bend(canvas, rng, from, to, &mut points);
-    bore(canvas, rng, &TUNNELS, &points);
+    bend(canvas, rng, from, to, &mut points, p);
+    bore(canvas, rng, &p.bore, &points);
 }
 
 /// Carves a tunnel along the straight lines through `points`, its width drawn by `how` every
@@ -397,23 +333,23 @@ pub(super) fn bore(canvas: &mut Canvas, rng: &mut Rng, how: &Bore, points: &[Pos
 }
 
 /// Pushes the points of the bent line from `a` (already in `out`) to `b`: the midpoint moved
-/// aside by [`BEND`] percent at most of the length, each half bent again, down to [`BEND_SEGMENT`].
-fn bend(canvas: &Canvas, rng: &mut Rng, a: Pos, b: Pos, out: &mut Vec<Pos>) {
+/// aside by `bend` percent at most of the length, each half bent again, down to `bend_segment`.
+fn bend(canvas: &Canvas, rng: &mut Rng, a: Pos, b: Pos, out: &mut Vec<Pos>, p: &TunnelsParams) {
     let (dx, dy) = (b.x - a.x, b.y - a.y);
     let len = dx.abs().max(dy.abs());
-    if len <= BEND_SEGMENT {
+    if len <= p.bend_segment {
         out.push(b);
         return;
     }
     // Always some way aside, so a long tunnel bends.
-    let amp = len * BEND / 100;
+    let amp = len * p.bend / 100;
     let push = rng.range(amp / 3, amp) * if rng.chance(50) { 1 } else { -1 };
     let mid = Pos::new(
         ((a.x + b.x) / 2 - dy * push / len).clamp(2, canvas.width() - 3),
         ((a.y + b.y) / 2 + dx * push / len).clamp(2, canvas.height() - 3),
     );
-    bend(canvas, rng, a, mid, out);
-    bend(canvas, rng, mid, b, out);
+    bend(canvas, rng, a, mid, out, p);
+    bend(canvas, rng, mid, b, out, p);
 }
 
 /// The 4-connected cells along the straight lines through `points`: a king's move of a line
@@ -468,18 +404,18 @@ fn brush(canvas: &mut Canvas, rng: &mut Rng, last: Pos, p: Pos, width: i32, nibb
 
 /// A few dead ends: from a cavern's rim a short winding tunnel out into the rock, ending in a
 /// small pocket.
-fn spurs(canvas: &mut Canvas, rng: &mut Rng, caverns: &[Cavern]) {
+fn spurs(canvas: &mut Canvas, rng: &mut Rng, caverns: &[Cavern], p: &TunnelsParams) {
     let (w, h) = (canvas.width(), canvas.height());
-    for _ in 0..rng.range(SPURS.0, SPURS.1) {
+    for _ in 0..rng.range(p.spurs.0, p.spurs.1) {
         let cavern = &caverns[rng.index(caverns.len())];
         let from = cavern.cells[rng.index(cavern.cells.len())];
         let sign = |rng: &mut Rng| if rng.chance(50) { 1 } else { -1 };
         let (sx, sy) = (sign(rng), sign(rng));
         let to = Pos::new(
-            (from.x + sx * rng.range(SPUR_REACH.0, SPUR_REACH.1)).clamp(3, w - 4),
-            (from.y + sy * rng.range(SPUR_REACH.0, SPUR_REACH.1) / 2).clamp(3, h - 4),
+            (from.x + sx * rng.range(p.spur_reach.0, p.spur_reach.1)).clamp(3, w - 4),
+            (from.y + sy * rng.range(p.spur_reach.0, p.spur_reach.1) / 2).clamp(3, h - 4),
         );
-        tunnel(canvas, rng, from, to);
-        brush(canvas, rng, to, to, 3, TUNNELS.nibble);
+        tunnel(canvas, rng, from, to, p);
+        brush(canvas, rng, to, to, 3, p.bore.nibble);
     }
 }

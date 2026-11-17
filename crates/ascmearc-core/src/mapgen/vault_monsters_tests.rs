@@ -52,7 +52,7 @@ fn content_in(vault: &str, danger: u8, levels: &str) -> Result<Content, String> 
     }
     files.insert("vaults/crowd.toml", vault);
     let branch = format!(
-        "\n[[dungeon]]\nid = \"crowded\"\nname = \"Crowded\"\ngenerator = \"rooms\"\ndepth = 1\n\
+        "\n[[dungeon]]\nid = \"crowded\"\nname = \"Crowded\"\ndepth = 1\n[dungeon.level]\ngenerator = {{ kind = \"rooms\" }}\n\
          size = [80, 40]\ndanger = {danger}\npopulation = [\"kobold\", \"rat\"]\n\
          population_count = 25\nspawn = {{ every = \"1m\", chance = 100 }}\n{levels}"
     );

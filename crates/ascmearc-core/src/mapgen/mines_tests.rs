@@ -4,9 +4,9 @@
 //! the lava rising with depth.
 
 use super::connect::flood;
-use super::mines::{END, MinesParams, START, params};
 use super::tests::describe;
 use super::*;
+use crate::content::MinesParams;
 use std::sync::LazyLock;
 
 static CONTENT: LazyLock<Content> =
@@ -22,11 +22,19 @@ fn fyrdelf_opens_up_and_grows_lava_from_top_to_bottom() {
     let def = CONTENT.dungeon("fyrdelf").expect("Fyrdelf");
     for depth in 1..=def.depth {
         let plan = def.plan(depth).expect("a floor");
-        assert_eq!(plan.generator, Generator::Mines, "depth {depth}");
+        assert_eq!(plan.generator.kind(), GeneratorKind::Mines, "depth {depth}");
     }
-    assert_eq!(params(def, 1), START);
-    assert_eq!(params(def, def.depth), END);
-    let all: Vec<MinesParams> = (1..=def.depth).map(|d| params(def, d)).collect();
+    // The ramps of data/generators.toml over its twelve floors (`content/generator.rs`).
+    let params = |depth| match &def.plan(depth).expect("a floor").generator {
+        Generator::Mines(p) => p.clone(),
+        g => panic!("{g:?}"),
+    };
+    assert_eq!((params(1).openness, params(1).lava), (0, 0));
+    assert_eq!(
+        (params(def.depth).openness, params(def.depth).lava),
+        (100, 100)
+    );
+    let all: Vec<MinesParams> = (1..=def.depth).map(params).collect();
     for pair in all.windows(2) {
         assert!(pair[0].openness < pair[1].openness, "{all:?}");
         assert!(pair[0].lava <= pair[1].lava, "{all:?}");

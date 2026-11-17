@@ -32,7 +32,7 @@ the trap with a door kicked in. **Picking locks** (#233) is `world/skills/lockpi
 #684 took the thief's Pick lock: the thief trains Open lock; `Ability::had_by`), a `crate::check` of the Dexterity modifier plus
 `skill_effect(Effect::Pick)` against `World::lock_difficulty` (the lock's own
 `Lock::difficulty`, `door::LOCK_DIFFICULTY` 14 unless a legend's `lock_difficulty` gives one,
-plus the branch's `DungeonDef::locks_at`, from `locks_per_depth` in `dungeons.toml`); both prices
+plus the floor's `DungeonDef::locks_at`, from its plan's `locks_per_depth` in `dungeons.toml`); both prices
 are taken before the check, `Use::Pick` trains Open lock, and a picked lock is removed and the
 door opened by `swing_open` (so a trapped door's trap goes off at the picker); a failure changes
 nothing, so trying again is free but for time. The ability is `Ability::PickLock`
@@ -49,7 +49,7 @@ and nothing locks a door again (no action, spell, or creature does). Closed door
 breaks the closed doors its `blast` reaches, `World::blast_doors`, no sturdiness check, lock and trap
 gone with `set_terrain`, sprung at no one; `docs/dev/spells.md` "Spell types"). The AI (`world/creatures/ai.rs`) paths through a locked door, and opens it, only
 with a key (`Stepped::Unlocked`); `go_look` stops next to a spot no one can stand on (a door kicked
-at). Generated levels: `Needs::key` (the branch's `key` in `dungeons.toml`) makes `rooms.rs`'s
+at). Generated levels: `Needs::key` (the level plan's `key` in `dungeons.toml`) makes `rooms.rs`'s
 `lock_rooms` lock up to two single-door rooms and drop the key in an unlocked room;
 `connect::validate` checks locks sit on closed doors and that the stairs and a key to each lock
 (`LevelTemplate::has_key_for`, lying or carried) are reachable without unlocking anything; vaults

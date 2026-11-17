@@ -57,7 +57,7 @@ fn three_short_cave_floors_of_danger_one_to_three() {
     assert_eq!(CONTENT.level_campaign("lytelscraef:1"), Some("ascmearc"));
     for depth in 1..=3 {
         let plan = def.plan(depth).expect("a floor");
-        assert_eq!(plan.generator, Generator::Caves, "depth {depth}");
+        assert_eq!(plan.generator.kind(), GeneratorKind::Caves, "depth {depth}");
         assert_eq!((plan.width, plan.height), (60, 30), "depth {depth}");
         let (rule, at, _) = CONTENT.spawning(&def.level_id(depth)).expect("a danger");
         for player_level in [1, 10, 30] {

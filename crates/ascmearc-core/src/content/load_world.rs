@@ -266,20 +266,25 @@ impl Content {
                     "`[defaults]` belongs in data/dungeons.toml only",
                 ));
             }
-            let key_id = |name: &str| {
-                self.object_id(name)
-                    .filter(|o| self.object(*o).key.is_some())
+            let generators = (self.generators.as_ref()).ok_or_else(|| {
+                ContentError::new(path, "dungeon branches need data/generators.toml")
+            })?;
+            let look = dungeon::Lookups {
+                creature_id: |name: &str| {
+                    (self.creature_id(name)).map(|c| (c, self.creature(c).level))
+                },
+                key_id: |name: &str| {
+                    self.object_id(name)
+                        .filter(|o| self.object(*o).key.is_some())
+                },
+                trap_id: |name: &str| self.trap_id(name),
+                hidden: |spec: &level::HiddenSpec| level::parse_generated_hidden(spec, self),
+                rooms: &self.room_effects,
+                shops: self.shops.as_ref(),
+                defaults: self.draw_odds,
+                generators,
             };
-            let resolved = parsed.resolve(
-                path,
-                |name| (self.creature_id(name)).map(|c| (c, self.creature(c).level)),
-                key_id,
-                |name| self.trap_id(name),
-                |spec| level::parse_generated_hidden(spec, self),
-                &self.room_effects,
-                self.shops.as_ref(),
-                self.draw_odds,
-            )?;
+            let resolved = parsed.resolve(path, &look)?;
             for mut def in resolved {
                 if let Some(first) = seen.insert(def.id.clone(), path) {
                     return Err(duplicate_id("dungeon", &def.id, path, first));
@@ -320,9 +325,15 @@ impl Content {
         let mut lives: BTreeMap<Option<String>, BTreeSet<CreatureId>> = BTreeMap::new();
         // A Pit's folk stay in it: though shared, its population is in no
         // other area's list. So do a tower's household, its floors' animated things.
+        // Every plan's folk count: a row may add a type to some depths alone.
         let branches = (self.dungeons.values())
             .filter(|d| d.portal.is_none() && d.tower.is_none())
-            .filter_map(|d| Some((d.campaign.clone(), d.spawning.as_ref()?)));
+            .flat_map(|d| {
+                (d.spawning
+                    .iter()
+                    .chain(d.plans().filter_map(|p| p.spawning.as_ref())))
+                .map(move |s| (d.campaign.clone(), s))
+            });
         let levels = (self.levels.iter()).filter_map(|(id, l)| {
             let campaign = self.level_campaigns.get(id).cloned().flatten();
             Some((campaign, &l.spawning.as_ref()?.1))
@@ -347,8 +358,15 @@ impl Content {
             }
             all.into_iter().collect()
         };
-        let lists: Vec<Vec<CreatureId>> = (self.dungeons.values())
-            .map(|d| (d.spawning.as_ref()).map_or_else(Vec::new, |s| generic(&d.campaign, s.pool)))
+        // A branch's lists: its template's spawning's, then each plan's ([`DungeonDef::plans`]).
+        let lists: Vec<Vec<Vec<CreatureId>>> = (self.dungeons.values())
+            .map(|d| {
+                (d.spawning
+                    .iter()
+                    .chain(d.plans().filter_map(|p| p.spawning.as_ref())))
+                .map(|s| generic(&d.campaign, s.pool))
+                .collect()
+            })
             .collect();
         let level_lists: Vec<Vec<CreatureId>> = (self.levels.iter())
             .map(|(id, l)| {
@@ -356,9 +374,13 @@ impl Content {
                 (l.spawning.as_ref()).map_or_else(Vec::new, |(_, s)| generic(&campaign, s.pool))
             })
             .collect();
-        for (d, list) in self.dungeons.values_mut().zip(lists) {
+        for (d, lists) in self.dungeons.values_mut().zip(lists) {
+            let mut lists = lists.into_iter();
             if let Some(s) = d.spawning.as_mut() {
-                s.generic = list;
+                s.generic = lists.next().unwrap_or_default();
+            }
+            for s in d.plans_mut().filter_map(|p| p.spawning.as_mut()) {
+                s.generic = lists.next().unwrap_or_default();
             }
         }
         for ((_, l), list) in self.levels.iter_mut().zip(level_lists) {

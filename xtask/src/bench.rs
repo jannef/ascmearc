@@ -33,8 +33,9 @@ const DELF_BRANCH: &str = r#"
 [[dungeon]]
 id = "bench_delf"
 name = "Bench delf"
-generator = "caves"
 depth = 1
+[dungeon.level]
+generator = { kind = "caves" }
 size = [120, 60]
 danger = 8
 population = ["bat", "beetle", "kobold", "kobold_archer", "kobold_shaman", "rat"]
@@ -59,8 +60,9 @@ const HEXED_BRANCH: &str = r#"
 [[dungeon]]
 id = "bench_hexed"
 name = "Bench hexed"
-generator = "caves"
 depth = 1
+[dungeon.level]
+generator = { kind = "caves" }
 size = [120, 60]
 danger = 8
 population = ["bench_hexed_bat", "bench_hexed_beetle", "kobold", "bench_hexed_kobold_archer", "bench_hexed_kobold_shaman", "bench_hexed_rat"]
@@ -87,8 +89,9 @@ const PANOPLY_BRANCH: &str = r#"
 [[dungeon]]
 id = "bench_panoply"
 name = "Bench panoply"
-generator = "caves"
 depth = 1
+[dungeon.level]
+generator = { kind = "caves" }
 size = [120, 60]
 danger = 40
 population = ["animated_panoply"]
@@ -102,8 +105,9 @@ const LONG_BRANCH: &str = r#"
 [[dungeon]]
 id = "bench_long"
 name = "Bench long"
-generator = "caves"
 depth = 40
+[dungeon.level]
+generator = { kind = "caves" }
 size = [120, 60]
 danger = { base = 8, per_depth = 0 }
 population = ["bat", "beetle", "kobold", "kobold_archer", "kobold_shaman", "rat"]

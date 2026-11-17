@@ -7,20 +7,24 @@
 # level. Its `<` leads one level up (on depth 1: back where the player came from), its `>` one
 # level down (the deepest level has none).
 #
-# Fields:
+# A `[[dungeon]]` table holds the branch: its id and name, how deep it goes and where it leads.
+# Its `[dungeon.level]` table is the level template: how every level is made, from its generator
+# and size to who lives there. `[[dungeon.levels]]` rows (`from`, `to`) take the same fields,
+# each optional, layered field by field over the template for their depths (first match wins),
+# so any level field may vary by depth; a table field (`generator` of the template's kind,
+# `chests`, `spawn`, `room_effects`, `shops`) layers field by field too, `danger` is one value.
+# What is checked is each depth's resolved plan: a `dread_one_in` or a `population` without a
+# `danger`, a size its generator does not build, a `hidden` on more than one depth, or a tower
+# plan with what a tower has not is refused wherever the field came from (#1834;
+# `content/dungeon.rs`, docs/dev/mapgen.md "Branches and level plans").
+#
+# Branch fields ([[dungeon]]):
 #   id         branch id; its levels are "<id>:1" to "<id>:<depth>"
 #   name       level names are "<name> <depth>" (default: the id)
 #   arrival    a line said each time the player arrives on the first level by stairs (optional)
-#   generator  "rooms" (rooms and corridors, ADOM-like), "caves" (cellular automata), "tunnels"
-#              (caverns of varied size joined by narrow winding tunnels, loops among them),
-#              "passage" (one long hewn way from stairs to stairs, no second route: shortcuts),
-#              "minster" (a drowned church's cellars and crypts, flooding and falling deeper down
-#              the branch, at least 90x36; docs/dev/mapgen.md "The minster"), "mines" (a worked
-#              mine that opens up and grows lava from the branch's first mines floor to its last,
-#              `mapgen/mines.rs`), or a tower's "tower"
-#   kind       "dungeon" (the default) or "tower": floors that go up from a hand-made clearing,
-#              with `floors`, `clearing`, and `top` instead of `depth` and `size` (below)
 #   depth      number of levels
+#   kind       "dungeon" (the default) or "tower": floors that go up from a hand-made clearing,
+#              with `floors`, `clearing`, and `top` instead of `depth` (below)
 #   below      a level of another bounded branch of the same campaign (`below = "fyrdelf:12"`):
 #              the branch is a way up; its deepest level's `>` leads there,
 #              that level gets a `<` back up near a vault it names, and its first level's `<`
@@ -29,6 +33,50 @@
 #              `>` leads to; that level's own `<` must name the deepest level (`to =
 #              "deopgang:11"`), and the player arrives on it (default none; not with `below`,
 #              `endless`, or `portal`)
+#   [dungeon.endless]  instead of `depth`: floors without end, each made as it is reached and
+#              forgotten when left: `caves` (percent of floors made by `caves_level`), `caves_level`
+#              (the level fields a caves floor changes, over the template: e.g. `{ generator = {
+#              kind = "caves" }, size = [100, 40] }`), `dread` (`dread_one_in` by depth: `{ steps =
+#              [[70, 40]], halves = 10, least = 5 }`), and `[[dungeon.endless.boss]]` rows (`depth`,
+#              `creature`, `vault`: a layer boss and its lair). One plan at every depth: no
+#              `[[dungeon.levels]]`, no `vaults`, no `hidden`
+#   [dungeon.portal]  (an empty table, with `depth`; no `endless`, no `below`) a branch of Pits: it
+#              exists only as instances opened by a portal, Pit S's
+#              levels "<id>@S:1" to "<id>@S:<depth>", each made from the run seed and its id and
+#              forgotten when left; no stairs, hidden location, or quest may name them. `boss =
+#              { depth, creature, vault }`: every Pit's warden and its hall
+#   kind = "tower"  a wizard's tower (docs/dev/mapgen.md "Towers"): its levels go up,
+#              "<id>:1" the floor above the ground. With it, and only with it:
+#     floors   the tower's floors, its ground floor and top included (at least 3): the
+#              branch's levels are "<id>:1" to "<id>:<floors - 2>", named "<name> 2" up
+#     clearing an outdoor level of the same campaign, the ground floor: the tower stands in it
+#              as the box of its tower wall, its `<` inside leading to "<id>:1"; every floor is
+#              its size, built on that box
+#     top      a hand-made level of the same campaign and the clearing's size, the top floor:
+#              the highest level's `<` leads there, and its own `>` must lead back from the
+#              cell of that `<` (the load error says which)
+#              Its template's generator is `{ kind = "tower" }` (a ring wall with windows round
+#              rooms and halls); each level's `<` climbs to the next (the highest's to `top`),
+#              its `>` goes down (the first's to the clearing's `<`); the traps, danger,
+#              population, loot, and chests as any level's. Refused beside it: the branch
+#              fields depth, below, bottom, endless, portal, and in the template or any row the
+#              level fields size, secret_doors, key, ores (nothing is mined: a tower has none),
+#              temperature, vaults, hidden, and a generator of any other kind
+#
+# Level fields ([dungeon.level], and each optional in a [[dungeon.levels]] row):
+#   generator  a table with its `kind` and any of the kind's parameters, which override
+#              data/generators.toml's for that level, just those (`generator = { kind = "caves",
+#              rock = 50 }`); a row's generator of the template's kind layers over the template's
+#              field by field, one of another kind starts from that kind's table. The kinds:
+#              "rooms" (rooms and corridors, ADOM-like), "caves" (cellular automata), "tunnels"
+#              (caverns of varied size joined by narrow winding tunnels, loops among them),
+#              "passage" (one long hewn way from stairs to stairs, no second route: shortcuts),
+#              "minster" (a drowned church's cellars and crypts, flooding and falling deeper down
+#              the branch, at least 90x36; docs/dev/mapgen.md "The minster"), "mines" (a worked
+#              mine that opens up and grows lava from the branch's first mines floor to its last,
+#              `mapgen/mines.rs`), or a tower's "tower". The mines' `openness` and `lava` and the
+#              minster's `flood` and `ruin` are ramps over the branch's floors of that kind
+#              (generators.toml); a row pins one with a number (`{ kind = "mines", lava = 0 }`)
 #   size      [width, height]
 #   creatures  creature ids generators may place on patrol (default none)
 #   traps      trap ids (data/traps.toml) generators hide on each level, all hidden, never on or
@@ -62,7 +110,8 @@
 #              nothing comes): `danger = 4` is `{ base = 4, per_depth = 1 }`, the floor at depth d
 #              `base + (d - 1) × per_depth` (at most 99 a floor); `player = {
 #              percent, from, max }` adds percent % of each player level past `from`, at most
-#              `max` (an area that grows with the player). With a danger, also:
+#              `max` (an area that grows with the player). One value: a row's replaces the
+#              template's whole. With a danger, also:
 #   population  creature ids that live there (default `creatures`); each type's level is its
 #              danger, and draws favour types at about the floor's
 #   population_count  how many a floor holds: a number, or `{ per_1000, least, most }` by its
@@ -93,43 +142,24 @@
 #   spawn      `{ every = "15m", chance = 60, cap = N }` (the defaults; cap: the population):
 #              while the player is on a floor, every `every` a creature comes with `chance` %
 #              unless the floor holds `cap` creatures hostile to the player
-#   room_effects  the branch's own special-room odds, a table:
+#   room_effects  the level's own special-room odds, a table:
 #              `chance` (percent a room is special), `per_level` (at most this many a level),
 #              `favoured` (`{ id = share }`, ids in room_effects/, each its fixed percent of
 #              the draws) and `banned` (ids never drawn); each field defaults to
 #              room_effects/'s, e.g. `room_effects = { chance = 25, favoured = { flooded = 40 } }`
-#   shops      the branch's own shop odds, a table: `chance` (percent of its
+#   shops      the level's own shop odds, a table: `chance` (percent of its
 #              rooms levels with a shop), `kinds` (ids in shops.toml, picked
 #              uniformly; default every kind with `generated`), `names` (the keepers' names), `keeper` (the keepers' creature type;
 #              they carry the shared `[keeper]`'s kit); each field defaults to shops.toml's,
 #              e.g. `shops = { chance = 0 }` for none
-#   [[dungeon.levels]]  per-depth overrides, first match wins:
-#              from, to (inclusive; default `from`), generator, size, temperature, danger,
-#              dread_one_in, room_effects, shops (each default the branch's; a danger or a
-#              dread_one_in here needs the branch's danger; a table field by field), and `vaults` (vault ids, shared or the branch's
-#              campaign's: each stamped on every level of the range for certain, and never drawn
-#              at random anywhere, e.g. `vaults = ["drakes_hoard"]`)
-#   kind = "tower"  a wizard's tower (docs/dev/mapgen.md "Towers"): its levels go up,
-#              "<id>:1" the floor above the ground. With it, and only with it:
-#     floors   the tower's floors, its ground floor and top included (at least 3): the
-#              branch's levels are "<id>:1" to "<id>:<floors - 2>", named "<name> 2" up
-#     clearing an outdoor level of the same campaign, the ground floor: the tower stands in it
-#              as the box of its tower wall (timber_wall until #1781 brings tower_wall), its
-#              `<` inside leading to "<id>:1"; every floor is its size, built on that box
-#     top      a hand-made level of the same campaign and the clearing's size, the top floor:
-#              the highest level's `<` leads there, and its own `>` must lead back from the
-#              cell of that `<` (the load error says which)
-#     generator = "tower" (a ring wall with windows round a hall that winds between two to
-#              four partitions); each level's `<` climbs to the next (the highest's to `top`),
-#              its `>` goes down (the first's to the clearing's `<`); the traps, danger,
-#              population, loot, and chests as any branch's. Refused beside it: depth, size,
-#              below, bottom, endless, portal, secret_doors, key, ores (nothing is mined:
-#              a tower has none), temperature, and a level row's generator, size,
-#              temperature, vaults, and hidden
-#   [dungeon.portal]  (an empty table, with `depth`; no `endless`, no `below`) a branch of Pits: it
-#              exists only as instances opened by a portal, Pit S's
-#              levels "<id>@S:1" to "<id>@S:<depth>", each made from the run seed and its id and
-#              forgotten when left; no stairs, hidden location, or quest may name them
+#   vaults     vault ids, shared or the branch's campaign's: each stamped on every level with
+#              the field for certain, and never drawn at random anywhere, e.g. `vaults =
+#              ["drakes_hoard"]` (usually a row's)
+#   hidden     `{ id, terrain, to, name }`: a hidden location on a cell of floor the generator
+#              picks, the far end of a hand-made level's hidden way of the same id
+#              (docs/dev/overworld.md); on one level only, so a row of one level's
+#   [[dungeon.levels]]  per-depth rows, first match wins: `from`, `to` (inclusive; default
+#              `from`), and any of the level fields above, over the template's
 #
 # [defaults] (this file only; required once any branch or level has a danger): the odds every
 # area with a danger draws by unless it gives its own `stray`, `out_of_depth`, `deeper`,
@@ -137,7 +167,8 @@
 # to 100, `neutral` to 100).
 #
 # Generators build with the terrain void, wall, floor, door_closed, door_open, stairs_up,
-# stairs_down, water, sconce, fungus and the light lamp, and stamp vaults (assets/vaults).
+# stairs_down, water, sconce, fungus and the light lamp, and stamp vaults (assets/vaults). Their
+# parameters are data/generators.toml's.
 
 [defaults]
 # Percent of draws from the generic creature list.

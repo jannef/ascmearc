@@ -1016,8 +1016,20 @@ fn dungeons_need_the_terrain_generators_build_with() {
     let mut files = minimal_files("#@#\n", "");
     files.insert(
         "data/dungeons.toml",
-        "[[dungeon]]\nid = \"d\"\ngenerator = \"rooms\"\ndepth = 1\nsize = [80, 21]\n",
+        "[[dungeon]]\nid = \"d\"\ndepth = 1\n[dungeon.level]\ngenerator = { kind = \"rooms\" }\nsize = [80, 21]\n",
     );
+    // And the generators' parameters: without them no branch loads.
+    let err = Content::load(&files).unwrap_err();
+    assert!(
+        err.message.contains("need data/generators.toml"),
+        "{}",
+        err.message
+    );
+    let generators = ContentFiles::builtin()
+        .get("data/generators.toml")
+        .expect("the file")
+        .to_string();
+    files.insert("data/generators.toml", &generators);
     let err = Content::load(&files).unwrap_err();
     assert_eq!(err.file, "data/dungeons.toml");
     assert!(

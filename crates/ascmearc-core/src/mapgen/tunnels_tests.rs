@@ -14,11 +14,11 @@ use std::sync::LazyLock;
 static FIXTURE: LazyLock<Content> = LazyLock::new(|| {
     let mut files = ContentFiles::builtin();
     let fixture = "\n\
-         [[dungeon]]\nid = \"fixture_tunnels\"\ngenerator = \"tunnels\"\ndepth = 4\n\
+         [[dungeon]]\nid = \"fixture_tunnels\"\ndepth = 4\n[dungeon.level]\ngenerator = { kind = \"tunnels\" }\n\
          size = [60, 24]\n\
          [[dungeon.levels]]\nfrom = 2\nsize = [100, 40]\n\
          [[dungeon.levels]]\nfrom = 3\nsize = [140, 50]\n\
-         [[dungeon]]\nid = \"fixture_passage\"\ngenerator = \"passage\"\ndepth = 3\n\
+         [[dungeon]]\nid = \"fixture_passage\"\ndepth = 3\n[dungeon.level]\ngenerator = { kind = \"passage\" }\n\
          size = [80, 21]\n\
          [[dungeon.levels]]\nfrom = 2\nsize = [120, 30]\n";
     let mut once = Some(fixture);
@@ -27,8 +27,6 @@ static FIXTURE: LazyLock<Content> = LazyLock::new(|| {
     });
     Content::load(&files).expect("fixture content")
 });
-
-use super::tunnels::PILLAR;
 
 fn floor(id: &str, seed: u64) -> LevelTemplate {
     let campaign = if id.starts_with("fixture") {
@@ -181,12 +179,20 @@ fn cealdhlaw_hollows_are_tunnels_and_utgang_a_passage() {
     let hollows = FIXTURE.dungeon("cealdhlaw").expect("Cealdhlāw");
     for depth in 3..=6 {
         let plan = hollows.plan(depth).expect("a floor");
-        assert_eq!(plan.generator, Generator::Tunnels, "depth {depth}");
+        assert_eq!(
+            plan.generator.kind(),
+            GeneratorKind::Tunnels,
+            "depth {depth}"
+        );
     }
     let shaft = FIXTURE.dungeon("utgang").expect("Ūtgang");
     for depth in 1..=3 {
         let plan = shaft.plan(depth).expect("a floor");
-        assert_eq!(plan.generator, Generator::Passage, "depth {depth}");
+        assert_eq!(
+            plan.generator.kind(),
+            GeneratorKind::Passage,
+            "depth {depth}"
+        );
     }
 }
 
@@ -235,6 +241,11 @@ proptest! {
     /// round no rock but a pillar, so there is no second way between any two places.
     #[test]
     fn a_passage_is_one_route_between_far_stairs(seed: u64) {
+        let passage = FIXTURE.dungeon("fixture_passage").expect("the fixture");
+        let pillar = match &passage.plan(1).expect("a floor").generator {
+            Generator::Passage(p) => p.pillar,
+            g => panic!("{g:?}"),
+        };
         for id in ["fixture_passage:1", "fixture_passage:2", "utgang:1", "utgang:3"] {
             let level = floor(id, seed);
             connected(&level)?;
@@ -244,7 +255,7 @@ proptest! {
             let walk = steps(&level, up, None)[down];
             prop_assert!(walk as i32 * 2 > w, "{}: {walk} steps", id);
             let most = holes(&level).into_iter().max().unwrap_or(0);
-            prop_assert!(most <= PILLAR, "{}: a hole of {most}\n{}", id, ascii(&level, &FIXTURE));
+            prop_assert!(most <= pillar, "{}: a hole of {most}\n{}", id, ascii(&level, &FIXTURE));
         }
     }
 }

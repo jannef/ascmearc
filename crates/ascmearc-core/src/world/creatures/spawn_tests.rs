@@ -63,8 +63,9 @@ const BARROW: &str = r#"
 [[dungeon]]
 id = "barrow"
 name = "Barrow"
-generator = "rooms"
 depth = 3
+[dungeon.level]
+generator = { kind = "rooms" }
 size = [80, 21]
 danger = 2
 population = ["kobold", "kobold_archer", "kobold_shaman"]
@@ -81,8 +82,9 @@ danger = { base = 9, per_depth = 0 }
 [[dungeon]]
 id = "lair"
 name = "Lair"
-generator = "caves"
 depth = 1
+[dungeon.level]
+generator = { kind = "caves" }
 size = [100, 40]
 danger = 3
 population = ["chief", "kobold"]
@@ -373,8 +375,8 @@ fn crowded_run() -> World {
          [legend]\n\"m\" = { terrain = \"floor\", monsters = { pool = \"level\" } }\n",
     );
     let dungeons = format!(
-        "{}{BARROW}\n[[dungeon]]\nid = \"crowded\"\nname = \"Crowded\"\ngenerator = \"rooms\"\n\
-         depth = 1\nsize = [80, 40]\ndanger = 3\npopulation = [\"kobold\", \"rat\"]\n\
+        "{}{BARROW}\n[[dungeon]]\nid = \"crowded\"\nname = \"Crowded\"\ndepth = 1\n[dungeon.level]\ngenerator = {{ kind = \"rooms\" }}\n\
+         size = [80, 40]\ndanger = 3\npopulation = [\"kobold\", \"rat\"]\n\
          population_count = 25\nspawn = {{ every = \"1m\", chance = 100 }}\n\
          [[dungeon.levels]]\nfrom = 1\nvaults = [\"crowd\"]\n",
         include_str!("../../../../../assets/data/dungeons.toml")

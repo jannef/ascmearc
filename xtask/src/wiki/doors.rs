@@ -52,7 +52,10 @@ pub(super) fn lock_picking(content: &Content) -> String {
     let mut rows = vec![("A lock of the usual difficulty".to_string(), usual)];
     let mut branches: Vec<_> = content.dungeons().collect();
     branches.sort_by(|a, b| a.name.cmp(&b.name));
-    for def in branches.into_iter().filter(|d| d.locks_per_depth > 0) {
+    for def in branches
+        .into_iter()
+        .filter(|d| d.plans().any(|p| p.locks_per_depth > 0))
+    {
         for depth in 2..=def.depth {
             let place = def.level_name(depth);
             rows.push((format!("Usual, on {place}"), usual + def.locks_at(depth)));

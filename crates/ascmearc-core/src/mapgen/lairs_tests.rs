@@ -27,7 +27,7 @@ struct Lair {
     name: &'static str,
     criminal: &'static str,
     vault: &'static str,
-    generator: Generator,
+    generator: GeneratorKind,
     size: (i32, i32),
     entrance: &'static str,
     at: Pos,
@@ -41,7 +41,7 @@ const LAIRS: [Lair; 4] = [
         name: "Wyrtholm",
         criminal: "sallow",
         vault: "still_room",
-        generator: Generator::Caves,
+        generator: GeneratorKind::Caves,
         size: (100, 40),
         entrance: "cave_mouth",
         at: Pos::new(88, 46),
@@ -53,7 +53,7 @@ const LAIRS: [Lair; 4] = [
         name: "Wulfeshol",
         criminal: "wystan",
         vault: "robbers_hoard",
-        generator: Generator::Caves,
+        generator: GeneratorKind::Caves,
         size: (100, 40),
         entrance: "cave_mouth",
         at: Pos::new(18, 49),
@@ -65,7 +65,7 @@ const LAIRS: [Lair; 4] = [
         name: "Bānfeld",
         criminal: "osrick",
         vault: "unhallowed_chapel",
-        generator: Generator::Rooms,
+        generator: GeneratorKind::Rooms,
         size: (80, 21),
         entrance: "barrow",
         at: Pos::new(42, 31),
@@ -77,7 +77,7 @@ const LAIRS: [Lair; 4] = [
         name: "Brocenburg",
         criminal: "herrick",
         vault: "captains_hall",
-        generator: Generator::Rooms,
+        generator: GeneratorKind::Rooms,
         size: (80, 21),
         entrance: "dungeon_entrance",
         at: Pos::new(66, 12),
@@ -134,7 +134,7 @@ fn four_floors_of_danger_six_to_nine() {
         assert_eq!(def.campaign.as_deref(), Some("ascmearc"));
         for depth in 1..=4 {
             let plan = def.plan(depth).expect("a floor");
-            assert_eq!(plan.generator, lair.generator, "{} {depth}", lair.id);
+            assert_eq!(plan.generator.kind(), lair.generator, "{} {depth}", lair.id);
             assert_eq!((plan.width, plan.height), lair.size, "{} {depth}", lair.id);
             let (rule, at, spawning) = CONTENT.spawning(&def.level_id(depth)).expect("a danger");
             for player_level in [1, 10, 30] {

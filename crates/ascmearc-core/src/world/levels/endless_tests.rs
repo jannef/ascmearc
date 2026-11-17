@@ -3,7 +3,7 @@
 
 use crate::action::Action;
 use crate::character::CharacterSpec;
-use crate::content::Generator;
+use crate::content::GeneratorKind;
 use crate::dump::{self, Layer};
 use crate::mapgen;
 use crate::replay::Replay;
@@ -318,7 +318,10 @@ fn the_generator_draw_gives_both_rooms_and_caves() {
         assert_eq!(t.stairs.len(), 2, "a way up and a way down");
     }
     assert!(rooms > 140 && caves > 10, "{rooms} rooms, {caves} caves");
-    assert_eq!(def.plan(3).map(|p| p.generator), Some(Generator::Rooms));
+    assert_eq!(
+        def.plan(3).map(|p| p.generator.kind()),
+        Some(GeneratorKind::Rooms)
+    );
 }
 
 #[test]

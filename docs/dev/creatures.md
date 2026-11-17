@@ -448,7 +448,8 @@ and reads no flag: a vault's monster pool (`mapgen/population.rs`). A den's warr
 from a non-dread type drawn without the roll (`mapgen/den.rs::Theme::roll`). The odds of a draw on
 a level are `Content::draw_odds_at(id)`: its spawning rules' odds with a branch depth's own
 `dread_one_in` (`DungeonDef::dread_one_in`: an endless branch's `content/dread.rs::DreadCurve` at
-the floor's true depth, else its `[[dungeon.levels]]` entry's `LevelPlan::dread_one_in`); the
+the floor's true depth, else its plan's, `LevelPlan::spawning`'s odds: its row's over the template's
+over `[defaults]`); the
 spawner, the population (`mapgen::generate_for` patches the `Spawning` it hands `populate` and
 `den::fill`), hoards' guardians, and outcomes' summons read it; an encounter's draw takes its
 branch's odds. Tests: `content::danger::tests` (the roll, the fallbacks, determinism),

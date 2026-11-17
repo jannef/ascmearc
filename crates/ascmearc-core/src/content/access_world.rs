@@ -148,11 +148,12 @@ impl Content {
             return Some((*rule, 1, spawning));
         }
         let (branch, depth) = self.branch_level(id)?;
-        let rule = branch.plan(depth)?.danger?;
+        let plan = branch.plan(depth)?;
+        let rule = plan.danger?;
         // Past the roster's top, an endless branch draws as at its top: nothing above a danger is
         // drawn, and nothing far below it.
         let depth = (branch.endless).map_or(depth, |e| depth.min(e.roster_depth));
-        Some((rule, depth, branch.spawning.as_ref()?))
+        Some((rule, depth, plan.spawning.as_ref()?))
     }
 
     /// The odds a random draw on level `id` is made by ([`danger::draw`]): its spawning rules'

@@ -24,7 +24,7 @@ fn caves_levels() -> Vec<(String, String)> {
                     Some(_) => def.pit_level_id(1, depth),
                     None => def.level_id(depth),
                 };
-                (plan.generator == Generator::Caves).then(|| (campaign.clone(), id))
+                (plan.generator.kind() == GeneratorKind::Caves).then(|| (campaign.clone(), id))
             })
         })
         .collect()
@@ -65,7 +65,7 @@ fn rooms_floors_have_none() {
             };
             let minster = def
                 .plan(depth)
-                .is_some_and(|p| p.generator == Generator::Minster);
+                .is_some_and(|p| p.generator.kind() == GeneratorKind::Minster);
             if minster || caves.iter().any(|(_, c)| *c == id) {
                 continue;
             }

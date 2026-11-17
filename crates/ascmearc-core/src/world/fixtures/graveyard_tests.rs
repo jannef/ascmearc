@@ -8,7 +8,7 @@ use crate::world::*;
 /// (so a basilisk is drawn, and its statues laid), and a scenario starting on its floor.
 fn content() -> Arc<Content> {
     let mut files = ContentFiles::builtin();
-    let branch = "\n[[dungeon]]\nid = \"lair\"\nname = \"Lair\"\ngenerator = \"rooms\"\ndepth = 1\n\
+    let branch = "\n[[dungeon]]\nid = \"lair\"\nname = \"Lair\"\ndepth = 1\n[dungeon.level]\ngenerator = { kind = \"rooms\" }\n\
          size = [80, 40]\ndanger = 16\npopulation = [\"basilisk\", \"kobold\"]\n\
          dread_one_in = 1\nspawn = { every = \"1m\", chance = 100 }\n";
     let dungeons = format!(

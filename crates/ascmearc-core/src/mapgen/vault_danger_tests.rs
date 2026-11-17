@@ -25,8 +25,8 @@ fn content_with(head: &str) -> Result<Content, String> {
             "name = \"Plain\"\nmap = '''\n##+##\n#...#\n#####\n'''\n",
         );
     }
-    let branch = "\n[[dungeon]]\nid = \"graded\"\nname = \"Graded\"\ngenerator = \"rooms\"\n\
-         depth = 12\nsize = [80, 30]\ndanger = { base = 1, per_depth = 1 }\n\
+    let branch = "\n[[dungeon]]\nid = \"graded\"\nname = \"Graded\"\ndepth = 12\n[dungeon.level]\ngenerator = { kind = \"rooms\" }\n\
+         size = [80, 30]\ndanger = { base = 1, per_depth = 1 }\n\
          population = [\"kobold\", \"rat\"]\npopulation_count = 10\n";
     let dungeons = format!(
         "{}{branch}",
@@ -172,8 +172,8 @@ fn a_vault_a_branch_level_names_takes_no_danger() {
     let mut files = ContentFiles::builtin();
     files.remove_shared_vaults();
     files.insert("vaults/marked.toml", &vault_file("danger = { from = 6 }"));
-    let branch = "\n[[dungeon]]\nid = \"pinning\"\nname = \"Pinning\"\ngenerator = \"rooms\"\n\
-         depth = 1\nsize = [80, 21]\n[[dungeon.levels]]\nfrom = 1\nvaults = [\"marked\"]\n";
+    let branch = "\n[[dungeon]]\nid = \"pinning\"\nname = \"Pinning\"\ndepth = 1\n[dungeon.level]\ngenerator = { kind = \"rooms\" }\n\
+         size = [80, 21]\n[[dungeon.levels]]\nfrom = 1\nvaults = [\"marked\"]\n";
     let dungeons = format!(
         "{}{branch}",
         include_str!("../../../../assets/data/dungeons.toml")

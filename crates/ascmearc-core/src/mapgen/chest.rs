@@ -26,7 +26,7 @@
 
 use super::{Palette, patrolled};
 use crate::chest::{Chest, ChestState, roll_contents};
-use crate::content::{Content, CreatureSpawn, DungeonDef, LevelTemplate, TerrainId, Trap, TrapId};
+use crate::content::{Content, CreatureSpawn, LevelPlan, LevelTemplate, TerrainId, Trap, TrapId};
 use crate::door::Lock;
 use crate::equipment::Equipment;
 use crate::geom::{Dir, Pos};
@@ -37,29 +37,29 @@ use crate::rng::Rng;
 /// The fewest cells (Chebyshev) between a chest and a staircase.
 pub const AWAY: i32 = 6;
 
-/// Lays the chests of generated level `template` of branch `def` (see the module docs), the
+/// Lays the chests of generated level `template` of plan `plan` (see the module docs), the
 /// finder's `luck` reaching their contents; `stamped` marks the vaults' cells.
 pub(super) fn fill(
     template: &mut LevelTemplate,
     content: &Content,
     (seed, luck): (u64, Luck),
-    (pal, def): (Palette, &DungeonDef),
+    (pal, plan): (Palette, &LevelPlan),
     stamped: &Grid<bool>,
 ) {
     let Some(shut) = content.chest_terrain(ChestState::Shut) else {
         return;
     };
-    if content.chests().bands.is_empty() || def.chests.chance == 0 {
+    if content.chests().bands.is_empty() || plan.chests.chance == 0 {
         return;
     }
     let mut rng = Rng::chests(seed, &template.id);
-    if !rng.chance(u32::from(def.chests.chance)) {
+    if !rng.chance(u32::from(plan.chests.chance)) {
         return;
     }
-    let [least, most] = def.chests.count.map(i32::from);
+    let [least, most] = plan.chests.count.map(i32::from);
     let count = rng.range(least, most);
     let mut free = cells(template, content, pal, stamped);
-    let traps: Vec<_> = (def.traps.iter().copied())
+    let traps: Vec<_> = (plan.traps.iter().copied())
         .filter(|&t| content.trap(t).effect.fits_fixture())
         .collect();
     for _ in 0..count {

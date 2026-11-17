@@ -4,7 +4,7 @@
 
 use super::util::{capital, percent_of};
 use ascmearc_core::check;
-use ascmearc_core::content::{Content, Generator, PassiveSearch};
+use ascmearc_core::content::{Content, GeneratorKind, PassiveSearch};
 use ascmearc_core::dice::Dice;
 use ascmearc_core::skills::{Effect, SkillId};
 use std::fmt::Write as _;
@@ -73,16 +73,19 @@ pub(super) fn search_depths(content: &Content) -> String {
     branches.sort_by(|a, b| a.name.cmp(&b.name));
     let door = i32::from(content.search().secret_door);
     for def in branches {
-        if def.hidden_per_depth == 0 && def.secret_doors[1] == 0 {
+        if (def.plans()).all(|p| p.hidden_per_depth == 0 && p.secret_doors[1] == 0) {
             continue;
         }
         for depth in 1..=def.depth {
-            let generator = def.plan(depth).map(|p| p.generator);
-            let doors = match def.secret_doors {
-                _ if generator == Some(Generator::Tower) => "none (a tower hides no doors)".into(),
+            let Some(plan) = def.plan(depth) else {
+                continue;
+            };
+            let generator = plan.generator.kind();
+            let doors = match plan.secret_doors {
+                _ if generator == GeneratorKind::Tower => "none (a tower hides no doors)".into(),
                 _ if matches!(
                     generator,
-                    Some(Generator::Caves | Generator::Tunnels | Generator::Passage)
+                    GeneratorKind::Caves | GeneratorKind::Tunnels | GeneratorKind::Passage
                 ) =>
                 {
                     "none (these floors have no doors)".into()

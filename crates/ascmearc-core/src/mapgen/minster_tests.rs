@@ -3,7 +3,6 @@
 //! sunken crypt stamped whole; the water rising and the plan falling with depth; and the
 //! parameters' line from the first floor to the bottom.
 
-use super::minster::{FLOOD, MinsterParams, RUIN};
 use super::tests::describe;
 use super::*;
 use crate::content::ContentFiles;
@@ -89,16 +88,18 @@ fn first_fourth_and_bottom_floor_snapshots() {
 
 #[test]
 fn the_parameters_run_from_the_first_floor_to_the_bottom() {
-    let at = |depth| MinsterParams::at(depth, 8);
-    assert_eq!((at(1).flood, at(1).ruin), (FLOOD.0, RUIN.0));
-    assert_eq!((at(8).flood, at(8).ruin), (FLOOD.1, RUIN.1));
+    // The ramps of data/generators.toml over Fennmynster's eight floors (`content/generator.rs`).
+    let def = CONTENT.dungeon("fennmynster").expect("Fennmynster");
+    let at = |depth| match &def.plan(depth).expect("a floor").generator {
+        Generator::Minster(p) => (p.flood, p.ruin),
+        g => panic!("{g:?}"),
+    };
+    assert_eq!(at(1), (10, 5));
+    assert_eq!(at(8), (85, 70));
     for depth in 2..=8 {
-        assert!(at(depth).flood > at(depth - 1).flood, "{depth}");
-        assert!(at(depth).ruin > at(depth - 1).ruin, "{depth}");
+        assert!(at(depth).0 > at(depth - 1).0, "{depth}");
+        assert!(at(depth).1 > at(depth - 1).1, "{depth}");
     }
-    // Past the bottom, and a branch of one floor, stay on the line.
-    assert_eq!(MinsterParams::at(9, 8), at(8));
-    assert_eq!(MinsterParams::at(1, 1).flood, FLOOD.0);
 }
 
 #[test]
