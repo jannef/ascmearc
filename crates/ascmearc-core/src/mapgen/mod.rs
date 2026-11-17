@@ -43,8 +43,8 @@ mod hidden;
 mod hoard;
 mod leavings;
 pub mod local;
-mod minster;
 mod mines;
+mod minster;
 mod population;
 mod room_loot;
 mod rooms;
@@ -1081,8 +1081,9 @@ mod leavings_tests;
 #[cfg(test)]
 mod lytelscraef_tests;
 #[cfg(test)]
-mod minster_tests;
 mod mines_tests;
+#[cfg(test)]
+mod minster_tests;
 #[cfg(test)]
 mod neutral_share_tests;
 #[cfg(test)]
