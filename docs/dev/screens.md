@@ -84,11 +84,20 @@ to open, read keys for, or draw one:
   (`ScreenStack::handle` →
   `ScreenAction`: stay, close, open, a
   `MenuChoice`, or `Act(Action)`: close and apply a gameplay action, e.g. `pickup:ac`,
-  `equip:body:b`; the screens beneath stay, and `screens::refresh`, after `SimSet`, shows the
-  equipment screen the result, as in ADOM, and reads every open object list again
-  (`ObjectScreen::refresh`: the read list stays beneath the dialog that reads a grimoire, and a
-  scroll used up moves the stacks after it, so a row kept from before would name another stack,
-  #591));
+  `equip:body:b`; the screens beneath stay, and `screens::refresh`, after `SimSet`, reads the
+  run again into every open screen whenever it changed (`ModalScreen::refresh`, given the
+  perception and the run's last conversation). **A screen that becomes the top again shows the
+  run as it is now, never as it was when it opened** (#1772): every screen that shows anything
+  of the run an action can change rebuilds it in its `refresh`, keeping its selection (a new
+  one adds it there: `modal!(..; refresh)` or its own impl). So the equipment screen shows the
+  result, as in ADOM; every object list is read again (`ObjectScreen::refresh`: the read list
+  stays beneath the dialog that reads a grimoire, and a scroll used up moves the stacks after
+  it, so a row kept from before would name another stack, #591); and the dialogue screen
+  beneath the dialog that bought a trader's ware or paid for a service shows the answer and the
+  topics as they are now (`DialogueScreen::refresh`, from the last `Event::Talked` with the same
+  speaker: the ware sold is for sale no more). A `Dialog` is never left beneath another (a
+  follow-up takes its place), so it needs no refresh. The rules refuse what a stale screen could
+  still ask for on their own (a ware sold once, `world/people/wares.rs`));
   otherwise
   it is a gameplay command in the current `InputMode`. Opens and closes apply at once, so the next
   press in the same frame goes to the new top; menu choices (start, resume, save-and-quit to menu,
