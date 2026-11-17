@@ -71,18 +71,27 @@ dressed stone that no pick, blast, or rod can break
 ([digging](digging.md#what-breaks-and-what-does-not)), and every floor has windows. A window is
 an open gap in the wall: you can see, hear, and shoot through it, but not climb through it.
 
-- **The ground floor** is the inside of the tower in the clearing. Through the windows you can
-  see into the hall before you open the door. The wizard keeps it hard on callers: two
-  [hidden traps](traps.md#finding-traps) lie across the south hall, and three bays in the wall of
-  the north hall each hold a trap you can see, with something left behind it to tempt you: a
-  potion, a scroll, and 25 gold. The traps there hit as hard as on a
-  [danger](dungeons.md#who-lives-there-and-how-many) 5 floor. Now and then a sprite or a pixie
-  of the fair folk comes out of the wood.
-- **The second and third floors** are new each run: a hall winding between walls, with hidden
-  traps (arrow and spear traps, pits, and alarms; three to five a floor) and the wizard's
-  household gone lively and hostile: books, brooms, candlesticks, chairs, coat stands, lanterns,
-  and rugs ([animated objects](animated.md)), and now and then a lesser earth elemental. They
-  are danger 6 and 7.
+- **The ground floor** is the inside of the tower in the clearing. It is big: three bands of
+  rooms, one above the other. Through the windows you can see into the halls before you open
+  the door. The wizard keeps it hard on callers. Two [hidden traps](traps.md#finding-traps) lie
+  across the entrance hall. In the long gallery behind it, among the statues, two
+  [gargoyles](creatures.md#creature-gargoyle) sit as still as stone until you pass beside them.
+  In the north hall, three bays each hold a trap you can see, with something left behind it to
+  tempt you: a potion, a scroll, and 25 gold. The stair up is in the middle of the north wall.
+  The traps there hit as hard as on a [danger](dungeons.md#who-lives-there-and-how-many) 5
+  floor. Now and then a sprite or a pixie of the fair folk comes out of the wood.
+- **The second and third floors** are new each run: many rooms and halls, some behind doors,
+  lit by wall torches, with hidden traps (arrow and spear traps, pits, and alarms; five to eight
+  a floor). They are danger 6 and 7, and 8 to 14 of the tower's folk keep each one. These are the wizard's
+  own making: [mannikins](creatures.md#creature-mannikin), his quick little men of clay, whose
+  bite makes you drowsy and who open doors; [ward-stones](creatures.md#creature-ward-stone),
+  which never move, slow whoever they look at, and spark at whoever comes beside them;
+  gargoyles; and [loam men](creatures.md#creature-loam-man), slow and heavy guardians whose
+  fists stagger. Besides them, a
+  [lesser earth elemental](creatures.md#creature-lesser-earth-elemental) bound to the stones,
+  and the wizard's household gone lively and hostile: books, brooms, candlesticks, chairs, coat
+  stands, lanterns, and rugs ([animated objects](animated.md)). The tower's folk are found in
+  the towers and nowhere else.
 - **The top floor** is the wizard's study and his quarters, with no traps and nobody to fight.
   Two doors lead out onto a balcony open to the sky, with a low wall round it. Rain falls on it.
 
@@ -129,6 +138,44 @@ hear, and shoot through, as at Drȳtorr.
   fight. Two doors lead out onto a balcony that runs the whole width of the tower.
 
 From the floors above, the windows look out over the down far below, as they do at Drȳtorr.
+
+### Steorratorr
+
+**Steorratorr**, the star tower, stands on the green plain of Ēastmearc where it runs down to the
+grey sea. It is the tallest of the three towers. It is a
+[hidden location](overworld.md#hidden-locations): Master Ordgar marks it on your map, with
+Wedertorr, when he gives you [the wizards' quarrel](quests.md#the-wizards-quarrel). **Master
+Sigeric**, the wizard, lives at the top. He makes wonders, he thinks very well of himself, and
+he is friendly until the quarrel says otherwise. The first time you climb to him during the
+quarrel, he offers you his side.
+
+The tower has seven floors, as big as Wedertorr's. Its walls cannot be dug
+([digging](digging.md#what-breaks-and-what-does-not)), and its windows are open gaps you can see,
+hear, and shoot through, as at Drȳtorr.
+
+- **The ground floor** is the inside of the tower on the plain. The south hall is a gallery of
+  statues of Sigeric, and three [hidden traps](traps.md#finding-traps) lie across it: a teleport
+  trap, a fireball trap, and a lightning trap. The way on is at the hall's west end. In the north
+  hall, three bays in the wall each hold a trap you can see (lightning, frost, and a pit) with
+  something behind it: a potion of greater healing, a scroll of haste, and 60 gold. A small room
+  off the hall's west end has a scroll of fireball lying in it. The traps hit as hard as on a
+  [danger](dungeons.md#who-lives-there-and-how-many) 9 floor. Now and then one of the drowned or a
+  lesser water elemental walks up out of the sea.
+- **The second to sixth floors** are new each run and dark but for a torch here and there, so
+  bring a light. They hold hidden traps (fireball, lightning, and teleport traps, and pits; five
+  to eight a floor) and the wizard's household, six to ten a floor: his own
+  [brass peacocks](creatures.md#creature-brass-peacock) (whose peck can leave you
+  [transfixed](status-list.md#status-transfixed), slow to act),
+  [quicksilver hounds](creatures.md#creature-quicksilver-hound) (fast, with a poisonous bite),
+  and [gilded likenesses](creatures.md#creature-gilded-likeness) (slow, heavy statues of himself
+  that hit very hard); blades and suits of armour he has set walking; the imps and quasits he
+  has bound; and teapots, cutlery, and books gone lively ([animated objects](animated.md)). None
+  of them ever leaves the tower. The floors are danger 10 to 14.
+- **The top floor** is his workshop, his quarters, and the landing at the top of the stair, with
+  no traps and nobody to fight. Two doors lead out onto a balcony down the whole east side of
+  the tower, over the sea.
+
+From the floors above, the windows look out over the plain and the sea far below.
 
 ### Līctūn
 

@@ -12,9 +12,31 @@
 #   eaten    the count
 #   talent   a granted talent of the `craving` tree (../talents/trees/180-craving.toml), given
 #            then; it may never slow or soften hunger (no negative `hunger_percent`, no
-#            `no_hunger_weakness`, no `no_exertion`)
+#            `no_hunger_weakness`, no `no_exertion`, no `hunger_harm` below 100)
 #   message  said as it is given
-# Each row given is also the deed `craving_threshold` (../alignment.toml).
+#   stance_floor     optional: the calmest stance the player may take from then on (a chosen
+#                    stance, each floor above the one before); a stance held below it is put
+#                    at it as the row is crossed
+#   stance_shift     optional, false: from then on the fight rules read the stance one step
+#                    more aggressive than the one held (Defensive fights as Neutral)
+#   strip_softeners  optional, false, on one row at most: every talent held that slows or
+#                    softens hunger (the same effects as above) is taken for good, never to be
+#                    granted, picked, or given again, and worn Sustenance does nothing from then on
+#   profane          optional: a draw on the profane gift table (../profane/) as the row is
+#                    crossed, after its talent: { rolls = 1, tiers = { lesser, greater, dire } },
+#                    the tiers' odds in percent summing to 100, as a keeper's corpse's `profane`
+#                    (../creatures/README.toml); `rolls` draws, each complete before the next
+#
+# [again]  optional, after the last row: every `every` corpses past it (600, 700, ... after 500),
+#          for ever, the message said and the `profane` draw made again; nothing else
+#   every    the corpses from one to the next, at least 1
+#   message  said each time, before the draw
+#   profane  as a row's
+#
+# Each row given is also the deed `craving_threshold`, and each profane gift the craving gives
+# is the deed `craving_gift` (../alignment.toml). A draw that finds nothing left to give says
+# "Nothing more of it will take in you." and is no deed. Every craving draw made, given or not,
+# is counted in the save (`craving_gifts`), so none is made twice.
 
 race = "ratfolk"
 first = "The ancient craving awakens in you."
@@ -29,3 +51,44 @@ message = "The flesh nourishes you."
 eaten = 25
 talent = "craving_empowered"
 message = "The flesh empowers you."
+
+[[threshold]]
+eaten = 50
+talent = "craving_unleashed"
+message = "Your teeth ache for it. You cannot hold yourself back any more."
+stance_floor = "defensive"
+stance_shift = true
+
+[[threshold]]
+eaten = 100
+talent = "craving_throttled"
+message = "Hunger has you by the throat now, and nothing stands between you and it. You smell them before you see them: the warm, the frightened, the bleeding."
+strip_softeners = true
+
+[[threshold]]
+eaten = 200
+talent = "craving_spoken_to"
+message = "The craving speaks now, and you listen. It knows what you are. No sickness will have you before it does."
+stance_floor = "neutral"
+
+[[threshold]]
+eaten = 300
+talent = "craving_forgetting"
+message = "You have forgotten the taste of anything else. You have forgotten why it mattered."
+stance_floor = "aggressive"
+
+[[threshold]]
+eaten = 400
+talent = "craving_hollowed"
+message = "The eaten crowd behind your eyes and whisper your name. It is no longer your name. Their venoms are water to you."
+
+[[threshold]]
+eaten = 500
+talent = "craving_consumed"
+message = "Whatever you were is eaten. What remains is hungry, and it is strong."
+profane = { rolls = 1, tiers = { lesser = 20, greater = 50, dire = 30 } }
+
+[again]
+every = 100
+message = "The flesh gives again."
+profane = { rolls = 1, tiers = { lesser = 20, greater = 50, dire = 30 } }

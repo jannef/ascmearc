@@ -138,6 +138,10 @@ pub enum Generator {
     /// One long hewn way from the stairs up at one end to the stairs down at the other, with no
     /// second route: the tunnels' linear mode, for shortcuts (`mapgen/tunnels/passage.rs`).
     Passage,
+    /// The cellars and crypts under a great church, drowning deeper (`mapgen/minster.rs`).
+    Minster,
+    /// A worked mine that opens up and grows lava the deeper it lies (`mapgen/mines.rs`).
+    Mines,
     /// A tower's floor: a ring wall with windows round a winding hall (`mapgen/tower.rs`); only
     /// a tower's ([`super::tower`]).
     Tower,
@@ -151,6 +155,8 @@ impl Generator {
             Generator::Caves => ([40, 30], [400, 300]),
             Generator::Tunnels => ([40, 20], [400, 300]),
             Generator::Passage => ([40, 15], [400, 300]),
+            Generator::Minster => ([90, 36], [200, 100]),
+            Generator::Mines => ([40, 20], [400, 300]),
             // A tower's floors are its clearing's size, which a hand-made level may have.
             Generator::Tower => ([1, 1], [400, 300]),
         }

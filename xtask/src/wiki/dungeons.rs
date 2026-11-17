@@ -221,6 +221,8 @@ pub(super) fn dungeon_floors(content: &Content) -> String {
                 Generator::Caves => "caves",
                 Generator::Tunnels => "tunnels",
                 Generator::Passage => "passage",
+                Generator::Minster => "minster",
+                Generator::Mines => "mines",
                 Generator::Tower => "tower",
             };
             let mut kinds: Vec<_> = (s.population.iter())

@@ -1115,7 +1115,7 @@ impl World {
         let marks = rules.earned(success, level, me.weapon_skills.rank(skill));
         let marks = (marks * percent + 50) / 100;
         // The stance: aggressive and frenzy ×1.25.
-        let marks = content.stance_def(me.stance).marks(marks);
+        let marks = content.stance_def(me.fought_as(&content)).marks(marks);
         // Weapon drill: more marks in a role's skills.
         let marks = (me.talent_mods(&content))
             .offence

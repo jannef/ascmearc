@@ -85,7 +85,8 @@ impl Actor {
 
     /// What it takes off a miscast's total: Spellcraft's `ward` and its stance's `miscast`.
     pub fn miscast_ward(&self, content: &Content) -> i32 {
-        self.skill_effect(content, Effect::Ward) + content.stance_def(self.stance).miscast
+        self.skill_effect(content, Effect::Ward)
+            + content.stance_def(self.fought_as(content)).miscast
     }
 }
 

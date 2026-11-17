@@ -35,7 +35,8 @@ The loader's checks (§6.5): the id is no talent's already and unique; the weigh
 effect passes the talent effects' own check and is none of the forbidden ones (§6.4:
 `profane::forbidden`, a hand-out that could not be taken back cleanly or a class's or a pick's
 business: `max_hp_per_levels`, `weapon_ranks`, `extra_pick`, `starting_gold`, a trade,
-`companion`, `xp_percent`, ...; `stat` is the one hand-out allowed); `not_for` names known races;
+`companion`, `xp_percent`, `immune` (no gift makes the player immune; the ratfolk craving is the
+one way, docs/dev/craving.md), ...; `stat` is the one hand-out allowed); `not_for` names known races;
 every relation names another gift; `excludes` is made symmetric (written once, on either gift:
 the phases write it on the gift that lands later, so a partial table loads); `undoes` asks for an
 `instead` line and every gift a `replaces` or `undoes` names for an `undone` line; `replaces` and
@@ -183,7 +184,9 @@ degrees; electricity resistance 50). The breaths' looks are `data/effects.toml`'
   lost ones counting, its two lines are said and the run ends, `die_of(Cause::Profane)` ("The
   Profane takes you, and nothing of you is left...", the epitaph "Taken by the Profane"). Not a
   harm: no Rise from the ashes, no reprieve, no Twice-born. A meal stops with it: no more draws,
-  no deed, no feeding. The graveyard records it as `cause = "profane"` and keeps every death's
+  no deed, no feeding; the ratfolk craving's draws (docs/dev/craving.md, from 500 sapient corpses)
+  are gifts like any and stop the meal the same way (`eat.rs::finish` returns after `ate_flesh`).
+  The graveyard records it as `cause = "profane"` and keeps every death's
   held gifts in `gifts` (`docs/dev/saves.md` "The graveyard").
 
 Saves: a gift held rides in `Actor::boons`; `stars::grant` puts it back on every restore and the

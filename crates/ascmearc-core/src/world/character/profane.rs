@@ -117,7 +117,8 @@ impl World {
         };
         let book = content.talents();
         let holds = |w: &Self, t: TalentId| w.state.player().talents.has(&book.get(t).id);
-        if self.had_gift(gift) {
+        // Ever had, or taken for good by the ratfolk craving (`craving.rs`).
+        if self.had_gift(gift) || self.state.progress.stripped.contains(&book.get(gift).id) {
             return false;
         }
         let undone: Vec<TalentId> = (def.undoes.iter().copied())
@@ -183,10 +184,18 @@ impl World {
     fn regrant(&mut self) {
         let content = self.content.clone();
         let character = self.state.character.clone();
+        let stripped = std::mem::take(&mut self.state.progress.stripped);
         let me = self.player_mut();
         let boons = std::mem::take(&mut me.boons);
-        super::stars::grant(&content, character.as_ref(), &boons, &mut me.talents);
+        super::stars::grant(
+            &content,
+            character.as_ref(),
+            &boons,
+            &stripped,
+            &mut me.talents,
+        );
         me.boons = boons;
+        self.state.progress.stripped = stripped;
     }
 
     /// Hands out `effects`' `stat` effects times `sign`: a rise raises score and potential (a

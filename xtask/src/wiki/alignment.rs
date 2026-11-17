@@ -101,6 +101,10 @@ pub(super) fn alignment_deeds(content: &Content) -> String {
             "Each step of the [ratfolk's craving](food.md#the-ratfolks-craving)",
             s.craving_threshold,
         ),
+        (
+            "Each profane gift the ratfolk's craving gives",
+            s.craving_gift,
+        ),
         ("Consecrating a cursed or draining place", s.consecrate),
         (
             "Praying at a good forgotten altar (gold glow)",

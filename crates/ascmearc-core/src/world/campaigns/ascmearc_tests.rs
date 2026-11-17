@@ -25,6 +25,8 @@ const MOUND: Pos = Pos::new(25, 13);
 const DRYTORR: Pos = Pos::new(19, 11);
 /// Wedertorr, Mistress Ælfswīð's tower, hidden on Hlāwdūn (#1786).
 const WEDERTORR: Pos = Pos::new(42, 23);
+/// Steorratorr, Master Sigeric's tower, hidden on the plain by the grey sea (#1787).
+const STEORRATORR: Pos = Pos::new(103, 40);
 /// Lytelscræf, the starter cave (#792): two cells from the pass, in sight of the start.
 const CAVE: Pos = Pos::new(14, 27);
 /// Līctūn, Cēaptūn's churchyard (#1258): beside the south road, four cells out of town.
@@ -260,6 +262,7 @@ fn the_locations_are_named_and_six_cells_apart() {
         MOUND,
         DRYTORR,
         WEDERTORR,
+        STEORRATORR,
     ];
     for (id, at) in LAIRS {
         let (pos, _) = CONTENT.hidden_location("ascmearc", id).expect(id);
@@ -287,7 +290,7 @@ fn the_locations_are_named_and_six_cells_apart() {
         );
     }
     // No road leads to a hidden dungeon.
-    for hidden in [FENNMYNSTER, FYRDELF, DRYTORR, WEDERTORR]
+    for hidden in [FENNMYNSTER, FYRDELF, DRYTORR, WEDERTORR, STEORRATORR]
         .into_iter()
         .chain(LAIRS.map(|(_, at)| at))
     {

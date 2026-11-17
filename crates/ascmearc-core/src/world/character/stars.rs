@@ -15,22 +15,26 @@ use crate::rng::draw;
 use crate::talent::{Taken, Talents};
 use crate::world::magic::spell::Caster;
 use crate::world::{ActorId, World};
+use std::collections::BTreeSet;
 
 /// Puts the talents `character`'s race grants (Versatile, `racial.rs`), the gifts of their
 /// sign, and the flaws a forgotten altar marked them with (`boons`:
 /// Forsaken) into `talents` in grant order, in place of whatever granted talents it held (none
-/// for a run without a character); an altar's other boons (Chosen) are held too.
+/// for a run without a character); an altar's other boons (Chosen) are held too. None of
+/// `stripped` (taken for good by the ratfolk craving, `craving.rs`) is granted.
 pub(in crate::world) fn grant(
     content: &Content,
     character: Option<&Character>,
     boons: &[Taken],
+    stripped: &BTreeSet<String>,
     talents: &mut Talents,
 ) {
     let mut grants = super::racial::grants(content, character);
     grants.extend(character.map_or(Vec::new(), |c| c.grants(content)));
     grants.extend(boons.iter().map(|b| b.id.as_str()));
+    grants.retain(|id| !stripped.contains(*id));
     talents.regrant(content, &grants);
-    for boon in boons {
+    for boon in boons.iter().filter(|b| !stripped.contains(&b.id)) {
         talents.take(&boon.id, boon.choice.as_deref());
     }
 }

@@ -1,0 +1,48 @@
+# Steorratorr's people (#1787; docs/design/wizard-tower.md §10): Master Sigeric, the wizard who
+# keeps the top floor of the tower on the shore of Grægsæ, placed by its legend
+# (levels/steorratorr_top.toml) with `npc = "sigeric"`. He speaks posh, as the better-off do
+# (docs/dev/npcs.md "Speech by race and station"): the maker of wonders of the three, his
+# sentences ornate, courteous, and very pleased with themselves. His side of the wizards' quarrel
+# is in data/quests/wynflaed_ordgar.toml.
+
+[[dialogue]]
+npc = "sigeric"
+name = "Master Sigeric"
+greet = "You have climbed a long way to be impressed. Allow me."
+greet_evil = [
+    "Ah. You have the look of a thing I should rather not have in my workshop. The stair is behind you.",
+    "I have made a great many wonders, and not one of them was you. Kindly go.",
+]
+lines = [
+    "Do mind the orrery. It is the finest in the world, and the world has only the one.",
+    "Every hound on my stair was a pint of quicksilver once. Consider what I might make of you.",
+    "The statues? A modest likeness. The sculptor flattered nobody; I insisted on it.",
+    "Gold is only lead that has been properly spoken to.",
+    "From the balcony, on a clear night, one can see every star there is, and several that are mine.",
+    "Do sit. Not on the peacock.",
+]
+mutter = { chance = 2, verb = "murmurs", lines = [
+    "...a little more gilt at the brow, I think. Yes...",
+    "...and the third ring turns against the second, and there... there...",
+    "...Ælfswīð would call it vanity. Ælfswīð has no statues...",
+] }
+
+[[dialogue.topic]]
+id = "steorratorr"
+name = "The tower"
+reply = "Steorratorr. The star tower. Seven floors, the tallest thing between the mountains and the sea, and every stone of it set by my word. The stair is full of my work; I do hope you admired it on the way up."
+
+[[dialogue.topic]]
+id = "sea"
+name = "The grey sea"
+reply = "Grægsæ. Cold, grey, and very large, which is why I put a tower beside it: a large thing wants a larger thing to be measured against. The drowned walk out of it now and then. I find them dull company."
+
+[[dialogue.topic]]
+id = "learning"
+name = "Magic and its learning"
+reply = "Ordgar will tell you magic is reading. Ælfswīð will tell you it is weather. It is neither. It is making: you take a thing as it is and persuade it to be something better. A spell is only the first thing a wizard makes, and seldom the best."
+
+[[dialogue.topic]]
+id = "wizards"
+name = "The other wizards"
+reply = "Ordgar is a very learned man who has never made anything but notes. Ælfswīð is a very forceful woman who has never made anything but noise. I am fond of them both, at a distance of some forty miles."

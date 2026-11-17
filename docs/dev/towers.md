@@ -12,8 +12,12 @@ ground by its depth (`docs/dev/rendering.md` "Depth blur"). **T1**
 (#1783, `docs/dev/mapgen.md` "Towers") builds the generated floors of this terrain, each with
 `below = clearing` and `storey = depth`. **C1** (#1784, "Drȳtorr" below) is the first tower, its
 wizard, and the wise-woman's quest that sends the player to him. **W1** (#1785, "The quarrel"
-below) is the quarrel's machinery and Ordgar's side of it. **C2** (#1786, "Wedertorr" below) is
-the second tower, Mistress Ælfswīð's, and her side. Not yet: the third tower (C3).
+below) is the quarrel's machinery and Ordgar's side of it. **#1823** made Drȳtorr's footprint
+big, the generator's inside rooms and halls, and gave the tower its folk ("A tower's household"
+below). **C2** (#1786, "Wedertorr" below) is the second tower, Mistress Ælfswīð's, and her side.
+**C3** (#1787, "Steorratorr" below) is
+the third, Master Sigeric's, and his side, with which the quarrel can be finished. All three
+towers are built.
 
 ## The idea
 
@@ -134,26 +138,30 @@ The first of the three towers (design §9, §10): Master Ordgar's, in Holegnwudu
   edge north-west of the fairy mound (six from it and from Holtwīc), hidden (`hidden = { id =
   "drytorr", terrain = "tower", to = "drytorr" }`) until Gammer Wynflæd's second quest marks it.
   (The design named the legend's `"8"`, but that is Lytelscræf's.)
-- **The clearing**, `levels/drytorr.toml` (60×24, `kind = "outdoor"`, `arrival`): the wood round a
-  grass clearing, a track from the south edge (the arrival, (30, 22)) to the tower's door. The
-  tower is 21×13 at (20, 4)–(40, 16): the ground floor, a south hall with two hidden traps (an
-  arrow trap at (21, 11), a spear trap at (26, 13)) across the way from the door to the way on
-  at the partition's west end, and a north hall with three one-cell bays in the partition, each
-  a known trap (arrow, spear, pit) with a potion, a scroll, or 25 gold behind it; the `<` at
-  (30, 5) to `drytorr_tower:1`; a named place, "a brass plaque", on the wall east of the door.
+- **The clearing**, `levels/drytorr.toml` (80×32, `kind = "outdoor"`, `arrival`): the wood round a
+  grass clearing, a track from the south edge (the arrival, (40, 30)) to the tower's door. The
+  tower is 41×19 at (20, 6)–(60, 24) (#1823; it was 21×13): the ground floor in three bands. The
+  south, the entrance hall, with two hidden traps (an arrow trap at (36, 21), a spear trap at
+  (33, 20)) across the way from the door to the way on at its west end, the porter's lodge west
+  of it and a store east; the middle, the long gallery, statues and two hand-placed gargoyles
+  (lurking, at (35, 14) and (45, 17)); the north, the north hall with three one-cell bays in its
+  south side, each a known trap (arrow, spear, pit) with a potion, a scroll, or 25 gold behind it,
+  the library west of it and a workshop east; the `<` at (40, 7) to `drytorr_tower:1`; a named
+  place, "a brass plaque", on the wall east of the door.
   `danger = 5` (the traps' growth) needs a population (`content/danger.rs`): Ælfhām's sprites and
   pixies, already in every Ascmearc stray list (`Content::fill_generic` adds a level's population
   to its campaign's, so new wildlife would stray into every branch; a tower branch's household it
   leaves out, as a portal branch's), `stray = 0`, a cap of three, a try every 30 minutes. Left by its edge or `<` off the stair,
   back to the tower's cell.
 - **The floors**, `data/dungeons/drytorr_tower.toml`: `floors = 4`, so `drytorr_tower:1` and `:2`
-  ("Drȳtorr 2" and "3", danger 6 and 7), the stair (30, 5) → (39, 15) → (21, 5); the household
-  as population (animated books, brooms, candlesticks, chairs, coat stands, lanterns, rugs) and
-  the lesser earth elemental; arrow, spear, alarm, and pit traps, `[3, 5]` a floor, all hidden.
-- **The top**, `levels/drytorr_top.toml` (`below = "drytorr"`, `storey = 3`): the `>` at (21, 5);
-  the study west of a partition (shelves, the reading table, a brazier, a lamp, Ordgar at
-  (26, 8)), his quarters east (bed, table, stool, shelves, a cat), and south through two doors
-  the balcony (flagstones, unroofed) with a parapet round it. No traps, no population.
+  ("Drȳtorr 2" and "3", danger 6 and 7), the stair (40, 7) → (59, 23) → (21, 7); the tower folk
+  as population ("A tower's household" below), `{ per_1000 = 20, least = 8, most = 14 }`; arrow,
+  spear, alarm, and pit traps, `[5, 8]` a floor, all hidden.
+- **The top**, `levels/drytorr_top.toml` (`below = "drytorr"`, `storey = 3`): the `>` at (21, 7);
+  under the roof, the study in the west (shelves, the reading table, a brazier, a lamp beside
+  him, Ordgar at (27, 11)), his library in the middle (rows of shelves), his quarters east (bed,
+  table, stool, shelves, a cat); south through two doors the balcony (flagstones, unroofed,
+  39×4) with a parapet round it. No traps, no population.
 - **Ordgar**: the campaign creature `ordgar` (`data/creatures/ordgar.toml`: unique, peaceful,
   level 10, tags `tower_wizard`, `caster`, `sapient`; `combat = "caster"` with `magic_missile`,
   `web`, `haste`, `silence`; a quarterstaff), placed with `npc = "ordgar"`, whose dialogue is
@@ -177,13 +185,35 @@ cargo dev-cli dump --scenario holtwic --actions "move:N*8 move:E*11 move:NE move
 ## A tower's household
 
 The owner's rule (2026-11-17, #1823): **a wizard's tower is big, and its folk are a wizard's**.
-The footprint is markedly bigger than Drȳtorr's first 21×13 (Wedertorr's is 41×19), so a
-generated floor has room for several halls; and the trap floors' population is the wizard's own:
-constructs and wards, bound and summoned things, the wizard's made servants, and some of the
-household gone lively, at the floors' danger. Where no creature in data fits, the tower brings
-its own as campaign creatures with `stray = false`, named in no other population; a tower
-branch's population joins no stray list (`Content::fill_generic`), so nothing of it leaves the
-tower. Drȳtorr is brought to this by #1823; Wedertorr (C2) and Steorratorr (C3) are built to it.
+The rule for every tower (Drȳtorr brought to it by #1823; Wedertorr, C2, and Steorratorr, C3,
+built to it):
+
+- **The footprint** about 41×19 (Drȳtorr's and Wedertorr's), so each generated floor is many
+  rooms and halls, lit by the generator's sconces (`docs/dev/mapgen.md` "Towers").
+- **The trap floors' population** is the wizard's own, at the floors' danger and in the wizard's
+  bent: constructs and wards, bound and summoned things, the wizard's made servants, and some of
+  the household gone lively. Where no creature in data fits, the tower brings its own as campaign
+  creatures with `stray = false`, named in no population but a tower's; a tower branch's
+  population joins no stray list (`Content::fill_generic`), so nothing of it leaves the tower.
+- **A sapient caster** among them leaves a corpse that teaches Decipher script, as every literate
+  caster's.
+- **The wizard's corpse** teaches Spellcraft and Decipher script (`on_eat`), more the higher the
+  tower: Ordgar 5 up to 40 of each; Ælfswīð Spellcraft 10 up to 60, Decipher script 7 up to 50;
+  Sigeric Spellcraft 15 up to 80, Decipher script 9 up to 60.
+
+Drȳtorr's (danger 6 and 7; Ordgar's bent is wards), all `faction = "animated"`, tag
+`construct`, no corpse (`assets/campaigns/ascmearc/data/creatures/`):
+
+| Id | Level | What it is |
+|---|---|---|
+| `mannikin` | 3 | his little man of clay and blood: quick, small, opens doors, a bite that makes drowsy |
+| `ward_stone` | 5 | a stone cut with a ward: `rooted`, its gaze makes sluggish, sparks at whoever is beside it |
+| `gargoyle` | 6 | carved stone: `lurks` until a caller is beside it, then rakes |
+| `loam_man` | 7 | the guardian golem: slow, heavy fists that stagger |
+
+and of the base types the lesser earth elemental and the household (animated books, brooms,
+candlesticks, chairs, coat stands, lanterns, rugs). Tests: `world/campaigns/drytorr_folk_tests.rs`
+(the floors draw only these, 8 to 14 a floor, the four new ones met; none strays anywhere else).
 
 ## Wedertorr (`assets/campaigns/ascmearc/`)
 
@@ -240,6 +270,64 @@ cargo dev-cli dump --scenario wedertorr --actions "quest_given:the_wizards_quarr
 The generated floors are dark but for a sconce a stretch: a climber needs a light (the replay
 lights the lantern with `use_tool`).
 
+## Steorratorr (`assets/campaigns/ascmearc/`)
+
+The third of the three towers (design §9, §10): Master Sigeric's, the maker's, on the plain of
+Ēastmearc by the shore of Grægsæ, the tallest.
+
+- **The cell**: the overworld legend's `S` at (103, 40), a plains cell three west of the sea
+  (Ēastmearc; fifteen from Wyrtholm, nineteen from Fyrdelf), hidden (`hidden = { id =
+  "steorratorr", terrain = "tower", to = "steorratorr" }`) until Ordgar's quarrel marks it as given
+  (the quest's `reveals`, beside Wedertorr).
+- **The plain**, `levels/steorratorr.toml` (72×30, `kind = "outdoor"`, `arrival`): grass, tall and
+  dry grass, flowers, rock, running down east over reeds and shallows into the sea (still and deep
+  water), a track from the south edge (the arrival, (35, 27)) to the door. The tower is 41×19 at
+  (15, 4)–(55, 22), Wedertorr's footprint: the ground floor, a south hall with four statues of
+  the wizard along the partition (named places, the last an empty plinth) and three hidden traps
+  (teleport (20, 17), fireball (27, 18), lightning (44, 19)), the way through the partition at
+  its west end, the north hall with three pillars a side and three one-cell bays in the north
+  wall, each a known trap (lightning, frost, pit) with a potion of greater healing, a scroll of
+  haste, or 60 gold behind it, a cabinet to the west behind a door (a scroll of fireball on its
+  floor), the `<` at (53, 7) to `steorratorr_tower:1`; a brass plaque east of the door. `danger
+  = 9` with a population of the drowned and lesser water elementals (both already Fennmynster's:
+  nothing new strays), `stray = 0`, a cap of two.
+- **The floors**, `data/dungeons/steorratorr_tower.toml`: `floors = 7`, so `:1` to `:5`
+  ("Steorratorr 2" to "6", danger 10 to 14), the stair (53, 7) → (16, 21) → (54, 5) → (16, 21) →
+  (54, 5) → (16, 21); fireball, lightning, teleport, and pit traps, `[5, 8]` a floor, all hidden;
+  the household ("A tower's household"): his own `brass_peacock` (10; its peck may transfix),
+  `quicksilver_hound` (12; fast, its bite may poison), and `gilded_likeness` (14, uncommon; slow,
+  heavy, a statue of himself) (`campaigns/ascmearc/data/creatures/`, `faction = "animated"`,
+  `stray = false`), the animated blades and armour he has set walking, the imps and quasits he
+  has bound, and three animated household things (teapot, cutlery, book); 6 to 10 a floor.
+- **The top**, `levels/steorratorr_top.toml` (`below = "steorratorr"`, `storey = 6`): the `>` at
+  (16, 21) on the landing (south-west: a sconce, a brazier); his quarters north of it (bed,
+  table, stool, shelves, lamp, brazier, a cat); his workshop through either door, the tower's
+  middle (shelves, workbenches, an anvil, tables, braziers, lamps, the orrery, a named place, and
+  Sigeric at (41, 11)); and east through two doors the balcony down the whole east side, a
+  parapet round it and his telescope (a named place), over the sea. No traps, no population.
+- **Sigeric**: `data/creatures/sigeric.toml` (unique, peaceful, level 16, tags `tower_wizard`,
+  `caster`, `sapient`; `combat = "caster"` with `fireball`, `bind`, `arcane_bolt`, `haste`; a
+  quarterstaff; his corpse teaches Spellcraft, 15 up to 80, and Decipher script, 9 up to 60),
+  placed with `npc = "sigeric"`, whose dialogue is `data/dialogue/steorratorr.toml` (posh, ornate
+  and vain: the tower, the grey sea, magic and its learning, the other wizards).
+- **His side** of the quarrel (`data/quests/wynflaed_ordgar.toml`): his `[[quest.taker]]` (300
+  gold, 900 experience, Sigeric's Star, Spellcraft and Enchanting, `start = "1d4"`, `marks =
+  100`; his own `parting` and `betrayed`), his `[[quest.side]]` (`offer`, `join`, `refuse`), and
+  `steorratorr` in the quest's `reveals`. Sigeric's Star (`data/uniques/sigerics_star.toml`) is a
+  unique gold ring of his making (item level 12: Mystic, Potent, of the Magus, of Light, and a ward
+  against Transfixed; a flawless sapphire setting for its four), placed by his reward and
+  nothing else
+  (`docs/dev/magic-items.md` "Unique items").
+
+The dev scenario `steorratorr` starts on the track at 10:00, its own character with a long sword,
+a shield, mail, and a lantern ready. The dev action `travel:LEVEL` (`world/levels/travel_dev.rs`)
+moves the player to a level at once, so a replay can go from one tower's top to another's:
+
+```sh
+cargo dev --scenario steorratorr --scale 1 --capture target/steorratorr.png
+cargo dev-cli dump --scenario steorratorr --actions "travel:steorratorr_top" --layers view,below
+```
+
 ## The quarrel
 
 The wizards' quarrel (#1785; design §10.3, §10.4, §11): a kill quest whose wizards take sides.
@@ -291,10 +379,10 @@ The data is `content/quarrel.rs` (`QuestDef::quarrel`, a `Quarrel`; the fields i
 `requires`): `the_wizards_quarrel`, given by Ordgar after the rowan, kill 2 of the
 `tag:tower_wizard` uniques, `feud = "feuding_wizards"`, Ordgar's taker (gold, experience, a
 grimoire of magic missile, Spellcraft and Decipher script), the parting, and the hoard (6d100
-gold, two rare items at item level 14, a grimoire). The rivals' takers, sides, and reveals come
-with their towers: Ælfswīð's with C2 (#1786, "Wedertorr" above), Sigeric's with C3 (#1787).
-Until C3, the two of the three are Ordgar and Ælfswīð, so the quest is done only by killing both,
-with nobody left to pay.
+gold, two rare items at item level 14, a grimoire). The rivals' takers, sides, and reveals came
+with their towers: Ælfswīð's with C2 (#1786, "Wedertorr" above), Sigeric's with C3 (#1787,
+"Steorratorr" above). Ordgar's `offer` names both rivals and his `accept` where their towers
+stand.
 
 **The test quarrel** (`--scenario quarrel`, `assets/campaigns/showcase/`): `levels/quarrel_hall.toml`
 with the scholar (npc `scholar`, east of the start), its west stair (2, 2) to
@@ -323,6 +411,8 @@ cargo dev-cli dump --scenario quarrel --actions "ask:E:quest-quarrel move:N move
   on the air (`lands_on` false on every air cell); a replay over the climb verifies.
 - `ui/screen_snapshots/play.rs::looking_far_below`: look mode over the ground, the deer, the
   dagger, and a window.
+- `mapgen/tower_tests.rs::drytorrs_floors_are_many_rooms_and_halls`: 5 to 24 rooms and halls a
+  floor, every cell reached, 5 to 8 traps; insta `drytorr_seed_1_depth_1`.
 - `world/campaigns/drytorr_tests.rs`: the hidden cell and the way in, the four floors on the
   clearing's footprint and their dangers, Ordgar on the top, the `<` on the clearing (on the
   stair it climbs, anywhere else it leaves: the design's §12 risk), the wise-woman's word and her
@@ -346,3 +436,12 @@ cargo dev-cli dump --scenario quarrel --actions "ask:E:quest-quarrel move:N move
   wand, 250 gold, 900 experience) and her parting words, betrayed; her corpse's Spellcraft and
   Decipher script; her household in no other population and never a stray; `quest_given`; and
   a replay up the tower from `--scenario wedertorr` to her side, verified.
+- `world/campaigns/steorratorr_tests.rs`: the hidden cell by the sea marked by Ordgar's quarrel
+  and the way in, the seven floors on the plain's footprint and their dangers, Sigeric on the top,
+  the `<` on the plain; his topics and no offer before the quarrel; his offer on the first arrival
+  only, taking his side (Ordgar turned, Ælfswīð turned and still to offer), refusing him; his
+  corpse's Spellcraft and Decipher script; his household in no other population and never a
+  stray; his ring a unique of his reward; `travel`; and two replays, verified: up the tower from
+  `--scenario steorratorr` to his side, Ordgar and Ælfswīð killed on their tops, his pay
+  (Spellcraft and Enchanting, the ring, 300 gold, 900 experience) and the parting left; and up
+  his last stair to refuse him and kill him.

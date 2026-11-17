@@ -60,6 +60,46 @@ Micelfenn: eight floors of its cellars and crypts, at 6 °C. No road leads there
 cannot be found by looking. Sister Hild marks it on your map as you take up her
 [quest](quests.md) **The fen minster**, the one after she has her chalice back.
 
+Every floor is built to the same church plan. A long crypt with two rows of pillars runs east to
+west down the middle, with a narrow aisle on each side and chapels off the aisles. A passage
+crosses the plan near the east end, and past it the chancel ends in a rounded apse. West of the
+crypt lie the monks' cellars: a pillared undercroft, a cloister walk round an open garth, the
+chapter house, an ossuary walled with bones, tombs of [sarcophagi](terrain.md#terrain-sarcophagus),
+and stores. Some chapels hold a statue, and now and then one holds a
+[forgotten altar](terrain.md#terrain-forgotten-altar).
+
+One end of each floor lies lower than the other, and the water gathers there. On the first floor
+only the lowest corners stand in [shallow water](terrain.md#terrain-shallow-water). Each floor
+down, the water rises: from the third floor a channel of
+[running water](terrain.md#terrain-running-water) runs down the middle of the crypt, and from
+about the fifth the low end holds [deep water](terrain.md#deep-water), with broken drains as deep pits.
+The plan falls apart as you go down too: pillars and walls lie in
+[rubble](terrain.md#terrain-rubble), and the fen pushes in, with [marsh](terrain.md#terrain-marsh)
+and [reeds](terrain.md#terrain-reeds) in the garth and where an outer wall gave way. However deep
+the water, there is always a way between the stairs that needs no swimming, though you may have
+to wade.
+
+How high the water stands and how far each floor has fallen, on a scale of 0 to 100:
+
+| Floor | Water | Ruin |
+|---|---|---|
+| 1 | 10 | 5 |
+| 2 | 20 | 14 |
+| 3 | 31 | 23 |
+| 4 | 42 | 32 |
+| 5 | 52 | 42 |
+| 6 | 63 | 51 |
+| 7 | 74 | 60 |
+| 8 | 85 | 70 |
+
+Along a floor, the ground sinks from 0 at its high end to 100 at its low end. Each room sits up
+to 12 higher or lower than that, and each spot up to 5 lower still. Floor stands in shallow water
+where it lies lower than 100 less the floor's water. Where it lies lower than 145 less the water,
+the water is deep, but only away from every edge, and only in the crypt, the crossing, the
+chancel, the undercroft, the chapels, the tombs, and the garth: never in an aisle, the cloister
+walk, a store, the chapter house, or the ossuary. The channel starts on floors with water 30 or
+more and ends in a deep drain from 50.
+
 The fen seeps into its rooms. One room in four is out of the ordinary (most floors have one or
 two): [flooded](special-rooms.md#room-flooded) ankle-deep, slow and loud to wade,
 [hushed](special-rooms.md#room-hushed), or [shadowed](special-rooms.md#room-shadowed). Its traps are
@@ -97,7 +137,7 @@ Who lives there:
   [lesser ice elementals](creatures.md#creature-lesser-ice-elemental).
 
 At the very bottom lies the **sunken crypt**: a nave of
-[shallow water](terrain.md#terrain-shallow-water) between the monks' tombs, where two of the
+shallow water between the monks' tombs, where two of the
 [drowned](creatures.md#creature-drowned) still stand guard. At its far end a dry dais holds an
 altar with the minster reliquary on it, which Sister Hild's last quest asks for. The crypt is on
 the eighth floor and nowhere else.
@@ -110,9 +150,23 @@ Wulfrun marks it on your map as you take up her [quest](quests.md) **The lost sh
 it once you have been four floors down into Cealdhlāw for the reeve, and gives it to you only once
 you have reached level 5.
 
-Its first four floors are the galleries: rooms and passages at 10 °C. The eight below are the deep
-workings: wide caves that grow hotter toward the volcano's heart, 16 °C, then 20 °C, and 24 °C at
-the bottom. Its traps are [arrows](traps.md#trap-arrow), [spears](traps.md#trap-spear),
+It is a worked mine all the way down, and it changes as you go. Its first four floors are the
+galleries, at 10 °C: long straight passages, propped with
+[timber](terrain.md#terrain-timber-wall) in places, small chambers cut beside them, and dead ends
+where the digging stopped, now and then with [rubble](terrain.md#terrain-rubble) at the face. The
+eight below are the deep workings, which grow hotter toward the volcano's heart: 16 °C, then
+20 °C, and 24 °C at the bottom.
+
+The deeper you go, the wider the passages and chambers get, and the more the natural rock breaks
+through into rough caverns. [Lava](terrain.md#terrain-lava) comes from about the fourth floor: a
+small pool or two at first, then more and bigger pools, and from about the eighth floor channels
+that wander across the floor, wider at the bottom. Exactly: the mine opens up evenly from the
+first floor to the twelfth, and its lava grows with the square of the way down, so the sixth floor
+has about a fifth of the bottom's share and the ninth about half. Lava never cuts any part of a
+floor off and never lies within two steps of a staircase; where a channel crosses a passage, the
+passage stays as a bridge.
+
+Its traps are [arrows](traps.md#trap-arrow), [spears](traps.md#trap-spear),
 [fireballs](traps.md#trap-fireball), [lightning](traps.md#trap-lightning-bolt), and
 [alarms](traps.md#trap-alarm). Few of its [doors are hidden](doors.md#secret-doors), and its locks
 are the hardest to pick of the three dungeons.
@@ -167,9 +221,9 @@ Every gallery floor holds a **foreman's cabin**: a timber-floored lodging where 
 keeps watch. Behind a plank wall it keeps a spare [pick-axe](digging.md#digging), his lamp, and a
 [brass key](doors.md#keys) to the delf's locked rooms.
 [Duergar traders](creatures.md#creature-duergar-trader) keep [general stores](shops.md) in the
-galleries, where a room is fit for one (about one gallery floor in four).
+galleries: every gallery floor has one, in one of its chambers, and the deep workings have none.
 
-On the eleventh floor, in a small chamber off a cave passage, stands a **hunter's statue**: a
+On the eleventh floor, in a small chamber off a passage, stands a **hunter's statue**: a
 [worn statue](terrain.md#terrain-statue) of a hooded figure on a raised floor between two torches,
 and nothing else. Coming beside it reads its plinth: *"Letters are cut deep into the plinth, in the
 old tongue: LĪF ǢR DĒAÞE. Below, in a later hand: 'Life before death. So the hunters swore, to the

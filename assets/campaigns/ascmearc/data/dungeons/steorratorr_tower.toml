@@ -1,0 +1,39 @@
+# Steorratorr, "the star tower" (#1787; docs/design/wizard-tower.md §3, §8, §9; the fields:
+# data/dungeons.toml): Master Sigeric's tower on the shore of Grægsæ, the tallest of the three.
+# Seven floors: the ground floor inside the tower on its plain (levels/steorratorr.toml), five
+# generated trap floors above it (`steorratorr_tower:1` to `:5`, "Steorratorr 2" to "6"), and the
+# hand-made top, the wizard's workshop and quarters with the balcony (levels/steorratorr_top.toml).
+# Each floor's `<` climbs, its `>` goes back down; the floors are the clearing's tower, 41×19,
+# the tower on the same cells, and their windows look out over the plain and the sea below
+# (docs/dev/towers.md).
+#
+# Pitched at Fyrdelf's lower half, where Ūtgang and Dēopgang start: the ground floor's traps at
+# danger 9, the trap floors at 10 to 14. A wizard's household keeps them (#1823's rule,
+# docs/dev/towers.md "A tower's household"): the maker's own works, the brass peacocks, the
+# quicksilver hounds, and the gilded likenesses of himself (campaigns/ascmearc/data/creatures/,
+# in no other population and never strays); blades and suits of armour he has set walking; the
+# imps and quasits he has bound to his service; and a little of his household gone lively,
+# teapots, cutlery, and books. Fireball and lightning traps, teleport traps, and pits, all hidden.
+# Nothing of his strays out, and nothing from outside comes in.
+
+[[dungeon]]
+id = "steorratorr_tower"
+name = "Steorratorr"
+kind = "tower"
+generator = "tower"
+floors = 7
+clearing = "steorratorr"
+top = "steorratorr_top"
+traps = ["fireball", "lightning_bolt", "teleport", "pit"]
+traps_per_level = [5, 8]
+hidden_per_depth = 2
+danger = { base = 10, per_depth = 1 }
+population = [
+    "brass_peacock", "quicksilver_hound", "gilded_likeness", "animated_blade", "animated_armour",
+    "imp", "quasit", "animated_teapot", "animated_cutlery", "animated_book",
+]
+population_count = { per_1000 = 15, least = 6, most = 10 }
+# Only his household: nothing from outside finds its way up the stair.
+stray = 0
+shops = { chance = 0 }
+room_effects = { chance = 0 }

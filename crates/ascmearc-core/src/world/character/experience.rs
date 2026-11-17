@@ -59,6 +59,10 @@ pub struct Progress {
     /// How often the player has broken each of the two laws (`world/character/laws.rs`).
     #[serde(default, skip_serializing_if = "super::laws::Broken::is_empty")]
     pub(crate) laws: super::laws::Broken,
+    /// The talents (by id) the ratfolk craving has taken for good (`world/character/craving.rs`):
+    /// never granted, picked, or given again.
+    #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
+    pub(crate) stripped: BTreeSet<String>,
 }
 
 impl Progress {
@@ -72,6 +76,7 @@ impl Progress {
             && self.sighted.is_empty()
             && self.prayer.is_none()
             && self.laws.is_empty()
+            && self.stripped.is_empty()
     }
 
     /// Whether `what` has happened, of what may happen once in a life.

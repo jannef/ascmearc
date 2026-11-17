@@ -180,6 +180,10 @@ impl World {
         let Some(talent) = content.talents().id(id) else {
             return;
         };
+        // Taken for good by the ratfolk craving (`craving.rs`): never given again.
+        if self.state.progress.stripped.contains(id) {
+            return;
+        }
         let def = content.talents().get(talent);
         let level = self.player_level();
         let me = self.player_mut();
@@ -191,15 +195,18 @@ impl World {
         });
         // Put in the order a restored run gives them (a flaw among the granted talents).
         let character = self.state.character.clone();
+        let stripped = std::mem::take(&mut self.state.progress.stripped);
         let me = self.player_mut();
         let boons = std::mem::take(&mut me.boons);
         crate::world::character::stars::grant(
             &content,
             character.as_ref(),
             &boons,
+            &stripped,
             &mut me.talents,
         );
         me.boons = boons;
+        self.state.progress.stripped = stripped;
         self.take_up_skills(def.effects.iter().cloned());
     }
 }

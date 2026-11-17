@@ -127,6 +127,7 @@ impl World {
             | Action::Lure(_)
             | Action::QuestDone(_)
             | Action::QuestGiven(_)
+            | Action::Travel(_)
             | Action::Profane(_)
             | Action::Rescind(_)
             | Action::QuestRoll { .. }

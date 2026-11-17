@@ -1,0 +1,41 @@
+# Campaign-owned (docs/design/campaign.md §3.6): the Ascmearc's own type, which only its files
+# may name.
+#
+# Steorratorr's wards (#1787; docs/dev/towers.md "A tower's household"): a statue of Master
+# Sigeric himself, gilt over stone, set to guard his stair. He has made a good many; he finds the
+# face reassuring. It walks slowly, strikes like a falling column, and nothing short of a hammer
+# troubles its gilding. Met only on the tower's trap floors, mostly the higher
+# (data/dungeons/steorratorr_tower.toml): never a stray.
+[[creature]]
+id = "gilded_likeness"
+level = 14
+xp = 80
+rarity = "uncommon"
+name = "gilded likeness"
+plural = "gilded likenesses"
+glyph = "@"
+fg = "#f0c850"
+speed = 800
+faction = "animated"
+tags = ["construct"]
+alignment = "neutral"
+vision = "darkvision"
+sight = 8
+footsteps = 80
+hearing = 8
+weight = 350000
+stray = false
+stats = { strength = 20, dexterity = 8, toughness = 21, intelligence = 3, willpower = 16, presence = 2 }
+base_hp = 30
+natural = { defence = 1, protection = 6, name = "gilded stone" }
+resist = { slashing = 25, piercing = 50, bludgeoning = -25 }
+immune = ["poisoned", "diseased", "bleeding"]
+corpse = false
+blood = "none"
+[creature.attack]
+damage = "2d8"
+damage_type = "bludgeoning"
+name = "fist"
+verb = "strikes"
+to_hit = 2
+on_hit = [{ status = "staggered", chance = 20, severity = 1 }]

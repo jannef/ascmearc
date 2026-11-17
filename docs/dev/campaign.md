@@ -288,6 +288,11 @@ quarrel"). Tests:
 "wedertorr"`) on Hlāwdūn, east of Cealdhlāw and north of Bānfeld. Ordgar's quarrel reveals it as
 given. Tests: `world/campaigns/wedertorr_tests.rs`. Its dev scenario is `wedertorr`.
 
+**Steorratorr** (#1787; `docs/dev/towers.md` "Steorratorr", where the whole tower is): Master
+Sigeric's wizard's tower, its way in the hidden `S` at (103, 40) (plains → `tower`, `to =
+"steorratorr"`) in Ēastmearc by the shore of Grægsæ. Ordgar's quarrel reveals it as given, with
+Wedertorr. Tests: `world/campaigns/steorratorr_tests.rs`. Its dev scenario is `steorratorr`.
+
 ## Līctūn, Cēaptūn's churchyard (#1258)
 
 `campaigns/ascmearc/levels/lictun.toml` (52×27, `kind = "outdoor"`, `item_level = 1`, no

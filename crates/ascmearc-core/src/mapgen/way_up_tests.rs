@@ -66,7 +66,8 @@ fn the_drakes_floor_gets_stairs_up_beside_the_hoard_and_no_other_floor_does() {
             let def = CONTENT.terrain(floor.terrain[p]);
             def.walkable || def.is_closed_door()
         });
-        assert!(dist[lair] <= 30, "seed {seed}: {} steps", dist[lair]);
+        // The mine's tunnel from the hoard's door may wind a little (#1836).
+        assert!(dist[lair] <= 36, "seed {seed}: {} steps", dist[lair]);
     }
     for depth in [1, 11] {
         let floor = level(&format!("fyrdelf:{depth}"), 1, None);

@@ -1,0 +1,78 @@
+# The top of Steorratorr (#1787; docs/design/wizard-tower.md §3, §7, §10.2; docs/dev/towers.md):
+# Master Sigeric's workshop and quarters, the hand-made level the highest trap floor's `<` leads
+# to (data/dungeons/steorratorr_tower.toml's `top`). The clearing's size, the tower on the same
+# cells, and its `>` back down in the south-west corner, where the stair through the tower ends
+# (`Content::fit_tower` checks both). Outside the tower the open air (_), six storeys over the
+# plain (`below`, `storey`): its seen cells show the grass, the shore, and the grey sea below.
+#
+# South-west, the landing: the stair down, a wall torch, a brazier. North of it, through a door,
+# his quarters: a bed (b), a table and a stool, shelves, a lamp, a brazier, and his cat. East,
+# through either door, his workshop, the tower's whole middle: shelves along the north wall, two
+# workbenches (k), an anvil (K), tables, braziers, lamps, the orrery he is proudest of (O, a named
+# place), and the wizard himself (A; his words: data/dialogue/steorratorr.toml). East of it,
+# through two doors, the balcony down the tower's whole east side, open to the sky and the sea
+# wind, with a parapet round it and his telescope (G, a named place): the star tower's roof,
+# facing the sea. No traps and no population: a home.
+name = "The Top of Steorratorr"
+kind = "outdoor"
+below = "steorratorr"
+storey = 6
+map = '''
+________________________________________________________________________
+________________________________________________________________________
+________________________________________________________________________
+________________________________________________________________________
+_______________WWW=WWW=WWW=WWW=WWW=WWW=WWW=WWW=WWW------________________
+_______________Wbb::::hhh:W:hhhhthhhhthhhhthhhh::W,,,,,-________________
+_______________W::::::::::W::::::::::::::::::::::W,,,,,-________________
+_______________=::::::::l:W::::::::::::::::::::::W,,,,,-________________
+_______________W::::::::::W::::::::::::::::l:::::',,,,,-________________
+_______________W::::Ts::::W:::kk:::::::::::::::::W,,,,,-________________
+_______________W::::::::::'::::::::::::::::::::::W,,,,,-________________
+_______________=::::::::::W::::::::::::::A:::::::W,,,,,-________________
+_______________W:::::::c::W::::::::::O:::::::::::W,,,,,-________________
+_______________WB:::::::::W::l:::::::::::::::::::=,,,G,-________________
+_______________W::::::::::W::::::::::::::::::::::W,,,,,-________________
+_______________=WWWWW'WWWWW::::::::::::::::::::::W,,,,,-________________
+_______________Wt:::::::::W:::KT::::::::::::TT:::W,,,,,-________________
+_______________W::::::::::W:::::::::::l::::::::::W,,,,,-________________
+_______________W::::::::::'::::::::::::::::::::::',,,,,-________________
+_______________=::::::::::W::::::::::::::::::::::W,,,,,-________________
+_______________W::::::::::W:B::::::::::::::::::B:W,,,,,-________________
+_______________W>::::::::BW::::::::::::::::::::::W,,,,,-________________
+_______________WWW=WWW=WWW=WWW=WWW=WWW=WWW=WWW=WWW------________________
+________________________________________________________________________
+________________________________________________________________________
+________________________________________________________________________
+________________________________________________________________________
+________________________________________________________________________
+________________________________________________________________________
+________________________________________________________________________
+'''
+
+[legend]
+"_" = "air"
+"W" = "tower_wall"
+":" = "tower_floor"
+"=" = "window"
+"'" = "door_open"
+"," = "flagstones"
+"-" = "parapet"
+"t" = "sconce"
+"h" = "shelves"
+"T" = "table"
+"b" = "bed"
+"s" = "stool"
+"B" = "brazier"
+"k" = "workbench"
+"K" = "anvil"
+"l" = { terrain = "tower_floor", light = "lamp" }
+"c" = { terrain = "tower_floor", creature = "cat" }
+# The orrery, on its own table in the workshop (a named place: look mode reads it).
+"O" = { terrain = "table", name = "an orrery", note = "Brass rings within rings, a gilt sun at the heart, the moon and the wandering stars on their arms. It turns by itself, very slowly. One star, larger than the rest, is engraved SIGERIC." }
+# The telescope on the balcony, looking out over the sea (a named place: look mode reads it).
+"G" = { terrain = "table", name = "a brass telescope", note = "A long brass tube on a stand, pointed at the sky over the sea. The eyepiece is worn bright." }
+# The stair down, to the highest trap floor.
+">" = { terrain = "stairs_down", to = "steorratorr_tower:5" }
+# The wizard in his workshop.
+"A" = { terrain = "tower_floor", creature = "sigeric", npc = "sigeric" }

@@ -8,6 +8,7 @@ cfg_if! {
         mod ceaptun_tests;
         mod crystal_guardian_tests;
         mod deep_gnome_tests;
+        mod drytorr_folk_tests;
         mod drytorr_tests;
         mod druid_quest_tests;
         mod gnome_letter_tests;
@@ -17,6 +18,7 @@ cfg_if! {
         mod pit_warden_tests;
         mod scriptorium_tests;
         mod skeul_hir_tests;
+        mod steorratorr_tests;
         mod strange_spirit_tests;
         mod wedertorr_tests;
         mod wynflaed_quest_tests;

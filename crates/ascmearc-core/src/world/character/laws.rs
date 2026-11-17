@@ -30,11 +30,15 @@ pub struct Broken {
     /// Fiends summoned.
     #[serde(default, skip_serializing_if = "is_zero")]
     pub(crate) summoned: u32,
+    /// The ratfolk craving's profane draws made, a gift given or not (`craving.rs`): none is
+    /// made twice.
+    #[serde(default, skip_serializing_if = "is_zero_u16")]
+    pub(crate) craving_gifts: u16,
 }
 
 impl Broken {
     pub fn is_empty(&self) -> bool {
-        self.eaten == 0 && self.summoned == 0
+        self.eaten == 0 && self.summoned == 0 && self.craving_gifts == 0
     }
 
     /// Corpses of thinking creatures the player has eaten.
@@ -46,9 +50,18 @@ impl Broken {
     pub fn summoned(&self) -> u32 {
         self.summoned
     }
+
+    /// The ratfolk craving's profane draws made so far.
+    pub fn craving_gifts(&self) -> u16 {
+        self.craving_gifts
+    }
 }
 
 fn is_zero(n: &u32) -> bool {
+    *n == 0
+}
+
+fn is_zero_u16(n: &u16) -> bool {
     *n == 0
 }
 

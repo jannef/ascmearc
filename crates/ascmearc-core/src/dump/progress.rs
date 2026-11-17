@@ -131,9 +131,26 @@ pub(super) fn progress_rows(world: &World) -> Vec<String> {
     // The two laws broken (`world/character/laws.rs`): sapient corpses eaten, fiends summoned.
     let laws = world.laws_broken();
     if !laws.is_empty() {
-        // The ratfolk craving's rows crossed (`world/character/craving.rs`), for one who craves.
+        // The ratfolk craving's rows crossed and the talents it stripped.
+        let stripped: Vec<&str> = world.stripped().collect();
+        let stripped = match stripped.is_empty() {
+            true => String::new(),
+            false => format!(", stripped {}", stripped.join(", ")),
+        };
+        // Its profane draws made (from 500), and `dry` once the table has nothing left.
+        let gifts = match (laws.craving_gifts(), world.craving_dry()) {
+            (0, _) => String::new(),
+            (n, dry) => format!(
+                ", {n} gift{}{}",
+                if n == 1 { "" } else { "s" },
+                if dry { " dry" } else { "" }
+            ),
+        };
         let craving = (world.craving_crossed()).map_or(String::new(), |n| {
-            format!("; craving {n} threshold{}", if n == 1 { "" } else { "s" })
+            format!(
+                "; craving {n} threshold{}{gifts}{stripped}",
+                if n == 1 { "" } else { "s" }
+            )
         });
         rows.push(format!(
             "laws broken: ate {} sapient, summoned {} fiend{craving}",

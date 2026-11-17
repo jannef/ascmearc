@@ -381,6 +381,7 @@ mod tests {
                 "grundleas",
                 "holtwic",
                 "rat_king",
+                "steorratorr",
                 "utgang",
                 "wedertorr",
             ]

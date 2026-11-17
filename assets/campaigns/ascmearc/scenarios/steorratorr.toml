@@ -1,0 +1,13 @@
+# A dev scenario of the Ascmearc (#1787): on the track up to Steorratorr, Master Sigeric's tower
+# on the shore of Grægsæ. Mid-morning, so the tower's shadow lies across the grass and the plain
+# and the sea are seen from the windows above. Walked off its edge, the run comes out on the
+# tower's cell, still hidden until Master Ordgar's quarrel marks it.
+name = "Steorratorr"
+description = "The plain by the grey sea where Master Sigeric's tower stands: its trap halls, the floors above, and the wizard at the top."
+start_level = "steorratorr"
+seed = 1
+character = { race = "human", gender = "male", class = "warrior", name = "Wulfstan" }
+# Ready for the climb (the replay up the tower: docs/dev/towers.md "Steorratorr"): a sword, a
+# shield, mail, and a lantern for the dark halls.
+wield = ["long_sword", "small_shield", "chain_mail", "lantern"]
+start_time = "10:00"

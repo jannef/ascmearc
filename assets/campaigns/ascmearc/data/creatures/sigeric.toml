@@ -1,0 +1,46 @@
+# Campaign-owned (docs/design/campaign.md §3.6): the Ascmearc's own type, which only its files
+# may name.
+#
+# Master Sigeric of Steorratorr (#1787; docs/design/wizard-tower.md §10): the maker of wonders of
+# the three wizards of the march, who keeps the top floor of his tower on the shore of Grægsæ (his
+# npc dialogue, campaigns/ascmearc/data/dialogue/steorratorr.toml). Once a run (`unique`), in no
+# population: only the tower's top floor places him. Peaceful until the quarrel says otherwise,
+# and the strongest of the three if crossed: fire, a quickened step, and a foe held where it
+# stands.
+#
+# His corpse teaches Spellcraft and Decipher script to whoever eats it, as every quest wizard's
+# does (#1761's follow-ups; the words: hunger.toml's `[corpses.skills]`): a way into the craft for
+# someone who wants it before the quarrel ends.
+[[creature]]
+id = "sigeric"
+level = 16
+xp = 100
+rarity = "very_rare"
+loot = 16
+unique = true
+name = "Master Sigeric"
+glyph = "@"
+fg = "#e8c870"
+faction = "peaceful"
+tags = ["tower_wizard", "caster", "sapient"]
+# One of the people: never greater or lesser than their kind.
+grades = false
+alignment = "neutral"
+race = "human"
+combat = "caster"
+range = 8
+spells = ["fireball", "bind", "arcane_bolt", "haste"]
+mana = 36
+opens_doors = true
+footsteps = 60
+hearing = 14
+weight = 74000
+stats = { strength = 10, dexterity = 13, toughness = 14, intelligence = 19, willpower = 18, presence = 19 }
+base_hp = 30
+skills = { enchanting = 85, spellcraft = 75, decipher_script = 55, concentration = 50 }
+weapon_skills = { staves = 4 }
+on_eat = { skills = { spellcraft = { gives = 15, up_to = 80 }, decipher_script = { gives = 9, up_to = 60 } } }
+[[creature.gear]]
+chance = 100
+one_of = ["quarterstaff"]
+keep = "wield"

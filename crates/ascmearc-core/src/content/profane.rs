@@ -206,6 +206,8 @@ fn forbidden(effect: &TalentEffect) -> bool {
                 | TalentEffect::Resource(ResourceEffect::GrantsResource { .. })
                 | TalentEffect::Beast(BeastEffect::Companion | BeastEffect::Familiar)
                 | TalentEffect::Growth(GrowthEffect::XpPercent { .. })
+                // No gift makes the player immune (the ratfolk craving is the one way).
+                | TalentEffect::Vigour(VigourEffect::Immune { .. })
         )
 }
 

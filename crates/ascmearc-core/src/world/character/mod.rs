@@ -29,6 +29,8 @@ cfg_if! {
         mod alignment_tests;
         mod body_talent_tests;
         mod character_tests;
+        mod craving_gifts_tests;
+        mod craving_rows_tests;
         mod craving_tests;
         mod creation_tests;
         mod damage_talent_tests;

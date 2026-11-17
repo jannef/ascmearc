@@ -1,22 +1,24 @@
 # Fennmynster, "the fen minster" (docs/design/campaign.md §7.1; the fields: data/dungeons.toml):
 # the cellars and crypts of the drowned minster in Micelfenn, the second of the Ascmearc's first
 # dungeons. Its way in on the overworld is hidden until a quest reveals it. Eight levels of
-# cellars, many rooms of them under water, and the sunken crypt at the bottom.
+# cellars and crypts built to a church's plan (the minster generator, docs/dev/mapgen.md "The
+# minster"), drowning and falling to ruin deeper down, and the sunken crypt at the bottom.
 
 [[dungeon]]
 id = "fennmynster"
 name = "Fennmynster"
 arrival = "The water is up to the third step."
-generator = "rooms"
+generator = "minster"
 depth = 8
-size = [80, 21]
+size = [100, 40]
 traps = ["pit", "frost", "alarm", "teleport"]
 # The monks hid their stores: more secret doors than the other dungeons, hidden things one harder
 # to find each level down, and locks one harder a level.
 secret_doors = [1, 3]
 hidden_per_depth = 1
 locks_per_depth = 1
-loot = [2, 4]
+# A floor is about three times a rooms floor of 80x21: so is its loot.
+loot = [5, 10]
 key = "iron_key"
 # The marsh is mild: its water freezes nowhere.
 temperature = 6
@@ -44,8 +46,10 @@ population = [
     "water_mote", "frost_mote", "lesser_ice_elemental",
     "stone_haunt", "pale_drinker", "mummy",
 ]
-# How many: the default, 35 a thousand walkable cells, 25 to 80 (a cellar floor of about 350
-# cells gets the least, 25).
+# How many: 20 a thousand walkable cells, 25 to 80. A minster floor has about 2,000 walkable
+# cells (the old rooms floors 350 to 700, which got the least, 25): the default 35 would put 70
+# on it, and its long open hall would bring them all at once; 20 puts about 40.
+population_count = { per_1000 = 20, least = 25, most = 80 }
 
 # The fen seeps in: a room is special one time in four, at most two a
 # level; water, hush, and shadow most of the time, the dead often, and the rest whatever any

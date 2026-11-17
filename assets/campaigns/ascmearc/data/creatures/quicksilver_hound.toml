@@ -1,0 +1,39 @@
+# Campaign-owned (docs/design/campaign.md §3.6): the Ascmearc's own type, which only its files
+# may name.
+#
+# Steorratorr's servants (#1787; docs/dev/towers.md "A tower's household"): a hound of living
+# quicksilver, the first of Master Sigeric's transmutations he was ever pleased with. It runs
+# like a spilled bead, low and fast, and its bite leaves the metal's sickness in the wound. Met
+# only on the tower's trap floors (data/dungeons/steorratorr_tower.toml): never a stray.
+[[creature]]
+id = "quicksilver_hound"
+level = 12
+xp = 70
+rarity = "common"
+name = "quicksilver hound"
+glyph = "C"
+fg = "#c8d0d8"
+speed = 1500
+faction = "animated"
+tags = ["construct"]
+alignment = "neutral"
+vision = "darkvision"
+sight = 10
+footsteps = 20
+hearing = 12
+weight = 40000
+stray = false
+stats = { strength = 13, dexterity = 18, toughness = 14, intelligence = 3, willpower = 16, presence = 2 }
+base_hp = 18
+natural = { defence = 3, protection = 1, name = "quicksilver skin" }
+resist = { slashing = 25, piercing = 25 }
+immune = ["poisoned", "diseased", "bleeding"]
+corpse = false
+blood = "none"
+[creature.attack]
+damage = "2d6"
+damage_type = "piercing"
+name = "bite"
+verb = "bites"
+to_hit = 3
+on_hit = [{ status = "poisoned", chance = 25, severity = 2 }]
