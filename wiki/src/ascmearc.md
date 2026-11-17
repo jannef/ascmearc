@@ -58,9 +58,9 @@ village, the wood, and the fair folk, and will [talk](npcs.md) of them. A girl o
 [escort](quests.md#kinds-of-quests) of the march. Like the town, Holtwīc has no
 [stairs](terrain.md#stairs); walk off its edge to leave.
 
-### Drytorr
+### Drȳtorr
 
-**Drytorr**, the wizard's tower, stands in a clearing at the western edge of the holly wood,
+**Drȳtorr**, the wizard's tower, stands in a clearing at the western edge of the holly wood,
 north-west of the fairy mound. It is a [hidden location](overworld.md#hidden-locations): Gammer
 Wynflæd marks it on your map when she sends you there with her rowan, once the girl from the
 village is home ([quests](quests.md#who-gives-quests)). **Master Ordgar**, the wizard, lives at
@@ -236,7 +236,7 @@ The guild is younger than the town, so its names are Middle English, not Old. It
 One-Eye, is a commoner, called by a short name and a byname. The guild's [ranks](guild.md#ranks)
 (Tin to Gold) are plain English.
 
-The game writes *ǣ* as **æ** and *ȳ* as **y** (Græg-, Fyr-), as its font draws them.
+Most names write *ǣ* as **æ** and *ȳ* as **y** (Græg-, Fyr-).
 
 The language has moved on since the old places were named. People of the march's own day go by
 the later forms of the old names. The outlaws go by the bynames the broadsheets give them, in the

@@ -112,7 +112,7 @@ The Ascmearc (`assets/campaigns/ascmearc/`):
 - `ceaptun`: on the market square of its town, Cēaptūn, with 60 gold.
 - `holtwic`: on the lane into Holtwīc, the village at the north road's end, with its wise-woman.
 - `aelfham`: on the first floor of Ælfhām, the hidden fey hall under the mound near it.
-- `drytorr`: on the track into Drytorr's clearing at 10:00, Master Ordgar's tower before you
+- `drytorr`: on the track into Drȳtorr's clearing at 10:00, Master Ordgar's tower before you
   (its `<` climbs the tower's trap floors to the wizard's top floor).
 - `cealdhlaw`: on the first floor of Cealdhlāw, the Ascmearc's first dungeon.
 - `deopgang`: on the first floor of Dēopgang, the deep way down from the south-west corner.

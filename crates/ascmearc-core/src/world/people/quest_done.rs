@@ -1,5 +1,5 @@
 //! The dev action `quest_done:ID` ([`crate::action::Action::QuestDone`]): a quest marked done as
-//! if handed in, so a replay or a capture can start a chain past its earlier quests (Drytorr's
+//! if handed in, so a replay or a capture can start a chain past its earlier quests (Drȳtorr's
 //! rowan needs the wise-woman's escort done first). No words, no reward, no reveal.
 
 use super::quest::{QuestRecord, Stage};

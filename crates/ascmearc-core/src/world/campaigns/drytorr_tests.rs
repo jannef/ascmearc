@@ -1,4 +1,4 @@
-//! Drytorr, Master Ordgar's tower (#1784; docs/design/wizard-tower.md, slice C1): its hidden cell
+//! Drȳtorr, Master Ordgar's tower (#1784; docs/design/wizard-tower.md, slice C1): its hidden cell
 //! in the holly wood, the clearing whose tower is the ground floor (its `<` climbs, it is not the
 //! way out), the two generated trap floors and the hand-made top with the wizard, Gammer
 //! Wynflæd's word about him as she hands in her first quest, her second (a sprig of rowan,
@@ -13,7 +13,7 @@ use crate::world::*;
 use std::collections::{BTreeMap, VecDeque};
 use std::sync::LazyLock;
 
-/// Drytorr's cell on the overworld, hidden in the wood north-west of the fairy mound.
+/// Drȳtorr's cell on the overworld, hidden in the wood north-west of the fairy mound.
 const TOWER_CELL: Pos = Pos::new(19, 11);
 /// Holtwīc's cell.
 const VILLAGE_CELL: Pos = Pos::new(18, 17);
@@ -66,7 +66,7 @@ fn topics(world: &World, at: Pos) -> Vec<String> {
 }
 
 fn tower() -> &'static crate::content::Tower {
-    let def = CONTENT.dungeon(BRANCH).expect("Drytorr's floors");
+    let def = CONTENT.dungeon(BRANCH).expect("Drȳtorr's floors");
     def.tower.as_ref().expect("a tower")
 }
 
@@ -80,14 +80,14 @@ fn warrior() -> World {
 fn the_tower_is_hidden_in_the_holly_wood_until_revealed() {
     let (at, tower) = CONTENT
         .hidden_location("ascmearc", "drytorr")
-        .expect("Drytorr");
+        .expect("Drȳtorr");
     assert_eq!(at, TOWER_CELL);
     assert_eq!(
         (
             CONTENT.terrain(tower.terrain).id.as_str(),
             tower.name.as_str()
         ),
-        ("tower", "Drytorr")
+        ("tower", "Drȳtorr")
     );
     let map = CONTENT.overworld_of("ascmearc").expect("the overworld");
     assert_eq!(CONTENT.terrain(map.terrain[at]).id, "forest");
@@ -101,7 +101,7 @@ fn the_tower_is_hidden_in_the_holly_wood_until_revealed() {
     act(&mut w, "reveal:drytorr");
     assert_eq!(
         w.perception().leads_to(TOWER_CELL).as_deref(),
-        Some("Drytorr")
+        Some("Drȳtorr")
     );
     put_player(&mut w, TOWER_CELL);
     act(&mut w, "descend");
@@ -114,7 +114,7 @@ fn the_tower_is_hidden_in_the_holly_wood_until_revealed() {
 
 #[test]
 fn the_tower_is_four_floors_on_the_clearings_footprint() {
-    let def = CONTENT.dungeon(BRANCH).expect("Drytorr's floors");
+    let def = CONTENT.dungeon(BRANCH).expect("Drȳtorr's floors");
     assert_eq!(def.campaign.as_deref(), Some("ascmearc"));
     let t = tower();
     assert_eq!((t.floors, t.depth()), (4, 2));
@@ -154,7 +154,7 @@ fn on_the_clearing_the_stair_climbs_and_anywhere_else_up_leaves() {
     act(&mut w, "ascend");
     assert_eq!(
         (w.perception().level_id(), w.perception().level_name()),
-        ("drytorr_tower:1", "Drytorr 2")
+        ("drytorr_tower:1", "Drȳtorr 2")
     );
     assert_eq!(w.player_pos(), STAIR);
     act(&mut w, "descend");
@@ -339,7 +339,7 @@ fn from_holtwic_to_the_top_and_the_hand_in_replays_exactly() {
     }
     act(&mut w, &mut replay, "ascend");
     assert_eq!(w.perception().level_id(), "drytorr_top");
-    assert!(heard(&w, "You climb the stairs to The Top of Drytorr."));
+    assert!(heard(&w, "You climb the stairs to The Top of Drȳtorr."));
     walk_to(&mut w, &mut replay, ORDGAR.step(Dir::W));
     act(&mut w, &mut replay, &format!("ask:E:quest-{ROWAN}"));
     assert_eq!(stage(&w, ROWAN), Some(Stage::Done));

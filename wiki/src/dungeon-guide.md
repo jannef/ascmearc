@@ -172,7 +172,7 @@ galleries, where a room is fit for one (about one gallery floor in four).
 On the eleventh floor, in a small chamber off a cave passage, stands a **hunter's statue**: a
 [worn statue](terrain.md#terrain-statue) of a hooded figure on a raised floor between two torches,
 and nothing else. Coming beside it reads its plinth: *"Letters are cut deep into the plinth, in the
-old tongue: LĪF ÆR DĒAÞE. Below, in a later hand: 'Life before death. So the hunters swore, to the
+old tongue: LĪF ǢR DĒAÞE. Below, in a later hand: 'Life before death. So the hunters swore, to the
 one who waited for them on the road; and the road gave them each a blade.'"*
 
 At the very bottom lies the **drake's hoard**: a hall ringed with lava where the
