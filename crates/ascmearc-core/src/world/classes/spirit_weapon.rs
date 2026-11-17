@@ -149,7 +149,9 @@ impl World {
     /// [`World::fade_spirit`]; with `held` every spirit weapon fades, in the hands too.
     fn fade_where(&mut self, held: bool) -> Positions {
         let content = self.content.clone();
-        let hands: Vec<_> = content.hand_slots().collect();
+        let hands: Vec<_> = (content.hand_slots())
+            .chain(content.extra_hands())
+            .collect();
         let player = self.state.player();
         let in_hand = |i: usize| {
             let slots = player.equipment.slots_of(i);

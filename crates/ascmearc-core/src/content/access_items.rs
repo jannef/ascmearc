@@ -83,16 +83,31 @@ impl Content {
 
     /// Whether `object` goes in `slot` by its own `slot`, not as a weapon some slot takes too:
     /// its `slot` is what the slot fits, or it is a light weapon or a shield (anything it can
-    /// bash with) and the slot is a hand (two-weapon and two-shield fighting).
+    /// bash with) and the slot is a hand (two-weapon and two-shield fighting); a `light_only`
+    /// slot (the tail) a light weapon alone.
     pub fn fits_properly(&self, object: ObjectId, slot: SlotId) -> bool {
         let (def, slot) = (self.object(object), self.slot(slot));
+        if slot.light_only {
+            return def.light_weapon && def.bash.is_none() && !def.two_handed;
+        }
         def.slot.as_ref() == Some(&slot.fits)
             || ((def.light_weapon || def.bash.is_some()) && slot.hand)
     }
 
-    /// The hand slots (a two-handed object takes them all), in display order.
+    /// The hand slots everyone has, the pair whose hold is the grip (a two-handed object takes
+    /// them all), in display order: never a grown one ([`Content::extra_hands`]).
     pub fn hand_slots(&self) -> impl Iterator<Item = SlotId> + '_ {
-        self.slot_ids().filter(|(_, s)| s.hand).map(|(id, _)| id)
+        (self.slot_ids())
+            .filter(|(_, s)| s.hand && !s.grown)
+            .map(|(id, _)| id)
+    }
+
+    /// The grown hand slots (Three-armed's third hand, Prehensile-tailed's tail, #1808), in
+    /// display order: what they hold is extra to the grip (`world/combat/extra_limbs.rs`).
+    pub fn extra_hands(&self) -> impl Iterator<Item = SlotId> + '_ {
+        (self.slot_ids())
+            .filter(|(_, s)| s.hand && s.grown)
+            .map(|(id, _)| id)
     }
 
     /// Whether missile weapon `launcher` shoots `ammo`: they pair by kind (`launches` and

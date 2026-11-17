@@ -1287,7 +1287,7 @@ mod tests {
         let actions = text("actions.md");
         assert!(
             actions.contains(
-                "| Wielding something, or putting it away: Main hand, off hand | 1000 | 6 seconds |"
+                "| Wielding something, or putting it away: Main hand, off hand, third hand, tail | 1000 | 6 seconds |"
             ),
             "{actions}"
         );

@@ -699,7 +699,8 @@ impl Actor {
         let weapon = self.weapon_item(content);
         let style = self.benefit(content, self.style(content, AttackKind::Melee, None));
         let parry_skill = self.benefit(content, self.melee_skill(content)).parry + style.parry;
-        let block = style.shield;
+        // The style's Shield bonus, or a grown hand's shield's (`extra_limbs.rs`).
+        let block = self.block(content);
         let equipped: Vec<(usize, &ObjectDef, Mods, bool)> = (self.equipment.items().into_iter())
             .filter_map(|(slot, item)| {
                 Some((item, content.slot(slot).hand, self.inventory.get(item)?))
@@ -1127,7 +1128,14 @@ impl Actor {
         let skill_of = |object: ObjectId| content.object(object).skill;
         match kind {
             AttackKind::Melee => {
-                let (grip, weapons) = self.grip(content)?;
+                let grip = self.grip(content);
+                // What a grown hand holds may fight in a style of its own (`extra_limbs.rs`).
+                if let Some(with) = with
+                    && let Some(style) = self.extra_style(content, grip.as_ref().map(|g| g.0), with)
+                {
+                    return style;
+                }
+                let (grip, weapons) = grip?;
                 table.style_for(grip, &weapons)
             }
             AttackKind::Ranged => {
@@ -1164,6 +1172,11 @@ impl Actor {
         .into_iter()
         .flatten()
         .collect();
+        // What its grown hands hold, each in its style (`extra_limbs.rs`).
+        for (_, item, _) in self.extra_held(content) {
+            let with = Some(self.inventory[item].object);
+            styles.extend(self.style(content, AttackKind::Melee, with));
+        }
         styles.sort_unstable();
         styles.dedup();
         styles
@@ -1494,8 +1507,16 @@ impl Actor {
     /// affixes and those of everything it wears and wields; and its
     /// combat stance. `None` without one.
     pub fn off_hand_blow(&self, content: &Content) -> Option<(ObjectId, Profile)> {
-        let (item, attack) = self.off_hand(content)?;
-        let stack = &self.inventory[item];
+        let (item, _) = self.off_hand(content)?;
+        self.held_blow(content, item)
+    }
+
+    /// The blow of the weapon at inventory position `item` beside another: the off hand's, or a
+    /// grown hand's (`extra_limbs.rs`), as [`Actor::off_hand_blow`] says, in the style that
+    /// weapon is fought in. `None` for no weapon.
+    pub fn held_blow(&self, content: &Content, item: usize) -> Option<(ObjectId, Profile)> {
+        let stack = self.inventory.get(item)?;
+        let attack = stack.attack(content)?;
         let mods = self.mods(content);
         let benefit = self.attack_benefit(content, AttackKind::Melee, Some(stack.object));
         let mut profile = Profile::melee(&attack, &self.stats_with(content, &mods)).with(&benefit);

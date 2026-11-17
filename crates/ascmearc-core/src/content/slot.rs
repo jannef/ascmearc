@@ -9,7 +9,9 @@
 //! two-handed object takes both. A slot that `takes_weapons` also holds any weapon or
 //! throwable (the missile weapon slot). A slot with a `class` belongs to the characters of that
 //! class alone (the aristocrat's three extra ring slots, #1404): nobody else has it, so it is not
-//! shown, filled, or offered for them ([`super::Content::slots_for`]).
+//! shown, filled, or offered for them ([`super::Content::slots_for`]). A `grown` slot is
+//! nobody's until a talent opens it (a profane gift's limb, #1808: Three-armed's third hand,
+//! Prehensile-tailed's tail); a `light_only` one holds a light weapon and nothing else.
 
 use super::{ActionKind, ContentError};
 use serde::{Deserialize, Serialize};
@@ -44,6 +46,12 @@ struct SlotSpec {
     takes_weapons: bool,
     /// Only a character of this class has the slot (a class id, checked once the classes load).
     class: Option<String>,
+    /// Nobody has the slot until a talent opens it (a grown limb).
+    #[serde(default)]
+    grown: bool,
+    /// Holds a light weapon and nothing else (a prehensile tail).
+    #[serde(default)]
+    light_only: bool,
 }
 
 #[derive(Deserialize)]
@@ -72,12 +80,19 @@ pub struct SlotDef {
     /// Only a character of this class has it (the aristocrat's extra ring slots); `None`:
     /// everyone does, creatures too.
     pub class: Option<String>,
+    /// Nobody has it until a talent opens it: a grown limb (the third hand, the tail, #1808).
+    /// A grown hand is no hand of the pair ([`super::Content::hand_slots`]): what it holds is
+    /// extra to the grip.
+    pub grown: bool,
+    /// Holds a light weapon and nothing else (the tail): no shield, no other weapon.
+    pub light_only: bool,
 }
 
 impl SlotDef {
-    /// Whether one of class `class` (`None`: no character, a creature) has this slot.
+    /// Whether one of class `class` (`None`: no character, a creature) has this slot without a
+    /// talent opening it: never a grown one.
     pub fn belongs_to(&self, class: Option<&str>) -> bool {
-        self.class.is_none() || self.class.as_deref() == class
+        !self.grown && (self.class.is_none() || self.class.as_deref() == class)
     }
 }
 
@@ -105,6 +120,12 @@ pub(super) fn parse(file: &str, text: &str) -> Result<Vec<SlotDef>, ContentError
             .ok_or_else(|| {
                 bad("`action` must be `wield`, `wear`, `body_armor`, or `ready` (actions.toml)")
             })?;
+        if spec.grown && spec.class.is_some() {
+            return Err(bad("a `grown` slot has no `class`: a talent opens it"));
+        }
+        if spec.light_only && !(spec.hand && spec.grown) {
+            return Err(bad("`light_only` is for a `grown` `hand` slot"));
+        }
         let fits = spec.fits.unwrap_or_else(|| spec.id.clone());
         slots.push(SlotDef {
             id: spec.id,
@@ -115,6 +136,8 @@ pub(super) fn parse(file: &str, text: &str) -> Result<Vec<SlotDef>, ContentError
             hand: spec.hand,
             takes_weapons: spec.takes_weapons,
             class: spec.class,
+            grown: spec.grown,
+            light_only: spec.light_only,
         });
     }
     Ok(slots)

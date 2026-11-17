@@ -112,6 +112,21 @@ and Craven's wall in #774. Tests: `world/combat/two_shield_tests.rs`, `content/w
 (the rank tables, the refusals), the screen's and the equipment screen's unit tests; wiki:
 the banes in `style-benefits.md` (`rank_table`'s bane columns).
 
+Extra limbs (#1808; `world/combat/extra_limbs.rs`, its module docs the summary): what a grown
+hand holds (`Actor::extra_held`: Three-armed's third hand, Prehensile-tailed's tail) is extra
+to the pair's grip, which `Actor::grip` reads from the main and off hand alone. One hook each:
+`Actor::extra_style` (from `Actor::style`: an attack made `with` a grown hand's weapon is fought
+in Twin Blades unless the pair holds two weapons, with its shield in Sword and Board unless the
+pair holds a shield beside a weapon or two shields; nothing changes for anyone with nothing in a
+grown hand), `Actor::block` (Defence: the pair's style's `shield`, or the grown hand's shield's
+style's, the larger), `Actor::styles_in_use` (both styles listed), `World::extra_limbs` (after the
+second blow, in `World::attack` and `player_attacks`: each weapon's blow, `Actor::held_blow` at the
+off hand's penalty; each shield's bash after a first blow that hit by its style's `bash`, one draw
+`fight/extra_bash/<key>/<slot>` only when the chance is above 0; struck as `Free::Second`), and
+`known_attacks` (the `Third hand` and `Tail` rows). Shield bonuses never add up: the best counts.
+Tests: `world/combat/extra_limbs_tests.rs` (each combination, the tail's refusals, the gifts' stat
+costs, what falls when a gift goes).
+
 Caster styles (#571, combat progression family): spells that roll to hit
 (`SpellData::rolls_to_hit`: a damage spell, a ray, a bolt, or a touch, resolved by the attack
 roll) draw on no weapon skill (the schools' skills went with #1263, docs/dev/caster-styles.md)

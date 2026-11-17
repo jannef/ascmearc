@@ -1,0 +1,13 @@
+[[gift]]
+id = "extra_arm"
+name = "Three-armed"
+kind = "mixed"
+tier = "dire"
+weight = 6
+description = "A third arm with a hand of its own: it holds what an off hand holds, a light weapon that strikes beside the others or a shield that guards and bashes. People cannot look at you for long."
+line = "Something tears loose under your ribs, and a third arm unfolds from your side."
+undone = "Your third arm withers, and is gone."
+effects = [
+    { kind = "opens_slot", slot = "third_hand" },
+    { kind = "stat", stat = "presence", value = -2 },
+]

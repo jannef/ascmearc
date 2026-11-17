@@ -293,6 +293,7 @@ above.
 | Target dummy, training dummy, the Gilde's yard | `weapon-skills.md#target-dummies`, `guild.md#the-yard` |
 | Fighting style | `fighting-styles.md` (a style: its row) |
 | Two-weapon fighting, off hand | `fighting-styles.md#two-weapons` |
+| Third hand, tail, more than two hands (Three-armed, Prehensile-tailed) | `fighting-styles.md#more-than-two-hands` |
 | Damage type | `damage-types.md` (a type: its row) |
 | Status effect, severity, degrees | `status-effects.md#how-they-work` (a status: its row) |
 | Buffs, hexes, and cooldowns | `buffs.md` |
