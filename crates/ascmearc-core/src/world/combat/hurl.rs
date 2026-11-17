@@ -5,11 +5,16 @@
 //! is within the throw's range with a clear line of fire (no opaque cell and nobody in between,
 //! as an archer's) and it stands in the open (an incorporeal thrower inside a wall comes out of
 //! it first); otherwise it closes in, and next to its target it fights in melee. Nothing is
-//! drawn at random to decide it.
+//! drawn at random to decide it. Two limits, each its type's to give (#1794, #1795): with a
+//! `cooldown` it throws only while its cooldown status (`thrown`) is
+//! off, and takes it as it throws; with a `supply` it throws only while one of the throw's object
+//! is in its pack (it was made with them, `gear.rs`), and each throw spends one. Meanwhile, or
+//! with none left, it closes in and fights in melee as any; what is left falls where it dies.
 //!
 //! **What**: a thrown attack ([`crate::world::Actor::hurled`]: Dexterity to hit, Strength to
-//! damage), flying as any missile ([`World::fly`]) as the throw's object, which never lands: the
-//! supply is endless, and the throw's price (its `cost`, else `throw`'s) is what limits it. It
+//! damage), flying as any missile ([`World::fly`]) as the throw's object, which never lands:
+//! without a `supply` the supply is endless, and the throw's price (its `cost`, else `throw`'s)
+//! and its cooldown are what limit it. It
 //! makes a throw's noise once. Its `on_hit` riders apply as a natural attack's do.
 //!
 //! **Words**: the player who sees the thrower is told it throws ("The hill giant hurls a
@@ -20,12 +25,13 @@
 //! has no attack of its own. It is priced and heard as any throw, the player who sees the thrower
 //! is told it throws ("The kobold alchemist hurls a flask."), and the flask flies and shatters as
 //! the player's does ([`World::shatter_flask`]), its splash cast by the thrower (its kills, its
-//! zone; the type learned when the player sees where it breaks). Its supply is endless, as a
-//! giant's boulders (the design's Q9); a flask in a creature's pack is never thrown (Q10).
+//! zone; the type learned when the player sees where it breaks). The shipped bombers carry a
+//! `supply` of their flasks and have a cooldown (#1794 replaced the design's endless supply, Q9);
+//! a flask in a pack is thrown only as a throw's supply (Q10 otherwise holds).
 
 use super::fight::{End, Guard, Words, attack_message};
 use super::shoot::Flight;
-use crate::action::{AttackKind, Event};
+use crate::action::{AttackKind, Event, Positions};
 use crate::combat::Strike;
 use crate::content::{ActionKind, Content, DamageTypeId, ObjectId, Throw};
 use crate::fov::radius2;
@@ -35,15 +41,20 @@ use crate::text::article;
 use crate::world::{Actor, ActorId, World};
 
 impl World {
-    /// Whether creature `id` throws at actor `target`, standing at `at`, now: it has a throw,
-    /// is not next to it, and has it in range with a clear line of fire.
+    /// Whether creature `id` throws at actor `target`, standing at `at`, now: it has a throw
+    /// that is ready (its cooldown off, one of its supply in its pack), is not next to it, and
+    /// has it in range with a clear line of fire.
     pub(in crate::world) fn hurls_at(&self, id: ActorId, target: ActorId, at: Pos) -> bool {
         let me = &self.state.actors[&id];
         let Some(throw) = self.content.creature(me.creature).throw.as_ref() else {
             return false;
         };
+        let cooling = throw.cooldown.is_some_and(|(_, s, _)| me.effects.has(s));
+        let spent = throw.supply.is_some() && supply_at(me, throw.object).is_none();
         // One inside solid rock (an earth elemental) comes out of it before it throws.
-        me.pos.chebyshev(at) > 1
+        !cooling
+            && !spent
+            && me.pos.chebyshev(at) > 1
             && !self.state.current().is_opaque(&self.content, me.pos)
             && me.pos.dist2(at) <= radius2(throw.range)
             && self.clear_shot(me.pos, at, id, target)
@@ -66,6 +77,12 @@ impl World {
         };
         let skills = self.skills_of(id, AttackKind::Thrown, Some(throw.object));
         let price = self.attack_price(id, ActionKind::Throw, None, skills);
+        if let Some((_, status, degrees)) = throw.cooldown {
+            self.afflict(id, status, degrees, None, events);
+        }
+        if throw.supply.is_some() {
+            self.spend_one(id, throw.object);
+        }
         self.make_noise(id, Act::Attack(AttackKind::Thrown));
         let at = self.aim_at(id, target, at);
         if content.object(throw.object).flask.is_some() {
@@ -93,6 +110,32 @@ impl World {
         self.fly(id, at, flight, events);
         price
     }
+}
+
+impl World {
+    /// Takes one of `object` out of actor `id`'s pack: its throw's supply (the last of a stack
+    /// empties it, and what is worn follows its letters).
+    fn spend_one(&mut self, id: ActorId, object: ObjectId) {
+        let Some(me) = self.state.actors.get_mut(&id) else {
+            return;
+        };
+        let Some(at) = supply_at(me, object) else {
+            return;
+        };
+        me.inventory[at].count -= 1;
+        if me.inventory[at].count == 0 {
+            me.inventory.remove(at);
+            me.equipment.after_removal(&Positions::of([at]));
+        }
+    }
+}
+
+/// Where in `actor`'s pack a throw's supply of `object` lies: its last stack of it not worn or
+/// wielded.
+fn supply_at(actor: &Actor, object: ObjectId) -> Option<usize> {
+    (0..actor.inventory.len())
+        .rev()
+        .find(|&i| actor.inventory[i].object == object && !actor.equipment.holds(i))
 }
 
 /// The throw of `attacker`'s type, if an attack of `kind` made `with` an object was one.
