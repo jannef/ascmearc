@@ -117,7 +117,7 @@ bottom is Gimmwīc, the deep gnomes' town. Tests: `content/dungeon.rs` (parse an
 `mapgen/tower.rs`): a branch of `kind = "tower"` (`DungeonDef::tower`, `Tower`) goes **up**
 from a hand-made outdoor `clearing`, the ground floor, to a hand-made `top`, with `floors`
 counting both (`depth` is `floors − 2`; `level_name` counts from the clearing, so depth 1 is
-"Drȳtorr 2"). `Content::fit_tower` (in `load_dungeons`, the levels being loaded) gives every
+"Drytorr 2"). `Content::fit_tower` (in `load_dungeons`, the levels being loaded) gives every
 floor the clearing's size and finds the footprint, the box of the clearing's tower wall; the
 clearing's `<` to depth 1 must stand inside it, and the stair runs on from there: each floor's
 `>` on the cell of the `<` below, its `<` in the interior corner farthest from that `>`

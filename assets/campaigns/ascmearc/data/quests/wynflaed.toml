@@ -2,7 +2,8 @@
 # Ælfrun, a girl of Holtwīc, went to the holly wood's edge and the dark court took her into its
 # hall. Asked, the wise-woman marks Ælfhām on the player's map (the reveal), and the girl is made
 # on the moss bed at its bottom (`waits`, world/people/escort_waits.rs); spoken with, she follows, and
-# home in Holtwīc with the player she says her thanks and the wise-woman pays.
+# home in Holtwīc with the player she says her thanks and the wise-woman pays. Her thanks end with
+# a word about the wizard of Drytorr, whom her second quest sends the player to.
 
 [[quest]]
 id = "taken_under_the_hill"
@@ -20,5 +21,27 @@ reveals = { location = "aelfham" }
 offer = "It's Ælfrun, my dear, Osgar's girl. Went for kindling at the wood's edge three days gone, and never came home. They found her basket in a ring of toadstools. The dark ones have her, under their hill. Bring her back to us, before she forgets she ever had a home."
 accept = "Here, I'll show you where the mound is. Keep iron about you, and eat nothing they offer. She'll be at the very bottom of it."
 reminder = "Ælfrun's under the hill still, my dear, at the bottom of Ælfhām. Bring her home to Holtwīc."
-done = "Bless you, bless you. Home, and herself still. Take these, my own brewing, and mind you thank nobody for them in the wood."
+done = "Bless you, bless you. Home, and herself still. Take these, my own brewing, and mind you thank nobody for them in the wood. There's one more I'd send you to, my dear, up in the wood: a learned man in a tower. Ask me of him."
 where = "Ælfhām lies in the holly wood, north-east of Holtwīc."
+
+# The wise-woman's second (#1784; docs/design/wizard-tower.md §11): her token, a sprig of rowan tied
+# with red thread, carried to Master Ordgar at the top of his tower, Drytorr, in the holly wood.
+# She cannot write, and a wise-woman's token is better than a letter. Asked, she marks the tower on
+# the map (the reveal); handed over, Ordgar says his piece and pays. Experience only: Spellcraft is
+# taught at the end of the wizards' quarrel, not here.
+[[quest]]
+id = "rowan_for_the_wizard"
+name = "A sprig of rowan"
+giver = "wynflaed"
+requires = "taken_under_the_hill"
+type = "deliver"
+target = "rowan_sprig"
+to = "ordgar"
+reward = { xp = 150 }
+alignment = 10
+reveals = { location = "drytorr" }
+offer = "There's a learned man keeps a tower in the wood, my dear, Master Ordgar, north-west of the mound. Books and brass and the stars. Take him this from me: rowan, and red thread. He'll know whose it is."
+accept = "Here, I'll mark the tower for you. Mind the stair: he keeps it hard on callers, and he's not one for visitors."
+reminder = "My rowan's for Master Ordgar, my dear, at the top of his tower in the wood."
+done = "Rowan and red thread. Wynflæd's, and sent with a purpose; she does nothing idly. Then you are what she thinks you are. Do sit. The tea is cold, but it is tea, and you have earned it on my stair."
+where = "Drytorr stands in Holegnwudu, north-west of the fairy mound; the wizard keeps the top floor."

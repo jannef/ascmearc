@@ -154,7 +154,9 @@ is revealed by its own variant of `guild_wanted` (`mapgen/lairs_tests.rs` walks 
 down once `reveal:ID` marks it). `V` Holtwīc (`town`, (18, 17), #1140) is the village at the north
 road's end, leading into `holtwic` (`docs/dev/campaign.md` "Holtwīc"); `E` Ælfhām (25, 13, forest →
 `barrow`, `to = "aelfham:1"`) is the hidden fairy mound seven cells north-east of it, for the
-wise-woman's quest to reveal (#1141; `world/campaigns/holtwic_tests.rs`). `g` Līctūn (`graveyard`, (19, 32),
+wise-woman's quest to reveal (#1141; `world/campaigns/holtwic_tests.rs`); `I` Drytorr (19, 11,
+forest → `tower`, `to = "drytorr"`) is Master Ordgar's hidden tower north-west of the mound, for
+her second quest to reveal (#1784; `docs/dev/towers.md`, `world/campaigns/drytorr_tests.rs`). `g` Līctūn (`graveyard`, (19, 32),
 #1258) is Cēaptūn's churchyard beside the south road, four cells out of town, leading into
 `lictun` (`docs/dev/campaign.md` "Līctūn"): with the starter cave, the one location closer than
 six cells to another (`ascmearc_tests`: four from the town, at least five from every other).

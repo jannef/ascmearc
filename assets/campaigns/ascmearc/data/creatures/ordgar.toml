@@ -1,0 +1,40 @@
+# Campaign-owned (docs/design/campaign.md §3.6): the Ascmearc's own type, which only its files
+# may name.
+#
+# Master Ordgar of Drytorr (#1784; docs/design/wizard-tower.md §10): the scholar of the three
+# wizards of the march, who keeps the top floor of his tower in the holly wood (his npc dialogue,
+# campaigns/ascmearc/data/dialogue/drytorr.toml). Once a run (`unique`), in no population: only
+# the tower's top floor places him. Peaceful, but a caster of some power if crossed: wards and
+# reading, a bolt or two, a web.
+[[creature]]
+id = "ordgar"
+level = 10
+xp = 60
+rarity = "very_rare"
+loot = 13
+unique = true
+name = "Master Ordgar"
+glyph = "@"
+fg = "#7a9ad8"
+faction = "peaceful"
+tags = ["tower_wizard", "caster", "sapient"]
+# One of the people: never greater or lesser than their kind.
+grades = false
+alignment = "good"
+race = "human"
+combat = "caster"
+range = 7
+spells = ["magic_missile", "web", "haste", "silence"]
+mana = 24
+opens_doors = true
+footsteps = 60
+hearing = 14
+weight = 68000
+stats = { strength = 9, dexterity = 12, toughness = 12, intelligence = 19, willpower = 18, presence = 15 }
+base_hp = 22
+skills = { concentration = 55, spellcraft = 65, decipher_script = 70 }
+weapon_skills = { staves = 3 }
+[[creature.gear]]
+chance = 100
+one_of = ["quarterstaff"]
+keep = "wield"

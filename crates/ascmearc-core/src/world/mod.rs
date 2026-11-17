@@ -1565,6 +1565,7 @@ impl World {
             Action::Infect(id) => return self.infect_dev(id),
             Action::Reveal(id) => return self.reveal_dev(id),
             Action::Lure(id) => return self.lure_dev(id),
+            Action::QuestDone(id) => return self.quest_done_dev(id),
             Action::Profane(id) => return self.gift_dev(id),
             Action::Rescind(id) => return self.rescind_dev(id),
             Action::QuestRoll { quest, target } => return self.quest_roll_dev(quest, target),

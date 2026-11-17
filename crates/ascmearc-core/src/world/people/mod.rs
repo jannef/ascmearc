@@ -6,6 +6,7 @@ mod goodwill;
 pub(in crate::world) mod guild;
 mod lure;
 pub(in crate::world) mod quest;
+mod quest_done;
 mod quest_roll;
 mod restock;
 pub(in crate::world) mod rumour;

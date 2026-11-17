@@ -123,6 +123,7 @@ impl World {
             | Action::Infect(_)
             | Action::Reveal(_)
             | Action::Lure(_)
+            | Action::QuestDone(_)
             | Action::Profane(_)
             | Action::Rescind(_)
             | Action::QuestRoll { .. }
