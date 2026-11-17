@@ -22,7 +22,21 @@
 #   strip_softeners  optional, false, on one row at most: every talent held that slows or
 #                    softens hunger (the same effects as above) is taken for good, never to be
 #                    granted, picked, or given again, and worn Sustenance does nothing from then on
-# Each row given is also the deed `craving_threshold` (../alignment.toml).
+#   profane          optional: a draw on the profane gift table (../profane/) as the row is
+#                    crossed, after its talent: { rolls = 1, tiers = { lesser, greater, dire } },
+#                    the tiers' odds in percent summing to 100, as a keeper's corpse's `profane`
+#                    (../creatures/README.toml); `rolls` draws, each complete before the next
+#
+# [again]  optional, after the last row: every `every` corpses past it (600, 700, ... after 500),
+#          for ever, the message said and the `profane` draw made again; nothing else
+#   every    the corpses from one to the next, at least 1
+#   message  said each time, before the draw
+#   profane  as a row's
+#
+# Each row given is also the deed `craving_threshold`, and each profane gift the craving gives
+# is the deed `craving_gift` (../alignment.toml). A draw that finds nothing left to give says
+# "Nothing more of it will take in you." and is no deed. Every craving draw made, given or not,
+# is counted in the save (`craving_gifts`), so none is made twice.
 
 race = "ratfolk"
 first = "The ancient craving awakens in you."
@@ -67,3 +81,14 @@ stance_floor = "aggressive"
 eaten = 400
 talent = "craving_hollowed"
 message = "The eaten crowd behind your eyes and whisper your name. It is no longer your name. Their venoms are water to you."
+
+[[threshold]]
+eaten = 500
+talent = "craving_consumed"
+message = "Whatever you were is eaten. What remains is hungry, and it is strong."
+profane = { rolls = 1, tiers = { lesser = 20, greater = 50, dire = 30 } }
+
+[again]
+every = 100
+message = "The flesh gives again."
+profane = { rolls = 1, tiers = { lesser = 20, greater = 50, dire = 30 } }

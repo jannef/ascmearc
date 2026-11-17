@@ -11,6 +11,9 @@ on the tenth floor to [Nīðdraca the Hate-Wyrm](creatures.md#creature-nithdraca
 The deeper the keeper, the more gifts its meal draws, and the more of them come from the greater and dire
 tiers.
 
+A [ratfolk's craving](food.md#the-ratfolks-craving) draws them too: one gift at 500 people
+eaten, and one more at every 100 after.
+
 > **Warning: the thirteenth gift kills you.** When you receive your 13th profane gift, the
 > Profane takes you and your character dies at once. Every gift you have ever received counts,
 > including ones you have since lost. The game gives no warning as you get close, so count them
@@ -146,6 +149,10 @@ A keeper's meal can give several gifts at once (see the rolls in
 [each keeper's own gift](#each-keepers-own-gift)), so count before you eat: with 10 received, a
 keeper whose meal gives three more kills you. Your gifts held now are on the Talents page, under
 Profane; ones you have lost are not, so remember them.
+
+The [ratfolk's craving](food.md#the-ratfolks-craving) counts too. A ratfolk with no gifts from
+keepers dies of the gift drawn at 1,700 people eaten. Each gift from elsewhere brings that 100
+sooner: with twelve already received, the first draw at 500 is the last.
 
 Your [graveyard](saving.md#your-characters-and-the-graveyard) records such a character as "Taken
 by the Profane".
