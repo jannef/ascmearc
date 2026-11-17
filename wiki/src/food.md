@@ -114,6 +114,12 @@ script](skills.md#skill-decipher-script). The first one teaches the skill if you
 it ("The letters come clearer."), but never past a value set by the creature, and deeper
 casters set it higher. Past that value, the corpse teaches nothing.
 
+The corpses of the wizards in the march's towers teach [Spellcraft](skills.md#skill-spellcraft)
+the same way. Master Ordgar's teaches it at 5 if you lack it ("Something stirs behind your eyes,
+and the shape of a spell makes sense."). If you have it, it adds 5 ("The shapes of spells come
+clearer."), but not past 40. A wizard is a person, so eating one also breaks the [old
+law](#eating-those-who-think) against eating those who think.
+
 In the game you find all this out by eating. Here it is in the order it happens, each chance
 rolled on its own. A rotten corpse has lost all of it.
 

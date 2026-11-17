@@ -1,6 +1,7 @@
 //! The two laws (`world/character/laws.rs`, `data/rules/laws.toml`): a sapient corpse eaten and
 //! a fiend summoned are counted, the first time said once; a beast's corpse and a summoned rat are
-//! not; without the file nothing is; the counts are saved and dumped.
+//! not; without the file nothing is; the counts are saved and dumped. Master Ordgar's corpse
+//! (#1820) teaches Spellcraft up to its cap, and is a sapient eaten.
 
 use crate::action::Meal;
 use crate::content::ContentFiles;
@@ -171,4 +172,51 @@ fn the_people_are_sapient_and_beasts_and_the_dead_are_not() {
             assert!(def.tags.iter().any(|t| t == "sapient"), "{}", def.id);
         }
     }
+}
+
+/// The player's Spellcraft, `None` while untrained.
+fn spellcraft(w: &World) -> Option<u16> {
+    let id = w.content().skill_id("spellcraft").expect("the skill");
+    w.state.player().skills.value(id)
+}
+
+/// Sets the player's Spellcraft (`None`: untrained), their other skills as they were.
+fn set_spellcraft(w: &mut World, value: Option<u16>) {
+    let id = w.content().skill_id("spellcraft").expect("the skill");
+    let mut skills = crate::skills::Skills::default();
+    for (other, trained) in w.state.player().skills.iter().filter(|(s, _)| *s != id) {
+        skills.add(other, i32::from(trained.value));
+    }
+    if let Some(v) = value {
+        skills.add(id, i32::from(v));
+    }
+    w.player_mut().skills = skills;
+}
+
+#[test]
+fn master_ordgars_corpse_teaches_spellcraft_and_is_a_sapient_eaten() {
+    const LEARN: &str = "Something stirs behind your eyes, and the shape of a spell makes sense.";
+    const RISE: &str = "The shapes of spells come clearer.";
+    // Untrained: learned at 5 (#1820), and the first sapient eaten.
+    let mut w = world_of(&files(), "pantry");
+    set_spellcraft(&mut w, None);
+    eat(&mut w, "ordgar");
+    assert_eq!(spellcraft(&w), Some(5));
+    assert_eq!(told(&w, LEARN), [LEARN]);
+    assert_eq!(w.laws_broken().eaten(), 1);
+    assert_eq!(told(&w, EATEN), [EATEN]);
+    // Trained: raised by 5, never past 40, and nothing said once there.
+    let mut w = world_of(&files(), "pantry");
+    set_spellcraft(&mut w, Some(20));
+    eat(&mut w, "ordgar");
+    assert_eq!(spellcraft(&w), Some(25));
+    set_spellcraft(&mut w, Some(37));
+    eat(&mut w, "ordgar");
+    assert_eq!(spellcraft(&w), Some(40));
+    assert_eq!(told(&w, RISE).len(), 2);
+    eat(&mut w, "ordgar");
+    assert_eq!(spellcraft(&w), Some(40));
+    assert_eq!(told(&w, RISE).len(), 2, "nothing past the cap");
+    assert!(told(&w, LEARN).is_empty());
+    assert_eq!(w.laws_broken().eaten(), 3);
 }
