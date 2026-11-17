@@ -83,7 +83,6 @@ impl<T, K: Copy + Ord> PagedList<T, K> {
         }
     }
 
-    #[cfg(test)]
     pub fn len(&self) -> usize {
         self.items.len()
     }

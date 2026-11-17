@@ -3,11 +3,13 @@
 //! the recipe, in the order the rules give them (`PerceptionView::craft_steps`): the stock for
 //! each chosen part ("blade"; the arrows' head: arrowheads, then shards and blocks, after a
 //! **None** row that makes them brittle), each input, then the ornament (the cut gems carried,
-//! after a **None** row on `-`). A row is a stack as the inventory lists it, with how many the
+//! after a **None** row). A row is a stack as the inventory lists it, with how many the
 //! recipe takes of it ("uses 3", an arrowhead "uses 1 each"); a stack too small is greyed "too
 //! few" and cannot be picked. The header carries the recipe's name and the running choice ("Long sword — blade: steel"). A
-//! letter on the page, or Enter on the `>` row, picks and goes to the next step; `-` picks None
-//! where a step allows it; Esc goes back a step, its pick kept (the list opens on
+//! letter on the page, or Enter on the `>` row, picks and goes to the next step. An optional
+//! step's None row is a row like the others: Up from the list's first row (Down from its last)
+//! moves the cursor onto it, Enter on it picks None, and so does `-`; the cursor starts on it
+//! when it is the only row (#1778). Esc goes back a step, its pick kept (the list opens on
 //! it), and closes the wizard from the first. The last pick opens the one dialog
 //! (`ScreenName::CraftConfirm`), which asks with what the rules say of the picks; declined, it
 //! closes back to the last step; accepted, it applies `Action::Craft` and closes the wizard and the profession's screen
@@ -79,6 +81,8 @@ pub struct CraftPickScreen {
     picks: Vec<Option<usize>>,
     /// Each step's stacks, grouped by item class.
     lists: Vec<PagedList<CraftOption>>,
+    /// For each step, whether the cursor is on its None row rather than in its list.
+    on_none: Vec<bool>,
     /// The steps with no pick made, to tell a changed pack from picks that narrowed them.
     base: Vec<CraftStep>,
     /// A pick was made since the steps were read: they are read again ([`Self::reread`]).
@@ -96,6 +100,7 @@ impl CraftPickScreen {
             step: 0,
             picks: Vec::new(),
             lists: Vec::new(),
+            on_none: Vec::new(),
             base: Vec::new(),
             stale: false,
         };
@@ -129,6 +134,10 @@ impl CraftPickScreen {
         self.lists = (0..self.steps.len())
             .map(|i| self.list_of(view, i))
             .collect();
+        self.on_none = vec![false; self.steps.len()];
+        if !self.steps.is_empty() {
+            self.go_to(0);
+        }
     }
 
     /// The pack changed (the work done): when the steps differ, the wizard starts over on them.
@@ -242,6 +251,7 @@ impl CraftPickScreen {
         if let Some(c) = press.text.filter(char::is_ascii_lowercase) {
             return match self.lists[step].at_letter(c) {
                 Some(row) => {
+                    self.on_none[step] = false;
                     self.lists[step].select(row);
                     self.choose(row)
                 }
@@ -249,10 +259,46 @@ impl CraftPickScreen {
             };
         }
         match press.nav {
+            Nav::Enter if self.on_none[step] => self.pick(None),
             Nav::Enter => self.choose(self.lists[step].cursor()),
             nav => {
-                self.lists[step].navigate(nav);
+                self.navigate(nav);
                 ScreenAction::Stay
+            }
+        }
+    }
+
+    /// Moves the cursor of the step shown: through its list, and on an optional step onto and
+    /// off its None row, which stands above the list's first row (and wraps round below its
+    /// last).
+    fn navigate(&mut self, nav: Nav) {
+        let step = self.step;
+        let list = &mut self.lists[step];
+        if !self.steps[step].optional || list.is_empty() {
+            list.navigate(nav);
+            return;
+        }
+        let last = list.len() - 1;
+        let on_none = &mut self.on_none[step];
+        match nav {
+            Nav::Up if *on_none => {
+                *on_none = false;
+                list.select(last);
+            }
+            Nav::Down if *on_none => {
+                *on_none = false;
+                list.select(0);
+            }
+            Nav::Up if list.cursor() == 0 => *on_none = true,
+            Nav::Down if list.cursor() == last => *on_none = true,
+            Nav::NextPage | Nav::PrevPage if list.page_count() > 1 => {
+                *on_none = false;
+                list.navigate(nav);
+            }
+            nav => {
+                if !*on_none {
+                    list.navigate(nav);
+                }
             }
         }
     }
@@ -274,11 +320,13 @@ impl CraftPickScreen {
     /// seal's None is None for the seals after it too, which are passed over.
     fn pick(&mut self, at: Option<usize>) -> ScreenAction {
         self.picks[self.step] = at;
+        self.on_none[self.step] = at.is_none();
         self.stale = true;
         let mut next = self.step + 1;
         if at.is_none() && self.steps[self.step].kind == CraftStepKind::Family {
             while next < self.steps.len() && self.steps[next].kind == CraftStepKind::Family {
                 self.picks[next] = None;
+                self.on_none[next] = true;
                 next += 1;
             }
         }
@@ -289,13 +337,19 @@ impl CraftPickScreen {
         ScreenAction::Open(ScreenName::CraftConfirm)
     }
 
-    /// Shows step `step`, the cursor on its pick if it has one.
+    /// Shows step `step`, the cursor on its pick if it has one, and on its None row when that is
+    /// the only row.
     fn go_to(&mut self, step: usize) {
         self.step = step;
         let list = &mut self.lists[step];
         let row = (self.picks[step]).and_then(|at| list.iter().position(|o| o.at == at));
         if let Some(row) = row {
             list.select(row);
+            self.on_none[step] = false;
+        }
+        let optional = self.steps[step].optional;
+        if !optional || list.is_empty() {
+            self.on_none[step] = optional;
         }
     }
 
@@ -333,8 +387,13 @@ impl CraftPickScreen {
             .collect();
         console.print(x, panel.y + 2, &header, TEXT_DIM);
         let mut y = panel.y + 4;
+        let on_none = self.on_none[self.step];
         if step.optional && fits(y) {
-            console.print(x + 2, y, "- - None", TEXT);
+            let color = if on_none { ACCENT } else { TEXT };
+            if on_none {
+                console.print(x, y, ">", ACCENT);
+            }
+            console.print(x + 2, y, "- - None", color);
             y += 1;
         }
         if self.list().is_empty() && fits(y) {
@@ -363,7 +422,7 @@ impl CraftPickScreen {
             let Some(option) = self.list().get(index) else {
                 continue;
             };
-            let selected = index == self.list().cursor();
+            let selected = !on_none && index == self.list().cursor();
             let color = match (option.enough, selected) {
                 (false, _) => TEXT_DIM,
                 (true, true) => ACCENT,
@@ -394,6 +453,7 @@ impl CraftPickScreen {
         match self.list().last_letter() {
             Some('a') => hints.push(format!("a or {confirm} choose")),
             Some(last) => hints.push(format!("a-{last} or {confirm} choose")),
+            None if step.optional => hints.push(format!("{confirm} choose")),
             None => {}
         }
         if step.optional {
@@ -470,6 +530,56 @@ mod tests {
         assert_eq!(
             screen.handle(&Press::nav(Nav::Back), &keys),
             ScreenAction::Close
+        );
+    }
+
+    #[test]
+    fn the_none_row_is_a_cursor_row_that_enter_picks() {
+        let world = world();
+        let view = world.perception();
+        let sword = view
+            .content()
+            .recipes()
+            .id("short_sword")
+            .expect("short sword");
+        let mut screen = CraftPickScreen::new(Some(&view), Some(sword));
+        screen.fit(100, 60);
+        let keys = Bindings::default();
+        screen.handle(&Press::typed('c'), &keys);
+        assert_eq!(screen.step, 1);
+        assert!(!screen.list().is_empty() && !screen.on_none[1]);
+        // Up from the first gem onto None, Down back off it; Up again and Enter picks None.
+        screen.handle(&Press::nav(Nav::Up), &keys);
+        assert!(screen.on_none[1]);
+        screen.handle(&Press::nav(Nav::Down), &keys);
+        assert!(!screen.on_none[1] && screen.list().cursor() == 0);
+        screen.handle(&Press::nav(Nav::Up), &keys);
+        assert_eq!(
+            screen.handle(&Press::nav(Nav::Enter), &keys),
+            ScreenAction::Open(ScreenName::CraftConfirm)
+        );
+        assert_eq!(screen.chosen().expect("chosen").1[1], None);
+        // Back to the pommel: the cursor is on the None picked.
+        screen.handle(&Press::nav(Nav::Back), &keys);
+        assert!(screen.on_none[1]);
+    }
+
+    #[test]
+    fn a_none_only_step_starts_on_none() {
+        let world = world();
+        let view = world.perception();
+        let sword = view
+            .content()
+            .recipes()
+            .id("short_sword")
+            .expect("short sword");
+        let mut screen = CraftPickScreen::new(Some(&view), Some(sword));
+        screen.lists[1] = PagedList::empty();
+        screen.handle(&Press::typed('c'), &Bindings::default());
+        assert!(screen.on_none[1]);
+        assert_eq!(
+            screen.handle(&Press::nav(Nav::Enter), &Bindings::default()),
+            ScreenAction::Open(ScreenName::CraftConfirm)
         );
     }
 
