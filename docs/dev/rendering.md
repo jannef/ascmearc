@@ -233,7 +233,8 @@ overbright knee plus a faint glow in the light's hue), desaturation, gain. Unlit
 terrain, the UI console's 1×1 textures) are drawn as they are. Free glyphs are lit on the CPU by
 `VisualLight::sample` + `lighting::shade`, which mirror the shader — change both together.
 Constants copied between Rust and a `.wesl` file (the grid animation kinds and table size, the
-water's glint and flow, the light flags and floors, the circles' sizes and glints, `CRISP`) are
+water's glint and flow, the light flags and floors, the circles' sizes and glints, `CRISP`, the
+depth blur's `BLUR_MAX`) are
 checked by a `shader_constants_match` test in each Rust module, which reads the shader with
 `include_str!` and `render::wesl_const` (#1561): a one-sided edit fails `cargo test`.
 
@@ -252,6 +253,18 @@ Effects, each off with its own switch (`particles`, `glow`, `distortion`,
   sampled (backgrounds and light stay put); after lighting, colors are clamped to 1 (overbright
   light alone never blooms) and glowing glyphs are multiplied past 1. Free glyphs do the same
   through their HDR vertex color (`post::in_range`, `post::emissive`).
+- **Depth blur** (the wizards' towers, `docs/design/wizard-tower.md` §6): a cell drawn as seen
+  from `storey` storeys up (a tower floor's window view of the ground; `ui/mod.rs::draw_map`
+  for each cell it draws through `below_cell`) gets `Console::set_blur(x, y, storey)`, reset by `put` and `clear` as the effects are, clamped to
+  `console::BLUR_MAX`. The byte rides in the glyph texture's spare fourth byte. `console.wesl`
+  reads the glyph's coverage as a nine-tap tent (center, four taps at half the radius, four
+  diagonal at the full radius; four taps on one ring showed small glyphs as ghosts) of radius
+  `blur × ConsoleParams::blur_px`, each tap clipped to the cell (no bleeding into neighbours), and
+  pulls the foreground toward the background by `BLUR_PULL` per step; background and light stay
+  put. `blur_px` is `BLUR_CELLS` (0.06) cell widths while `distortion` is on, else 0 (and always 0
+  on the UI console): storey 1 is barely there, storey 6 a third of a cell, washed about halfway.
+  Animated `flow` water keeps its own coverage (unblurred, still pulled); free glyphs are never
+  blurred.
 - **Post** (`render/post.rs` + `tint.wesl`): the camera gets `Hdr` + `Bloom` (threshold 1,
   additive, `Tonemapping::None`), so only glowing glyphs bloom (with `glow` off the camera stays plain LDR,
   pixel-identical to no effects). `ScreenTints` draws a fading color over the map viewport:

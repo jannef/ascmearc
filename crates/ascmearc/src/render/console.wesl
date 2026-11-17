@@ -11,12 +11,14 @@
 // mirror `render/anim.rs` and `render/water.rs`.
 //
 // Per-cell textures: `glyphs` (atlas slot, low and high byte; then the cell's flow, `flow_byte` in
-// water.rs), `fg_colors`, `bg_colors`, and `anims` (animation table entry plus one, phase, glow,
+// water.rs, and its depth blur, `Console::set_blur`), `fg_colors`, `bg_colors`, and `anims` (animation table entry plus one, phase, glow,
 // haze).
 //
 // Effects: `glow` brightens a glyph past 1 so bloom picks it up, and heat haze
 // distorts glyphs over hot cells by shifting where their coverage is read. Both come from per-cell
 // bytes next to the animation data, and are off (0) on the UI console and with reduced effects.
+// The depth blur softens a glyph seen far below (a tower's window view, one step per storey) and
+// pulls it toward its background; it is off with haze (the `distortion` switch).
 //
 // Cells nothing was drawn into are transparent (background alpha 0), so layers below show through.
 //
@@ -50,6 +52,8 @@ struct ConsoleParams {
     // How much a spell effect darkens the map (0 on the UI): the readability floor and cells
     // drawn unlit are scaled by 1 - dim; the light itself comes darkened from `lighting.rs`.
     dim: f32,
+    // Depth blur radius per blur step in pixels; 0 turns the blur off.
+    blur_px: f32,
 }
 
 // One grid animation (`GridAnim` in anim.rs).
@@ -79,6 +83,10 @@ const GLINT_PERIOD: f32 = 9.0;
 const GLINT_CHANCE: f32 = 0.4;
 const GLINT_LENGTH: f32 = 0.9;
 const FLOW_SPEED_STEPS: f32 = 8.0;
+// The strongest blur byte (`BLUR_MAX` in console.rs), and how far each step pulls the glyph's
+// color toward the background.
+const BLUR_MAX: f32 = 8.0;
+const BLUR_PULL: f32 = 0.08;
 // How much a full glint adds to the glyph, times the (modulated) light on it.
 const GLINT_GAIN: f32 = 0.5;
 
@@ -202,12 +210,37 @@ fn flow_coverage(index: u32, local: vec2<f32>, anim: GridAnim, code: u32) -> f32
 
 // -----------------------------------------------------------------------------------------------
 
-// Coverage of glyph `index` at `local`: 1:1 unless the pixel was moved off the pixel grid.
-fn coverage_at(index: u32, local: vec2<f32>, smooth_sample: bool) -> f32 {
+// Coverage of glyph `index` at `local`: 1:1 unless the pixel was moved off the pixel grid or the
+// glyph is blurred by `blur` pixels.
+fn coverage_at(index: u32, local: vec2<f32>, smooth_sample: bool, blur: f32) -> f32 {
+    if blur > 0.0 {
+        return blurred_coverage(index, local, blur);
+    }
     if smooth_sample {
         return coverage_smooth(index, local);
     }
     return coverage_crisp(index, vec2<i32>(floor(local)));
+}
+
+// --- Depth blur --------------------------------------------------------------------
+
+// Coverage of glyph `index` at `local`, softened by a radius of `r` pixels: a tent of nine taps,
+// the center, four at half the radius straight around it, and four at the full radius on the
+// diagonals (a few taps on one ring would show a small glyph as ghosts on that ring rather than
+// soft). Each tap stays inside the cell (`coverage_smooth`), so the blur never bleeds into a
+// neighbor: the glyph reads out of focus, not smeared.
+fn blurred_coverage(index: u32, local: vec2<f32>, r: f32) -> f32 {
+    let h = 0.5 * r;
+    let d = 0.70710678 * r;
+    let inner = coverage_smooth(index, local + vec2(h, 0.0))
+        + coverage_smooth(index, local - vec2(h, 0.0))
+        + coverage_smooth(index, local + vec2(0.0, h))
+        + coverage_smooth(index, local - vec2(0.0, h));
+    let outer = coverage_smooth(index, local + vec2(d, d))
+        + coverage_smooth(index, local - vec2(d, d))
+        + coverage_smooth(index, local + vec2(d, -d))
+        + coverage_smooth(index, local + vec2(-d, d));
+    return 0.25 * coverage_smooth(index, local) + 0.125 * inner + 0.0625 * outer;
 }
 
 // --- Heat haze ---------------------------------------------------------------------
@@ -278,11 +311,13 @@ fn fragment(in: VertexOutput) -> @location(0) vec4<f32> {
     var fg = textureLoad(fg_colors, cell, 0).rgb;
     var bg = textureLoad(bg_colors, cell, 0);
     let a = textureLoad(anims, cell, 0);
+    // Depth blur radius in pixels (0: sharp).
+    let blur = min(f32(g.a), BLUR_MAX) * params.blur_px;
 
     var coverage = 0.0;
     var glint_strength = 0.0;
     if a.r == 0u {
-        coverage = coverage_at(index, glyph_local, hazed);
+        coverage = coverage_at(index, glyph_local, hazed, blur);
     } else {
         let anim = anim_table.entries[a.r - 1u];
         let phase = f32(a.g) / 256.0;
@@ -292,7 +327,7 @@ fn fragment(in: VertexOutput) -> @location(0) vec4<f32> {
         }
         if anim.kind == KIND_WAVE {
             let offset = wave_offset(t, anim.speed, anim.amount, phase) * params.cell_size.x;
-            coverage = coverage_smooth(index, glyph_local - offset);
+            coverage = coverage_at(index, glyph_local - offset, true, blur);
         } else if anim.kind == KIND_FLOW {
             coverage = flow_coverage(index, glyph_local, anim, g.b);
         } else {
@@ -301,8 +336,12 @@ fn fragment(in: VertexOutput) -> @location(0) vec4<f32> {
             } else if anim.kind == KIND_CYCLE {
                 index = cycle_glyph(anim, t, phase);
             }
-            coverage = coverage_at(index, glyph_local, hazed);
+            coverage = coverage_at(index, glyph_local, hazed, blur);
         }
+    }
+    if blur > 0.0 {
+        // Seen from far up, the glyph is also washed toward its background.
+        fg = mix(fg, bg.rgb, min(f32(g.a), BLUR_MAX) * BLUR_PULL);
     }
     // Visual light, sampled where the pixel is (not where haze moved the glyph from).
     let light = light_at(cell, local / params.cell_size);
