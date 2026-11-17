@@ -1,0 +1,50 @@
+# Campaign-owned (docs/design/campaign.md §3.6): the Ascmearc's own type, which only its files
+# may name.
+#
+# Wedertorr's servants (#1786; docs/dev/towers.md "A tower's household"): a scrap of a storm that
+# Mistress Ælfswīð called down and tied to her tower with a ring of iron round the ankle it does
+# not have. It howls through the halls, buffets, and knocks callers off their feet; undone, it
+# lets go all at once. Met only on the tower's trap floors (data/dungeons/wedertorr_tower.toml):
+# never a stray.
+[[creature]]
+id = "bound_squall"
+level = 9
+xp = 55
+rarity = "uncommon"
+name = "bound squall"
+glyph = "v"
+fg = "#a8c0d8"
+speed = 1500
+faction = "animated"
+tags = ["elemental", "air"]
+alignment = "neutral"
+vision = "darkvision"
+sight = 9
+footsteps = 40
+hearing = 10
+weight = 5000
+stray = false
+stats = { strength = 13, dexterity = 18, toughness = 13, intelligence = 2, willpower = 18, presence = 2 }
+base_hp = 12
+natural = { defence = 3, protection = 0, name = "rushing wind" }
+resist = { piercing = 50, electricity = 50 }
+immune = ["poisoned"]
+corpse = false
+blood = "none"
+[creature.attack]
+damage = "1d10"
+damage_type = "bludgeoning"
+name = "buffet"
+verb = "buffets"
+to_hit = 3
+on_hit = [{ status = "staggered", chance = 20, severity = 1 }]
+[creature.burst]
+damage = "1d6"
+damage_type = "bludgeoning"
+radius = 1
+when = "dies"
+effect = "shatter"
+noun = "gust"
+verb = "comes apart in a howling gust"
+rider = [{ status = "staggered", severity = 1, chance = 50 }]
+gust = true

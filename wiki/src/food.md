@@ -114,6 +114,13 @@ script](skills.md#skill-decipher-script). The first one teaches the skill if you
 it ("The letters come clearer."), but never past a value set by the creature, and deeper
 casters set it higher. Past that value, the corpse teaches nothing.
 
+The corpse of a wizard of the [wizards' quarrel](quests.md#the-wizards-quarrel) teaches
+[Spellcraft](skills.md#skill-spellcraft) the same way ("Shapes of power turn behind your eyes,
+and some of them stay." the first time, "The weave of spells comes clearer." after), as well as
+Decipher script. Mistress Ælfswīð's gives 10 Spellcraft, up to 60, and 7 Decipher script, up to
+50. A wizard is one of the people, so eating one is
+[eating those who think](#eating-those-who-think).
+
 In the game you find all this out by eating. Here it is in the order it happens, each chance
 rolled on its own. A rotten corpse has lost all of it.
 

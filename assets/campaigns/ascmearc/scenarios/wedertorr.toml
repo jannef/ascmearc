@@ -1,0 +1,13 @@
+# A dev scenario of the Ascmearc (#1786): on the track up to Wedertorr, Mistress Ælfswīð's tower
+# on the downs. Mid-morning, so the tower's shadow lies across the grass and the downs are seen
+# from the windows above. Walked off its edge, the run comes out on the tower's cell, still
+# hidden until Master Ordgar's quarrel marks it.
+name = "Wedertorr"
+description = "The down on Hlāwdūn where Mistress Ælfswīð's tower stands: its trap halls, the floors above, and the wizard at the top."
+start_level = "wedertorr"
+seed = 1
+character = { race = "human", gender = "female", class = "warrior", name = "Ælfwynn" }
+# Ready for the climb (the replay up the tower: docs/dev/towers.md "Wedertorr"): a sword, a shield,
+# mail, and a lantern for the dark halls.
+wield = ["long_sword", "small_shield", "chain_mail", "lantern"]
+start_time = "10:00"

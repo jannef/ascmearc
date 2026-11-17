@@ -128,3 +128,4 @@ yugoloth = { train = { willpower = 20 } }
 # the skills here. Literate casters' corpses teach Decipher script (#1103).
 [corpses.skills]
 decipher_script = { learn = "Strange letters swim before your eyes, and settle into sense.", rise = "The letters come clearer." }
+spellcraft = { learn = "Shapes of power turn behind your eyes, and some of them stay.", rise = "The weave of spells comes clearer." }

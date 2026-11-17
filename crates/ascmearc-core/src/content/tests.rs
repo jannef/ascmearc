@@ -586,8 +586,20 @@ fn the_generic_list_is_every_hostile_type_without_uniques_or_people() {
             .any(|d| d.dies_into.as_ref().is_some_and(|i| i.pool.contains(&c)));
         // A Pit's warden only through its hall (#1298).
         let gate = (def.tags.iter().any(|t| t == "gate") || content.is_layer_boss(c)) && !def.stray;
-        let placed =
-            def.animated.is_some() || def.mimic.is_some() || gate || (offspring && !def.stray);
+        // A wizard's tower's own household only on its floors (#1786; docs/dev/towers.md "A
+        // tower's household").
+        let household = !def.stray
+            && (content.dungeons()).any(|d| {
+                d.tower.is_some()
+                    && d.spawning
+                        .as_ref()
+                        .is_some_and(|s| s.population.contains(&c))
+            });
+        let placed = def.animated.is_some()
+            || def.mimic.is_some()
+            || gate
+            || household
+            || (offspring && !def.stray);
         if hostile && !def.unique && !placed && campaign != Some("showcase") {
             assert!(
                 def.stray,

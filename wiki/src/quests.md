@@ -217,7 +217,8 @@ first, the level you must have reached for it to be given, and the
 ## The wizards' quarrel
 
 Three wizards keep towers in the march: Master Ordgar of [Drȳtorr](ascmearc.md#drȳtorr),
-Mistress Ælfswīð, and Master Sigeric. Ordgar wants two of the three dead, and would rather it
+Mistress Ælfswīð of [Wedertorr](ascmearc.md#wedertorr), and Master Sigeric. Ordgar marks
+Wedertorr on your map as he gives you the quest. Ordgar wants two of the three dead, and would rather it
 were not him. The quest is done once two of them have died by your hand.
 
 **Who pays.** Only the wizard who is your ally when the two are dead takes the quest in.
@@ -233,7 +234,8 @@ left, and go back to the last. If all three die, nobody pays, and the quest stay
 **The pay.** The ally gives gold, experience, and something of their making, and teaches you
 two [skills](skills.md): [Spellcraft](skills.md#skill-spellcraft), and a skill of their own.
 Ordgar teaches [Decipher script](skills.md#skill-decipher-script) and gives a grimoire of magic
-missile. A skill you have not got starts at 1d4; one you already have gets 100
+missile. Ælfswīð teaches [Concentration](skills.md#skill-concentration) and gives a wand of
+lightning bolt. A skill you have not got starts at 1d4; one you already have gets 100
 [skill marks](skills.md#improving-a-skill) instead. The skills stay yours whatever happens to
 the teacher. The exact pay of each wizard is in the table above.
 
@@ -245,8 +247,9 @@ gold, two rare [magic items](magic-items.md#rarity) made at [item level](magic-i
 14, and one grimoire drawn at random. They drop it where they die, whenever that is. A wizard who
 dies before anyone has won carries none of it.
 
-For now only Master Ordgar's tower stands in the march. Mistress Ælfswīð's and Master Sigeric's
-towers are still to come, and until then the quarrel cannot be finished.
+For now only Master Ordgar's and Mistress Ælfswīð's towers stand in the march. Master Sigeric's
+is still to come. Until then the two dead must be Ordgar and Ælfswīð, so nobody is left to pay
+you.
 
 See also: [The Weyfarers' Gilde](guild.md), [People and talk](npcs.md), and
 [Experience and levelling up](experience.md).

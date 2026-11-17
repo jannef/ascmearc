@@ -126,6 +126,7 @@ impl World {
             | Action::Reveal(_)
             | Action::Lure(_)
             | Action::QuestDone(_)
+            | Action::QuestGiven(_)
             | Action::Profane(_)
             | Action::Rescind(_)
             | Action::QuestRoll { .. }
