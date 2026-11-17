@@ -112,10 +112,67 @@ fn a_replacing_gift_takes_the_lesser_away() {
         "The gnawing in your belly sharpens into something worse."
     ));
     assert!(said(&w, "You are Wyrm's hunger."));
-    // Only `excludes` bars a gift from the pool (§7.3): the lesser may be drawn again, and is
-    // held beside the greater.
+    // The lesser was had once: never given again (#1805).
+    give(&mut w, "hungering");
+    assert!(!holds(&w, "hungering") && holds(&w, "wyrms_hunger"));
+    assert!(said(&w, "`hungering` would not take in you."));
+
+    // A replacing gift taken first leaves the lesser open: only `excludes` and gifts once had
+    // bar a gift from the pool (§7.3), so it is held beside the greater.
+    let mut w = world("human,male,warrior");
+    give(&mut w, "wyrms_hunger");
     give(&mut w, "hungering");
     assert!(holds(&w, "hungering") && holds(&w, "wyrms_hunger"));
+}
+
+#[test]
+fn a_gift_undone_is_never_drawn_nor_bestowed_again() {
+    let mut w = world("human,male,warrior");
+    give(&mut w, "oak_hearted");
+    give(&mut w, "withered");
+    assert!(!holds(&w, "oak_hearted"));
+    let content = w.content.clone();
+    let oak = gift(&w, "oak_hearted");
+    let def = content.profane().gift(oak).expect("a gift");
+    // Out of the pool, as if held: the lesser pool lacks it.
+    assert!(!w.may_take_gift(def));
+    let (open, all) = w.gift_pool(def.tier);
+    assert_eq!(open, all - 1);
+    // Bestowed directly (a signature's way): refused, with nothing said.
+    let said_before = w.messages().len();
+    let stats = toughness(&w);
+    assert!(!w.bestow_gift(oak));
+    assert_eq!(w.messages().len(), said_before);
+    assert!(!holds(&w, "oak_hearted"));
+    assert_eq!(toughness(&w), stats);
+    // The dev command refuses it too.
+    give(&mut w, "oak_hearted");
+    assert!(!holds(&w, "oak_hearted"));
+    assert!(said(&w, "`oak_hearted` would not take in you."));
+    // Withered was not taken by undoing (it gave nothing), so it is still open.
+    give(&mut w, "withered");
+    assert!(holds(&w, "withered"));
+}
+
+#[test]
+fn a_gift_rescinded_is_never_given_again_and_the_record_is_saved() {
+    let mut w = world("human,male,warrior");
+    give(&mut w, "thick_blooded");
+    assert!(w.rescind(gift(&w, "thick_blooded")));
+    let loaded = World::from_state(w.content.clone(), w.state().clone()).expect("loaded");
+    assert_eq!(loaded.state_hash(), w.state_hash());
+    let content = loaded.content.clone();
+    let thick = content
+        .profane()
+        .gift(gift(&loaded, "thick_blooded"))
+        .expect("a gift");
+    assert!(!loaded.may_take_gift(thick));
+    // What it excluded is open again: it is no longer held.
+    let paper = content
+        .profane()
+        .gift(gift(&loaded, "paper_skinned"))
+        .expect("a gift");
+    assert!(loaded.may_take_gift(paper));
 }
 
 #[test]

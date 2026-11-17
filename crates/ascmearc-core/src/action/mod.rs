@@ -3,7 +3,7 @@
 use crate::combat::Strike;
 use crate::content::{
     ActionKind, ClassActive, CombatStance, DamageTypeId, DiseaseId, ObjectId, ResourceId,
-    SignActive, StatusId, TalentActive, TrapId, ZoneKind,
+    SignActive, StairsDir, StatusId, TalentActive, TrapId, ZoneKind,
 };
 use crate::geom::{Dir, Pos};
 use crate::time::{DAY, Duration};
@@ -30,6 +30,11 @@ pub enum Action {
     /// the direction; landing in a corridor, it follows it to an intersection or a room. A first
     /// step a run cannot take is a plain [`Action::Move`].
     Run(Dir),
+    /// Run to the nearest stairs going this way that the player knows of (#1801): by the
+    /// shortest walk over the level as they know it, stopping on the stairs without taking them;
+    /// a run's long action, stopped as a run is. With no such stairs to walk to, refused with a
+    /// message, taking no time.
+    RunToStairs(StairsDir),
     /// Let a turn pass, looking around: the same as `Search(1)`, one code path (#1326). Kept as its
     /// own spelling, `wait`, for replays, tests, and the manifests.
     Wait,

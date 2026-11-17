@@ -361,8 +361,8 @@ and are **dev-only**.
   capacity, `(holds 1/2)` (docs/dev/enchanting.md), and weighs, worn and wielded things marked,
   `b - a leather jerkin (being worn) (3.5 kg)`, and in a shop what is unpaid, `c - a dagger
   (unpaid, 45 gold) (450 g)`; then what they carry, their burden and its thresholds, and what
-  they weigh, `carried 4.2 kg (unburdened: burdened over 14 kg, strained over 28 kg, overloaded
-  over 42 kg), total weight 74.2 kg`.
+  they weigh, `carried 4.2 kg (unburdened: burdened over 15 kg, strained over 30 kg, overloaded
+  over 45 kg), total weight 74.2 kg`.
 - `equipment`: the player's slots by letter, `c Body: a leather jerkin (b)`, `-` when empty,
   `- (horns)` when a talent bars the slot (a profane gift; docs/dev/equipment.md).
 - `stats`: the player's name, race, gender, and class (`Name Brakka`, `Race Dwarf`, `Class
@@ -542,7 +542,7 @@ messages, heard sounds, and, with `--state`, the full world state; and:
 
 Actions are whitespace-separated words; `ACTION*N` repeats one, e.g. `wait*10` (N at most 100,000, `action::MOST_REPEATS`; more is a parse error). The verbs:
 
-`move:DIR run:DIR wait open:DIR close:DIR kick:DIR pick:DIR ascend descend use_tool
+`move:DIR run:DIR run:< run:> wait open:DIR close:DIR kick:DIR pick:DIR ascend descend use_tool
 pickup[:LETTERS] drop[:LETTERS] sell[:LETTERS] pay[:DIR] equip:SLOT:LETTER remove:SLOT bash:DIR
 fire:X,Y throw:LETTER:X,Y eat:LETTER eat:floor:LETTER craft:ID[:POS,...] give:LETTER[:DIR]
 read:LETTER[:X,Y|:LETTER] scribe:SPELL dig:DIR search search:N disarm:DIR listen:DIR gather:DIR
@@ -579,6 +579,9 @@ thaw:X,Y,R web:X,Y,R`
   along a corridor through its bends to a branch, a side door, a dead end, or a room; it stops
   for whatever stops a rest; a first step a run cannot take is a plain `move`; docs/dev/time.md
   "Running").
+- `run:>` and `run:<` run to the nearest stairs down or up the player knows of (#1801,
+  `Action::RunToStairs`): by the shortest walk over the perception, stopping on the stairs
+  without taking them; with none to walk to, a message and no time (docs/dev/time.md "Running").
 - `search` searches the cells around the player for secret doors and hidden traps for a turn,
   and `wait` is another spelling of it (waiting is searching, one action: #1326; the game's
   Wait/search, Num5 or `s`); `search:N` for up to N turns (1 to 100), stopping when something is
@@ -888,8 +891,8 @@ None takes game time unless said.
   is nowhere), e.g. `ask:E:quest-crystal_guardian` on Ysella then `descend
   lure:crystal_guardian ascend` (`docs/dev/quests.md` "Lure quests").
 - `gift:ID` the player is given profane gift `ID`, an id in `assets/data/profane/`, as a meal's
-  draw would give it, its relations applied (`replaces`, `undoes`); refused for one held, one a
-  gift held excludes, or one barred to the race. `rescind:ID` takes a gift held away again, its
+  draw would give it, its relations applied (`replaces`, `undoes`); refused for one ever had (held,
+  or lost since: #1805), one a gift held excludes, or one barred to the race. `rescind:ID` takes a gift held away again, its
   `stat` given back (`docs/dev/profane-gifts.md`).
 - `quest_roll:ID:TARGET` active rolled quest `ID`, with no progress yet, draws `TARGET` instead (a
   creature, `tag:` a tag, or an object id its pool can hold, wherever the player can go, or a

@@ -62,7 +62,7 @@ Exactly which rules use the modifier and which use the score:
 >
 > | Strength | Dexterity | Toughness | Intelligence | Willpower | Presence |
 > |:---:|:---:|:---:|:---:|:---:|:---:|
-> | 15 (+2) | 10 (+0) | 17 (+3) | 9 (−1) | 14 (+2) | 7 (−2) |
+> | 15 (+2) | 10 (+0) | 17 (+3) | 10 (+0) | 14 (+2) | 7 (−2) |
 >
 > - Strength +2: +2 to hit and +2 damage with her long sword ([Combat](combat.md#hitting)).
 > - Dexterity +0: her Defence gets nothing from her feet, only from her armour and shield.

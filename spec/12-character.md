@@ -9,7 +9,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - The character has a name of 1 to 20 characters. Left empty, a name is drawn from the race's list for the gender.
 - Age is drawn within the race's range; the birthday is drawn over the year; the birth date is counted back from the run's start date.
 - Starting scores are 10 plus the race's, gender's, class's, and birth sign's adjustments, kept within 1 to 40. Male raises Strength, female Dexterity, other one random stat.
-- Adjustments are fixed numbers or dice. Races are mostly fixed numbers (their identity); classes roll their key stats. The player sees only the final scores; the creation screens and the wiki show the adjustments as written.
+- Adjustments are fixed numbers or dice. Races are mostly fixed numbers (their identity); classes roll their key stats and never lower one (#1800: no negative adjustment, no dice that can roll below zero). The player sees only the final scores; the creation screens and the wiki show the adjustments as written.
 - Potentials are hidden: a base plus the race's adjustment, never below the starting score. Classes, genders, and signs do not change them.
 - The race sets the player's eyes, size, hit points, mana, hunger, experience pace, starting skills and weapon ranks, and any racial gifts (natural armour, resistances, disease checks, eating rotten food, noticing in passing, light-blindness).
 - The class adjusts scores, gives hit points and mana, sets the experience pace, trains skills, gives weapon ranks and fighting styles, gives a starting kit, adds to the starting alignment, and through a level table gives class abilities and bonus talent picks.
@@ -85,7 +85,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - Food rots by its age alone: fresh, old, rotten, gone. Rotten food may sicken and expose to disease.
 - The player never sees food's age or stage: "eating stays a gamble" (the owner). Only a trained eye (Appraise, Survival) judges freshness in words.
 - Corpses are food that rots. Eating a fresh corpse may give training marks, rarely widen a potential, or teach Decipher script, by creature tags. The effects are never shown before trying; the wiki states them.
-- Everlasting corpses (the unique layer bosses) never rot. Eating a profane corpse grants its signature gift and drawn profane gifts and is the gravest sin; nothing asks and nothing marks it.
+- Everlasting corpses (the unique layer bosses) never rot. Eating a profane corpse grants its signature gift and drawn profane gifts and is the gravest sin; no profane gift is ever given twice, even after it is lost; nothing asks and nothing marks it.
 
 ## Skills
 

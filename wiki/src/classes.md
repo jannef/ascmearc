@@ -50,9 +50,9 @@ resource.
 
 The changes are added to the average score of 10, together with your [race](races.md)'s, your
 gender's, and your [birth sign's](horoscope.md#what-a-sign-does). Each class rolls dice for its key
-stats, and sometimes for a weakness too: `1d3+1` is two to four, `−1d2` takes away one or two (see
-[How your stats add up](character.md#how-your-stats-add-up)). Classes are not balanced against
-each other, and some are poor choices on purpose.
+stats: `1d3+1` is two to four, `1d2-1` is nothing or one (see
+[How your stats add up](character.md#how-your-stats-add-up)). No class lowers a stat. Classes are
+not balanced against each other, and some are poor choices on purpose.
 
 ## Who may take which
 

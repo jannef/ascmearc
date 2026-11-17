@@ -16,7 +16,7 @@ pub enum KeyCommand {
     /// `Action::Run`). Alt with a movement key by default.
     Run(Dir),
     /// Run, the way asked next (ADOM's run prefix, #1750): `.` then a movement key runs as
-    /// `Run(dir)` would. For a numpad on its own device, whose keys never carry the Alt held on
+    /// `Run(dir)` would; then the stairs keys run to the nearest known stairs that way (#1801). For a numpad on its own device, whose keys never carry the Alt held on
     /// another keyboard.
     RunPrefix,
     /// Wait a turn, which is searching the cells around the player for secret doors and hidden
@@ -205,7 +205,7 @@ impl KeyCommand {
         match self {
             KeyCommand::Move(_) => "Move",
             KeyCommand::Run(_) => "Run",
-            KeyCommand::RunPrefix => "Run (then a direction)",
+            KeyCommand::RunPrefix => "Run (then a direction or stairs)",
             KeyCommand::Wait => "Wait/search",
             KeyCommand::SearchLong => "Search for a while",
             KeyCommand::Open => "Open a door",

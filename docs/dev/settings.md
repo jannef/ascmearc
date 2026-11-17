@@ -102,7 +102,8 @@ is per device: Alt+Num8 arrives as Num8), so a run also has ADOM's run prefix (#
 `KeyCommand::RunPrefix` (`run_prefix`), `.` and the numpad's decimal key by default (bound as
 `NumpadDecimal`, so it works whatever that key types), asks the way in the direction prompt
 (`InputMode::Direction`, "Run in which direction?") and answers a movement key as `Run(dir)`'s
-own key does (`Gameplay::direction`). A settings file lists every command's keys, so one written
+own key does (`Gameplay::direction`); the stairs keys there (`Ascend`, `Descend`, as bound) run to
+the nearest known stairs that way (`Action::RunToStairs`, #1801). A settings file lists every command's keys, so one written
 before #1750 keeps `Alt+s` for Search for a while (Controls' reset gives `S`), and gets the run
 prefix's defaults unless a command it lists has `.` or the decimal key.
 Core knows no bindings, so a message names a key by its command's id (`messages::key("help")`

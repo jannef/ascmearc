@@ -2,7 +2,7 @@
 id = "bard"
 name = "Bard"
 description = "A wandering singer and teller of tales who gets by on charm, quick fingers, and a quicker tongue."
-stats = { strength = -1, dexterity = 1, toughness = -1, intelligence = "1d2", presence = "1d3+1" }
+stats = { dexterity = 1, intelligence = "1d2", presence = "1d3+1" }
 hp = 2
 mana = 5
 affinity = { enchantment = 2, divination = 1 }

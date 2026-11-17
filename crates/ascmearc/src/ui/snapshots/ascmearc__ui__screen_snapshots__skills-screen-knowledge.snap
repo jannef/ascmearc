@@ -12,12 +12,12 @@ expression: "render(case, content.clone())"
 
 ┌─ Skills ─────────────────────────────────────────────────────────────────────────────────────────┐
 │                                                                                                  │
-│   Concentration      26  ────                                                                    │
-│   Decipher script    20  ────                                                                    │
+│   Concentration      21  ────                                                                    │
+│   Decipher script    19  ────                                                                    │
 │ > Heal                4  ────                                                                    │
-│   Knowledge          17  ────                                                                    │
+│   Knowledge          19  ────                                                                    │
 │   Mining              2  ────                                                                    │
-│   Spellcraft         13  ────                                                                    │
+│   Spellcraft         15  ────                                                                    │
 │                                                                                                  │
 │ Binding wounds and tending the sick.                                                             │
 │                                                                                                  │

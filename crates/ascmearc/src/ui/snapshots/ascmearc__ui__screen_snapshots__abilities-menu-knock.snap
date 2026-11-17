@@ -3,7 +3,7 @@ source: crates/ascmearc/src/ui/screen_snapshots.rs
 expression: "render(case, content.clone())"
 ---
  You gain Knock.
- Your alchemy improves. (×12) You learn Deep lungs.
+ Your alchemy improves. (×12) You learn Clotting.
 
              ┌─ Abilities ───────────────────────────────────────────────────────────┐
              │                                                                       │

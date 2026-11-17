@@ -581,7 +581,7 @@ fn draw_messages(
         let prompt = match command {
             KeyCommand::UseTool => "Dig in which direction? (Esc to cancel)",
             KeyCommand::Chat => "Talk in which direction? (Esc to cancel)",
-            KeyCommand::RunPrefix => "Run in which direction? (Esc to cancel)",
+            KeyCommand::RunPrefix => "Run in which direction, or to which stairs? (Esc to cancel)",
             _ => "In which direction? (Esc to cancel)",
         };
         console.print(1, 0, prompt, ACCENT);

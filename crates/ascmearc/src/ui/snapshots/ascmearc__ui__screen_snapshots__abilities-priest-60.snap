@@ -3,7 +3,7 @@ source: crates/ascmearc/src/ui/screen_snapshots.rs
 expression: "render(case, content.clone())"
 ---
  Your athletics improves. (×177) You learn Deep lungs. You learn Healthy. You learn Cool head. You
- learn Iron wi┌─ Abilities ────────────────────────────────────────────── Page 1/2 ─┐earn --more--
+ learn Iron wi┌─ Abilities ────────────────────────────────────────────── Page 1/2 ─┐ --more--
               │                                                                     │
               │ Birth sign                                                          │
               │   a  Transfixing stare  at a place you see                          │
