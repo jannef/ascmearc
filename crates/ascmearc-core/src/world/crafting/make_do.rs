@@ -33,6 +33,7 @@ use crate::combat;
 use crate::object::Stack;
 use crate::rng::draw;
 use crate::skills::Use;
+use crate::stats::Stat;
 use crate::world::{Actor, Spent, World};
 
 /// Whether `stack` is damaged, so that a mend has something to do. Worn, protected, unpaid, and
@@ -60,6 +61,11 @@ impl Job for Mending {
 
     fn found(&mut self, now: &[Option<usize>]) {
         self.item = super::work::one(now);
+    }
+
+    fn stat(&self, w: &World) -> Option<Stat> {
+        let stack = w.state.player().inventory.get(self.item)?;
+        w.mend_by(stack).map(|(_, _, stat)| stat)
     }
 
     fn done(&self, w: &mut World, _: &mut Vec<Event>) {

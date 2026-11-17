@@ -120,6 +120,14 @@ impl World {
         self.train_stats_of(StatUse::Spell, None, 1, spell.trained_stats());
     }
 
+    /// The player finished long work made with `stat` (`world/crafting/work.rs`): the
+    /// `crafted` use's rule of that stat, if it has one.
+    pub(in crate::world) fn train_craft(&mut self, stat: Stat) {
+        let mut only = PerStat::splat(false);
+        only[stat] = true;
+        self.train_stats_of(StatUse::Crafted, None, 1, only);
+    }
+
     /// The player stepped onto `onto` with `footing`: a step through deep water (water that
     /// freezes and that a step wades slowly through, at least [`WADING_COST`]) trains
     /// Strength, unless its ice held them up.

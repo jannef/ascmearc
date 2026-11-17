@@ -78,6 +78,18 @@ Masterwork can be made no finer. Armour improves in its [Defence](combat.md#defe
 pick-axe, always comes out plain. A failure makes nothing: you break the work up and get half the
 stock back, and keep the gem.
 
+## Crafting trains your stats
+
+Work that runs its full time, however it comes out, may also [train](stats.md#raising-your-stats)
+the stat its check uses: 40 % of the time it earns that stat a training mark. Forging and
+[tempering](altars-forges-springs.md#forges) metal train [Strength](stats.md#stat-strength). Work by hand trains [Dexterity](stats.md#stat-dexterity):
+[Woodcraft](skills.md#skill-woodcraft), [fletching](skill-uses.md#fletching), whittling, [cutting and setting gems](gem-cutting.md), and
+[rigging a trap](traps.md#rigging-traps). A [brew](recipes-alchemy.md) trains [Intelligence](stats.md#stat-intelligence), and so does
+[making out a scroll](scrolls.md#making-out-a-scroll). [Enchanting](enchanting.md) trains [Willpower](stats.md#stat-willpower).
+[Make do and mend](class-craftsperson.md#make-do-and-mend) trains the stat of the craft that
+works the thing's material, and setting up a [field forge](class-craftsperson.md#field-forge)
+trains Strength. Work that is interrupted trains nothing. [Salvage](salvage.md) trains no stat.
+
 A [craftsperson](class-craftsperson.md) works their trades better than anyone, and their class
 abilities change these rules. See also: [Enchanting](enchanting.md),
 [Gem cutting](gem-cutting.md), and [Mining](mining.md).

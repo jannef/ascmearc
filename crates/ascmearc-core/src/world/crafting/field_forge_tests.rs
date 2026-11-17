@@ -169,6 +169,17 @@ fn an_hour_sets_a_makeshift_anvil_and_spends_one_ingot() {
 }
 
 #[test]
+fn a_field_forge_trains_strength() {
+    let mut w = world(true, false);
+    ingots(&mut w, 1);
+    let spent = w.start_field_forge(crate::geom::Dir::E);
+    assert_eq!(
+        super::work::stat_of(&w, spent),
+        Some(crate::stats::Stat::Strength)
+    );
+}
+
+#[test]
 fn an_interrupted_forge_makes_nothing_and_keeps_the_ingot() {
     let mut w = world(true, true);
     ingots(&mut w, 1);

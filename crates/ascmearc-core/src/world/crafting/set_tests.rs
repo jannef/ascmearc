@@ -314,6 +314,18 @@ fn a_setting_takes_twenty_minutes_and_marks_jewelcraft() {
 }
 
 #[test]
+fn a_setting_trains_dexterity() {
+    let mut w = world(false, 1);
+    item(&mut w, "long_sword");
+    gem(&mut w, "ruby", "medium", "fine");
+    let spent = w.start_craft("set", &[Some(0), Some(1)]);
+    assert_eq!(
+        super::work::stat_of(&w, spent),
+        Some(crate::stats::Stat::Dexterity)
+    );
+}
+
+#[test]
 fn an_interrupted_setting_spends_nothing() {
     let mut w = world(true, 4);
     item(&mut w, "long_sword");

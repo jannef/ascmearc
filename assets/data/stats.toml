@@ -24,7 +24,7 @@
 #   every other use has one. Such a use may give several marks at once (a potion's `marks`), each
 #   with the rule's chance.
 #
-# The uses (`on`): burdened, blow, critical, block, dig, kick, forged, struggled, waded, hauled,
+# The uses (`on`): burdened, blow, critical, block, dig, kick, crafted, struggled, waded, hauled,
 # dodge, parry, shot, sneak, sneak_attack, climb, picked, disarmed, stole, kept_wits, aimed, hurt,
 # big_hit, killed, resisted, plunge, marched, hungry_step, shook_off, exerted, chilled, found,
 # read, identified, study, scribe, discovered, spell, explored, appraised, searched, foraged, spot,
@@ -32,7 +32,12 @@
 # swapped, inspired, promoted, bargained, greeted, drank, elixir (the wiki's Stats page says each
 # in words). A use may train several stats, a rule each (disarmed, struggled); `spell` trains
 # only the rules of the stats the cast spell's `[spell.scales]` name (damage's, else
-# Intelligence; reach's; duration's). The chances are first guesses
+# Intelligence; reach's; duration's), and `crafted` (long craft work done to its end, #1790)
+# only the rule of the stat the work is made with: its check's (stock.toml's and recipes.toml's
+# professions: Strength for metal, Dexterity for wood, bone, hide, sinew, stone, resin, and gems,
+# Intelligence for a brew, Willpower for enchanting; Temper Strength, Whittle Dexterity, a rig
+# Dexterity, Make do and mend its material's, making out a scroll Intelligence, a field forge
+# Strength). The chances are first guesses
 # (docs/design/stat-training.md §5).
 
 [training]
@@ -43,7 +48,7 @@ odds_power = 3
 quarter = 4
 drop_share = 2
 
-# Strength: carrying, fighting, digging, kicking, forging, struggling, wading, hauling.
+# Strength: carrying, fighting, digging, kicking, working metal, struggling, wading, hauling.
 [[training.use]]
 stat = "strength"
 on = "burdened"
@@ -76,7 +81,7 @@ chance = 20
 
 [[training.use]]
 stat = "strength"
-on = "forged"
+on = "crafted"
 chance = 40
 
 [[training.use]]
@@ -94,8 +99,8 @@ stat = "strength"
 on = "hauled"
 chance = 50
 
-# Dexterity: dodging, shooting, sneaking, climbing, picking locks, disarming, stealing, keeping
-# your wits, aiming spells.
+# Dexterity: dodging, shooting, sneaking, climbing, picking locks, disarming, stealing, handwork
+# (wood, gems), keeping your wits, aiming spells.
 [[training.use]]
 stat = "dexterity"
 on = "dodge"
@@ -140,6 +145,11 @@ chance = 40
 stat = "dexterity"
 on = "stole"
 chance = 30
+
+[[training.use]]
+stat = "dexterity"
+on = "crafted"
+chance = 40
 
 [[training.use]]
 stat = "dexterity"
@@ -204,7 +214,7 @@ on = "chilled"
 chance = 100
 
 # Intelligence: finding, reading, identifying, learning about creatures, casting, exploring,
-# appraising, searching, foraging, disarming.
+# appraising, searching, brewing, foraging, disarming.
 [[training.use]]
 stat = "intelligence"
 on = "found"
@@ -257,6 +267,11 @@ chance = 3
 
 [[training.use]]
 stat = "intelligence"
+on = "crafted"
+chance = 40
+
+[[training.use]]
+stat = "intelligence"
 on = "foraged"
 chance = 30
 
@@ -265,8 +280,8 @@ stat = "intelligence"
 on = "disarmed"
 chance = 20
 
-# Willpower: noticing, enduring, resisting, fighting hungry, spending mana, praying, struggling,
-# holding out, steadying, casting, consuming a crystal.
+# Willpower: noticing, enduring, resisting, fighting hungry, spending mana, praying, enchanting,
+# struggling, holding out, steadying, casting, consuming a crystal.
 [[training.use]]
 stat = "willpower"
 on = "spot"
@@ -296,6 +311,11 @@ chance = 30
 stat = "willpower"
 on = "prayed"
 chance = 100
+
+[[training.use]]
+stat = "willpower"
+on = "crafted"
+chance = 40
 
 [[training.use]]
 stat = "willpower"

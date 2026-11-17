@@ -26,6 +26,7 @@ use crate::action::Event;
 use crate::content::{Content, LevelKind, TerrainId};
 use crate::geom::{Dir, Pos};
 use crate::object::Stack;
+use crate::stats::Stat;
 use crate::world::people::shop::unpaid_parts;
 use crate::world::{LevelState, Spent, World};
 
@@ -38,6 +39,11 @@ pub struct Forging {
 impl Job for Forging {
     fn leave(&self) -> String {
         "you leave the anvil unfinished".into()
+    }
+
+    /// No check, but an hour at the block of metal: Strength's.
+    fn stat(&self, _: &World) -> Option<Stat> {
+        Some(Stat::Strength)
     }
 
     fn done(&self, w: &mut World, _: &mut Vec<Event>) {
