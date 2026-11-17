@@ -143,7 +143,8 @@ the same way. Master Ordgar's teaches it at 5 if you lack it ("Something stirs b
 and the shape of a spell makes sense."). If you have it, it adds 5 ("The shapes of spells come
 clearer."), but not past 40. His corpse also teaches Decipher script, like any literate caster's,
 at 5 a meal and not past 40. Mistress Ælfswīð's gives 10 Spellcraft, up to 60, and 7 Decipher
-script, up to 50. A wizard is a person, so eating one also breaks the [old
+script, up to 50. Master Sigeric's gives 15 Spellcraft, up to 80, and 9 Decipher script, up to
+60. A wizard is a person, so eating one also breaks the [old
 law](#eating-those-who-think) against eating those who think.
 
 In the game you find all this out by eating. Here it is in the order it happens, each chance

@@ -15,7 +15,8 @@
 # village's wise-woman tells of it, is the fairy mound over Ælfhām (E), the Unseelie court's hall;
 # north-west of it, at the wood's western edge, Master Ordgar's tower, Drȳtorr (I), hidden until
 # she sends the player to him. On Hlāwdūn, east of the barrow, Mistress Ælfswīð's tower, Wedertorr
-# (W), hidden until Ordgar's quarrel names it.
+# (W), and on the plain by Grægsæ's shore, Master Sigeric's, Steorratorr (S), both hidden until
+# Ordgar's quarrel names them.
 #
 # Rivers (arrows, the way they flow), two cells wide so only a bridge or the ford crosses them:
 # Blæcwæter from the foot of Rēcbeorgas south through Micelfenn into Grægsæ (w), and Beorhtburna
@@ -86,7 +87,7 @@ MMMMMMMMMMhhhhhhhh=hhhhhhhhh""""""""""".......""""""""""""""""""""""""""""""....
 MMMMMMMMMMMhhhhhhh=hhhhhhhh""""""""""""".......""""""""""""""""""""""""""""".....↓↓....f.f"""""""""""""""""wwwwwwwwwwwww
 MMMMMMMMMM→→→→↘hhh=hhhhhhhh"""""""""""........"."""""""""""""""""""""""""""......↓↓ffffffff"f"""..."".....wwwwwwwwwwwwww
 MMMMMMMMMM→→→→↘→→→b→→→→→↘h"""""""""""".........""""""""""""""""""""""""""".......↙↙fffffffffffff....."....wwwwwwwwwwwwww
-MMMMMMMMMMfffff→→→b→→→→→↘→→→→→→→→→→→→→→→→→→→→→→→→→→→→→→→→↘"""""""""""""sssssssss↓↓sfsssssfssfffff.........wwwwwwwwwwwwww
+MMMMMMMMMMfffff→→→b→→→→→↘→→→→→→→→→→→→→→→→→→→→→→→→→→→→→→→→↘"""""""""""""sssssssss↓↓sfsssssfssfffff......S..wwwwwwwwwwwwww
 MMMMMMMMMMffffffff=ffffff→→→→→→→→→→→→→→→→→→→→→→→→→→→→→→→→↘→→→→→→→→→→→→→↘ssssssss↓↓ssssssssssffffff.........wwwwwwwwwwwww
 MMMMMMMMMMffffffffF=ffffffffffffffff".............".......→→→→→→→→→→→→→↘→→→→→→→→↘↘sssssssssfsffff.ff......wwwwwwwwwwwwww
 MMMMMMMMMMMffffFfFFf===========================================..."sssss→→→→→→→→s↓↓sssssssssssfff.ff......wwwwwwwwwwwwww
@@ -154,6 +155,10 @@ MMMMMMMMMMMMMMMMMMM.ff..................................."......................
 # Wedertorr, Mistress Ælfswīð's tower (#1786; docs/design/wizard-tower.md), high on Hlāwdūn
 # north of Bānfeld: hidden until Ordgar's quarrel marks it. It leads into the tower's clearing.
 "W" = { terrain = "hills", hidden = { id = "wedertorr", terrain = "tower", to = "wedertorr", name = "Wedertorr" } }
+# Steorratorr, Master Sigeric's tower (#1787; docs/design/wizard-tower.md), on the plain of
+# Ēastmearc where it runs down to Grægsæ: hidden until Ordgar's quarrel marks it. It leads into the
+# tower's clearing.
+"S" = { terrain = "plains", hidden = { id = "steorratorr", terrain = "tower", to = "steorratorr", name = "Steorratorr" } }
 # The way out from the drake's deep (#1117), on the volcano's south foot: hidden until the player
 # first climbs out of it, never by a quest.
 "0" = { terrain = "hills", hidden = { id = "utgang", terrain = "cave_mouth", to = "utgang:1", name = "Ūtgang" } }

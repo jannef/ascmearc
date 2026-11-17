@@ -448,6 +448,11 @@ pub enum Action {
     /// tests, and captures that skip the walk to its giver (`world/people/quest_done.rs`). Takes
     /// no game time; recorded in replays.
     QuestGiven(String),
+    /// Dev command: the player is moved to level `ID` at once (made on the first visit),
+    /// arriving as `World::travel` puts them: on its stairs back to where they were, else at its
+    /// start, else on its first staircase. For replays and tests that cross the map between two
+    /// places (`world/levels/travel_dev.rs`). Takes no game time; recorded in replays.
+    Travel(String),
     /// Dev command: the player is given profane gift `ID` (an id in `data/profane/`) as a draw
     /// would give it, its relations applied (`world/character/profane.rs`); refused for one a draw would
     /// not offer. For tests and captures. Takes no game time; recorded in replays.

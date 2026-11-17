@@ -1767,7 +1767,7 @@ mod tests {
             ],
         );
         for row in [
-            "half as fast | The attacks of 27 creatures; eating rotten food | A degree every 2 \
+            "half as fast | The attacks of 28 creatures; eating rotten food | A degree every 2 \
              minutes; ended at once by potion of antidote, potion of full healing, ",
             "Strength \u{2212}1, Dexterity \u{2212}1 when strong",
         ] {

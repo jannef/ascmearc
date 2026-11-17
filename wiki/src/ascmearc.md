@@ -130,6 +130,44 @@ hear, and shoot through, as at Drȳtorr.
 
 From the floors above, the windows look out over the down far below, as they do at Drȳtorr.
 
+### Steorratorr
+
+**Steorratorr**, the star tower, stands on the green plain of Ēastmearc where it runs down to the
+grey sea. It is the tallest of the three towers. It is a
+[hidden location](overworld.md#hidden-locations): Master Ordgar marks it on your map, with
+Wedertorr, when he gives you [the wizards' quarrel](quests.md#the-wizards-quarrel). **Master
+Sigeric**, the wizard, lives at the top. He makes wonders, he thinks very well of himself, and
+he is friendly until the quarrel says otherwise. The first time you climb to him during the
+quarrel, he offers you his side.
+
+The tower has seven floors, as big as Wedertorr's. Its walls cannot be dug
+([digging](digging.md#what-breaks-and-what-does-not)), and its windows are open gaps you can see,
+hear, and shoot through, as at Drȳtorr.
+
+- **The ground floor** is the inside of the tower on the plain. The south hall is a gallery of
+  statues of Sigeric, and three [hidden traps](traps.md#finding-traps) lie across it: a teleport
+  trap, a fireball trap, and a lightning trap. The way on is at the hall's west end. In the north
+  hall, three bays in the wall each hold a trap you can see (lightning, frost, and a pit) with
+  something behind it: a potion of greater healing, a scroll of haste, and 60 gold. A small room
+  off the hall's west end has a scroll of fireball lying in it. The traps hit as hard as on a
+  [danger](dungeons.md#who-lives-there-and-how-many) 9 floor. Now and then one of the drowned or a
+  lesser water elemental walks up out of the sea.
+- **The second to sixth floors** are new each run and dark but for a torch here and there, so
+  bring a light. They hold hidden traps (fireball, lightning, and teleport traps, and pits; five
+  to eight a floor) and the wizard's household, six to ten a floor: his own
+  [brass peacocks](creatures.md#creature-brass-peacock) (whose peck can leave you
+  [transfixed](status-list.md#status-transfixed), slow to act),
+  [quicksilver hounds](creatures.md#creature-quicksilver-hound) (fast, with a poisonous bite),
+  and [gilded likenesses](creatures.md#creature-gilded-likeness) (slow, heavy statues of himself
+  that hit very hard); blades and suits of armour he has set walking; the imps and quasits he
+  has bound; and teapots, cutlery, and books gone lively ([animated objects](animated.md)). None
+  of them ever leaves the tower. The floors are danger 10 to 14.
+- **The top floor** is his workshop, his quarters, and the landing at the top of the stair, with
+  no traps and nobody to fight. Two doors lead out onto a balcony down the whole east side of
+  the tower, over the sea.
+
+From the floors above, the windows look out over the plain and the sea far below.
+
 ### Līctūn
 
 Four cells down the south road from the town is **Līctūn**, Cēaptūn's churchyard, where your
