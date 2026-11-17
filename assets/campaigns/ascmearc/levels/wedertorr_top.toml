@@ -1,0 +1,73 @@
+# The top of Wedertorr (#1786; docs/design/wizard-tower.md §3, §7, §10.2; docs/dev/towers.md):
+# Mistress Ælfswīð's workroom and quarters, the hand-made level the highest trap floor's `<` leads
+# to (data/dungeons/wedertorr_tower.toml's `top`). The clearing's size, the tower on the same
+# cells, and its `>` back down in the south-east corner, where the stair through the tower ends
+# (`Content::fit_tower` checks both). Outside the tower the open air (_), four storeys over the
+# down (`below`, `storey`): its seen cells show the grass and the stones below.
+#
+# Three rooms. East, her workroom: the stair down, a work table (T), a brazier (B), wall torches,
+# the storm-glass she reads the weather by (G, a named place), and the wizard herself (A; her
+# words: data/dialogue/wedertorr.toml). In the middle, her library: stacks of shelves (h) and a
+# lamp. West, her quarters: a bed (b), a table and a stool, a shelf, a lamp, a brazier, and her
+# cat. North, through either door, the balcony across the
+# whole width of the tower, open to the sky and the weather, with a parapet round it: the
+# storm-caller's roof, facing the weather's way. No traps and no population: a home.
+name = "The Top of Wedertorr"
+kind = "outdoor"
+below = "wedertorr"
+storey = 4
+map = '''
+________________________________________________________________________
+________________________________________________________________________
+________________________________________________________________________
+________________________________________________________________________
+_______________-----------------------------------------________________
+_______________-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,-________________
+_______________-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,-________________
+_______________WWWWW'WWWWWWWWWWWWWWWWWWWWWWWWWW'WWWWWWWW________________
+_______________Wbb::::::::hWhhhhh:hhhhhWt:::::::::::::tW________________
+_______________W:::::::::::W:::::::::::W:::::::::::::G:W________________
+_______________W:::::::::::W:::::::::::W:::::::::l:::::W________________
+_______________=:::::::::::W::hh:::hh::W::::TT:::::::::=________________
+_______________W:::::::::::W::hh:::hh::':::::::::::::::W________________
+_______________W:::::sT::::W:::::::::::W:::::::A:::::::W________________
+_______________W:::::::::::W:::::l:::::W:::::::::::::::W________________
+_______________=:::::::::::':::::::::::W:::::::::::::::=________________
+_______________W:::::::::::W:::::::::::W:::::::::::::::W________________
+_______________W:::c:::::::W::hh:::hh::W:::::l:::::::::W________________
+_______________W:::::::::::W::hh:::hh::W:::::::::::::::W________________
+_______________=:::::::::::W:::::::::::W:::::::::::::::=________________
+_______________W:::::::::l:W:::::::::::W:::::::::::::::W________________
+_______________WB::::::::::Whhhhh:hhhhhWB:::::::::::::>W________________
+_______________WWW=WWW=WWW=WWW=WWW=WWW=WWW=WWW=WWW=WWWWW________________
+________________________________________________________________________
+________________________________________________________________________
+________________________________________________________________________
+________________________________________________________________________
+________________________________________________________________________
+________________________________________________________________________
+________________________________________________________________________
+'''
+
+[legend]
+"_" = "air"
+"W" = "tower_wall"
+":" = "tower_floor"
+"=" = "window"
+"'" = "door_open"
+"," = "flagstones"
+"-" = "parapet"
+"t" = "sconce"
+"h" = "shelves"
+"T" = "table"
+"b" = "bed"
+"s" = "stool"
+"B" = "brazier"
+"l" = { terrain = "tower_floor", light = "lamp" }
+"c" = { terrain = "tower_floor", creature = "cat" }
+# The storm-glass, on its own table by the east window (a named place: look mode reads it).
+"G" = { terrain = "table", name = "a storm-glass", note = "A tall glass of clear liquor on a brass stand, a cloud of white crystals hanging in it. The crystals are rising." }
+# The stair down, to the highest trap floor.
+">" = { terrain = "stairs_down", to = "wedertorr_tower:3" }
+# The wizard at her workroom.
+"A" = { terrain = "tower_floor", creature = "aelfswith", npc = "aelfswith" }

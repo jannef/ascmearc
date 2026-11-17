@@ -1,0 +1,45 @@
+# Campaign-owned (docs/design/campaign.md §3.6): the Ascmearc's own type, which only its files
+# may name.
+#
+# Mistress Ælfswīð of Wedertorr (#1786; docs/design/wizard-tower.md §10): the storm-caller of the
+# three wizards of the march, who keeps the top floor of her tower on Hlāwdūn (her npc dialogue,
+# campaigns/ascmearc/data/dialogue/wedertorr.toml). Once a run (`unique`), in no population: only
+# the tower's top floor places her. Peaceful until the quarrel says otherwise, and a caster of
+# real power if crossed: lightning, frost, and rime.
+#
+# Her corpse teaches Spellcraft and Decipher script to whoever eats it, as every quest wizard's
+# does (#1761's follow-ups; the words: hunger.toml's `[corpses.skills]`): a way into the craft for
+# someone who wants it before the quarrel ends.
+[[creature]]
+id = "aelfswith"
+level = 13
+xp = 80
+rarity = "very_rare"
+loot = 13
+unique = true
+name = "Mistress Ælfswīð"
+glyph = "@"
+fg = "#8fc8e8"
+faction = "peaceful"
+tags = ["tower_wizard", "caster", "sapient"]
+# One of the people: never greater or lesser than their kind.
+grades = false
+alignment = "neutral"
+race = "human"
+combat = "caster"
+range = 8
+spells = ["lightning_bolt", "frost", "rime", "magic_missile"]
+mana = 30
+opens_doors = true
+footsteps = 60
+hearing = 14
+weight = 61000
+stats = { strength = 9, dexterity = 14, toughness = 13, intelligence = 18, willpower = 19, presence = 16 }
+base_hp = 26
+skills = { concentration = 80, spellcraft = 70, decipher_script = 45 }
+weapon_skills = { staves = 3 }
+on_eat = { skills = { spellcraft = { gives = 10, up_to = 60 }, decipher_script = { gives = 7, up_to = 50 } } }
+[[creature.gear]]
+chance = 100
+one_of = ["quarterstaff"]
+keep = "wield"

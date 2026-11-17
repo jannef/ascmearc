@@ -19,6 +19,7 @@ expression: "render(case, content.clone())"
                     │   Holtwīc                                                │
                     │   Rat King                                               │
                     │   Ūtgang                                                 │
+                    │   Wedertorr                                              │
                     │ The Showcase                                             │
                     │   Showcase                                               │
                     │   Arena                                                  │
@@ -26,7 +27,6 @@ expression: "render(case, content.clone())"
                     │   Circles                                                │
                     │   Courtyard                                              │
                     │   Depths                                                 │
-                    │   Forest                                                 │
                     │                                                          │
                     │   Come down through Beorggeat into the Ascmearc; the     │
                     │   market town of Cēaptūn lies a short way east along the │

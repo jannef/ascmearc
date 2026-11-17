@@ -1,0 +1,36 @@
+# Campaign-owned (docs/design/campaign.md §3.6): the Ascmearc's own type, which only its files
+# may name.
+#
+# Wedertorr's servants (#1786; docs/dev/towers.md "A tower's household"): a little man of wax,
+# copper wire, and a jar of stormwater for a heart, made by Mistress Ælfswīð to run her errands
+# and to keep callers off her stair. It skitters, and its touch jolts. Met only on the tower's
+# trap floors (data/dungeons/wedertorr_tower.toml): never a stray.
+[[creature]]
+id = "galvanic_homunculus"
+level = 8
+xp = 50
+rarity = "common"
+name = "galvanic homunculus"
+plural = "galvanic homunculi"
+glyph = "i"
+fg = "#c8a060"
+speed = 1300
+glow = 0.1
+faction = "animated"
+tags = ["construct"]
+alignment = "neutral"
+vision = "darkvision"
+sight = 8
+footsteps = 20
+hearing = 10
+weight = 6000
+size = "small"
+stray = false
+stats = { strength = 8, dexterity = 16, toughness = 12, intelligence = 6, willpower = 14, presence = 2 }
+base_hp = 12
+natural = { defence = 2, protection = 1, name = "waxen hide" }
+attack = { damage = "1d8", damage_type = "electricity", name = "touch", verb = "jolts", to_hit = 2 }
+resist = { electricity = 50 }
+immune = ["poisoned", "diseased", "bleeding"]
+corpse = false
+blood = "none"
