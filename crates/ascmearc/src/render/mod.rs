@@ -107,6 +107,10 @@ pub use crate::settings::EffectSwitches as Effects;
 /// Largest heat-haze displacement, in cell widths (at full haze strength).
 const HAZE_CELLS: f32 = 0.07;
 
+/// Depth blur radius per storey, in cell widths (`ConsoleParams::blur_px`): storey 6, the
+/// highest tower floor, blurs a glyph by about a third of a cell.
+const BLUR_CELLS: f32 = 0.06;
+
 /// Where the console sits in the window, in physical pixels.
 #[derive(Resource, Debug, Default, Clone, Copy, PartialEq)]
 pub struct ConsoleLayout {
@@ -138,6 +142,9 @@ pub struct ConsoleParams {
     /// How much a spell effect darkens the map (`lighting::SpellLights::dim`): the readability
     /// floor and cells drawn unlit (remembered terrain) are scaled by `1 − dim`; 0 on the UI.
     pub dim: f32,
+    /// Depth blur radius per blur step ([`console::Console::set_blur`]) in pixels; 0 turns the
+    /// blur off (the `distortion` switch, and always on the UI).
+    pub blur_px: f32,
 }
 
 #[derive(Asset, TypePath, AsBindGroup, Debug, Clone)]
@@ -372,6 +379,12 @@ fn upload(
             },
             level_origin: IVec2::ZERO,
             dim: 0.0,
+            // Blur and haze share the `distortion` switch.
+            blur_px: if haze {
+                BLUR_CELLS * layout.cell.x as f32
+            } else {
+                0.0
+            },
         };
     let screen = Rect::from_corners(Vec2::ZERO, layout.window.as_vec2());
     let ui = params(&console, layout.origin, screen, false, false);
@@ -419,17 +432,18 @@ fn upload_cells(
         Vec::with_capacity(n * 4),
         Vec::with_capacity(n * 4),
     );
-    for ((cell, anim), fx) in console
+    for (((cell, anim), fx), blur) in console
         .cells()
         .iter()
         .zip(console.anims())
         .zip(console.fx())
+        .zip(console.blur())
     {
         match cell {
             Some(cell) => {
                 let [lo, hi] = atlas.glyph(cell.ch).to_le_bytes();
-                // The glyph texture's spare byte carries running water's flow.
-                glyphs.extend_from_slice(&[lo, hi, anim.flow, 0]);
+                // The glyph texture's spare bytes carry running water's flow and the depth blur.
+                glyphs.extend_from_slice(&[lo, hi, anim.flow, *blur]);
                 // Content colors stay as written; the palette applies only on the way out.
                 let (f, b) = (
                     palette.apply(cell.fg, Role::Fg),

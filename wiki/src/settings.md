@@ -13,7 +13,7 @@ changed in the Controls screen instead; see [Controls](controls-rebinding.md).
 | Light flicker | Firelight flickers and drifts in color. Off, every [light](light.md#what-light-is) is steady. |
 | Slides, camera | Creatures slide from cell to cell, attackers lunge, the view follows you smoothly, and a [fireball](magic.md#spell-fireball) or a [lightning bolt](magic.md#spell-lightning-bolt) plays out. Off, they jump, and a [spell](magic.md) is a brief still flash of the cells it hits. |
 | Bloom and glow | A soft glow around glowing glyphs such as [lava](terrain.md#terrain-lava) and [crystals](terrain.md#terrain-crystal). |
-| Heat haze | The air shimmers above [lava](terrain.md#terrain-lava) and fires. |
+| Heat haze | The air shimmers above [lava](terrain.md#terrain-lava) and fires, and the ground seen far below a tower window is a little out of focus. |
 | Particles | Sparks, embers, splashes, dust, foam, [arrows in flight](ranged.md#where-a-missile-goes), and the sparkle of a [spell](magic.md). |
 | Screen fades | The fade in from black after you change level, and the rest of the view darkening for a moment while a [fireball](magic.md#spell-fireball) or a [lightning bolt](magic.md#spell-lightning-bolt) flares. |
 | Screen shake | The view shakes for a moment when a [fireball](magic.md#spell-fireball) or a [lightning bolt](magic.md#spell-lightning-bolt) goes off near you; the nearer, the harder. |

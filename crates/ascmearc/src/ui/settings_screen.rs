@@ -50,7 +50,9 @@ impl Effect {
             Effect::Flicker => "Firelight flickers and drifts in hue; steady when off.",
             Effect::Motion => "Slides, the camera, and spell effects; off, they snap.",
             Effect::Glow => "Bloom around glowing glyphs such as lava and crystals.",
-            Effect::Distortion => "Heat haze rising over lava and fires.",
+            Effect::Distortion => {
+                "Heat haze over lava and fires; the ground far below a tower window out of focus."
+            }
             Effect::Particles => "Sparks, embers, splashes, and dust.",
             Effect::Circles => "Circles about the buffed and hexed (still with the preset).",
             Effect::ScreenFades => "Level fades, flashes, bright spells darkening the view.",

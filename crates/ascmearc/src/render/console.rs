@@ -2,8 +2,8 @@
 //! uploads it to textures when it changes.
 //!
 //! A console is a layer: cells nothing was drawn into are transparent, so the layers below show
-//! through. Each cell can also carry in-cell animation data and effects (glow, heat haze) for the
-//! grid shader.
+//! through. Each cell can also carry in-cell animation data and effects (glow, heat haze, the
+//! depth blur) for the grid shader.
 
 use ascmearc_core::color::Rgb;
 use bevy::prelude::*;
@@ -57,6 +57,14 @@ impl CellFx {
     pub const NONE: CellFx = CellFx { glow: 0, haze: 0 };
 }
 
+/// The strongest depth blur a cell takes ([`Console::set_blur`] clamps to it): past it the pull
+/// toward the background (`BLUR_PULL` in `console.wesl`) would wash the glyph out.
+#[cfg_attr(
+    not(test),
+    expect(dead_code, reason = "draw_map's tower window view calls it (#1781)")
+)]
+pub const BLUR_MAX: u8 = 8;
+
 /// A grid of cells; `None` cells are transparent.
 #[derive(Resource, Debug, Default)]
 pub struct Console {
@@ -65,6 +73,7 @@ pub struct Console {
     cells: Vec<Option<Cell>>,
     anims: Vec<CellAnim>,
     fx: Vec<CellFx>,
+    blur: Vec<u8>,
     /// Set when cells change; cleared by the upload.
     pub dirty: bool,
 }
@@ -93,6 +102,11 @@ impl Console {
         &self.fx
     }
 
+    /// Per-cell depth blur ([`Console::set_blur`]), parallel to [`Console::cells`].
+    pub fn blur(&self) -> &[u8] {
+        &self.blur
+    }
+
     pub fn resize(&mut self, cols: u32, rows: u32) {
         if (cols, rows) != (self.cols, self.rows) {
             self.cols = cols;
@@ -100,6 +114,7 @@ impl Console {
             self.cells = vec![None; (cols * rows) as usize];
             self.anims = vec![CellAnim::STILL; (cols * rows) as usize];
             self.fx = vec![CellFx::NONE; (cols * rows) as usize];
+            self.blur = vec![0; (cols * rows) as usize];
             self.dirty = true;
         }
     }
@@ -109,6 +124,7 @@ impl Console {
         self.cells.fill(None);
         self.anims.fill(CellAnim::STILL);
         self.fx.fill(CellFx::NONE);
+        self.blur.fill(0);
         self.dirty = true;
     }
 
@@ -129,6 +145,7 @@ impl Console {
             self.cells[i] = Some(cell);
             self.anims[i] = CellAnim::STILL;
             self.fx[i] = CellFx::NONE;
+            self.blur[i] = 0;
             self.dirty = true;
         }
     }
@@ -147,6 +164,23 @@ impl Console {
             && self.fx[i] != fx
         {
             self.fx[i] = fx;
+            self.dirty = true;
+        }
+    }
+
+    /// Blurs the glyph at `(x, y)` as seen from `storey` storeys up (a tower's window view of
+    /// the ground below; 0 is sharp, clamped to [`BLUR_MAX`]). The grid shader softens the glyph
+    /// and pulls it toward the background, more per storey; the background and light stay put.
+    #[cfg_attr(
+        not(test),
+        expect(dead_code, reason = "draw_map's tower window view calls it (#1781)")
+    )]
+    pub fn set_blur(&mut self, x: i32, y: i32, storey: u8) {
+        let blur = storey.min(BLUR_MAX);
+        if let Some(i) = self.index(x, y)
+            && self.blur[i] != blur
+        {
+            self.blur[i] = blur;
             self.dirty = true;
         }
     }
@@ -276,6 +310,34 @@ mod tests {
         c.set_fx(1, 0, hot);
         c.clear();
         assert!(c.fx().iter().all(|fx| *fx == CellFx::NONE));
+    }
+
+    #[test]
+    fn blur_follows_the_cell() {
+        let mut c = Console::default();
+        c.resize(3, 1);
+        c.put(0, 0, Cell::BLANK);
+        c.set_blur(0, 0, 3);
+        c.set_blur(1, 0, 200);
+        c.set_blur(9, 0, 3);
+        assert_eq!(c.blur(), &[3, BLUR_MAX, 0], "clamped, out of range ignored");
+        c.put(0, 0, Cell::BLANK);
+        assert_eq!(c.blur()[0], 0, "a new cell is sharp");
+        c.set_fx(1, 0, CellFx { glow: 9, haze: 9 });
+        assert_eq!(c.blur()[1], BLUR_MAX, "effects leave the blur alone");
+        c.clear();
+        assert!(c.blur().iter().all(|b| *b == 0));
+    }
+
+    /// The shader clamps the blur byte as `set_blur` does, and at the clamp the glyph still
+    /// shows: the pull toward the background stays well short of the background itself.
+    #[test]
+    fn shader_constants_match() {
+        let src = include_str!("console.wesl");
+        let max = crate::render::wesl_const(src, "BLUR_MAX");
+        assert_eq!(max, f32::from(BLUR_MAX), "BLUR_MAX");
+        let pull = crate::render::wesl_const(src, "BLUR_PULL");
+        assert!(pull * max <= 0.7, "BLUR_PULL × BLUR_MAX = {}", pull * max);
     }
 
     #[test]
