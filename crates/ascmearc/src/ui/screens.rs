@@ -16,7 +16,9 @@
 //!   Esc closes (pops) the top screen; choices that start, leave, or end a run ([`MenuChoice`])
 //!   are applied by [`apply_choice`]. A screen that chooses a gameplay action (what to pick up,
 //!   drop, wear, or wield) closes and hands the action to the simulation ([`ScreenAction::Act`]);
-//!   the equipment screen beneath a choice stays open and [`refresh`] shows it the result. Talk
+//!   the screens beneath stay open and [`refresh`] reads the run again into each of them (the
+//!   equipment screen beneath a choice, the dialogue beneath the dialog that bought a ware), so
+//!   a screen that becomes the top again shows the run as it is now. Talk
 //!   that answers with topics opens the dialogue screen ([`converse`]), and so does each answer
 //!   to a topic asked on it.
 //! - **Draw**: `ui::draw` clears the UI console, draws the gameplay UI when a run exists, then
@@ -735,31 +737,20 @@ impl ScreenStack {
         }
     }
 
-    /// Whether a screen is open that shows the run as it changes ([`refresh`]): the equipment
-    /// screen, or an object list.
-    fn shows_run(&self) -> bool {
-        (self.screens.iter()).any(|s| matches!(s, Screen::Equipment(_) | Screen::Objects(_)))
-    }
-
     /// Whether an object list is open: one left open beneath a dialog that acted names stacks
     /// by position until [`refresh`] reads the run again after the action.
     pub fn shows_objects(&self) -> bool {
         (self.screens.iter()).any(|s| matches!(s, Screen::Objects(_)))
     }
 
-    /// Reads the run again into the screens that stay open while it changes: the equipment
-    /// screen beneath a choice that was just done, and any object list, which names stacks by
-    /// position (the read list beneath the dialog that reads a grimoire: a scroll used up moves
-    /// the stacks after it, #591).
-    fn refresh(&mut self, view: &PerceptionView<'_>) {
+    /// Reads the run again into every open screen ([`ModalScreen::refresh`]), so the one the
+    /// player comes back to shows the run as it is now (#1772): the equipment screen beneath a
+    /// choice that was just done, the dialogue beneath the dialog that bought the pedlar's
+    /// ware, and any object list, which names stacks by position (the read list beneath the
+    /// dialog that reads a grimoire: a scroll used up moves the stacks after it, #591).
+    fn refresh(&mut self, view: &PerceptionView<'_>, talk: Option<&Conversation>) {
         for screen in &mut self.screens {
-            match screen {
-                Screen::Equipment(screen) => screen.refresh(view),
-                Screen::Objects(screen) => screen.refresh(view),
-                Screen::Profession(screen) => screen.refresh(view),
-                Screen::CraftPick(screen) => screen.refresh(view),
-                _ => {}
-            }
+            screen.modal_mut().refresh(view, talk);
         }
     }
 
@@ -993,11 +984,12 @@ impl Screens<'_> {
     }
 }
 
-/// Shows the screens that stay open while the run changes what they show (the equipment screen
-/// beneath a choice that was just done, an object list beneath a dialog) the run as it is now.
+/// Shows the screens that stay open while the run changes (the equipment screen beneath a
+/// choice that was just done, an object list or the dialogue beneath a dialog that acted) the
+/// run as it is now: a screen that becomes the top again never shows it as it was.
 pub(super) fn refresh(game: Res<Game>, mut stack: ResMut<ScreenStack>) {
-    if game.is_changed() && stack.shows_run() {
-        stack.refresh(&game.world.perception());
+    if game.is_changed() && !stack.is_empty() {
+        stack.refresh(&game.world.perception(), last_talk(&game.last_outcome));
     }
 }
 
@@ -2905,6 +2897,81 @@ mod tests {
         assert!(names(&app).is_empty());
         assert_eq!(actions(&app).last(), Some(&Action::Wait));
         assert_eq!(app.world().resource::<InputMode>(), &InputMode::Normal);
+    }
+
+    /// A screen the player comes back to reads the run again (#1772): the dialogue beneath a
+    /// dialog that acted shows the answer and the topics as they are now, not the ones it
+    /// opened with (the pedlar's ware offered again after it was bought).
+    #[test]
+    fn the_screen_beneath_a_dialog_that_acted_shows_the_run_as_it_is_now() {
+        let content = content();
+        let mut world = ascmearc_core::World::new(content.clone(), "showcase", None).expect("run");
+        // Into the stairs nook, beside the old hermit.
+        let walk = "move:N*3 open:N move:N*2 move:E*67 open:S move:S*4 move:SE*3";
+        for action in ascmearc_core::action::parse_actions(walk).expect("actions") {
+            world.apply(&action);
+        }
+        let mut app = app_with(content, Some(Game::from_world(world, "tamsin-1".into())));
+        fn apply(mut actions: MessageReader<PlayerAction>, mut game: ResMut<Game>) {
+            for PlayerAction(action) in actions.read() {
+                game.apply(action);
+            }
+        }
+        app.add_systems(
+            Update,
+            (apply, refresh, converse).chain().after(count_actions),
+        );
+        let shown = |app: &App| {
+            let mut console = Console::default();
+            console.resize(100, 30);
+            let stack = app.world().resource::<ScreenStack>();
+            let (settings, bindings) = (Settings::default(), Bindings::default());
+            stack.draw(&mut console, &settings, &bindings);
+            let console = &console;
+            (0..30)
+                .map(|y| (0..100).map(move |x| console.get(x, y).map_or(' ', |c| c.ch)))
+                .map(String::from_iter)
+                .collect::<Vec<_>>()
+                .join("\n")
+        };
+        frame(&mut app, &[(KeyCode::KeyC, "C")]);
+        assert_eq!(names(&app), [ScreenName::Dialogue]);
+        // The dialogue as it was before a deal: a ware for sale that the run no longer has,
+        // and over it the dialog that asks (here about the stairs).
+        let game = app.world().resource::<Game>();
+        let mut stale = last_talk(&game.last_outcome).expect("talk").clone();
+        stale.topics.push(ascmearc_core::world::TopicView {
+            id: "wares".into(),
+            name: "Your wares".into(),
+            price: Some(340),
+            items: None,
+            ware: Some("A ring".into()),
+        });
+        let screen = Screen::Dialogue(DialogueScreen::new(
+            Some(&stale),
+            Some(&game.world.perception()),
+        ));
+        let ask = Action::Ask {
+            dir: Dir::SE,
+            topic: "stairs".into(),
+        };
+        let dialog = Dialog::new("The old hermit", "Ask?").accept("Ask", ask.clone());
+        let mut stack = app.world_mut().resource_mut::<ScreenStack>();
+        *stack.screens.last_mut().expect("the dialogue") = screen;
+        stack
+            .screens
+            .push(Screen::Dialog(DialogScreen::new(dialog)));
+        assert!(shown(&app).contains("Ask?"));
+        // The dialog acts and closes; the dialogue beneath is the top again, read anew.
+        frame(&mut app, &[ENTER]);
+        assert_eq!(actions(&app).last(), Some(&ask));
+        assert_eq!(names(&app), [ScreenName::Dialogue]);
+        let text = shown(&app);
+        assert!(text.contains("Five stairs"), "the answer: {text}");
+        assert!(
+            !text.contains("Your wares"),
+            "the topics as they are: {text}"
+        );
     }
 
     #[test]

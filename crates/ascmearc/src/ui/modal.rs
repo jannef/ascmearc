@@ -1,5 +1,5 @@
 //! What every modal screen does for the screen stack (#1542): its name, its layout before a
-//! press, a press, and its drawing, through one trait, so the stack dispatches once
+//! press, a press, its drawing, and reading the run again, through one trait, so the stack dispatches once
 //! (`screens::Screen::modal`) instead of a match per question. A new screen is one
 //! `ModalScreen` impl here (most are one `modal!` line).
 
@@ -40,6 +40,8 @@ use super::{ScreenAction, ScreenName};
 use crate::input::Bindings;
 use crate::render::console::Console;
 use crate::settings::{Clock, Settings};
+use ascmearc_core::perception::PerceptionView;
+use ascmearc_core::world::Conversation;
 
 /// What a press may change besides the screen: the settings and the key bindings.
 pub(super) struct Keys<'a> {
@@ -65,6 +67,13 @@ pub(super) trait ModalScreen {
     fn fit(&self, _cols: u32, _rows: u32) {}
     fn handle(&mut self, press: &Press, keys: &mut Keys<'_>) -> ScreenAction;
     fn draw(&self, console: &mut Console, show: &Show<'_>);
+    /// Reads the run again: `view` as the player perceives it now, `talk` the run's last
+    /// conversation, if its last action was talk. The stack calls it on every open screen
+    /// whenever the run changes (`screens::refresh`), so a screen the player comes back to (the
+    /// one beneath a dialog that acted, #1772) shows the run as it is, never as it was when it
+    /// opened. A screen that shows anything of the run that an action can change rebuilds it
+    /// here, keeping its selection; the rest need nothing.
+    fn refresh(&mut self, _view: &PerceptionView<'_>, _talk: Option<&Conversation>) {}
 }
 
 impl<T: ModalScreen> ModalScreen for Box<T> {
@@ -80,13 +89,17 @@ impl<T: ModalScreen> ModalScreen for Box<T> {
     fn draw(&self, console: &mut Console, show: &Show<'_>) {
         (**self).draw(console, show)
     }
+    fn refresh(&mut self, view: &PerceptionView<'_>, talk: Option<&Conversation>) {
+        (**self).refresh(view, talk)
+    }
 }
 
-/// `modal!(Type => Name, handle(bindings?), draw(args...), fit?)`: a screen of one name whose
-/// own `handle` takes the press (and the bindings) and whose own `draw` takes the console and
-/// the named parts of [`Show`]; `fit` when it lays out before a press.
+/// `modal!(Type => Name, handle(bindings?), draw(args...), fit?; refresh?)`: a screen of one
+/// name whose own `handle` takes the press (and the bindings) and whose own `draw` takes the
+/// console and the named parts of [`Show`]; `fit` when it lays out before a press; `refresh`
+/// when its own `refresh` reads the run again ([`ModalScreen::refresh`]).
 macro_rules! modal {
-    ($ty:ty => $name:ident, handle($($h:ident)?), draw($($d:ident),*) $(, $fit:ident)?) => {
+    ($ty:ty => $name:ident, handle($($h:ident)?), draw($($d:ident),*) $(, $fit:ident)? $(; $refresh:ident)?) => {
         impl ModalScreen for $ty {
             fn name(&self) -> ScreenName {
                 ScreenName::$name
@@ -100,6 +113,9 @@ macro_rules! modal {
             fn draw(&self, console: &mut Console, _show: &Show<'_>) {
                 <$ty>::draw(self, console $(, _show.$d)*)
             }
+            $(fn $refresh(&mut self, view: &PerceptionView<'_>, _talk: Option<&Conversation>) {
+                <$ty>::refresh(self, view)
+            })?
         }
     };
 }
@@ -113,7 +129,7 @@ modal!(NameScreen => Name, handle(), draw());
 modal!(SummaryScreen => Summary, handle(), draw());
 modal!(FilesScreen => Files, handle(), draw());
 modal!(ModsScreen => Mods, handle(), draw());
-modal!(EquipmentScreen => Equipment, handle(bindings), draw());
+modal!(EquipmentScreen => Equipment, handle(bindings), draw(); refresh);
 modal!(ItemScreen => EquipItem, handle(bindings), draw(), fit);
 modal!(DescribeScreen => Describe, handle(bindings), draw(bindings));
 modal!(CharacterScreen => Character, handle(bindings), draw(bindings));
@@ -128,7 +144,6 @@ modal!(AbilitiesScreen => Abilities, handle(bindings), draw(bindings), fit);
 modal!(ShapeScreen => Shape, handle(bindings), draw(), fit);
 modal!(ScribeScreen => Scribe, handle(bindings), draw(), fit);
 modal!(RigScreen => Rig, handle(bindings), draw(), fit);
-modal!(DialogueScreen => Dialogue, handle(bindings), draw());
 modal!(DeathScreen => Death, handle(), draw(clock));
 modal!(LevelUpScreen => LevelUp, handle(), draw(), fit);
 modal!(DialogScreen => Dialog, handle(), draw());
@@ -209,6 +224,9 @@ impl ModalScreen for ObjectScreen {
     fn draw(&self, console: &mut Console, show: &Show<'_>) {
         ObjectScreen::draw(self, console, show.bindings)
     }
+    fn refresh(&mut self, view: &PerceptionView<'_>, _talk: Option<&Conversation>) {
+        ObjectScreen::refresh(self, view)
+    }
 }
 
 /// A profession's recipes; `--screen profession` names the first.
@@ -228,6 +246,9 @@ impl ModalScreen for ProfessionScreen {
     fn draw(&self, console: &mut Console, _show: &Show<'_>) {
         ProfessionScreen::draw(self, console)
     }
+    fn refresh(&mut self, view: &PerceptionView<'_>, _talk: Option<&Conversation>) {
+        ProfessionScreen::refresh(self, view)
+    }
 }
 
 /// The forging wizard; `--screen craft-pick` names the first recipe's.
@@ -246,5 +267,24 @@ impl ModalScreen for CraftPickScreen {
     }
     fn draw(&self, console: &mut Console, _show: &Show<'_>) {
         CraftPickScreen::draw(self, console)
+    }
+    fn refresh(&mut self, view: &PerceptionView<'_>, _talk: Option<&Conversation>) {
+        CraftPickScreen::refresh(self, view)
+    }
+}
+
+/// Talking with someone: it reads the run's last conversation again.
+impl ModalScreen for DialogueScreen {
+    fn name(&self) -> ScreenName {
+        ScreenName::Dialogue
+    }
+    fn handle(&mut self, press: &Press, keys: &mut Keys<'_>) -> ScreenAction {
+        DialogueScreen::handle(self, press, keys.bindings)
+    }
+    fn draw(&self, console: &mut Console, _show: &Show<'_>) {
+        DialogueScreen::draw(self, console)
+    }
+    fn refresh(&mut self, view: &PerceptionView<'_>, talk: Option<&Conversation>) {
+        DialogueScreen::refresh(self, view, talk)
     }
 }

@@ -8,7 +8,10 @@
 //! simulation ([`ScreenAction::Act`]); the answer reopens it (`screens::converse`) with the
 //! reply, on the topic just asked. A service paid per thing (an identification, #432) asks
 //! first, in the one dialog, with the total it would cost now; with nothing to pay for it asks
-//! straight away (the speaker says there is nothing to do).
+//! straight away (the speaker says there is nothing to do). A topic that asks first asks in the
+//! dialog over the screen, which stays beneath it: after the dialog's action the stack reads
+//! the run again ([`DialogueScreen::refresh`]), so the screen shows the answer and the topics as
+//! they are now (a ware bought is for sale no more, #1772).
 
 use super::cursor;
 use super::dialog_screen::Dialog;
@@ -20,7 +23,7 @@ use crate::render::console::Console;
 use ascmearc_core::content::ServiceKind;
 use ascmearc_core::perception::PerceptionView;
 use ascmearc_core::text::capitalized;
-use ascmearc_core::world::Conversation;
+use ascmearc_core::world::{ActorId, Conversation};
 use ascmearc_core::{Action, Dir, Event, Outcome};
 
 /// The panel's width.
@@ -28,6 +31,8 @@ const WIDTH: i32 = 64;
 
 #[derive(Debug)]
 pub struct DialogueScreen {
+    /// Whom the player talks to; `None` when there is no one to talk to.
+    with: Option<ActorId>,
     /// Whom the player talks to, as a title: "The old hermit".
     name: String,
     /// The way to them from the player; `None` when there is no one to talk to.
@@ -54,6 +59,7 @@ impl DialogueScreen {
     /// run: the speaker must be in view, next to them.
     pub fn new(talk: Option<&Conversation>, view: Option<&PerceptionView<'_>>) -> Self {
         let nobody = || Self {
+            with: None,
             name: String::new(),
             toward: None,
             line: "There is no one to talk to.".into(),
@@ -103,6 +109,7 @@ impl DialogueScreen {
             .and_then(|asked| topics.iter().position(|(id, _)| id == asked))
             .unwrap_or(0);
         Self {
+            with: Some(talk.with),
             name: capitalized(&name),
             toward,
             line: talk.line.clone(),
@@ -113,6 +120,24 @@ impl DialogueScreen {
             gold: view.own_gold(),
             selected,
         }
+    }
+
+    /// Reads the run again ([`crate::ui::modal::ModalScreen::refresh`]): `talk`, the run's last
+    /// conversation, with the one talked to here, rebuilds what they said and the topics (a
+    /// ware bought is for sale no more), keeping the selection while the topics are the same;
+    /// with no new word from them, only the gold carried is read again.
+    pub fn refresh(&mut self, view: &PerceptionView<'_>, talk: Option<&Conversation>) {
+        let ours = talk.filter(|t| self.with == Some(t.with));
+        let Some(talk) = ours else {
+            self.gold = view.own_gold();
+            return;
+        };
+        let fresh = Self::new(Some(talk), Some(view));
+        let selected = match fresh.topics == self.topics {
+            true => self.selected,
+            false => fresh.selected,
+        };
+        *self = Self { selected, ..fresh };
     }
 
     /// Applies a key press: a topic's number (or Enter on the selected one) asks about it, the
