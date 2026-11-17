@@ -5,7 +5,7 @@
 //! character written in the text files under `crates/` and `assets/` (the UI text, messages,
 //! content glyphs, names) plus a fixed safety set, so text the scan cannot see (a typed character
 //! name) still draws: the ranges the glyph atlas always holds (`GLYPH_RANGES` in the game's
-//! `render/atlas.rs`, a superset of Latin-1, Latin Extended-A, arrows, box drawing, blocks, and
+//! `render/atlas.rs`, a superset of Latin-1, Latin Extended-A and -B, arrows, box drawing, blocks, and
 //! geometric shapes), so the subset draws whatever the whole font draws there.
 //!
 //! The subset drops what fontdue never reads (hinting, OpenType layout, the family names): it is
@@ -23,7 +23,7 @@ use std::path::Path;
 /// Kept whether or not the scan finds them: the atlas's `GLYPH_RANGES` (change both together).
 const SAFETY_RANGES: &[(char, char)] = &[
     ('\u{0020}', '\u{007E}'), // printable ASCII
-    ('\u{00A0}', '\u{017F}'), // Latin-1 Supplement, Latin Extended-A
+    ('\u{00A0}', '\u{024F}'), // Latin-1 Supplement, Latin Extended-A and -B
     ('\u{0391}', '\u{03C9}'), // Greek
     ('\u{2010}', '\u{205E}'), // General Punctuation
     ('\u{2190}', '\u{21FF}'), // Arrows

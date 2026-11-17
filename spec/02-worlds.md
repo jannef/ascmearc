@@ -34,5 +34,5 @@ Part of the design document; the index is [`specification.md`](../specification.
 
 ### Names and language
 
-- A place name is a plain English description put into Old English, spelled with the letters the glyph atlas draws (æ for ǣ, y for ȳ; no wynn or yogh). Ids are ASCII slugs. People are named in the same register. Creature names stay plain English.
+- A place name is a plain English description put into Old English, spelled with Old English letters (macrons, æ, ǣ, ȳ, þ, ð; the glyph atlas draws them all, #1816), though the first names write æ for ǣ and y for ȳ (Grægweall, Fyrdelf); no wynn or yogh. Ids are ASCII slugs. People are named in the same register. Creature names stay plain English.
 - Speech follows the world's language register by age and people: Old, Middle, and Victorian English by the speaker's age; commoners Cockney, the rich posh, dwarves Geordie, elves Brummie, halflings and gnomes Scouse, goblins, kobolds, and ratfolk heavy Irish, drow Middle English, lizardfolk Dutch.
