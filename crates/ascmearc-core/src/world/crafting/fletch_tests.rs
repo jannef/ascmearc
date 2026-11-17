@@ -467,8 +467,8 @@ fn the_row_says_what_a_batch_takes() {
     let w = equipped(false, 8, "short_bow");
     assert_eq!(
         takes(&w, "arrows"),
-        "an arrowhead for each made or a bone shard or a block of flint, a wood billet, a knife, \
-         a bow ready, about 10 minutes"
+        "an arrowhead for each made or a shard or a block of flint or obsidian, a billet, a \
+         knife, a bow ready, about 10 minutes"
     );
     assert_eq!(
         takes(&w, "sling_stones"),
@@ -515,7 +515,7 @@ fn arrowheads_are_forged_by_the_score_at_an_anvil() {
     assert_eq!(row(&w, "arrowheads"), Some(None), "beside the anvil");
     assert_eq!(
         takes(&w, "arrowheads"),
-        "an iron ingot, an anvil, about 10 minutes"
+        "an ingot, an anvil, about 10 minutes"
     );
     sure_batch(&mut w, "craft:arrowheads:a");
     assert_eq!(count_of(&w, "arrowhead"), 20);

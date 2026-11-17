@@ -281,17 +281,18 @@ fn input_material(content: &Content, input: &RecipeInput) -> Option<MaterialId> 
     }
 }
 
-/// A stock input in words: "a length of sinew", "an ingot of any metal".
+/// A stock input in words: "a length of sinew", "an ingot" (of any metal: the form word alone,
+/// [`crate::piece::any_names`]).
 fn stock_input_words(content: &Content, input: &RecipeInput) -> Option<String> {
     let material = input_material(content, input)?;
     let piece = content.object(content.object_id(crate::piece::ID)?);
     let (one, many) = match &input.kind {
         InputKind::Group(group) => {
-            let (name, plural, _) = content.stock().form_of(content, material)?;
-            (
-                format!("{name} of any {group}"),
-                format!("{plural} of any {group}"),
-            )
+            let of_group: Vec<MaterialId> = (0..content.materials().len())
+                .filter_map(|i| u16::try_from(i).ok().map(MaterialId))
+                .filter(|&m| content.material(m).group.as_deref() == Some(group.as_str()))
+                .collect();
+            crate::piece::any_names(content, piece, &of_group)?
         }
         _ => crate::piece::names(content, piece, material),
     };
@@ -447,9 +448,10 @@ fn takes(content: &Content, level: &LevelState, player: &Actor, recipe: &RecipeD
 
 /// The stock part `part` of `batch` of `object` takes, from `materials`, priced in the part's
 /// base material where it is among them (else the cheapest of its group), once for each group
-/// they hold, the base material's group first: "3 steel ingots", "7 wood billets or 7 bone shards"
-/// (docs/design/professions.md §3: the part's share of the result's weight, in pieces; another
-/// material of the group takes as many of its own).
+/// they hold, the base material's group first: "3 ingots", "7 billets or 7 shards", the
+/// material named only where the part takes just that one of its group ("a block of flint";
+/// [`crate::piece::any_names`]) (docs/design/professions.md §3: the part's share of the result's
+/// weight, in pieces; another material of the group takes as many of its own).
 fn stock_words(
     content: &Content,
     recipe: &RecipeDef,
@@ -461,8 +463,8 @@ fn stock_words(
     let base = content.object(object).parts.get(part)?;
     let piece = content.object(content.object_id(crate::piece::ID)?);
     let group = |m: MaterialId| content.material(m).group.clone();
-    // The base material's group first, each other group by its cheapest: a club is "7 wood
-    // billets or 7 bone shards", a bow "4 wood billets or 4 horn shards".
+    // The base material's group first, each other group by its cheapest: a club is "7 billets
+    // or 7 shards".
     let mut order = materials.to_vec();
     order.sort_by_key(|&m| group(m) != group(base.material));
     let mut groups: Vec<Option<String>> = Vec::new();
@@ -472,8 +474,8 @@ fn stock_words(
             continue;
         }
         groups.push(group(first));
-        // The base material when it is of this group, else the piece's own (steel: a wooden
-        // small shield in metal is "13 steel ingots", never adamantium's), else the group's
+        // Priced in the base material when it is of this group, else the piece's own (steel: a
+        // wooden small shield in metal is 13 ingots, never adamantium's count), else the group's
         // cheapest.
         let named = |want: MaterialId| {
             (materials.iter().copied()).find(|&m| m == want && group(m) == group(first))
@@ -487,7 +489,13 @@ fn stock_words(
             })
             .unwrap_or(first);
         let count = super::craft_make::stock_need(content, recipe, part, material, batch)?;
-        let (one, many) = crate::piece::names(content, piece, material);
+        // The material named only where the part takes some of its group, the priced one first
+        // (#1767).
+        let mut of_group: Vec<MaterialId> = (materials.iter().copied())
+            .filter(|&m| group(m) == group(first))
+            .collect();
+        of_group.sort_by_key(|&m| m != material);
+        let (one, many) = crate::piece::any_names(content, piece, &of_group)?;
         words.push(counted(&one, &many, count));
     }
     (!words.is_empty()).then(|| words.join(" or "))

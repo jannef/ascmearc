@@ -134,13 +134,17 @@ fn the_stock_follows_the_bases_weight_as_the_design_counts_it() {
 }
 
 #[test]
-fn the_rows_price_in_the_bases_metal_or_steel_never_the_first_metal_on_the_list() {
+fn the_rows_price_in_the_bases_metal_or_steel_and_name_a_metal_only_when_some_are_taken() {
+    // Priced in the base's metal (chain mail's iron: 22) or steel (a wooden shield's 13, never
+    // adamantium's count), but any metal is "ingots" (#1767): the row never names a metal the
+    // smith need not use. A lantern takes iron or brass only, and says so.
     let w = world();
     for (id, words) in [
-        ("chain_mail", "22 iron ingots"),
-        ("small_shield", "13 steel ingots"),
-        ("leather_cap", "3 steel ingots"),
-        ("pick_axe_by_hand", "6 blocks of flint"),
+        ("chain_mail", "22 ingots,"),
+        ("small_shield", "13 ingots,"),
+        ("leather_cap", "3 ingots,"),
+        ("lantern", "an iron or brass ingot,"),
+        ("pick_axe_by_hand", "6 blocks of stone,"),
     ] {
         let (takes, _) = row(&w, id);
         assert!(takes.starts_with(words), "{id}: {takes}");

@@ -195,8 +195,12 @@ so a hand knife may also be of ivory or dragonbone (both `bone`); jade is no wea
   `work` stays the main chosen part's material's (a spear's head, not its haft).
 - **The row's words** (`craft::stock_words`) price a part once per material group it may be of,
   the base material's group first, each other group by its cheapest material (`value`: a bow
-  "or 4 horn shards", never dragonbone): "7 wood billets or 7 bone shards", "a bone shard or a block of
-  flint". The greyed reason names the first material's group ("no bone to hand"; the haft's "no
+  "or 4 horn shards", never dragonbone). It names the material only where the part takes some
+  of its group (#1767, `piece::any_names`): the whole group is the form word alone, "3 ingots",
+  "7 billets or 7 shards", "a block of stone" (an `of` form takes the group's name), "a hide or
+  pelt"; some of it names them, the priced one first, "an iron or brass ingot", "4 horn or
+  dragonbone shards", "a block of flint or obsidian"; one names it, "a gold ingot". A stock
+  input of a group (`{ group = "metal" }`) is said the same way: "an ingot". The greyed reason names the first material's group ("no bone to hand"; the haft's "no
   wood to hand").
 - **The wizard's label** for an unnamed main part is its stock's group when all of it is one
   group ("metal", "wood"), else "material".
@@ -400,12 +404,13 @@ the cells beside the player, and the skills: presentation never decides availabi
 
 - `takes`: what a built-in works on ("a metal weapon or armour", "a wooden weapon"), each stock
   part priced in pieces (`piece::count_for` of the part's share of the result's weight, named by
-  `piece::names`: "3 steel ingots"), inputs ("20 arrowheads", "an arrowhead for each made"), the
-  station ("an anvil"), "a knife", "a bow ready" (`data/fletch.toml`'s word for what shoots the
-  result), then the time in `Duration::spoken` ("about 10 minutes": Temper's and Whittle's
+  `piece::any_names`: "3 ingots" of any metal, "an iron or brass ingot"; "Routes and the
+  recipe's profession"), inputs ("20 arrowheads", "an arrowhead for each made"), the station
+  ("an anvil"), "a knife", "a bow ready" (`data/fletch.toml`'s word for what shoots the result),
+  then the time in `Duration::spoken` ("about 10 minutes": Temper's and Whittle's
   `data/rules/temper.toml`, a generic recipe's `seconds`, the arrows' cut by Fletcher). A part with
-  sources is its choices joined by "or" ("an arrowhead for each made or a bone shard or a block of
-  flint"); a counted recipe's stock is priced for the batch at its most; wood free here is not
+  sources is its choices joined by "or" ("an arrowhead for each made or a shard or a block of
+  flint or obsidian"); a counted recipe's stock is priced for the batch at its most; wood free here is not
   said. Never a difficulty or odds.
 - `unavailable`: the first `RecipeLack` that applies, in this order: `Skill` ("beyond your
   skill": the trained value below `from`), `Station` ("no anvil beside you"), `Knife` ("no

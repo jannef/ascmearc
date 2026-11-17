@@ -109,15 +109,15 @@ fn the_rows_tell_the_stock_inputs() {
     let w = world();
     assert_eq!(
         row(&w, "short_bow").0,
-        "4 wood billets or 4 horn shards, a length of sinew, a knife, about 1 hour"
+        "4 billets or 4 horn or dragonbone shards, a length of sinew, a knife, about 1 hour"
     );
     assert_eq!(
         row(&w, "composite_bow").0,
-        "5 wood billets or 5 horn shards, 2 lengths of sinew, a knife, about 1 hour and 30 minutes"
+        "5 billets or 5 horn or dragonbone shards, 2 lengths of sinew, a knife, about 1 hour and 30 minutes"
     );
     assert_eq!(
         row(&w, "crossbow").0,
-        "16 wood billets, an ingot of any metal, a knife, about 1 hour and 30 minutes"
+        "16 billets, an ingot, a knife, about 1 hour and 30 minutes"
     );
 }
 

@@ -93,10 +93,10 @@ fn the_built_in_rows_are_the_trained_with_what_they_take_and_why_not() {
             row(&w, "woodcraft", "Whittle"),
         ],
         [
-            "Arrows: an arrowhead for each made or a bone shard or a block of flint, a wood \
+            "Arrows: an arrowhead for each made or a shard or a block of flint or obsidian, a \
              billet, a knife, a bow ready, about 10 minutes (no knife)",
-            "Crossbow bolts: an arrowhead for each made or a bone shard or a block of flint, a \
-             wood billet, a knife, a crossbow ready, about 10 minutes (no knife)",
+            "Crossbow bolts: an arrowhead for each made or a shard or a block of flint or \
+             obsidian, a billet, a knife, a crossbow ready, about 10 minutes (no knife)",
             "Sling stones: a block of stone, about 10 minutes (no stone to hand)",
             "Whittle: a wooden weapon, a knife, about 10 minutes (no knife)",
         ]
@@ -134,7 +134,7 @@ fn the_untrained_see_no_rows_and_the_trained_what_is_beyond_them() {
     assert!(names(&w).contains(&"Tipped arrows".to_string()));
     assert_eq!(
         row(&w, "metalcraft", "Long sword"),
-        "Long sword: 3 steel ingots, an anvil, about 1 hour (beyond your skill)"
+        "Long sword: 3 ingots, an anvil, about 1 hour (beyond your skill)"
     );
     // At it: the anvil, then the stock, is what is missing.
     train(&mut w, "metalcraft", 20);
@@ -168,10 +168,7 @@ fn a_stock_part_wants_a_piece_the_profession_works_that_the_part_may_be_made_of(
     let iron = w.content.material_id("iron").expect("iron");
     let ingot = crate::piece::make(&w.content, iron, 1).expect("an ingot");
     w.player_mut().inventory.push(ingot);
-    assert_eq!(
-        sword(&w),
-        "Long sword: 3 steel ingots, an anvil, about 1 hour"
-    );
+    assert_eq!(sword(&w), "Long sword: 3 ingots, an anvil, about 1 hour");
 }
 
 #[test]
