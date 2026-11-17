@@ -263,7 +263,7 @@ stairs down lead to [Gimmwīc](ascmearc.md#gimmwīc), the deep gnomes' town.
 
 ## Skeul Hir
 
-The **Skeul Hir**, "the long stair" in the deep gnomes' tongue, is their old way from
+The **Skeul Hir** is their old way from
 [Gimmwīc](ascmearc.md#gimmwīc) up to the second floor of
 [Lytelscræf](dungeons.md#the-dungeons), cut long ago and long forgotten. Both ends are hidden
 until Headman Peran opens them with the moot's answer ([quests](quests.md#who-gives-quests)). Then
@@ -299,7 +299,7 @@ the cutters kept their cache: a [rod](wands-and-rods.md#rods) of digging, a
 
 ## Meyn Bew
 
-**Meyn Bew**, "the living stones" in the deep gnomes' tongue, is a pocket of the elemental plane
+**Meyn Bew** is a pocket of the elemental plane
 of earth under [Gimmwīc](ascmearc.md#gimmwīc). Its way in is a ring of crystal light in the rock
 of the town's garden, beside Ysella the Binder. It is not there at all until she gives you her
 [quest](quests.md#lures): then she sings it open, and it stays open. Its first floor's stairs up

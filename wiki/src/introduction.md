@@ -56,7 +56,7 @@ with your [starting kit](starting-kit.md):
 Tables in this wiki that list names, times, or numbers are generated from the game's own data, so
 they match the version of the game this wiki was published with.
 
-**The Ascmearc**, "the ash march", is the first world. You come down into it through
+**The Ascmearc** is the first world. You come down into it through
 **[Beorggeat](ascmearc.md#the-places)**, a pass in the mountains on its western edge. Snow closes
 the pass behind you, so there is no way back. The road runs east to
 **Cēaptūn**, a market town an easy morning's walk away (see [The
