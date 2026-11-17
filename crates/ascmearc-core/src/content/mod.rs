@@ -262,6 +262,7 @@ pub use creature::{
     possessive, the, the_start,
 };
 pub use creature_rarity::{COMMON, CreatureRarity};
+pub use creature_spells::{DEFAULT_AREA_COOLDOWN, harms_an_area};
 pub use crystal::{CrystalColour, Crystals, EnchantingRules, RareMaterials};
 pub use damage_type::{CharColors, DamageTypeDef, DamageTypeId, MAX_DAMAGE_TYPES};
 pub use danger::{Count, DangerRule, PlayerScale, Spawning};

@@ -225,6 +225,9 @@ pub(super) struct CreatureSpec {
     /// the order it prefers them.
     #[serde(default)]
     pub spells: Vec<String>,
+    /// A caster's cooldown on its harmful area spells, in seconds (`creature_spells.rs`;
+    /// default [`super::creature_spells::DEFAULT_AREA_COOLDOWN`]).
+    pub area_cooldown: Option<u32>,
     /// Whether it opens closed doors in its way.
     #[serde(default)]
     pub opens_doors: bool,
@@ -455,6 +458,7 @@ impl Default for CreatureSpec {
             combat: Combat::default(),
             range: None,
             spells: Vec::new(),
+            area_cooldown: None,
             opens_doors: false,
             swims: false,
             lurks: false,
@@ -805,6 +809,7 @@ pub(super) struct Resolved {
     pub immune: Vec<StatusId>,
     pub immune_kinds: Vec<DamageTypeId>,
     pub spells: Vec<super::SpellId>,
+    pub area_cooldown: Option<(u32, StatusId, u16)>,
 }
 
 /// A creature's `immune` ids, split: the statuses it never suffers and the damage types that never
@@ -850,6 +855,7 @@ impl CreatureSpec {
             combat: self.combat,
             range: self.range.unwrap_or(1),
             spells: r.spells,
+            area_cooldown: r.area_cooldown,
             opens_doors: self.opens_doors,
             swims: self.swims,
             lurks: self.lurks,
@@ -1004,6 +1010,10 @@ pub struct CreatureDef {
     /// (`world/creatures/creature_cast.rs`); empty for every other type. Rules only (the wiki
     /// states them).
     pub spells: Vec<super::SpellId>,
+    /// Gameplay: a caster's cooldown on its harmful area spells: its seconds, the status, and the
+    /// degrees of it a cast gives (`content/creature_spells.rs`); `None` without spells. Rules
+    /// only.
+    pub area_cooldown: Option<(u32, StatusId, u16)>,
     /// Whether it opens closed doors in its way.
     pub opens_doors: bool,
     /// Gameplay: whether it swims: deep water is open to its steps and paths, as ground is

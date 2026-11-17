@@ -8,9 +8,48 @@
 //! no open sky), a hex that lays a plain status (no zone, no push, no charm, no ground it needs)
 //! or webs (Web: `world/levels/web.rs`), a heal by touch, or a buff that lays a status. Summons, cleansing, and utilities are the
 //! player's (a summoner has its own `[creature.summon]`).
+//!
+//! **Area cooldown** (#1795): a caster's harmful area spells ([`harms_an_area`]) are limited by
+//! a cooldown, its type's `area_cooldown` in seconds (default [`DEFAULT_AREA_COOLDOWN`]), a
+//! status as every ability limit's (`ability.rs`): [`AREA_STATUS`], given `ceil(cooldown /
+//! eases)` degrees, as a spinning's (`spin.rs`). Only a caster has one.
 
 use super::creature::{Combat, CreatureSpec};
-use super::{Content, Shape, SpellData, SpellId, SpellPurpose};
+use super::status::StatusId;
+use super::{Content, Resolution, Shape, SpellData, SpellId, SpellPurpose};
+
+/// The cooldown status a caster's harmful area spell gives (`data/status/`).
+pub const AREA_STATUS: &str = "area_spell";
+
+/// A caster's area cooldown unless its type says otherwise, in seconds: three turns at a normal
+/// pace.
+pub const DEFAULT_AREA_COOLDOWN: u32 = 18;
+
+/// Whether `def` harms more than one: a damage spell that strikes everyone in its shape (a burst,
+/// a cone, a line) or leaps from one to the next (Chain lightning's arcs).
+pub fn harms_an_area(def: &SpellData) -> bool {
+    def.kind == SpellPurpose::Damage
+        && (def.resolution == Resolution::Area || def.effect.arcs.is_some_and(|a| a > 0))
+}
+
+/// The area cooldown of `spec` (module docs): `None` for a type with no spells; the seconds, the
+/// status, and the degrees of it an area spell gives.
+pub(super) fn area_cooldown(
+    content: &Content,
+    spec: &CreatureSpec,
+) -> Result<Option<(u32, StatusId, u16)>, String> {
+    let id = &spec.id;
+    if spec.spells.is_empty() {
+        return match spec.area_cooldown {
+            Some(_) => Err(format!("creature `{id}`: `area_cooldown` needs `spells`")),
+            None => Ok(None),
+        };
+    }
+    let seconds = spec.area_cooldown.unwrap_or(DEFAULT_AREA_COOLDOWN);
+    let (status, degrees) = super::theft::cooldown(content, "area_cooldown", AREA_STATUS, seconds)
+        .map_err(|m| format!("creature `{id}`: {m}"))?;
+    Ok(Some((seconds, status, degrees)))
+}
 
 /// The spells `spec` names, resolved, or what is wrong with them (module docs).
 pub(super) fn resolve(content: &Content, spec: &CreatureSpec) -> Result<Vec<SpellId>, String> {

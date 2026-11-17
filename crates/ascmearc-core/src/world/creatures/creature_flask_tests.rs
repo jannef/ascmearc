@@ -1,12 +1,14 @@
 //! The bombers (the potions wave 2 design §5, §7; `hurl.rs`): a creature whose throw is a flask
 //! hurls it, and it shatters and splashes as the player's does, its splash the thrower's; the
 //! player who sees it is told and learns the flask; up close it fights in melee; nothing of the
-//! throw lands; the three shipped bombers throw and carry flasks; the content check; replays.
+//! throw lands; the three shipped bombers throw from a supply with a cooldown (#1794): made with
+//! it, a flask spent a throw, none left none thrown, the rest dropped; the content check; replays.
 
 use crate::action::parse_actions;
 use crate::content::{ContentFiles, ZoneKind};
 use crate::replay::Replay;
 use crate::test_support::{builtin, run, said as texts};
+use crate::world::combat::fight::Harm;
 use crate::world::*;
 
 /// A lit hall of `map` (`@` the player, `k` a kobold alchemist, `g` a goblin firebomber, `c` a
@@ -112,24 +114,148 @@ fn a_bomber_beside_its_foe_fights_in_melee() {
 }
 
 #[test]
-fn the_three_bombers_throw_flasks_and_carry_them() {
+fn the_three_bombers_throw_flasks_from_a_supply_with_a_cooldown() {
     let content = builtin();
-    for (bomber, flask) in [
-        ("kobold_alchemist", "flask_of_oil"),
-        ("goblin_firebomber", "flask_of_fire"),
-        ("cult_chymist", "stinking_flask"),
+    for (bomber, flask, supply, cooldown) in [
+        ("kobold_alchemist", "flask_of_oil", "1d3", 24),
+        ("goblin_firebomber", "flask_of_fire", "2d3", 30),
+        ("cult_chymist", "stinking_flask", "1d3+1", 36),
     ] {
         let def = content.creature(content.creature_id(bomber).expect(bomber));
         let flask = content.object_id(flask).expect(flask);
         let throw = def.throw.as_ref().expect("a throw");
         assert_eq!(throw.object, flask, "{bomber}");
         assert!(content.object(flask).flask.is_some(), "{bomber}: a flask");
-        let carries = (def.gear.lines.iter())
+        assert_eq!(
+            throw.supply.map(|d| d.to_string()),
+            Some(supply.to_string()),
+            "{bomber}"
+        );
+        assert_eq!(
+            throw.cooldown.map(|(s, _, _)| s),
+            Some(cooldown),
+            "{bomber}"
+        );
+        // Its flasks are its supply, no gear line's (#1794).
+        let geared = (def.gear.lines.iter())
             .flat_map(|l| &l.one_of)
             .flat_map(|(stacks, _)| stacks)
             .any(|s| s.object == flask);
-        assert!(carries, "{bomber} drops its kind");
+        assert!(!geared, "{bomber}");
     }
+}
+
+/// How many of `object` actor `id` carries.
+fn carried(w: &World, id: ActorId, object: &str) -> u32 {
+    let object = w.content.object_id(object).expect("object");
+    (w.state.actors[&id].inventory.iter())
+        .filter(|s| s.object == object)
+        .map(|s| s.count)
+        .sum()
+}
+
+/// Sets how many of `object` actor `id` carries to `count`, in one stack, and takes off what it
+/// wears.
+fn give(w: &mut World, id: ActorId, object: &str, count: u32) {
+    let object = w.content.object_id(object).expect("object");
+    let me = w.state.actors.get_mut(&id).expect("there");
+    me.inventory.retain(|s| s.object != object);
+    me.equipment = Default::default();
+    if count > 0 {
+        me.inventory.push(crate::object::Stack::new(object, count));
+    }
+}
+
+/// How many flasks the player has seen thrown so far.
+fn throws(w: &World) -> usize {
+    (texts(w).iter())
+        .filter(|l| l.ends_with("hurls a flask."))
+        .count()
+}
+
+#[test]
+fn a_firebomber_is_made_with_two_to_six_flasks() {
+    let content = builtin();
+    let kind = content.creature_id("goblin_firebomber").expect("a type");
+    let fire = content.object_id("flask_of_fire").expect("fire");
+    let mut counts = std::collections::BTreeSet::new();
+    for seed in 0..40 {
+        let mut rng = crate::rng::Rng::gear(seed, "firebomber");
+        let pack = crate::gear::roll(&content, &mut rng, kind, 6);
+        let n: u32 = (pack.items.iter())
+            .filter(|s| s.object == fire)
+            .map(|s| s.count)
+            .sum();
+        assert!((2..=6).contains(&n), "{n}");
+        counts.insert(n);
+    }
+    assert!(counts.len() >= 3, "{counts:?}");
+    // Placed with no kit of its own, it carries them.
+    let w = hall("#########\n#@.....g#\n#########\n");
+    let bomber = first_of(&w, "goblin_firebomber");
+    assert!(carried(&w, bomber, "flask_of_fire") >= 2);
+}
+
+#[test]
+fn a_firebomber_throws_then_not_again_until_its_cooldown_is_over() {
+    // The player walks away down a long hall, the firebomber after them.
+    let mut w =
+        hall("#######################\n#..................@..g#\n#######################\n");
+    let bomber = first_of(&w, "goblin_firebomber");
+    give(&mut w, bomber, "flask_of_fire", 6);
+    let thrown = w.content.status_id("thrown").expect("the cooldown status");
+    run(&mut w, "wait");
+    assert_eq!(throws(&w), 1, "{:?}", texts(&w));
+    assert_eq!(
+        carried(&w, bomber, "flask_of_fire"),
+        5,
+        "the throw spent one"
+    );
+    assert!(w.state.actors[&bomber].effects.has(thrown));
+    let (player, at) = (w.state.player, w.player_pos());
+    assert!(!w.hurls_at(bomber, player, at), "not while it cools");
+    // While the cooldown lasts it throws nothing, its foe in range all along.
+    let mut turns = 0;
+    while w.state.actors[&bomber].effects.has(thrown) {
+        assert_eq!(throws(&w), 1, "turn {turns}: {:?}", texts(&w));
+        run(&mut w, "move:W");
+        turns += 1;
+        assert!(turns < 10, "the cooldown ends");
+    }
+    assert!(turns >= 4, "{turns}");
+    run(&mut w, "move:W*2");
+    assert_eq!(throws(&w), 2, "ready again, it throws: {:?}", texts(&w));
+}
+
+#[test]
+fn with_its_flasks_spent_a_firebomber_clubs_and_its_leftovers_fall_where_it_dies() {
+    let mut w = hall("#########\n#@.....g#\n#########\n");
+    let bomber = first_of(&w, "goblin_firebomber");
+    give(&mut w, bomber, "flask_of_fire", 1);
+    run(&mut w, "wait");
+    assert_eq!(throws(&w), 1);
+    assert_eq!(carried(&w, bomber, "flask_of_fire"), 0);
+    // None left: its cooldown over, it still throws nothing, and comes to club.
+    let thrown = w.content.status_id("thrown").expect("the cooldown status");
+    let me = w.state.actors.get_mut(&bomber).expect("there");
+    me.effects.remove(thrown);
+    let (player, at) = (w.state.player, w.player_pos());
+    assert!(!w.hurls_at(bomber, player, at));
+    let outs = run(&mut w, "wait*8");
+    assert_eq!(throws(&w), 1, "{:?}", texts(&w));
+    let clubbed = outs.iter().flat_map(|o| &o.events).any(|e| {
+        matches!(
+            e,
+            Event::Attacked { attacker, kind: crate::action::AttackKind::Melee, .. }
+                if *attacker == bomber
+        )
+    });
+    assert!(clubbed, "{:?}", texts(&w));
+    // What it has left falls where it dies.
+    give(&mut w, bomber, "flask_of_fire", 3);
+    let mut events = Vec::new();
+    assert!(w.hurt(bomber, 100_000, Harm::Actor(player), &mut events));
+    assert!(lying(&w, "flask_of_fire"), "its flasks fell");
 }
 
 #[test]

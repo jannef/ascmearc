@@ -1,0 +1,9 @@
+# A throw spent (the creatures' `[creature.throw]` with a `cooldown`, world/combat/hurl.rs): a
+# degree for every six seconds of its `cooldown`; while it lasts the creature throws nothing and
+# fights up close. Creatures only: no one sees it on them.
+[[status]]
+id = "thrown"
+name = "Throw spent"
+max = 100
+stacking = "refresh"
+eases = 6

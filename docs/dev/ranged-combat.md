@@ -75,4 +75,10 @@ then the blow with `End::Trap(noun)` as subject). A throw whose object is a flas
 else) takes the one branch in `creature_hurls`: after pricing, noise, and `aim_at`, "The kobold
 alchemist hurls a flask." (`gaze.rs::end_of`'s subject) when the player sees the thrower, then
 `World::shatter_flask(id, object, (pos, at, range))` instead of `fly` (`docs/dev/potions.md`
-"Flasks"). Tests: `world/combat/hurl_tests.rs`, `world/creatures/creature_flask_tests.rs`.
+"Flasks"). Two optional limits (#1794, #1795): `cooldown` (seconds; `Throw::cooldown`, the `thrown`
+status's `ceil(cooldown / eases)` degrees through `theft::cooldown`, as a spinning's): `hurls_at`
+refuses while the status is on and `creature_hurls` lays it; and `supply` (dice; `Throw::supply`):
+`gear::roll` adds that many of the object, rolled last, to a creature's rolled gear (a fixed kit
+carries what it names), `hurls_at` refuses with none in the pack (`hurl::supply_at`, a stack not
+worn), and `creature_hurls` spends one (`World::spend_one`); the rest falls where it dies as any
+pack. Tests: `world/combat/hurl_tests.rs`, `world/creatures/creature_flask_tests.rs`.

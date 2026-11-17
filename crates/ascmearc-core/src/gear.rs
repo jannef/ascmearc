@@ -12,7 +12,8 @@
 //! favoured materials ([`variant::draw`]; none
 //! for a placement that names its material). A piece that would overload the creature (what it
 //! carries over its carrying limit, by its stats and size) is left out; one with no free slot
-//! stays carried.
+//! stays carried. Last, a throw's `supply` (a bomber's flasks): one roll of its dice (a draw per
+//! die), that many of the thrown object, carried.
 //!
 //! Who rolls: every creature spawn that is not given a fixed kit (`CreatureSpawn::rolls_gear`).
 //! A generated level rolls its spawns' gear from `gear/<level id>`, in spawn order, after its
@@ -67,6 +68,16 @@ pub fn roll(content: &Content, rng: &mut Rng, creature: CreatureId, item_level: 
             if *keep != Keep::Carry {
                 pack.equip(at, content);
             }
+        }
+    }
+    // Last, a limited throw's supply (`[creature.throw]` `supply`, `world/combat/hurl.rs`): its
+    // dice, rolled once, of the thrown object, plain and carried, whatever they weigh.
+    if let Some(throw) = &def.throw
+        && let Some(supply) = throw.supply
+    {
+        let count = u32::try_from(supply.roll(rng)).unwrap_or(0);
+        if count > 0 {
+            pack.put(Stack::new(throw.object, count), content);
         }
     }
     pack
