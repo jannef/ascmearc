@@ -63,6 +63,7 @@ mod name_screen;
 mod new_run_screen;
 mod object_screen;
 mod paged_list;
+mod parting;
 mod profession_screen;
 mod quest_screen;
 mod rain;
@@ -200,6 +201,7 @@ impl Plugin for UiPlugin {
                         screens::show_identified,
                         screens::on_death,
                         encounter::on_encounter,
+                        parting::on_parting,
                         screens::on_level_up,
                     )
                         .chain()

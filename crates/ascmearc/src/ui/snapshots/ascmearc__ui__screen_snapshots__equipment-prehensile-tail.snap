@@ -1,0 +1,30 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ You wield a quarterstaff in both hands.
+ A tail uncoils behind you, and closes on nothing, and on nothing again. You are Prehensile-tailed.
+
+
+┌─ Equipment ──────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                                  │
+│ > a  Head             —                                                                          │
+│   b  Neck             —                                                                          │
+│   c  Body             —                                                                          │
+│   d  Cloak            —                                                                          │
+│   e  Main hand      ) a quarterstaff (+0 hit, 1d6, Dv +1) (both hands)                     2 kg  │
+│   f  Off hand       ) a quarterstaff (+0 hit, 1d6, Dv +1) (both hands)                           │
+│   g  Tail             —                                                                          │
+│   h  Hands            —                                                                          │
+│   i  Left ring        —                                                                          │
+│   j  Right ring       —                                                                          │
+│   k  Feet             —                                                                          │
+│   l  Missile weapon   —                                                                          │
+│   m  Missiles         —                                                                          │
+│   n  Tool           ( a lantern                                                           400 g  │
+│                                                                                                  │
+│ Defence (Dv) 12   ·   Protection (Pv) 0                                                          │
+│ Carrying 21.3 kg   ·   Your weight 91.3 kg (you 70 kg)                                           │
+│                                                                                                  │
+│ a-n choose a slot   A-N look   Esc close                                                         │
+└─ 1 Char · 2 Inv · 3 Eqp · 4 Skl · 5 Weap · 6 Mag · 7 Qst · 8 Tal · 9 Story ──────────────────────┘

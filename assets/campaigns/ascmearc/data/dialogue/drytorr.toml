@@ -1,0 +1,47 @@
+# Drȳtorr's people (#1784; docs/design/wizard-tower.md §10): Master Ordgar, the wizard who keeps
+# the top floor of the tower in the holly wood, placed by its legend (levels/drytorr_top.toml) with
+# `npc = "ordgar"`. He speaks posh, as the better-off do (docs/dev/npcs.md "Speech by race and
+# station"): the scholar of the three, his sentences long and exact, with a dry turn. Gammer
+# Wynflæd's rowan is handed in to him (data/quests/wynflaed.toml, `rowan_for_the_wizard`).
+
+[[dialogue]]
+npc = "ordgar"
+name = "Master Ordgar"
+greet = "A caller, and up my stair on foot. How very determined of you. Do come in."
+greet_evil = [
+    "I know that look. I have read about it. Kindly take it down my stair.",
+    "No, I think not. The door is behind you, and so, presently, is the stair.",
+]
+lines = [
+    "Do mind the third flagstone. It minds you.",
+    "Every book in this room has been read twice. Some of them have read me.",
+    "The brooms are not malicious. They are merely thorough.",
+    "Tea? It is cold. It has been cold since midsummer.",
+    "One learns more from a good index than from most men.",
+    "The view is the only thing in this tower I did not have to build.",
+]
+mutter = { chance = 2, verb = "murmurs", lines = [
+    "...and the second gloss contradicts the first, which is too bad of it...",
+    "...where did I put the ink? Where did the ink put itself...",
+    "...nine, ten, and the wards hold. Good...",
+] }
+
+[[dialogue.topic]]
+id = "drytorr"
+name = "The tower"
+reply = "Drȳtorr: the wizard's tower, in the old tongue, which is rather on the nose. I raised it on old stones, and I set the traps on the stairs myself. I find that callers who survive them have generally come about something worth hearing."
+
+[[dialogue.topic]]
+id = "holly_wood"
+name = "The holly wood"
+reply = "Holegnwudu is older than anyone's maps of it. Wynflæd knows its ways better than I, and I have had the sense to let her. There are rings in it one does not walk into, and a hill one does not dine under. I see a good deal of it from my balcony, and I keep to the balcony."
+
+[[dialogue.topic]]
+id = "learning"
+name = "Magic and its learning"
+reply = "Spellcraft is the grammar, and a grimoire the sentence. Without the grammar the sentence is noise; without the sentence the grammar is idle. Most people who come to magic want the fireball and not the grammar. They do not, as a rule, come back for the grammar."
+
+[[dialogue.topic]]
+id = "wizards"
+name = "The other wizards"
+reply = "There are three of us in this country who may call ourselves wizards. Mistress Ælfswīð keeps a tower on the downs and the weather in it. Master Sigeric keeps a taller one by the grey sea, and a very high opinion of it. We do not correspond."

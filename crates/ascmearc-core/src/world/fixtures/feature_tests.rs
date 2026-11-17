@@ -218,7 +218,7 @@ fn the_hunters_statue_on_fyrdelf_reads_its_inscription() {
         .filter(|t| t.starts_with("There is a worn statue here."))
         .collect();
     assert_eq!(said.len(), 1, "{said:?}");
-    assert!(said[0].contains("LĪF ÆR DĒAÞE"), "{}", said[0]);
+    assert!(said[0].contains("LĪF ǢR DĒAÞE"), "{}", said[0]);
     let place = w.perception().place(at).expect("look mode names it");
     assert_eq!(place.name, "a hooded figure");
 }

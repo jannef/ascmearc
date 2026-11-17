@@ -25,7 +25,7 @@ skera = { workspace = true, optional = true }
 # on (docs/dev/campaign.md, "The test world in release builds").
 default = []
 showcase = []
-# `FONT` is JuliaMono cut down at build time to the characters the game uses (about 170 kB in
+# `FONT` is JuliaMono cut down at build time to the characters the game uses (about 200 kB in
 # place of 3.3 MB); the web build turns it on through the game's own `font-subset` feature
 # (docs/dev/rendering.md, "The font").
 font-subset = ["dep:read-fonts", "dep:skera"]

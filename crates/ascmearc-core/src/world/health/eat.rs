@@ -272,6 +272,10 @@ impl World {
         }
         // A layer boss's: its signature, its draws, the deed (`world/character/profane.rs`).
         self.profane_meal(&on_eat);
+        // The Profane took them (`profane_taken.rs`): nothing more of the meal.
+        if self.state.death.is_some() {
+            return;
+        }
         self.feed(nutrition.saturating_add(on_eat.satiation).max(0), what);
     }
 

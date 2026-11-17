@@ -13,7 +13,7 @@
 #   takes_weapons  any weapon and any throwing weapon fits here too, besides what `fits` names
 #           (default false): the missile weapon slot, whose contents `t` shoots or throws
 #   hand    one of the hands (default false): a two-handed object (`two_handed` in objects.toml)
-#           takes every hand slot
+#           takes every hand slot but a grown one
 #   class   only a character of this class (an id in data/classes/) has the slot: nobody else
 #           sees, fills, or is given it (the aristocrat's extra ring slots); default: everyone,
 #           creatures too
@@ -60,6 +60,26 @@ name = "Off hand"
 action = "wield"
 mark = "in off hand"
 hand = true
+
+# The limbs a profane gift grows (#1808): nobody's until the Extra arm or the Prehensile tail
+# opens it, and gone again with the gift.
+
+[[slot]]
+id = "third_hand"
+name = "Third hand"
+action = "wield"
+mark = "in third hand"
+hand = true
+grown = true
+
+[[slot]]
+id = "tail"
+name = "Tail"
+action = "wield"
+mark = "held in tail"
+hand = true
+grown = true
+light_only = true
 
 [[slot]]
 id = "hands"

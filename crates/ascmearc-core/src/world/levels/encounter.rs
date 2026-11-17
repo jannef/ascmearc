@@ -876,17 +876,20 @@ impl World {
         woke
     }
 
-    /// Refuses `action` while an encounter is pending, unless it answers it or takes no game
+    /// Refuses `action` while an encounter or a parting is pending, unless it answers it or takes no game
     /// time and makes nothing happen (a stance, the level's picks, the dev switches).
     pub(in crate::world) fn refuse_pending(
         &mut self,
         action: &crate::action::Action,
     ) -> Option<Spent> {
         use crate::action::Action as A;
-        self.state.encounter.as_ref()?;
+        if self.state.encounter.is_none() && self.state.parting.is_none() {
+            return None;
+        }
         let free = matches!(
             action,
             A::Encounter(_)
+                | A::Parting(_)
                 | A::Talent { .. }
                 | A::Advance(_)
                 | A::LevelUpAuto
@@ -909,7 +912,12 @@ impl World {
         if free {
             return None;
         }
-        self.say(PENDING_REFUSED);
+        // The quarrel's parting (`world/people/quarrel.rs`) pends the same way.
+        let refused = match self.state.encounter {
+            Some(_) => PENDING_REFUSED,
+            None => "You must answer first.",
+        };
+        self.say(refused);
         Some(Spent::Nothing)
     }
 

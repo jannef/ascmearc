@@ -310,7 +310,8 @@ impl Content {
     /// Fills every area's generic creature list ([`danger::Spawning::generic`]). The populations'
     /// list of a campaign is every type that lives in some area with a danger (a branch's or a
     /// hand-made level's `population`) of that campaign or of no campaign, uniques and a portal
-    /// branch's left out. An area's list is that one ([`danger::StrayPool::Populations`]), or by
+    /// branch's or a tower's left out. An area's list is that one
+    /// ([`danger::StrayPool::Populations`]), or by
     /// default ([`danger::StrayPool::All`]) that one and every type of the campaign or of none that
     /// may stray ([`Content::may_stray`]): hostile to the player, no unique, no animated object
     /// (those come by their own populations), and not marked `stray = false` (people, keepers,
@@ -318,9 +319,9 @@ impl Content {
     pub(super) fn fill_generic(&mut self) {
         let mut lives: BTreeMap<Option<String>, BTreeSet<CreatureId>> = BTreeMap::new();
         // A Pit's folk stay in it: though shared, its population is in no
-        // other area's list.
+        // other area's list. So do a tower's household, its floors' animated things.
         let branches = (self.dungeons.values())
-            .filter(|d| d.portal.is_none())
+            .filter(|d| d.portal.is_none() && d.tower.is_none())
             .filter_map(|d| Some((d.campaign.clone(), d.spawning.as_ref()?)));
         let levels = (self.levels.iter()).filter_map(|(id, l)| {
             let campaign = self.level_campaigns.get(id).cloned().flatten();

@@ -37,7 +37,9 @@
 //! reached for it to be given, with `early`, what the giver says asked about it before then (the
 //! topic is listed; the quest is not given); `alignment` moves their score as it is completed;
 //! `repeatable` quests are offered again once done (never a reach). `reveals` names a hidden
-//! location of the overworld revealed as the quest is given (the default) or done, and `where` says where its goal lies after the objective.
+//! location of the overworld revealed as the quest is given (the default) or done, or a list of
+//! them, and `where` says where its goal lies after the objective. A kill quest may name who may
+//! complete it, the sides of a quarrel, the parting, and the hoard ([`super::quarrel`]).
 //!
 //! A kill or bring quest may draw its target as it is given instead of naming it: a `pick` or
 //! `[[quest.variant]]`s ([`super::quest_roll`]), its texts naming the roll through placeholders.
@@ -137,9 +139,33 @@ struct QuestSpec {
     alignment: i32,
     #[serde(default)]
     repeatable: bool,
-    reveals: Option<RevealSpec>,
+    reveals: Option<Reveals>,
     #[serde(rename = "where")]
     where_: Option<String>,
+    #[serde(default)]
+    taker: Vec<super::quarrel::TakerSpec>,
+    #[serde(default)]
+    side: Vec<super::quarrel::SideSpec>,
+    parting: Option<super::quarrel::PartingSpec>,
+    hoard: Option<super::quarrel::HoardSpec>,
+    feud: Option<String>,
+}
+
+/// A quest's `reveals`: one location, or a list of them.
+#[derive(Deserialize)]
+#[serde(untagged)]
+enum Reveals {
+    One(RevealSpec),
+    Many(Vec<RevealSpec>),
+}
+
+impl Reveals {
+    fn into_vec(self) -> Vec<RevealSpec> {
+        match self {
+            Reveals::One(r) => vec![r],
+            Reveals::Many(rs) => rs,
+        }
+    }
 }
 
 /// A quest's `requires`: one quest id, or a list of them (`["barrow_rats", "barrow_heart"]`).
@@ -270,7 +296,7 @@ pub struct Reveal {
 
 #[derive(Default, Deserialize)]
 #[serde(deny_unknown_fields)]
-struct RewardSpec {
+pub(super) struct RewardSpec {
     #[serde(default)]
     gold: u32,
     #[serde(default)]
@@ -441,8 +467,8 @@ pub struct QuestDef {
     pub repeatable: bool,
     /// The campaign whose `data/quests/` it is in; `None` outside every campaign.
     pub campaign: Option<String>,
-    /// The hidden location it reveals, and at which stage.
-    pub reveals: Option<Reveal>,
+    /// The hidden locations it reveals, and at which stage each.
+    pub reveals: Vec<Reveal>,
     /// Where its goal lies, in words, after the objective in the quest log ("The minster lies
     /// in Micelfenn, east of Fennhām.").
     pub where_: Option<String>,
@@ -450,6 +476,9 @@ pub struct QuestDef {
     /// For a rolled quest `goal` is a template: its target is the pool's first, and only the
     /// goal of the quest as given ([`QuestDef::rolled`]) is read.
     pub roll: Option<Rolled>,
+    /// Who may complete it, the sides, the parting, and the hoard (`super::quarrel`); empty for
+    /// most quests.
+    pub quarrel: super::quarrel::Quarrel,
 }
 
 impl QuestDef {
@@ -540,11 +569,14 @@ impl QuestDef {
     }
 
     /// The types carrying tag `tag` that its run can meet, by their plurals: "goblins, goblin
-    /// archers, and goblin chiefs". A family (animated blades) is named once.
+    /// archers, and goblin chiefs". A family (animated blades) is named once; a unique by its
+    /// name ("Master Ordgar").
     pub fn members(&self, content: &Content, tag: &str) -> String {
         let plurals: Vec<&str> = (content.tagged_in(tag, self.campaign.as_deref()))
             .filter(|&c| content.family(c) == c)
-            .map(|c| content.creature(c).plural.as_str())
+            .map(|c| content.creature(c))
+            .map(|c| if c.unique { &c.name } else { &c.plural })
+            .map(String::as_str)
             .collect();
         crate::text::and_list(&plurals)
     }
@@ -725,6 +757,15 @@ fn resolve(
         .ok_or("`pick`: the pool is empty")?,
     };
     let texts = texts(&spec, roll.as_ref())?;
+    let quarrel = super::quarrel::QuarrelSpec {
+        takers: std::mem::take(&mut spec.taker),
+        sides: std::mem::take(&mut spec.side),
+        parting: spec.parting.take(),
+        hoard: spec.hoard.take(),
+        feud: spec.feud.take(),
+    };
+    let paid = spec.done.is_some() || !reward_is_empty(&spec.reward);
+    let quarrel = super::quarrel::resolve(quarrel, content, (kind, giver, paid))?;
     if kind != QuestKind::Escort {
         unused("escort", spec.escort.is_some())?;
         unused("joins", spec.joins.is_some())?;
@@ -847,26 +888,7 @@ fn resolve(
         // Never read from a file (`skip_deserializing`).
         QuestKind::Commission => return Err("a commission is no quest of a file".into()),
     };
-    let reward = &spec.reward;
-    if reward.gold > 0 && content.object_id(GOLD).is_none() {
-        return Err(format!("reward: gold needs the object `{GOLD}`"));
-    }
-    let items = parse_stacks(&reward.items, content).map_err(|e| format!("reward: {e}"))?;
-    let mut skills = Vec::new();
-    for (name, s) in &reward.skills {
-        let skill =
-            (content.skill_id(name)).ok_or_else(|| format!("reward: unknown skill `{name}`"))?;
-        if s.start.is_none() && s.marks == 0 {
-            return Err(format!("reward: skill `{name}` needs `start` or `marks`"));
-        }
-        skills.push(SkillReward {
-            skill,
-            start: s.start,
-            marks: s.marks,
-            taught: s.taught.clone(),
-            more: s.more.clone(),
-        });
-    }
+    let reward = reward(&spec.reward, content)?;
     let min_level = match (spec.min_level, &spec.early) {
         (None, None) => None,
         (Some(level), Some(early)) => Some((level, early.clone())),
@@ -886,21 +908,18 @@ fn resolve(
             .ok_or_else(|| format!("`requires`: no quest `{id}` before this one"))?;
         requires.push(quest);
     }
-    let reveals = spec
+    let reveals = (spec
         .reveals
-        .map(|r| reveal(content, owner, r))
-        .transpose()?;
+        .map_or_else(Vec::new, Reveals::into_vec)
+        .into_iter())
+    .map(|r| reveal(content, owner, r))
+    .collect::<Result<Vec<_>, _>>()?;
     Ok(QuestDef {
         id: spec.id,
         name: spec.name,
         giver,
         goal,
-        reward: Reward {
-            gold: spec.reward.gold,
-            xp: spec.reward.xp,
-            items,
-            skills,
-        },
+        reward,
         texts,
         requires,
         requires_alignment: spec.requires_alignment,
@@ -911,6 +930,41 @@ fn resolve(
         reveals,
         where_: spec.where_,
         roll,
+        quarrel,
+    })
+}
+
+/// Whether a quest's `reward` gives nothing.
+fn reward_is_empty(r: &RewardSpec) -> bool {
+    r.gold == 0 && r.xp == 0 && r.items.is_empty() && r.skills.is_empty()
+}
+
+/// A `reward` (a quest's, or a taker's), checked against `content`.
+pub(super) fn reward(reward: &RewardSpec, content: &Content) -> Result<Reward, String> {
+    if reward.gold > 0 && content.object_id(GOLD).is_none() {
+        return Err(format!("reward: gold needs the object `{GOLD}`"));
+    }
+    let items = parse_stacks(&reward.items, content).map_err(|e| format!("reward: {e}"))?;
+    let mut skills = Vec::new();
+    for (name, s) in &reward.skills {
+        let skill =
+            (content.skill_id(name)).ok_or_else(|| format!("reward: unknown skill `{name}`"))?;
+        if s.start.is_none() && s.marks == 0 {
+            return Err(format!("reward: skill `{name}` needs `start` or `marks`"));
+        }
+        skills.push(SkillReward {
+            skill,
+            start: s.start,
+            marks: s.marks,
+            taught: s.taught.clone(),
+            more: s.more.clone(),
+        });
+    }
+    Ok(Reward {
+        gold: reward.gold,
+        xp: reward.xp,
+        items,
+        skills,
     })
 }
 
@@ -1039,11 +1093,16 @@ fn texts(spec: &QuestSpec, roll: Option<&Rolled>) -> Result<QuestTexts, String> 
             }
             None => Err(format!("a quest needs `{field}`")),
         };
+    // A quest with takers says no `done` of its own: each taker says theirs.
+    let done = match (&spec.done, spec.taker.is_empty()) {
+        (None, false) => String::new(),
+        _ => text(&spec.done, "done", |v| &v.done)?,
+    };
     Ok(QuestTexts {
         offer: text(&spec.offer, "offer", |v| &v.offer)?,
         accept: spec.accept.clone(),
         reminder: text(&spec.reminder, "reminder", |v| &v.reminder)?,
-        done: text(&spec.done, "done", |v| &v.done)?,
+        done,
     })
 }
 

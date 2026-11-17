@@ -11,6 +11,11 @@ on the tenth floor to [Nīðdraca the Hate-Wyrm](creatures.md#creature-nithdraca
 The deeper the keeper, the more gifts its meal draws, and the more of them come from the greater and dire
 tiers.
 
+> **Warning: the thirteenth gift kills you.** When you receive your 13th profane gift, the
+> Profane takes you and your character dies at once. Every gift you have ever received counts,
+> including ones you have since lost. The game gives no warning as you get close, so count them
+> yourself; see [the thirteenth gift](#the-thirteenth-gift).
+
 ## Eating a keeper's corpse
 
 A keeper's corpse is eaten like any corpse, from the floor or your pack, and the game does not
@@ -78,8 +83,8 @@ rules out [Paper-skinned](#talent-paper-skinned) (weight 8), and the tier's open
 106: Hungering is then 12 in 106, 11.3 %.
 
 Every tier holds good, bad, and mixed gifts, so no roll is ever safe. By weight the lesser tier is
-45 % good, 27 % mixed, and 27 % bad; the greater 45 %, 28 %, and 26 %; the dire 37 %, 25 %, and
-38 %.
+45 % good, 27 % mixed, and 27 % bad; the greater 43 %, 32 %, and 25 %; the dire 35 %, 29 %, and
+36 %.
 
 ## Gifts with other gifts
 
@@ -103,6 +108,7 @@ Every such link in the table:
 | [Dim-eyed](#talent-dim-eyed) | never with [Barrow-eyed](#talent-barrow-eyed), [Mere-eyed](#talent-mere-eyed), or [Deep-eyed](#talent-deep-eyed) |
 | [Hoofed](#talent-hoofed) | never with [Soft-footed](#talent-soft-footed) |
 | [Many-fingered](#talent-many-fingered) | never with [Clawed](#talent-clawed) |
+| [Prehensile-tailed](#talent-prehensile-tail) | never with [Tailed](#talent-tailed) |
 | [Thick-blooded](#talent-thick-blooded) | never with [Paper-skinned](#talent-paper-skinned) or [Glass-boned](#talent-glass-boned) |
 | [Scaled](#talent-scaled) | never with [Paper-skinned](#talent-paper-skinned), [Glass-boned](#talent-glass-boned), or [Hollowed](#talent-hollowed) |
 
@@ -121,13 +127,39 @@ Each gift comes to you at most once. A gift taken away by a gift that
 
 A gift that undoes another is not given when it does so, so it can still come to you later.
 
+## The thirteenth gift
+
+Twelve profane gifts are the most anyone survives. The moment you receive a 13th, the Profane
+takes you: after the gift's own line, "The flesh that was given is called back to the one that
+gave it." and "Something old and hungry wakes behind your eyes, and it does not sleep again.", and you [die](hit-points.md#death). Nothing saves you, not even
+[Twice-born](#talent-twice-born) or [Rise from the ashes](horoscope.md#talent-rise-from-ashes), and the rest of the meal never happens:
+no more rolls, no pull toward evil, no food.
+
+The count is of every gift you have ever received: your keepers' own gifts and the drawn ones,
+held now or lost since. A gift taken away by another still counts. A gift that undoes another
+instead of being given does not count, since you never received it.
+
+A keeper's meal can give several gifts at once (see the rolls in
+[each keeper's own gift](#each-keepers-own-gift)), so count before you eat: with 10 received, a
+keeper whose meal gives three more kills you. Your gifts held now are on the Talents page, under
+Profane; ones you have lost are not, so remember them.
+
+Your [graveyard](saving.md#your-characters-and-the-graveyard) records such a character as "Taken
+by the Profane".
+
 ## Gifts that change your body
 
 Some gifts change more than your numbers:
 
 - **Slots.** Horns, hooves, claws, and wing stubs bar the helm, boot, glove, and cloak slots; a
-  sixth finger opens a ring slot. What no longer fits falls to the floor as the gift takes (see [Barred and opened
+  sixth finger opens a ring slot, and a third arm or a gripping tail a hand. What no longer fits falls to the floor as the gift takes (see [Barred and opened
   slots](equipment.md#barred-and-opened-slots)).
+- **Limbs.** [Three-armed](#talent-extra-arm) grows a third arm, and
+  [Prehensile-tailed](#talent-prehensile-tail) a tail that grips: each is a new place to hold
+  something, shown on the Equipment page only while you have the gift. The third hand holds what
+  an off hand holds, a light weapon or a shield; the tail holds a light weapon and nothing else.
+  How they fight beside your two hands: [More than two hands](fighting-styles.md#more-than-two-hands).
+  If the gift is ever taken away, what the limb held falls to the floor.
 - **Claws.** [Clawed](#talent-clawed) bare hands hit harder and can make a foe
   [bleed](status-effects.md#bleeding). With a weapon in your hand the claws do nothing.
 - **Eyes.** [Deep-eyed](#talent-deep-eyed) gives you the eyes of the

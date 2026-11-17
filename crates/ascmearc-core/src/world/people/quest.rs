@@ -75,6 +75,28 @@ pub struct QuestRecord {
     /// A rolled quest: what was drawn as it was given (never drawn again until it is done).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub roll: Option<Roll>,
+    /// A quarrel (`quarrel.rs`): where each of its wizards stands with the player, by npc id;
+    /// one absent has not been met (the giver: the ally).
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub sides: BTreeMap<String, super::quarrel::Side>,
+    /// A quarrel's parting has been answered (`quarrel.rs`): it is never asked again.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub parted: bool,
+}
+
+impl QuestRecord {
+    /// A record at `stage`, nothing counted yet.
+    pub fn new(stage: Stage) -> Self {
+        Self {
+            stage,
+            completed: 0,
+            counted: 0,
+            reached: false,
+            roll: None,
+            sides: BTreeMap::new(),
+            parted: false,
+        }
+    }
 }
 
 fn is_zero(n: &u32) -> bool {
@@ -282,6 +304,9 @@ pub struct QuestView {
     pub target: Option<String>,
     /// How far it has got: "2 / 3 killed.", "Return to the old hermit.", "Done."
     pub status: String,
+    /// A quarrel's wizards the player has met or turned, by name, and where each stands
+    /// (`quarrel.rs`; the dumps).
+    pub sides: Vec<(String, super::quarrel::Side)>,
 }
 
 impl PerceptionView<'_> {
@@ -315,6 +340,7 @@ impl PerceptionView<'_> {
                 objective: objective(content, def),
                 target: record.roll.as_ref().map(|r| r.target.clone()),
                 status,
+                sides: super::quarrel::sides(content, def, record),
             }
         };
         let of = |active: bool| {
@@ -558,7 +584,8 @@ fn status(
 ) -> String {
     let (have, need) = progress(content, quests, inventory, def);
     if have >= need {
-        return format!("{}.", capitalized(&next_step(content, def)));
+        let to = super::quarrel::turn_in_now(def, quests.record(&def.id));
+        return format!("{}.", capitalized(&next_step(content, def, to)));
     }
     match def.goal {
         Goal::Escort { escort, .. } => {
@@ -598,9 +625,10 @@ fn failed_status(content: &Content, def: &QuestDef) -> String {
     }
 }
 
-/// What the player does once quest `def`'s goal is met: "return to the old hermit".
-fn next_step(content: &Content, def: &QuestDef) -> String {
-    let to = speaker_called(content, def.turn_in());
+/// What the player does once quest `def`'s goal is met, `to` whoever takes it in now: "return
+/// to the old hermit".
+fn next_step(content: &Content, def: &QuestDef, to: DialogueId) -> String {
+    let to = speaker_called(content, to);
     match def.goal {
         Goal::Deliver { object, .. } => {
             format!("take the {} to {to}", content.object(object).name)
@@ -610,8 +638,13 @@ fn next_step(content: &Content, def: &QuestDef) -> String {
     }
 }
 
-/// The message for progress on quest `def`, now `have` of `need`.
-fn progress_news(content: &Content, def: &QuestDef, (have, need): (u32, u32)) -> String {
+/// The message for progress on quest `def`, now `have` of `need`; `to` takes it in now.
+fn progress_news(
+    content: &Content,
+    def: &QuestDef,
+    to: DialogueId,
+    (have, need): (u32, u32),
+) -> String {
     let done = have >= need;
     let mut text = match def.goal {
         Goal::Kill { .. } => {
@@ -631,7 +664,7 @@ fn progress_news(content: &Content, def: &QuestDef, (have, need): (u32, u32)) ->
     };
     if done {
         text.push(' ');
-        let step = next_step(content, def);
+        let step = next_step(content, def, to);
         match def.goal {
             Goal::Deliver { .. } => text.push_str(&format!("{step}.")),
             _ => text.push_str(&format!("{}.", capitalized(&step))),
@@ -672,10 +705,11 @@ impl World {
                 {
                     topics.push(topic());
                 }
-            } else if def.turn_in() == speaker && active && self.ready(def) {
+            } else if active && self.takes_in(def, speaker) && self.ready(def) {
                 topics.push(topic());
             }
         }
+        topics.extend(self.side_topics(speaker));
         topics
     }
 
@@ -719,7 +753,7 @@ impl World {
             self.give(id, q, topic, events);
             return Some(Spent::NoTime);
         }
-        Some(if speaker == def.turn_in() && self.ready(def) {
+        Some(if self.takes_in(def, speaker) && self.ready(def) {
             self.complete(id, q, topic, events);
             Spent::NoTime
         } else {
@@ -729,19 +763,22 @@ impl World {
         })
     }
 
-    /// Quest `def` (as given) reached stage `when`: if it reveals its hidden location then,
+    /// Quest `def` (as given) reached stage `when`: for each hidden location it reveals then,
     /// creature `id`, who speaks for it, marks the location on the player's map. A location
     /// revealed before is not marked again.
     fn reveal_at(&mut self, id: ActorId, def: &QuestDef, when: RevealWhen) {
-        let Some(reveal) = def.reveals.as_ref().filter(|r| r.when == when) else {
-            return;
-        };
-        if !self.reveal_location(&reveal.location) {
+        for reveal in def.reveals.iter().filter(|r| r.when == when) {
+            self.reveal_one(id, &reveal.location);
+        }
+    }
+
+    /// Creature `id` marks hidden location `location` on the player's map, unless it was
+    /// revealed before.
+    fn reveal_one(&mut self, id: ActorId, location: &str) {
+        if !self.reveal_location(location) {
             return;
         }
-        let Some((_, location)) = self
-            .content
-            .hidden_location(&self.state.campaign, &reveal.location)
+        let Some((_, location)) = self.content.hidden_location(&self.state.campaign, location)
         else {
             return;
         };
@@ -768,13 +805,8 @@ impl World {
             _ => false,
         };
         let quests = &mut self.state.quests;
-        let record = quests.records.entry(def.id.clone()).or_insert(QuestRecord {
-            stage: Stage::Active,
-            completed: 0,
-            counted: 0,
-            reached: false,
-            roll: None,
-        });
+        let record =
+            (quests.records.entry(def.id.clone())).or_insert(QuestRecord::new(Stage::Active));
         let repeat = record.completed > 0;
         record.stage = Stage::Active;
         record.reached = reached;
@@ -817,7 +849,8 @@ impl World {
         self.promote(&standing);
         let progress = self.progress_of(def);
         if given.kind() != QuestKind::Deliver && progress.0 >= progress.1 {
-            self.say(progress_news(&content, &given, progress));
+            let to = super::quarrel::turn_in_now(&given, self.state.quests.record(&def.id));
+            self.say(progress_news(&content, &given, to, progress));
         }
     }
     /// Creature `id` takes quest `q` in: what it asks for leaves the pack, they say their thanks,
@@ -842,6 +875,11 @@ impl World {
             .into_owned();
         let def = &given;
         let standing = self.guild_standing();
+        // A quest with takers pays by whoever took it in (`quarrel.rs`).
+        let speaker = self.dialogue_of(&self.state.actors[&id]);
+        let taker = speaker.and_then(|s| def.quarrel.taker(s));
+        let done = taker.map_or(&def.texts.done, |t| &t.done).clone();
+        let reward = taker.map_or(&def.reward, |t| &t.reward).clone();
         if let Some((object, count)) = def.hand_in() {
             let handed = self.take_from_pack(object, count);
             let what = object::phrase(&handed, self.lore());
@@ -855,11 +893,11 @@ impl World {
         }
         match asked {
             Some((topic, events)) => {
-                self.answer(id, def.texts.done.clone(), Some(topic.into()), events);
+                self.answer(id, done, Some(topic.into()), events);
             }
             None => {
                 let who = capitalized(&self.called(&self.state.actors[&id]));
-                self.say(format!("{who} says: \"{}\"", def.texts.done));
+                self.say(format!("{who} says: \"{done}\""));
             }
         }
         self.reveal_at(id, def, RevealWhen::Done);
@@ -869,7 +907,7 @@ impl World {
         let who = capitalized(&self.called(&self.state.actors[&id]));
         // A talent (the half-elf's Diplomat) makes a quest pay more gold.
         let talents = self.state.player().talent_mods(&content);
-        let mut stacks = def.reward.stacks(&content);
+        let mut stacks = reward.stacks(&content);
         if let Some(gold) = (content.object_id(crate::content::GOLD))
             .and_then(|g| stacks.iter_mut().find(|s| s.object == g))
         {
@@ -877,7 +915,7 @@ impl World {
                 TalentMods::scaled(u64::from(gold.count), talents.fortune.quest_gold_percent);
             gold.count = u32::try_from(more).unwrap_or(u32::MAX).max(1);
         }
-        let xp = def.reward.xp;
+        let xp = reward.xp;
         crate::rot::made_at(&mut stacks, &content, self.state.time);
         if !stacks.is_empty() {
             self.say(format!(
@@ -886,7 +924,7 @@ impl World {
             ));
             self.give_player(&stacks);
         }
-        self.teach_skills(&content, &who, &def.reward.skills);
+        self.teach_skills(&content, &who, &reward.skills);
         if xp > 0 {
             self.say(format!("You gain {xp} experience."));
             self.grant_xp(xp);
@@ -894,6 +932,7 @@ impl World {
         }
         self.shift_alignment(self.state.player, def.alignment, Deed::Quest);
         self.promote(&standing);
+        self.quarrel_won(id, def);
     }
 
     /// A reward's skills, taught by `who`: an untrained one trained at its `start`, rolled from
@@ -1008,7 +1047,8 @@ impl World {
             let now = self.progress_of(def);
             if now.0 > had {
                 let given = self.state.quests.given(&content, def).into_owned();
-                self.say(progress_news(&content, &given, now));
+                let to = super::quarrel::turn_in_now(&given, self.state.quests.record(&def.id));
+                self.say(progress_news(&content, &given, to, now));
             }
         }
     }

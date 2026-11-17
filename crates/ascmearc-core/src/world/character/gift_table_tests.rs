@@ -82,13 +82,14 @@ fn profane_row(w: &World) -> String {
 
 /// The acceptance's fixture run: a meal of each keeper in turn, the progress dump's pools after
 /// each, the gifts held at the end. Every pool counts what may still be drawn of its tier, so
-/// each meal's draws and what they exclude show in the counts.
+/// each meal's draws and what they exclude show in the counts. The thirteenth gift received
+/// ends the run mid-meal (#1809, `profane_taken.rs`): the meals after it are refused.
 #[test]
 fn the_pools_after_each_of_ten_meals() {
     let mut w = eater();
     assert_eq!(
         profane_row(&w),
-        "profane 0 held; pool lesser 14/14, greater 12/12, dire 14/14"
+        "profane 0 held; pool lesser 14/14, greater 13/13, dire 15/15"
     );
     let mut rows = Vec::new();
     for keeper in KEEPERS {
@@ -101,8 +102,15 @@ fn the_pools_after_each_of_ten_meals() {
         .map(|b| b.id.clone())
         .collect();
     rows.push(format!("held: {}", held.join(", ")));
-    // Every signature is held, and between ten and twenty draws took (an undoer takes none).
-    assert!(KEEPERS.len() <= held.len() && held.len() <= 30, "{held:?}");
+    let death = w.death().expect("the Profane took them");
+    rows.push(format!(
+        "died: {}",
+        death.cause.expect("a cause").epitaph(w.content())
+    ));
+    assert_eq!(
+        w.state.gifts_received.len(),
+        crate::world::character::profane_taken::TAKEN_AT
+    );
     insta::with_settings!({ snapshot_path => "../../snapshots" }, {
         insta::assert_snapshot!("profane_ten_meals", rows.join("\n"));
     });
@@ -243,8 +251,8 @@ fn scaled_excludes_the_brittle_and_the_hollow() {
     }
     // The pools: the one held, and the lesser and the two dire it excludes.
     assert_eq!(w.gift_pool(GiftTier::Lesser).0, 13);
-    assert_eq!(w.gift_pool(GiftTier::Greater).0, 11);
-    assert_eq!(w.gift_pool(GiftTier::Dire).0, 12);
+    assert_eq!(w.gift_pool(GiftTier::Greater).0, 12);
+    assert_eq!(w.gift_pool(GiftTier::Dire).0, 13);
 }
 
 #[test]

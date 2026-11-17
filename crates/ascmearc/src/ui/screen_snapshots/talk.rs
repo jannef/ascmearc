@@ -17,6 +17,26 @@ cases! {
         screen: Some("dialogue"),
         ..BASE
     },
+    // The test quarrel's parting (#1785): both rivals refused and killed, the quest handed in to
+    // the scholar, and the one dialog asks Leave or Betray; Esc does not close it.
+    quarrel_parting: Case {
+        name: "quarrel-parting",
+        scenario: "quarrel",
+        actions: "ask:E:quest-quarrel move:N move:W*2 move:N ascend move:N ask:N:refuse-quarrel \
+                  move:N*8 move:S*3 descend move:E*6 ascend move:N ask:N:refuse-quarrel \
+                  move:N*8 move:S*3 descend move:SW move:W ask:SW:quest-quarrel levelup:auto",
+        keys: Some("Esc"),
+        ..BASE
+    },
+    // A rival's offer on the first arrival at her top (#1785): the dialogue screen opens on it,
+    // with the two topics.
+    quarrel_offer: Case {
+        name: "quarrel-offer",
+        scenario: "quarrel",
+        actions: "ask:E:quest-quarrel move:N move:W*2 move:N ascend",
+        screen: Some("dialogue"),
+        ..BASE
+    },
     // Cēaptūn's Sister Hild: a proper name, topics, and two services with their prices (#336).
     dialogue_services: Case {
         name: "dialogue-services",
@@ -161,4 +181,44 @@ fn the_oath_topic() {
         ..BASE
     };
     check_with(&case, content);
+}
+
+/// The test quarrel's parting (#1785) waits for the thanks: asked on the dialogue screen, the
+/// hand-in reopens the screen on the scholar's words, and the one dialog asks the parting only
+/// once every screen is closed; then it must be answered.
+#[test]
+fn the_parting_opens_once_the_thanks_are_read() {
+    let content = Arc::new(ascmearc_assets::content().expect("content"));
+    let case = Case {
+        scenario: "quarrel",
+        // A level bought first, so the hand-in brings none to choose over the dialog.
+        actions: "xp:1500 levelup:auto ask:E:quest-quarrel move:N move:W*2 move:N ascend move:N \
+                  ask:N:refuse-quarrel move:N*8 move:S*3 descend move:E*6 ascend move:N \
+                  ask:N:refuse-quarrel move:N*8 move:S*3 descend move:SW move:W chat:SW",
+        screen: Some("dialogue"),
+        ..BASE
+    };
+    let mut app = start(&case, content);
+    press_keys(&mut app, "1");
+    let parting = |app: &App| {
+        let game = app.world().resource::<Game>();
+        game.world.perception().parting().is_some()
+    };
+    assert!(parting(&app), "the hand-in leaves the parting pending");
+    assert!(!app.world().resource::<ScreenStack>().asks_required());
+    assert!(
+        !app.world().resource::<ScreenStack>().is_empty(),
+        "the thanks first"
+    );
+    // Closing the thanks opens it.
+    press_keys(&mut app, "Esc");
+    assert!(app.world().resource::<ScreenStack>().asks_required());
+    press_keys(&mut app, "Esc");
+    assert!(
+        app.world().resource::<ScreenStack>().asks_required(),
+        "it must be answered"
+    );
+    press_keys(&mut app, "Enter");
+    assert!(!parting(&app), "Leave answers it");
+    assert!(!app.world().resource::<ScreenStack>().asks_required());
 }

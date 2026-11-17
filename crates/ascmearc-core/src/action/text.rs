@@ -76,6 +76,7 @@ impl fmt::Display for Action {
             Action::Rest(Rest::Dawn) => f.write_str("rest:dawn"),
             Action::Rest(Rest::Dusk) => f.write_str("rest:dusk"),
             Action::Encounter(choice) => write!(f, "encounter:{}", choice.id()),
+            Action::Parting(choice) => write!(f, "parting:{}", choice.id()),
             Action::Chat(d) => write!(f, "chat:{d}"),
             Action::Ask { dir, topic } => write!(f, "ask:{dir}:{topic}"),
             Action::Steal(d) => write!(f, "steal:{d}"),
@@ -194,6 +195,7 @@ impl fmt::Display for Action {
             Action::Infect(id) => write!(f, "infect:{id}"),
             Action::Reveal(id) => write!(f, "reveal:{id}"),
             Action::Lure(id) => write!(f, "lure:{id}"),
+            Action::QuestDone(id) => write!(f, "quest_done:{id}"),
             Action::Profane(id) => write!(f, "gift:{id}"),
             Action::Rescind(id) => write!(f, "rescind:{id}"),
             Action::QuestRoll { quest, target } => write!(f, "quest_roll:{quest}:{target}"),
@@ -268,6 +270,7 @@ static VERBS: &[(&str, Shape)] = &[
     ("throw", Shape::Own(throw)),
     ("rest", Shape::Own(rest)),
     ("encounter", Shape::Own(encounter)),
+    ("parting", Shape::Own(parting)),
     ("chat", Shape::Dir(Action::Chat)),
     ("ask", Shape::Own(ask)),
     ("steal", Shape::Dir(Action::Steal)),
@@ -314,6 +317,7 @@ static VERBS: &[(&str, Shape)] = &[
     ("infect", Shape::Id(Action::Infect, "a disease id, e.g. `infect:filth_fever`")),
     ("reveal", Shape::Id(Action::Reveal, "a hidden location id, e.g. `reveal:fennmynster`")),
     ("lure", Shape::Id(Action::Lure, "a lure quest's id, e.g. `lure:crystal_guardian`")),
+    ("quest_done", Shape::Id(Action::QuestDone, "a quest's id, e.g. `quest_done:barrow_rats`")),
     ("gift", Shape::Id(Action::Profane, "a profane gift's id, e.g. `gift:oak_hearted`")),
     ("rescind", Shape::Id(Action::Rescind, "a profane gift's id, e.g. `rescind:oak_hearted`")),
     ("quest_roll", Shape::Own(quest_roll)),
@@ -474,6 +478,14 @@ fn encounter(words: &Words) -> Result<Action, String> {
         .ok_or_else(|| {
             "`encounter` needs a choice: ambush, evade, fight, hail, hunt, or pass".into()
         })
+}
+
+/// `parting:CHOICE`.
+fn parting(words: &Words) -> Result<Action, String> {
+    (words.arg)
+        .and_then(crate::world::PartingChoice::from_id)
+        .map(Action::Parting)
+        .ok_or_else(|| "`parting` needs a choice: leave or betray".into())
 }
 
 /// `ask:DIR:TOPIC`.
@@ -1190,6 +1202,7 @@ mod tests {
             Action::Infect("Odd_Case".into()),
             Action::Reveal("old_barrow".into()),
             Action::Lure("crystal_guardian".into()),
+            Action::QuestDone("barrow_rats".into()),
             Action::Profane("oak_hearted".into()),
             Action::Rescind("oak_hearted".into()),
             Action::Talent {
@@ -1303,6 +1316,8 @@ mod tests {
             Action::Search(10),
             Action::Search(MAX_SEARCH),
             Action::Encounter(crate::world::EncounterChoice::Hail),
+            Action::Parting(crate::world::PartingChoice::Leave),
+            Action::Parting(crate::world::PartingChoice::Betray),
             Action::Meet {
                 entry: "kobolds".into(),
                 outcome: None,
@@ -1832,7 +1847,7 @@ mod tests {
             ];
             let by_positions: [fn(Positions) -> Action; 4] =
                 [Action::PickUp, Action::Drop, Action::Sell, Action::Identify];
-            let by_cased: [fn(String) -> Action; 11] = [
+            let by_cased: [fn(String) -> Action; 12] = [
                 Action::Remove,
                 Action::Advance,
                 Action::SetVision,
@@ -1842,6 +1857,7 @@ mod tests {
                 Action::Infect,
                 Action::Reveal,
                 Action::Lure,
+                Action::QuestDone,
                 Action::Profane,
                 Action::Rescind,
             ];
@@ -1875,6 +1891,12 @@ mod tests {
                 select(EncounterChoice::ALL.to_vec())
                     .prop_map(Action::Encounter)
                     .boxed(),
+                select(vec![
+                    crate::world::PartingChoice::Leave,
+                    crate::world::PartingChoice::Betray,
+                ])
+                .prop_map(Action::Parting)
+                .boxed(),
                 (dir(), "[a-z0-9_-]{1,10}")
                     .prop_map(|(dir, topic)| Action::Ask { dir, topic })
                     .boxed(),

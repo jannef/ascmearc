@@ -118,6 +118,8 @@ pub enum Cause {
     Miscast(crate::content::SpellId),
     /// A forgotten altar they prayed at struck them down.
     Altar,
+    /// The thirteenth profane gift they received took them (`world/character/profane_taken.rs`).
+    Profane,
 }
 
 impl Cause {
@@ -149,6 +151,7 @@ impl Cause {
                 format!("Killed by their own miscast {name}")
             }
             Cause::Altar => "Struck down at a forgotten altar".into(),
+            Cause::Profane => "Taken by the Profane".into(),
         }
     }
 
@@ -162,6 +165,7 @@ impl Cause {
                 format!("You choke to death on {}...", crate::content::the(&name(o)))
             }
             Cause::Drowned => "You drown...".into(),
+            Cause::Profane => "The Profane takes you, and nothing of you is left...".into(),
             Cause::Trap(_)
             | Cause::Scroll(_)
             | Cause::Flask(_)
@@ -617,6 +621,10 @@ impl World {
                 hit |= struck.is_some_and(|b| b.strike.is_hit());
                 self.both_hands(attacker, target, (blow, struck), with, events);
             }
+            // What its grown hands hold (`extra_limbs.rs`).
+            let first_hit = blow.is_some_and(|b| b.strike.is_hit());
+            let extra = self.extra_limbs(attacker, target, first_hit, events);
+            (parried, hit) = (parried | extra.0, hit | extra.1);
             // Its natural attacks after the first: a dragon's claws and bite (`natural.rs`).
             let more = self.more_natural_blows(attacker, target, events);
             (parried, hit) = (parried | more.0, hit | more.1);
@@ -1423,8 +1431,8 @@ impl World {
     }
 
     /// The player attacks `target`, which they `seen` or not, in melee: a blow, and the blows
-    /// that may follow it ([`World::second_blow`]: the off hand's, a shield bash, then a cleave
-    /// or the target's riposte). Each message is said at once, by what the player knows as they
+    /// that may follow it ([`World::second_blow`]: the off hand's, a shield bash; then the grown
+    /// hands', `extra_limbs.rs`; then a cleave or the target's riposte). Each message is said at once, by what the player knows as they
     /// strike; events reach presentation only if they saw the target.
     pub(in crate::world) fn player_attacks(
         &mut self,
@@ -1442,6 +1450,9 @@ impl World {
             parried |= free_blow::parried(struck);
             self.both_hands(player, target, (first, struck), with, events);
         }
+        // What the player's grown hands hold (`extra_limbs.rs`).
+        let first_hit = first.is_some_and(|b| b.strike.is_hit());
+        parried |= self.extra_limbs(player, target, first_hit, events).0;
         self.after_attack(player, target, parried, events);
     }
 

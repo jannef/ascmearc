@@ -374,6 +374,7 @@ mod tests {
                 "cealdhlaw",
                 "deopgang",
                 "drake",
+                "drytorr",
                 "fennmynster",
                 "fyrdelf",
                 "gimmwic",
@@ -400,7 +401,7 @@ mod tests {
             let c = content.creature_id(id).expect(id);
             content.creature(c).campaign.clone()
         };
-        for own in ["hermit", "gardener", "bard"] {
+        for own in ["hermit", "gardener", "bard", "quarrel_scholar"] {
             assert_eq!(campaign_of(own).as_deref(), Some("showcase"), "{own}");
         }
         for shared in ["player", "shopkeeper", "deer", "kobold", "rat"] {
@@ -412,7 +413,7 @@ mod tests {
             .creature_defs()
             .iter()
             .position(|c| c.campaign.as_deref() == Some("showcase"));
-        assert_eq!(first_own, Some(content.creature_defs().len() - 3));
+        assert_eq!(first_own, Some(content.creature_defs().len() - 6));
         let first_campaign = content
             .creature_defs()
             .iter()

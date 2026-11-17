@@ -116,6 +116,7 @@ impl World {
             | Action::Spawn
             | Action::Meet { .. }
             | Action::Encounter(_)
+            | Action::Parting(_)
             | Action::Effect { .. }
             | Action::Identify(_)
             | Action::Afflict(_)
@@ -124,6 +125,7 @@ impl World {
             | Action::Infect(_)
             | Action::Reveal(_)
             | Action::Lure(_)
+            | Action::QuestDone(_)
             | Action::Profane(_)
             | Action::Rescind(_)
             | Action::QuestRoll { .. }

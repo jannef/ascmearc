@@ -58,6 +58,43 @@ village, the wood, and the fair folk, and will [talk](npcs.md) of them. A girl o
 [escort](quests.md#kinds-of-quests) of the march. Like the town, Holtwīc has no
 [stairs](terrain.md#stairs); walk off its edge to leave.
 
+### Drȳtorr
+
+**Drȳtorr**, the wizard's tower, stands in a clearing at the western edge of the holly wood,
+north-west of the fairy mound. It is a [hidden location](overworld.md#hidden-locations): Gammer
+Wynflæd marks it on your map when she sends you there with her rowan, once the girl from the
+village is home ([quests](quests.md#who-gives-quests)). **Master Ordgar**, the wizard, lives at
+the top. He is a scholar, dry and exact, and he is friendly.
+
+The tower has four floors, and you climb it by its [stairs](terrain.md#stairs). Its walls are
+dressed stone that no pick, blast, or rod can break
+([digging](digging.md#what-breaks-and-what-does-not)), and every floor has windows. A window is
+an open gap in the wall: you can see, hear, and shoot through it, but not climb through it.
+
+- **The ground floor** is the inside of the tower in the clearing. Through the windows you can
+  see into the hall before you open the door. The wizard keeps it hard on callers: two
+  [hidden traps](traps.md#finding-traps) lie across the south hall, and three bays in the wall of
+  the north hall each hold a trap you can see, with something left behind it to tempt you: a
+  potion, a scroll, and 25 gold. The traps there hit as hard as on a
+  [danger](dungeons.md#who-lives-there-and-how-many) 5 floor. Now and then a sprite or a pixie
+  of the fair folk comes out of the wood.
+- **The second and third floors** are new each run: a hall winding between walls, with hidden
+  traps (arrow and spear traps, pits, and alarms; three to five a floor) and the wizard's
+  household gone lively and hostile: books, brooms, candlesticks, chairs, coat stands, lanterns,
+  and rugs ([animated objects](animated.md)), and now and then a lesser earth elemental. They
+  are danger 6 and 7.
+- **The top floor** is the wizard's study and his quarters, with no traps and nobody to fight.
+  Two doors lead out onto a balcony open to the sky, with a low wall round it. Rain falls on it.
+
+From the floors above, the windows look out over the wood far below. You see the clearing and
+whatever stands in it as it stood when you climbed: the land below does not move while you are
+up there. You see it by day, dimly by moonlight, and not at all on a dark night. What you see
+from up there is marked on your map of the clearing. A creature seen far below cannot be
+attacked or targeted: look at it, and you are told only what it is.
+
+You leave the clearing by walking off its edge, or by going up with `<` anywhere but on the
+stair when nothing hostile is near.
+
 ### Līctūn
 
 Four cells down the south road from the town is **Līctūn**, Cēaptūn's churchyard, where your
@@ -199,7 +236,7 @@ The guild is younger than the town, so its names are Middle English, not Old. It
 One-Eye, is a commoner, called by a short name and a byname. The guild's [ranks](guild.md#ranks)
 (Tin to Gold) are plain English.
 
-The game writes *ǣ* as **æ** and *ȳ* as **y** (Græg-, Fyr-), as its font draws them.
+Most names write *ǣ* as **æ** and *ȳ* as **y** (Græg-, Fyr-).
 
 The language has moved on since the old places were named. People of the march's own day go by
 the later forms of the old names. The outlaws go by the bynames the broadsheets give them, in the

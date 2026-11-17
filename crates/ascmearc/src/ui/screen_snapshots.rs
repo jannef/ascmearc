@@ -306,6 +306,7 @@ pub(super) fn start(case: &Case, content: Arc<Content>) -> App {
                     screens::show_identified,
                     screens::on_death,
                     encounter::on_encounter,
+                    parting::on_parting,
                     screens::on_level_up,
                     more::wait,
                 )

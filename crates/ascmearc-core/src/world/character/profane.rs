@@ -60,6 +60,10 @@ impl World {
             self.bestow_gift(signature);
         }
         for _ in 0..rolls.rolls {
+            // The Profane took them (`profane_taken.rs`): the meal ends with them.
+            if self.state.death.is_some() {
+                return;
+            }
             match self.draw_gift(rolls) {
                 Some(gift) => {
                     self.bestow_gift(gift);
@@ -144,6 +148,8 @@ impl World {
         self.say(format!("You are {}.", book.get(gift).name));
         // What it bars falls (Horned's helm, `body_slots.rs`).
         self.shed_unworn();
+        // The thirteenth ever received takes them (`profane_taken.rs`, #1809).
+        self.profane_takes();
         true
     }
 

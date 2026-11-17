@@ -115,6 +115,13 @@ longer fits, and falls to the floor." for a slot barred, "Your silver ring slips
 that is no longer there." for a slot no longer the player's (only rings are gated to a class
 today; an aristocrat's own extra ring stays when Many-fingered goes).
 
+**The limbs** (#1808): two drawn gifts past the design's forty, both `opens_slot` on a grown
+slot (`docs/dev/equipment.md` "Grown slots") and a mental stat's price: `extra_arm` (Three-armed,
+dire, mixed, weight 6: the third hand, Presence −2) and `prehensile_tail` (Prehensile-tailed,
+greater, mixed, weight 6: the tail, a light weapon only, Willpower −1; excludes `tailed`, one tail
+to a body). How the limbs fight: `docs/dev/weapon-skills.md` "Extra limbs". So the table holds 42
+drawn gifts, 14 lesser, 13 greater, 15 dire.
+
 ## In the world: `world/character/profane.rs`
 
 - **Never twice** (#1805, the owner's rule): `WorldState::gifts_received` records the talent id
@@ -151,6 +158,13 @@ today; an aristocrat's own extra ring stays when Many-fingered goes).
   tier gives way up, then down (lesser → greater → dire; dire → greater → lesser); all empty is
   `None`, and the meal says "Nothing more of it will take in you.".
 - A forgotten altar's Forsaken never draws a profane bane (`bestow_flaw` skips the gifts).
+- **Taken by the Profane** (#1809, the owner's rule; `world/character/profane_taken.rs`): the last
+  step of a gift taken, `World::profane_takes`: once `gifts_received` holds `TAKEN_AT` (13) gifts,
+  lost ones counting, its two lines are said and the run ends, `die_of(Cause::Profane)` ("The
+  Profane takes you, and nothing of you is left...", the epitaph "Taken by the Profane"). Not a
+  harm: no Rise from the ashes, no reprieve, no Twice-born. A meal stops with it: no more draws,
+  no deed, no feeding. The graveyard records it as `cause = "profane"` and keeps every death's
+  held gifts in `gifts` (`docs/dev/saves.md` "The graveyard").
 
 Saves: a gift held rides in `Actor::boons`; `stars::grant` puts it back on every restore and the
 state hash covers both lists. `WorldState::gifts_received` is saved and hashed (left out while
@@ -166,7 +180,7 @@ load, as any unknown talent does.
 - `talents` dump: `Oak-hearted (profane)`, `Withered (profane, bane)`, `Twice-born (profane,
   spent)`; JSON `talents[].profane`,
   `"boon" | "mixed" | "bane"`, left out otherwise.
-- `progress` dump (dev): `profane 1 held; pool lesser 14/14, greater 11/12, dire 14/14` (each tier's
+- `progress` dump (dev): `profane 1 held; pool lesser 14/14, greater 12/13, dire 15/15` (each tier's
   gifts a draw may give now, of all it holds).
 - Dev actions (no time; `docs/dev/cli.md`): `gift:ID` gives a gift as a draw would (refused for
   one ever had, excluded, or barred to the race), `rescind:ID` takes one away (it stays had).

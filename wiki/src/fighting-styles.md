@@ -79,6 +79,41 @@ your shields turn [staggers](status-list.md#status-staggered) its striker (*[Sta
 The style eases all three, and from rank 9 none is left. A [scroll](scrolls.md) you read or a [wand](wands-and-rods.md#wands) you use never
 fails this way.
 
+## More than two hands
+
+Two [profane gifts](profane-gifts.md#gifts-that-change-your-body) give you more to hold things
+with: [Three-armed](profane-gifts.md#talent-extra-arm) a third hand, and
+[Prehensile-tailed](profane-gifts.md#talent-prehensile-tail) a tail. Your main and off hand fight
+just as before, in the style of what they hold. What the third hand or the tail holds comes on
+top:
+
+- **A weapon there** strikes one blow more in every attack up close, after your two hands'
+  blows. It is at the off hand's penalty to hit, and it is fought in
+  [Twin Blades](fighting-styles.md#style-twin-blades), which eases that penalty and trains with it.
+  The tail holds only a light weapon; so does the third hand, as an off hand does.
+- **A shield in the third hand** guards as any shield does. Shields never add up: only your best
+  shield counts. Beside a weapon it guards in
+  [Sword and Board](fighting-styles.md#style-sword-and-board), and after a blow that hits it may
+  bash, by that style's chance. If your two hands already fight in Sword and Board or Two Shields,
+  it bashes in that style instead. The tail never holds a shield.
+- **A two-handed weapon** takes your two own hands, never the third. The third hand may still
+  hold a light weapon or a shield beside it.
+
+So every mix works, and each style counts for its own part:
+
+| You hold | Your hands fight in | The extra hand |
+|---|---|---|
+| Two weapons and a shield | Twin Blades | the shield guards and bashes in Sword and Board |
+| Three weapons | Twin Blades | a third blow, in Twin Blades |
+| A weapon and two shields | Sword and Board | the second shield may bash too |
+| Two shields and a weapon | Two Shields | a weapon blow, in Twin Blades |
+| A two-handed weapon and a light weapon | Great Weapon | a weapon blow, in Twin Blades |
+
+With both gifts you can strike four blows in one attack: main hand, off hand, third hand, and
+tail. All of them are one attack, in the time of one. If a blow kills, the rest are not struck.
+The [character screen](character.md) lists the third hand's and the tail's blows under their own
+names.
+
 ## What a rank gives
 
 As with weapon skills, the game never tells you in numbers what a rank gives. These are the exact

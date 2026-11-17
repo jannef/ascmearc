@@ -1006,7 +1006,7 @@ fn beside(world: &mut World, creature: &str) -> Dir {
 }
 
 #[test]
-fn the_showcase_people_give_five_quests() {
+fn the_showcase_people_give_six_quests() {
     let w = showcase();
     let content = w.content();
     let kinds: Vec<(&str, &str, String)> = (content.quests().iter())
@@ -1016,6 +1016,7 @@ fn the_showcase_people_give_five_quests() {
     assert_eq!(
         kinds,
         [
+            ("quarrel", "kill", "Master Bookhold".to_string()),
             ("rats", "kill", "old hermit".to_string()),
             ("depths", "reach", "old hermit".to_string()),
             ("apples", "bring", "gardener".to_string()),

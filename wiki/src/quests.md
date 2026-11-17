@@ -201,13 +201,52 @@ offered one after the other.
 In [Holtwīc](ascmearc.md#the-places), at the end of the north road,
 **[Gammer Wynflæd](creatures.md#creature-wise-woman)** the wise-woman asks you to bring home a girl
 the fair folk took. She marks [Ælfhām](dungeon-guide.md#ælfhām), their hall in the holly wood, on
-your map. The girl waits at its very bottom.
+your map. The girl waits at its very bottom. Once she is home, the wise-woman tells you of a
+learned man in a tower, and sends him a sprig of rowan by your hand. She marks
+[Drȳtorr](ascmearc.md#drȳtorr), his tower in the wood, on your map as she gives it to you. Carry
+it up to Master Ordgar at the top of his tower: he pays you in
+[experience](experience.md) only, 150 of it. Then he has a bigger task for you:
+[the wizards' quarrel](#the-wizards-quarrel).
 
 The table lists every quest in its chain's order: what it asks, what it pays, what must be done
 first, the level you must have reached for it to be given, and the
 [hidden place](overworld.md#hidden-locations) it shows you.
 
 {{#include generated/quests.md}}
+
+## The wizards' quarrel
+
+Three wizards keep towers in the march: Master Ordgar of [Drȳtorr](ascmearc.md#drȳtorr),
+Mistress Ælfswīð, and Master Sigeric. Ordgar wants two of the three dead, and would rather it
+were not him. The quest is done once two of them have died by your hand.
+
+**Who pays.** Only the wizard who is your ally when the two are dead takes the quest in.
+Ordgar is your ally from the start. Each rival offers you their side **once**, the first time
+you climb to them, even if they are already your enemy. Take a side and that wizard is your
+ally, and every other wizard of the three turns [hostile](creatures.md#factions) at once,
+wherever they are. One you have not met yet still makes their offer when you get there.
+Refuse them, or attack any wizard who is not already your enemy, and that one turns hostile.
+You can change sides more than once: side with one rival, then with the other, kill the two you
+left, and go back to the last. If all three die, nobody pays, and the quest stays in your
+[log](#the-quest-log).
+
+**The pay.** The ally gives gold, experience, and something of their making, and teaches you
+two [skills](skills.md): [Spellcraft](skills.md#skill-spellcraft), and a skill of their own.
+Ordgar teaches [Decipher script](skills.md#skill-decipher-script) and gives a grimoire of magic
+missile. A skill you have not got starts at 1d4; one you already have gets 100
+[skill marks](skills.md#improving-a-skill) instead. The skills stay yours whatever happens to
+the teacher. The exact pay of each wizard is in the table above.
+
+**The parting.** Right after paying, the wizard asks you once whether you leave or betray them.
+Leave, and that is the end of it. Betray them, and they turn on you, there on their top floor.
+
+**The hoard.** The winner of the quarrel carries its spoils from the moment they pay you: 6d100
+gold, two rare [magic items](magic-items.md#rarity) made at [item level](magic-items.md#finding-them)
+14, and one grimoire drawn at random. They drop it where they die, whenever that is. A wizard who
+dies before anyone has won carries none of it.
+
+For now only Master Ordgar's tower stands in the march. Mistress Ælfswīð's and Master Sigeric's
+towers are still to come, and until then the quarrel cannot be finished.
 
 See also: [The Weyfarers' Gilde](guild.md), [People and talk](npcs.md), and
 [Experience and levelling up](experience.md).

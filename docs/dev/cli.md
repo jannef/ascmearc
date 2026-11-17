@@ -112,6 +112,8 @@ The Ascmearc (`assets/campaigns/ascmearc/`):
 - `ceaptun`: on the market square of its town, Cēaptūn, with 60 gold.
 - `holtwic`: on the lane into Holtwīc, the village at the north road's end, with its wise-woman.
 - `aelfham`: on the first floor of Ælfhām, the hidden fey hall under the mound near it.
+- `drytorr`: on the track into Drȳtorr's clearing at 10:00, Master Ordgar's tower before you
+  (its `<` climbs the tower's trap floors to the wizard's top floor).
 - `cealdhlaw`: on the first floor of Cealdhlāw, the Ascmearc's first dungeon.
 - `deopgang`: on the first floor of Dēopgang, the deep way down from the south-west corner.
 - `gimmwic`: in Gimmwīc, the deep gnomes' town at its bottom.
@@ -144,6 +146,9 @@ The test world (`assets/campaigns/showcase/`, the `showcase` feature):
 - `tower`: on the stair up in the ground-floor hall of the clearing's two-storey test tower at
   10:00 (`ascend` climbs; from the tower top the windows show the clearing below:
   docs/dev/towers.md).
+- `quarrel`: in the quarrel hall beside the scholar who gives the test quarrel (a warrior); its
+  west and east stairs climb to the two rivals who offer their sides (docs/dev/towers.md "The
+  quarrel").
 - `chests`: in the chest hall (every kind of chest, a mimic, and both treasure rooms).
 - `hellegeat`: on the first floor of Pit 1 of Hellegeat, the fiends' branch a `portal` miscast
   opens (its record made at the start: its `<` climbs out to the hub).
@@ -401,7 +406,9 @@ and are **dev-only**.
 - `locations`: the overworld locations the player knows, one a line, `(45, 23) The Hall`, a
   hidden one only once revealed; `no known locations`, also on any other level.
 - `quests`: the quest log, active first: name, stage, giver, objective, and status, `Rats in the
-  arena (active, from the old hermit): Kill 3 giant rats in the Arena. 0 / 3 killed.`
+  arena (active, from the old hermit): Kill 3 giant rats in the Arena. 0 / 3 killed.`; a
+  quarrel's wizards met and where each stands after it, `[Mistress Stormwell allied, Master
+  Bookhold hostile, Master Brasswright turned]`.
 - `story`: the player's background story, a paragraph a line as the story screen tells it, `no
   story` without one.
 - `companion`: the player's animal companion as they know it, `Snel, a hound (grade 12) at (12,
@@ -494,6 +501,7 @@ messages, heard sounds, and, with `--state`, the full world state; and:
   band's id, or null without alignment rules), `guilds` (`id`, `name`, `rank`; left out before
   joining one), `hunger` (`bloated` … `starving`, or null when nobody hungers), `stance` (the
   combat stance's id), `dazzled`.
+- `parting`: a quarrel's parting pending: `title`, `text`, `choices` (`id`, `label`), or null.
 - `encounter`: the overworld encounter pending: `entry`, `name`, `outcome`, `title`, `text`,
   `choices` (`id`, `label`), or null; with `--state` also the dev `encounter_tables`, those
   matching the player's cell, and the dev `callings`, each of the campaign's with its `class`,
@@ -549,10 +557,10 @@ read:LETTER[:X,Y|:LETTER] scribe:SPELL dig:DIR search search:N disarm:DIR listen
 wedge:DIR heal[:ID[:DIR]] feint:DIR intimidate:X,Y pray forage temper:LETTER whittle:LETTER
 salvage:LETTER rig:ID:DIR decipher:LETTER drink use:ID[:DIR|:X,Y] chat:DIR ask:DIR:TOPIC
 steal:DIR tame:DIR throw_voice:X,Y order:follow|stay|hunt:X,Y rest:GOAL encounter:CHOICE
-stance:NAME vision:PROFILE talent:ID[:CHOICE] advance:SKILL levelup:auto xp:N call:ID
+parting:CHOICE stance:NAME vision:PROFILE talent:ID[:CHOICE] advance:SKILL levelup:auto xp:N call:ID
 rank:SKILL:N skip:DURATION weather:KIND spawn ally:CREATURE[:N[:DURATION]] meet:ENTRY[:OUTCOME]
 effect:ID@X,Y[>X,Y] zone:KIND@X,Y,R identify[:LETTERS] afflict:STATUS drain:N resource:ID
-infect:DISEASE reveal:ID lure:ID gift:ID rescind:ID quest_roll:ID:TARGET freeze:X,Y,R
+infect:DISEASE reveal:ID lure:ID quest_done:ID gift:ID rescind:ID quest_roll:ID:TARGET freeze:X,Y,R
 thaw:X,Y,R web:X,Y,R`
 
 ### Arguments
@@ -832,6 +840,9 @@ All in docs/dev/crafting.md unless named.
   `evade`, `fight`, `hail`, `hunt`, `pass`, as its outcome offers; `bluff` talks past a party
   flagged `talk_past` when met, for one trained in Bluff; while one pends every other action
   that takes time is refused; docs/dev/encounters.md).
+- `parting:leave` and `parting:betray` answer a quarrel's parting, pending after its hand-in (no
+  time; while it pends every other action that takes time is refused; docs/dev/towers.md "The
+  quarrel").
 
 ### Level-ups
 
@@ -890,6 +901,10 @@ None takes game time unless said.
 - `lure:ID` active lure quest `ID`'s creature comes beside the player, aware of them (made if it
   is nowhere), e.g. `ask:E:quest-crystal_guardian` on Ysella then `descend
   lure:crystal_guardian ascend` (`docs/dev/quests.md` "Lure quests").
+- `quest_done:ID` quest `ID` is marked done as if handed in (given first if it was not), with no
+  words, reward, or reveal, so what requires it may be offered: a replay or capture that starts
+  a chain past its earlier quests, e.g. `quest_done:taken_under_the_hill` before Gammer
+  Wynflæd's rowan (`world/people/quest_done.rs`).
 - `gift:ID` the player is given profane gift `ID`, an id in `assets/data/profane/`, as a meal's
   draw would give it, its relations applied (`replaces`, `undoes`); refused for one ever had (held,
   or lost since: #1805), one a gift held excludes, or one barred to the race. `rescind:ID` takes a gift held away again, its

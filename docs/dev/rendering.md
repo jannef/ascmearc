@@ -164,18 +164,23 @@ Rendering is three layers, bottom to top, all positioned in framebuffer pixels:
 
 **The font** (`render/atlas.rs`): JuliaMono Medium (`assets/fonts/JuliaMono-Medium.ttf`, 3.3 MB,
 about 11 000 glyphs), rasterized by fontdue into the atlases. The atlas holds printable ASCII,
-the content's glyphs, and the fixed `GLYPH_RANGES`; any other character draws as `?`, and text
-fields refuse it (`atlas::draws`). ascmearc-assets embeds it (`FONT`). The web build embeds a
+the content's glyphs, and the fixed `GLYPH_RANGES` (Latin-1 and Latin Extended-A and -B, so
+every Old English letter: ā ǣ ȳ æ þ ð ƿ, #1816); any other character draws as `?`, and text
+fields refuse it (`atlas::draws`). Two tests in `render/atlas.rs` keep text from drawing `?`:
+`every_content_string_draws` (every string in every TOML file under `assets/`) and
+`every_ui_string_draws` (the string literals of `crates/ascmearc/src` and
+`crates/ascmearc-core/src` outside comments and test modules); a character either fails is
+added to `GLYPH_RANGES` (and `SAFETY_RANGES`), or the text changes. ascmearc-assets embeds it (`FONT`). The web build embeds a
 **subset** instead (#1719): the Cargo feature `font-subset` (of `crates/ascmearc`, forwarded to
 ascmearc-assets; `cargo xtask web` turns it on, native builds keep the whole font) makes
 ascmearc-assets' build script cut the font down (`crates/ascmearc-assets/font_subset.rs`, pure
 Rust: the fontations project's skera crate, an optional build dependency that only this feature
-builds) into its `OUT_DIR`, about 170 kB, and `FONT` is that. Nothing is committed and there is
+builds) into its `OUT_DIR`, about 200 kB, and `FONT` is that. Nothing is committed and there is
 no command: the build script reruns when the font or any file under `crates/` or `assets/`
 changes (`cargo:rerun-if-changed`), so the subset always matches the sources. It keeps every
 character written in the text files under `crates/` and `assets/` (Rust, TOML, Markdown,
 snapshots, shaders) plus a fixed **safety set**, the atlas's `GLYPH_RANGES` again
-(`SAFETY_RANGES`: Latin-1 and Latin Extended-A, so typed names keep working, Greek, general
+(`SAFETY_RANGES`: Latin-1 and Latin Extended-A and -B, so typed names keep working, Greek, general
 punctuation, arrows, mathematical operators, box drawing, blocks, geometric shapes,
 miscellaneous symbols): change the two lists together. It drops hinting and OpenType layout
 (fontdue reads neither) and the family names: JuliaMono's licence reserves its name, so the

@@ -443,21 +443,16 @@ fn an_interrupted_profane_meal_does_nothing() {
     assert!(pile.iter().any(|s| s.object == corpse));
 }
 
-/// Gives the player every gift of `tier` a draw could give, until none is left.
+/// Records every gift of `tier` a draw could give as had by the player, until none is left.
 fn give_all(w: &mut World, tier: crate::content::GiftTier) {
     let all: Vec<_> = (w.content.profane().iter())
         .filter(|g| g.tier == tier && g.drawn())
         .map(|g| g.talent)
         .collect();
+    // Recorded as had, never taken: thirteen taken would end the eater (`profane_taken.rs`).
     for t in all {
-        let content = w.content.clone();
-        if content
-            .profane()
-            .gift(t)
-            .is_some_and(|g| w.may_take_gift(g))
-        {
-            w.bestow_gift(t);
-        }
+        let id = w.content.talents().get(t).id.clone();
+        w.state.gifts_received.insert(id);
     }
     assert_eq!(w.gift_pool(tier).0, 0, "{tier:?} emptied");
 }
@@ -485,7 +480,7 @@ fn a_draw_falls_back_up_then_down_and_an_empty_table_gives_nothing() {
     give_all(&mut w, GiftTier::Greater);
     let t = w.draw_gift(&rolls(GiftTier::Lesser)).expect("a gift");
     assert_eq!(tier_of(&w, t), GiftTier::Dire);
-    // Every tier emptied (the dire first: Withered would undo Oak-hearted): nothing.
+    // Every tier emptied: nothing.
     let mut w = eater("pantry", "human,male,warrior", 0);
     for tier in [GiftTier::Dire, GiftTier::Greater, GiftTier::Lesser] {
         give_all(&mut w, tier);

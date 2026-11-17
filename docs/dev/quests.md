@@ -8,9 +8,11 @@ campaign's `data/quests/`; the showcase's four in `campaigns/showcase/data/quest
 dungeons (`QuestDef`: `giver` a `DialogueId`, `Goal::{Kill, Bring, Reach, Deliver}`, `Reward`,
 `QuestTexts`, `requires` (a list: every quest named must be done; the file takes one id or a
 list), `requires_alignment`, `min_level` (with its `early` refusal: `ask_quest` says it and
-gives nothing while `World::player_level` is below it; the topic is still listed), `alignment`, `repeatable`, `reveals` (a hidden
-location, of the overworld or a hand-made level, both ends of a hidden way, and the `RevealWhen` stage it is revealed at, `docs/dev/overworld.md`),
-`where_` (`where`, appended to the log's objective); validation including everyone's topic budget of nine;
+gives nothing while `World::player_level` is below it; the topic is still listed), `alignment`, `repeatable`, `reveals` (hidden
+locations, one or a list, of the overworld or a hand-made level, both ends of a hidden way, and the `RevealWhen` stage each is revealed at, `docs/dev/overworld.md`),
+`where_` (`where`, appended to the log's objective), `quarrel` (a kill quest's takers, sides,
+parting, and hoard, `content/quarrel.rs`; the rules `world/people/quarrel.rs`: `docs/dev/towers.md`
+"The quarrel"); validation including everyone's topic budget of nine;
 `Content::speaker_name` names a giver without an actor). `world/people/quest.rs` is the rules: quest
 topics come first in `World::topics` (`quest_topics`: one `quest-ID` a quest) and
 are answered in `World::ask` (`ask_quest`, `Spent::NoTime` when state changes). **Asking gives
@@ -37,7 +39,9 @@ wound counts too; under the level it died on, or `Actor::home` for a stair follo
 quests' `progress` before the player acts and says what rose after it, and again after the
 turn (`quest_progress`/`quest_news`), so pick-ups, kills, and arrivals all report through one
 place. `reveal_at` (beside the answer at the two places a stage is set: `give` and
-`complete`) reveals a quest's location after the speaker's words. No abandoning and no cap on active quests (the owner's decision): don't add either. What a quest asks to be
+`complete`) reveals a quest's locations after the speaker's words. Who takes a quest in is
+`World::takes_in` (the one `turn_in` names; for a quest with takers, a taker who is the ally),
+and `complete_saying` says and pays the taker's `done` and `reward`. No abandoning and no cap on active quests (the owner's decision): don't add either. What a quest asks to be
 brought or delivered (`World::quest_objects`) is protected from all item damage, ruin, acid, rust,
 heat, and a failed temper alike (`world/combat/item_damage.rs`, #1170; docs/dev/objects.md
 "Protection"); a quest's reward is an ordinary item unless another quest's `hand_in` names it

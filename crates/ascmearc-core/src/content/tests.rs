@@ -644,7 +644,9 @@ fn a_lair_draws_its_strays_from_the_populations_only() {
         |branch: &str| (content.dungeon(branch).and_then(|d| d.spawning.as_ref())).expect(branch);
     let mut lives = BTreeSet::new();
     for d in content.dungeons.values() {
+        // A tower's household stays in its tower.
         if d.campaign.as_deref() == Some("ascmearc")
+            && d.tower.is_none()
             && let Some(s) = &d.spawning
         {
             lives.extend((s.population.iter()).filter(|&&c| !content.creature(c).unique));

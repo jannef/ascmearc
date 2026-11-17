@@ -235,15 +235,29 @@ pub(super) fn quests(content: &Content) -> String {
             .min_level
             .as_ref()
             .map_or("—".to_string(), |(l, _)| l.to_string());
-        let reveals = q.reveals.as_ref().map_or_else(
-            || "—".to_string(),
-            |r| {
+        let reveals: Vec<String> = (q.reveals.iter())
+            .map(|r| {
                 let campaign = q.campaign.as_deref().unwrap_or_default();
                 let name = (content.hidden_location(campaign, &r.location))
                     .map_or(r.location.as_str(), |(_, h)| h.name.as_str());
                 format!("{name} (when {})", r.when.id())
-            },
-        );
+            })
+            .collect();
+        let reveals = match reveals.is_empty() {
+            true => "—".to_string(),
+            false => reveals.join(", "),
+        };
+        // A quarrel's takers each pay their own (`content/quarrel.rs`).
+        let pays = match q.quarrel.takers.as_slice() {
+            [] => reward(content, &q.reward),
+            takers => (takers.iter())
+                .map(|t| {
+                    let who = capital(&content.speaker_name(t.speaker));
+                    format!("{who}: {}", reward(content, &t.reward))
+                })
+                .collect::<Vec<_>>()
+                .join("; "),
+        };
         let _ = writeln!(
             out,
             "| {} | {} | {} | {} | {} | {after} | {level} | {reveals} | {} |",
@@ -251,7 +265,7 @@ pub(super) fn quests(content: &Content) -> String {
             capital(&content.speaker_name(q.giver)),
             q.kind().id(),
             quest_asks(content, q).trim_end_matches('.'),
-            reward(content, &q.reward),
+            pays,
             yes(q.repeatable)
         );
     }
