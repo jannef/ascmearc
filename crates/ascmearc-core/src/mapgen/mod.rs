@@ -645,6 +645,8 @@ pub fn generate_for(
             // Its branch's, asked of [`Content::spawning`].
             spawning: None,
             burial: None,
+            below: None,
+            storey: 0,
         };
         // A level that keeps a hidden way's far end picks its cell now (`hidden.rs`).
         let hides = |t: &mut LevelTemplate| {

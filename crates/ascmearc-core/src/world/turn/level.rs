@@ -202,6 +202,17 @@ pub struct LevelState {
     /// level with a danger rule, so every other level's state is as it was.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) spawner: Option<Spawner>,
+    /// A floor above the ground (docs/dev/towers.md): the level its `air` cells show at the same
+    /// coordinates, once that level exists. `None`: the air shows nothing.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) below: Option<String>,
+    /// How many storeys above `below` it stands; 0 without one.
+    #[serde(default, skip_serializing_if = "is_zero")]
+    pub(crate) storey: u8,
+}
+
+fn is_zero(n: &u8) -> bool {
+    *n == 0
 }
 
 impl LevelState {
@@ -272,6 +283,8 @@ impl LevelState {
             ice,
             ice_until: crate::ice::tick_floor(now),
             spawner: None,
+            below: template.below.clone(),
+            storey: template.storey,
         };
         let iced: Vec<Pos> = level.ice.keys().copied().collect();
         for p in iced {

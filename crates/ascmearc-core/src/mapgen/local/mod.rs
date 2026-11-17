@@ -227,6 +227,8 @@ pub(super) fn generate(
             // Local areas have no danger.
             spawning: None,
             burial: None,
+            below: None,
+            storey: 0,
         };
         if reach::validate(&template, content).is_ok() {
             // Ruins may hold loot; the land holds none of its own.

@@ -55,10 +55,6 @@ impl Job for Rigging {
         "you leave the trap unfinished".into()
     }
 
-    fn stat(&self, _: &World) -> Option<Stat> {
-        Some(Stat::Dexterity)
-    }
-
     fn done(&self, w: &mut World, events: &mut Vec<Event>) {
         w.rigged(*self, events);
     }

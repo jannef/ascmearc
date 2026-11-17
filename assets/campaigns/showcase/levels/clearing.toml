@@ -1,0 +1,58 @@
+# The clearing (#1781, docs/dev/towers.md): a forest clearing with a two-storey test tower in it,
+# the showcase of the wizards' towers' machinery. The tower (W, 15×9) is a roofed building of
+# tower wall, tower floor, and windows (=): from outside, the windows show the hall; from inside,
+# the forest around. The hall is the ground floor: dark but for two wall torches, with the stair
+# up (`<`, where the `tower` scenario starts) in its north bay and the door (+) in the south wall,
+# where a track leads off into the wood. Everything is dressed stone without `hardness`: nothing
+# digs or blasts through the shell.
+#
+# The upper floor (`tower_top`, `below = "clearing"`) stands over the same cells: from its windows
+# the air cells show this level, so the deer (d) grazing west of the tower, the hare (r) east of
+# it, and the dagger (!) in the grass are seen from above, as they stand. Looking down writes
+# this level's memory (`cargo dev-cli dump --scenario tower --actions "ascend descend" --layers
+# memory`).
+name = "The Clearing"
+kind = "outdoor"
+map = '''
+PPTPTTTTTTTTTTTTTTTTTTPTPPTTTTTPTPTPTTPPTTPPPTPTPPPTTTTTTTTT
+PTTTTTTTTTFTTPTFFTFTTTPTTTTPPPTPPTTFTTTTTTTPTTFTTPFTTTTTTPTT
+PPFTPPFTFFTTFTFTFTFTFFFTTTTFTTFFFPFTFFFTFFFFTFPTFFFFTPTPTTTT
+PPT..FT...b..TTT.T..bTTT.TFFb.TbFF.TbFFb.Fb.bFF..F.FT..FTFPT
+PTF....FF.F.F*...F..F..................*....*........FF.TFTT
+PPF.FF.F.FFF.F.FF.*...WWWW=WWWWW=WWWW...F.FF..F.*.*.*..F.FTT
+PTP...F.....*...F.....W:::::::::::::W..F..F..FF.F.......FFTP
+TTTT.F..**.FFF..!.F...=::::::@::::::=....*FFF........*FFbTTT
+TTPF.*.........d.F....W:::::::::::::W.F..F.*.............PTT
+TTT.......F...*....F..Wt:::::::::::tW.F....F....F.FFF..F.FFT
+TTT..FFF...F*.........=:::::::::::::=..F...r..F.*.......FFTP
+TTTF...F..*.F.........W:::::::::::::W....FF....F......F.FPTT
+TTT.F..FF..F....F..F..W:::::::::::::W.....F....FF...FF..FFFT
+TPFb.F.....F.F..F*....WWWWWW=+=WWWWWW..F...............F.FTP
+PTFF.*...*......F.FFF........,........**..*........*.F*.FFFT
+TTFF....*....FF.F..F..F.FF...,.....F......F.FF.......F...TTT
+PFFF...F..F...*....F.**..F...,F...F....**.F..*...F...F..FTPT
+PTTF.F..*F..*...*F...F....*..,.F..F.**.FFF....**.*..F...FFTT
+PTTFFF.TbF..FF.F.FF.F..FFF...,.FTb.bF.FF..T.FF.FFF...F.FFPTT
+TTFFFTTFFTFFTFFTTFTFFFFFTFFTT,TPTFFFFFTTTFFFFPFFFPPPTTTFFTPT
+TPTTFFPTTPTPFTTTTTTTTPTTPPTPP,TTFTTFPTTTPFFPTTFPTTTTTPFTTFFP
+PTTTTPPTTPTPTTPTPTTTTTTTTTTTT,TPTTPTPTTTTTPTTTTTPPTTTTPTTTPT
+'''
+
+[legend]
+"." = "grass"
+"F" = "forest_floor"
+"*" = "flowers"
+"b" = "bush"
+"T" = "tree"
+"P" = "pine"
+"," = "dirt_road"
+"W" = "tower_wall"
+":" = "tower_floor"
+"=" = "window"
+"t" = "sconce"
+# The stair up is where the `tower` scenario starts, so `ascend` climbs at once.
+"@" = { terrain = "stairs_up", to = "tower_top", spawn = "player" }
+# What is seen from the floor above: a deer grazing, a hare, a dagger in the grass.
+"d" = { terrain = "grass", creature = "deer", route = "N2 S2" }
+"r" = { terrain = "grass", creature = "hare", route = "E3 W3" }
+"!" = { terrain = "grass", objects = ["dagger"] }

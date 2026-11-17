@@ -267,17 +267,6 @@ fn a_cut_takes_half_an_hour_changes_one_gem_and_marks_jewelcraft() {
 }
 
 #[test]
-fn a_cut_trains_dexterity() {
-    let mut w = world(false, 3);
-    give(&mut w, |w| loose(w, "ruby", "large", "uncut", 1));
-    let spent = w.start_craft("cut", &[Some(0)]);
-    assert_eq!(
-        super::work::stat_of(&w, spent),
-        Some(crate::stats::Stat::Dexterity)
-    );
-}
-
-#[test]
 fn every_outcome_comes_up_and_says_itself() {
     // Over many fates an uncut large ruby (against 16) at Jewelcraft 100 (+8) is shattered,
     // failed, roughed out, and well cut; each says so, and the size follows the words.

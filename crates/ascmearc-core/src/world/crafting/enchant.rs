@@ -647,11 +647,6 @@ pub(super) fn plan(
     })
 }
 
-/// The stat of an enchanting's check: the rules' (Willpower without them).
-fn check_stat(content: &Content) -> Stat {
-    content.enchanting().map_or(Stat::Willpower, |r| r.stat)
-}
-
 /// An enchanting under way: the recipe and the picks (in step order).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(in crate::world) struct Enchanting {
@@ -670,10 +665,6 @@ impl Job for Enchanting {
         for (pick, at) in self.picks.iter_mut().zip(now) {
             *pick = at.or(*pick);
         }
-    }
-
-    fn stat(&self, w: &World) -> Option<Stat> {
-        Some(check_stat(&w.content))
     }
 
     fn done(&self, w: &mut World, _: &mut Vec<Event>) {
@@ -752,7 +743,8 @@ impl World {
             return;
         };
         let me = self.state.player();
-        let modifier = me.craft_modifier(&content, check_stat(&content), def.skill);
+        let stat = content.enchanting().map_or(Stat::Willpower, |r| r.stat);
+        let modifier = me.craft_modifier(&content, stat, def.skill);
         let step = content.enchanting().map_or(3, |r| r.level_step.max(1));
         let against = def.difficulty + i32::from(resolved.level / step);
         let natural = combat::roll_natural(&mut draw!(self, "enchant/check/player"));

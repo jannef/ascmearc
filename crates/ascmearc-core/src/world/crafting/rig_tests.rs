@@ -119,17 +119,6 @@ fn a_tripwire_takes_up_to_three_arrows_and_is_known_and_rigged() {
 }
 
 #[test]
-fn a_rig_trains_dexterity() {
-    let mut w = world(HALL);
-    carry(&mut w, "arrow", 3);
-    let spent = w.start_rig("tripwire", Some(crate::geom::Dir::E));
-    assert_eq!(
-        super::work::stat_of(&w, spent),
-        Some(crate::stats::Stat::Dexterity)
-    );
-}
-
-#[test]
 fn quick_hands_rigs_in_half_the_time() {
     let took = |quick: bool| {
         let mut w = world(HALL);

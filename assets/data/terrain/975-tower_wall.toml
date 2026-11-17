@@ -1,0 +1,15 @@
+# The towers' shell (docs/dev/towers.md): dressed stone, three cells tall, so its shadow lies
+# long across the clearing and the air; roofed, so the hall inside is dark but for its lights.
+# No `hardness`: nothing digs or blasts through it. (After the timber wall, so the ids before
+# stay put.)
+[[terrain]]
+id = "tower_wall"
+name = "tower wall"
+stone = true
+glyph = "#"
+fg = "#b0a898"
+bg = "#2c2a26"
+walkable = false
+transparent = false
+roofed = true
+height = 3

@@ -1,0 +1,13 @@
+# The open air outside a tower's footprint on a floor above the ground (docs/dev/towers.md):
+# see-through, never walked, unroofed, undiggable, and so lit by the sky and the sun on the
+# floor level itself. A seen air cell shows the cell of the level below at the same coordinates
+# (`Perception::below`); with no level below, it shows nothing.
+[[terrain]]
+id = "air"
+name = "open air"
+noun = "mass"
+glyph = " "
+fg = "#8090a8"
+bg = "#0a0e18"
+walkable = false
+stains = false

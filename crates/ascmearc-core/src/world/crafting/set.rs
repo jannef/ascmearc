@@ -35,7 +35,6 @@ use crate::object::{self, Stack};
 use crate::rng::draw;
 use crate::scroll_label::Lore;
 use crate::skills::Use;
-use crate::stats::Stat;
 use crate::time::Duration;
 use crate::world::{Actor, Spent, World};
 
@@ -218,11 +217,6 @@ impl Job for Setting {
         if let &[Some(item), Some(gem)] = now {
             (self.item, self.gem) = (item, gem);
         }
-    }
-
-    fn stat(&self, w: &World) -> Option<Stat> {
-        let stack = w.state.player().inventory.get(self.gem)?;
-        stack.gem(&w.content).map(|(gem, _)| w.gem_stat(gem))
     }
 
     fn done(&self, w: &mut World, _: &mut Vec<Event>) {

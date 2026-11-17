@@ -96,6 +96,7 @@ here, in its group.
 - [doors.md](doors.md): locks, keys, kicking, breaking
 - [chests.md](chests.md): chests, opening, picking, smashing
 - [digging.md](digging.md): digging, wall hardness, mining
+- [towers.md](towers.md): floors above the ground, the air, the below view, the test tower
 - [traps.md](traps.md): trap data, triggering, known traps
 - [fire.md](fire.md): burnable terrain catching fire, spreading, burning out
 - [webs.md](webs.md): webs that catch, the Web spell's webs, burning webs

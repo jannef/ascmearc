@@ -109,7 +109,7 @@ use ascmearc_core::burden::Burden;
 use ascmearc_core::color::Rgb;
 use ascmearc_core::content::ObjectId;
 use ascmearc_core::hunger::Hunger;
-use ascmearc_core::perception::{CellView, PerceptionView};
+use ascmearc_core::perception::{BelowView, CellView, PerceptionView};
 use bevy::prelude::*;
 use missiles::Missiles;
 use motion::Motion;
@@ -414,7 +414,8 @@ fn camera_origin(view: i32, level: i32, viewer: i32) -> i32 {
 
 /// Draws terrain into the map grid, with each known trap, else the top object of each known
 /// pile, in place of the terrain's glyph (over its background, lit like terrain): a known trap
-/// is a danger, so it shows over what lies on it. Creatures are on the free-glyph
+/// is a danger, so it shows over what lies on it. An air cell of a floor above the ground draws
+/// the ground below it instead ([`below_cell`], docs/dev/towers.md). Creatures are on the free-glyph
 /// layer: the grid keeps the terrain under them but not its glyph (`covered`); so do cells the
 /// line of fire is drawn over while aiming (`path`, its dots are free glyphs too), unless an
 /// object or a trap lies there. What a missile still in flight lands as (`arriving`) is not drawn
@@ -476,6 +477,11 @@ fn draw_map(
                 };
                 (ch, fg, zone.map_or(bg, |kind| zone_tint::tinted(bg, kind)))
             };
+            // Over the air, the ground below in its place: lit as the air cell is.
+            if let Some(below) = view.below(p) {
+                grid.console.put(sx, sy, below_cell(view, p, below));
+                continue;
+            }
             let cell = match seen {
                 CellView::Unknown => continue,
                 CellView::Remembered(t) => {
@@ -519,6 +525,36 @@ fn draw_map(
         if view.objects(p).is_empty() && view.trap(p).is_none() {
             let at = grid.to_console(p);
             grid.console.clear_glyph(at.x, at.y);
+        }
+    }
+}
+
+/// The ground below an air cell as the map draws it (docs/dev/towers.md): seen now, the creature
+/// standing there as it stood, else the top of the pile there (known stairs keep their glyph
+/// over a pile, as on the ground), else its terrain, over that terrain's background, in base
+/// colours (the shader lights it as the air cell is lit); remembered, its terrain dimmed like any
+/// remembered cell. Not blurred yet (#1781); never animated.
+fn below_cell(view: &PerceptionView<'_>, p: Pos, below: BelowView<'_>) -> Cell {
+    let content = view.content();
+    match below {
+        BelowView::Visible(cell) => {
+            let def = content.terrain(cell.terrain);
+            let (ch, fg) = match (&cell.actor, &cell.pile) {
+                (Some(actor), _) => (actor.glyph(content), actor.fg(content)),
+                (None, Some(top)) if def.stairs.is_none() => {
+                    (content.object(top.object).glyph, view.lore().fg(top))
+                }
+                _ => (def.glyph_at(p), def.fg),
+            };
+            Cell { ch, fg, bg: def.bg }
+        }
+        BelowView::Remembered(t) => {
+            let def = content.terrain(t);
+            Cell {
+                ch: def.glyph_at(p),
+                fg: remembered(def.fg),
+                bg: remembered(def.bg),
+            }
         }
     }
 }

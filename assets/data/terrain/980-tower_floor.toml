@@ -1,0 +1,10 @@
+# The floors inside a tower: flagstones under a roof.
+[[terrain]]
+id = "tower_floor"
+name = "tower floor"
+stone = true
+glyph = "."
+fg = "#8c8478"
+bg = "#1a1816"
+roofed = true
+bounce = "#c8c0b0"

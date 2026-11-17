@@ -37,6 +37,37 @@ fn looking_with_knowledge() {
     }
 }
 
+/// #1781: look mode on a floor above the ground names what is far below an air cell: the ground
+/// seen through the west window ("Open air. Far below: grass."), the deer grazing there as it
+/// stood, and the dagger in the grass; over the window itself, the window.
+#[test]
+fn looking_far_below() {
+    for (name, keys) in [
+        (
+            "look-below-ground",
+            "l Left Left Left Left Left Left Left Left",
+        ),
+        (
+            "look-below-deer",
+            "l Left Left Left Left Left Left Left Left Left Left Left Left Left Left Down",
+        ),
+        (
+            "look-below-dagger",
+            "l Left Left Left Left Left Left Left Left Left Left Left Left Left",
+        ),
+        ("look-below-window", "l Left Left Left Left Left Left Left"),
+    ] {
+        let case = Case {
+            name,
+            scenario: "tower",
+            actions: "ascend",
+            keys: Some(keys),
+            ..BASE
+        };
+        check(&case);
+    }
+}
+
 /// #1750: the run prefix asks the way on the message line.
 #[test]
 fn the_run_prefix_asks_the_way_as_text() {

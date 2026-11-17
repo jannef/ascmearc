@@ -139,6 +139,9 @@ The test world (`assets/campaigns/showcase/`, the `showcase` feature):
 - `summoners`: in the summoning hall's south hall (three summoners behind doors).
 - `thieves`: in the thieves' hall (a pixie, a nymph, and an imp that rob you as they fight,
   behind doors; a blink dog past statues).
+- `tower`: on the stair up in the ground-floor hall of the clearing's two-storey test tower at
+  10:00 (`ascend` climbs; from the tower top the windows show the clearing below:
+  docs/dev/towers.md).
 - `chests`: in the chest hall (every kind of chest, a mimic, and both treasure rooms).
 - `hellegeat`: on the first floor of Pit 1 of Hellegeat, the fiends' branch a `portal` miscast
   opens (its record made at the start: its `<` climbs out to the hub).
@@ -342,6 +345,9 @@ and are **dev-only**.
 - `blood`: blood the player sees or remembers as a digit over the view, `1` a few drops to `9`
   soaked.
 - `scorch`: fire's char, the same way, `1` a little soot to `9` charred through.
+- `below`: on a floor above the ground (docs/dev/towers.md), the storey digit on every air cell
+  whose ground below is seen now, `.` elsewhere (`view` and `memory` print the ground's glyph in
+  such a cell; JSON has `below: { level, storey }`, null on the ground).
 
 ### The player's own (from perception)
 

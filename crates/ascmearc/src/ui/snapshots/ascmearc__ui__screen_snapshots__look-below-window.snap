@@ -1,0 +1,14 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ A window. An unglazed opening in the wall, wide enough to lean out of.
+ Looking: direction keys move, Esc or l to stop.
+
+
+
+
+
+
+
+                      =

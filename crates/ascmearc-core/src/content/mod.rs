@@ -212,6 +212,8 @@ mod terrain;
 mod tests;
 mod theft;
 mod throw;
+#[cfg(test)]
+mod tower_tests;
 mod town;
 mod trap;
 mod tuning;

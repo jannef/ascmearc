@@ -538,22 +538,8 @@ in `world/mod.rs`, then runs `keep_at` for those seconds in turns of the task's 
 turn cut short, watched on the overworld where the task says; interrupted, it says the task's
 words ("...; you put down your work.", "You leave off your work."), the time spent; done, it
 finds the task's stacks again (below) and calls the task's end. Each kind implements `Job`
-(`kind`, `watch`, `on`, `found`, `leave`, `nothing_left`, `stat`, `done`; all but `done` have the
-common default), so a rule for every craft goes in `work.rs` once.
-
-**The stat it trains** (#1790): done to its end, whatever came of it, a work trains the stat
-it is made with, `Job::stat`, asked of the stacks found just before `done` spends them; the
-driver passes it to `World::train_craft`, the `crafted` use's rule of that stat in
-`data/stats.toml` (40 % for Strength, Dexterity, Intelligence, and Willpower; no rule, no mark).
-An interrupted work, or one whose stacks are gone, trains nothing. The stats: a recipe its
-check's (`craft_make.rs` `profession_stat`: the profession row's in `data/recipes.toml`, else the
-main material's in `data/stock.toml`: Strength for metal, Dexterity for wood, bone, hide, sinew,
-stone, resin, and the gems; Intelligence for a brew, Willpower for an enchanting), Cut and Set
-the gem's (`World::gem_stat`), Temper Strength and Whittle Dexterity (`Craft::stat`), Make do
-and mend its material's profession's, a rig Dexterity, a field forge Strength (no check: an
-hour at the block of metal), Decipher Intelligence. Salvage trains no stat yet (its default
-`None`). The tests: one per profession beside its own (`work::stat_of`, the stat a `Spent::Work`
-would train), and end to end in `craft_make_tests.rs`.
+(`kind`, `watch`, `on`, `found`, `leave`, `nothing_left`, `done`; all but `done` have the common
+default), so a rule for every craft goes in `work.rs` once.
 
 ## Long work's stacks found again
 

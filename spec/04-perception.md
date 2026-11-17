@@ -26,6 +26,12 @@ These are gameplay rules in the core: deterministic, integer math, independent o
 - Strong light dazzles light-blind races: sight is cut short and attacks are worse while the light on their own cell is too bright. The game says when it begins and ends, never the numbers. Creatures are never light-blind.
 - Memory keeps terrain, piles, stains, and known traps per level as last seen. Never creatures, never hidden traps.
 
+## Floors above the ground
+
+- A level may stand over another of its size (a tower's floor over its clearing): outside the tower's footprint it is open air, see-through, never walked, unroofed, undiggable, lit by the sky like any open cell.
+- A seen cell of open air shows the cell of the level below at the same coordinates: its terrain, the top of its pile, and the creature standing there as it stood. It is seen only when the air cell is: by day, dimly by moonlight, not on a dark night.
+- Looking down writes the level below's memory. A creature seen below is named in words only: it cannot be targeted, examined, or hit, and nothing from below is heard. With no level below yet, the air shows nothing.
+
 ## Creature sight
 
 - Creatures see by exactly the player's rules with their own eyes.

@@ -4,3 +4,8 @@
 object = "henbane"
 count = "1d2"
 chance = 50
+
+[[drop]]
+material = "bone"
+count = "1"
+chance = 30
