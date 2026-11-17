@@ -627,6 +627,18 @@ fn the_work_takes_its_hour_and_marks_enchanting() {
     assert!(made && failed);
 }
 
+#[test]
+fn an_enchanting_trains_willpower() {
+    let mut w = world(1);
+    item(&mut w, "long_sword", 1);
+    crystal(&mut w, "red");
+    let spent = w.start_craft("kindle", &[Some(0), Some(1)]);
+    assert_eq!(
+        super::work::stat_of(&w, spent),
+        Some(crate::stats::Stat::Willpower)
+    );
+}
+
 /// Quick hands (#1425) halves an enchanting's hour, as the plan's time says.
 #[test]
 fn quick_hands_halves_the_hour() {

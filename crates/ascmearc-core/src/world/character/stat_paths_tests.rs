@@ -110,7 +110,10 @@ fn every_new_use_has_its_rules_by_stat_in_the_data() {
     };
     use Stat::*;
     for (used, want) in [
-        (StatUse::Forged, vec![Strength]),
+        (
+            StatUse::Crafted,
+            vec![Strength, Dexterity, Intelligence, Willpower],
+        ),
         (StatUse::Struggled, vec![Strength, Willpower]),
         (StatUse::Waded, vec![Strength]),
         (StatUse::Hauled, vec![Strength]),
@@ -153,7 +156,6 @@ fn every_new_use_has_its_rules_by_stat_in_the_data() {
 fn the_skills_uses_that_are_stat_uses_too_train_both_from_one_report() {
     use Stat::*;
     for (used, stats) in [
-        (Use::Temper, vec![Strength]),
         (Use::Pick, vec![Dexterity]),
         (Use::Disarm, vec![Dexterity, Intelligence]),
         (Use::Steal, vec![Dexterity]),
