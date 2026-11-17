@@ -148,7 +148,8 @@ On its third floor there is always the **kobolds' cache**: two
 that floor would be. On the first floor the cave smells of wet stone and rats.
 
 Somewhere on its second floor, on a spot of plain cave floor, lies the top of the deep gnomes'
-**Skeul Hir**, a long stair down to [Gimmwīc](ascmearc.md#gimmwīc). It stays hidden until
+**[Skeul Hir](dungeon-guide.md#skeul-hir)**, a long stair down to
+[Gimmwīc](ascmearc.md#gimmwīc). It stays hidden until
 Headman Peran opens it for you ([quests](quests.md#who-gives-quests)); from then on it is stairs
 down there, and the floor shows it on your map. The spot differs from game to game, but in one
 game it never moves.

@@ -7,7 +7,7 @@
 #
 # North of the street, from the west: the arrival cave and its stairs (and in its south-west
 # corner the Skeul Hir, the gnomes' old long stair up to Lytelscræf 2, hidden until Peran gives
-# the moot's answer, #1760); the moot hall, where
+# the moot's answer, #1760, #1840); the moot hall, where
 # Headman Peran (P) speaks for the town at its long table; across the lane the Glimmering, the
 # temple, a sanctuary (the [[room]] table: wounds heal faster and nothing hostile steps in) lit by
 # its crystals, where Mother Senara (M) cures and mends for gold beside the altar; and Kerensa's
@@ -99,11 +99,12 @@ map = '''
 # portal into Meyn Bew, hidden (plain floor) until she gives her quest (data/quests/ysella.toml).
 "K" = { terrain = "floor", creature = "deep_gnome_binder", npc = "ysella" }
 "O" = { terrain = "floor", hidden = { id = "meyn_bew", terrain = "crystal_portal", to = "meynbew:1", name = "Meyn Bew", opens = "Ysella sings one long note. The rock beside her rings, and opens on a ring of crystal light." } }
-# The Skeul Hir (#1760), the gnomes' old long stair up to Lytelscræf 2, hidden (plain floor) until
-# Peran gives the moot's answer (data/quests/wulfrun.toml `gnome_reply`). Its far end is
-# Lytelscræf 2's (data/dungeons/lytelscraef.toml), on a cell that level's generation picks; the
-# one reveal opens both.
-"H" = { terrain = "floor", hidden = { id = "skeul_hir", terrain = "stairs_up", to = "lytelscraef:2", name = "the Skeul Hir", opens = "Peran raps the long table three times. Back in the arrival cave stone grinds on stone, and a slab swings up on a stair climbing steep into the dark: the Skeul Hir." } }
+# The Skeul Hir (#1760, #1840), the gnomes' old long stair up to Lytelscræf 2, hidden (plain floor)
+# until Peran gives the moot's answer (data/quests/wulfrun.toml `gnome_reply`). It leads up to the
+# stair itself, a floor of its own (data/dungeons/skeul_hir.toml, whose `bottom` this town is),
+# whose top comes out on Lytelscræf 2 (data/dungeons/lytelscraef.toml), on a cell that level's
+# generation picks; the one reveal opens both ends.
+"H" = { terrain = "floor", hidden = { id = "skeul_hir", terrain = "stairs_up", to = "skeul_hir:1", name = "the Skeul Hir", opens = "Peran raps the long table three times. Back in the arrival cave stone grinds on stone, and a slab swings up on a stair climbing steep into the dark: the Skeul Hir." } }
 
 # The Glimmering, walls and door included, is a sanctuary (data/room_effects/).
 [[room]]

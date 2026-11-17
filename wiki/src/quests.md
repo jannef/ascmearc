@@ -195,8 +195,8 @@ offered one after the other.
   drake is dead she has a letter for the deep gnomes of [Gimmwīc](ascmearc.md#gimmwīc), at the
   bottom of [Dēopgang](dungeon-guide.md#dēopgang). Headman Peran pays you with a cut stone and
   gives you his town's answer to carry back up to her. As he gives it, he opens the
-  [Skeul Hir](ascmearc.md#gimmwīc), the gnomes' long stair up to Lytelscræf's second floor, a
-  short way home. You can go down to Gimmwīc without the letter: its way in is never hidden.
+  [Skeul Hir](dungeon-guide.md#skeul-hir), the gnomes' long stair up to Lytelscræf's second
+  floor, a short way home. You can go down to Gimmwīc without the letter: its way in is never hidden.
 
 In [Holtwīc](ascmearc.md#the-places), at the end of the north road,
 **[Gammer Wynflæd](creatures.md#creature-wise-woman)** the wise-woman asks you to bring home a girl

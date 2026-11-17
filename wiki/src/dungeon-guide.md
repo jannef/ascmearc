@@ -3,7 +3,7 @@
 Most dungeons follow the rules on [Dungeons and danger](dungeons.md). The ones here have something
 of their own: Grundlēas never ends, Fennmynster and Fyrdelf hide their ways in until a quest names
 them, Ūtgang is found only from below, Ælfhām lies in the fey's own country, Dēopgang ends in a
-town, Meyn Bew opens only for a quest, and the four lairs each hold a criminal the Gilde wants
+town, the Skeul Hir and Meyn Bew open only for a quest, and the four lairs each hold a criminal the Gilde wants
 dead. Hellegeat, the fiends' own dungeon that a miscast tears open, has a page of its own:
 [Hellegeat, the Pits](pits.md).
 
@@ -260,6 +260,42 @@ Duergar, drow, trolls, elementals of stone and water, and the dead of old cave-i
 Secret doors and [chests](chests.md) are commoner than elsewhere, and its rock gives only silver
 and gold for ore, so a [miner](mining.md) finds [gems](gems.md) more often. The eleventh floor's
 stairs down lead to [Gimmwīc](ascmearc.md#gimmwīc), the deep gnomes' town.
+
+## Skeul Hir
+
+The **Skeul Hir**, "the long stair" in the deep gnomes' tongue, is their old way from
+[Gimmwīc](ascmearc.md#gimmwīc) up to the second floor of
+[Lytelscræf](dungeons.md#the-dungeons), cut long ago and long forgotten. Both ends are hidden
+until Headman Peran opens them with the moot's answer ([quests](quests.md#who-gives-quests)). Then
+its stairs up in Gimmwīc's arrival cave and its stairs down on Lytelscræf's second floor both lead
+into it, and stay open.
+
+It is one floor, 9 °C, a single hewn way from one end to the other, winding and turning at sharp
+corners, widening into a hall here and there, with short dead-end cuts off it. There is never a
+second way through. Its stairs down lead to Gimmwīc, its stairs up to Lytelscræf, whichever end
+you came in by.
+
+Its [danger](dungeons.md#who-lives-there-and-how-many) is 14, as on Dēopgang's first floor, and
+nothing strays in from elsewhere. What lives there came in through the rock or never left:
+[rust monsters](creatures.md#creature-rust-monster),
+[earth elementals](creatures.md#creature-earth-elemental),
+[knockers](creatures.md#creature-knocker), [trolls](creatures.md#creature-troll) and
+[rotting trolls](creatures.md#creature-rotting-troll),
+[basilisks](creatures.md#creature-basilisk), [meenlocks](creatures.md#creature-meenlock),
+[black puddings](creatures.md#creature-black-pudding),
+[duergar skeletons](creatures.md#creature-duergar-skeleton), [fetches](creatures.md#creature-fetch),
+and [revenants](creatures.md#creature-revenant). Its [traps](traps.md) are arrows, spears, pits,
+and alarms. It has no shops and no special rooms.
+
+It pays for the climb. It has 6 to 10 items of loot on its floor, where most floors have a few,
+one or two [chests](chests.md) every time, and two or three side rooms and caches off the way,
+each at the end of a cut of its own. And it always has **Powesva an Skeul**, "the stair's resting
+place": the stair-cutters' waystation, with a bunk room, a tool store with a
+[pick-axe](digging.md) and a mattock, and a hall where two of the way's folk wait by
+Jacca's stone. Read the stone. Behind a [secret door](doors.md#secret-doors) in the hall's wall
+the cutters kept their cache: a [rod](wands-and-rods.md#rods) of digging, a
+[heart-crystal](crystals.md#rare-materials), a sapphire, an emerald, a ruby, and a diamond
+([gems](gems.md)), a rare find, and a chest.
 
 ## Meyn Bew
 

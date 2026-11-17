@@ -1,0 +1,46 @@
+# Vault of the Ascmearc (#1840): Powesva an Skeul, "the stair's resting place" in the deep gnomes'
+# Cornish, the stair-cutters' waystation on the Skeul Hir. The decision: clear the hall of what
+# has moved in, then search its walls for the cutters' hidden cache, or climb on.
+#
+# A hall with two tables and the stone of Jacca the stair-cutter (a named place), a bunk room for
+# the cutters' shifts, a tool store, and, behind a secret door, the cache they kept for the
+# stair's upkeep: their rod of digging, a heart-crystal, four gems, a rare find rolled when the
+# level is made, and their chest (filled at the floor's level). Two of the way's own (the floor's
+# pool) have taken the hall. One entrance, as every vault on a passage floor has (two would open a
+# second route). The Skeul Hir names it for its one floor (`vaults` in its `[[dungeon.levels]]`),
+# so it is stamped there for certain and nowhere else, and lies the way this file draws it.
+# Borrows: the waystations of the old Cornish mines' adits.
+name = "Powesva an Skeul"
+dungeons = ["skeul_hir"]
+map = '''
+###################
+#b..#.........#1*2#
+#...#..t...t..#...#
+#b..+....J....S.R.#
+#...#.m.....m.#.C.#
+#b..#..t...t..#3r4#
+#####.........#####
+#p.q+....m....#####
+#########+#########
+'''
+
+[legend]
+"b" = "bed"
+"t" = "table"
+"J" = { terrain = "statue", name = "Jacca's stone", note = "A deep gnome in stone, no taller than a child, a cutting rod in one hand and the other flat on a step. Cut in the plinth: POWES, HA KERDH YN-RAG. Rest, and walk on. Below it, smaller, a cutter's joke: WHAT US KEEPS, US KEEPS IN THE WALL." }
+# What has taken the hall: two of the way's own on three cells, so where they wait moves.
+"m" = { terrain = "floor", monsters = { pool = "level", count = 2 } }
+# The cutters' tools, left in their store.
+"p" = { terrain = "floor", objects = ["pick_axe"] }
+"q" = { terrain = "floor", objects = ["mattock"] }
+# The cache, behind a secret door in the hall's wall.
+"S" = { terrain = "door_closed", secret = true }
+"R" = { terrain = "floor", objects = ["rod_of_digging"] }
+"*" = { terrain = "floor", objects = ["heart_crystal"] }
+"1" = { terrain = "floor", objects = ["gem:sapphire"] }
+"2" = { terrain = "floor", objects = ["gem:emerald"] }
+"3" = { terrain = "floor", objects = ["gem:ruby"] }
+"4" = { terrain = "floor", objects = ["gem:diamond"] }
+"r" = { terrain = "floor", loot = "rare" }
+# The cache's chest: neither locked nor trapped; what it holds is rolled at the floor's level.
+"C" = { terrain = "chest" }

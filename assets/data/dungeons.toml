@@ -9,7 +9,8 @@
 #
 # Fields:
 #   id         branch id; its levels are "<id>:1" to "<id>:<depth>"
-#   name       level names are "<name> <depth>" (default: the id)
+#   name       level names are "<name> <depth>", a branch of one floor's just "<name>" (default:
+#              the id)
 #   arrival    a line said each time the player arrives on the first level by stairs (optional)
 #   generator  "rooms" (rooms and corridors, ADOM-like), "caves" (cellular automata), "tunnels"
 #              (caverns of varied size joined by narrow winding tunnels, loops among them),
@@ -28,7 +29,12 @@
 #   bottom     a hand-made level of the same campaign (`bottom = "gimmwic"`) its deepest level's
 #              `>` leads to; that level's own `<` must name the deepest level (`to =
 #              "deopgang:11"`), and the player arrives on it (default none; not with `below`,
-#              `endless`, or `portal`)
+#              `endless`, or `portal`). A hidden location's stairs up count: the Skeul Hir's
+#              bottom, Gimmwīc, has its `<` back hidden until a quest opens it
+#   above      a level of another bounded branch of the same campaign (`above = "lytelscraef:2"`)
+#              its first level's `<` leads to, however the branch was entered; that level's
+#              `[[dungeon.levels]]` row keeps a hidden way down into the first level (`hidden`,
+#              below), so the player arrives on it (default none; not with `endless` or `portal`)
 #   size      [width, height]
 #   creatures  creature ids generators may place on patrol (default none)
 #   traps      trap ids (data/traps.toml) generators hide on each level, all hidden, never on or
@@ -48,6 +54,9 @@
 #              every ore of the table)
 #   loot       [fewest, most] items of loot on the floor of each level, rolled at the depth as
 #              item level (default none)
+#   random_vaults  [fewest, most] random vaults a `passage` floor stamps, only those with one
+#              entrance, each at the end of a cut of its own (default none; refused on a branch
+#              with floors of another generator, which draw their own)
 #   chests     `{ chance, count }`: percent of its floors with chests and how many such
 #              a floor gets, `[least, most]`, each of the floor's level, locked,
 #              trapped, and filled by its band in data/chests.toml (default
