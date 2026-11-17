@@ -368,7 +368,7 @@ fn her_corpse_teaches_spellcraft_and_decipher_script() {
         Some(crate::hunger::Satiation::new(1000));
     w.apply(&Action::Eat(Meal::Floor(0)));
     assert_eq!(trained(&w, "spellcraft"), Some(10), "{:?}", texts(&w));
-    assert!(heard(&w, "Shapes of power turn behind your eyes"));
+    assert!(heard(&w, "Something stirs behind your eyes"));
     // The scenario's character reads no old hands: she learns them too.
     assert_eq!(trained(&w, "decipher_script"), Some(7));
 }
