@@ -238,9 +238,9 @@ fn master_ordgar_talks_of_his_tower_and_takes_the_rowan() {
         .find(|q| q.id == "the_wizards_quarrel")
         .expect("logged");
     assert_eq!(quarrel.status, "0 / 2 killed.");
-    // He is the ally; a taker beside Ælfswīð (#1786), Sigeric to come (#1787).
+    // He is the ally; a taker beside Ælfswīð (#1786) and Sigeric (#1787).
     let def = CONTENT.quest(CONTENT.quest_id("the_wizards_quarrel").expect("it"));
-    assert_eq!(def.quarrel.takers.len(), 2);
+    assert_eq!(def.quarrel.takers.len(), 3);
     assert!(def.quarrel.hoard.is_some() && def.quarrel.parting.is_some());
 }
 

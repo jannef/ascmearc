@@ -158,7 +158,9 @@ wise-woman's quest to reveal (#1141; `world/campaigns/holtwic_tests.rs`); `I` Dr
 forest → `tower`, `to = "drytorr"`) is Master Ordgar's hidden tower north-west of the mound, for
 her second quest to reveal (#1784; `docs/dev/towers.md`, `world/campaigns/drytorr_tests.rs`); `W`
 Wedertorr (42, 23, hills → `tower`, `to = "wedertorr"`) is Mistress Ælfswīð's hidden tower on
-Hlāwdūn, for Ordgar's quarrel to reveal (#1786; `world/campaigns/wedertorr_tests.rs`). `g` Līctūn (`graveyard`, (19, 32),
+Hlāwdūn, for Ordgar's quarrel to reveal (#1786; `world/campaigns/wedertorr_tests.rs`); `S`
+Steorratorr (103, 40, plains → `tower`, `to = "steorratorr"`) is Master Sigeric's hidden tower in
+Ēastmearc by the shore of Grægsæ, revealed with it (#1787; `world/campaigns/steorratorr_tests.rs`). `g` Līctūn (`graveyard`, (19, 32),
 #1258) is Cēaptūn's churchyard beside the south road, four cells out of town, leading into
 `lictun` (`docs/dev/campaign.md` "Līctūn"): with the starter cave, the one location closer than
 six cells to another (`ascmearc_tests`: four from the town, at least five from every other).

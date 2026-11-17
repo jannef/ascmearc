@@ -5,10 +5,9 @@
 # parting asks, once, whether the player leaves them or betrays them. The file is named for the
 # chain it continues, so it loads after wynflaed.toml (`requires` names a quest loaded before).
 #
-# Built so far: Ordgar's side and Mistress Ælfswīð's of Wedertorr (#1786). Master Sigeric of
-# Steorratorr comes with his tower (#1787): he adds his `[[quest.taker]]`, his `[[quest.side]]`,
-# and his tower to `reveals`. Until then two of the three are only Ordgar and Ælfswīð, so the
-# quest is done only by killing both, with nobody left to pay.
+# The three sides: Ordgar's, Mistress Ælfswīð's of Wedertorr (#1786), and Master Sigeric's of
+# Steorratorr (#1787), each with their `[[quest.taker]]`; the two rivals with their
+# `[[quest.side]]`, and their towers in `reveals`.
 [[quest]]
 id = "the_wizards_quarrel"
 name = "The wizards' quarrel"
@@ -20,10 +19,10 @@ count = 2
 what = "wizards"
 alignment = 0
 # The rivals' towers, marked on the map as the quest is given.
-reveals = [{ location = "wedertorr" }]
+reveals = [{ location = "wedertorr" }, { location = "steorratorr" }]
 feud = "feuding_wizards"
 offer = "There are three of us in this country who may call ourselves wizards, and that is two too many. Mistress Ælfswīð and Master Sigeric want my books, my tower, and very likely my head. Two of us must fall. I should prefer it were not me."
-accept = "Their towers are taller than mine and their stairs no kinder. They will offer you terms; they always do. Drink their tea if you must, but sign nothing."
+accept = "Wedertorr stands on the downs past the old barrow; Steorratorr by the grey sea, and higher. I have marked them both for you. Their towers are taller than mine and their stairs no kinder. They will offer you terms; they always do. Drink their tea if you must, but sign nothing."
 reminder = "Two wizards. I am told you are good on stairs, and I am still here, which is the half of it I like."
 where = "Mistress Ælfswīð keeps a tower on the downs, Master Sigeric another by the grey sea; each keeps the top floor."
 
@@ -44,6 +43,19 @@ npc = "aelfswith"
 offer = "Ordgar sent you. Of course he did; he never climbs anything. Here's a better offer. Take my side, finish the other two, and I'll teach you more than he can. Well?"
 join = "Good. Quick, too. Ordgar will hear of it before the rain does, and so will Sigeric. Go and see to them."
 refuse = "Then you're weather, and I deal with weather."
+
+[[quest.taker]]
+npc = "sigeric"
+done = "Two of us gone, and the better one left standing; history so seldom manages it. You shall have your reward, and it shall be worthy of us both. Sit. We begin with spells, and we go on to making."
+reward = { gold = 300, xp = 900, items = ["unique:sigerics_star"], skills = { spellcraft = { start = "1d4", marks = 100, taught = "Sigeric shows you a spell as a made thing, joint by joint, and has you build it after him until it stands.", more = "You learn more of the weaving of spells." }, enchanting = { start = "1d4", marks = 100, taught = "He sets a plain ring in your hand and talks you through persuading it to be something better.", more = "You see more clearly how a thing may be made more than it is." } } }
+parting = "And so we part, as friends and as the two most accomplished people in the march. Unless you had something less graceful in mind."
+betrayed = "How very disappointing. I had thought you had taste. Come, then; let us see what I make of you."
+
+[[quest.side]]
+npc = "sigeric"
+offer = "Ordgar's errand-runner, at the top of my stair, and not even out of breath. Splendid. Let me make you a better offer than his. Take my side, see to the other two, and I shall teach you to make wonders. He will only teach you to read about them."
+join = "Wise, and gracious with it. Ordgar and Ælfswīð will have heard by the time you reach the stair; they always do hear of me. Go and see to them, and come back to be thanked."
+refuse = "A pity. I had such hopes for you. I shall make something of you yet, if only a doorstop."
 
 [quest.parting]
 text = "Well. That is the end of it, and you have what you came for. Unless you think you have not."

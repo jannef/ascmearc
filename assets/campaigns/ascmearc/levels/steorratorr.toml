@@ -1,0 +1,110 @@
+# Steorratorr's clearing and ground floor (#1787; docs/design/wizard-tower.md §3; docs/dev/towers.md):
+# a hand-made outdoor level, the open plain on the shore of Grægsæ with Master Sigeric's tower
+# standing on it, entered from its hidden cell on the Ascmearc's overworld (S, at 103, 40;
+# revealed by Master Ordgar's quarrel), arriving on the track from the south (@). Like any outdoor
+# area it is left by walking off its edge (or with `<` when no enemy is about and not on the
+# stair).
+#
+# The tower (W, 41×19 at (15, 4)–(55, 22): a wizard's tower is big, docs/dev/towers.md "A
+# tower's household") is dressed stone no pick or blast breaks, roofed, with unglazed windows
+# (=). The box of its walls is the footprint every floor above is built on
+# (data/dungeons/steorratorr_tower.toml). Its inside is the ground floor, the first of the
+# wizard's trap halls: in through the door (+) from the track, the south hall, Sigeric's gallery
+# of himself, four statues of the wizard along its north wall (named places: look mode reads
+# their plinths) and three hidden traps across it (J, a teleport trap; F, a fireball trap; L, a
+# lightning trap); the way on at the partition's west end; the north hall, pillared, where three
+# bays in the north wall hold a known trap each (a lightning trap, a frost trap, a pit) with
+# something left behind it to tempt a caller; a cabinet of curiosities off it to the west through
+# a door (shelves, a table, a scroll left lying); and the stair up (<) at the hall's north-east
+# corner. Wall torches (t) light it; a brass plaque by the door is Sigeric's. East of the tower,
+# the plain runs down over rocks and reeds into the grey sea.
+#
+# The level's danger (9) is for the traps' growth (`TrapDef::effect_at`); a level's danger needs
+# a population, so the drowned walk up out of the sea now and then, and a lesser water elemental
+# with them (the design's §12 fallback). Both already live in the campaign's branches
+# (Fennmynster): every level's population joins its campaign's stray lists
+# (`Content::fill_generic`), and these add nothing new to any branch's.
+name = "Steorratorr"
+kind = "outdoor"
+arrival = "A green plain running down to the grey sea, and on it, taller than anything for miles, a tower of white stone."
+danger = 9
+population = ["drowned", "lesser_water_elemental"]
+population_count = 2
+stray = 0
+spawn = { every = "30m", chance = 30, cap = 2 }
+map = '''
+....";%.;"*.%"";;;".."".%.";..b;"."b"*...."""..*""."".%.b%%r%~~~ww~wDDDD
+...".;.."obo;b%."b.;*""."..%".""..;b*b.*%;"%...*."."";"""";..rr~~wwwwwDD
+...b"...%;%"..."....%".""%*;.""..".."b;.";"""".;".";*.%.."%.%%%~r~ww~DDD
+.*.""."."".;;..;..;".b;..;..*"%.b...".""*"".%%""".;"%.."""""".r~rrwwwDDD
+..."%*..;%*...;WWW=WWW=WWW=WWW=WWW=WWW=WWW=WWW=WWW=WWW=W""%"%r~~~~wwDwDD
+".%.";".%%*.*%.WWWWWWWWWW!WWWWWWWWW?WWWWWWWWW$WWWWWWWWWW.%%%%.~~~wwwwDDD
+..o"";.%.*";.".WWWWWWWWWWlWWWWWWWWWfWWWWWWWWWpWWWWWWWWWW."%%;..~~~ww~DDD
+..;.""%%.;.".*.=:::::::tW:::::t::::::::::::::::::::::<:=%%."%.~r~w~wDDDD
+..".;....%.....W:hhh::::W::::::::::::::::::::::::::::::W.."....r~~w~wDwD
+......%..%;.*.*W::::::::W::::::W:::::::W:::::::W:::::::W;.%"%r~~~wwwDDDD
+"%.......".*."*W::::::::W:::::::::::::::::::::::::::::tW;%."%r~~~w~~DDwD
+.;"..;..b";o"*%=::::::::+::::::::::::::::::::::::::::::=;"%r%~~~~~~DDDDD
+;"""....;."""%oW::::T:::W::::::W:::::::W:::::::W:::::::W"%""%r~~~wwwDwDD
+..."...;"%""".%W:C::::::W::::::::::::::::::::::::::::::W"..;%..~~~wwwDDD
+...*%*%"...""%%W::::::::W:::::::::::::::::::::::::::::tW""%.%%r~~~~~wDDD
+."."*.*"%**.**"=W:WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW;%%""r%rr~wwwDDD
+"."*..".*.*;.;%Wt:::::::S:::::::U:::::::V:::::::Y:::::tW;%%r%~~~wwwDDDDD
+..""".....;".."W::::J::::::::::::::::::::::::::::::::::W".o%%~~~wwwDDDDw
+;.*""""%*".""..W:::::::::::F:::::::::::::::::::::::::::W%%".%r%r~~wwwDDD
+.*."o.."%.b."*.=::::::::::::::::::::::::::::L::::::::::=.";%%r~~wwwDDDDD
+..".."*."".."."W:::::::::::::::::::::::::::::::::::::::W.";"..%r~~w~wDDw
+%.."."...%.%.".Wt:::::::::::::::::::::::::::::::::::::tW;%"%%%r~~~~wwDDD
+;*o.;..%..;"".*WWW=WWW=WWW=WWW=WWW=+QW=WWW=WWW=WWW=WWW=W;."".%~~~wwwwDDD
+.b..."."".%...;".%......."...""....,%.*".."""o"%...*".%;"b.%.r~~w~~wDDDD
+***""*....b;..."";..."*%".%%;..".%.,b..;.""."..b.;%.*""..%...%~~rwwwDDDD
+.*.""".;""*;.;".""."."...""".*".;".,";."".;..*"...*.;."..%.;;.%~~~w~wwDD
+.;;"".;"."...*;"""..;;;"........"..,";.""..%%"".;.%.;..".%."%..r~~wwwwDw
+....b..%%"...%.;.*;"..";....*"."*..@....*.%".".%.*.."..";".%%~~~~wwDDDDw
+"...;**".";.;";."..;""..%%...;;..;",""%..."."..".."""....%"%%%r~r~~wwDwD
+".""""*..."...%.".........".."*%...,..."".*%..;"...;"*"..%;b%%r~r~wwwDwD
+'''
+
+[legend]
+"." = "grass"
+'"' = "tall_grass"
+";" = "dry_grass"
+"%" = "rocky_ground"
+"*" = "flowers"
+"o" = "boulder"
+"b" = "bush"
+"r" = "reeds"
+"~" = "shallow_water"
+"w" = "water"
+"D" = "deep_water"
+"," = "dirt_road"
+"W" = "tower_wall"
+":" = "tower_floor"
+"=" = "window"
+"+" = "door_closed"
+"t" = "sconce"
+"@" = { terrain = "dirt_road", spawn = "player" }
+# The stair up, through every floor of the tower (data/dungeons/steorratorr_tower.toml).
+"<" = { terrain = "stairs_up", to = "steorratorr_tower:1" }
+# Sigeric's plaque, on the wall east of the door (a named place: look mode reads it).
+"Q" = { terrain = "tower_wall", name = "a brass plaque", note = "Polished brass, very bright: STEORRATORR. THE HOUSE OF MASTER SIGERIC, MAKER. Smaller, under it: Callers are expected to be impressed." }
+# The gallery: four likenesses of the wizard, the last still to come.
+"S" = { terrain = "statue", name = "a statue of Master Sigeric", note = "A young man in a scholar's gown, a book under one arm. The plinth reads: SIGERIC, AT HIS STUDIES." }
+"U" = { terrain = "statue", name = "a statue of Master Sigeric", note = "A man in his prime, one hand raised, a gilt star in the palm. The plinth reads: SIGERIC, AT HIS FIRST WONDER." }
+"V" = { terrain = "statue", name = "a statue of Master Sigeric", note = "A man in a robe sewn with stars, looking up. The plinth reads: SIGERIC, RAISING HIS TOWER." }
+"Y" = { terrain = "statue", name = "a plinth", note = "Polished, and waiting for its statue. The plinth reads: SIGERIC, TRIUMPHANT." }
+# The bays: a known trap in each, and behind it what a caller is meant to want.
+"l" = { terrain = "tower_floor", trap = "lightning_bolt", known = true }
+"f" = { terrain = "tower_floor", trap = "frost", known = true }
+"p" = { terrain = "tower_floor", trap = "pit", known = true }
+"!" = { terrain = "tower_floor", objects = ["potion_of_greater_healing"] }
+"?" = { terrain = "tower_floor", objects = ["scroll_of_haste"] }
+"$" = { terrain = "tower_floor", objects = ["gold_coin*60"] }
+# The south hall's hidden traps, across the way from the door to the way on.
+"J" = { terrain = "tower_floor", trap = "teleport" }
+"F" = { terrain = "tower_floor", trap = "fireball" }
+"L" = { terrain = "tower_floor", trap = "lightning_bolt" }
+# The cabinet of curiosities: shelves, a table, and a scroll left on the floor.
+"h" = "shelves"
+"T" = "table"
+"C" = { terrain = "tower_floor", objects = ["scroll_of_fireball"] }

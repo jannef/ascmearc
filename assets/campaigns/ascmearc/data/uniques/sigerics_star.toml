@@ -1,0 +1,15 @@
+# Sigeric's Star (#1787; docs/design/wizard-tower.md §11): the thing of his own making Master
+# Sigeric of Steorratorr gives with his pay in the wizards' quarrel
+# (data/quests/wynflaed_ordgar.toml), placed by that reward and nowhere else. A caster's ring of
+# middling power: a deeper well of mana, spells struck harder and surer, a little starlight, and
+# a wearer no peacock's tail holds staring (he made it for himself).
+[[unique]]
+id = "sigerics_star"
+name = "Sigeric's Star"
+object = "gold_ring"
+affixes = ["mystic:8", "potent:2", "of_the_magus:3", "of_light:2"]
+level = 12
+# Four enchantments need its make (docs/dev/enchanting.md): a flawless sapphire setting.
+parts = [{ part = "setting", of = "sapphire", cut = "flawless" }]
+power = { ward = "transfixed", message = "Nothing holds your eyes for long.", phrase = "Nothing holds its wearer staring." }
+lore = "Inside the band, very small: SIGERIC MADE ME. Outside, larger: SIGERIC."

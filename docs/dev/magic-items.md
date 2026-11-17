@@ -258,7 +258,10 @@ the item's id (saved, hashed; `skip_serializing_if` none, so other items' saves 
   `docs/dev/creatures/outlaws.md`), so no other content names them: a test that needs a
   placement defines a unique of its own (`world/creatures/unique_tests.rs`), and a test that drops the
   uniques table puts the base items in their place (`character.rs`'s `skill_free_content`). The
-  wiki's table names who carries each (`xtask/src/wiki/uniques.rs`, from the gear lines).
+  wiki's table names who carries each (`xtask/src/wiki/uniques.rs`, from the gear lines), and
+  the quests that pay one (`rewarded_by`): Sigeric's Star (gold ring, item level 12, #1787) is
+  placed only by Master Sigeric's pay in the wizards' quarrel (`docs/dev/towers.md`
+  "Steorratorr").
 - **The pedlar's three** (#808): the Brosinga Mene (gold amulet), the Eorcanstān (gold ring),
   and Grendles Grāpe (gauntlets), `campaigns/ascmearc/data/uniques/`, each item level 12 with six
   affixes and a `ward`, after ADOM's black torc (resistances, speed, Defence and Protection; the

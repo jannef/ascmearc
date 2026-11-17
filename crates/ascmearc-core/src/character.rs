@@ -1312,11 +1312,14 @@ mod tests {
                 )
             })
             .collect();
-        files.edit_table("creatures", |text| {
-            (bases.iter()).fold(text.to_string(), |text, (unique, base)| {
-                text.replace(unique, base)
-            })
-        });
+        // So do the quests that pay one (Sigeric's Star, #1787).
+        for table in ["creatures", "quests"] {
+            files.edit_table(table, |text| {
+                (bases.iter()).fold(text.to_string(), |text, (unique, base)| {
+                    text.replace(unique, base)
+                })
+            });
+        }
         Content::load(&files).expect("valid content")
     }
 
