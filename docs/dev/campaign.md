@@ -233,8 +233,9 @@ Factor Wulfrun's Fyrdelf chain (`lost_shaft`: reach `fyrdelf:2`, which `requires
 done, the moot's answer carried back to Wulfrun; both in `wulfrun.toml`, since `requires` names
 only quests loaded before; the letter reveals nothing: Dēopgang is not hidden and no quest
 gates it, the owner's rule; the answer reveals `skeul_hir` as given (#1760): the Skeul Hir,
-the gnomes' old long stair from Gimmwīc's arrival cave up to Lytelscræf 2, a shortcut home whose
-two ends stay floor till then, `docs/dev/overworld.md` "A hidden way with two ends"). Each reach and bring quest has a `where` for the log. The
+the gnomes' old long stair from Gimmwīc's arrival cave up through a floor of its own
+(`skeul_hir:1`, #1840) to Lytelscræf 2, a shortcut home whose two ends stay floor till then,
+`docs/dev/overworld.md` "A hidden way with two ends"). Each reach and bring quest has a `where` for the log. The
 quest objects are shared objects (`data/objects/{silver_chalice,minster_reliquary}.toml`,
 worth 0: never traded). The chalice lies on the barrow chamber's plinth, which Cealdhlāw names
 for its second floor (`[[dungeon.levels]] vaults`: certain, once, and never drawn at random); the

@@ -13,7 +13,14 @@
 //!
 //! A branch with `bottom` (a hand-made level of its campaign, `bottom = "gimmwic"`) ends in that
 //! level: its deepest level's `>` leads there, and the hand-made level's own `<` names the deepest
-//! level (checked by `Content::validate`), so it arrives on that staircase coming back up.
+//! level (checked by `Content::validate`), so it arrives on that staircase coming back up (or
+//! will, once revealed: a hidden location's stairs up count).
+//!
+//! A branch with `above` (a level of another bounded branch, `above = "lytelscraef:2"`) is a way
+//! between that level and one below: its first level's `<` leads there however the branch was
+//! entered, and that level keeps the far end of a hidden way down into it (`[[dungeon.levels]]`'s
+//! `hidden`, checked by `Content::validate`). The Skeul Hir is one, with Gimmwīc its `bottom`.
+//! A branch of one floor calls it by its own name alone ("Skeul Hir", not "Skeul Hir 1").
 //!
 //! A branch with `endless` instead of `depth` has no last floor (`world/levels/endless.rs`): every
 //! staircase makes a new floor, only the current one exists, and each floor is drawn rooms or caves
@@ -45,6 +52,7 @@
 //! hidden_per_depth = 1          # hidden features this much harder to find per level down
 //! locks_per_depth = 1           # locks this much harder to pick per level down
 //! loot = [2, 4]                 # items of loot on each level's floor; default none
+//! random_vaults = [2, 3]        # passage floors only: random vaults (one entrance); default none
 //! chests = { chance = 20, count = [1, 1] } # chests a floor gets; the default
 //! ambient = [0, 0, 0, 0]        # optional
 //! temperature = 9               # °C; default the dungeon default (10)
@@ -192,6 +200,9 @@ struct DungeonSpec {
     top: Option<String>,
     /// How many levels it has; left out of a branch with `endless`, and of a tower.
     depth: Option<u32>,
+    /// The level (another branch's) its first level's stairs up lead to, however it was entered;
+    /// default none.
+    above: Option<String>,
     /// The level (another branch's) its deepest level's stairs down lead to; default none.
     below: Option<String>,
     /// The hand-made level of its campaign its deepest level's stairs down lead to; default none.
@@ -209,6 +220,9 @@ struct DungeonSpec {
     /// How many items of loot lie on the floor of each level, `[fewest, most]`.
     #[serde(default)]
     loot: [u8; 2],
+    /// How many random vaults a passage floor stamps, `[fewest, most]`; default none.
+    #[serde(default)]
+    random_vaults: [u8; 2],
     /// How often its floors get chests; default one floor in five, one chest.
     #[serde(default)]
     chests: ChestOdds,
@@ -570,6 +584,10 @@ pub struct DungeonDef {
     /// Number of levels: `id:1` to `id:depth`. An endless branch has no last floor and 1 here:
     /// the one row of its tables, which is every floor's.
     pub depth: u32,
+    /// The level of another branch its first level's `<` leads to, however the branch was
+    /// entered: a level that keeps the far end of a hidden way down into it (checked by
+    /// `Content::validate`); `None`: the way in, or where it was entered from.
+    pub above: Option<String>,
     /// The level of another branch its deepest level's `>` leads to, which gets a `<` back up
     /// (checked by `Content::validate`); `None`: the deepest level has no way down.
     pub below: Option<String>,
@@ -609,6 +627,9 @@ pub struct DungeonDef {
     /// How many items of loot lie on the floor of each level, fewest and most (item level: the
     /// depth).
     pub loot: [u8; 2],
+    /// How many random vaults a passage floor stamps, fewest and most (`mapgen/tunnels/
+    /// passage.rs`: only vaults with one entrance); none on other generators, which draw their own.
+    pub random_vaults: [u8; 2],
     /// How often its floors get chests.
     pub chests: ChestOdds,
     /// The key to the rooms the rooms generator locks: it locks them with the
@@ -732,8 +753,16 @@ impl DungeonDef {
     }
 
     /// The display name of level `depth`, e.g. `The Depths 3`; a tower's floors count from its
-    /// ground floor, the clearing, so its depth 1 is `Drȳtorr 2`.
+    /// ground floor, the clearing, so its depth 1 is `Drȳtorr 2`; the one floor of a branch of
+    /// one is called by the branch's name alone (`Skeul Hir`).
     pub fn level_name(&self, depth: u32) -> String {
+        if self.depth == 1
+            && self.endless.is_none()
+            && self.portal.is_none()
+            && self.tower.is_none()
+        {
+            return self.name.clone();
+        }
         let floor = depth + u32::from(self.tower.is_some());
         format!("{} {floor}", self.name)
     }
@@ -850,6 +879,7 @@ impl DungeonFile {
                 ("size", spec.size.is_some()),
                 ("bottom", spec.bottom.is_some()),
                 ("below", spec.below.is_some()),
+                ("above", spec.above.is_some()),
                 ("endless", spec.endless.is_some()),
                 ("portal", spec.portal.is_some()),
                 ("secret_doors", spec.secret_doors != [0, 0]),
@@ -882,6 +912,12 @@ impl DungeonFile {
             if spec.bottom.is_some() && (spec.below.is_some() || spec.endless.is_some()) {
                 return Err(err(format!(
                     "dungeon `{id}`: `bottom` has neither `below` nor `endless` beside it"
+                )));
+            }
+            // A floor's own `<` leads where its branch says, and only a bounded one's.
+            if spec.above.is_some() && (spec.endless.is_some() || spec.portal.is_some()) {
+                return Err(err(format!(
+                    "dungeon `{id}`: `above` has neither `endless` nor `portal` beside it"
                 )));
             }
             if spec.below.is_some() && spec.endless.is_some() {
@@ -1074,6 +1110,15 @@ impl DungeonFile {
             if spec.loot[0] > spec.loot[1] {
                 return Err(err(format!("dungeon `{id}`: `loot` is [fewest, most]")));
             }
+            // Only a passage reads it (the other generators draw their own random vaults).
+            let passages = plans.iter().all(|p| p.generator == Generator::Passage);
+            if spec.random_vaults[0] > spec.random_vaults[1]
+                || (spec.random_vaults != [0, 0] && !passages)
+            {
+                return Err(err(format!(
+                    "dungeon `{id}`: `random_vaults` is [fewest, most], on passage floors only"
+                )));
+            }
             if spec.chests.count[0] > spec.chests.count[1] {
                 return Err(err(format!(
                     "dungeon `{id}`: `chests.count` is [least, most]"
@@ -1106,6 +1151,7 @@ impl DungeonFile {
                 depth: depth_of,
                 bosses,
                 dread,
+                above: spec.above,
                 below: spec.below,
                 bottom: spec.bottom,
                 endless: spec.endless.map(|e| Endless {
@@ -1129,6 +1175,7 @@ impl DungeonFile {
                 hidden_per_depth: spec.hidden_per_depth,
                 locks_per_depth: spec.locks_per_depth,
                 loot: spec.loot,
+                random_vaults: spec.random_vaults,
                 chests: spec.chests,
                 key,
                 spawning: spawning.map(|(_, s)| s),

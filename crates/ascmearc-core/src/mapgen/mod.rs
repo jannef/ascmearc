@@ -183,6 +183,8 @@ pub(crate) struct Needs<'a> {
     /// Vaults (ids) the level stamps for certain (its branch level's `vaults`): a generator
     /// that cannot fit one fails the attempt.
     pub vaults: &'a [String],
+    /// How many random vaults a passage stamps, fewest and most (the branch's `random_vaults`).
+    pub random_vaults: [u8; 2],
 }
 
 /// A level under construction.
@@ -536,11 +538,15 @@ pub fn generate_for(
         creatures: &def.creatures,
         key: def.key,
         vaults: boss.map_or(def.vaults(depth), |b| std::slice::from_ref(&b.vault)),
+        random_vaults: def.random_vaults,
     };
     // A Pit's floors lead only to its own: the neighbours are the floor's
     // siblings, and its first floor's `<` is where it was entered from.
     let up_to = match (depth > 1, def.endless.is_some() || def.below.is_some()) {
         (true, _) => Some(sibling(id, depth - 1)),
+        // A branch between two levels climbs to its `above` however it was entered (the
+        // Skeul Hir, entered from Gimmwīc, climbs to Lytelscræf 2).
+        (false, _) if def.above.is_some() => def.above.clone(),
         // However the first floor was reached (from the second, it may be), it climbs out: an
         // endless branch's, and a way up's.
         (false, true) => content.way_into(id).map(str::to_string),

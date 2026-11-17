@@ -95,15 +95,17 @@ A hidden way with two ends (#1760): a `[[dungeon.levels]]` row of one level may 
 { id, terrain, to, name }` (no `opens`; `content/level.rs::parse_generated_hidden`,
 `DungeonDef::hidden_location`, `Content::generated_hidden_locations`), the far end of a hand-made
 level's hidden location of the same id: `Content::validate` (`check_generated_hidden`) asks that
-twin, each leading to the other's level, and one far end an id. The generator picks its cell as
+twin, each leading to the other's level or both to the one floor of a branch between them (its
+`above` the generated end's level, its `bottom` the hand-made one's), and one far end an id. The generator picks its cell as
 the level is made, revealed or not (`mapgen/hidden.rs`, `docs/dev/mapgen.md`), and keeps it in
 the template's `hidden`, so the one reveal by id opens both ends, a far end on a level made before
 it too, and a level made after it has it open from the start. The two ends' links carry no
 name: they go by the levels they lead to ("You climb the stairs to Lytelscræf 2."). The
-Ascmearc's one is the Skeul Hir, Gimmwīc's `H` (stairs up, `to = "lytelscraef:2"`) and
-Lytelscræf 2's end (stairs down to `gimmwic`), revealed by `gnome_reply` as given. Tests:
-`world/campaigns/skeul_hir_tests.rs` (both ends before and after, a floor made before and after
-the reveal on the same cell, both directions, the content checks).
+Ascmearc's one is the Skeul Hir, Gimmwīc's `H` (stairs up) and Lytelscræf 2's end (stairs down),
+both to `skeul_hir:1`, the stair's own floor between them (#1840, `docs/dev/mapgen.md` "The Skeul
+Hir"), revealed by `gnome_reply` as given. Tests: `world/campaigns/skeul_hir_tests.rs` (both ends
+before and after, a floor made before and after the reveal on the same cell, both directions
+through the stair's floor, its `<` to Lytelscræf 2 however entered, the content checks).
 `PerceptionView::known_locations` (the `locations` dump layer, JSON `known_locations`) lists the
 overworld's ways in that the player sees or remembers. Tests: `world/levels/reveal_tests.rs` (a fixture
 hiding a barrow in the Wildlands, revealed by the hermit's `depths` quest; the built-in Wildlands

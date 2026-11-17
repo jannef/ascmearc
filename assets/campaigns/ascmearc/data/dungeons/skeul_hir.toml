@@ -1,0 +1,59 @@
+# The Skeul Hir, "the long stair" in the deep gnomes' Cornish (#1760, #1840; the fields:
+# data/dungeons.toml): the gnomes' old way from Gimmwīc up through the rock to the mountain's
+# foot, cut long ago and long forgotten. One floor of one hewn way (`passage`, #1839): a single
+# winding climb from stair to stair, turning at right angles, opening into a hewn hall here and
+# there, with dead-end side cuts and no second route. Both ends are hidden until Headman Peran
+# gives the moot's answer (data/quests/wulfrun.toml `gnome_reply`): Gimmwīc's arrival cave keeps
+# the bottom (levels/gimmwic.toml's `H`, this floor's `bottom`), Lytelscræf 2 the top
+# (data/dungeons/lytelscraef.toml's `hidden`, this floor's `above`), and the one reveal opens both.
+#
+# The stair-cutters left more than the stair: their waystation halfway up, Powesva an Skeul
+# (vaults/powesva_an_skeul.toml), stamped here for certain, and the caches and rooms a forgotten
+# way gathers (two or three random vaults, each at the end of a cut of its own), with more loot
+# and a chest or two besides.
+
+[[dungeon]]
+id = "skeul_hir"
+name = "Skeul Hir"
+arrival = "Steps cut for small feet climb away into the dark, worn hollow in the middle."
+generator = "passage"
+depth = 1
+# Long and winding: half again as wide as Ūtgang's shaft, and taller.
+size = [120, 30]
+above = "lytelscraef:2"
+bottom = "gimmwic"
+# The gnomes hide their ways and guard them: Dēopgang's gallery traps, few secret doors.
+traps = ["arrow", "spear", "pit", "alarm"]
+secret_doors = [0, 1]
+# Rewarding (#1840): about twice Ūtgang's loot, a chest or two for certain, and random vaults
+# beside the waystation (only vaults with one entrance, so no vault opens a second route).
+loot = [6, 10]
+chests = { chance = 100, count = [1, 2] }
+random_vaults = [2, 3]
+temperature = 9
+# Between the deep's silver and gold and the mountain's foot's common ores.
+ores = ["copper", "tin", "silver"]
+# Danger 14, Dēopgang's first floor: the gnomes' own cut way, as their galleries are, between the
+# starter cave above (Lytelscræf, danger 1 to 3) and the deep town below. The way opens only to a
+# player who has walked Dēopgang to its bottom (danger 24 there), so it is no trap for a
+# newcomer, and a climb home that still asks something. Shut for generations, it holds none of
+# the deep's raiders (no drow, no duergar war parties) and nothing strays in: only what came in
+# through the rock or never left, the stone's own (its elementals, the knockers), the deep's
+# lurkers (the rust monster, the basilisk, the black pudding, the meenlock), the trolls of the
+# dark, and the dead of old cave-ins.
+danger = 14
+population = [
+    "rust_monster", "earth_elemental", "troll", "knocker", "duergar_skeleton", "basilisk",
+    "meenlock", "rotting_troll", "black_pudding", "fetch", "revenant",
+]
+stray = 0
+# One way, so whatever lives here stands in it: a thinner population than Ūtgang's.
+population_count = { per_1000 = 25, least = 10, most = 28 }
+# No traders on a shut way, and no special room.
+shops = { chance = 0 }
+room_effects = { chance = 0 }
+
+# Its one floor: the waystation, for certain.
+[[dungeon.levels]]
+from = 1
+vaults = ["powesva_an_skeul"]
