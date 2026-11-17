@@ -33,9 +33,10 @@ weight = 68000
 stats = { strength = 9, dexterity = 12, toughness = 12, intelligence = 19, willpower = 18, presence = 15 }
 base_hp = 22
 skills = { concentration = 55, spellcraft = 65, decipher_script = 70 }
-# His corpse teaches Spellcraft, as every quest wizard's does (#1820): for whoever would have it
+# His corpse teaches Spellcraft, as every quest wizard's does (#1820), and Decipher script, as
+# every literate caster's does: for whoever would have it
 # before the quarrel pays it.
-on_eat = { skills = { spellcraft = { gives = 5, up_to = 40 } } }
+on_eat = { skills = { spellcraft = { gives = 5, up_to = 40 }, decipher_script = { gives = 5, up_to = 40 } } }
 weapon_skills = { staves = 3 }
 [[creature.gear]]
 chance = 100
