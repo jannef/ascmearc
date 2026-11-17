@@ -1,16 +1,17 @@
 # Fyrdelf, "the fire delving" (docs/design/campaign.md §7.1; the fields: data/dungeons.toml): the
 # duergar's mine under the hills of Ascdūn, below the volcano, the deepest of the Ascmearc's
-# first dungeons. Its way in on the overworld is hidden until a quest reveals it. Four levels of
-# galleries, then eight of the deep workings, hotter the deeper they go, and the fire drake's
-# hoard at the bottom.
+# first dungeons. Its way in on the overworld is hidden until a quest reveals it. A worked mine
+# all the way down (the `mines` generator, #1836): four levels of galleries, then eight of the deep
+# workings, hotter, more open, and with more lava the deeper they go (the generator's parameters
+# rise from its first floor to its last), and the fire drake's hoard at the bottom.
 
 [[dungeon]]
 id = "fyrdelf"
 name = "Fyrdelf"
 arrival = "The galleries smell of sulphur."
-generator = "rooms"
+generator = "mines"
 depth = 12
-size = [80, 21]
+size = [100, 36]
 traps = ["arrow", "spear", "fireball", "lightning_bolt", "alarm"]
 # Few secret doors (the duergar dig, they do not hide), hidden things harder to find deeper down,
 # and the hardest locks of the three dungeons.
@@ -65,8 +66,9 @@ population = [
     "lemure", "imp", "goblin_wizard", "goblin_firebomber", "meenlock",
     "draugr", "barghest", "hand_of_glory", "vampire_spawn", "gallows_dead",
 ]
-# How many: the default, 35 a thousand walkable cells, 25 to 80. A gallery floor (about 350 cells)
-# gets the least, 25, as Cealdhlāw's passages do; the deep workings (about 3 000) the ceiling, 80.
+# How many: the default, 35 a thousand walkable cells, 25 to 80. A gallery floor (about 600 cells)
+# gets the least, 25, as Cealdhlāw's passages do; the deep workings open up from about 1 600 cells
+# on the fifth floor (about 60) to about 2 900 at the bottom (the ceiling, 80).
 
 # The duergar smiths' armouries (#487, animated objects A5): a fifth of the special rooms, racks of
 # their old work that wakes. An armoury draws its sleepers four dangers deeper than the floor, so
@@ -75,8 +77,8 @@ population = [
 # danger 20.
 room_effects = { favoured = { armoury = 20 } }
 
-# The duergar traders: every gallery floor with a fitting room has a general
-# store kept by a duergar. Shops stand on rooms levels only, so the deep workings have none.
+# The duergar traders: every gallery floor with a fitting chamber has a general store kept by a
+# duergar. They keep to the galleries: the deep workings' rows have `shops = { chance = 0 }`.
 shops = { chance = 100, kinds = ["general_store"], keeper = "duergar_trader", names = [
     "Bardek", "Drekmar", "Gorvin", "Holgrak", "Murgrim", "Skorvald",
     "Baldra", "Dregga", "Gunnra", "Hulda", "Krella", "Orna",
@@ -88,14 +90,14 @@ from = 1
 to = 4
 vaults = ["foremans_cabin"]
 
-# The deep workings: caverns, warmer with every level nearer the volcano's heart, and the dread
+# The deep workings: wider, warmer with every level nearer the volcano's heart, and the dread
 # oftener (docs/design/monster-dread.md §8; the galleries keep the default, one draw in 100):
 # one draw in 75 on 5 to 8, 60 on 9 and 10, 50 on 11, 40 at the drake's hoard.
 # The first of them: Alberich's delving, where a dwarven miser teaches Mining for gold (#1391).
 [[dungeon.levels]]
 from = 5
-generator = "caves"
 size = [120, 60]
+shops = { chance = 0 }
 temperature = 16
 vaults = ["alberichs_delving"]
 dread_one_in = 75
@@ -103,16 +105,16 @@ dread_one_in = 75
 [[dungeon.levels]]
 from = 6
 to = 8
-generator = "caves"
 size = [120, 60]
+shops = { chance = 0 }
 temperature = 16
 dread_one_in = 75
 
 [[dungeon.levels]]
 from = 9
 to = 10
-generator = "caves"
 size = [120, 60]
+shops = { chance = 0 }
 temperature = 20
 dread_one_in = 60
 
@@ -120,8 +122,8 @@ dread_one_in = 60
 # (docs/design/prestige-classes.md §8).
 [[dungeon.levels]]
 from = 11
-generator = "caves"
 size = [120, 60]
+shops = { chance = 0 }
 temperature = 20
 vaults = ["hunters_statue"]
 dread_one_in = 50
@@ -130,8 +132,8 @@ dread_one_in = 50
 # stairs up into Ūtgang's bottom, near the hoard (data/dungeons/utgang.toml).
 [[dungeon.levels]]
 from = 12
-generator = "caves"
 size = [120, 60]
+shops = { chance = 0 }
 temperature = 24
 vaults = ["drakes_hoard"]
 dread_one_in = 40
