@@ -1,0 +1,6 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ You set to work on the ruby-pommelled mithril dagger at the anvil. You have made a ruby-pommelled
+ mithril dagger.

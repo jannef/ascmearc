@@ -178,7 +178,7 @@ pub fn route_keys(
             ScreenAction::Stay => {}
             ScreenAction::Close => screens.stack.close(),
             ScreenAction::Act(action) => {
-                screens.stack.close();
+                screens.stack.close_acted();
                 if let Some(dialog) = play.act(action) {
                     screens.ask(dialog);
                 }
