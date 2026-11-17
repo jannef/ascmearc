@@ -1,7 +1,7 @@
-# Drytorr, "the wizard's tower" (#1784; docs/design/wizard-tower.md §3, §8, §9; the fields:
+# Drȳtorr, "the wizard's tower" (#1784; docs/design/wizard-tower.md §3, §8, §9; the fields:
 # data/dungeons.toml): Master Ordgar's tower in Holegnwudu. Four floors: the ground floor inside
 # the tower on its clearing (levels/drytorr.toml), two generated trap floors above it
-# (`drytorr_tower:1` and `:2`, "Drytorr 2" and "3"), and the hand-made top, the wizard's study
+# (`drytorr_tower:1` and `:2`, "Drȳtorr 2" and "3"), and the hand-made top, the wizard's study
 # and quarters with the balcony (levels/drytorr_top.toml). Each floor's `<` climbs, its `>` goes
 # back down; the floors are the clearing's size, the tower on the same cells, and their windows
 # look out over the wood below (docs/dev/towers.md).
@@ -13,7 +13,7 @@
 
 [[dungeon]]
 id = "drytorr_tower"
-name = "Drytorr"
+name = "Drȳtorr"
 kind = "tower"
 generator = "tower"
 floors = 4

@@ -1,8 +1,8 @@
-# A dev scenario of the Ascmearc (#1784): on the track into Drytorr's clearing, Master Ordgar's
+# A dev scenario of the Ascmearc (#1784): on the track into Drȳtorr's clearing, Master Ordgar's
 # tower before you. Mid-morning, so the tower's shadow lies across the clearing and the wood is
 # seen from the windows above. Walked off its edge, the run comes out on the tower's cell, still
 # hidden until the wise-woman's rowan quest marks it.
-name = "Drytorr"
+name = "Drȳtorr"
 description = "The clearing in the holly wood where Master Ordgar's tower stands: its trap halls, the floors above, and the wizard at the top."
 start_level = "drytorr"
 seed = 1

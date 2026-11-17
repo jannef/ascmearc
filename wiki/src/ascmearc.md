@@ -58,9 +58,9 @@ village, the wood, and the fair folk, and will [talk](npcs.md) of them. A girl o
 [escort](quests.md#kinds-of-quests) of the march. Like the town, Holtwīc has no
 [stairs](terrain.md#stairs); walk off its edge to leave.
 
-### Drytorr
+### Drȳtorr
 
-**Drytorr**, the wizard's tower, stands in a clearing at the western edge of the holly wood,
+**Drȳtorr**, the wizard's tower, stands in a clearing at the western edge of the holly wood,
 north-west of the fairy mound. It is a [hidden location](overworld.md#hidden-locations): Gammer
 Wynflæd marks it on your map when she sends you there with her rowan, once the girl from the
 village is home ([quests](quests.md#who-gives-quests)). **Master Ordgar**, the wizard, lives at

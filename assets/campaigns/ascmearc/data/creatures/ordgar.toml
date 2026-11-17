@@ -1,7 +1,7 @@
 # Campaign-owned (docs/design/campaign.md §3.6): the Ascmearc's own type, which only its files
 # may name.
 #
-# Master Ordgar of Drytorr (#1784; docs/design/wizard-tower.md §10): the scholar of the three
+# Master Ordgar of Drȳtorr (#1784; docs/design/wizard-tower.md §10): the scholar of the three
 # wizards of the march, who keeps the top floor of his tower in the holly wood (his npc dialogue,
 # campaigns/ascmearc/data/dialogue/drytorr.toml). Once a run (`unique`), in no population: only
 # the tower's top floor places him. Peaceful, but a caster of some power if crossed: wards and

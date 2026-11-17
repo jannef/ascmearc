@@ -1,4 +1,4 @@
-# Drytorr's people (#1784; docs/design/wizard-tower.md §10): Master Ordgar, the wizard who keeps
+# Drȳtorr's people (#1784; docs/design/wizard-tower.md §10): Master Ordgar, the wizard who keeps
 # the top floor of the tower in the holly wood, placed by its legend (levels/drytorr_top.toml) with
 # `npc = "ordgar"`. He speaks posh, as the better-off do (docs/dev/npcs.md "Speech by race and
 # station"): the scholar of the three, his sentences long and exact, with a dry turn. Gammer
@@ -29,7 +29,7 @@ mutter = { chance = 2, verb = "murmurs", lines = [
 [[dialogue.topic]]
 id = "drytorr"
 name = "The tower"
-reply = "Drytorr: the wizard's tower, in the old tongue, which is rather on the nose. I raised it on old stones, and I set the traps on the stairs myself. I find that callers who survive them have generally come about something worth hearing."
+reply = "Drȳtorr: the wizard's tower, in the old tongue, which is rather on the nose. I raised it on old stones, and I set the traps on the stairs myself. I find that callers who survive them have generally come about something worth hearing."
 
 [[dialogue.topic]]
 id = "holly_wood"
