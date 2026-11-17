@@ -42,8 +42,9 @@ pub(super) fn uniques(content: &Content) -> String {
     out
 }
 
-/// The creature types whose gear always or sometimes gives them unique `u` ("Black Wystan"), or
-/// "-" when it lies elsewhere (a level's pile or legend).
+/// The creature types whose gear always or sometimes gives them unique `u` ("Black Wystan"), the
+/// traders who may offer it, and the quests that pay it, or "-" when it lies elsewhere (a level's
+/// pile or legend).
 fn carried_by(content: &Content, u: &UniqueDef) -> String {
     let who: Vec<String> = (content.creature_defs().iter())
         .filter(|c| order::described(content, c.campaign.as_deref()))
@@ -55,6 +56,7 @@ fn carried_by(content: &Content, u: &UniqueDef) -> String {
         })
         .map(|c| c.name.to_string())
         .chain(offered_by(content, u))
+        .chain(rewarded_by(content, u))
         .collect();
     if who.is_empty() {
         "-".into()
@@ -77,6 +79,22 @@ fn offered_by(content: &Content, u: &UniqueDef) -> Vec<String> {
                 capital(&who),
                 offer.uniques.len()
             ))
+        })
+        .collect()
+}
+
+/// The quests whose reward is unique `u`, or a taker's reward (#1787): "Master Sigeric's pay in
+/// The wizards' quarrel".
+fn rewarded_by(content: &Content, u: &UniqueDef) -> Vec<String> {
+    (content.quests().iter())
+        .filter(|q| order::described(content, q.campaign.as_deref()))
+        .flat_map(|q| {
+            let own =
+                (q.reward.items.contains(&u.stack)).then(|| format!("the reward of {}", q.name));
+            let takers = (q.quarrel.takers.iter())
+                .filter(|t| t.reward.items.contains(&u.stack))
+                .map(|t| format!("{}'s pay in {}", content.speaker_called(t.speaker), q.name));
+            own.into_iter().chain(takers).collect::<Vec<_>>()
         })
         .collect()
 }

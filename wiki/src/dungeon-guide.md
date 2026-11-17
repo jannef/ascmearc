@@ -150,9 +150,23 @@ Wulfrun marks it on your map as you take up her [quest](quests.md) **The lost sh
 it once you have been four floors down into Cealdhlāw for the reeve, and gives it to you only once
 you have reached level 5.
 
-Its first four floors are the galleries: rooms and passages at 10 °C. The eight below are the deep
-workings: wide caves that grow hotter toward the volcano's heart, 16 °C, then 20 °C, and 24 °C at
-the bottom. Its traps are [arrows](traps.md#trap-arrow), [spears](traps.md#trap-spear),
+It is a worked mine all the way down, and it changes as you go. Its first four floors are the
+galleries, at 10 °C: long straight passages, propped with
+[timber](terrain.md#terrain-timber-wall) in places, small chambers cut beside them, and dead ends
+where the digging stopped, now and then with [rubble](terrain.md#terrain-rubble) at the face. The
+eight below are the deep workings, which grow hotter toward the volcano's heart: 16 °C, then
+20 °C, and 24 °C at the bottom.
+
+The deeper you go, the wider the passages and chambers get, and the more the natural rock breaks
+through into rough caverns. [Lava](terrain.md#terrain-lava) comes from about the fourth floor: a
+small pool or two at first, then more and bigger pools, and from about the eighth floor channels
+that wander across the floor, wider at the bottom. Exactly: the mine opens up evenly from the
+first floor to the twelfth, and its lava grows with the square of the way down, so the sixth floor
+has about a fifth of the bottom's share and the ninth about half. Lava never cuts any part of a
+floor off and never lies within two steps of a staircase; where a channel crosses a passage, the
+passage stays as a bridge.
+
+Its traps are [arrows](traps.md#trap-arrow), [spears](traps.md#trap-spear),
 [fireballs](traps.md#trap-fireball), [lightning](traps.md#trap-lightning-bolt), and
 [alarms](traps.md#trap-alarm). Few of its [doors are hidden](doors.md#secret-doors), and its locks
 are the hardest to pick of the three dungeons.
@@ -207,9 +221,9 @@ Every gallery floor holds a **foreman's cabin**: a timber-floored lodging where 
 keeps watch. Behind a plank wall it keeps a spare [pick-axe](digging.md#digging), his lamp, and a
 [brass key](doors.md#keys) to the delf's locked rooms.
 [Duergar traders](creatures.md#creature-duergar-trader) keep [general stores](shops.md) in the
-galleries, where a room is fit for one (about one gallery floor in four).
+galleries: every gallery floor has one, in one of its chambers, and the deep workings have none.
 
-On the eleventh floor, in a small chamber off a cave passage, stands a **hunter's statue**: a
+On the eleventh floor, in a small chamber off a passage, stands a **hunter's statue**: a
 [worn statue](terrain.md#terrain-statue) of a hooded figure on a raised floor between two torches,
 and nothing else. Coming beside it reads its plinth: *"Letters are cut deep into the plinth, in the
 old tongue: LĪF ǢR DĒAÞE. Below, in a later hand: 'Life before death. So the hunters swore, to the

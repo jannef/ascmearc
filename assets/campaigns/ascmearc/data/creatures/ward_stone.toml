@@ -1,0 +1,42 @@
+# Campaign-owned (docs/design/campaign.md §3.6): the Ascmearc's own type, which only its files
+# may name.
+#
+# The ward-stone (#1823; docs/dev/towers.md "Drȳtorr"): a waist-high stone cut with a wizard's
+# ward, set where callers pass. It never moves (`rooted`); its glyphs catch the eye of whoever it
+# sees and make them sluggish, and it sparks at whoever comes beside it. One of the tower folk:
+# drawn only by the towers' floors, never a stray (`stray = false`).
+[[creature]]
+id = "ward_stone"
+level = 5
+xp = 35
+rarity = "uncommon"
+stray = false
+name = "ward-stone"
+glyph = "0"
+fg = "#9aa8d0"
+glow = 0.2
+faction = "animated"
+tags = ["construct"]
+alignment = "neutral"
+vision = "darkvision"
+sight = 8
+rooted = true
+budge = "never"
+hearing = 8
+weight = 400000
+stats = { strength = 12, dexterity = 8, toughness = 18, intelligence = 2, willpower = 16, presence = 2 }
+base_hp = 25
+natural = { defence = 0, protection = 2, name = "stone" }
+resist = { slashing = 25, piercing = 50 }
+immune = ["poison", "diseased", "bleeding", "electricity"]
+corpse = false
+blood = "none"
+[creature.attack]
+damage = "1d8"
+damage_type = "electricity"
+name = "ward"
+verb = "sparks at"
+[creature.gaze]
+range = 6
+cooldown = 18
+riders = [{ status = "sluggish", chance = 50, severity = 1 }]

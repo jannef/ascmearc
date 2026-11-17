@@ -43,7 +43,9 @@ stomach empties, on top of the race's and the talent's (see [Magic items](magic-
 However much of it you wear, you still get a little hungry.
 
 A ratfolk who eats those who think gets hungry faster as [the
-craving](food.md#the-ratfolks-craving) grows.
+craving](food.md#the-ratfolks-craving) grows. From their hundredth such meal hunger hurts them
+twice as hard, the craving takes Lean and every other talent that eases hunger from them for
+good, and magic that sustains them does nothing.
 
 Fighting burns a little more. Each [blow](combat.md#hitting), [shot, or
 throw](ranged.md#shooting-and-throwing) costs a few points (see the facts above).

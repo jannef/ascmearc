@@ -4,14 +4,18 @@
 # Wynflæd's "A sprig of rowan"), arriving on the track from the south (@). Like any outdoor area
 # it is left by walking off its edge (or with `<` when no enemy is about and not on the stair).
 #
-# The tower (W, 21×13 at (20, 4)–(40, 16)) is dressed stone no pick or blast breaks, roofed, with
-# unglazed windows (=): from outside they show the hall, from inside the wood. The box of its walls
-# is the footprint every floor above is built on (data/dungeons/drytorr_tower.toml). Its inside
-# is the ground floor, the first of the wizard's trap halls: in through the door (+) from the
-# track, the south hall, with two hidden traps across it (A, S); the way on at its west end; the
-# north hall, where three bays in the partition hold a known trap each (an arrow trap, a spear
-# trap, a pit) with something left behind it to tempt a caller; and the stair up (<) in the middle
-# of the north wall. Wall torches (t) light it; a brass plaque by the door is Ordgar's.
+# The tower (W, 41×19 at (20, 6)–(60, 24); #1823 made it this big, so the generated floors above
+# have room for rooms and halls) is dressed stone no pick or blast breaks, roofed, with unglazed
+# windows (=): from outside they show the halls, from inside the wood. The box of its walls is the
+# footprint every floor above is built on (data/dungeons/drytorr_tower.toml). Its inside is the
+# ground floor, the first of the wizard's trap halls, in three bands: in through the door (+)
+# from the track, the entrance hall, with two hidden traps across it (A, S), the porter's lodge
+# west of it and a store east; the way on at its west end, into the long gallery, where statues
+# (I) stand and two gargoyles (G) sit among them as still; the way on at the gallery's east end,
+# into the north hall, where three bays in its south side hold a known trap each (an arrow trap,
+# a spear trap, a pit) with something left behind it to tempt a caller, the library west of it
+# and a workshop east; and the stair up (<) in the middle of the north wall. Wall torches (t)
+# light it; a brass plaque by the door is Ordgar's.
 #
 # The level's danger (5) is for the traps' growth (`TrapDef::effect_at`); a level's danger needs
 # a population, so the wood sends a few of the fair folk's small fey, sprites and pixies, now and
@@ -26,30 +30,38 @@ population_count = 3
 stray = 0
 spawn = { every = "30m", chance = 40, cap = 3 }
 map = '''
-FTbPbTTTTTTTFPTFPTT.TTF..FT*.*..PFT.TbFb..TFTFTPTPFFFTPTTTTb
-bFFFFFTPTTFbFTTPPTbF.PF.*..........FP*FPb*.bFFTTTTFTTFFTTFFT
-FbPTTTTFPTTPTFTTPFTbP.F...*.*........*T..P*PPFbFFbTPPFPTFPTF
-PPFFFFTFTTPTTbPP.F*.......*..*.............P*PFTFTPTTFTTPTPb
-TFFTTTFTTPTbFbP*T...WWW=WW=WW=W=WW=WW=WWW.FFFTbTTPTTTTTTTTTF
-TTFFTPTTTTTF.FbF.*..Wt::::::::<::::::::tW...PT*FTTPTTFTFPFTT
-PTTbTPPFFFPFT*PT....=:::::::::::::::::::=....F*.TFTTPTbTbTbF
-TbFTPFFbFTT*F.FP....W:::::::::::::::::::W.....T*FTPTFbFPTTPT
-TPTTFTFTTbTF*FT*....W::::WaW::WsW::WpW::W....*bbFbT.TPFPTTTb
-TPTFTFTTFTTPFF......W::::W!W::W?W::W$W::W......TFbTPbFFTFTbT
-FTTbPbTFTFbP.Tb.....W::WWWWWWWWWWWWWWWWWW...F.FTbTFTbTTPTPTT
-PTFFPTFPPFF.FFP..*F.WA:::::::::::::::::tW....bTFFbFFTPTTFFFT
-TTTbPFTTTF*TFTP.....=:::::::::::::::::::=.....bTPT*PTTTTFTPF
-FFTTTPbPTTbTP*......W:::::S:::::::::::::W..*.F.*b.FbFFbPTTFP
-bPTFTTPPFTbTT.PT....W:::::::::::::::::::W...bF.FPFbTPPTTPTFb
-TTTTFbPPTFT.P*.F....Wt::::::::::::::::::W*..TbFPFFFTTFPFFTbT
-PbFTPFbTTTPT*F.bFT..WWW=WW=WWW+QWW=WW=WWW.*....F.bPbTPTFFTTP
-FPFTTFTTPTFTPFF*TF.*.........*,....*......TFbFTTTTbTbPFTFTTP
-TTPTPPbTFbTPFTFF*PFT.b..F.....,......*.PFFFTFTTbPbPFTTFTFTPT
-TPTTFTbTTTTTTFFFPFFT*FT..*....,......***Tb*.FFTFPFTbTTbPTTTT
-TTTTPFTbTTTTTTTTPFPbFFFTFb*..*,FFFFTFbbTb*bPTPTTTTPTTFTFTTPP
-FTFTFFFTTTTbTPPTTTTb.TFb.FPF.F,..TF..F*TFTTPFPTTbbbFPTbTTPTT
-bFFbPPPFbTTPTPTbTPTPTTFT..Fb..@.FFbFTFFTbFPTTTTPFTPTTTTFPTFb
-FPTTTFTPTTTPTbTPTFTTbFTTPbPF*.,..TTFTPPPFTPTFTFTTbFPTPTFTFFT
+TTbTTFFbTPTPFFbTFTFFTTTbTTTbTbP*T.*FFTTF.TbFPT.FFTFTTTTFbTFTTPTbPPFTFFbFPPPTFbPT
+TFTbTFPPTPFTFPPFPTPPTFTTFTTTFTTTTFF............TTF*TTTbPbFTbTPTTFTFTTPTTbFPbFbPF
+TTTFbFFPFTPFTPbTPTTTTbT*TF.Fb.*........*b.........F.Fb**.TFbbPTbTTFPPbTTFbPFFTTF
+TPTPFPTTTFTFTFFPPTTTTTP....F................*...*.....**.FT.FTTFTFTPFPPTFTPPFTTP
+PbFFTTTTTFTPTFbFTT....T.F.*.....b........*.....*.....*......b..TTTFFTTPPPFFFbFFT
+TFFbFTFTbTFTTFFb..FT.T..*........*...........*..........*....F..F*FTTFTFTTTFPTTT
+FPPPTFFFTTTPTTP.TTbFWWWWWWWWW=WW=WW=WW=WW=WW=WW=WWWWW=WW=WWWW...bFTbbTFTFTFTPFTF
+TTFTFTTFPTFTFbb.T...Wt:hhhhhh:Wt::::::::<::::::::tW::::::::tWb*..bP..bTbTFPTTTTP
+bTbFFPFPTTTTF*......W:::::::::W:::::::::::::::::::W:::::::::W......TFP*TTTFTbPbF
+TPTPTTTFTbTT........Wh::::::::+:::::::::::::::::::+:KKKKK::hW...**F.b*FTTTTTTFPF
+TTFPFFTTTbTT**F..*.*Wh:::dd:::W:::::::::::::::::::W::::::::hW*........TTTbPPTFFF
+TTTFbTTPPb.F.....*..Wh::::o:::W::WaW:::WsW:::WpW::W::::::::hW.........T*TbbPPTTP
+FFTTFFFFTTFb..b*....Wh::::::::W::W!W:::W?W:::W$W::W:::::B:::=.....b..*..FTPFTFTP
+TFPFTTFTFFbF........WWWWWWWWWWWWWWWWWWWWWWWWWWWW:WWWWWWWWWWWW.........*bPPPFTTPF
+TTFbPFPbTF........*.Wt::::I::::::::G::::I:::::::::::::I:::::W..*....*...TFTPTTPP
+PFFFTFFTTF.F..*.....=:::::::::::::::::::::::::::::::::::::::=.*..........TPFTFFF
+PPPTPTbTTFb.T*......W:::::::::::::::::::::::::::::::::::::::W...*........*PTPPFP
+FFTFPTTTTT.b....*b*.W:::::I:::::::::::::t::::G::::::::I::::tW.........TTTTFTTPTb
+PTTTPTTTTFT.........WWWWWWWWWWWW:WWWWWWWWWWWWWWWWWWWWWWWWWWWW...........FPbPTFFF
+TPPFTFTbb*........*.W:::::::::W::::::::::::::::::tW::::::::hW........FbF.TTFFTTF
+TTFTFTbTb..F.F....*.W:zz::::::W::S::::::::::::::::W::::::::hW...*...FT.TTFPTTTPT
+bTPTFbFPPFT.TTT.....=:::::::::+:::::A:::::::::::::+::hhhh::hW.*..b..b.b.PFFFTbTP
+TbFbbFbbFFTTT.......W:::::do::W:::::::::::::::::::W::::::::hW.....*..FbFTTPbTTTb
+TTTPPbbFTPFbPF*F....Wt::::::::Wt::::::::::::::::::W:t::::::hW.....F*TFTbTbTFbTFF
+FTTTTFTFFTPTPPT.b.*.WWW=WW=WW=WW=WW=WW=W+QWW=WW=WWWWW=WW=WWWW....FbFT.TFbPbbbFFT
+PFFTTFTTFFFPPT.FTT.......*..*.......*...,....*..................FFFbTFPFTTPPbTTT
+TTFPPPTbTFPPTTFFTT...FF..*...*..........,....b...............T..FTbFTTbFPFTTTTbF
+FTFTPFFPbFFTTTTPT.b.F.*..*....*..*......,..*.......b*.*..*F...b.PTFTTTTTTFFbTTTb
+PTTTFPFTFTTbTTTTFFFF.b.T...b*.*...b.....,........b...*..b.TP.*bPPPFPPTFTFFTFPTTT
+TbPTFFTbTTTFTFFbFTTPFP.T.b...F*....*....,.....b*...b..*FFTTFFTbFFTFTFTFTTTFTFFTT
+TTTTFTFFTTTPTFbFFFTTTFFTFTTTTPF....FFb.b@*.b.bF....bbTFFTTTFbTTFFTTPbFTTPFPFFPTF
+TFPbTbTTTTTbFTFTTTPFFbPTTTTTFTTbTbb*bbT*,.TFb.bTPTTPFPPbTTPTTPTFTTTTTbTTPFPFTTbP
 '''
 
 [legend]
@@ -65,6 +77,15 @@ FPTTTFTPTTTPTbTPTFTTbFTTPbPF*.,..TTFTPPPFTPTFTFTTbFPTPTFTFFT
 "=" = "window"
 "+" = "door_closed"
 "t" = "sconce"
+"I" = "statue"
+"h" = "shelves"
+"d" = "table"
+"o" = "stool"
+"z" = "bed"
+"K" = "workbench"
+"B" = "brazier"
+# Two of the gallery's carvings are gargoyles, waiting.
+"G" = { terrain = "tower_floor", creature = "gargoyle" }
 "@" = { terrain = "dirt_road", spawn = "player" }
 # The stair up, through every floor of the tower (data/dungeons/drytorr_tower.toml).
 "<" = { terrain = "stairs_up", to = "drytorr_tower:1" }
@@ -77,6 +98,6 @@ FPTTTFTPTTTPTbTPTFTTbFTTPbPF*.,..TTFTPPPFTPTFTFTTbFPTPTFTFFT
 "!" = { terrain = "tower_floor", objects = ["potion_of_healing"] }
 "?" = { terrain = "tower_floor", objects = ["scroll_of_identify"] }
 "$" = { terrain = "tower_floor", objects = ["gold_coin*25"] }
-# The south hall's hidden traps, across the way from the door to the way on.
+# The entrance hall's hidden traps, across the way from the door to the way on.
 "A" = { terrain = "tower_floor", trap = "arrow" }
 "S" = { terrain = "tower_floor", trap = "spear" }

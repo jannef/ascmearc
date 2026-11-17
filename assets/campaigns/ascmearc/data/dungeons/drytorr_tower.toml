@@ -7,9 +7,12 @@
 # look out over the wood below (docs/dev/towers.md).
 #
 # Pitched straight after Ælfhām (4 to 6): the ground floor's traps at danger 5, the trap floors at
-# 6 and 7. The wizard's household keeps them: his books, brooms, candlesticks, chairs, coat
-# stands, lanterns, and rugs, gone lively, and now and then a lesser earth elemental bound to the
-# stones. Arrow and spear traps, alarms, and pits, all hidden.
+# 6 and 7. The tower is big (41×19, #1823), so each trap floor is many rooms and halls,
+# their doorways open, or doors. Its folk keep them (docs/dev/towers.md "A tower's household"): the
+# wizard's own creations, the mannikins that run his errands, the gargoyles that keep his stair,
+# the ward-stones he set where callers pass, and the loam men that guard; a lesser earth elemental
+# bound to the stones; and his household gone lively, books, brooms, candlesticks, chairs, coat
+# stands, lanterns, and rugs. Arrow and spear traps, alarms, and pits, all hidden.
 
 [[dungeon]]
 id = "drytorr_tower"
@@ -20,15 +23,16 @@ floors = 4
 clearing = "drytorr"
 top = "drytorr_top"
 traps = ["arrow", "spear", "alarm", "pit"]
-traps_per_level = [3, 5]
+traps_per_level = [5, 8]
 hidden_per_depth = 2
 danger = { base = 6, per_depth = 1 }
 population = [
     "animated_book", "animated_broom", "animated_candlestick", "animated_chair", "animated_coat_stand",
-    "animated_lantern", "animated_rug", "lesser_earth_elemental",
+    "animated_lantern", "animated_rug", "gargoyle", "lesser_earth_elemental", "loam_man", "mannikin",
+    "ward_stone",
 ]
-population_count = { per_1000 = 40, least = 4, most = 9 }
-# Only the household: nothing from outside finds its way up the stair.
+population_count = { per_1000 = 20, least = 8, most = 14 }
+# Only the tower's folk: nothing from outside finds its way up the stair.
 stray = 0
 shops = { chance = 0 }
 room_effects = { chance = 0 }

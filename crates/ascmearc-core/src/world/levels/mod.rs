@@ -17,6 +17,7 @@ mod stair_followers;
 pub(in crate::world) mod swim;
 pub(in crate::world) mod talk_past;
 pub(in crate::world) mod travel;
+mod travel_dev;
 pub(in crate::world) mod web;
 mod wriggle;
 cfg_if! {

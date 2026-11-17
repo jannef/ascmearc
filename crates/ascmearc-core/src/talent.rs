@@ -26,6 +26,7 @@ use crate::text::and_list;
 use crate::weapon_skills::WeaponSkills;
 use crate::world::Actor;
 use serde::{Deserialize, Serialize};
+use std::collections::BTreeSet;
 use std::sync::{Arc, OnceLock};
 
 mod ally;
@@ -163,8 +164,8 @@ impl Talents {
         self.0.iter()
     }
 
-    /// Lets go of talent `id`, every choice of it (tests: a pick made only to spend a level).
-    #[cfg(test)]
+    /// Lets go of talent `id`, every choice of it (the ratfolk craving's stripping; tests: a pick
+    /// made only to spend a level).
     pub(crate) fn forget(&mut self, id: &str) {
         self.1 = ModsCache::default();
         self.0.retain(|t| t.id != id);
@@ -513,7 +514,12 @@ pub struct Candidate<'a> {
     /// The birth sign, if any, and whether it is a lucky day's.
     pub sign: Option<&'a Sign>,
     pub lucky: bool,
+    /// The talents the ratfolk craving has taken for good (`Progress::stripped`): refused.
+    pub stripped: &'a BTreeSet<String>,
 }
+
+/// No talent stripped (a candidate without a run's progress).
+static NONE_STRIPPED: BTreeSet<String> = BTreeSet::new();
 
 impl<'a> Candidate<'a> {
     /// The player as prerequisites see them: `actor` with their `character` (none for a
@@ -537,6 +543,7 @@ impl<'a> Candidate<'a> {
             eyes: race.map(|r| r.vision.as_str()),
             sign: character.and_then(|c| c.sign.as_ref()),
             lucky: character.is_some_and(|c| c.lucky(content).is_some()),
+            stripped: &NONE_STRIPPED,
         }
     }
 
@@ -602,6 +609,8 @@ pub enum Refusal {
     BadChoice(Choice, String),
     /// It is held already.
     Held,
+    /// The ratfolk craving has taken it for good.
+    Stripped,
     /// These prerequisites do not hold.
     Unmet(Vec<Need>),
 }
@@ -616,6 +625,7 @@ impl Refusal {
             Refusal::TakesNoChoice => format!("{name} takes no choice."),
             Refusal::BadChoice(kind, id) => format!("`{id}` is not {}.", kind.words()),
             Refusal::Held => format!("You have {name} already."),
+            Refusal::Stripped => "The craving has taken this from you.".to_string(),
             Refusal::Unmet(needs) => {
                 let words: Vec<String> = needs.iter().map(|n| n.words(content)).collect();
                 format!("You cannot take {name}: you need {}.", and_list(&words))
@@ -671,6 +681,9 @@ pub fn may_take(
     }
     if who.talents.holds(&def.id, chosen) {
         return Err(Refusal::Held);
+    }
+    if who.stripped.contains(&def.id) {
+        return Err(Refusal::Stripped);
     }
     let missing = unmet(content, who, def, chosen);
     if missing.is_empty() {

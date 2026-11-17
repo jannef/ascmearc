@@ -1,0 +1,40 @@
+# Campaign-owned (docs/design/campaign.md §3.6): the Ascmearc's own type, which only its files
+# may name.
+#
+# Steorratorr's servants (#1787; docs/dev/towers.md "A tower's household"): a peacock of brass
+# and enamel, wound with a key and set to strut the halls by Master Sigeric, who likes a thing to
+# be looked at. Callers it pecks with a beak like a chisel, and when it fans its tail the whirl of
+# painted eyes holds them staring. Met only on the tower's trap floors
+# (data/dungeons/steorratorr_tower.toml): never a stray.
+[[creature]]
+id = "brass_peacock"
+level = 10
+xp = 60
+rarity = "common"
+name = "brass peacock"
+glyph = "B"
+fg = "#d8b040"
+speed = 1200
+faction = "animated"
+tags = ["construct"]
+alignment = "neutral"
+vision = "darkvision"
+sight = 9
+footsteps = 40
+hearing = 10
+weight = 20000
+stray = false
+stats = { strength = 12, dexterity = 15, toughness = 15, intelligence = 3, willpower = 16, presence = 14 }
+base_hp = 16
+natural = { defence = 2, protection = 3, name = "brass feathers" }
+resist = { piercing = 25, electricity = -25 }
+immune = ["poisoned", "diseased", "bleeding"]
+corpse = false
+blood = "none"
+[creature.attack]
+damage = "1d10"
+damage_type = "piercing"
+name = "beak"
+verb = "pecks"
+to_hit = 2
+on_hit = [{ status = "transfixed", chance = 20, severity = 1 }]

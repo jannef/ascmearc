@@ -106,15 +106,45 @@ mark](stats.md#raising-your-stats) into one of your six stats, picked at random.
 The mark comes even if the corpse comes back up.
 
 As the count grows, the craving changes you for good. At each count below you hear its line and
-gain its talent, which you keep among your other talents. The last column is how
-fast you get [hungry](hunger.md#races), against a human's 100%. A ratfolk starts at 110%, and
-each step adds a tenth of that.
+gain its talent, which you keep among your other talents. The stat changes add up: by 400 you
+have +5 Strength, Dexterity, and Toughness, −2 Intelligence, and −4 Presence. The last column is
+how fast you get [hungry](hunger.md#races), against a human's 100%. A ratfolk starts at 110%, and
+each step adds a tenth of that (the step at 400 adds two).
 
 {{#include generated/craving.md}}
 
 From the tenth corpse on, the tenth included, a fresh corpse never comes back up and its own
 harm never [sickens](status-effects.md#poisoned) you. Its other gifts stay. Each step is also a
 step toward evil: see the deeds table on the [alignment](alignment.md#what-moves-you) page.
+
+**Your stance.** From 50 you cannot hold back. You lose the coward [stance](stances.md#stances),
+then the defensive one at 200, and from 300 the aggressive stance is the only one left: `+` and
+`-` only tell you so. If you hold a stance you have just lost, you move up to the calmest one
+left. And from 50 every stance fights as the next more aggressive one: defensive fights as
+neutral, neutral as aggressive. Aggressive stays aggressive, and a berserker's frenzy stays a
+frenzy. The status bar still names the stance you chose.
+
+**Hunger, from 100.** [Hunger](hunger.md#how-hungry-you-are) hurts you twice as hard. Being Weak
+takes 2 off your Strength and Dexterity instead of 1. While Fainting or Starving you faint on 10%
+of turns instead of 5%. Starving costs 2 hit points every 10 minutes instead of 1. Being Bloated
+slows you no more than before.
+
+At the same count the craving takes away everything that eases your hunger, for good:
+[Lean](talents-body.md#talent-lean), [Long fast](talents-body.md#talent-long-fast), and the wood
+sign's [Evergreen](horoscope.md#talent-evergreen), whichever you have. You hear "The craving
+takes Lean from you." for each, then "Nothing shields you from hunger any more." You can never
+take them again. Magic that sustains you (*of Sustenance*) does nothing for you from then on,
+but a curse of *of Hunger* still makes you hungrier.
+
+> **Example: a ratfolk at 100 who is Weak.** A ratfolk with Strength 14 and Dexterity 14 has
+> eaten 100 who think. Weak from hunger, they fight and carry with Strength 12 and Dexterity 12.
+> A human would lose only 1 of each. If they go on to Fainting, they faint on 10% of turns.
+
+**From 200** no [disease](diseases.md#how-a-disease-goes) ever takes hold of you, and no meal
+leaves you Bloated: what does not fit is lost. **From 400** [poison](damage-types.md#damage-poison)
+does you no harm at all, and you are never [poisoned](status-list.md#status-poisoned). Both
+immunities are whole: no cap, as a creature's. Since food's sickness is being poisoned, rotten
+food no longer sickens you either.
 
 Only ratfolk feel the craving. Other races just keep count.
 
@@ -143,7 +173,8 @@ the same way. Master Ordgar's teaches it at 5 if you lack it ("Something stirs b
 and the shape of a spell makes sense."). If you have it, it adds 5 ("The shapes of spells come
 clearer."), but not past 40. His corpse also teaches Decipher script, like any literate caster's,
 at 5 a meal and not past 40. Mistress Ælfswīð's gives 10 Spellcraft, up to 60, and 7 Decipher
-script, up to 50. A wizard is a person, so eating one also breaks the [old
+script, up to 50. Master Sigeric's gives 15 Spellcraft, up to 80, and 9 Decipher script, up to
+60. A wizard is a person, so eating one also breaks the [old
 law](#eating-those-who-think) against eating those who think.
 
 In the game you find all this out by eating. Here it is in the order it happens, each chance

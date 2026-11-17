@@ -96,7 +96,9 @@ fn the_hunters_statue_stands_inscribed_on_the_eleventh_floor() {
         assert_eq!(floor.places.len(), 1, "seed {seed}");
         for depth in [10, 12] {
             let other = level(seed, depth);
-            assert!(statues(&other).is_empty() && other.places.is_empty());
+            // Another floor may have a statue of a random vault, never the hunter.
+            let hunter = (other.places.values()).any(|p| p.name == "a hooded figure");
+            assert!(!hunter, "seed {seed} depth {depth}");
         }
     }
 }
@@ -150,10 +152,10 @@ fn twelve_floors_of_danger_five_to_sixteen_hotter_downwards() {
     for depth in 1..=12 {
         let plan = def.plan(depth).expect("a floor");
         let (generator, size, celsius) = match depth {
-            1..=4 => (Generator::Rooms, (80, 21), 10),
-            5..=8 => (Generator::Caves, (120, 60), 16),
-            9..=11 => (Generator::Caves, (120, 60), 20),
-            _ => (Generator::Caves, (120, 60), 24),
+            1..=4 => (Generator::Mines, (100, 36), 10),
+            5..=8 => (Generator::Mines, (120, 60), 16),
+            9..=11 => (Generator::Mines, (120, 60), 20),
+            _ => (Generator::Mines, (120, 60), 24),
         };
         assert_eq!(plan.generator, generator, "depth {depth}");
         assert_eq!((plan.width, plan.height), size, "depth {depth}");
@@ -216,7 +218,8 @@ fn the_floors_start_full_of_the_delf_wave() {
     }
     // The drake is the hoard's alone.
     assert!(!lives.contains(&"fire_drake"));
-    for (depth, least) in [(1, 25), (5, 80)] {
+    // The density's floor of 25, and 35 a thousand of the fifth floor's 1 600 or so cells.
+    for (depth, least) in [(1, 25), (5, 50)] {
         let floor = level(1, depth);
         let drawn = (floor.creatures.iter())
             .filter(|c| {
@@ -284,7 +287,8 @@ fn duergar_keep_the_galleries_stores() {
     let def = CONTENT.dungeon("fyrdelf").expect("Fyrdelf");
     let odds = def.shop_odds(1).expect("shop odds");
     assert_eq!(odds.chance, 100);
-    assert!(def.shop_odds(5).is_some_and(|o| o.chance == 100));
+    // The traders keep to the galleries.
+    assert!(def.shop_odds(5).is_some_and(|o| o.chance == 0));
     let trader = CONTENT.creature_id("duergar_trader").expect("the trader");
     let mut shops = 0;
     for seed in 1..=12 {
@@ -299,7 +303,7 @@ fn duergar_keep_the_galleries_stores() {
                 assert_eq!(keeper.creature, trader);
             }
         }
-        // The deep workings are caves: no stores there.
+        // No stores in the deep workings.
         assert!(level(seed, 5).shops.is_empty());
     }
     assert!(shops > 0, "some gallery floor has a store");

@@ -61,12 +61,15 @@ impl World {
 
     /// Everything a prerequisite may ask of the player now ([`Candidate`]).
     pub(crate) fn candidate(&self) -> Candidate<'_> {
-        Candidate::player(
-            &self.content,
-            self.state.player(),
-            self.state.character.as_ref(),
-            self.player_level(),
-        )
+        Candidate {
+            stripped: &self.state.progress.stripped,
+            ..Candidate::player(
+                &self.content,
+                self.state.player(),
+                self.state.character.as_ref(),
+                self.player_level(),
+            )
+        }
     }
 
     /// Levels `from + 1..=to` came: each hands out what it brings (its skill rolls, a talent

@@ -20,7 +20,7 @@ const TOWER_CELL: Pos = Pos::new(42, 23);
 /// Drȳtorr's cell, in the holly wood.
 const DRYTORR_CELL: Pos = Pos::new(19, 11);
 /// Master Ordgar at his reading table, on Drȳtorr's top floor.
-const ORDGAR: Pos = Pos::new(26, 8);
+const ORDGAR: Pos = Pos::new(27, 11);
 /// Where the player comes onto the down: the track from the south.
 const ARRIVAL: Pos = Pos::new(35, 27);
 /// The down's `<`, inside the tower: the stair through every floor starts here.
@@ -264,11 +264,13 @@ fn she_offers_her_side_on_the_first_arrival_and_taking_it_turns_ordgar() {
         texts(&w)
     );
     assert_eq!(side(&w, "ordgar"), Some(Side::Hostile));
+    // Sigeric, not met, turned and still to offer (#1787).
+    assert_eq!(side(&w, "sigeric"), Some(Side::Turned));
     assert!(heard(&w, "Mistress Ælfswīð says: \"Good. Quick, too."));
     assert!(
         heard(
             &w,
-            "Mistress Ælfswīð is with you now. Master Ordgar will have heard."
+            "Mistress Ælfswīð is with you now. Master Ordgar and Master Sigeric will have heard."
         ),
         "{:?}",
         texts(&w)
@@ -299,8 +301,7 @@ fn refusing_her_turns_her_alone() {
 }
 
 /// Two wizards dead, she pays: Spellcraft and Concentration, a wand of lightning bolt, 250 gold,
-/// and 900 experience, then her parting. Steorratorr is #1787's, so Master Sigeric's death is
-/// tallied as if made (the second of Ordgar's two kills stands in for it).
+/// and 900 experience, then her parting. The two deaths are tallied as if made.
 #[test]
 fn allied_she_pays_with_spellcraft_and_concentration_and_parts_in_her_words() {
     let mut w = quarrel_given();
@@ -308,8 +309,9 @@ fn allied_she_pays_with_spellcraft_and_concentration_and_parts_in_her_words() {
     put_player(&mut w, AELFSWITH.step(Dir::W));
     act(&mut w, &format!("ask:E:side-{QUARREL}"));
     let ordgar = CONTENT.creature_id("ordgar").expect("Ordgar");
+    let sigeric = CONTENT.creature_id("sigeric").expect("Sigeric");
     w.tally_kill(ordgar, "drytorr_top");
-    w.tally_kill(ordgar, "drytorr_top");
+    w.tally_kill(sigeric, "steorratorr_top");
     assert_eq!(topics(&w, AELFSWITH)[0], format!("quest-{QUARREL}"));
     assert_eq!(
         (trained(&w, "spellcraft"), trained(&w, "concentration")),

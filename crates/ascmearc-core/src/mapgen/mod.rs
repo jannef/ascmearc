@@ -44,6 +44,7 @@ mod hoard;
 mod leavings;
 pub mod local;
 mod minster;
+mod mines;
 mod population;
 mod room_loot;
 mod rooms;
@@ -578,6 +579,9 @@ pub fn generate_for(
                 needs,
                 minster::MinsterParams::at(depth, def.depth),
             ),
+            Generator::Mines => {
+                mines::build(&mut canvas, &mut rng, needs, mines::params(def, depth))
+            }
             Generator::Tower => {
                 (def.tower.as_ref()).and_then(|t| tower::build(&mut canvas, &mut rng, t, depth))
             }
@@ -1078,6 +1082,7 @@ mod leavings_tests;
 mod lytelscraef_tests;
 #[cfg(test)]
 mod minster_tests;
+mod mines_tests;
 #[cfg(test)]
 mod neutral_share_tests;
 #[cfg(test)]

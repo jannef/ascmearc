@@ -197,6 +197,7 @@ impl fmt::Display for Action {
             Action::Lure(id) => write!(f, "lure:{id}"),
             Action::QuestDone(id) => write!(f, "quest_done:{id}"),
             Action::QuestGiven(id) => write!(f, "quest_given:{id}"),
+            Action::Travel(id) => write!(f, "travel:{id}"),
             Action::Profane(id) => write!(f, "gift:{id}"),
             Action::Rescind(id) => write!(f, "rescind:{id}"),
             Action::QuestRoll { quest, target } => write!(f, "quest_roll:{quest}:{target}"),
@@ -320,6 +321,7 @@ static VERBS: &[(&str, Shape)] = &[
     ("lure", Shape::Id(Action::Lure, "a lure quest's id, e.g. `lure:crystal_guardian`")),
     ("quest_done", Shape::Id(Action::QuestDone, "a quest's id, e.g. `quest_done:barrow_rats`")),
     ("quest_given", Shape::Id(Action::QuestGiven, "a quest's id, e.g. `quest_given:barrow_rats`")),
+    ("travel", Shape::Own(travel)),
     ("gift", Shape::Id(Action::Profane, "a profane gift's id, e.g. `gift:oak_hearted`")),
     ("rescind", Shape::Id(Action::Rescind, "a profane gift's id, e.g. `rescind:oak_hearted`")),
     ("quest_roll", Shape::Own(quest_roll)),
@@ -905,6 +907,17 @@ fn quest_roll(words: &Words) -> Result<Action, String> {
     }
 }
 
+/// `travel:LEVEL`: a level's id as typed, a branch's floor with its depth
+/// (`travel:drytorr_tower:2`).
+fn travel(words: &Words) -> Result<Action, String> {
+    match words.raw {
+        Some(id) if !id.is_empty() && !id.starts_with(':') && !id.ends_with(':') => {
+            Ok(Action::Travel(id.to_string()))
+        }
+        _ => Err("`travel` needs a level's id, e.g. `travel:drytorr_top`".into()),
+    }
+}
+
 /// `levelup:auto`.
 fn level_up(words: &Words) -> Result<Action, String> {
     match words.arg {
@@ -1206,6 +1219,7 @@ mod tests {
             Action::Lure("crystal_guardian".into()),
             Action::QuestDone("barrow_rats".into()),
             Action::QuestGiven("barrow_rats".into()),
+            Action::Travel("drytorr_top".into()),
             Action::Profane("oak_hearted".into()),
             Action::Rescind("oak_hearted".into()),
             Action::Talent {
@@ -1850,7 +1864,7 @@ mod tests {
             ];
             let by_positions: [fn(Positions) -> Action; 4] =
                 [Action::PickUp, Action::Drop, Action::Sell, Action::Identify];
-            let by_cased: [fn(String) -> Action; 13] = [
+            let by_cased: [fn(String) -> Action; 14] = [
                 Action::Remove,
                 Action::Advance,
                 Action::SetVision,
@@ -1862,6 +1876,7 @@ mod tests {
                 Action::Lure,
                 Action::QuestDone,
                 Action::QuestGiven,
+                Action::Travel,
                 Action::Profane,
                 Action::Rescind,
             ];

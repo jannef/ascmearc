@@ -117,6 +117,9 @@ The Ascmearc (`assets/campaigns/ascmearc/`):
 - `wedertorr`: on the track up to Wedertorr on the downs at 10:00, Mistress Ælfswīð's tower
   before you; the scenario's own character has a long sword, a small shield, mail, and a lantern
   ready (unlit: `use_tool` lights it).
+- `steorratorr`: on the track up to Steorratorr on the plain by the grey sea at 10:00, Master
+  Sigeric's tower before you; the scenario's own character has a long sword, a small shield,
+  mail, and a lantern ready (unlit: `use_tool` lights it).
 - `cealdhlaw`: on the first floor of Cealdhlāw, the Ascmearc's first dungeon.
 - `deopgang`: on the first floor of Dēopgang, the deep way down from the south-west corner.
 - `gimmwic`: in Gimmwīc, the deep gnomes' town at its bottom.
@@ -564,7 +567,7 @@ steal:DIR tame:DIR throw_voice:X,Y order:follow|stay|hunt:X,Y rest:GOAL encounte
 parting:CHOICE stance:NAME vision:PROFILE talent:ID[:CHOICE] advance:SKILL levelup:auto xp:N call:ID
 rank:SKILL:N skip:DURATION weather:KIND spawn ally:CREATURE[:N[:DURATION]] meet:ENTRY[:OUTCOME]
 effect:ID@X,Y[>X,Y] zone:KIND@X,Y,R identify[:LETTERS] afflict:STATUS drain:N resource:ID
-infect:DISEASE reveal:ID lure:ID quest_done:ID quest_given:ID gift:ID rescind:ID quest_roll:ID:TARGET freeze:X,Y,R
+infect:DISEASE reveal:ID lure:ID quest_done:ID quest_given:ID travel:LEVEL gift:ID rescind:ID quest_roll:ID:TARGET freeze:X,Y,R
 thaw:X,Y,R web:X,Y,R`
 
 ### Arguments
@@ -915,6 +918,12 @@ None takes game time unless said.
   reveals as given marked on the map; refused for a rolled quest (its draw is its giver's). A
   replay or capture that starts a quest without walking to its giver, e.g.
   `quest_given:the_wizards_quarrel` on `--scenario wedertorr` (`world/people/quest_done.rs`).
+- `travel:LEVEL` the player is moved to level `LEVEL` at once (made on the first visit; a
+  branch's floor with its depth, `travel:steorratorr_tower:5`), arriving as stairs would put
+  them: on its stairs back to where they were, else at its start, else on its first staircase;
+  nothing on the way is met. Refused for an unknown level, one with nowhere to arrive, and the
+  level the player is on. A replay or test that crosses the map between two places, e.g.
+  `travel:drytorr_top` from the top of Steorratorr (`world/levels/travel_dev.rs`).
 - `gift:ID` the player is given profane gift `ID`, an id in `assets/data/profane/`, as a meal's
   draw would give it, its relations applied (`replaces`, `undoes`); refused for one ever had (held,
   or lost since: #1805), one a gift held excludes, or one barred to the race. `rescind:ID` takes a gift held away again, its

@@ -926,7 +926,13 @@ impl World {
             boons: Vec::new(),
             stat_marks: Default::default(),
         };
-        character::stars::grant(&content, state.character.as_ref(), &[], &mut player.talents);
+        character::stars::grant(
+            &content,
+            state.character.as_ref(),
+            &[],
+            &Default::default(),
+            &mut player.talents,
+        );
         // The class abilities of level 1.
         let given = classes::class::grant(&content, state.character.as_ref(), &mut player, 1);
         player.hp = player.max_hp(&content);
@@ -1088,6 +1094,7 @@ impl World {
                 &content,
                 state.character.as_ref(),
                 &boons,
+                &state.progress.stripped,
                 &mut player.talents,
             );
             player.boons = boons;
@@ -1583,6 +1590,7 @@ impl World {
             Action::Lure(id) => return self.lure_dev(id),
             Action::QuestDone(id) => return self.quest_done_dev(id),
             Action::QuestGiven(id) => return self.quest_given_dev(id),
+            Action::Travel(id) => return self.travel_dev(id),
             Action::Profane(id) => return self.gift_dev(id),
             Action::Rescind(id) => return self.rescind_dev(id),
             Action::QuestRoll { quest, target } => return self.quest_roll_dev(quest, target),

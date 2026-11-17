@@ -56,6 +56,7 @@ impl World {
             self.say("Only rage brings the frenzy.");
             return Some(Spent::Nothing);
         }
-        None
+        // The ratfolk craving's floor (`world/character/craving.rs`).
+        self.craving_refuses(stance)
     }
 }

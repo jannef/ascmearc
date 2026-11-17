@@ -13,7 +13,9 @@
 #   arrival    a line said each time the player arrives on the first level by stairs (optional)
 #   generator  "rooms" (rooms and corridors, ADOM-like), "caves" (cellular automata),
 #              "minster" (a drowned church's cellars and crypts, flooding and falling deeper down
-#              the branch, at least 90x36; docs/dev/mapgen.md "The minster"), or a tower's "tower"
+#              the branch, at least 90x36; docs/dev/mapgen.md "The minster"), "mines" (a worked
+#              mine that opens up and grows lava from the branch's first mines floor to its last,
+#              `mapgen/mines.rs`), or a tower's "tower"
 #   kind       "dungeon" (the default) or "tower": floors that go up from a hand-made clearing,
 #              with `floors`, `clearing`, and `top` instead of `depth` and `size` (below)
 #   depth      number of levels
@@ -52,7 +54,7 @@
 #   temperature  °C on its levels (default 10, the dungeon
 #              default): water there freezes below 0
 #   key        a key (objects.toml): the rooms generator locks the door of up to
-#              two rooms that have only one, with the lock this key opens, and leaves the key
+#              two rooms that have only one (the mines generator, of up to two chambers), with the lock this key opens, and leaves the key
 #              where the player reaches it without unlocking anything (default none: no locks)
 #   danger     how dangerous its floors are (default none: 0, and
 #              nothing comes): `danger = 4` is `{ base = 4, per_depth = 1 }`, the floor at depth d
