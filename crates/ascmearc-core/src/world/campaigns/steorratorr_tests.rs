@@ -21,7 +21,7 @@ const TOWER_CELL: Pos = Pos::new(103, 40);
 /// Wedertorr's cell, on the downs.
 const WEDERTORR_CELL: Pos = Pos::new(42, 23);
 /// Master Ordgar at his reading table, on Drȳtorr's top floor.
-const ORDGAR: Pos = Pos::new(26, 8);
+const ORDGAR: Pos = Pos::new(27, 11);
 /// Where the player comes onto the plain: the track from the south.
 const ARRIVAL: Pos = Pos::new(35, 27);
 /// The plain's `<`, inside the tower: the stair through every floor starts here.

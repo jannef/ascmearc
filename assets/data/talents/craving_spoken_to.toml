@@ -1,0 +1,16 @@
+[[talent]]
+id = "craving_spoken_to"
+name = "Spoken-to"
+tree = "craving"
+granted = true
+description = "No disease can take hold of you. Every corpse feeds you more, and no meal slows you. The craving speaks, and you cannot hold back."
+effects = [
+    { kind = "disease_immune" },
+    { kind = "corpse_stats_percent", value = 50 },
+    { kind = "no_bloating" },
+    { kind = "stat", stat = "strength", value = 1 },
+    { kind = "stat", stat = "dexterity", value = 1 },
+    { kind = "stat", stat = "presence", value = -1 },
+    { kind = "hunger_percent", value = 10 },
+]
+systems = ["diseases", "stat_training", "stances", "hunger"]

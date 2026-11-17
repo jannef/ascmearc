@@ -1,7 +1,7 @@
 //! The worked examples on the wiki's pages (`> **Example: ...**` boxes on Combat, Stats, Burden,
-//! Skills, Mana, and Enchanting; #1578, #1669) are hand-written. These tests rebuild each
-//! example's character through `ascmearc-core`, as `ascmearc-cli dump --character ... --layers
-//! stats,attacks` does, or its hypothetical one through the same rules, and check that every
+//! Skills, Mana, Enchanting, and Food; #1578, #1669, #1825) are hand-written. These tests rebuild
+//! each example's character through `ascmearc-core`, as `ascmearc-cli dump --character ...
+//! --layers stats,attacks` does, or its hypothetical one through the same rules, and check that every
 //! number the box states is the number the game computes: each check is a phrase the box must
 //! contain with the computed number in it. Editing an example, or the rules or data under it,
 //! without the other fails here.
@@ -591,6 +591,37 @@ fn enchanting_kindling_a_long_sword() {
             level / step,
             difficulty - modifier,
             pct(made)
+        ),
+    );
+}
+
+/// Food: a ratfolk at 100 sapients eaten who is Weak (the craving's hunger harm, #1825).
+#[test]
+fn food_a_ratfolk_at_100_who_is_weak() {
+    use ascmearc_core::talent::TalentMods;
+    let block = example("food.md", "a ratfolk at 100 who is Weak");
+    let content = content();
+    let hunger = content.hunger().expect("hunger");
+    let rules = content.craving().expect("the craving");
+    let row = (rules.thresholds.iter())
+        .find(|t| t.eaten == 100)
+        .expect("the 100 row");
+    let book = content.talents();
+    let def = book.get(row.talent);
+    let mods = TalentMods::of(&content, def.effects.iter().cloned()).hunger;
+    for stat in [Stat::Strength, Stat::Dexterity] {
+        says(
+            &block,
+            &format!("{} {}", stat.name(), 14 + mods.harm(hunger.weak[stat])),
+        );
+        assert_eq!(hunger.weak[stat], -1, "a human loses 1");
+    }
+    says(&block, "would lose only 1 of each");
+    says(
+        &block,
+        &format!(
+            "faint on {}% of turns",
+            mods.harm(i32::from(hunger.faint.chance))
         ),
     );
 }

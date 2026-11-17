@@ -224,7 +224,7 @@ impl Term {
             Term::Scroll => ("scrolls.md", "scroll"),
             Term::Skill => ("skills.md", "skill"),
             Term::Spell => ("magic.md", "spell"),
-            Term::Stance => ("combat.md", "stance"),
+            Term::Stance => ("stances.md", "stance"),
             Term::Stat => ("stats.md", "stat"),
             Term::Status => ("status-list.md", "status"),
             Term::Style => ("fighting-styles.md", "style"),

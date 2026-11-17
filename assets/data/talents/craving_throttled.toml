@@ -1,0 +1,14 @@
+[[talent]]
+id = "craving_throttled"
+name = "Throttled"
+tree = "craving"
+granted = true
+description = "You smell the bleeding through the dark. Hunger hurts you twice as hard, and nothing shields you from it. Folk flinch from you."
+effects = [
+    { kind = "scent", status = "bleeding", radius = 9 },
+    { kind = "stat", stat = "toughness", value = 1 },
+    { kind = "stat", stat = "presence", value = -1 },
+    { kind = "hunger_harm", value = 200 },
+    { kind = "hunger_percent", value = 10 },
+]
+systems = ["vision", "hunger"]

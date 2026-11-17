@@ -328,7 +328,10 @@ impl World {
             return None;
         }
         let of = one_in.saturating_mul(100);
-        let percent = self.content.stance_def(actor.stance).gatekeeper;
+        let percent = self
+            .content
+            .stance_def(actor.fought_as(&self.content))
+            .gatekeeper;
         Some((percent.min(of), of))
     }
 

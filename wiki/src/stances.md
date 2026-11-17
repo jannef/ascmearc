@@ -9,6 +9,9 @@ for a more defensive one. The order is coward, defensive, neutral, aggressive, a
 either end. Changing stance takes no time, and you keep it until you change it, even across a save:
 "You take an aggressive stance." You start neutral.
 
+A ratfolk deep in [the craving](food.md#the-ratfolks-craving) loses the calmer stances and
+fights harder than the stance they hold.
+
 The [status bar](the-screen.md#the-screen) names your stance when it is not neutral, and the [character screen](character.md) always
 does. The game never shows what a stance adds. You feel it in the fight.
 

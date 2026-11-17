@@ -694,9 +694,16 @@ fn the_sneak_attackers_carry_their_craft_and_two_lurk() {
         .collect();
     lurkers.sort_unstable();
     // Āttorcoppe, the second layer boss of Grundlēas (#1118), waits in her web-hall, and
-    // Nihtscinna, the eighth (#1122), in the walls of its warren.
+    // Nihtscinna, the eighth (#1122), in the walls of its warren; the towers' gargoyles (#1823)
+    // sit still as their carvings.
     assert_eq!(
         lurkers,
-        ["attorcoppe", "barrow_spider", "meenlock", "nihtscinna"]
+        [
+            "attorcoppe",
+            "barrow_spider",
+            "gargoyle",
+            "meenlock",
+            "nihtscinna"
+        ]
     );
 }

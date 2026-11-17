@@ -1,0 +1,39 @@
+# Campaign-owned (docs/design/campaign.md §3.6): the Ascmearc's own type, which only its files
+# may name.
+#
+# The gargoyle (#1823; docs/dev/towers.md "Drȳtorr"): a grotesque of carved stone a wizard set to
+# keep his stair. It sits as still as the carving it is (`lurks`) until a caller comes beside it,
+# then rakes with its stone claws. One of the tower folk: drawn only by the towers' floors (and
+# placed by hand on Drȳtorr's ground floor), never a stray (`stray = false`).
+[[creature]]
+id = "gargoyle"
+level = 6
+xp = 40
+rarity = "common"
+stray = false
+name = "gargoyle"
+glyph = "X"
+fg = "#8c8c96"
+speed = 1100
+faction = "animated"
+tags = ["construct"]
+alignment = "neutral"
+vision = "darkvision"
+sight = 10
+lurks = true
+footsteps = 60
+hearing = 10
+weight = 200000
+stats = { strength = 15, dexterity = 13, toughness = 16, intelligence = 4, willpower = 14, presence = 3 }
+base_hp = 30
+natural = { defence = 1, protection = 2, name = "stone hide" }
+resist = { slashing = 25, piercing = 25 }
+immune = ["poison", "diseased", "bleeding"]
+corpse = false
+blood = "none"
+[creature.attack]
+damage = "1d8"
+damage_type = "slashing"
+to_hit = 1
+name = "claws"
+verb = "rakes"

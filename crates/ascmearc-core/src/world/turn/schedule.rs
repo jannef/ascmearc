@@ -143,7 +143,7 @@ impl World {
         let Some(me) = self.state.actors.get(&id) else {
             return false;
         };
-        let stance = self.content.stance_def(me.stance);
+        let stance = self.content.stance_def(me.fought_as(&self.content));
         if stance.flee_cost == 100 && stance.flee_noise == 100 {
             return false;
         }
@@ -171,7 +171,10 @@ impl World {
             Benefit::saving(self.attack_cost(id, kind, with), saving),
             BASE_TURN,
         );
-        let stance = self.content.stance_def(actor.stance).attack_cost;
+        let stance = self
+            .content
+            .stance_def(actor.fought_as(&self.content))
+            .attack_cost;
         let base = percent_of(base, stance);
         // Iron grip: blows with a two-handed weapon cost less.
         let two_handed = (with.and_then(|i| actor.inventory.get(i)))
@@ -270,7 +273,12 @@ impl World {
             }
         }
         if fleeing {
-            price = percent_of(price, self.content.stance_def(actor.stance).flee_cost);
+            price = percent_of(
+                price,
+                self.content
+                    .stance_def(actor.fought_as(&self.content))
+                    .flee_cost,
+            );
         }
         self.burdened(id, price)
     }

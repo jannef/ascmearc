@@ -1,0 +1,40 @@
+# Campaign-owned (docs/design/campaign.md §3.6): the Ascmearc's own type, which only its files
+# may name.
+#
+# The loam man (#1823; docs/dev/towers.md "Drȳtorr"): a man's shape of loam and straw, as tall as
+# a door, that a wizard taught to walk and to guard: slow, heavy, its fists staggering. The
+# guardian golem of the towers. One of the tower folk: drawn only by the towers' floors, never a
+# stray (`stray = false`).
+[[creature]]
+id = "loam_man"
+level = 7
+xp = 45
+rarity = "uncommon"
+stray = false
+name = "loam man"
+plural = "loam men"
+glyph = "X"
+fg = "#a87c50"
+speed = 800
+faction = "animated"
+tags = ["construct"]
+alignment = "neutral"
+vision = "darkvision"
+sight = 8
+footsteps = 90
+hearing = 8
+weight = 300000
+stats = { strength = 19, dexterity = 6, toughness = 20, intelligence = 1, willpower = 12, presence = 1 }
+base_hp = 40
+natural = { defence = 0, protection = 2, name = "loam" }
+resist = { piercing = 25 }
+immune = ["poison", "diseased", "bleeding"]
+corpse = false
+blood = "none"
+[creature.attack]
+damage = "2d6"
+damage_type = "bludgeoning"
+to_hit = 1
+name = "fist"
+verb = "pounds"
+on_hit = [{ status = "staggered", chance = 15, severity = 1 }]

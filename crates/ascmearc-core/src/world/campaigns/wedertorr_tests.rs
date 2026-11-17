@@ -20,7 +20,7 @@ const TOWER_CELL: Pos = Pos::new(42, 23);
 /// Drȳtorr's cell, in the holly wood.
 const DRYTORR_CELL: Pos = Pos::new(19, 11);
 /// Master Ordgar at his reading table, on Drȳtorr's top floor.
-const ORDGAR: Pos = Pos::new(26, 8);
+const ORDGAR: Pos = Pos::new(27, 11);
 /// Where the player comes onto the down: the track from the south.
 const ARRIVAL: Pos = Pos::new(35, 27);
 /// The down's `<`, inside the tower: the stair through every floor starts here.

@@ -1,0 +1,38 @@
+# Campaign-owned (docs/design/campaign.md §3.6): the Ascmearc's own type, which only its files
+# may name.
+#
+# The mannikin (#1823; docs/dev/towers.md "Drȳtorr"): a wizard's little man of clay and blood, a
+# span high, quick and spiteful, that runs his errands and bites strangers; its bite makes them
+# drowsy. Its own hands open doors. It falls back to clay when it dies. One of the tower folk:
+# drawn only by the towers' floors, never a stray (`stray = false`).
+[[creature]]
+id = "mannikin"
+level = 3
+xp = 25
+rarity = "common"
+stray = false
+name = "mannikin"
+glyph = "i"
+fg = "#c88a64"
+speed = 1300
+faction = "animated"
+tags = ["construct"]
+alignment = "neutral"
+vision = "darkvision"
+sight = 8
+opens_doors = true
+footsteps = 30
+hearing = 12
+weight = 3000
+size = "small"
+stats = { strength = 7, dexterity = 15, toughness = 8, intelligence = 6, willpower = 10, presence = 4 }
+base_hp = 4
+immune = ["poison", "diseased"]
+corpse = false
+blood = "#7a3a28"
+[creature.attack]
+damage = "1d4"
+damage_type = "piercing"
+name = "bite"
+verb = "bites"
+on_hit = [{ status = "drowsy", chance = 20, severity = 1 }]

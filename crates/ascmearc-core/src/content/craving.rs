@@ -1,12 +1,13 @@
 //! The ratfolk craving (`assets/data/rules/craving.toml`; #1804, docs/design/ratfolk-craving.md,
 //! `docs/dev/craving.md`): the race that craves, its first line, the marks per corpse, and the
 //! rows, each a count of sapient corpses eaten, a granted talent of the `craving` tree, and a
-//! message. The rule itself lives in `world/character/craving.rs`.
+//! message, and what the row does to the stance (`stance_floor`, `stance_shift`) and to hunger's
+//! softeners (`strip_softeners`). The rule itself lives in `world/character/craving.rs`.
 //!
 //! The file is optional: without it no race craves.
 
-use super::{Content, ContentError, TalentId};
-use crate::talent::TalentMods;
+use super::{CombatStance, Content, ContentError, TalentId};
+use crate::talent::{TalentMods, Talents};
 use serde::Deserialize;
 
 /// The talent tree every row's talent belongs to.
@@ -33,6 +34,45 @@ pub struct Threshold {
     pub talent: TalentId,
     /// Said as it is given.
     pub message: String,
+    /// The calmest stance the player may hold from this row on (a floor that only rises).
+    pub stance_floor: Option<CombatStance>,
+    /// From this row on the fight rules read the stance one step more aggressive than the one
+    /// held.
+    pub stance_shift: bool,
+    /// At this row every hunger softener held is taken for good, and worn Sustenance does
+    /// nothing from then on.
+    pub strip_softeners: bool,
+}
+
+impl CravingRules {
+    /// The rows whose talent `talents` holds: the rows the holder has crossed (a row's talent is
+    /// given at its count and never taken away).
+    fn held<'a>(
+        &'a self,
+        content: &'a Content,
+        talents: &'a Talents,
+    ) -> impl Iterator<Item = &'a Threshold> + 'a {
+        let book = content.talents();
+        (self.thresholds.iter()).filter(move |t| talents.has(&book.get(t.talent).id))
+    }
+
+    /// The calmest stance the holder of `talents` may take, if a row crossed sets one (the
+    /// highest such row's).
+    pub fn stance_floor(&self, content: &Content, talents: &Talents) -> Option<CombatStance> {
+        (self.held(content, talents))
+            .filter_map(|t| t.stance_floor)
+            .last()
+    }
+
+    /// Whether the fight rules read the holder's stance one step more aggressive.
+    pub fn stance_shift(&self, content: &Content, talents: &Talents) -> bool {
+        self.held(content, talents).any(|t| t.stance_shift)
+    }
+
+    /// Whether the holder's hunger softeners are stripped: worn Sustenance does nothing.
+    pub fn unshielded(&self, content: &Content, talents: &Talents) -> bool {
+        self.held(content, talents).any(|t| t.strip_softeners)
+    }
 }
 
 #[derive(Deserialize)]
@@ -51,6 +91,12 @@ struct ThresholdSpec {
     eaten: u32,
     talent: String,
     message: String,
+    #[serde(default)]
+    stance_floor: Option<CombatStance>,
+    #[serde(default)]
+    stance_shift: bool,
+    #[serde(default)]
+    strip_softeners: bool,
 }
 
 impl super::RulesFile for CravingRules {
@@ -69,6 +115,8 @@ impl super::RulesFile for CravingRules {
         let book = content.talents();
         let mut thresholds = Vec::new();
         let mut below = 0;
+        let mut floor: Option<CombatStance> = None;
+        let mut stripped = false;
         // Content without the Craving tree (without talents at all) keeps no rows: the mark and
         // the first line stay.
         let rows = match book.tree_id(TREE) {
@@ -97,7 +145,7 @@ impl super::RulesFile for CravingRules {
                 )));
             }
             let hunger = TalentMods::of(content, def.effects.iter().cloned()).hunger;
-            if hunger.hunger_percent < 0 || hunger.no_hunger_weakness || hunger.no_exertion {
+            if hunger.softens() {
                 return Err(err(format!(
                     "threshold {}: `{}` softens hunger, which the craving never does",
                     spec.eaten, spec.talent
@@ -106,10 +154,33 @@ impl super::RulesFile for CravingRules {
             if spec.message.is_empty() {
                 return Err(err(format!("threshold {}: a `message`", spec.eaten)));
             }
+            if let Some(new) = spec.stance_floor {
+                let rank = |s: CombatStance| CombatStance::CHOSEN.iter().position(|&c| c == s);
+                if rank(new).is_none() || floor.is_some_and(|old| rank(new) <= rank(old)) {
+                    return Err(err(format!(
+                        "threshold {}: `stance_floor` is a chosen stance above every floor before \
+                         it",
+                        spec.eaten
+                    )));
+                }
+                floor = Some(new);
+            }
+            if spec.strip_softeners {
+                if stripped {
+                    return Err(err(format!(
+                        "threshold {}: `strip_softeners` is on one row at most",
+                        spec.eaten
+                    )));
+                }
+                stripped = true;
+            }
             thresholds.push(Threshold {
                 eaten: spec.eaten,
                 talent,
                 message: spec.message,
+                stance_floor: spec.stance_floor,
+                stance_shift: spec.stance_shift,
+                strip_softeners: spec.strip_softeners,
             });
         }
         Ok(Self {

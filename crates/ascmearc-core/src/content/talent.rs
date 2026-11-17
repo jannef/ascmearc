@@ -596,6 +596,19 @@ impl TalentEffect {
                 }
                 status(status_id)
             }
+            // A status or a damage type, as a creature's `immune` list (`creature::immunities`).
+            TalentEffect::Vigour(VigourEffect::Immune { to }) => {
+                if content.status_ids().next().is_none() && content.damage_types().is_empty() {
+                    return Ok(());
+                }
+                match (content.status_id(to), content.damage_type_id(to)) {
+                    (Some(_), Some(_)) => Err(format!(
+                        "`immune`: `{to}` is both a status and a damage type"
+                    )),
+                    (None, None) => Err(format!("`immune`: unknown status or damage type `{to}`")),
+                    _ => Ok(()),
+                }
+            }
             TalentEffect::Faith(FaithEffect::Consecrate { time, .. }) => duration(time),
             TalentEffect::Craft(CraftEffect::FieldForge { seconds: 0 }) => {
                 Err("`field_forge`: `seconds` is 0".into())
