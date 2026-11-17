@@ -82,7 +82,8 @@ fn profane_row(w: &World) -> String {
 
 /// The acceptance's fixture run: a meal of each keeper in turn, the progress dump's pools after
 /// each, the gifts held at the end. Every pool counts what may still be drawn of its tier, so
-/// each meal's draws and what they exclude show in the counts.
+/// each meal's draws and what they exclude show in the counts. The thirteenth gift received
+/// ends the run mid-meal (#1809, `profane_taken.rs`): the meals after it are refused.
 #[test]
 fn the_pools_after_each_of_ten_meals() {
     let mut w = eater();
@@ -101,8 +102,15 @@ fn the_pools_after_each_of_ten_meals() {
         .map(|b| b.id.clone())
         .collect();
     rows.push(format!("held: {}", held.join(", ")));
-    // Every signature is held, and between ten and twenty draws took (an undoer takes none).
-    assert!(KEEPERS.len() <= held.len() && held.len() <= 30, "{held:?}");
+    let death = w.death().expect("the Profane took them");
+    rows.push(format!(
+        "died: {}",
+        death.cause.expect("a cause").epitaph(w.content())
+    ));
+    assert_eq!(
+        w.state.gifts_received.len(),
+        crate::world::character::profane_taken::TAKEN_AT
+    );
     insta::with_settings!({ snapshot_path => "../../snapshots" }, {
         insta::assert_snapshot!("profane_ten_meals", rows.join("\n"));
     });

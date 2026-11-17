@@ -118,6 +118,8 @@ pub enum Cause {
     Miscast(crate::content::SpellId),
     /// A forgotten altar they prayed at struck them down.
     Altar,
+    /// The thirteenth profane gift they received took them (`world/character/profane_taken.rs`).
+    Profane,
 }
 
 impl Cause {
@@ -149,6 +151,7 @@ impl Cause {
                 format!("Killed by their own miscast {name}")
             }
             Cause::Altar => "Struck down at a forgotten altar".into(),
+            Cause::Profane => "Taken by the Profane".into(),
         }
     }
 
@@ -162,6 +165,7 @@ impl Cause {
                 format!("You choke to death on {}...", crate::content::the(&name(o)))
             }
             Cause::Drowned => "You drown...".into(),
+            Cause::Profane => "The Profane takes you, and nothing of you is left...".into(),
             Cause::Trap(_)
             | Cause::Scroll(_)
             | Cause::Flask(_)

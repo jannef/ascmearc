@@ -158,6 +158,13 @@ drawn gifts, 14 lesser, 13 greater, 15 dire.
   tier gives way up, then down (lesser → greater → dire; dire → greater → lesser); all empty is
   `None`, and the meal says "Nothing more of it will take in you.".
 - A forgotten altar's Forsaken never draws a profane bane (`bestow_flaw` skips the gifts).
+- **Taken by the Profane** (#1809, the owner's rule; `world/character/profane_taken.rs`): the last
+  step of a gift taken, `World::profane_takes`: once `gifts_received` holds `TAKEN_AT` (13) gifts,
+  lost ones counting, its two lines are said and the run ends, `die_of(Cause::Profane)` ("The
+  Profane takes you, and nothing of you is left...", the epitaph "Taken by the Profane"). Not a
+  harm: no Rise from the ashes, no reprieve, no Twice-born. A meal stops with it: no more draws,
+  no deed, no feeding. The graveyard records it as `cause = "profane"` and keeps every death's
+  held gifts in `gifts` (`docs/dev/saves.md` "The graveyard").
 
 Saves: a gift held rides in `Actor::boons`; `stars::grant` puts it back on every restore and the
 state hash covers both lists. `WorldState::gifts_received` is saved and hashed (left out while

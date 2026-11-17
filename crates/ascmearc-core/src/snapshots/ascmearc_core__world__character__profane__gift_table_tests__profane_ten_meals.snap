@@ -7,9 +7,10 @@ attorcoppe: profane 4 held; pool lesser 11/14, greater 12/13, dire 15/15
 hrimwyrm: profane 6 held; pool lesser 11/14, greater 11/13, dire 15/15
 wealaf: profane 9 held; pool lesser 9/14, greater 10/13, dire 15/15
 grundwyrgen: profane 12 held; pool lesser 8/14, greater 9/13, dire 15/15
-ligetdry: profane 15 held; pool lesser 7/14, greater 8/13, dire 15/15
-staneoten: profane 17 held; pool lesser 7/14, greater 7/13, dire 14/15
-nihtscinna: profane 21 held; pool lesser 7/14, greater 7/13, dire 11/15
-waelcyrge: profane 24 held; pool lesser 7/14, greater 6/13, dire 9/15
-nithdraca: profane 28 held; pool lesser 7/14, greater 6/13, dire 6/15
-held: rat_kings_court, paper_skinned, spinners_blood, midden_gut, rime_blooded, blood_nosed, barrow_kings_will, mere_wifes_hide, slow_blooded, craven, storm_wrights_marrow, thick_skulled, marked_by_the_deep, hurlers_arm, wyrms_hunger, adder_quick, hollow_of_the_night, stone_sinewed, fell_minded, wyrm_blooded, choosers_quickness, deep_eyed, twice_born, ember_veined, hate_wyrms_heart, hollowed, stone_eyed, glass_boned
+ligetdry: profane 13 held; pool lesser 8/14, greater 9/13, dire 15/15
+staneoten: profane 13 held; pool lesser 8/14, greater 9/13, dire 15/15
+nihtscinna: profane 13 held; pool lesser 8/14, greater 9/13, dire 15/15
+waelcyrge: profane 13 held; pool lesser 8/14, greater 9/13, dire 15/15
+nithdraca: profane 13 held; pool lesser 8/14, greater 9/13, dire 15/15
+held: rat_kings_court, paper_skinned, spinners_blood, midden_gut, rime_blooded, blood_nosed, barrow_kings_will, barrow_eyed, hungering, mere_wifes_hide, slow_blooded, craven, storm_wrights_marrow
+died: Taken by the Profane

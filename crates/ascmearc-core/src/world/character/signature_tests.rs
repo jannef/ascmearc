@@ -48,19 +48,18 @@ fn eat(w: &mut World, creature: &str) {
     w.apply(&Action::Eat(Meal::Floor(0)));
 }
 
-/// Gives the player every drawn gift they may take, the dire first (Withered would undo
-/// Oak-hearted), so a meal's draws find nothing and only its signature takes.
+/// Records every drawn gift as had by the player, so a meal's draws find nothing and only its
+/// signature takes.
 fn empty_the_table(w: &mut World) {
     for tier in [GiftTier::Dire, GiftTier::Greater, GiftTier::Lesser] {
         let all: Vec<_> = (w.content.profane().iter())
             .filter(|g| g.tier == tier && g.drawn())
             .map(|g| g.talent)
             .collect();
+        // Recorded as had, never taken: thirteen taken would end the eater (`profane_taken.rs`).
         for t in all {
-            let content = w.content.clone();
-            if (content.profane().gift(t)).is_some_and(|g| w.may_take_gift(g)) {
-                w.bestow_gift(t);
-            }
+            let id = w.content.talents().get(t).id.clone();
+            w.state.gifts_received.insert(id);
         }
     }
     for tier in GiftTier::ALL {

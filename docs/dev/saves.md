@@ -136,7 +136,7 @@ for the page being hidden.
 folder; portable mode's `ascmearc-data/config`; the web's `localStorage` key
 `ascmearc/graveyard.toml`), one `[[fallen]]` table each (`name`, `race`, `gender`, `class`,
 `prestige`, `level`, `xp` (the experience total at death, #1252; 0 in older entries), `cause` (`stone`, a status id, `starved`, a trap's id, a creature's id, ...),
-`killer`, `place`, `turn`, `age`, `when`, `version`), through `Backend::append`: the file is
+`killer`, `place`, `turn`, `age`, `when`, `version`, `gifts` (the profane gifts held at death by talent id, #1809; left out when none; `cause = "profane"` is a character the thirteenth gift took)), through `Backend::append`: the file is
 never rewritten, and the death screen says "Remembered in the graveyard." when the entry went in.
 Captures and replays keep none unless `--config-dir` names one. **This file is the one
 deliberate exception to version pinning** (the owner's word): its reader (`graveyard::parse`)

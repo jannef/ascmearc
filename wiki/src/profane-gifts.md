@@ -11,6 +11,11 @@ on the tenth floor to [Nīðdraca the Hate-Wyrm](creatures.md#creature-nithdraca
 The deeper the keeper, the more gifts its meal draws, and the more of them come from the greater and dire
 tiers.
 
+> **Warning: the thirteenth gift kills you.** When you receive your 13th profane gift, the
+> Profane takes you and your character dies at once. Every gift you have ever received counts,
+> including ones you have since lost. The game gives no warning as you get close, so count them
+> yourself; see [the thirteenth gift](#the-thirteenth-gift).
+
 ## Eating a keeper's corpse
 
 A keeper's corpse is eaten like any corpse, from the floor or your pack, and the game does not
@@ -121,6 +126,26 @@ Each gift comes to you at most once. A gift taken away by a gift that
 [Oak-hearted](#talent-oak-hearted) leaves you with neither, and Oak-hearted never comes back.
 
 A gift that undoes another is not given when it does so, so it can still come to you later.
+
+## The thirteenth gift
+
+Twelve profane gifts are the most anyone survives. The moment you receive a 13th, the Profane
+takes you: after the gift's own line, "The flesh that was given is called back to the one that
+gave it." and "Something old and hungry wakes behind your eyes, and it does not sleep again.", and you [die](hit-points.md#death). Nothing saves you, not even
+[Twice-born](#talent-twice-born) or [Rise from the ashes](horoscope.md#talent-rise-from-ashes), and the rest of the meal never happens:
+no more rolls, no pull toward evil, no food.
+
+The count is of every gift you have ever received: your keepers' own gifts and the drawn ones,
+held now or lost since. A gift taken away by another still counts. A gift that undoes another
+instead of being given does not count, since you never received it.
+
+A keeper's meal can give several gifts at once (see the rolls in
+[each keeper's own gift](#each-keepers-own-gift)), so count before you eat: with 10 received, a
+keeper whose meal gives three more kills you. Your gifts held now are on the Talents page, under
+Profane; ones you have lost are not, so remember them.
+
+Your [graveyard](saving.md#your-characters-and-the-graveyard) records such a character as "Taken
+by the Profane".
 
 ## Gifts that change your body
 
