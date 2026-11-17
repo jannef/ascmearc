@@ -12,6 +12,7 @@ mod heirloom;
 pub(crate) mod laws;
 mod lucky;
 mod profane;
+mod profane_taken;
 mod racial;
 pub(in crate::world) mod resource;
 mod second_wind;

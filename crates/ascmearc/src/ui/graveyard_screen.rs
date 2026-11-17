@@ -14,7 +14,7 @@
 use super::menu::{HINTS, Nav, Panel, Press, wrap};
 use super::screens::ScreenAction;
 use super::{TEXT, TEXT_DIM};
-use crate::graveyard::{Fallen, STONE};
+use crate::graveyard::{Fallen, PROFANE, STONE};
 use crate::render::console::Console;
 use crate::save::played_text;
 use crate::settings::Clock;
@@ -121,6 +121,7 @@ fn cause_words(fallen: &Fallen, content: &Content) -> String {
         "choked" => return "Choked to death".into(),
         "drowning" => return "Drowned in deep water".into(),
         "altar" => return "Struck down at a forgotten altar".into(),
+        PROFANE => return "Taken by the Profane".into(),
         "own_spell" => return "Killed by their own spell".into(),
         "unseen" => return "Killed by something unseen".into(),
         _ => {}

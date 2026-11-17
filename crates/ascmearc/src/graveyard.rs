@@ -30,6 +30,9 @@ pub const FILE_NAME: &str = "graveyard.toml";
 /// The `cause` of a character turned to stone.
 pub const STONE: &str = "stone";
 
+/// The `cause` of a character the Profane took: their thirteenth profane gift (#1809).
+pub const PROFANE: &str = "profane";
+
 /// One character who has died. Every field defaults, so an entry another version wrote, with
 /// fields this one lacks or misses, reads (module docs). Never rename a field or change what it
 /// means; add new ones with a default.
@@ -52,8 +55,8 @@ pub struct Fallen {
     /// The experience total at the moment of death (#1252); 0 in entries written before it.
     pub xp: u32,
     /// What killed them, the death line's id: `stone` (turned to stone), a status's id
-    /// (`bleeding`), `starved`, `fell`, `choked`, `altar`, `own_spell`, a trap's id, a scroll's
-    /// object id, a creature's id (`kobold`), or `unseen`.
+    /// (`bleeding`), `starved`, `fell`, `choked`, `altar`, `own_spell`, `profane` (taken by the
+    /// Profane, #1809), a trap's id, a scroll's object id, a creature's id (`kobold`), or `unseen`.
     pub cause: String,
     /// The creature that killed them, in words (`kobold`); empty for none.
     #[serde(skip_serializing_if = "String::is_empty")]
@@ -68,6 +71,11 @@ pub struct Fallen {
     pub when: u64,
     /// The game version that wrote the entry, for curiosity only.
     pub version: String,
+    /// The profane gifts they held as they died, by talent id (`hill_thewed`), in the Talents
+    /// page's order (#1809: what a later feature may raise them with); empty for none, and in
+    /// entries written before it.
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub gifts: Vec<String>,
 }
 
 impl Fallen {
@@ -90,7 +98,12 @@ impl Fallen {
             }
             (None, None, None) => ("unseen".to_string(), String::new()),
         };
-        let progress = world.perception().own_experience();
+        let view = world.perception();
+        let progress = view.own_experience();
+        let gifts = (view.own_talents().into_iter())
+            .filter(|t| t.profane.is_some())
+            .map(|t| content.talents().get(t.id).id.clone())
+            .collect();
         let campaign = (content.campaign(world.campaign())).map(|c| c.name.clone());
         let place = match campaign {
             Some(campaign) => format!("{}, {campaign}", death.place),
@@ -111,6 +124,7 @@ impl Fallen {
             age: character.age_on(death.time),
             when,
             version: ascmearc_core::GAME_VERSION.to_string(),
+            gifts,
         })
     }
 
@@ -145,6 +159,7 @@ fn cause_id(world: &World, cause: ascmearc_core::world::Cause) -> String {
         Cause::Spell(_) => "own_spell".into(),
         Cause::Miscast(_) => "miscast".into(),
         Cause::Altar => "altar".into(),
+        Cause::Profane => PROFANE.into(),
     }
 }
 
