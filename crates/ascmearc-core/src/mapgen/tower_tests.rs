@@ -226,11 +226,11 @@ fn drytorrs_floors_are_many_rooms_and_halls() {
             assert!((5..=24).contains(&sizes.len()), "{at}: {sizes:?}");
             assert!(sizes.iter().all(|&n| n >= 6), "{at}: {sizes:?}");
             counts.insert(sizes.len());
-            assert!(
-                (5..=8).contains(&level.traps.len()),
-                "{at}: {}",
-                level.traps.len()
-            );
+            // The floor's traps; a chest's own (by the floor's item level, its danger) aside.
+            let laid = (level.traps.keys())
+                .filter(|p| !level.chests.contains_key(p))
+                .count();
+            assert!((5..=8).contains(&laid), "{at}: {laid}");
         }
     }
     assert!(counts.len() > 1, "the count varies: {counts:?}");

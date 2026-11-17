@@ -128,7 +128,7 @@ pub(super) fn progress_rows(world: &World) -> Vec<String> {
     if !slain.is_empty() {
         rows.push(format!("slain {}", slain.join(", ")));
     }
-    // The two laws broken (`world/character/laws.rs`): sapient corpses eaten, fiends summoned.
+    // The two laws broken (`world/character/laws.rs`): fiends summoned (the First), sapient corpses eaten (the Second).
     let laws = world.laws_broken();
     if !laws.is_empty() {
         // The ratfolk craving's rows crossed and the talents it stripped.

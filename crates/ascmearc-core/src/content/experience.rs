@@ -687,7 +687,7 @@ mod tests {
         assert_eq!(x.first_kill_xp(15), 15, "a kobold's XP once more");
         assert_eq!(x.first_kill_xp(0), 0);
         assert_eq!(x.arrival_xp(1), 5, "a hand-made level");
-        assert_eq!(x.arrival_xp(4), 20, "the fourth level of a dungeon");
+        assert_eq!(x.arrival_xp(4), 20, "a dungeon floor of danger 4");
         assert_eq!(
             (x.spell_xp(0), x.spell_xp(11), x.spell_xp(70)),
             (5, 55, 350)

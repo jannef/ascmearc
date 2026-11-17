@@ -9,7 +9,7 @@ creatures of its side, with no ability in the abilities menu, no action, no key,
 (#837, `docs/dev/allies.md` "Summons"): they share this file's `summon_cells` and
 `World::summon_draw` (the pool's draw, with the player's bias; the enemy's passes none, one
 `below(pool.len())` as before), and make allies.
-A fiend the player's own act makes is counted against the second law (`docs/dev/alignment.md`
+A fiend the player's own act makes is counted against the First Law (`docs/dev/alignment.md`
 "The two laws"): a new player summoning path calls `World::player_summoned` for each creature.
 
 - **Data** (`content/summon.rs`): `SummonSpec` as written (`CreatureSpec::summon`, checked by

@@ -105,7 +105,7 @@ deeper than any found so far:
   and the [wild huntsman](creatures.md#creature-wild-huntsman) of the old tales,
   [elder](creatures.md#creature-elder-vampire) and [eldest vampires](creatures.md#creature-eldest-vampire),
   the [dread lord](creatures.md#creature-dread-lord) of the death knights, the
-  [deathshade](creatures.md#creature-deathshade) (Old English *dēaþscūa*), the
+  [deathshade](creatures.md#creature-deathshade), the
   [ankou](creatures.md#creature-ankou) of Breton tales, the
   [ghost of a dragon](creatures.md#creature-ghost-dragon), the
   [nightwing](creatures.md#creature-nightwing) and the [nightworm](creatures.md#creature-nightworm),

@@ -158,13 +158,13 @@ pub(super) fn material_work(content: &Content) -> String {
     out
 }
 
-/// How often loot and creatures' gear are made of each material: the weight at level 1 (in
-/// words too), how it changes with each level deeper, the least level, and how well it suits
+/// How often loot and creatures' gear are made of each material: the weight at item level 1 (in
+/// words too), how it changes with each item level higher, the least level, and how well it suits
 /// each use of item (#1191).
 pub(super) fn material_finds(content: &Content) -> String {
     let mut out = String::from(
-        "| Material | Loot at depth 1 | Each depth deeper | From depth | Gear at creature level 1 \
-         | Each level higher | Weapons | Armour | Jewellery | Other items |\n\
+        "| Material | Loot at item level 1 | Each item level higher | From item level \
+         | Gear at creature level 1 | Each level higher | Weapons | Armour | Jewellery | Other items |\n\
          |---|---|---:|---:|---|---:|---|---|---|---|\n",
     );
     let level = |found: Option<ascmearc_core::content::Found>| match found {
@@ -213,11 +213,11 @@ const SAMPLES: [&str; 8] = [
 ];
 
 /// How often a few items are found made of their own material, of another that suits them well,
-/// of a poor fit, and of an odd one, in loot at depths 1, 10, and 21 (#1191), from the game's
+/// of a poor fit, and of an odd one, in loot at item levels 1, 10, and 21 (#1191), from the game's
 /// own weights; the three likeliest other materials by name.
 pub(super) fn material_odds(content: &Content) -> String {
     let mut out = String::from(
-        "| Item | Depth | Its own material | Another that suits it | A poor fit | An odd fit | \
+        "| Item | Item level | Its own material | Another that suits it | A poor fit | An odd fit | \
          Likeliest others |\n|---|---:|---:|---:|---:|---:|---|\n",
     );
     for id in SAMPLES {

@@ -123,11 +123,12 @@ enchantments.", or how many more it could bear.
 - Loot is sometimes set with a gem, and now and then a find is a loose gem instead (see
   [Gems](gems.md#finding-gems)).
 
-The deeper you are, the better the loot. An item's **item level** is the depth it was found at:
-a dungeon's first level is item level 1, the eighth is 8. What a creature drops has the
-creature's level as its item level when that is higher, so a creature [out of its
-depth](dungeons.md#who-lives-there-and-how-many) drops a deeper item. The game never shows an
-item's level.
+The more dangerous the floor, the better the loot. An item's **item level** is the
+[danger](dungeons.md#who-lives-there-and-how-many) of the dungeon floor it was found on:
+Lytelscræf's first floor is item level 1, Dēopgang's first is 14. A floor with no danger gives
+its depth instead, and a level made by hand gives its own item level, mostly 1. What a creature
+drops has the creature's level as its item level when that is higher, so a creature [out of its
+depth](dungeons.md#out-of-depth) drops a better item. The game never shows an item's level.
 
 The item level decides which base items can turn up and which **tiers** of each affix. Low tiers
 are found from the start, and the strongest only deep down. An item rolls among the tiers close

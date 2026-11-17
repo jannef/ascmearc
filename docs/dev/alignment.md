@@ -87,12 +87,12 @@ moved it: a diminished one that moved 0 empties nothing). It sets the pool `data
 the deed's own lines. One `if`; without the file nothing happens. The only reading of the score
 in the smiting rules (`smite_tests.rs::a_sin_empties_zeal`).
 
-**The two laws** (#1764; `world/character/laws.rs`, `data/rules/laws.toml`, `content/laws.rs`,
+**The two laws** (#1764; the First Law forbids calling up a fiend, the Second eating the flesh of a thinking creature; `world/character/laws.rs`, `data/rules/laws.toml`, `content/laws.rs`,
 `LawRules`, `Content::laws()`; optional: without the file nothing is counted). Not deeds: they
 move no score. `World::ate_flesh` (called beside `ate_corpse` in `world/health/eat.rs::finish`, a
-corpse fresh or rotten) counts a corpse whose creature carries the eat law's tag (`sapient`,
-`data/creatures/README.toml`); `World::player_summoned` counts a creature carrying the summon
-law's tag (`fiend`) made by the player's own act, called where each such path makes it: the
+corpse fresh or rotten) counts a corpse whose creature carries the Second Law's (`[eat]`) tag (`sapient`,
+`data/creatures/README.toml`); `World::player_summoned` counts a creature carrying the First
+Law's (`[summon]`) tag (`fiend`) made by the player's own act, called where each such path makes it: the
 summon spell (`magic/summon_spell.rs`, after "... come to your call."), its backfire
 (`magic/backfire.rs`), the player's miscast summon and portal gate (`magic/miscast.rs::miscast_summon`,
 which takes the caster, and `levels/pit.rs::open_pit`), a study mishap's summon (`magic/learn.rs`),
