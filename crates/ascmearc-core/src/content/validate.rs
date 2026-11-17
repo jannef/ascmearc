@@ -40,7 +40,6 @@ impl Content {
                 }
             }
         }
-        self.check_generated_hidden(&hidden_ids)?;
         for level in self.levels.values() {
             let campaign = self.level_campaign(&level.id).unwrap_or_default();
             // Nothing leads into a Pit but a portal.
@@ -99,13 +98,16 @@ impl Content {
             }
         }
         // A bottom: `bottom` names a hand-made level of the same
-        // campaign whose `<` leads back to the deepest level.
+        // campaign whose `<` leads back to the deepest level (or a hidden one will, once revealed:
+        // the Skeul Hir's in Gimmwīc).
         for def in self.dungeons.values() {
             let Some(bottom) = &def.bottom else { continue };
             let deepest = def.level_id(def.depth);
             let back = |l: &LevelTemplate| {
-                (l.stairs.iter())
-                    .any(|s| s.dir == StairsDir::Up && s.to.as_deref() == Some(deepest.as_str()))
+                let to = Some(deepest.as_str());
+                let up = |t| self.terrain(t).stairs == Some(StairsDir::Up);
+                (l.stairs.iter()).any(|s| s.dir == StairsDir::Up && s.to.as_deref() == to)
+                    || (l.hidden.values()).any(|h| up(h.terrain) && h.to.as_deref() == to)
             };
             let fits = self.levels.get(bottom).is_some_and(back)
                 && self.level_campaigns.get(bottom).cloned().flatten() == def.campaign;
@@ -120,6 +122,35 @@ impl Content {
                 ));
             }
         }
+        // A way above: `above` names a level of another, bounded branch of its campaign that keeps
+        // a hidden way down into the branch's first level (`[[dungeon.levels]]`'s `hidden`).
+        for def in self.dungeons.values() {
+            let Some(above) = &def.above else { continue };
+            let first = def.level_id(1);
+            let down = |h: &super::HiddenLocation| {
+                h.to.as_deref() == Some(first.as_str())
+                    && self.terrain(h.terrain).stairs == Some(StairsDir::Down)
+            };
+            let fits = self.branch_level(above).is_some_and(|(other, depth)| {
+                other.id != def.id
+                    && other.endless.is_none()
+                    && other.portal.is_none()
+                    && other.campaign == def.campaign
+                    && other.hidden_location(depth).is_some_and(down)
+            });
+            if !fits {
+                return Err(ContentError::new(
+                    "data/dungeons/",
+                    format!(
+                        "dungeon `{}`: `above = \"{above}\"` is no level of another bounded \
+                         branch of its campaign keeping a hidden way down to `{first}`",
+                        def.id
+                    ),
+                ));
+            }
+        }
+        // Checked after the branches' own ways, whose errors say more.
+        self.check_generated_hidden(&hidden_ids)?;
         // A floor above the ground: `below` names a hand-made outdoor level of its size and
         // campaign (docs/dev/towers.md), so its air cells show the ground cell for cell.
         for level in self.levels.values() {
@@ -177,8 +208,10 @@ impl Content {
 
     /// A generated level's hidden location (`[[dungeon.levels]]`'s `hidden`) is the far end of a
     /// hidden way: a hand-made level of its campaign hides one of the same id (`placed`, by
-    /// campaign and id), the two lead to each other's levels, and no other generated level
-    /// hides that id. One reveal opens both ends (`world/levels/reveal.rs`).
+    /// campaign and id), the two lead to each other's levels or both to the one floor of a
+    /// branch between them (its `above` the generated end's level, its `bottom` the hand-made
+    /// one's: the Skeul Hir), and no other generated level hides that id. One reveal opens both
+    /// ends (`world/levels/reveal.rs`).
     fn check_generated_hidden(
         &self,
         placed: &BTreeMap<(&str, &str), &str>,
@@ -200,10 +233,24 @@ impl Content {
                 let back = twin.and_then(|l| self.levels.get(l)).and_then(|l| {
                     (l.hidden.values()).find(|h| h.id == hidden.id && h.to.as_ref() == Some(&level))
                 });
-                if back.is_none() || twin != hidden.to.as_deref() {
+                let between = hidden.to.as_deref().and_then(|to| {
+                    let (branch, _) = self.branch_level(to)?;
+                    let both = twin.and_then(|l| self.levels.get(l)).and_then(|l| {
+                        (l.hidden.values())
+                            .find(|h| h.id == hidden.id && h.to.as_deref() == Some(to))
+                    });
+                    (branch.depth == 1
+                        && branch.above.as_deref() == Some(level.as_str())
+                        && branch.bottom.as_deref() == twin)
+                        .then_some(both)
+                        .flatten()
+                });
+                let each_other = back.is_some() && twin == hidden.to.as_deref();
+                if !each_other && between.is_none() {
                     return Err(err(format!(
                         "is no far end: a hand-made level of its campaign hides the same id, \
-                         leading to `{level}`, and it leads there"
+                         leading to `{level}` (or both to the one floor of a branch between \
+                         them), and it leads there"
                     )));
                 }
             }

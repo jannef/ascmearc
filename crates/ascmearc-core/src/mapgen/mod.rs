@@ -537,6 +537,9 @@ pub fn generate_for(
     // siblings, and its first floor's `<` is where it was entered from.
     let up_to = match (depth > 1, def.endless.is_some() || def.below.is_some()) {
         (true, _) => Some(sibling(id, depth - 1)),
+        // A branch between two levels climbs to its `above` however it was entered (the
+        // Skeul Hir, entered from Gimmwīc, climbs to Lytelscræf 2).
+        (false, _) if def.above.is_some() => def.above.clone(),
         // However the first floor was reached (from the second, it may be), it climbs out: an
         // endless branch's, and a way up's.
         (false, true) => content.way_into(id).map(str::to_string),

@@ -1132,6 +1132,7 @@ fn vaults_are_validated() {
             "moss_bower",
             "nihtscinnas_warren",
             "nithdracas_hoard",
+            "powesva_an_skeul",
             "robbers_hoard",
             "staneotens_gallery",
             "still_room",

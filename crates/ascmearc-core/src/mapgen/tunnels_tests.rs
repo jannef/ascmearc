@@ -1,6 +1,6 @@
 //! The tunnels generator and its linear mode, the passage (#1835, #1839; `tunnels/`): snapshots
 //! at a few seeds and sizes, every floor connected with its stairs reached, and a passage's way a
-//! single route between stairs far apart.
+//! single route between stairs far apart, its vaults too (the Skeul Hir's, #1840).
 
 use super::tests::describe_in;
 use super::*;
@@ -37,11 +37,13 @@ fn floor(id: &str, seed: u64) -> LevelTemplate {
     generate(&FIXTURE, (campaign, seed), id, None).unwrap_or_else(|e| panic!("{id}: {e}"))
 }
 
+/// Walkable, a door, or a secret door (a vault's cache behind one is reached).
 fn walkable(level: &LevelTemplate, p: Pos) -> bool {
-    level.terrain.get(p).is_some_and(|t| {
-        let def = FIXTURE.terrain(*t);
-        def.walkable || def.is_closed_door()
-    })
+    level.secrets.contains_key(&p)
+        || level.terrain.get(p).is_some_and(|t| {
+            let def = FIXTURE.terrain(*t);
+            def.walkable || def.is_closed_door()
+        })
 }
 
 /// Steps from `from` over walkable cells but `blocked`, 8-way as the player walks; `u32::MAX`
@@ -75,9 +77,8 @@ fn stairs(level: &LevelTemplate, dir: StairsDir) -> Pos {
 /// special room's, which may be a sealed box with no way in but its breach (`treasury.rs`).
 fn connected(level: &LevelTemplate) -> Result<(), TestCaseError> {
     let dist = steps(level, stairs(level, StairsDir::Up), None);
-    for (p, t) in level.terrain.iter() {
-        let def = FIXTURE.terrain(*t);
-        if def.walkable && !level.rooms.iter().any(|r| r.contains(p)) {
+    for (p, _) in level.terrain.iter() {
+        if walkable(level, p) && !level.rooms.iter().any(|r| r.contains(p)) {
             prop_assert!(dist[p] != u32::MAX, "{}: {p} cut off", level.id);
         }
     }
@@ -113,8 +114,35 @@ fn cut_cells(level: &LevelTemplate) -> BTreeSet<Pos> {
 /// floor stops it too, as the player walks it). A second route between two places is a ring of
 /// floor round a hole as large as the rock between them; a pillar is a small one.
 fn holes(level: &LevelTemplate) -> Vec<usize> {
+    holes_of(level, |p| !walkable(level, p))
+}
+
+/// [`holes`] of the way between the stairs alone: every side piece that hangs off one cell (a
+/// vault behind its door, a pocket behind a squeeze), whose loss leaves the stairs joined but
+/// cuts the piece off, counts as rock. A vault may ring round its own pillars; the way may not.
+fn way_holes(level: &LevelTemplate) -> Vec<usize> {
+    let (up, down) = (stairs(level, StairsDir::Up), stairs(level, StairsDir::Down));
+    let reach = steps(level, up, None);
+    let mut side = Grid::new(level.terrain.width(), level.terrain.height(), false);
+    for (c, _) in level.terrain.iter() {
+        if c == up || c == down || reach[c] == u32::MAX {
+            continue;
+        }
+        let without = steps(level, up, Some(c));
+        if without[down] == u32::MAX {
+            continue;
+        }
+        for (p, d) in without.iter() {
+            if *d == u32::MAX && p != c && reach[p] != u32::MAX {
+                side[p] = true;
+            }
+        }
+    }
+    holes_of(level, |p| !walkable(level, p) || side.get(p) == Some(&true))
+}
+
+fn holes_of(level: &LevelTemplate, rock: impl Fn(Pos) -> bool) -> Vec<usize> {
     let (w, h) = (level.terrain.width(), level.terrain.height());
-    let rock = |p: Pos| !walkable(level, p);
     let mut seen = Grid::new(w, h, false);
     let fill = |seen: &mut Grid<bool>, start: Pos| {
         seen[start] = true;
@@ -167,6 +195,7 @@ fn passage_snapshots() {
         ("fixture_passage:1", 1),
         ("fixture_passage:2", 2),
         ("utgang:1", 1),
+        ("skeul_hir:1", 1),
     ] {
         let name = format!("passage_{}_seed_{seed}", id.replace(':', "_"));
         insta::assert_snapshot!(name, describe_in(&FIXTURE, &floor(id, seed)));
@@ -219,6 +248,39 @@ fn tunnels_have_chokepoints_and_loops() {
     assert!(looped >= 9, "{looped} of 12 floors have a loop round rock");
 }
 
+/// The Skeul Hir (#1840): one floor between Lytelscræf 2 and Gimmwīc, whichever way it is
+/// entered, with the stair-cutters' waystation on it every time (its statue's named place), and
+/// rich: two chests at least (the waystation's and the floor's) and its random vaults' finds.
+#[test]
+fn the_skeul_hir_always_keeps_its_waystation() {
+    for seed in 0..12 {
+        let level = floor("skeul_hir:1", seed);
+        let ways: Vec<_> = (level.stairs.iter())
+            .map(|s| (s.dir, s.to.as_deref()))
+            .collect();
+        assert_eq!(
+            ways,
+            [
+                (StairsDir::Up, Some("lytelscraef:2")),
+                (StairsDir::Down, Some("gimmwic"))
+            ],
+            "seed {seed}"
+        );
+        let jacca = (level.places.values()).filter(|p| p.name == "Jacca's stone");
+        assert_eq!(jacca.count(), 1, "seed {seed}: the waystation, once");
+        assert!(
+            level.chests.len() >= 2,
+            "seed {seed}: {} chests",
+            level.chests.len()
+        );
+        assert_eq!(
+            level.secrets.len(),
+            1,
+            "seed {seed}: the cache's door, and no other"
+        );
+    }
+}
+
 proptest! {
     #![proptest_config(ProptestConfig::with_cases(16))]
 
@@ -257,5 +319,25 @@ proptest! {
             let most = holes(&level).into_iter().max().unwrap_or(0);
             prop_assert!(most <= pillar, "{}: a hole of {most}\n{}", id, ascii(&level, &FIXTURE));
         }
+    }
+
+    /// The Skeul Hir with its vaults is one route still: connected (the cache behind its secret
+    /// door too), its stairs far apart, and its way between them ringing round no rock but a
+    /// pillar (a vault hangs off its one door, so what it holds is no second route).
+    #[test]
+    fn the_skeul_hir_with_its_vaults_is_one_route(seed: u64) {
+        let level = floor("skeul_hir:1", seed);
+        connected(&level)?;
+        let w = level.terrain.width();
+        let (up, down) = (stairs(&level, StairsDir::Up), stairs(&level, StairsDir::Down));
+        prop_assert!((up.x - down.x).abs() * 2 > w, "{up} and {down}");
+        let skeul_hir = FIXTURE.dungeon("skeul_hir").expect("the Skeul Hir");
+        let pillar = match &skeul_hir.plan(1).expect("a floor").generator {
+            Generator::Passage(p) => p.pillar,
+            g => panic!("{g:?}"),
+        };
+        let most = way_holes(&level).into_iter().max().unwrap_or(0);
+        prop_assert!(most <= pillar, "a hole of {most}\n{}", ascii(&level, &FIXTURE));
+        prop_assert_eq!(&level, &floor("skeul_hir:1", seed), "same seed, same floor");
     }
 }

@@ -20,7 +20,8 @@
 #
 # Branch fields ([[dungeon]]):
 #   id         branch id; its levels are "<id>:1" to "<id>:<depth>"
-#   name       level names are "<name> <depth>" (default: the id)
+#   name       level names are "<name> <depth>", a branch of one floor's just "<name>" (default:
+#              the id)
 #   arrival    a line said each time the player arrives on the first level by stairs (optional)
 #   depth      number of levels
 #   kind       "dungeon" (the default) or "tower": floors that go up from a hand-made clearing,
@@ -32,7 +33,12 @@
 #   bottom     a hand-made level of the same campaign (`bottom = "gimmwic"`) its deepest level's
 #              `>` leads to; that level's own `<` must name the deepest level (`to =
 #              "deopgang:11"`), and the player arrives on it (default none; not with `below`,
-#              `endless`, or `portal`)
+#              `endless`, or `portal`). A hidden location's stairs up count: the Skeul Hir's
+#              bottom, Gimmwīc, has its `<` back hidden until a quest opens it
+#   above      a level of another bounded branch of the same campaign (`above = "lytelscraef:2"`)
+#              its first level's `<` leads to, however the branch was entered; that level's
+#              `[[dungeon.levels]]` row keeps a hidden way down into the first level (`hidden`,
+#              below), so the player arrives on it (default none; not with `endless` or `portal`)
 #   [dungeon.endless]  instead of `depth`: floors without end, each made as it is reached and
 #              forgotten when left: `caves` (percent of floors made by `caves_level`), `caves_level`
 #              (the level fields a caves floor changes, over the template: e.g. `{ generator = {
@@ -70,7 +76,9 @@
 #              field by field, one of another kind starts from that kind's table. The kinds:
 #              "rooms" (rooms and corridors, ADOM-like), "caves" (cellular automata), "tunnels"
 #              (caverns of varied size joined by narrow winding tunnels, loops among them),
-#              "passage" (one long hewn way from stairs to stairs, no second route: shortcuts),
+#              "passage" (one long hewn way from stairs to stairs, no second route: shortcuts;
+#              its `random_vaults = [fewest, most]` stamps vaults with one entrance, default
+#              none),
 #              "minster" (a drowned church's cellars and crypts, flooding and falling deeper down
 #              the branch, at least 90x36; docs/dev/mapgen.md "The minster"), "mines" (a worked
 #              mine that opens up and grows lava from the branch's first mines floor to its last,

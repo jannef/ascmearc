@@ -119,6 +119,10 @@ pocket_tries = 20
 pillar = 4
 # The kept way must cover at least this percent of the inner area.
 min_floor = 5
+# Random vaults a floor stamps, `[fewest, most]`, only those with one entrance (two would open a
+# second route), each dug to from the nearest floor by a cut of its own (#1849); none by default:
+# a branch gives its own, `generator = { kind = "passage", random_vaults = [2, 3] }`.
+random_vaults = [0, 0]
 # Longest tunnel from a vault entrance to the way, and the side of the blocks lamps are scattered
 # over (as the caves').
 max_tunnel = 40

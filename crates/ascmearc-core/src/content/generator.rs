@@ -102,6 +102,20 @@ pub enum Generator {
 }
 
 impl Generator {
+    /// What its parameters must agree on: a range's least at most its most, a drawn list not
+    /// empty.
+    pub(super) fn check(&self) -> Result<(), String> {
+        match self {
+            Generator::Passage(p) if p.random_vaults[0] > p.random_vaults[1] => {
+                Err("`random_vaults` is [fewest, most]".into())
+            }
+            Generator::Tunnels(p) if p.cavern_kinds.is_empty() => {
+                Err("`cavern_kinds` names at least one kind".into())
+            }
+            _ => Ok(()),
+        }
+    }
+
     pub fn kind(&self) -> GeneratorKind {
         match self {
             Generator::Rooms(_) => GeneratorKind::Rooms,
@@ -478,6 +492,9 @@ params! {
         pillar: usize,
         /// The kept way must cover at least this percent of the inner area.
         min_floor: i32,
+        /// Random vaults a floor stamps, `[fewest, most]`, only those with one entrance (two would
+        /// open a second route), each dug to by a cut of its own; `[0, 0]`: none (#1849).
+        random_vaults: [u8; 2],
         /// Longest tunnel from a vault entrance to the way (as the caves').
         max_tunnel: usize,
         /// Side of the blocks lamps are scattered over (as the caves').

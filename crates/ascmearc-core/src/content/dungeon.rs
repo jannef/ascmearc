@@ -21,7 +21,14 @@
 //!
 //! A branch with `bottom` (a hand-made level of its campaign, `bottom = "gimmwic"`) ends in that
 //! level: its deepest level's `>` leads there, and the hand-made level's own `<` names the deepest
-//! level (checked by `Content::validate`), so it arrives on that staircase coming back up.
+//! level (checked by `Content::validate`), so it arrives on that staircase coming back up (or
+//! will, once revealed: a hidden location's stairs up count).
+//!
+//! A branch with `above` (a level of another bounded branch, `above = "lytelscraef:2"`) is a way
+//! between that level and one below: its first level's `<` leads there however the branch was
+//! entered, and that level keeps the far end of a hidden way down into it (`[[dungeon.levels]]`'s
+//! `hidden`, checked by `Content::validate`). The Skeul Hir is one, with Gimmwīc its `bottom`.
+//! A branch of one floor calls it by its own name alone ("Skeul Hir", not "Skeul Hir 1").
 //!
 //! A branch with `endless` instead of `depth` has no last floor (`world/levels/endless.rs`): every
 //! staircase makes a new floor, only the current one exists, and each floor is drawn as it is
@@ -75,7 +82,7 @@
 //! [[dungeon.levels]]            # optional per-depth rows, first match wins: the template's
 //! from = 3                      # fields, each optional, over the template
 //! to = 5                        # inclusive; default: just `from`
-//! generator = { kind = "caves", rock = 50 }
+//! generator = { kind = "caves", rock = 50 }  # or { kind = "passage", random_vaults = [2, 3] }
 //! size = [120, 60]
 //! temperature = 7
 //! danger = { base = 9, per_depth = 2 }
@@ -177,6 +184,9 @@ struct DungeonSpec {
     top: Option<String>,
     /// How many levels it has; left out of a branch with `endless`, and of a tower.
     depth: Option<u32>,
+    /// The level (another branch's) its first level's stairs up lead to, however it was entered;
+    /// default none.
+    above: Option<String>,
     /// The level (another branch's) its deepest level's stairs down lead to; default none.
     below: Option<String>,
     /// The hand-made level of its campaign its deepest level's stairs down lead to; default none.
@@ -668,6 +678,10 @@ pub struct DungeonDef {
     /// Number of levels: `id:1` to `id:depth`. An endless branch has no last floor and 1 here:
     /// its one plan, which is every floor's.
     pub depth: u32,
+    /// The level of another branch its first level's `<` leads to, however the branch was
+    /// entered: a level that keeps the far end of a hidden way down into it (checked by
+    /// `Content::validate`); `None`: the way in, or where it was entered from.
+    pub above: Option<String>,
     /// The level of another branch its deepest level's `>` leads to, which gets a `<` back up
     /// (checked by `Content::validate`); `None`: the deepest level has no way down.
     pub below: Option<String>,
@@ -810,8 +824,16 @@ impl DungeonDef {
     }
 
     /// The display name of level `depth`, e.g. `The Depths 3`; a tower's floors count from its
-    /// ground floor, the clearing, so its depth 1 is `Drȳtorr 2`.
+    /// ground floor, the clearing, so its depth 1 is `Drȳtorr 2`; the one floor of a branch of
+    /// one is called by the branch's name alone (`Skeul Hir`).
     pub fn level_name(&self, depth: u32) -> String {
+        if self.depth == 1
+            && self.endless.is_none()
+            && self.portal.is_none()
+            && self.tower.is_none()
+        {
+            return self.name.clone();
+        }
         let floor = depth + u32::from(self.tower.is_some());
         format!("{} {floor}", self.name)
     }
@@ -1042,8 +1064,10 @@ impl LevelSpec {
             Some((rule, s)) => (Some(rule), Some(s)),
             None => (None, None),
         };
+        let generator = generator.resolve(look.generators, at.place);
+        generator.check()?;
         Ok(LevelPlan {
-            generator: generator.resolve(look.generators, at.place),
+            generator,
             width: size[0],
             height: size[1],
             temperature: self.temperature.map(|c| Temperature::degrees(c.into())),
@@ -1108,6 +1132,7 @@ impl DungeonFile {
                     ("depth", spec.depth.is_some()),
                     ("bottom", spec.bottom.is_some()),
                     ("below", spec.below.is_some()),
+                    ("above", spec.above.is_some()),
                     ("endless", spec.endless.is_some()),
                     ("portal", spec.portal.is_some()),
                 ];
@@ -1126,6 +1151,12 @@ impl DungeonFile {
                 return Err(at(
                     "`bottom` has neither `below` nor `endless` beside it".into()
                 ));
+            }
+            // A floor's own `<` leads where its branch says, and only a bounded one's.
+            if spec.above.is_some() && (spec.endless.is_some() || spec.portal.is_some()) {
+                return Err(err(format!(
+                    "dungeon `{id}`: `above` has neither `endless` nor `portal` beside it"
+                )));
             }
             if spec.below.is_some() && spec.endless.is_some() {
                 return Err(at(
@@ -1262,6 +1293,7 @@ impl DungeonFile {
                 depth: depth_of,
                 bosses,
                 dread,
+                above: spec.above,
                 below: spec.below,
                 bottom: spec.bottom,
                 endless: spec.endless.map(|e| Endless {
