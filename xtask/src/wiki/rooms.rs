@@ -453,7 +453,9 @@ pub(super) fn branch_odds(content: &Content) -> String {
             let levels = if from == depth {
                 def.level_name(depth)
             } else {
-                format!("{} {from}–{depth}", def.name)
+                // A tower's floors are named from its ground floor (`DungeonDef::level_name`).
+                let floor = |d: u32| d + u32::from(def.tower.is_some());
+                format!("{} {}–{}", def.name, floor(from), floor(depth))
             };
             from = depth + 1;
             let (Some(rooms), shops) = odds(depth) else {

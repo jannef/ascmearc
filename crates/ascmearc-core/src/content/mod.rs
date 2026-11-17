@@ -211,6 +211,9 @@ mod terrain;
 mod tests;
 mod theft;
 mod throw;
+pub(crate) mod tower;
+#[cfg(test)]
+mod tower_tests;
 mod town;
 mod trap;
 mod tuning;
@@ -423,6 +426,7 @@ pub use temper::TemperRules;
 pub use terrain::{Breakable, Freeze, FreezeSpec, Noun, StairsDir, TerrainDef, TerrainId};
 pub use theft::{Blinks, SMALL as SMALL_LOOT, Steals, Takes};
 pub use throw::Throw;
+pub use tower::Tower;
 pub use town::{InvestShare, TownDef, TownRestock, TownServant};
 pub use trap::{Trap, TrapAvoid, TrapDef, TrapDisarm, TrapEffect, TrapHarm, TrapId, TrapNoise};
 pub use tuning::Tuning;

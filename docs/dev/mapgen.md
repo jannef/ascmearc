@@ -113,6 +113,36 @@ campaign), so `World::travel` arrives on it, and back up on the deepest level's 
 bottom is Gimmwīc, the deep gnomes' town. Tests: `content/dungeon.rs` (parse and exclusions),
 `content/validate.rs` (the validate checks), `world/campaigns/deep_gnome_tests.rs` (down to the town and back).
 
+**Towers** (#1783, slice T1 of docs/design/wizard-tower.md §16; `content/tower.rs`,
+`mapgen/tower.rs`): a branch of `kind = "tower"` (`DungeonDef::tower`, `Tower`) goes **up**
+from a hand-made outdoor `clearing`, the ground floor, to a hand-made `top`, with `floors`
+counting both (`depth` is `floors − 2`; `level_name` counts from the clearing, so depth 1 is
+"Drȳtorr 2"). `Content::fit_tower` (in `load_dungeons`, the levels being loaded) gives every
+floor the clearing's size and finds the footprint, the box of the clearing's tower wall; the
+clearing's `<` to depth 1 must stand inside it, and the stair runs on from there: each floor's
+`>` on the cell of the `<` below, its `<` in the interior corner farthest from that `>`
+(`tower::far_corner`; `Tower::stairs`, known at load, so floors are made in any order), the last
+cell the top's `>`, which must name the highest floor and stand there (the error gives the cell).
+`DungeonDef::tower_ways` swaps the links `generate_for` writes: the `<` to depth + 1 (the highest
+to `top`), the `>` to depth − 1 (the first to the clearing); both are on every floor, and
+`World::travel` arrives as ever on the staircase that leads back. The `tower` generator (only a
+tower's, and a tower takes only it) draws from the floor's map stream: the ring wall, two to four
+partitions across the longer way (fewer where there is no room, never through a stair's line,
+two cells of floor apart at least) with one doorway each at alternate ends so the hall winds, a
+window every third ring cell (never a corner, never a partition's end), the stairs, a sconce in a
+corner of each stretch (a lamp if none fits). `generate_for` builds a tower with its own palette
+(`tower::palette`: the wall, the floor, and the outside in place of rock, so `hide_traps`, loot,
+chests, and the population go on its floor), skips `build_walls`, and makes the floor
+`LevelKind::Outdoor` (§7: sky, weather, and light come with the kind). No vaults, shops, special
+rooms, patrols, secret doors, locks, or veins (`ores` is `[]`). The terrain is four ids in
+`content/tower.rs` (`WALL`, `FLOOR`, `WINDOW`, `OUTSIDE`): until #1781 (F1) brings `tower_wall`,
+`tower_floor`, `window`, and `air`, today's nearest stand in (`timber_wall`, `plank_floor`, `fence`,
+`void`); F1 swaps the names, its `below`/`storey` level fields are not set here. Tests:
+`content/tower_tests.rs` (what is refused, the clearing's and the top's checks),
+`mapgen/tower_tests.rs` (the showcase's test tower, `campaigns/showcase/data/dungeons/tower_climb.toml`,
+scenario `tower_climb`: both floors' snapshots, the footprint and swapped stairs over twelve
+seeds, the partitions, a climb to the top and down again as a replay).
+
 **Meyn Bew** (#1446; `campaigns/ascmearc/data/dungeons/meynbew.toml`): a pocket of the plane of
 earth under Gimmwīc, entered only through the crystal portal Ysella the Binder's quest reveals
 in the town (a hidden location of a hand-made level, `docs/dev/overworld.md`), so its first

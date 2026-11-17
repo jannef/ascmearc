@@ -48,6 +48,7 @@ mod room_loot;
 mod rooms;
 mod shop;
 mod special;
+mod tower;
 mod treasury;
 mod vault;
 mod vein;
@@ -505,6 +506,11 @@ pub fn generate_for(
         .endless
         .map_or(plan, |e| endless_plan(plan, e, seed, id));
     let pal = Palette::resolve(content).map_err(GenError::Content)?;
+    // A tower is built of its own terrain (`tower.rs`).
+    let pal = match def.tower {
+        Some(_) => tower::palette(content, pal).map_err(GenError::Content)?,
+        None => pal,
+    };
     let room_odds =
         (def.room_odds(depth)).ok_or_else(|| GenError::NotAGeneratedLevel(id.to_string()))?;
     let odds = (room_odds, def.shop_odds(depth));
@@ -521,7 +527,8 @@ pub fn generate_for(
     // Its lair hides the floor's way down, where the floor leads anywhere.
     let lair = boss.is_some() && def.leads_down(depth);
     let needs = Needs {
-        down: def.leads_down(depth) && boss.is_none(),
+        // A tower's every floor has both: its `>` down, its `<` up.
+        down: (def.leads_down(depth) && boss.is_none()) || def.tower.is_some(),
         creatures: &def.creatures,
         key: def.key,
         vaults: boss.map_or(def.vaults(depth), |b| std::slice::from_ref(&b.vault)),
@@ -540,6 +547,11 @@ pub fn generate_for(
         .leads_down(depth)
         .then(|| def.down_to(id, depth))
         .flatten();
+    // A tower's floors go up: its `<` to the floor above, its `>` to the one below.
+    let (up_to, down_to) = match def.tower_ways(depth) {
+        Some((up, down)) => (Some(up), Some(down)),
+        None => (up_to, down_to),
+    };
     let ways_up = content.ways_up_from(id);
 
     // The danger the floor's pools draw at, which a vault's `danger` asks (`Vault::suits`).
@@ -559,6 +571,9 @@ pub fn generate_for(
         let built = match plan.generator {
             Generator::Rooms => rooms::build(&mut canvas, &mut rng, needs),
             Generator::Caves => caves::build(&mut canvas, &mut rng, needs),
+            Generator::Tower => {
+                (def.tower.as_ref()).and_then(|t| tower::build(&mut canvas, &mut rng, t, depth))
+            }
         };
         if built.is_none() {
             continue;
@@ -569,7 +584,10 @@ pub fn generate_for(
         if plan.generator == Generator::Caves {
             deep::lay(&mut canvas, seed, id);
         }
-        canvas.build_walls();
+        // A tower's walls are built, and its outside is no rock to wall in.
+        if plan.generator != Generator::Tower {
+            canvas.build_walls();
+        }
         let (Some(up), down) = (canvas.up, canvas.down) else {
             continue;
         };
@@ -612,7 +630,11 @@ pub fn generate_for(
             name: def.level_name(depth),
             arrival: None,
             ambient: def.ambient,
-            kind: LevelKind::Dungeon,
+            // A tower's floors stand under the sky (docs/design/wizard-tower.md §7).
+            kind: match def.tower {
+                Some(_) => LevelKind::Outdoor,
+                None => LevelKind::Dungeon,
+            },
             terrain: canvas.terrain,
             player_start: Some(up),
             creatures: canvas.creatures,
@@ -1052,6 +1074,8 @@ mod shrine_tests;
 mod special_tests;
 #[cfg(test)]
 mod tests;
+#[cfg(test)]
+mod tower_tests;
 #[cfg(test)]
 mod treasury_tests;
 #[cfg(test)]
