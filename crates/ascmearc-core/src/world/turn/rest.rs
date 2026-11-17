@@ -129,6 +129,10 @@ impl World {
         mut act: impl FnMut(&mut Self, &mut Vec<Event>) -> i64,
     ) -> Ended {
         let said = self.said;
+        // What is noted meanwhile passes the message line by (#1789), but for the last stretch's
+        // (from its first turn on): what came with the end is read with it.
+        let working = std::mem::replace(&mut self.working, true);
+        let mut last_stretch = self.state.turn + 1;
         let mut in_view = self.watched_in_view();
         let mut seen = self.hostiles_in_view();
         let mut came = None;
@@ -140,6 +144,7 @@ impl World {
         while more(self) && came.is_none() && !stirred && self.said == said && alive(self) {
             // What was perceived was said.
             events.clear();
+            last_stretch = self.state.turn + 1;
             let unseen_until = self.state.time + self.out_of_view_for();
             let (sprung, spawned) = (self.sprung, self.spawned);
             let mut stood = self.player_pos();
@@ -204,6 +209,8 @@ impl World {
             None if self.said != said || stirred => Ended::Said,
             None => Ended::Done,
         };
+        self.working = working;
+        self.state.messages.settle(last_stretch);
         // Seen through to its end, longer than a turn: it trains Willpower.
         // A run is no such effort (`run.rs`).
         if ended == Ended::Done && turns > 1 && !self.running {

@@ -154,6 +154,23 @@ impl SoundKind {
         }
     }
 
+    /// Whether the kind is calm: the plain coming and going of creatures (footsteps, a door
+    /// opening or closing, a heartbeat, a voice muttering), with no fight or alarm in it. The
+    /// player is told of it as a note, which does not stop a long action (`World::hear`,
+    /// `World::say_mutters`; #1779, #1789: a town full of walkers and chatter would stop every
+    /// rest and craft). It depends on the kind alone, never on who made the sound, so it tells
+    /// nothing the player could not know.
+    pub const fn calm(self) -> bool {
+        matches!(
+            self,
+            SoundKind::Footsteps
+                | SoundKind::DoorOpened
+                | SoundKind::DoorClosed
+                | SoundKind::Heartbeat
+                | SoundKind::Voice
+        )
+    }
+
     /// What the player hears, as in "You hear …": `footsteps`, `a door open`.
     pub const fn heard_as(self) -> &'static str {
         match self {

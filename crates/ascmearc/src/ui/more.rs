@@ -12,6 +12,11 @@
 //! keeps the end of this turn's messages; rows they leave free show earlier messages, one a
 //! row, as before.
 //!
+//! What was noted while a long action went on without stopping it (`Message::passing`: a calm
+//! sound, chatter; #1789) is not paged: the line passes over it by itself, showing it, as it
+//! shows earlier messages, in the rows this turn's other messages leave free, and the message
+//! history keeps it. What stops the work, and the work's own lines, page and wait as usual.
+//!
 //! A turn that left the player hungrier ([`Game::hunger_stop`]) waits at its
 //! last page too, however little it said, so the news cannot scroll past.
 //!
@@ -110,6 +115,7 @@ fn width(cols: u32) -> usize {
 /// they name as bound.
 fn turn_pages(game: &Game, cols: u32, bindings: &Bindings) -> Vec<Vec<String>> {
     let texts: Vec<String> = (game.unread().iter())
+        .filter(|msg| !msg.passing)
         .map(|msg| msg.display_with(|id| message_key(bindings, id)))
         .collect();
     pages(&texts, width(cols), MESSAGE_ROWS as usize, game.hunger_stop)
@@ -165,8 +171,9 @@ pub(super) fn wait(
 }
 
 /// Draws the message line in play: at `--more--` the page waited at, `--more--` after it;
-/// otherwise the end of this turn's messages, earlier messages in the rows they leave free, one
-/// a row, the latest lowest (dimmed once they are older than the turn before).
+/// otherwise the end of this turn's messages, earlier messages (and this turn's passed over,
+/// `Message::passing`) in the rows they leave free, one a row, the latest lowest (dimmed once
+/// they are older than the turn before).
 pub(super) fn draw(console: &mut Console, game: &Game, mode: InputMode, bindings: &Bindings) {
     let rows = MESSAGE_ROWS as usize;
     let pages = turn_pages(game, console.cols(), bindings);
@@ -186,7 +193,10 @@ pub(super) fn draw(console: &mut Console, game: &Game, mode: InputMode, bindings
     let news = &news[news.len().saturating_sub(rows)..];
     let unread = game.unread().len();
     let log = game.world.perception().messages();
-    let earlier: Vec<_> = log.iter().take(log.len() - unread).collect();
+    let earlier: Vec<_> = (log.iter().enumerate())
+        .filter(|(i, msg)| *i < log.len() - unread || msg.passing)
+        .map(|(_, msg)| msg)
+        .collect();
     let earlier = &earlier[earlier.len().saturating_sub(rows - news.len())..];
     let turn = game.world.turn();
     let mut row = 0;

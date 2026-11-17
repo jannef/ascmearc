@@ -41,8 +41,10 @@ Watchful's `exact_footsteps`, #267, places footsteps at their own cell, and the 
 `exact_sounds` (#244), every sound: `noise::perceive`'s `exact`, a `noise::Exact`). In
 `noise::noise` the thief's talents (#244) quiet the player: Hide in plain sight's `silent_unburdened` (no footsteps while the burden is
 Unburdened) and `attack_noise_percent` (attacks, the one percent they take). `World::hear` logs news
-(`noise::news` against `WorldState::recent_sounds`) as messages, which stop a rest (voices are said
-with their words by `World::say_mutters` instead, as notes). The app draws
+(`noise::news` against `WorldState::recent_sounds`) as messages, which stop a rest, but a calm
+kind's (`SoundKind::calm`: footsteps, a door opening or closing, a heartbeat; #1779, so walkers in a
+town do not stop every rest and craft) as notes, which do not: by the kind alone, never by who made
+it (voices are said with their words by `World::say_mutters` instead, as notes). The app draws
 `PerceptionView::sounds()` in `ui/sounds.rs` (a still `◌` marker, always: it is information; the
 ripple only with `glyph_animation`), and there too where the player's own thrown voice sounded
 (`Event::VoiceThrown` in the last outcome, as a loud sound). Throwing one's voice (#235) is

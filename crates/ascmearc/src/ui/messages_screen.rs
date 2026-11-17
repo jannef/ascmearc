@@ -234,6 +234,7 @@ mod tests {
             turn: 1,
             text: "word ".repeat(40).trim().to_string(),
             count: 1,
+            passing: false,
         }];
         let rows = shown(&screen, 40, 20);
         let body: Vec<&String> = rows.iter().filter(|r| r.contains("word")).collect();

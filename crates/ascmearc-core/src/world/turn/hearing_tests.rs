@@ -303,27 +303,16 @@ fn a_patrol_heard_turn_after_turn_is_said_once_per_pass() {
 }
 
 #[test]
-fn a_new_sound_stops_a_rest_and_a_known_one_does_not() {
-    let mut waited = world("closet");
-    let passes = stretches(&audible_turns(&mut waited, 200));
-
+fn footsteps_heard_are_said_but_do_not_stop_a_rest() {
     let mut rested = world("closet");
     rested.apply(&Action::Rest(Rest::For(Duration::hours(1))));
-    assert_eq!(
-        rested.turn(),
-        passes[0],
-        "stops on the turn it is first heard"
-    );
     let said: Vec<_> = rested.messages().iter().map(|m| m.text.clone()).collect();
-    let n = said.len();
-    assert!(said[n - 2].contains(" hear footsteps"), "{said:?}");
-    assert!(
-        said[n - 1].starts_with("You stop resting after"),
-        "{said:?}"
+    // Footsteps are calm (`SoundKind::calm`, #1779): each pass is said, and the rest goes on.
+    assert!(hearing_messages(&rested).len() >= 4, "{said:?}");
+    assert_eq!(
+        said.last().map(String::as_str),
+        Some("You rest for 1 hour.")
     );
-    // Resting on while the same rat is heard goes on until it comes back from afar.
-    rested.apply(&Action::Rest(Rest::For(Duration::hours(1))));
-    assert_eq!(rested.turn(), passes[1]);
 }
 
 #[test]

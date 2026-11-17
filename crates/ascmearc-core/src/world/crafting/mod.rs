@@ -46,5 +46,6 @@ cfg_if! {
         mod temper_tests;
         mod trade_tests;
         mod whittle_tests;
+        mod work_tests;
     }
 }
