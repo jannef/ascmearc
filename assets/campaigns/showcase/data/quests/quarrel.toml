@@ -1,0 +1,57 @@
+# The test quarrel (#1785; docs/dev/towers.md "The quarrel"; the fields: data/quests.toml;
+# `--scenario quarrel`): the wizards' quarrel's machinery on three small levels, the scholar in
+# the quarrel hall giving it, the storm-caller and the maker on the two tops above offering their
+# sides as the player first climbs to them. Whichever the player ends allied with pays, once two
+# of the three are dead; then the parting, and the winner carries the hoard.
+[[quest]]
+id = "quarrel"
+name = "The test quarrel"
+giver = "scholar"
+type = "kill"
+target = "tag:tower_wizard"
+count = 2
+what = "wizards"
+feud = "feuding_wizards"
+offer = "Two of my colleagues upstairs want my books. Two of the three of us must fall, and I should prefer it were not me."
+accept = "West stair, the storm-caller; east stair, the maker. They will offer you terms."
+reminder = "Two wizards, and I am still here."
+where = "The storm-caller keeps the west top, the maker the east."
+
+[[quest.taker]]
+npc = "scholar"
+done = "Two of us, and I am still talking. The grammar, as promised."
+reward = { gold = 10, xp = 100, skills = { spellcraft = { start = "1d4", marks = 100 }, decipher_script = { start = "1d4", marks = 100 } } }
+
+[[quest.taker]]
+npc = "stormcaller"
+done = "Good. Quick. Sit, and learn to hold a spell in a gale."
+reward = { gold = 20, xp = 100, skills = { spellcraft = { start = "1d4", marks = 100 }, concentration = { start = "1d4", marks = 100 } } }
+parting = "That's done. Out you go, unless you've a better idea."
+betrayed = "I wondered when you'd try."
+
+[[quest.taker]]
+npc = "maker"
+done = "Splendid. Now, allow me to teach you something worth knowing."
+reward = { gold = 30, xp = 100, skills = { spellcraft = { start = "1d4", marks = 100 }, enchanting = { start = "1d4", marks = 100 } } }
+
+[[quest.side]]
+npc = "stormcaller"
+offer = "Bookhold sent you. Of course he did. Here is a better offer: take my side, and finish the other two for me."
+join = "Good. Bookhold and Brasswright will hear of it soon enough."
+refuse = "Then you're weather, and I deal with weather."
+
+[[quest.side]]
+npc = "maker"
+offer = "A caller! Before you do anything rash: I pay better than either of them. Take my side."
+join = "Splendid. The others will be so disappointed."
+refuse = "A pity. You would have made a fine ornament."
+
+[quest.parting]
+text = "Well. That is the end of it, and you have what you came for. Unless you think you have not."
+betray = "Ah. I did wonder whether you had read the whole of the bargain."
+
+[quest.hoard]
+gold = "2d10"
+rare = 1
+item_level = 5
+grimoires = 1

@@ -1,0 +1,16 @@
+# The storm-caller's top (#1785; docs/dev/towers.md "The quarrel"; `--scenario quarrel`): the test
+# quarrel's first rival, two steps north of the stair down to the quarrel hall. Climbing here the
+# first time while the quarrel is active, she offers her side.
+name = "The Storm-caller's Top"
+ambient = [200, 200, 200, 0]
+map = '''
+#######
+#..W..#
+#.....#
+#..>..#
+#######
+'''
+
+[legend]
+"W" = { terrain = "floor", creature = "quarrel_stormcaller", npc = "stormcaller" }
+">" = { terrain = "stairs_down", to = "quarrel_hall" }

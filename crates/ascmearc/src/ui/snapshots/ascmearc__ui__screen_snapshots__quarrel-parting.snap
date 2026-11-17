@@ -1,0 +1,24 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ Welcome to level 2.
+ Your athletics improves. (×3)
+
+
+
+
+
+
+
+                            ┌─ Master Bookhold ────────────────────────┐
+                            │                                          │
+                            │   Well. That is the end of it, and you   │
+                            │ have what you came for. Unless you think │
+                            │              you have not.               │
+                            │                                          │
+                            │         > Leave                          │
+                            │           Betray Master Bookhold         │
+                            │                                          │
+                            │ ↑/↓ choose  Enter select                 │
+                            └──────────────────────────────────────────┘

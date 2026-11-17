@@ -375,13 +375,7 @@ fn arena() -> (World, ActorId) {
 }
 
 fn given(w: &mut World) {
-    let record = QuestRecord {
-        stage: Stage::Active,
-        completed: 0,
-        counted: 0,
-        reached: false,
-        roll: None,
-    };
+    let record = QuestRecord::new(Stage::Active);
     w.state.quests.records.insert("lich".into(), record);
 }
 

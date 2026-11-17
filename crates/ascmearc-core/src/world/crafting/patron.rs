@@ -200,6 +200,7 @@ impl PerceptionView<'_> {
             objective: format!("{giver} wants you to bring them a Fine {name} or better."),
             target: Some(content.object(object).id.clone()),
             status,
+            sides: Vec::new(),
         })
     }
 }

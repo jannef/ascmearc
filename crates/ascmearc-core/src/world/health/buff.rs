@@ -116,6 +116,7 @@ impl World {
             | Action::Spawn
             | Action::Meet { .. }
             | Action::Encounter(_)
+            | Action::Parting(_)
             | Action::Effect { .. }
             | Action::Identify(_)
             | Action::Afflict(_)

@@ -109,6 +109,15 @@ impl Grimoires {
     pub fn of(&self, scroll: ObjectId) -> Option<ObjectId> {
         self.of.get(&scroll).copied()
     }
+
+    /// Every grimoire, in object order (a quarrel's hoard draws among them,
+    /// `world/people/quarrel.rs`).
+    pub fn all(&self) -> Vec<ObjectId> {
+        let mut all: Vec<ObjectId> = self.of.values().copied().collect();
+        all.sort();
+        all.dedup();
+        all
+    }
 }
 
 impl Content {

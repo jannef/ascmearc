@@ -1,0 +1,20 @@
+# The test quarrel's first rival: the storm-caller, on the hall's west top. (#1785; docs/dev/towers.md "The quarrel":
+# `--scenario quarrel`). A wizard of the showcase's test quarrel (data/quests/quarrel.toml), weak
+# on purpose so a test can fight them: a few blows kill them. Only the quarrel's levels place
+# them, with `npc = "stormcaller"`.
+[[creature]]
+id = "quarrel_stormcaller"
+level = 1
+xp = 10
+unique = true
+name = "Mistress Stormwell"
+glyph = "@"
+fg = "#9ad8d0"
+faction = "peaceful"
+tags = ["tower_wizard", "sapient"]
+# One of the people: never greater or lesser than their kind.
+grades = false
+race = "human"
+opens_doors = true
+weight = 60000
+stats = { strength = 6, dexterity = 6, toughness = 4, intelligence = 16, willpower = 14 }

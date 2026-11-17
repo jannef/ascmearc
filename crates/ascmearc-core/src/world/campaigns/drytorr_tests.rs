@@ -227,6 +227,28 @@ fn master_ordgar_talks_of_his_tower_and_takes_the_rowan() {
     assert!(heard(&w, "Master Ordgar says: \"Rowan and red thread."));
     assert!(heard(&w, "Quest complete: A sprig of rowan."));
     assert_eq!(w.state.experience, xp + 150, "experience, and nothing else");
+    // The meeting leads straight into the quarrel (#1785): his next topic gives it.
+    assert!(heard(&w, "Master Ordgar says: \"Rowan and red thread.") && heard_quarrel(&w));
+    assert_eq!(topics(&w, ORDGAR)[0], "quest-the_wizards_quarrel");
+    act(&mut w, "levelup:auto ask:E:quest-the_wizards_quarrel");
+    assert_eq!(stage(&w, "the_wizards_quarrel"), Some(Stage::Active));
+    let log = w.perception().quests();
+    let quarrel = log
+        .iter()
+        .find(|q| q.id == "the_wizards_quarrel")
+        .expect("logged");
+    assert_eq!(quarrel.status, "0 / 2 killed.");
+    // He is the ally and the one taker until the rivals come (#1786, #1787).
+    let def = CONTENT.quest(CONTENT.quest_id("the_wizards_quarrel").expect("it"));
+    assert_eq!(def.quarrel.takers.len(), 1);
+    assert!(def.quarrel.hoard.is_some() && def.quarrel.parting.is_some());
+}
+
+/// Whether Ordgar's thanks for the rowan lead into his quarrel.
+fn heard_quarrel(world: &World) -> bool {
+    texts(world)
+        .iter()
+        .any(|m| m.contains("I have a quarrel I cannot walk to"))
 }
 
 /// Walks the player to `to` on their level, a step at a time by the shortest way round (traps,

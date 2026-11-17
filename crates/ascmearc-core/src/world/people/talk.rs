@@ -316,6 +316,10 @@ impl World {
         if let Some(spent) = self.ask_quest(id, dialogue, topic, events) {
             return spent;
         }
+        // A wizard's offer of their side (`quarrel.rs`).
+        if let Some(spent) = self.ask_side(id, dialogue, topic, events) {
+            return spent;
+        }
         if let Some(spent) = self.ask_service(id, dialogue, topic, events) {
             return spent;
         }

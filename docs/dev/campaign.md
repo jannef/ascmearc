@@ -278,7 +278,9 @@ and the way down, the three floors and the moss bed on the third, the view snaps
 wizard's tower, its way in the hidden `I` at (19, 11) (forest → `tower`, `to = "drytorr"`), at
 the wood's western edge north-west of the mound. Wynflæd's escort's `done` ends with a word about
 him, and her second quest, `rowan_for_the_wizard` (a delivery of the `rowan_sprig` to npc
-`ordgar`, `requires` the escort, 150 experience), reveals it as given. Tests:
+`ordgar`, `requires` the escort, 150 experience), reveals it as given; Ordgar then gives
+`the_wizards_quarrel` (`data/quests/wynflaed_ordgar.toml`; `docs/dev/towers.md` "The
+quarrel"). Tests:
 `world/campaigns/drytorr_tests.rs`. Its dev scenario is `drytorr`.
 
 ## Līctūn, Cēaptūn's churchyard (#1258)

@@ -132,6 +132,9 @@ mod potion;
 mod prayer;
 mod prestige;
 mod profane;
+mod quarrel;
+#[cfg(test)]
+mod quarrel_tests;
 mod quest;
 mod quest_roll;
 mod race;
@@ -352,6 +355,7 @@ pub use potion::{Draught, Drink, Flask, Splash};
 pub use prayer::{Face, FaceWords, Faced, PrayerRules, PrayerUse, UseDef};
 pub use prestige::{PrestigeDef, Table};
 pub use profane::{GiftDef, GiftKind, GiftTier, ProfaneRolls, ProfaneTable};
+pub use quarrel::{PartingDef, Quarrel, QuarrelHoard, SideDef, Taker};
 pub use quest::{
     Binding, Boon, GOLD, Goal, KillTarget, QuestDef, QuestId, QuestKind, QuestTexts, Reveal,
     RevealWhen, Reward, SkillReward, Waits,

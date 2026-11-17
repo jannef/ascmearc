@@ -1,0 +1,24 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ You climb the stairs to The Storm-caller's Top. Mistress Stormwell says: "Bookhold sent you. Of
+ course he did. Here is a better offer: take my side, and finish the other two for me." --more--
+
+
+
+
+
+
+
+
+                  ┌─ Mistress Stormwell ─────────────────────────────────────────┐
+                  │                                                              │
+                  │ "Bookhold sent you. Of course he did. Here is a better       │
+                  │ offer: take my side, and finish the other two for me."       │
+                  │                                                              │
+                  │ > 1  Take Mistress Stormwell's side                          │
+                  │   2  Refuse Mistress Stormwell                               │
+                  │                                                              │
+                  │ 1-2 or Enter  ask    Esc  leave                              │
+                  └──────────────────────────────────────────────────────────────┘

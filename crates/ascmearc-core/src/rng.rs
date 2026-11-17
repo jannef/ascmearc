@@ -93,6 +93,7 @@
 //! |---|---|
 //! | Every rule's roll in play | `<rule>/<decision>/<actor key>@<second>#<n>` ([`crate::draw!`]; the labels are listed at their sites, `docs/dev/merging.md` "Random streams") |
 //! | A rolled quest's draw | `quest/<quest id>` |
+//! | A quarrel's hoard (`world/people/quarrel.rs`) | `hoard/<quest id>` |
 //! | Appraising | `appraise/<hour>` |
 //! | Whether food is told stale | `freshness/<object>/<died>/<hour>` |
 //! | An investment's week | `invest/<week>` |

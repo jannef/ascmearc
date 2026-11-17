@@ -1,0 +1,7 @@
+# The wizards of a quarrel who have turned on the player (a quest's `feud`;
+# world/people/quarrel.rs): refused, attacked, betrayed, or left for a rival. Each is peaceful by
+# type and fights for this faction for as long as they are the player's enemy.
+[[faction]]
+id = "feuding_wizards"
+name = "feuding wizards"
+hostile = ["player"]

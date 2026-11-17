@@ -1,0 +1,21 @@
+# The test quarrel's three wizards (#1785; docs/dev/towers.md "The quarrel"; `--scenario
+# quarrel`): the scholar who gives it in the quarrel hall, and the two rivals on the tops above.
+# The quest and its sides' words: data/quests/quarrel.toml.
+
+[[dialogue]]
+npc = "scholar"
+name = "Master Bookhold"
+greet = "Ah, a visitor. Do mind the stairs; both of them lead somewhere unpleasant."
+lines = ["Two stairs, two rivals, one of me.", "Books are patient. Wizards are not."]
+
+[[dialogue]]
+npc = "stormcaller"
+name = "Mistress Stormwell"
+greet = "Shut the door. You're letting the weather in, and it is mine."
+lines = ["Thunder is only the sky clearing its throat.", "Bookhold reads. I do."]
+
+[[dialogue]]
+npc = "maker"
+name = "Master Brasswright"
+greet = "You have climbed a long way to be impressed. Allow me."
+lines = ["Everything in this room I made, except you.", "Brass does not argue."]
