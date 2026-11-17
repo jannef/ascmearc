@@ -249,8 +249,8 @@ Effects, each off with its own switch (`particles`, `glow`, `distortion`,
   light alone never blooms) and glowing glyphs are multiplied past 1. Free glyphs do the same
   through their HDR vertex color (`post::in_range`, `post::emissive`).
 - **Depth blur** (the wizards' towers, `docs/design/wizard-tower.md` §6): a cell drawn as seen
-  from `storey` storeys up (a tower floor's window view of the ground) gets
-  `Console::set_blur(x, y, storey)`, reset by `put` and `clear` as the effects are, clamped to
+  from `storey` storeys up (a tower floor's window view of the ground; `ui/mod.rs::draw_map`
+  for each cell it draws through `below_cell`) gets `Console::set_blur(x, y, storey)`, reset by `put` and `clear` as the effects are, clamped to
   `console::BLUR_MAX`. The byte rides in the glyph texture's spare fourth byte. `console.wesl`
   reads the glyph's coverage as a nine-tap tent (center, four taps at half the radius, four
   diagonal at the full radius; four taps on one ring showed small glyphs as ghosts) of radius

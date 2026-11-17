@@ -7,9 +7,10 @@ code, as CLAUDE.md says.
 
 Built so far: **F1** (#1781), the foundation: the terrain, the level fields `below` and `storey`,
 the below view in perception and memory, look mode, the `view` and `below` dump layers, the map
-drawing the ground below (not blurred yet: F2), and the showcase's two-storey test tower. **T1**
+drawing the ground below, and the showcase's two-storey test tower. **F2** (#1782) blurs that
+ground by its depth (`docs/dev/rendering.md` "Depth blur"). **T1**
 (#1783, `docs/dev/mapgen.md` "Towers") builds the generated floors of this terrain, each with
-`below = clearing` and `storey = depth`. Not yet: the blur (F2), the towers themselves, the
+`below = clearing` and `storey = depth`. Not yet: the towers themselves, the
 wizards, and their quests (C1, W1, C2, C3).
 
 ## The idea
@@ -92,8 +93,8 @@ so nobody lands on the air.
   if it has one), else the top object's (known stairs keep their glyph over a pile, as on the
   ground), else the terrain's `glyph_at(p)` and `fg`, over the below terrain's `bg`; remembered,
   the terrain dimmed through `remembered()`. Base colours: the shader lights the cell as the air
-  cell is lit, so the ground reads sunlit by day. Never animated, and not blurred (F2 adds the
-  blur byte). Below creatures are grid cells, not free glyphs: `covered` comes from `actors()`.
+  cell is lit, so the ground reads sunlit by day. Never animated; blurred by the floor's
+  storey (`Console::set_blur`, `docs/dev/rendering.md` "Depth blur"). Below creatures are grid cells, not free glyphs: `covered` comes from `actors()`.
 - **Look mode** (`ui/look.rs::describe`, `far_below`): "Open air. Far below: grass." / "Open air.
   Far below: a deer, on grass." / "... a dagger, on grass." (the pile phrase through the lore, so
   an unidentified scroll shows by its label); remembered, "You remember open air here. Far below:

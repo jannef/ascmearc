@@ -59,10 +59,6 @@ impl CellFx {
 
 /// The strongest depth blur a cell takes ([`Console::set_blur`] clamps to it): past it the pull
 /// toward the background (`BLUR_PULL` in `console.wesl`) would wash the glyph out.
-#[cfg_attr(
-    not(test),
-    expect(dead_code, reason = "draw_map's tower window view calls it (#1781)")
-)]
 pub const BLUR_MAX: u8 = 8;
 
 /// A grid of cells; `None` cells are transparent.
@@ -171,10 +167,6 @@ impl Console {
     /// Blurs the glyph at `(x, y)` as seen from `storey` storeys up (a tower's window view of
     /// the ground below; 0 is sharp, clamped to [`BLUR_MAX`]). The grid shader softens the glyph
     /// and pulls it toward the background, more per storey; the background and light stay put.
-    #[cfg_attr(
-        not(test),
-        expect(dead_code, reason = "draw_map's tower window view calls it (#1781)")
-    )]
     pub fn set_blur(&mut self, x: i32, y: i32, storey: u8) {
         let blur = storey.min(BLUR_MAX);
         if let Some(i) = self.index(x, y)
