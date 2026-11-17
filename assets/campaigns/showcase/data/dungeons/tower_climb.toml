@@ -1,0 +1,19 @@
+# The showcase's test tower (#1783): a branch of `kind = "tower"` (data/dungeons.toml; docs/dev/
+# mapgen.md "Towers"). Four floors: the ground floor in the meadow (levels/tower_climb.toml), two
+# generated trap floors above it (`tower_climb_floors:1` and `:2`, "The Test Tower 2" and "3"),
+# and the hand-made top (levels/tower_climb_top.toml). Each floor's `<` climbs, its `>` goes back
+# down. No danger: nobody lives there, only the traps.
+
+[[dungeon]]
+id = "tower_climb_floors"
+name = "The Test Tower"
+kind = "tower"
+generator = "tower"
+floors = 4
+clearing = "tower_climb"
+top = "tower_climb_top"
+traps = ["arrow", "spear", "alarm", "pit"]
+traps_per_level = [3, 5]
+hidden_per_depth = 2
+shops = { chance = 0 }
+room_effects = { chance = 0 }

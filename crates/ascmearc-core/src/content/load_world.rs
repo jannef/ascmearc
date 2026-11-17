@@ -291,7 +291,8 @@ impl Content {
                     ));
                 }
                 def.campaign = campaign::of_path(path).map(str::to_string);
-                self.pin_vaults(&def)
+                self.fit_tower(&mut def)
+                    .and_then(|()| self.pin_vaults(&def))
                     .and_then(|()| self.pin_lairs(&def))
                     .map_err(|m| ContentError::new(path, format!("dungeon `{}`: {m}", def.id)))?;
                 self.dungeons.insert(def.id.clone(), def);

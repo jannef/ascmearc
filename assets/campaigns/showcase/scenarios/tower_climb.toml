@@ -1,0 +1,6 @@
+name = "Tower climb"
+description = "A test tower in a meadow: its ground floor, two generated trap floors that go up, and a hand-made top."
+start_level = "tower_climb"
+seed = 1
+character = { race = "human", gender = "female", class = "warrior", name = "Hild" }
+wield = ["lantern"]

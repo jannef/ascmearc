@@ -136,6 +136,8 @@ The test world (`assets/campaigns/showcase/`, the `showcase` feature):
 - `quarry`: in the quarry beside a pick-axe (its pit holds a pool of deep water to swim in, with
   `--character lizardfolk,female,warrior`).
 - `traps`: in the trap hall.
+- `tower_climb`: in the meadow before the test tower's door: its ground floor, two generated trap
+  floors above (`kind = "tower"`, `docs/dev/mapgen.md` "Towers"), and its top.
 - `summoners`: in the summoning hall's south hall (three summoners behind doors).
 - `thieves`: in the thieves' hall (a pixie, a nymph, and an imp that rob you as they fight,
   behind doors; a blink dog past statues).

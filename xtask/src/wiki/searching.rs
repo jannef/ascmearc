@@ -77,9 +77,10 @@ pub(super) fn search_depths(content: &Content) -> String {
             continue;
         }
         for depth in 1..=def.depth {
-            let rooms = def.plan(depth).map(|p| p.generator) == Some(Generator::Rooms);
+            let generator = def.plan(depth).map(|p| p.generator);
             let doors = match def.secret_doors {
-                _ if !rooms => "none (caves have no doors)".to_string(),
+                _ if generator == Some(Generator::Tower) => "none (a tower hides no doors)".into(),
+                _ if generator != Some(Generator::Rooms) => "none (caves have no doors)".into(),
                 [0, 0] => "none".to_string(),
                 [least, most] if least == most => least.to_string(),
                 [least, most] => format!("{least} to {most}"),
