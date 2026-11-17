@@ -1,0 +1,8 @@
+# The ratfolk craving (docs/design/ratfolk-craving.md; docs/dev/craving.md; #1804): what eating
+# the flesh of the thinking makes of a ratfolk. Its talents are the craving's rows
+# (../../rules/craving.toml), each granted as its count is reached, never picked (no free
+# talent: never offered). Listed after Profane.
+[[tree]]
+id = "craving"
+name = "Craving"
+description = "What the flesh of the thinking made of you."

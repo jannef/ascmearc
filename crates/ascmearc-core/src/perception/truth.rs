@@ -1041,6 +1041,7 @@ impl<'a> PerceptionView<'a> {
                         crate::background::gave(self.content, self.campaign, c, &taken.id, choice)
                     });
                 let profane = self.content.profane().gift(id).map(|g| g.kind);
+                let craving = book.tree(def.tree).id == crate::content::CRAVING_TREE;
                 Some(OwnTalent {
                     id,
                     name: def.name_for(self.content, taken.choice.as_deref()),
@@ -1052,9 +1053,10 @@ impl<'a> PerceptionView<'a> {
                     flaw: def.flaw,
                     class: class.contains(&id),
                     spent: def.effects.iter().any(|e| spent(profane.is_some(), e)),
-                    boon: boon && !story && profane.is_none(),
+                    boon: boon && !story && profane.is_none() && !craving,
                     story,
                     profane,
+                    craving,
                 })
             })
             .collect()

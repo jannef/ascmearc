@@ -52,13 +52,17 @@ fn tree_page(tree: &str) -> Option<&'static str> {
 
 /// The page a talent's row is on (#1554): a birth sign's gift on the horoscope page, a class
 /// ability in its first class's level table, on that class's page (else its first prestige
-/// class's), a profane gift on the profane gifts page, any other on its tree group's page.
+/// class's), a profane gift on the profane gifts page, a craving's talent in the craving's table
+/// on the food page, any other on its tree group's page.
 fn talent_page(content: &Content, def: &TalentDef) -> String {
     let book = content.talents();
     if book.tree_id(STARS) == Some(def.tree) {
         "horoscope.md".into()
     } else if book.tree(def.tree).id == "profane" {
         "profane-gifts.md".into()
+    } else if book.tree(def.tree).id == "craving" {
+        // The ratfolk craving's rows, in its table on the food page.
+        "food.md".into()
     } else if book.tree(def.tree).class {
         match home_table(content, &def.id) {
             Some(Table::Prestige(_)) => "prestige-classes.md".into(),
@@ -807,7 +811,7 @@ mod tests {
         let content = ascmearc_assets::content().expect("content");
         let book = content.talents();
         for tree in &book.trees {
-            if tree.class || tree.id == STARS || tree.id == "profane" {
+            if tree.class || tree.id == STARS || tree.id == "profane" || tree.id == "craving" {
                 continue;
             }
             assert!(tree_page(&tree.id).is_some(), "{} is on no page", tree.id);

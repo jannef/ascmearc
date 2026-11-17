@@ -1,11 +1,12 @@
 //! Content's accessors for the rules files: the numbers of one system each, most of them optional.
 
 use super::{
-    AllyRules, CompanionRules, Content, EncounterRules, FamiliarRules, FeintRules, FireRules,
-    FletchRules, ForageRules, GearConditions, HerbRules, HungerDef, IntimidateRules, InvestRules,
-    LawRules, MagicWorth, MiningRules, PatronRules, PrayerRules, RangedRules, RequiredIds,
-    RestockRules, RigRules, RuinRules, SalvageRules, SearchRules, SmiteRules, StatTraining,
-    StealRules, StipendRules, SurpriseRules, SwimRules, TagDrops, TemperRules, Tuning, WebRules,
+    AllyRules, CompanionRules, Content, CravingRules, EncounterRules, FamiliarRules, FeintRules,
+    FireRules, FletchRules, ForageRules, GearConditions, HerbRules, HungerDef, IntimidateRules,
+    InvestRules, LawRules, MagicWorth, MiningRules, PatronRules, PrayerRules, RangedRules,
+    RequiredIds, RestockRules, RigRules, RuinRules, SalvageRules, SearchRules, SmiteRules,
+    StatTraining, StealRules, StipendRules, SurpriseRules, SwimRules, TagDrops, TemperRules,
+    Tuning, WebRules,
 };
 
 impl Content {
@@ -142,6 +143,12 @@ impl Content {
     /// The two laws (`data/rules/laws.toml`); `None` without the file, when nothing is counted.
     pub fn laws(&self) -> Option<&LawRules> {
         self.laws.as_ref()
+    }
+
+    /// The ratfolk craving (`data/rules/craving.toml`); `None` without the file, when no race
+    /// craves.
+    pub fn craving(&self) -> Option<&CravingRules> {
+        self.craving.as_ref()
     }
 
     /// What area spells do to the items lying in them (`data/ruin.toml`); no rows without the file.

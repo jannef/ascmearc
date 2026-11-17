@@ -71,7 +71,8 @@ on purpose, and their [levels](experience.md#levels) come quicker for it (see
   [notice what is hidden](searching.md#noticing-in-passing) in stone.
 - **[Ratfolk](races.md#race-ratfolk)** are nimble scavengers, weak and shunned. They are hard to
   sicken, with a bonus on every [check](diseases.md#checks) against a [disease](diseases.md), and
-  they eat rotten food without harm (see [Food](food.md)).
+  they eat rotten food without harm (see [Food](food.md)). Eating those who think wakes [their
+  craving](food.md#the-ratfolks-craving), which makes them stronger and hungrier.
 
 No [creature](creatures.md) takes your side because of your race.
 [Hostile](creatures.md#factions) [kobolds](races.md#race-kobold) attack a kobold too. Good folk

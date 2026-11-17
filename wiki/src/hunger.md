@@ -42,6 +42,9 @@ The [Lean](talents-body.md#talent-lean) talent makes you hungry more slowly (see
 stomach empties, on top of the race's and the talent's (see [Magic items](magic-items.md)).
 However much of it you wear, you still get a little hungry.
 
+A ratfolk who eats those who think gets hungry faster as [the
+craving](food.md#the-ratfolks-craving) grows.
+
 Fighting burns a little more. Each [blow](combat.md#hitting), [shot, or
 throw](ranged.md#shooting-and-throwing) costs a few points (see the facts above).
 

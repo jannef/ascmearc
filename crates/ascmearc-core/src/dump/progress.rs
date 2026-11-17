@@ -131,8 +131,12 @@ pub(super) fn progress_rows(world: &World) -> Vec<String> {
     // The two laws broken (`world/character/laws.rs`): sapient corpses eaten, fiends summoned.
     let laws = world.laws_broken();
     if !laws.is_empty() {
+        // The ratfolk craving's rows crossed (`world/character/craving.rs`), for one who craves.
+        let craving = (world.craving_crossed()).map_or(String::new(), |n| {
+            format!("; craving {n} threshold{}", if n == 1 { "" } else { "s" })
+        });
         rows.push(format!(
-            "laws broken: ate {} sapient, summoned {} fiend",
+            "laws broken: ate {} sapient, summoned {} fiend{craving}",
             laws.eaten(),
             laws.summoned()
         ));

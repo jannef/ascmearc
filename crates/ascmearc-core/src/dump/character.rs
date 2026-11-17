@@ -97,7 +97,7 @@ pub(super) fn skill_rows(view: &PerceptionView<'_>) -> Vec<String> {
 /// birth sign's gifts first, marked `(race)` and `(sign)`, the sign's flaw `(sign, flaw)`; a forgotten altar's
 /// `(altar)` and `(altar, flaw)`; the background story's `(story)` and `(story, flaw)`; a profane
 /// gift's `(profane)`, a profane bane's `(profane, bane)`, and a rising used up `(sign, spent)`
-/// or `(profane, spent)` (Twice-born).
+/// or `(profane, spent)` (Twice-born); a row of the ratfolk craving's `(craving)`.
 pub(super) fn talent_rows(view: &PerceptionView<'_>) -> Vec<String> {
     (view.own_talents().iter())
         .map(|t| {
@@ -106,6 +106,7 @@ pub(super) fn talent_rows(view: &PerceptionView<'_>) -> Vec<String> {
                 _ if t.profane == Some(GiftKind::Bane) => format!("{name} (profane, bane)"),
                 _ if t.profane.is_some() && t.spent => format!("{name} (profane, spent)"),
                 _ if t.profane.is_some() => format!("{name} (profane)"),
+                _ if t.craving => format!("{name} (craving)"),
                 _ if t.story && t.flaw => format!("{name} (story, flaw)"),
                 _ if t.story => format!("{name} (story)"),
                 _ if t.boon && t.flaw => format!("{name} (altar, flaw)"),
