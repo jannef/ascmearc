@@ -86,8 +86,32 @@
 #   reveals    a hidden location of the campaign it reveals (a legend's `hidden`, on the
 #              overworld or a hand-made level; optional): { location = "ID", when = "given" },
 #              `when` "given" (the default) or "done". The speaker marks it on the player's map,
-#              or the location's `opens` line is said instead
+#              or the location's `opens` line is said instead; or a list of them
+#              (`[{ location = "wedertorr" }, { location = "steorratorr" }]`), each at its `when`
 #   where      where the goal lies, in words, after the objective in the quest log (optional)
+#
+# A quarrel (world/people/quarrel.rs; docs/dev/towers.md "The quarrel"): a kill quest may name who
+# may complete it and the rivals who offer the player their side. Everyone named is the npc id
+# of a unique character with a dialogue.
+#   [[quest.taker]]  who may complete it, while they are the player's ally: `npc`, `done` (what
+#              they say), `reward` (as the quest's), and optionally `parting` and `betrayed`
+#              (their own words for the parting). The giver is one; the quest then has no
+#              `reward` or `done` of its own. The giver is the ally until the player takes
+#              another's side
+#   [[quest.side]]  a rival who offers their side once, as the player first arrives by stairs
+#              where they stand (even one turned hostile by a rival's deal): `npc` (a taker, not
+#              the giver), `offer` (said on arrival, the dialogue screen opening on it), `join`
+#              and `refuse` (their replies to the topics "Take <name>'s side" and "Refuse
+#              <name>"). Taking a side makes them the ally and every other wizard of the quest
+#              hostile; refusing, or attacking a wizard, makes that one hostile
+#   [quest.parting]  asked once by the one dialog right after the hand-in: `text` (what the
+#              one who paid says) and `betray` (what they say betrayed); options Leave and
+#              Betray <name>, which turns them hostile
+#   [quest.hoard]  what the one who paid carries from then on, dropped where they die: `gold`
+#              (dice), `rare` (rare items, made at `item_level`), `grimoires` (drawn among every
+#              grimoire)
+#   feud       the faction (data/factions/) a wizard of the quarrel fights for while hostile;
+#              needed with sides or a parting
 #
 # Rolled quests: instead of `target`, a kill or bring quest may draw its target as it is given
 # (and never again until it is done; the draw is saved):

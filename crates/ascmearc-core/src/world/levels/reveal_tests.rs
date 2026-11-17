@@ -419,3 +419,60 @@ fn files_with_quest_reveal(location: &str) -> ContentFiles {
     );
     files
 }
+
+#[test]
+fn a_quest_reveals_every_location_of_its_list() {
+    // A second hidden location on the plain north of the barrow, and the hermit's second quest
+    // revealing both as it is given (#1785: `reveals` as a list).
+    let second = r#""3" = { terrain = "plains", hidden = { id = "old_mound", terrain = "dungeon_entrance", to = "depths:1", name = "The Old Mound" } }"#;
+    let overworld = overworld_with(&format!("{LEGEND}\n{second}"));
+    let (head, rest) = overworld.split_once("map = '''\n").expect("a map");
+    let (map, tail) = rest.split_once("'''").expect("the map ends");
+    let mut rows: Vec<Vec<char>> = map.lines().map(|l| l.chars().collect()).collect();
+    let (x, y) = (NEARBY.x as usize, NEARBY.y as usize);
+    assert_eq!(rows[y][x], '.', "the mound lies on the plain");
+    rows[y][x] = '3';
+    let map: Vec<String> = rows.into_iter().map(String::from_iter).collect();
+    let mut files = ContentFiles::builtin();
+    files.insert(
+        "campaigns/showcase/levels/overworld.toml",
+        &format!("{head}map = '''\n{}\n'''{tail}", map.join("\n")),
+    );
+    let reveals = "target = \"depths:3\"\nreveals = [{ location = \"old_barrow\" }, \
+                   { location = \"old_mound\" }]";
+    files.insert(
+        "campaigns/showcase/data/quests/showcase.toml",
+        &QUESTS.replacen("target = \"depths:3\"", reveals, 1),
+    );
+    let content = Arc::new(Content::load(&files).expect("content"));
+    let mut w = World::new(content, "showcase", None).expect("run");
+    w.state.quests =
+        serde_json::from_str(r#"{"records": {"rats": {"stage": "done", "completed": 1}}}"#)
+            .expect("quests");
+    let hermit = w.content().creature_id("hermit").expect("hermit");
+    let at = (w.state.actors.values())
+        .find(|a| a.creature == hermit)
+        .expect("the hermit")
+        .pos;
+    let level = w.state.current_level.clone();
+    let player = w.state.player;
+    let d = (Dir::ALL.into_iter())
+        .find(|&d| {
+            let p = at.step(d);
+            w.state.current().is_walkable(&w.content, p)
+                && (w.state.actor_at(&level, p)).is_none_or(|a| a.id == player)
+        })
+        .expect("room beside him");
+    put_player(&mut w, at.step(d));
+    ask(&mut w, d.opposite(), "quest-depths");
+    assert!(w.state.revealed.contains("old_barrow"));
+    assert!(w.state.revealed.contains("old_mound"));
+    let said = texts(&w);
+    assert_eq!(
+        said[said.len() - 2..],
+        [
+            MARKS.to_string(),
+            "The old hermit marks the Old Mound on your map.".to_string()
+        ]
+    );
+}

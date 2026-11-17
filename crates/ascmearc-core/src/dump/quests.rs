@@ -17,8 +17,16 @@ pub(super) fn quest_rows(view: &PerceptionView<'_>) -> Vec<String> {
             } else {
                 String::new()
             };
+            // A quarrel's wizards and where each stands (`world/people/quarrel.rs`).
+            let sides: Vec<String> = (q.sides.iter())
+                .map(|(name, side)| format!("{name} {}", side.id()))
+                .collect();
+            let sides = match sides.is_empty() {
+                true => String::new(),
+                false => format!(" [{}]", sides.join(", ")),
+            };
             format!(
-                "{} ({stage}, from {}): {}{status}",
+                "{} ({stage}, from {}): {}{status}{sides}",
                 q.name, q.giver, q.objective
             )
         })

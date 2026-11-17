@@ -1,0 +1,16 @@
+# The maker's top (#1785; docs/dev/towers.md "The quarrel"; `--scenario quarrel`): the test
+# quarrel's second rival, two steps north of the stair down to the quarrel hall. Climbing here the
+# first time while the quarrel is active, he offers his side.
+name = "The Maker's Top"
+ambient = [200, 200, 200, 0]
+map = '''
+#######
+#..W..#
+#.....#
+#..>..#
+#######
+'''
+
+[legend]
+"W" = { terrain = "floor", creature = "quarrel_maker", npc = "maker" }
+">" = { terrain = "stairs_down", to = "quarrel_hall" }

@@ -1,0 +1,6 @@
+name = "Quarrel"
+description = "The wizards' quarrel's machinery on three small levels: the scholar gives the quest, the two rivals upstairs offer their sides, and whoever ends your ally pays, then asks the parting."
+start_level = "quarrel_hall"
+seed = 1
+# A warrior: no Spellcraft, so the ally's lesson teaches it.
+character = { race = "human", gender = "female", class = "warrior", name = "Hild" }

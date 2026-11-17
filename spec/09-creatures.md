@@ -83,7 +83,8 @@ Only enemies have these; the player never does.
 
 ## Quests
 
-- Quests are simple errands. There are no timers and no branching outcomes.
+- Quests are simple errands. There are no timers and no branching outcomes, but for the wizards' quarrel.
+- The wizards' quarrel: of three wizards, two must die. Each rival offers the player their side once, when the player first reaches them, even if already turned hostile by a rival's deal. Taking a side makes that wizard the ally and every other wizard hostile; refusing or attacking a wizard makes that one hostile. Whichever wizard the player ends allied with pays, teaching Spellcraft and a skill of their own; with all three dead nobody pays. Then the player is asked once whether to leave or betray them, and the winner carries a hoard with a grimoire, dropped where they die.
 - Asking about a quest gives it. There is no accepting or declining: this is a roguelike, not an MMO (the owner).
 - No abandoning, no cap on active quests (the owner).
 - A kill quest for a named monster is met by its death at any hand, at any time, so no quest can be softlocked.

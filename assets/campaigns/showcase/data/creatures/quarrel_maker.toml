@@ -1,0 +1,20 @@
+# The test quarrel's second rival: the maker, on the hall's east top. (#1785; docs/dev/towers.md "The quarrel":
+# `--scenario quarrel`). A wizard of the showcase's test quarrel (data/quests/quarrel.toml), weak
+# on purpose so a test can fight them: a few blows kill them. Only the quarrel's levels place
+# them, with `npc = "maker"`.
+[[creature]]
+id = "quarrel_maker"
+level = 1
+xp = 10
+unique = true
+name = "Master Brasswright"
+glyph = "@"
+fg = "#d8b07a"
+faction = "peaceful"
+tags = ["tower_wizard", "sapient"]
+# One of the people: never greater or lesser than their kind.
+grades = false
+race = "human"
+opens_doors = true
+weight = 60000
+stats = { strength = 6, dexterity = 6, toughness = 4, intelligence = 16, willpower = 14 }

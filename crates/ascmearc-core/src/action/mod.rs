@@ -108,6 +108,11 @@ pub enum Action {
     /// While one pends, every other action that takes time is refused. Refused (no time) with none
     /// pending or a choice it does not offer.
     Encounter(crate::world::EncounterChoice),
+    /// Answer the parting that is pending after a quarrel's hand-in (`parting:leave`,
+    /// `parting:betray`; `world/people/quarrel.rs`): leave, or betray the wizard who paid, who
+    /// turns hostile. Takes no time. While it pends, every other action that takes time is
+    /// refused. Refused (no time) with none pending.
+    Parting(crate::world::PartingChoice),
     /// Chat with the creature in a direction: it answers with a line, and
     /// one that has topics opens the dialogue screen. Takes the time of `chat`; refused (no
     /// time) when the player sees no one there.

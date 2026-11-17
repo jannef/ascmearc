@@ -326,6 +326,14 @@ pub fn json(world: &World, layers: &[Layer], include_state: bool) -> Value {
         "companion": kept_json(&view, Kept::Companion),
         // The player's familiar (`world/allies/familiar.rs`), or null.
         "familiar": kept_json(&view, Kept::Familiar),
+        // The quarrel's parting to answer, or null (`world/people/quarrel.rs`).
+        "parting": view.parting().map(|p| json!({
+            "title": p.title,
+            "text": p.text,
+            "choices": (p.choices.iter())
+                .map(|(label, c)| json!({ "id": c.id(), "label": label }))
+                .collect::<Vec<_>>(),
+        })),
         // The overworld encounter to answer, or null.
         "encounter": view.encounter().map(|e| {
             let (entry, outcome) = view.encounter_pending().expect("pending");

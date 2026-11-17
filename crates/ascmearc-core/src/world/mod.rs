@@ -216,6 +216,7 @@ pub use magic::spell_words::{SpellRoll, reach_words, reroll_words, roll_words};
 pub use magic::zone::Zone;
 pub use people::escort::{escort_slot, fits_escort};
 pub use people::guild::GuildRank;
+pub use people::quarrel::{Parting, PartingChoice, PartingView, Side};
 pub use people::quest::{
     QuestRecord, QuestView, Quests, Stage, asks as quest_asks, wants as quest_wants,
 };
@@ -330,6 +331,9 @@ pub struct WorldState {
     /// The encounter the player must answer before anything else (`world/levels/encounter.rs`).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) encounter: Option<levels::encounter::Pending>,
+    /// The parting the player must answer before anything else (`world/people/quarrel.rs`).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) parting: Option<people::quarrel::Parting>,
     /// The endless branches' floors made and depths reached (`world/levels/endless.rs`).
     #[serde(
         default,
@@ -853,6 +857,7 @@ impl World {
             listening: None,
             encounters: None,
             encounter: None,
+            parting: None,
             endless: Default::default(),
             pits: BTreeMap::new(),
             parties: Vec::new(),
@@ -1236,6 +1241,7 @@ impl World {
             lore: self.lore(),
             snapshot: &self.perception,
             encounter: self.state.encounter.as_ref(),
+            parting: self.state.parting.as_ref(),
             seed: self.state.seed,
         }
     }
@@ -1477,6 +1483,7 @@ impl World {
             Action::Throw { item, at } => return self.throw(*item, *at, events),
             Action::Rest(goal) => return self.start_rest(*goal),
             Action::Encounter(choice) => return self.answer_encounter(*choice),
+            Action::Parting(choice) => return self.answer_parting(*choice),
             Action::Chat(dir) => return self.chat(*dir, events),
             Action::Ask { dir, topic } => return self.ask(*dir, topic, events),
             Action::Steal(dir) => return self.steal(*dir),

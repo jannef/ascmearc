@@ -10,8 +10,9 @@ the below view in perception and memory, look mode, the `view` and `below` dump 
 drawing the ground below (not blurred yet: F2), and the showcase's two-storey test tower. **T1**
 (#1783, `docs/dev/mapgen.md` "Towers") builds the generated floors of this terrain, each with
 `below = clearing` and `storey = depth`. **C1** (#1784, "Drȳtorr" below) is the first tower, its
-wizard, and the wise-woman's quest that sends the player to him. Not yet: the blur (F2), the
-quarrel's machinery (W1), and the two rival towers (C2, C3).
+wizard, and the wise-woman's quest that sends the player to him. **W1** (#1785, "The quarrel"
+below) is the quarrel's machinery and Ordgar's side of it. Not yet: the blur (F2) and the two
+rival towers (C2, C3).
 
 ## The idea
 
@@ -160,7 +161,8 @@ The first of the three towers (design §9, §10): Master Ordgar's, in Holegnwudu
 - **The quests** (`data/quests/wynflaed.toml`): *Taken under the hill*'s `done` ends with a word
   about him; `rowan_for_the_wizard`, "A sprig of rowan", needs it done, is a delivery of the
   shared `rowan_sprig` (`assets/data/objects/rowan_sprig.toml`) to `ordgar`, reveals `drytorr`
-  as given, and pays 150 experience only (Spellcraft is taught at the end of the quarrel, W1).
+  as given, and pays 150 experience only; Ordgar's thanks lead into his quarrel ("The quarrel"
+  below), which teaches Spellcraft at its end.
 
 The dev scenario `drytorr` starts on the clearing's track at 10:00. The dev action
 `quest_done:ID` (`world/people/quest_done.rs`) marks a chain's earlier quest done, so a replay
@@ -169,6 +171,73 @@ can start the rowan from Holtwīc.
 ```sh
 cargo dev --scenario drytorr --scale 1 --capture target/drytorr.png
 cargo dev-cli dump --scenario holtwic --actions "move:N*8 move:E*11 move:NE move:N*3 move:E*11 quest_done:taken_under_the_hill ask:SE:quest-rowan_for_the_wizard" --layers quests
+```
+
+## The quarrel
+
+The wizards' quarrel (#1785; design §10.3, §10.4, §11): a kill quest whose wizards take sides.
+The data is `content/quarrel.rs` (`QuestDef::quarrel`, a `Quarrel`; the fields in
+`data/quests.toml`), the rules `world/people/quarrel.rs`.
+
+- **Takers** (`[[quest.taker]]`, `Taker`): who may complete a kill quest, each with their own
+  `done`, `reward`, and parting words; the giver is one, and the quest pays nothing of its own.
+  `World::takes_in` lists the hand-in topic on a taker's screen and takes it in only while they
+  are the ally; `complete_saying` says and pays the taker's (`turn_in_now` names them in the
+  log's "Return to ...").
+- **Standing** (`QuestRecord::sides`, by npc id, `Side`): absent, not met (the giver: the ally);
+  `Offered` (met, undecided, at peace); `Allied`; `Hostile` (refused, attacked, betrayed, or left
+  for a rival); `Turned` (hostile by a rival's deal before the player met them: they still
+  offer). `World::sync_wizards` sets each wizard's `Actor::faction_override` from it: the quest's
+  `feud` faction (`data/factions/335-feuding_wizards.toml`, hostile to the player) while
+  `Hostile` or `Turned`, cleared otherwise. It runs on every `travel` (so a top made after a deal
+  places its wizard hostile: the design's instantiation hook) and after every change.
+- **The offer** (`[[quest.side]]`, `SideDef`): `take_stairs` calls `quarrel_arrives` after the
+  arrival's words: an active quarrel's side standing on the level, absent or `Turned`, becomes
+  `Offered` and says its `offer` through `World::answer`, so `Event::Talked` opens the dialogue
+  screen on it. `side_topics` (after the quest topics) lists `side-<quest>` "Take <name>'s side"
+  and `refuse-<quest>` "Refuse <name>" while `Offered`; `ask_side` answers them: join makes them
+  `Allied` and every other wizard `Hostile` (the giver, one offered or allied) or `Turned` (one
+  not met), says the `join` (the screen reopens) and "<name> is with you now. <others> will have
+  heard." (the living ones turned); refuse makes them `Hostile` and says the `refuse` (no screen).
+- **Attacking** (`wizard_attacked`, called from `shop.rs::provoke`, where every attack of the
+  player's on a creature lands): a wizard of a quarrel the player has heard of who is not
+  `Hostile` becomes so, and a parting they pend is dropped as answered. A peaceful wizard is
+  never struck by walking into them (making way), only by a missile, a throw, or a spell.
+- **The parting** (`[quest.parting]`, `PartingDef`): `quarrel_won`, at the end of
+  `complete_saying`, sets `WorldState::parting` (`Parting { npc, quest }`) unless the record is
+  `parted`. `PerceptionView::parting` gives the `PartingView` (title the wizard's name, the
+  taker's or the quest's words, rows Leave and Betray <name>); the app's `ui/parting.rs` opens
+  the one dialog from it, required, once no screen is up (`on_parting`: the dialogue screen with
+  the thanks closes first; on load at once). `Action::Parting` (`parting:leave`,
+  `parting:betray`) is `answer_parting`: the record `parted`, Leave says "You take your leave of
+  <name>.", Betray makes them `Hostile` with their `betrayed` (or the quest's `betray`) line.
+  `refuse_pending` refuses every action that takes time meanwhile ("You must answer first.").
+- **The hoard** (`[quest.hoard]`, `QuarrelHoard`): made by `quarrel_won` from the one-shot
+  stream `hoard/<quest id>` (a quarrel is done once) and put in the taker's pack: `gold` coins,
+  `rare` items (`loot::roll_with` at `item_level`, grade rare, the player's luck), `grimoires`
+  drawn among `Grimoires::all`. Carried, it drops where they die, as everything a creature
+  carries does; a wizard killed before anyone won carries none.
+- **The dumps**: the `quests` layer lists the wizards met and where each stands; the JSON dump
+  has `parting` (`docs/dev/cli.md`).
+
+**Ordgar's side** (`data/quests/wynflaed_ordgar.toml`, named so it loads after the rowan it
+`requires`): `the_wizards_quarrel`, given by Ordgar after the rowan, kill 2 of the
+`tag:tower_wizard` uniques, `feud = "feuding_wizards"`, Ordgar's taker (gold, experience, a
+grimoire of magic missile, Spellcraft and Decipher script), the parting, and the hoard (6d100
+gold, two rare items at item level 14, a grimoire). The rivals' takers, sides, and reveals come
+with their towers (C2 #1786, C3 #1787): until then only Ordgar carries the tag, and the quest
+cannot be completed.
+
+**The test quarrel** (`--scenario quarrel`, `assets/campaigns/showcase/`): `levels/quarrel_hall.toml`
+with the scholar (npc `scholar`, east of the start), its west stair (2, 2) to
+`quarrel_storm.toml` (the storm-caller, npc `stormcaller`) and its east stair (8, 2) to
+`quarrel_star.toml` (the maker, npc `maker`), each wizard two steps north of the top's `>`;
+three weak campaign creatures (`data/creatures/quarrel_*.toml`), their dialogue
+(`data/dialogue/quarrel.toml`), and the quest `quarrel` (`data/quests/quarrel.toml`) with
+every field.
+
+```sh
+cargo dev-cli dump --scenario quarrel --actions "ask:E:quest-quarrel move:N move:W*2 move:N ascend move:N ask:N:side-quarrel" --layers quests
 ```
 
 ## Tests
@@ -190,4 +259,15 @@ cargo dev-cli dump --scenario holtwic --actions "move:N*8 move:E*11 move:NE move
   clearing's footprint and their dangers, Ordgar on the top, the `<` on the clearing (on the
   stair it climbs, anywhere else it leaves: the design's §12 risk), the wise-woman's word and her
   rowan (not before the escort, the sprig handed over, the tower marked), Ordgar's topics and the
-  hand-in (experience only), and a replay from Holtwīc to the top and the hand-in.
+  hand-in (experience only), then his quarrel given, and a replay from Holtwīc to the top and
+  the hand-in.
+- `world/people/quarrel_tests.rs`, on the test quarrel: the offer on the first arrival only and
+  not before the quest; refusing; taking a side (the giver turned at once, the unmet rival
+  turned and still offering); a rival met and left undecided turned for good; attacking; the
+  owner's full path (side with one, then the other, kill the two former allies, hand in to the
+  last); refusing every offer (the giver pays); a skill already trained; every wizard dead;
+  both partings (refused actions, Leave for good, Betray and the hoard dropped); no hoard on an
+  early death; a replay and saves. `content/quarrel_tests.rs`: what the loader refuses.
+  `world/levels/reveal_tests.rs::a_quest_reveals_every_location_of_its_list`.
+- `ui/screen_snapshots/talk.rs`: `quarrel-offer` (the screen on arrival), `quarrel-parting`
+  (the dialog, Esc doing nothing), and `the_parting_opens_once_the_thanks_are_read`.

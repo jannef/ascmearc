@@ -54,6 +54,8 @@ pub struct PerceptionView<'a> {
     pub(crate) snapshot: &'a Perception,
     /// The overworld encounter the player must answer, which they know.
     pub(crate) encounter: Option<&'a crate::world::Pending>,
+    /// The parting the player must answer, which they know (`world/people/quarrel.rs`).
+    pub(crate) parting: Option<&'a crate::world::Parting>,
     /// The run's seed, for the freshness check (`world/health/freshness.rs`), which only draws a
     /// stream of its own, and the developer's status bar segment (#1557).
     pub(crate) seed: u64,

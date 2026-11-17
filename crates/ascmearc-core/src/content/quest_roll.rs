@@ -246,8 +246,8 @@ impl QuestDef {
                 reminder: pick(&v.reminder, &self.texts.reminder),
                 done: pick(&v.done, &self.texts.done),
             };
-            if v.reveals.is_some() {
-                def.reveals = v.reveals.clone();
+            if let Some(r) = &v.reveals {
+                def.reveals = vec![r.clone()];
             }
             if v.where_.is_some() {
                 def.where_ = v.where_.clone();

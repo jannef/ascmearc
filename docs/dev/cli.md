@@ -146,6 +146,9 @@ The test world (`assets/campaigns/showcase/`, the `showcase` feature):
 - `tower`: on the stair up in the ground-floor hall of the clearing's two-storey test tower at
   10:00 (`ascend` climbs; from the tower top the windows show the clearing below:
   docs/dev/towers.md).
+- `quarrel`: in the quarrel hall beside the scholar who gives the test quarrel (a warrior); its
+  west and east stairs climb to the two rivals who offer their sides (docs/dev/towers.md "The
+  quarrel").
 - `chests`: in the chest hall (every kind of chest, a mimic, and both treasure rooms).
 - `hellegeat`: on the first floor of Pit 1 of Hellegeat, the fiends' branch a `portal` miscast
   opens (its record made at the start: its `<` climbs out to the hub).
@@ -403,7 +406,9 @@ and are **dev-only**.
 - `locations`: the overworld locations the player knows, one a line, `(45, 23) The Hall`, a
   hidden one only once revealed; `no known locations`, also on any other level.
 - `quests`: the quest log, active first: name, stage, giver, objective, and status, `Rats in the
-  arena (active, from the old hermit): Kill 3 giant rats in the Arena. 0 / 3 killed.`
+  arena (active, from the old hermit): Kill 3 giant rats in the Arena. 0 / 3 killed.`; a
+  quarrel's wizards met and where each stands after it, `[Mistress Stormwell allied, Master
+  Bookhold hostile, Master Brasswright turned]`.
 - `story`: the player's background story, a paragraph a line as the story screen tells it, `no
   story` without one.
 - `companion`: the player's animal companion as they know it, `Snel, a hound (grade 12) at (12,
@@ -496,6 +501,7 @@ messages, heard sounds, and, with `--state`, the full world state; and:
   band's id, or null without alignment rules), `guilds` (`id`, `name`, `rank`; left out before
   joining one), `hunger` (`bloated` … `starving`, or null when nobody hungers), `stance` (the
   combat stance's id), `dazzled`.
+- `parting`: a quarrel's parting pending: `title`, `text`, `choices` (`id`, `label`), or null.
 - `encounter`: the overworld encounter pending: `entry`, `name`, `outcome`, `title`, `text`,
   `choices` (`id`, `label`), or null; with `--state` also the dev `encounter_tables`, those
   matching the player's cell, and the dev `callings`, each of the campaign's with its `class`,
@@ -551,7 +557,7 @@ read:LETTER[:X,Y|:LETTER] scribe:SPELL dig:DIR search search:N disarm:DIR listen
 wedge:DIR heal[:ID[:DIR]] feint:DIR intimidate:X,Y pray forage temper:LETTER whittle:LETTER
 salvage:LETTER rig:ID:DIR decipher:LETTER drink use:ID[:DIR|:X,Y] chat:DIR ask:DIR:TOPIC
 steal:DIR tame:DIR throw_voice:X,Y order:follow|stay|hunt:X,Y rest:GOAL encounter:CHOICE
-stance:NAME vision:PROFILE talent:ID[:CHOICE] advance:SKILL levelup:auto xp:N call:ID
+parting:CHOICE stance:NAME vision:PROFILE talent:ID[:CHOICE] advance:SKILL levelup:auto xp:N call:ID
 rank:SKILL:N skip:DURATION weather:KIND spawn ally:CREATURE[:N[:DURATION]] meet:ENTRY[:OUTCOME]
 effect:ID@X,Y[>X,Y] zone:KIND@X,Y,R identify[:LETTERS] afflict:STATUS drain:N resource:ID
 infect:DISEASE reveal:ID lure:ID quest_done:ID gift:ID rescind:ID quest_roll:ID:TARGET freeze:X,Y,R
@@ -834,6 +840,9 @@ All in docs/dev/crafting.md unless named.
   `evade`, `fight`, `hail`, `hunt`, `pass`, as its outcome offers; `bluff` talks past a party
   flagged `talk_past` when met, for one trained in Bluff; while one pends every other action
   that takes time is refused; docs/dev/encounters.md).
+- `parting:leave` and `parting:betray` answer a quarrel's parting, pending after its hand-in (no
+  time; while it pends every other action that takes time is refused; docs/dev/towers.md "The
+  quarrel").
 
 ### Level-ups
 

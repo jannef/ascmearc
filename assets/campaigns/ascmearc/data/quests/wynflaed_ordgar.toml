@@ -1,0 +1,43 @@
+# Master Ordgar's quest (#1785; docs/design/wizard-tower.md §10, §11; the fields: data/quests.toml):
+# the wizards' quarrel. Three wizards keep towers in the march, and two of them must fall. Ordgar
+# gives it once the rowan is handed over; whichever wizard the player ends allied with pays, and
+# teaches Spellcraft with their own second skill. The ally carries the hoard from then on, and the
+# parting asks, once, whether the player leaves them or betrays them. The file is named for the
+# chain it continues, so it loads after wynflaed.toml (`requires` names a quest loaded before).
+#
+# Built so far: Ordgar's side. Mistress Ælfswīð of Wedertorr and Master Sigeric of Steorratorr
+# come with their towers (#1786, #1787): each adds their `[[quest.taker]]`, their
+# `[[quest.side]]`, and their tower to `reveals`. Until then the quest cannot be completed: two of
+# the three must die, and only Ordgar is in the march.
+[[quest]]
+id = "the_wizards_quarrel"
+name = "The wizards' quarrel"
+giver = "ordgar"
+requires = "rowan_for_the_wizard"
+type = "kill"
+target = "tag:tower_wizard"
+count = 2
+what = "wizards"
+alignment = 0
+feud = "feuding_wizards"
+offer = "There are three of us in this country who may call ourselves wizards, and that is two too many. Mistress Ælfswīð and Master Sigeric want my books, my tower, and very likely my head. Two of us must fall. I should prefer it were not me."
+accept = "Their towers are taller than mine and their stairs no kinder. They will offer you terms; they always do. Drink their tea if you must, but sign nothing."
+reminder = "Two wizards. I am told you are good on stairs, and I am still here, which is the half of it I like."
+where = "Mistress Ælfswīð keeps a tower on the downs, Master Sigeric another by the grey sea; each keeps the top floor."
+
+[[quest.taker]]
+npc = "ordgar"
+done = "Two of us, then, and I am the one still talking. I promised you the grammar, and here it is. Sit down; this will take some time, and none of it may be skipped."
+reward = { gold = 200, xp = 900, items = ["grimoire_of_magic_missile"], skills = { spellcraft = { start = "1d4", marks = 100, taught = "Ordgar sits you down with a primer and does not let you up until the first page makes sense.", more = "You learn more of the weaving of spells." }, decipher_script = { start = "1d4", marks = 100, taught = "He shows you how a grimoire is read: slowly, and twice.", more = "You read the old hands more easily." } } }
+
+[quest.parting]
+text = "Well. That is the end of it, and you have what you came for. Unless you think you have not."
+betray = "Ah. I did wonder whether you had read the whole of the bargain. Come, then."
+
+# The spoils of the quarrel (§10.4): made at the hand-in and carried by the winner, dropped where
+# they die. The same whoever wins.
+[quest.hoard]
+gold = "6d100"
+rare = 2
+item_level = 14
+grimoires = 1

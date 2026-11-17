@@ -76,6 +76,7 @@ impl fmt::Display for Action {
             Action::Rest(Rest::Dawn) => f.write_str("rest:dawn"),
             Action::Rest(Rest::Dusk) => f.write_str("rest:dusk"),
             Action::Encounter(choice) => write!(f, "encounter:{}", choice.id()),
+            Action::Parting(choice) => write!(f, "parting:{}", choice.id()),
             Action::Chat(d) => write!(f, "chat:{d}"),
             Action::Ask { dir, topic } => write!(f, "ask:{dir}:{topic}"),
             Action::Steal(d) => write!(f, "steal:{d}"),
@@ -269,6 +270,7 @@ static VERBS: &[(&str, Shape)] = &[
     ("throw", Shape::Own(throw)),
     ("rest", Shape::Own(rest)),
     ("encounter", Shape::Own(encounter)),
+    ("parting", Shape::Own(parting)),
     ("chat", Shape::Dir(Action::Chat)),
     ("ask", Shape::Own(ask)),
     ("steal", Shape::Dir(Action::Steal)),
@@ -476,6 +478,14 @@ fn encounter(words: &Words) -> Result<Action, String> {
         .ok_or_else(|| {
             "`encounter` needs a choice: ambush, evade, fight, hail, hunt, or pass".into()
         })
+}
+
+/// `parting:CHOICE`.
+fn parting(words: &Words) -> Result<Action, String> {
+    (words.arg)
+        .and_then(crate::world::PartingChoice::from_id)
+        .map(Action::Parting)
+        .ok_or_else(|| "`parting` needs a choice: leave or betray".into())
 }
 
 /// `ask:DIR:TOPIC`.
@@ -1306,6 +1316,8 @@ mod tests {
             Action::Search(10),
             Action::Search(MAX_SEARCH),
             Action::Encounter(crate::world::EncounterChoice::Hail),
+            Action::Parting(crate::world::PartingChoice::Leave),
+            Action::Parting(crate::world::PartingChoice::Betray),
             Action::Meet {
                 entry: "kobolds".into(),
                 outcome: None,
@@ -1879,6 +1891,12 @@ mod tests {
                 select(EncounterChoice::ALL.to_vec())
                     .prop_map(Action::Encounter)
                     .boxed(),
+                select(vec![
+                    crate::world::PartingChoice::Leave,
+                    crate::world::PartingChoice::Betray,
+                ])
+                .prop_map(Action::Parting)
+                .boxed(),
                 (dir(), "[a-z0-9_-]{1,10}")
                     .prop_map(|(dir, topic)| Action::Ask { dir, topic })
                     .boxed(),

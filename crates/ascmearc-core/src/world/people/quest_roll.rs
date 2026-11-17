@@ -116,10 +116,10 @@ impl World {
         if let Some(record) = quests.records.get_mut(&def.id) {
             record.counted = kills;
         }
-        if let Some(reveal) = &given.reveals
-            && reveal.when == crate::content::RevealWhen::Given
-        {
-            self.reveal_location(&reveal.location);
+        for reveal in &given.reveals {
+            if reveal.when == crate::content::RevealWhen::Given {
+                self.reveal_location(&reveal.location);
+            }
         }
         self.say(format!("{} now asks for {target} (dev).", def.name));
         Spent::NoTime

@@ -5,6 +5,7 @@ pub(in crate::world) mod escort_waits;
 mod goodwill;
 pub(in crate::world) mod guild;
 mod lure;
+pub(in crate::world) mod quarrel;
 pub(in crate::world) mod quest;
 mod quest_done;
 mod quest_roll;
@@ -23,6 +24,7 @@ cfg_if! {
         mod identify_service_tests;
         mod magic_price_tests;
         mod outlaw_tests;
+        mod quarrel_tests;
         mod quest_roll_tests;
         mod quest_tests;
         mod restock_tests;

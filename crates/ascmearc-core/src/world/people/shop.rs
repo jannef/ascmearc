@@ -726,8 +726,10 @@ impl World {
     }
 
     /// The player attacked actor `target`: a keeper of an open shop on the current level is
-    /// outraged (said after the attack's own messages).
+    /// outraged (said after the attack's own messages), and a quarrel's wizard turns on them.
     pub(in crate::world) fn provoke(&mut self, target: ActorId) {
+        // A quarrel's wizard decides against the player (`quarrel.rs`).
+        self.wizard_attacked(target);
         let shops = &self.state.current().shops;
         let Some(i) = shops.iter().position(|s| s.is_open() && s.keeper == target) else {
             return;

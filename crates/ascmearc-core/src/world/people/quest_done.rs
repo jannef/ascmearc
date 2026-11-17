@@ -14,13 +14,8 @@ impl World {
             self.say(format!("There is no quest `{id}`."));
             return Spent::Nothing;
         };
-        let record = (self.state.quests.records.entry(def.id.clone())).or_insert(QuestRecord {
-            stage: Stage::Done,
-            completed: 0,
-            counted: 0,
-            reached: false,
-            roll: None,
-        });
+        let record = (self.state.quests.records.entry(def.id.clone()))
+            .or_insert(QuestRecord::new(Stage::Done));
         record.stage = Stage::Done;
         record.completed += 1;
         self.say(format!("{} is marked done.", def.name));

@@ -1,0 +1,20 @@
+# The test quarrel's giver: the scholar, at the foot of the stair in the quarrel hall. (#1785; docs/dev/towers.md "The quarrel":
+# `--scenario quarrel`). A wizard of the showcase's test quarrel (data/quests/quarrel.toml), weak
+# on purpose so a test can fight them: a few blows kill them. Only the quarrel's levels place
+# them, with `npc = "scholar"`.
+[[creature]]
+id = "quarrel_scholar"
+level = 1
+xp = 10
+unique = true
+name = "Master Bookhold"
+glyph = "@"
+fg = "#7a9ad8"
+faction = "peaceful"
+tags = ["tower_wizard", "sapient"]
+# One of the people: never greater or lesser than their kind.
+grades = false
+race = "human"
+opens_doors = true
+weight = 60000
+stats = { strength = 6, dexterity = 6, toughness = 4, intelligence = 16, willpower = 14 }

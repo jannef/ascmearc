@@ -1,0 +1,20 @@
+# The quarrel hall (#1785; docs/dev/towers.md "The quarrel"; `--scenario quarrel`): the test
+# quarrel's ground. The scholar who gives it stands east of the player's start; the west stair
+# climbs to the storm-caller's top, the east stair to the maker's.
+name = "The Quarrel Hall"
+ambient = [200, 200, 200, 0]
+map = '''
+###########
+#.........#
+#.1.....2.#
+#.........#
+#...@O....#
+#.........#
+###########
+'''
+
+[legend]
+"@" = { terrain = "floor", spawn = "player" }
+"O" = { terrain = "floor", creature = "quarrel_scholar", npc = "scholar" }
+"1" = { terrain = "stairs_up", to = "quarrel_storm" }
+"2" = { terrain = "stairs_up", to = "quarrel_star" }

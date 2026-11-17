@@ -370,6 +370,8 @@ impl World {
         self.followers_arrive(&followers, &from, way);
         // A lure quest's creature that followed the player home is bound (`lure.rs`).
         self.lure_home(events);
+        // A quarrel's wizard met for the first time offers their side (`quarrel.rs`).
+        self.quarrel_arrives(events);
         true
     }
 
@@ -431,6 +433,8 @@ impl World {
         self.escorts_home();
         // A lure quest's creature waits on its level, formed anew if it was killed (`lure.rs`).
         self.lure_places(to);
+        // A quarrel's wizards fight for their feud while hostile, on a level just made too.
+        self.sync_wizards();
         // Sounds remembered on the level left say nothing about this one.
         self.state.recent_sounds.clear();
         if let Some(line) = self.content.arrival(to) {
