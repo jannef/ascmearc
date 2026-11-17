@@ -2,7 +2,7 @@
 id = "druid"
 name = "Druid"
 description = "A keeper of the old ways who speaks for forest and beast: hardy and patient, and uneasy in towns."
-stats = { toughness = "1d2", willpower = "2d2", presence = -1 }
+stats = { toughness = "1d2", willpower = "2d2" }
 hp = 4
 mana = 9
 affinity = { restoration = 2, transmutation = 2, evocation = 1, enchantment = 1 }

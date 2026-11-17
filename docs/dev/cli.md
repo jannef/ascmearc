@@ -361,8 +361,8 @@ and are **dev-only**.
   capacity, `(holds 1/2)` (docs/dev/enchanting.md), and weighs, worn and wielded things marked,
   `b - a leather jerkin (being worn) (3.5 kg)`, and in a shop what is unpaid, `c - a dagger
   (unpaid, 45 gold) (450 g)`; then what they carry, their burden and its thresholds, and what
-  they weigh, `carried 4.2 kg (unburdened: burdened over 14 kg, strained over 28 kg, overloaded
-  over 42 kg), total weight 74.2 kg`.
+  they weigh, `carried 4.2 kg (unburdened: burdened over 15 kg, strained over 30 kg, overloaded
+  over 45 kg), total weight 74.2 kg`.
 - `equipment`: the player's slots by letter, `c Body: a leather jerkin (b)`, `-` when empty,
   `- (horns)` when a talent bars the slot (a profane gift; docs/dev/equipment.md).
 - `stats`: the player's name, race, gender, and class (`Name Brakka`, `Race Dwarf`, `Class

@@ -12,16 +12,16 @@ expression: "render(case, content.clone())"
         │   Sign      Earth Kraken                                                         │
         │   Gender    Male                                                                 │
         │   Class     Aristocrat                                                           │
-        │   Talents   Deep lungs, Opportunist                                              │
+        │   Talents   Hardy, Far shot                                                      │
         │                                                                                  │
         │   Age 41 · born 2 Harvestide 1403 · year of the Earth Kraken                     │
         │                                                                                  │
-        │   St  Strength       7    Bluff             9   Knowledge        17              │
+        │   St  Strength       9    Bluff             7   Knowledge        17              │
         │   Dx  Dexterity     12    Decipher script   8   Listen           10              │
-        │   To  Toughness      9    Handle animal     5   Music             3              │
-        │   In  Intelligence  11    Herbalism         6   Spellcraft        8              │
-        │   Wi  Willpower     11    Intimidate        9   Stealth           5              │
-        │   Pr  Presence      12                                                           │
+        │   To  Toughness     11    Handle animal     5   Music             3              │
+        │   In  Intelligence  11    Herbalism         3   Spellcraft        8              │
+        │   Wi  Willpower     12    Intimidate        9   Stealth          10              │
+        │   Pr  Presence      14                                                           │
         │                                                                                  │
         │   Kit       a rapier (wielded),                                                  │
         │             a gold and smokestone ring (magic) (on left hand),                   │

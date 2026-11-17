@@ -3,7 +3,7 @@ source: crates/ascmearc/src/ui/screen_snapshots.rs
 expression: "render(case, content.clone())"
 ---
  Your appraise improves. (×36) You learn Clear mind. You learn Deep well. You learn Meditation. You
- learn Scroll savant. You learn Petrifying gaze.
+ learn Scroll savant. You learn Skill focus (appraise). You learn Petrifying gaze.
 
 
 
