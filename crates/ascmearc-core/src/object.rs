@@ -534,11 +534,15 @@ impl Stack {
     /// magic: its object's name ("long sword", "gold and ruby amulet"), named from what its file
     /// writes with its own parts if it has any ("emerald-pommelled long sword", "bronze long
     /// sword"; [`part::names`]), a loose gem's ("large fine emerald", [`crate::gem::names`]), or
-    /// a piece's by its material ("piece of tin", [`crate::piece::names`]).
+    /// a piece's or scrap's by its material ("piece of tin", [`crate::piece::names`]; "tin
+    /// scrap", [`crate::scrap::names`]).
     pub fn names(&self, content: &Content) -> (String, String) {
         let def = content.object(self.object);
         if def.id == crate::piece::ID {
             return crate::piece::names(content, def, self.parts(content)[0].material);
+        }
+        if crate::scrap::is(def) {
+            return crate::scrap::names(content, def, self.parts(content)[0].material);
         }
         if self.parts.is_none() {
             return (def.name.clone(), def.plural.clone());

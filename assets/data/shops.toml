@@ -93,6 +93,8 @@ never = [
     # Magic crystals and the rare materials: caught in salvage, never sold (enchanting.md §5, §9).
     "crystal_black", "crystal_blue", "crystal_gold", "crystal_green", "crystal_red",
     "crystal_white", "heart_crystal", "soul_fetter",
+    # Scrap: what salvage leaves of a material too little for stock, worth nothing (#1777).
+    "scrap",
 ]
 buys = [
     "melee_weapons", "missile_weapons", "missiles", "shields", "body_armour", "helmets",
@@ -120,6 +122,8 @@ never = [
     # Magic crystals and the rare materials: caught in salvage, never sold (enchanting.md §5, §9).
     "crystal_black", "crystal_blue", "crystal_gold", "crystal_green", "crystal_red",
     "crystal_white", "heart_crystal", "soul_fetter",
+    # Scrap: what salvage leaves of a material too little for stock, worth nothing (#1777).
+    "scrap",
 ]
 buys = [
     "cloaks", "clothing", "light_sources", "tools", "household", "materials", "food", "potions",
@@ -165,6 +169,8 @@ never = [
     # Magic crystals and the rare materials: caught in salvage, never sold (enchanting.md §5, §9).
     "crystal_black", "crystal_blue", "crystal_gold", "crystal_green", "crystal_red",
     "crystal_white", "heart_crystal", "soul_fetter",
+    # Scrap: what salvage leaves of a material too little for stock, worth nothing (#1777).
+    "scrap",
 ]
 buys = [
     "melee_weapons", "missile_weapons", "missiles", "shields", "body_armour", "helmets", "gloves",

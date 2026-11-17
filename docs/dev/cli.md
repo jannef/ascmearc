@@ -745,13 +745,14 @@ All in docs/dev/crafting.md unless named.
   screen: Temper's rules and `data/rules/temper.toml` for wood, a Dexterity check plus Woodcraft's
   `whittle` points; refused, with no time, untrained in Woodcraft, without a knife, a stack not of
   wood, or one with three improvements; docs/dev/skills.md "Whittling").
-- `salvage:c` takes one of inventory stack `c` apart for its materials, anywhere, with nothing
+- `salvage:c` takes one of inventory stack `c` (of a stackable thing, as many as make a piece
+  of stock: 72 copper coins, 500 steel scraps) apart for its materials, anywhere, with nothing
   (the Salvage ability, every profession's, in the Skills group: ten minutes, then a check per
   material a profession works, by its skill's stat plus that skill's `craft` points against
   `data/rules/salvage.toml`'s difficulty plus the material's `work`; made, half its weight back as
-  stock, a gem whole; failed, lost, a gem a cut or a size less and shattered only on a natural 2;
+  stock, never more than it weighs, a material too little for a piece as scrap, a gem whole; failed, lost, a gem a cut or a size less and shattered only on a natural 2;
   the item gone either way; refused, with no time, for a stack worn or wielded, protected,
-  unpaid, a spirit weapon, or with nothing a profession works).
+  unpaid, a spirit weapon, with nothing a profession works, or too few of a stackable thing).
 - `rig:tripwire:E` rigs a trap on the cell east of the player (the craftsperson's Trapwright,
   from level 25: a rig of `data/rigs.toml`, its `seconds` of `craft` turns, then a Dexterity
   check plus Woodcraft's `craft` points; made, the trap placed, known, and rigged, its kills the

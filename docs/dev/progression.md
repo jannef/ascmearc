@@ -451,7 +451,8 @@ ordinary pick. The class's level 1 abilities, granted in `begin` before the pick
 are **Time served** (`trade_bonus { value = 6 }`: each trade `3d6+6`) and **Eye for the make**
 (`eye_for_make`, `CraftMods::eye_for_make`, read once, in `PerceptionView::describe_item`,
 which adds `magic::describe::make_lines`: what salvage would give at `rules/salvage.toml`'s yield
-(`piece::break_up`, the materials a profession works), or that the item is protected
+(`piece::salvage` of one, or of a batch, `piece::salvage_batch`: "Taken apart, enough of them
+would give a copper ingot.", never the number; the materials a profession works), or that the item is protected
 (`world::protected_in`, the rules' `item_protected` over perception's quests, a unique or Proof only once identified, so nothing hidden leaks) or holds nothing
 worth saving; for arms and armour `temperable` or `whittleable`, the improvements left to
 `rules/temper.toml`'s `most` or that it is damaged, never `attempts`; the main material's `work` in

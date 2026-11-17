@@ -54,9 +54,9 @@ fn main<'c>(
 /// What one of `def` made of `parts` weighs, in grams: its weight with each of its base parts'
 /// share scaled by the material it is made of over the base part's (rounded, at least 1); parts
 /// it has besides its base item's (a gem it was set with) weigh nothing. Jewellery weighs what
-/// its base item does.
+/// its base item does, and so does scrap (a gram, [`crate::scrap`]).
 pub fn weight(def: &ObjectDef, parts: &[Part], content: &Content) -> u32 {
-    if def.is_jewellery() || parts == def.parts.as_slice() {
+    if def.is_jewellery() || crate::scrap::is(def) || parts == def.parts.as_slice() {
         return def.weight;
     }
     let weight_of = |p: &Part| u64::from(content.material(p.material).weight);

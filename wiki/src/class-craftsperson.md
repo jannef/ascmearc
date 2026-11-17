@@ -35,8 +35,8 @@ and a roll on a trade throws the die one step up.
 ### Eye for the make
 
 Eye for the make works whenever you look at an item's
-description. It adds a line on what [salvage](salvage.md) would give of it if every
-check went well, a line on how many more improvements
+description. It adds a line on what [salvage](salvage.md) would give of it (for small things,
+of [enough of them](salvage.md#small-things-and-stacks)) if every check went well, a line on how many more improvements
 [the anvil](altars-forges-springs.md#forges) (for metal) or a knife (for wood) could still give
 arms or armour, or that the thing is damaged (and, once you have
 [Make do and mend](#make-do-and-mend), that your own hands could mend it), and a line when its main material is hard or soft

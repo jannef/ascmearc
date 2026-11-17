@@ -249,6 +249,7 @@ above.
 | Foraging | `skill-uses.md#foraging` |
 | Crafting, a craft skill, craft points, who works which material, a material's work | `crafting.md`, `crafting.md#which-skill-makes-what` |
 | Salvage, taking an item apart, a gem chipped or shattered | `salvage.md` |
+| Scrap, salvaging small things in batches (coins, arrowheads) | `salvage.md#scrap`, `salvage.md#small-things-and-stacks` |
 | Magic crystal, a crystal's colour, consuming a crystal | `crystals.md`, a colour `crystals.md#crystal-ID` (`crystals.md#crystal-red`), `crystals.md#consuming-a-crystal` |
 | Heart-crystal, soul-fetter (rare materials) | `crystals.md#rare-materials`; what they do: `enchanting.md#the-rare-materials` |
 | Seal (in enchanting) | `enchanting.md#keeping-magic-out-with-seals` |

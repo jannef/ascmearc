@@ -58,7 +58,7 @@ fn count_of_share(
     percent: u64,
     material: MaterialId,
 ) -> Option<u32> {
-    let one = make(content, material, 1)?.weight(content).max(1);
+    let one = one_piece(content, material)?;
     let n = (grams * percent + one * 50) / (one * 100);
     Some(u32::try_from(n.max(1)).unwrap_or(u32::MAX))
 }
@@ -95,10 +95,10 @@ pub fn make(content: &Content, material: MaterialId, count: u32) -> Option<Stack
 
 /// What a part `made` of an item of `def` (in place of its base part `base`) weighs, in grams:
 /// its share of the item's weight, scaled by its material over the base part's as
-/// [`crate::variant::weight`] scales it (jewellery is not).
+/// [`crate::variant::weight`] scales it (jewellery and scrap are not).
 fn grams(def: &ObjectDef, base: &Part, made: &Part, content: &Content) -> u64 {
     let share = u64::from(def.weight) * u64::from(base.share);
-    if def.is_jewellery() || base.material == made.material {
+    if def.is_jewellery() || crate::scrap::is(def) || base.material == made.material {
         return share / 100;
     }
     let weight = |m: MaterialId| u64::from(content.material(m).weight).max(1);
@@ -110,10 +110,76 @@ fn grams(def: &ObjectDef, base: &Part, made: &Part, content: &Content) -> u64 {
 /// parts, `max(1, round(grams × percent / 100 / one piece's grams))` of them (its parts of that
 /// material summed, the whole stack's), nothing for the rest. In part order; no magic.
 pub fn break_up(stack: &Stack, content: &Content, percent: u8) -> Vec<Stack> {
+    (falls(stack, content).into_iter())
+        .filter_map(|fall| match fall {
+            Fall::Gem(gem) => Some(gem),
+            Fall::Pieces(material, grams) => {
+                let n = count_of_share(content, grams, u64::from(percent), material)?;
+                make(content, material, n)
+            }
+        })
+        .collect()
+}
+
+/// What salvage gives for `stack` (`world/crafting/salvage.rs`, #1777): as [`break_up`], but a
+/// material gives no more pieces than its grams hold whole, `min(round(grams × percent / 100 /
+/// one piece's grams), floor(grams / one piece's grams))`, and where that is none, its grams as
+/// scrap, a gram each ([`crate::scrap`]). So what is saved never outweighs what is taken apart.
+pub fn salvage(stack: &Stack, content: &Content, percent: u8) -> Vec<Stack> {
+    (falls(stack, content).into_iter())
+        .filter_map(|fall| match fall {
+            Fall::Gem(gem) => Some(gem),
+            Fall::Pieces(material, grams) => {
+                let one = one_piece(content, material)?;
+                let share = (grams * u64::from(percent) + one * 50) / (one * 100);
+                match share.min(grams / one) {
+                    0 => crate::scrap::make(content, material, grams),
+                    n => make(content, material, u32::try_from(n).unwrap_or(u32::MAX)),
+                }
+            }
+        })
+        .collect()
+}
+
+/// How many of `stack`'s items salvage takes at once (#1777), with the material that decides it.
+/// One of anything not stackable (what makes no piece comes out as scrap, [`salvage`]). Of a
+/// stackable thing, the fewest whose [`salvage`] at `percent` makes a piece of stock, by the
+/// material needing the fewest (a gem's own: one item always gives its gem): for a material of
+/// `g` grams an item and pieces of `p` grams, `max(ceil(p / g), ceil(50 × p / (g × percent)))`,
+/// so a copper coin's 8 g against a copper ingot's 570 g is 72 coins, and 500 steel scraps make
+/// a steel ingot. `None` when nothing comes of any number of them (no gem, no grouped material
+/// with weight). Whatever `stack.count` is: the caller compares.
+pub fn salvage_batch(stack: &Stack, content: &Content, percent: u8) -> Option<(u32, MaterialId)> {
+    let one = stack.single();
+    if !content.object(stack.object).stackable {
+        let first = salvage(&one, content, percent).into_iter().next()?;
+        return Some((1, first.parts(content).first()?.material));
+    }
+    let percent = u64::from(percent.max(1));
+    (falls(&one, content).into_iter())
+        .filter_map(|fall| match fall {
+            Fall::Gem(gem) => Some((1, gem.parts(content).first()?.material)),
+            Fall::Pieces(material, grams) if grams > 0 => {
+                let p = one_piece(content, material)?;
+                let n = p.div_ceil(grams).max((50 * p).div_ceil(grams * percent));
+                Some((u32::try_from(n).unwrap_or(u32::MAX), material))
+            }
+            Fall::Pieces(..) => None,
+        })
+        .min_by_key(|&(n, _)| n)
+}
+
+/// One piece of `material`'s grams (at least 1); `None` for a material no piece is made of.
+fn one_piece(content: &Content, material: MaterialId) -> Option<u64> {
+    Some(make(content, material, 1)?.weight(content).max(1))
+}
+
+/// What `stack`'s parts fall as, before they are counted into pieces (the module docs): its
+/// loose gems, and each grouped material with the grams of it in the whole stack. In part order.
+fn falls(stack: &Stack, content: &Content) -> Vec<Fall> {
     let def = content.object(stack.object);
     let parts = stack.parts(content);
     let count = u64::from(stack.count);
-    // In part order: loose gems, and each grouped material with the grams of it.
     let mut falls: Vec<Fall> = Vec::new();
     for (i, made) in parts.iter().enumerate() {
         let material = content.material(made.material);
@@ -146,15 +212,7 @@ pub fn break_up(stack: &Stack, content: &Content, percent: u8) -> Vec<Stack> {
             None => falls.push(Fall::Pieces(made.material, grams)),
         }
     }
-    (falls.into_iter())
-        .filter_map(|fall| match fall {
-            Fall::Gem(gem) => Some(gem),
-            Fall::Pieces(material, grams) => {
-                let n = count_of_share(content, grams, u64::from(percent), material)?;
-                make(content, material, n)
-            }
-        })
-        .collect()
+    falls
 }
 
 /// What one part of a broken item falls as.

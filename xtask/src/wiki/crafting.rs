@@ -4,7 +4,10 @@
 
 use super::util::capital;
 use ascmearc_core::combat::{FUMBLE, HIGHEST};
-use ascmearc_core::content::Content;
+use ascmearc_core::content::{Content, ObjectId};
+use ascmearc_core::object::Stack;
+use ascmearc_core::piece;
+use ascmearc_core::world::salvageable;
 use std::fmt::Write as _;
 
 /// The check modifiers the salvage odds table has a row for.
@@ -101,11 +104,58 @@ pub(super) fn salvage(content: &Content) -> String {
          modifier of the stat its skill works with, what talents add to checks of that stat, and \
          what that one skill gives to its craft, against {} plus the material's work. A natural \
          {FUMBLE} always fails, a natural {HIGHEST} always succeeds. A material salvaged gives back \
-         {}% of its weight as stock, at least one piece.\n",
+         {}% of its weight as stock, rounded to whole pieces, but never more pieces than its \
+         weight holds whole. A material with less than one piece's weight comes back whole as scrap \
+         instead, one scrap a gram.\n",
         rules.seconds,
         rules.seconds / 60,
         rules.difficulty,
         rules.percent,
     );
+    out.push_str(&batches(content, rules.percent));
+    out
+}
+
+/// The small things salvage takes several of at once (#1777): every stackable object salvage
+/// takes, by how many of it make a piece at `percent` and what they make, the grimoires as one
+/// row. Fewest first, then by name.
+fn batches(content: &Content, percent: u8) -> String {
+    let grimoires: Vec<ObjectId> = (0..content.object_defs().len())
+        .filter_map(|i| content.grimoires().of(ObjectId(i as u16)))
+        .collect();
+    let mut rows: Vec<(u32, String, String)> = Vec::new();
+    for (i, def) in content.object_defs().iter().enumerate() {
+        let id = ObjectId(i as u16);
+        let one = Stack::one(id);
+        if !def.stackable || !salvageable(content, &one) {
+            continue;
+        }
+        let Some((n, _)) = piece::salvage_batch(&one, content, percent) else {
+            continue;
+        };
+        if n < 2 {
+            continue;
+        }
+        let gives: Vec<String> = (piece::salvage(&Stack::new(id, n), content, percent).iter())
+            .map(|s| s.describe(content))
+            .collect();
+        let name = match grimoires.contains(&id) {
+            true => "any grimoire".to_string(),
+            false => one.names(content).0,
+        };
+        let row = (n, capital(&name), gives.join(" and "));
+        if !rows.contains(&row) {
+            rows.push(row);
+        }
+    }
+    rows.sort();
+    let mut out = format!(
+        "\nFrom a stack of small things, salvage takes as many as make one piece and leaves the \
+         rest. With fewer, it will not start. At the usual {percent}%:\n\n\
+         | Thing | How many | Make |\n|---|:---:|---|\n"
+    );
+    for (n, name, gives) in rows {
+        let _ = writeln!(out, "| {name} | {n} | {gives} |");
+    }
     out
 }
