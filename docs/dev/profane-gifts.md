@@ -70,9 +70,16 @@ to spare (Rime-blooded's cold under Hate-wyrm's heart's −25 is still 75), the 
 vulnerabilities stay (D8), and no gift makes the player immune.
 
 **Sign actives from a gift.** Hate-wyrm's heart carries the Wyvern pick's `fire_breath` effect,
-larger (12d8 over 10 cells, the `drained` cooldown at 1 degree). `SignMods::add` keeps one breath,
-the one with the larger mean damage (`Roll::mean_x2`), whichever was taken first, and one stare,
-the larger `severity`. The abilities menu lists such an active under `Source::Profane` ("profane")
+larger (12d8 over 10 cells, the `drained` cooldown at 1 degree). A `fire_breath` effect's
+`damage_type` picks the breath it is, one per type (#1828; `SignActive::breath_of`): fire
+`FireBreath`, cold `FrostBreath`, acid `BileSpit`, necrotic `RotBreath`, electricity
+`ThunderBreath`; the loader refuses any other type. `SignMods::breaths` keeps one breath per type,
+of two the one with the larger mean damage (`Roll::mean_x2`), whichever was taken first, and one
+stare, the larger `severity`. Each breath is its own ability (`use:frost_breath:X,Y`), cast by
+`World::breathe` (`sign_picks.rs`, its words in `breath_words`); every breath's cooldown is
+`drained`, so one breathed bars them all while it lasts. The effect's optional `name` names a
+breath apart from its gift in the menu ("Frost breath", on Frost-breathed; `TalentEffect::active_name`).
+The abilities menu lists such an active under `Source::Profane` ("profane")
 when no non-gift talent of the player's gives it (`Ability::source_for`, `OwnAbility::source`),
 else under the birth sign.
 
@@ -119,8 +126,21 @@ today; an aristocrat's own extra ring stays when Many-fingered goes).
 slot (`docs/dev/equipment.md` "Grown slots") and a mental stat's price: `extra_arm` (Three-armed,
 dire, mixed, weight 6: the third hand, Presence −2) and `prehensile_tail` (Prehensile-tailed,
 greater, mixed, weight 6: the tail, a light weapon only, Willpower −1; excludes `tailed`, one tail
-to a body). How the limbs fight: `docs/dev/weapon-skills.md` "Extra limbs". So the table holds 42
-drawn gifts, 14 lesser, 13 greater, 15 dire.
+to a body). How the limbs fight: `docs/dev/weapon-skills.md` "Extra limbs".
+
+**Eight more** (#1828, the owner: "two more per tier, a breath weapon among them"), every effect
+an existing one: lesser `quick_knit` (Quick-knit, boon, 10: healing +25 %), `owl_eyed` (Owl-eyed,
+mixed, 6: `night_sight` +3, `day_sight` −1), `lead_footed` (Lead-footed, bane, 8: footsteps +50 %,
+initiative −2; excludes `soft_footed`); greater `frost_breathed` (Frost-breathed, boon, 8: Frost
+breath 3d6 over 4 cells, 2 degrees of `drained`, cold resistance 25; excludes `ember_veined`),
+`bile_spitting` (Bile-spitting, mixed, 6: Bile spit 4d6 acid over 2 cells, range 4, 1 degree;
+hunger +25 %); dire `rot_breathed` (Rot-breathed, mixed, 6: Rot breath 5d8 necrotic over 6 cells,
+2 degrees; necrotic resistance 50, healing −25 %; excludes `quick_knit`), `many_eyed` (Many-eyed,
+mixed, 6: `sees_unaware`, initiative +2, Presence −2, `distrusted`; excludes `dim_eyed`),
+`thunder_throated` (Thunder-throated, boon, 6: Thunder breath 6d8 electricity over 8 cells, 2
+degrees; electricity resistance 50). The breaths' looks are `data/effects.toml`'s `frost_breath`,
+`bile_spit`, `rot_breath` (Fire breath's gout in their colours, dimmer) and Thunder breath's
+`lightning_bolt`. So the table holds 50 drawn gifts, 17 lesser, 15 greater, 18 dire.
 
 ## In the world: `world/character/profane.rs`
 
@@ -180,7 +200,7 @@ load, as any unknown talent does.
 - `talents` dump: `Oak-hearted (profane)`, `Withered (profane, bane)`, `Twice-born (profane,
   spent)`; JSON `talents[].profane`,
   `"boon" | "mixed" | "bane"`, left out otherwise.
-- `progress` dump (dev): `profane 1 held; pool lesser 14/14, greater 12/13, dire 15/15` (each tier's
+- `progress` dump (dev): `profane 1 held; pool lesser 17/17, greater 14/15, dire 18/18` (each tier's
   gifts a draw may give now, of all it holds).
 - Dev actions (no time; `docs/dev/cli.md`): `gift:ID` gives a gift as a draw would (refused for
   one ever had, excluded, or barred to the race), `rescind:ID` takes one away (it stays had).
@@ -203,6 +223,6 @@ bestowed again, the record saved; `excludes` both ways; `not_for`; a save; the
 `progress` row), `world/character/gift_table_tests.rs` (P6: the fixture run that eats all ten keepers, its
 `progress` pools after each meal as the insta snapshot `profane_ten_meals`; a Phoenix who is
 Twice-born rises twice, Twice-born alone once; Wyrm-blooded over Ember-veined and its glow;
-Palsied undoing Adder-quick and nothing more; Scaled's excludes; Wing-shouldered's cloak), and
+Palsied undoing Adder-quick and nothing more; Scaled's excludes; Wing-shouldered's cloak), `world/character/profane_breath_tests.rs` (#1828: each gift's breath of its own type along its line, Bile spit's short reach, a sign's Fire breath beside Frost breath sharing Drained, the new gifts' excludes both ways and their effects), and
 `content/profane.rs`'s `the_full_table_loads_with_every_tier_and_kind` and
 `the_loader_refuses_a_tier_without_each_kind`.

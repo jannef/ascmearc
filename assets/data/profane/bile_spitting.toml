@@ -1,0 +1,13 @@
+[[gift]]
+id = "bile_spitting"
+name = "Bile-spitting"
+kind = "mixed"
+tier = "greater"
+weight = 6
+description = "A second, sourer stomach: you can spit burning bile a short way, but you hunger sooner."
+line = "Something sour wells up in your gullet, and stays there."
+# A breath of its own (one per damage type): Bile spit, short and sharp.
+effects = [
+    { kind = "fire_breath", name = "Bile spit", range = 4, length = 2, damage = "4d6", damage_type = "acid", spell = "bile_spit", cooldown = "drained", degrees = 1 },
+    { kind = "hunger_percent", value = 25 },
+]

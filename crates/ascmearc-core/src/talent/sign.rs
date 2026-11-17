@@ -32,8 +32,13 @@ pub enum SignEffect {
     /// The active Fire breath (a birth sign's pick), aimed at a cell
     /// within `range` (1 to 40): a bolt of `damage` of kind `damage_type` along the
     /// line toward it, `length` cells from the player, through everyone on it; shown as effect
-    /// `spell` (a bolt); then `degrees` of the `cooldown` status.
+    /// `spell` (a bolt); then `degrees` of the `cooldown` status. Its damage type picks the
+    /// breath it is ([`crate::content::SignActive::breath_of`]: fire is Fire breath, cold Frost
+    /// breath, ...), one breath per type (#1828); `name` names a breath that is no talent's own
+    /// (a profane gift's: "Frost breath"), else its talent's name is the menu's.
     FireBreath {
+        #[serde(default)]
+        name: Option<String>,
         range: i32,
         length: i32,
         damage: Dice,
@@ -121,9 +126,10 @@ pub struct SignMods {
     pub petrifying_gaze: Option<(u16, u16)>,
     /// Wildfire: Blaze's radius and damage instead of its own.
     pub wildfire: Option<(i32, Dice)>,
-    /// The birth sign's active Fire breath, if it has it; of two (the Wyvern's pick and
-    /// Hate-wyrm's heart), the larger damage.
-    pub fire_breath: Option<FireBreath>,
+    /// The breaths it has, one per damage type (Fire breath, Frost breath, ...: the
+    /// [`crate::content::SignActive::breath_of`] of each); of two of one type (the Wyvern's pick
+    /// and Hate-wyrm's heart), the larger damage.
+    pub breaths: std::collections::BTreeMap<crate::content::SignActive, FireBreath>,
     /// The birth sign's active Hound's bay, if it has it.
     pub hounds_bay: Option<HoundsBay>,
 }
@@ -140,6 +146,7 @@ impl SignMods {
             }
             SignEffect::Wildfire { radius, damage } => self.wildfire = Some((radius, damage)),
             SignEffect::FireBreath {
+                name: _,
                 range: _,
                 length,
                 damage,
@@ -148,7 +155,8 @@ impl SignMods {
                 cooldown,
                 degrees,
             } => {
-                if let Some(cooldown) = content.status_id(&cooldown) {
+                let active = crate::content::SignActive::breath_of(&damage_type);
+                if let (Some(active), Some(cooldown)) = (active, content.status_id(&cooldown)) {
                     let bolt = crate::content::Bolt {
                         spell,
                         length,
@@ -156,16 +164,19 @@ impl SignMods {
                         reroll: 0,
                         kind: content.damage_type_id(&damage_type),
                     };
-                    // Two breaths (the Wyvern's pick and Hate-wyrm's heart): the larger
-                    // damage, with its own cooldown.
-                    let larger = (self.fire_breath.as_ref())
+                    // Two breaths of one type (the Wyvern's pick and Hate-wyrm's heart): the
+                    // larger damage, with its own cooldown.
+                    let larger = (self.breaths.get(&active))
                         .is_none_or(|held| bolt.damage.mean_x2() > held.bolt.damage.mean_x2());
                     if larger {
-                        self.fire_breath = Some(FireBreath {
-                            bolt,
-                            cooldown,
-                            degrees,
-                        });
+                        self.breaths.insert(
+                            active,
+                            FireBreath {
+                                bolt,
+                                cooldown,
+                                degrees,
+                            },
+                        );
                     }
                 }
             }
@@ -254,7 +265,9 @@ impl SignMods {
             A::HornsGrace => self.horns_grace.is_some(),
             A::TransfixingStare => self.stare.is_some(),
             A::Blaze => self.blaze.is_some(),
-            A::FireBreath => self.fire_breath.is_some(),
+            A::FireBreath | A::FrostBreath | A::BileSpit | A::RotBreath | A::ThunderBreath => {
+                self.breaths.contains_key(&active)
+            }
             A::HoundsBay => self.hounds_bay.is_some(),
         }
     }
@@ -266,13 +279,15 @@ impl SignMods {
             A::HornsGrace => self.horns_grace.as_ref().map(|g| g.cooldown),
             A::TransfixingStare => self.stare.map(|s| s.cooldown),
             A::Blaze => self.blaze.as_ref().map(|b| b.cooldown),
-            A::FireBreath => self.fire_breath.as_ref().map(|b| b.cooldown),
+            A::FireBreath | A::FrostBreath | A::BileSpit | A::RotBreath | A::ThunderBreath => {
+                self.breaths.get(&active).map(|b| b.cooldown)
+            }
             A::HoundsBay => self.hounds_bay.map(|b| b.cooldown),
         }
     }
 }
 
-/// The active Fire breath: a bolt of fire, then a cooldown.
+/// A breath (Fire breath, Frost breath, ...): a bolt of its damage type, then a cooldown.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct FireBreath {
     pub bolt: crate::content::Bolt,

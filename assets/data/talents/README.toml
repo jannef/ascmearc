@@ -718,7 +718,13 @@
 #                                 `use:fire_breath:12,5`): a bolt (`spell`, a bolt effect) along
 #                                 the line toward it, length cells (1 to 8), damage dice of
 #                                 damage_type to everyone on it; then `degrees` of the cooldown
-#                                 status
+#                                 status. The damage type picks the breath, one per type:
+#                                 fire Fire breath, cold Frost breath (`use:frost_breath`), acid
+#                                 Bile spit (`use:bile_spit`), necrotic Rot breath
+#                                 (`use:rot_breath`), electricity Thunder breath
+#                                 (`use:thunder_breath`); any other type is refused. Optional
+#                                 `name`: the menu's name for a breath that is not its
+#                                 talent's own (a profane gift's: "Frost breath")
 #   hounds_bay { status, severity, cooldown }   the active Hound's bay (`use:hounds_bay`): a
 #                                 howl; every hostile that hears it, of a lower level than the
 #                                 player, suffers `severity` degrees of `status` (one that

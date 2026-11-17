@@ -5,7 +5,8 @@ use super::util::{Term, anchored, at_normal_pace, link, percent_of};
 use ascmearc_core::ability::{Ability, Aim, Source};
 use ascmearc_core::check;
 use ascmearc_core::content::{
-    ActionKind, BASE_TURN, ClassActive, Content, Offer, SignActive, SongOn, TalentEffect, price,
+    ActionKind, BASE_TURN, ClassActive, Content, Offer, SignActive, SongOn, TalentDef,
+    TalentEffect, price,
 };
 use ascmearc_core::skills::Effect;
 use ascmearc_core::stats::Stat;
@@ -21,10 +22,17 @@ pub(super) fn abilities(content: &Content) -> String {
          pace | Read more |\n|---|---|---|---|---|---:|---|\n",
     );
     let mut every = Ability::every(content);
-    every.sort_by_key(|a| (a.source(), a.name(content).to_string()));
+    every.sort_by_key(|&a| (source(content, a), a.name(content).to_string()));
     for a in every {
         let who = match a {
-            Ability::Sign(active) => sign_holders(content, active),
+            Ability::Sign(active) => match profane_gift(content, active) {
+                Some(gift) => format!(
+                    "those who are {}, a [profane gift](profane-gifts.md#talent-{})",
+                    gift.name,
+                    gift.id.replace('_', "-")
+                ),
+                None => sign_holders(content, active),
+            },
             Ability::Class(active) => class_holders(content, active),
             Ability::Spell(spell) => {
                 let id = content.spell_of(spell).map_or("", |s| s.id.as_str());
@@ -186,7 +194,7 @@ pub(super) fn abilities(content: &Content) -> String {
             out,
             "| {} | {} | {who} | {asks} | {} | {takes} | {} |",
             anchored(Term::Ability, a.id(content), &a.name(content)),
-            a.source().name(),
+            source(content, a).name(),
             a.description(content),
             read_more(content, a),
         );
@@ -199,6 +207,13 @@ pub(super) fn abilities(content: &Content) -> String {
 fn read_more(content: &Content, a: Ability) -> String {
     let page = |name: &str, target: &str| format!("[{name}]({target})");
     match a {
+        Ability::Sign(active) if profane_gift(content, active).is_some() => {
+            let id = profane_gift(content, active).map_or("", |g| g.id.as_str());
+            page(
+                "Profane gifts",
+                &format!("profane-gifts.md#talent-{}", id.replace('_', "-")),
+            )
+        }
         Ability::Sign(active) => content.sign_active(active).map_or_else(
             || page("Horoscope", "horoscope.md#what-a-sign-does"),
             // A birth sign's gift is anchored on the horoscope page (`horoscope.rs`).
@@ -340,6 +355,22 @@ fn table_holders(content: &Content, has: impl Fn(&TalentEffect) -> bool) -> Stri
         )
     }));
     parts.join(", ")
+}
+
+/// The profane gift that gives sign active `active` when no birth sign's talent does (Frost
+/// breath, Frost-breathed's; #1828).
+fn profane_gift(content: &Content, active: SignActive) -> Option<&TalentDef> {
+    let def = content.sign_active(active)?;
+    let id = content.talents().id(&def.id)?;
+    content.profane().gift(id).map(|_| def)
+}
+
+/// The menu group `a` is listed under: a sign active only a profane gift gives under Profane.
+fn source(content: &Content, a: Ability) -> Source {
+    match a {
+        Ability::Sign(active) if profane_gift(content, active).is_some() => Source::Profane,
+        _ => a.source(),
+    }
 }
 
 /// Who has the birth sign's active `active`: those born under the animals and elements (and on

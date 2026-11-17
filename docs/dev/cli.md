@@ -808,7 +808,8 @@ All in docs/dev/crafting.md unless named.
   Thrown exploit, from 18: Exploit's blow as a throw at the creature there, within the throw's
   range and the sneak dice's reach, `docs/dev/openings.md`).
 - A birth sign's active the same way, `use:horns_grace`, `use:blaze`, `use:hounds_bay`, or aimed
-  at a cell, `use:transfixing_stare:12,5`, `use:fire_breath:12,5`.
+  at a cell, `use:transfixing_stare:12,5`, `use:fire_breath:12,5`; a profane gift's breath likewise,
+  `use:frost_breath:12,5`, `use:bile_spit:12,5`, `use:rot_breath:12,5`, `use:thunder_breath:12,5`.
 - A spell the player knows too, by its id in `assets/data/spells/`, paid in mana, `use:haste`,
   or aimed at a cell, `use:magic_missile:12,5`, or cast on inventory stack `c`,
   `use:identify:c` (any `use:ID` that is no class or birth sign ability is a spell).

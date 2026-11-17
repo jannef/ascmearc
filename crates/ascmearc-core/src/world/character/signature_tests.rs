@@ -239,8 +239,9 @@ fn a_wyverns_breath_and_the_hate_wyrms_heart_are_one_breath_the_larger() {
         .player()
         .talent_mods(&w.content)
         .sign
-        .fire_breath
-        .clone();
+        .breaths
+        .get(&SignActive::FireBreath)
+        .cloned();
     let small = small.expect("the Wyvern's breath");
     let heart = w
         .content
@@ -249,7 +250,11 @@ fn a_wyverns_breath_and_the_hate_wyrms_heart_are_one_breath_the_larger() {
         .expect("the gift");
     w.bestow_gift(heart);
     let mods = w.state.player().talent_mods(&w.content);
-    let breath = mods.sign.fire_breath.as_ref().expect("a breath");
+    let breath = mods
+        .sign
+        .breaths
+        .get(&SignActive::FireBreath)
+        .expect("a breath");
     assert!(breath.bolt.damage.mean_x2() > small.bolt.damage.mean_x2());
     assert_eq!(breath.bolt.length, 10);
     // One row, and the sign's: a sign talent gives it too.
@@ -265,7 +270,10 @@ fn a_wyverns_breath_and_the_hate_wyrms_heart_are_one_breath_the_larger() {
     w.player_mut().talents.take("fire_breath", None);
     let mods = w.state.player().talent_mods(&w.content);
     assert_eq!(
-        mods.sign.fire_breath.as_ref().map(|b| b.bolt.length),
+        mods.sign
+            .breaths
+            .get(&SignActive::FireBreath)
+            .map(|b| b.bolt.length),
         Some(10)
     );
 }

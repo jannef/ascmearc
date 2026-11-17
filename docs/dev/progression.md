@@ -290,7 +290,7 @@ Sign-limited picks (#270; `world/character/sign_picks.rs`), and their hooks:
 | `starving_heals` | `World::healing_rate`: Starving does not stop healing |
 | `horn_of_plenty { per_level, degrees }` | `World::horns_grace` via `World::horn_of_plenty`: hit points back (never past the maximum, and cause enough alone), the cooldown's degrees |
 | `petrifying_gaze { severity, degrees }` | `World::transfixing_stare`: the status's and the cooldown's degrees |
-| `fire_breath` | `World::fire_breath` (`SignActive::FireBreath`) |
+| `fire_breath` | `World::breathe` (`SignActive::breath_of` its damage type: `FireBreath`, `FrostBreath`, `BileSpit`, `RotBreath`, `ThunderBreath`; one breath per type, #1828) |
 | `hounds_bay` | `World::hounds_bay` (`SignActive::HoundsBay`); the status's `flees` read by `World::frightened` in `creature_turn` |
 | `wildfire { radius, damage }` | `World::blaze` (`element_gifts.rs`): radius and damage instead |
 | `second_rising` | `World::rise_from_ashes` (`stars.rs`): `risen_twice` after `risen` |

@@ -262,3 +262,7 @@ mod signature_tests;
 #[cfg(test)]
 #[path = "gift_table_tests.rs"]
 mod gift_table_tests;
+
+#[cfg(test)]
+#[path = "profane_breath_tests.rs"]
+mod profane_breath_tests;

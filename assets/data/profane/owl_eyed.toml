@@ -1,0 +1,12 @@
+[[gift]]
+id = "owl_eyed"
+name = "Owl-eyed"
+kind = "mixed"
+tier = "lesser"
+weight = 6
+description = "Round, gold eyes: under the open sky you see farther by night, but not so far by day."
+line = "Your eyes grow round and gold, and the night looks back at you."
+effects = [
+    { kind = "night_sight", value = 3 },
+    { kind = "day_sight", value = -1 },
+]

@@ -1,0 +1,9 @@
+[[gift]]
+id = "quick_knit"
+name = "Quick-knit"
+kind = "boon"
+tier = "lesser"
+weight = 10
+description = "Your flesh knits quickly: your wounds close faster."
+line = "Your flesh crawls, and a cut on your hand closes as you watch."
+effects = [{ kind = "healing_percent", value = 25 }]

@@ -58,7 +58,7 @@ cold alike, all of it counting.
 
 [Hate-wyrm's heart](#talent-hate-wyrms-heart) lets you breathe fire, as the Wyvern's [Fire breath](horoscope.md#talent-fire-breath)
 does but far stronger. It is used from the [abilities menu](abilities.md#the-abilities-menu), listed under Profane. If your sign
-already gave you Fire breath you still have one breath, listed under your birth sign: the
+already gave you Fire breath you still have one fire breath, listed under your birth sign: the
 stronger one, whichever came first.
 
 ## How a gift is drawn
@@ -77,14 +77,14 @@ Each gift is given in full before the next roll, so a roll never draws what the 
 ruled out. The odds in the table below are a tier's odds while none of its gifts is held, lost,
 or barred. As you gather gifts the rest of the tier shares the odds, by the same weights.
 
-For example, the lesser tier's weights add up to 124, and [Hungering](#talent-hungering) weighs
-12: 9.7 % of a lesser roll. Hold [Thick-blooded](#talent-thick-blooded) (weight 10), which also
+For example, the lesser tier's weights add up to 148, and [Hungering](#talent-hungering) weighs
+12: 8.1 % of a lesser roll. Hold [Thick-blooded](#talent-thick-blooded) (weight 10), which also
 rules out [Paper-skinned](#talent-paper-skinned) (weight 8), and the tier's open weights add up to
-106: Hungering is then 12 in 106, 11.3 %.
+130: Hungering is then 12 in 130, 9.2 %.
 
 Every tier holds good, bad, and mixed gifts, so no roll is ever safe. By weight the lesser tier is
-45 % good, 27 % mixed, and 27 % bad; the greater 43 %, 32 %, and 25 %; the dire 35 %, 29 %, and
-36 %.
+45 % good, 27 % mixed, and 28 % bad; the greater 44 %, 33 %, and 22 %; the dire 35 %, 33 %, and
+32 %.
 
 ## Gifts with other gifts
 
@@ -105,8 +105,11 @@ Every such link in the table:
 | [Wyrm's hunger](#talent-wyrms-hunger) | replaces [Hungering](#talent-hungering) |
 | [Withered](#talent-withered) | undoes [Oak-hearted](#talent-oak-hearted) |
 | [Palsied](#talent-palsied) | undoes [Adder-quick](#talent-adder-quick) |
-| [Dim-eyed](#talent-dim-eyed) | never with [Barrow-eyed](#talent-barrow-eyed), [Mere-eyed](#talent-mere-eyed), or [Deep-eyed](#talent-deep-eyed) |
+| [Dim-eyed](#talent-dim-eyed) | never with [Barrow-eyed](#talent-barrow-eyed), [Mere-eyed](#talent-mere-eyed), [Deep-eyed](#talent-deep-eyed), or [Many-eyed](#talent-many-eyed) |
 | [Hoofed](#talent-hoofed) | never with [Soft-footed](#talent-soft-footed) |
+| [Lead-footed](#talent-lead-footed) | never with [Soft-footed](#talent-soft-footed) |
+| [Frost-breathed](#talent-frost-breathed) | never with [Ember-veined](#talent-ember-veined) |
+| [Rot-breathed](#talent-rot-breathed) | never with [Quick-knit](#talent-quick-knit) |
 | [Many-fingered](#talent-many-fingered) | never with [Clawed](#talent-clawed) |
 | [Prehensile-tailed](#talent-prehensile-tail) | never with [Tailed](#talent-tailed) |
 | [Thick-blooded](#talent-thick-blooded) | never with [Paper-skinned](#talent-paper-skinned) or [Glass-boned](#talent-glass-boned) |
@@ -181,6 +184,14 @@ Some gifts change more than your numbers:
   enough to see the cells beside you, and enough for everything about to see you by. Under a full
   moon it burns as brightly as the Phoenix's [Inner light](horoscope.md#talent-inner-light).
   [Wyrm-blooded](#talent-wyrm-blooded) puts it out.
+- **Breaths.** [Frost-breathed](#talent-frost-breathed), [Bile-spitting](#talent-bile-spitting),
+  [Rot-breathed](#talent-rot-breathed), and [Thunder-throated](#talent-thunder-throated) each give
+  you a breath of your own, used from the abilities menu like
+  [Fire breath](horoscope.md#talent-fire-breath): Frost breath (cold), Bile spit (acid, a short
+  way), Rot breath (necrotic), and Thunder breath (lightning). You aim each at a cell, and it hits
+  everyone on the line toward it, as far as its length. Every breath leaves you
+  [Drained](status-list.md#status-drained), and while you are you can use none of them, fire
+  included.
 - **The stare.** [Stone-eyed](#talent-stone-eyed) gives you the Basilisk's
   [Transfixing stare](horoscope.md#talent-transfixing-stare), used from the abilities menu. If
   your sign gave you one already, you keep one stare, the stronger.

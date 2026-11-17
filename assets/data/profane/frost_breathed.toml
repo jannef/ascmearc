@@ -1,0 +1,17 @@
+[[gift]]
+id = "frost_breathed"
+name = "Frost-breathed"
+kind = "boon"
+tier = "greater"
+weight = 8
+description = "Rime in your lungs: you can breathe a blast of bitter cold, and cold troubles you less."
+line = "Your breath smokes white, and frost creeps over your lips."
+# A breath of its own (one per damage type, `SignActive::breath_of`): Frost breath, used from the
+# abilities menu. Every breath leaves the player Drained, and none is used while they are.
+effects = [
+    { kind = "fire_breath", name = "Frost breath", range = 8, length = 4, damage = "3d6", damage_type = "cold", spell = "frost_breath", cooldown = "drained", degrees = 2 },
+    { kind = "resist", damage = "cold", value = 25 },
+]
+# Written here, on the later of the two (docs/design/profane-gifts.md §6.5): made symmetric at
+# load. Fire in the veins and frost in the lungs do not share a body.
+excludes = ["ember_veined"]
