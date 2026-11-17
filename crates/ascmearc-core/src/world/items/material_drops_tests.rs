@@ -5,7 +5,7 @@
 //! the newly tagged beasts count as beasts; the arena's dead litter stock.
 
 use crate::action::parse_actions;
-use crate::content::{ContentFiles, Drop, DropFrom, DropGoods, PER_MILLE};
+use crate::content::{ContentFiles, CreatureId, Drop, DropFrom, DropGoods, PER_MILLE};
 use crate::object::Stack;
 use crate::test_support::builtin;
 use crate::world::*;
@@ -59,7 +59,6 @@ fn every_tag_applies_in_path_order_then_the_creatures_own() {
         summary(&content, "wolf"),
         vec![
             s("beast", "leather", 600),
-            s("beast", "bone", 500),
             s("beast", "sinew", 400),
             s("own", "fur", 500),
         ]
@@ -69,7 +68,7 @@ fn every_tag_applies_in_path_order_then_the_creatures_own() {
 #[test]
 fn bodiless_rows_reach_the_bodiless_and_a_spirit_leaves_nothing() {
     let content = builtin();
-    // A skeleton leaves no corpse: the undead row is not its, the skeleton row is (bodiless).
+    // A skeleton leaves no corpse: its skeleton row is bodiless.
     assert_eq!(
         summary(&content, "skeleton"),
         vec![s("skeleton", "bone", 800)]
@@ -89,15 +88,22 @@ fn bodiless_rows_reach_the_bodiless_and_a_spirit_leaves_nothing() {
 #[test]
 fn a_small_body_rolls_at_half_the_chance() {
     let content = builtin();
-    assert_eq!(summary(&content, "rat"), vec![s("vermin", "bone", 150)]);
     assert_eq!(
         summary(&content, "kobold"),
-        vec![
-            s("kobold", "flint", 200),
-            s("kobold", "wood", 125),
-            s("kobold", "bone", 100),
-        ]
+        vec![s("kobold", "flint", 200), s("kobold", "wood", 125),]
     );
+}
+
+#[test]
+fn only_skeletons_drop_bone() {
+    // #1792: bone everywhere was clutter; the walking bones are its one source among the drops.
+    let content = builtin();
+    assert!(rows(&content, "rat").is_empty(), "a rat leaves nothing");
+    for (i, creature) in content.creature_defs().iter().enumerate() {
+        let bone = (creature.drops.iter()).any(|r| material(&content, r) == "bone");
+        let skeleton = content.has_tag(CreatureId(i as u16), "skeleton");
+        assert_eq!(bone, skeleton, "{}", creature.id);
+    }
 }
 
 #[test]
@@ -122,7 +128,7 @@ fn the_untagged_beasts_are_beasts_now_and_the_gorgon_a_dragon() {
         .into_iter()
         .map(|r| r.0)
         .collect();
-    assert_eq!(from, ["dragon", "dragon", "dragon", "own", "own"]);
+    assert_eq!(from, ["dragon", "dragon", "dragon", "own"]);
 }
 
 #[test]

@@ -6,11 +6,6 @@ count = "1"
 chance = 60
 
 [[drop]]
-material = "bone"
-count = "1d2"
-chance = 50
-
-[[drop]]
 material = "sinew"
 count = "1"
 chance = 40

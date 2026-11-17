@@ -1,7 +1,7 @@
 # What creatures leave
 
 When a creature dies, its body may leave crafting stock on its cell, besides the gear it carried
-and any [loot](magic-items.md#finding-them): a wolf's hide and a shard of its bone,
+and any [loot](magic-items.md#finding-them): a wolf's hide and sinew,
 a kobold's flint, a skeleton's bones, an elemental's essence. You pick these up like anything
 else. They are [pieces](materials.md#pieces) of a material, or [herbs and
 essences](materials.md#herbs-and-essences), listed under **Materials**.
@@ -15,6 +15,7 @@ essences](materials.md#herbs-and-essences), listed under **Materials**.
   the same material join one stack.
 - Only a creature that leaves a corpse leaves stock, unless its sort says otherwise: a
   skeleton's bones and an elemental's essence come without a body. A ghost leaves nothing.
+- Only skeletons leave bone: other creatures leave hides, sinew, horn and the like, but no bone.
 - A **small** creature (a rat, a kobold) has half the chance of each.
 - A creature turned to stone leaves none, and neither does a summoned creature, which leaves
   nothing at all.

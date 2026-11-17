@@ -1,11 +1,6 @@
 # Material drops of the `marsh-thing` tag (README.toml). The fens' living things.
 
 [[drop]]
-material = "bone"
-count = "1"
-chance = 40
-
-[[drop]]
 material = "leather"
 count = "1"
 chance = 30

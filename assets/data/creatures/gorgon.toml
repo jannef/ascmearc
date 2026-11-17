@@ -50,11 +50,7 @@ name = "horns"
 verb = "gores"
 to_hit = 7
 
-# Bone and a hard hide, besides its tags' rows (material drops, data/drops/README.toml).
-[[creature.drops]]
-material = "bone"
-count = "1d2"
-chance = 50
+# A hard hide, besides its tags' rows (material drops, data/drops/README.toml).
 [[creature.drops]]
 material = "hardened_leather"
 count = "1"
