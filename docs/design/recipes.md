@@ -221,7 +221,7 @@ A suit of chain weighs 11 kg and costs 22 ingots: the by-weight rule, honest abo
 | great helm | M | main (metal); ornament studs | 6 | 14 | 5400 | 30 |
 | great helm | W | main (hide, bone) | 1 hide or 6 shards | 13 | 5400 | 30 |
 
-The leather cap's metal route was built and then dropped (#1771): a leather cap of ingots made no sense, so the cap is made by hand from hide or bone only, and Metalcraft's helmets are the iron helm and the great helm.
+The leather cap's metal route was built and then dropped (#1771): a leather cap of ingots made no sense, so the cap is made by hand from hide or bone only (and is never found in metal either), and Metalcraft's helmets are the iron helm and the great helm.
 
 ### Cloaks, gloves, boots
 
