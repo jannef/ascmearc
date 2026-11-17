@@ -18,7 +18,7 @@ const NOURISHED: &str = "The flesh nourishes you.";
 const EMPOWERED: &str = "The flesh empowers you.";
 
 /// Food underfoot, nothing else about.
-const PANTRY: &str = r##"
+pub(super) const PANTRY: &str = r##"
 name = "Pantry"
 ambient = [200, 200, 200, 0]
 map = '''
@@ -30,7 +30,7 @@ map = '''
 "@" = { terrain = "floor", spawn = "player" }
 "##;
 
-fn files() -> ContentFiles {
+pub(super) fn files() -> ContentFiles {
     let mut files = ContentFiles::builtin();
     files.insert("levels/pantry.toml", PANTRY);
     files.insert(
@@ -40,7 +40,7 @@ fn files() -> ContentFiles {
     files
 }
 
-fn world_of(files: &ContentFiles, who: &str) -> World {
+pub(super) fn world_of(files: &ContentFiles, who: &str) -> World {
     let content = Arc::new(Content::load(files).expect("the fixtures load"));
     let spec: CharacterSpec = who.parse().expect("a character");
     let mut w = World::with_character(content, "pantry", Some(7), Some(&spec)).expect("world");
@@ -49,24 +49,24 @@ fn world_of(files: &ContentFiles, who: &str) -> World {
     w
 }
 
-fn ratfolk() -> World {
+pub(super) fn ratfolk() -> World {
     world_of(&files(), "ratfolk,female,thief")
 }
 
 /// A ratfolk where nothing craves (no `craving.toml`): the control whose marks are everything
 /// but the craving's (a vomit costs Toughness marks, `stats.toml`).
-fn uncraving() -> World {
+pub(super) fn uncraving() -> World {
     let mut files = files();
     files.remove("data/rules/craving.toml");
     world_of(&files, "ratfolk,female,thief")
 }
 
-fn human() -> World {
+pub(super) fn human() -> World {
     world_of(&files(), "human,female,thief")
 }
 
 /// Lays a fresh corpse of `creature` on the player's cell and eats it, with room for it.
-fn eat(w: &mut World, creature: &str) {
+pub(super) fn eat(w: &mut World, creature: &str) {
     let corpse = (w.content().object_id(&format!("{creature}_corpse"))).expect("a corpse");
     let here = w.player_pos();
     let now = w.time();
@@ -78,30 +78,30 @@ fn eat(w: &mut World, creature: &str) {
 }
 
 /// How many lines said are exactly `text`.
-fn told(w: &World, text: &str) -> usize {
+pub(super) fn told(w: &World, text: &str) -> usize {
     said(w).iter().filter(|l| *l == text).count()
 }
 
-fn marks(w: &World) -> i32 {
+pub(super) fn marks(w: &World) -> i32 {
     Stat::ALL
         .iter()
         .map(|&s| w.state.player().stat_marks[s])
         .sum()
 }
 
-fn holds(w: &World, id: &str) -> bool {
+pub(super) fn holds(w: &World, id: &str) -> bool {
     w.state.player().talents.has(id)
 }
 
-fn score(w: &World, stat: Stat) -> u8 {
+pub(super) fn score(w: &World, stat: Stat) -> u8 {
     w.state.player().stats.score(stat)
 }
 
-fn alignment(w: &World) -> i32 {
+pub(super) fn alignment(w: &World) -> i32 {
     w.state.player().alignment.expect("a score").value()
 }
 
-fn set_eaten(w: &mut World, n: u32) {
+pub(super) fn set_eaten(w: &mut World, n: u32) {
     w.state.progress.laws.eaten = n;
 }
 

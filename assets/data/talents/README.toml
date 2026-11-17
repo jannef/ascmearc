@@ -180,6 +180,9 @@
 #   invest                        its business partner in town invests the gold put with them,
 #                                 every week a random return (../invest.toml, the merchant's)
 #   hunger_percent { value }      hunger burns that percent faster (negative: slower)
+#   hunger_harm { value }         hunger's harm that percent of the data's (200: twice; the
+#                                 ratfolk craving's): Weak's stat loss, the chance to faint, and
+#                                 starving's damage, rounded down, never below the data's own 1
 #   rot_harm_percent { value }    the sickness rotten food gives, that percent more (rounded
 #                                 down; negative: less)
 #   smell_rot                     the eat list says how fresh food smells: fresh, turning, or
@@ -423,6 +426,10 @@
 #                                 (negative: cheaper), only while each condition set holds
 #   stout                         Strained costs what Burdened costs others
 #   disease_immune                no disease is ever caught: no check, no infection
+#   immune { to }                 immune to `to`, a status id (../status/: it never takes) or a
+#                                 damage type id (../damage_types.toml: it does nothing, past
+#                                 every resistance's cap), as a creature's `immune`; never on a
+#                                 profane gift (the ratfolk craving's)
 #   no_penalty_to { stat }        no status lowers its score in that stat
 #   raise_percent { status, value }   what that status raises its scores by, that percent more
 #   hardened { bonus }            each level past `hp_level` adds a level's hit points again, and

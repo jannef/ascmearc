@@ -35,7 +35,8 @@ The loader's checks (§6.5): the id is no talent's already and unique; the weigh
 effect passes the talent effects' own check and is none of the forbidden ones (§6.4:
 `profane::forbidden`, a hand-out that could not be taken back cleanly or a class's or a pick's
 business: `max_hp_per_levels`, `weapon_ranks`, `extra_pick`, `starting_gold`, a trade,
-`companion`, `xp_percent`, ...; `stat` is the one hand-out allowed); `not_for` names known races;
+`companion`, `xp_percent`, `immune` (no gift makes the player immune; the ratfolk craving is the
+one way, docs/dev/craving.md), ...; `stat` is the one hand-out allowed); `not_for` names known races;
 every relation names another gift; `excludes` is made symmetric (written once, on either gift:
 the phases write it on the gift that lands later, so a partial table loads); `undoes` asks for an
 `instead` line and every gift a `replaces` or `undoes` names for an `undone` line; `replaces` and

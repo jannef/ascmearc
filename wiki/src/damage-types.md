@@ -41,8 +41,9 @@ the total, but **at most 75 % counts**. With 200 % fire resistance you take a qu
 fire. Lose 100 % of that again and you are still at 75 %, since 100 % remains. Below zero you take
 more, but at worst double: −100 % is the floor of what counts. The same cap holds for creatures.
 
-Nothing you can wear or learn makes you immune. Immunity belongs to some creatures alone: a
-creature immune to a kind takes nothing of it, whatever it wears or suffers.
+Nothing you can wear or learn makes you immune. Immunity belongs to some creatures, and to a
+ratfolk deep in [the craving](food.md#the-ratfolks-craving), who becomes immune to poison: one
+immune to a kind takes nothing of it, whatever it wears or suffers.
 
 The share comes off each kind on its own: a flaming arrow's point and its fire are reduced
 separately. The result is rounded to the nearest point, so a 1-point hit still hurts at 50 % but

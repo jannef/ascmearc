@@ -19,7 +19,11 @@ impl World {
     /// ([`World::flees`]): a stance may quieten a flight.
     pub(in crate::world) fn make_step_noise(&mut self, actor: ActorId, to: Pos, fleeing: bool) {
         let percent = match self.state.actors.get(&actor) {
-            Some(a) if fleeing => self.content.stance_def(a.stance).flee_noise,
+            Some(a) if fleeing => {
+                self.content
+                    .stance_def(a.fought_as(&self.content))
+                    .flee_noise
+            }
             _ => 100,
         };
         self.make_noise_at(actor, Act::Step(to), percent);

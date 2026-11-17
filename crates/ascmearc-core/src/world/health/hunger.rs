@@ -34,10 +34,16 @@ impl World {
             .and_then(|c| c.spec.race(&self.content).ok())
             .map_or(100, |r| r.hunger);
         // Then their talents (Lean) and what they wear (of Sustenance: hunger comes slower): a
-        // signed percent of that pace, at least 1.
+        // signed percent of that pace, at least 1. Sustenance does nothing for one the ratfolk
+        // craving has stripped (`craving.rs`); of Hunger still bites.
         let player = self.state.player();
-        let percent = player.talent_mods(&self.content).hunger.hunger_percent
-            - player.mods(&self.content).get(Effect::Hunger);
+        let worn = player.mods(&self.content).get(Effect::Hunger);
+        let worn = if worn > 0 && self.unshielded() {
+            0
+        } else {
+            worn
+        };
+        let percent = player.talent_mods(&self.content).hunger.hunger_percent - worn;
         let pace = TalentMods::scaled(u64::from(race), percent);
         u16::try_from(pace).unwrap_or(u16::MAX).max(1)
     }
@@ -79,13 +85,21 @@ impl World {
             return (0, None);
         };
         let percent = self.hunger_percent();
+        // Starving's damage, as hunger's harm falls on it (the ratfolk craving's doubled).
+        let damage = (self.state.actors.get(&id)).map_or(def.starve.damage, |a| {
+            let harm = a
+                .talent_mods(&content)
+                .hunger
+                .harm(i32::from(def.starve.damage));
+            u16::try_from(harm).unwrap_or(u16::MAX)
+        });
         let Some(fed) = (self.state.actors.get_mut(&id)).and_then(|a| a.satiation.as_mut()) else {
             return (0, None);
         };
         let before = def.state(fed.nutrition);
         fed.burn(seconds, percent, def.burn_seconds);
         let lost = if before == Hunger::Starving {
-            fed.starve(seconds, def.starve.seconds, def.starve.damage)
+            fed.starve(seconds, def.starve.seconds, damage)
         } else {
             fed.starving = 0;
             0
@@ -137,16 +151,13 @@ impl World {
         if def.faint.chance == 0 || !self.player_hunger().is_some_and(Hunger::faints) {
             return 0;
         }
-        if self
-            .state
-            .player()
-            .talent_mods(&content)
-            .hunger
-            .no_hunger_weakness
-        {
+        let mods = self.state.player().talent_mods(&content);
+        if mods.hunger.no_hunger_weakness {
             return 0;
         }
-        if !draw!(self, "hunger/faint/player").chance(u32::from(def.faint.chance)) {
+        // Hunger's harm (the ratfolk craving's doubled), never past always.
+        let chance = mods.hunger.harm(i32::from(def.faint.chance)).clamp(0, 100);
+        if !draw!(self, "hunger/faint/player").chance(chance.unsigned_abs()) {
             return 0;
         }
         self.say("You faint from hunger.");

@@ -10,6 +10,11 @@ pub(super) fn text(content: &Content, effect: &HungerEffect) -> String {
     let percent = |v: i32| format!("{} %", signed(v));
     match effect.clone() {
         HungerEffect::HungerPercent { value } => format!("hunger pace {}", percent(value)),
+        HungerEffect::HungerHarm { value } => format!(
+            "hunger hurts {value} % as hard: being [Weak](hunger.md#how-hungry-you-are) takes \
+             that much more off Strength and Dexterity, the chance to faint is that much higher, \
+             and starving costs that many more hit points (rounded down, at least the usual)"
+        ),
         HungerEffect::SmellRot => {
             "the eat list says whether food smells fresh, turning (old), or rotten".to_string()
         }

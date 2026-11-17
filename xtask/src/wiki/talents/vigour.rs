@@ -27,6 +27,13 @@ pub(super) fn text(content: &Content, effect: &VigourEffect) -> String {
         }
         VigourEffect::HealingPercent { value } => format!("healing pace {}", percent(value)),
         VigourEffect::DiseaseImmune => "you never catch a disease".to_string(),
+        VigourEffect::Immune { to } => match content.damage_type_id(&to) {
+            Some(kind) => format!(
+                "immune to {} damage (it does nothing, past every resistance's cap)",
+                content.damage_type(kind).name
+            ),
+            None => format!("immune to {}: it never takes", status(&to)),
+        },
         VigourEffect::NoPenaltyTo { stat } => {
             format!("no status lowers your {}", stat.name())
         }
