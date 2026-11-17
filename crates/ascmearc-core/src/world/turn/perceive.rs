@@ -310,6 +310,16 @@ impl World {
                 }
                 seen
             }
+            // Out of a tower's window: named as the player knows its kind (`shoot.rs`).
+            Event::FellBelow { object, at } => {
+                let seen = perception.is_visible(at);
+                if seen {
+                    let title = self.lore().title(&crate::object::Stack::one(object));
+                    let text = format!("The {title} falls away to the ground far below.");
+                    reports.push((text, false));
+                }
+                seen
+            }
             Event::Status {
                 actor,
                 status,

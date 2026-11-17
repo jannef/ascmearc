@@ -76,3 +76,9 @@ ________________________________________________________________________
 ">" = { terrain = "stairs_down", to = "steorratorr_tower:5" }
 # The wizard in his workshop.
 "A" = { terrain = "tower_floor", creature = "sigeric", npc = "sigeric" }
+
+# The wizard's rooms under the roof, walls and doors included, are kept warm by the braziers
+# (#1788; data/room_effects/290-hearth.toml): the balcony outside stands in the weather.
+[[room]]
+effect = "hearth"
+area = [15, 4, 49, 22]

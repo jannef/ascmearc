@@ -179,5 +179,15 @@ lies on a plinth. The [skeleton](creatures.md#creature-skeleton) carries the
 
 {{#include generated/dungeon-floors.md}}
 
+### The wizards' towers floor by floor
+
+The three [wizards' towers](ascmearc.md#drȳtorr) are climbed, not delved: each floor up is more
+dangerous than the one below it. The ground floor's traps are laid by hand and always the same;
+the floors above are new each run, with hidden [traps](traps.md) that hit harder as the
+[danger](#who-lives-there-and-how-many) grows ([traps by danger](traps.md)). The top floor is the
+wizard's home, with no traps and nobody else.
+
+{{#include generated/dungeon-towers.md}}
+
 See also: [The dungeons one by one](dungeon-guide.md), [Teeming dens](teeming-dens.md), and
 [Quests](quests.md).

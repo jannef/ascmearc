@@ -14,7 +14,8 @@ file, times each weather's `swing` percent) less the weather's `chill`, blended 
 changes by `weather::blend` (the one place the clouds' and the temperature's hour-long
 transition is decided). `WorldState::temperature_on(level, ..)` is the one place a level's
 temperature is decided, and `WorldState::temperature_at(level, .., pos)` a cell's (the level's
-plus a hot or a cold special room's, `docs/dev/special-rooms.md`); `World::temperature()` (ground
+plus a hot or a cold special room's, `docs/dev/special-rooms.md`, or a wizard's hearth, placed by
+hand, `docs/dev/towers.md` "Polish"); `World::temperature()` (ground
 truth, at the player's cell), `World::temperature_at`, and `PerceptionView::temperature()` (the
 player feels it where they stand) read it. The pause menu's line on the world tells it (`ui/almanac.rs`, after the weather: `rain at
 4 °C`, out of the weather `the air at 10 °C`), in the settings' unit.

@@ -71,3 +71,9 @@ ________________________________________________________________________________
 ">" = { terrain = "stairs_down", to = "drytorr_tower:2" }
 # The wizard at his reading table.
 "O" = { terrain = "tower_floor", creature = "ordgar", npc = "ordgar" }
+
+# The wizard's rooms under the roof, walls and doors included, are kept warm by the braziers
+# (#1788; data/room_effects/290-hearth.toml): the balcony outside stands in the weather.
+[[room]]
+effect = "hearth"
+area = [20, 6, 60, 19]

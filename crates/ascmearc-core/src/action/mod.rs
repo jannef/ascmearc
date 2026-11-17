@@ -848,6 +848,13 @@ pub enum Event {
         actor: ActorId,
         at: Pos,
     },
+    /// A missile of kind `object` came down over the open air at `at`, out of a tower's window
+    /// (docs/dev/towers.md): it fell to the ground far below and is lost. Kept, and said, when
+    /// the player sees the cell.
+    FellBelow {
+        object: ObjectId,
+        at: Pos,
+    },
 }
 
 /// How the player's attack found its target ([`Event::Attacked`]): what its words say of it,
