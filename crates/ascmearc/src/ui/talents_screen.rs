@@ -88,6 +88,8 @@ impl TalentsScreen {
                 // A profane gift (docs/design/profane-gifts.md §11), a bane marked as a flaw.
                 () if talent.profane.is_some() && talent.flaw => Some("profane, flaw"),
                 () if talent.profane.is_some() => Some("profane"),
+                // A row of the ratfolk craving (docs/dev/craving.md).
+                () if talent.craving => Some("craving"),
                 () if talent.story && talent.flaw => Some("story, flaw"),
                 () if talent.story => Some("story"),
                 () if talent.boon => Some("altar"),

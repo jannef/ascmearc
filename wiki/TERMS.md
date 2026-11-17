@@ -178,6 +178,7 @@ above.
 | Eating, food, rot, corpses | `food.md#eating`, `food.md#food-spoils`, `food.md#corpses` |
 | Everlasting (a keeper's corpse, which never rots) | `food.md#corpses` |
 | Sapient, eating those who think (the first law); summoning a fiend (the second) | `food.md#eating-those-who-think`, `allies.md#summons` |
+| Craving, the ratfolk's craving | `food.md#the-ratfolks-craving` |
 | Profane gift, profane corpse, eating a keeper's corpse | `profane-gifts.md`, `profane-gifts.md#eating-a-keepers-corpse` (a gift: its row) |
 | Signature gift (a keeper's own, sure) | `profane-gifts.md#each-keepers-own-gift` |
 | Shop, buying, selling, prices | `shops.md#buying`, `shops.md#selling`, `shops.md#prices` |

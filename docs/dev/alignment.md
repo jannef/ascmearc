@@ -46,7 +46,7 @@ checked only when races exist): eating such a corpse is kin to a character of th
 only the player's kills, a status they caused included), `shop.rs` (`provoke`: attacking a keeper
 who trades; `shop_step`: theft; `pay`: paying a debt; `favour`: `keeper_favour`), `eat.rs::finish`
 (`ate_corpse`, rotten or not), `quest.rs` (`complete`: the quest's `alignment`; `quest_topics`
-asks `offers`), `talk.rs` (`chat`: `cold_greeting` before the greeting and the lines). `steal.rs::got_away_with` (a theft that took something): `player_did(Deed::Theft)`. `consecrate.rs::consecrated` (Consecrate done): `player_did(Deed::Consecrated)`. `profane.rs::profane_meal` (a layer boss's corpse eaten, after its gifts): `player_did(Deed::EatProfane)`, `eat_profane` (−300, the largest single sin; docs/dev/profane-gifts.md). Nothing else
+asks `offers`), `talk.rs` (`chat`: `cold_greeting` before the greeting and the lines). `steal.rs::got_away_with` (a theft that took something): `player_did(Deed::Theft)`. `consecrate.rs::consecrated` (Consecrate done): `player_did(Deed::Consecrated)`. `profane.rs::profane_meal` (a layer boss's corpse eaten, after its gifts): `player_did(Deed::EatProfane)`, `eat_profane` (−300, the largest single sin; docs/dev/profane-gifts.md). `craving.rs::craved` (a row of the ratfolk craving crossed, its talent given): `player_did(Deed::CravingThreshold)`, `craving_threshold` (−100; docs/dev/craving.md). Nothing else
 moves a score: a new deed is a `Deed` variant, a `[shift]` field, and one call where it happens.
 
 **Readers.** Presentation reads `PerceptionView::own_alignment()` (the band, `None` without
@@ -99,7 +99,8 @@ which takes the caster, and `levels/pit.rs::open_pit`), a study mishap's summon 
 and a feature outcome's summon (`fixtures/outcome.rs::summon_hostiles`, the forgotten altar's). A
 new player summoning path calls `player_summoned` for each creature it makes. The counts live in
 `Progress::laws` (`Broken`: `eaten`, `summoned`, saved, left out while 0); the first of each says
-the law's `first` line. Read by `World::laws_broken()`: the `progress` dump layer's `laws broken:
+the law's `first` line, but for a player who craves: the ratfolk craving (docs/dev/craving.md)
+runs from `ate_flesh` on each sapient corpse and says its own first line instead. Read by `World::laws_broken()`: the `progress` dump layer's `laws broken:
 ate N sapient, summoned N fiend`. No screen shows them yet; nothing else reads them. Tests:
 `world/character/laws_tests.rs`.
 

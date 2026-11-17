@@ -3,6 +3,7 @@
 
 pub(in crate::world) mod alignment;
 mod background;
+mod craving;
 pub(in crate::world) mod creation;
 mod element_gifts;
 pub(in crate::world) mod experience;
@@ -28,6 +29,7 @@ cfg_if! {
         mod alignment_tests;
         mod body_talent_tests;
         mod character_tests;
+        mod craving_tests;
         mod creation_tests;
         mod damage_talent_tests;
         mod element_gift_tests;

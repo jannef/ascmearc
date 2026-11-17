@@ -1,0 +1,14 @@
+[[talent]]
+id = "craving_nourished"
+name = "Nourished"
+tree = "craving"
+granted = true
+description = "The flesh of the thinking has made you stronger, quicker, and harder, and hungrier. It never comes back up."
+effects = [
+    { kind = "stat", stat = "strength", value = 1 },
+    { kind = "stat", stat = "dexterity", value = 1 },
+    { kind = "stat", stat = "toughness", value = 1 },
+    { kind = "corpse_harmless" },
+    { kind = "hunger_percent", value = 10 },
+]
+systems = ["hunger"]

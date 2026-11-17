@@ -1,7 +1,8 @@
 //! The two laws (#1764; `data/rules/laws.toml`, `content/laws.rs`; docs/dev/alignment.md "The
 //! two laws"): never eat the flesh of a thinking creature, never call up a fiend. Each time the
 //! player breaks one is counted in [`Progress`](super::experience::Progress), and the first time
-//! the law's `first` message is said; nothing else follows yet.
+//! the law's `first` message is said. A player who craves (`craving.rs`, the ratfolk craving)
+//! hears the craving's first line instead, and the craving runs on every sapient corpse.
 //!
 //! - **Eating** ([`World::ate_flesh`], from `world/health/eat.rs` as a corpse is eaten, fresh or
 //!   rotten): a corpse whose creature carries the eat law's tag (`sapient`).
@@ -63,7 +64,13 @@ impl World {
         let Some(laws) = content.laws() else {
             return;
         };
-        self.broke(&laws.eat, creature, |b| &mut b.eaten);
+        // A player who craves (`craving.rs`) hears the craving's first line instead.
+        if let Some(count) = self.broke(&laws.eat, creature, |b| &mut b.eaten)
+            && !self.craved(count)
+            && count == 1
+        {
+            self.say(laws.eat.first.clone());
+        }
     }
 
     /// A `creature` came by the player's own act (module docs).
@@ -72,19 +79,24 @@ impl World {
         let Some(laws) = content.laws() else {
             return;
         };
-        self.broke(&laws.summon, creature, |b| &mut b.summoned);
+        if self.broke(&laws.summon, creature, |b| &mut b.summoned) == Some(1) {
+            self.say(laws.summon.first.clone());
+        }
     }
 
-    /// Counts `law` broken by `creature` in the tally `which` picks, if its tags break it; the
-    /// first time, says the law's message.
-    fn broke(&mut self, law: &Law, creature: CreatureId, which: fn(&mut Broken) -> &mut u32) {
+    /// Counts `law` broken by `creature` in the tally `which` picks, if its tags break it: the
+    /// count now, `None` if it was not broken. The caller says the law's `first` at 1.
+    fn broke(
+        &mut self,
+        law: &Law,
+        creature: CreatureId,
+        which: fn(&mut Broken) -> &mut u32,
+    ) -> Option<u32> {
         if !law.breaks(&self.content.creature(creature).tags) {
-            return;
+            return None;
         }
         let count = which(&mut self.state.progress.laws);
         *count = count.saturating_add(1);
-        if *count == 1 {
-            self.say(law.first.clone());
-        }
+        Some(*count)
     }
 }
