@@ -1,0 +1,226 @@
+//! Passage: the linear mode of the tunnels generator (#1839), for the shortcuts: one long winding
+//! way from the up stairs at one end of the map to the down stairs at the other, and no second
+//! route.
+//!
+//! 1. Waypoints from one end to the other, each a drawn step further along the map's width and
+//!    at a drawn height; which end is up is drawn too.
+//! 2. Between two waypoints a hewn leg: along, then up or down (or the other way round), so the
+//!    way bends at right angles and the line of sight breaks at every corner. The legs never turn
+//!    back along the width, so the way cannot meet itself but where it bends.
+//! 3. The way is bored as a tunnel (`Bore`): mostly 2 wide, now and then 3, now and then a 1-wide
+//!    squeeze, and steadier than the tunnels' (longer stretches, hardly a nibble).
+//! 4. A hewn hall at each end (the stairs stand there) and now and then at a waypoint: a box with
+//!    a corner or two left as rock.
+//! 5. A few dead-end pockets off the way, each dug straight out into rock that touches no other
+//!    floor, so it leads nowhere.
+//! 6. A way that rings round more rock than a pillar (a hall come too near another leg) fails
+//!    the attempt: there would be a second route.
+//! 7. Keep the largest cave, then the named vaults, the stairs (the up in the hall at its end,
+//!    the down at the other), lamps and fungus, patrols, now and then a special chamber. No random
+//!    vault (one with two entrances would open a second route) and no pools (an air shaft).
+//!
+//! The tunables are grouped here at the top (#1834 moves generators' parameters into data).
+
+use super::{Bore, bore};
+use crate::content::StairsDir;
+use crate::geom::{Dir, Pos};
+use crate::grid::Grid;
+use crate::mapgen::{CARDINALS, Canvas, Needs, caves, special, vault};
+use crate::rng::Rng;
+
+/// How the way is carved: steadier than the tunnels'.
+const PASSAGE: Bore = Bore {
+    widths: [(22, 1), (63, 2), (15, 3)],
+    stretch: (4, 10),
+    squeeze: (2, 3),
+    squeeze_within: 2,
+    nibble: 2,
+};
+/// How far from the map's side the first and last waypoints stand.
+const END: i32 = 5;
+/// How far along the width each waypoint is from the last.
+const LEG: (i32, i32) = (7, 14);
+/// Chance (percent) that a waypoint between the ends gets a hall.
+const HALL_CHANCE: u32 = 35;
+/// A hall's half-width and half-height.
+const HALL_X: (i32, i32) = (2, 4);
+const HALL_Y: (i32, i32) = (1, 2);
+/// Chance (percent) that each corner of a hall is left as rock.
+const CHIP: u32 = 50;
+/// Dead-end pockets tried for, and how far one runs.
+const POCKETS: (i32, i32) = (3, 6);
+const POCKET_LEN: (i32, i32) = (2, 5);
+/// Tries at each pocket before it is given up.
+const POCKET_TRIES: u32 = 20;
+/// The most rock the way may ring round (a pillar a hall or a wide stretch leaves); more is a
+/// second route, and the attempt fails.
+pub(in crate::mapgen) const PILLAR: usize = 4;
+/// The kept way must cover at least this percent of the inner area.
+const MIN_FLOOR: i32 = 5;
+
+pub(in crate::mapgen) fn build(canvas: &mut Canvas, rng: &mut Rng, needs: Needs) -> Option<()> {
+    let (w, h) = (canvas.width(), canvas.height());
+    if w < 2 * END + LEG.0 || h < 2 * HALL_Y.1 + 5 {
+        return None;
+    }
+    let mut points = vec![Pos::new(END, rng.range(3, h - 4))];
+    loop {
+        let x = points[points.len() - 1].x + rng.range(LEG.0, LEG.1);
+        let y = rng.range(3, h - 4);
+        if x >= w - 1 - END - LEG.0 / 2 {
+            points.push(Pos::new(w - 1 - END, y));
+            break;
+        }
+        points.push(Pos::new(x, y));
+    }
+    // Which end the stairs up stand at.
+    if rng.chance(50) {
+        for p in &mut points {
+            p.x = w - 1 - p.x;
+        }
+    }
+    let mut legs = vec![points[0]];
+    for pair in points.windows(2) {
+        let (a, b) = (pair[0], pair[1]);
+        let corner = if rng.chance(50) {
+            Pos::new(b.x, a.y)
+        } else {
+            Pos::new(a.x, b.y)
+        };
+        legs.extend([corner, b]);
+    }
+    bore(canvas, rng, &PASSAGE, &legs);
+    let last = points.len() - 1;
+    for (i, &p) in points.iter().enumerate() {
+        if i == 0 || i == last || rng.chance(HALL_CHANCE) {
+            hall(canvas, rng, p);
+        }
+    }
+    pockets(canvas, rng);
+    // Where a hall comes too near another leg the way rings round rock: a second route.
+    if largest_ring(canvas) > PILLAR {
+        return None;
+    }
+    caves::keep_largest_cave(canvas, MIN_FLOOR)?;
+    for v in vault::named(canvas, needs.vaults) {
+        if vault::spots(canvas, v).is_empty() {
+            caves::make_room(canvas, rng, v, MIN_FLOOR)?;
+        }
+        if caves::place_vaults(canvas, rng, &[v], 1) < 1 {
+            return None;
+        }
+    }
+    let up = roomy_nearest(canvas, points[0])?;
+    canvas.place_stairs(up, StairsDir::Up);
+    if needs.down {
+        let down = roomy_nearest(canvas, points[last])?;
+        canvas.place_stairs(down, StairsDir::Down);
+    }
+    caves::light(canvas, rng, up);
+    caves::patrols(canvas, rng, up, needs);
+    special::cave_rooms(canvas, rng, up);
+    Some(())
+}
+
+/// A hewn hall round `c`: a box of drawn size, each corner now and then left as rock.
+fn hall(canvas: &mut Canvas, rng: &mut Rng, c: Pos) {
+    let (hx, hy) = (rng.range(HALL_X.0, HALL_X.1), rng.range(HALL_Y.0, HALL_Y.1));
+    let chipped: Vec<bool> = (0..4).map(|_| rng.chance(CHIP)).collect();
+    for y in c.y - hy..=c.y + hy {
+        for x in c.x - hx..=c.x + hx {
+            let corner = match (x == c.x - hx || x == c.x + hx, y == c.y - hy, y == c.y + hy) {
+                (true, true, _) => Some(usize::from(x > c.x)),
+                (true, _, true) => Some(2 + usize::from(x > c.x)),
+                _ => None,
+            };
+            let p = Pos::new(x, y);
+            if corner.is_none_or(|i| !chipped[i]) && canvas.is_inner(p) {
+                canvas.set(p, canvas.pal.floor);
+            }
+        }
+    }
+}
+
+/// Dead ends dug straight out from the way into rock, each through cells whose every neighbour
+/// but the cell before is rock, so a pocket never reaches other floor.
+fn pockets(canvas: &mut Canvas, rng: &mut Rng) {
+    let floor: Vec<Pos> = canvas
+        .cells()
+        .filter(|p| canvas.get(*p) == canvas.pal.floor)
+        .collect();
+    for _ in 0..rng.range(POCKETS.0, POCKETS.1) {
+        for _ in 0..POCKET_TRIES {
+            let Some(&from) = rng.pick(&floor) else {
+                return;
+            };
+            let dir = CARDINALS[rng.index(CARDINALS.len())];
+            let len = rng.range(POCKET_LEN.0, POCKET_LEN.1);
+            let cells: Vec<Pos> = (1..=len)
+                .scan(from, |p, _| {
+                    *p = p.step(dir);
+                    Some(*p)
+                })
+                .collect();
+            let clear = cells.iter().enumerate().all(|(i, &p)| {
+                let before = if i == 0 { from } else { cells[i - 1] };
+                canvas.is_inner(p)
+                    && Dir::ALL.iter().all(|d| {
+                        let q = p.step(*d);
+                        q == before
+                            || cells.contains(&q)
+                            || q.chebyshev(before) <= 1 && i == 0
+                            || canvas.is_rock(q)
+                    })
+            });
+            if clear {
+                for p in cells {
+                    canvas.set(p, canvas.pal.floor);
+                }
+                break;
+            }
+        }
+    }
+}
+
+/// The most rock in one piece the floor rings round: rock a 4-way flood from the map's edge
+/// never reaches (a king's move of floor stops it, as the player walks it).
+fn largest_ring(canvas: &Canvas) -> usize {
+    let (w, h) = (canvas.width(), canvas.height());
+    let mut seen = Grid::new(w, h, false);
+    let fill = |seen: &mut Grid<bool>, start: Pos| {
+        seen[start] = true;
+        let mut stack = vec![start];
+        let mut size = 0;
+        while let Some(p) = stack.pop() {
+            size += 1;
+            for d in CARDINALS {
+                let q = p.step(d);
+                if seen.get(q) == Some(&false) && canvas.is_rock(q) {
+                    seen[q] = true;
+                    stack.push(q);
+                }
+            }
+        }
+        size
+    };
+    for p in canvas.cells() {
+        let edge = p.x == 0 || p.y == 0 || p.x == w - 1 || p.y == h - 1;
+        if edge && !seen[p] && canvas.is_rock(p) {
+            fill(&mut seen, p);
+        }
+    }
+    let mut most = 0;
+    for p in canvas.cells() {
+        if !seen[p] && canvas.is_rock(p) {
+            most = most.max(fill(&mut seen, p));
+        }
+    }
+    most
+}
+
+/// The roomy spot (3×3 of free floor) nearest `to`, the first of equals in row order.
+fn roomy_nearest(canvas: &Canvas, to: Pos) -> Option<Pos> {
+    (canvas.cells())
+        .filter(|p| canvas.is_open_area(*p))
+        .min_by_key(|p| p.dist2(to))
+}

@@ -33,7 +33,9 @@
 //! [[dungeon]]
 //! id = "depths"
 //! name = "The Depths"          # level names: "The Depths 3"; default: the id
-//! generator = "rooms"          # "rooms" (rooms and corridors) or "caves" (cellular automata)
+//! generator = "rooms"          # "rooms" (rooms and corridors), "caves" (cellular automata),
+//!                               # "tunnels" (caverns joined by narrow tunnels), or "passage"
+//!                               # (one long hewn way between the stairs, for shortcuts)
 //! depth = 8                     # or, instead: [dungeon.endless] (below)
 //! size = [80, 21]
 //! creatures = ["rat", "kobold"] # patrolling creatures generators may place; default none
@@ -131,6 +133,11 @@ pub enum Generator {
     Rooms,
     /// Cellular-automata caverns.
     Caves,
+    /// Natural caverns of varied size joined by narrow winding tunnels (`mapgen/tunnels/`).
+    Tunnels,
+    /// One long hewn way from the stairs up at one end to the stairs down at the other, with no
+    /// second route: the tunnels' linear mode, for shortcuts (`mapgen/tunnels/passage.rs`).
+    Passage,
     /// A tower's floor: a ring wall with windows round a winding hall (`mapgen/tower.rs`); only
     /// a tower's ([`super::tower`]).
     Tower,
@@ -142,6 +149,8 @@ impl Generator {
         match self {
             Generator::Rooms => ([40, 15], [200, 100]),
             Generator::Caves => ([40, 30], [400, 300]),
+            Generator::Tunnels => ([40, 20], [400, 300]),
+            Generator::Passage => ([40, 15], [400, 300]),
             // A tower's floors are its clearing's size, which a hand-made level may have.
             Generator::Tower => ([1, 1], [400, 300]),
         }

@@ -63,7 +63,7 @@ fn six_floors_of_danger_one_to_six_passages_then_hollows() {
         let plan = def.plan(depth).expect("a floor");
         let (generator, size) = match depth {
             1 | 2 => (Generator::Rooms, (80, 21)),
-            _ => (Generator::Caves, (100, 40)),
+            _ => (Generator::Tunnels, (120, 48)),
         };
         assert_eq!(plan.generator, generator, "depth {depth}");
         assert_eq!((plan.width, plan.height), size, "depth {depth}");

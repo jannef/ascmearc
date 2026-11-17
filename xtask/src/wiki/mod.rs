@@ -1509,7 +1509,7 @@ mod tests {
         );
         let depths = text("search-depths.md");
         assert!(
-            depths.contains("| The Depths 3 | none (caves have no doors) |"),
+            depths.contains("| The Depths 3 | none (these floors have no doors) |"),
             "{depths}"
         );
         assert!(

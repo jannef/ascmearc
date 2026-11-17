@@ -42,10 +42,10 @@ pub(super) fn build(canvas: &mut Canvas, rng: &mut Rng, needs: Needs) -> Option<
     for _ in 0..SMOOTHING {
         smooth(canvas);
     }
-    keep_largest_cave(canvas)?;
+    keep_largest_cave(canvas, MIN_CAVE)?;
     for v in vault::named(canvas, needs.vaults) {
         if vault::spots(canvas, v).is_empty() {
-            make_room(canvas, rng, v)?;
+            make_room(canvas, rng, v, MIN_CAVE)?;
         }
         if place_vaults(canvas, rng, &[v], 1) < 1 {
             return None;
@@ -96,8 +96,9 @@ fn smooth(canvas: &mut Canvas) {
     }
 }
 
-/// Fills every cave but the largest; `None` if even that one is too small.
-fn keep_largest_cave(canvas: &mut Canvas) -> Option<()> {
+/// Fills every cave but the largest; `None` if even that one covers less than `min` percent of
+/// the inner area.
+pub(super) fn keep_largest_cave(canvas: &mut Canvas, min: i32) -> Option<()> {
     let (w, h) = (canvas.width(), canvas.height());
     let floor = canvas.pal.floor;
     let mut claimed = Grid::new(w, h, false);
@@ -118,7 +119,7 @@ fn keep_largest_cave(canvas: &mut Canvas) -> Option<()> {
         }
     }
     let (size, keep) = best?;
-    if (size as i32) * 100 < (w - 2) * (h - 2) * MIN_CAVE {
+    if (size as i32) * 100 < (w - 2) * (h - 2) * min {
         return None;
     }
     for p in canvas.cells() {
@@ -132,8 +133,8 @@ fn keep_largest_cave(canvas: &mut Canvas) -> Option<()> {
 /// Makes room for a vault the level names when no rock is left big enough to hold it (#582): fills
 /// the spot that takes the least of the cave (a random one of those) with rock, the vault and its
 /// ring, then keeps the largest cave again, as the fill may cut a corner of it off. `None` if
-/// every spot touches a stamped cell, or the cave left is too small.
-fn make_room(canvas: &mut Canvas, rng: &mut Rng, v: &Vault) -> Option<()> {
+/// every spot touches a stamped cell, or the cave left covers less than `min` percent.
+pub(super) fn make_room(canvas: &mut Canvas, rng: &mut Rng, v: &Vault, min: i32) -> Option<()> {
     let (w, h) = (v.width(), v.height());
     let ring = |at: Pos| {
         (at.y - 1..=at.y + h).flat_map(move |y| (at.x - 1..=at.x + w).map(move |x| Pos::new(x, y)))
@@ -161,12 +162,17 @@ fn make_room(canvas: &mut Canvas, rng: &mut Rng, v: &Vault) -> Option<()> {
     for p in ring(at).collect::<Vec<_>>() {
         canvas.set(p, canvas.pal.void);
     }
-    keep_largest_cave(canvas)
+    keep_largest_cave(canvas, min)
 }
 
 /// Stamps up to `count` of `vaults`, in order, into solid rock, each joined to the cave by a
 /// tunnel from every entrance; returns how many it stamped.
-fn place_vaults(canvas: &mut Canvas, rng: &mut Rng, vaults: &[&Vault], count: usize) -> usize {
+pub(super) fn place_vaults(
+    canvas: &mut Canvas,
+    rng: &mut Rng,
+    vaults: &[&Vault],
+    count: usize,
+) -> usize {
     let mut placed = 0;
     for &v in vaults {
         if placed == count {
@@ -226,7 +232,7 @@ fn tunnel(canvas: &Canvas, start: Pos, avoid: impl Fn(Pos) -> bool) -> Option<Ve
 }
 
 /// One to three pools of shallow water grown from random floor cells.
-fn pools(canvas: &mut Canvas, rng: &mut Rng) {
+pub(super) fn pools(canvas: &mut Canvas, rng: &mut Rng) {
     let (w, h) = (canvas.width(), canvas.height());
     let count = rng.range(1, 3) * ((w * h) / 7200).max(1);
     for _ in 0..count {
@@ -251,7 +257,7 @@ fn pools(canvas: &mut Canvas, rng: &mut Rng) {
 
 /// The up staircase in a random roomy spot; the down staircase (if needed) in a roomy spot among
 /// the farthest by walking distance. Returns the up staircase.
-fn place_stairs(canvas: &mut Canvas, rng: &mut Rng, needs: Needs) -> Option<Pos> {
+pub(super) fn place_stairs(canvas: &mut Canvas, rng: &mut Rng, needs: Needs) -> Option<Pos> {
     let roomy: Vec<Pos> = canvas.cells().filter(|p| canvas.is_open_area(*p)).collect();
     let up = *rng.pick(&roomy)?;
     canvas.place_stairs(up, StairsDir::Up);
@@ -277,7 +283,7 @@ fn place_stairs(canvas: &mut Canvas, rng: &mut Rng, needs: Needs) -> Option<Pos>
     Some(up)
 }
 
-fn light(canvas: &mut Canvas, rng: &mut Rng, up: Pos) {
+pub(super) fn light(canvas: &mut Canvas, rng: &mut Rng, up: Pos) {
     let lamp = canvas.pal.lamp;
     let mut beside: Vec<Pos> = Dir::ALL.iter().map(|d| up.step(*d)).collect();
     rng.shuffle(&mut beside);
@@ -319,7 +325,7 @@ fn light(canvas: &mut Canvas, rng: &mut Rng, up: Pos) {
 }
 
 /// Two to four creatures, away from the arrival point, walking out and back.
-fn patrols(canvas: &mut Canvas, rng: &mut Rng, up: Pos, needs: Needs) {
+pub(super) fn patrols(canvas: &mut Canvas, rng: &mut Rng, up: Pos, needs: Needs) {
     if needs.creatures.is_empty() {
         return;
     }

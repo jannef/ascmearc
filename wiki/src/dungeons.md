@@ -155,7 +155,9 @@ game it never moves.
 
 **Cealdhlāw**, the cold barrow, is the first of the Ascmearc's deeper dungeons. Its way in is on the
 downs of Hlāwdūn, east of Cēaptūn. Its first two floors are the barrow's passages and chambers; the
-four below are the hollows of the hill, wide caves. It is [cold](temperature.md) (8 °C). Its traps
+four below are the hollows of the hill: caves of every size, from small chambers to a few wide
+halls, joined by narrow winding tunnels, mostly two abreast and in places only one. The bends keep
+an archer's sight short. It is [cold](temperature.md) (8 °C). Its traps
 are [arrows](traps.md#trap-arrow), [spears](traps.md#trap-spear), [pits](traps.md#trap-pit), and
 [alarms](traps.md#trap-alarm).
 

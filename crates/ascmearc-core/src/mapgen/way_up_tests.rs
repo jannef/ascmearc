@@ -19,13 +19,13 @@ fn link(level: &LevelTemplate, dir: StairsDir) -> Vec<Option<&str>> {
 }
 
 #[test]
-fn three_rooms_floors_from_the_overworld_down_to_the_drakes_deep() {
+fn three_passage_floors_from_the_overworld_down_to_the_drakes_deep() {
     let def = CONTENT.dungeon("utgang").expect("Ūtgang");
     assert_eq!((def.name.as_str(), def.depth), ("Ūtgang", 3));
     assert_eq!(def.below.as_deref(), Some("fyrdelf:12"));
     for depth in 1..=3 {
         let plan = def.plan(depth).expect("a floor");
-        assert_eq!(plan.generator, Generator::Rooms, "no caverns ({depth})");
+        assert_eq!(plan.generator, Generator::Passage, "one shaft ({depth})");
     }
     assert!(def.plan(4).is_none());
     for seed in 1..=4 {
