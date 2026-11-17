@@ -6,7 +6,7 @@ See also: [People and talk](npcs.md) and [Shops](shops.md).
 
 ## How to play
 
-You were never meant for this: few hit points, weak arms, and a rapier you barely know. What
+You were never meant for this: few hit points, no training in arms, and a rapier you barely know. What
 you have is money: plenty of gold at the start, a magic ring, a gem, and a
 [stipend](#stipend) from home that waits for you in Cēaptūn at every level. Talk to your servant
 at the Gæsthūs to collect it, and spend it on the best arms, armour, and

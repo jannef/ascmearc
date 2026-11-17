@@ -1129,7 +1129,7 @@ mod tests {
             "St  Strength      15",
             "Dx  Dexterity     10",
             "To  Toughness     16",
-            "In  Intelligence   9",
+            "In  Intelligence  10",
             "Wi  Willpower     12",
             "Pr  Presence       8",
             "Alignment Neutral",

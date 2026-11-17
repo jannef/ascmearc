@@ -24,7 +24,7 @@ fn the_player_starts_with_the_scenarios_stats() {
     // The showcase's character, a human female thief born in a Water Basilisk year.
     let w = showcase();
     let stats = &w.state.player().stats;
-    assert_eq!(scores(stats), [9, 13, 10, 12, 11, 9]);
+    assert_eq!(scores(stats), [10, 13, 10, 12, 12, 9]);
     assert_eq!(potentials(stats), [16; 6]);
     assert_eq!(stats.modifier(Stat::Dexterity), 1);
     assert_eq!(stats.modifier(Stat::Presence), -1);
@@ -100,7 +100,7 @@ fn the_player_perceives_their_own_scores_only() {
     // What perception hands out is a score per stat id: no potentials, no modifiers.
     let json = serde_json::to_value(own).expect("serializes");
     let expected = serde_json::json!({
-        "strength": 9, "dexterity": 13, "toughness": 10, "intelligence": 12, "willpower": 11,
+        "strength": 10, "dexterity": 13, "toughness": 10, "intelligence": 12, "willpower": 12,
         "presence": 9,
     });
     assert_eq!(json, expected);

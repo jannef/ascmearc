@@ -20,7 +20,7 @@ expression: "render(case, content.clone())"
 │ To  Toughness     11   Missile    short bow                                                      │
 │ In  Intelligence  11              +3 to hit, 1d6 piercing, range 10                              │
 │ Wi  Willpower     14                                                                             │
-│ Pr  Presence       8                                                                             │
+│ Pr  Presence       9                                                                             │
 │                                                                                                  │
 │ Lv  Level         1                                                                              │
 │ XP  Experience    0 / 134                                                                        │

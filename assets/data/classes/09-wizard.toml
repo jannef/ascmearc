@@ -2,7 +2,7 @@
 id = "wizard"
 name = "Wizard"
 description = "A scholar of the arcane who traded sunlight for candlelight: brilliant of mind, frail of body."
-stats = { strength = -2, toughness = "-1d2", intelligence = "2d2+1", willpower = 1 }
+stats = { intelligence = "2d2+1", willpower = 1 }
 hp = 0
 mana = 12
 affinity = { evocation = 2, abjuration = 1, transmutation = 1, enchantment = 1, divination = 1, necromancy = 1, restoration = -2 }

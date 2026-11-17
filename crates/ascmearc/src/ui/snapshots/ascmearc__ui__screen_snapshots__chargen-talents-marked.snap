@@ -32,9 +32,9 @@ expression: "render(case, content.clone())"
               │ Wayfarer                                                             │
               │   r  Pious            You keep the old observances: an altar of you… │
               │ Scholar                                                              │
-              │   s  Deep well        Your power runs deep: more mana, and more as … │
-              │   t  Skill focus      You have a knack for one trade you know: your… │
-              │   u  Treasure hunter  The loot you find, and what creatures drop, i… │
+              │   s  Clear mind       A mind at peace gathers its strength quickly:… │
+              │   t  Deep well        Your power runs deep: more mana, and more as … │
+              │   u  Skill focus      You have a knack for one trade you know: your… │
               │                                                                      │
               │ You were born to money: you set out with far more gold than most,    │
               │ and a few gems besides.                                              │

@@ -1425,12 +1425,12 @@ mod tests {
             screen.draw(&mut console, &b);
             text(&console)
         };
-        // The showcase's thief, St 9 To 10: a limit of 42 kg, by thirds.
+        // The showcase's thief, St 10 To 10: a limit of 45 kg, by thirds.
         let mut world = on_the_pile();
         world.apply(&Action::PickUp(Positions::default()));
         let text = draw(&world, 80);
         let at = |needle: &str| text.iter().position(|l| l.contains(needle));
-        let thresholds = "Burdened over 14 kg, strained over 28 kg, overloaded over 42 kg";
+        let thresholds = "Burdened over 15 kg, strained over 30 kg, overloaded over 45 kg";
         assert_eq!(at(thresholds), at("Carrying 4.2 kg   ·").map(|y| y + 1));
         assert!(!text.iter().any(|l| l.contains("(burdened)")), "unburdened");
         // Two chain mails for average scores: burdened over 15 kg.

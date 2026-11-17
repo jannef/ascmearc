@@ -1069,6 +1069,17 @@ mod tests {
         assert_eq!(parse(ONE).expect("valid")[0].mana, 0, "none unless named");
     }
 
+    /// No built-in class lowers a stat (#1800): every adjustment rolls 0 or more.
+    #[test]
+    fn built_in_classes_give_no_stat_penalties() {
+        let content = super::super::Content::builtin().expect("content");
+        for class in content.classes() {
+            for (stat, dice) in class.stats.iter() {
+                assert!(dice.min() >= 0, "{} {stat:?} {dice}", class.id);
+            }
+        }
+    }
+
     /// The built-in content with the aristocrat's file changed by `edit`, loaded.
     fn with_aristocrat(
         edit: impl Fn(&str) -> String,
