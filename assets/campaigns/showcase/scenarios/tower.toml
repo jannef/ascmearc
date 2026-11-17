@@ -1,0 +1,8 @@
+name = "Tower"
+description = "A two-storey test tower in a forest clearing: climb the stair and look out of the windows at the ground below; the balcony stands in the weather."
+start_level = "clearing"
+seed = 1
+character = { race = "human", gender = "female", class = "wizard", name = "Wynn" }
+wield = ["lantern"]
+# Mid-morning: the sun is up and the tower's shadow lies west across the clearing.
+start_time = "10:00"

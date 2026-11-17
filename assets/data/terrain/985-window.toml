@@ -1,0 +1,13 @@
+# An unglazed opening in a tower's wall ring: sight, sound, and missiles pass; nobody does. Not a
+# door: it never opens and never breaks. From a floor above the ground the view goes out over the
+# air to the land below (docs/dev/towers.md).
+[[terrain]]
+id = "window"
+name = "window"
+description = "An unglazed opening in the wall, wide enough to lean out of."
+glyph = "="
+fg = "#d8d4c8"
+bg = "#2c2a26"
+walkable = false
+roofed = true
+height = 2

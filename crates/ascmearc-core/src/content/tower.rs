@@ -29,16 +29,13 @@ use super::{Content, DungeonDef, Generator, LevelKind, StairsDir};
 use crate::geom::Pos;
 use serde::Deserialize;
 
-/// The terrain a tower is built of, by id.
-///
-/// The tower's own terrain (`tower_wall`, `tower_floor`, `window`, `air`) comes with #1781 (F1 of
-/// docs/design/wizard-tower.md §16). Until then the tower is built of today's nearest: a roofed
-/// wall no pick breaks, a roofed floor, a wall sight passes through, and solid nothing outside.
-/// F1 swaps these four names (and the generator's snapshots move with them).
-pub(crate) const WALL: &str = "timber_wall"; // F1: "tower_wall"
-pub(crate) const FLOOR: &str = "plank_floor"; // F1: "tower_floor"
-pub(crate) const WINDOW: &str = "fence"; // F1: "window"
-pub(crate) const OUTSIDE: &str = "void"; // F1: "air"
+/// The terrain a tower is built of, by id (docs/dev/towers.md "Terrain"): the roofed shell no
+/// pick breaks, the roofed floor, the unglazed window sight passes through, and the open air
+/// outside the footprint, whose seen cells show the clearing below.
+pub(crate) const WALL: &str = "tower_wall";
+pub(crate) const FLOOR: &str = "tower_floor";
+pub(crate) const WINDOW: &str = "window";
+pub(crate) const OUTSIDE: &str = "air";
 
 /// The least interior (inside the ring wall) a tower may have, each way.
 const LEAST_INTERIOR: i32 = 3;

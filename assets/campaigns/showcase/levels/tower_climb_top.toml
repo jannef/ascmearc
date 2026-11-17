@@ -1,9 +1,12 @@
 # The test tower's top floor (#1783): the hand-made level the highest generated floor's `<`
 # leads to (data/dungeons/tower_climb.toml's `top`). The clearing's size, the tower on the same
 # cells, and its `>` back down where the stair through the tower ends (`Content::fit_tower`
-# checks both). Outside the tower nothing (-) until #1781 brings the air and the view below.
+# checks both). Outside the tower the open air (-), three storeys over the meadow (`below`,
+# `storey`): its seen cells show the meadow below (docs/dev/towers.md).
 name = "The Test Tower's Top"
 kind = "outdoor"
+below = "tower_climb"
+storey = 3
 map = '''
 ------------------------------------------------
 ------------------------------------------------
@@ -28,9 +31,9 @@ map = '''
 '''
 
 [legend]
-"-" = "void"
-"W" = "timber_wall"
-"|" = "fence"
-"p" = "plank_floor"
+"-" = "air"
+"W" = "tower_wall"
+"|" = "window"
+"p" = "tower_floor"
 "s" = "sconce"
 ">" = { terrain = "stairs_down", to = "tower_climb_floors:2" }

@@ -1,0 +1,11 @@
+# A wizard's tower on the overworld (docs/dev/towers.md): a hidden location, revealed by a quest,
+# whose way in is the tower's clearing. Between the other locations so their ids stay in a row.
+[[terrain]]
+id = "tower"
+name = "tower"
+glyph = "I"
+fg = "#d8d0c0"
+bg = "#161a10"
+stairs = "down"
+glow = 0.2
+travel_minutes = 30

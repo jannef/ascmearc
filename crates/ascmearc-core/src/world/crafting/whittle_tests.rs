@@ -215,29 +215,6 @@ fn an_attempt_takes_ten_minutes_names_the_item_and_marks_woodcraft() {
 }
 
 #[test]
-fn an_attempt_trains_dexterity() {
-    let mut w = world(false);
-    give(&mut w, "knife");
-    give(&mut w, "short_bow");
-    let woodcraft = w.content.skill_id("woodcraft").expect("woodcraft");
-    let skills = &mut w.player_mut().skills;
-    let mut all: Vec<_> = skills.iter().filter(|(s, _)| *s != woodcraft).collect();
-    all.push((
-        woodcraft,
-        crate::skills::Trained {
-            value: 10,
-            marks: 0,
-        },
-    ));
-    *skills = all.into_iter().collect();
-    let spent = w.start_whittle(0);
-    assert_eq!(
-        super::work::stat_of(&w, spent),
-        Some(crate::stats::Stat::Dexterity)
-    );
-}
-
-#[test]
 fn the_table_is_the_anvils_row_by_row() {
     // Made once, three times at most; failed, damaged and stripped; damaged, mended or gone.
     let mut w = world(false);

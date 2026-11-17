@@ -667,6 +667,13 @@ pub fn generate_for(
             // Its branch's, asked of [`Content::spawning`].
             spawning: None,
             burial: None,
+            // A tower's floor stands over its clearing, `depth` storeys up: its air cells show
+            // the clearing (docs/dev/towers.md).
+            below: def.tower.as_ref().map(|t| t.clearing.clone()),
+            storey: match def.tower {
+                Some(_) => u8::try_from(depth).unwrap_or(u8::MAX),
+                None => 0,
+            },
         };
         // A level that keeps a hidden way's far end picks its cell now (`hidden.rs`).
         let hides = |t: &mut LevelTemplate| {

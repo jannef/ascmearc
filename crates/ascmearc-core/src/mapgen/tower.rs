@@ -13,7 +13,8 @@
 //!
 //! The rest is any branch floor's (`mapgen::generate_for`): the branch's traps hidden, its
 //! population at the floor's danger, its loot and chests; no vaults, shops, special rooms, or
-//! patrols. The terrain is `content/tower.rs`'s four ids: today's stand-ins until #1781.
+//! patrols. The terrain is `content/tower.rs`'s four ids (docs/dev/towers.md "Terrain"), and
+//! every floor gets `below = clearing` and `storey = depth` (`generate_for`).
 
 use super::{Canvas, Palette};
 use crate::content::{Content, StairsDir, Tower, tower};

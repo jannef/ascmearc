@@ -217,6 +217,8 @@ pub fn json(world: &World, layers: &[Layer], include_state: bool) -> Value {
         "turn": world.turn(),
         "time": time_json(world),
         "level": view.level_id(),
+        // A floor above the ground (docs/dev/towers.md): the level its air shows, and the storey.
+        "below": view.below_level().map(|(level, storey)| json!({ "level": level, "storey": storey })),
         "viewer": view.viewer(),
         "room": view.room(view.viewer()).map(|e| e.id.as_str()),
         "pervading": view.pervading().map(|e| e.id.as_str()),

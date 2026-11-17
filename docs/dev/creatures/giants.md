@@ -38,4 +38,4 @@ The variance pass (#1134, `docs/dev/creatures.md` "Variance by role") sets the r
 
 Gear materials (#1191): the faction's `gear` in `data/factions/`: giants favour bone (25 %), fur (20 %), and iron (20 %), each its share of the draws for an item whose construction list holds it, the usual draw the rest (`docs/dev/objects.md` "Materials and variants").
 
-**Material drops** (#1341; `data/drops/`, docs/dev/objects.md "Material drops"): `giant.toml`: leather 1d2 (50 %), sinew 1 (40 %); the ogres add `ogre.toml`: leather 1 (40 %).
+**Material drops** (#1341; `data/drops/`, docs/dev/objects.md "Material drops"): `giant.toml`: bone 1d3 (50 %), leather 1d2 (50 %), sinew 1 (40 %); the ogres add `ogre.toml`: bone 1d2 (40 %), leather 1 (40 %).

@@ -30,8 +30,7 @@
 //!   line is said. Neither draws from the rng. A stack of several is worked one at a time: the one
 //!   worked is set apart at the end of the pack, and being worked it joins nothing again. Then the item, if it survived,
 //!   is identified, and says what it is now ("This is ...!"). Metalcraft may earn a mark
-//!   ([`Use::Temper`]), whatever came of it, and Strength may (the work driver's stat, #1790).
-//!   The anvil is never spent.
+//!   ([`Use::Temper`]), whatever came of it. The anvil is never spent.
 //!
 //! **Whittle** (`docs/design/skill-uses.md` W3; [`Action::Whittle`]) is the same work on wood, with
 //! a knife, anywhere: [`Craft::Whittle`] against [`Craft::Temper`], on the same rules, numbers
@@ -232,10 +231,6 @@ impl Job for Tempering {
 
     fn leave(&self) -> String {
         format!("you put down the {}", self.craft.tool())
-    }
-
-    fn stat(&self, _: &World) -> Option<Stat> {
-        Some(self.craft.stat())
     }
 
     fn done(&self, w: &mut World, _: &mut Vec<Event>) {

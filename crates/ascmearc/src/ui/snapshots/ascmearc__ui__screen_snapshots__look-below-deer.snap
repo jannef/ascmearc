@@ -1,0 +1,6 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ Open air. Far below: a deer, on grass.
+ Looking: direction keys move, Esc or l to stop.

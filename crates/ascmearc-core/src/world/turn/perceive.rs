@@ -84,10 +84,7 @@ impl World {
         self.avert_news(averted);
         self.learn_traps(events);
         self.chest_wise_look();
-        let current = self.state.current_level.clone();
-        if let Some(level) = self.state.levels.get_mut(&current) {
-            self.perception.remember(level);
-        }
+        self.perception.remember_in(&mut self.state);
         self.glimpse_rooms();
         if let Some(text) = enter_room(&mut self.state, &self.content) {
             self.say(text);

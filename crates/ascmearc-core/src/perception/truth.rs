@@ -14,8 +14,8 @@
 //! (`quests`).
 
 use super::{
-    CellView, Freshness, NeedView, OwnResource, OwnScribe, OwnSkill, OwnStudy, OwnTalent,
-    PerceivedLight, PerceptionView, Sale, SeenActor, ShopView, TalentView,
+    BelowView, CellView, Freshness, NeedView, OwnResource, OwnScribe, OwnSkill, OwnStudy,
+    OwnTalent, PerceivedLight, PerceptionView, Sale, SeenActor, ShopView, TalentView,
 };
 use crate::ability::{Ability, OwnAbility};
 use crate::action::Positions;
@@ -181,6 +181,32 @@ impl<'a> PerceptionView<'a> {
                 _ => CellView::Unknown,
             }
         }
+    }
+
+    /// What the player sees or remembers of the level below at `p`, an air cell of a floor above
+    /// the ground (docs/dev/towers.md): the cell seen through the air now; else, if they
+    /// remember the air there and the level below exists, its terrain as last seen from above
+    /// (the level below's memory); `None` for any other cell, and everywhere on a level with no
+    /// `below` or whose level below does not exist yet.
+    pub fn below(&self, p: Pos) -> Option<BelowView<'a>> {
+        let below = self.snapshot.below()?;
+        if let Some(cell) = below.cells.get(&p) {
+            return Some(BelowView::Visible(cell));
+        }
+        if self.level.memory.get(p) != Some(&Some(below.air)) {
+            return None;
+        }
+        (self.below?.memory.get(p)?).map(BelowView::Remembered)
+    }
+
+    /// The level this one's air cells show and how many storeys above it the player stands
+    /// (the level's `below` and `storey`, docs/dev/towers.md); `None` on the ground. Known
+    /// whether or not that level exists yet.
+    pub fn below_level(&self) -> Option<(&'a str, u8)> {
+        self.level
+            .below
+            .as_deref()
+            .map(|id| (id, self.level.storey))
     }
 
     /// The flow of running water at a visible cell (presentation-only); `None` for cells that are

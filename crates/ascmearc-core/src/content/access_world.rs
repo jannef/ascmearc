@@ -49,6 +49,13 @@ impl Content {
             .map(|i| TerrainId(i as u16))
     }
 
+    /// The open air outside a tower's footprint on a floor above the ground (`air`,
+    /// docs/dev/towers.md), whose seen cells show the level below; `None` if the content has no
+    /// such terrain.
+    pub fn air(&self) -> Option<TerrainId> {
+        self.terrain_id("air")
+    }
+
     pub fn chest_terrain(&self, state: crate::chest::ChestState) -> Option<TerrainId> {
         (self.terrain.iter())
             .position(|d| d.chest == Some(state))

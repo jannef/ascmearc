@@ -725,10 +725,7 @@ impl World {
             world.player_mut().mana = world.state.player().max_mana(&world.content);
             *world.perception =
                 Perception::compute(&world.state, &world.content, &mut world.lights);
-            let current = world.state.current_level.clone();
-            if let Some(level) = world.state.levels.get_mut(&current) {
-                world.perception.remember(level);
-            }
+            world.perception.remember_in(&mut world.state);
         }
         Ok(world)
     }
@@ -1092,7 +1089,7 @@ impl World {
         character::stat_training::schedule(&mut state, &content);
         let mut lights = LightCache::default();
         let perception = Box::new(Perception::compute(&state, &content, &mut lights));
-        perception.remember(state.current_mut());
+        perception.remember_in(&mut state);
         let time = state.time;
         let player = state.player;
         let stood_on = fixtures::feature::standing(&state);
@@ -1217,6 +1214,7 @@ impl World {
         PerceptionView {
             content: &self.content,
             level: self.state.current(),
+            below: (self.state.current().below.as_deref()).and_then(|id| self.state.levels.get(id)),
             player: self.state.player(),
             character: self.state.character.as_ref(),
             campaign: &self.state.campaign,

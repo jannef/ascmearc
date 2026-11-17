@@ -15,7 +15,7 @@ use crate::hunger::Hunger;
 use crate::ice::Ice;
 use crate::noise::{PerceivedSound, SoundKind, Volume};
 use crate::object::{Stack, format_weight};
-use crate::perception::{CellView, PerceivedLight, PerceptionView};
+use crate::perception::{BelowView, CellView, PerceivedLight, PerceptionView};
 use crate::stats::Stat;
 use crate::text::article;
 use crate::weather::Weather;

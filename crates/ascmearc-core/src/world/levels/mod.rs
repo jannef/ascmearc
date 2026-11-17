@@ -42,6 +42,7 @@ cfg_if! {
         mod swim_deep_tests;
         mod swim_drown_tests;
         mod swim_tests;
+        mod tower_tests;
         mod way_out_tests;
         mod web_tests;
         mod wriggle_tests;

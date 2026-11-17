@@ -120,6 +120,29 @@ impl Content {
                 ));
             }
         }
+        // A floor above the ground: `below` names a hand-made outdoor level of its size and
+        // campaign (docs/dev/towers.md), so its air cells show the ground cell for cell.
+        for level in self.levels.values() {
+            let Some(below) = &level.below else { continue };
+            let campaign = self.level_campaign(&level.id);
+            let fits = self.levels.get(below).is_some_and(|under| {
+                under.kind == LevelKind::Outdoor
+                    && under.terrain.width() == level.terrain.width()
+                    && under.terrain.height() == level.terrain.height()
+                    && self.level_campaign(&under.id) == campaign
+            });
+            if !fits {
+                return Err(ContentError::new(
+                    &self.level_file(&level.id),
+                    format!(
+                        "`below = \"{below}\"` is no hand-made outdoor level of its campaign and \
+                         size ({}×{})",
+                        level.terrain.width(),
+                        level.terrain.height()
+                    ),
+                ));
+            }
+        }
         for scenario in self.scenarios.values() {
             let file = format!("scenarios/{}.toml", scenario.id);
             let campaign = scenario.campaign.as_deref().unwrap_or_default();

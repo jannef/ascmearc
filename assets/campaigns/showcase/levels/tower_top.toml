@@ -1,0 +1,48 @@
+# The tower top (#1781, docs/dev/towers.md): the upper floor of the clearing's test tower, one
+# storey above it (`below = "clearing"`, `storey = 1`), the same size as the clearing with the
+# tower's footprint on the same cells; everything outside the footprint is open air (_), which
+# shows the clearing's cell below it when seen (`Perception::below`): by day the sun lights the
+# air, so the forest, the deer, and the dagger show through the windows; on a dark night nothing
+# does. The hall holds the stair down (`>`, over the clearing's `<`), two wall torches, and a
+# known teleport trap (x) beside the east window: it never lands anyone on the air. South of the
+# hall, through an open doorway, a balcony of flagstones under the open sky with a parapet (-)
+# round it: rain falls there and over the air, and the view goes out over the parapet.
+name = "The Tower Top"
+kind = "outdoor"
+below = "clearing"
+storey = 1
+map = '''
+____________________________________________________________
+____________________________________________________________
+____________________________________________________________
+____________________________________________________________
+____________________________________________________________
+______________________WWWW=WWWWW=WWWW_______________________
+______________________W.............W_______________________
+______________________=......>......=_______________________
+______________________W.............W_______________________
+______________________Wt...........tW_______________________
+______________________=............x=_______________________
+______________________WWWWWWW'WWWWWWW_______________________
+______________________WWWW-:::::-WWWW_______________________
+______________________WWWW-------WWWW_______________________
+____________________________________________________________
+____________________________________________________________
+____________________________________________________________
+____________________________________________________________
+____________________________________________________________
+____________________________________________________________
+____________________________________________________________
+____________________________________________________________
+'''
+
+[legend]
+"_" = "air"
+"W" = "tower_wall"
+"." = "tower_floor"
+"=" = "window"
+"t" = "sconce"
+":" = "flagstones"
+"-" = "parapet"
+">" = { terrain = "stairs_down", to = "clearing" }
+"x" = { terrain = "tower_floor", trap = "teleport", known = true }

@@ -135,9 +135,9 @@ corner of each stretch (a lamp if none fits). `generate_for` builds a tower with
 chests, and the population go on its floor), skips `build_walls`, and makes the floor
 `LevelKind::Outdoor` (§7: sky, weather, and light come with the kind). No vaults, shops, special
 rooms, patrols, secret doors, locks, or veins (`ores` is `[]`). The terrain is four ids in
-`content/tower.rs` (`WALL`, `FLOOR`, `WINDOW`, `OUTSIDE`): until #1781 (F1) brings `tower_wall`,
-`tower_floor`, `window`, and `air`, today's nearest stand in (`timber_wall`, `plank_floor`, `fence`,
-`void`); F1 swaps the names, its `below`/`storey` level fields are not set here. Tests:
+`content/tower.rs` (`WALL`, `FLOOR`, `WINDOW`, `OUTSIDE`: `tower_wall`, `tower_floor`, `window`,
+`air`; docs/dev/towers.md), and every floor gets `below = clearing` and `storey = depth`, so its
+air shows the clearing (#1781). Tests:
 `content/tower_tests.rs` (what is refused, the clearing's and the top's checks),
 `mapgen/tower_tests.rs` (the showcase's test tower, `campaigns/showcase/data/dungeons/tower_climb.toml`,
 scenario `tower_climb`: both floors' snapshots, the footprint and swapped stairs over twelve

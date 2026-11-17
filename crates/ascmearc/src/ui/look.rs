@@ -10,7 +10,7 @@ use ascmearc_core::content::{
 use ascmearc_core::damage::ResistanceWord;
 use ascmearc_core::magic::Numbers;
 use ascmearc_core::object::{Stack, phrase, phrase_with};
-use ascmearc_core::perception::{CellView, PerceptionView, SeenActor};
+use ascmearc_core::perception::{BelowView, CellView, PerceptionView, SeenActor};
 use ascmearc_core::text::{and_list, article, capitalized};
 use ascmearc_core::world::{ActorId, ActorKind};
 
@@ -20,7 +20,8 @@ pub const CURSOR_BG: Rgb = Rgb::new(0xe0, 0xc0, 0x70);
 
 /// One line describing what the player knows about `p`: who is there, what lies there (as seen
 /// or remembered), on what (a known trap on its terrain: "on a pit on stone floor"), in which
-/// special room (once they have been in it), and what was heard there. Blood they know of there
+/// special room (once they have been in it), and what was heard there; over the air of a floor
+/// above the ground, what is far below ([`far_below`]). Blood they know of there
 /// reads before the terrain ("on blood-stained stone floor"), and char before that ("on charred
 /// stone floor"), if `blood` is shown. A named place
 /// with a note adds it after: "A mountain pass, Beorggeat. The way you came; snow has closed it
@@ -28,6 +29,10 @@ pub const CURSOR_BG: Rgb = Rgb::new(0xe0, 0xc0, 0x70);
 /// gravestone's inscription.
 pub fn describe(view: &PerceptionView<'_>, p: Pos, blood: bool) -> String {
     let text = describe_cell(view, p, blood);
+    let text = match view.below(p) {
+        Some(below) => format!("{text} Far below: {}.", far_below(view, below)),
+        None => text,
+    };
     let text = match view.place(p).and_then(|place| place.note.as_deref()) {
         Some(note) => format!("{text} {note}"),
         None => text,
@@ -124,8 +129,10 @@ fn describe_cell(view: &PerceptionView<'_>, p: Pos, blood: bool) -> String {
         Some(trap) => format!("{} on {}", with_article(trap), ground(t)),
         None => ground(t),
     };
-    // Ground named in the plural ("webs") takes no article.
-    let plural = |t: TerrainId| trap.is_none() && content.terrain(t).noun == Noun::Plural;
+    // Ground named in the plural ("webs") or as a mass noun ("open air") takes no article.
+    let plural = |t: TerrainId| {
+        trap.is_none() && matches!(content.terrain(t).noun, Noun::Plural | Noun::Mass)
+    };
     let named = |t: TerrainId, phrase: String| match plural(t) {
         true => phrase,
         false => with_article(&phrase),
@@ -171,6 +178,37 @@ fn describe_cell(view: &PerceptionView<'_>, p: Pos, blood: bool) -> String {
         },
         (CellView::Unknown, Some(heard)) => format!("{heard} here."),
         (CellView::Unknown, None) => "You don't know what is there.".to_string(),
+    }
+}
+
+/// What is far below an air cell of a floor above the ground, as the player sees or remembers it
+/// (docs/dev/towers.md): the creature standing there as it stood ("a wolf, on grass"; it is not
+/// examined further: how it stands toward them, how hurt it is, and what it wears stay unknown
+/// from this height), else what lies there ("a dagger, on grass"), else the ground ("grass");
+/// remembered, the ground as last seen from above.
+fn far_below(view: &PerceptionView<'_>, below: BelowView<'_>) -> String {
+    let content = view.content();
+    match below {
+        BelowView::Visible(cell) => {
+            let ground = &content.terrain(cell.terrain).name;
+            match (&cell.actor, &cell.pile) {
+                (Some(actor), _) => {
+                    let name = &content.creature(actor.creature).name;
+                    let name = if is_proper(name) {
+                        name.clone()
+                    } else {
+                        with_article(name)
+                    };
+                    format!("{name}, on {ground}")
+                }
+                (None, Some(top)) => {
+                    let things = phrase(std::slice::from_ref(top), view.lore());
+                    format!("{things}, on {ground}")
+                }
+                (None, None) => ground.clone(),
+            }
+        }
+        BelowView::Remembered(t) => content.terrain(t).name.clone(),
     }
 }
 
@@ -627,7 +665,8 @@ mod tests {
         let view = w.perception();
         let at = |x| describe(&view, Pos::new(x, 1), false);
         assert!(at(2).starts_with("Webs."), "{}", at(2));
-        assert!(at(3).starts_with("An acid-pitted floor."), "{}", at(3));
+        // A mass noun takes no article (as open air, #1781).
+        assert!(at(3).starts_with("Acid-pitted floor."), "{}", at(3));
         assert!(at(4).contains("scrap of torn cloth"), "{}", at(4));
     }
 

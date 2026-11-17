@@ -1,0 +1,10 @@
+# A balcony's edge: a low wall under the open sky, with the air beyond it.
+[[terrain]]
+id = "parapet"
+name = "parapet"
+description = "A low wall of dressed stone, about waist high."
+glyph = "-"
+fg = "#b0a898"
+bg = "#1c1a18"
+walkable = false
+height = 1

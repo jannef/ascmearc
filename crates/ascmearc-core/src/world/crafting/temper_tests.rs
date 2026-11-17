@@ -329,17 +329,6 @@ fn an_attempt_takes_ten_minutes_identifies_and_trains_metalcraft() {
 }
 
 #[test]
-fn an_attempt_trains_strength() {
-    let mut w = world(false);
-    magic_sword(&mut w);
-    let spent = w.start_temper(0);
-    assert_eq!(
-        super::work::stat_of(&w, spent),
-        Some(crate::stats::Stat::Strength)
-    );
-}
-
-#[test]
 fn an_interrupted_attempt_does_nothing_to_the_item_and_counts_for_nothing() {
     let mut w = world(true);
     magic_sword(&mut w);

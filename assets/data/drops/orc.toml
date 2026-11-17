@@ -9,3 +9,8 @@ chance = 40
 material = "leather"
 count = "1"
 chance = 30
+
+[[drop]]
+material = "bone"
+count = "1"
+chance = 20

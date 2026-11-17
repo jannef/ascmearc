@@ -4,8 +4,8 @@
 # is built on, and its `<` (inside, at the far end of the hall) climbs to the branch's first floor.
 # The `tower_climb` scenario starts on the path west of the door.
 #
-# Until #1781 brings the tower's own terrain, the tower is built of today's nearest: timber walls
-# (no pick breaks them) and a plank floor, both roofed; fences for windows.
+# The tower is dressed stone (docs/dev/towers.md): tower walls no pick breaks, a tower floor,
+# both roofed, and unglazed windows sight passes through.
 name = "The Tower Meadow"
 kind = "outdoor"
 map = '''
@@ -35,10 +35,10 @@ map = '''
 "." = "grass"
 "T" = "tree"
 ":" = "flagstones"
-"W" = "timber_wall"
-"|" = "fence"
+"W" = "tower_wall"
+"|" = "window"
 "+" = "door_closed"
-"p" = "plank_floor"
+"p" = "tower_floor"
 "s" = "sconce"
 "<" = { terrain = "stairs_up", to = "tower_climb_floors:1" }
 "@" = { terrain = "flagstones", spawn = "player" }

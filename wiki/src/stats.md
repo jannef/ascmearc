@@ -127,9 +127,6 @@ What earns a mark, and how likely:
 
 {{#include generated/stat-training.md}}
 
-Craft work trains the stat its check uses: Strength for metal, Dexterity for handwork, Intelligence
-for a brew, Willpower for enchanting ([Crafting](crafting.md#crafting-trains-your-stats)).
-
 Asking someone about a topic takes no time, so it trains nothing. A long action counts only when
 it lasts more than one turn and is not interrupted.
 

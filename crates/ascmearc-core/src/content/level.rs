@@ -164,6 +164,12 @@ struct LevelFile {
     _turns: Option<bool>,
     /// Its place in a burial chain (`burial.rs`); default none.
     burial: Option<super::burial::BurialSpec>,
+    /// A floor above the ground (docs/dev/towers.md): the level its `air` cells show, at the
+    /// same coordinates; default none.
+    below: Option<String>,
+    /// How many storeys above `below` it is; default 0, and refused without `below`.
+    #[serde(default)]
+    storey: u8,
 }
 
 #[derive(Debug, Deserialize)]
@@ -645,6 +651,12 @@ pub struct LevelTemplate {
     pub spawning: Option<(DangerRule, Spawning)>,
     /// A hand-made level's burial ground (`burial.rs`); `None`: none.
     pub burial: Option<super::burial::Burial>,
+    /// A floor above the ground (docs/dev/towers.md): the level its `air` cells show at the
+    /// same coordinates, a hand-made outdoor level of its size and campaign
+    /// (`Content::validate`); `None`: the air shows nothing.
+    pub below: Option<String>,
+    /// How many storeys above `below` it stands (the blur's strength); 0 without a `below`.
+    pub storey: u8,
 }
 
 impl LevelTemplate {
@@ -1172,6 +1184,14 @@ pub(super) fn parse_level(
         return Err(err("the overworld has no `danger`".into()));
     }
     let burial = super::burial::resolve(parsed.burial, marks, &terrain, content).map_err(err)?;
+    if parsed.storey > 0 && parsed.below.is_none() {
+        return Err(err(
+            "`storey` counts the floors above the level `below`: it needs a `below`".into(),
+        ));
+    }
+    if parsed.below.as_deref() == Some(id) {
+        return Err(err("`below` names the level itself".into()));
+    }
     let template = LevelTemplate {
         id: id.to_string(),
         name: parsed.name,
@@ -1205,6 +1225,8 @@ pub(super) fn parse_level(
         ice,
         spawning,
         burial,
+        below: parsed.below,
+        storey: parsed.storey,
     };
     for spawn in &template.creatures {
         validate_route(&template, content, spawn).map_err(err)?;

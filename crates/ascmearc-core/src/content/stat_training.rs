@@ -50,10 +50,8 @@ pub enum StatUse {
     Dig,
     /// A kick at a closed door, a chest, or a statue (Athletics' use).
     Kick,
-    /// Long work done to its end, whatever came of it (a recipe made, Temper or Whittle, a gem
-    /// cut or set, an enchanting, a mend, a field forge, a rig, a scroll made out): trains only
-    /// the rule of the stat the work is made with (its check's; `World::train_craft`).
-    Crafted,
+    /// An attempt at an anvil done to its end, whatever came of it (Metalcraft's use).
+    Forged,
     /// A struggle against a hold or other bonds, won or not (Strength's and Willpower's both).
     Struggled,
     /// A step through deep water (not over its ice).
@@ -176,6 +174,7 @@ impl StatUse {
         match used {
             Use::Burdened => Some(StatUse::Burdened),
             Use::Kick => Some(StatUse::Kick),
+            Use::Temper => Some(StatUse::Forged),
             Use::Pick => Some(StatUse::Picked),
             Use::Disarm => Some(StatUse::Disarmed),
             Use::Steal => Some(StatUse::Stole),
@@ -206,8 +205,8 @@ impl StatUse {
             StatUse::Block => "a blow on you that your shield blocked",
             StatUse::Dig => "a turn of digging",
             StatUse::Kick => "kicking at a closed door, a chest, or a statue",
-            StatUse::Crafted => {
-                "craft work that uses this stat, done to its end, whatever comes of it"
+            StatUse::Forged => {
+                "an attempt on metal arms or armour at an anvil, whatever comes of it"
             }
             StatUse::Struggled => "struggling against a hold or bonds, won or not",
             StatUse::Waded => "a step through deep water",
