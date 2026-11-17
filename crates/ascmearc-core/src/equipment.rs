@@ -107,7 +107,8 @@ pub fn slots_taken(content: &Content, object: ObjectId, slot: SlotId) -> Vec<Slo
 
 /// The first slot `object` fits that is free (every hand free, for a two-handed object), in
 /// display order: where it goes when nobody says which slot (creatures' spawn data, a starting
-/// kit). Never a class's own slot (the aristocrat's extra rings): nobody is put there unasked.
+/// kit). Never a class's own slot (the aristocrat's extra rings) nor a grown one (a third hand):
+/// nobody is put there unasked.
 pub fn free_slot(content: &Content, equipment: &Equipment, object: ObjectId) -> Option<SlotId> {
     // Only where it belongs: not the missile weapon slot that takes any weapon too; its own
     // `slot` first, so a shield goes to the off hand before the main hand it fits too.
@@ -119,7 +120,7 @@ pub fn free_slot(content: &Content, equipment: &Equipment, object: ObjectId) -> 
     let fitting = || {
         (content.slot_ids())
             .map(|(id, _)| id)
-            .filter(|&s| content.slot(s).class.is_none() && content.fits_properly(object, s))
+            .filter(|&s| content.slot(s).belongs_to(None) && content.fits_properly(object, s))
     };
     (fitting().filter(|&s| own(s)).find(free)).or_else(|| fitting().find(free))
 }

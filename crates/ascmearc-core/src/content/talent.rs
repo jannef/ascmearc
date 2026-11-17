@@ -1453,7 +1453,7 @@ pub(super) fn check_heirlooms(content: &Content) -> Result<(), String> {
 
 /// Every `bars_slot` and `opens_slot` names a slot (the slots load with the objects, after the
 /// talents): a bar never a grip's (a hand, or a `ready` slot: a body changes, a grip does not),
-/// an opening a slot gated to a class. The first that does not, in words.
+/// an opening a slot gated to a class or grown. The first that does not, in words.
 pub(super) fn check_slots(content: &Content) -> Result<(), String> {
     for (_, def) in content.talents().iter() {
         for effect in &def.effects {
@@ -1473,8 +1473,10 @@ pub(super) fn check_slots(content: &Content) -> Result<(), String> {
                 SlotEffect::BarsSlot { .. } if slot.hand || slot.action == ActionKind::Ready => {
                     return Err(bad("`bars_slot` never bars a hand or a `ready` slot"));
                 }
-                SlotEffect::OpensSlot { .. } if slot.class.is_none() => {
-                    return Err(bad("`opens_slot` opens only a slot gated to a class"));
+                SlotEffect::OpensSlot { .. } if slot.class.is_none() && !slot.grown => {
+                    return Err(bad(
+                        "`opens_slot` opens only a slot gated to a class, or a grown one",
+                    ));
                 }
                 _ => {}
             }

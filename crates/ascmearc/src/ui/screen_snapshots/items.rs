@@ -55,6 +55,28 @@ cases! {
         screen: Some("equipment"),
         ..BASE
     },
+    // The grown limbs (#1808): Three-armed's third hand holding a shield beside a staff,
+    // and Prehensile-tailed's tail, empty.
+    equipment_extra_arm: Case {
+        name: "equipment-extra-arm",
+        actions: concat!(
+            "move:N*3 open:N move:N*2 move:E*16 open:S move:S*4 open:W move:W*2 move:N ",
+            "pickup move:S*2 pickup move:NW move:W*2 move:N pickup move:SW pickup ",
+            "equip:main_hand:c gift:extra_arm equip:third_hand:b"
+        ),
+        screen: Some("equipment"),
+        ..BASE
+    },
+    equipment_prehensile_tail: Case {
+        name: "equipment-prehensile-tail",
+        actions: concat!(
+            "move:N*3 open:N move:N*2 move:E*16 open:S move:S*4 open:W move:W*2 move:N ",
+            "pickup move:S*2 pickup move:NW move:W*2 move:N pickup move:SW pickup ",
+            "equip:main_hand:c gift:prehensile_tail"
+        ),
+        screen: Some("equipment"),
+        ..BASE
+    },
     kit_inventory: Case {
         name: "kit-inventory",
         scenario: "world",

@@ -111,7 +111,8 @@ pub(in crate::world) enum Cue {
 /// What a blow more is.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(in crate::world) enum Free {
-    /// The off hand's blow, or a shield bash, after an attack's first.
+    /// The off hand's blow, or a shield bash, after an attack's first; or a grown hand's
+    /// (`extra_limbs.rs`).
     Second,
     /// At another hostile, after a kill.
     Cleave,

@@ -27,7 +27,14 @@ worn in a slot barred or no longer the player's and drops it on their cell ("You
 longer fits, and falls to the floor.", "Your silver ring slips from a finger that is no longer
 there."). The loader (`content::talent::check_slots`, after the objects) refuses a bar on a grip
 (a `hand` slot or a `ready` one: main and off hand, missile weapon, missiles, tool) and an
-opening of a slot no class gates.
+opening of a slot no class gates and that is not `grown`.
+**Grown slots** (#1808): a slot with `grown = true` is nobody's until a talent opens it
+(Three-armed's `third_hand`, Prehensile-tailed's `tail`; `SlotDef::belongs_to` is false for it);
+a grown `hand` is not one of the pair (`Content::hand_slots` leaves it out, `Content::extra_hands`
+lists it), so a two-handed object takes the main and off hand only, and what it holds fights
+beside the pair's grip (`docs/dev/weapon-skills.md` "Extra limbs"). A `light_only` slot (the
+tail) fits a light weapon and nothing else (`Content::fits_properly`). When the gift goes, what
+the grown hand held falls: "Your dagger falls from a grip that is no longer there.".
 `free_slot` (kits, heirlooms' fallback, spawn data, escorts) never picks a class's slot, so a
 creature or an ally never wears there; what reads the equipment itself (`Mods::worn`, Defence,
 `Actor::weapon`) reads whatever is in it, so a ring there works as on either hand. Objects say where they go (`slot` = a slot's `fits`,

@@ -6,6 +6,7 @@ pub(in crate::world) mod attacks;
 mod bleed;
 mod corrode;
 mod dummy;
+mod extra_limbs;
 pub(in crate::world) mod fight;
 pub(in crate::world) mod free_blow;
 mod frenzy;
@@ -31,6 +32,7 @@ cfg_if! {
         mod corrode_tests;
         mod damage_tests;
         mod dummy_tests;
+        mod extra_limbs_tests;
         mod fight_tests;
         mod free_blow_tests;
         mod frenzy_tests;

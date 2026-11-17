@@ -143,6 +143,15 @@ Some [profane gifts](profane-gifts.md) change which slots your body has:
   works just as the aristocrat's does. If you ever lose the gift, the ring there falls to the
   floor, unless the slot is your class's own.
 
+- **A grown slot** is one nobody has until a gift grows it. [A third
+  arm](profane-gifts.md#talent-extra-arm) gives you the Third hand, and [a gripping
+  tail](profane-gifts.md#talent-prehensile-tail) the Tail. The equipment screen shows each just
+  below the Off hand, only while you have the gift. The third hand takes what your off hand takes:
+  a light weapon or a shield. The tail takes a light weapon and nothing else. A two-handed weapon
+  fills your own two hands and leaves the third hand free. If you ever lose the gift, what the
+  slot held falls to the floor: "Your dagger falls from a grip that is no longer there." How they
+  fight: [More than two hands](fighting-styles.md#more-than-two-hands).
+
 Hands, missile weapons, missiles, and tools are never barred: a body changes, a grip does not.
 
 ## How long it takes
