@@ -375,10 +375,8 @@ fn the_menu_and_the_dump_say_the_rule_after_the_roll() {
         let text = view.own_spell_roll(sp(id)).expect("a roll").text;
         text.split_once(", ").map(|x| x.1.to_string())
     };
-    assert_eq!(
-        rule("magic_missile").as_deref(),
-        Some("shoves on a big hit")
-    );
+    // Magic missile never shoves (`shove = false`): force's words are left unsaid.
+    assert_eq!(rule("magic_missile"), None);
     assert_eq!(rule("blight").as_deref(), Some("poisons"));
     assert_eq!(rule("grave_breath").as_deref(), Some("bites the wounded"));
 }

@@ -32,6 +32,9 @@ share.
 - A **ray** or a **bolt** flies along the line toward the place you aim at, and strikes the first
   creature in its way. A [hex](magic.md#spell-hex-of-weakness) is cast the same way at a hostile
   creature you see, and falls on it.
+  [Magic missile](magic.md#spell-magic-missile) is different: it flies past everyone in its way
+  and strikes only the creature you aim at. Aimed at an empty spot, it strikes the first creature
+  at or past that spot. Walls still stop it.
 - A **line** runs through everyone on it, as far as its length, until a wall stops it.
 - A **cone** fans out from you toward where you aim, a quarter turn wide, as far as its length.
 - A **burst** flies toward where you aim and goes off on the first creature in its way (or at the

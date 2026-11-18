@@ -1,15 +1,18 @@
 # Magic missile (the first spell list): a dart of force that never misses, a
-# die more a rung of its Intelligence ladder ([spell.grows]).
+# die more a rung of its Intelligence ladder ([spell.grows]). It weaves past everyone in its way to
+# the one aimed at (`seeking`), and never shoves as force does (`shove = false`).
 [[spell]]
 id = "magic_missile"
 name = "Magic missile"
-description = "A dart of force toward a place you aim at: it never misses the first creature in its way."
+description = "A dart of force that weaves past everyone in its way to strike the creature you aim at, and never misses."
 level = 3
 school = "evocation"
 kind = "damage"
 shape = "bolt"
 resolution = "auto"
 damage_type = "force"
+seeking = true
+shove = false
 range = 8
 damage = "2d4"
 

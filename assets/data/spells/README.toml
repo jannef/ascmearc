@@ -30,6 +30,13 @@
 #                 by its `radius`.
 #   casts         its time, in `cast` actions (at least 1; default 1)
 #   open_sky      true: it is cast only under the open sky (default false)
+#   seeking       true: a ray's or a bolt's: it flies past every creature short of the cell
+#                 aimed at, so it strikes the one there, or else the first at or past it on its
+#                 line; a wall, or its reach, that stops it short of that cell leaves it striking
+#                 no one (default false: the first creature in its way; Magic missile)
+#   shove         false: its damage type's `shove` (../spells.toml [types]) never holds for it,
+#                 and the type's words are not said of it; only `false`, and only for a type that
+#                 shoves (default: as its type; Magic missile)
 #   mana          its base mana cost given outright, in place of its level's: the floor, the
 #                 shape, and the resolution do not count; the armour worn, the talents, and the
 #                 ranks still do. For a spell whose price is not its difficulty (Identify)

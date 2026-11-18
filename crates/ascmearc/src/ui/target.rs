@@ -16,8 +16,8 @@
 //! through creatures: only what is solid blocks it), one beyond the range out of range; the
 //! message line says so (never color alone). No chance to hit is shown. A burst read or cast so
 //! close that it may catch the player asks first ([`Aim::catches_reader`]). A spell is aimed by its
-//! shape: a burst, a ray, or a bolt as a scroll's burst (stopped by the first creature in the way),
-//! a line as a scroll's bolt (through creatures), a cone as the fan of cells it would reach, a
+//! shape: a burst, a ray, or a bolt as a scroll's burst (stopped by the first creature in the way;
+//! a `seeking` ray or bolt, Magic missile, through creatures), a line as a scroll's bolt (through creatures), a cone as the fan of cells it would reach, a
 //! touch at the cell next to the player; its reach is the player's own, Willpower counted. A spell
 //! aimed at a corpse flies nowhere: its cursor starts on the nearest corpse the player sees, Tab
 //! cycles the corpses, and a cell without one says so. Any other ability (and a hex) flies nowhere:
@@ -312,6 +312,8 @@ impl Aim {
                     no_corpse: false,
                 }
             }
+            // A seeking one flies past whoever stands between.
+            Shape::Ray | Shape::Bolt if spell.seeking => line_of(view, me, self.at, range, false),
             Shape::Burst | Shape::Ray | Shape::Bolt => line_of(view, me, self.at, range, true),
         }
     }

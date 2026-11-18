@@ -200,7 +200,7 @@ impl World {
         spread.struck.insert(target);
         let damage = Damage::new(spread.rolled, Some(spread.kind));
         let hit = Strike::Hit { critical: false };
-        self.spell_strikes(spread.by, target, source, (damage, hit), made);
+        self.spell_strikes(spread.by, target, source, (damage, hit), true, made);
     }
 }
 

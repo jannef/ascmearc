@@ -57,6 +57,7 @@ cfg_if! {
         mod spell_list_tests;
         mod spell_rank_tests;
         mod spell_rule_tests;
+        mod spell_seeking_tests;
         mod spell_type_force_tests;
         pub(in crate::world) mod spell_type_tests;
         mod summon_spell_tests;

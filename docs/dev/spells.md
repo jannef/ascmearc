@@ -95,7 +95,8 @@ cast path shares.
   never step quicker than their type: a rest's batching counts on it); a summon on `self`
   with `auto`, its `creatures` not empty, known, and never the player; `identify`, `blink`,
   and `weather` on `self`; a `zone` on a burst or a line; `arcs` on a ray, bolt, touch, or
-  line of a type that arcs; `corpse` and `rise` where they are read
+  line of a type that arcs; `seeking` on a ray or a bolt; `shove` only `false`, and only on a
+  spell whose type shoves; `corpse` and `rise` where they are read
   (`corpse_fits`); `[spell.cast]` (`SpellLook`): `effect` only for a shape cast at a
   distance (none: nothing drawn), a `noise` loudness at most `MAX_LOUDNESS`,
   `blast`/`heat`/`frost` only for a burst and checked by `Burst::new` (not both, `frost` at
@@ -221,7 +222,12 @@ cast path shares.
     line of sight from `from`, not opaque, `dot > 0` and `2·dot² ≥ |v|²·|d|²` (45° either side),
     never `from`; drawn as `SpellShape::Burst { center: caster, radius: length }` over those
     cells (the renderer draws only an event's cells). A ray or a bolt is `bolt_line` cut at the
-    first actor, drawn as `SpellShape::Bolt`. A spell without an `effect` pushes no
+    first actor, drawn as `SpellShape::Bolt`; a `seeking` one (Magic missile) skips the actors
+    short of the cell aimed at and is cut at the first at or past it, so it strikes the one aimed
+    at and its effect is drawn through the others to it; a wall or its reach that stops it short
+    of that cell leaves it striking no one (`cast_single`). The aiming line
+    (`crates/ascmearc/src/ui/target.rs`) lets creatures stand in a seeking one's way, and a
+    creature casts one past its friends (`creature_cast.rs::reaches`). A spell without an `effect` pushes no
     `Event::Spell` (`cast_burst` and `cast_bolt` skip an empty one).
   - **Determinism**: draws, only when they arise: the attack roll (two dice, a why-missed draw,
     a confirmation) and the damage dice for a single target, one draw a die in group order and
@@ -388,7 +394,8 @@ cast path shares.
     focus on Burning hands is a cone of 4. **Trained stats**
     are the ladders' stats (Intelligence when the roll has none): a spell with no reach ladder
     (Burning hands) trains no stat for its reach.
-  - A ray/bolt flies to the first creature on its line; a hex (`ray`, `auto`) keeps the
+  - A ray/bolt flies to the first creature on its line (a `seeking` one past those short of the
+    cell aimed at, above); a hex (`ray`, `auto`) keeps the
     placeholder's rule, the creature seen at the cell aimed at.
 - **Spells aimed at a corpse** (#999; the spell types design §7 entries 2, 29, 30;
   `world/magic/corpse_spell.rs`, tests `world/magic/corpse_spell_tests.rs`): `[spell.effect] corpse =
@@ -1015,7 +1022,10 @@ What every spell of a damage type does beyond its damage (the design:
     bears a person; `blast` as µm would be a 1 mm skin that bears no one).
   - `spell_type_bite` in `spell_strikes` (`world/magic/spell.rs`), after Poison lore's bite and before
     `resisted`: `bite` reads the target's hit points now.
-  - `spell_type_shove` in `spell_strikes`, after `wounded`, on one who lives: `combat::big_hit` on
+  - `spell_type_shove` in `spell_strikes`, after `wounded`, on one who lives, unless the spell has
+    `shove = false` (`spell_strikes`'s `shoves`, `def.shove` from `spell_attack`, `true` from
+    every other caller; Magic missile; its roll's words then leave the type's words out,
+    `spell_words.rs`): `combat::big_hit` on
     the hit points taken, or a confirmed critical. Away from `source.0` (a burst's centre, a ray's
     caster), else from the caster for the one at the centre; the caster there has no way and
     stays. A status blocking `Step` holds it (`Effects::blocking`). `weapon_active.rs::drive_back`

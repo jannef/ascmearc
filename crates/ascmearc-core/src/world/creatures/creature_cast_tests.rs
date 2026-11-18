@@ -278,3 +278,46 @@ fn a_fight_with_casters_saves_and_replays() {
     run(&mut loaded, "wait*3");
     assert_eq!(loaded.state_hash(), w.state_hash());
 }
+
+#[test]
+fn a_magic_missile_flies_past_the_casters_friend_to_the_player() {
+    // The warcaster's kobold stands between it and the player: no clear line, but a seeking
+    // bolt needs none.
+    let map = "\
+############
+#..........#
+#..@.f.k...#
+#..........#
+############
+";
+    let mut w = world(map, "hobgoblin_warcaster", "kobold");
+    let caster = of(&w, "hobgoblin_warcaster");
+    let friend = of(&w, "kobold");
+    w.state.actors.get_mut(&friend).expect("there").energy = i64::MIN / 4;
+    w.state.actors.get_mut(&caster).expect("there").mana = 1000;
+    // Its area spells cooling: the magic missile is what is left.
+    let cooling = status(&w, "area_spell");
+    w.afflict(caster, cooling, 1, None, &mut Vec::new());
+    let missile = w.content.spell_id("magic_missile").expect("a spell");
+    let at = w.player_pos();
+    let cast = w.creature_spell(caster, w.state.player, at);
+    assert_eq!(cast.map(|(s, _)| s), Some(missile));
+    let (hp, kobold) = (w.state.player().hp, w.state.actors[&friend].hp);
+    let outs = run(&mut w, "wait");
+    assert!(
+        said(&w, "casts magic missile at you!"),
+        "{:?}",
+        w.messages()
+    );
+    let struck: Vec<ActorId> = (outs.iter().flat_map(|o| &o.events))
+        .filter_map(|e| match *e {
+            Event::Attacked {
+                attacker, target, ..
+            } if attacker == caster => Some(target),
+            _ => None,
+        })
+        .collect();
+    assert_eq!(struck, [w.state.player]);
+    assert!(w.state.player().hp < hp);
+    assert_eq!(w.state.actors[&friend].hp, kobold, "the friend untouched");
+}

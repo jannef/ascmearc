@@ -56,7 +56,8 @@ cone does not do it at all.
 away. It is pushed away from the centre of a burst, or otherwise away from you (and away from you
 too if it is the one at the burst's centre). A cell that is not free stops the push, and so does
 [being held or webbed](status-list.md#status-held). You do not move when you are at the centre of
-your own burst, though you take the harm.
+your own burst, though you take the harm. [Magic missile](magic.md#spell-magic-missile) is the one
+force spell that never pushes.
 
 A force burst with a blast breaks the [shut doors](doors.md) it reaches, however sturdy, locked or
 trapped. A trap on the door goes with it and strikes no one. [Chests](chests.md) break under any

@@ -182,7 +182,7 @@ fn spell_kill(dx: i32) -> i32 {
     w.player_mut().mana = 0;
     let here = w.player_pos();
     let damage = (Damage::new(50, None), Strike::Hit { critical: false });
-    w.spell_strikes(player, target, (here, true), damage, &mut Vec::new());
+    w.spell_strikes(player, target, (here, true), damage, true, &mut Vec::new());
     assert!(!w.state.actors.contains_key(&target), "killed");
     w.state.player().mana
 }

@@ -549,6 +549,15 @@ pub(super) fn does(content: &Content, spell: &SpellData) -> String {
             "; it jumps {n} times for certain, every jump reaching {reach} cells"
         );
     }
+    if spell.seeking {
+        text.push_str(
+            "; it flies past everyone in its way and strikes only the creature you aim at (aimed \
+             at an empty spot, the first creature at or past it)",
+        );
+    }
+    if !spell.shove {
+        text.push_str("; it never [knocks anyone away](spell-types.md), as force does");
+    }
     // A spell's own `heat` or `frost` stands in for its type's; a burst's reaches its cells (the
     // cell struck of a ray or a bolt is in the "Spell types" table).
     let rule = content.spell_type(spell.damage_type);
