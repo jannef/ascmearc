@@ -12,7 +12,7 @@
 //! through them, a pit's fall and climb, an alarm, a teleport of them; a burst on a chest blows the
 //! chest apart). Every try takes the `disarm` action's time and may earn Disable device a training
 //! mark (training stream), whatever comes of it; nothing remembers a failed one, so the next try
-//! may make it (no limit on trying again: the owner's rule; time and the risk are the price).
+//! may make it (no limit on trying again).
 //!
 //! Without the skill, or without a trap the player knows of there (a hidden one is as good as
 //! none: the refusal is the same, so it gives nothing away), the action is refused and takes no

@@ -71,7 +71,7 @@ A **hex** is a status that a [hex spell](spellcasting.md#shapes) lays: [Hexed](s
 
 A **cooldown** is a status effect that only waits to wear off. While you are, say,
 [winded](status-list.md#status-winded), the ability that winded you cannot be used again
-(`you are winded`). Time is the only price: nothing counts how often you use an ability.
+(`you are winded`). Nothing counts how often you use an ability.
 
 **Raging** comes with the berserker's rage, one of the
 [class abilities](class-berserker.md). While the rage lasts you are stronger and tougher but

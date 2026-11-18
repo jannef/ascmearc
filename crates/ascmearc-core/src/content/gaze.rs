@@ -5,7 +5,7 @@
 //!
 //! Its riders are `on_hit` entries (`riders`, each a status with a severity or a drain with its
 //! check, by its own chance), never a disease or a hold: a look carries neither. The cooldown is
-//! a status (the house rule for ability limits, `ability.rs`): [`STATUS`], given
+//! a status (as every ability limit is, `ability.rs`): [`STATUS`], given
 //! `ceil(cooldown / eases)` degrees, as a summoning's (`summon.rs`).
 
 use super::Content;

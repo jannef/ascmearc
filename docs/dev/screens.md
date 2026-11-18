@@ -375,8 +375,8 @@ asking in the one dialog before its `Action::Read`; there is no Study command of
 (`KeyCommand::Steal`, unbound), and throwing one's voice
 (`KeyCommand::ThrowVoice`, unbound) are in `settings/bindings.rs` and `settings/keys.rs`; their default keys are ADOM's (#350, `docs/dev/settings.md`).
 
-**Abilities** (racial, class, skill, weapon skill and style, item; the
-owner's rule, #156) get no key of their own: they go into the one abilities menu.
+**Abilities** (racial, class, skill, weapon skill and style, item;
+#156) get no key of their own: they go into the one abilities menu.
 - **Registry**: `ascmearc_core::ability` is the one place they are registered. A new ability is
   a variant of `Ability` (id, name, description, `Source`, `Aim`, cost `ActionKind`, the `Action`
   it makes from its aim), a line in `Ability::every` (menu order: by source, then as listed),

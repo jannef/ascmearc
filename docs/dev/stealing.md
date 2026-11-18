@@ -33,8 +33,8 @@ is the Steal skill's use: `Action::Steal(Dir)` (replay text `steal:DIR`, cost `s
   Caught: `World::caught_stealing` (`shop.rs`) outrages a keeper of an open shop on the level as
   a robbery does (`outrage`), else the victim's `faction_override` becomes `StealRules::caught`
   (by custom one hostile to the player; the loader only resolves it), so the AI and every stance follow. Then
-  `train(Use::Steal)` (training stream). There is no limit on trying again (the owner's rule): a
-  victim that caught the player stays angry, and that is the price. There is no Bluff check when
+  `train(Use::Steal)` (training stream). There is no limit on trying again: a
+  victim that caught the player stays angry. There is no Bluff check when
   caught: a caught thief stays caught (the owner). Nothing is stored beyond what changed hands and the
   override (saved and hashed as they already are), so saves change only by content (the new
   `ActionKind`, no new indexed id).

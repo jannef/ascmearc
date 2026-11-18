@@ -4,7 +4,7 @@
 //! invisible stalker), or `[creature.invisible]`, a fading it gives itself on a cooldown (the
 //! duergar, the imp, the quasit, the will-o'-wisp). The rules are `world/creatures/unseen.rs`.
 //!
-//! The fading's cooldown is a status (the house rule for ability limits, `ability.rs`):
+//! The fading's cooldown is a status (as every ability limit is, `ability.rs`):
 //! [`SPENT`], given `ceil(cooldown / eases)` degrees, as a breath's (`breath.rs`). What it
 //! gives is [`STATUS`], the Invisible status, whose `unseen` flag does the hiding.
 

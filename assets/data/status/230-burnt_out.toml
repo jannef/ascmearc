@@ -1,5 +1,5 @@
 # Blaze's cooldown (the Fire-born's gift): twelve hours before the fire in
-# them kindles again. Nothing else; time is the penalty.
+# them kindles again. Nothing else.
 [[status]]
 id = "burnt_out"
 name = "Burnt out"

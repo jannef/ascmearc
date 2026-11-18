@@ -22,7 +22,7 @@
 //!   at none; a disease is eased: it counts as a progression check won (toward its `recovery`),
 //!   unless that would shake it off or it never recovers by itself, when its next progression is
 //!   put off to a full interval from now instead. A try never cures a disease outright.
-//! - **Failed**: any ailment may be tried again at once (time is the price, the owner's rule).
+//! - **Failed**: any ailment may be tried again at once.
 
 use crate::ability::Ability;
 use crate::action::Event;

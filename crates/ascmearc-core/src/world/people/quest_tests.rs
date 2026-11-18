@@ -782,7 +782,7 @@ fn a_pack_of_any_size_takes_a_delivery_and_a_reward() {
 
 #[test]
 fn any_number_of_quests_may_be_active_and_none_is_given_up() {
-    // The owner's decision: no cap on active quests, and no abandoning.
+    // No cap on active quests, and no abandoning.
     let mut w = world_on(YARD);
     take(&mut w, Dir::W, "pups");
     take(&mut w, Dir::W, "parcel");

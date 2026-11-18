@@ -12,7 +12,7 @@ runs and which quota pays for it.
 
 Both stop at a pushed branch or an open PR and never merge; the integrator merges as usual.
 
-**`rules.md` is the one copy of what every brief shares**, local and cloud: the owner's house
+**`rules.md` is the one copy of what every brief shares**, local and cloud: the house
 rules, golden screenshots, the steps of building and of finishing a PR, and the local agents'
 disk and background-shell rules. Each brief keeps only its role, its spawn fields, and its
 environment, and tells the agent to read `rules.md` from the repository. Change a shared rule

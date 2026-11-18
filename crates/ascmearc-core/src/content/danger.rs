@@ -140,7 +140,7 @@ pub struct Odds {
     /// Percent of draws made out of depth: one danger deeper, then perhaps more.
     pub out_of_depth: u8,
     /// Percent, again and again, that an out-of-depth draw goes one danger deeper still, with
-    /// no cap (the owner, #1711: "anything may come at astronomical odds").
+    /// no cap (#1711).
     pub deeper: u8,
     /// One draw in this many is made among the dread types ([`draw`]); the rest among the
     /// others. 0 (never in data, which gives 1 or more): no roll, the flag ignored (a vault's

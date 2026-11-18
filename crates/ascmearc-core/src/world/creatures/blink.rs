@@ -1,7 +1,6 @@
 //! The blink to reach you (docs/design/monster-dread.md §5.6, G6b; #1130): a creature type with
 //! `blinks` (`content/theft.rs`: the blink dog's) steps through nothing to its target's side
-//! when its path there is blocked. Enemy-only. No creature blinks **away** (the owner's word,
-//! design §17 D1).
+//! when its path there is blocked. Enemy-only. No creature blinks **away** (design §17 D1).
 //!
 //! **When** ([`World::blinks_at`], asked in `ai.rs::fight` where a melee fighter would close in
 //! and cannot: its path is held by someone (`Route::Wait`: a chokepoint, a corridor full of its

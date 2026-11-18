@@ -90,7 +90,7 @@ one. The foe's second action ends it; both cost it dear. A feint is a chosen att
 check (a feint at a new foe empties the pool, and a failed one still moves the mark); made, it
 builds `Build::Feint` (`feint`: Openings one). The ability's id is `feint`, as the
 Duelist's weapon active, False lead, is (`Ability::Weapon`, `use:false_lead:E`): the two rows are told apart by
-`Source`, and nothing looks an ability up by id. No caught-out check (the owner): `World::steal`
+`Source`, and nothing looks an ability up by id. No caught-out check: `World::steal`
 and the shops read nothing of Bluff. Tests: `world/skills/feint_tests.rs`, `content/feint.rs`. Music's
 `song_degrees` (#870) is read in `World::sing` (`world/classes/song.rs`): the degrees a song adds to its
 status, capped by the status's `max`; `song_craft`, the difficulty a song on its hearers adds to

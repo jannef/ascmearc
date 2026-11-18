@@ -1,6 +1,6 @@
 # The player wiki
 
-How the wiki under `wiki/` is built and laid out. The owner's rules for its prose and tables
+How the wiki under `wiki/` is built and laid out. The rules for its prose and tables
 (written for players, readable tables, the game vague and the wiki accurate, terms linked once
 per section, worked examples tested) are in CLAUDE.md "Wiki"; this file holds the mechanics.
 

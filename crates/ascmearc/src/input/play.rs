@@ -47,7 +47,7 @@ impl Gameplay<'_> {
                 // known trap, setting out on the overworld Fainting or Starving, or walking into
                 // something that offers an action asks first, in the dialog: one
                 // dialog a step, the first that applies. The dive comes first because it always
-                // asks (the owner's rule), and any other dialog's "go on" would step in unasked;
+                // asks, and any other dialog's "go on" would step in unasked;
                 // its own "Dive in" is a plain move, which the rules still judge (the keeper turns
                 // back one who owes). A held key stops there (repeats never open the dialog).
                 // Walking into an anvil opens Metalcraft's screen for the trained (#1387).

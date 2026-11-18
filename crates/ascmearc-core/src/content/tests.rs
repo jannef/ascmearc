@@ -676,7 +676,7 @@ fn a_lair_draws_its_strays_from_the_populations_only() {
     assert_eq!(spawning("cealdhlaw").pool, danger::StrayPool::All);
 }
 
-/// The owner's rules (2026-10-27, #1711): with the exploding out-of-depth draw, uncapped,
+/// With the exploding out-of-depth draw (#1711), uncapped,
 /// anything the campaign knows may come to a level-1 floor at astronomical odds: a type no
 /// population names, and the deepest type of all.
 #[test]

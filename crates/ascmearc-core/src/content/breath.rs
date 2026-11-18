@@ -3,8 +3,8 @@
 //! The rules are `world/creatures/breath.rs`.
 //!
 //! The cone is the spells' shared cone (`world/magic/spell.rs::cone_cells`: a quarter turn wide, as
-//! Burning hands'), `length` cells long. The cooldown is a status (the house rule for ability
-//! limits, `ability.rs`): [`STATUS`], given `ceil(cooldown / eases)` degrees, as a summoning's
+//! Burning hands'), `length` cells long. The cooldown is a status (as every ability
+//! limit is, `ability.rs`): [`STATUS`], given `ceil(cooldown / eases)` degrees, as a summoning's
 //! (`summon.rs`).
 
 use super::damage_type::DamageTypeId;

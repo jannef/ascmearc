@@ -934,7 +934,7 @@ mod tests {
         assert_eq!(lunge.effect, WeaponDoes::ReachBlow { reach: 2 });
         let actives = (content.weapon_abilities().iter()).filter(|a| a.active.is_some());
         assert_eq!(actives.count(), 12);
-        // No ability is called an aimed shot (the owner's rule): every shot is aimed.
+        // No ability is called an aimed shot: every shot is aimed.
         assert!(
             (content.weapon_abilities().iter()).all(|a| !a.name.to_lowercase().contains("aimed"))
         );

@@ -1,5 +1,5 @@
 //! How a zone looks on the map (`ascmearc_core::world::zone`; docs/dev/rendering.md): a still tint
-//! of its cells' background, no particles and no animation. Subtle: the owner's standing rule. A
+//! of its cells' background, no particles and no animation. A
 //! fire's life is in the light it sheds, which flickers as any fire's does.
 
 use ascmearc_core::color::Rgb;

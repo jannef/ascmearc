@@ -26,7 +26,7 @@
 //!   side, its mind cleared, graded at their level, named); "The wolf comes to your hand. You
 //!   call it Græg." **Failed**: "The wolf snaps at you and backs away."; a hostile one has seen
 //!   the player now ([`crate::world::Mind::last_seen`]), so it may not be tried again until it loses
-//!   them, and one not hostile may be tried again at once (no cooldown: time is the price). A
+//!   them, and one not hostile may be tried again at once (no cooldown). A
 //!   sleeper wakes either way.
 //! - **Marks**: Handle animal ([`Use::Handle`], the training stream), made or failed.
 

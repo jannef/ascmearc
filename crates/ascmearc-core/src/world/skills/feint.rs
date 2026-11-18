@@ -26,8 +26,7 @@
 //!
 //! Refused, taking no time and no draw: untrained ("You do not know how to feint."), with no one
 //! seen there, at one not hostile to them, or at one without a mind (`Content::has_vitals`: the
-//! bones, the spirits, the animated). Nothing limits trying again (the owner's rule): the time
-//! is the price.
+//! bones, the spirits, the animated). Nothing limits trying again.
 
 use crate::action::Event;
 use crate::check;

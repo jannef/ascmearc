@@ -32,7 +32,7 @@ A fiend the player's own act makes is counted against the First Law (`docs/dev/a
   (`summon::STATUS`), one that ticks or never eases, or one too short for the cooldown. The
   numbers are the author's (#1205): a summoner with too little mana for its cost never summons.
 - **The cooldown is a status** (`data/status/` `summoning`: no tick, eases 6 s a degree, max
-  100, refresh, no `seen`): the house rule for ability limits (`ability.rs` module docs). It is
+  100, refresh, no `seen`): the one shape of an ability limit (`ability.rs` module docs). It is
   saved with the actor's `effects`, as every status is; nothing counts uses.
 - **State**: `Actor::summoner: Option<ActorId>` (`serde(default, skip_serializing_if =
   "Option::is_none")`): who called it. Hashes are as before for an actor without one. `World::live_summons(id)` counts the actors that name `id`, on any level.

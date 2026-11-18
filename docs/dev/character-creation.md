@@ -66,7 +66,7 @@ rest), so the forge's Wulfhere smiths and works wood (Smith, Wright) and the qua
 gems (Wright, Gemcutter) now that the craftsperson trains no profession of its own. The summary and the character screen show
 final scores only: never dice, a breakdown, a modifier, or a potential (the step screens and the
 wiki show adjustments as written in data; the wiki also gives the modifiers and the races'
-potentials exactly). Balance is not a goal; classes only raise starting scores (never lower one, #1800), give hit
+potentials exactly). Classes only raise starting scores (never lower one, #1800), give hit
 points, train skills and weapon skills, and give a starting kit.
 
 **Class limits** (#1279): a class file's `races_not` (race ids), `only` (`[{ race, genders }]`,

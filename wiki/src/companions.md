@@ -65,7 +65,7 @@ decides:
 - If you make it, the beast comes to your hand and is your companion, named, at your level.
 - If you fail, it snaps at you and backs away. A beast that was your foe has seen you now.
 
-Try again as often as you like: time is the only price. While you have a companion you cannot tame
+Try again as often as you like. While you have a companion you cannot tame
 another. The ranger's Animal companion makes them a little better at it. The exact check and the
 chances:
 

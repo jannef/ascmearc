@@ -18,7 +18,7 @@ guideline, ±35 % of max HP and dice average).
 
 **Regeneration** (#1131, the dread design §5.9): the brutes carry `regen = 400` (four times the
 pace, `world/health/regen.rs`; Burning and Corroded stop it, `regen = 0` on both statuses), and only
-they: the owner's rule ("regenerating sack of potatoes is just free weapon marks!"), pinned by
+they (`spec/09-creatures.md` "Gimmicks"), pinned by
 `only_a_brute_regenerates` (a type with `regen` above 100 is a brute of `ROLES` or `dread`) and by
 `the_trolls_keep_to_the_tribe` (a troll regenerates if and only if it is a brute). So the marsh
 troll 9 became a brute (`2d8`, `base_hp` 36), and so did the troll 13 (`3d6`, `base_hp` 52) and

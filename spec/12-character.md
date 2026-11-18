@@ -36,7 +36,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - A chosen character is told a youth in chapters, one line each, shown as paragraphs.
 - Each chapter draws its tier first, then a line of that tier whose conditions hold (race, class, gender, sign, band, talents, skills, earlier lines, age, campaign, a starting beast), falling to the plain line.
 - Lines may give stat points, gold, items, skill starts, weapon-skill marks, alignment, a talent, or a flaw. A talent already held is never given twice.
-- **No caps and no protection** (the owner): nothing is counted across chapters; only a line's own worth is checked against its tier.
+- Nothing is counted across chapters; only a line's own worth is checked against its tier.
 - The story is told in words only, never a number or a stat's name. No talent changes its odds.
 
 ## Alignment
@@ -109,12 +109,12 @@ Part of the design document; the index is [`specification.md`](../specification.
 - **Mining**: only the trained dig. **Herbalism** finds herbs while foraging and gathers more from fungus.
 - **Heal**'s use treats the player's own bleeding, poison, or shown disease, or an ally's beside them, a quarter of a minute a try.
   - Each try is an Intelligence check. Bleeding stops when it succeeds; poison eases a degree; a disease gets a check counted toward recovery, never an outright cure.
-  - Any try may be repeated at once: time is the price.
+  - Any try may be repeated at once.
 - **Steal**'s use, in a direction, works on a creature seen there that is not hostile.
   - The contest is the player's Dexterity plus Steal against the victim's Willpower; the tie goes to the thief.
   - Unnoticed, the player takes one whole stack the victim carries but does not wear or wield, picked at random, because the player never sees a creature's pack. It is a theft deed.
   - Caught, the victim turns hostile; a shopkeeper is outraged as if robbed. Shop goods are never stolen this way.
-  - No limit on trying again: the angry victim is the price.
+  - No limit on trying again.
 - **Survival**'s use is foraging, in the wild only. The owner: "survival can be used on wilderness map, some chance to gather food items".
   - A forage takes ten minutes and finds food, plus a chance of a herb for a herbalist.
   - Gathering takes herbs from the dungeon's glowing fungus, for the trained in Herbalism only. Fungus never depletes.
@@ -180,7 +180,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - ADOM-like categories of weapons. Ranks run 0 to 10. A rank comes only from the skill's own training, starting ranks, and talents: no skill raises another.
 - Only the player trains. Every attack on someone trains its skill, a hit more. Marks shrink against weaker foes and as the rank rises; nothing rolls for marks. Bonuses to marks (the stance, Weapon drill, Forge-born) round to the nearest mark.
 - Ranks 1 to 5 grow slowly and 6 to 10 much faster in benefit (to-hit, damage, threat, speed, Parry). Ranks 7 to 10 take most of a career.
-- Target dummies train only the first ranks, at half pace, and never die. No daily cap: time is the price.
+- Target dummies train only the first ranks, at half pace, and never die. No daily cap.
 - A rank gained is said in words; benefits are never shown, though the character screen's attack line shows the totals.
 
 ## Fighting styles
