@@ -16,7 +16,8 @@ points, plus its size's row of the rules' `[size]` table, against `difficulty`. 
 `afflict`ed with the rules' `status` (Webbed) at `severity`, caused by the web's layer (the
 caster for a spell's web, so a witch's Cackle and Malison read it as a hex; none for a
 spider's); a creature the player sees is named ("The goblin is caught in a web."). It breaks
-free by the status's own rules: a struggle and Escape artist (`world/health/hold.rs`), Blink,
+free by the status's own rules: whatever it blocks (a step) is a struggle, Strength or Escape
+artist's check against its `escape` (`world/health/hold.rs`), it eases with time, and Blink,
 Unbinding, the prayer's release.
 
 `World::catchable` refuses, with no draw: a creature of an `at_home` tag (`spider`: the spiders

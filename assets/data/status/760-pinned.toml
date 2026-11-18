@@ -1,6 +1,7 @@
 # The weapon abilities' (the combat progression design §6): Pinned, a missile through the foot
 # (Pinning shot) or the legs taken by a staff (Trip): no step for an action a degree, a new pin
-# keeping the longer, never adding (at most 3 from any one); no grip, so only a trained Escape artist struggles.
+# keeping the longer, never adding (at most 3 from any one); no grip: a step tried is a struggle
+# against `escape` (world/health/hold.rs).
 # Light-footed, the skirmisher's step away after a strike (Hit and run): the next action costs
 # half, and it ends as that action is taken.
 [[status]]

@@ -636,7 +636,7 @@ pub struct StatusDef {
     pub statue: bool,
     /// What makes it a hold (Held), if it is one.
     pub hold: Option<Hold>,
-    /// Bonds a trained Escape artist may slip (`escape` in data): the difficulty of the check
+    /// Bonds (`escape` in data): the difficulty of the struggle a blocked action is instead
     /// (`world/health/hold.rs`). A status with a `hold` counts as bonds too, with its grip.
     pub escape: Option<i32>,
     /// How the Heal skill treats it, if it can (bleeding, poison).

@@ -15,10 +15,23 @@ unless the creature's attack says otherwise.
 - Made: "You break free of the ghast." You take the step.
 - Failed: "You struggle, but the ghast holds you fast." The turn is gone.
 
+## Webs and pins
+
+A [web](terrain.md#webs) or a pin works much the same way. While
+[Webbed](status-list.md#status-webbed) or [Pinned](status-list.md#status-pinned) you cannot step
+away, but each step you try is a struggle to break free. It is a check of your
+[Strength](stats.md#stat-strength), 2d12 plus its modifier, against 13.
+
+- Made: the web or the pin is gone ("You tear free of the web."), and you take the step.
+- Failed: "You struggle, but you are still caught in a web." The step's time is gone.
+
+You do not have to struggle: waiting works too. A web eases a degree every turn and lets go when
+none are left. A pin eases a degree with each action you take, a failed struggle included.
+
 ## Slipping bonds
 
-If you are trained in [Escape artist](skills.md#skill-escape-artist), you slip bonds without being
-asked. There is nothing to choose: no [ability](abilities.md) and no key. When
+If you are trained in [Escape artist](skills.md#skill-escape-artist), you slip bonds more easily.
+There is nothing to choose: no [ability](abilities.md) and no key. When
 [Held](status-list.md#status-held), [Webbed](status-list.md#status-webbed), or [Pinned](status-list.md#status-pinned) stops what you try, the
 check is part of the attempt.
 
@@ -32,10 +45,9 @@ a creature holding you). You need the grip, or 13 for a web or a pin.
   more than the wait you would have had.
 
 If two bonds stop you, the other one gets its check on your next attempt, and this step is refused
-at no cost. A [pin](status-list.md#status-pinned) eases a degree with each action, a failed struggle included.
+at no cost.
 
-Without the skill, a hold is still a struggle of Strength alone. A web or a pin simply refuses the
-step, at no cost, until it passes.
+Without the skill, the struggle is of Strength alone, against a hold, a web, or a pin.
 
 Being slowed in mind or body is not a bond, and the skill does nothing for it:
 [Staggered](status-list.md#status-staggered), [Stunned](status-list.md#status-stunned), [Surprised](status-list.md#status-surprised),

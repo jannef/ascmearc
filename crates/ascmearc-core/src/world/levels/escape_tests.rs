@@ -145,23 +145,102 @@ fn trained_or_not_the_menu_has_no_row() {
 }
 
 #[test]
-fn untrained_webbed_and_pinned_are_refused_for_no_time_and_no_draw() {
-    for id in ["webbed", "pinned"] {
+fn untrained_a_blocked_step_under_a_web_or_a_pin_is_a_struggle_of_strength() {
+    for (id, end, still) in [
+        (
+            "webbed",
+            "You tear free of the web.",
+            "You struggle, but you are still caught in a web.",
+        ),
+        (
+            "pinned",
+            "You can move again.",
+            "You struggle, but you are still pinned.",
+        ),
+    ] {
         let mut w = world();
-        suffer(&mut w, id, 3);
-        let (rng, start, turn) = (draws(&w), w.player_pos(), w.state.turn);
-        let out = w.apply(&Action::Move(Dir::W));
-        assert!(!out.took_turn, "{id}");
-        assert_eq!(w.player_pos(), start);
-        assert_eq!(draws(&w), rng, "{id}");
-        let name = w.content().status(status(&w, id)).name.to_lowercase();
+        // Strength 10 and Dexterity 40: untrained, only the Strength counts.
+        strong_and_quick(&mut w, 10, 40);
+        let start = w.player_pos();
+        let (mut made, mut failed) = (0, 0);
+        for _ in 0..40 {
+            let rng = draws(&w);
+            let (away, took, lines) = step_under(&mut w, start, id);
+            assert_eq!(
+                took,
+                Duration::seconds(6),
+                "{id}: the step's price, {lines:?}"
+            );
+            assert_eq!(draws(&w), rng + 1, "{id}: one check");
+            let name = w.content().status(status(&w, id)).name.to_lowercase();
+            let refused = format!("You cannot move while {name}.");
+            assert!(!lines.contains(&refused), "{id}: no refusal, {lines:?}");
+            if away {
+                made += 1;
+                assert!(lines.iter().any(|l| l == end), "{lines:?}");
+                assert!(w.state.player().effects.get(status(&w, id)).is_none());
+            } else {
+                failed += 1;
+                assert!(lines.iter().any(|l| l == still), "{lines:?}");
+            }
+        }
+        // About even at 2d12 against 13 with no modifier: the Dexterity of 40 would make nearly
+        // every one.
         assert!(
-            said(&w, turn).contains(&format!("You cannot move while {name}.")),
-            "{:?}",
-            said(&w, turn)
+            made >= 8 && failed >= 8,
+            "{id}: {made} made, {failed} failed"
         );
-        assert!(w.state.player().effects.get(status(&w, id)).is_some());
+        assert_eq!(marks(&w, "escape_artist"), 0, "no skill, no marks");
     }
+}
+
+#[test]
+fn untrained_a_failed_struggle_spends_the_turn_and_a_made_one_frees_you() {
+    use crate::combat::{FUMBLE, HIGHEST, roll_natural};
+    use crate::test_support::rig;
+    let mut w = world();
+    let webbed = status(&w, "webbed");
+    let start = w.player_pos();
+    suffer(&mut w, "webbed", 3);
+    rig(&mut w, "hold/slip/player", |r| roll_natural(r) == FUMBLE);
+    let turn = w.state.turn;
+    let out = w.apply(&Action::Move(Dir::W));
+    assert!(out.took_turn, "the turn is spent");
+    assert_eq!(w.player_pos(), start, "still caught");
+    assert!(w.state.player().effects.get(webbed).is_some());
+    assert!(
+        said(&w, turn).contains(&"You struggle, but you are still caught in a web.".to_string()),
+        "{:?}",
+        said(&w, turn)
+    );
+    rig(&mut w, "hold/slip/player", |r| roll_natural(r) == HIGHEST);
+    let turn = w.state.turn;
+    let out = w.apply(&Action::Move(Dir::W));
+    assert!(out.took_turn);
+    assert_eq!(
+        w.player_pos(),
+        start.step(Dir::W),
+        "free, and the step taken"
+    );
+    assert!(w.state.player().effects.get(webbed).is_none());
+    assert!(
+        said(&w, turn).contains(&"You tear free of the web.".to_string()),
+        "{:?}",
+        said(&w, turn)
+    );
+}
+
+#[test]
+fn holding_still_under_a_web_is_no_struggle_and_it_wears_off() {
+    let mut w = world();
+    suffer(&mut w, "webbed", 3);
+    let gameplay = draws(&w);
+    assert_eq!(w.struggle(&Action::Wait, &mut Vec::new()), None);
+    assert_eq!(draws(&w), gameplay);
+    for _ in 0..3 {
+        w.apply(&Action::Wait);
+    }
+    assert!(w.state.player().effects.get(status(&w, "webbed")).is_none());
 }
 
 #[test]

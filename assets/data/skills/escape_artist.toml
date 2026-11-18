@@ -11,8 +11,8 @@ mark = [
     { on = "wriggle", chance = 50 },
 ]
 # Effect "escape": points added to the check against bonds (better of Strength and Dexterity
-# against a hold's grip or a status's `escape`), +8 at 100, +12 at 200; trained at all, an action
-# that Webbed or Pinned stops is that check, and untrained it is refused. Effect "climb": a pit's
+# against a hold's grip or a status's `escape`), +8 at 100, +12 at 200; untrained, the struggle
+# an action that bonds stop becomes reads Strength alone. Effect "climb": a pit's
 # climb halved from 50 and skipped from 100 (world/fixtures/trap.rs). No ability: the check is automatic.
 benefit = [
     { effect = "escape", curve = [[0, 0], [100, 8], [200, 12]] },

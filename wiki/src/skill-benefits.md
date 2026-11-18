@@ -24,8 +24,8 @@ The passive skills help you more the higher they are:
   climb out of a [pit](traps.md#trap-pit).
 - **[Escape artist](skills.md#skill-escape-artist)** slips bonds without being asked. When being [Held](status-list.md#status-held), [Webbed](status-list.md#status-webbed), or [Pinned](status-list.md#status-pinned) stops
   what you try, the better of your [Strength](stats.md#stat-strength) and [Dexterity](stats.md#stat-dexterity) plus the skill is checked as part of the
-  attempt (see [Slipping bonds](held.md#slipping-bonds)): +8 at 100, +12 at 200. Untrained, a web or a pin just stops
-  the step. It also shortens the climb out of a pit: half from 50, none from 100. And it lets you
+  attempt (see [Slipping bonds](held.md#slipping-bonds)): +8 at 100, +12 at 200. Untrained, the struggle is of
+  Strength alone. It also shortens the climb out of a pit: half from 50, none from 100. And it lets you
   [wriggle past](npcs.md#getting-past) someone who will not make way. Every such check and climb, and half the wriggles,
   train it.
 - **[Survival](skills.md#skill-survival)** makes your journeys on the [overworld](overworld.md) quicker. It does nothing for your steps in a
