@@ -8,8 +8,8 @@
 # One that runs its time finds food with the ground's `chance` percent, plus what Survival gives
 # (its `forage` benefit, at most 30 more), at most 100: one draw. Found, one of `finds` is picked
 # by weight (one draw) and `count` of it rolled (a draw per die); the food is fresh, and goes into
-# the pack. Either way the try may earn Survival a training mark. Try again as often as you like:
-# the time is the price.
+# the pack. Either way the try may earn Survival a training mark. It may be repeated, and it
+# never runs out.
 #
 # Fields:
 #   seconds        how long a forage takes, in seconds (at least 1)

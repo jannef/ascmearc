@@ -259,7 +259,7 @@ gives none. A forage trains Herbalism one time in four, whatever it finds.
 {{#include generated/foraging.md}}
 
 What you find is ordinary [food](food.md) (see [Hunger](hunger.md)). Berries and mushrooms spoil within days, hazelnuts
-keep for months, and an angelica root cures [diseases](diseases.md#how-a-disease-goes). Forage as often as you like, in the same
-spot too: the time is the price.
+keep for months, and an angelica root cures [diseases](diseases.md#how-a-disease-goes). Foraging
+never runs out: forage as often as you like, in the same spot too.
 
 See also: [Abilities](abilities.md), [Skills](skills.md), and [Crafting](crafting.md).

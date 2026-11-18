@@ -316,12 +316,12 @@ cases! {
         ..BASE
     },
     // A witch's Alchemy (#1357; `--screen profession`, the first profession she has recipes of)
-    // after three gathers at the hub's fungus: the brews, those from a higher Alchemy greyed
+    // after two gathers at the hub's fungus (each picks its cell over): the brews, those from a higher Alchemy greyed
     // "beyond your skill", those short of herbs "not enough".
     profession_alchemy_herbs: Case {
         name: "profession-alchemy-herbs",
         character: Some("human,female,witch"),
-        actions: "move:N*6 move:E*30 move:N*3 move:W*6 gather:W*3",
+        actions: "move:N*6 move:E*30 move:N*3 move:W*6 gather:W move:W gather:W",
         screen: Some("profession"),
         ..BASE
     },
@@ -329,7 +329,7 @@ cases! {
     brew_dialog: Case {
         name: "brew-dialog",
         character: Some("human,female,witch"),
-        actions: "move:N*6 move:E*30 move:N*3 move:W*6 gather:W*3",
+        actions: "move:N*6 move:E*30 move:N*3 move:W*6 gather:W move:W gather:W",
         screen: Some("profession"),
         keys: Some("> b"),
         ..BASE

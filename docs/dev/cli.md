@@ -686,8 +686,9 @@ thaw:X,Y,R web:X,Y,R`
   with no time, with no spring beside them).
 - `gather:NE` gathers herbs from the glowing fungus northeast of the player (the Gather ability,
   the Here group, for those trained in Herbalism: five minutes, then `1d2` + Herbalism ÷ 50
-  herbs, each drawn by the level's depth from `data/herbs.toml`; cut short, nothing; the fungus
-  never runs out; refused, with no time, with no fungus that way or untrained in Herbalism; spec
+  herbs, each drawn by the level's depth from `data/herbs.toml`; cut short, nothing; done, the
+  fungus cell is picked over for good (`picked_fungus`); refused, with no time, with no fungus
+  that way (picked over: "This fungus has been picked over.") or untrained in Herbalism; spec
   §8 "Gathering herbs").
 - `forage` forages for food in the wild (the Forage ability, Survival's use: turns of the
   `forage` action for `data/forage.toml`'s time, then a chance of food by the landscape and

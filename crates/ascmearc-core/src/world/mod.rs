@@ -650,8 +650,8 @@ enum Spent {
     Drink(fixtures::drink::Draught),
     /// Foraging in the wild for this many seconds (see [`World::forage`]).
     Forage(u32),
-    /// Gathering herbs from the glowing fungus for this many seconds (see [`World::gather`]).
-    Gather(u32),
+    /// Gathering herbs from the glowing fungus beside the player (see [`World::gather`]).
+    Gather(skills::gather::Gathering),
     /// Long work: deciphering, a craft, salvage, a rig (see [`World::work`]).
     Work(crafting::work::Work),
     /// Taming a beast beside the player (see [`World::tame`]).
@@ -1369,7 +1369,7 @@ impl World {
             Spent::Pray(prayer) => self.pray(prayer, &mut events),
             Spent::Drink(draught) => self.drink(draught, &mut events),
             Spent::Forage(seconds) => self.forage(seconds, &mut events),
-            Spent::Gather(seconds) => self.gather(seconds, &mut events),
+            Spent::Gather(gathering) => self.gather(gathering, &mut events),
             Spent::Work(work) => self.work(work, &mut events),
             Spent::Tame(taming) => self.tame(taming, &mut events),
             Spent::Skip(duration) => {

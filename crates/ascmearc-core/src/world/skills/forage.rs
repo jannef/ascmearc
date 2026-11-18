@@ -22,7 +22,7 @@
 //!   pack (packs have no limit but the burden). "You gather 2 handfuls of berries." / "You find
 //!   nothing worth eating." Then Survival may earn a training mark ([`Use::Forage`], the
 //!   training stream). Nothing is remembered of a forage: the same spot may be tried again at
-//!   once (no anti-farming limit, the owner's rule: time is the price).
+//!   once, and foraging never runs out.
 //! - **A herbalist's extra find** (#1343): when the find was made and the player is trained in a
 //!   skill with the `herbs` benefit (Herbalism), and the ground has `herbs`, one more draw of
 //!   the gameplay stream with the benefit's chance; made, one of the herbs by weight (one draw),

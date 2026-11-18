@@ -810,7 +810,7 @@ impl Ability {
             Ability::Gather => {
                 "Search the glowing fungus beside you for five minutes for herbs to brew with. \
                  It takes Herbalism, and more of it finds more; the deeper the fungus grows, \
-                 the rarer the herbs. It never runs out."
+                 the rarer the herbs. Each clump gives one gather: then it is picked bare."
             }
             Ability::Heel => {
                 "Call your allies to your side: they follow you and fight what threatens you. \

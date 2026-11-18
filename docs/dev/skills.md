@@ -190,7 +190,13 @@ saved and hashed by that index. Their first effects (#1343, one hook each):
   `gather::UNTRAINED`, after the fungus is found) and by `Ability::unavailable`
   (`Unavailable::Untrained(skill)`, "you are untrained in Herbalism", id `untrained:herbalism`).
   A gather finds `count` + the skill's trained value / `value_per_count`, each drawn by weight
-  at the level's item level (`HerbRules::at`). Marks on `gather`, 100 %. The fungus never changes.
+  at the level's item level (`HerbRules::at`). Marks on `gather`, 100 %. A gather that ran its
+  time picks its cell over (`gather::Gathering` carries the cell from `start_gather`):
+  `World::set_terrain` turns it the file's `picked` terrain (`picked_fungus`, no light: the light
+  cache re-derives the cell as for a spent altar), "The fungus is picked bare.", for good; a
+  gather cut short leaves it. The terrain is the whole record, saved with the level, so a level's
+  fungus gives at most a find a cell. Gather toward picked fungus is refused, no time,
+  `gather::PICKED`; the menu no longer offers it there (`fungus_ways` asks for `terrain`).
 - **Alchemy**'s `identify_potion` and **Enchanting**'s `identify_magic` (5 / 25 / 40 %) look in
   `world/skills/appraise.rs::appraise_hours` after Appraise's `identify`, from the same hour's stream:
   Alchemy at the potions and flasks whose kind is unknown (`drink`), Enchanting at every other
@@ -320,7 +326,7 @@ abilities menu (`PerceptionView::abilities`: `Unavailable::NotHere`, "not usable
 ask it. Draws: the chance (one keyed draw), the find (`magic::loot::pick_weighted`, one), and
 the count's dice; the food is made then (`rot::made_at`) and joins the pack; then
 `train(Use::Forage)`. Nothing is stored, so saves change only by content (the new
-`ActionKind`, the new food objects). The wiki's table is `generated/foraging.md`
+`ActionKind`, the new food objects). Foraging never runs out. The wiki's table is `generated/foraging.md`
 (`xtask/src/wiki/skills.rs::foraging`).
 **Appraise** (#666; Negotiation took the shops' bargain): `world/skills/appraise.rs`,
 `World::appraise_hours(start, seconds)`, called for the player from `World::live` (the status

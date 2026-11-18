@@ -579,7 +579,7 @@ impl LevelState {
 
 /// Serde adapter: JSON object keys must be strings, so maps by position (placed lights, flow,
 /// piles) are written as a list of `[{x, y}, value]` pairs in position order.
-mod by_pos {
+pub(in crate::world) mod by_pos {
     use super::*;
     use serde::{Deserializer, Serializer};
 

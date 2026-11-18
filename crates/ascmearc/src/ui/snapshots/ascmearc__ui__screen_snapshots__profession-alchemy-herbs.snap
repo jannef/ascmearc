@@ -2,8 +2,8 @@
 source: crates/ascmearc/src/ui/screen_snapshots.rs
 expression: "render(case, content.clone())"
 ---
- You gather ┌─ Alchemy: recipes ──────────────────────────────────────────── Page 1/2 ─┐
- You search │                                                                          │
+ You search ┌─ Alchemy: recipes ──────────────────────────────────────────── Page 1/2 ─┐The fungus
+ is picked b│                                                                          │
             │ Potions                                                                  │
             │ > a - Blasting flask             beyond your skill                       │
             │   b - Flask of fire              beyond your skill                       │
