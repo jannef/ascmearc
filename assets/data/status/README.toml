@@ -106,10 +106,11 @@
 #   wades_free its sufferer wades as if on dry land (Water walking's)
 #   ice_holds  ice never gives way under its sufferer, however thin, nor melts or shatters under
 #              them in a burst (Water walking's)
-#   escape     bonds a trained Escape artist may slip: the difficulty of the automatic
-#              check, the better of Strength and Dexterity plus the skill, when the status stops
-#              or slows what they try (world/health/hold.rs). Needs `blocks` or a `cost` above 100 (else it is
-#              never struggled against); its `seen` ("You struggle, but you are still caught in a
+#   escape     bonds: the difficulty of the automatic struggle when the status stops what the
+#              player tries, which is that check instead (Strength; a trained Escape artist the
+#              better of Strength and Dexterity plus the skill), and of a trained one's when it
+#              only slows them (world/health/hold.rs). Needs `blocks` or a `cost` above 100 (else
+#              it is never struggled against); its `seen` ("You struggle, but you are still caught in a
 #              web.") is said of a failed try; not on a hold, whose
 #              grip counts the same way. Slowed minds and bodies (Staggered, Stunned, Surprised,
 #              Transfixed, Sluggish, Drowsy) are no bonds and take none

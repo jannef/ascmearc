@@ -150,7 +150,8 @@ like an [attack](combat.md#hitting), plus the better of your [Strength](stats.md
 and [Dexterity](stats.md#stat-dexterity) modifiers, plus what
 [Escape artist](skills.md#skill-escape-artist) gives, plus a size modifier, against the number in
 the table below. Fail it and you are [Webbed](status-list.md#status-webbed): you cannot step away
-until you [break free](held.md#slipping-bonds) or it wears off. You can still fight, cast, and
+until you [break free](held.md#webs-and-pins) or it wears off. Each step you try is a struggle to
+break free. You can still fight, cast, and
 shoot. Spiders, and the duergar who ride them, are never caught, and neither is anything that
 passes through walls. You are never caught twice at once.
 

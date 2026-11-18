@@ -596,7 +596,8 @@ thaw:X,Y,R web:X,Y,R`
   for whatever stops a rest; a first step a run cannot take is a plain `move`; docs/dev/time.md
   "Running").
 - `run:>` and `run:<` run to the nearest stairs down or up the player knows of (#1801,
-  `Action::RunToStairs`): by the shortest walk over the perception, stopping on the stairs
+  `Action::RunToStairs`): by the cheapest walk over the perception (through closed doors, which
+  it opens; round known traps, stopping beside one on the only way), stopping on the stairs
   without taking them; with none to walk to, a message and no time (docs/dev/time.md "Running").
 - `search` searches the cells around the player for secret doors and hidden traps for a turn,
   and `wait` is another spelling of it (waiting is searching, one action: #1326; the game's

@@ -374,6 +374,10 @@ fn pinned_keeps_the_longer_and_blocks_a_step() {
     w.afflict(player, pinned, 2, None, &mut events);
     assert_eq!(severity(&w, player, "pinned"), 3, "never added");
     let from = w.player_pos();
+    // The step is a struggle (`hold.rs`): failed, they stay.
+    crate::test_support::rig(&mut w, "hold/slip/player", |r| {
+        crate::combat::roll_natural(r) == crate::combat::FUMBLE
+    });
     w.apply(&Action::Move(Dir::E));
     assert_eq!(w.player_pos(), from, "pinned where they stand");
 }

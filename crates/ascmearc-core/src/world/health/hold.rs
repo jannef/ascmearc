@@ -19,17 +19,21 @@
 //!   step goes ahead; failed, the turn is spent, a step's price ("You struggle, but the ghast
 //!   holds you fast."). Two draws of the gameplay stream. Creatures never struggle: one held
 //!   fights its holder (`World::held_back`, `lucky.rs`).
+//! - **Bonds** (the owner: "any action that gets blocked by the webs, should instead be converted
+//!   into attempt to break free"): a status that is no hold carries `escape` as its difficulty in
+//!   data (Webbed, Pinned), and whatever it blocks is a struggle against it, with no Knowledge: a
+//!   check of Strength (the effective modifier and what talents add to its checks). Made, the
+//!   status ends with its own `end` line and the action goes ahead at its price; failed, the
+//!   action's price ("You struggle, but you are still caught in a web."). Holding still is no
+//!   struggle: the bonds ease as their status does. A status that blocks and is neither a hold
+//!   nor bonds (Raging, Silenced) is refused by `refuse_blocked`, no time, as is a second status
+//!   blocking the same action, which asks on the next attempt.
 //! - **Escape artist** (no action, no ability row: the check is part of the attempt, the owner's
-//!   rule, #1015): trained, the check against a hold reads the better of its stat and Dexterity
-//!   and adds [`SkillEffect::Escape`]. Bonds that are no hold carry `escape` as their difficulty in
-//!   data (Webbed, Pinned) and only the trained struggle against them, with the same modifier and
-//!   no Knowledge: made, the status ends with its own `end` line and the action goes ahead at its
-//!   price; failed, the action's price ("You struggle, but you are still caught in a web.").
-//!   Untrained, `refuse_blocked` refuses, no time, as it does a second status blocking the same
-//!   action, which asks on the next attempt. A marked status that only slows (`cost` above 100;
-//!   none in the data today) is checked the same way, and the action goes ahead either way: made,
-//!   at its plain price; failed, slowed, no worse. Every check marks [`Use::Escape`] (the
-//!   training stream) and `StatUse::Struggled`.
+//!   rule, #1015): trained, the check against a hold or bonds reads the better of its stat and
+//!   Dexterity and adds [`SkillEffect::Escape`]. A marked status that only slows (`cost` above
+//!   100; none in the data today) is checked for the trained only, and the action goes ahead
+//!   either way: made, at its plain price; failed, slowed, no worse. Every check marks
+//!   [`Use::Escape`] (the training stream) and `StatUse::Struggled`.
 //!
 //! - **Harm**: a hold that ticks costs its status's `damage` a tick, or the holder's attack's
 //!   own `damage` (its `on_hit` entry) while that holder holds ([`World::hold_harms`], read by
@@ -115,8 +119,12 @@ impl World {
             if content.status(status).hold.is_some() {
                 return self.struggle_hold(status, kind, trained);
             }
-            let difficulty = content.status(status).escape.filter(|_| trained)?;
-            let free = self.slip(status, difficulty, events);
+            let difficulty = content.status(status).escape?;
+            let modifier = match trained {
+                true => self.slipping(Stat::Strength),
+                false => me.check_modifier(&content, Stat::Strength),
+            };
+            let free = self.slip(status, modifier, difficulty, events);
             return (!free).then(|| Spent::Turn(self.price_of(self.state.player, kind)));
         }
         if !trained {
@@ -126,7 +134,8 @@ impl World {
             let def = content.status(e.status);
             def.escape.filter(|_| def.cost > 100).map(|d| (e.status, d))
         })?;
-        self.slip(status, difficulty, events);
+        let modifier = self.slipping(Stat::Strength);
+        self.slip(status, modifier, difficulty, events);
         None
     }
 
@@ -179,11 +188,16 @@ impl World {
         Some(Spent::Turn(self.price_of(player, kind)))
     }
 
-    /// A trained player's check against bonds `status` that are no hold, of [`World::slipping`]
-    /// against `difficulty`. Made, it ends with its own `end` line; failed, its `seen` says so.
-    /// Whether it was made.
-    fn slip(&mut self, status: StatusId, difficulty: i32, events: &mut Vec<Event>) -> bool {
-        let modifier = self.slipping(Stat::Strength);
+    /// The player's check against bonds `status` that are no hold, of `modifier` against
+    /// `difficulty`. Made, it ends with its own `end` line; failed, its `seen` says so. Whether it
+    /// was made.
+    fn slip(
+        &mut self,
+        status: StatusId,
+        modifier: i32,
+        difficulty: i32,
+        events: &mut Vec<Event>,
+    ) -> bool {
         let free = check(&mut draw!(self, "hold/slip/player"), modifier, difficulty);
         self.struggled();
         if free {

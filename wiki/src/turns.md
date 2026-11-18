@@ -85,9 +85,18 @@ Press `.` and then `>` to run to the nearest stairs down you know of on the leve
 so a run never takes a path you could not know.
 
 You stop on the stairs and do not take them: press `>` or `<` again to go. On the way, the run
-steps only where a run in the open would, goes around a creature in the way, and stops for
-everything above that stops a run. If you know of no such stairs, or of no way to reach them, the
-game says so and no time passes.
+goes around a creature in the way, and stops for everything above that stops a run.
+
+The way may lead through a closed [door](doors.md) you know of: the run opens it, which takes the
+time opening a door takes, and goes on. A [locked door](doors.md#locked-doors) you have no key
+for stops it, and the game says the door is locked.
+
+The run goes around a [trap](traps.md#finding-traps) you know of when there is any other way,
+even a much longer one. When the only way crosses one, the run stops beside it and the game says
+"A trap lies in the way." It never steps onto a known trap for you: step onto it yourself, or
+disarm it, and run again from there.
+
+If you know of no such stairs, or of no way to reach them, the game says so and no time passes.
 
 ## Creatures act at their own pace
 
