@@ -168,11 +168,16 @@ owner: "an automatic skill check when player action is prevented/slowed because 
 fix"): `World::struggle` takes the action's `kind_of` and the first status `blocking` it. Trained
 (`trains_effect(Effect::Escape)`), a hold's check reads `World::slipping` (the better of its stat
 and Dexterity, each with `talents.check`, plus `Effect::Escape`) with Knowledge's `resisting` on
-top. A status with `StatusDef::escape` (Webbed, Pinned; parse checks no `hold`, and `blocks` or
-`cost` above 100, without which it is never struggled against) is checked the same way without Knowledge, trained only: made,
-it is removed and `ended` says its `end`, and `None` lets the action go on; failed,
-`Spent::Turn(price_of(kind))` and "You struggle, but you are still {seen}.". Untrained or
-unmarked, `struggle` returns `None` with no draw and `refuse_blocked` refuses. With nothing
+top. **Bonds**, a status with `StatusDef::escape` (Webbed, Pinned; parse checks no `hold`, and
+`blocks` or `cost` above 100, without which it is never struggled against): whatever it blocks is
+a struggle instead (the owner: "any action that gets blocked by the webs, should instead be
+converted into attempt to break free"), trained or not, without Knowledge: `World::slip` of
+`slipping(Strength)` trained, else plain `check_modifier(Strength)`, against `escape`. Made, it
+is removed and `ended` says its `end`, and `None` lets the action go on; failed,
+`Spent::Turn(price_of(kind))` and "You struggle, but you are still {seen}.". Waiting is no
+struggle: bonds ease as their status does. For a blocking status that is neither (Raging, Silenced),
+`struggle` returns `None` with no draw and `refuse_blocked` refuses at no time. Creatures
+never struggle (spec 09): a webbed or pinned creature's blocked step is its turn. With nothing
 blocking, a trained player's first marked status with `cost` above 100 (none in the data today)
 is checked and `None` is returned either way. Each check marks `StatUse::Struggled` and
 `Use::Escape` (`World::struggled`). A second blocking status is refused this attempt and asks on

@@ -105,8 +105,12 @@ fn caught_you_struggle_and_the_web_holds_you_where_you_stand() {
     rig_catch(&mut w, "player", true);
     run(&mut w, "move:E");
     assert!(webbed(&w, w.state.player));
+    // The step is a struggle (`hold.rs`): failed, the turn goes and the web holds.
+    rig(&mut w, "hold/slip/player", |r| roll_natural(r) == FUMBLE);
+    let turn = w.state.turn;
     run(&mut w, "move:E");
     assert_eq!(w.player_pos(), cell(3, 3), "held where you stand");
+    assert!(w.state.turn > turn, "the turn is spent");
 }
 
 #[test]
