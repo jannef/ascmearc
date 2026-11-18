@@ -9,13 +9,16 @@ use crate::test_support::last_text as last;
 use crate::world::*;
 
 /// The built-in content with `map`, lit: the player at `@`, a kobold at `k`, fences
-/// (transparent, not walkable) at `F`, stairs at `<` and `>` (to a level of their own).
+/// (transparent, not walkable) at `F`, an alarm trap the player knows of at `^` and a hidden one
+/// at `_`, stairs at `<` and `>` (to a level of their own).
 fn world(map: &str) -> World {
     let mut files = ContentFiles::builtin();
     let legend = "[legend]\n\
                   \"@\" = { terrain = \"floor\", spawn = \"player\" }\n\
                   \"k\" = { terrain = \"floor\", creature = \"kobold\" }\n\
                   \"F\" = \"fence\"\n\
+                  \"^\" = { terrain = \"floor\", trap = \"alarm\", known = true }\n\
+                  \"_\" = { terrain = \"floor\", trap = \"alarm\" }\n\
                   \">\" = { terrain = \"stairs_down\", to = \"test_below\" }\n\
                   \"<\" = { terrain = \"stairs_up\", to = \"test_below\" }\n";
     files.insert(
@@ -154,4 +157,88 @@ fn a_run_to_the_stairs_records_and_replays() {
         .run(w.content.clone())
         .expect("the replay verifies");
     assert_eq!(verified.state_hash(), w.state_hash());
+}
+
+fn up(w: &mut World) -> Outcome {
+    w.apply(&Action::RunToStairs(StairsDir::Up))
+}
+
+#[test]
+fn the_run_opens_a_closed_door_in_the_way_and_goes_on() {
+    // The stairs up seen through the fence; the only way there is the door.
+    let mut w = world(
+        "\
+##########
+#@...F..<#
+#....+...#
+#....F...#
+##########
+",
+    );
+    let door = Pos::new(5, 2);
+    assert!(w.state.current().is_closed_door(&w.content, door));
+    up(&mut w);
+    assert_eq!(w.player_pos(), Pos::new(8, 1), "on the stairs");
+    assert!(
+        !w.state.current().is_closed_door(&w.content, door),
+        "opened"
+    );
+    assert_eq!(last(&w), "There is a staircase up here.");
+}
+
+#[test]
+fn a_longer_walk_round_a_known_trap_is_taken_over_one_across_it() {
+    let mut w = world(
+        "\
+############
+#@...^....<#
+#.FFFFFFFF.#
+#..........#
+############
+",
+    );
+    up(&mut w);
+    assert_eq!(w.player_pos(), Pos::new(10, 1), "on the stairs");
+    assert_eq!(w.sprung, 0, "the trap left alone");
+}
+
+#[test]
+fn a_known_trap_on_the_only_walk_stops_the_run_beside_it() {
+    let mut w = world(
+        "\
+##########
+#@..^...<#
+##########
+",
+    );
+    let outcome = up(&mut w);
+    assert!(outcome.took_turn);
+    assert_eq!(w.player_pos(), Pos::new(3, 1), "beside the trap");
+    assert_eq!(last(&w), "A trap lies in the way.");
+    assert_eq!(w.sprung, 0);
+    // Pressed again beside it: said again, and no time passes.
+    let turn = w.state.turn;
+    up(&mut w);
+    assert_eq!((w.player_pos(), w.state.turn), (Pos::new(3, 1), turn));
+    assert_eq!(last(&w), "A trap lies in the way.");
+    // The player steps onto it themselves; from there the run goes on.
+    w.apply(&Action::Move(Dir::E));
+    assert_eq!(w.player_pos(), Pos::new(4, 1));
+    up(&mut w);
+    assert_eq!(w.player_pos(), Pos::new(8, 1), "on the stairs");
+}
+
+#[test]
+fn a_trap_the_player_does_not_know_of_is_no_reason_to_walk_round() {
+    let mut w = world(
+        "\
+############
+#@..._....<#
+#.FFFFFFFF.#
+#..........#
+############
+",
+    );
+    up(&mut w);
+    assert!(w.sprung > 0, "the straight walk, over the hidden trap");
 }

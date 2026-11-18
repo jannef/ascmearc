@@ -165,7 +165,8 @@ impl World {
     /// The steps of a run (this one's, or one to the stairs, `run_stairs.rs`) through
     /// [`World::keep_at`]: `first` the first step if it is known already, then each step the one
     /// `next` gives from the perception at the player's cell (`at`, come from `from`, heading
-    /// `heading`), until it gives none. Ended by a creature coming close, it says so.
+    /// `heading`), until it gives none. A step onto a closed door opens it, and the run goes on
+    /// (only a run to the stairs is given one). Ended by a creature coming close, it says so.
     pub(in crate::world) fn keep_running(
         &mut self,
         events: &mut Vec<Event>,
@@ -211,9 +212,20 @@ impl World {
                 };
                 let load = w.load_of(player);
                 let (burden, slowed) = (load.burden(), load.penalty() != Burden::Unburdened);
+                // A closed door in the way (a run to the stairs goes through one): the step
+                // opens it as a bump does, and the run goes on through it; its line passes by
+                // as the steps do, unless more was said (a trap on it went off).
+                let door = (w.state.current()).is_closed_door(&w.content, w.player_pos().step(dir));
+                let (said, sprung) = (w.said, w.sprung);
                 from.set(w.player_pos());
                 heading.set(dir);
                 match w.player_moves(dir, events) {
+                    Spent::Turn(price) if door => {
+                        if w.sprung == sprung && w.said == said + 1 {
+                            w.said = said;
+                        }
+                        price
+                    }
                     Spent::Turn(price) => {
                         steps.set(steps.get() + 1);
                         w.ran_a_step(burden, slowed);
