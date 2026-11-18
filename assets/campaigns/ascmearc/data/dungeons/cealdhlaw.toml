@@ -38,9 +38,9 @@ population = [
     "animated_candlestick", "animated_cutlery", "animated_teapot", "animated_cooking_pot",
     "animated_blade",
 ]
-# 30 a thousand walkable cells: the least, 25, on the barrow's passages (about 350 cells), about
-# 45 in the hollows (about 1 500 of tunnels and caverns, #1835; 70 when they were open caves of
-# about 2 300).
+# 30 a thousand walkable cells: the least, 25, on the barrow's passages (about 350 cells) and in
+# the hollows (about 750 cells of tunnels and caverns at 84×34, #1835; about 1 500 at 120×48, which
+# was 45 a floor, and 2 300 when they were open caves of 100×40, which was 70).
 population_count = { per_1000 = 30, least = 25, most = 80 }
 
 # The barrow's heart: the barrow chamber, with the silver chalice on its plinth (Sister Hild's
@@ -50,10 +50,10 @@ from = 2
 vaults = ["barrow_chamber"]
 
 # The hill's hollows: caverns below the barrow, joined by narrow winding tunnels that keep the
-# archers' lines of fire short (#1835); larger than the open caves were (100×40), as tunnels
-# leave more rock, so about two thirds of the floor and folk remain.
+# archers' lines of fire short (#1835); small, 84×34 (about a third of the open caves' 100×40 in
+# walkable cells, as tunnels leave more rock), so that a floor is a short crawl.
 [[dungeon.levels]]
 from = 3
 to = 6
 generator = { kind = "tunnels" }
-size = [120, 48]
+size = [84, 34]
