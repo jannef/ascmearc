@@ -18,7 +18,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - This document states rules and intent. How they are built is in `docs/dev/`; the exact numbers are in the data and in the player wiki.
 - Rules are stated in the game's own terms. Concepts borrowed from other games (D&D, ADOM, Path of Exile) are named where they are the model and nowhere else; no undiscussed D&D concept comes in.
 - Balance is not a goal. Unbalanced choices are fine: a poor combination is the player's to discover.
-- No softlocking the win. One failed roll or an unlucky loss never makes the story's victory unreachable: what the way to win needs (a key, a quest step, a check on the path) can always be tried again. This is the whole rule. It does not mean nothing may run out: gathering spots, veins and other loot sources deplete, consumables are spent, and optional things may be lost to a bad roll. Retrying an ordinary check (a lock, a search, a treatment) is allowed, and its time is its cost.
+- No softlocking the win: a failed roll or an unlucky loss never makes the story's victory unreachable.
 - Hidden numbers stay hidden in the game: modifiers, rolls, chances, creatures' stats, speed, and the like are told in words or not at all. The wiki states every one of them exactly: the game is vague, the wiki is accurate.
 - Player text never says that randomness comes from a seed. To the player it is chance, fate, or luck.
 
