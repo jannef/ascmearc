@@ -145,9 +145,9 @@ of that kind; the snapshots in `src/mapgen/snapshots/` and `cargo xtask gen-vast
 
 **Tunnels** (#1835; `mapgen/tunnels/mod.rs`, `GeneratorKind::Tunnels`): caverns joined by narrow
 tunnels, between `rooms` and `caves`, for floors where open caves would give archers too long a
-line of fire (Cealdhlāw 3 to 6, 120×48: tunnels leave more rock than caves, about 1 500 walkable
-cells to the caves' 2 300 at 100×40, so the branch's `per_1000` population gives about 45 a floor
-where it gave 70). The map is cut into zones of about 14×9; in most a cavern is tried for, its
+line of fire (Cealdhlāw 3 to 6, 84×34: tunnels leave more rock than caves, about 750 walkable
+cells to the caves' 2 300 at 100×40 and the 1 500 of the first 120×48 size, so the branch's
+population is its `least`, 25 a floor, where it gave 70). The map is cut into zones of about 14×9; in most a cavern is tried for, its
 size drawn among chambers, caverns, and a few halls, its box kept two cells from the others, then
 a small chamber anywhere per two zones to fill the gaps; inside the box one to four overlapping
 ellipses of noise (rock thinning toward the middle) are smoothed with the 4-5 rule and the largest

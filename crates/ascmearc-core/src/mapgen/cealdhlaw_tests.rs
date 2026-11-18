@@ -63,7 +63,7 @@ fn six_floors_of_danger_one_to_six_passages_then_hollows() {
         let plan = def.plan(depth).expect("a floor");
         let (generator, size) = match depth {
             1 | 2 => (GeneratorKind::Rooms, (80, 21)),
-            _ => (GeneratorKind::Tunnels, (120, 48)),
+            _ => (GeneratorKind::Tunnels, (84, 34)),
         };
         assert_eq!(plan.generator.kind(), generator, "depth {depth}");
         assert_eq!((plan.width, plan.height), size, "depth {depth}");
@@ -95,7 +95,7 @@ fn the_floors_start_full_of_the_barrow_wave() {
     ] {
         assert!(lives.contains(&id), "{id} lives in Cealdhlāw");
     }
-    for (depth, least, most) in [(1, 25, 45), (3, 50, 80)] {
+    for (depth, least, most) in [(1, 25, 45), (3, 25, 45)] {
         let floor = level(1, depth);
         let count = floor.creatures.len();
         assert!((least..=most).contains(&count), "depth {depth}: {count}");
