@@ -694,16 +694,10 @@ impl<'a> PerceptionView<'a> {
             {
                 Some(crate::ability::Unavailable::NotHere)
             }
-            // Foraging asks for the wild underfoot, not yet foraged out.
+            // Foraging asks for the wild underfoot.
             Ability::Forage
                 if crate::world::forage_ground(self.content, self.level, self.player.pos)
-                    .is_none()
-                    || crate::world::foraged_out(
-                        self.content,
-                        self.foraged,
-                        self.level,
-                        self.player.pos,
-                    ) =>
+                    .is_none() =>
             {
                 Some(crate::ability::Unavailable::NotHere)
             }

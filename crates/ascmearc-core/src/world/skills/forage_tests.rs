@@ -1,8 +1,7 @@
 //! Foraging (#547): only those trained in Survival may forage, only in the
 //! wild (the overworld's land and its local areas, never water, a town, or a dungeon); a forage
 //! takes its time, then finds food by the ground's chance plus Survival, fresh, into the pack;
-//! refusals take none; a stretch of the wild gives so many finds and is then foraged out, an
-//! overworld cell and its local area together; it trains Survival; replays verify.
+//! refusals take none; it trains Survival; replays verify.
 
 use crate::ability::{Ability, Unavailable};
 use crate::action::parse_actions;
@@ -209,13 +208,11 @@ fn a_forage_takes_its_time_and_finds_fresh_food_by_chance() {
         );
     }
     assert!(interrupted < 5, "{interrupted} of 10 cut short");
-    // At the data's chance, sometimes nothing: a forage that found nothing may be tried again
-    // at once, until the land has given its `per_place` finds.
+    // At the data's chance, sometimes nothing: the same spot may be tried again at once.
     let mut w = world("forest");
     train(&mut w, Some(0));
-    let per_place = w.content().forage().expect("rules").per_place;
     let (mut found, mut empty) = (0, 0);
-    while found < per_place {
+    for _ in 0..40 {
         let before = food_count(&w);
         w.apply(&Action::Forage);
         if food_count(&w) > before {
@@ -224,33 +221,8 @@ fn a_forage_takes_its_time_and_finds_fresh_food_by_chance() {
             assert_eq!(last_message(&w), "You find nothing worth eating.");
             empty += 1;
         }
-        assert!(empty < 40, "{found} found, {empty} empty");
     }
-    assert!(empty > 0, "{found} found, {empty} empty");
-    // Foraged out: greyed out in the menu, refused with no time, for good.
-    assert_eq!(forage_in_menu(&w), Some(Some(Unavailable::NotHere)));
-    let before = (w.state.time, food_count(&w));
-    let out = w.apply(&Action::Forage);
-    assert!(!out.took_turn && out.elapsed.is_zero());
-    assert_eq!(last_message(&w), super::forage::FORAGED_OUT);
-    assert_eq!((w.state.time, food_count(&w)), before);
-    // The whole area is its overworld cell: another spot of it is foraged out too, and the
-    // record is the overworld cell's, so a neighbouring cell's land is fresh.
-    let level = w.state.current();
-    let exit = level.exit.as_ref().expect("a local area's exit");
-    let elsewhere = (level.terrain.iter())
-        .find(|&(p, _)| p != w.player_pos() && forage_ground(w.content(), level, p).is_some())
-        .map(|(p, _)| p)
-        .expect("more wild ground");
-    assert!(foraged_out(w.content(), &w.state.foraged, level, elsewhere));
-    let foraged = &w.state.foraged;
-    assert!(foraged.out(w.content(), (exit.to.as_str(), exit.pos)));
-    let next = exit.pos.step(Dir::E);
-    assert!(!foraged.out(w.content(), (exit.to.as_str(), next)));
-    // Saved with the run.
-    let saved = (*w.state).clone();
-    let w = World::from_state(w.content.clone(), saved).expect("loads");
-    assert_eq!(forage_in_menu(&w), Some(Some(Unavailable::NotHere)));
+    assert!(found > 0 && empty > 0, "{found} found, {empty} empty");
 }
 
 #[test]

@@ -118,7 +118,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - **Survival**'s use is foraging, in the wild only. The owner: "survival can be used on wilderness map, some chance to gather food items".
   - A forage takes ten minutes and finds food, plus a chance of a herb for a herbalist.
   - Gathering takes herbs from the dungeon's glowing fungus, for the trained in Herbalism only. Each cell of fungus gives one gather, then is picked over for good.
-  - A stretch of the wild (an overworld cell and its local area) gives two forages that find food, then is foraged out for good. A try that finds nothing may be made again at once. Only the outcome is shown, never the chance.
+  - Foraging may be tried again at once, and never runs out. Only the outcome is shown, never the chance.
 
 ## Professions and crafting
 

@@ -691,9 +691,8 @@ thaw:X,Y,R web:X,Y,R`
   §8 "Gathering herbs").
 - `forage` forages for food in the wild (the Forage ability, Survival's use: turns of the
   `forage` action for `data/forage.toml`'s time, then a chance of food by the landscape and
-  Survival; interrupted, it finds nothing; refused, with no time, untrained, anywhere but on
-  land of the overworld or a local area of it, or on an overworld cell (or its area) that has
-  given its `per_place` finds; docs/dev/skills.md "Foraging").
+  Survival; interrupted, it finds nothing; refused, with no time, untrained, or anywhere but on
+  land of the overworld or a local area of it; docs/dev/skills.md "Foraging").
 - `heal:bleeding` treats the player's own bleeding with the Heal skill (the Heal ability: a
   status id with a `treat` table, `heal:poisoned`, or a showing disease's id,
   `heal:filth_fever`; `heal:bleeding:E` the player's ally east of them; bare `heal` the player's

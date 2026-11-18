@@ -45,9 +45,6 @@ pub struct PerceptionView<'a> {
     pub(crate) progress: &'a crate::world::Progress,
     /// The player's quests, which they know.
     pub(crate) quests: &'a crate::world::Quests,
-    /// The stretches of the wild the player has foraged, which they know
-    /// (`world/skills/forage.rs`).
-    pub(crate) foraged: &'a crate::world::Foraged,
     /// The patron's open commission, which the player knows (`world/crafting/patron.rs`).
     pub(crate) patron: &'a crate::world::crafting::patron::Patron,
     /// Everything the player was told, which they know.

@@ -222,7 +222,7 @@ pub use people::quest::{
 };
 pub use people::shop::{Shop, ShopStatus, count_of, favour, part_of, unpaid_parts};
 pub use people::talk::{Conversation, Talk, TopicView};
-pub(crate) use skills::forage::{Foraged, forage_ground, foraged_out};
+pub(crate) use skills::forage::forage_ground;
 pub(crate) use skills::gather::{fungus_ways, unskilled};
 pub use turn::actor::{Actor, ActorId, ActorKind, AttackSkills, Mind, PLAYER_KEY, Patrol};
 pub use turn::actors::Actors;
@@ -340,10 +340,6 @@ pub struct WorldState {
         skip_serializing_if = "levels::endless::EndlessFloors::is_empty"
     )]
     pub(crate) endless: levels::endless::EndlessFloors,
-    /// The forages that found food, by stretch of the wild: a place gives so many, then is
-    /// foraged out (`world/skills/forage.rs`; left out while none have).
-    #[serde(default, skip_serializing_if = "skills::forage::Foraged::is_empty")]
-    pub(crate) foraged: skills::forage::Foraged,
     /// The Pits' records by their integers (`world/levels/pit.rs`; left out while there are none).
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub(crate) pits: BTreeMap<u32, levels::pit::Pit>,
@@ -863,7 +859,6 @@ impl World {
             encounter: None,
             parting: None,
             endless: Default::default(),
-            foraged: Default::default(),
             pits: BTreeMap::new(),
             parties: Vec::new(),
             wares: BTreeMap::new(),
@@ -1248,7 +1243,6 @@ impl World {
             experience: self.state.experience,
             progress: &self.state.progress,
             quests: &self.state.quests,
-            foraged: &self.state.foraged,
             patron: &self.state.patron,
             messages: &self.state.messages,
             lore: self.lore(),

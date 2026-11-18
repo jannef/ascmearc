@@ -773,7 +773,7 @@ impl Ability {
             }
             Ability::Forage => {
                 "Spend a while searching the wild around you for something to eat: berries, \
-                 nuts, mushrooms, roots. The land runs out: once it is bare, move on."
+                 nuts, mushrooms, roots."
             }
             Ability::Salvage => {
                 "Take an item you carry apart for ten minutes, for the metal, wood, bone, gems, \

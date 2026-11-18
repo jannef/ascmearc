@@ -16,9 +16,6 @@ use serde::Deserialize;
 pub struct ForageRules {
     /// How long a forage takes, in seconds of game time.
     pub seconds: u32,
-    /// How many forages that find food one stretch of the wild gives (an overworld cell and its
-    /// local area together) before it is foraged out, for good.
-    pub per_place: u8,
     /// The grounds, in file order: at most one per landscape.
     pub grounds: Vec<ForageGround>,
 }
@@ -56,14 +53,8 @@ impl ForageGround {
 #[serde(deny_unknown_fields)]
 struct ForageFile {
     seconds: u32,
-    #[serde(default = "one")]
-    per_place: u8,
     #[serde(default)]
     ground: Vec<GroundSpec>,
-}
-
-fn one() -> u8 {
-    1
 }
 
 #[derive(Deserialize)]
@@ -85,8 +76,7 @@ struct FindSpec {
 }
 
 impl ForageRules {
-    /// Parses `data/forage.toml`: a time of at least a second, a `per_place` of at least 1, each
-    /// ground once (a second
+    /// Parses `data/forage.toml`: a time of at least a second, each ground once (a second
     /// would never be read), and finds that are known objects.
     pub(super) fn parse(
         file: &str,
@@ -97,9 +87,6 @@ impl ForageRules {
         let parsed: ForageFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
         if parsed.seconds == 0 {
             return Err(err("`seconds` must be at least 1".into()));
-        }
-        if parsed.per_place == 0 {
-            return Err(err("`per_place` must be at least 1".into()));
         }
         let mut grounds: Vec<ForageGround> = Vec::new();
         for spec in parsed.ground {
@@ -126,7 +113,6 @@ impl ForageRules {
         }
         Ok(Self {
             seconds: parsed.seconds,
-            per_place: parsed.per_place,
             grounds,
         })
     }
@@ -149,7 +135,6 @@ mod tests {
         let content = crate::test_support::builtin();
         let rules = content.forage().expect("foraging is in the game");
         assert_eq!(rules.seconds, 600);
-        assert_eq!(rules.per_place, 2);
         // Every land landscape has a row; roads and water none.
         for landscape in [
             Landscape::Plains,
@@ -222,10 +207,6 @@ mod tests {
                 "listed twice",
             ),
             ("seconds = 0\n".to_string(), "`seconds` must be"),
-            (
-                format!("per_place = 0\n{}", row("forest", 10, "1d2", "apple", 1)),
-                "`per_place` must be",
-            ),
         ] {
             let mut files = ContentFiles::builtin();
             files.insert("data/forage.toml", &text);

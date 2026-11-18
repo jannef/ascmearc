@@ -8,15 +8,11 @@
 # One that runs its time finds food with the ground's `chance` percent, plus what Survival gives
 # (its `forage` benefit, at most 30 more), at most 100: one draw. Found, one of `finds` is picked
 # by weight (one draw) and `count` of it rolled (a draw per die); the food is fresh, and goes into
-# the pack. Either way the try may earn Survival a training mark. A forage that found nothing may
-# be tried again at once; but the land runs out: one stretch of the wild (an overworld cell and its
-# local area together) gives `per_place` forages that find food, and is then foraged out for good
-# (a forage there is refused, taking no time). Walk on to fresh land.
+# the pack. Either way the try may earn Survival a training mark. It may be repeated, and it
+# never runs out.
 #
 # Fields:
 #   seconds        how long a forage takes, in seconds (at least 1)
-#   per_place      how many forages that find food one stretch of the wild gives before it is
-#                  foraged out (at least 1; default 1)
 #   [[ground]]     one row per landscape (terrain/'s `landscape`: what the land of an
 #                  overworld cell is like; a local area's is its overworld cell's), once.
 #                  Roads, rivers, and lakes have none here: there is nothing to forage there.
@@ -33,7 +29,6 @@
 #                  gathered from the glowing fungus: herbs.toml)
 
 seconds = 600
-per_place = 2
 
 [[ground]]
 landscape = "plains"

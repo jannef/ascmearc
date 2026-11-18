@@ -325,13 +325,8 @@ exit's overworld cell, never on water or ice (`LevelState::water_at`); the rule 
 abilities menu (`PerceptionView::abilities`: `Unavailable::NotHere`, "not usable here") both
 ask it. Draws: the chance (one keyed draw), the find (`magic::loot::pick_weighted`, one), and
 the count's dice; the food is made then (`rot::made_at`) and joins the pack; then
-`train(Use::Forage)`. **The land runs out**: a forage that found food counts at its
-`forage::forage_place` (the overworld's id and cell; a local area's own overworld cell, so an
-area and its cell share one count) in `WorldState::foraged` (`forage::Foraged`, saved, left out
-of a save while empty); at the file's `per_place` (2) the place is foraged out for good
-(`forage::foraged_out`): `start_forage` refuses, no time, `forage::FORAGED_OUT`, and the menu
-greys it (`Unavailable::NotHere`, through `PerceptionView::foraged`, the player's own record). A
-forage that found nothing counts nothing. The wiki's table is `generated/foraging.md`
+`train(Use::Forage)`. Nothing is stored, so saves change only by content (the new
+`ActionKind`, the new food objects). Foraging never runs out. The wiki's table is `generated/foraging.md`
 (`xtask/src/wiki/skills.rs::foraging`).
 **Appraise** (#666; Negotiation took the shops' bargain): `world/skills/appraise.rs`,
 `World::appraise_hours(start, seconds)`, called for the player from `World::live` (the status
