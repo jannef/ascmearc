@@ -28,7 +28,9 @@
 #                  flying along at `speed`, its line behind fading over `tail` seconds (its glyphs
 #                  then: the shaft, then the dimming tail), its `impact` particles as the head
 #                  passes each cell, and one flash where it strikes; no `branches`
-#   tail           rays: seconds each stretch of the line takes to fade after the head passed it
+#   tail           bolts: seconds each stretch of the line takes to fade after the head (a ray's)
+#                  or the front (a jagged bolt's) passed it; a jagged bolt with one stays jagged
+#                  but no longer flashes its whole line, and gives its light from its front
 #   light          { color = [r, g, b], radius }: the light it gives at full strength (255 = fully
 #                  lit, more = overbright; as in lights.toml), from a burst's center
 #                  or along a bolt every other cell. It lights the scene like any light, but
@@ -336,6 +338,23 @@ colors = ["#f4e8ff", "#d8b8ff", "#a878f0", "#7a48d0", "#4a2890", "#241448"]
 glow = 0.7
 branches = 0.02
 light = { color = [520, 380, 820], radius = 3 }
+
+# Magic missile's: the arcane bolt's violet zigzag, but a dart, not lightning: its front draws
+# out at a speed the eye can follow and the line behind it fades over its `tail`, as Ray of
+# frost's does; one shape for the whole flight (a `flicker` longer than it lasts), no forks.
+[[effect]]
+id = "magic_missile"
+shape = "bolt"
+speed = 45
+impact = 0.1
+flashes = 1
+linger = 0.25
+flicker = 2.0
+glyphs = "─"
+tail = 0.3
+colors = ["#f4e8ff", "#d8b8ff", "#a878f0", "#7a48d0", "#4a2890", "#241448"]
+glow = 0.6
+light = { color = [420, 300, 660], radius = 2 }
 
 # Ray of frost's (#1249): a ray, a long icicle flying straight from the caster:
 # a glint of white at its thin point, a pale solid shaft behind it thinning to a fading tail of

@@ -14,7 +14,7 @@ range = 8
 damage = "2d4"
 
 [spell.cast]
-effect = "arcane_bolt"
+effect = "magic_missile"
 noun = "magic missile"
 verb = "strikes"
 noise = { sound = "chanting", loudness = 30 }

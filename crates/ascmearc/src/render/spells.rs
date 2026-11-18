@@ -395,8 +395,9 @@ pub fn ray_strokes(origin: Pos, path: &[Pos], aspect: f32) -> Vec<Stroke> {
         .collect()
 }
 
-/// How bright a stretch of a ray's line is `since` seconds after its head passed it, with a
-/// `tail` of that many seconds: full until the head passes, then fading to nothing.
+/// How bright a stretch of a ray's line (or a trailing bolt's, [`bolt_trail`]) is `since`
+/// seconds after its head passed it, with a `tail` of that many seconds: full until the head
+/// passes, then fading to nothing.
 pub fn ray_tail(since: f32, tail: f32) -> f32 {
     if since <= 0.0 {
         1.0
@@ -405,6 +406,14 @@ pub fn ray_tail(since: f32, tail: f32) -> f32 {
     } else {
         (1.0 - since / tail).clamp(0.0, 1.0).powi(2)
     }
+}
+
+/// How bright the strokes of a jagged bolt's path cell `index` (of `len`) are `age` seconds
+/// after it began, its front drawing out over `travel` seconds, with a `tail`: as a ray's line,
+/// [`ray_tail`] from the moment its front has passed that cell.
+pub fn bolt_trail(age: f32, index: usize, len: usize, travel: f32, tail: f32) -> f32 {
+    let passed = (index + 1) as f32 / len.max(1) as f32 * travel;
+    ray_tail(age - passed, tail)
 }
 
 #[cfg(test)]
@@ -635,5 +644,18 @@ mod tests {
         assert!(ray_tail(0.1, 0.3) < 1.0 && ray_tail(0.1, 0.3) > ray_tail(0.2, 0.3));
         assert_eq!(ray_tail(0.3, 0.3), 0.0);
         assert_eq!(ray_tail(0.1, 0.0), 0.0);
+    }
+
+    #[test]
+    fn a_trailing_bolt_fades_behind_its_front() {
+        // Ten cells drawn out over 0.5 s with a 0.3 s tail: at 0.3 s the front (cell 5) is full,
+        // the cells behind it dimmer the farther back, the first all but gone.
+        let at = |index| bolt_trail(0.3, index, 10, 0.5, 0.3);
+        assert_eq!(at(5), 1.0);
+        assert!(at(4) < 1.0 && at(4) > at(2) && at(2) > at(1));
+        assert!(at(0) < 0.05);
+        // After the strike the last cell fades over the tail too.
+        assert_eq!(bolt_trail(0.5, 9, 10, 0.5, 0.3), 1.0);
+        assert_eq!(bolt_trail(0.8, 9, 10, 0.5, 0.3), 0.0);
     }
 }
