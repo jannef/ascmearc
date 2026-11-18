@@ -3,7 +3,7 @@
 //! [`Effect::MaxMana`] deepens the pool a little ([`Actor::max_mana`], at most a fifth,
 //! [`crate::mana::deeper`]). Both only while the actor is trained in such a skill: an untrained
 //! one gives nothing, even with an item or a talent raising it. Marks:
-//! [`crate::skills::Use::Cast`], reported where mana is spent (`World::spend_mana`).
+//! [`crate::skills::Use::Mana`], reported for each point of mana spent (`World::spend_mana`).
 
 use crate::content::Content;
 use crate::skills::Effect;

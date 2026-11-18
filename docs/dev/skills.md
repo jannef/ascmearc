@@ -140,8 +140,12 @@ training-stream draw) under a creature they see; `Use::Overhear` (Listen) in `pe
 sound that is no news heard while resting or waiting (`World::waiting` is set around the player's
 wait); Detect traps also marks on `disarm` and, with Spot, on `search`, as data. Concentration's
 `mana_regen` and `max_mana` (trained only, `Actor::mind`) are read in
-`World::mana_rate` and `Actor::max_mana` (`world/magic/concentration.rs`, docs/dev/mana.md), its `cast`
-use reported by `World::spend_mana` (Spellcraft's `cast` mark, its only one, 25 %, rides the same use, #989, #1270). Spellcraft's `cast` (points on the Spellcraft check every cast with one's own mana makes) and `ward` (points off a miscast's total) are read in `world/magic/miscast.rs` (`Actor::cast_bonus`, `Actor::miscast_ward`; #1271, docs/dev/spells.md "Miscasts"), by anyone: an untrained caster has none of them and checks all the same. Knowledge (`kind = "passive"`, no menu row: it has no use of its own, #1698) has its `resist` (#667) read
+`World::mana_rate` and `Actor::max_mana` (`world/magic/concentration.rs`, docs/dev/mana.md), its `mana`
+use (`Use::Mana`, 4 %) reported by `World::spend_mana` once for each point of the cost actually paid
+(after `Actor::mana_cost`: Frugal caster, Thrift), the player's only and a spend over 0 only, each
+point its own training-stream draw, so a big spend trains more than a small one. The same spend
+reports `cast` once (Spellcraft's `cast` mark, its only one, 25 %, #989, #1270) and the stats'
+`StatUse::Cast` (Willpower). Tests: `world/magic/concentration_tests.rs`. Spellcraft's `cast` (points on the Spellcraft check every cast with one's own mana makes) and `ward` (points off a miscast's total) are read in `world/magic/miscast.rs` (`Actor::cast_bonus`, `Actor::miscast_ward`; #1271, docs/dev/spells.md "Miscasts"), by anyone: an untrained caster has none of them and checks all the same. Knowledge (`kind = "passive"`, no menu row: it has no use of its own, #1698) has its `resist` (#667) read
 in `world/skills/knowledge.rs` (`World::resisting`, `resist_bonus`) through `Actor::skill_effect_above`
 (`Skills::effect_above`: each benefit read at the value less the creature's level, nothing at or
 below it), called for the modifier of the player's check against a creature's drain

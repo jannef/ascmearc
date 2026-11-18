@@ -3,8 +3,10 @@ id = "concentration"
 name = "Concentration"
 description = "Keeping your mind on the task, whatever happens around you: your mana comes back faster, and your pool runs a little deeper."
 kind = "rules"
-# Spending mana (a spell, an ability paid in it) is practice (#668).
-mark = [{ on = "cast", chance = 25 }]
+# Spending mana (a spell, an ability paid in it) is practice (#668): a chance for each point of
+# the cost actually paid (after Frugal caster), so a 6-mana spell is near one spend's old 25 %
+# and a big spend trains more.
+mark = [{ on = "mana", chance = 4 }]
 # Trained only (`world/magic/concentration.rs`): mana back that percent faster, added to the items'
 # and talents' percent (+5 % at 20, +40 % at 100); and points added to the maximum mana, never
 # more than a fifth of the pool without them (`mana::deeper`; +1 at 25, +5 at 100).

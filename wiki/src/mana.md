@@ -92,13 +92,18 @@ When several things change the pace at once:
   as fast (resting's pace times 1.5).
 
 Nothing else changes it: not your [burden](burden.md), not the [cold](temperature.md), and not
-your [combat stance](stances.md#stances). Spending mana now and then trains Concentration.
+your [combat stance](stances.md#stances). Spending mana trains Concentration (below).
 
 ## Spending it
 
 Anything that costs mana is refused when you have too little, and then spends nothing. Spending
 any mana trains your [Willpower](stats.md#stat-willpower): each time is a chance at a training mark
 (see [Stats](stats.md#raising-your-stats)).
+
+Spending mana also trains *[Concentration](skills.md#skill-concentration)*, if you are trained
+in it. Each point you spend is its own 4 % chance at a [skill mark](skills.md#improving-a-skill),
+so big spends train it more than small ones. A 1-mana spell has a 4 % chance; a 10-mana spell
+earns 0.4 marks on average. Only the mana you actually pay counts, after the cuts below.
 
 The talent *[Frugal caster](talents-mind.md#talent-frugal-caster)* makes abilities cost a fifth less
 mana, rounded to the nearest point and never below 1: 5 becomes 4, 6 becomes 5, 10 becomes 8.
