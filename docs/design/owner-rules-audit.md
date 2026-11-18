@@ -22,10 +22,11 @@ new rule; a rule is kept as it was or removed. No behaviour and no data value ch
   deleted outright (no anti-farming limits / time is the price; balance is not a goal; no
   undiscussed D&D concepts; no caps and no protection; effects are subtle, outside its spec
   line). Eight technical rules and five quoted product decisions are kept, each in one home.
-- **75 edits in 65 files** remove the restatements outside the homes (§2): every `the owner's
+- **80 edits in 69 files** remove the restatements outside the homes (§2): every `the owner's
   rule` / `the owner's decision` justification in code and data comments, the maxims in
-  `docs/dev/` and `ops/agents/rules.md`, the five "time is the price" clauses in `spec/`, and
-  three wiki sentences. The remaining `(the owner)` tags in `spec/` are the spec's own quoting
+  `docs/dev/` and `ops/agents/rules.md`, the five "time is the price" clauses in `spec/`, the two
+  maxims in `spec/01-vision.md` itself ("Balance is not a goal", "no undiscussed D&D concept"),
+  and three wiki sentences. The remaining `(the owner)` tags in `spec/` are the spec's own quoting
   convention on **facts** (what the game does), not rules; they are left for the owner to rule
   on (§4).
 - **The worst misapplications** (§3.1, table): the "no anti-farming limits" line, which the owner
@@ -69,7 +70,7 @@ home of the rule; this report and the cleanup do not restate it anywhere else.
 | Where | What |
 |---|---|
 | `ops/agents/rules.md` | Deleted the line "No anti-farming limits; unbalanced choices are fine; no undiscussed D&D concepts" and "effects are subtle" (its home is `spec/03-rendering.md`); the headings "House rules (the owner's)" and "Local agents only (the owner's rules)" lose the attribution; "(owner's rule)" dropped from the push-at-once step. `ops/agents/README.md`: "the owner's house rules" becomes "the house rules". |
-| `spec/` | Five "time is the price/cost" clauses removed, the behaviour kept: `12-character.md` (Heal retries, Steal retries, target dummies), `10-combat.md` (disarming), `11-magic.md` (retrying a check). `12-character.md`'s background line loses its maxim name and tag ("**No caps and no protection** (the owner)"): the fact stays. `spec/01-vision.md` and `specification.md` are **not touched**: #1862 edits them (see §4 for the two lines left there to delete afterwards). |
+| `spec/` | Five "time is the price/cost" clauses removed, the behaviour kept: `12-character.md` (Heal retries, Steal retries, target dummies), `10-combat.md` (disarming), `11-magic.md` (retrying a check). `12-character.md`'s background line loses its maxim name and tag ("**No caps and no protection** (the owner)"): the fact stays. `spec/01-vision.md` (after #1862 merged): the line "Balance is not a goal. Unbalanced choices are fine" and the clause "no undiscussed D&D concept comes in" deleted; the no-softlock line, the hidden-numbers line, and the seed line stay. `specification.md`'s index line names the two house rules that remain. |
 | `docs/dev/` (20 files) | Every "the owner's rule" / "the owner's decision" justification removed; where the fact has a spec home the note now links it (`quests.md` → `spec/09-creatures.md` "Quests"; `creatures/trolls.md` → "Gimmicks"; `saves.md` → `spec/06-content.md` "Saves, permadeath, the graveyard"; `allies.md` → `screens.md` "Abilities"). "Balance is not a goal" out of `character-creation.md`; the D&D sentence out of `stats.md`; "the house rule for ability limits" in `summoning.md` now names what it is, the one shape of an ability limit in `ability.rs`. |
 | Code comments (33 files) | "the owner's rule: time is the price" and kin removed from the skill modules (`lockpick`, `feint`, `intimidate`, `steal`, `disarm`, `search`, `tame`, `heal` ×2, `lure`); "the house rule for ability limits" in seven `content/` modules becomes "as every ability limit is, `ability.rs`"; the owner attributions in `quest.rs`, `quest_tests.rs`, `quest_screen.rs`, `background.rs`, `zone_tint.rs`, `input/play.rs`, `weapon_ability.rs`, `tests.rs`, `danger.rs`, `learn.rs`, `blink.rs`, `snatch.rs`, `graveyard.rs`, `rod.rs` removed, the described behaviour kept. **Not touched**: `world/skills/gather.rs` and `forage.rs` (the depletion fix PR is in flight on them). |
 | Data comments | `crystals.toml` ×2, `rules/search.toml`, `status/230-burnt_out.toml`, `quests.toml` ("a roguelike, not an MMO"), and the "Balance is not a goal" lines in `classes/README.toml` and `prestige/README.toml`. **Not touched**: `herbs.toml`, `forage.toml` (the depletion PR). |
@@ -123,7 +124,8 @@ fungus never runs out).
 
 - **Words** (2026-10-18, #108): *"balancing choices is not one of our top priorities. Players
   will expect there to be garbage choices they can challenge themselves with."*
-- **Home**: `spec/01-vision.md` line 20 (left for #1862's wake, §4).
+- **Home**: was `spec/01-vision.md` line 20; deleted by this PR. The owner's quote stays in the
+  integrator's memory and in #108.
 - **Restatements**: `ops/agents/rules.md` (deleted), `docs/dev/character-creation.md`
   (deleted), `assets/data/classes/README.toml` and `prestige/README.toml` (deleted), 5 design
   documents (`recipes.md:7`, `craftsperson.md:7` "balance is not a goal", `progression.md:74`,
@@ -134,7 +136,7 @@ fungus never runs out).
 
 - **Words** (2026-10-18, in session; memory): *"do not implement other dnd concepts we did not
   discuss."* Said about the stat system (modifiers yes, checks and saves no).
-- **Home**: `spec/01-vision.md` line 19, last clause (left for §4).
+- **Home**: was the last clause of `spec/01-vision.md` line 19; deleted by this PR.
 - **Restatements**: `ops/agents/rules.md` (deleted), `docs/dev/stats.md` (deleted), #973.
 
 ### 3.4 Hidden numbers in the game, exact in the wiki — KEEP
@@ -306,12 +308,10 @@ out", #159): technical, and not a design maxim. Nothing to delete.
 
 ## 4. Left for the owner
 
-- `spec/01-vision.md` lines 19 (the clause "no undiscussed D&D concept comes in") and 20
-  ("Balance is not a goal. Unbalanced choices are fine ...") are maxims this audit recommends
-  deleting. They sit next to line 21, which #1862 replaces; this PR leaves the file alone to
-  avoid a conflict. Delete them in #1862 or right after it merges. `specification.md` line 23
-  names the house rules in its index line ("balance is not a goal, no softlocks, hidden
-  numbers" after #1862) and goes with them.
+- `spec/01-vision.md` "Scope" now holds three house rules: no softlocks (#1862), hidden
+  numbers in the game and exact in the wiki, and no seed in player text. Whether the last two
+  belong there or in CLAUDE.md alone (the hidden-numbers rule is in both) is a small further
+  call.
 - The spec's convention of tagging facts with `(the owner)` (§3.16, 35 lines) and
   `specification.md` line 17's "The owner's words are quoted verbatim where a rule rests on a
   decision". Keeping it means agents keep reading facts as rulings; dropping it is a mechanical

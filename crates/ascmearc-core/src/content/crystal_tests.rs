@@ -1,5 +1,5 @@
 //! The crystals' table (`data/crystals.toml`, docs/design/enchanting.md §5): the built-in one
-//! loads with the owner's rules, every creature and affix has the colour the rows say, and the
+//! loads with its never-rows kept, every creature and affix has the colour the rows say, and the
 //! loader refuses what would leave an affix that could never be enchanted.
 
 use crate::content::{Content, ContentFiles};

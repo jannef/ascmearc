@@ -20,7 +20,7 @@ not required. Avoid being overtly verbose."
 
 ## Sections
 
-- [`spec/01-vision.md`](spec/01-vision.md) — **Vision and scope**: what Ascmearc is, the targets, the house rules (balance is not a goal, no softlocks, hidden numbers), what is deliberately not built
+- [`spec/01-vision.md`](spec/01-vision.md) — **Vision and scope**: what Ascmearc is, the targets, the house rules (no softlocks, hidden numbers), what is deliberately not built
 - [`spec/02-worlds.md`](spec/02-worlds.md) — **Worlds**: campaigns, the showcase (the test world), the Ascmearc campaign, names and language
 - [`spec/03-rendering.md`](spec/03-rendering.md) — **Rendering**: glyphs and layers, visual light, motion and time, effects, readability
 - [`spec/04-perception.md`](spec/04-perception.md) — **Perception**: line of sight, light, visibility and eyes, creature sight, sky and weather, temperature and ice, overworld sight, hearing, the perception snapshot
