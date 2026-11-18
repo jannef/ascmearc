@@ -773,7 +773,7 @@ impl Ability {
             }
             Ability::Forage => {
                 "Spend a while searching the wild around you for something to eat: berries, \
-                 nuts, mushrooms, roots."
+                 nuts, mushrooms, roots. The land runs out: once it is bare, move on."
             }
             Ability::Salvage => {
                 "Take an item you carry apart for ten minutes, for the metal, wood, bone, gems, \
@@ -810,7 +810,7 @@ impl Ability {
             Ability::Gather => {
                 "Search the glowing fungus beside you for five minutes for herbs to brew with. \
                  It takes Herbalism, and more of it finds more; the deeper the fungus grows, \
-                 the rarer the herbs. It never runs out."
+                 the rarer the herbs. Each clump gives one gather: then it is picked bare."
             }
             Ability::Heel => {
                 "Call your allies to your side: they follow you and fight what threatens you. \

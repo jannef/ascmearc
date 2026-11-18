@@ -252,6 +252,13 @@ one of the land's finds is picked by the shares shown, and you gather a few of i
 pack ("You gather 2 handfuls of berries."). Otherwise: "You find nothing worth eating." Either way,
 your [Survival](skills.md#skill-survival) may earn a training mark.
 
+The land runs out. Each cell of the [overworld](overworld.md#travel), together with its
+[local area](overworld.md#local-areas), gives only a few forages that find food (the line above
+the table below says how many). After that it is foraged out for good: the menu greys Forage out there, and trying anyway tells you "You have
+stripped this land bare: there is nothing left to forage here." (no time passes). A forage that
+finds nothing does not count, so you can try again at once. When the land is bare, move on to the
+next cell.
+
 If you are also trained in **[Herbalism](skills.md#skill-herbalism)**, a forage that finds something may find a herb
 besides: one of the land's herbs below, picked by the shares shown ("Your eye for herbs finds an
 angelica root besides."). The chance is 25 % at 0, 60 % at 100, and 80 % at 200. Land with no herbs
@@ -260,7 +267,6 @@ gives none. A forage trains Herbalism one time in four, whatever it finds.
 {{#include generated/foraging.md}}
 
 What you find is ordinary [food](food.md) (see [Hunger](hunger.md)). Berries and mushrooms spoil within days, hazelnuts
-keep for months, and an angelica root cures [diseases](diseases.md#how-a-disease-goes). Forage as often as you like, in the same
-spot too: the time is the price.
+keep for months, and an angelica root cures [diseases](diseases.md#how-a-disease-goes).
 
 See also: [Abilities](abilities.md), [Skills](skills.md), and [Crafting](crafting.md).

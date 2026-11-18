@@ -190,7 +190,13 @@ saved and hashed by that index. Their first effects (#1343, one hook each):
   `gather::UNTRAINED`, after the fungus is found) and by `Ability::unavailable`
   (`Unavailable::Untrained(skill)`, "you are untrained in Herbalism", id `untrained:herbalism`).
   A gather finds `count` + the skill's trained value / `value_per_count`, each drawn by weight
-  at the level's item level (`HerbRules::at`). Marks on `gather`, 100 %. The fungus never changes.
+  at the level's item level (`HerbRules::at`). Marks on `gather`, 100 %. A gather that ran its
+  time picks its cell over (`gather::Gathering` carries the cell from `start_gather`):
+  `World::set_terrain` turns it the file's `picked` terrain (`picked_fungus`, no light: the light
+  cache re-derives the cell as for a spent altar), "The fungus is picked bare.", for good; a
+  gather cut short leaves it. The terrain is the whole record, saved with the level, so a level's
+  fungus gives at most a find a cell. Gather toward picked fungus is refused, no time,
+  `gather::PICKED`; the menu no longer offers it there (`fungus_ways` asks for `terrain`).
 - **Alchemy**'s `identify_potion` and **Enchanting**'s `identify_magic` (5 / 25 / 40 %) look in
   `world/skills/appraise.rs::appraise_hours` after Appraise's `identify`, from the same hour's stream:
   Alchemy at the potions and flasks whose kind is unknown (`drink`), Enchanting at every other
@@ -319,8 +325,13 @@ exit's overworld cell, never on water or ice (`LevelState::water_at`); the rule 
 abilities menu (`PerceptionView::abilities`: `Unavailable::NotHere`, "not usable here") both
 ask it. Draws: the chance (one keyed draw), the find (`magic::loot::pick_weighted`, one), and
 the count's dice; the food is made then (`rot::made_at`) and joins the pack; then
-`train(Use::Forage)`. Nothing is stored, so saves change only by content (the new
-`ActionKind`, the new food objects). The wiki's table is `generated/foraging.md`
+`train(Use::Forage)`. **The land runs out**: a forage that found food counts at its
+`forage::forage_place` (the overworld's id and cell; a local area's own overworld cell, so an
+area and its cell share one count) in `WorldState::foraged` (`forage::Foraged`, saved, left out
+of a save while empty); at the file's `per_place` (2) the place is foraged out for good
+(`forage::foraged_out`): `start_forage` refuses, no time, `forage::FORAGED_OUT`, and the menu
+greys it (`Unavailable::NotHere`, through `PerceptionView::foraged`, the player's own record). A
+forage that found nothing counts nothing. The wiki's table is `generated/foraging.md`
 (`xtask/src/wiki/skills.rs::foraging`).
 **Appraise** (#666; Negotiation took the shops' bargain): `world/skills/appraise.rs`,
 `World::appraise_hours(start, seconds)`, called for the player from `World::live` (the status

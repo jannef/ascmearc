@@ -13,6 +13,9 @@ use serde::Deserialize;
 pub struct HerbRules {
     /// The terrain herbs are gathered from (the glowing fungus).
     pub terrain: TerrainId,
+    /// The terrain a cell of it becomes once gathered from (picked-over fungus): it gives nothing
+    /// more.
+    pub picked: TerrainId,
     /// How long a gather takes, in seconds of game time.
     pub seconds: u32,
     /// How many herbs a trained gatherer finds, before Herbalism.
@@ -65,6 +68,7 @@ impl HerbRules {
 #[serde(deny_unknown_fields)]
 struct HerbsFile {
     terrain: String,
+    picked: String,
     seconds: u32,
     count: Dice,
     value_per_count: u16,
@@ -88,7 +92,8 @@ fn first_level() -> u8 {
 }
 
 impl HerbRules {
-    /// Parses `data/herbs.toml`: a known terrain and skill, a time of at least a second, a
+    /// Parses `data/herbs.toml`: a known terrain and skill, a known `picked` terrain other than
+    /// it (walkable if it is, so nobody on the cell is stranded), a time of at least a second, a
     /// `value_per_count` above 0 (a divisor), and herbs that are known stackable objects, each
     /// once, with a weight above 0 and a `level` of at least 1.
     pub(super) fn parse(
@@ -100,6 +105,14 @@ impl HerbRules {
         let parsed: HerbsFile = toml::from_str(text).map_err(|e| err(e.to_string()))?;
         let terrain = (content.terrain_id(&parsed.terrain))
             .ok_or_else(|| err(format!("unknown terrain `{}`", parsed.terrain)))?;
+        let picked = (content.terrain_id(&parsed.picked))
+            .ok_or_else(|| err(format!("unknown terrain `{}`", parsed.picked)))?;
+        if picked == terrain {
+            return Err(err("`picked` must be another terrain than `terrain`".into()));
+        }
+        if content.terrain(terrain).walkable && !content.terrain(picked).walkable {
+            return Err(err("`picked` must be walkable, as `terrain` is".into()));
+        }
         let skill = (content.skill_id(&parsed.skill))
             .ok_or_else(|| err(format!("unknown skill `{}`", parsed.skill)))?;
         if parsed.seconds == 0 {
@@ -142,6 +155,7 @@ impl HerbRules {
         }
         Ok(HerbRules {
             terrain,
+            picked,
             seconds: parsed.seconds,
             count: parsed.count,
             value_per_count: parsed.value_per_count,
@@ -210,6 +224,21 @@ mod tests {
                 "terrain = \"fungus\"",
                 "terrain = \"moss\"",
                 "unknown terrain",
+            ),
+            (
+                "picked = \"picked_fungus\"",
+                "picked = \"moss\"",
+                "unknown terrain",
+            ),
+            (
+                "picked = \"picked_fungus\"",
+                "picked = \"fungus\"",
+                "another terrain",
+            ),
+            (
+                "picked = \"picked_fungus\"",
+                "picked = \"wall\"",
+                "walkable",
             ),
             (
                 "object = \"glowcap\"",

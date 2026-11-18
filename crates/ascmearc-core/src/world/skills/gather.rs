@@ -6,19 +6,24 @@
 //!   exists. Anyone else is refused beside the fungus, taking no time ([`UNTRAINED`]); the menu
 //!   lists the row greyed out ([`unskilled`], [`crate::ability::Unavailable::Untrained`]).
 //! - **Where**: the cell the way named, beside the player, whose terrain is the file's `terrain`
-//!   (the glowing fungus, [`fungus_ways`]). Refused, taking no time, anywhere else ("There is
-//!   nothing here to gather."), before the skill is asked. The menu asks for the way only when
-//!   fungus stands on more than one cell beside the player.
+//!   (the glowing fungus, [`fungus_ways`]). Refused, taking no time, anywhere else, before the
+//!   skill is asked: "This fungus has been picked over." at the file's `picked` terrain, else
+//!   "There is nothing here to gather.". The menu asks for the way only when fungus stands on
+//!   more than one cell beside the player.
 //! - **Time**: the file's `seconds`, in turns of the `gather` action ([`World::keep_at`], the
 //!   rest's machinery; the last turn cut short to end on time): a creature coming into view, a
-//!   message, or a blow stops it, and a gather cut short finds nothing (the time is spent).
+//!   message, or a blow stops it, and a gather cut short finds nothing (the time is spent) and
+//!   leaves the fungus as it was.
 //! - **The find**, once the time is up: how many, `count` (a draw per die) plus one for every
 //!   `value_per_count` of the skill's trained value; then each herb one draw by weight from the table at the level's item level
 //!   ([`crate::content::HerbRules::at`]). They go into the pack: "You gather 2 sprigs of
 //!   moonwort and a glowcap." Then Herbalism may earn a training mark ([`Use::Gather`], the
 //!   training stream). Every find draw is from the gameplay stream, in that order.
-//! - **The fungus** is never picked over: no state changes, so the same fungus may be gathered
-//!   again at once (no anti-farming limit, the owner's rule: time is the price).
+//! - **The fungus is picked over** by a gather that ran its time: its cell becomes the file's
+//!   `picked` terrain ([`World::set_terrain`]: it sheds no light), "The fungus is picked bare.",
+//!   and it never grows back. A cell of fungus is loot, and loot that could be taken again and
+//!   again would be an exploit, so a level's fungus gives at most as many finds as it has cells.
+//!   The terrain is the whole record: it is saved with the level.
 //!
 //! [`Action::Gather`]: crate::action::Action::Gather
 
@@ -57,6 +62,16 @@ pub fn unskilled(gatherer: &crate::world::Actor, content: &Content) -> Option<Sk
     gatherer.skills.get(skill).is_none().then_some(skill)
 }
 
+/// A gather under way: the fungus's cell and how long it takes.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(in crate::world) struct Gathering {
+    fungus: Pos,
+    seconds: u32,
+}
+
+/// What the player is told gathering from fungus already picked over.
+pub const PICKED: &str = "This fungus has been picked over.";
+
 impl World {
     /// The player begins to gather from the fungus the way `dir`; refused, taking no time, with
     /// none there or untrained in Herbalism ([`unskilled`]).
@@ -65,7 +80,14 @@ impl World {
         let here = self.player_pos();
         let ways = fungus_ways(&content, self.state.current(), here);
         let Some(rules) = content.herbs().filter(|_| ways.contains(&dir)) else {
-            self.say("There is nothing here to gather.");
+            let picked = (content.herbs()).is_some_and(|rules| {
+                self.state.current().terrain_at(here.step(dir)) == Some(rules.picked)
+            });
+            self.say(if picked {
+                PICKED
+            } else {
+                "There is nothing here to gather."
+            });
             return Spent::Nothing;
         };
         if unskilled(self.state.player(), &content).is_some() {
@@ -73,12 +95,16 @@ impl World {
             return Spent::Nothing;
         }
         self.say("You search the glowing fungus for herbs.");
-        Spent::Gather(rules.seconds)
+        Spent::Gather(Gathering {
+            fungus: here.step(dir),
+            seconds: rules.seconds,
+        })
     }
 
     /// Gathers turn after turn until its time is up or something stops it (module docs): its
     /// last turn cut short to end exactly when its time is up, as a forage's is.
-    pub(in crate::world) fn gather(&mut self, seconds: u32, events: &mut Vec<Event>) {
+    pub(in crate::world) fn gather(&mut self, gathering: Gathering, events: &mut Vec<Event>) {
+        let Gathering { fungus, seconds } = gathering;
         let until = self.state.time + Duration::seconds(u64::from(seconds));
         let turn = self.price_of(self.state.player, ActionKind::Gather);
         let ended = self.keep_at(
@@ -88,7 +114,7 @@ impl World {
         );
         match ended {
             Ended::Died => {}
-            _ if self.state.time >= until => self.gathered(),
+            _ if self.state.time >= until => self.gathered(fungus),
             Ended::Came(came) => {
                 let text = format!("{}; you stop gathering.", self.came_line(came));
                 self.say(text);
@@ -97,8 +123,9 @@ impl World {
         }
     }
 
-    /// A gather ran its time: how many, which herbs, the mark (module docs).
-    fn gathered(&mut self) {
+    /// A gather ran its time: how many, which herbs, the mark, and the fungus at `fungus` picked
+    /// over (module docs).
+    fn gathered(&mut self, fungus: Pos) {
         let content = self.content.clone();
         let Some(rules) = content.herbs() else {
             return;
@@ -129,6 +156,10 @@ impl World {
             for stack in stacks {
                 object::add_to_inventory(self.state.inventory_mut(), stack, &content);
             }
+        }
+        if self.state.current().terrain_at(fungus) == Some(rules.terrain) {
+            self.set_terrain(fungus, rules.picked);
+            self.say("The fungus is picked bare.");
         }
         if self.trains(Use::Gather) {
             self.train(Use::Gather);

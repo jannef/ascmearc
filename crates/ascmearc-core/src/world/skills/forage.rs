@@ -21,8 +21,14 @@
 //!   `count` (a draw per die). The food is made now (fresh, `rot::made_at`) and goes into the
 //!   pack (packs have no limit but the burden). "You gather 2 handfuls of berries." / "You find
 //!   nothing worth eating." Then Survival may earn a training mark ([`Use::Forage`], the
-//!   training stream). Nothing is remembered of a forage: the same spot may be tried again at
-//!   once (no anti-farming limit, the owner's rule: time is the price).
+//!   training stream). A forage that found nothing may be tried again at once.
+//! - **The land runs out**: food is loot, and loot taken without limit from one place would be
+//!   an exploit. One stretch of the wild, its [`ForagePlace`] (an overworld cell and its local
+//!   area together, as they forage alike), gives the file's `per_place` forages that find food
+//!   ([`Foraged`], saved with the run); then it is foraged out for good: a forage there is
+//!   refused, taking no time ("You have stripped this land bare: there is nothing left to
+//!   forage here."), and the abilities menu greys it out ("not usable here"). Fresh land is a
+//!   walk away.
 //! - **A herbalist's extra find** (#1343): when the find was made and the player is trained in a
 //!   skill with the `herbs` benefit (Herbalism), and the ground has `herbs`, one more draw of
 //!   the gameplay stream with the benefit's chance; made, one of the herbs by weight (one draw),
@@ -43,6 +49,76 @@ use crate::time::Duration;
 use crate::world::levels::encounter::Watch;
 use crate::world::turn::rest::Ended;
 use crate::world::{LevelState, Spent, World};
+use serde::{Deserialize, Serialize};
+use std::collections::BTreeMap;
+
+/// What the player is told foraging land already foraged out.
+pub const FORAGED_OUT: &str =
+    "You have stripped this land bare: there is nothing left to forage here.";
+
+/// One stretch of the wild, as foraging counts it: an overworld's id and its cell (a local
+/// area's is its own overworld cell's).
+pub(crate) type ForagePlace<'a> = (&'a str, Pos);
+
+/// The forages that found food, by overworld and cell (module docs): saved with the run, and
+/// left out of a save while empty.
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub(crate) struct Foraged(BTreeMap<String, Cells>);
+
+/// The forages that found food on one overworld, by cell.
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+struct Cells(#[serde(with = "crate::world::turn::level::by_pos")] BTreeMap<Pos, u8>);
+
+impl Foraged {
+    pub(crate) fn is_empty(&self) -> bool {
+        self.0.is_empty()
+    }
+
+    /// How many forages found food at `place`.
+    fn finds(&self, (world, cell): ForagePlace<'_>) -> u8 {
+        (self.0.get(world))
+            .and_then(|cells| cells.0.get(&cell))
+            .copied()
+            .unwrap_or(0)
+    }
+
+    /// One more forage found food at `place`.
+    fn found(&mut self, (world, cell): ForagePlace<'_>) {
+        let cells = &mut self.0.entry(world.to_string()).or_default().0;
+        let finds = cells.entry(cell).or_default();
+        *finds = finds.saturating_add(1);
+    }
+
+    /// Whether `place` has given all its forages (`per_place`).
+    pub(crate) fn out(&self, content: &Content, place: ForagePlace<'_>) -> bool {
+        content
+            .forage()
+            .is_some_and(|r| self.finds(place) >= r.per_place)
+    }
+}
+
+/// The stretch of the wild a forage at `at` on `level` searches: the overworld's cell, or a local
+/// area's own overworld cell; `None` anywhere else.
+pub(crate) fn forage_place(level: &LevelState, at: Pos) -> Option<ForagePlace<'_>> {
+    match level.kind {
+        LevelKind::Overworld => Some((level.id.as_str(), at)),
+        _ => {
+            parse_local_area(&level.id)?;
+            let exit = level.exit.as_ref()?;
+            Some((exit.to.as_str(), exit.pos))
+        }
+    }
+}
+
+/// Whether the stretch of the wild at `at` on `level` is foraged out (module docs).
+pub(crate) fn foraged_out(
+    content: &Content,
+    foraged: &Foraged,
+    level: &LevelState,
+    at: Pos,
+) -> bool {
+    forage_place(level, at).is_some_and(|place| foraged.out(content, place))
+}
 
 /// The ground a forage at `at` on `level` would search (module docs): `None` where nothing can
 /// be foraged, or without `data/forage.toml`.
@@ -87,6 +163,11 @@ impl World {
         };
         if forage_ground(&content, self.state.current(), self.player_pos()).is_none() {
             self.say("There is nothing to forage here.");
+            return Spent::Nothing;
+        }
+        let (level, here) = (self.state.current(), self.player_pos());
+        if foraged_out(&content, &self.state.foraged, level, here) {
+            self.say(FORAGED_OUT);
             return Spent::Nothing;
         }
         self.say("You search the land about you for something to eat.");
@@ -144,6 +225,11 @@ impl World {
                 let [stack] = stacks;
                 object::add_to_inventory(self.state.inventory_mut(), stack, &content);
                 self.forage_herbs(ground);
+                let here = self.player_pos();
+                let level = &self.state.levels[&self.state.current_level];
+                if let Some(place) = forage_place(level, here) {
+                    self.state.foraged.found(place);
+                }
             }
             None => self.say("You find nothing worth eating."),
         }

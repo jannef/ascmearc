@@ -8,11 +8,14 @@
 # (the time is spent). One that runs its time finds `count` herbs, plus one for each
 # `value_per_count` of the skill's trained value (skills/).
 # Each herb is one draw by weight from the rows below, at the level's item level (a dungeon
-# level's depth; a hand-made level's `item_level`). The fungus is never picked over: gather again
-# at once, as often as you like. The time is the price.
+# level's depth; a hand-made level's `item_level`). A gather that runs its time picks that cell of
+# fungus over: it becomes the `picked` terrain, which gives nothing and never grows back, so a
+# level's fungus gives as many finds as it has cells. A gather cut short leaves it as it was.
 #
 # Fields:
 #   terrain          the terrain herbs are gathered from (terrain/)
+#   picked           the terrain a cell of it becomes once gathered from (terrain/): another
+#                    terrain, walkable if `terrain` is
 #   seconds          how long a gather takes, in seconds (at least 1)
 #   skill            the skill a gatherer must be trained in (skills/; Herbalism)
 #   count            dice: how many herbs a gather finds, before the skill
@@ -25,6 +28,7 @@
 #     level          the first item level it is found on (default 1): none above it
 
 terrain = "fungus"
+picked = "picked_fungus"
 seconds = 300
 count = "1d2"
 value_per_count = 50

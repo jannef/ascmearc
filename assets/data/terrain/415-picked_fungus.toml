@@ -1,0 +1,11 @@
+# Glowing fungus a herbalist has gathered from (data/herbs.toml's `picked`): the caps that glow
+# and hold the herbs are gone, so it sheds no light and gives nothing more. It never grows back.
+[[terrain]]
+id = "picked_fungus"
+plants = true
+name = "picked-over fungus"
+description = "Bare fungus stalks, picked clean of their glowing caps. Nothing here is worth gathering now."
+noun = "mass"
+glyph = '"'
+fg = "#3a5444"
+bg = "#0d0d10"

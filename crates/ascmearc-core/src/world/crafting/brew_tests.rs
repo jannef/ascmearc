@@ -13,11 +13,11 @@ use crate::stats::Stat;
 use crate::test_support::{builtin, run as apply};
 use crate::world::*;
 
-/// A cave with glowing fungus north-east of the player.
+/// A cave with glowing fungus on five sides of the player (a gather picks a cell over).
 const ROOM: &str = "\
 #######
-#...F.#
-#..@..#
+#.FFF.#
+#.F@F.#
 #.....#
 #.....#
 #######
@@ -413,7 +413,7 @@ fn a_brew_from_gathered_herbs_replays() {
     // The witch as the scenario makes her: Alchemy and Herbalism trained, nothing carried.
     let mut w = World::new(content.clone(), "test_still", Some(3)).expect("world");
     let mut replay = Replay::new(&w);
-    let text = "gather:NE*4 craft:potion_of_mana wait";
+    let text = "gather:NW gather:N gather:NE gather:W gather:E craft:potion_of_mana wait";
     for action in crate::action::parse_actions(text).expect("actions") {
         w.apply(&action);
         replay.push(&action, &w);

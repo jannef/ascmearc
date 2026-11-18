@@ -222,7 +222,7 @@ pub use people::quest::{
 };
 pub use people::shop::{Shop, ShopStatus, count_of, favour, part_of, unpaid_parts};
 pub use people::talk::{Conversation, Talk, TopicView};
-pub(crate) use skills::forage::forage_ground;
+pub(crate) use skills::forage::{Foraged, forage_ground, foraged_out};
 pub(crate) use skills::gather::{fungus_ways, unskilled};
 pub use turn::actor::{Actor, ActorId, ActorKind, AttackSkills, Mind, PLAYER_KEY, Patrol};
 pub use turn::actors::Actors;
@@ -340,6 +340,10 @@ pub struct WorldState {
         skip_serializing_if = "levels::endless::EndlessFloors::is_empty"
     )]
     pub(crate) endless: levels::endless::EndlessFloors,
+    /// The forages that found food, by stretch of the wild: a place gives so many, then is
+    /// foraged out (`world/skills/forage.rs`; left out while none have).
+    #[serde(default, skip_serializing_if = "skills::forage::Foraged::is_empty")]
+    pub(crate) foraged: skills::forage::Foraged,
     /// The Pits' records by their integers (`world/levels/pit.rs`; left out while there are none).
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub(crate) pits: BTreeMap<u32, levels::pit::Pit>,
@@ -650,8 +654,8 @@ enum Spent {
     Drink(fixtures::drink::Draught),
     /// Foraging in the wild for this many seconds (see [`World::forage`]).
     Forage(u32),
-    /// Gathering herbs from the glowing fungus for this many seconds (see [`World::gather`]).
-    Gather(u32),
+    /// Gathering herbs from the glowing fungus beside the player (see [`World::gather`]).
+    Gather(skills::gather::Gathering),
     /// Long work: deciphering, a craft, salvage, a rig (see [`World::work`]).
     Work(crafting::work::Work),
     /// Taming a beast beside the player (see [`World::tame`]).
@@ -859,6 +863,7 @@ impl World {
             encounter: None,
             parting: None,
             endless: Default::default(),
+            foraged: Default::default(),
             pits: BTreeMap::new(),
             parties: Vec::new(),
             wares: BTreeMap::new(),
@@ -1243,6 +1248,7 @@ impl World {
             experience: self.state.experience,
             progress: &self.state.progress,
             quests: &self.state.quests,
+            foraged: &self.state.foraged,
             patron: &self.state.patron,
             messages: &self.state.messages,
             lore: self.lore(),
@@ -1369,7 +1375,7 @@ impl World {
             Spent::Pray(prayer) => self.pray(prayer, &mut events),
             Spent::Drink(draught) => self.drink(draught, &mut events),
             Spent::Forage(seconds) => self.forage(seconds, &mut events),
-            Spent::Gather(seconds) => self.gather(seconds, &mut events),
+            Spent::Gather(gathering) => self.gather(gathering, &mut events),
             Spent::Work(work) => self.work(work, &mut events),
             Spent::Tame(taming) => self.tame(taming, &mut events),
             Spent::Skip(duration) => {

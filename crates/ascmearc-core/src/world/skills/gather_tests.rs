@@ -1,8 +1,9 @@
 //! Gathering herbs from the glowing fungus (Herbalism; #1340,
 //! `world/skills/gather.rs`): Gather is listed only beside fungus, refused untrained in Herbalism
 //! (#1400), a gather takes its five minutes and finds herbs by the level's depth (`1d2` +
-//! Herbalism ÷ 50), a broken one finds nothing, a refusal takes no time, the fungus never
-//! changes, Herbalism is marked, and replays verify.
+//! Herbalism ÷ 50), a broken one finds nothing and leaves the fungus be, a refusal takes no
+//! time, a gather picks its fungus over for good (a level's fungus gives as many finds as it has
+//! cells), Herbalism is marked, and replays verify.
 
 use crate::ability::{Ability, Source, Unavailable};
 use crate::action::parse_actions;
@@ -156,7 +157,7 @@ fn the_untrained_are_refused_and_the_trained_find_more() {
     assert!(said(&w, "You search the glowing fungus for herbs."));
     assert!((1..=2).contains(&herbs(&w)), "{}", herbs(&w));
     assert!(
-        last_message(&w).starts_with("You gather "),
+        (w.messages().iter()).any(|m| m.text.starts_with("You gather ")),
         "{}",
         last_message(&w)
     );
@@ -196,13 +197,19 @@ fn a_broken_gather_finds_nothing_and_costs_the_time() {
     let spent = w.state.time.since(start).as_seconds();
     assert!(spent > 0 && spent < seconds(&w), "{spent}");
     assert_eq!(herbs(&w), 0);
+    let fungus = w.content().terrain_id("fungus");
+    assert_eq!(
+        w.state.current().terrain_at(FUNGUS),
+        fungus,
+        "left as it was"
+    );
 }
 
 #[test]
-fn the_fungus_never_runs_out_and_herbalism_is_marked() {
+fn a_gather_picks_the_fungus_over_and_herbalism_is_marked() {
     let mut w = world(1, false, false);
     train(&mut w, Some(10));
-    let fungus = w.state.current().terrain_at(FUNGUS);
+    let rules = w.content().herbs().expect("herbs.toml").clone();
     let mark = |w: &World| {
         let id = herbalism(w);
         w.state.player().skills.get(id).map(|t| (t.value, t.marks))
@@ -211,11 +218,48 @@ fn the_fungus_never_runs_out_and_herbalism_is_marked() {
     w.apply(&Action::Gather(Dir::NE));
     let first = herbs(&w);
     assert!(first >= 1);
-    assert_eq!(w.state.current().terrain_at(FUNGUS), fungus, "unchanged");
     assert_ne!(mark(&w), marks, "Herbalism marked");
-    w.apply(&Action::Gather(Dir::NE));
-    assert!(herbs(&w) > first, "gathered again at once");
-    assert_eq!(here(&w), vec![Ability::Gather]);
+    assert!(said(&w, "The fungus is picked bare."));
+    assert_eq!(w.state.current().terrain_at(FUNGUS), Some(rules.picked));
+    // The picked fungus sheds no light, and is seen as it is.
+    assert!(w.content().terrain(rules.picked).light.is_none());
+    assert!(w.content().terrain(rules.terrain).light.is_some());
+    // Picked over: Gather is gone from the menu, and a gather that way is refused, no time.
+    assert!(here(&w).is_empty());
+    assert!(w.perception().gather_ways().is_empty());
+    let before = w.state.time;
+    let out = w.apply(&Action::Gather(Dir::NE));
+    assert!(!out.took_turn && out.elapsed.is_zero());
+    assert_eq!(w.state.time, before);
+    assert_eq!(last_message(&w), super::gather::PICKED);
+    assert_eq!(herbs(&w), first, "nothing more");
+    // It stays picked over through a save, and never grows back.
+    let saved = (*w.state).clone();
+    let mut w = World::from_state(w.content.clone(), saved).expect("loads");
+    for _ in 0..10 {
+        w.apply(&Action::Wait);
+    }
+    assert_eq!(w.state.current().terrain_at(FUNGUS), Some(rules.picked));
+}
+
+#[test]
+fn a_level_gives_at_most_a_find_a_cell_of_fungus() {
+    // Two cells of fungus beside the player: two gathers, then nothing, however often asked.
+    let mut w = world(1, false, true);
+    let mut finds = 0;
+    for _ in 0..6 {
+        for dir in [Dir::NE, Dir::S] {
+            let before = herbs(&w);
+            w.apply(&Action::Gather(dir));
+            finds += u32::from(herbs(&w) > before);
+        }
+    }
+    assert_eq!(finds, 2);
+    let rules = w.content().herbs().expect("herbs.toml");
+    let fungus_left = (w.state.current().terrain.iter())
+        .filter(|&(_, &t)| t == rules.terrain)
+        .count();
+    assert_eq!(fungus_left, 0);
 }
 
 #[test]
@@ -223,7 +267,7 @@ fn a_gather_replays() {
     let content = world(6, false, false).content.clone();
     let mut w = World::new(content.clone(), "test_fungus", Some(7)).expect("world");
     let mut replay = Replay::new(&w);
-    for action in parse_actions("gather:NE wait gather:NE").expect("actions") {
+    for action in parse_actions("gather:NE wait gather:NE gather:NE").expect("actions") {
         w.apply(&action);
         replay.push(&action, &w);
     }

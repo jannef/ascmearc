@@ -25,8 +25,12 @@ Gathering is like resting: if something comes into view, or something hits you, 
 nothing, and the time is gone. A gather that runs its time gives you the herbs at once: "You
 gather 2 sprigs of moonwort and a glowcap."
 
-The fungus never runs out. Gather again at once, as often as you like: time is the only cost.
-Each gather that runs its time trains Herbalism.
+Each cell of fungus gives one gather. A gather that runs its time picks that cell of fungus
+bare: it turns into [picked-over fungus](terrain.md#terrain-picked-fungus), a dull `"` that no
+longer glows, and it never grows back ("The fungus is picked bare."). Gather is no longer offered
+beside it, and trying anyway tells you "This fungus has been picked over." So a level holds as many
+gathers as it has cells of fungus. A gather cut short leaves the fungus as it was, so you can try
+that cell again. Each gather that runs its time trains Herbalism.
 
 ## What you find
 

@@ -514,8 +514,14 @@ pub(super) fn foraging(content: &Content) -> String {
     let Some(rules) = content.forage() else {
         return "Nobody forages.\n".into();
     };
+    let finds = match rules.per_place {
+        1 => "one forage".to_string(),
+        n => format!("{n} forages"),
+    };
     let mut out = format!(
-        "A forage takes {} minutes.\n\n| Land | Chance | How many | Finds | Herbs (Herbalism) |\n|---|:---:|:---:|---|---|\n",
+        "A forage takes {} minutes. Each cell of the overworld, with its local area, gives {finds} \
+         that find food; then it is foraged out.\n\n\
+         | Land | Chance | How many | Finds | Herbs (Herbalism) |\n|---|:---:|:---:|---|---|\n",
         rules.seconds / 60
     );
     let mut grounds: Vec<_> = rules.grounds.iter().collect();
