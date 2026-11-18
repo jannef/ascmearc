@@ -17,7 +17,7 @@
 //!
 //! **What**: the whole stack moves into the thief's pack (it joins a stack there of the same
 //! goods), the thief takes the cooldown status, and it **fights on** as it was: no flight, no
-//! blink away (the owner's word, design §17 D1). What it took falls where it dies, as anything a
+//! blink away (design §17 D1). What it took falls where it dies, as anything a
 //! creature carries does (`fight.rs::dies`).
 //!
 //! **Words**: "The nymph snatches a scroll of frost from you!" (by the type's name, as a seen

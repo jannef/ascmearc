@@ -13,8 +13,7 @@
 //!   it ([`World::swing_open`]: its noise, and a trap on the door going off at the picker), on top
 //!   of the try's time (`open_door`); both are priced before the check, since a trap may kill.
 //!   **Failed**, the lock holds: "You fail to pick the lock." Nothing is remembered of a failed
-//!   try, so the next may succeed (no limit on trying again, the owner's rule: time is the
-//!   price).
+//!   try, so the next may succeed (no limit on trying again).
 //! - A shut chest's lock is picked the same way: picked, the chest opens as a
 //!   key opens it ([`World::lift_lid`]), on top of the try's time (`open_chest`).
 //! - A closed door without a lock, or anything else, is refused and takes no time: "That door is

@@ -20,8 +20,8 @@
 //!   player, so the AI and every stance follow with nothing new.
 //!
 //! Refused, taking no time: untrained ("You do not know how to steal."), with no one seen there,
-//! or at someone hostile. Nothing limits trying again (the owner's rule): a victim that caught
-//! the player stays angry, and that is the price. Shop goods are not stolen this way: what lies
+//! or at someone hostile. Nothing limits trying again: a victim that caught
+//! the player stays angry. Shop goods are not stolen this way: what lies
 //! in a shop is the shop's (`shop.rs`: picking it up is owing for it, and leaving owing any way
 //! but the door is theft).
 

@@ -92,7 +92,7 @@ stream `tame/<beast key>` (two draws), the mark (`Use::Handle`, made or failed),
 stream) or the snap. Failed and hostile, the beast's `Mind::last_seen` is set, which is what
 `creature_unaware` reads (the design said `noticed`; that field is when the player last perceived the creature, and
 does not refuse a try), so it may not be tried again until it loses the player. No state beyond
-the actors; no cooldown (time is the price). Tests: `world/allies/tame_tests.rs`; the odds in the wiki,
+the actors; no cooldown. Tests: `world/allies/tame_tests.rs`; the odds in the wiki,
 `xtask/src/wiki/companions.rs::taming` (`companion-taming.md`).
 
 ## Creature types: `tameable` and `nose`

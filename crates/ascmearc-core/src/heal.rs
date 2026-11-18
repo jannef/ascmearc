@@ -9,7 +9,7 @@
 //! - a disease: once it shows. One still incubating is not known to its sufferer, so it is not
 //!   offered.
 //!
-//! A failed or a made try may be made again at once, on any of them: time is the price.
+//! A failed or a made try may be made again at once, on any of them.
 //!
 //! In status order, then disease order: what a bare `heal` treats is the first of them.
 //!

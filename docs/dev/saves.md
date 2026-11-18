@@ -21,8 +21,7 @@ panics. A page-hide save that fails is only a warning in the browser console (no
 be done once the page is going), so what can be lost is the turns since the last autosave: at
 most `AUTOSAVE_TURNS` (50) turns, or the last change of level (#1591). Only the `web-sys` features in `crates/ascmearc/Cargo.toml` are enabled (size).
 
-**Saves are pinned to the game version that wrote them** (#840; owner, 2026-11-02: "we do not
-need to preserve saves"). The envelope (`ascmearc-core/src/save.rs`) is `magic`, `game_version`
+**Saves are pinned to the game version that wrote them** (#840; `spec/06-content.md` "Saves, permadeath, the graveyard"). The envelope (`ascmearc-core/src/save.rs`) is `magic`, `game_version`
 (`ascmearc_core::GAME_VERSION`, the workspace version), `content_fingerprint`, `mods` (the mods
 the run was played with, `[{id, version}]` in load order, left out without any; #1731,
 docs/dev/mods.md), and the state; `save::decode` refuses a save whose `game_version` is not this
@@ -141,7 +140,7 @@ folder; portable mode's `ascmearc-data/config`; the web's `localStorage` key
 `killer`, `place`, `turn`, `age`, `when`, `version`, `gifts` (the profane gifts held at death by talent id, #1809; left out when none; `cause = "profane"` is a character the thirteenth gift took)), through `Backend::append`: the file is
 never rewritten, and the death screen says "Remembered in the graveyard." when the entry went in.
 Captures and replays keep none unless `--config-dir` names one. **This file is the one
-deliberate exception to version pinning** (the owner's word): its reader (`graveyard::parse`)
+deliberate exception to version pinning**: its reader (`graveyard::parse`)
 ignores unknown fields, defaults missing ones, and skips an entry it cannot read (each
 `[[fallen]]` table is parsed alone, so half an entry a crashed append left costs only that entry,
 #1573; `a_torn_append_skips_only_its_own_entry`); a field is

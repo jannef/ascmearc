@@ -232,7 +232,7 @@ Factor Wulfrun's Fyrdelf chain (`lost_shaft`: reach `fyrdelf:2`, which `requires
 (`to = "peran"`, paid there with a cut sapphire), and `gnome_reply`, given by Peran once that is
 done, the moot's answer carried back to Wulfrun; both in `wulfrun.toml`, since `requires` names
 only quests loaded before; the letter reveals nothing: Dēopgang is not hidden and no quest
-gates it, the owner's rule; the answer reveals `skeul_hir` as given (#1760): the Skeul Hir,
+gates it; the answer reveals `skeul_hir` as given (#1760): the Skeul Hir,
 the gnomes' old long stair from Gimmwīc's arrival cave up through a floor of its own
 (`skeul_hir:1`, #1840) to Lytelscræf 2, a shortcut home whose two ends stay floor till then,
 `docs/dev/overworld.md` "A hidden way with two ends"). Each reach and bring quest has a `where` for the log. The

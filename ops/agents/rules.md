@@ -14,7 +14,7 @@ sections the job touches. A `docs/design/` file marked "Built; this file is hist
 current: read the spec sections and topics it names instead. Keep the context small: read files in parts, grep, filter test output
 to failures and the summary, never print whole diffs or logs.
 
-## House rules (the owner's)
+## House rules
 
 - `ascmearc-core` stays deterministic and Bevy-free; presentation reads the perception snapshot
   only. Hidden numbers stay hidden **in the game**: never show a modifier, a roll, a to-hit, a
@@ -25,8 +25,7 @@ to failures and the summary, never print whole diffs or logs.
   prompts, and targeting are fixed (plain keys in the screen code, named in its hint line; no new
   `KeyCommand`/`Context`; owner 2026-10-26); abilities go into the one abilities menu (#156),
   never a key of their own; info screens are numbered pages; every confirmation uses the one
-  parameterized dialog; effects are subtle.
-- No anti-farming limits; unbalanced choices are fine; no undiscussed D&D concepts.
+  parameterized dialog.
 - Player text (UI strings, messages, wiki) never says randomness comes from the seed: call it
   chance, fate, or random. Developer text (CLAUDE.md, spec, `docs/dev/`, comments) describes
   determinism exactly.
@@ -86,7 +85,7 @@ CI compares every entry in `tests/golden/manifest/*.toml` with `tests/golden/<na
    `docs/dev/merging.md`: keep both sides of registry insertions; take main's side of generated
    files and PNGs and regenerate them; resolve insta snapshot conflicts by regenerating and
    reading the diff.
-3. **Push as soon as the merge conflicts are potentially fixed** (owner's rule): after resolving
+3. **Push as soon as the merge conflicts are potentially fixed**: after resolving
    them and a quick compile (`cargo check --workspace --all-targets`, or only what the conflict
    touched), commit and push at once. Do not run clippy, tests, replays, or goldens before that
    push, and do not re-merge main just before pushing. If CI fails, it fails. Then keep verifying
@@ -108,7 +107,7 @@ CI compares every entry in `tests/golden/manifest/*.toml` with `tests/golden/<na
 - Report briefly: decisions you made that the input left open, anything you were unsure of or
   could not verify. Then stop.
 
-## Local agents only (the owner's rules)
+## Local agents only
 
 - **Disk hygiene.** Before the final report, delete your incremental build output (`rm -rf
   "$CARGO_TARGET_DIR/debug/incremental"`) and any scratch files you made (prefixed with your

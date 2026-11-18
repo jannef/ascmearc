@@ -7,7 +7,7 @@
 //! (docs/design/monster-dread.md §5.5 G5c), whose `most` is the cap. `mana` may be left out,
 //! for a summoning that costs none (its cooldown is limit enough). It resolves once every creature type is known ([`resolve`]): a shared summoner
 //! may call only shared types, a campaign's its own and shared ones. The cooldown is a status
-//! (the house rule for ability limits, `ability.rs`): [`STATUS`], given `ceil(cooldown / eases)`
+//! (as every ability limit is, `ability.rs`): [`STATUS`], given `ceil(cooldown / eases)`
 //! degrees.
 
 use super::creature::CreatureDef;

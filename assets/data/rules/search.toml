@@ -15,7 +15,7 @@
 #   `search` - `passive_penalty`. Only elves (everything), dwarves (what is on stone), and those
 #   trained in Spot (everything) notice things in passing.
 #
-# Every check is rolled afresh: try as often as you like; time is the only price.
+# Every check is rolled afresh: try as often as you like.
 
 # What the passive check loses against searching: you notice less in passing than where you
 # look.

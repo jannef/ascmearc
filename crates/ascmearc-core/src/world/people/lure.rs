@@ -8,7 +8,7 @@
 //!   type is anywhere in the run, one is made on the quest's `waits` place (or the nearest free
 //!   cell, `escort_waits::spot`), awake. Killed before it is bound, it forms there anew the next
 //!   time the player comes to that level (the binding's `reforms` line, said then; its
-//!   `shatters` line as it dies): no anti-farming limit, so the quest can always be tried again.
+//!   `shatters` line as it dies): the quest can always be tried again.
 //! - **The way home** is the stairs' own rule (`stair_followers.rs`): it is hostile, so beside the
 //!   player as they take a staircase it follows them, through Gimmwīc's portal too (a staircase
 //!   down by its terrain, `crystal_portal`). Left behind, it stays on its floor, hunting, until

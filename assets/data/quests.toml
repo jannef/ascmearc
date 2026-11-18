@@ -2,7 +2,7 @@
 # the field reference: the quests are a campaign's, in its data/quests/ (the showcase's:
 # campaigns/showcase/data/quests/showcase.toml). Chat with
 # the giver (`C`): each quest they have for you is a topic on the dialogue screen. Asking about it
-# gives it to you: there is no accepting and no declining (a roguelike, not an MMO). The quest
+# gives it to you: there is no accepting and no declining. The quest
 # log (`q`) lists what you were given, first as "<giver> wants you to ...". Come back once it is
 # done, and they reward you.
 #

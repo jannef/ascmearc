@@ -141,7 +141,7 @@ at their side (`World::companion()`, made in `begin` before the story). `backgro
    magic item's loot draws (`loot::make` at `kit::ITEM_LEVEL`, identified).
 
 The tags it sets are known to the chapters after it. Nothing is counted across chapters, capped,
-dropped, or drawn again (the owner, 2026-10-29: no caps, no protection). The `only` rule is a
+dropped, or drawn again. The `only` rule is a
 little stronger than the issue's wording ("an `only` line fitting narrows the pool"): it applies
 whatever tier was drawn, so the heritage talents always force their lines.
 

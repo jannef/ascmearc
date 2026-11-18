@@ -25,7 +25,7 @@
 //!   anyone trained in Detect traps traps; everyone else notices nothing in passing.
 //!
 //! Every check is rolled afresh: nothing is remembered of a failed one, so the next turn may
-//! find what this one missed (no limit on trying again: the owner's rule). Checks draw from the
+//! find what this one missed (no limit on trying again). Checks draw from the
 //! gameplay stream only when something hidden is in reach, so a turn with nothing hidden around
 //! draws nothing. A turn spent searching may earn the Search skill a training mark, noticing
 //! something the Spot skill, and finding a trap either way the Detect traps skill (training

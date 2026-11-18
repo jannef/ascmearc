@@ -20,7 +20,7 @@
 //! Refused, taking no time and no draw: untrained ("You do not know how to intimidate."), at
 //! their own cell, out of range, at no creature they see, at one not hostile to them, or at one
 //! without vitals (`Content::has_vitals`: the bones, the spirits, the animated). Nothing limits
-//! trying again (the owner's rule): the time is the price.
+//! trying again.
 
 use crate::action::Event;
 use crate::content::{ActionKind, Stance};

@@ -185,7 +185,7 @@ cargo dev-cli dump --scenario holtwic --actions "move:N*8 move:E*11 move:NE move
 
 ## A tower's household
 
-The owner's rule (2026-11-17, #1823): **a wizard's tower is big, and its folk are a wizard's**.
+**A wizard's tower is big, and its folk are a wizard's** (#1823).
 The rule for every tower (Drȳtorr brought to it by #1823; Wedertorr, C2, and Steorratorr, C3,
 built to it):
 

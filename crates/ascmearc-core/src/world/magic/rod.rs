@@ -22,7 +22,7 @@
 //!   is used or identified; there is nothing more to know of one rod than its type.
 //! - **Time**: the `cast` action's.
 //!
-//! No skill applies (the owner: there is no Use magic device skill): a rod costs its own mana and
+//! No skill applies (there is no Use magic device skill): a rod costs its own mana and
 //! reaches by its user's Willpower, whoever holds it.
 //!
 //! Determinism: nothing here draws; a teleport's landing cell is the teleport trap's hash.

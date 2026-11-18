@@ -7,7 +7,7 @@
 //!   takes). By sight (line of sight, no light needed: a chill needs none) or, `heard = true`, by
 //!   hearing: to anyone within the radius a voice of `loudness` reaches by the hearing rules,
 //!   through walls and doors. `damage_type` makes the dose meet the target's resistance (the cold
-//!   aura's Sluggish against cold). The cooldown is a status ([`STATUS`], the house rule).
+//!   aura's Sluggish against cold). The cooldown is a status ([`STATUS`], as every ability limit is: `ability.rs`).
 //! - **Innate**: statuses an actor of the type is made with and that are refreshed each turn it
 //!   takes (Fire-cloaked's `retaliates` on a salamander, a devil's barbs); never shown in the
 //!   look line, since the type always carries them.

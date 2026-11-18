@@ -2,7 +2,7 @@
 //! and then on a cell beside it (the web terrain of `data/rules/webs.toml`). The rules are
 //! `world/creatures/spin.rs`; the web's are `world/levels/web.rs` (docs/dev/webs.md).
 //!
-//! The cooldown is a status (the house rule for ability limits, `ability.rs`): [`STATUS`], given
+//! The cooldown is a status (as every ability limit is, `ability.rs`): [`STATUS`], given
 //! `ceil(cooldown / eases)` degrees, as a blink's (`theft.rs`).
 
 use super::Content;

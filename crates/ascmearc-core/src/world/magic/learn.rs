@@ -373,7 +373,7 @@ impl World {
 
     /// The player learns `spell` for good, at rank 1 (a spell known already keeps its rank).
     /// A forgotten spell (`spell_rank.rs`) is learned again as if for the first time, its
-    /// experience paid again: there is no guard against it (the owner, #1289).
+    /// experience paid again: there is no guard against it (#1289).
     pub(super) fn learn_spell(&mut self, spell: SpellId) {
         let name = (self.content.spell_of(spell)).map_or_else(String::new, |d| d.name.clone());
         let new = !self.state.player().knows_spell(&self.content, spell);

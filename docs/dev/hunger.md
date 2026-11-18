@@ -57,7 +57,7 @@ gifts, and for foraged food, `world/skills/forage.rs`); a test stack made with `
 (`crate::rot`: `Stage` Fresh/Old/Rotten/Gone, `Food::stage(age)`, `rot::stage`, `gone_at`; all
 `None` without hunger.toml) and is shown only in dev dumps (`actors`: food on the level and in
 the packs of those on it, with its stage; `--state`: the raw `died`); food never shows its stage
-to the player by default (the owner's decision; #196 for later reveals), except in words to a trained eye
+to the player by default (#196 for later reveals), except in words to a trained eye
 (#1031): `Effect::Freshness` on Appraise and Survival, summed, a percent chance per hour and food
 (`world/health/freshness.rs::judged`, a pure function of the seed, the player, the food, and the hour, its own stream
 `freshness/<object>/<made>/<hour>`, so no keyed draw is made and looking is read-only), plus 25 points

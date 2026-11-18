@@ -11,8 +11,7 @@
 //! follows (gold coins and items into the pack, or at the player's feet if it is full; XP).
 //! A repeatable quest is offered again once done; a quest that `requires` others is offered
 //! once they are all done. A quest with a `min_level` is listed before the player reaches it,
-//! but asked about then the giver says its `early` line and gives nothing. There is no abandoning a quest and no cap on how many are active (the
-//! owner's decision).
+//! but asked about then the giver says its `early` line and gives nothing. There is no abandoning a quest and no cap on how many are active.
 //!
 //! **Goals**, and how far they have got ([`progress`]):
 //! - kill: the player's own kills of the creature type, or of any type carrying the tag (on

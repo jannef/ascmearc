@@ -12,8 +12,7 @@
 //! 4. its effects' dice, in order, from the same stream (gold, skills, an item's alternatives and
 //!    a magic item's loot draws).
 //!
-//! Nothing is counted across chapters, capped, dropped, or drawn again (the owner: no caps, no
-//! protection from a bad story). The ids are saved ([`Told`], `Character::story`); the text is
+//! Nothing is counted across chapters, capped, dropped, or drawn again. The ids are saved ([`Told`], `Character::story`); the text is
 //! told again from the content ([`retell`]), so an edited sentence reaches a saved character
 //! and a line removed from the content is skipped.
 

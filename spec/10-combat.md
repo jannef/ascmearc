@@ -75,7 +75,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - A plain trap's kill is no one's: it pays no experience and counts for no quest.
 - The player may try to sidestep a known trap they step onto deliberately. A hidden trap gives no such chance.
 - A trap on a door or a chest goes off when it is opened or kicked, never when someone walks past. Pits never sit on doors or chests.
-- Disarming needs Disable device (or Tinkerer). Failing badly sets the trap off. There is no limit on trying again and no memory of failed tries: the time and the risk are the price.
+- Disarming needs Disable device (or Tinkerer). Failing badly sets the trap off. There is no limit on trying again and no memory of failed tries.
 - Rigging (the craftsperson): a rigged trap is known to the player, and its kills are the player's.
 - Trap messages give no numbers.
 

@@ -69,7 +69,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 
 - A check is 2d12 plus the stat's modifier against a difficulty; a natural 2 always fails, a natural 24 always succeeds. A contest pits two rolls; ties go to the side making the check.
 - The player never sees a difficulty, a modifier, or a roll.
-- Nothing limits retrying: time is the cost.
+- Nothing limits retrying.
 
 ## Diseases
 

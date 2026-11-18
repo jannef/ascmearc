@@ -51,7 +51,7 @@ families = [
     "spell_critical",
 ]
 
-# Never `life` or `life_regeneration` (the owner's rule).
+# Never `life` or `life_regeneration`.
 [[colour]]
 id = "blue"
 name = "blue"
@@ -77,7 +77,7 @@ families = [
     "heal", "life", "life_regeneration", "willpower", "presence", "spell_armour", "focus",
 ]
 
-# Never `mana`, `mana_regeneration`, or `mana_cost` (the owner's rule).
+# Never `mana`, `mana_regeneration`, or `mana_cost`.
 [[colour]]
 id = "red"
 name = "red"

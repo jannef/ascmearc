@@ -3,8 +3,7 @@
 //! below: what it asks, how far it has got ("2 / 3 killed.", "Return to the old hermit."), and
 //! who gave it, in their words. Offers not yet answered are not here.
 //!
-//! Read-only (quests are not abandoned, and there is no cap on how many are active: the owner's
-//! decision): ↑↓ choose; Esc, Enter, or its own key closes it. A list taller than the panel
+//! Read-only (quests are not abandoned, and there is no cap on how many are active): ↑↓ choose; Esc, Enter, or its own key closes it. A list taller than the panel
 //! scrolls. It is read from the perception snapshot when it opens; no game time passes while it
 //! is open.
 

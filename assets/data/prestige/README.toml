@@ -42,5 +42,3 @@
 # world's; the dev action `call:ID` makes it whatever the level. Being called gives exactly the
 # experience the next level costs if the bank is short of it, so the first prestige level comes
 # at once (with every level a fuller bank buys), and nothing else is tracked.
-#
-# Balance is not a goal: a prestige class may well make its base class very strong.

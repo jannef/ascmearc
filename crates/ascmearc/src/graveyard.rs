@@ -6,7 +6,7 @@
 //! - **Written** once a death, in `ui::screens::on_death` where the character's save is deleted
 //!   ([`GraveyardStore::remember`]): an entry **appended**, the file never rewritten. Never by
 //!   the core, never read into the rules.
-//! - **Its format outlives every version** (the owner's word: the one deliberate exception to
+//! - **Its format outlives every version** (the one deliberate exception to
 //!   the saves' pinning, `docs/dev/saves.md`): a reader ignores the fields it does not know and
 //!   defaults those it misses, and an entry it cannot read is skipped, not the file; a field once
 //!   written is never renamed or given another meaning. No format number, no migration. The

@@ -145,7 +145,7 @@ degrees; electricity resistance 50). The breaths' looks are `data/effects.toml`'
 
 ## In the world: `world/character/profane.rs`
 
-- **Never twice** (#1805, the owner's rule): `WorldState::gifts_received` records the talent id
+- **Never twice** (#1805): `WorldState::gifts_received` records the talent id
   of every gift ever taken (inserted by `bestow_gift`; `rescind`, a `replaces`, an `undoes` never
   take one out). `World::had_gift(talent)` is "in the record, or held". Every source obeys it:
   draws, signatures, the dev `gift:` command, and any later source that goes through
@@ -179,7 +179,7 @@ degrees; electricity resistance 50). The breaths' looks are `data/effects.toml`'
   tier gives way up, then down (lesser → greater → dire; dire → greater → lesser); all empty is
   `None`, and the meal says "Nothing more of it will take in you.".
 - A forgotten altar's Forsaken never draws a profane bane (`bestow_flaw` skips the gifts).
-- **Taken by the Profane** (#1809, the owner's rule; `world/character/profane_taken.rs`): the last
+- **Taken by the Profane** (#1809; `world/character/profane_taken.rs`): the last
   step of a gift taken, `World::profane_takes`: once `gifts_received` holds `TAKEN_AT` (13) gifts,
   lost ones counting, its two lines are said and the run ends, `die_of(Cause::Profane)` ("The
   Profane takes you, and nothing of you is left...", the epitaph "Taken by the Profane"). Not a

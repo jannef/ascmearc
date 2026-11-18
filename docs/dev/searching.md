@@ -69,7 +69,7 @@ dwarves do not notice their traps in passing.
 
 **Invariants**: checks draw from keyed streams of their own (`search/active/<cell>`, `search/passive/<cell>`; `crate::check`, two draws each) only for
 hidden features in reach, so runs without any nearby keep their hashes; no memory of failed
-checks and no cooldown (the owner's rule: no anti-farming limits); presentation never sees a
+checks and no cooldown; presentation never sees a
 difficulty, a modifier, or a roll. Waiting is searching (#1326): `Action::Wait` (action text `wait`, kept as a spelling) is
 `Action::Search(1)`, one code path (`player_acts` gives both `Spent::Search(1)`): a turn of it
 is the active check, its training marks, and its messages; it sets `World::waiting`, so a sound

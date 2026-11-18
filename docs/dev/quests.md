@@ -41,11 +41,10 @@ turn (`quest_progress`/`quest_news`), so pick-ups, kills, and arrivals all repor
 place. `reveal_at` (beside the answer at the two places a stage is set: `give` and
 `complete`) reveals a quest's locations after the speaker's words. Who takes a quest in is
 `World::takes_in` (the one `turn_in` names; for a quest with takers, a taker who is the ally),
-and `complete_saying` says and pays the taker's `done` and `reward`. No abandoning and no cap on active quests (the owner's decision): don't add either. What a quest asks to be
+and `complete_saying` says and pays the taker's `done` and `reward`. No abandoning and no cap on active quests (`spec/09-creatures.md` "Quests"). What a quest asks to be
 brought or delivered (`World::quest_objects`) is protected from all item damage, ruin, acid, rust,
 heat, and a failed temper alike (`world/combat/item_damage.rs`, #1170; docs/dev/objects.md
-"Protection"); a quest's reward is an ordinary item unless another quest's `hand_in` names it
-(the owner: no special quest items for rewards).
+"Protection"); a quest's reward is an ordinary item unless another quest's `hand_in` names it.
 A reward's `skills` (#1329, `Reward::skills`, a `SkillReward` each: Grave goods teaches Heal)
 are applied in `complete_saying` after the items, by `World::teach_skills`: a skill the player is
 untrained in is trained at `start` (`Skills::add`, rolled on `levels_rng`, the stream background

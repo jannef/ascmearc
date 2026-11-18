@@ -100,7 +100,7 @@ as a place's) and listed by `Ability::orders(any)`: `PerceptionView::abilities` 
 while the player has an ally anywhere (`Perception::allies` is not empty), greyed
 `Unavailable::NoAllies` ("no allies here") while none is on the level; `Ability::every` lists
 them when the content has `allies.toml` (the wiki's table). No `KeyCommand`, no `Context`, no
-key: the owner's rule. Send away is not an order (the owner's Q2): a summon departs when its
+key (`docs/dev/screens.md` "Abilities"). Send away is not an order (the owner's Q2): a summon departs when its
 time runs out or it is slain.
 
 ## Following across levels, and the retinue

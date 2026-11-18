@@ -25,8 +25,7 @@ stat damage; never `actor.stats` directly in a rule; the hit points a level adds
 costs them for good). A check of a stat starts from **`Actor::check_modifier(content, stat)`**
 (#1551): the effective score's modifier plus `VigourMods::check(stat)` (Iron will and the
 like), the one place a bonus to every check of a stat goes; each check adds its own terms (a
-skill, a resistance) to it. And
-no other D&D concept (checks, saves) comes with them. The status bar has no stats segment: it is already
+skill, a resistance) to it. The status bar has no stats segment: it is already
 full at common window sizes (it shows `HP 18/18` right after the level name, dropping only
 before it, and the burden right after that when there is one).
 
