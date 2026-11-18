@@ -413,8 +413,11 @@ pub enum Use {
     Decipher,
     /// A scroll read and used up: a spell scroll, identify, restoration.
     Read,
-    /// Mana spent: a spell cast, an ability paid in mana, whatever it costs.
+    /// Mana spent: a spell cast, an ability paid in mana, whatever it costs (once a spend).
     Cast,
+    /// A point of mana spent: reported once for each point a spend actually costs, so a big
+    /// spend practises more than a small one (Concentration).
+    Mana,
     /// An attempt to disarm a trap, whatever comes of it.
     Disarm,
     /// An attack that missed because the actor dodged it (the Dexterity or Dodge category), or a
@@ -523,6 +526,7 @@ impl Use {
             Use::Decipher => "making out a scroll you cannot simply read",
             Use::Read => "reading a scroll and using it up",
             Use::Cast => "spending mana: a spell, or an ability paid in it",
+            Use::Mana => "each point of mana you spend",
             Use::Disarm => "trying to disarm a trap",
             Use::Dodge => "dodging an attack or a known trap",
             Use::Burdened => "acting (not waiting) while your load slows you",
@@ -666,6 +670,7 @@ impl Use {
             Use::Decipher => "decipher",
             Use::Read => "read",
             Use::Cast => "cast",
+            Use::Mana => "mana",
             Use::Disarm => "disarm",
             Use::Dodge => "dodge",
             Use::Burdened => "burdened",

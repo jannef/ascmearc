@@ -16,7 +16,9 @@
 //!   (`world/magic/concentration.rs`).
 //! - **Spending** ([`World::spend_mana`]): the one way, refused when the actor has too little.
 //!   What an ability costs passes the actor's talents first ([`Actor::mana_cost`]: Frugal
-//!   caster), and the player's spending is a `cast` use of their stats (it trains Willpower).
+//!   caster), and the player's spending is a `cast` use of their stats (it trains Willpower)
+//!   and skills (Spellcraft), and a `mana` use of their skills for each point paid
+//!   (Concentration).
 //!   Abilities will spend it; for now only the dev action `drain:N` does ([`World::drain_dev`]).
 //! - **Blood magic** ([`World::blood_magic`]): the talent's active trades hit points for mana.
 //! - **Draining**: a status whose ticks have `mana_damage` drains that much a tick (`live`),
@@ -84,8 +86,9 @@ impl World {
     /// less). Refused, spending nothing, when it has less than that (or `base` is below 0);
     /// returns whether it was spent, and while a status of theirs blocks casting (a raging
     /// berserker spends none). The player's spending of any is a `cast` use of their
-    /// stats (it trains Willpower). Says nothing: the spell or ability that
-    /// spends it does.
+    /// stats (it trains Willpower) and their skills (Spellcraft), once a spend, and a `mana`
+    /// use of their skills for each point it cost (Concentration: a draw a point). Says
+    /// nothing: the spell or ability that spends it does.
     pub(crate) fn spend_mana(&mut self, id: ActorId, base: i32) -> bool {
         let content = self.content.clone();
         let Some(actor) = self.state.actors.get_mut(&id) else {
@@ -102,8 +105,12 @@ impl World {
         actor.mana -= cost;
         if id == self.state.player && cost > 0 {
             self.train_stat(StatUse::Cast);
-            // Concentration's marks.
+            // Spellcraft's marks, once a spend.
             self.train(Use::Cast);
+            // Concentration's, a chance for each point spent.
+            for _ in 0..cost {
+                self.train(Use::Mana);
+            }
         }
         true
     }

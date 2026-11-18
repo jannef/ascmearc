@@ -1,5 +1,5 @@
 //! Concentration's hold on mana (#668): the pace and the pool by value, nothing untrained, the
-//! pool's fifth, the maximum falling with the skill, and the `cast` marks.
+//! pool's fifth, the maximum falling with the skill, and the `mana` marks: a chance a point spent.
 
 use crate::character::CharacterSpec;
 use crate::skills::Skills;
@@ -87,16 +87,78 @@ fn mana_follows_the_maximum_down_when_the_skill_goes() {
 
 #[test]
 fn spending_mana_earns_marks_only_when_trained() {
-    let mut w = wizard(Some(10), 40);
-    run(&mut w, "drain:1*40");
-    let got = marks(&w);
+    let mut w = wizard(Some(10), 400);
+    run(&mut w, "drain:10*40");
+    let big = marks(&w);
     assert!(
-        (3..=20).contains(&got),
-        "{got} marks from 40 spends at 25 %"
+        (6..=30).contains(&big),
+        "{big} marks from 400 points at 4 %"
     );
 
-    let mut w = wizard(None, 40);
+    let mut w = wizard(Some(10), 400);
     run(&mut w, "drain:1*40");
+    let small = marks(&w);
+    assert!(small < big, "{small} marks from 40 points, {big} from 400");
+
+    let mut w = wizard(None, 400);
+    run(&mut w, "drain:10*40");
+    assert_eq!(marks(&w), 0);
+}
+
+/// The training-stream draws the player's spend of what costs `base` makes beyond an untrained
+/// wizard's (the Willpower mark's), and the cost paid.
+fn concentration_draws(base: i32) -> (u32, i32) {
+    let mut trained = wizard(Some(10), 40);
+    let mut untrained = wizard(None, 40);
+    let cost = trained.state.player().mana_cost(&trained.content, base);
+    for w in [&mut trained, &mut untrained] {
+        let player = w.player_id();
+        assert!(w.spend_mana(player, base));
+    }
+    let mut stream = untrained.state.training.clone();
+    let mut draws = 0;
+    while stream != trained.state.training {
+        assert!(draws < 1000, "the streams never meet");
+        stream.next_u32();
+        draws += 1;
+    }
+    (draws, cost)
+}
+
+#[test]
+fn every_point_spent_is_its_own_draw() {
+    for base in [1, 5, 12, 30] {
+        let (draws, cost) = concentration_draws(base);
+        assert_eq!(
+            draws,
+            u32::try_from(cost).expect("a cost"),
+            "spending {base}"
+        );
+    }
+}
+
+#[test]
+fn a_spend_of_nothing_marks_nothing() {
+    let mut w = wizard(Some(10), 40);
+    let before = w.state.training.clone();
+    let player = w.player_id();
+    assert!(w.spend_mana(player, 0));
+    assert_eq!(w.state.training, before);
+    assert_eq!(marks(&w), 0);
+}
+
+#[test]
+fn another_actors_spend_trains_nothing() {
+    let mut w = wizard(Some(10), 40);
+    let player = w.player_id();
+    let other = *(w.state.actors.keys())
+        .find(|&&id| id != player)
+        .expect("a creature in the showcase");
+    w.state.actors.get_mut(&other).expect("the creature").mana = 50;
+    let before = w.state.training.clone();
+    assert!(w.spend_mana(other, 20));
+    assert_eq!(w.state.actors[&other].mana, 30);
+    assert_eq!(w.state.training, before);
     assert_eq!(marks(&w), 0);
 }
 
