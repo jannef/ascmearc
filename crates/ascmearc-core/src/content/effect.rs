@@ -108,7 +108,9 @@ pub struct EffectDef {
     /// fading over `tail` seconds; it strikes once at the end.
     #[serde(default)]
     pub head: Option<char>,
-    /// Rays: seconds each stretch of the line takes to fade after the head has passed it.
+    /// Bolts: seconds each stretch of the line takes to fade after the bolt's front (a ray's head)
+    /// has passed it. A jagged bolt with one does not flash its whole line at the impact: its
+    /// trail fades behind its front as a ray's does (Magic missile's).
     #[serde(default)]
     pub tail: f32,
     #[serde(default)]
@@ -181,9 +183,6 @@ impl EffectDef {
                 }
                 if self.head.is_some() && self.branches > 0.0 {
                     return Err("a ray (a bolt with a `head`) is straight: no `branches`".into());
-                }
-                if self.head.is_none() && self.tail > 0.0 {
-                    return Err("only a ray (a bolt with a `head`) has a `tail`".into());
                 }
             }
         }
@@ -285,6 +284,9 @@ branches = 0.3
         );
         assert_eq!((bolt.light, bolt.darken, bolt.shake), (None, None, None));
         assert!(parse("effects", "").expect("no effects").is_empty());
+        // A jagged bolt may have a fading trail too, not only a ray.
+        let trail = parse("effects", &format!("{BOLT}tail = 0.3\n")).expect("a trailing bolt");
+        assert_eq!((trail[0].head, trail[0].tail), (None, 0.3));
     }
 
     #[test]
@@ -315,7 +317,6 @@ branches = 0.3
             (format!("{BOLT}projectile = \"*\"\n"), "projectile"),
             (format!("{BOLT}sparkle = 1\n"), "unknown field"),
             (format!("{BOLT}head = \"▶\"\n"), "straight"),
-            (format!("{BOLT}tail = 0.3\n"), "tail"),
             (
                 BALL.replace("projectile = \"*\"\n", "projectile = \"*\"\nhead = \"▶\"\n"),
                 "head",

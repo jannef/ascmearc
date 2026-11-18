@@ -293,7 +293,9 @@ Effects, each off with its own switch (`particles`, `glow`, `distortion`,
   `ray_tail` (a ray, a bolt with a `head`: straight from the origin's center to the end's, not
   through the path's cell centers; each stroke fades over `tail` seconds after the head passed
   it; `ui/spells.rs::ray` draws the shaft, then the head turned along the line; its `impact`
-  particles start as the head passes each cell), `darken_curve`, `shake_offset`);
+  particles start as the head passes each cell; a jagged bolt with a `tail`, Magic missile's,
+  stays jagged but fades the same way behind its front, `bolt_trail`, without flashing its whole
+  line, its light at its front), `darken_curve`, `shake_offset`);
   `ui/spells.rs` (`Spells`) starts casts (one after another; frozen time: all at visual time 0, so
   `--freeze-time T` shows T s after), writes `render::lighting::SpellLights` (lights, `dim`, and
   the cells seen, which spell light passes even when unknown), and draws glyphs and particles last
@@ -309,7 +311,7 @@ Effects, each off with its own switch (`particles`, `glow`, `distortion`,
   `camera_split`, so the grid, free glyphs, and light move together and the viewport edges never
   gap. `motion` off: a still flash (`Timeline::still`); `screen_fades` off: no darkening;
   `screen_shake` off: no shake. Tune with `--content-dir` and captures across freeze times (e.g.
-  `effect:fireball@30,14` and `effect:lightning_bolt@21,17>58,17` in the arena, 0.03 to 0.6 s; a ray, `effect:frost_ray@21,17>35,11`).
+  `effect:fireball@30,14` and `effect:lightning_bolt@21,17>58,17` in the arena, 0.03 to 0.6 s; a ray, `effect:frost_ray@21,17>35,11`; a trailing bolt, `effect:magic_missile@21,17>32,15`, 0.08 to 0.4 s).
 
 `ui/` decides what is drawn from the perception snapshot: `ui/mod.rs` (UI console, map grid in
 base colors, the status bar: `status_segments`, a HUD of the character's status from the `PerceptionView` alone, segments two spaces apart, the conditions from `conditions` (which the character screen lists in full), its developer segments only with the dev keys, #1666; the date, moon, weather, and temperature are the pause menu's, `ui/almanac.rs`), `ui/circles.rs` (spell circles), `ui/glyphs.rs` (free glyphs), `ui/motion.rs`

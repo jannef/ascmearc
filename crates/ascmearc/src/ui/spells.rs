@@ -12,6 +12,8 @@
 //!   then a dying afterglow. A **ray** (a bolt with a `head`: Ray of frost) is straight instead: an
 //!   icicle whose head flies along the line, the shaft behind it fading over its `tail` seconds
 //!   (its `impact` particles, rime, settle as the head passes each cell), striking once at the end.
+//!   A jagged bolt with a `tail` (Magic missile) keeps its jagged line but fades the same way:
+//!   each stretch over the `tail` seconds after its front passed it, no flash of the whole line.
 //! - Both are light themselves (drawn unlit, glowing, on top of everything else on the map), light
 //!   the scene ([`SpellLights`], visual only), and while they peak darken everything else
 //!   (`darken`, with the `screen_fades` effect). Landing near the player they shake the view
@@ -32,9 +34,9 @@ use crate::render::lighting::{SpellLight, SpellLights, TERRAIN_FLOOR, VisualLigh
 use crate::render::particles::{self, Particle, Source, gradient};
 use crate::render::post::emissive;
 use crate::render::spells::{
-    self as model, JAG, Phase, Stroke, Timeline, bolt_strokes, burst_distance, burst_heat,
-    heat_glyph, ray_line, ray_share, ray_strokes, ray_tail, shake_amplitude, shake_offset,
-    shape_slot, still_heat, strength,
+    self as model, JAG, Phase, Stroke, Timeline, bolt_strokes, bolt_trail, burst_distance,
+    burst_heat, heat_glyph, ray_line, ray_share, ray_strokes, ray_tail, shake_amplitude,
+    shake_offset, shape_slot, still_heat, strength,
 };
 use crate::render::{Effects, VisualTime};
 use crate::settings::{Role, Settings};
@@ -271,8 +273,9 @@ impl Spells {
                     }
                 }
                 (SpellShape::Burst { center, .. }, _) => add(cell(*center)),
-                (SpellShape::Bolt { path }, phase) if def.head.is_some() => {
-                    // A ray: from its head as it flies, then from where it struck.
+                (SpellShape::Bolt { path }, phase) if def.head.is_some() || def.tail > 0.0 => {
+                    // A ray (or a trailing bolt): from its head (front) as it flies, then from
+                    // where it struck.
                     if let Some(line) = ray_line(c.origin, path) {
                         let x = match phase {
                             Phase::Travel(x) => x,
@@ -468,12 +471,24 @@ pub(super) fn emit(
                 };
                 let strokes =
                     bolt_strokes(c.origin, path, aspect, JAG, branches, c.key, slot, open);
+                // With a `tail` its trail fades behind its front, as a ray's does, and does not
+                // flash again.
+                let fade = linger_fade(phase);
+                let travel = c.timeline.travel;
                 for s in strokes {
                     if s.index < shown && (s.fork || c.shows(path[s.index])) {
                         let ch = match (s.fork, glyphs_of.last()) {
                             (true, Some(&fork)) => fork,
                             _ => glyphs_of[0],
                         };
+                        let k = if def.tail > 0.0 {
+                            bolt_trail(age, s.index, path.len(), travel, def.tail) * fade
+                        } else {
+                            k
+                        };
+                        if k <= FAINT {
+                            continue;
+                        }
                         let k = if s.fork { k * FORK } else { k };
                         bolt_stroke(&mut put, s, ch, k, def, &glow, paint, aspect);
                     }
@@ -592,11 +607,7 @@ fn ray(
         Phase::Travel(x) => x,
         _ => 1.0,
     };
-    // Whatever is left of it is gone by the end of the linger.
-    let fade = match phase {
-        Phase::Linger(l) => 1.0 - l,
-        _ => 1.0,
-    };
+    let fade = linger_fade(phase);
     let tip = line.0.lerp(line.1, x);
     let span = ((line.1 - line.0) * Vec2::new(1.0, aspect)).length();
     for s in ray_strokes(c.origin, path, aspect) {
@@ -629,6 +640,15 @@ fn ray(
     let k = strength(def, phase);
     if c.shows(home) && k > FAINT {
         ray_head(put, head, line, x, k, def, glow, paint, aspect);
+    }
+}
+
+/// How much of a fading line (a ray's, a trailing bolt's) is left at `phase`: whatever is left
+/// of it is gone by the end of the linger.
+fn linger_fade(phase: Phase) -> f32 {
+    match phase {
+        Phase::Linger(l) => 1.0 - l,
+        _ => 1.0,
     }
 }
 
@@ -850,6 +870,34 @@ mod tests {
         particles_of(c, def, c.timeline.travel * 0.5, 2.0, paint, &mut out);
         assert!(!out.is_empty());
         assert!(out.iter().all(|p| p.pos.x < 30.0), "none ahead of the head");
+    }
+
+    #[test]
+    fn a_magic_missile_keeps_its_zigzag_and_lights_only_its_front() {
+        let mut world = arena();
+        let spells = cast_of(
+            &mut world,
+            "effect:magic_missile@21,17>36,17",
+            0.0,
+            false,
+            true,
+        );
+        let content = world.content().clone();
+        let c = &spells.casts[0];
+        let def = c.def(&content);
+        assert!(
+            def.head.is_none() && def.tail > 0.0,
+            "a jagged bolt with a fading trail"
+        );
+        assert!(
+            c.timeline.travel > 0.2,
+            "its front draws out at a speed the eye can follow"
+        );
+        // One light, at its front, not along the faded trail.
+        let early = spells.lights(&content, c.timeline.travel * 0.1, true);
+        let late = spells.lights(&content, c.timeline.travel * 0.9, true);
+        assert_eq!((early.lights.len(), late.lights.len()), (1, 1));
+        assert!(early.lights[0].at.x < 24.0 && late.lights[0].at.x > 33.0);
     }
 
     #[test]
