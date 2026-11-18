@@ -3,6 +3,6 @@ id = "magic_missile"
 name = "Magic missile"
 tree = "class"
 granted = true
-description = "A dart of force toward a place you aim at (a spell, paid in mana): it never misses the first creature in its way."
+description = "A dart of force that weaves past everyone in its way to strike the creature you aim at (a spell, paid in mana), and never misses."
 effects = [{ kind = "spell", spell = "magic_missile" }]
 systems = ["spells", "mana", "combat"]

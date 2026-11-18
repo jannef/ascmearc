@@ -45,7 +45,7 @@ fn spell(w: &mut World, target: ActorId, amount: i32) {
     let player = w.state.player;
     let here = w.player_pos();
     let damage = (Damage::new(amount, None), Strike::Hit { critical: false });
-    w.spell_strikes(player, target, (here, true), damage, &mut Vec::new());
+    w.spell_strikes(player, target, (here, true), damage, true, &mut Vec::new());
 }
 
 fn told(w: &World) -> bool {

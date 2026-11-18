@@ -439,6 +439,11 @@ struct SpellSpec {
     casts: Option<u8>,
     #[serde(default)]
     open_sky: bool,
+    /// A ray or a bolt that flies past everyone short of the cell aimed at.
+    #[serde(default)]
+    seeking: bool,
+    /// `false`: its damage type's `shove` does not hold for it.
+    shove: Option<bool>,
     mana: Option<u16>,
     /// A roll (`"2d6"`).
     damage: Option<String>,
@@ -834,6 +839,12 @@ pub struct SpellData {
     pub casts: u8,
     /// It is cast only under the open sky (call lightning).
     pub open_sky: bool,
+    /// A ray or a bolt that flies past every creature short of the cell aimed at, so it
+    /// strikes the one there, else the first at or past it (Magic missile; `cast.rs::cast_single`).
+    pub seeking: bool,
+    /// Whether its damage type's `shove` holds for it (`false`: Magic missile's never does;
+    /// `spell_type.rs`).
+    pub shove: bool,
     /// Its base mana cost given outright (Identify), in place of its level's: no shape or
     /// resolution counts; armour and the talents still do.
     pub mana: Option<u16>,
@@ -1088,6 +1099,19 @@ fn resolve(spec: SpellSpec, rules: &SpellRules, content: &Content) -> Result<Spe
             return Err("`arcs` needs a damage type that arcs (`[types]`)".into());
         }
     }
+    if spec.seeking && !matches!(shape, Shape::Ray | Shape::Bolt) {
+        return Err("`seeking` is a ray's or a bolt's".into());
+    }
+    let shoves = (damage_type.and_then(|kind| rules.types.get(&kind))).is_some_and(|r| r.shove);
+    match spec.shove {
+        Some(true) => {
+            return Err("`shove` is only ever `false`: a spell shoves as its type does".into());
+        }
+        Some(false) if !shoves => {
+            return Err("`shove = false` needs a damage type that shoves (`[types]`)".into());
+        }
+        _ => {}
+    }
     let study_difficulty = spec.study_difficulty.unwrap_or(0);
     if effect.zone.is_some() && !matches!(shape, Shape::Burst | Shape::Line) {
         return Err("a `zone` lies on a `burst`'s or a `line`'s cells".into());
@@ -1175,6 +1199,8 @@ fn resolve(spec: SpellSpec, rules: &SpellRules, content: &Content) -> Result<Spe
         length,
         casts,
         open_sky: spec.open_sky,
+        seeking: spec.seeking,
+        shove: spec.shove.unwrap_or(true),
         mana: spec.mana,
         look,
         damage,
@@ -2115,6 +2141,22 @@ damage = "2d6"
                 "damage = \"2d6\"",
                 "damage = \"2d6\"\naim = \"intelligence\"",
                 "`aim` is an `attack` or `touch` damage spell's",
+            ),
+            // Only a ray or a bolt flies past anyone; only a type that shoves can be kept from it.
+            (
+                "range = 8\n",
+                "range = 8\nseeking = true\n",
+                "`seeking` is a ray's or a bolt's",
+            ),
+            (
+                "range = 8\n",
+                "range = 8\nshove = false\n",
+                "needs a damage type that shoves",
+            ),
+            (
+                "range = 8\n",
+                "range = 8\nshove = true\n",
+                "only ever `false`",
             ),
         ] {
             let body = good.replace(from, to);

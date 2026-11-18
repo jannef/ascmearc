@@ -13,7 +13,7 @@ expression: "render(case, content.clone())"
              │ Spells                                                                 │
              │   d  Burning hands      2d6 fire, burns one in four, 5 mana, aimed     │
              │   e  Ray of frost       2d6 cold, numbs, 3 mana, aimed                 │
-             │   f  Magic missile      4d4 force, shoves on a big hit, 3 mana, aimed  │
+             │   f  Magic missile      4d4 force, 3 mana, aimed                       │
              │   g  Blink              5 mana                                         │
              │   h  Shatter            6d6 force, shoves on a big hit, 11 mana, aimed │
              │ Talents                                                                │

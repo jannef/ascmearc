@@ -936,8 +936,9 @@ impl World {
     }
 
     /// A ray, a bolt, or a touch from `here` toward `at` (`reach` cells at most): it flies to
-    /// the first creature on its line (a touch: the one at `at`), its effect drawn along the
-    /// way, and strikes it as its resolution says: `auto` always, `attack` and `touch` by the
+    /// the first creature on its line (a touch: the one at `at`; a `seeking` one: the first at
+    /// or past `at`, flying past those short of it), its effect drawn along the way, and
+    /// strikes it as its resolution says: `auto` always, `attack` and `touch` by the
     /// attack roll against its Defence, aimed with its `aim` stat when it is the caster's own
     /// spell (`own`: the school and the style it is cast in), else (a scroll, a wand) with
     /// Dexterity. One that finds no one strikes
@@ -953,16 +954,23 @@ impl World {
         made: &mut Vec<Event>,
     ) -> (Option<Turned<'s>>, i32) {
         let level = self.state.current_level.clone();
-        let path: Vec<Pos> = if def.shape == Shape::Touch {
-            vec![at]
+        // Its flight, and the cell of the one it strikes (if anyone).
+        let (path, struck): (Vec<Pos>, Option<Pos>) = if def.shape == Shape::Touch {
+            (vec![at], Some(at))
         } else {
             let line = self.bolt_line(here, at, reach);
-            let end = line
-                .iter()
-                .position(|&p| self.state.actor_at(&level, p).is_some());
+            // A seeking one flies past everyone short of the cell aimed at; if a wall or its
+            // reach stops it short of that cell, it passes everyone and strikes no one.
+            let from = match def.seeking {
+                true => line.iter().position(|&p| p == at).unwrap_or(line.len()),
+                false => 0,
+            };
+            let end = (line.iter().enumerate().skip(from))
+                .find(|&(_, &p)| self.state.actor_at(&level, p).is_some())
+                .map(|(i, _)| i);
             match end {
-                Some(i) => line[..=i].to_vec(),
-                None => line,
+                Some(i) => (line[..=i].to_vec(), Some(line[i])),
+                None => (line, None),
             }
         };
         if !effect.is_empty() && !path.is_empty() && def.shape != Shape::Touch {
@@ -974,7 +982,7 @@ impl World {
             });
         }
         let last = path.last().copied();
-        let target = last.and_then(|p| self.state.actor_at(&level, p).map(|a| a.id));
+        let target = struck.and_then(|p| self.state.actor_at(&level, p).map(|a| a.id));
         // A spell of the player's that rolls to hit is an attack they chose (`mark.rs`).
         if let Some(target) = target.filter(|_| caster == self.state.player && def.rolls_to_hit()) {
             self.choose_mark(target);
@@ -1114,7 +1122,7 @@ impl World {
         let start = made.len();
         // Soulglass: a kill of this blow leaves crystals (`crystal.rs`).
         self.glassing = def.effect.crystal.then_some(target);
-        let harm = self.spell_strikes(by, target, source, (damage, strike), made);
+        let harm = self.spell_strikes(by, target, source, (damage, strike), def.shove, made);
         self.glassing = None;
         crate::world::combat::surprise::mark_caught(&mut made[start..], (by, target), caught);
         self.leech(by, def, harm, made);

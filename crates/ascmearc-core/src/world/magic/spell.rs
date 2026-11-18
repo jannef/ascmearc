@@ -481,7 +481,7 @@ impl World {
             Caster::Trap(trap) => self.trap_hurts(trap, target, source, damage, events),
             Caster::Actor(by) => {
                 let hit = Strike::Hit { critical: false };
-                self.spell_strikes(by, target, source, (damage, hit), events);
+                self.spell_strikes(by, target, source, (damage, hit), true, events);
             }
             Caster::Place => self.place_hurts(target, damage, events),
         }
@@ -493,7 +493,8 @@ impl World {
     /// its kind, dealt the way every blow is: the event, a big hit's blood, the damage, which may
     /// kill (a kill by the player earns its experience), and if it lives the statuses its wound
     /// causes. A shopkeeper the player's spell reaches turns on them, as one they strike does; a
-    /// miss provokes too. No Evasion here: [`World::spell_hurts`] takes it off an area's first. The
+    /// miss provokes too. No Evasion here: [`World::spell_hurts`] takes it off an area's first.
+    /// `shoves`: whether its type's shove may hold (a spell with `shove = false`: no). The
     /// hit points it took (a Leech's share is of them).
     pub(in crate::world) fn spell_strikes(
         &mut self,
@@ -501,6 +502,7 @@ impl World {
         target: ActorId,
         source: (Pos, bool),
         (damage, strike): (Damage, Strike),
+        shoves: bool,
         events: &mut Vec<Event>,
     ) -> i32 {
         let Some(to) = self.state.actors.get(&target).map(|a| a.pos) else {
@@ -559,7 +561,9 @@ impl World {
             self.siphon(by, (target, to));
         } else {
             self.wounded(target, &blow, Some(by), events);
-            self.spell_type_shove(target, (source.0, from), &blow, events);
+            if shoves {
+                self.spell_type_shove(target, (source.0, from), &blow, events);
+            }
         }
         taken
     }

@@ -83,6 +83,7 @@ fn strike(w: &mut World, target: ActorId, from: Pos, id: &str, amount: i32, stri
         target,
         (from, true),
         (damage, strike),
+        true,
         &mut Vec::new(),
     );
 }

@@ -269,7 +269,14 @@ impl World {
             let damage = Damage::new(rider.dice.roll(&mut rng), Some(rider.kind));
             let hit = Strike::Hit { critical: false };
             let mut made = Vec::new();
-            self.spell_strikes(target, attacker, (from, false), (damage, hit), &mut made);
+            self.spell_strikes(
+                target,
+                attacker,
+                (from, false),
+                (damage, hit),
+                true,
+                &mut made,
+            );
             let harmed = (made.iter()).any(|e| {
                 matches!(
                     e,

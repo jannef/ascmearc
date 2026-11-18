@@ -55,8 +55,11 @@ pub fn roll_words(content: &Content, spell: &SpellData, roll: Roll) -> SpellRoll
     } else {
         roll.to_string()
     };
-    // The rule every spell of its type carries (`data/spells.toml`'s `[types]`).
-    let rule = (content.spell_type(spell.damage_type)).and_then(|t| t.words.as_deref());
+    // The rule every spell of its type carries (`data/spells.toml`'s `[types]`); one that never
+    // shoves (`shove = false`) leaves them unsaid: force's tell only of its shove.
+    let rule = (content.spell_type(spell.damage_type))
+        .filter(|_| spell.shove)
+        .and_then(|t| t.words.as_deref());
     let mut text = match rule {
         Some(rule) => format!("{shown} {what}, {rule}"),
         None => format!("{shown} {what}"),

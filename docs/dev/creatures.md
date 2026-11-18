@@ -308,7 +308,8 @@ or with `arcs`) share a cooldown (#1795): `area_cooldown` seconds (default
 `DEFAULT_AREA_COOLDOWN`, 18), resolved for every type with spells into `CreatureDef::area_cooldown`
 (the `area_spell` status's degrees through `theft::cooldown`; refused on a type without spells).
 **Rules**: `world/creatures/creature_cast.rs`: `World::creature_spell` (one branch in `ai.rs::fight`
-after the breath, `Plan::Cast { spell, on }`), `World::spell_reach_at` (how far the AI closes
+after the breath, `Plan::Cast { spell, on }`; a ray or bolt needs `clear_shot`, a `seeking` one only
+no wall: `reaches`), `World::spell_reach_at` (how far the AI closes
 in; `None` sends it to a launcher or to melee: never idle; both pass over an area spell while
 its cooldown status is on, `affords`), `World::creature_casts` (mana
 through `World::spend_mana`, an area spell's cooldown status, a spell's noise, the words, then by kind: a buff or a hex through

@@ -21,7 +21,8 @@
 //! - a **damage** spell at that hostile, in reach.
 //!
 //! "In reach" is the spell's shape's: a ray or a bolt within its range with a clear line
-//! ([`World::clear_shot`]); a touch beside it; a burst within its range with a clear line, the
+//! ([`World::clear_shot`]), a `seeking` one (Magic missile) with no wall between, whoever stands
+//! there; a touch beside it; a burst within its range with a clear line, the
 //! caster outside its cells; a burst about the caster with the hostile in its cells; a cone or
 //! a line whose cells hold the hostile, with a clear line to it. An area spell is never cast
 //! where its cells hold a friend of the caster's (anyone not hostile to it), and a harmful area
@@ -200,6 +201,10 @@ impl World {
         let clear = || self.clear_shot(here, at, id, target);
         match def.shape {
             Shape::Touch => here.chebyshev(at) <= 1,
+            // A seeking one flies past whoever stands between: only a wall stops it.
+            Shape::Ray | Shape::Bolt if def.seeking => {
+                self.bolt_line(here, at, range).contains(&at)
+            }
             Shape::Ray | Shape::Bolt => in_range && clear(),
             Shape::Burst if def.about_caster() => {
                 let cells = burst_cells(here, radius, |p| {

@@ -23,7 +23,8 @@ Otherwise the spell works as it always does:
 
 - A ray [rolls to hit](combat.md#hitting) like any spell attack, with your
   [Dexterity](stats.md#stat-dexterity).
-- Magic missile never misses.
+- [Magic missile](magic.md#spell-magic-missile) never misses, and flies past everyone in its way to
+  the creature you aim at.
 - An area catches whoever is in it.
 - How far it reaches is in the spell's row and depends on your
   [Willpower](stats.md#stat-willpower), just as for your own casts.
