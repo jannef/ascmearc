@@ -185,6 +185,15 @@ fn a_mend_made_takes_ten_minutes_and_keeps_the_attempts() {
 }
 
 #[test]
+fn a_mend_trains_the_stat_of_its_materials_profession() {
+    use crate::stats::Stat;
+    let mut w = world(-100);
+    damage(&mut w, 0, 0);
+    let spent = w.start_make_do(0);
+    assert_eq!(super::work::stat_of(&w, spent), Some(Stat::Strength));
+}
+
+#[test]
 fn a_mend_failed_destroys_nothing_and_may_be_tried_again() {
     let mut w = world(100);
     damage(&mut w, 0, 1);

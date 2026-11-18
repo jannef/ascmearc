@@ -400,6 +400,14 @@ fn intelligence_is_the_brews_stat() {
 }
 
 #[test]
+fn a_brew_trains_intelligence() {
+    let mut w = world(20);
+    give(&mut w, "glowcap", 3);
+    let spent = w.start_craft("potion_of_sustenance", &[]);
+    assert_eq!(super::work::stat_of(&w, spent), Some(Stat::Intelligence));
+}
+
+#[test]
 fn a_brew_from_gathered_herbs_replays() {
     let content = world(20).content.clone();
     // The witch as the scenario makes her: Alchemy and Herbalism trained, nothing carried.

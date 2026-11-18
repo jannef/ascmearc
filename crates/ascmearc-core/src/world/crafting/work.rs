@@ -12,12 +12,16 @@
 //! - **Done**: the stacks the task works on ([`Job::on`]) are found again ([`World::worked_on`],
 //!   #1564) and handed to it ([`Job::found`]); any gone ends the work on nothing
 //!   ([`Job::nothing_left`]). Then the task finishes ([`Job::done`]): its own checks, what comes
-//!   of them, its marks.
+//!   of them, its skill marks.
+//! - **The stat** (#1790): work done to its end, whatever came of it, trains the stat it is made
+//!   with ([`Job::stat`], asked of the stacks found before the task finishes; none for salvage
+//!   yet), through the `crafted` rules of that stat (`data/stats.toml`, [`World::train_craft`]).
 //!
 //! A new rule for every craft (an interruption, a station check) goes here once.
 
 use crate::action::Event;
 use crate::content::{ActionKind, Content};
+use crate::stats::Stat;
 use crate::time::Duration;
 use crate::world::levels::encounter::Watch;
 use crate::world::turn::rest::Ended;
@@ -57,6 +61,12 @@ pub(in crate::world) trait Job {
     /// What is said when a stack it works on is gone as the time is up.
     fn nothing_left(&self) -> &'static str {
         "You have nothing left to work on."
+    }
+
+    /// The stat the work is made with (its check's), which its end trains: asked once the
+    /// stacks are found, before [`Job::done`] spends them. `None` trains nothing.
+    fn stat(&self, _w: &World) -> Option<Stat> {
+        None
     }
 
     /// The time is up and the stacks are found: the work's own end.
@@ -140,7 +150,11 @@ impl World {
             _ if self.state.time >= until => match self.worked_on(&on) {
                 Some(now) => {
                     job.found(&now);
+                    let stat = job.stat(self);
                     job.done(self, events);
+                    if let Some(stat) = stat {
+                        self.train_craft(stat);
+                    }
                 }
                 None => self.say(job.nothing_left()),
             },
@@ -161,4 +175,14 @@ impl World {
 /// The one stack `now` names, for a job of one stack: found, so it is there.
 pub(in crate::world) fn one(now: &[Option<usize>]) -> usize {
     now.first().copied().flatten().expect("the stack worked on")
+}
+
+/// The stat the work `spent` begins would train at its end ([`Job::stat`], asked of the stacks
+/// as they are now), for the tests of each profession's; `None` for no work.
+#[cfg(test)]
+pub(in crate::world) fn stat_of(w: &World, spent: Spent) -> Option<Stat> {
+    match spent {
+        Spent::Work(mut work) => work.task.job().stat(w),
+        _ => None,
+    }
 }

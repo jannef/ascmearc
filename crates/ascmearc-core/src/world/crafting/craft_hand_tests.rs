@@ -256,6 +256,19 @@ fn a_recipes_profession_is_its_directorys_for_the_stat_the_skill_and_the_mark() 
 }
 
 #[test]
+fn a_recipe_trains_its_professions_stat() {
+    use crate::stats::Stat;
+    let mut w = world();
+    carry(&mut w, "knife");
+    stock(&mut w, "flint", 1);
+    let spent = w.start_craft("knife_by_hand", &[Some(1)]);
+    assert_eq!(super::work::stat_of(&w, spent), Some(Stat::Dexterity));
+    stock(&mut w, "steel", 1);
+    let spent = w.start_craft("knife", &[Some(2)]);
+    assert_eq!(super::work::stat_of(&w, spent), Some(Stat::Strength));
+}
+
+#[test]
 fn the_made_spear_and_javelin_are_named_by_their_heads_and_the_javelin_still_flies() {
     let mut w = world();
     train(&mut w, "woodcraft", 200);
