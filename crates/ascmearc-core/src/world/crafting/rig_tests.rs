@@ -19,6 +19,11 @@ fn world(map: &str) -> World {
 
 /// [`world`], with or without Trapwright.
 fn world_with(map: &str, trapwright: bool) -> World {
+    world_as(map, trapwright, "human", "craftsperson")
+}
+
+/// [`world_with`] as a character of `race` and `class`.
+fn world_as(map: &str, trapwright: bool, race: &str, class: &str) -> World {
     let mut files = ContentFiles::builtin();
     files.remove("data/hunger.toml");
     let legend = r#"
@@ -34,8 +39,10 @@ fn world_with(map: &str, trapwright: bool) -> World {
     );
     files.insert(
         "scenarios/rig_hall.toml",
-        "name = \"Hall\"\nstart_level = \"rig_hall\"\nseed = 7\ncharacter = { race = \"human\", \
-         gender = \"female\", class = \"craftsperson\" }\n",
+        &format!(
+            "name = \"Hall\"\nstart_level = \"rig_hall\"\nseed = 7\ncharacter = {{ race = \"{race}\", \
+             gender = \"female\", class = \"{class}\" }}\n"
+        ),
     );
     let content = Arc::new(Content::load(&files).expect("test content is valid"));
     let w = World::new(content.clone(), "rig_hall", None).expect("world");
@@ -116,6 +123,21 @@ fn a_tripwire_takes_up_to_three_arrows_and_is_known_and_rigged() {
         truth.contains("trap rigged_arrows at (3, 2): 3 charges (rigged)"),
         "{truth}"
     );
+}
+
+/// A kobold of any class rigs from level 1, by the Trapwright their race grants; a human
+/// warrior has none.
+#[test]
+fn a_kobold_warrior_rigs_a_tripwire_and_a_human_warrior_cannot() {
+    let mut w = world_as(HALL, false, "kobold", "warrior");
+    carry(&mut w, "arrow", 3);
+    let w = fated(&w, "rig:tripwire:E", "You rig a tripwire across the way.");
+    assert!(w.state.current().traps[&EAST].rigged);
+    let mut human = world_as(HALL, false, "human", "warrior");
+    carry(&mut human, "arrow", 3);
+    assert!(human.perception().rigs().is_empty());
+    run(&mut human, "rig:tripwire:E");
+    assert!(human.state.current().traps.is_empty());
 }
 
 #[test]
