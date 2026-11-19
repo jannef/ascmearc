@@ -1,0 +1,9 @@
+# An elf's narrow way: one weapon, the other hand free, and no other way of fighting.
+[[talent]]
+id = "way_of_the_duel"
+name = "Way of the duel"
+tree = "racial"
+description = "One weapon and the other hand free, as the elven masters teach: you fight far better as a duelist, and worse in any other way of fighting."
+needs = { race = ["elf", "half_elf"], weapon_skills = { duelist = 2 } }
+effects = [{ kind = "way", attacks = "melee", skills = ["duelist"], to_hit = 3, damage = 1, else_to_hit = -3, else_damage = -1 }]
+systems = ["combat", "styles"]

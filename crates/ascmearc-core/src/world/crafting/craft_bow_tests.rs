@@ -1,4 +1,4 @@
-//! The bows, crossbows, the sling, the lute, and the pipe (docs/dev/crafting.md "Stock inputs";
+//! The bows, crossbows, the sling, and the lute (docs/dev/crafting.md "Stock inputs";
 //! #1352): the stock each takes by the base's weight, the stock inputs (a bow's sinew, a
 //! crossbow's ingot of any metal) as wizard steps, spent and never a part of what is made, their
 //! greyings and refusals, a wooden composite bow named from its parts, and a lute that comes out
@@ -95,7 +95,6 @@ fn the_stock_follows_the_bases_weight_as_the_design_counts_it() {
         ("heavy_crossbow", "wood", 23),
         ("sling", "leather", 1),
         ("lute", "wood", 8),
-        ("pipe", "wood", 1),
     ] {
         let mut w = world();
         stock(&mut w, material, 40);
@@ -168,8 +167,6 @@ fn without_sinew_or_metal_the_rows_grey_and_the_work_is_refused_with_no_time() {
     apply(&mut w, "craft:composite_bow:b,c");
     assert_eq!(said(&w), "You have too few of those.");
     assert_eq!(w.state.time, start);
-    // The sling and the pipe take no input.
-    assert_eq!(row(&w, "pipe").1, None);
 }
 
 #[test]

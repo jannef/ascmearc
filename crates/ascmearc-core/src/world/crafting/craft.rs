@@ -23,8 +23,8 @@
 //! [`PerceptionView::recipes`]: crate::perception::PerceptionView::recipes
 
 use crate::content::{
-    Content, InputKind, MaterialId, ObjectId, PartSource, RecipeDef, RecipeId, RecipeInput,
-    RecipeUse, TerrainId, counted,
+    Content, InputKind, MaterialId, ObjectId, PartSource, RaceDef, RecipeDef, RecipeId,
+    RecipeInput, RecipeUse, TerrainId, counted,
 };
 use crate::geom::{Dir, Pos};
 use crate::scroll_label::Lore;
@@ -123,12 +123,14 @@ pub(crate) fn recipe_rows(
     lore: Lore<'_>,
     level: &LevelState,
     player: &Actor,
+    race: Option<&RaceDef>,
     skill: SkillId,
 ) -> Vec<RecipeRow> {
     if player.skills.get(skill).is_none() {
         return Vec::new();
     }
     (content.recipes().of(skill))
+        .filter(|(_, recipe)| of_race(recipe, race))
         .map(|(id, recipe)| RecipeRow {
             id,
             name: recipe.name.clone(),
@@ -136,6 +138,15 @@ pub(crate) fn recipe_rows(
             unavailable: lack(content, lore, level, player, recipe),
         })
         .collect()
+}
+
+/// Whether a character of `race` may make `recipe`: any, unless it is one race's own craft (the
+/// halfling's pipe, `RecipeDef::race`), which only that race sees or makes.
+pub(crate) fn of_race(recipe: &RecipeDef, race: Option<&RaceDef>) -> bool {
+    recipe
+        .race
+        .as_deref()
+        .is_none_or(|own| race.is_some_and(|r| r.id == own))
 }
 
 /// The station `station` beside `at` on `level`: the first cell around it (in [`Dir::ALL`]
@@ -532,6 +543,10 @@ impl World {
             return Spent::Nothing;
         };
         let def = content.recipe(id);
+        if !of_race(def, self.state.race_of(&content, self.state.player())) {
+            self.say("You know no such recipe.");
+            return Spent::Nothing;
+        }
         if self.untrained(def.skill) {
             return Spent::Nothing;
         }

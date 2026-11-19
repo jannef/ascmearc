@@ -86,16 +86,21 @@ pub enum Aspect {
     Defence,
     /// +1 Protection.
     Protection,
+    /// The make alone, no number: what a pipe (a [`ItemKind::Pipe`]) is made better in, having
+    /// nothing else to better. It counts for its name, its worth, and the affixes it may hold
+    /// (`super::capacity`).
+    Make,
 }
 
 impl Aspect {
     /// Every aspect, in the order they are drawn among.
-    pub const ALL: [Aspect; 5] = [
+    pub const ALL: [Aspect; 6] = [
         Aspect::Die,
         Aspect::ToHit,
         Aspect::Damage,
         Aspect::Defence,
         Aspect::Protection,
+        Aspect::Make,
     ];
 
     /// Its id, as saves and the dev dump write it.
@@ -106,16 +111,19 @@ impl Aspect {
             Aspect::Damage => "damage",
             Aspect::Defence => "defence",
             Aspect::Protection => "protection",
+            Aspect::Make => "make",
         }
     }
 
     /// Whether the base item `def` has it: anything with an attack has the first three, anything
-    /// that gives Defence (armour, a shield, a parrying weapon) or Protection the others.
+    /// that gives Defence (armour, a shield, a parrying weapon) or Protection the next two, and a
+    /// pipe the make.
     pub fn of(self, def: &ObjectDef) -> bool {
         match self {
             Aspect::Die | Aspect::ToHit | Aspect::Damage => def.attack.is_some(),
             Aspect::Defence => def.armour != 0 || def.shield != 0 || def.parry != 0,
             Aspect::Protection => def.protection != 0,
+            Aspect::Make => def.kind == Some(ItemKind::Pipe),
         }
     }
 }

@@ -81,8 +81,8 @@ issue how it interacts with mana**, and hooks in at the one place below.
   - `World::keep_mana_within_max` after every player action (in `World::apply`, beside
     `keep_hp_within_max`): down to the lasting maximum when something that raised it comes off.
     `World::disease_turn` cuts mana to the new maximum after mental stat damage, like hit points.
-  - `World::level_up_mana(before, after)` from `grant_xp`: `max(0, class mana ÷ 2 + the better
-    of the raised Intelligence and Willpower modifiers)` (`mana::level_modifier`) per level up to
+  - `World::level_up_mana(before, after)` from `grant_xp`: `max(0, class mana ÷ 2 + the best
+    of the raised Intelligence, Willpower, and Presence modifiers, `mana::MENTAL`)` (`mana::level_modifier`) per level up to
     `mana_level` (60; `World::level_mana`; the scenario's `mana` without a character). The race
     and class values and this formula are the progression design's (`docs/design/progression.md`
     §3.7). An ability short of mana is `Unavailable::NoMana` (a spell's through

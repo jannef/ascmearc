@@ -114,7 +114,7 @@ the abilities menu or `KeyCommand::Disarm` (unbound). The wiki's `trap-disarm.md
 refusals, the modifier, marks, the menu, saves and replays), `check.rs`, `ability.rs`.
 
 **Rigging** (#1423; the craftsperson design §7.6) is
-`world/crafting/rig.rs`: the craftsperson's Trapwright (`data/talents/trapwright.toml`, `effects = [{
+`world/crafting/rig.rs`: the craftsperson's Trapwright, also every kobold's from level 1 (`races.toml` `talents = ["trapwright"]`: `Talents::regrant` gives a race's granted class-tree talent unless it is held already, so a kobold craftsperson holds it once; the abilities menu lists it in the Class group for any holder) (`data/talents/trapwright.toml`, `effects = [{
 kind = "rigs" }]` → `CraftMods::rigs` → `ClassActive::Rig`, id `trapwright`, `Aim::Rig`).
 The rigs are `data/rigs.toml` (`content/rig.rs`: `RigRules { difficulty, skill, rigs }`,
 `RigDef { trap, seconds, takes: RigTakes::{Ammo, Stock, DigTool}, knife, wall, made, snaps }`,

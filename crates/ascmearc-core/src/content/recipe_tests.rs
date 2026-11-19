@@ -164,7 +164,7 @@ fn the_built_in_recipes_are_the_forges_weapons_armour_tools_and_temper_and_woodc
         ("heavy_crossbow", 16, 7200, 60, false, 1),
         ("sling", 8, 600, 0, false, 1),
         ("lute", 14, 7200, 40, false, 1),
-        ("pipe", 7, 600, 0, false, 1),
+        ("pipe", 7, 600, 0, false, 2),
     ] {
         let r = content.recipe(recipes.id(id).expect(id));
         let got = (r.difficulty, r.seconds, r.from, r.ornament, r.parts.len());
@@ -898,4 +898,40 @@ fn alchemys_row_and_its_brews_load_and_a_missing_herb_or_an_empty_line_is_refuse
         Err(e) => e.message,
     };
     assert!(message.contains("an empty line"), "{message}");
+}
+
+#[test]
+fn the_pipe_is_a_halflings_and_its_wood_and_trim_make_it_finer() {
+    let content = builtin();
+    let pipe = content.recipe(content.recipes().id("pipe").expect("pipe"));
+    assert_eq!(pipe.race.as_deref(), Some("halfling"));
+    let m = |id: &str| content.material_id(id).expect(id);
+    assert_eq!(pipe.finer_by([(0, m("wood")), (1, m("wood"))]), 0);
+    assert_eq!(pipe.finer_by([(0, m("hardwood")), (1, m("hardwood"))]), 1);
+    assert_eq!(pipe.finer_by([(0, m("ironwood")), (1, m("dragonbone"))]), 4);
+    assert_eq!(pipe.finer_by([(0, m("wood")), (1, m("horn"))]), 1);
+    // The checks: a known race, a part of the result, a material it may be of, 1 to 3 grades.
+    for (extra, says) in [
+        ("race = \"nobody\"\n", "unknown race `nobody`"),
+        (
+            "[recipe.finer]\nhilt = { steel = 1 }\n",
+            "has no part `hilt`",
+        ),
+        (
+            "[recipe.finer]\nmain = { wood = 1 }\n",
+            "`wood` is not what it may be made of",
+        ),
+        (
+            "[recipe.finer]\nmain = { mithril = 4 }\n",
+            "1 to 3 grades, not 4",
+        ),
+    ] {
+        let message = refused(SWORD, &sword(extra));
+        assert!(message.contains(says), "{extra}: {message}");
+    }
+    let message = refused(
+        "data/recipes/metalcraft/temper.toml",
+        "[[recipe]]\nid = \"temper\"\nuse = \"temper\"\nstation = \"anvil\"\nrace = \"halfling\"\n",
+    );
+    assert!(message.contains("race, or finer"), "{message}");
 }

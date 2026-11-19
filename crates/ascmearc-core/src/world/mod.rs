@@ -630,6 +630,8 @@ enum Spent {
     RunToStairs(StairsDir),
     /// A meal (see [`World::dine`]).
     Meal(health::eat::Dish),
+    /// Smoking a pipe until this moment (see [`World::smoke`]).
+    Smoke(GameTime),
     /// Digging into the wall at this cell (see [`World::dig`]).
     Dig(Pos),
     /// Searching for up to this many turns (see [`World::search`]).
@@ -1354,6 +1356,7 @@ impl World {
             Spent::Run(dir) => self.run(dir, &mut events),
             Spent::RunToStairs(way) => self.run_to_stairs(way, &mut events),
             Spent::Meal(dish) => self.dine(dish, &mut events),
+            Spent::Smoke(until) => self.smoke(until, &mut events),
             Spent::Dig(at) => self.dig(at, &mut events),
             Spent::Search(turns) => {
                 // A sound heard again while waiting trains Listen a little (`perceive.rs`).

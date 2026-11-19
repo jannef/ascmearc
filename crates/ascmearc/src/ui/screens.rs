@@ -1736,6 +1736,31 @@ mod tests {
         frame(&mut app, &[USE]);
         assert_eq!(actions(&app), [Action::UseTool]);
         assert_eq!(app.world().resource::<InputMode>(), &InputMode::Normal);
+        // A pipe ready (a halfling's, from the kit): `u` smokes it at once, no prompt.
+        let showcase = content();
+        let spec = "halfling,male,thief".parse().expect("a character");
+        let mut world = ascmearc_core::World::start_run(
+            showcase.clone(),
+            "showcase",
+            Some(3),
+            Some(&spec),
+            None,
+            true,
+        )
+        .expect("run");
+        let pipe = showcase.object_id("pipe").expect("pipe");
+        let at = (world.perception().inventory().iter())
+            .position(|s| s.object == pipe)
+            .expect("the kit's pipe");
+        world.apply(&Action::Equip {
+            slot: "tool".into(),
+            item: at,
+        });
+        assert_eq!(world.perception().ready_pipe(), Some(at));
+        let mut app = app_with(showcase, Some(Game::from_world(world, "pip-1".into())));
+        frame(&mut app, &[USE]);
+        assert_eq!(actions(&app), [Action::UseTool]);
+        assert_eq!(app.world().resource::<InputMode>(), &InputMode::Normal);
         // Nothing ready (the quarry's start): the rules say so at once, and no prompt opens.
         let quarry = content();
         let world = ascmearc_core::World::new(quarry.clone(), "quarry", None).expect("run");

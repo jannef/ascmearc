@@ -58,17 +58,17 @@ fn deep_well_hands_out_mana_at_the_pick_and_as_levels_come() {
     let (base, now) = mana(&w);
     run(&mut w, "talent:deep_well");
     assert!(w.state.player().talents.holds("deep_well", None));
-    // Level 9: 9 / 4 = 2, and at least 2.
-    assert_eq!(mana(&w), (base + 2, now + 2));
+    // Level 9: 9 / 1 = 9.
+    assert_eq!(mana(&w), (base + 9, now + 9));
 
-    // A twin without it gains only the levels' own mana from 9 to 12; the well adds 1 more
-    // (12 / 4 = 3).
+    // A twin without it gains only the levels' own mana from 9 to 12; the well adds 3 more
+    // (one a level).
     let mut twin = world();
     at_level_with_a_pick(&mut twin, 9);
     let (twin_base, _) = mana(&twin);
     reach(&mut w, 12);
     reach(&mut twin, 12);
-    assert_eq!(mana(&w).0 - (base + 2), mana(&twin).0 - twin_base + 1);
+    assert_eq!(mana(&w).0 - (base + 9), mana(&twin).0 - twin_base + 3);
 }
 
 #[test]

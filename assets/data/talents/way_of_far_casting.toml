@@ -1,0 +1,9 @@
+# An elf's narrow way: spells cast from afar, out of armour, and no other way.
+[[talent]]
+id = "way_of_far_casting"
+name = "Way of far casting"
+tree = "racial"
+description = "Elves cast from afar: your spells aimed from a distance strike truer and harder, but a spell loosed at arm's length or in armour goes awry."
+needs = { race = ["elf", "half_elf"], weapon_skills = { sniper = 2 } }
+effects = [{ kind = "way", attacks = "spell", skills = ["sniper"], to_hit = 2, damage = 2, else_to_hit = -3, else_damage = -2 }]
+systems = ["spells", "styles"]

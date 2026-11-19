@@ -3,7 +3,7 @@
 
 use crate::wiki::util::signed;
 use ascmearc_core::content::{Content, Role};
-use ascmearc_core::talent::OffenceEffect;
+use ascmearc_core::talent::{OffenceEffect, WayAttacks};
 
 /// What `effect` does, as the talents' tables say it.
 pub(super) fn text(content: &Content, effect: &OffenceEffect) -> String {
@@ -285,5 +285,54 @@ pub(super) fn text(content: &Content, effect: &OffenceEffect) -> String {
             signed(to_hit),
             signed(damage)
         ),
+        OffenceEffect::Way {
+            attacks,
+            skills,
+            objects,
+            to_hit,
+            damage,
+            else_to_hit,
+            else_damage,
+        } => {
+            let table = content.weapon_skills();
+            let skill = |id: &String| match table.id(id).map(|s| table.skill(s)) {
+                Some(s) if s.role == Role::Style => format!("in the {} style", s.name),
+                Some(s) => format!("with {}", s.name),
+                None => format!("with {id}"),
+            };
+            let object = |id: &String| {
+                let name = (content.object_id(id))
+                    .map_or_else(|| id.clone(), |o| content.object(o).name.clone());
+                format!("with a {name}")
+            };
+            let mut ways: Vec<String> = objects.iter().map(object).collect();
+            ways.extend(skills.iter().map(skill));
+            // A way of launchers alone is a way of shots.
+            let shots = skills.is_empty()
+                && objects.iter().all(|id| {
+                    (content.object_id(id)).is_some_and(|o| content.object(o).launches.is_some())
+                });
+            let (these, others) = match attacks {
+                WayAttacks::Melee => (
+                    "blows",
+                    "every other blow (bare hands and shield bashes too; not kicks)",
+                ),
+                WayAttacks::Missile if shots => ("shots", "every other shot and every throw"),
+                WayAttacks::Missile => ("shots and throws", "every other shot and throw"),
+                WayAttacks::Spell => (
+                    "spells that roll to hit",
+                    "every other spell that rolls to hit",
+                ),
+            };
+            let gains = |to_hit: i32, damage: i32| {
+                format!("to hit {}, damage {}", signed(to_hit), signed(damage))
+            };
+            format!(
+                "{these} {}: {}; {others}: {}",
+                ways.join(" or "),
+                gains(to_hit, damage),
+                gains(else_to_hit, else_damage)
+            )
+        }
     }
 }

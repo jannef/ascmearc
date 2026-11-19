@@ -242,7 +242,7 @@ impl KeyCommand {
             KeyCommand::Steal => "Steal",
             KeyCommand::Roundhouse => "Roundhouse",
             KeyCommand::PrevTarget => "Previous target",
-            KeyCommand::UseTool => "Use a tool (dig, light)",
+            KeyCommand::UseTool => "Use a tool (dig, light, smoke)",
             KeyCommand::Chat => "Chat",
             KeyCommand::Pay => "Pay the shopkeeper",
             KeyCommand::Back => "Back (Esc always works)",

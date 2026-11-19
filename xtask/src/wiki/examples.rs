@@ -494,7 +494,7 @@ fn mana_an_elf_wizards_mana() {
     says(
         &block,
         &format!(
-            "half the wizard's {class_mana}, plus the better of her Intelligence and Willpower modifiers: {} + {level} = **{more} more**",
+            "half the wizard's {class_mana}, plus the best of her Intelligence, Willpower, and Presence modifiers: {} + {level} = **{more} more**",
             class_mana / 2
         ),
     );

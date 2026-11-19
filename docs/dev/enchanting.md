@@ -103,6 +103,22 @@ weapon, #1444, its 2 to 4 affixes never trimmed). With the base at 2 and quality
 (#1444) every one fits; Stonebiter and the trap hall's dagger (two affixes each) need no make
 and are plain.
 
+## Pipes
+
+A halfling's pipe (`objects/pipe.toml`, `kind = "pipe"`, `ItemKind::Pipe`) is enchanted as if it
+were armour: Kindle, Quicken, Recast, Imbue, Ennoble, Unbind, the seals, and salvage's affix
+checks all take it, since they read `def.kind` (`enchant::refusal`: "No magic can be bound in
+that." only for an object with no kind) and roll through `magic::may_roll`, which gives a pipe
+every affix whose `bases` name an armour kind (body, helmet, cloak, gloves, boots), but those
+raising the item's own Protection, which a pipe has none of (`ItemKind::rolls_as_armour`). No
+other tool changes: the lantern has no kind and stays unenchantable; the pick-axe and mattock
+keep the `tool` list. Its magic works while it is ready in the Tool slot (as anything worn or
+wielded). Its capacity is the usual sum: the base 2, its make (the pipe's one aspect is
+`Aspect::Make`, so a crafted pipe is Fine to Masterwork, +0 to +2: docs/dev/crafting.md
+"Pipes"), and its bowl's binding (ironwood +1), 2 to 5. Tests:
+`world/crafting/enchant_tests.rs::a_pipe_is_enchanted_as_armour_and_its_magic_works_in_the_tool_slot`,
+`world/crafting/craft_pipe_tests.rs::a_finer_pipe_holds_more_enchantment`.
+
 ## What the player sees
 
 The item description (`magic/describe.rs::appraised_for`, through `Appraisal::capacity`) adds one

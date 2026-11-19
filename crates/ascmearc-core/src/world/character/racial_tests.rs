@@ -80,10 +80,12 @@ fn every_racial_talent_asks_for_its_race_and_only_that_race_is_offered_it() {
         ["gem_lore", "gnomish_illusionist", "tinkerer"]
     );
     assert_eq!(racial("half_orc"), ["ferocity", "orcish_hide"]);
-    assert_eq!(racial("half_elf"), ["diplomat"]);
+    assert_eq!(racial("half_elf"), ["diplomat", "way_of_the_long_blade"]);
     assert_eq!(racial("halfling"), ["lucky", "small_target"]);
-    // An elf needs a level and a bow skill first; a human has none to pick (Versatile is given).
-    assert!(racial("elf").is_empty());
+    // A warrior starts with long blades at rank 2, so the long blade's way is open to an elf or
+    // a half-elf at once; the elves' other talents need a level or more weapon skill first, and
+    // a human has none to pick (Versatile is given).
+    assert_eq!(racial("elf"), ["way_of_the_long_blade"]);
     assert!(racial("human").is_empty());
 }
 
@@ -360,4 +362,37 @@ fn a_replay_that_takes_a_racial_talent_verifies() {
         .run(CONTENT.clone())
         .expect("the replay verifies");
     assert_eq!(verified.state_hash(), w.state_hash());
+}
+
+fn holds_trapwright(w: &World) -> usize {
+    (w.state.player().talents.iter())
+        .filter(|t| t.id == "trapwright")
+        .count()
+}
+
+/// Kobolds hold the craftsperson's Trapwright from level 1, whatever their class, and have
+/// the ability; no other race does.
+#[test]
+fn kobolds_are_trapwrights() {
+    let w = world("kobold,female,warrior");
+    assert_eq!(holds_trapwright(&w), 1);
+    assert!(mods(&w).craft.rigs);
+    assert!(!w.perception().rigs().is_empty());
+    let human = world("human,female,warrior");
+    assert_eq!(holds_trapwright(&human), 0);
+    assert!(human.perception().rigs().is_empty());
+}
+
+/// A kobold craftsperson holds Trapwright once, at level 1 and after the class gives it at 25,
+/// and a restore does not add it again.
+#[test]
+fn a_kobold_craftsperson_never_holds_it_twice() {
+    let mut w = world("kobold,female,craftsperson");
+    assert_eq!(holds_trapwright(&w), 1);
+    w.grant_class(25, false);
+    assert_eq!(holds_trapwright(&w), 1);
+    let state = w.state().clone();
+    let again = World::from_state(CONTENT.clone(), state).expect("restores");
+    assert_eq!(holds_trapwright(&again), 1);
+    assert!(!offered(&again).contains(&"trapwright".to_string()));
 }

@@ -503,6 +503,12 @@ impl<'a> PerceptionView<'a> {
         self.player.ready_light(self.content)
     }
 
+    /// The pipe the player has ready (in the Tool slot), by its inventory position: `u` smokes
+    /// it at once, without a direction (the rules refuse what they refuse).
+    pub fn ready_pipe(&self) -> Option<usize> {
+        self.player.ready_pipe(self.content)
+    }
+
     /// Whether the wall at `p`, which the player sees, has been dug into and still stands.
     pub fn is_dug(&self, p: Pos) -> bool {
         self.is_visible(p) && self.level.dug.contains_key(&p)
@@ -811,7 +817,14 @@ impl<'a> PerceptionView<'a> {
     /// The recipes of profession `skill` the player sees, in path order, each with what it takes
     /// and why it cannot be made now (`world/crafting/craft.rs`): what the profession's screen lists.
     pub fn recipes(&self, skill: crate::skills::SkillId) -> Vec<crate::world::RecipeRow> {
-        crate::world::recipe_rows(self.content, self.lore, self.level, self.player, skill)
+        crate::world::recipe_rows(
+            self.content,
+            self.lore,
+            self.level,
+            self.player,
+            self.own_race(),
+            skill,
+        )
     }
 
     /// The choices of generic recipe `recipe`, in order, each with the stacks carried that it may

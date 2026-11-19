@@ -621,8 +621,9 @@ thaw:X,Y,R web:X,Y,R`
 - `dig:E` digs into the wall east with the tool in the Tool slot, turn after turn until it gives
   way or something interrupts (refused, with no time, untrained in Mining: a teacher sells it,
   `train_skill`, docs/dev/digging.md).
-- `use_tool` uses the light ready in the Tool slot (a lantern: unlit, lit, hooded, unlit again;
-  `u` in the game, which asks for a direction to dig instead without one).
+- `use_tool` uses the tool ready in the Tool slot: smokes a pipe (an hour's smoke, a halfling's,
+  on a Bloated belly: docs/dev/hunger.md "Pipes"), else turns a light (a lantern: unlit, lit,
+  hooded, unlit again; `u` in the game, which asks for a direction to dig instead without one).
 - `vision:PROFILE` switches the vision profile (`vision:darkvision`).
 - `stance:NAME` takes a combat stance, no time; `frenzy` is refused: only rage gives it.
 

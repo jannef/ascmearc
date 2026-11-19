@@ -4,5 +4,5 @@ name = "Deep well"
 tree = "scholar"
 description = "Your power runs deep: more mana, and more as you level."
 needs = { either = { stats = { intelligence = 12, willpower = 12 } } }
-effects = [{ kind = "max_mana_per_levels", per_levels = 4, at_least = 2 }]
+effects = [{ kind = "max_mana_per_levels", per_levels = 1, at_least = 1 }]
 systems = ["mana"]

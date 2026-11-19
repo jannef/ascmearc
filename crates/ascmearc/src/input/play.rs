@@ -222,8 +222,8 @@ impl Gameplay<'_> {
             KeyCommand::Chat => self.beside(Beside::Chat, InputMode::Direction(command)),
             KeyCommand::UseTool => {
                 let view = game.world.perception();
-                if view.ready_light().is_some() {
-                    // A light ready (a lantern): its next mode, at once.
+                if view.ready_pipe().is_some() || view.ready_light().is_some() {
+                    // A pipe ready: smoked; a light ready (a lantern): its next mode, at once.
                     self.actions.write(PlayerAction(Action::UseTool));
                     InputMode::Normal
                 } else if view.dig_refusal().is_none() {

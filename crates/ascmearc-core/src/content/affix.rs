@@ -57,6 +57,9 @@ pub enum ItemKind {
     Amulet,
     /// A tool worn in the Tool slot: a pick-axe.
     Tool,
+    /// A halfling's pipe, readied in the Tool slot: it rolls what armour rolls
+    /// ([`ItemKind::rolls_as_armour`]).
+    Pipe,
 }
 
 impl ItemKind {
@@ -73,6 +76,7 @@ impl ItemKind {
         ItemKind::Ring,
         ItemKind::Amulet,
         ItemKind::Tool,
+        ItemKind::Pipe,
     ];
 
     /// Its id in data files: `body`.
@@ -90,6 +94,7 @@ impl ItemKind {
             ItemKind::Ring => "ring",
             ItemKind::Amulet => "amulet",
             ItemKind::Tool => "tool",
+            ItemKind::Pipe => "pipe",
         }
     }
 
@@ -108,6 +113,7 @@ impl ItemKind {
             ItemKind::Ring => "rings",
             ItemKind::Amulet => "amulets",
             ItemKind::Tool => "tools",
+            ItemKind::Pipe => "pipes",
         }
     }
 
@@ -132,6 +138,13 @@ impl ItemKind {
                 | ItemKind::Gloves
                 | ItemKind::Boots
         )
+    }
+
+    /// Whether it takes armour's affixes rather than its own (a pipe): an affix rolls on
+    /// it when its `bases` name any armour kind ([`ItemKind::is_armour`]), so no affix file
+    /// names it. Only a pipe; the other tools keep their own `tool` list.
+    pub const fn rolls_as_armour(self) -> bool {
+        matches!(self, ItemKind::Pipe)
     }
 }
 
@@ -1398,7 +1411,7 @@ tiers = [{ level = 1, min = 1, max = 2 }]
     #[test]
     fn tools_are_a_kind_of_item() {
         assert_eq!(ItemKind::from_id("tool"), Some(ItemKind::Tool));
-        assert_eq!(ItemKind::ALL.last(), Some(&ItemKind::Tool));
+        assert!(ItemKind::ALL.contains(&ItemKind::Tool));
         assert!(!ItemKind::Tool.attacks() && !ItemKind::Tool.is_armour());
         let tier = "{ level = 1, min = 10, max = 15 }";
         let a = parse_with(&one("prefix", "x", "weight", "\"tool\"", "", tier)).expect("valid");

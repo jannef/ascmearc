@@ -28,6 +28,7 @@ cfg_if! {
         mod craft_hand_tests;
         mod craft_hide_tests;
         mod craft_make_tests;
+        mod craft_pipe_tests;
         mod craft_tests;
         mod craftsperson_tests;
         mod cut_tests;
