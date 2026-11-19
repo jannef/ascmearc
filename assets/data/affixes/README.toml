@@ -68,7 +68,9 @@
 #           (of each skill, for skill affixes; of each damage type, for elemental and
 #           resistance affixes).
 #   bases   the kinds of item that may roll it: weapon, launcher, ammo, body, helmet, cloak,
-#           gloves, boots, shield, ring, amulet. An affix whose effect the item lacks the means
+#           gloves, boots, shield, ring, amulet, tool. A pipe (`pipe`) is never named: it rolls
+#           every affix whose bases name an armour kind (body, helmet, cloak, gloves, boots), but
+#           those raising the armour's own Protection. An affix whose effect the item lacks the means
 #           for (range without a range, draw without a Strength to draw, durability on what never
 #           breaks, armour, shield, or max_dex on what has none) does not roll on it
 #   weight  how often it rolls among those that may (default 100)

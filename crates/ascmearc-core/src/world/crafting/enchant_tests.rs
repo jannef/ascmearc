@@ -940,3 +940,69 @@ fn a_stack_gone_ahead_of_the_work_never_turns_it_on_the_next() {
     }
     panic!("some fate kindles the sword");
 }
+
+#[test]
+fn a_pipe_is_enchanted_as_armour_and_its_magic_works_in_the_tool_slot() {
+    use crate::content::{Effect, ItemKind};
+    use crate::stats::Stat;
+    let pipe = FIXTURE.object_id("pipe").expect("pipe");
+    let def = FIXTURE.object(pipe);
+    for seed in 0..20 {
+        let mut w = world(seed);
+        item(&mut w, "pipe", 1);
+        crystal(&mut w, "red");
+        enchant_out_for_test(&mut w, "kindle", &[Some(0), Some(1)], EnchantBand::Made);
+        let magic = checked(&w, 0);
+        assert_eq!(magic.rarity, Rarity::Magic, "{seed}");
+        // What it rolled is armour's, and nothing the pipe has no Protection for.
+        for r in magic.rolled(&w.content) {
+            assert!(r.def.bases.iter().any(|k| k.is_armour()), "{}", r.def.id);
+            assert!(
+                crate::magic::may_roll(r.def, ItemKind::Pipe, def),
+                "{}",
+                r.def.id
+            );
+            assert_ne!(r.def.effect, Effect::Protection, "{}", r.def.id);
+        }
+    }
+    // Delving (body armour, gloves, tools) and of the Bear roll on it as on armour.
+    for id in ["delving", "of_the_bear"] {
+        let a = FIXTURE.affixes().get(id).expect(id);
+        assert!(crate::magic::may_roll(a, ItemKind::Pipe, def), "{id}");
+    }
+    // A lantern is no base item: nothing binds in it.
+    let mut w = world(1);
+    item(&mut w, "lantern", 1);
+    crystal(&mut w, "red");
+    let start = w.state.time;
+    apply(&mut w, "craft:kindle:a,b");
+    assert_eq!(last(&w), "No magic can be bound in that.");
+    assert_eq!(w.state.time, start);
+    // A pipe of the Bear ready in the Tool slot raises Strength; in the pack it does not.
+    let mut w = world(1);
+    let strength = |w: &World| {
+        let me = w.state.player();
+        me.effective_stats(&w.content).score(Stat::Strength)
+    };
+    let bare = strength(&w);
+    let magic = Magic {
+        rarity: Rarity::Magic,
+        level: 1,
+        affixes: vec![Affix {
+            id: "of_the_bear".into(),
+            tier: 1,
+            value: 1,
+        }],
+        name: None,
+        identified: true,
+        carried: 0,
+        curse_known: false,
+        unique: None,
+    };
+    let stack = Stack::with_magic(pipe, 1, magic);
+    w.player_mut().inventory.push(stack);
+    assert_eq!(strength(&w), bare);
+    let tool = w.content.slot_id("tool").expect("tool");
+    w.player_mut().equipment.put(&[tool], 0);
+    assert_eq!(strength(&w), bare + 1);
+}

@@ -60,6 +60,9 @@ past 40.
 
 {{#include generated/race-growth.md}}
 
+Only [halflings](races.md#race-halfling) smoke a pipe. On a full belly, an hour's smoke trains their
+stats as it empties the belly, and only halflings carve pipes. See [Your pipe](pipe.md).
+
 ## The evil races
 
 Six races start on the evil side of [alignment](alignment.md).

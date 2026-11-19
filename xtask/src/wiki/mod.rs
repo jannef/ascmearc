@@ -353,6 +353,7 @@ fn generate(content: &Content) -> Vec<(String, String)> {
         ("recipes-metalcraft.md", recipes::recipes_metalcraft),
         ("recipes-woodcraft.md", recipes::recipes_woodcraft),
         ("crafting-grades.md", recipes::crafting_grades),
+        ("recipes-finer.md", recipes::recipes_finer),
         ("gem-cutting.md", recipes::gem_cutting),
         ("recipes-alchemy.md", recipes::brews),
         ("gem-setting.md", recipes::gem_setting),
@@ -1260,7 +1261,7 @@ mod tests {
             "{fletching}"
         );
         assert!(equipment.contains(
-            "| `m`, an aristocrat's `p` | Tool | Lantern, pick-axe, mattock | 6 seconds |"
+            "| `m`, an aristocrat's `p` | Tool | Long-stemmed pipe, lantern, pick-axe, mattock | 6 seconds |"
         ));
         let digging = text("digging.md");
         assert!(
@@ -1948,7 +1949,7 @@ mod tests {
         );
         let at = |row: &str| classes.find(row).unwrap_or_else(|| panic!("{row}"));
         assert!(at("| Melee weapons |") < at("| Gems | Gems |"));
-        assert!(at("| Gems | Gems |") < at("| Miscellaneous | Boulders, long-stemmed pipes"));
+        assert!(at("| Gems | Gems |") < at("| Miscellaneous | Boulders, lutes"));
         assert!(text("creatures.md").contains("| Giant rat | `r` | Vermin | hostile | up close |"));
         assert!(text("creature-carries.md").contains("| Giant rat | - | - |"));
         assert!(text("creatures.md").contains("| Deer | `d` | Wildlife | neutral | never |"));

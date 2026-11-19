@@ -131,6 +131,7 @@ mod overworld;
 pub(crate) mod part;
 mod particles;
 mod patron;
+mod pipe;
 mod plural;
 mod potion;
 mod prayer;
@@ -363,6 +364,7 @@ pub use overworld::{Landscape, LocalArea, local_area_id, parse_local_area};
 pub use part::{MAX_OBJECT_PARTS, MAX_PARTS, Part, PartDef, PartId, PartRole};
 pub use particles::{ParticleEmitter, ParticleTrigger};
 pub use patron::PatronRules;
+pub use pipe::PipeRules;
 pub use plural::Plurals;
 pub use potion::{Draught, Drink, Flask, Splash};
 pub use prayer::{Face, FaceWords, Faced, PrayerRules, PrayerUse, UseDef};
@@ -668,6 +670,9 @@ pub struct Content {
     /// The numbers of feinting (`data/rules/feint.toml`: Bluff); none without the
     /// file, when nobody feints.
     feint: Option<FeintRules>,
+    /// Smoking a pipe (`data/rules/pipe.toml`: the halfling's); none without the file, when
+    /// nobody smokes.
+    pipe: Option<PipeRules>,
     /// Fire on the ground (`data/rules/fire.toml`): its harm and the damage type that lights it;
     /// none without the file, when nothing catches fire.
     fire: Option<FireRules>,
@@ -1141,6 +1146,7 @@ impl Content {
         content.forage = content.load_optional(files)?;
         content.herbs = content.load_optional(files)?;
         content.feint = content.load_optional(files)?;
+        content.pipe = content.load_optional(files)?;
         content.fire = content.load_optional(files)?;
         content.stipend = content.load_optional(files)?;
         content.invest = content.load_optional(files)?;

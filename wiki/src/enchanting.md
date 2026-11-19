@@ -47,6 +47,9 @@ you must know what its magic is ([identify](magic-items.md#unidentified-items) i
 [unique item](magic-items.md#unique-items) or something a quest asks for cannot be enchanted. Arrows, bolts, and other [ammunition](ammunition.md) are worked a whole stack at once, for
 the same crystals as one item. Imbue's three crystals may all come from one stack.
 
+A halfling's [pipe](pipe.md#enchanting-it) is enchanted as if it were armour, and its magic works
+while it is ready in the Tool slot. No other tool but the digging tools takes magic.
+
 {{#include generated/recipes-enchanting.md}}
 
 ## Which magic a crystal gives

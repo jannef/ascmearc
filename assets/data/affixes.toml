@@ -56,3 +56,4 @@ shield = ["Wall", "Guard", "Ward", "Bulwark", "Aegis", "Barrier", "Rampart", "Ba
 ring = ["Loop", "Band", "Coil", "Circle", "Spiral", "Hoop", "Knot", "Whorl"]
 amulet = ["Charm", "Talisman", "Eye", "Heart", "Locket", "Pendant", "Beads", "Clasp"]
 tool = ["Tooth", "Fang", "Bite", "Jaw", "Maw"]
+pipe = ["Ember", "Wreath", "Smoulder", "Draw", "Bowl", "Puff"]

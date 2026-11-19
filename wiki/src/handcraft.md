@@ -37,8 +37,9 @@ A crossbow is made of wood, but its lock and trigger take one ingot of any metal
 you choose which ingot to use. Without sinew or an ingot the recipe is greyed out "no sinew to
 hand" or "no metal to hand".
 
-A lute (strung with sinew) and a long-stemmed pipe are made the same way. They have nothing to
-improve, so they always come out plain, however well the work goes.
+A lute (strung with sinew) is made the same way. It has nothing to improve, so it always comes
+out plain, however well the work goes. A long-stemmed [pipe](pipe.md#making-one) is a halfling's
+own craft: only halflings see the recipe, and its wood and trim make it finer.
 
 Some weapons are never made by hand. A battle axe or a great axe of stone would shatter, a
 stiletto is a slim steel point, and a sword of dragonbone is only ever found.

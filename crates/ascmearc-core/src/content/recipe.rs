@@ -296,6 +296,27 @@ pub struct RecipeDef {
     pub fumble: Option<ObjectId>,
     /// The result when an `optional` part is None.
     pub brittle: Option<ObjectId>,
+    /// The race (an id in `data/races.toml`) whose own craft it is: only a character of that race
+    /// sees and makes it (the halfling's pipe); `None`: anyone trained.
+    pub race: Option<String>,
+    /// How many grades a made item is raised by a part of a material (`[recipe.finer]`: the
+    /// part's name, then material to grades, 1 to 3): `(part index, material, grades)`, summed
+    /// over the made item's parts, the grade at most a Masterwork (the pipe's wood and trim).
+    pub finer: Vec<(usize, MaterialId, u8)>,
+}
+
+impl RecipeDef {
+    /// The grades `parts` (a made item's, `(part index, material)`) raise it by ([`Self::finer`]).
+    pub fn finer_by(&self, parts: impl IntoIterator<Item = (usize, MaterialId)>) -> usize {
+        (parts.into_iter())
+            .map(|(part, material)| {
+                (self.finer.iter())
+                    .filter(|&&(p, m, _)| p == part && m == material)
+                    .map(|&(_, _, n)| usize::from(n))
+                    .sum::<usize>()
+            })
+            .sum()
+    }
 }
 
 /// What `data/recipes.toml` says of a profession.
@@ -454,6 +475,9 @@ struct RecipeSpec {
     failure: Option<ObjectSpec>,
     fumble: Option<ObjectSpec>,
     brittle: Option<String>,
+    race: Option<String>,
+    #[serde(default)]
+    finer: BTreeMap<String, BTreeMap<String, u8>>,
 }
 
 #[derive(Deserialize)]
@@ -701,6 +725,8 @@ fn resolve(spec: RecipeSpec, skill: SkillId, content: &Content) -> Result<Recipe
         failure: None,
         fumble: None,
         brittle: None,
+        race: None,
+        finer: Vec::new(),
     };
     if let Some(uses) = &spec.uses {
         let uses = RecipeUse::parse(uses, spec.enchant.as_deref())?;
@@ -711,11 +737,13 @@ fn resolve(spec: RecipeSpec, skill: SkillId, content: &Content) -> Result<Recipe
             || (!uses.checked() && (spec.difficulty.is_some() || spec.seconds.is_some()))
             || spec.failure.is_some()
             || spec.fumble.is_some()
-            || spec.brittle.is_some();
+            || spec.brittle.is_some()
+            || spec.race.is_some()
+            || !spec.finer.is_empty();
         if generic {
             return Err(format!(
                 "a `use` recipe runs its action: no result, parts, inputs, ornament, \
-                 difficulty, seconds, failure, fumble, or brittle (`use = \"{}\"`)",
+                 difficulty, seconds, failure, fumble, brittle, race, or finer (`use = \"{}\"`)",
                 uses.id()
             ));
         }
@@ -831,8 +859,38 @@ fn resolve(spec: RecipeSpec, skill: SkillId, content: &Content) -> Result<Recipe
         }
         None => None,
     };
+    let race = match &spec.race {
+        // Content without races (fixtures) has nobody to make it.
+        Some(id) if content.race(id).is_none() && !content.races().list.is_empty() => {
+            return Err(format!("unknown race `{id}`"));
+        }
+        race => race.clone(),
+    };
+    let mut finer = Vec::new();
+    for (name, by) in &spec.finer {
+        let part = part_index(content, object, name)
+            .ok_or_else(|| format!("`{}` has no part `{name}`", result.object))?;
+        let made_of = def.made_of(part);
+        for (material, &grades) in by {
+            let m = (content.material_id(material))
+                .ok_or_else(|| format!("finer `{name}`: unknown material `{material}`"))?;
+            if !made_of.contains(&m) {
+                return Err(format!(
+                    "finer `{name}`: `{material}` is not what it may be made of"
+                ));
+            }
+            if !(1..=3).contains(&grades) {
+                return Err(format!(
+                    "finer `{name}`: `{material}` raises by 1 to 3 grades, not {grades}"
+                ));
+            }
+            finer.push((part, m, grades));
+        }
+    }
     let name = spec.name.clone().unwrap_or_else(|| capitalized(&def.name));
     Ok(RecipeDef {
+        race,
+        finer,
         result: Some(RecipeResult { object, count }),
         parts,
         inputs,

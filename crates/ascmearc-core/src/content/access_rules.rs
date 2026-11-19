@@ -98,6 +98,12 @@ impl Content {
         self.feint.as_ref()
     }
 
+    /// The numbers of smoking a pipe (`data/rules/pipe.toml`); `None` without the file, when
+    /// nobody smokes.
+    pub fn pipe(&self) -> Option<&super::PipeRules> {
+        self.pipe.as_ref()
+    }
+
     /// Fire on the ground (`data/rules/fire.toml`); `None` without the file, when nothing
     /// catches fire.
     pub fn fire(&self) -> Option<&FireRules> {

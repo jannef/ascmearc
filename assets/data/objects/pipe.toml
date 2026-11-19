@@ -1,10 +1,22 @@
-# A halfling's pipe (data/races.toml): a comfort on the road, and nothing more yet.
+# A halfling's pipe (data/races.toml): ready in the Tool slot, `u` (the use-tool command) smokes
+# it, a halfling's hour of ease on a full belly (data/rules/pipe.toml; docs/dev/hunger.md
+# "Pipes"). Its `kind` is a pipe: it takes armour's affixes (affixes/README.toml), so an enchanter
+# can make it a stat-stick, and it is made Fine to Masterwork in its make
+# (recipes/woodcraft/pipe.toml: the wood and the mouthpiece's trim).
 [[object]]
 id = "pipe"
 name = "long-stemmed pipe"
 glyph = "("
 fg = "#a8784c"
-class = "miscellaneous"
-materials = ["wood"]
+class = "tools"
+materials = [
+    { part = "bowl", of = "wood" },
+    { part = "mouthpiece", of = "wood", share = 15, made_of = ["wood", "bone", "horn", "ivory", "dragonbone", "amber"] },
+]
+made_of = ["wood"]
 weight = 60
 value = 3
+slot = "tool"
+kind = "pipe"
+# Never found as loot: made, bought, carried from home.
+frequency = 0
