@@ -5,7 +5,7 @@ use crate::content::ContentFiles;
 use crate::dump::{Layer, layer_rows};
 use crate::perception::CellView;
 use crate::replay::Replay;
-use crate::test_support::last_text as last_message;
+use crate::test_support::{last_text as last_message, texts};
 use crate::world::creatures::fixture_factions::make_peace;
 use crate::world::*;
 
@@ -141,7 +141,15 @@ fn picking_up_and_dropping_take_the_level_turn() {
     assert!(outcome.took_turn);
     assert_eq!(outcome.elapsed, Duration::seconds(6));
     assert_eq!(w.turn(), turn + 1);
-    assert_eq!(last_message(&w), "You pick up 5 arrows.");
+    // The arrows go into the empty quiver by themselves (`quiver.rs`).
+    let said = texts(&w);
+    assert_eq!(
+        said[said.len() - 2..],
+        [
+            "You pick up 5 arrows.",
+            "You ready 5 arrows in your quiver."
+        ]
+    );
     assert_eq!(inventory(&w), [pair("arrow", 5)]);
     assert_eq!(truth(&w, PILE), [pair("dagger", 1)]);
     assert_eq!(known(&w, PILE), [pair("dagger", 1)], "seen at once");
@@ -163,7 +171,8 @@ fn picking_up_everything_and_dropping_it_restores_the_pile() {
     run(&mut w, "move:E move:E");
     let before = truth(&w, PILE);
     run(&mut w, "pickup");
-    assert_eq!(last_message(&w), "You pick up a dagger and 5 arrows.");
+    let said = texts(&w);
+    assert_eq!(said[said.len() - 2], "You pick up a dagger and 5 arrows.");
     assert!(truth(&w, PILE).is_empty());
     assert!(!w.state().current().objects.contains_key(&PILE));
     run(&mut w, "drop");
@@ -178,7 +187,8 @@ fn stackable_objects_join_their_stack() {
     run(&mut w, "move:E move:E pickup:b move:E drop");
     assert_eq!(truth(&w, ARROWS), [pair("arrow", 8)]);
     run(&mut w, "pickup");
-    assert_eq!(last_message(&w), "You pick up 8 arrows.");
+    let said = texts(&w);
+    assert_eq!(said[said.len() - 2], "You pick up 8 arrows.");
     // A dagger takes the next letter; more arrows join theirs.
     run(&mut w, "move:W pickup move:E drop:a");
     assert_eq!(inventory(&w), [pair("dagger", 1)]);

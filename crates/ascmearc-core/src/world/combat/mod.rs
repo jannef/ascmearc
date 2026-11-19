@@ -44,7 +44,7 @@ cfg_if! {
         mod lurk_tests;
         mod protection_tests;
         mod sear_tests;
-        mod shoot_tests;
+        pub(in crate::world) mod shoot_tests;
         mod shot_range_tests;
         mod silent_tests;
         mod slip_tests;

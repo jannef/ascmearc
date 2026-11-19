@@ -1,8 +1,9 @@
 ---
 source: crates/ascmearc/src/ui/screen_snapshots.rs
+assertion_line: 149
 expression: "render(case, content.clone())"
 ---
- You ready 24 arrows.
+ You ready a short bow.
  You put on a pair of leather boots.
 
 

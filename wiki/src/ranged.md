@@ -17,6 +17,23 @@ Ready what you will shoot or throw on the [equipment](equipment.md) screen (`i`)
 Each missile weapon shoots its own kind: bows shoot arrows, crossbows shoot bolts, and slings shoot
 stones (see [Ammunition](ammunition.md)).
 
+### Your quiver fills itself
+
+You seldom need to ready ammunition by hand. Both of these take no time:
+
+- **When you shoot your last one**, the next stack in your pack that your missile weapon shoots
+  goes into the Missiles slot. A stack of the same kind as the one you used up comes first (more
+  arrows before flaming arrows), then the first in your pack. Ammunition your weapon cannot shoot
+  is passed over: a bow never readies bolts. "You ready 12 flaming arrows in your quiver." With
+  nothing it can shoot, the slot stays empty: "You have no arrows left."
+- **When you [pick up](objects.md#picking-up) ammunition** and the Missiles slot is empty, it goes
+  straight in: "You ready 14 arrows in your quiver." With a missile weapon ready, only ammunition
+  it shoots goes in; with none ready, any ammunition does. If you pick up several stacks at once,
+  the first that fits goes in.
+
+A [cursed](magic-items.md#cursed-items) stack readied this way binds, as it would if you readied
+it yourself.
+
 ## Shooting and throwing
 
 `t` uses whatever is in the Missile weapon slot and lets you aim with the cursor (see

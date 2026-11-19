@@ -17,7 +17,8 @@
 //! lost too, and the player who sees the cell is told so ([`Event::FellBelow`]).
 //!
 //! **Ammunition**: a shot takes one from the readied ammunition, a throw one from the stack
-//! thrown; the last one empties its slot.
+//! thrown; the last one empties its slot. The player's last shot readies the next stack their
+//! missile weapon shoots, if they carry one (`world/items/quiver.rs`).
 //!
 //! **Burning missiles**: what is `lit` as it is loosed (a flaming arrow) flies and comes down as
 //! the burning object (a burning arrow). Where it lies it is a fire ([`Fire`]): a light source,
@@ -314,12 +315,13 @@ impl World {
             let what = self.lore().describe(&stack);
             said.insert(0, format!("You {verb} {what}."));
         }
-        if last {
-            let ammo = &content.object(stack.object).plural;
-            said.push(format!("You have no {ammo} left."));
-        }
         for text in said {
             self.say(text);
+        }
+        // The next stack goes into the emptied quiver by itself (`world/items/quiver.rs`).
+        if last && !self.refill_quiver(stack.object) {
+            let ammo = &content.object(stack.object).plural;
+            self.say(format!("You have no {ammo} left."));
         }
         self.say_news();
     }

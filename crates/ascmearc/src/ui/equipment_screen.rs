@@ -546,7 +546,8 @@ mod tests {
         assert!(row(&text, "f  Off hand").contains(staff));
         assert!(row(&text, "a  Head").contains("an iron helm (Dv +0, Pv 1)"));
         row(&text, "Defence (Dv) ");
-        assert!(row(&text, "l  Missiles").contains('—'));
+        // The arrows picked up went into the empty quiver by themselves.
+        assert!(row(&text, "l  Missiles").contains("24 arrows"));
         assert!(row(&text, "m  Tool").contains('—'));
         assert!(row(&text, "Carrying").contains("Your weight 90.9 kg (you 70 kg)"));
         row(&text, "a-m choose a slot");
