@@ -119,6 +119,18 @@ level's name, hidden while Not hungry; `ui::hunger_tint` colours the word from H
 `ScreenName::Eat` (`ObjectList::Eat`). Long tests that rest or travel for days remove
 `data/hunger.toml` (or the player starves).
 
+**Second breakfast** (the halflings' granted racial talent, `data/talents/second_breakfast.toml`,
+named by races.toml's `talents`): three `HungerEffect`s of `talent/hunger.rs`, each read once.
+`bloated_unslowed` makes `World::bloated` return the price as it is; `capacity_percent`
+(`HungerMods::capacity`, 100: twice) raises the `max` that `eat.rs::feed` overeats past (the
+states' bands are the data's for everyone, so a halfling stays Bloated longer; `satiate` and the
+orison still stop one short of Bloated); `bloated_training { every }` makes `World::digest`, when
+the player was Bloated, call `train_bloated`: one `train_stat(StatUse::Bloated)` per multiple of
+`every` passed between the nutrition before and after the burn (multiples, not points, and one
+use at a time, so the marks and the training stream are the same however time is cut; exertion's
+burn counts none). The six `bloated` rules are in `data/stats.toml`. `no_bloating` (Gourmand)
+still wins over all of it in `feed`. Tests: `world/health/second_breakfast_tests.rs`.
+
 **Stopping the player** (#972; no rule but one changed, no save state). Every long action is
 `World::keep_at`, which stops on any `say`, and `hunger_news` says a worsening: rest, eat, dig,
 search, forage, study, scribe, pray, drink, temper, tame, the sanctuary and the familiar's sitting

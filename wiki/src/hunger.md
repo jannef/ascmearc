@@ -26,8 +26,9 @@ You never see the count, only how hungry you are.
 - **Starving**: your wounds stop [healing](healing.md#how-fast-you-heal), and you lose [hit
   points](hit-points.md#hit-points) as time passes until you eat or starve to death.
 - **Satiated** does nothing. **Bloated** slows everything you do, as a
-  [burden](burden.md#burden-levels) does, so wait for it to pass. Eating more than your stomach can
-  hold is **overeating**: you may vomit, which leaves you hungry and feeds you nothing.
+  [burden](burden.md#burden-levels) does, so wait for it to pass (a halfling it never slows: see
+  [A halfling's second breakfast](#a-halflings-second-breakfast)). Eating more than your stomach
+  can hold is **overeating**: you may vomit, which leaves you hungry and feeds you nothing.
 
 You cannot choke to death on food.
 
@@ -51,6 +52,27 @@ slowly: a halfling ends at two and a half times a human's.
 
 Fighting burns a little more. Each [blow](combat.md#hitting), [shot, or
 throw](ranged.md#shooting-and-throwing) costs a few points (see the facts above).
+
+## A halfling's second breakfast
+
+[Halflings](races.md#race-halfling) get hungry sooner than anyone, but they are built for it.
+Every halfling has the talent [Second breakfast](talents-origins.md#talent-second-breakfast) from
+the start:
+
+- **Bloated never slows them.** They act at their usual pace however full they are.
+- **They hold twice as much.** A halfling overeats only past 13,000 points of nutrition, where
+  anyone else does past 6,500. The states are the same for everyone: a halfling is Bloated from
+  5,500 points too, so they can stay Bloated far longer. A food ration (1,500 points) takes a
+  halfling from the edge of Bloated to the top in five meals.
+- **A full belly trains them.** While a halfling is Bloated, every 10 points of nutrition they
+  digest (8 minutes at a halfling's pace) give each [stat](stats.md#raising-your-stats) a 5 %
+  chance of a training mark. That is about 9 marks a stat for each day spent Bloated: slow beside
+  the price of a point, but it comes while resting, walking, or doing anything else. From 13,000
+  points a halfling stays Bloated for 7,500 points, about 100 hours.
+
+Talents that change how fast you get hungry change how fast a halfling digests, and so how often
+the marks come. [Gourmand](talents-body.md#talent-gourmand) still stops a halfling short of
+Bloated, so a halfling who takes it gives up the marks.
 
 ## What you see
 

@@ -229,7 +229,10 @@ mana = 1
 alignment = 50
 size = "small"
 skills = { herbalism = "1d4+2", listen = "1d6+4", stealth = "1d6+4" }
-# Second breakfast.
+# Second breakfast (talents/second_breakfast.toml): Bloated never slows them, they hold twice the
+# nutrition before overeating (the states' bands stay), and digesting while Bloated trains their
+# stats. And they get hungry sooner.
+talents = ["second_breakfast"]
 hunger = 125
 experience = 95
 weapon_skills = { slings = 1 }

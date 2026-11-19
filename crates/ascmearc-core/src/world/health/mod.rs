@@ -40,6 +40,7 @@ cfg_if! {
         mod potion_tests;
         mod potion_utility_tests;
         mod rot_tests;
+        mod second_breakfast_tests;
         mod smoke_tests;
         mod status_tests;
     }

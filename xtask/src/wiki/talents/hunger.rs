@@ -28,6 +28,18 @@ pub(super) fn text(content: &Content, effect: &HungerEffect) -> String {
         HungerEffect::NoBloating => "a meal never leaves you Bloated: what does not fit below \
              Bloated is lost, and you never overeat"
             .to_string(),
+        HungerEffect::BloatedUnslowed => {
+            "being [Bloated](hunger.md#how-hungry-you-are) never slows you".to_string()
+        }
+        HungerEffect::CapacityPercent { value } => format!(
+            "you can hold {value} % more nutrition before you overeat (the hunger states stay \
+             where they are, so you can stay Bloated longer)"
+        ),
+        HungerEffect::BloatedTraining { every } => format!(
+            "while Bloated, every {every} points of nutrition \
+             you digest give each stat a chance at a [training \
+             mark](stats.md#raising-your-stats)"
+        ),
         HungerEffect::NoHungerWeakness => {
             "being [Weak, Fainting, or Starving](hunger.md#how-hungry-you-are) \
              takes nothing off your Strength and Dexterity, and you never faint from hunger; \

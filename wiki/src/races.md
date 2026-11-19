@@ -92,6 +92,8 @@ Each race's gifts and flaws beyond its stats, exactly:
 
 Each race except the humans has [talents](talents-origins.md#racial-talents) that only it may pick, in the
 Racial tree. Humans get Versatile instead: one more talent at creation and at level 30.
+Halflings are also given Second breakfast: Bloated never slows them, they hold twice as much food,
+and a full belly slowly trains their stats (see [Hunger](hunger.md#a-halflings-second-breakfast)).
 
 {{#include generated/talents-racial.md}}
 
