@@ -119,6 +119,18 @@ level's name, hidden while Not hungry; `ui::hunger_tint` colours the word from H
 `ScreenName::Eat` (`ObjectList::Eat`). Long tests that rest or travel for days remove
 `data/hunger.toml` (or the player starves).
 
+**Second breakfast** (the halflings' granted racial talent, `data/talents/second_breakfast.toml`,
+named by races.toml's `talents`): three `HungerEffect`s of `talent/hunger.rs`, each read once.
+`bloated_unslowed` makes `World::bloated` return the price as it is; `capacity_percent`
+(`HungerMods::capacity`, 100: twice) raises the `max` that `eat.rs::feed` overeats past (the
+states' bands are the data's for everyone, so a halfling stays Bloated longer; `satiate` and the
+orison still stop one short of Bloated); `bloated_training { every }` makes `World::digest`, when
+the player was Bloated, call `train_bloated`: one `train_stat(StatUse::Bloated)` per multiple of
+`every` passed between the nutrition before and after the burn (multiples, not points, and one
+use at a time, so the marks and the training stream are the same however time is cut; exertion's
+burn counts none). The six `bloated` rules are in `data/stats.toml`. `no_bloating` (Gourmand)
+still wins over all of it in `feed`. Tests: `world/health/second_breakfast_tests.rs`.
+
 **Stopping the player** (#972; no rule but one changed, no save state). Every long action is
 `World::keep_at`, which stops on any `say`, and `hunger_news` says a worsening: rest, eat, dig,
 search, forage, study, scribe, pray, drink, temper, tame, the sanctuary and the familiar's sitting
@@ -170,6 +182,7 @@ owner: a tool is used with the tool command).
   nothing). Nutrition is set directly: no hunger news is said for the fall.
 - **The marks**: for every `per` (100) points the smoke took, a `chance` (25) % draw of the
   training stream, and on a hit one mark to a stat drawn evenly among
-  `Stat::ALL` (a second draw of the stream); sure, silent, saturating. From Bloated (5500 to 6500)
-  an hour's smoke takes about 3600 to 4600 points (less the hour's own burn), so 36 to 46 draws,
-  about 9 to 12 marks.
+  `Stat::ALL` (a second draw of the stream); sure, silent, saturating. From Bloated (5500 up to a halfling's
+  13000, Second breakfast's doubled capacity; the bands are the same for every race) an hour's
+  smoke takes about 3600 to 11100 points (less the hour's own burn), so 36 to 111 draws, about 9
+  to 28 marks.

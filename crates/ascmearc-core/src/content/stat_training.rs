@@ -97,6 +97,10 @@ pub enum StatUse {
     Marched,
     /// An action other than waiting while Hungry (not yet Weak).
     HungryStep,
+    /// Digesting while Bloated, for one whose talent trains on it (the halflings' Second
+    /// breakfast, `bloated_training`): every so many points of nutrition digested
+    /// (`World::digest`).
+    Bloated,
     /// A status that harms as it ticks (bleeding, poison, ebbing mana) wearing off by time.
     ShookOff,
     /// Stamina spent on a weapon ability.
@@ -233,6 +237,9 @@ impl StatUse {
             StatUse::Plunge => "falling through the ice",
             StatUse::Marched => "a step on the overworld",
             StatUse::HungryStep => "acting (not waiting) while Hungry, not yet Weak",
+            StatUse::Bloated => {
+                "digesting while Bloated, for a halfling (Second breakfast says how often)"
+            }
             StatUse::ShookOff => {
                 "shaking off bleeding, poison, or anything else that harms as it lasts (it wears \
                  off)"

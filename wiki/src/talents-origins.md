@@ -65,14 +65,20 @@ Taking a trade does three things:
 
 The **Racial** tree holds what each people is good at. Every talent in it asks for its
 [race](races.md), and some for a score, a level, or a [weapon skill](weapon-skills.md) besides. So
-only an [elf](races.md#race-elf) may take [Elven accuracy](talents-origins.md#talent-elven-accuracy), and
-only a [dwarf](races.md#race-dwarf) [Stone sense](talents-origins.md#talent-stone-sense). They are picked
+only an [elf](races.md#race-elf) or a [half-elf](races.md#race-half-elf) may take
+[Elven accuracy](talents-origins.md#talent-elven-accuracy), and only a [dwarf](races.md#race-dwarf) [Stone sense](talents-origins.md#talent-stone-sense). They are picked
 like any other talent.
 
 [Humans](races.md#race-human) have no gift of their own, so they are given
 **[Versatile](talents-origins.md#talent-versatile)** from the start instead: one more talent at creation and
 one more at level 30. Like the gifts of the stars it is never on a pick list, and the
 [character](character.md) screen's Talents page marks it as your race's.
+
+[Halflings](races.md#race-halfling) are given
+**[Second breakfast](talents-origins.md#talent-second-breakfast)** from the start too, beside the
+talents they may pick. Being [Bloated](hunger.md#how-hungry-you-are) never slows them, they hold
+twice as much food before they overeat, and a full belly slowly trains their stats (see
+[Hunger](hunger.md#a-halflings-second-breakfast)).
 
 ## The trees
 

@@ -23,7 +23,7 @@ of a halfling's.
 
 As your belly empties, your stats train. For every 100 points the pipe takes, you have a 25 %
 chance of one [training mark](stats.md#raising-your-stats) in one of your six stats, picked at
-random. From Bloated a full smoke takes about 3600 points or more, so about nine marks or more.
+random. From Bloated a full smoke takes about 3600 points; from a halfling's fullest belly (13000) about 11100. That is about nine marks at the least and about 28 at the most.
 
 A smoke cut short counts for its share of the hour: stopped after 15 minutes, it takes a quarter
 of what a full one would, and gives marks for that much.

@@ -574,7 +574,8 @@ taker is trained in, `talent::may_take` refuses another as a `BadChoice`;
 `talent:skill_focus:athletics`, one pick per skill; `skill { value = 25 }`), Treasure hunter the
 first with an `either` prerequisite (`Need::Either`, "Intelligence 12 or Appraise 20").
 
-The racial talents (#241) are the `racial` tree (`no_free`: each asks for its race): Elven
+The racial talents (#241) are the `racial` tree (`no_free`: each asks for its race; `race` may be a list, `Need::Race(Vec)`, any one of them: Elven
+accuracy and Ageless are for an elf or a half-elf, `race = ["elf", "half_elf"]`): Elven
 accuracy, Ageless, Diplomat, Stone sense, Dwarven resilience, Lucky,
 Slinger, Small target, Tinkerer, Gem lore, Ferocity, Orcish hide, and the humans' granted
 Versatile. The gnome's disarming talent is `tinkerer` ("Tinkerer"; #787). With Diplomat and Gem lore the `talk` and `gems`

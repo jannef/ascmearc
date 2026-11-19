@@ -1,0 +1,12 @@
+[[talent]]
+id = "second_breakfast"
+name = "Second breakfast"
+tree = "racial"
+granted = true
+description = "Halflings eat well and often: you hold twice as much as others before you can eat no more, being bloated never slows you, and a full belly slowly does your whole body good."
+effects = [
+    { kind = "bloated_unslowed" },
+    { kind = "capacity_percent", value = 100 },
+    { kind = "bloated_training", every = 10 },
+]
+systems = ["hunger", "stat_training"]

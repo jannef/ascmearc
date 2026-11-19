@@ -126,6 +126,13 @@ fn an_hour_smoked_draws_the_belly_down_to_just_above_hungry_and_gives_marks() {
     // About 4100 points lost (less the hour's own burn): 41 draws at 25 %.
     let won = marks(&w) - before;
     assert!((1..=41).contains(&won), "{won}");
+    // A halfling's fullest belly (Second breakfast's 13000) comes down to the same, for more
+    // marks.
+    let mut full = smoker("den", "halfling", 12_900);
+    let before_full = marks(&full);
+    run(&mut full, "use_tool");
+    assert_eq!(nutrition(&full), LEAVES);
+    assert!(marks(&full) - before_full > won, "more lost, more marks");
     // Not Bloated now: no second pipe.
     run(&mut w, "use_tool");
     assert_eq!(last(&w), "A pipe wants a full belly first.");

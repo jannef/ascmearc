@@ -31,7 +31,8 @@
 #                                                        that rank (talents with such a
 #                                                        choice)
 #                   level = 9                            the character level
-#                   race = "dwarf", class = "warrior"    the character's
+#                   race = "dwarf", class = "warrior"    the character's (race may be a list,
+#                                                        any one of them)
 #                   eyes = "darkvision"                  the race's vision profile; a list,
 #                                                        any one of them
 #                   animal = "roc", element = "fire"     the birth sign's (horoscope.toml)
@@ -192,6 +193,11 @@
 #                                 rotten
 #   no_exertion                   blows, shots, and throws burn no extra nutrition
 #   no_bloating                   a meal never leaves it Bloated: what does not fit is lost
+#   bloated_unslowed              being Bloated never slows it
+#   capacity_percent { value }    the most nutrition it can hold (../hunger.toml `max`) that
+#                                 percent more (100: twice); the states' bands stay
+#   bloated_training { every }    while Bloated, every `every` points of nutrition it digests
+#                                 are a `bloated` use of stat training (../stats.toml)
 #   no_hunger_weakness            Weak or worse takes nothing off its stats, and it never faints
 #                                 (Starving still costs hit points)
 #   corpse_stats_percent { value }   a fresh corpse's stat training marks and its chances to
