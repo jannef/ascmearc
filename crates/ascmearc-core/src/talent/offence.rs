@@ -6,9 +6,11 @@
 //! `xtask/src/wiki/talents/offence.rs`, and its one read.
 
 use super::TalentMods;
+use crate::action::AttackKind;
 use crate::content::{
     Affliction, Benefit, Content, DamageTypeId, FreeBlowTrigger, OnHit, Role, StatusId,
 };
+use crate::content::{ObjectId, WeaponSkillId};
 use crate::damage::Kinds;
 use crate::world::FreeBlows;
 use serde::Deserialize;
@@ -168,12 +170,54 @@ pub enum OffenceEffect {
     /// Against creature types that carry the tag it was taken for (a `choice = "tag"`), its
     /// attacks are this much likelier to hit and do this much more damage (Sworn foe).
     SwornFoe { to_hit: i32, damage: i32 },
+    /// One narrow way to make the attacks of `attacks` (the elves' racial ways): those made
+    /// with one of the weapon skills or fighting styles `skills` names, or with one of the
+    /// weapons `objects` names (the launcher of a shot), gain `to_hit` and `damage`; every
+    /// other attack of `attacks` gains `else_to_hit` and `else_damage` (negative: a cost).
+    Way {
+        attacks: WayAttacks,
+        #[serde(default)]
+        skills: Vec<String>,
+        #[serde(default)]
+        objects: Vec<String>,
+        #[serde(default)]
+        to_hit: i32,
+        #[serde(default)]
+        damage: i32,
+        #[serde(default)]
+        else_to_hit: i32,
+        #[serde(default)]
+        else_damage: i32,
+    },
+}
+
+/// The attacks a [`OffenceEffect::Way`] judges.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum WayAttacks {
+    /// Blows and shield bashes (not kicks: a kick is made whatever the hands hold).
+    Melee,
+    /// Shots and throws.
+    Missile,
+    /// Spells that roll to hit.
+    Spell,
+}
+
+impl WayAttacks {
+    /// Whether it judges an attack of `kind`.
+    pub fn judges(self, kind: AttackKind) -> bool {
+        match self {
+            Self::Melee => kind == AttackKind::Melee,
+            Self::Missile => matches!(kind, AttackKind::Ranged | AttackKind::Thrown),
+            Self::Spell => kind == AttackKind::Spell,
+        }
+    }
 }
 
 impl OffenceEffect {
     /// The `kind`s of the data that are effects of the area, one a variant (`TalentEffect`'s
     /// deserializer hands these to [`OffenceEffect`]).
-    pub const KINDS: [&'static str; 32] = [
+    pub const KINDS: [&'static str; 33] = [
         "ability_ranks",
         "attack_price_percent",
         "best_skill_threat",
@@ -202,6 +246,7 @@ impl OffenceEffect {
         "two_handed_price",
         "unarmed_die",
         "unarmed_on_hit",
+        "way",
         "weapon",
         "weapon_energy_percent",
         "weapon_marks",
@@ -292,6 +337,8 @@ pub struct OffenceMods {
     pub favoured_prey: (i32, i32),
     /// To hit and damage against the creature types carrying each tag, by tag (Sworn foe).
     pub sworn_foe: Vec<(String, i32, i32)>,
+    /// The narrow ways its attacks are judged by ([`OffenceMods::way`]).
+    pub ways: Vec<Way>,
 }
 
 impl OffenceMods {
@@ -454,7 +501,46 @@ impl OffenceMods {
                 let tag = choice.unwrap_or_default().to_string();
                 self.sworn_foe.push((tag, to_hit, damage));
             }
+            OffenceEffect::Way {
+                attacks,
+                skills,
+                objects,
+                to_hit,
+                damage,
+                else_to_hit,
+                else_damage,
+            } => self.ways.push(Way {
+                attacks,
+                skills: (skills.iter())
+                    .filter_map(|s| content.weapon_skills().id(s))
+                    .collect(),
+                objects: (objects.iter())
+                    .filter_map(|o| content.object_id(o))
+                    .collect(),
+                proper: (to_hit, damage),
+                other: (else_to_hit, else_damage),
+            }),
         }
+    }
+
+    /// The to-hit and damage its ways (Way of the longbow, ...) give an attack of `kind` made
+    /// in weapon skill and fighting style `skills` with weapon `object` (the launcher of a
+    /// shot, the thing thrown, the weapon or shield of a blow): each way that judges the kind,
+    /// its gain where the attack is made its way, its cost otherwise.
+    pub fn way(
+        &self,
+        kind: AttackKind,
+        skills: [Option<WeaponSkillId>; 2],
+        object: Option<ObjectId>,
+    ) -> (i32, i32) {
+        let mut sum = (0, 0);
+        for way in self.ways.iter().filter(|w| w.attacks.judges(kind)) {
+            let proper = skills.iter().flatten().any(|s| way.skills.contains(s))
+                || object.is_some_and(|o| way.objects.contains(&o));
+            let (to_hit, damage) = if proper { way.proper } else { way.other };
+            sum = (sum.0 + to_hit, sum.1 + damage);
+        }
+        sum
     }
 
     /// `marks` weapon skill marks earned in a skill of `role`, more by its talents' (Weapon
@@ -515,4 +601,16 @@ pub struct WeaponBonus {
     pub ranks: u8,
     /// Only for a skill held at this rank at least (0: any).
     pub at_rank: u8,
+}
+
+/// One narrow way of attacking ([`OffenceEffect::Way`]), its ids resolved.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Way {
+    pub attacks: WayAttacks,
+    pub skills: Vec<WeaponSkillId>,
+    pub objects: Vec<ObjectId>,
+    /// To hit and damage the way's own attacks gain.
+    pub proper: (i32, i32),
+    /// To hit and damage every other attack it judges gains.
+    pub other: (i32, i32),
 }

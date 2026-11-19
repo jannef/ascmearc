@@ -1207,14 +1207,51 @@ impl Actor {
     }
 
     /// What its ranks give an attack of `kind` made `with` (as for [`Actor::attack_skill`]): its
-    /// weapon skill's benefit and its fighting style's, together.
+    /// weapon skill's benefit and its fighting style's, together, and its talents' ways
+    /// ([`Actor::on_its_way`]).
     pub fn attack_benefit(
         &self,
         content: &Content,
         kind: AttackKind,
         with: Option<ObjectId>,
     ) -> Benefit {
-        self.benefit_of(content, self.attack_skills(content, kind, with))
+        let object = match kind {
+            AttackKind::Melee => with.or_else(|| self.weapon(content).map(|(o, _)| o)),
+            AttackKind::Ranged => self.launcher(content).map(|(o, _)| o),
+            AttackKind::Thrown => with,
+            AttackKind::Spell => None,
+        };
+        let skills = self.attack_skills(content, kind, with);
+        self.on_its_way(
+            content,
+            kind,
+            skills,
+            object,
+            self.benefit_of(content, skills),
+        )
+    }
+
+    /// `benefit` with what its talents' narrow ways (the elves' Way of the longbow, ...;
+    /// [`crate::talent::OffenceMods::way`]) give an attack of `kind` in `skills` with weapon
+    /// `object`: the way's gain, or its cost.
+    pub fn on_its_way(
+        &self,
+        content: &Content,
+        kind: AttackKind,
+        skills: AttackSkills,
+        object: Option<ObjectId>,
+        benefit: Benefit,
+    ) -> Benefit {
+        if self.talents.is_empty() {
+            return benefit;
+        }
+        let offence = &self.talent_mods(content).offence;
+        let (to_hit, damage) = offence.way(kind, [skills.skill, skills.style], object);
+        Benefit {
+            to_hit: benefit.to_hit + to_hit,
+            damage: benefit.damage + damage,
+            ..benefit
+        }
     }
 
     /// The weapon in its off hand while it holds a weapon in each of two hands: the second, in hand

@@ -775,6 +775,15 @@ impl TalentEffect {
                         .into(),
                 ),
             },
+            TalentEffect::Offence(OffenceEffect::Way {
+                skills, objects, ..
+            }) => {
+                if skills.is_empty() && objects.is_empty() {
+                    return Err("`way` names no weapon skill, style, or weapon".into());
+                }
+                // Its weapons are checked once the objects load (`check_heirlooms`).
+                skills.iter().try_for_each(|id| weapon_skill(id))
+            }
             TalentEffect::Magic(MagicEffect::SpellMod(spec)) => spec.check(content),
             TalentEffect::Magic(MagicEffect::SpellType { when, .. }) => {
                 when.iter().try_for_each(|id| damage_type(id))
@@ -1478,22 +1487,25 @@ fn resolve_needs(
     })
 }
 
-/// Every `heirloom` effect names weapons (objects load after the talents): the first that
-/// names something else, in words.
+/// Every `heirloom` and `way` effect names weapons (objects load after the talents): the first
+/// that names something else, in words.
 pub(super) fn check_heirlooms(content: &Content) -> Result<(), String> {
     for (_, def) in content.talents().iter() {
         for effect in &def.effects {
-            let TalentEffect::Fortune(FortuneEffect::Heirloom {
-                weapons, fallback, ..
-            }) = effect
-            else {
-                continue;
+            let (kind, named): (&str, Vec<&String>) = match effect {
+                TalentEffect::Fortune(FortuneEffect::Heirloom {
+                    weapons, fallback, ..
+                }) => ("heirloom", weapons.values().chain([fallback]).collect()),
+                TalentEffect::Offence(OffenceEffect::Way { objects, .. }) => {
+                    ("way", objects.iter().collect())
+                }
+                _ => continue,
             };
-            for object in weapons.values().chain([fallback]) {
+            for object in named {
                 let weapon = (content.object_id(object)).and_then(|o| content.object(o).kind);
                 if !matches!(weapon, Some(ItemKind::Weapon | ItemKind::Launcher)) {
                     return Err(format!(
-                        "talent `{}`: `heirloom`: `{object}` is not a weapon",
+                        "talent `{}`: `{kind}`: `{object}` is not a weapon",
                         def.id
                     ));
                 }

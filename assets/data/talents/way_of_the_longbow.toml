@@ -1,0 +1,9 @@
+# An elf's narrow way: the long war bow and nothing else.
+[[talent]]
+id = "way_of_the_longbow"
+name = "Way of the longbow"
+tree = "racial"
+description = "The elven war bow and no other: your shots with a long war bow strike truer and harder, but every other bow, crossbow, sling, and throw feels wrong in your hands."
+needs = { race = ["elf", "half_elf"], weapon_skills = { bows = 2 } }
+effects = [{ kind = "way", attacks = "missile", objects = ["long_bow"], to_hit = 2, damage = 2, else_to_hit = -2, else_damage = -2 }]
+systems = ["ranged", "combat"]

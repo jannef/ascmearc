@@ -77,10 +77,12 @@ fn every_racial_talent_asks_for_its_race_and_only_that_race_is_offered_it() {
     assert_eq!(racial("dwarf"), ["dwarven_resilience", "stone_sense"]);
     assert_eq!(racial("gnome"), ["gem_lore", "tinkerer"]);
     assert_eq!(racial("half_orc"), ["ferocity", "orcish_hide"]);
-    assert_eq!(racial("half_elf"), ["diplomat"]);
+    assert_eq!(racial("half_elf"), ["diplomat", "way_of_the_long_blade"]);
     assert_eq!(racial("halfling"), ["lucky", "small_target"]);
-    // An elf needs a level and a bow skill first; a human has none to pick (Versatile is given).
-    assert!(racial("elf").is_empty());
+    // A warrior starts with long blades at rank 2, so the long blade's way is open to an elf or
+    // a half-elf at once; the elves' other talents need a level or more weapon skill first, and
+    // a human has none to pick (Versatile is given).
+    assert_eq!(racial("elf"), ["way_of_the_long_blade"]);
     assert!(racial("human").is_empty());
 }
 

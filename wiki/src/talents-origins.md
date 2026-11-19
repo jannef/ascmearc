@@ -69,6 +69,10 @@ only an [elf](races.md#race-elf) or a [half-elf](races.md#race-half-elf) may tak
 [Elven accuracy](talents-origins.md#talent-elven-accuracy), and only a [dwarf](races.md#race-dwarf) [Stone sense](talents-origins.md#talent-stone-sense). They are picked
 like any other talent.
 
+The elves' four ways ([Way of the longbow](talents-origins.md#talent-way-of-the-longbow) and
+the rest) are narrow on purpose: each makes one way of fighting much better and every other way
+of the same kind worse. Which attacks each one counts: [The elves' ways](races.md#the-elves-ways).
+
 [Humans](races.md#race-human) have no gift of their own, so they are given
 **[Versatile](talents-origins.md#talent-versatile)** from the start instead: one more talent at creation and
 one more at level 30. Like the gifts of the stars it is never on a pick list, and the

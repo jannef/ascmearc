@@ -65,7 +65,7 @@ pub use martial::{
     MartialEffect, MartialMods, PalmBlow, RapidShot, SpiritWeapon, Unstoppable, Volley, WarCry,
 };
 pub use movement::{MovementEffect, MovementMods, StepBonus};
-pub use offence::{OffenceEffect, OffenceMods, WeaponBonus};
+pub use offence::{OffenceEffect, OffenceMods, Way, WayAttacks, WeaponBonus};
 pub use resource::{ResourceEffect, ResourceMods};
 pub use senses::{SensesEffect, SensesMods};
 pub use sign::{Blaze, FireBreath, HornsGrace, HoundsBay, SignEffect, SignMods, Stare};
