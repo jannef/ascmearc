@@ -27,6 +27,16 @@ pub(crate) fn world(scenario: &str) -> World {
     World::new(builtin(), scenario, None).expect("world")
 }
 
+/// Makes the player's character a half-elf, whose marks count once (no `marks_percent` nor
+/// `skill_marks_percent`), for a test that counts marks one by one: the showcase's human's
+/// marks count twice one time in four (`world/character/race_growth_tests.rs`). Only the race
+/// the rules read from now on changes; the stats, skills, and kit made for the human stay.
+pub(crate) fn plain_marks(world: &mut World) {
+    if let Some(c) = world.state_mut().character.as_mut() {
+        c.spec.race = "half_elf".into();
+    }
+}
+
 /// Applies action text (`move:N wait*3`) to `world`, returning each action's outcome.
 pub(crate) fn run(world: &mut World, actions: &str) -> Vec<Outcome> {
     (parse_actions(actions).expect("actions").iter())

@@ -10,6 +10,7 @@ use crate::replay::Replay;
 use crate::skills::Trained;
 use crate::stats::{PerStat, Stat, Stats};
 use crate::test_support::draws;
+use crate::test_support::plain_marks;
 use crate::test_support::{CONTENT as BUILTIN, last, run};
 use crate::world::*;
 
@@ -289,6 +290,7 @@ fn rolls_survive_saves_and_replays() {
 #[test]
 fn marks_reaching_the_threshold_roll_once_and_spend_half() {
     let mut w = world("human,male,warrior");
+    plain_marks(&mut w);
     let auto_at = w.content().skill_rolls().auto_at;
     assert_eq!(auto_at, 100, "the data's threshold");
     set(&mut w, "stealth", 20, auto_at - 2);

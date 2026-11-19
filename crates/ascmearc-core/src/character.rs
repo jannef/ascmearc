@@ -20,8 +20,9 @@
 //!   [`Gender::raises`]), plus the class's, plus the sign's animal's and element's, kept within
 //!   [`SCORES`](crate::stats::SCORES).
 //! - **Potentials**: the races file's `base_potential` plus the race's potential adjustment,
-//!   kept within the same range and never below the starting score; like every potential they
-//!   are hidden from the player.
+//!   kept within the same range, then multiplied by the race's `potential_percent` for the stat
+//!   (rounded to the nearest, a half up; humans' 150), within the range again and never below
+//!   the starting score; like every potential they are hidden from the player.
 //! - **Dice**: adjustments may be dice ([`Dice`](crate::dice::Dice)), rolled from the stream
 //!   `character/rolls/<race>,<gender>,<class>` in this order: the race's scores, the class's,
 //!   the animal's, the element's (each in stat order), then the race's potentials, then the
@@ -559,7 +560,7 @@ impl CharacterSpec {
             familiar: None,
         };
         Ok(Start {
-            stats: starting_stats(by, potential, content.races().base_potential),
+            stats: starting_stats(race, by, potential, content.races().base_potential),
             vision: race.vision.clone(),
             hp: race.hp + class.hp,
             mana: race.mana + class.mana,
@@ -672,13 +673,19 @@ fn skill_choice(class: &ClassDef, skills: &mut Skills, seed: u64, spec: &Charact
 }
 
 /// Starting stats from the adjustments: scores 10 plus `by`, potentials `base_potential` plus
-/// `potential`, all within 1 to 40 and no potential below its score.
-fn starting_stats(by: PerStat<i32>, potential: PerStat<i32>, base_potential: u8) -> Stats {
+/// `potential` multiplied by the race's `potential_percent` ([`RaceDef::potential_of`]), all
+/// within 1 to 40 and no potential below its score.
+fn starting_stats(
+    race: &RaceDef,
+    by: PerStat<i32>,
+    potential: PerStat<i32>,
+    base_potential: u8,
+) -> Stats {
     let mut scores = PerStat::splat(AVERAGE);
     let mut potentials = PerStat::splat(AVERAGE);
     for stat in Stat::ALL {
         scores[stat] = adjusted(AVERAGE, by[stat]);
-        potentials[stat] = adjusted(base_potential, potential[stat]);
+        potentials[stat] = race.potential_of(stat, base_potential, potential[stat]);
     }
     Stats::new(scores, potentials)
 }
@@ -879,9 +886,13 @@ mod tests {
             }
             out
         };
+        // A race without potential percents (the dwarf's).
+        let content = content();
+        let race = content.race("dwarf").expect("a dwarf");
         // St 10 + 31 caps at 40 and its potential 35 + 10 too; Dx 10 - 30 stops at 1, its
         // potential 35 - 10 = 25.
         let stats = starting_stats(
+            race,
             by(&[(Stat::Strength, 31), (Stat::Dexterity, -30)]),
             by(&[(Stat::Strength, 10), (Stat::Dexterity, -10)]),
             35,
@@ -890,13 +901,14 @@ mod tests {
         assert_eq!(potentials(&stats), [40, 25, 35, 35, 35, 35]);
         // A potential below the score is raised to it; a potential of 1 - 10 stops at 1.
         let low = starting_stats(
+            race,
             by(&[(Stat::Strength, 20)]),
             by(&[(Stat::Dexterity, -10)]),
             1,
         );
         assert_eq!(scores(&low)[..2], [30, 10]);
         assert_eq!(potentials(&low)[..3], [30, 10, 10]);
-        let floor = starting_stats(by(&[]), by(&[(Stat::Dexterity, -10)]), 5);
+        let floor = starting_stats(race, by(&[]), by(&[(Stat::Dexterity, -10)]), 5);
         assert_eq!(potentials(&floor)[..2], [10, 10]);
     }
 
@@ -1623,7 +1635,8 @@ mod tests {
                         for stat in Stat::ALL {
                             let (s, p) = (start.stats.score(stat), start.stats.potential(stat));
                             assert!((4..=22).contains(&s), "{spec} {stat:?} {s}");
-                            assert!(p >= s && p <= 22, "{spec} {stat:?} {p}");
+                            // A race's `potential_percent` may lift a potential to the top.
+                            assert!(p >= s && p <= 40, "{spec} {stat:?} {p}");
                             let low = lowest.entry(stat).or_insert(s);
                             *low = (*low).min(s);
                             let high = highest.entry(stat).or_insert(s);

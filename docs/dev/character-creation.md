@@ -12,10 +12,14 @@ gender raised: male Strength, female Dexterity, other `other_stat(seed)` from th
 race's `age` range and birthday from `character/birth/<race>`, counted back from the start date
 with `BirthDate::counted_back`; `age_on(date)`), and `sign` (`content::Sign { animal, element }`,
 the birth year's)). Scores: 10 + race + gender + class + animal + element, clamped to 1..=40;
-potentials `base_potential` + the race's, never below the score. Flags for rules:
+potentials `base_potential` + the race's, then multiplied by the race's `potential_percent` for
+the stat (`RaceDef::potential_of`, the one rule, which the wiki's `potentials.md` table reads too:
+rounded to the nearest, a half up, clamped to 1..=40), never below the score. Flags for rules:
 `Character::born_of_element("fire")`, `born_in_year_of("manticore")`. Content:
 `data/races.toml` (`content/race.rs`: `Races` with `base_potential`, `RaceDef` with `vision`,
-`age`, `stats`, `potential`, `hp`, `natural`, `resist`, `light_blind`, `disease_check`,
+`age`, `stats`, `potential`, `potential_percent`, `marks_percent`, `skill_marks_percent` (a
+race's growth, percents 1..=1000 per stat or race-wide, default 100; the marks ones are applied in
+play, docs/dev/stats.md and skills.md; the wiki table `race-growth.md`), `hp`, `natural`, `resist`, `light_blind`, `disease_check`,
 `eats_rotten`, `alignment`, `rolls`), `data/classes/` (`content/class.rs`:
 `ClassDef` with `stats`, `hp`, `alignment`, `known_for`, `optional_skills` (#662, rolled from
 their own stream `character/optional-skills/<spec>`, so adding or changing one moves no other

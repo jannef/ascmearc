@@ -10,6 +10,7 @@ use crate::object::Stack;
 use crate::replay::Replay;
 use crate::skills::{SkillId, Trained};
 use crate::stats::{PerStat, Stats};
+use crate::test_support::plain_marks;
 use crate::test_support::{said_text as said, texts};
 use crate::world::*;
 use std::sync::LazyLock;
@@ -332,6 +333,7 @@ fn a_tiny_stone_cut_badly_crumbles_and_every_cut_is_marked() {
     let mut crumbled = false;
     for seed in 0..60 {
         let mut w = world(false, seed);
+        plain_marks(&mut w);
         give(&mut w, |w| loose(w, "garnet", "tiny", "uncut", 1));
         w.apply(&cut_action(0));
         let jewel = jewelcraft(&w);

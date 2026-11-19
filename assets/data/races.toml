@@ -11,6 +11,13 @@
 #                 dice (`"1d2+1"`, `"-1d3"`), rolled when the character is made; the score is
 #                 kept within 1 to 40
 #   potential     adjustments to the potentials, the same way (hidden from the player)
+#   potential_percent  what each potential is multiplied by, in percent, by stat id (default
+#                 100, 1 to 1000): `potential` is added to `base_potential` first, then the sum
+#                 multiplied, rounded to the nearest (a half up), kept within 1 to 40 (humans' 150)
+#   marks_percent how much each stat training mark counts, in percent, by stat id (default 100,
+#                 1 to 1000): each whole hundred is a mark for certain and the rest a chance of
+#                 one more, drawn per mark (125: a mark counts twice one time in four)
+#   skill_marks_percent  the same for every skill training mark (default 100)
 #   hp            hit points (default 0): a character's maximum is their
 #                 Toughness plus their race's and their class's (classes/)
 #   mana          mana (default 0, at most 1000): a character's maximum is
@@ -137,6 +144,8 @@ vision = "low_light"
 age = [20, 60]
 stats = { dexterity = 1, presence = "1d2" }
 potential = { dexterity = 1, toughness = -1, intelligence = 1, presence = 2 }
+# The mental stats grow far: half as much again.
+potential_percent = { intelligence = 150, willpower = 150, presence = 150 }
 hp = 3
 mana = 2
 size = "medium"
@@ -163,6 +172,11 @@ description = "Short-lived, ambitious, and everywhere: no gift and no flaw."
 vision = "normal"
 age = [16, 35]
 potential = { strength = "1d2", dexterity = "1d2", toughness = "1d2", intelligence = "1d2", willpower = "1d2", presence = "1d2" }
+# Room to grow: every potential half as much again, and a mark counts twice one time in four,
+# a stat's or a skill's.
+potential_percent = { strength = 150, dexterity = 150, toughness = 150, intelligence = 150, willpower = 150, presence = 150 }
+marks_percent = { strength = 125, dexterity = 125, toughness = 125, intelligence = 125, willpower = 125, presence = 125 }
+skill_marks_percent = 125
 hp = 4
 mana = 1
 size = "medium"
@@ -278,6 +292,11 @@ vision = "darkvision"
 age = [14, 30]
 stats = { strength = "1d2+2", toughness = 1, intelligence = "-1d3", presence = -2 }
 potential = { strength = 4, toughness = 2, intelligence = -3, presence = -3 }
+# The body grows far: the physical potentials two and a half times over; and a mark counts twice
+# one time in four, a stat's or a skill's.
+potential_percent = { strength = 250, dexterity = 250, toughness = 250 }
+marks_percent = { strength = 125, dexterity = 125, toughness = 125, intelligence = 125, willpower = 125, presence = 125 }
+skill_marks_percent = 125
 hp = 6
 alignment = -50
 size = "medium"

@@ -79,7 +79,7 @@ pub(in crate::world) enum Look {
 
 impl World {
     /// The player's race, if the run has a character.
-    fn player_race(&self) -> Option<&RaceDef> {
+    pub(in crate::world) fn player_race(&self) -> Option<&RaceDef> {
         (self.state.character.as_ref()).and_then(|c| c.spec.race(&self.content).ok())
     }
 

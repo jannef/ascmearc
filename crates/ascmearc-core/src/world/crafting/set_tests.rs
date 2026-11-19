@@ -13,6 +13,7 @@ use crate::object::Stack;
 use crate::replay::Replay;
 use crate::skills::{SkillId, Trained};
 use crate::stats::{PerStat, Stats};
+use crate::test_support::plain_marks;
 use crate::test_support::{last_text as last, run as apply, said_text as said, texts};
 use crate::world::*;
 use std::sync::LazyLock;
@@ -289,6 +290,7 @@ fn a_setting_takes_twenty_minutes_and_marks_jewelcraft() {
     let (mut set, mut chipped) = (false, false);
     for seed in 1..40 {
         let mut w = world(false, seed);
+        plain_marks(&mut w);
         item(&mut w, "long_sword");
         gem(&mut w, "ruby", "medium", "fine");
         let start = w.state.time;
@@ -417,6 +419,7 @@ fn the_gold_amulet_must_have_a_cut_gem() {
 #[test]
 fn the_bone_amulet_is_woodcrafts_by_hand() {
     let mut w = world(false, 1);
+    plain_marks(&mut w);
     let id = recipe(&w, "bone_amulet");
     assert_eq!(w.content.recipe(id).skill, skill(&w, "woodcraft"));
     stock(&mut w, "bone", 1);

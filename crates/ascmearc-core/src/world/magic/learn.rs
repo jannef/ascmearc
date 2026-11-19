@@ -430,10 +430,7 @@ impl World {
                     *marks -= 1;
                 }
             }
-            MishapEffect::Mark { stat } => {
-                let marks = &mut self.player_mut().stat_marks[stat];
-                *marks = marks.saturating_add(1);
-            }
+            MishapEffect::Mark { stat } => self.gain_stat_marks(stat, 1),
             MishapEffect::Drain {
                 stat,
                 points,

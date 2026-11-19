@@ -143,8 +143,7 @@ impl World {
         let first = eaten == 1 && self.state.progress.laws.craving_from.is_none();
         let (count, scale) = self.craving_count(rules, eaten);
         let stat = Stat::ALL[draw!(self, "craving/mark/player").index(Stat::ALL.len())];
-        let pile = &mut self.player_mut().stat_marks[stat];
-        *pile = pile.saturating_add(i32::from(rules.mark));
+        self.gain_stat_marks(stat, u32::from(rules.mark));
         if first {
             self.say(rules.first.clone());
         }

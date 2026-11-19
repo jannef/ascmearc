@@ -8,6 +8,7 @@ use crate::rng::Rng;
 use crate::skills::{Effect, Trained};
 use crate::stats::{PerStat, Stat, Stats};
 use crate::test_support::draws;
+use crate::test_support::plain_marks;
 use crate::test_support::{builtin, last};
 use crate::world::classes::class_active_tests::world;
 use crate::world::*;
@@ -252,6 +253,7 @@ fn run_until_it_acts(w: &mut World, id: ActorId) {
 fn a_feint_may_mark_bluff_on_the_training_stream_whatever_came_of_it() {
     let marks_of = |seed: u64| {
         let mut w = liar("thief", 3, Some(1));
+        plain_marks(&mut w);
         let kobold = kobold_beside(&mut w, 30);
         w.state.actors.get_mut(&kobold).expect("there").energy = -100_000;
         w.state.training = Rng::training(seed);

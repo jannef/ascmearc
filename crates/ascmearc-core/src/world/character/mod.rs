@@ -44,6 +44,7 @@ cfg_if! {
         mod laws_tests;
         mod lucky_tests;
         mod mana_talent_tests;
+        mod race_growth_tests;
         mod race_tests;
         mod racial_tests;
         mod resource_talent_tests;

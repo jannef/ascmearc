@@ -11,6 +11,7 @@ use crate::object::Stack;
 use crate::replay::Replay;
 use crate::skills::{SkillId, Trained};
 use crate::stats::{PerStat, Stats};
+use crate::test_support::plain_marks;
 use crate::test_support::{last_text as last, run as apply, said_text as said, texts};
 use crate::world::*;
 use std::sync::LazyLock;
@@ -607,6 +608,7 @@ fn the_work_takes_its_hour_and_marks_enchanting() {
     let (mut made, mut failed) = (false, false);
     for seed in 1..40 {
         let mut w = world(seed);
+        plain_marks(&mut w);
         train(&mut w, 0);
         item(&mut w, "long_sword", 1);
         crystal(&mut w, "red");

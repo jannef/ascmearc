@@ -233,6 +233,9 @@ impl World {
                     }
                 }
             }
+            MishapEffect::Mark { stat } if caster == self.state.player => {
+                self.gain_stat_marks(stat, 1);
+            }
             MishapEffect::Mark { stat } => {
                 if let Some(me) = self.state.actors.get_mut(&caster) {
                     me.stat_marks[stat] = me.stat_marks[stat].saturating_add(1);

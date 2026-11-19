@@ -25,7 +25,8 @@ fn the_player_starts_with_the_scenarios_stats() {
     let w = showcase();
     let stats = &w.state.player().stats;
     assert_eq!(scores(stats), [10, 13, 10, 12, 12, 9]);
-    assert_eq!(potentials(stats), [16; 6]);
+    // Potentials: 15 + 1d2 (16 here), half as much again for a human (races.toml).
+    assert_eq!(potentials(stats), [24; 6]);
     assert_eq!(stats.modifier(Stat::Dexterity), 1);
     assert_eq!(stats.modifier(Stat::Presence), -1);
     // A scenario without a character gives the stats itself; without any, average.
