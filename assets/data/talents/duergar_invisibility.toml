@@ -1,0 +1,11 @@
+# The duergar's Invisibility (races.toml `talents`): they fade from sight as the duergar monsters
+# do, by the same rule and on the same five-minute cooldown as their `[creature.invisible]`
+# (creatures/duergar_warrior.toml; docs/dev/creatures.md "The unseen").
+[[talent]]
+id = "duergar_invisibility"
+name = "Invisibility"
+tree = "racial"
+granted = true
+description = "The duergar's dark gift: you can fade from sight a while (an ability), as your grey kin do, and then not again for some minutes."
+effects = [{ kind = "fade", cooldown = 300 }]
+systems = ["stealth", "status"]

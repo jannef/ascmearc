@@ -502,7 +502,8 @@ impl World {
 
     /// The player gains `points` of nutrition from `what`. A meal that would go past the most
     /// there can be is overeating: they may choke to death (if choking is on), else vomit, else
-    /// what does not fit is lost. With Gourmand a meal never leaves them
+    /// what does not fit is lost; the most is the data's `max`, `capacity_percent` more for a
+    /// halfling (`HungerMods::capacity`). With Gourmand a meal never leaves them
     /// Bloated: what does not fit below it is lost, and they never overeat.
     fn feed(&mut self, points: i32, what: ObjectId) {
         let content = self.content.clone();
@@ -522,7 +523,9 @@ impl World {
             }
             return;
         }
-        if nutrition.saturating_add(points) > def.max {
+        // The most there can be: the data's, more for one who holds more (Second breakfast).
+        let max = (self.state.player().talent_mods(&content).hunger).capacity(def.max);
+        if nutrition.saturating_add(points) > max {
             let o = def.overeating;
             let mut rng = draw!(self, "eat/overeat/player");
             if o.choke > 0 && rng.chance(u32::from(o.choke)) {
@@ -542,7 +545,7 @@ impl World {
             self.say("You have a hard time getting it all down.");
         }
         if let Some(fed) = self.player_mut().satiation.as_mut() {
-            fed.feed(points, def.max);
+            fed.feed(points, max);
         }
     }
 

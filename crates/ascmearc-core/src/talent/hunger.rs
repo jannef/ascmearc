@@ -25,6 +25,15 @@ pub enum HungerEffect {
     NoExertion,
     /// A meal never leaves it Bloated: what does not fit below Bloated is lost (Gourmand).
     NoBloating,
+    /// Being Bloated never slows it (`World::bloated`; the halflings' Second breakfast).
+    BloatedUnslowed,
+    /// It holds this percent more nutrition before the most there can be (`max` in
+    /// `data/hunger.toml`; 100: twice as much), so it eats on into Bloated without overeating;
+    /// the states' bands stay (Second breakfast).
+    CapacityPercent { value: i32 },
+    /// While Bloated, every `every` points of nutrition it digests are a `bloated` use of stat
+    /// training (`StatUse::Bloated`, `World::digest`; Second breakfast).
+    BloatedTraining { every: u16 },
     /// Hunger never weakens it: Weak, Fainting, and Starving take nothing off its Strength and
     /// Dexterity (`Actor::penalty`), and it never faints (`World::faint`; Long fast). Starving
     /// still costs hit points.
@@ -58,7 +67,10 @@ pub enum HungerEffect {
 impl HungerEffect {
     /// The `kind`s of the data that are effects of the area, one a variant (`TalentEffect`'s
     /// deserializer hands these to [`HungerEffect`]).
-    pub const KINDS: [&'static str; 14] = [
+    pub const KINDS: [&'static str; 17] = [
+        "bloated_training",
+        "bloated_unslowed",
+        "capacity_percent",
         "corpse_harmless",
         "corpse_stats_percent",
         "craves",
@@ -93,6 +105,13 @@ pub struct HungerMods {
     pub no_exertion: bool,
     /// A meal never leaves it Bloated.
     pub no_bloating: bool,
+    /// Being Bloated never slows it.
+    pub bloated_unslowed: bool,
+    /// Percent more nutrition it can hold before the most there can be.
+    pub capacity_percent: i32,
+    /// While Bloated, every this many points of nutrition digested train its stats (the
+    /// smallest of its talents'; `None`: never).
+    pub bloated_training: Option<u16>,
     /// Hunger never weakens it: Weak or worse takes nothing off its stats, and it never faints
     /// (Long fast).
     pub no_hunger_weakness: bool,
@@ -123,6 +142,12 @@ impl HungerMods {
             HungerEffect::SmellRot => self.smell_rot = true,
             HungerEffect::NoExertion => self.no_exertion = true,
             HungerEffect::NoBloating => self.no_bloating = true,
+            HungerEffect::BloatedUnslowed => self.bloated_unslowed = true,
+            HungerEffect::CapacityPercent { value } => self.capacity_percent += value,
+            HungerEffect::BloatedTraining { every } => {
+                let every = every.max(1);
+                self.bloated_training = Some(self.bloated_training.map_or(every, |e| e.min(every)));
+            }
             HungerEffect::NoHungerWeakness => self.no_hunger_weakness = true,
             HungerEffect::CorpseStatsPercent { value } => self.corpse_stats_percent += value,
             HungerEffect::IronStomach => self.iron_stomach = true,
@@ -149,6 +174,13 @@ impl HungerMods {
             || self.no_hunger_weakness
             || self.no_exertion
             || self.hunger_harm < 0
+    }
+
+    /// The most nutrition the holder can have, `max` the data's: `capacity_percent` more
+    /// (less for a negative one), at least 1.
+    pub fn capacity(&self, max: i32) -> i32 {
+        let scaled = i64::from(max) * i64::from((100 + self.capacity_percent).max(0)) / 100;
+        i32::try_from(scaled.max(1)).unwrap_or(i32::MAX)
     }
 
     /// One of hunger's harms, `by` in the data (Weak's stat loss, the faint chance, starving's

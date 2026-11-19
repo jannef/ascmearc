@@ -1,11 +1,12 @@
 # Glamour (the spell types design §7 entry 23): Barkskin's cousin for the arcane, blows that miss
-# more often; a scroll's only.
+# more often; a scroll's only, and the gnomes' (talents/gnomish_glamour.toml). Illusion: it fools
+# the eye, not the blow.
 [[spell]]
 id = "glamour"
 name = "Glamour"
 description = "A glamour lies over you a while: you seem a little to one side of where you stand, and blows meant for you miss more often."
 level = 8
-school = "abjuration"
+school = "illusion"
 kind = "buff"
 shape = "self"
 resolution = "auto"

@@ -1,0 +1,11 @@
+# The gnomes' Glamour (races.toml `talents`): every gnome knows the illusion from the start, as a
+# caster's class gives its spells: cast and paid in mana as spells/glamour.toml says, deepened by
+# its grimoire like any other.
+[[talent]]
+id = "gnomish_glamour"
+name = "Glamour"
+tree = "racial"
+granted = true
+description = "Every gnome learns the old glamour as a child: you know the Glamour spell (paid in mana)."
+effects = [{ kind = "spell", spell = "glamour" }]
+systems = ["spells", "mana"]

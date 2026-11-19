@@ -50,7 +50,7 @@
 
 use crate::action::{AttackKind, Event};
 use crate::combat::Profile;
-use crate::content::{ActionKind, Content, Invisible, Stance};
+use crate::content::{ActionKind, Content, Fading, Invisible, Stance, StatusId};
 use crate::geom::Pos;
 use crate::noise::Act;
 use crate::status::Effect;
@@ -77,6 +77,15 @@ pub(crate) fn invisible_to(content: &Content, viewer: &Actor, target: &Actor) ->
         && target.invisible(content)
         && !viewer.effects.sees_unseen(content)
         && !content.has_tag(viewer.creature, crate::content::EYELESS)
+}
+
+/// Why `me` may not fade from sight now (`fading`), the status that keeps it: Invisible already,
+/// the cooldown, or one that blocks casting (Silenced); `None` when it may.
+pub(crate) fn fade_refused(content: &Content, me: &Actor, fading: Fading) -> Option<StatusId> {
+    [fading.status, fading.spent]
+        .into_iter()
+        .find(|&s| me.effects.has(s))
+        .or_else(|| me.effects.blocking(content, ActionKind::Cast))
 }
 
 /// One the player does not see though they might its cell (the module docs).
@@ -143,30 +152,27 @@ impl World {
         let Some(me) = self.state.actors.get(&id) else {
             return;
         };
-        let Some(Invisible::Fades {
-            status,
-            spent,
-            degrees,
-            ..
-        }) = content.creature(me.creature).invisible
-        else {
+        let Some(Invisible::Fades(fading)) = content.creature(me.creature).invisible else {
             return;
         };
-        if me.effects.has(status)
-            || me.effects.has(spent)
-            || me.effects.hides(&content)
-            || me.effects.blocking(&content, ActionKind::Cast).is_some()
-        {
+        if fade_refused(&content, me, fading).is_some() || me.effects.hides(&content) {
             return;
         }
         let seen = self.perception.shows(id);
         let who = crate::text::capitalized(&self.called(me));
-        self.afflict(id, status, 1, Some(id), events);
-        self.afflict(id, spent, degrees, Some(id), events);
-        self.make_noise(id, Act::Attack(AttackKind::Spell));
+        self.fade(id, fading, events);
         if seen {
             self.say(format!("{who} fades from sight."));
         }
+    }
+
+    /// Actor `id` fades from sight (`fading`): the Invisible status and the cooldown's degrees,
+    /// heard as chanting. The creatures' self-buff step and the duergar's racial Invisibility
+    /// (`world/character/fade.rs`) alike; the caller has asked [`fade_refused`].
+    pub(in crate::world) fn fade(&mut self, id: ActorId, fading: Fading, events: &mut Vec<Event>) {
+        self.afflict(id, fading.status, 1, Some(id), events);
+        self.afflict(id, fading.spent, fading.degrees, Some(id), events);
+        self.make_noise(id, Act::Attack(AttackKind::Spell));
     }
 
     /// Statuses `ended` on actor `id`: one that left it unseen, where the player sees its cell

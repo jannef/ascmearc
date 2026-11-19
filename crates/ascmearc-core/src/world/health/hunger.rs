@@ -97,7 +97,9 @@ impl World {
             return (0, None);
         };
         let before = def.state(fed.nutrition);
+        let was = fed.nutrition;
         fed.burn(seconds, percent, def.burn_seconds);
+        let now = fed.nutrition;
         let lost = if before == Hunger::Starving {
             fed.starve(seconds, def.starve.seconds, damage)
         } else {
@@ -108,7 +110,26 @@ impl World {
         if id == self.state.player && lost > 0 {
             self.stat_deed_times(crate::content::StatDeed::Starved, lost.unsigned_abs());
         }
+        if id == self.state.player && before == Hunger::Bloated {
+            self.train_bloated(was, now);
+        }
         (lost, Some(before))
+    }
+
+    /// The player, Bloated, digested from `was` nutrition down to `now`: with Second breakfast
+    /// (`bloated_training`, every `every` points) each multiple of `every` passed on the way
+    /// down is a `bloated` use of stat training ([`crate::content::StatUse::Bloated`]), one
+    /// after another (each its rules' draws in turn), so the marks and the training stream are
+    /// the same however the time is cut.
+    fn train_bloated(&mut self, was: i32, now: i32) {
+        let Some(every) = (self.state.player().talent_mods(&self.content).hunger).bloated_training
+        else {
+            return;
+        };
+        let every = i32::from(every.max(1));
+        for _ in 0..(was.div_euclid(every) - now.div_euclid(every)) {
+            self.train_stat(crate::content::StatUse::Bloated);
+        }
     }
 
     /// A hit point lost to starving stops a rest, which would otherwise run on
@@ -167,13 +188,16 @@ impl World {
     }
 
     /// `price` as the player pays it while Bloated: raised by `[bloated] slow` percent (rounded
-    /// up to a whole unit of energy), like a burden; as it is for anyone else.
+    /// up to a whole unit of energy), like a burden; as it is for anyone else. One whom Bloated
+    /// never slows (`bloated_unslowed`, the halflings' Second breakfast) pays the price as it is.
     pub(in crate::world) fn bloated(&self, id: crate::world::ActorId, price: i64) -> i64 {
         let Some(def) = self.content.hunger() else {
             return price;
         };
-        let bloated = (self.state.actors.get(&id))
-            .is_some_and(|a| a.hunger(&self.content) == Some(Hunger::Bloated));
+        let bloated = (self.state.actors.get(&id)).is_some_and(|a| {
+            a.hunger(&self.content) == Some(Hunger::Bloated)
+                && !a.talent_mods(&self.content).hunger.bloated_unslowed
+        });
         if !bloated {
             return price;
         }
