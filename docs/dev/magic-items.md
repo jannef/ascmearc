@@ -165,7 +165,11 @@ nothing. **`Group`** is a struct `{ effect, skill, damage_type, resource }` (`Gr
 effect that names nothing else): one group per (effect, resource), so Tireless (stamina) and of
 Fury (rage) are two. **`ItemKind::Tool`** (`ALL` is a slice; the `tools`
 item class holds the kind; rare names' second words `tool = [...]` in `data/affixes.toml`): a
-kind for digging tools, which the pick-axe takes in D1. **Tiers**: rising by item level (`tier_window` reads them in order;
+kind for digging tools, which the pick-axe takes in D1. **`ItemKind::Pipe`** (the `tools` class
+too, rare names' `pipe = [...]`): the halfling's pipe, which rolls armour's affixes rather than
+a list of its own (`ItemKind::rolls_as_armour`; `magic::may_roll`: any affix whose `bases` name an
+armour kind, `is_armour`, but a `protection` one on a pipe of no Protection), so no affix file
+names it; `Numbers::of` shows it nothing, as a tool (docs/dev/enchanting.md "Pipes"). **Tiers**: rising by item level (`tier_window` reads them in order;
 at most 255, a rolled affix names its tier as a `u8`). Every shipped ladder (X1, #637, regraded the old affixes but Flaming,
 Freezing, and Venomous, which W1 (#638) put on the elemental ladder, 1d2 at item level 2 to 1d8
 at 12, with Shocking, Corrosive, and Withering; the two light affixes keep their three glow presets, and

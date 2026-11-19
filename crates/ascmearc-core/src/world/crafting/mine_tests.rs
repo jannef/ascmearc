@@ -355,6 +355,7 @@ fn smelt_makes_the_ore_s_ingot_at_an_anvil_for_the_trained() {
         w.lore(),
         w.state.current(),
         w.state.player(),
+        None,
         w.content.recipe(smelt).skill,
     );
     assert!(rows.iter().all(|r| r.id != smelt));

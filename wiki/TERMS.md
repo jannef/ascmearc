@@ -92,6 +92,7 @@ above.
 | Light, lit, brightness | `light.md#what-light-is` |
 | Light source, torch, lantern light | `light.md#light-sources` |
 | Your lantern, its hood | `lantern.md`, `lantern.md#the-hood` |
+| A halfling's pipe, smoking it, making and enchanting one | `pipe.md`, `pipe.md#smoking-it`, `pipe.md#making-one`, `pipe.md#enchanting-it` |
 | Sunlight, sky light | `sun.md#sky-light` |
 | Moonlight, the moon's phases | `sun.md#moonlight`, `sun.md#phases` |
 | Line of sight, field of view | `sight.md#line-of-sight` |

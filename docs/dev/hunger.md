@@ -143,3 +143,33 @@ held key's repeats are the only walking.
 "Spells aimed at a corpse") use up the top-most corpse of a pile the player sees, and read neither
 `Stack::died` nor its stage. A cursed room's rising looks for its corpse when it is due
 (`world/fixtures/curse.rs`): one used by a spell does not rise.
+
+## Pipes
+
+A halfling's hour of ease on a full belly: `data/rules/pipe.toml` (`content/pipe.rs`,
+`PipeRules`, `Content::pipe()`; optional: without it no pipe is smoked), the rule in
+`world/health/pipe.rs`, tests in `world/health/pipe_tests.rs`. A pipe is an object of
+`kind = "pipe"` (`ItemKind::Pipe`, `objects/pipe.toml`) ready in the Tool slot
+(`Actor::ready_pipe`); the use-tool command (`Action::UseTool`, `u`) smokes it, ahead of a
+lantern (`World::use_tool`, `world/items/lamp.rs`): no ability row and no key of its own (the
+owner: a tool is used with the tool command).
+
+- **Refused, no time**, in order: a smoker not of the rules' `race` (halfling): "You cough and
+  splutter: a pipe is a halfling's pleasure."; one not Bloated (`World::player_hunger`, the
+  hunger API as it is): "A pipe wants a full belly first."; afloat: "The water would only put it
+  out.".
+- **The smoke**: "You light your pipe and settle back.", then `Spent::Smoke(until)`, `seconds`
+  (3600) from now, run by `World::smoke` as a rest: `World::keep_at` in `Wait` turns with
+  `resting` set (healing as a rest heals), watched on the overworld as a rest
+  (`Watch::Rest`), stopped as a rest is. Done: "You smoke your pipe to the last of it, and feel
+  wonderfully at ease."; stopped: "...; you put out your pipe after N minutes." (as a rest's).
+- **The belly** (`World::draw_down`, after the rest): the nutrition above `leaves` (360) past
+  the least of Not hungry (`HungerDef::least`, 1440 today) goes, all of it on an hour seen
+  through (so 1800 is left, Not hungry, six hours from Hungry at a human's pace), and on an
+  interrupted smoke the share of it the time smoked is of `seconds` (proportional, never
+  nothing). Nutrition is set directly: no hunger news is said for the fall.
+- **The marks**: for every `per` (100) points the smoke took, a `chance` (25) % draw of the
+  training stream, and on a hit one mark to a stat drawn evenly among
+  `Stat::ALL` (a second draw of the stream); sure, silent, saturating. From Bloated (5500 to 6500)
+  an hour's smoke takes about 3600 to 4600 points (less the hour's own burn), so 36 to 46 draws,
+  about 9 to 12 marks.

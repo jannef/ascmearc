@@ -1,0 +1,25 @@
+# Smoking a pipe: a halfling's hour of ease (docs/dev/hunger.md "Pipes"). A pipe
+# (objects/pipe.toml, `kind = "pipe"`) ready in the Tool slot is smoked with `u` (the use-tool
+# command), as a lantern is lit.
+#
+# Only one of `race` smokes it; anyone else is refused, taking no time. It wants a full belly:
+# a smoker who is not Bloated (hunger.toml's states) is refused, taking no time. Otherwise the
+# smoker rests for `seconds` (a rest: stopped as a rest is, by a hostile coming close, a blow, or
+# news), and the pipe draws the belly down: the nutrition above `leaves` points past the least
+# of Not hungry (hunger.toml's `not_hungry`) goes, all of it on an hour seen through, and on an
+# interrupted smoke the share of it the time smoked is of `seconds`. For every `per` points so
+# lost the smoker has a `chance` percent of a stat training mark (stats.toml's `[training]`) in
+# a stat drawn evenly among the six, each a draw of the training stream. Without this file no
+# pipe is smoked.
+
+# The one race that smokes a pipe (races.toml).
+race = "halfling"
+# How long a smoke is, in seconds: an hour.
+seconds = 3600
+# How far above the least of Not hungry a smoke leaves the belly, in nutrition points: 360, six
+# hours from Hungry at a human's pace.
+leaves = 360
+# A draw for a mark for every this many nutrition points the smoke takes.
+per = 100
+# The chance in percent of each draw.
+chance = 25

@@ -146,7 +146,8 @@ name = "Missiles"
 action = "ready"
 mark = "quivered"
 
-# A tool ready to use: a pick-axe or a mattock to dig with (`U`).
+# A tool ready to use: a pick-axe or a mattock to dig with (`U`), a lantern to light or a pipe to
+# smoke (`u`).
 [[slot]]
 id = "tool"
 name = "Tool"

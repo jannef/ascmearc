@@ -181,6 +181,24 @@ impl Grade {
             Grade::Masterwork => 3,
         }
     }
+
+    /// A made item's grade raised by `steps` grades (a recipe's `finer`: a pipe's wood and
+    /// trim), a Masterwork at most; a failure stays one.
+    pub const fn raised(self, steps: usize) -> Grade {
+        let at = match self {
+            Grade::Failed => return Grade::Failed,
+            Grade::Plain => 0,
+            Grade::Fine => 1,
+            Grade::Marvellous => 2,
+            Grade::Masterwork => 3,
+        };
+        match at + steps {
+            0 => Grade::Plain,
+            1 => Grade::Fine,
+            2 => Grade::Marvellous,
+            _ => Grade::Masterwork,
+        }
+    }
 }
 
 /// The bands when content has no `data/recipes.toml` (fixtures): the shipped ones.
@@ -641,6 +659,8 @@ struct Resolved {
     fumble: Option<ObjectId>,
     /// The profession.
     skill: crate::skills::SkillId,
+    /// The grades its parts' materials raise a made item by (the recipe's `finer`).
+    finer: usize,
 }
 
 /// What input `input` chosen at `at` gives up.
@@ -816,6 +836,7 @@ fn resolve(
     };
     let made_def = content.object(object);
     let mut own: Vec<ItemPart> = Vec::new();
+    let mut materials = Vec::new();
     for (i, base) in made_def.parts.iter().enumerate() {
         // Each part of the made item takes its own chosen material; the brittle object's take
         // the first chosen that fits them (the shaft's wood).
@@ -825,6 +846,7 @@ fn resolve(
                 .find(|m| made_def.made_of(i).contains(m)),
             false => (chosen.iter()).find(|&&(p, _)| p == i).map(|&(_, m)| m),
         };
+        materials.push((i, material.unwrap_or(base.material)));
         if let Some(material) = material.filter(|&m| m != base.material) {
             let id = (i > 0).then_some(base.part).flatten();
             own.push(ItemPart::material(content, id, material));
@@ -844,6 +866,7 @@ fn resolve(
         failure: recipe.failure,
         fumble: recipe.fumble,
         skill: recipe.skill,
+        finer: recipe.finer_by(materials),
     })
 }
 
@@ -1170,8 +1193,11 @@ impl World {
             spends,
             skill,
             main,
+            finer,
             ..
         } = resolved;
+        // The materials make it finer still (a pipe's wood and trim).
+        let grade = grade.raised(finer);
         let failed = grade == Grade::Failed;
         self.spend_out(spends, u32::from(!failed));
         if let Some(object) = spoilt {
