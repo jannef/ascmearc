@@ -42,7 +42,7 @@ In it, `mod.toml` describes the mod:
 name = "Pride month"
 description = "Five of Cēaptūn's townsfolk in bright colours (not Eadric or Ceolred)."
 version = "1.0.0"
-game_version = "0.21.0"
+game_version = "0.22.0"
 ```
 
 - `name` and `description` (one line) are what the Mods screen shows.

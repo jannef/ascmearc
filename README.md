@@ -99,7 +99,7 @@ Feature work changes the wiki, the spec, and the developer notes, not this file.
 To play a locked release from source, install it with `cargo install` (a tag picks the version):
 
 ```sh
-cargo install --git https://github.com/jannef/ascmearc --tag v0.21.0 --locked ascmearc
+cargo install --git https://github.com/jannef/ascmearc --tag v0.22.0 --locked ascmearc
 ```
 
 - `--locked` uses the release's `Cargo.lock`. Add `ascmearc-cli` after `ascmearc` for the
