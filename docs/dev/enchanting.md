@@ -73,7 +73,9 @@ them more affixes; the capacity and the trim are unchanged, and everything still
   vault loot) draws its make with `magic/make.rs::make` after the wand's rung and
   before the trim, from the loot stream: one draw, then one per improvement's aspect; none where
   the row gives nothing (item levels 1 and 2 have no row) or for what takes no make (not single
-  arms or armour with an aspect). Creature gear adds the row of its level's item level to its
+  arms or armour with an aspect). A stack of ammunition takes the same one draw and no more, its
+  make fixed by the grade (docs/dev/special-rooms.md "Ammunition's make"); this added draw moved
+  the loot stream after deep arrows, bolts, and stones. Creature gear adds the row of its level's item level to its
   tribe's odds (`Odds::deeper`: damaged gives way to what the improvements leave), in the same one
   condition draw. The loader keeps every row's improvements with any table's within
   1000. Kits, the background's gifts, the stipend, the pedlar, and animated things (`loot::make`,

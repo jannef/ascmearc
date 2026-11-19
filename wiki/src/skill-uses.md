@@ -200,7 +200,9 @@ Arrows of different heads and woods are different goods: they do not stack toget
 A batch takes ten minutes. Something coming into view, or anything else that would wake you from
 a [rest](resting.md#how-resting-works), stops the work: the time is spent, and nothing else. A
 batch that runs its full time rolls a check on your [Dexterity](stats.md), helped by your
-Woodcraft, and the result decides how much of the count you get. If you are trained in
+Woodcraft, and the result decides how much of the count you get and how well it is made: a good
+enough check makes the whole batch Fine, Marvellous, or Masterwork (see
+[Ammunition](ammunition.md#fine-marvellous-and-masterwork-ammunition)). If you are trained in
 Woodcraft, it earns a training mark for every finished batch. Fletch as often as you like.
 
 A [ranger](class-ranger.md)'s [Fletcher](class-ranger.md#talent-fletcher) makes this far quicker and

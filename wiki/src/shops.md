@@ -84,7 +84,8 @@ things lying there. A shop pays only part of what a thing is worth, and always l
 asks for it.
 
 An item worked at an [anvil](altars-forges-springs.md#forges) is worth more for each
-improvement, and half as much while it is damaged.
+improvement, and half as much while it is damaged. So is
+[Fine or better ammunition](ammunition.md#fine-marvellous-and-masterwork-ammunition), each arrow.
 
 Rotten food is worth nothing (see [Food](food.md#food-spoils)). A keeper sniffs at it and will
 not buy it at any price. Food that rots on a shop's floor is no longer for sale.

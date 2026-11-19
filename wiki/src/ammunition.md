@@ -21,5 +21,36 @@ itself](ranged.md#your-quiver-fills-itself)).
 - Ammunition has weight like anything else. A full quiver counts toward your
   [burden](burden.md) (see [Objects and your pack](objects.md)).
 
+## Fine, Marvellous, and Masterwork ammunition
+
+A stack of arrows, bolts, or sling stones can be better made than plain: **Fine**,
+**Marvellous**, or **Masterwork**, like a [weapon](altars-forges-springs.md#forges). The word is
+in its name: "12 Fine arrows". The whole stack is made the same way, and each grade always
+gives the same:
+
+| Grade | To hit | Damage | Worth |
+|---|---:|---:|---:|
+| Fine | +1 | +0 | ×2 |
+| Marvellous | +1 | +1 | ×3 |
+| Masterwork | +2 | +1 | ×5 |
+
+The bonus counts for every shot you loose with it, on top of your bow's, crossbow's, or sling's
+own. A Fine bow gives +1 to hit, so a Fine bow shooting Masterwork arrows hits at +3 and does +1
+damage. A [shop](shops.md) prices better ammunition by its worth, like any worked item.
+
+Where it comes from:
+
+- **Found**: from [item level](magic-items.md#finding-them) 3 on, a stack you find may be
+  better made, by the same chances as a weapon found there (see
+  [Deeper finds](magic-items.md#deeper-finds)). What creatures carry and what shops sell is
+  plain.
+- **Fletched**: a batch of arrows, bolts, or sling stones takes the grade your check earns, as a
+  forged weapon does (see [Batches](handcraft.md#batches-arrowheads-arrows-and-stones)). Brittle
+  and flaming arrows are always plain.
+
+Stacks of different grades never join: Fine arrows go with Fine arrows, and plain arrows with plain
+ones. Nothing makes ammunition better later. The anvil and the knife refuse it, and the time is
+not spent: "Ammunition cannot be worked finer: its make is set when it is fletched."
+
 See also: [Making things by hand](handcraft.md), [Weapon skills](weapon-skills.md), and
 [Fighting styles](fighting-styles.md).

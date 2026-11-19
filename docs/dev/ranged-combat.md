@@ -30,6 +30,12 @@ until it arrives; `draw_map`, object glow, and object particles hold back what i
 The player's last shot of a stack readies the next one their launcher fires, and ammunition picked
 up goes into an empty quiver (`world/items/quiver.rs`; docs/dev/equipment.md "The quiver kept
 filled"); creatures' shots never refill.
+A shot's profile is `Actor::ranged` (`world/turn/actor.rs`): the launcher's attack and dice
+(its make's `Die` through `Stack::attack`), `Mods::local` of the launcher (its affixes, material,
+and make's to hit and damage), then `Mods::local` of the ammunition nocked (its affixes, material,
+and make: docs/dev/special-rooms.md "Ammunition's make"), then everything worn. The two makes add
+up: a Fine bow (+1 to hit) loosing Masterwork arrows (+2 to hit, +1 damage) shoots at +3 to hit,
++1 damage. Tests: `world/crafting/fletch_tests.rs` (`a_fine_arrow_hits_better_than_a_plain_one`).
 
 The thief's Thrown exploit (#1465, `world/classes/openings.rs`, docs/dev/openings.md "The thrown
 exploit") is a throw through the same path: `World::thrown_exploit` hands its `Loose` to

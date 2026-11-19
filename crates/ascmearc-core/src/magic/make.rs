@@ -10,9 +10,14 @@
 //! the trim, then one draw per improvement for its [`Aspect`](super::Aspect) among those its base
 //! item has, as the anvil draws them; none where the row gives nothing (the shallow levels,
 //! whose draws are as before) or for what takes no make ([`improvable`]).
+//!
+//! **Ammunition** (a stack of arrows, bolts, or sling stones; [`ammunition`]) takes its make the
+//! same way, the whole stack at once: the same one draw by the same row, then no more, its
+//! improvements always the same at one quality ([`ammunition_make`]), so that finds of one quality
+//! stack together.
 
 use super::Worked;
-use super::worked::{arms, aspects};
+use super::worked::{ammunition, ammunition_make, arms, aspects};
 use crate::content::{Content, PER_MILLE};
 use crate::object::Stack;
 use crate::rng::Rng;
@@ -22,12 +27,29 @@ use crate::rng::Rng;
 /// `stack` takes no make.
 pub(crate) fn make(content: &Content, rng: &mut Rng, level: u8, stack: &mut Stack) {
     let odds = content.gear_condition().depth_at(level).odds();
-    if odds.improved() == 0 || !improvable(content, stack) {
+    if odds.improved() == 0 {
+        return;
+    }
+    if graded_ammunition(content, stack) {
+        let improved = odds.of(rng.below(PER_MILLE)).unwrap_or(0);
+        let def = content.object(stack.object);
+        if let Some(worked) = ammunition_make(def, improved, content.temper().most) {
+            stack.set_worked(worked);
+        }
+        return;
+    }
+    if !improvable(content, stack) {
         return;
     }
     if let Some(improved) = odds.of(rng.below(PER_MILLE)) {
         improve(content, rng, improved, stack);
     }
+}
+
+/// Whether `stack` is ammunition that may take a make ([`ammunition`]): of this world, and of
+/// no make yet.
+pub(crate) fn graded_ammunition(content: &Content, stack: &Stack) -> bool {
+    !stack.is_spirit() && stack.worked().is_none() && ammunition(content.object(stack.object))
 }
 
 /// `stack` given `improved` improvements (at most `rules/temper.toml`'s `most`), each one attempt,

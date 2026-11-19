@@ -74,7 +74,9 @@ twice, or three times (see [Forges](altars-forges-springs.md#forges)): each grad
 improvement to one of its numbers, and the forge counts as that many attempts. So you can temper
 a Fine weapon further, but each attempt is as hard as on any once-tempered weapon, and a
 Masterwork can be made no finer. Armour improves in its [Defence](combat.md#defence) or
-[Protection](combat.md#protection). Something with no numbers to improve, like a lantern or a
+[Protection](combat.md#protection). A batch of arrows, bolts, or sling stones takes the grade too,
+the whole batch alike, but it can never be tempered (see
+[Ammunition](ammunition.md#fine-marvellous-and-masterwork-ammunition)). Something with no numbers to improve, like a lantern or a
 pick-axe, always comes out plain. A failure makes nothing: you break the work up and get half the
 stock back, and keep the gem.
 

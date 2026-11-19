@@ -161,6 +161,7 @@ value = 0
 stackable = true
 slot = "missiles"
 ammo = "arrow"
+kind = "ammo"
 
 [[object]]
 id = "brittle_arrow"

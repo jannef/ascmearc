@@ -82,9 +82,10 @@ pub struct Stack {
     /// (`world/classes/spirit_weapon.rs`). Otherwise it is its base object in every rule.
     #[serde(default, skip_serializing_if = "is_false")]
     spirit: bool,
-    /// What an anvil's work has done to it (Temper; [`Worked`]); `None`
-    /// for an item no one has worked. Boxed: most stacks have none. A worked item is like no
-    /// other and never stacks. Its attempts are ground truth, for the rules and the dev dump.
+    /// What an anvil's work has done to it (Temper; [`Worked`]), or the make of a stack of
+    /// ammunition as found or fletched; `None` for an item no one has worked. Boxed: most stacks
+    /// have none. A worked item is like no other and never stacks, but for ammunition of one
+    /// make. Its attempts are ground truth, for the rules and the dev dump.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     worked: Option<Box<Worked>>,
 }
@@ -695,7 +696,9 @@ impl Stack {
             && (self.wand_rung.is_none() || def.wand.is_some())
             && (self.light.is_unlit() || def.carried_light.is_some())
             && (!self.spirit || (self.count == 1 && def.attack.is_some()))
-            && (self.worked()).is_none_or(|w| self.count == 1 && w.is_valid(def))
+            && (self.worked()).is_none_or(|w| {
+                (self.count == 1 || crate::magic::worked::ammunition(def)) && w.is_valid(def)
+            })
     }
 
     /// The same goods as `other`: the same object made the same way, and as worked at an anvil
@@ -822,9 +825,11 @@ pub fn phrase_with(
 
 /// Joins `stack` to a stack of the same object (and the same magic and parts, if any) in
 /// `stacks` if it stacks; returns where the stack it joined is. Food joins whatever its age, and
-/// keeps the oldest.
+/// keeps the oldest. A worked item joins nothing, but ammunition of a make joins its like: Fine
+/// arrows Fine arrows, never plain or Marvellous ones ([`crate::magic::worked::ammunition`]).
 fn join(stacks: &mut [Stack], stack: &Stack, content: &Content) -> Option<usize> {
-    if !content.object(stack.object).stackable || stack.worked.is_some() {
+    let def = content.object(stack.object);
+    if !def.stackable || (stack.worked.is_some() && !crate::magic::worked::ammunition(def)) {
         return None;
     }
     let at = (stacks.iter()).position(|s| s.same_goods(stack) && s.magic == stack.magic)?;
