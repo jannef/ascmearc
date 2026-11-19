@@ -44,6 +44,7 @@ pub(super) fn progress_rows(world: &World) -> Vec<String> {
                 count(due.rolls, "skill roll"),
                 count(due.talents, "talent"),
                 count(due.bonus, "bonus talent"),
+                count(due.free, "free talent"),
             ]
             .into_iter()
             .flatten()
@@ -127,6 +128,18 @@ pub(super) fn progress_rows(world: &World) -> Vec<String> {
     let slain: Vec<&str> = world.quests().slain().collect();
     if !slain.is_empty() {
         rows.push(format!("slain {}", slain.join(", ")));
+    }
+    // The dwarves' oath kills and the bands crossed (`world/character/oath.rs`), once there are
+    // any: `oath kills 75, 3 bands`.
+    if let Some(bands) = world
+        .oath_bands_crossed()
+        .filter(|_| world.oath_kills() > 0)
+    {
+        rows.push(format!(
+            "oath kills {}, {bands} band{}",
+            world.oath_kills(),
+            if bands == 1 { "" } else { "s" }
+        ));
     }
     // The two laws broken (`world/character/laws.rs`): fiends summoned (the First), sapient corpses eaten (the Second).
     let laws = world.laws_broken();

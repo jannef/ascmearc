@@ -278,6 +278,13 @@ pub(super) fn text(content: &Content, effect: &OffenceEffect) -> String {
             signed(to_hit),
             signed(damage)
         ),
+        OffenceEffect::SwornFoes { to_hit, damage } => format!(
+            "against every kind of creature you are sworn against (by [Sworn \
+             foe](talents-fighting.md#talent-sworn-foe) or Slayer's Oath; once, however many \
+             oaths a creature answers), to hit {} and damage {}",
+            signed(to_hit),
+            signed(damage)
+        ),
         OffenceEffect::Way {
             attacks,
             skills,

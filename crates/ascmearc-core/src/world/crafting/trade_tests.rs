@@ -179,7 +179,12 @@ fn a_race_is_never_offered_a_trade_its_people_all_have() {
     ] {
         let spec: CharacterSpec = character.parse().expect("a character");
         let draft = World::draft(CONTENT.clone(), "showcase", Some(1), &spec).expect("a draft");
-        let (_, offers) = draft.creation_offers(&[]).expect("offers");
+        // A dwarf's free Sworn foe (Old grudges) comes first.
+        let first: Vec<String> = match spec.race.as_str() {
+            "dwarf" => vec!["sworn_foe:kobold".into()],
+            _ => Vec::new(),
+        };
+        let (_, offers) = draft.creation_offers(&first).expect("offers");
         let book = CONTENT.talents();
         let offered = |id: &str| offers.iter().any(|(t, _)| book.get(*t).id == id);
         for trade in TRADES {

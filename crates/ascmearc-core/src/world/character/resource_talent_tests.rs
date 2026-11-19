@@ -249,6 +249,7 @@ fn the_resource_talents_need_their_class_and_level() {
             talents: 1,
             rolls: 0,
             bonus: 0,
+            free: 0,
         });
         run(&mut w, &format!("talent:{talent}"));
         w.state.player().talents.holds(talent, None)

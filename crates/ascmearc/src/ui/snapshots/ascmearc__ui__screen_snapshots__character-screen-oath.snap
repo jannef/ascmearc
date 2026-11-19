@@ -1,0 +1,40 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ Welcome to Showcase. Press ? for controls.
+
+
+┌─ Character ──────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                                  │
+│ Dorvak                                                                                           │
+│                                                                                                  │
+│ Race    Dwarf                                                                                    │
+│ Gender  Male                                                                                     │
+│ Class   Warrior                                                                                  │
+│ Age 101 · born 23 Rainmoon 1343 · year of the Earth Kraken                                       │
+│ Stars   Grasping arms, Of the deep, Ungainly ashore, Stone hide, Stonewise                       │
+│                                                                                                  │
+│ St  Strength      16   Main hand  long sword                                                     │
+│ Dx  Dexterity      9              +4 to hit, 1d9+4 slashing or piercing                          │
+│ To  Toughness     16   Missile    crossbow                                                       │
+│ In  Intelligence  10              +1 to hit, 1d10+1 piercing, range 13                           │
+│ Wi  Willpower     13                                                                             │
+│ Pr  Presence       7                                                                             │
+│                                                                                                  │
+│ Lv  Level         1                                                                              │
+│ XP  Experience    0 / 147                                                                        │
+│     Talents       9                                                                              │
+│ HP  Hit points    32/32   MP  Mana       0/0                                                     │
+│ Dv  Defence       13      Pv  Protection  6                                                      │
+│     Stance        Neutral                                                                        │
+│     Stamina       13/13                                                                          │
+│     Alignment     Neutral                                                                        │
+│     Oath kills    0                                                                              │
+│     Resistant to  cold, acid                                                                     │
+│                                                                                                  │
+│ Weight 93.2 kg (you 70 kg, carrying 23.2 kg)                                                     │
+│ Burdened over 24 kg, strained over 48 kg, overloaded over 72 kg                                  │
+│                                                                                                  │
+│ @ or Esc close   A skills                                                                        │
+└─ 1 Char · 2 Inv · 3 Eqp · 4 Skl · 5 Weap · 6 Mag · 7 Qst · 8 Tal · 9 Story ──────────────────────┘

@@ -10,7 +10,9 @@
 //! (`World::random_creation`), and moves on. Esc steps back to the class; the picks are
 //! remembered (`Picks::talents`) and kept where they still hold. A class with creation bonus
 //! picks (the craftsperson's two trades) lists its own trees alone until those are marked, under
-//! the title "Choose a trade" (`World::creation_bonus_left`), then every tree for the rest.
+//! the title "Choose a trade" (`World::creation_bonus_left`), then every tree for the rest. A
+//! race with a free pick at creation (a dwarf's Sworn foe) lists that talent alone before
+//! anything else, under the title "Choose your free Sworn foe" (`World::creation_free_left`).
 //!
 //! A plain state machine like every screen, testable without a window.
 
@@ -63,6 +65,9 @@ pub struct ChargenTalentsScreen {
     /// The class's creation bonus picks still to mark (the craftsperson's trades), which the
     /// list offers first; kept by `rebuild`.
     trades: u8,
+    /// The race's free picks still to mark (a dwarf's Sworn foe), with their talents' names,
+    /// which the list offers first; kept by `rebuild`.
+    free: (u8, Vec<String>),
     entries: PagedList<Entry, Group>,
     /// A talent's choices, listed in its place.
     choosing: Option<PagedList<Entry, Group>>,
@@ -87,6 +92,7 @@ impl ChargenTalentsScreen {
             count,
             picks: Vec::new(),
             trades: 0,
+            free: (0, Vec::new()),
             entries: PagedList::empty(),
             choosing: None,
             notice: None,
@@ -148,6 +154,8 @@ impl ChargenTalentsScreen {
             }
         };
         self.trades = (self.draft.as_ref()).map_or(0, |w| w.creation_bonus_left(&self.picks));
+        self.free =
+            (self.draft.as_ref()).map_or((0, Vec::new()), |w| w.creation_free_left(&self.picks));
         if let Some(world) = &self.draft {
             add(world.creation_offers(&[]).map_or(Vec::new(), |(_, o)| o));
             for n in 1..=self.picks.len() {
@@ -345,9 +353,13 @@ impl ChargenTalentsScreen {
         self.fit(console.cols(), console.rows());
         let list = self.list();
         let count = list.tallest().max(1) as i32;
-        let title = match self.trades {
-            0 => format!(" Choose your talents (4 of 5): {} left ", self.left()),
-            n => format!(" Choose a trade (4 of 5): {n} left "),
+        let title = match (&self.free, self.trades) {
+            ((n @ 1.., names), _) => format!(
+                " Choose your free {} (4 of 5): {n} left ",
+                ascmearc_core::text::or_list(names)
+            ),
+            (_, 0) => format!(" Choose your talents (4 of 5): {} left ", self.left()),
+            (_, n) => format!(" Choose a trade (4 of 5): {n} left "),
         };
         let panel = Panel::new(console, &title, WIDTH, count + EXTRA);
         list.draw_label(console, &panel);
@@ -460,26 +472,41 @@ mod tests {
         let content = content();
         let mut screen =
             ChargenTalentsScreen::new(&content, &draft(&content, "dwarf,male,warrior"), None);
-        assert_eq!(screen.count, 2);
+        // The two everyone picks and Old grudges' free Sworn foe, which comes first.
+        assert_eq!(screen.count, 3);
+        assert_eq!(screen.free, (1, vec!["Sworn foe".to_string()]));
         let book = content.talents();
+        let sworn = book.id("sworn_foe").expect("Sworn foe");
+        assert!(
+            (screen.entries.iter())
+                .filter_map(|e| e.talent)
+                .all(|t| t == sworn),
+            "only Sworn foe while the free pick is due"
+        );
+        // Its choices are listed in its place; the first is marked.
+        assert_eq!(screen.choose(at(&screen, "sworn_foe")), ScreenAction::Stay);
+        assert_eq!(screen.choose(0), ScreenAction::Stay);
+        let foe = screen.picks()[0].clone();
+        assert!(foe.starts_with("sworn_foe:"), "{foe}");
+        assert_eq!(screen.free.0, 0);
         let fast = book.id("fast_healer").expect("a talent");
         assert!(!screen.entries.iter().any(|e| e.talent == Some(fast)));
         assert_eq!(screen.choose(at(&screen, "healthy")), ScreenAction::Stay);
-        assert_eq!(screen.picks(), ["healthy"]);
+        assert_eq!(screen.picks(), [foe.as_str(), "healthy"]);
         // Healthy marked opens Fast healer (a dwarf warrior is tough enough).
         assert!(screen.entries.iter().any(|e| e.talent == Some(fast)));
         // Unmarking Healthy unmarks nothing else, and closes it again.
         screen.choose(at(&screen, "healthy"));
-        assert!(screen.picks().is_empty());
+        assert_eq!(screen.picks(), [foe.as_str()]);
         screen.choose(at(&screen, "healthy"));
         assert_eq!(
             screen.choose(at(&screen, "fast_healer")),
             ScreenAction::Open(ScreenName::Name)
         );
-        assert_eq!(screen.picks(), ["healthy", "fast_healer"]);
+        assert_eq!(screen.picks(), [foe.as_str(), "healthy", "fast_healer"]);
         // Unmarking Healthy now drops Fast healer, which needed it.
         screen.choose(at(&screen, "healthy"));
-        assert!(screen.picks().is_empty(), "{:?}", screen.picks());
+        assert_eq!(screen.picks(), [foe.as_str()], "{:?}", screen.picks());
     }
 
     #[test]

@@ -12,8 +12,10 @@
 //!
 //! A level of the player's class's `bonus_talents` brings a **bonus pick** besides
 //! ([`Due::bonus`]), of a talent from the class's trees (any for the commoner); a talent from
-//! those trees spends a bonus pick before an ordinary one. The class abilities of a level are
-//! given as it comes (`world/classes/class.rs`).
+//! those trees spends a bonus pick before an ordinary one. A level a talent's `free_pick` names
+//! brings a **free pick** ([`Due::free`]: the dwarves' Old grudges, a Sworn foe), of that talent
+//! alone, for a choice the player makes; it is spent before a bonus or an ordinary pick. The
+//! class abilities of a level are given as it comes (`world/classes/class.rs`).
 //!
 //! What a talent does is read through `Actor::talent_mods` where each rule lives; the hand-outs
 //! are hit points by level (Hardy): a share at the pick, and each later level's growth as
@@ -40,6 +42,17 @@ pub struct Due {
     /// Bonus talent picks left, from the class's trees.
     #[serde(default, skip_serializing_if = "is_zero")]
     pub bonus: u8,
+    /// Free picks left, of the talents a `free_pick` names for the level (a dwarf's Sworn foe).
+    #[serde(default, skip_serializing_if = "is_zero")]
+    pub free: u8,
+}
+
+/// Which of a level's picks a talent taken spends.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum Pick {
+    Free,
+    Bonus,
+    Talent,
 }
 
 fn is_zero(n: &u8) -> bool {
@@ -49,7 +62,12 @@ fn is_zero(n: &u8) -> bool {
 impl Due {
     /// Whether nothing is left to choose.
     pub fn is_spent(&self) -> bool {
-        self.talents == 0 && self.rolls == 0 && self.bonus == 0
+        self.talents == 0 && self.rolls == 0 && self.bonus == 0 && self.free == 0
+    }
+
+    /// Whether a talent pick of any kind is left.
+    pub fn picks_left(&self) -> bool {
+        self.talents > 0 || self.bonus > 0 || self.free > 0
     }
 }
 
@@ -112,12 +130,20 @@ impl World {
             let talents = u8::from(every > 0 && level % every == 0)
                 .saturating_add(more)
                 .saturating_add(held.len() as u8);
-            if !again && (talents > 0 || rolls > 0 || bonus > 0) {
+            // Old grudges (the dwarves'): a free Sworn foe at its levels.
+            let free = self
+                .state
+                .player()
+                .talent_mods(&content)
+                .growth
+                .free_picks_at(level);
+            if !again && (talents > 0 || rolls > 0 || bonus > 0 || free > 0) {
                 (self.state.progress.due).push(Due {
                     level,
                     talents,
                     rolls,
                     bonus,
+                    free,
                 });
             }
             // What the talents held grow by, then what this level's class abilities give.
@@ -180,6 +206,34 @@ impl World {
             .unwrap_or_default()
     }
 
+    /// The talents a free pick of total level `level` may be spent on: those the player's
+    /// talents' `free_pick`s name for it.
+    pub(crate) fn free_talents_at(&self, level: u8) -> Vec<TalentId> {
+        let mods = self.state.player().talent_mods(&self.content);
+        (mods.growth.free_talents_at(level).into_iter())
+            .filter_map(|t| self.content.talents().id(t))
+            .collect()
+    }
+
+    /// The talents the player may take now for a free pick of total level `level`, with their
+    /// choices.
+    pub(super) fn free_offers_at(&self, level: u8) -> Vec<(TalentId, Vec<Option<String>>)> {
+        let free = self.free_talents_at(level);
+        (talent::offers(&self.content, &self.candidate()).into_iter())
+            .filter(|(id, _)| free.contains(id))
+            .collect()
+    }
+
+    /// The talents the player may take now for the first free pick due that any fits, with
+    /// their choices; none without a free pick due.
+    fn free_offers(&self) -> Vec<(TalentId, Vec<Option<String>>)> {
+        (self.state.progress.due.iter())
+            .filter(|d| d.free > 0)
+            .map(|d| self.free_offers_at(d.level))
+            .find(|offers| !offers.is_empty())
+            .unwrap_or_default()
+    }
+
     /// Drops the choices nothing can be spent on: talent picks when no talent may be taken now
     /// (a run without talents, or every talent they qualify for held) and no skill roll is left
     /// that might open one, bonus picks likewise when no talent of the class's trees may be
@@ -202,7 +256,13 @@ impl World {
             .map(|(level, _)| level)
             .filter(|&level| self.bonus_offers_at(level).is_empty())
             .collect();
-        if !no_rolls && !no_talents && no_bonus.is_empty() {
+        // A free pick its talent cannot fill (every choice of it held) likewise.
+        let no_free: Vec<u8> = (due.iter())
+            .filter(|d| d.free > 0 && !rolls_left)
+            .map(|d| d.level)
+            .filter(|&level| self.free_offers_at(level).is_empty())
+            .collect();
+        if !no_rolls && !no_talents && no_bonus.is_empty() && no_free.is_empty() {
             return;
         }
         for due in &mut self.state.progress.due {
@@ -214,6 +274,9 @@ impl World {
             }
             if no_bonus.contains(&due.level) {
                 due.bonus = 0;
+            }
+            if no_free.contains(&due.level) {
+                due.free = 0;
             }
         }
         self.state.progress.due.retain(|d| !d.is_spent());
@@ -237,7 +300,8 @@ impl World {
     }
 
     /// `talent:ID[:CHOICE]` ([`Action::Talent`]): the player takes talent `id` for `choice`,
-    /// one of the picks due (a bonus pick first, if it is of the class's bonus trees), if its
+    /// one of the picks due (a free pick first, if it is the level's free talent, then a bonus
+    /// pick, if it is of the class's bonus trees), if its
     /// prerequisites hold; else why not, and nothing changes. Takes no time.
     pub(in crate::world) fn take_talent(&mut self, id: &str, choice: Option<&str>) -> Spent {
         let craved = self.craves();
@@ -262,24 +326,40 @@ impl World {
     /// cannot be taken (and nothing changes).
     pub(super) fn learn(&mut self, id: &str, choice: Option<&str>) -> Result<String, String> {
         let content = self.content.clone();
-        if !(self.state.progress.due.iter()).any(|d| d.talents > 0 || d.bonus > 0) {
+        if !(self.state.progress.due.iter()).any(Due::picks_left) {
             return Err("You have no talent to choose now.".into());
         }
         let Some(talent) = content.talents().id(id) else {
             return Err(format!("There is no talent `{id}`."));
         };
-        // A bonus pick first, of the level whose class's trees the talent is of.
-        let Some((at, as_bonus)) =
+        // A free pick first, of the level whose free talent it is; then a bonus pick, of the
+        // level whose class's trees the talent is of.
+        let Some((at, pick)) =
             (self.state.progress.due.iter())
                 .enumerate()
                 .find_map(|(i, d)| match () {
-                    () if d.bonus > 0 && self.fits_bonus(&self.bonus_trees_at(d.level), talent) => {
-                        Some((i, true))
+                    () if d.free > 0 && self.free_talents_at(d.level).contains(&talent) => {
+                        Some((i, Pick::Free))
                     }
-                    () if d.talents > 0 => Some((i, false)),
+                    () if d.bonus > 0 && self.fits_bonus(&self.bonus_trees_at(d.level), talent) => {
+                        Some((i, Pick::Bonus))
+                    }
+                    () if d.talents > 0 => Some((i, Pick::Talent)),
                     () => None,
                 })
         else {
+            // Only free picks left: they name their talents.
+            if let Some(d) = (self.state.progress.due.iter()).find(|d| d.free > 0)
+                && !(self.state.progress.due.iter()).any(|d| d.bonus > 0)
+            {
+                let names: Vec<String> = (self.free_talents_at(d.level).into_iter())
+                    .map(|t| content.talents().get(t).name.clone())
+                    .collect();
+                return Err(format!(
+                    "You must choose your free {} first.",
+                    crate::text::or_list(&names)
+                ));
+            }
             let trees = (self.bonus_trees_due().into_iter())
                 .next()
                 .and_then(|(_, t)| t);
@@ -305,10 +385,10 @@ impl World {
         self.hand_down(def.effects.iter().cloned());
         self.surrender(def);
         let due = &mut self.state.progress.due[at];
-        if as_bonus {
-            due.bonus -= 1;
-        } else {
-            due.talents -= 1;
+        match pick {
+            Pick::Free => due.free -= 1,
+            Pick::Bonus => due.bonus -= 1,
+            Pick::Talent => due.talents -= 1,
         }
         if due.is_spent() {
             self.state.progress.due.remove(at);
@@ -327,17 +407,13 @@ impl World {
         }
         self.advance_auto();
         let content = self.content.clone();
-        // Bonus picks first, from the class's trees, then the ordinary ones.
-        while self
-            .state
-            .progress
-            .due
-            .iter()
-            .any(|d| d.talents > 0 || d.bonus > 0)
-        {
-            let offers = match self.state.progress.due.iter().any(|d| d.bonus > 0) {
-                true => self.bonus_offers(),
-                false => talent::offers(&content, &self.candidate()),
+        // Free picks first, then bonus picks, from the class's trees, then the ordinary ones.
+        while self.state.progress.due.iter().any(Due::picks_left) {
+            let due = &self.state.progress.due;
+            let offers = match () {
+                () if due.iter().any(|d| d.free > 0) => self.free_offers(),
+                () if due.iter().any(|d| d.bonus > 0) => self.bonus_offers(),
+                () => talent::offers(&content, &self.candidate()),
             };
             let Some((id, ways)) = offers.into_iter().next() else {
                 break;

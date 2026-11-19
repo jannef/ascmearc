@@ -1,0 +1,12 @@
+[[talent]]
+id = "oath_bane_eyed"
+name = "Bane-eyed"
+tree = "oath"
+granted = true
+description = "You know where a body breaks: your attacks threaten a critical more often, make it good more surely, and cut deeper through armour when they do."
+effects = [
+    { kind = "threat", value = 2 },
+    { kind = "critical_confirm", value = 3 },
+    { kind = "critical_penetration", value = 3 },
+]
+systems = ["combat", "protection"]

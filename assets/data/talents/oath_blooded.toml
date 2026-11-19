@@ -1,0 +1,11 @@
+[[talent]]
+id = "oath_blooded"
+name = "Blooded"
+tree = "oath"
+granted = true
+description = "The first of your oath-debt is paid, and your body knows it: Toughness +2, and your blows find the kinds you are sworn against surer and harder."
+effects = [
+    { kind = "stat", stat = "toughness", value = 2 },
+    { kind = "sworn_foes", to_hit = 1, damage = 1 },
+]
+systems = ["stat_training", "combat"]

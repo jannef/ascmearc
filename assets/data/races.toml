@@ -221,6 +221,9 @@ ignores_burdened = true
 passive_search = "stone"
 hunger = 110
 experience = 115
+# Old grudges: a free Sworn foe at creation and every tenth level to 50 (the oath table that
+# Slayer's Oath feeds: rules/oaths.toml).
+talents = ["old_grudges"]
 # A dwarf never goes anywhere without a pick-axe (readied in the Tool slot), and goes in good
 # steel: the pick, gauntlets, and iron-shod boots. Dried meat.
 kit = [

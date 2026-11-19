@@ -193,7 +193,8 @@ impl World {
 
     /// `profile` of an attack by `attacker` at `target`, with Favoured prey's to-hit and damage
     /// when the player makes it at a creature of the type they have killed most, and Sworn
-    /// foe's at one whose type carries the tag it was taken for (each tag sworn adds).
+    /// foe's at one whose type carries the tag it was taken for (each tag sworn adds), and the
+    /// oath table's `sworn_foes` once at a creature any of those tags answers for.
     pub(in crate::world) fn favoured(
         &self,
         attacker: ActorId,
@@ -209,11 +210,17 @@ impl World {
         }
         let mods = me.talent_mods(&self.content);
         let creature = self.state.actors.get(&target).map(|a| a.creature);
+        let mut sworn = false;
         for (tag, to_hit, damage) in &mods.offence.sworn_foe {
             if creature.is_some_and(|c| self.content.has_tag(c, tag)) {
                 profile.to_hit += to_hit;
                 profile.bonus += damage;
+                sworn = true;
             }
+        }
+        if sworn {
+            profile.to_hit += mods.offence.sworn_foes.0;
+            profile.bonus += mods.offence.sworn_foes.1;
         }
         let (to_hit, damage) = mods.offence.favoured_prey;
         if (to_hit, damage) == (0, 0) {

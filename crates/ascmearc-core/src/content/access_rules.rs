@@ -3,10 +3,10 @@
 use super::{
     AllyRules, CompanionRules, Content, CravingRules, EncounterRules, FamiliarRules, FeintRules,
     FireRules, FletchRules, ForageRules, GearConditions, HerbRules, HungerDef, IntimidateRules,
-    InvestRules, LawRules, MagicWorth, MiningRules, PatronRules, PrayerRules, RangedRules,
-    RequiredIds, RestockRules, RigRules, RuinRules, SalvageRules, SearchRules, SmiteRules,
-    StatTraining, StealRules, StipendRules, SurpriseRules, SwimRules, TagDrops, TemperRules,
-    Tuning, WebRules,
+    InvestRules, LawRules, MagicWorth, MiningRules, OathRules, PatronRules, PrayerRules,
+    RangedRules, RequiredIds, RestockRules, RigRules, RuinRules, SalvageRules, SearchRules,
+    SmiteRules, StatTraining, StealRules, StipendRules, SurpriseRules, SwimRules, TagDrops,
+    TemperRules, Tuning, WebRules,
 };
 
 impl Content {
@@ -155,6 +155,12 @@ impl Content {
     /// craves.
     pub fn craving(&self) -> Option<&CravingRules> {
         self.craving.as_ref()
+    }
+
+    /// The dwarves' oath table (`data/rules/oaths.toml`); `None` without the file, when there
+    /// are no oath kills.
+    pub fn oaths(&self) -> Option<&OathRules> {
+        self.oaths.as_ref()
     }
 
     /// What area spells do to the items lying in them (`data/ruin.toml`); no rows without the file.

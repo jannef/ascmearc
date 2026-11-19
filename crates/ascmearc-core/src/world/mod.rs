@@ -154,7 +154,7 @@ pub use allies::companion::{CompanionData, draw as companion_draw, name_for as c
 pub use allies::familiar::{draw as familiar_draw, name_for as familiar_name};
 pub use character::alignment::Deed;
 pub use character::creation::{
-    chosen_with_talents, creation_bonus, creation_count, parse_talents, pick_text,
+    chosen_with_talents, creation_bonus, creation_count, creation_free, parse_talents, pick_text,
 };
 pub use character::experience::{Discovered, Progress};
 pub use character::gifts::Streak;

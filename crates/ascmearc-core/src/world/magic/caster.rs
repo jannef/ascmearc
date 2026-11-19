@@ -9,24 +9,18 @@ use crate::world::ActorId;
 use crate::world::World;
 
 impl World {
-    /// Miracle, Hag's bargain: once in a life, what would kill the
-    /// player does not. They are left at 1 hit point, suffer the reprieve's status, and lose its
-    /// stat for good; its words are said. Returns whether it saved them (never twice).
+    /// Hag's bargain, Doom of their kind: once in a life each, what would kill the player does
+    /// not (the first reprieve they hold not yet spent). They are left at 1 hit point, suffer the
+    /// reprieve's status, and lose its stat for good; its words are said. Returns whether it saved
+    /// them (each never twice).
     pub(in crate::world) fn reprieve(&mut self, events: &mut Vec<Event>) -> bool {
         let player = self.state.player;
-        let Some(reprieve) = self
-            .state
-            .player()
-            .talent_mods(&self.content)
-            .into_owned()
-            .vigour
-            .reprieve
+        let mods = self.state.player().talent_mods(&self.content).into_owned();
+        let Some(reprieve) =
+            (mods.vigour.reprieves.into_iter()).find(|r| !self.state.progress.happened(&r.once))
         else {
             return false;
         };
-        if self.state.progress.happened(&reprieve.once) {
-            return false;
-        }
         self.state.progress.once.insert(reprieve.once.clone());
         self.say(reprieve.message.clone());
         let me = self.player_mut();

@@ -1,0 +1,9 @@
+[[talent]]
+id = "slayers_oath"
+name = "Slayer's Oath"
+tree = "racial"
+choice = "tag"
+description = "You have vowed to hunt down a kind of creature you are sworn against: your attacks against them are surer and deadlier still, and every one of them you kill counts toward your oaths."
+needs = { race = "dwarf", talents = ["sworn_foe"] }
+effects = [{ kind = "sworn_foe", to_hit = 1, damage = 3 }]
+systems = ["combat"]

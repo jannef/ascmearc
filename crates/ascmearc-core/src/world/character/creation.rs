@@ -52,16 +52,25 @@ pub fn creation_bonus(content: &Content, spec: &CharacterSpec) -> u8 {
 /// granted talents give (the humans' Versatile).
 pub fn creation_count(content: &Content, spec: &CharacterSpec) -> u8 {
     let class = content.class(&spec.class).map_or(0, |c| c.creation_talents);
+    let race = race_growth(content, spec).extra_picks_at(1);
+    (content.experience().creation_talents())
+        .saturating_add(class)
+        .saturating_add(race)
+}
+
+/// The free picks a character of `spec` takes at creation, besides [`creation_count`]'s: those
+/// its race's granted talents' `free_pick` names for level 1 (the dwarves' Sworn foe).
+pub fn creation_free(content: &Content, spec: &CharacterSpec) -> u8 {
+    race_growth(content, spec).free_picks_at(1)
+}
+
+/// What the talents `spec`'s race grants do to its growth.
+fn race_growth(content: &Content, spec: &CharacterSpec) -> talent::GrowthMods {
     let mut granted = talent::Talents::default();
     for id in content.race(&spec.race).map_or(&[][..], |r| &r.talents[..]) {
         granted.take(id, None);
     }
-    let race = (granted.mods(content, &Default::default()))
-        .growth
-        .extra_picks_at(1);
-    (content.experience().creation_talents())
-        .saturating_add(class)
-        .saturating_add(race)
+    granted.mods(content, &Default::default()).growth
 }
 
 /// `--talents`: the character a run of `scenario` starts as when its creation picks are named,
@@ -111,8 +120,21 @@ impl World {
     ) -> Result<(u8, Vec<(TalentId, Vec<Option<String>>)>), String> {
         let world = self.after_picks(picks)?;
         let due = world.creation_due();
-        let left = due.map_or(0, |d| d.talents + d.bonus);
+        let left = due.map_or(0, |d| d.talents + d.bonus + d.free);
         Ok((left, world.creation_choices()))
+    }
+
+    /// The free picks still due on a drafted run after `picks`, with the names of the talents
+    /// they are of (a dwarf's Sworn foe: 1, `["Sworn foe"]`; 0 and none for most).
+    pub fn creation_free_left(&self, picks: &[String]) -> (u8, Vec<String>) {
+        let Some(world) = self.after_picks(picks).ok() else {
+            return (0, Vec::new());
+        };
+        let free = world.creation_due().map_or(0, |d| d.free);
+        let names = (world.free_talents_at(1).into_iter())
+            .map(|t| self.content.talents().get(t).name.clone())
+            .collect();
+        (free, if free > 0 { names } else { Vec::new() })
     }
 
     /// The bonus picks of the class's creation trees still due on a drafted run after `picks`
@@ -133,13 +155,19 @@ impl World {
         Ok(world)
     }
 
-    /// The talents that may fill the next creation pick, with their choices: the creation
-    /// trees' while a bonus pick is due (any, should none of them fit), else any tree's; none
-    /// when nothing is due.
+    /// The talents that may fill the next creation pick, with their choices: the free talent's
+    /// while a free pick is due, then the creation trees' while a bonus pick is due (any,
+    /// should none of them fit), else any tree's; none when nothing is due.
     fn creation_choices(&self) -> Vec<(TalentId, Vec<Option<String>>)> {
         let Some(due) = self.creation_due() else {
             return Vec::new();
         };
+        if due.free > 0 {
+            let free = self.free_offers_at(1);
+            if !free.is_empty() {
+                return free;
+            }
+        }
         let bonus = match due.bonus {
             0 => Vec::new(),
             _ => self.bonus_offers_at(1),
@@ -158,10 +186,10 @@ impl World {
         world.take_random().unwrap_or_default()
     }
 
-    /// The creation picks due, if any (level 1's talent and bonus picks).
+    /// The creation picks due, if any (level 1's talent, bonus, and free picks).
     fn creation_due(&self) -> Option<Due> {
         (self.state.progress.due.first())
-            .filter(|d| d.level == 1 && (d.talents > 0 || d.bonus > 0))
+            .filter(|d| d.level == 1 && d.picks_left())
             .copied()
     }
 
@@ -172,12 +200,14 @@ impl World {
         };
         let talents = creation_count(&self.content, spec);
         let bonus = creation_bonus(&self.content, spec);
-        if talents > 0 || bonus > 0 {
+        let free = creation_free(&self.content, spec);
+        if talents > 0 || bonus > 0 || free > 0 {
             let due = Due {
                 level: 1,
                 talents,
                 rolls: 0,
                 bonus,
+                free,
             };
             self.state.progress.due.insert(0, due);
             self.settle_due();
@@ -195,7 +225,9 @@ impl World {
         let Some(spec) = self.state.character.as_ref().map(|c| c.spec.clone()) else {
             return Ok(());
         };
-        let count = creation_count(&self.content, &spec) + creation_bonus(&self.content, &spec);
+        let count = creation_count(&self.content, &spec)
+            + creation_bonus(&self.content, &spec)
+            + creation_free(&self.content, &spec);
         let taken = if spec.talents.is_empty() {
             self.take_named(scenario)?;
             let mut taken = scenario.to_vec();
@@ -218,7 +250,7 @@ impl World {
         if let Some(due) = self.creation_due() {
             return Err(WorldError::Character(format!(
                 "{} more talent(s) to pick: this character takes {count} at creation",
-                due.talents + due.bonus
+                due.talents + due.bonus + due.free
             )));
         }
         if let Some(character) = &mut self.state.character {

@@ -181,6 +181,7 @@ above.
 | Everlasting (a keeper's corpse, which never rots) | `food.md#corpses` |
 | The First Law, summoning a fiend; the Second Law, eating those who think (sapient) | `allies.md#summons`, `food.md#eating-those-who-think` |
 | Craving, the ratfolk's craving | `food.md#the-ratfolks-craving` |
+| Oath kills, Slayer's Oath, Old grudges (the dwarves' free Sworn foe), the oath table | `races.md#the-dwarves-oaths` (the talents: `talents-origins.md#talent-slayers-oath`, `talents-origins.md#talent-old-grudges`, a band's talent: its row) |
 | Surrender to hunger (the craving for the other races) | `food.md#surrender-to-hunger` (the talent: `talents-body.md#talent-surrender-to-hunger`) |
 | Profane gift, profane corpse, eating a keeper's corpse | `profane-gifts.md`, `profane-gifts.md#eating-a-keepers-corpse` (a gift: its row) |
 | Signature gift (a keeper's own, sure) | `profane-gifts.md#each-keepers-own-gift` |

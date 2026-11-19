@@ -1,0 +1,7 @@
+# The dwarves' oath table (../../rules/oaths.toml; docs/dev/oaths.md): what the kills of a dwarf's
+# Slayer's Oaths make of them. Its talents are the table's bands, each granted as the count of
+# oath kills reaches it, never picked (no free talent: never offered). Listed after Craving.
+[[tree]]
+id = "oath"
+name = "Oath"
+description = "What the kills of your oaths have made of you."

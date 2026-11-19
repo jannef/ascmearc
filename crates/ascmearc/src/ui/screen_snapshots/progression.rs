@@ -37,6 +37,26 @@ cases! {
         size: (100, 40),
         ..BASE
     },
+    // A dwarf's level 10 (docs/dev/oaths.md): its skill rolls spent, the free Sworn foe comes
+    // before the warrior's bonus talent, Sworn foe alone listed.
+    level_up_free: Case {
+        name: "level-up-free",
+        character: Some("dwarf,male,warrior"),
+        actions: "xp:20000 levelup:auto xp:8000 advance:athletics*2",
+        size: (100, 40),
+        ..BASE
+    },
+    // A dwarf who took Slayer's Oath at creation: the character screen's `Oath kills` row,
+    // there from the oath on.
+    character_screen_oath: Case {
+        name: "character-screen-oath",
+        character: Some("dwarf,male,warrior"),
+        talents: Some("sworn_foe:kobold,slayers_oath:kobold,hardy"),
+        run: true,
+        screen: Some("character"),
+        size: (100, 40),
+        ..BASE
+    },
     level_up_choice: Case {
         name: "level-up-choice",
         character: Some("human,male,warrior"),

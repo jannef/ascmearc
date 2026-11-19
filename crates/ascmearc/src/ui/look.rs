@@ -1389,7 +1389,9 @@ map = '''
         let content = Arc::new(Content::load(&files).expect("content"));
         let spec = "dwarf,male,warrior".parse::<ascmearc_core::character::CharacterSpec>();
         let mut said = Vec::new();
-        let talents = ["healthy", "lean"].map(String::from).to_vec();
+        let talents = ["sworn_foe:kobold", "healthy", "lean"]
+            .map(String::from)
+            .to_vec();
         let spec = spec.expect("a character").with_talents(talents);
         let w = World::start_run(content.clone(), "hall", Some(1), Some(&spec), None, true)
             .expect("hall");
@@ -1441,7 +1443,11 @@ map = '''
         let spec = "dwarf,male,ranger"
             .parse::<ascmearc_core::character::CharacterSpec>()
             .expect("a character")
-            .with_talents(["healthy", "lean"].map(String::from).to_vec());
+            .with_talents(
+                ["sworn_foe:kobold", "healthy", "lean"]
+                    .map(String::from)
+                    .to_vec(),
+            );
         // A ranger gains the talent at level 2. A run whose deer is big (its grade is the
         // run's, `rng.rs` "Actor keys"), so the grade word shows before the talent's.
         let start = |seed: u64, actions: &str| {
@@ -1493,7 +1499,11 @@ map = '''
         let spec = "dwarf,male,thief"
             .parse::<ascmearc_core::character::CharacterSpec>()
             .expect("a character")
-            .with_talents(["healthy", "lean"].map(String::from).to_vec());
+            .with_talents(
+                ["sworn_foe:kobold", "healthy", "lean"]
+                    .map(String::from)
+                    .to_vec(),
+            );
         let marked = (1..40).find_map(|seed| {
             let mut w =
                 World::start_run(content.clone(), "hall", Some(seed), Some(&spec), None, true)

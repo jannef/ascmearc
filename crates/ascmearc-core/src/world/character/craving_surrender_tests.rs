@@ -35,6 +35,7 @@ fn surrender(w: &mut World) {
         talents: 1,
         rolls: 0,
         bonus: 0,
+        free: 0,
     });
     w.apply(&Action::Talent {
         id: SURRENDER.into(),
