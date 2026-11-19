@@ -45,6 +45,7 @@ cfg_if! {
         mod lucky_tests;
         mod mana_talent_tests;
         mod race_tests;
+        mod racial_magic_tests;
         mod racial_tests;
         mod resource_talent_tests;
         mod resource_tests;

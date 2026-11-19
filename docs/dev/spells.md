@@ -817,7 +817,7 @@ cast path shares.
 - **Talents** (#400; design §10; the spell scaling design §7.2; tests
   `world/character/spell_talent_tests.rs`): the `spells` system in `data/talents/systems/`, held to the bar.
   The Spellcraft tree: Quick study (#396), Overreach (level 6, `study { overreach_percent = -33
-  }`), School focus (`choice = "school"`, `Choice::School`: the seven schools then the
+  }`), School focus (`choice = "school"`, `Choice::School`: the eight schools then the
   non-physical damage types; `spell_mod { cost = -10, cells = 1 }`, one pick per choice, foci on
   the same spell add up), Keen mind (the same choice, `spell_mod { sides = 1 }`), and S2's three
   (each hook ships with a user, but the rider: "Spell types" below took Numbing cold's): Sure

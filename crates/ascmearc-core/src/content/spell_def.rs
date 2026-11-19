@@ -54,11 +54,13 @@ pub enum School {
     Transmutation,
     Enchantment,
     Divination,
+    /// What deceives the senses (Glamour).
+    Illusion,
 }
 
 impl School {
     /// Every school, in the design's order (§6).
-    pub const ALL: [School; 7] = [
+    pub const ALL: [School; 8] = [
         School::Evocation,
         School::Necromancy,
         School::Abjuration,
@@ -66,6 +68,7 @@ impl School {
         School::Transmutation,
         School::Enchantment,
         School::Divination,
+        School::Illusion,
     ];
 
     /// Its id in data files and as a tag.
@@ -78,6 +81,7 @@ impl School {
             School::Transmutation => "transmutation",
             School::Enchantment => "enchantment",
             School::Divination => "divination",
+            School::Illusion => "illusion",
         }
     }
 }

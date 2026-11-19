@@ -30,7 +30,7 @@ use crate::geom::{Dir, Pos};
 use crate::item_list::ItemList;
 use crate::skills::{Effect, SkillId};
 use crate::talent::SongCost;
-use crate::talent::{MagicEffect, VigourEffect};
+use crate::talent::{MagicEffect, StealthEffect, VigourEffect};
 use crate::world::{Actor, LevelState};
 use std::borrow::Cow;
 
@@ -128,6 +128,12 @@ pub enum Ability {
     /// Second wind talent (a talent with the `second_wind` effect). Had by whoever holds it;
     /// unavailable while its cooldown (Winded) lasts.
     SecondWind,
+    /// Invisibility, the duergar's racial active: [`Action::UseTalent`] (`use:fade`), the
+    /// active of a talent with the `fade` effect (`world/character/racial.rs`): the player fades
+    /// from sight as the duergar monsters do. Had by whoever holds it; unavailable while
+    /// Invisible, while its cooldown (Invisibility spent) lasts, and while a status blocks casting.
+    /// It takes no time.
+    Fade,
     /// Blood magic: [`Action::UseTalent`], the active of the Blood magic
     /// talent (a talent with the `blood_magic` effect): hit points given for mana. Had by
     /// whoever holds it; usable whenever they have it (the rules refuse, taking no time, when
@@ -181,7 +187,7 @@ pub enum Ability {
 /// Where an ability comes from: the abilities menu's groups, in this order.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Source {
-    /// The character's race (none yet).
+    /// The character's race: its actives (the duergar's Invisibility).
     Race,
     /// The character's birth sign: its active gifts.
     Sign,
@@ -458,9 +464,13 @@ impl Ability {
         let blood = (content.talents().iter())
             .flat_map(|(_, def)| &def.effects)
             .any(|e| matches!(e, TalentEffect::Magic(MagicEffect::BloodMagic { .. })));
+        let fade = (content.talents().iter())
+            .flat_map(|(_, def)| &def.effects)
+            .any(|e| matches!(e, TalentEffect::Stealth(StealthEffect::Fade { .. })));
         let talents = (wind.then_some(Ability::SecondWind))
             .into_iter()
-            .chain(blood.then_some(Ability::BloodMagic));
+            .chain(blood.then_some(Ability::BloodMagic))
+            .chain(fade.then_some(Ability::Fade));
         // Classes: the actives some class's table has, in their order.
         let classes = (ClassActive::ALL.iter())
             .filter(|&&a| content.class_active(a).is_some())
@@ -637,6 +647,7 @@ impl Ability {
             Ability::Feint => actor.skills.trains_effect(content, Effect::Feint),
             Ability::SecondWind => actor.talent_mods(content).vigour.second_wind.is_some(),
             Ability::BloodMagic => actor.talent_mods(content).magic.blood_magic.is_some(),
+            Ability::Fade => actor.talent_mods(content).stealth.fade.is_some(),
             Ability::ThrowVoice => actor.talent_mods(content).stealth.throw_voice,
             Ability::Profession(skill) => actor.skills.get(skill).is_some(),
             Ability::ShieldBash | Ability::Salvage => true,
@@ -670,6 +681,7 @@ impl Ability {
             Ability::Heal => "heal",
             Ability::SecondWind => "second_wind",
             Ability::BloodMagic => "blood_magic",
+            Ability::Fade => "fade",
             Ability::ShieldBash => "shield_bash",
             Ability::Weapon(_, id) => &content.weapon_ability(id).id,
             Ability::Pray => "pray",
@@ -717,6 +729,7 @@ impl Ability {
             Ability::Heal => "Heal",
             Ability::SecondWind => "Second wind",
             Ability::BloodMagic => "Blood magic",
+            Ability::Fade => "Invisibility",
             Ability::ShieldBash => "Shield bash",
             Ability::Pray => "Pray",
             Ability::Drink => "Drink",
@@ -797,6 +810,10 @@ impl Ability {
                 "Give some of your hit points, never the last, to have some of your mana back at \
                  once."
             }
+            Ability::Fade => {
+                "Fade from sight a while: no eye sees you, but you are heard as ever. Then it \
+                 is some minutes before you can again. It takes no time."
+            }
             Ability::ShieldBash => "Strike someone next to you with the shield you hold.",
             Ability::Weapon(_, id) => &content.weapon_ability(id).description,
             Ability::Pray => {
@@ -854,6 +871,7 @@ impl Ability {
             | Ability::Heal => Source::Skill,
             Ability::ThrowVoice => Source::Class,
             Ability::SecondWind | Ability::BloodMagic => Source::Talent,
+            Ability::Fade => Source::Race,
             Ability::ShieldBash | Ability::Weapon(..) => Source::WeaponSkill,
             Ability::Pray | Ability::Drink | Ability::Gather => Source::Place,
             Ability::Heel | Ability::Hold | Ability::SetOn | Ability::Give => Source::Ally,
@@ -914,6 +932,7 @@ impl Ability {
             | Ability::Skill(_)
             | Ability::SecondWind
             | Ability::BloodMagic
+            | Ability::Fade
             | Ability::Forage
             | Ability::Pray
             | Ability::Heel
@@ -967,8 +986,8 @@ impl Ability {
             Ability::Give => Some(ActionKind::Wear),
             Ability::Drink => Some(ActionKind::Drink),
             Ability::Gather => Some(ActionKind::Gather),
-            // An order takes no time: it is priced as nothing.
-            Ability::Heel | Ability::Hold | Ability::SetOn => None,
+            // An order takes no time: it is priced as nothing; so does fading from sight.
+            Ability::Heel | Ability::Hold | Ability::SetOn | Ability::Fade => None,
         }
     }
 
@@ -1045,6 +1064,7 @@ impl Ability {
             }),
             (Ability::SecondWind, _) => Some(Action::UseTalent(TalentActive::SecondWind)),
             (Ability::BloodMagic, _) => Some(Action::UseTalent(TalentActive::BloodMagic)),
+            (Ability::Fade, _) => Some(Action::UseTalent(TalentActive::Fade)),
             (Ability::Disarm, Some(dir)) => Some(Action::Disarm(dir)),
             (Ability::Listen, Some(dir)) => Some(Action::Listen(dir)),
             (Ability::PickLock, Some(dir)) => Some(Action::PickLock(dir)),
@@ -1139,6 +1159,7 @@ impl Ability {
             | Ability::Heal
             | Ability::SecondWind
             | Ability::BloodMagic
+            | Ability::Fade
             | Ability::ShieldBash
             | Ability::Pray
             | Ability::Drink
@@ -1246,6 +1267,10 @@ impl Ability {
             Ability::SecondWind => (actor.talent_mods(content).vigour.second_wind)
                 .map(|w| w.cooldown)
                 .filter(|&cooldown| actor.effects.has(cooldown))
+                .map(Unavailable::While),
+            // Invisible already, its cooldown, or a status that blocks casting (Silenced).
+            Ability::Fade => (actor.talent_mods(content).stealth.fade)
+                .and_then(|fading| crate::world::fade_refused(content, actor, fading))
                 .map(Unavailable::While),
             Ability::ShieldBash => actor
                 .shield(content)
@@ -1453,8 +1478,10 @@ mod tests {
         let content = crate::test_support::builtin();
         let every = Ability::every(&content);
         assert!(every.windows(2).all(|w| w[0].source() <= w[1].source()));
+        assert_eq!(every.first(), Some(&Ability::Fade), "the race's first");
+        let sign = every.iter().find(|a| a.source() == Source::Sign);
         assert_eq!(
-            every.first(),
+            sign,
             Some(&Ability::Sign(SignActive::HornsGrace)),
             "the birth sign's first"
         );

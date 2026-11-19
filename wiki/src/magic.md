@@ -15,7 +15,7 @@ More about magic:
 - [How spells work](spellcasting.md): shapes, targeting, spell types, zones, and how a spell grows
   with your stats.
 - [Learning spells](learning-spells.md): grimoires, your learning, and a spell's ranks.
-- [Schools and caster styles](schools.md): the seven schools of magic, the Magic page, and the
+- [Schools and caster styles](schools.md): the eight schools of magic, the Magic page, and the
   styles you cast in.
 - [Miscasts](miscasts.md): what can go wrong when you cast, and the miscast table.
 - [Wands and rods](wands-and-rods.md): magic anyone can use.

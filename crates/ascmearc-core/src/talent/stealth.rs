@@ -5,7 +5,7 @@
 //! variant here, its field and its arm in [`StealthMods::add`] here, its wiki text in
 //! `xtask/src/wiki/talents/stealth.rs`, and its one read.
 
-use crate::content::{Content, StatusId};
+use crate::content::{Content, Fading, StatusId};
 use crate::dice::Dice;
 use serde::Deserialize;
 
@@ -71,12 +71,17 @@ pub enum StealthEffect {
     /// An exploit threatens a critical `value` lower per opening spent, never below 2, and with
     /// `sure_at` or more spent is a critical whenever it hits, no confirmation (Master thief).
     ExploitThreat { value: u8, sure_at: u16 },
+    /// The racial active Invisibility (the duergar's): it fades from sight as a creature with
+    /// `[creature.invisible]` does, the same rule (`content::fading`): the Invisible status, and
+    /// the cooldown status (Invisibility spent) for `cooldown` seconds, while which it cannot fade
+    /// again (`world/character/fade.rs`).
+    Fade { cooldown: u32 },
 }
 
 impl StealthEffect {
     /// The `kind`s of the data that are effects of the area, one a variant (`TalentEffect`'s
     /// deserializer hands these to [`StealthEffect`]).
-    pub const KINDS: [&'static str; 22] = [
+    pub const KINDS: [&'static str; 23] = [
         "ambush",
         "ambush_threat",
         "attack_noise_percent",
@@ -85,6 +90,7 @@ impl StealthEffect {
         "exploit_status",
         "exploit_threat",
         "exploit_to_hit",
+        "fade",
         "footsteps_percent",
         "initiative_bonus",
         "lurk",
@@ -146,6 +152,8 @@ pub struct StealthMods {
     pub thrown_exploit: bool,
     /// What an exploit adds per opening spent (Exploit's dice, Low blow's stun and to-hit).
     pub exploit: ExploitMods,
+    /// The racial active Invisibility, its fading resolved, if it has it.
+    pub fade: Option<Fading>,
 }
 
 impl StealthMods {
@@ -187,6 +195,9 @@ impl StealthMods {
                 self.exploit.threat = self.exploit.threat.saturating_add(value);
                 let sure = self.exploit.sure_at.map_or(sure_at, |had| had.min(sure_at));
                 self.exploit.sure_at = Some(sure);
+            }
+            StealthEffect::Fade { cooldown } => {
+                self.fade = crate::content::fading(content, cooldown).ok().or(self.fade);
             }
         }
     }

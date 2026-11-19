@@ -44,6 +44,17 @@ pub(super) fn text(content: &Content, effect: &StealthEffect) -> String {
                                       with reduced effects)"
             .to_string(),
         StealthEffect::SilentUnburdened => "no footsteps at all while Unburdened".to_string(),
+        StealthEffect::Fade { cooldown } => {
+            let lasts = (content.status_id("invisible"))
+                .and_then(|s| content.status(s).eases)
+                .unwrap_or_default();
+            format!(
+                "active (no time, no mana; heard as chanting): you are {} for {lasts} seconds (no \
+                 creature sees you unless it sees the invisible or has no eyes), then cannot fade \
+                 again for {cooldown} seconds from the fading; refused while Silenced",
+                status("invisible")
+            )
+        }
         StealthEffect::AttackNoisePercent { value } => {
             format!("the noise of your attacks {}", percent(value))
         }
