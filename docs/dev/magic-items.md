@@ -214,6 +214,37 @@ Featherweight, and of the Bear roll on tools (P1, #635), so loot finds a magic p
 that must be magic draws only bases some affix rolls on (`loot::can_be_magic`), and a magic
 item's shape only among those its base can take (`loot::rolls_any`).
 
+## Magical ammunition
+
+A stack of ammunition (`kind = "ammo"`) is a magic item like a weapon (spec/11-magic.md): it rolls
+affixes when loot makes it, and enchanting works the whole stack at once (docs/dev/enchanting.md);
+every missile in it shares the stack's `Magic`, and stacks join only with the very same magic
+(`object::add_to_inventory`), so arrows of different affixes never merge. Its capacity is one less than
+other equipment's (`magic/capacity.rs`: `BASE` 2 − 1, so plain arrows hold 1, Marvellous 2,
+Masterwork 3). **Its pool** is the affixes whose `bases` name `ammo`, and the loader holds them to
+what makes a shot better (`Effect::betters_a_shot`, read by `Effect::allowed_on`: to hit, damage,
+an extra die, an elemental die, criticals, a bane, breaking less): a stat, a Defence, speed, Proof,
+or anything a wearer carries on ammunition is a content error. A shot reads the nocked
+ammunition's `Mods::local` after the launcher's (`Actor::ranged`; docs/dev/ranged-combat.md).
+Tests: `magic/ammo_magic_tests.rs`.
+
+## Banes
+
+`Effect::Bane` (the owner: "weapons definitely should be able to roll banes"):
+to hit and damage against creatures whose type carries one tag (`content/tag.rs`), nothing
+against the rest. One `[[suffix]]` entry makes the family (`data/affixes/of_bane.toml`): its
+`tags` list makes one affix per tag (`AffixSpec::expand`), `{tag}` put into the `id`
+(`of_orc_bane`) and the `name` ("of orc-bane"), each `AffixDef::tag` the tag, each weight the
+entry's `weight` shared evenly (100 over 20 tags: 5 each, so the family rolls about as often as
+one ordinary affix); `tags` on another effect, a bane without them, or an `id` or `name` without
+`{tag}` is refused. All share the category `bane` (one per item) and roll on weapons, missile
+weapons, and ammunition. `Mods::add_magic` keeps banes by tag (`Mods::banes`, never summed into
+another tag's), `Mods::sharpen` hands them to `Profile::banes`, and `World::resolve` adds the ones
+whose tag the target's type carries to its to-hit and damage (`world/combat/bane.rs`,
+`World::baned`, beside Sworn foe's `favoured`), for any attacker. The crystal families: `bane` is
+black's and red's (`data/crystals.toml`, "the bane of a kind"). Tests:
+`world/combat/bane_tests.rs`, `content/affix.rs` (`banes_are_made_one_per_tag`).
+
 ## Curses
 
 Curses (#1754; spec/11-magic.md "Curses"). A cursed affix is an `[[prefix]]`/`[[suffix]]` with

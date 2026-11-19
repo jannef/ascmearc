@@ -3,8 +3,9 @@
 //! it.
 //!
 //! - **The capacity** ([`capacity`], the one read): [`BASE`] (2), +1 for jewellery (a ring, an
-//!   amulet), + its quality (Fine 0, Marvellous 1, Masterwork 2: [`Worked::improvements`] less
-//!   one, never below 0, none while damaged; #1444), + its main part's material's `binding` (−2
+//!   amulet), −1 for ammunition (a whole stack's one magic, the owner's), + its quality (Fine
+//!   0, Marvellous 1, Masterwork 2: [`Worked::improvements`] less one, never below 0, none
+//!   while damaged; #1444), + its main part's material's `binding` (−2
 //!   to +2; silver −2, adamantium +1, mithril +2), + a gem in its ornament part (+1, a gem of the finest cut +2), + 1 for a maker's mark
 //!   (Maker's mark, [`Worked::marked`](super::Worked::marked)), at least 1 and at most
 //!   [`MOST`]. The three-per-kind caps stand beside it.
@@ -31,6 +32,8 @@ pub const MOST: u8 = (crate::content::MAX_PER_KIND * 2) as u8;
 pub fn capacity(stack: &Stack, content: &Content) -> u8 {
     let def = content.object(stack.object);
     let jewellery = i32::from(def.is_jewellery());
+    // Ammunition holds one less than other equipment.
+    let ammo = i32::from(def.kind == Some(crate::content::ItemKind::Ammo));
     let quality = stack
         .worked()
         .map_or(0, |w| w.improvements().saturating_sub(1) as i32);
@@ -41,7 +44,7 @@ pub fn capacity(stack: &Stack, content: &Content) -> u8 {
     let gem = gem_term(stack, content);
     // A maker's mark holds one more (Maker's mark, the craftsperson's).
     let mark = i32::from(stack.worked().is_some_and(super::Worked::marked));
-    let sum = BASE + jewellery + quality + binding + gem + mark;
+    let sum = BASE + jewellery - ammo + quality + binding + gem + mark;
     u8::try_from(sum.clamp(1, i32::from(MOST))).unwrap_or(1)
 }
 

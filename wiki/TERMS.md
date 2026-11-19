@@ -177,6 +177,8 @@ above.
 | Unique item | `magic-items.md#unique-items` |
 | Ammunition, arrows, bolts | `ammunition.md` |
 | Fine, Marvellous, Masterwork ammunition (arrows of a grade) | `ammunition.md#fine-marvellous-and-masterwork-ammunition` |
+| Magic ammunition (arrows of orc-bane) | `ammunition.md#magic-ammunition` |
+| Bane, of orc-bane (a suffix against one kind of creature) | `affixes.md#banes` |
 | Burden (Unburdened, Burdened, Strained, Overloaded), carrying limit | `burden.md#burden-levels`, `burden.md#how-much-you-can-carry` |
 | Hunger, nutrition (Satiated, Hungry, Weak, Fainting, Starving, Bloated) | `hunger.md#how-hungry-you-are` |
 | Eating, food, rot, corpses | `food.md#eating`, `food.md#food-spoils`, `food.md#corpses` |

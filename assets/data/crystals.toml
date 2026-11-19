@@ -48,7 +48,7 @@ tags = ["undead", "skeleton", "spirit", "demon", "devil", "yugoloth", "fiend", "
 families = [
     "necrotic_damage", "necrotic_resistance", "poison_damage", "critical_chance",
     "critical_multiplier", "mana_on_kill", "stamina_on_kill", "stealth", "steal", "openings",
-    "spell_critical",
+    "spell_critical", "bane",
 ]
 
 # Never `life` or `life_regeneration`.
@@ -90,7 +90,7 @@ families = [
     "physical_damage", "extra_damage", "accuracy", "critical_chance", "critical_multiplier",
     "attack_speed", "range", "draw", "kick", "carrying", "fire_damage", "fire_resistance",
     "strength", "toughness", "life", "life_regeneration", "rage", "stamina", "stamina_cost",
-    "stamina_pace", "stamina_on_kill", "parry",
+    "stamina_pace", "stamina_on_kill", "parry", "bane",
 ]
 
 [[colour]]
@@ -143,6 +143,9 @@ word = "the quick blow"
 [[family]]
 category = "balance"
 word = "balance"
+[[family]]
+category = "bane"
+word = "the bane of a kind"
 [[family]]
 category = "carrying"
 word = "the strong back"

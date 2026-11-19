@@ -33,6 +33,9 @@ and make's to hit and damage), then `Mods::local` of the ammunition nocked (its 
 and make: docs/dev/special-rooms.md "Ammunition's make"), then everything worn. The two makes add
 up: a Fine bow (+1 to hit) loosing Masterwork arrows (+2 to hit, +1 damage) shoots at +3 to hit,
 +1 damage. Tests: `world/crafting/fletch_tests.rs` (`a_fine_arrow_hits_better_than_a_plain_one`).
+Every arrow of a stack shares the stack's magic (docs/dev/magic-items.md "Magical
+ammunition"), and a bane on the launcher and one on the ammunition both ride the shot
+(`Profile::banes`), each counting against its own creatures (`world/combat/bane.rs`).
 
 The thief's Thrown exploit (#1465, `world/classes/openings.rs`, docs/dev/openings.md "The thrown
 exploit") is a throw through the same path: `World::thrown_exploit` hands its `Loose` to

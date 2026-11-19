@@ -20,6 +20,21 @@ pub(super) fn suffixes(content: &Content) -> String {
     affix_table(content, AffixKind::Suffix)
 }
 
+/// The banes: one suffix per kind of creature, each with its share of the family's weight.
+pub(super) fn banes(content: &Content) -> String {
+    let mut out = String::from("| Suffix | Against | Weight |\n|---|---|:---:|\n");
+    let mut banes: Vec<&AffixDef> = (content.affixes().all().iter())
+        .filter(|a| a.tag.is_some())
+        .collect();
+    banes.sort_by_key(|a| a.name.to_lowercase());
+    for a in banes {
+        let tag = a.tag.as_deref().unwrap_or_default();
+        let against = content.plural(&ascmearc_core::content::spoken(tag));
+        let _ = writeln!(out, "| {} | {against} | {} |", a.name, a.weight);
+    }
+    out
+}
+
 /// How often loot is normal, magic, or rare, and how many affixes magic and rare items roll.
 pub(super) fn magic_rarity(content: &Content) -> String {
     let affixes = content.affixes();
@@ -119,20 +134,36 @@ fn affix_table(content: &Content, kind: AffixKind) -> String {
         "| {what} | Effect | Category | Rolls on | Tiers (item level: value) | Weight |\n\
          |---|---|---|---|---|:---:|\n"
     );
+    let mut banes = false;
     for a in order::affixes(content, kind) {
         let bases: Vec<&str> = a.bases.iter().map(|k| k.plural()).collect();
+        // The banes are one row: the family, each kind of creature in the banes table.
+        let (name, weight) = match &a.tag {
+            Some(_) if banes => continue,
+            Some(_) => {
+                banes = true;
+                let all = (content.affixes().all().iter()).filter(|b| b.tag.is_some());
+                let total: u32 = all.map(|b| b.weight).sum();
+                (
+                    "of *creature*-bane".to_string(),
+                    format!("{} each, {total} together", a.weight),
+                )
+            }
+            None => (a.name.clone(), a.weight.to_string()),
+        };
         let tiers: Vec<String> = (a.tiers.iter())
             .map(|t| format!("{}: {}", t.level, tier_value(a, t, content)))
             .collect();
+        let effect = match a.tag {
+            Some(_) => "to hit and damage against one kind of creature ([Banes](#banes))".into(),
+            None => effect_text(content, a),
+        };
         let _ = writeln!(
             out,
-            "| {} | {} | {} | {} | {} | {} |",
-            a.name,
-            effect_text(content, a),
+            "| {name} | {effect} | {} | {} | {} | {weight} |",
             a.category.replace('_', " "),
             bases.join(", "),
             tiers.join(" · "),
-            a.weight
         );
     }
     out
@@ -160,6 +191,10 @@ fn effect_text(content: &Content, a: &AffixDef) -> String {
             ItemEffect::ResourceOnKill => format!("{pool} on a kill within {siphon} cells"),
             other => effect_words(content, other),
         };
+    }
+    if let Some(tag) = &a.tag {
+        let against = content.plural(&ascmearc_core::content::spoken(tag));
+        return format!("to hit and damage against {against}");
     }
     match (a.skill, a.damage_type) {
         (Some(id), _) if super::skills::gated(content.skill(id)) => format!(
@@ -189,6 +224,7 @@ fn effect_words(content: &Content, effect: ItemEffect) -> String {
         ItemEffect::Range => "range, in cells".into(),
         ItemEffect::Draw => "less Strength needed to draw".into(),
         ItemEffect::Durability => "breaks less often".into(),
+        ItemEffect::Bane => "to hit and damage against one kind of creature".into(),
         ItemEffect::Parry => "Parry".into(),
         ItemEffect::Armour => "Armour".into(),
         ItemEffect::Protection => "Protection".into(),
@@ -335,6 +371,7 @@ fn system_of(content: &Content, a: &AffixDef) -> &'static str {
     }
     match a.effect {
         E::ToHit | E::Damage | E::ExtraDamage | E::Threat | E::Crit | E::AttackSpeed => "Combat",
+        E::Bane => "Combat",
         E::Range | E::Draw => "Ranged combat",
         E::Elemental | E::Resistance => "Damage types",
         E::Parry | E::Armour | E::Protection | E::Shield | E::MaxDex => "Armour and Defence",

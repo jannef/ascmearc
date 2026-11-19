@@ -283,6 +283,10 @@ pub struct Profile {
     /// power of the unique weapon it is made with (Inflict; a natural
     /// attack's `on_hit` is read from its creature).
     pub on_hit: Vec<crate::content::OnHit>,
+    /// To hit and damage against creatures of a tag, from bane affixes (a bow of orc-bane,
+    /// arrows of undead-bane), by tag in the order first met: added where the attack meets its
+    /// target (`World::resolve`), only when the target's type carries the tag.
+    pub banes: Vec<(String, i32)>,
 }
 
 /// What an attack is made with, as data gives it: a weapon (`data/objects.toml`) or a creature's
@@ -409,6 +413,7 @@ impl Profile {
             kinds: attack.kinds,
             riders: Vec::new(),
             on_hit: Vec::new(),
+            banes: Vec::new(),
         }
     }
 
@@ -729,6 +734,7 @@ mod tests {
             kinds: Kinds::NONE,
             riders: Vec::new(),
             on_hit: Vec::new(),
+            banes: Vec::new(),
         }
     }
 

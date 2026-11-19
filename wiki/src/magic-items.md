@@ -38,6 +38,8 @@ Every item can bear only so many **enchantments** (affixes, [prefixes](affixes.m
 
 - **2** for any item;
 - **+1** for a ring or an amulet (they are made to carry a charm);
+- **−1** for a stack of [ammunition](ammunition.md#magic-ammunition): arrows, bolts, and stones
+  hold one less than anything else;
 - nothing more for a Fine item, **+1** for a Marvellous one, **+2** for a Masterwork one (see
   [Forges](altars-forges-springs.md#forges) and [Crafting](crafting.md#how-well-it-comes-out));
   a damaged item counts as plain, and stays so once mended until it is made finer again;
@@ -62,6 +64,8 @@ It is never less than one or more than six. Some examples:
 | a Fine mithril long sword with a sapphire pommel | 5 |
 | a Masterwork adamantium plate armour | 5 |
 | a Masterwork great sword with a flawless diamond pommel | 6 |
+| a stack of arrows | 1 |
+| a stack of Masterwork arrows | 3 |
 
 **Every item is made to fit.** Loot, what creatures carry, and the game's own named items never
 hold more than they can bear. A find that rolls more loses the extra, one at a time: one from
@@ -167,7 +171,8 @@ merely carried.
   hit](combat.md#hitting), [damage](combat.md#damage), [criticals](combat.md#criticals), attack
   speed, [range](ranged.md#shooting-and-throwing)) changes only the attacks made **with that
   item**. A Sharp sword hits harder, but your bow does not. A bow's magic and its arrows' add up
-  for a shot.
+  for a shot, and every arrow of a stack has the stack's magic. A
+  [bane](affixes.md#banes) counts only against its own kind of creature.
 - **On anything else** ([gloves](objects.md#class-gloves), [rings](objects.md#class-rings),
   [amulets](objects.md#class-amulets), a [helm](objects.md#class-helmets)), attack magic changes
   **every attack** you make, bare hands and thrown rocks included.

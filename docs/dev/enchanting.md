@@ -15,6 +15,7 @@ affixes, prefixes and suffixes together, an item can hold:
 |---|---|---|
 | The base | 2 (`capacity::BASE`; the owner, 2026-11-13) | every item |
 | Jewellery | +1 | `ObjectDef::is_jewellery()` (ring and amulet kinds) |
+| Ammunition | −1 (the owner's: a stack holds one less) | `kind = "ammo"` (docs/dev/magic-items.md "Magical ammunition") |
 | Quality | Fine +0, Marvellous +1, Masterwork +2 (#1444; first +1/+2/+3) | `Worked::improvements()` − 1, never below 0 (none while damaged) |
 | Material | −2 to +2 | `MaterialDef::binding` of the main part's material (`Stack::parts(content)[0]`, a variant's own) |
 | The set gem | +1, the finest cut (flawless, the last `[[cut]]` of `gems.toml`) +2 | the part of `gem::ornament_part` whose material is a gem; a base item's own gem part (the gold amulet's ruby setting) has no cut and counts +1 |

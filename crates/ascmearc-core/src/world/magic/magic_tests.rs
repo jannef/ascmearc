@@ -666,8 +666,8 @@ fn generated_levels_hold_floor_and_vault_loot() {
     let content = builtin();
     for depth in 1..=8 {
         let id = format!("depths:{depth}");
-        let a = crate::mapgen::generate(&content, ("showcase", 42), &id, None).expect("level");
-        let b = crate::mapgen::generate(&content, ("showcase", 42), &id, None).expect("level");
+        let a = crate::mapgen::generate(&content, ("showcase", 43), &id, None).expect("level");
+        let b = crate::mapgen::generate(&content, ("showcase", 43), &id, None).expect("level");
         assert_eq!(a, b, "deterministic");
         // Loot: base items and scrolls, what has a loot frequency.
         let loot: Vec<&Stack> = (a.objects.values().flatten())

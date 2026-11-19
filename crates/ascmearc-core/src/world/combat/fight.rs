@@ -887,6 +887,8 @@ impl World {
         let profile = profile.map(|p| self.relentless(attacker, target, kind, p));
         // Keen edge in Metal's season (`flavour.rs`).
         let profile = profile.map(|p| self.season_threat(attacker, p));
+        // Its banes, against a creature of their tags (`bane.rs`).
+        let profile = profile.map(|p| self.baned(target, p));
         // Favoured prey and a sneak attack.
         let profile = profile.map(|p| self.favoured(attacker, target, p));
         // An ally's master's gifts to it (Beast-bond).

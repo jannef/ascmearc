@@ -81,7 +81,18 @@ fn roll_untrimmed(c: &Content, n: usize, level: u8, grade: LootGrade) -> Vec<Sta
 fn the_builtin_affixes_cover_every_kind_of_item() {
     let c = content();
     let affixes = c.affixes();
-    let count = |kind: AffixKind| affixes.all().iter().filter(|a| a.kind == kind).count();
+    // The banes count as one: one entry makes them all, one per creature tag.
+    let count = |kind: AffixKind| {
+        let of = |a: &&AffixDef| a.kind == kind;
+        let banes = affixes.all().iter().filter(of).any(|a| a.tag.is_some());
+        affixes
+            .all()
+            .iter()
+            .filter(of)
+            .filter(|a| a.tag.is_none())
+            .count()
+            + usize::from(banes)
+    };
     assert!(
         (30..=45).contains(&count(AffixKind::Prefix)),
         "about 30 to 45 prefixes"
@@ -679,6 +690,7 @@ fn tiers_roll_from_a_window_below_the_item_level() {
         skill: None,
         damage_type: None,
         resource: None,
+        tag: None,
         bases: vec![ItemKind::Weapon],
         weight: 100,
         cursed: false,
@@ -732,6 +744,7 @@ fn reader(effect: Effect) -> (&'static str, &'static str) {
         | Effect::Elemental
         | Effect::Threat
         | Effect::Crit
+        | Effect::Bane
         | Effect::Resistance
         | Effect::Stat(_)
         | Effect::Light
