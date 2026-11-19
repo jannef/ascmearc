@@ -38,48 +38,58 @@ pub enum Invisible {
     /// Never seen: the invisible stalker.
     Innate,
     /// It fades from sight whenever the cooldown is off (`world/creatures/unseen.rs`'s self-buff step).
-    Fades {
-        /// Seconds before it fades again, from the fading.
-        cooldown: u32,
-        /// The Invisible status it gives itself.
-        status: StatusId,
-        /// The cooldown status, and the degrees of it a fading gives.
-        spent: StatusId,
-        degrees: u16,
-    },
+    Fades(Fading),
+}
+
+/// A fading from sight on a cooldown, resolved: a creature type's `[creature.invisible]`, or the
+/// duergar's racial Invisibility (the `fade` talent effect, `talent/stealth.rs`): one rule for
+/// both.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Fading {
+    /// Seconds before it fades again, from the fading.
+    pub cooldown: u32,
+    /// The Invisible status it gives itself.
+    pub status: StatusId,
+    /// The cooldown status, and the degrees of it a fading gives.
+    pub spent: StatusId,
+    pub degrees: u16,
 }
 
 impl InvisibleSpec {
     /// Resolves the spec against `content` (its statuses already loaded): `None` for
     /// `invisible = false`.
     pub(super) fn resolve(self, content: &Content) -> Result<Option<Invisible>, String> {
-        let fade = match self {
-            InvisibleSpec::Always(false) => return Ok(None),
-            InvisibleSpec::Always(true) => return Ok(Some(Invisible::Innate)),
-            InvisibleSpec::Fades(fade) => fade,
-        };
-        let status = (content.status_id(STATUS))
-            .filter(|&s| content.status(s).unseen)
-            .ok_or_else(|| format!("invisible: needs the `{STATUS}` status, `unseen`"))?;
-        let spent = (content.status_id(SPENT))
-            .ok_or_else(|| format!("invisible: needs the `{SPENT}` status in data/status/"))?;
-        let spent_def = content.status(spent);
-        let eases = (spent_def.eases)
-            .filter(|_| spent_def.tick.is_none())
-            .ok_or_else(|| format!("invisible: the `{SPENT}` status must ease and never tick"))?;
-        let degrees = (u16::try_from(fade.cooldown.div_ceil(eases)).ok())
-            .filter(|&d| d <= spent_def.max)
-            .ok_or_else(|| {
-                format!(
-                    "invisible: a cooldown of {} s is more than the `{SPENT}` status lasts",
-                    fade.cooldown
-                )
-            })?;
-        Ok(Some(Invisible::Fades {
-            cooldown: fade.cooldown,
-            status,
-            spent,
-            degrees,
-        }))
+        match self {
+            InvisibleSpec::Always(false) => Ok(None),
+            InvisibleSpec::Always(true) => Ok(Some(Invisible::Innate)),
+            InvisibleSpec::Fades(fade) => {
+                Ok(Some(Invisible::Fades(fading(content, fade.cooldown)?)))
+            }
+        }
     }
+}
+
+/// A fading with a cooldown of `cooldown` seconds, resolved against `content` (its statuses
+/// already loaded): the [`STATUS`] it gives, and `ceil(cooldown / eases)` degrees of [`SPENT`].
+pub(crate) fn fading(content: &Content, cooldown: u32) -> Result<Fading, String> {
+    let status = (content.status_id(STATUS))
+        .filter(|&s| content.status(s).unseen)
+        .ok_or_else(|| format!("invisible: needs the `{STATUS}` status, `unseen`"))?;
+    let spent = (content.status_id(SPENT))
+        .ok_or_else(|| format!("invisible: needs the `{SPENT}` status in data/status/"))?;
+    let spent_def = content.status(spent);
+    let eases = (spent_def.eases)
+        .filter(|_| spent_def.tick.is_none())
+        .ok_or_else(|| format!("invisible: the `{SPENT}` status must ease and never tick"))?;
+    let degrees = (u16::try_from(cooldown.div_ceil(eases)).ok())
+        .filter(|&d| d <= spent_def.max)
+        .ok_or_else(|| {
+            format!("invisible: a cooldown of {cooldown} s is more than the `{SPENT}` status lasts")
+        })?;
+    Ok(Fading {
+        cooldown,
+        status,
+        spent,
+        degrees,
+    })
 }

@@ -1142,9 +1142,8 @@ pub(super) fn creature_unseen(content: &Content) -> String {
     for (_, c) in listed(content) {
         let (how, lasts, again) = match c.invisible {
             Some(Invisible::Innate) => ("always".to_string(), "-".into(), "-".into()),
-            Some(Invisible::Fades {
-                status, cooldown, ..
-            }) => {
+            Some(Invisible::Fades(fading)) => {
+                let (status, cooldown) = (fading.status, fading.cooldown);
                 let def = content.status(status);
                 let lasts = def.eases.map_or("-".into(), |s| format!("{s} s"));
                 let how = link(Term::Status, &def.id, "fades from sight");

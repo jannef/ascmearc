@@ -40,7 +40,7 @@ pub struct CircleStatuses {
     rows: Vec<CircledStatus>,
     by_status: BTreeMap<StatusId, usize>,
     /// By [`School::ALL`] position; set for every school once there are rows.
-    colors: [Rgb; 7],
+    colors: [Rgb; School::ALL.len()],
 }
 
 impl CircleStatuses {
@@ -112,8 +112,8 @@ pub(super) fn parse(
 ) -> Result<CircleStatuses, ContentError> {
     let err = |m: String| ContentError::new(path, m);
     let file: File = toml::from_str(text).map_err(|e| err(e.to_string()))?;
-    let mut colors: [Option<Rgb>; 7] = [None; 7];
-    let mut lights: [Option<LightId>; 7] = [None; 7];
+    let mut colors: [Option<Rgb>; School::ALL.len()] = [None; School::ALL.len()];
+    let mut lights: [Option<LightId>; School::ALL.len()] = [None; School::ALL.len()];
     for row in &file.school {
         let slot = &mut colors[school_index(row.id)];
         if slot.is_some() {

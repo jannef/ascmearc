@@ -187,7 +187,7 @@ pub use crafting::seal::MOST_SEALS;
 pub use crafting::set::{SetBand, set_band, settable};
 pub use crafting::temper::{temperable, whittleable, workable, workable_wood};
 pub use creatures::statue::Statue;
-pub(crate) use creatures::unseen::{Concealed, unseen_by_player};
+pub(crate) use creatures::unseen::{Concealed, fade_refused, unseen_by_player};
 pub use fixtures::curse::{Rising, rise_candidates, rises_as};
 pub use fixtures::graveyard::Fallen;
 pub use fixtures::mirrors::Image;
@@ -1529,6 +1529,7 @@ impl World {
             Action::Give { item, ally } => return self.give_collar(*item, *ally),
             Action::UseTalent(TalentActive::SecondWind) => return self.second_wind(events),
             Action::UseTalent(TalentActive::BloodMagic) => return self.blood_magic(),
+            Action::UseTalent(TalentActive::Fade) => return self.fade_from_sight(events),
             Action::Use(active, dir) => return self.use_class(*active, *dir, events),
             Action::UseAt(active, at) => return self.use_class_at(*active, *at, events),
             Action::UseOn(active, item) => return self.use_class_on(*active, *item),

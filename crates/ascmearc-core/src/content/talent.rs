@@ -220,17 +220,25 @@ pub enum TalentActive {
     SecondWind,
     /// Blood magic: some hit points (never the last) for some mana.
     BloodMagic,
+    /// Invisibility, the duergar's racial active: it fades from sight as the duergar monsters do
+    /// (the `fade` effect; the abilities menu's Racial group).
+    Fade,
 }
 
 impl TalentActive {
     /// Every one, in menu order.
-    pub const ALL: &[TalentActive] = &[TalentActive::SecondWind, TalentActive::BloodMagic];
+    pub const ALL: &[TalentActive] = &[
+        TalentActive::SecondWind,
+        TalentActive::BloodMagic,
+        TalentActive::Fade,
+    ];
 
     /// Its id: its effect's kind, and its replay text (`use:second_wind`).
     pub const fn id(self) -> &'static str {
         match self {
             TalentActive::SecondWind => "second_wind",
             TalentActive::BloodMagic => "blood_magic",
+            TalentActive::Fade => "fade",
         }
     }
 
@@ -483,6 +491,7 @@ impl TalentEffect {
                 self,
                 TalentEffect::Vigour(VigourEffect::SecondWind { .. })
                     | TalentEffect::Magic(MagicEffect::BloodMagic { .. })
+                    | TalentEffect::Stealth(StealthEffect::Fade { .. })
                     | TalentEffect::Magic(MagicEffect::Spell { .. })
                     | TalentEffect::Faith(FaithEffect::Prayer { .. })
                     | TalentEffect::Faith(FaithEffect::Communion)
@@ -652,6 +661,14 @@ impl TalentEffect {
             }
             TalentEffect::Offence(OffenceEffect::KickDie { sides, .. }) => {
                 nonzero("kick_die", "sides", u32::from(*sides))
+            }
+            // The same rule as a creature's `[creature.invisible]`: its statuses and a cooldown
+            // the spent status holds.
+            TalentEffect::Stealth(StealthEffect::Fade { cooldown }) => {
+                if content.status_ids().next().is_none() {
+                    return Ok(());
+                }
+                super::fading(content, *cooldown).map(|_| ())
             }
             TalentEffect::Stealth(StealthEffect::ExploitThreat { value, sure_at }) => {
                 nonzero("exploit_threat", "value", u32::from(*value))?;

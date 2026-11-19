@@ -48,6 +48,10 @@ color = "#d07ab0"
 id = "divination"
 color = "#d8d8e8"
 
+[[school]]
+id = "illusion"
+color = "#9a88e8"
+
 # Buffs.
 
 # Light.
@@ -110,7 +114,7 @@ school = "transmutation"
 # Glamour.
 [[status]]
 status = "glamoured"
-school = "abjuration"
+school = "illusion"
 
 # Renewal.
 [[status]]

@@ -14,7 +14,7 @@
 #                 (../study.toml). 0 and 1 are cantrips.
 #   The tags (talents, abilities, items, and the wiki key on them; magic design §6):
 #   school        evocation, necromancy, abjuration, restoration, transmutation, enchantment,
-#                 or divination
+#                 divination, or illusion (what deceives the senses: Glamour)
 #   kind          damage, heal, buff, hex, cleanse, utility, or summon (a summon is cast on
 #                 `self` with `auto`: it calls creatures to the caster's side)
 #   shape         ray, bolt, touch, self (single targets), cone, line, or burst (areas)
@@ -176,7 +176,7 @@
 #   [D] a static bonus at the top (`25 5d6+2`), where a small step fits better than a die.
 #   Mixed dice (`25 3d6+1d10`) sparingly, where the spell's fiction wants them.
 #   The stat by school, unless the spell says otherwise: evocation, transmutation, divination
-#   Intelligence; necromancy, abjuration, restoration Willpower; enchantment Presence (Call
+#   Intelligence; necromancy, abjuration, restoration Willpower; enchantment, illusion Presence (Call
 #   lightning, the druid's, names Willpower). Reach Willpower, degrees Presence. A new spell
 #   takes the level of its mana; how much its top rung does is its author's call.
 #

@@ -84,6 +84,29 @@ by; your own [lantern](lantern.md) alone is not enough. While the light on your 
 bright, you see nothing farther than ten cells and fight a little worse. The game tells you when it
 begins and ends, and the [status bar](the-screen.md#the-screen) shows `Dazzled` while it lasts.
 
+## Racial magic
+
+Three races start knowing a little magic, whatever their class:
+
+- **[Gnomes](races.md#race-gnome)** know the [Glamour](magic.md#spell-glamour) spell, an
+  [illusion](schools.md#school-illusion).
+- **[Drow](races.md#race-drow)** know the [Fume](magic.md#spell-fume) spell.
+- **[Duergar](races.md#race-duergar)** can fade from sight, as their grey kin in the deep do:
+  [Invisibility](abilities.md#ability-fade).
+
+The two spells work as any spell you know. You cast them from the
+[abilities menu](abilities.md#the-abilities-menu) and pay their [mana](mana.md#spending-it) in full,
+and reading their grimoire deepens them ([Spell ranks](learning-spells.md#spell-ranks)).
+
+Invisibility is in the menu's Racial group. It takes no time and no mana, but it is heard, as a
+chant is. You are [Invisible](status-list.md#status-invisible) for two minutes: no creature that
+needs eyes sees you, though they still hear you. Then you cannot fade again for five minutes from
+the moment you faded, and the status bar shows `Invisibility spent` while you wait. While you are
+[Silenced](status-list.md#status-silenced) you cannot fade at all.
+
+Gnomes may also pick *Gnomish illusionist* (below), which makes illusion spells cost a quarter less
+mana.
+
 Each race's gifts and flaws beyond its stats, exactly:
 
 {{#include generated/race-traits.md}}

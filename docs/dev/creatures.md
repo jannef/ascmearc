@@ -106,7 +106,12 @@ the blow, not frightened by a war cry or intimidation), and `ai.rs::noise_to_loo
 from such an actor's cell is looked into though the cell is in sight). `ai.rs::go_look` asks
 `World::strike_at_heard` first: beside the spot it looks into (a noise's, or where it last saw
 them) with a hostile it does not see on it, it attacks it in melee, and `at_the_unseen` puts the
-same `[unseen]` `to_hit` on that blow. The tests are `unseen_tests.rs`.
+same `[unseen]` `to_hit` on that blow. **The player's fading**: a duergar character's racial
+Invisibility (`data/talents/duergar_invisibility.toml`, the `fade` effect with the monsters'
+`cooldown`) resolves through the same `content::fading` (`Fading`, as `Invisible::Fades` holds)
+and fades through the same `World::fade`; `unseen::fade_refused` is the one test of whether
+either may (Invisible, the cooldown, a status that blocks casting; a creature also not while a
+status `hides` it). The tests are `unseen_tests.rs` and `world/character/racial_magic_tests.rs`.
 
 Factions and creature behavior:
 `data/factions/` (`content/faction.rs`: `Factions`, symmetric hostility, `Stance`; optional,

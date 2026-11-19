@@ -24,7 +24,7 @@ hit points a level gives) is `docs/dev/experience.md`.
 | `xtask/src/wiki/talents.rs` | `talents-origins.md`, `talents-body.md`, `talents-fighting.md`, `talents-exploring.md`, `talents-mind.md` (the trees with the rules, by tree group: `PAGES`, each the table of a wiki page under Talents, #1668), `talents-by-system.md` (each system's talents, class abilities beside them); `effect_text`, the rule of one effect, shared with the class tables. |
 | `content/class.rs` (#243) | `ClassActive`, the actives (id = the ability's id, aim, cost); `strip_tables` (tests that load talents of their own). |
 | `world/magic/caster.rs` | `cast_spell` (`Action::Cast`, `use:blessing`, `use:arcane_bolt:12,5`), `Actor::spell_cost`, the strike on the scrolls' shared code, `reprieve` (Hag's bargain, from `hurt`), `lore_blow` (Poison lore, Malison; from `resolve` and `spell_strikes`). |
-| `world/character/racial.rs` | The racial talents (#241): `grants` (a race's `talents`, `data/races.toml`, put in by `stars::grant` before the sign's gifts, through `Talents::regrant`, which now replaces every granted talent outside a class tree), `World::small_target` (Small target's Dodge, from `resolve` after `target_against`, when the attacker's `size_of` is larger). `content/race.rs::check_talents` (at load): a race grants only `granted` talents of the `racial` tree. |
+| `world/character/racial.rs` | The racial talents (#241): `grants` (a race's `talents`, `data/races.toml`, put in by `stars::grant` before the sign's gifts, through `Talents::regrant`, which now replaces every granted talent outside a class tree), `World::small_target` (Small target's Dodge, from `resolve` after `target_against`, when the attacker's `size_of` is larger), `World::fade_from_sight` (the duergar's Invisibility, `use:fade`). `content/race.rs::check_talents` (at load): a race grants only `granted` talents of the `racial` tree. |
 | `world/classes/class_ability.rs` | `use_class` (`Action::Use`, `use:rage`, `use:smite:E`), `may_use_class`, and the actives but Volley and Rage (the songs are `world/classes/song.rs`, #870; Smite is `world/classes/smite.rs`, #910); Hardened's hit points are `level_up`'s. |
 | `world/classes/rage.rs` | The berserker's Rage on the Rage resource (R1, #249): `World::rage` (`grant_resource_with_status`), `World::unstoppable` (from `hurt`). |
 | `world/classes/volley.rs` | `use_class_at` (`Action::UseAt`, a class active aimed at a cell: `use:volley:12,5`) and the ranger's Volley (#244), on 6 Focus (#250). |
@@ -577,7 +577,15 @@ first with an `either` prerequisite (`Need::Either`, "Intelligence 12 or Apprais
 The racial talents (#241) are the `racial` tree (`no_free`: each asks for its race): Elven
 accuracy, Ageless, Diplomat, Stone sense, Dwarven resilience, Lucky,
 Slinger, Small target, Tinkerer, Gem lore, Ferocity, Orcish hide, and the humans' granted
-Versatile. The gnome's disarming talent is `tinkerer` ("Tinkerer"; #787). With Diplomat and Gem lore the `talk` and `gems`
+Versatile. The gnome's disarming talent is `tinkerer` ("Tinkerer"; #787). A race's known
+spells and abilities are granted racial talents too (races.toml `talents`, the one mechanism):
+the gnomes' `gnomish_glamour` and the drow's `drow_fume` (a `spell` effect, so
+`Actor::knows_spell` holds from creation, cast and deepened as a class's spell is), and the
+duergar's `duergar_invisibility` (the `fade` effect, `StealthEffect::Fade { cooldown }`,
+resolved by `content::fading` as a creature's `[creature.invisible]` is, and used as
+`Ability::Fade`, `use:fade`: `World::fade_from_sight` in `world/character/racial.rs` calls the
+creatures' `World::fade`, no time). The gnomes' pick Gnomish illusionist is School focus's cost
+hook fixed to the illusion school (`spell_mod { cost = -25, when = ["illusion"] }`). With Diplomat and Gem lore the `talk` and `gems`
 systems are held to the bar. The dump's `talents` layer marks it `(race)`, the Talents page
 "race", and the character screen's birth-sign list leaves it out (`OwnTalent::race`).
 `racial_tests.rs` covers each rule, the prerequisites, the picks, and a replay.

@@ -496,7 +496,10 @@ fn the_roster_rows() {
         assert!(
             matches!(
                 def(id).invisible,
-                Some(Invisible::Fades { cooldown: 300, .. })
+                Some(Invisible::Fades(crate::content::Fading {
+                    cooldown: 300,
+                    ..
+                }))
             ),
             "{id} fades on a five-minute cooldown"
         );

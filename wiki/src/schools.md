@@ -1,13 +1,15 @@
 # Schools and caster styles
 
-Every [spell](magic.md#the-spells) belongs to one of seven **schools of magic**: evocation,
-necromancy, abjuration, restoration, transmutation, enchantment, and divination. A school is the
-kind of magic a spell is. You do not train a school, and it has no ranks.
+Every [spell](magic.md#the-spells) belongs to one of eight **schools of magic**: evocation,
+necromancy, abjuration, restoration, transmutation, enchantment, divination, and illusion. A school
+is the kind of magic a spell is. Illusion is the magic that fools the senses: Glamour is one. You
+do not train a school, and it has no ranks.
 
 A spell's school matters for:
 
 - *[Keen mind](talents-mind.md#talent-keen-mind)* and *[School focus](talents-mind.md#talent-school-focus)*,
-  which you take for one school (or one element) and which help only its spells;
+  which you take for one school (or one element) and which help only its spells, and the
+  gnomes' *[Gnomish illusionist](races.md#race-gnome)*, which helps only illusion spells;
 - your class's affinity with each school, which makes its spells easier or harder to
   [learn](learning-spells.md#your-learning);
 - the colour of a [spell circle](spell-circles.md).

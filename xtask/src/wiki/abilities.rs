@@ -78,6 +78,10 @@ pub(super) fn abilities(content: &Content) -> String {
             }
             Ability::SecondWind => "everyone with the Second wind talent (not while winded)".into(),
             Ability::BloodMagic => "everyone with the Blood magic talent".into(),
+            Ability::Fade => format!(
+                "{} (not while invisible or its cooldown, Invisibility spent, lasts)",
+                table_holders(content, |e| matches!(e, TalentEffect::Stealth(StealthEffect::Fade { .. })))
+            ),
             Ability::ShieldBash => "everyone (usable with a shield in hand)".into(),
             Ability::ThrowVoice => {
                 table_holders(content, |e| matches!(e, TalentEffect::Stealth(StealthEffect::ThrowVoice)))
@@ -182,8 +186,10 @@ pub(super) fn abilities(content: &Content) -> String {
                 let cost = content.action_costs().cost(kind);
                 (aim(a.aim(content)), at_normal_pace(price(cost, BASE_TURN)))
             }
-            // An order is a shout: no time at all.
-            None if a.source() == Source::Ally => (aim(a.aim(content)), "no time".to_string()),
+            // An order is a shout, and a fading free as the duergar monsters': no time at all.
+            None if a.source() == Source::Ally || a == Ability::Fade => {
+                (aim(a.aim(content)), "no time".to_string())
+            }
             // A profession's list: each recipe takes its own time.
             None if matches!(a, Ability::Profession(_)) => {
                 (aim(a.aim(content)), "the recipe's time".to_string())
@@ -262,6 +268,7 @@ fn read_more(content: &Content, a: Ability) -> String {
         Ability::Forage => page("Foraging", "skill-uses.md#foraging"),
         Ability::SecondWind => super::talents::talent_link(content, "second_wind", "Talents"),
         Ability::BloodMagic => super::talents::talent_link(content, "blood_magic", "Talents"),
+        Ability::Fade => page("Duergar", "races.md#race-duergar"),
         Ability::ShieldBash => link(Term::WeaponSkill, "shield_bash", "Weapon skills"),
         Ability::ThrowVoice => page("Throwing your voice", "hearing.md#throwing-your-voice"),
         Ability::Pray => page(
@@ -321,10 +328,17 @@ fn class_holders(content: &Content, active: ClassActive) -> String {
     table_holders(content, |e| e.active() == Some(active))
 }
 
-/// The classes whose table gives a talent with an effect `has` says yes to, from which level, by
-/// name ("bards from level 16").
+/// The races that grant a talent with an effect `has` says yes to ("every gnome"), then the
+/// classes whose table gives one, from which level, by name ("bards from level 16").
 fn table_holders(content: &Content, has: impl Fn(&TalentEffect) -> bool) -> String {
     let book = content.talents();
+    let races = (content.races().list.iter()).filter(|r| {
+        (r.talents.iter())
+            .any(|talent| (book.id(talent)).is_some_and(|t| book.get(t).effects.iter().any(&has)))
+    });
+    let races: Vec<String> = races
+        .map(|r| format!("every {}", r.name.to_lowercase()))
+        .collect();
     let mut who: Vec<(String, u8)> = (content.classes().iter())
         .filter_map(|c| {
             let (level, _) = c.abilities.iter().find(|(_, talent)| {
@@ -348,6 +362,7 @@ fn table_holders(content: &Content, has: impl Fn(&TalentEffect) -> bool) -> Stri
         })
         .collect();
     prestige.sort();
+    parts.splice(0..0, races);
     parts.extend((prestige.iter()).map(|(class, level)| {
         format!(
             "{} from {class} level {level}",

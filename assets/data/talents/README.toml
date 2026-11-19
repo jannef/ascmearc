@@ -342,6 +342,11 @@
 #   second_wind { per_level, at_least, cooldown }   the Second wind ability: per_level hit points
 #                                 per character level back at once (at least at_least), then the
 #                                 cooldown status (an id in ../status/)
+#   fade { cooldown }             the racial active Invisibility (the duergar's, `use:fade`): it
+#                                 fades from sight by the duergar monsters' rule, a creature's
+#                                 `[creature.invisible]` (../creatures/README.toml): Invisible,
+#                                 then Invisibility spent for cooldown seconds (at most 600), while
+#                                 which it cannot again; no time, no mana; Silenced, it cannot
 #   blaze { radius, damage, damage_type, spell, fire, burns, cooldown }   a birth sign's active
 #                                 (Fire's Blaze, `use:blaze`): a burst of radius (1 to 3) around
 #                                 the player, damage dice of damage_type to every creature in it

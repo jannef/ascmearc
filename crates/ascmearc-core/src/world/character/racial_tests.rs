@@ -75,7 +75,10 @@ fn every_racial_talent_asks_for_its_race_and_only_that_race_is_offered_it() {
         ids
     };
     assert_eq!(racial("dwarf"), ["dwarven_resilience", "stone_sense"]);
-    assert_eq!(racial("gnome"), ["gem_lore", "tinkerer"]);
+    assert_eq!(
+        racial("gnome"),
+        ["gem_lore", "gnomish_illusionist", "tinkerer"]
+    );
     assert_eq!(racial("half_orc"), ["ferocity", "orcish_hide"]);
     assert_eq!(racial("half_elf"), ["diplomat"]);
     assert_eq!(racial("halfling"), ["lucky", "small_target"]);

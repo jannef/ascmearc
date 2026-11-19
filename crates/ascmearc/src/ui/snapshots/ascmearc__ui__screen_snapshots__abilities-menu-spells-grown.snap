@@ -14,19 +14,20 @@ expression: "render(case, content.clone())"
           │   e  Magic missile    6d4+1 force, 2 mana, aimed                            │
           │ > f  Arcane bolt      6d6+4 force, shoves on a big hit, 7 mana, aimed       │
           │   g  Blink            4 mana                                                │
-          │   h  Shatter          6d6+4 force, shoves on a big hit, 10 mana, aimed      │
-          │   i  Chain lightning  12d6+3 electricity, may arc, conducts, 14 mana, aimed │
+          │   h  Glamour          6 mana                                                │
+          │   i  Shatter          6d6+4 force, shoves on a big hit, 10 mana, aimed      │
+          │   j  Chain lightning  12d6+3 electricity, may arc, conducts, 14 mana, aimed │
           │ Skills                                                                      │
-          │   j  Decipher         no unknown scroll                                     │
-          │   k  Heal             nothing to treat                                      │
-          │   l  Jewelcraft…                                                            │
-          │   m  Salvage          on something you carry                                │
+          │   k  Decipher         no unknown scroll                                     │
+          │   l  Heal             nothing to treat                                      │
+          │   m  Jewelcraft…                                                            │
+          │   n  Salvage          on something you carry                                │
           │ Weapon skills                                                               │
-          │   n  Shield bash      you hold no shield                                    │
+          │   o  Shield bash      you hold no shield                                    │
           │                                                                             │
           │ A bolt of raw force from your hand toward a place you aim at, through       │
           │ everyone on its line. Length 6.                                             │
           │                                                                             │
           │                                                                             │
-          │ a-n or Enter use   Esc close                                                │
+          │ a-o or Enter use   Esc close                                                │
           └─────────────────────────────────────────────────────────────────────────────┘

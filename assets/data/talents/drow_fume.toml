@@ -1,0 +1,11 @@
+# The drow's Fume (races.toml `talents`): every drow knows the smoke of the deep from the start,
+# cast and paid in mana as spells/fume.toml says (no discount), deepened by its grimoire like any
+# other.
+[[talent]]
+id = "drow_fume"
+name = "Fume"
+tree = "racial"
+granted = true
+description = "The drow's old trick of the dark: you know the Fume spell (paid in mana)."
+effects = [{ kind = "spell", spell = "fume" }]
+systems = ["spells", "mana"]
