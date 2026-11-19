@@ -2,7 +2,7 @@
 source: crates/ascmearc/src/ui/screen_snapshots.rs
 expression: "render(case, content.clone())"
 ---
- You learn Sworn foe (beast).
+ You learn Sworn foe (drow).
  You spend┌─ Abilities ────────────────────────────────────────────────────── Page 1/2 ─┐
           │                                                                             │
           │ Birth sign                                                                  │

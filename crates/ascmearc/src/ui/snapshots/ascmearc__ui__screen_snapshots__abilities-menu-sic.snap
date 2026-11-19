@@ -3,7 +3,7 @@ source: crates/ascmearc/src/ui/screen_snapshots.rs
 expression: "render(case, content.clone())"
 ---
  Your appraise improves. (×236) You learn Early mastery. You learn Far shot. You learn Steady hand.
- You learn Sworn foe┌─ Abilities ─────────────────────────────────── Page 1/2 ─┐(archer). --more--
+ You learn Sworn foe┌─ Abilities ─────────────────────────────────── Page 1/2 ─┐oe --more--
                     │                                                          │
                     │ Birth sign                                               │
                     │ > a  Transfixing stare  at a place you see               │

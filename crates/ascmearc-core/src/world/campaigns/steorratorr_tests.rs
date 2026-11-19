@@ -500,7 +500,7 @@ fn ready() -> (World, Replay) {
         &mut replay,
         &format!(
             "quest_done:taken_under_the_hill quest_done:rowan_for_the_wizard \
-             quest_given:{QUARREL} xp:400000 levelup:auto rank:long_blades:10 \
+             quest_given:{QUARREL} xp:600000 levelup:auto rank:long_blades:10 \
              rank:sword_and_board:10 use_tool"
         ),
     );

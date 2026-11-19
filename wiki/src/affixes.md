@@ -102,7 +102,8 @@ nothing against anyone else. Banes roll on [melee weapons](objects.md#class-mele
 [missile weapons](objects.md#class-missile-weapons), and [ammunition](ammunition.md#magic-ammunition),
 from item level 1, with the tiers in the suffix table above.
 
-There is one bane for each kind of creature below. Each one is rare: they have a weight of 5
+There is one bane for each kind of creature below: the same kinds
+[Sworn foe](talents-fighting.md#talent-sworn-foe) lets you swear against. Each one is rare: they have a weight of 5
 each, so all twenty together turn up about as often as one ordinary suffix (weight 100). An item
 holds at most one bane. On a shot, a bow's bane and its arrows' both count, each against its own
 kind: a bow of orc-bane shooting arrows of undead-bane is better against both.

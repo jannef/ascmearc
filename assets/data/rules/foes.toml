@@ -1,0 +1,18 @@
+# The kinds of creature (`content/foes.rs`; docs/dev/quests.md "Kinds of creature"): the
+# creature tags that name a kind of creature one can be sworn against or forge a bane for. The
+# one list for every place that offers a kind of creature: the choice of a talent taken for a
+# kind (`choice = "tag"`: Sworn foe, Slayer's Oath, the dwarves' free Sworn foe), and the bane
+# affixes (affixes/of_bane.toml makes one per kind, in this order).
+#
+# kinds   creature tags, each carried by some creature (creatures/): peoples (orc, drow) and
+#         broad kinds of monster (undead, fiend, beast). A tag that only marks a trait
+#         (sapient, eyeless), a role (archer, caster, cultist), an element (fire, ice), a
+#         campaign's group (tower_wizard, outlaw, marsh-thing), or a narrower kind of one listed
+#         here (skeleton under undead, demon under fiend) is no kind and stays out.
+#
+# Optional: without it there is no kind to choose and no bane.
+kinds = [
+  "undead", "fiend", "elemental", "spirit", "construct", "giant", "troll", "ogre", "orc",
+  "hobgoblin", "goblin", "kobold", "drow", "duergar", "dragon", "fey", "hag", "beast", "spider",
+  "vermin",
+]

@@ -250,10 +250,12 @@ pub(super) fn factions(content: &Content) -> String {
 }
 
 /// Every creature tag, by tag: the word a kill quest names (`tag:goblin`),
-/// its plural as quests say it, and the creature types that carry it, by name (a tag carried
-/// by one type is listed too).
+/// its plural as quests say it, whether it is a kind of creature (`data/rules/foes.toml`: Sworn
+/// foe may be sworn against it and a bane is made for it), and the creature types that carry it,
+/// by name (a tag carried by one type is listed too).
 pub(super) fn creature_tags(content: &Content) -> String {
-    let mut out = String::from("| Tag | Said | Creatures |\n|---|---|---|\n");
+    let mut out =
+        String::from("| Tag | Said | Sworn foe, bane | Creatures |\n|---|---|:---:|---|\n");
     for tag in content.tags() {
         let mut names: Vec<&str> = (content.tagged(tag))
             .filter(|&c| content.family(c) == c)
@@ -266,7 +268,8 @@ pub(super) fn creature_tags(content: &Content) -> String {
         }
         names.sort_by_cached_key(|n| n.to_lowercase());
         let said = content.plural(&spoken(tag));
-        let _ = writeln!(out, "| `{tag}` | {said} | {} |", names.join(", "));
+        let foe = yes(content.is_foe_kind(tag));
+        let _ = writeln!(out, "| `{tag}` | {said} | {foe} | {} |", names.join(", "));
     }
     out
 }
@@ -1447,17 +1450,23 @@ mod tests {
         let table = creature_tags(&content);
         assert!(
             table.contains(
-                "| `goblin` | goblins | goblin, goblin archer, goblin chief, goblin firebomber, goblin wizard, \
+                "| `goblin` | goblins | yes | goblin, goblin archer, goblin chief, goblin firebomber, goblin wizard, \
                  hobgoblin, hobgoblin archer, hobgoblin captain, hobgoblin legionnaire, hobgoblin sergeant, \
                  hobgoblin warcaster, hobgoblin warlord |"
             ),
             "{table}"
         );
         assert!(
-            table.contains("| `marsh-thing` | marsh things |"),
+            table.contains("| `marsh-thing` | marsh things | no |"),
             "{table}"
         );
-        assert!(table.contains("| `undead` | undead |"), "{table}");
+        assert!(table.contains("| `undead` | undead | yes |"), "{table}");
+        for not in ["sapient", "tower_wizard", "cultist", "eyeless"] {
+            let row = (table.lines())
+                .find(|l| l.starts_with(&format!("| `{not}` | ")))
+                .unwrap_or_else(|| panic!("{not}: a row"));
+            assert!(row.contains(" | no | "), "{row}");
+        }
     }
 
     /// Every family of the numbers' pages has creatures, and every creature is in one (#1550).

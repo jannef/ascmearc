@@ -2,7 +2,7 @@
 source: crates/ascmearc/src/ui/screen_snapshots.rs
 expression: "render(case, content.clone())"
 ---
- You learn Sworn foe (deep-gnome).
+ You learn Sworn foe (fiend).
  Fire roars from your throat! You feel drained.
 
 

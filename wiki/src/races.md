@@ -178,7 +178,8 @@ long sword better still, and a sword with a shield worse twice over.
 A dwarf never forgets a wrong. Every dwarf gets a free
 [Sworn foe](talents-fighting.md#talent-sworn-foe) when they are made, and another at levels 10, 20,
 30, 40, and 50. Each time, you choose the kind of creature to swear against, just as when you pick
-Sworn foe yourself. These come on top of your other [talents](talents.md#when-you-get-a-talent):
+Sworn foe yourself. The kinds you can choose are the [sorts of creatures](quests.md#sorts-of-creatures)
+marked "yes" there: peoples such as orcs and drow, and kinds of monster such as the undead. These come on top of your other [talents](talents.md#when-you-get-a-talent):
 at creation the Talents step asks for the free one first, and at those levels the
 [level-up screen](experience.md#levelling-up) asks for it after the skill rolls. You can still pick
 Sworn foe with an ordinary talent for more kinds.

@@ -94,7 +94,7 @@ snapshots `quest-offer-rolled`, `quest-log-rolled`), and `world/people/quest_rol
 fixtures in Cēaptūn (Godgifu gives a creature pick, a tag pick, and two variants revealing
 Fennmynster and Fyrdelf) and the arena (a kobold made the demilich, a shared unique).
 **Bounties' talent** (the `bounties` tag folded into `talk` and `combat`, #773; Quarry sense was
-cut in #774): Sworn foe (weaponcraft, `choice = "tag"`, a new `talent::Choice::Tag` over `Content::tags`;
+cut in #774): Sworn foe (weaponcraft, `choice = "tag"`, a new `talent::Choice::Tag` over the kinds of creature, `Content::foe_kinds`;
 `sworn_foe { to_hit, damage }`, read in `World::favoured` beside Favoured prey; the oath table's
 `sworn_foes`, docs/dev/oaths.md). Tests:
 `world/people/quest_roll_tests.rs`.
@@ -114,6 +114,16 @@ tagged types a run of the quest's campaign can meet (`world::people::quest::memb
 progress says the same noun. **Tag new creatures**: a new creature of a group carries the
 group's tag (every creature of the `undead` faction carries `undead`; `content::tag`'s test
 checks it), and a role tag where one fits (the list is in `assets/data/creatures/README.toml`).
+**Kinds of creature** (`content/foes.rs`, `data/rules/foes.toml`): the one list of the tags that
+name a kind of creature (peoples and broad kinds of monster: `orc`, `undead`), the only tags a
+`choice = "tag"` talent offers (`Choice::Tag` over `Content::foe_kinds`, sorted: Sworn foe,
+Slayer's Oath, the dwarves' free Sworn foe) and the tags the bane affixes are made for (in its
+order; `docs/dev/magic-items.md` "Banes"). A trait (`sapient`, `eyeless`), a role (`archer`,
+`caster`, `cultist`), an element (`fire`), a campaign's group (`tower_wizard`, `outlaw`,
+`marsh-thing`), or a narrower kind of one listed (`skeleton`, `demon`) stays out; each kind must
+be carried by some creature (`foes::check_carried`). Without the file there is no kind and no
+bane. Tests: `content/foes.rs`, `world/people/quest_roll_tests.rs`
+(`sworn_foe_hits_its_kind_surer_and_harder`).
 Tests: `content/tag.rs` (the word rule, the built-in members, the undead check),
 `world/creatures/tag_tests.rs` (levels summed, a bled-out one counts, a trap's or another's kill does not,
 the override, `what`, load checks of tag targets and of creature tags); the wiki table is

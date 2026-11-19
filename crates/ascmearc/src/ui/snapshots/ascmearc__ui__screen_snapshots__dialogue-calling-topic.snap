@@ -1,8 +1,8 @@
 ---
 source: crates/ascmearc/src/ui/screen_snapshots.rs
-expression: "render(&case, content)"
+expression: "render(case, content)"
 ---
- You learn Sworn foe (demon).
+ You learn Sworn foe (giant).
  The old hermit says: "Hm? A visitor. Sit, if you can find a stone nobody's sitting on."
 
 

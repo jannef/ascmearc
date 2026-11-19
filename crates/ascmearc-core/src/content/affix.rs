@@ -619,8 +619,8 @@ pub struct AffixDef {
     pub damage_type: Option<DamageTypeId>,
     /// The resource a pooled affix ([`Effect::is_pooled`]) changes: `stamina`, `rage`.
     pub resource: Option<ResourceId>,
-    /// The creature tag a [`Effect::Bane`] affix is the bane of (`orc`): one affix per tag,
-    /// made from one entry's `tags`.
+    /// The creature tag a [`Effect::Bane`] affix is the bane of (`orc`): one affix per kind of
+    /// creature ([`super::Content::foe_kinds`]), made from one entry.
     pub tag: Option<String>,
     /// What kinds of item may roll it.
     pub bases: Vec<ItemKind>,
@@ -853,11 +853,6 @@ struct AffixSpec {
     damage_type: Option<String>,
     /// The resource a pooled affix changes (an id in `data/resources.toml`).
     resource: Option<String>,
-    /// The creature tags an affix of effect `bane` is made for: one affix per tag, its `id` and
-    /// `name` with `{tag}` put in (`of_{tag}_bane`, `of {tag}-bane`), its `weight` the whole
-    /// family's, shared evenly among them.
-    #[serde(default)]
-    tags: Vec<String>,
     tiers: Vec<TierSpec>,
 }
 
@@ -872,7 +867,7 @@ struct TierSpec {
 
 /// How the affix table resolves the ids it names. A table content has none of is `None`, and the
 /// affixes that would name one of its entries are left out: skill affixes without skills, typed
-/// ones without damage types, pooled ones without resources.
+/// ones without damage types, pooled ones without resources, banes without kinds of creature.
 #[allow(clippy::type_complexity)]
 pub(super) struct Lookups<'a> {
     /// Light preset ids (a light's tiers).
@@ -883,6 +878,9 @@ pub(super) struct Lookups<'a> {
     pub damage_type: Option<&'a dyn Fn(&str) -> Option<DamageTypeId>>,
     /// Resource ids (`resource`).
     pub resource: Option<&'a dyn Fn(&str) -> Option<ResourceId>>,
+    /// The kinds of creature (`data/rules/foes.toml`): an affix of effect `bane` is made once
+    /// per kind; none, and there is no bane.
+    pub foes: &'a [String],
 }
 
 /// Parses the affix table: `files` is `ContentFiles::table("affixes")` (`data/affixes.toml`,
@@ -975,38 +973,29 @@ pub(super) fn parse<'a>(
 }
 
 impl AffixSpec {
-    /// The affixes this entry makes: itself, or for a bane one per tag (`tags`), in the order
-    /// named, each with its share of the family's weight (at least 1).
-    fn expand(mut self, kind: AffixKind, lookups: &Lookups<'_>) -> Result<Vec<AffixDef>, String> {
-        let tags = std::mem::take(&mut self.tags);
-        let bane = self.effect == Effect::Bane.id();
-        match (bane, tags.is_empty()) {
-            (false, true) => return Ok(vec![self.resolve(kind, lookups)?]),
-            (false, false) => return Err("`tags` is for affixes of effect `bane`".into()),
-            (true, true) => return Err("effect `bane` names its `tags`".into()),
-            (true, false) => {}
+    /// The affixes this entry makes: itself, or for a bane one per kind of creature
+    /// (`lookups.foes`; none without them), in their order, each with its share of the
+    /// family's weight (at least 1).
+    fn expand(self, kind: AffixKind, lookups: &Lookups<'_>) -> Result<Vec<AffixDef>, String> {
+        if self.effect != Effect::Bane.id() {
+            return Ok(vec![self.resolve(kind, lookups)?]);
         }
         const TAG: &str = "{tag}";
         if !self.id.contains(TAG) || !self.name.contains(TAG) {
             return Err(format!("a bane's `id` and `name` hold `{TAG}`"));
         }
         let template = self.resolve(kind, lookups)?;
-        let share = (template.weight / tags.len() as u32).max(1);
-        let mut defs: Vec<AffixDef> = Vec::new();
-        for tag in tags {
-            super::tag::check(&tag)?;
-            if defs.iter().any(|d| d.tag.as_deref() == Some(tag.as_str())) {
-                return Err(format!("tag `{tag}` twice"));
-            }
-            defs.push(AffixDef {
+        let kinds = lookups.foes;
+        let share = (template.weight / kinds.len().max(1) as u32).max(1);
+        Ok((kinds.iter())
+            .map(|tag| AffixDef {
                 id: template.id.replace(TAG, &tag.replace('-', "_")),
-                name: template.name.replace(TAG, &super::tag::spoken(&tag)),
+                name: template.name.replace(TAG, &super::tag::spoken(tag)),
                 weight: share,
-                tag: Some(tag),
+                tag: Some(tag.clone()),
                 ..template.clone()
-            });
-        }
-        Ok(defs)
+            })
+            .collect())
     }
 
     fn resolve(self, kind: AffixKind, lookups: &Lookups<'_>) -> Result<AffixDef, String> {
@@ -1161,7 +1150,8 @@ tool = ["Tooth"]
     }
 
     /// Parses `files` as the affix table, with a light `glow`, a skill `stealth`, a damage type
-    /// `fire`, and resources `stamina` and `rage`.
+    /// `fire`, and resources `stamina` and `rage`, and the kinds of creature `orc`, `undead`, and
+    /// `marsh-thing`.
     fn parse_files<'a>(
         files: impl IntoIterator<Item = (&'a str, &'a str)>,
     ) -> Result<Affixes, ContentError> {
@@ -1173,11 +1163,13 @@ tool = ["Tooth"]
             "rage" => Some(ResourceId(1)),
             _ => None,
         };
+        let foes = ["orc", "undead", "marsh-thing"].map(String::from);
         let lookups = Lookups {
             light: &light,
             skill: Some(&skill),
             damage_type: Some(&damage),
             resource: Some(&resource),
+            foes: &foes,
         };
         parse(files, &lookups)
     }
@@ -1474,26 +1466,26 @@ tiers = [{ level = 1, min = 1, max = 2 }]
             skill: None,
             damage_type: None,
             resource: None,
+            foes: &[],
         };
         let text = format!("{HEAD}\n{two}");
         let a = parse([("data/affixes.toml", text.as_str())], &lookups).expect("valid");
         assert!(a.is_empty());
     }
 
-    /// A bane entry makes one affix per tag, its id and name the tag's, the weight shared; tags
-    /// on another effect, a bane without them, a template without `{tag}`, and a tag twice are
-    /// refused.
+    /// A bane entry makes one affix per kind of creature, in their order, its id and name the
+    /// kind's, the weight shared; a template without `{tag}` and a `tags` list of its own (the
+    /// kinds have one home, `data/rules/foes.toml`) are refused.
     #[test]
-    fn banes_are_made_one_per_tag() {
-        let bane = |id: &str, tags: &str| {
+    fn banes_are_made_one_per_kind() {
+        let bane = |id: &str, more: &str| {
             format!(
                 "[[suffix]]\nid = \"{id}\"\nname = \"of {{tag}}-bane\"\neffect = \"bane\"\n\
-                 category = \"bane\"\nbases = [\"weapon\", \"ammo\"]\nweight = 100\n{tags}\
+                 category = \"bane\"\nbases = [\"weapon\", \"ammo\"]\nweight = 100\n{more}\
                  tiers = [{{ level = 1, min = 1, max = 2 }}]\n"
             )
         };
-        let tags = "tags = [\"orc\", \"undead\", \"marsh-thing\"]\n";
-        let a = parse_with(&bane("of_{tag}_bane", tags)).expect("valid");
+        let a = parse_with(&bane("of_{tag}_bane", "")).expect("valid");
         let made: Vec<(&str, &str, Option<&str>, u32)> = (a.all().iter())
             .map(|d| (d.id.as_str(), d.name.as_str(), d.tag.as_deref(), d.weight))
             .collect();
@@ -1511,21 +1503,14 @@ tiers = [{ level = 1, min = 1, max = 2 }]
             ]
         );
         assert!((a.all().iter()).all(|d| d.effect == Effect::Bane && d.category == "bane"));
-        let orc = "tags = [\"orc\"]\n";
-        let tier = "{ level = 1, min = 1, max = 1 }";
         for (text, needle) in [
-            (bane("of_{tag}_bane", ""), "names its `tags`"),
-            (bane("of_bane", orc), "hold `{tag}`"),
+            (bane("of_bane", ""), "hold `{tag}`"),
             (
-                bane("of_{tag}_bane", "tags = [\"orc\", \"orc\"]\n"),
-                "twice",
+                bane("of_{tag}_bane", "tags = [\"orc\"]\n"),
+                "unknown field `tags`",
             ),
             (
-                one("suffix", "x", "damage", "\"weapon\"", orc, tier),
-                "`tags` is for affixes of effect `bane`",
-            ),
-            (
-                bane("of_{tag}_bane", orc).replace("\"ammo\"", "\"ring\""),
+                bane("of_{tag}_bane", "").replace("\"ammo\"", "\"ring\""),
                 "cannot be on rings",
             ),
         ] {

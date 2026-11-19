@@ -106,6 +106,10 @@ gives it, and the kinds of it.
   vermin.
 - A creature's sort goes with its kind, whoever it sides with: a
   [kobold](creatures.md#creature-kobold) is always a kobold.
+- Only the sorts marked "yes" are peoples or kinds of monster you can swear against with
+  [Sworn foe](talents-fighting.md#talent-sworn-foe), and only they have a
+  [bane](affixes.md#banes). The rest say something else about a creature: that it can think
+  (sapient), what it does (archer, caster, cultist), or where it is found (marsh thing).
 
 {{#include generated/creature-tags.md}}
 

@@ -128,7 +128,9 @@ type's) (`content/creature.rs`, checked in `content/load_creatures.rs`). No crea
 by the player's race: hostile kobolds attack a kobold player as they would anyone, and good
 creatures greet a drow coldly only when the player's alignment is Evil or worse, never for their
 race (`WorldState::race_of` is the one lookup of the player's race, and no stance reads it). Its `tags` (`content/tag.rs`, #441) are plain singular
-words for quests and rules (`tag:goblin`, `docs/dev/quests.md` "Creature tags"), never the
+words for quests and rules (`tag:goblin`, `docs/dev/quests.md` "Creature tags"; the ones that
+name a kind of creature, offered by Sworn foe and the banes, are `data/rules/foes.toml`'s,
+`docs/dev/quests.md` "Kinds of creature"), never the
 faction: **tag every new creature** of a group or role listed in the README (an undead of the
 `undead` faction must carry `undead`: `content::tag`'s test). Creature types live in `data/creatures/`,
 one file per creature named by its id (`kobold.toml`; the field documentation is in its

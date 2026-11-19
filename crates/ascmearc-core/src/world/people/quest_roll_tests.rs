@@ -551,10 +551,22 @@ fn sworn_foe_hits_its_kind_surer_and_harder() {
         (profile.to_hit + 1, profile.bonus + 2)
     );
     assert_eq!(w.favoured(player, rat, profile.clone()), profile);
-    // Its choices are the creature tags.
-    let def = content
-        .talents()
-        .get(content.talents().id("sworn_foe").expect("a talent"));
-    let options = def.choice.expect("a choice").options(&content);
-    assert!(options.contains(&"kobold".to_string()) && options.contains(&"undead".to_string()));
+    // Its choices are the kinds of creature (`data/rules/foes.toml`), and nothing but them: no
+    // trait, role, or campaign's group a creature also carries.
+    for id in ["sworn_foe", "slayers_oath"] {
+        let def = content
+            .talents()
+            .get(content.talents().id(id).expect("a talent"));
+        let kind = def.choice.expect("a choice");
+        let options = kind.options(&content);
+        let mut kinds = content.foe_kinds().to_vec();
+        kinds.sort();
+        assert_eq!(options, kinds, "{id}");
+        assert!(options.contains(&"kobold".to_string()) && options.contains(&"undead".to_string()));
+        for not in ["sapient", "tower_wizard", "eyeless", "cultist"] {
+            assert!(content.tags().contains(&not), "{not} is a tag");
+            assert!(!options.iter().any(|o| o == not), "{id}: {not} offered");
+            assert_eq!(kind.name(&content, not), None, "{not}");
+        }
+    }
 }
