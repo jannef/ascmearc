@@ -40,10 +40,14 @@ impl WorldState {
 }
 
 impl World {
-    /// Uses the tool ready in the Tool slot without a direction: turns a light there to its next
-    /// mode (the module docs). Refused, taking no time, without one (a digging tool is used
+    /// Uses the tool ready in the Tool slot without a direction: smokes a pipe there
+    /// ([`World::start_smoke`]), else turns a light there to its next mode (the module docs). Refused, taking no time, without one (a digging tool is used
     /// toward a direction, `dig:DIR`).
     pub(in crate::world) fn use_tool(&mut self) -> Spent {
+        // A pipe ready is smoked (`health/pipe.rs`).
+        if self.state.player().ready_pipe(&self.content).is_some() {
+            return self.start_smoke();
+        }
         let player = self.state.player;
         let Some(item) = self.state.player().ready_light(&self.content) else {
             self.say("You have no light ready to use.");

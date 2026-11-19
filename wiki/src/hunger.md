@@ -27,8 +27,9 @@ You never see the count, only how hungry you are.
   points](hit-points.md#hit-points) as time passes until you eat or starve to death.
 - **Satiated** does nothing. **Bloated** slows everything you do, as a
   [burden](burden.md#burden-levels) does, so wait for it to pass (a halfling it never slows: see
-  [A halfling's second breakfast](#a-halflings-second-breakfast)). Eating more than your stomach
-  can hold is **overeating**: you may vomit, which leaves you hungry and feeds you nothing.
+  [A halfling's second breakfast](#a-halflings-second-breakfast)), or, as a halfling, smoke it off
+  with your [pipe](pipe.md#smoking-it). Eating more than your stomach can hold is
+  **overeating**: you may vomit, which leaves you hungry and feeds you nothing.
 
 You cannot choke to death on food.
 

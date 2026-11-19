@@ -218,11 +218,21 @@ pub fn worn_powers<'c>(
     })
 }
 
-/// Whether affix `a` may roll on `def`, an item of `kind`: its bases name the kind, and the item
-/// has what the effect changes (a range to lengthen, a bow's Strength to lower, a chance to break,
-/// a Dexterity limit, Armour, Shield, or a spell cost surcharge to ease).
+/// Whether affix `a` may roll on `def`, an item of `kind`: its bases name the kind (for a pipe,
+/// any armour kind: [`ItemKind::rolls_as_armour`]), and the item has what the effect changes (a
+/// range to lengthen, a bow's Strength to lower, a chance to break, a Dexterity limit, Armour,
+/// Shield, a spell cost surcharge to ease, or on a pipe a Protection to raise).
 pub fn may_roll(a: &AffixDef, kind: ItemKind, def: &ObjectDef) -> bool {
-    let has = match a.effect {
+    if kind.rolls_as_armour() {
+        let local = matches!(a.effect, Effect::Protection) && def.protection == 0;
+        return !local && may_roll_on(a, def) && a.bases.iter().any(|k| k.is_armour());
+    }
+    may_roll_on(a, def) && a.bases.contains(&kind)
+}
+
+/// Whether `def` has what affix `a`'s effect changes ([`may_roll`]).
+fn may_roll_on(a: &AffixDef, def: &ObjectDef) -> bool {
+    match a.effect {
         Effect::Range => def.range.is_some(),
         Effect::Draw => def.attack.is_some_and(|at| at.strength.is_some()),
         Effect::Durability => def.breaks > 0,
@@ -231,8 +241,7 @@ pub fn may_roll(a: &AffixDef, kind: ItemKind, def: &ObjectDef) -> bool {
         Effect::Shield => def.shield > 0,
         Effect::SpellEase => def.spell_cost_percent > 0,
         _ => true,
-    };
-    has && a.bases.contains(&kind)
+    }
 }
 
 #[cfg(test)]

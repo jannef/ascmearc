@@ -215,6 +215,10 @@ pub(super) fn recipes_of(content: &Content, skill: &str) -> String {
             })
             .collect();
         let mut needs = Vec::new();
+        // One race's own craft (the halfling's pipe): only that race sees the recipe.
+        if let Some(race) = r.race.as_deref().and_then(|id| content.race(id)) {
+            needs.push(format!("to be a {}", race.name.to_lowercase()));
+        }
         if let Some(t) = r.station {
             let t = content.terrain(t);
             needs.push(link(Term::Terrain, &t.id, &t.name));
@@ -280,6 +284,32 @@ pub(super) fn recipes_of(content: &Content, skill: &str) -> String {
          and one piece always covers at least one. The last column is the chance the work comes \
          out at all (for a batch, all of it), with an average stat.\n",
     );
+    out
+}
+
+/// The materials that make a recipe's made item finer (`[recipe.finer]`: the halfling's pipe's
+/// wood and trim), a row each: the recipe, the part, the material, the grades it adds.
+pub(super) fn recipes_finer(content: &Content) -> String {
+    let mut out =
+        String::from("| Recipe | Part | Material | Grades it adds |\n|---|---|---|:---:|\n");
+    for r in &content.recipes().list {
+        let Some(result) = r.result.as_ref() else {
+            continue;
+        };
+        let def = content.object(result.object);
+        for &(part, material, grades) in &r.finer {
+            let name = (def.parts[part].part).map_or("the item".to_string(), |p| {
+                content.part_defs()[usize::from(p.0)].name.clone()
+            });
+            let _ = writeln!(
+                out,
+                "| {} | {} | {} | {grades} |",
+                r.name,
+                capital(&name),
+                capital(&content.material(material).name),
+            );
+        }
+    }
     out
 }
 

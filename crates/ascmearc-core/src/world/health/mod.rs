@@ -13,6 +13,7 @@ mod heal_harm;
 mod hold;
 mod hunger;
 mod magic_heal;
+pub(in crate::world) mod pipe;
 pub(in crate::world) mod potion;
 mod regen;
 pub(in crate::world) mod rot;
@@ -34,6 +35,7 @@ cfg_if! {
         mod heal_tests;
         mod hold_tests;
         mod hunger_tests;
+        mod pipe_tests;
         mod magic_heal_tests;
         mod potion_gamble_tests;
         mod potion_status_tests;

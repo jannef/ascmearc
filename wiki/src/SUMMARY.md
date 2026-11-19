@@ -114,6 +114,7 @@
 - [Potions](potions.md)
 - [Scrolls](scrolls.md)
 - [Your lantern](lantern.md)
+- [Your pipe](pipe.md)
 - [Materials](materials.md)
 - [Gems](gems.md)
 - [Shops](shops.md)

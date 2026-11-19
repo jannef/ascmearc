@@ -82,6 +82,8 @@ when empty) on `ProfessionText` (`Recipes::profession`), and the bands (`RecipeS
 | `station` | a terrain id that must stand beside the maker |
 | `knife`, `launcher` | a knife carried; a launcher ready that shoots the result (its `ammo`) |
 | `from` | the trained value it is listed from (default 0) |
+| `race` | the race (an id in `data/races.toml`) whose own craft it is: only that race sees the row or makes it (`craft::of_race`; "Pipes" below) |
+| `finer` | `[recipe.finer]`: per part, the materials that raise a made item's grade and by how many grades (1 to 3; "Pipes" below) |
 
 Checked at load (`recipe::parse`; refusals tested in `content/recipe_tests.rs`): a file in a
 skill's directory (the directory a known skill), one `[[recipe]]` a file (a file with none, a
@@ -273,7 +275,7 @@ nothing that shoots is a smith's.
 | heavy_crossbow | the same | the same | 16 | 7200 | 60 | 23 |
 | sling | main `{ stock = ["hide"] }` | — | 8 | 600 | 0 | 1 leather hide |
 | lute | main `{ stock = ["wood"] }` | 1 sinew | 14 | 7200 | 40 | 8 |
-| pipe | main `{ stock = ["wood"] }` | — | 7 | 600 | 0 | 1 |
+| pipe | main `{ stock = ["wood"] }`, mouthpiece `{ stock = ["bone", "amber"], optional = true }` | — | 7 | 600 | 0 | 1, a shard or lump of trim ("Pipes" below) |
 
 - **A stock input** (`InputKind::Material`, `InputKind::Group`; `craft::input_fits`, the one
   test of a stack against any input; an object input through `craft::known_object`, below) is a wizard step like an object input (`CraftStepKind::Input`,
@@ -288,12 +290,50 @@ nothing that shoots is a smith's.
   holds the count: "no sinew to hand", "no metal to hand" (a composite bow with one length too).
 - **The composite bow** keeps its base material, wood, so its stock counts are the design's (5
   horn shards or 5 billets); the horn one is "a horn composite bow" (better: horn's `damage` is
-  -1 to wood's -2) and the wooden one plain "a composite bow". The lute and the pipe have no
-  `Aspect`, so they come out plain whatever the margin; the bows, crossbows, and sling take the
-  bands.
+  -1 to wood's -2) and the wooden one plain "a composite bow". The lute has no
+  `Aspect`, so it comes out plain whatever the margin; the bows, crossbows, and sling take the
+  bands, and so does the pipe (its one aspect is its make: "Pipes" below).
 - Tests: `world/crafting/craft_bow_tests.rs` (the design's counts, the rows' words, the sinew and metal
   steps, the greyings and refusals with no time, a long bow made with its sinew spent and no part
   of it, the ingot chosen spent, the composite bow's names, the plain lute).
+## Pipes
+
+`recipes/woodcraft/pipe.toml`, the halfling's own (`race = "halfling"`): a dwarf or a human
+trained in Woodcraft never sees the row (`craft::recipe_rows` takes the player's race,
+`PerceptionView::own_race`, and `craft::of_race` filters), and `craft:pipe` from one is refused
+with no time, "You know no such recipe." (`World::start_craft`). The loader refuses an unknown
+race, and `race` or `finer` on a `use` recipe.
+
+- **The parts** (`objects/pipe.toml`): the `bowl` (main, `made_of = ["wood"]`: wood, hardwood,
+  ironwood) and the `mouthpiece` (15 % of the 60 g, of the bowl's wood by default; its own
+  `made_of` the woods, bone, horn, ivory, dragonbone, and amber). The mouthpiece's step is
+  `{ stock = ["bone", "amber"], optional = true }`: the `bone` group on its `made_of` (bone,
+  horn, ivory, dragonbone; not chitin) and amber (Jewelcraft's stock, any profession's stock
+  serving a table of stock). None leaves it untrimmed: the recipe's `brittle` is the pipe itself,
+  so `craft_make::resolve` makes a pipe whose every part is of the first chosen material that
+  fits, the bowl's wood (no code: the brittle path).
+- **Quality**: a pipe has one `Aspect`, `Make` (`magic/worked.rs`: `Aspect::Make.of(def)` for a
+  `kind = "pipe"`; it changes no number), so the bands grade it as anything with an aspect, and
+  a Fine, Marvellous, or Masterwork pipe is named so, worth ×2, ×3, ×5, and holds +0, +1, +2
+  affixes (`magic::capacity`; ironwood's `binding` +1 besides). `finer` then raises a made
+  pipe's grade (`RecipeDef::finer_by` over the made item's parts, `Resolved::finer`,
+  `Grade::raised` in `make_out`), to a Masterwork at most; a failure stays one:
+
+| Part | Material | Grades |
+|---|---|---|
+| bowl | wood | 0 |
+| bowl | hardwood | +1 |
+| bowl | ironwood | +2 |
+| mouthpiece | bone, horn, amber | +1 |
+| mouthpiece | ivory, dragonbone | +2 |
+| mouthpiece | none (the bowl's wood) | 0 |
+
+  The work's difficulty is the recipe's 7 plus the bowl's `work` (wood −1, hardwood 0, ironwood
+  +3), as any recipe's main part.
+- Tests: `world/crafting/craft_pipe_tests.rs` (a dwarf never sees or makes it, a halfling's
+  steps and the whole work, every wood and trim's grade, a failure, the capacity);
+  `content/recipe_tests.rs` (the fields and their refusals).
+
 ## Armour and tools
 
 P9 (#1354; `docs/design/recipes.md` §6 "Shields", "Body armour", "Helmets", "Cloaks, gloves,

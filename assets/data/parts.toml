@@ -24,6 +24,10 @@ id = "blade"
 name = "blade"
 
 [[part]]
+id = "bowl"
+name = "bowl"
+
+[[part]]
 id = "chain"
 name = "chain"
 
@@ -51,6 +55,10 @@ adjective = "inlaid"
 [[part]]
 id = "lining"
 name = "lining"
+
+[[part]]
+id = "mouthpiece"
+name = "mouthpiece"
 
 [[part]]
 id = "pendant"
