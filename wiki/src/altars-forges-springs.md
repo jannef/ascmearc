@@ -73,7 +73,8 @@ the anvil only tells you so. If you are, walking into the anvil opens your
 [recipe](skill-uses.md#professions); away from an anvil it is greyed out "no anvil beside you").
 Then pick something of metal you carry: a weapon, a missile weapon, armour, or a shield whose main part is metal, as its
 [description](objects.md#what-an-object-is) says. Leather, wood, and bone will not do, and neither
-will [ammunition](ammunition.md), rings, or amulets.
+will rings, amulets, or [ammunition](ammunition.md#fine-marvellous-and-masterwork-ammunition),
+whose make is set when it is found or fletched.
 
 An attempt is ten minutes of work. Anything that would stop a
 [rest](resting.md#how-resting-works) stops it. The item is then untouched and the attempt does not

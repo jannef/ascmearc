@@ -76,8 +76,9 @@ The deeper you go, the better made the things you find, so they can bear more. F
 [item level](#finding-them) 3 on, every weapon, missile weapon, shield, and piece of armour you
 find (on the floor, in a chest or a hoard, in a den or a room) may be **Fine**, **Marvellous**, or
 **Masterwork**, never damaged. What creatures carry gets the same chances on top of its
-[own](creature-gear.md). Rings, amulets, ammunition, and the
-[gear you start with](starting-kit.md) are not affected. Deeper finds are also set with a
+[own](creature-gear.md). A stack of [ammunition](ammunition.md#fine-marvellous-and-masterwork-ammunition)
+you find takes the same chances, the whole stack at once (what creatures carry of it stays plain).
+Rings, amulets, and the [gear you start with](starting-kit.md) are not affected. Deeper finds are also set with a
 [gem](gems.md) more often, for the kinds of item that ever are:
 
 {{#include generated/gear-depth.md}}

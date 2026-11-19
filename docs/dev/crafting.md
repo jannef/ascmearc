@@ -681,7 +681,12 @@ from some creature and every flask input is stocked by a generated shop. Alchemy
 
 A result whose `count` is above 1, or `"fletch"`, is **counted** (`craft_make::is_counted`;
 `docs/design/professions.md` §7, `recipes.md` §4): the arrowheads, the arrows and bolts, the sling
-stones, the flaming arrows. No grades:
+stones, the flaming arrows. No grades, but for ammunition (`kind = "ammo"`: arrows, bolts, sling
+stones; not the brittle or flaming ones): `make_batch` gives the whole batch the grade `grade`
+gives a graded item from the same check (Master's hand's `graded_margin`, `finer`), its make fixed
+by the grade with no draw (`worked::ammunition_make`; docs/dev/special-rooms.md "Ammunition's
+make"), so "You make 6 Fine steel arrows." joins Fine steel arrows and nothing else. No Maker's
+mark on a batch.
 
 - **The batch** (`resolve`): its most (`batch_most`: the dice's most, or `fletch::fletch_most`),
   at most what each stack chosen covers: a `per_made` input's count over its `count`, a stock

@@ -489,6 +489,25 @@ reads `Mods::local` for a worked item too. A damaged item adds nothing to either
 ahead of the rest in `magic/name.rs` (`ahead`). The showcase's `forge` scenario (a dwarf
 craftsperson; arms and armour on the floor) is the place to try it.
 
+**Ammunition's make** (the owner: "stacks of ammunition also spawn with quality, and they get a
+quality depending on the crafting roll, but they can't be tempered"): `worked::ammunition(def)`
+is `kind = "ammo"` (arrows, bolts, sling stones; the brittle and flaming ones have no kind and
+stay plain). `Aspect::ToHit` and `Aspect::Damage` are of ammunition too (`Aspect::Die` is not:
+it has no dice of its own), and a stack of it carries a `Worked` whatever its count
+(`Stack::is_valid_for`). Its make is always `Quality::worked`, the aspects in turn with no draw
+(`worked::ammunition_make`): Fine +1 to hit, Marvellous +1 to hit and +1 damage, Masterwork +2 to
+hit and +1 damage, `attempts` equal to the improvements. So two stacks of one grade are equal and
+join (`object.rs::join` lets worked ammunition join `same_goods`; every other worked item still
+joins nothing), and stacks of two grades never do. It is found (loot's make, docs/dev/enchanting.md
+"Deeper finds are better made") or fletched (docs/dev/crafting.md "Counted recipes"), never
+worked: `start_temper` and `start_whittle` refuse it first, taking no time, with
+`temper::AMMUNITION` ("Ammunition cannot be worked finer: its make is set when it is
+fletched."), and `arms` keeps it off both lists. The shot reads it through `Mods::local` of the
+ammunition in `Actor::ranged`, added to the launcher's own (docs/dev/ranged-combat.md). Its worth
+is a weapon's (`GRADES`: ×2, ×3, ×5 each), so a shop prices it so. Tests:
+`magic/ammo_make_tests.rs`, `world/crafting/fletch_tests.rs` (the grade of the check, the shot),
+`world/crafting/temper_tests.rs` (the refusal).
+
 ## Healing springs
 
 #416, the design's §9.10. Data: the `spring` effect (`feature = "spring"`, `offers = { drink =

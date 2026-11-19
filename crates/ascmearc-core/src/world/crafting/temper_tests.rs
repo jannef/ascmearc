@@ -273,6 +273,33 @@ fn only_metal_arms_and_armour_are_worked() {
     assert!(!works("quarterstaff"), "wood");
 }
 
+/// Ammunition is never worked, plain or of a make: refused by its own line, taking no time
+/// (its make is the fletcher's or the find's alone).
+#[test]
+fn ammunition_is_refused_at_the_anvil() {
+    let mut w = world(false);
+    let c = w.content.clone();
+    let arrow = object(&w, "arrow");
+    let mut fine = Stack::new(arrow, 12);
+    fine.set_worked(
+        crate::magic::Quality::Fine
+            .worked(c.object(arrow))
+            .expect("aspects"),
+    );
+    w.player_mut().inventory.push(Stack::new(arrow, 12));
+    w.player_mut().inventory.push(fine);
+    let before = w.state.time;
+    for item in [0, 1] {
+        w.apply(&Action::Temper { item });
+        assert!(said(&w, super::temper::AMMUNITION), "{item}");
+    }
+    assert_eq!(w.state.time, before, "refused, no time");
+    let pack = &w.state.player().inventory;
+    assert_eq!((pack.len(), pack[0].count, pack[1].count), (2, 12, 12));
+    let bolt = Stack::new(object(&w, "bolt"), 5);
+    assert!(!workable(&c, &bolt) && !workable_wood(&c, &bolt));
+}
+
 #[test]
 fn the_main_part_says_what_it_is_made_of() {
     let w = world(false);
@@ -716,19 +743,20 @@ fn a_worked_item_is_like_no_other_and_one_of_a_stack_is_worked_apart() {
     let pack = &w.state.player().inventory;
     assert_eq!((pack.len(), pack[0].count, pack[1].count), (2, 2, 1));
     assert!(pack[0].worked().is_none() && pack[1].worked().is_some());
-    // Of what stacks, a worked one joins nothing, with nothing left to show for it too.
-    let arrow = object(&w, "arrow");
-    let mut one = Stack::one(arrow);
+    // Of what stacks, a worked one joins nothing, with nothing left to show for it too (a
+    // brittle arrow: stackable, and no ammunition with a make of its own).
+    let brittle = object(&w, "brittle_arrow");
+    let mut one = Stack::one(brittle);
     one.set_worked(Worked {
         attempts: 1,
         ..Worked::default()
     });
-    assert_eq!(one.describe(&c), Stack::one(arrow).describe(&c));
-    let mut pack = vec![Stack::one(arrow)];
+    assert_eq!(one.describe(&c), Stack::one(brittle).describe(&c));
+    let mut pack = vec![Stack::one(brittle)];
     add_to_inventory(&mut pack, one.clone(), &c);
     add_to_inventory(&mut pack, one, &c);
     assert_eq!(pack.len(), 3);
-    add_to_inventory(&mut pack, Stack::one(arrow), &c);
+    add_to_inventory(&mut pack, Stack::one(brittle), &c);
     assert_eq!(pack[0].count, 2, "plain ones still join each other");
 }
 

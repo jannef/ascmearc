@@ -45,7 +45,9 @@
 //!   main material. Made by a holder of Maker's mark, an item with a `kind` (arms, armour,
 //!   jewellery: never an ingot or a brew) bears their mark (`Worked::marked`, the talent's one
 //!   read), whatever its grade.
-//! - **Counted** (a count above 1, or `"fletch"`): no grades. The count is rolled (its dice, or
+//! - **Counted** (a count above 1, or `"fletch"`): no grades, but for ammunition (`kind =
+//!   "ammo"`: arrows, bolts, sling stones), whose whole batch takes the grade the same check
+//!   and bands give a graded item, with no draw (`magic/worked.rs::ammunition_make`). The count is rolled (its dice, or
 //!   `world/crafting/fletch.rs`'s), then the margin keeps all of it, half rounded up within
 //!   `half_within`, one within `one_within`, else none ([`batch_made`]; a natural 2 none, a
 //!   natural 24 all), then Fletcher's multiple, at most the batch: what each `per_made` input's
@@ -81,7 +83,7 @@ use crate::content::{
 };
 use crate::item_parts::{self, ItemPart};
 use crate::magic::Worked;
-use crate::magic::worked::aspects;
+use crate::magic::worked::{ammunition_make, aspects};
 use crate::object::Stack;
 use crate::rng::draw;
 use crate::scroll_label::Lore;
@@ -1158,6 +1160,7 @@ impl World {
         let Resolved {
             made: mut stack,
             spends,
+            finer,
             ..
         } = resolved;
         self.spend_out(spends, made);
@@ -1166,6 +1169,15 @@ impl World {
             return;
         }
         stack.count = made;
+        // Ammunition takes the grade of the check, as a graded recipe's item does, the whole
+        // batch alike (`magic/worked.rs::ammunition`); anything else counted is plain.
+        let eased = super::mastery::graded_margin(&content, self.state.player(), margin);
+        let grade = grade(settings, natural, eased).raised(finer);
+        let def = content.object(stack.object);
+        let most = content.temper().most;
+        if let Some(worked) = ammunition_make(def, grade.improvements(), most) {
+            stack.set_worked(worked);
+        }
         stack.identify();
         let text = format!(
             "You make {}.",
@@ -1227,8 +1239,13 @@ impl World {
         }
         let among = aspects(content.object(made.object));
         let most = grade.improvements().min(content.temper().most);
+        let def = content.object(made.object);
         let grade = if among.is_empty() || most == 0 {
             Grade::Plain
+        } else if let Some(worked) = ammunition_make(def, most, most) {
+            // Ammunition's make is always the same at one grade (`magic/worked.rs`).
+            made.set_worked(worked);
+            grade
         } else {
             let mut worked = Worked::default();
             let mut rng = draw!(self, "craft/aspects/player");

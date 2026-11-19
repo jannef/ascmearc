@@ -245,6 +245,8 @@ fn may_roll_on(a: &AffixDef, def: &ObjectDef) -> bool {
 }
 
 #[cfg(test)]
+mod ammo_make_tests;
+#[cfg(test)]
 mod pool_tests;
 #[cfg(test)]
 mod shares_tests;
