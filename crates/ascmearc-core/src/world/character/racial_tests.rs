@@ -85,6 +85,29 @@ fn every_racial_talent_asks_for_its_race_and_only_that_race_is_offered_it() {
 }
 
 #[test]
+fn half_elves_may_take_the_elves_talents_but_humans_and_drow_may_not() {
+    let take = |race: &str| {
+        let mut w = world(&format!("{race},male,ranger"));
+        w.player_mut().stats = Stats::new(PerStat::splat(18), PerStat::splat(40));
+        let bows = CONTENT.weapon_skills().id("bows").expect("bows");
+        w.player_mut().weapon_skills.raise(bows, 3);
+        let book = w.content().talents();
+        let mut who = w.candidate();
+        who.level = 9;
+        let mut ids: Vec<String> = (talent::offers(w.content(), &who).into_iter())
+            .map(|(id, _)| book.get(id).id.clone())
+            .filter(|id| ["elven_accuracy", "ageless"].contains(&id.as_str()))
+            .collect();
+        ids.sort();
+        ids
+    };
+    assert_eq!(take("elf"), ["ageless", "elven_accuracy"]);
+    assert_eq!(take("half_elf"), ["ageless", "elven_accuracy"]);
+    assert!(take("human").is_empty());
+    assert!(take("drow").is_empty());
+}
+
+#[test]
 fn humans_are_granted_versatile_and_pick_one_more_at_creation_and_at_level_30() {
     let human = kitted("human,male,warrior");
     let book = human.content().talents();

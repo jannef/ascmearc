@@ -65,8 +65,8 @@ Taking a trade does three things:
 
 The **Racial** tree holds what each people is good at. Every talent in it asks for its
 [race](races.md), and some for a score, a level, or a [weapon skill](weapon-skills.md) besides. So
-only an [elf](races.md#race-elf) may take [Elven accuracy](talents-origins.md#talent-elven-accuracy), and
-only a [dwarf](races.md#race-dwarf) [Stone sense](talents-origins.md#talent-stone-sense). They are picked
+only an [elf](races.md#race-elf) or a [half-elf](races.md#race-half-elf) may take
+[Elven accuracy](talents-origins.md#talent-elven-accuracy), and only a [dwarf](races.md#race-dwarf) [Stone sense](talents-origins.md#talent-stone-sense). They are picked
 like any other talent.
 
 [Humans](races.md#race-human) have no gift of their own, so they are given
