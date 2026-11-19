@@ -60,7 +60,9 @@ on purpose, and their [levels](experience.md#levels) come quicker for it (see
 - **[Kobolds](races.md#race-kobold)** are the weakest of all, but good with
   [traps](traps.md#finding-traps). They [notice hidden traps in passing](searching.md#noticing-in-passing)
   (never a [secret door](doors.md#secret-doors)), find hidden things more easily, and start trained
-  in [Disable device](skills.md#skill-disable-device). With their huge families, their
+  in [Disable device](skills.md#skill-disable-device). They also know
+  [Trapwright](class-craftsperson.md#talent-trapwright) from the start, whatever their class, and can
+  [rig traps](traps.md#rigging-traps). With their huge families, their
   [levels](experience.md#levels) come cheapest of all.
 - **[Lizardfolk](races.md#race-lizardfolk)** are strong and tough, dull and alien. Their scales soak
   a point of every physical blow, as natural armour does for a [creature](creatures.md)'s hide (see

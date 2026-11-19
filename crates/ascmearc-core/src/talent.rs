@@ -205,7 +205,8 @@ impl Talents {
     /// a race's, the birth sign's; a class's abilities are left alone) with `ids`, first and in
     /// that order (a sign's gifts are computed, never
     /// chosen; a race's likewise). Picked talents keep their order after them; ids the content
-    /// lacks are skipped.
+    /// lacks are skipped. A granted talent of a class tree that `ids` names (the kobolds'
+    /// Trapwright) is given too, unless it is held already (a craftsperson's own, so never twice).
     pub(crate) fn regrant(&mut self, content: &Content, ids: &[&str]) {
         self.1 = ModsCache::default();
         let book = content.talents();
@@ -216,10 +217,21 @@ impl Talents {
             })
         };
         self.0.retain(|t| !is_granted(&t.id));
-        let given = (ids.iter()).filter(|id| is_granted(id)).map(|id| Taken {
-            id: id.to_string(),
-            choice: None,
-        });
+        let class_granted =
+            |id: &str| (book.id(id)).is_some_and(|t| book.get(t).granted) && !is_granted(id);
+        let mut given: Vec<Taken> = Vec::new();
+        for id in ids {
+            let fresh = is_granted(id)
+                || (class_granted(id)
+                    && !self.holds(id, None)
+                    && !given.iter().any(|t| t.id == *id));
+            if fresh {
+                given.push(Taken {
+                    id: id.to_string(),
+                    choice: None,
+                });
+            }
+        }
         self.0.splice(0..0, given);
     }
 
