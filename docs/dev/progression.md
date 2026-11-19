@@ -135,7 +135,8 @@ wiki's effect text appends "while raging".
 | `startled_blow` | `World::startle` → `World::hair_trigger` (`world/combat/free_blow.rs`): a check made against a hostile attacker beside the holder is answered by `Cue::Startled`'s free blow before the attack is rolled; `resolve` (and `cast.rs::spell_attack`) stop when it fells the attacker (Hair trigger) |
 | `carry_percent` | `burden::load` (the limit before the affixes' kilograms, kept a multiple of 3) |
 | `travel_percent` | `World::step_price` on the overworld, after the survival skill |
-| `terrain_as` | `World::step_price`: the terrain stepped onto is priced as the one it names (local and overworld alike; its ids checked once the terrain loads, `TalentBook::check_terrain`) |
+| `terrain_as` | `World::step_price`: the terrain stepped onto is priced as the one it names (local and overworld alike; its ids checked once the terrain loads, `TalentBook::check_terrain`); with `noise = true` also `noise::plain_noise`: a step onto it is as loud as onto the one it names (`MovementMods::sounds_as`; Cold-blooded) |
+| `temperature_speed` | `World::warmed` (`world/character/cold_blood.rs`), from `World::burdened`, the one place every price passes: the band of the temperature at the actor's cell scales the price by 100 / (100 + percent); `World::blood_turn`, as `run_turn` ends, says the band's line when the player comes into another (`WorldState::blood_band`; docs/dev/temperature.md "Cold blood") |
 | `plunge_proof` | `World::fall_in`: no plunge damage and no draw for it (Water walking's status has `ice_holds` instead: the ice never gives way, `docs/dev/status-effects.md`) |
 | `light_on_ice`, `climb_percent` | `World::tread` (the load on the ice is the body's weight alone), `World::tread_price` (the climb's price) |
 | `wading_proof` | `World::wade`: no exposure, no draw |

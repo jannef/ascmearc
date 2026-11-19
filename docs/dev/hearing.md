@@ -5,7 +5,8 @@ rules it implements are in spec/04-perception.md. Keep it current with the code,
 
 Hearing lives in `ascmearc-core/src/noise.rs`. `noise::noise(content, level,
 actor, burden, Act)` is the one place an action's loudness is decided (creature `footsteps` ×
-terrain `step_noise` percent × the burden's `footsteps()` percent for `Act::Step`, the door's
+terrain `step_noise` percent (of the terrain a talent's `terrain_as` with `noise` sounds it as,
+`MovementMods::sounds_as`: Cold-blooded's quiet wading) × the burden's `footsteps()` percent for `Act::Step`, the door's
 `toggle_noise` for `Act::OpenDoor`/`CloseDoor`, `VOICE_NOISE` for `Act::Mutter` and for
 `Act::ThrowVoice(at)`, which is made on that cell, not the actor's, `HOWL_NOISE` for `Act::Howl`
 (Hound's bay, #270: `SoundKind::Howl`, "a howl", `h` in the sound layer; `noise::hearers` tells

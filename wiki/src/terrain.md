@@ -69,6 +69,9 @@ Running water flows in a direction you can see in the ripples, and foams where i
 rock. The current does not push you. Water glints with nearby [light](light.md#what-light-is).
 [Swim](skills.md#skill-swim) spares some of the extra time of wading, here and in a marsh;
 [Water walking](magic.md#spell-water-walking) spares all of it while it lasts.
+[Lizardfolk](races.md#race-lizardfolk) wade still water, running water, and shallow water as
+quickly as they walk, and make no more noise than on a stone floor
+([Cold-blooded](temperature.md#cold-blooded)). Deep water is another matter for them as for anyone.
 
 [Shallow water](#terrain-shallow-water), ankle-deep over a stone floor, covers the floor of a
 [flooded room](special-rooms.md#room-flooded) (see [Special rooms](special-rooms.md)). It is paler

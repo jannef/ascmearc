@@ -1,8 +1,9 @@
 # Temperature and ice
 
 The air has a temperature wherever you are, and the [pause menu](the-screen.md#menus) (`Esc`) tells
-it, as `4 °C` (or in °F; see [Settings](settings.md)). For now the cold does nothing to you; what it does is freeze
-water.
+it, as `4 °C` (or in °F; see [Settings](settings.md)). The cold does nothing to most folk; what it
+does is freeze water. [Lizardfolk](races.md#race-lizardfolk) are the exception: they are
+[cold-blooded](#cold-blooded).
 
 ## Underground
 
@@ -35,6 +36,33 @@ What the weather does to the day's swing (the difference between the coldest nig
 warmest afternoon) and how much it cools the air:
 
 {{#include generated/temperature-weather.md}}
+
+## Cold-blooded
+
+A [lizardfolk](races.md#race-lizardfolk)'s blood is as warm as the air around them. The temperature
+where they stand makes everything they do slower or quicker: steps, blows, spells, waits, and
+journeys on the [overworld](overworld.md#travel) alike. Their [speed](turns.md#speed) changes by
+these bands:
+
+| Temperature | Speed | Everything takes |
+|---|:---:|:---:|
+| below 0 °C | −25 % | 4/3 as long (a step: 8 s) |
+| 0 to under 10 °C | −10 % | 10/9 as long (a step: about 6.7 s) |
+| 10 to under 25 °C | as usual | as long as usual (a step: 6 s) |
+| 25 to under 35 °C | +10 % | 10/11 as long (a step: about 5.5 s) |
+| 35 °C and above | +20 % | 5/6 as long (a step: 5 s) |
+
+What counts is the temperature where they stand as the action begins, so a step into a [sweltering
+chamber](special-rooms.md#room-hot) is quick at once, and the next one quicker still. Most
+[dungeons](dungeons.md) are 10 °C, the plain band, but deeper and colder levels slow a lizardfolk
+down, and a winter's night under the open sky slows them more.
+
+The game never shows the numbers. It tells you in words as you come into another band: "The cold
+creeps into your blood; you grow sluggish." as you cool below 10 °C, "The cold sinks deep into your
+blood; you grow numb and slow." below freezing, "The heat quickens you." as you warm past 25 °C, and
+"The fierce heat sets your blood racing." past 35 °C. Coming back, you are told that too, such as
+"Warmth returns to your blood; the sluggishness leaves you." Being told stops a
+[rest](resting.md#how-resting-works).
 
 ## Water freezes
 

@@ -305,7 +305,9 @@ impl World {
         let ease = actor.skill_effect(&self.content, Effect::Burden) + talents.movement.burden_ease;
         let price = self.bloated(id, self.load_of(id).penalty().slow_eased(price, ease));
         // A talent's `speed_percent` (Quick, Fleet-footed) is not read here: `Actor::speed` counts
-        // it, once.
+        // it, once. Its blood is (Cold-blooded: the temperature where it stands,
+        // `cold_blood.rs`).
+        let price = self.warmed(id, price);
         actor.effects.slow_with(price, |s| self.status_cost(id, s))
     }
 
@@ -436,6 +438,10 @@ impl World {
         self.zones_fade();
         // Fires spread and burn out (`fire.rs`).
         self.fires_burn(events);
+        // The player's blood warms or cools where the turn left them (`cold_blood.rs`).
+        if self.state.death.is_none() {
+            self.blood_turn();
+        }
     }
 
     /// How long from now no creature on the current level that disturbs a rest

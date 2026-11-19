@@ -1,0 +1,21 @@
+# The lizardfolk's Cold-blooded (races.toml `talents`; world/character/cold_blood.rs): their speed
+# follows the temperature where they stand, and they wade still and running water as quickly and
+# as quietly as they walk on dry ground (not deep water: that is swimming, a Swim check as for
+# anyone). Underground is 10 °C unless the level says otherwise, so the plain band starts there.
+[[talent]]
+id = "cold_blooded"
+name = "Cold-blooded"
+tree = "racial"
+granted = true
+description = "Your blood is as warm as the air: the cold makes you sluggish and the heat quickens you. You wade through water as quickly and as quietly as you walk on dry ground."
+effects = [
+    { kind = "temperature_speed", bands = [
+        { below = 0, percent = -25, slower = "The cold sinks deep into your blood; you grow numb and slow." },
+        { below = 10, percent = -10, slower = "The cold creeps into your blood; you grow sluggish.", faster = "The worst of the cold leaves your blood, but you are still sluggish." },
+        { below = 25, percent = 0, slower = "The heat ebbs from your blood.", faster = "Warmth returns to your blood; the sluggishness leaves you." },
+        { below = 35, percent = 10, slower = "The fierce heat ebbs, but your blood is still quick.", faster = "The heat quickens you." },
+        { percent = 20, faster = "The fierce heat sets your blood racing." },
+    ] },
+    { kind = "terrain_as", terrains = ["water", "running_water", "shallow_water"], like = "floor", noise = true },
+]
+systems = ["speed", "wading"]
