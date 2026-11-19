@@ -171,13 +171,14 @@ fn oath_kills_count_only_the_oaths_tags() {
     w.oath_kill(rat);
     w.oath_kill(creature(&w, "kobold_archer"));
     assert_eq!(w.oath_kills(), 2);
-    // A kill answering two oaths is one oath kill.
-    hold(&mut w, "sworn_foe", Some("sapient"));
-    hold(&mut w, "slayers_oath", Some("sapient"));
-    w.oath_kill(kobold);
+    // A kill answering two oaths is one oath kill: a hobgoblin is a goblin too.
+    for kind in ["goblin", "hobgoblin"] {
+        hold(&mut w, "slayers_oath", Some(kind));
+    }
+    w.oath_kill(creature(&w, "hobgoblin"));
     assert_eq!(w.oath_kills(), 3);
     w.oath_kill(goblin);
-    assert_eq!(w.oath_kills(), 4, "a goblin is sapient");
+    assert_eq!(w.oath_kills(), 4);
 }
 
 #[test]
@@ -235,22 +236,22 @@ fn the_oath_table_strikes_every_sworn_kind_surer_once() {
     let mut w = dwarf();
     let content = w.content().clone();
     let player = w.state.player;
-    hold(&mut w, "sworn_foe", Some("kobold"));
-    hold(&mut w, "sworn_foe", Some("sapient"));
+    hold(&mut w, "sworn_foe", Some("goblin"));
+    hold(&mut w, "sworn_foe", Some("hobgoblin"));
     let me = w.player_pos();
-    let kobold = foe_at(&mut w, "kobold", Pos::new(me.x + 2, me.y), 10);
+    let hobgoblin = foe_at(&mut w, "hobgoblin", Pos::new(me.x + 2, me.y), 10);
     let rat = foe_at(&mut w, "rat", Pos::new(me.x + 3, me.y), 10);
     let profile = w.state.player().melee(&content);
-    let sworn = w.favoured(player, kobold, profile.clone());
+    let sworn = w.favoured(player, hobgoblin, profile.clone());
     hold(&mut w, "oath_grudge_hewer", None);
-    let hewer = w.favoured(player, kobold, profile.clone());
+    let hewer = w.favoured(player, hobgoblin, profile.clone());
     assert_eq!(
         (hewer.to_hit, hewer.bonus),
         (sworn.to_hit + 1, sworn.bonus + 3),
-        "once, though a kobold answers two oaths"
+        "once, though a hobgoblin answers two oaths"
     );
     hold(&mut w, "oath_doom", None);
-    let doom = w.favoured(player, kobold, profile.clone());
+    let doom = w.favoured(player, hobgoblin, profile.clone());
     assert_eq!(
         (doom.to_hit, doom.bonus),
         (sworn.to_hit + 3, sworn.bonus + 7)

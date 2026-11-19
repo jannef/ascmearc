@@ -232,18 +232,19 @@ Tests: `magic/ammo_magic_tests.rs`.
 
 `Effect::Bane` (the owner: "weapons definitely should be able to roll banes"):
 to hit and damage against creatures whose type carries one tag (`content/tag.rs`), nothing
-against the rest. One `[[suffix]]` entry makes the family (`data/affixes/of_bane.toml`): its
-`tags` list makes one affix per tag (`AffixSpec::expand`), `{tag}` put into the `id`
-(`of_orc_bane`) and the `name` ("of orc-bane"), each `AffixDef::tag` the tag, each weight the
-entry's `weight` shared evenly (100 over 20 tags: 5 each, so the family rolls about as often as
-one ordinary affix); `tags` on another effect, a bane without them, or an `id` or `name` without
-`{tag}` is refused. All share the category `bane` (one per item) and roll on weapons, missile
+against the rest. One `[[suffix]]` entry makes the family (`data/affixes/of_bane.toml`): one
+affix per kind of creature (`data/rules/foes.toml`, the one list Sworn foe chooses from too,
+`docs/dev/quests.md` "Kinds of creature"; `affix::Lookups::foes`, `AffixSpec::expand`), in its
+order, `{tag}` put into the `id` (`of_orc_bane`) and the `name` ("of orc-bane"), each
+`AffixDef::tag` the kind, each weight the entry's `weight` shared evenly (100 over 20 kinds: 5
+each, so the family rolls about as often as one ordinary affix); an `id` or `name` without
+`{tag}` is refused, and without the kinds there is no bane. All share the category `bane` (one per item) and roll on weapons, missile
 weapons, and ammunition. `Mods::add_magic` keeps banes by tag (`Mods::banes`, never summed into
 another tag's), `Mods::sharpen` hands them to `Profile::banes`, and `World::resolve` adds the ones
 whose tag the target's type carries to its to-hit and damage (`world/combat/bane.rs`,
 `World::baned`, beside Sworn foe's `favoured`), for any attacker. The crystal families: `bane` is
 black's and red's (`data/crystals.toml`, "the bane of a kind"). Tests:
-`world/combat/bane_tests.rs`, `content/affix.rs` (`banes_are_made_one_per_tag`).
+`world/combat/bane_tests.rs`, `content/affix.rs` (`banes_are_made_one_per_kind`), `content/foes.rs`.
 
 ## Curses
 

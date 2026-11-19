@@ -1,9 +1,10 @@
-# Banes: one suffix per creature tag, made from this one entry (`tags`): "arrows of orc-bane".
-# Each adds its value to hit and to damage against a creature whose type carries the tag, and
-# nothing against anyone else. `{tag}` in the id and the name is the tag (`of_orc_bane`, "of
-# orc-bane"). The weight is the whole family's, shared evenly: twenty tags at 5 each, so the
-# banes together roll about as often as one ordinary affix (100), each one rarely. One bane per
-# item (the category); a launcher's and its ammunition's both count on a shot.
+# Banes: one suffix per kind of creature (../rules/foes.toml, the one list of kinds, which Sworn
+# foe chooses from too), made from this one entry: "arrows of orc-bane". Each adds its value to
+# hit and to damage against a creature whose type carries the kind's tag, and nothing against
+# anyone else. `{tag}` in the id and the name is the kind (`of_orc_bane`, "of orc-bane"). The
+# weight is the whole family's, shared evenly: twenty kinds at 5 each, so the banes together
+# roll about as often as one ordinary affix (100), each one rarely. One bane per item (the
+# category); a launcher's and its ammunition's both count on a shot.
 [[suffix]]
 id = "of_{tag}_bane"
 name = "of {tag}-bane"
@@ -11,11 +12,6 @@ effect = "bane"
 category = "bane"
 bases = ["weapon", "launcher", "ammo"]
 weight = 100
-tags = [
-  "undead", "fiend", "elemental", "spirit", "construct", "giant", "troll", "ogre", "orc",
-  "hobgoblin", "goblin", "kobold", "drow", "duergar", "dragon", "fey", "hag", "beast", "spider",
-  "vermin",
-]
 tiers = [
   { level = 1, min = 1, max = 2 },
   { level = 3, min = 2, max = 2 },

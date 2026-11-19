@@ -75,6 +75,7 @@ mod fingerprint;
 mod fire;
 mod fletch;
 mod flow;
+mod foes;
 mod forage;
 #[cfg(test)]
 mod forge_tests;
@@ -309,6 +310,7 @@ pub use files::ContentFiles;
 pub use fire::FireRules;
 pub use fletch::{FletchMakes, FletchRules};
 pub use flow::{FLOW_SPEEDS, Flow};
+pub use foes::FoeRules;
 pub use forage::{ForageGround, ForageRules};
 pub use gaze::Gaze;
 pub use gear::{Gear, GearLine, RACIAL_CHANCE};
@@ -705,6 +707,9 @@ pub struct Content {
     /// The dwarves' oath table (`data/rules/oaths.toml`): the talent whose choices make a kill an
     /// oath kill and the bands; none without the file, when nothing is counted.
     oaths: Option<OathRules>,
+    /// The kinds of creature (`data/rules/foes.toml`): the tags a talent taken for a kind may be
+    /// taken for, and the banes; none without the file, when there is no kind and no bane.
+    foes: Option<FoeRules>,
     /// What area spells do to the items lying in them (`data/ruin.toml`); empty without the file,
     /// when nothing is ruined.
     ruin: RuinRules,
@@ -991,6 +996,8 @@ impl Content {
             };
             content.resources = resource::parse(path, text, status)?;
         }
+        // The kinds of creature before the affixes, whose banes are made one per kind.
+        content.foes = content.load_optional(files)?;
         // The affix table: optional, so loot without it is always normal. After lights, skills,
         // damage types, and resources, which its affixes name.
         if files.table("affixes").next().is_some() {
@@ -1002,6 +1009,7 @@ impl Content {
                 skill: (!content.skills().is_empty()).then_some(skill),
                 damage_type: (!content.damage_types().is_empty()).then_some(damage),
                 resource: (!content.resources().is_empty()).then_some(resource),
+                foes: content.foe_kinds(),
             };
             content.affixes = affix::parse(files.table("affixes"), &lookups)?;
         }
@@ -1122,6 +1130,7 @@ impl Content {
         talent::check_trades(&content).map_err(|m| ContentError::new("data/talents", m))?;
         talent::check_slots(&content).map_err(|m| ContentError::new("data/talents", m))?;
         talent::check_kin(&content).map_err(|m| ContentError::new("data/talents", m))?;
+        foes::check_carried(&content)?;
         spell_def::check_effects(&content).map_err(|m| ContentError::new("data/spells", m))?;
         breath::check_effects(&content)?;
         burst::check_effects(&content)?;

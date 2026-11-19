@@ -67,7 +67,8 @@ pub enum Choice {
     Skill,
     /// An element: a damage type (an id in `data/damage_types.toml`).
     Element,
-    /// A creature tag (one some creature type carries, `goblin`).
+    /// A kind of creature: a creature tag of `data/rules/foes.toml`'s `kinds` (`goblin`), never
+    /// any other tag (`sapient`, `tower_wizard`).
     Tag,
     /// A spell tag a talent may focus on (magic design §6): a school (`evocation`), or an
     /// element as [`Choice::Element`] offers them (`fire`).
@@ -98,7 +99,7 @@ impl Choice {
         matches!(self, Choice::WeaponSkill | Choice::Style)
     }
 
-    /// Every valid choice of this kind, by id, in file order.
+    /// Every valid choice of this kind, by id, in file order (kinds of creature sorted).
     pub fn options(self, content: &Content) -> Vec<String> {
         match self {
             Choice::WeaponSkill => (content.weapon_skills().ids())
@@ -113,7 +114,11 @@ impl Choice {
                 .filter(|t| !t.physical)
                 .map(|t| t.id.clone())
                 .collect(),
-            Choice::Tag => content.tags().into_iter().map(str::to_string).collect(),
+            Choice::Tag => {
+                let mut kinds = content.foe_kinds().to_vec();
+                kinds.sort();
+                kinds
+            }
             Choice::School => (super::School::ALL.iter().map(|s| s.id().to_string()))
                 .chain(Choice::Element.options(content))
                 .collect(),
@@ -141,7 +146,9 @@ impl Choice {
                 let def = content.damage_type(kind);
                 (!def.physical).then_some(def.name.as_str())
             }
-            Choice::Tag => content.tags().into_iter().find(|t| *t == id),
+            Choice::Tag => (content.foe_kinds().iter())
+                .find(|t| *t == id)
+                .map(String::as_str),
             Choice::School => (super::School::ALL.iter())
                 .map(|s| s.id())
                 .find(|s| *s == id)

@@ -305,6 +305,9 @@ fn favoured_prey_hits_its_prey_surer_and_harder() {
     assert_eq!(w.favoured(player, kobold, profile.clone()), profile);
     // Master hunter doubles it, and bows threaten sooner.
     reach(&mut w, 60);
+    // The picks of sixty levels swear the ranger against every kind, vermin too: let go of
+    // those, to see the prey's alone.
+    w.player_mut().talents.forget("sworn_foe");
     let profile = w.state.player().melee(&content);
     let favoured = w.favoured(player, rat, profile.clone());
     assert_eq!(
