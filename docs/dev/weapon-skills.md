@@ -68,7 +68,8 @@ leaves `weapons` out and no weapon skill is named twice, else a content error), 
 `Actor::attack_skills(kind, with)` is the `AttackSkills` of an attack (its weapon skill and its
 style, `Actor::style(kind, with)`: blows by `Actor::grip`, the hands' hold; shots `launcher`;
 throws `thrown`), and `Actor::attack_benefit(kind, with)` / `benefit_of(skills)` the weapon
-skill's benefit `plus` the style's, read by `Actor::melee`/`off_hand_blow`/`ranged`/
+skill's benefit `plus` the style's (and `attack_benefit` a talent's narrow `way`,
+`Actor::on_its_way`: the elves' Way of the longbow and the rest), read by `Actor::melee`/`off_hand_blow`/`ranged`/
 `thrown(item)`/`bash`, `Actor::defence` (the hands' style's parry and shield), and
 `World::attack_price(id, action, with, skills)` (`World::attack_cost` of what the attack is made
 `with`, then the speed of the weapon skill and the style together, then the stance and the

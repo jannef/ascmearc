@@ -123,4 +123,29 @@ and a full belly slowly trains their stats (see [Hunger](hunger.md#a-halflings-s
 
 {{#include generated/talents-racial.md}}
 
+### The elves' ways
+
+[Elves](races.md#race-elf) and [half-elves](races.md#race-half-elf) may take four narrow
+**ways**. Each makes one way of fighting much better, and every other way of the same kind
+worse. The table above has the numbers.
+
+- **[Way of the longbow](talents-origins.md#talent-way-of-the-longbow)**: shots with a long war
+  bow are better. Every other shot (a short bow, a composite bow, a crossbow, a sling) and every
+  [throw](ranged.md#shooting-and-throwing) is worse. Blows are untouched.
+- **[Way of the long blade](talents-origins.md#talent-way-of-the-long-blade)**: blows with a
+  weapon of [Long blades](weapon-skills.md#weapon-skill-long-blades) are better. Every other blow
+  is worse: other weapons, bare hands, and a shield's bash. Kicks, shots, and throws are untouched.
+- **[Way of the duel](talents-origins.md#talent-way-of-the-duel)**: blows in the
+  [Duelist](fighting-styles.md#style-duelist) style (one weapon, the other hand empty) are better.
+  Blows in any other style are worse: with a shield, with two weapons, with a two-handed weapon, or
+  with bare hands.
+- **[Way of far casting](talents-origins.md#talent-way-of-far-casting)**: spells that roll to hit
+  are better when cast as a [Sniper](schools.md#style-sniper), from two or more cells away. Cast
+  as a [Toucher](schools.md#style-toucher) (at a creature beside you) or as a
+  [Battle caster](schools.md#style-battle-caster) (in armour that hinders casting), they are worse.
+  Spells that never roll to hit are untouched.
+
+The ways add up with each other. Way of the long blade and Way of the duel together make a lone
+long sword better still, and a sword with a shield worse twice over.
+
 See also: [Classes](classes.md), [Horoscope](horoscope.md), and [Stats](stats.md).

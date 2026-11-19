@@ -36,7 +36,8 @@ cast), S11's `spell_lands`.
   `PerceptionView::own_spell_reach`, the dumps, and the aiming mode all read the same sum, so
   what is shown is what is cast.
 - **The aim**: a spell that rolls to hit aims with the stat, the caster style's `to_hit` and
-  `threat` (`benefit_of` in `cast.rs::spell_attack`, Sniper's far benefits by distance),
+  `threat` (`benefit_of` in `cast.rs::spell_attack`, Sniper's far benefits by distance, and
+  a talent's `way` by the style, `Actor::on_its_way`: Way of far casting),
   talents, and items. With the schools gone a rank-0 caster's numbers are what they were: a
   school at rank 0 gave nothing.
 - **A touch's reach is fixed** (#1251): `spell_reach_with` gives a `touch` spell a range of 1

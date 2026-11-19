@@ -147,6 +147,7 @@ wiki's effect text appends "while raging".
 | `notice` | `search.rs`: `notices` (as if trained in Spot) and `search_modifier(Look::Passive)` |
 | `free_blow` | `World::free_blows_of`: `FreeBlows::either` of the actor's own switches and the talents' |
 | `weapon` | `Actor::benefit` (`OffenceMods::weapon_benefit`): the chosen skill's (`WeaponBonus::skill`, the choice) or a role's benefits; `ranks` raise a held rank (`TalentMods::raised`); `bash` only where the base has a chance. Every profile builder, Defence's parry and shield, `attack_price`, and `reload_price` read benefits, so they need no read of their own |
+| `way` | `Actor::on_its_way` (`OffenceMods::way`): from `Actor::attack_benefit` for blows, bashes, shots, and throws (the weapon, shield, launcher, or thing thrown as the object; kicks read `benefit` alone and are not judged), and from `cast.rs::spell_attack` for a spell cast in a caster style (a flask's splash, in none, is not judged); the gain where the attack's weapon skill or style or object is the way's, the `else_` cost otherwise, each way that judges the attack's kind summed. Objects are checked once they load (`check_heirlooms`) |
 | `launcher_range`, `throw_range` | `Actor::launcher_range`, `Actor::throw_range` |
 | `max_dex`, `deflection` | `Actor::defence` (each worn armour's cap; on top of magic items' Deflection) |
 | `protection` | `Actor::protection` through `talent_protection` (`DefenceMods::protection_with`: the piece worn with the most Protection counts as body armour; a shield in a hand slot) |
@@ -575,8 +576,10 @@ taker is trained in, `talent::may_take` refuses another as a `BadChoice`;
 first with an `either` prerequisite (`Need::Either`, "Intelligence 12 or Appraise 20").
 
 The racial talents (#241) are the `racial` tree (`no_free`: each asks for its race; `race` may be a list, `Need::Race(Vec)`, any one of them: Elven
-accuracy and Ageless are for an elf or a half-elf, `race = ["elf", "half_elf"]`): Elven
-accuracy, Ageless, Diplomat, Stone sense, Dwarven resilience, Lucky,
+accuracy, Ageless, and the four ways are for an elf or a half-elf, `race = ["elf", "half_elf"]`): Elven
+accuracy, Ageless, the ways (Way of the longbow, of the long blade, of the duel, of far casting:
+the `way` effect, a gain to one way of attacking and a cost to every other of the same kind;
+`racial_way_tests.rs`), Diplomat, Stone sense, Dwarven resilience, Lucky,
 Slinger, Small target, Tinkerer, Gem lore, Ferocity, Orcish hide, and the humans' granted
 Versatile. The gnome's disarming talent is `tinkerer` ("Tinkerer"; #787). A race's known
 spells and abilities are granted racial talents too (races.toml `talents`, the one mechanism):
