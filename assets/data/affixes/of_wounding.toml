@@ -3,7 +3,7 @@ id = "of_wounding"
 name = "of Wounding"
 effect = "extra_damage"
 category = "extra_damage"
-bases = ["weapon", "launcher"]
+bases = ["weapon", "launcher", "ammo"]
 weight = 40
 tiers = [
   { level = 3, min = 2, max = 2 },

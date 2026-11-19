@@ -3,6 +3,7 @@
 
 mod ambush;
 pub(in crate::world) mod attacks;
+mod bane;
 mod bleed;
 mod corrode;
 mod dummy;
@@ -27,6 +28,7 @@ cfg_if! {
     if #[cfg(test)] {
         mod ambush_tests;
         mod attacks_tests;
+        mod bane_tests;
         mod balance_probe;
         mod blood_tests;
         mod corrode_tests;

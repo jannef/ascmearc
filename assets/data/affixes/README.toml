@@ -28,6 +28,7 @@
 #             range         + cells it shoots or is thrown
 #             draw          a bow needs N less Strength
 #             durability    breaks N% less often
+#             bane          + N to hit and to damage against creatures of one tag (`tags`)
 #             parry, armour, shield   + to the item's own Parry, Armour, or Shield
 #             protection    + to the armour's own Protection (body armour, helmets, cloaks,
 #                           gloves, boots)
@@ -60,7 +61,7 @@
 #             light         the wearer carries the light of a preset (lights.toml)
 #             skill         + to the value of the affix's `skill` (an id in skills/) for
 #                           what that skill gives, trained or not
-#           Attack effects (to_hit through durability) on a weapon, a missile weapon, or
+#           Attack effects (to_hit through bane) on a weapon, a missile weapon, or
 #           ammunition change the attacks made with it (local); on anything else every attack
 #           (global). parry, armour, protection, shield, max_dex, and weight change the item
 #           itself; the rest change whoever wears or wields it. An item has at most one affix of
@@ -73,7 +74,12 @@
 #           those raising the armour's own Protection. An affix whose effect the item lacks the means
 #           for (range without a range, draw without a Strength to draw, durability on what never
 #           breaks, armour, shield, or max_dex on what has none) does not roll on it
+#           Ammunition takes only what betters a shot: to_hit, damage, extra_damage, elemental,
+#           threat, crit, durability, bane (the loader refuses the rest on `ammo`)
 #   weight  how often it rolls among those that may (default 100)
+#   tags    a bane's creature tags (creatures/): the entry makes one affix per tag, `{tag}` in
+#           its `id` and `name` put in (`of_{tag}_bane`, "of {tag}-bane"), its `weight` the whole
+#           family's, shared evenly (of_bane.toml)
 #   cursed  true for a curse (#1754; default false): its effect works the other way (hunger
 #           faster, a heavier piece, slower steps: only `hunger`, `weight`, and `move_speed` may
 #           be cursed), it shares its good twin's category, it rolls only on what is found (loot

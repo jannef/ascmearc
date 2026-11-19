@@ -61,7 +61,7 @@ fn item(
 #[test]
 fn the_examples_of_the_design_hold() {
     let c = content();
-    let rows: [(&str, Stack, u8); 16] = [
+    let rows: [(&str, Stack, u8); 17] = [
         (
             "steel long sword",
             item(&c, "long_sword", None, None, None),
@@ -165,7 +165,13 @@ fn the_examples_of_the_design_hold() {
             ),
             5,
         ),
-        ("arrows", Stack::new(object(&c, "arrow"), 20), 2),
+        // Ammunition holds one less than other equipment.
+        ("arrows", Stack::new(object(&c, "arrow"), 20), 1),
+        (
+            "Masterwork arrows",
+            item(&c, "arrow", None, Some(Quality::Masterwork), None),
+            3,
+        ),
     ];
     for (name, stack, want) in rows {
         assert_eq!(capacity(&stack, &c), want, "{name}");

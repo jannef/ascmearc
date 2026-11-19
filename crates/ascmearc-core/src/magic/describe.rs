@@ -488,6 +488,12 @@ fn lines_named(
     out
 }
 
+/// The creatures a bane affix is the bane of, in the plural: `orcs`, `undead`.
+pub fn bane_of(rolled: &Rolled<'_>, content: &Content) -> String {
+    let tag = rolled.def.tag.as_deref().unwrap_or("creature");
+    content.plural(&crate::content::spoken(tag))
+}
+
 /// What `rolled`, on an item of `kind`, does, in plain language: "+2 damage", "adds 1d4
 /// damage", "+1 to Strength", "attacks faster".
 pub fn phrase(rolled: &Rolled<'_>, kind: ItemKind, content: &Content) -> String {
@@ -517,6 +523,10 @@ pub fn phrase(rolled: &Rolled<'_>, kind: ItemKind, content: &Content) -> String 
         Effect::Range => format!("+{v} {} of range", cells(v)),
         Effect::Draw => format!("needs {v} less Strength to draw"),
         Effect::Durability => format!("breaks {v}% less often"),
+        Effect::Bane => format!(
+            "+{v} to hit and damage against {}",
+            bane_of(rolled, content)
+        ),
         Effect::Parry => format!("+{v} to Parry"),
         Effect::Armour => format!("+{v} to Armour"),
         Effect::Protection => format!("+{v} to Protection"),

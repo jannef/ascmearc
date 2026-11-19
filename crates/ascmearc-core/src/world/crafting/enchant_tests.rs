@@ -331,6 +331,45 @@ fn a_stack_of_arrows_is_kindled_whole() {
     assert_eq!(w.state.player().inventory.len(), 1);
 }
 
+/// Ammunition holds one affix less than other equipment: plain arrows take one and no more,
+/// Masterwork arrows three; what a crystal binds in them betters a shot.
+#[test]
+fn enchanted_arrows_hold_one_affix_less() {
+    for seed in 1..8 {
+        let mut w = world(seed);
+        item(&mut w, "arrow", 20);
+        crystal(&mut w, "red");
+        crystal(&mut w, "red");
+        enchant_out_for_test(&mut w, "kindle", &[Some(0), Some(1)], EnchantBand::Made);
+        let magic = checked(&w, 0);
+        assert_eq!(magic.affixes.len(), 1);
+        assert_eq!(capacity(&w.state.player().inventory[0], &w.content), 1);
+        let pack_before = w.state.player().inventory.len();
+        let before = w.state.time;
+        apply(&mut w, "craft:quicken:a,b");
+        assert!(said(&w, "It holds all it can."), "{:?}", texts(&w));
+        assert_eq!(
+            (w.state.time, w.state.player().inventory.len()),
+            (before, pack_before)
+        );
+        let mut w = world(seed);
+        item(&mut w, "arrow", 20);
+        worked_as(&mut w, Quality::Masterwork);
+        crystal(&mut w, "red");
+        crystal(&mut w, "red");
+        crystal(&mut w, "red");
+        assert_eq!(capacity(&w.state.player().inventory[0], &w.content), 3);
+        let picks = [Some(0), Some(1), Some(2), Some(3)];
+        enchant_out_for_test(&mut w, "imbue", &picks, EnchantBand::Made);
+        let magic = checked(&w, 0);
+        assert_eq!(magic.affixes.len(), 3, "{magic:?}");
+        for affix in &magic.affixes {
+            let def = w.content.affixes().get(&affix.id).expect("affix");
+            assert!(def.effect.betters_a_shot(), "{}", def.id);
+        }
+    }
+}
+
 #[test]
 fn the_reach_grows_with_enchanting_and_a_deeper_item_keeps_its_level() {
     for (value, reach) in [(0, 1), (10, 2), (55, 6), (110, 12), (200, 12)] {

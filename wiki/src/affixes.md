@@ -94,6 +94,21 @@ Each tier's value is rolled once, when the item is made, anywhere within its ran
 remembers each affix's tier and value. How many affixes an item can hold is its
 [capacity](magic-items.md#capacity).
 
+## Banes
+
+A **bane** is a suffix against one kind of creature. A sword *of orc-bane* adds its value both to
+[hit](combat.md#hitting) and to [damage](combat.md#damage) when it strikes an orc, and does
+nothing against anyone else. Banes roll on [melee weapons](objects.md#class-melee-weapons),
+[missile weapons](objects.md#class-missile-weapons), and [ammunition](ammunition.md#magic-ammunition),
+from item level 1, with the tiers in the suffix table above.
+
+There is one bane for each kind of creature below. Each one is rare: they have a weight of 5
+each, so all twenty together turn up about as often as one ordinary suffix (weight 100). An item
+holds at most one bane. On a shot, a bow's bane and its arrows' both count, each against its own
+kind: a bow of orc-bane shooting arrows of undead-bane is better against both.
+
+{{#include generated/magic-banes.md}}
+
 ## What systems have affixes
 
 Every affix by the part of the game it works in, with the [talents](talents.md) that work in the

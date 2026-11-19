@@ -192,6 +192,8 @@ pub enum Effect {
     Draw,
     /// Percent less chance to break on a hit.
     Durability,
+    /// To hit and damage against creatures of the affix's `tag` (a creature tag: `orc`).
+    Bane,
     /// Added to the weapon's Parry.
     Parry,
     /// Added to the armour's Armour.
@@ -297,6 +299,7 @@ impl Effect {
             Effect::Range,
             Effect::Draw,
             Effect::Durability,
+            Effect::Bane,
             Effect::Parry,
             Effect::Armour,
             Effect::Protection,
@@ -360,6 +363,7 @@ impl Effect {
             Effect::Range => "range",
             Effect::Draw => "draw",
             Effect::Durability => "durability",
+            Effect::Bane => "bane",
             Effect::Parry => "parry",
             Effect::Armour => "armour",
             Effect::Protection => "protection",
@@ -412,7 +416,7 @@ impl Effect {
     }
 
     /// How many effects there are.
-    pub const COUNT: usize = 53 + Stat::COUNT;
+    pub const COUNT: usize = 54 + Stat::COUNT;
 
     /// Its place in [`Effect::all`].
     pub const fn index(self) -> usize {
@@ -427,50 +431,51 @@ impl Effect {
             Effect::Range => 7,
             Effect::Draw => 8,
             Effect::Durability => 9,
-            Effect::Parry => 10,
-            Effect::Armour => 11,
-            Effect::Protection => 12,
-            Effect::Shield => 13,
-            Effect::MaxDex => 14,
-            Effect::Weight => 15,
-            Effect::Proof => 16,
-            Effect::Dodge => 17,
-            Effect::Deflection => 18,
-            Effect::Natural => 19,
-            Effect::MaxHp => 20,
-            Effect::Regeneration => 21,
-            Effect::MaxMana => 22,
-            Effect::ManaRegeneration => 23,
-            Effect::ManaCost => 24,
-            Effect::SpellEase => 25,
-            Effect::SpellToHit => 26,
-            Effect::SpellThreat => 27,
-            Effect::SpellRungs => 28,
-            Effect::SpellBonus => 29,
-            Effect::SpellSides => 30,
-            Effect::SpellDice => 31,
-            Effect::SpellReroll => 32,
-            Effect::SpellReach => 33,
-            Effect::SpellDuration => 34,
-            Effect::ManaOnKill => 35,
-            Effect::WandRungs => 36,
-            Effect::ResourceMax => 37,
-            Effect::ResourceRate => 38,
-            Effect::ActiveStamina => 39,
-            Effect::ResourceOnKill => 40,
-            Effect::Resistance => 41,
-            Effect::Stat(stat) => 42 + stat as usize,
-            Effect::MoveSpeed => 42 + Stat::COUNT,
-            Effect::Carry => 43 + Stat::COUNT,
-            Effect::Stealth => 44 + Stat::COUNT,
-            Effect::DoorKick => 45 + Stat::COUNT,
-            Effect::DigPercent => 46 + Stat::COUNT,
-            Effect::Hunger => 47 + Stat::COUNT,
-            Effect::TrapDamage => 48 + Stat::COUNT,
-            Effect::DiseaseCheck => 49 + Stat::COUNT,
-            Effect::PotionKept => 50 + Stat::COUNT,
-            Effect::Light => 51 + Stat::COUNT,
-            Effect::Skill => 52 + Stat::COUNT,
+            Effect::Bane => 10,
+            Effect::Parry => 11,
+            Effect::Armour => 12,
+            Effect::Protection => 13,
+            Effect::Shield => 14,
+            Effect::MaxDex => 15,
+            Effect::Weight => 16,
+            Effect::Proof => 17,
+            Effect::Dodge => 18,
+            Effect::Deflection => 19,
+            Effect::Natural => 20,
+            Effect::MaxHp => 21,
+            Effect::Regeneration => 22,
+            Effect::MaxMana => 23,
+            Effect::ManaRegeneration => 24,
+            Effect::ManaCost => 25,
+            Effect::SpellEase => 26,
+            Effect::SpellToHit => 27,
+            Effect::SpellThreat => 28,
+            Effect::SpellRungs => 29,
+            Effect::SpellBonus => 30,
+            Effect::SpellSides => 31,
+            Effect::SpellDice => 32,
+            Effect::SpellReroll => 33,
+            Effect::SpellReach => 34,
+            Effect::SpellDuration => 35,
+            Effect::ManaOnKill => 36,
+            Effect::WandRungs => 37,
+            Effect::ResourceMax => 38,
+            Effect::ResourceRate => 39,
+            Effect::ActiveStamina => 40,
+            Effect::ResourceOnKill => 41,
+            Effect::Resistance => 42,
+            Effect::Stat(stat) => 43 + stat as usize,
+            Effect::MoveSpeed => 43 + Stat::COUNT,
+            Effect::Carry => 44 + Stat::COUNT,
+            Effect::Stealth => 45 + Stat::COUNT,
+            Effect::DoorKick => 46 + Stat::COUNT,
+            Effect::DigPercent => 47 + Stat::COUNT,
+            Effect::Hunger => 48 + Stat::COUNT,
+            Effect::TrapDamage => 49 + Stat::COUNT,
+            Effect::DiseaseCheck => 50 + Stat::COUNT,
+            Effect::PotionKept => 51 + Stat::COUNT,
+            Effect::Light => 52 + Stat::COUNT,
+            Effect::Skill => 53 + Stat::COUNT,
         }
     }
 
@@ -512,6 +517,24 @@ impl Effect {
                 | Effect::Range
                 | Effect::Draw
                 | Effect::Durability
+                | Effect::Bane
+        )
+    }
+
+    /// Whether it makes a shot better, the only effects ammunition may have (its own rule:
+    /// never a stat, a Defence, or anything its wielder would carry): to hit, damage, an extra
+    /// die, a typed die, criticals, a bane, or breaking less.
+    pub const fn betters_a_shot(self) -> bool {
+        matches!(
+            self,
+            Effect::ToHit
+                | Effect::Damage
+                | Effect::ExtraDamage
+                | Effect::Elemental
+                | Effect::Threat
+                | Effect::Crit
+                | Effect::Durability
+                | Effect::Bane
         )
     }
 
@@ -540,12 +563,16 @@ impl Effect {
     /// The kinds of item it may be on at all: what only attacks made with an item can use needs
     /// such an item, and what changes an item needs one that has it.
     fn allowed_on(self, kind: ItemKind) -> bool {
+        if kind == ItemKind::Ammo && !self.betters_a_shot() {
+            return false;
+        }
         match self {
             Effect::ExtraDamage
             | Effect::Elemental
             | Effect::Range
             | Effect::Draw
-            | Effect::Durability => kind.attacks(),
+            | Effect::Durability
+            | Effect::Bane => kind.attacks(),
             Effect::Parry => kind == ItemKind::Weapon,
             Effect::Armour => kind == ItemKind::Body,
             Effect::Protection => kind.is_armour(),
@@ -592,6 +619,9 @@ pub struct AffixDef {
     pub damage_type: Option<DamageTypeId>,
     /// The resource a pooled affix ([`Effect::is_pooled`]) changes: `stamina`, `rage`.
     pub resource: Option<ResourceId>,
+    /// The creature tag a [`Effect::Bane`] affix is the bane of (`orc`): one affix per tag,
+    /// made from one entry's `tags`.
+    pub tag: Option<String>,
     /// What kinds of item may roll it.
     pub bases: Vec<ItemKind>,
     /// How often it rolls among those that may (default 100).
@@ -823,6 +853,11 @@ struct AffixSpec {
     damage_type: Option<String>,
     /// The resource a pooled affix changes (an id in `data/resources.toml`).
     resource: Option<String>,
+    /// The creature tags an affix of effect `bane` is made for: one affix per tag, its `id` and
+    /// `name` with `{tag}` put in (`of_{tag}_bane`, `of {tag}-bane`), its `weight` the whole
+    /// family's, shared evenly among them.
+    #[serde(default)]
+    tags: Vec<String>,
     tiers: Vec<TierSpec>,
 }
 
@@ -924,19 +959,56 @@ pub(super) fn parse<'a>(
             continue;
         }
         let id = spec.id.clone();
-        let def = spec.resolve(kind, lookups).map_err(|m| {
+        let defs = spec.expand(kind, lookups).map_err(|m| {
             ContentError::new(file, format!("{} `{id}`: {m}", kind.name().to_lowercase()))
         })?;
-        if let Some(first) = seen.insert(id.clone(), file) {
-            return Err(super::duplicate_id("affix", &id, file, first));
+        for def in defs {
+            let id = def.id.clone();
+            if let Some(first) = seen.insert(id.clone(), file) {
+                return Err(super::duplicate_id("affix", &id, file, first));
+            }
+            affixes.ids.insert(id, affixes.defs.len());
+            affixes.defs.push(def);
         }
-        affixes.ids.insert(id, affixes.defs.len());
-        affixes.defs.push(def);
     }
     Ok(affixes)
 }
 
 impl AffixSpec {
+    /// The affixes this entry makes: itself, or for a bane one per tag (`tags`), in the order
+    /// named, each with its share of the family's weight (at least 1).
+    fn expand(mut self, kind: AffixKind, lookups: &Lookups<'_>) -> Result<Vec<AffixDef>, String> {
+        let tags = std::mem::take(&mut self.tags);
+        let bane = self.effect == Effect::Bane.id();
+        match (bane, tags.is_empty()) {
+            (false, true) => return Ok(vec![self.resolve(kind, lookups)?]),
+            (false, false) => return Err("`tags` is for affixes of effect `bane`".into()),
+            (true, true) => return Err("effect `bane` names its `tags`".into()),
+            (true, false) => {}
+        }
+        const TAG: &str = "{tag}";
+        if !self.id.contains(TAG) || !self.name.contains(TAG) {
+            return Err(format!("a bane's `id` and `name` hold `{TAG}`"));
+        }
+        let template = self.resolve(kind, lookups)?;
+        let share = (template.weight / tags.len() as u32).max(1);
+        let mut defs: Vec<AffixDef> = Vec::new();
+        for tag in tags {
+            super::tag::check(&tag)?;
+            if defs.iter().any(|d| d.tag.as_deref() == Some(tag.as_str())) {
+                return Err(format!("tag `{tag}` twice"));
+            }
+            defs.push(AffixDef {
+                id: template.id.replace(TAG, &tag.replace('-', "_")),
+                name: template.name.replace(TAG, &super::tag::spoken(&tag)),
+                weight: share,
+                tag: Some(tag),
+                ..template.clone()
+            });
+        }
+        Ok(defs)
+    }
+
     fn resolve(self, kind: AffixKind, lookups: &Lookups<'_>) -> Result<AffixDef, String> {
         let skill = |id: &str| lookups.skill.and_then(|f| f(id));
         let damage = |id: &str| lookups.damage_type.and_then(|f| f(id));
@@ -1042,6 +1114,7 @@ impl AffixSpec {
             skill,
             damage_type,
             resource,
+            tag: None,
             bases,
             weight: self.weight.unwrap_or(100),
             cursed: self.cursed,
@@ -1405,6 +1478,89 @@ tiers = [{ level = 1, min = 1, max = 2 }]
         let text = format!("{HEAD}\n{two}");
         let a = parse([("data/affixes.toml", text.as_str())], &lookups).expect("valid");
         assert!(a.is_empty());
+    }
+
+    /// A bane entry makes one affix per tag, its id and name the tag's, the weight shared; tags
+    /// on another effect, a bane without them, a template without `{tag}`, and a tag twice are
+    /// refused.
+    #[test]
+    fn banes_are_made_one_per_tag() {
+        let bane = |id: &str, tags: &str| {
+            format!(
+                "[[suffix]]\nid = \"{id}\"\nname = \"of {{tag}}-bane\"\neffect = \"bane\"\n\
+                 category = \"bane\"\nbases = [\"weapon\", \"ammo\"]\nweight = 100\n{tags}\
+                 tiers = [{{ level = 1, min = 1, max = 2 }}]\n"
+            )
+        };
+        let tags = "tags = [\"orc\", \"undead\", \"marsh-thing\"]\n";
+        let a = parse_with(&bane("of_{tag}_bane", tags)).expect("valid");
+        let made: Vec<(&str, &str, Option<&str>, u32)> = (a.all().iter())
+            .map(|d| (d.id.as_str(), d.name.as_str(), d.tag.as_deref(), d.weight))
+            .collect();
+        assert_eq!(
+            made,
+            [
+                ("of_orc_bane", "of orc-bane", Some("orc"), 33),
+                ("of_undead_bane", "of undead-bane", Some("undead"), 33),
+                (
+                    "of_marsh_thing_bane",
+                    "of marsh thing-bane",
+                    Some("marsh-thing"),
+                    33
+                ),
+            ]
+        );
+        assert!((a.all().iter()).all(|d| d.effect == Effect::Bane && d.category == "bane"));
+        let orc = "tags = [\"orc\"]\n";
+        let tier = "{ level = 1, min = 1, max = 1 }";
+        for (text, needle) in [
+            (bane("of_{tag}_bane", ""), "names its `tags`"),
+            (bane("of_bane", orc), "hold `{tag}`"),
+            (
+                bane("of_{tag}_bane", "tags = [\"orc\", \"orc\"]\n"),
+                "twice",
+            ),
+            (
+                one("suffix", "x", "damage", "\"weapon\"", orc, tier),
+                "`tags` is for affixes of effect `bane`",
+            ),
+            (
+                bane("of_{tag}_bane", orc).replace("\"ammo\"", "\"ring\""),
+                "cannot be on rings",
+            ),
+        ] {
+            let e = parse_with(&text).expect_err(needle);
+            assert!(e.to_string().contains(needle), "{e}");
+        }
+    }
+
+    /// Ammunition takes only what betters a shot: never a stat, a Defence, speed, or Proof.
+    #[test]
+    fn ammunition_takes_only_what_betters_a_shot() {
+        let tier = "{ level = 1, min = 1, max = 1 }";
+        for effect in [
+            "to_hit",
+            "damage",
+            "extra_damage",
+            "threat",
+            "crit",
+            "durability",
+        ] {
+            let text = one("prefix", "x", effect, "\"ammo\"", "", tier);
+            assert!(parse_with(&text).is_ok(), "{effect} on ammunition");
+        }
+        for effect in [
+            "strength",
+            "dodge",
+            "max_hp",
+            "attack_speed",
+            "proof",
+            "stealth",
+        ] {
+            let text = one("prefix", "x", effect, "\"ammo\"", "", tier);
+            let e = parse_with(&text).expect_err(effect);
+            assert!(e.to_string().contains("cannot be on ammunition"), "{e}");
+        }
     }
 
     /// Tools are a kind of item: rare names have words for them, and affixes may roll on them.

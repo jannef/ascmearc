@@ -45,7 +45,8 @@ give.
 Each recipe works one item you carry. You must take it off first if you wear or wield it, and
 you must know what its magic is ([identify](magic-items.md#unidentified-items) it first). A
 [unique item](magic-items.md#unique-items) or something a quest asks for cannot be enchanted. Arrows, bolts, and other [ammunition](ammunition.md) are worked a whole stack at once, for
-the same crystals as one item. Imbue's three crystals may all come from one stack.
+the same crystals as one item. A stack holds one enchantment less than other things (see
+[Capacity](magic-items.md#capacity)), so plain arrows take one, and Kindle is all they can bear. Imbue's three crystals may all come from one stack.
 
 A halfling's [pipe](pipe.md#enchanting-it) is enchanted as if it were armour, and its magic works
 while it is ready in the Tool slot. No other tool but the digging tools takes magic.

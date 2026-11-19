@@ -48,6 +48,8 @@ pub struct Mods {
     pools: Vec<(Effect, ResourceId, i32)>,
     /// What its hits cause, from a unique item's Inflict power (local: the weapon that hits).
     on_hit: Vec<OnHit>,
+    /// What bane affixes add against creatures of each tag, in the order first met.
+    banes: Vec<(String, i32)>,
 }
 
 impl Default for Mods {
@@ -60,7 +62,16 @@ impl Default for Mods {
             resistances: Vec::new(),
             pools: Vec::new(),
             on_hit: Vec::new(),
+            banes: Vec::new(),
         }
+    }
+}
+
+/// Adds `value` to `tag`'s entry in `list`, or appends one.
+fn add_bane(list: &mut Vec<(String, i32)>, tag: &str, value: i32) {
+    match list.iter_mut().find(|(t, _)| t == tag) {
+        Some((_, sum)) => *sum = sum.saturating_add(value),
+        None => list.push((tag.to_string(), value)),
     }
 }
 
@@ -184,6 +195,13 @@ impl Mods {
                     true => -rolled.value,
                     false => rolled.value,
                 };
+                // A bane is by its tag: banes of two tags never add up.
+                if rolled.def.effect == Effect::Bane {
+                    if let Some(tag) = &rolled.def.tag {
+                        add_bane(&mut self.banes, tag, value);
+                    }
+                    continue;
+                }
                 self.add(rolled.def.group(), value, light, content);
             }
         }
@@ -270,7 +288,8 @@ impl Mods {
     /// Changes an attack by these effects: to-hit, damage (added to every roll), extra damage
     /// dice, a wider critical threat range, a larger critical multiplier, and the damage of
     /// other kinds elemental affixes add (one rider per kind, after those the attack has); and
-    /// what a unique weapon's Inflict power makes its hits cause (`Profile::on_hit`).
+    /// what a unique weapon's Inflict power makes its hits cause (`Profile::on_hit`); and its
+    /// banes (`Profile::banes`), which count only against their creatures.
     pub fn sharpen(&self, profile: &mut Profile) {
         profile.to_hit += self.get(Effect::ToHit);
         profile.bonus += self.get(Effect::Damage);
@@ -290,6 +309,9 @@ impl Mods {
             profile.add_rider(rider);
         }
         profile.on_hit.extend_from_slice(&self.on_hit);
+        for (tag, value) in &self.banes {
+            add_bane(&mut profile.banes, tag, *value);
+        }
     }
 
     /// Every effect with a value, in [`Effect::all`] order, and the light.

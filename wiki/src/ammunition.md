@@ -50,5 +50,24 @@ Stacks of different grades never join: Fine arrows go with Fine arrows, and plai
 ones. Nothing makes ammunition better later. The anvil and the knife refuse it, and the time is
 not spent: "Ammunition cannot be worked finer: its make is set when it is fletched."
 
+## Magic ammunition
+
+A stack of ammunition can be [magic](magic-items.md) or rare, like a weapon: "14 Flaming arrows",
+"12 Fine arrows of orc-bane". Every arrow of the stack has the same magic, and it works on every
+shot you loose with it, on top of your bow's own magic. Stacks with different magic never join,
+even when only the value differs.
+
+Ammunition takes only magic that makes a shot better: to [hit](combat.md#hitting),
+[damage](combat.md#damage), an extra die, a die of fire, cold, or another
+[kind of damage](damage-types.md), wider [criticals](combat.md#criticals), breaking less often,
+and the [banes](affixes.md#banes), which strike one kind of creature harder. It never carries a
+stat, Defence, or anything else for the one who shoots it. The tables on
+[Prefixes and suffixes](affixes.md#prefixes) say which affixes roll on ammunition.
+
+A stack holds one enchantment less than other things (see
+[Capacity](magic-items.md#capacity)): plain and Fine arrows hold one, Marvellous two, and
+Masterwork three. Sling stones are stone, which holds one less again. You can
+[enchant](enchanting.md#enchanting-an-item) a whole stack at once, within the same limit.
+
 See also: [Making things by hand](handcraft.md), [Weapon skills](weapon-skills.md), and
 [Fighting styles](fighting-styles.md).
