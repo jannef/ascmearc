@@ -119,13 +119,15 @@ impl Content {
         self.spells.get(usize::from(spell.0))
     }
 
-    /// Whether a class ability gives `spell` (its `spell` effect names it).
+    /// Whether a class ability gives `spell` (its `spell` effect names it): a talent of a class
+    /// tree, never a race's (the gnomes' Glamour stays a scroll's spell for everyone else).
     pub(super) fn class_gives(&self, spell: SpellId) -> bool {
         let Some(name) = self.spell_of(spell).map(|s| s.id.as_str()) else {
             return false;
         };
         (self.talents.iter()).any(|(_, def)| {
-            (def.effects.iter()).any(
+            self.talents.tree(def.tree).class
+                && (def.effects.iter()).any(
                 |e| matches!(e, TalentEffect::Magic(MagicEffect::Spell { spell: s }) if s == name),
             )
         })

@@ -77,7 +77,8 @@ scent comes to you wherever you are on its level.
 ### When you are invisible
 
 The potion of the unseen makes you [Invisible](status-list.md#status-invisible) for two
-minutes. No creature sees you then, however near and however bright the light, unless it is
+minutes, and so does a [duergar](races.md#race-duergar)'s own
+[Invisibility](abilities.md#ability-fade) (see [Racial magic](races.md#racial-magic)). No creature sees you then, however near and however bright the light, unless it is
 [Seeing](status-list.md#status-seeing) or has no eyes at all (oozes, worms, and the like). The
 same goes for an invisible creature and your allies: they do not see it either.
 

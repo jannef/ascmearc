@@ -25,7 +25,7 @@
 //!   lifts.
 
 use crate::action::{Action, Event};
-use crate::content::{ActionKind, Stance};
+use crate::content::{ActionKind, Stance, TalentActive};
 use crate::geom::Dir;
 use crate::status::Effect;
 use crate::world::ActorId;
@@ -48,6 +48,8 @@ impl World {
         Some(match action {
             Action::Move(dir) | Action::Run(dir) | Action::Pay(Some(dir)) => self.move_kind(*dir),
             Action::RunToStairs(_) => ActionKind::Step,
+            // Fading from sight is a casting, as the duergar monsters' is (Silenced stops it).
+            Action::UseTalent(TalentActive::Fade) => ActionKind::Cast,
             Action::Rest(_) | Action::UseTalent(_) => ActionKind::Wait,
             Action::Open(_) => ActionKind::OpenDoor,
             Action::Close(_) => ActionKind::CloseDoor,

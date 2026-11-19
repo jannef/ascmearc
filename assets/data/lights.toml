@@ -319,3 +319,8 @@ radius = 1
 id = "circle_divination"
 color = [46, 46, 54, 90]
 radius = 1
+
+[[light]]
+id = "circle_illusion"
+color = [50, 40, 76, 90]
+radius = 1

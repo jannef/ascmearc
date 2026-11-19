@@ -402,6 +402,11 @@ asking in the one dialog before its `Action::Read`; there is no Study command of
   `Ability::BloodMagic` (`Source::Talent`, after it) is Blood magic's (`docs/dev/mana.md`):
   listed while some talent has the `blood_magic` effect, had by its holders, never greyed out
   (the rules refuse low hit points and full mana).
+  `Ability::Fade` (`Source::Race`, the menu's Racial group, first) is the duergar's Invisibility
+  (`use:fade`, `Action::UseTalent(TalentActive::Fade)`; `world/character/racial.rs`): listed
+  while some talent has the `fade` effect, had by its holders, `While` Invisible, its cooldown
+  (Invisibility spent), or a status that blocks casting (`world::fade_refused`); it takes no time
+  (`cost` is `None`).
   `Ability::Sign(SignActive)` (`Source::Sign`, the menu's Birth sign group between Racial and
   Class) are the birth sign's actives (`docs/dev/character-creation.md`): listed while some talent
   has one, had by whoever's `TalentMods` has it, `While(cooldown)`; their action is

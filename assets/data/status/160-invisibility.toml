@@ -1,9 +1,11 @@
 # Invisibility spent (docs/dev/creatures.md "The unseen", the creatures' `[creature.invisible]`):
 # a degree for every six seconds of its `cooldown`; while it lasts the creature does not fade
-# again. Creatures only: no one sees it on them.
+# again. A duergar character's racial Invisibility (talents/duergar_invisibility.toml) gives it
+# them by the same rule; no one sees it on another.
 [[status]]
 id = "invisibility"
 name = "Invisibility spent"
 max = 100
 stacking = "refresh"
 eases = 6
+end = "You can fade from sight again."

@@ -31,7 +31,8 @@
 #                                                        that rank (talents with such a
 #                                                        choice)
 #                   level = 9                            the character level
-#                   race = "dwarf", class = "warrior"    the character's
+#                   race = "dwarf", class = "warrior"    the character's (race may be a list,
+#                                                        any one of them)
 #                   eyes = "darkvision"                  the race's vision profile; a list,
 #                                                        any one of them
 #                   animal = "roc", element = "fire"     the birth sign's (horoscope.toml)
@@ -192,6 +193,11 @@
 #                                 rotten
 #   no_exertion                   blows, shots, and throws burn no extra nutrition
 #   no_bloating                   a meal never leaves it Bloated: what does not fit is lost
+#   bloated_unslowed              being Bloated never slows it
+#   capacity_percent { value }    the most nutrition it can hold (../hunger.toml `max`) that
+#                                 percent more (100: twice); the states' bands stay
+#   bloated_training { every }    while Bloated, every `every` points of nutrition it digests
+#                                 are a `bloated` use of stat training (../stats.toml)
 #   no_hunger_weakness            Weak or worse takes nothing off its stats, and it never faints
 #                                 (Starving still costs hit points)
 #   corpse_stats_percent { value }   a fresh corpse's stat training marks and its chances to
@@ -346,6 +352,11 @@
 #   second_wind { per_level, at_least, cooldown }   the Second wind ability: per_level hit points
 #                                 per character level back at once (at least at_least), then the
 #                                 cooldown status (an id in ../status/)
+#   fade { cooldown }             the racial active Invisibility (the duergar's, `use:fade`): it
+#                                 fades from sight by the duergar monsters' rule, a creature's
+#                                 `[creature.invisible]` (../creatures/README.toml): Invisible,
+#                                 then Invisibility spent for cooldown seconds (at most 600), while
+#                                 which it cannot again; no time, no mana; Silenced, it cannot
 #   blaze { radius, damage, damage_type, spell, fire, burns, cooldown }   a birth sign's active
 #                                 (Fire's Blaze, `use:blaze`): a burst of radius (1 to 3) around
 #                                 the player, damage dice of damage_type to every creature in it

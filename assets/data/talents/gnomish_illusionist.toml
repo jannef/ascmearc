@@ -1,0 +1,10 @@
+# Gnomish illusionist: a gnome's pick of the Racial tree. School focus's cost hook (`spell_mod`
+# `cost`), fixed to the illusion school and larger: illusion spells cost 25 % less mana.
+[[talent]]
+id = "gnomish_illusionist"
+name = "Gnomish illusionist"
+tree = "racial"
+description = "Illusion comes naturally to gnomes: your illusion spells cost you much less mana."
+needs = { race = "gnome" }
+effects = [{ kind = "spell_mod", cost = -25, when = ["illusion"] }]
+systems = ["spells", "mana"]

@@ -314,7 +314,7 @@ pub(super) fn racial(content: &Content) -> String {
                 race.talents.contains(&t.id)
                     || t.needs
                         .iter()
-                        .any(|n| matches!(&n, Need::Race(id) if *id == race.id))
+                        .any(|n| matches!(&n, Need::Race(ids) if ids.contains(&race.id)))
             })
             .collect();
         rows.sort_by_key(|t| (!t.granted, t.name.clone()));

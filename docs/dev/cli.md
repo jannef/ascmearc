@@ -796,7 +796,8 @@ All in docs/dev/crafting.md unless named.
 
 - `use:second_wind` uses the Second wind talent (hit points back at once, then Winded) and
   `use:blood_magic` the Blood magic talent (hit points for mana, never the last), a talent's own
-  active.
+  active; `use:fade` the duergar's racial Invisibility (Invisible, then Invisibility spent; no
+  time).
 - `use:rage` uses a class ability (`use:smite:E` one aimed in a
   direction): rage, veterans_wind, lay_on_hands, smite, holy_radiance, quivering_palm, exploit
   (`use:exploit:E`, the thief's: every opening held spent on one sneak attack,
