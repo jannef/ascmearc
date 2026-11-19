@@ -11,7 +11,9 @@
 //!   [`Dir::ALL`] order. Refused, taking no time, anywhere else ("There is no anvil here.").
 //! - **What**: a weapon, launcher, armour, or shield whose main part is of a metal, and not a
 //!   spirit weapon ([`temperable`]). Refused otherwise, taking no time, and so is an item with
-//!   all its improvements ([`workable`] is what the list offers).
+//!   all its improvements ([`workable`] is what the list offers). Ammunition is refused first,
+//!   by its own line ([`AMMUNITION`]), and so by Whittle: its make (Fine arrows) is set where it
+//!   is found or fletched, never at the anvil or with the knife (`magic/worked.rs::ammunition`).
 //! - **Time**: `seconds` (ten minutes), in turns of the `temper` action ([`World::work`], the
 //!   rest's machinery): a creature coming into view, a message, or a blow stops it, and an
 //!   interrupted attempt does nothing to the item and counts for nothing, but the time is spent.
@@ -53,7 +55,7 @@ use crate::content::{ActionKind, Content, ItemHarm, Offer, RecipeUse, TerrainId}
 use crate::geom::{Dir, Pos};
 use crate::magic::Worked;
 use crate::magic::worked::proof;
-use crate::magic::worked::{arms, aspects};
+use crate::magic::worked::{ammunition, arms, aspects};
 use crate::object::Stack;
 use crate::rng::draw;
 use crate::skills::{Effect, Use};
@@ -149,6 +151,11 @@ impl Craft {
         }
     }
 }
+
+/// What is said of ammunition offered to the anvil or the knife: its make is the fletcher's or
+/// the find's alone (`magic/worked.rs::ammunition`).
+pub(super) const AMMUNITION: &str =
+    "Ammunition cannot be worked finer: its make is set when it is fletched.";
 
 /// What is said of a failed attempt the item withstands (`item_damage.rs`: a protected item, or
 /// one of a `proof` material).
@@ -294,6 +301,10 @@ impl World {
             self.say("You carry no such thing.");
             return Spent::Nothing;
         };
+        if ammunition(self.content.object(stack.object)) {
+            self.say(AMMUNITION);
+            return Spent::Nothing;
+        }
         if !arms(&self.content, stack) {
             self.say("Only weapons and armour can be tempered.");
             return Spent::Nothing;
@@ -330,6 +341,10 @@ impl World {
             self.say("You carry no such thing.");
             return Spent::Nothing;
         };
+        if ammunition(self.content.object(stack.object)) {
+            self.say(AMMUNITION);
+            return Spent::Nothing;
+        }
         if !craftable(&self.content, stack, Craft::Whittle) {
             self.say("Only a weapon of wood can be whittled.");
             return Spent::Nothing;

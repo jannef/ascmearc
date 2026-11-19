@@ -36,6 +36,16 @@ pub enum Quality {
 }
 
 impl Quality {
+    /// The quality of `improvements` improvements: none for none, Masterwork for three or more.
+    pub const fn of(improvements: u8) -> Option<Quality> {
+        match improvements {
+            0 => None,
+            1 => Some(Quality::Fine),
+            2 => Some(Quality::Marvellous),
+            _ => Some(Quality::Masterwork),
+        }
+    }
+
     /// How many improvements it is.
     pub const fn improvements(self) -> usize {
         match self {
@@ -115,12 +125,14 @@ impl Aspect {
         }
     }
 
-    /// Whether the base item `def` has it: anything with an attack has the first three, anything
+    /// Whether the base item `def` has it: anything with an attack has the first three and
+    /// ammunition the to-hit and damage (no dice of its own: [`ammunition`]), anything
     /// that gives Defence (armour, a shield, a parrying weapon) or Protection the next two, and a
     /// pipe the make.
     pub fn of(self, def: &ObjectDef) -> bool {
         match self {
-            Aspect::Die | Aspect::ToHit | Aspect::Damage => def.attack.is_some(),
+            Aspect::Die => def.attack.is_some(),
+            Aspect::ToHit | Aspect::Damage => def.attack.is_some() || ammunition(def),
             Aspect::Defence => def.armour != 0 || def.shield != 0 || def.parry != 0,
             Aspect::Protection => def.protection != 0,
             Aspect::Make => def.kind == Some(ItemKind::Pipe),
@@ -139,6 +151,26 @@ pub fn arms(content: &Content, stack: &Stack) -> bool {
     content.object(stack.object).kind.is_some_and(|k| {
         matches!(k, ItemKind::Weapon | ItemKind::Launcher | ItemKind::Shield) || k.is_armour()
     })
+}
+
+/// Whether base item `def` is ammunition that takes a make (`kind = "ammo"`: arrows, bolts,
+/// sling stones; not the brittle or flaming ones, which have no kind). A stack of it is Fine,
+/// Marvellous, or Masterwork as found or as fletched, never by an anvil or a knife ([`arms`]
+/// leaves it out), and always the same way at one quality ([`Quality::worked`]: Fine +1 to hit,
+/// Marvellous +1 to hit and +1 damage, Masterwork +2 to hit and +1 damage), so stacks of one
+/// quality join (`object.rs`'s `join`). What it adds rides on the shot it is loosed in
+/// (`Actor::ranged`), beside the launcher's own.
+pub fn ammunition(def: &ObjectDef) -> bool {
+    def.kind == Some(ItemKind::Ammo)
+}
+
+/// The make of a stack of ammunition of base item `def` with `improvements` improvements (at
+/// most `most`): [`Quality::worked`], no draw; `None` for none, or for what is no ammunition.
+pub fn ammunition_make(def: &ObjectDef, improvements: u8, most: u8) -> Option<Worked> {
+    if !ammunition(def) {
+        return None;
+    }
+    Quality::of(improvements.min(most))?.worked(def)
 }
 
 /// What the anvil has done to an item so far.

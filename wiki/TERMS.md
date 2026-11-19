@@ -176,6 +176,7 @@ above.
 | Base item | `affixes.md#base-items` |
 | Unique item | `magic-items.md#unique-items` |
 | Ammunition, arrows, bolts | `ammunition.md` |
+| Fine, Marvellous, Masterwork ammunition (arrows of a grade) | `ammunition.md#fine-marvellous-and-masterwork-ammunition` |
 | Burden (Unburdened, Burdened, Strained, Overloaded), carrying limit | `burden.md#burden-levels`, `burden.md#how-much-you-can-carry` |
 | Hunger, nutrition (Satiated, Hungry, Weak, Fainting, Starving, Bloated) | `hunger.md#how-hungry-you-are` |
 | Eating, food, rot, corpses | `food.md#eating`, `food.md#food-spoils`, `food.md#corpses` |

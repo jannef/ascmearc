@@ -71,7 +71,7 @@ Some recipes make a **batch** of many: [arrowheads](forging.md#recipe-arrowheads
 [arrows](#recipe-arrows) and [crossbow bolts](#recipe-bolts) (see
 [Fletching](skill-uses.md#fletching)), [sling stones](#recipe-sling-stones) chipped from a block
 of stone (no knife needed), and [flaming arrows](#recipe-flaming-arrows), arrows wrapped in rag
-and soaked in a flask of oil. A batch has no grade. Your check sets how many you get:
+and soaked in a flask of oil. Your check sets how many you get:
 
 - beat the difficulty, and you get the whole count;
 - fall up to 3 short, half of it, rounded up;
@@ -79,6 +79,12 @@ and soaked in a flask of oil. A batch has no grade. Your check sets how many you
 - fall further, none: "You spoil the whole batch."
 
 A natural 2 always spoils the batch; a natural 24 always makes the whole count.
+
+A batch of arrows, bolts, or sling stones also takes a grade from the same check, as a forged
+weapon does (see [How well it comes out](crafting.md#how-well-it-comes-out)): the whole batch is
+plain, **Fine**, **Marvellous**, or **Masterwork**, and the grade makes every shot with it better
+(see [Ammunition](ammunition.md#fine-marvellous-and-masterwork-ammunition)). Arrowheads, brittle
+arrows, and flaming arrows have no grade.
 
 An **arrowhead** is the one thing a smith makes for someone else: one ingot of any metal makes
 twenty, of that metal. A fletcher puts one on each arrow, and the arrow takes its metal. Bone and

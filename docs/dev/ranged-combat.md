@@ -27,6 +27,13 @@ with `FreeGlyph::turn`, trail, embers via `particles::trail`, impact puff) and w
 `render::lighting::Transients` (the moving light of a burning missile, and landed lights held back
 until it arrives; `draw_map`, object glow, and object particles hold back what is `arriving` too).
 
+A shot's profile is `Actor::ranged` (`world/turn/actor.rs`): the launcher's attack and dice
+(its make's `Die` through `Stack::attack`), `Mods::local` of the launcher (its affixes, material,
+and make's to hit and damage), then `Mods::local` of the ammunition nocked (its affixes, material,
+and make: docs/dev/special-rooms.md "Ammunition's make"), then everything worn. The two makes add
+up: a Fine bow (+1 to hit) loosing Masterwork arrows (+2 to hit, +1 damage) shoots at +3 to hit,
++1 damage. Tests: `world/crafting/fletch_tests.rs` (`a_fine_arrow_hits_better_than_a_plain_one`).
+
 The thief's Thrown exploit (#1465, `world/classes/openings.rs`, docs/dev/openings.md "The thrown
 exploit") is a throw through the same path: `World::thrown_exploit` hands its `Loose` to
 `player_looses`, with `Technique::at` naming the creature aimed at so that `resolve` gives the

@@ -720,3 +720,112 @@ fn fletching_replays_verify() {
     assert_eq!(verified.state_hash(), w.state_hash());
     assert!(count_of(&w, "brittle_arrow") > 0, "{:?}", pack(&w));
 }
+
+/// The arrows carried, by their make's word: (count, word).
+fn arrow_stacks(w: &World) -> Vec<(u32, Option<&'static str>)> {
+    let arrow = object(w, "arrow");
+    (w.state.player().inventory.iter())
+        .filter(|s| s.object == arrow)
+        .map(|s| (s.count, s.worked().and_then(crate::magic::Worked::word)))
+        .collect()
+}
+
+/// Fletched ammunition takes the grade of the check, as a forged weapon does, the whole batch
+/// alike and always the same make; a batch of one grade joins its like, never another's.
+#[test]
+fn fletched_arrows_take_the_grade_of_the_check() {
+    let mut w = equipped(false, 2, "short_bow");
+    arrowheads(&mut w, "iron", 20); // c
+    pieces(&mut w, "wood", 2); // d
+    sure_batch(&mut w, "craft:arrows:c,d");
+    let first = arrow_stacks(&w);
+    assert!(
+        matches!(first.as_slice(), [(_, Some("Masterwork"))]),
+        "far past the bands: {first:?}"
+    );
+    let made = (w.state.player().inventory.iter())
+        .find(|s| s.object == object(&w, "arrow"))
+        .expect("made");
+    let def = w.content.object(made.object);
+    let masterwork = crate::magic::worked::ammunition_make(def, 3, 3);
+    assert_eq!(made.worked(), masterwork.as_ref(), "always the same make");
+    let said = last_message(&w);
+    assert!(said.contains("Masterwork arrows"), "{said}");
+    // A second Masterwork batch joins the first; plain arrows stay apart.
+    sure_batch(&mut w, "craft:arrows:c,d");
+    let second = arrow_stacks(&w);
+    assert_eq!(second.len(), 1, "{second:?}");
+    assert!(second[0].0 > first[0].0);
+    let content = w.content.clone();
+    let plain = Stack::new(object(&w, "arrow"), 5);
+    crate::object::add_to_inventory(&mut w.player_mut().inventory, plain, &content);
+    assert_eq!(arrow_stacks(&w).len(), 2, "{:?}", pack(&w));
+    // At an even check the grade is the check's: over many batches, plain and finer both.
+    let mut words = std::collections::BTreeSet::new();
+    for seed in 0..60 {
+        let mut w = equipped(false, seed, "short_bow");
+        set_skill(&mut w, "woodcraft", Some(100));
+        pieces(&mut w, "wood", 1); // c
+        craft(&mut w, "craft:arrows:-,c");
+        // Headless arrows have no kind: brittle, and never of a make.
+        assert!(
+            (w.state.player().inventory.iter()).all(|s| s.worked().is_none()),
+            "{:?}",
+            pack(&w)
+        );
+        let mut w = world(false, seed);
+        pieces(&mut w, "stone", 1); // a
+        craft(&mut w, "craft:sling_stones:a");
+        let stone = object(&w, "sling_stone");
+        for s in (w.state.player().inventory.iter()).filter(|s| s.object == stone) {
+            words.insert(s.worked().and_then(crate::magic::Worked::word));
+        }
+    }
+    assert!(
+        words.contains(&None) && words.contains(&Some("Fine")),
+        "{words:?}"
+    );
+}
+
+/// What the make of the arrows nocked adds to the shot: Fine +1 to hit, Marvellous +1 to hit and
+/// +1 damage, Masterwork +2 to hit and +1 damage; on top of the bow's own make.
+#[test]
+fn a_fine_arrow_hits_better_than_a_plain_one() {
+    use crate::magic::{Aspect, Quality, Worked};
+    let shot = |bow: Option<Quality>, arrows: Option<Quality>| {
+        let mut w = equipped(false, 1, "short_bow");
+        let content = w.content.clone();
+        if let Some(q) = bow {
+            let at = (w.state.player().launcher_item(&content)).expect("bow");
+            let def = content.object(w.state.player().inventory[at].object);
+            let mut worked = Worked::default();
+            for _ in 0..q.improvements() {
+                worked.attempted();
+                worked.improve(Aspect::ToHit);
+            }
+            assert!(worked.is_valid(def));
+            w.player_mut().inventory[at].set_worked(worked);
+        }
+        let mut stack = Stack::new(object(&w, "arrow"), 10);
+        if let Some(q) = arrows {
+            stack.set_worked(q.worked(content.object(stack.object)).expect("aspects"));
+        }
+        let item = carry(&mut w, stack);
+        let slot = content.slot_id("missiles").expect("slot");
+        w.player_mut().equipment.put(&[slot], item);
+        let p = w.state.player().ranged(&content).expect("a shot");
+        (p.to_hit, p.bonus)
+    };
+    let (hit, bonus) = shot(None, None);
+    let more = |q| {
+        let (h, b) = shot(None, Some(q));
+        (h - hit, b - bonus)
+    };
+    assert_eq!(
+        [Quality::Fine, Quality::Marvellous, Quality::Masterwork].map(more),
+        [(1, 0), (1, 1), (2, 1)]
+    );
+    // A Fine bow (+1 to hit) with Masterwork arrows: the two add up.
+    let (h, b) = shot(Some(Quality::Fine), Some(Quality::Masterwork));
+    assert_eq!((h - hit, b - bonus), (3, 1));
+}
