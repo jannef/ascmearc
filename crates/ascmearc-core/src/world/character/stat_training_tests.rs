@@ -12,7 +12,7 @@ use crate::dump::{self, Layer};
 use crate::skills::Use;
 use crate::stats::{PerStat, Stat, Stats};
 use crate::test_support::draws;
-use crate::test_support::{CONTENT as BUILTIN, run, said};
+use crate::test_support::{CONTENT as BUILTIN, plain_marks, run, said};
 use crate::time::{DAWN, DAY};
 use crate::world::*;
 use std::sync::LazyLock;
@@ -31,9 +31,13 @@ static SURE: LazyLock<Arc<Content>> = LazyLock::new(|| {
     Arc::new(Content::load(&files).expect("content"))
 });
 
+/// A human warrior whose marks count once (`plain_marks`), so a test counts them one by one.
 fn world_with(content: Arc<Content>) -> World {
     let spec: CharacterSpec = "human,male,warrior".parse().expect("a character");
-    World::with_character(content, "showcase", Some(7), Some(&spec)).expect("world")
+    let mut world =
+        World::with_character(content, "showcase", Some(7), Some(&spec)).expect("world");
+    plain_marks(&mut world);
+    world
 }
 
 fn marks(world: &World) -> PerStat<i32> {

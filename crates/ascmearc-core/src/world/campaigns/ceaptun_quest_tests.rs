@@ -8,6 +8,7 @@ use crate::content::ContentFiles;
 use crate::dump::{self, Layer};
 use crate::object::Stack;
 use crate::replay::Replay;
+use crate::test_support::plain_marks;
 use crate::test_support::{run as act, texts};
 use crate::world::*;
 use std::sync::LazyLock;
@@ -226,6 +227,7 @@ fn grave_goods_trains_heal_in_one_untrained() {
 fn grave_goods_gives_a_trained_healer_a_hundred_marks() {
     let heal = CONTENT.skill_id("heal").expect("heal");
     let mut w = town();
+    plain_marks(&mut w);
     w.player_mut().skills.add(heal, 30);
     w.player_mut().skills.mark(heal);
     hand_in_the_chalice(&mut w);

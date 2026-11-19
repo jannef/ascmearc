@@ -282,6 +282,7 @@ fn generate(content: &Content) -> Vec<(String, String)> {
         ("stat-modifiers.md", character::stat_modifiers),
         ("stat-uses.md", character::stat_uses),
         ("potentials.md", character::potentials),
+        ("race-growth.md", character::growth),
         ("stat-training.md", stats::stat_training),
         ("stat-losses.md", stats::stat_losses),
         ("stat-prices.md", stats::stat_prices),
@@ -842,7 +843,21 @@ mod tests {
         ] {
             has("stat-modifiers.md", row);
         }
-        has("potentials.md", "| Human | 16–17 | 16–17 |");
+        has("potentials.md", "| Human | 24–26 | 24–26 |");
+        has(
+            "potentials.md",
+            "| Half-orc | 40 | 38 | 40 | 12 | 15 | 12 |",
+        );
+        has("race-growth.md", "| Human | ×1.5 all | ×1.25 all | ×1.25 |");
+        has(
+            "race-growth.md",
+            "| Half-orc | ×2.5 St, Dx, To; else ×1 | ×1.25 all | ×1.25 |",
+        );
+        has(
+            "race-growth.md",
+            "| Half-elf | ×1.5 In, Wi, Pr; else ×1 | ×1 | ×1 |",
+        );
+        has("race-growth.md", "| Dwarf | ×1 | ×1 | ×1 |");
         has("potentials.md", "| Dwarf | 17 | 13 | 19 |");
         has(
             "stat-uses.md",

@@ -9,6 +9,7 @@ use crate::skills::SkillId;
 use crate::stats::{PerStat, Stat, Stats};
 use crate::test_support::CONTENT as BUILTIN;
 use crate::test_support::draws;
+use crate::test_support::plain_marks;
 use crate::world::*;
 
 fn knowledge() -> SkillId {
@@ -145,6 +146,7 @@ fn resisting_marks_knowledge_and_creatures_get_nothing() {
 #[test]
 fn discovery_experience_marks_knowledge() {
     let (mut w, creature) = world(1);
+    plain_marks(&mut w);
     w.player_mut().skills.add(knowledge(), 10);
     let kind = w.state.actors[&creature].creature;
     let marks = |w: &World| {

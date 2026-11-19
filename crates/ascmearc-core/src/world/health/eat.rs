@@ -299,8 +299,7 @@ impl World {
             let marks = on_eat.train.get(&stat).copied().unwrap_or(0);
             let marks = TalentMods::scaled(u64::from(marks), more).min(u64::from(u32::MAX)) as u32;
             if marks > 0 {
-                let pile = &mut self.player_mut().stat_marks[stat];
-                *pile = pile.saturating_add(i32::try_from(marks).unwrap_or(i32::MAX));
+                self.gain_stat_marks(stat, marks);
                 if marks >= LOUD_MARKS {
                     self.say(gift_news(stat));
                 }

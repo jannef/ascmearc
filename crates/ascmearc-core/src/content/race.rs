@@ -19,7 +19,7 @@ use super::{
 use crate::dice::Dice;
 use crate::light::Light;
 use crate::skills::{self, SkillId};
-use crate::stats::{PerStat, Stat, adjustments};
+use crate::stats::{PerStat, Stat, adjusted, adjustments};
 use serde::Deserialize;
 use std::collections::BTreeMap;
 use std::ops::RangeInclusive;
@@ -33,6 +33,22 @@ fn normal_hunger() -> u16 {
 
 fn normal_experience() -> u16 {
     100
+}
+
+/// A race's growth percents ([`RaceDef::potential_percent`], [`RaceDef::marks_percent`],
+/// [`RaceDef::skill_marks_percent`]): at most ten times, never nothing.
+pub const GROWTH: RangeInclusive<u16> = 1..=1000;
+
+/// No change: a growth percent's default.
+const PLAIN: u16 = 100;
+
+fn plain() -> u16 {
+    PLAIN
+}
+
+/// `value` scaled by `percent`, rounded to the nearest (a half up).
+fn scaled_nearest(value: u32, percent: u16) -> u32 {
+    (value * u32::from(percent) + 50) / 100
 }
 
 #[derive(Deserialize)]
@@ -54,6 +70,12 @@ struct RaceSpec {
     stats: BTreeMap<Stat, Dice>,
     #[serde(default)]
     potential: BTreeMap<Stat, Dice>,
+    #[serde(default)]
+    potential_percent: BTreeMap<Stat, u16>,
+    #[serde(default)]
+    marks_percent: BTreeMap<Stat, u16>,
+    #[serde(default = "plain")]
+    skill_marks_percent: u16,
     #[serde(default)]
     hp: u16,
     natural: Option<Hide>,
@@ -152,6 +174,15 @@ pub struct RaceDef {
     pub stats: PerStat<Dice>,
     /// Adjustments to the potentials on [`Races::base_potential`]; hidden from the player.
     pub potential: PerStat<Dice>,
+    /// What each rolled potential is multiplied by, in percent ([`RaceDef::potential_of`]; 100
+    /// by default): humans' 150 in every stat.
+    pub potential_percent: PerStat<u16>,
+    /// How much each stat training mark counts, in percent (100 by default): each whole hundred
+    /// is a mark for certain, the rest a chance of one more (humans' 125: a mark counts twice
+    /// one time in four; `World::gain_stat_marks`).
+    pub marks_percent: PerStat<u16>,
+    /// The same for every skill training mark (`World::mark_skill`).
+    pub skill_marks_percent: u16,
     /// What the race adds to the hit points: maximum hit points are
     /// Toughness plus the race's and the class's.
     pub hp: i32,
@@ -228,6 +259,16 @@ impl RaceDef {
     pub fn teaches(&self, skill: SkillId) -> bool {
         self.skills.iter().any(|&(s, _)| s == skill)
     }
+
+    /// The potential in `stat` of a new character of the race: `base` plus the rolled
+    /// adjustment `rolled`, kept within the scores' range, then multiplied by
+    /// [`RaceDef::potential_percent`], rounded to the nearest (a half up), within the range
+    /// again.
+    pub fn potential_of(&self, stat: Stat, base: u8, rolled: i32) -> u8 {
+        let rolled = u32::from(adjusted(base, rolled));
+        let scaled = scaled_nearest(rolled, self.potential_percent[stat]);
+        adjusted(0, i32::try_from(scaled).unwrap_or(i32::MAX))
+    }
 }
 
 /// Every race, and the base every potential starts from.
@@ -283,6 +324,31 @@ impl Races {
                 )));
             }
             let (stats, potential) = (adjustments(&spec.stats), adjustments(&spec.potential));
+            let percents = |field: &str, data: &BTreeMap<Stat, u16>| {
+                let mut out = PerStat::splat(PLAIN);
+                for (&stat, &percent) in data {
+                    if !GROWTH.contains(&percent) {
+                        return Err(err(format!(
+                            "race `{id}`: {field} {} {percent} is not within {} to {}",
+                            stat.id(),
+                            GROWTH.start(),
+                            GROWTH.end()
+                        )));
+                    }
+                    out[stat] = percent;
+                }
+                Ok(out)
+            };
+            let potential_percent = percents("potential_percent", &spec.potential_percent)?;
+            let marks_percent = percents("marks_percent", &spec.marks_percent)?;
+            if !GROWTH.contains(&spec.skill_marks_percent) {
+                return Err(err(format!(
+                    "race `{id}`: skill_marks_percent {} is not within {} to {}",
+                    spec.skill_marks_percent,
+                    GROWTH.start(),
+                    GROWTH.end()
+                )));
+            }
             let resist = resist(&spec.resist).map_err(|m| err(format!("race `{id}`: {m}")))?;
             let size_id = spec.size.as_deref().unwrap_or(super::MEDIUM);
             let size = size_index(size_id)
@@ -309,6 +375,9 @@ impl Races {
                 age: u32::from(young)..=u32::from(old),
                 stats,
                 potential,
+                potential_percent,
+                marks_percent,
+                skill_marks_percent: spec.skill_marks_percent,
                 hp: i32::from(spec.hp),
                 mana: i32::from(spec.mana),
                 natural: spec.natural,
@@ -539,10 +608,48 @@ mod tests {
                 format!("{ONE}light_blind = {{ glare = 250, sight = 10 }}\n"),
                 "missing field `to_hit`",
             ),
+            (
+                format!("{ONE}potential_percent = {{ strength = 0 }}\n"),
+                "race `human`: potential_percent strength 0 is not within 1 to 1000",
+            ),
+            (
+                format!("{ONE}marks_percent = {{ luck = 125 }}\n"),
+                "unknown stat `luck`",
+            ),
+            (
+                format!("{ONE}skill_marks_percent = 1001\n"),
+                "race `human`: skill_marks_percent 1001 is not within 1 to 1000",
+            ),
         ] {
             let e = parse(&text).unwrap_err();
             assert!(e.message.contains(why), "{why}: {}", e.message);
         }
+    }
+
+    #[test]
+    fn growth_percents_default_to_plain_and_scale_the_potential() {
+        let plain = parse(ONE).expect("valid");
+        let human = &plain.list[0];
+        assert_eq!(human.potential_percent, PerStat::splat(100));
+        assert_eq!(human.marks_percent, PerStat::splat(100));
+        assert_eq!(human.skill_marks_percent, 100);
+        assert_eq!(human.potential_of(Stat::Strength, 15, 1), 16);
+        let grown = parse(&format!(
+            "{ONE}potential_percent = {{ strength = 250, intelligence = 150 }}\n\
+             marks_percent = {{ dexterity = 125 }}\nskill_marks_percent = 125\n"
+        ))
+        .expect("valid");
+        let human = &grown.list[0];
+        assert_eq!(human.marks_percent[Stat::Dexterity], 125);
+        assert_eq!(human.marks_percent[Stat::Strength], 100);
+        assert_eq!(human.skill_marks_percent, 125);
+        // 15 × 1.5 = 22.5, a half up: 23; 16 × 1.5 = 24 exactly.
+        assert_eq!(human.potential_of(Stat::Intelligence, 15, 0), 23);
+        assert_eq!(human.potential_of(Stat::Intelligence, 15, 1), 24);
+        // 15 × 2.5 = 37.5: 38; 19 × 2.5 = 47.5 tops out at 40.
+        assert_eq!(human.potential_of(Stat::Strength, 15, 0), 38);
+        assert_eq!(human.potential_of(Stat::Strength, 15, 4), 40);
+        assert_eq!(human.potential_of(Stat::Presence, 15, -3), 12, "plain");
     }
 
     #[test]

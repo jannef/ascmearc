@@ -10,6 +10,7 @@ use crate::skills::Use;
 use crate::stats::{PerStat, Stat};
 use crate::temperature::Temperature;
 use crate::test_support::builtin;
+use crate::test_support::plain_marks;
 use crate::world::*;
 use std::sync::LazyLock;
 
@@ -459,6 +460,7 @@ fn a_deal_trains_presence_more_when_negotiation_bettered_it() {
 #[test]
 fn the_first_chat_with_someone_trains_presence_twice_and_later_ones_once() {
     let mut w = World::new(SURE.clone(), "ceaptun", Some(7)).expect("world");
+    plain_marks(&mut w);
     let player = w.state.player;
     // Someone who will talk, beside the player.
     let npc = (w.state.actors.values())
