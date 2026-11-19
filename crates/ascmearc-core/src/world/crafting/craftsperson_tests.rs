@@ -103,7 +103,11 @@ fn a_bonus_pick_takes_only_a_trade_and_the_run_records_every_pick() {
         .expect("a character")
         .spec
         .talents;
-    assert_eq!(taken.len(), 4, "two trades and everyone's two: {taken:?}");
+    assert_eq!(
+        taken.len(),
+        5,
+        "two trades, everyone's two, and Old grudges' Sworn foe: {taken:?}"
+    );
     assert_eq!(world.due(), None);
     // A dwarf is born to Metalcraft: Smith is closed to them.
     let spec: CharacterSpec = "dwarf,female,craftsperson".parse().expect("a character");

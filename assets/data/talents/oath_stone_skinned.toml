@@ -1,0 +1,8 @@
+[[talent]]
+id = "oath_stone_skinned"
+name = "Stone-skinned"
+tree = "oath"
+granted = true
+description = "Their blows find you harder to hurt: Protection +1."
+effects = [{ kind = "protection", value = 1 }]
+systems = ["protection"]

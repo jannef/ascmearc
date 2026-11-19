@@ -41,7 +41,8 @@ fn picked(world: &World) -> Vec<String> {
 fn a_chosen_character_takes_its_random_picks_and_records_them() {
     let world = start("dwarf,female,warrior", &[], 3).expect("starts");
     let named = &world.character().expect("a character").spec.talents;
-    assert_eq!(named.len(), 2, "{named:?}");
+    // The two everyone picks and Old grudges' free Sworn foe.
+    assert_eq!(named.len(), 3, "{named:?}");
     assert_eq!(&picked(&world), named);
     assert_eq!(world.due(), None, "nothing waits");
     assert!(
@@ -88,25 +89,35 @@ fn the_bard_picks_one_more_and_the_scenarios_own_character_none() {
 
 #[test]
 fn named_picks_are_taken_in_order_and_checked() {
-    let world = start("dwarf,male,warrior", &["healthy", "keen_ears"], 1).expect("starts");
-    assert_eq!(picked(&world), ["healthy", "keen_ears"]);
+    // A dwarf's free Sworn foe (Old grudges) is one of the picks named.
+    const FOE: &str = "sworn_foe:kobold";
+    let world = start("dwarf,male,warrior", &[FOE, "healthy", "keen_ears"], 1).expect("starts");
+    assert_eq!(picked(&world), [FOE, "healthy", "keen_ears"]);
     // A chain within the picks: Fast healer needs Healthy (and Toughness 13, a dwarf's).
-    let chain = start("dwarf,male,warrior", &["healthy", "fast_healer"], 1).expect("a chain");
-    assert_eq!(picked(&chain), ["healthy", "fast_healer"]);
-    let Err(WorldError::Character(why)) = start("dwarf,male,warrior", &["fast_healer"], 1) else {
+    let chain = start("dwarf,male,warrior", &[FOE, "healthy", "fast_healer"], 1).expect("a chain");
+    assert_eq!(picked(&chain), [FOE, "healthy", "fast_healer"]);
+    let Err(WorldError::Character(why)) = start("dwarf,male,warrior", &[FOE, "fast_healer"], 1)
+    else {
         panic!("Fast healer without Healthy is refused");
     };
     assert!(why.contains("fast_healer"), "{why}");
-    let Err(WorldError::Character(why)) = start("dwarf,male,warrior", &["healthy"], 1) else {
+    let Err(WorldError::Character(why)) = start("dwarf,male,warrior", &[FOE, "healthy"], 1) else {
         panic!("too few");
     };
     assert!(why.contains("1 more"), "{why}");
-    assert!(start("dwarf,male,warrior", &["healthy", "lean", "keen_ears"], 1).is_err());
-    assert!(start("dwarf,male,warrior", &["healthy", "nonsense"], 1).is_err());
+    assert!(
+        start(
+            "dwarf,male,warrior",
+            &[FOE, "healthy", "lean", "keen_ears"],
+            1
+        )
+        .is_err()
+    );
+    assert!(start("dwarf,male,warrior", &[FOE, "healthy", "nonsense"], 1).is_err());
     // A choice is written after a colon.
     let focus = start(
         "dwarf,male,warrior",
-        &["weapon_focus:long_blades", "lean"],
+        &["weapon_focus:long_blades", "lean", FOE],
         1,
     );
     assert_eq!(
@@ -126,16 +137,28 @@ fn a_draft_offers_what_the_next_pick_may_be() {
     .expect("a draft");
     let book = draft.content().talents();
     let id = |name: &str| book.id(name).expect("a talent");
+    // Old grudges' free Sworn foe first, alone.
     let (left, offers) = draft.creation_offers(&[]).expect("offers");
+    assert_eq!(left, 3);
+    assert!(
+        offers.iter().all(|(t, _)| *t == id("sworn_foe")),
+        "{offers:?}"
+    );
+    let foe = "sworn_foe:kobold".to_string();
+    let (left, offers) = draft
+        .creation_offers(std::slice::from_ref(&foe))
+        .expect("offers");
     assert_eq!(left, 2);
     assert!(offers.iter().any(|(t, _)| *t == id("healthy")));
     assert!(!offers.iter().any(|(t, _)| *t == id("fast_healer")));
-    let (left, offers) = draft.creation_offers(&["healthy".into()]).expect("offers");
+    let (left, offers) = draft
+        .creation_offers(&[foe.clone(), "healthy".into()])
+        .expect("offers");
     assert_eq!(left, 1);
     // Healthy's rank is held: it is offered no more; what needed it may be.
     assert!(!offers.iter().any(|(t, _)| *t == id("healthy")));
     let (left, offers) =
-        (draft.creation_offers(&["healthy".into(), "lean".into()])).expect("offers");
+        (draft.creation_offers(&[foe, "healthy".into(), "lean".into()])).expect("offers");
     assert_eq!((left, offers.len()), (0, 0));
     assert!(draft.creation_offers(&["fast_healer".into()]).is_err());
 }

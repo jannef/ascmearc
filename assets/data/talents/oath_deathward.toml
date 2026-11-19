@@ -1,0 +1,11 @@
+[[talent]]
+id = "oath_deathward"
+name = "Deathward"
+tree = "oath"
+granted = true
+description = "Death has walked beside you so long it hardly knows you: Protection +1, and you resist necrotic harm."
+effects = [
+    { kind = "protection", value = 1 },
+    { kind = "resist", damage = "necrotic", value = 25 },
+]
+systems = ["protection", "damage_types"]

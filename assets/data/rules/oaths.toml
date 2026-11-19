@@ -1,0 +1,69 @@
+# The dwarves' oath table (`world/character/oath.rs`, `content/oath.rs`; docs/dev/oaths.md): a
+# dwarf who takes Slayer's Oath for a kind of creature (a creature tag they are sworn against)
+# counts every creature they kill of that kind as an oath kill, from then on. One running total
+# across all their oaths; each band below is crossed once, as the total reaches its `kills`.
+# Optional: without this file there are no oath kills.
+#
+# talent     the talent whose choices (creature tags) count: a kill of a creature carrying any
+#            tag the player holds it for is one oath kill (one, however many oaths it answers)
+#
+# [[band]]   one per band, in rising order of `kills`; crossed once, as the total reaches it:
+#   kills    the total of oath kills
+#   talent   a granted talent of the `oath` tree (../talents/trees/190-oath.toml), given then
+#   message  said as it is given
+#
+# The bands are spread over a whole career: a dwarf with oaths against common kinds kills about
+# a quarter of everything they kill under an oath, so the last band comes near level 50 (the
+# reasoning: docs/dev/oaths.md "The table").
+
+talent = "slayers_oath"
+
+[[band]]
+kills = 10
+talent = "oath_blooded"
+message = "Ten of them lie dead by your oath. The debt has begun to be paid."
+
+[[band]]
+kills = 30
+talent = "oath_grim"
+message = "Your grudge has set hard in you, like old iron."
+
+[[band]]
+kills = 75
+talent = "oath_steadfast"
+message = "The work of your oath has hardened your arms."
+
+[[band]]
+kills = 150
+talent = "oath_unbowed"
+message = "A hundred and fifty of them. You stand taller for every one."
+
+[[band]]
+kills = 300
+talent = "oath_stone_skinned"
+message = "Their blows hardly find you now."
+
+[[band]]
+kills = 500
+talent = "oath_grudge_hewer"
+message = "Five hundred. Your blows carry the weight of every wrong done to your folk."
+
+[[band]]
+kills = 800
+talent = "oath_bane_eyed"
+message = "You know their bodies better than they do: where they break, where they bleed."
+
+[[band]]
+kills = 1200
+talent = "oath_deathward"
+message = "Death has walked beside you so long it hardly knows you any more."
+
+[[band]]
+kills = 1800
+talent = "oath_mountain_hearted"
+message = "You are as hard to move as the roots of the mountain."
+
+[[band]]
+kills = 2500
+talent = "oath_doom"
+message = "Your oaths are kept. Your name will be sung in the deep halls for as long as there are dwarves to sing it."

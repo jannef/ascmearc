@@ -125,6 +125,9 @@ pub struct CharacterScreen {
     /// Their alignment band's name, never the score; `None` without
     /// alignment rules.
     alignment: Option<&'static str>,
+    /// Their oath kills (a dwarf with a Slayer's Oath, `docs/dev/oaths.md`): the tally, which
+    /// they could keep themselves; `None` without an oath.
+    oath_kills: Option<u32>,
     /// The guilds they belong to: the rank's title, in its metal's
     /// colour, and the guild's name in a sentence ("the Weyfarers' Gilde").
     guilds: Vec<(String, Rgb, String)>,
@@ -164,6 +167,7 @@ impl CharacterScreen {
                 resources: Vec::new(),
                 talents: 0,
                 alignment: None,
+                oath_kills: None,
                 guilds: Vec::new(),
                 attacks: Vec::new(),
             };
@@ -244,6 +248,7 @@ impl CharacterScreen {
                 .collect(),
             talents: view.own_talents().iter().filter(|t| !t.class).count(),
             alignment: view.own_alignment().map(|b| b.name()),
+            oath_kills: view.own_oath_kills(),
             guilds: (view.own_guilds().iter())
                 .map(|g| {
                     let color = g.guild.color(content, g.rank, TEXT);
@@ -313,6 +318,7 @@ impl CharacterScreen {
         conditions[..last].iter_mut().for_each(|l| l.push(','));
         let status_rows = self.resources.len() as i32
             + i32::from(self.alignment.is_some())
+            + i32::from(self.oath_kills.is_some())
             + self.guilds.len() as i32
             + conditions.len() as i32
             + i32::from(!self.diseases.is_empty())
@@ -426,6 +432,14 @@ impl CharacterScreen {
             if fits(y) {
                 console.print(x + 4, y, "Alignment", TEXT);
                 console.print(x + 4 + NAME_W, y, band, TEXT);
+            }
+            y += 1;
+        }
+        // `    Oath kills    37`: the tally of a dwarf's Slayer's Oaths.
+        if let Some(kills) = self.oath_kills {
+            if fits(y) {
+                console.print(x + 4, y, "Oath kills", TEXT);
+                console.print(x + 4 + NAME_W, y, &kills.to_string(), TEXT);
             }
             y += 1;
         }

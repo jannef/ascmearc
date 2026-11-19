@@ -37,6 +37,7 @@ fn at_level_with_a_pick(w: &mut World, level: u8) {
         talents: 1,
         rolls: 0,
         bonus: 0,
+        free: 0,
     });
 }
 

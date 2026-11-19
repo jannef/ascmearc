@@ -60,6 +60,7 @@ mod mimics;
 mod mining;
 mod miscast;
 mod moons;
+mod oaths;
 mod objects;
 mod order;
 mod outcomes;
@@ -469,6 +470,7 @@ fn generate(content: &Content) -> Vec<(String, String)> {
         ("corpses.md", hunger::corpses),
         ("corpse-effects.md", hunger::corpse_effects),
         ("craving.md", craving::craving),
+        ("oaths.md", oaths::oaths),
         ("profane-corpses.md", profane::profane_corpses),
         ("profane-gifts.md", profane::profane_gifts),
         ("digging.md", digging::digging),

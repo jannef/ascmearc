@@ -1,0 +1,11 @@
+[[talent]]
+id = "oath_grudge_hewer"
+name = "Grudge-hewer"
+tree = "oath"
+granted = true
+description = "Your blows land with the weight of every wrong: more melee damage, and Toughness +1."
+effects = [
+    { kind = "melee_damage", value = 1 },
+    { kind = "stat", stat = "toughness", value = 1 },
+]
+systems = ["combat", "stat_training"]

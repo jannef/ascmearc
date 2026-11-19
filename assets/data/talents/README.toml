@@ -199,6 +199,10 @@
 #   xp_percent { value }          experience gained, that percent more
 #   skill_rolls { value }         skill rolls every level, that many more
 #   extra_pick { level }          one more talent pick at that character level (1: at creation)
+#   free_pick { talent, levels }  a free pick of that talent (one that may be picked, taken for
+#                                 a choice the holder makes) at each character level of
+#                                 `levels` (1: at creation), besides the level's other picks
+#                                 (the dwarves' Old grudges)
 #   weapon_ranks { to, skills, news }   handed out once, as the talent is taken or given:
 #                                 every weapon skill and style of `skills` (left out: every row
 #                                 of ../weapon_skills.toml but the hidden

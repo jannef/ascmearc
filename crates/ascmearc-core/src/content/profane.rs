@@ -201,6 +201,7 @@ fn forbidden(effect: &TalentEffect) -> bool {
                 | TalentEffect::Growth(GrowthEffect::WeaponRanks { .. })
                 | TalentEffect::Offence(OffenceEffect::WeaponMarks { .. })
                 | TalentEffect::Growth(GrowthEffect::ExtraPick { .. })
+                | TalentEffect::Growth(GrowthEffect::FreePick { .. })
                 | TalentEffect::Growth(GrowthEffect::SkillRolls { .. })
                 | TalentEffect::Growth(GrowthEffect::TakeUpSkills { .. })
                 | TalentEffect::Resource(ResourceEffect::GrantsResource { .. })

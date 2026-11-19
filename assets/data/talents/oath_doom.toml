@@ -1,0 +1,12 @@
+[[talent]]
+id = "oath_doom"
+name = "Doom of their kind"
+tree = "oath"
+granted = true
+description = "Your oaths are kept. The halls will sing of you: more melee damage, criticals more often, and +2 to every Willpower check."
+effects = [
+    { kind = "melee_damage", value = 2 },
+    { kind = "threat", value = 1 },
+    { kind = "checks", stat = "willpower", value = 2 },
+]
+systems = ["combat", "status"]

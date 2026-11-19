@@ -90,6 +90,8 @@ impl TalentsScreen {
                 () if talent.profane.is_some() => Some("profane"),
                 // A row of the ratfolk craving (docs/dev/craving.md).
                 () if talent.craving => Some("craving"),
+                // A band of the dwarves' oath table (docs/dev/oaths.md).
+                () if talent.oath => Some("oath"),
                 () if talent.story && talent.flaw => Some("story, flaw"),
                 () if talent.story => Some("story"),
                 () if talent.boon => Some("altar"),
@@ -277,9 +279,11 @@ mod tests {
     fn lists_the_players_talents_then_the_others_with_their_needs() {
         let content = Arc::new(ascmearc_assets::content().expect("content"));
         let spec = "dwarf,male,warrior".parse::<ascmearc_core::character::CharacterSpec>();
-        let spec = spec
-            .expect("a character")
-            .with_talents(vec!["healthy".into(), "lean".into()]);
+        let spec = spec.expect("a character").with_talents(vec![
+            "sworn_foe:kobold".into(),
+            "healthy".into(),
+            "lean".into(),
+        ]);
         let world =
             World::start_run(content, "showcase", Some(1), Some(&spec), None, true).expect("world");
         let mut screen = TalentsScreen::new(Some(&world.perception()));

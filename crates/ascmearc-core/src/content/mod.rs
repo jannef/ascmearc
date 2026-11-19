@@ -122,6 +122,7 @@ mod miscast;
 mod mods;
 mod monster_pool;
 mod names;
+mod oath;
 mod object;
 mod offer;
 #[cfg(test)]
@@ -353,6 +354,7 @@ pub(crate) use mods::pride_month;
 pub use mods::{ModStamp, describe as describe_mods};
 pub use monster_pool::{MonsterPool, VaultMonsters};
 pub use names::{NameLists, Names};
+pub use oath::{OathBand, OathRules, TREE as OATH_TREE};
 pub use object::{MAX_VALUE, ObjectDef, ObjectId, counted, weapon_noun};
 pub use offer::TradeOffer;
 pub use outcome::{
@@ -694,6 +696,9 @@ pub struct Content {
     /// The ratfolk craving (`data/rules/craving.toml`): the race that craves and its rows; none
     /// without the file, when no race craves.
     craving: Option<CravingRules>,
+    /// The dwarves' oath table (`data/rules/oaths.toml`): the talent whose choices make a kill an
+    /// oath kill and the bands; none without the file, when nothing is counted.
+    oaths: Option<OathRules>,
     /// What area spells do to the items lying in them (`data/ruin.toml`); empty without the file,
     /// when nothing is ruined.
     ruin: RuinRules,
@@ -1015,6 +1020,7 @@ impl Content {
         let mut book = std::mem::take(&mut content.talents);
         content.profane = profane::parse(files.table("profane"), &mut book, &content)?;
         content.talents = book;
+        content.talents.check_free_picks()?;
         content.check_class_tables()?;
         // Weapon abilities (the combat progression design §4) name weapon skills, statuses,
         // damage types, and the talent table's systems.
@@ -1149,6 +1155,7 @@ impl Content {
         content.intimidate = content.load_optional(files)?;
         content.laws = content.load_optional(files)?;
         content.craving = content.load_optional(files)?;
+        content.oaths = content.load_optional(files)?;
         content.ruin = content.load_or_default(files)?;
         content.swim = content.load_optional(files)?;
         content.webs = content.load_optional(files)?;

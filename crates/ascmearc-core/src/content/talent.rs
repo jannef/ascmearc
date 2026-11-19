@@ -492,6 +492,7 @@ impl TalentEffect {
                     | TalentEffect::Growth(GrowthEffect::WeaponRanks { .. })
                     | TalentEffect::Growth(GrowthEffect::TakeUpSkills { .. })
                     | TalentEffect::Growth(GrowthEffect::ExtraPick { .. })
+                    | TalentEffect::Growth(GrowthEffect::FreePick { .. })
                     | TalentEffect::Fortune(FortuneEffect::StartingGold { .. })
                     | TalentEffect::Fortune(FortuneEffect::StartingGems { .. })
                     | TalentEffect::Fortune(FortuneEffect::Heirloom { .. })
@@ -1141,6 +1142,29 @@ impl TalentBook {
                     return Err(ContentError::new(
                         &format!("data/talents/{}.toml", def.id),
                         format!("talent `{}` names an unknown terrain `{id}`", def.id),
+                    ));
+                }
+            }
+        }
+        Ok(())
+    }
+
+    /// Whether every free pick (`free_pick`) names a talent of the book that may be picked:
+    /// not a granted one, so a pick list can offer it.
+    pub(super) fn check_free_picks(&self) -> Result<(), ContentError> {
+        for (_, def) in self.iter() {
+            for effect in &def.effects {
+                let TalentEffect::Growth(GrowthEffect::FreePick { talent, .. }) = effect else {
+                    continue;
+                };
+                if self.id(talent).is_none_or(|t| self.get(t).granted) {
+                    return Err(ContentError::new(
+                        &format!("data/talents/{}.toml", def.id),
+                        format!(
+                            "talent `{}`: `free_pick` names `{talent}`, no talent that may be \
+                             picked",
+                            def.id
+                        ),
                     ));
                 }
             }

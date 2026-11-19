@@ -87,6 +87,7 @@ fn a_third_level_asks_for_a_talent_and_refuses_everything_else_until_it_is_made(
             talents: 1,
             rolls: 0,
             bonus: 0,
+            free: 0,
         })
     );
     assert!(
@@ -237,9 +238,10 @@ fn a_pick_nothing_can_be_spent_on_is_dropped() {
             "tree = \"scholar\"\ndescription = \"You can tell a bound",
             "tree = \"scholar\"\nneeds = { race = \"elf\" }\ndescription = \"You can tell a bound",
         )
+        // Sworn foe's (Slayer's Oath, a dwarf's, has needs of its own).
         .replace(
-            "choice = \"tag\"\n",
-            "choice = \"tag\"\nneeds = { race = \"elf\" }\n",
+            "tree = \"weaponcraft\"\nchoice = \"tag\"\n",
+            "tree = \"weaponcraft\"\nchoice = \"tag\"\nneeds = { race = \"elf\" }\n",
         )
         .replace(
             "choice = \"school\"\n",

@@ -91,8 +91,40 @@ Each race's gifts and flaws beyond its stats, exactly:
 ## Racial talents
 
 Each race except the humans has [talents](talents-origins.md#racial-talents) that only it may pick, in the
-Racial tree. Humans get Versatile instead: one more talent at creation and at level 30.
+Racial tree. Humans get Versatile instead: one more talent at creation and at level 30. Dwarves
+also get Old grudges, a free Sworn foe now and then (below).
 
 {{#include generated/talents-racial.md}}
+
+## The dwarves' oaths
+
+A dwarf never forgets a wrong. Every dwarf gets a free
+[Sworn foe](talents-fighting.md#talent-sworn-foe) when they are made, and another at levels 10, 20,
+30, 40, and 50. Each time, you choose the kind of creature to swear against, just as when you pick
+Sworn foe yourself. These come on top of your other [talents](talents.md#when-you-get-a-talent):
+at creation the Talents step asks for the free one first, and at those levels the
+[level-up screen](experience.md#levelling-up) asks for it after the skill rolls. You can still pick
+Sworn foe with an ordinary talent for more kinds.
+
+**[Slayer's Oath](talents-origins.md#talent-slayers-oath)** is the dwarves' own follow-up. You can take it for a kind you are already sworn
+against, and only for that kind. It makes your attacks against that kind surer and deadlier still
+(+1 to hit and +3 damage, on top of Sworn foe's +1 and +2). From then on, every creature of that
+kind you kill yourself is an **oath kill**. A kill made by an [ally](allies.md) does not count.
+
+Your oath kills are one running total across all your oaths. A creature that belongs to two kinds
+you have oaths against still counts once. The [character screen](character.md) shows the total as
+`Oath kills` once you have an oath.
+
+As the total grows, it passes the marks in the table below. At each one the game says what you feel,
+and you gain a lasting talent, listed on your Talents page as `oath`. Each comes once, and they add
+up: a dwarf with 300 oath kills has the first five.
+
+{{#include generated/oaths.md}}
+
+**How far is that?** Reaching level 20 takes about 1,700 kills of creatures of your own level, and
+level 50 about 7,400 (see [Experience](experience.md#levels)). A dwarf needs 15% more, and real
+counts run higher still, since weaker monsters are worth less. If you swear oaths against kinds
+you meet often, roughly a quarter of your kills are oath kills. That puts the 500 mark near level
+20, 1,200 near level 30, and the last mark, 2,500, near level 50.
 
 See also: [Classes](classes.md), [Horoscope](horoscope.md), and [Stats](stats.md).

@@ -1,0 +1,29 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+ Welcome to level 10.
+ Your athletics improves. (×2)
+
+
+
+
+
+
+
+
+
+
+
+
+            ┌─ Level 10 · Free talent 1 · Bonus talent 1 ──────────────────────────────┐
+            │                                                                          │
+            │ Weaponcraft                                                              │
+            │ > a  Sworn foe  You have sworn yourself against one kind of creature: y… │
+            │                                                                          │
+            │ You have sworn yourself against one kind of creature: your attacks       │
+            │ against them are surer and deadlier.                                     │
+            │                                                                          │
+            │                                                                          │
+            │ a or Enter choose                                                        │
+            └──────────────────────────────────────────────────────────────────────────┘

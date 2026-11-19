@@ -1,0 +1,8 @@
+[[talent]]
+id = "old_grudges"
+name = "Old grudges"
+tree = "racial"
+granted = true
+description = "A dwarf never forgets a wrong: you swear yourself against a kind of creature when you are made, and again at levels 10, 20, 30, 40, and 50, free."
+effects = [{ kind = "free_pick", talent = "sworn_foe", levels = [1, 10, 20, 30, 40, 50] }]
+systems = ["combat"]

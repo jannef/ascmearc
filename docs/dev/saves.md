@@ -41,7 +41,8 @@ tier, ...) is refused by `World::from_state`'s checks, never dropped or mapped.
 that paid, the uniques met, and the creature types whose first-sight line was said
 (`Progress::sighted`, `world/creatures/first_sight.rs`), and the ratfolk craving's state
 (`Progress::stripped`, `Progress::laws`: `craving_gifts` and a surrendered character's base,
-`craving_from`; docs/dev/craving.md). Between two
+`craving_from`; docs/dev/craving.md), and the dwarves' oath kills (`Progress::oath_kills`;
+docs/dev/oaths.md). Between two
 releases every development build shares the version, so there the content fingerprint and the
 decoder are what refuse a save a build cannot read (a renamed `.sav.bad`, as below); saves are
 not promised across development builds.

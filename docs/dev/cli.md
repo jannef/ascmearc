@@ -310,8 +310,8 @@ mods/pride_month ...`; `replay --create` records the mods, and `replay --verify`
 | Preview a generated level | `... gen --level depths:3 --seed ascmearc` |
 
 - `dump` and `replay --create` take `--character dwarf,female,warrior` (starts as that
-  character), `--name Brakka` (names them), `--talents healthy,lean` (picks their creation
-  talents), and `--fallen Brakka:dwarf:stone,Tamsin:elf:bard` (gives the run the graveyard's
+  character), `--name Brakka` (names them), `--talents sworn_foe:goblin,healthy,lean` (picks their creation
+  talents; a dwarf names their free Sworn foe among them), and `--fallen Brakka:dwarf:stone,Tamsin:elf:bard` (gives the run the graveyard's
   dead, the most recent first, `NAME:RACE[:CLASS][:stone]`, `:stone` the petrified: statues are
   named from the petrified, the rest laid in Līctūn's graves and crypts; out of the state hash;
   docs/dev/saves.md "The graveyard", docs/dev/graves.md).
@@ -457,12 +457,13 @@ On a level with a danger, `truth` and `actors` start with `danger 3 population 2
   which the player is never shown (`corpse rat_corpse at (2, 1): died 1444-11-11 08:01:12, 2
   hours ago, fresh`).
 - `progress`: the level-up choices due, `due level 3: 1 talent`, `due level 30: 1 talent, 1
-  bonus talent`; the talents the player may take now by id with their choices, `takeable
+  bonus talent`, a dwarf's free Sworn foe `due level 10: 2 skill rolls, 1 free talent`; the talents the player may take now by id with their choices, `takeable
   healthy, weapon_focus:{bows,slings}`; the first kills that paid; each rolled quest's draw and
   the size of its pool now, `roll slug_charm scroll_of_lightning x1 of 4`; each calling of the
   run's campaign and where the player stands with it, `calling hunter: open`, `calling hunter:
   level 30 not met`, `calling hunter: not for a thief`, `called hunter at 30`; the named monsters
-  dead, `slain fire_drake`; the two laws broken (`docs/dev/alignment.md`), once either is,
+  dead, `slain fire_drake`; a dwarf's oath kills and the bands crossed, once there are any
+  (`docs/dev/oaths.md`), `oath kills 75, 3 bands`; the two laws broken (`docs/dev/alignment.md`), once either is,
   `laws broken: ate 1 sapient, summoned 0 fiend`, and for a ratfolk the craving's rows crossed
   (`docs/dev/craving.md`), `...; craving 1 threshold` (a surrendered character's with its base,
 `...; craving 0 thresholds from 120`); what an aristocrat's stipend holds, `stipend 412 gold: a fizzy pink

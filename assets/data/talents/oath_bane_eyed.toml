@@ -1,0 +1,8 @@
+[[talent]]
+id = "oath_bane_eyed"
+name = "Bane-eyed"
+tree = "oath"
+granted = true
+description = "You know where a body breaks: your attacks threaten a critical more often."
+effects = [{ kind = "threat", value = 1 }]
+systems = ["combat"]

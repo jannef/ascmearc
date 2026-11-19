@@ -1,0 +1,8 @@
+[[talent]]
+id = "oath_grim"
+name = "Grim"
+tree = "oath"
+granted = true
+description = "Your grudge has set hard in you: +2 to every Willpower check."
+effects = [{ kind = "checks", stat = "willpower", value = 2 }]
+systems = ["status"]

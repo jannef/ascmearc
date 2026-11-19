@@ -1332,6 +1332,10 @@ impl World {
                 let level = home.unwrap_or_else(|| self.state.current_level.clone());
                 if counts {
                     self.tally_kill(creature, &level);
+                    // An oath is kept by the player's own hand (`oath.rs`).
+                    if master.is_none() {
+                        self.oath_kill(creature);
+                    }
                 }
                 self.judge_kill(id);
                 if master.is_some() && self.trains(Use::Handle) {

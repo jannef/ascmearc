@@ -1,8 +1,9 @@
 //! The level-up screen (#236): it opens by itself at the end
 //! of the turn in which a level came (`screens::on_level_up`; the death screen wins) and walks
 //! that level's choices, one step at a time, skipping steps with nothing to choose: the **skill
-//! rolls** (the trained skills, each with its value and its meter), then a **bonus pick** of the
-//! class's trees, then the level's **talent** (the talents that may be taken now, grouped by
+//! rolls** (the trained skills, each with its value and its meter), then a **free pick** of the
+//! level's free talent (a dwarf's Sworn foe, `PerceptionView::free_talents`), then a **bonus
+//! pick** of the class's trees, then the level's **talent** (the talents that may be taken now, grouped by
 //! tree). Each step is the one paged list (`paged_list`); a letter, or Enter on the `>` row, is
 //! the choice's action (`advance:stealth`, `talent:hardy`), applied at once: the screen closes
 //! to apply it and opens again on what is left, so the rules, replays, and dumps see the same
@@ -46,6 +47,8 @@ const ROLLS_EXTRA: i32 = 3;
 enum Step {
     /// Skill rolls: a letter rolls one on that skill.
     Rolls,
+    /// A free pick, of the level's free talent (a dwarf's Sworn foe).
+    Free,
     /// A bonus pick, of the class's trees.
     Bonus,
     /// The level's talent pick.
@@ -115,12 +118,16 @@ impl LevelUpScreen {
         let skills = !view.own_skills().is_empty();
         screen.step = match () {
             () if due.rolls > 0 && skills => Step::Rolls,
+            () if due.free > 0 => Step::Free,
             () if due.bonus > 0 => Step::Bonus,
             () => Step::Talent,
         };
         let mut parts = vec![format!("Level {}", due.level)];
         if due.rolls > 0 {
             parts.push(format!("Skill rolls {}", due.rolls));
+        }
+        if due.free > 0 {
+            parts.push(format!("Free talent {}", due.free));
         }
         if due.bonus > 0 {
             parts.push(format!("Bonus talent {}", due.bonus));
@@ -142,7 +149,7 @@ impl LevelUpScreen {
         screen.left = match screen.step {
             Step::Rolls if due.rolls == 1 => "You have a skill roll to spend.".into(),
             Step::Rolls => format!("You have {} skill rolls to spend.", due.rolls),
-            Step::Bonus | Step::Talent => "You must choose a talent first.".into(),
+            Step::Free | Step::Bonus | Step::Talent => "You must choose a talent first.".into(),
         };
         if screen.step == Step::Rolls {
             screen.sources = roll_sources(view.roll_count());
@@ -169,13 +176,15 @@ impl LevelUpScreen {
                     (Group::Skills, entry)
                 })
                 .collect(),
-            Step::Bonus | Step::Talent => {
+            Step::Free | Step::Bonus | Step::Talent => {
                 let trees = (screen.step == Step::Bonus)
                     .then(|| view.bonus_trees())
                     .flatten();
+                let free = (screen.step == Step::Free).then(|| view.free_talents());
                 (view.talents().into_iter())
                     .filter(|t| !t.openings.is_empty())
                     .filter(|t| trees.as_ref().is_none_or(|trees| trees.contains(&t.tree)))
+                    .filter(|t| free.as_ref().is_none_or(|free| free.contains(&t.id)))
                     .map(|t| {
                         let def = book.get(t.id);
                         let take = |choice: &Option<String>| Action::Talent {

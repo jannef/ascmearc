@@ -21,9 +21,11 @@ Then the **level-up screen** opens by itself, and you make the level's choices i
 
 1. your **[skill rolls](skills.md#improving-a-skill)**, every level: two for most classes, more for
    some, spent on the skills you are trained in;
-2. a **bonus talent**, at the levels your class names (see
+2. a **free Sworn foe**, for a [dwarf](races.md#the-dwarves-oaths) at levels 10, 20, 30, 40, and
+   50;
+3. a **bonus talent**, at the levels your class names (see
    [When you get a talent](talents.md#when-you-get-a-talent));
-3. a **[talent](talents.md)**, every third level: 3, 6, 9, and so on.
+4. a **[talent](talents.md)**, every third level: 3, 6, 9, and so on.
 
 The screen can't be closed until everything is chosen, and nothing can be saved for later. Your
 [weapon skills](weapon-skills.md#raising-a-weapon-skill) are not part of it: they rise with use,

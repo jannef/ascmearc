@@ -18,6 +18,10 @@ pub enum GrowthEffect {
     SkillRolls { value: i32 },
     /// One more talent pick at character level `level` (1: at creation; Versatile).
     ExtraPick { level: u8 },
+    /// A free pick of talent `talent` (an id of `data/talents/`, one with a choice, taken for
+    /// a choice the holder makes) at each character level of `levels` (1: at creation), on top
+    /// of the level's other picks (the dwarves' Old grudges: a Sworn foe).
+    FreePick { talent: String, levels: Vec<u8> },
     /// Handed out once, as the talent is taken or given: every weapon skill and style of
     /// `skills` (none named: every row of `weapon_skills.toml` but the
     /// hidden styles, whatever the content holds) held below rank `to` rises to it (Travelled
@@ -54,8 +58,9 @@ pub enum GrowthEffect {
 impl GrowthEffect {
     /// The `kind`s of the data that are effects of the area, one a variant (`TalentEffect`'s
     /// deserializer hands these to [`GrowthEffect`]).
-    pub const KINDS: [&'static str; 7] = [
+    pub const KINDS: [&'static str; 8] = [
         "extra_pick",
+        "free_pick",
         "skill",
         "skill_rolls",
         "take_up_skills",
@@ -75,6 +80,8 @@ pub struct GrowthMods {
     pub skill_rolls: i32,
     /// The character levels that bring one more talent pick, once for each (1: at creation).
     pub extra_picks: Vec<u8>,
+    /// The free picks: `(talent id, character level)`, one each (1: at creation).
+    pub free_picks: Vec<(String, u8)>,
     /// How much higher some skills count, by skill.
     pub skills: Vec<(SkillId, i32)>,
     /// How much higher every skill it is trained in counts (Jack of all trades).
@@ -88,6 +95,9 @@ impl GrowthMods {
             GrowthEffect::XpPercent { value } => self.xp_percent += value,
             GrowthEffect::SkillRolls { value } => self.skill_rolls += value,
             GrowthEffect::ExtraPick { level } => self.extra_picks.push(level),
+            GrowthEffect::FreePick { talent, levels } => {
+                (self.free_picks).extend(levels.into_iter().map(|l| (talent.clone(), l)));
+            }
             // Handed out as the talent is taken (`World::take_talent`), never read after.
             GrowthEffect::WeaponRanks { .. } | GrowthEffect::TakeUpSkills { .. } => {}
             GrowthEffect::Skill { skill, value } => {
@@ -110,5 +120,21 @@ impl GrowthMods {
     pub fn extra_picks_at(&self, level: u8) -> u8 {
         let n = self.extra_picks.iter().filter(|&&l| l == level).count();
         u8::try_from(n).unwrap_or(u8::MAX)
+    }
+
+    /// The free picks character `level` brings (the dwarves' Sworn foe; 1: at creation).
+    pub fn free_picks_at(&self, level: u8) -> u8 {
+        let n = self.free_picks.iter().filter(|(_, l)| *l == level).count();
+        u8::try_from(n).unwrap_or(u8::MAX)
+    }
+
+    /// The talents (by id) a free pick of character `level` may be spent on, in data order.
+    pub fn free_talents_at(&self, level: u8) -> Vec<&str> {
+        let mut ids: Vec<&str> = (self.free_picks.iter())
+            .filter(|(_, l)| *l == level)
+            .map(|(t, _)| t.as_str())
+            .collect();
+        ids.dedup();
+        ids
     }
 }

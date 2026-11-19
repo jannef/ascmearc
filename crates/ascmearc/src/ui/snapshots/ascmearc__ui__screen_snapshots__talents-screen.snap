@@ -11,10 +11,14 @@ expression: "render(case, content.clone())"
 │     Ungainly ashore  (birth sign)                                                                │
 │     Stone hide  (birth sign)                                                                     │
 │     Stonewise  (birth sign)                                                                      │
+│   Heritage                                                                                       │
+│     Family wealth                                                                                │
 │   Vigour                                                                                         │
 │     Hardy                                                                                        │
-│   Scholar                                                                                        │
-│     Clear mind                                                                                   │
+│   Weaponcraft                                                                                    │
+│     Sworn foe (mimic)                                                                            │
+│   Racial                                                                                         │
+│     Old grudges  (race)                                                                          │
 │   Class abilities                                                                                │
 │     Weapon drill  (class)                                                                        │
 │     Charge  (class)                                                                              │
@@ -25,16 +29,12 @@ expression: "render(case, content.clone())"
 │     Tentacles                                                                                    │
 │         Needs: Twin Blades 3, to be born in the year of the Kraken                               │
 │   Heritage                                                                                       │
-│     Family wealth                                                                                │
-│         Needs: to be a new character                                                             │
 │     Father's sword                                                                               │
 │         Needs: Family wealth, to be a new character                                              │
 │     Landed noble                                                                                 │
 │         Needs: to be an aristocrat, to be a new character                                        │
 │   Crafts                                                                                         │
 │     Brewster                                                                                     │
-│         Needs: to be a craftsperson, to be a new character                                       │
-│     Gemcutter                                                                                    │
 │                                                                                                ↓ │
 │ A weapon in each hand hampers you less, and with sword and shield your free bash comes more      │
 │ often.                                                                                           │

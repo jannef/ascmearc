@@ -98,7 +98,7 @@ fn humans_are_granted_versatile_and_pick_one_more_at_creation_and_at_level_30() 
     assert_eq!(creation_count(&CONTENT, &spec("human,other,bard")), 4);
     assert_eq!(creation_count(&CONTENT, &spec("elf,other,bard")), 3);
     let dwarf = kitted("dwarf,male,warrior");
-    assert_eq!(picked(&dwarf), 2);
+    assert_eq!(picked(&dwarf), 3, "two and Old grudges' Sworn foe");
     assert!(!dwarf.state.player().talents.has("versatile"));
     let versatile = book.id("versatile").expect("versatile");
     assert!(book.get(versatile).granted, "never on a pick list");

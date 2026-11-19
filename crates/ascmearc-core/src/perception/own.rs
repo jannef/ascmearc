@@ -87,6 +87,8 @@ pub struct OwnTalent {
     /// A row of the ratfolk craving gave it (docs/dev/craving.md): "(craving)"; never an
     /// altar's.
     pub craving: bool,
+    /// A band of the dwarves' oath table gave it (docs/dev/oaths.md): "(oath)"; never an altar's.
+    pub oath: bool,
 }
 
 /// How fresh food smells to those who can tell (Hound's nose): a word,

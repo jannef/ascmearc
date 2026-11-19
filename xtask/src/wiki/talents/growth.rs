@@ -13,6 +13,28 @@ pub(super) fn text(content: &Content, effect: &GrowthEffect) -> String {
         GrowthEffect::SkillRolls { value } => format!("skill rolls every level {}", signed(value)),
         GrowthEffect::ExtraPick { level: 1 } => "one more talent at creation".to_string(),
         GrowthEffect::ExtraPick { level } => format!("one more talent at level {level}"),
+        GrowthEffect::FreePick { talent, levels } => {
+            let name = (content.talents().id(&talent))
+                .map_or(talent.clone(), |t| content.talents().get(t).name.clone());
+            let link = super::talent_link(content, &talent, &name);
+            let at: Vec<String> = (levels.iter())
+                .map(|&l| match l {
+                    1 => "at creation".to_string(),
+                    l => format!("{l}"),
+                })
+                .collect();
+            let at = match at.split_first() {
+                Some((first, rest)) if first == "at creation" && !rest.is_empty() => {
+                    format!(
+                        "at creation and at levels {}",
+                        ascmearc_core::text::and_list(rest)
+                    )
+                }
+                Some((first, [])) if first == "at creation" => "at creation".to_string(),
+                _ => format!("at levels {}", ascmearc_core::text::and_list(&at)),
+            };
+            format!("a free {link} of your choosing {at}, besides your other talents")
+        }
         GrowthEffect::WeaponRanks { to, skills, .. } if skills.is_empty() => format!(
             "every [weapon skill](weapon-skills.md) and [fighting style](fighting-styles.md) \
              (not a hidden style) below rank {to} rises to rank {to}, \

@@ -59,6 +59,15 @@ cases! {
         size: (100, 40),
         ..BASE
     },
+    // A dwarf's Talents step (docs/dev/oaths.md): the free Sworn foe first, alone, under its
+    // own title.
+    chargen_talents_dwarf: Case {
+        name: "chargen-talents-dwarf",
+        screen: Some("race"),
+        keys: Some("Down Enter Enter Enter Enter"),
+        size: (100, 40),
+        ..BASE
+    },
     chargen_talents_marked: Case {
         name: "chargen-talents-marked",
         screen: Some("chargen-talents"),

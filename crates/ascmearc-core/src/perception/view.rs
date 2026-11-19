@@ -292,6 +292,27 @@ impl<'a> PerceptionView<'a> {
         table.bonus_trees(self.content.talents())
     }
 
+    /// The player's oath kills (the dwarves' oath table, `docs/dev/oaths.md`), once they hold an
+    /// oath or have any; `None` otherwise, and without the table. A tally the player could
+    /// keep themselves, so it is shown as a number.
+    pub fn own_oath_kills(&self) -> Option<u32> {
+        let rules = self.content.oaths()?;
+        let kills = self.progress.oath_kills;
+        let sworn = (rules.tags(self.content, &self.player.talents))
+            .next()
+            .is_some();
+        (sworn || kills > 0).then_some(kills)
+    }
+
+    /// The talents the free pick due now may be spent on (a dwarf's Sworn foe): those the
+    /// player's talents' `free_pick`s name for the level that brought it.
+    pub fn free_talents(&self) -> Vec<crate::content::TalentId> {
+        let mods = self.player.talent_mods(self.content);
+        (mods.growth.free_talents_at(self.due_level()).into_iter())
+            .filter_map(|t| self.content.talents().id(t))
+            .collect()
+    }
+
     /// The player's race, when the run has a character.
     pub(super) fn own_race(&self) -> Option<&'a RaceDef> {
         self.character.and_then(|c| c.spec.race(self.content).ok())

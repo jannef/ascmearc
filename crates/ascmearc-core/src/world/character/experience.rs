@@ -63,6 +63,9 @@ pub struct Progress {
     /// never granted, picked, or given again.
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
     pub(crate) stripped: BTreeSet<String>,
+    /// The player's oath kills, one running total across all their oaths (`world/character/oath.rs`).
+    #[serde(default, skip_serializing_if = "is_zero_u32")]
+    pub(crate) oath_kills: u32,
 }
 
 impl Progress {
@@ -77,6 +80,7 @@ impl Progress {
             && self.prayer.is_none()
             && self.laws.is_empty()
             && self.stripped.is_empty()
+            && self.oath_kills == 0
     }
 
     /// Whether `what` has happened, of what may happen once in a life.
@@ -86,6 +90,10 @@ impl Progress {
 }
 
 fn is_zero(n: &u8) -> bool {
+    *n == 0
+}
+
+fn is_zero_u32(n: &u32) -> bool {
     *n == 0
 }
 

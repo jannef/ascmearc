@@ -1,0 +1,12 @@
+[[talent]]
+id = "oath_mountain_hearted"
+name = "Mountain-hearted"
+tree = "oath"
+granted = true
+description = "You are as hard to move as the mountain's roots: Strength +1, Toughness +1, and a tenth more hit points."
+effects = [
+    { kind = "stat", stat = "strength", value = 1 },
+    { kind = "stat", stat = "toughness", value = 1 },
+    { kind = "max_hp_percent", value = 10 },
+]
+systems = ["stat_training", "hit_points"]

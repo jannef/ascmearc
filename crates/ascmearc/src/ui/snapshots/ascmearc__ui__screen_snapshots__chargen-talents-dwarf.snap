@@ -1,0 +1,30 @@
+---
+source: crates/ascmearc/src/ui/screen_snapshots.rs
+expression: "render(case, content.clone())"
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+              ┌─ Choose your free Sworn foe (4 of 5): 1 left ────────────────────────┐
+              │                                                                      │
+              │ Chance                                                               │
+              │ > a  Random                                                          │
+              │ Weaponcraft                                                          │
+              │   b  Sworn foe  You have sworn yourself against one kind of creatur… │
+              │                                                                      │
+              │ Let chance pick your talents.                                        │
+              │                                                                      │
+              │                                                                      │
+              │                                                                      │
+              │ Enter or a letter mark   Esc back                                    │
+              └──────────────────────────────────────────────────────────────────────┘

@@ -9,7 +9,9 @@ most ask something of you first.
 A new character picks **two talents at creation**, on the Talents step after the
 [class](classes.md). The **[bard](class-bard.md)**, the lucky class, picks one more, and so does a
 **[human](races.md#race-human)** (their racial [Versatile](talents-origins.md#talent-versatile), below). A
-human bard picks four.
+human bard picks four. A **[dwarf](races.md#race-dwarf)** also gets a free
+[Sworn foe](talents-fighting.md#talent-sworn-foe), chosen first: the list shows only Sworn foe until
+it is marked (see [The dwarves' oaths](races.md#the-dwarves-oaths)).
 
 The list shows the talents your character so far may take. Its scores, [skills](skills.md),
 [class abilities](classes.md#levels), and [birth sign](horoscope.md#what-a-sign-does) all
@@ -40,8 +42,9 @@ The **[level-up screen](experience.md#levelling-up)** opens by itself when a lev
 walks through the level's choices in order:
 
 1. the [skill rolls](skills.md), each [skill](skills.md) shown with the dice a roll on it adds;
-2. a bonus talent;
-3. the level's talent, listing only the talents you may take now, by tree.
+2. a dwarf's free Sworn foe, at levels 10, 20, 30, 40, and 50;
+3. a bonus talent;
+4. the level's talent, listing only the talents you may take now, by tree.
 
 A talent with a choice ([Weapon focus](talents-fighting.md#talent-weapon-focus),
 [Skill focus](talents-mind.md#talent-skill-focus)) asks for it next. The screen can't be closed until

@@ -12,6 +12,7 @@ pub(in crate::world) mod gifts;
 mod heirloom;
 pub(crate) mod laws;
 mod lucky;
+mod oath;
 mod profane;
 mod profane_taken;
 mod racial;
@@ -44,6 +45,7 @@ cfg_if! {
         mod laws_tests;
         mod lucky_tests;
         mod mana_talent_tests;
+        mod oath_tests;
         mod race_tests;
         mod racial_tests;
         mod resource_talent_tests;
