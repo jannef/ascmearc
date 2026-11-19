@@ -1,0 +1,9 @@
+# An elf's narrow way: the long blade and nothing else.
+[[talent]]
+id = "way_of_the_long_blade"
+name = "Way of the long blade"
+tree = "racial"
+description = "A long blade is the only proper weapon: you fight far better with one, and worse with anything else, bare hands and shields included."
+needs = { race = ["elf", "half_elf"], weapon_skills = { long_blades = 2 } }
+effects = [{ kind = "way", attacks = "melee", skills = ["long_blades"], to_hit = 2, damage = 2, else_to_hit = -2, else_damage = -2 }]
+systems = ["combat", "weapon_skills"]

@@ -312,6 +312,15 @@
 #                                 where there is one, `crit` adds to a confirmed critical's
 #                                 multiplier (at most x5), `at_rank` asks that rank of the
 #                                 skill held at least; each field 0 by default
+#   way { attacks, skills, objects, to_hit, damage, else_to_hit, else_damage }
+#                                 one narrow way to attack (the elves' Way of the longbow, ...):
+#                                 of the attacks `attacks` names ("melee": blows and shield
+#                                 bashes, not kicks; "missile": shots and throws; "spell": spells
+#                                 cast in a caster style that roll to hit), those made in one of
+#                                 the weapon skills or fighting styles `skills` names, or with one
+#                                 of the weapons `objects` names (a shot's launcher), gain to_hit
+#                                 and damage; every other one gains else_to_hit and else_damage
+#                                 (negative: a cost); skills or objects, at least one
 #   launcher_range { value, skill }   the readied missile weapon shoots that many cells
 #                                 farther; with `skill` (a weapon skill id), only a launcher of it
 #   throw_range { value }         throws reach that many cells farther

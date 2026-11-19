@@ -92,7 +92,9 @@ it a [training mark](skills.md#improving-a-skill).
 
 Trapwright (from level 25) rigs a trap on the cell beside you: a
 tripwire from arrows, stakes from a billet of wood, or a pitfall dug with your pick. A creature
-your trap kills is your kill. See [Rigging traps](traps.md#rigging-traps).
+your trap kills is your kill. See [Rigging traps](traps.md#rigging-traps). A
+[kobold](races.md#race-kobold) of any class knows it from level 1, so a kobold craftsperson does not
+take it a second time.
 
 ### Field forge
 

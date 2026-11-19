@@ -75,6 +75,8 @@
 #                 humans: Versatile). A race's known spells and abilities are such talents: one
 #                 with a `spell` effect knows that spell from the start (gnomes Glamour, drow
 #                 Fume), one with an active its ability (the duergar's Invisibility, `fade`).
+#                 A `granted` talent of a class tree may be named too (the kobolds' Trapwright,
+#                 the craftsperson's own: held once, never given twice).
 #                 The race's other talents are picks that ask for the race
 #   hunger       how much the character needs to eat, in percent of a human (default 100): game time
 #   burns their nutrition this much faster experience    how much experience a level needs, in
@@ -408,6 +410,9 @@ search = 2
 hunger = 80
 experience = 75
 weapon_skills = { slings = 1, spears = 1 }
+# Trap-makers from the cradle: the craftsperson's Trapwright (talents/trapwright.toml) at level 1,
+# whatever the class; a kobold craftsperson holds it once.
+talents = ["trapwright"]
 
 # Cold-blooded: slower in the cold, once temperature has effects.
 # Candles to see by, and a strip of dried meat.

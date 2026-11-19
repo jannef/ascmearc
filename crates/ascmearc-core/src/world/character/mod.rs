@@ -48,6 +48,7 @@ cfg_if! {
         mod race_tests;
         mod racial_magic_tests;
         mod racial_tests;
+        mod racial_way_tests;
         mod resource_talent_tests;
         mod resource_tests;
         mod sign_pick_tests;

@@ -1062,7 +1062,21 @@ impl World {
                 let to = self.state.actors.get(&target).map_or(here, |a| a.pos);
                 let spells = self.content.weapon_skills().spell_attacks();
                 let benefit = (self.state.actors.get(&by))
-                    .map(|a| a.benefit_of(&self.content, skills))
+                    .map(|a| {
+                        let benefit = a.benefit_of(&self.content, skills);
+                        // A spell cast in a caster style meets its ways (Way of far casting);
+                        // a flask's splash is cast in none.
+                        match skills.style {
+                            Some(_) => a.on_its_way(
+                                &self.content,
+                                AttackKind::Spell,
+                                skills,
+                                None,
+                                benefit,
+                            ),
+                            None => benefit,
+                        }
+                    })
                     .unwrap_or_default()
                     .at_distance(here.chebyshev(to), spells);
                 // Caught unawares (`surprise.rs`): the initiative check, before the roll; a
