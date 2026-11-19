@@ -1,7 +1,8 @@
 //! Noise and hearing.
 //!
 //! **Noise**: actions make noise. A step makes the walker's `footsteps` (creature data) scaled by
-//! the `step_noise` percent of the terrain stepped onto (water splashes, grass is soft) and by its
+//! the `step_noise` percent of the terrain stepped onto (water splashes, grass is soft; a talent may
+//! sound it as another, Cold-blooded's quiet wading) and by its
 //! burden (×1.25 Burdened, ×1.5 Strained; a heavy load is noisy), less what a
 //! stealth affix takes off; opening or
 //! closing a door makes the door's `toggle_noise` (terrain data); an attack
@@ -45,8 +46,8 @@
 
 use crate::action::AttackKind;
 use crate::burden::Burden;
-use crate::content::Content;
 use crate::content::Effect as ItemEffect;
+use crate::content::{Content, TerrainId};
 use crate::geom::{Dir, Pos};
 use crate::skills::Effect;
 use crate::talent::TalentMods;
@@ -407,7 +408,18 @@ pub fn plain_noise(
     let (kind, at, loudness) = match act {
         Act::Step(to) => {
             let footsteps = u32::from(content.creature(actor.creature).footsteps);
-            let percent = terrain(to).map_or(100, |t| u32::from(t.step_noise));
+            // Its talents may sound the terrain as another (Cold-blooded's quiet wading).
+            let sounds_as = |t: TerrainId| {
+                if actor.talents.is_empty() {
+                    return t;
+                }
+                (actor.talent_mods(content).movement.sounds_as.iter())
+                    .find(|(from, _)| *from == t)
+                    .map_or(t, |&(_, like)| like)
+            };
+            let percent = (level.terrain.get(to)).map_or(100, |t| {
+                u32::from(content.terrain(sounds_as(*t)).step_noise)
+            });
             let load = burden.footsteps();
             (
                 SoundKind::Footsteps,

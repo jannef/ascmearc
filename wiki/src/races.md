@@ -89,8 +89,10 @@ on purpose, and their [levels](experience.md#levels) come quicker for it (see
   [levels](experience.md#levels) come cheapest of all.
 - **[Lizardfolk](races.md#race-lizardfolk)** are strong and tough, dull and alien. Their scales soak
   a point of every physical blow, as natural armour does for a [creature](creatures.md)'s hide (see
-  [Combat](combat.md#protection)). They are cold-blooded, and will be slower in the
-  [cold](temperature.md) once the cold slows anyone.
+  [Combat](combat.md#protection)). They are
+  [cold-blooded](temperature.md#cold-blooded): slower in the cold and quicker in the heat. They wade
+  [water](terrain.md#water) as quickly and as quietly as they walk, and they start far better at
+  [Swim](skills.md#skill-swim) than anyone else.
 - **[Duergar](races.md#race-duergar)**, the [dwarves](races.md#race-dwarf)' grey cousins, are tough
   and dour. Like dwarves, they shrug off a [load](burden.md) until they strain under it, and they
   [notice what is hidden](searching.md#noticing-in-passing) in stone.

@@ -134,6 +134,8 @@ quicker:
   and weapons off the cost of your attacks ([Magic items](magic-items.md)).
 - Your rank in a [weapon skill](weapon-skills.md) or [fighting style](fighting-styles.md) takes some
   off your attacks with it ([Weapon skills](weapon-skills.md#what-a-rank-gives)).
+- A [lizardfolk](races.md#race-lizardfolk) is up to a fifth quicker in the heat, and up to a
+  quarter slower in the cold ([Cold-blooded](temperature.md#cold-blooded)).
 
 After that, a [load](burden.md) multiplies the time of everything you do (see
 [Burden](burden.md)), and so does being [bloated](hunger.md#how-hungry-you-are)

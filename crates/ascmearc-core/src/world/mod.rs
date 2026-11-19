@@ -387,6 +387,10 @@ pub struct WorldState {
     /// without them hashes as before).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) next_stat_check: Option<GameTime>,
+    /// The band of the player's blood (a talent's `temperature_speed`, Cold-blooded) as it was
+    /// last told (`world/character/cold_blood.rs`); none without one.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) blood_band: Option<u8>,
     /// Dev: the weather set by hand (`weather:rain`), until it runs out.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) weather_override: Option<weather::Override>,
@@ -870,6 +874,7 @@ impl World {
             fund: classes::invest::Fund::default(),
             patron: crafting::patron::Patron::default(),
             recent_sounds: Vec::new(),
+            blood_band: None,
             weather_override: None,
             death: None,
             experience: 0,

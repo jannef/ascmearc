@@ -64,7 +64,7 @@ pub use magic::{BloodMagic, Cackle, Knock, MagicEffect, MagicMods};
 pub use martial::{
     MartialEffect, MartialMods, PalmBlow, RapidShot, SpiritWeapon, Unstoppable, Volley, WarCry,
 };
-pub use movement::{MovementEffect, MovementMods, StepBonus};
+pub use movement::{MovementEffect, MovementMods, StepBonus, WarmthBand};
 pub use offence::{OffenceEffect, OffenceMods, Way, WayAttacks, WeaponBonus};
 pub use resource::{ResourceEffect, ResourceMods};
 pub use senses::{SensesEffect, SensesMods};

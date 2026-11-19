@@ -160,8 +160,9 @@
 #                                 quicker)
 #   swimmer                       wading (water, and ground a disease is caught wading in)
 #                                 costs a plain step, and never gives a disease
-#   terrain_as { terrains, like } a step onto any of terrains costs what a step onto like does
-#                                 (terrain ids in ../terrain/)
+#   terrain_as { terrains, like, noise }   a step onto any of terrains costs what a step onto
+#                                 like does (terrain ids in ../terrain/); with noise = true it is
+#                                 as loud as one onto like too (default false)
 #   plunge_proof                  a plunge through the ice never hurts it
 #   light_on_ice                  ice holds it as if it carried nothing
 #   climb_percent { value }       climbing out onto ice costs that percent more (negative: less)
@@ -430,6 +431,13 @@
 #   pit_proof                     pits never catch it
 #   disarm                        the Disarm ability without Disable device
 #   speed_percent { value }       it moves and acts that percent quicker (hidden in the game)
+#   temperature_speed { bands }   its speed follows the temperature where it stands: bands of
+#                                 { below, percent, slower, faster }, the coldest first, each
+#                                 `below` °C higher than the last and the last band with none;
+#                                 the band the temperature falls in makes every action that
+#                                 percent quicker (negative: slower; above -100), and coming
+#                                 into a band says its `slower` line from a quicker band, its
+#                                 `faster` line from a slower one (Cold-blooded; hidden numbers)
 #   missile_dodge { value }       Dodge added against shots, throws, and trap missiles
 #   small_target { value }        Dodge added against the attacks of creatures larger than it
 #   spell_damage_percent { value }   the damage bursts and bolts do it, that percent more

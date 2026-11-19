@@ -19,7 +19,24 @@ hand, `docs/dev/towers.md` "Polish"); `World::temperature()` (ground
 truth, at the player's cell), `World::temperature_at`, and `PerceptionView::temperature()` (the
 player feels it where they stand) read it. The pause menu's line on the world tells it (`ui/almanac.rs`, after the weather: `rain at
 4 °C`, out of the weather `the air at 10 °C`), in the settings' unit.
-Nothing feels the cold yet.
+Only the cold-blooded feel it (below).
+
+**Cold blood** (`world/character/cold_blood.rs`; the lizardfolk's Cold-blooded,
+`data/talents/cold_blooded.toml`, granted by `races.toml` `talents`): a talent effect
+`temperature_speed { bands }` (`talent::WarmthBand`, checked by `WarmthBand::check`: ascending
+`below` °C, the last band open) puts the holder in the band of `WorldState::temperature_at` its
+cell. `World::warmed` scales every price by 100 / (100 + the band's percent) in
+`World::burdened`, the one place prices are finished (so steps, attacks, spells, waits, and
+overworld journeys alike; `price_until`, a rest's last turn, escapes it as it escapes the burden):
+deterministic, read from the clock and the cell, never from frames. `World::blood_turn` runs as
+`run_turn` ends: the player's band is kept in `WorldState::blood_band` (saved, hashed; `None`
+without the effect, so other runs hash as before), the first one unsaid, and coming into another
+band `say`s its `slower` line (from a quicker band) or `faster` line (from a slower one), which
+stops a rest. The bands (−25 % below 0 °C, −10 % below 10, plain below 25, +10 % below 35, +20 %
+above) and lines are data; the wiki states them (`wiki/src/temperature.md` "Cold-blooded", and the
+generated racial talents table). The same talent wades still, running, and shallow water as a
+stone floor, price and noise (`terrain_as` with `noise`), but not deep water: that stays a Swim
+check (docs/dev/progression.md). Tests: `world/character/cold_blood_tests.rs`.
 
 **Ice** (`ice.rs` the model, `world/levels/ice.rs` the rules; M26): water terrain with a
 `freeze` table grows ice; terrain with `ice = MM` is what ice of at least that thickness looks

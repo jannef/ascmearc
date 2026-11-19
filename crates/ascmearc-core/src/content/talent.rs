@@ -833,6 +833,9 @@ impl TalentEffect {
             TalentEffect::Beast(BeastEffect::KinTo { tag }) => {
                 super::tag::check(tag).map_err(|m| format!("`kin_to`: {m}"))
             }
+            TalentEffect::Movement(MovementEffect::TemperatureSpeed { bands }) => {
+                crate::talent::WarmthBand::check(bands)
+            }
             // Slots are checked once the objects load ([`check_slots`]), the creatures' tags
             // `kin_to` names once the creatures do ([`check_kin`]).
             // Terrain is checked once it has loaded ([`TalentBook::check_terrain`]); the weapon
@@ -1163,7 +1166,8 @@ impl TalentBook {
         }
         for (_, def) in self.iter() {
             for effect in &def.effects {
-                let TalentEffect::Movement(MovementEffect::TerrainAs { terrains, like }) = effect
+                let TalentEffect::Movement(MovementEffect::TerrainAs { terrains, like, .. }) =
+                    effect
                 else {
                     continue;
                 };

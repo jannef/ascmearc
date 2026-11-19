@@ -6,6 +6,7 @@
 //! read.
 
 use crate::content::{Content, TerrainId};
+use crate::temperature::Temperature;
 use serde::Deserialize;
 
 /// What a talent of the area does, one typed effect, read by one rule each.
@@ -23,8 +24,14 @@ pub enum MovementEffect {
     /// Wading (water, marsh) costs a plain step, and never gives a disease.
     Swimmer,
     /// A step onto any of `terrains` costs what a step onto `like` does (ids in
-    /// `data/terrain/`; Swimmer, Trailblazer).
-    TerrainAs { terrains: Vec<String>, like: String },
+    /// `data/terrain/`; Swimmer, Trailblazer), and with `noise` it is as loud as one onto `like`
+    /// too (Cold-blooded: no splash).
+    TerrainAs {
+        terrains: Vec<String>,
+        like: String,
+        #[serde(default)]
+        noise: bool,
+    },
     /// A plunge through ice into the water never hurts it (Swimmer).
     PlungeProof,
     /// Ice holds it as if it carried nothing (Winter-born).
@@ -57,12 +64,69 @@ pub enum MovementEffect {
     },
     /// Strained costs it what Burdened costs others (Beast of burden).
     Stout,
+    /// Its speed follows the temperature where it stands (Cold-blooded): the band the
+    /// temperature falls in gives a percent quicker (negative: slower), and crossing into a band
+    /// says the band's line.
+    TemperatureSpeed { bands: Vec<WarmthBand> },
+}
+
+/// One band of [`MovementEffect::TemperatureSpeed`]: the temperatures below `below` °C (and not
+/// below the band before's; the last band has no `below`, it goes on up), the speed `percent`
+/// there, and the lines said on coming into it from a quicker band (`slower`) or a slower one
+/// (`faster`).
+#[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct WarmthBand {
+    #[serde(default)]
+    pub below: Option<i32>,
+    pub percent: i32,
+    #[serde(default)]
+    pub slower: Option<String>,
+    #[serde(default)]
+    pub faster: Option<String>,
+}
+
+impl WarmthBand {
+    /// Whether `bands` are well formed: at least one, each `below` higher than the one before,
+    /// the last with none and the others each with one, every percent above -100.
+    pub fn check(bands: &[WarmthBand]) -> Result<(), String> {
+        let Some((last, rest)) = bands.split_last() else {
+            return Err("`temperature_speed`: no bands".to_string());
+        };
+        if last.below.is_some() {
+            return Err("`temperature_speed`: the last band has no `below`".to_string());
+        }
+        let mut floor = i32::MIN;
+        for band in rest {
+            let Some(below) = band.below.filter(|&b| b > floor) else {
+                return Err("`temperature_speed`: each band but the last has a `below` \
+                     higher than the band before's"
+                    .to_string());
+            };
+            floor = below;
+        }
+        if let Some(b) = bands.iter().find(|b| b.percent <= -100) {
+            return Err(format!(
+                "`temperature_speed`: percent {} is not above -100",
+                b.percent
+            ));
+        }
+        Ok(())
+    }
+
+    /// The index of the band of `bands` that `t` falls in: the first whose `below` it is under,
+    /// else the last.
+    pub fn index(bands: &[WarmthBand], t: Temperature) -> usize {
+        (bands.iter())
+            .position(|b| b.below.is_none_or(|below| t < Temperature::degrees(below)))
+            .unwrap_or(bands.len().saturating_sub(1))
+    }
 }
 
 impl MovementEffect {
     /// The `kind`s of the data that are effects of the area, one a variant (`TalentEffect`'s
     /// deserializer hands these to [`MovementEffect`]).
-    pub const KINDS: [&'static str; 16] = [
+    pub const KINDS: [&'static str; 17] = [
         "burden_dex",
         "burden_ease",
         "carry_percent",
@@ -74,6 +138,7 @@ impl MovementEffect {
         "step_percent",
         "stout",
         "swimmer",
+        "temperature_speed",
         "terrain_as",
         "travel_percent",
         "wades_free",
@@ -98,6 +163,10 @@ pub struct MovementMods {
     pub swimmer: bool,
     /// Terrain it steps onto at another's price: `(terrain, priced as)`.
     pub terrain_as: Vec<(TerrainId, TerrainId)>,
+    /// Terrain its steps onto are as loud as onto another: `(terrain, sounds as)`.
+    pub sounds_as: Vec<(TerrainId, TerrainId)>,
+    /// Its speed by the temperature where it stands (the last such talent's bands; empty: none).
+    pub temperature_speed: Vec<WarmthBand>,
     /// A plunge through ice never hurts it.
     pub plunge_proof: bool,
     /// Ice holds it as if it carried nothing.
@@ -129,10 +198,20 @@ impl MovementMods {
             MovementEffect::WeightlessCoins => self.weightless_coins = true,
             MovementEffect::TravelPercent { value } => self.travel_percent += value,
             MovementEffect::Swimmer => self.swimmer = true,
-            MovementEffect::TerrainAs { terrains, like } => {
+            MovementEffect::TerrainAs {
+                terrains,
+                like,
+                noise,
+            } => {
                 if let Some(like) = content.terrain_id(&like) {
-                    let terrains = terrains.iter().filter_map(|t| content.terrain_id(t));
-                    self.terrain_as.extend(terrains.map(|t| (t, like)));
+                    let terrains: Vec<TerrainId> = terrains
+                        .iter()
+                        .filter_map(|t| content.terrain_id(t))
+                        .collect();
+                    self.terrain_as.extend(terrains.iter().map(|&t| (t, like)));
+                    if noise {
+                        self.sounds_as.extend(terrains.iter().map(|&t| (t, like)));
+                    }
                 }
             }
             MovementEffect::PlungeProof => self.plunge_proof = true,
@@ -155,6 +234,7 @@ impl MovementMods {
                 no_shield,
             }),
             MovementEffect::Stout => self.stout = true,
+            MovementEffect::TemperatureSpeed { bands } => self.temperature_speed = bands,
         }
     }
 

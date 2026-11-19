@@ -21,14 +21,24 @@ pub(super) fn text(content: &Content, effect: &MovementEffect) -> String {
         MovementEffect::Swimmer => {
             "wading (water, marsh) costs a plain step and never gives a disease".into()
         }
-        MovementEffect::TerrainAs { terrains, like } => {
+        MovementEffect::TerrainAs {
+            terrains,
+            like,
+            noise,
+        } => {
             let name = |id: &str| {
                 (content.terrain_id(id))
                     .map_or_else(|| id.to_string(), |t| content.terrain(t).name.clone())
             };
             let names: Vec<String> = terrains.iter().map(|t| name(t)).collect();
+            let what = if noise {
+                "costs and sounds as"
+            } else {
+                "costs what"
+            };
+            let does = if noise { "" } else { " does" };
             format!(
-                "a step onto {} costs what one onto {} does",
+                "a step onto {} {what} one onto {}{does}",
                 names.join(", "),
                 name(&like)
             )
@@ -78,5 +88,27 @@ pub(super) fn text(content: &Content, effect: &MovementEffect) -> String {
             "{value} % off the burden's slowdown, on top of Balance (Burdened ×1.10 for 60 %)"
         ),
         MovementEffect::SpeedPercent { value } => format!("speed {}", percent(value)),
+        MovementEffect::TemperatureSpeed { bands } => {
+            let mut from: Option<i32> = None;
+            let parts: Vec<String> = (bands.iter())
+                .map(|b| {
+                    let range = match (from, b.below) {
+                        (None, Some(below)) => format!("below {below} °C"),
+                        (Some(lo), Some(below)) => format!("{lo} to under {below} °C"),
+                        (Some(lo), None) => format!("{lo} °C and above"),
+                        (None, None) => "at any temperature".to_string(),
+                    };
+                    from = b.below;
+                    match b.percent {
+                        0 => format!("{range} as usual"),
+                        p => format!("{range} {}", percent(p)),
+                    }
+                })
+                .collect();
+            format!(
+                "speed by the temperature where you stand: {}",
+                parts.join(", ")
+            )
+        }
     }
 }

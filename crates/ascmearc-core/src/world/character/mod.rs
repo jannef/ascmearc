@@ -3,6 +3,7 @@
 
 pub(in crate::world) mod alignment;
 mod background;
+mod cold_blood;
 mod craving;
 pub(in crate::world) mod creation;
 mod element_gifts;
@@ -30,6 +31,7 @@ cfg_if! {
         mod alignment_tests;
         mod body_talent_tests;
         mod character_tests;
+        mod cold_blood_tests;
         mod craving_gifts_tests;
         mod craving_rows_tests;
         mod craving_surrender_tests;

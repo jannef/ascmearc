@@ -18,8 +18,9 @@
 //! ([`crate::weather::Blend`]). Integer math only (tenths of a degree, the sun's fixed-point
 //! cosine), so it is the same on every platform.
 //!
-//! Nothing feels it yet (no hypothermia, warmth, or clothing): water does, which freezes below
-//! zero ([`crate::ice`]). The player knows it only in words, under the open sky, and only when
+//! Few feel it (no hypothermia, warmth, or clothing): water does, which freezes below zero
+//! ([`crate::ice`]), and the cold-blooded do, slower in the cold and quicker in the heat
+//! (`world/character/cold_blood.rs`). The player knows it only in words, under the open sky, and only when
 //! it is worth saying ([`Feel`]).
 
 use crate::content::Climate;

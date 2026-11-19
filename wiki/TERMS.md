@@ -103,6 +103,7 @@ above.
 | Throwing your voice | `hearing.md#throwing-your-voice` |
 | Weather (clear, overcast, rain, heavy rain) | `weather.md#how-the-weather-changes` |
 | Temperature | `temperature.md` |
+| Cold-blooded (lizardfolk) | `temperature.md#cold-blooded` |
 | Ice (thin ice, thick ice), falling in | `temperature.md#walking-on-ice`, `temperature.md#falling-in` |
 | **The world** | |
 | Overworld, travel | `overworld.md#travel` |

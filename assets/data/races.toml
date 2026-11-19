@@ -417,7 +417,6 @@ weapon_skills = { slings = 1, spears = 1 }
 # whatever the class; a kobold craftsperson holds it once.
 talents = ["trapwright"]
 
-# Cold-blooded: slower in the cold, once temperature has effects.
 # Candles to see by, and a strip of dried meat.
 kit = [
     "candle*2",
@@ -439,10 +438,14 @@ hp = 5
 natural = { protection = 1, name = "scales" }
 alignment = -200
 size = "medium"
-skills = { survival = "1d4+2", swim = "1d6+4" }
+# Swamp-born: they swim almost before they walk.
+skills = { survival = "1d4+2", swim = "4d6+26" }
 hunger = 90
 experience = 95
 weapon_skills = { spears = 1, thrown = 1 }
+# Cold-blooded (talents/cold_blooded.toml): slower in the cold and quicker in the heat, and they
+# wade water quietly and as quickly as they walk.
+talents = ["cold_blooded"]
 # Dried meat, as much as they can stomach.
 kit = [
     { wield = "lantern" },
