@@ -567,6 +567,8 @@
 #                                 first to get there), its attacks gain that to-hit and damage
 #   sworn_foe { to_hit, damage }  against creature types carrying the tag it was taken for (a
 #                                 talent with `choice = "tag"`), that to-hit and damage
+#   sworn_foes { to_hit, damage }   against creature types carrying any tag it holds a
+#                                 sworn_foe for, that to-hit and damage (once, however many)
 #   exact_sounds                  every sound it hears is placed where it was made
 #   exact_footsteps               the footsteps it hears are placed exactly, at the cell they came
 #                                 from (Watchful)

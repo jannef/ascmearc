@@ -3,10 +3,11 @@ id = "oath_mountain_hearted"
 name = "Mountain-hearted"
 tree = "oath"
 granted = true
-description = "You are as hard to move as the mountain's roots: Strength +1, Toughness +1, and a tenth more hit points."
+description = "You are as hard to move as the mountain's roots: Strength +2, Toughness +2, a fifth more hit points, and every hit on you does less again."
 effects = [
-    { kind = "stat", stat = "strength", value = 1 },
-    { kind = "stat", stat = "toughness", value = 1 },
-    { kind = "max_hp_percent", value = 10 },
+    { kind = "stat", stat = "strength", value = 2 },
+    { kind = "stat", stat = "toughness", value = 2 },
+    { kind = "max_hp_percent", value = 20 },
+    { kind = "pain", value = 1 },
 ]
-systems = ["stat_training", "hit_points"]
+systems = ["stat_training", "hit_points", "protection"]

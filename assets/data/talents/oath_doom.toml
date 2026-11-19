@@ -3,10 +3,11 @@ id = "oath_doom"
 name = "Doom of their kind"
 tree = "oath"
 granted = true
-description = "Your oaths are kept. The halls will sing of you: more melee damage, criticals more often, and +2 to every Willpower check."
+description = "Your oaths are kept, and the halls will sing of you: surer and harder still against the kinds you are sworn against, harder blows up close, criticals more often, and once in your life death passes you by, leaving you worn thin."
 effects = [
+    { kind = "sworn_foes", to_hit = 2, damage = 4 },
     { kind = "melee_damage", value = 2 },
     { kind = "threat", value = 1 },
-    { kind = "checks", stat = "willpower", value = 2 },
+    { kind = "reprieve", once = "oath_doom", status = "worn_thin", message = "Your oaths are not yet done with you. You do not die." },
 ]
-systems = ["combat", "status"]
+systems = ["combat", "hit_points"]

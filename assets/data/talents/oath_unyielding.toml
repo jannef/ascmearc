@@ -1,0 +1,11 @@
+[[talent]]
+id = "oath_unyielding"
+name = "Unyielding"
+tree = "oath"
+granted = true
+description = "You have stood against them a hundred times and more: many more hit points, more as you level, and your wounds close faster."
+effects = [
+    { kind = "max_hp_per_levels", per_levels = 2, at_least = 10 },
+    { kind = "healing_percent", value = 50 },
+]
+systems = ["hit_points"]

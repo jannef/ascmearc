@@ -168,12 +168,16 @@ pub enum OffenceEffect {
     /// Against creature types that carry the tag it was taken for (a `choice = "tag"`), its
     /// attacks are this much likelier to hit and do this much more damage (Sworn foe).
     SwornFoe { to_hit: i32, damage: i32 },
+    /// Against creature types that carry any tag it holds a `sworn_foe` for (every oath at
+    /// once, counted once however many it answers), its attacks are this much likelier to hit
+    /// and do this much more damage (the dwarves' oath table).
+    SwornFoes { to_hit: i32, damage: i32 },
 }
 
 impl OffenceEffect {
     /// The `kind`s of the data that are effects of the area, one a variant (`TalentEffect`'s
     /// deserializer hands these to [`OffenceEffect`]).
-    pub const KINDS: [&'static str; 32] = [
+    pub const KINDS: [&'static str; 33] = [
         "ability_ranks",
         "attack_price_percent",
         "best_skill_threat",
@@ -196,6 +200,7 @@ impl OffenceEffect {
         "status_damage",
         "streak",
         "sworn_foe",
+        "sworn_foes",
         "threat",
         "throw_range",
         "two_handed_crit",
@@ -292,6 +297,8 @@ pub struct OffenceMods {
     pub favoured_prey: (i32, i32),
     /// To hit and damage against the creature types carrying each tag, by tag (Sworn foe).
     pub sworn_foe: Vec<(String, i32, i32)>,
+    /// To hit and damage against a creature type carrying any tag of `sworn_foe`'s, once.
+    pub sworn_foes: (i32, i32),
 }
 
 impl OffenceMods {
@@ -453,6 +460,10 @@ impl OffenceMods {
             OffenceEffect::SwornFoe { to_hit, damage } => {
                 let tag = choice.unwrap_or_default().to_string();
                 self.sworn_foe.push((tag, to_hit, damage));
+            }
+            OffenceEffect::SwornFoes { to_hit, damage } => {
+                self.sworn_foes.0 += to_hit;
+                self.sworn_foes.1 += damage;
             }
         }
     }

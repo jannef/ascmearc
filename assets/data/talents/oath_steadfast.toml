@@ -1,8 +1,0 @@
-[[talent]]
-id = "oath_steadfast"
-name = "Steadfast"
-tree = "oath"
-granted = true
-description = "The work of your oaths has hardened your arms: Strength +1."
-effects = [{ kind = "stat", stat = "strength", value = 1 }]
-systems = ["stat_training"]

@@ -146,6 +146,12 @@ up: a dwarf with 300 oath kills has the first five.
 
 {{#include generated/oaths.md}}
 
+The bonuses "against every kind of creature you are sworn against" count once per attack, even
+when a creature belongs to several kinds you are sworn against. They come on top of what each Sworn
+foe and Slayer's Oath gives. A dwarf with all ten marks has +4 to hit and +8 damage from the table
+against those kinds alone. [Doom of their kind](#talent-oath-doom) saves your life once. If you also have another way
+to escape death once, such as the witch's [Hag's bargain](class-witch.md#talent-hags-bargain), each one works once.
+
 **How far is that?** Reaching level 20 takes about 1,700 kills of creatures of your own level, and
 level 50 about 7,400 (see [Experience](experience.md#levels)). A dwarf needs 15% more, and real
 counts run higher still, since weaker monsters are worth less. If you swear oaths against kinds

@@ -1,0 +1,11 @@
+[[talent]]
+id = "oath_iron_armed"
+name = "Iron-armed"
+tree = "oath"
+granted = true
+description = "The work of your oaths has hardened your arms: Strength +2, and your blows up close land harder."
+effects = [
+    { kind = "stat", stat = "strength", value = 2 },
+    { kind = "melee_damage", value = 1 },
+]
+systems = ["stat_training", "combat"]

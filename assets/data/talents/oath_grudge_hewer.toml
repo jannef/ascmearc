@@ -3,8 +3,9 @@ id = "oath_grudge_hewer"
 name = "Grudge-hewer"
 tree = "oath"
 granted = true
-description = "Your blows land with the weight of every wrong: more melee damage, and Toughness +1."
+description = "Your blows land with the weight of every wrong: far surer and harder against the kinds you are sworn against, harder against anything up close, and Toughness +1."
 effects = [
+    { kind = "sworn_foes", to_hit = 1, damage = 3 },
     { kind = "melee_damage", value = 1 },
     { kind = "stat", stat = "toughness", value = 1 },
 ]

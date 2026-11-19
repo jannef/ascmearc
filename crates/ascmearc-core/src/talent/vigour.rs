@@ -199,8 +199,9 @@ pub struct VigourMods {
     pub rise: Option<Rise>,
     /// Its rising brings it back whole (Reborn whole).
     pub reborn_whole: bool,
-    /// Its once-in-a-life reprieve from death, if it has one.
-    pub reprieve: Option<Reprieve>,
+    /// Its once-in-a-life reprieves from death, each once (Hag's bargain, Doom of their kind),
+    /// in the order of its talents.
+    pub reprieves: Vec<Reprieve>,
     /// It may rise from the ashes once more (Second rising).
     pub second_rising: bool,
     /// Its hit points come back while it is Starving too (Another head).
@@ -263,7 +264,7 @@ impl VigourMods {
                 message,
             } => {
                 if let Some(status) = content.status_id(&status) {
-                    self.reprieve = Some(Reprieve {
+                    self.reprieves.push(Reprieve {
                         once,
                         status,
                         stat: stat.map(|s| (s, by)),

@@ -55,16 +55,25 @@ Sworn foe of your choosing at creation and at levels ..." (`xtask/src/wiki/talen
 
 | Oath kills | Talent | What it gives |
 |---:|---|---|
-| 10 | Blooded | Toughness +1 |
-| 30 | Grim | +2 to Willpower checks |
-| 75 | Steadfast | Strength +1 |
-| 150 | Unbowed | hit points by level (1 per 5 levels, at least 4) |
-| 300 | Stone-skinned | Protection +1 |
-| 500 | Grudge-hewer | melee damage +1, Toughness +1 |
-| 800 | Bane-eyed | threat +1 |
-| 1,200 | Deathward | Protection +1, necrotic resistance 25 % |
-| 1,800 | Mountain-hearted | Strength +1, Toughness +1, hit points +10 % |
-| 2,500 | Doom of their kind | melee damage +2, threat +1, +2 to Willpower checks |
+| 10 | Blooded | Toughness +2; against sworn kinds +1 to hit, +1 damage |
+| 30 | Grim | +4 to Willpower checks; immune to Frightened |
+| 75 | Iron-armed | Strength +2; melee damage +1 |
+| 150 | Unyielding | hit points by level (1 per 2 levels, at least 10); healing 50 % faster |
+| 300 | Stone-skinned | Protection +2; pain 1 (every hit 1 less) |
+| 500 | Grudge-hewer | against sworn kinds +1 to hit, +3 damage; melee damage +1; Toughness +1 |
+| 800 | Bane-eyed | threat +2; critical confirm +3; critical penetration +3 |
+| 1,200 | Deathward | Protection +2; necrotic resistance 50 %; drain checks +5 |
+| 1,800 | Mountain-hearted | Strength +2, Toughness +2; hit points +20 %; pain 1 |
+| 2,500 | Doom of their kind | against sworn kinds +2 to hit, +4 damage; melee damage +2; threat +1; a reprieve (`once = "oath_doom"`, Worn thin) |
+
+Each band is a reward a player plans for, the top ones a career's (owner, #1870: "beef up that
+dwarf oath table quite a lot"): several effects a band, and three of them, **`sworn_foes { to_hit,
+damage }`** (`OffenceEffect::SwornFoes`, `OffenceMods::sworn_foes`, read in `World::favoured`),
+strike every kind the dwarf holds a `sworn_foe` for at once, counted once however many tags a
+creature answers: +4 to hit and +8 damage from the table at the end, on top of each oath's own.
+Doom's reprieve sits beside any other (`VigourMods::reprieves`, a list: `World::reprieve` takes the
+first not yet spent, so a dwarf witch keeps Hag's bargain too). The totals did not move: the
+spread below still holds.
 
 The totals are spread over a career: the curve's own-level kills (`Experience::kills_for`) sum to
 about 1,700 by level 20, 3,400 by 30, 5,300 by 40, and 7,400 by 50; a dwarf needs 15 % more,
@@ -78,5 +87,7 @@ a named list refused without it, a human's none), free picks at 10 to 50 and no 
 human never, the free pick refusing another talent and spent before an ordinary one,
 `levelup:auto` spending them, Slayer's Oath refused for another tag and for a human, oath kills
 counting only the oaths' tags (one a kill however many oaths), only the player's own kills
-through `dies`, a band given once with its message and stat, the save and the dump rows, and the
-loader refusing a band of another tree and a talent without a tag choice.
+through `dies`, a band given once with its message and stat, `sworn_foes` once at a creature
+answering two oaths and never at another, Doom's reprieve beside Hag's bargain (each once), the
+save and the dump rows, and the loader refusing a band of another tree and a talent without a tag
+choice.

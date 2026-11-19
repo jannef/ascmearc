@@ -30,12 +30,12 @@ message = "Your grudge has set hard in you, like old iron."
 
 [[band]]
 kills = 75
-talent = "oath_steadfast"
+talent = "oath_iron_armed"
 message = "The work of your oath has hardened your arms."
 
 [[band]]
 kills = 150
-talent = "oath_unbowed"
+talent = "oath_unyielding"
 message = "A hundred and fifty of them. You stand taller for every one."
 
 [[band]]

@@ -95,7 +95,8 @@ fixtures in Cēaptūn (Godgifu gives a creature pick, a tag pick, and two varian
 Fennmynster and Fyrdelf) and the arena (a kobold made the demilich, a shared unique).
 **Bounties' talent** (the `bounties` tag folded into `talk` and `combat`, #773; Quarry sense was
 cut in #774): Sworn foe (weaponcraft, `choice = "tag"`, a new `talent::Choice::Tag` over `Content::tags`;
-`sworn_foe { to_hit, damage }`, read in `World::favoured` beside Favoured prey). Tests:
+`sworn_foe { to_hit, damage }`, read in `World::favoured` beside Favoured prey; the oath table's
+`sworn_foes`, docs/dev/oaths.md). Tests:
 `world/people/quest_roll_tests.rs`.
 **Creature tags** (#421, #441): a creature file's `tags = ["goblin", "archer"]` (plain
 singular words, by custom lower-case words joined by hyphens; `content/tag.rs` asks only for

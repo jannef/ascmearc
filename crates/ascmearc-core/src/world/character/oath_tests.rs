@@ -5,7 +5,7 @@
 //! given once as the total reaches it; the total saved.
 
 use super::craving_tests::{files, world_of};
-use crate::test_support::{run, said};
+use crate::test_support::{run, said, said_text};
 use crate::world::classes::war_cry_tests::foe_at;
 use crate::world::*;
 
@@ -214,7 +214,7 @@ fn a_band_is_crossed_once_and_gives_its_talent() {
     assert_eq!(told(&w), 1);
     assert_eq!(
         w.state.player().stats.score(crate::stats::Stat::Toughness),
-        toughness + 1
+        toughness + 2
     );
     assert_eq!(w.oath_bands_crossed(), Some(1));
     // The total reached again (it never falls, but a band held gives nothing twice).
@@ -224,10 +224,65 @@ fn a_band_is_crossed_once_and_gives_its_talent() {
     assert_eq!(told(&w), 1);
     assert_eq!(
         w.state.player().stats.score(crate::stats::Stat::Toughness),
-        toughness + 1
+        toughness + 2
     );
     let rows = crate::dump::layer_rows(&w, crate::dump::Layer::Talents);
     assert!(rows.contains(&"Blooded (oath)".to_string()), "{rows:?}");
+}
+
+#[test]
+fn the_oath_table_strikes_every_sworn_kind_surer_once() {
+    let mut w = dwarf();
+    let content = w.content().clone();
+    let player = w.state.player;
+    hold(&mut w, "sworn_foe", Some("kobold"));
+    hold(&mut w, "sworn_foe", Some("sapient"));
+    let me = w.player_pos();
+    let kobold = foe_at(&mut w, "kobold", Pos::new(me.x + 2, me.y), 10);
+    let rat = foe_at(&mut w, "rat", Pos::new(me.x + 3, me.y), 10);
+    let profile = w.state.player().melee(&content);
+    let sworn = w.favoured(player, kobold, profile.clone());
+    hold(&mut w, "oath_grudge_hewer", None);
+    let hewer = w.favoured(player, kobold, profile.clone());
+    assert_eq!(
+        (hewer.to_hit, hewer.bonus),
+        (sworn.to_hit + 1, sworn.bonus + 3),
+        "once, though a kobold answers two oaths"
+    );
+    hold(&mut w, "oath_doom", None);
+    let doom = w.favoured(player, kobold, profile.clone());
+    assert_eq!(
+        (doom.to_hit, doom.bonus),
+        (sworn.to_hit + 3, sworn.bonus + 7)
+    );
+    assert_eq!(w.favoured(player, rat, profile.clone()), profile, "no oath");
+}
+
+#[test]
+fn doom_spares_a_dwarf_once_beside_another_reprieve() {
+    use crate::world::combat::fight::Harm;
+    let mut w = dwarf();
+    hold(&mut w, "hags_bargain", None);
+    hold(&mut w, "oath_doom", None);
+    let player = w.state.player;
+    let presence = w.state.player().stats.score(crate::stats::Stat::Presence);
+    let mut events = Vec::new();
+    for _ in 0..2 {
+        assert!(!w.hurt(player, 999, Harm::Barbs, &mut events), "spared");
+        assert_eq!(w.state.player().hp, 1);
+    }
+    assert!(said_text(
+        &w,
+        "Your oaths are not yet done with you. You do not die."
+    ));
+    assert!(w.state.progress.happened("oath_doom"));
+    assert!(w.state.progress.happened("hags_bargain"));
+    assert_eq!(
+        w.state.player().stats.score(crate::stats::Stat::Presence),
+        presence - 2,
+        "the hag's price, once"
+    );
+    assert!(w.hurt(player, 999, Harm::Barbs, &mut events), "no third");
 }
 
 #[test]
@@ -241,7 +296,7 @@ fn the_oath_kills_are_saved_and_dumped() {
     assert_eq!(back.progress.oath_kills, 75);
     let restored = World::from_state(w.content().clone(), back).expect("restored");
     assert_eq!(restored.oath_kills(), 75);
-    assert!(restored.state.player().talents.has("oath_steadfast"));
+    assert!(restored.state.player().talents.has("oath_iron_armed"));
     let rows = crate::dump::layer_rows(&w, crate::dump::Layer::Progress);
     assert!(
         rows.contains(&"oath kills 75, 3 bands".to_string()),

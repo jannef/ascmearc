@@ -1,8 +1,0 @@
-[[talent]]
-id = "oath_unbowed"
-name = "Unbowed"
-tree = "oath"
-granted = true
-description = "You have stood against them a hundred times and more: more hit points, and more as you level."
-effects = [{ kind = "max_hp_per_levels", per_levels = 5, at_least = 4 }]
-systems = ["hit_points"]
