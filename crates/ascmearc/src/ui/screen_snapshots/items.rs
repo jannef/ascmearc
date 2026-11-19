@@ -3,10 +3,11 @@
 
 use super::*;
 
-/// The showcase's storeroom, with the first stacks picked up and armour on (equipment cases).
+/// The showcase's storeroom, with the first stacks picked up (the arrows go into the quiver by
+/// themselves) and armour on (equipment cases).
 const ARMED: &str = "move:N*3 open:N move:N*2 move:E*16 open:S move:S*4 open:W move:W*2 move:N \
     pickup move:S*2 pickup move:NW move:W*2 move:N pickup move:SW pickup equip:head:g \
-    equip:body:f equip:main_hand:c equip:missile_weapon:d equip:missiles:e equip:feet:j";
+    equip:body:f equip:main_hand:c equip:missile_weapon:d equip:feet:j";
 /// Enough stacks carried for a second page.
 const HOARD: &str = "move:SW*2 pickup move:NE*2 move:E*2 move:NE pickup move:SW move:W*2 \
     move:N*3 open:N move:N*2 move:E*16 open:S move:S*4 open:W move:W*2 move:N pickup move:S*2 \

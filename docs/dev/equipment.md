@@ -49,6 +49,16 @@ action (`wield`, `wear`, `body_armor`, `ready` in `data/actions.toml`) of everyt
 taken off (`World::price_for`); dropping takes off first (`take_off_before_dropping`) and
 `Equipment::after_removal` follows the positions (past the 26th too: the pack has no count limit).
 A cursed thing once on will not come off (`World::bound`, `world/items/curse.rs`; docs/dev/magic-items.md "Curses").
+**The quiver kept filled** (`world/items/quiver.rs`, tests `world/items/quiver_tests.rs`): the
+player's alone, for no time, each said "You ready 14 arrows in your quiver." and bound when cursed
+(`bind_if_cursed`). `World::refill_quiver`, called from `shoot.rs::player_looses` after the shot
+that loosed the last of a stack (`AttackKind::Ranged` only, so a throw never refills), readies the
+pack stack the readied launcher `Content::fires` (same object as the one used up first, then pack
+order), else says "You have no arrows left."; Volley's later shots read `ammunition_item` again and
+so shoot from it. `World::quiver_picked_up`, after `pick_up`'s line (`object::add_to_inventory_at`
+gives each picked stack's position), readies the first picked stack that is ammunition the readied
+launcher fires (any `ammo` with none ready) while its slot is empty (`equipment::free_slot`).
+Creatures never go through either: `creature_shoots` calls `loose` directly.
 **Clothing** (#1173): item class `clothing` (`data/item_classes.toml`), everyday garments in the
 Body slot (tunic, kirtle, robe, ...) and shoes in the Feet slot (shoes, clogs, sandals, ...), one
 object file each; no `armour`, `protection`, or `kind` (never loot or magic), and the Body slot's

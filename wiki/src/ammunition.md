@@ -5,7 +5,9 @@ arrows, crossbows shoot bolts, and slings shoot stones. Ammunition stacks, so a 
 arrows is one [stack](objects.md#piles) in your [pack](objects.md#your-pack). You
 [ready](ranged.md#getting-ready) it in the Missiles slot on the [equipment](equipment.md)
 screen. Every shot uses one. It lies where it comes down, and you can [pick it
-up](objects.md#picking-up) again to join it back to the stack.
+up](objects.md#picking-up) again to join it back to the stack. When the stack runs out, the next
+one your weapon shoots is readied by itself (see [Your quiver fills
+itself](ranged.md#your-quiver-fills-itself)).
 
 {{#include generated/ammunition.md}}
 

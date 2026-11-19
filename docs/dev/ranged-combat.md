@@ -27,6 +27,10 @@ with `FreeGlyph::turn`, trail, embers via `particles::trail`, impact puff) and w
 `render::lighting::Transients` (the moving light of a burning missile, and landed lights held back
 until it arrives; `draw_map`, object glow, and object particles hold back what is `arriving` too).
 
+The player's last shot of a stack readies the next one their launcher fires, and ammunition picked
+up goes into an empty quiver (`world/items/quiver.rs`; docs/dev/equipment.md "The quiver kept
+filled"); creatures' shots never refill.
+
 The thief's Thrown exploit (#1465, `world/classes/openings.rs`, docs/dev/openings.md "The thrown
 exploit") is a throw through the same path: `World::thrown_exploit` hands its `Loose` to
 `player_looses`, with `Technique::at` naming the creature aimed at so that `resolve` gives the

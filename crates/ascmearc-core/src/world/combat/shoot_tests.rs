@@ -334,7 +334,7 @@ fn files(map: &str, objects: &str, dark: bool, scenario: &str) -> ContentFiles {
     files
 }
 
-fn world_with(map: &str, objects: &str, dark: bool, scenario: &str) -> World {
+pub(in crate::world) fn world_with(map: &str, objects: &str, dark: bool, scenario: &str) -> World {
     let files = files(map, objects, dark, scenario);
     let content = Arc::new(Content::load(&files).expect("test content is valid"));
     World::new(content, "range", None).expect("world")
@@ -342,7 +342,7 @@ fn world_with(map: &str, objects: &str, dark: bool, scenario: &str) -> World {
 
 /// A world on `map` where the player has picked up `objects` and readied the first two (a
 /// missile weapon and its ammunition).
-fn armed(map: &str, objects: &str, dark: bool) -> World {
+pub(in crate::world) fn armed(map: &str, objects: &str, dark: bool) -> World {
     let mut w = world_with(
         map,
         objects,
@@ -353,7 +353,7 @@ fn armed(map: &str, objects: &str, dark: bool) -> World {
     w
 }
 
-fn pile(world: &World, p: Pos) -> Vec<(String, u32)> {
+pub(in crate::world) fn pile(world: &World, p: Pos) -> Vec<(String, u32)> {
     let (level, _) = world.ground_truth();
     let content = world.content();
     (level.objects_at(p).iter())
@@ -361,7 +361,7 @@ fn pile(world: &World, p: Pos) -> Vec<(String, u32)> {
         .collect()
 }
 
-fn carried(world: &World, id: &str) -> u32 {
+pub(in crate::world) fn carried(world: &World, id: &str) -> u32 {
     let content = world.content();
     (world.state().player().inventory.iter())
         .filter(|s| content.object(s.object).id == id)
@@ -378,7 +378,7 @@ fn missiles(out: &Outcome) -> Vec<(Vec<Pos>, MissileEnd)> {
         .collect()
 }
 
-const OPEN: &str = "###########\n#@........#\n###########\n";
+pub(in crate::world) const OPEN: &str = "###########\n#@........#\n###########\n";
 
 #[test]
 fn a_shot_at_an_empty_cell_comes_down_there_to_be_picked_up_again() {
@@ -426,7 +426,8 @@ fn shots_stop_at_walls_and_fly_no_farther_than_their_range() {
 
     // Something that does not fly, or nothing ready: refused.
     let mut w = world_with(OPEN, "\"bow\", \"arrow*5\"", false, "");
-    run(&mut w, "pickup");
+    // The arrows go into the quiver as they are picked up (`quiver.rs`): put them away.
+    run(&mut w, "pickup remove:missiles");
     assert!(!w.apply(&Action::Fire(Pos::new(4, 1))).took_turn);
     assert_eq!(
         last_message(&w),

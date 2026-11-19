@@ -177,7 +177,7 @@ cases! {
     weapon_skills_screen: Case {
         name: "weapon-skills-screen",
         scenario: "arena",
-        actions: "move:E pickup equip:missile_weapon:b equip:missiles:c fire:30,16*12",
+        actions: "move:E pickup equip:missile_weapon:b fire:30,16*12",
         screen: Some("weapon-skills"),
         ..BASE
     },

@@ -51,9 +51,12 @@ fn content() -> Arc<Content> {
 
 /// The armory with everything picked up: a quarterstaff, b small shield, c short sword,
 /// d leather jerkin, e chain mail, f and g silver rings, h short bow, i 12 arrows, j iron helm.
+/// Nothing is worn: the arrows, quivered as they were picked up (`quiver.rs`), are put away.
 fn world() -> World {
     let mut w = World::new(content(), "armory", None).expect("world");
     run(&mut w, PICK_ALL);
+    assert_eq!(last_message(&w), "You ready 12 arrows in your quiver.");
+    run(&mut w, "remove:missiles");
     assert_eq!(w.perception().inventory().len(), 10);
     w
 }
@@ -181,7 +184,8 @@ fn world_as(class: &str) -> World {
         .parse()
         .expect("a character");
     let mut w = World::with_character(content(), "armory", None, Some(&spec)).expect("world");
-    run(&mut w, PICK_ALL);
+    // The arrows quivered as they are picked up are put away, as in `world`.
+    run(&mut w, &format!("{PICK_ALL} remove:missiles"));
     w
 }
 

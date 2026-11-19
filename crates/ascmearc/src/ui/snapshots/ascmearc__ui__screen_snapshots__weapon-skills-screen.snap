@@ -1,9 +1,10 @@
 ---
 source: crates/ascmearc/src/ui/screen_snapshots.rs
+assertion_line: 149
 expression: "render(case, content.clone())"
 ---
  The giant rat dies.
- You shoot an arrow. (×4) You have no arrows left.
+ You shoot an arrow. (×3) You ready 4 flaming arrows in your quiver.
 
 
 ┌─ Weapon skills ──────────────────────────────────────────────────────────────────────────────────┐

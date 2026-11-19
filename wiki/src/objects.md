@@ -113,6 +113,9 @@ Picking up is one [action](turns.md#what-actions-cost) (6 seconds), however many
 take. If there is nothing here, you are told so and no time passes. In a [shop](shops.md), what
 you pick up is not yours until you [pay for it](shops.md#buying).
 
+Ammunition you pick up while your Missiles slot is empty goes straight into it, for no extra time
+(see [Your quiver fills itself](ranged.md#your-quiver-fills-itself)).
+
 ## Dropping
 
 Press `d` to choose what to drop: it opens your [pack](#your-pack) in its drop mode, titled

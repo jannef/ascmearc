@@ -821,27 +821,24 @@ pub fn phrase_with(
 }
 
 /// Joins `stack` to a stack of the same object (and the same magic and parts, if any) in
-/// `stacks` if it stacks; returns whether it did. Food joins whatever its age, and keeps the
-/// oldest.
-fn join(stacks: &mut [Stack], stack: &Stack, content: &Content) -> bool {
+/// `stacks` if it stacks; returns where the stack it joined is. Food joins whatever its age, and
+/// keeps the oldest.
+fn join(stacks: &mut [Stack], stack: &Stack, content: &Content) -> Option<usize> {
     if !content.object(stack.object).stackable || stack.worked.is_some() {
-        return false;
+        return None;
     }
-    match (stacks.iter_mut()).find(|s| s.same_goods(stack) && s.magic == stack.magic) {
-        Some(same) => {
-            same.count += stack.count;
-            same.died = oldest(same.died, stack.died);
-            true
-        }
-        None => false,
-    }
+    let at = (stacks.iter()).position(|s| s.same_goods(stack) && s.magic == stack.magic)?;
+    let same = &mut stacks[at];
+    same.count += stack.count;
+    same.died = oldest(same.died, stack.died);
+    Some(at)
 }
 
 /// Puts `stacks` on top of `pile`, keeping their order (the first ends on top). Stackable
 /// objects join a stack of the same object already there.
 pub fn add_to_pile(pile: &mut Vec<Stack>, stacks: &[Stack], content: &Content) {
     for stack in stacks.iter().rev() {
-        if !join(pile, stack, content) {
+        if join(pile, stack, content).is_none() {
             pile.insert(0, stack.clone());
         }
     }
@@ -849,9 +846,15 @@ pub fn add_to_pile(pile: &mut Vec<Stack>, stacks: &[Stack], content: &Content) {
 
 /// Adds `stack` to `inventory`: joins a stack of the same object if it stacks, else goes last.
 pub fn add_to_inventory(inventory: &mut Vec<Stack>, stack: Stack, content: &Content) {
-    if !join(inventory, &stack, content) {
+    add_to_inventory_at(inventory, stack, content);
+}
+
+/// [`add_to_inventory`], returning where in `inventory` the stack is now.
+pub fn add_to_inventory_at(inventory: &mut Vec<Stack>, stack: Stack, content: &Content) -> usize {
+    join(inventory, &stack, content).unwrap_or_else(|| {
         inventory.push(stack);
-    }
+        inventory.len() - 1
+    })
 }
 
 #[cfg(test)]

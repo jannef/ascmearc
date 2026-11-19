@@ -7,6 +7,7 @@ mod equip;
 mod lamp;
 pub(in crate::world) mod loot;
 mod material_drops;
+mod quiver;
 mod siphon;
 mod stock;
 cfg_if! {
@@ -25,6 +26,7 @@ cfg_if! {
         mod material_drops_tests;
         mod object_tests;
         mod parts_tests;
+        mod quiver_tests;
         mod siphon_tests;
     }
 }

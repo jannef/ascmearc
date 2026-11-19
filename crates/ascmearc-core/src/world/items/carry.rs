@@ -63,9 +63,9 @@ impl World {
             return false;
         }
         let inventory = self.state.inventory_mut();
-        for i in chosen.iter() {
-            object::add_to_inventory(inventory, pile[i].clone(), &content);
-        }
+        let places: Vec<usize> = (chosen.iter())
+            .map(|i| object::add_to_inventory_at(inventory, pile[i].clone(), &content))
+            .collect();
         let (got, left) = split(&pile, &chosen);
         self.state.current_mut().set_pile(here, left);
         // In a shop, goods for sale are now owed for.
@@ -84,6 +84,8 @@ impl World {
             text.push_str(&format!(" You owe {name} {owed} gold."));
         }
         self.say(text);
+        // Ammunition goes into an empty quiver by itself (`quiver.rs`).
+        self.quiver_picked_up(&places);
         self.train_haul(&got);
         self.lift_in_hoard(here, got.len());
         true
