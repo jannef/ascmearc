@@ -79,6 +79,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 
 - An ADOM-like nutrition counter. Game time and exertion burn it; creatures do not hunger.
 - States: Bloated, Satiated, Not hungry, Hungry, Weak, Fainting, Starving. Weak lowers stats, Fainting faints, Starving stops healing and mana and kills in time; Bloated slows.
+- Halflings (Second breakfast, given at creation): Bloated never slows them, they hold twice the nutrition before overeating (the states' bands unchanged), and digesting while Bloated slowly earns training marks in every stat.
 - Getting hungrier into Hungry or worse stops rests and long actions and waits at `--more--`.
 - Each overworld step while Fainting or Starving asks first, judged by the state alone so it gives no number away.
 - Meals take turns and can be interrupted; nothing is eaten until the last turn. Overeating may make the player vomit.

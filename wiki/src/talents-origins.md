@@ -74,6 +74,12 @@ like any other talent.
 one more at level 30. Like the gifts of the stars it is never on a pick list, and the
 [character](character.md) screen's Talents page marks it as your race's.
 
+[Halflings](races.md#race-halfling) are given
+**[Second breakfast](talents-origins.md#talent-second-breakfast)** from the start too, beside the
+talents they may pick. Being [Bloated](hunger.md#how-hungry-you-are) never slows them, they hold
+twice as much food before they overeat, and a full belly slowly trains their stats (see
+[Hunger](hunger.md#a-halflings-second-breakfast)).
+
 ## The trees
 
 Each talent with what it needs and its rule, exactly (see
