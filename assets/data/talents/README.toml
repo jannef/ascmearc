@@ -31,7 +31,8 @@
 #                                                        that rank (talents with such a
 #                                                        choice)
 #                   level = 9                            the character level
-#                   race = "dwarf", class = "warrior"    the character's
+#                   race = "dwarf", class = "warrior"    the character's (race may be a list,
+#                                                        any one of them)
 #                   eyes = "darkvision"                  the race's vision profile; a list,
 #                                                        any one of them
 #                   animal = "roc", element = "fire"     the birth sign's (horoscope.toml)

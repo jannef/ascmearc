@@ -832,8 +832,8 @@ pub enum Need {
     Chosen(u8),
     /// A character level.
     Level(u8),
-    /// A race, by id.
-    Race(String),
+    /// A race, by id: any one of these (`race = ["elf", "half_elf"]`).
+    Race(Vec<String>),
     /// Not of this race, by id (`not_race`: Surrender to hunger is not for a ratfolk, who craves
     /// already).
     NotRace(String),
@@ -873,9 +873,14 @@ impl Need {
             Need::AnyWeaponSkill(any) => format!("{} {}", any.words, any.rank),
             Need::Chosen(rank) => format!("the chosen one at {rank}"),
             Need::Level(level) => format!("level {level}"),
-            Need::Race(id) => {
-                let name = content.race(id).map_or(id.as_str(), |r| r.name.as_str());
-                format!("to be {} {}", article(name), name.to_lowercase())
+            Need::Race(ids) => {
+                let names: Vec<String> = (ids.iter())
+                    .map(|id| {
+                        let name = content.race(id).map_or(id.as_str(), |r| r.name.as_str());
+                        format!("{} {}", article(name), name.to_lowercase())
+                    })
+                    .collect();
+                format!("to be {}", crate::text::or_list(&names))
             }
             Need::NotRace(id) => {
                 let name = content.race(id).map_or(id.as_str(), |r| r.name.as_str());
@@ -944,7 +949,7 @@ pub struct Needs {
     pub chosen: Option<u8>,
     /// 0 asks nothing.
     pub level: u8,
-    pub race: Option<String>,
+    pub race: Vec<String>,
     /// A race the character must not be (`not_race`).
     pub not_race: Option<String>,
     /// A skill the race must not teach everyone (`race_lacks`); left out when no race does.
@@ -984,7 +989,7 @@ impl Needs {
         let any = self.any_weapon_skill.clone().map(Need::AnyWeaponSkill);
         let chosen = self.chosen.map(Need::Chosen);
         let level = (self.level > 0).then_some(Need::Level(self.level));
-        let race = self.race.clone().map(Need::Race);
+        let race = (!self.race.is_empty()).then(|| Need::Race(self.race.clone()));
         let not_race = self.not_race.clone().map(Need::NotRace);
         let race_lacks = self.race_lacks.map(Need::RaceLacks);
         let eyes = (!self.eyes.is_empty()).then(|| Need::Eyes(self.eyes.clone()));
@@ -1300,7 +1305,7 @@ struct NeedsSpec {
     any_weapon_skill: Option<AnySpec>,
     chosen: Option<u8>,
     level: u8,
-    race: Option<String>,
+    race: Option<OneOrMany>,
     /// A race the character must not be.
     not_race: Option<String>,
     /// A skill the race must not teach everyone (a Crafts trade's own).
@@ -1417,7 +1422,8 @@ fn resolve_needs(
     };
     // A race, class, or eyes is checked against its table when the content has one; without
     // (a fixture), the need stays and is simply never met.
-    for race in spec.race.iter().chain(&spec.not_race) {
+    let race = spec.race.as_ref().map_or(&[][..], OneOrMany::ids).to_vec();
+    for race in race.iter().chain(&spec.not_race) {
         if !content.races().list.is_empty() && content.race(race).is_none() {
             return Err(format!("needs an unknown race `{race}`"));
         }
@@ -1458,7 +1464,7 @@ fn resolve_needs(
         any_weapon_skill,
         chosen: spec.chosen,
         level: spec.level,
-        race: spec.race,
+        race,
         not_race: spec.not_race,
         race_lacks,
         eyes,

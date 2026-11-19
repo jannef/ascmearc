@@ -582,7 +582,7 @@ impl<'a> Candidate<'a> {
                 _ => false,
             },
             Need::Level(level) => self.level >= *level,
-            Need::Race(id) => self.race == Some(id.as_str()),
+            Need::Race(ids) => self.race.is_some_and(|r| ids.iter().any(|id| id == r)),
             Need::NotRace(id) => self.race != Some(id.as_str()),
             // No race (a run without a character) has no skill of its people's to lack.
             Need::RaceLacks(skill) => (self.race)
