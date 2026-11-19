@@ -3,7 +3,7 @@ source: crates/ascmearc/src/ui/screen_snapshots.rs
 expression: "render(case, content.clone())"
 ---
 ┌─ Magic ──────────────────────────────────────────────────────────────────────┐
-│ Mana 156/162                                                                 │
+│ Mana 170/176                                                                 │
 │ Caster styles                                                                │
 │   Sniper                   1  ──────────                                     │
 │   Toucher                  0  ──────────                                     │
