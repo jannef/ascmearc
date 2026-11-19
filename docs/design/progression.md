@@ -218,7 +218,7 @@ The owner has asked for **mana** as a resource with regeneration rules, built in
 | Dwarf | 0 | **Aristocrat** | **7** (the oddly high one: idle minds, old blood) | Barbarian | 0 |
 | Half-orc | 0 | Merchant | 2 | Commoner, Craftsperson | 1 |
 
-- **Per level**: as hit points gain `max(1, class hp ÷ 2 + the Toughness modifier)` up to `hp_level`, mana gains `max(0, class mana ÷ 2 + the better of the Intelligence and Willpower modifiers)` up to `mana_level` (the mana PR's; 30 is the suggestion, so casters keep growing after hit points stop), through `World::level_hp`'s twin in `level_up`. A warrior with class mana 0 and In 10 gains none.
+- **Per level**: as hit points gain `max(1, class hp ÷ 2 + the Toughness modifier)` up to `hp_level`, mana gains `max(0, class mana ÷ 2 + the best of the Intelligence, Willpower, and Presence modifiers)` up to `mana_level` (the mana PR's; 30 is the suggestion, so casters keep growing after hit points stop), through `World::level_hp`'s twin in `level_up`. A warrior with class mana 0 and In 10 gains none.
 - **Class actives that cast** (the caster placeholders of §4 and the paladin's, bard's, and priest's gifts) **cost mana instead of a cooldown status**: mana comes back with time, so "time is the penalty" holds without a second timer; a cast with too little mana is `Unavailable::NoMana` ("not enough mana"), the cost is in the ability's data (`mana = 6`), and the martial actives (second wind, rage, smite, whirlwind, volley, quivering palm) keep their statuses, since they are not magic. §4's tables say which.
 - **Stat training**: spending mana is a `cast` use that trains **Willpower** (§6.2); Intelligence already trains from reading and identifying.
 - **Talents**: five in the Scholar tree on the mana PR's hooks (§7.5), and mana is a system in the coverage list (§8).
@@ -767,7 +767,7 @@ Notation: **Needs** as in §7.3; **R** ranks (blank = 1); **A/P** active (an ent
 | `good_learner` | Good learner | 2 | In 12 / In 16 | XP +5 % per rank | `grant_xp` | P |
 | `quick_learner` | Quick learner | | In 14 | +1 skill roll every level | §5 | P |
 | `apprentice` | Apprentice (*skill*) | 3 | — | train a skill you are untrained in, at 1d6+4; or +1d6+4 to one you are trained in | `Actor::skills` (dice from the `levels` stream) | P |
-| `deep_well` | Deep well | 3 | In 12 or Wi 12 / Lv 10 / Lv 25 | +1 maximum mana per 4 character levels per rank (at least +2) | `Actor::max_mana` | P `mana` |
+| `deep_well` | Deep well | 3 | In 12 or Wi 12 / Lv 10 / Lv 25 | +1 maximum mana per character level per rank | `Actor::max_mana` | P `mana` |
 | `clear_mind` | Clear mind | | Wi 12 | mana comes back 25 % faster | `World::mana_rate` | P `mana` |
 | `meditation` | Meditation | | → clear_mind | resting regains mana half again as fast | `mana_rate` while `resting` | P `mana` |
 | `frugal_caster` | Frugal caster | | In 14, Lv 9 | abilities cost a fifth less mana (never below 1) | the ability's spend | P `mana` |

@@ -175,7 +175,7 @@ The owner: "Player receives enough experience to immediately receive level up to
 | Each total level | Today | After |
 |---|---|---|
 | Hit points | `max(1, class hp ÷ 2 + Toughness modifier)` to `hp_level` 50 (`World::level_hp`) | the same with **the class of the level** (`class_of`): a Hunter level brings the Hunter's `hp = 7` → 3 + Toughness; 51 and up Hardened's only (unchanged) |
-| Mana | `max(0, class mana ÷ 2 + the better of Intelligence and Willpower)` to `mana_level` 60 | the class of the level: the Hunter's `mana = 0` → the modifier alone, so a bard-hunter's mana grows a little still |
+| Mana | `max(0, class mana ÷ 2 + the best of Intelligence, Willpower, and Presence)` to `mana_level` 60 | the class of the level: the Hunter's `mana = 0` → the modifier alone, so a bard-hunter's mana grows a little still |
 | Skill rolls | class `rolls` + race + Intelligence | the class of the level's `rolls` (the Hunter's 2); `known_for` for the ladder step is the **union** of both classes' (a bard-hunter who took up Survival at 12 rolls it at the known-for die); the +1 for a class's other skills reads either class's `skills` (the Hunter has none: its `known_for` alone) |
 | Talent picks | every `talent_every` total level (3) | unchanged: the total level's |
 | Bonus picks | the class's `bonus_talents` at its levels | the class of the level's, at its **class** level (the Hunter's 5, 10, 15, 23, 28 are total 35, 40, 45, 53, 58, from Weaponcraft and Guard); the bard's 5, 10, 15, 23, 28 as before |

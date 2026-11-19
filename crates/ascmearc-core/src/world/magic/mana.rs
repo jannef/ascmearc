@@ -144,7 +144,7 @@ impl World {
 
     /// What total level `level` adds to the player's mana: half the mana of the class the
     /// level falls in (the scenario's `mana` without a character)
-    /// plus the better of the Intelligence and Willpower modifiers, at least 0 (the progression
+    /// plus the best of the mental stats' modifiers, at least 0 (the progression
     /// design, `docs/design/progression.md` §3.7). The stats as what the player wears raises
     /// them, not as a status lowers them: the penalty passes, this mana stays.
     pub(in crate::world) fn level_mana(&self, content: &Content, level: u8) -> i32 {
