@@ -146,8 +146,8 @@ From level 51 on, levels add no hit points, so hit point pools do not run away.
 since (see [Stats](stats.md#raising-your-stats)).
 
 **Mana.** Up to level 60, each level raises your **[mana](mana.md#how-much-mana-you-have)** by half your class's
-mana plus what the better of your [Intelligence](stats.md#stat-intelligence) and
-[Willpower](stats.md#stat-willpower) adds, if that comes to anything (see [Mana](mana.md)).
+mana plus what the best of your [Intelligence](stats.md#stat-intelligence),
+[Willpower](stats.md#stat-willpower), and [Presence](stats.md#stat-presence) adds, if that comes to anything (see [Mana](mana.md)).
 
 **Skill rolls.** Every level gives **[skill rolls](skills.md#improving-a-skill)**: two for most classes,
 three for a [thief](class-thief.md) or a [ranger](class-ranger.md), four for a
