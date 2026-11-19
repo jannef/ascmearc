@@ -125,7 +125,10 @@ mark**. The chance is in the table of skills above. Skills you use all the time,
 - **[Open lock](skills.md#skill-open-lock)**: a try at picking a lock, whether it works or not.
 - **[Heal](skills.md#skill-heal)**: a try at treating yourself, whether it works or not.
 
-Only skills you are trained in earn marks. They gather until a roll on the skill spends them. The
+Only skills you are trained in earn marks. [Humans](races.md#race-human) and
+[half-orcs](races.md#race-half-orc) learn quickly: each mark they earn has a 25% chance to count
+as two (see [How races grow](races.md#how-races-grow)). Marks gather until a roll on the skill
+spends them. The
 Skills screen's meter shows how practised a skill is (the step its marks have reached on the ladder
 below), never the marks.
 

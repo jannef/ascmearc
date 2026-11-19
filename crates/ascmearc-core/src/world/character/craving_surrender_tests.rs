@@ -9,6 +9,7 @@ use super::craving_tests::*;
 use crate::action::Action;
 use crate::content::{CravingRules, Need};
 use crate::talent::{Refusal, may_take};
+use crate::test_support::plain_marks;
 use crate::test_support::said;
 use crate::world::*;
 
@@ -100,6 +101,7 @@ fn the_pick_asks_a_hundred_sapients_and_another_race() {
 #[test]
 fn the_pick_sets_the_base_and_says_its_line() {
     let mut w = human();
+    plain_marks(&mut w);
     set_eaten(&mut w, 120);
     assert!(!w.craves());
     surrender(&mut w);
@@ -115,6 +117,7 @@ fn the_pick_sets_the_base_and_says_its_line() {
     // The corpses after it train a mark each (against one who never surrendered); the
     // ratfolk's first line is never said.
     let mut control = human();
+    plain_marks(&mut control);
     set_eaten(&mut control, 120);
     for n in 1..=3 {
         eat(&mut w, "kobold");

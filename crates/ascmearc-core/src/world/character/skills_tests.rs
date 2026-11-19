@@ -9,6 +9,7 @@ use crate::object::Stack;
 use crate::replay::Replay;
 use crate::skills::{MAX_VALUE, SkillId, Trained};
 use crate::test_support::draws;
+use crate::test_support::plain_marks;
 use crate::test_support::said_text as said;
 use crate::world::*;
 
@@ -633,6 +634,7 @@ fn acting_under_a_load_trains_balance() {
 #[test]
 fn journeys_train_survival() {
     let mut w = World::new(content(true), "world", None).expect("world");
+    plain_marks(&mut w);
     assert!(value(&w, "survival").is_some(), "the ranger knows survival");
     // Along the road and back.
     let mut moved = 0;
@@ -815,6 +817,7 @@ fn the_same_walk_takes_less_time_with_athletics() {
 #[test]
 fn burdened_acts_and_journeys_train_athletics() {
     let mut w = eager("yard");
+    plain_marks(&mut w);
     set(&mut w, "athletics", Some(0));
     let mail = w.content.object_id("chain_mail").expect("chain mail");
     w.player_mut().inventory = vec![Stack::one(mail); 2];
@@ -828,6 +831,7 @@ fn burdened_acts_and_journeys_train_athletics() {
         "an easy step trains nothing"
     );
     let mut w = World::new(content(true), "world", None).expect("world");
+    plain_marks(&mut w);
     set(&mut w, "athletics", Some(0));
     let mut moved = 0;
     for dir in [Dir::E, Dir::W, Dir::N, Dir::S] {

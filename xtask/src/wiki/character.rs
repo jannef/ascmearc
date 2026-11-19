@@ -151,20 +151,20 @@ pub(super) fn stat_uses(content: &Content) -> String {
 }
 
 /// Each race's potentials: the races file's base potential plus
-/// the race's adjustment, rolled once at the start of a run, kept within the scores' range; a
-/// potential is never below its starting score.
+/// the race's adjustment, rolled once at the start of a run, multiplied by the race's
+/// `potential_percent` (`RaceDef::potential_of`, the game's own rule); a potential is never below
+/// its starting score.
 pub(super) fn potentials(content: &Content) -> String {
     let (names, align) = stat_columns();
     let races = content.races();
     let mut out = format!("{}| Race |{names}\n|---|{align}\n", super::util::stat_key());
-    let (lo, hi) = (i32::from(*SCORES.start()), i32::from(*SCORES.end()));
-    let base = i32::from(races.base_potential);
+    let base = races.base_potential;
     for r in &races.list {
         let cells: String = (r.potential.iter())
-            .map(|(_, v)| {
+            .map(|(stat, v)| {
                 let (min, max) = (
-                    (base + v.min()).clamp(lo, hi),
-                    (base + v.max()).clamp(lo, hi),
+                    r.potential_of(stat, base, v.min()),
+                    r.potential_of(stat, base, v.max()),
                 );
                 if min == max {
                     format!(" {min} |")
@@ -176,6 +176,66 @@ pub(super) fn potentials(content: &Content) -> String {
         let _ = writeln!(out, "| {} |{cells}", r.name);
     }
     out
+}
+
+/// How each race grows (`RaceDef::potential_percent`, `marks_percent`, `skill_marks_percent`):
+/// what its potentials are multiplied by, and how much a stat's and a skill's training mark
+/// counts, one row per race.
+pub(super) fn growth(content: &Content) -> String {
+    let mut out =
+        String::from("| Race | Potentials | Stat marks | Skill marks |\n|---|---|---|---|\n");
+    for r in &content.races().list {
+        let _ = writeln!(
+            out,
+            "| {} | {} | {} | {} |",
+            r.name,
+            per_stat_factors(&r.potential_percent),
+            per_stat_factors(&r.marks_percent),
+            factor(r.skill_marks_percent),
+        );
+    }
+    out
+}
+
+/// A percent as a multiplier: `×1.5`, `×2.5`, `×1.25`; `×1` for a plain 100.
+fn factor(percent: u16) -> String {
+    let whole = percent / 100;
+    let rest = format!("{:02}", percent % 100);
+    let rest = rest.trim_end_matches('0');
+    if rest.is_empty() {
+        format!("×{whole}")
+    } else {
+        format!("×{whole}.{rest}")
+    }
+}
+
+/// Per-stat percents in short: `×1` when all are plain, `×1.5 all` when all are alike, else the
+/// stats that differ from plain grouped by factor, `×2.5 St, Dx, To`.
+fn per_stat_factors(percents: &PerStat<u16>) -> String {
+    let first = percents[Stat::ALL[0]];
+    if percents.iter().all(|(_, p)| p == first) {
+        return match first {
+            100 => "×1".into(),
+            p => format!("{} all", factor(p)),
+        };
+    }
+    let mut seen: Vec<u16> = Vec::new();
+    for (_, p) in percents.iter().filter(|&(_, p)| p != 100) {
+        if !seen.contains(&p) {
+            seen.push(p);
+        }
+    }
+    let groups: Vec<String> = seen
+        .into_iter()
+        .map(|p| {
+            let stats: Vec<&str> = (percents.iter())
+                .filter(|&(_, q)| q == p)
+                .map(|(s, _)| s.abbrev())
+                .collect();
+            format!("{} {}", factor(p), stats.join(", "))
+        })
+        .collect();
+    format!("{}; else ×1", groups.join("; "))
 }
 
 /// What each gender raises.

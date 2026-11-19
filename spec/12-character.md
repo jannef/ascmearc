@@ -60,6 +60,7 @@ Part of the design document; the index is [`specification.md`](../specification.
 - Every rule reads the effective score: the stored score plus worn items, less status penalties, hunger, and stat damage, within 1 to 40. Items never change stored scores.
 - The player sees their own effective scores, never a creature's, never a potential.
 - Training: using a stat earns hidden marks. At each level-up and once a day at dawn, a stat may rise by a check against a price that steepens past the potential.
+- Races grow differently, as data per race and stat: potentials multiplied at creation (humans every stat ×1.5, half-orcs the physical stats ×2.5, half-elves the mental stats ×1.5), and marks, a stat's or a skill's, counting more (humans and half-orcs ×1.25: a mark counts twice one time in four).
 - Marks may go negative through a few deliberate deeds (starving, fainting, overloading, stepping on a known trap, getting caught stealing); a negative pile may drop the score. Bad luck alone takes nothing.
 - A warning in words always precedes a drop.
 - Nothing numeric is shown for training; the wiki states the rules exactly.

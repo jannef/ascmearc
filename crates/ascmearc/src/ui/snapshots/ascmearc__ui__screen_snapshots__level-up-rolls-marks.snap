@@ -13,7 +13,7 @@ expression: "render(case, content.clone())"
   │   f  Listen            6  ────  1d2                                      │
   │   g  Negotiation      10  ────  1d2+1                                    │
   │   h  Open lock        21  ────  1d3                                      │
-  │   i  Search           10  ━───  1d5+1                                    │
+  │   i  Search           10  ━━──  2d4+1                                    │
   │   j  Sneak attack     25  ────  1d3                                      │
   │   k  Spot              9  ━───  1d3+1                                    │
   │   l  Steal            12  ────  1d3                                      │

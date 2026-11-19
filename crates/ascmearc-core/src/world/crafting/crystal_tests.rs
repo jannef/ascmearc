@@ -13,6 +13,7 @@ use crate::object::Stack;
 use crate::replay::Replay;
 use crate::skills::{SkillId, Trained};
 use crate::stats::{PerStat, Stat, Stats};
+use crate::test_support::plain_marks;
 use crate::test_support::{said_text as said, texts};
 use crate::world::*;
 use std::sync::LazyLock;
@@ -84,6 +85,7 @@ fn eat(w: &mut World, at: usize) {
 #[test]
 fn a_crystal_consumed_gives_mana_to_the_maximum_willpower_marks_and_a_step_toward_evil() {
     let mut w = world(1);
+    plain_marks(&mut w);
     give(&mut w, "crystal_red", 2);
     w.player_mut().mana_base = 10;
     let max = w.state.player().max_mana(&w.content);

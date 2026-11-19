@@ -65,6 +65,16 @@ never past `SCORES` (docs/dev/potions.md); a corpse's `on_eat` `widen`, a keyed 
 `Stats::widen(stat, 1)` (docs/dev/hunger.md). A corpse's `train` marks go straight into
 `Actor::stat_marks` (`world/health/eat.rs::corpse_gifts`, sure, no draw, no `StatUse`).
 
+**A race's count** (`data/races.toml` `marks_percent`, per stat): every mark a stat gains goes
+through `World::gain_stat_marks` (`world/character/stat_training.rs`; `train_stats_of`, a
+corpse's `corpse_gifts`, the craving's mark, a mishap's `Mark` for the player), which counts it by
+`World::counted_marks` (each whole hundred sure, the rest a chance per mark on the `training`
+stream, no draw at a whole hundred, so a plain race's stream never moves): humans' and half-orcs'
+125. Add a new gain of marks there, never straight into the pile. Losses (deeds, a mishap's
+`LoseMark`, a check's price) are not gains and are never counted. A race's
+`potential_percent` multiplies its potentials at creation (`docs/dev/character-creation.md`).
+Tests: `world/character/race_growth_tests.rs`.
+
 `Actor::stat_marks` (`PerStat<i32>`, signed, saturating) is saved and hashed, left out while all
 zero (the JSON map of `u16` piles saved before #722 reads as the same numbers). Nothing shows the
 marks but the dev `progress` dump layer (`stat marks St 120/160, To -30/75`: each pile with its

@@ -28,7 +28,10 @@ through `PerceptionView::skill_roll`/`roll_count` and by the dev `progress` dump
 level ...`, `roll dice athletics 1d3, ...`). `levelup:auto` spends rolls on the first trained skill
 (`advance_auto`). **Automatic rolls** (#1328): every mark is added through
 `World::mark_skill(id, by)` (`world/character/skill_roll.rs`; `World::train` calls it a mark at a time, and
-`World::teach_skills` with a quest reward's `marks` at once, after its words). Once the skill's marks reach `RollRules::auto_at` (`[rolls]
+`World::teach_skills` with a quest reward's `marks` at once, after its words). It counts `by` by
+the race's `skill_marks_percent` first (`World::counted_marks`, `world/character/stat_training.rs`:
+each whole hundred sure, the rest a chance per mark on the `training` stream, no draw at a whole
+hundred; humans' and half-orcs' 125; tests `world/character/race_growth_tests.rs`). Once the skill's marks reach `RollRules::auto_at` (`[rolls]
 auto_at`, 100; 0 turns it off) it rolls at once through `World::roll_skill`, the one path
 `advance_skill` uses too: the same dice, `levels_rng`, words, and spend, again while the spent
 marks are still at the threshold (a big gift). No `Due` is touched, and a pending level-up does

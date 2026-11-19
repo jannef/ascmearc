@@ -9,6 +9,7 @@ use crate::content::{ContentFiles, Landscape};
 use crate::replay::Replay;
 use crate::skills::{Effect, SkillId, Trained};
 use crate::test_support::last_text as last_message;
+use crate::test_support::plain_marks;
 use crate::world::*;
 
 /// The built-in content, with Survival earning a mark on every forage when `eager`, and every
@@ -268,6 +269,7 @@ fn survival_raises_the_chance() {
 #[test]
 fn a_forage_trains_survival() {
     let mut w = World::new(content(true, None), "forest", None).expect("world");
+    plain_marks(&mut w);
     train(&mut w, Some(10));
     let marks = |w: &World| w.state.player().skills.get(survival(w)).map(|t| t.marks);
     assert_eq!(marks(&w), Some(0));
@@ -389,6 +391,7 @@ fn a_forage_without_herbalism_draws_as_before() {
 #[test]
 fn a_forage_marks_herbalism_now_and_then() {
     let mut w = World::new(content(true, None), "forest", None).expect("world");
+    plain_marks(&mut w);
     train(&mut w, Some(10));
     train_herbalism(&mut w, 10);
     let id = w.content().skill_id("herbalism").expect("Herbalism");

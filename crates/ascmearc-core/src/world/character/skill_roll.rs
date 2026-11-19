@@ -219,15 +219,20 @@ impl World {
     }
 
     /// `by` training marks for the player's skill `id`, if trained: the one place marks are
-    /// added (`World::train`, and any other gift of marks). A skill whose marks reach `[rolls]
+    /// added (`World::train`, and any other gift of marks), counted by the race's
+    /// `skill_marks_percent` (`World::counted_marks`: humans' and half-orcs' 125, a mark
+    /// counting twice one time in four). A skill whose marks reach `[rolls]
     /// auto_at` rolls at once, by itself ([`crate::skills::RollRules::auto_at`]), the same
     /// roll a level-up's
     /// would be, and again while its spent marks are still at the threshold. Whatever level-up
     /// is due, its rolls are untouched. Returns whether the skill was trained.
     pub(in crate::world) fn mark_skill(&mut self, id: SkillId, by: u32) -> bool {
-        if !self.player_mut().skills.add_marks(id, by) {
+        if self.state.player().skills.get(id).is_none() {
             return false;
         }
+        let percent = self.player_race().map_or(100, |r| r.skill_marks_percent);
+        let by = self.counted_marks(percent, by);
+        self.player_mut().skills.add_marks(id, by);
         let rules = *self.content.skill_rolls();
         while let Some(trained) = self.state.player().skills.get(id) {
             if rules.auto_at == 0

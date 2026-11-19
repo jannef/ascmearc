@@ -120,8 +120,7 @@ impl World {
         for _ in 0..lost / u64::from(rules.per) {
             if self.state.training.chance(rules.chance) {
                 let stat = Stat::ALL[self.state.training.index(Stat::ALL.len())];
-                let pile = &mut self.player_mut().stat_marks[stat];
-                *pile = pile.saturating_add(1);
+                self.gain_stat_marks(stat, 1);
             }
         }
     }

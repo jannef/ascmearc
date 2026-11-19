@@ -40,6 +40,26 @@ Races need different amounts of [food](food.md). [Elves](races.md#race-elf),
 need the least, [halflings](races.md#race-halfling) (second breakfast) the most. See
 [Hunger](hunger.md).
 
+## How races grow
+
+Some races grow further than others.
+
+- **[Humans](races.md#race-human)** have the most room to grow. Each
+  [potential](stats.md#potentials) is half as much again, 24 or 26 in every stat. And every
+  [training mark](stats.md#raising-your-stats) they earn, a stat's or a
+  [skill's](skills.md#improving-a-skill), has a one in four chance to count twice.
+- **[Half-orcs](races.md#race-half-orc)** grow far in body. Their Strength, Dexterity, and
+  Toughness potentials are two and a half times as much: 40 (the most there is), 38, and 40. Their
+  marks count twice one time in four, like a human's.
+- **[Half-elves](races.md#race-half-elf)** grow far in mind. Their Intelligence, Willpower, and
+  Presence potentials are half as much again.
+
+Every other race grows as the plain rules say. A potential is multiplied after your race's
+adjustment is added, and rounded to the nearest whole number (a half rounds up). No potential goes
+past 40.
+
+{{#include generated/race-growth.md}}
+
 Only [halflings](races.md#race-halfling) smoke a pipe. On a full belly, an hour's smoke trains their
 stats as it empties the belly, and only halflings carve pipes. See [Your pipe](pipe.md).
 

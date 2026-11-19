@@ -7,6 +7,9 @@
 //!   [`World::train_stat`] for the rest; each rule for it gives its stat a mark with the rule's
 //!   chance, one draw of the **training** stream per rule below 100 (never gameplay). Only the
 //!   player trains, and only while alive. Marks are never said.
+//! - **A race's count**: every mark gained goes through [`World::gain_stat_marks`], which
+//!   counts it by the race's `marks_percent` for the stat (humans' and half-orcs' 125: a mark
+//!   counts twice one time in four, a draw of the training stream per mark).
 //! - **The pile**: `Actor::stat_marks`, a signed sum per stat, is the whole state: no cap, no
 //!   decay, no daily counter (the design, `docs/design/stat-training.md` §4.5).
 //! - **Checks** ([`World::settle`]): at every level gained ([`World::check_stats`], from
@@ -106,11 +109,38 @@ impl World {
                         .count() as u16
                 }
             };
-            let player = self.state.player;
-            if let Some(actor) = self.state.actors.get_mut(&player) {
-                let marks = &mut actor.stat_marks[stat];
-                *marks = marks.saturating_add(i32::from(won));
-            }
+            self.gain_stat_marks(stat, u32::from(won));
+        }
+    }
+
+    /// `count` marks gained at `percent` (a race's `marks_percent` or `skill_marks_percent`):
+    /// each whole hundred is a mark for certain, the rest a chance of one more, one draw of the
+    /// training stream per mark (none at a whole hundred, so a plain race draws nothing).
+    pub(super) fn counted_marks(&mut self, percent: u16, count: u32) -> u32 {
+        let (whole, part) = (u32::from(percent / 100), u32::from(percent % 100));
+        let sure = count.saturating_mul(whole);
+        if part == 0 {
+            return sure;
+        }
+        let more = (0..count)
+            .filter(|_| self.state.training.chance(part))
+            .count();
+        sure.saturating_add(u32::try_from(more).unwrap_or(u32::MAX))
+    }
+
+    /// `count` marks for the player's `stat`, as their race counts them (its `marks_percent`,
+    /// [`World::counted_marks`]): **the one place a stat's marks are gained** (a use's, a
+    /// potion's, a corpse's, a craving's, a mishap's). The pile saturates at `i32::MAX`.
+    pub(in crate::world) fn gain_stat_marks(&mut self, stat: Stat, count: u32) {
+        if count == 0 {
+            return;
+        }
+        let percent = self.player_race().map_or(100, |r| r.marks_percent[stat]);
+        let won = self.counted_marks(percent, count);
+        let player = self.state.player;
+        if let Some(actor) = self.state.actors.get_mut(&player) {
+            let marks = &mut actor.stat_marks[stat];
+            *marks = marks.saturating_add(i32::try_from(won).unwrap_or(i32::MAX));
         }
     }
 

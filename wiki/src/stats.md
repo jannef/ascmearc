@@ -80,8 +80,11 @@ Every stat also has a **potential**: how far it can grow for good. The game neve
   itself (see [Raising your stats](#raising-your-stats)).
 - Only elixirs, and rarely a fresh [corpse](food.md#corpses), widen the potential.
 
-Yours are set at the start of a run. Each is the potential your [race](races.md) gives, rolled once. It is
-never below your starting score: a score above it raises the potential to match.
+Yours are set at the start of a run. Each is the potential your [race](races.md) gives, rolled once.
+[Humans](races.md#race-human), [half-orcs](races.md#race-half-orc), and
+[half-elves](races.md#race-half-elf) then multiply some of theirs (see
+[How races grow](races.md#how-races-grow)). A potential is never below your starting score: a score
+above it raises the potential to match.
 
 {{#include generated/potentials.md}}
 
@@ -122,6 +125,9 @@ You never pick a stat to raise. Instead, your stats grow with what you do:
 
 Each such use may earn the stat a **training mark**. A stat's marks are kept as one running total,
 its pile. Marks never fade, have no limit, and count the same however many come in a day.
+[Humans](races.md#race-human) and [half-orcs](races.md#race-half-orc) are quick to learn: each mark
+they earn, however it comes, has a 25% chance to count as two (see
+[How races grow](races.md#how-races-grow)).
 
 What earns a mark, and how likely:
 
@@ -149,7 +155,8 @@ potential, that is (2 + n × (n + 1)) / 2 times the plain price.)
 
 Training alone never raises the potential. So a stat you live by ends a long career of sixty
 levels some twelve or thirteen points past its potential, at about 30. It never reaches the top by
-use alone. An [elixir](potions.md#elixirs) or a rare [corpse](food.md#corpses) that raises the potential makes every later point cheaper.
+use alone. A [human](races.md#race-human)'s or a [half-orc](races.md#race-half-orc)'s higher
+potentials keep the plain price for longer, and their marks come a quarter faster. An [elixir](potions.md#elixirs) or a rare [corpse](food.md#corpses) that raises the potential makes every later point cheaper.
 
 {{#include generated/stat-prices.md}}
 
