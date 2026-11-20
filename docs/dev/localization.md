@@ -5,8 +5,9 @@ in #1882). This topic describes what is built. **Built so far: L1**, the crate a
 (#1884), and **L2**, the log of entries (#1885): core logs messages, not English, the app and
 the dumps render them, and `world/fixtures/door.rs` and the welcome line say theirs from
 templates; every other `say` site still says finished English as a literal line ("Literal
-lines", below). Nothing player-visible has changed: the English templates read as the strings
-did. The English helpers core, the app, and the wiki generator call have moved into the crate
+lines", below); and **L6a**, the UI text path (#1900): the app's words in
+`assets/lang/en/ui/`, the abilities screen converted ("UI text", below). Nothing player-visible
+has changed: the English templates read as the strings did. The English helpers core, the app, and the wiki generator call have moved into the crate
 behind re-exports at their old paths.
 
 ## The crate
@@ -119,7 +120,62 @@ folds on equal text, as the old log did, and costs a save a few bytes more per l
    replays' hashes move only where a converted line was said (a literal entry became an id's):
    regenerate those with `replay --create` and say so.
 
-When no literal is left, `LITERAL`, the `From` text impls, and this section go. where the design left them open
+When no literal is left, `LITERAL`, the `From` text impls, and this section go.
+
+## UI text (L6)
+
+**Files.** `assets/lang/en/ui/<module>.toml`, one per screen or UI module, named as its
+`crates/ascmearc/src/ui/<module>.rs` (`abilities_screen.toml`). Every entry is a table with a
+`text` (or `by` and its variants, as a message's) and a `width`, alphabetical:
+
+```toml
+# A spell's roll and cost: `roll`, the dice and their type ("4d6 fire"); `cost`, its mana.
+[roll_mana]
+text = "{roll:bare}, {cost:bare} mana"
+width = 69
+```
+
+`width` is the columns the rendered text must fit, from the screen's layout (its `WIDTH`, the
+room of a column, the lines a paragraph wraps over); say in the file's head comment where the
+numbers come from. `width` is a reserved key in `template.rs`, never a variant. Core reads the
+files into English as `ui.<module>.<name>` (`content/english.rs`; every content file must be
+read), so `Content::english()` holds the UI text beside the messages.
+
+**Ids at build time.** `crates/ascmearc/build.rs` scans `assets/lang/en/ui/*.toml` as core's
+does the message files and writes `ui_text_ids` into `OUT_DIR`, included by `ui/text.rs`: a module
+per file and a `UiText` (the id and the width) per entry, `text::abilities_screen::TITLE`. An
+entry without a `width` fails the build. `text.rs`'s test checks the scan against the runtime
+parser.
+
+**Rendering.** `ui::text::ui(text::abilities_screen::TITLE)`, or with slots
+`ui_with(text::abilities_screen::MANA, &[("cost", Arg::Number(n))])`: the entry through the
+current language (`text::language`, English until L8) and the content's lexicon. A rendering wider than its `width` is cut at
+`width - 1` with `…`, a last resort (`cargo xtask lang --check` reports the overflow). The text
+comes from the content the game loaded (`text::use_content`, `main.rs`), else the built-in
+content (tests).
+
+**Converting a screen (the L6 parts)** is mechanical, and `ui/abilities_screen.rs` is the worked
+example:
+
+1. Make `assets/lang/en/ui/<module>.toml`, an entry per piece of prose the screen draws or
+   builds: titles (without the padding spaces, which stay in the code), headings, empty
+   states, hints, row states, notices. The text exactly as the string was.
+2. A `format!` gets a role per value, each `{role:bare}`: a number as `Arg::Number` (`bare`
+   gives digits; `num` would give words up to twelve), a name or a string from elsewhere as text
+   (`.into()`). `key` is reserved (the host's keys): name a key's role otherwise (`own`).
+   `{role:Bare}` capitalizes its first letter. Punctuation and words around a value go in the
+   entry; layout (the spaces between hint groups, a column's padding) stays in the code.
+3. **Keys stay as they are** (CLAUDE.md: menu keys are fixed): a fixed key letter is written in
+   the text (`a or {confirm:bare} use`; a translator keeps it), a key the code knows (`Enter`
+   from `HINTS`, a bound key's `display()`) is passed as a text role. No key handling changes.
+4. Leave what is not the screen's own: words from core (`Unavailable::reason`, `reach_words`,
+   ability and source names) wait for their L4 slice; text from a shared module (`paged_list`'s
+   page hint, `menu.rs`) waits for that module's part. A function another screen calls
+   (`needs`, `spell_head`) moves with its own module and returns `String`.
+5. Import `use super::text::{<module> as T, ui, ui_with};`, replace each literal, and run the
+   screen's tests and every screen snapshot (`cargo test -p ascmearc`): they must read
+   identically. A snapshot that changes is a mistake, usually a `width` too small (the panel
+   grows wider than its `WIDTH` on an 80-column console: take the room it has there). where the design left them open
 
 - `MessageId` and `Role` are `Cow<'static, str>` newtypes, not `&'static str`: an `Entry` is
   saved state (L2) and must deserialize to an owned id.
@@ -150,8 +206,19 @@ When no literal is left, `LITERAL`, the `From` text impls, and this section go. 
 - `Entry` leaves out `args` while empty and `count` while 1 when serialized, as the old
   `Message` left out its count.
 
+## Decisions L6a made where the design left them open
+
+- The UI text is part of English in the content (`ui.<module>.<name>`), not a second language
+  object in the app: the content's check that every file is read needs a reader, and L8 then
+  switches one language for the log and the UI.
+- Screens draw without a handle on the content, so `ui/text.rs` keeps the game's content in a
+  static (`use_content`) instead of threading a language through every `draw`.
+- A UI entry is always a table: the shorthand `id = "text"` has no room for its `width`.
+- `width` is the English file's, compiled into the id (`UiText`); a translation declares none.
+- Numbers are `{role:bare}` (digits in every language); fixed keys stay written in the text.
+
 ## Next
 
 L3 (phrases from `Lore`, `Stack`, `magic/name.rs`; the `Lexicon` over `Content`, then
-`Content::lexicon`), the L4 slices ("Literal lines"), L6 (UI text), L10 (the `fi` module):
+`Content::lexicon`), the L4 slices ("Literal lines"), the other L6 parts ("UI text"), L10 (the `fi` module):
 `docs/design/localization.md` §17.

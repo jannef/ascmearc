@@ -17,16 +17,21 @@
 //! repeats it (and so does the quick-repeat key, `A`, in play). Esc closes it, and so does its
 //! own key when it names no row. Read from the perception snapshot when it opens; no game time
 //! passes while it is open.
+//!
+//! Its words are `assets/lang/en/ui/abilities_screen.toml` (`T::…`, [`super::text`]): the worked
+//! example of the UI text path (docs/dev/localization.md "UI text").
 
 use super::character_screen::fit_joined;
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::ScreenAction;
+use super::text::{abilities_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
 use ascmearc_core::ability::{Ability, Aim, Source, Unavailable};
 use ascmearc_core::content::{ClassActive, SpellId};
+use ascmearc_core::lang::Arg;
 use ascmearc_core::perception::PerceptionView;
 use ascmearc_core::world::{reach_words, reroll_words};
 
@@ -76,8 +81,17 @@ impl AbilitiesScreen {
                 .map(|own| {
                     let a = own.ability;
                     let state = match own.unavailable {
-                        Some(why) => why.reason(content),
-                        None => needs(a.aim(content)).into(),
+                        Some(why) => why.reason(content).into_owned(),
+                        None => needs(a.aim(content)),
+                    };
+                    // What it costs, then why it cannot be used now, or what it asks for.
+                    let why = |cost: String| {
+                        let args = [("cost", cost.into()), ("why", state.as_str().into())];
+                        ui_with(T::COST_WHY, &args)
+                    };
+                    let aim = |cost: String| {
+                        let args = [("cost", cost.into()), ("aim", state.as_str().into())];
+                        ui_with(T::COST_AIM, &args)
                     };
                     // A spell says the roll it makes now with its type, as the character
                     // screen says a weapon's (the spell scaling design decision 11), and what
@@ -88,39 +102,46 @@ impl AbilitiesScreen {
                             let head = spell_head(view, spell);
                             match own.unavailable {
                                 Some(Unavailable::NoMana) => {
-                                    format!("{head}: you have {}", view.own_mana().0).into()
+                                    let mana = Arg::Number(i64::from(view.own_mana().0));
+                                    let args = [("cost", head.into()), ("mana", mana)];
+                                    ui_with(T::SHORT_OF_MANA, &args)
                                 }
-                                Some(_) => format!("{head}: {state}").into(),
-                                None if state.is_empty() => head.into(),
-                                None => format!("{head}, aimed").into(),
+                                Some(_) => why(head),
+                                None if state.is_empty() => head,
+                                None => ui_with(T::AIMED, &[("cost", head.into())]),
                             }
                         }
                         // An active weapon ability says what it costs the player in
                         // stamina, first (never its time).
                         Ability::Weapon(_, id) if content.weapon_ability(id).active.is_some() => {
-                            let head = format!("{} stamina", view.own_weapon_stamina(id));
+                            let stamina = Arg::Number(i64::from(view.own_weapon_stamina(id)));
+                            let head = ui_with(T::STAMINA, &[("stamina", stamina)]);
                             match own.unavailable {
-                                Some(_) => format!("{head}: {state}").into(),
-                                None if state.is_empty() => head.into(),
-                                None => format!("{head}, {state}").into(),
+                                Some(_) => why(head),
+                                None if state.is_empty() => head,
+                                None => aim(head),
                             }
                         }
                         // Charge says its stamina, a point and a point more a pace.
                         Ability::Class(ClassActive::Charge) => {
                             let (base, per) = content.charge_cost().unwrap_or((0, 0));
-                            let head = format!("{base} stamina + {per} a pace");
+                            let args = [
+                                ("base", Arg::Number(i64::from(base))),
+                                ("per", Arg::Number(i64::from(per))),
+                            ];
+                            let head = ui_with(T::CHARGE_STAMINA, &args);
                             match own.unavailable {
-                                Some(_) => format!("{head}: {state}").into(),
-                                None => format!("{head}, {state}").into(),
+                                Some(_) => why(head),
+                                None => aim(head),
                             }
                         }
-                        _ => state,
+                        _ => state.clone(),
                     };
                     let entry = Entry {
                         ability: a,
                         name: view.ability_name(a).to_string(),
                         description: describe(view, a),
-                        state: state.to_string(),
+                        state,
                         available: own.unavailable.is_none(),
                     };
                     (own.source, entry)
@@ -180,7 +201,11 @@ impl AbilitiesScreen {
         match self.entries.get(index) {
             Some(entry) if entry.available => ScreenAction::UseAbility(entry.ability),
             Some(entry) => {
-                self.notice = Some(format!("{}: {}.", entry.name, entry.state));
+                let args = [
+                    ("ability", entry.name.as_str().into()),
+                    ("why", entry.state.as_str().into()),
+                ];
+                self.notice = Some(ui_with(T::NOTICE, &args));
                 ScreenAction::Stay
             }
             None => ScreenAction::Stay,
@@ -208,12 +233,13 @@ impl AbilitiesScreen {
         let wide = longest(|e| &e.name) + longest(|e| &e.state) + ROW_EXTRA;
         let width = wide.clamp(WIDTH, (console.cols() as i32).max(WIDTH));
         let height = (count + EXTRA).min(console.rows() as i32 - OUTSIDE);
-        let panel = Panel::new(console, " Abilities ", width, height);
+        let title = format!(" {} ", ui(T::TITLE));
+        let panel = Panel::new(console, &title, width, height);
         self.entries.draw_label(console, &panel);
         let (x, top) = (panel.inner_x(), panel.y + 2);
         let fits = |y: i32| y < panel.y + panel.h - 2;
         if self.entries.is_empty() && fits(top) {
-            console.print(x + 2, top, "You have no abilities.", TEXT_DIM);
+            console.print(x + 2, top, &ui(T::NONE), TEXT_DIM);
         }
         // The name column: the longest name on any page, so turning the page keeps it.
         let name_w = (self.entries.iter())
@@ -277,16 +303,22 @@ impl AbilitiesScreen {
     fn footer(&self, bindings: &Bindings) -> String {
         let keys = HINTS;
         let page = (self.entries.hint(&keys)).map_or(String::new(), |hint| format!("{hint}   "));
-        let confirm = &keys.confirm;
+        let confirm = ("confirm", Arg::from(keys.confirm));
         let close = match bindings.keys_of(KeyCommand::Abilities).first() {
-            Some(key) if self.entries.is_empty() => format!("{} or Esc close", key.display()),
-            _ => "Esc close".to_string(),
+            Some(key) if self.entries.is_empty() => {
+                ui_with(T::CLOSE_OWN, &[("own", key.display().into())])
+            }
+            _ => ui(T::CLOSE),
         };
-        match self.entries.last_letter() {
-            Some('a') => format!("a or {confirm} use   {page}{close}"),
-            Some(last) => format!("a-{last} or {confirm} use   {page}{close}"),
-            None => close,
-        }
+        let used = match self.entries.last_letter() {
+            Some('a') => ui_with(T::USE_A, &[confirm]),
+            Some(last) => ui_with(
+                T::USE_LETTERS,
+                &[("last", last.to_string().into()), confirm],
+            ),
+            None => return close,
+        };
+        format!("{used}   {page}{close}")
     }
 }
 
@@ -302,9 +334,8 @@ fn describe(view: &PerceptionView<'_>, ability: Ability) -> String {
     let reach = (content.spell_of(spell).zip(view.own_spell_reach(spell)))
         .map(|(def, reach)| reach_words(def.shape, reach).join(", "))
         .unwrap_or_default();
-    let mut chars = reach.chars();
-    if let Some(first) = chars.next() {
-        text += &format!(" {}{}.", first.to_ascii_uppercase(), chars.as_str());
+    if !reach.is_empty() {
+        text += &format!(" {}", ui_with(T::REACH, &[("reach", reach.into())]));
     }
     if let Some(reroll) = reroll_words(view.own_spell_reroll(spell)) {
         text += &format!(" {reroll}");
@@ -316,29 +347,33 @@ fn describe(view: &PerceptionView<'_>, ability: Ability) -> String {
 /// now with its type, and what it costs them ("4d6 fire, 26 mana"; "3 mana" for one that rolls
 /// nothing).
 pub(super) fn spell_head(view: &PerceptionView<'_>, spell: SpellId) -> String {
-    let cost = view.own_spell_cost(spell).unwrap_or(0);
+    let cost = (
+        "cost",
+        Arg::Number(i64::from(view.own_spell_cost(spell).unwrap_or(0))),
+    );
     match view.own_spell_roll(spell) {
-        Some(roll) => format!("{}, {cost} mana", roll.text),
-        None => format!("{cost} mana"),
+        Some(roll) => ui_with(T::ROLL_MANA, &[("roll", roll.text.into()), cost]),
+        None => ui_with(T::MANA, &[cost]),
     }
 }
 
 /// What an ability that can be used now asks for, as its row says it.
-pub(super) fn needs(aim: Aim) -> &'static str {
-    match aim {
-        Aim::Nothing => "",
-        Aim::Direction => "in a direction",
-        Aim::Cell => "at a place you see",
-        Aim::Corpse => "at a corpse you see",
-        Aim::Ailment => "on yourself or an ally",
-        Aim::Item(_) => "on something you carry",
-        Aim::Throw => "something thrown at a place you see",
-        Aim::Shape => "in a weapon's shape",
-        Aim::Rig => "a trap beside you",
-        Aim::Spell => "a scroll of a spell you know",
+pub(super) fn needs(aim: Aim) -> String {
+    let text = match aim {
+        Aim::Nothing => return String::new(),
+        Aim::Direction => T::AIM_DIRECTION,
+        Aim::Cell => T::AIM_CELL,
+        Aim::Corpse => T::AIM_CORPSE,
+        Aim::Ailment => T::AIM_AILMENT,
+        Aim::Item(_) => T::AIM_ITEM,
+        Aim::Throw => T::AIM_THROW,
+        Aim::Shape => T::AIM_SHAPE,
+        Aim::Rig => T::AIM_RIG,
+        Aim::Spell => T::AIM_SPELL,
         // It opens the profession's list, as the ellipsis in its name says.
-        Aim::Recipes => "",
-    }
+        Aim::Recipes => return String::new(),
+    };
+    ui(text)
 }
 
 #[cfg(test)]

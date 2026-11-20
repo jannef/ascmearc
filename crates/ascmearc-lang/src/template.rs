@@ -186,8 +186,8 @@ impl Templates {
     }
 }
 
-/// The keys of an entry table that are not variants.
-const RESERVED: [&str; 3] = ["of", "by", "else"];
+/// The keys of an entry table that are not variants (`width`: a UI entry's room, read by the app).
+const RESERVED: [&str; 4] = ["of", "by", "else", "width"];
 
 fn parse_template(value: &toml::Value) -> Result<Template, String> {
     match value {
@@ -288,6 +288,22 @@ mod tests {
         assert_eq!(line.roles(), ["actor", "target"]);
         assert_eq!(Line::parse("").0, []);
         assert_eq!(Line::parse("{a:b}").0, [slot("a", "b")]);
+    }
+
+    /// A UI entry's `width` is its room, not a variant, with `text` or with `by`.
+    #[test]
+    fn a_width_is_no_variant() {
+        let file = "[title]\ntext = \"Abilities\"\nwidth = 54\n\
+                    [count]\nby = \"n.number\"\none = \"one\"\nelse = \"many\"\nwidth = 20\n";
+        let templates = Templates::parse("ui.x", file).expect("parses");
+        assert_eq!(
+            templates.get("ui.x.title"),
+            Some(&Template::Line(Line(vec![text("Abilities")])))
+        );
+        let Some(Template::Variants { variants, .. }) = templates.get("ui.x.count") else {
+            panic!("variants");
+        };
+        assert_eq!(variants.keys().collect::<Vec<_>>(), ["one"]);
     }
 
     #[test]
