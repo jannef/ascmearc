@@ -15,6 +15,7 @@ use crate::action::Event;
 use crate::content::ActionKind;
 use crate::door::kick_breaks;
 use crate::geom::{Dir, Pos};
+use crate::msg;
 use crate::noise::Act;
 use crate::rng::draw;
 use crate::skills::{Effect, Use};
@@ -26,18 +27,18 @@ impl World {
     pub(in crate::world) fn wedge(&mut self, dir: Dir) -> Spent {
         let player = self.state.player;
         if !Ability::Wedge.had_by(self.state.player(), &self.content) {
-            self.say("You do not know how to wedge a door.");
+            self.say(msg::skills::WEDGE_UNTRAINED);
             return Spent::Nothing;
         }
         let at = self.player_pos().step(dir);
         let closed = (self.state.current().terrain.get(at))
             .is_some_and(|t| self.content.terrain(*t).is_closed_door());
         if !closed {
-            self.say("There is no closed door there to wedge.");
+            self.say(msg::skills::NO_DOOR_TO_WEDGE);
             return Spent::Nothing;
         }
         if self.state.current().wedged.contains_key(&at) {
-            self.say("That door is wedged already.");
+            self.say(msg::skills::WEDGED_ALREADY);
             return Spent::Nothing;
         }
         let points = self
@@ -50,7 +51,7 @@ impl World {
         if self.trains(Use::Wedge) {
             self.train(Use::Wedge);
         }
-        self.say("You drive a wedge under the door.");
+        self.say(msg::skills::WEDGE);
         Spent::Turn(self.price_of(player, ActionKind::Wait))
     }
 

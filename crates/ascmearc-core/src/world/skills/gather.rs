@@ -3,8 +3,8 @@
 //! offered beside the fungus.
 //!
 //! - **Who**: one trained in the file's `skill` (Herbalism; #1400), while `data/herbs.toml`
-//!   exists. Anyone else is refused beside the fungus, taking no time ([`UNTRAINED`]); the menu
-//!   lists the row greyed out ([`unskilled`], [`crate::ability::Unavailable::Untrained`]).
+//!   exists. Anyone else is refused beside the fungus, taking no time (`skills.gather_untrained`);
+//!   the menu lists the row greyed out ([`unskilled`], [`crate::ability::Unavailable::Untrained`]).
 //! - **Where**: the cell the way named, beside the player, whose terrain is the file's `terrain`
 //!   (the glowing fungus, [`fungus_ways`]). Refused, taking no time, anywhere else, before the
 //!   skill is asked: "This fungus has been picked over." at the file's `picked` terrain, else
@@ -30,7 +30,9 @@
 use crate::action::Event;
 use crate::content::{ActionKind, Content};
 use crate::geom::{Dir, Pos};
+use crate::lang::{Arg, Msg};
 use crate::magic::loot::pick_weighted;
+use crate::msg;
 use crate::object::{self, Stack};
 use crate::rng::draw;
 use crate::skills::{SkillId, Use};
@@ -49,10 +51,6 @@ pub(crate) fn fungus_ways(content: &Content, level: &LevelState, at: Pos) -> Vec
         .collect()
 }
 
-/// What the player is told when they would gather untrained in Herbalism (#1400).
-pub const UNTRAINED: &str =
-    "You do not know what to do with these: gathering herbs takes the Herbalism skill.";
-
 /// The skill `gatherer` must be trained in to gather and is not (`data/herbs.toml`'s `skill`),
 /// or `None` when they may gather (or nobody gathers, without the file). The one check, read by
 /// [`World::start_gather`] and by the abilities menu
@@ -69,9 +67,6 @@ pub(in crate::world) struct Gathering {
     seconds: u32,
 }
 
-/// What the player is told gathering from fungus already picked over.
-pub const PICKED: &str = "This fungus has been picked over.";
-
 impl World {
     /// The player begins to gather from the fungus the way `dir`; refused, taking no time, with
     /// none there or untrained in Herbalism ([`unskilled`]).
@@ -84,17 +79,17 @@ impl World {
                 self.state.current().terrain_at(here.step(dir)) == Some(rules.picked)
             });
             self.say(if picked {
-                PICKED
+                msg::skills::PICKED_OVER
             } else {
-                "There is nothing here to gather."
+                msg::skills::NOTHING_TO_GATHER
             });
             return Spent::Nothing;
         };
         if unskilled(self.state.player(), &content).is_some() {
-            self.say(UNTRAINED);
+            self.say(msg::skills::GATHER_UNTRAINED);
             return Spent::Nothing;
         }
-        self.say("You search the glowing fungus for herbs.");
+        self.say(msg::skills::GATHER_START);
         Spent::Gather(Gathering {
             fungus: here.step(dir),
             seconds: rules.seconds,
@@ -116,10 +111,10 @@ impl World {
             Ended::Died => {}
             _ if self.state.time >= until => self.gathered(fungus),
             Ended::Came(came) => {
-                let text = format!("{}; you stop gathering.", self.came_line(came));
-                self.say(text);
+                let came = self.came_line(came);
+                self.say(Msg::new(msg::skills::GATHER_BROKEN_BY).role("came", came));
             }
-            Ended::Said | Ended::Done => self.say("You stop gathering."),
+            Ended::Said | Ended::Done => self.say(msg::skills::STOP_GATHERING),
         }
     }
 
@@ -148,18 +143,18 @@ impl World {
             }
         }
         if stacks.is_empty() {
-            self.say("You find nothing worth gathering.");
+            self.say(msg::skills::NOTHING_WORTH_GATHERING);
         } else {
             crate::rot::made_at(&mut stacks, &content, self.state.time);
-            let text = format!("You gather {}.", found(&stacks, &content));
-            self.say(text);
+            let found = found(&stacks, &content);
+            self.say(Msg::new(msg::skills::GATHERED).role("what", found));
             for stack in stacks {
                 object::add_to_inventory(self.state.inventory_mut(), stack, &content);
             }
         }
         if self.state.current().terrain_at(fungus) == Some(rules.terrain) {
             self.set_terrain(fungus, rules.picked);
-            self.say("The fungus is picked bare.");
+            self.say(msg::skills::PICKED_BARE);
         }
         if self.trains(Use::Gather) {
             self.train(Use::Gather);
@@ -167,12 +162,11 @@ impl World {
     }
 }
 
-/// The herbs found, in a sentence, however many kinds: "a glowcap", "2 sprigs of moonwort and
-/// a glowcap", "a, b, c, and d".
-fn found(stacks: &[Stack], content: &Content) -> String {
-    let names: Vec<String> = stacks.iter().map(|s| s.describe(content)).collect();
-    if names.is_empty() {
-        return "nothing".into();
+/// The herbs found (at least one stack), however many kinds, said counted: one stack's phrase
+/// ("a glowcap"), else a list of them ("2 sprigs of moonwort and a glowcap", "a, b, c, and d").
+fn found(stacks: &[Stack], content: &Content) -> Arg {
+    match stacks {
+        [one] => Arg::Phrase(one.phrase(content)),
+        _ => Arg::List(stacks.iter().map(|s| s.phrase(content).into()).collect()),
     }
-    crate::text::and_list(&names)
 }

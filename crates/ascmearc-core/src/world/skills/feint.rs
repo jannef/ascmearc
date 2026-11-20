@@ -32,10 +32,11 @@ use crate::action::Event;
 use crate::check;
 use crate::content::{ActionKind, Build, Stance};
 use crate::geom::Dir;
+use crate::lang::Msg;
+use crate::msg;
 use crate::rng::draw;
 use crate::skills::{Effect, Use};
 use crate::stats::Stat;
-use crate::text::capitalized;
 use crate::world::{Spent, World};
 
 impl World {
@@ -45,22 +46,22 @@ impl World {
         let player = self.state.player;
         let trained = crate::ability::Ability::Feint.had_by(self.state.player(), &content);
         let Some(rules) = content.feint().copied().filter(|_| trained) else {
-            self.say("You do not know how to feint.");
+            self.say(msg::skills::FEINT_UNTRAINED);
             return Spent::Nothing;
         };
         let at = self.player_pos().step(dir);
         let Some(foe) = self.seen_creature_at(at) else {
-            self.say("You see no one there to feint at.");
+            self.say(msg::skills::NO_ONE_TO_FEINT_AT);
             return Spent::Nothing;
         };
-        let called = self.called(&self.state.actors[&foe]);
-        let name = capitalized(&called);
+        let who = self.called_phrase(&self.state.actors[&foe]);
+        let about = |id| Msg::new(id).role("who", who.clone());
         if self.stance(player, foe) != Stance::Hostile {
-            self.say(format!("{name} is no foe of yours."));
+            self.say(about(msg::skills::NO_FOE));
             return Spent::Nothing;
         }
         if !self.has_vitals(foe) {
-            self.say(format!("{name} has no mind to fool."));
+            self.say(about(msg::skills::NO_MIND));
             return Spent::Nothing;
         }
         // A chosen attack: the mark rule before the check (`mark.rs`).
@@ -73,12 +74,12 @@ impl World {
         let them = &self.state.actors[&foe];
         let nerve = them.check_modifier(&content, Stat::Willpower);
         if check::check(&mut draw!(self, "feint/{}", them.key), nerve, difficulty) {
-            self.say(format!("{name} is not fooled."));
+            self.say(about(msg::skills::NOT_FOOLED));
         } else {
             self.afflict(foe, rules.status, 1, Some(player), events);
             // Its next action does not ease it (the module docs).
             self.fresh.push((foe, rules.status));
-            self.say(format!("{name} falls for it."));
+            self.say(about(msg::skills::FALLS_FOR_IT));
             self.gain_resource(player, Build::Feint);
         }
         if self.trains(Use::Feint) {

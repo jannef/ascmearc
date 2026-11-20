@@ -13,9 +13,12 @@ use crate::action::Event;
 use crate::combat::Category;
 use crate::content::TrapEffect;
 use crate::geom::Pos;
+use crate::lang::Msg;
+use crate::msg;
 use crate::rng::draw;
 use crate::skills::Use;
 use crate::world::World;
+use crate::world::combat::fight::word;
 
 impl World {
     /// The player's dodge against a known trap: the Dexterity and Dodge categories of their
@@ -50,11 +53,11 @@ impl World {
             return false;
         }
         let def = self.content.trap(kind);
-        let text = match def.effect {
-            TrapEffect::Pit { .. } => format!("You step lightly over the {}.", def.name),
-            _ => format!("You deftly avoid the {}.", def.name),
+        let id = match def.effect {
+            TrapEffect::Pit { .. } => msg::skills::STEP_OVER,
+            _ => msg::skills::AVOID_TRAP,
         };
-        self.say(text);
+        self.say(Msg::new(id).role("trap", word(&def.name)));
         if self.trains(Use::Dodge) {
             self.train(Use::Dodge);
         }

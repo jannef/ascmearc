@@ -26,9 +26,10 @@ use crate::action::Event;
 use crate::content::{ActionKind, Stance};
 use crate::fov::radius2;
 use crate::geom::Pos;
+use crate::lang::Msg;
+use crate::msg;
 use crate::noise::Act;
 use crate::skills::{Effect, Use};
-use crate::text::capitalized;
 use crate::world::{Spent, World};
 
 impl World {
@@ -39,34 +40,34 @@ impl World {
         let player = self.state.player;
         let trained = crate::ability::Ability::Intimidate.had_by(self.state.player(), &content);
         let Some(rules) = content.intimidate().filter(|_| trained) else {
-            self.say("You do not know how to intimidate.");
+            self.say(msg::skills::INTIMIDATE_UNTRAINED);
             return Spent::Nothing;
         };
         let here = self.player_pos();
         if at == here {
-            self.say("You cannot intimidate yourself.");
+            self.say(msg::skills::INTIMIDATE_YOURSELF);
             return Spent::Nothing;
         }
         if at.dist2(here) > radius2(rules.range) {
-            self.say("That is out of range.");
+            self.say(msg::skills::OUT_OF_RANGE);
             return Spent::Nothing;
         }
         let Some(foe) = self.seen_creature_at(at) else {
-            self.say("You see no one there to intimidate.");
+            self.say(msg::skills::NO_ONE_TO_INTIMIDATE);
             return Spent::Nothing;
         };
-        let called = self.called(&self.state.actors[&foe]);
-        let name = capitalized(&called);
+        let who = self.called_phrase(&self.state.actors[&foe]);
+        let about = |id| Msg::new(id).role("who", who.clone());
         if self.stance(player, foe) != Stance::Hostile {
-            self.say(format!("{name} is no foe of yours."));
+            self.say(about(msg::skills::NO_FOE));
             return Spent::Nothing;
         }
         if !self.has_vitals(foe) {
-            self.say(format!("{name} has no heart to quail."));
+            self.say(about(msg::skills::NO_HEART));
             return Spent::Nothing;
         }
         let price = self.price_of(player, ActionKind::Intimidate);
-        self.say(format!("You threaten {called}."));
+        self.say(about(msg::skills::THREATEN));
         let heard = self.heard_by(Act::Mutter).binary_search(&foe).is_ok();
         self.make_noise(player, Act::Mutter);
         if self.trains(Use::Intimidate) {
@@ -81,7 +82,7 @@ impl World {
             let difficulty = self.threat_difficulty(rules.difficulty);
             self.cow(foe, difficulty, rules.status, degrees, events);
         } else {
-            self.say(format!("{name} pays you no heed."));
+            self.say(about(msg::skills::NO_HEED));
         }
         Spent::Turn(price)
     }

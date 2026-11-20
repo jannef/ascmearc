@@ -190,7 +190,7 @@ saved and hashed by that index. Their first effects (#1343, one hook each):
   abilities menu's *Here* group, offered by the fungus as a room's feature offers Pray, so the
   skill stays `passive`), but only one trained in the file's `skill` (Herbalism) may gather
   (#1400): `gather::unskilled` is the one check, read by `World::start_gather` (refused, no time,
-  `gather::UNTRAINED`, after the fungus is found) and by `Ability::unavailable`
+  `skills.gather_untrained`, after the fungus is found) and by `Ability::unavailable`
   (`Unavailable::Untrained(skill)`, "you are untrained in Herbalism", id `untrained:herbalism`).
   A gather finds `count` + the skill's trained value / `value_per_count`, each drawn by weight
   at the level's item level (`HerbRules::at`). Marks on `gather`, 100 %. A gather that ran its
@@ -199,7 +199,7 @@ saved and hashed by that index. Their first effects (#1343, one hook each):
   cache re-derives the cell as for a spent altar), "The fungus is picked bare.", for good; a
   gather cut short leaves it. The terrain is the whole record, saved with the level, so a level's
   fungus gives at most a find a cell. Gather toward picked fungus is refused, no time,
-  `gather::PICKED`; the menu no longer offers it there (`fungus_ways` asks for `terrain`).
+  `skills.picked_over`; the menu no longer offers it there (`fungus_ways` asks for `terrain`).
 - **Alchemy**'s `identify_potion` and **Enchanting**'s `identify_magic` (5 / 25 / 40 %) look in
   `world/skills/appraise.rs::appraise_hours` after Appraise's `identify`, from the same hour's stream:
   Alchemy at the potions and flasks whose kind is unknown (`drink`), Enchanting at every other

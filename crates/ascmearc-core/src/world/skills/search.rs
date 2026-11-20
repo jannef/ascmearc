@@ -44,11 +44,13 @@ use crate::check::check;
 use crate::content::StatUse;
 use crate::content::{ActionKind, PassiveSearch, RaceDef, TrapId};
 use crate::geom::Pos;
+use crate::lang::Msg;
+use crate::msg;
 use crate::rng::draw;
 use crate::sight::LineOfSight;
 use crate::skills::{Effect, Use};
 use crate::stats::Stat;
-use crate::text::article;
+use crate::world::combat::fight::word;
 use crate::world::turn::rest::Ended;
 use crate::world::{ActorId, World};
 use std::cell::Cell;
@@ -255,11 +257,11 @@ impl World {
         let took = self.state.time.since(start).spoken();
         let text = match ended {
             Ended::Died => return,
-            Ended::Came(came) => {
-                format!("{}; you stop searching after {took}.", self.came_line(came))
-            }
-            Ended::Said => format!("You stop searching after {took}."),
-            Ended::Done => format!("You search for {took} and find nothing."),
+            Ended::Came(came) => Msg::new(msg::skills::SEARCH_BROKEN_BY)
+                .role("came", self.came_line(came))
+                .role("time", took),
+            Ended::Said => Msg::new(msg::skills::STOP_SEARCHING).role("time", took),
+            Ended::Done => Msg::new(msg::skills::SEARCHED_NOTHING).role("time", took),
         };
         self.say(text);
     }
@@ -353,14 +355,14 @@ impl World {
                 };
                 self.set_terrain(at, secret.door);
                 self.state.current_mut().memory.set(at, Some(secret.door));
-                self.say("You find a secret door!");
+                self.say(msg::skills::SECRET_DOOR);
             }
             Hidden::Hollow => {
                 let level = self.state.current_mut();
                 level.hollows.insert(at);
                 let wall = level.terrain.get(at).copied();
                 level.memory.set(at, wall);
-                self.say("The wall here sounds hollow.");
+                self.say(msg::skills::SOUNDS_HOLLOW);
             }
             Hidden::Trap(_) => {
                 let Some(kind) = self.know_trap(at) else {
@@ -368,16 +370,17 @@ impl World {
                 };
                 self.state.current_mut().trap_memory.insert(at, kind);
                 let def = self.content.trap(kind);
+                let trap = word(&def.name);
                 let level = self.state.current();
-                let sign = if level.is_door(&self.content, at) {
-                    "that the door is trapped".to_string()
+                let text = if level.is_door(&self.content, at) {
+                    Msg::new(msg::skills::NOTICE_DOOR_TRAPPED)
                 } else if level.is_shut_chest(&self.content, at) {
-                    format!("that the {} is trapped", self.chest_name(at))
+                    Msg::new(msg::skills::NOTICE_CHEST_TRAPPED)
+                        .role("chest", word(&self.chest_name(at)))
                 } else {
-                    def.sign.clone()
+                    Msg::new(msg::skills::NOTICE_TRAP).role("sign", def.sign.clone())
                 };
-                let text = format!("You notice {sign}: {} {}.", article(&def.name), def.name);
-                self.say(text);
+                self.say(text.role("trap", trap));
             }
         }
     }
