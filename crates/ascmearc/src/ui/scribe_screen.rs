@@ -5,20 +5,27 @@
 //! takes at a normal pace in words; the blank scrolls carried above. A letter on the page, or
 //! Enter on the `>` row, writes it ([`Action::Scribe`], `scribe:fireball`); the list keys turn
 //! the page; Esc closes it. The keys are the list's own, fixed.
+//!
+//! Its words are `assets/lang/en/ui/scribe_screen.toml` (`T::…`, [`super::text`]); the spells'
+//! and schools' names are the data's, the time in words core's (`Duration::spoken`).
 
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::ScreenAction;
+use super::text::{scribe_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::Bindings;
 use crate::render::console::Console;
 use ascmearc_core::Action;
 use ascmearc_core::content::School;
+use ascmearc_core::lang::Arg;
 use ascmearc_core::perception::PerceptionView;
 use ascmearc_core::text::capitalized;
 
 /// Panel width: room for the longest spell name with its price and time.
 const WIDTH: i32 = 64;
+/// Cells a row's time takes at the right, and the gap before it.
+const TIME_W: i32 = 20;
 
 /// One spell as the list shows it.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -55,8 +62,8 @@ impl ScribeScreen {
                 let writable = Writable {
                     id: def.id.clone(),
                     name: def.name.clone(),
-                    mana: format!("{} mana", own.mana),
-                    time: format!("about {}", own.time.spoken()),
+                    mana: ui_with(T::MANA, &[("mana", Arg::Number(i64::from(own.mana)))]),
+                    time: ui_with(T::ABOUT, &[("time", own.time.spoken().into())]),
                 };
                 (def.school, writable)
             })
@@ -108,19 +115,20 @@ impl ScribeScreen {
         // Rows: margin, the blanks' line, a gap, the list, a gap, the footer, the frame.
         self.fit(console.cols(), console.rows());
         let count = self.spells.tallest().max(1) as i32;
-        let panel = Panel::new(console, " Scribe: which spell? ", WIDTH, count + 7);
+        let title = format!(" {} ", ui(T::TITLE));
+        let panel = Panel::new(console, &title, WIDTH, count + 7);
         self.spells.draw_label(console, &panel);
         let x = panel.inner_x();
         let right = panel.x + panel.w - 3;
         let fits = |y: i32| y < panel.y + panel.h - 2;
+        let room = panel.inner_w() - 2;
         let blanks = match self.blanks {
-            0 => "You carry no blank scroll to write on.".to_string(),
-            1 => "You carry 1 blank scroll.".to_string(),
-            n => format!("You carry {n} blank scrolls."),
+            0 => ui(T::BLANKS_NONE),
+            n => ui_with(T::BLANKS, &[("n", Arg::Number(i64::from(n)))]),
         };
-        console.print(x + 2, panel.y + 2, &blanks, TEXT_DIM);
+        console.print_in(x + 2, panel.y + 2, &blanks, TEXT_DIM, room);
         if self.spells.is_empty() && fits(panel.y + 4) {
-            console.print(x + 2, panel.y + 4, "You know no spell to write.", TEXT_DIM);
+            console.print_in(x + 2, panel.y + 4, &ui(T::NONE), TEXT_DIM, room);
         }
         for (row, y) in self.spells.rows().into_iter().zip(panel.y + 4..) {
             if !fits(y) {
@@ -143,23 +151,28 @@ impl ScribeScreen {
             }
             // `b - Fireball          78 mana   about 32 minutes`, the page's letter.
             console.print(x + 2, y, &format!("{letter} - {}", spell.name), color);
-            let time_x = right - spell.time.chars().count() as i32;
-            console.print(time_x, y, &spell.time, TEXT_DIM);
-            let mana_x = right - 20 - spell.mana.chars().count() as i32;
+            let time_w = (spell.time.chars().count() as i32).min(TIME_W - 1);
+            console.print_in(right - time_w, y, &spell.time, TEXT_DIM, TIME_W - 1);
+            let mana_x = right - TIME_W - spell.mana.chars().count() as i32;
             console.print(mana_x, y, &spell.mana, color);
         }
         let keys = HINTS;
-        let confirm = &keys.confirm;
-        let choose = match self.spells.last_letter() {
-            Some('a') => format!("a or {confirm}"),
-            Some(last) => format!("a-{last} or {confirm}"),
-            None => confirm.to_string(),
+
+        let confirm = ("confirm", Arg::from(keys.confirm));
+        let write = match self.spells.last_letter() {
+            Some('a') => ui_with(T::WRITE_A, &[confirm]),
+            Some(last) => ui_with(
+                T::WRITE_LETTERS,
+                &[("last", last.to_string().into()), confirm],
+            ),
+            None => ui_with(T::WRITE, &[confirm]),
         };
         let page = (self.spells.hint(&keys)).map_or(String::new(), |hint| format!("{hint}   "));
+        let back = ui(T::BACK);
         if self.spells.is_empty() {
-            panel.footer(console, "Esc back");
+            panel.footer(console, &back);
         } else {
-            panel.footer(console, &format!("{choose} write   {page}Esc back"));
+            panel.footer(console, &format!("{write}   {page}{back}"));
         }
     }
 }

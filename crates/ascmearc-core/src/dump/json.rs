@@ -331,11 +331,9 @@ pub fn json(world: &World, layers: &[Layer], include_state: bool) -> Value {
         "familiar": kept_json(&view, Kept::Familiar),
         // The quarrel's parting to answer, or null (`world/people/quarrel.rs`).
         "parting": view.parting().map(|p| json!({
-            "title": p.title,
+            "who": crate::messages::english_arg(content, &p.who.into(), "The"),
             "text": p.text,
-            "choices": (p.choices.iter())
-                .map(|(label, c)| json!({ "id": c.id(), "label": label }))
-                .collect::<Vec<_>>(),
+            "choices": p.choices.iter().map(|c| c.id()).collect::<Vec<_>>(),
         })),
         // The overworld encounter to answer, or null.
         "encounter": view.encounter().map(|e| {
@@ -344,10 +342,9 @@ pub fn json(world: &World, layers: &[Layer], include_state: bool) -> Value {
                 "entry": entry,
                 "name": e.name,
                 "outcome": outcome.id(),
-                "title": e.title,
                 "text": e.text,
                 "choices": (e.choices.iter())
-                    .map(|(label, c)| json!({ "id": c.id(), "label": label }))
+                    .map(|c| json!({ "id": c.id() }))
                     .collect::<Vec<_>>(),
             })
         }),

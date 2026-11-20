@@ -12,7 +12,7 @@ pub(super) fn uniques(content: &Content) -> String {
     let mut all: Vec<&UniqueDef> = (content.uniques())
         .filter(|u| order::described(content, u.campaign.as_deref()))
         .collect();
-    all.sort_by_cached_key(|u| u.name.to_lowercase());
+    all.sort_by_cached_key(|u| u.listed_name().to_lowercase());
     let mut out = String::from(
         "| Item | Base | Item level | Affixes (tier: what it does) | Power | Carried by | Lore |\n\
          |---|---|:---:|---|---|---|---|\n",
@@ -30,7 +30,7 @@ pub(super) fn uniques(content: &Content) -> String {
         let _ = writeln!(
             out,
             "| {} | {} | {} | {} | {} | {} | {} |",
-            u.name,
+            u.listed_name(),
             capital(&def.name),
             magic.level,
             affixes.join("; "),

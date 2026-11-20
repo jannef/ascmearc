@@ -84,8 +84,8 @@ return_to = "You return to {place:bare}."
 run_you_down = "They run you down."
 see_each_other = "You and {party:bare} see each other at the same moment."
 # `what`: what lies on the cell the player entered, one stack; `price` its price, for sale.
-see_here = "You see here {what:counted}."
-see_here_for_sale = "You see here {what:counted} (for sale, {price:bare} gold)."
+see_here = "You see here {what:a}."
+see_here_for_sale = "You see here {what:a} (for sale, {price:bare} gold)."
 # `party` is set upon the player from cover, which the land gives.
 set_upon_grass = "You are set upon by {party:bare} from the long grass!"
 set_upon_hills = "You are set upon by {party:bare} from behind the rocks!"
@@ -165,5 +165,5 @@ many = "{who:num} {who:plural}"
 # `what`: what sank: a stack, a list of two or three, or a count of objects.
 [sinks]
 by = "what.number"
-one = "{what:Counted} sinks into the water."
-many = "{what:Counted} sink into the water."
+one = "{what:A} sinks into the water."
+many = "{what:A} sink into the water."

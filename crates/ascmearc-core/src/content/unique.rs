@@ -48,7 +48,9 @@ pub enum Power {
 #[derive(Debug)]
 pub struct UniqueDef {
     pub id: String,
-    /// Its name, which the item shows once identified ("Widowmaker").
+    /// Its name, which the item shows once identified, written as a sentence says it: with its
+    /// own "the" if it takes one ("the Brosinga Mene"), else none ("Widowmaker", "Sigeric's
+    /// Star"). A list drops that "the" ([`UniqueDef::listed_name`]; #1974).
     pub name: String,
     pub object: ObjectId,
     /// The item as placed: one, rare, unidentified, with its affixes, parts, and id.
@@ -67,6 +69,11 @@ impl UniqueDef {
     /// affixes, its item level, and its id.
     pub fn magic(&self) -> &Magic {
         self.stack.magic().expect("a unique item is magic")
+    }
+
+    /// Its name as a list or a table says it, without its own "the": "Brosinga Mene".
+    pub fn listed_name(&self) -> &str {
+        crate::lang::en::own_article(&self.name).unwrap_or(&self.name)
     }
 }
 

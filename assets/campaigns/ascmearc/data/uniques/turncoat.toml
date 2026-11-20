@@ -2,7 +2,7 @@
 # his crime): stand in the doorway and do not move. Heavy, hard to hurt, unshakable.
 [[unique]]
 id = "turncoat"
-name = "The Turncoat"
+name = "the Turncoat"
 object = "banded_mail"
 affixes = ["reinforced:4", "hardened:4", "hale:7", "of_the_ox:2"]
 level = 12

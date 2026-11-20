@@ -307,6 +307,64 @@ fn names_follow_rarity_and_what_the_player_knows() {
     assert_eq!(unknown.describe_truth(&c), "a Sharp arrow (unidentified)");
 }
 
+/// A rare item takes "the" where a sentence needs an article and none in a list (#1974); a
+/// unique is said as its data writes it, its own "the" dropped in a list.
+#[test]
+fn a_rare_takes_the_in_a_sentence_and_none_in_a_list() {
+    use crate::lang::Msg;
+    use crate::msg;
+    use crate::test_support::english_of;
+    let c = content();
+    let mut helm = item(
+        &c,
+        "iron_helm",
+        &[("hale", 1, 3), ("of_the_owl", 1, 1), ("radiant", 1, 0)],
+        Some("Grim Bite"),
+    );
+    helm.identify();
+    let said = |id, phrase| english_of(&c, &Msg::new(id).role("what", phrase));
+    assert_eq!(helm.describe(&c), "Grim Bite, an iron helm", "a list row");
+    assert_eq!(helm.title(&c), "Grim Bite", "a label");
+    assert_eq!(
+        said(msg::items::PICK_UP, helm.phrase(&c)),
+        "You pick up the Grim Bite, an iron helm."
+    );
+    assert_eq!(
+        said(msg::turn::FALLS_BELOW, helm.title_phrase(&c)),
+        "The Grim Bite falls away to the ground far below."
+    );
+    assert_eq!(
+        said(msg::items::WILL_NOT_LEAVE_HAND, helm.title_phrase(&c)),
+        "The Grim Bite will not leave your hand."
+    );
+    let unique = |id: &str| {
+        let mut stack = c.unique(id).expect(id).stack.clone();
+        stack.identify();
+        stack
+    };
+    let mene = unique("brosinga_mene");
+    assert_eq!(
+        c.unique("brosinga_mene").expect("mene").listed_name(),
+        "Brosinga Mene"
+    );
+    assert_eq!(
+        mene.title(&c),
+        "Brosinga Mene",
+        "a list drops its own article"
+    );
+    assert_eq!(
+        said(msg::items::PUT_ON, mene.title_phrase(&c)),
+        "You put on the Brosinga Mene."
+    );
+    let star = unique("sigerics_star");
+    assert_eq!(star.title(&c), "Sigeric's Star");
+    assert_eq!(
+        said(msg::turn::FALLS_BELOW, star.title_phrase(&c)),
+        "Sigeric's Star falls away to the ground far below.",
+        "a possessive takes no article"
+    );
+}
+
 #[test]
 fn bad_items_are_refused() {
     let c = content();

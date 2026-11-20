@@ -12,19 +12,22 @@
 //! about the player's own to-hit or modifiers is shown.
 //!
 //! Read-only: Esc, Enter, or Back closes it. It is read from the perception snapshot when it
-//! opens; no game time passes while it is open.
+//! opens; no game time passes while it is open. Its words are
+//! `assets/lang/en/ui/describe_screen.toml` (`T::…`, [`super::text`]); the description's lines
+//! are core's.
 
 use super::menu::{Nav, Panel, Press, wrap};
 use super::screens::ScreenAction;
+use super::text::{UiText, describe_screen as T, ui, ui_with};
 use super::{MAGIC, TEXT, TEXT_DIM, rarity_color};
 use crate::input::Bindings;
 use crate::render::console::Console;
 use ascmearc_core::color::Rgb;
-use ascmearc_core::content::Rarity;
+use ascmearc_core::content::{AffixKind, Rarity};
 use ascmearc_core::equipment;
+use ascmearc_core::lang::Phrase;
 use ascmearc_core::magic::describe::{Line, LineKind};
 use ascmearc_core::perception::PerceptionView;
-use ascmearc_core::text::capitalized;
 
 /// Panel width: the description's lines wrap within it.
 const WIDTH: i32 = 64;
@@ -35,8 +38,8 @@ const LABEL_W: i32 = 8;
 pub struct DescribeScreen {
     glyph: char,
     fg: Rgb,
-    /// What it is called, as the player knows it.
-    title: String,
+    /// What it is called, as the player knows it (`Lore::title_phrase`); `None` for nothing.
+    title: Option<Phrase>,
     rarity: Rarity,
     /// Whether the player knows it is cursed: its name's color then.
     cursed: bool,
@@ -52,7 +55,7 @@ impl DescribeScreen {
         let empty = Self {
             glyph: ' ',
             fg: TEXT,
-            title: String::new(),
+            title: None,
             rarity: Rarity::Normal,
             cursed: false,
             mark: None,
@@ -67,7 +70,7 @@ impl DescribeScreen {
         Self {
             glyph: def.glyph,
             fg: view.lore().fg(stack),
-            title: capitalized(&view.lore().title(stack)),
+            title: Some(view.lore().title_phrase(stack)),
             rarity: stack.rarity(),
             cursed: stack.known_cursed(content),
             mark: equipment::mark(content, view.equipment(), item),
@@ -101,8 +104,9 @@ impl DescribeScreen {
             }
             last = Some(line.kind);
             let (label, dx, color) = match line.kind {
-                LineKind::Affix(kind) => (Some(kind.name()), LABEL_W, MAGIC),
-                LineKind::Power => (Some("Power"), LABEL_W, MAGIC),
+                LineKind::Affix(AffixKind::Prefix) => (Some(T::LABEL_PREFIX), LABEL_W, MAGIC),
+                LineKind::Affix(AffixKind::Suffix) => (Some(T::LABEL_SUFFIX), LABEL_W, MAGIC),
+                LineKind::Power => (Some(T::LABEL_POWER), LABEL_W, MAGIC),
                 LineKind::Stat => (None, 0, TEXT),
                 LineKind::Base | LineKind::Note | LineKind::Lore => (None, 0, TEXT_DIM),
             };
@@ -123,26 +127,18 @@ impl DescribeScreen {
         let rows = self.rows(width);
         // Rows: margin, the name, a gap, the description, a gap, the footer, the frame.
         let h = rows.len() as i32 + 7;
-        let panel = Panel::new(console, " Item ", WIDTH, h);
+        let title = format!(" {} ", ui(T::TITLE));
+        let panel = Panel::new(console, &title, WIDTH, h);
         let x = panel.inner_x();
         let fits = |y: i32| y < panel.y + panel.h - 2;
-        if self.title.is_empty() {
-            if fits(panel.y + 2) {
-                console.print(x, panel.y + 2, "You carry no such thing.", TEXT_DIM);
+        if fits(panel.y + 2) {
+            match &self.title {
+                Some(title) => self.draw_name(console, (x, panel.y + 2), title, width),
+                None => {
+                    let none = ui(T::NONE);
+                    console.print_in(x, panel.y + 2, &none, TEXT_DIM, panel.inner_w());
+                }
             }
-        } else if fits(panel.y + 2) {
-            console.print(x, panel.y + 2, &self.glyph.to_string(), self.fg);
-            let mark = (self.mark.as_ref()).map_or(String::new(), |m| format!(" ({m})"));
-            let name: String = format!("{}{mark}", self.title)
-                .chars()
-                .take((width - 2).max(0) as usize)
-                .collect();
-            console.print(
-                x + 2,
-                panel.y + 2,
-                &name,
-                rarity_color(self.rarity, self.cursed, TEXT),
-            );
         }
         for (i, row) in rows.iter().enumerate() {
             let y = panel.y + 4 + i as i32;
@@ -150,11 +146,31 @@ impl DescribeScreen {
                 break;
             }
             if let Some(label) = row.label {
-                console.print(x, y, label, TEXT_DIM);
+                console.print_in(x, y, &ui(label), TEXT_DIM, LABEL_W - 1);
             }
             console.print(x + row.dx, y, &row.text, row.color);
         }
-        panel.footer(console, "Esc close");
+        panel.footer(console, &ui(T::ESC_CLOSE));
+    }
+
+    /// Draws the glyph and the name at `at` (the name cut to `width`, as the lines wrap), with
+    /// how it is worn if it is.
+    fn draw_name(&self, console: &mut Console, at: (i32, i32), title: &Phrase, width: i32) {
+        let (x, y) = at;
+        console.print(x, y, &self.glyph.to_string(), self.fg);
+        let name = match &self.mark {
+            Some(mark) => ui_with(
+                T::NAME_MARKED,
+                &[
+                    ("name", title.clone().into()),
+                    ("mark", mark.clone().into()),
+                ],
+            ),
+            None => ui_with(T::NAME, &[("name", title.clone().into())]),
+        };
+        let name: String = name.chars().take((width - 2).max(0) as usize).collect();
+        let color = rarity_color(self.rarity, self.cursed, TEXT);
+        console.print(x + 2, y, &name, color);
     }
 }
 
@@ -162,7 +178,7 @@ impl DescribeScreen {
 #[derive(Clone, Debug)]
 struct Row {
     /// In the left column: "Prefix" or "Suffix" on an affix's first row.
-    label: Option<&'static str>,
+    label: Option<UiText>,
     dx: i32,
     text: String,
     color: Rgb,

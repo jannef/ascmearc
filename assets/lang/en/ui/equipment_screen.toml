@@ -1,0 +1,93 @@
+# The equipment screen and the choice of what goes in a slot
+# (`crates/ascmearc/src/ui/equipment_screen.rs`). Ids alphabetical.
+#
+# The keys named in the hint lines are fixed (`a-m`, `A-M`, `Enter`, `Esc`): translate the words
+# around them. The screen fits each text to its panel (docs/dev/localization.md "UI text").
+
+# A slot a talent bars: `mark`, the talent's word for it ("horns").
+[barred]
+text = "— ({mark:bare})"
+
+# What a slot holds in both hands: `name`, as the item lists name it.
+[both_hands]
+text = "{name:bare} (both hands)"
+
+# The weights line's first part: `weight`, what the player carries.
+[carrying]
+text = "Carrying {weight:bare}"
+
+# The footer's slot letters: `last`, the last slot's letter.
+[choose_slot]
+text = "a-{last:bare} choose a slot"
+
+# The totals line: the player's Defence and Protection in all, `n`.
+[defence]
+text = "Defence (Dv) {n:bare}"
+
+# The choice's empty list.
+[empty_choice]
+text = "You carry nothing that goes here."
+
+# The equipment screen with no slot.
+[empty_slots]
+text = "Nothing can be worn here."
+
+[esc_back]
+text = "Esc back"
+
+[esc_close]
+text = "Esc close"
+
+# How choosing what a slot holds takes it off, by the slot: a weapon's or a quiver's, anything
+# else's.
+[hint_put_away]
+text = "Choose what is there to put it away."
+
+[hint_take_off]
+text = "Choose what is there to take it off."
+
+# The footer's capital letters: `last`, the last slot's, in capitals.
+[look]
+text = "A-{last:bare} look"
+
+# A stack in the choice that is worn or wielded: `name`, as the item lists name it; `mark`, where
+# ("being worn").
+[name_marked]
+text = "{name:bare} ({mark:bare})"
+
+[protection]
+text = "Protection (Pv) {n:bare}"
+
+# The choice's title: `slot`, the slot's name.
+[title_choice]
+text = "Equipment: {slot:bare}"
+
+[title_equipment]
+text = "Equipment"
+
+# The choice's footer: `confirm`, the key that chooses the `>` row; `verb`, what choosing does
+# (`verb_*`).
+[use_a]
+text = "a or {confirm:bare} {verb:bare}"
+
+# The same, for the letters `a` to `last`.
+[use_letters]
+text = "a-{last:bare} or {confirm:bare} {verb:bare}"
+
+# The same, with nothing listed.
+[use_none]
+text = "{confirm:bare} {verb:bare}"
+
+# What choosing a stack does, by the slot: armour and the rest, a weapon, a quiver.
+[verb_put_on]
+text = "put on"
+
+[verb_ready]
+text = "ready"
+
+[verb_wield]
+text = "wield"
+
+# The weights line's second part: `total`, with the pack; `base`, the player's own.
+[your_weight]
+text = "Your weight {total:bare} (you {base:bare})"

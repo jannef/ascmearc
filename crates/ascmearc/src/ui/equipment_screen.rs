@@ -14,12 +14,15 @@
 //! upper-case letter (`A` to `L`) opens the description of what is in it (`describe_screen`).
 //! Names are in their rarity's color.
 //!
-//! Both are read from the perception snapshot: the player's own inventory and equipment.
+//! Both are read from the perception snapshot: the player's own inventory and equipment. Their
+//! words are `assets/lang/en/ui/equipment_screen.toml` (`T::…`, [`super::text`]); the slots' and
+//! the items' are the content's.
 
 use super::cursor;
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::ScreenAction;
+use super::text::{UiText, equipment_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM, rarity_color};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
@@ -27,7 +30,8 @@ use ascmearc_core::Action;
 use ascmearc_core::action::letter;
 use ascmearc_core::color::Rgb;
 use ascmearc_core::content::{ActionKind, Rarity, SlotId};
-use ascmearc_core::equipment::{self, verbs};
+use ascmearc_core::equipment;
+use ascmearc_core::lang::Arg;
 use ascmearc_core::object::{Stack, Weight, format_weight};
 use ascmearc_core::perception::PerceptionView;
 
@@ -73,10 +77,15 @@ impl Item {
         let weight = format_weight(self.weight);
         let weight_x = right - weight.chars().count() as i32;
         let room = (weight_x - x - 3).max(0) as usize;
-        let name: String = format!("{}{}", self.name, text.note)
-            .chars()
-            .take(room)
-            .collect();
+        let name = match text.note {
+            Some((note, args)) => {
+                let mut args = args.to_vec();
+                args.push(("name", self.name.clone().into()));
+                ui_with(note, &args)
+            }
+            None => self.name.clone(),
+        };
+        let name: String = name.chars().take(room).collect();
         console.print(
             x + 2,
             y,
@@ -89,10 +98,11 @@ impl Item {
     }
 }
 
-/// How an item's name is written: its color and a note after it ("(both hands)").
+/// How an item's name is written: its color, and the entry that adds a note to it ("(both
+/// hands)"; its `name` is the item's) with the note's other slots.
 struct Text<'a> {
     color: Rgb,
-    note: &'a str,
+    note: Option<(UiText, &'a [(&'static str, Arg)])>,
 }
 
 /// A slot as the equipment screen shows it.
@@ -213,9 +223,10 @@ impl EquipmentScreen {
     pub fn draw(&self, console: &mut Console) {
         // Rows: margin, the slots, a gap, the totals, the weight, a gap, the footer, the frame.
         let count = self.rows.len().max(1) as i32;
+        let title = format!(" {} ", ui(T::TITLE_EQUIPMENT));
         let panel = Panel::new(
             console,
-            " Equipment ",
+            &title,
             super::info_tabs::panel_width(WIDTH),
             count + 8,
         );
@@ -225,7 +236,8 @@ impl EquipmentScreen {
         // Rows from the footer's down would draw over it, or the frame, of a panel cut short.
         let fits = |y: i32| y < panel.y + panel.h - 2;
         if self.rows.is_empty() && fits(panel.y + 2) {
-            console.print(x + 2, panel.y + 2, "Nothing can be worn here.", TEXT_DIM);
+            let none = ui(T::EMPTY_SLOTS);
+            console.print_in(x + 2, panel.y + 2, &none, TEXT_DIM, panel.inner_w() - 2);
         }
         for (i, row) in self.rows.iter().enumerate() {
             let y = panel.y + 2 + i as i32;
@@ -243,16 +255,16 @@ impl EquipmentScreen {
             let item_x = x + 5 + SLOT_W;
             match &row.item {
                 Some(item) => {
-                    let note = if row.both_hands { " (both hands)" } else { "" };
+                    let note = row.both_hands.then_some((T::BOTH_HANDS, &[][..]));
                     let text = Text { color, note };
                     item.draw(console, (item_x, y), right, !row.listed, text);
                 }
                 None => {
                     let empty = match &row.barred {
-                        Some(mark) => format!("— ({mark})"),
+                        Some(mark) => ui_with(T::BARRED, &[("mark", mark.clone().into())]),
                         None => "—".into(),
                     };
-                    console.print(item_x + 2, y, &empty, TEXT_DIM);
+                    console.print_in(item_x + 2, y, &empty, TEXT_DIM, right - item_x - 2);
                 }
             }
         }
@@ -261,25 +273,35 @@ impl EquipmentScreen {
         let y = panel.y + panel.h - 5;
         if fits(y) && y > panel.y + 1 + count {
             let (dv, pv) = self.totals;
-            let totals = format!("Defence (Dv) {dv}   ·   Protection (Pv) {pv}");
-            console.print(x, y, &totals, TEXT);
+            let totals = format!(
+                "{}   ·   {}",
+                ui_with(T::DEFENCE, &[("n", Arg::Number(i64::from(dv)))]),
+                ui_with(T::PROTECTION, &[("n", Arg::Number(i64::from(pv)))]),
+            );
+            console.print_in(x, y, &totals, TEXT, panel.inner_w());
         }
         let y = panel.y + panel.h - 4;
         if fits(y) && y > panel.y + 1 + count {
+            let weight = |grams| Arg::from(format_weight(grams));
             let summary = format!(
-                "Carrying {}   ·   Your weight {} (you {})",
-                format_weight(self.weight.carried),
-                format_weight(self.weight.total()),
-                format_weight(self.weight.base),
+                "{}   ·   {}",
+                ui_with(T::CARRYING, &[("weight", weight(self.weight.carried))]),
+                ui_with(
+                    T::YOUR_WEIGHT,
+                    &[
+                        ("total", weight(self.weight.total())),
+                        ("base", weight(self.weight.base)),
+                    ],
+                ),
             );
-            console.print(x, y, &summary, TEXT);
+            console.print_in(x, y, &summary, TEXT, panel.inner_w());
         }
         let last = letter(self.rows.len().saturating_sub(1)).unwrap_or('a');
-        let upper = format!("A-{}", last.to_ascii_uppercase());
-        panel.footer(
-            console,
-            &format!("a-{last} choose a slot   {upper} look   Esc close"),
-        );
+        let lower = ui_with(T::CHOOSE_SLOT, &[("last", last.to_string().into())]);
+        let upper = last.to_ascii_uppercase().to_string();
+        let upper = ui_with(T::LOOK, &[("last", upper.into())]);
+        let close = ui(T::ESC_CLOSE);
+        panel.footer(console, &format!("{lower}   {upper}   {close}"));
     }
 }
 
@@ -301,8 +323,8 @@ pub struct ItemScreen {
     /// The slot's id (for the action) and name (the title).
     slot: String,
     name: String,
-    /// What putting on and taking off are called here ("wield", "put away").
-    verbs: (&'static str, &'static str),
+    /// How the slot is used: what putting on and taking off are called there (`verbs`).
+    kind: ActionKind,
     /// What fits, grouped by class and paged (`paged_list`); its cursor is the `>` row.
     choices: PagedList<Choice>,
     /// Rows to make room for at least: as many as the equipment screen beneath has slots, so it
@@ -320,7 +342,7 @@ impl ItemScreen {
         let mut screen = Self {
             slot: String::new(),
             name: String::new(),
-            verbs: verbs(ActionKind::Wear),
+            kind: ActionKind::Wear,
             choices: PagedList::empty(),
             rows: 0,
             barred: None,
@@ -336,7 +358,7 @@ impl ItemScreen {
         let worn = view.equipment();
         screen.slot = def.id.clone();
         screen.name = def.name.clone();
-        screen.verbs = verbs(def.action);
+        screen.kind = def.action;
         // A slot the body bars takes nothing (`world/items/body_slots.rs`).
         screen.barred = view.barred_words(slot);
         if screen.barred.is_some() {
@@ -414,15 +436,16 @@ impl ItemScreen {
         // equipment screen beneath at least. A page takes what rows the console has for it.
         self.fit(console.cols(), console.rows());
         let count = self.choices.tallest().max(self.rows).max(1) as i32;
-        let title = format!(" Equipment: {} ", self.name);
+        let title = ui_with(T::TITLE_CHOICE, &[("slot", self.name.clone().into())]);
+        let title = format!(" {title} ");
         let panel = Panel::new(console, &title, WIDTH, count + 7);
         self.choices.draw_label(console, &panel);
         let x = panel.inner_x();
         let right = panel.x + panel.w - 3;
         let fits = |y: i32| y < panel.y + panel.h - 2;
         if self.choices.is_empty() && fits(panel.y + 2) {
-            let text = (self.barred.as_deref()).unwrap_or("You carry nothing that goes here.");
-            console.print(x + 2, panel.y + 2, text, TEXT_DIM);
+            let text = (self.barred.clone()).unwrap_or_else(|| ui(T::EMPTY_CHOICE));
+            console.print_in(x + 2, panel.y + 2, &text, TEXT_DIM, panel.inner_w() - 2);
         }
         for (row, y) in self.choices.rows().into_iter().zip(panel.y + 2..) {
             if !fits(y) {
@@ -446,32 +469,40 @@ impl ItemScreen {
             // `b - [ an iron helm (being worn)    1.5 kg`, the page's letter.
             let label = format!("{letter} -");
             console.print(x + 2, y, &label, color);
-            let note = choice
-                .mark
-                .as_ref()
-                .map_or(String::new(), |m| format!(" ({m})"));
-            let text = Text { color, note: &note };
+            let mark = (choice.mark.clone()).map(|m| [("mark", Arg::from(m))]);
+            let note = (mark.as_ref()).map(|args| (T::NAME_MARKED, &args[..]));
+            let text = Text { color, note };
             choice.shown.draw(console, (x + 6, y), right, true, text);
         }
-        let (put_on, take_off) = self.verbs;
+        let (put_on, take_off) = verbs(self.kind);
         let y = panel.y + panel.h - 4;
         if self.choices.iter().any(|c| c.here) && fits(y) && y > panel.y + 1 + count {
-            // "take off" → "to take it off".
-            let hint = format!(
-                "Choose what is there to {}.",
-                take_off.replacen(' ', " it ", 1)
-            );
-            console.print(x, y, &hint, TEXT_DIM);
+            console.print_in(x, y, &ui(take_off), TEXT_DIM, panel.inner_w());
         }
         let keys = HINTS;
-        let confirm = &keys.confirm;
+        let confirm = ("confirm", Arg::from(keys.confirm));
+        let verb = ("verb", Arg::from(ui(put_on)));
         let choose = match self.choices.last_letter() {
-            Some('a') => format!("a or {confirm}"),
-            Some(last) => format!("a-{last} or {confirm}"),
-            None => confirm.to_string(),
+            Some('a') => ui_with(T::USE_A, &[confirm, verb]),
+            Some(last) => {
+                let last = ("last", last.to_string().into());
+                ui_with(T::USE_LETTERS, &[last, confirm, verb])
+            }
+            None => ui_with(T::USE_NONE, &[confirm, verb]),
         };
         let page = (self.choices.hint(&keys)).map_or(String::new(), |hint| format!("{hint}   "));
-        panel.footer(console, &format!("{choose} {put_on}   {page}Esc back"));
+        let back = ui(T::ESC_BACK);
+        panel.footer(console, &format!("{choose}   {page}{back}"));
+    }
+}
+
+/// How a slot of `kind` is used: the footer's verb for putting a thing on, and the hint for
+/// taking off what is there.
+fn verbs(kind: ActionKind) -> (UiText, UiText) {
+    match kind {
+        ActionKind::Wield => (T::VERB_WIELD, T::HINT_PUT_AWAY),
+        ActionKind::Ready => (T::VERB_READY, T::HINT_PUT_AWAY),
+        _ => (T::VERB_PUT_ON, T::HINT_TAKE_OFF),
     }
 }
 

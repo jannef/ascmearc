@@ -1,0 +1,84 @@
+# The Characters screen (`crates/ascmearc/src/ui/characters_screen.rs`), and the saved
+# characters' summaries it lists (`crates/ascmearc/src/save/characters.rs`). Ids alphabetical.
+#
+# The keys named in the footer are fixed (`Esc`): translate the words around them. The screen
+# fits each text to its panel (docs/dev/localization.md "UI text").
+
+# The delete dialog: `name`, the character's name.
+[delete_keep]
+text = "Keep"
+
+[delete_text]
+text = "Delete {name:poss} save? The character is gone for good."
+
+[delete_title]
+text = "Delete character"
+
+[delete_yes]
+text = "Delete"
+
+# How many characters have died: `n`, their number (none is not said).
+[died]
+by = "n.number"
+one = "One character has died."
+many = "{n:Num} characters have died."
+
+# The footer's parts: `keys`, the key or keys, as the menus write them.
+[footer_back]
+text = "Esc back"
+
+[footer_choose]
+text = "{keys:bare} choose"
+
+[footer_delete]
+text = "{keys:bare} delete"
+
+[footer_play]
+text = "{keys:bare} play"
+
+# When the selected character was last played: `when`, the date and time.
+[last_played]
+text = "Last played {when:bare}."
+
+# A character's level.
+[level]
+text = "level {level:bare}"
+
+# Why a save of another version cannot be continued: `version`, the version that made it.
+[made_by]
+text = "Made by version {version:bare} of the game: it cannot be continued here."
+
+# The same, for a save that does not say which version made it.
+[made_by_older]
+text = "Made by an older version of the game: it cannot be continued here."
+
+[no_characters]
+text = "No saved characters."
+
+# The selected save has no summary.
+[nothing_known]
+text = "Nothing is known of this save until it is played."
+
+# The level column, of a save another version of the game made.
+[other_version]
+text = "other version"
+
+# Where the character is: `place`, the place's name; `campaign`, the campaign's (shown when
+# more than one is installed, a developer build).
+[place]
+text = "In {place:bare}."
+
+[place_campaign]
+text = "In {place:bare} ({campaign:bare})."
+
+# A date and time a character was last played: `date`, the day (`2026-10-20`); `time`, the time
+# of day.
+[played]
+text = "{date:bare} {time:bare} UTC"
+
+# A character's race and class: `race`, `class`, their names (`Dwarf Warrior`).
+[race_class]
+text = "{race:bare} {class:bare}"
+
+[title]
+text = "Characters"

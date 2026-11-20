@@ -154,12 +154,17 @@ fn a_rival_offers_her_side_on_the_first_arrival_only() {
     // Chatting again shows the topics again; closing the screen leaves them.
     let dir = beside(&mut w, "stormcaller");
     let topics = w.topics(wizard(&w, "stormcaller").expect("her"));
+    let her = crate::lang::Phrase::literal("Mistress Stormwell");
     assert!(
         topics
             .iter()
-            .any(|t| t.name == "Take Mistress Stormwell's side")
+            .any(|t| t.name == TopicName::Side(her.clone()))
     );
-    assert!(topics.iter().any(|t| t.name == "Refuse Mistress Stormwell"));
+    assert!(
+        topics
+            .iter()
+            .any(|t| t.name == TopicName::Refuse(her.clone()))
+    );
     w.apply(&Action::Chat(dir));
     down(&mut w);
     let again = climb(&mut w, STORM);
@@ -316,8 +321,8 @@ fn the_owners_full_path_ends_with_the_last_ally() {
         "gold, one rare item, one grimoire: {hoard:?}"
     );
     let view = w.perception().parting().expect("the parting");
-    assert_eq!(view.title, "Master Brasswright");
-    assert_eq!(view.choices[1].0, "Betray Master Brasswright");
+    assert_eq!(view.who, crate::lang::Phrase::literal("Master Brasswright"));
+    assert_eq!(view.choices, [PartingChoice::Leave, PartingChoice::Betray]);
 }
 
 /// The quest refused twice and both rivals killed; handed in to the scholar.

@@ -29,15 +29,15 @@ forage_broken_by = "{came:bare}; you stop foraging."
 forage_start = "You search the land about you for something to eat."
 forage_untrained = "You do not know how to live off the land."
 # `what`: the food found.
-foraged = "You gather {what:counted}."
+foraged = "You gather {what:a}."
 # `came`: what came, as a line told it.
 gather_broken_by = "{came:bare}; you stop gathering."
 gather_start = "You search the glowing fungus for herbs."
 gather_untrained = "You do not know what to do with these: gathering herbs takes the Herbalism skill."
 # `what`: the herbs found, a stack or a list of them.
-gathered = "You gather {what:counted}."
+gathered = "You gather {what:a}."
 # `what`: the herb found besides the food.
-herbs_besides = "Your eye for herbs finds {what:counted} besides."
+herbs_besides = "Your eye for herbs finds {what:a} besides."
 # `who`: the creature stolen from.
 hostile_to_thief = "{who:The} is hostile: it would never let you near enough."
 intimidate_untrained = "You do not know how to intimidate."
@@ -83,12 +83,12 @@ picked_chest = "You pick the lock and open {chest:the}."
 picked_door = "You pick the lock and open the door."
 picked_over = "This fungus has been picked over."
 # `before`: what the player carried, theirs; `after`: what it turned out to be.
-read_magic = "You read the magic bound in {before:counted}: {after:counted}."
+read_magic = "You read the magic bound in {before:a}: {after:a}."
 # `before`: what the player carried, theirs ("your gold ring", "your 2 potions"); `after`: what
 # it turned out to be.
-realise = "You realise {before:counted} {before:is} {after:counted}."
+realise = "You realise {before:a} {before:is} {after:a}."
 # `before`: what the player carried, theirs; `after`: what it turned out to be.
-recognise = "You recognise {before:counted}: {after:counted}."
+recognise = "You recognise {before:a}: {after:a}."
 # `came`: what came, as a line told it; `time`: how long the search went on.
 search_broken_by = "{came:bare}; you stop searching after {time:bare}."
 # `time`: how long the search went on.
@@ -101,7 +101,7 @@ steal_untrained = "You do not know how to steal."
 # `trap`: the pit stepped over.
 step_over = "You step lightly over {trap:the}."
 # `what`: what was taken; `who`: from whom.
-stole = "You steal {what:counted} from {who:the}."
+stole = "You steal {what:a} from {who:the}."
 stop_foraging = "You stop foraging."
 stop_gathering = "You stop gathering."
 # `time`: how long the search went on.

@@ -1,0 +1,44 @@
+# The overworld encounter's dialog (`crates/ascmearc/src/ui/encounter.rs`). Ids alphabetical.
+#
+# The dialog fits each text to its panel: a translation longer than the room is cut with `…`
+# (docs/dev/localization.md "UI text").
+
+# A choice's row: wait for the party to come to you and fall on them.
+[ambush]
+text = "Lie in wait"
+
+# A choice's row: talk the party into letting you by.
+[bluff]
+text = "Talk your way past"
+
+# A choice's row: slip away before the party sees you.
+[evade]
+text = "Slip past"
+
+# A choice's row: get away from a party that has seen you too.
+[evade_met]
+text = "Give them the slip"
+
+[fight]
+text = "Stand and fight"
+
+# A choice's row: greet travellers.
+[hail]
+text = "Hail them"
+
+# A choice's row: go after animals.
+[hunt]
+text = "Hunt them"
+
+# A choice's row: leave travellers be.
+[pass]
+text = "Pass by"
+
+# A choice's row: leave animals be.
+[pass_wildlife]
+text = "Let them be"
+
+# The dialog's title: `party`, the party as the data names it, article and all ("a band of
+# footpads").
+[title]
+text = "{party:Bare}"

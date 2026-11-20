@@ -9,22 +9,22 @@
 # shopkeeper's name, `price` and `owed` numbers of gold.
 
 # `what`: what is already in the slot.
-already_there = "You already have {what:counted} there."
+already_there = "You already have {what:a} there."
 # `what`: the burning thing that cannot be picked up.
-cannot_pick_up_burning = "You cannot pick up {what:counted} while it burns."
+cannot_pick_up_burning = "You cannot pick up {what:a} while it burns."
 carry_no_such_thing = "You carry no such thing."
 # `what`: a bound thing, the player's.
 curse_lets_go = "The curse lets go of {what:the}."
 # `what`: the light, the player's.
 douse = "You douse {what:the}."
 # `what`: what the player dropped (a stack, a list of two or three, or a count).
-drop = "You drop {what:counted}."
+drop = "You drop {what:a}."
 # What a temple's decurse took off.
 falls_at_feet = "What it held falls at your feet."
 # `what`: what a grown hand held, the player's.
 falls_from_grip = "{what:The} falls from a grip that is no longer there."
 # `what`: the cursed weapon thrown; `other`: the bound thing in the hand, the player's.
-holds_your_hand = "The {what:bare} will not leave you, but {other:the} holds your hand."
+holds_your_hand = "{what:The} will not leave you, but {other:the} holds your hand."
 it_is_cursed = "It is cursed! It will not come off."
 it_would_sink = "It would sink."
 # `what`: the light, the player's.
@@ -43,36 +43,36 @@ nothing_to_identify_dev = "There is nothing to identify (dev)."
 nothing_to_pick_up = "There is nothing here to pick up."
 # `what`: what the player picked up: a stack, a list of two or three (each an item, or an
 # `unpaid` one), or a count.
-pick_up = "You pick up {what:counted}."
+pick_up = "You pick up {what:a}."
 # `what`: the thing put away (a weapon or something readied).
-put_away = "You put away {what:counted}."
-put_on = "You put on {what:counted}."
-put_on_both_hands = "You put on {what:counted} in both hands."
-ready = "You ready {what:counted}."
-ready_both_hands = "You ready {what:counted} in both hands."
+put_away = "You put away {what:a}."
+put_on = "You put on {what:a}."
+put_on_both_hands = "You put on {what:a} in both hands."
+ready = "You ready {what:a}."
+ready_both_hands = "You ready {what:a} in both hands."
 # `what`: the ammunition that went into the quiver by itself.
-ready_in_quiver = "You ready {what:counted} in your quiver."
+ready_in_quiver = "You ready {what:a} in your quiver."
 # `what`: a worn ring, the player's.
 slips_from_finger = "{what:The} slips from a finger that is no longer there."
-take_off = "You take off {what:counted}."
+take_off = "You take off {what:a}."
 # `what`: the item just identified.
-this_is = "This is {what:counted}!"
+this_is = "This is {what:a}!"
 # `what`: the cursed weapon thrown.
-twists_in_grip = "The {what:bare} twists in your grip and will not leave your hand."
+twists_in_grip = "{what:The} twists in your grip and will not leave your hand."
 # An item of `pick_up`'s list: `what` goods for sale picked up, `price` what they cost.
-unpaid = "{what:counted} (unpaid, {price:bare} gold)"
+unpaid = "{what:a} (unpaid, {price:bare} gold)"
 water_would_put_it_out = "The water would only put it out."
-wield = "You wield {what:counted}."
-wield_both_hands = "You wield {what:counted} in both hands."
+wield = "You wield {what:a}."
+wield_both_hands = "You wield {what:a} in both hands."
 # `what`: a bound thing, the player's.
 will_not_come_off = "{what:The} will not come off."
 # `what`: the cursed weapon thrown, bound in the hand.
-will_not_leave_hand = "The {what:bare} will not leave your hand."
+will_not_leave_hand = "{what:The} will not leave your hand."
 # Said after `pick_up`, in the same line: `name` the shopkeeper, `owed` what the player owes.
 you_owe = "You owe {name:bare} {owed:bare} gold."
 
 # `what`: the thing that does not fit the slot.
 [does_not_go_there]
 by = "what.number"
-one = "{what:Counted} does not go there."
-many = "{what:Counted} do not go there."
+one = "{what:A} does not go there."
+many = "{what:A} do not go there."

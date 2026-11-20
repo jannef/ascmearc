@@ -324,7 +324,7 @@ fn a_rares_quicken_takes_a_heart_crystal() {
         assert_eq!(w.state.player().inventory.len(), 1, "both spent");
         assert!(said(
             &w,
-            "Grim Bite takes the red crystal's glow and the heart-crystal's, and holds more."
+            "The Grim Bite takes the red crystal's glow and the heart-crystal's, and holds more."
         ));
     }
     // Failed, the heart-crystal goes too; the rare as it was.

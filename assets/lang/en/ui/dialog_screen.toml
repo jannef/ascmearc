@@ -1,0 +1,17 @@
+# The one dialog (`crates/ascmearc/src/ui/dialog_screen.rs`): only its own words. The title, the
+# question, and the options are the asking screen's. Ids alphabetical.
+#
+# The keys named are fixed: translate the words around them. The dialog sizes itself to its text
+# (docs/dev/localization.md "UI text").
+
+# Footer, more than one option: `up` and `down`, the keys that move the selection.
+[choose]
+text = "{up:bare}/{down:bare} choose"
+
+# After an option, the keys that pick it: `keys`, "y" or "n, Esc".
+[keys]
+text = "({keys:bare})"
+
+# Footer: `confirm`, the key that takes the `>` option.
+[select]
+text = "{confirm:bare} select"

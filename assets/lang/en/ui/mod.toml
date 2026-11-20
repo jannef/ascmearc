@@ -1,0 +1,103 @@
+# The UI core (`crates/ascmearc/src/ui/mod.rs`): the message line's prompts and the status bar.
+# Ids alphabetical.
+#
+# The keys written in the prompts are fixed (`Esc`): translate the words around them. A prompt
+# is cut with `…` where the message line ends; the status bar drops its least important parts
+# first when a translation is longer (docs/dev/localization.md "UI text").
+
+# The aimed wand, when the player knows what it does in their hands: `item`, the wand; `does`,
+# what it does.
+[aim_wand]
+text = "{item:bare} ({does:bare})"
+
+# A condition in the status bar: eyes kept from a gaze.
+[averted]
+text = "Averted"
+
+# The status bar's reminder of where the keys are: `own`, the help key as bound.
+[controls]
+text = "{own:bare} controls"
+
+# The same without a help key: the pause menu (Esc) holds Controls.
+[controls_menu]
+text = "Esc menu"
+
+# A condition in the status bar: strong light on light-blind eyes.
+[dazzled]
+text = "Dazzled"
+
+# The prompts asking for a direction.
+[dig_way]
+text = "Dig in which direction? (Esc to cancel)"
+
+[disarm_way]
+text = "Disarm in which direction? (Esc to cancel)"
+
+[give_way]
+text = "Give it to which side? (Esc to cancel)"
+
+# The status bar's hit points: `hp`, now; `max`, at most.
+[hp]
+text = "HP {hp:bare}/{max:bare}"
+
+# A kept beast in the status bar: `name`, its name; `health`, how it looks ("unhurt").
+[kept]
+text = "{name:bare}: {health:bare}"
+
+# A kept beast in the status bar while it travels in the retinue.
+[kept_retinue]
+text = "{name:bare}: with you"
+
+# The status bar's character level.
+[level]
+text = "Lv {level:bare}"
+
+[listen_door]
+text = "Listen at which door? (Esc to cancel)"
+
+# The look mode's hint: `own`, the look key as bound.
+[look_hint]
+text = "Looking: direction keys move, Esc or {own:bare} to stop."
+
+# The same without a look key.
+[look_hint_esc]
+text = "Looking: direction keys move, Esc to stop."
+
+# The status bar's mana: `mp`, now; `max`, at most.
+[mp]
+text = "MP {mp:bare}/{max:bare}"
+
+# An alternative resource in the status bar: `name`, its short name ("Focus"); `value`, now;
+# `max`, at most.
+[resource]
+text = "{name:bare} {value:bare}/{max:bare}"
+
+# The same for a resource shown without its most ("Rage 7").
+[resource_value]
+text = "{name:bare} {value:bare}"
+
+# The rest prompt: `choices`, how long, each with its key marked ("(h)our, until (d)awn").
+[rest]
+text = "Rest: {choices:bare}? (Esc to cancel)"
+
+[rig_way]
+text = "Rig it on which side? (Esc to cancel)"
+
+[run_way]
+text = "Run in which direction, or to which stairs? (Esc to cancel)"
+
+[talk_way]
+text = "Talk in which direction? (Esc to cancel)"
+
+# The tend prompt with two kept beasts beside: `own`, the key that tends the player.
+[tend_way]
+text = "Tend to which side? ({own:bare} yourself, Esc to cancel)"
+
+[tend_way_esc]
+text = "Tend to which side? (Esc to cancel)"
+
+[way]
+text = "In which direction? (Esc to cancel)"
+
+[wedge_door]
+text = "Wedge which door? (Esc to cancel)"

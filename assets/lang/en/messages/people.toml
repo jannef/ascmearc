@@ -13,7 +13,7 @@
 
 # What a quest asks, as the wiki's quest table says it: `task`, a `task_*` line.
 asks = "{task:Bare}."
-cannot_afford = "{who:The} cannot afford {what:counted}."
+cannot_afford = "{who:The} cannot afford {what:a}."
 # A dev action's: `quest` the quest's name, `target` as typed.
 cannot_draw_dev = "{quest:bare} cannot draw `{target:bare}`."
 cannot_pay = "You cannot pay."
@@ -24,10 +24,10 @@ done_times = "Done ({times:bare} times)."
 # A dev action's.
 drawn_by_giver_dev = "{quest:bare} is drawn by its giver: ask them."
 # A potion bought by drinking it in a shop: `what`, the potion as the player knows it.
-drink_and_buy = "You drink it, you buy it: {price:bare} gold for the {what:bare}."
-drunk_or_not = "Drunk or not, the {what:bare} is still {price:bare} gold."
-eat_and_buy = "You eat it, you buy it: {price:bare} gold for the {what:bare}."
-eaten_or_not = "Eaten or not, the {what:bare} is still {price:bare} gold."
+drink_and_buy = "You drink it, you buy it: {price:bare} gold for {what:the}."
+drunk_or_not = "Drunk or not, {what:the} is still {price:bare} gold."
+eat_and_buy = "You eat it, you buy it: {price:bare} gold for {what:the}."
+eaten_or_not = "Eaten or not, {what:the} is still {price:bare} gold."
 # An escort given something: `who` the escort, `what` what it took off for it.
 escort_drops = "{who:The} drop{who:s} {what:the}."
 escort_follows = "{who:The} follow{who:s} you."
@@ -44,14 +44,14 @@ gain_experience = "You gain {xp:bare} experience."
 # The player gives an escort something: `what`, one of the stack.
 give_escort = "You give {what:the} to {who:the}."
 # The player hands a quest's things in: `what`, what was handed in.
-give_quest_items = "You give {who:the} {what:counted}."
+give_quest_items = "You give {who:the} {what:a}."
 # A dev action's.
 given_dev = "{quest:bare} is given."
 # A quest giver hands over a letter to deliver, or a reward: `what`, what it gives.
-gives_you = "{who:The} gives you {what:counted}."
+gives_you = "{who:The} gives you {what:a}."
 # A dev action's.
 got_somewhere_dev = "{quest:bare} has got somewhere already."
-have_not_paid = "You have not paid for {what:counted}."
+have_not_paid = "You have not paid for {what:a}."
 killed = "{have:bare} / {need:bare} killed."
 # A quest's reward teaches more of a skill the player knows.
 learn_more_of = "You learn more of {skill:bare}."
@@ -74,7 +74,7 @@ no_lure_quest_dev = "There is no lure quest `{id:bare}`."
 # A dev action's: `id` as typed.
 no_quest_dev = "There is no quest `{id:bare}`."
 no_room_beside_you = "There is no room beside you."
-no_use_for = "{who:The} {who:has} no use for {what:counted}."
+no_use_for = "{who:The} {who:has} no use for {what:a}."
 nobody_to_pay = "There is nobody here to pay."
 not_carrying_anything = "You are not carrying anything."
 not_reached_yet = "Not reached yet."
@@ -87,18 +87,18 @@ not_yet_bound = "{who:The} is not yet bound in {place:the}."
 nothing_to_decide = "There is nothing to decide."
 # A dev action's: `target` as typed.
 now_asks_dev = "{quest:bare} now asks for {target:bare} (dev)."
-offers_gold = "{who:The} offer{who:s} {gold:bare} gold for {what:counted}."
+offers_gold = "{who:The} offer{who:s} {gold:bare} gold for {what:a}."
 owe_but_none = "You owe {who:the} {owed:bare} gold, but you have none."
 owe_but_only = "You owe {who:the} {owed:bare} gold, but you have only {gold:bare}."
 owe_nothing = "You owe {who:the} nothing."
 pay_for_that = "\"You will pay for that!\" shouts {who:the}."
 pay_gold = "You pay {who:the} {gold:bare} gold."
-pay_gold_for = "You pay {who:the} {gold:bare} gold for {what:counted}."
-put_back = "You put back {what:counted}."
+pay_gold_for = "You pay {who:the} {gold:bare} gold for {what:a}."
+put_back = "You put back {what:a}."
 quest_complete = "Quest complete: {quest:bare}."
 quest_failed = "Quest failed: {quest:bare}."
-sell = "You sell {what:counted} to {who:the} for {gold:bare} gold."
-sniffs = "{who:The} sniff{who:s} at {what:counted} and say{who:s}: \"Not at any price.\""
+sell = "You sell {what:a} to {who:the} for {gold:bare} gold."
+sniffs = "{who:The} sniff{who:s} at {what:a} and say{who:s}: \"Not at any price.\""
 # The next step of a quest whose goal is met (in `next_step`, `updated_step`): `who`, whoever
 # takes it in now.
 step_return = "return to {who:the}"
@@ -114,8 +114,8 @@ target_the = "{who:the}"
 # What a quest asks, in `asks` and `wants`, without where: `task_*`. `who` is whoever it is
 # handed in to, `what` the thing, `target` a `target_*` line, `members` the creature types of
 # a tag, a list.
-task_bring = "bring {what:counted}"
-task_bring_to = "bring {what:counted} to {who:the}"
+task_bring = "bring {what:a}"
+task_bring_to = "bring {what:a} to {who:the}"
 task_deliver = "deliver {what:a} to {who:the}"
 # `who`, the escort; `place`, where to bring them.
 task_escort = "bring {who:the} safely to {place:the}"

@@ -1,9 +1,9 @@
 ---
 source: crates/ascmearc/src/ui/screen_snapshots.rs
-expression: "render(case, content.clone())"
+expression: shown
 ---
- You pick up Dread Visage, a Masterwork iron helm and a Sharp emerald-pommelled long sword of the Be
- You put on Dread Visage, a Masterwork iron helm.
+ You pick up the Dread Visage, a Masterwork iron helm and a Sharp emerald-pommelled long sword of th
+ You put on the Dread Visage, a Masterwork iron helm.
 
 
 

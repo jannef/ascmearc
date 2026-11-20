@@ -980,6 +980,18 @@ impl<'a> PerceptionView<'a> {
         ))
     }
 
+    /// The player's mark as [`Self::own_mark`] knows it, for a line that says it in its own
+    /// words: `Some(Some(creature))` while they see it, `Some(None)` while they do not; `None`
+    /// without one.
+    pub fn own_mark_phrase(&self) -> Option<Option<crate::lang::Phrase>> {
+        let mark = self.player.mark?;
+        let seen = (self.snapshot.actors.iter()).find(|a| a.id == mark);
+        Some(seen.map(|a| {
+            let id = &self.content.creature(a.creature).id;
+            crate::lang::Phrase::id(format!("creature:{id}"))
+        }))
+    }
+
     /// Where a level's skill rolls come from now: the level-up screen names
     /// it (the owner's call: numbers on that screen).
     pub fn roll_count(&self) -> RollCount {

@@ -291,7 +291,7 @@ fn the_wizard_steps_offer_what_fits_and_the_plan_names_the_item() {
     assert_eq!(plan.verb, "Forge");
     assert_eq!(plan.name, "a ruby-pommelled mithril long sword");
     assert_eq!(plan.uses, "3 mithril ingots and the ruby");
-    assert_eq!(plan.station.as_deref(), Some("anvil"));
+    assert_eq!(plan.station, Some(crate::lang::Phrase::id("terrain:anvil")));
     assert_eq!(plan.time, "about 1 hour");
     // The rules' refusals, as the dialog would hear them.
     let refused = |picks: &[Option<usize>]| view.craft_plan(recipe(&w, "long_sword"), picks);

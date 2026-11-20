@@ -265,7 +265,7 @@ fn the_spirit_waits_and_speaks_only_to_the_good() {
     });
     let talk = talk.expect("the dialogue screen");
     let topics: Vec<(&str, &str)> = (talk.topics.iter())
-        .map(|t| (t.id.as_str(), t.name.as_str()))
+        .map(|t| (t.id.as_str(), t.name.text().unwrap_or_default()))
         .collect();
     assert_eq!(topics, [(OATH, "Life before death")]);
     assert!(said(&w, "I have waited long on this road."));

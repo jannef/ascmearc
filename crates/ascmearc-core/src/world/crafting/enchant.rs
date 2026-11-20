@@ -63,7 +63,7 @@ use crate::content::{
 };
 use crate::lang::{Arg, MessageId, Msg, Phrase};
 use crate::magic::loot::{pick_weighted, rare_name, rare_split, roll_affix_within, rolls_within};
-use crate::magic::{Affix, Magic, capacity};
+use crate::magic::{Affix, Magic, capacity, name};
 use crate::msg;
 use crate::object::Stack;
 use crate::rng::Rng;
@@ -558,12 +558,12 @@ fn reach(content: &Content, player: &Actor) -> u8 {
 }
 
 /// "the long sword", "the arrows": `stack` named as the work speaks of it.
-/// A known rare goes by its name alone: "Grim Bite".
+/// A known rare by its name: "the Grim Bite".
 fn the(content: &Content, lore: Lore<'_>, stack: &Stack) -> String {
     content.english_of(&item_phrase(lore, stack), "the")
 }
 
-/// [`the`]'s phrase, said `{item:the}`: one by its title (a known rare's is its name), several
+/// [`the`]'s phrase, said `{item:the}`: one by its title (a known rare by its name), several
 /// by what they are called as made.
 fn item_phrase(lore: Lore<'_>, stack: &Stack) -> Phrase {
     match stack.count {
@@ -795,8 +795,9 @@ impl World {
                 let stack = self.state.player().inventory[at].clone();
                 let made = self.worked(&content, kind, stack, resolved);
                 let name = self.lore().phrase(&made);
-                let title = (made.magic().and_then(|m| m.name.clone()))
-                    .map_or(name.clone(), Phrase::literal);
+                let title = (made.magic())
+                    .and_then(|m| Some(name::name_phrase(m.name.as_deref()?, m.unique.is_some())))
+                    .unwrap_or_else(|| name.clone());
                 self.player_mut().inventory[at] = made;
                 let text = match (kind, stone) {
                     (EnchantKind::Unbind, _) | (_, None) => Msg::new(msg::crafting::MAGIC_GOES_OUT)

@@ -5,7 +5,7 @@
 # whole body's ward, for anyone.
 [[unique]]
 id = "brosinga_mene"
-name = "The Brosinga Mene"
+name = "the Brosinga Mene"
 object = "gold_amulet"
 affixes = ["shimmering:5", "oaken:5", "hale:11", "of_the_salamander:12", "of_warmth:12", "of_the_wind:7"]
 level = 12

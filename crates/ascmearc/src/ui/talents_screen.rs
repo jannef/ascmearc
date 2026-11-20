@@ -13,6 +13,7 @@
 use super::cursor;
 use super::menu::{HINTS, Nav, Panel, Press, wrap};
 use super::screens::{ScreenAction, ScreenName};
+use super::text::{UiText, talents_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
@@ -31,7 +32,7 @@ const EXTRA: i32 = 9;
 struct Item {
     name: String,
     /// Where one of the player's came from, if they did not pick it: "class", "birth sign".
-    from: Option<&'static str>,
+    from: Option<UiText>,
     description: String,
     /// What it needs (another talent's), each part met or not.
     needs: Vec<NeedView>,
@@ -73,9 +74,9 @@ impl TalentsScreen {
         let mut own = view.own_talents();
         own.sort_by_key(|t| t.tree);
         let mut tree: Option<TreeId> = None;
-        screen.lines.push(Line::Section("Your talents".into()));
+        screen.lines.push(Line::Section(ui(T::YOUR_TALENTS)));
         if own.is_empty() {
-            screen.lines.push(Line::Tree("none yet".into()));
+            screen.lines.push(Line::Tree(ui(T::NONE_YET)));
         }
         for talent in own {
             if tree != Some(talent.tree) {
@@ -86,18 +87,18 @@ impl TalentsScreen {
             }
             let from = match () {
                 // A profane gift (docs/design/profane-gifts.md §11), a bane marked as a flaw.
-                () if talent.profane.is_some() && talent.flaw => Some("profane, flaw"),
-                () if talent.profane.is_some() => Some("profane"),
+                () if talent.profane.is_some() && talent.flaw => Some(T::FROM_PROFANE_FLAW),
+                () if talent.profane.is_some() => Some(T::FROM_PROFANE),
                 // A row of the ratfolk craving (docs/dev/craving.md).
-                () if talent.craving => Some("craving"),
+                () if talent.craving => Some(T::FROM_CRAVING),
                 // A band of the dwarves' oath table (docs/dev/oaths.md).
-                () if talent.oath => Some("oath"),
-                () if talent.story && talent.flaw => Some("story, flaw"),
-                () if talent.story => Some("story"),
-                () if talent.boon => Some("altar"),
-                () if talent.class => Some("class"),
-                () if talent.race => Some("race"),
-                () if talent.granted => Some("birth sign"),
+                () if talent.oath => Some(T::FROM_OATH),
+                () if talent.story && talent.flaw => Some(T::FROM_STORY_FLAW),
+                () if talent.story => Some(T::FROM_STORY),
+                () if talent.boon => Some(T::FROM_ALTAR),
+                () if talent.class => Some(T::FROM_CLASS),
+                () if talent.race => Some(T::FROM_RACE),
+                () if talent.granted => Some(T::FROM_BIRTH_SIGN),
                 () => None,
             };
             screen.lines.push(Line::Name(screen.items.len()));
@@ -118,7 +119,7 @@ impl TalentsScreen {
             }
             if !section {
                 section = true;
-                screen.lines.push(Line::Section("Other talents".into()));
+                screen.lines.push(Line::Section(ui(T::OTHER_TALENTS)));
             }
             if tree != Some(talent.tree) {
                 tree = Some(talent.tree);
@@ -157,7 +158,7 @@ impl TalentsScreen {
 
     pub fn draw(&self, console: &mut Console, bindings: &Bindings) {
         let h = self.lines.len() as i32 + EXTRA;
-        let panel = Panel::new(console, " Talents ", WIDTH, h);
+        let panel = Panel::new(console, &format!(" {} ", ui(T::TITLE)), WIDTH, h);
         super::info_tabs::draw_tabs(console, &panel, ScreenName::Talents);
         let x = panel.inner_x();
         let room = (panel.h - EXTRA).max(1) as usize;
@@ -204,11 +205,12 @@ impl TalentsScreen {
                 }
             }
         }
-        let up_down = HINTS.up_down();
-        let footer = match bindings.keys_of(KeyCommand::Talents).first() {
-            Some(key) => format!("{up_down} choose   {} or Esc close", key.display()),
-            None => format!("{up_down} choose   Esc close"),
+        let choose = ui_with(T::CHOOSE, &[("keys", HINTS.up_down().into())]);
+        let close = match bindings.keys_of(KeyCommand::Talents).first() {
+            Some(key) => ui_with(T::CLOSE_OWN, &[("own", key.display().into())]),
+            None => ui(T::CLOSE),
         };
+        let footer = format!("{choose}   {close}");
         panel.footer(console, &footer);
     }
 
@@ -227,7 +229,12 @@ impl TalentsScreen {
         console.print(x + 4, y, &item.name, color);
         if let Some(from) = item.from {
             let at = x + 4 + item.name.chars().count() as i32 + 2;
-            console.print(at, y, &format!("({from})"), TEXT_DIM);
+            console.print(
+                at,
+                y,
+                &ui_with(T::FROM, &[("from", ui(from).into())]),
+                TEXT_DIM,
+            );
         }
     }
 }
@@ -243,9 +250,9 @@ fn draw_needs(console: &mut Console, x: i32, y: i32, needs: &[NeedView], panel: 
         console.print(at, y, &shown, color);
         at += shown.chars().count() as i32;
     };
-    print(console, "Needs: ", TEXT_DIM);
+    print(console, &format!("{} ", ui(T::NEEDS)), TEXT_DIM);
     if needs.is_empty() {
-        print(console, "nothing", TEXT);
+        print(console, &ui(T::NOTHING), TEXT);
     }
     for (i, need) in needs.iter().enumerate() {
         if i > 0 {

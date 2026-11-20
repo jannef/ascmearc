@@ -9,7 +9,10 @@ built from what the player perceives, items are named by phrases English renders
 checker (L7)"); **L10**, the `fi` morphology (#1893, "The `fi` module"); and **L6a**, the UI
 text path (#1900): the app's words in `assets/lang/en/ui/`, the abilities screen converted ("UI
 text"), with its widths in the screens' layout, not the text (#1908), and the further L6 parts:
-the controls, settings, and mods screens (#1935) and the object and rig screens (#1928); **L4a**,
+the controls, settings, and mods screens (#1935), the object and rig screens (#1928), the
+character, characters, skills, and talents screens (#1933), the UI core, `--more--`, info tabs,
+and encounter dialog (#1930), the magic, scribe, and weapon skills screens (#1938), the look
+line (#1927), and the dialogue screens and dialogs (#1934); **L4a**,
 **L4b**, **L4e**, **L4h**, **L4i**, **L4j**, and **L4m**, `world/allies/` (#1912), `world/character/` (#1913),
 `world/creatures/` (#1916), `world/fixtures/` and `world/items/` (#1919), `world/health/` (#1920),
 `world/levels/` (#1921), and `world/people/` (#1924) say their lines from templates
@@ -36,13 +39,13 @@ nothing for it, `docs/dev/merging.md` "One build of ascmearc-core"). Dependencie
 | Module | What |
 |---|---|
 | `message.rs` | `MessageId` (a newtype over `Cow<'static, str>`: a generated constant borrows, a loaded save owns; serialized as the plain string), `Role` (the same, and `Borrow<str>` so `args.get("actor")` works), `Arg` (`Phrase`, `Number`, `Text`, `List`, `Said`, `Key`, `Msg`: a message inside a message, "Nested messages"; `Arg::said(key).with(role, arg)`, `.spoken_by(register, race)`), `Msg` (id and args; `Msg::new(id).role("who", phrase)`; `Msg::data_line(said)`, the `DATA_LINE` entry), `Entry` (a `Msg` with `turn`, `count`, and the unserialized `passing`). `Arg::feature` gives the value a template's variants select on |
-| `phrase.rs` | `Phrase` (head `Word`, `mods`, `count`, `proper`, `person`, `gender`, `notes`, `owner`), `Word::{Id, Literal}`, `Modifier::{Adjective, Of, Label, Material, Part, Made}`, `Person`, `Gender`, `Note::{Tags, Charges, Base}`. Builders: `Phrase::id`, `Phrase::literal` (proper), `.count`, `.with(modifier)`, `.note(tag)`, `.with_note`, `.owned_by`, `.without_notes` |
+| `phrase.rs` | `Phrase` (head `Word`, `mods`, `count`, `proper`, `definite`, `person`, `gender`, `notes`, `owner`), `Word::{Id, Literal}`, `Modifier::{Adjective, Of, Label, Material, Part, Made}`, `Person`, `Gender`, `Note::{Tags, Charges, Base}`. Builders: `Phrase::id`, `Phrase::literal` (proper), `Phrase::definite` (a proper name said with "the" in a sentence, #1974), `.count`, `.with(modifier)`, `.note(tag)`, `.with_note`, `.owned_by`, `.without_notes` |
 | `lexicon.rs` | `Lexicon` (`word(id) -> Option<LexWord>`; core implements it over `Content`, "Phrases"), `LexWord` (`base`, explicit `forms`, `proper`, `gender`, `many`, `harmony`, `plural_only`), `MapLexicon` (a map; `MapLexicon::parse` reads a lexicon file: `id = "lemma"` or `{ word, forms, proper, gender, many, harmony, plural_only }`, `of` skipped), `NoLexicon` |
 | `template.rs` | `Line::parse` (total: a `{` that opens no `{role:form}` or `{role}` is text; `{{` and `}}` are literal braces), `Template::{Line, Alternatives, Variants}` (`from_value`, `slots`, `written`), `Templates::parse(prefix, text)` for one `messages/<prefix>.toml`, `Templates::parse_data(what, kind, text)` for a translation's lines of data (`[hit] text = …` or a plain `hit = "…"`; `text = [...]` alternatives; `by = "<role>.<feature>"` with one key per value and an optional `else`, nesting allowed; `of` skipped). Errors name the file and the entry |
 | `lang.rs` | `LangFile` and `parse`: `name`, `code`, `morphology`, `fallback`, `repeat` (default `" (×{n})"`), `number_words` (default 12), `[registers.<name>]`, `[race_registers]`, `[generic]`. A key with a letter outside ASCII is quoted in TOML (`"minä" = "mie"`) |
 | `register.rs` | `Register::word("the")` returns the override or the word; `Registers` (`standard` always present; `get`, `for_speaker(own, race)`: the speaker's own, else the race's, else standard; `unknown_race_registers` for the checker) |
 | `morphology/mod.rs` | the `Morphology` trait: `forms() -> Vec<String>`, `phrase(&Phrase, form, &dyn Lexicon, &Register) -> Result<String, FormError>`, `number`, `list(items, Conj)`, `parse_word(entry) -> Result<(), ParseError>`. `FormError::UnknownForm` is the one failure; the renderer falls back from it |
-| `morphology/en.rs` | the helpers (below) and `En`, English as a `Morphology`: forms `bare`/`name`, `plural`, `a`, `the`, `counted`, `your`/`poss`, `they`/`them`/`their`, `s`, `es`, `is`, `has`, `does`, `num`, `ord` (`en::FORMS`). Phrase order: [adjectives and materials] head [of-qualifier] [labelled X] [notes], and what L3 added ("Phrases"); `person: You` renders as "you"/"your" and the plural verb; proper names take no article, and a name written with its own ("the shakes", `en::own_article`) takes no second one in any form (an owner's possessive takes its place: "your wolf's shakes"); a lexicon `plural` form wins over the dictionary. The article, `the`, the pronouns, and the number words go through the register |
+| `morphology/en.rs` | the helpers (below) and `En`, English as a `Morphology`: forms `bare`/`name`, `plural`, `a`, `the`, `counted`, `your`/`poss`, `they`/`them`/`their`, `s`, `es`, `is`, `has`, `does`, `num`, `ord` (`en::FORMS`). Phrase order: [adjectives and materials] head [of-qualifier] [labelled X] [notes], and what L3 added ("Phrases"); `person: You` renders as "you"/"your" and the plural verb; proper names take no article, a `definite` one (a rare item's "Grim Bite") takes "the" for both `the` and `a` ("the Grim Bite": there is only one) and none for `bare` and `counted` (a list's "Grim Bite, a long sword"), so `a` is a sentence's form and `counted` a list row's; a name written with its own ("the shakes", `en::own_article`) takes no second one in any form (an owner's possessive takes its place: "your wolf's shakes"); a lexicon `plural` form wins over the dictionary. The article, `the`, the pronouns, and the number words go through the register |
 | `morphology/generic.rs` | `GenericSpec` (the `[generic]` table: `forms` with the first the lemma, `plural`, `genders`, `adjectives = "before"/"after"`, `agree` (`true`, `false`, or the forms), `[articles.<form>]` and `[pronouns.<form>]` by `<gender>.pl`/`pl`/`<gender>`/`""` (else the table's first word), `number_words`, `counted = "{num} {pl}"`, `and`, `or`, `label`) and `Generic`. Every language has `bare`, `counted`, `num`; a form a word does not list is its lemma |
 | `render.rs` | `Language` (a `LangFile`, its `Morphology`, its `Templates`, its `Registers`): `from_toml(text, plurals)` picks `en`, `fi`, or `generic`; `add_templates(prefix, text)`; `phrase(phrase, form, lex) -> String`; `render(entry, lex, keys) -> String`; `try_render` / `try_render_as(register, …) -> Result<String, RenderError>`. `render_chain(&[&lang, &fallback, …], …)`: the first language that renders wins, else `[id]`. `Keys` is `&dyn Fn(&str) -> String`; `written_key` is the identity for dumps (`{key:help}` stays written) |
 | `proptests.rs` | rendering is total: arbitrary Unicode through `Line::parse`, `Templates::parse`, `lang::parse`, `MapLexicon::parse`, `Plurals::add`, `Language::render`, `En::phrase`, `Generic::phrase`, and `Fi::phrase` (phrases with every modifier and note kind and an owner) gives a string or an `Err`, never a panic; a module renders a form iff it lists it |
@@ -271,7 +274,7 @@ A role that names a thing or a creature holds a `Phrase` (`docs/design/localizat
 built **by value at the `say` site from what the player perceives**: never an actor or stack id
 resolved later, so a line reads the same after the creature dies, the item is gone, or it is
 identified (`scroll_label_tests.rs::a_line_names_a_scroll_as_it_was_seen_then`). Proper names
-(the player's, a companion's, a rare item's, a scroll's label) are literals.
+(the player's, a companion's, a rare item's, a scroll's label) are literals; a rare item's is `Phrase::definite`.
 
 **The lexicon ids** (`content/lexicon.rs`, which implements `Lexicon` for `Content`; its module
 docs hold the table): `creature:<id>`, `object:<id>` (with `written`, `written_plural`, and
@@ -309,6 +312,15 @@ name with its base (`Note::Base`), and the rarity and curse notes. `describe` is
 `Content::english_of(&phrase, form)`, so the old strings and the phrases are one code path and
 every snapshot checks the `en` order.
 
+**A rare item's name** (#1974, `magic/name.rs::name_phrase`) takes "the" wherever a sentence
+needs an article and none in a list: a generated rare's is `Phrase::definite` ("You pick up the
+Grim Bite, a long sword.", "The Grim Bite falls away", the inventory's "Grim Bite, a long
+sword"). A unique's (`data/uniques/`) is written as a sentence says it: with its own "the" when it
+takes one ("the Brosinga Mene", definite, listed "Brosinga Mene": `UniqueDef::listed_name`), else
+none, never given one ("Sigeric's Star", "Widowmaker": a literal). So a template that names an
+item in a sentence asks `{x:the}` or `{x:a}` (never "the {x:bare}" or `{x:counted}`), and a list
+row or a label asks `counted` or `bare`.
+
 **What `en` adds over L1** (`morphology/en.rs`): an `owner` said in place of the article ("your
 wolf", "the goblin's long sword"); `Modifier::Made` (the main material) with
 `Material`/`Part` (notable materials, "ruby-pommelled") named as `en::made_names` says (moved
@@ -336,7 +348,7 @@ example and `world/combat/` (`messages/combat.toml`) the one whose lines name th
    value.
 2. A value that names someone or something is a **phrase**, and the template asks its form:
    `the(&name)` is `{who:the}`, `the_start(&name)` `{who:The}`, `format!("{}'s", the(name))`
-   `{who:poss}` (capitalized `{who:Poss}`), `lore.describe(&stack)` `{what:counted}`, a title
+   `{who:poss}` (capitalized `{who:Poss}`), `lore.describe(&stack)` `{what:a}` (a list row's `counted`), a title
    `{what:bare}`, a plural name `{what:plural}`, "your {name}" a phrase `owned_by(self.you())`
    said `{what:the}`. Pass `self.phrase_of(id)` (or `World::end_of`), `self.you()`,
    `self.lore().phrase(&stack)`, or an id phrase (`Phrase::id("object:…")`,
@@ -437,7 +449,7 @@ enchanting, crystals, digging, the field forge). A refusal a function returns fo
 say (`cut.rs::refusal`, `enchant.rs::refusal`, `dig_refusal`, `field_forge.rs::forge_ground`) is
 a `MessageId`; the recipes' `resolve` returns its reason as a `Msg`, and the plan the dialog
 shows renders it in English (`craft_make.rs::english`) until L8. An item being enchanted is
-`enchant.rs::item_phrase` said `{item:the}` (a known rare by its name alone), several of a
+`enchant.rs::item_phrase` said `{item:the}` (a known rare by its name, "the Grim Bite"), several of a
 stack by `Lore::names_phrase` (what they are called as made); a salvaged affix's words ("its
 Sharp magic", "some of its magic") are nested messages in `catch_magic` and `goes_out_unread`;
 Soulglass's crystals a phrase or a list of two (`turns_to_glass`, by number). A profession's
@@ -494,7 +506,7 @@ Its second half (L4d: `merchants_eye`, `openings`, `orison`, `rage`, `sanctuary`
 `song`, `spirit_weapon`, `stipend`, `thief`, `volley`, `war_cry`, `witch`) says the prayer's
 words as lines of data (`prayer:words.<face>.<field>`, `prayer:use.<id>.<face>`). A line that
 differs by how many openings an exploit spends is an entry per band. Stacks handed over or set
-down are a list of their phrases (`stipend.rs::listed_arg`, `{what:counted}`); a spirit weapon's
+down are a list of their phrases (`stipend.rs::listed_arg`, `{what:a}`); a spirit weapon's
 shape `object:<id>`, also in the line it is called with (`pale_light_in_hand`, `_hands` for a
 two-handed one: "A long sword of pale light is in your hand."), which `World::equip_saying`
 says as its `put_on`. Text roles until their words are converted (#1949): a song's name lower
@@ -503,10 +515,10 @@ case (`song`), and the ids typed in a dev-style refusal (`id`).
 `world/skills/` (`messages/skills.toml`, L4n) names a trap by its type's `name` as a `word:`
 phrase (`{trap:the}`, `{trap:a}`: "an arrow trap") and a chest by `chest_name` the same way
 (`{chest:the}`), until traps and chest bands have lexicon ids. An appraisal's `before` is the
-stack as the player knew it, owned by them (`{before:counted}`: "your gold ring", "your 2
+stack as the player knew it, owned by them (`{before:a}`: "your gold ring", "your 2
 potions"), and `skills.realise` agrees its verb with it (`{before:is}`: "your boots are",
 where the string said "is"). The herbs a gather finds are one stack's phrase or a list of them, each
-`counted`. A trap's `sign` ("a tripwire") is a text role until the traps' text is converted.
+`a`. A trap's `sign` ("a tripwire") is a text role until the traps' text is converted.
 
 `world/fixtures/` (`messages/fixtures.toml`) and `world/items/` (`messages/items.toml`, L4h)
 say an outcome's lines and a special room's as lines of data ("Lines of data"). A chest is
@@ -547,7 +559,7 @@ actor) or `Content::speaker_phrase` (whoever speaks a dialogue, where the string
 `speaker_called`), a shopkeeper `Phrase::literal` of the shop's name, a quarrel's wizards a
 list of phrases (`{heard:And}`). A place inside a sentence is `quest::place`: a name written
 with "The" is `word:<rest>` said `the` ("the Arena"), any other a literal ("Cealdhlāw"). Stacks
-are `items::stacks_arg` said `counted` (one, a list of two or three, else a count of
+are `items::stacks_arg` said `a` (one, a list of two or three, else a count of
 `word:object`).
 
 **The quest log** renders from keys and phrases: `QuestView` holds `giver` (an `Arg`, said
@@ -565,9 +577,9 @@ objective and status from `crafting.commission_*`.
 Text roles until core's words are converted (#1949): a quest's name (`quest`), a skill's name
 lower case (`skill`), a guild's name (`guild`), a shop's sign (`shop`, its data's
 `{keeper}` filled; the app's step dialogs show the same string), and a dev action's typed ids.
-A rank's title is a `word:` phrase (`{title:a}`). Left as they are: the topic names of a
-quarrel's sides ("Take X's side") and the parting dialog (`PartingView`: its text, title, and
-choices), which are UI text; `carry.rs::chosen`'s refusal (items).
+A rank's title is a `word:` phrase (`{title:a}`). The topic names of a quarrel's sides and the
+parting dialog are UI text ("The dialogue screens and dialogs" below); left as they are:
+`carry.rs::chosen`'s refusal (items).
 
 ## Nested messages
 
@@ -685,6 +697,57 @@ example:
      `{x:counted}`. `level_up_screen.toml`'s `left_rolls`, `marks`, and `sources` are the example.
    - *No sentence glued from entries.* A sentence with optional clauses is one entry with a slot
      per clause, each clause its own entry or empty: `level_up_screen.toml`'s `explain`.
+
+**Words the screens still take from core as text** until core's words are converted (#1949):
+the character screen's stat names and abbreviations (`Stat::name`, `Stat::abbrev`), the gender's
+name, the alignment band's, the burden's word and thresholds (`Load::over`), the resistance words
+(`ResistanceWord::label`), an attack's source label and summary, the guild rank's title, the
+conditions (`ui::conditions`), and the race, class, stance, resource, sign, skill, talent, tree, and
+need names data gives as English; the Characters list's race and class, kept in a save's summary
+as the names were.
+
+**The UI core** (#1930): `mod.toml` (the module `text::r#mod`: `build.rs` names every module raw)
+holds the message line's prompts and the status bar's own labels (`HP`, `MP`, `Lv`, a resource's
+value, a kept beast's line, Dazzled, Averted); `more.toml` the `--more--` mark; `info_tabs.toml`
+the pages' names; `encounter.toml` the encounter dialog's title and choice labels, which core's
+`EncounterView` no longer carries (it gives the `outcome` and the `Choice`s; the dump's JSON lost
+its `title` and `label`). The bar still takes from core as text (#1949) the status effects', the
+hunger's, the burden's, the stance's, and a kept beast's health word (`Health::word`), and
+the rest prompt's words (`settings::fixed::REST`, the settings part). The bar's developer
+segments (turn, position, light, vision, seed) and `dev.rs`'s overlay line stay literal.
+
+**The magic, scribe, and weapon skills screens** (#1938; `spells.rs` draws effects and has no
+text) still take as text the weapon skills' section names (`Section::name`), a scribed spell's
+time in words (`Duration::spoken`), and the spell, school, caster style, and skill names data
+gives as English (the scribe list's school headings are the school's id, capitalized). The magic
+screen's spell detail is cut in its room, not run over the frame (#1910 stays in `KNOWN` until its
+layout gives the detail the room).
+
+**The look line** (`ui/look.rs`, `look.toml`, #1927) is a sentence entry per shape of the cell
+(`you`, `seen_creature`, `remember_things`, …) with its clauses nested in it as UI entries
+(`Arg::Msg` of a `ui.look.*` id, "Nested messages"), an empty text for a clause that does not
+apply; `lines` says it with the far-below part and the data's notes after it. The ground is a
+clause that says its own article (`ground` after "on", `ground_named` alone, an entry per
+terrain `noun`), its phrase `terrain:<id>` with char, blood, and "hollow" as `word:` adjectives;
+a creature is its type (`creature:<id>`, its grade a `word:` adjective, an animated thing's
+material an `Of`), an ally's owned by the player, a named one a literal; things are the lore's
+phrases said `a` (a rare "the Grim Bite, a long sword"). A list said with commas or semicolons
+(a creature's state, a room's, an item's tags) nests `listed` or `tags`, so the language owns
+the separator. Core's words it says as text until #1949: a sound heard (`you_hear`), how hurt a
+creature looks, a status's `seen`, an item's numbers and freshness, a damage type's name, a
+room's name with its article (`with_article`), where stairs lead, a place's name and note, and a
+chest's band with its state, a trap's name, and the grade's, char's, and blood's words (`word:`
+phrases).
+
+**The dialogue screens and dialogs** (#1934): `dialog_screen.toml` holds only the one dialog's
+own words (its footer, the keys after an option); every title, question, and option is its
+caller's, from `step_dialogs.toml`, `dialogue_screen.toml`, and `parting.toml`. A topic the rules
+make is a `TopicName` (core), worded by the screen: a quarrel's `Side` and `Refuse` with the
+wizard as a phrase (`{who:poss}`, `{who:the}`), and the partner's invest and withdraw rows; one
+the data names stays `Text`. `PartingView` holds the wizard as a phrase and the choices' ids.
+The speaker, a feature (`terrain:`), a trap and a burst (`word:`), and a scroll (`object:`) are
+phrases; a shopkeeper is a name (text). The sign reveal's date, sign name, and gifts, a hunger's
+name (the hungry journey's title), and an ailment's name stay core's text.
 
 ## Lines of data
 

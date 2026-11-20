@@ -48,7 +48,7 @@ feature_mass_here = "There is {what:bare} here."
 feature_plural_here = "There are {what:bare} here."
 floor_gives_way = "The floor gives way beneath you!"
 # `what`: what the chest held, as it lies (a stack, a list of two or three, or a count).
-find_inside = "Inside you find {what:counted}."
+find_inside = "Inside you find {what:a}."
 # `talent`: the talent the altar gave.
 gain_talent = "You gain {talent:bare}."
 # `level`: the level the player is at once more.
@@ -73,5 +73,5 @@ wrenched_elsewhere = "You are wrenched elsewhere."
 # count).
 [destroyed]
 by = "what.number"
-one = "{what:Counted} is destroyed."
-many = "{what:Counted} are destroyed."
+one = "{what:A} is destroyed."
+many = "{what:A} are destroyed."

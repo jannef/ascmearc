@@ -1,0 +1,122 @@
+# The forging wizard and its dialog (`crates/ascmearc/src/ui/craft_pick_screen.rs`). Ids
+# alphabetical.
+#
+# The keys named in the hint lines are fixed (`a`, `-`, `Enter`, `Esc`): translate the words
+# around them. The screen fits each text to its panel (docs/dev/localization.md "UI text").
+
+# The footer's letters to pick with: `confirm`, the key that picks the `>` row.
+[choose_a]
+text = "a or {confirm:bare} choose"
+
+# The same, for the letters `a` to `last`.
+[choose_letters]
+text = "a-{last:bare} or {confirm:bare} choose"
+
+# The same, with only the None row.
+[choose_none]
+text = "{confirm:bare} choose"
+
+# The header's running choice, one step: `label`, what the step is for ("blade"); `what`, the
+# pick ("steel").
+[chosen_step]
+text = "{label:bare}: {what:bare}"
+
+# The dialog's way back when there is nothing to make or the picks do not hold.
+[dialog_back]
+text = "Back"
+
+# The dialog's no.
+[dialog_not_now]
+text = "Not now"
+
+[dialog_nothing]
+text = "There is nothing to make."
+
+# The dialog: `verb`, the profession's ("Forge"); `name`, what it makes ("a ruby-pommelled long
+# sword"); `time`, how long ("about 1 hour"); `uses`, what it uses ("3 steel ingots and the
+# ruby"); `station`, where it is done (asked `the`). A work that uses nothing up and needs no
+# station says only its time.
+[dialog_takes]
+text = "{verb:bare} {name:bare}? It takes {time:bare}."
+
+[dialog_takes_at]
+text = "{verb:bare} {name:bare}? It takes {time:bare}, at {station:the}."
+
+# The dialog's title with nothing to make.
+[dialog_title]
+text = "Make"
+
+[dialog_uses]
+text = "{verb:bare} {name:bare}? It uses {uses:bare}, and takes {time:bare}."
+
+[dialog_uses_at]
+text = "{verb:bare} {name:bare}? It uses {uses:bare}, at {station:the}, and takes {time:bare}."
+
+# An optional step with nothing that would do, by what it chooses: the ornament, a seal, the
+# affix to keep, the arrows' head; and a step that must be picked.
+[empty_affix]
+text = "Choose the item first."
+
+[empty_family]
+text = "Nothing of the crystal's nature to seal."
+
+[empty_head]
+text = "Nothing carried would do; None makes them brittle."
+
+[empty_ornament]
+text = "Nothing carried would do; None leaves it plain."
+
+[empty_required]
+text = "Nothing carried will do."
+
+[esc_back]
+text = "Esc back"
+
+# The header with picks made: `name`, the recipe's ("Long sword"); `chosen`, the picks, a list of
+# `chosen_step`.
+[header_chosen]
+text = "{name:bare} — {chosen:bare}"
+
+# The list's heading when it holds no stacks: a seal's crystal families, the affixes to keep.
+[heading_families]
+text = "Families"
+
+[heading_magic]
+text = "Its magic"
+
+# The footer's key for None.
+[none_key]
+text = "- none"
+
+# The None row of an optional step: its key, `-`, and its name.
+[none_row]
+text = "- - None"
+
+# The wizard with no step to show: what it says.
+[nothing_to_choose]
+text = "Nothing to choose."
+
+# A row's state, after its name: a seal's crystal family, an affix to keep; what the recipe takes
+# of a stack (`n`), for each one made, or in all; a stack too small.
+[state_crystal]
+text = "a crystal more"
+
+[state_kept]
+text = "kept"
+
+[state_too_few]
+text = "too few"
+
+[state_uses]
+text = "uses {n:bare}"
+
+[state_uses_each]
+text = "uses {n:bare} each"
+
+# The wizard with no step to show: its title.
+[title_empty]
+text = "Forge"
+
+# A step's title: `name`, the recipe's; `label`, what the step is for ("blade").
+[title_step]
+text = "{name:bare}: {label:bare}"

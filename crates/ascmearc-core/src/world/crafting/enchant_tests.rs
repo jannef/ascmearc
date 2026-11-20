@@ -302,7 +302,7 @@ fn unbind_takes_every_affix_off_and_gives_nothing_back() {
     assert!(
         said(
             &w,
-            "The magic goes out of Grim Bite. It is now a long sword."
+            "The magic goes out of the Grim Bite. It is now a long sword."
         ),
         "{:?}",
         texts(&w)
@@ -805,7 +805,7 @@ fn imbue_makes_a_plain_item_rare_within_its_capacity() {
         );
         let name = magic.name.clone().expect("a name");
         let line =
-            format!("The Marvellous long sword drinks the three crystals and wakes as {name}.");
+            format!("The Marvellous long sword drinks the three crystals and wakes as the {name}.");
         assert!(said(&w, &line), "{:?}", texts(&w));
     }
     // Three red crystals from one stack: every affix red; a Masterwork sword holds four.
@@ -897,7 +897,7 @@ fn ennoble_makes_a_magic_item_rare_with_one_affix_more_and_a_name() {
         assert!(families(&w, "red").contains(&category(&w, added)));
         drew.push(k);
         let name = magic.name.clone().expect("a name");
-        let line = format!("{thing} takes the red crystal's glow and wakes as {name}.");
+        let line = format!("{thing} takes the red crystal's glow and wakes as the {name}.");
         assert!(said(&w, &line), "{:?}", texts(&w));
     }
     // Both kinds have room on a magic item: either may be drawn.

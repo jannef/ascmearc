@@ -1,0 +1,8 @@
+# `--more--` in the message line (`crates/ascmearc/src/ui/more.rs`). Ids alphabetical.
+#
+# The message line leaves room for it on a page's last line: a longer translation leaves less
+# for the messages (docs/dev/localization.md "UI text").
+
+# What ends every page of this turn's messages but the last.
+[more]
+text = "--more--"
