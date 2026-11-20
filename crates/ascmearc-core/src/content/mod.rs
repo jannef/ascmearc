@@ -155,6 +155,8 @@ mod ranged;
 mod recipe;
 #[cfg(test)]
 mod recipe_tests;
+#[cfg(test)]
+mod register_tests;
 pub mod required;
 mod resource;
 mod restock;
