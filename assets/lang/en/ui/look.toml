@@ -1,0 +1,285 @@
+# Look mode's line (`crates/ascmearc/src/ui/look.rs`): what the player perceives on the cell under
+# the cursor, said as one line. Ids alphabetical.
+#
+# The line is built of the entries below, each a sentence or a clause said inside another. A
+# clause that may be missing is a slot that is empty when it does not apply; a clause that fills
+# one starts with its own punctuation (", partly dug"). Roles that name a creature or a thing are
+# phrases (the language gives the article); the ground is a nested clause (`ground`,
+# `ground_named`) that says its own article.
+
+# A creature's state, in its brackets: the player's own ally with a name.
+[ally]
+text = "your ally"
+
+# What is far below an air cell, a creature: `who`, its kind; `ground`, the terrain.
+[below_creature]
+text = "{who:a}, on {ground:bare}"
+
+# What is far below, the ground alone: `ground`, the terrain.
+[below_ground]
+text = "{ground:bare}"
+
+# What is far below, a thing lying there: `what`, the top stack; `ground`, the terrain.
+[below_thing]
+text = "{what:a}, on {ground:bare}"
+
+# A seen creature that is the player's kept beast: `name`, its name (or `your_companion`); `who`,
+# its kind as the player's ("your hound"); `state`, what shows in the brackets (`listed`); the
+# clauses after it as in `creature`.
+[companion]
+text = "{name:bare}, {who:the} ({state:bare}){writhing:bare}{moves:bare}{wielding:bare}{wearing:bare}{ready:bare}"
+
+# A seen creature: `who`, its kind or its name (with its grade word and what it is made of);
+# `state`, what shows in the brackets (`listed`: `ally`, `hostile`, how hurt it looks, the
+# statuses that show, `unaware`, `your_mark`); then, each empty or its clause: `services`
+# (`services`), `waits` (`waits`), `writhing`, `moves`, and its gear (`wielding`, `wearing`,
+# `ready`).
+[creature]
+text = "{who:A} ({state:bare}){services:bare}{waits:bare}{writhing:bare}{moves:bare}{wielding:bare}{wearing:bare}{ready:bare}"
+
+# The services a person sells, each said in `services`' list.
+[cures]
+text = "cures"
+
+# Ground hallowed by the dark powers' Sanctuary.
+[dreaded]
+text = "on dreaded ground"
+
+# The line's part for what is far below an air cell: `below`, one of the `below_*` clauses.
+[far_below]
+text = "Far below: {below:bare}."
+
+# Goods in a shop: `gold`, the price.
+[for_sale]
+text = "for sale, {gold:bare} gold"
+
+[frees_the_cursed]
+text = "frees the cursed"
+
+# The ground as said after "on", without an article: `ground`, the terrain, a chest, or a statue
+# (with the blood and char on it); `of`, `statue_of` or `trapped`, else empty; `where`,
+# `leading_to`, `partly_dug`, or `place`, else empty; `room`, `room` or `room_after_comma`, else
+# empty.
+[ground]
+text = "{ground:bare}{of:bare}{where:bare}{room:bare}"
+
+# The ground named alone, with its article ("A stone floor."); the roles as `ground`.
+[ground_named]
+text = "{ground:a}{of:bare}{where:bare}{room:bare}"
+
+# The ground named alone, a terrain named as a mass noun ("Acid-pitted floor.").
+[ground_named_mass]
+text = "{ground:bare}{of:bare}{where:bare}{room:bare}"
+
+# The ground named alone, a terrain named in the plural ("Webs.").
+[ground_named_plural]
+text = "{ground:bare}{of:bare}{where:bare}{room:bare}"
+
+# Ground hallowed by Sanctuary.
+[hallowed]
+text = "on hallowed ground"
+
+# A sound heard on a cell the player does not see: `heard`, what they hear ("You hear
+# footsteps").
+[heard_here]
+text = "{heard:bare} here."
+
+# A sound heard on a cell the player remembers: `heard`, as `heard_here`; `memory`, what they
+# remember there (`things_on`, `trap_on`, or a ground clause).
+[heard_where_remembered]
+text = "{heard:bare} here, where you remember {memory:bare}."
+
+# What lies where the player or a creature stands: `things`, the stacks.
+[here]
+text = "; here: {things:a}"
+
+# A seen creature's state: hostile to the player.
+[hostile]
+text = "hostile"
+
+[identifies]
+text = "identifies"
+
+# Knowledge of a creature's resistances: `kinds`, the damage types.
+[immune_to]
+text = "immune to {kinds:and}"
+
+# A special room the player has been in: `room`, its name with its article.
+[in_room]
+text = "in {room:bare}"
+
+# What the player's Knowledge tells of a creature: `who`, the creature; `parts`, the
+# `immune_to`, `resistant_to`, and `vulnerable_to` that apply.
+[known]
+text = "You know {who:the} {who:is} {parts:and}."
+
+# The ground's way on: `to`, where the stairs or the location lead.
+[leading_to]
+text = ", leading to {to:bare}"
+
+# The line said as one: the cell's sentence, `far_below`, and the data's notes after it, each
+# said in turn.
+[lines]
+text = "{lines:lines}"
+
+# Items in a creature's state or a room's list: `first`, an item; `rest`, the others (this entry
+# again, or the last item).
+[listed]
+text = "{first:bare}, {rest:bare}"
+
+# A trained eye tells food's freshness: `fresh`, the word.
+[looks]
+text = "looks {fresh:bare}"
+
+[mends]
+text = "mends"
+
+# How an animated thing moves: `moves`, the data's word.
+[moves]
+text = ", {moves:bare}"
+
+# A wall the player has dug into.
+[partly_dug]
+text = ", partly dug"
+
+# A named place's name after its ground: `place`.
+[place]
+text = ", {place:bare}"
+
+# What a creature has ready: `what`, the stacks.
+[ready]
+text = ", with {what:a} ready"
+
+# The player's own image in a hall of mirrors: `ground`, a ground clause; `here`, `here` or
+# empty.
+[reflection]
+text = "Your reflection, on {ground:bare}{here:bare}."
+
+# A remembered cell with nothing on it: `ground`, a named ground clause; `room`,
+# `room_after_comma` or empty.
+[remember_ground]
+text = "You remember {ground:bare} here{room:bare}."
+
+# A remembered cell with things on it: `things`, the stacks; `ground`, a ground clause.
+[remember_things]
+text = "You remember {things:a} here, on {ground:bare}."
+
+# A remembered cell with a known trap alone: `trap`, the trap; `ground`, a ground clause.
+[remember_trap]
+text = "You remember {trap:a} here, on {ground:bare}."
+
+[resistant_to]
+text = "resistant to {kinds:and}"
+
+# Where the ground lies, after its name: `room`, its list (`listed`: `in_room`, `hallowed`,
+# `dreaded`, a `zone_*`).
+[room]
+text = " {room:bare}"
+
+# As `room`, after a way on or after "here".
+[room_after_comma]
+text = ", {room:bare}"
+
+# A seen creature on its ground: `who`, `creature` or `companion`; `ground`, a ground clause;
+# `here`, `here` or empty.
+[seen_creature]
+text = "{who:Bare}, on {ground:bare}{here:bare}."
+
+# A seen cell with nothing on it: `ground`, a named ground clause.
+[seen_ground]
+text = "{ground:Bare}."
+
+# A seen cell with things on it: `things`, the stacks; `ground`, a ground clause.
+[seen_things]
+text = "{things:A}, on {ground:bare}."
+
+# A seen cell with a known trap alone: `trap`, the trap; `ground`, a ground clause.
+[seen_trap]
+text = "{trap:A}, on {ground:bare}."
+
+# What a person sells: `verbs`, a list of `cures`, `frees_the_cursed`, `identifies`, `mends`,
+# `teaches`.
+[services]
+text = ", who {verbs:and} for gold"
+
+# A statue of the stoned, after its name: `of`, what it was.
+[statue_of]
+text = " of {of:a}, mouth open"
+
+# A thing with what it gives and costs: `what`, the stack; `tags`, its tags (`tags`).
+[tagged]
+text = "{what:a} ({tags:bare})"
+
+# An item's tags: `first`, a tag (its numbers, `looks`, `for_sale`); `rest`, the others (this
+# entry again, or the last tag).
+[tags]
+text = "{first:bare}; {rest:bare}"
+
+[teaches]
+text = "teaches"
+
+# What the player remembers on a cell: `things`, the stacks; `ground`, a ground clause.
+[things_on]
+text = "{things:a} on {ground:bare}"
+
+# A known trap on its ground: `trap`; `ground`, a ground clause.
+[trap_on]
+text = "{trap:a} on {ground:bare}"
+
+# A chest's known trap, after its name: `trap`.
+[trapped]
+text = ", trapped: {trap:a}"
+
+# Stalker's eye: a creature that has not noticed the player.
+[unaware]
+text = "unaware of you"
+
+[unknown]
+text = "You don't know what is there."
+
+[vulnerable_to]
+text = "vulnerable to {kinds:and}"
+
+# One whose only words are callings, with nothing to sell.
+[waits]
+text = ", who waits"
+
+# What a creature wears: `what`, the stacks.
+[wearing]
+text = ", wearing {what:a}"
+
+# What a creature wields: `what`, the stacks.
+[wielding]
+text = ", wielding {what:a}"
+
+# What lives in a creature shows.
+[writhing]
+text = ", writhing"
+
+# The player's own cell: `ground`, a ground clause; `here`, `here` or empty.
+[you]
+text = "You, on {ground:bare}{here:bare}."
+
+# The player's kept beast whose name is not known.
+[your_companion]
+text = "Your companion"
+
+# The creature the player's openings are in.
+[your_mark]
+text = "your mark"
+
+# What lies on a cell, a zone.
+[zone_dark]
+text = "under a pall of dark"
+
+[zone_fire]
+text = "wreathed in fire"
+
+[zone_fouled]
+text = "under a foul reek"
+
+[zone_slick]
+text = "slick underfoot"
+
+[zone_smoke]
+text = "in thick smoke"
