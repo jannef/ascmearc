@@ -1,0 +1,33 @@
+# A profession's screen (`crates/ascmearc/src/ui/profession_screen.rs`). Ids alphabetical.
+#
+# The keys named in the hint lines are fixed (`a`, `Esc`, `{confirm}`): translate the words
+# around them. Recipe names and what they take come from the game's data. The screen fits each
+# text to its panel: a translation longer than the room is cut with `…`, which the screen
+# snapshots check (docs/dev/localization.md "UI text").
+
+[back]
+text = "Esc back"
+
+# The list when the character knows no recipe of the profession.
+[none]
+text = "You know no recipe of it."
+
+# The footer's hint to make a recipe: `confirm`, the key.
+[make_a]
+text = "a or {confirm:bare} make"
+
+# `last`, the letter of the last row on the page.
+[make_letters]
+text = "a-{last:bare} or {confirm:bare} make"
+
+# The group of the recipes every character knows.
+[work]
+text = "Work"
+
+# The panel's title: `profession`, its name.
+[title]
+text = "{profession:bare}: recipes"
+
+# The line under the list: `takes`, what the selected recipe takes.
+[takes]
+text = "Takes {takes:bare}."

@@ -10,12 +10,14 @@
 use super::chargen_screen::{Draft, Step};
 use super::menu::{Edit, Panel, Press, wrap};
 use super::screens::{ScreenAction, ScreenName};
+use super::text::{name_screen as T, ui, ui_with};
 use super::text_field::TextField;
 use super::{TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use crate::settings::fixed;
 use ascmearc_core::character::{MAX_NAME, NAMELESS, random_name};
 use ascmearc_core::content::Content;
+use ascmearc_core::lang::Arg;
 
 /// How many random names Random goes through before it starts over.
 const DRAWS: u32 = 64;
@@ -54,7 +56,12 @@ impl NameScreen {
             let race = (spec.race(content)).map_or(spec.race.clone(), |r| r.name.clone());
             let class = (spec.class(content)).map_or(spec.class.clone(), |c| c.name.clone());
             let article = ascmearc_core::text::article(&race);
-            format!("{article} {} {}", race.to_lowercase(), class.to_lowercase())
+            let args = [
+                ("article", Arg::from(article)),
+                ("race", race.to_lowercase().into()),
+                ("class", class.to_lowercase().into()),
+            ];
+            ui_with(T::WHO, &args)
         });
         Self {
             field: TextField::new(draft.remembered_name().unwrap_or_default(), MAX_NAME),
@@ -111,39 +118,37 @@ impl NameScreen {
         // frame.
         let panel = Panel::new(
             console,
-            Step::Name.title(),
+            &Step::Name.title(),
             super::chargen_screen::WIDTH,
             11,
         );
         let x = panel.inner_x();
         let mut y = panel.y + 2;
         if !self.who.is_empty() {
-            console.print(
-                x + 2,
-                y,
-                &format!("What is the name of {}?", self.who),
-                TEXT,
-            );
+            let question = ui_with(T::QUESTION, &[("who", self.who.as_str().into())]);
+            console.print_in(x + 2, y, &question, TEXT, panel.inner_w() - 2);
         }
         y += 2;
-        console.print(x + 2, y, "Name: ", TEXT);
+        console.print(x + 2, y, &ui(T::FIELD), TEXT);
         self.field.draw(console, x + 8, y, self.placeholder());
         y += 2;
-        let help = format!(
-            "Type a name of up to {MAX_NAME} characters, or {} for one of your people's names. \
-             Left empty, it is {}.",
-            fixed::TEXT_RANDOM,
-            self.placeholder()
-        );
+        let args = [
+            ("max", Arg::Number(MAX_NAME as i64)),
+            ("random", fixed::TEXT_RANDOM.into()),
+            ("name", self.placeholder().into()),
+        ];
+        let help = ui_with(T::HELP, &args);
         for line in wrap(&help, panel.inner_w() - 2).into_iter().take(2) {
             console.print(x + 2, y, &line, TEXT_DIM);
             y += 1;
         }
+        let own = |text, key: &str| ui_with(text, &[("own", key.into())]);
         let footer = format!(
-            "{} accept   {} random   {} erase   Esc back",
-            fixed::TEXT_CONFIRM,
-            fixed::TEXT_RANDOM,
-            fixed::TEXT_ERASE,
+            "{}   {}   {}   {}",
+            own(T::ACCEPT, fixed::TEXT_CONFIRM),
+            own(T::RANDOM, fixed::TEXT_RANDOM),
+            own(T::ERASE, fixed::TEXT_ERASE),
+            ui(T::BACK),
         );
         panel.footer(console, &footer);
     }

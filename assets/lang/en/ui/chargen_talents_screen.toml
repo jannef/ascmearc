@@ -1,0 +1,57 @@
+# Character creation's talents step (`crates/ascmearc/src/ui/chargen_talents_screen.rs`). Ids
+# alphabetical.
+#
+# The keys named in the hint lines are fixed (`Esc`, a letter, and `{confirm}`): translate the
+# words around them. Talent names and descriptions come from the game's data. The screen fits each
+# text to its panel: a translation longer than the room is cut with `…`, which the screen
+# snapshots check (docs/dev/localization.md "UI text").
+
+# The footer's hint to go back.
+[back]
+text = "Esc back"
+
+# The group of the Random row.
+[chance]
+text = "Chance"
+
+# Why a talent cannot be marked now: `count`, how many talents the character has.
+[chosen_all]
+text = "You have chosen {count:bare} talents: unmark one first."
+
+# The footer's hint to mark a talent: `confirm`, the key.
+[mark]
+text = "{confirm:bare} or a letter mark"
+
+# The row that goes on with the marked talents, and what it says.
+[done]
+text = "Done"
+
+[done_hint]
+text = "Go on with these talents."
+
+# The list when the character can choose no talent.
+[none]
+text = "There are no talents to choose."
+
+# The row that takes the character's random talents, and what it says.
+[random]
+text = "Random"
+
+[random_hint]
+text = "Let chance pick your talents."
+
+# A talent the character does not meet the needs of: `name`, the talent.
+[cannot_take]
+text = "You cannot take {name:bare} yet."
+
+# The panel's title when the race gives a free talent: `names`, the talent or talents; `left`, how
+# many remain.
+[title_free]
+text = "Choose your free {names:bare} (4 of 5): {left:bare} left"
+
+# When the class gives trades to choose first.
+[title_trade]
+text = "Choose a trade (4 of 5): {left:bare} left"
+
+[title_talents]
+text = "Choose your talents (4 of 5): {left:bare} left"

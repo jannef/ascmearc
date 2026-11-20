@@ -1,0 +1,39 @@
+# The New run screen (`crates/ascmearc/src/ui/new_run_screen.rs`). Ids alphabetical.
+#
+# The keys named in the hint lines are fixed: translate the words around them. Scenario names and
+# descriptions come from the game's data. The screen fits each text to its panel: a translation
+# longer than the room is cut with `…`, which the screen snapshots check
+# (docs/dev/localization.md "UI text").
+
+[back]
+text = "Esc back"
+
+# The footer's hint to choose a scenario: `keys`, the keys that move the cursor.
+[choose]
+text = "{keys:bare} scenario"
+
+# The footer's hint to go on: `confirm`, the key. Next when a character is made, else start.
+[next]
+text = "{confirm:bare} next"
+
+[start]
+text = "{confirm:bare} start"
+
+# The developer builds' seed field: `seed`, what is typed or the default.
+[seed_default]
+text = "(default: {seed:bare})"
+
+[seed_hint]
+text = "Type a number or a word to set a seed."
+
+# The seed field's label, up to where the typed text starts.
+[seed_label]
+text = "Seed: ["
+
+# When the content has no scenarios.
+[none]
+text = "No scenarios are installed."
+
+# The panel's title.
+[title]
+text = "New run"
