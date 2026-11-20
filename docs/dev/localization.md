@@ -150,6 +150,30 @@ When no literal is left, `LITERAL`, the `From` text impls, and this section go. 
 - `Entry` leaves out `args` while empty and `count` while 1 when serialized, as the old
   `Message` left out its count.
 
+## The checker (L7)
+
+`cargo xtask lang` (`xtask/src/lang.rs`; CI's docs job runs `--check`) reads every
+`assets/lang/<code>/` with the crate's parsers (`Language::from_toml`, `Templates::parse`,
+`MapLexicon::parse`, `Morphology::parse_word`) and reports per language. **Errors** (the run
+fails): a file that does not parse; a form the language's `Morphology::forms` (plus `and`/`or`)
+does not list; a role the English entry does not pass; an id English lacks; a lexicon word the
+module refuses; a form request in `dialogue/` other than `name`/`Name`/`a`/`the`/`address`; a
+race naming an unknown register; a UI entry (`ui/<module>.toml`, ids `ui.<module>.<name>`) whose
+fixed text is wider than its `width` (placeholders count nothing: a lower bound, so no false
+failure until L6 renders them); and **stale** entries. **Warnings**: a missing id (an error for
+`--strict <code>`; Finnish is strict before it ships) and an English id no source names as
+`msg::<file>::<ID>`. English is checked for forms, parsing, and width only.
+
+**The `of` hash** of a translated entry is the six-hex FNV-1a (32 bits, the top byte folded into
+the low 24) of the English entry's canonical text: a string as it is, an array's items joined by a
+newline, a table's keys in order as `key=value` lines, never `of` or `width`. An entry without
+`of` is stale too. `--stamp <code>` writes `of` into entries that lack one (`--restamp` also
+refreshes stale ones, after the translator has read the English change); it edits lines, so
+comments and layout stay: a `[table]` gets an `of` line after its header, a plain `id = "text"`
+becomes `id = { text = "text", of = "…" }`, and a plain entry whose value spans lines is refused
+(put it in a table). Not yet checked: lexicon staleness and missing words (L3 and L10, when
+lexicons exist and the English `assets/data` names are mapped to them).
+
 ## Next
 
 L3 (phrases from `Lore`, `Stack`, `magic/name.rs`; the `Lexicon` over `Content`, then

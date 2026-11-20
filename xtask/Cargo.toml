@@ -17,6 +17,7 @@ toml.workspace = true
 # The wiki, the goldens, and the benchmarks read the test world.
 ascmearc-assets = { workspace = true, features = ["showcase"] }
 ascmearc-core.workspace = true
+ascmearc-lang.workspace = true
 workspace-hack.workspace = true
 
 [lints]

@@ -39,6 +39,12 @@ metadata`'s `target_directory`) for the build output it reads and the files it w
 - **Regenerate the vast level**, `cargo xtask gen-vast`: writes
   `assets/campaigns/showcase/levels/vast.toml`; deterministic, never hand-edit. `--check` fails
   if the file differs from the generator output; run it after touching `xtask/src/vast.rs` (CI runs it).
+- **Check the language files**, `cargo xtask lang [--check] [--strict CODE] [--stamp CODE
+  [--restamp]] [--dir PATH]` (`xtask/src/lang.rs`, #1890; CI runs `--check`;
+  `docs/dev/localization.md` "The checker"): checks `assets/lang/<code>/` against English with
+  the `ascmearc-lang` parsers. Errors fail the run, a missing id is a warning (an error for a
+  `--strict` language). `--stamp CODE` writes `of` into the entries that lack one, `--restamp`
+  refreshes the stale ones too (read the diff). `--dir` points it at another language folder.
 - **Check the docs' code paths**, `cargo xtask docs-check` (`xtask/src/docs_check.rs`, #1667):
   every code name in an inline code span of CLAUDE.md, `spec/`, and `docs/dev/` (not
   `docs/design/`, which is history) must name something in the sources under `crates/` and
