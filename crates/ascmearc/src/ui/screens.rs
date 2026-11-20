@@ -64,6 +64,7 @@ use super::skills_screen::SkillsScreen;
 use super::story_screen::StoryScreen;
 use super::talents_screen::TalentsScreen;
 use super::target::AimKind;
+use super::text::{screens as T, ui};
 use super::weapon_skills_screen::WeaponSkillsScreen;
 use crate::cli::Args;
 use crate::game::{Game, GameContent, PlayerAction};
@@ -1198,7 +1199,7 @@ pub(super) fn apply_choice(
                 match screens.store.save_run(&game.save_id, &game.world) {
                     Ok(()) => {
                         leave_run(&mut commands, &mut grid, &mut mode);
-                        screens.back_to_main(Some("Game saved.".into()), false);
+                        screens.back_to_main(Some(ui(T::GAME_SAVED)), false);
                     }
                     Err(e) => screens.stack.fail(e),
                 }
@@ -1210,7 +1211,7 @@ pub(super) fn apply_choice(
             }
             MenuChoice::Continue => match screens.store.last_played() {
                 Some(last) => resume(&mut commands, &mut screens, &last.id),
-                None => screens.back_to_main(Some("There is no saved character.".into()), false),
+                None => screens.back_to_main(Some(ui(T::NO_SAVED_CHARACTER)), false),
             },
             MenuChoice::Resume(id) => resume(&mut commands, &mut screens, id),
             // Applied by `crate::mods::apply`.
@@ -1251,7 +1252,7 @@ fn resume(commands: &mut Commands, screens: &mut Screens, id: &str) {
             screens.stack.clear();
         }
         Resume::Failed(message) => screens.back_to_main(Some(message), false),
-        Resume::NoSave => screens.back_to_main(Some("That save is gone.".into()), false),
+        Resume::NoSave => screens.back_to_main(Some(ui(T::SAVE_GONE)), false),
     }
 }
 

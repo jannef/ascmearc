@@ -1,0 +1,14 @@
+# The screen stack's notices (`crates/ascmearc/src/ui/screens.rs`): what the main menu says after
+# a run is left or a character cannot be resumed. Ids alphabetical.
+
+# The run was saved and the main menu opened.
+[game_saved]
+text = "Game saved."
+
+# Continue was chosen with no character saved.
+[no_saved_character]
+text = "There is no saved character."
+
+# The character chosen has no save any more.
+[save_gone]
+text = "That save is gone."
