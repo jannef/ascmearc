@@ -26,10 +26,6 @@ text = "Name: "
 [help]
 text = "Type a name of up to {max:bare} characters, or {random:bare} for one of your people's names. Left empty, it is {name:bare}."
 
-# The question: `who`, the character, such as "a dwarf warrior".
+# The question about the character: `race` and `class`, their names in lower case.
 [question]
-text = "What is the name of {who:bare}?"
-
-# Who is being named: `article`, "a" or "an"; `race` and `class`, their names in lower case.
-[who]
-text = "{article:bare} {race:bare} {class:bare}"
+text = "What is the name of your {race:bare} {class:bare}?"

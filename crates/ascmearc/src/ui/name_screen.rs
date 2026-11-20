@@ -32,8 +32,8 @@ pub struct NameScreen {
     draws: Vec<String>,
     /// How often Random was pressed here.
     rolls: usize,
-    /// Who is being named, as the panel says it: `a dwarf warrior`.
-    who: String,
+    /// The panel's question about the character (empty without a race and class).
+    question: String,
 }
 
 impl NameScreen {
@@ -52,22 +52,20 @@ impl NameScreen {
         } else {
             draws
         };
-        let who = spec.map_or(String::new(), |spec| {
+        let question = spec.map_or(String::new(), |spec| {
             let race = (spec.race(content)).map_or(spec.race.clone(), |r| r.name.clone());
             let class = (spec.class(content)).map_or(spec.class.clone(), |c| c.name.clone());
-            let article = ascmearc_core::text::article(&race);
             let args = [
-                ("article", Arg::from(article)),
-                ("race", race.to_lowercase().into()),
+                ("race", Arg::from(race.to_lowercase())),
                 ("class", class.to_lowercase().into()),
             ];
-            ui_with(T::WHO, &args)
+            ui_with(T::QUESTION, &args)
         });
         Self {
             field: TextField::new(draft.remembered_name().unwrap_or_default(), MAX_NAME),
             draws,
             rolls: 0,
-            who,
+            question,
         }
     }
 
@@ -124,9 +122,8 @@ impl NameScreen {
         );
         let x = panel.inner_x();
         let mut y = panel.y + 2;
-        if !self.who.is_empty() {
-            let question = ui_with(T::QUESTION, &[("who", self.who.as_str().into())]);
-            console.print_in(x + 2, y, &question, TEXT, panel.inner_w() - 2);
+        if !self.question.is_empty() {
+            console.print_in(x + 2, y, &self.question, TEXT, panel.inner_w() - 2);
         }
         y += 2;
         console.print(x + 2, y, &ui(T::FIELD), TEXT);
@@ -274,7 +271,7 @@ mod tests {
         let text = drawn(&s);
         assert!(text.contains("Choose your name (5 of 5)"), "{text}");
         assert!(
-            text.contains("What is the name of a human thief?"),
+            text.contains("What is the name of your human thief?"),
             "{text}"
         );
         assert!(text.contains(&format!("[{}_", s.placeholder())), "{text}");
