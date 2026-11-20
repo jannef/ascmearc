@@ -4,11 +4,18 @@ members = [
   "crates/ascmearc-assets",
   "crates/ascmearc-core",
   "crates/ascmearc-cli",
+  "crates/ascmearc-lang",
   "crates/ascmearc",
   "crates/workspace-hack",
   "xtask",
 ]
-default-members = ["crates/ascmearc-assets", "crates/ascmearc-core", "crates/ascmearc-cli", "crates/ascmearc"]
+default-members = [
+  "crates/ascmearc-assets",
+  "crates/ascmearc-core",
+  "crates/ascmearc-cli",
+  "crates/ascmearc-lang",
+  "crates/ascmearc",
+]
 
 [workspace.package]
 version = "0.22.0"
@@ -23,6 +30,7 @@ repository = "https://github.com/jannef/ascmearc"
 # Each binary turns the test world on through its own `showcase` feature (docs/dev/campaign.md).
 ascmearc-assets = { path = "crates/ascmearc-assets", default-features = false }
 ascmearc-core = { path = "crates/ascmearc-core" }
+ascmearc-lang = { path = "crates/ascmearc-lang" }
 workspace-hack = { path = "crates/workspace-hack" }
 # The leaf features the game uses (#1590): `default_app` and `2d_bevy_render` would add bevy_state,
 # bevy_text, bevy_animation, and the gizmos, none of which it uses (glyphs are drawn with

@@ -72,6 +72,7 @@ const CRATES: &[(&str, &str)] = &[
     ("ascmearc_assets", "crates/ascmearc-assets/"),
     ("ascmearc_cli", "crates/ascmearc-cli/"),
     ("ascmearc_core", "crates/ascmearc-core/"),
+    ("ascmearc_lang", "crates/ascmearc-lang/"),
     ("xtask", "xtask/"),
 ];
 

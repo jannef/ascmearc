@@ -1377,7 +1377,9 @@ impl Content {
         );
         for path in paths {
             if let Some(text) = files.get_optional(&path) {
-                self.plurals.add(&path, text)?;
+                self.plurals
+                    .add(text)
+                    .map_err(|m| ContentError::new(&path, m))?;
             }
         }
         Ok(())

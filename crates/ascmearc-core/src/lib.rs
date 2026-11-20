@@ -78,6 +78,9 @@ pub use action::{
     Action, AttackKind, Breach, DiseaseNews, Event, Meal, MissileEnd, Outcome, Positions,
     ReadTarget, Rest, SpellShape,
 };
+/// The languages crate (`docs/dev/localization.md`), for the app and xtask: the message model,
+/// the renderer, and the `en` helpers (`text`, `content::the`, ... re-export them).
+pub use ascmearc_lang as lang;
 pub use geom::{Dir, Pos};
 pub use world::{World, WorldError, WorldState};
 

@@ -97,7 +97,6 @@ use crate::dice::Dice;
 use crate::door::Key;
 use crate::item_parts::ItemPart;
 use crate::object::Stack;
-use crate::text::article;
 use crate::time::Duration;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
@@ -658,14 +657,8 @@ impl ObjectDef {
 }
 
 /// `count` of something called `name` (`plural` for several) in words: "a dagger", "an iron
-/// key", "12 arrows".
-pub fn counted(name: &str, plural: &str, count: u32) -> String {
-    if count == 1 {
-        format!("{} {name}", article(name))
-    } else {
-        format!("{count} {plural}")
-    }
-}
+/// key", "12 arrows". In `ascmearc_lang::en` (`docs/dev/localization.md`), re-exported here.
+pub use ascmearc_lang::en::counted;
 
 impl ObjectSpec {
     /// Whether it is a scroll of a spell (its `read` of kind `spell`): what a grimoire is

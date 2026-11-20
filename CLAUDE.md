@@ -48,6 +48,7 @@ screen, a scenario, a dump layer, or an action. For example:
 ## Architecture
 
 ```
+crates/ascmearc-lang   plain Rust below core: the message model, templates, renderer, morphology (docs/dev/localization.md)
 crates/ascmearc-core   plain Rust, no Bevy, deterministic simulation; takes its content as input
 crates/ascmearc-assets the content under assets/ embedded for the binaries (#1587)
 crates/ascmearc-cli    headless dev tool on top of core (no Bevy)

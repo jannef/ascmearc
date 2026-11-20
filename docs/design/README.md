@@ -16,6 +16,8 @@ How far a design's slices have come is tracked in its issues, not here.
 
 ## Approved, being built
 
+- `localization.md` (#1882): messages as composition entries, the `ascmearc-lang` crate, English
+  and Finnish.
 - `profane-gifts.md` (#1471): the layer bosses' corpses and the gift table.
 
 ## Built
