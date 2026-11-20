@@ -323,7 +323,8 @@ fn dropping_takes_off_first_and_the_letters_follow() {
     run(&mut w, "equip:body:d equip:head:j");
     // The jerkin comes off (18 s) and is dropped (6 s); the helm moves up a letter, still worn.
     assert_eq!(took(&mut w, "drop:d"), 24);
-    let said: Vec<&str> = (w.messages().iter().rev().take(2).map(|m| m.text.as_str())).collect();
+    let log = w.messages();
+    let said: Vec<&str> = (log.iter().rev().take(2).map(|m| m.text.as_str())).collect();
     assert_eq!(
         said,
         [

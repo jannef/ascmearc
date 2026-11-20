@@ -5,7 +5,7 @@
 use std::path::{Path, PathBuf};
 
 /// The directories under a content root that hold content.
-pub const CONTENT_DIRS: [&str; 3] = ["campaigns", "data", "vaults"];
+pub const CONTENT_DIRS: [&str; 4] = ["campaigns", "data", "lang", "vaults"];
 
 /// The test world's directory, as content paths start (docs/dev/campaign.md, "The test world in
 /// release builds").

@@ -1,4 +1,4 @@
-//! Embeds the TOML content under `assets/{campaigns,data,vaults}` (subdirectories included:
+//! Embeds the TOML content under `assets/{campaigns,data,lang,vaults}` (subdirectories included:
 //! `data/creatures/kobold.toml`, `campaigns/showcase/levels/hub.toml`), so every binary (the web
 //! build too) is self-contained. It lives in this small crate, not ascmearc-core, so a data edit
 //! rebuilds this crate and the binaries above it, never the core (#1587). The walk is

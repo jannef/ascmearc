@@ -1,14 +1,17 @@
 //! Helpers shared by the core's tests (#1509): the built-in content, loaded once per test binary,
 //! action text applied, and the message log read back.
 //!
-//! The message readers come in two forms that differ when a line repeats: [`said`] and [`last`]
-//! read a message with its counted repeats ([`Message::display`], `... (×2)`), [`texts`],
-//! [`last_text`], and [`said_text`] its raw text.
+//! The message readers render the log in English (`World::messages`) and come in two forms that
+//! differ when a line repeats: [`said`] and [`last`] read a message with its counted repeats
+//! ([`Message::display`], `... (×2)`), [`texts`], [`last_text`], and [`said_text`] its text said
+//! once. [`spoken`] renders messages not logged yet (the news).
 //!
 //! [`Message::display`]: crate::messages::Message::display
 
 use crate::action::{Outcome, parse_actions};
 use crate::content::Content;
+use crate::lang::{Entry, Msg, written_key};
+use crate::messages::english;
 use crate::rng::Rng;
 use crate::world::World;
 use std::sync::{Arc, LazyLock};
@@ -47,6 +50,13 @@ pub(crate) fn run(world: &mut World, actions: &str) -> Vec<Outcome> {
 /// Every message in the log, with its counted repeats.
 pub(crate) fn said(world: &World) -> Vec<String> {
     world.messages().iter().map(|m| m.display()).collect()
+}
+
+/// Messages not logged yet (the news, the notes: `World::news`) in English, keys left written.
+pub(crate) fn spoken(world: &World, msgs: &[Msg]) -> Vec<String> {
+    (msgs.iter())
+        .map(|msg| english(world.content(), &Entry::new(0, msg.clone()), &written_key))
+        .collect()
 }
 
 /// Every message's raw text.

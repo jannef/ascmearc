@@ -108,8 +108,9 @@ use ascmearc_core::Pos;
 use ascmearc_core::ability::Ability;
 use ascmearc_core::burden::Burden;
 use ascmearc_core::color::Rgb;
-use ascmearc_core::content::ObjectId;
+use ascmearc_core::content::{Content, ObjectId};
 use ascmearc_core::hunger::Hunger;
+use ascmearc_core::lang::Entry;
 use ascmearc_core::perception::{BelowView, CellView, PerceptionView};
 use bevy::prelude::*;
 use missiles::Missiles;
@@ -678,7 +679,14 @@ fn draw_messages(
     more::draw(console, game, mode, bindings);
 }
 
-/// A key a message names by its command's id ([`ascmearc_core::messages::key`]), as bound: `?`
+/// A logged message as the player reads it: rendered in their language (English until the
+/// language setting, L8; `docs/dev/localization.md`), its repeats counted, the keys it names as
+/// bound ([`message_key`]).
+fn message_text(content: &Content, entry: &Entry, bindings: &Bindings) -> String {
+    ascmearc_core::messages::english(content, entry, &|id| message_key(bindings, id))
+}
+
+/// A key a message names by its command's id (`{key:help}`), as bound: `?`
 /// for `help` with the default keys (`Welcome to Showcase. Press ? for controls.`). Without a key,
 /// help points at Esc, whose pause menu holds Controls (as [`controls_hint`] does), and any
 /// other command is named.
@@ -1402,8 +1410,8 @@ mod tests {
     fn the_welcome_line_names_the_help_key_as_bound() {
         let content = Arc::new(ascmearc_assets::content().expect("content"));
         let world = World::new(content, "showcase", None).expect("starts");
-        let welcome = world.messages().iter().next().expect("a welcome");
-        let shown = |b: &Bindings| welcome.display_with(|id| message_key(b, id));
+        let welcome = world.log().iter().next().expect("a welcome");
+        let shown = |b: &Bindings| message_text(world.content(), welcome, b);
         let mut b = Bindings::default();
         // The text it always had, with the default keys.
         assert_eq!(shown(&b), "Welcome to Showcase. Press ? for controls.");

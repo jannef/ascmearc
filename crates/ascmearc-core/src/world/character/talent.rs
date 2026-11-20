@@ -123,9 +123,8 @@ impl World {
             };
             for &id in &held {
                 let name = &content.talents().get(id).name;
-                (self.news).push(format!(
-                    "You know {name} already: choose a talent in its place."
-                ));
+                (self.news)
+                    .push(format!("You know {name} already: choose a talent in its place.").into());
             }
             let talents = u8::from(every > 0 && level % every == 0)
                 .saturating_add(more)

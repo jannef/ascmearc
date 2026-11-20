@@ -25,7 +25,7 @@ mod proptests;
 
 pub use lang::{LangError, LangFile};
 pub use lexicon::{LexWord, Lexicon, MapLexicon, NoLexicon};
-pub use message::{Arg, Entry, MessageId, Msg, Role};
+pub use message::{Arg, Entry, LITERAL, MessageId, Msg, Role};
 pub use morphology::{Conj, FormError, Morphology, ParseError, en, fi, generic};
 pub use phrase::{Gender, Modifier, Note, Person, Phrase, Word};
 pub use register::{Register, Registers};

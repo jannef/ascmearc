@@ -391,7 +391,8 @@ fn gifts(w: &World) -> Vec<String> {
 }
 
 fn at(w: &World, text: &str) -> usize {
-    let all: Vec<&str> = w.messages().iter().map(|m| m.text.as_str()).collect();
+    let log = w.messages();
+    let all: Vec<&str> = log.iter().map(|m| m.text.as_str()).collect();
     (all.iter().position(|m| *m == text)).unwrap_or_else(|| panic!("{text:?} in {all:?}"))
 }
 

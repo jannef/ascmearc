@@ -287,7 +287,7 @@ fn a_banishing_smite_spends_nothing_when_refused_or_unanswered() {
     set(&mut w, 6);
     let from = w.messages().len();
     run(&mut w, "use:banishing_smite:E");
-    let first = w.messages().iter().nth(from).map(|m| m.display());
+    let first = w.messages().get(from).map(|m| m.display());
     assert_eq!(
         first.as_deref(),
         Some("You call for holy wrath, but none answers.")

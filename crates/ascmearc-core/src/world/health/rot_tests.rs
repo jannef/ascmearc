@@ -232,7 +232,8 @@ fn rests_of_any_length_lose_the_food_at_the_same_moment_without_being_stopped() 
         rested("rest:7h*34 rest:2h rest:1h"),
     ];
     let turn = |w: &World| {
-        let lost = (w.messages().iter()).find(|m| m.text == LOST);
+        let log = w.messages();
+        let lost = (log.iter()).find(|m| m.text == LOST);
         lost.map(|m| m.turn).expect("told")
     };
     for w in &worlds {

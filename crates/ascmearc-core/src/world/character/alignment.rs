@@ -114,7 +114,7 @@ impl World {
             a.alignment = Some(shifted);
         }
         if let Some(text) = news.filter(|_| actor == self.state.player) {
-            self.notes.push(text);
+            self.notes.push(text.into());
         }
         if shifted.value() < score.value() && actor == self.state.player {
             self.sin_empties_zeal();
@@ -132,7 +132,7 @@ impl World {
         if let Some(held) = held.filter(|p| p.value > 0) {
             held.value = 0;
             let name = self.content.resource(pool).name.to_lowercase();
-            self.notes.push(format!("Your {name} deserts you."));
+            self.notes.push(format!("Your {name} deserts you.").into());
         }
     }
 

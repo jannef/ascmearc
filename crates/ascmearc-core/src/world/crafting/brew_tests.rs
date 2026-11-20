@@ -290,7 +290,8 @@ fn a_brewed_potion_is_known_for_what_it_is_and_alchemy_is_marked() {
         marks, 1,
         "one mark, at a hundred percent, whatever came of it"
     );
-    let words: Vec<&str> = w.messages().iter().map(|m| m.text.as_str()).collect();
+    let log = w.messages();
+    let words: Vec<&str> = log.iter().map(|m| m.text.as_str()).collect();
     assert!(
         words.contains(&"You set to work on the potion of sustenance."),
         "{words:?}"

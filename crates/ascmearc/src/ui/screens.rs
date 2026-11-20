@@ -495,7 +495,7 @@ impl Screen {
             ScreenName::Quests => Screen::Quests(QuestScreen::new(run)),
             ScreenName::Talents => Screen::Talents(TalentsScreen::new(run)),
             ScreenName::Story => Screen::Story(StoryScreen::page(run)),
-            ScreenName::Messages => Screen::Messages(MessagesScreen::new(run)),
+            ScreenName::Messages => Screen::Messages(MessagesScreen::new(run, content)),
             ScreenName::Drop => Screen::Objects(ObjectScreen::dropping(run)),
             ScreenName::Identify => objects(ObjectList::Identify(IdentifyBy::Scroll(
                 beneath.item.unwrap_or(0),

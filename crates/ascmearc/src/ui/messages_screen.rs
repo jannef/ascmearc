@@ -13,11 +13,14 @@
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::more;
 use super::screens::ScreenAction;
-use super::{TEXT, TEXT_DIM, message_key};
+use super::{TEXT, TEXT_DIM, message_text};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
-use ascmearc_core::messages::{CAPACITY, Message};
+use ascmearc_core::content::Content;
+use ascmearc_core::lang::Entry;
+use ascmearc_core::messages::CAPACITY;
 use ascmearc_core::perception::PerceptionView;
+use std::sync::Arc;
 use std::sync::atomic::{AtomicU64, Ordering};
 
 /// The widest the panel gets.
@@ -29,8 +32,10 @@ const INDENT: usize = 2;
 
 #[derive(Debug)]
 pub struct MessagesScreen {
-    /// What the player was told, oldest first.
-    messages: Vec<Message>,
+    /// What the player was told, oldest first, as core composed it.
+    messages: Vec<Entry>,
+    /// What renders it.
+    content: Arc<Content>,
     /// Lines scrolled up from the newest (0: the newest at the bottom).
     back: usize,
     /// The console's size as last fitted (columns, rows), packed: presses scroll by its layout.
@@ -38,11 +43,12 @@ pub struct MessagesScreen {
 }
 
 impl MessagesScreen {
-    /// The history of the run's messages (`None` outside a run: none).
-    pub fn new(view: Option<&PerceptionView<'_>>) -> Self {
-        let messages = view.map_or_else(Vec::new, |v| v.messages().iter().cloned().collect());
+    /// The history of the run's messages (`None` outside a run: none), rendered with `content`.
+    pub fn new(view: Option<&PerceptionView<'_>>, content: &Arc<Content>) -> Self {
+        let messages = view.map_or_else(Vec::new, |v| v.log().iter().cloned().collect());
         Self {
             messages,
+            content: content.clone(),
             back: 0,
             console: AtomicU64::new(u64::MAX),
         }
@@ -88,7 +94,7 @@ impl MessagesScreen {
         let note = format!("The log keeps the last {CAPACITY} messages.");
         let mut lines = vec![(note, true)];
         for msg in &self.messages {
-            let text = msg.display_with(|id| message_key(bindings, id));
+            let text = message_text(&self.content, msg, bindings);
             let first = more::lines(&text, inner);
             let (head, rest) = first.split_first().map_or(("", &[][..]), |(h, r)| (h, r));
             lines.push((head.to_string(), false));
@@ -149,7 +155,6 @@ mod tests {
     use super::*;
     use crate::input::KeyBinding;
     use bevy::input::keyboard::KeyCode;
-    use std::sync::Arc;
 
     use ascmearc_core::{Action, World};
 
@@ -196,9 +201,9 @@ mod tests {
     fn opens_on_the_newest_at_the_bottom_and_scrolls_up() {
         let world = chatty();
         let view = world.perception();
-        let log: Vec<String> = view.messages().iter().map(Message::display).collect();
+        let log: Vec<String> = world.messages().iter().map(|m| m.display()).collect();
         assert!(log.len() > 30, "{log:?}");
-        let mut screen = MessagesScreen::new(Some(&view));
+        let mut screen = MessagesScreen::new(Some(&view), world.content());
         let rows = shown(&screen, 80, 24).join("\n");
         assert!(rows.contains(log.last().expect("a message")), "{rows}");
         assert!(
@@ -229,13 +234,9 @@ mod tests {
 
     #[test]
     fn long_messages_wrap_with_their_further_lines_indented() {
-        let mut screen = MessagesScreen::new(None);
-        screen.messages = vec![Message {
-            turn: 1,
-            text: "word ".repeat(40).trim().to_string(),
-            count: 1,
-            passing: false,
-        }];
+        let mut screen = MessagesScreen::new(None, &Arc::default());
+        let words = "word ".repeat(40);
+        screen.messages = vec![Entry::new(1, words.trim().into())];
         let rows = shown(&screen, 40, 20);
         let body: Vec<&String> = rows.iter().filter(|r| r.contains("word")).collect();
         assert!(body.len() > 2, "{rows:#?}");
@@ -246,7 +247,7 @@ mod tests {
 
     #[test]
     fn its_own_key_esc_and_enter_close_it() {
-        let mut screen = MessagesScreen::new(None);
+        let mut screen = MessagesScreen::new(None, &Arc::default());
         let bindings = Bindings::default();
         let own = Press {
             binding: Some(KeyBinding::Char("v".into())),

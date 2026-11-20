@@ -164,7 +164,7 @@ impl World {
         if first > 0 && !discovered.contains(key) {
             discovered.insert(key.to_string());
             self.news
-                .push(format!("You learn something of {}.", def.plural));
+                .push(format!("You learn something of {}.", def.plural).into());
             gain = gain.saturating_add(first);
             self.train_stat(StatUse::Discovered);
             self.discovered();
@@ -185,9 +185,8 @@ impl World {
         if gain == 0 {
             return;
         }
-        self.news.push(format!(
-            "You gain {gain} experience for finding your way here."
-        ));
+        self.news
+            .push(format!("You gain {gain} experience for finding your way here.").into());
         self.train_stat(StatUse::Explored);
         self.discovered();
         self.grant_xp(gain);
@@ -243,7 +242,7 @@ impl World {
         }
         self.level_up_mana(before, after);
         self.news.push("You feel more experienced.".into());
-        self.news.push(format!("Welcome to level {after}."));
+        self.news.push(format!("Welcome to level {after}.").into());
         self.level_up(before, after);
         self.grow_stipend(before, after);
         self.restock_shops();

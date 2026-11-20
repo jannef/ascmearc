@@ -80,7 +80,8 @@ fn footsteps_heard_are_said_and_the_work_goes_on() {
     assert!(w.perception().actors().iter().all(|a| a.creature != cottar));
     // The footsteps pass the message line by (#1789), but for the last stretch's, read with the
     // end; the work's own lines never do.
-    let all: Vec<_> = w.messages().iter().collect();
+    let log = w.messages();
+    let all: Vec<_> = log.iter().collect();
     assert!(all.iter().any(|m| m.passing), "{said:?}");
     for m in &all {
         assert!(

@@ -223,13 +223,14 @@ fn a_broken_body_falls_as_the_parts_it_is_made_of() {
     let content = w.content().clone();
     for p in [Pos::new(2, 2), Pos::new(4, 2), Pos::new(6, 2)] {
         let body = w.state.actors[&at(&w, p)].inventory[0].clone();
-        let before = w.messages().iter().count();
+        let before = w.messages().len();
         let pile = kill_at(&mut w, p);
         assert!(!pile.is_empty(), "its pieces fall");
         assert_eq!(pile, crate::object::break_up(&body, &content, 50));
         // Said first, with the death, before what the kill taught the player.
         let (name, _) = body.names(&content);
-        let said = w.messages().iter().nth(before).expect("a line");
+        let log = w.messages();
+        let said = log.get(before).expect("a line");
         assert_eq!(said.text, format!("The {name} breaks apart."));
     }
     // The candlestick of silver: a silver ingot, worth real coin.

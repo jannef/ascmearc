@@ -199,7 +199,8 @@ fn the_player_reads_the_blow_then_the_shove() {
     let id = kobold_at(&mut w, (5, 0), 300);
     let at = pos(&w, id);
     cast(&mut w, "ray_of_frost", at, Some(id));
-    let lines: Vec<&str> = w.messages().iter().map(|m| m.text.as_str()).collect();
+    let log = w.messages();
+    let lines: Vec<&str> = log.iter().map(|m| m.text.as_str()).collect();
     let driven = (lines.iter()).position(|l| *l == "The kobold is driven back.");
     let hit = (lines.iter()).position(|l| l.contains("clout") && l.contains("kobold"));
     assert!(hit.is_some() && hit < driven, "{lines:?}");

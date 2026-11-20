@@ -169,17 +169,80 @@ impl From<MessageId> for Msg {
     }
 }
 
+/// The id of a literal line: finished text core still says as a string. Transitional, until the
+/// L4 slices have converted every `say` site to a template (`docs/dev/localization.md`, "Literal
+/// lines"); it has no dot, so no generated `<file>.<entry>` id can be it.
+pub const LITERAL: MessageId = MessageId::new("literal");
+
+/// The role holding a literal line's text.
+const LITERAL_ROLE: &str = "text";
+
+impl Msg {
+    /// A literal line ([`LITERAL`]): `text` as written, in every language.
+    pub fn literal(text: impl Into<String>) -> Self {
+        Self::new(LITERAL).role(LITERAL_ROLE, Arg::Text(text.into()))
+    }
+
+    /// The text of a literal line; `None` for a template's message.
+    pub fn literal_text(&self) -> Option<&str> {
+        literal_text(&self.id, &self.args)
+    }
+}
+
+fn literal_text<'a>(id: &MessageId, args: &'a BTreeMap<Role, Arg>) -> Option<&'a str> {
+    match args.get(LITERAL_ROLE) {
+        Some(Arg::Text(text)) if *id == LITERAL => Some(text),
+        _ => None,
+    }
+}
+
+/// Finished text said as it is: a literal line (transitional, [`LITERAL`]).
+impl From<String> for Msg {
+    fn from(text: String) -> Self {
+        Self::literal(text)
+    }
+}
+
+impl From<&str> for Msg {
+    fn from(text: &str) -> Self {
+        Self::literal(text)
+    }
+}
+
+impl From<&String> for Msg {
+    fn from(text: &String) -> Self {
+        Self::literal(text.as_str())
+    }
+}
+
+impl From<Cow<'_, str>> for Msg {
+    fn from(text: Cow<'_, str>) -> Self {
+        Self::literal(text.into_owned())
+    }
+}
+
 /// One line of the log, as core composed it. Repeats in a row fold on equal `(id, args)`.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Entry {
     pub turn: u64,
     pub id: MessageId,
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub args: BTreeMap<Role, Arg>,
-    /// Repeats in a row, 1 for a line said once.
+    /// Repeats in a row, 1 for a line said once (and then not written).
+    #[serde(default = "one", skip_serializing_if = "is_one")]
     pub count: u32,
-    /// Said while time passed in a wait or a rest, as today's `Message::passing`.
+    /// Noted while a long action went on and did not stop it (#1789): the message line passes
+    /// over it. Presentation only: not saved, not hashed.
     #[serde(skip)]
     pub passing: bool,
+}
+
+fn one() -> u32 {
+    1
+}
+
+fn is_one(n: &u32) -> bool {
+    *n == 1
 }
 
 impl Entry {
@@ -201,6 +264,11 @@ impl Entry {
     /// The argument in `role`.
     pub fn arg(&self, role: &str) -> Option<&Arg> {
         self.args.get(role)
+    }
+
+    /// The text of a literal line ([`Msg::literal_text`]).
+    pub fn literal_text(&self) -> Option<&str> {
+        literal_text(&self.id, &self.args)
     }
 }
 
@@ -224,6 +292,30 @@ mod tests {
         );
         assert_eq!(Arg::Number(1).feature("number"), Some("one"));
         assert_eq!(Arg::Text("x".into()).feature("number"), None);
+    }
+
+    #[test]
+    fn text_said_as_it_is_is_a_literal_line_that_folds_on_its_text() {
+        let msg = Msg::from("You open the door.");
+        assert_eq!(msg.id, LITERAL);
+        assert_eq!(msg.literal_text(), Some("You open the door."));
+        assert_eq!(Msg::from(String::from("You open the door.")), msg);
+        let entry = Entry::new(3, msg.clone());
+        assert_eq!(entry.literal_text(), Some("You open the door."));
+        assert!(entry.repeats(&msg));
+        assert!(!entry.repeats(&Msg::from("You close the door.")));
+        assert_eq!(Msg::new(HIT).literal_text(), None);
+        // Not literal: another id with a `text` role.
+        assert_eq!(Msg::new(HIT).role("text", "x").literal_text(), None);
+    }
+
+    #[test]
+    fn a_line_said_once_with_no_roles_writes_neither() {
+        let entry = Entry::new(2, Msg::new(HIT));
+        let text = toml::to_string(&entry).expect("serializes");
+        assert!(!text.contains("count") && !text.contains("args"), "{text}");
+        let back: Entry = toml::from_str(&text).expect("parses");
+        assert_eq!(back, entry);
     }
 
     #[test]

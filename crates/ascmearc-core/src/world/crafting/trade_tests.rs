@@ -233,7 +233,8 @@ fn a_trade_is_a_craftspersons_creation_pick_alone() {
     for action in crate::action::parse_actions("xp:2431 talent:brewster").expect("actions") {
         world.apply(&action);
     }
-    let said = &world.messages().iter().last().expect("a refusal").text;
+    let log = world.messages();
+    let said = &log.iter().last().expect("a refusal").text;
     assert_eq!(
         said,
         "You cannot take Brewster: you need to be a new character."

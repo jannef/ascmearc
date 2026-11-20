@@ -1,267 +1,1001 @@
-//! `cargo xtask lang`: the translator's tools for the `fi` morphology (`docs/dev/localization.md`
-//! "The `fi` module"; the checker, `--check`, is L7).
+//! `cargo xtask lang [--check] [--strict CODE]... [--stamp CODE [--restamp]] [--dir PATH]`
+//! (`docs/design/localization.md` §15, `docs/dev/localization.md` "The checker").
 //!
-//! - `--forms fi [WORD...]`: every form of every word in `assets/lang/fi/lexicon/*.toml`, and of
-//!   each WORD given on the command line (`"pitkä|miekka/9*A"`), for a native speaker's review.
-//! - `--suggest fi <KOTUS_XML> [WORD...]`: for every lexicon word without a class, and for each
-//!   WORD given, the class and gradation the Kotus word list gives (a local copy of
-//!   `kotus-sanalista_v1.xml`, its path on the command line; never embedded, never shipped), a
-//!   compound by its last part; words the list lacks are named for the translator to decide.
+//! Reads `assets/lang/<code>/` (or `--dir`) with the `ascmearc-lang` parsers, never a parser of
+//! its own, and reports per language: missing ids (a warning; an error for a `--strict`
+//! language), stale entries (`of` differs from the hash of the English it came from, or is
+//! absent), unknown roles and forms, templates and lexicon words that do not parse, form requests
+//! in dialogue files, UI entries wider than their `width`, and (English only, a warning) message
+//! ids no code names. `--stamp` writes `of` into the entries that lack one, `--restamp` also
+//! refreshes the stale ones; the diff is the review.
+//!
+//! `--forms fi [WORD...]` and `--suggest fi <KOTUS_XML> [WORD...]` are the Finnish translator's
+//! tools (`lang/fi_tools.rs`).
 
-use ascmearc_core::lang::fi::{CASES, Fi};
-use ascmearc_core::lang::{LexWord, Lexicon, MapLexicon, Morphology, Phrase, Register};
-use std::collections::BTreeMap;
+mod fi_tools;
+
+use crate::workspace_root;
+use ascmearc_lang::en::Plurals;
+use ascmearc_lang::template::{Segment, Template};
+use ascmearc_lang::{Language, Lexicon, Line, MapLexicon, Morphology, Templates};
+use std::collections::{BTreeMap, BTreeSet};
+use std::fs;
 use std::path::{Path, PathBuf};
 
+/// The English every other language is checked against.
+const ENGLISH: &str = "en";
+
+/// The forms a dialogue line may ask for: dialogue nouns take the base form only (§9).
+const DIALOGUE_FORMS: &[&str] = &["name", "a", "the", "address"];
+
+/// Forms every language's lists accept, beside its module's own (`Arg::List`'s conjunctions).
+const LIST_FORMS: &[&str] = &["and", "or"];
+
+/// The role the host fills with a key; its "form" is a command name, not a grammatical form.
+const KEY_ROLE: &str = "key";
+
 pub enum Mode {
+    Check { strict: Vec<String> },
+    Stamp { code: String, restamp: bool },
     Forms { words: Vec<String> },
     Suggest { kotus: PathBuf, words: Vec<String> },
 }
 
-const USAGE: &str =
-    "usage: cargo xtask lang <--forms fi [WORD...] | --suggest fi <KOTUS_XML> [WORD...]>";
+pub struct Options {
+    pub mode: Mode,
+    pub dir: Option<PathBuf>,
+}
 
-pub fn parse_mode(args: &[String]) -> Result<Mode, String> {
-    match args {
-        [flag, code, rest @ ..] if flag == "--forms" && code == "fi" => Ok(Mode::Forms {
-            words: rest.to_vec(),
-        }),
-        [flag, code, kotus, rest @ ..] if flag == "--suggest" && code == "fi" => {
-            Ok(Mode::Suggest {
-                kotus: PathBuf::from(kotus),
-                words: rest.to_vec(),
-            })
+pub fn parse_mode(args: &[String]) -> Result<Options, String> {
+    if let Some(mode) = parse_fi_tools(args)? {
+        return Ok(Options { mode, dir: None });
+    }
+    let mut strict = Vec::new();
+    let mut stamp = None;
+    let mut restamp = false;
+    let mut dir = None;
+    let mut it = args.iter();
+    while let Some(arg) = it.next() {
+        match arg.as_str() {
+            "--check" => {}
+            "--strict" => strict.push(it.next().ok_or("--strict needs a language code")?.clone()),
+            "--stamp" => stamp = Some(it.next().ok_or("--stamp needs a language code")?.clone()),
+            "--restamp" => restamp = true,
+            "--dir" => dir = Some(PathBuf::from(it.next().ok_or("--dir needs a path")?)),
+            other => return Err(format!("lang: unknown argument `{other}`")),
         }
-        [_, code, ..] if code != "fi" => Err(format!("only `fi` has these tools ({USAGE})")),
-        _ => Err(USAGE.to_string()),
+    }
+    let mode = match stamp {
+        Some(code) => Mode::Stamp { code, restamp },
+        None if restamp => return Err("--restamp goes with --stamp CODE".into()),
+        None => Mode::Check { strict },
+    };
+    Ok(Options { mode, dir })
+}
+
+/// The `fi` tools take their own positional arguments: `--forms fi [WORD...]`,
+/// `--suggest fi <KOTUS_XML> [WORD...]`.
+fn parse_fi_tools(args: &[String]) -> Result<Option<Mode>, String> {
+    let usage = fi_tools::USAGE;
+    match args {
+        [flag, code, rest @ ..] if flag == "--forms" || flag == "--suggest" => {
+            if code != "fi" {
+                return Err(format!("only `fi` has these tools ({usage})"));
+            }
+            if flag == "--forms" {
+                return Ok(Some(Mode::Forms {
+                    words: rest.to_vec(),
+                }));
+            }
+            let [kotus, words @ ..] = rest else {
+                return Err(format!("--suggest fi needs the Kotus XML ({usage})"));
+            };
+            Ok(Some(Mode::Suggest {
+                kotus: PathBuf::from(kotus),
+                words: words.to_vec(),
+            }))
+        }
+        [flag] if flag == "--forms" || flag == "--suggest" => {
+            Err(format!("{flag} needs a language code ({usage})"))
+        }
+        _ => Ok(None),
     }
 }
 
-pub fn run(mode: Mode) -> Result<(), String> {
-    match mode {
-        Mode::Forms { words } => forms(&words),
-        Mode::Suggest { kotus, words } => suggest(&kotus, &words),
+pub fn run(options: Options) -> Result<(), String> {
+    match &options.mode {
+        Mode::Forms { words } => return fi_tools::forms_cmd(words),
+        Mode::Suggest { kotus, words } => return fi_tools::suggest_cmd(kotus, words),
+        _ => {}
+    }
+    let default_dir = workspace_root().join("assets/lang");
+    let dir = options.dir.clone().unwrap_or(default_dir);
+    let mut langs = load(&dir)?;
+    match options.mode {
+        Mode::Check { strict } => {
+            let mut report = check(&langs, &strict);
+            if options.dir.is_none() {
+                report.warnings.extend(unused_ids(&langs));
+            }
+            for w in &report.warnings {
+                eprintln!("warning: {w}");
+            }
+            for e in &report.errors {
+                eprintln!("error: {e}");
+            }
+            println!(
+                "lang: {} language(s), {} error(s), {} warning(s)",
+                langs.len(),
+                report.errors.len(),
+                report.warnings.len()
+            );
+            if report.errors.is_empty() {
+                Ok(())
+            } else {
+                Err(format!(
+                    "{} problem(s) in the language files",
+                    report.errors.len()
+                ))
+            }
+        }
+        Mode::Forms { .. } | Mode::Suggest { .. } => unreachable!("handled above"),
+        Mode::Stamp { code, restamp } => {
+            if code == ENGLISH {
+                return Err("English is the source: it carries no `of`".into());
+            }
+            let english = langs
+                .remove(ENGLISH)
+                .ok_or("no English in the language dir")?;
+            let lang = langs
+                .get(&code)
+                .ok_or_else(|| format!("no language `{code}`"))?;
+            let changed = stamp(&english, lang, restamp)?;
+            let mut count = 0;
+            for (path, text) in changed {
+                count += 1;
+                fs::write(dir.join(&code).join(&path), text)
+                    .map_err(|e| format!("cannot write {path}: {e}"))?;
+                println!("stamped {code}/{path}");
+            }
+            println!("lang: {count} file(s) stamped");
+            Ok(())
+        }
     }
 }
 
-fn lexicon_dir() -> PathBuf {
-    crate::workspace_root().join("assets/lang/fi/lexicon")
+/// One language's files, by path under its directory (`messages/doors.toml`).
+#[derive(Clone, Debug, Default)]
+pub struct LangFiles {
+    pub files: BTreeMap<String, String>,
 }
 
-/// Every `id = word` of the Finnish lexicon files (prefixed by the file's name, `objects:`),
-/// then the words given on the command line under their own text.
-fn words(extra: &[String]) -> Result<Vec<(String, LexWord)>, String> {
-    let mut out: Vec<(String, LexWord)> = Vec::new();
-    let dir = lexicon_dir();
-    if dir.is_dir() {
-        let mut files: Vec<PathBuf> = std::fs::read_dir(&dir)
-            .map_err(|e| format!("{}: {e}", dir.display()))?
-            .filter_map(Result::ok)
-            .map(|e| e.path())
-            .filter(|p| p.extension().is_some_and(|x| x == "toml"))
-            .collect();
-        files.sort();
-        for file in files {
+impl LangFiles {
+    fn under<'a>(&'a self, folder: &'a str) -> impl Iterator<Item = (&'a str, &'a str)> {
+        self.files.iter().filter_map(move |(path, text)| {
+            path.strip_prefix(folder)
+                .and_then(|rest| rest.strip_prefix('/'))
+                .map(|_| (path.as_str(), text.as_str()))
+        })
+    }
+}
+
+fn load(dir: &Path) -> Result<BTreeMap<String, LangFiles>, String> {
+    let mut langs = BTreeMap::new();
+    let entries = fs::read_dir(dir).map_err(|e| format!("cannot read {}: {e}", dir.display()))?;
+    for entry in entries.flatten() {
+        if !entry.path().is_dir() {
+            continue;
+        }
+        let code = entry.file_name().to_string_lossy().into_owned();
+        let mut files = LangFiles::default();
+        walk(&entry.path(), "", &mut files)?;
+        langs.insert(code, files);
+    }
+    Ok(langs)
+}
+
+fn walk(dir: &Path, rel: &str, into: &mut LangFiles) -> Result<(), String> {
+    let mut entries: Vec<_> = fs::read_dir(dir)
+        .map_err(|e| format!("cannot read {}: {e}", dir.display()))?
+        .flatten()
+        .collect();
+    entries.sort_by_key(|e| e.file_name());
+    for entry in entries {
+        let name = entry.file_name().to_string_lossy().into_owned();
+        let path = if rel.is_empty() {
+            name.clone()
+        } else {
+            format!("{rel}/{name}")
+        };
+        if entry.path().is_dir() {
+            walk(&entry.path(), &path, into)?;
+        } else if name.ends_with(".toml") {
             let text =
-                std::fs::read_to_string(&file).map_err(|e| format!("{}: {e}", file.display()))?;
-            let stem = file.file_stem().and_then(|s| s.to_str()).unwrap_or("");
-            let lexicon = MapLexicon::parse(&format!("{stem}:"), &text)
-                .map_err(|e| format!("{}: {e}", file.display()))?;
-            for id in lexicon.ids() {
-                if let Some(word) = lexicon.word(id) {
-                    out.push((id.to_string(), word));
-                }
+                fs::read_to_string(entry.path()).map_err(|e| format!("cannot read {path}: {e}"))?;
+            into.files.insert(path, text);
+        }
+    }
+    Ok(())
+}
+
+#[derive(Debug, Default)]
+pub struct Report {
+    pub errors: Vec<String>,
+    pub warnings: Vec<String>,
+}
+
+/// The FNV-1a of a string, folded to 24 bits, as six hex digits: an entry's `of`.
+pub fn fnv6(text: &str) -> String {
+    let mut hash: u32 = 0x811c_9dc5;
+    for byte in text.bytes() {
+        hash ^= u32::from(byte);
+        hash = hash.wrapping_mul(0x0100_0193);
+    }
+    format!("{:06x}", (hash >> 24) ^ (hash & 0x00ff_ffff))
+}
+
+/// What an entry's hash is taken of: its text, its alternatives, or its variants, each key and
+/// value in key order; never `of` or `width`, which are no part of what a translator reads.
+fn canonical(value: &toml::Value) -> String {
+    match value {
+        toml::Value::String(s) => s.clone(),
+        toml::Value::Array(items) => items.iter().map(canonical).collect::<Vec<_>>().join("\n"),
+        toml::Value::Table(t) => t
+            .iter()
+            .filter(|(k, _)| !matches!(k.as_str(), "of" | "width"))
+            .map(|(k, v)| format!("{k}={}", canonical(v)))
+            .collect::<Vec<_>>()
+            .join("\n"),
+        other => other.to_string(),
+    }
+}
+
+/// Every message and UI file of a language as `(folder, stem, text)`.
+fn template_files(files: &LangFiles) -> Vec<(&'static str, String, &str)> {
+    let mut out = Vec::new();
+    for folder in ["messages", "ui"] {
+        for (path, text) in files.under(folder) {
+            let stem = path
+                .strip_prefix(folder)
+                .and_then(|p| p.strip_prefix('/'))
+                .and_then(|p| p.strip_suffix(".toml"))
+                .filter(|s| !s.contains('/'));
+            if let Some(stem) = stem {
+                out.push((folder, stem.to_string(), text));
             }
         }
     }
-    for word in extra {
-        out.push((word.clone(), LexWord::new(word.clone())));
+    out
+}
+
+/// One parsed entry: its template, its hash, its `of`, its `width`, and its written texts.
+struct Entry {
+    template: Template,
+    hash: String,
+    of: Option<String>,
+    width: Option<usize>,
+    texts: Vec<String>,
+}
+
+/// Parses a file; the errors are the file's problems, never a panic. `width` is taken out
+/// before the template parser sees the table (it is no variant).
+fn parse_file(folder: &str, stem: &str, text: &str) -> Result<BTreeMap<String, Entry>, String> {
+    let what = format!("{folder}/{stem}.toml");
+    let mut table: toml::Table =
+        toml::from_str(text).map_err(|e| format!("{what}: {}", e.message()))?;
+    let mut meta = BTreeMap::new();
+    for (name, value) in &mut table {
+        let hash = fnv6(&canonical(value));
+        let mut of = None;
+        let mut width = None;
+        if let toml::Value::Table(entry) = value {
+            of = entry.get("of").and_then(|v| v.as_str()).map(str::to_string);
+            width = entry
+                .remove("width")
+                .and_then(|v| v.as_integer())
+                .map(|w| w.max(0) as usize);
+        }
+        let source = match value {
+            toml::Value::Table(t) => t.get("text").cloned(),
+            other => Some(other.clone()),
+        };
+        let texts = match source {
+            Some(toml::Value::String(s)) => vec![s],
+            Some(toml::Value::Array(items)) => items
+                .iter()
+                .filter_map(|i| i.as_str().map(str::to_string))
+                .collect(),
+            _ => Vec::new(),
+        };
+        meta.insert(name.clone(), (hash, of, width, texts));
+    }
+    let stripped = toml::to_string(&table).map_err(|e| format!("{what}: {e}"))?;
+    let templates =
+        Templates::parse(stem, &stripped).map_err(|e| format!("{what}: {}", e.message))?;
+    let mut out = BTreeMap::new();
+    for (name, (hash, of, width, texts)) in meta {
+        let template = templates
+            .get(&format!("{stem}.{name}"))
+            .ok_or_else(|| format!("{what}: [{name}] did not parse"))?
+            .clone();
+        out.insert(
+            name,
+            Entry {
+                template,
+                hash,
+                of,
+                width,
+                texts,
+            },
+        );
     }
     Ok(out)
 }
 
-fn forms(extra: &[String]) -> Result<(), String> {
-    let words = words(extra)?;
-    if words.is_empty() {
-        return Err(format!(
-            "no words: none in {} and none given ({USAGE})",
-            lexicon_dir().display()
-        ));
+fn template_lines(template: &Template, out: &mut Vec<Line>) {
+    match template {
+        Template::Line(line) => out.push(line.clone()),
+        Template::Alternatives(lines) => out.extend(lines.iter().cloned()),
+        Template::Variants {
+            variants,
+            otherwise,
+            ..
+        } => {
+            for v in variants.values().chain(otherwise.iter().map(AsRef::as_ref)) {
+                template_lines(v, out);
+            }
+        }
     }
-    let fi = Fi::default();
-    let reg = Register::default();
-    for (id, word) in words {
-        println!("{id} = {}", word.base);
-        if let Err(e) = fi.parse_word(&word.base) {
-            if !(word.proper && !word.base.contains('/')) {
-                println!("  refused: {e}; renders as written in every form");
-                println!();
-                continue;
-            }
-            println!("  a proper name: inflected as a foreign name");
+}
+
+fn slots(template: &Template) -> Vec<(String, String)> {
+    let mut lines = Vec::new();
+    template_lines(template, &mut lines);
+    lines
+        .iter()
+        .flat_map(|l| l.0.iter())
+        .filter_map(|s| match s {
+            Segment::Slot { role, form } => Some((role.clone(), form.clone())),
+            Segment::Text(_) => None,
+        })
+        .collect()
+}
+
+/// A form with its capital taken off (`The` asks for `the`, capitalized).
+fn lower(form: &str) -> String {
+    let mut chars = form.chars();
+    match chars.next() {
+        Some(c) if c.is_uppercase() => c.to_lowercase().chain(chars).collect(),
+        _ => form.to_string(),
+    }
+}
+
+fn language_of(code: &str, files: &LangFiles, report: &mut Report) -> Option<Language> {
+    let Some(text) = files.files.get("lang.toml") else {
+        report.errors.push(format!("{code}: no lang.toml"));
+        return None;
+    };
+    match Language::from_toml(text, Plurals::default()) {
+        Ok(lang) => Some(lang),
+        Err(e) => {
+            report.errors.push(format!("{code}: {e}"));
+            None
         }
-        let mut lexicon = MapLexicon::default();
-        lexicon.insert("w", word.clone());
-        let phrase = Phrase::id("w");
-        let form = |name: &str| {
-            fi.phrase(&phrase, name, &lexicon, &reg)
-                .unwrap_or_else(|e| e.to_string())
+    }
+}
+
+type Entries = BTreeMap<String, BTreeMap<String, Entry>>;
+
+/// Every template file of a language, parsed (keyed `messages/<stem>` or `ui/<stem>`); a file
+/// that fails is reported and left out.
+fn parse_templates(code: &str, files: &LangFiles, report: &mut Report) -> Entries {
+    let mut parsed = Entries::new();
+    for (folder, stem, text) in template_files(files) {
+        match parse_file(folder, &stem, text) {
+            Ok(entries) => {
+                parsed.insert(format!("{folder}/{stem}"), entries);
+            }
+            Err(e) => report.errors.push(format!("{code}: {e}")),
+        }
+    }
+    parsed
+}
+
+pub fn check(langs: &BTreeMap<String, LangFiles>, strict: &[String]) -> Report {
+    let mut report = Report::default();
+    let Some(english_files) = langs.get(ENGLISH) else {
+        report.errors.push("no English (assets/lang/en)".into());
+        return report;
+    };
+    let english = parse_templates(ENGLISH, english_files, &mut report);
+    for code in strict {
+        if !langs.contains_key(code) {
+            report
+                .errors
+                .push(format!("--strict {code}: no such language"));
+        }
+    }
+    for (code, files) in langs {
+        let Some(language) = language_of(code, files, &mut report) else {
+            continue;
         };
-        for case in CASES {
-            if *case == "com" || *case == "ins" {
-                println!("  {case:<6} {:<24} {}", "", form(case));
-            } else {
-                println!(
-                    "  {case:<6} {:<24} {}",
-                    form(case),
-                    form(&format!("pl_{case}"))
-                );
-            }
-        }
-        let poss = [
-            "nom_ni",
-            "nom_si",
-            "nom_nsa",
-            "ade_si",
-            "ade_nsa",
-            "ill_nsa",
-            "pl_gen_nsa",
-            "com_nsa",
-        ]
-        .map(|f| format!("{f}={}", form(f)));
-        println!("  poss   {}", poss.join(" "));
-        println!(
-            "  3×     {}",
-            fi.phrase(&Phrase::id("w").count(3), "counted", &lexicon, &reg)
-                .unwrap_or_default()
+        let mut forms: BTreeSet<String> = language.morphology().forms().into_iter().collect();
+        forms.extend(LIST_FORMS.iter().map(|f| f.to_string()));
+        let own = (code != ENGLISH).then(|| parse_templates(code, files, &mut report));
+        let entries = own.as_ref().unwrap_or(&english);
+        check_entries(
+            code,
+            entries,
+            &english,
+            &forms,
+            strict.contains(code),
+            &mut report,
         );
-        println!();
-    }
-    Ok(())
-}
-
-/// The Kotus list: word → its `class[*letter]` marks (several for a word with several
-/// inflections), read from the 2006 XML (`<st><s>miekka</s><t><tn>9</tn><av>A</av></t></st>`).
-fn read_kotus(path: &Path) -> Result<BTreeMap<String, Vec<String>>, String> {
-    let text = std::fs::read_to_string(path).map_err(|e| format!("{}: {e}", path.display()))?;
-    let mut list: BTreeMap<String, Vec<String>> = BTreeMap::new();
-    for record in text.split("<st>").skip(1) {
-        let record = record.split("</st>").next().unwrap_or("");
-        let Some(word) = between(record, "<s>", "</s>") else {
-            continue;
-        };
-        let mut marks: Vec<String> = Vec::new();
-        for t in record.split("<tn>").skip(1) {
-            let Some(class) = t.split("</tn>").next() else {
-                continue;
-            };
-            let mark = match between(t, "<av>", "</av>") {
-                Some(letter) => format!("{}*{letter}", class.trim()),
-                None => class.trim().to_string(),
-            };
-            marks.push(mark);
+        check_lexicon(code, files, language.morphology(), &mut report);
+        check_dialogue(code, files, &mut report);
+        for (race, register) in language.registers().unknown_race_registers() {
+            report.errors.push(format!(
+                "{code}: lang.toml: race `{race}` names the unknown register `{register}`"
+            ));
         }
-        list.entry(word.to_string()).or_default().extend(marks);
     }
-    if list.is_empty() {
-        return Err(format!(
-            "{}: no `<st><s>…</s>…</st>` records; is it the Kotus word list XML?",
-            path.display()
-        ));
-    }
-    Ok(list)
+    report
 }
 
-fn between<'a>(text: &'a str, open: &str, close: &str) -> Option<&'a str> {
-    let start = text.find(open)? + open.len();
-    let end = text[start..].find(close)? + start;
-    Some(text[start..end].trim())
-}
-
-/// `word` without its `/class` mark, and the mark.
-fn split_mark(word: &str) -> (&str, Option<&str>) {
-    match word.rfind('/') {
-        Some(slash) => (&word[..slash], Some(&word[slash + 1..])),
-        None => (word, None),
-    }
-}
-
-fn suggest(kotus: &Path, extra: &[String]) -> Result<(), String> {
-    let list = read_kotus(kotus)?;
-    let words = words(extra)?;
-    if words.is_empty() {
-        return Err(format!(
-            "no words: none in {} and none given ({USAGE})",
-            lexicon_dir().display()
-        ));
-    }
-    let mut missing = 0;
-    for (id, word) in words {
-        if word.proper && !word.base.contains('/') {
-            continue;
-        }
-        for token in word.base.split_whitespace() {
-            let (base, mark) = split_mark(token);
-            let has_class =
-                mark.is_some_and(|m| m.chars().next().is_some_and(|c| c.is_ascii_digit()));
-            let base = base.replace('|', "");
-            let lookup = lookup(&list, &base);
-            match (has_class, lookup) {
-                (true, Some((found, marks))) => {
-                    let mark = mark.unwrap_or("");
-                    if !marks.iter().any(|m| m == mark) {
-                        println!(
-                            "{id}: {token} differs from the list, which says {}{}",
-                            marks.join(" or "),
-                            by(&base, found)
-                        );
+fn check_entries(
+    code: &str,
+    entries: &Entries,
+    english: &Entries,
+    forms: &BTreeSet<String>,
+    strict: bool,
+    report: &mut Report,
+) {
+    let is_english = code == ENGLISH;
+    for (file, items) in entries {
+        for (name, entry) in items {
+            let id = format!("{file}/{name}");
+            let source = english.get(file).and_then(|f| f.get(name));
+            if !is_english && source.is_none() {
+                report
+                    .errors
+                    .push(format!("{code}: {id}: no such id in English"));
+            }
+            for (role, form) in slots(&entry.template) {
+                if role == KEY_ROLE {
+                    continue;
+                }
+                if !forms.contains(&lower(&form)) {
+                    report
+                        .errors
+                        .push(format!("{code}: {id}: unknown form `{form}` (of `{role}`)"));
+                }
+                if let Some(src) = source.filter(|_| !is_english)
+                    && !src.template.roles().contains(&role)
+                {
+                    report.errors.push(format!(
+                        "{code}: {id}: unknown role `{role}` (English passes {:?})",
+                        src.template.roles()
+                    ));
+                }
+            }
+            if let (Some(src), false) = (source, is_english) {
+                match &entry.of {
+                    None => report.errors.push(format!(
+                        "{code}: {id}: no `of` hash (cargo xtask lang --stamp {code})"
+                    )),
+                    Some(of) if *of != src.hash => report.errors.push(format!(
+                        "{code}: {id}: stale (of = {of}, English is {})",
+                        src.hash
+                    )),
+                    Some(_) => {}
+                }
+            }
+            if let Some(width) = entry.width {
+                for text in &entry.texts {
+                    let fixed: usize = Line::parse(text)
+                        .0
+                        .iter()
+                        .map(|s| match s {
+                            Segment::Text(t) => t.chars().count(),
+                            Segment::Slot { .. } => 0,
+                        })
+                        .sum();
+                    if fixed > width {
+                        report.errors.push(format!(
+                            "{code}: {id}: wider than its width ({fixed} > {width}): {text}"
+                        ));
                     }
                 }
-                (true, None) => {}
-                (false, Some((found, marks))) => {
-                    println!("{id}: {base} → {}{}", marks.join(" or "), by(&base, found));
-                }
-                (false, None) => {
-                    missing += 1;
-                    println!(
-                        "{id}: {base} is not in the Kotus list (nor is any ending of it): decide its class"
-                    );
+            }
+        }
+    }
+    if is_english {
+        return;
+    }
+    for (file, items) in english {
+        for name in items.keys() {
+            if !entries.get(file).is_some_and(|f| f.contains_key(name)) {
+                let line = format!("{code}: {file}/{name}: missing");
+                if strict {
+                    report.errors.push(line);
+                } else {
+                    report.warnings.push(line);
                 }
             }
         }
     }
-    if missing > 0 {
-        println!("{missing} word(s) the list lacks");
-    }
-    Ok(())
 }
 
-fn by(base: &str, found: &str) -> String {
-    if found == base {
-        String::new()
-    } else {
-        format!(" (by its last part, {found})")
-    }
-}
-
-/// The list's entry for `base`, else for its longest ending of three letters or more that is a
-/// word of the list (a compound by its last part), lower-cased.
-fn lookup<'a>(
-    list: &'a BTreeMap<String, Vec<String>>,
-    base: &str,
-) -> Option<(&'a str, &'a [String])> {
-    let lower = base.to_lowercase();
-    let chars: Vec<char> = lower.chars().collect();
-    for start in 0..chars.len() {
-        if chars.len() - start < 3 && start > 0 {
-            break;
+fn check_lexicon(code: &str, files: &LangFiles, morphology: &dyn Morphology, report: &mut Report) {
+    for (path, text) in files.under("lexicon") {
+        match MapLexicon::parse("", text) {
+            Err(e) => report.errors.push(format!("{code}: {path}: {}", e.message)),
+            Ok(lexicon) => {
+                for id in lexicon.ids() {
+                    let Some(word) = lexicon.word(id) else {
+                        continue;
+                    };
+                    if let Err(e) = morphology.parse_word(&word.base) {
+                        report
+                            .errors
+                            .push(format!("{code}: {path}: `{id}`: {}", e.reason));
+                    }
+                }
+            }
         }
-        let tail: String = chars[start..].iter().collect();
-        if let Some((word, marks)) = list.get_key_value(&tail)
-            && !marks.is_empty()
+    }
+}
+
+fn check_dialogue(code: &str, files: &LangFiles, report: &mut Report) {
+    fn walk(value: &toml::Value, at: &str, code: &str, path: &str, report: &mut Report) {
+        match value {
+            toml::Value::String(s) => {
+                for (role, form) in slots(&Template::Line(Line::parse(s))) {
+                    if role != KEY_ROLE && !DIALOGUE_FORMS.contains(&lower(&form).as_str()) {
+                        report.errors.push(format!(
+                            "{code}: {path}: {at}: `{{{role}:{form}}}`: dialogue takes the base form only ({})",
+                            DIALOGUE_FORMS.join(", ")
+                        ));
+                    }
+                }
+            }
+            toml::Value::Array(items) => {
+                for (i, v) in items.iter().enumerate() {
+                    walk(v, &format!("{at}[{i}]"), code, path, report);
+                }
+            }
+            toml::Value::Table(t) => {
+                for (k, v) in t {
+                    walk(v, &format!("{at}.{k}"), code, path, report);
+                }
+            }
+            _ => {}
+        }
+    }
+    for (path, text) in files.under("dialogue") {
+        match toml::from_str::<toml::Table>(text) {
+            Err(e) => report
+                .errors
+                .push(format!("{code}: {path}: {}", e.message())),
+            Ok(table) => {
+                for (k, v) in &table {
+                    walk(v, k, code, path, report);
+                }
+            }
+        }
+    }
+}
+
+/// English ids no source names: `msg::<file>::<ID>` nowhere under `crates/`.
+fn unused_ids(langs: &BTreeMap<String, LangFiles>) -> Vec<String> {
+    let Some(english) = langs.get(ENGLISH) else {
+        return Vec::new();
+    };
+    let mut source = String::new();
+    collect_rs(&workspace_root().join("crates"), &mut source);
+    let mut out = Vec::new();
+    let mut report = Report::default();
+    for (file, items) in parse_templates(ENGLISH, english, &mut report) {
+        let Some(stem) = file.strip_prefix("messages/") else {
+            continue;
+        };
+        for name in items.keys() {
+            let constant = format!("msg::{stem}::{}", name.to_uppercase());
+            if !source.contains(&constant) {
+                out.push(format!("en: {file}/{name}: no code names `{constant}`"));
+            }
+        }
+    }
+    out
+}
+
+fn collect_rs(dir: &Path, into: &mut String) {
+    let Ok(entries) = fs::read_dir(dir) else {
+        return;
+    };
+    for entry in entries.flatten() {
+        let path = entry.path();
+        if path.is_dir() {
+            collect_rs(&path, into);
+        } else if path.extension().is_some_and(|e| e == "rs")
+            && let Ok(text) = fs::read_to_string(&path)
         {
-            return Some((word.as_str(), marks.as_slice()));
+            into.push_str(&text);
         }
     }
-    None
+}
+
+/// The files of `lang` with `of` written (every entry lacking one; with `restamp`, the stale
+/// ones too), as `(path, new text)` for the files that changed.
+pub fn stamp(
+    english: &LangFiles,
+    lang: &LangFiles,
+    restamp: bool,
+) -> Result<Vec<(String, String)>, String> {
+    let mut report = Report::default();
+    let source = parse_templates(ENGLISH, english, &mut report);
+    if let Some(e) = report.errors.first() {
+        return Err(e.clone());
+    }
+    let mut changed = Vec::new();
+    for (folder, stem, text) in template_files(lang) {
+        let path = format!("{folder}/{stem}.toml");
+        let entries = parse_file(folder, &stem, text)?;
+        let key = format!("{folder}/{stem}");
+        let mut wanted = BTreeMap::new();
+        for (name, entry) in &entries {
+            let Some(src) = source.get(&key).and_then(|f| f.get(name)) else {
+                continue;
+            };
+            let stale = entry.of.as_deref().is_some_and(|o| o != src.hash);
+            if entry.of.is_none() || (stale && restamp) {
+                wanted.insert(name.clone(), src.hash.clone());
+            }
+        }
+        if wanted.is_empty() {
+            continue;
+        }
+        let new = stamp_text(text, &wanted).map_err(|e| format!("{path}: {e}"))?;
+        // The result must read back as the same entries with the new hashes.
+        let again = parse_file(folder, &stem, &new)
+            .map_err(|e| format!("{path}: stamping broke the file: {e}"))?;
+        for (name, hash) in &wanted {
+            if again.get(name).and_then(|e| e.of.as_deref()) != Some(hash) {
+                return Err(format!(
+                    "{path}: [{name}] was not stamped: put it in a [table] by hand"
+                ));
+            }
+        }
+        changed.push((path, new));
+    }
+    Ok(changed)
+}
+
+/// Writes `of = "<hash>"` for each named entry by editing lines, so comments and layout stay.
+/// A `[name]` table gets (or has replaced) an `of` line after its header; a plain
+/// `name = "text"` line becomes `name = { text = "text", of = "<hash>" }`.
+fn stamp_text(text: &str, wanted: &BTreeMap<String, String>) -> Result<String, String> {
+    let mut out: Vec<String> = Vec::new();
+    let mut in_table = false; // after any header
+    let mut replacing: Option<String> = None; // an entry table whose own `of` line is replaced
+    for line in text.lines() {
+        let trimmed = line.trim();
+        if trimmed.starts_with('[')
+            && !trimmed.starts_with("[[")
+            && let Some(name) = trimmed[1..].split(']').next()
+        {
+            in_table = true;
+            replacing = None;
+            out.push(line.to_string());
+            let name = name.trim();
+            if !name.contains('.')
+                && let Some(hash) = wanted.get(name)
+            {
+                if body_has_of(text, line) {
+                    replacing = Some(hash.clone());
+                } else {
+                    out.push(format!("of = \"{hash}\""));
+                }
+            }
+            continue;
+        }
+        if let Some(hash) = &replacing
+            && trimmed
+                .strip_prefix("of")
+                .is_some_and(|r| r.trim_start().starts_with('='))
+        {
+            out.push(format!("of = \"{hash}\""));
+            replacing = None;
+            continue;
+        }
+        if !in_table
+            && let Some((key, value)) = trimmed.split_once('=')
+            && let Some(hash) = wanted.get(key.trim())
+        {
+            out.push(stamp_value(key.trim(), value.trim(), hash)?);
+            continue;
+        }
+        out.push(line.to_string());
+    }
+    let mut joined = out.join("\n");
+    if text.ends_with('\n') {
+        joined.push('\n');
+    }
+    Ok(joined)
+}
+
+/// Whether the table opened by `header` (a line of `text`) has its own `of` line.
+fn body_has_of(text: &str, header: &str) -> bool {
+    let mut seen = false;
+    for line in text.lines() {
+        let t = line.trim();
+        if seen {
+            if t.starts_with('[') {
+                return false;
+            }
+            if t.strip_prefix("of")
+                .is_some_and(|r| r.trim_start().starts_with('='))
+            {
+                return true;
+            }
+        } else if line == header {
+            seen = true;
+        }
+    }
+    false
+}
+
+fn stamp_value(key: &str, value: &str, hash: &str) -> Result<String, String> {
+    if let Some(inner) = value.strip_prefix('{').and_then(|v| v.strip_suffix('}')) {
+        // An inline table stamped before: replace its `of`, or add one.
+        return Ok(match inner.find("of = \"") {
+            Some(at) => {
+                let start = at + 6;
+                let end = inner[start..].find('"').map_or(inner.len(), |e| start + e);
+                format!("{key} = {{{}{hash}{}}}", &inner[..start], &inner[end..])
+            }
+            None => format!("{key} = {{{}, of = \"{hash}\" }}", inner.trim_end()),
+        });
+    }
+    let balanced = value.matches('[').count() == value.matches(']').count();
+    if !balanced || value.is_empty() {
+        return Err(format!(
+            "`{key}` spans lines: put it in a [{key}] table by hand"
+        ));
+    }
+    Ok(format!("{key} = {{ text = {value}, of = \"{hash}\" }}"))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn args(words: &[&str]) -> Vec<String> {
+        words.iter().map(|w| w.to_string()).collect()
+    }
+
+    #[test]
+    fn the_fi_tools_parse_their_own_arguments() {
+        let forms = parse_mode(&args(&["--forms", "fi", "miekka"])).unwrap();
+        assert!(matches!(forms.mode, Mode::Forms { ref words } if words == &["miekka"]));
+        let suggest = parse_mode(&args(&["--suggest", "fi", "k.xml", "pöytä"])).unwrap();
+        assert!(
+            matches!(suggest.mode, Mode::Suggest { ref kotus, ref words }
+            if kotus == Path::new("k.xml") && words == &["pöytä"])
+        );
+        assert!(parse_mode(&args(&["--forms", "sv"])).is_err());
+        assert!(parse_mode(&args(&["--suggest", "fi"])).is_err());
+        assert!(parse_mode(&args(&["--forms"])).is_err());
+        assert!(matches!(
+            parse_mode(&args(&["--check"])).unwrap().mode,
+            Mode::Check { .. }
+        ));
+    }
+
+    const EN_LANG: &str = "name = \"English\"\ncode = \"en\"\nmorphology = \"en\"\n";
+    const EN_MSG: &str =
+        "hit = \"{actor:The} hit{actor:s} {target:the}.\"\nlocked = \"The door is locked.\"\n";
+
+    fn lang(files: &[(&str, &str)]) -> LangFiles {
+        LangFiles {
+            files: files
+                .iter()
+                .map(|(p, t)| (p.to_string(), t.to_string()))
+                .collect(),
+        }
+    }
+
+    /// English plus a second language `xx` (the English module, so the forms are known).
+    fn world(xx: &[(&str, &str)]) -> BTreeMap<String, LangFiles> {
+        let mut langs = BTreeMap::new();
+        langs.insert(
+            "en".to_string(),
+            lang(&[("lang.toml", EN_LANG), ("messages/combat.toml", EN_MSG)]),
+        );
+        let mut files = vec![(
+            "lang.toml",
+            "name = \"xx\"\ncode = \"xx\"\nmorphology = \"en\"\nfallback = \"en\"\n",
+        )];
+        files.extend_from_slice(xx);
+        langs.insert("xx".to_string(), lang(&files));
+        langs
+    }
+
+    fn hit_hash() -> String {
+        fnv6("{actor:The} hit{actor:s} {target:the}.")
+    }
+
+    fn errors(langs: &BTreeMap<String, LangFiles>) -> Vec<String> {
+        check(langs, &[]).errors
+    }
+
+    #[test]
+    fn the_shipped_english_is_clean() {
+        let langs = load(&workspace_root().join("assets/lang")).expect("loads");
+        let report = check(&langs, &[]);
+        assert!(report.errors.is_empty(), "{:?}", report.errors);
+    }
+
+    #[test]
+    fn a_complete_stamped_translation_is_clean() {
+        let xx = format!(
+            "[hit]\nof = \"{}\"\ntext = \"{{actor:The}} osuu.\"\n\n[locked]\nof = \"{}\"\ntext = \"Lukossa.\"\n",
+            hit_hash(),
+            fnv6("The door is locked.")
+        );
+        let langs = world(&[("messages/combat.toml", &xx)]);
+        let report = check(&langs, &["xx".to_string()]);
+        assert!(report.errors.is_empty(), "{:?}", report.errors);
+        assert!(report.warnings.is_empty());
+    }
+
+    #[test]
+    fn missing_ids_warn_and_fail_when_strict() {
+        let langs = world(&[("messages/combat.toml", "")]);
+        let report = check(&langs, &[]);
+        assert!(report.errors.is_empty());
+        assert_eq!(report.warnings.len(), 2, "{:?}", report.warnings);
+        let strict = check(&langs, &["xx".to_string()]);
+        assert_eq!(strict.errors.len(), 2);
+    }
+
+    #[test]
+    fn a_stale_or_unstamped_entry_is_an_error() {
+        let xx = "[hit]\nof = \"000000\"\ntext = \"Osuu.\"\n\n[locked]\ntext = \"Lukossa.\"\n";
+        let e = errors(&world(&[("messages/combat.toml", xx)]));
+        assert!(
+            e.iter().any(|m| m.contains("hit") && m.contains("stale")),
+            "{e:?}"
+        );
+        assert!(
+            e.iter()
+                .any(|m| m.contains("locked") && m.contains("no `of`")),
+            "{e:?}"
+        );
+    }
+
+    #[test]
+    fn unknown_roles_forms_and_ids_are_errors() {
+        let xx = format!(
+            "[hit]\nof = \"{}\"\ntext = \"{{victim:the}} {{actor:genitive}}\"\n\n[extra]\ntext = \"x\"\n",
+            hit_hash()
+        );
+        let e = errors(&world(&[("messages/combat.toml", &xx)]));
+        assert!(
+            e.iter().any(|m| m.contains("unknown role `victim`")),
+            "{e:?}"
+        );
+        assert!(
+            e.iter().any(|m| m.contains("unknown form `genitive`")),
+            "{e:?}"
+        );
+        assert!(
+            e.iter()
+                .any(|m| m.contains("extra") && m.contains("no such id")),
+            "{e:?}"
+        );
+    }
+
+    #[test]
+    fn a_template_that_does_not_parse_is_an_error() {
+        let e = errors(&world(&[(
+            "messages/combat.toml",
+            "[hit]\nby = \"nodot\"\n",
+        )]));
+        assert!(
+            e.iter().any(|m| m.contains("messages/combat.toml")),
+            "{e:?}"
+        );
+        let e = errors(&world(&[("messages/combat.toml", "hit = = \n")]));
+        assert!(
+            e.iter().any(|m| m.contains("messages/combat.toml")),
+            "{e:?}"
+        );
+    }
+
+    #[test]
+    fn a_lexicon_word_the_module_refuses_is_an_error() {
+        let e = errors(&world(&[(
+            "lexicon/creatures.toml",
+            "goblin = \"\"\nrat = \"rotta\"\n",
+        )]));
+        assert!(e.iter().any(|m| m.contains("goblin")), "{e:?}");
+        assert!(!e.iter().any(|m| m.contains("`rat`")), "{e:?}");
+    }
+
+    #[test]
+    fn dialogue_asks_for_the_base_form_only() {
+        let e = errors(&world(&[(
+            "dialogue/ceaptun.toml",
+            "[greeting]\nline = \"Hei {player:Name}, {thing:plural} ja {x:the}\"\n",
+        )]));
+        assert!(e.iter().any(|m| m.contains("{thing:plural}")), "{e:?}");
+        assert!(!e.iter().any(|m| m.contains("Name}")), "{e:?}");
+        assert!(!e.iter().any(|m| m.contains("{x:the}")), "{e:?}");
+    }
+
+    #[test]
+    fn a_ui_entry_wider_than_its_width_is_an_error() {
+        let mut langs = world(&[]);
+        langs.get_mut("en").unwrap().files.insert(
+            "ui/menu.toml".into(),
+            "[title]\ntext = \"Inventory of the {who:bare}\"\nwidth = 10\n\n[ok]\ntext = \"OK\"\nwidth = 4\n"
+                .into(),
+        );
+        let e = errors(&langs);
+        assert_eq!(e.iter().filter(|m| m.contains("wider")).count(), 1, "{e:?}");
+        assert!(e.iter().any(|m| m.contains("ui/menu/title")), "{e:?}");
+    }
+
+    #[test]
+    fn stamping_writes_the_hash_and_keeps_comments() {
+        let xx = "# the plain ones first\nlocked = \"Lukossa.\"\n\n# the table\n[hit]\ntext = \"Osuu.\"\n";
+        let langs = world(&[("messages/combat.toml", xx)]);
+        let changed = stamp(&langs["en"], &langs["xx"], false).expect("stamps");
+        assert_eq!(changed.len(), 1);
+        let new = &changed[0].1;
+        assert!(new.contains("# the plain ones first") && new.contains("# the table"));
+        assert!(new.contains(&format!("of = \"{}\"", hit_hash())), "{new}");
+        let mut stamped = langs.clone();
+        stamped
+            .get_mut("xx")
+            .unwrap()
+            .files
+            .insert("messages/combat.toml".into(), new.clone());
+        let report = check(&stamped, &["xx".to_string()]);
+        assert!(report.errors.is_empty(), "{:?}\n{new}", report.errors);
+        // Stamping again changes nothing.
+        assert!(
+            stamp(&stamped["en"], &stamped["xx"], true)
+                .expect("again")
+                .is_empty()
+        );
+    }
+
+    #[test]
+    fn restamp_refreshes_stale_entries_only_when_asked() {
+        let xx = "[hit]\nof = \"000000\"\ntext = \"Osuu.\"\n";
+        let langs = world(&[("messages/combat.toml", xx)]);
+        assert!(stamp(&langs["en"], &langs["xx"], false).unwrap().is_empty());
+        let changed = stamp(&langs["en"], &langs["xx"], true).unwrap();
+        assert!(changed[0].1.contains(&hit_hash()) && !changed[0].1.contains("000000"));
+        // An inline table stamped before is refreshed in place.
+        let xx = "locked = { text = \"Lukossa.\", of = \"000000\" }\n";
+        let langs = world(&[("messages/combat.toml", xx)]);
+        let changed = stamp(&langs["en"], &langs["xx"], true).unwrap();
+        assert!(
+            changed[0].1.contains(&fnv6("The door is locked.")),
+            "{}",
+            changed[0].1
+        );
+    }
+
+    #[test]
+    fn the_hash_is_six_hex_and_ignores_of_and_width() {
+        assert_eq!(fnv6("a").len(), 6);
+        assert_ne!(fnv6("a"), fnv6("b"));
+        let a: toml::Value = toml::from_str("text = \"x\"\nof = \"111111\"\nwidth = 3").unwrap();
+        let b: toml::Value = toml::from_str("text = \"x\"").unwrap();
+        assert_eq!(canonical(&a), canonical(&b));
+    }
 }

@@ -74,7 +74,8 @@ fn stepping_onto_an_altar_names_it_once() {
     step(&mut w, 1);
     assert_eq!(w.messages().len(), before, "plain floor says nothing");
     step(&mut w, 1);
-    let texts: Vec<&str> = w.messages().iter().map(|m| m.text.as_str()).collect();
+    let log = w.messages();
+    let texts: Vec<&str> = log.iter().map(|m| m.text.as_str()).collect();
     let room = texts
         .iter()
         .position(|t| *t == "Your footsteps echo loudly.");
@@ -95,7 +96,8 @@ fn an_altar_is_named_before_what_lies_on_it_in_one_line() {
     let mut w = world_with("floor");
     step(&mut w, 5);
     w.apply(&Action::Move(Dir::SE));
-    let texts: Vec<&str> = w.messages().iter().map(|m| m.text.as_str()).collect();
+    let log = w.messages();
+    let texts: Vec<&str> = log.iter().map(|m| m.text.as_str()).collect();
     assert_eq!(
         texts.last(),
         Some(&"There is an altar here. You see here a silver chalice."),
@@ -213,7 +215,8 @@ fn the_hunters_statue_on_fyrdelf_reads_its_inscription() {
     let player = w.player_mut();
     player.pos = beside;
     w.apply(&Action::Wait);
-    let said: Vec<&str> = (w.messages().iter())
+    let log = w.messages();
+    let said: Vec<&str> = (log.iter())
         .map(|m| m.text.as_str())
         .filter(|t| t.starts_with("There is a worn statue here."))
         .collect();
@@ -263,9 +266,8 @@ fn row_world() -> World {
 fn step_says(w: &mut World) -> String {
     let before = w.messages().len();
     step(w, 1);
-    let said: Vec<&str> = (w.messages().iter().skip(before))
-        .map(|m| m.text.as_str())
-        .collect();
+    let log = w.messages();
+    let said: Vec<&str> = (log.iter().skip(before)).map(|m| m.text.as_str()).collect();
     assert_eq!(said.len(), 1, "one line per arrival: {said:?}");
     said[0].to_string()
 }

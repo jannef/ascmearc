@@ -482,7 +482,7 @@ fn a_long_craft_amid_chatter_asks_for_no_more() {
     let app = start(&case, content.clone());
     assert_eq!(*app.world().resource::<InputMode>(), InputMode::Normal);
     let game = app.world().resource::<Game>();
-    let texts: Vec<&str> = game.unread().iter().map(|m| m.text.as_str()).collect();
+    let texts = game.unread();
     let chatter = game.unread().iter().filter(|m| m.passing).count();
     assert!(chatter >= 3, "chatter during the work: {texts:?}");
     check_with(&case, content);

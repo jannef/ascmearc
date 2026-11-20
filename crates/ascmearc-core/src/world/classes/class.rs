@@ -145,8 +145,9 @@ impl World {
         if news {
             for id in given {
                 let def = content.talents().get(id);
-                self.news.push(format!("You gain {}.", def.name));
-                self.news.extend(handed_news(def));
+                self.news.push(format!("You gain {}.", def.name).into());
+                self.news
+                    .extend(handed_news(def).into_iter().map(crate::lang::Msg::from));
             }
         }
     }

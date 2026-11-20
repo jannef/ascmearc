@@ -243,7 +243,8 @@ fn a_lullaby_replays_and_restores() {
         replay.push(&action, &w);
     }
     // The two songs, one message line counted twice.
-    let sang = (w.messages().iter()).find(|m| m.text == "You sing a lullaby.");
+    let log = w.messages();
+    let sang = (log.iter()).find(|m| m.text == "You sing a lullaby.");
     assert_eq!(sang.map(|m| m.count), Some(2));
     let verified = Replay::from_json(&replay.to_json())
         .expect("json")

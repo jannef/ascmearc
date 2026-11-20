@@ -10,6 +10,7 @@ use crate::perception::Freshness;
 use crate::rng::Rng;
 use crate::stats::{PerStat, Stats};
 use crate::talent::{OffenceEffect, VigourEffect};
+use crate::test_support::spoken;
 use crate::test_support::{CONTENT as BUILTIN, said};
 use crate::time::Duration;
 use crate::world::*;
@@ -433,7 +434,7 @@ fn gatekeeper_blows(stance: crate::content::CombatStance, approaches: u32) -> u3
         // The arena's corner is dark: the blow at something unseen is told, not shown.
         w.news.clear();
         w.step_up(foe, from, &mut Vec::new());
-        struck += u32::from(w.news.iter().any(|m| m.starts_with("You ")));
+        struck += u32::from(spoken(&w, &w.news).iter().any(|m| m.starts_with("You ")));
     }
     struck
 }

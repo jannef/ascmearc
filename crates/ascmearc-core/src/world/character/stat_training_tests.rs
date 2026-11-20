@@ -12,6 +12,7 @@ use crate::dump::{self, Layer};
 use crate::skills::Use;
 use crate::stats::{PerStat, Stat, Stats};
 use crate::test_support::draws;
+use crate::test_support::spoken;
 use crate::test_support::{CONTENT as BUILTIN, plain_marks, run, said};
 use crate::time::{DAWN, DAY};
 use crate::world::*;
@@ -284,7 +285,7 @@ fn past_the_potential_the_price_ramps_and_a_rise_leaves_the_potential() {
     }
     assert!((330..385).contains(&below), "about 89 %: {below}");
     assert!((160..240).contains(&at), "about 50 %: {at}");
-    assert!(w.news.contains(&"You feel quicker.".to_string()));
+    assert!(spoken(&w, &w.news).contains(&"You feel quicker.".to_string()));
 }
 
 #[test]

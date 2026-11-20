@@ -6,6 +6,7 @@ use super::class_active_tests::{at_normal_speed, beside, reach, world};
 use crate::content::{Build, ResourceId};
 use crate::replay::Replay;
 use crate::stats::Stat;
+use crate::test_support::spoken;
 use crate::test_support::{builtin, last, run};
 use crate::world::character::alignment::Deed;
 use crate::world::*;
@@ -110,7 +111,11 @@ fn a_sin_empties_zeal() {
     assert_eq!(held(&w), Some(7), "a good deed leaves it");
     w.shift_alignment(player, -20, Deed::Theft);
     assert_eq!(held(&w), Some(0));
-    assert!(w.notes.iter().any(|n| n == "Your zeal deserts you."));
+    assert!(
+        spoken(&w, &w.notes)
+            .iter()
+            .any(|n| n == "Your zeal deserts you.")
+    );
     // It bars nothing: the pool fills again.
     assert!(w.state.player().resources.has(zeal(&w)));
 }

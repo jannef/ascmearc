@@ -381,11 +381,11 @@ fn an_overworld_step_while_starving_says_nothing_for_each_hit_point() {
     let mut w = world_in(&content, "world");
     set_nutrition(&mut w, -1);
     let hp = w.state.player().hp;
-    let before = w.messages().iter().count();
+    let before = w.messages().len();
     let out = w.apply(&Action::Move(Dir::E));
     assert!(out.elapsed >= Duration::minutes(15));
     assert!(w.state.player().hp < hp, "it costs hit points");
-    assert_eq!(w.messages().iter().count(), before);
+    assert_eq!(w.messages().len(), before);
 }
 
 #[test]

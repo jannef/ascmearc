@@ -54,7 +54,7 @@ impl fmt::Display for ParseError {
 impl std::error::Error for ParseError {}
 
 /// A language's grammar, as far as the renderer needs it.
-pub trait Morphology: fmt::Debug {
+pub trait Morphology: fmt::Debug + Send + Sync {
     /// The forms this language knows, by name (`the`, `s`, `ill`, `counted`): the checker's list.
     /// `bare` (the lemma, the head and its modifiers with no article) is in every language's.
     fn forms(&self) -> Vec<String>;

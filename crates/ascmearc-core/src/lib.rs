@@ -45,6 +45,7 @@ pub mod magic;
 pub mod mana;
 pub mod mapgen;
 pub mod messages;
+pub mod msg;
 pub mod noise;
 pub mod object;
 pub mod perception;
