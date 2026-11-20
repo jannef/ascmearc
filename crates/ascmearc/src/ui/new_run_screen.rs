@@ -13,6 +13,7 @@ use super::chargen_screen::ScenarioPick;
 use super::cursor;
 use super::menu::{HINTS, Nav, Panel, Press, wrap};
 use super::screens::{MenuChoice, ScreenAction, ScreenName};
+use super::text::{new_run_screen as T, ui, ui_with};
 use super::{TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use ascmearc_core::character::CharacterSpec;
@@ -187,11 +188,11 @@ impl NewRunScreen {
             .unwrap_or(0);
         let first = (at + 1).saturating_sub(room);
         let shown = self.rows.len().min(room);
-        let panel = Panel::new(console, " New run ", 60, h);
+        let panel = Panel::new(console, &format!(" {} ", ui(T::TITLE)), 60, h);
         let x = panel.inner_x();
         let mut y = panel.y + 2;
         if self.scenarios.is_empty() {
-            console.print(x, y, "No scenarios are installed.", TEXT);
+            console.print_in(x, y, &ui(T::NONE), TEXT, panel.inner_w());
         }
         for row in self.rows.iter().skip(first).take(shown) {
             match row {
@@ -215,30 +216,37 @@ impl NewRunScreen {
         if let (Some(info), Some(text)) = (self.scenarios.get(self.selected), field) {
             y += 1;
             let (seed, color) = if text.is_empty() {
-                (format!("(default: {})", info.seed), TEXT_DIM)
+                (
+                    ui_with(T::SEED_DEFAULT, &[("seed", info.seed.to_string().into())]),
+                    TEXT_DIM,
+                )
             } else {
                 (text.clone(), TEXT)
             };
-            console.print(x + 2, y, "Seed: [", TEXT);
-            let printed = console.print(x + 9, y, &seed, color);
-            console.print(x + 9 + printed, y, "_]", TEXT);
-            console.print(
+            let label = ui(T::SEED_LABEL);
+            console.print(x + 2, y, &label, TEXT);
+            let at = x + 2 + label.chars().count() as i32;
+            let printed = console.print(at, y, &seed, color);
+            console.print(at + printed, y, "_]", TEXT);
+            console.print_in(
                 x + 2,
                 y + 1,
-                "Type a number or a word to set a seed.",
+                &ui(T::SEED_HINT),
                 TEXT_DIM,
+                panel.inner_w() - 2,
             );
         }
         let keys = HINTS;
         let next = if self.creates_characters {
-            "next"
+            T::NEXT
         } else {
-            "start"
+            T::START
         };
         let footer = format!(
-            "{} scenario   {} {next}   Esc back",
-            keys.up_down(),
-            keys.confirm
+            "{}   {}   {}",
+            ui_with(T::CHOOSE, &[("keys", keys.up_down().into())]),
+            ui_with(next, &[("confirm", keys.confirm.to_string().into())]),
+            ui(T::BACK),
         );
         panel.footer(console, &footer);
     }

@@ -13,6 +13,7 @@
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::{ScreenAction, ScreenName};
+use super::text::{profession_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::Bindings;
 use crate::render::console::Console;
@@ -100,7 +101,7 @@ impl ProfessionScreen {
             })
             .collect();
         let recipes = PagedList::grouped(rows, |class| match class {
-            None => "Work".to_string(),
+            None => ui(T::WORK),
             Some(class) => content.item_class(class).name.clone(),
         });
         Self {
@@ -191,7 +192,10 @@ impl ProfessionScreen {
         // Rows: margin, the list, a gap, the line under it, a gap, the footer, the frame.
         self.fit(console.cols(), console.rows());
         let count = self.recipes.tallest().max(1) as i32;
-        let title = format!(" {}: recipes ", self.title);
+        let title = format!(
+            " {} ",
+            ui_with(T::TITLE, &[("profession", self.title.as_str().into())])
+        );
         let panel = Panel::new(console, &title, WIDTH, count + 7);
         self.recipes.draw_label(console, &panel);
         let x = panel.inner_x();
@@ -205,7 +209,7 @@ impl ProfessionScreen {
             .unwrap_or(0);
         let name_w = NAME_W.max(longest + 5);
         if self.recipes.is_empty() && fits(top) {
-            console.print(x + 2, top, "You know no recipe of it.", TEXT_DIM);
+            console.print_in(x + 2, top, &ui(T::NONE), TEXT_DIM, panel.inner_w() - 2);
         }
         for (row, y) in self.recipes.rows().into_iter().zip(top..) {
             if !fits(y) {
@@ -234,30 +238,32 @@ impl ProfessionScreen {
             }
             console.print(x + 2, y, &format!("{letter} - {}", entry.name), color);
             let state_x = x + 2 + name_w;
-            let room = (right - state_x).max(0) as usize;
             let state = entry.why.as_ref().unwrap_or(&entry.takes);
+            let room = (right - state_x).max(0) as usize;
             let state: String = state.chars().take(room).collect();
             console.print(state_x, y, &state, TEXT_DIM);
         }
         // Under the list: what the selected recipe takes, in full.
         let under = panel.y + panel.h - 4;
         if let Some(entry) = self.recipes.selected().filter(|_| fits(under)) {
-            let text = format!("Takes {}.", entry.takes);
-            let text: String = text.chars().take(panel.inner_w().max(0) as usize).collect();
-            console.print(x, under, &text, TEXT_DIM);
+            let text = ui_with(T::TAKES, &[("takes", entry.takes.as_str().into())]);
+            console.print_in(x, under, &text, TEXT_DIM, panel.inner_w());
         }
         let keys = HINTS;
-        let confirm = &keys.confirm;
+        let confirm = ("confirm", keys.confirm.to_string().into());
         let choose = match self.recipes.last_letter() {
-            Some('a') => format!("a or {confirm}"),
-            Some(last) => format!("a-{last} or {confirm}"),
-            None => confirm.to_string(),
+            Some('a') => ui_with(T::MAKE_A, &[confirm]),
+            Some(last) => ui_with(
+                T::MAKE_LETTERS,
+                &[("last", last.to_string().into()), confirm],
+            ),
+            None => keys.confirm.to_string(),
         };
         let page = (self.recipes.hint(&keys)).map_or(String::new(), |hint| format!("{hint}   "));
         if self.recipes.is_empty() {
-            panel.footer(console, "Esc back");
+            panel.footer(console, &ui(T::BACK));
         } else {
-            panel.footer(console, &format!("{choose} make   {page}Esc back"));
+            panel.footer(console, &format!("{choose}   {page}{}", ui(T::BACK)));
         }
     }
 }

@@ -21,6 +21,7 @@ use super::chargen_screen::{Draft, WIDTH};
 use super::menu::{HINTS, Nav, Panel, Press, truncated};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::{ScreenAction, ScreenName};
+use super::text::{chargen_talents_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use ascmearc_core::World;
@@ -196,19 +197,16 @@ impl ChargenTalentsScreen {
                 done,
             };
             if self.left() == 0 {
-                items.push((
-                    Group::Chance,
-                    row("Done", "Go on with these talents.", true),
-                ));
+                items.push((Group::Chance, row(&ui(T::DONE), &ui(T::DONE_HINT), true)));
             }
             items.push((
                 Group::Chance,
-                row("Random", "Let chance pick your talents.", false),
+                row(&ui(T::RANDOM), &ui(T::RANDOM_HINT), false),
             ));
         }
         self.entries = PagedList::grouped(items, |group| match group {
             Group::Tree(tree) => book.tree(tree).name.clone(),
-            Group::Chance => "Chance".into(),
+            Group::Chance => ui(T::CHANCE),
         });
         let at = (self.entries.iter()).position(|e| e.talent.is_some() && e.talent == selected);
         if let Some(at) = at {
@@ -316,10 +314,8 @@ impl ChargenTalentsScreen {
             return ScreenAction::Stay;
         }
         if self.left() == 0 {
-            self.notice = Some(format!(
-                "You have chosen {} talents: unmark one first.",
-                self.count
-            ));
+            let count = ("count", i64::from(self.count).into());
+            self.notice = Some(ui_with(T::CHOSEN_ALL, &[count]));
             return ScreenAction::Stay;
         }
         let Some(way) = entry.ways.first().cloned() else {
@@ -328,7 +324,10 @@ impl ChargenTalentsScreen {
         self.picks.push(way);
         if !self.holds() {
             self.picks.pop();
-            self.notice = Some(format!("You cannot take {} yet.", entry.name));
+            self.notice = Some(ui_with(
+                T::CANNOT_TAKE,
+                &[("name", entry.name.as_str().into())],
+            ));
             return ScreenAction::Stay;
         }
         self.choosing = None;
@@ -353,20 +352,25 @@ impl ChargenTalentsScreen {
         self.fit(console.cols(), console.rows());
         let list = self.list();
         let count = list.tallest().max(1) as i32;
+        let left = |n: i64| ("left", n.into());
         let title = match (&self.free, self.trades) {
-            ((n @ 1.., names), _) => format!(
-                " Choose your free {} (4 of 5): {n} left ",
-                ascmearc_core::text::or_list(names)
-            ),
-            (_, 0) => format!(" Choose your talents (4 of 5): {} left ", self.left()),
-            (_, n) => format!(" Choose a trade (4 of 5): {n} left "),
+            ((n @ 1.., names), _) => {
+                let names = ascmearc_core::text::or_list(names);
+                ui_with(
+                    T::TITLE_FREE,
+                    &[("names", names.into()), left(i64::from(*n))],
+                )
+            }
+            (_, 0) => ui_with(T::TITLE_TALENTS, &[left(self.left() as i64)]),
+            (_, n) => ui_with(T::TITLE_TRADE, &[left(i64::from(n))]),
         };
+        let title = format!(" {title} ");
         let panel = Panel::new(console, &title, WIDTH, count + EXTRA);
         list.draw_label(console, &panel);
         let (x, top) = (panel.inner_x(), panel.y + 2);
         let fits = |y: i32| y < panel.y + panel.h - 2;
         if list.is_empty() && fits(top) {
-            console.print(x + 2, top, "There are no talents to choose.", TEXT_DIM);
+            console.print_in(x + 2, top, &ui(T::NONE), TEXT_DIM, panel.inner_w() - 2);
         }
         let name_w = (list.iter().map(|e| e.name.chars().count()).max()).unwrap_or(0) as i32;
         let cursor = list.cursor();
@@ -413,11 +417,12 @@ impl ChargenTalentsScreen {
             }
         }
         let keys = HINTS;
-        let mut footer = format!("{} or a letter mark", keys.confirm);
+        let confirm = ("confirm", keys.confirm.to_string().into());
+        let mut footer = ui_with(T::MARK, &[confirm]);
         if let Some(hint) = list.hint(&keys) {
             footer = format!("{footer}   {hint}");
         }
-        footer = format!("{footer}   Esc back");
+        footer = format!("{footer}   {}", ui(T::BACK));
         panel.footer(console, &footer);
     }
 }
