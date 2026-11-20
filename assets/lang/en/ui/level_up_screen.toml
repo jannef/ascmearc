@@ -1,0 +1,135 @@
+# The level-up screen (`crates/ascmearc/src/ui/level_up_screen.rs`). Ids alphabetical.
+#
+# The keys named in the hint lines are fixed (`a`, `Esc`): translate the words around them.
+# The screen fits each text to its panel: a translation longer than the room is cut with `…`
+# (docs/dev/localization.md "UI text").
+
+# Footer, the levels after this one that have choices too: `levels`, a list ("3, 4").
+[after_list]
+text = "Levels {levels:bare} next"
+
+# Footer, many levels at once: `first` and `last`.
+[after_many]
+text = "Levels {first:bare} to {last:bare} next"
+
+# Footer, one more level: `level`.
+[after_one]
+text = "Level {level:bare} next"
+
+# Footer, the way back from a talent's choices.
+[back]
+text = "Esc back"
+
+# Footer, a letter chooses: `last`, the page's last letter; `confirm`, the key that chooses the
+# `>` row.
+[choose_range]
+text = "a-{last:bare} or {confirm:bare} choose"
+
+[choose_single]
+text = "a or {confirm:bare} choose"
+
+# What a skill's roll gets from your class, when it trains the skill.
+[explain_class]
+text = ", +1 as your class trains it"
+
+# The end of the explanation of a roll.
+[explain_end]
+text = "."
+
+# The roll's halving, `cap`, the value the skill rises by half from.
+[explain_halved]
+text = "; from {cap:bare} on the skill rises by half, rounded up"
+
+# A skill's roll explained: `dice`, what it adds; `marks`, the practice words; `practice`, the die
+# the practice gives.
+[explain_start]
+text = "Rolls {dice:bare}: practice ({marks:bare}) gives {practice:bare}"
+
+# `die`, the biggest die.
+[explain_own]
+text = ", one die up to {die:bare} as your class's own skill"
+
+[explain_race]
+text = ", +1 as your race trains it"
+
+[explain_trade]
+text = ", one die up to {die:bare} as your trade"
+
+# The title of the screen with nothing due.
+[title]
+text = "Level up"
+
+# The frame's title parts, joined with a dot: `n`, how many.
+[title_bonus]
+text = "Bonus talent {n:bare}"
+
+[title_free]
+text = "Free talent {n:bare}"
+
+[title_level]
+text = "Level {level:bare}"
+
+[title_rolls]
+text = "Skill rolls {n:bare}"
+
+[title_talent]
+text = "Talent {n:bare}"
+
+# What Esc says while rolls are left: `n`, how many.
+[left_roll]
+text = "You have a skill roll to spend."
+
+[left_rolls]
+text = "You have {n:bare} skill rolls to spend."
+
+# What Esc says while a talent is due.
+[left_talent]
+text = "You must choose a talent first."
+
+# A skill's marks.
+[marks_many]
+text = "{n:bare} marks"
+
+[marks_none]
+text = "no marks"
+
+[marks_one]
+text = "1 mark"
+
+# The list has no rows.
+[nothing]
+text = "There is nothing to choose."
+
+# Footer, a letter rolls: as `choose_range`.
+[roll_range]
+text = "a-{last:bare} or {confirm:bare} roll"
+
+[roll_single]
+text = "a or {confirm:bare} roll"
+
+# The header of the skills.
+[skills]
+text = "Skills"
+
+# Where a level's rolls come from: `total`, how many; `from`, the sources, a list.
+[sources_many]
+text = "{total:bare} skill rolls a level: {from:bare}"
+
+[sources_one]
+text = "{total:bare} skill roll a level: {from:bare}"
+
+# One source and its rolls: `source`, its name; `n`, its rolls.
+[source]
+text = "{source:bare} {n:bare}"
+
+[source_class]
+text = "class"
+
+[source_intelligence]
+text = "Intelligence"
+
+[source_race]
+text = "race"
+
+[source_talents]
+text = "talents"

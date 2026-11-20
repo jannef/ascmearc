@@ -1,0 +1,57 @@
+# The death screen (`crates/ascmearc/src/ui/death_screen.rs`). Ids alphabetical.
+#
+# The epitaph is lines the screen centres: each is one line of it, in the order read. The screen
+# fits each text to its panel (docs/dev/localization.md "UI text").
+
+# The cause, a status without words of its own: `status`, its name.
+[died_of]
+text = "Died of {status:bare}"
+
+# The footer: `confirm`, the key that leaves.
+[footer]
+text = "{confirm:bare} or Esc  main menu"
+
+# The epitaph's lines: `name`, the titled name; `class`, the class words; `by`, the cause;
+# `place`; `date` and `time`; `n`, turns; `level`.
+[epitaph_by]
+text = "{by:bare},"
+
+[epitaph_class]
+text = "{class:bare},"
+
+[epitaph_here_lies]
+text = "Here lies {name:bare},"
+
+[epitaph_level]
+text = "You had reached level {level:bare}."
+
+[epitaph_place]
+text = "in {place:bare},"
+
+[epitaph_turn]
+text = "after 1 turn."
+
+[epitaph_turns]
+text = "after {n:bare} turns."
+
+[epitaph_when]
+text = "on {date:bare}, at {time:bare},"
+
+# The cause: `who`, a creature with its article ("a kobold").
+[killed_by]
+text = "Killed by {who:bare}"
+
+[killed_unseen]
+text = "Killed by something you did not see"
+
+[nothing]
+text = "Nothing has died."
+
+[remembered]
+text = "Remembered in the graveyard."
+
+[run_over]
+text = "Your run is over; its save is gone."
+
+[title]
+text = "Y O U   D I E D"

@@ -1,0 +1,26 @@
+# The story screen (`crates/ascmearc/src/ui/story_screen.rs`). Ids alphabetical.
+#
+# The keys named in the hint lines are fixed (`Esc`): translate the words around them. The screen
+# fits each text to its panel (docs/dev/localization.md "UI text").
+
+# Footer, the way out as the run begins: `confirm`, the key.
+[close_continue]
+text = "{confirm:bare} continue"
+
+[close_esc]
+text = "Esc close"
+
+# Footer, scrolling: `up_down`, the keys.
+[scroll]
+text = "{up_down:bare} scroll"
+
+# The title: `name`, the character's.
+[title_named]
+text = "{name:bare}'s story"
+
+[title_your]
+text = "Your story"
+
+# What the page says for a character without a story.
+[unwritten]
+text = "Your story is not written."

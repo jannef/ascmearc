@@ -8,9 +8,11 @@
 
 use super::menu::{HINTS, Nav, Panel, Press, wrap};
 use super::screens::{MenuChoice, ScreenAction};
+use super::text::{death_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use crate::settings::Clock;
+use ascmearc_core::lang::Arg;
 use ascmearc_core::perception::PerceptionView;
 use ascmearc_core::text::article;
 use ascmearc_core::time::GameTime;
@@ -32,7 +34,7 @@ impl DeathScreen {
     pub fn new(view: Option<&PerceptionView<'_>>) -> Self {
         let Some((view, death)) = view.and_then(|v| v.death().map(|d| (v, d))) else {
             return Self {
-                lines: vec!["Nothing has died.".into()],
+                lines: vec![ui(T::NOTHING)],
                 when: None,
                 remembered: false,
             };
@@ -43,28 +45,32 @@ impl DeathScreen {
             // A status effect killed them: "Bled to death".
             (Some(status), _, _) => {
                 let def = content.status(status);
-                (def.death.clone())
-                    .unwrap_or_else(|| format!("Died of {}", def.name.to_lowercase()))
+                (def.death.clone()).unwrap_or_else(|| {
+                    ui_with(T::DIED_OF, &[("status", def.name.to_lowercase().into())])
+                })
             }
             // Hunger, overeating, or a trap: "Killed by a fireball trap".
             (None, Some(cause), _) => cause.epitaph(content),
             (None, None, Some(creature)) => {
                 let name = &content.creature(creature).name;
-                format!("Killed by {} {name}", article(name))
+                let who = format!("{} {name}", article(name));
+                ui_with(T::KILLED_BY, &[("who", who.into())])
             }
-            (None, None, None) => "Killed by something you did not see".into(),
+            (None, None, None) => ui(T::KILLED_UNSEEN),
         };
         let turns = match death.turn {
-            1 => "after 1 turn".to_string(),
-            n => format!("after {n} turns"),
+            1 => ui(T::EPITAPH_TURN),
+            n => ui_with(T::EPITAPH_TURNS, &[("n", Arg::Number(n as i64))]),
         };
         // "Here lies Brakka, killed by a kobold, ...": the epitaph names the character.
         let mut lines = Vec::new();
         let by = match view.character() {
             Some(c) => {
-                lines.push(format!("Here lies {},", c.titled_name(view.content())));
+                let name = c.titled_name(view.content());
+                lines.push(ui_with(T::EPITAPH_HERE_LIES, &[("name", name.into())]));
                 // "a bard", or "a bard and hunter" once called.
-                lines.push(format!("{},", c.class_phrase(view.content())));
+                let class = c.class_phrase(view.content());
+                lines.push(ui_with(T::EPITAPH_CLASS, &[("class", class.into())]));
                 let mut chars = by.chars();
                 chars
                     .next()
@@ -73,11 +79,14 @@ impl DeathScreen {
             None => by,
         };
         lines.extend([
-            format!("{by},"),
-            format!("in {},", death.place),
+            ui_with(T::EPITAPH_BY, &[("by", by.into())]),
+            ui_with(T::EPITAPH_PLACE, &[("place", death.place.as_str().into())]),
             String::new(),
-            format!("{turns}."),
-            format!("You had reached level {}.", view.own_experience().level),
+            turns,
+            ui_with(
+                T::EPITAPH_LEVEL,
+                &[("level", Arg::Number(i64::from(view.own_experience().level)))],
+            ),
         ]);
         Self {
             lines,
@@ -98,7 +107,11 @@ impl DeathScreen {
         let w = 52;
         let lines = self.lines.iter().map(|line| match &self.when {
             Some((date, time)) if line.is_empty() => {
-                format!("on {date}, at {},", clock.format(*time))
+                let args = [
+                    ("date", date.as_str().into()),
+                    ("time", clock.format(*time).into()),
+                ];
+                ui_with(T::EPITAPH_WHEN, &args)
             }
             _ => line.clone(),
         });
@@ -108,7 +121,7 @@ impl DeathScreen {
         let h = 10 + text.len() as i32 + i32::from(self.remembered);
         let panel = Panel::new(console, "", w, h);
         let cx = |text: &str| panel.x + (panel.w - text.chars().count() as i32) / 2;
-        let title = "Y O U   D I E D";
+        let title = &ui(T::TITLE);
         // Rows from the footer's down would draw over it, or the frame, of a panel cut short.
         let fits = |y: i32| y < panel.y + panel.h - 2;
         let mut y = panel.y + 2;
@@ -128,15 +141,15 @@ impl DeathScreen {
             y += 1;
         }
         y += 1;
-        let gone = "Your run is over; its save is gone.";
+        let gone = &ui(T::RUN_OVER);
         if fits(y) {
             console.print(cx(gone), y, gone, TEXT_DIM);
         }
-        let remembered = "Remembered in the graveyard.";
+        let remembered = &ui(T::REMEMBERED);
         if self.remembered && fits(y + 1) {
             console.print(cx(remembered), y + 1, remembered, TEXT_DIM);
         }
-        let footer = format!("{} or Esc  main menu", HINTS.confirm);
+        let footer = ui_with(T::FOOTER, &[("confirm", Arg::from(HINTS.confirm))]);
         panel.footer(console, &footer);
     }
 }
