@@ -335,7 +335,16 @@ example and `world/combat/` (`messages/combat.toml`) the one whose lines name th
 
 What combat leaves as literal lines, for their own slices: a rank risen and what it teaches
 (`fight.rs::ranks_news`, the data's lines joined), acid's lines (`corrode.rs`, the data's
-`{}`), and how the player died (`fight.rs::Cause::message`, said by `health/`).
+`{}`).
+
+`world/health/` (`messages/health.toml`, L4i) converted `Cause::message` (how the player died, now
+`Cause::message(&World) -> Msg`) with it. It leaves as literal text what the data writes: a
+status's start, end, ward, and stage lines, a disease's recovery line, a corpse's `on_eat` message,
+a treatment's made and failed lines, a skill gift's lines, and a flask's `words`. Text from another
+module's helper (`came_line`, `Hunger::news`) goes in as a text role, or stays literal. A stat's
+comparative ("stronger") and the disease in a sentence ("your wolf's sickness") are text roles
+(`feel`, `more`, `words`) until those words are converted. `health::object_phrase(content, id)`
+builds `object:<id>`; `Lore::title_phrase` is a stack's `title` as a phrase.
 
 When no literal is left, `LITERAL`, the `From` text impls, and this section go.
 

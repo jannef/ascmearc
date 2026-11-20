@@ -283,7 +283,9 @@ fn thrifty_drinker_keeps_potions_by_its_chance_and_draws_only_when_held() {
     w.player_mut().talents.take("thrifty_drinker", None);
     run(&mut w, "eat:a");
     assert_eq!(count(&w, "potion_of_antidote"), 3);
-    assert!(said(&w).contains(&super::potion::KEPT.to_string()));
+    assert!(
+        said(&w).contains(&"There is enough left in the flask for another draught.".to_string())
+    );
     assert!(
         w.state
             .known_scrolls

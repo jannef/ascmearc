@@ -1,0 +1,103 @@
+# Health (`world/health/`): statuses, diseases, healing, hunger, eating, drinking, pipes, flasks, and
+# how the player dies of hunger, choking, or drowning (`Cause::message`, `world/combat/fight.rs`).
+# Ids alphabetical (`docs/dev/localization.md` "Literal lines"). What the data writes (a status's
+# start and end lines, a corpse's `on_eat` message, a rank's text) is still said as literal lines.
+#
+# Roles: `who` is the one a line is about, `what` an item (a phrase built where it is said),
+# `status` a status as it looks ("dazed"), `came` the clause that says what stopped a long action
+# ("A kobold comes into view"), `time` how long it went on ("3 minutes"). `feel`, `more`, `doing`,
+# and `words` are English words from the data, text until that data's text is converted.
+
+blink_elsewhere = "In a blink, you are elsewhere."
+break_free = "You break free."
+# `who`: the one holding you.
+break_free_of = "You break free of {who:the}."
+cannot_consume = "You cannot consume {what:counted}."
+cannot_smoke = "You cannot smoke that."
+# `doing`: what the action is ("reading"); `status`: the status that blocks it, lower case.
+cannot_while = "You cannot {doing:bare} while {status:bare}."
+# A dev action's: `name` the disease's name.
+carry_disease_already = "You carry {name:bare} already (dev)."
+carry_no_such_thing = "You carry no such thing."
+# A dev action's.
+catch_disease = "You catch {name:bare} (dev)."
+choke = "You choke to death on {what:the}..."
+# `more`: the stat's comparative ("stronger").
+could_grow_yet = "You feel you could grow {more:bare} yet."
+crash_of_glass = "You hear a crash of glass."
+die = "You die..."
+draught_kept = "There is enough left in the flask for another draught."
+drink = "You drink the {what:bare}."
+drown = "You drown..."
+# `words`: the disease in a sentence ("the sickness", "your wolf's sickness").
+ease_somewhat = "You ease {words:bare} somewhat."
+eat = "You eat {what:the}."
+eat_your_fill = "You eat your fill; the rest does you no good."
+elixir_no_difference = "You feel no different."
+# `feel`: the stat's comparative ("stronger").
+elixir_rise = "You feel {feel:bare}."
+elixir_rise_yet = "You feel {feel:bare}, and that you could be {feel:bare} yet."
+elixir_yet = "You feel that you could be {feel:bare} yet."
+faint = "You faint from hunger."
+feel_better = "You feel better."
+feel_cleansed = "You feel cleansed."
+feel_healthy = "You feel healthy."
+feel_whole = "You feel whole."
+fills_you = "It fills you as a good meal would."
+# `what`: the stat's word ("strength", "nimbleness").
+gift_passes = "Something of its {what:bare} passes into you."
+hard_time_getting_down = "You have a hard time getting it all down."
+# `who`: a creature; `status`: how the status looks ("dazed").
+is_status = "{who:The} {who:is} {status:bare}."
+it_is = "It is {what:counted}."
+it_was = "It was {what:counted}."
+know_nothing_of_healing = "You know nothing of healing."
+land_lurches = "The land lurches, and holds you where you are."
+light_pipe = "You light your pipe and settle back."
+lurch_stay = "You feel a lurch, but stay where you are."
+mind_clears = "Your mind clears, and power wells up in you."
+mind_feels_clear = "Your mind feels clear."
+no_ally_there = "You have no ally there."
+# A dev action's: `id` as typed.
+no_disease = "There is no disease `{id:bare}`."
+no_fuller = "You feel no fuller."
+no_longer = "{who:The} {who:is} no longer {status:bare}."
+# `words`: the disease in a sentence.
+no_more_for = "You can do no more for {words:bare}."
+no_need_to_eat = "You feel no need to eat."
+# A dev action's: `id` as typed.
+no_status = "There is no status `{id:bare}`."
+no_such_thing_here = "There is no such thing here."
+nothing_left_to_eat = "There is nothing left to eat."
+nothing_like_that_to_treat = "There is nothing like that to treat."
+nothing_more_comes = "Nothing more comes of it."
+nothing_to_treat = "There is nothing to treat."
+# `smoker`: the race that smokes, lower case ("halfling").
+pipe_not_yours = "You cough and splutter: a pipe is a {smoker:bare}'s pleasure."
+pipe_wants_full_belly = "A pipe wants a full belly first."
+potion_shatters = "The potion shatters; the draught soaks away."
+profane_takes_you = "The Profane takes you, and nothing of you is left..."
+put_out_pipe = "You put out your pipe after {time:bare}."
+put_out_pipe_came = "{came:bare}; you put out your pipe after {time:bare}."
+rotten_no_mind = "{what:The} was rotten, but your stomach does not mind."
+smoke_done = "You smoke your pipe to the last of it, and feel wonderfully at ease."
+starve = "You starve to death..."
+# A dev action's: `id` as typed.
+status_comes_of_disease = "`{id:bare}` comes of a disease: try `infect:DISEASE`."
+# A dev action's: `id` as typed, `resource` the resource's id.
+status_comes_of_resource = "`{id:bare}` comes of a resource: try `resource:{resource:bare}`."
+stop_eating = "You stop eating."
+stop_eating_came = "{came:bare}; you stop eating."
+struggle_free = "You struggle, but cannot break free."
+# `who`: the one holding you.
+struggle_held = "You struggle, but {who:the} holds you fast."
+struggle_still = "You struggle, but you are still {status:bare}."
+tastes_foul = "It tastes foul!"
+throw_flask = "You throw the {what:bare}."
+ugh_rotten = "Ugh! {what:The} was rotten."
+vomit = "You vomit!"
+wasting_away = "You are wasting away from hunger."
+water_puts_it_out = "The water would only put it out."
+# `who`: a creature.
+wounds_close = "{who:Poss} wounds close."
+wounds_close_you = "You feel your wounds close."

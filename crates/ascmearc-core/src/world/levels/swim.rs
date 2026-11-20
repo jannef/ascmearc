@@ -105,7 +105,7 @@ impl World {
     }
 
     /// `said`, with no time, if the player is in deep water. Whether they are.
-    pub(in crate::world) fn refused_afloat(&mut self, said: &str) -> bool {
+    pub(in crate::world) fn refused_afloat(&mut self, said: impl Into<crate::lang::Msg>) -> bool {
         let swimming = self.swimming();
         if swimming {
             self.say(said);

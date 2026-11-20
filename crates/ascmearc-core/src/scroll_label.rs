@@ -198,9 +198,14 @@ impl<'a> Lore<'a> {
     /// What `stack` is called as the player knows it, without an article or count: "scroll
     /// labelled ZUNBAR", else [`Stack::title`].
     pub fn title(&self, stack: &Stack) -> String {
+        self.content.english_of(&self.title_phrase(stack), "bare")
+    }
+
+    /// [`Lore::title`] as a phrase, for a message to name `stack` by (`{what:the}`).
+    pub fn title_phrase(&self, stack: &Stack) -> Phrase {
         match self.label_phrase(stack.object) {
-            Some(label) => self.content.english_of(&label, "bare"),
-            None => stack.title(self.content),
+            Some(label) => label,
+            None => stack.title_phrase(self.content),
         }
     }
 
