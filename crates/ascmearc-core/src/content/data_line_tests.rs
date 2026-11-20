@@ -91,6 +91,19 @@ fn a_levels_and_a_branchs_arrival_read_as_the_data_writes_them() {
 }
 
 #[test]
+fn a_professions_lines_read_as_the_data_writes_them() {
+    let content = &CONTENT;
+    let alchemy = content.skill_id("alchemy").expect("alchemy");
+    let text = content
+        .recipes()
+        .profession(alchemy)
+        .expect("Alchemy's lines");
+    let said = |fumbled| said_text(content, profession("alchemy", fumbled));
+    assert_eq!(Some(said(false)), text.failed.clone());
+    assert_eq!(Some(said(true)), text.fumbled.clone());
+}
+
+#[test]
 fn a_line_that_names_a_role_is_refused() {
     let mut files = ContentFiles::builtin();
     let laws = "[summon]\ntag = \"fiend\"\nfirst = \"{who:The} sees.\"\n\

@@ -71,19 +71,23 @@
 //! [`Use::Craft`]: crate::skills::Use::Craft
 
 use super::craft::{
-    RecipeLack, input_fits, known_object, lack, stack_material, stock_only, worked_materials,
+    RecipeLack, input_fits, known_object, lack, stack_material, stock_only, terrain,
+    worked_materials,
 };
 use super::fletch;
 use super::work::{Job, Task, Work};
 use crate::action::{Event, Positions};
 use crate::combat;
+use crate::content::data_line;
 use crate::content::{
     Content, InputKind, MaterialId, ObjectId, PartSource, RecipeCount, RecipeDef, RecipeId,
     RecipeInput, RecipeSettings, RecipeUse, counted,
 };
 use crate::item_parts::{self, ItemPart};
+use crate::lang::{Entry, Msg, Phrase, written_key};
 use crate::magic::Worked;
 use crate::magic::worked::{ammunition_make, aspects};
+use crate::msg;
 use crate::object::Stack;
 use crate::rng::draw;
 use crate::scroll_label::Lore;
@@ -695,14 +699,14 @@ fn resolve(
     player: &Actor,
     recipe: &RecipeDef,
     picks: &[Option<usize>],
-) -> Result<Resolved, String> {
-    let not_yet = || "You cannot make that yet.".to_string();
+) -> Result<Resolved, Msg> {
+    let not_yet = || Msg::from(msg::crafting::CANNOT_MAKE_YET);
     let free = |part| fletch::part_free(content, level, player, recipe, part);
     let steps = steps(content, recipe, free).ok_or_else(not_yet)?;
     let result = recipe.result.as_ref().ok_or_else(not_yet)?;
     let def = content.object(result.object);
     if picks.len() > steps.len() {
-        return Err("That is more than the work takes.".into());
+        return Err(msg::crafting::MORE_THAN_THE_WORK_TAKES.into());
     }
     let yield_percent = failed_percent(content, player);
     let pack = &player.inventory;
@@ -714,7 +718,7 @@ fn resolve(
     for (n, &step) in steps.iter().enumerate() {
         let pick = picks.get(n).copied().flatten();
         let what = label(content, recipe, step);
-        let will_not_do = || format!("That will not do for the {what}.");
+        let will_not_do = || Msg::new(msg::crafting::WILL_NOT_DO).role("what", what.clone());
         let Some(at) = pick else {
             match step {
                 Step::Ornament(_) => continue,
@@ -727,11 +731,13 @@ fn resolve(
                     brittle = true;
                     continue;
                 }
-                _ => return Err(format!("You must choose the {what}.")),
+                _ => return Err(Msg::new(msg::crafting::MUST_CHOOSE).role("what", what)),
             }
         };
-        let stack = pack.get(at).ok_or("You carry no such thing.")?;
-        let stock_spend = |part: usize, material: MaterialId| -> Result<Spend, String> {
+        let stack = pack
+            .get(at)
+            .ok_or(Msg::from(msg::crafting::CARRY_NO_SUCH_THING))?;
+        let stock_spend = |part: usize, material: MaterialId| -> Result<Spend, Msg> {
             let grams = part_grams(content, recipe, part, material).ok_or_else(not_yet)?;
             Ok(Spend {
                 at,
@@ -779,8 +785,8 @@ fn resolve(
                 spends.push(input_spend(at, input, recipe, yield_percent));
             }
             Step::Ornament(_) | Step::Gem(_) => {
-                let (gem, cutting) = (cut_gem(content, stack))
-                    .ok_or_else(|| "Only a cut gem can be set.".to_string())?;
+                let (gem, cutting) =
+                    (cut_gem(content, stack)).ok_or(Msg::from(msg::crafting::ONLY_CUT_GEM))?;
                 spends.push(Spend {
                     at,
                     count: 1,
@@ -829,7 +835,7 @@ fn resolve(
             .map(|s| s.count)
             .sum();
         if pack[spend.at].count < total {
-            return Err("You have too few of those.".into());
+            return Err(msg::crafting::TOO_FEW_OF_THOSE.into());
         }
     }
     let object = match brittle {
@@ -881,12 +887,12 @@ fn taken(
     player: &Actor,
     recipe: &RecipeDef,
     spends: &mut Vec<Spend>,
-) -> Result<(), String> {
+) -> Result<(), Msg> {
     let yield_percent = failed_percent(content, player);
     for input in &recipe.inputs {
         // Stock inputs are chosen, never taken (`steps`).
         let Some(object) = input.object() else {
-            return Err("You cannot make that yet.".into());
+            return Err(msg::crafting::CANNOT_MAKE_YET.into());
         };
         let mut left = input.count;
         for (at, stack) in player.inventory.iter().enumerate() {
@@ -910,8 +916,8 @@ fn taken(
             });
         }
         if left > 0 {
-            let plural = &content.object(object).plural;
-            return Err(format!("You have too few {plural}."));
+            let what = Phrase::id(format!("object:{}", content.object(object).id));
+            return Err(Msg::new(msg::crafting::TOO_FEW).role("what", what));
         }
     }
     Ok(())
@@ -926,6 +932,22 @@ fn made_name(content: &Content, lore: Lore<'_>, made: &Stack, article: bool) -> 
         (false, true) => lore.describe(made),
         (false, false) => lore.title(made),
     }
+}
+
+/// [`made_name`] without an article as a phrase, for the line that begins the work; a batch's
+/// (`batch`) is its names' plural.
+fn made_phrase(content: &Content, lore: Lore<'_>, made: &Stack, batch: bool) -> Phrase {
+    match (batch, lore.label(made.object).is_some()) {
+        (true, _) => lore.names_phrase(made).count(2),
+        (false, true) => made.title_phrase(content),
+        (false, false) => lore.title_phrase(made),
+    }
+}
+
+/// `msg` in English, keys written: the plan's reason why not, which the dialog shows (until a
+/// language can be chosen, L8).
+pub(super) fn english(content: &Content, msg: Msg) -> String {
+    crate::messages::english(content, &Entry::new(0, msg), &written_key)
 }
 
 /// What `recipe` with `picks` would make and use, in words (the module docs), or why not.
@@ -944,7 +966,8 @@ pub(crate) fn craft_plan(
     if let Some(RecipeUse::Enchant(_)) = def.uses {
         return super::enchant::plan(content, lore, player, def, picks);
     }
-    let resolved = resolve(content, lore, level, player, def, picks)?;
+    let resolved =
+        resolve(content, lore, level, player, def, picks).map_err(|why| english(content, why))?;
     let pack = &player.inventory;
     // Stacks of one thing taken together (a brew's herbs from two stacks) are told as one; what
     // goes for each made, then the gem (the ornament, the last step), after them.
@@ -1039,19 +1062,19 @@ impl World {
         let me = self.state.player();
         let level = self.state.current();
         let refused = match lack(&content, self.lore(), level, me, def) {
-            Some(RecipeLack::Skill) => Some("That is beyond your skill.".to_string()),
+            Some(RecipeLack::Skill) => Some(msg::crafting::BEYOND_YOUR_SKILL.into()),
             Some(RecipeLack::Station(t)) => {
-                Some(format!("There is no {} here.", content.terrain(t).name))
+                Some(Msg::new(msg::crafting::NO_STATION_HERE).role("station", terrain(&content, t)))
             }
-            Some(RecipeLack::Knife) => Some("You have no knife.".into()),
-            Some(RecipeLack::Gem) => Some("You have no gem to hand.".into()),
-            Some(RecipeLack::Launcher(o)) => Some(format!(
-                "You have no {} ready.",
-                fletch::launcher_word(&content, o)
-            )),
+            Some(RecipeLack::Knife) => Some(msg::crafting::NO_KNIFE.into()),
+            Some(RecipeLack::Gem) => Some(msg::crafting::NO_GEM_TO_HAND.into()),
+            Some(RecipeLack::Launcher(o)) => Some(
+                Msg::new(msg::crafting::NO_LAUNCHER_READY)
+                    .role("launcher", fletch::launcher_word(&content, o).to_string()),
+            ),
             Some(
                 RecipeLack::Setting | RecipeLack::Nothing | RecipeLack::Room | RecipeLack::Crystal,
-            ) => Some("You cannot make that yet.".into()),
+            ) => Some(msg::crafting::CANNOT_MAKE_YET.into()),
             // The picks say what is missing.
             Some(RecipeLack::Stock(_) | RecipeLack::Input(_)) | None => None,
         };
@@ -1069,16 +1092,15 @@ impl World {
         let level = self.state.current();
         let at = (def.station)
             .and_then(|t| super::craft::station_beside(&content, level, me.pos, t))
-            .and_then(|p| level.terrain_at(p))
-            .map(|t| content.terrain(t).name.clone());
-        let name = match resolved.batch {
-            Some(_) => self.lore().names(&resolved.made).1,
-            None => made_name(&content, self.lore(), &resolved.made, false),
-        };
+            .and_then(|p| level.terrain_at(p));
+        let batch = resolved.batch.is_some();
+        let name = made_phrase(&content, self.lore(), &resolved.made, batch);
         let seconds = fletch::fletcher_seconds(&content, me, def);
         self.say(match at {
-            Some(station) => format!("You set to work on the {name} at the {station}."),
-            None => format!("You set to work on the {name}."),
+            Some(station) => Msg::new(msg::crafting::SET_TO_WORK_AT)
+                .role("what", name)
+                .role("station", terrain(&content, station)),
+            None => Msg::new(msg::crafting::SET_TO_WORK).role("what", name),
         });
         let work = Crafting {
             recipe: id,
@@ -1106,7 +1128,7 @@ impl World {
         let level = self.state.current();
         let player = self.state.player();
         let Ok(resolved) = resolve(&content, self.lore(), level, player, def, work.picks()) else {
-            self.say("You have nothing left to work with.");
+            self.say(msg::crafting::NOTHING_LEFT_TO_WORK_WITH);
             return;
         };
         let modifier = self.craft_modifier(def, resolved.main);
@@ -1165,7 +1187,7 @@ impl World {
         } = resolved;
         self.spend_out(spends, made);
         if made == 0 {
-            self.say("You spoil the whole batch.");
+            self.say(msg::crafting::SPOIL_BATCH);
             return;
         }
         stack.count = made;
@@ -1179,11 +1201,7 @@ impl World {
             stack.set_worked(worked);
         }
         stack.identify();
-        let text = format!(
-            "You make {}.",
-            crate::object::phrase(std::slice::from_ref(&stack), self.lore())
-        );
-        self.say(text);
+        self.say(Msg::new(msg::crafting::YOU_MAKE).role("what", self.lore().phrase(&stack)));
         crate::object::add_to_inventory(&mut self.player_mut().inventory, stack, &content);
     }
 
@@ -1228,12 +1246,10 @@ impl World {
                 .failed_percent
                 >= 100;
             self.say(match (metal && arms, all) {
-                (true, false) => "The blade comes out brittle and you break it up for the metal.",
-                (true, true) => {
-                    "The blade comes out brittle and you break it up for the metal, every ounce."
-                }
-                (false, false) => "The work goes wrong, and you save what you can of it.",
-                (false, true) => "The work goes wrong, but you save every scrap of it.",
+                (true, false) => msg::crafting::BLADE_BRITTLE,
+                (true, true) => msg::crafting::BLADE_BRITTLE_EVERY_OUNCE,
+                (false, false) => msg::crafting::WORK_GOES_WRONG_SAVE,
+                (false, true) => msg::crafting::WORK_GOES_WRONG_EVERY_SCRAP,
             });
             return;
         }
@@ -1268,15 +1284,16 @@ impl World {
         // The maker knows their work, and the type of what they made (a potion's).
         made.identify();
         self.learn_scroll(made.object);
-        let name = self.lore().describe(&made);
+        let name = self.lore().phrase(&made);
         let pack = &mut self.player_mut().inventory;
         crate::object::add_to_inventory(pack, made, &content);
-        self.say(match grade {
-            Grade::Masterwork => format!("You have made {name}!"),
-            Grade::Marvellous => format!("This is {name}!"),
-            Grade::Fine => format!("This is {name}."),
-            Grade::Plain | Grade::Failed => format!("You have made {name}."),
-        });
+        let said = match grade {
+            Grade::Masterwork => msg::crafting::MADE_MASTERWORK,
+            Grade::Marvellous => msg::crafting::MADE_MARVELLOUS,
+            Grade::Fine => msg::crafting::MADE_FINE,
+            Grade::Plain | Grade::Failed => msg::crafting::MADE_PLAIN,
+        };
+        self.say(Msg::new(said).role("what", name));
     }
 }
 
@@ -1286,21 +1303,27 @@ impl World {
     /// object, known for what it is, into the pack.
     fn brew_spoilt(&mut self, skill: crate::skills::SkillId, object: ObjectId, fumbled: bool) {
         let content = self.content.clone();
-        let text = content
-            .recipes()
-            .profession(skill)
-            .and_then(|p| match fumbled {
-                true => p.fumbled.clone().or(p.failed.clone()),
-                false => p.failed.clone(),
-            });
-        self.say(text.unwrap_or_else(|| "The work goes wrong.".into()));
+        // The profession's own line (a line of data), its `fumbled` on a natural 2 where it has
+        // one, else its `failed`.
+        let field = (content.recipes().profession(skill)).and_then(|p| {
+            match (fumbled && p.fumbled.is_some(), p.failed.is_some()) {
+                (true, _) => Some(true),
+                (false, true) => Some(false),
+                (false, false) => None,
+            }
+        });
+        let skill_id = &content.skill(skill).id;
+        self.say(match field {
+            Some(fumbled) => data_line::said(data_line::profession(skill_id, fumbled)),
+            None => msg::crafting::WORK_GOES_WRONG.into(),
+        });
         let mut made = Stack::one(object);
         made.identify();
         self.learn_scroll(object);
-        let name = self.lore().describe(&made);
+        let name = self.lore().phrase(&made);
         let pack = &mut self.player_mut().inventory;
         crate::object::add_to_inventory(pack, made, &content);
-        self.say(format!("You are left with {name}."));
+        self.say(Msg::new(msg::crafting::LEFT_WITH).role("what", name));
     }
 }
 

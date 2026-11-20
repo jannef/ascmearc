@@ -19,10 +19,13 @@
 //! follow the terrain as they do a door's: [`World::set_terrain`] drops the light masks the cell
 //! could change, and perception sees and remembers the rubble like any terrain.
 
+use super::craft::terrain;
 use crate::action::{Breach, Event, MAX_REST};
 use crate::content::StatUse;
 use crate::content::{ActionKind, Content, Effect, LevelKind};
 use crate::geom::{Dir, Pos};
+use crate::lang::{MessageId, Msg};
+use crate::msg;
 use crate::noise::Act;
 use crate::sight::LineOfSight;
 use crate::skills::{Effect as SkillEffect, Use};
@@ -30,6 +33,7 @@ use crate::stats::Stat;
 use crate::talent::TalentMods;
 use crate::text::{article, capitalized};
 use crate::time::Duration;
+use crate::world::combat::fight::word;
 use crate::world::{Ended, LevelState, Spent, World};
 
 /// The work done on a wall is kept in twentieths of a point of hardness, so a dig's work,
@@ -47,16 +51,16 @@ pub fn dig_work(power: u16, strength: u8) -> u32 {
 }
 
 /// What the player is told when they would dig untrained in Mining (#1391).
-pub const UNTRAINED: &str = "You do not know how to mine: that takes the Mining skill.";
+pub const UNTRAINED: MessageId = msg::crafting::UNTRAINED_MINING;
 
 /// Why `digger` cannot dig at all now, in the words the player is told, or `None` when they
 /// can: without a digging tool ready, or untrained in the skill
 /// `data/mining.toml` names (Mining; no rule without that file). The one check, read by
 /// [`World::start_dig`] and by perception ([`crate::PerceptionView::dig_refusal`]), so the
 /// game asks for no direction where the rules would refuse. Creatures do not dig.
-pub fn dig_refusal(digger: &crate::world::Actor, content: &Content) -> Option<&'static str> {
+pub fn dig_refusal(digger: &crate::world::Actor, content: &Content) -> Option<MessageId> {
     if digger.dig_tool(content).is_none() {
-        return Some("You have no digging tool ready.");
+        return Some(msg::crafting::NO_DIGGING_TOOL);
     }
     let skill = content.mining().map(|rules| rules.skill);
     skill
@@ -88,7 +92,7 @@ impl World {
     /// digging tool ready or untrained in Mining ([`dig_refusal`]), on the overworld, and toward
     /// anything that is no wall that breaks.
     pub(in crate::world) fn start_dig(&mut self, dir: Dir) -> Spent {
-        if self.refused_afloat("You cannot dig in deep water.") {
+        if self.refused_afloat(msg::crafting::CANNOT_DIG_IN_DEEP_WATER) {
             return Spent::Nothing;
         }
         let content = self.content.clone();
@@ -99,27 +103,26 @@ impl World {
         }
         let level = self.state.current();
         if level.kind == LevelKind::Overworld {
-            self.say("You cannot dig here.");
+            self.say(msg::crafting::CANNOT_DIG_HERE);
             return Spent::Nothing;
         }
         let at = player.pos.step(dir);
-        let def = match level.terrain.get(at) {
-            Some(t) if !content.terrain(*t).walkable => content.terrain(*t),
+        let wall = match level.terrain.get(at) {
+            Some(&t) if !content.terrain(t).walkable => terrain(&content, t),
             _ => {
-                self.say("There is nothing to dig there.");
+                self.say(msg::crafting::NOTHING_TO_DIG);
                 return Spent::Nothing;
             }
         };
         if !level.breaks_at(&content, at) {
-            self.say(format!("You cannot dig through the {}.", def.name));
+            self.say(Msg::new(msg::crafting::CANNOT_DIG_THROUGH).role("wall", wall));
             return Spent::Nothing;
         }
-        let text = if level.dug.contains_key(&at) {
-            format!("You go on digging at the {}.", def.name)
-        } else {
-            format!("You dig into the {}.", def.name)
+        let said = match level.dug.contains_key(&at) {
+            true => msg::crafting::GO_ON_DIGGING,
+            false => msg::crafting::DIG_INTO,
         };
-        self.say(text);
+        self.say(Msg::new(said).role("wall", wall));
         Spent::Dig(at)
     }
 
@@ -128,7 +131,7 @@ impl World {
     pub(in crate::world) fn dig(&mut self, at: Pos, events: &mut Vec<Event>) {
         let start = self.state.time;
         let wall = self.state.current().terrain.get(at).copied();
-        let name = wall.map_or_else(String::new, |t| self.content.terrain(t).name.clone());
+        let name = wall.map_or_else(|| word("wall"), |t| terrain(&self.content, t));
         let until = start + MAX_DIG;
         let standing = move |w: &World| w.state.current().terrain.get(at).copied() == wall;
         let ended = self.keep_at(
@@ -147,12 +150,13 @@ impl World {
         let took = self.state.time.since(start).spoken();
         let text = match (standing(self), ended) {
             (_, Ended::Died) => return,
-            (false, _) => format!("After {took}, the {name} crumbles."),
+            (false, _) => Msg::new(msg::crafting::WALL_CRUMBLES).role("wall", name),
             (true, Ended::Came(came)) => {
-                format!("{}; you stop digging after {took}.", self.came_line(came))
+                Msg::new(msg::crafting::STOP_DIGGING_CAME).role("came", self.came_line(came))
             }
-            (true, Ended::Said | Ended::Done) => format!("You stop digging after {took}."),
+            (true, Ended::Said | Ended::Done) => Msg::new(msg::crafting::STOP_DIGGING),
         };
+        let text = text.role("time", took);
         self.say(text);
         // Dug through: what Mining breaks out of it (`world/crafting/mine.rs`).
         if !standing(self)

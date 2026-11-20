@@ -101,7 +101,9 @@ fn untrained_the_player_cannot_dig_and_is_told_why_for_no_time() {
     );
     let time = w.time();
     run(&mut w, "dig:N");
-    assert_eq!(last_message(&w), crate::world::crafting::dig::UNTRAINED);
+    let untrained = crate::world::crafting::dig::UNTRAINED.into();
+    let untrained = crate::test_support::english_of(w.content(), &untrained);
+    assert_eq!(last_message(&w), untrained);
     assert_eq!(w.time(), time);
     assert!(!earth_dug(&w));
 }

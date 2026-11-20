@@ -221,12 +221,19 @@ impl<'a> Lore<'a> {
     /// What `stack` is called as made, singular and plural, as the player knows it: a labelled
     /// scroll's label ("scroll labelled ZUNBAR"), else [`Stack::names`].
     pub fn names(&self, stack: &Stack) -> (String, String) {
+        let one = self.names_phrase(stack);
+        (
+            self.content.english_of(&one, "bare"),
+            self.content.english_of(&one.count(2), "bare"),
+        )
+    }
+
+    /// [`Lore::names`] as a phrase of one, for a message to name `stack` by: its label, else
+    /// [`Stack::made_phrase`].
+    pub fn names_phrase(&self, stack: &Stack) -> Phrase {
         match self.label_phrase(stack.object) {
-            Some(label) => (
-                self.content.english_of(&label, "bare"),
-                self.content.english_of(&label.count(2), "bare"),
-            ),
-            None => stack.names(self.content),
+            Some(label) => label,
+            None => stack.made_phrase(self.content),
         }
     }
 
