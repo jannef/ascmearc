@@ -112,8 +112,9 @@ impl World {
         Spent::Turn(price)
     }
 
-    /// The disease `d` of `patient`, said `{disease:the}`: "the sickness", "the filth fever"; an
-    /// ally's "Snel's sickness", "your wolf's sickness".
+    /// The disease `d` of `patient`, said `{disease:the}`: "the sickness", "the filth fever",
+    /// "the shakes" (a name with its own article takes no other, `en::own_article`); an ally's
+    /// "Snel's sickness", "your wolf's sickness".
     fn disease_phrase(&self, patient: ActorId, d: DiseaseId) -> Phrase {
         let Some(actor) = self.state.actors.get(&patient) else {
             return fight::word("sickness");

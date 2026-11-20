@@ -19,6 +19,8 @@
 
 use crate::content::{Content, DiseaseId, StatusId};
 use crate::geom::Dir;
+use crate::lang::Phrase;
+use crate::lang::en::own_article;
 use crate::text::capitalized;
 use crate::world::Actor;
 
@@ -48,20 +50,35 @@ impl Ailment {
     }
 
     /// How `actor` knows it, for a choice of what to treat: the status's name ("Bleeding"), the
-    /// disease's once they know which it is ("Filth fever"), else "Sickness".
+    /// disease's once they know which it is, said `{disease:The}` ("The filth fever", "The
+    /// shakes"), else "Sickness".
     pub fn name(self, content: &Content, actor: &Actor) -> String {
         match self {
             Ailment::Status(s) => content.status(s).name.clone(),
-            Ailment::Disease(d) => capitalized(&noun(content, actor, d)),
+            Ailment::Disease(d) if knows(actor, d) => {
+                content.english_of(&phrase(content, d), "The")
+            }
+            Ailment::Disease(_) => capitalized("sickness"),
         }
     }
 }
 
+/// Whether `actor` knows which disease `d` they have.
+fn knows(actor: &Actor, d: DiseaseId) -> bool {
+    actor.diseases.get(d).is_some_and(|i| i.is_known())
+}
+
+/// Disease `d` by its name as the data writes it, with its own article if it has one ("the
+/// shakes"; "filth fever"): templates say it `{disease:the}`, which adds none to "the shakes",
+/// and agree with its number ("the shakes are").
+pub fn phrase(content: &Content, d: DiseaseId) -> Phrase {
+    Phrase::id(format!("word:{}", content.disease(d).name))
+}
+
 /// What `actor` calls disease `d` in a sentence: its name once they know which it is ("filth
-/// fever"), else "sickness".
+/// fever", "the shakes"), else "sickness".
 pub fn noun(content: &Content, actor: &Actor, d: DiseaseId) -> String {
-    let known = actor.diseases.get(d).is_some_and(|i| i.is_known());
-    if known {
+    if knows(actor, d) {
         content.disease(d).name.clone()
     } else {
         "sickness".to_string()
@@ -126,7 +143,11 @@ pub fn of_allies(allies: &[(Dir, &Actor)], content: &Content) -> Vec<OwnAilment>
         for a in treatable(ally, content) {
             let what = match a {
                 Ailment::Status(s) => content.status(s).name.to_lowercase(),
-                Ailment::Disease(d) => noun(content, ally, d),
+                // After a possessive a name gives up its own article: "Your wolf's shakes".
+                Ailment::Disease(d) => {
+                    let noun = noun(content, ally, d);
+                    own_article(&noun).unwrap_or(&noun).to_string()
+                }
             };
             let way = if twin {
                 format!(" ({})", dir.compass_name())

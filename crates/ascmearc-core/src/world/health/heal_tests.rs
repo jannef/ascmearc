@@ -347,8 +347,9 @@ fn a_disease_may_be_tried_again_eased_never_cured() {
 }
 
 #[test]
-fn a_disease_known_by_name_is_said_with_the_article_the_line_gives_it() {
-    // "the shakes", never "the the shakes" (#1944): the data names it, the line says "the".
+fn a_disease_named_with_its_own_article_is_not_given_another() {
+    // "the shakes", never "the the shakes" (#1944): the data writes its name with its article,
+    // and `{disease:the}` adds none to it (`en::own_article`).
     let mut w = World::new(content(false), "room", Some(1)).expect("world");
     train(&mut w, 0);
     let shakes = sicken(&mut w, "the_shakes");
@@ -368,6 +369,27 @@ fn a_disease_known_by_name_is_said_with_the_article_the_line_gives_it() {
         .contains(&said.as_str()),
         "{said}"
     );
+}
+
+#[test]
+fn one_template_names_a_disease_with_or_without_its_own_article_and_agrees_with_it() {
+    // A template's `{disease:The} {disease:is}`, through the shipped English and the data's
+    // names: "the shakes" keeps its article and is plural, "mummy rot" takes the template's.
+    let mut files = ContentFiles::builtin();
+    files.insert(
+        "lang/en/messages/test.toml",
+        "cured = \"{disease:The} {disease:is} cured.\"\n",
+    );
+    let content = crate::content::Content::load(&files).expect("content");
+    let said = |id: &str| {
+        let d = content.disease_id(id).expect(id);
+        let msg = crate::lang::Msg::new(crate::lang::MessageId::owned("test.cured"))
+            .role("disease", crate::heal::phrase(&content, d));
+        let entry = crate::lang::Entry::new(0, msg);
+        crate::messages::english(&content, &entry, &crate::lang::written_key)
+    };
+    assert_eq!(said("the_shakes"), "The shakes are cured.");
+    assert_eq!(said("mummy_rot"), "The mummy rot is cured.");
 }
 
 #[test]

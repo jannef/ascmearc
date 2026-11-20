@@ -3,7 +3,7 @@
 //! character), their score in each stat with its abbreviation and full name (as the rules read it:
 //! a score a status effect or stat damage lowers is shown lowered, in a warning color), their hit
 //! points, Defence, and Protection (the totals only), their alignment band (`Kind`, never
-//! the score), the status effects they suffer, by name, the diseases they know they have, by name (`Diseased  Filth
+//! the score), the status effects they suffer, by name, the diseases they know they have, by name (`Diseased  The filth
 //! fever`), what they weigh and carry, their burden, and the weights at which it changes (they follow from
 //! scores the player knows). Beside the stats, the attacks they have ready (main hand, off hand,
 //! missile weapon), each with its to-hit, damage, and range as a strike would roll them now
@@ -23,6 +23,7 @@ use ascmearc_core::burden::{Burden, Load};
 use ascmearc_core::character::{Character, Gender};
 use ascmearc_core::color::Rgb;
 use ascmearc_core::content::{Content, possessive};
+use ascmearc_core::heal;
 use ascmearc_core::object::{Weight, format_weight};
 use ascmearc_core::perception::{PerceptionView, Progress};
 use ascmearc_core::stats::{PerStat, Stat};
@@ -226,7 +227,7 @@ impl CharacterScreen {
                 .map(|s| s.text)
                 .collect(),
             diseases: (view.own_diseases())
-                .map(|d| content.disease(d).name.clone())
+                .map(|d| content.english_of(&heal::phrase(content, d), "the"))
                 .collect(),
             resistances: resistance_rows(view),
             weight: view.own_weight(),
@@ -465,7 +466,7 @@ impl CharacterScreen {
             }
             y += 1;
         }
-        // `    Diseased      Filth fever`: the diseases they know they have.
+        // `    Diseased      The filth fever`: the diseases they know they have, `{disease:The}`.
         if !self.diseases.is_empty() {
             if fits(y) {
                 let names = capitalized(&self.diseases.join(", "));
@@ -843,7 +844,7 @@ mod tests {
             world.apply(&day);
         }
         let text = drawn(&world, 80, 30).join("\n");
-        for expected in ["Status        Diseased", "Diseased      Shakes"] {
+        for expected in ["Status        Diseased", "Diseased      The shakes"] {
             assert!(text.contains(expected), "{expected:?} in\n{text}");
         }
         let dexterity = world.perception().own_scores()[Stat::Dexterity];
