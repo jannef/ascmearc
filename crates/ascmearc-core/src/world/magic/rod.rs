@@ -102,7 +102,7 @@ impl World {
         }
         let me = self.state.player();
         if let Some(status) = me.effects.blocking(&content, ActionKind::Cast) {
-            let name = content.status(status).name.to_lowercase();
+            let name = content.status_phrase(status);
             self.say(Msg::new(msg::magic::CANNOT_USE_ROD_WHILE).role("status", name));
             return Spent::Nothing;
         }

@@ -221,7 +221,7 @@ impl World {
             return;
         };
         self.player_mut().skills.add(skill, i32::from(train.value));
-        let name = self.content.skill(skill).name.to_lowercase();
+        let name = self.content.skill_phrase(skill);
         let who = self.called_phrase(&self.state.actors[&teacher]);
         self.say(
             Msg::new(msg::people::TRAINS_YOU)
