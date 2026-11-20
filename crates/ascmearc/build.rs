@@ -37,8 +37,13 @@ fn main() {
         let stem = path.file_stem().and_then(|s| s.to_str()).unwrap_or("");
         assert!(ident(stem), "{}: not a Rust name", path.display());
         let text = std::fs::read_to_string(path).expect("read a UI text file");
-        // A raw name, so a module named as a keyword is one (`mod.toml`, `ui/mod.rs`'s).
-        writeln!(modules, "pub mod r#{stem} {{\n    use super::UiText;")
+        // A raw name, so a module named as a keyword is one (`mod.toml`, `ui/mod.rs`'s). The web
+        // build lacks the desktop's file commands (`--export-keys`, `--import-keys`), so the ids
+        // only they say are unused there: the desktop build still finds an id nothing says.
+        writeln!(
+            modules,
+            "#[cfg_attr(target_arch = \"wasm32\", allow(dead_code))]\npub mod r#{stem} {{\n    use super::UiText;"
+        )
             .expect("writing to a String cannot fail");
         for Entry { name, roles } in entries(path, &text) {
             let id = format!("ui.{stem}.{name}");

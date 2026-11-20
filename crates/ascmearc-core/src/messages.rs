@@ -76,9 +76,40 @@ pub fn english(content: &Content, entry: &Entry, keys: Keys<'_>) -> String {
     content.english().render(entry, content.lexicon(), keys)
 }
 
-/// What a creature said ([`Speech`]) in English, its lines in turn, keys left written: what the
-/// dialogue screen shows (until a language can be chosen, L8) and a commission's offer in the
-/// quest log. A line English cannot render reads as the reason in brackets.
+/// `entry` in the language `code`, English for what it lacks (an unknown code is English), its
+/// repeats counted, each key it names by `keys`: the app's log, a dump with `--lang`.
+pub fn render_in(content: &Content, code: &str, entry: &Entry, keys: Keys<'_>) -> String {
+    let chain = content.shown_chain(code);
+    crate::lang::render_chain(&chain, entry, content.lexicon(), keys)
+}
+
+/// A message not logged (a quest log's objective) in the language `code`, keys left written.
+pub fn msg_in(content: &Content, code: &str, msg: &Msg) -> String {
+    render_in(content, code, &Entry::new(0, msg.clone()), &written_key)
+}
+
+/// An argument alone in `form` in the language `code`, keys left written: the first language
+/// of its chain that renders it, else the reason in brackets. What a creature said ([`Speech`])
+/// is its lines said in turn (the dialogue screen).
+pub fn arg_in(content: &Content, code: &str, arg: &Arg, form: &str) -> String {
+    let mut failed = None;
+    for language in content.shown_chain(code) {
+        match language.try_arg(arg, form, content.lexicon(), &written_key) {
+            Ok(text) => return text,
+            Err(e) => failed = failed.or(Some(e)),
+        }
+    }
+    failed.map_or_else(String::new, |e| format!("[{e}]"))
+}
+
+/// What a creature said in the language `code` ([`arg_in`]): the dialogue screen.
+pub fn speech_in(content: &Content, code: &str, speech: &Speech) -> String {
+    arg_in(content, code, &Arg::List(speech.0.clone()), LINES_FORM)
+}
+
+/// What a creature said ([`Speech`]) in English, its lines in turn, keys left written: a
+/// commission's offer in the quest log ([`speech_in`] in another language). A line English cannot
+/// render reads as the reason in brackets.
 pub fn english_speech(content: &Content, speech: &Speech) -> String {
     let lines = Arg::List(speech.0.clone());
     (content
@@ -124,13 +155,18 @@ fn is_one(n: &u32) -> bool {
 impl Message {
     /// `entry` rendered in English.
     pub fn english(content: &Content, entry: &Entry) -> Self {
+        Self::in_language(content, "en", entry)
+    }
+
+    /// `entry` rendered in the language `code` (a dump with `--lang`), English for what it lacks.
+    pub fn in_language(content: &Content, code: &str, entry: &Entry) -> Self {
         let once = Entry {
             count: 1,
             ..entry.clone()
         };
         Self {
             turn: entry.turn,
-            text: english(content, &once, &written_key),
+            text: render_in(content, code, &once, &written_key),
             count: entry.count,
             passing: entry.passing,
         }

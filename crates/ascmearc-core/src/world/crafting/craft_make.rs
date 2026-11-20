@@ -944,8 +944,8 @@ fn made_phrase(content: &Content, lore: Lore<'_>, made: &Stack, batch: bool) -> 
     }
 }
 
-/// `msg` in English, keys written: the plan's reason why not, which the dialog shows (until a
-/// language can be chosen, L8).
+/// `msg` in English, keys written: the plan's reason why not, which the dialog shows (English
+/// whatever the language until core's words move to the app, #1949).
 pub(super) fn english(content: &Content, msg: Msg) -> String {
     crate::messages::english(content, &Entry::new(0, msg), &written_key)
 }

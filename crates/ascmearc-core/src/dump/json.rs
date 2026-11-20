@@ -17,6 +17,12 @@ use super::*;
 /// rows, and optionally the full [`crate::WorldState`] under `state` (with the current level's
 /// `danger`, ground truth).
 pub fn json(world: &World, layers: &[Layer], include_state: bool) -> Value {
+    json_in(world, layers, include_state, "en")
+}
+
+/// [`json`] with the logged words (the messages, the quest log, a parting's speaker) in the
+/// language `code` (`--lang`; English for what it lacks).
+pub fn json_in(world: &World, layers: &[Layer], include_state: bool, code: &str) -> Value {
     let view = world.perception();
     let content = world.content();
     let seen: Vec<Value> = view
@@ -64,13 +70,8 @@ pub fn json(world: &World, layers: &[Layer], include_state: bool) -> Value {
             seen
         })
         .collect();
-    // The recent messages, in English (`docs/dev/localization.md`).
-    let messages: Vec<crate::messages::Message> = {
-        let log = world.log();
-        (log.iter().skip(log.len().saturating_sub(RECENT_MESSAGES)))
-            .map(|entry| crate::messages::Message::english(content, entry))
-            .collect()
-    };
+    // The recent messages, in the dump's language (`docs/dev/localization.md`).
+    let messages = recent_messages(world, code);
     let unpaid = view.unpaid();
     let inventory: Vec<Value> = view
         .inventory()
@@ -194,7 +195,7 @@ pub fn json(world: &World, layers: &[Layer], include_state: bool) -> Value {
         .collect();
     let layer_map: serde_json::Map<String, Value> = layers
         .iter()
-        .map(|&l| (l.name().to_string(), json!(layer_rows(world, l))))
+        .map(|&l| (l.name().to_string(), json!(layer_rows_in(world, l, code))))
         .collect();
     let talents: Vec<Value> = (view.own_talents().iter())
         .map(|t| {
@@ -285,7 +286,7 @@ pub fn json(world: &World, layers: &[Layer], include_state: bool) -> Value {
         "due": view.due(),
         "abilities": abilities_json(&view),
         "spells": spells_json(&view),
-        "quests": quests_json(&view),
+        "quests": quests_json(&view, code),
         "story": story_json(world),
     });
     // A second `json!`: one macro call this long passes the recursion limit.
@@ -331,7 +332,7 @@ pub fn json(world: &World, layers: &[Layer], include_state: bool) -> Value {
         "familiar": kept_json(&view, Kept::Familiar),
         // The quarrel's parting to answer, or null (`world/people/quarrel.rs`).
         "parting": view.parting().map(|p| json!({
-            "who": crate::messages::english_arg(content, &p.who.into(), "The"),
+            "who": crate::messages::arg_in(content, code, &p.who.into(), "The"),
             "text": p.text,
             "choices": p.choices.iter().map(|c| c.id()).collect::<Vec<_>>(),
         })),

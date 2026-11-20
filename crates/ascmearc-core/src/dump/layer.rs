@@ -5,6 +5,14 @@ use super::*;
 /// Number of recent messages included in a dump.
 pub(super) const RECENT_MESSAGES: usize = 10;
 
+/// The last [`RECENT_MESSAGES`] messages of the log in the language `code`, oldest first.
+pub(super) fn recent_messages(world: &World, code: &str) -> Vec<crate::messages::Message> {
+    let log = world.log();
+    (log.iter().skip(log.len().saturating_sub(RECENT_MESSAGES)))
+        .map(|entry| crate::messages::Message::in_language(world.content(), code, entry))
+        .collect()
+}
+
 /// A map layer to render.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Layer {
@@ -93,6 +101,9 @@ pub enum Layer {
     /// Not a map: the player's quest log, one quest a line, active first (`Rats in the arena
     /// (active, from the old hermit): Kill 3 giant rats in the Arena. 2 / 3 killed.`).
     Quests,
+    /// Not a map: the last [`RECENT_MESSAGES`] messages of the log, one a line, oldest first,
+    /// with their repeats (`You open the door. (×2)`), in the dump's language (`--lang`).
+    Messages,
     /// Ground truth: all terrain, objects, traps (hidden ones too), secret doors (`S`), hidden
     /// locations (by their entrance's glyph), and actors on the level, then a line per chest
     /// (its level, band, state, lock, and how many stacks it holds). **Dev-only.**
@@ -152,6 +163,7 @@ impl Layer {
         Layer::Traps,
         Layer::Locations,
         Layer::Quests,
+        Layer::Messages,
         Layer::Story,
         Layer::Companion,
         Layer::Familiar,
@@ -186,6 +198,7 @@ impl Layer {
             Layer::Traps => "traps",
             Layer::Locations => "locations",
             Layer::Quests => "quests",
+            Layer::Messages => "messages",
             Layer::Story => "story",
             Layer::Companion => "companion",
             Layer::Familiar => "familiar",
@@ -218,7 +231,7 @@ impl FromStr for Layer {
                 format!(
                     "unknown layer `{s}` (expected view, fov, memory, light, sound, blood, \
                      scorch, below, inventory, equipment, stats, skills, weapon_skills, attacks, talents, \
-                     abilities, recipes, traps, locations, quests, story, companion, familiar, \
+                     abilities, recipes, traps, locations, quests, messages, story, companion, familiar, \
                      truth, actors, progress, rooms, ice)"
                 )
             })

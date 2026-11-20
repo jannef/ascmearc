@@ -89,6 +89,7 @@ pub(super) fn perceived_glyph(view: &PerceptionView<'_>, layer: Layer, p: Pos) -
         | Layer::Traps
         | Layer::Locations
         | Layer::Quests
+        | Layer::Messages
         | Layer::Story
         | Layer::Companion
         | Layer::Familiar
