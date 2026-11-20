@@ -1,0 +1,77 @@
+# The Mods screen (`crates/ascmearc/src/ui/mods_screen.rs`). Ids alphabetical.
+#
+# The keys named in the footer are fixed (`Shift`, `Esc`): translate the words around them. The
+# screen fits each text to its panel: a translation longer than the room is cut with `…`, which
+# the screen snapshots check (docs/dev/localization.md "UI text").
+
+# The rows after the mods.
+[act_apply]
+text = "Apply"
+
+[act_back]
+text = "Back"
+
+[act_open_folder]
+text = "Open the mods folder"
+
+# What Apply tells: `n`, how many mods are on now.
+[applied_many]
+text = "Applied: {n:bare} mods are on."
+
+[applied_none]
+text = "Applied: no mods are on."
+
+[applied_one]
+text = "Applied: 1 mod is on."
+
+# `id`, the mod; `why`, what is wrong with it.
+[cannot_use]
+text = "{id:bare} cannot be used: {why:bare}"
+
+# The second line of a mod that does not read: `why`, what is wrong with it.
+[cannot_use_line]
+text = "Cannot be used: {why:bare}"
+
+# `ids`, the mods' names joined; `path`, the file they all change; `last`, the one used.
+[clash]
+text = "{ids:bare} all change {path:bare}: {last:bare}'s is used."
+
+[empty_hint]
+text = "A mod is a folder there with a mod.toml."
+
+# The footer: `up_down`, the keys that select a row and, with Shift, change the order;
+# `confirm` and `mark`, the keys that turn a mod on and off.
+[footer]
+text = "{up_down:bare} select   {confirm:bare}/{mark:bare} on/off   Shift+{up_down:bare} order   Esc back"
+
+# `version`, the game version a mod was made for, when it is not this one.
+[made_for]
+text = "(made for {version:bare})"
+
+[no_folder]
+text = "This launch keeps no mods folder."
+
+# The folder has no mods: `dir`, the folder.
+[none_in]
+text = "No mods are in {dir:bare}."
+
+# What a failed Apply tells: `why`, the reason.
+[not_applied]
+text = "Not applied: {why:bare}"
+
+[not_applied_yet]
+text = "Changes are not applied yet."
+
+[nothing_to_apply]
+text = "Nothing to apply."
+
+# `dir`, the folder that was opened.
+[opened]
+text = "Opened {dir:bare}."
+
+# `shown` of `total` mods fit on the screen.
+[shown]
+text = "{shown:bare} of {total:bare} mods shown"
+
+[title]
+text = "Mods"
