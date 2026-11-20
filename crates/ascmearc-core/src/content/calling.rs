@@ -38,7 +38,8 @@ pub struct CallingDef {
     pub from: Vec<String>,
     /// The total level it asks: at least every `from` class's `max_level`.
     pub level: u8,
-    /// What the character is told as they are called.
+    /// What the character is told as they are called: a line of data
+    /// (`content/data_line.rs::calling`).
     pub message: String,
     /// The campaign whose table it is in (`None`: outside every campaign, a fixture's).
     pub campaign: Option<String>,

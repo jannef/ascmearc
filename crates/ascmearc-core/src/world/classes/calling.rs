@@ -18,8 +18,10 @@
 //! There is no `from_state`: a restore grants both tables' abilities (`World::grant_class`).
 
 use crate::action::Event;
-use crate::content::{ActionKind, CallingDef, DialogueId};
-use crate::text::capitalized;
+use crate::content::{ActionKind, CallingDef, DialogueId, data_line};
+use crate::lang::Msg;
+use crate::msg;
+use crate::world::combat::fight;
 use crate::world::{ActorId, Spent, World};
 
 /// Where the player stands with a calling, for the dev `progress` dump.
@@ -77,7 +79,7 @@ impl World {
         if let Some(character) = self.state.character.as_mut() {
             character.prestige = Some(calling.class.clone());
         }
-        self.say(calling.message.clone());
+        self.say(data_line::said(data_line::calling(calling)));
         // Exactly the experience the first prestige level costs, if the bank is short of it.
         let factor = self.experience_factor();
         let need = content
@@ -107,9 +109,9 @@ impl World {
         let class = t.calls.as_ref()?;
         let calling = (content.calling(self.campaign(), class))
             .filter(|c| self.calling_status(c) == CallingStatus::Open);
-        let who = capitalized(&self.called(&self.state.actors[&id]));
         let Some(calling) = calling else {
-            self.say(format!("{who} knows nothing about that."));
+            let who = self.called_phrase(&self.state.actors[&id]);
+            self.say(Msg::new(msg::classes::KNOWS_NOTHING_ABOUT_THAT).role("who", who));
             return Some(Spent::Nothing);
         };
         let reply = self.said(id, &t.reply);
@@ -134,24 +136,26 @@ impl World {
     pub(in crate::world) fn call_dev(&mut self, id: &str) -> Spent {
         let content = self.content.clone();
         if content.prestige(id).is_none() {
-            self.say(format!("There is no prestige class `{id}` (dev)."));
+            self.say(Msg::new(msg::classes::NO_PRESTIGE_CLASS_DEV).role("id", id));
             return Spent::Nothing;
         }
         let Some(character) = &self.state.character else {
-            self.say("There is no character to call (dev).");
+            self.say(msg::classes::NO_CHARACTER_TO_CALL_DEV);
             return Spent::Nothing;
         };
         if let Some(held) = &character.prestige {
-            self.say(format!("You are a {held} already (dev)."));
+            let held = held.clone();
+            self.say(Msg::new(msg::classes::PRESTIGE_ALREADY_DEV).role("id", held));
             return Spent::Nothing;
         }
         let class = character.spec.class.clone();
         let Some(calling) = (content.calling(self.campaign(), id)).filter(|c| c.is_from(&class))
         else {
-            self.say(format!(
-                "No calling of this world opens `{id}` to {} {class} (dev).",
-                crate::text::article(&class)
-            ));
+            self.say(
+                Msg::new(msg::classes::NO_CALLING_OPENS_DEV)
+                    .role("id", id)
+                    .role("class", fight::word(&class)),
+            );
             return Spent::Nothing;
         };
         let calling = calling.clone();
