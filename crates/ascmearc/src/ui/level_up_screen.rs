@@ -165,7 +165,6 @@ impl LevelUpScreen {
             )),
         };
         screen.left = match screen.step {
-            Step::Rolls if due.rolls == 1 => ui(T::LEFT_ROLL),
             Step::Rolls => ui_with(T::LEFT_ROLLS, &count(due.rolls)),
             Step::Free | Step::Bonus | Step::Talent => ui(T::LEFT_TALENT),
         };
@@ -474,16 +473,11 @@ fn roll_sources(count: RollCount) -> Option<String> {
         ui_with(T::SOURCE, &args)
     })
     .collect();
-    let id = if total == 1 {
-        T::SOURCES_ONE
-    } else {
-        T::SOURCES_MANY
-    };
     let args = [
         ("total", Arg::Number(i64::from(total))),
         ("from", parts.join(", ").into()),
     ];
-    Some(ui_with(id, &args))
+    Some(ui_with(T::SOURCES, &args))
 }
 
 /// What a roll adds to the skill, as dice: `2d4+1`, or `(1d5+1)/2` from the soft cap on.
@@ -500,8 +494,7 @@ fn roll_dice(roll: &SkillRoll) -> String {
 fn explain_roll(roll: &SkillRoll, soft_cap: u16) -> String {
     let marks = match roll.marks {
         0 => ui(T::MARKS_NONE),
-        1 => ui(T::MARKS_ONE),
-        n => ui_with(T::MARKS_MANY, &[("n", Arg::Number(i64::from(n)))]),
+        n => ui_with(T::MARKS, &[("n", Arg::Number(i64::from(n)))]),
     };
     let mut text = ui_with(
         T::EXPLAIN_START,

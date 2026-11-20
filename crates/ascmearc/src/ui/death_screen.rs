@@ -13,8 +13,8 @@ use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use crate::settings::Clock;
 use ascmearc_core::lang::Arg;
+use ascmearc_core::lang::Phrase;
 use ascmearc_core::perception::PerceptionView;
-use ascmearc_core::text::article;
 use ascmearc_core::time::GameTime;
 
 #[derive(Debug)]
@@ -52,16 +52,12 @@ impl DeathScreen {
             // Hunger, overeating, or a trap: "Killed by a fireball trap".
             (None, Some(cause), _) => cause.epitaph(content),
             (None, None, Some(creature)) => {
-                let name = &content.creature(creature).name;
-                let who = format!("{} {name}", article(name));
+                let who = Phrase::id(format!("creature:{}", content.creature(creature).id));
                 ui_with(T::KILLED_BY, &[("who", who.into())])
             }
             (None, None, None) => ui(T::KILLED_UNSEEN),
         };
-        let turns = match death.turn {
-            1 => ui(T::EPITAPH_TURN),
-            n => ui_with(T::EPITAPH_TURNS, &[("n", Arg::Number(n as i64))]),
-        };
+        let turns = ui_with(T::EPITAPH_TURNS, &[("n", Arg::Number(death.turn as i64))]);
         // "Here lies Brakka, killed by a kobold, ...": the epitaph names the character.
         let mut lines = Vec::new();
         let by = match view.character() {

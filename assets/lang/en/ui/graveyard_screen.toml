@@ -7,7 +7,7 @@
 [and_prestige]
 text = "{what:bare} and {prestige:bare}"
 
-# How they died; `who`, a creature or thing with its article where it has one ("a kobold").
+# How they died; `who`, the killer as a phrase; the language gives its article.
 [cause_altar]
 text = "Struck down at a forgotten altar"
 
@@ -24,7 +24,7 @@ text = "Drowned in deep water"
 text = "Fell through a collapsed floor"
 
 [cause_killed_by]
-text = "Killed by {who:bare}"
+text = "Killed by {who:a}"
 
 # `name`, the status's name.
 [cause_died_of]

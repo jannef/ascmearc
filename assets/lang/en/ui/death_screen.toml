@@ -28,18 +28,17 @@ text = "You had reached level {level:bare}."
 [epitaph_place]
 text = "in {place:bare},"
 
-[epitaph_turn]
-text = "after 1 turn."
-
 [epitaph_turns]
-text = "after {n:bare} turns."
+by = "n.number"
+one = "after 1 turn."
+many = "after {n:bare} turns."
 
 [epitaph_when]
 text = "on {date:bare}, at {time:bare},"
 
-# The cause: `who`, a creature with its article ("a kobold").
+# The cause: `who`, the creature as a phrase; the language gives its article.
 [killed_by]
-text = "Killed by {who:bare}"
+text = "Killed by {who:a}"
 
 [killed_unseen]
 text = "Killed by something you did not see"

@@ -20,8 +20,7 @@ use crate::render::console::Console;
 use crate::save::played_text;
 use crate::settings::Clock;
 use ascmearc_core::content::Content;
-use ascmearc_core::lang::Arg;
-use ascmearc_core::text::article;
+use ascmearc_core::lang::{Arg, Phrase};
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 /// The widest the panel gets.
@@ -132,10 +131,9 @@ pub(crate) fn death_words(fallen: &Fallen, content: &Content) -> String {
 
 /// What killed `fallen`, in words: `Killed by a kobold`, `Turned to stone`, `Bled to death`.
 fn cause_words(fallen: &Fallen, content: &Content) -> String {
-    let killed_by = |name: &str| {
-        let who = format!("{} {name}", article(name));
-        ui_with(T::CAUSE_KILLED_BY, &[("who", who.into())])
-    };
+    let killed_by = |who: Phrase| ui_with(T::CAUSE_KILLED_BY, &[("who", who.into())]);
+    // A name the record or the data holds as English text: a word of the lexicon by its text.
+    let by_name = |name: &str| killed_by(Phrase::id(format!("word:{name}")));
     let cause = fallen.cause.as_str();
     match cause {
         STONE => return ui(T::CAUSE_STONE),
@@ -151,7 +149,7 @@ fn cause_words(fallen: &Fallen, content: &Content) -> String {
         _ => {}
     }
     if !fallen.killer.is_empty() {
-        return killed_by(&fallen.killer);
+        return by_name(&fallen.killer);
     }
     if let Some(status) = content.status_id(cause) {
         let def = content.status(status);
@@ -163,10 +161,13 @@ fn cause_words(fallen: &Fallen, content: &Content) -> String {
         });
     }
     if let Some(trap) = content.trap_id(cause) {
-        return killed_by(&content.trap(trap).name);
+        return by_name(&content.trap(trap).name);
     }
     if let Some(creature) = content.creature_id(cause) {
-        return killed_by(&content.creature(creature).name);
+        return killed_by(Phrase::id(format!(
+            "creature:{}",
+            content.creature(creature).id
+        )));
     }
     if let Some(object) = content.object_id(cause) {
         let name = content.object(object).name.as_str();

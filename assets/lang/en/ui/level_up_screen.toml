@@ -76,25 +76,24 @@ text = "Skill rolls {n:bare}"
 text = "Talent {n:bare}"
 
 # What Esc says while rolls are left: `n`, how many.
-[left_roll]
-text = "You have a skill roll to spend."
-
 [left_rolls]
-text = "You have {n:bare} skill rolls to spend."
+by = "n.number"
+one = "You have a skill roll to spend."
+many = "You have {n:bare} skill rolls to spend."
 
 # What Esc says while a talent is due.
 [left_talent]
 text = "You must choose a talent first."
 
 # A skill's marks.
-[marks_many]
-text = "{n:bare} marks"
+[marks]
+by = "n.number"
+one = "1 mark"
+many = "{n:bare} marks"
 
+# No marks at all (a count of nothing is `many` to the languages, so the screen asks for this).
 [marks_none]
 text = "no marks"
-
-[marks_one]
-text = "1 mark"
 
 # The list has no rows.
 [nothing]
@@ -112,11 +111,10 @@ text = "a or {confirm:bare} roll"
 text = "Skills"
 
 # Where a level's rolls come from: `total`, how many; `from`, the sources, a list.
-[sources_many]
-text = "{total:bare} skill rolls a level: {from:bare}"
-
-[sources_one]
-text = "{total:bare} skill roll a level: {from:bare}"
+[sources]
+by = "total.number"
+one = "{total:bare} skill roll a level: {from:bare}"
+many = "{total:bare} skill rolls a level: {from:bare}"
 
 # One source and its rolls: `source`, its name; `n`, its rolls.
 [source]
