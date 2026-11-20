@@ -190,10 +190,7 @@ fn check_with(case: &Case, content: Arc<Content>) {
 
 /// Text known not to fit in English, as `(case, the text's start)`, each with its issue: the
 /// check passes over it until the screen is fixed. Add none to make a check pass.
-const KNOWN: &[(&str, &str)] = &[
-    // #1910: a long spell's detail is cut in its room on the magic screen at 80 columns.
-    ("magic-screen-short", "6d6 force, shoves on a big hit"),
-];
+const KNOWN: &[(&str, &str)] = &[];
 
 /// What did not fit where `app`'s UI drew it ([`Console::overflows`]), a line each, but the
 /// [`KNOWN`] of `case`.
