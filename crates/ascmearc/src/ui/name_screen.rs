@@ -22,9 +22,9 @@ use ascmearc_core::lang::{Arg, Modifier, Phrase, Word};
 /// How many random names Random goes through before it starts over.
 const DRAWS: u32 = 64;
 
-/// The panel's question about a `race` `class` character: "What is the name of a human thief?".
+/// The panel's question about a `race` `class` character: "What is the name of the human thief?".
 /// The class is the head word and the race an adjective before it, both words of the lexicon by
-/// their English (`word:<text>`); the language says the article ("an elf wizard").
+/// their English (`word:<text>`); the definite article, as it is the player's own character.
 fn question(race: &str, class: &str) -> String {
     let race = Word::id(format!("word:{}", race.to_lowercase()));
     let character =
@@ -271,14 +271,14 @@ mod tests {
     }
 
     #[test]
-    fn the_question_gives_the_article_of_the_race() {
+    fn the_question_names_the_character_with_the_definite_article() {
         assert_eq!(
             question("Human", "Thief"),
-            "What is the name of a human thief?"
+            "What is the name of the human thief?"
         );
         assert_eq!(
             question("Elf", "Wizard"),
-            "What is the name of an elf wizard?"
+            "What is the name of the elf wizard?"
         );
     }
 
@@ -289,7 +289,7 @@ mod tests {
         let text = drawn(&s);
         assert!(text.contains("Choose your name (5 of 5)"), "{text}");
         assert!(
-            text.contains("What is the name of a human thief?"),
+            text.contains("What is the name of the human thief?"),
             "{text}"
         );
         assert!(text.contains(&format!("[{}_", s.placeholder())), "{text}");
