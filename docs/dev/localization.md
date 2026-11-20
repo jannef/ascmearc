@@ -411,8 +411,17 @@ from the talent that gives it, `caster.rs::reprieve_source`), and the status `en
 or, of several types, a list of `magic.hostile_creatures` items ("A kobold and two rats"). A
 ruin row's words for one item and for several are both passed (`one`, `many`, lines of data),
 and `magic.ruined`'s count picks one. Text roles until their words are converted (#1949): a
-status's name lower case, `Unavailable::reason`, and a stat's name; `read::KEPT` is the learning
-side's (#1923).
+status's name lower case, `Unavailable::reason`, and a stat's name.
+
+Its learning and items side (L4l: `corpse_spell`, `decipher`, `forget`, `learn`, `read`, `rod`,
+`scribe`, `summon_spell`) says its lines from the same file; a mishap's `message` and a risen
+corpse's `berserk_message` are lines of data. A scroll, a grimoire, or a rod is named as the
+player knew it as it was read or zapped (`Lore::title_phrase`, `{what:bare}`: "scroll labelled
+ZUNBAR") and its type, once learned, by `object:<id>` (`magic.it_is`); a corpse by its object.
+A summon spell's allies are said as a backfired summon's are (`magic.comes_to_call`, `_mixed`
+with `magic.hostile_creatures` items). Text roles until their words are converted (#1949): a
+spell's name as the data writes it (`spell`; a list of them, `spells`, said `{spells:and}`), a
+status's name lower case, and the `came_line` that stops a reading or a writing (`came`).
 
 `world/crafting/` (`messages/crafting.toml`, L4f, its first half: making a recipe, cutting,
 enchanting, crystals, digging, the field forge). A refusal a function returns for its caller to
@@ -688,6 +697,7 @@ arrays named by the id that tells it apart. Every kind of line of data, the thre
 | `object:<id>.throw.words` | a flask shattering |
 | `spell:<id>.effect.charm.message`, `.ends` | a charm taking hold and ending (in `allies.charm_takes`, `allies.charm_ends`) |
 | `spell:<id>.cast.message` | a spell cast (its `[spell.cast]` `message`) |
+| `spell:<id>.effect.rise.berserk_message` | a corpse raised by the spell rising berserk, in place of its cast message |
 | `miscast:<id>.message`, `mishap:<id>.message` | a miscast befalling the player; a mishap of study |
 | `ruin:<type>.<class\|material\|group>.<id>.says.0`, `.says.1` | a `ruin.toml` row's words for one item ruined and for several (in `magic.ruined`) |
 | `talent:<id>.effects.reprieve.message` | a reprieve saving the player from death |

@@ -29,10 +29,12 @@
 use super::cast::Cast;
 use crate::action::Event;
 use crate::content::{CreatureId, LevelKind, SpellId};
+use crate::lang::{Arg, Msg, Phrase};
+use crate::msg;
 use crate::rng::draw;
-use crate::text::{and_list, capitalized};
 use crate::time::Duration;
-use crate::world::allies::ally::{AllySource, few};
+use crate::world::allies::ally::AllySource;
+use crate::world::combat::fight;
 use crate::world::{ActorId, World};
 
 impl World {
@@ -43,16 +45,16 @@ impl World {
             return false;
         };
         let Some(rules) = content.allies() else {
-            self.say("Nothing answers your call.");
+            self.say(msg::magic::NOTHING_ANSWERS);
             return false;
         };
         if self.state.current().kind == LevelKind::Overworld {
-            self.say("Nothing answers your call out here.");
+            self.say(msg::magic::NOTHING_ANSWERS_OUT_HERE);
             return false;
         }
         let player = self.state.player;
         if self.summon_cells(player, call.spread).is_empty() {
-            self.say("There is no room for them beside you.");
+            self.say(msg::magic::NO_ROOM_BESIDE_YOU);
             return false;
         }
         let mods = self.state.player().talent_mods(&content);
@@ -71,15 +73,13 @@ impl World {
             .count();
         let global = usize::from(rules.most);
         if self.allies_here(player).len() - freed_here >= global {
-            self.say("You cannot lead more than this.");
+            self.say(msg::magic::CANNOT_LEAD_MORE);
             return false;
         }
         if !self.pay_cast(cast) {
             return true;
         }
-        if let Some(text) = &cast.def.look.message {
-            self.say(text.clone());
-        }
+        self.say_cast_message(cast.def);
         self.sound_at(cast.def.look.noise, self.player_pos());
         for id in mine.drain(..give_way) {
             self.gives_way(id, events);
@@ -110,15 +110,20 @@ impl World {
                 None => came.push((creature, 1)),
             }
         }
-        let words: Vec<String> = (came.iter())
-            .map(|&(c, n)| {
-                let def = content.creature(c);
-                few(&def.name, &def.plural, n)
-            })
+        // One type: that phrase, its count picking the line. Several: a list of them, each type
+        // an item that takes its own form ("a wolf and two rats", `magic.hostile_creatures`).
+        let mut who: Vec<Phrase> = (came.iter())
+            .map(|&(c, n)| fight::creature(content.creature(c)).count(n))
             .collect();
-        let list = and_list(&words.iter().map(String::as_str).collect::<Vec<_>>());
-        let verb = if count == 1 { "comes" } else { "come" };
-        self.say(format!("{} {verb} to your call.", capitalized(&list)));
+        match who.len() {
+            0 => {}
+            1 => self.say(Msg::new(msg::magic::COMES_TO_CALL).role("who", who.remove(0))),
+            _ => {
+                let items = who.into_iter().map(super::backfire::hostile_creatures);
+                let list = Arg::List(items.collect());
+                self.say(Msg::new(msg::magic::COMES_TO_CALL_MIXED).role("who", list));
+            }
+        }
         for &(creature, n) in &came {
             (0..n).for_each(|_| self.player_summoned(creature));
         }

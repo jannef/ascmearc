@@ -172,11 +172,17 @@ pub fn arrival(content: &Content, id: &str) -> Option<String> {
 }
 
 // The magic's lines (L4k, #1922): a spell's look, a miscast's and a mishap's message, a ruin
-// row's words, and a reprieve's.
+// row's words, and a reprieve's; a risen corpse's berserk line (L4l, #1923).
 
 /// Spell `id`'s `[spell.cast]` `message` (its `look.message`), said as it is cast.
 pub fn spell_cast(id: &str) -> String {
     format!("spell:{id}.cast.message")
+}
+
+/// Spell `id`'s `rise` `berserk_message`, said in place of its cast message when the corpse
+/// rises berserk.
+pub fn rise_berserk(id: &str) -> String {
+    format!("spell:{id}.effect.rise.berserk_message")
 }
 
 /// Miscast `id`'s `message`, said to the player who miscast.
@@ -224,6 +230,9 @@ fn magic_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
     for spell in content.spells() {
         if let Some(message) = &spell.look.message {
             add(spell_cast(&spell.id), message);
+        }
+        if let Some(rise) = &spell.effect.rise {
+            add(rise_berserk(&spell.id), &rise.berserk_message);
         }
     }
     for entry in content.miscasts() {
