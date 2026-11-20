@@ -1,0 +1,14 @@
+# The paged list every lettered list of items uses (`crates/ascmearc/src/ui/paged_list.rs`). Ids
+# alphabetical.
+#
+# The keys named in the hint are fixed: translate the words around them. The screens fit the text
+# to their panels (docs/dev/localization.md "UI text").
+
+# The paging keys in a footer, while there is more than one page: `next` and `prev`, the keys
+# that turn the page.
+[hint]
+text = "{next:bare} {prev:bare} page"
+
+# The page label on the panel's top: `page`, the page shown; `pages`, how many there are.
+[page]
+text = "Page {page:bare}/{pages:bare}"

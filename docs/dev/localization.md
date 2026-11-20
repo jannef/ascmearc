@@ -749,6 +749,12 @@ The speaker, a feature (`terrain:`), a trap and a burst (`word:`), and a scroll 
 phrases; a shopkeeper is a name (text). The sign reveal's date, sign name, and gifts, a hunger's
 name (the hungry journey's title), and an ailment's name stay core's text.
 
+**The shared modules** (#1931): `paged_list.toml` holds the page label and the page keys' hint
+every paged list shows (`PagedList::page_label`, `hint`), `menu.toml` the main and pause menus and
+the quit dialogs, `screens.toml` the stack's notices; the messages and files screens have their
+own files. The main menu's spaced-out title is the game's name and stays in code; the files
+screen's kinds, what they hold, and where they are come from `paths.rs` as English.
+
 ## Lines of data
 
 A line whose text lives in the data, not in `messages/` (a dialogue line, a miscast's `seen`, an
