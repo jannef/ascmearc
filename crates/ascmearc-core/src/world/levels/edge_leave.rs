@@ -6,10 +6,8 @@
 //! rule; this one only adds to walking.
 
 use crate::content::Stance;
+use crate::msg;
 use crate::world::World;
-
-/// What the player is told when walking off the edge is refused.
-pub const EDGE_LEAVE_REFUSED: &str = "They are too close to slip away.";
 
 impl World {
     /// Whether a creature hostile to the player stops them walking off the area's edge: one on
@@ -25,7 +23,7 @@ impl World {
                 .filter(|a| a.pos.chebyshev(here) <= reach)
                 .any(|a| self.stance(player, a.id) == Stance::Hostile);
         if held {
-            self.say(EDGE_LEAVE_REFUSED);
+            self.say(msg::levels::TOO_CLOSE);
         }
         held
     }

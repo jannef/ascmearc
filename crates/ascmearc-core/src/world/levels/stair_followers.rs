@@ -34,9 +34,10 @@
 //! it gets no blow out of their climb: at equal speed the player acts first on arrival, and a
 //! fast creature comes at its own speed. No draws at all, so replays stay deterministic.
 
-use crate::content::{ActionKind, Budge, CreatureId, LevelKind, Stance, the};
-use crate::text::{and_list, capitalized};
-use crate::world::allies::ally::few;
+use crate::content::{ActionKind, Budge, CreatureId, LevelKind, StairsDir, Stance};
+use crate::lang::{Arg, Msg};
+use crate::msg;
+use crate::world::combat::fight;
 use crate::world::{ActorId, ActorKind, Mind, World, allies::beast_friend};
 
 impl World {
@@ -80,8 +81,8 @@ impl World {
 
     /// `followers` (asked as the player left level `from`) arrive beside them on the current
     /// level, as far as there is room (module docs), and the player is told of those they saw:
-    /// "The kobold follows you down the stairs." `way` is "down" or "up".
-    pub(super) fn followers_arrive(&mut self, followers: &[ActorId], from: &str, way: &str) {
+    /// "The kobold follows you down the stairs." `way` is the way the stairs went.
+    pub(super) fn followers_arrive(&mut self, followers: &[ActorId], from: &str, way: StairsDir) {
         if self.state.current().kind == LevelKind::Overworld {
             return;
         }
@@ -128,13 +129,12 @@ impl World {
     }
 
     /// The line for followers `ids`, by type in the order they first come: "The kobold follows
-    /// you down the stairs.", "Two kobolds and the rat follow you up the stairs."
-    fn followers_line(&self, ids: &[ActorId], way: &str) -> Option<String> {
-        let verb = match ids {
-            [] => return None,
-            [_] => "follows",
-            _ => "follow",
-        };
+    /// you down the stairs.", "Three kobolds follow you up the stairs.", "2 kobolds and a rat
+    /// follow you up the stairs."
+    fn followers_line(&self, ids: &[ActorId], way: StairsDir) -> Option<Msg> {
+        if ids.is_empty() {
+            return None;
+        }
         let mut kinds: Vec<(CreatureId, u32)> = Vec::new();
         for id in ids {
             let creature = self.state.actors[id].creature;
@@ -143,19 +143,16 @@ impl World {
                 None => kinds.push((creature, 1)),
             }
         }
-        let words: Vec<String> = (kinds.iter())
-            .map(|&(c, n)| {
-                let def = self.content.creature(c);
-                match n {
-                    1 => the(&def.name),
-                    n => few(&def.name, &def.plural, n),
-                }
-            })
+        let mut who: Vec<Arg> = (kinds.iter())
+            .map(|&(c, n)| fight::creature(self.content.creature(c)).count(n).into())
             .collect();
-        let who = and_list(&words.iter().map(String::as_str).collect::<Vec<_>>());
-        Some(format!(
-            "{} {verb} you {way} the stairs.",
-            capitalized(&who)
-        ))
+        // One type: that phrase, its count picking the line; several: a list of them.
+        let (id, who) = match (who.len(), way) {
+            (1, StairsDir::Down) => (msg::levels::FOLLOW_DOWN, who.remove(0)),
+            (1, StairsDir::Up) => (msg::levels::FOLLOW_UP, who.remove(0)),
+            (_, StairsDir::Down) => (msg::levels::FOLLOW_DOWN_MIXED, Arg::List(who)),
+            (_, StairsDir::Up) => (msg::levels::FOLLOW_UP_MIXED, Arg::List(who)),
+        };
+        Some(Msg::new(id).role("who", who))
     }
 }

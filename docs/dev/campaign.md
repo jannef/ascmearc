@@ -241,7 +241,7 @@ worth 0: never traded). The chalice lies on the barrow chamber's plinth, which C
 for its second floor (`[[dungeon.levels]] vaults`: certain, once, and never drawn at random); the
 reliquary on the sunken crypt's altar, Fennmynster 8; the drake in its hoard, Fyrdelf 12. The
 three branches' first levels say their `arrival` lines (`DungeonDef::arrival`, read through
-`Content::arrival` in `travel` with the hand-made levels'). Tests: `world/campaigns/ceaptun_quest_tests.rs`
+`Content::arrival_key` in `travel` with the hand-made levels'). Tests: `world/campaigns/ceaptun_quest_tests.rs`
 (one quest a giver at a time, the lost shaft's prerequisite, its level-5 refusal, and its reveal and log, the fen minster's reveal, kills on any Cealdhlāw level, the arrival lines, a
 replay), `mapgen/cealdhlaw_tests.rs` (the chamber and its chalice on floor 2 for certain),
 `mapgen/fennmynster_tests.rs` (the reliquary on the crypt's altar).

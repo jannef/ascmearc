@@ -33,6 +33,8 @@
 
 use crate::action::Event;
 use crate::content::{Content, parse_branch_level};
+use crate::lang::Msg;
+use crate::msg;
 use crate::world::{ActorId, World, WorldState};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
@@ -120,8 +122,8 @@ impl World {
             .filter(|a| self.state.actors[a].master() == Some(player))
             .collect();
         if !allies.is_empty() {
-            let who = self.pack_phrase(&allies);
-            self.say(format!("You will not see {who} again."));
+            let pack = self.pack_args(&allies);
+            self.say(Msg::new(msg::levels::WILL_NOT_SEE_AGAIN).role("pack", pack));
         }
         for actor in on_it {
             let Some(actor) = self.state.actors.remove(&actor) else {

@@ -29,9 +29,11 @@ use crate::combat::Blow;
 use crate::content::{ActionKind, DamageTypeId, LevelKind};
 use crate::damage::{Damage, IMMUNE};
 use crate::geom::{Dir, Pos};
+use crate::lang::{Msg, Phrase};
+use crate::msg;
 use crate::rng::draw;
 use crate::time::{Duration, GameTime};
-use crate::world::combat::fight::Harm;
+use crate::world::combat::fight::{self, Harm};
 use crate::world::creatures::ai::Plan;
 use crate::world::{ActorId, LevelState, World};
 use serde::{Deserialize, Serialize};
@@ -219,16 +221,25 @@ impl World {
         let damage = Damage::new(rolled, Some(rules.damage_type));
         let taken = self.resisted(id, damage);
         let verb = content.damage_type(rules.damage_type).verb.clone();
-        let fire = (self.state.current().terrain_at(pos))
-            .map_or_else(|| "fire".to_string(), |t| content.terrain(t).name.clone());
+        let fire = (self.state.current().terrain_at(pos)).map_or_else(
+            || fight::word("fire"),
+            |t| Phrase::id(format!("terrain:{}", content.terrain(t).id)),
+        );
         if id == self.state.player {
             self.say(match taken {
-                t if t <= 0 => format!("The {fire} flares about you harmlessly."),
-                _ => format!("The {fire} {verb} you!"),
+                t if t <= 0 => Msg::new(msg::levels::FIRE_HARMLESS).role("fire", fire),
+                _ => Msg::new(msg::levels::FIRE_BURNS_YOU)
+                    .role("fire", fire)
+                    .role("verb", verb),
             });
         } else if self.perception.sees_actors_at(pos) {
-            let name = self.creature_called(id).to_lowercase();
-            self.say(format!("The {fire} {verb} {name}."));
+            let who = fight::creature(content.creature(self.state.actors[&id].creature));
+            self.say(
+                Msg::new(msg::levels::FIRE_BURNS)
+                    .role("fire", fire)
+                    .role("verb", verb)
+                    .role("who", who),
+            );
         }
         if taken <= 0 {
             return;

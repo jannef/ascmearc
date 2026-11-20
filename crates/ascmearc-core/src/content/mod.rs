@@ -1332,6 +1332,16 @@ impl Content {
             content.vaults.push(vault);
         }
         content.load_dungeons(files)?;
+        // English says every level's and branch's arrival line by its key; it names no one.
+        for (key, line) in content.arrival_lines() {
+            let line = crate::lang::Line::parse(&line);
+            if !line.roles().is_empty() {
+                return Err(ContentError::new(&key, "an `arrival` line names no role"));
+            }
+            content
+                .english
+                .add_data_line(key, crate::lang::Template::Line(line));
+        }
         // After the branches: their `ores` are checked against the table.
         let path = "data/mining.toml";
         if let Some(text) = files.get_optional(path) {

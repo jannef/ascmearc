@@ -7,10 +7,8 @@
 
 use crate::action::Event;
 use crate::content::{LevelKind, Stance};
+use crate::msg;
 use crate::world::{Spent, World};
-
-/// What the player is told when the quick leave is refused.
-pub const QUICK_LEAVE_REFUSED: &str = "You cannot slip away with enemies about.";
 
 impl World {
     /// `<` off any stairs up: on an outdoor level with an edge exit, the quick leave (whether it
@@ -23,7 +21,7 @@ impl World {
         }
         let exit = level.exit.clone()?;
         if self.enemies_about() {
-            self.say(QUICK_LEAVE_REFUSED);
+            self.say(msg::levels::ENEMIES_ABOUT);
             return Some(false);
         }
         if !self.can_move() {

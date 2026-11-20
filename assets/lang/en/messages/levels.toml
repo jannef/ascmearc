@@ -1,0 +1,153 @@
+# Levels (`world/levels/`): travel between levels and on the overworld, stairs and the ones who
+# follow, the overworld's encounters, deep water, ice, fire, webs, the Pits, and the dev actions
+# that move the player or reshape a level. Ids alphabetical (`docs/dev/localization.md` "Literal
+# lines"), the plain ones first, then the tables.
+#
+# Roles: `who` is the creature a line is about; `pack` the player's allies, a list ("Snel and your
+# wolves"); `what` a thing or a terrain; `place` a place by its name ("Ceaptun", "the Barrow");
+# `party` an encounter's party as its data names it, article and all ("a band of footpads");
+# `fire` the burning terrain. `verb` is a damage type's verb and `seen` how a status looks
+# ("caught in a web"), English words from the data, text until that data's text is converted.
+# `error` is a refusal's reason, English for developers; `id` a level, location, or encounter id
+# as typed; `x`, `y`, `cells`, `laid`, and `price` are numbers.
+
+# A dev action's: `id` as typed.
+already_on_dev = "You are on `{id:bare}` already."
+answer_first = "You must answer first."
+break_through_ice = "You break through the ice."
+cannot_go = "You cannot go there ({error:bare})."
+cannot_go_dev = "You cannot go there: {error:bare}."
+cannot_go_that_way = "You can't go that way."
+cannot_leave = "You cannot leave this way ({error:bare})."
+cannot_swim = "You cannot swim."
+climb_out_onto_ice = "You climb out onto the ice."
+# `place`: the level's name.
+climb_out_to = "You climb out to {place:bare}."
+climb_to = "You climb the stairs to {place:bare}."
+come_upon = "You come upon {party:bare}."
+descend_to = "You descend the stairs to {place:bare}."
+dive_in = "You dive into the deep water."
+enemies_about = "You cannot slip away with enemies about."
+enter_place = "You enter {place:bare}."
+# `what`: the terrain of the overworld cell ("forest").
+explore = "You explore {what:the}."
+# `fire`: the burning terrain; `who`: the creature it burns; `verb`: how the damage type says it
+# ("burns").
+fire_burns = "{fire:The} {verb:bare} {who:a}."
+fire_burns_you = "{fire:The} {verb:bare} you!"
+fire_harmless = "{fire:The} flare{fire:s} about you harmlessly."
+foot_finds_no_bottom = "Your foot finds no bottom: deep water lies ahead."
+# A dev action's: `x`, `y` the centre, `cells` how many froze.
+frost_dev = "Frost seizes the water around {x:bare},{y:bare} ({cells:bare} cells, dev)."
+go_after = "You go after {party:bare}."
+go_to_meet = "You go to meet {party:bare}."
+go_under = "You go under and choke."
+ice_creaks = "The ice creaks under your weight."
+keep_your_head = "You keep your head, and the cold bites less deep."
+known = "You remember them: you got away from them here before."
+# `boss`: the layer boss slain.
+lair_opens = "With {boss:the} dead, stairs open in the floor."
+# `what`: the player's light, theirs.
+light_goes_out = "{what:The} go{what:es} out."
+lose_them_byways = "You lose them in the byways."
+lose_them_grass = "You lose them in the long grass."
+lose_them_hills = "You lose them in the hills."
+lose_them_marsh = "You lose them in the marsh."
+lose_them_woods = "You lose them in the woods."
+# `place`: the hidden location found on the way out.
+mark_found = "You mark {place:bare} on your map."
+# A dev action's: `place`, the hidden location.
+marked_dev = "{place:Bare} is marked on your map (dev)."
+meet_on_way = "You meet {party:bare} on the way."
+no_encounter_dev = "There is no encounter `{id:bare}` (dev)."
+no_encounter_rules_dev = "Nobody meets anybody: no encounter rules (dev)."
+no_headway = "You make no headway and swallow water."
+no_headway_choke = "You make no headway, go under, and choke."
+no_hidden_location_dev = "There is no hidden location `{id:bare}`."
+no_local_area_dev = "Nobody is met here: no local area (dev)."
+# A dev action's: `place`, the hidden location already known.
+no_secret_dev = "{place:Bare} is no secret any more."
+no_way_down = "You see no way down here."
+no_way_up = "You see no way up here."
+not_a_choice = "That is not a choice now."
+not_fooled = "They are not fooled."
+nothing_to_decide = "There is nothing to decide."
+nothing_to_explore = "There is nothing to explore here."
+# A dev action's: `place`, the level arrived on.
+on_dev = "You are on {place:bare} (dev)."
+onto_you = "They are onto you."
+pending_refused = "You must decide what to do about them."
+pit_shudders = "The Pit shudders. Far above, stone grinds on stone."
+plunge = "The ice cracks beneath you and you plunge into the freezing water!"
+# `place`: the overworld the player walked back onto.
+return_to = "You return to {place:bare}."
+run_you_down = "They run you down."
+see_each_other = "You and {party:bare} see each other at the same moment."
+# `party` is set upon the player from cover, which the land gives.
+set_upon_grass = "You are set upon by {party:bare} from the long grass!"
+set_upon_hills = "You are set upon by {party:bare} from behind the rocks!"
+set_upon_reeds = "You are set upon by {party:bare} from the reeds!"
+set_upon_roadside = "You are set upon by {party:bare} from the roadside!"
+set_upon_undergrowth = "You are set upon by {party:bare} from the undergrowth!"
+slip_away_unseen = "You slip away unseen."
+# `what`: the paper item, the player's.
+soaked = "{what:The} {what:is} soaked through and ruined."
+# `party`, seen first; where, as the land runs.
+spot_ahead = "You spot {party:bare} ahead. They have not seen you."
+spot_on_road = "You spot {party:bare} on the road ahead. They have not seen you."
+spot_on_trail = "You spot {party:bare} on the trail ahead. They have not seen you."
+stair_crumbles = "The stair crumbles to rubble behind you."
+stairs_blocked = "The stairs are blocked ({error:bare})."
+stairs_lead_nowhere = "These stairs lead nowhere yet."
+stand_ground = "You stand your ground."
+stone_grinds = "Somewhere stone grinds on stone."
+swallow_water = "You swallow water."
+talk_past = "You talk your way past."
+# A dev action's: `x`, `y` the centre.
+thaw_dev = "Heat melts the ice around {x:bare},{y:bare} (dev)."
+# The encounter's dialog text for a party met again: `told`, how it was met, and `known`, the
+# line that remembers it, both as said.
+told_known = "{told:bare} {known:bare}"
+too_close = "They are too close to slip away."
+wait_in_cover = "You wait in cover."
+wake_at_camp = "You wake to find {party:bare} at your camp."
+wake_close_by = "You wake to the sound of {party:bare} close by your camp."
+wake_near_camp = "You wake to find {party:bare} near your camp."
+wake_upon_you = "You wake with {party:bare} upon you!"
+# `what`: the terrain in the way.
+way_blocked = "{what:The} blocks your way."
+# `who`: the one a web caught; `seen`: how the web's status looks.
+web_caught = "{who:The} {who:is} {seen:bare}."
+web_caught_plain = "{who:The} {who:is} caught in a web."
+# A dev action's: `laid` how many webs, `x`, `y` the centre.
+webs_dev = "{laid:bare} webs lie around {x:bare},{y:bare} (dev)."
+# `pack`: the allies left on a floor of an endless branch the player left.
+will_not_see_again = "You will not see {pack:the} again."
+would_sink = "You would sink."
+# `who`: the one in the way, as the player calls it, or "something".
+wriggle_past = "You wriggle past {who:the}."
+wriggle_stuck = "You try to wriggle past {who:the}, but it is in the way."
+
+# `who`: the creatures that followed, all of one type ("the kobold", "three kobolds").
+[follow_down]
+by = "who.number"
+one = "{who:The} follows you down the stairs."
+many = "{who:Num} {who:plural} follow you down the stairs."
+
+# `who`: the creatures that followed, of several types, a list.
+[follow_down_mixed]
+text = "{who:Counted} follow you down the stairs."
+
+[follow_up]
+by = "who.number"
+one = "{who:The} follows you up the stairs."
+many = "{who:Num} {who:plural} follow you up the stairs."
+
+[follow_up_mixed]
+text = "{who:Counted} follow you up the stairs."
+
+# `what`: what sank: a stack, a list of two or three, or a count of objects.
+[sinks]
+by = "what.number"
+one = "{what:Counted} sinks into the water."
+many = "{what:Counted} sink into the water."

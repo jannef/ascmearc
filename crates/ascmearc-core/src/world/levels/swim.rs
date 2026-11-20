@@ -36,6 +36,8 @@ use crate::action::Positions;
 use crate::burden::Burden;
 use crate::content::{Content, SwimRules, TerrainDef};
 use crate::geom::Pos;
+use crate::lang::{MessageId, Msg};
+use crate::msg;
 use crate::object::{LightMode, Stack};
 use crate::rng::draw;
 use crate::skills::{Effect, Use};
@@ -49,11 +51,11 @@ const SHORE_REACH: i32 = 16;
 
 /// Why the player, under `burden`, may not dive in, if they may not: the rules' words. Read by
 /// presentation too, which asks no question of one the rules would refuse.
-pub(crate) fn shore_refusal(content: &Content, burden: Burden) -> Option<&'static str> {
+pub(crate) fn shore_refusal(content: &Content, burden: Burden) -> Option<MessageId> {
     if content.swim().is_none() {
-        return Some("You cannot swim.");
+        return Some(msg::levels::CANNOT_SWIM);
     }
-    (burden_above(burden) >= 2).then_some("You would sink.")
+    (burden_above(burden) >= 2).then_some(msg::levels::WOULD_SINK)
 }
 
 /// How many levels `burden` is above Unburdened.
@@ -125,7 +127,7 @@ impl World {
         if level.memory.get(to).is_none_or(Option::is_none) {
             let terrain = level.terrain[to];
             self.state.current_mut().memory.set(to, Some(terrain));
-            self.say("Your foot finds no bottom: deep water lies ahead.");
+            self.say(msg::levels::FOOT_FINDS_NO_BOTTOM);
             return Some(Spent::NoTime);
         }
         let burden = self.load_of(self.state.player).penalty();
@@ -186,10 +188,10 @@ impl World {
         let percent = rules.harm.percent(by);
         let severe = percent >= (rules.harm.least + rules.harm.most) / 2;
         self.say(match (stroke, severe) {
-            (true, false) => "You make no headway and swallow water.",
-            (true, true) => "You make no headway, go under, and choke.",
-            (false, false) => "You swallow water.",
-            (false, true) => "You go under and choke.",
+            (true, false) => msg::levels::NO_HEADWAY,
+            (true, true) => msg::levels::NO_HEADWAY_CHOKE,
+            (false, false) => msg::levels::SWALLOW_WATER,
+            (false, true) => msg::levels::GO_UNDER,
         });
         let max = i64::from(self.state.player().max_hp(&content).max(1));
         let taken = ((max * i64::from(percent) + 99) / 100).max(1);
@@ -221,9 +223,9 @@ impl World {
             .collect();
         // From the last, so the earlier positions hold as stacks empty.
         for &at in ruined.iter().rev() {
-            let title = self
-                .lore()
-                .title(&self.state.player().inventory[at].single());
+            let what = (self.lore())
+                .title_phrase(&self.state.player().inventory[at].single())
+                .owned_by(self.you());
             let player = self.player_mut();
             let stack = &mut player.inventory[at];
             stack.count -= 1;
@@ -231,7 +233,7 @@ impl World {
                 player.inventory.remove(at);
                 player.equipment.after_removal(&Positions::of([at]));
             }
-            self.say(format!("Your {title} is soaked through and ruined."));
+            self.say(Msg::new(msg::levels::SOAKED).role("what", what));
         }
     }
 
@@ -241,7 +243,7 @@ impl World {
         let level = self.state.current();
         let swim = |p: Pos| self.content.terrain(level.terrain[p]).swim;
         if swim(to) && !swim(from) {
-            self.say("You dive into the deep water.");
+            self.say(msg::levels::DIVE_IN);
             self.douse_afloat();
         }
     }
@@ -256,9 +258,9 @@ impl World {
             return;
         };
         if me.inventory[item].light_mode() != LightMode::Unlit {
-            let name = me.inventory[item].title(&self.content);
+            let what = (me.inventory[item].title_phrase(&self.content)).owned_by(self.you());
             self.snuff_light();
-            self.say(format!("Your {name} goes out."));
+            self.say(Msg::new(msg::levels::LIGHT_GOES_OUT).role("what", what));
         }
     }
 
