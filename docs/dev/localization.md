@@ -333,8 +333,7 @@ blows (`World::say_spell_of`), are `sign_noun:<active>` (the ability's name in l
 breath"); a retaliating status's blow (`gifts.rs`) is its `damage_type:` or `status:` phrase. A
 caster style is a weapon skill (`weapon_skill:<id>`). Left as text: the typed slot id
 (`items.no_slot`), a dev zone's kind, composed text (#1997: a spell's roll and an attack's
-summary, `magic/describe.rs`, the epitaph's "miscast {spell}"), a rider's damage type in an
-item's numbers, and labels shown alone (the spells and scribe lists, the school headings,
+summary, `magic/describe.rs`, the epitaph's "miscast {spell}"), and labels shown alone (the spells and scribe lists, the school headings,
 item class headers: #2000).
 
 **The data's words beside a name** (#1995, `content/data_word.rs`, whose module docs hold both
@@ -720,7 +719,7 @@ and summary, and `magic/describe.rs`.
 it** (`Lore::listed`) is `items.listed`, the phrase `counted` with `listed_numbers` and
 `listed_spirit` or an empty slot after it; the numbers (`Numbers::words`) are `items.numbers_*`
 parts listed by `numbers_listed`, a signed number and dice written as text (notation every
-language writes alike; a rider's damage type a text role until #1994). The screens render it
+language writes alike; a rider's damage type `damage_type:<id>`). The screens render it
 (`text::ui_msg`), a crafting choice holds it (`CraftOption::name`, a seal's family word as text),
 the dumps and a ware's words render English (`english_msg`). Food's freshness (`rot::Stage::word`,
 `Freshness::word`) is `health.food_*`; **a sound heard** is `noise.toml`'s: what it is heard as

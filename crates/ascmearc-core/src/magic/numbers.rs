@@ -206,7 +206,7 @@ impl AttackNumbers {
         let riders = self.riders.iter().map(|r| {
             Msg::new(msg::items::NUMBERS_RIDER)
                 .role("dice", Arg::Text(format!("+{}", r.dice)))
-                .role("kind", Arg::Text(content.damage_type(r.kind).name.clone()))
+                .role("kind", content.damage_type_phrase(r.kind))
         });
         if !self.adds() {
             let dice = Arg::Text(dice_text(self.damage, self.extra));
