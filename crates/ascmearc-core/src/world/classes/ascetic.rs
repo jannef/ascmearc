@@ -138,7 +138,7 @@ impl World {
         self.caught = true;
         if target == self.state.player {
             self.news
-                .push(format!("You pluck the {noun} from the air."));
+                .push(format!("You pluck the {noun} from the air.").into());
         }
         true
     }

@@ -62,11 +62,11 @@ pub struct LangFile {
     pub generic: Option<GenericSpec>,
 }
 
-fn default_repeat() -> String {
+pub(crate) fn default_repeat() -> String {
     " (×{n})".to_string()
 }
 
-fn default_number_words() -> u32 {
+pub(crate) fn default_number_words() -> u32 {
     12
 }
 

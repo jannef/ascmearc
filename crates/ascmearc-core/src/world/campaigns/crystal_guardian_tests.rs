@@ -7,6 +7,7 @@
 
 use crate::content::{ContentFiles, StairsDir};
 use crate::test_support::run as act;
+use crate::test_support::spoken;
 use crate::world::*;
 use std::sync::LazyLock;
 
@@ -33,7 +34,7 @@ fn town() -> World {
 /// What the player has been told, and what is still to be told this turn.
 fn said(world: &World) -> Vec<String> {
     (world.messages().iter().map(|m| m.text.clone()))
-        .chain(world.news.iter().cloned())
+        .chain(spoken(world, &world.news))
         .collect()
 }
 

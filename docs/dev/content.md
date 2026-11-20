@@ -151,7 +151,7 @@ variants always edited together, named after the family (`objects/arrows.toml`: 
 flaming arrow, and the burning arrow it flies as). Each directory's `README.toml` is comments
 only (the field documentation and notes for authors; a file of comments defines nothing, the
 loaders take a missing array as empty). `ascmearc-assets`' `build.rs` embeds and
-`ContentFiles::from_dir` reads `{campaigns,data,vaults}` recursively through one walk,
+`ContentFiles::from_dir` reads `{campaigns,data,lang,vaults}` recursively through one walk,
 core's `content/walk.rs` (the build script includes it with `#[path]`), both in sorted path order
 and both leaving `campaigns/showcase/` out without the `showcase` feature (`from_dir` takes it as
 an argument, `ascmearc_assets::from_dir` passes the build's, so `--content-dir assets` on a release

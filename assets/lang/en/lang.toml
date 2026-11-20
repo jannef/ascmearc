@@ -1,0 +1,5 @@
+# English: the language every message id is generated from (`messages/*.toml`) and the end of
+# every fallback chain (docs/dev/localization.md).
+name = "English"
+code = "en"
+morphology = "en"

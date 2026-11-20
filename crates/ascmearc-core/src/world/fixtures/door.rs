@@ -24,6 +24,8 @@ use crate::content::Effect as ItemEffect;
 use crate::content::{ActionKind, Role};
 use crate::door::kick_breaks;
 use crate::geom::{Dir, Pos};
+use crate::lang::Msg;
+use crate::msg;
 use crate::noise::Act;
 use crate::rng::draw;
 use crate::skills::{Effect, Use};
@@ -45,11 +47,11 @@ impl World {
             // A shut chest opens as a door does.
             Some(def) if def.is_shut_chest() => return self.open_chest(p, events),
             Some(def) if def.is_open_door() => {
-                self.say("That door is already open.");
+                self.say(msg::doors::ALREADY_OPEN);
                 return Spent::Nothing;
             }
             _ => {
-                self.say("There is nothing to open there.");
+                self.say(msg::doors::NOTHING_TO_OPEN);
                 return Spent::Nothing;
             }
         }
@@ -59,13 +61,13 @@ impl World {
             let wedged = self.state.current().wedged.contains_key(&p);
             self.swing_open(player, p, events);
             self.say(match wedged {
-                true => "You pull the wedge free and open the door.",
-                false => "You open the door.",
+                true => msg::doors::UNWEDGE,
+                false => msg::doors::OPEN,
             });
             return Spent::Turn(price);
         };
         let Some(key) = self.state.player().key_for(&self.content, &lock) else {
-            self.say("The door is locked.");
+            self.say(msg::doors::LOCKED);
             return Spent::Nothing;
         };
         let price =
@@ -73,7 +75,7 @@ impl World {
         self.state.current_mut().locks.remove(&p);
         self.swing_open(player, p, events);
         let key = self.content.object(key).name.clone();
-        self.say(format!("You unlock the door with your {key} and open it."));
+        self.say(Msg::new(msg::doors::UNLOCK).role("what", key));
         Spent::Turn(price)
     }
 
@@ -100,21 +102,21 @@ impl World {
                 if self.state.actor_at(&self.state.current_level, p).is_some()
                     || !self.state.current().objects_at(p).is_empty()
                 {
-                    self.say("Something is in the way.");
+                    self.say(msg::doors::IN_THE_WAY);
                     return false;
                 }
                 self.make_noise(self.state.player, Act::CloseDoor(p));
                 self.set_terrain(p, closed);
                 events.push(Event::DoorClosed { pos: p });
-                self.say("You close the door.");
+                self.say(msg::doors::CLOSE);
                 true
             }
             Some(def) if def.is_closed_door() => {
-                self.say("That door is already closed.");
+                self.say(msg::doors::ALREADY_CLOSED);
                 false
             }
             _ => {
-                self.say("There is nothing to close there.");
+                self.say(msg::doors::NOTHING_TO_CLOSE);
                 false
             }
         }
@@ -146,11 +148,11 @@ impl World {
             Some(def) if def.statue.is_some() => self.kick_statue(at, events),
             Some(def) if !def.walkable => {
                 let name = def.name.clone();
-                self.say(format!("Kicking the {name} would only hurt your foot."));
+                self.say(Msg::new(msg::doors::KICK_HURTS).role("what", name));
                 Spent::Nothing
             }
             _ => {
-                self.say("You kick at empty space.");
+                self.say(msg::doors::KICK_EMPTY);
                 Spent::Nothing
             }
         }
@@ -192,11 +194,11 @@ impl World {
             Some(to) => {
                 self.set_terrain(p, to);
                 events.push(Event::DoorBroken { pos: p });
-                self.say("The door crashes open!");
+                self.say(msg::doors::CRASHES_OPEN);
             }
             None => {
                 events.push(Event::DoorKicked { pos: p });
-                self.say("WHAMM!");
+                self.say(msg::doors::WHAMM);
             }
         }
         Spent::Turn(price)

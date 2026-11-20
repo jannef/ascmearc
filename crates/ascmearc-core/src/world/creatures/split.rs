@@ -110,9 +110,9 @@ impl World {
         };
         let first = self.state.progress.once.insert(format!("split:{}", def.id));
         self.news.push(if first {
-            format!("{name} comes apart, and both halves crawl.")
+            format!("{name} comes apart, and both halves crawl.").into()
         } else {
-            format!("{name} splits in two.")
+            format!("{name} splits in two.").into()
         });
     }
 

@@ -117,7 +117,8 @@ impl World {
         let (max_hp, max_mana) = (me.max_hp(&content), me.max_mana(&content));
         me.hp = me.hp.min(max_hp).max(1);
         me.mana = me.mana.min(max_mana).max(0);
-        self.news.push(format!("You are level {below} again."));
+        self.news
+            .push(format!("You are level {below} again.").into());
         true
     }
 

@@ -54,7 +54,7 @@ impl World {
             let who = self.ally_subject(companion);
             let def = self.content.status(status);
             let seen = def.seen.clone().unwrap_or_else(|| def.name.to_lowercase());
-            self.news.push(format!("{who} is {seen} too."));
+            self.news.push(format!("{who} is {seen} too.").into());
         }
     }
 }

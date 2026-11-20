@@ -1158,7 +1158,7 @@ impl World {
                 text.push_str(" You learn to pace your breath.");
             }
         }
-        self.news.push(text);
+        self.news.push(text.into());
     }
 
     /// The player, who did not know them `before`, has learned an active weapon ability: they
@@ -1357,8 +1357,10 @@ impl World {
             // A patron's open commission is off (`patron.rs`).
             self.patron_dies(id);
             let lines = self.creature_dies(id, credited, stoned);
-            self.news
-                .splice(earned..earned, lines.into_iter().chain(crawled));
+            self.news.splice(
+                earned..earned,
+                lines.into_iter().chain(crawled).map(crate::lang::Msg::from),
+            );
             // Death throes go off where it died (`creature_burst.rs`), after what crawled out.
             self.death_throes(id, (at, &level), creature, events);
         }

@@ -47,7 +47,7 @@ impl World {
         );
         if after > before {
             self.player_mut().mana = after;
-            self.news.push("The hex comes home.".to_string());
+            self.news.push("The hex comes home.".to_string().into());
         }
     }
 }

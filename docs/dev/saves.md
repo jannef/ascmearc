@@ -54,6 +54,14 @@ stake (`world/classes/invest.rs`, #1407) is `WorldState::fund` (`Fund`: `cents`,
 and `week`, the last week whose return it took; left out until something is first put in), saved
 and hashed; the business partner is an actor like the servant.
 
+The message log (`WorldState::messages`, `messages.rs`) is saved and hashed as composition
+entries, never as text (#1885; `docs/dev/localization.md` "The log"): each `{turn, id, args,
+count}`, `args` left out while empty and `count` while 1, `passing` neither saved nor hashed. A
+line still said as text is the `literal` entry with its text (`{"id":"literal","args":{"text":
+{"text":"You hit the kobold."}}}`) until its subsystem is converted. So a changed English word
+in `assets/lang/` moves no state hash and loads in any save; a renamed message id, a role added,
+or an argument changed does, like any field, under the version pin.
+
 A charmed ally (`world/allies/charm.rs`, `docs/dev/allies.md` "Charmed") saves its charm in its
 `Actor::ally`: `AllySource::Charmed { spell, faction }`, the `faction_override` it had (left out
 while `None`) put back when the charm ends, and `Ally::until`. A save of this build with one

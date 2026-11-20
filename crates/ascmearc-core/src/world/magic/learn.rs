@@ -389,7 +389,7 @@ impl World {
         let xp = self.content.experience().spell_xp(level);
         if new && xp > 0 {
             self.news
-                .push(format!("You gain {xp} experience for learning {name}."));
+                .push(format!("You gain {xp} experience for learning {name}.").into());
             self.grant_xp(xp);
         }
     }

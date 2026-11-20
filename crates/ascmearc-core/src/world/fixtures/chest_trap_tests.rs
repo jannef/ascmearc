@@ -184,7 +184,8 @@ fn a_fireball_in_a_coffer_blows_it_apart_sparing_nothing() {
     assert!(!trapped(&w, FIRE));
     assert!(!said(&w, "Inside you find 200 rubies."));
     // Said after the burst's own report, the lines in the order they happened.
-    let texts: Vec<&str> = w.messages().iter().map(|m| m.text.as_str()).collect();
+    let log = w.messages();
+    let texts: Vec<&str> = log.iter().map(|m| m.text.as_str()).collect();
     let at = |line: &str| texts.iter().rposition(|t| *t == line).expect(line);
     assert!(
         at("You open the coffer.") < at("A fireball explodes!"),

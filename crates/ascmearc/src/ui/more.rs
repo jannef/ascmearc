@@ -12,7 +12,7 @@
 //! keeps the end of this turn's messages; rows they leave free show earlier messages, one a
 //! row, as before.
 //!
-//! What was noted while a long action went on without stopping it (`Message::passing`: a calm
+//! What was noted while a long action went on without stopping it (`Entry::passing`: a calm
 //! sound, chatter; #1789) is not paged: the line passes over it by itself, showing it, as it
 //! shows earlier messages, in the rows this turn's other messages leave free, and the message
 //! history keeps it. What stops the work, and the work's own lines, page and wait as usual.
@@ -23,7 +23,7 @@
 //! Presentation only: the rules, replays, and dumps never see pages. The whole log is on the
 //! message history screen (`ui::messages_screen`).
 
-use super::{ACCENT, MESSAGE_ROWS, TEXT, TEXT_DIM, message_key};
+use super::{ACCENT, MESSAGE_ROWS, TEXT, TEXT_DIM, message_text};
 use crate::game::Game;
 use crate::input::{Bindings, InputMode};
 use crate::render::console::Console;
@@ -116,7 +116,7 @@ fn width(cols: u32) -> usize {
 fn turn_pages(game: &Game, cols: u32, bindings: &Bindings) -> Vec<Vec<String>> {
     let texts: Vec<String> = (game.unread().iter())
         .filter(|msg| !msg.passing)
-        .map(|msg| msg.display_with(|id| message_key(bindings, id)))
+        .map(|msg| message_text(game.world.content(), msg, bindings))
         .collect();
     pages(&texts, width(cols), MESSAGE_ROWS as usize, game.hunger_stop)
 }
@@ -172,7 +172,7 @@ pub(super) fn wait(
 
 /// Draws the message line in play: at `--more--` the page waited at, `--more--` after it;
 /// otherwise the end of this turn's messages, earlier messages (and this turn's passed over,
-/// `Message::passing`) in the rows they leave free, one a row, the latest lowest (dimmed once
+/// `Entry::passing`) in the rows they leave free, one a row, the latest lowest (dimmed once
 /// they are older than the turn before).
 pub(super) fn draw(console: &mut Console, game: &Game, mode: InputMode, bindings: &Bindings) {
     let rows = MESSAGE_ROWS as usize;
@@ -192,7 +192,7 @@ pub(super) fn draw(console: &mut Console, game: &Game, mode: InputMode, bindings
     let news: Vec<String> = pages.into_iter().flatten().collect();
     let news = &news[news.len().saturating_sub(rows)..];
     let unread = game.unread().len();
-    let log = game.world.perception().messages();
+    let log = game.world.perception().log();
     let earlier: Vec<_> = (log.iter().enumerate())
         .filter(|(i, msg)| *i < log.len() - unread || msg.passing)
         .map(|(_, msg)| msg)
@@ -202,7 +202,7 @@ pub(super) fn draw(console: &mut Console, game: &Game, mode: InputMode, bindings
     let mut row = 0;
     for msg in earlier {
         let color = if msg.turn + 1 >= turn { TEXT } else { TEXT_DIM };
-        let text = msg.display_with(|id| message_key(bindings, id));
+        let text = message_text(game.world.content(), msg, bindings);
         console.print(1, row, &text, color);
         row += 1;
     }

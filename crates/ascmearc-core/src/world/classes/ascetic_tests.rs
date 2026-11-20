@@ -9,6 +9,7 @@ use crate::combat::Strike;
 use crate::content::{ClassActive, ContentFiles, ResourceId};
 use crate::dump::{self, Layer};
 use crate::replay::Replay;
+use crate::test_support::spoken;
 use crate::test_support::{builtin, last, run};
 use crate::world::*;
 
@@ -411,7 +412,7 @@ fn stillness_ends_what_holds_and_clouds_at_once_and_no_more() {
     for id in ["held", "stunned", "frightened", "webbed", "poisoned"] {
         assert!(suffers(&w, player, id), "{id}");
     }
-    let from = w.messages().iter().count();
+    let from = w.messages().len();
     let outcome = w.apply(&parse_actions("use:stillness").expect("an action")[0]);
     assert_eq!(outcome.elapsed, crate::time::Duration::ZERO, "no time");
     assert_eq!(held_ki(&w), Some(3), "two ki");
@@ -548,7 +549,8 @@ fn diamond_soul_plucks_a_shot_from_the_air_for_a_point_of_ki() {
         u32::from(caught),
         "each fell at their feet"
     );
-    let plucked = (w.news.iter()).filter(|n| *n == "You pluck the arrow from the air.");
+    let plucked =
+        (spoken(&w, &w.news).into_iter()).filter(|n| *n == "You pluck the arrow from the air.");
     assert_eq!(plucked.count(), usize::from(caught), "{:?}", w.news);
 }
 
@@ -618,7 +620,8 @@ fn diamond_soul_catches_a_traps_arrow_too() {
         u32::from(caught),
         "each fell at their feet"
     );
-    let plucked = (w.news.iter()).filter(|n| *n == "You pluck the arrow from the air.");
+    let plucked =
+        (spoken(&w, &w.news).into_iter()).filter(|n| *n == "You pluck the arrow from the air.");
     assert_eq!(plucked.count(), usize::from(caught), "{:?}", w.news);
 }
 

@@ -1,0 +1,18 @@
+# Doors: opening, unlocking, closing, and kicking (`world/fixtures/door.rs`). Ids alphabetical.
+
+already_closed = "That door is already closed."
+already_open = "That door is already open."
+close = "You close the door."
+crashes_open = "The door crashes open!"
+in_the_way = "Something is in the way."
+kick_empty = "You kick at empty space."
+# `what`: the terrain kicked ("stone wall").
+kick_hurts = "Kicking the {what:bare} would only hurt your foot."
+locked = "The door is locked."
+nothing_to_close = "There is nothing to close there."
+nothing_to_open = "There is nothing to open there."
+open = "You open the door."
+unwedge = "You pull the wedge free and open the door."
+# `what`: the key that fits.
+unlock = "You unlock the door with your {what:bare} and open it."
+whamm = "WHAMM!"

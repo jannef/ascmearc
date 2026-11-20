@@ -49,7 +49,7 @@ impl World {
             }
             self.bestow(id, None);
             // Said after the death and what the kill earned (`dies` splices the death first).
-            self.news.push(band.message.clone());
+            self.news.push(band.message.clone().into());
         }
     }
 }

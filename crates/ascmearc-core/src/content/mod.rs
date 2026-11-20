@@ -62,6 +62,7 @@ mod elemental_roster_tests;
 mod encounter;
 #[cfg(test)]
 mod encounter_tests;
+mod english;
 mod experience;
 mod faction;
 mod familiar;
@@ -861,6 +862,8 @@ pub struct Content {
     dialogues: Vec<Dialogue>,
     /// The plural dictionary (`data/plurals.toml` and each campaign's).
     plurals: Plurals,
+    /// English, which dumps and tests render the log in (`lang/en/`, `english.rs`).
+    english: crate::lang::Language,
     /// What people ask of the player (`data/quests.toml`), in file order.
     quests: Vec<QuestDef>,
     /// Guilds and their ranks (`data/guilds/`, each campaign's too), in table order.
@@ -904,6 +907,7 @@ impl Content {
         };
         content.campaigns = campaign::parse(files)?;
         content.load_plurals(files)?;
+        content.load_english(files)?;
         content.calendar = content.load_or_default(files)?;
         let path = "data/sky.toml";
         if let Some(text) = files.get_optional(path) {

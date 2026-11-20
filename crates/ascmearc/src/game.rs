@@ -5,7 +5,8 @@ use crate::save::{Resume, SaveStore};
 use ascmearc_core::character::CharacterSpec;
 use ascmearc_core::content::{Content, ContentFiles};
 use ascmearc_core::hunger::Hunger;
-use ascmearc_core::messages::{Message, MessageLog};
+use ascmearc_core::lang::Entry;
+use ascmearc_core::messages::MessageLog;
 use ascmearc_core::replay::{Divergence, Replay};
 use ascmearc_core::world::WorldError;
 use ascmearc_core::{Action, Outcome, World};
@@ -100,7 +101,7 @@ impl Game {
     /// its messages all read.
     pub fn from_world(world: World, save_id: String) -> Self {
         Self {
-            read: world.messages().clone(),
+            read: world.log().clone(),
             world,
             last_outcome: Outcome::default(),
             applied: 0,
@@ -221,7 +222,7 @@ impl Game {
 
     /// Applies `action`, recording it if `--record` is on.
     pub fn apply(&mut self, action: &Action) {
-        self.read = self.world.messages().clone();
+        self.read = self.world.log().clone();
         let before = self.world.perception().own_hunger();
         self.last_outcome = self.world.apply(action);
         self.hunger_stop = match (before, self.world.perception().own_hunger()) {
@@ -237,14 +238,14 @@ impl Game {
 
     /// Counts every message logged so far as read: the world was replaced (a snapshot loaded).
     pub fn mark_read(&mut self) {
-        self.read = self.world.messages().clone();
+        self.read = self.world.log().clone();
     }
 
     /// This turn's news: the messages logged since the player last acted (since the run began,
     /// for a new run), oldest first. A message read before and logged again since (folded into
     /// the same entry, `(×2)`) is news again, with its count.
-    pub fn unread(&self) -> Vec<&Message> {
-        let log: Vec<&Message> = self.world.messages().iter().collect();
+    pub fn unread(&self) -> Vec<&Entry> {
+        let log: Vec<&Entry> = self.world.log().iter().collect();
         let from = unread_from(&self.read, &log);
         log[from..].to_vec()
     }
@@ -264,15 +265,15 @@ impl Game {
 /// its capacity, so what is left of `read` lines up with the start of `log`: all of it but its
 /// last entry as it was, that one perhaps repeated since (then it is news again). With nothing
 /// read, or nothing lining up (more news than the log keeps), everything is news.
-fn unread_from(read: &MessageLog, log: &[&Message]) -> usize {
-    let read: Vec<&Message> = read.iter().collect();
+fn unread_from(read: &MessageLog, log: &[&Entry]) -> usize {
+    let read: Vec<&Entry> = read.iter().collect();
     let Some((last, before)) = read.split_last() else {
         return 0;
     };
     for dropped in 0..=before.len() {
         let kept = &before[dropped..];
         let n = kept.len();
-        if log.len() > n && log[..n] == *kept && log[n].text == last.text {
+        if log.len() > n && log[..n] == *kept && log[n].id == last.id && log[n].args == last.args {
             return if log[n] == *last { n + 1 } else { n };
         }
     }
@@ -295,7 +296,7 @@ fn play_replay(
         return Ok((world, divergence, Outcome::default(), MessageLog::default()));
     };
     let (mut world, mut divergence) = head.play_from(start);
-    let before = world.messages().clone();
+    let before = world.log().clone();
     let outcome = world.apply(&last.action);
     let actual = world.state_hash();
     if divergence.is_none() && actual != last.hash {
@@ -359,8 +360,13 @@ mod tests {
     use ascmearc_core::{Dir, Event};
     use clap::Parser;
 
-    fn texts(messages: &[&Message]) -> Vec<String> {
-        messages.iter().map(|m| m.display()).collect()
+    fn texts(messages: &[&Entry]) -> Vec<String> {
+        static CONTENT: std::sync::LazyLock<Content> =
+            std::sync::LazyLock::new(|| ascmearc_assets::content().expect("built-in content"));
+        let keys = ascmearc_core::lang::written_key;
+        (messages.iter())
+            .map(|m| ascmearc_core::messages::english(&CONTENT, m, &keys))
+            .collect()
     }
 
     #[test]
@@ -369,7 +375,7 @@ mod tests {
         let mut log = MessageLog::default();
         log.push(1, "A");
         let news = |read: &MessageLog, log: &MessageLog| {
-            let all: Vec<&Message> = log.iter().collect();
+            let all: Vec<&Entry> = log.iter().collect();
             texts(&all[unread_from(read, &all)..])
         };
         // Nothing read: everything is news.
@@ -396,7 +402,7 @@ mod tests {
         for i in 0..5 {
             log.push(1000, format!("n{i}"));
         }
-        let all: Vec<&Message> = log.iter().collect();
+        let all: Vec<&Entry> = log.iter().collect();
         assert_eq!(all.len(), CAPACITY);
         assert_eq!(
             texts(&all[unread_from(&read, &all)..]),
@@ -406,7 +412,7 @@ mod tests {
         for i in 0..CAPACITY {
             log.push(2000, format!("o{i}"));
         }
-        let all: Vec<&Message> = log.iter().collect();
+        let all: Vec<&Entry> = log.iter().collect();
         assert_eq!(unread_from(&read, &all), 0);
     }
 

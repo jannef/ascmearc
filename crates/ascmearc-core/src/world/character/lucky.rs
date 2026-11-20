@@ -78,7 +78,8 @@ impl World {
         if !held && attacker == self.state.player && self.perception.sees_actors_at(at) {
             let who = capitalized(&self.called(&self.state.actors[&target]));
             // Said after the blow's own report ("You hit the kobold.").
-            self.news.push(format!("{who} is caught in your grip."));
+            self.news
+                .push(format!("{who} is caught in your grip.").into());
         }
     }
 

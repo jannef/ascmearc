@@ -1,88 +1,35 @@
-//! The in-game message log.
+//! The in-game message log: what core said, as composition entries (`docs/dev/localization.md`).
+//!
+//! An [`Entry`] is a template id and its arguments, as core composed the line when it said it;
+//! the log never holds a language. The app renders it in the player's language, dumps and tests
+//! in English ([`english`], [`Message`]).
 
+use crate::content::Content;
+use crate::lang::{Entry, Keys, Msg, written_key};
 use serde::{Deserialize, Serialize};
 use std::collections::VecDeque;
 
 /// How many messages the log keeps: older ones drop off its front (the message history says so).
 pub const CAPACITY: usize = 200;
 
-/// One logged message. Repeats of the same text in a row are folded into one entry.
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-pub struct Message {
-    /// Turn of the latest repeat.
-    pub turn: u64,
-    pub text: String,
-    /// How many times in a row it was logged (1 for a single message).
-    #[serde(default = "one", skip_serializing_if = "is_one")]
-    pub count: u32,
-    /// Whether it was noted while a long action went on and did not stop it (a calm sound,
-    /// chatter, a status wearing off; #1789): the message line passes over it without asking for
-    /// `--more--`, and the log keeps it. Presentation only (not saved, not hashed).
-    #[serde(skip)]
-    pub passing: bool,
-}
-
-fn one() -> u32 {
-    1
-}
-
-fn is_one(n: &u32) -> bool {
-    *n == 1
-}
-
-/// Names in a message the key that runs a command, by the command's id in the app's key
-/// settings (`help`): core knows no bindings, so the text holds `{key:help}` and the app fills
-/// in the key as bound ([`Message::display_with`]).
-pub fn key(command: &str) -> String {
-    format!("{KEY_OPEN}{command}}}")
-}
-
-const KEY_OPEN: &str = "{key:";
-
-impl Message {
-    /// The text with its counted repeats, e.g. `You open the door. (×2)`, keys named in it
-    /// ([`key`]) left as written: for dev tools, which know no bindings.
-    pub fn display(&self) -> String {
-        self.display_with(key)
-    }
-
-    /// The text as shown to the player: [`Message::display`] with every key named in it filled
-    /// in by `key_name` from the command's id (`?` for `help` with the default keys).
-    pub fn display_with(&self, key_name: impl Fn(&str) -> String) -> String {
-        let mut text = String::with_capacity(self.text.len());
-        let mut rest = self.text.as_str();
-        while let Some(at) = rest.find(KEY_OPEN) {
-            let after = &rest[at + KEY_OPEN.len()..];
-            let Some(end) = after.find('}') else { break };
-            text.push_str(&rest[..at]);
-            text.push_str(&key_name(&after[..end]));
-            rest = &after[end + 1..];
-        }
-        text.push_str(rest);
-        if self.count > 1 {
-            text.push_str(&format!(" (×{})", self.count));
-        }
-        text
-    }
-}
-
-/// The most recent messages, oldest first.
+/// The most recent messages, oldest first. Repeats of the same message in a row (the same id and
+/// arguments) fold into one entry.
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct MessageLog {
-    entries: VecDeque<Message>,
+    entries: VecDeque<Entry>,
 }
 
 impl MessageLog {
-    pub fn push(&mut self, turn: u64, text: impl Into<String>) {
-        self.push_as(turn, text, false);
+    pub fn push(&mut self, turn: u64, msg: impl Into<Msg>) {
+        self.push_as(turn, msg, false);
     }
 
-    /// Logs `text`, [`Message::passing`] if `passing` (a repeat folded into the last entry takes
+    /// Logs `msg`, [`Entry::passing`] if `passing` (a repeat folded into the last entry takes
     /// the latest's).
-    pub fn push_as(&mut self, turn: u64, text: impl Into<String>, passing: bool) {
-        let text = text.into();
+    pub fn push_as(&mut self, turn: u64, msg: impl Into<Msg>, passing: bool) {
+        let msg = msg.into();
         if let Some(last) = self.entries.back_mut()
-            && last.text == text
+            && last.repeats(&msg)
         {
             last.count = last.count.saturating_add(1);
             last.turn = turn;
@@ -92,26 +39,23 @@ impl MessageLog {
         if self.entries.len() == CAPACITY {
             self.entries.pop_front();
         }
-        self.entries.push_back(Message {
-            turn,
-            text,
-            count: 1,
-            passing,
-        });
+        let mut entry = Entry::new(turn, msg);
+        entry.passing = passing;
+        self.entries.push_back(entry);
     }
 
-    /// Clears [`Message::passing`] on the messages logged on turn `since` or later: the last
+    /// Clears [`Entry::passing`] on the messages logged on turn `since` or later: the last
     /// stretch of a long action, read with its end (#1789).
     pub fn settle(&mut self, since: u64) {
-        for msg in self.entries.iter_mut().rev() {
-            if msg.turn < since {
+        for entry in self.entries.iter_mut().rev() {
+            if entry.turn < since {
                 break;
             }
-            msg.passing = false;
+            entry.passing = false;
         }
     }
 
-    pub fn iter(&self) -> impl DoubleEndedIterator<Item = &Message> {
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = &Entry> {
         self.entries.iter()
     }
 
@@ -124,23 +68,82 @@ impl MessageLog {
     }
 }
 
+/// `entry` in English, its repeats counted (`You open the door. (×2)`), each key it names by
+/// `keys` (dumps and tests pass [`written_key`]: `{key:help}` stays written).
+pub fn english(content: &Content, entry: &Entry, keys: Keys<'_>) -> String {
+    content.english().render(entry, content.lexicon(), keys)
+}
+
+/// A logged message rendered in English, for dev tools and tests ([`crate::World::messages`]):
+/// what the dumps show and what a test reads. The app renders the log itself
+/// ([`crate::World::log`]) in the player's language.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct Message {
+    /// Turn of the latest repeat.
+    pub turn: u64,
+    /// The line said once, keys left written (`{key:help}`).
+    pub text: String,
+    /// How many times in a row it was said (1 for a single message).
+    #[serde(skip_serializing_if = "is_one")]
+    pub count: u32,
+    /// Whether it was noted while a long action went on and did not stop it (#1789).
+    #[serde(skip)]
+    pub passing: bool,
+}
+
+fn is_one(n: &u32) -> bool {
+    *n == 1
+}
+
+impl Message {
+    /// `entry` rendered in English.
+    pub fn english(content: &Content, entry: &Entry) -> Self {
+        let once = Entry {
+            count: 1,
+            ..entry.clone()
+        };
+        Self {
+            turn: entry.turn,
+            text: english(content, &once, &written_key),
+            count: entry.count,
+            passing: entry.passing,
+        }
+    }
+
+    /// The text with its counted repeats, e.g. `You open the door. (×2)`.
+    pub fn display(&self) -> String {
+        match self.count {
+            0 | 1 => self.text.clone(),
+            n => format!("{} (×{n})", self.text),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::msg;
+
+    fn shown(log: &MessageLog) -> Vec<String> {
+        let content = crate::test_support::builtin();
+        (log.iter())
+            .map(|entry| english(&content, entry, &written_key))
+            .collect()
+    }
 
     #[test]
     fn repeats_fold_into_one_entry() {
         let mut log = MessageLog::default();
         log.push(1, "You open the door.");
         log.push(2, "You open the door.");
-        log.push(3, "You close the door.");
-        log.push(4, "You open the door.");
-        let shown: Vec<_> = log.iter().map(Message::display).collect();
+        log.push(3, msg::doors::CLOSE);
+        log.push(4, msg::doors::CLOSE);
+        log.push(5, "You open the door.");
         assert_eq!(
-            shown,
+            shown(&log),
             [
                 "You open the door. (×2)",
-                "You close the door.",
+                "You close the door. (×2)",
                 "You open the door."
             ]
         );
@@ -149,31 +152,42 @@ mod tests {
 
     #[test]
     fn keys_named_in_a_message_are_filled_in_as_bound() {
+        let content = crate::test_support::builtin();
+        let welcome = || Msg::new(msg::world::WELCOME).role("place", "Showcase");
         let mut log = MessageLog::default();
-        log.push(1, format!("Press {} or {}.", key("help"), key("look")));
-        log.push(2, format!("Press {} or {}.", key("help"), key("look")));
-        let message = log.iter().next().unwrap();
+        log.push(1, welcome());
+        log.push(2, welcome());
+        let entry = log.iter().next().unwrap();
         let bound = |id: &str| match id {
             "help" => "F1".to_string(),
             other => other.to_uppercase(),
         };
-        assert_eq!(message.display_with(bound), "Press F1 or LOOK. (×2)");
-        assert_eq!(message.display(), "Press {key:help} or {key:look}. (×2)");
-        let plain = Message {
-            turn: 0,
-            text: "No {keys} here, {key:open".into(),
-            count: 1,
-            passing: false,
-        };
-        assert_eq!(plain.display_with(bound), plain.text);
+        assert_eq!(
+            english(&content, entry, &bound),
+            "Welcome to Showcase. Press F1 for controls. (×2)"
+        );
+        let message = Message::english(&content, entry);
+        assert_eq!(
+            message.display(),
+            "Welcome to Showcase. Press {key:help} for controls. (×2)"
+        );
+        assert_eq!(
+            message.text,
+            "Welcome to Showcase. Press {key:help} for controls."
+        );
     }
 
     #[test]
-    fn single_messages_serialize_without_a_count() {
+    fn the_log_saves_entries_and_single_messages_without_a_count() {
         let mut log = MessageLog::default();
         log.push(1, "Hello.");
+        log.push(2, msg::doors::LOCKED);
         let json = serde_json::to_string(&log).unwrap();
         assert!(!json.contains("count"), "{json}");
+        assert_eq!(
+            json,
+            r#"{"entries":[{"turn":1,"id":"literal","args":{"text":{"text":"Hello."}}},{"turn":2,"id":"doors.locked"}]}"#
+        );
         let back: MessageLog = serde_json::from_str(&json).unwrap();
         assert_eq!(back, log);
     }

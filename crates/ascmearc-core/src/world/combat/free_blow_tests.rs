@@ -8,6 +8,7 @@ use crate::action::AttackKind;
 use crate::content::ContentFiles;
 use crate::equipment;
 use crate::test_support::said;
+use crate::test_support::spoken;
 use crate::world::*;
 
 const TERRAIN: &str = r##"
@@ -483,7 +484,11 @@ fn the_player_strikes_a_hostile_stepping_away_and_says_it_last() {
         Some(Event::Attacked { attacker, target, .. }) if (*attacker, *target) == (player, kobold)
     ));
     assert_eq!(w.messages().len(), before, "nothing said yet");
-    assert!(w.news.iter().any(|m| m.contains("kobold")), "{:?}", w.news);
+    assert!(
+        spoken(&w, &w.news).iter().any(|m| m.contains("kobold")),
+        "{:?}",
+        w.news
+    );
     w.say_news();
     assert!(said(&w).iter().any(|m| m.starts_with("You hit the kobold")));
 }

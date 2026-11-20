@@ -546,7 +546,8 @@ fn a_fireball_trap_blasts_the_softer_walls_open() {
         })
         .collect();
     assert_eq!(broken, [Pos::new(2, 1), Pos::new(3, 1)]);
-    let said: Vec<&str> = (w.messages().iter()).map(|m| m.text.as_str()).collect();
+    let log = w.messages();
+    let said: Vec<&str> = (log.iter()).map(|m| m.text.as_str()).collect();
     assert!(said.contains(&"A fireball explodes!"), "{said:?}");
     assert!(said.contains(&"The walls collapse!"), "{said:?}");
 }

@@ -394,11 +394,8 @@ fn digging_through_breaks_ore_out_and_replays_verify() {
         recorded.apply(&action);
         replay.push(&action, &recorded);
     }
-    let lines: Vec<&str> = recorded
-        .messages()
-        .iter()
-        .map(|m| m.text.as_str())
-        .collect();
+    let log = recorded.messages();
+    let lines: Vec<&str> = log.iter().map(|m| m.text.as_str()).collect();
     let crumbles = lines
         .iter()
         .position(|l| l.contains("crumbles"))

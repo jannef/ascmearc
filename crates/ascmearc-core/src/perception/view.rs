@@ -80,8 +80,9 @@ impl<'a> PerceptionView<'a> {
     }
 
     /// The message log: what the player was told, oldest first, at most
-    /// [`crate::messages::CAPACITY`] entries (the message line and the message history).
-    pub fn messages(&self) -> &'a crate::messages::MessageLog {
+    /// [`crate::messages::CAPACITY`] entries (the message line and the message history), as core
+    /// composed them: the app renders each in the player's language.
+    pub fn log(&self) -> &'a crate::messages::MessageLog {
         self.messages
     }
 

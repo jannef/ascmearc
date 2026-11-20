@@ -254,7 +254,7 @@ impl World {
             let name = data.name.clone();
             let after = actor.max_hp(&content);
             actor.hp += after - before;
-            self.news.push(format!("{name} grows stronger."));
+            self.news.push(format!("{name} grows stronger.").into());
         }
     }
 

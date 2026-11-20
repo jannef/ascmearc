@@ -240,8 +240,9 @@ use crate::content::{
 };
 use crate::geom::{Dir, Pos};
 use crate::hunger::Satiation;
+use crate::lang::Msg;
 use crate::light::{LightCache, Sky};
-use crate::messages::MessageLog;
+use crate::messages::{Message, MessageLog};
 use crate::noise::Recent;
 use crate::object::Stack;
 use crate::perception::{Perception, PerceptionView};
@@ -541,20 +542,20 @@ pub struct World {
     /// changes.
     said: u64,
     /// Whether a long action is under way ([`World::keep_at`]; not saved): the notes logged
-    /// meanwhile are [`crate::messages::Message::passing`].
+    /// meanwhile are [`crate::lang::Entry::passing`].
     working: bool,
     /// Creatures that died during the current action, as they were (not saved): what they did
     /// that turn is said when it is perceived.
     fallen: Vec<Actor>,
     /// What the player's kills earned them during the current action (not saved): said after
     /// the attack's own messages.
-    news: Vec<String>,
+    news: Vec<Msg>,
     /// Notes the current action earned (not saved): said after its own messages and the news,
     /// as notes that do not stop a rest (an alignment band crossed, `alignment.rs`).
-    notes: Vec<String>,
+    notes: Vec<Msg>,
     /// While the player strikes a free blow in another's turn (not saved): what is said
     /// meanwhile, to join the news (`free_blow.rs`).
-    held: Option<Vec<String>>,
+    held: Option<Vec<Msg>>,
     /// The sleeper the player's attack now under way found asleep (not saved; `surprise.rs`):
     /// its waking is said after the attack's own line ("You hit the sleeping goblin.").
     sleeper_struck: Option<ActorId>,
@@ -951,8 +952,7 @@ impl World {
         }
         instantiate_level(&mut state, &content, &start);
         drop(start); // It may borrow `content`, which `assemble` takes.
-        let help = crate::messages::key("help");
-        let welcome = format!("Welcome to {}. Press {help} for controls.", def.name);
+        let welcome = Msg::new(crate::msg::world::WELCOME).role("place", def.name.as_str());
         state.messages.push(0, welcome);
         if let Some(line) = &def.arrival {
             state.messages.push(0, line.clone());
@@ -1231,8 +1231,16 @@ impl World {
         }
     }
 
-    pub fn messages(&self) -> &MessageLog {
+    /// The message log as core keeps it: entries, which the app renders in the player's language.
+    pub fn log(&self) -> &MessageLog {
         &self.state.messages
+    }
+
+    /// The message log rendered in English, keys left written: what tests and dev tools read.
+    pub fn messages(&self) -> Vec<Message> {
+        (self.state.messages.iter())
+            .map(|entry| Message::english(&self.content, entry))
+            .collect()
     }
 
     /// What the player perceives right now. Rendering and dumps must go through this.
@@ -1416,26 +1424,28 @@ impl World {
     }
 
     /// Appends a system notice (for example "Game saved.") to the message log.
-    pub fn notice(&mut self, text: impl Into<String>) {
-        self.say(text);
+    pub fn notice(&mut self, msg: impl Into<Msg>) {
+        self.say(msg);
     }
 
-    /// Logs a message; it stops a rest. While the player strikes in another's turn (a free blow,
-    /// `free_blow.rs`), it is held instead, to be said with the news after that turn's reports.
-    fn say(&mut self, text: impl Into<String>) {
+    /// Logs a message: a template's (`msg::doors::LOCKED`, or a [`Msg`] with its roles), or
+    /// finished text, a literal line until its subsystem is converted (`docs/dev/localization.md`).
+    /// It stops a rest. While the player strikes in another's turn (a free blow, `free_blow.rs`),
+    /// it is held instead, to be said with the news after that turn's reports.
+    fn say(&mut self, msg: impl Into<Msg>) {
         if let Some(held) = &mut self.held {
-            held.push(text.into());
+            held.push(msg.into());
             return;
         }
-        self.note(text);
+        self.note(msg);
         self.said += 1;
     }
 
     /// Logs a message that does not stop a rest; logged during a long action, the message line
-    /// passes over it ([`crate::messages::Message::passing`]).
-    fn note(&mut self, text: impl Into<String>) {
+    /// passes over it ([`crate::lang::Entry::passing`]).
+    fn note(&mut self, msg: impl Into<Msg>) {
         let turn = self.state.turn;
-        self.state.messages.push_as(turn, text, self.working);
+        self.state.messages.push_as(turn, msg, self.working);
     }
 
     /// A turn of the player's action `kind` if they did it, else nothing.
