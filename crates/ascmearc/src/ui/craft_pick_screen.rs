@@ -19,16 +19,21 @@
 //! read again after each pick, [`CraftPickScreen::reread`]): the seals list the families of the
 //! crystals picked in words, the affix kept the item's affixes; a seal's None skips the seals
 //! after it (and Esc skips back over them).
+//!
+//! Its words are `assets/lang/en/ui/craft_pick_screen.toml` (`T::…`, [`super::text`]); the
+//! recipe's, the steps', the stacks', and the plan's are core's.
 
 use super::dialog_screen::Dialog;
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::{ScreenAction, ScreenName};
+use super::text::{craft_pick_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::Bindings;
 use crate::render::console::Console;
 use ascmearc_core::Action;
 use ascmearc_core::content::{ItemClassId, RecipeId};
+use ascmearc_core::lang::Arg;
 use ascmearc_core::perception::PerceptionView;
 use ascmearc_core::world::{CraftOption, CraftStep, CraftStepKind};
 
@@ -44,29 +49,42 @@ pub fn craft_dialog(
     craft: Option<(RecipeId, Vec<Option<usize>>)>,
 ) -> Dialog {
     let (Some(view), Some((recipe, picks))) = (run, craft) else {
-        return Dialog::new("Make", "There is nothing to make.")
-            .cancel("Back", ScreenAction::Close);
+        return Dialog::new(ui(T::DIALOG_TITLE), ui(T::DIALOG_NOTHING))
+            .cancel(ui(T::DIALOG_BACK), ScreenAction::Close);
     };
     let plan = match view.craft_plan(recipe, &picks) {
         Ok(plan) => plan,
-        Err(why) => return Dialog::new("Make", why).cancel("Back", ScreenAction::Close),
+        Err(why) => {
+            return Dialog::new(ui(T::DIALOG_TITLE), why)
+                .cancel(ui(T::DIALOG_BACK), ScreenAction::Close);
+        }
     };
-    let at = plan
-        .station
-        .map_or(String::new(), |s| format!(", at the {s}"));
+    let mut args = vec![
+        ("verb", Arg::from(plan.verb.clone())),
+        ("name", plan.name.into()),
+        ("time", plan.time.into()),
+    ];
     // A work that uses nothing up and needs no station (Enchanting's Unbind) says only its time.
-    let text = match plan.uses.is_empty() && at.is_empty() {
-        true => format!("{} {}? It takes {}.", plan.verb, plan.name, plan.time),
-        false => format!(
-            "{} {}? It uses {}{at}, and takes {}.",
-            plan.verb, plan.name, plan.uses, plan.time
-        ),
+    let uses = !plan.uses.is_empty();
+    if uses {
+        args.push(("uses", plan.uses.into()));
+    }
+    let at = plan.station.is_some();
+    if let Some(station) = plan.station {
+        args.push(("station", station.into()));
+    }
+    let text = match (uses, at) {
+        (false, false) => T::DIALOG_TAKES,
+        (false, true) => T::DIALOG_TAKES_AT,
+        (true, false) => T::DIALOG_USES,
+        (true, true) => T::DIALOG_USES_AT,
     };
+    let text = ui_with(text, &args);
     let action = Action::Craft {
         recipe: view.content().recipe(recipe).id.clone(),
         picks,
     };
-    Dialog::yes_no(&plan.verb, text, &plan.verb, action, "Not now")
+    Dialog::yes_no(&plan.verb, text, &plan.verb, action, ui(T::DIALOG_NOT_NOW))
 }
 
 #[derive(Debug)]
@@ -192,13 +210,13 @@ impl CraftPickScreen {
         if matches!(step.kind, CraftStepKind::Family | CraftStepKind::Affix) {
             // Not stacks: one group, headed by what they are.
             let header = match step.kind {
-                CraftStepKind::Family => "Families",
-                _ => "Its magic",
+                CraftStepKind::Family => ui(T::HEADING_FAMILIES),
+                _ => ui(T::HEADING_MAGIC),
             };
             let items = (step.options.iter().cloned())
                 .map(|o| (ItemClassId(0), o))
                 .collect();
-            return PagedList::grouped(items, |_| header.to_string());
+            return PagedList::grouped(items, |_| header.clone());
         }
         let content = view.content();
         let pack = view.inventory();
@@ -357,12 +375,22 @@ impl CraftPickScreen {
         self.fit(console.cols(), console.rows());
         let count = self.list().tallest().max(1) as i32;
         let Some(step) = self.steps.get(self.step) else {
-            let panel = Panel::new(console, " Forge ", WIDTH, 6);
-            console.print(panel.inner_x(), panel.y + 2, "Nothing to choose.", TEXT_DIM);
-            panel.footer(console, "Esc back");
+            let title = format!(" {} ", ui(T::TITLE_EMPTY));
+            let panel = Panel::new(console, &title, WIDTH, 6);
+            let none = ui(T::NOTHING_TO_CHOOSE);
+            console.print_in(
+                panel.inner_x(),
+                panel.y + 2,
+                &none,
+                TEXT_DIM,
+                panel.inner_w(),
+            );
+            panel.footer(console, &ui(T::ESC_BACK));
             return;
         };
-        let title = format!(" {}: {} ", self.name, step.label);
+        let name = || ("name", Arg::from(self.name.clone()));
+        let label = ("label", Arg::from(step.label.clone()));
+        let title = format!(" {} ", ui_with(T::TITLE_STEP, &[name(), label]));
         let panel = Panel::new(console, &title, WIDTH, count + 9);
         self.list().draw_label(console, &panel);
         let x = panel.inner_x();
@@ -374,12 +402,16 @@ impl CraftPickScreen {
             .map(|(s, pick)| {
                 let what = (pick.and_then(|at| s.options.iter().find(|o| o.at == at)))
                     .map_or("—".to_string(), |o| o.short.clone());
-                format!("{}: {what}", s.label)
+                let args = [("label", s.label.clone().into()), ("what", what.into())];
+                ui_with(T::CHOSEN_STEP, &args)
             })
             .collect();
         let header = match chosen.is_empty() {
             true => self.name.clone(),
-            false => format!("{} — {}", self.name, chosen.join(", ")),
+            false => ui_with(
+                T::HEADER_CHOSEN,
+                &[name(), ("chosen", chosen.join(", ").into())],
+            ),
         };
         let header: String = header
             .chars()
@@ -393,20 +425,18 @@ impl CraftPickScreen {
             if on_none {
                 console.print(x, y, ">", ACCENT);
             }
-            console.print(x + 2, y, "- - None", color);
+            console.print_in(x + 2, y, &ui(T::NONE_ROW), color, panel.inner_w() - 2);
             y += 1;
         }
         if self.list().is_empty() && fits(y) {
             let none = match (step.optional, step.kind) {
-                (true, CraftStepKind::Ornament) => {
-                    "Nothing carried would do; None leaves it plain."
-                }
-                (true, CraftStepKind::Family) => "Nothing of the crystal's nature to seal.",
-                (true, CraftStepKind::Affix) => "Choose the item first.",
-                (true, _) => "Nothing carried would do; None makes them brittle.",
-                (false, _) => "Nothing carried will do.",
+                (true, CraftStepKind::Ornament) => T::EMPTY_ORNAMENT,
+                (true, CraftStepKind::Family) => T::EMPTY_FAMILY,
+                (true, CraftStepKind::Affix) => T::EMPTY_AFFIX,
+                (true, _) => T::EMPTY_HEAD,
+                (false, _) => T::EMPTY_REQUIRED,
             };
-            console.print(x + 2, y, none, TEXT_DIM);
+            console.print_in(x + 2, y, &ui(none), TEXT_DIM, panel.inner_w() - 2);
         }
         for (row, y) in self.list().rows().into_iter().zip(y..) {
             if !fits(y) {
@@ -431,12 +461,13 @@ impl CraftPickScreen {
             if selected {
                 console.print(x, y, ">", ACCENT);
             }
+            let takes = || [("n", Arg::Number(i64::from(option.takes)))];
             let state = match (step.kind, option.enough, option.each) {
-                (CraftStepKind::Family, _, _) => "a crystal more".to_string(),
-                (CraftStepKind::Affix, _, _) => "kept".to_string(),
-                (_, true, true) => format!("uses {} each", option.takes),
-                (_, true, false) => format!("uses {}", option.takes),
-                (_, false, _) => "too few".to_string(),
+                (CraftStepKind::Family, _, _) => ui(T::STATE_CRYSTAL),
+                (CraftStepKind::Affix, _, _) => ui(T::STATE_KEPT),
+                (_, true, true) => ui_with(T::STATE_USES_EACH, &takes()),
+                (_, true, false) => ui_with(T::STATE_USES, &takes()),
+                (_, false, _) => ui(T::STATE_TOO_FEW),
             };
             let state_x = right - state.chars().count() as i32;
             let room = (state_x - x - 3).max(0) as usize;
@@ -448,21 +479,24 @@ impl CraftPickScreen {
             console.print(state_x, y, &state, TEXT_DIM);
         }
         let keys = HINTS;
-        let confirm = &keys.confirm;
+        let confirm = ("confirm", Arg::from(keys.confirm));
         let mut hints = Vec::new();
         match self.list().last_letter() {
-            Some('a') => hints.push(format!("a or {confirm} choose")),
-            Some(last) => hints.push(format!("a-{last} or {confirm} choose")),
-            None if step.optional => hints.push(format!("{confirm} choose")),
+            Some('a') => hints.push(ui_with(T::CHOOSE_A, &[confirm])),
+            Some(last) => {
+                let last = ("last", last.to_string().into());
+                hints.push(ui_with(T::CHOOSE_LETTERS, &[last, confirm]));
+            }
+            None if step.optional => hints.push(ui_with(T::CHOOSE_NONE, &[confirm])),
             None => {}
         }
         if step.optional {
-            hints.push("- none".to_string());
+            hints.push(ui(T::NONE_KEY));
         }
         if let Some(page) = self.list().hint(&keys) {
             hints.push(page);
         }
-        hints.push("Esc back".to_string());
+        hints.push(ui(T::ESC_BACK));
         panel.footer(console, &hints.join("   "));
     }
 }

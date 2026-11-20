@@ -1,0 +1,31 @@
+# The item description (`crates/ascmearc/src/ui/describe_screen.rs`). Ids alphabetical.
+#
+# The key named in the hint line is fixed (`Esc`): translate the words around it. The screen
+# fits each text to its panel (docs/dev/localization.md "UI text").
+
+[esc_close]
+text = "Esc close"
+
+# The left column's labels: on an affix's first row, and on an item power's.
+[label_power]
+text = "Power"
+
+[label_prefix]
+text = "Prefix"
+
+[label_suffix]
+text = "Suffix"
+
+# The item's name heading the description: `name`, what it is called.
+[name]
+text = "{name:Bare}"
+
+# The same, worn or wielded: `mark`, how ("being worn").
+[name_marked]
+text = "{name:Bare} ({mark:bare})"
+
+[none]
+text = "You carry no such thing."
+
+[title]
+text = "Item"

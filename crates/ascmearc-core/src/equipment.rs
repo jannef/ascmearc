@@ -6,7 +6,7 @@
 //! once. Combat reads it (`Actor::weapon`, `launcher`, `defence`).
 
 use crate::action::Positions;
-use crate::content::{ActionKind, Content, ObjectId, SlotId};
+use crate::content::{Content, ObjectId, SlotId};
 use crate::object::Stack;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
@@ -136,15 +136,6 @@ pub fn mark(content: &Content, equipment: &Equipment, item: usize) -> Option<Str
     } else {
         first.mark.clone()
     })
-}
-
-/// How an equipment action is said: the verb for putting a thing on and for taking it off.
-pub fn verbs(kind: ActionKind) -> (&'static str, &'static str) {
-    match kind {
-        ActionKind::Wield => ("wield", "put away"),
-        ActionKind::Ready => ("ready", "put away"),
-        _ => ("put on", "take off"),
-    }
 }
 
 #[cfg(test)]

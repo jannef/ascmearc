@@ -4,17 +4,20 @@
 //! glyph, its name with its numbers as a plain one would have them (`Lore::listed`: the gifts are
 //! the ability's, said in its description), and its weight. A letter on the page, or Enter on the
 //! `>` row, calls a weapon of that shape ([`Action::Shape`], `use:spirit_weapon:long_sword`);
-//! the list keys turn the page; Esc closes it. The keys are the list's own, fixed.
+//! the list keys turn the page; Esc closes it. The keys are the list's own, fixed. Its words are
+//! `assets/lang/en/ui/shape_screen.toml` (`T::…`, [`super::text`]).
 
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::ScreenAction;
+use super::text::{shape_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::Bindings;
 use crate::render::console::Console;
 use ascmearc_core::Action;
 use ascmearc_core::color::Rgb;
 use ascmearc_core::content::{ClassActive, WeaponSkillId};
+use ascmearc_core::lang::Arg;
 use ascmearc_core::object::{Stack, format_weight};
 use ascmearc_core::perception::PerceptionView;
 
@@ -108,13 +111,15 @@ impl ShapeScreen {
         // Rows: margin, the list, a gap, the footer, the frame.
         self.fit(console.cols(), console.rows());
         let count = self.shapes.tallest().max(1) as i32;
-        let panel = Panel::new(console, " Spirit weapon: which shape? ", WIDTH, count + 5);
+        let title = format!(" {} ", ui(T::TITLE));
+        let panel = Panel::new(console, &title, WIDTH, count + 5);
         self.shapes.draw_label(console, &panel);
         let x = panel.inner_x();
         let right = panel.x + panel.w - 3;
         let fits = |y: i32| y < panel.y + panel.h - 2;
         if self.shapes.is_empty() && fits(panel.y + 2) {
-            console.print(x + 2, panel.y + 2, "There is no shape to call.", TEXT_DIM);
+            let room = panel.inner_w() - 2;
+            console.print_in(x + 2, panel.y + 2, &ui(T::NONE), TEXT_DIM, room);
         }
         for (row, y) in self.shapes.rows().into_iter().zip(panel.y + 2..) {
             if !fits(y) {
@@ -146,14 +151,18 @@ impl ShapeScreen {
             console.print(weight_x, y, &weight, TEXT_DIM);
         }
         let keys = HINTS;
-        let confirm = &keys.confirm;
+        let confirm = ("confirm", Arg::from(keys.confirm));
         let choose = match self.shapes.last_letter() {
-            Some('a') => format!("a or {confirm}"),
-            Some(last) => format!("a-{last} or {confirm}"),
-            None => confirm.to_string(),
+            Some('a') => ui_with(T::CALL_A, &[confirm]),
+            Some(last) => ui_with(
+                T::CALL_LETTERS,
+                &[("last", last.to_string().into()), confirm],
+            ),
+            None => ui_with(T::CALL_NONE, &[confirm]),
         };
         let page = (self.shapes.hint(&keys)).map_or(String::new(), |hint| format!("{hint}   "));
-        panel.footer(console, &format!("{choose} call   {page}Esc back"));
+        let back = ui(T::ESC_BACK);
+        panel.footer(console, &format!("{choose}   {page}{back}"));
     }
 }
 
