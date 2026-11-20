@@ -85,6 +85,7 @@ pub(crate) mod step_dialogs;
 mod story_screen;
 mod talents_screen;
 mod target;
+pub(crate) mod text;
 mod text_field;
 mod weapon_skills_screen;
 mod zone_tint;
