@@ -83,12 +83,16 @@ plunge = "The ice cracks beneath you and you plunge into the freezing water!"
 return_to = "You return to {place:bare}."
 run_you_down = "They run you down."
 see_each_other = "You and {party:bare} see each other at the same moment."
+# `what`: what lies on the cell the player entered, one stack; `price` its price, for sale.
+see_here = "You see here {what:counted}."
+see_here_for_sale = "You see here {what:counted} (for sale, {price:bare} gold)."
 # `party` is set upon the player from cover, which the land gives.
 set_upon_grass = "You are set upon by {party:bare} from the long grass!"
 set_upon_hills = "You are set upon by {party:bare} from behind the rocks!"
 set_upon_reeds = "You are set upon by {party:bare} from the reeds!"
 set_upon_roadside = "You are set upon by {party:bare} from the roadside!"
 set_upon_undergrowth = "You are set upon by {party:bare} from the undergrowth!"
+several_objects_here = "There are several objects here."
 slip_away_unseen = "You slip away unseen."
 # `what`: the paper item, the player's.
 soaked = "{what:The} {what:is} soaked through and ruined."
@@ -97,6 +101,8 @@ spot_ahead = "You spot {party:bare} ahead. They have not seen you."
 spot_on_road = "You spot {party:bare} on the road ahead. They have not seen you."
 spot_on_trail = "You spot {party:bare} on the trail ahead. They have not seen you."
 stair_crumbles = "The stair crumbles to rubble behind you."
+staircase_down_here = "There is a staircase down here."
+staircase_up_here = "There is a staircase up here."
 stairs_blocked = "The stairs are blocked ({error:bare})."
 stairs_lead_nowhere = "These stairs lead nowhere yet."
 stand_ground = "You stand your ground."
@@ -116,6 +122,8 @@ wake_near_camp = "You wake to find {party:bare} near your camp."
 wake_upon_you = "You wake with {party:bare} upon you!"
 # `what`: the terrain in the way.
 way_blocked = "{what:The} blocks your way."
+# `place`: the overworld location a way down leads into, by its name.
+way_into_here = "The way into {place:bare} is here."
 # `who`: the one a web caught; `seen`: how the web's status looks.
 web_caught = "{who:The} {who:is} {seen:bare}."
 web_caught_plain = "{who:The} {who:is} caught in a web."
@@ -134,9 +142,10 @@ by = "who.number"
 one = "{who:The} follows you down the stairs."
 many = "{who:Num} {who:plural} follow you down the stairs."
 
-# `who`: the creatures that followed, of several types, a list.
+# `who`: the creatures that followed, of several types, a list of `follower`s (each type takes
+# its own form: "Two kobolds and the giant rat").
 [follow_down_mixed]
-text = "{who:Counted} follow you down the stairs."
+text = "{who:And} follow you down the stairs."
 
 [follow_up]
 by = "who.number"
@@ -144,7 +153,14 @@ one = "{who:The} follows you up the stairs."
 many = "{who:Num} {who:plural} follow you up the stairs."
 
 [follow_up_mixed]
-text = "{who:Counted} follow you up the stairs."
+text = "{who:And} follow you up the stairs."
+
+# An item of `follow_down_mixed`'s and `follow_up_mixed`'s list: `who`, the creatures of one
+# type that followed ("the giant rat", "two kobolds").
+[follower]
+by = "who.number"
+one = "{who:the}"
+many = "{who:num} {who:plural}"
 
 # `what`: what sank: a stack, a list of two or three, or a count of objects.
 [sinks]

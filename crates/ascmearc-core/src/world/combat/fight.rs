@@ -62,7 +62,7 @@ use crate::content::{
 };
 use crate::damage::{self, Damage, Protection, Resistances};
 use crate::geom::Dir;
-use crate::lang::{Modifier, Msg, Phrase, Word};
+use crate::lang::{Arg, Modifier, Msg, Phrase, Word};
 use crate::msg;
 use crate::noise::Act;
 use crate::object;
@@ -1135,19 +1135,24 @@ impl World {
     ) {
         let content = self.content.clone();
         let table = content.weapon_skills();
-        let mut text = format!("You feel more skilled {}.", table.skill(risen).phrase);
+        let how = table.skill(risen).phrase.as_str();
+        let mut lines: Vec<Arg> = vec![Msg::new(msg::combat::SKILL_RISEN).role("how", how).into()];
         // The first active a rank teaches grants the stamina it is paid from to one without it
         // (the third place stamina is granted, beside the class tables and a restored run),
         // said after that active.
         let mut breath = self.grant_stamina(before);
         for (_, line, active) in self.learned(before) {
-            text.push(' ');
-            text.push_str(&line);
+            lines.push(line.into());
             if active && std::mem::take(&mut breath) {
-                text.push_str(" You learn to pace your breath.");
+                lines.push(msg::combat::PACE_YOUR_BREATH.into());
             }
         }
-        self.news.push(text.into());
+        // Said as one line (`docs/dev/localization.md` "Nested messages").
+        let said = match lines.len() {
+            1 => Msg::new(msg::combat::SKILL_RISEN).role("how", how),
+            _ => Msg::new(msg::world::LINES).role("lines", Arg::List(lines)),
+        };
+        self.news.push(said);
     }
 
     /// The player, who did not know them `before`, has learned an active weapon ability: they

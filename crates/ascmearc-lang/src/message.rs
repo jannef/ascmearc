@@ -108,6 +108,30 @@ pub enum Arg {
     },
     /// A command id; the host fills in the key as bound (`{key:help}`).
     Key(String),
+    /// A message inside this one: a template's id and its args, rendered in the same language
+    /// and register as the line it stands in (`docs/dev/localization.md` "Nested messages"). In
+    /// a list said `lines`, several lines said as one; in a list said `and`, items that each
+    /// take their own form (a template per item, picking by the item's own features).
+    Msg {
+        id: MessageId,
+        #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+        args: BTreeMap<Role, Arg>,
+    },
+}
+
+impl From<Msg> for Arg {
+    fn from(msg: Msg) -> Self {
+        Self::Msg {
+            id: msg.id,
+            args: msg.args,
+        }
+    }
+}
+
+impl From<MessageId> for Arg {
+    fn from(id: MessageId) -> Self {
+        Msg::new(id).into()
+    }
 }
 
 impl From<Phrase> for Arg {
@@ -242,7 +266,7 @@ impl Msg {
     }
 }
 
-fn literal_text<'a>(id: &MessageId, args: &'a BTreeMap<Role, Arg>) -> Option<&'a str> {
+pub(crate) fn literal_text<'a>(id: &MessageId, args: &'a BTreeMap<Role, Arg>) -> Option<&'a str> {
     match args.get(LITERAL_ROLE) {
         Some(Arg::Text(text)) if *id == LITERAL => Some(text),
         _ => None,

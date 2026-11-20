@@ -337,7 +337,10 @@ fn several_types_are_counted_in_a_list() {
     let last = at(&w, 4, 3);
     w.state.actors.get_mut(&last).expect("actor").creature = rat;
     run(&mut w, "descend");
-    told(&w, "2 kobolds and a giant rat follow you down the stairs.");
+    told(
+        &w,
+        "Two kobolds and the giant rat follow you down the stairs.",
+    );
 }
 
 #[test]
