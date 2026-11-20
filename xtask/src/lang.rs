@@ -879,6 +879,16 @@ mod tests {
     }
 
     #[test]
+    fn a_form_less_placeholder_with_an_unknown_role_is_an_error() {
+        let xx = format!("[hit]\nof = \"{}\"\ntext = \"{{victim}}\"\n", hit_hash());
+        let e = errors(&world(&[("messages/combat.toml", &xx)]));
+        assert!(
+            e.iter().any(|m| m.contains("unknown role `victim`")),
+            "{e:?}"
+        );
+    }
+
+    #[test]
     fn a_template_that_does_not_parse_is_an_error() {
         let e = errors(&world(&[(
             "messages/combat.toml",
