@@ -31,7 +31,7 @@ fn befalls(w: &mut World, effect: MishapEffect) -> Vec<Event> {
         from: 1,
         to: Some(2),
         message: "The weave slips.".into(),
-        seen: "{who} slips.".into(),
+        seen: "{who:The} slips.".into(),
         effect,
     };
     let mut events = Vec::new();
@@ -151,7 +151,7 @@ fn stat_damage_is_allowed_below_71_and_a_drains_times_is_checked() {
             "data/miscasts/glimmer.toml",
             &format!(
                 "[[miscast]]\nid = \"glimmer\"\nfrom = 1\nto = 2\nmessage = \"x\"\n\
-                 seen = \"{{who}}\"\neffect = {{ {effect} }}\n"
+                 seen = \"{{who:The}}\"\neffect = {{ {effect} }}\n"
             ),
         );
         Content::load(&files)

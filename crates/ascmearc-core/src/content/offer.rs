@@ -30,9 +30,9 @@ pub struct TradeOffer {
     /// What the player picks: "Your wares" (the screen adds the price).
     pub name: String,
     /// What the speaker says when the item is bought.
-    pub reply: String,
+    pub reply: super::DialogueLine,
     /// What the speaker says when asked again after the sale.
-    pub sold: String,
+    pub sold: super::DialogueLine,
     /// The item level of the favoured roll: the player's level plus this.
     pub level_bonus: u8,
     /// The least item level of the favoured roll.
@@ -54,8 +54,8 @@ pub struct TradeOffer {
 pub(super) struct OfferSpec {
     id: String,
     name: String,
-    reply: String,
-    sold: String,
+    reply: super::DialogueLine,
+    sold: super::DialogueLine,
     level: LevelSpec,
     affixes: Vec<(u8, u32)>,
     price: PriceSpec,

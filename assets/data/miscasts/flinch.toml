@@ -3,5 +3,5 @@ id = "flinch"
 from = 29
 to = 30
 message = "Something cold looks back at you through the spell."
-seen = "{who} flinches from something unseen."
+seen = "{who:The} flinches from something unseen."
 effect = { kind = "status", status = "frightened", severity = 1 }

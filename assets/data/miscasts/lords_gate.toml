@@ -3,5 +3,5 @@ id = "lords_gate"
 from = 123
 to = 124
 message = "A gate opens for a lord of the hells."
-seen = "A gate opens beside {who} for a lord of the hells!"
+seen = "A gate opens beside {who:the} for a lord of the hells!"
 effect = { kind = "summon", creature = "lords_gate" }

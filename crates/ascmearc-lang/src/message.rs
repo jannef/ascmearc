@@ -92,10 +92,19 @@ pub enum Arg {
     Text(String),
     /// Items the language joins ("gold, ruby, and jet").
     List(Vec<Arg>),
-    /// A dialogue line by its key in the dialogue data, with the args it was filled with (L5).
+    /// A line whose text lives in data, by its key there: a dialogue line
+    /// (`ascmearc.servant.lines.3`) or a narrator's (`miscast.blank.seen`), with the args it was
+    /// filled with, and, for speech, who said it as far as the register goes: the speaker's own
+    /// `register` from the data, and its race (design §9). The language looks the key up in its
+    /// lines of data ([`crate::Language::add_data_line`]) and renders it in that register.
     Said {
         key: String,
+        #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
         args: BTreeMap<Role, Arg>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        register: Option<String>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        race: Option<String>,
     },
     /// A command id; the host fills in the key as bound (`{key:help}`).
     Key(String),
@@ -126,6 +135,34 @@ impl From<&str> for Arg {
 }
 
 impl Arg {
+    /// The line of data keyed `key`, filled with nothing yet: [`Arg::with`] adds args.
+    pub fn said(key: impl Into<String>) -> Self {
+        Self::Said {
+            key: key.into(),
+            args: BTreeMap::new(),
+            register: None,
+            race: None,
+        }
+    }
+
+    /// A line of data with one more arg (a role it fills); anything but a line is unchanged.
+    pub fn with(mut self, role: impl Into<Role>, arg: impl Into<Arg>) -> Self {
+        if let Self::Said { args, .. } = &mut self {
+            args.insert(role.into(), arg.into());
+        }
+        self
+    }
+
+    /// A line of data said by a speaker of `register` (its own, from the data) and `race`;
+    /// anything but a line is unchanged.
+    pub fn spoken_by(mut self, own: Option<String>, of_race: Option<String>) -> Self {
+        if let Self::Said { register, race, .. } = &mut self {
+            *register = own;
+            *race = of_race;
+        }
+        self
+    }
+
     /// The value of a feature of this argument, for a template's variants (`by =
     /// "actor.person"`): a phrase's `person`, `number`, or `gender`; a number's or a list's
     /// `number` (`one` for 1, else `many`). None for a feature the argument has not.
@@ -166,6 +203,22 @@ impl Msg {
 impl From<MessageId> for Msg {
     fn from(id: MessageId) -> Self {
         Self::new(id)
+    }
+}
+
+/// The id of a line of data said alone (a status's start line, a creature's `touch`): its text is
+/// the [`Arg::Said`] in its `line` role, the line's key in the data and its args, which the
+/// language renders from its own lines of data, else English's (`docs/dev/localization.md`
+/// "Lines of data"). No dot, so no generated id can be it.
+pub const DATA_LINE: MessageId = MessageId::new("data_line");
+
+/// The role holding a [`DATA_LINE`]'s line.
+pub const DATA_LINE_ROLE: &str = "line";
+
+impl Msg {
+    /// A line of data said alone ([`DATA_LINE`]): `line` is its [`Arg::Said`], args filled.
+    pub fn data_line(line: Arg) -> Self {
+        Self::new(DATA_LINE).role(DATA_LINE_ROLE, line)
     }
 }
 

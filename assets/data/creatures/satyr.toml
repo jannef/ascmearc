@@ -29,7 +29,7 @@ difficulty = 13
 every = 18
 heard = true
 loudness = 60
-touch = "The pipes of {the} lull you."
+touch = "The pipes of {subject:the} lull you."
 unseen = "Soft piping lulls you."
 [[creature.gear]]
 chance = 25

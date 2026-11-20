@@ -3,5 +3,5 @@ id = "gloom_gate"
 from = 79
 to = 80
 message = "A gate of gloom stands open where there was none, and something bays beyond it."
-seen = "A gate of gloom opens beside {who}."
+seen = "A gate of gloom opens beside {who:the}."
 effect = { kind = "summon", creature = "gloom_gate" }

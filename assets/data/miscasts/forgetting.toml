@@ -3,5 +3,5 @@ id = "forgetting"
 from = 81
 to = 82
 message = "The spell tears loose from your mind."
-seen = "{who} stares at its hands."
+seen = "{who:The} stares at its hands."
 effect = { kind = "forget", spells = 1 }

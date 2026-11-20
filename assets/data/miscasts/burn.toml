@@ -3,5 +3,5 @@ id = "burn"
 from = 53
 to = 54
 message = "The spell bursts in your hands, and you take the brunt of it."
-seen = "{who}'s spell bursts in its hands."
+seen = "{who:Poss} spell bursts in its hands."
 effect = { kind = "harm", dice = "2d6" }

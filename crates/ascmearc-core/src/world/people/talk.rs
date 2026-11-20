@@ -3,7 +3,9 @@
 //! **Chatting** ([`Action::Chat`](crate::Action::Chat)) with a creature the player sees next to
 //! them takes the time of `chat`. A creature with a dialogue (`data/dialogue.toml`, by its `npc`
 //! id or its type) answers: its greeting the first time, then its one-liners in turn
-//! ([`rotation`]): `The gardener says: "…"`. One with topics opens the dialogue screen
+//! ([`rotation`]): `The gardener says: "…"`. Every line it says is a line of its dialogue said
+//! by its key ([`World::said`], `docs/dev/localization.md` "Dialogue"), with the player in its
+//! `player` role and the speaker's register. One with topics opens the dialogue screen
 //! ([`Event::Talked`] carries what it said and its topics), where asking about a topic
 //! ([`Action::Ask`](crate::Action::Ask)) takes no time. A creature with nothing to say, or one
 //! hostile to the player, gives a non-answer. Quests (#148, `quest.rs`) add topics of their own
@@ -26,8 +28,12 @@
 
 use crate::action::Event;
 use crate::content::StatUse;
-use crate::content::{ActionKind, Budge, Dialogue, DialogueId, Service, Stance, Topic};
+use crate::content::{
+    ActionKind, Budge, Dialogue, DialogueId, DialogueLine, Service, Stance, Topic,
+};
 use crate::geom::{Dir, Pos};
+use crate::lang::{Arg, Msg, Phrase};
+use crate::msg;
 use crate::noise::{self, Act, Heard, SoundKind, Volume};
 use crate::text::capitalized;
 use crate::world::{Actor, ActorId, ActorKind, Spent, World};
@@ -82,13 +88,37 @@ pub struct TopicView {
     pub ware: Option<String>,
 }
 
+/// What a creature says in one answer: a line, or several said in turn (a one-liner and what a
+/// stake is worth). Each is a line of its dialogue ([`Arg::Said`]), or finished text where the
+/// line is not yet keyed (a quest's texts: their `say` sites' slice keys them).
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Speech(pub Vec<Arg>);
+
+impl From<Arg> for Speech {
+    fn from(line: Arg) -> Self {
+        Self(vec![line])
+    }
+}
+
+impl From<String> for Speech {
+    fn from(text: String) -> Self {
+        Self(vec![Arg::Text(text)])
+    }
+}
+
+impl From<Vec<Arg>> for Speech {
+    fn from(lines: Vec<Arg>) -> Self {
+        Self(lines)
+    }
+}
+
 /// A creature's answer to the player (an [`Event::Talked`]).
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Conversation {
     /// Who answered.
     pub with: ActorId,
-    /// What they said.
-    pub line: String,
+    /// What they said (the app renders it: `messages::english_speech` in English).
+    pub line: Speech,
     /// What the player may ask them about; none for a creature of one-liners.
     pub topics: Vec<TopicView>,
     /// The topic this answers, if the player asked about one.
@@ -103,7 +133,7 @@ pub(in crate::world) struct Mutter {
     actor: ActorId,
     at: Pos,
     verb: String,
-    line: String,
+    line: Arg,
 }
 
 /// Why a creature does not make way.
@@ -157,29 +187,21 @@ impl World {
 
     /// What `actor` is called in messages: "the gardener", a shop's keeper by its name
     /// ("Grimbold"), a unique character by its proper name ("Sister Hild"), or
-    /// a kept beast (a companion, a familiar) by its own ("Snel").
+    /// a kept beast (a companion, a familiar) by its own ("Snel"): [`World::called_phrase`] in
+    /// English.
     pub(in crate::world) fn called(&self, actor: &Actor) -> String {
-        if let Some(data) = actor.kept() {
-            return data.name.clone();
-        }
-        let keeper = (self.state.levels.get(&actor.level))
-            .and_then(|level| level.shops.iter().find(|s| s.keeper == actor.id));
-        let proper =
-            (self.dialogue_of(actor)).and_then(|d| self.content.dialogue(d).name.as_deref());
-        // An aristocrat's own servant is theirs: "your squire" (`stipend.rs`); so is a merchant's
-        // business partner (`invest.rs`), and a craftsperson's patron (`patron.rs`).
-        let servant = (self.dialogue_of(actor)).is_some_and(|d| {
-            let d = self.content.dialogue(d);
-            d.stipend.is_some() || d.partner.is_some() || d.patron.is_some()
-        });
-        match (keeper, proper) {
-            (Some(shop), _) => shop.name.clone(),
-            (None, Some(name)) => name.to_string(),
-            (None, None) if servant => {
-                format!("your {}", self.content.creature(actor.creature).name)
-            }
-            (None, None) => crate::content::the(&self.content.creature(actor.creature).name),
-        }
+        self.content.english_of(&self.called_phrase(actor), "the")
+    }
+
+    /// `line` of creature `id`'s dialogue as it says it: by its key, with the player in its
+    /// `player` role, in the speaker's register (its dialogue's own, else its race's). Roles a
+    /// line has beside the player's are added with [`Arg::with`].
+    pub(in crate::world) fn said(&self, id: ActorId, line: &DialogueLine) -> Arg {
+        let actor = self.state.actors.get(&id);
+        let register = (actor.and_then(|a| self.dialogue_of(a)))
+            .and_then(|d| self.content.dialogue(d).register.clone());
+        let race = actor.and_then(|a| self.content.creature(a.creature).race.clone());
+        (line.said().with("player", self.you())).spoken_by(register, race)
     }
 
     /// The dialogue `actor` speaks: its npc's, else its type's.
@@ -279,9 +301,10 @@ impl World {
         let cold = self.cold_greeting(id, d, talk.said);
         let line = match (cold, &d.greet) {
             (Some(cold), _) => cold,
-            (None, Some(greet)) if !talk.met => greet.clone(),
+            (None, Some(greet)) if !talk.met => greet,
             _ => self.one_liner(id, d, talk.said),
         };
+        let line = self.said(id, line);
         if let Some(actor) = self.state.actors.get_mut(&id) {
             if actor.talk.met || d.greet.is_none() {
                 actor.talk.said += 1;
@@ -332,7 +355,8 @@ impl World {
         if let Some(spent) = self.ask_calling(id, dialogue, topic, events) {
             return spent;
         }
-        let reply = (self.content.dialogue(dialogue).topic(topic)).map(|t| t.reply.clone());
+        let content = self.content.clone();
+        let reply = (content.dialogue(dialogue).topic(topic)).map(|t| self.said(id, &t.reply));
         match reply {
             Some(reply) => {
                 self.answer(id, reply, Some(topic.to_string()), events);
@@ -377,13 +401,26 @@ impl World {
     pub(in crate::world) fn answer(
         &mut self,
         id: ActorId,
-        line: String,
+        line: impl Into<Speech>,
         asked: Option<String>,
         events: &mut Vec<Event>,
     ) {
-        let who = capitalized(&self.called(&self.state.actors[&id]));
-        self.say(format!("{who} says: \"{line}\""));
+        let line = self.says(id, line);
         self.converse(id, line, asked, events);
+    }
+
+    /// Says what creature `id` says (`The gardener says: "…"`), without a conversation: it
+    /// leaves as it speaks, or speaks unasked. Gives back the speech.
+    pub(in crate::world) fn says(&mut self, id: ActorId, line: impl Into<Speech>) -> Speech {
+        let line = line.into();
+        let who = self.called_phrase(&self.state.actors[&id]);
+        let lines = Arg::List(line.0.clone());
+        self.say(
+            Msg::new(msg::talk::SAYS)
+                .role("who", who)
+                .role("line", lines),
+        );
+        line
     }
 
     /// Records the conversation with creature `id`, its last line `line`, for presentation (the
@@ -391,7 +428,7 @@ impl World {
     pub(super) fn converse(
         &self,
         id: ActorId,
-        line: String,
+        line: Speech,
         asked: Option<String>,
         events: &mut Vec<Event>,
     ) {
@@ -406,11 +443,16 @@ impl World {
     /// The `k`-th one-liner of `d` for creature `id`: of its `lines`, of its lines after each
     /// quest the player has done (`[[dialogue.after]]`), and in a town of its lines about the
     /// town's trade (`[dialogue.economy]`, [`World::economy_lines`]).
-    pub(in crate::world) fn one_liner(&self, id: ActorId, d: &Dialogue, k: u32) -> String {
+    pub(in crate::world) fn one_liner<'d>(
+        &self,
+        id: ActorId,
+        d: &'d Dialogue,
+        k: u32,
+    ) -> &'d DialogueLine {
         let key = self.rotation_key(id, b"lines");
         let done =
             |quest: &str| (self.state.quests.records.get(quest)).is_some_and(|r| r.completed > 0);
-        let lines: Vec<&String> = (d.lines.iter())
+        let lines: Vec<&DialogueLine> = (d.lines.iter())
             .chain(
                 (d.after.iter())
                     .filter(|a| done(&a.quest))
@@ -418,7 +460,7 @@ impl World {
             )
             .chain(self.economy_lines(d))
             .collect();
-        lines[rotation(key, k, lines.len())].clone()
+        lines[rotation(key, k, lines.len())]
     }
 
     /// Creature `id`, having acted, may mutter (see the module docs).
@@ -442,7 +484,8 @@ impl World {
             return;
         }
         let key = self.rotation_key(id, b"mutters");
-        let line = mutter.lines[rotation(key, actor.talk.muttered, mutter.lines.len())].clone();
+        let line = &mutter.lines[rotation(key, actor.talk.muttered, mutter.lines.len())];
+        let line = self.said(id, line);
         let (at, verb) = (actor.pos, mutter.verb.clone());
         if let Some(actor) = self.state.actors.get_mut(&id) {
             actor.talk.muttered += 1;
@@ -473,11 +516,11 @@ impl World {
             let Some((heard, threshold)) = heard else {
                 continue;
             };
-            let text = match self.state.actors.get(&m.actor) {
-                Some(actor) if self.perception.sees_actors_at(m.at) => {
-                    let who = capitalized(&self.called(actor));
-                    format!("{who} {}: \"{}\"", m.verb, m.line)
-                }
+            let said = match self.state.actors.get(&m.actor) {
+                Some(actor) if self.perception.sees_actors_at(m.at) => Msg::new(msg::talk::MUTTERS)
+                    .role("who", self.called_phrase(actor))
+                    .role("verb", m.verb)
+                    .role("line", m.line),
                 _ => {
                     let volume = Volume::of(heard.loudness, threshold);
                     let level = self.state.current();
@@ -485,17 +528,24 @@ impl World {
                     let hidden = |p: Pos| self.perception.hides(p);
                     let place =
                         noise::rough_place(level, &self.content, m.at, volume, turn, hidden);
-                    let from = Dir::toward(viewer, place)
-                        .map_or_else(String::new, |d| format!(" to the {}", d.compass_name()));
-                    match volume {
-                        Volume::Faint => format!("You faintly hear a voice{from}."),
-                        Volume::Clear | Volume::Loud => {
-                            format!("You hear a voice{from}: \"{}\"", m.line)
+                    let dir = Dir::toward(viewer, place);
+                    match (volume, dir) {
+                        (Volume::Faint, _) => {
+                            let from = dir.map_or_else(String::new, |d| {
+                                format!(" to the {}", d.compass_name())
+                            });
+                            Msg::literal(format!("You faintly hear a voice{from}."))
                         }
+                        (Volume::Clear | Volume::Loud, None) => {
+                            Msg::new(msg::talk::VOICE).role("line", m.line)
+                        }
+                        (Volume::Clear | Volume::Loud, Some(d)) => Msg::new(msg::talk::VOICE_FROM)
+                            .role("dir", Phrase::id(format!("word:{}", d.compass_name())))
+                            .role("line", m.line),
                     }
                 }
             };
-            self.note(text);
+            self.note(said);
         }
     }
 

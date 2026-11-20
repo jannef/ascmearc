@@ -6,6 +6,7 @@
 
 [[dialogue]]
 npc = "ordgar"
+register = "posh"
 name = "Master Ordgar"
 greet = "A caller, and up my stair on foot. How very determined of you. Do come in."
 greet_evil = [

@@ -19,7 +19,9 @@
 //! ([`World::answered`]), and is never barred.
 
 use crate::alignment::Alignment;
-use crate::content::{Content, CreatureId, Dialogue, QuestDef, Shifts, Shops, Stance};
+use crate::content::{
+    Content, CreatureId, Dialogue, DialogueLine, QuestDef, Shifts, Shops, Stance,
+};
 use crate::world::{Actor, ActorId, World};
 
 /// What moved an alignment score. Talents that change what a deed costs (one that spares an
@@ -196,12 +198,12 @@ impl World {
     /// scorns the player: one of its `greet_evil` lines (a good speaker) or `greet_good` lines
     /// (an evil one), in turn like the one-liners (`said` of them so far); `None` while it does
     /// not scorn them, or has no such lines.
-    pub(in crate::world) fn cold_greeting(
+    pub(in crate::world) fn cold_greeting<'d>(
         &self,
         id: ActorId,
-        d: &Dialogue,
+        d: &'d Dialogue,
         said: u32,
-    ) -> Option<String> {
+    ) -> Option<&'d DialogueLine> {
         let actor = self.state.actors.get(&id).filter(|a| self.scorns(a))?;
         let lines = match actor.nature(&self.content) {
             Alignment::Good => &d.greet_evil,
@@ -210,7 +212,7 @@ impl World {
         };
         let key = self.rotation_key(id, b"cold");
         let k = crate::world::people::talk::rotation(key, said, lines.len());
-        lines.get(k).cloned()
+        lines.get(k)
     }
 
     /// Whether quest `def` may be offered to the player: their band meets its

@@ -3,5 +3,5 @@ id = "lapse"
 from = 59
 to = 60
 message = "A little of your hard-won training slips away."
-seen = "{who} shakes its head."
+seen = "{who:The} shakes its head."
 effect = { kind = "lose_mark" }

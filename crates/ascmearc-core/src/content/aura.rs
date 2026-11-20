@@ -17,6 +17,7 @@
 use super::damage_type::DamageTypeId;
 use super::status::StatusId;
 use super::{Content, creature::CreatureSpec};
+use crate::lang::Line;
 use crate::noise::SoundKind;
 use crate::stats::Stat;
 use serde::Deserialize;
@@ -65,12 +66,25 @@ pub struct Aura {
     pub heard: Option<u16>,
     /// The damage type whose resistance takes its share of the dose.
     pub kind: Option<DamageTypeId>,
-    /// The words of its first touch on the player who sees the bearer, `{the}` its name:
-    /// "A chill comes off {the}."
+    /// The words of its first touch on the player who sees the bearer, `subject` its bearer:
+    /// "A chill comes off {subject:the}." A line of data, keyed `creature:<id>.touch`
+    /// ([`touch_key`]).
     pub touch: String,
     /// The words when they do not see it: "A wail rises somewhere below."; none: nothing more
     /// than the status's own.
     pub unseen: Option<String>,
+}
+
+/// The role an aura's `touch` names its bearer by.
+pub const TOUCH_SOURCE: &str = "subject";
+
+/// The key of creature `id`'s aura's `touch` among the lines of data (`docs/dev/localization.md`
+/// "Lines of data"), and of its `unseen` with `unseen = true`.
+pub fn touch_key(id: &str, unseen: bool) -> String {
+    match unseen {
+        false => format!("creature:{id}.touch"),
+        true => format!("creature:{id}.unseen"),
+    }
 }
 
 /// A cry as written: `cry = { kind = "hiss", loudness = 40, every = 60 }`.
@@ -135,6 +149,26 @@ pub(super) fn resolve(content: &Content, spec: &CreatureSpec) -> Result<Presence
 }
 
 fn aura(content: &Content, spec: &AuraSpec) -> Result<Aura, String> {
+    // The touch names its bearer, `{subject:the}`, and nothing else; the unseen line no one.
+    let names = |text: &str, roles: &[&str]| {
+        if let Some(old) = super::quest_roll::old_placeholder(text) {
+            return Err(format!(
+                "`{{{old}}}`: a slot is `{{role:form}}`, `{{subject:the}}`"
+            ));
+        }
+        let line = Line::parse(text);
+        match line.roles().into_iter().find(|r| !roles.contains(r)) {
+            Some(r) => Err(format!(
+                "`{text}`: `{r}` is no role of it ({})",
+                roles.join(", ")
+            )),
+            None => Ok(()),
+        }
+    };
+    names(&spec.touch, &[TOUCH_SOURCE])?;
+    if let Some(unseen) = &spec.unseen {
+        names(unseen, &[])?;
+    }
     let status = (content.status_id(&spec.status))
         .filter(|&s| Some(s) != content.disease_status)
         .ok_or_else(|| format!("unknown status `{}`", spec.status))?;

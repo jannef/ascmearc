@@ -143,7 +143,8 @@ impl World {
         self.stock_wares(id, dialogue);
         let wares = self.state.wares[&id].clone();
         let Some(item) = wares.item else {
-            self.answer(id, offer.sold, Some(topic.to_string()), events);
+            let sold = self.said(id, &offer.sold);
+            self.answer(id, sold, Some(topic.to_string()), events);
             return Some(Spent::Nothing);
         };
         let currency = self.content.shops().map(|s| s.currency);
@@ -163,7 +164,8 @@ impl World {
             w.item = None;
         }
         self.train_deal();
-        self.answer(id, offer.reply, Some(topic.to_string()), events);
+        let reply = self.said(id, &offer.reply);
+        self.answer(id, reply, Some(topic.to_string()), events);
         Some(Spent::Turn(self.price_of(player, ActionKind::Chat)))
     }
 }

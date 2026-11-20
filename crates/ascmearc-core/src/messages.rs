@@ -5,7 +5,9 @@
 //! in English ([`english`], [`Message`]).
 
 use crate::content::Content;
-use crate::lang::{Entry, Keys, Msg, written_key};
+use crate::lang::render::LINES_FORM;
+use crate::lang::{Arg, Entry, Keys, Msg, written_key};
+use crate::world::Speech;
 use serde::{Deserialize, Serialize};
 use std::collections::VecDeque;
 
@@ -72,6 +74,17 @@ impl MessageLog {
 /// `keys` (dumps and tests pass [`written_key`]: `{key:help}` stays written).
 pub fn english(content: &Content, entry: &Entry, keys: Keys<'_>) -> String {
     content.english().render(entry, content.lexicon(), keys)
+}
+
+/// What a creature said ([`Speech`]) in English, its lines in turn, keys left written: what the
+/// dialogue screen shows (until a language can be chosen, L8) and a commission's offer in the
+/// quest log. A line English cannot render reads as the reason in brackets.
+pub fn english_speech(content: &Content, speech: &Speech) -> String {
+    let lines = Arg::List(speech.0.clone());
+    (content
+        .english()
+        .try_arg(&lines, LINES_FORM, content.lexicon(), &written_key))
+    .unwrap_or_else(|e| format!("[{e}]"))
 }
 
 /// A logged message rendered in English, for dev tools and tests ([`crate::World::messages`]):

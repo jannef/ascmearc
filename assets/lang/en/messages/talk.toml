@@ -1,0 +1,20 @@
+# Talk (`world/people/talk.rs`): the lines that carry a line of dialogue (`line`, a dialogue
+# line said by its key, `docs/dev/localization.md` "Dialogue"). Ids alphabetical.
+
+# A creature the player sees mutters: `who`, the speaker; `verb`, how (its dialogue's `verb`,
+# "mutters", "hums"); `line`, the line.
+[mutters]
+text = "{who:The} {verb:bare}: \"{line:bare}\""
+
+# A creature answers the player: `who`, the speaker; `line`, what it says, one or more lines
+# said in turn.
+[says]
+text = "{who:The} says: \"{line:lines}\""
+
+# The player hears a mutter but does not see who: `line`, the line.
+[voice]
+text = "You hear a voice: \"{line:bare}\""
+
+# The same, placed: `dir`, the compass word ("north").
+[voice_from]
+text = "You hear a voice to the {dir:bare}: \"{line:bare}\""

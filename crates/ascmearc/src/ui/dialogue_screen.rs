@@ -112,7 +112,7 @@ impl DialogueScreen {
             with: Some(talk.with),
             name: capitalized(&name),
             toward,
-            line: talk.line.clone(),
+            line: ascmearc_core::messages::english_speech(content, &talk.line),
             topics,
             per_item,
             per_cursed,

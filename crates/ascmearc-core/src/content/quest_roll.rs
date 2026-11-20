@@ -2,8 +2,9 @@
 //! whose target is drawn as the quest is given, from a **`pick`** (a pool drawn by a rule from
 //! data that already exists) or a list of authored **`[[quest.variant]]`**s. The quest stays one
 //! template in data; what was drawn is a [`Roll`], kept in the quest's record (saved), and
-//! [`QuestDef::rolled`] makes the quest as given from the two. Texts name the roll through
-//! placeholders (`{target}`, `{count}`, `{members}`, ...), filled from it.
+//! [`QuestDef::rolled`] makes the quest as given from the two. Texts name the roll through role
+//! slots in the base form, as dialogue does (`{target:a}`, `{target:Name}`, `{branch:name}`,
+//! `{where:Name}`; `docs/dev/localization.md` "Dialogue"), filled from it in English.
 //!
 //! - `pick = { creatures = ["cealdhlaw", ...] }`: a creature type that is no unique, from the
 //!   populations of those branches the player can enter (a kill quest).
@@ -24,12 +25,16 @@
 use super::Content;
 use super::creature::CreatureId;
 use super::dialogue::{ID_SHAPE, is_id};
+use super::dialogue_line::DIALOGUE_FORMS;
 use super::item_class::ItemClassId;
 use super::object::ObjectId;
 use super::quest::{Goal, KillTarget, QuestDef, QuestKind, QuestTexts, Reveal, RevealSpec};
 use super::tag::TAG_TARGET;
-use crate::text::{article, capitalized};
+use crate::lang::template::Template;
+use crate::lang::{Arg, Line, Phrase, Role, Segment, written_key};
+use crate::text::article;
 use serde::{Deserialize, Serialize};
+use std::collections::BTreeMap;
 
 /// What a rolled quest drew as it was given (saved in its record): a creature type's, a tag's
 /// (`tag:goblin`), or an object type's id, the variant drawn, if any, and how many it asks for.
@@ -253,14 +258,16 @@ impl QuestDef {
                 def.where_ = v.where_.clone();
             }
         }
-        let words = Words::of(content, &def, &roll.target);
-        let fill = |text: &str| fill(text, &words).unwrap_or_else(|_| text.to_string());
-        def.where_ = def.where_.as_deref().map(fill);
-        let filled = Words {
-            where_: def.where_.clone().unwrap_or_default(),
-            ..words
+        let mut words = words(content, &def, &roll.target);
+        let fill = |text: &str, words: &Words| {
+            self::fill(content, text, words).unwrap_or_else(|_| text.to_string())
         };
-        let fill = |text: &str| self::fill(text, &filled).unwrap_or_else(|_| text.to_string());
+        def.where_ = def.where_.as_deref().map(|w| fill(w, &words));
+        words.insert(
+            WHERE.into(),
+            Arg::Text(def.where_.clone().unwrap_or_default()),
+        );
+        let fill = |text: &str| fill(text, &words);
         def.texts = QuestTexts {
             offer: fill(&def.texts.offer),
             accept: def.texts.accept.as_deref().map(fill),
@@ -318,68 +325,57 @@ pub(crate) fn roll_known(content: &Content, def: &QuestDef, roll: &Roll) -> bool
     variant && goal_for(content, def, &roll.target, roll.count).is_ok()
 }
 
-/// What a quest's placeholders say, for one roll.
-#[derive(Clone, Debug, Default)]
-struct Words {
-    target: String,
-    targets: String,
-    a_target: String,
-    count: String,
-    members: String,
-    branch: String,
-    where_: String,
-}
+/// What a quest's slots name, for one roll: its args by role.
+type Words = BTreeMap<Role, Arg>;
 
-impl Words {
-    /// The words of quest `def` (with its goal after the roll) for target `target`.
-    fn of(content: &Content, def: &QuestDef, target: &str) -> Words {
-        let mut words = Words::default();
-        match &def.goal {
-            Goal::Kill {
-                target: kill,
-                count,
-                what,
-                ..
-            } => {
-                let (one, many) = match what {
-                    Some(what) => (what.clone(), what.clone()),
-                    None => (kill.name(content, true), kill.name(content, false)),
-                };
-                let unique = matches!(kill, KillTarget::Creature(c) if content.creature(*c).unique);
-                words.a_target = one_of(&one, unique);
-                words.target = one;
-                words.targets = many;
-                words.count = count.to_string();
-                if let KillTarget::Tag(tag) = kill {
-                    words.members = def.members(content, tag);
+/// The roles a rolled quest's texts may name (module docs).
+const ROLES: [&str; 5] = ["target", "count", "members", "branch", WHERE];
+
+/// The role of the filled `where`.
+const WHERE: &str = "where";
+
+/// The words of quest `def` (with its goal after the roll) for target `target`, `where` aside:
+/// `target`, what it is after as a phrase counted as it asks; `count`; `members`, a tag's
+/// types; `branch`, the first branch it lives in.
+fn words(content: &Content, def: &QuestDef, target: &str) -> Words {
+    let mut words = Words::new();
+    let mut put = |role: &'static str, arg: Arg| {
+        words.insert(Role::new(role), arg);
+    };
+    match &def.goal {
+        Goal::Kill {
+            target: kill,
+            count,
+            what,
+            ..
+        } => {
+            let named = match (what, kill) {
+                // Called as the quest says, one or many alike.
+                (Some(what), _) => Phrase::id(format!("word:{what}")),
+                (None, KillTarget::Creature(c)) => {
+                    let one = Phrase::id(format!("creature:{}", content.creature(*c).id));
+                    one.count(*count)
                 }
-                words.branch = branch_of(content, def, kill).unwrap_or_default();
+                (None, KillTarget::Tag(tag)) => {
+                    Phrase::id(format!("word:{}", super::tag::spoken(tag))).count(*count)
+                }
+            };
+            put("target", Arg::Phrase(named));
+            put("count", Arg::Number(i64::from(*count)));
+            if let KillTarget::Tag(tag) = kill {
+                put("members", Arg::List(def.member_phrases(content, tag)));
             }
-            Goal::Bring { object, count, .. } => {
-                let o = content.object(*object);
-                words.target = o.name.clone();
-                words.targets = o.plural.clone();
-                words.a_target = o.describe(1);
-                words.count = count.to_string();
-            }
-            _ => words.target = target.to_string(),
+            let branch = branch_of(content, def, kill).unwrap_or_default();
+            put("branch", Arg::Text(branch));
         }
-        words.where_ = def.where_.clone().unwrap_or_default();
-        words
+        Goal::Bring { object, count, .. } => {
+            let what = Phrase::id(format!("object:{}", content.object(*object).id));
+            put("target", Arg::Phrase(what.count(*count)));
+            put("count", Arg::Number(i64::from(*count)));
+        }
+        _ => put("target", Arg::Text(target.to_string())),
     }
-
-    fn get(&self, key: &str) -> Option<&str> {
-        Some(match key {
-            "target" => &self.target,
-            "targets" => &self.targets,
-            "a_target" => &self.a_target,
-            "count" => &self.count,
-            "members" => &self.members,
-            "branch" => &self.branch,
-            "where" => &self.where_,
-            _ => return None,
-        })
-    }
+    words
 }
 
 /// The name of the first branch the kill target `kill` lives in: of the pick's, in its order,
@@ -402,32 +398,55 @@ fn branch_of(content: &Content, def: &QuestDef, kill: &KillTarget) -> Option<Str
     found.map(|b| content.place_name(b))
 }
 
-/// `text` with its placeholders filled from `words`: `{target}`, `{targets}`, `{a_target}`,
-/// `{count}`, `{members}`, `{branch}`, and `{where}`, each also capitalised (`{A_target}`,
-/// `{Where}`). An unknown or unclosed placeholder is an error naming it.
-fn fill(text: &str, words: &Words) -> Result<String, String> {
-    let mut out = String::with_capacity(text.len());
+/// `text` with its slots filled from `words`, in English: what the giver says. A text is said by
+/// a person, so its slots take the base form only (`{target:a}`, `{target:Name}`,
+/// `{branch:name}`: [`DIALOGUE_FORMS`]) and name only [`ROLES`]; a placeholder of the old shape
+/// (`{a_target}`), an unknown role or form, or one `words` lacks, is an error naming it.
+fn fill(content: &Content, text: &str, words: &Words) -> Result<String, String> {
+    if let Some(old) = old_placeholder(text) {
+        return Err(format!(
+            "`{{{old}}}`: a slot is `{{role:form}}`, `{{target:a}}`"
+        ));
+    }
+    let line = Line::parse(text);
+    for segment in &line.0 {
+        if let Segment::Slot { role, form } = segment {
+            if !ROLES.contains(&role.as_str()) {
+                return Err(format!("unknown role `{role}` in `{{{role}:{form}}}`"));
+            }
+            if !DIALOGUE_FORMS.contains(&form.to_lowercase().as_str()) || form == "address" {
+                let forms = (DIALOGUE_FORMS.iter())
+                    .filter(|f| **f != "address")
+                    .copied()
+                    .collect::<Vec<_>>()
+                    .join(", ");
+                return Err(format!("`{{{role}:{form}}}`: a quest's text takes {forms}"));
+            }
+        }
+    }
+    let english = content.english();
+    (english.try_line(
+        &Template::Line(line),
+        words,
+        content.lexicon(),
+        &written_key,
+    ))
+    .map_err(|e| format!("\"{text}\": {e}"))
+}
+
+/// A placeholder of the shape before roles (`{target}`, `{A_target}`), if `text` has one.
+pub(super) fn old_placeholder(text: &str) -> Option<&str> {
     let mut rest = text;
     while let Some(open) = rest.find('{') {
-        out.push_str(&rest[..open]);
         let after = &rest[open + 1..];
-        let close = after
-            .find('}')
-            .ok_or_else(|| format!("an unclosed placeholder in \"{text}\""))?;
-        let key = &after[..close];
-        let lower = key.to_lowercase();
-        let value = words
-            .get(&lower)
-            .ok_or_else(|| format!("unknown placeholder `{{{key}}}`"))?;
-        if key == lower {
-            out.push_str(value);
-        } else {
-            out.push_str(&capitalized(value));
+        let close = after.find('}')?;
+        let inner = &after[..close];
+        if !inner.is_empty() && inner.chars().all(|c| c.is_alphanumeric() || c == '_') {
+            return Some(inner);
         }
-        rest = &after[close + 1..];
+        rest = after;
     }
-    out.push_str(rest);
-    Ok(out)
+    None
 }
 
 /// Parses a quest's `pick` (for a quest of kind `kind` in campaign `campaign`).
@@ -584,15 +603,18 @@ fn check_roll(content: &Content, def: &QuestDef, roll: &Roll) -> Result<(), Stri
         .and_then(|v| v.where_.clone())
         .or_else(|| def.where_.clone());
     raw.where_ = where_.clone();
-    let words = Words::of(content, &raw, &roll.target);
+    let mut words = words(content, &raw, &roll.target);
     if let Some(w) = &where_ {
-        if w.to_lowercase().contains("{where}") {
-            return Err("`where` cannot name `{where}`".into());
+        if Line::parse(w).roles().contains(&WHERE) {
+            return Err("`where` cannot name `where`".into());
         }
-        fill(w, &words)?;
+        let filled = fill(content, w, &words)?;
+        words.insert(WHERE.into(), Arg::Text(filled));
+    } else {
+        words.insert(WHERE.into(), Arg::Text(String::new()));
     }
     for text in texts.iter().chain(accept.iter()) {
-        fill(text, &words)?;
+        fill(content, text, &words)?;
     }
     Ok(())
 }

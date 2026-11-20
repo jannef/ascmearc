@@ -3,5 +3,5 @@ id = "singe"
 from = 19
 to = 20
 message = "The spell snaps back and stings you."
-seen = "{who}'s spell snaps back and stings it."
+seen = "{who:Poss} spell snaps back and stings it."
 effect = { kind = "harm", dice = "1d3" }

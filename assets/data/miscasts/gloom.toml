@@ -3,5 +3,5 @@ id = "gloom"
 from = 43
 to = 44
 message = "The spell drinks the light, and dark pools about you."
-seen = "Dark pools about {who}."
+seen = "Dark pools about {who:the}."
 effect = { kind = "zone", zone = "dark", radius = 2, turns = 10 }

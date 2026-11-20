@@ -193,7 +193,7 @@ fn the_protected_half_may_lose_ranks_but_never_forget() {
             "data/miscasts/glimmer.toml",
             &format!(
                 "[[miscast]]\nid = \"glimmer\"\nfrom = 1\nto = 2\nmessage = \"x\"\n\
-                 seen = \"{{who}}\"\neffect = {{ {effect} }}\n"
+                 seen = \"{{who:The}}\"\neffect = {{ {effect} }}\n"
             ),
         );
         Content::load(&files)

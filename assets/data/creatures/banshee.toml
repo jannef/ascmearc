@@ -38,7 +38,7 @@ difficulty = 15
 every = 24
 heard = true
 loudness = 100
-touch = "{the} wails, and your heart quails."
+touch = "{subject:The} wails, and your heart quails."
 unseen = "A wail rises through the walls, and your heart quails."
 [creature.attack]
 damage = "2d8"

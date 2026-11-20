@@ -45,6 +45,7 @@ mod decipher;
 #[cfg(test)]
 mod demon_roster_tests;
 mod dialogue;
+mod dialogue_line;
 mod disease;
 pub mod dread;
 #[cfg(test)]
@@ -252,7 +253,7 @@ pub use alignment::{AlignmentRules, BandDef, ByAlignment, Shifts};
 pub use ally::AllyRules;
 pub use anim::GlyphAnim;
 pub use animated::{Animated, AnimatedDef, Body, ID_PREFIX, Line, Numbers, Ramp, SlotLine};
-pub use aura::{Aura, CRY_TURN, Cry};
+pub use aura::{Aura, CRY_TURN, Cry, TOUCH_SOURCE, touch_key};
 pub use background::{
     AgeRange, Background, Chapter, ChapterWhen, Effect as StoryEffect, Line as StoryLine, Marks,
     Points, Tier as StoryTier, Tiers, When,
@@ -290,6 +291,7 @@ pub use dialogue::{
     AfterLines, Dialogue, DialogueId, EconomyLines, GenderWords, Mutter, PartnerWords, PatronWords,
     ServantWords, Service, ServiceKind, ServiceTraining, Speaker, Topic,
 };
+pub use dialogue_line::{DIALOGUE_FORMS, DialogueLine};
 pub use disease::{DiseaseDef, DiseaseId, SOURCES, Wading};
 pub use drops::{Drop, DropFrom, DropGoods, TagDrops};
 pub use dummy::DummyTraining;
@@ -353,7 +355,7 @@ pub use material::{
     ANY, Fit, Fits, Found, ItemHarm, MaterialDef, MaterialId, ODD, POOR, Resists, VERY_RARE,
 };
 pub use mining::{Mined, MiningBand, MiningFind, MiningRules, Vein, Veins};
-pub use miscast::{Miscast, MiscastRules};
+pub use miscast::{Miscast, MiscastRules, WHO as MISCAST_WHO};
 #[cfg(test)]
 pub(crate) use mods::pride_month;
 pub use mods::{ModStamp, describe as describe_mods};
@@ -1152,6 +1154,10 @@ impl Content {
         // types.
         content.miscast = content.load_optional(files)?;
         content.miscasts = miscast::parse(files.table("miscasts"), &content)?;
+        for m in &content.miscasts {
+            let seen = crate::lang::Template::Line(crate::lang::Line::parse(&m.seen));
+            content.english.add_data_line(m.seen_key(), seen);
+        }
         content.decipher = content.load_optional(files)?;
         content.encounters = content.load_or_default(files)?;
         content.search = content.load_or_default(files)?;
@@ -1185,7 +1191,12 @@ impl Content {
         content.allies = content.load_optional(files)?;
         content.stat_training = content.load_or_default(files)?;
         content.tuning = content.load_or_default(files)?;
-        content.dialogues = dialogue::parse(files.table("dialogue"), &content)?;
+        let (dialogues, lines) = dialogue::parse(files.table("dialogue"), &content)?;
+        content.dialogues = dialogues;
+        // English says every line of dialogue by its key.
+        for (key, template) in lines {
+            content.english.add_data_line(key, template);
+        }
         content.load_hunger(files)?;
         profane::check_signatures(&content)?;
         // Outcome tables last of the rules' data: they name terrain,

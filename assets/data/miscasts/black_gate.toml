@@ -3,5 +3,5 @@ id = "black_gate"
 from = 93
 to = 94
 message = "A black gate opens beside you, and things that serve for pay look out."
-seen = "A black gate opens beside {who}."
+seen = "A black gate opens beside {who:the}."
 effect = { kind = "summon", creature = "black_gate" }

@@ -4,7 +4,7 @@
 //! tests say what the strings are.
 
 use crate::lexicon::{LexWord, MapLexicon};
-use crate::message::{Arg, Entry, MessageId, Msg};
+use crate::message::{Arg, Entry, MessageId, Msg, Role};
 use crate::morphology::en::{En, Plurals};
 use crate::morphology::fi::Fi;
 use crate::morphology::generic::{Agree, Generic, GenericSpec, Position};
@@ -96,7 +96,20 @@ fn arg() -> impl Strategy<Value = Arg> {
         any::<String>().prop_map(Arg::Key),
     ];
     leaf.prop_recursive(2, 6, 3, |inner| {
-        prop::collection::vec(inner, 0..3).prop_map(Arg::List)
+        // A dialogue line keyed as the line test's dialogue has it, or not at all.
+        let key = prop::sample::select(vec!["d:x.lines.0", "d:x.lines.1", "d:x.address", "d:y"]);
+        let said = (
+            key,
+            prop::collection::btree_map(any::<String>(), inner.clone(), 0..3),
+            prop::option::of(any::<String>()),
+        )
+            .prop_map(|(key, args, register)| Arg::Said {
+                key: key.to_string(),
+                args: args.into_iter().map(|(r, a)| (Role::from(r), a)).collect(),
+                register,
+                race: None,
+            });
+        prop_oneof![prop::collection::vec(inner, 0..3).prop_map(Arg::List), said]
     })
 }
 
@@ -204,6 +217,9 @@ proptest! {
             prop_assert_eq!(templates.len(), 3);
         }
         en.add_templates("p", &toml).ok();
+        let dialogue = format!("[x]\nlines = [\"{escaped}\", \"{{player:address}} {{a:lines}}\"]\naddress = \"{escaped}\"\n");
+        en.add_data_file("d", "d", &dialogue).ok();
+        let _ = Templates::parse_data("d", "d", &text);
         let mut msg = Msg::new(MessageId::owned("p.t"));
         for (role, arg) in args {
             msg = msg.role(role, arg);
