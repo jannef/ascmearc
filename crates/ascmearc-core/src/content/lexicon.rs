@@ -6,7 +6,8 @@
 //! | Id | The word |
 //! |---|---|
 //! | `creature:<id>` | its `name` and `plural`; proper when the name starts upper-case |
-//! | `object:<id>` | its `name` and `plural`; `written`, `written_plural`, and `material` (the main material its name is written for) for an item made of its own parts; a plural noun (`many`) as [`crate::lang::en::is_plural`] says |
+//! | `object:<id>` | its `name` and `plural`; `written`, `written_plural`, and `material` (the main material its name is written for) for an item made of its own parts |
+//! | `disease:<id>` | its `name` as written, with its own article if it has one ("the shakes"); a plural noun (`many`) as its data says |
 //! | `affix:<id>` | its `name` ("Sharp", "of the Bear") |
 //! | `material:<id>` | its `name`; a gem's `plural` |
 //! | `part:<id>` | its `name`, its `adjective` ("pommelled") |
@@ -16,7 +17,10 @@
 //! | `terrain:<id>` | its `name` ("stone wall") |
 //! | `label:scroll`, `label:wand`, `label:rod`, `label:potion` | an unidentified type's `name` and `plural`, with its `{label}` and `{colour}` slots (`data/scroll_labels.toml`, …) |
 //! | `colour:<colour>` | a potion's colour, as its type writes it ("red") |
-//! | `word:<text>` | a word data names without an id of its own (a natural attack's "bite", a trap's "arrow", a status's "staggered", "something"), keyed by its English, which is the word |
+//! | `word:<text>` | a word data names without an id of its own (a natural attack's "bite", a trap's "arrow", a status's "staggered", "something"), keyed by its English, which is the word; with no data to say its number, a plural noun (`many`) as its spelling suggests ([`crate::lang::en::is_plural`]: "claws", "flames", "stakes") |
+//!
+//! A phrase's number comes from data (#1965): its count, the `many` above, and a proper name or
+//! a literal is one thing ("The Hounds quails", "the incubus's"). Only `word:` guesses.
 
 use super::Content;
 use crate::lang::en::is_plural;
@@ -38,11 +42,14 @@ impl Lexicon for Content {
                         .form("written", &def.written_name)
                         .form("written_plural", &def.written_plural)
                         .form("material", &self.material(def.material()).name)
-                        .proper(crate::content::is_proper(&def.name))
-                        .many(is_plural(&def.name)),
+                        .proper(crate::content::is_proper(&def.name)),
                 )
             }
             "affix" => Some(LexWord::new(&self.affixes().get(key)?.name)),
+            "disease" => {
+                let def = self.disease(self.disease_id(key)?);
+                Some(LexWord::new(&def.name).many(def.many))
+            }
             "material" => {
                 let def = self.material(self.material_id(key)?);
                 let plural = (def.gem.as_ref())
@@ -118,6 +125,13 @@ mod tests {
         assert_eq!(word("word:flames").base, "flames");
         assert_eq!(word("race:half_elf").base, "half-elf");
         assert!(word("word:flames").many, "a plural noun");
+        assert!(word("disease:the_shakes").many, "the data says so");
+        assert_eq!(word("disease:the_shakes").base, "the shakes");
+        assert!(!word("disease:mummy_rot").many);
+        assert!(
+            !word("object:leather_boots").many,
+            "\"pair of leather boots\" is one thing"
+        );
         for unknown in [
             "creature:dodo",
             "object:",

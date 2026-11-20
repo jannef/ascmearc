@@ -94,10 +94,17 @@ pub fn the(name: &str) -> String {
     }
 }
 
-/// `called` ("the kobold", "Black Wystan") as an owner: "the kobold's", and a name ending
-/// in s with the apostrophe alone ("Hrothgar's", "the Hounds'").
+/// One thing `called` ("the kobold", "Black Wystan", "the incubus") as an owner: "the
+/// kobold's", "the incubus's". Several are [`possessive_of`].
 pub fn possessive(called: &str) -> String {
-    if called.ends_with('s') {
+    possessive_of(called, false)
+}
+
+/// `called` as an owner by its number, not its spelling: one thing takes "'s" ("the
+/// incubus's", "Agnes's"); several, or a plural noun ("the wolves", "the shakes"), take the
+/// apostrophe alone when the word ends in s ("the wolves'"), else "'s" ("the men's").
+pub fn possessive_of(called: &str, plural: bool) -> String {
+    if plural && called.ends_with('s') {
         format!("{called}'")
     } else {
         format!("{called}'s")
@@ -133,8 +140,10 @@ pub fn own_article(name: &str) -> Option<&str> {
     ["the ", "The "].iter().find_map(|a| name.strip_prefix(a))
 }
 
-/// Whether a noun's last word is a plural ("flames", "shards"): it ends in `s` but not in `ss`
-/// ("soulglass"), `us`, or `is`. What a lexicon marks `many` ([`crate::LexWord::many`]).
+/// Whether a noun's last word looks plural by its spelling ("flames", "shards"): it ends in `s`
+/// but not in `ss` ("soulglass"), `us`, or `is`. Only a guess: a phrase's number comes from data
+/// (its count, the lexicon's [`crate::LexWord::many`], a proper name singular), and this is the
+/// last resort for a word the data names with nothing else to say (core's `word:<text>`).
 pub fn is_plural(noun: &str) -> bool {
     let last = noun.rsplit(' ').next().unwrap_or(noun);
     last.ends_with('s') && !["ss", "us", "is"].iter().any(|e| last.ends_with(e))
@@ -525,6 +534,8 @@ impl Morphology for En {
                 Some(owner) if one => format!("{owner} {}", owned(&w.singular)),
                 Some(owner) => format!("{owner} {} {}", phrase.count, owned(&w.plural)),
                 None if w.proper && one => w.singular.clone(),
+                // A plural noun takes no "a": "some stakes".
+                None if one && w.many => format!("{} {}", reg.word("some"), w.singular),
                 None if one => format!("{} {}", reg.word(article(&w.singular)), w.singular),
                 None => format!("{} {}", phrase.count, w.plural),
             }
@@ -538,7 +549,7 @@ impl Morphology for En {
                 if you {
                     reg.word("your").to_string()
                 } else {
-                    possessive(&the())
+                    possessive_of(&the(), !singular)
                 }
             }
             "they" | "them" | "their" => reg.word(Self::pronoun(phrase, w.many, form)).to_string(),
@@ -648,7 +659,10 @@ mod tests {
         assert_eq!(the_start("kobold"), "The kobold");
         assert_eq!(the_start("Black Wystan"), "Black Wystan");
         assert_eq!(possessive("the kobold"), "the kobold's");
-        assert_eq!(possessive("the Hounds"), "the Hounds'");
+        assert_eq!(possessive("the incubus"), "the incubus's", "one: by number");
+        assert_eq!(possessive("Agnes"), "Agnes's");
+        assert_eq!(possessive_of("the wolves", true), "the wolves'");
+        assert_eq!(possessive_of("the men", true), "the men's");
         assert_eq!(counted("dagger", "daggers", 1), "a dagger");
         assert_eq!(counted("iron key", "iron keys", 1), "an iron key");
         assert_eq!(counted("arrow", "arrows", 12), "12 arrows");
@@ -837,6 +851,50 @@ mod tests {
             )
             .expect("renders");
         assert_eq!(no_lexicon, "a [creature:wolf]");
+    }
+
+    #[test]
+    fn number_comes_from_the_data_not_the_spelling() {
+        // #1965: a name or a singular noun ending in s is one thing; a noun the lexicon marks
+        // `many` is plural however it is spelt.
+        let lex = lexicon()
+            .with("creature:incubus", LexWord::new("incubus"))
+            .with("creature:lens", LexWord::new("lens"))
+            .with("word:stakes", LexWord::new("stakes").many(true))
+            .with("word:the shakes", LexWord::new("the shakes").many(true));
+        let form = |p: &Phrase, f: &str| {
+            en().phrase(p, f, &lex, &Register::default())
+                .unwrap_or_else(|e| panic!("{f}: {e}"))
+        };
+        let hounds = Phrase::literal("The Hounds");
+        assert_eq!(
+            format!("{} quail{}!", form(&hounds, "the"), form(&hounds, "s")),
+            "The Hounds quails!",
+            "a proper name is singular unless marked"
+        );
+        assert_eq!(form(&hounds, "poss"), "The Hounds's");
+        let agnes = Phrase::literal("Agnes").gender(Gender::Female);
+        assert_eq!(form(&agnes, "is"), "is");
+        assert_eq!(form(&agnes, "poss"), "Agnes's");
+        let incubus = Phrase::id("creature:incubus");
+        assert_eq!(form(&incubus, "poss"), "the incubus's");
+        assert_eq!(form(&incubus, "does"), "does");
+        let lens = Phrase::id("creature:lens");
+        assert_eq!(form(&lens, "has"), "has");
+        assert_eq!(form(&lens, "a"), "a lens");
+        let stakes = Phrase::id("word:stakes");
+        assert_eq!(
+            format!("You set to work on {}.", form(&stakes, "a")),
+            "You set to work on some stakes.",
+            "a plural noun takes no indefinite article"
+        );
+        assert_eq!(form(&stakes, "counted"), "some stakes");
+        assert_eq!(form(&stakes, "is"), "are");
+        assert_eq!(form(&stakes, "poss"), "the stakes'");
+        let shakes = Phrase::id("word:the shakes");
+        assert_eq!(form(&shakes, "a"), "the shakes", "its own article");
+        assert_eq!(form(&shakes, "is"), "are");
+        assert_eq!(form(&shakes, "poss"), "the shakes'");
     }
 
     #[test]

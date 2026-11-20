@@ -13,6 +13,7 @@
 #   id          stable id, used by `on_hit` (creatures.toml) and saves
 #   name        how the character screen names it once it is known, as it is said: with its own
 #               article if it has one ("the shakes"; "mummy rot" takes the sentence's)
+#   many        true: the name is a plural noun ("the shakes are cured"; default false)
 #   difficulty  what a check must reach to resist it, as it is caught and at each progression
 #   check       the stat whose modifier the checks add: "toughness" (the default), or any stat
 #   incubation  days from catching it to its onset: dice ("1d3") or a number, at least 1
@@ -79,6 +80,7 @@ recovered = "The ache in your muscles fades."
 [[disease]]
 id = "the_shakes"
 name = "the shakes"
+many = true
 difficulty = 14
 incubation = 1
 damage = { dexterity = "1d6" }

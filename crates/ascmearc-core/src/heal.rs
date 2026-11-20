@@ -70,9 +70,19 @@ fn knows(actor: &Actor, d: DiseaseId) -> bool {
 
 /// Disease `d` by its name as the data writes it, with its own article if it has one ("the
 /// shakes"; "filth fever"): templates say it `{disease:the}`, which adds none to "the shakes",
-/// and agree with its number ("the shakes are").
+/// and agree with its number as the data says (`many`: "the shakes are").
 pub fn phrase(content: &Content, d: DiseaseId) -> Phrase {
-    Phrase::id(format!("word:{}", content.disease(d).name))
+    Phrase::id(format!("disease:{}", content.disease(d).id))
+}
+
+/// Disease `d` as `actor` calls it, as a phrase: [`phrase`] once they know which it is, else
+/// "sickness" (as [`noun`]).
+pub fn phrase_for(content: &Content, actor: &Actor, d: DiseaseId) -> Phrase {
+    if knows(actor, d) {
+        phrase(content, d)
+    } else {
+        Phrase::id("word:sickness")
+    }
 }
 
 /// What `actor` calls disease `d` in a sentence: its name once they know which it is ("filth

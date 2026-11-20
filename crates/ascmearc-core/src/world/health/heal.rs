@@ -119,7 +119,7 @@ impl World {
         let Some(actor) = self.state.actors.get(&patient) else {
             return fight::word("sickness");
         };
-        let disease = fight::word(&heal::noun(&self.content, actor, d));
+        let disease = heal::phrase_for(&self.content, actor, d);
         if patient == self.state.player {
             disease
         } else if let Some(data) = actor.kept() {

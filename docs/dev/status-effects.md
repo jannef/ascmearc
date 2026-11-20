@@ -222,7 +222,8 @@ talents' `disease_checks`, the worn `disease_check` affix effect, and the player
 `disease_check`), for exposure and progression alike. Data: `content/disease.rs` (`DiseaseDef`: `difficulty`, `check` stat, `incubation`
 dice in days, `interval`, `damage: PerStat<Dice>`, `hp`, `recovery` (0 = never), `kills`,
 `regen`, `caught` (named `SOURCES`: `rotten_food`), `wading` (`Wading { terrain, per_hour }`),
-`cured_by`, words `onset`/`symptoms`/`recovered`; `DiseaseId` an index, in the fingerprint);
+`cured_by`, words `onset`/`symptoms`/`recovered`, `many` (a plural name, "the shakes":
+the lexicon's `disease:<id>`, `docs/dev/localization.md` "Phrases"); `DiseaseId` an index, in the fingerprint);
 `on_hit` entries are `OnHit { what: Affliction::Status { .. } | Affliction::Disease(id),
 chance }`. `crate::disease` holds one actor's infections (`Actor::diseases: Diseases`, at most
 one `Infection { disease, left, shown, progressions, streak, by }` per disease: `left` counts
