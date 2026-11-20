@@ -5,9 +5,11 @@
 use super::cursor;
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::screens::{ScreenAction, ScreenName};
+use super::text::{UiText, settings_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use crate::settings::{EffectSwitches, MAX_FONT_PX, MIN_FONT_PX, Settings};
+use ascmearc_core::lang::Arg;
 
 /// One per-effect switch, listed under the reduced-effects preset.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -28,37 +30,35 @@ enum Effect {
 }
 
 impl Effect {
-    fn label(self) -> &'static str {
+    fn label(self) -> UiText {
         match self {
-            Effect::GlyphAnimation => "Glyph animation",
-            Effect::Flicker => "Light flicker",
-            Effect::Motion => "Slides, camera",
-            Effect::Glow => "Bloom and glow",
-            Effect::Distortion => "Heat haze",
-            Effect::Particles => "Particles",
-            Effect::Circles => "Spell circles",
-            Effect::ScreenFades => "Screen fades",
-            Effect::ScreenShake => "Screen shake",
-            Effect::Weather => "Weather",
-            Effect::Blood => "Blood",
+            Effect::GlyphAnimation => T::EFFECT_GLYPH_ANIMATION,
+            Effect::Flicker => T::EFFECT_FLICKER,
+            Effect::Motion => T::EFFECT_MOTION,
+            Effect::Glow => T::EFFECT_GLOW,
+            Effect::Distortion => T::EFFECT_DISTORTION,
+            Effect::Particles => T::EFFECT_PARTICLES,
+            Effect::Circles => T::EFFECT_CIRCLES,
+            Effect::ScreenFades => T::EFFECT_SCREEN_FADES,
+            Effect::ScreenShake => T::EFFECT_SCREEN_SHAKE,
+            Effect::Weather => T::EFFECT_WEATHER,
+            Effect::Blood => T::EFFECT_BLOOD,
         }
     }
 
-    fn help(self) -> &'static str {
+    fn help(self) -> UiText {
         match self {
-            Effect::GlyphAnimation => "Water waves, pulsing altars, sounds rippling in.",
-            Effect::Flicker => "Firelight flickers and drifts in hue; steady when off.",
-            Effect::Motion => "Slides, the camera, and spell effects; off, they snap.",
-            Effect::Glow => "Bloom around glowing glyphs such as lava and crystals.",
-            Effect::Distortion => {
-                "Heat haze over lava and fires; the ground far below a tower window out of focus."
-            }
-            Effect::Particles => "Sparks, embers, splashes, and dust.",
-            Effect::Circles => "Circles about the buffed and hexed (still with the preset).",
-            Effect::ScreenFades => "Level fades, flashes, bright spells darkening the view.",
-            Effect::ScreenShake => "The view shakes when a spell lands near you.",
-            Effect::Weather => "Rain falling, splashing, and rings on water.",
-            Effect::Blood => "Blood stains from big hits and kills (not part of the preset).",
+            Effect::GlyphAnimation => T::EFFECT_GLYPH_ANIMATION_HELP,
+            Effect::Flicker => T::EFFECT_FLICKER_HELP,
+            Effect::Motion => T::EFFECT_MOTION_HELP,
+            Effect::Glow => T::EFFECT_GLOW_HELP,
+            Effect::Distortion => T::EFFECT_DISTORTION_HELP,
+            Effect::Particles => T::EFFECT_PARTICLES_HELP,
+            Effect::Circles => T::EFFECT_CIRCLES_HELP,
+            Effect::ScreenFades => T::EFFECT_SCREEN_FADES_HELP,
+            Effect::ScreenShake => T::EFFECT_SCREEN_SHAKE_HELP,
+            Effect::Weather => T::EFFECT_WEATHER_HELP,
+            Effect::Blood => T::EFFECT_BLOOD_HELP,
         }
     }
 
@@ -123,9 +123,6 @@ const ROWS: &[Row] = &[
 /// Index of the first action row (Files); a gap is drawn before it.
 const FIRST_ACTION: usize = 16;
 
-/// The sample line under the help: how text and the marks read at this size and palette.
-const SAMPLE: &str = "Sample: legible text, then  [ marked ]  and  * flagged *";
-
 /// Selection state of the settings screen.
 #[derive(Debug, Default)]
 pub struct SettingsScreen {
@@ -180,7 +177,7 @@ impl SettingsScreen {
     }
 
     pub fn draw(&self, console: &mut Console, settings: &Settings) {
-        let panel = Panel::new(console, " Settings ", 60, 28);
+        let panel = Panel::new(console, &format!(" {} ", ui(T::TITLE)), 60, 28);
         let label_w = 18;
         let mut switches = settings.effects;
         // The rows start 2 down. A gap before the actions separates them from the options, when
@@ -189,38 +186,32 @@ impl SettingsScreen {
         let rows_end = panel.y + 2 + ROWS.len() as i32;
         let gap = i32::from(rows_end + 2 <= footer_y);
         for (i, row) in ROWS.iter().enumerate() {
-            let on_off = |on: bool| if on { "On" } else { "Off" }.to_string();
+            let on_off = |on: bool| ui(if on { T::ON } else { T::OFF });
             let (label, value) = match row {
-                Row::FontSize => ("Font size".to_string(), format!("{} px", settings.font_px)),
-                Row::ReducedEffects => (
-                    "Reduced effects".to_string(),
-                    on_off(settings.reduced_effects),
+                Row::FontSize => (
+                    ui(T::FONT_SIZE),
+                    ui_with(T::FONT_PX, &[("px", Arg::Number(settings.font_px as i64))]),
                 ),
+                Row::ReducedEffects => (ui(T::REDUCED_EFFECTS), on_off(settings.reduced_effects)),
                 Row::Effect(e) => {
                     let own = *e.switch(&mut switches);
                     // The preset overrides every switch; say so rather than show a lie.
                     let value = if own && settings.reduced_effects && e.in_preset() {
-                        "Off (preset)".to_string()
+                        ui(T::OFF_PRESET)
                     } else {
                         on_off(own)
                     };
                     // The preset's switches sit under it; spell circles and blood are settings
                     // of their own.
                     let indent = if e.in_preset() { "  " } else { "" };
-                    (format!("{indent}{}", e.label()), value)
+                    (format!("{indent}{}", ui(e.label())), value)
                 }
-                Row::Palette => (
-                    "Color palette".to_string(),
-                    settings.palette.label().to_string(),
-                ),
-                Row::Clock => ("Clock".to_string(), settings.clock.label().to_string()),
-                Row::Temperature => (
-                    "Temperature".to_string(),
-                    settings.temperature.label().to_string(),
-                ),
-                Row::Files => ("Where are my files?".to_string(), String::new()),
-                Row::Reset => ("Reset to defaults".to_string(), String::new()),
-                Row::Back => ("Back".to_string(), String::new()),
+                Row::Palette => (ui(T::COLOR_PALETTE), settings.palette.label().to_string()),
+                Row::Clock => (ui(T::CLOCK), settings.clock.label().to_string()),
+                Row::Temperature => (ui(T::TEMPERATURE), settings.temperature.label().to_string()),
+                Row::Files => (ui(T::FILES), String::new()),
+                Row::Reset => (ui(T::RESET), String::new()),
+                Row::Back => (ui(T::BACK), String::new()),
             };
             let y = panel.y + 2 + i as i32 + gap * i32::from(i >= FIRST_ACTION);
             panel.row_with(
@@ -234,40 +225,42 @@ impl SettingsScreen {
             );
         }
         let help = match ROWS[self.selected] {
-            Row::FontSize => "Size of the glyphs, in logical pixels.",
-            Row::ReducedEffects => "Preset: turns every effect below off.",
-            Row::Effect(e) => e.help(),
-            Row::Palette => "Recolors everything on screen; game data is unchanged.",
-            Row::Clock => "How the time of day is written: 14:32 or 2:32 PM.",
-            Row::Temperature => "The unit the status bar shows the temperature in.",
-            Row::Files => "Where settings and saves are, and open the folder.",
-            Row::Reset => "Restores these settings (not the key bindings).",
-            Row::Back => "Settings are saved as you change them.",
+            Row::FontSize => ui(T::FONT_SIZE_HELP),
+            Row::ReducedEffects => ui(T::REDUCED_EFFECTS_HELP),
+            Row::Effect(e) => ui(e.help()),
+            Row::Palette => ui(T::PALETTE_HELP),
+            Row::Clock => ui(T::CLOCK_HELP),
+            Row::Temperature => ui(T::TEMPERATURE_HELP),
+            Row::Files => ui(T::FILES_HELP),
+            Row::Reset => ui(T::RESET_HELP),
+            Row::Back => ui(T::BACK_HELP),
         };
         // Under the last row (rows start 2 down, plus the gap before the actions): a blank line,
         // the help, and the samples, as many as fit above the footer. A panel cut short by a
         // small window loses the blank line first, then the samples, never the frame or footer.
         let below = [
             (help, TEXT_DIM),
-            (SAMPLE, TEXT),
-            ("Sample accent text", ACCENT),
+            (ui(T::SAMPLE), TEXT),
+            (ui(T::SAMPLE_ACCENT), ACCENT),
         ];
         let mut y = rows_end + gap + 1;
         if y + below.len() as i32 > footer_y {
             y -= 1;
         }
-        for (text, color) in below {
+        for (text, color) in &below {
             if y >= footer_y {
                 break;
             }
-            console.print(panel.inner_x(), y, text, color);
+            console.print_in(panel.inner_x(), y, text, *color, panel.inner_w());
             y += 1;
         }
         let keys = HINTS;
-        let footer = format!(
-            "{} select   {} change   Esc back",
-            keys.up_down(),
-            keys.left_right()
+        let footer = ui_with(
+            T::FOOTER,
+            &[
+                ("up_down", keys.up_down().into()),
+                ("left_right", keys.left_right().into()),
+            ],
         );
         panel.footer(console, &footer);
     }

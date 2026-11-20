@@ -1,0 +1,141 @@
+# The controls screen and the `?` help (`crates/ascmearc/src/ui/controls_screen.rs`). Ids
+# alphabetical.
+#
+# A message that starts with `!` is a refusal and is shown in the accent color: a translation
+# keeps the `!`. The keys named in the footers and the notes are fixed (`Esc`): translate the
+# words around them. The screen fits each text to its panel: a translation longer than the room
+# is cut with `…` or wrapped, which the screen snapshots check (docs/dev/localization.md "UI
+# text"). The commands' names and the contexts' titles come from `settings/keys.rs`.
+
+# `name`, the command; `shown`, the key.
+[added]
+text = "{name:bare}: {shown:bare} added."
+
+[ability_keys]
+text = "Ability keys (all in the abilities menu too)"
+
+[action_back]
+text = "Back"
+
+[action_export]
+text = "Export keys…"
+
+[action_import]
+text = "Import keys…"
+
+[action_reset]
+text = "Reset all keys"
+
+[add_key]
+text = "Add a key"
+
+[all_reset]
+text = "All keys are back to their defaults."
+
+[cancelled]
+text = "Cancelled."
+
+# The prompt while a key is awaited: `name`, the command.
+[capture_prompt]
+text = "Press a key for \"{name:bare}\". Esc cancels."
+
+# A context holds one key twice: `shown`, the key; `first` and `second`, the commands; `context`,
+# the context's title.
+[conflict]
+text = "! {shown:bare} is bound to both {first:bare} and {second:bare} ({context:bare})."
+
+# `shown`, the key; `name`, the command.
+[fixed_cannot_remove]
+text = "! {shown:bare} is fixed for {name:bare} and cannot be removed."
+
+# `shown`, the key; `owner`, the command that has it fixed.
+[fixed_cannot_take]
+text = "! {shown:bare} is fixed for {owner:bare} and cannot be taken."
+
+[footer_browse]
+text = "{confirm:bare} keys   {erase:bare} reset   Esc back"
+
+# The help's footer: `shown`, the key that closes it besides Esc.
+[footer_close]
+text = "{shown:bare} or Esc close"
+
+[footer_close_plain]
+text = "Esc close"
+
+[footer_open]
+text = "{confirm:bare} replace or add   {erase:bare} remove   Esc done"
+
+# Before the close hint, when the list scrolls: `up_down`, the scroll keys.
+[footer_scroll]
+text = "{up_down:bare} scroll"
+
+# `name`, the command; `shown`, the key.
+[has_already]
+text = "{name:bare} has {shown:bare} already."
+
+[import_choose]
+text = "Choose a keymap file to import."
+
+# `n`, the key's place in the command's list.
+[key_n]
+text = "Key {n:bare}"
+
+# `name`, the command.
+[keys_of]
+text = "The keys of {name:bare}. The first is the one hints name."
+
+[keys_reset]
+text = "{name:bare} is back to its default keys."
+
+# `shown`, the key; `to`, the command that has it now; `from`, the one that had it.
+[moved]
+text = "{shown:bare} moved to {to:bare} (was {from:bare})."
+
+[moved_keyless]
+text = "{shown:bare} moved to {to:bare}; {from:bare} has no key."
+
+[none]
+text = "(none)"
+
+[note_1]
+text = "Esc always backs out and cancels; it cannot be rebound."
+
+[note_2]
+text = "Menus, dialogs, text fields, and info pages have fixed keys,"
+
+[note_3]
+text = "as do the rest prompt and aiming: hint lines name them."
+
+[note_4]
+text = "On screens the numpad moves as the arrows do (fixed)."
+
+# `name`, the command; `old`, the key it had; `shown`, the key it has now.
+[now]
+text = "{name:bare}: {old:bare} is now {shown:bare}."
+
+[press_a_key]
+text = "press a key..."
+
+# A refusal from elsewhere: `why`, the reason.
+[refused]
+text = "! {why:bare}"
+
+[refused_try]
+text = "! {why:bare}. Try another, or Esc to cancel."
+
+[refused_unbindable]
+text = "! That key cannot be bound. Try another, or Esc to cancel."
+
+# `name`, the command; `shown`, the key.
+[removed]
+text = "{name:bare}: {shown:bare} removed."
+
+[removed_keyless]
+text = "{name:bare}: {shown:bare} removed; it has no key now."
+
+[title]
+text = "Controls"
+
+# `name`, the command; `shown`, the key; `old`, the key it replaced.
+[traded]
+text = "{name:bare}: {shown:bare} and {old:bare} traded places."
