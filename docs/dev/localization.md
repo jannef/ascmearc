@@ -704,6 +704,14 @@ conditions (`ui::conditions`), and the race, class, stance, resource, sign, skil
 need names data gives as English; the Characters list's race and class, kept in a save's summary
 as the names were.
 
+**The quest log, the almanac, and targeting** (#1939): the quest log's objective and status stay
+the core messages they were (`QuestView`, `english_msg`); its giver is passed as the phrase it is
+(`{giver:The}`). The almanac's date asks for the day's ordinal (`{day:ord}`), and several moons
+are a list of nested `moon_named` messages (`{moons:and}`, the language's conjunction). Each way
+of aiming has its whole prompt (`target.toml`'s `prompt_*`); `Line::status` returns the text. What
+is aimed (`describe_object`, an ability's name) stays core's text. `circle_tracks.rs` shows no
+text.
+
 ## Lines of data
 
 A line whose text lives in the data, not in `messages/` (a dialogue line, a miscast's `seen`, an
