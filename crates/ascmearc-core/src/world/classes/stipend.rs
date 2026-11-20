@@ -32,7 +32,9 @@ use crate::content::{
 };
 use crate::equipment::Equipment;
 use crate::geom::Pos;
+use crate::lang::{Arg, Msg};
 use crate::magic::loot::{self, LootGrade, Luck};
+use crate::msg;
 use crate::object::{self, Stack};
 use crate::rng::Rng;
 use crate::variant::Source;
@@ -179,8 +181,7 @@ impl World {
                 object::add_to_pile(&mut stipend.items, &[find], &content);
             }
         }
-        self.news
-            .push("Word comes from home: your stipend has grown.".into());
+        self.news.push(msg::classes::STIPEND_GROWN.into());
     }
 
     /// The `progress` dump's row (dev-only): what the stipend holds, `stipend 412 gold: a
@@ -257,8 +258,8 @@ impl World {
             }
         }
         if !taken.is_empty() {
-            let what = self.listed(&taken);
-            self.say(format!("You receive {what}."));
+            let what = self.listed_arg(&taken);
+            self.say(Msg::new(msg::classes::RECEIVE).role("what", what));
         }
         if !left.is_empty() {
             let here = self.player_pos();
@@ -266,9 +267,20 @@ impl World {
             let mut pile = level.objects_at(here).to_vec();
             object::add_to_pile(&mut pile, &left, &content);
             level.set_pile(here, pile);
-            let what = self.listed(&left);
-            self.say(format!("Too much to carry, set down at your feet: {what}."));
+            let what = self.listed_arg(&left);
+            self.say(Msg::new(msg::classes::SET_DOWN_TOO_MUCH).role("what", what));
         }
+    }
+
+    /// Every stack of `stacks` as a line names them (`{what:counted}`), however many: a list of
+    /// their phrases, "412 gold coins, a potion, and a ruby".
+    fn listed_arg(&self, stacks: &[Stack]) -> Arg {
+        Arg::List(
+            stacks
+                .iter()
+                .map(|s| self.lore().phrase(s).into())
+                .collect(),
+        )
     }
 
     /// Every stack of `stacks` named, however many: "412 gold coins, a potion, and a ruby".

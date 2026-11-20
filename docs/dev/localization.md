@@ -13,7 +13,7 @@ the controls, settings, and mods screens (#1935) and the object and rig screens 
 **L4b**, **L4i**, and **L4j**, `world/allies/` (#1912), `world/character/` (#1913),
 `world/health/` (#1920), and `world/levels/` (#1921) say their lines from templates
 ("Literal lines");
-**L4c**, the first half of `world/classes/` (#1914, `messages/classes.toml`, "Literal lines");
+**L4c** and **L4d**, `world/classes/` (#1914, #1915, `messages/classes.toml`, "Literal lines");
 and **L5**, dialogue (#1888): every line a creature says is a line of data
 said by its key, with role slots in the base form ("Dialogue"), on the one mechanism every line
 whose text lives in data uses ("Lines of data"). The doors, the welcome line, combat, allies,
@@ -409,6 +409,16 @@ until their words are converted (#1949): a talent's and a resource's names, a st
 lower case, `Unavailable::reason`, and the `came_line` that stops a consecration (`came`); a dev
 action's class id is a `word:` phrase (`{class:a}`).
 
+Its second half (L4d: `merchants_eye`, `openings`, `orison`, `rage`, `sanctuary`, `smite`,
+`song`, `spirit_weapon`, `stipend`, `thief`, `volley`, `war_cry`, `witch`) says the prayer's
+words as lines of data (`prayer:words.<face>.<field>`, `prayer:use.<id>.<face>`). A line that
+differs by how many openings an exploit spends is an entry per band. Stacks handed over or set
+down are a list of their phrases (`stipend.rs::listed_arg`, `{what:counted}`); a spirit weapon's
+shape `object:<id>`. Text roles until their words are converted (#1949): a song's name lower
+case (`song`), and the ids typed in a dev-style refusal (`id`). What it leaves a literal line: a
+spirit weapon called ("A long sword of pale light is in your hand."), which goes through
+`World::equip_saying`'s `put_on` text (`world/items/equip.rs`, items' slice).
+
 When no literal is left, `LITERAL`, the `From` text impls, and this section go.
 
 ## Nested messages
@@ -593,6 +603,7 @@ arrays named by the id that tells it apart. Every kind of line of data, the thre
 | `calling:<campaign>.<class>.message` | a calling made (`data` for one outside every campaign, as a dialogue's scope) |
 | `talent:<id>.effects.weapon_ranks.news`, `.take_up_skills.news` | what a talent a class table gives hands out |
 | `resources:resource.<id>.lacking` | a class active refused for too little of the resource (in `classes.lacking`) |
+| `prayer:words.<face>.pray`, `.fizzle`, `.nothing`; `prayer:use.<id>.<face>` | the prayer begun, fizzled, and refused, and each use answered, in the face's words |
 
 None of them names a role: the loader refuses one that does. A status's start and end lines said
 as the turn is perceived (`world/turn/perceive.rs`) and the other subsystems' reads of these

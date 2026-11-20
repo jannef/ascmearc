@@ -83,7 +83,7 @@ impl Face {
     }
 }
 
-/// A line for each face.
+/// A line for each face: a line of data (`content/data_line.rs::prayer_use`).
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Faced {
@@ -102,7 +102,8 @@ impl Faced {
 }
 
 /// A face's own lines: a prayer begun and answered, one that fizzles (locked or unlucky, the
-/// same words), and one refused with nothing to answer.
+/// same words), and one refused with nothing to answer: lines of data
+/// (`content/data_line.rs::prayer_words`).
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct FaceWords {

@@ -6,6 +6,10 @@
 # by chance, `fizzle_per_100` percent for every 100 points of strain it finds (100 % at most);
 # a fizzle locks the prayer, and every prayer fizzles until the strain has passed to 0. A prayer
 # with nothing to answer is refused and costs nothing.
+#
+# The words (`[words]` and each use's `holy` and `dark`) are lines of data, said by their keys
+# (`prayer:words.<face>.<field>`, `prayer:use.<id>.<face>`; docs/dev/localization.md "Lines of
+# data"): plain text, naming no role.
 strain = 100           # added by every attempt, answered or not
 decay = "1m"           # a point of strain gone every this long
 fizzle_per_100 = 10    # percent chance a prayer fizzles per 100 points of strain

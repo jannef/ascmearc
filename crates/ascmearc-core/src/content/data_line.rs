@@ -191,8 +191,19 @@ pub fn lacking(id: &str) -> String {
     format!("resources:resource.{id}.lacking")
 }
 
-/// The classes' lines: the callings' messages, the talents' handed-out news, and the
-/// resources' `lacking`.
+/// The prayer's words for `face` (`prayer.toml`'s `[words]`), `field` one of `pray`, `fizzle`,
+/// and `nothing`: `prayer:words.<face>.<field>` (L4d, #1915).
+pub fn prayer_words(face: super::Face, field: &str) -> String {
+    format!("prayer:words.{}.{field}", face.id())
+}
+
+/// Use `id`'s words for `face` (`prayer.toml`'s `[[use]]`): `prayer:use.<id>.<face>`.
+pub fn prayer_use(id: super::PrayerUse, face: super::Face) -> String {
+    format!("prayer:use.{}.{}", id.id(), face.id())
+}
+
+/// The classes' lines: the callings' messages, the talents' handed-out news, the resources'
+/// `lacking`, and the prayer's words.
 fn class_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
     for def in content.callings() {
         add(calling(def), &def.message);
@@ -205,6 +216,19 @@ fn class_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
     for def in content.resources() {
         if let Some(words) = &def.lacking {
             add(lacking(&def.id), words);
+        }
+    }
+    if let Some(rules) = content.prayer() {
+        for face in [super::Face::Holy, super::Face::Dark] {
+            let words = rules.words(face);
+            add(prayer_words(face, "pray"), &words.pray);
+            add(prayer_words(face, "fizzle"), &words.fizzle);
+            add(prayer_words(face, "nothing"), &words.nothing);
+        }
+        for def in &rules.uses {
+            for face in [super::Face::Holy, super::Face::Dark] {
+                add(prayer_use(def.id, face), def.words.of(face));
+            }
         }
     }
 }
