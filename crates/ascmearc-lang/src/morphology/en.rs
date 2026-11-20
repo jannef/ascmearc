@@ -522,7 +522,7 @@ impl Morphology for En {
         let the = || {
             if let Some(owner) = owner() {
                 format!("{owner} {}", owned(w.by_count(phrase.count)))
-            } else if w.proper {
+            } else if w.proper && !phrase.definite {
                 w.singular.clone()
             } else {
                 format!("{} {}", reg.word("the"), w.by_count(phrase.count))
@@ -540,10 +540,17 @@ impl Morphology for En {
                 None => format!("{} {}", phrase.count, w.plural),
             }
         };
+        // A definite name is one of its kind: a sentence's "a" is its "the" ("You pick up the
+        // Grim Bite"); a list's count says it bare ("Grim Bite, a long sword").
+        let a = || match phrase.definite && phrase.owner.is_none() {
+            true => the(),
+            false => counted(),
+        };
         Ok(match form {
             "bare" | "name" => named(&|| w.by_count(phrase.count).to_string()),
             "plural" => named(&|| w.plural.clone()),
-            "a" | "counted" => named(&counted),
+            "a" => named(&a),
+            "counted" => named(&counted),
             "the" => named(&the),
             "your" | "poss" => {
                 if you {
@@ -964,10 +971,34 @@ mod tests {
             form(&unknown, "a"),
             "a long sword (magic, cursed) (lit) (1 charge)"
         );
-        let rare = Phrase::literal("Grim Bite")
+        let rare = Phrase::definite("Grim Bite")
             .with_note(Note::Base(Box::new(Phrase::id("object:long_sword"))));
-        assert_eq!(form(&rare, "a"), "Grim Bite, a long sword");
+        assert_eq!(form(&rare, "counted"), "Grim Bite, a long sword");
         assert_eq!(form(&rare.without_notes(), "bare"), "Grim Bite");
+    }
+
+    #[test]
+    fn a_rare_item_takes_the_in_a_sentence_and_none_in_a_list() {
+        let rare = Phrase::definite("Grim Bite");
+        let base = Box::new(Phrase::id("object:long_sword"));
+        let listed = rare.clone().with_note(Note::Base(base));
+        assert_eq!(
+            form(&listed, "counted"),
+            "Grim Bite, a long sword",
+            "a list row"
+        );
+        assert_eq!(form(&listed, "a"), "the Grim Bite, a long sword");
+        assert_eq!(form(&rare, "bare"), "Grim Bite", "a label");
+        assert_eq!(form(&rare, "the"), "the Grim Bite");
+        assert_eq!(form(&rare, "a"), "the Grim Bite", "there is only one");
+        assert_eq!(form(&rare, "poss"), "the Grim Bite's");
+        assert_eq!(form(&rare, "is"), "is");
+        let you = Phrase::literal("Hild").person(Person::You);
+        assert_eq!(
+            form(&rare.clone().owned_by(you.clone()), "the"),
+            "your Grim Bite"
+        );
+        assert_eq!(form(&rare.owned_by(you), "a"), "your Grim Bite");
     }
 
     #[test]

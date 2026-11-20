@@ -178,7 +178,7 @@ fn gear(content: &Content, c: &CreatureDef) -> String {
                     // stiletto (rare))".
                     let names: Vec<String> = (stacks.iter())
                         .map(|s| match content.uniques().find(|u| u.stack == *s) {
-                            Some(u) => format!("{} ({})", u.name, s.describe(content)),
+                            Some(u) => format!("{} ({})", u.listed_name(), s.describe(content)),
                             None => s.describe(content),
                         })
                         .collect();

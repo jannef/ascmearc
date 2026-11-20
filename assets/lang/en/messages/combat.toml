@@ -22,7 +22,7 @@ burns_away = "{what:The} burns away."
 # `verb`: what the player would do ("shoot", "cast", "throw your voice").
 cannot_aim_at_yourself = "You cannot {verb:bare} at yourself."
 cannot_loose_here = "You cannot do that on the overworld."
-cannot_throw = "You cannot throw {what:counted}."
+cannot_throw = "You cannot throw {what:a}."
 carry_no_such_thing = "You carry no such thing."
 casts_at = "{actor:The} cast{actor:s} a spell at {target:the}."
 comes_away_pitted = "{what:The} comes away pitted."
@@ -85,7 +85,7 @@ shield_wrath = "You answer the blow with holy wrath!"
 shields_fumble = "Your shields get in the way, and the spell slips from your grasp."
 shoots_at = "{actor:The} shoot{actor:s} at {target:the}."
 # `verb`: "shoot" or "throw"; `what`: the missile, counted.
-shot = "You {verb:bare} {what:counted}."
+shot = "You {verb:bare} {what:a}."
 # A rank risen in a weapon skill: `how`, the skill's phrase as the data writes it ("with long
 # blades").
 skill_risen = "You feel more skilled {how:bare}."

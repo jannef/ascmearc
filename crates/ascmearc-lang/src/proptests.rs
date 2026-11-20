@@ -41,7 +41,7 @@ fn plain_phrase() -> impl Strategy<Value = Phrase> {
         word(),
         prop::collection::vec(modifier(), 0..3),
         any::<u32>(),
-        any::<bool>(),
+        (any::<bool>(), any::<bool>()),
         prop_oneof![Just(Person::You), Just(Person::Third)],
         prop_oneof![
             Just(Gender::Male),
@@ -53,11 +53,12 @@ fn plain_phrase() -> impl Strategy<Value = Phrase> {
         any::<u32>(),
     )
         .prop_map(
-            |(head, mods, count, proper, person, gender, tags, charges)| Phrase {
+            |(head, mods, count, (proper, definite), person, gender, tags, charges)| Phrase {
                 head,
                 mods,
                 count,
-                proper,
+                proper: proper || definite,
+                definite,
                 person,
                 gender,
                 notes: vec![Note::Tags(tags), Note::Charges(charges)],

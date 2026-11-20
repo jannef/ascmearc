@@ -36,13 +36,13 @@ nothing for it, `docs/dev/merging.md` "One build of ascmearc-core"). Dependencie
 | Module | What |
 |---|---|
 | `message.rs` | `MessageId` (a newtype over `Cow<'static, str>`: a generated constant borrows, a loaded save owns; serialized as the plain string), `Role` (the same, and `Borrow<str>` so `args.get("actor")` works), `Arg` (`Phrase`, `Number`, `Text`, `List`, `Said`, `Key`, `Msg`: a message inside a message, "Nested messages"; `Arg::said(key).with(role, arg)`, `.spoken_by(register, race)`), `Msg` (id and args; `Msg::new(id).role("who", phrase)`; `Msg::data_line(said)`, the `DATA_LINE` entry), `Entry` (a `Msg` with `turn`, `count`, and the unserialized `passing`). `Arg::feature` gives the value a template's variants select on |
-| `phrase.rs` | `Phrase` (head `Word`, `mods`, `count`, `proper`, `person`, `gender`, `notes`, `owner`), `Word::{Id, Literal}`, `Modifier::{Adjective, Of, Label, Material, Part, Made}`, `Person`, `Gender`, `Note::{Tags, Charges, Base}`. Builders: `Phrase::id`, `Phrase::literal` (proper), `.count`, `.with(modifier)`, `.note(tag)`, `.with_note`, `.owned_by`, `.without_notes` |
+| `phrase.rs` | `Phrase` (head `Word`, `mods`, `count`, `proper`, `definite`, `person`, `gender`, `notes`, `owner`), `Word::{Id, Literal}`, `Modifier::{Adjective, Of, Label, Material, Part, Made}`, `Person`, `Gender`, `Note::{Tags, Charges, Base}`. Builders: `Phrase::id`, `Phrase::literal` (proper), `Phrase::definite` (a proper name said with "the" in a sentence, #1974), `.count`, `.with(modifier)`, `.note(tag)`, `.with_note`, `.owned_by`, `.without_notes` |
 | `lexicon.rs` | `Lexicon` (`word(id) -> Option<LexWord>`; core implements it over `Content`, "Phrases"), `LexWord` (`base`, explicit `forms`, `proper`, `gender`, `many`, `harmony`, `plural_only`), `MapLexicon` (a map; `MapLexicon::parse` reads a lexicon file: `id = "lemma"` or `{ word, forms, proper, gender, many, harmony, plural_only }`, `of` skipped), `NoLexicon` |
 | `template.rs` | `Line::parse` (total: a `{` that opens no `{role:form}` or `{role}` is text; `{{` and `}}` are literal braces), `Template::{Line, Alternatives, Variants}` (`from_value`, `slots`, `written`), `Templates::parse(prefix, text)` for one `messages/<prefix>.toml`, `Templates::parse_data(what, kind, text)` for a translation's lines of data (`[hit] text = …` or a plain `hit = "…"`; `text = [...]` alternatives; `by = "<role>.<feature>"` with one key per value and an optional `else`, nesting allowed; `of` skipped). Errors name the file and the entry |
 | `lang.rs` | `LangFile` and `parse`: `name`, `code`, `morphology`, `fallback`, `repeat` (default `" (×{n})"`), `number_words` (default 12), `[registers.<name>]`, `[race_registers]`, `[generic]`. A key with a letter outside ASCII is quoted in TOML (`"minä" = "mie"`) |
 | `register.rs` | `Register::word("the")` returns the override or the word; `Registers` (`standard` always present; `get`, `for_speaker(own, race)`: the speaker's own, else the race's, else standard; `unknown_race_registers` for the checker) |
 | `morphology/mod.rs` | the `Morphology` trait: `forms() -> Vec<String>`, `phrase(&Phrase, form, &dyn Lexicon, &Register) -> Result<String, FormError>`, `number`, `list(items, Conj)`, `parse_word(entry) -> Result<(), ParseError>`. `FormError::UnknownForm` is the one failure; the renderer falls back from it |
-| `morphology/en.rs` | the helpers (below) and `En`, English as a `Morphology`: forms `bare`/`name`, `plural`, `a`, `the`, `counted`, `your`/`poss`, `they`/`them`/`their`, `s`, `es`, `is`, `has`, `does`, `num`, `ord` (`en::FORMS`). Phrase order: [adjectives and materials] head [of-qualifier] [labelled X] [notes], and what L3 added ("Phrases"); `person: You` renders as "you"/"your" and the plural verb; proper names take no article, and a name written with its own ("the shakes", `en::own_article`) takes no second one in any form (an owner's possessive takes its place: "your wolf's shakes"); a lexicon `plural` form wins over the dictionary. The article, `the`, the pronouns, and the number words go through the register |
+| `morphology/en.rs` | the helpers (below) and `En`, English as a `Morphology`: forms `bare`/`name`, `plural`, `a`, `the`, `counted`, `your`/`poss`, `they`/`them`/`their`, `s`, `es`, `is`, `has`, `does`, `num`, `ord` (`en::FORMS`). Phrase order: [adjectives and materials] head [of-qualifier] [labelled X] [notes], and what L3 added ("Phrases"); `person: You` renders as "you"/"your" and the plural verb; proper names take no article, a `definite` one (a rare item's "Grim Bite") takes "the" for both `the` and `a` ("the Grim Bite": there is only one) and none for `bare` and `counted` (a list's "Grim Bite, a long sword"), so `a` is a sentence's form and `counted` a list row's; a name written with its own ("the shakes", `en::own_article`) takes no second one in any form (an owner's possessive takes its place: "your wolf's shakes"); a lexicon `plural` form wins over the dictionary. The article, `the`, the pronouns, and the number words go through the register |
 | `morphology/generic.rs` | `GenericSpec` (the `[generic]` table: `forms` with the first the lemma, `plural`, `genders`, `adjectives = "before"/"after"`, `agree` (`true`, `false`, or the forms), `[articles.<form>]` and `[pronouns.<form>]` by `<gender>.pl`/`pl`/`<gender>`/`""` (else the table's first word), `number_words`, `counted = "{num} {pl}"`, `and`, `or`, `label`) and `Generic`. Every language has `bare`, `counted`, `num`; a form a word does not list is its lemma |
 | `render.rs` | `Language` (a `LangFile`, its `Morphology`, its `Templates`, its `Registers`): `from_toml(text, plurals)` picks `en`, `fi`, or `generic`; `add_templates(prefix, text)`; `phrase(phrase, form, lex) -> String`; `render(entry, lex, keys) -> String`; `try_render` / `try_render_as(register, …) -> Result<String, RenderError>`. `render_chain(&[&lang, &fallback, …], …)`: the first language that renders wins, else `[id]`. `Keys` is `&dyn Fn(&str) -> String`; `written_key` is the identity for dumps (`{key:help}` stays written) |
 | `proptests.rs` | rendering is total: arbitrary Unicode through `Line::parse`, `Templates::parse`, `lang::parse`, `MapLexicon::parse`, `Plurals::add`, `Language::render`, `En::phrase`, `Generic::phrase`, and `Fi::phrase` (phrases with every modifier and note kind and an owner) gives a string or an `Err`, never a panic; a module renders a form iff it lists it |
@@ -271,7 +271,7 @@ A role that names a thing or a creature holds a `Phrase` (`docs/design/localizat
 built **by value at the `say` site from what the player perceives**: never an actor or stack id
 resolved later, so a line reads the same after the creature dies, the item is gone, or it is
 identified (`scroll_label_tests.rs::a_line_names_a_scroll_as_it_was_seen_then`). Proper names
-(the player's, a companion's, a rare item's, a scroll's label) are literals.
+(the player's, a companion's, a rare item's, a scroll's label) are literals; a rare item's is `Phrase::definite`.
 
 **The lexicon ids** (`content/lexicon.rs`, which implements `Lexicon` for `Content`; its module
 docs hold the table): `creature:<id>`, `object:<id>` (with `written`, `written_plural`, and
@@ -309,6 +309,15 @@ name with its base (`Note::Base`), and the rarity and curse notes. `describe` is
 `Content::english_of(&phrase, form)`, so the old strings and the phrases are one code path and
 every snapshot checks the `en` order.
 
+**A rare item's name** (#1974, `magic/name.rs::name_phrase`) takes "the" wherever a sentence
+needs an article and none in a list: a generated rare's is `Phrase::definite` ("You pick up the
+Grim Bite, a long sword.", "The Grim Bite falls away", the inventory's "Grim Bite, a long
+sword"). A unique's (`data/uniques/`) is written as a sentence says it: with its own "the" when it
+takes one ("the Brosinga Mene", definite, listed "Brosinga Mene": `UniqueDef::listed_name`), else
+none, never given one ("Sigeric's Star", "Widowmaker": a literal). So a template that names an
+item in a sentence asks `{x:the}` or `{x:a}` (never "the {x:bare}" or `{x:counted}`), and a list
+row or a label asks `counted` or `bare`.
+
 **What `en` adds over L1** (`morphology/en.rs`): an `owner` said in place of the article ("your
 wolf", "the goblin's long sword"); `Modifier::Made` (the main material) with
 `Material`/`Part` (notable materials, "ruby-pommelled") named as `en::made_names` says (moved
@@ -336,7 +345,7 @@ example and `world/combat/` (`messages/combat.toml`) the one whose lines name th
    value.
 2. A value that names someone or something is a **phrase**, and the template asks its form:
    `the(&name)` is `{who:the}`, `the_start(&name)` `{who:The}`, `format!("{}'s", the(name))`
-   `{who:poss}` (capitalized `{who:Poss}`), `lore.describe(&stack)` `{what:counted}`, a title
+   `{who:poss}` (capitalized `{who:Poss}`), `lore.describe(&stack)` `{what:a}` (a list row's `counted`), a title
    `{what:bare}`, a plural name `{what:plural}`, "your {name}" a phrase `owned_by(self.you())`
    said `{what:the}`. Pass `self.phrase_of(id)` (or `World::end_of`), `self.you()`,
    `self.lore().phrase(&stack)`, or an id phrase (`Phrase::id("object:…")`,
@@ -437,7 +446,7 @@ enchanting, crystals, digging, the field forge). A refusal a function returns fo
 say (`cut.rs::refusal`, `enchant.rs::refusal`, `dig_refusal`, `field_forge.rs::forge_ground`) is
 a `MessageId`; the recipes' `resolve` returns its reason as a `Msg`, and the plan the dialog
 shows renders it in English (`craft_make.rs::english`) until L8. An item being enchanted is
-`enchant.rs::item_phrase` said `{item:the}` (a known rare by its name alone), several of a
+`enchant.rs::item_phrase` said `{item:the}` (a known rare by its name, "the Grim Bite"), several of a
 stack by `Lore::names_phrase` (what they are called as made); a salvaged affix's words ("its
 Sharp magic", "some of its magic") are nested messages in `catch_magic` and `goes_out_unread`;
 Soulglass's crystals a phrase or a list of two (`turns_to_glass`, by number). A profession's
@@ -494,7 +503,7 @@ Its second half (L4d: `merchants_eye`, `openings`, `orison`, `rage`, `sanctuary`
 `song`, `spirit_weapon`, `stipend`, `thief`, `volley`, `war_cry`, `witch`) says the prayer's
 words as lines of data (`prayer:words.<face>.<field>`, `prayer:use.<id>.<face>`). A line that
 differs by how many openings an exploit spends is an entry per band. Stacks handed over or set
-down are a list of their phrases (`stipend.rs::listed_arg`, `{what:counted}`); a spirit weapon's
+down are a list of their phrases (`stipend.rs::listed_arg`, `{what:a}`); a spirit weapon's
 shape `object:<id>`, also in the line it is called with (`pale_light_in_hand`, `_hands` for a
 two-handed one: "A long sword of pale light is in your hand."), which `World::equip_saying`
 says as its `put_on`. Text roles until their words are converted (#1949): a song's name lower
@@ -503,10 +512,10 @@ case (`song`), and the ids typed in a dev-style refusal (`id`).
 `world/skills/` (`messages/skills.toml`, L4n) names a trap by its type's `name` as a `word:`
 phrase (`{trap:the}`, `{trap:a}`: "an arrow trap") and a chest by `chest_name` the same way
 (`{chest:the}`), until traps and chest bands have lexicon ids. An appraisal's `before` is the
-stack as the player knew it, owned by them (`{before:counted}`: "your gold ring", "your 2
+stack as the player knew it, owned by them (`{before:a}`: "your gold ring", "your 2
 potions"), and `skills.realise` agrees its verb with it (`{before:is}`: "your boots are",
 where the string said "is"). The herbs a gather finds are one stack's phrase or a list of them, each
-`counted`. A trap's `sign` ("a tripwire") is a text role until the traps' text is converted.
+`a`. A trap's `sign` ("a tripwire") is a text role until the traps' text is converted.
 
 `world/fixtures/` (`messages/fixtures.toml`) and `world/items/` (`messages/items.toml`, L4h)
 say an outcome's lines and a special room's as lines of data ("Lines of data"). A chest is
@@ -547,7 +556,7 @@ actor) or `Content::speaker_phrase` (whoever speaks a dialogue, where the string
 `speaker_called`), a shopkeeper `Phrase::literal` of the shop's name, a quarrel's wizards a
 list of phrases (`{heard:And}`). A place inside a sentence is `quest::place`: a name written
 with "The" is `word:<rest>` said `the` ("the Arena"), any other a literal ("Cealdhlāw"). Stacks
-are `items::stacks_arg` said `counted` (one, a list of two or three, else a count of
+are `items::stacks_arg` said `a` (one, a list of two or three, else a count of
 `word:object`).
 
 **The quest log** renders from keys and phrases: `QuestView` holds `giver` (an `Arg`, said

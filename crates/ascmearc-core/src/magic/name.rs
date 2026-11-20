@@ -42,13 +42,25 @@ pub(crate) fn phrase(
     let named = match (magic.rarity, &magic.name) {
         (Rarity::Rare, Some(name)) => {
             let base = ahead(word, made).count(count);
-            Phrase::literal(name).with_note(Note::Base(Box::new(base)))
+            name_phrase(name, magic.unique.is_some()).with_note(Note::Base(Box::new(base)))
         }
         _ => ahead(word, affixed(made, magic, content)).count(count),
     };
     match cursed {
         true => named.note("cursed"),
         false => named,
+    }
+}
+
+/// A rare item's `name` as a phrase (#1974): a generated rare's ("Grim Bite") takes "the" in a
+/// sentence and none in a list ([`Phrase::definite`]); a `unique`'s is said as the data writes
+/// it, with "the" in a sentence and none in a list if it is written with its own ("the
+/// Brosinga Mene"), else never an article ("Sigeric's Star").
+pub(crate) fn name_phrase(name: &str, unique: bool) -> Phrase {
+    match (unique, crate::lang::en::own_article(name)) {
+        (false, _) => Phrase::definite(name),
+        (true, Some(rest)) => Phrase::definite(rest),
+        (true, None) => Phrase::literal(name),
     }
 }
 

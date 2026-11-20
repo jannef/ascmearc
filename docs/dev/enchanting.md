@@ -293,9 +293,9 @@ reach `enchant_level` (`Effect::EnchantLevel`, `[[0, 1], [110, 12], [200, 12]]`,
   roll, the affix, then the name; the rarity becomes rare. Unbind
   draws nothing and clears the `Magic` (`Stack::set_magic(None)`): its `Worked`, parts, rung,
   and charges stay. "The long sword takes the red crystal's glow. It is now a Sharp long sword.",
-  "The magic goes out of Grim Bite. It is now a long sword.", "The long sword drinks the three
-  crystals and wakes as Grim Bite.", "The Sharp long sword takes the red crystal's glow and wakes
-  as Storm Hunger." (Ennoble). `Magic::check` holds on every result (the tests). The item is changed in place,
+  "The magic goes out of the Grim Bite. It is now a long sword.", "The long sword drinks the three
+  crystals and wakes as the Grim Bite.", "The Sharp long sword takes the red crystal's glow and wakes
+  as the Storm Hunger." (Ennoble). `Magic::check` holds on every result (the tests). The item is changed in place,
   a whole stack at once.
 - **Failed**: the crystals are spent ("The crystal goes dark in your hands.", "The crystals go
   dark in your hands."; `World::spend_crystals`: one from each pick, a stack picked twice gives
@@ -339,7 +339,7 @@ E6 (#1432; design §9; `world/crafting/seal.rs`, its tests `world/crafting/seal_
 - **The heart-crystal** (`[rare] heart`): Quicken on a rare (`refusal` lets it through below its
   capacity and with a kind below `MAX_PER_KIND`) takes the first heart-crystal carried ("A rare
   takes a heart-crystal beside the crystal, and you have none."); it draws its kind evenly among
-  the kinds with room (`Rng::index`, as Ennoble) and keeps the rarity and the name. "Grim Bite
+  the kinds with room (`Rng::index`, as Ennoble) and keeps the rarity and the name. "The Grim Bite
   takes the red crystal's glow and the heart-crystal's, and holds more." A magic item's Quicken
   takes none. Ennoble on a rare: "It is rare already: only a heart-crystal's Quicken adds to it."
 - **The soul-fetter** (`[rare] fetter`): Recast with an affix kept takes the first soul-fetter
