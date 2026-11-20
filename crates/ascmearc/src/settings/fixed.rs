@@ -11,6 +11,7 @@
 
 use crate::input::{Context, KeyBinding};
 use crate::settings::mods::{self, Mods};
+use crate::ui::text::{UiText, settings as T, ui_with};
 use crate::ui::{Edit, Nav};
 use ascmearc_core::Rest;
 use ascmearc_core::time::Duration;
@@ -86,10 +87,10 @@ pub const LOOSE: &str = "Enter";
 pub const NEXT_TARGET: &str = "Tab";
 
 /// The rest prompt's answers: the key, what it rests for, and how the prompt words it.
-pub const REST: [(&str, Rest, &str); 3] = [
-    ("h", Rest::For(Duration::hours(1)), "hour"),
-    ("d", Rest::Dawn, "until dawn"),
-    ("n", Rest::Dusk, "until nightfall"),
+pub const REST: [(&str, Rest, UiText); 3] = [
+    ("h", Rest::For(Duration::hours(1)), T::REST_HOUR),
+    ("d", Rest::Dawn, T::REST_DAWN),
+    ("n", Rest::Dusk, T::REST_NIGHTFALL),
 ];
 
 fn is_char(key: &KeyBinding, s: &str) -> bool {
@@ -212,10 +213,14 @@ pub fn taken(context: Context, key: &KeyBinding) -> bool {
 
 /// Why `key` may not be a key of a command of `context`: it is fixed there.
 pub fn refusal(key: &KeyBinding, context: Context) -> Option<String> {
-    taken(context, key).then(|| {
-        let place = context.title().to_lowercase();
-        format!("{} is fixed in {place}", key.display())
-    })
+    let why = match context {
+        Context::Menu => T::FIXED_IN_MENU,
+        Context::Text => T::FIXED_IN_TEXT,
+        Context::Pages => T::FIXED_IN_PAGES,
+        Context::Aim => T::FIXED_IN_AIM,
+        Context::Play | Context::More => return None,
+    };
+    taken(context, key).then(|| ui_with(why, &[("shown", key.display().into())]))
 }
 
 /// What a press means in one place: for each key the press may stand for, most specific first,
