@@ -96,7 +96,8 @@ impl Content {
     }
 
     /// The line said as the player arrives on level `id` by stairs: a hand-made level's
-    /// `arrival`, or its branch's on a branch's first level.
+    /// `arrival`, or its branch's on a branch's first level. It is said by its key,
+    /// [`super::data_line::arrival`].
     pub fn arrival(&self, id: &str) -> Option<&str> {
         if let Some(template) = self.levels.get(id) {
             return template.arrival.as_deref();
@@ -105,32 +106,6 @@ impl Content {
             (def, 1) => def.arrival.as_deref(),
             _ => None,
         }
-    }
-
-    /// The key of [`Content::arrival`] among the lines of data (`docs/dev/localization.md`
-    /// "Lines of data"): `level:<id>.arrival` for a hand-made level's, `dungeon:<id>.arrival`
-    /// for a branch's.
-    pub fn arrival_key(&self, id: &str) -> Option<String> {
-        if let Some(template) = self.levels.get(id) {
-            return template.arrival.as_ref().map(|_| arrival_key("level", id));
-        }
-        match self.branch_level(id)? {
-            (def, 1) => def
-                .arrival
-                .as_ref()
-                .map(|_| arrival_key("dungeon", &def.id)),
-            _ => None,
-        }
-    }
-
-    /// Every arrival line with its key ([`Content::arrival_key`]): the hand-made levels', then
-    /// the branches'.
-    pub(super) fn arrival_lines(&self) -> Vec<(String, String)> {
-        let levels = (self.levels.iter())
-            .filter_map(|(id, l)| Some((arrival_key("level", id), l.arrival.clone()?)));
-        let branches = (self.dungeons.values())
-            .filter_map(|d| Some((arrival_key("dungeon", &d.id), d.arrival.clone()?)));
-        levels.chain(branches).collect()
     }
 
     /// Whether `id` names a hand-made level, a level of a dungeon branch, or a local area of
@@ -372,9 +347,4 @@ impl Content {
             .chain(traps)
             .collect()
     }
-}
-
-/// An arrival line's key: `<kind>:<id>.arrival`.
-fn arrival_key(kind: &str, id: &str) -> String {
-    format!("{kind}:{id}.arrival")
 }

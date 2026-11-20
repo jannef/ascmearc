@@ -8,6 +8,8 @@
 
 use crate::action::Event;
 use crate::content::ActionKind;
+use crate::lang::Msg;
+use crate::msg;
 use crate::world::{Spent, World};
 
 impl World {
@@ -18,19 +20,19 @@ impl World {
         let player = self.state.player;
         let me = self.state.player();
         let Some(wind) = me.talent_mods(&content).vigour.second_wind else {
-            self.say("You have no second wind to catch.");
+            self.say(msg::character::NO_SECOND_WIND);
             return Spent::Nothing;
         };
         if me.effects.has(wind.cooldown) {
             let name = content.status(wind.cooldown).name.to_lowercase();
-            self.say(format!("You are still {name}."));
+            self.say(Msg::new(msg::character::STILL_STATUS).role("status", name));
             return Spent::Nothing;
         }
         let max = me.max_hp(&content);
         let back = wind.hp_at(self.player_level());
         let me = self.player_mut();
         me.hp = (me.hp + back).min(max).max(me.hp);
-        self.say("You catch your second wind.");
+        self.say(msg::character::CATCH_SECOND_WIND);
         self.afflict(player, wind.cooldown, 1, None, events);
         Spent::Turn(self.price_of(player, ActionKind::Wait))
     }

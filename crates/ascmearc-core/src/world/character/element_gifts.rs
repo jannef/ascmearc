@@ -21,6 +21,7 @@ use crate::damage::Damage;
 use crate::dice::Dice;
 use crate::geom::Pos;
 use crate::ice::Shock;
+use crate::msg;
 use crate::rng::draw;
 use crate::world::magic::spell::{Caster, burst_cells};
 use crate::world::{ActorId, Spent, World};
@@ -53,7 +54,7 @@ impl World {
         let level = self.state.current();
         let opaque = |p: Pos| p != here && level.is_opaque(&content, p);
         let cells = burst_cells(here, blaze.radius, opaque);
-        self.say("Flames burst from you!");
+        self.say(msg::character::FLAMES_BURST);
         let mut made = vec![Event::Spell {
             effect: blaze.spell.clone(),
             origin: here,

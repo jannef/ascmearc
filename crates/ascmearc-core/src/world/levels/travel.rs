@@ -439,7 +439,7 @@ impl World {
         self.sync_wizards();
         // Sounds remembered on the level left say nothing about this one.
         self.state.recent_sounds.clear();
-        if let Some(key) = self.content.arrival_key(to) {
+        if let Some(key) = crate::content::data_line::arrival(&self.content, to) {
             self.say(Msg::data_line(Arg::said(key)));
         }
         if let Some(line) = crate::world::fixtures::rooms::pervade_line(&self.state, &self.content)

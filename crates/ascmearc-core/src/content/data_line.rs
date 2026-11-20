@@ -1,15 +1,23 @@
-//! The narrator's lines of data the health and allies rules say (#1944; `docs/dev/localization.md`
-//! "Lines of data"): each is said by its key, never its text, and English is the data itself,
+//! The narrator's lines of data (#1944; `docs/dev/localization.md` "Lines of data", whose table
+//! lists every key): each is said by its key, never its text, and English is the data itself,
 //! added here by key once the content is loaded ([`add_all`]). A key is the entity's kind, its
-//! id, and the field's path in its file (`status:bleeding.start`, `creature:troll.on_eat.message`);
-//! a rules file's line is the file's stem and the line's path in it
-//! (`hunger:corpses.skills.spellcraft.learn`, `familiars:arrives.cat`). Each function here gives
-//! one key, so the loader and the `say` site agree. None of these lines names a role: a fragment
-//! (a charm's `message`, a creature's `depart`, a familiar's arrival) is said inside a template
-//! of `messages/allies.toml`, which names the one it is about.
+//! id, and the field's path in its file (`status:bleeding.start`, `creature:troll.on_eat.message`,
+//! `level:ceaptun.arrival`); a rules file's line is the file's stem and the line's path in it
+//! (`hunger:corpses.skills.spellcraft.learn`, `familiars:arrives.cat`, `laws:eat.first`), a row
+//! of its arrays named by the id that tells it apart (`craving:threshold.<talent>.message`). Each
+//! function here gives one key, so the loader and the `say` site agree. None of these lines names
+//! a role: a fragment (a charm's `message`, a creature's `depart`, a familiar's arrival) is said
+//! inside a template of `messages/allies.toml`, which names the one it is about.
 
-use super::{Content, ContentError, StatusDef};
-use crate::lang::{Line, Template};
+use super::{Content, ContentError, StatusDef, TalentDef, TalentEffect, TalentId};
+use crate::alignment::Band;
+use crate::lang::{Arg, Line, Msg, Template};
+use crate::talent::{MovementEffect, WarmthBand};
+
+/// The line of data at `key`, said alone and naming no one.
+pub fn said(key: String) -> Msg {
+    Msg::data_line(Arg::said(key))
+}
 
 /// A status's `start` line, or its first stage where `stages` gives it (the data gives one or
 /// the other).
@@ -79,6 +87,79 @@ pub fn skill_gift(skill: &str, learn: bool) -> String {
     format!("hunger:corpses.skills.{skill}.{field}")
 }
 
+/// Alignment band `band`'s `rise` (`rise` true) or `fall` line (`alignment.toml`'s `[[band]]`).
+pub fn alignment_band(band: Band, rise: bool) -> String {
+    let field = if rise { "rise" } else { "fall" };
+    format!("alignment:band.{}.{field}", band.id())
+}
+
+/// The craving's line at `path` (`first`, `again.message`, `surrender.first`; `craving.toml`).
+pub fn craving(path: &str) -> String {
+    format!("craving:{path}")
+}
+
+/// The message of the craving's `[[threshold]]` row that gives `talent`.
+pub fn craving_threshold(content: &Content, talent: TalentId) -> String {
+    let talent = &content.talents().get(talent).id;
+    format!("craving:threshold.{talent}.message")
+}
+
+/// Law `law`'s (`eat`, `summon`) `first` line (`laws.toml`).
+pub fn law_first(law: &str) -> String {
+    format!("laws:{law}.first")
+}
+
+/// The message of the oath's `[[band]]` that gives `talent` (`oaths.toml`).
+pub fn oath_band(content: &Content, talent: TalentId) -> String {
+    let talent = &content.talents().get(talent).id;
+    format!("oaths:band.{talent}.message")
+}
+
+/// Profane gift `gift`'s `field` (`line`, `undone`, `instead`).
+pub fn profane(gift: &str, field: &str) -> String {
+    format!("profane:{gift}.{field}")
+}
+
+/// The `slower` (`slower` true) or `faster` line of band `band` (from 0) of talent `talent`'s
+/// `temperature_speed` effect (cold blood).
+pub fn warmth(talent: &str, band: usize, slower: bool) -> String {
+    let field = if slower { "slower" } else { "faster" };
+    format!("talent:{talent}.effects.temperature_speed.bands.{band}.{field}")
+}
+
+/// The bands of every `temperature_speed` of talent `def`, its `while` effects' too.
+pub fn warmth_bands(def: &TalentDef) -> impl Iterator<Item = &[WarmthBand]> {
+    let whiles = def.effects_while.iter().map(|(_, e)| e);
+    (def.effects.iter().chain(whiles)).filter_map(|effect| match effect {
+        TalentEffect::Movement(MovementEffect::TemperatureSpeed { bands }) => {
+            Some(bands.as_slice())
+        }
+        _ => None,
+    })
+}
+
+/// A hand-made level `id`'s `arrival` line.
+fn level_arrival(id: &str) -> String {
+    format!("level:{id}.arrival")
+}
+
+/// A branch `id`'s `arrival` line, said on its first level.
+fn dungeon_arrival(id: &str) -> String {
+    format!("dungeon:{id}.arrival")
+}
+
+/// The arrival line level `id` says ([`Content::arrival`]), if it has one: a hand-made level's
+/// own, else its branch's on the branch's first level.
+pub fn arrival(content: &Content, id: &str) -> Option<String> {
+    if let Some(template) = content.levels.get(id) {
+        return template.arrival.as_ref().map(|_| level_arrival(id));
+    }
+    match content.branch_level(id)? {
+        (def, 1) => def.arrival.as_ref().map(|_| dungeon_arrival(&def.id)),
+        _ => None,
+    }
+}
+
 /// Adds every line above to English by its key; a line naming a role is refused (none is given
 /// one).
 pub(super) fn add_all(content: &mut Content) -> Result<(), ContentError> {
@@ -139,6 +220,17 @@ pub(super) fn add_all(content: &mut Content) -> Result<(), ContentError> {
             add(skill_gift(skill, false), &news.rise);
         }
     }
+    character_lines(content, &mut add);
+    for (id, level) in &content.levels {
+        if let Some(line) = &level.arrival {
+            add(level_arrival(id), line);
+        }
+    }
+    for def in content.dungeons.values() {
+        if let Some(line) = &def.arrival {
+            add(dungeon_arrival(&def.id), line);
+        }
+    }
     for (key, text) in lines {
         let line = Line::parse(&text);
         if let Some(role) = line.roles().first() {
@@ -152,37 +244,64 @@ pub(super) fn add_all(content: &mut Content) -> Result<(), ContentError> {
     Ok(())
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::lang::{Arg, Msg};
-    use crate::test_support::{builtin, english_of};
-
-    #[test]
-    fn each_line_is_english_by_its_key_and_reads_as_the_data_writes_it() {
-        let content = builtin();
-        let said = |key: String| english_of(&content, &Msg::data_line(Arg::said(key)));
-        let bleeding = content.status(content.status_id("bleeding").expect("bleeding"));
-        assert_eq!(Some(said(status_start(bleeding))), bleeding.start.clone());
-        assert_eq!(Some(said(status_end(bleeding))), bleeding.end.clone());
-        let stiffening = content.status(content.status_id("stiffening").expect("stiffening"));
-        assert_eq!(said(status_start(stiffening)), stiffening.stages[0]);
-        assert_eq!(said(status_stage(stiffening, 2)), stiffening.stages[1]);
-        let treat = bleeding.treat.as_ref().expect("Heal treats bleeding");
-        assert_eq!(said(status_treat(bleeding, false)), treat.failed);
-        let fever = content.disease(content.disease_id("filth_fever").expect("fever"));
-        assert_eq!(said(disease_recovered(&fever.id)), fever.recovered);
-        let corpses = content.hunger().and_then(|h| h.corpses.as_ref());
-        let spellcraft = &corpses.expect("corpses").skills["spellcraft"];
-        assert_eq!(said(skill_gift("spellcraft", false)), spellcraft.rise);
-        // The fragments said inside a template are English by their keys too.
-        let lines = content.english().data_lines();
-        for key in [
-            familiar_arrives("cat"),
-            charm("beguile", true),
-            depart("hare"),
-        ] {
-            assert!(lines.get(&key).is_some(), "{key}");
+/// The character's lines: alignment, the craving, the laws, the oaths, profane gifts, and cold
+/// blood.
+fn character_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
+    if let Some(rules) = content.alignment() {
+        for def in rules.bands() {
+            for (rise, text) in [(true, &def.rise), (false, &def.fall)] {
+                if let Some(text) = text {
+                    add(alignment_band(def.band, rise), text);
+                }
+            }
+        }
+    }
+    if let Some(rules) = content.craving() {
+        add(craving("first"), &rules.first);
+        if let Some(again) = &rules.again {
+            add(craving("again.message"), &again.message);
+        }
+        if let Some(surrender) = &rules.surrender {
+            add(craving("surrender.first"), &surrender.first);
+        }
+        for row in &rules.thresholds {
+            add(craving_threshold(content, row.talent), &row.message);
+        }
+    }
+    if let Some(laws) = content.laws() {
+        add(law_first("eat"), &laws.eat.first);
+        add(law_first("summon"), &laws.summon.first);
+    }
+    if let Some(oaths) = content.oaths() {
+        for band in &oaths.bands {
+            add(oath_band(content, band.talent), &band.message);
+        }
+    }
+    for gift in content.profane().iter() {
+        let fields = [
+            ("line", Some(&gift.line)),
+            ("undone", gift.undone.as_ref()),
+            ("instead", gift.instead.as_ref()),
+        ];
+        for (field, text) in fields {
+            if let Some(text) = text {
+                add(profane(&gift.id, field), text);
+            }
+        }
+    }
+    for (_, def) in content.talents().iter() {
+        for bands in warmth_bands(def) {
+            for (n, band) in bands.iter().enumerate() {
+                for (slower, text) in [(true, &band.slower), (false, &band.faster)] {
+                    if let Some(text) = text {
+                        add(warmth(&def.id, n, slower), text);
+                    }
+                }
+            }
         }
     }
 }
+
+#[cfg(test)]
+#[path = "data_line_tests.rs"]
+mod tests;

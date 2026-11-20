@@ -5,8 +5,9 @@
 //! is told in words when they come into another band ([`World::blood_turn`]); the numbers stay
 //! hidden.
 
+use crate::content::{Content, data_line};
 use crate::talent::WarmthBand;
-use crate::world::{ActorId, World};
+use crate::world::{Actor, ActorId, World};
 
 impl World {
     /// The band of its talents' `temperature_speed` that actor `id` stands in now (by the
@@ -58,15 +59,28 @@ impl World {
         let bands = &mods.movement.temperature_speed;
         let before = bands.get(was).map_or(0, |b| b.percent);
         let band = &bands[now];
-        let line = if percent < before {
-            band.slower.clone()
-        } else if percent > before {
-            band.faster.clone()
-        } else {
-            None
+        let slower = percent < before;
+        let line = match () {
+            () if slower => band.slower.as_ref(),
+            () if percent > before => band.faster.as_ref(),
+            () => None,
         };
-        if let Some(line) = line {
-            self.say(line);
+        // Its line of data, by the key of the talent the bands are (`docs/dev/localization.md`
+        // "Lines of data").
+        let source = line.and_then(|_| warmth_source(&self.content, actor, bands));
+        if let Some(talent) = source {
+            self.say(data_line::said(data_line::warmth(&talent, now, slower)));
         }
     }
+}
+
+/// The talent whose `temperature_speed` gives `actor` its `bands`, by id: the last held with
+/// them, the one its mods keep.
+fn warmth_source(content: &Content, actor: &Actor, bands: &[WarmthBand]) -> Option<String> {
+    let book = content.talents();
+    (actor.talents.iter())
+        .filter_map(|taken| book.id(&taken.id).map(|id| book.get(id)))
+        .filter(|def| data_line::warmth_bands(def).any(|b| b == bands))
+        .last()
+        .map(|def| def.id.clone())
 }

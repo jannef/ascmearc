@@ -34,6 +34,8 @@ use crate::action::AttackKind;
 use crate::combat::{Blow, Category, Strike};
 use crate::content::{Content, HAUL_GRAMS, ODDS_SCALE, SpellData, StatDeed, StatUse, TerrainId};
 use crate::hunger::Hunger;
+use crate::lang::MessageId;
+use crate::msg;
 use crate::object::Stack;
 use crate::rng::Rng;
 use crate::stats::{PerStat, Stat};
@@ -48,14 +50,14 @@ use crate::world::{ActorId, World, WorldState};
 const WADING_COST: u16 = 200;
 
 /// What a rise in `stat` says.
-fn rise_news(stat: Stat) -> &'static str {
+fn rise_news(stat: Stat) -> MessageId {
     match stat {
-        Stat::Strength => "You feel stronger.",
-        Stat::Dexterity => "You feel quicker.",
-        Stat::Toughness => "You feel tougher.",
-        Stat::Intelligence => "You feel sharper.",
-        Stat::Willpower => "You feel more resolute.",
-        Stat::Presence => "You feel more confident.",
+        Stat::Strength => msg::character::RISE_STRENGTH,
+        Stat::Dexterity => msg::character::RISE_DEXTERITY,
+        Stat::Toughness => msg::character::RISE_TOUGHNESS,
+        Stat::Intelligence => msg::character::RISE_INTELLIGENCE,
+        Stat::Willpower => msg::character::RISE_WILLPOWER,
+        Stat::Presence => msg::character::RISE_PRESENCE,
     }
 }
 
@@ -404,7 +406,7 @@ pub(super) enum Moved {
 
 impl Moved {
     /// What the player is told of it.
-    fn news(self) -> &'static str {
+    fn news(self) -> MessageId {
         match self {
             Moved::Rose(stat) => rise_news(stat),
             Moved::Fell(stat) => drop_news(stat),

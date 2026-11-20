@@ -10,12 +10,12 @@ checker (L7)"); **L10**, the `fi` morphology (#1893, "The `fi` module"); and **L
 text path (#1900): the app's words in `assets/lang/en/ui/`, the abilities screen converted ("UI
 text"), with its widths in the screens' layout, not the text (#1908), and the further L6 parts:
 the controls, settings, and mods screens (#1935) and the object and rig screens (#1928); **L4a**,
-**L4i**, and **L4j**, `world/allies/` (#1912), `world/health/` (#1920), and `world/levels/` (#1921)
-say their lines from templates
+**L4b**, **L4i**, and **L4j**, `world/allies/` (#1912), `world/character/` (#1913),
+`world/health/` (#1920), and `world/levels/` (#1921) say their lines from templates
 ("Literal lines"); and **L5**, dialogue (#1888): every line a creature says is a line of data
 said by its key, with role slots in the base form ("Dialogue"), on the one mechanism every line
 whose text lives in data uses ("Lines of data"). The doors, the welcome line, combat, allies,
-health, levels, and talk say theirs from templates; every other `say` site still says finished English
+the character, health, levels, and talk say theirs from templates; every other `say` site still says finished English
 as a literal line ("Literal lines"). Nothing player-visible has
 changed: the English templates and phrases read as the strings did. The English helpers core,
 the app, and the wiki generator call have moved into the crate behind re-exports at their old
@@ -376,7 +376,7 @@ own form ("Two kobolds and the giant rat", "Nested messages"). A place is named 
 terrain by `terrain:<id>`, a party met on the overworld by its entry's `name` as text (the data
 writes its article: "a band of footpads"), stacks that sank by `ice.rs::stacks_arg` (a list of
 two or three, else a count of `word:object`). A level's and a branch's `arrival` are lines of data,
-`level:<id>.arrival` and `dungeon:<id>.arrival` (`Content::arrival_key`). The encounter dialog's
+`level:<id>.arrival` and `dungeon:<id>.arrival` (`data_line::arrival`). The encounter dialog's
 text (`EncounterView`) is the told line rendered in English, with `told_known` adding the line
 for a party met again, until L8. The line said on entering a cell (`enter.rs::tell_cell`):
 stairs (`levels.staircase_down_here`, `way_into_here`, …), a feature's lines
@@ -386,6 +386,16 @@ its place's note after it as the data's text), and what lies there (`levels.see_
 a spell's `look.message`
 (`web.rs`), an anvil's need, and `burden`'s refusals are their own modules'; a status's `seen`, a
 damage type's `verb`, and a refusal's `error` are text roles.
+
+`world/character/` (`messages/character.toml`, L4b) says the lines its data writes as lines of
+data ("Lines of data", whose table lists their keys): an alignment band's `rise` and `fall`, the
+craving's and the oaths' messages, the laws' `first`, a profane gift's `line`, `undone`, and
+`instead`, and cold blood's bands, the talent found back from the bands the player's mods hold
+(`cold_blood.rs::warmth_source`). Text roles until their words are converted (#1949): a
+talent's, a tree's, a skill's, a resource's, and a profane gift's names, a status's name lower
+case, and `Unavailable::reason`. A talent's refusal (`talent::Refusal::words`) stays a literal
+line. `World::learn` returns `Msg`s; `creation_offers` and the creation errors render them in
+English, as developer text.
 
 When no literal is left, `LITERAL`, the `From` text impls, and this section go.
 
@@ -540,12 +550,17 @@ so a saved log re-renders in any language and a later identification cannot reac
   by item, so it is written an item a line.
 
 **The narrator's lines of data** (#1944) are keyed in `content/data_line.rs`, one function a key,
-which the loader (`add_all`, at the end of `Content::load`) and the `say` sites share. An entity's
-line is its kind, its id, and the field's path in its file; a rules file's line is the file's stem
-and the path in it:
+which the loader (`add_all`, at the end of `Content::load`) and the `say` sites share
+(`data_line::said(key)` is the line said alone). An entity's line is its kind, its id, and the
+field's path in its file; a rules file's line is the file's stem and the path in it, a row of its
+arrays named by the id that tells it apart. Every kind of line of data, the three keyed outside
+`data_line.rs` first:
 
 | Key | The line |
 |---|---|
+| `dialogue:<scope>.<field>` | a line a creature says ("Dialogue"; `content/dialogue_line.rs`) |
+| `miscast:<id>.seen` | a miscast seen (`Miscast::seen_key`) |
+| `creature:<id>.touch`, `.unseen` | an aura's touch (`content/aura.rs::touch_key`) |
 | `status:<id>.start`, `.end`, `.stages.<n>` | a status beginning, ending, and reaching degree `n + 1` (a status with `stages` starts with `.stages.0`) |
 | `status:<id>.treat.made`, `.treat.failed` | the Heal skill's try at it |
 | `disease:<id>.recovered` | the player shaking a disease off |
@@ -555,6 +570,14 @@ and the path in it:
 | `spell:<id>.effect.charm.message`, `.ends` | a charm taking hold and ending (in `allies.charm_takes`, `allies.charm_ends`) |
 | `familiars:arrives.<creature>` | a familiar's arrival (in `allies.familiar_arrives`) |
 | `hunger:corpses.skills.<skill>.learn`, `.rise` | a corpse teaching a skill |
+| `level:<id>.arrival`, `dungeon:<id>.arrival` | arriving on a hand-made level by stairs, or on a branch's first level (`data_line::arrival`) |
+| `alignment:band.<band>.rise`, `.fall` | the player's alignment rising or falling into a band |
+| `craving:first`, `craving:again.message`, `craving:surrender.first` | the ratfolk craving waking, giving again, and taken up at the pick |
+| `craving:threshold.<talent>.message` | a craving row crossed, named by the talent it gives |
+| `laws:eat.first`, `laws:summon.first` | a law broken the first time |
+| `oaths:band.<talent>.message` | an oath band reached, named by the talent it gives |
+| `profane:<id>.line`, `.undone`, `.instead` | a profane gift given, taken back, or said in place of its own line when it takes a gift held away |
+| `talent:<id>.effects.temperature_speed.bands.<n>.slower`, `.faster` | cold blood coming into band `n` (from 0) from a quicker or a slower one |
 
 None of them names a role: the loader refuses one that does. A status's start and end lines said
 as the turn is perceived (`world/turn/perceive.rs`) and the other subsystems' reads of these
@@ -569,7 +592,8 @@ fields are still literal text, until their slices.
    the field passes in its README.
 2. At load, check the text names only those roles (`Line::parse(text).roles()`), and add it to
    English: `content.english.add_data_line(key, Template::Line(Line::parse(text)))` (a function
-   giving the key, as `Miscast::seen_key`, so the loader and the `say` site agree).
+   giving the key, in `content/data_line.rs` and added in its `add_all`, so the loader and the `say`
+   site agree).
 3. At the `say` site: `self.say(Msg::data_line(Arg::said(key).with("who", phrase)))`; a dialogue
    line is said by `World::answer` instead ("Dialogue"). The role's value is a phrase as for any
    template (`self.called_phrase(actor)`, `self.phrase_of(id)`, an id phrase).

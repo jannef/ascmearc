@@ -21,30 +21,32 @@
 //! always comes first.
 
 use crate::content::StatDeed;
+use crate::lang::MessageId;
+use crate::msg;
 use crate::stats::Stat;
 use crate::world::World;
 
 /// What the player is told when a stat's pile first comes within reach of a drop.
-fn warn_news(stat: Stat) -> &'static str {
+fn warn_news(stat: Stat) -> MessageId {
     match stat {
-        Stat::Strength => "You feel your strength wasting.",
-        Stat::Dexterity => "Your hands feel less sure.",
-        Stat::Toughness => "You feel your health failing.",
-        Stat::Intelligence => "Your mind feels dull.",
-        Stat::Willpower => "Your will feels brittle.",
-        Stat::Presence => "You feel small and unregarded.",
+        Stat::Strength => msg::character::WARN_STRENGTH,
+        Stat::Dexterity => msg::character::WARN_DEXTERITY,
+        Stat::Toughness => msg::character::WARN_TOUGHNESS,
+        Stat::Intelligence => msg::character::WARN_INTELLIGENCE,
+        Stat::Willpower => msg::character::WARN_WILLPOWER,
+        Stat::Presence => msg::character::WARN_PRESENCE,
     }
 }
 
 /// What a drop in `stat` says.
-pub(in crate::world) fn drop_news(stat: Stat) -> &'static str {
+pub(in crate::world) fn drop_news(stat: Stat) -> MessageId {
     match stat {
-        Stat::Strength => "You feel weaker.",
-        Stat::Dexterity => "You feel clumsier.",
-        Stat::Toughness => "You feel frailer.",
-        Stat::Intelligence => "You feel duller.",
-        Stat::Willpower => "Your resolve wavers.",
-        Stat::Presence => "You feel less sure of yourself.",
+        Stat::Strength => msg::character::DROP_STRENGTH,
+        Stat::Dexterity => msg::character::DROP_DEXTERITY,
+        Stat::Toughness => msg::character::DROP_TOUGHNESS,
+        Stat::Intelligence => msg::character::DROP_INTELLIGENCE,
+        Stat::Willpower => msg::character::DROP_WILLPOWER,
+        Stat::Presence => msg::character::DROP_PRESENCE,
     }
 }
 

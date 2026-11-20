@@ -24,6 +24,8 @@
 
 use crate::action::Action;
 use crate::content::{TalentId, TreeId};
+use crate::lang::{Arg, Msg};
+use crate::msg;
 use crate::talent::{self, Candidate};
 use crate::world::{Spent, World, classes::class};
 use serde::{Deserialize, Serialize};
@@ -122,9 +124,8 @@ impl World {
                 }
             };
             for &id in &held {
-                let name = &content.talents().get(id).name;
-                (self.news)
-                    .push(format!("You know {name} already: choose a talent in its place.").into());
+                let name = content.talents().get(id).name.as_str();
+                (self.news).push(Msg::new(msg::character::KNOW_ALREADY).role("talent", name));
             }
             let talents = u8::from(every > 0 && level % every == 0)
                 .saturating_add(more)
@@ -291,9 +292,9 @@ impl World {
             return None;
         }
         if due.rolls > 0 {
-            self.say("You have skill rolls to spend.");
+            self.say(msg::character::SKILL_ROLLS_TO_SPEND);
         } else {
-            self.say("You must choose a talent first.");
+            self.say(msg::character::CHOOSE_TALENT_FIRST);
         }
         Some(Spent::Nothing)
     }
@@ -323,13 +324,13 @@ impl World {
 
     /// [`World::take_talent`] without its words: what is said of the talent learnt, or why it
     /// cannot be taken (and nothing changes).
-    pub(super) fn learn(&mut self, id: &str, choice: Option<&str>) -> Result<String, String> {
+    pub(super) fn learn(&mut self, id: &str, choice: Option<&str>) -> Result<Msg, Msg> {
         let content = self.content.clone();
         if !(self.state.progress.due.iter()).any(Due::picks_left) {
-            return Err("You have no talent to choose now.".into());
+            return Err(msg::character::NO_TALENT_TO_CHOOSE.into());
         }
         let Some(talent) = content.talents().id(id) else {
-            return Err(format!("There is no talent `{id}`."));
+            return Err(Msg::new(msg::character::NO_TALENT).role("id", id));
         };
         // A free pick first, of the level whose free talent it is; then a bonus pick, of the
         // level whose class's trees the talent is of.
@@ -351,29 +352,26 @@ impl World {
             if let Some(d) = (self.state.progress.due.iter()).find(|d| d.free > 0)
                 && !(self.state.progress.due.iter()).any(|d| d.bonus > 0)
             {
-                let names: Vec<String> = (self.free_talents_at(d.level).into_iter())
-                    .map(|t| content.talents().get(t).name.clone())
+                let names: Vec<Arg> = (self.free_talents_at(d.level).into_iter())
+                    .map(|t| content.talents().get(t).name.as_str().into())
                     .collect();
-                return Err(format!(
-                    "You must choose your free {} first.",
-                    crate::text::or_list(&names)
-                ));
+                let names = Arg::List(names);
+                return Err(Msg::new(msg::character::CHOOSE_YOUR_FREE_FIRST).role("talents", names));
             }
             let trees = (self.bonus_trees_due().into_iter())
                 .next()
                 .and_then(|(_, t)| t);
-            let names: Vec<String> = (trees.iter().flatten())
-                .map(|&t| content.talents().tree(t).name.clone())
+            let names: Vec<Arg> = (trees.iter().flatten())
+                .map(|&t| content.talents().tree(t).name.as_str().into())
                 .collect();
-            return Err(format!(
-                "You must choose a talent of {}.",
-                crate::text::or_list(&names)
-            ));
+            let names = Arg::List(names);
+            return Err(Msg::new(msg::character::CHOOSE_TALENT_OF).role("trees", names));
         };
         let def = content.talents().get(talent);
         let name = def.name_for(&content, choice);
+        // The refusal's words are `talent.rs`'s, finished English until they are converted.
         if let Err(why) = talent::may_take(&content, &self.candidate(), def, choice) {
-            return Err(why.words(&content, &name));
+            return Err(Msg::literal(why.words(&content, &name)));
         }
         // Its hit points by level come now (each later level grows them), and its gifts.
         let level = self.player_level();
@@ -392,7 +390,7 @@ impl World {
         if due.is_spent() {
             self.state.progress.due.remove(at);
         }
-        Ok(format!("You learn {name}."))
+        Ok(Msg::new(msg::character::LEARN_TALENT).role("talent", name))
     }
 
     /// The dev action `levelup:auto` ([`Action::LevelUpAuto`]): spends every choice due with
@@ -401,7 +399,7 @@ impl World {
     /// benchmarks. Takes no time.
     pub(in crate::world) fn level_up_auto(&mut self) -> Spent {
         if self.due().is_none() {
-            self.say("Nothing is due.");
+            self.say(msg::character::NOTHING_DUE);
             return Spent::Nothing;
         }
         self.advance_auto();

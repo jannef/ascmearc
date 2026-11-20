@@ -11,6 +11,7 @@ use crate::content::{Content, TerrainDef};
 use crate::damage::Damage;
 use crate::geom::Pos;
 use crate::ice::Shock;
+use crate::msg;
 use crate::rng::draw;
 use crate::talent::{Taken, Talents};
 use crate::world::magic::spell::Caster;
@@ -115,7 +116,7 @@ impl World {
             return false;
         };
         self.state.progress.once.insert(flag.to_string());
-        self.say("You burst into flame and rise from your ashes!");
+        self.say(msg::character::RISE_FROM_ASHES);
         // Reborn whole (a lucky day's gift): whole again, and no Ashen (`lucky.rs`).
         if !self.reborn_whole(events) {
             self.afflict(player, rise.status, 1, None, events);

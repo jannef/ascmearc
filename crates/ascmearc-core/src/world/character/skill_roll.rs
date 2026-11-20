@@ -24,6 +24,8 @@
 use crate::character::Character;
 use crate::content::Content;
 use crate::dice::Dice;
+use crate::lang::Msg;
+use crate::msg;
 use crate::rng::Rng;
 use crate::skills::{SkillId, Trained};
 use crate::stats::Stat;
@@ -169,19 +171,17 @@ impl World {
     pub(in crate::world) fn advance_skill(&mut self, skill: &str) -> Spent {
         let content = self.content.clone();
         let Some(id) = content.skill_id(skill) else {
-            self.say(format!("There is no skill `{skill}`."));
+            self.say(Msg::new(msg::character::NO_SKILL).role("id", skill));
             return Spent::Nothing;
         };
         let Some(at) = (self.state.progress.due.iter()).position(|d| d.rolls > 0) else {
-            self.say("You have no skill rolls to spend.");
+            self.say(msg::character::NO_SKILL_ROLLS);
             return Spent::Nothing;
         };
         let def = content.skill(id);
         let Some(trained) = self.state.player().skills.get(id) else {
-            self.say(format!(
-                "You are not trained in {}.",
-                def.name.to_lowercase()
-            ));
+            let skill = def.name.to_lowercase();
+            self.say(Msg::new(msg::character::NOT_TRAINED_IN).role("skill", skill));
             return Spent::Nothing;
         };
         self.roll_skill(id, trained);
@@ -215,7 +215,7 @@ impl World {
             .skills
             .roll(id, rolled, content.skill_rolls());
         let name = content.skill(id).name.to_lowercase();
-        self.say(format!("Your {name} improves."));
+        self.say(Msg::new(msg::character::SKILL_IMPROVES).role("skill", name));
     }
 
     /// `by` training marks for the player's skill `id`, if trained: the one place marks are

@@ -17,7 +17,7 @@
 //!
 //! No draws: the counts never touch the random streams.
 
-use crate::content::{CreatureId, Law};
+use crate::content::{CreatureId, Law, data_line};
 use crate::world::World;
 use serde::{Deserialize, Serialize};
 
@@ -94,7 +94,7 @@ impl World {
             && !self.craved(count)
             && count == 1
         {
-            self.say(laws.eat.first.clone());
+            self.say(data_line::said(data_line::law_first("eat")));
         }
     }
 
@@ -105,7 +105,7 @@ impl World {
             return;
         };
         if self.broke(&laws.summon, creature, |b| &mut b.summoned) == Some(1) {
-            self.say(laws.summon.first.clone());
+            self.say(data_line::said(data_line::law_first("summon")));
         }
     }
 

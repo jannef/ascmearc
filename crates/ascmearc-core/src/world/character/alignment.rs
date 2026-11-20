@@ -20,8 +20,10 @@
 
 use crate::alignment::Alignment;
 use crate::content::{
-    Content, CreatureId, Dialogue, DialogueLine, QuestDef, Shifts, Shops, Stance,
+    Content, CreatureId, Dialogue, DialogueLine, QuestDef, Shifts, Shops, Stance, data_line,
 };
+use crate::lang::Msg;
+use crate::msg;
 use crate::world::{Actor, ActorId, World};
 
 /// What moved an alignment score. Talents that change what a deed costs (one that spares an
@@ -111,12 +113,15 @@ impl World {
             return;
         };
         let shifted = score.shifted(amount);
-        let news = (rules.news(rules.band(score), rules.band(shifted))).map(str::to_string);
+        let (from, to) = (rules.band(score), rules.band(shifted));
+        // Its line of data, by its key (`docs/dev/localization.md` "Lines of data").
+        let news = (rules.news(from, to))
+            .map(|_| data_line::said(data_line::alignment_band(to, to > from)));
         if let Some(a) = self.state.actors.get_mut(&actor) {
             a.alignment = Some(shifted);
         }
-        if let Some(text) = news.filter(|_| actor == self.state.player) {
-            self.notes.push(text.into());
+        if let Some(line) = news.filter(|_| actor == self.state.player) {
+            self.notes.push(line);
         }
         if shifted.value() < score.value() && actor == self.state.player {
             self.sin_empties_zeal();
@@ -134,7 +139,7 @@ impl World {
         if let Some(held) = held.filter(|p| p.value > 0) {
             held.value = 0;
             let name = self.content.resource(pool).name.to_lowercase();
-            self.notes.push(format!("Your {name} deserts you.").into());
+            (self.notes).push(Msg::new(msg::character::DESERTS_YOU).role("name", name));
         }
     }
 

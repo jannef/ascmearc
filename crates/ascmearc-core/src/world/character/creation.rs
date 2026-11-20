@@ -17,6 +17,8 @@
 use super::talent::Due;
 use crate::character::CharacterSpec;
 use crate::content::{Content, TalentId};
+use crate::lang::{Entry, Msg, written_key};
+use crate::messages;
 use crate::rng::Rng;
 use crate::talent;
 use crate::text::article;
@@ -118,7 +120,7 @@ impl World {
         &self,
         picks: &[String],
     ) -> Result<(u8, Vec<(TalentId, Vec<Option<String>>)>), String> {
-        let world = self.after_picks(picks)?;
+        let world = self.after_picks(picks).map_err(|why| self.english(&why))?;
         let due = world.creation_due();
         let left = due.map_or(0, |d| d.talents + d.bonus + d.free);
         Ok((left, world.creation_choices()))
@@ -146,7 +148,7 @@ impl World {
     }
 
     /// The drafted run with `picks` taken, or why one cannot be.
-    fn after_picks(&self, picks: &[String]) -> Result<Self, String> {
+    fn after_picks(&self, picks: &[String]) -> Result<Self, Msg> {
         let mut world = self.clone();
         for pick in picks {
             let (id, choice) = split(pick);
@@ -237,6 +239,7 @@ impl World {
             for pick in &spec.talents {
                 let (id, choice) = split(pick);
                 self.learn(id, choice).map_err(|why| {
+                    let why = self.english(&why);
                     let why = why.trim_end_matches('.');
                     WorldError::Character(format!(
                         "talent `{pick}`: {why} ({} {} takes {count} at creation)",
@@ -272,12 +275,19 @@ impl World {
         Ok(())
     }
 
+    /// Why a pick could not be taken, in English: a scenario's or a character's error is the
+    /// developer's ([`WorldError::Character`]), not the player's.
+    fn english(&self, why: &Msg) -> String {
+        messages::english(&self.content, &Entry::new(0, why.clone()), &written_key)
+    }
+
     /// Takes the scenario's own character's named picks, in order; a pick that cannot be taken
     /// is an error naming the scenario.
     fn take_named(&mut self, picks: &[String]) -> Result<(), WorldError> {
         for pick in picks {
             let (id, choice) = split(pick);
             self.learn(id, choice).map_err(|why| {
+                let why = self.english(&why);
                 let why = why.trim_end_matches('.');
                 let scenario = &self.state.scenario;
                 WorldError::Character(format!("scenario `{scenario}`: talent `{pick}`: {why}"))
@@ -302,7 +312,7 @@ impl World {
             let choice = ways[rng.index(ways.len())].clone();
             let id = self.content.talents().get(*id).id.clone();
             self.learn(&id, choice.as_deref())
-                .map_err(WorldError::Character)?;
+                .map_err(|why| WorldError::Character(self.english(&why)))?;
             self.settle_due();
             taken.push(pick_text(&id, choice.as_deref()));
         }
