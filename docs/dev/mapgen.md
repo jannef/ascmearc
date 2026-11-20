@@ -165,21 +165,26 @@ for the shortcuts (Ūtgang): waypoints from one side of the map to the other, ne
 along the width, joined by right-angled hewn legs and bored steadier (longer stretches, hardly a
 nibble, a squeeze after two stretches without one); a hewn hall (a box, corners now and then left)
 at both ends and at about a third of the waypoints; three to six straight dead-end pockets, each
-dug only through rock no other floor touches; the named vaults, then as many random ones as the
+dug only through rock no other floor touches; the named vaults (where room is made for one,
+`make_room`'s box of rock may cross the way and only its larger side is kept: an attempt that
+has lost either end hall fails, #1961), then as many random ones as the
 passage's `random_vaults` parameter draws (`[fewest, most]`, default none: `generator = { kind =
 "passage", random_vaults = [2, 3] }`), only vaults with one entrance (two would open a second route; a vault a
 passage names should have one too), each dug to from the nearest floor by a cut of its own, a
 pocket ending at its door; an attempt whose floor rings round more than `pillar` (4) cells of
 rock (a hall come too near another leg, a vault's cut grazing the way: a second route) fails,
 a vault's own cells counted as outside, so what a vault holds is no ring; the stairs in the roomy
-spots nearest the two ends (which end is up is drawn). No pools. Both keep every tunable as a named
+spots nearest the two ends (which end is up is drawn). No pools. The ring is measured once more
+at the end, every cell not walkable counted as rock, so a special chamber's feature (a spring's
+basin) set beside a pillar fails the attempt too. Both keep every tunable as a named
 constant at the top of their file (#1834 moves them into data). Tests: `mapgen/tunnels_tests.rs`
 (snapshots of both at a few seeds and sizes; proptests: every tunnels floor connected and
 deterministic, a passage's stairs more than half the width apart and its floor ringing round no
 more rock than a pillar, `holes`, and the Skeul Hir's too with its vaults, `way_holes`, the holes
 of the way between the stairs once every piece hanging off one cell is taken away; chokepoints,
 `cut_cells`, the cells whose loss parts the stairs, on most floors of both, loops round rock on
-most tunnels floors, and the Skeul Hir's waystation on every floor).
+most tunnels floors, the Skeul Hir's waystation on every floor, and its stairs far apart at
+the seed where room made for the waystation once cut the way, #1961).
 
 **The Skeul Hir** (#1760, #1840; `campaigns/ascmearc/data/dungeons/skeul_hir.toml`), the deep
 gnomes' old long stair: a branch of one passage floor, 120×30, between Gimmwīc (its `bottom`)

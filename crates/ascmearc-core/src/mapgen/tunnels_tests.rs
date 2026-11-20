@@ -341,3 +341,29 @@ proptest! {
         prop_assert_eq!(&level, &floor("skeul_hir:1", seed), "same seed, same floor");
     }
 }
+
+/// The Skeul Hir's floor at a seed where room made for the waystation once filled a box across
+/// the way, and only the way's larger side was kept: its stairs stood a third of the width
+/// apart (#1961). The attempt fails now, and the next keeps both ends.
+#[test]
+fn room_for_the_waystation_never_cuts_the_way() {
+    let level = floor("skeul_hir:1", 10293782342217884471);
+    let (up, down) = (
+        stairs(&level, StairsDir::Up),
+        stairs(&level, StairsDir::Down),
+    );
+    assert!(
+        (up.x - down.x).abs() * 2 > level.terrain.width(),
+        "{up} and {down}"
+    );
+    connected(&level).expect("connected");
+}
+
+/// Ūtgang 3 at a seed where a spring's basin was set beside a pillar, and the way rang round
+/// five cells: the ring is measured again after the chambers, and that attempt fails.
+#[test]
+fn a_chamber_feature_never_grows_a_pillar_into_a_ring() {
+    let level = floor("utgang:3", 11736819950414072484);
+    let most = holes(&level).into_iter().max().unwrap_or(0);
+    assert!(most <= 4, "a hole of {most}\n{}", ascii(&level, &FIXTURE));
+}
