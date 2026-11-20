@@ -24,8 +24,11 @@ use crate::action::Event;
 use crate::combat::Profile;
 use crate::content::{ActionKind, ClassActive, Content, Stance};
 use crate::geom::Pos;
+use crate::lang::Msg;
+use crate::msg;
 use crate::noise::Act;
 use crate::skills::Use;
+use crate::world::combat::fight;
 use crate::world::{Actor, Order, WorldState, stance_between};
 use crate::world::{ActorId, Spent, World};
 
@@ -42,7 +45,7 @@ impl World {
             pet.level == self.state.current_level && !pet.in_retinue()
         });
         let Some(companion) = companion else {
-            self.say("You have no companion here.");
+            self.say(msg::allies::NO_COMPANION_HERE);
             return Spent::Nothing;
         };
         if !self.within_reach(at, sic.range, "set your companion") {
@@ -53,16 +56,16 @@ impl World {
             // A disguised mimic is a chest to every eye (`mimic.rs`).
             .filter(|a| self.perception.sees_actors_at(at) && !a.effects.hides(&content))
             .map(|a| (a.id, a.creature));
-        let who = self.ally_subject(companion);
+        let who = self.ally_phrase(companion);
         let Some((quarry, creature)) = quarry else {
-            self.say(format!("There is nothing there to set {who} on."));
+            self.say(Msg::new(msg::allies::NOTHING_TO_SET_ON).role("who", who));
             return Spent::Nothing;
         };
         let state = &self.state;
         if stance_between(state, &content, state.player(), &state.actors[&quarry])
             != Stance::Hostile
         {
-            self.say(format!("You have no quarrel there to set {who} on."));
+            self.say(Msg::new(msg::allies::NO_QUARREL_TO_SET_ON).role("who", who));
             return Spent::Nothing;
         }
         if let Some(cost) = (content.class_active(ClassActive::Sic)).and_then(|a| a.resource) {
@@ -73,8 +76,12 @@ impl World {
             data.quarry = Some(quarry);
         }
         self.afflict(companion, sic.status, sic.blows, None, events);
-        let name = crate::content::the_start(&content.creature(creature).name).to_lowercase();
-        self.say(format!("{who} goes for {name}'s throat."));
+        let target = fight::creature(content.creature(creature));
+        self.say(
+            Msg::new(msg::allies::GOES_FOR_THROAT)
+                .role("who", who)
+                .role("target", target),
+        );
         self.make_noise(player, Act::Order);
         events.push(Event::Ordered {
             at: self.player_pos(),

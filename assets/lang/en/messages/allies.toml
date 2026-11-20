@@ -1,0 +1,111 @@
+# Allies (`world/allies/`): the companion, the familiar, taming, charm, the collar, and the orders
+# the player gives. Ids alphabetical, the plain ones first, then the tables.
+#
+# Roles: `who` is the one a line is about, as the player calls it ("Snel", "your wolf", "the
+# gardener"); `pack` is the allies an order names, a list ("Snel and your wolves"), said `{pack:the}`
+# and agreeing by `pack.number`; `what` is a thing; `name` and `own` are a beast's own name; `kind`
+# is its type. `came`, `message`, `ends`, `seen`, `line`, and `words` are text the data (or
+# another line) writes, until it is converted.
+
+# `who`: the one already led.
+already_at_side = "{who:The} {who:is} already at someone's side."
+# `who`: the beast that left while the player tamed it.
+beast_leaves = "{who:The} leave{who:s} your side; you stop taming it."
+# `seen`: how a status looks ("hasted").
+bond_shared = "{who:The} {who:is} {seen:bare} too."
+calling_begins = "You sit down in the dark and call, under your breath."
+calling_broken = "You break off your calling."
+# `came`: what came, as a line told it ("A kobold comes into view").
+calling_broken_by = "{came:bare}; you break off your calling."
+cannot_be_tamed = "{who:The} cannot be tamed."
+carry_no_such_thing = "You carry no such thing."
+# `ends`: what the data says of a charm's end ("shakes off the charm").
+charm_ends = "{who:The} {ends:bare}."
+# `message`: what the data says of a charm taking hold.
+charm_takes = "{who:The} {message:bare}."
+# `who`: the beast; `what`: the collar's old piece that fell.
+collar_falls = "{who:Poss} {what:bare} falls to the floor."
+# `own`: the name the player gives it.
+comes_to_your_hand = "{who:The} come{who:s} to your hand. You call it {own:bare}."
+# `name`: its name; `kind`: its type.
+companion_arrives = "{name:bare}, your {kind:bare}, pads at your heel."
+# `what`: the food held out.
+crouch_feed = "You crouch by {who:the} and hold out {what:counted}."
+crouch_speak = "You crouch by {who:the} and speak softly to it."
+# `line`: how the data says it arrives ("keeps to your heel").
+familiar_arrives = "{name:bare}, your {kind:bare}, {line:bare}."
+familiar_lives = "Your familiar lives yet."
+# `what`: the collar, `who`: the beast it goes on.
+fasten_collar = "You fasten {what:the} about {who:poss} neck."
+# `who`: the ally; `target`: its quarry.
+goes_for_throat = "{who:The} go{who:es} for {target:poss} throat."
+growls_at_the_dark = "{who:The} growl{who:s} at the dark."
+grows_stronger = "{who:The} grow{who:s} stronger."
+has_seen_you = "{who:The} {who:has} seen you: it will not be tamed now."
+have_companion = "You already have a companion."
+lead_no_more = "You cannot lead more than this."
+looks_back = "{who:The} look{who:s} back at you."
+no_allies = "This world knows no allies."
+no_beast_kept = "You keep no beast to give it to."
+no_beast_that_way = "No beast of yours stands that way."
+no_beast_to_tame = "There is no beast there to tame."
+no_companion_here = "You have no companion here."
+no_mind_to_charm = "{who:The} {who:has} no mind to charm."
+no_one_to_call = "You have no one to call."
+no_ones_fool = "{who:The} {who:is} no one's fool."
+no_quarrel_to_set_on = "You have no quarrel there to set {who:the} on."
+no_room_beside_you = "There is no room for them beside you."
+# A dev action's: `creature` as typed.
+no_such_creature = "There is no creature `{creature:bare}`."
+no_use_for_that = "{who:The} {who:has} no use for that."
+not_beside_you = "{who:The} {who:is} not beside you."
+not_with_that_watching = "Not with that watching."
+nothing_answers = "Nothing answers your call."
+nothing_comes = "Nothing comes."
+nothing_to_set_on = "There is nothing there to set {who:the} on."
+# `target`: the creature the pack is set on.
+set_on = "You set {pack:the} on {target:the}."
+set_on_spot = "You set {pack:the} on that spot."
+set_on_unseen = "You can set them on only a place you see."
+snaps_and_backs_away = "{who:The} snap{who:s} at you and back{who:s} away."
+something_comes = "Something comes out of the dark and sits at your feet."
+# `came`: what came, as a line told it.
+tame_broken_by = "{came:bare}; you stop taming {who:the}."
+tame_stopped = "You stop taming {who:the}."
+tame_untrained = "You do not know how to tame beasts."
+yours_already = "{who:The} {who:is} yours already."
+
+# `what`: the creature, with its count.
+[come_to_your_side]
+by = "what.number"
+one = "{what:Counted} comes to your side."
+many = "{what:Num} {what:plural} come to your side."
+
+[come_with_you]
+by = "pack.number"
+one = "{pack:The} comes with you."
+many = "{pack:The} come with you."
+
+# `who`: the creature that departs; `words`: how the data says it ("fades away").
+[departs]
+text = "{who:The} {words:bare}."
+
+[follow_you_in]
+by = "pack.number"
+one = "{pack:The} follows you in."
+many = "{pack:The} follow you in."
+
+[heel]
+by = "pack.number"
+one = "{pack:The} comes to heel."
+many = "{pack:The} come to heel."
+
+[hold]
+by = "pack.number"
+one = "{pack:The} holds."
+many = "{pack:The} hold."
+
+[left_behind]
+by = "pack.number"
+one = "{pack:The} is left behind."
+many = "{pack:The} are left behind."

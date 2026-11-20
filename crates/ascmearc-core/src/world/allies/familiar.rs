@@ -33,8 +33,11 @@ use crate::action::{AttackKind, Event};
 use crate::character::{CharacterSpec, RememberedFamiliar};
 use crate::content::{ActionKind, Content, CreatureId, LevelKind, Stacking};
 use crate::geom::Pos;
+use crate::lang::{Msg, Phrase};
+use crate::msg;
 use crate::rng::Rng;
 use crate::rng::draw;
+use crate::world::combat::fight;
 use crate::world::turn::rest::Ended;
 use crate::world::{Actor, ActorId, AllySource, CompanionData, Spent, World, WorldState};
 use std::cell::Cell;
@@ -170,14 +173,19 @@ impl World {
                 name: name.clone(),
             });
         }
-        let kind = &content.creature(creature).name;
+        let kind = fight::creature(content.creature(creature));
         let line = if back {
             Some("comes back to you out of the dark")
         } else {
             (content.familiars()).and_then(|rules| rules.arrives(creature))
         };
         let line = line.unwrap_or("keeps to your heel");
-        self.say(format!("{name}, your {kind}, {line}."));
+        self.say(
+            Msg::new(msg::allies::FAMILIAR_ARRIVES)
+                .role("name", Phrase::literal(&name))
+                .role("kind", kind)
+                .role("line", line),
+        );
     }
 
     /// `use:call_familiar`: the player sits down to call, or is refused with no time (module
@@ -188,14 +196,14 @@ impl World {
             .filter(|_| self.content.allies().is_some())
             .map(|rules| rules.call_turns);
         let Some(turns) = turns else {
-            self.say("Nothing comes.");
+            self.say(msg::allies::NOTHING_COMES);
             return Spent::Nothing;
         };
         match self.perception().calling_barred() {
-            Some(Unavailable::FamiliarLives) => self.say("Your familiar lives yet."),
-            Some(_) => self.say("Not with that watching."),
+            Some(Unavailable::FamiliarLives) => self.say(msg::allies::FAMILIAR_LIVES),
+            Some(_) => self.say(msg::allies::NOT_WITH_THAT_WATCHING),
             None => {
-                self.say("You sit down in the dark and call, under your breath.");
+                self.say(msg::allies::CALLING_BEGINS);
                 return Spent::Calling(turns);
             }
         }
@@ -217,10 +225,11 @@ impl World {
             Ended::Died => {}
             _ if left.get() == 0 => self.finish_calling(events),
             Ended::Came(came) => {
-                let text = format!("{}; you break off your calling.", self.came_line(came));
-                self.say(text);
+                // What came is told as `came_line` says it, until that line is converted.
+                let came = self.came_line(came);
+                self.say(Msg::new(msg::allies::CALLING_BROKEN_BY).role("came", came));
             }
-            Ended::Said | Ended::Done => self.say("You break off your calling."),
+            Ended::Said | Ended::Done => self.say(msg::allies::CALLING_BROKEN),
         }
     }
 
@@ -232,7 +241,7 @@ impl World {
         let remembered = (self.state.character.as_ref()).and_then(|c| c.familiar.clone());
         if let Some(RememberedFamiliar { creature, name }) = remembered {
             let Some(at) = self.familiar_cell() else {
-                self.say("Nothing comes.");
+                self.say(msg::allies::NOTHING_COMES);
                 return;
             };
             self.make_familiar(creature, at, Some(name));
@@ -248,10 +257,10 @@ impl World {
             calling_draw(&content, &mut rng, race, level)
         });
         let (Some(creature), Some(at)) = (drawn, self.familiar_cell()) else {
-            self.say("Nothing comes.");
+            self.say(msg::allies::NOTHING_COMES);
             return;
         };
-        self.say("Something comes out of the dark and sits at your feet.");
+        self.say(msg::allies::SOMETHING_COMES);
         self.make_familiar(creature, at, None);
         self.perceive_familiar(events);
     }

@@ -26,7 +26,8 @@
 use super::ally::{Ally, AllySource, Order};
 use crate::content::SpellCharm;
 use crate::geom::Pos;
-use crate::text::capitalized;
+use crate::lang::Msg;
+use crate::msg;
 use crate::time::Duration;
 use crate::world::magic::cast::Cast;
 use crate::world::{ActorId, World};
@@ -40,7 +41,7 @@ impl World {
         at: Pos,
     ) -> bool {
         let Some(rules) = self.content.allies().cloned() else {
-            self.say("Nothing answers your call.");
+            self.say(msg::allies::NOTHING_ANSWERS);
             return false;
         };
         let level = self.state.current_level.clone();
@@ -50,8 +51,8 @@ impl World {
         if let Some(id) = seen
             && self.master_of(id).is_some()
         {
-            let who = capitalized(&self.called(&self.state.actors[&id]));
-            self.say(format!("{who} is already at someone's side."));
+            let who = self.called_phrase(&self.state.actors[&id]);
+            self.say(Msg::new(msg::allies::ALREADY_AT_SIDE).role("who", who));
             return false;
         }
         let Some(target) = self.hex_target(at, cast.reach.range.unwrap_or(1)) else {
@@ -63,7 +64,7 @@ impl World {
         }
         let player = self.state.player;
         if self.allies_here(player).len() >= usize::from(rules.most) {
-            self.say("You cannot lead more than this.");
+            self.say(msg::allies::LEAD_NO_MORE);
             return false;
         }
         if !self.pay_cast(cast) {
@@ -86,24 +87,28 @@ impl World {
                 until: Some(until),
             });
         }
-        let who = capitalized(&self.called(&self.state.actors[&target]));
-        self.say(format!("{who} {}.", charm.message));
+        let who = self.called_phrase(&self.state.actors[&target]);
+        self.say(
+            Msg::new(msg::allies::CHARM_TAKES)
+                .role("who", who)
+                .role("message", charm.message.as_str()),
+        );
         self.spell_landed(cast, target, true);
         true
     }
 
     /// Why creature `id` cannot be charmed, as the player is told; `None` when it can.
-    fn uncharmable(&self, id: ActorId, charm: &SpellCharm) -> Option<String> {
+    fn uncharmable(&self, id: ActorId, charm: &SpellCharm) -> Option<Msg> {
         let actor = &self.state.actors[&id];
         let def = self.content.creature(actor.creature);
-        let who = capitalized(&self.called(actor));
+        let who = self.called_phrase(actor);
         if def.unique || actor.npc.is_some() {
-            return Some(format!("{who} is no one's fool."));
+            return Some(Msg::new(msg::allies::NO_ONES_FOOL).role("who", who));
         }
         let mindless = actor.risen.is_some()
             || def.animated.is_some()
             || (charm.mindless.iter()).any(|t| self.content.has_tag(actor.creature, t));
-        mindless.then(|| format!("{who} has no mind to charm."))
+        mindless.then(|| Msg::new(msg::allies::NO_MIND_TO_CHARM).role("who", who))
     }
 
     /// Charmed creature `id`'s charm ends (the module docs): its faction is put back and it is
@@ -135,8 +140,12 @@ impl World {
                 .and_then(|s| s.effect.charm.as_ref())
                 .map_or("shakes off the charm", |c| c.ends.as_str())
                 .to_string();
-            let who = capitalized(&self.called(&self.state.actors[&id]));
-            self.say(format!("{who} {ends}."));
+            let who = self.called_phrase(&self.state.actors[&id]);
+            self.say(
+                Msg::new(msg::allies::CHARM_ENDS)
+                    .role("who", who)
+                    .role("ends", ends),
+            );
         }
     }
 }
