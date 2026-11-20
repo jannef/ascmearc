@@ -1,0 +1,49 @@
+# Why an ability cannot be used now (`ability.rs`, `Unavailable::reason`; #1997): a clause the
+# abilities menu shows beside the greyed-out row, and a refusal says in its `reason` (`You cannot:
+# {reason:bare}.`). Lower case: the line it stands in capitalizes it where it begins one. Ids
+# alphabetical (`docs/dev/localization.md` "Literal lines").
+#
+# Roles: `status` is a status by its name (`status:<id>`, "winded"), `skill` a skill's
+# (`skill:<id>`), `name` a resource's (`resource:<id>`); `words` a resource's `lacking`, a line of
+# data (`resources:resource.<id>.lacking`, "you have not the rage for it").
+
+familiar_lives = "your familiar lives"
+fires_by_itself = "fires by itself"
+have_companion = "you already have a companion"
+# `words`: the resource's own words for too little of it.
+lacking = "{words:bare}"
+no_allies = "no allies here"
+no_companion = "no companion here"
+no_knife = "you have no knife"
+no_mana = "you have too little mana"
+no_shield = "you hold no shield"
+# One aimed in a direction with nothing beside the player it may act on (`beside.rs`,
+# `Target::reason`), one entry a target.
+no_target_beast = "no beast beside you to tame"
+no_target_closed_door = "no closed door beside you"
+no_target_foe = "no foe within reach"
+no_target_fool = "no foe beside you to fool"
+no_target_fungus = "no fungus beside you"
+no_target_ground = "no open ground beside you"
+no_target_lock = "no lock beside you"
+no_target_mark = "no one beside you to rob"
+no_target_open_door = "no open door beside you"
+no_target_openable = "nothing beside you to open"
+no_target_someone = "no one beside you"
+no_target_trap = "no known trap beside you"
+no_target_wall = "nothing beside you to dig"
+no_unknown_scroll = "no unknown scroll"
+not_beside = "not beside you"
+not_here = "not usable here"
+not_so_held = "your hands are not so held"
+not_yet = "not usable yet"
+nothing_to_mend = "nothing to mend"
+nothing_to_treat = "nothing to treat"
+# `name`: the resource, too little of it held.
+short = "not enough {name:bare}"
+still = "your mind is already still"
+# `skill`: the skill the actor is not trained in.
+untrained = "you are untrained in {skill:Bare}"
+watched = "something is watching"
+# `status`: the status that keeps the ability from use (its cooldown, or one that blocks it).
+while_status = "you are {status:bare}"

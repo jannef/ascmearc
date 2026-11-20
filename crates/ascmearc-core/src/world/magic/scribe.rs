@@ -128,7 +128,7 @@ impl World {
             Ended::Died => {}
             _ if left.get() == 0 => self.finish_scribe(writing),
             Ended::Came(came) => {
-                let came = self.came_line(came);
+                let came = self.came_msg(came);
                 self.say(Msg::new(msg::magic::WRITE_BROKEN_BY).role("came", came));
             }
             Ended::Said | Ended::Done => self.say(msg::magic::STOP_WRITING),

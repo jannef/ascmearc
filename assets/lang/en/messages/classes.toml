@@ -9,9 +9,9 @@
 # Roles: `who` is a creature a line is about, as the player calls it ("the kobold", "Grimbold");
 # `keeper` a shopkeeper by name; `missile` what flew ("the arrow"); `what` a stack as the player
 # knows it, a list of them, or an object type. `status` is a status by its name (`status:<id>`,
-# "raging"), `name` a resource's (`resource:<id>`); `talent` is a talent's name from the data,
-# `song` a song's name lower case, and `reason` why an ability cannot be used: text until those
-# words are converted (#1949). `came` is who came and how ("The kobold comes close"), from
+# "raging"), `name` a resource's (`resource:<id>`); `talent` is a talent's name from the data
+# and `song` a song's name lower case: text until those words are converted (#1949). `reason` is
+# why an ability cannot be used, a message of its own (`messages/ability.toml`). `came` is who came and how ("The kobold comes close"), from
 # `turn/rest.rs`. `class` is a class id as a word (dev) and `id` an id as typed: a prestige
 # class's (dev), a class active's, or a shape's. `gold` is a number, said in digits.
 

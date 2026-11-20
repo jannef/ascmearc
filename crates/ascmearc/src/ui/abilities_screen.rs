@@ -25,7 +25,7 @@ use super::character_screen::fit_joined;
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::ScreenAction;
-use super::text::{abilities_screen as T, ui, ui_with};
+use super::text::{abilities_screen as T, ui, ui_msg, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
@@ -81,7 +81,7 @@ impl AbilitiesScreen {
                 .map(|own| {
                     let a = own.ability;
                     let state = match own.unavailable {
-                        Some(why) => why.reason(content).into_owned(),
+                        Some(why) => ui_msg(why.reason(content)),
                         None => needs(a.aim(content)),
                     };
                     // What it costs, then why it cannot be used now, or what it asks for.
@@ -338,9 +338,8 @@ fn describe(view: &PerceptionView<'_>, ability: Ability) -> String {
         return text;
     };
     let reach = (content.spell_of(spell).zip(view.own_spell_reach(spell)))
-        .map(|(def, reach)| reach_words(def.shape, reach).join(", "))
-        .unwrap_or_default();
-    if !reach.is_empty() {
+        .and_then(|(def, reach)| reach_words(def.shape, reach));
+    if let Some(reach) = reach {
         text += &format!(" {}", ui_with(T::REACH, &[("reach", reach.into())]));
     }
     if let Some(reroll) = reroll_words(view.own_spell_reroll(spell)) {

@@ -133,7 +133,10 @@ fn without_a_knife_it_is_refused_with_its_reason() {
             .and_then(|r| r.unavailable)
     };
     assert_eq!(reason(&w), Some(crate::world::RecipeLack::Knife));
-    assert_eq!(Unavailable::NoKnife.reason(&content), "you have no knife");
+    assert_eq!(
+        crate::test_support::english_of(&content, &Unavailable::NoKnife.reason(&content)),
+        "you have no knife"
+    );
     give(&mut w, "knife");
     assert_eq!(reason(&w), None);
 }

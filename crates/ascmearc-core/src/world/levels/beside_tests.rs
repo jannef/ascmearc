@@ -54,7 +54,10 @@ fn doors_beside_the_player_are_what_open_close_listen_wedge_and_pick_lock_act_on
     assert_eq!(own(&w, Ability::Wedge), None);
     let no_lock = Unavailable::NoTarget(Target::Lock);
     assert_eq!(own(&w, Ability::PickLock), Some(Some(no_lock)));
-    assert_eq!(no_lock.reason(w.content()), "no lock beside you");
+    assert_eq!(
+        crate::test_support::english_of(w.content(), &no_lock.reason(w.content())),
+        "no lock beside you"
+    );
     assert_eq!(no_lock.id(w.content()), "no_target:lock");
     // Below the hall's door: one closed door, north.
     run(&mut w, "move:N*3");

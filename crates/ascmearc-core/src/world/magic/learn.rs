@@ -280,7 +280,7 @@ impl World {
             Ended::Died => {}
             _ if left.get() == 0 => self.finish_study(lesson, events),
             Ended::Came(came) => {
-                let came = self.came_line(came);
+                let came = self.came_msg(came);
                 self.say(Msg::new(msg::magic::READ_BROKEN_BY).role("came", came));
             }
             Ended::Said | Ended::Done => self.say(msg::magic::STOP_READING),

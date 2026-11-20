@@ -189,7 +189,7 @@ fn every_pick_is_offered_only_under_its_sign() {
         .expect_err("not a wyvern")
         .words(&BUILTIN, "Fire breath");
     assert_eq!(
-        words,
+        crate::test_support::english_of(&BUILTIN, &words),
         "You cannot take Fire breath: you need to be born in the year of the Wyvern."
     );
 }

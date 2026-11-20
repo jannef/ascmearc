@@ -76,7 +76,8 @@ pub enum Choice {
 }
 
 impl Choice {
-    /// What is chosen, in words: "a weapon skill".
+    /// What is chosen, in words: "a weapon skill", for the content's errors (developer text;
+    /// the player reads [`Choice::message`]).
     pub fn words(self) -> &'static str {
         match self {
             Choice::WeaponSkill => "a weapon skill",
@@ -85,6 +86,20 @@ impl Choice {
             Choice::Element => "an element",
             Choice::Tag => "a kind of creature",
             Choice::School => "a school of magic or an element",
+        }
+    }
+
+    /// What is chosen, as the player reads it in a refusal (`character.choice_*`): "a weapon
+    /// skill". [`Choice::words`] is the same in English, for the content's own errors.
+    pub fn message(self) -> crate::lang::MessageId {
+        use crate::msg;
+        match self {
+            Choice::WeaponSkill => msg::character::CHOICE_WEAPON_SKILL,
+            Choice::Style => msg::character::CHOICE_STYLE,
+            Choice::Skill => msg::character::CHOICE_SKILL,
+            Choice::Element => msg::character::CHOICE_ELEMENT,
+            Choice::Tag => msg::character::CHOICE_TAG,
+            Choice::School => msg::character::CHOICE_SCHOOL,
         }
     }
 
@@ -897,6 +912,20 @@ pub enum Need {
 }
 
 impl Need {
+    /// The prerequisite as an item of a refusal's `needs`: a stat nests its name's message
+    /// (`character.talent_needs_stat`); the rest are [`Need::words`], text until a talent's
+    /// requirements are converted (#1997).
+    pub fn arg(&self, content: &Content) -> crate::lang::Arg {
+        use crate::lang::{Arg, Msg};
+        match self {
+            Need::Stat(stat, score) => Msg::new(crate::msg::character::TALENT_NEEDS_STAT)
+                .role("stat", stat.name())
+                .role("score", i64::from(*score))
+                .into(),
+            other => Arg::Text(other.words(content)),
+        }
+    }
+
     /// The prerequisite in words, as a refusal and the Talents page say it: "Toughness 14",
     /// "Hardy", "Stealth 25", "to be a dwarf".
     pub fn words(&self, content: &Content) -> String {

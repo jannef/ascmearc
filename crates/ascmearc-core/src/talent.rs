@@ -19,10 +19,10 @@ use crate::character::Character;
 use crate::content::{
     Choice, Content, MAX_RANK, Need, Sign, StatusId, TalentDef, TalentEffect, TalentId,
 };
+use crate::lang::{Arg, Msg};
 use crate::skills::Skills;
 use crate::stats::Stats;
 use crate::status::Effects;
-use crate::text::and_list;
 use crate::weapon_skills::WeaponSkills;
 use crate::world::Actor;
 use serde::{Deserialize, Serialize};
@@ -633,19 +633,25 @@ pub enum Refusal {
 }
 
 impl Refusal {
-    /// The refusal in words, for a talent `name`: "You cannot take Cleave: you need Strength
-    /// 13."
-    pub fn words(&self, content: &Content, name: &str) -> String {
+    /// The refusal, for a talent `name` (as the data writes it): "You cannot take Cleave: you
+    /// need Strength 13." (`messages/character.toml`'s `talent_*`).
+    pub fn words(&self, content: &Content, name: &str) -> Msg {
+        use crate::msg;
+        let named = |id| Msg::new(id).role("talent", name);
         match self {
-            Refusal::Granted => format!("{name} is given, not chosen."),
-            Refusal::NeedsChoice(kind) => format!("{name} needs a choice: {}.", kind.words()),
-            Refusal::TakesNoChoice => format!("{name} takes no choice."),
-            Refusal::BadChoice(kind, id) => format!("`{id}` is not {}.", kind.words()),
-            Refusal::Held => format!("You have {name} already."),
-            Refusal::Stripped => "The craving has taken this from you.".to_string(),
+            Refusal::Granted => named(msg::character::TALENT_GRANTED),
+            Refusal::NeedsChoice(kind) => {
+                named(msg::character::TALENT_NEEDS_CHOICE).role("choice", kind.message())
+            }
+            Refusal::TakesNoChoice => named(msg::character::TALENT_TAKES_NO_CHOICE),
+            Refusal::BadChoice(kind, id) => Msg::new(msg::character::TALENT_BAD_CHOICE)
+                .role("id", id.as_str())
+                .role("choice", kind.message()),
+            Refusal::Held => named(msg::character::TALENT_HELD),
+            Refusal::Stripped => msg::character::TALENT_STRIPPED.into(),
             Refusal::Unmet(needs) => {
-                let words: Vec<String> = needs.iter().map(|n| n.words(content)).collect();
-                format!("You cannot take {name}: you need {}.", and_list(&words))
+                let words = needs.iter().map(|n| n.arg(content)).collect();
+                named(msg::character::TALENT_UNMET).role("needs", Arg::List(words))
             }
         }
     }
@@ -861,7 +867,7 @@ mod tests {
 
     #[test]
     fn lists_read_naturally() {
-        let w = |s: &[&str]| and_list(s);
+        let w = |s: &[&str]| crate::text::and_list(s);
         assert_eq!(w(&["Strength 13"]), "Strength 13");
         assert_eq!(w(&["Strength 13", "Dodge"]), "Strength 13 and Dodge");
         assert_eq!(w(&["a", "b", "c"]), "a, b, and c");

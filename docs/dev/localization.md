@@ -425,8 +425,8 @@ craving's and the oaths' messages, the laws' `first`, a profane gift's `line`, `
 `instead`, and cold blood's bands, the talent found back from the bands the player's mods hold
 (`cold_blood.rs::warmth_source`). A status, a skill, and a resource are named by their lexicon
 ids ("Phrases"). Text roles until their words are converted (#1949): a talent's, a tree's, and a
-profane gift's names, and `Unavailable::reason`. A talent's refusal (`talent::Refusal::words`) stays a literal
-line. `World::learn` returns `Msg`s; `creation_offers` and the creation errors render them in
+profane gift's names. A talent's refusal is a message (`talent::Refusal::words`, "Reasons
+core composes"). `World::learn` returns `Msg`s; `creation_offers` and the creation errors render them in
 English, as developer text.
 
 `world/magic/`'s casting side (`messages/magic.toml`, L4k: `cast`, `backfire`, `caster`,
@@ -437,8 +437,7 @@ from the talent that gives it, `caster.rs::reprieve_source`), and the status `en
 `recovered` lines a cleanse ends. A backfired summon's creatures are one phrase with its count
 or, of several types, a list of `magic.hostile_creatures` items ("A kobold and two rats"). A
 ruin row's words for one item and for several are both passed (`one`, `many`, lines of data),
-and `magic.ruined`'s count picks one. A status that blocks a cast is `status:<id>`. Text roles
-until their words are converted (#1949): `Unavailable::reason`.
+and `magic.ruined`'s count picks one. A status that blocks a cast is `status:<id>`.
 
 Its learning and items side (L4l: `corpse_spell`, `decipher`, `forget`, `learn`, `read`, `rod`,
 `scribe`, `summon_spell`) says its lines from the same file; a mishap's `message` and a risen
@@ -447,8 +446,8 @@ player knew it as it was read or zapped (`Lore::title_phrase`, `{what:bare}`: "s
 ZUNBAR") and its type, once learned, by `object:<id>` (`magic.it_is`); a corpse by its object.
 A summon spell's allies are said as a backfired summon's are (`magic.comes_to_call`, `_mixed`
 with `magic.hostile_creatures` items). Text roles until their words are converted (#1949): a
-spell's name as the data writes it (`spell`; a list of them, `spells`, said `{spells:and}`) and
-the `came_line` that stops a reading or a writing (`came`).
+spell's name as the data writes it (`spell`; a list of them, `spells`, said `{spells:and}`). What
+stops a reading or a writing is `World::came_msg` in a `came` role.
 
 `world/crafting/` (`messages/crafting.toml`, L4f, its first half: making a recipe, cutting,
 enchanting, crystals, digging, the field forge). A refusal a function returns for its caller to
@@ -485,17 +484,15 @@ lines of data: a calling's `message`, a talent's handed-out `news`, and a resour
 (`{words:Bare}.`). A missile caught is its object (`object:<id>`) or a trap's noun or "missile"
 (`word:`); a shopkeeper in the way a literal phrase of their name; the mark the player cannot
 see is a line of its own (`openings_lost_unseen`, "an unseen foe"), not a phrase. A status and a resource are
-their lexicon ids. Text roles until their words are converted (#1949): a talent's name and
-`Unavailable::reason`; a dev action's class id is a `word:` phrase
+their lexicon ids. Text roles until their words are converted (#1949): a talent's name;
+a dev action's class id is a `word:` phrase
 (`{class:a}`).
 
 `world/turn/` (`messages/turn.toml`, L4o) and the two lines of `world/mod.rs` (`world.toml`)
 converted resting, running, the run to the stairs, the voice thrown, the glare, the weather
 turning, and what the player perceives as a turn ends (`perceive.rs`). **What stopped a long
 action** is `World::came_msg`, a message of its own (`turn.comes_into_view`, "A kobold comes into
-view"; `turn.comes_close`), said in a line's `came` role ("Nested messages"); `came_line`
-renders it in English for the lines not converted yet that write it into their text (Learn's
-and Scribe's, `world/magic/`), and goes with them. A status's start and end, a disease's onset, symptoms, and recovery, a resource's
+view"; `turn.comes_close`), said in a line's `came` role ("Nested messages"), Learn's and Scribe's too (#1997). A status's start and end, a disease's onset, symptoms, and recovery, a resource's
 `ended`, and a trap's `message` are lines of data by their keys ("Lines of data"). A line that
 differs by a value core picks from a few is an entry per value: a combat stance taken
 (`CombatStance::taken`), the way to stairs not known (`run_stairs.rs::none_known`), the weather
@@ -629,6 +626,28 @@ equipment mark, `ActionKind::doing`, gender, alignment band, weather and vision,
 The checker needs nothing new: a nested template is an entry like any other (its roles and forms
 checked, a missing one a warning), and `lines`/`and` are list forms every language accepts.
 
+## Reasons core composes (#1949)
+
+Text core composes for a line or a screen is a message, nested where it stands (#1997, its first
+half). **Why an ability cannot be used now** (`Unavailable::reason`) is a clause of
+`messages/ability.toml` (lower case: "you are {status:bare}", "not enough {name:bare}", "you are
+untrained in {skill:Bare}", a resource's own `lacking` as its line of data, and a
+`beside::Target`'s "no lock beside you" by its `no_target_*` entry), said in a refusal's
+`reason` (`{reason:bare}`, `{reason:Bare}`), rendered alone by the abilities menu
+(`text::ui_msg`) and by the `abilities` dump (`english_msg`). **A talent's refusal**
+(`talent::Refusal::words`) is a `character.talent_*` sentence, the talent's name a text role until
+#1993, what a choice is for a `character.choice_*` message (`Choice::message`; `Choice::words`
+stays the content's own developer errors), and the prerequisites not met a list said
+`{needs:and}` (`Need::arg`): a stat a `character.talent_needs_stat` nesting its name ("Words core
+picks"), the rest `Need::words` text until talent requirements are converted. **What stopped
+a long action** is `World::came_msg` everywhere (`came_line` is gone). **A spell's reach**
+(`spell_words.rs::reach_words`) is one clause, `None` for none: its parts (`magic.reach_range`,
+`reach_length`, `reach_radius`, `reach_jumps`) listed by `magic.reach_listed`, a nested entry a
+join, as the look line's `listed`, so the language owns the separator. Still English (#1997's
+remainder): a talent's requirements (`Need::words`, after #1993's names), `takes_words` and
+`Lack`, `CraftPlan` and `RecipeLack::reason`, a heal's ailment names, an attack's source label
+and summary, and `magic/describe.rs`.
+
 ## UI text (L6)
 
 **Files.** `assets/lang/en/ui/<module>.toml`, one per screen or UI module, named as its
@@ -694,8 +713,9 @@ example:
 3. **Keys stay as they are** (CLAUDE.md: menu keys are fixed): a fixed key letter is written in
    the text (`a or {confirm:bare} use`; a translator keeps it), a key the code knows (`Enter`
    from `HINTS`, a bound key's `display()`) is passed as a text role. No key handling changes.
-4. Leave what is not the screen's own: words from core (`Unavailable::reason`, `reach_words`,
-   ability and source names) wait for their L4 slice; text from a shared module (`paged_list`'s
+4. Leave what is not the screen's own: words from core (ability and source names) wait for their
+   part of #1949, and those already messages (`Unavailable::reason`, `reach_words`) are passed
+   as a nested message (`ui_with`'s slot) or rendered alone (`text::ui_msg`); text from a shared module (`paged_list`'s
    page hint, `menu.rs`) waits for that module's part. A function another screen calls
    (`needs`, `spell_head`) moves with its own module and returns `String`.
 5. Import `use super::text::{<module> as T, ui, ui_with};`, replace each literal, and place it
