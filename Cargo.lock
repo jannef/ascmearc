@@ -6461,6 +6461,7 @@ version = "0.22.0"
 dependencies = [
  "ascmearc-assets",
  "ascmearc-core",
+ "ascmearc-lang",
  "image",
  "serde",
  "serde_json",
