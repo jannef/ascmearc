@@ -16,6 +16,8 @@ use super::ice::Footing;
 use crate::action::Event;
 use crate::content::{LevelKind, StairsDir};
 use crate::geom::Pos;
+use crate::lang::{Arg, Msg, Phrase};
+use crate::msg;
 use crate::skills::Use;
 use crate::world::{ActorId, World};
 
@@ -98,7 +100,7 @@ impl World {
     /// What the player finds at `to`, just entered, in one line: stairs, a feature of the ground
     /// ("There is an altar here."), then what lies there (with its price, for sale).
     fn tell_cell(&mut self, to: Pos) {
-        let mut parts = Vec::new();
+        let mut parts: Vec<Msg> = Vec::new();
         let level = self.state.current();
         if let Some(stairs) = level.stairs_at(to) {
             // A location goes by its name, even while it leads nowhere yet.
@@ -106,27 +108,35 @@ impl World {
                 (stairs.name.clone()).or_else(|| Some(self.place_name(stairs.to.as_ref()?)));
             parts.push(match (level.kind, stairs.dir, named) {
                 (LevelKind::Overworld, StairsDir::Down, Some(name)) => {
-                    format!("The way into {name} is here.")
+                    Msg::new(msg::levels::WAY_INTO_HERE).role("place", Phrase::literal(name))
                 }
-                (_, StairsDir::Down, _) => "There is a staircase down here.".into(),
-                (_, StairsDir::Up, _) => "There is a staircase up here.".into(),
+                (_, StairsDir::Down, _) => msg::levels::STAIRCASE_DOWN_HERE.into(),
+                (_, StairsDir::Up, _) => msg::levels::STAIRCASE_UP_HERE.into(),
             });
         }
         parts.extend(self.arrival_features());
         // Goods for sale say their price.
         parts.extend(match self.state.current().objects_at(to) {
             [] => None,
-            [one] => Some(match self.asking_price(to, one) {
-                Some(price) => format!(
-                    "You see here {} (for sale, {price} gold).",
-                    self.lore().describe(one)
-                ),
-                None => format!("You see here {}.", self.lore().describe(one)),
-            }),
-            _ => Some("There are several objects here.".to_string()),
+            [one] => {
+                let what = self.lore().phrase(one);
+                Some(match self.asking_price(to, one) {
+                    Some(price) => Msg::new(msg::levels::SEE_HERE_FOR_SALE)
+                        .role("what", what)
+                        .role("price", i64::from(price)),
+                    None => Msg::new(msg::levels::SEE_HERE).role("what", what),
+                })
+            }
+            _ => Some(msg::levels::SEVERAL_OBJECTS_HERE.into()),
         });
-        if !parts.is_empty() {
-            self.say(parts.join(" "));
+        // One line, or several said as one (`docs/dev/localization.md` "Nested messages").
+        match parts.len() {
+            0 => {}
+            1 => self.say(parts.remove(0)),
+            _ => {
+                let lines = parts.into_iter().map(Arg::from).collect();
+                self.say(Msg::new(msg::world::LINES).role("lines", Arg::List(lines)));
+            }
         }
     }
 }

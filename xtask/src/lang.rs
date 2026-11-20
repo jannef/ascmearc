@@ -916,6 +916,58 @@ mod tests {
         );
     }
 
+    /// Nested messages (`docs/dev/localization.md` "Nested messages"): a translation's lines
+    /// said as one and its list items with their own forms are entries like any other, their
+    /// forms the language's own.
+    #[test]
+    fn nested_items_are_checked_in_their_own_language() {
+        let en = "follower = \"{who:the}\"\nlines = \"{lines:lines}\"\n\
+                  mixed = \"{who:And} follow you.\"\n";
+        let fi = |item: &str| {
+            format!(
+                "lines = {{ text = \"{{lines:lines}}\", of = \"{}\" }}\n\
+                 mixed = {{ text = \"{{who:And}} seuraavat sinua.\", of = \"{}\" }}\n\
+                 [follower]\nof = \"{}\"\nby = \"who.number\"\none = \"{item}\"\nmany = \"{{who:nom}}\"\n",
+                fnv6("{lines:lines}"),
+                fnv6("{who:And} follow you."),
+                fnv6("{who:the}"),
+            )
+        };
+        let langs = |item: &str| {
+            let mut langs = world(&[]);
+            langs.remove("xx");
+            langs
+                .get_mut("en")
+                .unwrap()
+                .files
+                .insert("messages/levels.toml".into(), en.into());
+            langs.insert(
+                "fi".into(),
+                lang(&[
+                    (
+                        "lang.toml",
+                        "name = \"suomi\"\ncode = \"fi\"\nmorphology = \"fi\"\n",
+                    ),
+                    ("messages/levels.toml", &fi(item)),
+                ]),
+            );
+            langs
+        };
+        let report = check(&langs("{who:nom}"), &[]);
+        assert!(
+            !report.errors.iter().any(|m| m.contains("levels")),
+            "{:?}",
+            report.errors
+        );
+        // `the` is English's form, not Finnish's: the item's own template is checked.
+        let e = errors(&langs("{who:the}"));
+        assert!(
+            e.iter()
+                .any(|m| m.contains("follower") && m.contains("unknown form `the`")),
+            "{e:?}"
+        );
+    }
+
     #[test]
     fn a_form_less_placeholder_with_an_unknown_role_is_an_error() {
         let xx = format!("[hit]\nof = \"{}\"\ntext = \"{{victim}}\"\n", hit_hash());

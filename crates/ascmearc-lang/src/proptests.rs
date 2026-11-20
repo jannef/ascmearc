@@ -109,7 +109,33 @@ fn arg() -> impl Strategy<Value = Arg> {
                 register,
                 race: None,
             });
-        prop_oneof![prop::collection::vec(inner, 0..3).prop_map(Arg::List), said]
+        // A message inside the line: one the test's templates have, a literal, a line of data
+        // with a line or none, or an id no language has.
+        let id = prop::sample::select(vec![
+            "p.t",
+            "p.alts",
+            "p.v",
+            "p.none",
+            "literal",
+            "data_line",
+        ]);
+        let nested = (
+            id,
+            prop::collection::btree_map(
+                prop::sample::select(vec!["a", "text", "line", "flavour", "x"]),
+                inner.clone(),
+                0..3,
+            ),
+        )
+            .prop_map(|(id, args)| Arg::Msg {
+                id: MessageId::owned(id),
+                args: args.into_iter().map(|(r, a)| (Role::from(r), a)).collect(),
+            });
+        prop_oneof![
+            prop::collection::vec(inner, 0..3).prop_map(Arg::List),
+            said,
+            nested
+        ]
     })
 }
 
@@ -224,11 +250,23 @@ proptest! {
         for (role, arg) in args {
             msg = msg.role(role, arg);
         }
+        // `fi` and `generic` with the same templates: the nested messages and lists in their
+        // args render in each module, or fail to and fall back, never a panic.
+        let mut fi = Language::from_toml("name = \"suomi\"\ncode = \"fi\"\nmorphology = \"fi\"\n", Plurals::default()).expect("fi");
+        let mut generic = Language::from_toml("name = \"x\"\ncode = \"x\"\nmorphology = \"generic\"\n[generic]\nforms = [\"nom\", \"pl\"]\nplural = \"pl\"\n", Plurals::default()).expect("generic");
+        for other in [&mut fi, &mut generic] {
+            other.add_templates("p", &toml).ok();
+            other.add_data_file("d", "d", &dialogue).ok();
+        }
         for id in ["p.t", "p.alts", "p.v", "p.none"] {
             let mut entry = Entry::new(0, Msg { id: MessageId::owned(id), args: msg.args.clone() });
             entry.count = 2;
             let rendered = en.render(&entry, &lex, &written_key);
             prop_assert!(!rendered.is_empty());
+            let rendered = crate::render::render_chain(&[&fi, &generic, &en], &entry, &lex, &written_key);
+            prop_assert!(!rendered.is_empty());
+            let _ = fi.try_render(&entry, &lex, &written_key);
+            let _ = generic.try_render(&entry, &lex, &written_key);
         }
     }
 
@@ -306,6 +344,7 @@ fn the_strategies_cover_the_arg_kinds() {
             Arg::List(_) => "list",
             Arg::Key(_) => "key",
             Arg::Said { .. } => "said",
+            Arg::Msg { .. } => "msg",
         };
         *kinds.entry(kind).or_insert(0) += 1;
     }

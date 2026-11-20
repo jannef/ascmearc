@@ -612,13 +612,14 @@ impl World {
     pub(super) fn learned(
         &self,
         before: &[(WeaponSkillId, WeaponAbilityId)],
-    ) -> Vec<(WeaponSkillId, String, bool)> {
+    ) -> Vec<(WeaponSkillId, Msg, bool)> {
         let content = &self.content;
         (self.state.player().weapon_abilities(content).into_iter())
             .filter(|(_, id)| !before.iter().any(|(_, b)| b == id))
             .map(|(skill, id)| {
                 let ability = content.weapon_ability(id);
-                let line = format!("You have learned the {}.", ability.name.to_lowercase());
+                let what = word(&ability.name.to_lowercase());
+                let line = Msg::new(msg::combat::LEARNED_ABILITY).role("ability", what);
                 (skill, line, ability.active.is_some())
             })
             .collect()

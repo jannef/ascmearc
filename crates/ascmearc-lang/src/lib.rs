@@ -21,6 +21,8 @@ pub mod render;
 pub mod template;
 
 #[cfg(test)]
+mod nested_tests;
+#[cfg(test)]
 mod proptests;
 
 pub use lang::{LangError, LangFile};
