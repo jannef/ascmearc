@@ -10,6 +10,7 @@
 # The townsfolk (the `deep_gnome` type): one-liners and mutters, no topics.
 [[dialogue]]
 creature = "deep_gnome"
+register = "cornish"
 greet = "Wasson, emmet? Come all the way down the Deep Way, did 'ee? Proper job."
 greet_evil = [
     "Giss on. We know your sort, even down 'ere.",
@@ -59,6 +60,7 @@ lines = [
 # floors: trade talk, no topics.
 [[dialogue]]
 creature = "deep_gnome_trader"
+register = "cornish"
 greet = "Come in, my 'ansum. What 'ee pick up, 'ee pay for at the door. Fair?"
 greet_evil = [
     "I'll trade with 'ee. I'll count me stock after, mind.",
@@ -76,6 +78,7 @@ lines = [
 # strangers, in the deep's Cornish.
 [[dialogue]]
 npc = "peran"
+register = "cornish"
 name = "Headman Peran"
 greet = "Welcome to Gimmwīc, stranger. Not many come down the Deep Way an' live to say so."
 greet_evil = [
@@ -115,6 +118,7 @@ reply = "Duergar to the east, diggin' at our veins. Drow come up from below when
 # Cēaptūn's Factor Wulfrun does: a jeweller's eye for every article.
 [[dialogue]]
 npc = "kerensa"
+register = "cornish"
 name = "Kerensa"
 greet = "Stones an' settin's, my lover. Look all 'ee like. Touch, an' 'ee pay."
 greet_evil = [
@@ -166,6 +170,7 @@ lines = [
 # Sister Hild does.
 [[dialogue]]
 npc = "senara"
+register = "cornish"
 name = "Mother Senara"
 greet = "Peace on 'ee, child of the deep or up top. The Glimmerin' turns no one away."
 greet_evil = [
@@ -222,6 +227,7 @@ nothing = "Nothin' cursed clings to 'ee, child."
 # (data/quests/ysella.toml), opening the crystal portal beside her as she gives it.
 [[dialogue]]
 npc = "ysella"
+register = "cornish"
 name = "Ysella the Binder"
 greet = "Wasson, emmet? Stand still a minute. The stone's listenin' to 'ee."
 greet_evil = [
@@ -280,6 +286,7 @@ mutter = { chance = 3, verb = "hums", lines = [
 # gives no quests).
 [[dialogue]]
 npc = "tregear"
+register = "cornish"
 name = "Old Tregear"
 greet = "Mind the wheel, emmet. Speak, but don't jog me elbow."
 greet_evil = [
@@ -319,6 +326,7 @@ nothing = "'Ee can cut a stone already, emmet. I'm not teachin' 'ee twice."
 # what consuming one does. No topics, no services.
 [[dialogue]]
 npc = "morwenna"
+register = "cornish"
 name = "Morwenna"
 greet = "Crystals, is it? I read 'em, my 'ansum. Every colour 'olds its own."
 greet_evil = [

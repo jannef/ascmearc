@@ -36,7 +36,7 @@ severity = 2
 radius = 3
 check = "willpower"
 difficulty = 19
-touch = "Your heart fails at the sight of {the}."
+touch = "Your heart fails at the sight of {subject:the}."
 [creature.attack]
 damage = "3d10"
 damage_type = "cold"

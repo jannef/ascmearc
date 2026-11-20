@@ -251,13 +251,14 @@ cast path shares.
     `rank_ease`, `die` (a `Dice`, `"2d12"`), `per_margin`, `safe_below`; optional: without it
     no cast checks and nothing draws) and
     `data/miscasts/` (`Miscast`, one `[[miscast]]` a file, `README.toml` the format: `from`, `to`
-    (left out on the last only), `message` (the player's), `seen` (a creature's, `{who}` its
-    name), `effect`). The lines (#1292, the design §8) vary by row, never a number, and are
+    (left out on the last only), `message` (the player's), `seen` (a creature's, `who` the
+    caster, `{who:The}`: a line of data keyed `miscast:<id>.seen`, `docs/dev/localization.md`
+    "Lines of data"), `effect`). The lines (#1292, the design §8) vary by row, never a number, and are
     said before the effect, so each stays true whether or not it lands (a drain resisted, a
     swap with no one near, a rank already 1): what was lost follows
     from the engine (a stat's `drop_news` or `drained_message`, a status's `start`, the
     backfire's whom, the rank and the forgotten spells). The loader orders the table by `from` and refuses a gap, an overlap, a
-    closed last entry, an open one before it, and a `seen` without `{who}`. The effects are the
+    closed last entry, an open one before it, and a `seen` naming any role but `who`, or none. The effects are the
     mishaps' (`MishapEffect`, `content/learning.rs::resolve_effect` shared, with `miscast`
     true): the miscast's own kinds `harm` (`dice`, `damage`), `stat_damage` (`stat`, a stat id
     or `random`, and `points`, at least 1; #1290), `refund`, `twice`, `swap`, `boon`
@@ -287,7 +288,7 @@ cast path shares.
     `Actor::miscast_ward` (`ward` + the stance's `miscast`), at least 1; `miscast_entry`
     (`world::magic::miscast::entry_for`) finds the entry covering it.
   - **The entry** (`World::miscast`, any caster): the message (the player's, or `seen` with
-    `{who}` when the player sees the creature), then the effect: `afflict`, the mana cut,
+    `who` when the player sees the creature, said by its key), then the effect: `afflict`, the mana cut,
     `teleport`, a stat mark off or on, `drain` (`times` over), `stat_damage`
     (`miscast_stat_damage`: a `random` stat draws `below(6)`, then `StatDamage::take` against the
     score, never below 1, hit points and mana cut to the new maxima, never below 1, and the player

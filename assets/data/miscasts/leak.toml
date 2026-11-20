@@ -3,5 +3,5 @@ id = "leak"
 from = 25
 to = 26
 message = "Your power leaks away through a fraying in the weave."
-seen = "{who}'s light gutters."
+seen = "{who:Poss} light gutters."
 effect = { kind = "mana", percent = 25 }

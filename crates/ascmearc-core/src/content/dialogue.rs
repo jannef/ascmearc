@@ -24,11 +24,17 @@
 //! `better`): one-liners that join its `lines` while it is in a town (`content/town.rs`, its
 //! `levels`), the `better` ones while anything raises the town's restocking beyond the player's
 //! level (its `[town.restock]`: a quest done, a merchant's stake; `world/people/restock.rs`),
-//! the `hard` ones while nothing does (#1735).
+//! the `hard` ones while nothing does (#1735). An optional `address` (`{ male, female, other }`) is
+//! how it addresses the player, which any of its lines may say as `{player:address}`, and an
+//! optional `register` names the register it speaks in where its race's is not it (`posh` for
+//! the better-off, `cornish` for the deep gnomes; design §9.3). Every line it says is a
+//! [`DialogueLine`] (`dialogue_line.rs`: variants, slots, and the key it is said by).
 
 use super::creature::CreatureId;
+use super::dialogue_line::{self, DialogueLine};
 use super::{Content, ContentError};
 use crate::geom::Pos;
+use crate::lang::template::Template;
 use serde::Deserialize;
 
 /// Index of a dialogue in [`Content::dialogues`].
@@ -48,13 +54,15 @@ struct DialogueSpec {
     creature: Option<String>,
     npc: Option<String>,
     name: Option<String>,
-    greet: Option<String>,
+    register: Option<String>,
+    address: Option<GenderWords>,
+    greet: Option<DialogueLine>,
     #[serde(default)]
-    greet_evil: Vec<String>,
+    greet_evil: Vec<DialogueLine>,
     #[serde(default)]
-    greet_good: Vec<String>,
+    greet_good: Vec<DialogueLine>,
     #[serde(default)]
-    lines: Vec<String>,
+    lines: Vec<DialogueLine>,
     #[serde(default)]
     topic: Vec<Topic>,
     #[serde(default)]
@@ -77,9 +85,9 @@ struct DialogueSpec {
 #[serde(deny_unknown_fields)]
 pub struct EconomyLines {
     #[serde(default)]
-    pub hard: Vec<String>,
+    pub hard: Vec<DialogueLine>,
     #[serde(default)]
-    pub better: Vec<String>,
+    pub better: Vec<DialogueLine>,
 }
 
 /// One-liners a speaker adds to its own once the player has done a quest (`[[dialogue.after]]`).
@@ -88,7 +96,7 @@ pub struct EconomyLines {
 pub struct AfterLines {
     /// The quest, by id (checked as the quests load: `quest.rs`).
     pub quest: String,
-    pub lines: Vec<String>,
+    pub lines: Vec<DialogueLine>,
 }
 
 #[derive(Deserialize)]
@@ -96,7 +104,7 @@ pub struct AfterLines {
 struct MutterSpec {
     chance: u8,
     verb: Option<String>,
-    lines: Vec<String>,
+    lines: Vec<DialogueLine>,
 }
 
 /// Whose a dialogue is.
@@ -117,7 +125,7 @@ pub struct Topic {
     /// What the player picks: "The rooms".
     pub name: String,
     /// What the speaker answers.
-    pub reply: String,
+    pub reply: DialogueLine,
     /// The way the speaker describes, as waypoints `[x, y]` on the campaign's overworld: asking
     /// marks on the player's map what they would have seen walking it by day ([`crate::world`]'s
     /// `world/people/rumour.rs`). Empty for most topics.
@@ -198,9 +206,9 @@ pub struct Service {
     #[serde(default)]
     pub temple: bool,
     /// What the speaker says when it is done.
-    pub reply: String,
+    pub reply: DialogueLine,
     /// What the speaker says when there is nothing to do: "Nothing ails you, child."
-    pub nothing: String,
+    pub nothing: DialogueLine,
     /// What a `train_skill` service teaches (`train = { skill = "mining", value = 5 }`); given
     /// for that kind only.
     #[serde(default)]
@@ -223,56 +231,52 @@ pub struct Mutter {
     pub chance: u8,
     /// How it says them: "mutters", "hums".
     pub verb: String,
-    pub lines: Vec<String>,
+    pub lines: Vec<DialogueLine>,
 }
 
 /// A family servant's words (`[dialogue.stipend]`, #1405; `world/classes/stipend.rs`): the dialogue of
-/// an aristocrat's own servant, who hands over the stipend when chatted with. Its `lines` and
-/// `handover` may say `{address}`, which becomes the word for the player's gender.
+/// an aristocrat's own servant, who hands over the stipend when chatted with; how they address
+/// their master is the dialogue's `address` ("m'lord", "m'lady").
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ServantWords {
     /// Said as the stipend is handed over, instead of a line.
-    pub handover: String,
-    /// How the servant addresses their master, by gender: "m'lord", "m'lady".
-    pub address: GenderWords,
+    pub handover: DialogueLine,
 }
 
 /// A business partner's words (`[dialogue.partner]`, #1407; `world/classes/invest.rs`): the dialogue of
-/// a merchant's partner, who invests the gold put with them. `{gold}` becomes an amount of gold,
-/// `{fee}` the fee taken from it.
+/// a merchant's partner, who invests the gold put with them. `{gold:name}` is an amount of gold,
+/// `{fee:name}` the fee taken from it.
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct PartnerWords {
-    /// Said after a one-liner when the player holds a stake: what it is worth now (`{gold}`).
-    pub worth: String,
+    /// Said after a one-liner when the player holds a stake: what it is worth now (`gold`).
+    pub worth: DialogueLine,
     /// Said after a one-liner when they hold none.
-    pub idle: String,
-    /// Said as gold is put in (`{gold}` the amount, `{fee}` the fee).
-    pub invested: String,
-    /// Said as gold is taken out (`{gold}` the amount, `{fee}` the fee).
-    pub withdrawn: String,
+    pub idle: DialogueLine,
+    /// Said as gold is put in (`gold` the amount, `fee` the fee).
+    pub invested: DialogueLine,
+    /// Said as gold is taken out (`gold` the amount, `fee` the fee).
+    pub withdrawn: DialogueLine,
 }
 
 /// A patron's words (`[dialogue.patron]`, #1421; `world/crafting/patron.rs`): the dialogue of a
-/// craftsperson's patron, who commissions graded work. `{work}` becomes the thing asked for with
-/// its article ("a long sword"), `{stock}` the stock advanced ("3 steel ingots"), `{gold}` what
-/// is paid, and `{address}` the word for the player's gender.
+/// craftsperson's patron, who commissions graded work. `work` is the thing asked for
+/// (`{work:a}`, "a long sword") and `gold` what is paid (`{gold:name}`); how the patron addresses
+/// the player is the dialogue's `address` ("sir", "madam").
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct PatronWords {
-    /// Said as a commission is given (`{work}`, `{stock}`).
-    pub offer: String,
-    /// Said while one is open and nothing carried will do (`{work}`).
-    pub waiting: String,
-    /// Said as the work is handed in and paid for (`{gold}`).
-    pub delivered: String,
-    /// Said when only plain pieces of the work are carried (`{work}`).
-    pub plain: String,
+    /// Said as a commission is given (`work`); the stock advanced is told after it.
+    pub offer: DialogueLine,
+    /// Said while one is open and nothing carried will do (`work`).
+    pub waiting: DialogueLine,
+    /// Said as the work is handed in and paid for (`gold`).
+    pub delivered: DialogueLine,
+    /// Said when only plain pieces of the work are carried (`work`).
+    pub plain: DialogueLine,
     /// Said when nothing the player can make is worth commissioning.
-    pub idle: String,
-    /// How the patron addresses the player, by gender: "sir", "madam".
-    pub address: GenderWords,
+    pub idle: DialogueLine,
 }
 
 /// A word for each gender.
@@ -303,16 +307,20 @@ pub struct Dialogue {
     /// A unique character's proper name ("Sister Hild"), said without an article; `None`: the
     /// speaker is called by its creature type ("the old hermit").
     pub name: Option<String>,
+    /// The register it speaks in, where its race's is not it: `posh`, `cornish` (design §9.3).
+    pub register: Option<String>,
+    /// How it addresses the player, by gender: `{player:address}` in its lines.
+    pub address: Option<GenderWords>,
     /// Said the first time the player chats with it, instead of a line.
-    pub greet: Option<String>,
+    pub greet: Option<DialogueLine>,
     /// What a good speaker says to an Evil or Wicked character instead of its greeting and
     /// lines, in turn; none: its usual words.
-    pub greet_evil: Vec<String>,
+    pub greet_evil: Vec<DialogueLine>,
     /// What an evil speaker says to a Good or Saintly character, the same way.
-    pub greet_good: Vec<String>,
+    pub greet_good: Vec<DialogueLine>,
     /// One-liners, said in turn ([`crate::world`]'s rotation: each once a round, in an order of
     /// the speaker's own, never the same twice in a row).
-    pub lines: Vec<String>,
+    pub lines: Vec<DialogueLine>,
     /// One-liners that join `lines` once the player has done a quest, in file order.
     pub after: Vec<AfterLines>,
     /// One-liners about the town's trade that join `lines` in a town.
@@ -425,16 +433,33 @@ impl Content {
     }
 }
 
+/// Every line of dialogue, by its key, with its template: what English says them by.
+pub(super) type KeyedLines = Vec<(String, Template)>;
+
 /// Parses the dialogue table (`data/dialogue.toml`, `data/dialogue/`, and each campaign's
-/// `data/dialogue/`; [`super::ContentFiles::table`]) against the creature types loaded already.
+/// `data/dialogue/`; [`super::ContentFiles::table`]) against the creature types loaded already,
+/// with every line keyed ([`dialogue_line::key_lines`]).
 pub(super) fn parse<'a>(
     table: impl Iterator<Item = (&'a str, &'a str)>,
     content: &Content,
-) -> Result<Vec<Dialogue>, ContentError> {
+) -> Result<(Vec<Dialogue>, KeyedLines), ContentError> {
     let mut dialogues: Vec<Dialogue> = Vec::new();
     let mut files: Vec<&str> = Vec::new();
+    let mut keyed = KeyedLines::new();
+    let mut scopes: Vec<String> = Vec::new();
     for (file, text) in table {
         parse_file(file, text, content, &mut dialogues, &mut files)?;
+        for d in &mut dialogues[scopes.len()..] {
+            let scope = scope(d, content);
+            if scopes.contains(&scope) {
+                let m = format!("two dialogues are keyed `{scope}`: an npc and a creature type");
+                return Err(ContentError::new(file, m));
+            }
+            let lines = dialogue_line::key_lines(d, &scope)
+                .map_err(|m| ContentError::new(file, format!("dialogue `{scope}`: {m}")))?;
+            keyed.extend(lines);
+            scopes.push(scope);
+        }
     }
     if dialogues.len() > usize::from(u16::MAX) {
         return Err(ContentError::new(
@@ -442,7 +467,17 @@ pub(super) fn parse<'a>(
             "too many dialogues",
         ));
     }
-    Ok(dialogues)
+    Ok((dialogues, keyed))
+}
+
+/// The scope of dialogue `d`'s keys: its campaign (`data` outside every campaign) and its
+/// speaker's id, `ascmearc.servant`.
+fn scope(d: &Dialogue, content: &Content) -> String {
+    let speaker = match &d.speaker {
+        Speaker::Creature(c) => content.creature(*c).id.as_str(),
+        Speaker::Npc(npc) => npc.as_str(),
+    };
+    format!("{}.{speaker}", d.campaign.as_deref().unwrap_or("data"))
 }
 
 /// One file of the dialogue table, added to `dialogues` (and `files`, the file of each).
@@ -543,6 +578,9 @@ fn parse_file<'a>(
             }
             (Some(_), Some(_)) | (None, None) => {}
         }
+        if let Some(r) = spec.register.as_deref().filter(|r| !is_id(r)) {
+            return Err(bad(format!("register `{r}`: {ID_SHAPE}")));
+        }
         if let Some(a) = spec.after.iter().find(|a| a.lines.is_empty()) {
             return Err(bad(format!(
                 "after `{}`: `lines` needs at least one line",
@@ -565,6 +603,8 @@ fn parse_file<'a>(
         dialogues.push(Dialogue {
             speaker,
             name: spec.name,
+            register: spec.register,
+            address: spec.address,
             greet: spec.greet,
             greet_evil: spec.greet_evil,
             greet_good: spec.greet_good,

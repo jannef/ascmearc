@@ -40,7 +40,7 @@ radius = 2
 check = "toughness"
 difficulty = 18
 damage_type = "cold"
-touch = "A winter chill comes off {the}."
+touch = "A winter chill comes off {subject:the}."
 unseen = "A chill creeps over you."
 [creature.attack]
 damage = "3d10"

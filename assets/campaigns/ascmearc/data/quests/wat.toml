@@ -12,11 +12,11 @@ giver = "wat"
 type = "kill"
 pick = { creatures = ["cealdhlaw", "fennmynster", "fyrdelf"] }
 reward = { gold = 40, xp = 60 }
-offer = "There's a price on {a_target}, see. Bring the beast down, wherever you find it, an' the Gilde pays. Counts from today, mind: what you done before's your own business. {Where}"
+offer = "There's a price on {target:a}, see. Bring the beast down, wherever you find it, an' the Gilde pays. Counts from today, mind: what you done before's your own business. {where:Name}"
 accept = "Put yer mark 'ere, then. That's you in the Gilde."
-reminder = "{A_target}, an' just the one. {Where}"
+reminder = "{target:A}, an' just the one. {where:Name}"
 done = "That's the one. 'Ere's the Gilde's coin, fair earned."
-where = "{Targets} are known in {branch}."
+where = "They're known in {branch:name}."
 
 [[quest]]
 id = "guild_score"
@@ -28,11 +28,11 @@ count = 25
 pick = { tags = ["kobold", "goblin", "undead", "vermin", "marsh-thing", "duergar", "fire-thing"] }
 reward = { gold = 250, xp = 500, items = ["potion_of_healing*2"] }
 alignment = 5
-offer = "A score an' five {targets} for the Gilde. Every sort of 'em counts, an' I'll write you down which. Anywhere you like, so long as it's your 'and does it. Counts from today."
+offer = "A score an' five {target:name} for the Gilde. Every sort of 'em counts, an' I'll write you down which. Anywhere you like, so long as it's your 'and does it. Counts from today."
 accept = "Count 'em careful. I will."
-reminder = "A score an' five {targets}, all told. {Where}"
+reminder = "A score an' five {target:name}, all told. {where:Name}"
 done = "A score an' five! I 'ad me doubts, I don't mind sayin'. Pewter suits you. Potions an' all."
-where = "{Targets} are known in {branch}."
+where = "{target:Name} are known in {branch:name}."
 
 [[quest]]
 id = "guild_scroll"
@@ -42,8 +42,8 @@ requires = "guild_score"
 type = "bring"
 pick = { objects = { class = "scrolls", loot = true } }
 reward = { gold = 200, xp = 150 }
-offer = "The Gilde keeps a few scrolls by, for when a job goes wrong, an' we're short {a_target}. Find one or buy one, I don't ask which, an' bring it 'ere."
-reminder = "{A_target}, for the Gilde's shelf. Bring it 'ere."
+offer = "The Gilde keeps a few scrolls by, for when a job goes wrong, an' we're short {target:a}. Find one or buy one, I don't ask which, an' bring it 'ere."
+reminder = "{target:A}, for the Gilde's shelf. Bring it 'ere."
 done = "Lovely. That goes on the shelf, an' this goes in yer purse."
 
 # Link 4 (docs/design/adventurers-guild.md §8): one of the four wanted criminals, each at the
@@ -59,7 +59,7 @@ type = "kill"
 reward = { gold = 500, xp = 800 }
 alignment = 10
 accept = "I'll mark it on yer map. Mind 'ow you go: this one bites back."
-reminder = "{Target}, still breathin'. {Where}"
+reminder = "{target:Name}, still breathin'. {where:Name}"
 
 [[quest.variant]]
 id = "sallow"

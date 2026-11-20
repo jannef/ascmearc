@@ -3,5 +3,5 @@ id = "pit"
 from = 105
 to = 106
 message = "The floor splits, and a stair goes down into red dark. Something waits at its head."
-seen = "The floor splits beside {who}, and a stair goes down into red dark!"
+seen = "The floor splits beside {who:the}, and a stair goes down into red dark!"
 effect = { kind = "portal", gate = "rift" }

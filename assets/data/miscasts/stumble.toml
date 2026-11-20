@@ -3,5 +3,5 @@ id = "stumble"
 from = 51
 to = 52
 message = "The spell's shape blurs in your mind."
-seen = "{who} looks puzzled."
+seen = "{who:The} looks puzzled."
 effect = { kind = "rank_loss", ranks = 1 }

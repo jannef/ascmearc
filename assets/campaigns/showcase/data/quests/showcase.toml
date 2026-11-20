@@ -69,6 +69,6 @@ giver = "gardener"
 type = "bring"
 pick = { objects = { class = "scrolls", loot = true } }
 reward = { gold = 15, xp = 20 }
-offer = "My old master swore that the words of a spell, said over a bed, kept the slugs off. Bring me {a_target}, would you? I'll only read the first line. Probably."
-reminder = "{A_target}, for the beds. The slugs aren't waiting."
-done = "{A_target}! Now we'll see who eats my lettuces. Here, for your trouble."
+offer = "My old master swore that the words of a spell, said over a bed, kept the slugs off. Bring me {target:a}, would you? I'll only read the first line. Probably."
+reminder = "{target:A}, for the beds. The slugs aren't waiting."
+done = "{target:A}! Now we'll see who eats my lettuces. Here, for your trouble."

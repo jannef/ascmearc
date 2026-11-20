@@ -112,10 +112,11 @@ impl World {
             self.say(format!("{who} knows nothing about that."));
             return Some(Spent::Nothing);
         };
+        let reply = self.said(id, &t.reply);
         if t.departs {
-            self.say(format!("{who} says: \"{}\"", t.reply));
+            self.says(id, reply);
         } else {
-            self.answer(id, t.reply.clone(), Some(topic.into()), events);
+            self.answer(id, reply, Some(topic.into()), events);
         }
         self.call(calling);
         if t.departs {

@@ -3,5 +3,5 @@ id = "chill"
 from = 61
 to = 62
 message = "Cold sinks into your limbs and slows them."
-seen = "{who} slows, as if wading."
+seen = "{who:The} slows, as if wading."
 effect = { kind = "status", status = "sluggish", severity = 2 }

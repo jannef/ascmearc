@@ -324,7 +324,7 @@ fn ceolred_the_apprentice_stands_in_the_smithy_at_peace_and_keeps_no_shop() {
             .dialogue(d)
             .lines
             .iter()
-            .all(|l| !l.contains(char::is_numeric))
+            .all(|l| !l.written().contains(char::is_numeric))
     );
 }
 

@@ -44,11 +44,11 @@ use crate::content::{
 use crate::damage::Damage;
 use crate::dice::{Dice, Roll};
 use crate::geom::{Dir, Pos};
+use crate::lang::{Arg, Msg};
 use crate::noise::SoundKind;
 use crate::rng::draw;
 use crate::skills::Effect;
 use crate::stats::Stat;
-use crate::text::capitalized;
 use crate::world::combat::fight::Harm;
 use crate::world::levels::pit::Refused;
 use crate::world::{Actor, ActorId, Cause, World};
@@ -186,21 +186,24 @@ impl World {
             MishapEffect::Portal { .. } if in_play => self.pit_refused(here),
             _ => None,
         };
-        let (message, seen) = match refused {
-            Some(why) => pit_refused_words(why),
-            None => (entry.message.as_str(), entry.seen.as_str()),
-        };
         if caster == player {
+            let message = match refused {
+                Some(why) => pit_refused_words(why).0,
+                None => entry.message.as_str(),
+            };
             self.say(message.to_string());
         } else if self.perception.sees_actors_at(here) {
-            // Upper case only where the name opens the line ("Sparks bite the kobold's …").
-            let called = self.called(me);
-            let who = if seen.starts_with("{who}") {
-                capitalized(&called)
-            } else {
-                called
-            };
-            self.say(seen.replace("{who}", &who));
+            let who = self.called_phrase(me);
+            match refused {
+                Some(why) => {
+                    let called = self.called(me);
+                    self.say(pit_refused_words(why).1.replace("{who}", &called));
+                }
+                // A line of data, by its key (`docs/dev/localization.md` "Lines of data").
+                None => self.say(Msg::data_line(
+                    Arg::said(entry.seen_key()).with(crate::content::MISCAST_WHO, who),
+                )),
+            }
         }
         let alive = self.state.death.is_none();
         let content = self.content.clone();

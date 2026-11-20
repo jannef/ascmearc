@@ -3,5 +3,5 @@ id = "echo"
 from = 9
 to = 10
 message = "The spell rings like a struck bell and sounds twice."
-seen = "{who}'s spell sounds twice!"
+seen = "{who:Poss} spell sounds twice!"
 effect = { kind = "twice" }

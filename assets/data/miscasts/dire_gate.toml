@@ -3,5 +3,5 @@ id = "dire_gate"
 from = 101
 to = 102
 message = "A dire gate rips open, and what steps through has a name."
-seen = "A dire gate rips open beside {who}!"
+seen = "A dire gate rips open beside {who:the}!"
 effect = { kind = "summon", creature = "dire_gate" }

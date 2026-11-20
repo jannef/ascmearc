@@ -221,7 +221,7 @@ pub use people::quest::{
     QuestRecord, QuestView, Quests, Stage, asks as quest_asks, wants as quest_wants,
 };
 pub use people::shop::{Shop, ShopStatus, count_of, favour, part_of, unpaid_parts};
-pub use people::talk::{Conversation, Talk, TopicView};
+pub use people::talk::{Conversation, Speech, Talk, TopicView};
 pub(crate) use skills::forage::forage_ground;
 pub(crate) use skills::gather::{fungus_ways, unskilled};
 pub use turn::actor::{Actor, ActorId, ActorKind, AttackSkills, Mind, PLAYER_KEY, Patrol};

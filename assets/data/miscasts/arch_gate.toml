@@ -3,5 +3,5 @@ id = "arch_gate"
 from = 111
 to = 112
 message = "An arch-gate opens beside you, wide enough for a lord of the hells."
-seen = "An arch-gate opens beside {who}!"
+seen = "An arch-gate opens beside {who:the}!"
 effect = { kind = "summon", creature = "arch_gate" }

@@ -3,5 +3,5 @@ id = "slip"
 from = 35
 to = 36
 message = "Space knots and twists about you."
-seen = "Space knots and twists about {who}."
+seen = "Space knots and twists about {who:the}."
 effect = { kind = "swap" }

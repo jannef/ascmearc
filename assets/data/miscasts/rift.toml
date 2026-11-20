@@ -3,5 +3,5 @@ id = "rift"
 from = 75
 to = 76
 message = "A rift tears open beside you, and the stink of the Abyss pours out!"
-seen = "A rift tears open beside {who}!"
+seen = "A rift tears open beside {who:the}!"
 effect = { kind = "summon", creature = "rift" }

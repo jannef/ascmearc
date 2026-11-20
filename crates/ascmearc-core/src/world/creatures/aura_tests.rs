@@ -144,9 +144,9 @@ const NEAR: &str = "########\n#@.W...#\n########\n";
 const DOOR: &str = "#######\n#@+.W.#\n#######\n";
 
 const SIGHT: &str =
-    "status = \"chilled\"\nradius = 2\nevery = 30\ntouch = \"A chill comes off {the}.\"";
+    "status = \"chilled\"\nradius = 2\nevery = 30\ntouch = \"A chill comes off {subject:the}.\"";
 const HEARD: &str = "status = \"chilled\"\nradius = 3\nheard = true\nloudness = 100\n\
-                     touch = \"{the} wails.\"\nunseen = \"A wail rises through the walls.\"";
+                     touch = \"{subject:The} wails.\"\nunseen = \"A wail rises through the walls.\"";
 
 fn files(aura: &str, speed: u32, map: &str) -> ContentFiles {
     let mut files = ContentFiles::default();

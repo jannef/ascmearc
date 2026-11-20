@@ -6,7 +6,7 @@
 
 use crate::lang::{self, LangError, LangFile};
 use crate::lexicon::Lexicon;
-use crate::message::{Arg, Entry, Role};
+use crate::message::{Arg, DATA_LINE, DATA_LINE_ROLE, Entry, Role};
 use crate::morphology::en::{En, Plurals};
 use crate::morphology::fi::Fi;
 use crate::morphology::generic::Generic;
@@ -31,6 +31,16 @@ const KEY_ROLE: &str = "key";
 
 /// The role whose number picks among a template's alternatives.
 const FLAVOUR_ROLE: &str = "flavour";
+
+/// The form that asks how a speaker addresses someone: the dialogue's `address` line, found
+/// beside the line said (design §9.1).
+const ADDRESS_FORM: &str = "address";
+
+/// The key under a dialogue's scope that holds its `address` line.
+const ADDRESS_KEY: &str = "address";
+
+/// The list form that says its items one after another, each `bare`: sentences of one speech.
+pub const LINES_FORM: &str = "lines";
 
 /// Why one language could not render an entry: the next in the chain is tried.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -78,6 +88,10 @@ pub struct Language {
     repeat: String,
     morphology: Box<dyn Morphology>,
     templates: Templates,
+    /// Lines whose text lives in data, by their key there: dialogue (`ascmearc.servant.lines.3`)
+    /// and a narrator's lines of data (`miscast.blank.seen`). English's come from the data
+    /// itself, a translation's from its keyed files ([`Templates::parse_data`]).
+    lines: Templates,
     registers: Registers,
 }
 
@@ -86,6 +100,7 @@ impl fmt::Debug for Language {
         f.debug_struct("Language")
             .field("code", &self.code)
             .field("templates", &self.templates.len())
+            .field("lines", &self.lines.len())
             .finish_non_exhaustive()
     }
 }
@@ -107,6 +122,7 @@ impl Language {
             repeat: file.repeat.clone(),
             morphology,
             templates: Templates::default(),
+            lines: Templates::default(),
             registers: Registers::new(file.registers.clone(), file.race_registers.clone()),
         }
     }
@@ -160,6 +176,23 @@ impl Language {
     pub fn add_templates(&mut self, prefix: &str, text: &str) -> Result<(), LangError> {
         self.templates.extend(Templates::parse(prefix, text)?);
         Ok(())
+    }
+
+    /// Adds a line of data by its key (English's, from `assets/data` as the content loads).
+    pub fn add_data_line(&mut self, key: impl Into<String>, template: Template) {
+        self.lines.insert(key, template);
+    }
+
+    /// Adds a translation's file of data lines (`dialogue/<file>.toml`, and the narrator's data
+    /// files the L4 slices add; [`Templates::parse_data`]): a key it has wins over English's.
+    pub fn add_data_file(&mut self, what: &str, kind: &str, text: &str) -> Result<(), LangError> {
+        self.lines.extend(Templates::parse_data(what, kind, text)?);
+        Ok(())
+    }
+
+    /// The lines of data, by key.
+    pub fn data_lines(&self) -> &Templates {
+        &self.lines
     }
 
     pub fn code(&self) -> &str {
@@ -226,25 +259,78 @@ impl Language {
         let mut text = match entry.literal_text() {
             // Transitional: a literal line reads as written in every language.
             Some(literal) => literal.to_string(),
+            // A line of data said alone: the line, by its key.
+            None if entry.id == DATA_LINE => match entry.args.get(DATA_LINE_ROLE) {
+                Some(line) => {
+                    self.ctx(register, lex, keys, &entry.args)
+                        .arg(DATA_LINE_ROLE, line, "bare")?
+                }
+                None => return Err(RenderError::MissingRole(DATA_LINE_ROLE.into())),
+            },
             None => {
                 let template = self
                     .templates
                     .get(entry.id.as_str())
                     .ok_or_else(|| RenderError::NoTemplate(entry.id.to_string()))?;
-                let ctx = Ctx {
-                    morphology: self.morphology.as_ref(),
-                    register,
-                    lex,
-                    keys,
-                    args: &entry.args,
-                };
-                ctx.template(template)?
+                self.ctx(register, lex, keys, &entry.args)
+                    .template(template)?
             }
         };
         if entry.count > 1 {
             text.push_str(&self.repeat.replace("{n}", &entry.count.to_string()));
         }
         Ok(text)
+    }
+}
+
+impl Language {
+    fn ctx<'a>(
+        &'a self,
+        register: &'a Register,
+        lex: &'a dyn Lexicon,
+        keys: Keys<'a>,
+        args: &'a BTreeMap<Role, Arg>,
+    ) -> Ctx<'a> {
+        Ctx {
+            language: self,
+            register,
+            lex,
+            keys,
+            args,
+            said: None,
+        }
+    }
+
+    /// `template` filled with `args`, in this language's standard register, or why not: a line
+    /// of data that is no message of its own (a quest's text with its target, a creature's
+    /// `touch`).
+    pub fn try_line(
+        &self,
+        template: &Template,
+        args: &BTreeMap<Role, Arg>,
+        lex: &dyn Lexicon,
+        keys: Keys<'_>,
+    ) -> Result<String, RenderError> {
+        self.ctx(self.registers.standard(), lex, keys, args)
+            .template(template)
+    }
+
+    /// An argument alone in `form`, or why not: a dialogue line `bare` is what the dialogue
+    /// screen shows.
+    pub fn try_arg(
+        &self,
+        arg: &Arg,
+        form: &str,
+        lex: &dyn Lexicon,
+        keys: Keys<'_>,
+    ) -> Result<String, RenderError> {
+        let none = BTreeMap::new();
+        let ctx = self.ctx(self.registers.standard(), lex, keys, &none);
+        let text = ctx.arg("", arg, &lower_form(form))?;
+        Ok(match capitalized_form(form) {
+            true => capitalize(&text),
+            false => text,
+        })
     }
 }
 
@@ -270,15 +356,18 @@ pub fn render_chain(
 }
 
 /// What one rendering has in hand.
+#[derive(Clone, Copy)]
 struct Ctx<'a> {
-    morphology: &'a dyn Morphology,
+    language: &'a Language,
     register: &'a Register,
     lex: &'a dyn Lexicon,
     keys: Keys<'a>,
     args: &'a BTreeMap<Role, Arg>,
+    /// The key of the dialogue line being rendered, if it is one: where its `address` is found.
+    said: Option<&'a str>,
 }
 
-impl Ctx<'_> {
+impl<'a> Ctx<'a> {
     fn template(&self, template: &Template) -> Result<String, RenderError> {
         match template {
             Template::Line(line) => self.line(line),
@@ -333,6 +422,14 @@ impl Ctx<'_> {
         if role == KEY_ROLE {
             return Ok((self.keys)(form));
         }
+        if lower_form(form) == ADDRESS_FORM {
+            let text = self.address(role)?;
+            return Ok(if capitalized_form(form) {
+                capitalize(&text)
+            } else {
+                text
+            });
+        }
         let arg = self
             .args
             .get(role)
@@ -345,19 +442,73 @@ impl Ctx<'_> {
         })
     }
 
+    /// How the speaker of the dialogue line being rendered addresses `role` (`{player:address}`):
+    /// the `address` line nearest the line's key, up its scope (`ascmearc.servant.lines.3` finds
+    /// `ascmearc.servant.address`), rendered with the line's args, so it may pick by `by =
+    /// "player.gender"`. Outside a dialogue line, or with no `address` up its scope, the form is
+    /// unknown.
+    fn address(&self, role: &str) -> Result<String, RenderError> {
+        let unknown = || RenderError::Form {
+            role: role.to_string(),
+            error: FormError::UnknownForm(ADDRESS_FORM.to_string()),
+        };
+        let mut scope = self.said.ok_or_else(unknown)?;
+        let template = loop {
+            let (up, _) = scope.rsplit_once('.').ok_or_else(unknown)?;
+            if let Some(t) = self.language.lines.get(&format!("{up}.{ADDRESS_KEY}")) {
+                break t;
+            }
+            scope = up;
+        };
+        // The address itself names no address: it is rendered outside the line.
+        Ctx {
+            said: None,
+            ..*self
+        }
+        .template(template)
+    }
+
+    /// Dialogue line `key` filled with `args`, in the register of a speaker with `own` register
+    /// and of `race`.
+    fn said(
+        &self,
+        key: &'a str,
+        args: &'a BTreeMap<Role, Arg>,
+        own: Option<&str>,
+        race: Option<&str>,
+    ) -> Result<String, RenderError> {
+        let template = (self.language.lines.get(key))
+            .ok_or_else(|| RenderError::NoTemplate(key.to_string()))?;
+        Ctx {
+            register: self.language.registers.for_speaker(own, race),
+            args,
+            said: Some(key),
+            ..*self
+        }
+        .template(template)
+    }
+
     /// An argument in a form (lower-case).
-    fn arg(&self, role: &str, arg: &Arg, form: &str) -> Result<String, RenderError> {
+    fn arg(&self, role: &str, arg: &'a Arg, form: &str) -> Result<String, RenderError> {
+        let morphology = self.language.morphology.as_ref();
         Ok(match arg {
-            Arg::Phrase(phrase) => self
-                .morphology
+            Arg::Phrase(phrase) => morphology
                 .phrase(phrase, form, self.lex, self.register)
                 .map_err(|error| RenderError::Form {
                     role: role.to_string(),
                     error,
                 })?,
-            Arg::Number(n) => self.morphology.number(*n, form, self.register),
+            Arg::Number(n) => morphology.number(*n, form, self.register),
             Arg::Text(text) => text.clone(),
             Arg::Key(command) => (self.keys)(command),
+            Arg::List(items) if form == LINES_FORM => {
+                // One speech of several lines (a one-liner and a reminder), said in turn.
+                let items = items
+                    .iter()
+                    .map(|item| self.arg(role, item, "bare"))
+                    .collect::<Result<Vec<_>, _>>()?;
+                items.join(" ")
+            }
             Arg::List(items) => {
                 // `{what:and}` / `{what:or}` pick the conjunction and render the items bare; any
                 // other form renders the items in it, joined with "and".
@@ -370,10 +521,14 @@ impl Ctx<'_> {
                     .iter()
                     .map(|item| self.arg(role, item, inner))
                     .collect::<Result<Vec<_>, _>>()?;
-                self.morphology.list(&items, conj)
+                morphology.list(&items, conj)
             }
-            // L5 renders the line by its key in the dialogue data; until then, the key.
-            Arg::Said { key, .. } => key.clone(),
+            Arg::Said {
+                key,
+                args,
+                register,
+                race,
+            } => self.said(key, args, register.as_deref(), race.as_deref())?,
         })
     }
 }
@@ -574,16 +729,166 @@ text = "{what:Bare}, {count:num} of them."
             en.render(&twice, &lexicon(), &written_key),
             "You hit the goblin. (×2)"
         );
-        let said = Msg::new(id("combat.fine"))
-            .role(
-                "what",
-                Arg::Said {
-                    key: "ceaptun.gardener.lines.3".into(),
-                    args: BTreeMap::new(),
-                },
+    }
+
+    /// English with a dialogue: the patron's lines, its `address`, and a speaker's register.
+    fn speaking() -> Language {
+        let mut en = english();
+        en.add_templates("talk", "says = \"{who:The} says: \\\"{line:lines}\\\"\"\n")
+            .expect("talk");
+        let dialogue = r#"
+[town.patron]
+lines = ["Hello, {player:address}.", { by = "player.gender", female = "Fair lady!", else = "Fair {player:address}!" }]
+offer = "I want {work:a}, {player:address}. Here's {gold:name} gold."
+address = { by = "player.gender", male = "sir", female = "madam", else = "my dear" }
+[town.priest]
+lines = ["Bless {target:the}."]
+"#;
+        en.add_data_file("dialogue/town.toml", "dialogue", dialogue)
+            .expect("dialogue");
+        en
+    }
+
+    #[test]
+    fn a_said_line_renders_by_its_key_with_its_address_and_register() {
+        let en = speaking();
+        let says = |line: Arg| {
+            render(
+                &en,
+                Msg::new(id("talk.says"))
+                    .role("who", goblin())
+                    .role("line", Arg::List(vec![line])),
             )
-            .role("count", 1);
-        assert_eq!(render(&en, said), "Ceaptun.gardener.lines.3, one of them.");
+        };
+        let her = || you().gender(Gender::Female);
+        let line = |n: u32| Arg::said(format!("dialogue:town.patron.lines.{n}"));
+        assert_eq!(
+            says(line(0).with("player", you().gender(Gender::Male))),
+            "The goblin says: \"Hello, sir.\""
+        );
+        assert_eq!(
+            says(line(0).with("player", her())),
+            "The goblin says: \"Hello, madam.\""
+        );
+        assert_eq!(
+            says(line(1).with("player", her())),
+            "The goblin says: \"Fair lady!\""
+        );
+        assert_eq!(
+            says(line(1).with("player", you())),
+            "The goblin says: \"Fair my dear!\""
+        );
+        let offer = Arg::said("dialogue:town.patron.offer")
+            .with("player", her())
+            .with("work", Phrase::id("creature:goblin"))
+            .with("gold", 40);
+        assert_eq!(
+            says(offer),
+            "The goblin says: \"I want a goblin, madam. Here's 40 gold.\""
+        );
+        // Several lines of one speech are said in turn.
+        let two = Arg::List(vec![
+            line(0).with("player", her()),
+            line(1).with("player", her()),
+        ]);
+        assert_eq!(
+            render(
+                &en,
+                Msg::new(id("talk.says"))
+                    .role("who", goblin())
+                    .role("line", two)
+            ),
+            "The goblin says: \"Hello, madam. Fair lady!\""
+        );
+        // The speaker's register: their own, else their race's, else standard.
+        let bless = || Arg::said("dialogue:town.priest.lines.0").with("target", goblin());
+        assert_eq!(says(bless()), "The goblin says: \"Bless the goblin.\"");
+        assert_eq!(
+            says(bless().spoken_by(Some("irish".into()), None)),
+            "The goblin says: \"Bless th' goblin.\"",
+            "only the inserted article"
+        );
+        assert_eq!(
+            says(bless().spoken_by(Some("nonesuch".into()), None)),
+            "The goblin says: \"Bless the goblin.\""
+        );
+        // A line the language lacks fails the entry (the chain falls back), as does an address
+        // with none up the line's scope.
+        let lex = lexicon();
+        let fails = |line: Arg| {
+            let msg = Msg::new(id("talk.says"))
+                .role("who", goblin())
+                .role("line", Arg::List(vec![line]));
+            en.try_render(&Entry::new(1, msg), &lex, &written_key)
+        };
+        assert_eq!(
+            fails(Arg::said("dialogue:town.patron.lines.9")),
+            Err(RenderError::NoTemplate(
+                "dialogue:town.patron.lines.9".into()
+            ))
+        );
+        en_without_address(&en);
+        // The dialogue screen renders the line alone.
+        assert_eq!(
+            en.try_arg(&line(0).with("player", her()), "bare", &lex, &written_key),
+            Ok("Hello, madam.".to_string())
+        );
+        // A narrator's line of data said alone, in full grammar, by its key.
+        let mut en = speaking();
+        en.add_data_file(
+            "data/miscast.toml",
+            "miscast",
+            "[blank]\nseen = \"{who:The} stares.\"\n",
+        )
+        .expect("data");
+        let stares = Msg::data_line(Arg::said("miscast:blank.seen").with("who", goblin()));
+        assert_eq!(render(&en, stares.clone()), "The goblin stares.");
+        let mut twice = Entry::new(1, stares);
+        twice.count = 2;
+        assert_eq!(
+            en.render(&twice, &lex, &written_key),
+            "The goblin stares. (×2)"
+        );
+        assert_eq!(
+            en.try_render(
+                &Entry::new(1, Msg::new(crate::DATA_LINE)),
+                &lex,
+                &written_key
+            ),
+            Err(RenderError::MissingRole("line".into()))
+        );
+        // A line of data, filled.
+        let line = Template::Line(Line::parse("{target:The} wants {gold:name}."));
+        let args = Msg::new(id("x"))
+            .role("target", goblin())
+            .role("gold", 3)
+            .args;
+        assert_eq!(
+            en.try_line(&line, &args, &lex, &written_key),
+            Ok("The goblin wants 3.".to_string())
+        );
+    }
+
+    /// `{player:address}` outside a dialogue line, or with no `address` up its scope.
+    fn en_without_address(en: &Language) {
+        let lex = lexicon();
+        let mut en_plain = english();
+        en_plain
+            .add_data_file(
+                "d.toml",
+                "dialogue",
+                "[a.b]\nlines = [\"Hi, {player:address}.\"]\n",
+            )
+            .expect("dialogue");
+        let unknown = Err(RenderError::Form {
+            role: "player".into(),
+            error: FormError::UnknownForm("address".into()),
+        });
+        let said = Arg::said("dialogue:a.b.lines.0").with("player", you());
+        assert_eq!(en_plain.try_arg(&said, "bare", &lex, &written_key), unknown);
+        let line = Template::Line(Line::parse("Hi, {player:address}."));
+        let args = Msg::new(id("x")).role("player", you()).args;
+        assert_eq!(en.try_line(&line, &args, &lex, &written_key), unknown);
     }
 
     #[test]
@@ -707,7 +1012,7 @@ text = "{what:Bare}, {count:num} of them."
         assert_eq!(error.what, "messages/x.toml");
         assert_eq!(
             format!("{:?}", english()),
-            "Language { code: \"en\", templates: 7, .. }"
+            "Language { code: \"en\", templates: 7, lines: 0, .. }"
         );
     }
 }

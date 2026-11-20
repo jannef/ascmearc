@@ -39,7 +39,7 @@ severity = 2
 radius = 3
 check = "willpower"
 difficulty = 22
-touch = "A terrible will bears down from {the}."
+touch = "A terrible will bears down from {subject:the}."
 [creature.attack]
 damage = "3d12"
 damage_type = "cold"

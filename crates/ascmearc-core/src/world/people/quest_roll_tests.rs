@@ -24,10 +24,10 @@ giver = "godgifu"
 type = "kill"
 pick = { creatures = ["cealdhlaw", "fennmynster", "fyrdelf"] }
 reward = { gold = 40, xp = 60 }
-offer = "There's a price on {a_target}. Counts from today, mind. {Where}"
-reminder = "{A_target}. {Where}"
+offer = "There's a price on {target:a}. Counts from today, mind. {where:Name}"
+reminder = "{target:A}. {where:Name}"
 done = "That's the one."
-where = "{Targets} are known in {branch}."
+where = "They're known in {branch:name}."
 
 [[quest]]
 id = "score"
@@ -36,8 +36,8 @@ giver = "godgifu"
 type = "kill"
 count = 25
 pick = { tags = ["kobold", "goblin"] }
-offer = "A score and five {targets}: {members}."
-reminder = "{Count} {targets}."
+offer = "A score and five {target:name}: {members:name}."
+reminder = "{count:name} {target:name}."
 done = "Done."
 
 [[quest]]
@@ -45,8 +45,8 @@ id = "wanted"
 name = "Wanted"
 giver = "godgifu"
 type = "kill"
-offer = "{target}?"
-reminder = "Still {target}."
+offer = "{target:Name}?"
+reminder = "Still {target:name}."
 done = "Done."
 
 [[quest.variant]]
@@ -120,7 +120,6 @@ fn a_roll_is_drawn_as_the_quest_is_given_and_never_again() {
     assert!(!w.content().creature(c).unique);
     // Its words are filled; the log has the first breadcrumb and where.
     let name = w.content().creature(c).name.clone();
-    let plural = w.content().creature(c).plural.clone();
     let offer = texts(&w)
         .into_iter()
         .rev()
@@ -131,17 +130,11 @@ fn a_roll_is_drawn_as_the_quest_is_given_and_never_again() {
         crate::text::article(&name)
     )));
     assert!(!offer.contains('{'), "{offer}");
-    let mut capital = plural.chars();
-    let capital: String = capital
-        .next()
-        .into_iter()
-        .flat_map(char::to_uppercase)
-        .chain(capital)
-        .collect();
+    assert!(offer.ends_with("They're known in Cealdhlāw.\""), "{offer}");
     assert_eq!(
         logged(&w, "bounty").objective,
         format!(
-            "Godgifu wants you to kill {} {name}. {capital} are known in Cealdhlāw.",
+            "Godgifu wants you to kill {} {name}. They're known in Cealdhlāw.",
             crate::text::article(&name)
         )
     );
@@ -463,8 +456,16 @@ fn picks_variants_and_placeholders_are_checked_at_load() {
         )
     };
     let kill = "type = \"kill\"\npick = { creatures = [\"cealdhlaw\"] }";
-    bad(&quest(kill, "{nobody}"), "unknown placeholder `{nobody}`");
-    bad(&quest(kill, "{target"), "unclosed placeholder");
+    bad(&quest(kill, "{nobody:a}"), "unknown role `nobody`");
+    bad(
+        &quest(kill, "{a_target}"),
+        "`{a_target}`: a slot is `{role:form}`",
+    );
+    // A giver speaks: the base form only.
+    bad(
+        &quest(kill, "{target:plural}"),
+        "`{target:plural}`: a quest's text takes",
+    );
     bad(
         &quest(
             "type = \"kill\"\ntarget = \"rat\"\npick = { creatures = [\"cealdhlaw\"] }",

@@ -2,13 +2,14 @@
 # at Cēaptūn in a merchant's run, of the merchant's own race, and speaks in that race's register
 # (docs/dev/npcs.md "Speech by race and station"; a partner in trade is a person of means, so a
 # human one speaks posh). data/towns/ceaptun.toml names the npc for each race. Each has
-# businesslike one-liners and `[dialogue.partner]`: what the stake is worth (`worth`, `{gold}`)
+# businesslike one-liners and `[dialogue.partner]`: what the stake is worth (`worth`, `{gold:name}`)
 # or that there is none (`idle`), said after a one-liner, and what they say as gold goes in
-# (`invested`) or comes out (`withdrawn`), `{gold}` the amount and `{fee}` the fee kept.
+# (`invested`) or comes out (`withdrawn`), `{gold:name}` the amount and `{fee:name}` the fee kept.
 
 # Humans, half-elves, and half-orcs: posh.
 [[dialogue]]
 npc = "partner"
+register = "posh"
 lines = [
     "Ah, partner. Wool is up, tin is down, and the pass is open. One cannot ask for more.",
     "I have been through the ledgers twice this morning. They balance, which is always a relief.",
@@ -18,10 +19,10 @@ lines = [
     "A word to the wise: the Holtwīc honey trade is worth watching.",
 ]
 [dialogue.partner]
-worth = "Your stake stands at {gold} gold this week."
+worth = "Your stake stands at {gold:name} gold this week."
 idle = "You have nothing with me at present. Idle gold earns nothing, you know."
-invested = "{gold} gold, less {fee} for the paperwork. Consider it working."
-withdrawn = "{gold} gold out, less {fee} for my trouble. Do spend it wisely."
+invested = "{gold:name} gold, less {fee:name} for the paperwork. Consider it working."
+withdrawn = "{gold:name} gold out, less {fee:name} for my trouble. Do spend it wisely."
 
 # Dwarves and duergar: Geordie.
 [[dialogue]]
@@ -35,10 +36,10 @@ lines = [
     "If the mines ever open again, partner, we'll be rich as kings.",
 ]
 [dialogue.partner]
-worth = "Your stake's worth {gold} gold this week, partner."
+worth = "Your stake's worth {gold:name} gold this week, partner."
 idle = "Ye've nowt wi' us yet. Gold in a purse divvent grow, man."
-invested = "{gold} gold, less {fee} for the writin'. It's workin' noo."
-withdrawn = "{gold} gold oot, less {fee} for wor trouble. Divvent waste it."
+invested = "{gold:name} gold, less {fee:name} for the writin'. It's workin' noo."
+withdrawn = "{gold:name} gold oot, less {fee:name} for wor trouble. Divvent waste it."
 
 # Elves: Brummie.
 [[dialogue]]
@@ -52,10 +53,10 @@ lines = [
     "Keep an eye on the honey trade, partner. Bostin' prospects.",
 ]
 [dialogue.partner]
-worth = "Yower stake's worth {gold} gold this week."
+worth = "Yower stake's worth {gold:name} gold this week."
 idle = "Yow've got nothin' with me yet. Gold in a purse don't grow, does it?"
-invested = "{gold} gold, less {fee} for the paperwork. It's workin' now."
-withdrawn = "{gold} gold out, less {fee} for me trouble. Spend it careful."
+invested = "{gold:name} gold, less {fee:name} for the paperwork. It's workin' now."
+withdrawn = "{gold:name} gold out, less {fee:name} for me trouble. Spend it careful."
 
 # Halflings and gnomes: Scouse.
 [[dialogue]]
@@ -69,10 +70,10 @@ lines = [
     "Keep an eye on the honey trade, partner. It's boss.",
 ]
 [dialogue.partner]
-worth = "Yer stake's worth {gold} gold this week, la."
+worth = "Yer stake's worth {gold:name} gold this week, la."
 idle = "Ye've got nothin' with me yet. Gold in a purse doesn't grow, does it?"
-invested = "{gold} gold, less {fee} for the paperwork. It's graftin' now."
-withdrawn = "{gold} gold out, less {fee} for me trouble. Don't go blowin' it."
+invested = "{gold:name} gold, less {fee:name} for the paperwork. It's graftin' now."
+withdrawn = "{gold:name} gold out, less {fee:name} for me trouble. Don't go blowin' it."
 
 # Goblins, kobolds, and ratfolk: a heavy Irish brogue.
 [[dialogue]]
@@ -86,10 +87,10 @@ lines = [
     "Keep an eye on th' honey trade, partner. There's money in it.",
 ]
 [dialogue.partner]
-worth = "Yer stake's worth {gold} gold this week, so it is."
+worth = "Yer stake's worth {gold:name} gold this week, so it is."
 idle = "Ye've nuttin' wit' me yet. Gold in a purse doesn't grow, sure."
-invested = "{gold} gold, less {fee} for th' paperwork. Tis workin' now."
-withdrawn = "{gold} gold out, less {fee} for me trouble. Mind ye don't waste it."
+invested = "{gold:name} gold, less {fee:name} for th' paperwork. Tis workin' now."
+withdrawn = "{gold:name} gold out, less {fee:name} for me trouble. Mind ye don't waste it."
 
 # Drow: Middle English.
 [[dialogue]]
@@ -103,10 +104,10 @@ lines = [
     "Mark thou the honey trade, partner. There is profit in it.",
 ]
 [dialogue.partner]
-worth = "Thy stake is worth {gold} gold this week."
+worth = "Thy stake is worth {gold:name} gold this week."
 idle = "Thou hast nought with me as yet. Gold in a purse groweth nat."
-invested = "{gold} gold, less {fee} for the writing. It worketh now."
-withdrawn = "{gold} gold out, less {fee} for my labour. Spend it wisely."
+invested = "{gold:name} gold, less {fee:name} for the writing. It worketh now."
+withdrawn = "{gold:name} gold out, less {fee:name} for my labour. Spend it wisely."
 
 # Lizardfolk: Dutch.
 [[dialogue]]
@@ -120,7 +121,7 @@ lines = [
     "Let op de honinghandel, partner. Daar zit geld in.",
 ]
 [dialogue.partner]
-worth = "Uw inleg is deze week {gold} goud waard."
+worth = "Uw inleg is deze week {gold:name} goud waard."
 idle = "U hebt nog niets bij mij. Goud in een buidel groeit niet."
-invested = "{gold} goud, min {fee} voor het papierwerk. Het werkt nu."
-withdrawn = "{gold} goud eruit, min {fee} voor de moeite. Besteed het goed."
+invested = "{gold:name} goud, min {fee:name} voor het papierwerk. Het werkt nu."
+withdrawn = "{gold:name} goud eruit, min {fee:name} voor de moeite. Besteed het goed."

@@ -3,5 +3,5 @@ id = "pit_roaring"
 from = 121
 to = 122
 message = "The floor splits with a roar, and a stair goes down into red dark. A dire gate stands at its head!"
-seen = "The floor splits beside {who} with a roar, and a dire gate stands at the stair's head!"
+seen = "The floor splits beside {who:the} with a roar, and a dire gate stands at the stair's head!"
 effect = { kind = "portal", gate = "dire_gate" }

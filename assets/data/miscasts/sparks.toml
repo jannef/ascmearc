@@ -3,5 +3,5 @@ id = "sparks"
 from = 11
 to = 12
 message = "Sparks leap from your fingers and bite."
-seen = "Sparks bite {who}'s fingers."
+seen = "Sparks bite {who:poss} fingers."
 effect = { kind = "harm", dice = "1d2", damage = "fire" }

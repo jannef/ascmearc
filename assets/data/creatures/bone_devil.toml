@@ -31,7 +31,7 @@ severity = 2
 radius = 2
 check = "willpower"
 difficulty = 17
-touch = "Terror rolls off {the}."
+touch = "Terror rolls off {subject:the}."
 [creature.attack]
 damage = "3d10"
 damage_type = "piercing"
