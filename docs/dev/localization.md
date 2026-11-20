@@ -755,6 +755,14 @@ the quit dialogs, `screens.toml` the stack's notices; the messages and files scr
 own files. The main menu's spaced-out title is the game's name and stays in code; the files
 screen's kinds, what they hold, and where they are come from `paths.rs` as English.
 
+**The quest log, the almanac, and targeting** (#1939): the quest log's objective and status stay
+the core messages they were (`QuestView`, `english_msg`); its giver is passed as the phrase it is
+(`{giver:The}`). The almanac's date asks for the day's ordinal (`{day:ord}`), and several moons
+are a list of nested `moon_named` messages (`{moons:and}`, the language's conjunction). Each way
+of aiming has its whole prompt (`target.toml`'s `prompt_*`); `Line::status` returns the text. What
+is aimed (`describe_object`, an ability's name) stays core's text. `circle_tracks.rs` shows no
+text.
+
 ## Lines of data
 
 A line whose text lives in the data, not in `messages/` (a dialogue line, a miscast's `seen`, an

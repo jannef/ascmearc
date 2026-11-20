@@ -1,0 +1,39 @@
+# The quest log (`crates/ascmearc/src/ui/quest_screen.rs`). Ids alphabetical.
+#
+# The keys named in the footer are fixed (`Esc`) or as bound (`own`, `keys`): translate the words
+# around them. The screen fits each text to its panel (docs/dev/localization.md "UI text").
+
+# The heading over the quests taken up and not yet done.
+[active]
+text = "Active"
+
+# Footer: `keys`, the keys that move the selection ("↑↓").
+[choose]
+text = "{keys:bare} choose"
+
+# Footer, the way out when the log's own key is unbound.
+[close]
+text = "Esc close"
+
+# Footer, the way out: `own`, the log's own key as bound.
+[close_own]
+text = "{own:bare} or Esc close"
+
+# The heading over the quests done or failed.
+[done]
+text = "Done"
+
+# A failed quest's row (an escort's death): `name`, the quest's name.
+[failed]
+text = "{name:bare} (failed)"
+
+# The log has no quests.
+[none]
+text = "You have taken up no quests."
+
+# Who gave the selected quest, in their words: `giver`, who (a creature); `offer`, what they said.
+[said]
+text = "{giver:The}: \"{offer:bare}\""
+
+[title]
+text = "Quests"

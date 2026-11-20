@@ -25,6 +25,7 @@
 //! blocked target, "You do not see there.". Everything here reads the perception snapshot only.
 
 use super::look;
+use super::text::{target as T, ui, ui_with};
 use crate::game::Game;
 use crate::input::{InputMode, KeyCommand};
 use crate::render::console::Console;
@@ -36,6 +37,7 @@ use ascmearc_core::ability::Ability;
 use ascmearc_core::color::Rgb;
 use ascmearc_core::content::{ClassActive, Shape, SpellData, SpellId, SpellPurpose, Stance};
 use ascmearc_core::fov::radius2;
+use ascmearc_core::lang::Arg;
 use ascmearc_core::perception::{CellView, PerceptionView};
 use ascmearc_core::world::{ActorId, cone_cells};
 use ascmearc_core::{Action, Dir, Pos, ReadTarget};
@@ -379,24 +381,22 @@ impl Aim {
     /// The prompt in the message line: what is aimed, and how. `ready` names the missile ("an
     /// arrow"); `confirm` is the key of [`AimKind::confirm`] as bound, Enter and Tab are fixed.
     pub fn prompt(&self, ready: &str, confirm: &str) -> String {
-        let (loose, next) = (fixed::LOOSE, fixed::NEXT_TARGET);
-        let (verb, does) = match self.kind {
-            AimKind::Fire => ("Fire", "fires"),
-            AimKind::Throw(_) => ("Throw", "throws"),
-            AimKind::ThrownExploit(_) => ("Exploit an opening with", "throws"),
-            AimKind::Read(_) => ("Read", "reads"),
-            AimKind::Zap(_) => ("Zap", "zaps"),
+        let text = match self.kind {
+            AimKind::Fire => T::PROMPT_FIRE,
+            AimKind::Throw(_) => T::PROMPT_THROW,
+            AimKind::ThrownExploit(_) => T::PROMPT_EXPLOIT,
+            AimKind::Read(_) => T::PROMPT_READ,
+            AimKind::Zap(_) => T::PROMPT_ZAP,
             // `ready` names the ability ("Throw your voice").
-            AimKind::Ability(_) => {
-                return format!(
-                    "{ready}: {next} or direction keys aim, {loose} or {confirm} uses it, Esc \
-                     cancels."
-                );
-            }
+            AimKind::Ability(_) => T::PROMPT_ABILITY,
         };
-        format!(
-            "{verb} {ready}: {next} or direction keys aim, {loose} or {confirm} {does}, Esc cancels."
-        )
+        let args = [
+            ("ready", Arg::from(ready)),
+            ("next", Arg::from(fixed::NEXT_TARGET)),
+            ("loose", Arg::from(fixed::LOOSE)),
+            ("confirm", Arg::from(confirm)),
+        ];
+        ui_with(text, &args)
     }
 }
 
@@ -404,18 +404,19 @@ impl Line {
     /// Why a missile loosed along it would not reach the cursor, said after the target's
     /// description: "Out of range.", "The way is blocked.", "You do not see there."; nothing
     /// when it would.
-    pub fn status(&self) -> Option<&'static str> {
-        if self.out_of_range {
-            Some("Out of range.")
+    pub fn status(&self) -> Option<String> {
+        let text = if self.out_of_range {
+            T::OUT_OF_RANGE
         } else if self.unseen {
-            Some("You do not see there.")
+            T::UNSEEN
         } else if self.no_corpse {
-            Some("There is no corpse there.")
+            T::NO_CORPSE
         } else if self.blocked {
-            Some("The way is blocked.")
+            T::BLOCKED
         } else {
-            None
-        }
+            return None;
+        };
+        Some(ui(text))
     }
 }
 
@@ -824,7 +825,11 @@ mod tests {
             assert_eq!(aim.cycle(&view, true).at, view.viewer(), "{id}");
             let line = aim.line(&view);
             assert!(line.cells.is_empty(), "{id}: it flies nowhere");
-            assert_eq!(line.status(), Some("There is no corpse there."), "{id}");
+            assert_eq!(
+                line.status().as_deref(),
+                Some("There is no corpse there."),
+                "{id}"
+            );
             assert_eq!(
                 aim.action(view.content()),
                 Some(Action::Cast(id.into(), Some(aim.at)))
@@ -917,12 +922,12 @@ mod tests {
             blocked: true,
             ..Line::default()
         };
-        assert_eq!(far.status(), Some("Out of range."));
+        assert_eq!(far.status().as_deref(), Some("Out of range."));
         let walled = Line {
             blocked: true,
             ..Line::default()
         };
-        assert_eq!(walled.status(), Some("The way is blocked."));
+        assert_eq!(walled.status().as_deref(), Some("The way is blocked."));
         let throw = Aim {
             kind: AimKind::Throw(0),
             ..aim
