@@ -9,6 +9,11 @@ use ascmearc_core::noise::{
 };
 use std::fmt::Write as _;
 
+/// What a sound of `kind` is heard as, in English: "footsteps", "a door open".
+pub(super) fn heard_as(content: &Content, kind: SoundKind) -> String {
+    ascmearc_core::messages::english_msg(content, &kind.heard_as().into())
+}
+
 /// How far a noise of `loudness` carries to a listener whose threshold is `hearing`, in open
 /// space: `5 cells (3 diagonally)`; `-` if it never does.
 fn reach(loudness: u16, hearing: u16) -> String {
@@ -90,7 +95,7 @@ pub(super) fn noises(content: &Content) -> String {
         let _ = writeln!(
             out,
             "| {what} | {} | {loudness} | {} |",
-            kind.heard_as(),
+            heard_as(content, kind),
             reach(loudness, hearing)
         );
     }

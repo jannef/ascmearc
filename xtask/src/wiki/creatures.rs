@@ -1248,7 +1248,7 @@ pub(super) fn creature_auras(content: &Content) -> String {
         let cry = c.cry.map_or("-".to_string(), |cry| {
             format!(
                 "{} (loudness {}, every {} s)",
-                cry.kind.heard_as(),
+                super::hearing::heard_as(content, cry.kind),
                 cry.loudness,
                 cry.every
             )

@@ -13,6 +13,8 @@
 //! [`Food::lasts`]: crate::content::Food::lasts
 
 use crate::content::Content;
+use crate::lang::MessageId;
+use crate::msg;
 use crate::object::Stack;
 use crate::time::GameTime;
 use serde::Serialize;
@@ -38,6 +40,16 @@ impl Stage {
             Stage::Old => "old",
             Stage::Rotten => "rotten",
             Stage::Gone => "gone",
+        }
+    }
+
+    /// How it looks to a trained eye, a word (`health.food_*`): fresh, old, or rotten (gone
+    /// food is told as rotten).
+    pub const fn word(self) -> MessageId {
+        match self {
+            Stage::Fresh => msg::health::FOOD_FRESH,
+            Stage::Old => msg::health::FOOD_OLD,
+            Stage::Rotten | Stage::Gone => msg::health::FOOD_ROTTEN,
         }
     }
 

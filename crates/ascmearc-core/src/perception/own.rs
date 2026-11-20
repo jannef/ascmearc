@@ -102,12 +102,12 @@ pub enum Freshness {
 }
 
 impl Freshness {
-    /// The word: `fresh`, `turning`, `rotten`.
-    pub const fn word(self) -> &'static str {
+    /// The word (`health.food_*`): fresh, turning, rotten.
+    pub const fn word(self) -> crate::lang::MessageId {
         match self {
-            Freshness::Fresh => "fresh",
-            Freshness::Turning => "turning",
-            Freshness::Rotten => "rotten",
+            Freshness::Fresh => crate::msg::health::FOOD_FRESH,
+            Freshness::Turning => crate::msg::health::FOOD_TURNING,
+            Freshness::Rotten => crate::msg::health::FOOD_ROTTEN,
         }
     }
 }

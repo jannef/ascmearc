@@ -27,7 +27,7 @@ use super::dialog_screen::Dialog;
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::{ScreenAction, ScreenName};
-use super::text::{craft_pick_screen as T, ui, ui_with};
+use super::text::{craft_pick_screen as T, ui, ui_msg, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::Bindings;
 use crate::render::console::Console;
@@ -471,7 +471,7 @@ impl CraftPickScreen {
             };
             let state_x = right - state.chars().count() as i32;
             let room = (state_x - x - 3).max(0) as usize;
-            let name: String = format!("{letter} - {}", option.name)
+            let name: String = format!("{letter} - {}", ui_msg(option.name.clone()))
                 .chars()
                 .take(room)
                 .collect();
@@ -673,7 +673,7 @@ mod tests {
         choose_short(&mut screen, &view, "red crystal");
         assert_eq!(screen.step, 2);
         assert_eq!(screen.steps[2].kind, CraftStepKind::Family);
-        let words: Vec<String> = screen.list().iter().map(|o| o.name.clone()).collect();
+        let words: Vec<String> = screen.list().iter().map(|o| o.short.clone()).collect();
         assert!(
             !words.is_empty() && !words.iter().any(|w| w == "mana"),
             "{words:?}"
@@ -682,7 +682,7 @@ mod tests {
         let first = words[0].clone();
         choose_short(&mut screen, &view, &first);
         assert_eq!(screen.step, 3);
-        assert!(!screen.list().iter().any(|o| o.name == first));
+        assert!(!screen.list().iter().any(|o| o.short == first));
         let keys = Bindings::default();
         assert_eq!(
             screen.handle(&Press::typed('-'), &keys),

@@ -229,7 +229,7 @@ fn thrown(content: &Content, o: &ObjectDef) -> String {
     if flask.noise.sound != SoundKind::Shatter {
         does.push(format!(
             "heard as {} at loudness {}",
-            flask.noise.sound.heard_as(),
+            super::hearing::heard_as(content, flask.noise.sound),
             flask.noise.loudness
         ));
     }

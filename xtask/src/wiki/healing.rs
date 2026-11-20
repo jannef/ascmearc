@@ -463,7 +463,7 @@ fn also(content: &Content, status: usize, def: &StatusDef) -> Vec<String> {
             "every living creature within {} cells you do not see (not the undead, animated \
              things, or constructs) is heard as {} at a rough place, up to 2 cells off, each turn",
             senses.reach,
-            senses.kind.heard_as()
+            super::hearing::heard_as(content, senses.kind)
         ));
     }
     if let Some(vision) = def.vision {

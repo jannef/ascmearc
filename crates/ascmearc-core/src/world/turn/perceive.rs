@@ -79,7 +79,7 @@ impl World {
         *self.perception = Perception::compute(&self.state, &self.content, &mut self.lights);
         // An unseen shadow come near (`unseen.rs`).
         if !draught && self.perception.draught() {
-            self.say(crate::world::creatures::unseen::DRAUGHT_LINE);
+            self.say(msg::creatures::COLD_DRAUGHT);
         }
         self.mark_noticed();
         self.glare_news(dazzled);
@@ -489,7 +489,7 @@ impl World {
             turn,
         );
         let viewer = self.player_pos();
-        let mut said: Vec<String> = Vec::new();
+        let mut said: Vec<Msg> = Vec::new();
         // Listening at a door, everything heard is told, news or not, and so is a silence.
         let listening = self.state.listening.is_some();
         let told = if listening {

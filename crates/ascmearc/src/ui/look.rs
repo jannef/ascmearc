@@ -187,7 +187,7 @@ fn describe_cell(view: &PerceptionView<'_>, p: Pos, blood: bool) -> Arg {
         return trap_alone(view, p, trap.clone(), on);
     }
     // A sound heard there (never on a cell the player sees): "You hear footsteps here."
-    let heard = view.sound_at(p).map(|s| Arg::Text(s.you_hear()));
+    let heard = view.sound_at(p).map(|s| Arg::from(s.you_hear()));
     let things = pile(view, p);
     let here = (things.clone()).map_or_else(none, |o| clause(T::HERE, [("things", o)]));
     // What the player remembers at a cell out of sight.
@@ -380,9 +380,10 @@ fn room(view: &PerceptionView<'_>, p: Pos) -> Option<Arg> {
         CellView::Visible(t) | CellView::Remembered(t) => view.content().terrain(t).walkable,
         CellView::Unknown => false,
     };
-    // The room's name with its article is core's words until they are converted (#1949).
-    let room = (view.room(p).filter(|_| walkable))
-        .map(|r| clause(T::IN_ROOM, [("room", Arg::Text(r.with_article()))]));
+    let room = (view.room(p).filter(|_| walkable)).map(|r| {
+        let room = Phrase::id(format!("room:{}", r.id));
+        clause(T::IN_ROOM, [("room", room.into())])
+    });
     let hallow = (view.hallow(p).filter(|_| walkable)).map(|dark| match dark {
         true => clause(T::DREADED, []),
         false => clause(T::HALLOWED, []),
@@ -403,7 +404,7 @@ fn trap_alone(view: &PerceptionView<'_>, p: Pos, trap: Arg, on: impl Fn(TerrainI
             let memory = clause(T::TRAP_ON, [("trap", trap), ("ground", on(t))]);
             clause(
                 T::HEARD_WHERE_REMEMBERED,
-                [("heard", Arg::Text(heard.you_hear())), ("memory", memory)],
+                [("heard", heard.you_hear().into()), ("memory", memory)],
             )
         }
         (CellView::Remembered(t), None) => {
@@ -435,11 +436,10 @@ fn pile(view: &PerceptionView<'_>, p: Pos) -> Option<Arg> {
     let seen = matches!(view.cell(p), CellView::Visible(_));
     let item = |stack: &Stack| {
         let what = Arg::from(view.lore().phrase(stack));
-        // The numbers are core's words until they are converted (#1949).
-        let numbers = Numbers::of(stack, content).text(content).map(Arg::Text);
+        let numbers = Numbers::of(stack, content).words(content);
         // A trained eye (Appraise, Survival; #1031) tells food's freshness of what it sees.
         let fresh = (seen.then(|| view.judge(stack)).flatten())
-            .map(|w| clause(T::LOOKS, [("fresh", Arg::Text(w.to_string()))]));
+            .map(|stage| clause(T::LOOKS, [("fresh", stage.word().into())]));
         let price = (view.price_tag(p, stack))
             .map(|g| clause(T::FOR_SALE, [("gold", Arg::Number(i64::from(g)))]));
         let tags = [numbers, fresh, price].into_iter().flatten().collect();

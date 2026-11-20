@@ -455,7 +455,10 @@ fn hounds_bay_sends_lesser_foes_fleeing_then_leaves_you_hoarse() {
     assert_eq!(severity(&w, kobold, "frightened"), 0);
     // The howl is heard: a loud noise.
     assert_eq!(
-        crate::noise::SoundKind::Howl.heard_as(),
+        crate::test_support::english_of(
+            &w.content,
+            &crate::noise::SoundKind::Howl.heard_as().into()
+        ),
         "a howl",
         "the player hears others' howls by this name"
     );

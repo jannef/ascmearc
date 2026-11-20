@@ -189,7 +189,7 @@ pub(super) fn steps(
     };
     let option = |at: usize, name: String, short: String| CraftOption {
         at,
-        name,
+        name: name.into(),
         short,
         takes: 1,
         each: false,
@@ -207,7 +207,7 @@ pub(super) fn steps(
             })
             .map(|(i, (_, word))| option(i, word.clone(), word.clone()))
             .collect();
-        options.sort_by(|a, b| a.name.cmp(&b.name));
+        options.sort_by(|a, b| a.short.cmp(&b.short));
         steps.push(CraftStep {
             kind: CraftStepKind::Family,
             label: seal_label(n).into(),
