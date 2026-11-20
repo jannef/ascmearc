@@ -348,9 +348,9 @@ mod tests {
         // Other names the stat it raised.
         let content = crate::test_support::builtin();
         let other = "gnome,other,bard".parse().expect("a character");
-        let gnome =
-            World::with_character(content, "showcase", Some(3), Some(&other)).expect("world");
-        let raised = crate::character::other_stat(3).name();
+        let gnome = World::with_character(content.clone(), "showcase", Some(3), Some(&other))
+            .expect("world");
+        let raised = content.english_word(crate::character::other_stat(3).name(), "Bare");
         assert!(
             layer_rows(&gnome, Layer::Stats).contains(&format!("Gender Other ({raised} +1)")),
             "{:?}",

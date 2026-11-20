@@ -122,7 +122,10 @@ fn every_elixir_raises_its_own_stat_and_says_so_in_words() {
             let want = if s == raised { 12 } else { 11 };
             assert_eq!(stat(&w, s).0, want, "{id}: {s:?}");
         }
-        let feel = format!("You feel {}", raised.comparative());
+        let feel = format!(
+            "You feel {}",
+            w.content.english_word(raised.comparative(), "bare")
+        );
         assert!(said(&w).iter().any(|m| m.starts_with(&feel)), "{id}");
         let object = w.content.object_id(id).expect("elixir");
         let def = w.content.object(object);

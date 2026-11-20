@@ -3,6 +3,7 @@
 //! what a healing spring's drink may bring, per drink (`data/outcomes/spring.toml`); and what
 //! each gamble potion may bring, per draught.
 
+use super::util::stat_name;
 use super::util::{capital, percent};
 use ascmearc_core::alignment::Alignment;
 use ascmearc_core::content::{
@@ -160,7 +161,7 @@ fn does(content: &Content, effect: &OutcomeEffect) -> String {
         out.push(format!(
             "{points} {} [drained](stats.md#drained-stats) for good, with no check (never below \
              the drain's floor)",
-            stat.name()
+            stat_name(stat)
         ));
     }
     if effect.xp > 0 {

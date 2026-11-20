@@ -1004,7 +1004,10 @@ pub(crate) fn craft_plan(
         name,
         uses: crate::text::and_list(&uses),
         station: def.station.map(|t| terrain(content, t)),
-        time: format!("about {}", Duration::seconds(u64::from(seconds)).spoken()),
+        time: format!(
+            "about {}",
+            content.english_word(Duration::seconds(u64::from(seconds)).spoken(), "bare")
+        ),
     })
 }
 

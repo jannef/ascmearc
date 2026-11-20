@@ -311,7 +311,7 @@ fn resting_stops_on_the_turn_a_creature_comes_into_view() {
     assert_eq!(rested.turn(), turns);
     assert_eq!(out.elapsed, secs(6 * turns));
     assert_eq!(rested.state().actors, waited.state().actors);
-    let rested_for = secs(6 * turns).spoken();
+    let rested_for = (rested.content).english_word(secs(6 * turns).spoken(), "bare");
     assert_eq!(
         last_message(&rested),
         format!("A giant rat comes into view; you stop resting after {rested_for}.")

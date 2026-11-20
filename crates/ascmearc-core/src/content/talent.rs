@@ -902,7 +902,9 @@ impl Need {
     pub fn words(&self, content: &Content) -> String {
         match self {
             Need::Talent(id) => content.talents().get(*id).name.clone(),
-            Need::Stat(stat, score) => format!("{} {score}", stat.name()),
+            Need::Stat(stat, score) => {
+                format!("{} {score}", content.english_word(stat.name(), "Bare"))
+            }
             Need::Skill(id, value) => format!("{} {value}", content.skill(*id).name),
             Need::WeaponSkill(id, rank) => {
                 format!("{} {rank}", content.weapon_skills().skill(*id).name)

@@ -3,6 +3,7 @@
 //! stats for good. The game says
 //! none of these numbers; the wiki states them exactly.
 
+use super::util::stat_name;
 use super::util::{capital, ordinal, percent_of};
 use ascmearc_core::check;
 use ascmearc_core::content::{Affliction, Content, ODDS_SCALE};
@@ -21,7 +22,7 @@ pub(super) fn stat_training(content: &Content) -> String {
             let _ = writeln!(
                 out,
                 "| {} | {} | {} % |",
-                stat.map_or("Any", Stat::name),
+                stat.map_or_else(|| "Any".to_string(), stat_name),
                 rule.on.describe(),
                 rule.chance
             );
@@ -47,7 +48,7 @@ pub(super) fn stat_losses(content: &Content) -> String {
             let _ = writeln!(
                 out,
                 "| {} | {} | {takes} |",
-                stat.name(),
+                stat_name(stat),
                 rule.on.describe()
             );
         }
@@ -186,7 +187,7 @@ const RESIST_SCORES: [u8; 6] = [6, 8, 10, 12, 14, 16];
 
 /// A drain's stat in words: `Strength`, or `a random stat`.
 pub(super) fn drained_stat(stat: Option<Stat>) -> String {
-    stat.map_or_else(|| "a random stat".to_string(), |s| s.name().to_string())
+    stat.map_or_else(|| "a random stat".to_string(), |s| stat_name(s).to_string())
 }
 
 /// Every creature attack that drains: the stat and the points it
@@ -218,7 +219,7 @@ pub(super) fn drain_attacks(content: &Content) -> String {
                 attack.name,
                 drained_stat(drain.stat),
                 hit.chance,
-                drain.check.name(),
+                stat_name(drain.check),
                 drain.difficulty
             );
         }

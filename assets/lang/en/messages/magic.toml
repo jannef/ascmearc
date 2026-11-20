@@ -7,11 +7,11 @@
 # is said by its key in the data, not here (`docs/dev/localization.md` "Lines of data").
 #
 # Roles: `who` is the creature a line is about, as the player calls it ("the kobold", "Snel");
-# `what` an item (a phrase built where it is said); `status` a status as it looks ("dazed");
-# `id`, `kind`, `usage`, `x`, `y` a dev action's words and numbers as typed. `reason` and `stat`
-# are core's English words, text until they are converted; so are `spell` and `spells`, a
-# spell's name as the data writes it ("Frost"), and `came`, the clause another module writes
-# when something stops a long action ("A kobold comes into view").
+# `what` an item (a phrase built where it is said); `status` a status as it looks ("dazed"); `id`,
+# `kind`, `usage`, `x`, `y` a dev action's words and numbers as typed. `stat` is a stat's name
+# (`words.toml`); `reason` is core's English words, text until they are converted; so are `spell`
+# and `spells`, a spell's name as the data writes it ("Frost"), and `came`, the clause another
+# module writes when something stops a long action ("A kobold comes into view").
 
 # `what`: the item, one of the stack.
 already_know = "You already know what {what:a} is."
@@ -46,7 +46,7 @@ driven_back = "{who:The} {who:is} driven back."
 # A dev action's: `id` the effect's.
 effect_dev = "Effect: {id:bare} (dev)."
 effect_reaches_no_cell = "Effect `{id:bare}` reaches no cell there."
-# `stat`: the stat's name, lower case ("strength").
+# `stat`: the stat's name ("strength").
 feel_stat_return = "You feel your {stat:bare} return."
 # `spells`: the spells forgotten, a list of their names.
 forgotten = "You have forgotten {spells:and}."

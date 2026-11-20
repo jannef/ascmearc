@@ -3,6 +3,7 @@
 //! time and the check, how often a failure crumbles the grimoire, the classes' affinities with
 //! the schools, and the mishaps.
 
+use super::util::{stat_name, time_words};
 use ascmearc_core::check;
 use ascmearc_core::content::{Band, Content, MishapEffect};
 use ascmearc_core::skills::Effect;
@@ -105,7 +106,7 @@ pub(super) fn times(content: &Content) -> String {
     let mut out = String::from(
         "| Spell level | Turns | Takes | With Quick study |\n|:---:|:---:|:---:|:---:|\n",
     );
-    let took = |turns: u32| Duration::seconds(u64::from(turns) * 6).spoken();
+    let took = |turns: u32| time_words(Duration::seconds(u64::from(turns) * 6));
     for level in LEVELS {
         let turns = ascmearc_core::world::study_turns(rules, level, 0);
         let quick = quick.map_or_else(
@@ -224,7 +225,7 @@ fn effect_text(content: &Content, effect: MishapEffect) -> String {
             )
         }
         MishapEffect::Learn => "you learn the spell anyway".into(),
-        MishapEffect::Mark { stat } => format!("a training mark of {}", stat.name()),
+        MishapEffect::Mark { stat } => format!("a training mark of {}", stat_name(stat)),
         // The miscast table's only (`miscast.rs` says them).
         MishapEffect::Harm { .. }
         | MishapEffect::StatDamage { .. }
@@ -252,7 +253,7 @@ pub(super) fn drain_words(
     match (stat, times) {
         (Some(stat), _) => format!(
             "{} loses {points} [for good](stats.md#drained-stats) {check}",
-            stat.name()
+            stat_name(stat)
         ),
         (None, 1) => {
             format!("a random stat loses {points} [for good](stats.md#drained-stats) {check}")

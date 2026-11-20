@@ -18,6 +18,8 @@
 //! is bumped per release, see `save.rs`).
 
 use crate::dice::Dice;
+use crate::lang::MessageId;
+use crate::msg;
 use crate::rng::Rng;
 use serde::de::Error as _;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
@@ -37,10 +39,11 @@ pub const ADJUSTMENTS: RangeInclusive<i8> = -10..=10;
 /// The lowest score a drain leaves (`World::drain`).
 pub const DRAIN_FLOOR: u8 = 3;
 
-/// Defines [`Stat`] from one entry per stat: the variant, its id in data files and saves, its
-/// two-letter abbreviation, and its name, in display order.
+/// Defines [`Stat`] from one entry per stat: the variant, its id in data files and saves, and its
+/// words' message ids (`messages/words.toml`): the abbreviation, the name, and the comparative; in
+/// display order.
 macro_rules! stats {
-    ($($(#[$doc:meta])* $variant:ident = $id:literal, $abbrev:literal, $name:literal;)+) => {
+    ($($(#[$doc:meta])* $variant:ident = $id:literal, $abbrev:path, $name:path, $more:path;)+) => {
         /// A stat. [`Stat::ALL`] lists them in display order.
         #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
         pub enum Stat {
@@ -61,17 +64,24 @@ macro_rules! stats {
                 }
             }
 
-            /// The two-letter abbreviation: `St`.
-            pub const fn abbrev(self) -> &'static str {
+            /// The two-letter abbreviation, a message id: `St`.
+            pub const fn abbrev(self) -> MessageId {
                 match self {
                     $(Stat::$variant => $abbrev,)+
                 }
             }
 
-            /// The name: `Strength`.
-            pub const fn name(self) -> &'static str {
+            /// The name, a message id: `strength` (a label asks `Bare`, "Strength").
+            pub const fn name(self) -> MessageId {
                 match self {
                     $(Stat::$variant => $name,)+
+                }
+            }
+
+            /// What a rise in it makes you, a message id: `stronger` ("You feel stronger.").
+            pub const fn comparative(self) -> MessageId {
+                match self {
+                    $(Stat::$variant => $more,)+
                 }
             }
         }
@@ -80,35 +90,41 @@ macro_rules! stats {
 
 stats! {
     /// Physical power.
-    Strength = "strength", "St", "Strength";
+    Strength = "strength",
+        msg::words::STAT_STRENGTH_ABBREV,
+        msg::words::STAT_STRENGTH,
+        msg::words::STAT_STRENGTH_MORE;
     /// Agility, balance, and quick hands.
-    Dexterity = "dexterity", "Dx", "Dexterity";
+    Dexterity = "dexterity",
+        msg::words::STAT_DEXTERITY_ABBREV,
+        msg::words::STAT_DEXTERITY,
+        msg::words::STAT_DEXTERITY_MORE;
     /// Health and endurance (D&D's Constitution).
-    Toughness = "toughness", "To", "Toughness";
+    Toughness = "toughness",
+        msg::words::STAT_TOUGHNESS_ABBREV,
+        msg::words::STAT_TOUGHNESS,
+        msg::words::STAT_TOUGHNESS_MORE;
     /// Reason and memory.
-    Intelligence = "intelligence", "In", "Intelligence";
+    Intelligence = "intelligence",
+        msg::words::STAT_INTELLIGENCE_ABBREV,
+        msg::words::STAT_INTELLIGENCE,
+        msg::words::STAT_INTELLIGENCE_MORE;
     /// Awareness and strength of will (D&D's Wisdom).
-    Willpower = "willpower", "Wi", "Willpower";
+    Willpower = "willpower",
+        msg::words::STAT_WILLPOWER_ABBREV,
+        msg::words::STAT_WILLPOWER,
+        msg::words::STAT_WILLPOWER_MORE;
     /// Force of personality (D&D's Charisma).
-    Presence = "presence", "Pr", "Presence";
+    Presence = "presence",
+        msg::words::STAT_PRESENCE_ABBREV,
+        msg::words::STAT_PRESENCE,
+        msg::words::STAT_PRESENCE_MORE;
 }
 
 impl Stat {
     /// The stat with data id `id`.
     pub fn from_id(id: &str) -> Option<Stat> {
         Stat::ALL.into_iter().find(|s| s.id() == id)
-    }
-
-    /// What a rise in it makes you, in words: `stronger` ("You feel stronger.").
-    pub const fn comparative(self) -> &'static str {
-        match self {
-            Stat::Strength => "stronger",
-            Stat::Dexterity => "quicker",
-            Stat::Toughness => "tougher",
-            Stat::Intelligence => "sharper",
-            Stat::Willpower => "more resolute",
-            Stat::Presence => "more confident",
-        }
     }
 
     fn index(self) -> usize {
@@ -566,9 +582,11 @@ mod tests {
 
     #[test]
     fn the_six_stats_in_order() {
+        let content = crate::test_support::builtin();
+        let word = |id: MessageId| content.english_word(id, "Bare");
         let names: Vec<String> = Stat::ALL
             .iter()
-            .map(|s| format!("{} {} {}", s.abbrev(), s.name(), s.id()))
+            .map(|s| format!("{} {} {}", word(s.abbrev()), word(s.name()), s.id()))
             .collect();
         assert_eq!(
             names,

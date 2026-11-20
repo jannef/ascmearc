@@ -466,8 +466,8 @@ fn creature(view: &PerceptionView<'_>, actor: &SeenActor) -> Arg {
         Stance::Hostile => Some(clause(T::HOSTILE, [])),
         Stance::Neutral => None,
     };
-    // They see how hurt it is: in words, never in hit points (core's words, #1949).
-    let health = Some(Arg::Text(actor.health.word().to_string()));
+    // They see how hurt it is: in words, never in hit points.
+    let health = Some(Arg::from(actor.health.word()));
     // The status effects that show on it: ", bleeding" (the data's words, #1949).
     let effects = (view.effects_of(actor.id))
         .filter_map(|s| content.status(s).seen.clone())
@@ -1268,7 +1268,7 @@ mod tests {
         });
         let (health, text) = hurt.expect("someone in view was hurt");
         // The health word, then what shows of its statuses (", bleeding") if any.
-        let word = health.word();
+        let word = crate::ui::text::word(health.word(), "bare");
         let named = [format!(", {word})"), format!(", {word}, ")];
         assert!(named.iter().any(|n| text.contains(n)), "{text}");
         // Never a number of hit points.

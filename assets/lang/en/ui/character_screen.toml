@@ -69,7 +69,7 @@ text = "Gender"
 
 # The gender "other" and the stat it raised: `stat`, the stat's name.
 [gender_other]
-text = "Other ({stat:bare} +1)"
+text = "Other ({stat:Bare} +1)"
 
 [guild]
 text = "Guild"

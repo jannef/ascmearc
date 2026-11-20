@@ -3,6 +3,7 @@
 //! numbers of consuming one and of catching them in salvage. From `data/crystals.toml` and
 //! `data/rules/enchanting.toml`.
 
+use super::util::stat_name;
 use super::util::{Term, anchored, capital};
 use ascmearc_core::combat::{FUMBLE, HIGHEST};
 use ascmearc_core::content::Content;
@@ -41,7 +42,7 @@ pub(super) fn crystal_rules(content: &Content) -> String {
     let (Some(crystals), Some(rules)) = (content.crystals(), content.enchanting()) else {
         return "There are no magic crystals.\n".to_string();
     };
-    let (stat, skill) = (rules.stat.name(), &content.skill(rules.skill).name);
+    let (stat, skill) = (stat_name(rules.stat), &content.skill(rules.skill).name);
     let rare: Vec<String> = (crystals.rare.materials.iter())
         .map(|&m| content.object(m).describe(1))
         .collect();

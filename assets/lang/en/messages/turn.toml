@@ -7,9 +7,10 @@
 #
 # Roles: `who` is the creature a line is about, `what` a thing or a terrain (phrases built where
 # they are said); `came` the clause that says what stopped a long action, a message of its own
-# (`comes_close`, `comes_into_view`). `time` is how long ("3 minutes"), `dies` how a status kills
-# ("bleeds to death"), `weather` a weather's name: English words from core and the data, text
-# until they are converted. `id` and `name` are a dev action's, as typed and as the data names it.
+# (`comes_close`, `comes_into_view`); `time` how long ("3 minutes", a `words.toml` message). `dies`
+# is how a status kills ("bleeds to death"), `weather` a weather's name: English words from core and
+# the data, text until they are converted. `id` and `name` are a dev action's, as typed and as the
+# data names it.
 
 adjusted = "Your eyes adjust to the dimmer light."
 cannot_rest_in_deep_water = "You cannot rest in deep water."

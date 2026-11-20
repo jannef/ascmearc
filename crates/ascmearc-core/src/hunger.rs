@@ -19,6 +19,7 @@
 //! What the player knows is the state, in words (the status bar shows it unless it is Not
 //! hungry): never the counter.
 
+use crate::msg;
 use serde::{Deserialize, Serialize};
 
 /// How hungry the player is, from the hungriest up.
@@ -53,16 +54,17 @@ impl Hunger {
         Hunger::Starving,
     ];
 
-    /// Its name, as the status bar shows it: `Hungry`.
-    pub const fn name(self) -> &'static str {
+    /// Its name, a message id (`messages/words.toml`): `hungry` (the status bar asks `Bare`,
+    /// "Hungry").
+    pub const fn name(self) -> crate::lang::MessageId {
         match self {
-            Hunger::Starving => "Starving",
-            Hunger::Fainting => "Fainting",
-            Hunger::Weak => "Weak",
-            Hunger::Hungry => "Hungry",
-            Hunger::NotHungry => "Not hungry",
-            Hunger::Satiated => "Satiated",
-            Hunger::Bloated => "Bloated",
+            Hunger::Starving => msg::words::HUNGER_STARVING,
+            Hunger::Fainting => msg::words::HUNGER_FAINTING,
+            Hunger::Weak => msg::words::HUNGER_WEAK,
+            Hunger::Hungry => msg::words::HUNGER_HUNGRY,
+            Hunger::NotHungry => msg::words::HUNGER_NOT_HUNGRY,
+            Hunger::Satiated => msg::words::HUNGER_SATIATED,
+            Hunger::Bloated => msg::words::HUNGER_BLOATED,
         }
     }
 
@@ -93,7 +95,6 @@ impl Hunger {
     /// What the player is told when the state goes from `from` to `to`; `None` if it did not
     /// change.
     pub fn news(from: Hunger, to: Hunger) -> Option<crate::lang::MessageId> {
-        use crate::msg;
         use Hunger::*;
         if from as u8 == to as u8 {
             return None;
@@ -192,7 +193,10 @@ mod tests {
     #[test]
     fn states_run_from_the_hungriest_up() {
         assert!(Hunger::Starving < Hunger::Fainting && Hunger::Satiated < Hunger::Bloated);
-        let names: Vec<&str> = Hunger::ALL.iter().map(|h| h.name()).collect();
+        let content = crate::test_support::builtin();
+        let names: Vec<String> = (Hunger::ALL.iter())
+            .map(|h| content.english_word(h.name(), "Bare"))
+            .collect();
         assert_eq!(
             names,
             [

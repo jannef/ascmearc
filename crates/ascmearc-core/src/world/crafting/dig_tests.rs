@@ -240,7 +240,8 @@ fn digging_stops_like_resting_and_the_work_stays_on_the_wall() {
         last_message(&w),
         format!(
             "A giant rat comes into view; you stop digging after {}.",
-            Duration::seconds(took).spoken()
+            w.content
+                .english_word(Duration::seconds(took).spoken(), "bare")
         )
     );
     // It would come for the player; gone, it leaves them to dig on.
@@ -318,7 +319,8 @@ fn digging_is_loud_and_what_it_brings_stops_it() {
     assert!(
         text.ends_with(&format!(
             "stop digging after {}.",
-            Duration::seconds(took).spoken()
+            w.content
+                .english_word(Duration::seconds(took).spoken(), "bare")
         )),
         "{text}"
     );

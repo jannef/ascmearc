@@ -3,6 +3,7 @@
 //! metal.
 
 use super::order;
+use super::util::stat_name;
 use super::util::{capital, percent, signed, times};
 use ascmearc_core::content::{
     Content, Fit, MaterialDef, MaterialId, ObjectDef, PartRole, VERY_RARE,
@@ -479,7 +480,7 @@ pub(super) fn pieces(content: &Content) -> String {
             n => format!("{n} gold"),
         };
         let worked = (content.stock().profession_of(content, id)).map_or("-".to_string(), |p| {
-            format!("{} ({})", content.skill(p.skill).name, p.stat.name())
+            format!("{} ({})", content.skill(p.skill).name, stat_name(p.stat))
         });
         let _ = writeln!(
             out,

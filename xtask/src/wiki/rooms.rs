@@ -1,5 +1,6 @@
 //! Special rooms.
 
+use super::util::time_words;
 use super::util::{Term, anchored, article, capital};
 use ascmearc_core::content::{Content, Hoard, Offer, StatusId};
 use ascmearc_core::world::rise_candidates;
@@ -234,7 +235,7 @@ pub(super) fn special_rooms(content: &Content) -> String {
                 "A creature that dies in it (not one of the {}) rises from its corpse {} later \
                  as one of them, unless the corpse is gone by then (see Cursed rooms).",
                 faction_name(content, &rise.faction),
-                rise.after.spoken()
+                time_words(rise.after)
             ));
         }
         if let Some(haunt) = &e.haunt {
@@ -243,7 +244,7 @@ pub(super) fn special_rooms(content: &Content) -> String {
                  the level's danger comes inside (as the dead rise in a cursed room: of that \
                  level, else the nearest), out of your sight where it can, and comes for you. It \
                  never comes while you do anything else (see Haunted rooms).",
-                haunt.every.spoken().trim_start_matches("1 "),
+                time_words(haunt.every).trim_start_matches("1 "),
                 faction_name(content, &haunt.faction),
             ));
         }

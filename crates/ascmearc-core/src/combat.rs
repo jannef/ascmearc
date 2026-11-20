@@ -37,6 +37,7 @@
 use crate::content::{Benefit, DamageTypeId};
 use crate::damage::{self, Kinds, Protection, Resistances, Rider};
 use crate::dice::{Dice, Roll};
+use crate::msg;
 use crate::rng::Rng;
 use crate::stats::{Stat, Stats};
 use serde::{Deserialize, Serialize};
@@ -696,14 +697,14 @@ impl Health {
         }
     }
 
-    /// `badly wounded`.
-    pub const fn word(self) -> &'static str {
+    /// In words, a message id (`messages/words.toml`): `badly wounded`.
+    pub const fn word(self) -> crate::lang::MessageId {
         match self {
-            Health::Unhurt => "unhurt",
-            Health::LightlyWounded => "lightly wounded",
-            Health::Wounded => "wounded",
-            Health::BadlyWounded => "badly wounded",
-            Health::NearlyDead => "nearly dead",
+            Health::Unhurt => msg::words::HEALTH_UNHURT,
+            Health::LightlyWounded => msg::words::HEALTH_LIGHTLY_WOUNDED,
+            Health::Wounded => msg::words::HEALTH_WOUNDED,
+            Health::BadlyWounded => msg::words::HEALTH_BADLY_WOUNDED,
+            Health::NearlyDead => msg::words::HEALTH_NEARLY_DEAD,
         }
     }
 }
@@ -1441,7 +1442,10 @@ mod tests {
 
     #[test]
     fn health_reads_in_words() {
-        let words: Vec<&str> = (0..=12).map(|hp| Health::of(hp, 12).word()).collect();
+        let content = crate::test_support::builtin();
+        let words: Vec<String> = (0..=12)
+            .map(|hp| content.english_word(Health::of(hp, 12).word(), "bare"))
+            .collect();
         assert_eq!(
             words,
             [
