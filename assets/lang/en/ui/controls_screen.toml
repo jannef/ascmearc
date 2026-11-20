@@ -97,16 +97,14 @@ text = "{shown:bare} moved to {to:bare}; {from:bare} has no key."
 [none]
 text = "(none)"
 
-[note_1]
+# The notes at the top of the list, each a sentence: a line break (`\n`) starts a new row.
+[note_esc]
 text = "Esc always backs out and cancels; it cannot be rebound."
 
-[note_2]
-text = "Menus, dialogs, text fields, and info pages have fixed keys,"
+[note_fixed]
+text = "Menus, dialogs, text fields, and info pages have fixed keys,\nas do the rest prompt and aiming: hint lines name them."
 
-[note_3]
-text = "as do the rest prompt and aiming: hint lines name them."
-
-[note_4]
+[note_numpad]
 text = "On screens the numpad moves as the arrows do (fixed)."
 
 # `name`, the command; `old`, the key it had; `shown`, the key it has now.

@@ -41,7 +41,7 @@ second ring on the other hand). `wield` takes what goes in a slot of action `wie
 one with no free slot, or the wrong one of the two is a content error. Objects lie only on
 walkable terrain; vaults place them the same way and generators stamp them with the vault. A level
 file's optional `arrival = "..."` line is said when the player arrives by stairs (a dungeon
-branch's on its first level, `Content::arrival`; a scenario's `arrival` once, as a run of it
+branch's on its first level, `Content::arrival`, said by its key, `data_line::arrival`; a scenario's `arrival` once, as a run of it
 starts). A floor above the ground names the level its `air` cells show and how many storeys up it
 stands, `below = "clearing"` and `storey = 1` (docs/dev/towers.md "Level fields": a hand-made
 outdoor level of the same size and campaign, checked at load). A legend entry's `name` (and `note`) names the place on

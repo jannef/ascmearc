@@ -16,8 +16,11 @@
 //! the next floor. From then on a floor made at that depth reads the slain list
 //! (`mapgen::Visit::slain`) and is an ordinary floor.
 
-use crate::content::{StairsDir, StairsLink, the};
+use crate::content::{StairsDir, StairsLink};
+use crate::lang::{Msg, Phrase};
+use crate::msg;
 use crate::world::World;
+use crate::world::combat::fight;
 
 impl World {
     /// Unique creature type `id` died on level `level`: if that level hides its lair's way down,
@@ -45,9 +48,14 @@ impl World {
             return;
         }
         let line = if self.perception.is_visible(at) {
-            format!("With {} dead, stairs open in the floor.", the(&hidden.name))
+            // The lair is named for its boss, a creature type (`mapgen::layer_boss_stairs`).
+            let boss = match self.content.creature_id(id) {
+                Some(c) => fight::creature(self.content.creature(c)),
+                None => Phrase::literal(&hidden.name),
+            };
+            Msg::new(msg::levels::LAIR_OPENS).role("boss", boss)
         } else {
-            "Somewhere stone grinds on stone.".to_string()
+            msg::levels::STONE_GRINDS.into()
         };
         self.say(line);
     }

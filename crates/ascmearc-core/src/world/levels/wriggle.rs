@@ -16,6 +16,8 @@
 //! time is spent.
 
 use crate::check::check;
+use crate::lang::Msg;
+use crate::msg;
 use crate::rng::draw;
 use crate::skills::Effect as SkillEffect;
 use crate::stats::Stat;
@@ -53,8 +55,8 @@ impl World {
         };
         let nerve = them.check_modifier(&content, Stat::Willpower);
         let who = match seen {
-            true => self.called(them),
-            false => "something".to_string(),
+            true => self.called_phrase(them),
+            false => crate::world::turn::phrase::something(),
         };
         let past = check(
             &mut draw!(self, "wriggle/{}", them.key),
@@ -65,12 +67,10 @@ impl World {
             self.train(Use::Wriggle);
         }
         if past {
-            self.say(format!("You wriggle past {who}."));
+            self.say(Msg::new(msg::levels::WRIGGLE_PAST).role("who", who));
             return Wriggled::Past;
         }
-        self.say(format!(
-            "You try to wriggle past {who}, but it is in the way."
-        ));
+        self.say(Msg::new(msg::levels::WRIGGLE_STUCK).role("who", who));
         let player = self.state.player;
         let onto = self.state.current().terrain[to];
         Wriggled::Stuck(Spent::Turn(self.step_price(

@@ -11,7 +11,8 @@
 #
 # [[disease]], in order:
 #   id          stable id, used by `on_hit` (creatures.toml) and saves
-#   name        how the character screen names it once it is known
+#   name        how the character screen names it once it is known, as it is said: with its own
+#               article if it has one ("the shakes"; "mummy rot" takes the sentence's)
 #   difficulty  what a check must reach to resist it, as it is caught and at each progression
 #   check       the stat whose modifier the checks add: "toughness" (the default), or any stat
 #   incubation  days from catching it to its onset: dice ("1d3") or a number, at least 1
@@ -37,7 +38,8 @@
 #               dialogue: every disease lists it), later potions
 #   onset       said when it shows (stops a rest)
 #   symptoms    said when a progression goes badly, in turn (each stops a rest)
-#   recovered   said when it is gone (lets a rest go on)
+#   recovered   said when it is gone (lets a rest go on); a line of data, said by its key
+#               `disease:<id>.recovered` (docs/dev/localization.md "Lines of data")
 # Creatures' bites may give a disease too: `on_hit = [{ disease = "filth_fever", chance = 10 }]`
 # in creatures.toml (then a check to resist it).
 

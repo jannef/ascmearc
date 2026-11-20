@@ -20,8 +20,7 @@
 
 use crate::alignment::Alignment;
 use crate::content::{
-    Content, CreatureId, Dialogue, DialogueLine, QuestDef, Shifts, Shops, Stance, alignment_key,
-    said_line,
+    Content, CreatureId, Dialogue, DialogueLine, QuestDef, Shifts, Shops, Stance, data_line,
 };
 use crate::lang::Msg;
 use crate::msg;
@@ -116,7 +115,8 @@ impl World {
         let shifted = score.shifted(amount);
         let (from, to) = (rules.band(score), rules.band(shifted));
         // Its line of data, by its key (`docs/dev/localization.md` "Lines of data").
-        let news = (rules.news(from, to)).map(|_| said_line(alignment_key(to, to > from)));
+        let news = (rules.news(from, to))
+            .map(|_| data_line::said(data_line::alignment_band(to, to > from)));
         if let Some(a) = self.state.actors.get_mut(&actor) {
             a.alignment = Some(shifted);
         }

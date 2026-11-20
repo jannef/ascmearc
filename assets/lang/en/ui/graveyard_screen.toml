@@ -1,0 +1,99 @@
+# The graveyard screen (`crates/ascmearc/src/ui/graveyard_screen.rs`). Ids alphabetical.
+#
+# The keys named in the hint lines are fixed (`Esc`): translate the words around them. The screen
+# fits each text to its panel (docs/dev/localization.md "UI text").
+
+# Race and class with a prestige class: `what`, the first two; `prestige`.
+[and_prestige]
+text = "{what:bare} and {prestige:bare}"
+
+# How they died; `who`, the killer as a phrase; the language gives its article.
+[cause_altar]
+text = "Struck down at a forgotten altar"
+
+[cause_burned]
+text = "Burned to death"
+
+[cause_choked]
+text = "Choked to death"
+
+[cause_drowned]
+text = "Drowned in deep water"
+
+[cause_fell]
+text = "Fell through a collapsed floor"
+
+[cause_killed_by]
+text = "Killed by {who:a}"
+
+# `name`, the status's name.
+[cause_died_of]
+text = "Died of {name:bare}"
+
+[cause_own]
+text = "Killed by their own {name:bare}"
+
+[cause_own_spell]
+text = "Killed by their own spell"
+
+[cause_profane]
+text = "Taken by the Profane"
+
+[cause_starved]
+text = "Starved to death"
+
+[cause_stone]
+text = "Turned to stone"
+
+[cause_unknown]
+text = "Died"
+
+[cause_unseen]
+text = "Killed by something unseen"
+
+# A cause with its place: `cause`, `place`.
+[death_place]
+text = "{cause:bare} in {place:bare}"
+
+# The death as a sentence: `death`.
+[death_line]
+text = "{death:bare}."
+
+# When and how old: `when`, the date; `age`.
+[died_aged]
+text = "Died aged {age:bare}."
+
+[died_when]
+text = "Died {when:bare}."
+
+[died_when_aged]
+text = "Died {when:bare}, aged {age:bare}."
+
+# Footer: `up_down`, `next`, `prev`, the page keys.
+[footer]
+text = "Esc back"
+
+[footer_pages]
+text = "{up_down:bare} {next:bare} {prev:bare} page   Esc back"
+
+# `n`, the level.
+[level]
+text = "level {n:bare}"
+
+[nobody]
+text = "No one lies here yet."
+
+# The page label: `page`, `pages`.
+[page]
+text = "Page {page:bare}/{pages:bare}"
+
+# A fallen character without a name.
+[someone]
+text = "Someone"
+
+[title]
+text = "Graveyard"
+
+# `n`, the experience.
+[xp]
+text = "{n:bare} xp"

@@ -11,6 +11,11 @@ use crate::test_support::draws;
 use crate::test_support::{builtin, last_text as last, run as act};
 use crate::world::*;
 
+/// Said when an action is refused while an encounter is pending.
+const PENDING_REFUSED: &str = "You must decide what to do about them.";
+/// The line that acknowledges a party met again.
+const KNOWN_LINE: &str = "You remember them: you got away from them here before.";
+
 const TABLE: &str = r#"
 [[table]]
 id = "wilds"

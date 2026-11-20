@@ -14,7 +14,7 @@ read their `CompanionData`.
 
 | Reads `kept` (both) | Reads its own |
 |---|---|
-| the name in the words (`called`, `End::Named`, `pack_phrase`, the Heal rows), growth (`grade_above`, `growth_protection`, `grow_companion`), always along (`follow_along`), the scent's growl, the status bar, the Character screen's `With` rows, look mode, `kept_beside` | `Actor::companion()`, `World::companion()` (Pack tactics and the ranger's later abilities, Tame); `Actor::familiar()`, `World::familiar()` (the touch, the harrying, `bring_familiar`) |
+| the name in the words (`called`, `End::Named`, `pack_args`, the Heal rows), growth (`grade_above`, `growth_protection`, `grow_companion`), always along (`follow_along`), the scent's growl, the status bar, the Character screen's `With` rows, look mode, `kept_beside` | `Actor::companion()`, `World::companion()` (Pack tactics and the ranger's later abilities, Tame); `Actor::familiar()`, `World::familiar()` (the touch, the harrying, `bring_familiar`) |
 
 A familiar and a companion may be had at once (the owner, §16 Q8): each is at most one of its
 source. `World::familiar()` is derived from the actors, on any level or in the retinue; the only

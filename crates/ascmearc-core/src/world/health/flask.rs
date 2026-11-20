@@ -38,7 +38,7 @@ use crate::content::{
     ActionKind, Burst, ObjectId, Shape, SpellPurpose, SpellZone, StatusId, TrapNoise,
 };
 use crate::geom::Pos;
-use crate::lang::Msg;
+use crate::lang::{Arg, Msg};
 use crate::msg;
 use crate::noise::{Act, SHATTER_NOISE, SoundKind};
 use crate::world::combat::fight;
@@ -138,8 +138,9 @@ impl World {
             return;
         };
         if seen {
-            if let Some(words) = &flask.words {
-                self.say(words.clone());
+            if flask.words.is_some() {
+                let key = crate::content::data_line::flask_words(&def.id);
+                self.say(Msg::data_line(Arg::said(key)));
             }
             if self.learn_scroll(object) {
                 let what = object_phrase(&content, object).count(1);
@@ -239,7 +240,7 @@ impl World {
             self.afflict(id, status, degrees, Some(cast.by), events);
             let them = &self.state.actors[&id];
             if id != self.state.player && self.perception.sees_actors_at(them.pos) {
-                let who = self.phrase_of(id);
+                let who = self.called_phrase(them);
                 let word = fight::word(&word);
                 self.say(
                     Msg::new(msg::health::IS_STATUS)

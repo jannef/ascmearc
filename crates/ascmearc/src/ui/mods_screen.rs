@@ -183,8 +183,7 @@ impl ModsScreen {
             Ok(on) => {
                 let text = match on.len() {
                     0 => ui(T::APPLIED_NONE),
-                    1 => ui(T::APPLIED_ONE),
-                    n => ui_with(T::APPLIED_MANY, &[("n", Arg::Number(n as i64))]),
+                    n => ui_with(T::APPLIED, &[("n", Arg::Number(n as i64))]),
                 };
                 self.applied = on;
                 self.say(text, false);

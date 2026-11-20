@@ -234,6 +234,18 @@ fn the_scroll_of_identify_is_the_commonest_scroll_and_the_general_store_has_it()
     assert_eq!(general.always, vec![identify]);
 }
 
+/// A scroll is no food: the refusal names an unknown one by its label, not its true type.
+#[test]
+fn a_refused_meal_names_an_unknown_scroll_by_its_label() {
+    let mut w = world(7);
+    let fire = label(&w, "scroll_of_fireball");
+    run(&mut w, "eat:a");
+    assert_eq!(
+        texts(&w).last().unwrap(),
+        &format!("You cannot consume a scroll labelled {fire}.")
+    );
+}
+
 /// A message names an unidentified scroll by what the player sees, never its true type, and reads
 /// the same after it is identified: the phrase was taken by value (`docs/dev/localization.md`).
 #[test]

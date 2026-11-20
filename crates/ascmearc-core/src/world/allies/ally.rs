@@ -57,7 +57,6 @@ use crate::lang::{Arg, Msg, Phrase};
 use crate::msg;
 use crate::noise::Act;
 use crate::skills::Use;
-use crate::text::and_list;
 use crate::time::{Duration, GameTime};
 use crate::world::combat::fight;
 use crate::world::creatures::ai::{Plan, Route};
@@ -568,47 +567,6 @@ impl World {
         }
     }
 
-    /// The allies `ids` as the player's words name them: "your wolf", "your wolves", "your
-    /// wolves and bear" (by type, in the order the ids run; a possessive takes no count), a
-    /// companion by its name first ("Snel", "Snel and your wolves"; `companion.rs`).
-    pub(in crate::world) fn pack_phrase(&self, ids: &[ActorId]) -> String {
-        let mut names: Vec<String> = Vec::new();
-        let mut kinds: Vec<(CreatureId, u32)> = Vec::new();
-        for id in ids {
-            let Some(a) = self.state.actors.get(id) else {
-                continue;
-            };
-            if let Some(data) = a.kept() {
-                names.push(data.name.clone());
-                continue;
-            }
-            // An escort by what the player calls them ("Eadgyth", "the lost villager").
-            if a.ally.as_ref().is_some_and(|x| x.source.is_escort()) {
-                names.push(self.called(a));
-                continue;
-            }
-            match kinds.iter_mut().find(|(c, _)| *c == a.creature) {
-                Some((_, n)) => *n += 1,
-                None => kinds.push((a.creature, 1)),
-            }
-        }
-        let words: Vec<String> = (kinds.iter())
-            .map(|&(c, n)| {
-                let def = self.content.creature(c);
-                if n == 1 {
-                    def.name.clone()
-                } else {
-                    def.plural.clone()
-                }
-            })
-            .collect();
-        if !words.is_empty() {
-            let yours = and_list(&words.iter().map(String::as_str).collect::<Vec<_>>());
-            names.push(format!("your {yours}"));
-        }
-        and_list(&names.iter().map(String::as_str).collect::<Vec<_>>())
-    }
-
     /// The player left `from` at `old` for `to`, arriving at `arrival` (the module docs): their
     /// allies within `comes_along` of `old`, not held fast, come along (into the retinue, when
     /// `to` is the overworld), and their companion wherever it stands, held fast or not
@@ -764,12 +722,14 @@ impl World {
         });
         if self.perception.sees_actors_at(actor.pos) {
             let def = self.content.creature(actor.creature);
-            let words = def.depart.as_deref().unwrap_or("fades away");
-            self.say(
-                Msg::new(msg::allies::DEPARTS)
-                    .role("who", fight::creature(def))
-                    .role("words", words),
-            );
+            let said = match def.depart {
+                Some(_) => Msg::new(msg::allies::DEPARTS).role(
+                    "words",
+                    Arg::said(crate::content::data_line::depart(&def.id)),
+                ),
+                None => Msg::new(msg::allies::FADES_AWAY),
+            };
+            self.say(said.role("who", fight::creature(def)));
         }
         self.fallen.push(actor);
     }

@@ -96,7 +96,8 @@ impl Content {
     }
 
     /// The line said as the player arrives on level `id` by stairs: a hand-made level's
-    /// `arrival`, or its branch's on a branch's first level.
+    /// `arrival`, or its branch's on a branch's first level. It is said by its key,
+    /// [`super::data_line::arrival`].
     pub fn arrival(&self, id: &str) -> Option<&str> {
         if let Some(template) = self.levels.get(id) {
             return template.arrival.as_deref();

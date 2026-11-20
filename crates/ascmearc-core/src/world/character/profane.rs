@@ -11,7 +11,7 @@
 //! as it takes or goes (`body_slots.rs`).
 
 use super::alignment::Deed;
-use crate::content::{GiftDef, GiftTier, OnEat, TalentEffect, TalentId, gift_key, said_line};
+use crate::content::{GiftDef, GiftTier, OnEat, TalentEffect, TalentId, data_line};
 use crate::lang::Msg;
 use crate::msg;
 use crate::rng::draw;
@@ -131,7 +131,7 @@ impl World {
                 self.rescind(t);
             }
             if def.instead.is_some() {
-                self.say(said_line(gift_key(&def.id, "instead")));
+                self.say(data_line::said(data_line::profane(&def.id, "instead")));
             }
             return false;
         }
@@ -149,7 +149,7 @@ impl World {
         });
         self.regrant();
         self.shift_stats(&book.get(gift).effects, 1);
-        self.say(said_line(gift_key(&def.id, "line")));
+        self.say(data_line::said(data_line::profane(&def.id, "line")));
         let name = book.get(gift).name.as_str();
         self.say(Msg::new(msg::character::YOU_ARE).role("gift", name));
         // What it bars falls (Horned's helm, `body_slots.rs`).
@@ -177,7 +177,7 @@ impl World {
         self.regrant();
         self.shift_stats(&talent.effects, -1);
         if def.undone.is_some() {
-            self.say(said_line(gift_key(&def.id, "undone")));
+            self.say(data_line::said(data_line::profane(&def.id, "undone")));
         }
         // A slot it opened is gone, and what was worn there falls (`body_slots.rs`).
         self.shed_unworn();

@@ -12,6 +12,7 @@
 //! | `part:<id>` | its `name`, its `adjective` ("pommelled") |
 //! | `gem_size:<id>`, `gem_cut:<id>` | the size's and the cut's `name` |
 //! | `stock:<material id>` | the form word a piece of the material is called by ("ingot", "lump") |
+//! | `race:<id>` | its `name` in lower case ("halfling") |
 //! | `terrain:<id>` | its `name` ("stone wall") |
 //! | `label:scroll`, `label:wand`, `label:rod`, `label:potion` | an unidentified type's `name` and `plural`, with its `{label}` and `{colour}` slots (`data/scroll_labels.toml`, …) |
 //! | `colour:<colour>` | a potion's colour, as its type writes it ("red") |
@@ -79,6 +80,8 @@ impl Lexicon for Content {
                 }?;
                 Some(named(&def.name, &def.plural))
             }
+            // A race is a common noun in a sentence ("a halfling"); its `name` is a label.
+            "race" => Some(LexWord::new(self.race(key)?.name.to_lowercase())),
             "terrain" => Some(LexWord::new(&self.terrain(self.terrain_id(key)?).name)),
             "colour" => Some(LexWord::new(key)),
             "word" => Some(LexWord::new(key).many(is_plural(key))),
@@ -113,6 +116,7 @@ mod tests {
         assert_eq!(word("material:ruby").forms["plural"], "rubies");
         assert_eq!(word("label:scroll").base, "scroll labelled {label}");
         assert_eq!(word("word:flames").base, "flames");
+        assert_eq!(word("race:half_elf").base, "half-elf");
         assert!(word("word:flames").many, "a plural noun");
         for unknown in [
             "creature:dodo",

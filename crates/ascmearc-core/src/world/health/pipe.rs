@@ -12,7 +12,7 @@
 use crate::action::Event;
 use crate::content::{ActionKind, ItemKind};
 use crate::hunger::Hunger;
-use crate::lang::Msg;
+use crate::lang::{Msg, Phrase};
 use crate::msg;
 use crate::stats::Stat;
 use crate::time::GameTime;
@@ -42,10 +42,7 @@ impl World {
         };
         let race = self.state.race_of(&content, self.state.player());
         if race.is_none_or(|r| r.id != rules.race) {
-            let smoker = content
-                .race(&rules.race)
-                .map_or("halfling", |r| r.name.as_str());
-            let smoker = smoker.to_lowercase();
+            let smoker = Phrase::id(format!("race:{}", rules.race));
             self.say(Msg::new(msg::health::PIPE_NOT_YOURS).role("smoker", smoker));
             return Spent::Nothing;
         }

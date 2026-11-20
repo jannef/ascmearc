@@ -4,7 +4,7 @@
 # (`docs/dev/localization.md` "Literal lines"). The lines the data writes (an alignment band's
 # `rise` and `fall`, the craving's and the oaths' messages, the laws' `first`, a profane gift's
 # `line`, `undone`, and `instead`, cold blood's bands) are lines of data, said by their keys
-# (`content/character_lines.rs`).
+# (`content/data_line.rs`).
 #
 # Roles: `who` is a creature a line is about, as the player calls it ("the kobold", "Grimbold").
 # `status` is a status as the player sees it, lower case ("invisible"); `talent`, `gift`,

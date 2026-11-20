@@ -13,13 +13,14 @@
 
 use super::menu::{HINTS, Nav, Panel, Press, wrap};
 use super::screens::ScreenAction;
+use super::text::{graveyard_screen as T, ui, ui_with};
 use super::{TEXT, TEXT_DIM};
 use crate::graveyard::{Fallen, PROFANE, STONE};
 use crate::render::console::Console;
 use crate::save::played_text;
 use crate::settings::Clock;
 use ascmearc_core::content::Content;
-use ascmearc_core::text::article;
+use ascmearc_core::lang::{Arg, Phrase};
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 /// The widest the panel gets.
@@ -61,11 +62,15 @@ impl Entry {
         if !fallen.prestige.is_empty() {
             let prestige = (content.prestige(&fallen.prestige))
                 .map_or(fallen.prestige.as_str(), |p| p.name.as_str());
-            what = format!("{what} and {prestige}");
+            let args = [("what", what.into()), ("prestige", prestige.into())];
+            what = ui_with(T::AND_PRESTIGE, &args);
         }
-        let death = format!("{}.", death_words(fallen, content));
+        let death = ui_with(
+            T::DEATH_LINE,
+            &[("death", death_words(fallen, content).into())],
+        );
         let name = if fallen.name.is_empty() {
-            "Someone".to_string()
+            ui(T::SOMEONE)
         } else {
             fallen.name.clone()
         };
@@ -84,9 +89,12 @@ impl Entry {
     fn died(&self, clock: Clock) -> Option<String> {
         match (self.when, self.age) {
             (0, 0) => None,
-            (0, age) => Some(format!("Died aged {age}.")),
-            (when, 0) => Some(format!("Died {}.", played_text(when, clock))),
-            (when, age) => Some(format!("Died {}, aged {age}.", played_text(when, clock))),
+            (0, age) => Some(ui_with(T::DIED_AGED, &[age_arg(age)])),
+            (when, 0) => Some(ui_with(T::DIED_WHEN, &[when_arg(when, clock)])),
+            (when, age) => Some(ui_with(
+                T::DIED_WHEN_AGED,
+                &[when_arg(when, clock), age_arg(age)],
+            )),
         }
     }
 
@@ -98,6 +106,14 @@ impl Entry {
     }
 }
 
+fn age_arg(age: u32) -> (&'static str, Arg) {
+    ("age", Arg::Number(i64::from(age)))
+}
+
+fn when_arg(when: u64, clock: Clock) -> (&'static str, Arg) {
+    ("when", played_text(when, clock).into())
+}
+
 /// What killed `fallen` and where, in words without a full stop: `Killed by a kobold in Fyrdelf
 /// 3, The Ascmearc`; this screen's line, and a gravestone's (`graveyard::GraveyardStore::dead`).
 pub(crate) fn death_words(fallen: &Fallen, content: &Content) -> String {
@@ -105,45 +121,59 @@ pub(crate) fn death_words(fallen: &Fallen, content: &Content) -> String {
     if fallen.place.is_empty() {
         cause
     } else {
-        format!("{cause} in {}", fallen.place)
+        let args = [
+            ("cause", cause.into()),
+            ("place", fallen.place.as_str().into()),
+        ];
+        ui_with(T::DEATH_PLACE, &args)
     }
 }
 
 /// What killed `fallen`, in words: `Killed by a kobold`, `Turned to stone`, `Bled to death`.
 fn cause_words(fallen: &Fallen, content: &Content) -> String {
-    let killed_by = |name: &str| format!("Killed by {} {name}", article(name));
+    let killed_by = |who: Phrase| ui_with(T::CAUSE_KILLED_BY, &[("who", who.into())]);
+    // A name the record or the data holds as English text: a word of the lexicon by its text.
+    let by_name = |name: &str| killed_by(Phrase::id(format!("word:{name}")));
     let cause = fallen.cause.as_str();
     match cause {
-        STONE => return "Turned to stone".into(),
-        "starved" => return "Starved to death".into(),
-        "fell" => return "Fell through a collapsed floor".into(),
-        "burned" => return "Burned to death".into(),
-        "choked" => return "Choked to death".into(),
-        "drowning" => return "Drowned in deep water".into(),
-        "altar" => return "Struck down at a forgotten altar".into(),
-        PROFANE => return "Taken by the Profane".into(),
-        "own_spell" => return "Killed by their own spell".into(),
-        "unseen" => return "Killed by something unseen".into(),
+        STONE => return ui(T::CAUSE_STONE),
+        "starved" => return ui(T::CAUSE_STARVED),
+        "fell" => return ui(T::CAUSE_FELL),
+        "burned" => return ui(T::CAUSE_BURNED),
+        "choked" => return ui(T::CAUSE_CHOKED),
+        "drowning" => return ui(T::CAUSE_DROWNED),
+        "altar" => return ui(T::CAUSE_ALTAR),
+        PROFANE => return ui(T::CAUSE_PROFANE),
+        "own_spell" => return ui(T::CAUSE_OWN_SPELL),
+        "unseen" => return ui(T::CAUSE_UNSEEN),
         _ => {}
     }
     if !fallen.killer.is_empty() {
-        return killed_by(&fallen.killer);
+        return by_name(&fallen.killer);
     }
     if let Some(status) = content.status_id(cause) {
         let def = content.status(status);
-        return (def.death.clone())
-            .unwrap_or_else(|| format!("Died of {}", def.name.to_lowercase()));
+        return (def.death.clone()).unwrap_or_else(|| {
+            ui_with(
+                T::CAUSE_DIED_OF,
+                &[("name", def.name.to_lowercase().into())],
+            )
+        });
     }
     if let Some(trap) = content.trap_id(cause) {
-        return killed_by(&content.trap(trap).name);
+        return by_name(&content.trap(trap).name);
     }
     if let Some(creature) = content.creature_id(cause) {
-        return killed_by(&content.creature(creature).name);
+        return killed_by(Phrase::id(format!(
+            "creature:{}",
+            content.creature(creature).id
+        )));
     }
     if let Some(object) = content.object_id(cause) {
-        return format!("Killed by their own {}", content.object(object).name);
+        let name = content.object(object).name.as_str();
+        return ui_with(T::CAUSE_OWN, &[("name", name.into())]);
     }
-    "Died".into()
+    ui(T::CAUSE_UNKNOWN)
 }
 
 /// The fallen, a page at a time.
@@ -214,23 +244,27 @@ impl GraveyardScreen {
         let pages = Self::pages(&blocks, room);
         self.pages.store(pages.len(), Ordering::Relaxed);
         let page = self.page.min(pages.len() - 1);
-        let panel = Panel::new(console, " Graveyard ", WIDTH, rows);
+        let panel = Panel::new(console, &format!(" {} ", ui(T::TITLE)), WIDTH, rows);
         let x = panel.inner_x();
         let right = x + panel.inner_w();
         if pages.len() > 1 {
-            let label = format!(" Page {}/{} ", page + 1, pages.len());
+            let args = [
+                ("page", Arg::Number(page as i64 + 1)),
+                ("pages", Arg::Number(pages.len() as i64)),
+            ];
+            let label = format!(" {} ", ui_with(T::PAGE, &args));
             let lx = panel.x + panel.w - 2 - label.chars().count() as i32;
             console.print(lx, panel.y, &label, TEXT);
         }
         if self.entries.is_empty() {
-            console.print(x, panel.y + 2, "No one lies here yet.", TEXT_DIM);
+            console.print(x, panel.y + 2, &ui(T::NOBODY), TEXT_DIM);
         }
         let mut y = panel.y + 2;
         for entry in &self.entries[pages[page].clone()] {
             console.print(x, y, &entry.name, TEXT);
             console.print(x + RACE_X, y, &entry.what, TEXT);
-            let level = format!("level {}", entry.level);
-            let xp = format!("{} xp", entry.xp);
+            let level = ui_with(T::LEVEL, &[("n", Arg::Number(i64::from(entry.level)))]);
+            let xp = ui_with(T::XP, &[("n", Arg::Number(i64::from(entry.xp)))]);
             let level_x = right - XP_W - level.chars().count() as i32;
             console.print(level_x, y, &level, TEXT);
             console.print(right - xp.chars().count() as i32, y, &xp, TEXT);
@@ -242,14 +276,14 @@ impl GraveyardScreen {
         }
         let keys = HINTS;
         let footer = if pages.len() > 1 {
-            format!(
-                "{} {} {} page   Esc back",
-                keys.up_down(),
-                keys.next_page,
-                keys.prev_page
-            )
+            let args = [
+                ("up_down", keys.up_down().into()),
+                ("next", Arg::from(keys.next_page)),
+                ("prev", Arg::from(keys.prev_page)),
+            ];
+            ui_with(T::FOOTER_PAGES, &args)
         } else {
-            "Esc back".to_string()
+            ui(T::FOOTER)
         };
         panel.footer(console, &footer);
     }

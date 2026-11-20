@@ -18,6 +18,7 @@
 use super::encounter::{Choice, How, Opening, Outcome, Pending};
 use crate::check;
 use crate::content::{ActionKind, Content, EncounterEntry};
+use crate::msg;
 use crate::rng::draw;
 use crate::skills::{Effect, Use};
 use crate::stats::Stat;
@@ -62,10 +63,10 @@ impl World {
             self.train(Use::Bluffed);
         }
         if fooled {
-            self.say("You talk your way past.");
+            self.say(msg::levels::TALK_PAST);
             return Spent::Turn(self.price_of(player, ActionKind::Chat));
         }
-        self.say("They are not fooled.");
+        self.say(msg::levels::NOT_FOOLED);
         self.encounter.opening = Some(Opening {
             pending,
             how: How::Fight,

@@ -6,7 +6,7 @@
 //!
 //! The script reads only the ids and the roles, with a scan of the file's lines that needs no
 //! dependency: a top-level `name = …` before the first table, or a table header `[name]`, is an
-//! entry; `{role:form}` in its text and a `by = "role.feature"` name its roles (`key`, the
+//! entry; `{role:form}` (or `{role}`) in its text and a `by = "role.feature"` name its roles (`key`, the
 //! host's keys, is none). The text itself is loaded at run time from the content, and a test
 //! (`msg.rs`) checks that the runtime parser finds the same ids and roles.
 
@@ -102,19 +102,29 @@ fn entries(path: &Path, text: &str) -> Vec<(String, Vec<String>)> {
     entries
 }
 
-/// The roles of the `{role:form}` placeholders in `text`.
+/// The roles of the placeholders in `text`, as `Line::parse` finds them: `{role:form}`, or
+/// `{role}` (the form `bare`); `{{` and `}}` are literal braces.
 fn slots(text: &str) -> Vec<&str> {
+    let plain =
+        |s: &str| !s.is_empty() && !s.contains(|c: char| c.is_whitespace() || c == '{' || c == ':');
     let mut roles = Vec::new();
     let mut rest = text;
-    while let Some(open) = rest.find('{') {
-        rest = &rest[open + 1..];
+    while let Some(open) = rest.find(['{', '}']) {
+        let from = &rest[open..];
+        if from.starts_with("{{") || from.starts_with("}}") {
+            rest = &from[2..];
+            continue;
+        }
+        rest = &from[1..];
+        if from.starts_with('}') {
+            continue;
+        }
         let Some(close) = rest.find('}') else { break };
-        if let Some((role, form)) = rest[..close].split_once(':')
-            && ident(role)
-            && !form.is_empty()
-            && !form.contains(char::is_whitespace)
-        {
+        let inner = &rest[..close];
+        let (role, form) = inner.split_once(':').unwrap_or((inner, "bare"));
+        if ident(role) && plain(form) {
             roles.push(role);
+            rest = &rest[close + 1..];
         }
     }
     roles

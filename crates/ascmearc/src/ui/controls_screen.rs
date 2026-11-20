@@ -46,8 +46,8 @@ enum Mode {
 /// One row of the list.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Row {
-    /// A line of text about keys in general.
-    Note(UiText),
+    /// A line of text about keys in general: a note's line, as its text breaks it.
+    Note(UiText, usize),
     /// The space before a group.
     Blank,
     /// The heading of a context's group.
@@ -92,7 +92,7 @@ impl Row {
             Row::Export => Some(T::ACTION_EXPORT),
             Row::Import => Some(T::ACTION_IMPORT),
             Row::Back => Some(T::ACTION_BACK),
-            Row::Note(_)
+            Row::Note(..)
             | Row::Blank
             | Row::Header(_)
             | Row::AbilityKeys
@@ -103,8 +103,9 @@ impl Row {
     }
 }
 
-/// What the list says first: the keys no binding changes.
-const NOTES: [UiText; 4] = [T::NOTE_1, T::NOTE_2, T::NOTE_3, T::NOTE_4];
+/// What the list says first: the keys no binding changes. A note is a sentence, broken into rows
+/// where its text has a line break, so a translation breaks it where its words allow.
+const NOTES: [UiText; 3] = [T::NOTE_ESC, T::NOTE_FIXED, T::NOTE_NUMPAD];
 
 /// The command whose keys are open as a sub-list, and how many keys it has.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -169,7 +170,9 @@ impl ControlsScreen {
     /// rebinding screen ends with its actions.
     fn rows(&self) -> Vec<Row> {
         let read_only = self.mode == Mode::ReadOnly;
-        let mut rows: Vec<Row> = NOTES.iter().map(|&note| Row::Note(note)).collect();
+        let mut rows: Vec<Row> = (NOTES.iter())
+            .flat_map(|&note| (0..ui(note).lines().count()).map(move |line| Row::Note(note, line)))
+            .collect();
         for &context in Context::ALL {
             rows.extend([Row::Blank, Row::Header(context)]);
             let commands =
@@ -487,8 +490,10 @@ impl ControlsScreen {
             // Help has nothing to select.
             let selected = !read_only && i == self.selected;
             match row {
-                Row::Note(note) => {
-                    console.print_in(panel.inner_x(), y, &ui(*note), TEXT_DIM, panel.inner_w());
+                Row::Note(note, line) => {
+                    let text = ui(*note);
+                    let text = text.lines().nth(*line).unwrap_or_default();
+                    console.print_in(panel.inner_x(), y, text, TEXT_DIM, panel.inner_w());
                 }
                 Row::Blank => {}
                 Row::Header(context) => {

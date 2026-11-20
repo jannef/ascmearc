@@ -32,19 +32,18 @@ use crate::content::{ActionKind, Content, Here, TerrainId};
 use crate::fov::compute_fov;
 use crate::geom::Pos;
 use crate::ice::{self, Ice, Shock};
-use crate::object;
+use crate::lang::{Arg, Msg};
+use crate::msg;
+use crate::object::Stack;
 use crate::rng::draw;
+use crate::scroll_label::Lore;
 use crate::skills::{Effect, Use};
 use crate::stats::Stat;
 use crate::temperature::{self, Temperature};
-use crate::text::capitalized;
 use crate::time::GameTime;
 use crate::world::combat::fight::Harm;
 use crate::world::{ActorId, LevelState, Spent, World, WorldState};
 use std::collections::{BTreeMap, BTreeSet};
-
-/// What the player is told when they plunge through the ice.
-const PLUNGE: &str = "The ice cracks beneath you and you plunge into the freezing water!";
 
 /// What stepping onto a cell did to the ice there ([`World::tread`]).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -327,7 +326,7 @@ impl World {
             chance => {
                 let broke = draw!(self, "ice/tread/{}", self.state.actors.key(id)).chance(chance);
                 if !broke && id == self.state.player {
-                    self.say("The ice creaks under your weight.");
+                    self.say(msg::levels::ICE_CREAKS);
                 }
                 broke
             }
@@ -338,18 +337,13 @@ impl World {
         let sank = self.break_ice(to);
         if id == self.state.player {
             self.say(if wading {
-                "You break through the ice."
+                msg::levels::BREAK_THROUGH_ICE
             } else {
-                PLUNGE
+                msg::levels::PLUNGE
             });
             if !sank.is_empty() {
-                let sink = if matches!(sank.as_slice(), [one] if one.count == 1) {
-                    "sinks"
-                } else {
-                    "sink"
-                };
-                let what = capitalized(&object::phrase(&sank, self.lore()));
-                self.say(format!("{what} {sink} into the water."));
+                let what = stacks_arg(&sank, self.lore());
+                self.say(Msg::new(msg::levels::SINKS).role("what", what));
             }
         }
         Footing::Broke { plunge: !wading }
@@ -372,7 +366,7 @@ impl World {
                 }
             }
             Footing::Held { climb: true } if id == self.state.player => {
-                self.say("You climb out onto the ice.");
+                self.say(msg::levels::CLIMB_OUT_ONTO_ICE);
                 self.train_stat(StatUse::Climb);
             }
             _ => {}
@@ -407,7 +401,7 @@ impl World {
 
     /// Breaks the ice at `p` on the player's level: open water there again. Returns the pile
     /// that lay on it, which sank to the bottom (it stays in the cell's pile, under the water).
-    fn break_ice(&mut self, p: Pos) -> Vec<object::Stack> {
+    fn break_ice(&mut self, p: Pos) -> Vec<Stack> {
         let content = self.content.clone();
         let level = self.state.current_mut();
         if let Some(water) = level.water_at(&content, p) {
@@ -463,7 +457,7 @@ impl World {
             self.train(Use::Swim);
         }
         if made {
-            self.say("You keep your head, and the cold bites less deep.");
+            self.say(msg::levels::KEEP_YOUR_HEAD);
         }
         made
     }
@@ -522,7 +516,7 @@ impl World {
             broke += 1;
             if let (true, Some(id)) = (bore, standing) {
                 if id == self.state.player {
-                    self.say(PLUNGE);
+                    self.say(msg::levels::PLUNGE);
                 }
                 self.fall_in(id, p, events);
             }
@@ -577,10 +571,12 @@ impl World {
             return Spent::Nothing;
         }
         let froze = self.frost(at, radius, crate::ice::FROST);
-        self.say(format!(
-            "Frost seizes the water around {},{} ({froze} cells, dev).",
-            at.x, at.y
-        ));
+        self.say(
+            Msg::new(msg::levels::FROST_DEV)
+                .role("x", i64::from(at.x))
+                .role("y", i64::from(at.y))
+                .role("cells", i64::try_from(froze).unwrap_or(i64::MAX)),
+        );
         self.frost_look(at, radius, events);
         Spent::NoTime
     }
@@ -596,11 +592,25 @@ impl World {
         if self.off_level_dev(at) {
             return Spent::Nothing;
         }
-        self.say(format!(
-            "Heat melts the ice around {},{} (dev).",
-            at.x, at.y
-        ));
+        self.say(
+            Msg::new(msg::levels::THAW_DEV)
+                .role("x", i64::from(at.x))
+                .role("y", i64::from(at.y)),
+        );
         self.shock(at, radius, crate::ice::Shock::Heat, events);
         Spent::NoTime
+    }
+}
+
+/// Stacks as a line names them (`{what:counted}`): one stack its phrase, two or three a list of
+/// them, more a count of objects ("17 objects"), as [`crate::object::phrase`] says them.
+fn stacks_arg(stacks: &[Stack], lore: Lore<'_>) -> Arg {
+    match stacks {
+        [one] => Arg::Phrase(lore.phrase(one)),
+        [_, _] | [_, _, _] => Arg::List(stacks.iter().map(|s| lore.phrase(s).into()).collect()),
+        _ => {
+            let count: u32 = stacks.iter().map(|s| s.count).sum();
+            Arg::Phrase(crate::world::combat::fight::word("object").count(count))
+        }
     }
 }

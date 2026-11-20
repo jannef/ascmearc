@@ -4,8 +4,10 @@
 # Roles: `who` is the one a line is about, as the player calls it ("Snel", "your wolf", "the
 # gardener"); `pack` is the allies an order names, a list ("Snel and your wolves"), said `{pack:the}`
 # and agreeing by `pack.number`; `what` is a thing; `name` and `own` are a beast's own name; `kind`
-# is its type. `came`, `message`, `ends`, `seen`, `line`, and `words` are text the data (or
-# another line) writes, until it is converted.
+# is its type; `seen` is a status as it looks ("hasted"). `message`, `ends`, `line`, and `words`
+# are lines of data (`docs/dev/localization.md` "Lines of data") said by their keys: a charm's,
+# a familiar's arrival, a creature's departure. `came` is text another line writes, until that
+# line is converted.
 
 # `who`: the one already led.
 already_at_side = "{who:The} {who:is} already at someone's side."
@@ -19,9 +21,9 @@ calling_broken = "You break off your calling."
 calling_broken_by = "{came:bare}; you break off your calling."
 cannot_be_tamed = "{who:The} cannot be tamed."
 carry_no_such_thing = "You carry no such thing."
-# `ends`: what the data says of a charm's end ("shakes off the charm").
+# `ends`: the charm's end, `spell:<id>.effect.charm.ends` ("shakes off the charm").
 charm_ends = "{who:The} {ends:bare}."
-# `message`: what the data says of a charm taking hold.
+# `message`: the charm taking hold, `spell:<id>.effect.charm.message`.
 charm_takes = "{who:The} {message:bare}."
 # `who`: the beast; `what`: the collar's old piece that fell.
 collar_falls = "{who:Poss} {what:bare} falls to the floor."
@@ -32,8 +34,13 @@ companion_arrives = "{name:bare}, your {kind:bare}, pads at your heel."
 # `what`: the food held out.
 crouch_feed = "You crouch by {who:the} and hold out {what:counted}."
 crouch_speak = "You crouch by {who:the} and speak softly to it."
-# `line`: how the data says it arrives ("keeps to your heel").
+# `who`: an ally whose time ran out, of a kind with no `depart` of its own.
+fades_away = "{who:The} fades away."
+# `line`: how its kind arrives, `familiars:arrives.<creature>` ("winds about your ankles").
 familiar_arrives = "{name:bare}, your {kind:bare}, {line:bare}."
+familiar_back = "{name:bare}, your {kind:bare}, comes back to you out of the dark."
+# A kind with no arrival of its own.
+familiar_heels = "{name:bare}, your {kind:bare}, keeps to your heel."
 familiar_lives = "Your familiar lives yet."
 # `what`: the collar, `who`: the beast it goes on.
 fasten_collar = "You fasten {what:the} about {who:poss} neck."
@@ -86,7 +93,8 @@ by = "pack.number"
 one = "{pack:The} comes with you."
 many = "{pack:The} come with you."
 
-# `who`: the creature that departs; `words`: how the data says it ("fades away").
+# `who`: the creature that departs; `words`: its kind's departure, `creature:<id>.depart`
+# ("darts away into the straw").
 [departs]
 text = "{who:The} {words:bare}."
 

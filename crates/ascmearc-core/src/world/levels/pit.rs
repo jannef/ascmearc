@@ -43,6 +43,7 @@ use crate::content::{
     Content, CreatureId, LevelKind, StairsDir, StairsLink, parse_branch_level, parse_instance,
 };
 use crate::geom::Pos;
+use crate::msg;
 use crate::world::{ActorId, World, WorldState};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
@@ -232,7 +233,7 @@ impl World {
         };
         pit.sealed = true;
         if self.state.current_level == level {
-            self.say("The Pit shudders. Far above, stone grinds on stone.");
+            self.say(msg::levels::PIT_SHUDDERS);
         }
     }
 
@@ -265,7 +266,7 @@ impl World {
             return;
         }
         self.set_terrain(at, rubble);
-        self.say("The stair crumbles to rubble behind you.");
+        self.say(msg::levels::STAIR_CRUMBLES);
     }
 
     /// After an action that changed level, on an arrival outside every Pit: a sealed Pit's mouth

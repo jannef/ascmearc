@@ -328,6 +328,19 @@ fn several_are_told_in_one_line() {
 }
 
 #[test]
+fn several_types_are_counted_in_a_list() {
+    let mut w = world_of(&Fixture {
+        top: CROWD,
+        ..Fixture::default()
+    });
+    let rat = w.content().creature_id("rat").expect("rat");
+    let last = at(&w, 4, 3);
+    w.state.actors.get_mut(&last).expect("actor").creature = rat;
+    run(&mut w, "descend");
+    told(&w, "2 kobolds and a giant rat follow you down the stairs.");
+}
+
+#[test]
 fn an_ally_keeps_its_place_and_the_follower_stays_behind() {
     for order in ["", "order:stay", "order:hunt:6,1"] {
         let mut w = world_of(&Fixture {

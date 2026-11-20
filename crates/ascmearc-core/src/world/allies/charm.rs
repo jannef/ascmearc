@@ -24,9 +24,9 @@
 //! Nothing here draws from any stream.
 
 use super::ally::{Ally, AllySource, Order};
-use crate::content::SpellCharm;
+use crate::content::{SpellCharm, data_line};
 use crate::geom::Pos;
-use crate::lang::Msg;
+use crate::lang::{Arg, Msg};
 use crate::msg;
 use crate::time::Duration;
 use crate::world::magic::cast::Cast;
@@ -88,11 +88,14 @@ impl World {
             });
         }
         let who = self.called_phrase(&self.state.actors[&target]);
-        self.say(
-            Msg::new(msg::allies::CHARM_TAKES)
-                .role("who", who)
-                .role("message", charm.message.as_str()),
-        );
+        let words = (self.content.spell_of(cast.spell)).map(|s| data_line::charm(&s.id, false));
+        if let Some(words) = words {
+            self.say(
+                Msg::new(msg::allies::CHARM_TAKES)
+                    .role("who", who)
+                    .role("message", Arg::said(words)),
+            );
+        }
         self.spell_landed(cast, target, true);
         true
     }
@@ -135,16 +138,19 @@ impl World {
                 summoned.faction_override = theirs.filter(|&f| Some(f) != own);
             }
         }
-        if told && self.perception.sees_actors_at(pos) {
-            let ends = (self.content.spell_of(spell))
-                .and_then(|s| s.effect.charm.as_ref())
-                .map_or("shakes off the charm", |c| c.ends.as_str())
-                .to_string();
+        // The spell is the charm's while the run's content is (saves are pinned to the version).
+        let ends = (self.content.spell_of(spell))
+            .filter(|s| s.effect.charm.is_some())
+            .map(|s| data_line::charm(&s.id, true));
+        if told
+            && self.perception.sees_actors_at(pos)
+            && let Some(ends) = ends
+        {
             let who = self.called_phrase(&self.state.actors[&id]);
             self.say(
                 Msg::new(msg::allies::CHARM_ENDS)
                     .role("who", who)
-                    .role("ends", ends),
+                    .role("ends", Arg::said(ends)),
             );
         }
     }

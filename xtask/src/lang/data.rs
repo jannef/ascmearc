@@ -6,10 +6,12 @@
 //! form the language lacks (a dialogue line: the base form only, `DIALOGUE_FORMS`) are errors; a
 //! line not translated is a warning (an error for `--strict`).
 
-use super::{KEY_ROLE, LIST_FORMS, LangFiles, Report, fnv6, language_of, lower};
+use super::{
+    KEY_ROLE, LIST_FORMS, LangFiles, Report, alternatives, fnv6, language_of, lower, shape_problems,
+};
 use ascmearc_core::content::DIALOGUE_FORMS;
 use ascmearc_lang::{Morphology, Template, Templates};
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 /// The kind of a dialogue line's key, whose files are `dialogue/<file>.toml`.
 const DIALOGUE: &str = "dialogue";
@@ -63,7 +65,10 @@ pub fn check_data(
                     ));
                 }
                 match Template::from_value(&by_gender(&key, value)) {
-                    Ok(t) => check_slots(&at, kind, &t, en, language.morphology(), &mut report),
+                    Ok(t) => {
+                        check_slots(&at, kind, &t, en, language.morphology(), &mut report);
+                        check_shape(&at, kind, &t, en, &mut report);
+                    }
                     Err(e) => report.errors.push(format!("{at}: {e}")),
                 }
             }
@@ -81,6 +86,155 @@ pub fn check_data(
         }
     }
     report
+}
+
+/// The data files of `lang` with `of` written (every line lacking one; with `restamp`, the stale
+/// ones too), as `(path, new text)` for the files that changed: `--stamp` for lines of data. It
+/// edits lines as the message files' stamping does, so comments and layout stay: a line in a
+/// table, `start = "…"`, becomes `start = { text = "…", of = "<hash>" }`; an array written an
+/// item a line (dialogue's `lines`) has each item stamped so; a table that is one line (variants,
+/// an `address`) gets an `of` line after its header. An array on one line is refused (write it
+/// an item a line).
+pub fn stamp_data(
+    english: &Templates,
+    lang: &LangFiles,
+    restamp: bool,
+) -> Result<Vec<(String, String)>, String> {
+    let mut changed = Vec::new();
+    for (kind, path, text) in data_files(lang) {
+        let wanted =
+            wanted_stamps(kind, text, english, restamp).map_err(|e| format!("{path}: {e}"))?;
+        if wanted.is_empty() {
+            continue;
+        }
+        let new = stamp_data_text(kind, text, &wanted).map_err(|e| format!("{path}: {e}"))?;
+        // The result must read back with every wanted line stamped.
+        let again = wanted_stamps(kind, &new, english, true)
+            .map_err(|e| format!("{path}: stamping broke the file: {e}"))?;
+        if let Some(key) = wanted.keys().find(|k| again.contains_key(*k)) {
+            return Err(format!(
+                "{path}: `{key}` was not stamped: write its `of` by hand"
+            ));
+        }
+        changed.push((path.to_string(), new));
+    }
+    Ok(changed)
+}
+
+/// The lines of a data file to stamp, by key, with their hashes: those without `of` and, with
+/// `restamp`, the stale ones. A line English lacks is left alone (the check reports it).
+fn wanted_stamps(
+    kind: &str,
+    text: &str,
+    english: &Templates,
+    restamp: bool,
+) -> Result<BTreeMap<String, String>, String> {
+    let table = toml::from_str::<toml::Table>(text).map_err(|e| e.message().to_string())?;
+    let mut leaves = Vec::new();
+    for (key, value) in &table {
+        leaves_of(&format!("{kind}:{key}"), value, &mut leaves);
+    }
+    let mut wanted = BTreeMap::new();
+    for (key, value) in leaves {
+        let Some(en) = english.get(&key) else {
+            continue;
+        };
+        let hash = fnv6(&en.written());
+        let of = value.get("of").and_then(|v| v.as_str());
+        if of.is_none() || (restamp && of != Some(hash.as_str())) {
+            wanted.insert(key, hash);
+        }
+    }
+    Ok(wanted)
+}
+
+/// Writes the `of`s of [`stamp_data`] by editing `text`'s lines.
+fn stamp_data_text(
+    kind: &str,
+    text: &str,
+    wanted: &BTreeMap<String, String>,
+) -> Result<String, String> {
+    let mut out: Vec<String> = Vec::new();
+    let mut table = String::new(); // the path of the table the lines are in ("" at the top)
+    let mut replacing: Option<String> = None; // a one-line table whose own `of` is replaced
+    let mut array: Option<(String, usize)> = None; // an array written an item a line, its next
+    let key_of = |table: &str, name: &str| match table {
+        "" => format!("{kind}:{name}"),
+        t => format!("{kind}:{t}.{name}"),
+    };
+    for line in text.lines() {
+        let trimmed = line.trim();
+        if let Some((base, next)) = &mut array {
+            if trimmed.starts_with(']') {
+                array = None;
+            } else if !trimmed.is_empty() && !trimmed.starts_with('#') {
+                let key = format!("{base}.{next}");
+                *next += 1;
+                if let Some(hash) = wanted.get(&key) {
+                    let indent = &line[..line.len() - line.trim_start().len()];
+                    let item = trimmed.strip_suffix(',').unwrap_or(trimmed).trim_end();
+                    let stamped = super::stamp_value("x", item, hash)?;
+                    let stamped = stamped.strip_prefix("x = ").unwrap_or(&stamped);
+                    out.push(format!("{indent}{stamped},"));
+                    continue;
+                }
+            }
+            out.push(line.to_string());
+            continue;
+        }
+        if trimmed.starts_with('[')
+            && !trimmed.starts_with("[[")
+            && let Some(name) = trimmed[1..].split(']').next()
+        {
+            table = name.trim().to_string();
+            replacing = None;
+            out.push(line.to_string());
+            if let Some(hash) = wanted.get(&key_of("", &table)) {
+                if super::body_has_of(text, line) {
+                    replacing = Some(hash.clone());
+                } else {
+                    out.push(format!("of = \"{hash}\""));
+                }
+            }
+            continue;
+        }
+        if let Some(hash) = &replacing
+            && trimmed
+                .strip_prefix("of")
+                .is_some_and(|r| r.trim_start().starts_with('='))
+        {
+            out.push(format!("of = \"{hash}\""));
+            replacing = None;
+            continue;
+        }
+        if !trimmed.starts_with('#')
+            && let Some((name, value)) = trimmed.split_once('=')
+        {
+            let (name, value) = (name.trim(), value.trim());
+            let key = key_of(&table, name);
+            let opens = value.starts_with('[');
+            let closed = value.matches('[').count() == value.matches(']').count();
+            if opens && !closed {
+                array = Some((key, 0));
+            } else if opens {
+                let prefix = format!("{key}.");
+                if wanted.keys().any(|k| k.starts_with(&prefix)) {
+                    return Err(format!(
+                        "`{name}` is an array on one line: write it an item a line"
+                    ));
+                }
+            } else if let Some(hash) = wanted.get(&key) {
+                out.push(super::stamp_value(name, value, hash)?);
+                continue;
+            }
+        }
+        out.push(line.to_string());
+    }
+    let mut joined = out.join("\n");
+    if text.ends_with('\n') {
+        joined.push('\n');
+    }
+    Ok(joined)
 }
 
 /// Every file of lines of data as `(kind, path, text)`: `data/<kind>.toml`, `dialogue/*.toml`.
@@ -126,6 +280,25 @@ fn by_gender(key: &str, value: &toml::Value) -> toml::Value {
             toml::Value::Table(t)
         }
         other => other.clone(),
+    }
+}
+
+/// A translated line's variants and alternatives, as a message's: a `by` on a role the English
+/// line does not pass, a feature no argument has, or a value the feature never takes, and more
+/// flavour alternatives than English has (core draws by English's count).
+fn check_shape(at: &str, kind: &str, line: &Template, english: &Template, report: &mut Report) {
+    let mut roles = english.roles();
+    if kind == DIALOGUE {
+        roles.push(PLAYER.to_string());
+    }
+    for problem in shape_problems(line, Some(&roles)) {
+        report.errors.push(format!("{at}: {problem}"));
+    }
+    let (most, ours) = (alternatives(english), alternatives(line));
+    if ours > most {
+        report.errors.push(format!(
+            "{at}: {ours} alternatives, English has {most} (core draws by English's count)"
+        ));
     }
 }
 
@@ -196,6 +369,59 @@ mod tests {
     }
 
     #[test]
+    fn stamping_lines_of_data_writes_each_hash_and_keeps_the_layout() {
+        let status = "# Dazed.\n[dazed]\nstart = \"{who:The} horjuu.\"\nend = { text = \"{who:The} tasaantuu.\", of = \"000000\" }\n";
+        let dialogue = "[ceaptun.gardener]\nlines = [\n    # the first\n    \"{thing:the}, {player:address}.\",\n]\n";
+        let files = [
+            ("data/status.toml", status),
+            ("dialogue/ceaptun.toml", dialogue),
+        ];
+        let langs = world(&files);
+        let changed = stamp_data(&english(), &langs["xx"], false).expect("stamps");
+        assert_eq!(changed.len(), 2, "{changed:?}");
+        let new: std::collections::BTreeMap<_, _> = changed.into_iter().collect();
+        let status = &new["data/status.toml"];
+        assert!(status.starts_with("# Dazed.\n[dazed]\n"), "{status}");
+        assert!(status.contains(&fnv6("{who:The} reels.")), "{status}");
+        assert!(
+            status.contains("000000"),
+            "a stale line waits for --restamp"
+        );
+        assert!(new["dialogue/ceaptun.toml"].contains("# the first"));
+        let stamped: Vec<(&str, &str)> =
+            new.iter().map(|(p, t)| (p.as_str(), t.as_str())).collect();
+        let e = checked(&stamped, &[]).errors;
+        assert_eq!(e.len(), 1, "only the stale end: {e:?}");
+        assert!(
+            e[0].contains("dazed.end") && e[0].contains("stale"),
+            "{e:?}"
+        );
+        // Restamped, it is clean, and stamping again changes nothing.
+        let langs = world(&stamped);
+        let again = stamp_data(&english(), &langs["xx"], true).expect("restamps");
+        let restamped: Vec<(&str, &str)> = (stamped.iter().copied())
+            .map(|(p, t)| {
+                let new = again
+                    .iter()
+                    .find(|(q, _)| q == p)
+                    .map_or(t, |(_, n)| n.as_str());
+                (p, new)
+            })
+            .collect();
+        assert!(checked(&restamped, &[]).errors.is_empty());
+        let langs = world(&restamped);
+        assert!(
+            stamp_data(&english(), &langs["xx"], true)
+                .unwrap()
+                .is_empty()
+        );
+        // An array on one line is refused.
+        let one = "[ceaptun.gardener]\nlines = [\"{thing:the}.\"]\n";
+        let langs = world(&[("dialogue/ceaptun.toml", one)]);
+        assert!(stamp_data(&english(), &langs["xx"], false).is_err());
+    }
+
+    #[test]
     fn a_translated_line_of_data_is_checked_like_a_message() {
         let start = fnv6("{who:The} reels.");
         let gardener = fnv6("Mind the {thing:the}, {player:address}.");
@@ -260,5 +486,57 @@ mod tests {
                 .any(|m| m.contains("{thing:plural}") && m.contains("base form only")),
             "{e:?}"
         );
+    }
+
+    #[test]
+    fn a_line_of_datas_by_and_alternatives_are_checked_like_a_messages() {
+        let start = fnv6("{who:The} reels.");
+        let gardener = fnv6("Mind the {thing:the}, {player:address}.");
+        let status = |entry: &str| format!("[dazed]\nstart = {{ of = \"{start}\", {entry} }}\n");
+        let e = |file: &str, text: &str| checked(&[(file, text)], &[]).errors;
+        let wrong_role = e(
+            "data/status.toml",
+            &status("by = \"x.gender\", else = \"{who:The} horjuu.\""),
+        );
+        assert!(
+            wrong_role
+                .iter()
+                .any(|m| m.contains("dazed.start") && m.contains("unknown role `x` in `by`")),
+            "{wrong_role:?}"
+        );
+        let wrong_value = e(
+            "data/status.toml",
+            &status("by = \"who.number\", one = \"Horjuu.\", lots = \"Horjuvat.\""),
+        );
+        assert!(
+            wrong_value.iter().any(|m| m.contains("`lots` is no value")),
+            "{wrong_value:?}"
+        );
+        let wrong_feature = e(
+            "data/status.toml",
+            &status("by = \"who.mood\", else = \"x\""),
+        );
+        assert!(
+            wrong_feature
+                .iter()
+                .any(|m| m.contains("no feature `mood`")),
+            "{wrong_feature:?}"
+        );
+        let more = e(
+            "data/status.toml",
+            &status("text = [\"Horjuu.\", \"Huojuu.\"]"),
+        );
+        assert!(
+            more.iter()
+                .any(|m| m.contains("2 alternatives, English has 1")),
+            "{more:?}"
+        );
+        // Dialogue is given the player: a `by` on it is fine, as is an `address` by gender.
+        let by_player = format!(
+            "[ceaptun.gardener]\nlines = [{{ of = \"{gardener}\", by = \"player.gender\", \
+             female = \"{{thing:the}}\", else = \"{{thing}}\" }}]\n"
+        );
+        let ok = e("dialogue/ceaptun.toml", &by_player);
+        assert!(ok.is_empty(), "{ok:?}");
     }
 }

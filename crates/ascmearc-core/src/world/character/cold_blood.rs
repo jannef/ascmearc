@@ -5,7 +5,7 @@
 //! is told in words when they come into another band ([`World::blood_turn`]); the numbers stay
 //! hidden.
 
-use crate::content::{Content, said_line, warmth_bands, warmth_key};
+use crate::content::{Content, data_line};
 use crate::talent::WarmthBand;
 use crate::world::{Actor, ActorId, World};
 
@@ -69,7 +69,7 @@ impl World {
         // "Lines of data").
         let source = line.and_then(|_| warmth_source(&self.content, actor, bands));
         if let Some(talent) = source {
-            self.say(said_line(warmth_key(&talent, now, slower)));
+            self.say(data_line::said(data_line::warmth(&talent, now, slower)));
         }
     }
 }
@@ -80,7 +80,7 @@ fn warmth_source(content: &Content, actor: &Actor, bands: &[WarmthBand]) -> Opti
     let book = content.talents();
     (actor.talents.iter())
         .filter_map(|taken| book.id(&taken.id).map(|id| book.get(id)))
-        .filter(|def| warmth_bands(def).any(|b| b == bands))
+        .filter(|def| data_line::warmth_bands(def).any(|b| b == bands))
         .last()
         .map(|def| def.id.clone())
 }

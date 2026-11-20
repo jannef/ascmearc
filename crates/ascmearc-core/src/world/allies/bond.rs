@@ -16,6 +16,7 @@ use crate::action::Event;
 use crate::content::{Content, StatusId};
 use crate::lang::Msg;
 use crate::msg;
+use crate::world::combat::fight;
 use crate::world::{ActorId, World};
 
 impl World {
@@ -59,7 +60,7 @@ impl World {
             self.news.push(
                 Msg::new(msg::allies::BOND_SHARED)
                     .role("who", who)
-                    .role("seen", seen),
+                    .role("seen", fight::word(&seen)),
             );
         }
     }

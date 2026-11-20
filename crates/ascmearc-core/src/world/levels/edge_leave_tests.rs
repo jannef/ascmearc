@@ -4,13 +4,16 @@
 //! nobody. The fixture is the forest scenario's generated local area, the player moved to its
 //! west edge and a kobold placed where each case needs it.
 
-use super::edge_leave::EDGE_LEAVE_REFUSED;
-use super::quick_leave::QUICK_LEAVE_REFUSED;
 use crate::action::parse_actions;
 use crate::content::Stance;
 use crate::test_support::{builtin as content, last_text as last};
 use crate::world::magic::caster_tests::kobold_at;
 use crate::world::*;
+
+/// What the player is told when the walk off the edge is refused.
+const EDGE_LEAVE_REFUSED: &str = "They are too close to slip away.";
+/// What the player is told when the quick leave is refused.
+const QUICK_LEAVE_REFUSED: &str = "You cannot slip away with enemies about.";
 
 /// A run in the forest's local area, the player on a free, walkable cell of its west edge.
 fn at_the_edge() -> World {

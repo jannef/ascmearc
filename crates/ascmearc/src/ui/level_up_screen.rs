@@ -26,10 +26,12 @@ use super::menu::{HINTS, Nav, Panel, Press, truncated};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::ScreenAction;
 use super::skills_screen::meter;
+use super::text::{level_up_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use ascmearc_core::Action;
 use ascmearc_core::content::TreeId;
+use ascmearc_core::lang::Arg;
 use ascmearc_core::perception::PerceptionView;
 use ascmearc_core::world::{RollBonus, RollCount, SkillRoll};
 
@@ -99,7 +101,7 @@ impl LevelUpScreen {
     /// the stack does not open it then).
     pub fn new(view: Option<&PerceptionView<'_>>) -> Self {
         let mut screen = Self {
-            title: " Level up ".into(),
+            title: format!(" {} ", ui(T::TITLE)),
             after: None,
             step: Step::Talent,
             left: String::new(),
@@ -122,18 +124,22 @@ impl LevelUpScreen {
             () if due.bonus > 0 => Step::Bonus,
             () => Step::Talent,
         };
-        let mut parts = vec![format!("Level {}", due.level)];
+        let count = |n: u8| [("n", Arg::Number(i64::from(n)))];
+        let mut parts = vec![ui_with(
+            T::TITLE_LEVEL,
+            &[("level", Arg::Number(i64::from(due.level)))],
+        )];
         if due.rolls > 0 {
-            parts.push(format!("Skill rolls {}", due.rolls));
+            parts.push(ui_with(T::TITLE_ROLLS, &count(due.rolls)));
         }
         if due.free > 0 {
-            parts.push(format!("Free talent {}", due.free));
+            parts.push(ui_with(T::TITLE_FREE, &count(due.free)));
         }
         if due.bonus > 0 {
-            parts.push(format!("Bonus talent {}", due.bonus));
+            parts.push(ui_with(T::TITLE_BONUS, &count(due.bonus)));
         }
         if due.talents > 0 {
-            parts.push(format!("Talent {}", due.talents));
+            parts.push(ui_with(T::TITLE_TALENT, &count(due.talents)));
         }
         screen.title = format!(" {} ", parts.join(" · "));
         let later: Vec<String> = (view.dues().iter().skip(1))
@@ -141,15 +147,26 @@ impl LevelUpScreen {
             .collect();
         screen.after = match later.len() {
             0 => None,
-            1 => Some(format!("Level {} next", later[0])),
+            1 => Some(ui_with(
+                T::AFTER_ONE,
+                &[("level", later[0].as_str().into())],
+            )),
             // Many levels at once: the first and the last, so the footer fits.
-            n if n > 3 => Some(format!("Levels {} to {} next", later[0], later[n - 1])),
-            _ => Some(format!("Levels {} next", later.join(", "))),
+            n if n > 3 => Some(ui_with(
+                T::AFTER_MANY,
+                &[
+                    ("first", later[0].as_str().into()),
+                    ("last", later[n - 1].as_str().into()),
+                ],
+            )),
+            _ => Some(ui_with(
+                T::AFTER_LIST,
+                &[("levels", later.join(", ").into())],
+            )),
         };
         screen.left = match screen.step {
-            Step::Rolls if due.rolls == 1 => "You have a skill roll to spend.".into(),
-            Step::Rolls => format!("You have {} skill rolls to spend.", due.rolls),
-            Step::Free | Step::Bonus | Step::Talent => "You must choose a talent first.".into(),
+            Step::Rolls => ui_with(T::LEFT_ROLLS, &count(due.rolls)),
+            Step::Free | Step::Bonus | Step::Talent => ui(T::LEFT_TALENT),
         };
         if screen.step == Step::Rolls {
             screen.sources = roll_sources(view.roll_count());
@@ -225,7 +242,7 @@ impl LevelUpScreen {
             }
         };
         screen.entries = PagedList::grouped(items, |group| match group {
-            Group::Skills => "Skills".to_string(),
+            Group::Skills => ui(T::SKILLS),
             Group::Tree(tree) => book.tree(tree).name.clone(),
         });
         screen
@@ -330,7 +347,7 @@ impl LevelUpScreen {
         let (x, top) = (panel.inner_x(), panel.y + 2);
         let fits = |y: i32| y < panel.y + panel.h - 2;
         if list.is_empty() && fits(top) {
-            console.print(x + 2, top, "There is nothing to choose.", TEXT_DIM);
+            console.print(x + 2, top, &ui(T::NOTHING), TEXT_DIM);
         }
         let name_w = (list.iter().map(|e| e.name.chars().count()).max()).unwrap_or(0) as i32;
         let cursor = list.cursor();
@@ -398,14 +415,25 @@ impl LevelUpScreen {
     fn footer(&self) -> String {
         let keys = HINTS;
         let list = self.list();
-        let verb = match (self.step, &self.choosing) {
-            (Step::Rolls, _) => "roll",
-            (_, Some(_)) | (_, None) => "choose",
-        };
-        let confirm = &keys.confirm;
+        let rolling = self.step == Step::Rolls;
+        let confirm = ("confirm", Arg::from(keys.confirm));
         let letters = match list.last_letter() {
-            Some('a') => format!("a or {confirm} {verb}"),
-            Some(last) => format!("a-{last} or {confirm} {verb}"),
+            Some('a') => {
+                let id = if rolling {
+                    T::ROLL_SINGLE
+                } else {
+                    T::CHOOSE_SINGLE
+                };
+                ui_with(id, &[confirm])
+            }
+            Some(last) => {
+                let id = if rolling {
+                    T::ROLL_RANGE
+                } else {
+                    T::CHOOSE_RANGE
+                };
+                ui_with(id, &[("last", last.to_string().into()), confirm])
+            }
             None => String::new(),
         };
         let mut parts = vec![letters];
@@ -413,7 +441,7 @@ impl LevelUpScreen {
             parts.push(hint);
         }
         if self.choosing.is_some() {
-            parts.push("Esc back".into());
+            parts.push(ui(T::BACK));
         } else if let Some(after) = &self.after {
             parts.push(after.clone());
         }
@@ -430,21 +458,26 @@ fn roll_sources(count: RollCount) -> Option<String> {
         return None;
     }
     let parts: Vec<String> = [
-        ("class", count.class),
-        ("race", count.race),
-        ("Intelligence", count.intelligence),
-        ("talents", count.talents),
+        (T::SOURCE_CLASS, count.class),
+        (T::SOURCE_RACE, count.race),
+        (T::SOURCE_INTELLIGENCE, count.intelligence),
+        (T::SOURCE_TALENTS, count.talents),
     ]
     .into_iter()
     .filter(|&(_, n)| n > 0)
-    .map(|(from, n)| format!("{from} {n}"))
+    .map(|(from, n)| {
+        let args = [
+            ("source", ui(from).into()),
+            ("n", Arg::Number(i64::from(n))),
+        ];
+        ui_with(T::SOURCE, &args)
+    })
     .collect();
-    let rolls = if total == 1 {
-        "skill roll"
-    } else {
-        "skill rolls"
-    };
-    Some(format!("{total} {rolls} a level: {}", parts.join(", ")))
+    let args = [
+        ("total", Arg::Number(i64::from(total))),
+        ("from", parts.join(", ").into()),
+    ];
+    Some(ui_with(T::SOURCES, &args))
 }
 
 /// What a roll adds to the skill, as dice: `2d4+1`, or `(1d5+1)/2` from the soft cap on.
@@ -460,32 +493,39 @@ fn roll_dice(roll: &SkillRoll) -> String {
 /// gives 1d5, one die up to 2d4 as your class's own skill, +1 as your race trains it."
 fn explain_roll(roll: &SkillRoll, soft_cap: u16) -> String {
     let marks = match roll.marks {
-        0 => "no marks".to_string(),
-        1 => "1 mark".to_string(),
-        n => format!("{n} marks"),
+        0 => ui(T::MARKS_NONE),
+        n => ui_with(T::MARKS, &[("n", Arg::Number(i64::from(n)))]),
     };
-    let mut text = format!(
-        "Rolls {}: practice ({marks}) gives {}",
-        roll.dice(),
-        roll.practice
-    );
-    if roll.known {
-        let why = if roll.trade {
-            "your trade"
-        } else {
-            "your class's own skill"
-        };
-        text += &format!(", one die up to {} as {why}", roll.die);
-    }
-    match roll.bonus {
-        Some(RollBonus::Class) => text += ", +1 as your class trains it",
-        Some(RollBonus::Race) => text += ", +1 as your race trains it",
-        None => {}
-    }
-    if roll.halved {
-        text += &format!("; from {soft_cap} on the skill rises by half, rounded up");
-    }
-    text + "."
+    // The clauses that apply, each empty when it does not: the sentence is one entry.
+    let die = [("die", roll.die.to_string().into())];
+    let known = match (roll.known, roll.trade) {
+        (false, _) => String::new(),
+        (true, true) => ui_with(T::EXPLAIN_TRADE, &die),
+        (true, false) => ui_with(T::EXPLAIN_OWN, &die),
+    };
+    let trained = match roll.bonus {
+        Some(RollBonus::Class) => ui(T::EXPLAIN_CLASS),
+        Some(RollBonus::Race) => ui(T::EXPLAIN_RACE),
+        None => String::new(),
+    };
+    let halved = match roll.halved {
+        true => ui_with(
+            T::EXPLAIN_HALVED,
+            &[("cap", Arg::Number(i64::from(soft_cap)))],
+        ),
+        false => String::new(),
+    };
+    ui_with(
+        T::EXPLAIN,
+        &[
+            ("dice", roll.dice().to_string().into()),
+            ("marks", marks.into()),
+            ("practice", roll.practice.to_string().into()),
+            ("known", known.into()),
+            ("trained", trained.into()),
+            ("halved", halved.into()),
+        ],
+    )
 }
 
 #[cfg(test)]

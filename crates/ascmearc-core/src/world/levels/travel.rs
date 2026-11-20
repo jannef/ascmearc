@@ -14,8 +14,10 @@ use crate::content::{
 };
 use crate::equipment::Equipment;
 use crate::geom::{Dir, Pos};
+use crate::lang::{Arg, Msg, Phrase};
 use crate::magic::loot::Luck;
 use crate::mapgen::local::arrival;
+use crate::msg;
 use crate::object::Stack;
 use crate::world::creatures::spawn::Spawner;
 use crate::world::people::talk::Refusal;
@@ -118,7 +120,7 @@ impl World {
                 }
                 return self.leave_by_edge(exit, events);
             }
-            self.say("You can't go that way.");
+            self.say(msg::levels::CANNOT_GO_THAT_WAY);
             return Spent::Nothing;
         };
         let def = self.content.terrain(terrain);
@@ -140,8 +142,8 @@ impl World {
                 self.say(text);
                 return Spent::Nothing;
             }
-            let name = def.name.clone();
-            self.say(format!("The {name} blocks your way."));
+            let what = Phrase::id(format!("terrain:{}", def.id));
+            self.say(Msg::new(msg::levels::WAY_BLOCKED).role("what", what));
             return Spent::Nothing;
         }
         // Deep water, from the shore: seen first, and only for a swimmer (`swim.rs`).
@@ -265,12 +267,12 @@ impl World {
     pub(super) fn leave_by_edge(&mut self, exit: EdgeExit, events: &mut Vec<Event>) -> Spent {
         let from = self.state.current_level.clone();
         if let Err(err) = self.travel(&exit.to, Some(exit.pos)) {
-            self.say(format!("You cannot leave this way ({err})."));
+            self.say(Msg::new(msg::levels::CANNOT_LEAVE).role("error", err.to_string()));
             return Spent::Nothing;
         }
         events.push(Event::LevelChanged { from, to: exit.to });
-        let name = self.state.current().name.clone();
-        self.say(format!("You return to {name}."));
+        let place = Phrase::literal(&self.state.current().name);
+        self.say(Msg::new(msg::levels::RETURN_TO).role("place", place));
         self.took(true, ActionKind::Stairs)
     }
 
@@ -280,10 +282,10 @@ impl World {
     pub(super) fn enter_local_area(&mut self, events: &mut Vec<Event>) -> bool {
         let id = local_area_id(self.player_pos());
         let Some(area) = self.content.local_area(&self.state.campaign, &id) else {
-            self.say("There is nothing to explore here.");
+            self.say(msg::levels::NOTHING_TO_EXPLORE);
             return false;
         };
-        let what = self.content.terrain(area.terrain).name.clone();
+        let what = Phrase::id(format!("terrain:{}", self.content.terrain(area.terrain).id));
         if !self.can_move() {
             return false;
         }
@@ -293,16 +295,16 @@ impl World {
         let arrival = match self.visit(&id, Some(&from)) {
             Ok(level) => side.and_then(|s| arrival(&level.terrain, &content, s)),
             Err(err) => {
-                self.say(format!("You cannot go there ({err})."));
+                self.say(Msg::new(msg::levels::CANNOT_GO).role("error", err.to_string()));
                 return false;
             }
         };
         if let Err(err) = self.travel(&id, arrival) {
-            self.say(format!("You cannot go there ({err})."));
+            self.say(Msg::new(msg::levels::CANNOT_GO).role("error", err.to_string()));
             return false;
         }
         events.push(Event::LevelChanged { from, to: id });
-        self.say(format!("You explore the {what}."));
+        self.say(Msg::new(msg::levels::EXPLORE).role("what", what));
         true
     }
 
@@ -318,10 +320,6 @@ impl World {
             .stairs_at(here)
             .filter(|s| s.dir == dir)
             .cloned();
-        let way = match dir {
-            StairsDir::Down => "down",
-            StairsDir::Up => "up",
-        };
         let kind = self.state.current().kind;
         let Some(link) = link else {
             if kind == LevelKind::Overworld && dir == StairsDir::Down {
@@ -332,11 +330,14 @@ impl World {
             {
                 return done;
             }
-            self.say(format!("You see no way {way} here."));
+            self.say(match dir {
+                StairsDir::Down => msg::levels::NO_WAY_DOWN,
+                StairsDir::Up => msg::levels::NO_WAY_UP,
+            });
             return false;
         };
         let Some(to) = link.to else {
-            self.say("These stairs lead nowhere yet.");
+            self.say(msg::levels::STAIRS_LEAD_NOWHERE);
             return false;
         };
         if !self.can_move() {
@@ -347,7 +348,7 @@ impl World {
         let followers = self.stair_followers();
         let found = self.reveal_way_out(&from, &to);
         if let Err(err) = self.travel(&to, None) {
-            self.say(format!("The stairs are blocked ({err})."));
+            self.say(Msg::new(msg::levels::STAIRS_BLOCKED).role("error", err.to_string()));
             return false;
         }
         events.push(Event::LevelChanged {
@@ -356,18 +357,19 @@ impl World {
         });
         let level = self.state.current();
         // A revealed location goes by its own name.
-        let name = link.name.unwrap_or_else(|| level.name.clone());
-        let text = match (kind, level.kind, dir) {
-            (LevelKind::Overworld, _, _) => format!("You enter {name}."),
-            (_, LevelKind::Overworld, _) => format!("You climb out to {name}."),
-            (_, _, StairsDir::Down) => format!("You descend the stairs to {name}."),
-            (_, _, StairsDir::Up) => format!("You climb the stairs to {name}."),
+        let place = Phrase::literal(link.name.unwrap_or_else(|| level.name.clone()));
+        let id = match (kind, level.kind, dir) {
+            (LevelKind::Overworld, _, _) => msg::levels::ENTER_PLACE,
+            (_, LevelKind::Overworld, _) => msg::levels::CLIMB_OUT_TO,
+            (_, _, StairsDir::Down) => msg::levels::DESCEND_TO,
+            (_, _, StairsDir::Up) => msg::levels::CLIMB_TO,
         };
-        self.say(text);
+        self.say(Msg::new(id).role("place", place));
         if let Some(found) = found {
-            self.say(format!("You mark {found} on your map."));
+            let place = Phrase::literal(found);
+            self.say(Msg::new(msg::levels::MARK_FOUND).role("place", place));
         }
-        self.followers_arrive(&followers, &from, way);
+        self.followers_arrive(&followers, &from, dir);
         // A lure quest's creature that followed the player home is bound (`lure.rs`).
         self.lure_home(events);
         // A quarrel's wizard met for the first time offers their side (`quarrel.rs`).
@@ -437,8 +439,8 @@ impl World {
         self.sync_wizards();
         // Sounds remembered on the level left say nothing about this one.
         self.state.recent_sounds.clear();
-        if let Some(line) = self.content.arrival(to) {
-            self.say(line.to_string());
+        if let Some(key) = crate::content::data_line::arrival(&self.content, to) {
+            self.say(Msg::data_line(Arg::said(key)));
         }
         if let Some(line) = crate::world::fixtures::rooms::pervade_line(&self.state, &self.content)
         {

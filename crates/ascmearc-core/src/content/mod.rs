@@ -30,7 +30,6 @@ mod burst;
 mod calendar;
 mod calling;
 mod campaign;
-mod character_lines;
 mod chest;
 mod circles;
 mod class;
@@ -42,6 +41,7 @@ mod creature_spells;
 mod crystal;
 mod damage_type;
 pub mod danger;
+pub mod data_line;
 mod decipher;
 #[cfg(test)]
 mod demon_roster_tests;
@@ -265,10 +265,6 @@ pub use burst::{BurstWhen, CreatureBurst};
 pub use calendar::Calendar;
 pub use calling::CallingDef;
 pub use campaign::{CAMPAIGNS, CampaignDef, CampaignKind};
-pub use character_lines::{
-    alignment_key, craving_key, gift_key, law_key, oath_key, said_line, threshold_key,
-    warmth_bands, warmth_key,
-};
 pub use chest::{ChestBand, ChestGold, ChestLoot, ChestRules};
 pub use circles::{CircleStatuses, CircledStatus, school_index};
 #[cfg(test)]
@@ -1204,7 +1200,6 @@ impl Content {
         }
         content.load_hunger(files)?;
         profane::check_signatures(&content)?;
-        character_lines::add(&mut content)?;
         // Outcome tables last of the rules' data: they name terrain,
         // statuses, objects, damage types, and spell effects; then the rooms that offer them.
         content.outcomes = OutcomeTables::parse(files.table("outcomes"), &content)?;
@@ -1367,6 +1362,7 @@ impl Content {
         content.callings = calling::parse(files.table("callings"), &content)?;
         content.encounter_tables = encounter::parse(files.table("encounters"), &content)?;
         content.ids = required::resolve(&content)?;
+        data_line::add_all(&mut content)?;
         content.validate()?;
         content.check_topic_routes()?;
         content.check_topic_callings()?;

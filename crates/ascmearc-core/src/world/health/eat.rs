@@ -40,8 +40,8 @@
 
 use super::object_phrase;
 use crate::action::{DiseaseNews, Event, Meal, Positions};
-use crate::content::{ActionKind, ObjectId};
-use crate::lang::Msg;
+use crate::content::{ActionKind, CreatureId, ObjectId, data_line};
+use crate::lang::{Arg, Msg};
 use crate::msg;
 use crate::object::{self, Stack};
 use crate::rng::draw;
@@ -108,7 +108,7 @@ impl World {
             return self.drink_potion(meal, &stack, events);
         }
         let Some(food) = def.food else {
-            let what = object_phrase(&content, stack.object).count(1);
+            let what = self.lore().object_phrase(stack.object).count(1);
             self.say(Msg::new(msg::health::CANNOT_CONSUME).role("what", what));
             return Spent::Nothing;
         };
@@ -182,7 +182,7 @@ impl World {
             Some(creature) => {
                 let on_eat = content.creature(creature).on_eat.clone();
                 let on_eat = on_eat.unwrap_or_default();
-                self.eat_fresh(nutrition, food.object, on_eat, events);
+                self.eat_fresh(nutrition, food.object, creature, on_eat, events);
             }
             None => self.feed(nutrition, food.object),
         }
@@ -241,11 +241,13 @@ impl World {
         &mut self,
         nutrition: i32,
         what: ObjectId,
+        creature: CreatureId,
         on_eat: crate::content::OnEat,
         events: &mut Vec<Event>,
     ) {
-        if let Some(text) = &on_eat.message {
-            self.say(text.clone());
+        if on_eat.message.is_some() {
+            let key = data_line::on_eat(&self.content.creature(creature).id);
+            self.say(Msg::data_line(Arg::said(key)));
         }
         // Herb lore, Cauldron: a corpse's own harm never touches
         // them (no draw for it).
@@ -329,7 +331,7 @@ impl World {
             return;
         };
         for (name, gift) in &on_eat.skills {
-            let (Some(id), Some(words)) = (content.skill_id(name), news.get(name)) else {
+            let (Some(id), true) = (content.skill_id(name), news.contains_key(name)) else {
                 continue;
             };
             let before = self.state.player().skills.value(id);
@@ -338,11 +340,8 @@ impl World {
             };
             let by = i32::from(after) - i32::from(before.unwrap_or(0));
             self.player_mut().skills.add(id, by);
-            self.say(if before.is_none() {
-                words.learn.clone()
-            } else {
-                words.rise.clone()
-            });
+            let key = data_line::skill_gift(name, before.is_none());
+            self.say(Msg::data_line(Arg::said(key)));
         }
     }
 
@@ -455,17 +454,18 @@ impl World {
                     disease,
                     news: DiseaseNews::Recovered,
                     ..
-                } => Some(content.disease(disease).recovered.clone()),
+                } => Some(data_line::disease_recovered(&content.disease(disease).id)),
                 Event::Status {
                     status,
                     began: false,
                     ..
-                } => content.status(status).end.clone(),
+                } => (content.status(status).end.as_ref())
+                    .map(|_| data_line::status_end(content.status(status))),
                 _ => None,
             })
             .collect();
-        for text in ended {
-            self.say(text);
+        for key in ended {
+            self.say(Msg::data_line(Arg::said(key)));
         }
     }
 
@@ -480,18 +480,20 @@ impl World {
         };
         let from = events.len();
         self.afflict(self.state.player, status, degrees, None, events);
+        let content = &self.content;
         let began: Vec<String> = (events[from..].iter())
             .filter_map(|e| match *e {
                 Event::Status {
                     status,
                     began: true,
                     ..
-                } => self.content.status(status).start.clone(),
+                } => (content.status(status).start.as_ref())
+                    .map(|_| data_line::status_start(content.status(status))),
                 _ => None,
             })
             .collect();
-        for text in began {
-            self.say(text);
+        for key in began {
+            self.say(Msg::data_line(Arg::said(key)));
         }
     }
 

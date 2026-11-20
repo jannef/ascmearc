@@ -58,7 +58,8 @@ lizardfolk = ["toad", "cave_lizard"]
 duergar = ["bat", "large_spider", "toad"]
 ratfolk = ["rat", "polecat", "toad"]
 
-# How each kind arrives, said with its name and kind: "Tibb, your cat, winds about your
+# How each kind arrives, said with its name and kind (a line of data, `familiars:arrives.<kind>`;
+# docs/dev/localization.md "Lines of data"): "Tibb, your cat, winds about your
 # ankles." Every beast a start or a calling may draw has its line.
 [arrives]
 cat = "winds about your ankles"

@@ -25,8 +25,7 @@
 
 use super::alignment::Deed;
 use crate::content::{
-    CombatStance, Content, CravingRules, DamageTypeId, Effect, GiftTier, TalentDef, craving_key,
-    said_line, threshold_key,
+    CombatStance, Content, CravingRules, DamageTypeId, Effect, GiftTier, TalentDef, data_line,
 };
 use crate::lang::Msg;
 use crate::msg;
@@ -101,7 +100,7 @@ impl World {
     pub(in crate::world) fn surrender_line(&mut self) {
         let surrenders = (self.content.craving()).is_some_and(|c| c.surrender.is_some());
         if surrenders {
-            self.say(said_line(craving_key("surrender.first")));
+            self.say(data_line::said(data_line::craving("surrender.first")));
         }
     }
 
@@ -146,7 +145,7 @@ impl World {
         let stat = Stat::ALL[draw!(self, "craving/mark/player").index(Stat::ALL.len())];
         self.gain_stat_marks(stat, u32::from(rules.mark));
         if first {
-            self.say(said_line(craving_key("first")));
+            self.say(data_line::said(data_line::craving("first")));
         }
         let book = content.talents();
         let mut crossed = false;
@@ -157,7 +156,9 @@ impl World {
             }
             crossed = true;
             self.bestow(id, None);
-            self.say(said_line(threshold_key(&content, row.talent)));
+            self.say(data_line::said(data_line::craving_threshold(
+                &content, row.talent,
+            )));
             self.player_did(Deed::CravingThreshold);
             self.settle_craving_stance();
             if row.strip_softeners {
@@ -197,7 +198,7 @@ impl World {
         if !(rules.thresholds.iter()).any(|t| CravingRules::at(t.eaten, scale) == count)
             && rules.again.is_some()
         {
-            self.say(said_line(craving_key("again.message")));
+            self.say(data_line::said(data_line::craving("again.message")));
         }
         for _ in 0..due.min(u32::from(rolls.rolls)) {
             let laws = &mut self.state.progress.laws;
