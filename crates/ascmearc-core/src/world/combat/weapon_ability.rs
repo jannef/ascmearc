@@ -618,7 +618,7 @@ impl World {
             .filter(|(_, id)| !before.iter().any(|(_, b)| b == id))
             .map(|(skill, id)| {
                 let ability = content.weapon_ability(id);
-                let what = word(&ability.name.to_lowercase());
+                let what = content.weapon_ability_phrase(id);
                 let line = Msg::new(msg::combat::LEARNED_ABILITY).role("ability", what);
                 (skill, line, ability.active.is_some())
             })

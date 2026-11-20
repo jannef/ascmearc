@@ -2,6 +2,7 @@
 //! the level add), its start, how it changes over time, what builds it, and whether it ends at
 //! zero.
 
+use super::util::stat_name;
 use super::util::{Term, anchored, link, signed};
 use ascmearc_core::content::{Build, Content, OverTime, ResourceDef, TalentEffect};
 use ascmearc_core::dice::Dice;
@@ -54,7 +55,7 @@ pub(super) fn resources(content: &Content) -> String {
                 format!(
                     "{} + the {} modifier + 1 per {} levels (at least {})",
                     def.max,
-                    from.stat.name(),
+                    stat_name(from.stat),
                     from.per_levels,
                     from.least
                 )

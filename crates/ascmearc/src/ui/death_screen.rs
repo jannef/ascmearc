@@ -68,8 +68,15 @@ impl DeathScreen {
                 let name = c.titled_name(view.content());
                 lines.push(ui_with(T::EPITAPH_HERE_LIES, &[("name", name.into())]));
                 // "a bard", or "a bard and hunter" once called.
-                let class = c.class_phrase(view.content());
-                lines.push(ui_with(T::EPITAPH_CLASS, &[("class", class.into())]));
+                let content = view.content();
+                let class = ("class", content.class_phrase(&c.spec.class).into());
+                lines.push(match c.prestige.as_deref() {
+                    Some(p) if content.prestige(p).is_some() => {
+                        let prestige = ("prestige", content.prestige_phrase(p).into());
+                        ui_with(T::EPITAPH_CLASS_PRESTIGE, &[class, prestige])
+                    }
+                    _ => ui_with(T::EPITAPH_CLASS, &[class]),
+                });
                 let mut chars = by.chars();
                 chars
                     .next()

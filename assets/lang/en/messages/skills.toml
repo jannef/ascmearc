@@ -2,13 +2,13 @@
 # intimidating, listening at doors, picking locks, searching, sidestepping traps, stealing, and
 # wedging doors. Ids alphabetical (`docs/dev/localization.md` "Literal lines").
 #
-# Roles: `who` is the creature a line is about, as the player calls it; `what` an item, counted
-# (a phrase built where it is said; a list of them, each counted, where several were found);
-# `before` and `after` an item the player carries as they knew it and as it turned out to be,
-# `before` theirs ("your gold ring"); `trap` a trap by its type's name ("arrow trap"); `chest` a
-# chest by its name ("coffer"); `came` the clause that says what stopped a long action ("A kobold
-# comes into view"); `time` how long it went on ("3 minutes"). `sign` is how a hidden trap shows
-# ("a tripwire"), English words from the data, text until that data's text is converted.
+# Roles: `who` is the creature a line is about, as the player calls it; `what` an item, counted (a
+# phrase built where it is said; a list of them, each counted, where several were found); `before`
+# and `after` an item the player carries as they knew it and as it turned out to be, `before` theirs
+# ("your gold ring"); `trap` a trap by its type's name ("arrow trap"); `chest` a chest by its name
+# ("coffer"); `came` the clause that says what stopped a long action ("A kobold comes into view");
+# `time` how long it went on ("3 minutes", a `words.toml` message). `sign` is how a hidden trap
+# shows ("a tripwire"), English words from the data, text until that data's text is converted.
 
 all_of_a_piece = "It is all of a piece."
 # `trap`: the trap avoided.

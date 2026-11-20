@@ -2,6 +2,7 @@
 //! horoscope, with adjustments as written in data.
 
 use super::util::{Term, anchored, damage_link, signed, table_text};
+use super::util::{stat_abbrev, stat_name};
 use super::weapon_skills;
 use ascmearc_core::character::Gender;
 use ascmearc_core::content::Content;
@@ -15,8 +16,8 @@ use std::fmt::Write as _;
 pub(super) fn stats(_content: &Content) -> String {
     let mut out = String::from("| Stat | Short |\n|---|:---:|\n");
     for stat in Stat::ALL {
-        let name = anchored(Term::Stat, stat.name(), stat.name());
-        let _ = writeln!(out, "| {name} | `{}` |", stat.abbrev());
+        let name = anchored(Term::Stat, &stat_name(stat), &stat_name(stat));
+        let _ = writeln!(out, "| {name} | `{}` |", stat_abbrev(stat));
     }
     let _ = writeln!(out, "\nA score of {AVERAGE} is average.");
     out
@@ -142,7 +143,7 @@ pub(super) fn stat_uses(content: &Content) -> String {
         let _ = writeln!(
             out,
             "| {} | {} | {} |",
-            stat.name(),
+            stat_name(stat),
             join(modifier),
             join(score)
         );
@@ -228,9 +229,9 @@ fn per_stat_factors(percents: &PerStat<u16>) -> String {
     let groups: Vec<String> = seen
         .into_iter()
         .map(|p| {
-            let stats: Vec<&str> = (percents.iter())
+            let stats: Vec<String> = (percents.iter())
                 .filter(|&(_, q)| q == p)
-                .map(|(s, _)| s.abbrev())
+                .map(|(s, _)| stat_abbrev(s))
                 .collect();
             format!("{} {}", factor(p), stats.join(", "))
         })
@@ -243,8 +244,8 @@ pub(super) fn genders(_content: &Content) -> String {
     let mut out = String::from("| Gender | Starting stats |\n|---|---|\n");
     for gender in Gender::ALL {
         let raises = match gender {
-            Gender::Male => format!("{} +1", Stat::Strength.name()),
-            Gender::Female => format!("{} +1", Stat::Dexterity.name()),
+            Gender::Male => format!("{} +1", stat_name(Stat::Strength)),
+            Gender::Female => format!("{} +1", stat_name(Stat::Dexterity)),
             Gender::Other => "+1 to one stat, chosen by fate".to_string(),
         };
         let _ = writeln!(out, "| {} | {raises} |", gender.name());
@@ -262,7 +263,7 @@ pub(super) fn adjustment(v: Dice) -> String {
 fn stat_columns() -> (String, String) {
     let names: Vec<String> = Stat::ALL
         .iter()
-        .map(|s| format!(" {} |", s.abbrev()))
+        .map(|s| format!(" {} |", stat_abbrev(s)))
         .collect();
     (names.concat(), ":---:|".repeat(Stat::COUNT))
 }

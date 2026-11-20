@@ -295,17 +295,6 @@ impl Character {
         text
     }
 
-    /// The character's classes as an epitaph says them: `a bard`, `a bard and hunter`.
-    pub fn class_phrase(&self, content: &Content) -> String {
-        let class =
-            (self.spec.class(content)).map_or(self.spec.class.clone(), |c| c.name.to_lowercase());
-        let text = match self.prestige(content) {
-            Some(p) => format!("{class} and {}", p.name.to_lowercase()),
-            None => class,
-        };
-        format!("{} {text}", crate::text::article(&text))
-    }
-
     /// Whether the character was born in a year of `element` (an id: "is this character
     /// Fire-born?" is `born_of_element("fire")`).
     pub fn born_of_element(&self, element: &str) -> bool {
@@ -324,6 +313,16 @@ impl Character {
             || format!("{} {}", sign.element, sign.animal),
             |h| h.name(sign),
         ))
+    }
+
+    /// The birth sign as a sentence names it: `sign:<element>.<animal>` where the horoscope has
+    /// both parts, else [`Character::sign_name`]'s text; `None` without one.
+    pub fn sign_arg(&self, content: &Content) -> Option<crate::lang::Arg> {
+        let sign = self.sign.as_ref()?;
+        match content.horoscope().and_then(|h| h.parts(sign)) {
+            Some(_) => Some(content.sign_phrase(sign).into()),
+            None => self.sign_name(content).map(Into::into),
+        }
     }
 
     /// The lucky day the character was born on, if they were.

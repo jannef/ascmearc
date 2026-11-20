@@ -2,6 +2,7 @@
 //! what changes the pace.
 
 use super::healing::pace;
+use super::util::{time_words, word};
 use ascmearc_core::content::Content;
 use ascmearc_core::hunger::Hunger;
 use ascmearc_core::mana;
@@ -71,7 +72,7 @@ pub(super) fn paces(content: &Content) -> String {
             (0, _) | (_, None) => String::new(),
             (points, Some(tick)) => format!(
                 "; it drains {points} mana every {}",
-                Duration::seconds(u64::from(tick)).spoken()
+                time_words(Duration::seconds(u64::from(tick)))
             ),
         };
         if def.mana_regen != 100 || !drains.is_empty() {
@@ -93,7 +94,12 @@ pub(super) fn paces(content: &Content) -> String {
         }
     }
     if content.hunger().is_some() {
-        let _ = writeln!(out, "| {} | {} |", Hunger::Starving.name(), pace(0));
+        let _ = writeln!(
+            out,
+            "| {} | {} |",
+            word(Hunger::Starving.name(), "Bare"),
+            pace(0)
+        );
     }
     for room in content.room_effects().defs() {
         if room.mana_regen != 100 {

@@ -20,7 +20,10 @@ pub(super) fn stat_rows(view: &PerceptionView<'_>) -> Vec<String> {
         let class = c.class_text(content, view.own_experience().level);
         rows.push(format!("Race {race}"));
         rows.push(match spec.gender {
-            Gender::Other => format!("Gender Other ({} +1)", c.raised.name()),
+            Gender::Other => format!(
+                "Gender Other ({} +1)",
+                content.english_word(c.raised.name(), "Bare")
+            ),
             gender => format!("Gender {}", gender.name()),
         });
         rows.push(format!("Class {class}"));
@@ -30,7 +33,10 @@ pub(super) fn stat_rows(view: &PerceptionView<'_>) -> Vec<String> {
             rows.push(format!("Sign {sign}"));
         }
     }
-    rows.extend((view.own_scores().iter()).map(|(stat, score)| format!("{} {score}", stat.name())));
+    rows.extend(
+        (view.own_scores().iter())
+            .map(|(stat, score)| format!("{} {score}", content.english_word(stat.name(), "Bare"))),
+    );
     if let Some(band) = view.own_alignment() {
         rows.push(format!("Alignment {}", band.name()));
     }

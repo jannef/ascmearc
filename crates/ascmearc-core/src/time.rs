@@ -8,6 +8,8 @@
 //! [`Duration`] is how long something takes; [`GameTime`] is a moment on the clock. Both have a
 //! text form for action scripts: durations are `6s`, `30m`, `1h`.
 
+use crate::lang::{Arg, Msg};
+use crate::msg;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::ops::{Add, AddAssign, Mul};
@@ -59,19 +61,20 @@ impl Duration {
         self.0 == 0
     }
 
-    /// In words for messages, e.g. `1 hour`, `2 hours and 30 minutes`, `45 seconds` (whole
-    /// minutes only once it is a minute or more).
-    pub fn spoken(self) -> String {
-        let unit = |n: u64, one: &str| {
-            let s = if n == 1 { "" } else { "s" };
-            format!("{n} {one}{s}")
-        };
+    /// In words for messages, a message (`messages/words.toml`) said in a line's `time` role:
+    /// `1 hour`, `2 hours and 30 minutes`, `45 seconds` (whole minutes only once it is a minute or
+    /// more). The language counts each unit (`hours`, `minutes`, `seconds`).
+    pub fn spoken(self) -> Msg {
+        let unit =
+            |id, n: u64| Msg::new(id).role("n", Arg::Number(i64::try_from(n).unwrap_or(i64::MAX)));
         let (hours, minutes) = (self.0 / HOUR, self.0 % HOUR / MINUTE);
         match (hours, minutes) {
-            (0, 0) => unit(self.0, "second"),
-            (0, m) => unit(m, "minute"),
-            (h, 0) => unit(h, "hour"),
-            (h, m) => format!("{} and {}", unit(h, "hour"), unit(m, "minute")),
+            (0, 0) => unit(msg::words::SECONDS, self.0),
+            (0, m) => unit(msg::words::MINUTES, m),
+            (h, 0) => unit(msg::words::HOURS, h),
+            (h, m) => Msg::new(msg::words::HOURS_AND_MINUTES)
+                .role("hours", unit(msg::words::HOURS, h))
+                .role("minutes", unit(msg::words::MINUTES, m)),
         }
     }
 }
@@ -348,11 +351,14 @@ mod tests {
 
     #[test]
     fn durations_read_aloud() {
-        assert_eq!(Duration::hours(1).spoken(), "1 hour");
-        assert_eq!(Duration::minutes(150).spoken(), "2 hours and 30 minutes");
-        assert_eq!(Duration::minutes(1).spoken(), "1 minute");
-        assert_eq!(Duration::seconds(45).spoken(), "45 seconds");
-        assert_eq!(Duration::seconds(61).spoken(), "1 minute");
+        let content = crate::test_support::builtin();
+        let spoken = |d: Duration| content.english_word(d.spoken(), "bare");
+        assert_eq!(spoken(Duration::hours(1)), "1 hour");
+        assert_eq!(spoken(Duration::minutes(150)), "2 hours and 30 minutes");
+        assert_eq!(spoken(Duration::minutes(1)), "1 minute");
+        assert_eq!(spoken(Duration::seconds(45)), "45 seconds");
+        assert_eq!(spoken(Duration::seconds(61)), "1 minute");
+        assert_eq!(spoken(Duration::ZERO), "0 seconds");
     }
 
     #[test]

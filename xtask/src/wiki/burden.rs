@@ -1,6 +1,6 @@
 //! Burden: its levels, the races' sizes, and sample carrying limits.
 
-use super::util::{at_normal_pace, factor};
+use super::util::{at_normal_pace, factor, word};
 use ascmearc_core::burden::{self, Burden, Load};
 use ascmearc_core::content::{BASE_TURN, Content, price};
 use ascmearc_core::object::format_weight;
@@ -40,7 +40,7 @@ pub(super) fn burden_levels(_content: &Content) -> String {
         let _ = writeln!(
             out,
             "| {} | {carried} | {takes} | {dex} | {steps} |",
-            b.name()
+            word(b.name(), "Bare")
         );
     }
     out

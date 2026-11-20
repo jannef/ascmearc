@@ -61,4 +61,10 @@ impl Content {
     pub fn english_of(&self, phrase: &crate::lang::Phrase, form: &str) -> String {
         self.english.phrase(phrase, form, self)
     }
+
+    /// A word core picks (a message id, `Stat::name`) or a span of time (`Duration::spoken`) in
+    /// English in `form` (`bare`, `Bare` for a label's capital): a dump's or the wiki's.
+    pub fn english_word(&self, word: impl Into<crate::lang::Arg>, form: &str) -> String {
+        crate::messages::english_arg(self, &word.into(), form)
+    }
 }

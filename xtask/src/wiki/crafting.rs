@@ -3,6 +3,7 @@
 //! odds and numbers of a salvage (`data/rules/salvage.toml` and the 2d12 rules).
 
 use super::util::capital;
+use super::util::stat_name;
 use ascmearc_core::combat::{FUMBLE, HIGHEST};
 use ascmearc_core::content::{Content, ObjectId};
 use ascmearc_core::object::Stack;
@@ -37,7 +38,7 @@ pub(super) fn crafting_groups(content: &Content) -> String {
     let mut groups: Vec<_> = stock.groups.iter().collect();
     groups.sort_by(|a, b| a.group.cmp(&b.group));
     let worked = |p: Option<&ascmearc_core::content::Profession>| match p {
-        Some(p) => (content.skill(p.skill).name.clone(), capital(p.stat.name())),
+        Some(p) => (content.skill(p.skill).name.clone(), stat_name(p.stat)),
         None => ("nothing yet".to_string(), "-".to_string()),
     };
     for g in groups {

@@ -48,7 +48,7 @@ pub(super) fn actor_rows(world: &World) -> Vec<String> {
         Some(format!(
             "{what} {}{count} {where_}: {verb} {made}, {} ago, {}",
             content.object(s.object).id,
-            now.since(made).spoken(),
+            content.english_word(now.since(made).spoken(), "bare"),
             stage.id()
         ))
     };
@@ -115,7 +115,7 @@ pub(super) fn actor_rows(world: &World) -> Vec<String> {
                 .iter()
                 .map(|&s| {
                     let (score, potential) = (a.stats.score(s), a.stats.potential(s));
-                    format!("{} {score}/{potential}", s.abbrev())
+                    format!("{} {score}/{potential}", content.english_word(s.abbrev(), "bare"))
                 })
                 .collect();
             let skills: Vec<String> = (a.skills.iter())
@@ -395,14 +395,26 @@ pub(super) fn disease_text(a: &crate::world::Actor, content: &crate::content::Co
     }
     let damaged: Vec<String> = (Stat::ALL.iter())
         .filter(|&&s| a.damage.get(s) > 0)
-        .map(|&s| format!("{} {}", s.abbrev(), a.damage.get(s)))
+        .map(|&s| {
+            format!(
+                "{} {}",
+                content.english_word(s.abbrev(), "bare"),
+                a.damage.get(s)
+            )
+        })
         .collect();
     if !damaged.is_empty() {
         let _ = write!(out, "; damage {}", damaged.join(" "));
     }
     let drained: Vec<String> = (Stat::ALL.iter())
         .filter(|&&s| a.drained[s] > 0)
-        .map(|&s| format!("{} {}", s.abbrev(), a.drained[s]))
+        .map(|&s| {
+            format!(
+                "{} {}",
+                content.english_word(s.abbrev(), "bare"),
+                a.drained[s]
+            )
+        })
         .collect();
     if !drained.is_empty() {
         let _ = write!(out, "; drained {}", drained.join(" "));

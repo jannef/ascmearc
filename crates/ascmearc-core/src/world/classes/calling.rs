@@ -21,7 +21,6 @@ use crate::action::Event;
 use crate::content::{ActionKind, CallingDef, DialogueId, data_line};
 use crate::lang::Msg;
 use crate::msg;
-use crate::world::combat::fight;
 use crate::world::{ActorId, Spent, World};
 
 /// Where the player stands with a calling, for the dev `progress` dump.
@@ -154,7 +153,7 @@ impl World {
             self.say(
                 Msg::new(msg::classes::NO_CALLING_OPENS_DEV)
                     .role("id", id)
-                    .role("class", fight::word(&class)),
+                    .role("class", content.class_phrase(&class)),
             );
             return Spent::Nothing;
         };

@@ -199,12 +199,15 @@ pub(super) fn plan(
         station: None,
         time: format!(
             "about {}",
-            Duration::seconds(u64::from(super::mastery::craft_seconds(
-                content,
-                player,
-                def.seconds
-            )))
-            .spoken()
+            content.english_word(
+                Duration::seconds(u64::from(super::mastery::craft_seconds(
+                    content,
+                    player,
+                    def.seconds
+                )))
+                .spoken(),
+                "bare"
+            )
         ),
     })
 }

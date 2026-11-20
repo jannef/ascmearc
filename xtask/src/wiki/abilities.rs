@@ -1,6 +1,7 @@
 //! Abilities: every ability the abilities menu can list, from the one
 //! registry (`ascmearc_core::ability`).
 
+use super::util::stat_name;
 use super::util::{Term, anchored, at_normal_pace, link, percent_of};
 use ascmearc_core::ability::{Ability, Aim, Source};
 use ascmearc_core::check;
@@ -497,7 +498,7 @@ pub(super) fn songs(content: &Content) -> String {
                     "every hostile creature that hears it".to_string(),
                     format!(
                         "{} against {difficulty} + Music's",
-                        link(Term::Stat, &stat.name().to_lowercase(), stat.name())
+                        link(Term::Stat, stat.id(), &stat_name(stat))
                     ),
                 ),
                 (SongOn::Hearers, None) => ("its hearers".to_string(), "—".to_string()),
@@ -587,7 +588,7 @@ pub(super) fn song_odds(content: &Content) -> String {
         let _ = write!(
             out,
             "**{name}**, shaken off:\n\n| Their {} edge |",
-            stat.name()
+            stat_name(stat)
         );
         for v in &values {
             let _ = write!(out, " Music {v} ({}) |", difficulty + craft(*v));

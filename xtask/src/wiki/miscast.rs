@@ -2,6 +2,7 @@
 //! level and its chance of a miscast by bonus, what Spellcraft gives it, and the whole miscast
 //! table with its exact ranges.
 
+use super::util::stat_name;
 use ascmearc_core::check;
 use ascmearc_core::content::{Content, MishapEffect, ZoneKind};
 use ascmearc_core::skills::Effect;
@@ -146,7 +147,7 @@ fn effect_text(content: &Content, effect: MishapEffect, protected: bool) -> Stri
         } => super::learning::drain_words(stat, points, difficulty, times),
         MishapEffect::StatDamage { stat, points } => format!(
             "{} takes {points} [stat damage](diseases.md#stat-damage), which mends a point a day",
-            stat.map_or("a random stat", |s| s.name())
+            stat.map_or_else(|| "a random stat".to_string(), stat_name)
         ),
         MishapEffect::Summon { creature } => {
             format!(
@@ -154,7 +155,7 @@ fn effect_text(content: &Content, effect: MishapEffect, protected: bool) -> Stri
                 content.creature(creature).name
             )
         }
-        MishapEffect::Mark { stat } => format!("a training mark of {}", stat.name()),
+        MishapEffect::Mark { stat } => format!("a training mark of {}", stat_name(stat)),
         MishapEffect::RankLoss { ranks } => format!(
             "you know the spell {ranks} [rank{}](learning-spells.md#spell-ranks) lower, never below rank 1",
             if ranks == 1 { "" } else { "s" }

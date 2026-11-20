@@ -633,11 +633,13 @@ pub enum Refusal {
 }
 
 impl Refusal {
-    /// The refusal, for a talent `name` (as the data writes it): "You cannot take Cleave: you
-    /// need Strength 13." (`messages/character.toml`'s `talent_*`).
-    pub fn words(&self, content: &Content, name: &str) -> Msg {
+    /// The refusal, for a talent `name` (its phrase, with what was chosen for it,
+    /// `Content::talent_arg`): "You cannot take Cleave: you need Strength 13."
+    /// (`messages/character.toml`'s `talent_*`).
+    pub fn words(&self, content: &Content, name: impl Into<Arg>) -> Msg {
         use crate::msg;
-        let named = |id| Msg::new(id).role("talent", name);
+        let name: Arg = name.into();
+        let named = |id| Msg::new(id).role("talent", name.clone());
         match self {
             Refusal::Granted => named(msg::character::TALENT_GRANTED),
             Refusal::NeedsChoice(kind) => {
@@ -650,7 +652,7 @@ impl Refusal {
             Refusal::Held => named(msg::character::TALENT_HELD),
             Refusal::Stripped => msg::character::TALENT_STRIPPED.into(),
             Refusal::Unmet(needs) => {
-                let words = needs.iter().map(|n| Arg::Text(n.words(content))).collect();
+                let words = needs.iter().map(|n| n.arg(content)).collect();
                 named(msg::character::TALENT_UNMET).role("needs", Arg::List(words))
             }
         }

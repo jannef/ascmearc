@@ -26,7 +26,7 @@ text = "Fell through a collapsed floor"
 [cause_killed_by]
 text = "Killed by {who:a}"
 
-# `name`, the status's name.
+# `name`, the status by its name (`status:<id>`).
 [cause_died_of]
 text = "Died of {name:bare}"
 

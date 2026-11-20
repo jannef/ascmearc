@@ -85,16 +85,16 @@ impl SignScreen {
         let c = start.character;
         let parts = (content.horoscope())
             .zip(c.sign.as_ref())
-            .and_then(|(h, s)| {
-                let (animal, element) = h.parts(s)?;
-                Some((h, animal, element))
-            });
+            .and_then(|(h, s)| h.parts(s));
         let date = ("date", Arg::from(c.born.text(content.calendar())));
         let age = ("age", Arg::Number(c.age_on(draft.start()).into()));
-        let Some((h, animal, element)) = parts else {
+        let Some((animal, element)) = parts else {
             return empty(ui_with(T::BORN, &[date, age]));
         };
-        let sign = ("sign", h.name(c.sign.as_ref().expect("a sign")).into());
+        let sign = (
+            "sign",
+            content.sign_phrase(c.sign.as_ref().expect("a sign")).into(),
+        );
         let born = ui_with(T::BORN_SIGN, &[date, sign, age]);
         let legend = format!("{} {}", animal.description, element.description);
         let lucky = c.lucky(content);
@@ -103,8 +103,8 @@ impl SignScreen {
             l.grants.iter().map(String::as_str).collect()
         });
         let gifts = (c.grants(content).into_iter())
-            .filter_map(|id| book.id(id).map(|t| (id, book.get(t))))
-            .map(|(id, def)| {
+            .filter_map(|id| book.id(id).map(|t| (id, t, book.get(t))))
+            .map(|(id, talent, def)| {
                 let look = if lucky_grants.contains(&id) {
                     Look::Lucky
                 } else if def.flaw {
@@ -113,7 +113,7 @@ impl SignScreen {
                     Look::Plain
                 };
                 let name = if def.flaw {
-                    ui_with(T::FLAW, &[("name", def.name.as_str().into())])
+                    ui_with(T::FLAW, &[("name", content.talent_phrase(talent).into())])
                 } else {
                     def.name.clone()
                 };

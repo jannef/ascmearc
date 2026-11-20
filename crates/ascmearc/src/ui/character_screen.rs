@@ -16,7 +16,7 @@
 
 use super::menu::{Nav, Panel, Press};
 use super::screens::{ScreenAction, ScreenName};
-use super::text::{character_screen as T, ui, ui_with};
+use super::text::{character_screen as T, ui, ui_with, word};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
@@ -226,7 +226,10 @@ impl CharacterScreen {
             // The sign's gifts only: a profane gift is no star's (the Talents page lists those).
             .filter(|t| t.granted && !t.race && !t.boon && !t.story && t.profane.is_none())
             .map(|t| match t.spent {
-                true => ui_with(T::SPENT, &[("talent", t.name.into())]),
+                true => {
+                    let talent = content.talent_arg(t.id, t.choice.as_deref());
+                    ui_with(T::SPENT, &[("talent", talent)])
+                }
                 false => t.name,
             })
             .collect();
@@ -407,8 +410,8 @@ impl CharacterScreen {
                 } else {
                     TEXT
                 };
-                console.print(x, y, stat.abbrev(), TEXT_DIM);
-                console.print(x + 4, y, stat.name(), TEXT);
+                console.print(x, y, &word(stat.abbrev(), "bare"), TEXT_DIM);
+                console.print(x + 4, y, &word(stat.name(), "Bare"), TEXT);
                 console.print(x + 4 + NAME_W, y, &format!("{score:>2}"), color);
             }
             y += 1;
@@ -640,8 +643,8 @@ pub fn birth_parts(character: &Character, content: &Content, now: GameTime) -> V
             &[("date", character.born.text(content.calendar()).into())],
         ),
     ];
-    if let Some(sign) = character.sign_name(content) {
-        parts.push(ui_with(T::YEAR_OF, &[("sign", sign.into())]));
+    if let Some(sign) = character.sign_arg(content) {
+        parts.push(ui_with(T::YEAR_OF, &[("sign", sign)]));
     }
     parts
 }
@@ -674,8 +677,9 @@ pub fn fit_joined(parts: &[String], sep: &str, width: i32) -> Vec<String> {
 /// The weights at which the player's burden changes, in lines of at most
 /// `width` characters: `Burdened over 15 kg, strained over 30 kg, overloaded over 45 kg`.
 pub fn thresholds(load: &Load, width: i32) -> Vec<String> {
-    let mut parts = load.over().to_vec();
-    parts[0] = capitalized(&parts[0]);
+    let mut parts: Vec<String> = (load.over().into_iter().enumerate())
+        .map(|(i, part)| word(part, if i == 0 { "Bare" } else { "bare" }))
+        .collect();
     let last = parts.len() - 1;
     for part in &mut parts[..last] {
         part.push(',');
@@ -985,7 +989,7 @@ mod tests {
         let world =
             World::with_character(content.clone(), "showcase", None, Some(&spec)).expect("world");
         let text = drawn(&world, 80, 30).join("\n");
-        let raised = ascmearc_core::character::other_stat(1).name();
+        let raised = word(ascmearc_core::character::other_stat(1).name(), "Bare");
         for expected in [
             "Race    Half-orc",
             &format!("Gender  Other ({raised} +1)"),

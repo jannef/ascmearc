@@ -822,7 +822,7 @@ pub(super) fn stats(p: &Probe, out: &mut String) {
                 out,
                 "| {} | {} | {start:.1}/{pot:.1} | {:.1} | {:.1} | {:.1} | {:.1} | {end:.1} | {:+.1} | {past:.1} |",
                 if i == 0 { class } else { "" },
-                stat.abbrev(),
+                p.content.english_word(stat.abbrev(), "bare"),
                 mean(10, i),
                 mean(20, i),
                 mean(30, i),

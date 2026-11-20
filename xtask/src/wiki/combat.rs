@@ -4,6 +4,7 @@
 use super::objects::goes_on;
 use super::order;
 use super::util::{Term, anchored, at_normal_pace, capital, percent_of, signed};
+use super::util::{time_words, word};
 use ascmearc_core::combat;
 use ascmearc_core::content::{ActionKind, BASE_TURN, Content, price};
 use ascmearc_core::geom::Pos;
@@ -240,7 +241,7 @@ pub(super) fn ammunition(content: &Content) -> String {
                 Some(burning) => format!(
                     "burns as {} for {}, lighting {} cells around",
                     lit.describe(1),
-                    burning.lasts.spoken(),
+                    time_words(burning.lasts),
                     content.light(burning.light).radius
                 ),
                 None => "-".into(),
@@ -595,7 +596,7 @@ pub(super) fn health(_content: &Content) -> String {
         let _ = writeln!(
             out,
             "| {} | {} | {} |",
-            capital(health.word()),
+            word(health.word(), "Bare"),
             cell(low, high),
             cell(small_low, small_high)
         );

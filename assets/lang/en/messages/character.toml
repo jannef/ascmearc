@@ -9,8 +9,9 @@
 # Roles: `who` is a creature a line is about, as the player calls it ("the kobold", "Grimbold").
 # `status` is a status by its name (`status:<id>`, "invisible"), `skill` a skill's
 # (`skill:<id>`), and `name` a resource's (`resource:<id>`); `talent` and `gift` are a talent's
-# and a profane gift's names from the data: text until those words are converted (#1949).
-# `reason` is why an ability cannot be used, a message of its own (`messages/ability.toml`). `id`
+# and a profane gift's names (`talent:<id>`, with what was chosen for it `talent_chosen`), and
+# `trees` and `talents` lists of them (`tree:<id>`); `reason` is why an ability cannot be used, a
+# message of its own (`messages/ability.toml`). `id`
 # is an id a dev action was given, as typed. `xp`, `level`, and `value` are numbers, said in
 # digits.
 
@@ -113,18 +114,24 @@ still_status = "You are still {status:bare}."
 # What the player is told as the Profane takes them (`profane_taken.rs`), in turn.
 taken_called_back = "The flesh that was given is called back to the one that gave it."
 taken_wakes = "Something old and hungry wakes behind your eyes, and it does not sleep again."
-# Why a talent cannot be taken (`talent.rs`, `Refusal::words`): `talent` its name, as the data
-# writes it (text until a talent's name is converted, #1993).
+# Why a talent cannot be taken (`talent.rs`, `Refusal::words`): `talent` the talent as a sentence
+# names it (`Content::talent_arg`).
 # `id`: the choice as typed; `choice`: what the talent is chosen for (a `choice_*` entry).
 talent_bad_choice = "`{id:bare}` is not {choice:bare}."
+# A talent with what was chosen for it, as a sentence names it (`Content::talent_arg`): `talent`,
+# the talent; `choice`, what was chosen, lower case ("Weapon Focus (long blades)").
+talent_chosen = "{talent:bare} ({choice:bare})"
 talent_granted = "{talent:Bare} is given, not chosen."
 talent_held = "You have {talent:bare} already."
 # `choice`: what the talent is chosen for (a `choice_*` entry).
 talent_needs_choice = "{talent:Bare} needs a choice: {choice:bare}."
+# One stat a talent needs, an item of `talent_unmet`'s `needs` (`Need::arg`): `stat` its name
+# (`words.toml`), `score` the score needed ("Strength 13").
+talent_needs_stat = "{stat:Bare} {score}"
 talent_stripped = "The craving has taken this from you."
 talent_takes_no_choice = "{talent:Bare} takes no choice."
-# `needs`: the prerequisites not met, a list of their words ("Strength 13"; text until a talent's
-# requirements are converted, #1997).
+# `needs`: the prerequisites not met, a list: a stat a `talent_needs_stat` ("Strength 13"), the
+# rest their words as text until a talent's requirements are converted (#1997).
 talent_unmet = "You cannot take {talent:bare}: you need {needs:and}."
 # Warnings that a stat's pile has come within reach of a drop (`stat_deeds.rs`).
 warn_dexterity = "Your hands feel less sure."
