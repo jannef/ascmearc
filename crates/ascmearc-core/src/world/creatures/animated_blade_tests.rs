@@ -5,6 +5,7 @@
 
 use crate::content::ContentFiles;
 use crate::magic::Rarity;
+use crate::test_support::spoken;
 use crate::world::combat::fight::Harm;
 use crate::world::*;
 
@@ -229,7 +230,7 @@ fn a_family_is_learnt_of_and_counted_as_one_kind() {
     let (a, b) = (at(&w, Pos::new(2, 2)), at(&w, Pos::new(4, 2)));
     kill(&mut w, a);
     kill(&mut w, b);
-    let learnt = (w.news.iter())
+    let learnt = (spoken(&w, &w.news).iter())
         .filter(|m| *m == "You learn something of animated blades.")
         .count();
     assert_eq!(learnt, 1, "once for the family");

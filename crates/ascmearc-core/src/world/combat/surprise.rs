@@ -288,7 +288,7 @@ impl World {
             // A trap's own line is said with the turn's reports: this one after it.
             match by {
                 Some(_) => self.say(text),
-                None => self.news.push(text),
+                None => self.news.push(text.into()),
             }
         } else if by == Some(player) && made && self.perception.sees_actors_at(pos) {
             // Failed, it is told in the attack's own words ([`World::caught_by`]).

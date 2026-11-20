@@ -4,6 +4,7 @@
 
 use crate::action::AttackKind;
 use crate::content::ResourceId;
+use crate::test_support::spoken;
 use crate::world::classes::class_active_tests::{beside, reach, world};
 use crate::world::combat::free_blow::{Cue, Free};
 use crate::world::*;
@@ -67,7 +68,7 @@ fn a_hit_is_answered_for_four_zeal_and_a_miss_is_not() {
         set(&mut w, start);
         w.news.clear();
         let (hit, back) = attacked(&mut w, kobold);
-        let said = w.news.iter().any(|n| n == ANSWER);
+        let said = spoken(&w, &w.news).iter().any(|n| n == ANSWER);
         assert_eq!(back, said, "the line comes with the blow");
         match (hit, start) {
             (false, _) => {

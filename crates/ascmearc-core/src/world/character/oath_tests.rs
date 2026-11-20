@@ -5,6 +5,7 @@
 //! given once as the total reaches it; the total saved.
 
 use super::craving_tests::{files, world_of};
+use crate::test_support::spoken;
 use crate::test_support::{run, said, said_text};
 use crate::world::classes::war_cry_tests::foe_at;
 use crate::world::*;
@@ -211,7 +212,7 @@ fn a_band_is_crossed_once_and_gives_its_talent() {
     w.oath_kill(kobold);
     assert!(w.state.player().talents.has("oath_blooded"));
     let message = "Ten of them lie dead by your oath. The debt has begun to be paid.";
-    let told = |w: &World| w.news.iter().filter(|n| *n == message).count();
+    let told = |w: &World| spoken(w, &w.news).iter().filter(|n| *n == message).count();
     assert_eq!(told(&w), 1);
     assert_eq!(
         w.state.player().stats.score(crate::stats::Stat::Toughness),

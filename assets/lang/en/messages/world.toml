@@ -1,0 +1,4 @@
+# The run as a whole (`world/mod.rs`). Ids alphabetical.
+
+# The run's first line. `place`: the scenario's name; `{key:help}` the key that shows the controls.
+welcome = "Welcome to {place:bare}. Press {key:help} for controls."

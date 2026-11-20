@@ -264,7 +264,7 @@ impl World {
             Trigger::Parried => " from your parry",
             _ => "",
         };
-        self.news.push(format!("{name} {does}{from}."));
+        self.news.push(format!("{name} {does}{from}.").into());
     }
 
     /// An `extra_damage` effect (Rend): `dice` rolled once more (no bonus, no riders) on the
@@ -316,17 +316,17 @@ impl World {
         };
         if by == player {
             self.news
-                .push(format!("Your blades rend {}.", end.object()));
+                .push(format!("Your blades rend {}.", end.object()).into());
         } else if target == player && seen_me {
             let who = crate::content::the(&names.0);
             self.news
-                .push(format!("{}'s blades rend you.", capitalized(&who)));
+                .push(format!("{}'s blades rend you.", capitalized(&who)).into());
         }
         if amount > 0 {
             let mut made = Vec::new();
             let died = self.hurt(target, amount, super::fight::Harm::Actor(by), &mut made);
             if died && by == player && seen_them {
-                self.news.push(death_message(end, &names.2));
+                self.news.push(death_message(end, &names.2).into());
             }
             if by != player || seen_them {
                 events.extend(made);

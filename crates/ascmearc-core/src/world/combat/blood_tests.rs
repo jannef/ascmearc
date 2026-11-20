@@ -278,7 +278,7 @@ fn blood_never_changes_what_happens() {
     assert_eq!(a.messages, b.messages);
     assert_eq!(a.current().objects, b.current().objects);
     assert!(b.current().blood.is_empty());
-    let deaths = (a.messages.iter())
+    let deaths = (bloody.messages().iter())
         .filter(|m| m.display().contains("dies"))
         .count();
     assert!(

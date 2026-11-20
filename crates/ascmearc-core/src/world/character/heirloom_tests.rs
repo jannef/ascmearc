@@ -97,7 +97,8 @@ fn the_heritage_talents_are_only_for_creation() {
     for action in crate::action::parse_actions("talent:family_wealth").expect("actions") {
         world.apply(&action);
     }
-    let said = &world.messages().iter().last().expect("a refusal").text;
+    let log = world.messages();
+    let said = &log.iter().last().expect("a refusal").text;
     assert_eq!(
         said,
         "You cannot take Family wealth: you need to be a new character."

@@ -234,7 +234,7 @@ to open, read keys for, or draw one:
   has read everything; a replay's last step is news, `play_replay`; a loaded snapshot calls
   `Game::mark_read`), and `Game::unread` lines it up with the log (which only grows at its end,
   folds repeats into its last entry, and drops its oldest beyond `messages::CAPACITY`) to give
-  this turn's messages. Those noted during a long action (`Message::passing`: `World::note` while
+  this turn's messages. Those noted during a long action (`Entry::passing`: `World::note` while
   `World::keep_at` runs, its `working`, but for its last stretch's, cleared by `MessageLog::settle`
   so what came with the end is read with it; presentation only, not saved or hashed; #1789) are not
   paged: `more::draw` shows them among the earlier messages in the rows left free, so a craft amid

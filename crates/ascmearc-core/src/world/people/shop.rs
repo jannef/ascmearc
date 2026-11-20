@@ -737,7 +737,7 @@ impl World {
         let name = shops[i].name.clone();
         self.outrage(i);
         self.news
-            .push(format!("\"You will pay for that!\" shouts {name}."));
+            .push(format!("\"You will pay for that!\" shouts {name}.").into());
         self.player_did(Deed::AttackedShopkeeper);
     }
 

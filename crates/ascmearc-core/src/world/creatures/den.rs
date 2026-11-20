@@ -111,7 +111,7 @@ impl World {
             let text = format!("{} wakes up.", crate::content::the_start(&name));
             // Woken by the player's attack that found it asleep: after that attack's line.
             if self.sleeper_struck == Some(id) {
-                self.news.push(text);
+                self.news.push(text.into());
             } else {
                 self.say(text);
             }

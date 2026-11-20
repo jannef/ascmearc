@@ -64,9 +64,12 @@ pub fn json(world: &World, layers: &[Layer], include_state: bool) -> Value {
             seen
         })
         .collect();
-    let messages: Vec<&crate::messages::Message> = {
-        let all: Vec<_> = world.messages().iter().collect();
-        all[all.len().saturating_sub(RECENT_MESSAGES)..].to_vec()
+    // The recent messages, in English (`docs/dev/localization.md`).
+    let messages: Vec<crate::messages::Message> = {
+        let log = world.log();
+        (log.iter().skip(log.len().saturating_sub(RECENT_MESSAGES)))
+            .map(|entry| crate::messages::Message::english(content, entry))
+            .collect()
     };
     let unpaid = view.unpaid();
     let inventory: Vec<Value> = view

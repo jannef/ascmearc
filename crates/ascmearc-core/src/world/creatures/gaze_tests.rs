@@ -237,7 +237,8 @@ fn a_gaze_takes_at_sight_both_ways_and_then_cools() {
     let before = w.messages().len();
     run(&mut w, "wait");
     assert!(first_of(&w, "starer").pos.chebyshev(w.player_pos()) < far);
-    let again = w.messages().iter().skip(before);
+    let log = w.messages();
+    let again = log.iter().skip(before);
     assert!(
         !again
             .map(|m| m.display())

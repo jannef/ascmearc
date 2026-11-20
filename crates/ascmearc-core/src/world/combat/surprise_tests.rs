@@ -9,6 +9,7 @@ use crate::combat::{Category, Defence, Target};
 use crate::content::{ActionKind, ContentFiles};
 use crate::replay::Replay;
 use crate::test_support::draws;
+use crate::test_support::spoken;
 use crate::test_support::texts;
 use crate::world::*;
 
@@ -460,7 +461,7 @@ fn attackers(events: &[Event]) -> Vec<ActorId> {
 
 /// The player's blows at something unseen said so far in another's turn: held for the news.
 fn answers(w: &World) -> usize {
-    (w.news.iter())
+    (spoken(w, &w.news).iter())
         .filter(|t| t.starts_with("You ") && t.contains("something"))
         .count()
 }

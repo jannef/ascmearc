@@ -121,7 +121,8 @@ fn a_member_bled_to_death_counts_and_is_said() {
     }
     assert!(!w.state.actors.contains_key(&kobold), "it bled to death");
     assert_eq!(status(&w, "cull"), "1 / 150 killed.");
-    let said: Vec<_> = w.messages().iter().map(|m| m.text.as_str()).collect();
+    let log = w.messages();
+    let said: Vec<_> = log.iter().map(|m| m.text.as_str()).collect();
     assert!(
         said.contains(&"Quest updated: 1 / 150 kobolds."),
         "{said:?}"
@@ -199,7 +200,8 @@ fn what_renames_the_noun() {
         }
         w.apply(&Action::Wait);
     }
-    let said: Vec<_> = w.messages().iter().map(|m| m.text.as_str()).collect();
+    let log = w.messages();
+    let said: Vec<_> = log.iter().map(|m| m.text.as_str()).collect();
     assert!(
         said.contains(&"Quest updated: 1 / 150 scalies."),
         "{said:?}"

@@ -158,7 +158,8 @@ fn each_corpse_gives_its_signature_its_stats_and_its_resistances() {
         let totals: Vec<i32> = RESISTED.iter().map(|d| resists(&w, d).0).collect();
         eat(&mut w, boss);
         assert!(holds(&w, gift), "{boss}: {gift}");
-        let messages: Vec<&str> = w.messages().iter().map(|m| m.text.as_str()).collect();
+        let log = w.messages();
+        let messages: Vec<&str> = log.iter().map(|m| m.text.as_str()).collect();
         assert!(
             messages.contains(&"Nothing more of it will take in you."),
             "{boss}: {messages:?}"

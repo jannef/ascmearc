@@ -36,8 +36,8 @@ impl ContentFiles {
         }
     }
 
-    /// Reads the `campaigns/`, `data/`, and `vaults/` TOML files under `root`, subdirectories
-    /// included (`data/creatures/kobold.toml`): the same set, under the same paths, as
+    /// Reads the `campaigns/`, `data/`, `lang/`, and `vaults/` TOML files under `root`,
+    /// subdirectories included (`data/creatures/kobold.toml`): the same set, under the same paths, as
     /// `ascmearc-assets` embeds from `assets/` (one walk, `content/walk.rs`), the test world,
     /// `campaigns/showcase/`, left out unless `showcase`.
     pub fn from_dir(root: &Path, showcase: bool) -> std::io::Result<Self> {
@@ -124,6 +124,19 @@ impl ContentFiles {
     pub(crate) fn insert_builtin_table(&mut self, name: &str) {
         let builtin = Self::builtin();
         for (path, text) in builtin.table_unread(name) {
+            self.insert(path, text);
+        }
+    }
+
+    /// Adds the built-in languages, `lang/` (tests: a fixture set whose test reads a line said
+    /// from a template, which would otherwise render as its `[id]`).
+    #[cfg(test)]
+    pub(crate) fn insert_builtin_lang(&mut self) {
+        let builtin = Self::builtin();
+        for (path, text) in builtin.files.range("lang/".to_string()..) {
+            if !path.starts_with("lang/") {
+                break;
+            }
             self.insert(path, text);
         }
     }

@@ -122,7 +122,8 @@ fn bought_it_trains_mining_takes_the_gold_and_a_chat_and_then_digging_works() {
     run(&mut w, "ask:E:train_mining");
     assert_eq!(gold(&w), 100);
     assert_eq!(mining(&w), Some(5));
-    let said: Vec<&str> = (w.messages().iter()).map(|m| m.text.as_str()).collect();
+    let log = w.messages();
+    let said: Vec<&str> = (log.iter()).map(|m| m.text.as_str()).collect();
     assert!(
         said.contains(&"The old hermit trains you in mining."),
         "{said:?}"

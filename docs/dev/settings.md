@@ -106,9 +106,10 @@ own key does (`Gameplay::direction`); the stairs keys there (`Ascend`, `Descend`
 the nearest known stairs that way (`Action::RunToStairs`, #1801). A settings file lists every command's keys, so one written
 before #1750 keeps `Alt+s` for Search for a while (Controls' reset gives `S`), and gets the run
 prefix's defaults unless a command it lists has `.` or the decimal key.
-Core knows no bindings, so a message names a key by its command's id (`messages::key("help")`
-writes `{key:help}`, as the welcome line does) and the message line fills it in as bound
-(`Message::display_with` with `ui::message_key`; dumps show the token).
+Core knows no bindings, so a message names a key by its command's id (`{key:help}` in its
+template, as the welcome line's, `assets/lang/en/messages/world.toml`) and the message line fills
+it in as bound when it renders the line (`ui::message_text` with `ui::message_key`; dumps show
+the token; `docs/dev/localization.md`).
 Controls binds a key in place of one of a command's keys or after its last
 (`Bindings::bind_at(command, key, Some(n) | None)`, #1324; `bind_primary`, the tests' shorthand, is `Some(0)`; a key the
 command has already trades places with the one replaced) and removes one by place

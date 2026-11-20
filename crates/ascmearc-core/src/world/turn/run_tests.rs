@@ -44,11 +44,11 @@ fn in_the_open_a_run_holds_its_direction_to_the_wall() {
 ##########
 ",
     );
-    let said = w.messages().iter().count();
+    let said = w.messages().len();
     let outcome = run(&mut w, Dir::E);
     assert_eq!(w.player_pos(), Pos::new(8, 2), "beside the east wall");
     assert!(outcome.took_turn);
-    assert_eq!(w.messages().iter().count(), said, "nothing to say");
+    assert_eq!(w.messages().len(), said, "nothing to say");
     // Against the wall, a run is a plain step: the wall is in the way, and no time passes.
     let turn = w.state.turn;
     run(&mut w, Dir::E);
@@ -195,10 +195,10 @@ fn a_hostile_farther_off_in_view_does_not_stop_a_run() {
 ################
 ",
     );
-    let said = w.messages().iter().count();
+    let said = w.messages().len();
     run(&mut w, Dir::E);
     assert_eq!(w.player_pos(), Pos::new(4, 1), "to the fence");
-    assert_eq!(w.messages().iter().count(), said);
+    assert_eq!(w.messages().len(), said);
 }
 
 #[test]

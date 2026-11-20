@@ -8,6 +8,7 @@ use crate::character::CharacterSpec;
 use crate::content::{ContentFiles, StatDeed, TrapId};
 use crate::stats::{PerStat, Stat, Stats};
 use crate::test_support::draws;
+use crate::test_support::spoken;
 use crate::test_support::{CONTENT as BUILTIN, run, said};
 use crate::time::DAWN;
 use crate::world::*;
@@ -302,7 +303,7 @@ fn a_drop_never_goes_below_the_floors_and_never_kills() {
     );
     assert_eq!(p.stats.potential(Stat::Toughness), 30);
     assert!(p.hp <= p.max_hp(&content) && p.hp >= 1 && p.hp <= before);
-    assert!(w.news.iter().any(|m| m == "You feel frailer."));
+    assert!(spoken(&w, &w.news).iter().any(|m| m == "You feel frailer."));
 }
 
 #[test]

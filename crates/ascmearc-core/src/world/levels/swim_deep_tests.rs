@@ -109,8 +109,8 @@ fn carry(w: &mut World, level: Burden) {
     }
 }
 
-fn last(w: &World) -> &str {
-    w.messages().iter().last().map_or("", |m| m.text.as_str())
+fn last(w: &World) -> String {
+    crate::test_support::last_text(w)
 }
 
 /// `action` is refused with `said`: no time, no draw, nothing changed.

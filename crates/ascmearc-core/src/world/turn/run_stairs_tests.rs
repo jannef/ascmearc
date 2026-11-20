@@ -62,7 +62,7 @@ const PENNED: &str = "\
 #[test]
 fn the_nearest_stairs_are_the_nearest_walk_and_the_run_stops_on_them() {
     let mut w = world(PENNED);
-    let said = w.messages().iter().count();
+    let said = w.messages().len();
     let outcome = down(&mut w);
     assert!(outcome.took_turn);
     assert_eq!(
@@ -71,7 +71,7 @@ fn the_nearest_stairs_are_the_nearest_walk_and_the_run_stops_on_them() {
         "on the stairs nearer by the walk"
     );
     assert_eq!(w.state.current_level, "test_run", "not taken");
-    assert_eq!(w.messages().iter().count(), said + 1, "only what is here");
+    assert_eq!(w.messages().len(), said + 1, "only what is here");
     assert_eq!(last(&w), "There is a staircase down here.");
     // On them, the run says so and takes no time; the stairs key takes them.
     let turn = w.state.turn;

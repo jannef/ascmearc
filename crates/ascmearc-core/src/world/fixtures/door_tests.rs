@@ -243,6 +243,7 @@ const LEVELS: &[(&str, &str, &str)] = &[
 
 fn files() -> ContentFiles {
     let mut files = ContentFiles::default();
+    files.insert_builtin_lang();
     files.insert(
         "data/item_classes.toml",
         crate::content::BUILTIN_ITEM_CLASSES,

@@ -8,6 +8,7 @@ use crate::combat::{Blow, Strike};
 use crate::damage::Damage;
 use crate::test_support::draws;
 use crate::test_support::run;
+use crate::test_support::spoken;
 use crate::world::classes::class_active_tests::{reach, world};
 use crate::world::classes::war_cry_tests::foe_at;
 use crate::world::*;
@@ -49,7 +50,9 @@ fn spell(w: &mut World, target: ActorId, amount: i32) {
 }
 
 fn told(w: &World) -> bool {
-    w.news.iter().any(|n| n == "The hex comes home.")
+    spoken(w, &w.news)
+        .iter()
+        .any(|n| n == "The hex comes home.")
 }
 
 #[test]

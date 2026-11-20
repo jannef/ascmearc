@@ -88,6 +88,13 @@ impl fmt::Debug for Language {
     }
 }
 
+/// [`Language::english`] with no plural dictionary.
+impl Default for Language {
+    fn default() -> Self {
+        Self::english(Plurals::default())
+    }
+}
+
 impl Language {
     /// A language from its parsed `lang.toml` and the morphology it names.
     pub fn new(file: &LangFile, morphology: Box<dyn Morphology>) -> Self {
@@ -125,6 +132,25 @@ impl Language {
             }
         };
         Ok(Self::new(&file, morphology))
+    }
+
+    /// English with no templates yet: the `en` module given `plurals`, every `lang.toml` field at
+    /// its default. What content without `lang/en/lang.toml` renders with (a test's own files):
+    /// its literal lines read as written, a template's message as its `[id]`.
+    pub fn english(plurals: Plurals) -> Self {
+        let file = LangFile {
+            name: "English".into(),
+            code: "en".into(),
+            morphology: "en".into(),
+            fallback: None,
+            repeat: lang::default_repeat(),
+            number_words: lang::default_number_words(),
+            registers: BTreeMap::new(),
+            race_registers: BTreeMap::new(),
+            generic: None,
+        };
+        let morphology = Box::new(En::new(plurals, file.number_words));
+        Self::new(&file, morphology)
     }
 
     /// Adds a template file (`messages/<prefix>.toml`).
@@ -180,18 +206,24 @@ impl Language {
         lex: &dyn Lexicon,
         keys: Keys<'_>,
     ) -> Result<String, RenderError> {
-        let template = self
-            .templates
-            .get(entry.id.as_str())
-            .ok_or_else(|| RenderError::NoTemplate(entry.id.to_string()))?;
-        let ctx = Ctx {
-            morphology: self.morphology.as_ref(),
-            register,
-            lex,
-            keys,
-            args: &entry.args,
+        let mut text = match entry.literal_text() {
+            // Transitional: a literal line reads as written in every language.
+            Some(literal) => literal.to_string(),
+            None => {
+                let template = self
+                    .templates
+                    .get(entry.id.as_str())
+                    .ok_or_else(|| RenderError::NoTemplate(entry.id.to_string()))?;
+                let ctx = Ctx {
+                    morphology: self.morphology.as_ref(),
+                    register,
+                    lex,
+                    keys,
+                    args: &entry.args,
+                };
+                ctx.template(template)?
+            }
         };
-        let mut text = ctx.template(template)?;
         if entry.count > 1 {
             text.push_str(&self.repeat.replace("{n}", &entry.count.to_string()));
         }
@@ -390,6 +422,37 @@ text = "{what:Bare}, {count:num} of them."
 
     fn render(en: &Language, msg: Msg) -> String {
         en.render(&Entry::new(1, msg), &lexicon(), &written_key)
+    }
+
+    #[test]
+    fn a_literal_line_reads_as_written_in_any_language_with_its_repeats() {
+        let generic = Language::from_toml(
+            "name = \"x\"\ncode = \"x\"\nmorphology = \"generic\"\nrepeat = \" x{n}\"\n[generic]\nforms = [\"nom\"]\n",
+            Plurals::default(),
+        )
+        .expect("generic");
+        let mut entry = Entry::new(1, Msg::from("Press {key:help} {sic}."));
+        for language in [&english(), &Language::default(), &generic] {
+            assert_eq!(
+                language.render(&entry, &NoLexicon, &|_| "?".into()),
+                "Press {key:help} {sic}."
+            );
+        }
+        entry.count = 3;
+        assert_eq!(
+            Language::default().render(&entry, &NoLexicon, &written_key),
+            "Press {key:help} {sic}. (×3)"
+        );
+        assert_eq!(
+            generic.render(&entry, &NoLexicon, &written_key),
+            "Press {key:help} {sic}. x3"
+        );
+        // English without templates renders a template's message as its id.
+        let hit = Entry::new(1, Msg::new(id("combat.hit")));
+        assert_eq!(
+            Language::default().render(&hit, &NoLexicon, &written_key),
+            "[combat.hit]"
+        );
     }
 
     #[test]
