@@ -6,7 +6,7 @@
 
 use super::inflect::{Case, Poss};
 use super::word::{self, Entry};
-use super::{Fi, NUMBER_WORDS, numeral};
+use super::{Fi, NUMBER_WORDS, numeral, plural_numeral};
 use crate::lexicon::{LexWord, MapLexicon, NoLexicon};
 use crate::morphology::{Conj, FormError, Morphology};
 use crate::phrase::{Gender, Modifier, Note, Person, Phrase, Word};
@@ -192,11 +192,47 @@ fn the_numerals_decline_as_the_oracle_says() {
         }
     }
     assert!(wrong.is_empty(), "{}", wrong.join("\n"));
-    assert_eq!(seen, 10, "yksi to kymmenen");
+    assert_eq!(seen, 12, "yksi to kymmenen, yksitoista, kolmetoista");
     assert_eq!(numeral(11, Case::Gen).as_deref(), Some("yhdentoista"));
     assert_eq!(numeral(19, Case::Ill).as_deref(), Some("yhdeksääntoista"));
     assert_eq!(numeral(20, Case::Nom), None);
     assert_eq!(numeral(3, Case::Com), None);
+}
+
+/// The plural numerals, which count a word with no singular ("kolmet sakset"), against the
+/// plural columns of the same tables: every one of 1–10, 11, and 13 in the twelve cases.
+#[test]
+fn the_plural_numerals_decline_as_the_oracle_says() {
+    let mut wrong: Vec<String> = Vec::new();
+    let mut seen = 0;
+    let oracle = oracle();
+    for w in &oracle.word {
+        let Some(n) = NUMBER_WORDS.iter().position(|word| *word == w.lemma) else {
+            continue;
+        };
+        seen += 1;
+        for case in &Case::SINGULAR {
+            let i = index(&oracle, *case);
+            let got = plural_numeral(n as u32, *case).expect("a plural numeral in a case");
+            if !accepts(&w.pl[i], &got) {
+                wrong.push(format!(
+                    "{} pl_{}: got {got}, want {}",
+                    w.lemma,
+                    case.name(),
+                    w.pl[i]
+                ));
+            }
+        }
+    }
+    assert!(wrong.is_empty(), "{}", wrong.join("\n"));
+    assert_eq!(seen, 12);
+    assert_eq!(
+        plural_numeral(19, Case::Nom).as_deref(),
+        Some("yhdeksättoista")
+    );
+    assert_eq!(plural_numeral(0, Case::Nom), None, "zero has no plural");
+    assert_eq!(plural_numeral(20, Case::Nom), None);
+    assert_eq!(plural_numeral(3, Case::Com), None);
 }
 
 #[test]
@@ -294,6 +330,8 @@ fn lexicon() -> MapLexicon {
             LexWord::new("ponsi/27").form("adjective", "ponsinen/38"),
         )
         .with("word:flames", LexWord::new("liekki/5*A").many(true))
+        .with("object:scissors", LexWord::new("saksi/7").plural_only(true))
+        .with("object:trousers", LexWord::new("housu/1").plural_only(true))
 }
 
 fn form(phrase: &Phrase, form: &str) -> String {
@@ -539,16 +577,134 @@ fn notes_and_plural_only_words() {
         "Grim Biteen, pitkämiekkaan",
         "the base agrees in case"
     );
+}
+
+/// English's `many` is plural in meaning only: uncounted the plural, counted as any noun, the
+/// singular partitive after a nominative numeral and agreement in the other cases (#1906).
+#[test]
+fn a_word_plural_in_meaning_is_counted_as_any_noun() {
     let flames = Phrase::id("word:flames");
-    assert_eq!(form(&flames, "nom"), "liekit", "a plural-only word");
+    assert_eq!(form(&flames, "nom"), "liekit", "uncounted: the plural");
     assert_eq!(form(&flames, "bare"), "liekit");
     assert_eq!(form(&flames, "ill"), "liekkeihin");
     assert_eq!(form(&flames, "par"), "liekkejä");
+    assert_eq!(form(&flames, "counted"), "liekit");
+    let three = flames.clone().count(3);
+    assert_eq!(form(&three, "counted"), "kolme liekkiä");
+    assert_eq!(form(&three, "bare"), "liekit", "bare: no numeral");
+    // Every singular case against the oracle's own table of `liekki`.
+    let oracle = oracle();
+    let liekki = oracle.word.iter().find(|w| w.lemma == "liekki");
+    let kolme = oracle.word.iter().find(|w| w.lemma == "kolme");
+    let (Some(liekki), Some(kolme)) = (liekki, kolme) else {
+        panic!("liekki and kolme in the oracle");
+    };
+    for case in Case::SINGULAR {
+        let i = index(&oracle, case);
+        let (numeral, noun) = if case == Case::Nom {
+            (&kolme.sg[i], &liekki.sg[index(&oracle, Case::Par)])
+        } else {
+            (&kolme.sg[i], &liekki.sg[i])
+        };
+        let got = form(&three, case.name());
+        let (got_numeral, got_noun) = got.split_once(' ').expect("numeral and noun");
+        assert!(
+            accepts(numeral, got_numeral) && accepts(noun, got_noun),
+            "{}: got {got}, want {numeral} {noun}",
+            case.name()
+        );
+    }
+    assert_eq!(form(&three, "ill"), "kolmeen liekkiin");
+    assert_eq!(form(&three, "ade"), "kolmella liekillä");
     assert_eq!(
-        form(&flames.count(3), "counted"),
-        "kolme liekkejä",
-        "no plural numeral yet"
+        form(&three, "pl_ill"),
+        "liekkeihin",
+        "a plural form ignores the count"
     );
+}
+
+/// A word with no singular (`plural_only`) is plural in every case and counted with the plural
+/// numeral, numeral and noun agreeing in every case, nominative included (#1906).
+#[test]
+fn a_word_with_no_singular_takes_the_plural_numeral() {
+    let scissors = Phrase::id("object:scissors");
+    assert_eq!(form(&scissors, "nom"), "sakset");
+    assert_eq!(
+        form(&scissors, "counted"),
+        "sakset",
+        "one: no numeral, as any noun"
+    );
+    assert_eq!(form(&scissors, "gen"), "saksien");
+    assert_eq!(form(&scissors, "ill"), "saksiin");
+    assert_eq!(form(&scissors, "pl_ill"), "saksiin");
+    let three = scissors.clone().count(3);
+    assert_eq!(form(&three, "counted"), "kolmet sakset");
+    assert_eq!(form(&three, "nom"), "kolmet sakset");
+    assert_eq!(form(&three, "par"), "kolmia saksia");
+    assert_eq!(form(&three, "gen"), "kolmien saksien");
+    assert_eq!(form(&three, "bare"), "sakset", "bare: no numeral");
+    let trousers = Phrase::id("object:trousers").count(3);
+    assert_eq!(form(&trousers, "ine"), "kolmissa housuissa");
+    assert_eq!(form(&trousers.clone().count(2), "nom"), "kahdet housut");
+    assert_eq!(
+        form(&trousers.clone().count(11), "nom"),
+        "yhdettoista housut"
+    );
+    assert_eq!(
+        form(&trousers.clone().count(13), "nom"),
+        "13 housut",
+        "digits agree"
+    );
+    assert_eq!(form(&trousers.clone().count(13), "ill"), "13 housuihin");
+    assert_eq!(
+        form(&trousers.clone().count(0), "nom"),
+        "nolla housuja",
+        "zero: the plain numeral and the plural partitive"
+    );
+    let mine = |n| {
+        let owned = Phrase::id("object:trousers")
+            .count(n)
+            .owned_by(Phrase::literal("Hild").person(Person::You));
+        form(&owned, "nom")
+    };
+    assert_eq!(mine(3), "kolmet housusi");
+    // Every case of every numeral 1–10, 11, and 13 against the oracle: the plural numeral and
+    // the plural of `karhu` (class 1, as `housu`) in the same case.
+    let oracle = oracle();
+    let karhu = oracle
+        .word
+        .iter()
+        .find(|w| w.lemma == "karhu")
+        .expect("karhu");
+    let fi = Fi::new(19);
+    let lex = MapLexicon::default().with("x", LexWord::new("karhu/1").plural_only(true));
+    let mut checked = 0;
+    for w in &oracle.word {
+        let Some(n) = NUMBER_WORDS.iter().position(|word| *word == w.lemma) else {
+            continue;
+        };
+        let phrase = Phrase::id("x").count(n as u32);
+        for case in Case::SINGULAR {
+            let i = index(&oracle, case);
+            let got = fi
+                .phrase(&phrase, case.name(), &lex, &Register::default())
+                .expect("a case");
+            if n == 1 {
+                assert_eq!(got, karhu.pl[i], "one: no numeral");
+                continue;
+            }
+            let (got_numeral, got_noun) = got.rsplit_once(' ').expect("numeral and noun");
+            assert!(
+                accepts(&w.pl[i], got_numeral) && accepts(&karhu.pl[i], got_noun),
+                "{n} {}: got {got}, want {} {}",
+                case.name(),
+                w.pl[i],
+                karhu.pl[i]
+            );
+            checked += 1;
+        }
+    }
+    assert_eq!(checked, 11 * 12);
 }
 
 #[test]
