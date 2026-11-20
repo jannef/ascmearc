@@ -20,6 +20,7 @@
 use crate::color::Rgb;
 use crate::content::{Content, Cutting, MaterialId, ObjectDef, PartId, dull};
 use crate::item_parts::ItemPart;
+use crate::lang::{Modifier, Phrase, Word};
 use crate::magic::loot::pick_weighted;
 use crate::object::Stack;
 use crate::rng::Rng;
@@ -27,29 +28,30 @@ use crate::rng::Rng;
 /// What a loose `gem` cut as `cutting` is called, singular and plural, without an article or a
 /// count: "ruby"/"rubies", "large fine emerald", "uncut tiny garnet".
 pub fn names(content: &Content, gem: MaterialId, cutting: Cutting) -> (String, String) {
-    let material = content.material(gem);
-    let plural = (material.gem.as_ref())
-        .and_then(|g| g.plural.clone())
-        .unwrap_or_else(|| content.plural(&material.name));
-    let words = |noun: &str| {
-        let Some(gems) = content.gems() else {
-            return noun.to_string();
-        };
-        let plain = gems.plain();
-        let cut = gems.cut(cutting.cut);
-        let size = (cutting.size != plain.size).then(|| gems.size(cutting.size).name.as_str());
-        let cut_word = (cutting.cut != plain.cut).then_some(cut.name.as_str());
-        let order = if cut.rough {
-            [cut_word, size]
-        } else {
-            [size, cut_word]
-        };
-        (order.into_iter().flatten())
-            .chain([noun])
-            .collect::<Vec<_>>()
-            .join(" ")
+    let one = name_phrase(content, gem, cutting);
+    (
+        content.english_of(&one, "bare"),
+        content.english_of(&one.count(2), "bare"),
+    )
+}
+
+/// [`names`] as a phrase: the gem with its size and cut before it, a rough cut first.
+pub fn name_phrase(content: &Content, gem: MaterialId, cutting: Cutting) -> Phrase {
+    let phrase = Phrase::id(format!("material:{}", content.material(gem).id));
+    let Some(gems) = content.gems() else {
+        return phrase;
     };
-    (words(&material.name), words(&plural))
+    let plain = gems.plain();
+    let cut = gems.cut(cutting.cut);
+    let size = (cutting.size != plain.size)
+        .then(|| Word::id(format!("gem_size:{}", gems.size(cutting.size).id)));
+    let cut_word = (cutting.cut != plain.cut).then(|| Word::id(format!("gem_cut:{}", cut.id)));
+    let order = if cut.rough {
+        [cut_word, size]
+    } else {
+        [size, cut_word]
+    };
+    (order.into_iter().flatten()).fold(phrase, |p, w| p.with(Modifier::Adjective(w)))
 }
 
 /// `gem` cut as `cutting` in words for a description, its size and cut always said: "small

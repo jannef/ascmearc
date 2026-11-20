@@ -29,8 +29,9 @@
 
 use crate::color::Rgb;
 use crate::combat::Attack;
-use crate::content::{Content, Cutting, DamageTypeId, MaterialId, ObjectId, Part, Rarity, part};
+use crate::content::{Content, Cutting, DamageTypeId, MaterialId, ObjectId, Part, Rarity};
 use crate::item_parts::{self, ItemPart};
+use crate::lang::{Modifier, Phrase, Word};
 use crate::magic::{Effect, Magic, Mods, Worked, name};
 use crate::rng::Rng;
 use crate::scroll_label::Lore;
@@ -532,33 +533,57 @@ impl Stack {
     }
 
     /// What it is called as it is made, singular and plural, without an article, a count, or
-    /// magic: its object's name ("long sword", "gold and ruby amulet"), named from what its file
-    /// writes with its own parts if it has any ("emerald-pommelled long sword", "bronze long
-    /// sword"; [`part::names`]), a loose gem's ("large fine emerald", [`crate::gem::names`]), or
-    /// a piece's or scrap's by its material ("piece of tin", [`crate::piece::names`]; "tin
-    /// scrap", [`crate::scrap::names`]).
+    /// magic: [`Stack::made_phrase`] in English.
     pub fn names(&self, content: &Content) -> (String, String) {
+        let made = self.made_phrase(content);
+        (
+            content.english_of(&made, "bare"),
+            content.english_of(&made.count(2), "bare"),
+        )
+    }
+
+    /// What one of it is called as it is made, as a phrase: its object's name ("long sword",
+    /// "gold and ruby amulet"), named from what its file writes with its own parts if it has any
+    /// (its main material, and its gems and precious metals: "emerald-pommelled long sword",
+    /// "bronze long sword"; [`crate::content::part::names`]), a loose gem's ("large fine emerald",
+    /// [`crate::gem::name_phrase`]), or a piece's or scrap's by its material ("piece of tin",
+    /// [`crate::piece::name_phrase`]; "tin scrap", [`crate::scrap::name_phrase`]).
+    pub fn made_phrase(&self, content: &Content) -> Phrase {
         let def = content.object(self.object);
         if def.id == crate::piece::ID {
-            return crate::piece::names(content, def, self.parts(content)[0].material);
+            return crate::piece::name_phrase(content, def, self.parts(content)[0].material);
         }
         if crate::scrap::is(def) {
-            return crate::scrap::names(content, def, self.parts(content)[0].material);
+            return crate::scrap::name_phrase(content, def, self.parts(content)[0].material);
         }
+        let object = Phrase::id(format!("object:{}", def.id));
         if self.parts.is_none() {
-            return (def.name.clone(), def.plural.clone());
+            return object;
         }
         if let Some((gem, cutting)) = self.gem(content) {
-            return crate::gem::names(content, gem, cutting);
+            return crate::gem::name_phrase(content, gem, cutting);
         }
-        part::names(
-            &def.written_name,
-            &def.written_plural,
-            &self.parts(content),
-            def.material(),
-            content.materials(),
-            content.part_defs(),
-        )
+        let parts = self.parts(content);
+        let Some(main) = parts.first() else {
+            return object;
+        };
+        let material = |m: MaterialId| Word::id(format!("material:{}", content.material(m).id));
+        let mut phrase = object.with(Modifier::Made(material(main.material)));
+        for p in parts
+            .iter()
+            .filter(|p| content.material(p.material).precious)
+        {
+            let kinds = content.part_defs();
+            let part = p.part.map(|k| &kinds[usize::from(k.0)]);
+            phrase = phrase.with(match part.filter(|k| k.adjective.is_some()) {
+                Some(kind) => Modifier::Part {
+                    material: material(p.material),
+                    part: Word::id(format!("part:{}", kind.id)),
+                },
+                None => Modifier::Material(material(p.material)),
+            });
+        }
+        phrase
     }
 
     /// The colour its glyph is drawn in: its object's, a loose gem's own (duller uncut), its
@@ -588,23 +613,26 @@ impl Stack {
     }
 
     /// As the player knows it: "a dagger", "12 arrows", "a Sharp long sword of the Bear", "Grim
-    /// Bite, a long sword", unidentified "a long sword (magic)".
+    /// Bite, a long sword", unidentified "a long sword (magic)": [`Stack::phrase`] counted.
     pub fn describe(&self, content: &Content) -> String {
-        let names = self.names(content);
-        let known = self.is_identified();
-        let word = self.worked_word();
-        let cursed = self.known_cursed(content);
-        let text = name::describe(
-            &names,
-            word,
-            self.count,
-            self.magic(),
-            (known, cursed),
-            content,
-        );
+        content.english_of(&self.phrase(content), "counted")
+    }
+
+    /// As the player knows it, as a phrase (`magic/name.rs`): its name as made, its magic as far
+    /// as it is identified, a curse they know of, and a light's mode ("(lit)").
+    pub fn phrase(&self, content: &Content) -> Phrase {
+        let known = (self.is_identified(), self.known_cursed(content));
+        self.phrase_as(content, known)
+    }
+
+    /// [`Stack::phrase`] with its magic `known` or not and `cursed` or not.
+    fn phrase_as(&self, content: &Content, (known, cursed): (bool, bool)) -> Phrase {
+        let made = self.made_phrase(content);
+        let (word, count, magic) = (self.worked_word(), self.count, self.magic());
+        let phrase = name::phrase(made, word, count, magic, (known, cursed), content);
         match self.light.word() {
-            Some(mode) => format!("{text} ({mode})"),
-            None => text,
+            Some(mode) => phrase.note(mode),
+            None => phrase,
         }
     }
 
@@ -621,9 +649,14 @@ impl Stack {
     /// What it is called as the player knows it, without an article or count: "long sword",
     /// "Sharp long sword of the Bear", "Grim Bite".
     pub fn title(&self, content: &Content) -> String {
-        let names = self.names(content);
-        let word = self.worked_word();
-        name::title(&names, word, self.magic(), self.is_identified(), content)
+        content.english_of(&self.title_phrase(content), "bare")
+    }
+
+    /// [`Stack::phrase`] of one, with nothing said after its name.
+    pub fn title_phrase(&self, content: &Content) -> Phrase {
+        let (made, word, magic) = (self.made_phrase(content), self.worked_word(), self.magic());
+        let known = (self.is_identified(), false);
+        name::phrase(made, word, 1, magic, known, content).without_notes()
     }
 
     /// The affixes it holds against its capacity, as they truly are, for a base item (one with a
@@ -637,20 +670,8 @@ impl Stack {
 
     /// As it truly is, identified or not: for dev tools only.
     pub(crate) fn describe_truth(&self, content: &Content) -> String {
-        let names = self.names(content);
-        let word = self.worked_word();
-        let cursed = self.is_cursed(content);
-        let mut text = name::describe(
-            &names,
-            word,
-            self.count,
-            self.magic(),
-            (true, cursed),
-            content,
-        );
-        if let Some(mode) = self.light.word() {
-            text += &format!(" ({mode})");
-        }
+        let truth = self.phrase_as(content, (true, self.is_cursed(content)));
+        let mut text = content.english_of(&truth, "counted");
         if let Some(left) = self.charges_left(content) {
             text += &format!(" ({})", charges_text(left));
         }
@@ -751,11 +772,7 @@ fn oldest(a: Option<GameTime>, b: Option<GameTime>) -> Option<GameTime> {
 
 /// A wand's charges in words: "7 charges", "1 charge", "empty".
 pub fn charges_text(left: u8) -> String {
-    match left {
-        0 => "empty".into(),
-        1 => "1 charge".into(),
-        n => format!("{n} charges"),
-    }
+    crate::lang::en::charges(u32::from(left))
 }
 
 /// Total weight of `stacks`, in grams.

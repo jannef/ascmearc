@@ -233,3 +233,29 @@ fn the_scroll_of_identify_is_the_commonest_scroll_and_the_general_store_has_it()
         .expect("a general store");
     assert_eq!(general.always, vec![identify]);
 }
+
+/// A message names an unidentified scroll by what the player sees, never its true type, and reads
+/// the same after it is identified: the phrase was taken by value (`docs/dev/localization.md`).
+#[test]
+fn a_line_names_a_scroll_as_it_was_seen_then() {
+    let mut w = world(7);
+    let fireball = id(&w, "scroll_of_fireball");
+    let stack = crate::object::Stack::new(fireball, 3);
+    let phrase = w.lore().phrase(&stack);
+    assert_eq!(phrase.head, crate::lang::Word::id("label:scroll"));
+    assert!(!format!("{phrase:?}").contains("fireball"), "{phrase:?}");
+    let line = crate::lang::Msg::new(crate::msg::combat::CANNOT_THROW).role("what", phrase);
+    let english = |w: &World| crate::test_support::english_of(w.content(), &line);
+    let before = english(&w);
+    assert!(
+        before.starts_with("You cannot throw 3 scrolls labelled "),
+        "{before}"
+    );
+    assert!(w.learn_scroll(fireball));
+    assert_eq!(w.lore().describe(&stack), "3 scrolls of fireball");
+    assert_eq!(
+        english(&w),
+        before,
+        "an old line keeps what the player read"
+    );
+}

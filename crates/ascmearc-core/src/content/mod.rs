@@ -107,6 +107,7 @@ mod layer_boss;
 mod learning;
 pub mod leaving;
 mod level;
+mod lexicon;
 mod light;
 mod load_creatures;
 mod load_items;

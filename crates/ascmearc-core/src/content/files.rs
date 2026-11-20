@@ -128,17 +128,19 @@ impl ContentFiles {
         }
     }
 
-    /// Adds the built-in languages, `lang/` (tests: a fixture set whose test reads a line said
-    /// from a template, which would otherwise render as its `[id]`).
+    /// The built-in languages alone, `lang/`: what a test's own files without English load
+    /// English from (`english.rs`).
     #[cfg(test)]
-    pub(crate) fn insert_builtin_lang(&mut self) {
+    pub(super) fn builtin_lang() -> Self {
         let builtin = Self::builtin();
+        let mut lang = Self::default();
         for (path, text) in builtin.files.range("lang/".to_string()..) {
             if !path.starts_with("lang/") {
                 break;
             }
-            self.insert(path, text);
+            lang.insert(path, text);
         }
+        lang
     }
 
     /// The files of table `name` as one text, in the table's order (tests: a fixture built from

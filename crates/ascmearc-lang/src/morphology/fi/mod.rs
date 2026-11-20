@@ -5,6 +5,9 @@
 //! generated when a template asks, from small tables (`classes.rs`, `inflect.rs`), never
 //! expanded ahead. A phrase's adjectives agree with its head, a genitive qualifier comes first,
 //! a count puts the numeral before a partitive, and the player is a pronoun in the case asked.
+//! An owner is a genitive before the phrase ("peikon pitkämiekka"), the player as owner a
+//! possessive suffix ("pitkämiekkasi"); a part's material makes a compound adjective
+//! ("smaragdiponsinen"); a plural-only word (`many`) is said in the plural.
 //! Total: a word the rules refuse renders as written; nothing here panics on file data.
 
 mod classes;
@@ -16,7 +19,7 @@ mod tests;
 
 use super::{Conj, FormError, Morphology, ParseError, missing, spaced};
 use crate::lexicon::{LexWord, Lexicon};
-use crate::phrase::{Modifier, Person, Phrase, Word};
+use crate::phrase::{Modifier, Note, Person, Phrase, Word};
 use crate::register::Register;
 use inflect::{Case, Harmony, Poss};
 use std::collections::BTreeMap;
@@ -150,6 +153,35 @@ impl Inflectable {
             entry,
             fallback: Entry::base_text(&word.base),
             forms: word.forms.clone(),
+        }
+    }
+
+    /// A part's compound adjective: the material's lemma (its `compound` form, else its base)
+    /// joined to the part's adjective entry (its `adjective` form, else its base), inflecting by
+    /// the adjective: `smaragdi` + `ponsinen/38` is "smaragdiponsinen". Refused, it is written
+    /// "material-adjective", as the words are.
+    fn part(material: &Word, part: &Word, lex: &dyn Lexicon) -> Self {
+        let material = match material {
+            Word::Literal(text) => text.clone(),
+            Word::Id(id) => match lex.word(id) {
+                Some(w) => {
+                    (w.forms.get("compound").cloned()).unwrap_or_else(|| Entry::base_text(&w.base))
+                }
+                None => return Self::unknown(id),
+            },
+        };
+        let adjective = match part {
+            Word::Literal(text) => text.clone(),
+            Word::Id(id) => match lex.word(id) {
+                Some(w) => w.forms.get("adjective").cloned().unwrap_or(w.base),
+                None => return Self::unknown(id),
+            },
+        };
+        let entry = format!("{material}|{adjective}");
+        Self {
+            entry: word::parse(&entry, None).ok(),
+            fallback: format!("{material}-{}", Entry::base_text(&adjective)),
+            forms: BTreeMap::new(),
         }
     }
 
@@ -309,8 +341,10 @@ impl Fi {
         n.to_string()
     }
 
-    /// The phrase's words in a case and number: [genitive qualifiers] [adjectives] head
-    /// [, jossa lukee X] [(notes)]; the possessive suffix on the head alone.
+    /// The phrase's words in a case and number: [genitive qualifiers] [adjectives, materials,
+    /// and parts] [what it is made of] head [, jossa lukee X] [(notes)] [, base]; the possessive
+    /// suffix on the head alone. A plural-only word (`many`) is plural whatever the count.
+    #[allow(clippy::too_many_arguments)]
     fn assemble(
         &self,
         phrase: &Phrase,
@@ -319,14 +353,28 @@ impl Fi {
         case: Case,
         poss: Option<Poss>,
         lex: &dyn Lexicon,
+        reg: &Register,
     ) -> String {
+        let plural = plural || self.many(phrase, lex);
         let mut front: Vec<String> = Vec::new();
         let mut adjectives: Vec<String> = Vec::new();
+        let mut made: Vec<String> = Vec::new();
         let mut after: Vec<String> = Vec::new();
         for modifier in &phrase.mods {
             match modifier {
                 Modifier::Adjective(w) | Modifier::Material(w) => {
                     adjectives.push(self.word(w, lex).form(plural, case, None));
+                }
+                Modifier::Part { material, part } => {
+                    let compound = Inflectable::part(material, part, lex);
+                    adjectives.push(compound.form(plural, case, None));
+                }
+                Modifier::Made(w) => {
+                    let material = self.word(w, lex);
+                    // Not the material the head's word already says ("pitkämiekka" is steel).
+                    if head.forms.get("material") != Some(&material.fallback) {
+                        made.push(material.form(plural, case, None));
+                    }
                 }
                 Modifier::Of(w) => front.push(self.word(w, lex).form(false, Case::Gen, None)),
                 Modifier::Label(w) => {
@@ -336,13 +384,21 @@ impl Fi {
             }
         }
         for note in &phrase.notes {
-            after.push(format!("({})", note.0));
+            after.push(match note {
+                Note::Tags(tags) => format!("({})", tags.join(", ")),
+                Note::Charges(0) => "(tyhjä)".to_string(),
+                Note::Charges(1) => "(1 lataus)".to_string(),
+                Note::Charges(n) => format!("({n} latausta)"),
+                Note::Base(base) => {
+                    let form = form_name(false, case, None);
+                    let base = self.phrase(base, &form, lex, reg).unwrap_or_default();
+                    format!(", {base}")
+                }
+            });
         }
         let head = head.form(plural, case, poss);
         let mut out = spaced(
-            front
-                .iter()
-                .chain(adjectives.iter())
+            (front.iter().chain(&adjectives).chain(&made))
                 .map(String::as_str)
                 .chain(std::iter::once(head.as_str())),
         );
@@ -355,6 +411,24 @@ impl Fi {
             }
         }
         out
+    }
+
+    /// Whether the head is a plural-only word (`many`): "liekit", "sakset".
+    fn many(&self, phrase: &Phrase, lex: &dyn Lexicon) -> bool {
+        matches!(&phrase.head, Word::Id(id) if lex.word(id).is_some_and(|w| w.many))
+    }
+
+    /// Whose it is: the owner's genitive before the phrase ("peikon "), or, for the player, no
+    /// word and the possessive suffix `-si` on the head ("pitkämiekkasi").
+    fn owner(&self, phrase: &Phrase, lex: &dyn Lexicon, reg: &Register) -> (String, Option<Poss>) {
+        match phrase.owner.as_deref() {
+            None => (String::new(), None),
+            Some(owner) if owner.person == Person::You => (String::new(), Some(Poss::Si)),
+            Some(owner) => {
+                let genitive = self.phrase(owner, "gen", lex, reg).unwrap_or_default();
+                (format!("{genitive} "), None)
+            }
+        }
     }
 
     /// A phrase of several in a singular case: the numeral in that case and the words in the
@@ -371,7 +445,7 @@ impl Fi {
     ) -> String {
         let noun_case = if case == Case::Nom { Case::Par } else { case };
         let numeral = self.count(phrase.count, case, reg);
-        let words = self.assemble(phrase, head, false, noun_case, poss, lex);
+        let words = self.assemble(phrase, head, false, noun_case, poss, lex, reg);
         format!("{numeral} {words}")
     }
 }
@@ -401,15 +475,16 @@ impl Morphology for Fi {
                 Form::Bare | Form::Counted => reg.word(you(Case::Nom)).to_string(),
             });
         }
-        Ok(match form {
-            Form::Num => self.number(i64::from(phrase.count), "num", reg),
-            Form::Ord => self.number(i64::from(phrase.count), "ord", reg),
-            Form::Bare => self.assemble(phrase, &head, several, Case::Nom, None, lex),
+        let (owner, owned) = self.owner(phrase, lex, reg);
+        let words = match form {
+            Form::Num => return Ok(self.number(i64::from(phrase.count), "num", reg)),
+            Form::Ord => return Ok(self.number(i64::from(phrase.count), "ord", reg)),
+            Form::Bare => self.assemble(phrase, &head, several, Case::Nom, owned, lex, reg),
             Form::Counted => {
                 if several {
-                    self.counted(phrase, &head, Case::Nom, None, lex, reg)
+                    self.counted(phrase, &head, Case::Nom, owned, lex, reg)
                 } else {
-                    self.assemble(phrase, &head, false, Case::Nom, None, lex)
+                    self.assemble(phrase, &head, false, Case::Nom, owned, lex, reg)
                 }
             }
             Form::Case {
@@ -417,12 +492,13 @@ impl Morphology for Fi {
                 case,
                 poss,
             } if several && !case.plural_only() => {
-                self.counted(phrase, &head, case, poss, lex, reg)
+                self.counted(phrase, &head, case, poss.or(owned), lex, reg)
             }
             Form::Case { plural, case, poss } => {
-                self.assemble(phrase, &head, plural, case, poss, lex)
+                self.assemble(phrase, &head, plural, case, poss.or(owned), lex, reg)
             }
-        })
+        };
+        Ok(owner + &words)
     }
 
     fn number(&self, n: i64, form: &str, reg: &Register) -> String {

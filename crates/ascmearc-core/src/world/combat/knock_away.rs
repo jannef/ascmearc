@@ -31,6 +31,8 @@ use crate::action::{AttackKind, Positions};
 use crate::check;
 use crate::content::{Content, Grip};
 use crate::geom::Pos;
+use crate::lang::{Msg, Phrase};
+use crate::msg;
 use crate::object;
 use crate::rng::draw;
 use crate::stats::Stat;
@@ -84,7 +86,10 @@ impl World {
         let Some(blow) = content.creature(me.creature).disarms else {
             return;
         };
-        let (pos, name) = (me.pos, content.creature(me.creature).name.clone());
+        let (pos, them) = (
+            me.pos,
+            super::fight::creature(content.creature(me.creature)),
+        );
         let Some(hand) = content.hand_slots().next() else {
             return;
         };
@@ -115,13 +120,14 @@ impl World {
             1 => landings[0],
             n => landings[rng.index(n)],
         };
-        let who = if self.perception.sees_actors_at(pos) {
-            crate::content::the_start(&name)
-        } else {
-            "Something".to_string()
+        let who = match self.perception.sees_actors_at(pos) {
+            true => them,
+            false => crate::world::turn::phrase::something(),
         };
-        let what = &content.object(weapon).name;
-        self.say(format!("{who} knocks your {what} from your hand!"));
+        let what = Phrase::id(format!("object:{}", content.object(weapon).id));
+        let what = what.owned_by(self.you());
+        let line = Msg::new(msg::combat::KNOCKED_FROM_HAND).role("who", who);
+        self.say(line.role("what", what));
         if self.state.player().inventory[item].is_spirit() {
             // Spirit-stuff out of the hand fades (`spirit_weapon.rs`), and says so.
             self.player_mut().equipment.take_off(item);
@@ -135,6 +141,6 @@ impl World {
         let mut pile = level.objects_at(at).to_vec();
         object::add_to_pile(&mut pile, &[stack], &content);
         level.set_pile(at, pile);
-        self.say("It lands beside you.");
+        self.say(msg::combat::LANDS_BESIDE_YOU);
     }
 }

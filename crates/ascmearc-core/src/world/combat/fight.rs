@@ -57,17 +57,20 @@ use super::free_blow::{self, Cue, Free, FreeBlow};
 use crate::action::{AttackKind, Event};
 use crate::combat::{self, Blow, Category, Profile, Strike, Target};
 use crate::content::{
-    ActionKind, Build, Content, CreatureId, DamageTypeId, Grip, ObjectDef, ObjectId, Role, Stance,
-    StatusId, TrapId, WeaponSkillId,
+    ActionKind, Build, Content, CreatureDef, CreatureId, DamageTypeId, Grip, ObjectDef, ObjectId,
+    Role, Stance, StatusId, TrapId, WeaponSkillId,
 };
 use crate::damage::{self, Damage, Protection, Resistances};
 use crate::geom::Dir;
+use crate::lang::{Modifier, Msg, Phrase, Word};
+use crate::msg;
 use crate::noise::Act;
 use crate::object;
 use crate::rng::draw;
 use crate::skills::Use;
-use crate::text::{article, capitalized};
+use crate::text::article;
 use crate::time::GameTime;
+use crate::world::turn::phrase::something;
 use crate::world::{Actor, ActorId, AttackSkills, Spent, World, WorldState};
 use serde::{Deserialize, Serialize};
 
@@ -215,12 +218,13 @@ pub(in crate::world) enum Harm {
     Spared,
 }
 
-/// What an attack is made with, in words: what it is called ("spear", "bite", "fist", "arrow",
-/// "small shield", "kick"), what it does to its target ("hits", "bites", "shoots", "bashes",
-/// "kicks"), and what the player does with it ("hit", "bash", "kick").
+/// What an attack is made with, in words: what it is called (a phrase: the weapon's object, a
+/// natural attack's "bite", "fist", "arrow", "small shield", "kick"), what it does to its target
+/// ("hits", "bites", "shoots", "bashes", "kicks"), and what the player does with it ("hit",
+/// "bash", "kick").
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(in crate::world) struct Words {
-    noun: String,
+    noun: Phrase,
     verb: String,
     you: String,
     /// The noun is a plural ("flames", "shards"): what it does is said in the plural verb
@@ -229,42 +233,60 @@ pub(in crate::world) struct Words {
 }
 
 impl Words {
-    /// What hits ("arrow", "fireball") and what it does ("hits", "burns"); what the player does
+    /// What hits (an arrow, a fireball) and what it does ("hits", "burns"); what the player does
     /// with it follows ("hit", "burn").
-    pub(in crate::world) fn new(noun: &str, verb: &str) -> Self {
+    pub(in crate::world) fn new(noun: Phrase, verb: &str, content: &Content) -> Self {
         Self {
-            noun: noun.into(),
+            plural: plural(&noun, content),
+            noun,
             verb: verb.into(),
             you: second_person(verb),
-            plural: is_plural(noun),
         }
+    }
+
+    /// Words for a noun the data names without an id of its own ("bite", "fireball", "arrow"):
+    /// `word:<noun>` (`content/lexicon.rs`).
+    pub(in crate::world) fn named(noun: &str, verb: &str, content: &Content) -> Self {
+        Self::new(word(noun), verb, content)
     }
 
     #[cfg(test)]
     pub(super) fn test(noun: &str, verb: &str) -> Self {
-        Self::new(noun, verb)
+        Self {
+            noun: word(noun),
+            verb: verb.into(),
+            you: second_person(verb),
+            plural: crate::lang::en::is_plural(noun),
+        }
+    }
+
+    /// What it is called.
+    #[cfg(test)]
+    pub(super) fn noun(&self) -> &Phrase {
+        &self.noun
     }
 
     /// A kick: "You kick the giant rat.", "The giant rat dodges your kick."
-    pub(super) fn kick() -> Self {
-        Self::new("kick", "kicks")
+    pub(super) fn kick(content: &Content) -> Self {
+        Self::named("kick", "kicks", content)
     }
 
     /// What a weapon's blow does: the weapon's own `verb` ("cleaves"),
     /// else the verb of `damage`, the kind it did ("slashes", "slash"), else "hits".
     fn blow(weapon: &ObjectDef, damage: Option<DamageTypeId>, content: &Content) -> Self {
+        let noun = object_phrase(weapon);
         match (&weapon.verb, damage) {
-            (Some(verb), _) => Self::new(&weapon.name, verb),
+            (Some(verb), _) => Self::new(noun, verb, content),
             (None, Some(kind)) => {
                 let kind = content.damage_type(kind);
                 Self {
-                    plural: is_plural(&weapon.name),
-                    noun: weapon.name.clone(),
+                    plural: plural(&noun, content),
+                    noun,
                     verb: kind.verb.clone(),
                     you: kind.you.clone(),
                 }
             }
-            (None, None) => Self::new(&weapon.name, "hits"),
+            (None, None) => Self::new(noun, "hits", content),
         }
     }
 
@@ -278,108 +300,99 @@ impl Words {
         damage: Option<DamageTypeId>,
         content: &Content,
     ) -> Self {
-        let words = |noun: &str, verb: &str| Self::new(noun, verb);
+        let object =
+            |o: ObjectId, verb: &str| Self::new(object_phrase(content.object(o)), verb, content);
+        let named = |noun: &str, verb: &str| Self::named(noun, verb, content);
         match kind {
             AttackKind::Melee if let Some(with) = with => match content.object(with) {
-                shield if shield.bash.is_some() => words(&shield.name, "bashes"),
+                shield if shield.bash.is_some() => object(with, "bashes"),
                 weapon => Self::blow(weapon, damage, content),
             },
             AttackKind::Melee => {
                 let natural = content.creature(actor.creature).attack.as_ref();
                 match (actor.weapon(content), natural) {
                     (Some((weapon, _)), _) => Self::blow(content.object(weapon), damage, content),
-                    (None, Some(attack)) => words(&attack.name, &attack.verb),
-                    (None, None) => words("fist", "hits"),
+                    (None, Some(attack)) => named(&attack.name, &attack.verb),
+                    (None, None) => named("fist", "hits"),
                 }
             }
             AttackKind::Ranged => match with.or_else(|| actor.ammunition(content)) {
-                Some(ammo) => words(&content.object(ammo).name, "shoots"),
-                None => words("shot", "shoots"),
+                Some(ammo) => object(ammo, "shoots"),
+                None => named("shot", "shoots"),
             },
             AttackKind::Thrown => match with {
-                Some(thrown) => words(&content.object(thrown).name, "hits"),
-                None => words("throw", "hits"),
+                Some(thrown) => object(thrown, "hits"),
+                None => named("throw", "hits"),
             },
-            AttackKind::Spell => words("spell", "casts a spell at"),
+            AttackKind::Spell => named("spell", "casts a spell at"),
         }
     }
 }
 
-/// One end of an attack as the player perceives it.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(in crate::world) enum End<'a> {
-    You,
-    /// A creature the player sees, by its type's name.
-    Seen(&'a str),
-    /// One of the player's own allies they see, by its type's name: "your wolf"
-    /// (`docs/dev/allies.md`).
-    Yours(&'a str),
+/// An object type as a phrase: `object:<id>`.
+fn object_phrase(def: &ObjectDef) -> Phrase {
+    Phrase::id(format!("object:{}", def.id))
+}
+
+/// A creature type as the player sees one, as a phrase: `creature:<id>` ("the kobold").
+pub(in crate::world) fn creature(def: &CreatureDef) -> Phrase {
+    Phrase::id(format!("creature:{}", def.id))
+}
+
+/// A word the data names without an id of its own, as a phrase: `word:<text>`.
+pub(in crate::world) fn word(text: &str) -> Phrase {
+    Phrase::id(format!("word:{text}"))
+}
+
+/// Whether `noun` is a plural noun ("flames"), as English's lexicon says.
+fn plural(noun: &Phrase, content: &Content) -> bool {
+    match &noun.head {
+        Word::Id(id) => content.lexicon().word(id).is_some_and(|w| w.many),
+        Word::Literal(text) => crate::lang::en::is_plural(text),
+    }
+}
+
+/// One end of an attack as the player perceives it, by its phrase ([`World::phrase_of`]).
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(in crate::world) enum End {
+    /// The player ([`World::you`]).
+    You(Phrase),
+    /// A creature the player sees, by its type: "the kobold".
+    Seen(Phrase),
+    /// One of the player's own allies they see: "your wolf" (`docs/dev/allies.md`).
+    Yours(Phrase),
     /// The player's companion, seen, by its name: "Snel" (`companion.rs`).
-    Named(&'a str),
+    Named(Phrase),
     /// Something the player does not see.
     Unseen,
     /// A trap's missile, blades, or blast, by what hits ("arrow", "fireball"): it attacks by
     /// itself.
-    Trap(&'a str),
+    Trap(Phrase),
 }
 
-impl End<'_> {
-    /// As the subject: "You", "The kobold", "Something", "The arrow".
-    pub(in crate::world) fn subject(self) -> String {
+impl End {
+    /// Who it is, as a line names them: "something" for what the player does not see.
+    pub(in crate::world) fn phrase(&self) -> Phrase {
         match self {
-            End::You => "You".into(),
-            End::Yours(name) => format!("Your {name}"),
-            End::Named(name) => name.into(),
-            End::Seen(name) | End::Trap(name) => crate::content::the_start(name),
-            End::Unseen => "Something".into(),
+            End::You(p) | End::Seen(p) | End::Yours(p) | End::Named(p) | End::Trap(p) => p.clone(),
+            End::Unseen => something(),
         }
     }
 
-    /// As the object: "you", "the kobold", "something".
-    pub(in crate::world) fn object(self) -> String {
-        match self {
-            End::You => "you".into(),
-            End::Yours(name) => format!("your {name}"),
-            End::Named(name) => name.into(),
-            End::Seen(name) | End::Trap(name) => crate::content::the(name),
-            End::Unseen => "something".into(),
-        }
+    pub(in crate::world) fn is_unseen(&self) -> bool {
+        matches!(self, End::Unseen)
     }
 
-    /// Whose: "your", "the kobold's"; a trap's own missile or blast is just "the" one.
-    fn whose(self) -> String {
-        match self {
-            End::You => "your".into(),
-            End::Seen(name) => format!("{}'s", crate::content::the(name)),
-            End::Yours(name) => format!("your {name}'s"),
-            End::Named(name) => format!("{name}'s"),
-            End::Unseen => "something's".into(),
-            End::Trap(_) => "the".into(),
+    /// A creature the player sees, with how the blow found it ("sleeping", "staggered";
+    /// `surprise.rs`) before its name.
+    pub(in crate::world) fn caught(self, word: Option<&str>) -> Self {
+        match (self, word) {
+            (End::Seen(p), Some(w)) => {
+                End::Seen(p.with(Modifier::Adjective(Word::id(format!("word:{w}")))))
+            }
+            (end, _) => end,
         }
     }
-
-    /// Its own: "your", "its".
-    fn own(self) -> &'static str {
-        match self {
-            End::You => "your",
-            _ => "its",
-        }
-    }
-
-    /// A verb in its person: `you` for the player ("dodge"), `other` for anyone else ("dodges").
-    fn verb<'v>(self, you: &'v str, other: &'v str) -> &'v str {
-        match self {
-            End::You => you,
-            _ => other,
-        }
-    }
-}
-
-/// Whether a noun's last word is a plural ("flames", "shards"): it ends in `s` but not in `ss`
-/// ("soulglass"), `us`, or `is`. The one test the messages' verb agreement reads.
-fn is_plural(noun: &str) -> bool {
-    let last = noun.rsplit(' ').next().unwrap_or(noun);
-    last.ends_with('s') && !["ss", "us", "is"].iter().any(|e| last.ends_with(e))
 }
 
 /// A verb in the player's person: "slashes" → "slash", "bashes" → "bash", "pierces" →
@@ -405,21 +418,21 @@ pub(super) fn second_person(verb: &str) -> String {
 }
 
 /// What a target's armour is called in the messages of the blows it turns.
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-pub(in crate::world) struct Guard<'a> {
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub(in crate::world) struct Guard {
     /// Its natural armour, for a blow that missed because of it: "shell".
-    pub(super) hide: Option<&'a str>,
+    pub(super) hide: Option<Phrase>,
     /// What took all of a blow its Protection soaked: the piece it wears with the most
     /// Protection, else its natural armour ([`Actor::soaked_by`]).
-    pub(super) soak: Option<&'a str>,
+    pub(super) soak: Option<Phrase>,
 }
 
-impl<'a> Guard<'a> {
+impl Guard {
     /// The guard of `target` (alive, or fallen this action), if it is known, in `state` (the
     /// player's race may give them a hide).
     pub(in crate::world) fn of(
         target: Option<&Actor>,
-        content: &'a Content,
+        content: &Content,
         state: &WorldState,
     ) -> Self {
         let Some(target) = target else {
@@ -427,8 +440,8 @@ impl<'a> Guard<'a> {
         };
         let race = state.race_of(content, target);
         Self {
-            hide: target.hide(content, race).map(|h| h.name.as_str()),
-            soak: target.soaked_by(content, race),
+            hide: target.hide(content, race).map(|h| word(&h.name)),
+            soak: target.soaked_by_phrase(content, race),
         }
     }
 }
@@ -439,134 +452,95 @@ impl<'a> Guard<'a> {
 /// soaked to nothing glanced off, is said only when the player saw both ends; `None` if they
 /// saw neither and were not the target.
 pub(in crate::world) fn attack_message(
-    attacker: End<'_>,
-    target: End<'_>,
+    attacker: &End,
+    target: &End,
     words: &Words,
     kind: AttackKind,
     strike: Option<Strike>,
-    guard: Guard<'_>,
-) -> Option<String> {
-    if attacker == End::Unseen && target == End::Unseen {
+    guard: &Guard,
+) -> Option<Msg> {
+    if attacker.is_unseen() && target.is_unseen() {
         return None;
     }
-    let (a, t) = (attacker.subject(), target.object());
+    let (a, t) = (attacker.phrase(), target.phrase());
+    let ends = |id| {
+        Msg::new(id)
+            .role("actor", a.clone())
+            .role("target", t.clone())
+    };
     let Some(strike) = strike else {
-        let verb = match kind {
-            AttackKind::Melee => attacker.verb("attack", "attacks"),
-            AttackKind::Ranged => attacker.verb("shoot at", "shoots at"),
-            AttackKind::Thrown => attacker.verb("throw at", "throws at"),
-            AttackKind::Spell => attacker.verb("cast a spell at", "casts a spell at"),
-        };
-        return Some(format!("{a} {verb} {t}."));
+        return Some(ends(match kind {
+            AttackKind::Melee => msg::combat::ATTACKS,
+            AttackKind::Ranged => msg::combat::SHOOTS_AT,
+            AttackKind::Thrown => msg::combat::THROWS_AT,
+            AttackKind::Spell => msg::combat::CASTS_AT,
+        }));
     };
-    let weapon = format!("{} {}", attacker.whose(), words.noun);
-    // A plural subject takes the plural verb: the weapon's own, and a trap's, which is its noun.
-    let many = words.plural;
-    let (glances, does, turns, strikes) = if many {
-        ("glance", "do", "turn", "strike")
-    } else {
-        ("glances", "does", "turns", "strikes")
+    // Whose it is: the attacker's, but a trap's own missile or blast is just "the" one.
+    let weapon = match attacker {
+        End::Trap(_) => words.noun.clone(),
+        _ => words.noun.clone().owned_by(a.clone()),
     };
-    let both_seen = attacker != End::Unseen && target != End::Unseen;
+    let struck = |id| {
+        Msg::new(id)
+            .role("weapon", weapon.clone())
+            .role("target", t.clone())
+    };
+    let off = |armour: Option<&Phrase>, or: &str| {
+        let armour = armour.cloned().unwrap_or_else(|| word(or));
+        struck(msg::combat::GLANCES_OFF).role("armour", armour)
+    };
+    let both_seen = !attacker.is_unseen() && !target.is_unseen();
+    // A plural subject takes the plural verb: a trap's, which is its noun.
     let hit = match (attacker, kind) {
-        (End::You, AttackKind::Ranged) => "shoot",
-        (End::You, _) => words.you.as_str(),
-        (End::Trap(_), _) if many => words.you.as_str(),
+        (End::You(_), AttackKind::Ranged) => "shoot",
+        (End::You(_), _) => words.you.as_str(),
+        (End::Trap(_), _) if words.plural => words.you.as_str(),
         _ => words.verb.as_str(),
     };
-    let text = match strike {
-        Strike::Hit { critical } => {
-            let end = if critical { " hard!" } else { "." };
-            format!("{a} {hit} {t}{end}")
-        }
-        Strike::Soaked if both_seen => format!(
-            "{} {glances} off {} {}.",
-            capitalized(&weapon),
-            target.whose(),
-            guard.soak.unwrap_or("armour")
-        ),
-        Strike::Resisted if both_seen => format!("{} {does} {t} no harm.", capitalized(&weapon)),
-        Strike::Soaked | Strike::Resisted => {
-            let harmless = if matches!(attacker, End::Trap(_)) && many {
-                "do"
-            } else {
-                attacker.verb("do", "does")
-            };
-            format!("{a} {hit} {t} but {harmless} no harm.")
-        }
+    let msg = match strike {
+        Strike::Hit { critical } => ends(if critical {
+            msg::combat::HIT_HARD
+        } else {
+            msg::combat::HIT
+        })
+        .role("verb", hit),
+        Strike::Soaked if both_seen => off(guard.soak.as_ref(), "armour"),
+        Strike::Resisted if both_seen => struck(msg::combat::DOES_NO_HARM),
+        Strike::Soaked | Strike::Resisted => ends(msg::combat::HIT_NO_HARM).role("verb", hit),
         Strike::Missed { by } => match by.filter(|_| both_seen) {
-            None => {
-                let misses = if matches!(attacker, End::Trap(_)) && many {
-                    "miss"
-                } else {
-                    attacker.verb("miss", "misses")
-                };
-                format!("{a} {misses} {t}.")
-            }
-            Some(Category::Dexterity | Category::Dodge) => format!(
-                "{} {} {weapon}.",
-                target.subject(),
-                target.verb("dodge", "dodges")
-            ),
-            Some(Category::Armour) => format!(
-                "{} {glances} off {} armour.",
-                capitalized(&weapon),
-                target.whose()
-            ),
-            Some(Category::Shield) => format!(
-                "{} {} {weapon} with {} shield.",
-                target.subject(),
-                target.verb("block", "blocks"),
-                target.own()
-            ),
-            Some(Category::Parry) => format!(
-                "{} {} {weapon}.",
-                target.subject(),
-                target.verb("parry", "parries")
-            ),
-            Some(Category::Natural) => format!(
-                "{} {glances} off {} {}.",
-                capitalized(&weapon),
-                target.whose(),
-                guard.hide.unwrap_or("hide")
-            ),
-            Some(Category::Deflection) => format!(
-                "{} {turns} aside before {} {t}.",
-                capitalized(&weapon),
-                if many { "they reach" } else { "it reaches" }
-            ),
-            Some(Category::Wall) => format!(
-                "{} {strikes} stone where {} {} in the wall.",
-                capitalized(&weapon),
-                target.object(),
-                target.verb("hide", "hides")
-            ),
+            None => ends(msg::combat::MISSES),
+            Some(Category::Dexterity | Category::Dodge) => struck(msg::combat::DODGES),
+            Some(Category::Armour) => off(None, "armour"),
+            Some(Category::Shield) => struck(msg::combat::BLOCKS),
+            Some(Category::Parry) => struck(msg::combat::PARRIES),
+            Some(Category::Natural) => off(guard.hide.as_ref(), "hide"),
+            Some(Category::Deflection) => struck(msg::combat::TURNED_ASIDE),
+            Some(Category::Wall) => struck(msg::combat::STRIKES_WALL),
         },
     };
-    Some(text)
+    Some(msg)
 }
 
 /// The message for a death the player saw: "The giant rat dies." (a creature's by the verb of its
 /// type, `dies`: "The animated chair splinters."), or the player's own.
-pub(in crate::world) fn death_message(who: End<'_>, dies: &str) -> String {
+pub(in crate::world) fn death_message(who: &End, dies: &str) -> Msg {
     match who {
-        End::You => "You die...".into(),
-        End::Seen(name) => format!("{} {dies}.", crate::content::the_start(name)),
-        End::Yours(name) => format!("Your {name} {dies}."),
-        End::Named(name) => format!("{name} {dies}."),
-        End::Unseen | End::Trap(_) => "Something dies.".into(),
+        End::You(_) => msg::combat::YOU_DIE.into(),
+        End::Unseen | End::Trap(_) => msg::combat::SOMETHING_DIES.into(),
+        seen => Msg::new(msg::combat::DIES)
+            .role("who", seen.phrase())
+            .role("verb", dies),
     }
 }
 
 /// What the player reads when a spell's shove drives `who` back (`spell_type.rs`).
-pub(in crate::world) fn driven_message(who: End<'_>) -> String {
-    match who {
-        End::You => "You are driven back.".into(),
-        End::Seen(name) => format!("{} is driven back.", crate::content::the_start(name)),
-        End::Yours(name) => format!("Your {name} is driven back."),
-        End::Named(name) => format!("{name} is driven back."),
-        End::Unseen | End::Trap(_) => "Something is driven back.".into(),
-    }
+pub(in crate::world) fn driven_message(who: &End) -> Msg {
+    let who = match who {
+        End::Trap(_) => something(),
+        end => end.phrase(),
+    };
+    Msg::new(msg::combat::DRIVEN_BACK).role("who", who)
 }
 
 impl World {
@@ -579,6 +553,21 @@ impl World {
     /// did before it died).
     pub(in crate::world) fn actor_or_fallen(&self, id: ActorId) -> Option<&Actor> {
         (self.state.actors.get(&id)).or_else(|| self.fallen.iter().find(|a| a.id == id))
+    }
+
+    /// Actor `id` (alive, or fallen this action) as the fight's lines name it, `seen` or not
+    /// ([`World::phrase_of`]).
+    pub(in crate::world) fn end_of(&self, id: ActorId, seen: bool) -> End {
+        let player = self.state.player;
+        match self.actor_or_fallen(id) {
+            _ if id == player => End::You(self.you()),
+            Some(a) if seen && a.master() == Some(player) => match a.kept() {
+                Some(_) => End::Named(self.phrase_of(id)),
+                None => End::Yours(self.phrase_of(id)),
+            },
+            Some(_) if seen => End::Seen(self.phrase_of(id)),
+            _ => End::Unseen,
+        }
     }
 
     /// Actor `attacker` attacks actor `target`: a melee blow with what it wields (else its
@@ -1536,7 +1525,7 @@ impl World {
         let profile = self.state.player().kick(&self.content);
         let skills = AttackSkills::only(self.content.weapon_skills().of_role(Role::Unarmed));
         let blow = (None, profile, skills);
-        let words = |_: &Actor, _: &Content, _| Words::kick();
+        let words = |_: &Actor, content: &Content, _| Words::kick(content);
         let struck = self.player_strikes(target, seen, blow, (&words, true), events);
         self.after_attack(
             self.state.player,
@@ -1566,23 +1555,23 @@ impl World {
         let content = self.content.clone();
         let player = self.state.player;
         let Some((shield, profile)) = self.state.player().bash(&content) else {
-            self.say("You have no shield to bash with.");
+            self.say(msg::combat::NO_SHIELD_TO_BASH);
             return Spent::Nothing;
         };
         let to = self.player_pos().step(dir);
         let level = &self.state.current().id;
         let Some((target, creature)) = (self.state.actor_at(level, to)).map(|a| (a.id, a.creature))
         else {
-            self.say("There is nothing there to bash.");
+            self.say(msg::combat::NOTHING_TO_BASH);
             return Spent::Nothing;
         };
         let seen = self.perception.sees_actors_at(to);
         if self.stance(player, target) != Stance::Hostile {
             self.say(if seen {
-                let name = &content.creature(creature).name;
-                format!("You have no quarrel with {}.", crate::content::the(name))
+                let them = self::creature(content.creature(creature));
+                Msg::new(msg::combat::NO_QUARREL).role("target", them)
             } else {
-                "Something is in the way.".into()
+                msg::combat::IN_THE_WAY.into()
             });
             return Spent::Nothing;
         }
@@ -1623,16 +1612,8 @@ impl World {
         let content = self.content.clone();
         let words = words(self.state.player(), &content, blow.and_then(|b| b.kind));
         let target_actor = self.actor_or_fallen(target);
-        let name = target_actor.map(|a| content.creature(a.creature).name.as_str());
         let guard = Guard::of(target_actor, &content, &self.state);
-        let yours = target_actor.is_some_and(|a| a.master() == Some(player));
-        let named = target_actor.and_then(|a| a.kept()).map(|c| c.name.as_str());
-        let end = match name {
-            Some(_) if seen && yours && named.is_some() => End::Named(named.unwrap_or_default()),
-            Some(name) if seen && yours => End::Yours(name),
-            Some(name) if seen => End::Seen(name),
-            _ => End::Unseen,
-        };
+        let end = self.end_of(target, seen);
         let (strike, caught) = (made.iter())
             .find_map(|e| match e {
                 Event::Attacked { strike, caught, .. } => Some((*strike, *caught)),
@@ -1641,23 +1622,22 @@ impl World {
             .unwrap_or_default();
         let died = made.iter().any(|e| matches!(e, Event::Died { .. }));
         // How the blow found the one it struck at, in its words (`surprise.rs`).
-        let caught = name.map(|n| super::surprise::caught_name(&content, n, caught));
-        let struck_at = match (end, caught.as_deref()) {
-            (End::Seen(_), Some(caught)) => End::Seen(caught),
-            _ => end,
-        };
+        let struck_at = end
+            .clone()
+            .caught(super::surprise::caught_word(&content, caught));
+        let you = End::You(self.you());
         let mut said = Vec::new();
         said.extend(attack_message(
-            End::You,
-            struck_at,
+            &you,
+            &struck_at,
             &words,
             AttackKind::Melee,
             strike,
-            guard,
+            &guard,
         ));
         if died && seen {
             let dies = target_actor.map_or("dies", |a| content.creature(a.creature).death_verb());
-            said.push(death_message(end, dies));
+            said.push(death_message(&end, dies));
         }
         for text in said {
             self.say(text);

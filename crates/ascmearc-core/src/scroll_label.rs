@@ -24,7 +24,8 @@
 //!   gives a labelled scroll its label and anything else its usual name ([`Stack::describe`]).
 
 use crate::color::Rgb;
-use crate::content::{Content, ObjectId, counted};
+use crate::content::{Content, ObjectId, ScrollLabelDef};
+use crate::lang::{Modifier, Note, Phrase, Word};
 use crate::object::Stack;
 use crate::rng::Rng;
 use std::collections::{BTreeMap, BTreeSet};
@@ -152,23 +153,29 @@ impl<'a> Lore<'a> {
     /// `count` of `object` as the player knows it, a fresh one made plainly: "2 scrolls
     /// labelled ZUNBAR", "a dagger".
     pub fn describe_object(&self, object: ObjectId, count: u32) -> String {
-        match self.labelled_names(object) {
-            Some((name, plural)) => counted(&name, &plural, count),
+        match self.label_phrase(object) {
+            Some(label) => self.content.english_of(&label.count(count), "counted"),
             None => self.content.object(object).describe(count),
         }
     }
 
     /// `stack` as the player knows it: a labelled scroll by its label, "2 scrolls labelled
-    /// ZUNBAR", anything else as [`Stack::describe`] says.
+    /// ZUNBAR", anything else as [`Stack::describe`] says: [`Lore::phrase`] counted.
     pub fn describe(&self, stack: &Stack) -> String {
-        let text = match self.labelled_names(stack.object) {
-            Some((name, plural)) => counted(&name, &plural, stack.count),
-            None => stack.describe(self.content),
+        self.content.english_of(&self.phrase(stack), "counted")
+    }
+
+    /// `stack` as the player knows it, as a phrase (`docs/design/localization.md` §8): a
+    /// labelled type by its label, anything else as [`Stack::phrase`] says; a wand's charges the
+    /// player knows after it ("a wand of fireball (7 charges)"). What a message names an item by.
+    pub fn phrase(&self, stack: &Stack) -> Phrase {
+        let phrase = match self.label_phrase(stack.object) {
+            Some(label) => label.count(stack.count),
+            None => stack.phrase(self.content),
         };
-        // A wand whose charges the player knows says them: "a wand of fireball (7 charges)".
         match stack.known_charges(self.content) {
-            Some(left) => format!("{text} ({})", crate::object::charges_text(left)),
-            None => text,
+            Some(left) => phrase.with_note(Note::Charges(u32::from(left))),
+            None => phrase,
         }
     }
 
@@ -191,8 +198,8 @@ impl<'a> Lore<'a> {
     /// What `stack` is called as the player knows it, without an article or count: "scroll
     /// labelled ZUNBAR", else [`Stack::title`].
     pub fn title(&self, stack: &Stack) -> String {
-        match self.labelled_names(stack.object) {
-            Some((name, _)) => name,
+        match self.label_phrase(stack.object) {
+            Some(label) => self.content.english_of(&label, "bare"),
             None => stack.title(self.content),
         }
     }
@@ -200,7 +207,13 @@ impl<'a> Lore<'a> {
     /// What `stack` is called as made, singular and plural, as the player knows it: a labelled
     /// scroll's label ("scroll labelled ZUNBAR"), else [`Stack::names`].
     pub fn names(&self, stack: &Stack) -> (String, String) {
-        (self.labelled_names(stack.object)).unwrap_or_else(|| stack.names(self.content))
+        match self.label_phrase(stack.object) {
+            Some(label) => (
+                self.content.english_of(&label, "bare"),
+                self.content.english_of(&label.count(2), "bare"),
+            ),
+            None => stack.names(self.content),
+        }
     }
 
     /// The colour `stack` shows in: the labels' one while it is a labelled scroll (a potion
@@ -213,32 +226,45 @@ impl<'a> Lore<'a> {
         }
     }
 
-    /// The names (singular, plural) of labelled scroll or wand type `object`, while it is
-    /// unknown.
-    fn labelled_names(&self, object: ObjectId) -> Option<(String, String)> {
+    /// One of labelled type `object` while it is unknown, as a phrase: the kind's name
+    /// (`label:scroll`, "scroll labelled {label}") with its label, a scroll's as written
+    /// ("ZUNBAR"), a wand's, rod's, or potion's a word ("oak"); a potion's colour is its
+    /// type's ("a fizzy red potion").
+    fn label_phrase(&self, object: ObjectId) -> Option<Phrase> {
         let label = self.label(object)?;
-        let (name, plural) = self.label_def(object)?.names(label);
-        // A potion's colour is its type's ("a fizzy red potion").
-        match &self.content.object(object).drink {
-            Some(drink) => Some((
-                name.replace("{colour}", &drink.colour),
-                plural.replace("{colour}", &drink.colour),
-            )),
-            None => Some((name, plural)),
-        }
+        let (kind, _) = self.label_kind(object);
+        self.label_def(object)?;
+        let word = match kind {
+            "scroll" => Word::literal(label),
+            _ => Word::id(format!("word:{label}")),
+        };
+        let phrase = Phrase::id(format!("label:{kind}")).with(Modifier::Label(word));
+        Some(match &self.content.object(object).drink {
+            Some(drink) => {
+                let colour = Word::id(format!("colour:{}", drink.colour));
+                phrase.with(Modifier::Adjective(colour))
+            }
+            None => phrase,
+        })
     }
 
     /// How labels of type `object` are made and shown: a wand's, or a scroll's.
     fn label_def(&self, object: ObjectId) -> Option<&'a crate::content::ScrollLabelDef> {
+        self.label_kind(object).1
+    }
+
+    /// The kind of label type `object` shows (`scroll`, `wand`, `rod`, `potion`), and how its
+    /// labels are made.
+    fn label_kind(&self, object: ObjectId) -> (&'static str, Option<&'a ScrollLabelDef>) {
         let def = self.content.object(object);
         if def.wand.is_some() {
-            self.content.wand_labels()
+            ("wand", self.content.wand_labels())
         } else if def.rod.is_some() {
-            self.content.rod_labels()
+            ("rod", self.content.rod_labels())
         } else if def.drink.is_some() {
-            self.content.potion_labels()
+            ("potion", self.content.potion_labels())
         } else {
-            self.content.scroll_labels()
+            ("scroll", self.content.scroll_labels())
         }
     }
 }

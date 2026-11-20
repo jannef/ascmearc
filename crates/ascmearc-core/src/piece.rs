@@ -18,6 +18,7 @@
 
 use crate::content::{Content, MaterialId, ObjectDef, Part};
 use crate::item_parts::ItemPart;
+use crate::lang::{Modifier, Phrase, Word};
 use crate::object::Stack;
 
 /// The piece object's id.
@@ -28,19 +29,27 @@ pub const ID: &str = "piece";
 /// pelt", "lump of amber"/"lumps of amber"), else the object's own ("piece of glass"/"pieces of
 /// glass").
 pub fn names(content: &Content, def: &ObjectDef, material: MaterialId) -> (String, String) {
-    let m = content.material(material);
+    let one = name_phrase(content, def, material);
+    (
+        content.english_of(&one, "bare"),
+        content.english_of(&one.count(2), "bare"),
+    )
+}
+
+/// [`names`] as a phrase: the form word with the material before it or after it ("of"), else
+/// the object with the material after it.
+pub fn name_phrase(content: &Content, def: &ObjectDef, material: MaterialId) -> Phrase {
+    let m = &content.material(material).id;
+    let of_material = Word::id(format!("material:{m}"));
     match content.stock().form_of(content, material) {
-        Some((name, plural, false)) => {
-            (format!("{} {name}", m.name), format!("{} {plural}", m.name))
+        Some((_, _, of)) => {
+            let form = Phrase::id(format!("stock:{m}"));
+            form.with(match of {
+                false => Modifier::Material(of_material),
+                true => Modifier::Of(of_material),
+            })
         }
-        Some((name, plural, true)) => (
-            format!("{name} of {}", m.name),
-            format!("{plural} of {}", m.name),
-        ),
-        None => (
-            format!("{} of {}", def.name, m.name),
-            format!("{} of {}", def.plural, m.name),
-        ),
+        None => Phrase::id(format!("object:{}", def.id)).with(Modifier::Of(of_material)),
     }
 }
 

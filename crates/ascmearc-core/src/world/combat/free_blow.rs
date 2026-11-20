@@ -534,7 +534,7 @@ impl World {
         let earlier = std::mem::take(&mut self.news);
         self.held = Some(Vec::new());
         if blow.kind == Free::Retribution {
-            self.say("You answer the blow with holy wrath!");
+            self.say(crate::msg::combat::SHIELD_WRATH);
         }
         let struck = self.player_blow(at, seen, Some(blow), events);
         let held = self.held.take().unwrap_or_default();

@@ -930,26 +930,52 @@ impl Actor {
     /// What a blow that its Protection soaked to nothing glanced off, in messages: the piece it
     /// wears with the most Protection (the first in slot order of the best), else its natural
     /// armour, if either has any.
+    #[cfg(test)]
     pub(crate) fn soaked_by<'c>(
         &self,
         content: &'c Content,
         race: Option<&'c RaceDef>,
     ) -> Option<&'c str> {
-        let mut best: Option<(i32, &'c str)> = None;
+        self.soaker(content, race).map(|soak| match soak {
+            Ok(object) => content.object(object).name.as_str(),
+            Err(hide) => hide.name.as_str(),
+        })
+    }
+
+    /// [`Actor::soaked_by`] as a phrase: the piece's object (`object:chain_mail_shirt`), or its
+    /// natural armour's word (`word:shell`).
+    pub(crate) fn soaked_by_phrase(
+        &self,
+        content: &Content,
+        race: Option<&RaceDef>,
+    ) -> Option<crate::lang::Phrase> {
+        self.soaker(content, race).map(|soak| match soak {
+            Ok(object) => crate::lang::Phrase::id(format!("object:{}", content.object(object).id)),
+            Err(hide) => crate::lang::Phrase::id(format!("word:{}", hide.name)),
+        })
+    }
+
+    /// What soaks a blow: the object it wears, or its natural armour.
+    fn soaker<'c>(
+        &self,
+        content: &'c Content,
+        race: Option<&'c RaceDef>,
+    ) -> Option<Result<ObjectId, &'c Hide>> {
+        let mut best: Option<(i32, ObjectId)> = None;
         for (_, item) in self.equipment.items() {
             let Some(stack) = self.inventory.get(item) else {
                 continue;
             };
             let pv = stack.protection(content);
             if pv > 0 && best.is_none_or(|(b, _)| pv > b) {
-                best = Some((pv, content.object(stack.object).name.as_str()));
+                best = Some((pv, stack.object));
             }
         }
         let hide = self.hide(content, race).filter(|h| h.protection > 0);
         match (best, hide) {
-            (Some((pv, _)), Some(hide)) if hide.protection > pv => Some(hide.name.as_str()),
-            (Some((_, name)), _) => Some(name),
-            (None, hide) => hide.map(|h| h.name.as_str()),
+            (Some((pv, _)), Some(hide)) if hide.protection > pv => Some(Err(hide)),
+            (Some((_, object)), _) => Some(Ok(object)),
+            (None, hide) => hide.map(Err),
         }
     }
 

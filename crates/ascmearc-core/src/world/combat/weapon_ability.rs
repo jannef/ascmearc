@@ -25,7 +25,7 @@
 //! next action's, which is priced with it. One given during the sufferer's own action is not
 //! eased by that action.
 
-use super::fight::{End, death_message};
+use super::fight::{End, creature, death_message, word};
 use super::free_blow::FreeBlows;
 use super::shoot::Loose;
 use crate::action::{AttackKind, Event};
@@ -37,9 +37,10 @@ use crate::content::{
 use crate::damage::Damage;
 use crate::dice::{Dice, Roll};
 use crate::geom::Pos;
+use crate::lang::Msg;
+use crate::msg;
 use crate::rng::draw;
 use crate::talent::TalentMods;
-use crate::text::capitalized;
 use crate::world::{Actor, ActorId, AttackSkills, Spent, World};
 
 /// What an event a trigger fires on was ([`World::weapon_trigger`]): the other end of it (the
@@ -249,22 +250,26 @@ impl World {
             return;
         }
         let content = self.content.clone();
-        let name = crate::content::the_start(&content.creature(them.creature).name);
+        let who = creature(content.creature(them.creature));
         let def = content.status(status);
-        let does = if content.ids().staggered == Some(status) {
-            "staggers".to_string()
-        } else {
-            format!(
-                "is {}",
-                def.seen.as_deref().unwrap_or(&def.name.to_lowercase())
-            )
-        };
+        let staggers = content.ids().staggered == Some(status);
         let from = match trigger {
-            Trigger::Blocked => " from your shield",
-            Trigger::Parried => " from your parry",
-            _ => "",
+            Trigger::Blocked => Some("shield"),
+            Trigger::Parried => Some("parry"),
+            _ => None,
         };
-        self.news.push(format!("{name} {does}{from}.").into());
+        let id = match (staggers, from) {
+            (true, None) => msg::combat::STAGGERS,
+            (true, Some(_)) => msg::combat::STAGGERS_FROM,
+            (false, None) => msg::combat::STATUS,
+            (false, Some(_)) => msg::combat::STATUS_FROM,
+        };
+        let seen = def.seen.clone().unwrap_or_else(|| def.name.to_lowercase());
+        let mut line = Msg::new(id).role("who", who).role("status", word(&seen));
+        if let Some(from) = from {
+            line = line.role("from", word(from));
+        }
+        self.news.push(line);
     }
 
     /// An `extra_damage` effect (Rend): `dice` rolled once more (no bonus, no riders) on the
@@ -302,31 +307,30 @@ impl World {
         let seen_them = self.perception.sees_actors_at(them.pos);
         let seen_me = self.perception.sees_actors_at(me.pos);
         let names = (
-            content.creature(me.creature).name.clone(),
-            content.creature(them.creature).name.clone(),
+            creature(content.creature(me.creature)),
+            creature(content.creature(them.creature)),
             content.creature(them.creature).death_verb().to_string(),
         );
         let mut rng = draw!(self, "weapon_ability/harm/{}/{}", me.key, them.key);
         let amount: i32 = rolls.iter().map(|d| d.roll(&mut rng).max(0)).sum();
         let amount = self.resisted(target, Damage { amount, kind });
         let end = if seen_them {
-            End::Seen(&names.1)
+            End::Seen(names.1)
         } else {
             End::Unseen
         };
         if by == player {
-            self.news
-                .push(format!("Your blades rend {}.", end.object()).into());
+            let line = Msg::new(msg::combat::BLADES_REND).role("target", end.phrase());
+            self.news.push(line);
         } else if target == player && seen_me {
-            let who = crate::content::the(&names.0);
-            self.news
-                .push(format!("{}'s blades rend you.", capitalized(&who)).into());
+            let line = Msg::new(msg::combat::BLADES_REND_YOU).role("actor", names.0);
+            self.news.push(line);
         }
         if amount > 0 {
             let mut made = Vec::new();
             let died = self.hurt(target, amount, super::fight::Harm::Actor(by), &mut made);
             if died && by == player && seen_them {
-                self.news.push(death_message(end, &names.2).into());
+                self.news.push(death_message(&end, &names.2));
             }
             if by != player || seen_them {
                 events.extend(made);
@@ -627,7 +631,7 @@ impl World {
         let content = self.content.clone();
         let table = content.weapon_skills();
         let Some(id) = table.id(skill) else {
-            self.say(format!("There is no weapon skill `{skill}`."));
+            self.say(Msg::new(msg::combat::NO_WEAPON_SKILL).role("skill", skill));
             return Spent::Nothing;
         };
         let before = self.state.player().weapon_abilities(&content);

@@ -27,12 +27,15 @@
 //! [`Trigger::SpellBlocked`]: crate::content::Trigger::SpellBlocked
 //! [`WeaponDoes::ReflectSpell`]: crate::content::WeaponDoes::ReflectSpell
 
+use super::fight::{creature, word};
 use super::weapon_ability::Fired;
 use crate::action::{AttackKind, Event, SpellShape};
 use crate::combat::{Blow, Category};
 use crate::content::{Shape, SpellData, Trigger};
 use crate::dice::Roll;
 use crate::geom::Pos;
+use crate::lang::{Msg, Phrase};
+use crate::msg;
 use crate::world::{ActorId, AttackSkills, World};
 
 /// The reflections' transient state (never saved).
@@ -169,25 +172,31 @@ impl World {
         let seen = |w: &World, id: ActorId| {
             (w.state.actors.get(&id))
                 .filter(|a| w.perception.sees_actors_at(a.pos))
-                .map(|a| content.creature(a.creature).name.clone())
+                .map(|a| creature(content.creature(a.creature)))
         };
-        let text = if reflector == player {
-            let them =
-                seen(self, caster).map_or("its caster".to_string(), |n| crate::content::the(&n));
-            format!("Your shield turns the {noun} back at {them}.")
+        let bolt = word(noun);
+        // Turned back at its caster: by name if the player sees them.
+        let at = |w: &World, who: Phrase, bolt: Phrase| {
+            let line = match seen(w, caster) {
+                Some(them) => Msg::new(msg::combat::REFLECTED).role("target", them),
+                None => Msg::new(msg::combat::REFLECTED_AT_CASTER),
+            };
+            line.role("who", who).role("weapon", bolt)
+        };
+        let line = if reflector == player {
+            at(self, self.you(), bolt)
         } else {
-            let whose = seen(self, reflector).map(|n| crate::content::the_start(&n));
-            match (whose, caster == player) {
-                (Some(whose), true) => format!("{whose}'s shield turns your {noun} back at you."),
-                (None, true) => format!("Your {noun} is turned back at you."),
-                (Some(whose), false) => {
-                    let them = seen(self, caster)
-                        .map_or("its caster".to_string(), |n| crate::content::the(&n));
-                    format!("{whose}'s shield turns the {noun} back at {them}.")
-                }
+            let yours = bolt.clone().owned_by(self.you());
+            match (seen(self, reflector), caster == player) {
+                (Some(whose), true) => Msg::new(msg::combat::REFLECTED)
+                    .role("who", whose)
+                    .role("weapon", yours)
+                    .role("target", self.you()),
+                (None, true) => Msg::new(msg::combat::REFLECTED_AT_YOU).role("weapon", yours),
+                (Some(whose), false) => at(self, whose, bolt),
                 (None, false) => return,
             }
         };
-        self.say(text);
+        self.say(line);
     }
 }

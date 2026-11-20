@@ -6,7 +6,7 @@
 
 use super::{Conj, FormError, Morphology, ParseError, missing, spaced};
 use crate::lexicon::{LexWord, Lexicon};
-use crate::phrase::{Modifier, Phrase, Word};
+use crate::phrase::{Modifier, Note, Phrase, Word};
 use crate::register::Register;
 use serde::Deserialize;
 use std::collections::BTreeMap;
@@ -146,7 +146,10 @@ impl Generic {
         let mut after: Vec<String> = Vec::new();
         for modifier in &phrase.mods {
             match modifier {
-                Modifier::Adjective(w) | Modifier::Material(w) => {
+                Modifier::Adjective(w)
+                | Modifier::Material(w)
+                | Modifier::Made(w)
+                | Modifier::Part { material: w, .. } => {
                     let word = self.word(w, lex);
                     let form = if agree { form } else { self.lemma() };
                     adjectives.push(Self::inflect(&word, form).to_string());
@@ -158,7 +161,11 @@ impl Generic {
             }
         }
         for note in &phrase.notes {
-            after.push(format!("({})", note.0));
+            match note {
+                Note::Tags(tags) => after.push(format!("({})", tags.join(", "))),
+                Note::Charges(n) => after.push(format!("({n})")),
+                Note::Base(base) => after.push(self.word(&base.head, lex).base),
+            }
         }
         let head = Self::inflect(head, form);
         let adjectives = adjectives.iter().map(String::as_str);

@@ -21,6 +21,7 @@ use crate::rng::draw;
 use crate::world::{ActorId, World};
 
 /// Said once a skill or style reaches the rank past which a dummy teaches nothing.
+#[cfg(test)]
 pub(crate) const LEARNED_ALL: &str = "You have learned all the dummy can teach you.";
 
 impl World {
@@ -57,7 +58,7 @@ impl World {
         if self.practise_at(skill, success, level, training.percent)
             && self.state.player().weapon_skills.rank(skill) >= most
         {
-            self.news.push(LEARNED_ALL.into());
+            self.news.push(crate::msg::combat::DUMMY_LEARNED_ALL.into());
         }
     }
 

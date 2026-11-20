@@ -26,7 +26,7 @@
 use super::ContentError;
 use super::gem::Cutting;
 use super::material::{ANY, MaterialDef, MaterialId};
-use crate::text::and_list;
+
 use serde::Deserialize;
 use std::collections::BTreeSet;
 
@@ -385,74 +385,24 @@ pub fn names(
     materials: &[MaterialDef],
     kinds: &[PartDef],
 ) -> (String, String) {
-    let material = |p: &Part| &materials[usize::from(p.material.0)];
-    let (name, plural) = match parts.first() {
-        Some(main) if main.material != written_for => {
-            let (base, made) = (
-                &materials[usize::from(written_for.0)].name,
-                &material(main).name,
-            );
-            (
-                with_material(name, base, made),
-                with_material(plural, base, made),
-            )
-        }
-        _ => (name.to_string(), plural.to_string()),
-    };
-    let (name, plural) = (name.as_str(), plural.as_str());
-    // Whole words only: "gold" is in "gold ring" and "gold-shod boots", not in "golden".
-    let words = format!(" {} ", name.replace('-', " "));
-    let mentioned = |m: &str| words.contains(&format!(" {m} "));
-    let (mut before, mut joined) = (Vec::new(), Vec::new());
-    let mut said = BTreeSet::new();
-    for part in parts {
-        let m = material(part);
-        if !m.precious || mentioned(&m.name) || !said.insert(m.name.as_str()) {
-            continue;
-        }
-        match part
-            .part
-            .and_then(|p| kinds[usize::from(p.0)].adjective.as_ref())
-        {
-            Some(adjective) => before.push(format!("{}-{adjective}", m.name)),
-            None => joined.push(m.name.as_str()),
-        }
-    }
-    let main = parts.first().map(|p| material(p).name.as_str());
-    let call = |written: &str| {
-        let rest = if joined.is_empty() {
-            written.to_string()
-        } else {
-            let begins = main.and_then(|m| Some((m, written.strip_prefix(m)?.strip_prefix(' ')?)));
-            let (mut list, rest) = match begins {
-                Some((main, rest)) => (vec![main], rest),
-                None => (Vec::new(), written),
-            };
-            list.extend(&joined);
-            format!("{} {rest}", and_list(&list))
-        };
-        before
-            .iter()
-            .map(String::as_str)
-            .chain([rest.as_str()])
-            .collect::<Vec<_>>()
-            .join(" ")
-    };
-    (call(name), call(plural))
-}
-
-/// `written` made of `made` instead of `base`: `made` in place of the first whole word (between
-/// spaces, hyphens, or the ends) `base`, else before it all.
-fn with_material(written: &str, base: &str, made: &str) -> String {
-    let boundary = |c: Option<char>| c.is_none_or(|c| c == ' ' || c == '-');
-    let found = written.match_indices(base).find(|&(at, _)| {
-        boundary(written[..at].chars().next_back())
-            && boundary(written[at + base.len()..].chars().next())
-    });
-    match found {
-        Some((at, _)) => format!("{}{made}{}", &written[..at], &written[at + base.len()..]),
-        None => format!("{made} {written}"),
-    }
+    let material = |p: &Part| materials[usize::from(p.material.0)].name.as_str();
+    let notable: Vec<(&str, Option<&str>)> = (parts.iter())
+        .filter(|p| materials[usize::from(p.material.0)].precious)
+        .map(|p| {
+            let adjective = p
+                .part
+                .and_then(|k| kinds[usize::from(k.0)].adjective.as_deref());
+            (material(p), adjective)
+        })
+        .collect();
+    let written_for = materials[usize::from(written_for.0)].name.as_str();
+    crate::lang::en::made_names(
+        name,
+        plural,
+        parts.first().map(material),
+        written_for,
+        &notable,
+    )
 }
 
 #[cfg(test)]

@@ -619,7 +619,7 @@ fn two_weapons_strike_twice_at_penalties_twin_blades_eases() {
     // The off hand's blow is made with the dagger, and worded so ("parries your dagger").
     let me = w.state.player();
     let words = super::fight::Words::of(me, AttackKind::Melee, Some(dagger), None, &content);
-    assert_eq!(words, super::fight::Words::test("dagger", "hits"));
+    assert_eq!(words.noun(), &crate::lang::Phrase::id("object:dagger"));
 }
 
 #[test]

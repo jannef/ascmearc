@@ -24,7 +24,7 @@ use crate::content::Effect as ItemEffect;
 use crate::content::{ActionKind, Role};
 use crate::door::kick_breaks;
 use crate::geom::{Dir, Pos};
-use crate::lang::Msg;
+use crate::lang::{Msg, Phrase};
 use crate::msg;
 use crate::noise::Act;
 use crate::rng::draw;
@@ -74,7 +74,8 @@ impl World {
             self.price_of(player, ActionKind::Unlock) + self.price_of(player, ActionKind::OpenDoor);
         self.state.current_mut().locks.remove(&p);
         self.swing_open(player, p, events);
-        let key = self.content.object(key).name.clone();
+        let key =
+            Phrase::id(format!("object:{}", self.content.object(key).id)).owned_by(self.you());
         self.say(Msg::new(msg::doors::UNLOCK).role("what", key));
         Spent::Turn(price)
     }
@@ -147,8 +148,8 @@ impl World {
             Some(def) if def.is_shut_chest() => self.kick_chest(at, events),
             Some(def) if def.statue.is_some() => self.kick_statue(at, events),
             Some(def) if !def.walkable => {
-                let name = def.name.clone();
-                self.say(Msg::new(msg::doors::KICK_HURTS).role("what", name));
+                let what = Phrase::id(format!("terrain:{}", def.id));
+                self.say(Msg::new(msg::doors::KICK_HURTS).role("what", what));
                 Spent::Nothing
             }
             _ => {

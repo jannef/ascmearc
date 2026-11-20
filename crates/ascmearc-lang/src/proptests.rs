@@ -1,14 +1,15 @@
 //! Rendering is total (`docs/design/localization.md` decision 14): arbitrary Unicode through the
-//! template parser, the renderer, `en`, and `generic` gives a string and never a panic. The
+//! template parser, the renderer, `en`, `generic`, and `fi` gives a string and never a panic. The
 //! assertions are deliberately weak (a string back; non-empty where the input was); the unit
 //! tests say what the strings are.
 
 use crate::lexicon::{LexWord, MapLexicon};
 use crate::message::{Arg, Entry, MessageId, Msg};
 use crate::morphology::en::{En, Plurals};
+use crate::morphology::fi::Fi;
 use crate::morphology::generic::{Agree, Generic, GenericSpec, Position};
 use crate::morphology::{Conj, Morphology};
-use crate::phrase::{Gender, Modifier, Person, Phrase, Word};
+use crate::phrase::{Gender, Modifier, Note, Person, Phrase, Word};
 use crate::register::Register;
 use crate::render::{Language, written_key};
 use crate::template::{Line, Templates};
@@ -29,10 +30,13 @@ fn modifier() -> impl Strategy<Value = Modifier> {
         word().prop_map(Modifier::Of),
         word().prop_map(Modifier::Label),
         word().prop_map(Modifier::Material),
+        word().prop_map(Modifier::Made),
+        (word(), word()).prop_map(|(material, part)| Modifier::Part { material, part }),
     ]
 }
 
-fn phrase() -> impl Strategy<Value = Phrase> {
+/// A phrase without an owner or a base note: what [`phrase`] nests.
+fn plain_phrase() -> impl Strategy<Value = Phrase> {
     (
         word(),
         prop::collection::vec(modifier(), 0..3),
@@ -46,19 +50,39 @@ fn phrase() -> impl Strategy<Value = Phrase> {
             Just(Gender::Neuter)
         ],
         prop::collection::vec(any::<String>(), 0..2),
+        any::<u32>(),
     )
-        .prop_map(|(head, mods, count, proper, person, gender, notes)| {
-            let mut phrase = Phrase {
+        .prop_map(
+            |(head, mods, count, proper, person, gender, tags, charges)| Phrase {
                 head,
                 mods,
                 count,
                 proper,
                 person,
                 gender,
-                notes: Vec::new(),
-            };
-            for note in notes {
-                phrase = phrase.note(note);
+                notes: vec![Note::Tags(tags), Note::Charges(charges)],
+                owner: None,
+            },
+        )
+}
+
+/// Any phrase: every modifier and note kind, an owner or none.
+fn phrase() -> impl Strategy<Value = Phrase> {
+    (
+        plain_phrase(),
+        prop::option::of(plain_phrase()),
+        prop::option::of(plain_phrase()),
+        any::<bool>(),
+    )
+        .prop_map(|(mut phrase, owner, base, notes)| {
+            if !notes {
+                phrase.notes.clear();
+            }
+            if let Some(base) = base {
+                phrase = phrase.with_note(Note::Base(Box::new(base)));
+            }
+            if let Some(owner) = owner {
+                phrase = phrase.owned_by(owner);
             }
             phrase
         })
@@ -82,13 +106,15 @@ fn lex_word() -> impl Strategy<Value = LexWord> {
         prop::collection::btree_map(any::<String>(), any::<String>(), 0..3),
         any::<bool>(),
         prop::option::of(any::<String>()),
+        any::<bool>(),
     )
-        .prop_map(|(base, forms, proper, gender)| LexWord {
+        .prop_map(|(base, forms, proper, gender, many)| LexWord {
             base,
             forms,
             proper,
             gender,
             harmony: None,
+            many,
         })
 }
 
@@ -212,6 +238,19 @@ proptest! {
         let _ = generic.number(n, &form, &reg);
         let _ = generic.list(std::slice::from_ref(&form), Conj::And);
         let _ = generic.parse_word(&form);
+    }
+
+    #[test]
+    fn fi_puts_any_phrase_in_any_form(phrase in phrase(), form in any::<String>(), lex in lexicon(), reg in register()) {
+        let fi = Fi::default();
+        let forms = fi.forms();
+        match fi.phrase(&phrase, &form, &lex, &reg) {
+            Ok(_) => prop_assert!(forms.contains(&form), "{form} rendered but is not listed"),
+            Err(_) => prop_assert!(!forms.contains(&form), "{form} listed but not rendered"),
+        }
+        for listed in ["nom", "gen", "ill", "pl_ade_si", "com_nsa", "bare", "counted", "num"] {
+            prop_assert!(fi.phrase(&phrase, listed, &lex, &reg).is_ok(), "{listed}");
+        }
     }
 
     #[test]

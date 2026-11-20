@@ -39,8 +39,8 @@ impl World {
         }
         // A note, said after the rage's own words.
         let text = match self.state.player().stance {
-            CombatStance::Frenzy => "You fight in a frenzy.",
-            _ => "You fall back into an aggressive stance.",
+            CombatStance::Frenzy => crate::msg::combat::FRENZY,
+            _ => crate::msg::combat::FRENZY_ENDS,
         };
         self.notes.push(text.into());
     }
@@ -49,11 +49,11 @@ impl World {
     /// only of rage, and rage holds them in it.
     pub(in crate::world) fn stance_refused(&mut self, stance: CombatStance) -> Option<Spent> {
         if raging(self.state.player(), &self.content) {
-            self.say("Your rage holds you in the frenzy.");
+            self.say(crate::msg::combat::FRENZY_HOLDS);
             return Some(Spent::Nothing);
         }
         if stance == CombatStance::Frenzy {
-            self.say("Only rage brings the frenzy.");
+            self.say(crate::msg::combat::FRENZY_NEEDS_RAGE);
             return Some(Spent::Nothing);
         }
         // The ratfolk craving's floor (`world/character/craving.rs`).

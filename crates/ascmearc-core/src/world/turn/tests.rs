@@ -113,7 +113,6 @@ map = '''
 
 fn content() -> Arc<Content> {
     let mut files = ContentFiles::default();
-    files.insert_builtin_lang();
     files.replace_table("terrain", TERRAIN);
     files.insert("data/creatures.toml", CREATURES);
     files.insert("data/legend.toml", LEGEND);

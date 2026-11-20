@@ -923,8 +923,8 @@ is not listed): `seconds = 600`, `difficulty = 12`, `yield = 50`.
   set apart); the lines name it ("You take 72 copper coins apart.").
 - **Scrap** (#1777; `scrap.rs`, `data/objects/scrap.toml`): the one generic object for a
   material too little for one piece, as the piece is for stock: made of any grouped material,
-  stacking by it, named "{material} scrap(s)" (`scrap::names`, special-cased in `Stack::names`
-  after the piece), a gram each whatever the material (`scrap::is` in `variant::weight` and
+  stacking by it, named "{material} scrap(s)" (`scrap::names` and `scrap::name_phrase`, special-cased in
+  `Stack::made_phrase` after the piece), a gram each whatever the material (`scrap::is` in `variant::weight` and
   `piece::grams`, as jewellery), worth nothing, no `kind`, in every shop's `never`. Salvaged,
   it is a stackable thing like any other.
 - **Time**: `seconds` by `keep_at`, as Temper; interrupted, nothing happens and the time is spent

@@ -148,7 +148,7 @@ else `OffGuard(status)` (the first flat-footed status it suffers, Surprised or S
 none. It rides on `Event::Attacked::caught` (a spell's set by `surprise::mark_caught` after
 `spell_strikes` pushed the event). The three places the player's attacks are said
 (`fight.rs::player_strikes`, `shoot.rs::player_looses`, `read.rs::say_spell`) name the target
-by `surprise::caught_name`, only when it is seen (`End::Seen`): "the sleeping kobold", "the
+by `surprise::caught_word` before its name (`End::caught`), only when it is seen (`End::Seen`): "the sleeping kobold", "the
 unsuspecting kobold", "the stunned kobold" (the status's `seen` word); the death line keeps the
 plain name. A sleeper the attack wakes is told so after that line ("You hit the sleeping
 goblin. The goblin wakes up."): `caught_by` keeps it in `World::sleeper_struck` (not saved),

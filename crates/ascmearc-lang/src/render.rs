@@ -11,6 +11,7 @@ use crate::morphology::en::{En, Plurals};
 use crate::morphology::fi::Fi;
 use crate::morphology::generic::Generic;
 use crate::morphology::{Conj, FormError, Morphology, capitalize, capitalized_form, lower_form};
+use crate::phrase::Phrase;
 use crate::register::{Register, Registers};
 use crate::template::{Line, Segment, Template, Templates};
 use std::collections::BTreeMap;
@@ -183,6 +184,20 @@ impl Language {
 
     pub fn registers(&self) -> &Registers {
         &self.registers
+    }
+
+    /// A phrase alone in `form`, in the standard register (an item's name in a list, a dump): a
+    /// form the language lacks gives the phrase `bare`. A form written with a capital capitalizes.
+    pub fn phrase(&self, phrase: &Phrase, form: &str, lex: &dyn Lexicon) -> String {
+        let reg = self.registers.standard();
+        let lower = lower_form(form);
+        let text = (self.morphology.phrase(phrase, &lower, lex, reg))
+            .or_else(|_| self.morphology.phrase(phrase, "bare", lex, reg))
+            .unwrap_or_default();
+        match capitalized_form(form) {
+            true => capitalize(&text),
+            false => text,
+        }
     }
 
     /// The entry as a line in this language alone: its template, else `[id]`.

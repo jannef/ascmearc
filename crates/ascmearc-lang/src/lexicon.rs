@@ -22,6 +22,9 @@ pub struct LexWord {
     /// `fi`: `front` or `back`, overriding the vowel-harmony rule where it would misjudge a loan
     /// word (`oliivi|öljy/1` with `harmony = "front"`).
     pub harmony: Option<String>,
+    /// A plural noun though it names one thing ("flames", "shards"): a verb agrees with it in the
+    /// plural.
+    pub many: bool,
 }
 
 impl LexWord {
@@ -49,6 +52,11 @@ impl LexWord {
 
     pub fn harmony(mut self, harmony: impl Into<String>) -> Self {
         self.harmony = Some(harmony.into());
+        self
+    }
+
+    pub fn many(mut self, many: bool) -> Self {
+        self.many = many;
         self
     }
 }
@@ -88,8 +96,8 @@ impl MapLexicon {
 
     /// Reads one lexicon file. Each entry is `id = "lemma"` or a table: `word` (the lemma, or
     /// for `generic` a table of forms, the first declared being the lemma), `forms` (explicit
-    /// forms), `proper`, `gender`, `harmony` (`fi`); `of` (the hash of the English) is the
-    /// checker's and is skipped.
+    /// forms), `proper`, `gender`, `many` (a plural noun), `harmony` (`fi`); `of` (the hash of
+    /// the English) is the checker's and is skipped.
     /// `prefix` is put before every id (`object:`), matching the data directory the file mirrors.
     pub fn parse(prefix: &str, text: &str) -> Result<Self, LangError> {
         let table: toml::Table =
@@ -153,6 +161,10 @@ fn parse_entry(id: &str, entry: &toml::Table) -> Result<LexWord, LangError> {
         .get("proper")
         .and_then(toml::Value::as_bool)
         .unwrap_or(false);
+    word.many = entry
+        .get("many")
+        .and_then(toml::Value::as_bool)
+        .unwrap_or(false);
     word.gender = entry
         .get("gender")
         .and_then(toml::Value::as_str)
@@ -191,6 +203,7 @@ arrow = "arrow"
 wolf = { of = "22c8d9", word = "wolf", forms = { plural = "wolves" } }
 sword = { word = { nom = "espada", pl = "espadas" }, gender = "f" }
 "Black Wystan" = { word = "Black Wystan", proper = true }
+flames = { word = "flames", many = true }
 "#,
         )
         .expect("parses");
@@ -205,6 +218,7 @@ sword = { word = { nom = "espada", pl = "espadas" }, gender = "f" }
                 .word("object:Black Wystan")
                 .is_some_and(|w| w.proper)
         );
+        assert!(lexicon.word("object:flames").is_some_and(|w| w.many));
         assert_eq!(lexicon.word("creature:wolf"), None);
         assert_eq!(NoLexicon.word("object:arrow"), None);
     }

@@ -26,7 +26,6 @@ use crate::action::Event;
 use crate::content::{ActionKind, Gaze, the, the_start};
 use crate::geom::Pos;
 use crate::rng::draw;
-use crate::world::combat::fight::End;
 use crate::world::{ActorId, World};
 
 /// Said when a gazer the player does not see looks at them.
@@ -94,8 +93,10 @@ impl World {
                 .is_some_and(|t| self.perception.sees_actors_at(t.pos));
             let line = format!(
                 "{} stares at {}.",
-                self.end_of(id, true).subject(),
-                self.end_of(target, seen).object()
+                self.content
+                    .english_of(&self.end_of(id, true).phrase(), "The"),
+                self.content
+                    .english_of(&self.end_of(target, seen).phrase(), "the")
             );
             self.say(line);
         }
@@ -108,20 +109,6 @@ impl World {
             }
         }
         price
-    }
-
-    /// Actor `id` as the fight's lines name it, `seen` or not (`fight.rs::End`).
-    pub(in crate::world) fn end_of(&self, id: ActorId, seen: bool) -> End<'_> {
-        let player = self.state.player;
-        match self.state.actors.get(&id) {
-            _ if id == player => End::You,
-            Some(a) if seen && a.master() == Some(player) => match a.kept() {
-                Some(data) => End::Named(data.name.as_str()),
-                None => End::Yours(self.content.creature(a.creature).name.as_str()),
-            },
-            Some(a) if seen => End::Seen(self.content.creature(a.creature).name.as_str()),
-            _ => End::Unseen,
-        }
     }
 
     /// Whether actor `id`'s `gaze` catches the eyes it met: its chance, a glance's share of it

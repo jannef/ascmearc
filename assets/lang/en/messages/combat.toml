@@ -1,0 +1,93 @@
+# Combat (`world/combat/`), the worked example of a subsystem whose lines name things and people
+# (`docs/dev/localization.md` "Phrases"). Ids alphabetical, the plain ones first, then the tables.
+#
+# Roles: `actor` attacks and `target` is attacked; `who` is the one a line is about; `weapon` is
+# what strikes, said with its owner ("the goblin's spear", "your long sword", a trap's "the
+# arrow"); `what` is an item; `armour` is what a blow glances off. `verb` is a verb as the data
+# writes it ("slashes", "bites"), already in the actor's person: the data's words are text until
+# the data's text is converted.
+
+aimed_at_nothing = "That is aimed at nothing."
+# The intent alone: an attack the player saw made, its blow not (yet) told.
+attacks = "{actor:The} attack{actor:s} {target:the}."
+blades_rend = "Your blades rend {target:the}."
+blades_rend_you = "{actor:Poss} blades rend you."
+blocks = "{target:The} block{target:s} {weapon:the} with {target:their} shield."
+# `verb`: what the player would do ("shoot", "cast", "throw your voice").
+cannot_aim_at_yourself = "You cannot {verb:bare} at yourself."
+cannot_loose_here = "You cannot do that on the overworld."
+cannot_throw = "You cannot throw {what:counted}."
+carry_no_such_thing = "You carry no such thing."
+casts_at = "{actor:The} cast{actor:s} a spell at {target:the}."
+# `verb`: how the creature dies ("dies", "splinters").
+dies = "{who:The} {verb:bare}."
+does_no_harm = "{weapon:The} {weapon:does} {target:the} no harm."
+dodges = "{target:The} dodge{target:s} {weapon:the}."
+driven_back = "{who:The} {who:is} driven back."
+dummy_learned_all = "You have learned all the dummy can teach you."
+fires_by_itself = "That fires by itself."
+frenzy = "You fight in a frenzy."
+frenzy_ends = "You fall back into an aggressive stance."
+frenzy_holds = "Your rage holds you in the frenzy."
+frenzy_needs_rage = "Only rage brings the frenzy."
+# `armour`: what it glances off: the piece worn ("chain mail shirt"), a hide ("shell"), "armour".
+glances_off = "{weapon:The} glance{weapon:s} off {target:poss} {armour:bare}."
+hit = "{actor:The} {verb:bare} {target:the}."
+hit_hard = "{actor:The} {verb:bare} {target:the} hard!"
+hit_no_harm = "{actor:The} {verb:bare} {target:the} but {actor:does} no harm."
+in_the_way = "Something is in the way."
+keep_wits = "You keep your wits about you."
+# `what`: the player's weapon, knocked away by `who`.
+knocked_from_hand = "{who:The} knock{who:s} {what:the} from your hand!"
+lands_beside_you = "It lands beside you."
+misses = "{actor:The} miss{actor:es} {target:the}."
+no_ability = "You have no such ability."
+# `what`: the ammunition the launcher takes ("arrows").
+no_ammunition = "You have no {what:plural} ready."
+no_ammunition_kind = "You have no ammunition ready."
+no_ammunition_left = "You have no {what:plural} left."
+no_quarrel = "You have no quarrel with {target:the}."
+no_room_to_lunge = "There is no room to lunge."
+no_shield_to_bash = "You have no shield to bash with."
+no_vital_spot = "It has no vital spot."
+# A dev action's: `skill` as typed.
+no_weapon_skill = "There is no weapon skill `{skill:bare}`."
+nobody_beside_you = "There is nobody beside you to strike."
+nobody_there = "There is nobody there to strike."
+nothing_ready = "You have nothing ready to throw or shoot."
+nothing_ready_to_shoot = "You have nothing ready to shoot."
+nothing_to_bash = "There is nothing there to bash."
+out_of_range = "That is out of range."
+# `reason`: why the ability cannot be used now, as the abilities menu says it.
+reason = "{reason:Bare}."
+# `who`: whose shield; `weapon`: the spell's bolt, said with its caster ("your bolt").
+reflected = "{who:Poss} shield turns {weapon:the} back at {target:the}."
+reflected_at_caster = "{who:Poss} shield turns {weapon:the} back at its caster."
+reflected_at_you = "{weapon:The} is turned back at you."
+shield_wrath = "You answer the blow with holy wrath!"
+shields_fumble = "Your shields get in the way, and the spell slips from your grasp."
+shoots_at = "{actor:The} shoot{actor:s} at {target:the}."
+# `verb`: "shoot" or "throw"; `what`: the missile, counted.
+shot = "You {verb:bare} {what:counted}."
+something_dies = "Something dies."
+# `status`: how the status looks ("dazed"); `from`: what turned the blow ("shield", "parry").
+staggers = "{who:The} staggers."
+staggers_from = "{who:The} staggers from your {from:bare}."
+status = "{who:The} {who:is} {status:bare}."
+status_from = "{who:The} {who:is} {status:bare} from your {from:bare}."
+strikes_wall = "{weapon:The} strike{weapon:s} stone where {target:the} hide{target:s} in the wall."
+# `actor`: the thrower; `verb`: its throw's verb ("hurls"); `what`: what it throws.
+throws = "{actor:The} {verb:bare} {what:a}."
+throws_at = "{actor:The} throw{actor:s} at {target:the}."
+throws_flask = "{actor:The} {verb:bare} a flask."
+turned_aside = "{weapon:The} turn{weapon:s} aside before {weapon:they} reach{weapon:es} {target:the}."
+where = "Where?"
+which_way = "Which way?"
+whirls = "{who:The} whirls to face you."
+will_not_leave_hand = "It will not leave your hand."
+you_die = "You die..."
+
+[parries]
+by = "target.person"
+you = "You parry {weapon:the}."
+other = "{target:The} parries {weapon:the}."

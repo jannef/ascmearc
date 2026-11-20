@@ -32,14 +32,16 @@
 //! a throw `throw`, less what the rank in the launcher's skill or in throwing takes off, which also
 //! adds to their to-hit and damage.
 
-use super::fight::{End, Guard, Words, attack_message, death_message};
+use super::fight::{End, Guard, Words, attack_message, creature, death_message};
 use crate::action::{AttackKind, Event, MissileEnd, Positions};
 use crate::combat::Profile;
 use crate::content::{ActionKind, Content, Effect, LevelKind, ObjectId};
 use crate::fov::radius2;
 use crate::geom::Pos;
+use crate::lang::{Msg, Phrase};
 use crate::magic::Mods;
 use crate::magic::mods::less;
+use crate::msg;
 use crate::noise::Act;
 use crate::object::{self, Stack};
 use crate::rng::draw;
@@ -72,12 +74,12 @@ pub(in crate::world) struct Flight {
     pub(in crate::world) breaks: u32,
 }
 
-/// What ammunition of the kind missile weapon `launcher` shoots is called, in the plural:
-/// "arrows", "bolts".
-fn ammunition_name(content: &Content, launcher: ObjectId) -> String {
+/// The ammunition of the kind missile weapon `launcher` shoots, as a phrase ("arrows", "bolts"
+/// in the plural), if the content has one.
+fn ammunition(content: &Content, launcher: ObjectId) -> Option<Phrase> {
     let kind = content.object(launcher).launches.as_deref();
-    kind.and_then(|k| content.ammunition(k))
-        .map_or_else(|| "ammunition".into(), |o| o.plural.clone())
+    let ammunition = kind.and_then(|k| content.ammunition(k))?;
+    Some(Phrase::id(format!("object:{}", ammunition.id)))
 }
 
 /// The chance in percent that `missile` breaks when it hits: its `breaks`, less what a durability
@@ -106,12 +108,14 @@ impl World {
         }
         let (Some((launcher, _)), Some(profile)) = (me.launcher(&content), me.ranged(&content))
         else {
-            self.say("You have nothing ready to throw or shoot.");
+            self.say(msg::combat::NOTHING_READY);
             return Spent::Nothing;
         };
         let Some(item) = me.ammunition_item(&content) else {
-            let what = ammunition_name(&content, launcher);
-            self.say(format!("You have no {what} ready."));
+            self.say(match ammunition(&content, launcher) {
+                Some(what) => Msg::new(msg::combat::NO_AMMUNITION).role("what", what),
+                None => msg::combat::NO_AMMUNITION_KIND.into(),
+            });
             return Spent::Nothing;
         };
         let range = me.launcher_range(&content).unwrap_or(1);
@@ -164,12 +168,12 @@ impl World {
         }
         let me = self.state.player();
         let Some(stack) = me.inventory.get(item) else {
-            self.say("You carry no such thing.");
+            self.say(msg::combat::CARRY_NO_SUCH_THING);
             return Spent::Nothing;
         };
         // A spirit weapon is not thrown: it would fade as it left the hand.
         if stack.is_spirit() {
-            self.say("It will not leave your hand.");
+            self.say(msg::combat::WILL_NOT_LEAVE_HAND);
             return Spent::Nothing;
         }
         // A cursed weapon is never thrown: it leaps into the main hand (`curse.rs`).
@@ -186,8 +190,8 @@ impl World {
         let (Some(range), Some(profile)) =
             (me.throw_range(item, &content), me.thrown(item, &content))
         else {
-            let what = self.lore().describe(&stack.single());
-            self.say(format!("You cannot throw {what}."));
+            let what = self.lore().phrase(&stack.single());
+            self.say(Msg::new(msg::combat::CANNOT_THROW).role("what", what));
             return Spent::Nothing;
         };
         let throwing = me.attack_skills(&content, AttackKind::Thrown, Some(stack.object));
@@ -212,7 +216,7 @@ impl World {
     pub(in crate::world) fn can_loose_here(&mut self) -> bool {
         let here = self.state.current().kind != LevelKind::Overworld;
         if !here {
-            self.say("You cannot do that on the overworld.");
+            self.say(msg::combat::CANNOT_LOOSE_HERE);
         }
         here
     }
@@ -222,10 +226,10 @@ impl World {
     pub(in crate::world) fn within_reach(&mut self, at: Pos, range: i32, verb: &str) -> bool {
         let here = self.player_pos();
         if at == here {
-            self.say(format!("You cannot {verb} at yourself."));
+            self.say(Msg::new(msg::combat::CANNOT_AIM_AT_YOURSELF).role("verb", verb));
             false
         } else if at.dist2(here) > radius2(range) {
-            self.say("That is out of range.");
+            self.say(msg::combat::OUT_OF_RANGE);
             false
         } else {
             true
@@ -256,10 +260,11 @@ impl World {
             None,
             &content,
         );
-        let mut said = Vec::new();
+        let mut said: Vec<Msg> = Vec::new();
         // Whether the player saw the target of the last attack, and how it reads.
-        let mut seen: Option<(End<'_>, &str)> = None;
+        let mut seen: Option<(End, &str)> = None;
         let mut attacked = false;
+        let you = End::You(self.you());
         for event in made {
             match event {
                 Event::Attacked {
@@ -274,32 +279,23 @@ impl World {
                     let def = fallen.map(|a| content.creature(a.creature));
                     let guard = Guard::of(fallen, &content, &self.state);
                     let end = match def {
-                        Some(d) if self.perception.sees_actors_at(to) => End::Seen(&d.name),
+                        Some(d) if self.perception.sees_actors_at(to) => End::Seen(creature(d)),
                         _ => End::Unseen,
                     };
                     // How the missile found the one it struck at, in its words (`surprise.rs`).
-                    let named =
-                        def.map(|d| super::surprise::caught_name(&content, &d.name, caught));
-                    let struck_at = match (end, named.as_deref()) {
-                        (End::Seen(_), Some(named)) => End::Seen(named),
-                        _ => end,
-                    };
+                    let caught = super::surprise::caught_word(&content, caught);
+                    let struck_at = end.clone().caught(caught);
                     said.extend(attack_message(
-                        End::You,
-                        struck_at,
-                        &words,
-                        kind,
-                        strike,
-                        guard,
+                        &you, &struck_at, &words, kind, strike, &guard,
                     ));
                     seen =
-                        (end != End::Unseen).then(|| (end, def.map_or("dies", |d| d.death_verb())));
+                        (!end.is_unseen()).then(|| (end, def.map_or("dies", |d| d.death_verb())));
                     if seen.is_some() {
                         events.push(event);
                     }
                 }
                 Event::Died { .. } => {
-                    if let Some((end, dies)) = seen {
+                    if let Some((end, dies)) = &seen {
                         said.push(death_message(end, dies));
                         events.push(event);
                     }
@@ -312,16 +308,17 @@ impl World {
                 AttackKind::Thrown => "throw",
                 _ => "shoot",
             };
-            let what = self.lore().describe(&stack);
-            said.insert(0, format!("You {verb} {what}."));
+            let what = self.lore().phrase(&stack);
+            let shot = Msg::new(msg::combat::SHOT).role("verb", verb);
+            said.insert(0, shot.role("what", what));
         }
         for text in said {
             self.say(text);
         }
         // The next stack goes into the emptied quiver by itself (`world/items/quiver.rs`).
         if last && !self.refill_quiver(stack.object) {
-            let ammo = &content.object(stack.object).plural;
-            self.say(format!("You have no {ammo} left."));
+            let ammo = Phrase::id(format!("object:{}", content.object(stack.object).id));
+            self.say(Msg::new(msg::combat::NO_AMMUNITION_LEFT).role("what", ammo));
         }
         self.say_news();
     }

@@ -6,13 +6,13 @@ close = "You close the door."
 crashes_open = "The door crashes open!"
 in_the_way = "Something is in the way."
 kick_empty = "You kick at empty space."
-# `what`: the terrain kicked ("stone wall").
-kick_hurts = "Kicking the {what:bare} would only hurt your foot."
+# `what`: the terrain kicked ("the stone wall").
+kick_hurts = "Kicking {what:the} would only hurt your foot."
 locked = "The door is locked."
 nothing_to_close = "There is nothing to close there."
 nothing_to_open = "There is nothing to open there."
 open = "You open the door."
 unwedge = "You pull the wedge free and open the door."
-# `what`: the key that fits.
-unlock = "You unlock the door with your {what:bare} and open it."
+# `what`: the key that fits, the player's ("your iron key").
+unlock = "You unlock the door with {what:the} and open it."
 whamm = "WHAMM!"

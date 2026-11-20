@@ -9,7 +9,7 @@ use super::word::{self, Entry};
 use super::{Fi, NUMBER_WORDS, numeral};
 use crate::lexicon::{LexWord, MapLexicon, NoLexicon};
 use crate::morphology::{Conj, FormError, Morphology};
-use crate::phrase::{Gender, Modifier, Person, Phrase, Word};
+use crate::phrase::{Gender, Modifier, Note, Person, Phrase, Word};
 use crate::register::Register;
 use proptest::prelude::*;
 use serde::Deserialize;
@@ -277,6 +277,23 @@ fn lexicon() -> MapLexicon {
         .with("bad:none", LexWord::new("karhu"))
         .with("odd:fits", LexWord::new("hopöööääa/10"))
         .with("two:words", LexWord::new("pitkä/10 miekka/9*A"))
+        .with(
+            "object:helm",
+            LexWord::new("kypärä/12").form("material", "rautainen"),
+        )
+        .with("object:wand", LexWord::new("sauva/10"))
+        .with("material:iron", LexWord::new("rautainen/38"))
+        .with("material:bronze", LexWord::new("pronssinen/38"))
+        .with("material:emerald", LexWord::new("smaragdi/5"))
+        .with(
+            "material:gold",
+            LexWord::new("kultainen/38").form("compound", "kulta"),
+        )
+        .with(
+            "part:pommel",
+            LexWord::new("ponsi/27").form("adjective", "ponsinen/38"),
+        )
+        .with("word:flames", LexWord::new("liekki/5*A").many(true))
 }
 
 fn form(phrase: &Phrase, form: &str) -> String {
@@ -412,6 +429,125 @@ fn creatures_names_and_the_player() {
     assert_eq!(
         form(&Phrase::id("object:shield").count(0), "nom"),
         "nolla kilpeä"
+    );
+}
+
+#[test]
+fn owners_genitive_or_the_players_suffix() {
+    let troll = Phrase::id("creature:troll");
+    let you = Phrase::literal("Hild").person(Person::You);
+    let sword = Phrase::id("object:long_sword");
+    let theirs = sword.clone().owned_by(troll.clone());
+    assert_eq!(form(&theirs, "nom"), "peikon pitkämiekka");
+    assert_eq!(form(&theirs, "ill"), "peikon pitkämiekkaan");
+    assert_eq!(
+        form(&theirs.clone().owned_by(troll.clone().count(3)), "nom"),
+        "kolmen peikon pitkämiekka"
+    );
+    let yours = sword.clone().owned_by(you.clone());
+    assert_eq!(form(&yours, "nom"), "pitkämiekkasi", "the player: a suffix");
+    assert_eq!(form(&yours, "bare"), "pitkämiekkasi");
+    assert_eq!(form(&yours, "ade"), "pitkämiekallasi");
+    assert_eq!(
+        form(&yours, "ade_nsa"),
+        "pitkämiekallaan",
+        "a suffix the template asks wins"
+    );
+    let arrows = Phrase::id("object:arrow").count(3);
+    assert_eq!(
+        form(&arrows.clone().owned_by(you), "counted"),
+        "kolme nuoltasi"
+    );
+    assert_eq!(
+        form(&arrows.clone().owned_by(troll), "counted"),
+        "peikon kolme nuolta",
+        "the owner before the numeral"
+    );
+    assert_eq!(form(&arrows.owned_by(sword), "num"), "kolme");
+}
+
+#[test]
+fn made_and_parts() {
+    let helm = Phrase::id("object:helm");
+    let bronze = helm
+        .clone()
+        .with(Modifier::Made(Word::id("material:bronze")));
+    assert_eq!(form(&bronze, "nom"), "pronssinen kypärä");
+    assert_eq!(form(&bronze, "ill"), "pronssiseen kypärään");
+    assert_eq!(form(&bronze, "pl_ade"), "pronssisilla kypäröillä");
+    let iron = helm.with(Modifier::Made(Word::id("material:iron")));
+    assert_eq!(form(&iron, "nom"), "kypärä", "the material the word says");
+    let pommel = Modifier::Part {
+        material: Word::id("material:emerald"),
+        part: Word::id("part:pommel"),
+    };
+    let sword = Phrase::id("object:long_sword").with(pommel.clone());
+    assert_eq!(form(&sword, "nom"), "smaragdiponsinen pitkämiekka");
+    assert_eq!(form(&sword, "ill"), "smaragdiponsiseen pitkämiekkaan");
+    assert_eq!(form(&sword, "pl_ade"), "smaragdiponsisilla pitkämiekoilla");
+    let gold = Phrase::id("object:long_sword").with(Modifier::Part {
+        material: Word::id("material:gold"),
+        part: Word::id("part:pommel"),
+    });
+    assert_eq!(
+        form(&gold, "gen"),
+        "kultaponsisen pitkämiekan",
+        "a `compound` form"
+    );
+    let both = Phrase::id("object:long_sword")
+        .with(Modifier::Adjective(Word::id("affix:flaming")))
+        .with(Modifier::Made(Word::id("material:bronze")))
+        .with(pommel)
+        .with(Modifier::Of(Word::id("affix:of_the_bear")));
+    assert_eq!(
+        form(&both, "nom"),
+        "karhun liekehtivä smaragdiponsinen pronssinen pitkämiekka",
+        "what it is made of next to the head"
+    );
+    let unknown = Phrase::id("object:long_sword").with(Modifier::Part {
+        material: Word::id("material:emerald"),
+        part: Word::id("part:nope"),
+    });
+    assert_eq!(form(&unknown, "nom"), "[part:nope] pitkämiekka");
+    let refused = Phrase::id("object:long_sword").with(Modifier::Part {
+        material: Word::literal("emerald"),
+        part: Word::literal("pommelled"),
+    });
+    assert_eq!(
+        form(&refused, "ill"),
+        "emerald-pommelled pitkämiekkaan",
+        "an adjective without a class: as written"
+    );
+}
+
+#[test]
+fn notes_and_plural_only_words() {
+    let sword = Phrase::id("object:long_sword");
+    let tagged = sword
+        .clone()
+        .with_note(Note::Tags(vec!["taika".into(), "kirottu".into()]));
+    assert_eq!(form(&tagged, "nom"), "pitkämiekka (taika, kirottu)");
+    let wand = Phrase::id("object:wand");
+    let charged = |n| form(&wand.clone().with_note(Note::Charges(n)), "nom");
+    assert_eq!(charged(7), "sauva (7 latausta)");
+    assert_eq!(charged(1), "sauva (1 lataus)");
+    assert_eq!(charged(0), "sauva (tyhjä)");
+    let rare = Phrase::literal("Grim Bite").with_note(Note::Base(Box::new(sword)));
+    assert_eq!(form(&rare, "nom"), "Grim Bite, pitkämiekka");
+    assert_eq!(
+        form(&rare, "ill"),
+        "Grim Biteen, pitkämiekkaan",
+        "the base agrees in case"
+    );
+    let flames = Phrase::id("word:flames");
+    assert_eq!(form(&flames, "nom"), "liekit", "a plural-only word");
+    assert_eq!(form(&flames, "bare"), "liekit");
+    assert_eq!(form(&flames, "ill"), "liekkeihin");
+    assert_eq!(form(&flames, "par"), "liekkejä");
+    assert_eq!(
+        form(&flames.count(3), "counted"),
+        "kolme liekkejä",
+        "no plural numeral yet"
     );
 }
 
