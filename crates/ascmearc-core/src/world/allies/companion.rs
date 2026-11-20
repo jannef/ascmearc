@@ -125,30 +125,6 @@ impl World {
             .find(|id| self.state.actors[id].companion().is_some())
     }
 
-    /// A kept beast's name and type, as the words say them: `("Snel", "hound")`.
-    pub(super) fn companion_words(&self, id: ActorId) -> Option<(String, String)> {
-        let actor = self.state.actors.get(&id)?;
-        let data = actor.kept()?;
-        Some((
-            data.name.clone(),
-            self.content.creature(actor.creature).name.clone(),
-        ))
-    }
-
-    /// Ally `id` as the subject of a sentence: its name ("Snel"), else "Your wolf".
-    pub(in crate::world) fn ally_subject(&self, id: ActorId) -> String {
-        if let Some(escort) = (self.state.actors.get(&id)).filter(|a| a.escorting().is_some()) {
-            return crate::text::capitalized(&self.called(escort));
-        }
-        match self.companion_words(id) {
-            Some((name, _)) => name,
-            None => format!(
-                "Your {}",
-                self.content.creature(self.state.actors[&id].creature).name
-            ),
-        }
-    }
-
     /// Actor `actor` as the player calls it in a line, as a phrase (`called`'s words): a kept
     /// beast or a shop's keeper by its name, a named person by it, a servant as the player's
     /// ("your squire"), anyone else by its creature type ("the gardener").
@@ -173,9 +149,8 @@ impl World {
         }
     }
 
-    /// Ally `id` as the subject of a line, as a phrase (`ally_subject`'s words): an escort by
-    /// what the player calls it, a kept beast by its name, any other as the player's ("your
-    /// wolf").
+    /// Ally `id` as the subject of a line, as a phrase: an escort by what the player calls it, a
+    /// kept beast by its name, any other as the player's ("your wolf").
     pub(in crate::world) fn ally_phrase(&self, id: ActorId) -> Phrase {
         let actor = &self.state.actors[&id];
         if actor.escorting().is_some() {

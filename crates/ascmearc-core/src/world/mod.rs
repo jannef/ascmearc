@@ -217,9 +217,7 @@ pub use magic::zone::Zone;
 pub use people::escort::{escort_slot, fits_escort};
 pub use people::guild::GuildRank;
 pub use people::quarrel::{Parting, PartingChoice, PartingView, Side};
-pub use people::quest::{
-    QuestRecord, QuestView, Quests, Stage, asks as quest_asks, wants as quest_wants,
-};
+pub use people::quest::{QuestRecord, QuestView, Quests, Stage, asks as quest_asks};
 pub use people::shop::{Shop, ShopStatus, count_of, favour, part_of, unpaid_parts};
 pub use people::talk::{Conversation, Speech, Talk, TopicView};
 pub(crate) use skills::forage::forage_ground;

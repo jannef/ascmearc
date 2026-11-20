@@ -13,13 +13,10 @@ use crate::daylight::SIGHT_DAY;
 use crate::fov::compute_fov;
 use crate::world::World;
 
-/// What the player is told when a rumour marks something new on their map.
-pub const MARKED: &str = "You mark the way on your map.";
-
 impl World {
     /// Marks the way topic `topic` of dialogue `dialogue` describes on the player's overworld
     /// map (the module docs), making the overworld first if the run has not been there yet.
-    /// Says [`MARKED`] if any cell was new to the map.
+    /// Says so if any cell was new to the map.
     pub(super) fn mark_rumoured_way(&mut self, dialogue: DialogueId, topic: &str) {
         let content = self.content.clone();
         let Some(route) = (content.dialogue(dialogue).topic(topic))
@@ -60,7 +57,7 @@ impl World {
             }
         }
         if marked {
-            self.say(MARKED);
+            self.say(crate::msg::people::MARK_THE_WAY);
         }
     }
 }

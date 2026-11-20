@@ -39,6 +39,8 @@ use crate::content::StatUse;
 use crate::content::{ActionKind, Content, MAX_FAVOUR, ShopId, ShopPlan, Shops, TerrainId};
 use crate::geom::{Dir, Pos};
 use crate::grid::Grid;
+use crate::lang::{Arg, Msg, Phrase};
+use crate::msg;
 use crate::object::{self, Stack};
 use crate::skills::{Effect, Use};
 use crate::stats::Stat;
@@ -401,33 +403,45 @@ impl World {
             return;
         };
         let what = match drank {
-            true => self.lore().title(food),
-            false => self.content.object(food.object).name.clone(),
-        };
-        let (verb, done) = if drank {
-            ("drink", "Drunk")
-        } else {
-            ("eat", "Eaten")
+            true => self.lore().title_phrase(food),
+            false => Phrase::id(format!("object:{}", self.content.object(food.object).id)),
         };
         let line = match meal {
             Meal::Floor(_) => {
                 self.state.current_mut().shops[i].owe(food);
-                format!("You {verb} it, you buy it: {price} gold for the {what}.")
+                match drank {
+                    true => msg::people::DRINK_AND_BUY,
+                    false => msg::people::EAT_AND_BUY,
+                }
             }
             Meal::Pack(_) => {
                 let unpaid = count_of(&self.state.current().shops[i].unpaid, food.object);
                 if count_of(&self.state.player().inventory, food.object) >= unpaid {
                     return;
                 }
-                format!("{done} or not, the {what} is still {price} gold.")
+                match drank {
+                    true => msg::people::DRUNK_OR_NOT,
+                    false => msg::people::EATEN_OR_NOT,
+                }
             }
         };
+        let line = Msg::new(line)
+            .role("price", i64::from(price))
+            .role("what", what);
         let (name, owed) = self.owing().expect("eaten goods are owed for");
-        let mut text = format!("{name} says: \"{line}\"");
-        if owed != price {
-            text.push_str(&format!(" You owe {name} {owed} gold."));
+        let keeper = Phrase::literal(&name);
+        let says = Msg::new(msg::talk::SAYS)
+            .role("who", keeper.clone())
+            .role("line", Arg::List(vec![line.into()]));
+        if owed == price {
+            self.say(says);
+            return;
         }
-        self.say(text);
+        let owe = Msg::new(msg::people::YOU_OWE)
+            .role("who", keeper)
+            .role("owed", i64::from(owed));
+        let lines = Arg::List(vec![says.into(), owe.into()]);
+        self.say(Msg::new(msg::world::LINES).role("lines", lines));
     }
 
     /// Whom the player owes how much in the open shop they stand in, if anything.
@@ -442,32 +456,34 @@ impl World {
     /// nothing changes) outside a shop, owing nothing, or without enough gold.
     pub(super) fn pay(&mut self) -> Spent {
         let Some(i) = self.shop_here() else {
-            self.say("There is nobody here to pay.");
+            self.say(msg::people::NOBODY_TO_PAY);
             return Spent::Nothing;
         };
         let content = self.content.clone();
         let shops = content.shops().expect("a shop is here");
         let shop = self.state.current().shops[i].clone();
         let owed = shop.owed(shops, &content, self.player_favour());
+        let keeper = Phrase::literal(&shop.name);
         if owed == 0 {
-            self.say(format!("You owe {} nothing.", shop.name));
+            self.say(Msg::new(msg::people::OWE_NOTHING).role("who", keeper));
             return Spent::Nothing;
         }
         let gold = count_of(&self.state.player().inventory, shops.currency);
         if gold < owed {
-            let have = match gold {
-                0 => "none".to_string(),
-                n => format!("only {n}"),
+            let short = match gold {
+                0 => Msg::new(msg::people::OWE_BUT_NONE),
+                n => Msg::new(msg::people::OWE_BUT_ONLY).role("gold", i64::from(n)),
             };
-            self.say(format!(
-                "You owe {} {owed} gold, but you have {have}.",
-                shop.name
-            ));
+            self.say(short.role("who", keeper).role("owed", i64::from(owed)));
             return Spent::Nothing;
         }
         self.hand_over(self.state.player, shop.keeper, owed);
         self.state.current_mut().shops[i].unpaid.clear();
-        self.say(format!("You pay {} {owed} gold.", shop.name));
+        self.say(
+            Msg::new(msg::people::PAY_GOLD)
+                .role("who", keeper)
+                .role("gold", i64::from(owed)),
+        );
         self.train_deal();
         self.player_did(Deed::PaidDebt);
         Spent::NoTime
@@ -497,7 +513,7 @@ impl World {
         let i = self.shop_here()?;
         let len = self.state.player().inventory.len();
         if len == 0 {
-            self.say("You are not carrying anything.");
+            self.say(msg::people::NOT_CARRYING_ANYTHING);
             return Some(Spent::Nothing);
         }
         let Some(chosen) = self.chosen(positions, len, "You carry no such thing.") else {
@@ -517,22 +533,23 @@ impl World {
         let content = self.content.clone();
         let shop = self.state.current().shops[i].clone();
         let deal = self.deal(&shop, &inventory, &chosen, sell);
-        let name = shop.name.as_str();
-        let sold = object::phrase(&deal.sold, self.lore());
+        let name = Phrase::literal(&shop.name);
+        let sold = object::stacks_arg(&deal.sold, self.lore());
+        let about = |id, stacks: &[Stack], world: &World| {
+            Msg::new(id)
+                .role("who", name.clone())
+                .role("what", object::stacks_arg(stacks, world.lore()))
+        };
         if !deal.refused.is_empty() {
-            let what = object::phrase(&deal.refused, self.lore());
-            self.say(format!("{name} has no use for {what}."));
+            self.say(about(msg::people::NO_USE_FOR, &deal.refused, self));
         }
         // Rotten food is worth nothing: the keeper's nose is the only hint of it the player gets.
         if !deal.spoilt.is_empty() {
-            let what = object::phrase(&deal.spoilt, self.lore());
-            self.say(format!(
-                "{name} sniffs at {what} and says: \"Not at any price.\""
-            ));
+            self.say(about(msg::people::SNIFFS, &deal.spoilt, self));
         }
         if !deal.offered.is_empty() {
-            let what = object::phrase(&deal.offered, self.lore());
-            self.say(format!("{name} offers {} gold for {what}.", deal.offer));
+            let offers = about(msg::people::OFFERS_GOLD, &deal.offered, self);
+            self.say(offers.role("gold", i64::from(deal.offer)));
         }
         if deal.back.is_empty() && deal.sold.is_empty() {
             return Some(match faded.is_empty() {
@@ -564,15 +581,17 @@ impl World {
             level.shops[i].put_back(stack);
         }
         if !deal.back.is_empty() {
-            let what = object::phrase(&deal.back, self.lore());
-            self.say(format!("You put back {what}."));
+            let what = object::stacks_arg(&deal.back, self.lore());
+            self.say(Msg::new(msg::people::PUT_BACK).role("what", what));
         }
         if !deal.sold.is_empty() {
             self.hand_over(shop.keeper, self.state.player, deal.payment);
-            self.say(format!(
-                "You sell {sold} to {name} for {} gold.",
-                deal.payment
-            ));
+            self.say(
+                Msg::new(msg::people::SELL)
+                    .role("what", sold)
+                    .role("who", name)
+                    .role("gold", i64::from(deal.payment)),
+            );
             self.train_deal();
         }
         Some(spent)
@@ -620,8 +639,12 @@ impl World {
         let purse = (self.state.actors.get(&shop.keeper))
             .map_or(0, |k| count_of(&k.inventory, shops.currency));
         if purse < deal.payment {
-            let what = object::phrase(&deal.sold, self.lore());
-            self.say(format!("{} cannot afford {what}.", shop.name));
+            let what = object::stacks_arg(&deal.sold, self.lore());
+            self.say(
+                Msg::new(msg::people::CANNOT_AFFORD)
+                    .role("who", Phrase::literal(&shop.name))
+                    .role("what", what),
+            );
             deal.sold.clear();
             deal.payment = 0;
             return deal;
@@ -643,8 +666,8 @@ impl World {
         if parts.get(item).copied().unwrap_or(0) == 0 {
             return true;
         }
-        let what = self.lore().describe(&inventory[item]);
-        self.say(format!("You have not paid for {what}."));
+        let what = self.lore().phrase(&inventory[item]);
+        self.say(Msg::new(msg::people::HAVE_NOT_PAID).role("what", what));
         false
     }
 
@@ -681,10 +704,8 @@ impl World {
                 .min_by_key(|p| p.dist2(from))
                 .unwrap_or(from)
         };
-        self.say(format!(
-            "{} steps into your way: you haven't paid.",
-            shop.name
-        ));
+        let keeper = Phrase::literal(&shop.name);
+        self.say(Msg::new(msg::people::STEPS_INTO_YOUR_WAY).role("who", keeper));
         Some(land)
     }
 
@@ -700,13 +721,12 @@ impl World {
             }
             let (was, is) = (shop.contains(from), shop.contains(to));
             if !was && is {
-                self.say(format!("Welcome to {}!", shop.sign(&content)));
+                let sign = shop.sign(&content);
+                self.say(Msg::new(msg::people::WELCOME_SHOP).role("shop", sign));
             } else if was && !is && !shop.unpaid.is_empty() {
-                let name = shop.name.clone();
+                let keeper = Phrase::literal(&shop.name);
                 self.outrage(i);
-                self.say(format!(
-                    "You leave without paying. \"Stop, thief!\" shouts {name}."
-                ));
+                self.say(Msg::new(msg::people::LEAVE_WITHOUT_PAYING).role("who", keeper));
                 self.player_did(Deed::Theft);
             }
         }
@@ -734,10 +754,10 @@ impl World {
         let Some(i) = shops.iter().position(|s| s.is_open() && s.keeper == target) else {
             return;
         };
-        let name = shops[i].name.clone();
+        let keeper = Phrase::literal(&shops[i].name);
         self.outrage(i);
         self.news
-            .push(format!("\"You will pay for that!\" shouts {name}.").into());
+            .push(Msg::new(msg::people::PAY_FOR_THAT).role("who", keeper));
         self.player_did(Deed::AttackedShopkeeper);
     }
 
@@ -749,9 +769,9 @@ impl World {
         let Some(i) = shops.iter().position(|s| s.is_open() && s.keeper == victim) else {
             return false;
         };
-        let name = shops[i].name.clone();
+        let keeper = Phrase::literal(&shops[i].name);
         self.outrage(i);
-        self.say(format!("{name} catches you stealing. \"Stop, thief!\""));
+        self.say(Msg::new(msg::people::CATCHES_STEALING).role("who", keeper));
         true
     }
 

@@ -236,7 +236,7 @@ fn a_family_is_learnt_of_and_counted_as_one_kind() {
     assert_eq!(learnt, 1, "once for the family");
     assert!(w.state.progress.discovered.kills.contains("animated_blade"));
     // Both count toward the family's quest and the tag's; the tally is the family's.
-    let quests = w.perception().quests();
+    let quests = crate::test_support::quest_log(&w);
     let status = |id: &str| (quests.iter().find(|q| q.id == id)).map(|q| q.status.clone());
     assert_eq!(status("blades").as_deref(), Some("2 / 5 killed."));
     assert_eq!(status("things").as_deref(), Some("2 / 50 killed."));

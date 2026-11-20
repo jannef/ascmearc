@@ -90,7 +90,7 @@ fn asked_she_marks_the_mound_and_the_girl_waits_at_the_bottom() {
     assert_eq!(stage(&w), Some(Stage::Active));
     assert!(heard(&w, "Gammer Wynflæd says: \"It's Ælfrun, my dear"));
     assert!(w.state.revealed.contains("aelfham"), "the mound on the map");
-    let log = &w.perception().quests()[0];
+    let log = &crate::test_support::quest_log(&w)[0];
     assert_eq!(log.name, "Taken under the hill");
     assert!(aelfruns(&w).is_empty(), "the floor is not made yet");
     w.travel(BOTTOM, None).expect("down");

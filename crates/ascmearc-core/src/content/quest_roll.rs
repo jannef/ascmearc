@@ -4,7 +4,8 @@
 //! template in data; what was drawn is a [`Roll`], kept in the quest's record (saved), and
 //! [`QuestDef::rolled`] makes the quest as given from the two. Texts name the roll through role
 //! slots in the base form, as dialogue does (`{target:a}`, `{target:Name}`, `{branch:name}`,
-//! `{where:Name}`; `docs/dev/localization.md` "Dialogue"), filled from it in English.
+//! `{where:Name}`; `docs/dev/localization.md` "Dialogue"), which it fills ([`QuestDef::words`]);
+//! each text is said by its key (`content/data_line.rs`).
 //!
 //! - `pick = { creatures = ["cealdhlaw", ...] }`: a creature type that is no unique, from the
 //!   populations of those branches the player can enter (a kill quest).
@@ -24,6 +25,7 @@
 
 use super::Content;
 use super::creature::CreatureId;
+use super::data_line::QUEST_TEXTS;
 use super::dialogue::{ID_SHAPE, is_id};
 use super::dialogue_line::DIALOGUE_FORMS;
 use super::item_class::ItemClassId;
@@ -232,8 +234,9 @@ impl QuestDef {
         }
     }
 
-    /// The quest as given with `roll`: its goal after the drawn target, a variant's texts,
-    /// `reveals`, and `where` instead of its own, and every text's placeholders filled. A roll
+    /// The quest as given with `roll`: its goal after the drawn target, a variant's texts (and
+    /// their keys), `reveals`, and `where` instead of its own, and what its texts name in
+    /// `words`. A roll
     /// that names nothing of the content (a guard: saves are checked as they load) leaves it as
     /// it is.
     pub fn rolled(&self, content: &Content, roll: &Roll) -> QuestDef {
@@ -257,23 +260,20 @@ impl QuestDef {
             if v.where_.is_some() {
                 def.where_ = v.where_.clone();
             }
+            let theirs = [&v.offer, &v.accept, &v.reminder, &v.done, &v.where_];
+            for (field, text) in QUEST_TEXTS.into_iter().zip(theirs) {
+                if text.is_some() {
+                    let key =
+                        super::data_line::quest(&self.id, &format!("variant.{}.{field}", v.id));
+                    def.variant_keys.insert(field, key);
+                }
+            }
         }
-        let mut words = words(content, &def, &roll.target);
-        let fill = |text: &str, words: &Words| {
-            self::fill(content, text, words).unwrap_or_else(|_| text.to_string())
-        };
-        def.where_ = def.where_.as_deref().map(|w| fill(w, &words));
-        words.insert(
-            WHERE.into(),
-            Arg::Text(def.where_.clone().unwrap_or_default()),
-        );
-        let fill = |text: &str| fill(text, &words);
-        def.texts = QuestTexts {
-            offer: fill(&def.texts.offer),
-            accept: def.texts.accept.as_deref().map(fill),
-            reminder: fill(&def.texts.reminder),
-            done: fill(&def.texts.done),
-        };
+        // Its words name the draw: `where` is a line of its own, naming the rest.
+        def.words = words(content, &def, &roll.target);
+        let where_ = def.where_.as_ref().map(|_| def.said(WHERE));
+        def.words
+            .insert(WHERE.into(), where_.unwrap_or(Arg::Text(String::new())));
         // As given, it is drawn: nothing about it is rolled any more.
         def.roll = None;
         def
@@ -329,7 +329,7 @@ pub(crate) fn roll_known(content: &Content, def: &QuestDef, roll: &Roll) -> bool
 type Words = BTreeMap<Role, Arg>;
 
 /// The roles a rolled quest's texts may name (module docs).
-const ROLES: [&str; 5] = ["target", "count", "members", "branch", WHERE];
+pub(super) const ROLES: [&str; 5] = ["target", "count", "members", "branch", WHERE];
 
 /// The role of the filled `where`.
 const WHERE: &str = "where";

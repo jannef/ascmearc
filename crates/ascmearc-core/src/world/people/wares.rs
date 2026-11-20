@@ -29,7 +29,9 @@
 use super::shop::count_of;
 use crate::action::Event;
 use crate::content::{ActionKind, DialogueId, MAX_ITEM_LEVEL, TradeOffer};
+use crate::lang::Msg;
 use crate::magic::describe::{self, LineKind};
+use crate::msg;
 use crate::object::{self, Stack};
 use crate::rng::Rng;
 use crate::world::{ActorId, Spent, World};
@@ -150,14 +152,19 @@ impl World {
         let currency = self.content.shops().map(|s| s.currency);
         let gold = currency.map_or(0, |c| count_of(&self.state.player().inventory, c));
         if gold < wares.price {
-            self.say("You cannot pay.");
+            self.say(msg::people::CANNOT_PAY);
             return Some(Spent::Nothing);
         }
         let player = self.state.player;
         self.hand_over(player, id, wares.price);
-        let who = self.called(&self.state.actors[&id]);
-        let what = self.lore().describe(&item);
-        self.say(format!("You pay {who} {} gold for {what}.", wares.price));
+        let who = self.called_phrase(&self.state.actors[&id]);
+        let what = self.lore().phrase(&item);
+        self.say(
+            Msg::new(msg::people::PAY_GOLD_FOR)
+                .role("who", who)
+                .role("gold", i64::from(wares.price))
+                .role("what", what),
+        );
         let content = self.content.clone();
         object::add_to_inventory(self.state.inventory_mut(), item, &content);
         if let Some(w) = self.state.wares.get_mut(&id) {

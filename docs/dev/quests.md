@@ -57,16 +57,19 @@ entry with neither `start` nor `marks`.
 A quest done for one of a town's people (`data/towns/`) also raises that town's goodwill, its
 services cheaper by its percent: `World::tell_goodwill` after "Quest complete", the count derived
 from `QuestRecord::completed` (#1247; docs/dev/npcs.md "Goodwill").
-The log's objective is the **first breadcrumb**, `world::quest_wants`: "<Giver> wants you to
-<asks, lower-cased>." (a bring to the giver names no recipient); `quest_asks` stays the plain
-goal, and for a rolled quest describes its pool (the wiki's goal column).
+The log's objective is the **first breadcrumb**, `people.wants`: "<Giver> wants you to
+<task>." (a bring to the giver names no recipient), then the quest's `where`; `quest_asks` is
+the plain goal, `people.asks` in English, and for a rolled quest describes its pool (the wiki's
+goal column). `QuestView` holds the log's words as messages and lines of data (`giver` a
+phrase, `offer` a `Speech`, `objective` and `status` messages), which the quest screen and the
+dumps render (`messages::english_msg`, `english_arg`; `docs/dev/localization.md` "People").
 **Rolled quests** (#422, the guild design §5): `content/quest_roll.rs` holds the data:
 `QuestDef::roll: Option<Rolled>` (`Rolled::Pick(Pick::{Creatures(branches), Tags(tags),
 Objects{class, loot}})` or `Rolled::Variants`), parsed from `pick` or `[[quest.variant]]`
 (exactly one of `target`, `pick`, variants; a pick of creatures or tags is a kill quest's, of
 objects a bring's). A rolled quest's `goal` is a template whose target is the full pool's
 first; only `QuestDef::rolled(content, roll)`, the quest as given (goal after the roll, a
-variant's texts, `reveals`, `where`, every placeholder filled, `roll` cleared), is read for a
+variant's texts and their keys, `reveals`, `where`, the roll's `words`, `roll` cleared), is read for a
 given quest: `Quests::given` makes it (a `Cow`, borrowed for every quest not rolled), and
 `progress`, the log, `ask_quest`'s reminder, `complete`, and `quest_news` go through it.
 `Rolled::candidates(content, campaign, open)` is the pool in content order, animated objects left out (creature and

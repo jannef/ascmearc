@@ -26,8 +26,10 @@
 
 use super::quest::{QuestRecord, Stage};
 use crate::action::Event;
-use crate::content::{Content, DialogueId, QuestDef};
+use crate::content::{Content, DialogueId, QuestDef, data_line};
+use crate::lang::{Arg, Msg, Phrase};
 use crate::magic::loot::LootGrade;
+use crate::msg;
 use crate::object::{self, Stack};
 use crate::perception::PerceptionView;
 use crate::rng::Rng;
@@ -138,7 +140,10 @@ pub(super) fn sides(
     record: &QuestRecord,
 ) -> Vec<(String, Side)> {
     (def.quarrel.wizards())
-        .filter_map(|npc| Some((content.quarrel_name(def, npc)?, *record.sides.get(npc)?)))
+        .filter_map(|npc| {
+            let name = content.speaker_called(def.quarrel.taker_npc(npc)?.speaker);
+            Some((name, *record.sides.get(npc)?))
+        })
         .collect()
 }
 
@@ -235,7 +240,9 @@ impl World {
                     continue;
                 };
                 self.stand(def, &side.npc, Side::Offered);
-                self.answer(id, side.offer.clone(), None, events);
+                let offer = side_line(def, &side.npc, "offer");
+                let offer = self.voiced(id, offer);
+                self.answer(id, offer, None, events);
                 return;
             }
         }
@@ -297,14 +304,13 @@ impl World {
         let def = content.quest_id(quest).map(|q| content.quest(q));
         let side = def.and_then(|d| d.quarrel.sides.iter().find(|s| s.speaker == speaker));
         let (Some(def), Some(side), true) = (def, side, listed) else {
-            let who = capitalized(&self.called(&self.state.actors[&id]));
-            self.say(format!("{who} knows nothing about that."));
+            self.knows_nothing(id);
             return Some(Spent::Nothing);
         };
         if !join {
             self.stand(def, &side.npc, Side::Hostile);
-            let who = capitalized(&self.called(&self.state.actors[&id]));
-            self.say(format!("{who} says: \"{}\"", side.refuse));
+            let refuse = self.voiced(id, side_line(def, &side.npc, "refuse"));
+            self.says(id, refuse);
             return Some(Spent::NoTime);
         }
         let record = self.state.quests.record(&def.id).cloned();
@@ -328,18 +334,18 @@ impl World {
             }
         }
         self.sync_wizards();
-        self.answer(id, side.join.clone(), Some(topic.into()), events);
-        let name = content.speaker_called(side.speaker);
-        let heard: Vec<String> = (heard.iter())
+        let joined = self.voiced(id, side_line(def, &side.npc, "join"));
+        self.answer(id, joined, Some(topic.into()), events);
+        let name = content.speaker_phrase(side.speaker);
+        let heard: Vec<Arg> = (heard.iter())
             .filter_map(|npc| content.quarrel_name(def, npc))
+            .map(Arg::from)
             .collect();
-        let heard: Vec<&str> = heard.iter().map(String::as_str).collect();
-        self.say(match heard.as_slice() {
-            [] => format!("{name} is with you now."),
-            names => format!(
-                "{name} is with you now. {} will have heard.",
-                crate::text::and_list(names)
-            ),
+        self.say(match heard.is_empty() {
+            true => Msg::new(msg::people::WITH_YOU).role("who", name),
+            false => Msg::new(msg::people::WITH_YOU_HEARD)
+                .role("who", name)
+                .role("heard", Arg::List(heard)),
         });
         Some(Spent::NoTime)
     }
@@ -441,7 +447,7 @@ impl World {
     /// Takes no time; refused with none pending.
     pub(in crate::world) fn answer_parting(&mut self, choice: PartingChoice) -> Spent {
         let Some(pending) = self.state.parting.take() else {
-            self.say("There is nothing to decide.");
+            self.say(msg::people::NOTHING_TO_DECIDE);
             return Spent::Nothing;
         };
         let content = self.content.clone();
@@ -451,16 +457,31 @@ impl World {
         if let Some(record) = self.state.quests.records.get_mut(&def.id) {
             record.parted = true;
         }
-        let name = (content.quarrel_name(def, &pending.npc)).unwrap_or_default();
+        let Some(taker) = def.quarrel.taker_npc(&pending.npc) else {
+            return Spent::NoTime;
+        };
+        let name = content.speaker_phrase(taker.speaker);
         match choice {
-            PartingChoice::Leave => self.say(format!("You take your leave of {name}.")),
+            PartingChoice::Leave => {
+                self.say(Msg::new(msg::people::TAKE_LEAVE).role("who", name));
+            }
             PartingChoice::Betray => {
                 self.stand(def, &pending.npc, Side::Hostile);
-                let words = (def.quarrel.taker_npc(&pending.npc))
-                    .and_then(|t| t.betrayed.clone())
-                    .or_else(|| def.quarrel.parting.as_ref().map(|p| p.betray.clone()));
-                if let Some(words) = words {
-                    self.say(format!("{} says: \"{words}\"", capitalized(&name)));
+                let path = match (&taker.betrayed, &def.quarrel.parting) {
+                    (Some(_), _) => Some(format!("taker.{}.betrayed", taker.npc)),
+                    (None, Some(_)) => Some("parting.betray".to_string()),
+                    (None, None) => None,
+                };
+                if let Some(path) = path {
+                    let (register, race) = content.speaker_voice(taker.speaker);
+                    let words = Arg::said(data_line::quest(&def.id, &path))
+                        .with("player", self.you())
+                        .spoken_by(register, race);
+                    self.say(
+                        Msg::new(msg::talk::SAYS)
+                            .role("who", name)
+                            .role("line", Arg::List(vec![words])),
+                    );
                 }
             }
         }
@@ -469,11 +490,14 @@ impl World {
 }
 
 impl Content {
-    /// What wizard `npc` of quest `def`'s quarrel is called in messages: "Master Ordgar".
-    fn quarrel_name(&self, def: &QuestDef, npc: &str) -> Option<String> {
-        let speaker = (def.quarrel.takers.iter())
-            .find(|t| t.npc == npc)
-            .map(|t| t.speaker)?;
-        Some(self.speaker_called(speaker))
+    /// Wizard `npc` of quest `def`'s quarrel as messages call them: "Master Ordgar".
+    fn quarrel_name(&self, def: &QuestDef, npc: &str) -> Option<Phrase> {
+        Some(self.speaker_phrase(def.quarrel.taker_npc(npc)?.speaker))
     }
+}
+
+/// What side `npc` of quest `def`'s quarrel says at `field` (`offer`, `join`, `refuse`), by its
+/// key.
+fn side_line(def: &QuestDef, npc: &str, field: &str) -> Arg {
+    Arg::said(data_line::quest(&def.id, &format!("side.{npc}.{field}")))
 }

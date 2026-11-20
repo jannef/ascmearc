@@ -10,12 +10,12 @@ checker (L7)"); **L10**, the `fi` morphology (#1893, "The `fi` module"); and **L
 text path (#1900): the app's words in `assets/lang/en/ui/`, the abilities screen converted ("UI
 text"), with its widths in the screens' layout, not the text (#1908), and the further L6 parts:
 the controls, settings, and mods screens (#1935) and the object and rig screens (#1928); **L4a**,
-**L4b**, **L4i**, and **L4j**, `world/allies/` (#1912), `world/character/` (#1913),
-`world/health/` (#1920), and `world/levels/` (#1921) say their lines from templates
-("Literal lines"); and **L5**, dialogue (#1888): every line a creature says is a line of data
+**L4b**, **L4i**, **L4j**, and **L4m**, `world/allies/` (#1912), `world/character/` (#1913),
+`world/health/` (#1920), `world/levels/` (#1921), and `world/people/` (#1924) say their lines
+from templates ("Literal lines", "People"); and **L5**, dialogue (#1888): every line a creature says is a line of data
 said by its key, with role slots in the base form ("Dialogue"), on the one mechanism every line
 whose text lives in data uses ("Lines of data"). The doors, the welcome line, combat, allies,
-the character, health, levels, and talk say theirs from templates; every other `say` site still says finished English
+the character, health, levels, people, and talk say theirs from templates; every other `say` site still says finished English
 as a literal line ("Literal lines"). Nothing player-visible has
 changed: the English templates and phrases read as the strings did. The English helpers core,
 the app, and the wiki generator call have moved into the crate behind re-exports at their old
@@ -342,7 +342,7 @@ example and `world/combat/` (`messages/combat.toml`) the one whose lines name th
    entry became an id's): regenerate those with `replay --create` and say so.
 
 `world/allies/` (`messages/allies.toml`) is converted: `World::called_phrase` and `ally_phrase`
-are `called` and `ally_subject` as phrases, `pack_args` an order's allies as a list said
+are `called` and the ally as a subject as phrases, `pack_args` an order's allies as a list said
 `{pack:the}` (a lone one is its phrase, so its count agrees the verb). What it leaves as text
 for now: the `came_line` that stops a calling or a taming (a `came` role). The data's own words
 are lines of data (#1944, "Lines of data"): a charm's, a familiar's arrival, and a creature's
@@ -397,7 +397,40 @@ case, and `Unavailable::reason`. A talent's refusal (`talent::Refusal::words`) s
 line. `World::learn` returns `Msg`s; `creation_offers` and the creation errors render them in
 English, as developer text.
 
+`world/people/` (`messages/people.toml`, L4m; talk's own lines in `messages/talk.toml`) is
+the "People" section below.
+
 When no literal is left, `LITERAL`, the `From` text impls, and this section go.
+
+## People
+
+`world/people/` (L4m, #1924) says its lines from `messages/people.toml` and `talk.toml`, and
+what its data writes by key ("Lines of data"). Someone a line names is `called_phrase` (an
+actor) or `Content::speaker_phrase` (whoever speaks a dialogue, where the string was
+`speaker_called`), a shopkeeper `Phrase::literal` of the shop's name, a quarrel's wizards a
+list of phrases (`{heard:And}`). A place inside a sentence is `quest::place`: a name written
+with "The" is `word:<rest>` said `the` ("the Arena"), any other a literal ("Cealdhlāw"). Stacks
+are `object::stacks_arg` said `counted` (one, a list of two or three, else a count of
+`word:object`).
+
+**The quest log** renders from keys and phrases: `QuestView` holds `giver` (an `Arg`, said
+`The`), `offer` (a `Speech` in the giver's register: `Content::speaker_voice`), `objective`,
+and `status` (`Msg`s). What a quest asks is one `task_*` entry (kill, in a place, with its tag's
+members; bring, to someone; deliver; escort; lure; reach), said in `asks` ("{task:Bare}.", the
+wiki's goal) and `wants` ("{giver:The} wants you to {task:bare}."), the objective `wants` and
+the quest's `where` said as one (`world.lines`). A kill's target is a `target_*` entry: a
+unique `{who:the}`, a type or tag `{who:counted}`, a quest's own word (`what = "wizards"`) by the
+count's number. The next step is a `step_*` entry inside `next_step` ("{step:Bare}.") or, for a
+delivery picked up again, `updated_step`. `messages::english_msg` and `english_arg` render them
+for the quest screen and the dumps; a patron's commission (`crafting/patron.rs`) still fills its
+view with literal text.
+
+Text roles until core's words are converted (#1949): a quest's name (`quest`), a skill's name
+lower case (`skill`), a guild's name (`guild`), a shop's sign (`shop`, its data's
+`{keeper}` filled; the app's step dialogs show the same string), and a dev action's typed ids.
+A rank's title is a `word:` phrase (`{title:a}`). Left as they are: the topic names of a
+quarrel's sides ("Take X's side") and the parting dialog (`PartingView`: its text, title, and
+choices), which are UI text; `carry.rs::chosen`'s refusal (items).
 
 ## Nested messages
 
@@ -578,8 +611,21 @@ arrays named by the id that tells it apart. Every kind of line of data, the thre
 | `oaths:band.<talent>.message` | an oath band reached, named by the talent it gives |
 | `profane:<id>.line`, `.undone`, `.instead` | a profane gift given, taken back, or said in place of its own line when it takes a gift held away |
 | `talent:<id>.effects.temperature_speed.bands.<n>.slower`, `.faster` | cold blood coming into band `n` (from 0) from a quicker or a slower one |
+| `quest:<id>.binding.words.<n>`, `.binding.shatters`, `.binding.reforms` | a lure quest's creature bound, killed unbound, and formed anew |
+| `quest:<id>.reward.skills.<skill>.taught`, `.more`; `quest:<id>.taker.<npc>.reward.skills.…` | a quest's reward (or a taker's) teaching a skill |
+| `town:<id>.told` | a town's goodwill rising |
+| `level:<id>.hidden.<location>.opens` | a hidden location opening as a quest reveals it |
+| `dialogue:<scope>.silent` | a speaker turning away one outside its `speaks_to` |
 
-None of them names a role: the loader refuses one that does. A status's start and end lines said
+What quests' people say is keyed in the same file (`data_line::quest`, added by `quest_speech`)
+but said by a speaker, so in their register and with the player given: a giver's `offer`,
+`accept`, `reminder`, `done`, `where`, and `early`, a drawn variant's
+(`quest:<id>.variant.<v>.offer`), an escort's `joins` and `thanks`, a taker's `done` and
+`betrayed` (`quest:<id>.taker.<npc>.done`), a side's `offer`, `join`, and `refuse`
+(`quest:<id>.side.<npc>.join`), and the parting's `betray`. A rolled quest's lines may name
+its roles ("Dialogue", "Quests' texts"); every other one names none.
+
+None of the narrator's names a role: the loader refuses one that does. A status's start and end lines said
 as the turn is perceived (`world/turn/perceive.rs`) and the other subsystems' reads of these
 fields are still literal text, until their slices.
 
@@ -626,13 +672,16 @@ roles with `.with`. `World::answer(id, speech, asked, events)` logs `talk.says` 
 whose `line` is a `Speech` (the lines said in turn); `World::says` the same without a
 conversation. The dialogue screen renders the speech with `messages::english_speech`. A mutter
 is `talk.mutters` (seen) or `talk.voice`/`talk.voice_from` (heard). Lines from quest data (a
-giver's `offer`, `reminder`, `done`, a side's words, an escort's) are still finished English
-passed as a `Speech` of text until people's slice keys them.
+giver's `offer`, `reminder`, `done`, a side's words, an escort's) are lines of data too, keyed
+`quest:<id>.<field>` ("Lines of data"; `World::voiced` says one in the speaker's register).
 
-**Quests' texts** (`content/quest_roll.rs::fill`) take the same slots, filled in English as the
-quest is rolled: `target` (a phrase counted as the quest asks: `{target:a}` "a cave bear",
-`{target:name}` "goblins" for 25), `count`, `members`, `branch`, `where`; a placeholder of the old
-shape (`{a_target}`) is refused.
+**Quests' texts** take the same slots, which a rolled quest fills from its draw as it is
+given (`QuestDef::rolled` keeps them as `QuestDef::words`; `QuestDef::said(field)` is the line
+by its key with them): `target` (a phrase counted as the quest asks: `{target:a}` "a cave
+bear", `{target:name}` "goblins" for 25), `count`, `members`, `branch`, and `where` (the
+quest's `where` line, itself said by its key with the rest); a placeholder of the old shape
+(`{a_target}`) is refused. `content/quest_roll.rs::fill` renders every text for every draw at
+load, so a bad slot is a load error.
 
 ## Decisions L5 made where the design left them open
 

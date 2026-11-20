@@ -231,6 +231,7 @@ pub(super) fn add_all(content: &mut Content) -> Result<(), ContentError> {
             add(dungeon_arrival(&def.id), line);
         }
     }
+    people_lines(content, &mut add);
     for (key, text) in lines {
         let line = Line::parse(&text);
         if let Some(role) = line.roles().first() {
@@ -241,6 +242,7 @@ pub(super) fn add_all(content: &mut Content) -> Result<(), ContentError> {
         }
         content.english.add_data_line(key, Template::Line(line));
     }
+    quest_speech(content)?;
     Ok(())
 }
 
@@ -300,6 +302,165 @@ fn character_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
             }
         }
     }
+}
+
+// ----- People (`world/people/`, #1924): what quests' people say, a town's goodwill, a hidden
+// location opening, and a dialogue's `silent` line. -----
+
+/// Quest `quest`'s line at `path` in its `[[quest]]`: `offer`, `variant.<id>.offer`,
+/// `joins`, `binding.words.0`, `taker.<npc>.done`, `side.<npc>.join`, `parting.betray`
+/// (a taker and a side by their npc).
+pub fn quest(quest: &str, path: &str) -> String {
+    format!("quest:{quest}.{path}")
+}
+
+/// The words of a quest its giver says that a drawn variant may say instead, each a field of
+/// the `[[quest]]` and of its `[[quest.variant]]`s.
+pub const QUEST_TEXTS: [&str; 5] = ["offer", "accept", "reminder", "done", "where"];
+
+/// What a reward says of the skill `skill` it teaches: `taught` (true) to one untrained, else
+/// `more`. `reward` is the reward's path in the quest: `reward`, or `taker.<npc>.reward`.
+pub fn quest_skill(quest: &str, reward: &str, skill: &str, taught: bool) -> String {
+    let field = if taught { "taught" } else { "more" };
+    self::quest(quest, &format!("{reward}.skills.{skill}.{field}"))
+}
+
+/// Town `id`'s `told` line, said as its goodwill rises.
+pub fn town_told(id: &str) -> String {
+    format!("town:{id}.told")
+}
+
+/// Hidden location `id`'s `opens` line, the location on level `level`.
+pub fn hidden_opens(level: &str, id: &str) -> String {
+    format!("level:{level}.hidden.{id}.opens")
+}
+
+/// Dialogue `d`'s `silent` line: what its speaker does for one outside its `speaks_to`.
+pub fn silent(content: &Content, d: super::DialogueId) -> String {
+    let scope = super::dialogue::scope(content.dialogue(d), content);
+    format!("dialogue:{scope}.silent")
+}
+
+/// The narrator's lines of `world/people/`: a lure quest's binding, a reward's skills, a town's
+/// `told`, a hidden location's `opens`, and a dialogue's `silent`.
+fn people_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
+    for def in content.quests() {
+        let id = &def.id;
+        if let Some((_, _, _, binding)) = def.lure() {
+            for (n, words) in binding.words.iter().enumerate() {
+                add(quest(id, &format!("binding.words.{n}")), words);
+            }
+            if let Some(line) = &binding.shatters {
+                add(quest(id, "binding.shatters"), line);
+            }
+            if let Some(line) = &binding.reforms {
+                add(quest(id, "binding.reforms"), line);
+            }
+        }
+        let takers =
+            (def.quarrel.takers.iter()).map(|t| (format!("taker.{}.reward", t.npc), &t.reward));
+        for (path, reward) in std::iter::once(("reward".to_string(), &def.reward)).chain(takers) {
+            for taught in &reward.skills {
+                let skill = &content.skill(taught.skill).id;
+                for (yes, text) in [(true, &taught.taught), (false, &taught.more)] {
+                    if let Some(text) = text {
+                        add(quest_skill(id, &path, skill, yes), text);
+                    }
+                }
+            }
+        }
+    }
+    for town in content.towns() {
+        add(town_told(&town.id), &town.told);
+    }
+    for level in content.levels.values() {
+        for hidden in level.hidden.values() {
+            if let Some(line) = &hidden.opens {
+                add(hidden_opens(&level.id, &hidden.id), line);
+            }
+        }
+    }
+    for (i, d) in content.dialogues().iter().enumerate() {
+        if let Some(line) = &d.silent {
+            add(silent(content, super::DialogueId(i as u16)), line);
+        }
+    }
+}
+
+/// Adds what quests' people say to English by its key: a giver's words (and a drawn variant's),
+/// an escort's, a taker's, a side's, and the parting's betrayal. Said by a person, a line takes
+/// the base form only; a rolled quest's words may name what the roll drew
+/// (`content/quest_roll.rs`'s roles), any other quest's none.
+fn quest_speech(content: &mut Content) -> Result<(), ContentError> {
+    let mut lines: Vec<(String, String, &[&str])> = Vec::new();
+    for def in content.quests() {
+        let id = &def.id;
+        let roles: &'static [&'static str] = if def.is_rolled() {
+            &super::quest_roll::ROLES
+        } else {
+            &[]
+        };
+        let mut add = |path: String, text: &str, roles: &'static [&'static str]| {
+            lines.push((quest(id, &path), text.to_string(), roles));
+        };
+        let own = [
+            Some(&def.texts.offer),
+            def.texts.accept.as_ref(),
+            Some(&def.texts.reminder),
+            Some(&def.texts.done),
+            def.where_.as_ref(),
+        ];
+        // A text a quest's variants each say instead is empty on the quest.
+        for (field, text) in QUEST_TEXTS.iter().zip(own) {
+            if let Some(text) = text.filter(|t| !t.is_empty()) {
+                add(field.to_string(), text, roles);
+            }
+        }
+        if let Some(super::Rolled::Variants(variants)) = &def.roll {
+            for v in variants {
+                let theirs = [&v.offer, &v.accept, &v.reminder, &v.done, &v.where_];
+                for (field, text) in QUEST_TEXTS.iter().zip(theirs) {
+                    if let Some(text) = text {
+                        add(format!("variant.{}.{field}", v.id), text, roles);
+                    }
+                }
+            }
+        }
+        if let Some((_, early)) = &def.min_level {
+            add("early".into(), early, &[]);
+        }
+        if let super::Goal::Escort { joins, thanks, .. } = &def.goal {
+            add("joins".into(), joins, &[]);
+            if let Some(thanks) = thanks {
+                add("thanks".into(), thanks, &[]);
+            }
+        }
+        for t in &def.quarrel.takers {
+            add(format!("taker.{}.done", t.npc), &t.done, &[]);
+            if let Some(betrayed) = &t.betrayed {
+                add(format!("taker.{}.betrayed", t.npc), betrayed, &[]);
+            }
+        }
+        for s in &def.quarrel.sides {
+            add(format!("side.{}.offer", s.npc), &s.offer, &[]);
+            add(format!("side.{}.join", s.npc), &s.join, &[]);
+            add(format!("side.{}.refuse", s.npc), &s.refuse, &[]);
+        }
+        if let Some(parting) = &def.quarrel.parting {
+            add("parting.betray".into(), &parting.betray, &[]);
+        }
+    }
+    for (key, text, roles) in lines {
+        let line = Line::parse(&text);
+        if let Some(role) = line.roles().into_iter().find(|r| !roles.contains(r)) {
+            return Err(ContentError::new(
+                "data",
+                format!("`{key}`: \"{text}\" names `{role}`, which this line is not given"),
+            ));
+        }
+        content.english.add_data_line(key, Template::Line(line));
+    }
+    Ok(())
 }
 
 #[cfg(test)]

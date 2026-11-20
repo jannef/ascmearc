@@ -238,7 +238,7 @@ fn the_pedlar_hailed_talks_and_tells_the_ways() {
     w.perceive(&mut Vec::new());
     act(&mut w, &format!("chat:{dir:?} ask:{dir:?}:rumours"));
     assert!(
-        said(&w, crate::world::people::rumour::MARKED),
+        said(&w, "You mark the way on your map."),
         "the way is marked"
     );
     let overworld = &w.state.levels["ascmearc"];

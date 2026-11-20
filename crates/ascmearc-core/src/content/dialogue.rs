@@ -472,7 +472,7 @@ pub(super) fn parse<'a>(
 
 /// The scope of dialogue `d`'s keys: its campaign (`data` outside every campaign) and its
 /// speaker's id, `ascmearc.servant`.
-fn scope(d: &Dialogue, content: &Content) -> String {
+pub(super) fn scope(d: &Dialogue, content: &Content) -> String {
     let speaker = match &d.speaker {
         Speaker::Creature(c) => content.creature(*c).id.as_str(),
         Speaker::Npc(npc) => npc.as_str(),
