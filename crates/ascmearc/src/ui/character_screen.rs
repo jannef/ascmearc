@@ -104,7 +104,7 @@ pub struct CharacterScreen {
     conditions: Vec<String>,
     /// The diseases they know they have, by name (one that has not progressed yet is only
     /// "Diseased").
-    diseases: Vec<String>,
+    diseases: Vec<Phrase>,
     /// What they resist, in words only: a row per word ("Resistant
     /// to", "Vulnerable to", "Immune to") with the kinds it holds for, in that order.
     resistances: Vec<(&'static str, String)>,
@@ -143,10 +143,11 @@ pub struct CharacterScreen {
     attacks: Vec<(&'static str, String, String)>,
 }
 
-/// Disease `d` as the screen lists it: its name as written, its own article kept
-/// (`{disease:Bare}`: "Filth fever", "The shakes").
-fn disease_name(content: &Content, d: ascmearc_core::content::DiseaseId) -> String {
-    ui_with(T::DISEASE, &[("disease", heal::phrase(content, d).into())])
+/// The known diseases as the screen lists them: one list, its names as written, their own
+/// articles kept, capitalised once (`{diseases:Bare}`: "Filth fever and the shakes").
+fn disease_names(diseases: &[Phrase]) -> String {
+    let list = Arg::List(diseases.iter().cloned().map(Arg::from).collect());
+    ui_with(T::DISEASES, &[("diseases", list)])
 }
 
 /// `value` of `max`, as hit points, mana, and a resource are shown: `18/24`.
@@ -247,7 +248,7 @@ impl CharacterScreen {
                 .map(|s| s.text)
                 .collect(),
             diseases: (view.own_diseases())
-                .map(|d| disease_name(content, d))
+                .map(|d| heal::phrase(content, d))
                 .collect(),
             resistances: resistance_rows(view),
             weight: view.own_weight(),
@@ -527,10 +528,10 @@ impl CharacterScreen {
             }
             y += 1;
         }
-        // `    Diseased      Filth fever`: the diseases they know they have, as written (`{disease:Bare}`).
+        // `    Diseased      Filth fever`: the diseases they know they have, as written (`{diseases:Bare}`).
         if !self.diseases.is_empty() {
             if fits(y) {
-                let names = self.diseases.join(", ");
+                let names = disease_names(&self.diseases);
                 console.print_in(x + 4, y, &ui(T::DISEASED), TEXT, NAME_W - 1);
                 console.print(x + 4 + NAME_W, y, &names, LOWERED);
             }
@@ -936,13 +937,21 @@ mod tests {
     #[test]
     fn names_a_disease_without_an_article_as_written() {
         // "Filth fever", not "The filth fever": a screen says the name as written
-        // (`{disease:Bare}`), as main did; "The shakes" keeps its own article.
+        // (`{diseases:Bare}`), as main did; "The shakes" keeps its own article. Two are one
+        // list, capitalised once: "the shakes" second keeps its small letter.
         let world = crate::ui::hoard();
         let content = world.content();
-        let named = |id: &str| disease_name(content, content.disease_id(id).expect(id));
+        let named = |id: &str| heal::phrase(content, content.disease_id(id).expect(id));
         let mut screen = CharacterScreen::new(Some(&world.perception()));
-        for (id, shown) in [("filth_fever", "Filth fever"), ("the_shakes", "The shakes")] {
-            screen.diseases = vec![named(id)];
+        for (ids, shown) in [
+            (&["filth_fever"][..], "Filth fever"),
+            (&["the_shakes"][..], "The shakes"),
+            (
+                &["filth_fever", "the_shakes"][..],
+                "Filth fever and the shakes",
+            ),
+        ] {
+            screen.diseases = ids.iter().map(|id| named(id)).collect();
             let mut console = Console::default();
             console.resize(80, 30);
             screen.draw(&mut console, &Bindings::default());

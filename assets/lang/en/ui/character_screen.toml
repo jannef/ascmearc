@@ -49,10 +49,10 @@ text = "{own:bare} or Esc close"
 [defence]
 text = "Defence"
 
-# A disease the player knows they have: `disease`, its name as written ("Filth fever", "The
-# shakes").
-[disease]
-text = "{disease:Bare}"
+# The diseases the player knows they have: `diseases`, a list of their names as written,
+# capitalised once ("Filth fever", "The shakes", "Filth fever and the shakes").
+[diseases]
+text = "{diseases:Bare}"
 
 [diseased]
 text = "Diseased"
