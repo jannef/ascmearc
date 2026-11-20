@@ -33,40 +33,11 @@ use std::collections::BTreeMap;
 /// The speed of a normal creature, and of the player.
 pub const NORMAL_SPEED: u32 = 1000;
 
-/// Whether a creature type's `name` is a proper name, said without an article: one that starts
-/// upper-case ("Black Wystan", a named monster's), where every other is lower-case ("kobold").
-pub fn is_proper(name: &str) -> bool {
-    name.chars().next().is_some_and(char::is_uppercase)
-}
+/// The English of a creature's name as the player hears it (`is_proper`, `the`, `the_start`,
+/// `possessive`) lives in `ascmearc_lang::en` (`docs/dev/localization.md`); re-exported here so
+/// every caller keeps its path.
+pub use ascmearc_lang::en::{is_proper, possessive, the, the_start};
 
-/// A creature called `name` as the player hears of one they know: "the kobold", or a proper
-/// name alone ("Black Wystan").
-pub fn the(name: &str) -> String {
-    if is_proper(name) {
-        name.to_string()
-    } else {
-        format!("the {name}")
-    }
-}
-
-/// `called` ("the kobold", "Black Wystan") as an owner: "the kobold's", and a name ending
-/// in s with the apostrophe alone ("Hrothgar's", "the Hounds'").
-pub fn possessive(called: &str) -> String {
-    if called.ends_with('s') {
-        format!("{called}'")
-    } else {
-        format!("{called}'s")
-    }
-}
-
-/// [`the`] at the start of a sentence: "The kobold", "Black Wystan".
-pub fn the_start(name: &str) -> String {
-    if is_proper(name) {
-        name.to_string()
-    } else {
-        format!("The {name}")
-    }
-}
 /// How far a creature sees unless its type says otherwise, in cells.
 pub const DEFAULT_SIGHT: i32 = 10;
 

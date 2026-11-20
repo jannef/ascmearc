@@ -340,6 +340,7 @@ dependencies = [
 name = "ascmearc-core"
 version = "0.22.0"
 dependencies = [
+ "ascmearc-lang",
  "flate2",
  "insta",
  "proptest",
@@ -348,6 +349,15 @@ dependencies = [
  "serde",
  "serde_json",
  "thiserror 2.0.21",
+ "toml",
+]
+
+[[package]]
+name = "ascmearc-lang"
+version = "0.22.0"
+dependencies = [
+ "proptest",
+ "serde",
  "toml",
 ]
 

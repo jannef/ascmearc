@@ -1,0 +1,124 @@
+//! Morphology: how a language puts a [`Phrase`] into a form (`docs/design/localization.md` §7).
+//! One trait, a module per language: [`en`] (today's English helpers), [`generic`] (forms
+//! declared in `lang.toml` and listed per word), and `fi` (L10). Every method is total: a form a
+//! module has no rule for is an `Err`, never a panic, and the renderer falls back from it.
+
+pub mod en;
+pub mod generic;
+
+use crate::lexicon::Lexicon;
+use crate::phrase::Phrase;
+use crate::register::Register;
+use std::fmt;
+
+/// The conjunction of a list.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Conj {
+    And,
+    Or,
+}
+
+/// Why a phrase could not be put in a form.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum FormError {
+    /// A form the module's [`Morphology::forms`] does not list.
+    UnknownForm(String),
+}
+
+impl fmt::Display for FormError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            FormError::UnknownForm(form) => write!(f, "unknown form `{form}`"),
+        }
+    }
+}
+
+impl std::error::Error for FormError {}
+
+/// Why a lexicon `word` entry is refused by a module: the entry and the reason ("class 9 takes
+/// a word ending in a or ä").
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ParseError {
+    pub entry: String,
+    pub reason: String,
+}
+
+impl fmt::Display for ParseError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "`{}`: {}", self.entry, self.reason)
+    }
+}
+
+impl std::error::Error for ParseError {}
+
+/// A language's grammar, as far as the renderer needs it.
+pub trait Morphology: fmt::Debug {
+    /// The forms this language knows, by name (`the`, `s`, `ill`, `counted`): the checker's list.
+    /// `bare` (the lemma, the head and its modifiers with no article) is in every language's.
+    fn forms(&self) -> Vec<String>;
+
+    /// A phrase in a form: the head inflected, every modifier agreed and ordered, count, article,
+    /// and notes placed as this language places them. The form is given lower-case; the renderer
+    /// capitalizes a form written with a capital.
+    fn phrase(
+        &self,
+        phrase: &Phrase,
+        form: &str,
+        lex: &dyn Lexicon,
+        reg: &Register,
+    ) -> Result<String, FormError>;
+
+    /// A number in a form: `num` (digits or words), `ord` (an ordinal); digits for any other.
+    fn number(&self, n: i64, form: &str, reg: &Register) -> String;
+
+    /// Rendered items joined as a list with the conjunction.
+    fn list(&self, items: &[String], conj: Conj) -> String;
+
+    /// Whether a lexicon `word` entry is one this module can inflect: the checker's and the
+    /// language loader's report; a refused word renders in its base form.
+    fn parse_word(&self, entry: &str) -> Result<(), ParseError>;
+}
+
+/// `text` with its first letter in upper case, on a char boundary.
+pub(crate) fn capitalize(text: &str) -> String {
+    let mut chars = text.chars();
+    match chars.next() {
+        Some(first) => first.to_uppercase().chain(chars).collect(),
+        None => String::new(),
+    }
+}
+
+/// Whether `form` is written with a capital (`The`, `Nom`): the renderer's capitalization signal.
+pub(crate) fn capitalized_form(form: &str) -> bool {
+    form.chars().next().is_some_and(char::is_uppercase)
+}
+
+/// `form` with its first letter in lower case: what the modules see.
+pub(crate) fn lower_form(form: &str) -> String {
+    let mut chars = form.chars();
+    match chars.next() {
+        Some(first) => first.to_lowercase().chain(chars).collect(),
+        None => String::new(),
+    }
+}
+
+/// The word of a lexicon id as a language writes it when its lexicon lacks the id: the id in
+/// brackets, so the gap is seen and the line still reads.
+pub(crate) fn missing(id: &str) -> String {
+    format!("[{id}]")
+}
+
+/// Joins `parts`, skipping empty ones, with single spaces.
+pub(crate) fn spaced<'a>(parts: impl IntoIterator<Item = &'a str>) -> String {
+    let mut out = String::new();
+    for part in parts {
+        if part.is_empty() {
+            continue;
+        }
+        if !out.is_empty() {
+            out.push(' ');
+        }
+        out.push_str(part);
+    }
+    out
+}
