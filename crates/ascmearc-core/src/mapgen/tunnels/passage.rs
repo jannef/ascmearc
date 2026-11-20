@@ -16,12 +16,16 @@
 //! 6. Keep the largest cave, then the named vaults and as many random ones as the branch's
 //!    `random_vaults` draws (none by default), each dug to from the nearest floor by a cut of its
 //!    own: a pocket that ends at the vault's door. Only vaults with one entrance are drawn (one
-//!    with two would open a second route); a vault the branch names should have one too.
+//!    with two would open a second route); a vault the branch names should have one too. Room
+//!    made for a named vault may fill a box of the way with rock, keeping its larger side: an
+//!    attempt that has lost an end hall fails (#1961).
 //! 7. A way that rings round more rock than a pillar (a hall come too near another leg, a vault's
 //!    cut grazing the way) fails the attempt: there would be a second route. A vault's own cells
 //!    count as outside, so the pillars and rooms inside one are no ring.
 //! 8. The stairs (the up in the hall at its end, the down at the other), lamps and fungus,
-//!    patrols, now and then a special chamber. No pools (an air shaft).
+//!    patrols, now and then a special chamber. No pools (an air shaft). The ring is measured
+//!    again last, with every cell not walkable as rock: a chamber's feature (a spring's basin)
+//!    beside a pillar makes it more than one, and fails the attempt.
 //!
 //! The tunables are [`PassageParams`] (`content/generator.rs`, `data/generators.toml`, #1834).
 
@@ -90,6 +94,12 @@ pub(in crate::mapgen) fn build(
             return None;
         }
     }
+    // Room made for a named vault fills a box with rock, and where the box crosses the way only
+    // its larger side is kept (#1961): the way would no longer run from end to end, and the
+    // stairs would stand near each other. Both end halls must be left.
+    if !canvas.is_walkable(points[0]) || !canvas.is_walkable(points[last]) {
+        return None;
+    }
     let [fewest, most] = params.random_vaults;
     if most > 0 {
         let count = rng.range(i32::from(fewest), i32::from(most));
@@ -117,7 +127,9 @@ pub(in crate::mapgen) fn build(
     caves::light(canvas, rng, up, params.lamp_block);
     caves::patrols(canvas, rng, up, needs);
     special::cave_rooms(canvas, rng, up);
-    Some(())
+    // A special chamber's feature (a spring's basin) set beside a pillar makes it more than a
+    // pillar.
+    (largest_ring(canvas) <= params.pillar).then_some(())
 }
 
 /// A hewn hall round `c`: a box of drawn size, each corner now and then left as rock.
@@ -183,9 +195,10 @@ fn pockets(canvas: &mut Canvas, rng: &mut Rng, params: &PassageParams) {
     }
 }
 
-/// The most rock in one piece the floor rings round: rock a 4-way flood from the map's edge
-/// never reaches (a king's move of floor stops it, as the player walks it). The flood passes
-/// through a vault's cells, so what a vault holds inside is no ring.
+/// The most rock in one piece the floor rings round: rock (any cell not walkable, a chamber's
+/// feature too) a 4-way flood from the map's edge never reaches (a king's move of floor stops it,
+/// as the player walks it). The flood passes through a vault's cells, so what a vault holds
+/// inside is no ring.
 fn largest_ring(canvas: &Canvas) -> usize {
     let (w, h) = (canvas.width(), canvas.height());
     let mut seen = Grid::new(w, h, false);
@@ -197,7 +210,7 @@ fn largest_ring(canvas: &Canvas) -> usize {
             size += 1;
             for d in CARDINALS {
                 let q = p.step(d);
-                if seen.get(q) == Some(&false) && (canvas.is_rock(q) || canvas.is_stamped(q)) {
+                if seen.get(q) == Some(&false) && (!canvas.is_walkable(q) || canvas.is_stamped(q)) {
                     seen[q] = true;
                     stack.push(q);
                 }
@@ -207,13 +220,13 @@ fn largest_ring(canvas: &Canvas) -> usize {
     };
     for p in canvas.cells() {
         let edge = p.x == 0 || p.y == 0 || p.x == w - 1 || p.y == h - 1;
-        if edge && !seen[p] && canvas.is_rock(p) {
+        if edge && !seen[p] && !canvas.is_walkable(p) {
             fill(&mut seen, p);
         }
     }
     let mut most = 0;
     for p in canvas.cells() {
-        if !seen[p] && canvas.is_rock(p) && !canvas.is_stamped(p) {
+        if !seen[p] && !canvas.is_walkable(p) && !canvas.is_stamped(p) {
             most = most.max(fill(&mut seen, p));
         }
     }
