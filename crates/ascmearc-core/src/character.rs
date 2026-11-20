@@ -61,8 +61,7 @@
 
 use crate::alignment::Score;
 use crate::content::{
-    Calendar, ClassDef, Content, CreatureId, PrestigeDef, RaceDef, ScenarioDef, Sign, Table,
-    WeaponSkillId,
+    ClassDef, Content, CreatureId, PrestigeDef, RaceDef, ScenarioDef, Sign, Table, WeaponSkillId,
 };
 use crate::kit::{self, Pack};
 use crate::rng::Rng;
@@ -174,10 +173,39 @@ impl BirthDate {
         u32::try_from(age).unwrap_or(0)
     }
 
-    /// Day, month, and year: `3 Seedtide 1417`.
-    pub fn text(&self, calendar: &Calendar) -> String {
-        format!("{} {} {}", self.day, calendar.month(self.month), self.year)
+    /// Day, month, and year, as a message (`character.birth_date`, the month a line of data):
+    /// `3 Seedtide 1417`.
+    pub fn arg(&self) -> crate::lang::Arg {
+        (crate::lang::Msg::new(crate::msg::character::BIRTH_DATE))
+            .role("day", i64::from(self.day))
+            .role(
+                "month",
+                crate::lang::Arg::said(crate::content::data_line::month(self.month)),
+            )
+            .role("year", self.year)
+            .into()
     }
+}
+
+/// The classes `class` and `prestige` (ids) at total `level`, as the character screen and the
+/// Characters list name them ([`Character::class_text`]): `Bard` until the class is full, `Bard
+/// 30` at its cap, `Bard 30, Hunter 4` once the prestige class has levels; a class the content
+/// lacks by its id.
+pub fn class_text(content: &Content, class: &str, prestige: Option<&str>, level: u8) -> String {
+    let Some(class) = content.class(class) else {
+        return class.to_string();
+    };
+    let mut text = class.name.clone();
+    if level >= class.max_level {
+        text.push_str(&format!(" {}", class.max_level));
+    }
+    if let Some(p) = prestige.and_then(|p| content.prestige(p)) {
+        match level.saturating_sub(class.max_level) {
+            0 => text.push_str(&format!(", {}", p.name)),
+            n => text.push_str(&format!(", {} {n}", p.name)),
+        }
+    }
+    text
 }
 
 /// Who the player is in a run: the choice and what came of it.
@@ -279,20 +307,7 @@ impl Character {
     /// The Class row of the character screen at total `level`: `Bard` until the class is full,
     /// `Bard 30` at its cap, `Bard 30, Hunter 4` once the prestige class has levels.
     pub fn class_text(&self, content: &Content, level: u8) -> String {
-        let Ok(class) = self.spec.class(content) else {
-            return self.spec.class.clone();
-        };
-        let mut text = class.name.clone();
-        if level >= class.max_level {
-            text.push_str(&format!(" {}", class.max_level));
-        }
-        if let Some(p) = self.prestige(content) {
-            match level.saturating_sub(class.max_level) {
-                0 => text.push_str(&format!(", {}", p.name)),
-                n => text.push_str(&format!(", {} {n}", p.name)),
-            }
-        }
-        text
+        class_text(content, &self.spec.class, self.prestige.as_deref(), level)
     }
 
     /// Whether the character was born in a year of `element` (an id: "is this character
@@ -1021,7 +1036,8 @@ mod tests {
         let early = BirthDate::counted_back(date(1, 6, 1), 30, 12, 30);
         assert_eq!(early.year, -30);
         assert_eq!(early.age_on(date(1, 6, 1)), 30);
-        assert_eq!(born.text(content().calendar()), "3 Seedtide 1417");
+        let said = crate::messages::english_arg(&content(), &born.arg(), "bare");
+        assert_eq!(said, "3 Seedtide 1417");
     }
 
     #[test]

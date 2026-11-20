@@ -22,7 +22,7 @@ use super::cursor;
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::ScreenAction;
-use super::text::{UiText, equipment_screen as T, ui, ui_with};
+use super::text::{UiText, equipment_screen as T, ui, ui_msg, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM, rarity_color};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
@@ -62,7 +62,7 @@ impl Item {
         Self {
             glyph: def.glyph,
             fg: stack.fg(content),
-            name: view.lore().listed(stack),
+            name: ui_msg(view.lore().listed(stack)),
             weight: stack.weight(content),
             rarity: stack.rarity(),
             cursed: stack.known_cursed(content),

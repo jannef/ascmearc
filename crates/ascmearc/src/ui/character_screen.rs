@@ -642,10 +642,7 @@ pub fn birth_parts(character: &Character, content: &Content, now: GameTime) -> V
     let age = Arg::Number(i64::from(character.age_on(now)));
     let mut parts = vec![
         ui_with(T::AGE, &[("age", age)]),
-        ui_with(
-            T::BORN,
-            &[("date", character.born.text(content.calendar()).into())],
-        ),
+        ui_with(T::BORN, &[("date", character.born.arg())]),
     ];
     if let Some(sign) = character.sign_arg(content) {
         parts.push(ui_with(T::YEAR_OF, &[("sign", sign)]));

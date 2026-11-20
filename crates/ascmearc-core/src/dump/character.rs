@@ -28,7 +28,8 @@ pub(super) fn stat_rows(view: &PerceptionView<'_>) -> Vec<String> {
         });
         rows.push(format!("Class {class}"));
         rows.push(format!("Age {}", c.age_on(view.time())));
-        rows.push(format!("Born {}", c.born.text(content.calendar())));
+        let born = crate::messages::english_arg(content, &c.born.arg(), "bare");
+        rows.push(format!("Born {born}"));
         if let Some(sign) = c.sign_title(content) {
             rows.push(format!("Sign {sign}"));
         }

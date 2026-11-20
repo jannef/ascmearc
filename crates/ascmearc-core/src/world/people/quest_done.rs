@@ -24,7 +24,7 @@ impl World {
             .or_insert(QuestRecord::new(Stage::Done));
         record.stage = Stage::Done;
         record.completed += 1;
-        self.say(Msg::new(msg::people::MARKED_DONE_DEV).role("quest", def.name.as_str()));
+        self.say(Msg::new(msg::people::MARKED_DONE_DEV).role("quest", def.name_arg()));
         Spent::Nothing
     }
 
@@ -38,7 +38,7 @@ impl World {
             return Spent::Nothing;
         };
         if def.is_rolled() {
-            self.say(Msg::new(msg::people::DRAWN_BY_GIVER_DEV).role("quest", def.name.as_str()));
+            self.say(Msg::new(msg::people::DRAWN_BY_GIVER_DEV).role("quest", def.name_arg()));
             return Spent::Nothing;
         }
         // As `give` counts: every kill for a first time, the kills from now on for a repeat.
@@ -50,7 +50,7 @@ impl World {
         for reveal in def.reveals.iter().filter(|r| r.when == RevealWhen::Given) {
             self.reveal_location(&reveal.location);
         }
-        self.say(Msg::new(msg::people::GIVEN_DEV).role("quest", def.name.as_str()));
+        self.say(Msg::new(msg::people::GIVEN_DEV).role("quest", def.name_arg()));
         Spent::Nothing
     }
 }

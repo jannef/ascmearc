@@ -87,7 +87,7 @@ fn a_new_crypt_is_one_file_and_the_one_above_leads_down_to_it() {
     let (before, burial) = content.burial_of(&id).expect("a burial ground");
     assert_eq!(before, BELOW.places);
     assert_eq!(burial.places.len(), 2);
-    assert_eq!(burial.epitaph, DEFAULT_EPITAPH);
+    assert_eq!(burial.epitaph, None);
     // The deepest's way down leads nowhere.
     assert_eq!(burial.stairs.as_ref().and_then(|s| s.to.as_deref()), None);
 }

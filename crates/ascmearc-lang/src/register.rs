@@ -87,6 +87,11 @@ impl Registers {
         std::iter::once(STANDARD).chain(self.registers.keys().map(String::as_str))
     }
 
+    /// The races `[race_registers]` maps, in id order: the checker holds them to the content's.
+    pub fn races(&self) -> impl Iterator<Item = &str> {
+        self.by_race.keys().map(String::as_str)
+    }
+
     /// Race → register pairs whose register the language does not declare: the checker's.
     pub fn unknown_race_registers(&self) -> impl Iterator<Item = (&str, &str)> {
         self.by_race
@@ -157,5 +162,6 @@ human = "cockney"
             r.unknown_race_registers().collect::<Vec<_>>(),
             [("human", "cockney")]
         );
+        assert_eq!(r.races().collect::<Vec<_>>(), ["goblin", "human"]);
     }
 }

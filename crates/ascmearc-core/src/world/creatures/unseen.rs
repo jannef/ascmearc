@@ -59,9 +59,6 @@ use crate::status::Effect;
 use crate::world::creatures::ai::Plan;
 use crate::world::{Actor, ActorId, ActorKind, World, WorldState, smelt_within};
 
-/// What the player feels as an unseen shadowy creature comes near.
-pub(crate) const DRAUGHT_LINE: &str = "You feel a cold draught.";
-
 impl Actor {
     /// Whether it is invisible now: by its type, or by a status of its that is `unseen`.
     pub fn invisible(&self, content: &Content) -> bool {

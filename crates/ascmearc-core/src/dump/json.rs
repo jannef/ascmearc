@@ -108,7 +108,7 @@ pub fn json_in(world: &World, layers: &[Layer], include_state: bool, code: &str)
         .collect();
     let shop = view
         .shop_here()
-        .map(|s| json!({ "sign": s.sign(), "keeper": s.keeper(), "owed": s.owed() }));
+        .map(|s| json!({ "sign": crate::messages::arg_in(content, code, &s.sign(), "bare"), "keeper": s.keeper(), "owed": s.owed() }));
     let equipment: serde_json::Map<String, Value> = (view.equipment().iter())
         .filter_map(|(slot, item)| {
             let s = view.inventory().get(item)?;
@@ -341,9 +341,9 @@ pub fn json_in(world: &World, layers: &[Layer], include_state: bool, code: &str)
             let (entry, outcome) = view.encounter_pending().expect("pending");
             json!({
                 "entry": entry,
-                "name": e.name,
+                "name": crate::messages::arg_in(content, code, &e.name, "bare"),
                 "outcome": outcome.id(),
-                "text": e.text,
+                "text": crate::messages::msg_in(content, code, &e.text),
                 "choices": (e.choices.iter())
                     .map(|c| json!({ "id": c.id() }))
                     .collect::<Vec<_>>(),

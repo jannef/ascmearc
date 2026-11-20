@@ -29,7 +29,6 @@ use crate::msg;
 use crate::rng::draw;
 use crate::skills::{Effect, Use};
 use crate::stats::Stat;
-use crate::world::combat::fight::word;
 use crate::world::{Spent, World};
 
 impl World {
@@ -55,7 +54,7 @@ impl World {
         if self.trains(Use::Disarm) {
             self.train(Use::Disarm);
         }
-        let trap = word(&self.content.trap(kind).name);
+        let trap = self.content.trap_phrase(kind);
         match checked {
             Checked::Made => {
                 let level = self.state.current_mut();

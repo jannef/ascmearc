@@ -2,8 +2,8 @@
 //! made of a slug of the name and a number (`brakka-1`, `brakka-2`: two Brakkas live side by
 //! side). Beside each save (`saves/<id>.sav`) lies its summary (`saves/<id>.toml`): what the
 //! list of saved characters shows (name, race, class, level, place and campaign, when last
-//! played), so the
-//! list reads no save.
+//! played), so the list reads no save. The race and the classes are kept by id and named as the
+//! list shows them; a summary another version wrote with their names shows them as written.
 //!
 //! When a character was last played is wall-clock time, which only the app knows: seconds since
 //! 1970 (UTC), shown in UTC.
@@ -11,7 +11,8 @@
 use crate::settings::Clock;
 use crate::ui::text::{characters_screen as T, ui_with};
 use ascmearc_core::World;
-use ascmearc_core::character::NAMELESS;
+use ascmearc_core::character::{NAMELESS, class_text};
+use ascmearc_core::content::Content;
 use serde::{Deserialize, Serialize};
 
 /// The longest slug of a name in an id.
@@ -21,12 +22,16 @@ const MAX_SLUG: usize = 20;
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Summary {
     pub name: String,
-    /// The race's name (`Dwarf`); empty for a run without a character.
+    /// The race, by id (`dwarf`); empty for a run without a character. One the content lacks
+    /// (a summary another version wrote with the name, `Dwarf`) is shown as written.
     #[serde(default)]
     pub race: String,
-    /// The class's name (`Warrior`).
+    /// The class, by id (`warrior`), shown as `race` is.
     #[serde(default)]
     pub class: String,
+    /// The prestige class the character was called into, by id; empty for none.
+    #[serde(default, skip_serializing_if = "String::is_empty")]
+    pub prestige: String,
     /// The experience level.
     #[serde(default)]
     pub level: u32,
@@ -51,19 +56,25 @@ impl Summary {
     pub fn of(world: &World, played: u64) -> Self {
         let view = world.perception();
         let content = world.content();
-        let (name, race, class) = match world.character() {
+        let (name, race, class, prestige) = match world.character() {
             Some(c) => (
                 c.name.clone(),
-                (c.spec.race(content)).map_or(c.spec.race.clone(), |r| r.name.clone()),
-                // `Bard 30, Hunter 4` once called.
-                c.class_text(content, view.own_experience().level),
+                c.spec.race.clone(),
+                c.spec.class.clone(),
+                c.prestige.clone().unwrap_or_default(),
             ),
-            None => (NAMELESS.to_string(), String::new(), String::new()),
+            None => (
+                NAMELESS.to_string(),
+                String::new(),
+                String::new(),
+                String::new(),
+            ),
         };
         Self {
             name,
             race,
             class,
+            prestige,
             level: u32::from(view.own_experience().level),
             place: view.level_name().to_string(),
             campaign: (content.campaign(world.campaign()))
@@ -89,9 +100,17 @@ impl Summary {
         toml::from_str(text).ok()
     }
 
-    /// Race and class together: `Dwarf Warrior` (either may be missing).
-    pub fn race_and_class(&self) -> String {
-        match (self.race.as_str(), self.class.as_str()) {
+    /// Race and class together: `Dwarf Warrior`, `Human Bard 30, Hunter 4` (either may be
+    /// missing), named from `content`.
+    pub fn race_and_class(&self, content: &Content) -> String {
+        let race = (content.race(&self.race)).map_or_else(|| self.race.clone(), |r| r.name.clone());
+        let prestige = Some(self.prestige.as_str()).filter(|p| !p.is_empty());
+        let level = u8::try_from(self.level).unwrap_or(u8::MAX);
+        let class = match self.class.is_empty() {
+            true => String::new(),
+            false => class_text(content, &self.class, prestige, level),
+        };
+        match (race.as_str(), class.as_str()) {
             ("", one) | (one, "") => one.to_string(),
             (race, class) => ui_with(
                 T::RACE_CLASS,
@@ -204,7 +223,11 @@ mod tests {
         let world = World::new(content, "showcase", None).expect("world");
         let summary = Summary::of(&world, 1_781_654_400);
         assert_eq!(summary.name, "Tamsin");
-        assert_eq!(summary.race_and_class(), "Human Thief");
+        assert_eq!(
+            (summary.race.as_str(), summary.class.as_str()),
+            ("human", "thief")
+        );
+        assert_eq!(summary.race_and_class(world.content()), "Human Thief");
         assert_eq!(summary.level, 1);
         assert_eq!(summary.place, world.perception().level_name());
         assert_eq!(summary.campaign, "The Showcase");
@@ -231,6 +254,7 @@ mod tests {
                 name: id.into(),
                 race: String::new(),
                 class: String::new(),
+                prestige: String::new(),
                 level: 1,
                 place: String::new(),
                 campaign: String::new(),

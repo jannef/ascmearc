@@ -186,7 +186,7 @@ impl World {
             return Vec::new();
         };
         let def = self.content.quest(q);
-        let name = def.name.clone();
+        let name = def.name_arg();
         if let Some(record) = self.state.quests.records.get_mut(&def.id) {
             record.stage = Stage::Failed;
         }

@@ -404,7 +404,7 @@ fn the_steps_plan_and_rows_say_what_the_work_takes() {
     let steps = w.perception().craft_steps(recipe(&w, "kindle"));
     let at = |n: usize| -> Vec<usize> { steps[n].options.iter().map(|o| o.at).collect() };
     assert_eq!(
-        (steps.iter().map(|s| s.label.as_str())).collect::<Vec<_>>(),
+        (steps.iter().map(|s| s.label_en())).collect::<Vec<_>>(),
         ["item", "crystal", "seal", "second seal", "third seal"]
     );
     assert_eq!(
@@ -416,7 +416,7 @@ fn the_steps_plan_and_rows_say_what_the_work_takes() {
     // Imbue's crystals are told apart: their order matters.
     let steps = w.perception().craft_steps(recipe(&w, "imbue"));
     assert_eq!(
-        (steps.iter().map(|s| s.label.as_str())).collect::<Vec<_>>(),
+        (steps.iter().map(|s| s.label_en())).collect::<Vec<_>>(),
         [
             "item",
             "first crystal",

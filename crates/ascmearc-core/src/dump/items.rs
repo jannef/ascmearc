@@ -47,7 +47,7 @@ pub(super) fn inventory_rows(view: &PerceptionView<'_>) -> Vec<String> {
             class = Some(here);
             rows.push(format!("{}:", content.item_class(here).name));
         }
-        let mut name = view.lore().listed(s);
+        let mut name = crate::messages::english_msg(content, &view.lore().listed(s));
         // A wand's rung once its type is known (the spell scaling design §7.4).
         if let Some(rung) = s.known_wand_rung(view.lore()) {
             name += &format!(" (rung {rung})");

@@ -3,3 +3,48 @@
 name = "English"
 code = "en"
 morphology = "en"
+
+# The registers: dialects of English, each a table of overrides for the function words the
+# renderer inserts into a spoken line (an article, a pronoun, a possessive, a number word), never
+# for the authored text, which carries the accent itself (docs/dev/localization.md "Registers").
+# A speaker speaks their dialogue's own `register` (the rich: `posh`; the deep gnomes: `cornish`),
+# else their race's below, else `standard`. A register with no overrides is still named, so the
+# data can say it and the authors know who speaks it (docs/dev/npcs.md "Speech by race and
+# station" has each one's vocabulary).
+[registers.standard]
+[registers.cockney]
+[registers.posh]
+[registers.geordie]
+you = "ye"
+[registers.brummie]
+you = "yow"
+[registers.scouse]
+you = "ye"
+[registers.irish]
+the = "th'"
+you = "ye"
+your = "yer"
+[registers.middle_english]
+you = "thou"
+your = "thy"
+yours = "thine"
+[registers.cornish]
+you = "'ee"
+# A foreign voice: the authored lines are Dutch, the inserted words the game language's.
+[registers.dutch]
+
+# Race id (`data/races.toml`) → register. A race not listed speaks `standard`.
+[race_registers]
+human = "cockney"     # commoners; a speaker's dialogue says `register = "posh"` for the rich
+half_elf = "cockney"  # half-elves and half-orcs speak as humans do, never as elves
+half_orc = "cockney"
+dwarf = "geordie"
+duergar = "geordie"
+elf = "brummie"
+halfling = "scouse"
+gnome = "scouse"
+goblin = "irish"
+kobold = "irish"
+ratfolk = "irish"
+drow = "middle_english"
+lizardfolk = "dutch"

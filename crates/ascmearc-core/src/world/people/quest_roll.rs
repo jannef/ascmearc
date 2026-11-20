@@ -90,11 +90,11 @@ impl World {
             return Spent::Nothing;
         };
         if !def.is_rolled() || !self.state.quests.is_active(def) {
-            self.say(Msg::new(msg::people::NOT_ROLLED_DEV).role("quest", def.name.as_str()));
+            self.say(Msg::new(msg::people::NOT_ROLLED_DEV).role("quest", def.name_arg()));
             return Spent::Nothing;
         }
         if self.progress_of(def).0 > 0 {
-            self.say(Msg::new(msg::people::GOT_SOMEWHERE_DEV).role("quest", def.name.as_str()));
+            self.say(Msg::new(msg::people::GOT_SOMEWHERE_DEV).role("quest", def.name_arg()));
             return Spent::Nothing;
         }
         let pool = def.candidates(&content, &|_| true);
@@ -107,7 +107,7 @@ impl World {
         else {
             self.say(
                 Msg::new(msg::people::CANNOT_DRAW_DEV)
-                    .role("quest", def.name.as_str())
+                    .role("quest", def.name_arg())
                     .role("target", target),
             );
             return Spent::Nothing;
@@ -129,7 +129,7 @@ impl World {
         }
         self.say(
             Msg::new(msg::people::NOW_ASKS_DEV)
-                .role("quest", def.name.as_str())
+                .role("quest", def.name_arg())
                 .role("target", target),
         );
         Spent::NoTime

@@ -50,7 +50,6 @@ use crate::rng::draw;
 use crate::sight::LineOfSight;
 use crate::skills::{Effect, Use};
 use crate::stats::Stat;
-use crate::world::combat::fight::word;
 use crate::world::turn::rest::Ended;
 use crate::world::{ActorId, World};
 use std::cell::Cell;
@@ -370,15 +369,15 @@ impl World {
                 };
                 self.state.current_mut().trap_memory.insert(at, kind);
                 let def = self.content.trap(kind);
-                let trap = word(&def.name);
+                let trap = self.content.trap_phrase(kind);
                 let level = self.state.current();
                 let text = if level.is_door(&self.content, at) {
                     Msg::new(msg::skills::NOTICE_DOOR_TRAPPED)
                 } else if level.is_shut_chest(&self.content, at) {
-                    Msg::new(msg::skills::NOTICE_CHEST_TRAPPED)
-                        .role("chest", word(&self.chest_name(at)))
+                    Msg::new(msg::skills::NOTICE_CHEST_TRAPPED).role("chest", self.chest_phrase(at))
                 } else {
-                    Msg::new(msg::skills::NOTICE_TRAP).role("sign", def.sign.clone())
+                    let sign = crate::content::data_word::trap_sign(&def.id);
+                    Msg::new(msg::skills::NOTICE_TRAP).role("sign", crate::lang::Arg::said(sign))
                 };
                 self.say(text.role("trap", trap));
             }

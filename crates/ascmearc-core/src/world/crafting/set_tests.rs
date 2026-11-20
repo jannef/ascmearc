@@ -237,10 +237,7 @@ fn the_steps_offer_unset_items_and_cut_gems_only() {
     let steps = w.perception().craft_steps(recipe(&w, "set"));
     let at = |n: usize| -> Vec<usize> { steps[n].options.iter().map(|o| o.at).collect() };
     assert_eq!(steps.len(), 2);
-    assert_eq!(
-        (steps[0].label.as_str(), steps[1].label.as_str()),
-        ("item", "gem")
-    );
+    assert_eq!((steps[0].label_en(), steps[1].label_en()), ("item", "gem"));
     assert_eq!(at(0), [0, 5], "the sword and the plain silver ring");
     assert_eq!(at(1), [2], "the cut garnet, never the uncut ruby");
     assert_eq!(steps[1].options[0].short, "garnet");
@@ -408,9 +405,7 @@ fn the_gold_amulet_must_have_a_cut_gem() {
     gem(&mut w, "sapphire", "small", "fine");
     assert_eq!(row(&w), None);
     let steps = w.perception().craft_steps(recipe(&w, "gold_amulet"));
-    let labels: Vec<(&str, bool)> = (steps.iter())
-        .map(|s| (s.label.as_str(), s.optional))
-        .collect();
+    let labels: Vec<(&str, bool)> = (steps.iter()).map(|s| (s.label_en(), s.optional)).collect();
     assert_eq!(labels, [("chain", false), ("setting", false)]);
     assert_eq!(
         (steps[1].options.iter()).map(|o| o.at).collect::<Vec<_>>(),

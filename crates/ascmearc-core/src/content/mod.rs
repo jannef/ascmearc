@@ -42,6 +42,7 @@ mod crystal;
 mod damage_type;
 pub mod danger;
 pub mod data_line;
+pub mod data_word;
 mod decipher;
 #[cfg(test)]
 mod demon_roster_tests;
@@ -156,6 +157,8 @@ mod ranged;
 mod recipe;
 #[cfg(test)]
 mod recipe_tests;
+#[cfg(test)]
+mod register_tests;
 pub mod required;
 mod resource;
 mod restock;
@@ -262,7 +265,7 @@ pub use background::{
     Points, Tier as StoryTier, Tiers, When,
 };
 pub use breath::Breath;
-pub use burial::{Burial, BurialStairs, DEFAULT_EPITAPH};
+pub use burial::{Burial, BurialStairs, EPITAPH_ROLES};
 pub use burst::{BurstWhen, CreatureBurst};
 pub use calendar::Calendar;
 pub use calling::CallingDef;
@@ -415,9 +418,7 @@ pub use scenario::ScenarioDef;
 pub use scroll::{Cleansing, Reading, SpellScroll};
 pub use scroll_label::ScrollLabelDef;
 pub use search::{PassiveSearch, SEARCH_TURNS, SearchRules, Secret, secret_look};
-pub use shop::{
-    KEEPER, Keeper, MAX_FAVOUR, MAX_SHOPS, MOST_FAVOUR, ShopDef, ShopId, ShopPlan, Shops,
-};
+pub use shop::{Keeper, MAX_FAVOUR, MAX_SHOPS, MOST_FAVOUR, ShopDef, ShopId, ShopPlan, Shops};
 pub use size::{MEDIUM, SizeDef};
 pub use skill::{OptionalSkill, SkillBook, SkillDef};
 pub use sky::{MoonDef, PHASE_ONE, STANDARD_SIZE};

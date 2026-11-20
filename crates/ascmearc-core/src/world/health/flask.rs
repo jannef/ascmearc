@@ -232,7 +232,7 @@ impl World {
             .map(|a| a.id)
             .collect();
         let content = self.content.clone();
-        let word = (content.status(status).seen.clone()).unwrap_or_else(|| "hexed".into());
+        let word = (content.seen_phrase(status)).unwrap_or_else(|| fight::word("hexed"));
         for id in caught {
             if !self.state.actors.contains_key(&id) || self.state.death.is_some() {
                 continue;
@@ -241,11 +241,10 @@ impl World {
             let them = &self.state.actors[&id];
             if id != self.state.player && self.perception.sees_actors_at(them.pos) {
                 let who = self.called_phrase(them);
-                let word = fight::word(&word);
                 self.say(
                     Msg::new(msg::health::IS_STATUS)
                         .role("who", who)
-                        .role("status", word),
+                        .role("status", word.clone()),
                 );
             }
             self.spell_landed(cast, id, true);

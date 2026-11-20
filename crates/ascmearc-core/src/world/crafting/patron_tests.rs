@@ -185,6 +185,21 @@ fn a_commission_is_offered_logged_handed_in_and_paid_then_the_next() {
             .starts_with("Your patron wants you to bring them a Fine ")
     );
     assert!(w.state.quests.records.is_empty());
+    // Kept by its keys (the work, the patron, their words): it reads the same once loaded.
+    assert!(logged.name.starts_with("Commission: a"), "{}", logged.name);
+    assert!(logged.offer.contains("Fine or better"), "{}", logged.offer);
+    let loaded = crate::save::decode(&crate::save::encode(&w), w.content.clone()).expect("loads");
+    let again = crate::test_support::quest_log(&loaded);
+    let again = again.iter().find(|q| q.id == "commission").expect("logged");
+    assert_eq!(
+        (&again.name, &again.giver, &again.offer, &again.objective),
+        (
+            &logged.name,
+            &logged.giver,
+            &logged.offer,
+            &logged.objective
+        )
+    );
     // Nothing made: waiting. A plain one: plain. Neither takes the work or the commission.
     act(&mut w, "chat:E");
     assert!(
