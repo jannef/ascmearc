@@ -32,7 +32,8 @@ use crate::content::{
 };
 use crate::dice::{Dice, Roll};
 use crate::geom::{Dir, Pos};
-use crate::text::capitalized;
+use crate::lang::Msg;
+use crate::msg;
 use crate::world::{Actor, ActorId, AttackSkills, Spent, World};
 
 /// The penetration an `ignore_protection` blow or shot has: more than any Protection, so none
@@ -129,16 +130,18 @@ impl World {
         let known = (content.weapon_ability_id(name))
             .and_then(|id| (me.weapon_abilities(&content).into_iter()).find(|&(_, a)| a == id));
         let Some((skill, id)) = known else {
-            self.say("You have no such ability.");
+            self.say(msg::combat::NO_ABILITY);
             return Spent::Nothing;
         };
         let def = content.weapon_ability(id);
         let Some(active) = def.active else {
-            self.say("That fires by itself.");
+            self.say(msg::combat::FIRES_BY_ITSELF);
             return Spent::Nothing;
         };
         if let Some(why) = Ability::Weapon(skill, id).unavailable(me, &content) {
-            self.say(format!("{}.", capitalized(&why.reason(&content))));
+            self.say(
+                Msg::new(msg::combat::REASON).role("reason", why.reason(&content).into_owned()),
+            );
             return Spent::Nothing;
         }
         let effect = def.effect;
@@ -160,15 +163,15 @@ impl World {
                 }
             }
             (ActiveAim::Direction, _) => {
-                self.say("Which way?");
+                self.say(msg::combat::WHICH_WAY);
                 Spent::Nothing
             }
             (ActiveAim::Cell, _) => {
-                self.say("Where?");
+                self.say(msg::combat::WHERE);
                 Spent::Nothing
             }
             (ActiveAim::Nothing, Aimed::Cell(_)) => {
-                self.say("That is aimed at nothing.");
+                self.say(msg::combat::AIMED_AT_NOTHING);
                 Spent::Nothing
             }
         }
@@ -283,7 +286,7 @@ impl World {
         let content = self.content.clone();
         let player = self.state.player;
         let Some((shield, profile)) = self.state.player().bash(&content) else {
-            self.say("You have no shield to bash with.");
+            self.say(msg::combat::NO_SHIELD_TO_BASH);
             return Spent::Nothing;
         };
         let Some((target, seen)) = self.hostile_toward(dir) else {
@@ -343,11 +346,11 @@ impl World {
             }
             // A lunge is no step: nothing is sprung on the way, but it needs room.
             if !level.is_walkable(&self.content, cell) {
-                self.say("There is no room to lunge.");
+                self.say(msg::combat::NO_ROOM_TO_LUNGE);
                 return None;
             }
         }
-        self.say("There is nobody there to strike.");
+        self.say(msg::combat::NOBODY_THERE);
         None
     }
 
@@ -359,10 +362,10 @@ impl World {
         let seen = self.perception.sees_actors_at(cell);
         if self.stance(self.state.player, target) != crate::content::Stance::Hostile {
             self.say(if seen {
-                let name = &self.content.creature(creature).name;
-                format!("You have no quarrel with {}.", crate::content::the(name))
+                let them = super::fight::creature(self.content.creature(creature));
+                Msg::new(msg::combat::NO_QUARREL).role("target", them)
             } else {
-                "Something is in the way.".into()
+                msg::combat::IN_THE_WAY.into()
             });
             return None;
         }
@@ -389,8 +392,8 @@ impl World {
         };
         if self.perception.sees_actors_at(from) {
             let creature = self.state.actors[&target].creature;
-            let name = crate::content::the_start(&self.content.creature(creature).name);
-            self.say(format!("{name} is driven back."));
+            let who = super::fight::creature(self.content.creature(creature));
+            self.say(Msg::new(msg::combat::DRIVEN_BACK).role("who", who));
         }
         if let Some(status) = status {
             self.afflict(target, status, 1, Some(self.state.player), events);
@@ -448,7 +451,7 @@ impl World {
         let player = self.state.player;
         let mut around = self.hostiles_beside();
         if around.is_empty() {
-            self.say("There is nobody beside you to strike.");
+            self.say(msg::combat::NOBODY_BESIDE_YOU);
             return Spent::Nothing;
         }
         // Clockwise from `from`: the list is clockwise from the north.
@@ -517,11 +520,11 @@ impl World {
         let me = self.state.player();
         let (Some((launcher, _)), Some(mut profile)) = (me.launcher(&content), me.ranged(&content))
         else {
-            self.say("You have nothing ready to shoot.");
+            self.say(msg::combat::NOTHING_READY_TO_SHOOT);
             return Spent::Nothing;
         };
         let Some(item) = me.ammunition_item(&content) else {
-            self.say("You have nothing ready to shoot.");
+            self.say(msg::combat::NOTHING_READY_TO_SHOOT);
             return Spent::Nothing;
         };
         let range = me.launcher_range(&content).unwrap_or(1);

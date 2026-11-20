@@ -400,7 +400,10 @@ fn lines_named(
     let def = content.object(stack.object);
     let mut out = Vec::new();
     let base = if stack.count == 1 {
-        super::name::ahead(stack.worked().and_then(super::Worked::word), &name)
+        match stack.worked().and_then(super::Worked::word) {
+            Some(word) => format!("{word} {name}"),
+            None => name,
+        }
     } else {
         format!("{} {plural}", stack.count)
     };

@@ -26,7 +26,7 @@
 use crate::action::{Caught, Event};
 use crate::check;
 use crate::combat::{Category, Target};
-use crate::content::{Content, StatusId, the_start};
+use crate::content::{Content, StatusId};
 use crate::fov::radius2;
 use crate::light::LightCache;
 use crate::rng::draw;
@@ -248,7 +248,10 @@ impl World {
             return true;
         }
         let content = &self.content;
-        let (pos, name) = (me.pos, content.creature(me.creature).name.clone());
+        let (pos, them) = (
+            me.pos,
+            super::fight::creature(content.creature(me.creature)),
+        );
         let helpless =
             me.kind == ActorKind::Creature && (self.asleep(target) || self.disguised(target));
         let talents = me.talent_mods(content);
@@ -284,7 +287,7 @@ impl World {
         }
         if target == player && made {
             self.train_stat(crate::content::StatUse::KeptWits);
-            let text = "You keep your wits about you.".to_string();
+            let text = crate::msg::combat::KEEP_WITS;
             // A trap's own line is said with the turn's reports: this one after it.
             match by {
                 Some(_) => self.say(text),
@@ -292,7 +295,7 @@ impl World {
             }
         } else if by == Some(player) && made && self.perception.sees_actors_at(pos) {
             // Failed, it is told in the attack's own words ([`World::caught_by`]).
-            self.say(format!("{} whirls to face you.", the_start(&name)));
+            self.say(crate::lang::Msg::new(crate::msg::combat::WHIRLS).role("who", them));
         }
         // Hair trigger: one blow per surprise, after the check's word.
         match by {
@@ -397,22 +400,14 @@ pub(in crate::world) fn mark_caught(
     }
 }
 
-/// `name`, a creature's type's, as an attack that found it `caught` calls it: "sleeping
-/// kobold", "unsuspecting kobold", "stunned kobold" (by its status's `seen` word); its own
-/// name when the attack found it aware.
-pub(in crate::world) fn caught_name(
-    content: &Content,
-    name: &str,
-    caught: Option<Caught>,
-) -> String {
-    let word = match caught {
+/// What an attack that found a creature `caught` calls it, before its name: "sleeping",
+/// "unsuspecting", "stunned" (by its status's `seen` word); nothing when the attack found it
+/// aware ([`super::fight::End::caught`]).
+pub(in crate::world) fn caught_word(content: &Content, caught: Option<Caught>) -> Option<&str> {
+    match caught {
         None => None,
         Some(Caught::Asleep) => Some("sleeping"),
         Some(Caught::Unaware) => Some("unsuspecting"),
         Some(Caught::OffGuard(status)) => content.status(status).seen.as_deref(),
-    };
-    match word {
-        Some(word) => format!("{word} {name}"),
-        None => name.to_string(),
     }
 }

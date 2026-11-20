@@ -5,6 +5,7 @@
 use crate::action::{AttackKind, Breach, DiseaseNews, Event, MissileEnd};
 use crate::content::{CreatureId, TrapEffect};
 use crate::geom::Pos;
+use crate::lang::Msg;
 use crate::noise;
 use crate::perception::{Perception, VIEW_RADIUS};
 use crate::sight::LineOfSight;
@@ -130,11 +131,11 @@ impl World {
     pub(in crate::world) fn perceive_events(
         &mut self,
         events: &mut Vec<Event>,
-    ) -> Vec<(String, bool)> {
-        use fight::{End, Guard, Words, attack_message, death_message};
+    ) -> Vec<(Msg, bool)> {
+        use fight::{End, Guard, Words, attack_message, death_message, word};
         let player = self.state.player;
         let content = self.content.clone();
-        let mut reports: Vec<(String, bool)> = Vec::new();
+        let mut reports: Vec<(Msg, bool)> = Vec::new();
         // What came last: an attack (its attacker, its target, whether the player saw the
         // target, and the attacker's creature type if the player saw that), or a trap (its
         // target and whether the player saw it).
@@ -150,15 +151,7 @@ impl World {
         // farther off they are told and the rest goes on.
         let here = self.player_pos();
         let close = |p: Pos| p.chebyshev(here) <= self.stop_within();
-        let end = |id: ActorId, seen: bool| match self.actor_or_fallen(id) {
-            _ if id == player => End::You,
-            Some(a) if seen && a.master() == Some(player) => match a.kept() {
-                Some(data) => End::Named(data.name.as_str()),
-                None => End::Yours(content.creature(a.creature).name.as_str()),
-            },
-            Some(a) if seen => End::Seen(content.creature(a.creature).name.as_str()),
-            _ => End::Unseen,
-        };
+        let end = |id: ActorId, seen: bool| self.end_of(id, seen);
         // A missile is seen where it flies over cells the player sees: its path is cut to the
         // stretch from the first of them to the last, and where it was loosed is known only if
         // the player saw it leave. A burning one is light itself: it is seen wherever it flies
@@ -279,17 +272,17 @@ impl World {
                     // A creature's throw is said by what flies (`hurl.rs`).
                     if let Some(throw) = hurl::thrown_by(&content, me, kind, with) {
                         let said =
-                            hurl::throw_messages(&content, throw, (a, t), strike, damage, guard);
+                            hurl::throw_messages(&content, throw, (&a, &t), strike, damage, &guard);
                         reports.extend(said.into_iter().map(|text| (text, stops)));
                     } else {
                         // A natural attack after the first is said by its own words (`claws`).
                         let def = content.creature(me.creature);
                         let words =
                             match natural.and_then(|i| def.natural_attacks().nth(usize::from(i))) {
-                                Some(attack) => Words::new(&attack.name, &attack.verb),
+                                Some(attack) => Words::named(&attack.name, &attack.verb, &content),
                                 None => Words::of(me, kind, with, damage, &content),
                             };
-                        let said = attack_message(a, t, &words, kind, strike, guard);
+                        let said = attack_message(&a, &t, &words, kind, strike, &guard);
                         reports.extend(said.map(|text| (text, stops)));
                     }
                 }
@@ -304,7 +297,8 @@ impl World {
                 if let Some(me) = self.actor_or_fallen(actor).filter(|_| seen) {
                     let name = &content.creature(me.creature).name;
                     reports.push((
-                        format!("{} falls through the ice!", crate::content::the_start(name)),
+                        format!("{} falls through the ice!", crate::content::the_start(name))
+                            .into(),
                         true,
                     ));
                 }
@@ -316,7 +310,7 @@ impl World {
                 if seen {
                     let title = self.lore().title(&crate::object::Stack::one(object));
                     let text = format!("The {title} falls away to the ground far below.");
-                    reports.push((text, false));
+                    reports.push((text.into(), false));
                 }
                 seen
             }
@@ -328,14 +322,14 @@ impl World {
                 let def = content.status(status);
                 let text = if began { &def.start } else { &def.end };
                 if let Some(text) = text.clone().filter(|_| actor == player) {
-                    reports.push((text, began));
+                    reports.push((text.into(), began));
                 }
                 actor == player
             }
             Event::ResourceEnded { actor, resource } => {
                 let ended = content.resource(resource).ended.clone();
                 if let Some(text) = ended.filter(|_| actor == player) {
-                    reports.push((text, false));
+                    reports.push((text.into(), false));
                 }
                 actor == player
             }
@@ -351,13 +345,16 @@ impl World {
                     DiseaseNews::Recovered => (def.recovered.as_str(), false),
                 };
                 if actor == player {
-                    reports.push((text.to_string(), stops));
+                    reports.push((text.into(), stops));
                 }
                 actor == player
             }
             Event::Drained { actor, stat } => {
                 if actor == player {
-                    reports.push((crate::world::health::drain::drained_message(stat), true));
+                    reports.push((
+                        crate::world::health::drain::drained_message(stat).into(),
+                        true,
+                    ));
                 }
                 actor == player
             }
@@ -367,7 +364,7 @@ impl World {
                 of: Some(status),
             } => {
                 if actor == player {
-                    reports.push((death_message(End::You, ""), true));
+                    reports.push((death_message(&End::You(self.you()), ""), true));
                     return true;
                 }
                 let seen = perception.sees_actors_at(at);
@@ -375,7 +372,7 @@ impl World {
                     let name = &content.creature(dead.creature).name;
                     let dies = content.status(status).dies.as_deref().unwrap_or("dies");
                     let text = format!("{} {dies}.", crate::content::the_start(name));
-                    reports.push((text, close(at)));
+                    reports.push((text.into(), close(at)));
                 }
                 seen
             }
@@ -383,12 +380,12 @@ impl World {
                 None => actor == player,
                 Some(Last::Attack(_, _, _, by)) if actor == player => {
                     killer_seen = Some(by);
-                    reports.push((death_message(End::You, ""), true));
+                    reports.push((death_message(&End::You(self.you()), ""), true));
                     true
                 }
                 // A trap's victim: the death records the trap, not who was seen.
                 Some(Last::Trap(..)) if actor == player => {
-                    reports.push((death_message(End::You, ""), true));
+                    reports.push((death_message(&End::You(self.you()), ""), true));
                     true
                 }
                 // A death by the player's hand was said with their blow, and recorded only if
@@ -399,7 +396,7 @@ impl World {
                     if seen {
                         let dies = (self.actor_or_fallen(actor))
                             .map_or("dies", |a| content.creature(a.creature).death_verb());
-                        reports.push((death_message(end(actor, true), dies), close(at)));
+                        reports.push((death_message(&end(actor, true), dies), close(at)));
                     }
                     seen
                 }
@@ -409,7 +406,7 @@ impl World {
                 let seen = sprung_seen.next().unwrap_or(false);
                 if seen {
                     let def = content.trap(trap);
-                    reports.extend(def.message.clone().map(|text| (text, true)));
+                    reports.extend(def.message.clone().map(|text| (text.into(), true)));
                     let name = (self.actor_or_fallen(victim))
                         .map(|a| content.creature(a.creature).name.as_str());
                     let creature = name.filter(|_| perception.sees_actors_at(at));
@@ -427,7 +424,7 @@ impl World {
                         }
                         _ => None,
                     };
-                    reports.extend(text.map(|text| (text, true)));
+                    reports.extend(text.map(|text: String| (text.into(), true)));
                 }
                 seen
             }
@@ -442,15 +439,15 @@ impl World {
                 let def = content.trap(trap);
                 // A fall is said with the trap ("You fall into a pit.").
                 if seen && !matches!(def.effect, TrapEffect::Pit { .. }) {
-                    let words = Words::new(&def.noun, &def.verb);
+                    let words = Words::named(&def.noun, &def.verb, &content);
                     let guard = Guard::of(self.actor_or_fallen(target), &content, &self.state);
                     let said = attack_message(
-                        End::Trap(&def.noun),
-                        end(target, true),
+                        &End::Trap(word(&def.noun)),
+                        &end(target, true),
                         &words,
                         AttackKind::Melee,
                         Some(strike),
-                        guard,
+                        &guard,
                     );
                     reports.extend(said.map(|text| (text, true)));
                 }

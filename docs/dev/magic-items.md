@@ -265,7 +265,7 @@ About 0.4% of magic-or-rare finds carry one (`world/items/curse_tests.rs` measur
 **Knowledge**: `Magic::cursed` is the truth (`Stack::is_cursed`, crate-private); `Magic::curse_known`
 (saved, skipped when false) is the perceived fact that it is cursed without its affixes, set by
 `Stack::show_curse` when it is put on or thrown; `Stack::known_cursed` (identified or
-`curse_known`, and cursed) is what presentation reads: `name::describe` adds `cursed` ("(magic,
+`curse_known`, and cursed) is what presentation reads: `name::phrase` adds `cursed` ("(magic,
 cursed)", "... of Hunger (cursed)"), `describe::lines` a `Note` ("Cursed: ..."), `describe::phrase`
 the hindrance's words (`hindrance`), the UI's `rarity_color` its `CURSED` red, and
 `MagicWorth::add` makes known-cursed magic worth nothing. **Binding** (`world/items/curse.rs`):

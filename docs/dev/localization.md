@@ -2,12 +2,14 @@
 
 The design is `docs/design/localization.md` (approved 2026-11-20, #1883; the slices are tracked
 in #1882). This topic describes what is built. **Built so far: L1**, the crate and the model
-(#1884), **L10**, the `fi` morphology (#1893, "The `fi` module" below), and **L2**, the log of entries (#1885): core logs messages, not English, the app and
-the dumps render them, and `world/fixtures/door.rs` and the welcome line say theirs from
-templates; every other `say` site still says finished English as a literal line ("Literal
-lines", below). Nothing player-visible has changed: the English templates read as the strings
-did. The English helpers core, the app, and the wiki generator call have moved into the crate
-behind re-exports at their old paths.
+(#1884), **L2**, the log of entries (#1885): core logs messages, not English, the app and the
+dumps render them, and **L3**, phrases (#1886): a thing or a creature a line names is a `Phrase`
+built from what the player perceives, items are named by phrases English renders, and
+`world/combat/` says its lines from templates ("Phrases", below). The doors, the welcome line,
+and combat say theirs from templates; every other `say` site still says finished English as a
+literal line ("Literal lines"). Nothing player-visible has changed: the English templates and
+phrases read as the strings did. The English helpers core, the app, and the wiki generator call
+have moved into the crate behind re-exports at their old paths.
 
 ## The crate
 
@@ -19,15 +21,15 @@ nothing for it, `docs/dev/merging.md` "One build of ascmearc-core"). Dependencie
 | Module | What |
 |---|---|
 | `message.rs` | `MessageId` (a newtype over `Cow<'static, str>`: a generated constant borrows, a loaded save owns; serialized as the plain string), `Role` (the same, and `Borrow<str>` so `args.get("actor")` works), `Arg` (`Phrase`, `Number`, `Text`, `List`, `Said`, `Key`), `Msg` (id and args; `Msg::new(id).role("who", phrase)`), `Entry` (a `Msg` with `turn`, `count`, and the unserialized `passing`). `Arg::feature` gives the value a template's variants select on |
-| `phrase.rs` | `Phrase` (head `Word`, `mods`, `count`, `proper`, `person`, `gender`, `notes`), `Word::{Id, Literal}`, `Modifier::{Adjective, Of, Label, Material}`, `Person`, `Gender`, `Note`. Builders: `Phrase::id`, `Phrase::literal` (proper), `.count`, `.with(modifier)`, `.note` |
-| `lexicon.rs` | `Lexicon` (`word(id) -> Option<LexWord>`; core implements it over `Content` in L3), `LexWord` (`base`, explicit `forms`, `proper`, `gender`), `MapLexicon` (a map; `MapLexicon::parse` reads a lexicon file: `id = "lemma"` or `{ word, forms, proper, gender }`, `of` skipped), `NoLexicon` |
+| `phrase.rs` | `Phrase` (head `Word`, `mods`, `count`, `proper`, `person`, `gender`, `notes`, `owner`), `Word::{Id, Literal}`, `Modifier::{Adjective, Of, Label, Material, Part, Made}`, `Person`, `Gender`, `Note::{Tags, Charges, Base}`. Builders: `Phrase::id`, `Phrase::literal` (proper), `.count`, `.with(modifier)`, `.note(tag)`, `.with_note`, `.owned_by`, `.without_notes` |
+| `lexicon.rs` | `Lexicon` (`word(id) -> Option<LexWord>`; core implements it over `Content`, "Phrases"), `LexWord` (`base`, explicit `forms`, `proper`, `gender`, `many`), `MapLexicon` (a map; `MapLexicon::parse` reads a lexicon file: `id = "lemma"` or `{ word, forms, proper, gender, many }`, `of` skipped), `NoLexicon` |
 | `template.rs` | `Line::parse` (total: a `{` that opens no `{role:form}` is text), `Template::{Line, Alternatives, Variants}`, `Templates::parse(prefix, text)` for one `messages/<prefix>.toml` (`[hit] text = …` or a plain `hit = "…"`; `text = [...]` alternatives; `by = "<role>.<feature>"` with one key per value and an optional `else`, nesting allowed; `of` skipped). Errors name the file and the entry |
 | `lang.rs` | `LangFile` and `parse`: `name`, `code`, `morphology`, `fallback`, `repeat` (default `" (×{n})"`), `number_words` (default 12), `[registers.<name>]`, `[race_registers]`, `[generic]`. A key with a letter outside ASCII is quoted in TOML (`"minä" = "mie"`) |
 | `register.rs` | `Register::word("the")` returns the override or the word; `Registers` (`standard` always present; `get`, `for_speaker(own, race)`: the speaker's own, else the race's, else standard; `unknown_race_registers` for the checker) |
 | `morphology/mod.rs` | the `Morphology` trait: `forms() -> Vec<String>`, `phrase(&Phrase, form, &dyn Lexicon, &Register) -> Result<String, FormError>`, `number`, `list(items, Conj)`, `parse_word(entry) -> Result<(), ParseError>`. `FormError::UnknownForm` is the one failure; the renderer falls back from it |
-| `morphology/en.rs` | the helpers (below) and `En`, English as a `Morphology`: forms `bare`/`name`, `plural`, `a`, `the`, `counted`, `your`/`poss`, `they`/`them`/`their`, `s`, `es`, `is`, `has`, `does`, `num`, `ord` (`en::FORMS`). Phrase order: [adjectives and materials] head [of-qualifier] [labelled X] [(notes)]; `person: You` renders as "you"/"your" and the plural verb; proper names take no article; a lexicon `plural` form wins over the dictionary. The article, `the`, the pronouns, and the number words go through the register |
+| `morphology/en.rs` | the helpers (below) and `En`, English as a `Morphology`: forms `bare`/`name`, `plural`, `a`, `the`, `counted`, `your`/`poss`, `they`/`them`/`their`, `s`, `es`, `is`, `has`, `does`, `num`, `ord` (`en::FORMS`). Phrase order: [adjectives and materials] head [of-qualifier] [labelled X] [notes], and what L3 added ("Phrases"); `person: You` renders as "you"/"your" and the plural verb; proper names take no article; a lexicon `plural` form wins over the dictionary. The article, `the`, the pronouns, and the number words go through the register |
 | `morphology/generic.rs` | `GenericSpec` (the `[generic]` table: `forms` with the first the lemma, `plural`, `genders`, `adjectives = "before"/"after"`, `agree` (`true`, `false`, or the forms), `[articles.<form>]` and `[pronouns.<form>]` by `<gender>.pl`/`pl`/`<gender>`/`""` (else the table's first word), `number_words`, `counted = "{num} {pl}"`, `and`, `or`, `label`) and `Generic`. Every language has `bare`, `counted`, `num`; a form a word does not list is its lemma |
-| `render.rs` | `Language` (a `LangFile`, its `Morphology`, its `Templates`, its `Registers`): `from_toml(text, plurals)` picks `en` or `generic` (`fi` is L10); `add_templates(prefix, text)`; `render(entry, lex, keys) -> String`; `try_render` / `try_render_as(register, …) -> Result<String, RenderError>`. `render_chain(&[&lang, &fallback, …], …)`: the first language that renders wins, else `[id]`. `Keys` is `&dyn Fn(&str) -> String`; `written_key` is the identity for dumps (`{key:help}` stays written) |
+| `render.rs` | `Language` (a `LangFile`, its `Morphology`, its `Templates`, its `Registers`): `from_toml(text, plurals)` picks `en` or `generic` (`fi` is L10); `add_templates(prefix, text)`; `phrase(phrase, form, lex) -> String`; `render(entry, lex, keys) -> String`; `try_render` / `try_render_as(register, …) -> Result<String, RenderError>`. `render_chain(&[&lang, &fallback, …], …)`: the first language that renders wins, else `[id]`. `Keys` is `&dyn Fn(&str) -> String`; `written_key` is the identity for dumps (`{key:help}` stays written) |
 | `proptests.rs` | rendering is total: arbitrary Unicode through `Line::parse`, `Templates::parse`, `lang::parse`, `MapLexicon::parse`, `Plurals::add`, `Language::render`, `En::phrase`, and `Generic::phrase` gives a string or an `Err`, never a panic; a module renders a form iff it lists it |
 
 **Rendering a line.** `{role:form}`: the form's first letter upper-case capitalizes the result
@@ -50,116 +52,9 @@ no caller changed: `capitalized`, `article`, `and_list`, `or_list`, `joined`, `n
 from `content/creature.rs`); `counted` (`content/object.rs`); `Plurals` (`content/plural.rs`:
 `Plurals::add(text) -> Result<(), String>` now takes no path, `Content::load_plurals` names the
 file in the `ContentError`). Their tests moved with them; `the_builtin_dictionary` stays in core.
-`en::ordinal` is new ("1st", "22nd").
-
-## The `fi` module
-
-`crates/ascmearc-lang/src/morphology/fi/` (design §7.3; decisions 10–14). Finnish nominals
-inflect by their **Kotus class**, the numbering of Kotus's "Nykysuomen sanalista" (1–49) that
-every Finnish dictionary uses, so a translator looks a class up rather than invents one. The
-module keeps no word tables: a form is computed when a template asks for it, from the lemma, the
-class, and the gradation letter, in microseconds.
-
-**A lexicon `word`** (`word.rs::parse`) is one or more space-separated words, each
-`<base>/<class>[*<letter>]`: `"miekka/9*A"`, `"pitkä/10 miekka/9*A"` (every classed word
-inflects and agrees; a word with no slash stays as written). A `|` joins the parts of a compound,
-of which the last part inflects, is tested for shape, and sets the harmony:
-`"pitkä|miekka/9*A"` → `pitkämiekkaan`. `harmony = "front"` or `"back"` beside the word
-overrides the vowel rule for every word of the entry (`"oliivi|öljy/1"`, `harmony = "back"` →
-`oliiviöljyssa`). A `forms` table beside it overrides any generated form by its full name
-(`forms = { par = "hiittä", pl_gen_nsa = "…" }`). `proper = true` with no class makes the entry a
-name (below). An entry with no class at all is refused ("no class: write the Kotus class after a
-slash"), as is a class the module lacks, a letter outside A–M, a word whose last part does not fit
-its class's shape ("`karhu/9`: class 9 (kala) takes a word ending in a or ä"), or a letter whose
-consonants the stem does not have ("gradation A (kk~k) needs kk before the last vowel of
-`karhu`"). `Morphology::parse_word` is that check for the loader and the xtask; a refused entry
-**renders as written in every form** (class marks stripped, compounds joined), so one bad entry
-costs one word's grammar. A word that fits its class but means nothing (`hopöööääa/10`) inflects
-mechanically (`hopöööääalla`): the module judges shape, not meaning.
-
-**Classes** (`classes.rs`): 1–30, 32–35, 38–44, 47–49, each one row of `SPECS` (shape, gradation
-kind, partitive, illative, and plural endings) and one arm of `stems` (the strong and weak vowel
-stems, the consonant stem, the plural `i`-stem). Not implemented: 31 (`kaksi`), 36 (`sisin`), 37
-(`vasen`), 45 (ordinals), 46 (`tuhat`), 50–51 (compounds that inflect in front): a word of those
-is refused with "not implemented: spell its forms out with `forms`". Where Kotus gives several
-plurals (2, 4, 6, 11, 13, 14) the module gives one of them; the oracle accepts any listed.
-Kotus's own class assignments are followed where Wiktionary's differ (`hapan` is 33*B in Kotus,
-35*B on Wiktionary; both inflect right here).
-
-**Consonant gradation** (`inflect.rs::{weaken, strengthen}`): the Kotus letters A–M
-(kk~k, pp~p, tt~t, k~∅, p~v, t~d, nk~ng, mp~mm, lt~ll, nt~nn, rt~rr, k~j, k~v) on the consonant
-cluster before the stem's last vowel. Classes 1–16 gradate forward (the lemma strong; weak in
-the genitive, the local cases, the translative and abessive, the plural nominative and the
-plural local cases); 32–35, 41, 48, 49 backward (the lemma and the consonant-stem partitive weak,
-everything else strong). 27, 28, and 40 gradate by themselves (`käsi` : `käden`, `kynsi` :
-`kynnen`, `kalleus` : `kalleuden`): a letter is optional and must agree ("class 27 gradates F
-(t~d) by itself, not A"). A letter on a class that does not gradate is refused.
-
-**Vowel harmony** (`inflect.rs::Harmony`): by the last back (a, o, u) or front (ä, ö, y) vowel of
-the inflecting part; a part with neither (`Hild`, `tie`) takes the front series, as Finnish does.
-Endings are written with `A`/`O`/`U` and resolved per word.
-
-**Forms** (`Fi::forms`, 156 names): the fourteen cases `nom gen par ine ela ill ade abl all ess
-tra abe com ins` in the singular and, with `pl_`, the plural (`pl_gen`; `com` and `ins` are
-plural only and take no `pl_`), each with an optional possessive suffix `_ni _si _nsa _mme _nne`
-(`ade_si` "with your …", `pl_ill_nsa`; `ins` takes none), and `bare`/`name` (the nominative,
-plural for a count over one, no numeral: "nuolet"), `counted` ("kolme peikkoa", "13 nuolta"; one
-→ the nominative), `num`, `ord`. A **count over one in a singular case** puts the numeral first
-and the words in the partitive after a nominative numeral, else in the case: `{item:nom}` "kolme
-nuolta", `{item:ill}` "kolmeen nuoleen" (the cardinals 0–19 decline: `kaksi` and `yksi` from a
-table, the rest by their own class; beyond `number_words` or 19, digits: "13 nuoleen"). A `pl_`
-form ignores the count. **The player** (`person: You`) renders as the second-person pronoun in
-the case asked (`{target:ill}` → "sinuun"), through the register (`sinä` → `sie`), whatever the
-head. **Phrase order**: [genitive qualifiers (`Modifier::Of`, genitive singular, not agreeing)]
-[adjectives and materials, agreeing in case and number] head [`, jossa lukee X` for a label;
-`joissa` in the plural] [`(note)`]: "karhun liekehtivään smaragdiponsiseen pitkämiekkaan". A
-`Material` is an agreeing adjective here; the parts' compound adjectives are the parts lexicon's
-(L11, design §8). Notes render as `(id)` until a notes table exists (design §8).
-
-**Names** (`word.rs::name`): every `Word::Literal`, and a `proper = true` entry without a class,
-inflects as Finnish inflects a foreign name: the last word takes the endings, no gradation, no
-stem change, by a class its last letter picks (`-a` 9 `Hilda` : `Hildaa`, `Hildoja`; `-i` 5;
-`-e` 8 `Grim Bite` : `Grim Biteen`; `-o/-u/-y/-ö` 1; a long vowel 18 `Lee` : `Leehen`), and after
-a consonant the link vowel `i` as class 5 (`Bran` : `Branin`, `Braniin`, `Brania`; `Hild` :
-`Hildiä`). A name ending in a silent consonant (`Bordeaux`) gets no apostrophe unless its lexicon
-entry says `/22`. Capitals stay as written (`ZUNBARin`). A proper phrase is never counted.
-
-**Numbers and lists**: `num` says 0–12 in words by default (`number_words`, up to 19), digits
-beyond; `ord` 1–12 (`ensimmäinen` … `kahdestoista`), else "13."; lists join with ", " and `ja` /
-`tai`, no comma before the conjunction. Number words go through the register.
-
-**Totality**: every stem edit works on `Vec<char>` (ä and ö are two bytes); every table lookup
-has a default; the module's only `Err` is `FormError::UnknownForm`. `tests.rs` drives arbitrary
-Unicode through every class 0–60, every letter (and a wrong one), every form, with and without a
-`harmony` override, and asserts a string back, non-empty for a non-empty word, the base text for
-a refused entry; and arbitrary literals, as the player and not.
-
-**The oracle** (`tests.rs`, `oracle.toml`): the declension tables of the English Wiktionary
-(en.wiktionary.org, **CC BY-SA 4.0**; each entry names its page and revision), 176 words: one to
-eleven per class and gradation letter (every implemented class, every letter A–M in use), the
-cardinals 1–10, and two names (`Hilda` 9, `Jenni` 5). Every case × number of every word is
-checked, plus every possessive form (five suffixes × two numbers × thirteen cases) of fourteen
-words, and the numerals in the twelve cases; a form may be any alternative the table lists.
-The fixture is test data only, generated by a one-off script from the MediaWiki API, never
-shipped; regenerate it rather than hand-edit (the script is not kept: it fetched
-`action=parse` HTML and read the `fi-decl` tables). One known deviation, skipped in the test:
-the illative of class 22 copies the *pronounced* final vowel (`parfait'hen`, `show'hun`) and the
-module copies the written one; a `forms = { ill = … }` spells it out.
-
-**The Kotus word list** ("Kotimaisten kielten tutkimuskeskuksen nykysuomen sanalista", version
-1, 15.12.2006, 94 110 entries): the licence, verified 2026-11-20 from the archive at
-`https://kaino.kotus.fi/sanat/nykysuomi/kotus-sanalista-v1.zip`, is the **GNU LGPL** (the XML
-header: "Sanalista julkaistaan GNU LGPL -lisenssillä"; the zip holds `GNULGPL.txt`, v2.1, and
-`EUPL v.1.1 - Lisenssi.pdf`, so it is dual-licensed LGPL 2.1 / EUPL 1.1). Reading a local copy
-with `cargo xtask lang --suggest fi <path>` is plain use, which both licences allow; the list is
-never embedded, shipped, or read by the game, so the game carries nothing of it. Kotus's open
-data page also lists the list under CC BY-ND 3.0, and its 2023 annual report names a newer
-edition (based on the 2022 Kielitoimiston sanakirja, with word classes) whose download and
-licence were not reachable from the web when this was written; the tool reads the 2006 XML
-shape (`<st><s>miekka</s><t><tn>9</tn><av>A</av></t></st>`; compounds are listed without a
-class when their last part is a word of the list, so `--suggest` tries the longest ending of
-three letters or more). `--forms fi` prints every word's fourteen cases, singular and plural,
-eight possessive forms, and "kolme …" (`xtask/src/lang/fi_tools.rs`; `docs/dev/cli.md`).
+`en::ordinal` is new ("1st", "22nd"). L3 moved three more: `en::made_names` (which
+`content/part.rs::names` wraps), `en::charges` (which `object::charges_text` wraps), and
+`en::is_plural` (from `fight.rs`; the content lexicon's `many`).
 
 ## The log (L2)
 
@@ -180,11 +75,11 @@ same ids and roles in the content. Editing a message file rebuilds core (the ids
 text itself is read at run time.
 
 **English in the content.** `Content::load` reads English after the plurals (`content/english.rs`):
-`Content::english()` is the `Language`, `Content::lexicon()` its lexicon (`NoLexicon` until L3).
-Without `lang/en/lang.toml` (a test's own `ContentFiles`) it is `Language::english(plurals)`, no
-templates: literal lines read as written, a template's message as `[doors.locked]`. A fixture
-whose test reads a converted line adds the shipped files with `ContentFiles::insert_builtin_lang`
-(`door_tests.rs`, `door_trap_tests.rs`, `turn/tests.rs`).
+`Content::english()` is the `Language`, `Content::lexicon()` its lexicon (the content itself,
+"Phrases"). Without `lang/en/lang.toml` it is `Language::english(plurals)`, no templates: literal
+lines read as written, a template's message as `[doors.locked]`. In tests, a fixture's own
+`ContentFiles` without it read the shipped English (`ContentFiles::builtin_lang`), so a fixture's
+lines read as the game's and no test adds the language by hand.
 
 **Saying.** `World::say`, `note`, and `notice` take `impl Into<Msg>`: a generated id
 (`self.say(msg::doors::LOCKED)`), a `Msg` with roles (the key that unlocks a door:
@@ -206,6 +101,51 @@ helpers (`test_support`: `said`, `texts`, `last`, …) read `World::messages()`;
 
 **Saves and the hash.** `docs/dev/saves.md` (the log is saved and hashed as entries).
 
+## Phrases (L3)
+
+A role that names a thing or a creature holds a `Phrase` (`docs/design/localization.md` §5),
+built **by value at the `say` site from what the player perceives**: never an actor or stack id
+resolved later, so a line reads the same after the creature dies, the item is gone, or it is
+identified (`scroll_label_tests.rs::a_line_names_a_scroll_as_it_was_seen_then`). Proper names
+(the player's, a companion's, a rare item's, a scroll's label) are literals.
+
+**The lexicon ids** (`content/lexicon.rs`, which implements `Lexicon` for `Content`; its module
+docs hold the table): `creature:<id>`, `object:<id>` (with `written`, `written_plural`, and
+`material`, for an item made of its own parts), `affix:<id>`, `material:<id>`, `part:<id>` (its
+`adjective`), `gem_size:<id>`, `gem_cut:<id>`, `stock:<material id>` (a piece's form word),
+`terrain:<id>`, `label:scroll|wand|rod|potion` (an unidentified type's name with its `{label}`
+and `{colour}` slots), `colour:<colour>`, and `word:<text>`: a word the data names without an id
+of its own (a natural attack's "bite", a trap's "arrow", a status's "dazed", "something"), keyed
+by its English, which is the word. A noun that is plural though it names one thing ("flames") is
+`many` in the lexicon (`en::is_plural`), and verbs agree with it in the plural.
+
+**Who.** `World::you()` is the player (their name, `Person::You`, their gender);
+`World::phrase_of(id)` any actor as the player knows it when they see it: the player, a
+companion by its name, an ally as theirs (`owned_by(you)`: "your wolf"), anyone else by its
+creature (`creature:kobold`, a unique's proper name), an actor gone from the level "something"
+(`world/turn/phrase.rs`). The combat lines' `End` (`fight.rs`) holds these phrases;
+`World::end_of(id, seen)` builds one.
+
+**Items.** `Lore::phrase(&Stack)` is a stack as the player knows it (a labelled type by its
+label, else `Stack::phrase`, with the charges they know); `Stack::phrase` its name as made with
+its magic as identified, the curse they know of, and a light's mode; `Stack::made_phrase` the
+name as made (`object:<id>`, `Made` and `Material`/`Part` modifiers for its own parts,
+`gem::name_phrase`, `piece::name_phrase`, `scrap::name_phrase`); `Stack::title_phrase` one,
+with nothing said after it; `magic/name.rs::phrase` adds the worked word, the affixes, a rare's
+name with its base (`Note::Base`), and the rarity and curse notes. `describe` is the phrase
+`counted`, `title` it `bare`, `names` it `bare` for one and for two, all rendered by
+`Content::english_of(&phrase, form)`, so the old strings and the phrases are one code path and
+every snapshot checks the `en` order.
+
+**What `en` adds over L1** (`morphology/en.rs`): an `owner` said in place of the article ("your
+wolf", "the goblin's long sword"); `Modifier::Made` (the main material) with
+`Material`/`Part` (notable materials, "ruby-pommelled") named as `en::made_names` says (moved
+from `content/part.rs::names`, which wraps it); an `Of` word said with "of" unless it says it
+("of the Bear"); a head word's `{label}` and `{colour}` slots filled from the phrase's `Label`
+and its `colour:` adjective; `Note::Tags` ("(magic, cursed)"), `Note::Charges` ("(7 charges)"),
+`Note::Base` (", a long sword"); a proper head counted in the plural when there are several.
+`Language::phrase(&phrase, form, lex)` renders a phrase alone.
+
 ## Literal lines
 
 Until the L4 slices convert every `say` site, text said as it is becomes a **literal line**:
@@ -214,21 +154,41 @@ Until the L4 slices convert every `say` site, text said as it is becomes a **lit
 `text` role. Every language renders it as written, with its repeat mark (`try_render_as`). It
 folds on equal text, as the old log did, and costs a save a few bytes more per line.
 
-**Converting a subsystem (L4)** is mechanical, and `world/fixtures/door.rs` is the worked example:
+**Converting a subsystem (L4)** is mechanical. `world/fixtures/door.rs` is the small worked
+example and `world/combat/` (`messages/combat.toml`) the one whose lines name things and people:
 
 1. Make `assets/lang/en/messages/<subsystem>.toml` (one per `world/<dir>`, or per feature where
-   the design names one, as `doors`), an entry per line said, alphabetical, the text exactly as
-   the string was. A fixed string is `id = "That door is already open."`; a `format!` gets a role
-   per value: `unlock = "You unlock the door with your {what:bare} and open it."`. Until L3, a
-   name is `Arg::Text` (`.role("what", name)`) in a `bare` slot; L3's phrases replace it.
-2. Replace `self.say("…")` with `self.say(msg::<subsystem>::<ID>)` and `self.say(format!(…))`
-   with `self.say(Msg::new(msg::<subsystem>::<ID>).role("what", …))`; a `news.push(…)` the same.
-3. Tests read English as before (`said`, `last`, `World::messages()`); a test on a fixture
-   `ContentFiles` adds `files.insert_builtin_lang()`. Every snapshot must read the same, and the
-   replays' hashes move only where a converted line was said (a literal entry became an id's):
-   regenerate those with `replay --create` and say so.
+   the design names one, as `doors`), an entry per line said, alphabetical (the plain entries
+   first, then the `[id]` tables), the text exactly as the string was, with a comment naming
+   each role. A fixed string is `id = "That door is already open."`; a `format!` gets a role per
+   value.
+2. A value that names someone or something is a **phrase**, and the template asks its form:
+   `the(&name)` is `{who:the}`, `the_start(&name)` `{who:The}`, `format!("{}'s", the(name))`
+   `{who:poss}` (capitalized `{who:Poss}`), `lore.describe(&stack)` `{what:counted}`, a title
+   `{what:bare}`, a plural name `{what:plural}`, "your {name}" a phrase `owned_by(self.you())`
+   said `{what:the}`. Pass `self.phrase_of(id)` (or `World::end_of`), `self.you()`,
+   `self.lore().phrase(&stack)`, or an id phrase (`Phrase::id("object:…")`,
+   `fight::creature(def)`, `fight::word(text)`); never English text for a name.
+3. A verb that agrees with a phrase is the phrase's form: `hit{actor:s}`, `miss{actor:es}`,
+   `{who:is}`, `{actor:does}`, `{weapon:they}`; the player is "you" with the plural verb. A line
+   whose shape differs by person beyond a suffix takes variants (`[parries] by =
+   "target.person"`, `you = …`, `other = …`). A verb the data writes ("slashes", a status's word
+   in a sentence) stays `Arg::Text` (`.role("verb", verb)`) until that data's text is converted.
+4. Replace `self.say("…")` with `self.say(msg::<subsystem>::<ID>)` and `self.say(format!(…))`
+   with `self.say(Msg::new(msg::<subsystem>::<ID>).role("who", phrase)…)`; a `news.push(…)` the
+   same, and a `Vec<String>` of lines a `Vec<Msg>`.
+5. Tests read English as before (`said`, `last`, `World::messages()`; a `Msg` not logged with
+   `test_support::english_of`); a fixture's files read the shipped English. Every snapshot must
+   read the same, and the replays' hashes move only where a converted line was said (a literal
+   entry became an id's): regenerate those with `replay --create` and say so.
 
-When no literal is left, `LITERAL`, the `From` text impls, and this section go. where the design left them open
+What combat leaves as literal lines, for their own slices: a rank risen and what it teaches
+(`fight.rs::ranks_news`, the data's lines joined), acid's lines (`corrode.rs`, the data's
+`{}`), and how the player died (`fight.rs::Cause::message`, said by `health/`).
+
+When no literal is left, `LITERAL`, the `From` text impls, and this section go.
+
+## Decisions L1 made where the design left them open
 
 - `MessageId` and `Role` are `Cow<'static, str>` newtypes, not `&'static str`: an `Entry` is
   saved state (L2) and must deserialize to an owned id.
@@ -259,66 +219,29 @@ When no literal is left, `LITERAL`, the `From` text impls, and this section go. 
 - `Entry` leaves out `args` while empty and `count` while 1 when serialized, as the old
   `Message` left out its count.
 
-## The checker (L7)
+## Decisions L3 made where the design left them open
 
-`cargo xtask lang` (`xtask/src/lang.rs`; CI's docs job runs `--check`) reads every
-`assets/lang/<code>/` with the crate's parsers (`Language::from_toml`, `Templates::parse`,
-`MapLexicon::parse`, `Morphology::parse_word`) and reports per language. **Errors** (the run
-fails): a file that does not parse; a form the language's `Morphology::forms` (plus `and`/`or`)
-does not list; a role the English entry does not pass; an id English lacks; a lexicon word the
-module refuses; a form request in `dialogue/` other than `name`/`Name`/`a`/`the`/`address`; a
-race naming an unknown register; a UI entry (`ui/<module>.toml`, ids `ui.<module>.<name>`) whose
-fixed text is wider than its `width` (placeholders count nothing: a lower bound, so no false
-failure until L6 renders them); and **stale** entries. **Warnings**: a missing id (an error for
-`--strict <code>`; Finnish is strict before it ships) and an English id no source names as
-`msg::<file>::<ID>`. English is checked for forms, parsing, and width only.
-
-**The `of` hash** of a translated entry is the six-hex FNV-1a (32 bits, the top byte folded into
-the low 24) of the English entry's canonical text: a string as it is, an array's items joined by a
-newline, a table's keys in order as `key=value` lines, never `of` or `width`. An entry without
-`of` is stale too. `--stamp <code>` writes `of` into entries that lack one (`--restamp` also
-refreshes stale ones, after the translator has read the English change); it edits lines, so
-comments and layout stay: a `[table]` gets an `of` line after its header, a plain `id = "text"`
-becomes `id = { text = "text", of = "…" }`, and a plain entry whose value spans lines is refused
-(put it in a table). Not yet checked: lexicon staleness and missing words (L3 and L10, when
-lexicons exist and the English `assets/data` names are mapped to them).
-
-
-## Decisions L10 made where the design left them open
-
-- **Classes**: all of 1–49 but 31, 36, 37, 45, 46 (numerals, superlatives, `vasen`), not only
-  the design's examples: a class is one table row, and a translator is never blocked on a Rust
-  PR. 50–51 (compounds inflecting in front) are written as two classed words instead.
-- **`harmony` is a `LexWord` field** (`lexicon.rs`), since the design puts it beside `word` in
-  the file; `MapLexicon::parse` accepts only `front` and `back`.
-- **Form names**: `pl_<case>` for the plural and `_<suffix>` for a possessive, so the checker's
-  list is finite (156) and a template reads `{weapon:ade_si}`; `com`/`ins` are plural only.
-- **A counted phrase in a case declines its numeral** ("kolmeen nuoleen"), since the design's
-  "12 nuoleen" is only right with digits; digits take no case ending.
-- **`bare` is the plain nominative, plural for a count** (en's `bare` is the plural noun), and
-  `nom` of a count over one is the counted phrase ("kolme nuolta"), what a subject reads as.
-- **The player is a pronoun** in every form, since a Finnish narrator line names the second
-  person by its verb and `{target:ill}` must read "sinuun" when the target is the player.
-- **Names pick a class by their last letter** (above) instead of one fixed rule: `Hilda` and
-  `Jenni` are in the oracle under 9 and 5.
-- **Kotus over Wiktionary** where the two assign a class differently.
-
-## For the owner (a native speaker) to check
-
-Nothing here is guessed against the oracle; these are the choices the oracle cannot judge:
-
-- The name rules: `Hild` → `Hildiä`, `Hildiin` (front series for a name with no back or front
-  vowel); `Grim Bite` → `Grim Biteen`; `Lee` → `Leehen`; `-ä` names as class 10.
-- The class-22 illative copying the written vowel (`parfait'hin`) until `forms` says otherwise.
-- `bare` as "nuolet" and `nom` as "kolme nuolta" for a count of three arrows (above).
-- The label clause ", jossa lukee ZUNBAR" / ", joissa lukee" and the note "(taika)" placement.
-- Class 33's stem vowel: `e` (`kytkime-`, `sydäme-`), `a` after `a` (`hapan` : `happama-`).
-- Whether `com` without a suffix (`miekkoine`) should render at all for nouns.
-- The ordinal beyond twelve written "13." and digits in a case with no colon suffix ("13
-  nuoleen", not "13:een nuoleen").
+- Items are named by their phrases everywhere (`describe`, `title`, `names` render them), not
+  only in messages: one code path, so the whole test suite checks the `en` order.
+- The phrase gained `owner` (whose it is, said in place of the article), and the lexicon word
+  `many` (a plural noun): combat's lines need both ("your wolf's bite", "The flames burn you.").
+- `Note` is an enum (`Tags`, `Charges`, `Base`): "(magic, cursed)" is one parenthesis, a wand's
+  charges a number, and a rare's base a phrase. `Modifier` gained `Made` and `Part { material,
+  part }`, so "emerald-pommelled" and "bronze helm" for "iron helm" are named by the language
+  (`en::made_names`), not written in core.
+- A word the data names without an id is `word:<English>`; an unidentified wand's, rod's, or
+  potion's label word is `word:<label>` (a scroll's syllables are a literal), the potion's colour
+  `colour:<colour>`, and the kind's name `label:<kind>` with its data's `{label}`/`{colour}`
+  slots, which the lexicon word keeps (a translation writes its own).
+- The English plural stays the content's: the lexicon serves each word's `plural`, and `En`'s
+  dictionary (the content's, given at load) makes one only for a literal or a word without.
+- In tests, fixture files without English read the shipped English, so the L4 slices touch no
+  fixture (the old `insert_builtin_lang` is gone).
+- A creature's possessive is `en::possessive` ("the Hounds'"), where combat wrote "'s" always;
+  no creature's or companion's name ends in "s" today, so no line changed. A unique caught
+  asleep is "sleeping Black Wystan", where it was "the sleeping Black Wystan".
 
 ## Next
 
-L3 (phrases from `Lore`, `Stack`, `magic/name.rs`; the `Lexicon` over `Content`, then
-`Content::lexicon`), the L4 slices ("Literal lines"), L6 (UI text), the Finnish lexicon (L11) on `fi`:
+The L4 slices ("Literal lines"), L5 (the dialogue slots), L6 (UI text), L10 (the `fi` module):
 `docs/design/localization.md` §17.

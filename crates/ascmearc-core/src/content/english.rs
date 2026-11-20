@@ -1,11 +1,12 @@
 //! English, the language the message ids are generated from (`docs/dev/localization.md`):
 //! `lang/en/lang.toml` and every `lang/en/messages/<file>.toml`, with the plural dictionary.
 //! Dumps and the tests render the log in it; the app renders it too until a language can be
-//! chosen (L8). Without `lang/en/lang.toml` (a test's own files) it is English with no templates:
-//! literal lines read as written, a template's message as its `[id]`.
+//! chosen (L8). Without `lang/en/lang.toml` it is English with no templates: literal lines read as
+//! written, a template's message as its `[id]`; a test's own files without it read the shipped
+//! English instead, so a fixture's lines read as the game's.
 
 use super::{Content, ContentError, ContentFiles};
-use crate::lang::{Language, Lexicon, NoLexicon};
+use crate::lang::{Language, Lexicon};
 
 /// Where English's files are.
 const LANG: &str = "lang/en/lang.toml";
@@ -15,6 +16,17 @@ impl Content {
     /// Reads English's `lang.toml` and its message templates; after the plurals, which its
     /// morphology takes.
     pub(super) fn load_english(&mut self, files: &ContentFiles) -> Result<(), ContentError> {
+        // A test's own files without English read the shipped English, as the game always has.
+        #[cfg(test)]
+        let shipped;
+        #[cfg(test)]
+        let files = match files.get_optional(LANG) {
+            Some(_) => files,
+            None => {
+                shipped = ContentFiles::builtin_lang();
+                &shipped
+            }
+        };
         let plurals = self.plurals.clone();
         self.english = match files.get_optional(LANG) {
             Some(text) => Language::from_toml(text, plurals)
@@ -33,8 +45,13 @@ impl Content {
         &self.english
     }
 
-    /// The words a message's phrases name, by id. None yet: L3 makes the content the lexicon.
+    /// The words a message's phrases name, by id: the content itself (`lexicon.rs`).
     pub fn lexicon(&self) -> &dyn Lexicon {
-        &NoLexicon
+        self
+    }
+
+    /// `phrase` in English in `form` ("a", "The", "bare"): an item's name in a list, a dump.
+    pub fn english_of(&self, phrase: &crate::lang::Phrase, form: &str) -> String {
+        self.english.phrase(phrase, form, self)
     }
 }

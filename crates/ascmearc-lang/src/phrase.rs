@@ -23,9 +23,14 @@ pub struct Phrase {
     pub person: Person,
     #[serde(default)]
     pub gender: Gender,
-    /// Short ids the language renders after the head: `magic` "(magic)", `cursed`, `lit`.
+    /// What the language says after the head: "(magic, cursed)", "(7 charges)", a rare item's
+    /// base (", a long sword").
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub notes: Vec<Note>,
+    /// Whose it is, said in place of the article: "your wolf" (the player's), "the goblin's long
+    /// sword", "Snel's spear".
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub owner: Option<Box<Phrase>>,
 }
 
 fn one() -> u32 {
@@ -55,6 +60,7 @@ impl Phrase {
             person: Person::Third,
             gender: Gender::Neuter,
             notes: Vec::new(),
+            owner: None,
         }
     }
 
@@ -83,8 +89,27 @@ impl Phrase {
         self
     }
 
-    pub fn note(mut self, note: impl Into<String>) -> Self {
-        self.notes.push(Note(note.into()));
+    /// A note of one tag: "(magic)", "(lit)".
+    pub fn note(mut self, tag: impl Into<String>) -> Self {
+        self.notes.push(Note::Tags(vec![tag.into()]));
+        self
+    }
+
+    pub fn with_note(mut self, note: Note) -> Self {
+        self.notes.push(note);
+        self
+    }
+
+    /// Whose it is: `owner` said in its possessive in place of the article.
+    pub fn owned_by(mut self, owner: Phrase) -> Self {
+        self.owner = Some(Box::new(owner));
+        self
+    }
+
+    /// The same without its notes: what an item is called in a title ("Grim Bite", "long
+    /// sword"), where its rarity, charges, and base are not said.
+    pub fn without_notes(mut self) -> Self {
+        self.notes.clear();
         self
     }
 
@@ -133,8 +158,16 @@ pub enum Modifier {
     Of(Word),
     /// "labelled ZUNBAR": the language's label pattern around the word.
     Label(Word),
-    /// A part's material ("emerald-pommelled"): an adjective in `en`, a compound in `fi`.
+    /// A material said before the head: "iron scrap", "steel ingot"; with [`Modifier::Made`],
+    /// a notable material the item is made with ("gold and ruby amulet").
     Material(Word),
+    /// A notable part, by its material and its part: "emerald-pommelled" (`en` writes the
+    /// material and the part's adjective), a compound adjective in `fi`.
+    Part { material: Word, part: Word },
+    /// What an item made of its own parts is made of, its main part's material: the language
+    /// names it from the item's written name ("bronze long sword", "bronze helm" for "iron
+    /// helm"), joining its notable materials ([`Modifier::Material`]) as it does.
+    Made(Word),
 }
 
 /// Who a phrase speaks of: the player ("you") or anyone else.
@@ -169,10 +202,18 @@ impl Gender {
     }
 }
 
-/// A short id rendered after the head: `magic`, `cursed`, `lit`, `spirit`.
+/// What is said after the head.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct Note(pub String);
+#[serde(rename_all = "snake_case")]
+pub enum Note {
+    /// Short ids said together, in parentheses in `en`: `magic` and `cursed` "(magic, cursed)",
+    /// `lit` "(lit)". Each language has its word for each (`en`: the id as written).
+    Tags(Vec<String>),
+    /// A wand's charges the player knows: "(7 charges)", "(1 charge)", "(empty)".
+    Charges(u32),
+    /// What a named item is: a rare's base, counted (", a long sword").
+    Base(Box<Phrase>),
+}
 
 #[cfg(test)]
 mod tests {
@@ -203,6 +244,9 @@ mod tests {
             .with(Modifier::Adjective(Word::id("affix:flaming")))
             .with(Modifier::Of(Word::id("affix:of_the_bear")))
             .note("cursed")
+            .with_note(Note::Charges(3))
+            .with_note(Note::Base(Box::new(Phrase::id("object:dagger"))))
+            .owned_by(Phrase::literal("Hild").person(Person::You))
             .count(2);
         let text = toml::to_string(&dressed).expect("serializes");
         let back: Phrase = toml::from_str(&text).expect("parses");

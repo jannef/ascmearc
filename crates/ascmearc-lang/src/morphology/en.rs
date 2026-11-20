@@ -5,8 +5,8 @@
 //! hold.
 
 use super::{Conj, FormError, Morphology, ParseError, missing, spaced};
-use crate::lexicon::Lexicon;
-use crate::phrase::{Gender, Modifier, Person, Phrase, Word};
+use crate::lexicon::{LexWord, Lexicon};
+use crate::phrase::{Gender, Modifier, Note, Person, Phrase, Word};
 use crate::register::Register;
 use std::collections::BTreeMap;
 
@@ -125,6 +125,101 @@ pub fn counted(name: &str, plural: &str, count: u32) -> String {
     }
 }
 
+/// Whether a noun's last word is a plural ("flames", "shards"): it ends in `s` but not in `ss`
+/// ("soulglass"), `us`, or `is`. What a lexicon marks `many` ([`crate::LexWord::many`]).
+pub fn is_plural(noun: &str) -> bool {
+    let last = noun.rsplit(' ').next().unwrap_or(noun);
+    last.ends_with('s') && !["ss", "us", "is"].iter().any(|e| last.ends_with(e))
+}
+
+/// A wand's charges left: "empty", "1 charge", "7 charges".
+pub fn charges(left: u32) -> String {
+    match left {
+        0 => "empty".into(),
+        1 => "1 charge".into(),
+        n => format!("{n} charges"),
+    }
+}
+
+// ----- An item named from what it is made of: today's `content/part.rs::names` -----
+
+/// What an object written as `name` (and `plural`) for the material `written_for` is called,
+/// made with `main` (its main part's material) and the `notable` materials (each with its part's
+/// adjective, if it has one; core passes the precious ones, gems and precious metals), in part
+/// order.
+///
+/// A notable material with an adjective goes before the name, "ruby-pommelled long sword"; any
+/// other joins the main material if the name begins with it ("gold amulet", a ruby setting:
+/// "gold and ruby amulet"), else goes before the name. A material the name mentions as a word
+/// ("gold ring", "ruby") is not said again, nor one said already. A main material other than
+/// `written_for` is named in place of that material's word if the name says it ("iron helm":
+/// "bronze helm"; "iron-shod boots": "bronze-shod boots"), else before the name ("bronze long
+/// sword"), so the order is [ornament] [material] name.
+pub fn made_names(
+    name: &str,
+    plural: &str,
+    main: Option<&str>,
+    written_for: &str,
+    notable: &[(&str, Option<&str>)],
+) -> (String, String) {
+    let (name, plural) = match main {
+        Some(made) if made != written_for => (
+            with_material(name, written_for, made),
+            with_material(plural, written_for, made),
+        ),
+        _ => (name.to_string(), plural.to_string()),
+    };
+    let (name, plural) = (name.as_str(), plural.as_str());
+    // Whole words only: "gold" is in "gold ring" and "gold-shod boots", not in "golden".
+    let words = format!(" {} ", name.replace('-', " "));
+    let mentioned = |m: &str| words.contains(&format!(" {m} "));
+    let (mut before, mut joined) = (Vec::new(), Vec::new());
+    let mut said = std::collections::BTreeSet::new();
+    for &(material, adjective) in notable {
+        if mentioned(material) || !said.insert(material) {
+            continue;
+        }
+        match adjective {
+            Some(adjective) => before.push(format!("{material}-{adjective}")),
+            None => joined.push(material),
+        }
+    }
+    let call = |written: &str| {
+        let rest = if joined.is_empty() {
+            written.to_string()
+        } else {
+            let begins = main.and_then(|m| Some((m, written.strip_prefix(m)?.strip_prefix(' ')?)));
+            let (mut list, rest) = match begins {
+                Some((main, rest)) => (vec![main], rest),
+                None => (Vec::new(), written),
+            };
+            list.extend(&joined);
+            format!("{} {rest}", and_list(&list))
+        };
+        (before.iter().map(String::as_str))
+            .chain([rest.as_str()])
+            .collect::<Vec<_>>()
+            .join(" ")
+    };
+    (call(name), call(plural))
+}
+
+/// `written` made of `made` instead of `base`: `made` in place of the first whole word (between
+/// spaces, hyphens, or the ends) `base`, else before it all.
+fn with_material(written: &str, base: &str, made: &str) -> String {
+    let boundary = |c: Option<char>| c.is_none_or(|c| c == ' ' || c == '-');
+    let found = written.match_indices(base).find(|&(at, _)| {
+        boundary(written[..at].chars().next_back())
+            && boundary(written[at + base.len()..].chars().next())
+    });
+    match found {
+        Some((at, _)) if !base.is_empty() => {
+            format!("{}{made}{}", &written[..at], &written[at + base.len()..])
+        }
+        _ => format!("{made} {written}"),
+    }
+}
+
 // ----- The plural dictionary: today's `content/plural.rs` -----
 
 /// The plural dictionary (`assets/data/plurals.toml`, and a campaign's `data/plurals.toml`): the
@@ -208,55 +303,128 @@ impl En {
         &self.plurals
     }
 
-    /// The written word of a head or a modifier.
-    fn word(&self, word: &Word, lex: &dyn Lexicon) -> (String, Option<String>, bool) {
+    /// What the lexicon says of a head or a modifier's word; a literal is its text.
+    fn lex(&self, word: &Word, lex: &dyn Lexicon) -> LexWord {
         match word {
-            Word::Literal(text) => (text.clone(), None, false),
-            Word::Id(id) => match lex.word(id) {
-                Some(w) => (w.base, w.forms.get("plural").cloned(), w.proper),
-                None => (missing(id), None, false),
-            },
+            Word::Literal(text) => LexWord::new(text.clone()),
+            Word::Id(id) => lex.word(id).unwrap_or_else(|| LexWord::new(missing(id))),
         }
     }
 
+    /// The written word of a modifier.
+    fn text(&self, word: &Word, lex: &dyn Lexicon) -> String {
+        self.lex(word, lex).base
+    }
+
+    /// A part's adjective ("pommelled"), else its name.
+    fn adjective(&self, part: &Word, lex: &dyn Lexicon) -> String {
+        let word = self.lex(part, lex);
+        word.forms.get("adjective").cloned().unwrap_or(word.base)
+    }
+
     /// The phrase's words in English order, singular and plural, and whether it is proper:
-    /// [adjectives and materials] head [of-qualifier] [labelled X] [(notes)].
-    fn words(&self, phrase: &Phrase, lex: &dyn Lexicon) -> Words {
-        let (head, plural, proper) = self.word(&phrase.head, lex);
-        let plural = plural.unwrap_or_else(|| self.plurals.plural(&head));
+    /// [adjectives and materials] head [of-qualifier] [labelled X] [notes]. An item made of its
+    /// own parts ([`Modifier::Made`]) is named as [`made_names`] says, and a head word's
+    /// `{label}` and `{colour}` slots are filled from the phrase's label and its `colour:`
+    /// adjective ("fizzy red potion", "scroll labelled ZUNBAR").
+    fn words(&self, phrase: &Phrase, lex: &dyn Lexicon, reg: &Register) -> Words {
+        let head = self.lex(&phrase.head, lex);
+        let mut singular = head.base.clone();
+        let mut plural =
+            (head.forms.get("plural").cloned()).unwrap_or_else(|| self.plurals.plural(&head.base));
+        let mods = &phrase.mods;
+        let mut used = vec![false; mods.len()];
+        let label = mods.iter().position(|m| matches!(m, Modifier::Label(_)));
+        let colour = mods.iter().position(
+            |m| matches!(m, Modifier::Adjective(Word::Id(id)) if id.starts_with("colour:")),
+        );
+        for (slot, at) in [("{label}", label), ("{colour}", colour)] {
+            let Some(at) = at.filter(|_| singular.contains(slot) || plural.contains(slot)) else {
+                continue;
+            };
+            let text = self.text(mod_word(&mods[at]), lex);
+            singular = singular.replace(slot, &text);
+            plural = plural.replace(slot, &text);
+            used[at] = true;
+        }
+        if let Some(at) = mods.iter().position(|m| matches!(m, Modifier::Made(_))) {
+            used[at] = true;
+            let main = self.text(mod_word(&mods[at]), lex);
+            let mut notable: Vec<(String, Option<String>)> = Vec::new();
+            for (i, m) in mods.iter().enumerate() {
+                match m {
+                    Modifier::Material(w) => notable.push((self.text(w, lex), None)),
+                    Modifier::Part { material, part } => {
+                        notable.push((self.text(material, lex), Some(self.adjective(part, lex))));
+                    }
+                    _ => continue,
+                }
+                used[i] = true;
+            }
+            let notable: Vec<(&str, Option<&str>)> = (notable.iter())
+                .map(|(m, a)| (m.as_str(), a.as_deref()))
+                .collect();
+            let written = head.forms.get("written").unwrap_or(&head.base);
+            let written_plural = head.forms.get("written_plural").unwrap_or(&plural);
+            let written_for = head.forms.get("material").unwrap_or(&main);
+            (singular, plural) =
+                made_names(written, written_plural, Some(&main), written_for, &notable);
+        }
         let mut before: Vec<String> = Vec::new();
         let mut after: Vec<String> = Vec::new();
-        for modifier in &phrase.mods {
+        for (modifier, _) in mods.iter().zip(&used).filter(|(_, used)| !**used) {
             match modifier {
-                Modifier::Adjective(w) | Modifier::Material(w) => before.push(self.word(w, lex).0),
-                Modifier::Of(w) => after.push(self.word(w, lex).0),
-                Modifier::Label(w) => after.push(format!("labelled {}", self.word(w, lex).0)),
+                Modifier::Adjective(w) | Modifier::Material(w) | Modifier::Made(w) => {
+                    before.push(self.text(w, lex));
+                }
+                Modifier::Part { material, part } => before.push(format!(
+                    "{}-{}",
+                    self.text(material, lex),
+                    self.adjective(part, lex)
+                )),
+                Modifier::Of(w) => {
+                    // An affix's name says its "of" ("of the Bear"); a material does not.
+                    let text = self.text(w, lex);
+                    after.push(match text.starts_with("of ") {
+                        true => text,
+                        false => format!("of {text}"),
+                    });
+                }
+                Modifier::Label(w) => after.push(format!("labelled {}", self.text(w, lex))),
             }
         }
+        let mut notes = String::new();
         for note in &phrase.notes {
-            after.push(format!("({})", note.0));
+            match note {
+                Note::Tags(tags) => notes += &format!(" ({})", tags.join(", ")),
+                Note::Charges(n) => notes += &format!(" ({})", charges(*n)),
+                Note::Base(base) => {
+                    let base = self.phrase(base, "counted", lex, reg).unwrap_or_default();
+                    notes += &format!(", {base}");
+                }
+            }
         }
         let assemble = |head: &str| {
-            spaced(
-                before
-                    .iter()
-                    .map(String::as_str)
+            let words = spaced(
+                (before.iter().map(String::as_str))
                     .chain(std::iter::once(head))
                     .chain(after.iter().map(String::as_str)),
-            )
+            );
+            words + &notes
         };
         Words {
-            singular: assemble(&head),
+            singular: assemble(&singular),
             plural: assemble(&plural),
-            proper: phrase.proper || proper,
+            proper: phrase.proper || head.proper,
+            many: head.many,
         }
     }
 
     /// The pronoun in `form` (`they`, `them`, `their`) for the phrase.
-    fn pronoun(phrase: &Phrase, form: &str) -> &'static str {
+    fn pronoun(phrase: &Phrase, many: bool, form: &str) -> &'static str {
         let set: [&'static str; 3] = if phrase.person == Person::You {
             ["you", "you", "your"]
-        } else if phrase.count != 1 {
+        } else if phrase.count != 1 || many {
             ["they", "them", "their"]
         } else {
             match phrase.gender {
@@ -274,10 +442,24 @@ impl En {
     }
 }
 
+/// The word a modifier names (a part's material).
+fn mod_word(modifier: &Modifier) -> &Word {
+    match modifier {
+        Modifier::Adjective(w)
+        | Modifier::Of(w)
+        | Modifier::Label(w)
+        | Modifier::Material(w)
+        | Modifier::Made(w) => w,
+        Modifier::Part { material, .. } => material,
+    }
+}
+
 struct Words {
     singular: String,
     plural: String,
     proper: bool,
+    /// A plural noun ("flames"): verbs agree with it in the plural.
+    many: bool,
 }
 
 impl Words {
@@ -303,8 +485,8 @@ impl Morphology for En {
         reg: &Register,
     ) -> Result<String, FormError> {
         let you = phrase.person == Person::You;
-        let singular = you || phrase.count == 1;
-        let w = self.words(phrase, lex);
+        let w = self.words(phrase, lex, reg);
+        let singular = !you && phrase.count == 1 && !w.many;
         // "you" said of the player: the pronoun stands for the whole phrase.
         let named = |named: &dyn Fn() -> String| -> String {
             if you {
@@ -313,20 +495,27 @@ impl Morphology for En {
                 named()
             }
         };
+        // Whose it is, in place of the article: "your wolf", "the goblin's long sword".
+        let owner = || {
+            (phrase.owner.as_deref()).map(|o| self.phrase(o, "poss", lex, reg).unwrap_or_default())
+        };
         let the = || {
-            if w.proper {
+            if let Some(owner) = owner() {
+                format!("{owner} {}", w.by_count(phrase.count))
+            } else if w.proper {
                 w.singular.clone()
             } else {
                 format!("{} {}", reg.word("the"), w.by_count(phrase.count))
             }
         };
         let counted = || {
-            if w.proper {
-                w.singular.clone()
-            } else if phrase.count == 1 {
-                format!("{} {}", reg.word(article(&w.singular)), w.singular)
-            } else {
-                format!("{} {}", phrase.count, w.plural)
+            let one = phrase.count == 1;
+            match owner() {
+                Some(owner) if one => format!("{owner} {}", w.singular),
+                Some(owner) => format!("{owner} {} {}", phrase.count, w.plural),
+                None if w.proper && one => w.singular.clone(),
+                None if one => format!("{} {}", reg.word(article(&w.singular)), w.singular),
+                None => format!("{} {}", phrase.count, w.plural),
             }
         };
         Ok(match form {
@@ -341,12 +530,12 @@ impl Morphology for En {
                     possessive(&the())
                 }
             }
-            "they" | "them" | "their" => reg.word(Self::pronoun(phrase, form)).to_string(),
-            "s" => if singular && !you { "s" } else { "" }.to_string(),
-            "es" => if singular && !you { "es" } else { "" }.to_string(),
-            "is" => if singular && !you { "is" } else { "are" }.to_string(),
-            "has" => if singular && !you { "has" } else { "have" }.to_string(),
-            "does" => if singular && !you { "does" } else { "do" }.to_string(),
+            "they" | "them" | "their" => reg.word(Self::pronoun(phrase, w.many, form)).to_string(),
+            "s" => if singular { "s" } else { "" }.to_string(),
+            "es" => if singular { "es" } else { "" }.to_string(),
+            "is" => if singular { "is" } else { "are" }.to_string(),
+            "has" => if singular { "has" } else { "have" }.to_string(),
+            "does" => if singular { "does" } else { "do" }.to_string(),
             "num" => self.number(i64::from(phrase.count), "num", reg),
             "ord" => ordinal(i64::from(phrase.count)),
             other => return Err(FormError::UnknownForm(other.to_string())),
@@ -625,6 +814,123 @@ mod tests {
             .with(Modifier::Adjective(Word::literal("fizzy")))
             .with(Modifier::Adjective(Word::literal("red")));
         assert_eq!(form(&potion, "the"), "the fizzy red [object:potion]");
+    }
+
+    #[test]
+    fn owners_plural_nouns_notes_and_slots() {
+        let lex = lexicon()
+            .with("word:flames", LexWord::new("flames").many(true))
+            .with("label:potion", LexWord::new("{label} {colour} potion"))
+            .with("colour:red", LexWord::new("red"))
+            .with("material:amber", LexWord::new("amber"))
+            .with("object:piece", LexWord::new("piece"));
+        let form = |p: &Phrase, f: &str| {
+            en().phrase(p, f, &lex, &Register::default())
+                .unwrap_or_else(|e| panic!("{f}: {e}"))
+        };
+        let you = Phrase::literal("Hild").person(Person::You);
+        let wolf = Phrase::id("creature:wolf").owned_by(you.clone());
+        assert_eq!(form(&wolf, "the"), "your wolf");
+        assert_eq!(form(&wolf, "poss"), "your wolf's");
+        let bite = Phrase::id("word:bite").owned_by(wolf);
+        assert_eq!(form(&bite, "the"), "your wolf's [word:bite]");
+        let sword = Phrase::id("object:long_sword").owned_by(Phrase::id("creature:wolf"));
+        assert_eq!(form(&sword, "the"), "the wolf's long sword");
+        let flames = Phrase::id("word:flames");
+        assert_eq!(form(&flames, "the"), "the flames");
+        assert_eq!(
+            form(&flames, "s"),
+            "",
+            "a plural noun takes the plural verb"
+        );
+        assert_eq!(form(&flames, "they"), "they");
+        let potion = Phrase::id("label:potion")
+            .with(Modifier::Label(Word::literal("fizzy")))
+            .with(Modifier::Adjective(Word::id("colour:red")))
+            .count(2);
+        assert_eq!(form(&potion, "counted"), "2 fizzy red potions");
+        let amber = Phrase::id("object:piece").with(Modifier::Of(Word::id("material:amber")));
+        assert_eq!(form(&amber, "a"), "a piece of amber");
+        let unknown = Phrase::id("object:long_sword")
+            .with_note(Note::Tags(vec!["magic".into(), "cursed".into()]))
+            .note("lit")
+            .with_note(Note::Charges(1));
+        assert_eq!(
+            form(&unknown, "a"),
+            "a long sword (magic, cursed) (lit) (1 charge)"
+        );
+        let rare = Phrase::literal("Grim Bite")
+            .with_note(Note::Base(Box::new(Phrase::id("object:long_sword"))));
+        assert_eq!(form(&rare, "a"), "Grim Bite, a long sword");
+        assert_eq!(form(&rare.without_notes(), "bare"), "Grim Bite");
+    }
+
+    #[test]
+    fn things_made_of_their_parts() {
+        let lex = MapLexicon::default()
+            .with(
+                "object:helm",
+                LexWord::new("iron helm").form("material", "iron"),
+            )
+            .with(
+                "object:amulet",
+                LexWord::new("gold amulet").form("material", "gold"),
+            )
+            .with(
+                "object:sword",
+                LexWord::new("long sword").form("material", "steel"),
+            )
+            .with("material:bronze", LexWord::new("bronze"))
+            .with("material:gold", LexWord::new("gold"))
+            .with("material:ruby", LexWord::new("ruby"))
+            .with("material:steel", LexWord::new("steel"))
+            .with(
+                "part:pommel",
+                LexWord::new("pommel").form("adjective", "pommelled"),
+            );
+        let form = |p: &Phrase| {
+            en().phrase(p, "a", &lex, &Register::default())
+                .expect("renders")
+        };
+        let made = |head: &str, main: &str| {
+            Phrase::id(head).with(Modifier::Made(Word::id(format!("material:{main}"))))
+        };
+        assert_eq!(form(&made("object:helm", "bronze")), "a bronze helm");
+        assert_eq!(form(&made("object:sword", "bronze")), "a bronze long sword");
+        let ruby = Modifier::Material(Word::id("material:ruby"));
+        assert_eq!(
+            form(&made("object:amulet", "gold").with(ruby.clone())),
+            "a gold and ruby amulet"
+        );
+        let pommel = Modifier::Part {
+            material: Word::id("material:ruby"),
+            part: Word::id("part:pommel"),
+        };
+        assert_eq!(
+            form(&made("object:sword", "steel").with(pommel.clone())),
+            "a ruby-pommelled long sword"
+        );
+        assert_eq!(
+            form(
+                &Phrase::id("object:sword")
+                    .with(Modifier::Adjective(Word::literal("Sharp")))
+                    .with(Modifier::Made(Word::id("material:bronze")))
+                    .with(pommel)
+                    .with(Modifier::Of(Word::literal("of the Bear")))
+            ),
+            "a Sharp ruby-pommelled bronze long sword of the Bear"
+        );
+        assert_eq!(
+            made_names(
+                "gold ring",
+                "gold rings",
+                Some("gold"),
+                "gold",
+                &[("gold", None)]
+            ),
+            ("gold ring".to_string(), "gold rings".to_string()),
+            "a material the name says is not said again"
+        );
     }
 
     #[test]

@@ -39,19 +39,6 @@ metadata`'s `target_directory`) for the build output it reads and the files it w
 - **Regenerate the vast level**, `cargo xtask gen-vast`: writes
   `assets/campaigns/showcase/levels/vast.toml`; deterministic, never hand-edit. `--check` fails
   if the file differs from the generator output; run it after touching `xtask/src/vast.rs` (CI runs it).
-- **Check the language files**, `cargo xtask lang [--check] [--strict CODE] [--stamp CODE
-  [--restamp]] [--dir PATH]` (`xtask/src/lang.rs`, #1890; CI runs `--check`;
-  `docs/dev/localization.md` "The checker"): checks `assets/lang/<code>/` against English with
-  the `ascmearc-lang` parsers. Errors fail the run, a missing id is a warning (an error for a
-  `--strict` language). `--stamp CODE` writes `of` into the entries that lack one, `--restamp`
-  refreshes the stale ones too (read the diff). `--dir` points it at another language folder.
-  The Finnish translator's tools are the same command (`xtask/src/lang/fi_tools.rs`): `--forms fi
-  [WORD...]` prints every case form, singular and plural, of every word in
-  `assets/lang/fi/lexicon/*.toml` and of each `WORD` given (`"pitkä|miekka/9*A"`), for a native
-  speaker's review; `--suggest fi <KOTUS_XML> [WORD...]` reads a local copy of the Kotus word
-  list (never shipped; `docs/dev/localization.md` "The Kotus word list") and prints the class
-  and gradation it gives each lexicon word without a class (a compound by its last part), says
-  where an entry's class differs from the list's, and names the words the list lacks.
 - **Check the docs' code paths**, `cargo xtask docs-check` (`xtask/src/docs_check.rs`, #1667):
   every code name in an inline code span of CLAUDE.md, `spec/`, and `docs/dev/` (not
   `docs/design/`, which is history) must name something in the sources under `crates/` and

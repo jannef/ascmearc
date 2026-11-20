@@ -6,6 +6,7 @@
 
 use crate::content::{Content, MaterialId, ObjectDef};
 use crate::item_parts::ItemPart;
+use crate::lang::{Modifier, Phrase, Word};
 use crate::object::Stack;
 
 /// The scrap object's id.
@@ -19,8 +20,18 @@ pub fn is(def: &ObjectDef) -> bool {
 
 /// What scrap of `material` is called, singular and plural: "iron scrap", "iron scraps".
 pub fn names(content: &Content, def: &ObjectDef, material: MaterialId) -> (String, String) {
-    let m = &content.material(material).name;
-    (format!("{m} {}", def.name), format!("{m} {}", def.plural))
+    let one = name_phrase(content, def, material);
+    (
+        content.english_of(&one, "bare"),
+        content.english_of(&one.count(2), "bare"),
+    )
+}
+
+/// [`names`] as a phrase: the object with its material before it.
+pub fn name_phrase(content: &Content, def: &ObjectDef, material: MaterialId) -> Phrase {
+    let m = &content.material(material).id;
+    Phrase::id(format!("object:{}", def.id))
+        .with(Modifier::Material(Word::id(format!("material:{m}"))))
 }
 
 /// `grams` scraps of `material` (a gram each); `None` without the scrap object, for no grams, or

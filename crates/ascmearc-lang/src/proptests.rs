@@ -29,6 +29,8 @@ fn modifier() -> impl Strategy<Value = Modifier> {
         word().prop_map(Modifier::Of),
         word().prop_map(Modifier::Label),
         word().prop_map(Modifier::Material),
+        word().prop_map(Modifier::Made),
+        (word(), word()).prop_map(|(material, part)| Modifier::Part { material, part }),
     ]
 }
 
@@ -56,6 +58,7 @@ fn phrase() -> impl Strategy<Value = Phrase> {
                 person,
                 gender,
                 notes: Vec::new(),
+                owner: None,
             };
             for note in notes {
                 phrase = phrase.note(note);
@@ -82,13 +85,14 @@ fn lex_word() -> impl Strategy<Value = LexWord> {
         prop::collection::btree_map(any::<String>(), any::<String>(), 0..3),
         any::<bool>(),
         prop::option::of(any::<String>()),
+        any::<bool>(),
     )
-        .prop_map(|(base, forms, proper, gender)| LexWord {
+        .prop_map(|(base, forms, proper, gender, many)| LexWord {
             base,
             forms,
             proper,
             gender,
-            harmony: None,
+            many,
         })
 }
 

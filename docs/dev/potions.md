@@ -181,7 +181,7 @@ every later flask (smoke, fire, frost, acid, the bombers) builds on.
 - `scroll_label.rs`: `Labels::draw` draws potion words **after** the rods' from the same
   `identification` stream, so scrolls', wands', and rods' labels (and runs' rolls) are unchanged.
   `data/potion_labels.toml` is the scroll labels' format with `name = "{label} {colour} potion"`.
-- `Lore::labelled_names` puts the type's `colour` in `{colour}`; `Lore::fg` keeps a labelled
+- `Lore::label_phrase` gives the type's `colour` for `{colour}`; `Lore::fg` keeps a labelled
   potion's own `fg` (the type's colour, its family's hue) instead of the file's single `fg`.
 - Known types live in `WorldState::known_scrolls` with scrolls, wands, and rods: learned by
   drinking, by brewing one (`world/crafting/craft_make.rs`), by `World::identify` (the scroll of identify, the appraisal service, dev

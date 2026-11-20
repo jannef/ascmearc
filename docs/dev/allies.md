@@ -230,7 +230,8 @@ cap (`[allies] most`, 8) is data alone. The beasts: `docs/dev/creatures/beasts.m
 and the `spells` dump's count (`spell_words.rs`) adds `ally_mod`'s `count` as the cast does
 (`2 called` with Pack leader); a fixed roll is said as its number (`1 called`, not `+1`).
 
-**Fights**: `fight::End::Yours(name)` is an ally of the player's they see: "Your wolf bites the
+**Fights**: `fight::End::Yours` is an ally of the player's they see, its phrase theirs
+(`World::phrase_of`): "Your wolf bites the
 kobold.", "The kobold claws your wolf.", "Your wolf dies." (`perceive_events`' ends; the
 player's own blow at one, `fight.rs`; a throw's, `hurl.rs`); a companion is `End::Named`, "Snel
 bites the kobold."; unseen it is "something" as ever.

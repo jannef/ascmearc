@@ -95,7 +95,7 @@ impl World {
     /// it was a plain blow, and the player is told so after its line.
     pub(in crate::world) fn no_vital_spot(&mut self, vitalless: bool, blow: Option<Blow>) {
         if vitalless && blow.is_some_and(|b| b.strike.is_hit()) {
-            self.news.push("It has no vital spot.".into());
+            self.news.push(crate::msg::combat::NO_VITAL_SPOT.into());
         }
     }
 

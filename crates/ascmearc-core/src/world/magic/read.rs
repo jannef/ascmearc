@@ -32,11 +32,12 @@ use crate::action::{AttackKind, Event, Positions, ReadTarget};
 use crate::content::StatUse;
 use crate::content::{ActionKind, Reading, percent_of};
 use crate::geom::Pos;
+use crate::lang::Msg;
 use crate::object::Stack;
 use crate::rng::draw;
 use crate::skills::Use;
 use crate::world::combat::fight::{
-    End, Guard, Words, attack_message, death_message, driven_message,
+    End, Guard, Words, attack_message, creature, death_message, driven_message, word,
 };
 use crate::world::{Spent, World};
 
@@ -172,10 +173,10 @@ impl World {
     ) {
         let content = self.content.clone();
         let player = self.state.player;
-        let words = Words::new(noun, verb);
-        let mut said = Vec::new();
+        let words = Words::named(noun, verb, &content);
+        let mut said: Vec<Msg> = Vec::new();
         // Whom the last blow struck, as the player saw them (if they did).
-        let mut seen: Option<(End<'_>, &str)> = None;
+        let mut seen: Option<(End, &str)> = None;
         for event in made {
             match event {
                 Event::Attacked {
@@ -189,32 +190,27 @@ impl World {
                     let def = fallen.map(|a| content.creature(a.creature));
                     let guard = Guard::of(fallen, &content, &self.state);
                     let end = match def {
-                        _ if target == player => End::You,
-                        Some(d) if self.perception.sees_actors_at(to) => End::Seen(&d.name),
+                        _ if target == player => End::You(self.you()),
+                        Some(d) if self.perception.sees_actors_at(to) => End::Seen(creature(d)),
                         _ => End::Unseen,
                     };
                     // How the spell found the one it struck at, in its words (`surprise.rs`).
-                    let named = def.map(|d| {
-                        crate::world::combat::surprise::caught_name(&content, &d.name, caught)
-                    });
-                    let struck_at = match (end, named.as_deref()) {
-                        (End::Seen(_), Some(named)) => End::Seen(named),
-                        _ => end,
-                    };
-                    let caster = End::Trap(noun);
+                    let caught = crate::world::combat::surprise::caught_word(&content, caught);
+                    let struck_at = end.clone().caught(caught);
+                    let caster = End::Trap(word(noun));
                     let kind = AttackKind::Spell;
                     said.extend(attack_message(
-                        caster, struck_at, &words, kind, strike, guard,
+                        &caster, &struck_at, &words, kind, strike, &guard,
                     ));
                     seen =
-                        (end != End::Unseen).then(|| (end, def.map_or("dies", |d| d.death_verb())));
+                        (!end.is_unseen()).then(|| (end, def.map_or("dies", |d| d.death_verb())));
                     if seen.is_some() {
                         events.push(event);
                     }
                 }
                 // A force spell's shove (`spell_type.rs`), of the one it just struck.
                 Event::ActorMoved { .. } => {
-                    if let Some((end, _)) = seen {
+                    if let Some((end, _)) = &seen {
                         said.push(driven_message(end));
                     }
                     events.push(event);
@@ -222,13 +218,13 @@ impl World {
                 // A force blast's (`spell_type.rs`).
                 Event::DoorBroken { pos } => {
                     if self.perception.is_visible(pos) {
-                        said.push("The door crashes open!".to_string());
+                        said.push("The door crashes open!".into());
                     }
                     events.push(event);
                 }
                 Event::Died { actor, .. } if actor == player => events.push(event),
                 Event::Died { .. } => {
-                    if let Some((end, dies)) = seen {
+                    if let Some((end, dies)) = &seen {
                         said.push(death_message(end, dies));
                         events.push(event);
                     }

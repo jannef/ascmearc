@@ -29,15 +29,16 @@
 //! `supply` of their flasks and have a cooldown (#1794 replaced the design's endless supply, Q9);
 //! a flask in a pack is thrown only as a throw's supply (Q10 otherwise holds).
 
-use super::fight::{End, Guard, Words, attack_message};
+use super::fight::{End, Guard, Words, attack_message, word};
 use super::shoot::Flight;
 use crate::action::{AttackKind, Event, Positions};
 use crate::combat::Strike;
 use crate::content::{ActionKind, Content, DamageTypeId, ObjectId, Throw};
 use crate::fov::radius2;
 use crate::geom::Pos;
+use crate::lang::Msg;
+use crate::msg;
 use crate::noise::Act;
-use crate::text::article;
 use crate::world::{Actor, ActorId, World};
 
 impl World {
@@ -88,11 +89,9 @@ impl World {
         if content.object(throw.object).flask.is_some() {
             let from = self.state.actors[&id].pos;
             if self.perception.sees_actors_at(from) && !self.perception.conceals(id) {
-                let line = format!(
-                    "{} {} a flask.",
-                    self.end_of(id, true).subject(),
-                    throw.attack.verb
-                );
+                let line = Msg::new(msg::combat::THROWS_FLASK)
+                    .role("actor", self.end_of(id, true).phrase())
+                    .role("verb", throw.attack.verb.as_str());
                 self.say(line);
             }
             self.shatter_flask(id, throw.object, (from, at, throw.range), events);
@@ -154,28 +153,28 @@ pub(in crate::world) fn thrown_by<'c>(
 pub(in crate::world) fn throw_messages(
     content: &Content,
     throw: &Throw,
-    (thrower, target): (End<'_>, End<'_>),
+    (thrower, target): (&End, &End),
     strike: Option<Strike>,
     damage: Option<DamageTypeId>,
-    guard: Guard<'_>,
-) -> Vec<String> {
-    if thrower == End::Unseen && target == End::Unseen {
+    guard: &Guard,
+) -> Vec<Msg> {
+    if thrower.is_unseen() && target.is_unseen() {
         return Vec::new();
     }
     let noun = throw.attack.name.as_str();
     let mut said = Vec::new();
     if let End::Seen(_) | End::Yours(_) | End::Named(_) = thrower {
-        let verb = &throw.attack.verb;
-        said.push(format!(
-            "{} {verb} {} {noun}.",
-            thrower.subject(),
-            article(noun)
-        ));
+        said.push(
+            Msg::new(msg::combat::THROWS)
+                .role("actor", thrower.phrase())
+                .role("verb", throw.attack.verb.as_str())
+                .role("what", word(noun)),
+        );
     }
     let verb = damage.map_or("hits", |d| content.damage_type(d).verb.as_str());
-    let words = Words::new(noun, verb);
+    let words = Words::named(noun, verb, content);
     let blow = attack_message(
-        End::Trap(noun),
+        &End::Trap(word(noun)),
         target,
         &words,
         AttackKind::Thrown,

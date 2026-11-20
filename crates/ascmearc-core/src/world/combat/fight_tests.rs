@@ -1,59 +1,60 @@
 //! Combat in the world: attacks hurt and kill, creatures drop what they
 //! carry, hit points come back with time, and the player's death ends the run.
 
-use super::fight::{End, Guard, Words, attack_message, death_message};
+use super::fight::{End, Guard, Words, attack_message, death_message, word};
 use crate::action::{AttackKind, parse_actions};
 use crate::combat::{Category, Health, Strike};
 use crate::content::{ContentFiles, Role};
+use crate::lang::{Msg, Person, Phrase};
 use crate::replay::Replay;
-use crate::test_support::{builtin, run, said as messages};
+use crate::test_support::{builtin, english_of, run, said as messages};
 use crate::world::*;
 
 #[test]
 fn a_plural_noun_takes_a_plural_verb() {
     let flames = Words::test("flames", "burns");
     let glass = Words::test("soulglass", "cuts");
-    let say = |a, t, words: &Words, strike| {
-        attack_message(
-            a,
-            t,
+    let say = |a: End, t: End, words: &Words, strike| {
+        let guard = Guard::default();
+        text(attack_message(
+            &a,
+            &t,
             words,
             AttackKind::Spell,
             Some(strike),
-            Guard::default(),
-        )
-        .unwrap_or_default()
+            &guard,
+        ))
     };
     let hit = Strike::Hit { critical: false };
-    let haunt = End::Seen("stone haunt");
+    let haunt = || seen("stone haunt");
     for (text, expected) in [
         (
-            say(End::Trap("flames"), haunt, &flames, hit),
+            say(trap("flames"), haunt(), &flames, hit),
             "The flames burn the stone haunt.",
         ),
         (
-            say(End::Trap("flames"), End::You, &flames, hit),
+            say(trap("flames"), you(), &flames, hit),
             "The flames burn you.",
         ),
         (
-            say(End::Trap("flames"), haunt, &flames, Strike::Resisted),
+            say(trap("flames"), haunt(), &flames, Strike::Resisted),
             "The flames do the stone haunt no harm.",
         ),
         (
             say(
-                End::Trap("flames"),
-                haunt,
+                trap("flames"),
+                haunt(),
                 &flames,
                 Strike::Missed { by: None },
             ),
             "The flames miss the stone haunt.",
         ),
         (
-            say(End::Trap("soulglass"), haunt, &glass, hit),
+            say(trap("soulglass"), haunt(), &glass, hit),
             "The soulglass cuts the stone haunt.",
         ),
         (
-            say(End::You, haunt, &flames, hit),
+            say(you(), haunt(), &flames, hit),
             "You burn the stone haunt.",
         ),
     ] {
@@ -66,127 +67,137 @@ fn messages_say_what_came_of_an_attack_without_numbers() {
     let spear = Words::test("spear", "hits");
     let bite = Words::test("bite", "bites");
     let shell = Guard {
-        hide: Some("shell"),
-        soak: Some("shell"),
+        hide: Some(word("shell")),
+        soak: Some(word("shell")),
     };
-    let say = |a, t, words: &Words, strike| {
-        attack_message(a, t, words, AttackKind::Melee, Some(strike), shell).unwrap_or_default()
+    let say = |a: End, t: End, words: &Words, strike| {
+        text(attack_message(
+            &a,
+            &t,
+            words,
+            AttackKind::Melee,
+            Some(strike),
+            &shell,
+        ))
     };
     let mail = Guard {
         hide: None,
-        soak: Some("chain mail shirt"),
+        soak: Some(word("chain mail shirt")),
     };
-    let soaked = |a, t, words: &Words| {
-        attack_message(a, t, words, AttackKind::Melee, Some(Strike::Soaked), mail)
-            .unwrap_or_default()
+    let soaked = |a: End, t: End, words: &Words| {
+        text(attack_message(
+            &a,
+            &t,
+            words,
+            AttackKind::Melee,
+            Some(Strike::Soaked),
+            &mail,
+        ))
     };
-    let (kobold, rat, beetle) = (
-        End::Seen("kobold"),
-        End::Seen("giant rat"),
-        End::Seen("cave beetle"),
-    );
+    let kobold = || seen("kobold");
+    let rat = || seen("giant rat");
+    let beetle = || seen("cave beetle");
     let hit = Strike::Hit { critical: false };
     let crit = Strike::Hit { critical: true };
     let by = |c| Strike::Missed { by: Some(c) };
     for (text, expected) in [
-        (say(kobold, End::You, &spear, hit), "The kobold hits you."),
+        (say(kobold(), you(), &spear, hit), "The kobold hits you."),
         (
-            say(kobold, End::You, &spear, crit),
+            say(kobold(), you(), &spear, crit),
             "The kobold hits you hard!",
         ),
         (
-            say(rat, kobold, &bite, hit),
+            say(rat(), kobold(), &bite, hit),
             "The giant rat bites the kobold.",
         ),
         (
-            say(End::You, rat, &spear, crit),
+            say(you(), rat(), &spear, crit),
             "You hit the giant rat hard!",
         ),
         (
-            say(kobold, End::You, &spear, Strike::Missed { by: None }),
+            say(kobold(), you(), &spear, Strike::Missed { by: None }),
             "The kobold misses you.",
         ),
         (
-            say(kobold, End::You, &spear, by(Category::Dexterity)),
+            say(kobold(), you(), &spear, by(Category::Dexterity)),
             "You dodge the kobold's spear.",
         ),
         (
-            say(kobold, End::You, &spear, by(Category::Armour)),
+            say(kobold(), you(), &spear, by(Category::Armour)),
             "The kobold's spear glances off your armour.",
         ),
         (
-            say(kobold, End::You, &spear, by(Category::Shield)),
+            say(kobold(), you(), &spear, by(Category::Shield)),
             "You block the kobold's spear with your shield.",
         ),
         (
-            say(kobold, End::You, &spear, by(Category::Parry)),
+            say(kobold(), you(), &spear, by(Category::Parry)),
             "You parry the kobold's spear.",
         ),
         (
-            say(End::You, beetle, &spear, by(Category::Natural)),
+            say(you(), beetle(), &spear, by(Category::Natural)),
             "Your spear glances off the cave beetle's shell.",
         ),
         (
-            say(rat, kobold, &bite, by(Category::Shield)),
+            say(rat(), kobold(), &bite, by(Category::Shield)),
             "The kobold blocks the giant rat's bite with its shield.",
         ),
         (
-            say(End::You, rat, &spear, by(Category::Dodge)),
+            say(you(), rat(), &spear, by(Category::Dodge)),
             "The giant rat dodges your spear.",
         ),
         (
-            say(kobold, rat, &spear, by(Category::Deflection)),
+            say(kobold(), rat(), &spear, by(Category::Deflection)),
             "The kobold's spear turns aside before it reaches the giant rat.",
         ),
         // Why it missed needs both ends seen.
         (
-            say(End::Unseen, End::You, &spear, by(Category::Armour)),
+            say(End::Unseen, you(), &spear, by(Category::Armour)),
             "Something misses you.",
         ),
         (
-            say(End::You, End::Unseen, &spear, by(Category::Natural)),
+            say(you(), End::Unseen, &spear, by(Category::Natural)),
             "You miss something.",
         ),
         (
-            say(End::Unseen, rat, &bite, hit),
+            say(End::Unseen, rat(), &bite, hit),
             "Something bites the giant rat.",
         ),
         (
-            say(kobold, End::Unseen, &spear, crit),
+            say(kobold(), End::Unseen, &spear, crit),
             "The kobold hits something hard!",
         ),
         // A hit Protection soaked to nothing glances off the hide, or the armour worn that
         // soaks the most; what it glanced off needs both ends seen.
         (
-            say(End::You, beetle, &spear, Strike::Soaked),
+            say(you(), beetle(), &spear, Strike::Soaked),
             "Your spear glances off the cave beetle's shell.",
         ),
         (
-            soaked(kobold, End::You, &spear),
+            soaked(kobold(), you(), &spear),
             "The kobold's spear glances off your chain mail shirt.",
         ),
         (
-            soaked(rat, kobold, &bite),
+            soaked(rat(), kobold(), &bite),
             "The giant rat's bite glances off the kobold's chain mail shirt.",
         ),
         (
-            soaked(End::Unseen, End::You, &spear),
+            soaked(End::Unseen, you(), &spear),
             "Something hits you but does no harm.",
         ),
         (
-            soaked(End::You, End::Unseen, &spear),
+            soaked(you(), End::Unseen, &spear),
             "You hit something but do no harm.",
         ),
         (
-            attack_message(
-                End::Trap("arrow"),
-                End::You,
+            text(attack_message(
+                &trap("arrow"),
+                &you(),
                 &Words::test("arrow", "hits"),
                 AttackKind::Melee,
                 Some(Strike::Soaked),
-                mail,
-            )
-            .unwrap_or_default(),
+                &mail,
+            )),
             "The arrow glances off your chain mail shirt.",
         ),
     ] {
@@ -194,48 +205,76 @@ fn messages_say_what_came_of_an_attack_without_numbers() {
     }
     // Shots, and intents (a spell; a shot with no missile weapon).
     let arrow = Words::test("arrow", "shoots");
-    let archer = End::Seen("kobold archer");
-    let shot =
-        |a, t, strike| attack_message(a, t, &arrow, AttackKind::Ranged, strike, Guard::default());
+    let archer = || seen("kobold archer");
+    let shot = |a: End, t: End, strike| {
+        let guard = Guard::default();
+        text(attack_message(
+            &a,
+            &t,
+            &arrow,
+            AttackKind::Ranged,
+            strike,
+            &guard,
+        ))
+    };
     assert_eq!(
-        shot(archer, rat, Some(hit)).as_deref(),
-        Some("The kobold archer shoots the giant rat.")
+        shot(archer(), rat(), Some(hit)),
+        "The kobold archer shoots the giant rat."
     );
     assert_eq!(
-        shot(archer, End::You, Some(by(Category::Dexterity))).as_deref(),
-        Some("You dodge the kobold archer's arrow.")
+        shot(archer(), you(), Some(by(Category::Dexterity))),
+        "You dodge the kobold archer's arrow."
     );
     assert_eq!(
-        shot(archer, End::You, None).as_deref(),
-        Some("The kobold archer shoots at you.")
+        shot(archer(), you(), None),
+        "The kobold archer shoots at you."
     );
     let spell = Words::test("spell", "casts a spell at");
     assert_eq!(
-        attack_message(
-            End::Seen("kobold shaman"),
-            rat,
+        text(attack_message(
+            &seen("kobold shaman"),
+            &rat(),
             &spell,
             AttackKind::Spell,
             None,
-            Guard::default()
-        )
-        .as_deref(),
-        Some("The kobold shaman casts a spell at the giant rat.")
+            &Guard::default()
+        )),
+        "The kobold shaman casts a spell at the giant rat."
     );
     // The player sees neither end of it, and was not its target: nothing.
     assert_eq!(
         attack_message(
-            End::Unseen,
-            End::Unseen,
+            &End::Unseen,
+            &End::Unseen,
             &spear,
             AttackKind::Melee,
             Some(hit),
-            Guard::default()
+            &Guard::default()
         ),
         None
     );
-    assert_eq!(death_message(rat, "dies"), "The giant rat dies.");
-    assert_eq!(death_message(End::You, ""), "You die...");
+    assert_eq!(
+        text(Some(death_message(&rat(), "dies"))),
+        "The giant rat dies."
+    );
+    assert_eq!(text(Some(death_message(&you(), ""))), "You die...");
+}
+
+fn you() -> End {
+    End::You(Phrase::literal("Hild").person(Person::You))
+}
+
+fn seen(name: &str) -> End {
+    End::Seen(word(name))
+}
+
+fn trap(name: &str) -> End {
+    End::Trap(word(name))
+}
+
+/// A message in English, or nothing.
+fn text(msg: Option<Msg>) -> String {
+    msg.map(|m| english_of(&builtin(), &m)).unwrap_or_default()
 }
 
 const TERRAIN: &str = r##"

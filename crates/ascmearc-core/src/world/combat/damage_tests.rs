@@ -587,7 +587,9 @@ fn the_plunge_is_cold_and_the_words_say_what_a_creature_did() {
     }
     assert!(chilled);
     let reports = w.perceive_events(&mut events);
-    let texts: Vec<&str> = reports.iter().map(|(t, _)| t.as_str()).collect();
+    let texts: Vec<String> = (reports.iter())
+        .map(|(m, _)| crate::test_support::english_of(w.content(), m))
+        .collect();
     assert!(
         texts.iter().all(|t| {
             t.starts_with("The frostling chills you")

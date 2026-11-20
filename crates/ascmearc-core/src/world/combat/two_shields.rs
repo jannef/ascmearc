@@ -36,6 +36,7 @@ pub struct ShieldBanes {
 }
 
 /// What the player hears when their shields spoil a spell.
+#[cfg(test)]
 pub(super) const FUMBLED: &str =
     "Your shields get in the way, and the spell slips from your grasp.";
 
@@ -114,7 +115,7 @@ impl World {
             return false;
         }
         self.spend_mana(player, mana);
-        self.say(FUMBLED);
+        self.say(crate::msg::combat::SHIELDS_FUMBLE);
         true
     }
 

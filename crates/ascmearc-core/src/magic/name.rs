@@ -1,4 +1,4 @@
-//! What magic items are called:
+//! What magic items are called, as a phrase (`docs/design/localization.md` §8; English renders it):
 //!
 //! - normal: "a long sword";
 //! - magic: its prefix and suffix around the base name, "a Sharp long sword of the Bear";
@@ -7,7 +7,7 @@
 //! - cursed, once the player knows it (#1754): "cursed" after it, "a long sword (magic,
 //!   cursed)", "a Leaden long sword (cursed)".
 //!
-//! The base is the item as it is made (`Stack::names`): its gems and precious metals show,
+//! The base is the item as it is made (`Stack::made_phrase`): its gems and precious metals show,
 //! identified or not, between the prefix and the base ("a Sharp emerald-pommelled long sword of
 //! the Bear"); a rare item keeps its two-word name ("Grim Bite, an emerald-pommelled long
 //! sword").
@@ -17,88 +17,68 @@
 //! sword (magic)", "Grim Bite, a Masterwork long sword".
 
 use super::{AffixKind, Magic, Rarity};
-use crate::content::{Content, counted, is_proper};
-use crate::text::article;
+use crate::content::Content;
+use crate::lang::{Modifier, Note, Phrase, Word};
 
-/// `count` of an item called `names` (singular and plural, as it is made) with `magic` in
-/// words, as the player knows it: with `known` false (not identified) only its rarity shows;
-/// `word` is what an anvil's work calls it; `cursed` marks a curse the player knows of.
-pub(crate) fn describe(
-    names: &(String, String),
+/// `count` of an item made as `made` (its phrase as made, [`crate::object::Stack::made_phrase`])
+/// with `magic`, as the player knows it: with `known` false (not identified) only its rarity
+/// shows; `word` is what an anvil's work calls it; `cursed` marks a curse the player knows of.
+pub(crate) fn phrase(
+    made: Phrase,
     word: Option<&str>,
     count: u32,
     magic: Option<&Magic>,
     (known, cursed): (bool, bool),
     content: &Content,
-) -> String {
-    // A proper name ("Gnægan the Rat King's corpse") takes no article.
-    let base = match count == 1 && is_proper(&names.0) {
-        true => ahead(word, &names.0),
-        false => counted(&ahead(word, &names.0), &ahead(word, &names.1), count),
-    };
+) -> Phrase {
     let Some(magic) = magic else {
-        return base;
+        return ahead(word, made).count(count);
     };
     if !known {
-        let curse = if cursed { ", cursed" } else { "" };
-        return format!("{base} ({}{curse})", magic.rarity.word());
+        let mut tags = vec![magic.rarity.word().to_string()];
+        tags.extend(cursed.then(|| "cursed".to_string()));
+        return ahead(word, made).count(count).with_note(Note::Tags(tags));
     }
     let named = match (magic.rarity, &magic.name) {
-        (Rarity::Rare, Some(name)) => format!("{name}, {base}"),
-        _ => {
-            let name = ahead(word, &magic_name(names, count, magic, content));
-            if count == 1 {
-                format!("{} {name}", article(&name))
-            } else {
-                format!("{count} {name}")
-            }
+        (Rarity::Rare, Some(name)) => {
+            let base = ahead(word, made).count(count);
+            Phrase::literal(name).with_note(Note::Base(Box::new(base)))
         }
+        _ => ahead(word, affixed(made, magic, content)).count(count),
     };
     match cursed {
-        true => format!("{named} (cursed)"),
+        true => named.note("cursed"),
         false => named,
     }
 }
 
-/// What it is called without an article or count, as the player knows it: "Sharp long sword of
-/// the Bear", "Grim Bite", "long sword", "Fine long sword".
-pub(crate) fn title(
-    names: &(String, String),
-    word: Option<&str>,
-    magic: Option<&Magic>,
-    known: bool,
-    content: &Content,
-) -> String {
-    match magic {
-        Some(magic) if known => match &magic.name {
-            Some(name) => name.clone(),
-            None => ahead(word, &magic_name(names, 1, magic, content)),
-        },
-        _ => ahead(word, &names.0),
-    }
-}
-
-/// `name` with what an anvil's work calls it ahead of it.
-pub(crate) fn ahead(word: Option<&str>, name: &str) -> String {
+/// `phrase` with what an anvil's work calls it ahead of the rest.
+pub(crate) fn ahead(word: Option<&str>, phrase: Phrase) -> Phrase {
     match word {
-        Some(word) => format!("{word} {name}"),
-        None => name.to_string(),
+        Some(word) => {
+            let mut phrase = phrase;
+            let worked = Modifier::Adjective(Word::id(format!("word:{word}")));
+            phrase.mods.insert(0, worked);
+            phrase
+        }
+        None => phrase,
     }
 }
 
-/// A magic item's prefix and suffix around its base name (plural for several).
-fn magic_name(names: &(String, String), count: u32, magic: &Magic, content: &Content) -> String {
-    let base = if count == 1 { &names.0 } else { &names.1 };
+/// A magic item's prefix before its name as made (after an anvil's word) and its suffix after.
+fn affixed(base: Phrase, magic: &Magic, content: &Content) -> Phrase {
     let rolled = magic.rolled(content);
-    let named = |kind: AffixKind| {
+    let affix = |kind: AffixKind| {
         (rolled.iter())
             .find(|r| r.def.kind == kind)
-            .map(|r| r.def.name.as_str())
+            .map(|r| Word::id(format!("affix:{}", r.def.id)))
     };
-    match (named(AffixKind::Prefix), named(AffixKind::Suffix)) {
-        (Some(p), Some(s)) => format!("{p} {base} {s}"),
-        (Some(p), None) => format!("{p} {base}"),
-        (None, Some(s)) => format!("{base} {s}"),
-        (None, None) => base.clone(),
+    let mut phrase = base;
+    if let Some(prefix) = affix(AffixKind::Prefix) {
+        phrase.mods.insert(0, Modifier::Adjective(prefix));
     }
+    if let Some(suffix) = affix(AffixKind::Suffix) {
+        phrase.mods.push(Modifier::Of(suffix));
+    }
+    phrase
 }

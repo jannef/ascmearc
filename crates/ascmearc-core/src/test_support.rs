@@ -53,6 +53,11 @@ pub(crate) fn said(world: &World) -> Vec<String> {
 }
 
 /// Messages not logged yet (the news, the notes: `World::news`) in English, keys left written.
+/// One message, not logged, in English with the keys written.
+pub(crate) fn english_of(content: &Content, msg: &Msg) -> String {
+    english(content, &Entry::new(0, msg.clone()), &written_key)
+}
+
 pub(crate) fn spoken(world: &World, msgs: &[Msg]) -> Vec<String> {
     (msgs.iter())
         .map(|msg| english(world.content(), &Entry::new(0, msg.clone()), &written_key))

@@ -9,6 +9,7 @@ pub(in crate::world) mod hash;
 mod hearing;
 pub(in crate::world) mod level;
 mod perceive;
+pub(in crate::world) mod phrase;
 pub(in crate::world) mod rest;
 mod run;
 mod run_stairs;
