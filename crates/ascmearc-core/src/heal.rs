@@ -50,13 +50,13 @@ impl Ailment {
     }
 
     /// How `actor` knows it, for a choice of what to treat: the status's name ("Bleeding"), the
-    /// disease's once they know which it is, said `{disease:The}` ("The filth fever", "The
-    /// shakes"), else "Sickness".
+    /// disease's once they know which it is, said `{disease:Bare}`, as written ("Filth fever",
+    /// "The shakes"), else "Sickness".
     pub fn name(self, content: &Content, actor: &Actor) -> String {
         match self {
             Ailment::Status(s) => content.status(s).name.clone(),
             Ailment::Disease(d) if knows(actor, d) => {
-                content.english_of(&phrase(content, d), "The")
+                content.english_of(&phrase(content, d), "Bare")
             }
             Ailment::Disease(_) => capitalized("sickness"),
         }

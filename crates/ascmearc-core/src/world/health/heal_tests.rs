@@ -372,6 +372,20 @@ fn a_disease_named_with_its_own_article_is_not_given_another() {
 }
 
 #[test]
+fn the_treat_menu_names_a_known_disease_as_written() {
+    // As main: "Filth fever", "The shakes" (`{disease:Bare}`), never "The filth fever".
+    for (id, name) in [("filth_fever", "Filth fever"), ("the_shakes", "The shakes")] {
+        let mut w = World::new(content(false), "room", Some(1)).expect("world");
+        train(&mut w, 0);
+        let d = sicken(&mut w, id);
+        let player = w.state.player;
+        let actor = w.state.actors.get_mut(&player).expect("player");
+        actor.diseases.get_mut(d).expect("caught").progressions = 1;
+        assert_eq!(w.perception().own_ailments()[0].name, name);
+    }
+}
+
+#[test]
 fn one_template_names_a_disease_with_or_without_its_own_article_and_agrees_with_it() {
     // A template's `{disease:The} {disease:is}`, through the shipped English and the data's
     // names: "the shakes" keeps its article and is plural, "mummy rot" takes the template's.

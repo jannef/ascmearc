@@ -357,7 +357,7 @@ What combat leaves as literal lines, for their own slices: a rank risen and what
 of data"): a status's start, end, ward, and stage lines, a disease's recovery line, a corpse's
 `on_eat` message, a treatment's made and failed lines, a skill gift's lines, and a flask's
 `words`; `Hunger::news` is message ids. The disease in a sentence is a phrase owned by its
-sufferer (`{disease:the}`: "the sickness", "the shakes", "your wolf's sickness"; `heal::phrase`: the data writes a disease's name as it is said, with its own article if it has one, and the character screen and the treat menu say it `{disease:The}`), the pipe's race `race:<id>`
+sufferer (`{disease:the}`: "the sickness", "the shakes", "your wolf's sickness"; `heal::phrase`: the data writes a disease's name as it is said, with its own article if it has one, and the character screen and the treat menu say it as written, `{disease:Bare}`: "Filth fever", "The shakes"), the pipe's race `race:<id>`
 (`{smoker:a}`). Text from another module's helper (`came_line`) goes in as a text role. A stat's
 words ("strength", the comparative "stronger") are text roles (`what`, `feel`, `more`) until
 core's words are converted (#1949). Someone a line names is `called_phrase` (what `called` says: a
