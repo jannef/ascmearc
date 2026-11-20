@@ -101,13 +101,6 @@ impl World {
         Msg::new(id).role("who", crate::world::combat::fight::creature(creature))
     }
 
-    /// [`World::came_msg`] in English, for the lines not yet converted that write it into their
-    /// text (`docs/dev/localization.md` "Literal lines").
-    pub(in crate::world) fn came_line(&self, came: Came) -> String {
-        let entry = crate::lang::Entry::new(0, self.came_msg(came));
-        crate::messages::english(&self.content, &entry, &crate::lang::written_key)
-    }
-
     /// Passes turn after turn of a long action (a rest, digging) through the normal pipeline
     /// while `more` says there is more to do: the player does `act` (which returns what it
     /// costs), the others act, perception. It stops after a turn in which a creature hostile to

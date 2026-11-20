@@ -189,8 +189,9 @@ impl World {
                     }
                 }
                 Unavailable::Still => msg::classes::MIND_ALREADY_STILL.into(),
-                other => Msg::new(msg::classes::CANNOT_REASON)
-                    .role("reason", other.reason(&content).into_owned()),
+                other => {
+                    Msg::new(msg::classes::CANNOT_REASON).role("reason", other.reason(&content))
+                }
             });
             return false;
         }

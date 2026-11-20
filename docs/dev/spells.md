@@ -531,7 +531,7 @@ cast path shares.
   dump `spells` layer's `Fireball (level 11, 26 mana): 4d6 fire, range 11, radius 2`; a test
   holds it to `Actor::spell_roll`), and `own_spell_reroll(spell)` (Sure hand's faces, the
   description's "Your 1s are rolled again."). `spell_words.rs` also says a reach
-  (`reach_words`: `range 11`, `length 3`, `radius 2`) and a reroll (`reroll_words`) for the
+  (`reach_words`, a message: `range 11`, `length 3`, `radius 2`, listed with commas) and a reroll (`reroll_words`) for the
   menu, the wand's description, and the dump. The character screen does not show spells (its
   attacks column holds three).
 - **UI**: the abilities menu's **Spells** group (`Source::Spell`) with the roll now, its type,

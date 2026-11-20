@@ -153,7 +153,10 @@ fn only_those_trained_in_heal_may_treat_and_only_with_something_to_treat() {
         "trained, nothing to treat: greyed out"
     );
     assert_eq!(
-        Unavailable::NothingToTreat.reason(w.content()),
+        crate::test_support::english_of(
+            w.content(),
+            &Unavailable::NothingToTreat.reason(w.content())
+        ),
         "nothing to treat"
     );
     for (action, said) in [

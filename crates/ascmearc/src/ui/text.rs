@@ -101,10 +101,16 @@ pub fn ui(text: UiText) -> String {
 /// `{cost:bare}`. A key the text names (`{key:help}`) shows as the command's id: a screen that
 /// names a key passes it as text, as it is bound.
 pub fn ui_with(text: UiText, args: &[(&'static str, Arg)]) -> String {
-    let content = content();
     let msg = (args.iter()).fold(Msg::new(MessageId::new(text.id)), |msg, (role, arg)| {
         msg.role(*role, arg.clone())
     });
+    ui_msg(msg)
+}
+
+/// A message core made (why an ability cannot be used now, `Unavailable::reason`) in the current
+/// language, as [`ui_with`] renders its own.
+pub fn ui_msg(msg: Msg) -> String {
+    let content = content();
     let entry = Entry::new(0, msg);
     #[cfg(test)]
     if let Some(shown) = SHOWN_IN.with(|l| l.borrow().clone()) {

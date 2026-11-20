@@ -369,9 +369,8 @@ impl World {
         };
         let def = content.talents().get(talent);
         let name = def.name_for(&content, choice);
-        // The refusal's words are `talent.rs`'s, finished English until they are converted.
         if let Err(why) = talent::may_take(&content, &self.candidate(), def, choice) {
-            return Err(Msg::literal(why.words(&content, &name)));
+            return Err(why.words(&content, &name));
         }
         // Its hit points by level come now (each later level grows them), and its gifts.
         let level = self.player_level();

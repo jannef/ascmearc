@@ -10,7 +10,7 @@ pub(super) fn ability_rows(view: &PerceptionView<'_>) -> Vec<String> {
         .map(|own| {
             let a = own.ability;
             let state = match own.unavailable {
-                Some(why) => why.reason(content),
+                Some(why) => crate::messages::english_msg(content, &why.reason(content)),
                 None => aim_word(a.aim(content)).into(),
             };
             let source = own.source.id().replace('_', " ");

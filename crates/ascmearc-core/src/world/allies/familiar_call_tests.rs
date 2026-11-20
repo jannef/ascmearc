@@ -147,7 +147,10 @@ fn it_is_refused_with_no_time_while_her_familiar_lives() {
     assert!(kept.is_some());
     assert_eq!(reason(&w), Some(Unavailable::FamiliarLives));
     assert_eq!(
-        Unavailable::FamiliarLives.reason(w.content()),
+        crate::test_support::english_of(
+            w.content(),
+            &Unavailable::FamiliarLives.reason(w.content())
+        ),
         "your familiar lives"
     );
     run(&mut w, "use:call_familiar");
@@ -163,7 +166,7 @@ fn it_is_refused_with_a_hostile_in_sight() {
     let time = w.state.time;
     assert_eq!(reason(&w), Some(Unavailable::Watched));
     assert_eq!(
-        Unavailable::Watched.reason(w.content()),
+        crate::test_support::english_of(w.content(), &Unavailable::Watched.reason(w.content())),
         "something is watching"
     );
     run(&mut w, "use:call_familiar");

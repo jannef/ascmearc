@@ -139,9 +139,7 @@ impl World {
             return Spent::Nothing;
         };
         if let Some(why) = Ability::Weapon(skill, id).unavailable(me, &content) {
-            self.say(
-                Msg::new(msg::combat::REASON).role("reason", why.reason(&content).into_owned()),
-            );
+            self.say(Msg::new(msg::combat::REASON).role("reason", why.reason(&content)));
             return Spent::Nothing;
         }
         let effect = def.effect;

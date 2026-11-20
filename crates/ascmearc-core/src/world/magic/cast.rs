@@ -185,8 +185,7 @@ impl World {
             self.say(match why {
                 Unavailable::While(status) => Msg::new(msg::magic::CANNOT_CAST_WHILE)
                     .role("status", content.status_phrase(status)),
-                other => Msg::new(msg::magic::CANNOT_REASON)
-                    .role("reason", other.reason(&content).into_owned()),
+                other => Msg::new(msg::magic::CANNOT_REASON).role("reason", other.reason(&content)),
             });
             return Spent::Nothing;
         }

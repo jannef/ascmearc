@@ -8,10 +8,11 @@
 #
 # Roles: `who` is the creature a line is about, as the player calls it ("the kobold", "Snel");
 # `what` an item (a phrase built where it is said); `status` a status as it looks ("dazed");
-# `id`, `kind`, `usage`, `x`, `y` a dev action's words and numbers as typed. `reason` and `stat`
-# are core's English words, text until they are converted; so are `spell` and `spells`, a
-# spell's name as the data writes it ("Frost"), and `came`, the clause another module writes
-# when something stops a long action ("A kobold comes into view").
+# `id`, `kind`, `usage`, `x`, `y` a dev action's words and numbers as typed. `reason` is why an
+# ability cannot be used, a message of its own (`messages/ability.toml`), and `came` the clause
+# that says what stopped a long action ("A kobold comes into view", `turn.comes_into_view`).
+# `stat` is core's English word, text until it is converted; so are `spell` and `spells`, a
+# spell's name as the data writes it ("Frost").
 
 # `what`: the item, one of the stack.
 already_know = "You already know what {what:a} is."
@@ -120,7 +121,15 @@ pit_refused_ground_seen = "The ground heaves beside {who:the}, and a gate tears 
 pit_refused_in_pit = "The floor here is the Pit's already: a gate tears open beside you instead!"
 pit_refused_in_pit_seen = "The floor heaves beside {who:the}, and a gate tears open!"
 pore_over_writing = "You pore over the writing."
-# `came`: what came, as a line told it.
+# A spell's reach now, a part of it (`spell_words.rs::reach_words`): `n`, the cells (a jump's
+# count for `reach_jumps`). The abilities menu and the `spells` dump say them after its description.
+reach_jumps = "jumps {n:bare}"
+reach_length = "length {n:bare}"
+# The parts listed: `first`, a part; `rest`, the others (this entry again, or the last part).
+reach_listed = "{first:bare}, {rest:bare}"
+reach_radius = "radius {n:bare}"
+reach_range = "range {n:bare}"
+# `came`: what came, a message of its own (`turn.comes_into_view`, `turn.comes_close`).
 read_broken_by = "{came:bare}; you stop reading."
 read_it_at_what = "Read it at what? Name a cell to aim at: `read:a:12,5`."
 read_it_on_what = "Read it on what? Name a stack you carry: `read:a:b`."
@@ -150,7 +159,7 @@ words_add_nothing = "The words add nothing new."
 words_settle_deeper = "The words settle deeper: you know {spell:bare} at rank {rank:bare} of {most:bare}."
 words_twist_away = "The words twist away from you."
 wounds_close = "Your wounds close."
-# `came`: what came, as a line told it.
+# `came`: what came, a message of its own (`turn.comes_into_view`, `turn.comes_close`).
 write_broken_by = "{came:bare}; you stop writing."
 # Scroll savant keeps a scroll read.
 writing_does_not_fade = "The writing does not fade from the scroll."

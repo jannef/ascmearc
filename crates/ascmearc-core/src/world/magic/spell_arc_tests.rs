@@ -318,9 +318,10 @@ fn chain_lightnings_jumps_grow_by_its_ladder_and_are_shown_as_reach() {
     }
     let view = w.perception();
     let reach: Reach = view.own_spell_reach(chain).expect("known");
+    let words = crate::world::reach_words(def.shape, reach).expect("a reach");
     assert_eq!(
-        crate::world::reach_words(def.shape, reach),
-        ["range 10", "jumps 6"]
+        crate::test_support::english_of(&w.content, &words),
+        "range 10, jumps 6"
     );
     let text = view.own_spell_roll(chain).expect("a roll").text;
     assert!(text.ends_with("electricity, may arc, conducts"), "{text}");
