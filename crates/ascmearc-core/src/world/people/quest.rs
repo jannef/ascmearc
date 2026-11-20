@@ -40,6 +40,7 @@ use crate::object::{self, Stack};
 use crate::perception::PerceptionView;
 use crate::rng::Rng;
 use crate::talent::TalentMods;
+use crate::world::items::stacks_arg;
 use crate::world::{ActorId, Deed, Speech, Spent, TopicView, World};
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
@@ -958,7 +959,7 @@ impl World {
         let who = self.called_phrase(&self.state.actors[&id]);
         if let Some((object, count)) = def.hand_in() {
             let handed = self.take_from_pack(object, count);
-            let what = crate::world::items::stacks_arg(&handed, self.lore());
+            let what = stacks_arg(&handed, self.lore());
             self.say(
                 Msg::new(msg::people::GIVE_QUEST_ITEMS)
                     .role("who", who.clone())
@@ -998,7 +999,7 @@ impl World {
             self.say(
                 Msg::new(msg::people::GIVES_YOU)
                     .role("who", who.clone())
-                    .role("what", crate::world::items::stacks_arg(&stacks, self.lore())),
+                    .role("what", stacks_arg(&stacks, self.lore())),
             );
             self.give_player(&stacks);
         }

@@ -150,9 +150,7 @@ impl World {
         self.state.levels.get_mut(&dead.level)?.risings.push(rising);
         let seen =
             dead.level == self.state.current_level && self.perception.sees_actors_at(dead.pos);
-        seen.then(|| {
-            Msg::new(msg::fixtures::CORPSE_TWITCHES).role("dead", fight::creature(def))
-        })
+        seen.then(|| Msg::new(msg::fixtures::CORPSE_TWITCHES).role("dead", fight::creature(def)))
     }
 
     /// The end of a turn: every rising due on the current level rises, in the order they died.

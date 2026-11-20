@@ -44,6 +44,7 @@ use crate::msg;
 use crate::object::{self, Stack};
 use crate::skills::{Effect, Use};
 use crate::stats::Stat;
+use crate::world::items::stacks_arg;
 use crate::world::{ActorId, Deed, Spent, World};
 use serde::{Deserialize, Serialize};
 
@@ -534,11 +535,11 @@ impl World {
         let shop = self.state.current().shops[i].clone();
         let deal = self.deal(&shop, &inventory, &chosen, sell);
         let name = Phrase::literal(&shop.name);
-        let sold = crate::world::items::stacks_arg(&deal.sold, self.lore());
+        let sold = stacks_arg(&deal.sold, self.lore());
         let about = |id, stacks: &[Stack], world: &World| {
             Msg::new(id)
                 .role("who", name.clone())
-                .role("what", crate::world::items::stacks_arg(stacks, world.lore()))
+                .role("what", stacks_arg(stacks, world.lore()))
         };
         if !deal.refused.is_empty() {
             self.say(about(msg::people::NO_USE_FOR, &deal.refused, self));
@@ -581,7 +582,7 @@ impl World {
             level.shops[i].put_back(stack);
         }
         if !deal.back.is_empty() {
-            let what = crate::world::items::stacks_arg(&deal.back, self.lore());
+            let what = stacks_arg(&deal.back, self.lore());
             self.say(Msg::new(msg::people::PUT_BACK).role("what", what));
         }
         if !deal.sold.is_empty() {
@@ -639,7 +640,7 @@ impl World {
         let purse = (self.state.actors.get(&shop.keeper))
             .map_or(0, |k| count_of(&k.inventory, shops.currency));
         if purse < deal.payment {
-            let what = crate::world::items::stacks_arg(&deal.sold, self.lore());
+            let what = stacks_arg(&deal.sold, self.lore());
             self.say(
                 Msg::new(msg::people::CANNOT_AFFORD)
                     .role("who", Phrase::literal(&shop.name))
