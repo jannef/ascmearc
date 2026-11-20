@@ -14,6 +14,8 @@ use crate::action::Event;
 use crate::burden::Burden;
 use crate::content::{Content, StairsDir};
 use crate::geom::{Dir, Pos};
+use crate::lang::{Msg, Phrase};
+use crate::msg;
 use crate::rng::draw;
 use crate::world::combat::fight::Harm;
 use crate::world::{LevelState, World};
@@ -62,7 +64,7 @@ impl World {
         }
         let pick = rng.below(u32::try_from(cells.len()).unwrap_or(u32::MAX));
         let to = cells[pick as usize];
-        self.say("The floor gives way beneath you!");
+        self.say(msg::fixtures::FLOOR_GIVES_WAY);
         if self.travel(&below, Some(to)).is_err() {
             return false;
         }
@@ -70,8 +72,8 @@ impl World {
             from,
             to: below.clone(),
         });
-        let name = self.state.current().name.clone();
-        self.say(format!("You fall to {name}."));
+        let place = Phrase::literal(self.state.current().name.clone());
+        self.say(Msg::new(msg::fixtures::FALL_TO).role("place", place));
         let id = self.state.player;
         let damage = collapse.damage.roll(&mut rng).max(0);
         if self.hurt(id, damage, Harm::Fall, events) {

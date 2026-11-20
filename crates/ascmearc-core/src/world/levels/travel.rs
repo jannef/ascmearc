@@ -567,7 +567,7 @@ impl World {
 
 /// The first time the player is inside a special room: marks it
 /// entered and returns what they are told; from then on they know it (look mode names it).
-pub(in crate::world) fn enter_room(state: &mut WorldState, content: &Content) -> Option<String> {
+pub(in crate::world) fn enter_room(state: &mut WorldState, content: &Content) -> Option<Msg> {
     let here = state.player().pos;
     let room = (state.current_mut().rooms.iter_mut()).find(|r| r.contains(here))?;
     if room.entered {

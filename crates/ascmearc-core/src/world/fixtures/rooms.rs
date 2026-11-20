@@ -6,7 +6,8 @@
 //! Ebbing). The rules' one question is [`World::effects_at`].
 
 use crate::action::Event;
-use crate::content::{Content, StatusId};
+use crate::content::{Content, StatusId, data_line};
+use crate::lang::Msg;
 use crate::world::{Actor, ActorId, World, WorldState};
 
 impl World {
@@ -27,7 +28,10 @@ impl World {
             if room.entered || room.contains(here) {
                 continue;
             }
-            lines.extend(content.room_effect(room.effect).near.clone());
+            let effect = content.room_effect(room.effect);
+            if effect.near.is_some() {
+                lines.push(data_line::said(data_line::room_effect(effect, "near")));
+            }
         }
         for line in lines {
             self.say(line);
@@ -113,9 +117,7 @@ impl World {
 
 /// The line said as the player arrives on the current level when an effect covers it whole: its
 /// `pervade` line.
-pub(in crate::world) fn pervade_line(state: &WorldState, content: &Content) -> Option<String> {
-    content
-        .room_effect(state.current().pervading?)
-        .pervade
-        .clone()
+pub(in crate::world) fn pervade_line(state: &WorldState, content: &Content) -> Option<Msg> {
+    let effect = content.room_effect(state.current().pervading?);
+    (effect.pervade.as_ref()).map(|_| data_line::said(data_line::room_effect(effect, "pervade")))
 }

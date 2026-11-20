@@ -10,8 +10,10 @@
 //! inside a template of `messages/allies.toml`, which names the one it is about.
 
 use super::{Content, ContentError, StatusDef, TalentDef, TalentEffect, TalentId};
+use super::{OutcomeDef, RoomEffectDef};
 use crate::alignment::Band;
 use crate::lang::{Arg, Line, Msg, Template};
+use crate::talent::SlotEffect;
 use crate::talent::{MovementEffect, WarmthBand};
 
 /// The line of data at `key`, said alone and naming no one.
@@ -221,6 +223,7 @@ pub(super) fn add_all(content: &mut Content) -> Result<(), ContentError> {
         }
     }
     character_lines(content, &mut add);
+    fixture_lines(content, &mut add);
     for (id, level) in &content.levels {
         if let Some(line) = &level.arrival {
             add(level_arrival(id), line);
@@ -297,6 +300,75 @@ fn character_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
                         add(warmth(&def.id, n, slower), text);
                     }
                 }
+            }
+        }
+    }
+}
+
+// The fixtures' and the items' lines (L4h, #1919): outcomes, special rooms, and a barred slot.
+
+/// Line `n` of `outcome` (`data/outcomes/<table>.toml`'s `[[outcome]]` of its id): its
+/// `message` when it has one line, else its `messages[n]`.
+pub fn outcome_message(outcome: &OutcomeDef, n: usize) -> String {
+    let (table, id) = (&outcome.table, &outcome.id);
+    match outcome.messages.len() {
+        1 => format!("outcome:{table}.outcome.{id}.message"),
+        _ => format!("outcome:{table}.outcome.{id}.messages.{n}"),
+    }
+}
+
+/// `outcome`'s `otherwise` line.
+pub fn outcome_otherwise(outcome: &OutcomeDef) -> String {
+    format!("outcome:{}.outcome.{}.otherwise", outcome.table, outcome.id)
+}
+
+/// Room effect `def`'s line `field` (`enter`, `near`, `pervade`, `arrive`; a shrine's
+/// `shrine.welcome`, `shrine.unwelcome`).
+pub fn room_effect(def: &RoomEffectDef, field: &str) -> String {
+    format!("room_effect:{}.{field}", def.id)
+}
+
+/// What talent `talent` says when something is put on in slot `slot` it bars (the `refused`
+/// of its `bars_slot` effect for the slot).
+pub fn barred(talent: &str, slot: &str) -> String {
+    format!("talent:{talent}.effects.bars_slot.{slot}.refused")
+}
+
+/// The fixtures' and the items' lines: every outcome's, every room effect's, and every barred
+/// slot's.
+fn fixture_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
+    for table in content.outcomes().iter() {
+        for outcome in &table.outcomes {
+            for (n, line) in outcome.messages.iter().enumerate() {
+                add(outcome_message(outcome, n), line);
+            }
+            if let Some(line) = &outcome.otherwise {
+                add(outcome_otherwise(outcome), line);
+            }
+        }
+    }
+    for def in content.room_effects().defs() {
+        add(room_effect(def, "enter"), &def.enter);
+        let fields = [
+            ("near", &def.near),
+            ("pervade", &def.pervade),
+            ("arrive", &def.arrive),
+        ];
+        for (field, line) in fields {
+            if let Some(line) = line {
+                add(room_effect(def, field), line);
+            }
+        }
+        if let Some(shrine) = &def.shrine {
+            add(room_effect(def, "shrine.welcome"), &shrine.welcome);
+            add(room_effect(def, "shrine.unwelcome"), &shrine.unwelcome);
+        }
+    }
+    for (_, def) in content.talents().iter() {
+        let whiles = def.effects_while.iter().map(|(_, e)| e);
+        for effect in def.effects.iter().chain(whiles) {
+            if let TalentEffect::Slots(SlotEffect::BarsSlot { slot, refused, .. }) = effect {
+                add(barred(&def.id, slot), refused);
             }
         }
     }

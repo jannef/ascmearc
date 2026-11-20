@@ -4,11 +4,12 @@
 //! effect however many such rooms there are. Nothing is stored: `SpecialRoom::entered` is the
 //! record, so the line comes again on every return until the room is entered. No draw.
 
-use crate::content::{Content, RoomEffectId};
+use crate::content::{Content, RoomEffectId, data_line};
+use crate::lang::Msg;
 use crate::world::WorldState;
 
 /// The lines said as the player arrives on the current level (see the module docs).
-pub(in crate::world) fn arrive_lines(state: &WorldState, content: &Content) -> Vec<String> {
+pub(in crate::world) fn arrive_lines(state: &WorldState, content: &Content) -> Vec<Msg> {
     let here = state.player().pos;
     let mut effects: Vec<RoomEffectId> = Vec::new();
     for room in &state.current().rooms {
@@ -21,6 +22,11 @@ pub(in crate::world) fn arrive_lines(state: &WorldState, content: &Content) -> V
     }
     effects.sort();
     (effects.into_iter())
-        .filter_map(|effect| content.room_effect(effect).arrive.clone())
+        .map(|effect| {
+            data_line::said(data_line::room_effect(
+                content.room_effect(effect),
+                "arrive",
+            ))
+        })
         .collect()
 }

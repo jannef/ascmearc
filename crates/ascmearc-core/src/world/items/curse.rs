@@ -17,9 +17,12 @@
 //!   stay cursed: put on again, they bind again.
 
 use super::carry::split;
+use super::equip::take_off_line;
 use crate::action::Positions;
 use crate::content::SlotId;
-use crate::equipment::{self, verbs};
+use crate::equipment;
+use crate::lang::Msg;
+use crate::msg;
 use crate::object;
 use crate::world::{Spent, World};
 
@@ -41,8 +44,11 @@ impl World {
         let mut bound: Vec<usize> = items.into_iter().filter(|&i| self.bound(i)).collect();
         bound.dedup();
         for &item in &bound {
-            let title = self.lore().title(&self.state.player().inventory[item]);
-            self.say(format!("Your {title} will not come off."));
+            let what = (self
+                .lore()
+                .title_phrase(&self.state.player().inventory[item]))
+            .owned_by(self.you());
+            self.say(Msg::new(msg::items::WILL_NOT_COME_OFF).role("what", what));
         }
         !bound.is_empty()
     }
@@ -62,7 +68,7 @@ impl World {
             return;
         };
         if stack.show_curse(&content) && !quiet {
-            self.say("It is cursed! It will not come off.");
+            self.say(msg::items::IT_IS_CURSED);
         }
     }
 
@@ -76,7 +82,7 @@ impl World {
         };
         let me = self.state.player();
         let object = me.inventory[item].object;
-        let title = self.lore().title(&me.inventory[item]);
+        let title = self.lore().title_phrase(&me.inventory[item]);
         let taken: Vec<SlotId> = equipment::slots_taken(&content, object, main);
         let mut held: Vec<usize> = (taken.iter())
             .filter_map(|&s| me.equipment.get(s))
@@ -84,14 +90,19 @@ impl World {
         held.dedup();
         self.bind_if_cursed(item, true);
         if held.contains(&item) && self.bound(item) {
-            self.say(format!("The {title} will not leave your hand."));
+            self.say(Msg::new(msg::items::WILL_NOT_LEAVE_HAND).role("what", title));
             return Spent::Nothing;
         }
         if let Some(&other) = held.iter().find(|&&i| self.bound(i)) {
-            let other = self.lore().title(&self.state.player().inventory[other]);
-            self.say(format!(
-                "The {title} will not leave you, but your {other} holds your hand."
-            ));
+            let other = (self
+                .lore()
+                .title_phrase(&self.state.player().inventory[other]))
+            .owned_by(self.you());
+            self.say(
+                Msg::new(msg::items::HOLDS_YOUR_HAND)
+                    .role("what", title)
+                    .role("other", other),
+            );
             return Spent::Nothing;
         }
         // What held the hand goes back to the pack (it is there already); then the thing itself,
@@ -100,9 +111,8 @@ impl World {
             let action = content
                 .slot(self.state.player().equipment.slots_of(i)[0])
                 .action;
-            let (_, take_off) = verbs(action);
-            let what = self.lore().describe(&self.state.player().inventory[i]);
-            self.say(format!("You {take_off} {what}."));
+            let what = self.lore().phrase(&self.state.player().inventory[i]);
+            self.say(take_off_line(action, what));
         }
         let worn = &mut self.player_mut().equipment;
         for i in held {
@@ -110,9 +120,7 @@ impl World {
         }
         worn.take_off(item);
         worn.put(&taken, item);
-        self.say(format!(
-            "The {title} twists in your grip and will not leave your hand."
-        ));
+        self.say(Msg::new(msg::items::TWISTS_IN_GRIP).role("what", title));
         self.fade_spirit();
         Spent::Turn(price)
     }
@@ -141,10 +149,10 @@ impl World {
         }
         let inventory = me.inventory.clone();
         for i in bound.iter() {
-            let title = self.lore().title(&inventory[i]);
-            self.say(format!("The curse lets go of your {title}."));
+            let what = self.lore().title_phrase(&inventory[i]).owned_by(self.you());
+            self.say(Msg::new(msg::items::CURSE_LETS_GO).role("what", what));
         }
-        self.say("What it held falls at your feet.");
+        self.say(msg::items::FALLS_AT_FEET);
         let (released, kept) = split(&inventory, &bound);
         *self.state.inventory_mut() = kept;
         self.player_mut().equipment.after_removal(&bound);

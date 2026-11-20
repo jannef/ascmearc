@@ -45,13 +45,14 @@ use crate::content::StatUse;
 use crate::content::{ActionKind, Bolt, Effect, ObjectId, TrapEffect, TrapId};
 use crate::damage::Damage;
 use crate::geom::{Dir, Pos};
+use crate::lang::Msg;
+use crate::msg;
 use crate::object::Stack;
 use crate::perception::VIEW_RADIUS;
 use crate::rng::draw;
 use crate::skills::{Effect as SkillEffect, Use};
 use crate::stats::Stat;
 use crate::talent::TalentMods;
-use crate::text::article;
 use crate::world::combat::fight::Harm;
 use crate::world::magic::spell::Caster;
 use crate::world::{ActorId, World, fnv1a};
@@ -140,11 +141,8 @@ impl World {
         if light {
             self.know_trap(at);
             self.state.current_mut().trap_memory.insert(at, kind);
-            self.say(format!(
-                "You step lightly off {} {}.",
-                article(&def.name),
-                def.name
-            ));
+            let trap = crate::world::combat::fight::word(&def.name);
+            self.say(Msg::new(msg::fixtures::STEP_LIGHTLY_OFF).role("trap", trap));
         }
         light
     }

@@ -14,6 +14,8 @@
 
 use crate::content::ObjectId;
 use crate::equipment;
+use crate::lang::Msg;
+use crate::msg;
 use crate::world::World;
 
 impl World {
@@ -74,9 +76,9 @@ impl World {
             return false;
         };
         let taken = equipment::slots_taken(&content, stack.object, slot);
-        let what = self.lore().describe(stack);
+        let what = self.lore().phrase(stack);
         self.player_mut().equipment.put(&taken, item);
-        self.say(format!("You ready {what} in your quiver."));
+        self.say(Msg::new(msg::items::READY_IN_QUIVER).role("what", what));
         self.bind_if_cursed(item, false);
         true
     }

@@ -53,13 +53,14 @@ impl Shrine {
         }
     }
 
-    /// The line the first entry says to one it treats `regard`, `enter` the effect's own (the
-    /// neutral one's).
-    pub fn enter_line<'a>(&'a self, regard: Regard, enter: &'a str) -> &'a str {
+    /// The field of its room effect whose line the first entry says to one it treats `regard`
+    /// (`content/data_line.rs::room_effect`): `shrine.welcome`, `shrine.unwelcome`, or the
+    /// effect's own `enter` (the neutral one's).
+    pub fn enter_field(regard: Regard) -> &'static str {
         match regard {
-            Regard::Welcome => &self.welcome,
-            Regard::Unwelcome => &self.unwelcome,
-            Regard::Ignored => enter,
+            Regard::Welcome => "shrine.welcome",
+            Regard::Unwelcome => "shrine.unwelcome",
+            Regard::Ignored => "enter",
         }
     }
 

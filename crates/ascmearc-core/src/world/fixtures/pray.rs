@@ -25,6 +25,8 @@ use crate::action::Event;
 use crate::alignment::Alignment;
 use crate::content::{ActionKind, Offer};
 use crate::geom::{Dir, Pos};
+use crate::lang::Msg;
+use crate::msg;
 use crate::rng::draw;
 use crate::time::Duration;
 use crate::world::character::alignment::Deed;
@@ -61,7 +63,7 @@ impl World {
     /// The player begins to pray at the altar beside them; refused, taking no time, with none.
     pub(in crate::world) fn start_prayer(&mut self) -> Spent {
         let Some(altar) = self.altar_beside() else {
-            self.say("There is no altar here to pray at.");
+            self.say(msg::fixtures::NO_ALTAR);
             return Spent::Nothing;
         };
         let terrain = self.state.current().terrain_at(altar);
@@ -69,7 +71,7 @@ impl World {
             return Spent::Nothing;
         };
         let seconds = table.seconds;
-        self.say("You kneel before the altar and pray.");
+        self.say(msg::fixtures::PRAY);
         Spent::Pray(Prayer { altar, seconds })
     }
 
@@ -88,10 +90,10 @@ impl World {
             Ended::Died => {}
             _ if self.state.time >= until => self.prayer_answered(prayer.altar, events),
             Ended::Came(came) => {
-                let text = format!("{}; your prayer is broken.", self.came_line(came));
-                self.say(text);
+                let came = self.came_line(came);
+                self.say(Msg::new(msg::fixtures::PRAYER_BROKEN_BY).role("came", came));
             }
-            Ended::Said | Ended::Done => self.say("Your prayer is broken."),
+            Ended::Said | Ended::Done => self.say(msg::fixtures::PRAYER_BROKEN),
         }
     }
 
@@ -101,7 +103,7 @@ impl World {
         let content = self.content.clone();
         let terrain = self.state.current().terrain_at(altar);
         let Some((_, table)) = terrain.and_then(|t| content.offer_at(t)) else {
-            self.say("Your prayer goes unheard.");
+            self.say(msg::fixtures::PRAYER_UNHEARD);
             return;
         };
         let side = self.altar_side(altar);
@@ -124,7 +126,7 @@ impl World {
         {
             self.state.current_mut().lights.remove(&altar);
             self.set_terrain(altar, spent);
-            self.say("The altar's glow gutters and dies.");
+            self.say(msg::fixtures::ALTAR_GUTTERS);
         }
     }
 }

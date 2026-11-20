@@ -13,6 +13,8 @@
 //! light's affixes would modify it there.
 
 use crate::content::{ActionKind, Content, LightId};
+use crate::lang::Msg;
+use crate::msg;
 use crate::object::LightMode;
 use crate::world::{Spent, World, WorldState};
 
@@ -50,31 +52,27 @@ impl World {
         }
         let player = self.state.player;
         let Some(item) = self.state.player().ready_light(&self.content) else {
-            self.say("You have no light ready to use.");
+            self.say(msg::items::NO_LIGHT_READY);
             return Spent::Nothing;
         };
         if self.state.player().inventory[item].light_mode() == LightMode::Unlit
-            && self.refused_afloat("The water would only put it out.")
+            && self.refused_afloat(msg::items::WATER_WOULD_PUT_IT_OUT)
         {
             return Spent::Nothing;
         }
         let stack = &self.state.player().inventory[item];
-        let name = stack.title(&self.content);
+        let what = stack.title_phrase(&self.content).owned_by(self.you());
         let preset = self.content.object(stack.object).carried_light;
         let hood = preset.is_some_and(|p| self.content.light(p).hooded.is_some());
         let (mode, kind, said) = match stack.light_mode() {
-            LightMode::Unlit => (LightMode::Lit, ActionKind::Light, "You light your"),
-            LightMode::Lit if hood => (
-                LightMode::Hooded,
-                ActionKind::Hood,
-                "You lower the hood of your",
-            ),
+            LightMode::Unlit => (LightMode::Lit, ActionKind::Light, msg::items::LIGHT),
+            LightMode::Lit if hood => (LightMode::Hooded, ActionKind::Hood, msg::items::LOWER_HOOD),
             LightMode::Lit | LightMode::Hooded => {
-                (LightMode::Unlit, ActionKind::Light, "You douse your")
+                (LightMode::Unlit, ActionKind::Light, msg::items::DOUSE)
             }
         };
         self.player_mut().inventory[item].set_light_mode(mode);
-        self.say(format!("{said} {name}."));
+        self.say(Msg::new(said).role("what", what));
         Spent::Turn(self.price_of(player, kind))
     }
 

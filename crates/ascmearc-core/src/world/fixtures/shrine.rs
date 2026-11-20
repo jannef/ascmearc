@@ -7,8 +7,9 @@
 
 use crate::action::Event;
 use crate::alignment::Alignment;
-use crate::content::{Content, Regard, Shrine, SpecialRoom};
+use crate::content::{Content, Regard, Shrine, SpecialRoom, data_line};
 use crate::geom::Pos;
+use crate::lang::Msg;
 use crate::world::{Actor, ActorId, LevelState, World};
 
 impl LevelState {
@@ -61,17 +62,11 @@ impl World {
 
 /// The line the player's first entry into `room` says: a shrine's by how it treats them, else
 /// the effect's `enter`.
-pub(in crate::world) fn enter_line(
-    room: &SpecialRoom,
-    player: &Actor,
-    content: &Content,
-) -> String {
+pub(in crate::world) fn enter_line(room: &SpecialRoom, player: &Actor, content: &Content) -> Msg {
     let effect = content.room_effect(room.effect);
-    match (&effect.shrine, room.side) {
-        (Some(shrine), Some(side)) => {
-            let regard = Shrine::regard(side, player.nature(content));
-            shrine.enter_line(regard, &effect.enter).to_string()
-        }
-        _ => effect.enter.clone(),
-    }
+    let field = match (&effect.shrine, room.side) {
+        (Some(_), Some(side)) => Shrine::enter_field(Shrine::regard(side, player.nature(content))),
+        _ => "enter",
+    };
+    data_line::said(data_line::room_effect(effect, field))
 }

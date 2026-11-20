@@ -10,6 +10,46 @@ mod material_drops;
 mod quiver;
 mod siphon;
 mod stock;
+
+use crate::lang::{Arg, Msg, Phrase};
+use crate::object::Stack;
+use crate::scroll_label::Lore;
+
+/// Stacks as a line names them (`{what:counted}`): one stack its phrase, two or three a list of
+/// them, more a count of objects ("17 objects"), as [`crate::object::phrase`] says them.
+pub(in crate::world) fn stacks_arg(stacks: &[Stack], lore: Lore<'_>) -> Arg {
+    stacks_arg_with(stacks, lore, |_, _| None)
+}
+
+/// [`stacks_arg`] with what `tag` makes of the stack at each position from its phrase: a
+/// message said in its place ("a dagger (unpaid, 45 gold)", `items.unpaid`), as
+/// [`crate::object::phrase_with`] says them. More than three stacks are counted, untagged.
+pub(in crate::world) fn stacks_arg_with(
+    stacks: &[Stack],
+    lore: Lore<'_>,
+    tag: impl Fn(usize, &Phrase) -> Option<Msg>,
+) -> Arg {
+    let item = |i: usize, stack: &Stack| {
+        let phrase = lore.phrase(stack);
+        match tag(i, &phrase) {
+            Some(tagged) => Arg::from(tagged),
+            None => Arg::Phrase(phrase),
+        }
+    };
+    match stacks {
+        [one] => item(0, one),
+        [_, _] | [_, _, _] => Arg::List(
+            (stacks.iter().enumerate())
+                .map(|(i, s)| item(i, s))
+                .collect(),
+        ),
+        _ => {
+            let count: u32 = stacks.iter().map(|s| s.count).sum();
+            Arg::Phrase(crate::world::combat::fight::word("object").count(count))
+        }
+    }
+}
+
 cfg_if! {
     if #[cfg(test)] {
         mod affix_draught_tests;

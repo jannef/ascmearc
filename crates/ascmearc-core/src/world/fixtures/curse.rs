@@ -13,10 +13,13 @@
 
 use crate::content::{Content, CreatureId, CreatureSpawn, FactionId};
 use crate::geom::Pos;
+use crate::lang::Msg;
+use crate::msg;
 use crate::noise::Act;
 use crate::rng::Rng;
 use crate::rng::draw;
 use crate::time::GameTime;
+use crate::world::combat::fight;
 use crate::world::{World, levels::travel};
 use serde::{Deserialize, Serialize};
 
@@ -212,14 +215,14 @@ impl World {
             self.perception.sees_actors_at(rising.pos) || self.perception.sees_actors_at(spawn.pos);
         if seen {
             let (dead, risen) = (
-                &content.creature(rising.from).name,
-                &content.creature(rising.into).name,
+                fight::creature(content.creature(rising.from)),
+                fight::creature(content.creature(rising.into)),
             );
-            let article = crate::text::article(risen);
-            self.say(format!(
-                "{}'s corpse rises as {article} {risen}!",
-                crate::content::the_start(dead)
-            ));
+            self.say(
+                Msg::new(msg::fixtures::CORPSE_RISES)
+                    .role("dead", dead)
+                    .role("risen", risen),
+            );
         } else {
             self.make_noise_at(risen, Act::Mutter, 100);
         }
