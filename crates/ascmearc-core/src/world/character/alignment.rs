@@ -138,7 +138,7 @@ impl World {
         let held = self.player_mut().resources.get_mut(pool);
         if let Some(held) = held.filter(|p| p.value > 0) {
             held.value = 0;
-            let name = self.content.resource(pool).name.to_lowercase();
+            let name = self.content.resource_phrase(pool);
             (self.notes).push(Msg::new(msg::character::DESERTS_YOU).role("name", name));
         }
     }

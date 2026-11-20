@@ -21,7 +21,8 @@ settings module (#1936), which complete L6 (#1889); **L4a**,
 ("Literal lines", "People"), as do **L4f** and **L4g**, `world/crafting/` (#1917, #1918);
 **L4o**, `world/turn/` and `world/mod.rs` (#1926, `messages/turn.toml`, "Literal lines");
 **L4c** and **L4d**, `world/classes/` (#1914, #1915, `messages/classes.toml`, "Literal lines");
-and **L5**, dialogue (#1888): every line a creature says is a line of data
+**L8**, the language setting (#1891, "The language setting (L8)"): any language under
+`assets/lang/` loads, the player chooses one, and the log and the screens switch live; and **L5**, dialogue (#1888): every line a creature says is a line of data
 said by its key, with role slots in the base form ("Dialogue"), on the one mechanism every line
 whose text lives in data uses ("Lines of data"). The doors, the welcome line, combat, allies,
 the character, creatures, the fixtures, items, health, levels, people, skills (L4n, #1925), and talk say
@@ -260,7 +261,7 @@ so the old helper that wrote it into a string, and the one that filled it in, ar
 **Rendering.** The app renders the log itself: `Game::read`/`Game::unread` line up entries
 (`game.rs`, `unread_from` compares id and args), and the message line (`ui/more.rs`) and the
 history (`ui/messages_screen.rs`, which holds the entries and the content) call
-`ui::message_text`, the entry in English (the chosen language from L8) with the keys as bound. The
+`ui::message_text`, the entry in the chosen language (`text::message`, "The language setting") with the keys as bound. The
 perception view gives the log as `PerceptionView::log()`. Dumps and tests render English with the
 keys written: `messages::english(content, entry, keys)`; `World::messages()` is the whole log so
 rendered (`messages::Message { turn, text, count, passing }`, `display()` adding ` (×n)`), which
@@ -285,7 +286,10 @@ docs hold the table): `creature:<id>`, `object:<id>` (with `written`, `written_p
 `terrain:<id>`, `label:scroll|wand|rod|potion` (an unidentified type's name with its `{label}`
 and `{colour}` slots), `colour:<colour>`, and `word:<text>`: a word the data names without an id
 of its own (a natural attack's "bite", a trap's "arrow", a status's "dazed", "something"), keyed
-by its English, which is the word; and `disease:<id>` (its name as written, "the shakes").
+by its English, which is the word; `disease:<id>` (its name as written, "the shakes"); and
+`status:<id>`, `skill:<id>`, and `resource:<id>` (#1992: the name in lower case, as `race:<id>`'s,
+"hasted", "open lock", "rage"; `Content::status_phrase`, `skill_phrase`, `resource_phrase`), said
+`bare` in a sentence and `Bare` where the line kept the data's capital ("You need Metalcraft").
 
 **Number comes from data** (#1965): a phrase is plural by its count or by the lexicon's `many` (a
 noun plural though it names one thing, "flames"); a proper name or a literal is one thing ("The
@@ -406,7 +410,7 @@ writes its article: "a band of footpads"), stacks that sank by `items::stacks_ar
 two or three, else a count of `word:object`). A level's and a branch's `arrival` are lines of data,
 `level:<id>.arrival` and `dungeon:<id>.arrival` (`data_line::arrival`). The encounter dialog's
 text (`EncounterView`) is the told line rendered in English, with `told_known` adding the line
-for a party met again, until L8. The line said on entering a cell (`enter.rs::tell_cell`):
+for a party met again, English whatever the language until core's words move to the app (#1949). The line said on entering a cell (`enter.rs::tell_cell`):
 stairs (`levels.staircase_down_here`, `way_into_here`, …), a feature's lines
 (`fixtures/feature.rs`, `messages/fixtures.toml`: the terrain by its `noun`, its description and
 its place's note after it as the data's text), and what lies there (`levels.see_here`,
@@ -419,9 +423,9 @@ damage type's `verb`, and a refusal's `error` are text roles.
 data ("Lines of data", whose table lists their keys): an alignment band's `rise` and `fall`, the
 craving's and the oaths' messages, the laws' `first`, a profane gift's `line`, `undone`, and
 `instead`, and cold blood's bands, the talent found back from the bands the player's mods hold
-(`cold_blood.rs::warmth_source`). Text roles until their words are converted (#1949): a
-talent's, a tree's, a skill's, a resource's, and a profane gift's names, a status's name lower
-case, and `Unavailable::reason`. A talent's refusal (`talent::Refusal::words`) stays a literal
+(`cold_blood.rs::warmth_source`). A status, a skill, and a resource are named by their lexicon
+ids ("Phrases"). Text roles until their words are converted (#1949): a talent's, a tree's, and a
+profane gift's names, and `Unavailable::reason`. A talent's refusal (`talent::Refusal::words`) stays a literal
 line. `World::learn` returns `Msg`s; `creation_offers` and the creation errors render them in
 English, as developer text.
 
@@ -433,8 +437,8 @@ from the talent that gives it, `caster.rs::reprieve_source`), and the status `en
 `recovered` lines a cleanse ends. A backfired summon's creatures are one phrase with its count
 or, of several types, a list of `magic.hostile_creatures` items ("A kobold and two rats"). A
 ruin row's words for one item and for several are both passed (`one`, `many`, lines of data),
-and `magic.ruined`'s count picks one. Text roles until their words are converted (#1949): a
-status's name lower case and `Unavailable::reason`.
+and `magic.ruined`'s count picks one. A status that blocks a cast is `status:<id>`. Text roles
+until their words are converted (#1949): `Unavailable::reason`.
 
 Its learning and items side (L4l: `corpse_spell`, `decipher`, `forget`, `learn`, `read`, `rod`,
 `scribe`, `summon_spell`) says its lines from the same file; a mishap's `message` and a risen
@@ -443,20 +447,20 @@ player knew it as it was read or zapped (`Lore::title_phrase`, `{what:bare}`: "s
 ZUNBAR") and its type, once learned, by `object:<id>` (`magic.it_is`); a corpse by its object.
 A summon spell's allies are said as a backfired summon's are (`magic.comes_to_call`, `_mixed`
 with `magic.hostile_creatures` items). Text roles until their words are converted (#1949): a
-spell's name as the data writes it (`spell`; a list of them, `spells`, said `{spells:and}`), a
-status's name lower case, and the `came_line` that stops a reading or a writing (`came`).
+spell's name as the data writes it (`spell`; a list of them, `spells`, said `{spells:and}`) and
+the `came_line` that stops a reading or a writing (`came`).
 
 `world/crafting/` (`messages/crafting.toml`, L4f, its first half: making a recipe, cutting,
 enchanting, crystals, digging, the field forge). A refusal a function returns for its caller to
 say (`cut.rs::refusal`, `enchant.rs::refusal`, `dig_refusal`, `field_forge.rs::forge_ground`) is
 a `MessageId`; the recipes' `resolve` returns its reason as a `Msg`, and the plan the dialog
-shows renders it in English (`craft_make.rs::english`) until L8. An item being enchanted is
+shows renders it in English (`craft_make.rs::english`) whatever the language, until core's words move to the app (#1949). An item being enchanted is
 `enchant.rs::item_phrase` said `{item:the}` (a known rare by its name, "the Grim Bite"), several of a
 stack by `Lore::names_phrase` (what they are called as made); a salvaged affix's words ("its
 Sharp magic", "some of its magic") are nested messages in `catch_magic` and `goes_out_unread`;
 Soulglass's crystals a phrase or a list of two (`turns_to_glass`, by number). A profession's
-`failed` and `fumbled` lines are lines of data (`data_line::profession`). Text roles until their
-words are converted (#1949): a skill's and a recipe's names, a launcher's word, the label of a
+`failed` and `fumbled` lines are lines of data (`data_line::profession`). A profession is
+`skill:<id>`. Text roles until their words are converted (#1949): a recipe's name, a launcher's word, the label of a
 pick ("blade", "arrowheads"), and the time a dig took.
 
 Its second half (L4g: mending, mining, the patron, rigging, salvage, setting, tempering, and
@@ -468,8 +472,8 @@ rig list's words (`lacking_knife`, which the screen says in its own `lacking`) a
 sentence. Several stacks are `items::stacks_arg` (`you_save`); one taken apart by its title or
 several counted is one entry by number (`take_apart`). A rig and a trap are `word:` phrases of
 their names (`{rig:a}`, `{trap:a}`). A rig's `made` and `snaps` are lines of data
-(`data_line::rig`). Text roles until their words are converted (#1949): a skill's name
-(`need_skill_at`), a rig's id as the action wrote it, and the patron as the commission calls
+(`data_line::rig`); `need_skill_at`'s skill is `skill:<id>`. Text roles until their words are
+converted (#1949): a rig's id as the action wrote it, and the patron as the commission calls
 them (`giver`, "your patron", kept as text in the save). The commission's quest-log view
 (`patron.rs::commission`) says its objective and status from `commission_*`; its name stays
 text, as every quest's does. Left for their own work: the rig list's "what it takes" (`rig.rs::takes_words`), and the craft
@@ -480,9 +484,9 @@ dialog's plan (`CraftPlan`), screen text built in core.
 lines of data: a calling's `message`, a talent's handed-out `news`, and a resource's `lacking`
 (`{words:Bare}.`). A missile caught is its object (`object:<id>`) or a trap's noun or "missile"
 (`word:`); a shopkeeper in the way a literal phrase of their name; the mark the player cannot
-see is a line of its own (`openings_lost_unseen`, "an unseen foe"), not a phrase. Text roles
-until their words are converted (#1949): a talent's and a resource's names, a status's name
-lower case, and `Unavailable::reason`; a dev action's class id is a `word:` phrase
+see is a line of its own (`openings_lost_unseen`, "an unseen foe"), not a phrase. A status and a resource are
+their lexicon ids. Text roles until their words are converted (#1949): a talent's name and
+`Unavailable::reason`; a dev action's class id is a `word:` phrase
 (`{class:a}`).
 
 `world/turn/` (`messages/turn.toml`, L4o) and the two lines of `world/mod.rs` (`world.toml`)
@@ -576,8 +580,8 @@ delivery picked up again, `updated_step`. `messages::english_msg` and `english_a
 for the quest screen and the dumps; a patron's commission (`crafting/patron.rs`) fills its
 objective and status from `crafting.commission_*`.
 
-Text roles until core's words are converted (#1949): a quest's name (`quest`), a skill's name
-lower case (`skill`), a guild's name (`guild`), a shop's sign (`shop`, its data's
+A skill taught is `skill:<id>`. Text roles until core's words are converted (#1949): a quest's
+name (`quest`), a guild's name (`guild`), a shop's sign (`shop`, its data's
 `{keeper}` filled; the app's step dialogs show the same string), and a dev action's typed ids.
 A rank's title is a `word:` phrase (`{title:a}`). The topic names of a quarrel's sides and the
 parting dialog are UI text ("The dialogue screens and dialogs" below); left as they are:
@@ -650,7 +654,7 @@ every table fails the build. `text.rs`'s test checks the scan against the runtim
 
 **Rendering.** `ui::text::ui(text::abilities_screen::TITLE)`, or with slots
 `ui_with(text::abilities_screen::MANA, &[("cost", Arg::Number(n))])`: the entry through the
-current language (`text::language`, English until L8) and the content's lexicon, whole. The text
+current language (`text::use_language`, "The language setting") and the content's lexicon, whole. The text
 comes from the content the game loaded (`text::use_content`, `main.rs`), else the built-in
 content (tests).
 
@@ -768,7 +772,7 @@ own files. The main menu's spaced-out title is the game's name and stays in code
 screen's kinds, what they hold, and where they are come from `paths.rs` as English.
 
 **The quest log, the almanac, and targeting** (#1939): the quest log's objective and status stay
-the core messages they were (`QuestView`, `english_msg`); its giver is passed as the phrase it is
+the core messages they were (`QuestView`), rendered in the language shown (`messages::msg_in`); its giver is passed as the phrase it is
 (`{giver:The}`). The almanac's date asks for the day's ordinal (`{day:ord}`), and several moons
 are a list of nested `moon_named` messages (`{moons:and}`, the language's conjunction). Each way
 of aiming has its whole prompt (`target.toml`'s `prompt_*`); `Line::status` returns the text. What
@@ -782,6 +786,48 @@ a direction glued), a context's title `context_<id>`, the palette, clock, and un
 choices (`fixed::REST`), why a key cannot be bound (`fixed_in_<context>`, `kept_by_*`), and what
 exporting and importing a keymap reports, in Controls and on the command line. The settings file's
 ids and its load warnings (the log), and the keymap file's comments, stay as written.
+
+## The language setting (L8)
+
+**Languages.** Core loads every `assets/lang/<code>/` with a `lang.toml` beside English
+(`content/languages.rs`): its `lang.toml` (its `code` must be its folder's name), its
+`messages/<file>.toml`, and its `ui/<module>.toml` (ids `ui.<module>.<name>`). Its lexicon and
+dialogue files are not read yet (L11, L13), so a folder holding them is refused, as is a folder
+under `lang/` without a `lang.toml` (no loader reads its files). `Content::languages` lists them,
+English first; `Content::language(code)` finds one; `Content::shown_chain(code)` is the chain a
+line is rendered through: the language, then English, which has every id (an unknown code is
+English alone). A phrase's words come from the content (English) until the language has a
+lexicon.
+
+**The setting.** `language` in `settings.toml` (`Settings::language`, a code, `"en"` by default:
+no guess from the system's locale, design §12; `docs/dev/settings.md`), chosen in the settings
+screen's Language row, which shows each language by its own `name` and steps through
+`text::languages` (the content's). `--lang CODE` sets it for the launch (`settings::load_for`); a
+code the content lacks stops the game with `--lang` and is a warning from the file, the game then
+shown in English (`settings::check_language`). Captures are English unless given `--lang`.
+
+**Live switching.** The app keeps the code it shows (`text::use_language`, set at startup in
+`main.rs` and on every change of the settings: `settings::apply_language`, and
+`screens::refresh` before it rebuilds the open screens). Every screen asks `ui`/`ui_with` as it
+draws, and the message line, the history, and `--more--` render the log's entries each frame
+(`text::message`), so a switch shows at once, what was said before it included: the log holds
+entries, not text. What a screen built when it opened (the dialogue screen's speech,
+`text::speech`) is rebuilt by `screens::refresh` on the change. What core renders to text before
+the app sees it (the perception's item names, an encounter's text, the quest log's words, the
+words #1949 lists) stays English until it moves to the app.
+
+**Dumps.** `ascmearc-cli dump --lang CODE` (`dump::ascii_in`, `dump::json_in`,
+`dump::layer_rows_in`) says the log (the `messages` layer, the JSON's `messages`), the quest log,
+and a parting's speaker in that language; English by default (`dump::ascii`, `dump::json`), so
+the snapshots stay English. Core renders with `messages::render_in`, `msg_in`, `arg_in`,
+`speech_in` (the `english*` helpers are these for `"en"`).
+
+**Tests.** No language but English ships yet, so the tests add a small one, `xx`, to the built-in
+files: `content/languages.rs` (it loads, renders what it has, falls back for the rest, and a
+misnamed or bare folder is refused) and `ui::tests::the_log_reads_in_the_language_chosen_and_switches_live`
+(the welcome line already logged reads in `xx` once it is chosen, and in English again after). In
+the app's tests the shown language is the test thread's own, so a test that switches it switches no
+other test's.
 
 ## Lines of data
 
@@ -801,8 +847,8 @@ so a saved log re-renders in any language and a later identification cannot reac
   `assets/lang/<code>/dialogue/<file>.toml` (kind `dialogue`, keyed by the data's path:
   `[ascmearc.servant] lines = [ … ]`, an array numbered from 0; an `address` table without `by`
   is by the player's gender): `Templates::parse_data`, `Language::add_data_file`. A key the
-  language lacks fails that language's rendering, so the chain falls back to English (L8 loads the
-  chosen language's files). A mod's data lines are keyed by its content ids and overlay the same
+  language lacks fails that language's rendering, so the chain falls back to English (a language's
+  `dialogue/` and lines of data are not loaded yet: L13, "The language setting"). A mod's data lines are keyed by its content ids and overlay the same
   way.
 - **Rendering**: the line by its key, filled with the Said's args like any template, in the
   speaker's register (`Registers::for_speaker(register, race)`; standard for a narrator's). A
@@ -864,14 +910,14 @@ arrays named by the id that tells it apart. Every kind of line of data, the thre
 | `room_effect:<id>.enter`, `.near`, `.pervade`, `.arrive`, `.shrine.welcome`, `.shrine.unwelcome` | a special room entered, glimpsed, covering the level, hinted at on arrival, and a shrine's entry by how it treats the player (`Shrine::enter_field`) |
 | `talent:<id>.effects.bars_slot.<slot>.refused` | something put on in a slot the talent bars (the first talent held that bars it with these words, `body_slots.rs::barred_words`) |
 | `quest:<id>.binding.words.<n>`, `.binding.shatters`, `.binding.reforms` | a lure quest's creature bound, killed unbound, and formed anew |
-| `quest:<id>.reward.skills.<skill>.taught`, `.more`; `quest:<id>.taker.<npc>.reward.skills.…` | a quest's reward (or a taker's) teaching a skill |
+| `quest:<id>.reward.skills.<skill>.taught`, `.more`; `quest:<id>.taker.<npc>.reward.skills.…`, `quest:<id>.on_accept.skills.…` | a quest's reward (or a taker's, or its `on_accept`'s) teaching a skill |
 | `town:<id>.told` | a town's goodwill rising |
 | `level:<id>.hidden.<location>.opens` | a hidden location opening as a quest reveals it |
 | `dialogue:<scope>.silent` | a speaker turning away one outside its `speaks_to` |
 
 What quests' people say is keyed in the same file (`data_line::quest`, added by `quest_speech`)
 but said by a speaker, so in their register and with the player given: a giver's `offer`,
-`accept`, `reminder`, `done`, `where`, and `early`, a drawn variant's
+`accept`, `reminder`, `done`, `where`, `early`, and `on_accept.says`, a drawn variant's
 (`quest:<id>.variant.<v>.offer`), an escort's `joins` and `thanks`, a taker's `done` and
 `betrayed` (`quest:<id>.taker.<npc>.done`), a side's `offer`, `join`, and `refuse`
 (`quest:<id>.side.<npc>.join`), and the parting's `betray`. A rolled quest's lines may name

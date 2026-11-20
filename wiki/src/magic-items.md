@@ -14,9 +14,11 @@ magic crystals: see [Enchanting](enchanting.md).
 | Normal | none | "long sword" | white |
 | Magic | a [prefix](affixes.md#prefixes), a [suffix](affixes.md#suffixes), or one of each (most have one) | "Sharp long sword of the Bear" | blue |
 | Rare | three to six affixes (most often three), at most three prefixes and three suffixes, fewer if the item cannot bear them ([Capacity](#capacity)) | "Grim Bite, long sword" | yellow |
+| Unique | set by hand, at most three prefixes and three suffixes | "Widowmaker, stiletto" | golden orange |
 
 The color is the color of the item's name, in your pack, on the equipment screen, and in its
-description. The item's glyph keeps its own color. [Unique items](#unique-items) are rares too.
+description. The item's glyph keeps its own color. Loot is never unique: see
+[Unique items](#unique-items).
 
 How often loot is normal, magic, or rare, and how many affixes magic and rare items have:
 
@@ -142,8 +144,9 @@ tables above.
 
 ## Unidentified items
 
-Magic and rare items are **unidentified** when you find them. You see their rarity ("a long
-sword (magic)", "an iron helm (rare)"), but not their affixes or a rare item's name.
+Magic, rare, and unique items are **unidentified** when you find them. You see their rarity ("a
+long sword (magic)", "an iron helm (rare)", "a stiletto (unique)"), but not their affixes or a
+rare or unique item's name.
 
 Their magic works all the same while you wear or wield them. An unknown
 [ring](objects.md#class-rings) of [Strength](stats.md#stat-strength) makes you stronger, and one
@@ -301,17 +304,25 @@ screen](equipment.md#the-equipment-screen) (`i`). The description shows, in this
 
 ## Unique items
 
-A unique item is one of a kind: a [rare](#rarity) item whose name, affixes, and [item
-level](affixes.md#base-items) are set by hand. It also has a **power**, a rule of its own that no affix
-gives.
+A unique item is one of a kind, a [rarity](#rarity) of its own: an item whose name, affixes,
+and [item level](affixes.md#base-items) are set by hand. Its name is shown in golden orange. It
+also has a **power**, a rule of its own that no affix gives.
 
-It is found unidentified like any rare item ("a stiletto (rare)"). Once identified, it shows its
+It is found unidentified like any magic item, but its rarity shows ("a stiletto (unique)"). Its
+affixes work as a rare item's do, and it is worth what a rare item would be. Once identified, it shows its
 name, its affixes, its power in words, and a line of lore. Each one lies in one place in the
 world, so a character finds each at most once, and loot never makes one. Most are carried by
 those who own them. Three are only ever offered, very rarely, by a
 [pedlar](npcs.md#the-pedlars-offer).
 
-No [item damage](materials.md#protected-items) ever harms it.
+Nothing harms it: no [item damage](materials.md#protected-items), no spell's ruin, and no
+[chest](chests.md) smashed or blown apart.
+
+No craft changes it. It cannot be [enchanted](enchanting.md), worked at an
+[anvil](altars-forges-springs.md#forges) or [whittled](skill-uses.md#whittling), given a
+[gem](gem-cutting.md#setting-a-gem), or [taken apart](salvage.md), and no recipe uses it up.
+Those lists leave it out, and trying says "It is unique: no craft of yours will change it." (an
+enchantment says "It will not take your will.").
 
 Its power works while it is worn or wielded, identified or not:
 

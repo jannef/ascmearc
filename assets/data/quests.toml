@@ -66,6 +66,11 @@
 #              trained one gets `marks` training marks (at least one of the two); `taught` and
 #              `more` (optional) are what is said of each, else "<giver> trains you in heal." and
 #              "You learn more of heal."
+#   on_accept  what the giver hands over as they give it (optional, #1991): a `reward`'s fields
+#              (at least one), the objects identified and their kind known from then on; `once`
+#              (optional) a key quests share so only the first of them given pays
+#              (`once = "hild_welcome"`; without it, it pays each time the quest is given), and
+#              `says` (optional) what the giver says as they hand it over, after `accept`
 #   offer, accept, reminder   what the giver says when you ask about it (giving it), after the
 #              offer in the same reply (accept, optional), and when you ask again before it is
 #              done

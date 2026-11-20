@@ -46,7 +46,10 @@ impl DeathScreen {
             (Some(status), _, _) => {
                 let def = content.status(status);
                 (def.death.clone()).unwrap_or_else(|| {
-                    ui_with(T::DIED_OF, &[("status", def.name.to_lowercase().into())])
+                    ui_with(
+                        T::DIED_OF,
+                        &[("status", content.status_phrase(status).into())],
+                    )
                 })
             }
             // Hunger, overeating, or a trap: "Killed by a fireball trap".

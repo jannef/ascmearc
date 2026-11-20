@@ -19,7 +19,7 @@ pub struct MagicWorth {
     pub affix: AffixWorth,
 }
 
-/// Percent added to an item's worth as made: a magic one's, a rare one's.
+/// Percent added to an item's worth as made: a magic one's, a rare one's (a unique's too).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct RarityWorth {
@@ -46,7 +46,7 @@ impl MagicWorth {
         let percent = match magic.rarity {
             Rarity::Normal => 0,
             Rarity::Magic => self.rarity.magic,
-            Rarity::Rare => self.rarity.rare,
+            Rarity::Rare | Rarity::Unique => self.rarity.rare,
         };
         let worth = worth.saturating_mul(100 + u64::from(percent)) / 100;
         if !magic.identified {

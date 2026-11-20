@@ -129,7 +129,7 @@ fn quest_objects_and_uniques_survive_any_number_of_casts() {
     lay(&mut w, "bread", 3);
     let sword = w.content().object_id("long_sword").expect("a sword");
     let magic = Magic {
-        rarity: Rarity::Rare,
+        rarity: Rarity::Unique,
         level: 1,
         affixes: Vec::new(),
         name: Some("Widowmaker".into()),

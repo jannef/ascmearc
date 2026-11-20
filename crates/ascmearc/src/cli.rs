@@ -76,6 +76,12 @@ pub struct Args {
     #[arg(long)]
     pub reduced_effects: bool,
 
+    /// Show the game in this language, by code (a folder under `assets/lang/`: `en`), for this
+    /// launch, as if chosen in the settings; a code the content lacks stops the game. Captures
+    /// and replays are English without it.
+    #[arg(long, value_name = "CODE")]
+    pub lang: Option<String>,
+
     /// Window size in physical pixels, e.g. `1280x720`.
     #[arg(long, value_parser = parse_size, default_value = "1280x720")]
     pub window: UVec2,

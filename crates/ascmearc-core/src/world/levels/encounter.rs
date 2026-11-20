@@ -286,7 +286,7 @@ fn told(outcome: Outcome, name: &str, landscape: Option<Landscape>, woken: bool)
 }
 
 /// The view of `pending`, its entry named by `name`, offering `choices`: its text in English
-/// (until a language can be chosen, L8), with the line for a party met again after it.
+/// (whatever the language until core's words move to the app, #1949), with the line for a party met again after it.
 pub(crate) fn view(
     pending: &Pending,
     name: &str,

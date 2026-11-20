@@ -24,7 +24,7 @@ impl World {
             return Spent::Nothing;
         };
         if me.effects.has(wind.cooldown) {
-            let name = content.status(wind.cooldown).name.to_lowercase();
+            let name = content.status_phrase(wind.cooldown);
             self.say(Msg::new(msg::character::STILL_STATUS).role("status", name));
             return Spent::Nothing;
         }

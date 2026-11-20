@@ -209,6 +209,46 @@ fn the_rust_monster_rusts_both_ways_and_never_cloth() {
     assert!(!damaged(&w, leather));
     assert_eq!(count(&w, "Your leather chain mail shirt takes no rust."), 1);
 }
+/// #1975: acid and rust never harm a unique, worn or struck with: the Turncoat (banded mail)
+/// and Widowmaker (a steel stiletto), through a hezrou's acid, an acid spell, and a rust
+/// monster both ways, kept whole and as they were; the once-a-life withstood line is all that
+/// is said, as for any piece that withstands.
+#[test]
+fn acid_and_rust_never_harm_a_unique() {
+    let mut w = world("warrior");
+    let player = w.state.player;
+    let content = w.content().clone();
+    let me = w.player_mut();
+    me.inventory.clear();
+    me.equipment = Default::default();
+    for (id, slot) in [("turncoat", "body"), ("widowmaker", "main_hand")] {
+        let stack = content.unique(id).expect(id).stack.clone();
+        let item = w.state.player().inventory.len();
+        w.player_mut().inventory.push(stack);
+        let slot = content.slot_id(slot).expect(slot);
+        w.player_mut().equipment.put(&[slot], item);
+    }
+    let before = w.state.player().inventory.clone();
+    let hezrou = beside(&mut w, "hezrou", 500);
+    hits(&mut w, (hezrou, player), 200);
+    for _ in 0..50 {
+        w.spell_eats_gear();
+    }
+    let rust = beside(&mut w, "rust_monster", 500);
+    hits(&mut w, (rust, player), 200);
+    hits(&mut w, (player, rust), 200);
+    assert_eq!(w.state.player().inventory, before, "untouched");
+    assert!(!damaged(&w, 0) && !damaged(&w, 1));
+    let said = |start: &str| {
+        (w.messages().iter())
+            .filter(|m| m.display().starts_with(start))
+            .count()
+    };
+    assert_eq!(said("The acid runs off your"), 1, "once in a life");
+    assert_eq!(said("The acid eats"), 0);
+    assert_eq!(said("Rust spreads"), 0);
+}
+
 #[test]
 fn a_hit_that_lands_corrodes_through_the_blow() {
     let mut w = world("warrior");

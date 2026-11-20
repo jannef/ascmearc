@@ -83,8 +83,11 @@ fn ammunition(content: &Content, launcher: ObjectId) -> Option<Phrase> {
 }
 
 /// The chance in percent that `missile` breaks when it hits: its `breaks`, less what a durability
-/// affix takes off.
+/// affix takes off; a unique never breaks (#1975).
 pub(in crate::world) fn break_chance(missile: &Stack, content: &Content) -> u32 {
+    if missile.is_unique() {
+        return 0;
+    }
     let def = content.object(missile.object);
     let sturdier = Mods::local(missile, content).get(Effect::Durability);
     u32::try_from(less(u64::from(def.breaks), sturdier)).unwrap_or(0)

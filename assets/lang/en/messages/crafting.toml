@@ -10,12 +10,12 @@
 # gem, as a stack or as its material; `crystal` a crystal by its object; `wall` and `station` a
 # terrain; `affix` an affix by its name ("Sharp", "of the Bear"); `magic` an item's magic as a
 # salvage line names it (`its_magic_suffix`, `its_prefix_magic`, `some_of_its_magic`); `count` a
-# number. `skill`, `recipe`, `launcher`, and `part` are core's and the data's English words, text
-# until they are converted (#1949); `time` how long a work went on ("3 minutes", a `words.toml`
-# message); `came` the clause that says what stopped it ("A kobold comes into view"); `leave` what
-# the player does as a work is cut short, a message of its own ("you put down your work"). `rig` and
-# `trap` a rig's and a trap's name; `piece` a piece of stock; `name` a rig's id as the action wrote
-# it.
+# number. `skill` is a skill by its name (`skill:<id>`, said `Bare`: "Metalcraft"); `recipe`,
+# `launcher`, and `part` are core's and the data's English words, text until they are converted
+# (#1949); `time` how long a work went on ("3 minutes", a `words.toml` message); `came` the clause
+# that says what stopped it ("A kobold comes into view"); `leave` what the player does as a work
+# is cut short, a message of its own ("you put down your work"). `rig` and `trap` a rig's and a
+# trap's name; `piece` a piece of stock; `name` a rig's id as the action wrote it.
 
 ammunition_set_when_fletched = "Ammunition cannot be worked finer: its make is set when it is fletched."
 # `gem`, `item`: the gem and the item, by their titles.
@@ -122,7 +122,7 @@ must_choose_item = "You must choose the item."
 must_know_first = "You must know what is bound in it first."
 need_an_anvil = "You cannot make it good here; it will need an anvil."
 # `skill`: the profession's name; `station`: the anvil's terrain.
-need_skill_at = "You need {skill:bare} to work at {station:the}."
+need_skill_at = "You need {skill:Bare} to work at {station:the}."
 no_anvil_here = "There is no anvil here."
 no_craft_to_mend = "You know no craft that would mend it."
 no_crystal = "That is no crystal."
@@ -151,7 +151,7 @@ no_such_rig = "There is no rig `{name}`."
 no_wall_near = "There is no wall near enough to fix it to."
 not_so_many_crystals = "You do not carry so many crystals."
 # `skill`: the profession's name.
-not_trained = "You are not trained in {skill:bare}."
+not_trained = "You are not trained in {skill:Bare}."
 nothing_left_to_cut = "There is nothing left to cut."
 nothing_left_to_recast = "Nothing would be left to recast."
 nothing_left_to_rig_with = "You have nothing left to rig it with."

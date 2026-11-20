@@ -99,6 +99,11 @@ fn main() -> AppExit {
             return AppExit::error();
         }
     };
+    if let Err(err) = settings::check_language(&args, &settings, &content) {
+        logging::print_early_warnings();
+        eprintln!("ascmearc: {err}");
+        return AppExit::error();
+    }
     // Flags that name what to run skip the menu; otherwise the game starts when the player picks.
     // The main menu and `--screen` are opened at startup (`ui::screens`).
     let game = if !args.starts_in_menu() {
@@ -156,8 +161,9 @@ fn main() -> AppExit {
         ));
     }
     let graveyard = graveyard::GraveyardStore::from_args(&args);
-    // The UI's words come from the content too (`ui/text.rs`).
+    // The UI's words come from the content too (`ui/text.rs`), in the language chosen.
     ui::text::use_content(content.clone());
+    ui::text::use_language(&settings.language);
     app.insert_resource(args)
         .insert_resource(game::GameContent(content))
         .insert_resource(ui::StartupNotice(notice))

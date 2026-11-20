@@ -22,7 +22,7 @@ blank_scroll_gone = "The blank scroll is gone."
 # A dev action's.
 bolt_needs_a_way = "A bolt needs a way to go: `effect:ID@X,Y>X,Y`, not into a wall."
 bolt_strikes_nothing = "The bolt strikes nothing."
-# `status`: the status that blocks the cast, its name lower case.
+# `status`: the status that blocks the cast, by its name (`status:<id>`).
 cannot_cast_while = "You are {status:bare}: you cannot cast now."
 cannot_lead_more = "You cannot lead more than this."
 cannot_make_sense = "You cannot make sense of it."
@@ -30,7 +30,7 @@ cannot_make_sense = "You cannot make sense of it."
 cannot_read = "You cannot read {what:a}."
 # `reason`: why the ability is unavailable (`Unavailable::reason`).
 cannot_reason = "You cannot: {reason:bare}."
-# `status`: the status that blocks it, its name lower case.
+# `status`: the status that blocks it, by its name (`status:<id>`).
 cannot_use_rod_while = "You cannot use a rod while {status:bare}."
 cannot_write_it = "You cannot write it."
 cannot_zap_yourself = "You cannot zap at yourself."

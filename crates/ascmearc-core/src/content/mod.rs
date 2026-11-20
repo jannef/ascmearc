@@ -104,6 +104,7 @@ mod item_class;
 #[cfg(test)]
 mod item_level_tests;
 mod kit;
+mod languages;
 mod laws;
 mod layer_boss;
 mod learning;
@@ -381,8 +382,8 @@ pub use prestige::{PrestigeDef, Table};
 pub use profane::{GiftDef, GiftKind, GiftTier, ProfaneRolls, ProfaneTable};
 pub use quarrel::{PartingDef, Quarrel, QuarrelHoard, SideDef, Taker};
 pub use quest::{
-    Binding, Boon, GOLD, Goal, KillTarget, QuestDef, QuestId, QuestKind, QuestTexts, Reveal,
-    RevealWhen, Reward, SkillReward, Waits,
+    Binding, Boon, GOLD, Goal, KillTarget, OnAccept, QuestDef, QuestId, QuestKind, QuestTexts,
+    Reveal, RevealWhen, Reward, SkillReward, Waits,
 };
 pub(crate) use quest_roll::roll_known;
 pub use quest_roll::{Candidate, Pick, Roll, Rolled, Variant, one_of};
@@ -868,6 +869,8 @@ pub struct Content {
     plurals: Plurals,
     /// English, which dumps and tests render the log in (`lang/en/`, `english.rs`).
     english: crate::lang::Language,
+    /// The other languages under `lang/` with a `lang.toml`, by code (`languages.rs`).
+    languages: Vec<crate::lang::Language>,
     /// What people ask of the player (`data/quests.toml`), in file order.
     quests: Vec<QuestDef>,
     /// Guilds and their ranks (`data/guilds/`, each campaign's too), in table order.
@@ -912,6 +915,7 @@ impl Content {
         content.campaigns = campaign::parse(files)?;
         content.load_plurals(files)?;
         content.load_english(files)?;
+        content.load_languages(files)?;
         content.calendar = content.load_or_default(files)?;
         let path = "data/sky.toml";
         if let Some(text) = files.get_optional(path) {

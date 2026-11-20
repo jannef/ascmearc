@@ -153,7 +153,7 @@ pub(super) fn refusal(
         return Some(msg::crafting::TAKE_IT_OFF_FIRST);
     }
     let magic = stack.magic();
-    if magic.is_some_and(|m| m.unique.is_some()) {
+    if stack.is_unique() {
         return Some(msg::crafting::WILL_NOT_TAKE_YOUR_WILL);
     }
     let room = capacity(stack, content);

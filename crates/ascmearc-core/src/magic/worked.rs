@@ -302,7 +302,7 @@ pub(crate) fn proof(content: &Content, stack: &Stack) -> bool {
 /// quests' objects (`World::quest_objects`, gathered once for many stacks): a unique, of Proof,
 /// or a quest's.
 pub(crate) fn protected(content: &Content, quest: &BTreeSet<ObjectId>, stack: &Stack) -> bool {
-    stack.magic().is_some_and(|m| m.unique.is_some())
+    stack.is_unique()
         || Mods::local(stack, content).get(Effect::Proof) > 0
         || quest.contains(&stack.object)
 }
