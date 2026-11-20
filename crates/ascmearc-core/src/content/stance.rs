@@ -81,14 +81,15 @@ impl CombatStance {
         }
     }
 
-    /// What the player says they take: "an aggressive", "a cowardly" (then "stance").
-    pub const fn phrase(self) -> &'static str {
+    /// The line said as the player takes it: "You take an aggressive stance."
+    pub fn taken(self) -> crate::lang::MessageId {
+        use crate::msg;
         match self {
-            CombatStance::Aggressive => "an aggressive",
-            CombatStance::Neutral => "a neutral",
-            CombatStance::Defensive => "a defensive",
-            CombatStance::Coward => "a cowardly",
-            CombatStance::Frenzy => "a frenzied",
+            CombatStance::Aggressive => msg::world::TAKE_STANCE_AGGRESSIVE,
+            CombatStance::Neutral => msg::world::TAKE_STANCE_NEUTRAL,
+            CombatStance::Defensive => msg::world::TAKE_STANCE_DEFENSIVE,
+            CombatStance::Coward => msg::world::TAKE_STANCE_COWARD,
+            CombatStance::Frenzy => msg::world::TAKE_STANCE_FRENZY,
         }
     }
 

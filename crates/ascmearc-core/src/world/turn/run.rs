@@ -20,6 +20,7 @@ use super::rest::Ended;
 use crate::action::Event;
 use crate::burden::Burden;
 use crate::geom::{Dir, Pos};
+use crate::lang::Msg;
 use crate::perception::{CellView, PerceptionView};
 use crate::skills::Use;
 use crate::world::{Spent, World};
@@ -242,8 +243,8 @@ impl World {
         );
         self.running = false;
         if let Ended::Came(came) = ended {
-            let text = format!("{}; you stop running.", self.came_line(came));
-            self.say(text);
+            let came = self.came_msg(came);
+            self.say(Msg::new(crate::msg::turn::STOP_RUNNING_CAME).role("came", came));
         }
     }
 

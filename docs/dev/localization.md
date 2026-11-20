@@ -13,7 +13,8 @@ the controls, settings, and mods screens (#1935) and the object and rig screens 
 **L4b**, **L4e**, **L4h**, **L4i**, **L4j**, and **L4m**, `world/allies/` (#1912), `world/character/` (#1913),
 `world/creatures/` (#1916), `world/fixtures/` and `world/items/` (#1919), `world/health/` (#1920),
 `world/levels/` (#1921), and `world/people/` (#1924) say their lines from templates
-("Literal lines", "People"), as does **L4f**, the first half of `world/crafting/` (#1917);
+("Literal lines", "People"), as do **L4f** and **L4g**, `world/crafting/` (#1917, #1918);
+**L4o**, `world/turn/` and `world/mod.rs` (#1926, `messages/turn.toml`, "Literal lines");
 **L4c** and **L4d**, `world/classes/` (#1914, #1915, `messages/classes.toml`, "Literal lines");
 and **L5**, dialogue (#1888): every line a creature says is a line of data
 said by its key, with role slots in the base form ("Dialogue"), on the one mechanism every line
@@ -355,8 +356,8 @@ example and `world/combat/` (`messages/combat.toml`) the one whose lines name th
 
 `world/allies/` (`messages/allies.toml`) is converted: `World::called_phrase` and `ally_phrase`
 are `called` and the ally as a subject as phrases, `pack_args` an order's allies as a list said
-`{pack:the}` (a lone one is its phrase, so its count agrees the verb). What it leaves as text
-for now: the `came_line` that stops a calling or a taming (a `came` role). The data's own words
+`{pack:the}` (a lone one is its phrase, so its count agrees the verb). What stops a calling or a
+taming is `World::came_msg` in a `came` role (L4o, below). The data's own words
 are lines of data (#1944, "Lines of data"): a charm's, a familiar's arrival, and a creature's
 departure are said inside their templates (`{message:bare}`, `{line:bare}`, `{words:bare}`),
 and a status's `seen` is a `word:` phrase.
@@ -373,7 +374,7 @@ of data"): a status's start, end, ward, and stage lines, a disease's recovery li
 `on_eat` message, a treatment's made and failed lines, a skill gift's lines, and a flask's
 `words`; `Hunger::news` is message ids. The disease in a sentence is a phrase owned by its
 sufferer (`{disease:the}`: "the sickness", "the shakes", "your wolf's sickness"; `heal::phrase`: the data writes a disease's name as it is said, with its own article if it has one, and the character screen and the treat menu say it as written, `{disease:Bare}`: "Filth fever", "The shakes"), the pipe's race `race:<id>`
-(`{smoker:a}`). Text from another module's helper (`came_line`) goes in as a text role. A stat's
+(`{smoker:a}`). What stopped a long action is `World::came_msg` in a `came` role. A stat's
 words ("strength", the comparative "stronger") are text roles (`what`, `feel`, `more`) until
 core's words are converted (#1949). Someone a line names is `called_phrase` (what `called` says: a
 named person or a shopkeeper by name), not `phrase_of`, where the string was `called`.
@@ -442,8 +443,23 @@ Sharp magic", "some of its magic") are nested messages in `catch_magic` and `goe
 Soulglass's crystals a phrase or a list of two (`turns_to_glass`, by number). A profession's
 `failed` and `fumbled` lines are lines of data (`data_line::profession`). Text roles until their
 words are converted (#1949): a skill's and a recipe's names, a launcher's word, the label of a
-pick ("blade", "arrowheads"), the time a dig took, and `came_line`. Temper's `WITHSTOOD`, said
-by a warped enchanting too, waits for the second half (#1918).
+pick ("blade", "arrowheads"), and the time a dig took.
+
+Its second half (L4g: mending, mining, the patron, rigging, salvage, setting, tempering, and
+`work.rs`, the driver of long work). What the player does as a work is cut short (`Job::leave`:
+"you put down your work") is a message of its own, said inside `crafting.work_stopped`
+(`{leave:Bare}.`) or `work_stopped_came`, after `World::came_msg` (L4o); Decipher's (`world/magic/`) is a
+literal line in that slot until its slice. A rig's lacking (`rig.rs::Lack`) is two entries: the
+rig list's words (`lacking_knife`, which the screen says in its own `lacking`) and the refusal's
+sentence. Several stacks are `items::stacks_arg` (`you_save`); one taken apart by its title or
+several counted is one entry by number (`take_apart`). A rig and a trap are `word:` phrases of
+their names (`{rig:a}`, `{trap:a}`). A rig's `made` and `snaps` are lines of data
+(`data_line::rig`). Text roles until their words are converted (#1949): a skill's name
+(`need_skill_at`), a rig's id as the action wrote it, and the patron as the commission calls
+them (`giver`, "your patron", kept as text in the save). The commission's quest-log view
+(`patron.rs::commission`) says its objective and status from `commission_*`; its name stays
+text, as every quest's does. Left for their own work: the rig list's "what it takes" (`rig.rs::takes_words`), and the craft
+dialog's plan (`CraftPlan`), screen text built in core.
 
 `world/classes/`'s first half (`messages/classes.toml`, L4c: `ascetic`, `calling`, `charge`,
 `class_ability`, `class`, `consecrate`, `invest`, `mark`) says the lines its data writes as
@@ -452,8 +468,27 @@ lines of data: a calling's `message`, a talent's handed-out `news`, and a resour
 (`word:`); a shopkeeper in the way a literal phrase of their name; the mark the player cannot
 see is a line of its own (`openings_lost_unseen`, "an unseen foe"), not a phrase. Text roles
 until their words are converted (#1949): a talent's and a resource's names, a status's name
-lower case, `Unavailable::reason`, and the `came_line` that stops a consecration (`came`); a dev
-action's class id is a `word:` phrase (`{class:a}`).
+lower case, and `Unavailable::reason`; a dev action's class id is a `word:` phrase
+(`{class:a}`).
+
+`world/turn/` (`messages/turn.toml`, L4o) and the two lines of `world/mod.rs` (`world.toml`)
+converted resting, running, the run to the stairs, the voice thrown, the glare, the weather
+turning, and what the player perceives as a turn ends (`perceive.rs`). **What stopped a long
+action** is `World::came_msg`, a message of its own (`turn.comes_into_view`, "A kobold comes into
+view"; `turn.comes_close`), said in a line's `came` role ("Nested messages"); `came_line`
+renders it in English for the lines not converted yet that write it into their text (Learn's
+and Scribe's, `world/magic/`), and goes with them. A status's start and end, a disease's onset, symptoms, and recovery, a resource's
+`ended`, and a trap's `message` are lines of data by their keys ("Lines of data"). A line that
+differs by a value core picks from a few is an entry per value: a combat stance taken
+(`CombatStance::taken`), the way to stairs not known (`run_stairs.rs::none_known`), the weather
+turning. The one who falls, vanishes, or dies of a status is its creature (`fight::creature`), the
+player `World::you()`; an item that falls below `Lore::title_phrase` said `{what:The}`; the
+stairs one stands on a `terrain:` phrase. Text roles until their words are converted (#1949):
+how long a rest went on (`Duration::spoken`), how a status kills (`dies`, "bleeds to death"), a
+drained stat's name (`health.drained`), and the dev actions' weather and vision names. Other
+modules' text it says as it is: a sound heard (`noise.rs`), a room entered
+(`fixtures/shrine.rs::enter_line`), and the draught of an unseen shadow
+(`creatures/unseen.rs::DRAUGHT_LINE`), until their slices.
 
 Its second half (L4d: `merchants_eye`, `openings`, `orison`, `rage`, `sanctuary`, `smite`,
 `song`, `spirit_weapon`, `stipend`, `thief`, `volley`, `war_cry`, `witch`) says the prayer's
@@ -482,8 +517,9 @@ a phrase `owned_by(self.you())`, and stacks `items::stacks_arg` (moved from `ice
 list); the debt said after a pickup is `items.you_owe` in a `world.lines`. A line whose verb
 core picks from a few (an equipment action's "wield", "ready", "put on", in both hands or not;
 "put away" or "take off") is an entry per value (`equip.rs::put_on_line`, `take_off_line`).
-Text roles until their words are converted (#1949): a talent's name, a damage type's verb, a
-slot's name or the id typed, and `came_line`. `equip_saying` takes `Option<impl Into<Msg>>`,
+Text roles until their words are converted (#1949): a talent's name, a damage type's verb, and a
+slot's name or the id typed; what stops a prayer or a drink is `World::came_msg` (L4o).
+`equip_saying` takes `Option<impl Into<Msg>>`,
 `chosen` its refusal as `impl Into<Msg>`. The altar's fire seen hitting a creature names it by its
 type (`{who:a}`): a unique by its name, "Black Wystan", where the old line lower-cased it (a bug,
 corrected). What it leaves: `Burden::news` (`burden.rs`) stays core's text.
@@ -523,8 +559,8 @@ the quest's `where` said as one (`world.lines`). A kill's target is a `target_*`
 unique `{who:the}`, a type or tag `{who:counted}`, a quest's own word (`what = "wizards"`) by the
 count's number. The next step is a `step_*` entry inside `next_step` ("{step:Bare}.") or, for a
 delivery picked up again, `updated_step`. `messages::english_msg` and `english_arg` render them
-for the quest screen and the dumps; a patron's commission (`crafting/patron.rs`) still fills its
-view with literal text.
+for the quest screen and the dumps; a patron's commission (`crafting/patron.rs`) fills its
+objective and status from `crafting.commission_*`.
 
 Text roles until core's words are converted (#1949): a quest's name (`quest`), a skill's name
 lower case (`skill`), a guild's name (`guild`), a shop's sign (`shop`, its data's
@@ -698,6 +734,7 @@ arrays named by the id that tells it apart. Every kind of line of data, the thre
 | `status:<id>.start`, `.end`, `.stages.<n>` | a status beginning, ending, and reaching degree `n + 1` (a status with `stages` starts with `.stages.0`) |
 | `status:<id>.treat.made`, `.treat.failed` | the Heal skill's try at it |
 | `disease:<id>.recovered` | the player shaking a disease off |
+| `disease:<id>.onset`, `.symptoms.<n>` | a disease showing, and progression `n + 1` going badly (wrapping) |
 | `creature:<id>.on_eat.message`, `creature:<id>.depart` | eating its fresh corpse; an ally of its kind whose time ran out (in `allies.departs`) |
 | `creature:<id>.first_sight` | a type seen the first time in a run (`world/creatures/first_sight.rs`) |
 | `unique:<id>.power.message` | its Ward refusing a status |
@@ -719,9 +756,12 @@ arrays named by the id that tells it apart. Every kind of line of data, the thre
 | `profane:<id>.line`, `.undone`, `.instead` | a profane gift given, taken back, or said in place of its own line when it takes a gift held away |
 | `talent:<id>.effects.temperature_speed.bands.<n>.slower`, `.faster` | cold blood coming into band `n` (from 0) from a quicker or a slower one |
 | `recipes:profession.<skill>.failed`, `.fumbled` | a recipe with a `failure` object failing, or its `fumble` object made on a natural 2 |
+| `rigs:rig.<id>.made`, `.snaps` | a trap rigged, or sprung on its rigger by a natural 2 |
 | `calling:<campaign>.<class>.message` | a calling made (`data` for one outside every campaign, as a dialogue's scope) |
 | `talent:<id>.effects.weapon_ranks.news`, `.take_up_skills.news` | what a talent a class table gives hands out |
 | `resources:resource.<id>.lacking` | a class active refused for too little of the resource (in `classes.lacking`) |
+| `resources:resource.<id>.ended` | the resource ending (L4o) |
+| `trap:<id>.message` | a trap seen going off (L4o) |
 | `prayer:words.<face>.pray`, `.fizzle`, `.nothing`; `prayer:use.<id>.<face>` | the prayer begun, fizzled, and refused, and each use answered, in the face's words |
 | `outcome:<table>.outcome.<id>.message`, `.messages.<n>`, `.otherwise` | an altar's, a spring's, or a potion's outcome: its one line, line `n` of several, or what it says when it found nothing to do (`OutcomeDef::table` is the table) |
 | `room_effect:<id>.enter`, `.near`, `.pervade`, `.arrive`, `.shrine.welcome`, `.shrine.unwelcome` | a special room entered, glimpsed, covering the level, hinted at on arrival, and a shrine's entry by how it treats the player (`Shrine::enter_field`) |
@@ -740,9 +780,8 @@ but said by a speaker, so in their register and with the player given: a giver's
 (`quest:<id>.side.<npc>.join`), and the parting's `betray`. A rolled quest's lines may name
 its roles ("Dialogue", "Quests' texts"); every other one names none.
 
-None of the narrator's names a role: the loader refuses one that does. A status's start and end lines said
-as the turn is perceived (`world/turn/perceive.rs`) and the other subsystems' reads of these
-fields are still literal text, until their slices.
+None of the narrator's names a role: the loader refuses one that does. The other subsystems'
+reads of these fields are still literal text, until their slices.
 
 **Saying a line of data (the recipe for an L4 slice)**, worked by `miscast:<id>.seen`
 (`content/miscast.rs`, `world/magic/miscast.rs`) and `creature:<id>.touch`/`.unseen`

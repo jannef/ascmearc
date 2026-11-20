@@ -9,11 +9,6 @@ use crate::content::LightBlind;
 use crate::sight;
 use crate::world::{ActorId, World};
 
-/// Said as strong light begins to dazzle the player.
-const DAZZLED: &str = "The bright light dazzles you.";
-/// Said as it stops.
-const ADJUSTED: &str = "Your eyes adjust to the dimmer light.";
-
 impl World {
     /// What dazzles actor `id`, if strong light on its cell does: the player's race's
     /// [`LightBlind`], when the light there, as their eyes perceive it (the same light their
@@ -41,8 +36,8 @@ impl World {
     /// perception before (`before`); a note that does not stop a rest.
     pub(super) fn glare_news(&mut self, before: bool) {
         match (before, self.perception.dazzled()) {
-            (false, true) => self.note(DAZZLED),
-            (true, false) => self.note(ADJUSTED),
+            (false, true) => self.note(crate::msg::turn::DAZZLED),
+            (true, false) => self.note(crate::msg::turn::ADJUSTED),
             _ => {}
         }
     }

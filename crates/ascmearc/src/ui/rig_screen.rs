@@ -111,7 +111,7 @@ impl RigScreen {
                 continue;
             };
             let selected = index == self.rigs.cursor();
-            let color = match (selected, rig.lacking) {
+            let color = match (selected, &rig.lacking) {
                 (true, _) => ACCENT,
                 (false, Some(_)) => TEXT_DIM,
                 (false, None) => TEXT,
@@ -123,8 +123,8 @@ impl RigScreen {
             // lacking in place of the time.
             console.print(x + 2, y, &format!("{letter} - {}", rig.name), color);
             console.print(x + 18, y, &rig.takes, color);
-            let tail = match rig.lacking {
-                Some(why) => ui_with(T::LACKING, &[("why", why.into())]),
+            let tail = match &rig.lacking {
+                Some(why) => ui_with(T::LACKING, &[("why", why.clone().into())]),
                 None => ui_with(T::TIME, &[("time", rig.time.spoken().into())]),
             };
             let tail_x = right - tail.chars().count() as i32;

@@ -21,6 +21,8 @@
 
 use crate::action::Event;
 use crate::content::{ActionKind, Content};
+use crate::lang::Msg;
+use crate::msg;
 use crate::stats::Stat;
 use crate::time::Duration;
 use crate::world::levels::encounter::Watch;
@@ -53,14 +55,15 @@ pub(in crate::world) trait Job {
     /// Where the stacks of [`Job::on`] are now that the time is up, in the same order.
     fn found(&mut self, _now: &[Option<usize>]) {}
 
-    /// What the player does as the work is cut short, in lower case: "you put down your work".
-    fn leave(&self) -> String {
-        "you put down your work".into()
+    /// What the player does as the work is cut short, in lower case: "you put down your work"
+    /// (said inside `crafting.work_stopped` and `work_stopped_came`).
+    fn leave(&self) -> Msg {
+        msg::crafting::PUT_DOWN_WORK.into()
     }
 
     /// What is said when a stack it works on is gone as the time is up.
-    fn nothing_left(&self) -> &'static str {
-        "You have nothing left to work on."
+    fn nothing_left(&self) -> Msg {
+        msg::crafting::NOTHING_LEFT_TO_WORK_ON.into()
     }
 
     /// The stat the work is made with (its check's), which its end trains: asked once the
@@ -159,14 +162,13 @@ impl World {
                 None => self.say(job.nothing_left()),
             },
             Ended::Came(came) => {
-                let text = format!("{}; {}.", self.came_line(came), job.leave());
-                self.say(text);
+                let said = Msg::new(msg::crafting::WORK_STOPPED_CAME)
+                    .role("came", self.came_msg(came))
+                    .role("leave", job.leave());
+                self.say(said);
             }
             Ended::Said | Ended::Done => {
-                let leave = job.leave();
-                let mut chars = leave.chars();
-                let first = chars.next().map(|c| c.to_uppercase().to_string());
-                self.say(format!("{}{}.", first.unwrap_or_default(), chars.as_str()));
+                self.say(Msg::new(msg::crafting::WORK_STOPPED).role("leave", job.leave()));
             }
         }
     }
