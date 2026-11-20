@@ -1,0 +1,36 @@
+# The rig list (`crates/ascmearc/src/ui/rig_screen.rs`). Ids alphabetical.
+#
+# The keys named in the hint lines are fixed (`a`, `Enter`, `Esc`): translate the words around
+# them. The screen fits each text to its panel (docs/dev/localization.md "UI text").
+
+# The footer when the list is empty.
+[esc_back]
+text = "Esc back"
+
+# The group header over the rigs.
+[group_traps]
+text = "Traps"
+
+# What the list says when the player knows no rig.
+[none]
+text = "You know no trap to rig."
+
+# The footer's pick: `a` alone, the page's letters `a-{last}`, or only the confirm key.
+[pick_a]
+text = "a or {confirm:bare} rig"
+
+[pick_letters]
+text = "a-{last:bare} or {confirm:bare} rig"
+
+[pick_only]
+text = "{confirm:bare} rig"
+
+# A rig's tail: what is lacking for it, or how long it takes.
+[lacking]
+text = "({why:bare})"
+
+[time]
+text = "about {time:bare}"
+
+[title]
+text = "Trapwright: which trap?"

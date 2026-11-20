@@ -1,0 +1,225 @@
+# The object screens (`crates/ascmearc/src/ui/object_screen.rs`): the inventory and its drop
+# mode, the pile, and the lists that choose a stack (throw, consume, read, identify, temper, ...).
+# Ids alphabetical.
+#
+# The keys named in the hint lines are fixed (`a-c`, `D`, `Enter`, `Esc`): translate the words
+# around them. The screen fits each text to its panel (docs/dev/localization.md "UI text").
+
+# Carrying: `weight`, what the player carries; `burden`, the burden's word.
+[carrying]
+text = "Carrying {weight:bare}"
+
+[carrying_burden]
+text = "Carrying {weight:bare} ({burden:bare})"
+
+# The read dialog over a grimoire: `grimoire`, its name; `what`, what reading it does
+# (`deepening` or `learning`); `chance`, the chance in words.
+[dialog_cancel]
+text = "Don't read it"
+
+[dialog_read]
+text = "Read it"
+
+[dialog_text]
+text = "Read the {grimoire:bare}? {what:bare} will be {chance:bare}. Once you begin you cannot stop of your own accord."
+
+[dialog_title]
+text = "Read"
+
+# What reading would do: `spell`, the spell; `rank`, the rank it would bring; `max`, the top rank.
+[deepening]
+text = "Deepening {spell:bare} to rank {rank:bare} of {max:bare}"
+
+[learning]
+text = "Learning {spell:bare}"
+
+# The footer: `letters`, the page's letters (`a-c`); `confirm`, the confirm key; `verb`, below.
+[either]
+text = "{letters:bare} or {confirm:bare} {verb:bare}"
+
+[either_none]
+text = "{confirm:bare} {verb:bare}"
+
+[esc_back]
+text = "Esc back"
+
+[esc_cancel]
+text = "Esc cancel"
+
+[esc_close]
+text = "Esc close"
+
+# The inventory's own key, as bound (`own`).
+[esc_close_own]
+text = "{own:bare} or Esc close"
+
+[footer_drop]
+text = "D drop"
+
+[footer_look]
+text = "{letters:bare} look"
+
+[footer_mark]
+text = "{letters:bare} mark"
+
+# The key that marks everything (`own`).
+[footer_mark_all]
+text = "{own:bare} all"
+
+# A list's empty words.
+[empty_cut]
+text = "You carry no gem that can be cut."
+
+[empty_decipher]
+text = "You carry no scroll you have not made out."
+
+[empty_eat]
+text = "You have nothing to consume."
+
+[empty_give]
+text = "You carry nothing for a beast's neck."
+
+[empty_identify]
+text = "You carry nothing unidentified."
+
+[empty_inventory]
+text = "You are not carrying anything."
+
+[empty_make_do]
+text = "You carry nothing damaged to mend."
+
+[empty_pick_up]
+text = "There is nothing here."
+
+[empty_read]
+text = "You have nothing to read."
+
+[empty_salvage]
+text = "You carry nothing worth taking apart."
+
+[empty_temper]
+text = "You carry no metal arms or armour to work."
+
+[empty_throw]
+text = "You have nothing to throw."
+
+[empty_thrown_exploit]
+text = "You have nothing to throw into an opening."
+
+[empty_whittle]
+text = "You carry no wooden weapon to whittle."
+
+# A row's marks, in brackets after its name: `name`, `mark`.
+[name_marked]
+text = "{name:bare} ({mark:bare})"
+
+[mark_for_sale]
+text = "for sale, {gold:bare} gold"
+
+[mark_learning]
+text = "learning: {chance:bare}"
+
+[mark_looks]
+text = "looks {word:bare}"
+
+[mark_lying_here]
+text = "lying here"
+
+[mark_rank]
+text = "rank {rank:bare} of {max:bare}: {chance:bare}"
+
+[mark_smells]
+text = "smells {word:bare}"
+
+[mark_unpaid]
+text = "unpaid, {gold:bare} gold"
+
+# What the page's letters do on a one-pick list.
+[verb_choose]
+text = "choose"
+
+[verb_consume]
+text = "consume"
+
+[verb_cut]
+text = "cut"
+
+[verb_decipher]
+text = "decipher"
+
+[verb_drop]
+text = "drop"
+
+[verb_give]
+text = "give"
+
+[verb_identify]
+text = "identify"
+
+[verb_mend]
+text = "mend"
+
+[verb_pick_up]
+text = "pick up"
+
+[verb_read]
+text = "read"
+
+[verb_salvage]
+text = "salvage"
+
+[verb_temper]
+text = "temper"
+
+[verb_whittle]
+text = "whittle"
+
+# The weights line: `total`, with the pack; `base`, the player's own.
+[your_weight]
+text = "Your weight {total:bare} (you {base:bare})"
+
+# Panel titles.
+[title_cut]
+text = "Cut"
+
+[title_decipher]
+text = "Decipher"
+
+[title_drop]
+text = "Inventory: drop"
+
+[title_eat]
+text = "Consume what?"
+
+[title_give]
+text = "Give"
+
+[title_identify]
+text = "Identify"
+
+[title_inventory]
+text = "Inventory"
+
+[title_make_do]
+text = "Make do and mend"
+
+[title_pick_up]
+text = "Pick up"
+
+[title_read]
+text = "Read"
+
+[title_salvage]
+text = "Salvage"
+
+[title_temper]
+text = "Temper"
+
+[title_throw]
+text = "Throw"
+
+[title_thrown_exploit]
+text = "Thrown exploit"
+
+[title_whittle]
+text = "Whittle"
