@@ -12,14 +12,19 @@
 //! it in play: it is reached by its number or Tab from any info page (the Weapons page's hint
 //! line names it). Esc or Enter closes it. It is read from the perception
 //! snapshot when it opens; no game time passes while it is open, so it cannot go stale.
+//!
+//! Its words are `assets/lang/en/ui/magic_screen.toml` (`T::…`, [`super::text`]); the styles'
+//! and spells' names are the data's.
 
 use super::abilities_screen::{needs, spell_head};
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::screens::ScreenAction;
+use super::text::{magic_screen as T, ui, ui_with};
 use super::weapon_skills_screen::{BAR, IN_USE, draw_bar};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use ascmearc_core::ability::Ability;
+use ascmearc_core::lang::Arg;
 use ascmearc_core::perception::PerceptionView;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
@@ -32,10 +37,6 @@ const RANK_W: i32 = 8;
 const LINE_W: i32 = 2 + NAME_W + RANK_W + 36;
 /// Width of the panel's own: the line in the frame and its margins.
 const WIDTH: i32 = LINE_W + 6;
-/// What the caster styles' heading says while one is marked.
-const LEGEND: &str = "the style you cast in now";
-/// What the spells' section says when there are none.
-const NO_SPELLS: &str = "You know no spells.";
 
 /// A row of the page.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -43,7 +44,7 @@ enum Row {
     /// The player's mana: `Mana 47/106`.
     Mana(String),
     /// A section's heading (`Schools`), with the legend of the mark while one is marked.
-    Section { name: &'static str, legend: bool },
+    Section { name: String, legend: bool },
     /// A school or a caster style: its name, its rank, how many of the bar's cells its marks
     /// fill (`None` at the last rank), and whether it is the style cast in now.
     Skill {
@@ -59,7 +60,7 @@ enum Row {
         detail: String,
     },
     /// A line of its own, dim ("You know no spells.").
-    Note(&'static str),
+    Note(String),
     /// A gap between sections.
     Gap,
 }
@@ -106,7 +107,8 @@ impl MagicScreen {
             .collect();
         let body = rows.len().max(1) as i32;
         let width = super::info_tabs::panel_width(WIDTH);
-        let panel = Panel::new(console, " Magic ", width, body + around);
+        let title = format!(" {} ", ui(T::TITLE));
+        let panel = Panel::new(console, &title, width, body + around);
         super::info_tabs::draw_tabs(console, &panel, super::ScreenName::Magic);
         let room = (panel.h - around).max(0);
         let most = (body - room).max(0) as usize;
@@ -115,7 +117,7 @@ impl MagicScreen {
         let top = panel.y + if compact { 1 } else { 2 };
         let x = panel.inner_x();
         for (y, row) in (top..).zip(rows.iter().skip(first).take(room as usize)) {
-            draw_row(console, x, y, row);
+            draw_row(console, x, y, row, panel.inner_w());
         }
         // Arrows on the frame where rows are hidden above or below.
         let edge = panel.x + panel.w - 1;
@@ -125,10 +127,12 @@ impl MagicScreen {
         if first < most && room > 0 {
             console.print(edge, top + room - 1, "↓", TEXT_DIM);
         }
+        let close = ui(T::CLOSE);
         let footer = if most > 0 {
-            format!("{} scroll   Esc close", HINTS.up_down())
+            let scroll = ui_with(T::SCROLL, &[("keys", HINTS.up_down().into())]);
+            format!("{scroll}   {close}")
         } else {
-            "Esc close".to_string()
+            close
         };
         panel.footer(console, &footer);
     }
@@ -153,7 +157,7 @@ fn rows(view: &PerceptionView<'_>) -> Vec<Row> {
                 let detail = if needs(a.aim(content)).is_empty() {
                     head
                 } else {
-                    format!("{head}, aimed")
+                    ui_with(T::AIMED, &[("cost", head.into())])
                 };
                 Some(Row::Spell {
                     name: a.name(content).to_string(),
@@ -167,7 +171,11 @@ fn rows(view: &PerceptionView<'_>) -> Vec<Row> {
     let mut rows = Vec::new();
     let (mana, max) = view.own_mana();
     if max > 0 {
-        rows.extend([Row::Mana(format!("Mana {mana}/{max}")), Row::Gap]);
+        let args = [
+            ("mana", Arg::Number(i64::from(mana))),
+            ("max", Arg::Number(i64::from(max))),
+        ];
+        rows.extend([Row::Mana(ui_with(T::MANA, &args)), Row::Gap]);
     }
     // The caster styles, for a caster: one who knows a spell, or has marks or a rank in one of
     // them (everyone has a little mana; a warrior is no caster).
@@ -181,35 +189,36 @@ fn rows(view: &PerceptionView<'_>) -> Vec<Row> {
     if !spells.is_empty() || trained {
         let legend = (styles.iter()).any(|r| matches!(r, Row::Skill { in_use: true, .. }));
         rows.push(Row::Section {
-            name: "Caster styles",
+            name: ui(T::CASTER_STYLES),
             legend,
         });
         rows.extend(styles);
         rows.push(Row::Gap);
     }
     rows.push(Row::Section {
-        name: "Spells",
+        name: ui(T::SPELLS),
         legend: false,
     });
     if spells.is_empty() {
-        rows.push(Row::Note(NO_SPELLS));
+        rows.push(Row::Note(ui(T::NO_SPELLS)));
     }
     rows.extend(spells);
     rows
 }
 
-/// One row at (`x`, `y`).
-fn draw_row(console: &mut Console, x: i32, y: i32, row: &Row) {
+/// One row at (`x`, `y`), in a panel `inner` columns wide inside.
+fn draw_row(console: &mut Console, x: i32, y: i32, row: &Row, inner: i32) {
     match row {
         Row::Mana(text) => {
-            console.print(x, y, text, TEXT);
+            console.print_in(x, y, text, TEXT, inner);
         }
         Row::Section { name, legend } => {
-            console.print(x, y, name, TEXT_DIM);
+            console.print_in(x, y, name, TEXT_DIM, inner);
             if *legend {
-                let at = x + LINE_W - LEGEND.chars().count() as i32 - 2;
+                let legend = ui(T::LEGEND);
+                let at = x + LINE_W - legend.chars().count() as i32 - 2;
                 console.print(at, y, &IN_USE.to_string(), ACCENT);
-                console.print(at + 2, y, LEGEND, TEXT_DIM);
+                console.print_in(at + 2, y, &legend, TEXT_DIM, x + inner - at - 2);
             }
         }
         Row::Skill {
@@ -223,19 +232,21 @@ fn draw_row(console: &mut Console, x: i32, y: i32, row: &Row) {
             if *in_use {
                 console.print(x, y, &IN_USE.to_string(), ACCENT);
             }
-            console.print(x + 2, y, name, fg);
+            console.print_in(x + 2, y, name, fg, NAME_W - 1);
             console.print(x + 2 + NAME_W, y, &format!("{rank:>2}"), fg);
             if let Some(filled) = filled {
                 draw_bar(console, x + NAME_W + 6, y, *filled);
             }
         }
         Row::Spell { name, rank, detail } => {
-            console.print(x + 2, y, name, TEXT);
-            console.print(x + 2 + NAME_W, y, &format!("rank {rank}"), TEXT_DIM);
-            console.print(x + 2 + NAME_W + RANK_W, y, detail, TEXT_DIM);
+            console.print_in(x + 2, y, name, TEXT, NAME_W - 1);
+            let rank = ui_with(T::RANK, &[("rank", Arg::Number(i64::from(*rank)))]);
+            console.print_in(x + 2 + NAME_W, y, &rank, TEXT_DIM, RANK_W - 1);
+            let at = 2 + NAME_W + RANK_W;
+            console.print_in(x + at, y, detail, TEXT_DIM, inner - at);
         }
         Row::Note(text) => {
-            console.print(x + 2, y, text, TEXT_DIM);
+            console.print_in(x + 2, y, text, TEXT_DIM, inner - 2);
         }
         Row::Gap => {}
     }
@@ -297,7 +308,7 @@ mod tests {
         let missile = find(&text, "Magic missile");
         assert!(missile.contains(" mana, aimed"), "{missile}");
         assert!(find(&text, "Esc close").contains("Esc close"));
-        assert!(at(NO_SPELLS).is_none());
+        assert!(at(&ui(T::NO_SPELLS)).is_none());
     }
 
     #[test]
@@ -316,7 +327,8 @@ mod tests {
         let text = drawn(&MagicScreen::new(Some(&mail.perception())), 120, 50);
         let marked = format!("{IN_USE} Battle caster");
         assert!(find(&text, "Battle caster").contains(&marked), "{text:#?}");
-        assert!(find(&text, "Caster styles").contains(&format!("{IN_USE} {LEGEND}")));
+        let legend = format!("{IN_USE} {}", ui(T::LEGEND));
+        assert!(find(&text, "Caster styles").contains(&legend));
         assert_eq!(text.iter().filter(|l| l.contains(IN_USE)).count(), 2);
     }
 
@@ -325,7 +337,7 @@ mod tests {
         let world = world("showcase", "human,male,warrior", "");
         let screen = MagicScreen::new(Some(&world.perception()));
         let text = drawn(&screen, 120, 50);
-        find(&text, NO_SPELLS);
+        find(&text, &ui(T::NO_SPELLS));
         let at = |needle: &str| text.iter().position(|l| l.contains(needle));
         assert!(at("Caster styles").is_none() && at("Sniper").is_none());
         for hidden in ["+", "%", "to-hit", "marks"] {

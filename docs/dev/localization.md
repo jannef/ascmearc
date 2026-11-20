@@ -714,6 +714,13 @@ hunger's, the burden's, the stance's, and a kept beast's health word (`Health::w
 the rest prompt's words (`settings::fixed::REST`, the settings part). The bar's developer
 segments (turn, position, light, vision, seed) and `dev.rs`'s overlay line stay literal.
 
+**The magic, scribe, and weapon skills screens** (#1938; `spells.rs` draws effects and has no
+text) still take as text the weapon skills' section names (`Section::name`), a scribed spell's
+time in words (`Duration::spoken`), and the spell, school, caster style, and skill names data
+gives as English (the scribe list's school headings are the school's id, capitalized). The magic
+screen's spell detail is cut in its room, not run over the frame (#1910 stays in `KNOWN` until its
+layout gives the detail the room).
+
 ## Lines of data
 
 A line whose text lives in the data, not in `messages/` (a dialogue line, a miscast's `seen`, an
