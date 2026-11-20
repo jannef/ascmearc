@@ -1,0 +1,78 @@
+# The Talents page (`crates/ascmearc/src/ui/talents_screen.rs`). Ids alphabetical.
+#
+# The talents' and trees' names and descriptions, and what a talent needs, come from the game's
+# data. The keys named in the footer are fixed (`Esc`): translate the words around them. The
+# screen fits each text to its panel (docs/dev/localization.md "UI text").
+
+# The footer's parts: `keys`, the keys that move the selection; `own`, the screen's own key, as
+# bound.
+[choose]
+text = "{keys:bare} choose"
+
+[close]
+text = "Esc close"
+
+[close_own]
+text = "{own:bare} or Esc close"
+
+# Where one of the player's talents came from, after its name: `from`, one of the `from_` words.
+[from]
+text = "({from:bare})"
+
+# An altar's boon.
+[from_altar]
+text = "altar"
+
+[from_birth_sign]
+text = "birth sign"
+
+[from_class]
+text = "class"
+
+# A row of the ratfolk's craving.
+[from_craving]
+text = "craving"
+
+# A band of the dwarves' oath table.
+[from_oath]
+text = "oath"
+
+# A profane gift.
+[from_profane]
+text = "profane"
+
+# A profane gift that is a flaw.
+[from_profane_flaw]
+text = "profane, flaw"
+
+[from_race]
+text = "race"
+
+# A talent the story gave.
+[from_story]
+text = "story"
+
+[from_story_flaw]
+text = "story, flaw"
+
+# The label before what another talent needs, its parts listed after it.
+[needs]
+text = "Needs:"
+
+# The player has no talents yet.
+[none_yet]
+text = "none yet"
+
+# What a talent that needs nothing lists after `needs`.
+[nothing]
+text = "nothing"
+
+# The headings: the player's own talents, then every other they could still pick.
+[other_talents]
+text = "Other talents"
+
+[title]
+text = "Talents"
+
+[your_talents]
+text = "Your talents"

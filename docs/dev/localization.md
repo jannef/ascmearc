@@ -9,7 +9,8 @@ built from what the player perceives, items are named by phrases English renders
 checker (L7)"); **L10**, the `fi` morphology (#1893, "The `fi` module"); and **L6a**, the UI
 text path (#1900): the app's words in `assets/lang/en/ui/`, the abilities screen converted ("UI
 text"), with its widths in the screens' layout, not the text (#1908), and the further L6 parts:
-the controls, settings, and mods screens (#1935) and the object and rig screens (#1928); **L4a**,
+the controls, settings, and mods screens (#1935), the object and rig screens (#1928), and the
+character, characters, skills, and talents screens (#1933); **L4a**,
 **L4b**, **L4e**, **L4h**, **L4i**, **L4j**, and **L4m**, `world/allies/` (#1912), `world/character/` (#1913),
 `world/creatures/` (#1916), `world/fixtures/` and `world/items/` (#1919), `world/health/` (#1920),
 `world/levels/` (#1921), and `world/people/` (#1924) say their lines from templates
@@ -685,6 +686,14 @@ example:
      `{x:counted}`. `level_up_screen.toml`'s `left_rolls`, `marks`, and `sources` are the example.
    - *No sentence glued from entries.* A sentence with optional clauses is one entry with a slot
      per clause, each clause its own entry or empty: `level_up_screen.toml`'s `explain`.
+
+**Words the screens still take from core as text** until core's words are converted (#1949):
+the character screen's stat names and abbreviations (`Stat::name`, `Stat::abbrev`), the gender's
+name, the alignment band's, the burden's word and thresholds (`Load::over`), the resistance words
+(`ResistanceWord::label`), an attack's source label and summary, the guild rank's title, the
+conditions (`ui::conditions`), and the race, class, stance, resource, sign, skill, talent, tree, and
+need names data gives as English; the Characters list's race and class, kept in a save's summary
+as the names were.
 
 ## Lines of data
 

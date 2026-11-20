@@ -13,10 +13,12 @@ use super::cursor;
 use super::dialog_screen::Dialog;
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::screens::{MenuChoice, ScreenAction};
+use super::text::{characters_screen as T, ui, ui_with};
 use super::{TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use crate::save::{SavedCharacter, Summary, played_text};
 use crate::settings::Clock;
+use ascmearc_core::lang::{Arg, Phrase};
 
 /// The panel's width.
 const WIDTH: i32 = 72;
@@ -24,8 +26,6 @@ const WIDTH: i32 = 72;
 const RACE_X: i32 = 24;
 /// Where the level column ends.
 const LEVEL_END: i32 = 66;
-/// What the level column says of a save another version of the game made.
-const OTHER_VERSION: &str = "other version";
 
 /// The saved characters.
 #[derive(Debug)]
@@ -58,72 +58,41 @@ impl CharactersScreen {
 
     /// "Twelve characters have died.", "One character has died."; `None` while none has.
     fn died_line(&self) -> Option<String> {
-        const WORDS: [&str; 21] = [
-            "No",
-            "One",
-            "Two",
-            "Three",
-            "Four",
-            "Five",
-            "Six",
-            "Seven",
-            "Eight",
-            "Nine",
-            "Ten",
-            "Eleven",
-            "Twelve",
-            "Thirteen",
-            "Fourteen",
-            "Fifteen",
-            "Sixteen",
-            "Seventeen",
-            "Eighteen",
-            "Nineteen",
-            "Twenty",
-        ];
-        let count = WORDS
-            .get(self.died)
-            .map_or_else(|| self.died.to_string(), |w| (*w).to_string());
-        match self.died {
-            0 => None,
-            1 => Some("One character has died.".into()),
-            _ => Some(format!("{count} characters have died.")),
-        }
+        let n = i64::try_from(self.died).unwrap_or(i64::MAX);
+        (n > 0).then(|| ui_with(T::DIED, &[("n", Arg::Number(n))]))
     }
 
     /// Where a character is: `In Cēaptūn.`, or with more than one campaign installed and the
     /// summary's campaign known, `In Cēaptūn (The Ascmearc).`
     fn place(&self, summary: &Summary) -> String {
+        let place = ("place", summary.place.as_str().into());
         if self.campaigns && !summary.campaign.is_empty() {
-            format!("In {} ({}).", summary.place, summary.campaign)
+            let campaign = ("campaign", summary.campaign.as_str().into());
+            ui_with(T::PLACE_CAMPAIGN, &[place, campaign])
         } else {
-            format!("In {}.", summary.place)
+            ui_with(T::PLACE, &[place])
         }
     }
 
     /// Why a save of another version cannot be played: `Made by version 0.8.0 of the game: it
     /// cannot be continued here.` (a summary from before saves were pinned names none).
     fn made_by(summary: &Summary) -> String {
-        let version = if summary.version.is_empty() {
-            "an older version".to_string()
+        if summary.version.is_empty() {
+            ui(T::MADE_BY_OLDER)
         } else {
-            format!("version {}", summary.version)
-        };
-        format!("Made by {version} of the game: it cannot be continued here.")
+            ui_with(T::MADE_BY, &[("version", summary.version.as_str().into())])
+        }
     }
 
     /// The dialog deleting `character` asks first.
     fn delete_dialog(character: &SavedCharacter) -> Dialog {
-        let text = format!(
-            "Delete {}'s save? The character is gone for good.",
-            character.name()
-        );
+        let name = Phrase::literal(character.name());
         Dialog::yes_no(
-            "Delete character",
-            text,
-            "Delete",
+            ui(T::DELETE_TITLE),
+            ui_with(T::DELETE_TEXT, &[("name", name.into())]),
+            ui(T::DELETE_YES),
             MenuChoice::DeleteCharacter(character.id.clone()),
-            "Keep",
+            ui(T::DELETE_KEEP),
         )
     }
 
@@ -157,12 +126,14 @@ impl CharactersScreen {
         let rows = self.characters.len().max(1) as i32;
         let died = self.died_line();
         let below = if died.is_some() { 11 } else { 9 };
-        let panel = Panel::new(console, " Characters ", WIDTH, rows + below);
+        let title = format!(" {} ", ui(T::TITLE));
+        let panel = Panel::new(console, &title, WIDTH, rows + below);
         let x = panel.inner_x();
         let visible = (panel.h - below).clamp(1, rows);
         let first = (self.selected as i32 - visible + 1).clamp(0, rows - visible);
         if self.characters.is_empty() {
-            console.print(x + 2, panel.y + 2, "No saved characters.", TEXT_DIM);
+            let none = ui(T::NO_CHARACTERS);
+            console.print_in(x + 2, panel.y + 2, &none, TEXT_DIM, panel.inner_w() - 2);
         }
         for row in first..(first + visible).min(self.characters.len() as i32) {
             let character = &self.characters[row as usize];
@@ -183,9 +154,10 @@ impl CharactersScreen {
                 };
                 console.print(x + RACE_X, y, &summary.race_and_class(), colour);
                 let level = if summary.this_version() {
-                    format!("level {}", summary.level)
+                    let level = Arg::Number(i64::from(summary.level));
+                    ui_with(T::LEVEL, &[("level", level)])
                 } else {
-                    OTHER_VERSION.to_string()
+                    ui(T::OTHER_VERSION)
                 };
                 let lx = x + LEVEL_END - level.chars().count() as i32;
                 console.print(lx, y, &level, TEXT);
@@ -207,33 +179,32 @@ impl CharactersScreen {
                     lines.push(Self::made_by(summary));
                 }
                 lines.push(self.place(summary));
-                lines.push(format!(
-                    "Last played {}.",
-                    played_text(summary.played, clock)
-                ));
+                let when = played_text(summary.played, clock);
+                lines.push(ui_with(T::LAST_PLAYED, &[("when", when.into())]));
                 lines
             }
-            Some(_) => vec!["Nothing is known of this save until it is played.".into()],
+            Some(_) => vec![ui(T::NOTHING_KNOWN)],
             None => Vec::new(),
         };
         let bottom = panel.y + panel.h - (below - 7);
         for (y, line) in (panel.y + 3 + visible..).zip(details) {
             if y < bottom {
-                console.print(x + 2, y, &line, TEXT_DIM);
+                console.print_in(x + 2, y, &line, TEXT_DIM, panel.inner_w() - 2);
             }
         }
         if let Some(line) = died
             && bottom < panel.y + panel.h - 2
         {
-            console.print(x + 2, bottom, &line, TEXT_DIM);
+            console.print_in(x + 2, bottom, &line, TEXT_DIM, panel.inner_w() - 2);
         }
         let keys = HINTS;
-        let footer = format!(
-            "{} choose   {} play   {} delete   Esc back",
-            keys.up_down(),
-            keys.confirm,
-            keys.erase
-        );
+        let footer = [
+            ui_with(T::FOOTER_CHOOSE, &[("keys", keys.up_down().into())]),
+            ui_with(T::FOOTER_PLAY, &[("keys", keys.confirm.into())]),
+            ui_with(T::FOOTER_DELETE, &[("keys", keys.erase.into())]),
+            ui(T::FOOTER_BACK),
+        ]
+        .join("   ");
         panel.footer(console, &footer);
     }
 }
