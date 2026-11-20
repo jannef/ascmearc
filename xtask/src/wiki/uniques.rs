@@ -152,5 +152,20 @@ fn power_text(content: &Content, u: &UniqueDef) -> String {
         Some(Power::Ward { status, .. }) => {
             format!("its wearer is never {}", content.status(*status).name)
         }
+        Some(Power::Light(id)) => {
+            let radius = content.light(*id).radius;
+            format!(
+                "worn or wielded, it sheds a steady light reaching {radius} cells about its \
+                 bearer (with a glowing item's light, only the farther-reaching counts; a \
+                 lantern adds its own)"
+            )
+        }
+        Some(Power::Range(times)) => {
+            let word = match times {
+                2 => "twice".to_string(),
+                n => format!("{n} times"),
+            };
+            format!("it shoots {word} as far: its range, and what its affixes add, times {times}")
+        }
     }
 }

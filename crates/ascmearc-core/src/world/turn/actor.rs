@@ -1316,7 +1316,8 @@ impl Actor {
         object.attack.as_ref().map(|a| (stack.object, a))
     }
 
-    /// How far its missile weapon shoots, in cells: its `range`, and what its affixes add.
+    /// How far its missile weapon shoots, in cells: its `range`, and what its affixes add, times
+    /// a unique's Range power ([`Mods::range`]), and its talents'.
     pub fn launcher_range(&self, content: &Content) -> Option<i32> {
         let stack = self.inventory.get(self.launcher_item(content)?)?;
         let object = content.object(stack.object);
@@ -1324,7 +1325,7 @@ impl Actor {
         // Its talents' (Far shot), and those for a launcher of its skill (Slinger's slings).
         let skill = (object.skill).map(|s| content.weapon_skills().skill(s).id.as_str());
         let talents = self.talent_mods(content).offence.launcher_range_for(skill);
-        Some(range + Mods::local(stack, content).get(ItemEffect::Range) + talents)
+        Some(Mods::local(stack, content).range(range) + talents)
     }
 
     /// How far it throws inventory stack `item`, if it can be thrown: a throwing weapon's
@@ -1333,7 +1334,7 @@ impl Actor {
         let stack = self.inventory.get(item)?;
         let range = content.object(stack.object).throw_range()?;
         let talents = self.talent_mods(content).offence.throw_range;
-        Some(range + Mods::local(stack, content).get(ItemEffect::Range) + talents)
+        Some(Mods::local(stack, content).range(range) + talents)
     }
 
     /// How far it throws inventory stack `item` in a thrown exploit (`openings.rs`): its throw

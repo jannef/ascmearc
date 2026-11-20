@@ -65,6 +65,21 @@ objects = ["mattock"]
 at = [7, 8]
 objects = ["unique:stonebiter"]
 
+# The three uniques of the drop pool to come (#1976), placed nowhere else: so tests and
+# captures can reach them. The Grandmother, Silverstrike (with arrows to shoot), and the
+# Radiant, whose light fills the dark arrival room once wielded.
+[[pile]]
+at = [5, 11]
+objects = ["unique:grandmother"]
+
+[[pile]]
+at = [7, 11]
+objects = ["unique:silverstrike", "arrow*20"]
+
+[[pile]]
+at = [9, 11]
+objects = ["unique:radiant"]
+
 # Stones from the old digging, to throw.
 [[pile]]
 at = [23, 4]

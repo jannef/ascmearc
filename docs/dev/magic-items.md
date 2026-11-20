@@ -334,7 +334,8 @@ id on another rarity than unique, and a unique without its id.
   the hand-set ones, and `Magic::check` (saves) passes those of the unique's own table (an
   affix equal to one there), so a value set by hand is valid on that unique alone. The wiki
   table marks them `set` in place of a tier. Use it for the owner's exact numbers; a value a
-  tier tops is still written with its tier.
+  tier tops is still written with its tier, except on the drop-pool three below, which write
+  every value so a regrade of the tiers never moves them.
 - **Placement**: `parse_stacks` (`content/object.rs`) makes `unique:ID` through
   `Content::place_unique` (`Uniques::place`). Content places each unique once (the data
   author's promise, not counted at load, #1205). `level::equip_ids` takes `unique:ID` in
@@ -355,6 +356,14 @@ id on another rarity than unique, and a unique without its id.
   offer (`docs/dev/npcs.md` "A trader's offer"; no other content places them), and the run's
   `WorldState::uniques_offered` keeps each to one offer a run. The wiki's
   "Carried by" names the offer with its chance (`offered_by`).
+- **The drop-pool three** (#1976): the Grandmother (a Masterwork mithril great sword: +10
+  damage, a d12 more, a d12 of necrotic, +4 to hit, +4 Strength, and Bleeding on half its
+  hits), Silverstrike (a Marvellous long war bow: Range ×2, +6 to hit, Keen, Steady), and the
+  Radiant (a Masterwork war hammer: Light `radiant_hammer`, radius 20, `data/lights.toml`; +4
+  damage, Keen, +4 Toughness, +12 hit points), in the shared `data/uniques/`, item level 12,
+  every affix set by hand. They are meant for the low-chance drop pool (#196; #2004 / #2009 may
+  move them to item level 40) and placed nowhere yet but the test world's quarry
+  (`campaigns/showcase/levels/quarry.toml`), so tests and captures reach them.
 - **Powers**, a variant each, read in one place each: `Power::Inflict { hit, added }` rides
   `Mods::local` of the weapon into `Profile::on_hit` (`sharpen`), which `World::resolve` hands
   to `after_blow` after the natural attack's `on_hit` (`Mods::worn` never carries it: it is the
@@ -367,6 +376,14 @@ id on another rarity than unique, and a unique without its id.
   for the player unless `WorldState::vision_dev` (set by the dev `vision:` action) and the AI's
   and ambush's sight checks for creatures. `Power::Ward { status, message }`: `World::afflict`
   returns before anything else when `Actor::ward` finds one, saying `message` to the player.
+  `Power::Light(LightId)` (`{ light = "radiant_hammer" }`, a preset of `data/lights.toml`;
+  #1976): `Mods::worn` carries it as a glowing affix's light (`Mods::add_light`: the
+  farther-reaching counts), so the light cache's `GLOW` source sheds it on the player and on a
+  creature alike, while worn or wielded. `Power::Range(times)` (`{ range = 2 }`, 2 or more,
+  only on a base with a `range`; #1976): `Mods::local` keeps it, and `Mods::range` is the
+  base's range plus what affixes add, times it, read by `Actor::launcher_range`,
+  `Actor::throw_range`, and `Numbers::of` (talents add after). A creature's AI still judges
+  its reach by its launcher's plain `range` (`world/creatures/ai.rs`), as it ignores Hunter's.
   `magic::worn_powers` lists the powers of what an actor has equipped.
 - **Description**: `describe::lines` adds `LineKind::Power` (the `phrase`) and
   `LineKind::Lore` after the affixes, only through `known_magic`; the UI labels the first
@@ -380,7 +397,9 @@ id on another rarity than unique, and a unique without its id.
 - **Tests**: `world/creatures/unique_tests.rs` (the table and the values set by hand, hiding
   until identified, placement, Widowmaker's poison and its 2d6 on every hit, High Toby's
   Bleeding by its chance on its keyed stream, the
-  Bedes' darkvision on and off and under the dev override, the Turncoat's ward, a save); the
+  Bedes' darkvision on and off and under the dev override, the Turncoat's ward, the Radiant's
+  light on and off and on a creature, Silverstrike's doubled range, the load's checks of both
+  powers, a save); the
   item description's text snapshots `unique-description` and `unique-description-unidentified`
   (the quarry's Stonebiter, the test world's unique). Tests that strip statuses or skills
   remove `campaigns/ascmearc/data/uniques` with them.

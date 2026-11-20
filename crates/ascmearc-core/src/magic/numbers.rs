@@ -263,7 +263,7 @@ fn attack(stack: &Stack, content: &Content) -> Option<AttackNumbers> {
     }
     let range = (def.range)
         .filter(|_| role == Role::Weapon)
-        .map(|range| range + mods.get(Effect::Range));
+        .map(|range| mods.range(range));
     if role == Role::Worn {
         // Only its to-hit and damage with every attack: the rest stays in its description.
         profile.to_hit += mods.get(Effect::ToHit);

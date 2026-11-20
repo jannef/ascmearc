@@ -53,6 +53,9 @@ pub struct Mods {
     added: Vec<Rider>,
     /// What bane affixes add against creatures of each tag, in the order first met.
     banes: Vec<(String, i32)>,
+    /// How many times as far it shoots or is thrown, from a unique item's Range power (local;
+    /// 1 without one: [`Mods::range`]).
+    range_times: u8,
 }
 
 impl Default for Mods {
@@ -67,6 +70,7 @@ impl Default for Mods {
             on_hit: Vec::new(),
             added: Vec::new(),
             banes: Vec::new(),
+            range_times: 1,
         }
     }
 }
@@ -168,11 +172,8 @@ impl Mods {
             }
             Effect::Deflection | Effect::Natural => *slot = (*slot).max(value),
             Effect::Light => {
-                let radius = |id: LightId| content.light(id).radius;
-                if let Some(id) = light
-                    && self.light.is_none_or(|best| radius(id) > radius(best))
-                {
-                    self.light = Some(id);
+                if let Some(id) = light {
+                    self.add_light(id, content);
                 }
             }
             Effect::Skill => {
@@ -184,6 +185,20 @@ impl Mods {
             }
             _ => *slot = slot.saturating_add(value),
         }
+    }
+
+    /// Carries light `id` if it is brighter (reaches farther) than the one it carries.
+    fn add_light(&mut self, id: LightId, content: &Content) {
+        let radius = |id: LightId| content.light(id).radius;
+        if self.light.is_none_or(|best| radius(id) > radius(best)) {
+            self.light = Some(id);
+        }
+    }
+
+    /// How far it reaches with `range`, its base item's: that and what its affixes add, times
+    /// a unique's Range power (#1976). Talents add after (`Actor::launcher_range`).
+    pub fn range(&self, range: i32) -> i32 {
+        (range + self.get(Effect::Range)) * i32::from(self.range_times)
     }
 
     /// Adds the effects of `magic`'s affixes on an item of `kind` that are `local` (or not).
@@ -219,11 +234,16 @@ impl Mods {
         let mut mods = Mods::default();
         if let Some(magic) = stack.magic() {
             mods.add_magic(magic, true, stack, content);
-            // A unique weapon's Inflict power rides on the attacks made with it.
+            // A unique weapon's Inflict power rides on the attacks made with it; its Range power
+            // lengthens its reach.
             let unique = (magic.unique.as_deref()).and_then(|id| content.unique(id));
-            if let Some(Power::Inflict { hit, added }) = unique.and_then(|u| u.power.as_ref()) {
-                mods.on_hit.push(*hit);
-                mods.added.extend(*added);
+            match unique.and_then(|u| u.power.as_ref()) {
+                Some(Power::Inflict { hit, added }) => {
+                    mods.on_hit.push(*hit);
+                    mods.added.extend(*added);
+                }
+                Some(&Power::Range(times)) => mods.range_times = times,
+                _ => {}
             }
         }
         if stack.own_parts().is_some() {
@@ -277,7 +297,7 @@ impl Mods {
     }
 
     /// What the things in `inventory` that `equipment` holds do to whoever wears and wields
-    /// them (their global effects).
+    /// them (their global effects, and a unique's Light power's light).
     pub fn worn(inventory: &[Stack], equipment: &Equipment, content: &Content) -> Mods {
         let mut mods = Mods::default();
         for (_, item) in equipment.items() {
@@ -285,6 +305,10 @@ impl Mods {
                 && let Some(magic) = stack.magic()
             {
                 mods.add_magic(magic, false, stack, content);
+                let unique = (magic.unique.as_deref()).and_then(|id| content.unique(id));
+                if let Some(&Power::Light(id)) = unique.and_then(|u| u.power.as_ref()) {
+                    mods.add_light(id, content);
+                }
             }
         }
         mods
