@@ -134,3 +134,24 @@ fn the_classes_lines_read_as_the_data_writes_them() {
     let rage = content.resource(content.resource_id("rage").expect("rage"));
     assert_eq!(Some(said(lacking("rage"))), rage.lacking);
 }
+
+#[test]
+fn the_turns_lines_read_as_the_data_writes_them() {
+    let content = &CONTENT;
+    let said = |key: String| said_text(content, key);
+    let arrow = content.trap(content.trap_id("arrow").expect("arrow"));
+    assert_eq!(Some(said(trap_message("arrow"))), arrow.message);
+    let fever = content.disease(content.disease_id("filth_fever").expect("fever"));
+    assert_eq!(said(disease_onset(&fever.id)), fever.onset);
+    let count = u16::try_from(fever.symptoms.len()).expect("a few");
+    for n in 1..=count + 1 {
+        let key = disease_symptom(fever, n).expect("a symptom");
+        assert_eq!(said(key), fever.symptom(n), "progression {n}");
+    }
+    // No built-in resource says `ended` today; any that does reads as written.
+    for def in content.resources() {
+        if let Some(ended) = &def.ended {
+            assert_eq!(&said(resource_ended(&def.id)), ended);
+        }
+    }
+}

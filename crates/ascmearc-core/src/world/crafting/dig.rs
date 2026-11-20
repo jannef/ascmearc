@@ -152,7 +152,7 @@ impl World {
             (_, Ended::Died) => return,
             (false, _) => Msg::new(msg::crafting::WALL_CRUMBLES).role("wall", name),
             (true, Ended::Came(came)) => {
-                Msg::new(msg::crafting::STOP_DIGGING_CAME).role("came", self.came_line(came))
+                Msg::new(msg::crafting::STOP_DIGGING_CAME).role("came", self.came_msg(came))
             }
             (true, Ended::Said | Ended::Done) => Msg::new(msg::crafting::STOP_DIGGING),
         };

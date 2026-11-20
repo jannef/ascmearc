@@ -16,6 +16,8 @@ use super::run::terrain_at;
 use crate::action::Event;
 use crate::content::StairsDir;
 use crate::geom::{Dir, Pos};
+use crate::lang::{MessageId, Msg, Phrase};
+use crate::msg;
 use crate::perception::PerceptionView;
 use crate::world::{Spent, World};
 use std::cell::Cell;
@@ -23,7 +25,7 @@ use std::cmp::Reverse;
 use std::collections::BinaryHeap;
 
 /// What is said when the next step of the walk is onto a known trap.
-const TRAP_IN_THE_WAY: &str = "A trap lies in the way.";
+const TRAP_IN_THE_WAY: MessageId = msg::turn::TRAP_IN_THE_WAY;
 
 /// Whether the player knows `p` as stairs going `way`.
 fn stairs(view: &PerceptionView, p: Pos, way: StairsDir) -> bool {
@@ -112,11 +114,14 @@ pub(crate) fn toward_stairs(view: &PerceptionView, at: Pos, way: StairsDir) -> O
     None
 }
 
-/// What the stairs going `way` are called in the messages.
-fn way_name(way: StairsDir) -> &'static str {
-    match way {
-        StairsDir::Up => "up",
-        StairsDir::Down => "down",
+/// What is said when the player knows of no stairs going `way` (`known` false), or of no walk
+/// to any they know of.
+fn none_known(way: StairsDir, known: bool) -> MessageId {
+    match (way, known) {
+        (StairsDir::Up, true) => msg::turn::NO_PATH_UP,
+        (StairsDir::Up, false) => msg::turn::NO_WAY_UP,
+        (StairsDir::Down, true) => msg::turn::NO_PATH_DOWN,
+        (StairsDir::Down, false) => msg::turn::NO_WAY_DOWN,
     }
 }
 
@@ -127,13 +132,11 @@ impl World {
     pub(in crate::world) fn start_running_to_stairs(&mut self, way: StairsDir) -> Spent {
         let view = self.perception();
         let at = self.player_pos();
-        let name = way_name(way);
-        if stairs(&view, at, way) {
-            let here = terrain_at(&view, at).map(|t| view.content().terrain(t).name.clone());
-            self.say(format!(
-                "You are on the {} already.",
-                here.unwrap_or_default()
-            ));
+        if stairs(&view, at, way)
+            && let Some(here) = terrain_at(&view, at)
+        {
+            let what = Phrase::id(format!("terrain:{}", view.content().terrain(here).id));
+            self.say(Msg::new(msg::turn::ON_STAIRS_ALREADY).role("what", what));
             return Spent::Nothing;
         }
         if let Some(step) = toward_stairs(&view, at, way) {
@@ -147,10 +150,7 @@ impl World {
         let known = (0..view.height())
             .flat_map(|y| (0..view.width()).map(move |x| Pos::new(x, y)))
             .any(|p| stairs(&view, p, way));
-        self.say(match known {
-            true => format!("You know of no path to a way {name}."),
-            false => format!("You know of no way {name} here."),
-        });
+        self.say(none_known(way, known));
         Spent::Nothing
     }
 

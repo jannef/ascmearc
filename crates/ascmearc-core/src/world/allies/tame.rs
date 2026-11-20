@@ -135,9 +135,8 @@ impl World {
         let about = |id| Msg::new(id).role("who", who.clone());
         let text = match ended {
             _ if !self.taming_holds(taming) => about(msg::allies::BEAST_LEAVES),
-            // What came is told as `came_line` says it, until that line is converted.
             Ended::Came(came) => {
-                about(msg::allies::TAME_BROKEN_BY).role("came", self.came_line(came))
+                about(msg::allies::TAME_BROKEN_BY).role("came", self.came_msg(came))
             }
             _ => about(msg::allies::TAME_STOPPED),
         };

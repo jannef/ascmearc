@@ -27,7 +27,11 @@ choke = "You choke to death on {what:the}..."
 # `more`: the stat's comparative ("stronger").
 could_grow_yet = "You feel you could grow {more:bare} yet."
 crash_of_glass = "You hear a crash of glass."
+# A drain that took from no stat.
+deathly_chill = "A deathly chill passes through you."
 die = "You die..."
+# `stat`: the stat a drain took from, lower case ("strength"), core's word.
+drained = "You feel your {stat:bare} drain away!"
 draught_kept = "There is enough left in the flask for another draught."
 drink = "You drink the {what:bare}."
 drown = "You drown..."

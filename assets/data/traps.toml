@@ -8,7 +8,8 @@
 # Fields:
 #   id, name     the trap's id and what it is called ("Really step onto the fireball trap?")
 #   glyph, fg    how it shows once known (glyph default "^")
-#   message      said when the player perceives it go off (optional)
+#   message      said when the player perceives it go off (optional); a line of data, said by its
+#                key `trap:<id>.message`, naming no role (docs/dev/localization.md "Lines of data")
 #   difficulty   how hard it is to find while hidden: what a search must
 #                reach (default 15); on a dungeon branch its `hidden_per_depth` adds to it
 #                (data/dungeons.toml)

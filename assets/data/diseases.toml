@@ -36,8 +36,9 @@
 #   cured_by    the means that cure it at once: eating a remedy that `cures` it (objects: the
 #               angelica root cures `remove_disease`), a temple's cure (`prayer`, a service in
 #               dialogue: every disease lists it), later potions
-#   onset       said when it shows (stops a rest)
-#   symptoms    said when a progression goes badly, in turn (each stops a rest)
+#   onset       said when it shows (stops a rest); a line of data, `disease:<id>.onset`
+#   symptoms    said when a progression goes badly, in turn (each stops a rest); lines of data,
+#               `disease:<id>.symptoms.<n>` from 0
 #   recovered   said when it is gone (lets a rest go on); a line of data, said by its key
 #               `disease:<id>.recovered` (docs/dev/localization.md "Lines of data")
 # Creatures' bites may give a disease too: `on_hit = [{ disease = "filth_fever", chance = 10 }]`

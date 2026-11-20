@@ -9,6 +9,7 @@
 use crate::action::Event;
 use crate::content::ActionKind;
 use crate::geom::Pos;
+use crate::msg;
 use crate::noise::Act;
 use crate::world::{Spent, World};
 
@@ -17,7 +18,7 @@ impl World {
     /// bard's Throw your voice), on the overworld (which is silent), at their own cell, out of reach, or at a cell they do not see or that is solid.
     pub(in crate::world) fn throw_voice(&mut self, at: Pos, events: &mut Vec<Event>) -> Spent {
         if !crate::ability::Ability::ThrowVoice.had_by(self.state.player(), &self.content) {
-            self.say("You do not know how to throw your voice.");
+            self.say(msg::turn::THROW_VOICE_UNKNOWN);
             return Spent::Nothing;
         }
         let range = self.content.tuning().throw_voice.range;
@@ -26,14 +27,14 @@ impl World {
         }
         let solid = self.state.current().is_opaque(&self.content, at);
         if solid || !self.perception.sees_actors_at(at) {
-            self.say("You can throw your voice only to a place you see.");
+            self.say(msg::turn::THROW_VOICE_ONLY_SEEN);
             return Spent::Nothing;
         }
         let player = self.state.player;
         let price = self.price_of(player, ActionKind::ThrowVoice);
         self.make_noise(player, Act::ThrowVoice(at));
         events.push(Event::VoiceThrown { at });
-        self.say("You throw your voice.");
+        self.say(msg::turn::THROW_VOICE);
         self.train_stat(crate::content::StatUse::Inspired);
         Spent::Turn(price)
     }
