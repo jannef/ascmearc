@@ -33,11 +33,14 @@
 
 use crate::action::{AttackKind, Event};
 use crate::combat::Strike;
-use crate::content::{Burst, BurstWhen, CreatureId, TrapNoise, the_start};
+use crate::content::{Burst, BurstWhen, CreatureId, TrapNoise};
 use crate::geom::Pos;
+use crate::lang::Msg;
+use crate::msg;
 use crate::noise::SoundKind;
 use crate::object;
 use crate::rng::draw;
+use crate::world::combat::fight;
 use crate::world::magic::spell::{Caster, Reach, burst_cells};
 use crate::world::{ActorId, World};
 
@@ -105,7 +108,8 @@ impl World {
             return;
         };
         if self.perception.sees_actors_at(here) {
-            self.say(format!("{} {}!", the_start(&def.name), burst.verb));
+            let line = Msg::new(msg::creatures::BURSTS).role("who", fight::creature(def));
+            self.say(line.role("verb", burst.verb.as_str()));
         }
         let sound = TrapNoise {
             sound: SoundKind::Explosion,

@@ -1,0 +1,83 @@
+# Creatures (`world/creatures/`): what they do as the player sees it: breath, bursts, blinks,
+# webs, gazes, spells, summonings, splits, mimics, thieves, sleepers, the unseen, statues, and the
+# dev action that spawns one. Ids alphabetical (`docs/dev/localization.md` "Literal lines"), the
+# plain ones first, then the tables. A type's `first_sight` is a line of data, said by its key
+# (`creature:<id>.first_sight`, "Lines of data").
+#
+# Roles: `who` is the creature a line is about, as the player calls it ("the kobold", "Snel",
+# "your wolf"); `target` and `beside` someone else it names (the player as "you"); `what` a thing:
+# an item, a terrain, or creatures counted ("a kobold and 2 goblins", a list); `from` the
+# creature something came out of; `chest` what a mimic was taken for, its chest band's name (a
+# `word:` phrase); `status` how a status looks ("weakened", a `word:` phrase). `verb` is a verb as
+# the data writes it ("breathes fire", "calls forth") and `spell` a spell's name, lower case:
+# English words, text until that data's text and core's words are converted.
+
+avert_eyes = "You avert your eyes."
+# `beside`: the one it came to stand beside, the player as "you".
+blinks_beside = "{who:The} is suddenly beside {beside:the}."
+# `verb`: the breath as the data writes it ("breathes fire").
+breathes = "{who:The} {verb:bare}!"
+# `verb`: the burst as the data writes it ("comes apart in flame").
+bursts = "{who:The} {verb:bare}!"
+# `spell`: the spell's name, lower case. Cast on itself, or at no one the player sees.
+casts = "{who:The} casts {spell:bare}."
+casts_at = "{who:The} casts {spell:bare} at {target:the}."
+casts_at_you = "{who:The} casts {spell:bare} at you!"
+# A heal cast on another.
+casts_on = "{who:The} casts {spell:bare} on {target:the}."
+# `chest`: what the mimic was taken for; `who`: the mimic, revealed.
+chest_breathing = "You notice {chest:the} breathing: {who:a}!"
+chest_lurches = "{chest:The} lurches: it is {who:a}!"
+chest_shudders = "{chest:The} shudders: it is {who:a}!"
+cold_stare = "You feel a cold stare on you."
+# A dev action's: `who`, the creature that came.
+comes_dev = "A {who:bare} comes (dev)."
+# `who`: the gazer. The possessive is written out: "The incubus's eyes".
+eyes_find_yours = "{who:The}'s eyes find yours."
+fades_from_sight = "{who:The} fades from sight."
+# `status`: how the hex's status looks ("weakened").
+is_status = "{who:The} is {status:bare}."
+# `who`: the gazer whose eyes the player averted from.
+keep_eyes_from = "You keep your eyes from {who:the}'s."
+looks_better = "{who:The} looks better."
+no_cell_out_of_sight_dev = "Nothing could come: no cell out of sight (dev)."
+no_danger_dev = "Nothing comes here: the level has no danger (dev)."
+raise_eyes = "You raise your eyes again."
+see_again = "You can see {who:the} again."
+# `who`: the thief, or "something" unseen; `what`: the stack it took.
+snatches = "{who:The} snatches {what:counted} from you!"
+spins_web = "{who:The} spins a web."
+# `who`: the creature that split (said once a run for its type: `splits_first`).
+splits = "{who:The} splits in two."
+splits_first = "{who:The} comes apart, and both halves crawl."
+stares_at = "{who:The} stares at {target:the}."
+# `what`: the statue's terrain.
+statue_falls = "{what:The} cracks and falls to pieces!"
+statue_stands = "THUD! Your foot meets the stone; {what:the} stands."
+strike_at_something = "You strike at something."
+# `verb`: how the summoner summons, as the data writes it ("summons", "calls forth"); `what`:
+# the creatures that came, counted, a list, or "something".
+summons = "{who:The} {verb:bare} {what:counted}!"
+# `who`: the gazer.
+tear_eyes_from = "You tear your eyes from {who:the}'s."
+wakes_up = "{who:The} wakes up."
+
+# `what`: the creatures that appeared, counted: one creature, one type of several, or a list.
+[appear]
+by = "what.number"
+one = "{what:Counted} appears!"
+many = "{what:Counted} appear!"
+
+# `what`: an animated thing's component that broke as it fell, a stack ("the candlestick", "the 3
+# candlesticks").
+[breaks_apart]
+by = "what.number"
+one = "{what:The} breaks apart."
+many = "The {what:counted} break apart."
+
+# `what`: the creatures that crawled out of `from`'s corpse, counted: one creature, one type of
+# several, or a list.
+[crawl_out]
+by = "what.number"
+one = "{what:Counted} crawls out of {from:the}!"
+many = "{what:Counted} crawl out of {from:the}!"

@@ -1351,12 +1351,8 @@ impl World {
             // A patron's open commission is off (`patron.rs`).
             self.patron_dies(id);
             let lines = self.creature_dies(id, credited, stoned);
-            self.news.splice(
-                earned..earned,
-                lines
-                    .into_iter()
-                    .chain(crawled.into_iter().map(crate::lang::Msg::from)),
-            );
+            self.news
+                .splice(earned..earned, lines.into_iter().chain(crawled));
             // Death throes go off where it died (`creature_burst.rs`), after what crawled out.
             self.death_throes(id, (at, &level), creature, events);
         }
@@ -1402,7 +1398,7 @@ impl World {
         let glassed = glass.is_some();
         if let Some((crystals, line)) = glass {
             dropped.extend(crystals);
-            lines.extend(line);
+            lines.extend(line.map(Msg::from));
         } else if !stoned {
             dropped.extend(self.drops_of(&actor));
         }
@@ -1423,11 +1419,7 @@ impl World {
         if !stoned && !glassed {
             self.leave_corpse(&actor);
             // In a cursed room the dead rise (`curse.rs`).
-            lines.extend(
-                self.curse_corpse(&actor, by_player)
-                    .into_iter()
-                    .map(Msg::from),
-            );
+            lines.extend(self.curse_corpse(&actor, by_player).map(Msg::from));
         }
         // A dead shopkeeper's goods are free to take.
         self.keeper_died(id, &actor.level);

@@ -21,10 +21,13 @@
 //! dog is suddenly beside the kobold." beside another target; unseen, nothing.
 
 use crate::action::Event;
-use crate::content::{ActionKind, the_start};
+use crate::content::ActionKind;
 use crate::geom::Pos;
+use crate::lang::Msg;
+use crate::msg;
 use crate::rng::draw;
 use crate::sight::LineOfSight;
+use crate::world::combat::fight;
 use crate::world::{ActorId, World};
 
 impl World {
@@ -86,12 +89,13 @@ impl World {
             let player = self.state.player;
             let level = self.state.current_level.clone();
             let beside = match self.state.actor_at(&level, at) {
-                Some(a) if a.id == player => "you".to_string(),
-                Some(a) => self.called(a),
+                Some(a) if a.id == player => self.you(),
+                Some(a) => self.called_phrase(a),
                 None => return price,
             };
-            let name = &self.content.creature(creature).name;
-            self.say(format!("{} is suddenly beside {beside}.", the_start(name)));
+            let who = fight::creature(self.content.creature(creature));
+            let line = Msg::new(msg::creatures::BLINKS_BESIDE).role("who", who);
+            self.say(line.role("beside", beside));
         }
         price
     }

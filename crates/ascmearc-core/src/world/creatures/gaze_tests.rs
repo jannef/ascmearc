@@ -10,6 +10,9 @@ use crate::stats::Stat;
 use crate::test_support::said;
 use crate::world::*;
 
+/// Said when a gazer the player does not see looks at them (`creatures.cold_stare`).
+const COLD_STARE: &str = "You feel a cold stare on you.";
+
 const TERRAIN: &str = r##"
 [[terrain]]
 id = "floor"
@@ -267,7 +270,7 @@ fn never_through_a_wall_or_a_door() {
     assert_eq!(degrees(&w, me, "transfixed"), 0);
     let vampire = first_of(&w, "starer").id;
     assert_eq!(degrees(&w, vampire, "gaze"), 0, "it never gazed");
-    assert!(!said(&w).iter().any(|l| l == super::gaze::UNSEEN));
+    assert!(!said(&w).iter().any(|l| l == COLD_STARE));
 }
 
 #[test]
@@ -276,11 +279,7 @@ fn a_gazer_in_the_dark_is_felt_and_cannot_catch_the_eye() {
     let mut w = load(STARE, AVERTED, HALL, 0).expect("world");
     let me = w.state.player;
     run(&mut w, "wait");
-    assert!(
-        said(&w).iter().any(|l| l == super::gaze::UNSEEN),
-        "{:?}",
-        said(&w)
-    );
+    assert!(said(&w).iter().any(|l| l == COLD_STARE), "{:?}", said(&w));
     assert_eq!(degrees(&w, me, "transfixed"), 0, "the eyes never met");
     let vampire = first_of(&w, "starer").id;
     assert!(degrees(&w, vampire, "gaze") > 0, "the stare was spent");

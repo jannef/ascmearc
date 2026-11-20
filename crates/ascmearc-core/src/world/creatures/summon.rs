@@ -21,12 +21,15 @@
 //! what appears where they see it ("A skeleton appears!").
 
 use crate::action::{AttackKind, Event};
-use crate::content::{ActionKind, CreatureId, CreatureSpawn, counted, the_start};
+use crate::content::{ActionKind, Content, CreatureId, CreatureSpawn};
 use crate::geom::Pos;
+use crate::lang::{Arg, Msg};
+use crate::msg;
 use crate::noise::Act;
 use crate::rng::{Rng, draw};
 use crate::sight::LineOfSight;
-use crate::text::{and_list, capitalized};
+use crate::world::combat::fight;
+use crate::world::turn::phrase::something;
 use crate::world::{ActorId, World};
 
 impl World {
@@ -197,26 +200,35 @@ impl World {
                 None => seen.push((c, 1)),
             }
         }
-        let words: Vec<String> = (seen.iter())
-            .map(|&(c, n)| {
-                let def = content.creature(c);
-                counted(&def.name, &def.plural, n)
-            })
-            .collect();
-        let list = and_list(&words.iter().map(String::as_str).collect::<Vec<_>>());
+        let came = counted_arg(&content, &seen);
         let summoner = &self.state.actors[&id];
         let def = content.creature(summoner.creature);
         let line = if self.perception.sees_actors_at(pos) {
             let verb = def.summon.as_ref().map_or("summons", |s| s.verb.as_str());
-            let what = if list.is_empty() { "something" } else { &list };
-            format!("{} {verb} {what}!", the_start(&def.name))
-        } else if list.is_empty() {
-            return;
+            let what = came.unwrap_or_else(|| something().into());
+            Msg::new(msg::creatures::SUMMONS)
+                .role("who", fight::creature(def))
+                .role("verb", verb)
+                .role("what", what)
+        } else if let Some(came) = came {
+            Msg::new(msg::creatures::APPEAR).role("what", came)
         } else {
-            let one = seen.len() == 1 && seen[0].1 == 1;
-            let verb = if one { "appears" } else { "appear" };
-            format!("{} {verb}!", capitalized(&list))
+            return;
         };
         self.say(line);
+    }
+}
+
+/// Creatures the player saw come, `(type, how many)` in the order they came, as one argument a
+/// line says counted ("a kobold", "2 goblins", "a kobold and 2 goblins"): one type alone is its
+/// phrase with its count, so its number agrees the verb; several types a list. None for none.
+pub(super) fn counted_arg(content: &Content, seen: &[(CreatureId, u32)]) -> Option<Arg> {
+    let mut phrases: Vec<Arg> = (seen.iter())
+        .map(|&(c, n)| fight::creature(content.creature(c)).count(n).into())
+        .collect();
+    match phrases.len() {
+        0 => None,
+        1 => phrases.pop(),
+        _ => Some(Arg::List(phrases)),
     }
 }

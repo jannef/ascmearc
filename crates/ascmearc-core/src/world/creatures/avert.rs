@@ -13,12 +13,8 @@
 //! [`World::avert_news`] says when it begins and ends.
 
 use crate::combat::{Category, Defence, Profile};
+use crate::msg;
 use crate::world::{ActorId, World};
-
-/// Said as the player averts their eyes.
-const AVERTS: &str = "You avert your eyes.";
-/// Said as they may look again.
-const LOOKS: &str = "You raise your eyes again.";
 
 impl World {
     /// Whether actor `id` is Averted now: the player, while their last perception sees a
@@ -54,8 +50,8 @@ impl World {
     /// perception before (`before`); a note that does not stop a rest.
     pub(in crate::world) fn avert_news(&mut self, before: bool) {
         match (before, self.perception.averted()) {
-            (false, true) => self.note(AVERTS),
-            (true, false) => self.note(LOOKS),
+            (false, true) => self.note(msg::creatures::AVERT_EYES),
+            (true, false) => self.note(msg::creatures::RAISE_EYES),
             _ => {}
         }
     }

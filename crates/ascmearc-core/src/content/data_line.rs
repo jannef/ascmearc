@@ -381,6 +381,7 @@ pub(super) fn add_all(content: &mut Content) -> Result<(), ContentError> {
     crafting_lines(content, &mut add);
     class_lines(content, &mut add);
     fixture_lines(content, &mut add);
+    creature_lines(content, &mut add);
     for (id, level) in &content.levels {
         if let Some(line) = &level.arrival {
             add(level_arrival(id), line);
@@ -539,6 +540,23 @@ fn fixture_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
             if let TalentEffect::Slots(SlotEffect::BarsSlot { slot, refused, .. }) = effect {
                 add(barred(&def.id, slot), refused);
             }
+            }
+        }
+    }
+}
+
+// The creatures' lines (`world/creatures/`, #1916).
+
+/// Creature type `id`'s `first_sight` line, said the first time a run the player sees one.
+pub fn first_sight(id: &str) -> String {
+    format!("creature:{id}.first_sight")
+}
+
+/// The creatures' lines: a type's first sight.
+fn creature_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
+    for def in content.creature_defs() {
+        if let Some(line) = &def.first_sight {
+            add(first_sight(&def.id), line);
         }
     }
 }

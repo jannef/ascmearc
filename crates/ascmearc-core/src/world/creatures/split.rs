@@ -25,10 +25,11 @@
 //!   crawls out where the player sees it, "3 grave worms crawl out of the wormhost!". Unseen,
 //!   nothing. Said with the news, after the blow's own words.
 
-use crate::content::{CORPSE_SHARE, CreatureId, CreatureSpawn, HALF_SHARE, counted};
-use crate::content::{the, the_start};
+use crate::content::{CORPSE_SHARE, CreatureId, CreatureSpawn, HALF_SHARE};
+use crate::lang::Msg;
+use crate::msg;
 use crate::rng::draw;
-use crate::text::{and_list, capitalized};
+use crate::world::combat::fight;
 use crate::world::{ActorId, World};
 use serde::{Deserialize, Serialize};
 
@@ -104,21 +105,21 @@ impl World {
         }
         let yours =
             (self.state.actors.get(&id)).is_some_and(|a| a.master() == Some(self.state.player));
-        let name = match yours {
-            true => format!("Your {}", def.name),
-            false => the_start(&def.name),
+        let who = match yours {
+            true => fight::creature(def).owned_by(self.you()),
+            false => fight::creature(def),
         };
         let first = self.state.progress.once.insert(format!("split:{}", def.id));
-        self.news.push(if first {
-            format!("{name} comes apart, and both halves crawl.").into()
-        } else {
-            format!("{name} splits in two.").into()
-        });
+        let line = match first {
+            true => msg::creatures::SPLITS_FIRST,
+            false => msg::creatures::SPLITS,
+        };
+        self.news.push(Msg::new(line).role("who", who));
     }
 
     /// Creature `id`, dying, lets out what its type's `dies_into` says (module docs). Returns
     /// what the player is told, said with its death.
-    pub(in crate::world) fn dies_into(&mut self, id: ActorId) -> Option<String> {
+    pub(in crate::world) fn dies_into(&mut self, id: ActorId) -> Option<Msg> {
         let content = self.content.clone();
         let me = self.state.actors.get(&id)?;
         let def = content.creature(me.creature);
@@ -170,17 +171,9 @@ impl World {
         if seen.is_empty() || !self.perception.sees_actors_at(pos) {
             return None;
         }
-        let words: Vec<String> = (seen.iter())
-            .map(|&(c, n)| counted(&content.creature(c).name, &content.creature(c).plural, n))
-            .collect();
-        let list = and_list(&words.iter().map(String::as_str).collect::<Vec<_>>());
-        let one = seen.len() == 1 && seen[0].1 == 1;
-        let verb = if one { "crawls" } else { "crawl" };
-        Some(format!(
-            "{} {verb} out of {}!",
-            capitalized(&list),
-            the(&def.name)
-        ))
+        let what = super::summon::counted_arg(&content, &seen)?;
+        let line = Msg::new(msg::creatures::CRAWL_OUT).role("what", what);
+        Some(line.role("from", fight::creature(def)))
     }
 
     /// The share of a kill of actor `id` its master earns, `percent` before what it was made

@@ -10,14 +10,16 @@ checker (L7)"); **L10**, the `fi` morphology (#1893, "The `fi` module"); and **L
 text path (#1900): the app's words in `assets/lang/en/ui/`, the abilities screen converted ("UI
 text"), with its widths in the screens' layout, not the text (#1908), and the further L6 parts:
 the controls, settings, and mods screens (#1935) and the object and rig screens (#1928); **L4a**,
-**L4b**, **L4h**, **L4i**, and **L4j**, `world/allies/` (#1912), `world/character/` (#1913),
-`world/fixtures/` and `world/items/` (#1919), `world/health/` (#1920), and `world/levels/` (#1921) say their lines from templates
+**L4b**, **L4e**, **L4h**, **L4i**, and **L4j**, `world/allies/` (#1912), `world/character/` (#1913),
+`world/creatures/` (#1916), `world/fixtures/` and `world/items/` (#1919), `world/health/` (#1920),
+and `world/levels/` (#1921) say their lines from templates
 ("Literal lines"), as does **L4f**, the first half of `world/crafting/` (#1917);
 **L4c** and **L4d**, `world/classes/` (#1914, #1915, `messages/classes.toml`, "Literal lines");
 and **L5**, dialogue (#1888): every line a creature says is a line of data
 said by its key, with role slots in the base form ("Dialogue"), on the one mechanism every line
 whose text lives in data uses ("Lines of data"). The doors, the welcome line, combat, allies,
-the character, the fixtures, items, health, levels, skills (L4n, #1925), and talk say theirs from templates; every other `say` site still says finished English
+the character, creatures, the fixtures, items, health, levels, skills (L4n, #1925), and talk say
+theirs from templates; every other `say` site still says finished English
 as a literal line ("Literal lines"). Nothing player-visible has
 changed: the English templates and phrases read as the strings did. The English helpers core,
 the app, and the wiki generator call have moved into the crate behind re-exports at their old
@@ -351,8 +353,9 @@ are lines of data (#1944, "Lines of data"): a charm's, a familiar's arrival, and
 departure are said inside their templates (`{message:bare}`, `{line:bare}`, `{words:bare}`),
 and a status's `seen` is a `word:` phrase.
 
-What combat leaves as literal lines, for their own slices: acid's lines (`corrode.rs`, the data's
-`{}`). A rank risen and what it teaches (`fight.rs::ranks_news`) is `combat.skill_risen` (the
+Combat's last literal lines went with `world/creatures/` (L4e): acid's, fire's, and rust's harm to
+gear (`corrode.rs`), `combat.acid_eats_at` and the rest, name the piece as made, the player's
+(`Stack::made_phrase` owned by `World::you`, `{what:the}`: "your long sword"). A rank risen and what it teaches (`fight.rs::ranks_news`) is `combat.skill_risen` (the
 skill's `phrase` from the data as text), each `combat.learned_ability` (the ability's name a
 `word:` phrase), and `combat.pace_your_breath`, said as one ("Nested messages").
 
@@ -453,7 +456,6 @@ potions"), and `skills.realise` agrees its verb with it (`{before:is}`: "your bo
 where the string said "is"). The herbs a gather finds are one stack's phrase or a list of them, each
 `counted`. A trap's `sign` ("a tripwire") is a text role until the traps' text is converted.
 
-
 `world/fixtures/` (`messages/fixtures.toml`) and `world/items/` (`messages/items.toml`, L4h)
 say an outcome's lines and a special room's as lines of data ("Lines of data"). A chest is
 `World::chest_phrase` (its band's name a `word:` phrase, else its terrain), a trap a `word:`
@@ -468,6 +470,17 @@ slot's name or the id typed, and `came_line`. `equip_saying` takes `Option<impl 
 `chosen` its refusal as `impl Into<Msg>`. The altar's fire seen hitting a creature names it by its
 type (`{who:a}`): a unique by its name, "Black Wystan", where the old line lower-cased it (a bug,
 corrected). What it leaves: `Burden::news` (`burden.rs`) stays core's text.
+
+`world/creatures/` (`messages/creatures.toml`, L4e) names a creature by its type
+(`fight::creature`, where the string named its type) or as the player calls it (`called_phrase`,
+where it was `called`), and the player as `World::you`. Creatures that came (a summoning, what
+crawls out of a corpse) are one argument said `{what:Counted}` (`summon.rs::counted_arg`): one
+type alone is its phrase with its count, so the line's `by = "what.number"` picks the verb;
+several types a list. A type's `first_sight` is a line of data, `creature:<id>.first_sight`. A
+possessive the string wrote as `'s` after the name stays written so (`{who:The}'s eyes`), as
+`{who:poss}` would drop the `s` after "incubus" and "succubus". Text roles until their words are
+converted (#1949): a breath's, a burst's, and a summoning's `verb` from the data, and a spell's
+name, lower case. A chest band's name, and a status's `seen`, are `word:` phrases.
 
 When no literal is left, `LITERAL`, the `From` text impls, and this section go.
 
@@ -637,6 +650,7 @@ arrays named by the id that tells it apart. Every kind of line of data, the thre
 | `status:<id>.treat.made`, `.treat.failed` | the Heal skill's try at it |
 | `disease:<id>.recovered` | the player shaking a disease off |
 | `creature:<id>.on_eat.message`, `creature:<id>.depart` | eating its fresh corpse; an ally of its kind whose time ran out (in `allies.departs`) |
+| `creature:<id>.first_sight` | a type seen the first time in a run (`world/creatures/first_sight.rs`) |
 | `unique:<id>.power.message` | its Ward refusing a status |
 | `object:<id>.throw.words` | a flask shattering |
 | `spell:<id>.effect.charm.message`, `.ends` | a charm taking hold and ending (in `allies.charm_takes`, `allies.charm_ends`) |

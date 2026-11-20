@@ -23,13 +23,13 @@
 //! vampire stares at the wolf."
 
 use crate::action::Event;
-use crate::content::{ActionKind, Gaze, the, the_start};
+use crate::content::{ActionKind, Gaze};
 use crate::geom::Pos;
+use crate::lang::Msg;
+use crate::msg;
 use crate::rng::draw;
+use crate::world::combat::fight;
 use crate::world::{ActorId, World};
-
-/// Said when a gazer the player does not see looks at them.
-pub(super) const UNSEEN: &str = "You feel a cold stare on you.";
 
 impl World {
     /// Whether creature `id` gazes now at `target`, a hostile it sees at `at` (module docs).
@@ -71,10 +71,10 @@ impl World {
         } else {
             self.sees_now(target, id)
         };
-        let gazer = the_start(&def.name);
+        let gazer = fight::creature(def);
         if !met {
             if player {
-                self.say(UNSEEN);
+                self.say(msg::creatures::COLD_STARE);
             }
             return price;
         }
@@ -82,22 +82,18 @@ impl World {
         let caught = self.caught(id, gaze, averted);
         if player {
             let line = match (caught, averted && gaze.averted) {
-                (true, _) => format!("{gazer}'s eyes find yours."),
-                (false, true) => format!("You keep your eyes from {}'s.", the(&def.name)),
-                (false, false) => format!("You tear your eyes from {}'s.", the(&def.name)),
+                (true, _) => msg::creatures::EYES_FIND_YOURS,
+                (false, true) => msg::creatures::KEEP_EYES_FROM,
+                (false, false) => msg::creatures::TEAR_EYES_FROM,
             };
-            self.say(line);
+            self.say(Msg::new(line).role("who", gazer));
         } else if self.perception.sees_actors_at(here) {
             // As the fight's lines name them: "Your vampire", "the hobgoblin", "Snel".
             let seen = (self.state.actors.get(&target))
                 .is_some_and(|t| self.perception.sees_actors_at(t.pos));
-            let line = format!(
-                "{} stares at {}.",
-                self.content
-                    .english_of(&self.end_of(id, true).phrase(), "The"),
-                self.content
-                    .english_of(&self.end_of(target, seen).phrase(), "the")
-            );
+            let line = Msg::new(msg::creatures::STARES_AT)
+                .role("who", self.end_of(id, true).phrase())
+                .role("target", self.end_of(target, seen).phrase());
             self.say(line);
         }
         if caught {
