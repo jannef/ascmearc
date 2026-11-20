@@ -25,8 +25,11 @@
 
 use super::alignment::Deed;
 use crate::content::{
-    CombatStance, Content, CravingRules, DamageTypeId, Effect, GiftTier, TalentDef,
+    CombatStance, Content, CravingRules, DamageTypeId, Effect, GiftTier, TalentDef, craving_key,
+    said_line, threshold_key,
 };
+use crate::lang::Msg;
+use crate::msg;
 use crate::rng::draw;
 use crate::stats::Stat;
 use crate::talent::{Taken, TalentMods};
@@ -96,11 +99,9 @@ impl World {
 
     /// The line said at Surrender to hunger's pick (`[surrender] first`).
     pub(in crate::world) fn surrender_line(&mut self) {
-        let line = (self.content.craving())
-            .and_then(|c| c.surrender.as_ref())
-            .map(|s| s.first.clone());
-        if let Some(line) = line {
-            self.say(line);
+        let surrenders = (self.content.craving()).is_some_and(|c| c.surrender.is_some());
+        if surrenders {
+            self.say(said_line(craving_key("surrender.first")));
         }
     }
 
@@ -145,7 +146,7 @@ impl World {
         let stat = Stat::ALL[draw!(self, "craving/mark/player").index(Stat::ALL.len())];
         self.gain_stat_marks(stat, u32::from(rules.mark));
         if first {
-            self.say(rules.first.clone());
+            self.say(said_line(craving_key("first")));
         }
         let book = content.talents();
         let mut crossed = false;
@@ -156,7 +157,7 @@ impl World {
             }
             crossed = true;
             self.bestow(id, None);
-            self.say(row.message.clone());
+            self.say(said_line(threshold_key(&content, row.talent)));
             self.player_did(Deed::CravingThreshold);
             self.settle_craving_stance();
             if row.strip_softeners {
@@ -194,9 +195,9 @@ impl World {
             return false;
         }
         if !(rules.thresholds.iter()).any(|t| CravingRules::at(t.eaten, scale) == count)
-            && let Some(again) = &rules.again
+            && rules.again.is_some()
         {
-            self.say(again.message.clone());
+            self.say(said_line(craving_key("again.message")));
         }
         for _ in 0..due.min(u32::from(rolls.rolls)) {
             let laws = &mut self.state.progress.laws;
@@ -207,7 +208,7 @@ impl World {
                         self.player_did(Deed::CravingGift);
                     }
                 }
-                None => self.say("Nothing more of it will take in you."),
+                None => self.say(msg::character::NOTHING_MORE_TAKES),
             }
             if self.state.death.is_some() {
                 break;
@@ -222,9 +223,9 @@ impl World {
     pub(in crate::world) fn craving_refuses(&mut self, stance: CombatStance) -> Option<Spent> {
         let floor = self.stance_floor()?;
         let text = match (floor, stance) {
-            (CombatStance::Aggressive, _) => "You know only one way to fight now.",
-            (_, CombatStance::Coward) => "The craving will not let you cower.",
-            (_, s) if calmer(s, floor) => "The craving will not let you hold back.",
+            (CombatStance::Aggressive, _) => msg::character::ONE_WAY_TO_FIGHT,
+            (_, CombatStance::Coward) => msg::character::WILL_NOT_LET_YOU_COWER,
+            (_, s) if calmer(s, floor) => msg::character::WILL_NOT_LET_YOU_HOLD_BACK,
             _ => return None,
         };
         self.say(text);
@@ -242,9 +243,9 @@ impl World {
         }
         self.player_mut().stance = floor;
         self.say(match floor {
-            CombatStance::Defensive => "You cannot bring yourself to cower.",
-            CombatStance::Neutral => "You cannot bring yourself to hold back.",
-            _ => "Your hands know only one way now.",
+            CombatStance::Defensive => msg::character::CANNOT_BRING_YOURSELF_TO_COWER,
+            CombatStance::Neutral => msg::character::CANNOT_BRING_YOURSELF_TO_HOLD_BACK,
+            _ => msg::character::ONE_WAY_NOW,
         });
     }
 
@@ -269,11 +270,11 @@ impl World {
             me.talents.forget(id);
             me.boons.retain(|b: &Taken| &b.id != id);
             self.state.progress.stripped.insert(id.clone());
-            self.say(format!("The craving takes {name} from you."));
+            self.say(Msg::new(msg::character::CRAVING_TAKES).role("talent", name.as_str()));
         }
         let sustained = self.state.player().mods(&content).get(Effect::Hunger) > 0;
         if !softeners.is_empty() || sustained {
-            self.say("Nothing shields you from hunger any more.");
+            self.say(msg::character::NOTHING_SHIELDS_YOU);
         }
     }
 }

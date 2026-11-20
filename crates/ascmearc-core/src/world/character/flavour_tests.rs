@@ -7,6 +7,7 @@ use super::flavour::BIRTHDAY;
 use crate::ability::Ability;
 use crate::character::CharacterSpec;
 use crate::content::{ContentFiles, Sign, SignActive};
+use crate::lang::MessageId;
 use crate::test_support::{CONTENT as BUILTIN, run};
 use crate::time::{Duration, GameTime};
 use crate::world::*;
@@ -52,10 +53,9 @@ fn born(content: &Arc<Content>, sign: (&str, &str), month: u32, day: u32, time: 
     World::from_state(content.clone(), state).expect("restores")
 }
 
-fn said(w: &World, text: &str) -> usize {
-    (w.messages().iter())
-        .filter(|m| m.display() == text)
-        .count()
+/// How often the log has line `id`.
+fn said(w: &World, id: MessageId) -> usize {
+    w.log().iter().filter(|e| e.id == id).count()
 }
 
 /// Hit points (and the banked part) actor `id` gets back over `seconds` from `start`, lived

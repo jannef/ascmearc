@@ -11,7 +11,9 @@
 //! as it takes or goes (`body_slots.rs`).
 
 use super::alignment::Deed;
-use crate::content::{GiftDef, GiftTier, OnEat, TalentEffect, TalentId};
+use crate::content::{GiftDef, GiftTier, OnEat, TalentEffect, TalentId, gift_key, said_line};
+use crate::lang::Msg;
+use crate::msg;
 use crate::rng::draw;
 use crate::stats::DRAIN_FLOOR;
 use crate::talent::{Taken, VigourEffect};
@@ -68,7 +70,7 @@ impl World {
                 Some(gift) => {
                     self.bestow_gift(gift);
                 }
-                None => self.say("Nothing more of it will take in you."),
+                None => self.say(msg::character::NOTHING_MORE_TAKES),
             }
         }
         self.player_did(Deed::EatProfane);
@@ -128,7 +130,9 @@ impl World {
             for t in undone {
                 self.rescind(t);
             }
-            self.say(def.instead.clone().unwrap_or_default());
+            if def.instead.is_some() {
+                self.say(said_line(gift_key(&def.id, "instead")));
+            }
             return false;
         }
         let replaced: Vec<TalentId> = (def.replaces.iter().copied())
@@ -145,8 +149,9 @@ impl World {
         });
         self.regrant();
         self.shift_stats(&book.get(gift).effects, 1);
-        self.say(def.line.clone());
-        self.say(format!("You are {}.", book.get(gift).name));
+        self.say(said_line(gift_key(&def.id, "line")));
+        let name = book.get(gift).name.as_str();
+        self.say(Msg::new(msg::character::YOU_ARE).role("gift", name));
         // What it bars falls (Horned's helm, `body_slots.rs`).
         self.shed_unworn();
         // The thirteenth ever received takes them (`profane_taken.rs`, #1809).
@@ -171,8 +176,8 @@ impl World {
         }
         self.regrant();
         self.shift_stats(&talent.effects, -1);
-        if let Some(line) = &def.undone {
-            self.say(line.clone());
+        if def.undone.is_some() {
+            self.say(said_line(gift_key(&def.id, "undone")));
         }
         // A slot it opened is gone, and what was worn there falls (`body_slots.rs`).
         self.shed_unworn();
@@ -234,11 +239,11 @@ impl World {
         let content = self.content.clone();
         let gift = (content.talents().id(id)).and_then(|t| content.profane().gift(t));
         let Some(gift) = gift else {
-            self.say(format!("There is no profane gift `{id}`."));
+            self.say(Msg::new(msg::character::NO_PROFANE_GIFT).role("id", id));
             return Spent::Nothing;
         };
         if !self.may_take_gift(gift) {
-            self.say(format!("`{id}` would not take in you."));
+            self.say(Msg::new(msg::character::WOULD_NOT_TAKE).role("id", id));
             return Spent::Nothing;
         }
         self.bestow_gift(gift.talent);
@@ -253,7 +258,7 @@ impl World {
         match gift {
             Some(t) if self.rescind(t) => Spent::NoTime,
             _ => {
-                self.say(format!("You hold no profane gift `{id}`."));
+                self.say(Msg::new(msg::character::HOLD_NO_PROFANE_GIFT).role("id", id));
                 Spent::Nothing
             }
         }

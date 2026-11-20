@@ -34,6 +34,8 @@ use crate::ability::Ability;
 use crate::action::{AttackKind, Event};
 use crate::content::{SignActive, Stance};
 use crate::geom::{Dir, Pos};
+use crate::lang::{MessageId, Msg};
+use crate::msg;
 use crate::noise::{self, Act};
 use crate::world::creatures::ai::Plan;
 use crate::world::magic::spell::Caster;
@@ -102,7 +104,7 @@ impl World {
             return Spent::Nothing;
         }
         let price = self.price_of(player, SignActive::HoundsBay.cost());
-        self.say("You throw back your head and howl!");
+        self.say(msg::character::HOWL);
         // Who hears it: the same noise the howl makes, before it is made.
         let me = self.state.player();
         let burden = self.state.load(&content, me).penalty();
@@ -121,12 +123,12 @@ impl World {
                 continue;
             }
             if self.perception.sees_actors_at(them.pos) {
-                fled.push(crate::text::capitalized(&self.called(them)));
+                fled.push(self.called_phrase(them));
             }
             self.afflict(id, bay.status, bay.severity, Some(player), events);
         }
         for who in fled {
-            self.say(format!("{who} cowers and flees from you."));
+            self.say(Msg::new(msg::character::FLEES_FROM_YOU).role("who", who));
         }
         self.gift_cooldown(bay.cooldown, 1, events);
         Spent::Turn(price)
@@ -171,18 +173,12 @@ impl World {
 
 /// A breath's words: what the player cannot do at themselves ("You cannot breathe fire at
 /// yourself."), and what is said as it is loosed.
-fn breath_words(active: SignActive) -> (&'static str, &'static str) {
+fn breath_words(active: SignActive) -> (&'static str, MessageId) {
     match active {
-        SignActive::FrostBreath => (
-            "breathe frost",
-            "Rime and bitter cold pour from your throat!",
-        ),
-        SignActive::BileSpit => ("spit", "You hawk up a gobbet of bile and spit it!"),
-        SignActive::RotBreath => (
-            "breathe rot",
-            "The barrow's breath rolls out of your throat!",
-        ),
-        SignActive::ThunderBreath => ("breathe thunder", "Thunder cracks out of your throat!"),
-        _ => ("breathe fire", "Fire roars from your throat!"),
+        SignActive::FrostBreath => ("breathe frost", msg::character::BREATH_FROST),
+        SignActive::BileSpit => ("spit", msg::character::BREATH_BILE),
+        SignActive::RotBreath => ("breathe rot", msg::character::BREATH_ROT),
+        SignActive::ThunderBreath => ("breathe thunder", msg::character::BREATH_THUNDER),
+        _ => ("breathe fire", msg::character::BREATH_FIRE),
     }
 }

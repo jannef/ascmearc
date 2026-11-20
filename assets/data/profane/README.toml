@@ -26,6 +26,8 @@
 #   only          a signature: the creature whose corpse gives it, sure (its `on_eat.gives`
 #                 names it back); never drawn, weight 0, and in that creature's campaign's
 #                 `data/profane/` when the creature is a campaign's
+# `line`, `undone`, and `instead` are lines of data, said by their keys (`profane:<id>.line`, ...;
+# docs/dev/localization.md "Lines of data"), and name no role: a `{role}` slot is refused.
 #
 # The whole table: each tier holds at least one drawn gift (no `only`) of each kind, a boon, a
 # mixed gift, and a bane, or the content does not load.

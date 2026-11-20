@@ -15,6 +15,8 @@ use crate::action::Event;
 use crate::character::Character;
 use crate::combat::{Category, Target};
 use crate::content::Content;
+use crate::lang::Msg;
+use crate::msg;
 use crate::world::{ActorId, Spent, World, fade_refused};
 
 /// The talents `character`'s race grants, in data order (none for a run without a character).
@@ -32,12 +34,12 @@ impl World {
         let player = self.state.player;
         let me = self.state.player();
         let Some(fading) = me.talent_mods(&content).stealth.fade else {
-            self.say("You have no way to fade from sight.");
+            self.say(msg::character::NO_WAY_TO_FADE);
             return Spent::Nothing;
         };
         if let Some(status) = fade_refused(&content, me, fading) {
             let name = content.status(status).name.to_lowercase();
-            self.say(format!("You cannot fade from sight while {name}."));
+            self.say(Msg::new(msg::character::CANNOT_FADE_WHILE).role("status", name));
             return Spent::Nothing;
         }
         self.fade(player, fading, events);

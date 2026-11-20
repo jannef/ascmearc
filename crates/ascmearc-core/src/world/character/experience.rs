@@ -16,8 +16,11 @@
 
 use crate::content::StatUse;
 use crate::content::{Content, CreatureId, Factor, LevelKind, parse_local_area};
+use crate::lang::Msg;
+use crate::msg;
 use crate::stats::Stat;
 use crate::talent::TalentMods;
+use crate::world::combat::fight;
 use crate::world::{Due, Spent, World};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
@@ -163,8 +166,8 @@ impl World {
         let discovered = &mut self.state.progress.discovered.kills;
         if first > 0 && !discovered.contains(key) {
             discovered.insert(key.to_string());
-            self.news
-                .push(format!("You learn something of {}.", def.plural).into());
+            let what = fight::creature(def);
+            (self.news).push(Msg::new(msg::character::LEARN_SOMETHING_OF).role("what", what));
             gain = gain.saturating_add(first);
             self.train_stat(StatUse::Discovered);
             self.discovered();
@@ -185,8 +188,8 @@ impl World {
         if gain == 0 {
             return;
         }
-        self.news
-            .push(format!("You gain {gain} experience for finding your way here.").into());
+        let xp = i64::from(gain);
+        (self.news).push(Msg::new(msg::character::GAIN_XP_FOR_FINDING).role("xp", xp));
         self.train_stat(StatUse::Explored);
         self.discovered();
         self.grant_xp(gain);
@@ -195,7 +198,7 @@ impl World {
     /// The dev action `xp:N` ([`crate::action::Action::GrantXp`]): the player gains `xp`
     /// experience, and any levels that earns. Takes no time.
     pub(in crate::world) fn grant_xp_dev(&mut self, xp: u32) -> Spent {
-        self.say(format!("You gain {xp} experience (dev)."));
+        self.say(Msg::new(msg::character::GAIN_XP_DEV).role("xp", i64::from(xp)));
         self.grant_xp(xp);
         Spent::NoTime
     }
@@ -241,8 +244,9 @@ impl World {
             player.hp += hp;
         }
         self.level_up_mana(before, after);
-        self.news.push("You feel more experienced.".into());
-        self.news.push(format!("Welcome to level {after}.").into());
+        self.news.push(msg::character::FEEL_MORE_EXPERIENCED.into());
+        let level = i64::from(after);
+        (self.news).push(Msg::new(msg::character::WELCOME_TO_LEVEL).role("level", level));
         self.level_up(before, after);
         self.grow_stipend(before, after);
         self.restock_shops();

@@ -384,7 +384,7 @@ impl World {
         me.hp = me.hp.min(me.max_hp(&content)).max(1);
         me.mana = me.mana.min(me.max_mana(&content));
         if took && caster == self.state.player {
-            self.say(crate::world::character::stat_deeds::drop_news(stat).to_string());
+            self.say(crate::world::character::stat_deeds::drop_news(stat));
         }
     }
 

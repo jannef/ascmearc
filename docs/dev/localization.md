@@ -9,12 +9,12 @@ built from what the player perceives, items are named by phrases English renders
 checker (L7)"); **L10**, the `fi` morphology (#1893, "The `fi` module"); and **L6a**, the UI
 text path (#1900): the app's words in `assets/lang/en/ui/`, the abilities screen converted ("UI
 text"), with its widths in the screens' layout, not the text (#1908), and the further L6 parts:
-the controls, settings, and mods screens (#1935) and the object and rig screens (#1928); **L4a**
-and **L4i**, `world/allies/` (#1912) and `world/health/` (#1920) say their lines from templates
-("Literal lines"); and **L5**, dialogue (#1888): every line a creature says is a line of data
+the controls, settings, and mods screens (#1935) and the object and rig screens (#1928); **L4a**,
+**L4b**, and **L4i**, `world/allies/` (#1912), `world/character/` (#1913), and `world/health/`
+(#1920) say their lines from templates ("Literal lines"); and **L5**, dialogue (#1888): every line a creature says is a line of data
 said by its key, with role slots in the base form ("Dialogue"), on the one mechanism every line
 whose text lives in data uses ("Lines of data"). The doors, the welcome line, combat, allies,
-health, and talk say theirs from templates; every other `say` site still says finished English
+the character, health, and talk say theirs from templates; every other `say` site still says finished English
 as a literal line ("Literal lines"). Nothing player-visible has
 changed: the English templates and phrases read as the strings did. The English helpers core,
 the app, and the wiki generator call have moved into the crate behind re-exports at their old
@@ -358,6 +358,19 @@ module's helper (`came_line`, `Hunger::news`) goes in as a text role, or stays l
 comparative ("stronger") and the disease in a sentence ("your wolf's sickness") are text roles
 (`feel`, `more`, `words`) until those words are converted. `health::object_phrase(content, id)`
 builds `object:<id>`; `Lore::title_phrase` is a stack's `title` as a phrase.
+
+`world/character/` (`messages/character.toml`, L4b) says the lines its data writes as lines of
+data ("Lines of data"), keyed in `content/character_lines.rs` (its module docs hold the table):
+a rules file's line is `<file>:<path>`, a row of its arrays named by the talent it gives
+(`craving:threshold.craving_nourished.message`, `oaths:band.oath_blooded.message`,
+`laws:eat.first`, `alignment:band.kind.rise`); a profane gift's `profane:<id>.line`, `.undone`,
+`.instead`; cold blood's bands `talent:<id>.temperature_speed.<n>.slower`/`.faster`, the talent
+found back from the bands the player's mods hold (`cold_blood.rs::warmth_source`). None names a
+role; one that does is refused at load. Text roles until their words are converted (#1949): a
+talent's, a tree's, a skill's, a resource's, and a profane gift's names, a status's name lower
+case, and `Unavailable::reason`. A talent's refusal (`talent::Refusal::words`) stays a literal
+line. `World::learn` returns `Msg`s; `creation_offers` and the creation errors render them in
+English, as developer text.
 
 When no literal is left, `LITERAL`, the `From` text impls, and this section go.
 

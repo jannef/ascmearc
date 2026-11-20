@@ -3,6 +3,8 @@
 //! (`WorldState::gifts_received`, #1805), is taken by the Profane as the last one takes, and the
 //! run ends there: [`Cause::Profane`].
 
+use crate::lang::MessageId;
+use crate::msg;
 use crate::world::{Cause, World};
 
 /// How many profane gifts ever received end the character: the thirteenth takes them.
@@ -10,9 +12,9 @@ pub(crate) const TAKEN_AT: usize = 13;
 
 /// What the player is told as the Profane takes them, before the death's own line
 /// ([`Cause::message`]).
-const LINES: [&str; 2] = [
-    "The flesh that was given is called back to the one that gave it.",
-    "Something old and hungry wakes behind your eyes, and it does not sleep again.",
+const LINES: [MessageId; 2] = [
+    msg::character::TAKEN_CALLED_BACK,
+    msg::character::TAKEN_WAKES,
 ];
 
 impl World {

@@ -13,11 +13,13 @@
 use crate::action::Event;
 use crate::combat::{FUMBLE, Profile};
 use crate::content::StatusId;
+use crate::lang::MessageId;
+use crate::msg;
 use crate::time::{DAWN, DAY, GameTime};
 use crate::world::{ActorId, World};
 
 /// What the player is told on their birthday.
-pub const BIRTHDAY: &str = "It is your birthday.";
+pub const BIRTHDAY: MessageId = msg::character::BIRTHDAY;
 
 impl World {
     /// Whether `now` is actor `id`'s birthday: the player's, with a character, and the month
@@ -68,7 +70,7 @@ impl World {
     }
 
     /// The note on arrival: a run that begins on the player's birthday says so.
-    pub(in crate::world) fn birthday_welcome(&self) -> Option<&'static str> {
+    pub(in crate::world) fn birthday_welcome(&self) -> Option<MessageId> {
         let player = self.state.player;
         (self.content.flavour().is_some() && self.birthday_on(player, self.state.time))
             .then_some(BIRTHDAY)

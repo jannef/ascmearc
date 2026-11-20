@@ -7,8 +7,9 @@
 use crate::action::{AttackKind, Event};
 use crate::combat::Blow;
 use crate::content::{ActionKind, Stance};
+use crate::lang::Msg;
+use crate::msg;
 use crate::status::Effect;
-use crate::text::capitalized;
 use crate::world::{ActorId, World};
 
 impl World {
@@ -76,10 +77,9 @@ impl World {
         self.afflict(target, status, 1, Some(attacker), events);
         let at = self.state.actors[&target].pos;
         if !held && attacker == self.state.player && self.perception.sees_actors_at(at) {
-            let who = capitalized(&self.called(&self.state.actors[&target]));
+            let who = self.called_phrase(&self.state.actors[&target]);
             // Said after the blow's own report ("You hit the kobold.").
-            self.news
-                .push(format!("{who} is caught in your grip.").into());
+            (self.news).push(Msg::new(msg::character::CAUGHT_IN_GRIP).role("who", who));
         }
     }
 

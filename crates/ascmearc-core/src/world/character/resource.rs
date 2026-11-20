@@ -28,6 +28,8 @@
 use crate::action::Event;
 use crate::content::Effect as ItemEffect;
 use crate::content::{Build, Content, ResourceId};
+use crate::lang::Msg;
+use crate::msg;
 use crate::resource::Pace;
 use crate::status::Effect;
 use crate::world::{Actor, ActorId, Spent, World};
@@ -308,14 +310,18 @@ impl World {
         events: &mut Vec<Event>,
     ) -> Spent {
         let Some(resource) = self.content.resource_id(id) else {
-            self.say(format!("There is no resource `{id}`."));
+            self.say(Msg::new(msg::character::NO_RESOURCE).role("id", id));
             return Spent::Nothing;
         };
         let player = self.state.player;
         self.grant_resource_with_status(player, resource, None, events);
         let name = self.content.resource(resource).name.clone();
         let value = (self.state.player().resources.get(resource)).map_or(0, |p| p.value);
-        self.say(format!("You gain {name}: {value} (dev)."));
+        self.say(
+            Msg::new(msg::character::GAIN_RESOURCE_DEV)
+                .role("name", name)
+                .role("value", i64::from(value)),
+        );
         Spent::NoTime
     }
 }

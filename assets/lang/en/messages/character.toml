@@ -1,0 +1,121 @@
+# The character (`world/character/`): experience and levels, talents and skill rolls, stats
+# trained and wasted, the birth sign's gifts and breaths, the racial actives, the ratfolk craving,
+# profane gifts, the laws, and the dev actions that grant these. Ids alphabetical
+# (`docs/dev/localization.md` "Literal lines"). The lines the data writes (an alignment band's
+# `rise` and `fall`, the craving's and the oaths' messages, the laws' `first`, a profane gift's
+# `line`, `undone`, and `instead`, cold blood's bands) are lines of data, said by their keys
+# (`content/character_lines.rs`).
+#
+# Roles: `who` is a creature a line is about, as the player calls it ("the kobold", "Grimbold").
+# `status` is a status as the player sees it, lower case ("invisible"); `talent`, `gift`,
+# `skill`, and `name` are a talent's, a profane gift's, a skill's, and a resource's names from the
+# data, and `reason` why an ability cannot be used: text until those words are converted. `id`
+# is an id a dev action was given, as typed. `xp`, `level`, and `value` are numbers, said in
+# digits.
+
+at_whom = "At whom?"
+birthday = "It is your birthday."
+# The breaths of the birth sign's picks (`sign_picks.rs`), as each is loosed.
+breath_bile = "You hawk up a gobbet of bile and spit it!"
+breath_fire = "Fire roars from your throat!"
+breath_frost = "Rime and bitter cold pour from your throat!"
+breath_rot = "The barrow's breath rolls out of your throat!"
+breath_thunder = "Thunder cracks out of your throat!"
+cannot_bring_yourself_to_cower = "You cannot bring yourself to cower."
+cannot_bring_yourself_to_hold_back = "You cannot bring yourself to hold back."
+# `status`: the status that keeps the player from fading.
+cannot_fade_while = "You cannot fade from sight while {status:bare}."
+# `reason`: why the ability cannot be used, in words.
+cannot_reason = "You cannot: {reason:bare}."
+catch_second_wind = "You catch your second wind."
+# `who`: the creature the player's grip caught.
+caught_in_grip = "{who:The} {who:is} caught in your grip."
+choose_talent_first = "You must choose a talent first."
+# `trees`: the talent trees a bonus pick may be of, a list of names.
+choose_talent_of = "You must choose a talent of {trees:or}."
+# `talents`: the free talents the pick may be, a list of names.
+choose_your_free_first = "You must choose your free {talents:or} first."
+clean_warmth = "A clean warmth runs through your blood."
+# `talent`: the hunger softener the craving took.
+craving_takes = "The craving takes {talent:bare} from you."
+# `who`: the creature that struck the player.
+cut_by_barbs = "{who:The} {who:is} cut by your barbs."
+# `name`: the pool the deed emptied ("zeal").
+deserts_you = "Your {name:bare} deserts you."
+does_not_meet_gaze = "{who:The} {who:does} not meet your gaze."
+# Drops in a stat (`stat_deeds.rs`, said at a stat check).
+drop_dexterity = "You feel clumsier."
+drop_intelligence = "You feel duller."
+drop_presence = "You feel less sure of yourself."
+drop_strength = "You feel weaker."
+drop_toughness = "You feel frailer."
+drop_willpower = "Your resolve wavers."
+feel_more_experienced = "You feel more experienced."
+flames_burst = "Flames burst from you!"
+flees_from_you = "{who:The} cower{who:s} and flee{who:s} from you."
+freezes_under_gaze = "{who:The} freeze{who:s} under your gaze."
+# A dev action's: `name`, the resource; `value`, how much of it the player holds now.
+gain_resource_dev = "You gain {name:bare}: {value:bare} (dev)."
+gain_xp_dev = "You gain {xp:bare} experience (dev)."
+gain_xp_for_finding = "You gain {xp:bare} experience for finding your way here."
+# A dev action's.
+hold_no_profane_gift = "You hold no profane gift `{id:bare}`."
+howl = "You throw back your head and howl!"
+# `talent`: the talent the class gives that the player knows already.
+know_already = "You know {talent:bare} already: choose a talent in its place."
+# `what`: the creature whose kind the player killed for the first time, said in the plural.
+learn_something_of = "You learn something of {what:plural}."
+# `talent`: the talent taken (its name with its choice).
+learn_talent = "You learn {talent:bare}."
+means_no_harm = "{who:The} mean{who:s} you no harm."
+no_one_to_stare_at = "You see no one there to stare at."
+# A dev action's.
+no_profane_gift = "There is no profane gift `{id:bare}`."
+# A dev action's.
+no_resource = "There is no resource `{id:bare}`."
+no_second_wind = "You have no second wind to catch."
+no_skill = "There is no skill `{id:bare}`."
+no_skill_rolls = "You have no skill rolls to spend."
+no_such_gift = "You have no such gift."
+no_talent = "There is no talent `{id:bare}`."
+no_talent_to_choose = "You have no talent to choose now."
+no_way_to_fade = "You have no way to fade from sight."
+# `skill`: the skill, lower case.
+not_trained_in = "You are not trained in {skill:bare}."
+# A dev action's.
+nothing_due = "Nothing is due."
+nothing_more_takes = "Nothing more of it will take in you."
+nothing_shields_you = "Nothing shields you from hunger any more."
+nothing_to_mend = "There is nothing for your horn's grace to mend."
+one_way_now = "Your hands know only one way now."
+one_way_to_fight = "You know only one way to fight now."
+# Rises in a stat (`stat_training.rs`).
+rise_dexterity = "You feel quicker."
+rise_from_ashes = "You burst into flame and rise from your ashes!"
+rise_intelligence = "You feel sharper."
+rise_presence = "You feel more confident."
+rise_strength = "You feel stronger."
+rise_toughness = "You feel tougher."
+rise_willpower = "You feel more resolute."
+# `skill`: the skill, lower case.
+skill_improves = "Your {skill:bare} improves."
+skill_rolls_to_spend = "You have skill rolls to spend."
+# `status`: the status that still lasts ("winded").
+still_status = "You are still {status:bare}."
+# What the player is told as the Profane takes them (`profane_taken.rs`), in turn.
+taken_called_back = "The flesh that was given is called back to the one that gave it."
+taken_wakes = "Something old and hungry wakes behind your eyes, and it does not sleep again."
+# Warnings that a stat's pile has come within reach of a drop (`stat_deeds.rs`).
+warn_dexterity = "Your hands feel less sure."
+warn_intelligence = "Your mind feels dull."
+warn_presence = "You feel small and unregarded."
+warn_strength = "You feel your strength wasting."
+warn_toughness = "You feel your health failing."
+warn_willpower = "Your will feels brittle."
+welcome_to_level = "Welcome to level {level:bare}."
+where_to = "Where to?"
+will_not_let_you_cower = "The craving will not let you cower."
+will_not_let_you_hold_back = "The craving will not let you hold back."
+would_not_take = "`{id:bare}` would not take in you."
+# `gift`: the profane gift taken.
+you_are = "You are {gift:bare}."

@@ -14,9 +14,10 @@ use crate::combat::{Profile, Strike};
 use crate::content::{ActionKind, SignActive, Stance};
 use crate::damage::{Damage, Rider};
 use crate::geom::Pos;
+use crate::lang::Msg;
+use crate::msg;
 use crate::rng::draw;
 use crate::status::Effect;
-use crate::text::capitalized;
 use crate::world::combat::fight::Harm;
 use crate::world::{ActorId, Spent, World};
 use serde::{Deserialize, Serialize};
@@ -45,16 +46,15 @@ impl World {
         let ability = Ability::Sign(active);
         let me = self.state.player();
         if !ability.had_by(me, &content) {
-            self.say("You have no such gift.");
+            self.say(msg::character::NO_SUCH_GIFT);
             return Spent::Nothing;
         }
         if let Some(why) = ability.unavailable(me, &content) {
             self.say(match why {
-                Unavailable::While(status) => format!(
-                    "You are still {}.",
-                    content.status(status).name.to_lowercase()
-                ),
-                other => format!("You cannot: {}.", other.reason(&content)),
+                Unavailable::While(status) => Msg::new(msg::character::STILL_STATUS)
+                    .role("status", content.status(status).name.to_lowercase()),
+                other => Msg::new(msg::character::CANNOT_REASON)
+                    .role("reason", other.reason(&content).into_owned()),
             });
             return Spent::Nothing;
         }
@@ -62,7 +62,7 @@ impl World {
             (SignActive::HornsGrace, _) => self.horns_grace(events),
             (SignActive::TransfixingStare, Some(at)) => self.transfixing_stare(at, events),
             (SignActive::TransfixingStare, None) => {
-                self.say("At whom?");
+                self.say(msg::character::AT_WHOM);
                 Spent::Nothing
             }
             (SignActive::Blaze, _) => self.blaze(events),
@@ -70,7 +70,7 @@ impl World {
             // The rest are the breaths, one per damage type (`sign_picks.rs`).
             (breath, Some(at)) => self.breathe(breath, at, events),
             (_, None) => {
-                self.say("Where to?");
+                self.say(msg::character::WHERE_TO);
                 Spent::Nothing
             }
         }
@@ -100,10 +100,10 @@ impl World {
             .take(usize::from(grace.diseases))
             .collect();
         if ended.is_empty() && diseases.is_empty() && heal == 0 {
-            self.say("There is nothing for your horn's grace to mend.");
+            self.say(msg::character::NOTHING_TO_MEND);
             return Spent::Nothing;
         }
-        self.say("A clean warmth runs through your blood.");
+        self.say(msg::character::CLEAN_WARMTH);
         for e in &ended {
             self.player_mut().effects.remove(e.status);
         }
@@ -147,21 +147,21 @@ impl World {
         let level = self.state.current().id.clone();
         let target = (self.state.actor_at(&level, at)).map(|a| a.id);
         let Some(target) = target.filter(|_| self.perception.sees_actors_at(at)) else {
-            self.say("You see no one there to stare at.");
+            self.say(msg::character::NO_ONE_TO_STARE_AT);
             return Spent::Nothing;
         };
-        let who = capitalized(&self.called(&self.state.actors[&target]));
+        let who = self.called_phrase(&self.state.actors[&target]);
         if self.stance(player, target) != Stance::Hostile {
-            self.say(format!("{who} means you no harm."));
+            self.say(Msg::new(msg::character::MEANS_NO_HARM).role("who", who));
             return Spent::Nothing;
         }
         let price = self.price_of(player, ActionKind::Wait);
         if !self.sees_now(target, player) {
-            self.say(format!("{who} does not meet your gaze."));
+            self.say(Msg::new(msg::character::DOES_NOT_MEET_GAZE).role("who", who));
             return Spent::Turn(price);
         }
         self.afflict(target, stare.status, severity, Some(player), events);
-        self.say(format!("{who} freezes under your gaze."));
+        self.say(Msg::new(msg::character::FREEZES_UNDER_GAZE).role("who", who));
         self.gift_cooldown(stare.cooldown, degrees, events);
         Spent::Turn(price)
     }
@@ -233,8 +233,8 @@ impl World {
             return;
         }
         if target == self.state.player && self.perception.sees_actors_at(at) {
-            let who = capitalized(&self.called(&self.state.actors[&attacker]));
-            self.say(format!("{who} is cut by your barbs."));
+            let who = self.called_phrase(&self.state.actors[&attacker]);
+            self.say(Msg::new(msg::character::CUT_BY_BARBS).role("who", who));
         }
         self.hurt(attacker, barbs, Harm::Barbs, events);
     }

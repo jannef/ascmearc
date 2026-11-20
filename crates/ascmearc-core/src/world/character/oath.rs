@@ -8,7 +8,7 @@
 //! [`World::oath_kill`] runs from `fight.rs::dies` beside `tally_kill`, for the kills that count
 //! for quests and are the player's own (an ally's kill is no oath kept).
 
-use crate::content::CreatureId;
+use crate::content::{CreatureId, oath_key, said_line};
 use crate::world::World;
 
 impl World {
@@ -49,7 +49,7 @@ impl World {
             }
             self.bestow(id, None);
             // Said after the death and what the kill earned (`dies` splices the death first).
-            self.news.push(band.message.clone().into());
+            self.news.push(said_line(oath_key(&content, band.talent)));
         }
     }
 }
