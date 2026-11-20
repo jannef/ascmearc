@@ -11,9 +11,11 @@
 //!   or no longer the player's comes off and falls to their cell, said once each.
 
 use crate::action::Positions;
-use crate::content::{Content, SlotId};
+use crate::content::{Content, SlotId, TalentEffect, data_line};
+use crate::lang::Msg;
+use crate::msg;
 use crate::object;
-use crate::talent::TalentMods;
+use crate::talent::{SlotEffect, TalentMods};
 use crate::world::World;
 
 /// Whether one of class `class` (`None`: no character) whose talents are `mods` has slot `slot`:
@@ -39,13 +41,26 @@ impl World {
 
     /// The words that refuse putting anything in slot `slot`, if a talent of the player's bars
     /// it ("Your horns are in the way.").
-    pub(super) fn barred_words(&self, slot: SlotId) -> Option<String> {
+    pub(super) fn barred_words(&self, slot: SlotId) -> Option<Msg> {
         let me = self.state.player();
         if me.talents.is_empty() {
             return None;
         }
         let mods = me.talent_mods(&self.content);
-        mods.slots.barred(slot).map(|b| b.refused.clone())
+        let refused = &mods.slots.barred(slot)?.refused;
+        // Said by the key of the first talent held that bars the slot with these words.
+        let slot = &self.content.slot(slot).id;
+        let book = self.content.talents();
+        let talent = (me.talents.iter())
+            .filter_map(|taken| book.id(&taken.id).map(|id| book.get(id)))
+            .find(|def| {
+                let whiles = def.effects_while.iter().map(|(_, e)| e);
+                def.effects.iter().chain(whiles).any(|effect| {
+                    matches!(effect, TalentEffect::Slots(SlotEffect::BarsSlot { slot: s, refused: r, .. })
+                        if s == slot && r == refused)
+                })
+            })?;
+        Some(data_line::said(data_line::barred(&talent.id, slot)))
     }
 
     /// What the player wears in a slot that is barred to them now, or no longer theirs, comes
@@ -72,12 +87,16 @@ impl World {
         }
         let inventory = self.state.player().inventory.clone();
         for &(item, gone) in &shed {
-            let title = self.lore().title(&inventory[item]);
-            self.say(match gone {
-                Some(true) => format!("Your {title} falls from a grip that is no longer there."),
-                Some(false) => format!("Your {title} slips from a finger that is no longer there."),
-                None => format!("Your {title} no longer fits, and falls to the floor."),
-            });
+            let what = self
+                .lore()
+                .title_phrase(&inventory[item])
+                .owned_by(self.you());
+            let id = match gone {
+                Some(true) => msg::items::FALLS_FROM_GRIP,
+                Some(false) => msg::items::SLIPS_FROM_FINGER,
+                None => msg::items::NO_LONGER_FITS,
+            };
+            self.say(Msg::new(id).role("what", what));
         }
         let chosen = Positions::of(shed.iter().map(|&(i, _)| i));
         let (dropped, kept) = super::carry::split(&inventory, &chosen);

@@ -225,7 +225,7 @@ room (`cells()`: a rooms level's rectangle holds its walls and doors) that is an
 nothing in the doorway is shut (`set_terrain` to its `closes_to`), every closed door there then
 gets `Lock::new(None)` unless it is locked already (only a skeleton key fits; `lock_difficulty`
 adds the branch's depth), and each makes a slam through `sound_at` (`Banging`, `KICK_NOISE`, no
-maker: sleepers and creatures hear it as a trap's noise); "The doors slam shut!" (`hoard::SLAM`)
+maker: sleepers and creatures hear it as a trap's noise); "The doors slam shut!" (`fixtures.doors_slam`)
 when any. No `Event::DoorClosed` is sent (the pick-up has no event list; the screen follows the
 terrain). Then `guard`: on a level with a danger rule (`Content::spawning`) and a danger,
 `rng.range(least, most)` guardians from the room's keyed stream `hoard/guard/<level>/<room>`, each `danger::draw` at the

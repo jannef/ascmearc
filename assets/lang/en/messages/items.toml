@@ -1,0 +1,78 @@
+# Items (`world/items/`): picking up and dropping, wearing and wielding, curses, the body's
+# slots, lights, the quiver, and identifying. Ids alphabetical (`docs/dev/localization.md`
+# "Literal lines"). What a talent that bars a slot says (`refused`) is a line of data, said by
+# its key (`content/data_line.rs`).
+#
+# Roles: `what` is an item as the player knows it (a phrase built where it is said; "your long
+# sword" when the line names it as the player's), `other` another such. `slot` is a slot as
+# typed or its name in lower case, text until those words are converted. `name` is a
+# shopkeeper's name, `price` and `owed` numbers of gold.
+
+# `what`: what is already in the slot.
+already_there = "You already have {what:counted} there."
+# `what`: the burning thing that cannot be picked up.
+cannot_pick_up_burning = "You cannot pick up {what:counted} while it burns."
+carry_no_such_thing = "You carry no such thing."
+# `what`: a bound thing, the player's.
+curse_lets_go = "The curse lets go of {what:the}."
+# `what`: the light, the player's.
+douse = "You douse {what:the}."
+# `what`: what the player dropped (a stack, a list of two or three, or a count).
+drop = "You drop {what:counted}."
+# What a temple's decurse took off.
+falls_at_feet = "What it held falls at your feet."
+# `what`: what a grown hand held, the player's.
+falls_from_grip = "{what:The} falls from a grip that is no longer there."
+# `what`: the cursed weapon thrown; `other`: the bound thing in the hand, the player's.
+holds_your_hand = "The {what:bare} will not leave you, but {other:the} holds your hand."
+it_is_cursed = "It is cursed! It will not come off."
+it_would_sink = "It would sink."
+# `what`: the light, the player's.
+light = "You light {what:the}."
+# `what`: the light, the player's.
+lower_hood = "You lower the hood of {what:the}."
+no_light_ready = "You have no light ready to use."
+# `slot`: the slot as typed.
+no_slot = "There is no slot `{slot:bare}`."
+no_longer_fits = "{what:The} no longer fits, and falls to the floor."
+no_such_thing_here = "There is no such thing here."
+not_carrying_anything = "You are not carrying anything."
+# `slot`: the slot's name, lower case.
+nothing_there = "You have nothing there ({slot:bare})."
+nothing_to_identify_dev = "There is nothing to identify (dev)."
+nothing_to_pick_up = "There is nothing here to pick up."
+# `what`: what the player picked up: a stack, a list of two or three (each an item, or an
+# `unpaid` one), or a count.
+pick_up = "You pick up {what:counted}."
+# `what`: the thing put away (a weapon or something readied).
+put_away = "You put away {what:counted}."
+put_on = "You put on {what:counted}."
+put_on_both_hands = "You put on {what:counted} in both hands."
+ready = "You ready {what:counted}."
+ready_both_hands = "You ready {what:counted} in both hands."
+# `what`: the ammunition that went into the quiver by itself.
+ready_in_quiver = "You ready {what:counted} in your quiver."
+# `what`: a worn ring, the player's.
+slips_from_finger = "{what:The} slips from a finger that is no longer there."
+take_off = "You take off {what:counted}."
+# `what`: the item just identified.
+this_is = "This is {what:counted}!"
+# `what`: the cursed weapon thrown.
+twists_in_grip = "The {what:bare} twists in your grip and will not leave your hand."
+# An item of `pick_up`'s list: `what` goods for sale picked up, `price` what they cost.
+unpaid = "{what:counted} (unpaid, {price:bare} gold)"
+water_would_put_it_out = "The water would only put it out."
+wield = "You wield {what:counted}."
+wield_both_hands = "You wield {what:counted} in both hands."
+# `what`: a bound thing, the player's.
+will_not_come_off = "{what:The} will not come off."
+# `what`: the cursed weapon thrown, bound in the hand.
+will_not_leave_hand = "The {what:bare} will not leave your hand."
+# Said after `pick_up`, in the same line: `name` the shopkeeper, `owed` what the player owes.
+you_owe = "You owe {name:bare} {owed:bare} gold."
+
+# `what`: the thing that does not fit the slot.
+[does_not_go_there]
+by = "what.number"
+one = "{what:Counted} does not go there."
+many = "{what:Counted} do not go there."

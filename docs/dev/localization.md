@@ -10,14 +10,14 @@ checker (L7)"); **L10**, the `fi` morphology (#1893, "The `fi` module"); and **L
 text path (#1900): the app's words in `assets/lang/en/ui/`, the abilities screen converted ("UI
 text"), with its widths in the screens' layout, not the text (#1908), and the further L6 parts:
 the controls, settings, and mods screens (#1935) and the object and rig screens (#1928); **L4a**,
-**L4b**, **L4i**, and **L4j**, `world/allies/` (#1912), `world/character/` (#1913),
-`world/health/` (#1920), and `world/levels/` (#1921) say their lines from templates
+**L4b**, **L4h**, **L4i**, and **L4j**, `world/allies/` (#1912), `world/character/` (#1913),
+`world/fixtures/` and `world/items/` (#1919), `world/health/` (#1920), and `world/levels/` (#1921) say their lines from templates
 ("Literal lines"), as does **L4f**, the first half of `world/crafting/` (#1917);
 **L4c** and **L4d**, `world/classes/` (#1914, #1915, `messages/classes.toml`, "Literal lines");
 and **L5**, dialogue (#1888): every line a creature says is a line of data
 said by its key, with role slots in the base form ("Dialogue"), on the one mechanism every line
 whose text lives in data uses ("Lines of data"). The doors, the welcome line, combat, allies,
-the character, health, levels, skills (L4n, #1925), and talk say theirs from templates; every other `say` site still says finished English
+the character, the fixtures, items, health, levels, skills (L4n, #1925), and talk say theirs from templates; every other `say` site still says finished English
 as a literal line ("Literal lines"). Nothing player-visible has
 changed: the English templates and phrases read as the strings did. The English helpers core,
 the app, and the wiki generator call have moved into the crate behind re-exports at their old
@@ -453,6 +453,22 @@ potions"), and `skills.realise` agrees its verb with it (`{before:is}`: "your bo
 where the string said "is"). The herbs a gather finds are one stack's phrase or a list of them, each
 `counted`. A trap's `sign` ("a tripwire") is a text role until the traps' text is converted.
 
+
+`world/fixtures/` (`messages/fixtures.toml`) and `world/items/` (`messages/items.toml`, L4h)
+say an outcome's lines and a special room's as lines of data ("Lines of data"). A chest is
+`World::chest_phrase` (its band's name a `word:` phrase, else its terrain), a trap a `word:`
+phrase of its name, a key or a thing named as the player's ("your iron key", "Your long sword")
+a phrase `owned_by(self.you())`, and stacks `items::stacks_arg` (moved from `ice.rs`), or
+`stacks_arg_with` when each item carries its price (`items.unpaid`, an item message in the
+list); the debt said after a pickup is `items.you_owe` in a `world.lines`. A line whose verb
+core picks from a few (an equipment action's "wield", "ready", "put on", in both hands or not;
+"put away" or "take off") is an entry per value (`equip.rs::put_on_line`, `take_off_line`).
+Text roles until their words are converted (#1949): a talent's name, a damage type's verb, a
+slot's name or the id typed, and `came_line`. `equip_saying` takes `Option<impl Into<Msg>>`,
+`chosen` its refusal as `impl Into<Msg>`. The altar's fire seen hitting a creature names it by its
+type (`{who:a}`): a unique by its name, "Black Wystan", where the old line lower-cased it (a bug,
+corrected). What it leaves: `Burden::news` (`burden.rs`) stays core's text.
+
 When no literal is left, `LITERAL`, the `From` text impls, and this section go.
 
 ## Nested messages
@@ -643,6 +659,9 @@ arrays named by the id that tells it apart. Every kind of line of data, the thre
 | `talent:<id>.effects.weapon_ranks.news`, `.take_up_skills.news` | what a talent a class table gives hands out |
 | `resources:resource.<id>.lacking` | a class active refused for too little of the resource (in `classes.lacking`) |
 | `prayer:words.<face>.pray`, `.fizzle`, `.nothing`; `prayer:use.<id>.<face>` | the prayer begun, fizzled, and refused, and each use answered, in the face's words |
+| `outcome:<table>.outcome.<id>.message`, `.messages.<n>`, `.otherwise` | an altar's, a spring's, or a potion's outcome: its one line, line `n` of several, or what it says when it found nothing to do (`OutcomeDef::table` is the table) |
+| `room_effect:<id>.enter`, `.near`, `.pervade`, `.arrive`, `.shrine.welcome`, `.shrine.unwelcome` | a special room entered, glimpsed, covering the level, hinted at on arrival, and a shrine's entry by how it treats the player (`Shrine::enter_field`) |
+| `talent:<id>.effects.bars_slot.<slot>.refused` | something put on in a slot the talent bars (the first talent held that bars it with these words, `body_slots.rs::barred_words`) |
 
 None of them names a role: the loader refuses one that does. A status's start and end lines said
 as the turn is perceived (`world/turn/perceive.rs`) and the other subsystems' reads of these

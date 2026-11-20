@@ -8,6 +8,9 @@ use crate::content::{ContentFiles, SpecialRoom};
 use crate::test_support::{builtin, said_text as said};
 use crate::world::*;
 
+/// What the player is told when a hoard's doors slam shut.
+const SLAM: &str = "The doors slam shut!";
+
 /// A lit hall, its east part (x 7 on, walls included) a tempting hoard with one door, closed
 /// (`+`, at (7, 3)), and an open one (`'`, at (7, 1)). Daggers lie at `a` and `b` inside. A wall
 /// at x 11, open only at its foot, hides the room's east end from the daggers.
@@ -135,7 +138,7 @@ fn the_first_stack_lifted_seals_the_room() {
     assert!(out.took_turn);
     let room = room(&w);
     assert!(room.sealed && room.lifted == 1);
-    assert!(said(&w, super::hoard::SLAM));
+    assert!(said(&w, SLAM));
     // Both doors shut and locked, with a lock no key but a skeleton one opens.
     let level = w.state.current();
     for door in [DOOR, OPEN] {
@@ -211,7 +214,7 @@ fn old_hand_lifts_one_stack_before_it_seals() {
     let first = room(&w);
     assert!(!first.sealed && first.lifted == 1, "one is free");
     assert!(creatures(&w).is_empty());
-    assert!(!said(&w, super::hoard::SLAM));
+    assert!(!said(&w, SLAM));
     lift(&mut w, B);
     assert!(room(&w).sealed, "the second seals it");
     assert!(!creatures(&w).is_empty());
@@ -249,7 +252,7 @@ fn a_blob_without_doors_gets_only_guardians() {
     );
     lift(&mut w, A);
     assert!(room(&w).sealed);
-    assert!(!said(&w, super::hoard::SLAM), "no doors to slam");
+    assert!(!said(&w, SLAM), "no doors to slam");
     assert!(w.state.current().locks.is_empty());
     assert!(creatures(&w).len() >= 2);
 }
@@ -258,7 +261,7 @@ fn a_blob_without_doors_gets_only_guardians() {
 fn without_a_danger_only_the_doors_lock() {
     let mut w = world_of("", HALL, "[7, 0, 14, 6]");
     lift(&mut w, A);
-    assert!(said(&w, super::hoard::SLAM));
+    assert!(said(&w, SLAM));
     assert!(creatures(&w).is_empty());
 }
 

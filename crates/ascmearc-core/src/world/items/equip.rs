@@ -9,15 +9,40 @@
 //! on, will not come off (`curse.rs`).
 
 use crate::content::{ActionKind, SlotId};
-use crate::equipment::{self, verbs};
-use crate::text::capitalized;
+use crate::equipment;
+use crate::lang::{Msg, Phrase};
+use crate::msg;
 use crate::world::{Spent, World};
+
+/// The line that says the player put `what` on by action `kind` ("You wield a long sword."),
+/// `both` in both hands.
+fn put_on_line(kind: ActionKind, both: bool, what: Phrase) -> Msg {
+    let id = match (kind, both) {
+        (ActionKind::Wield, false) => msg::items::WIELD,
+        (ActionKind::Wield, true) => msg::items::WIELD_BOTH_HANDS,
+        (ActionKind::Ready, false) => msg::items::READY,
+        (ActionKind::Ready, true) => msg::items::READY_BOTH_HANDS,
+        (_, false) => msg::items::PUT_ON,
+        (_, true) => msg::items::PUT_ON_BOTH_HANDS,
+    };
+    Msg::new(id).role("what", what)
+}
+
+/// The line that says the player took `what` off by action `kind` ("You put away a long
+/// sword.", "You take off a leather jerkin."), as [`equipment::verbs`] names it.
+pub(super) fn take_off_line(kind: ActionKind, what: Phrase) -> Msg {
+    let id = match kind {
+        ActionKind::Wield | ActionKind::Ready => msg::items::PUT_AWAY,
+        _ => msg::items::TAKE_OFF,
+    };
+    Msg::new(id).role("what", what)
+}
 
 impl World {
     /// Puts inventory stack `item` on in slot `slot` (an id), taking off first what is in the
     /// slots it takes, and moving it if it is in another slot.
     pub(in crate::world) fn equip(&mut self, slot: &str, item: usize) -> Spent {
-        let spent = self.equip_saying(slot, item, None);
+        let spent = self.equip_saying(slot, item, None::<Msg>);
         // A light made ready in the water goes out at once (`swim.rs`).
         self.douse_afloat();
         spent
@@ -29,16 +54,16 @@ impl World {
         &mut self,
         slot: &str,
         item: usize,
-        put_on: Option<String>,
+        put_on: Option<impl Into<Msg>>,
     ) -> Spent {
         let content = self.content.clone();
         let Some(slot) = self.own_slot(slot) else {
-            self.say(format!("There is no slot `{slot}`."));
+            self.say(Msg::new(msg::items::NO_SLOT).role("slot", slot));
             return Spent::Nothing;
         };
         let player = self.state.player();
         let Some(stack) = player.inventory.get(item).cloned() else {
-            self.say("You carry no such thing.");
+            self.say(msg::items::CARRY_NO_SUCH_THING);
             return Spent::Nothing;
         };
         // A slot the body bars (Horned's head): its own words, no time (`body_slots.rs`).
@@ -46,16 +71,15 @@ impl World {
             self.say(words);
             return Spent::Nothing;
         }
-        let what = self.lore().describe(&stack);
+        let what = self.lore().phrase(&stack);
         if !content.fits(stack.object, slot) {
-            let does = if stack.count > 1 { "do" } else { "does" };
-            self.say(format!("{} {does} not go there.", capitalized(&what)));
+            self.say(Msg::new(msg::items::DOES_NOT_GO_THERE).role("what", what));
             return Spent::Nothing;
         }
         let taken = equipment::slots_taken(&content, stack.object, slot);
         let worn = &player.equipment;
         if worn.slots_of(item) == taken {
-            self.say(format!("You already have {what} there."));
+            self.say(Msg::new(msg::items::ALREADY_THERE).role("what", what));
             return Spent::Nothing;
         }
         // What comes off first: the thing itself if it is in another slot, then whatever is in
@@ -79,29 +103,18 @@ impl World {
         let worn = &player.equipment;
         let action = |i: usize| content.slot(worn.slots_of(i)[0]).action;
         let mut kinds: Vec<ActionKind> = off.iter().map(|&i| action(i)).collect();
-        let mut said: Vec<String> = off
+        let mut said: Vec<Msg> = off
             .iter()
             .filter(|&&i| i != item)
-            .map(|&i| {
-                let (_, take_off) = verbs(action(i));
-                format!(
-                    "You {take_off} {}.",
-                    self.lore().describe(&player.inventory[i])
-                )
-            })
+            .map(|&i| take_off_line(action(i), self.lore().phrase(&player.inventory[i])))
             .collect();
         let kind = content.slot(slot).action;
         kinds.push(kind);
         let quiet = put_on.is_some();
-        let hands = if taken.len() > 1 {
-            " in both hands"
-        } else {
-            ""
-        };
-        said.push(put_on.unwrap_or_else(|| {
-            let (put_on, _) = verbs(kind);
-            format!("You {put_on} {what}{hands}.")
-        }));
+        said.push(match put_on {
+            Some(line) => line.into(),
+            None => put_on_line(kind, taken.len() > 1, what),
+        });
         let worn = &mut self.player_mut().equipment;
         for i in off {
             worn.take_off(i);
@@ -119,15 +132,13 @@ impl World {
     pub(in crate::world) fn remove(&mut self, slot: &str) -> Spent {
         let content = self.content.clone();
         let Some(slot) = self.own_slot(slot) else {
-            self.say(format!("There is no slot `{slot}`."));
+            self.say(Msg::new(msg::items::NO_SLOT).role("slot", slot));
             return Spent::Nothing;
         };
         let player = self.state.player();
         let Some(item) = player.equipment.get(slot) else {
-            self.say(format!(
-                "You have nothing there ({}).",
-                content.slot(slot).name.to_lowercase()
-            ));
+            let name = content.slot(slot).name.to_lowercase();
+            self.say(Msg::new(msg::items::NOTHING_THERE).role("slot", name));
             return Spent::Nothing;
         };
         if self.refuse_bound([item]) {
@@ -135,10 +146,9 @@ impl World {
         }
         let player = self.state.player();
         let kind = self.first_action(item);
-        let (_, take_off) = verbs(kind);
-        let what = self.lore().describe(&player.inventory[item]);
+        let what = self.lore().phrase(&player.inventory[item]);
         self.player_mut().equipment.take_off(item);
-        self.say(format!("You {take_off} {what}."));
+        self.say(take_off_line(kind, what));
         self.fade_spirit();
         self.price_for(&[kind])
     }
@@ -155,10 +165,9 @@ impl World {
                 continue;
             }
             let kind = self.first_action(item);
-            let (_, take_off) = verbs(kind);
-            let what = self.lore().describe(&self.state.player().inventory[item]);
+            let what = self.lore().phrase(&self.state.player().inventory[item]);
             self.player_mut().equipment.take_off(item);
-            self.say(format!("You {take_off} {what}."));
+            self.say(take_off_line(kind, what));
             kinds.push(kind);
         }
         kinds

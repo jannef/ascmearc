@@ -104,6 +104,35 @@ fn a_professions_lines_read_as_the_data_writes_them() {
 }
 
 #[test]
+fn the_fixtures_and_items_lines_read_as_the_data_writes_them() {
+    let content = builtin();
+    let said = |key: String| said_text(&content, key);
+    let altar = content
+        .outcomes()
+        .get("forgotten_altar")
+        .expect("the altar");
+    for outcome in &altar.outcomes {
+        for (n, line) in outcome.messages.iter().enumerate() {
+            assert_eq!(&said(outcome_message(outcome, n)), line, "{}", outcome.id);
+        }
+        if let Some(line) = &outcome.otherwise {
+            assert_eq!(&said(outcome_otherwise(outcome)), line, "{}", outcome.id);
+        }
+    }
+    let one = (altar.outcomes.iter())
+        .find(|o| o.messages.len() == 1)
+        .expect("an outcome of one line");
+    assert!(outcome_message(one, 0).ends_with(".message"));
+    let shrine = (content.room_effects().defs().iter())
+        .find(|d| d.shrine.is_some())
+        .expect("a shrine");
+    assert_eq!(said(room_effect(shrine, "enter")), shrine.enter);
+    let welcome = &shrine.shrine.as_ref().expect("a shrine").welcome;
+    assert_eq!(&said(room_effect(shrine, "shrine.welcome")), welcome);
+    assert_eq!(said(barred("horned", "head")), "Your horns are in the way.");
+}
+
+#[test]
 fn a_line_that_names_a_role_is_refused() {
     let mut files = ContentFiles::builtin();
     let laws = "[summon]\ntag = \"fiend\"\nfirst = \"{who:The} sees.\"\n\

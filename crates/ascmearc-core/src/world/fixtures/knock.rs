@@ -7,6 +7,7 @@
 
 use crate::content::ActionKind;
 use crate::geom::Dir;
+use crate::msg;
 use crate::world::{Spent, World};
 
 impl World {
@@ -22,7 +23,7 @@ impl World {
         // is spent, and no blow comes (it was no hand).
         if let Some(mimic) = self.mimic_at(at).filter(|&m| !self.perception.shows(m)) {
             if !self.spend_mana(player, knock.mana) {
-                self.say("You have too little mana.");
+                self.say(msg::fixtures::TOO_LITTLE_MANA);
                 return Spent::Nothing;
             }
             self.reveal_mimic(
@@ -38,15 +39,15 @@ impl World {
             def.is_closed_door() || def.is_shut_chest()
         });
         if !lockable || !level.locks.contains_key(&at) {
-            self.say("There is no lock there to spring.");
+            self.say(msg::fixtures::NO_LOCK_TO_SPRING);
             return Spent::Nothing;
         }
         if !self.spend_mana(player, knock.mana) {
-            self.say("You have too little mana.");
+            self.say(msg::fixtures::TOO_LITTLE_MANA);
             return Spent::Nothing;
         }
         self.state.current_mut().locks.remove(&at);
-        self.say("The lock springs open with a click.");
+        self.say(msg::fixtures::LOCK_SPRINGS);
         Spent::Turn(self.price_of(player, ActionKind::Cast))
     }
 }
