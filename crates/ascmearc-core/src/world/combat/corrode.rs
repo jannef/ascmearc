@@ -32,6 +32,8 @@
 use super::item_damage::Harmed;
 use crate::action::AttackKind;
 use crate::content::{CorrodesWhat, ItemHarm, ObjectId};
+use crate::lang::{MessageId, Msg};
+use crate::msg;
 use crate::rng::draw;
 use crate::world::{ActorId, World};
 
@@ -42,13 +44,13 @@ pub(super) fn chance(chance: u8, resistance: i32) -> u32 {
     if resistance > 0 { chance / 2 } else { chance }
 }
 
-/// What is said of harm of one kind to a piece named `{}`: worn, struck with, destroyed, and
-/// withstood (that once in a life, by the flag `once`).
+/// What is said of harm of one kind to a piece (`messages/combat.toml`, the piece in `what`):
+/// worn, struck with, destroyed, and withstood (that once in a life, by the flag `once`).
 pub(super) struct Lines {
-    pub(super) worn: &'static str,
-    pub(super) struck: &'static str,
-    pub(super) gone: &'static str,
-    pub(super) withstood: &'static str,
+    pub(super) worn: MessageId,
+    pub(super) struck: MessageId,
+    pub(super) gone: MessageId,
+    pub(super) withstood: MessageId,
     pub(super) once: &'static str,
 }
 
@@ -56,24 +58,24 @@ pub(super) struct Lines {
 pub(super) const fn lines(kind: ItemHarm) -> Lines {
     match kind {
         ItemHarm::Rust => Lines {
-            worn: "Rust spreads over your {}.",
-            struck: "Your {} comes away rusted.",
-            gone: "Your {} rusts away to nothing.",
-            withstood: "Your {} takes no rust.",
+            worn: msg::combat::RUST_SPREADS,
+            struck: msg::combat::COMES_AWAY_RUSTED,
+            gone: msg::combat::RUSTS_AWAY,
+            withstood: msg::combat::TAKES_NO_RUST,
             once: "rust_takes_none",
         },
         ItemHarm::Fire => Lines {
-            worn: "The heat scorches your {}.",
-            struck: "Your {} comes away scorched.",
-            gone: "Your {} burns away.",
-            withstood: "The heat leaves your {} unmarked.",
+            worn: msg::combat::HEAT_SCORCHES,
+            struck: msg::combat::COMES_AWAY_SCORCHED,
+            gone: msg::combat::BURNS_AWAY,
+            withstood: msg::combat::HEAT_LEAVES_UNMARKED,
             once: "heat_leaves_unmarked",
         },
         ItemHarm::Acid | ItemHarm::Work | ItemHarm::Enchant => Lines {
-            worn: "The acid eats at your {}.",
-            struck: "Your {} comes away pitted.",
-            gone: "The acid eats your {} away.",
-            withstood: "The acid runs off your {}.",
+            worn: msg::combat::ACID_EATS_AT,
+            struck: msg::combat::COMES_AWAY_PITTED,
+            gone: msg::combat::ACID_EATS_AWAY,
+            withstood: msg::combat::ACID_RUNS_OFF,
             once: "acid_runs_off",
         },
     }
@@ -130,7 +132,9 @@ impl World {
     /// The player's piece at pack position `item`, reached by `kind` from side `what`, takes
     /// it, and what came of it is said.
     fn gear_harmed(&mut self, item: usize, kind: ItemHarm, what: CorrodesWhat) {
-        let name = self.state.player().inventory[item].names(&self.content).0;
+        let stack = &self.state.player().inventory[item];
+        // Named as made, one of it, theirs: "your long sword".
+        let piece = stack.made_phrase(&self.content).owned_by(self.you());
         let lines = lines(kind);
         let line = match self.harm_item(item, kind) {
             Harmed::Withstood if self.state.progress.happened(lines.once) => return,
@@ -144,7 +148,7 @@ impl World {
             },
             Harmed::Destroyed => lines.gone,
         };
-        self.say(line.replacen("{}", &name, 1));
+        self.say(Msg::new(line).role("what", piece));
     }
 
     /// Where in the player's pack lies what acid of `what` may reach, the body armour first: what

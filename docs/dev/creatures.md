@@ -197,7 +197,8 @@ Warning signs (#1133, design `docs/design/monster-dread.md` §9 channels 3 and 4
 laid as a fixed terrain or object, `Content::leaving`; the loader refuses a kind the content
 lacks) and `first_sight = "A basilisk. Do not meet its eyes."` on a type. **Rules**: the
 generator lays leavings (`mapgen/leavings.rs`, docs/dev/mapgen.md); `world/creatures/first_sight.rs`
-(`World::first_sight`, the last line of `perceive.rs::perceive`) says a type's line once a run
+(`World::first_sight`, the last line of `perceive.rs::perceive`) says a type's line (a line of
+data, `creature:<id>.first_sight`, naming no role; docs/dev/localization.md) once a run
 when one is first among the perception's actors, remembering the type's id in
 `Progress::sighted` (saved). **Content**: every dread type has a `first_sight` and nothing else
 does (`dread_roster_tests.rs`); statues on the basilisk, webs (which catch, docs/dev/webs.md) on the barrow and large spiders,

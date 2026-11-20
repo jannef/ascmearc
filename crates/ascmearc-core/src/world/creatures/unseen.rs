@@ -52,6 +52,8 @@ use crate::action::{AttackKind, Event};
 use crate::combat::Profile;
 use crate::content::{ActionKind, Content, Fading, Invisible, Stance, StatusId};
 use crate::geom::Pos;
+use crate::lang::Msg;
+use crate::msg;
 use crate::noise::Act;
 use crate::status::Effect;
 use crate::world::creatures::ai::Plan;
@@ -159,10 +161,10 @@ impl World {
             return;
         }
         let seen = self.perception.shows(id);
-        let who = crate::text::capitalized(&self.called(me));
+        let who = self.called_phrase(me);
         self.fade(id, fading, events);
         if seen {
-            self.say(format!("{who} fades from sight."));
+            self.say(Msg::new(msg::creatures::FADES_FROM_SIGHT).role("who", who));
         }
     }
 
@@ -187,8 +189,8 @@ impl World {
         if me.invisible(&self.content) || !self.perception.in_sight(me.pos) {
             return;
         }
-        let who = self.called(me);
-        self.say(format!("You can see {who} again."));
+        let who = self.called_phrase(me);
+        self.say(Msg::new(msg::creatures::SEE_AGAIN).role("who", who));
     }
 
     /// `profile`, a blow by `attacker` at `target`, at the `[unseen]` `to_hit` when it is the
@@ -242,7 +244,7 @@ impl World {
     /// at, and they are told so.
     pub(in crate::world) fn strike_at_unseen(&mut self, target: ActorId) {
         if self.perception.conceals(target) {
-            self.say("You strike at something.");
+            self.say(msg::creatures::STRIKE_AT_SOMETHING);
         }
     }
 

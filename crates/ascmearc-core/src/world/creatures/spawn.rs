@@ -22,6 +22,8 @@
 use crate::content::danger::{self, Spawning};
 use crate::content::{CreatureSpawn, Stance};
 use crate::geom::Pos;
+use crate::lang::Msg;
+use crate::msg;
 use crate::perception::Perception;
 use crate::rng::Rng;
 use crate::time::{Duration, GameTime};
@@ -242,19 +244,16 @@ impl World {
     /// level now, whatever its cap and chance. Takes no time.
     pub(in crate::world) fn spawn_dev(&mut self) -> crate::world::Spent {
         if self.danger(&self.state.current_level.clone()) == 0 {
-            self.say("Nothing comes here: the level has no danger (dev).");
+            self.say(msg::creatures::NO_DANGER_DEV);
             return crate::world::Spent::Nothing;
         }
         match self.attempt(true) {
             Some(actor) => {
-                let name = self
-                    .content
-                    .creature(self.state.actors[&actor].creature)
-                    .name
-                    .clone();
-                self.say(format!("A {name} comes (dev)."));
+                let def = self.content.creature(self.state.actors[&actor].creature);
+                let who = crate::world::combat::fight::creature(def);
+                self.say(Msg::new(msg::creatures::COMES_DEV).role("who", who));
             }
-            None => self.say("Nothing could come: no cell out of sight (dev)."),
+            None => self.say(msg::creatures::NO_CELL_OUT_OF_SIGHT_DEV),
         }
         crate::world::Spent::NoTime
     }

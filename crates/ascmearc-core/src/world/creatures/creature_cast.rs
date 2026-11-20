@@ -50,9 +50,11 @@ use crate::content::{
 };
 use crate::fov::radius2;
 use crate::geom::Pos;
+use crate::lang::Msg;
+use crate::msg;
 use crate::noise::Act;
 use crate::rng::draw;
-use crate::text::capitalized;
+use crate::world::combat::fight;
 use crate::world::magic::cast::Cast;
 use crate::world::magic::spell::{Caster, burst_cells, cone_cells};
 use crate::world::{ActorId, AttackSkills, World};
@@ -327,22 +329,23 @@ impl World {
         if !self.perception.sees_actors_at(me.pos) {
             return;
         }
-        let who = capitalized(&self.called(me));
+        let who = self.called_phrase(me);
+        // The spell's name is core's English, text until it is converted (#1949).
         let name = def.name.to_lowercase();
         let player = self.state.player;
         let them = (self.state.actors.get(&on))
             .filter(|a| on == player || self.perception.sees_actors_at(a.pos))
-            .map(|a| self.called(a));
-        let text = match (on, them) {
-            _ if on == id => format!("{who} casts {name}."),
-            _ if on == player => format!("{who} casts {name} at you!"),
+            .map(|a| self.called_phrase(a));
+        let line = match (on, them) {
+            _ if on == id => Msg::new(msg::creatures::CASTS),
+            _ if on == player => Msg::new(msg::creatures::CASTS_AT_YOU),
             (_, Some(them)) if def.kind == SpellPurpose::Heal => {
-                format!("{who} casts {name} on {them}.")
+                Msg::new(msg::creatures::CASTS_ON).role("target", them)
             }
-            (_, Some(them)) => format!("{who} casts {name} at {them}."),
-            (_, None) => format!("{who} casts {name}."),
+            (_, Some(them)) => Msg::new(msg::creatures::CASTS_AT).role("target", them),
+            (_, None) => Msg::new(msg::creatures::CASTS),
         };
-        self.say(text);
+        self.say(line.role("who", who).role("spell", name));
     }
 
     /// A heal by touch: hit points back to `on`, said as the player sees it.
@@ -365,8 +368,8 @@ impl World {
             return;
         };
         if self.perception.sees_actors_at(actor.pos) {
-            let who = capitalized(&self.called(actor));
-            self.say(format!("{who} looks better."));
+            let who = self.called_phrase(actor);
+            self.say(Msg::new(msg::creatures::LOOKS_BETTER).role("who", who));
         }
         self.heal_by_magic(on, back, events);
     }
@@ -419,7 +422,8 @@ impl World {
                 .collect()
         };
         let content = self.content.clone();
-        let word = (content.status(status).seen.clone()).unwrap_or_else(|| "hexed".into());
+        let word = (content.status(status).seen.as_deref())
+            .map_or_else(|| fight::word("hexed"), fight::word);
         for target in caught {
             if !self.state.actors.contains_key(&target) || self.state.death.is_some() {
                 continue;
@@ -427,8 +431,9 @@ impl World {
             self.afflict(target, status, severity, Some(id), events);
             let them = &self.state.actors[&target];
             if target != self.state.player && self.perception.sees_actors_at(them.pos) {
-                let who = capitalized(&self.called(them));
-                self.say(format!("{who} is {word}."));
+                let line =
+                    Msg::new(msg::creatures::IS_STATUS).role("who", self.called_phrase(them));
+                self.say(line.role("status", word.clone()));
             }
         }
     }

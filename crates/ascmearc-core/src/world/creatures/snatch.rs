@@ -26,8 +26,12 @@
 
 use crate::action::{AttackKind, Event, Positions};
 use crate::content::{SMALL_LOOT, Takes};
+use crate::lang::Msg;
+use crate::msg;
 use crate::object;
 use crate::rng::draw;
+use crate::world::combat::fight;
+use crate::world::turn::phrase::something;
 use crate::world::{ActorId, World};
 
 impl World {
@@ -98,14 +102,14 @@ impl World {
         };
         object::add_to_inventory(&mut robber.inventory, stack.clone(), &content);
         let pos = robber.pos;
-        let name = content.creature(robber.creature).name.clone();
+        let who = fight::creature(content.creature(robber.creature));
         self.afflict(thief, steals.status, steals.degrees, None, events);
-        let what = object::phrase(std::slice::from_ref(&stack), self.lore());
-        let who = if self.perception.sees_actors_at(pos) {
-            crate::content::the_start(&name)
-        } else {
-            "Something".to_string()
+        let what = self.lore().phrase(&stack);
+        let who = match self.perception.sees_actors_at(pos) {
+            true => who,
+            false => something(),
         };
-        self.say(format!("{who} snatches {what} from you!"));
+        let line = Msg::new(msg::creatures::SNATCHES).role("who", who);
+        self.say(line.role("what", what));
     }
 }

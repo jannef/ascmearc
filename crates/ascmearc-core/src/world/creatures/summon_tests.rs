@@ -354,3 +354,44 @@ fn the_goblin_wizard_calls_forth_goblins_that_pay_when_killed() {
     assert!(!w.state.actors.contains_key(&victim), "it died");
     assert!(w.state.experience > xp, "its kill paid");
 }
+
+/// Creatures that came (`summon.rs::counted_arg`) read as the strings did, their verb agreeing
+/// with how many came, as does an animated thing's component breaking.
+#[test]
+fn creatures_that_came_are_said_counted_and_agree_their_verb() {
+    use crate::content::CreatureId;
+    use crate::lang::{Msg, Phrase};
+    use crate::msg::creatures;
+    use crate::test_support::english_of;
+    use crate::world::combat::fight::creature;
+    let content = builtin();
+    let id = |name: &str| content.creature_id(name).expect(name);
+    let (kobold, goblin, wormhost) = (id("kobold"), id("goblin"), id("wormhost"));
+    let came = |seen: &[(CreatureId, u32)]| super::summon::counted_arg(&content, seen);
+    let say = |msg: Msg| english_of(&content, &msg);
+    let appear = |seen: &[(CreatureId, u32)]| {
+        say(Msg::new(creatures::APPEAR).role("what", came(seen).expect("came")))
+    };
+    assert_eq!(appear(&[(kobold, 1)]), "A kobold appears!");
+    assert_eq!(appear(&[(kobold, 2)]), "2 kobolds appear!");
+    assert_eq!(
+        appear(&[(kobold, 1), (goblin, 2)]),
+        "A kobold and 2 goblins appear!"
+    );
+    assert_eq!(came(&[]), None, "none came");
+    let crawl = Msg::new(creatures::CRAWL_OUT)
+        .role("from", creature(content.creature(wormhost)))
+        .role("what", came(&[(kobold, 3)]).expect("came"));
+    assert_eq!(say(crawl), "3 kobolds crawl out of the wormhost!");
+    let summons = Msg::new(creatures::SUMMONS)
+        .role("who", creature(content.creature(kobold)))
+        .role("verb", "summons")
+        .role("what", crate::world::turn::phrase::something());
+    assert_eq!(say(summons), "The kobold summons something!");
+    let broke = |n| {
+        let what = Phrase::id("object:dagger").count(n);
+        say(Msg::new(creatures::BREAKS_APART).role("what", what))
+    };
+    assert_eq!(broke(1), "The dagger breaks apart.");
+    assert_eq!(broke(3), "The 3 daggers break apart.");
+}
