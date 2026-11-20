@@ -12,7 +12,9 @@ ships the whole file in the `[[dungeon]]` / `[dungeon.level]` shape of `data/dun
 one that tunes a generator ships `data/generators.toml` whole (every kind, every parameter) or
 overrides the parameters it wants in the branch's `generator` table instead. Mods are data, never
 code. Every other `.toml` file under the folder is content; other files (a README, a picture) are
-left alone.
+left alone. **A language file merges by id** instead (#1892): a mod's file under `lang/` at a
+path the game has (`lang/en/messages/doors.toml`) holds only the entries it changes or adds, and
+the rest stay; a language's `lang.toml` is one table and is replaced whole.
 
 **The overlay** (`ascmearc-assets/src/mods.rs`): `Mod::read` reads a folder, `scan` the mods
 folder (each sub-folder a `Found`, the mod or why it does not read), `overlay` lays mods over
@@ -22,12 +24,33 @@ last one winning, and `load` loads the result. The core reads no folder: it take
 supplied. So every loader check runs on the merged set (the unread files, #1530; the required
 ids, #1546; the schemas), and an error in a file a mod supplied names it under the mod's folder,
 `mods/<id>/<path>` (`ContentFiles::blame`); an error elsewhere, with mods on, lists them.
-`clashes` lists the paths two mods both hold.
+`clashes` lists the paths two mods both hold (a language file that merges by id is no clash).
+The merge of a language file is by layers: `overlay` keeps the text a mod's file was laid over
+(`ContentFiles::layers`, oldest first) and `ContentFiles::in_dir` gives each layer before the
+file itself, so a loader that adds every file it is given in turn (`english.rs`'s
+`add_templates`, a repeated id taking the later one) reads the merge; every loader of a language
+file goes through `in_dir`. `ContentFiles::insert` replaces a file whole, layers and all.
+
+**Text mods** (#1892; `docs/design/localization.md` §11). A mod whose files all lie under
+`lang/` (or that has none) is a text mod: `ContentFiles::overlay` classifies it by its paths
+(`content::is_text_path`; `Mod::is_text` says the same), never by a flag in `mod.toml`, so a mod
+cannot claim to be text while it changes a rule. A text mod changes how the game reads, never
+what a save means (the log holds message ids and lexicon ids, not words), so `Content::
+content_mods` (every mod but the text ones) is what saves, replays, and the fingerprint use:
+a save or a replay made without a text mod loads with it, and the other way round. A mod with
+content as well as `lang/` files is a content mod and pins saves by its content: the
+fingerprint's digest leaves every file under `lang/` out, a content mod's too, so its text can
+change without making its saves unusable. `Content::mods` stays every mod laid (the Mods screen's
+list of what is on). `cargo xtask lang --check` checks each mod's `lang/` laid over the game's
+(docs/dev/localization.md "The checker"). A mod adds a language with `lang/<code>/` files, read
+where the game reads languages other than English (L8, #1891); a language no loader reads fails
+the load as any unread file does.
 
 **Saves, replays, and the fingerprint.** `Content` keeps the mods it was loaded with
-(`Content::mods`) and a hash of the files they supplied; the content fingerprint adds both, and
-only when there are mods, so a save made without mods keeps its fingerprint. A save records the
-mods (`mods` in the envelope, docs/dev/saves.md) and `save::decode` refuses one made with other
+(`Content::mods`; the content mods, `Content::content_mods`, "Text mods" above) and a hash of
+the content files they supplied; the content fingerprint adds both, and only when there are
+content mods, so a save made without mods (or with text mods only) keeps its fingerprint. A save records the
+content mods (`mods` in the envelope, docs/dev/saves.md) and `save::decode` refuses one made with other
 mods (`SaveError::OtherMods`, both sets in words). A replay records them too (`Replay::mods`,
 docs/dev/cli.md "Replay files"); `Replay::run` and `Replay::check_mods` refuse other mods.
 
@@ -53,3 +76,9 @@ shopkeeper) and Ceolred (a villager) keep theirs: their types live outside the t
 load it (core: `content/mods.rs`, `save.rs`, `replay.rs`; `ascmearc-assets`; the game's
 `mods.rs`; the Mods screen's snapshots read the repository root as `--config-dir`). When a
 change to those five files' other fields lands, copy it into the mod's files too.
+
+**The example text mod**, `mods/creaky_doors/`, rewords four door lines
+(`lang/en/messages/doors.toml`: `close`, `crashes_open`, `open`, `unwedge`), every other door line
+staying the game's. Tests load it (core: `content/text_mod_tests.rs`, `save.rs`, `replay.rs`;
+`ascmearc-assets`; `xtask/src/lang/mods.rs`). When a door line it rewords is renamed or removed,
+change it here too.

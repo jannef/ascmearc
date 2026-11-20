@@ -1,7 +1,7 @@
 # Mods
 
-A mod changes the game's content: a creature's colour, a level, a quest, a new item. Mods work
-in the desktop game only, not in the browser.
+A mod changes the game's content: a creature's colour, a level, a quest, a new item. A text mod
+changes only the game's words. Mods work in the desktop game only, not in the browser.
 
 ## Installing a mod
 
@@ -19,7 +19,8 @@ The Mods screen's **Open the mods folder** opens the folder for you, making it i
 
 Mods turned on are used in order, shown by the number beside each: `[1]` first, then `[2]`, and
 so on. Hold Shift and press ↑ or ↓ to move the selected mod earlier or later. When two mods
-change the same file, the later one wins, and the Mods screen says so.
+change the same file, the later one wins, and the Mods screen says so. Two mods that change the
+same [text file](#text-mods) both apply: where they change the same line, the later one wins.
 
 If a mod is broken, **Apply** says what is wrong and the game keeps the mods it had. If a mod you
 had on is broken or missing when the game starts, the game starts without mods and the main menu
@@ -30,6 +31,9 @@ tells you why.
 A character is played with the mods that were on when the run began. To continue them, turn on
 the same mods, in the same order: a save made with other mods, or without mods, cannot be
 loaded. Changing a mod's files can make its saves unusable too.
+
+[Text mods](#text-mods) are the exception. They change only words, so you can turn them on or off
+at any time: every save loads with them or without them.
 
 ## Making a mod
 
@@ -63,10 +67,40 @@ The game checks all the content, with the mods in, when it loads. A mistake (a m
 a file in a place nothing reads, a creature that names an item that does not exist) stops the
 load, and the message names the mod and the file.
 
-## The example mod
+## Text mods
 
-The game's source has an example, `mods/pride_month`. It gives five of Cēaptūn's townsfolk,
+A text mod changes what the game says, not what happens: it rewords the game's messages and
+screens, or adds a translation. Every file in it is under `lang/`, the folder of the game's
+words (`assets/lang/` in the source).
+
+- `lang/en/messages/` holds the game's messages in English, a file for each part of the game.
+  `lang/en/ui/` holds the words on its screens.
+- A text file at a path the game has does **not** replace the game's file. It changes only the
+  lines it holds, by their names. Every other line stays as it was. A language's `lang.toml` is
+  the one exception: it is replaced whole.
+- A mod that holds any file outside `lang/` is not a text mod, even if most of it is text. Its
+  saves need it on, as any content mod's do.
+
+The game tells a text mod apart by where its files are. Nothing in `mod.toml` makes a mod a text
+mod.
+
+## The example mods
+
+The game's source has two examples.
+
+`mods/pride_month` changes content. It gives five of Cēaptūn's townsfolk,
 Hild, Godgifu, Leofric, Wulfrun, and Wat, a bright colour each. It replaces five creature files,
 each a copy of the game's with only the `fg` line (the colour) changed. Eadric and Ceolred keep
 their colours: their kinds of creature live outside the town too, and the change would reach
 them all.
+
+`mods/creaky_doors` is a text mod. Doors creak, groan, and scrape as they open and close. Its one
+file, `lang/en/messages/doors.toml`, holds four lines, and every other door message stays the
+game's:
+
+```toml
+close = "You close the door. It groans shut."
+crashes_open = "The door crashes open, its hinges shrieking!"
+open = "You open the door. It creaks."
+unwedge = "You pull the wedge free, and the door scrapes open."
+```

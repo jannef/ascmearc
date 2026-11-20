@@ -15,9 +15,10 @@
 //! before characters existed still load. `name` is the character's name, left out with the
 //! character; a replay without it gives the character the run's default name
 //! ([`default_name`](crate::character::default_name)), so replays recorded before names
-//! existed still load. `mods` lists the mods the run was played with (#1731; `{ "id":
+//! existed still load. `mods` lists the content mods the run was played with (#1731; `{ "id":
 //! "pride_month", "version": "1.0.0" }` each, in order), left out without any: a replay plays
-//! only on content with the same mods ([`Replay::check_mods`]).
+//! only on content with the same mods ([`Replay::check_mods`]). Text mods are never listed and
+//! never checked (#1892).
 
 use crate::action::Action;
 use crate::character::CharacterSpec;
@@ -86,7 +87,8 @@ pub struct Replay {
     /// chose; [`World::start_run`]); left out when false, so replays from before kits load.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub kit: bool,
-    /// The mods laid over the content, in order (#1731); left out without any.
+    /// The content mods laid over the content, in order (#1731; text mods never, #1892); left
+    /// out without any.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub mods: Vec<ModStamp>,
     pub steps: Vec<Step>,
@@ -103,7 +105,7 @@ impl Replay {
             character: world.character().map(|c| c.spec.clone()),
             name: world.character().map(|c| c.name.clone()),
             kit: world.started_with_kit(),
-            mods: world.content().mods().to_vec(),
+            mods: world.content().content_mods().to_vec(),
             steps: Vec::new(),
         }
     }
@@ -141,14 +143,14 @@ impl Replay {
         })
     }
 
-    /// Whether `content` was loaded with the mods this replay was recorded with.
+    /// Whether `content` was loaded with the content mods this replay was recorded with.
     pub fn check_mods(&self, content: &Content) -> Result<(), ReplayError> {
-        if self.mods == content.mods() {
+        if self.mods == content.content_mods() {
             return Ok(());
         }
         Err(ReplayError::OtherMods {
             recorded: describe_mods(&self.mods),
-            loaded: describe_mods(content.mods()),
+            loaded: describe_mods(content.content_mods()),
         })
     }
 
@@ -286,6 +288,32 @@ mod tests {
         assert_eq!(json["mods"][0]["version"], "1.0.0");
         replay.run(modded).expect("the same mods");
         assert!(replay.run(content()).is_err());
+    }
+
+    /// A text mod (#1892) is never recorded nor required: a replay made without the example
+    /// text mod plays with it, and one made with it plays without it.
+    #[test]
+    fn a_text_mod_never_refuses_a_replay() {
+        let mod_files = crate::content::repo_mod("creaky_doors");
+        let mut files = crate::content::ContentFiles::builtin();
+        let stamp = ModStamp {
+            id: "creaky_doors".into(),
+            version: "1.0.0".into(),
+        };
+        files.overlay(
+            stamp,
+            mod_files.iter().map(|(p, t)| (p.as_str(), t.as_str())),
+        );
+        let text = Arc::new(Content::load(&files).expect("the mod loads"));
+        recorded("wait move:N")
+            .run(text.clone())
+            .expect("plays with it");
+        let mut world = World::new(text, "showcase", None).expect("world");
+        let mut replay = Replay::new(&world);
+        world.apply(&Action::Wait);
+        replay.push(&Action::Wait, &world);
+        assert!(!replay.to_json().contains("\"mods\""));
+        replay.run(content()).expect("plays without it");
     }
 
     #[test]

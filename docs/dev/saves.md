@@ -22,9 +22,9 @@ be done once the page is going), so what can be lost is the turns since the last
 most `AUTOSAVE_TURNS` (50) turns, or the last change of level (#1591). Only the `web-sys` features in `crates/ascmearc/Cargo.toml` are enabled (size).
 
 **Saves are pinned to the game version that wrote them** (#840; `spec/06-content.md` "Saves, permadeath, the graveyard"). The envelope (`ascmearc-core/src/save.rs`) is `magic`, `game_version`
-(`ascmearc_core::GAME_VERSION`, the workspace version), `content_fingerprint`, `mods` (the mods
+(`ascmearc_core::GAME_VERSION`, the workspace version), `content_fingerprint`, `mods` (the content mods
 the run was played with, `[{id, version}]` in load order, left out without any; #1731,
-docs/dev/mods.md), and the state; `save::decode` refuses a save whose `game_version` is not this
+docs/dev/mods.md; text mods are never listed, #1892, docs/dev/mods.md "Text mods"), and the state; `save::decode` refuses a save whose `game_version` is not this
 build's (`SaveError::OtherVersion`, before the state is read; a save that names none, from before
 the pin, is "an older version"), then one made with other mods (`OtherMods`, saying both sets),
 then one whose fingerprint differs (`ContentMismatch`), then one that does not read (`Corrupt`).
