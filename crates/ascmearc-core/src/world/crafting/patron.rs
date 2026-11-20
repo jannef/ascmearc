@@ -38,8 +38,9 @@ use crate::content::{
     QuestKind, RecipeCount, RecipeDef, RecipeId,
 };
 use crate::dice::Dice;
-use crate::lang::{Arg, Phrase};
+use crate::lang::{Arg, Msg, Phrase};
 use crate::magic::worked;
+use crate::msg;
 use crate::object::Stack;
 use crate::perception::PerceptionView;
 use crate::rng::Rng;
@@ -270,8 +271,9 @@ impl World {
                         // magic as the player knows it (#1709).
                         let gold = rules.paid(stack.worth(&content));
                         let gold = u32::try_from(gold).unwrap_or(u32::MAX);
-                        let what = self.lore().describe(&stack);
-                        self.say(format!("You hand over {what}."));
+                        let what = self.lore().phrase(&stack);
+                        let said = Msg::new(msg::crafting::HAND_OVER).role("what", what);
+                        self.say(said);
                         let line = self
                             .said(id, &words.delivered)
                             .with("gold", i64::from(gold));
@@ -339,7 +341,7 @@ impl World {
             .and_then(|a| self.dialogue_of(a))
             .is_some_and(|d| self.patron_words(d).is_some());
         if patron && self.state.patron.open.take().is_some() {
-            self.say("With your patron dead, the commission is off.");
+            self.say(msg::crafting::PATRON_DEAD);
         }
     }
 

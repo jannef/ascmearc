@@ -323,7 +323,15 @@ fn the_menu_and_the_rig_list_say_what_is_lacking() {
         .expect("Trapwright in the menu");
     assert_eq!(own.unavailable, None);
     let rows = view.rigs();
-    let lacking: Vec<_> = rows.iter().map(|r| (r.id.as_str(), r.lacking)).collect();
+    let words = |why: &crate::lang::MessageId| {
+        crate::test_support::english_of(w.content(), &why.clone().into())
+    };
+    let lacking: Vec<_> = (rows.iter())
+        .map(|r| (r.id.as_str(), r.lacking.as_ref().map(words)))
+        .collect();
+    let lacking: Vec<_> = (lacking.iter())
+        .map(|(id, why)| (*id, why.as_deref()))
+        .collect();
     assert_eq!(
         lacking,
         [

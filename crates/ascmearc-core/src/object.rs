@@ -814,6 +814,20 @@ pub fn phrase(stacks: &[Stack], lore: Lore<'_>) -> String {
     phrase_with(stacks, lore, |_| None)
 }
 
+/// [`phrase`]'s stacks as an argument of a line, said `counted`: one stack its phrase, two or
+/// three a list of them, more a count of objects.
+pub fn stacks_arg(stacks: &[Stack], lore: Lore<'_>) -> crate::lang::Arg {
+    use crate::lang::Arg;
+    match stacks {
+        [one] => Arg::Phrase(lore.phrase(one)),
+        [_, _] | [_, _, _] => Arg::List(stacks.iter().map(|s| lore.phrase(s).into()).collect()),
+        _ => {
+            let count: u32 = stacks.iter().map(|s| s.count).sum();
+            Arg::Phrase(crate::lang::Phrase::id("word:object").count(count))
+        }
+    }
+}
+
 /// [`phrase`] with what `tag` says of the stack at each position after its name, in
 /// parentheses: "a dagger (for sale, 45 gold) and 12 arrows (for sale, 18 gold)". More than
 /// three stacks are counted, untagged.

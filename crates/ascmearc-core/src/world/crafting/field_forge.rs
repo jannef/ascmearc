@@ -39,8 +39,8 @@ pub struct Forging {
 }
 
 impl Job for Forging {
-    fn leave(&self) -> String {
-        "you leave the anvil unfinished".into()
+    fn leave(&self) -> crate::lang::Msg {
+        msg::crafting::LEAVE_ANVIL_UNFINISHED.into()
     }
 
     /// No check, but an hour at the block of metal: Strength's.

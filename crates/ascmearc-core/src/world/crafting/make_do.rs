@@ -30,6 +30,8 @@
 use super::work::{Job, Task};
 use crate::action::Event;
 use crate::combat;
+use crate::lang::Msg;
+use crate::msg;
 use crate::object::Stack;
 use crate::rng::draw;
 use crate::skills::Use;
@@ -80,31 +82,31 @@ impl World {
             return Spent::Nothing;
         };
         let Some(stack) = self.state.player().inventory.get(item) else {
-            self.say("You carry no such thing.");
+            self.say(msg::crafting::CARRY_NO_SUCH_THING);
             return Spent::Nothing;
         };
         if !mendable(stack) {
-            self.say("There is nothing wrong with it.");
+            self.say(msg::crafting::NOTHING_WRONG_WITH_IT);
             return Spent::Nothing;
         }
         if self.state.player().equipment.holds(item) {
-            self.say("Take it off first.");
+            self.say(msg::crafting::TAKE_IT_OFF_FIRST);
             return Spent::Nothing;
         }
         if self.mend_by(stack).is_none() {
-            self.say("You know no craft that would mend it.");
+            self.say(msg::crafting::NO_CRAFT_TO_MEND);
             return Spent::Nothing;
         }
         if self.item_protected(stack) {
-            self.say("You dare not work on it.");
+            self.say(msg::crafting::DARE_NOT_WORK_ON_IT);
             return Spent::Nothing;
         }
         if !self.may_loose(item) {
             return Spent::Nothing;
         }
         let stack = &self.state.player().inventory[item];
-        let name = self.lore().title(stack);
-        self.say(format!("You set to mending the {name}."));
+        let name = self.lore().title_phrase(stack);
+        self.say(Msg::new(msg::crafting::SET_TO_MENDING).role("item", name));
         self.craft_work(Task::MakeDo(Mending { item }), rules.seconds)
     }
 
@@ -133,7 +135,7 @@ impl World {
         let still = (me.inventory.get(item))
             .filter(|s| mendable(s) && !me.equipment.holds(item) && !self.item_protected(s));
         let Some((material, skill, stat)) = still.and_then(|s| self.mend_by(s)) else {
-            self.say("You have nothing left to work on.");
+            self.say(msg::crafting::NOTHING_LEFT_TO_WORK_ON);
             return;
         };
         let modifier = me.craft_modifier(&content, stat, skill);
@@ -147,10 +149,10 @@ impl World {
             stack.set_worked(worked);
             let what = self
                 .lore()
-                .describe(&self.state.player().inventory[at].single());
-            self.say(format!("You make good the damage: it is {what} again."));
+                .phrase(&self.state.player().inventory[at].single());
+            self.say(Msg::new(msg::crafting::MAKE_GOOD).role("what", what));
         } else {
-            self.say("You cannot make it good here; it will need an anvil.");
+            self.say(msg::crafting::NEED_AN_ANVIL);
         }
         if self.trains(Use::Craft) {
             self.train_skill(Use::Craft, skill);

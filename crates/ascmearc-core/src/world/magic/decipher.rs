@@ -95,12 +95,12 @@ impl Job for Deciphering {
         self.item = crate::world::crafting::work::one(now);
     }
 
-    fn leave(&self) -> String {
+    fn leave(&self) -> crate::lang::Msg {
         "you put the scroll away".into()
     }
 
-    fn nothing_left(&self) -> &'static str {
-        "You have nothing left to make out."
+    fn nothing_left(&self) -> crate::lang::Msg {
+        "You have nothing left to make out.".into()
     }
 
     fn stat(&self, _: &World) -> Option<Stat> {

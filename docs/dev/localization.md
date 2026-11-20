@@ -12,7 +12,7 @@ text"), with its widths in the screens' layout, not the text (#1908), and the fu
 the controls, settings, and mods screens (#1935) and the object and rig screens (#1928); **L4a**,
 **L4b**, **L4i**, and **L4j**, `world/allies/` (#1912), `world/character/` (#1913),
 `world/health/` (#1920), and `world/levels/` (#1921) say their lines from templates
-("Literal lines"), as does **L4f**, the first half of `world/crafting/` (#1917);
+("Literal lines"), as do **L4f** and **L4g**, `world/crafting/` (#1917, #1918);
 **L4c**, the first half of `world/classes/` (#1914, `messages/classes.toml`, "Literal lines");
 and **L5**, dialogue (#1888): every line a creature says is a line of data
 said by its key, with role slots in the base form ("Dialogue"), on the one mechanism every line
@@ -410,8 +410,22 @@ Sharp magic", "some of its magic") are nested messages in `catch_magic` and `goe
 Soulglass's crystals a phrase or a list of two (`turns_to_glass`, by number). A profession's
 `failed` and `fumbled` lines are lines of data (`data_line::profession`). Text roles until their
 words are converted (#1949): a skill's and a recipe's names, a launcher's word, the label of a
-pick ("blade", "arrowheads"), the time a dig took, and `came_line`. Temper's `WITHSTOOD`, said
-by a warped enchanting too, waits for the second half (#1918).
+pick ("blade", "arrowheads"), the time a dig took, and `came_line`.
+
+Its second half (L4g: mending, mining, the patron, rigging, salvage, setting, tempering, and
+`work.rs`, the driver of long work). What the player does as a work is cut short (`Job::leave`:
+"you put down your work") is a message of its own, said inside `crafting.work_stopped`
+(`{leave:Bare}.`) or `work_stopped_came`, after `came_line`; Decipher's (`world/magic/`) is a
+literal line in that slot until its slice. A rig's lacking (`rig.rs::Lack`) is two entries: the
+rig list's words (`lacking_knife`, which the screen says in its own `lacking`) and the refusal's
+sentence. Several stacks are `object::stacks_arg` (`you_save`); one taken apart by its title or
+several counted is one entry by number (`take_apart`). A rig and a trap are `word:` phrases of
+their names (`{rig:a}`, `{trap:a}`). A rig's `made` and `snaps` are lines of data
+(`data_line::rig`). Text roles until their words are converted (#1949): a skill's name
+(`need_skill_at`) and a rig's id as the action wrote it. Left for their own work: the
+commission's quest-log view (`patron.rs::commission`, whose `QuestView` takes `Msg`s with
+people's slice, #1924), the rig list's "what it takes" (`rig.rs::takes_words`), and the craft
+dialog's plan (`CraftPlan`), screen text built in core.
 
 `world/classes/`'s first half (`messages/classes.toml`, L4c: `ascetic`, `calling`, `charge`,
 `class_ability`, `class`, `consecrate`, `invest`, `mark`) says the lines its data writes as
@@ -605,6 +619,7 @@ arrays named by the id that tells it apart. Every kind of line of data, the thre
 | `profane:<id>.line`, `.undone`, `.instead` | a profane gift given, taken back, or said in place of its own line when it takes a gift held away |
 | `talent:<id>.effects.temperature_speed.bands.<n>.slower`, `.faster` | cold blood coming into band `n` (from 0) from a quicker or a slower one |
 | `recipes:profession.<skill>.failed`, `.fumbled` | a recipe with a `failure` object failing, or its `fumble` object made on a natural 2 |
+| `rigs:rig.<id>.made`, `.snaps` | a trap rigged, or sprung on its rigger by a natural 2 |
 | `calling:<campaign>.<class>.message` | a calling made (`data` for one outside every campaign, as a dialogue's scope) |
 | `talent:<id>.effects.weapon_ranks.news`, `.take_up_skills.news` | what a talent a class table gives hands out |
 | `resources:resource.<id>.lacking` | a class active refused for too little of the resource (in `classes.lacking`) |

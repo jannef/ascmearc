@@ -104,6 +104,16 @@ fn a_professions_lines_read_as_the_data_writes_them() {
 }
 
 #[test]
+fn a_rigs_lines_read_as_the_data_writes_them() {
+    let content = &CONTENT;
+    let rules = content.rigs().expect("rigs.toml");
+    for (_, def) in rules.iter() {
+        assert_eq!(said_text(content, rig(&def.id, false)), def.made);
+        assert_eq!(said_text(content, rig(&def.id, true)), def.snaps);
+    }
+}
+
+#[test]
 fn a_line_that_names_a_role_is_refused() {
     let mut files = ContentFiles::builtin();
     let laws = "[summon]\ntag = \"fiend\"\nfirst = \"{who:The} sees.\"\n\

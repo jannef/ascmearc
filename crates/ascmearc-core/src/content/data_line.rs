@@ -147,6 +147,12 @@ pub fn profession(skill: &str, fumbled: bool) -> String {
     format!("recipes:profession.{skill}.{field}")
 }
 
+/// Rig `id`'s `snaps` (`snaps` true) or `made` line (`rigs.toml`'s `[[rig]]`).
+pub fn rig(id: &str, snaps: bool) -> String {
+    let field = if snaps { "snaps" } else { "made" };
+    format!("rigs:rig.{id}.{field}")
+}
+
 /// A hand-made level `id`'s `arrival` line.
 fn level_arrival(id: &str) -> String {
     format!("level:{id}.arrival")
@@ -362,7 +368,7 @@ fn character_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
     }
 }
 
-/// Crafting's lines: the professions' `failed` and `fumbled`.
+/// Crafting's lines: the professions' `failed` and `fumbled`, the rigs' `made` and `snaps`.
 fn crafting_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
     for text in &content.recipes().professions {
         let skill = &content.skill(text.skill).id;
@@ -371,6 +377,10 @@ fn crafting_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
                 add(profession(skill, fumbled), line);
             }
         }
+    }
+    for (_, def) in content.rigs().into_iter().flat_map(|rules| rules.iter()) {
+        add(rig(&def.id, false), &def.made);
+        add(rig(&def.id, true), &def.snaps);
     }
 }
 
