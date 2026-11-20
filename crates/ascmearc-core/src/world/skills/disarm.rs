@@ -24,9 +24,12 @@ use crate::action::Event;
 use crate::check::{self, Checked};
 use crate::content::ActionKind;
 use crate::geom::Dir;
+use crate::lang::Msg;
+use crate::msg;
 use crate::rng::draw;
 use crate::skills::{Effect, Use};
 use crate::stats::Stat;
+use crate::world::combat::fight::word;
 use crate::world::{Spent, World};
 
 impl World {
@@ -36,13 +39,13 @@ impl World {
     pub(in crate::world) fn disarm(&mut self, dir: Dir, events: &mut Vec<Event>) -> Spent {
         let player = self.state.player;
         if !Ability::Disarm.had_by(self.state.player(), &self.content) {
-            self.say("You do not know how to disarm traps.");
+            self.say(msg::skills::DISARM_UNTRAINED);
             return Spent::Nothing;
         }
         let at = self.player_pos().step(dir);
         let known = self.state.current().traps.get(&at).filter(|t| t.known);
         let Some(kind) = known.map(|t| t.kind) else {
-            self.say("You know of no trap there.");
+            self.say(msg::skills::NO_KNOWN_TRAP);
             return Spent::Nothing;
         };
         let price = self.price_of(player, ActionKind::Disarm);
@@ -52,23 +55,23 @@ impl World {
         if self.trains(Use::Disarm) {
             self.train(Use::Disarm);
         }
-        let name = self.content.trap(kind).name.clone();
+        let trap = word(&self.content.trap(kind).name);
         match checked {
             Checked::Made => {
                 let level = self.state.current_mut();
                 level.traps.remove(&at);
                 level.trap_memory.remove(&at);
-                self.say(format!("You disarm the {name}."));
+                self.say(Msg::new(msg::skills::DISARMED).role("trap", trap));
                 Spent::Turn(price)
             }
             Checked::Failed { by } if by >= self.content.trap_disarm().springs_short_by => {
-                self.say(format!("You set off the {name}!"));
+                self.say(Msg::new(msg::skills::SET_OFF).role("trap", trap));
                 // A burst on a chest blows it apart.
                 let (climb, _) = self.spring_chest_trap(at, player, events);
                 Spent::Turn(price + climb)
             }
             Checked::Failed { .. } => {
-                self.say(format!("You fail to disarm the {name}."));
+                self.say(Msg::new(msg::skills::DISARM_FAILED).role("trap", trap));
                 Spent::Turn(price)
             }
         }

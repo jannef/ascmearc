@@ -13,8 +13,9 @@ use super::screens::{ScreenAction, ScreenName};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
+use ascmearc_core::content::Content;
+use ascmearc_core::messages::{english_arg, english_msg, english_speech};
 use ascmearc_core::perception::PerceptionView;
-use ascmearc_core::text::capitalized;
 use ascmearc_core::world::QuestView;
 
 /// Width of the panel: the dialogue screen's.
@@ -25,15 +26,48 @@ const WORDS: usize = 6;
 #[derive(Debug)]
 pub struct QuestScreen {
     /// Active quests first, then done ones.
-    quests: Vec<QuestView>,
+    quests: Vec<Logged>,
     selected: usize,
+}
+
+/// A quest of the log, its words rendered (in English until a language can be chosen, L8).
+#[derive(Clone, Debug)]
+struct Logged {
+    name: String,
+    active: bool,
+    failed: bool,
+    objective: String,
+    status: String,
+    /// Who gave it, in their words: `The old hermit: "…"`.
+    words: String,
+}
+
+impl Logged {
+    fn of(content: &Content, quest: &QuestView) -> Self {
+        let giver = english_arg(content, &quest.giver, "The");
+        let offer = english_speech(content, &quest.offer);
+        Self {
+            name: quest.name.clone(),
+            active: quest.active,
+            failed: quest.failed,
+            objective: english_msg(content, &quest.objective),
+            status: english_msg(content, &quest.status),
+            words: format!("{giver}: \"{offer}\""),
+        }
+    }
 }
 
 impl QuestScreen {
     /// The log of the player's quests (`None` outside a run: none).
     pub fn new(view: Option<&PerceptionView<'_>>) -> Self {
+        let quests = view.map_or_else(Vec::new, |view| {
+            let content = view.content();
+            (view.quests().iter())
+                .map(|q| Logged::of(content, q))
+                .collect()
+        });
         Self {
-            quests: view.map_or_else(Vec::new, PerceptionView::quests),
+            quests,
             selected: 0,
         }
     }
@@ -85,8 +119,7 @@ impl QuestScreen {
         lines.extend(wrap(&quest.objective, width).into_iter().map(|l| (l, true)));
         lines.extend(wrap(&quest.status, width).into_iter().map(|l| (l, true)));
         lines.push((String::new(), false));
-        let words = format!("{}: \"{}\"", capitalized(&quest.giver), quest.offer);
-        let mut said = wrap(&words, width);
+        let mut said = wrap(&quest.words, width);
         if said.len() > WORDS {
             said.truncate(WORDS);
             if let Some(last) = said.last_mut() {
@@ -248,7 +281,7 @@ mod tests {
     #[test]
     fn done_quests_follow_the_active_ones() {
         let world = with_quests();
-        let mut quests = world.perception().quests();
+        let mut quests = QuestScreen::new(Some(&world.perception())).quests;
         let mut done = quests[0].clone();
         (done.name, done.active, done.status) = ("Three apples".into(), false, "Done.".into());
         quests.push(done);
@@ -284,9 +317,9 @@ mod tests {
     fn many_quests_scroll_within_the_panel() {
         // No cap on active quests: a long log keeps the selection in view and its frame whole.
         let world = with_quests();
-        let one = world.perception().quests()[0].clone();
-        let quests: Vec<QuestView> = (0..60)
-            .map(|i| QuestView {
+        let one = QuestScreen::new(Some(&world.perception())).quests[0].clone();
+        let quests: Vec<Logged> = (0..60)
+            .map(|i| Logged {
                 name: format!("Errand {i}"),
                 active: i < 40,
                 ..one.clone()

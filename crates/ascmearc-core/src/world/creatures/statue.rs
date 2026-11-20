@@ -27,6 +27,8 @@ use crate::action::{Breach, Event};
 use crate::content::ActionKind;
 use crate::door::kick_breaks;
 use crate::geom::Pos;
+use crate::lang::{Msg, Phrase};
+use crate::msg;
 use crate::noise::Act;
 use crate::object::{self, Stack};
 use crate::rng::draw;
@@ -106,7 +108,8 @@ impl World {
         let player = self.state.player;
         let price = self.price_of(player, ActionKind::Kick);
         let def = self.content.terrain(self.state.current().terrain[p]);
-        let (name, sturdiness) = (def.name.clone(), def.statue.unwrap_or(u8::MAX));
+        let what = Phrase::id(format!("terrain:{}", def.id));
+        let sturdiness = def.statue.unwrap_or(u8::MAX);
         let force = self.kick_force();
         let broken = kick_breaks(
             force,
@@ -119,12 +122,10 @@ impl World {
         self.make_noise(player, Act::Kick(p));
         if broken {
             self.break_wall(p, Breach::Kicked, events);
-            self.say(format!("The {name} cracks and falls to pieces!"));
+            self.say(Msg::new(msg::creatures::STATUE_FALLS).role("what", what));
         } else {
             events.push(Event::DoorKicked { pos: p });
-            self.say(format!(
-                "THUD! Your foot meets the stone; the {name} stands."
-            ));
+            self.say(Msg::new(msg::creatures::STATUE_STANDS).role("what", what));
         }
         Spent::Turn(price)
     }

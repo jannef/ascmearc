@@ -9,6 +9,8 @@
 //! Anything else it carried falls as any creature's does.
 
 use crate::geom::Pos;
+use crate::lang::Msg;
+use crate::msg;
 use crate::object::{Stack, break_up};
 use crate::rng::Rng;
 use crate::world::{Actor, World};
@@ -39,12 +41,7 @@ impl World {
     /// The lines for `broken`, an animated thing's components that broke as it fell at `at` on
     /// `level`: one each, if the player sees the cell ("The candlestick breaks apart."), else
     /// none.
-    pub(in crate::world) fn break_lines(
-        &self,
-        level: &str,
-        at: Pos,
-        broken: &[Stack],
-    ) -> Vec<String> {
+    pub(in crate::world) fn break_lines(&self, level: &str, at: Pos, broken: &[Stack]) -> Vec<Msg> {
         if broken.is_empty()
             || level != self.state.current_level
             || !self.perception.sees_actors_at(at)
@@ -53,11 +50,8 @@ impl World {
         }
         (broken.iter())
             .map(|stack| {
-                let (one, many) = stack.names(&self.content);
-                match stack.count {
-                    1 => format!("The {one} breaks apart."),
-                    n => format!("The {n} {many} break apart."),
-                }
+                let what = stack.made_phrase(&self.content).count(stack.count);
+                Msg::new(msg::creatures::BREAKS_APART).role("what", what)
             })
             .collect()
     }

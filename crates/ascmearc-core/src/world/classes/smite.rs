@@ -23,6 +23,8 @@ use crate::combat::{Blow, Profile};
 use crate::content::{ActionKind, ClassActive};
 use crate::damage::Damage;
 use crate::geom::Dir;
+use crate::lang::Msg;
+use crate::msg;
 use crate::rng::draw;
 use crate::talent::FaithEffect;
 use crate::talent::SmiteRider;
@@ -77,7 +79,7 @@ impl World {
         let melee = me.attack_skills(&content, AttackKind::Melee, None);
         let with = me.weapon_item(&content);
         let price = self.attack_price(player, ActionKind::Melee, with, melee);
-        self.say("You smite!");
+        self.say(msg::classes::SMITE);
         let blow = self.player_blow_with(target, seen, profile, events);
         if let Some(rider) = rider
             && let Some(blow) = blow.filter(|b| b.damage > 0)
@@ -110,13 +112,13 @@ impl World {
             return;
         };
         let seen = self.perception.sees_actors_at(them.pos);
-        let name = self.called(them);
+        let who = self.called_phrase(them);
         match rider {
             SmiteRider::Brand { status, severity } => {
                 self.afflict(target, status, severity, Some(player), events);
                 let took = (self.state.actors.get(&target)).is_some_and(|a| a.effects.has(status));
                 if seen && took {
-                    self.say(format!("Holy light clings to {name}."));
+                    self.say(Msg::new(msg::classes::HOLY_LIGHT_CLINGS).role("who", who));
                 }
             }
             SmiteRider::Fear {
@@ -130,29 +132,27 @@ impl World {
                     .and_then(|s| s.aim)
                     .map_or(0, |stat| me.effective_stats(&content).modifier(stat));
                 let nerve = them.check_modifier(&content, check);
-                let who = crate::text::capitalized(&name);
                 let mut rng = draw!(self, "smite/fear/{}", them.key);
                 if crate::check::check(&mut rng, nerve, difficulty + aim) {
                     if seen {
-                        self.say(format!("{who}'s will holds."));
+                        self.say(Msg::new(msg::classes::WILL_HOLDS).role("who", who));
                     }
                     return;
                 }
                 let degrees = u16::try_from(turns.roll(&mut rng).max(1)).unwrap_or(1);
                 self.afflict(target, status, degrees, Some(player), events);
                 if seen {
-                    self.say(format!("{who} quails!"));
+                    self.say(Msg::new(msg::classes::QUAILS).role("who", who));
                 }
             }
             SmiteRider::Banish => {
-                let who = crate::text::capitalized(&name);
                 if them.summoner.is_some() {
                     if seen {
-                        self.say(format!("{who} is unmade!"));
+                        self.say(Msg::new(msg::classes::UNMADE).role("who", who));
                     }
                     self.unmake(target, blow, seen, events);
                 } else if seen && content.unholy(them.creature) {
-                    self.say(format!("{who} reels under holy wrath!"));
+                    self.say(Msg::new(msg::classes::REELS_UNDER_WRATH).role("who", who));
                 }
             }
         }

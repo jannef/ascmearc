@@ -242,7 +242,7 @@ overworld only; the waypoints are the author's, #1205). `World::ask` calls
 `World::mark_rumoured_way` after a dialogue topic's reply: it makes the overworld if the run has
 none yet (`World::visit`), runs `fov::compute_fov` with `daylight::SIGHT_DAY` from every route
 cell over the overworld's opacity, and writes each cell seen into `LevelState::memory` from the
-terrain grid, saying `rumour::MARKED` if anything was new. The terrain grid holds a hidden
+terrain grid, saying `people.mark_the_way` if anything was new. The terrain grid holds a hidden
 location's plain terrain, so nothing hidden leaks (`docs/dev/overworld.md`); nothing else is
 read or written (no objects, traps, or stairs links; no time; no stream; no new saved state).
 Why waypoints and not a computed path: the way is the speaker's words, drawn by hand along the

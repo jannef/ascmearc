@@ -84,8 +84,8 @@ fn roll(world: &World, id: &str) -> Option<crate::content::Roll> {
     world.quests().record(id).and_then(|r| r.roll.clone())
 }
 
-fn logged(world: &World, id: &str) -> QuestView {
-    (world.perception().quests().into_iter())
+fn logged(world: &World, id: &str) -> crate::test_support::LoggedQuest {
+    (crate::test_support::quest_log(world).into_iter())
         .find(|q| q.id == id)
         .expect("in the log")
 }

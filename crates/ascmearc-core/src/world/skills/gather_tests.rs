@@ -141,7 +141,10 @@ fn the_untrained_are_refused_and_the_trained_find_more() {
     let out = w.apply(&Action::Gather(Dir::NE));
     assert!(!out.took_turn && out.elapsed.is_zero());
     assert_eq!(w.state.time, start);
-    assert_eq!(last_message(&w), super::gather::UNTRAINED);
+    assert_eq!(
+        last_message(&w),
+        "You do not know what to do with these: gathering herbs takes the Herbalism skill."
+    );
     assert_eq!(herbs(&w), 0);
     // Not the way to the fungus: the place is asked first.
     w.apply(&Action::Gather(Dir::S));
@@ -231,7 +234,7 @@ fn a_gather_picks_the_fungus_over_and_herbalism_is_marked() {
     let out = w.apply(&Action::Gather(Dir::NE));
     assert!(!out.took_turn && out.elapsed.is_zero());
     assert_eq!(w.state.time, before);
-    assert_eq!(last_message(&w), super::gather::PICKED);
+    assert_eq!(last_message(&w), "This fungus has been picked over.");
     assert_eq!(herbs(&w), first, "nothing more");
     // It stays picked over through a save, and never grows back.
     let saved = (*w.state).clone();

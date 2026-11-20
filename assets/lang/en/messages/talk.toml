@@ -1,5 +1,23 @@
 # Talk (`world/people/talk.rs`): the lines that carry a line of dialogue (`line`, a dialogue
-# line said by its key, `docs/dev/localization.md` "Dialogue"). Ids alphabetical.
+# line said by its key, `docs/dev/localization.md` "Dialogue"), and talking, asking, and making
+# way. Ids alphabetical, the plain ones first. `who` is a creature by what the player calls it
+# ("the gardener", "Sister Hild").
+
+does_not_answer = "{who:The} {who:does}n't answer."
+does_not_budge = "{who:The} {who:does}n't budge."
+in_no_mood = "{who:The} {who:is} in no mood to talk."
+# Asked about a topic it does not have.
+knows_nothing = "{who:The} know{who:s} nothing about that."
+no_one_to_talk_to = "You see no one there to talk to."
+# What will not make way for the player, unseen.
+something_in_the_way = "Something is in the way."
+swap_places = "You swap places with {who:the}."
+swap_places_unseen = "You swap places with something."
+# A mutter heard faintly, from no way the player can tell.
+voice_faint = "You faintly hear a voice."
+# The same, placed: `dir`, the compass word ("north").
+voice_faint_from = "You faintly hear a voice to the {dir:bare}."
+will_not_go_into_water = "{who:The} will not go into the water."
 
 # A creature the player sees mutters: `who`, the speaker; `verb`, how (its dialogue's `verb`,
 # "mutters", "hums"); `line`, the line.

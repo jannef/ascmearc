@@ -15,6 +15,7 @@
 use crate::action::{Event, Positions};
 use crate::alignment::Alignment;
 use crate::combat::Blow;
+use crate::content::data_line;
 use crate::content::{
     Amount, CreatureSpawn, Harmful, Near, OutcomeDef, OutcomeEffect, OutcomeKind, OutcomeSummon,
     OutcomeTable, Stance, danger,
@@ -22,7 +23,9 @@ use crate::content::{
 use crate::damage::Damage;
 use crate::geom::{Dir, Pos};
 use crate::hunger::Hunger;
+use crate::lang::Msg;
 use crate::magic::loot::{self, LootGrade};
+use crate::msg;
 use crate::object::{Stack, add_to_pile};
 use crate::rng::draw;
 use crate::stats::Stat;
@@ -87,12 +90,13 @@ impl World {
     ) {
         let line = match outcome.messages.len() {
             0 => None,
-            1 => outcome.messages.first().cloned(),
+            1 => Some(data_line::outcome_message(outcome, 0)),
             n => {
                 let i = draw!(self, "outcome/line/player").index(n);
-                outcome.messages.get(i).cloned()
+                Some(data_line::outcome_message(outcome, i))
             }
-        };
+        }
+        .map(data_line::said);
         // The line is said after the hooks when one of them may have nothing to do.
         let effect = &outcome.effect;
         if outcome.otherwise.is_none()
@@ -105,8 +109,8 @@ impl World {
                 w.say(line.clone());
             }
         });
-        if !done && let Some(otherwise) = &outcome.otherwise {
-            self.say(otherwise.clone());
+        if !done && outcome.otherwise.is_some() {
+            self.say(data_line::said(data_line::outcome_otherwise(outcome)));
         }
     }
 
@@ -657,12 +661,18 @@ impl World {
         );
         if target == self.state.player {
             self.say(match taken {
-                t if t <= 0 => "The altar's fire washes over you harmlessly.".to_string(),
-                _ => format!("The altar's fire {verb} you."),
+                t if t <= 0 => Msg::new(msg::fixtures::ALTAR_FIRE_HARMLESS),
+                _ => Msg::new(msg::fixtures::ALTAR_FIRE_HITS_YOU).role("verb", verb),
             });
         } else if self.perception.sees_actors_at(to) {
-            let name = self.creature_called(target).to_lowercase();
-            self.say(format!("The altar's fire {verb} {name}."));
+            // By its type, as `creature_called` named it ("a kobold", "Black Wystan").
+            let creature = self.state.actors[&target].creature;
+            let who = crate::world::combat::fight::creature(self.content.creature(creature));
+            self.say(
+                Msg::new(msg::fixtures::ALTAR_FIRE_HITS)
+                    .role("verb", verb)
+                    .role("who", who),
+            );
         }
         if taken <= 0 {
             return;

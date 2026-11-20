@@ -17,6 +17,7 @@
 
 use crate::action::Event;
 use crate::content::{ActionKind, Stacking, StatusId};
+use crate::msg;
 use crate::noise::Act;
 use crate::world::{ActorId, Spent, World};
 
@@ -30,11 +31,11 @@ impl World {
         };
         let hexes = self.own_hexes_in_sight();
         if hexes.is_empty() {
-            self.say("No one you see is under your hex.");
+            self.say(msg::classes::NO_ONE_UNDER_HEX);
             return Spent::Nothing;
         }
         let price = self.price_of(player, ActionKind::Cast);
-        self.say("You cackle.");
+        self.say(msg::classes::CACKLE);
         self.make_noise(player, Act::Cackle);
         for (id, status, severity) in hexes {
             // A hex that adds its degrees takes only the cackle's; the rest the sum, and keep
@@ -45,7 +46,7 @@ impl World {
             };
             self.afflict(id, status, degrees, Some(player), events);
         }
-        self.say("Your hexes hold.");
+        self.say(msg::classes::HEXES_HOLD);
         Spent::Turn(price)
     }
 

@@ -20,12 +20,10 @@ use crate::content::danger::{self, Candidate};
 use crate::content::{CreatureSpawn, SpecialRoom, Stance, TrapNoise, Treasure};
 use crate::door::Lock;
 use crate::geom::{Dir, Pos};
+use crate::msg;
 use crate::noise::{KICK_NOISE, SoundKind};
 use crate::rng::draw;
 use crate::world::{ActorId, World, levels::travel};
-
-/// What the player is told when a hoard's doors slam shut.
-pub const SLAM: &str = "The doors slam shut!";
 
 impl World {
     /// The player has lifted `stacks` stacks at `at`: inside a tempting hoard not yet sealed, they
@@ -88,7 +86,7 @@ impl World {
             self.sound_at(Some(slam), p);
         }
         if !slammed.is_empty() {
-            self.say(SLAM);
+            self.say(msg::fixtures::DOORS_SLAM);
         }
         self.guard(room, hoard);
     }

@@ -21,9 +21,12 @@
 //! is told ("The large spider spins a web.").
 
 use crate::action::Event;
-use crate::content::{ActionKind, Spins, the_start};
+use crate::content::{ActionKind, Spins};
 use crate::geom::{Dir, Pos};
+use crate::lang::Msg;
+use crate::msg;
 use crate::rng::draw;
+use crate::world::combat::fight;
 use crate::world::creatures::ai::Plan;
 use crate::world::{ActorId, World};
 
@@ -99,8 +102,8 @@ impl World {
         }
         self.afflict(id, spins.status, spins.degrees, None, events);
         if self.perception.sees_actors_at(here) {
-            let name = &self.content.creature(creature).name;
-            self.say(format!("{} spins a web.", the_start(name)));
+            let who = fight::creature(self.content.creature(creature));
+            self.say(Msg::new(msg::creatures::SPINS_WEB).role("who", who));
         }
         price
     }

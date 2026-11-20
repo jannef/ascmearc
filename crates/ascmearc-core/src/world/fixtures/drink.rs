@@ -18,6 +18,8 @@
 use crate::action::Event;
 use crate::content::{ActionKind, Offer};
 use crate::geom::{Dir, Pos};
+use crate::lang::Msg;
+use crate::msg;
 use crate::time::Duration;
 use crate::world::turn::rest::Ended;
 use crate::world::{Spent, World};
@@ -45,7 +47,7 @@ impl World {
     /// The player begins to drink at the spring beside them; refused, taking no time, with none.
     pub(in crate::world) fn start_drink(&mut self) -> Spent {
         let Some(spring) = self.spring_beside() else {
-            self.say("There is no spring here to drink from.");
+            self.say(msg::fixtures::NO_SPRING);
             return Spent::Nothing;
         };
         let terrain = self.state.current().terrain_at(spring);
@@ -53,7 +55,7 @@ impl World {
             return Spent::Nothing;
         };
         let seconds = table.seconds;
-        self.say("You cup your hands and drink from the spring.");
+        self.say(msg::fixtures::DRINK);
         Spent::Drink(Draught { spring, seconds })
     }
 
@@ -71,10 +73,10 @@ impl World {
             Ended::Died => {}
             _ if self.state.time >= until => self.drunk(draught.spring, events),
             Ended::Came(came) => {
-                let text = format!("{}; you stop drinking.", self.came_line(came));
-                self.say(text);
+                let came = self.came_line(came);
+                self.say(Msg::new(msg::fixtures::DRINK_BROKEN_BY).role("came", came));
             }
-            Ended::Said | Ended::Done => self.say("You stop drinking."),
+            Ended::Said | Ended::Done => self.say(msg::fixtures::STOP_DRINKING),
         }
     }
 

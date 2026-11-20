@@ -15,7 +15,10 @@
 //! player sees it); the creature is an ordinary one from its next turn on.
 
 use crate::content::ActionKind;
+use crate::lang::Msg;
+use crate::msg;
 use crate::noise::{self, Act, Heard, Noise, VOICE_NOISE};
+use crate::world::combat::fight;
 use crate::world::{ActorId, World};
 
 impl World {
@@ -107,11 +110,11 @@ impl World {
         actor.effects.remove(sleep);
         let (pos, creature) = (actor.pos, actor.creature);
         if id != self.state.player && self.perception.sees_actors_at(pos) {
-            let name = self.content.creature(creature).name.clone();
-            let text = format!("{} wakes up.", crate::content::the_start(&name));
+            let who = fight::creature(self.content.creature(creature));
+            let text = Msg::new(msg::creatures::WAKES_UP).role("who", who);
             // Woken by the player's attack that found it asleep: after that attack's line.
             if self.sleeper_struck == Some(id) {
-                self.news.push(text.into());
+                self.news.push(text);
             } else {
                 self.say(text);
             }

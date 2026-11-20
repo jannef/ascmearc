@@ -147,7 +147,7 @@ fn the_lost_shaft_waits_for_the_barrows_heart_and_reveals_fyrdelf() {
         texts(&w).last().unwrap(),
         "Factor Wulfrun marks Fyrdelf on your map."
     );
-    let log = &w.perception().quests()[0];
+    let log = &crate::test_support::quest_log(&w)[0];
     assert_eq!(
         log.objective,
         "Factor Wulfrun wants you to reach Fyrdelf 2. The shaft lies in Ascdūn, in the hills under Fyrbeorg, north of the ford."
@@ -182,7 +182,7 @@ fn the_fen_minster_is_marked_as_sister_hild_sends_the_player() {
     let n = lines.len();
     assert!(lines[n - 2].contains("Here, let me show you"));
     assert_eq!(lines[n - 1], "Sister Hild marks Fennmynster on your map.");
-    let active = (w.perception().quests().into_iter())
+    let active = (crate::test_support::quest_log(&w).into_iter())
         .find(|q| q.name == "The fen minster")
         .expect("in the log");
     assert_eq!(
@@ -310,7 +310,7 @@ fn taking_up_the_chalice_replays_exactly() {
         w.apply(&action);
         replay.push(&action, &w);
     }
-    assert_eq!(w.perception().quests()[0].name, "Grave goods");
+    assert_eq!(crate::test_support::quest_log(&w)[0].name, "Grave goods");
     let verified = Replay::from_json(&replay.to_json())
         .expect("json")
         .run(CONTENT.clone())

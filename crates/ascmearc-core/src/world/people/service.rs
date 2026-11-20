@@ -48,10 +48,10 @@ use super::goodwill::discounted;
 use super::shop::{count_of, haggling};
 use crate::action::Event;
 use crate::content::{ActionKind, DialogueId, MAX_FAVOUR, Service, ServiceKind};
-use crate::lang::Arg;
+use crate::lang::{Arg, Msg};
+use crate::msg;
 use crate::skills::SkillId;
 use crate::skills::Use;
-use crate::text::capitalized;
 use crate::world::turn::actor::undrained;
 use crate::world::{ActorId, Spent, World};
 
@@ -170,14 +170,18 @@ impl World {
         let currency = self.content.shops().map(|s| s.currency);
         let gold = currency.map_or(0, |c| count_of(&self.state.player().inventory, c));
         if gold < price {
-            self.say("You cannot pay.");
+            self.say(msg::people::CANNOT_PAY);
             return Some(Spent::Nothing);
         }
         // Free for the town's goodwill (`goodwill.rs`): nothing changes hands.
         if price > 0 {
             self.hand_over(player, id, price);
-            let who = self.called(&self.state.actors[&id]);
-            self.say(format!("You pay {who} {price} gold."));
+            let who = self.called_phrase(&self.state.actors[&id]);
+            self.say(
+                Msg::new(msg::people::PAY_GOLD)
+                    .role("who", who)
+                    .role("gold", i64::from(price)),
+            );
             self.train(Use::Deal);
         }
         match service.does {
@@ -218,8 +222,12 @@ impl World {
         };
         self.player_mut().skills.add(skill, i32::from(train.value));
         let name = self.content.skill(skill).name.to_lowercase();
-        let who = capitalized(&self.called(&self.state.actors[&teacher]));
-        self.say(format!("{who} trains you in {name}."));
+        let who = self.called_phrase(&self.state.actors[&teacher]);
+        self.say(
+            Msg::new(msg::people::TRAINS_YOU)
+                .role("who", who)
+                .role("skill", name),
+        );
     }
 
     /// Whether a prayer would end anything of actor `id`'s: a status or a disease (showing or

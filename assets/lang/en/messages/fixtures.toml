@@ -1,8 +1,77 @@
-# The fixtures of a level (`world/fixtures/`): a special feature of the ground the player arrives
-# at (`feature.rs`). Ids alphabetical.
+# The fixtures of a level (`world/fixtures/`, but for its doors, `doors.toml`): the features of
+# the ground the player arrives at (`feature.rs`), chests, altars and springs, the forgotten
+# altar's boons, special rooms (a hoard, a hall of mirrors, collapsed and unstable floors),
+# traps, risen corpses, and Knock. Ids alphabetical (`docs/dev/localization.md` "Literal lines").
+# The lines the data writes (an outcome's `message`, `messages`, and `otherwise`; a room
+# effect's `enter`, `near`, `pervade`, and `arrive`, and a shrine's `welcome` and `unwelcome`)
+# are lines of data, said by their keys (`content/data_line.rs`).
 #
+# Roles: `chest` is a chest by its band ("coffer") or its terrain; `what` a thing, or a
+# feature's terrain; `who` a creature a line is about, as the player calls it; `trap` a trap by
+# its name ("arrow trap"); `came` the clause that says what stopped a long action ("A kobold
+# comes into view"). `talent` is a talent's name and `verb` a damage type's verb ("burns"),
+# text until those words are converted. `level` is a number.
+
+# The forgotten altar's fire, harming the player (`outcome.rs`).
+altar_fire_harmless = "The altar's fire washes over you harmlessly."
+# `verb`: the fire's damage type's verb ("burns"); `who`: the creature hit, by its type.
+altar_fire_hits = "The altar's fire {verb:bare} {who:a}."
+# `verb`: the fire's damage type's verb ("burns").
+altar_fire_hits_you = "The altar's fire {verb:bare} you."
+altar_gutters = "The altar's glow gutters and dies."
+# `talent`: the flaw the altar gave.
+bear_the_mark = "You bear the mark: {talent:bare}."
+blow_meets_glass = "Your blow meets only glass."
+chest_blown_apart = "{chest:The} is blown apart!"
+chest_bursts_apart = "{chest:The} bursts apart!"
+chest_empty = "It is empty."
+chest_kick_holds = "You kick {chest:the}. It holds."
+chest_locked = "{chest:The} is locked."
+chest_open = "You open {chest:the}."
+# Chest-wise: a shut chest's hidden trap seen.
+chest_trapped = "You notice that {chest:the} is trapped: {trap:a}."
+# `what`: the key that fits, the player's ("your iron key").
+chest_unlock = "You unlock {chest:the} with {what:the} and open it."
+# `dead`: the creature whose corpse rose; `risen`: what it rose as.
+corpse_rises = "{dead:Poss} corpse rises as {risen:a}!"
+# `dead`: the creature whose corpse will rise, by its type ("'s" written, as the string was).
+corpse_twitches = "{dead:The}'s corpse twitches."
+doors_slam = "The doors slam shut!"
+drink = "You cup your hands and drink from the spring."
+drink_broken_by = "{came:bare}; you stop drinking."
+# `place`: the level the player fell to, by its name.
+fall_to = "You fall to {place:bare}."
 # `what`: the feature's terrain, an entry per way its name counts (the terrain's `noun`: one, a
 # mass, or a plural). Its description and the note of its place follow it as lines of their own.
 feature_here = "There is {what:a} here."
 feature_mass_here = "There is {what:bare} here."
 feature_plural_here = "There are {what:bare} here."
+floor_gives_way = "The floor gives way beneath you!"
+# `what`: what the chest held, as it lies (a stack, a list of two or three, or a count).
+find_inside = "Inside you find {what:counted}."
+# `talent`: the talent the altar gave.
+gain_talent = "You gain {talent:bare}."
+# `level`: the level the player is at once more.
+level_again = "You are level {level:bare} again."
+lock_springs = "The lock springs open with a click."
+no_altar = "There is no altar here to pray at."
+no_lock_to_spring = "There is no lock there to spring."
+no_spring = "There is no spring here to drink from."
+pray = "You kneel before the altar and pray."
+prayer_broken = "Your prayer is broken."
+prayer_broken_by = "{came:bare}; your prayer is broken."
+prayer_unheard = "Your prayer goes unheard."
+# `trap`: the trap stepped off.
+step_lightly_off = "You step lightly off {trap:a}."
+stop_drinking = "You stop drinking."
+too_little_mana = "You have too little mana."
+# `who`: the creature an unstable floor took away.
+vanishes = "{who:The} vanishes!"
+wrenched_elsewhere = "You are wrenched elsewhere."
+
+# `what`: what a broken chest held that was destroyed (a stack, a list of two or three, or a
+# count).
+[destroyed]
+by = "what.number"
+one = "{what:Counted} is destroyed."
+many = "{what:Counted} are destroyed."

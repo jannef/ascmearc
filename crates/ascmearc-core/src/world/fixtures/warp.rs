@@ -10,8 +10,9 @@
 
 use crate::action::Event;
 use crate::geom::Pos;
+use crate::lang::Msg;
+use crate::msg;
 use crate::rng::draw;
-use crate::text::capitalized;
 use crate::world::{ActorId, World};
 
 impl World {
@@ -29,12 +30,12 @@ impl World {
             return;
         }
         let seen = self.perception.sees_actors_at(at);
-        let name = capitalized(&self.called(&self.state.actors[&who]));
+        let who_phrase = self.called_phrase(&self.state.actors[&who]);
         self.teleport(who, at, events);
         if who == self.state.player {
-            self.say("You are wrenched elsewhere.".to_string());
+            self.say(msg::fixtures::WRENCHED_ELSEWHERE);
         } else if seen {
-            self.say(format!("{name} vanishes!"));
+            self.say(Msg::new(msg::fixtures::VANISHES).role("who", who_phrase));
         }
     }
 }

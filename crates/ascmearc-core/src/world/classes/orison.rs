@@ -26,8 +26,10 @@
 //! writes nothing, so however time is cut it passes the same. Nothing trains, and no score moves.
 
 use crate::action::{DiseaseNews, Event};
+use crate::content::data_line;
 use crate::content::{ActionKind, Content, Face, PrayerRules, PrayerUse, TalentEffect};
 use crate::hunger::Hunger;
+use crate::msg;
 use crate::rng::draw;
 use crate::talent::FaithEffect;
 use crate::time::GameTime;
@@ -129,16 +131,15 @@ impl World {
         };
         let face = me.prayer_face(&content);
         let Some(rules) = content.prayer() else {
-            self.say("You have nothing to pray for.");
+            self.say(msg::classes::NOTHING_TO_PRAY_FOR);
             return Spent::Nothing;
         };
         let problems: Vec<PrayerUse> = (rules.uses.iter())
             .map(|u| u.id)
             .filter(|&u| prayer.answers_to(u) && self.ails(rules, u))
             .collect();
-        let words = rules.words(face);
         if problems.is_empty() {
-            self.say(words.nothing.clone());
+            self.say(data_line::said(data_line::prayer_words(face, "nothing")));
             return Spent::Nothing;
         }
         let time = self.state.time;
@@ -159,10 +160,10 @@ impl World {
         });
         let spent = Spent::Turn(self.price_of(player, ActionKind::Cast));
         if fizzled {
-            self.say(words.fizzle.clone());
+            self.say(data_line::said(data_line::prayer_words(face, "fizzle")));
             return spent;
         }
-        self.say(words.pray.clone());
+        self.say(data_line::said(data_line::prayer_words(face, "pray")));
         let answers = if prayer.all {
             problems.len()
         } else {
@@ -171,8 +172,8 @@ impl World {
         let mut quiet = Vec::new();
         for answer in problems.into_iter().take(answers) {
             self.answer_prayer(rules, answer, face, &mut quiet);
-            if let Some(line) = rules.use_words(answer) {
-                self.say(line.of(face).to_string());
+            if rules.use_words(answer).is_some() {
+                self.say(data_line::said(data_line::prayer_use(answer, face)));
             }
         }
         if prayer.all {

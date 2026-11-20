@@ -257,7 +257,7 @@ fn master_ordgar_talks_of_his_tower_and_takes_the_rowan() {
     assert_eq!(topics(&w, ORDGAR)[0], "quest-the_wizards_quarrel");
     act(&mut w, "levelup:auto ask:E:quest-the_wizards_quarrel");
     assert_eq!(stage(&w, "the_wizards_quarrel"), Some(Stage::Active));
-    let log = w.perception().quests();
+    let log = crate::test_support::quest_log(&w);
     let quarrel = log
         .iter()
         .find(|q| q.id == "the_wizards_quarrel")

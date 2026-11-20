@@ -30,8 +30,10 @@
 //! and post) and the quest's record.
 
 use super::escort_waits::spot;
-use crate::content::{CombatStance, CreatureSpawn, QuestId};
+use crate::content::{CombatStance, CreatureSpawn, QuestId, data_line};
 use crate::equipment::Equipment;
+use crate::lang::{Msg, Phrase};
+use crate::msg;
 use crate::skills::SkillId;
 use crate::world::levels::travel::make_creature;
 use crate::world::{Actor, ActorId, Event, Spent, World};
@@ -67,9 +69,12 @@ impl World {
             let slain = &content.creature(creature).id;
             if self.state.current_level == level
                 && self.state.quests.slain_set().contains(slain)
-                && let Some(line) = &binding.reforms
+                && binding.reforms.is_some()
             {
-                self.say(line.clone());
+                self.say(data_line::said(data_line::quest(
+                    &def.id,
+                    "binding.reforms",
+                )));
             }
         }
     }
@@ -99,8 +104,9 @@ impl World {
             let (Some(lured), Some(giver)) = (lured, giver) else {
                 continue;
             };
-            for line in &binding.words {
-                self.say(line.clone());
+            for n in 0..binding.words.len() {
+                let key = data_line::quest(&def.id, &format!("binding.words.{n}"));
+                self.say(data_line::said(key));
             }
             self.bind(lured, binding, events);
             self.complete_saying(giver, QuestId(i as u16), None);
@@ -126,17 +132,17 @@ impl World {
         let content = self.content.clone();
         let def = (content.quest_id(id)).map(|q| content.quest(q));
         let Some((def, (creature, ..))) = def.and_then(|d| Some((d, d.lure()?))) else {
-            self.say(format!("There is no lure quest `{id}`."));
+            self.say(Msg::new(msg::people::NO_LURE_QUEST_DEV).role("id", id));
             return Spent::Nothing;
         };
         if !self.state.quests.is_active(def) {
-            self.say(format!("{} is not under way.", def.name));
+            self.say(Msg::new(msg::people::NOT_UNDER_WAY_DEV).role("quest", def.name.as_str()));
             return Spent::Nothing;
         }
         let here = self.state.current_level.clone();
         let at = self.player_pos();
         let Some(cell) = self.free_cell_within(&here, at, 1, |_| true) else {
-            self.say("There is no room beside you.");
+            self.say(msg::people::NO_ROOM_BESIDE_YOU);
             return Spent::Nothing;
         };
         let found = (self.state.actors.values())
@@ -159,21 +165,21 @@ impl World {
             a.mind.post = None;
             a.mind.last_seen = Some(at);
         }
-        let name = crate::content::the(&content.creature(creature).name);
-        self.say(format!("You lure {name} to your side (dev)."));
+        let name = Phrase::id(format!("creature:{}", content.creature(creature).id));
+        self.say(Msg::new(msg::people::LURE_DEV).role("who", name));
         Spent::NoTime
     }
 
     /// `actor` died: a lure quest's creature, unbound while the quest is active, has its
     /// `shatters` line told (it forms anew: the module docs). The lines to say.
-    pub(in crate::world) fn lured_dies(&self, actor: &Actor) -> Vec<String> {
+    pub(in crate::world) fn lured_dies(&self, actor: &Actor) -> Vec<Msg> {
         (self.content.quests().iter())
             .filter_map(|def| {
                 let (creature, _, _, binding) = def.lure()?;
                 let unbound = actor.creature == creature && !actor.effects.has(binding.status);
-                (unbound && self.state.quests.is_active(def))
-                    .then(|| binding.shatters.clone())
-                    .flatten()
+                let shatters = data_line::quest(&def.id, "binding.shatters");
+                (unbound && self.state.quests.is_active(def) && binding.shatters.is_some())
+                    .then(|| data_line::said(shatters))
             })
             .collect()
     }

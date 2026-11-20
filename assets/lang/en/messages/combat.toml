@@ -7,18 +7,27 @@
 # writes it ("slashes", "bites"), already in the actor's person: the data's words are text until
 # the data's text is converted.
 
+# Acid's, fire's, and rust's harm to the player's gear (`corrode.rs`): `what` is the piece, theirs
+# ("your long sword").
+acid_eats_at = "The acid eats at {what:the}."
+acid_eats_away = "The acid eats {what:the} away."
+acid_runs_off = "The acid runs off {what:the}."
 aimed_at_nothing = "That is aimed at nothing."
 # The intent alone: an attack the player saw made, its blow not (yet) told.
 attacks = "{actor:The} attack{actor:s} {target:the}."
 blades_rend = "Your blades rend {target:the}."
 blades_rend_you = "{actor:Poss} blades rend you."
 blocks = "{target:The} block{target:s} {weapon:the} with {target:their} shield."
+burns_away = "{what:The} burns away."
 # `verb`: what the player would do ("shoot", "cast", "throw your voice").
 cannot_aim_at_yourself = "You cannot {verb:bare} at yourself."
 cannot_loose_here = "You cannot do that on the overworld."
 cannot_throw = "You cannot throw {what:counted}."
 carry_no_such_thing = "You carry no such thing."
 casts_at = "{actor:The} cast{actor:s} a spell at {target:the}."
+comes_away_pitted = "{what:The} comes away pitted."
+comes_away_rusted = "{what:The} comes away rusted."
+comes_away_scorched = "{what:The} comes away scorched."
 # `verb`: how the creature dies ("dies", "splinters").
 dies = "{who:The} {verb:bare}."
 does_no_harm = "{weapon:The} {weapon:does} {target:the} no harm."
@@ -32,6 +41,8 @@ frenzy_holds = "Your rage holds you in the frenzy."
 frenzy_needs_rage = "Only rage brings the frenzy."
 # `armour`: what it glances off: the piece worn ("chain mail shirt"), a hide ("shell"), "armour".
 glances_off = "{weapon:The} glance{weapon:s} off {target:poss} {armour:bare}."
+heat_leaves_unmarked = "The heat leaves {what:the} unmarked."
+heat_scorches = "The heat scorches {what:the}."
 hit = "{actor:The} {verb:bare} {target:the}."
 hit_hard = "{actor:The} {verb:bare} {target:the} hard!"
 hit_no_harm = "{actor:The} {verb:bare} {target:the} but {actor:does} no harm."
@@ -68,6 +79,8 @@ reason = "{reason:Bare}."
 reflected = "{who:Poss} shield turns {weapon:the} back at {target:the}."
 reflected_at_caster = "{who:Poss} shield turns {weapon:the} back at its caster."
 reflected_at_you = "{weapon:The} is turned back at you."
+rust_spreads = "Rust spreads over {what:the}."
+rusts_away = "{what:The} rusts away to nothing."
 shield_wrath = "You answer the blow with holy wrath!"
 shields_fumble = "Your shields get in the way, and the spell slips from your grasp."
 shoots_at = "{actor:The} shoot{actor:s} at {target:the}."
@@ -83,6 +96,7 @@ staggers_from = "{who:The} staggers from your {from:bare}."
 status = "{who:The} {who:is} {status:bare}."
 status_from = "{who:The} {who:is} {status:bare} from your {from:bare}."
 strikes_wall = "{weapon:The} strike{weapon:s} stone where {target:the} hide{target:s} in the wall."
+takes_no_rust = "{what:The} takes no rust."
 # `actor`: the thrower; `verb`: its throw's verb ("hurls"); `what`: what it throws.
 throws = "{actor:The} {verb:bare} {what:a}."
 throws_at = "{actor:The} throw{actor:s} at {target:the}."

@@ -26,10 +26,13 @@
 //! Nothing here draws from any stream.
 
 use crate::action::Positions;
+use crate::content::data_line;
 use crate::content::{
     ActionKind, CombatStance, Content, DialogueId, Goal, ObjectId, QuestId, SlotId,
 };
 use crate::equipment::{self, Equipment};
+use crate::lang::{Arg, Msg, Phrase};
+use crate::msg;
 use crate::object::{self, Stack};
 use crate::world::{Actor, ActorId, Ally, AllySource, Event, Order, Spent, Stage, World};
 
@@ -86,7 +89,7 @@ impl World {
         };
         let content = self.content.clone();
         let def = content.quest(q);
-        let Goal::Escort { joins, .. } = &def.goal else {
+        let Goal::Escort { .. } = &def.goal else {
             return false;
         };
         let player = self.state.player;
@@ -109,7 +112,8 @@ impl World {
         if let Some(actor) = self.state.actors.get_mut(&id) {
             actor.talk.met = true;
         }
-        self.answer(id, joins.clone(), None, events);
+        let joins = self.voiced(id, Arg::said(data_line::quest(&def.id, "joins")));
+        self.answer(id, joins, None, events);
         // Found already at home: home at once.
         self.escorts_home();
         true
@@ -139,12 +143,12 @@ impl World {
             };
             self.escort_released(escort);
             if let Goal::Escort {
-                thanks: Some(thanks),
-                ..
+                thanks: Some(_), ..
             } = &def.goal
             {
-                let who = crate::text::capitalized(&self.called(&self.state.actors[&escort]));
-                self.say(format!("{who} says: \"{thanks}\""));
+                let thanks = Arg::said(data_line::quest(&def.id, "thanks"));
+                let thanks = self.voiced(escort, thanks);
+                self.says(escort, thanks);
             }
             // The giver thanks the player, if here to; else the escort does.
             let giver = (self.state.actors.values())
@@ -174,7 +178,7 @@ impl World {
     }
 
     /// `actor` died: an active escort quest whose escort it was fails. The lines to say.
-    pub(in crate::world) fn escort_dies(&mut self, actor: &Actor) -> Vec<String> {
+    pub(in crate::world) fn escort_dies(&mut self, actor: &Actor) -> Vec<Msg> {
         let Some(dialogue) = self.dialogue_of(actor) else {
             return Vec::new();
         };
@@ -186,39 +190,37 @@ impl World {
         if let Some(record) = self.state.quests.records.get_mut(&def.id) {
             record.stage = Stage::Failed;
         }
-        vec![format!("Quest failed: {name}.")]
+        vec![Msg::new(msg::people::QUEST_FAILED).role("quest", name)]
     }
 
     /// Set on is given to `allies`: the escorts among them are taken out, and what they say of
     /// it is returned, if any were (the module docs).
-    pub(in crate::world) fn escorts_refuse(&self, allies: &mut Vec<ActorId>) -> Option<String> {
-        let escorts: Vec<String> = (allies.iter())
+    pub(in crate::world) fn escorts_refuse(&self, allies: &mut Vec<ActorId>) -> Option<Msg> {
+        let escorts: Vec<Arg> = (allies.iter())
             .filter(|id| self.state.actors[id].escorting().is_some())
-            .map(|&id| self.ally_subject(id))
+            .map(|&id| self.ally_phrase(id).into())
             .collect();
         if escorts.is_empty() {
             return None;
         }
         allies.retain(|id| self.state.actors[id].escorting().is_none());
-        let names: Vec<&str> = escorts.iter().map(String::as_str).collect();
-        let will = crate::text::and_list(&names);
-        Some(format!("{will} will not go looking for a fight."))
+        Some(Msg::new(msg::people::ESCORTS_REFUSE).role("who", Arg::List(escorts)))
     }
 
     /// The player gives one of the stack at `item` to escort `escort` beside them (the module
     /// docs).
     pub(in crate::world) fn give_escort(&mut self, item: usize, escort: ActorId) -> Spent {
         let content = self.content.clone();
-        let name = self.ally_subject(escort);
+        let name = self.ally_phrase(escort);
         let Some(stack) = self.state.player().inventory.get(item).cloned() else {
-            self.say("You carry no such thing.");
+            self.say(msg::allies::CARRY_NO_SUCH_THING);
             return Spent::Nothing;
         };
         let equipment = &self.state.actors[&escort].equipment;
         let Some(slot) =
             (escort_slot(&content, equipment, stack.object)).filter(|_| !stack.is_spirit())
         else {
-            self.say(format!("{name} has no use for that."));
+            self.say(Msg::new(msg::allies::NO_USE_FOR_THAT).role("who", name));
             return Spent::Nothing;
         };
         if !self.may_loose(item) {
@@ -226,9 +228,13 @@ impl World {
         }
         let action = content.slot(slot).action;
         let (spent, one) = self.hand_over_one(item, action);
-        let what = crate::world::allies::collar::definite(&self.lore().describe(&one));
-        self.say(format!("You give {what} to {name}."));
-        self.put_on_escort(escort, one, slot, &name, action);
+        let what = self.lore().phrase(&one);
+        self.say(
+            Msg::new(msg::people::GIVE_ESCORT)
+                .role("what", what)
+                .role("who", name.clone()),
+        );
+        self.put_on_escort(escort, one, slot, name, action);
         spent
     }
 
@@ -239,7 +245,7 @@ impl World {
         escort: ActorId,
         gift: Stack,
         slot: SlotId,
-        name: &str,
+        name: Phrase,
         action: ActionKind,
     ) {
         let content = self.content.clone();
@@ -264,23 +270,24 @@ impl World {
         actor
             .equipment
             .after_removal(&Positions::of(held.iter().copied()));
-        let what = self.lore().describe(&gift);
+        let what = self.lore().phrase(&gift);
         actor_put(self, escort, gift, &taken);
-        let verb = match action {
-            ActionKind::Wield => "wields",
-            ActionKind::Ready => "readies",
-            _ => "puts on",
+        let puts = match action {
+            ActionKind::Wield => msg::people::ESCORT_WIELDS,
+            ActionKind::Ready => msg::people::ESCORT_READIES,
+            _ => msg::people::ESCORT_PUTS_ON,
         };
-        self.say(format!(
-            "{name} {verb} {}.",
-            crate::world::allies::collar::definite(&what)
-        ));
+        self.say(Msg::new(puts).role("who", name.clone()).role("what", what));
         if old.is_empty() {
             return;
         }
         for stack in &old {
-            let what = crate::world::allies::collar::definite(&self.lore().describe(stack));
-            self.say(format!("{name} drops {what}."));
+            let what = self.lore().phrase(stack);
+            self.say(
+                Msg::new(msg::people::ESCORT_DROPS)
+                    .role("who", name.clone())
+                    .role("what", what),
+            );
         }
         let level = self.state.current_mut();
         let mut pile = level.objects_at(at).to_vec();

@@ -26,9 +26,12 @@
 
 use crate::action::{AttackKind, Event};
 use crate::combat::Strike;
-use crate::content::{ActionKind, Breath, the_start};
+use crate::content::{ActionKind, Breath};
 use crate::geom::Pos;
+use crate::lang::Msg;
+use crate::msg;
 use crate::noise::Act;
+use crate::world::combat::fight;
 use crate::world::magic::spell::{Caster, cone_cells};
 use crate::world::{ActorId, World};
 
@@ -70,7 +73,8 @@ impl World {
         self.afflict(id, breath.status, breath.degrees, None, events);
         self.make_noise(id, Act::Roar);
         if self.perception.sees_actors_at(here) {
-            self.say(format!("{} {}!", the_start(&def.name), breath.verb));
+            let line = Msg::new(msg::creatures::BREATHES).role("who", fight::creature(def));
+            self.say(line.role("verb", breath.verb.as_str()));
         }
         let mut made = Vec::new();
         let cone = (

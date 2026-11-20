@@ -10,6 +10,8 @@
 use crate::action::{AttackKind, Event};
 use crate::content::{ActionKind, ClassActive};
 use crate::geom::Pos;
+use crate::lang::Msg;
+use crate::msg;
 use crate::world::combat::shoot::Loose;
 use crate::world::{Spent, World};
 
@@ -23,7 +25,7 @@ impl World {
         events: &mut Vec<Event>,
     ) -> Spent {
         if !active.aims_cell() {
-            self.say(format!("`{}` aims at no place.", active.id()));
+            self.say(Msg::new(msg::classes::AIMS_AT_NO_PLACE).role("id", active.id()));
             return Spent::Nothing;
         }
         if !self.may_use_class(active) {
@@ -49,7 +51,7 @@ impl World {
         }
         let me = self.state.player();
         let Some((launcher, _)) = me.launcher(&content) else {
-            self.say("You have no missile weapon ready.");
+            self.say(msg::classes::NO_MISSILE_WEAPON_READY);
             return Spent::Nothing;
         };
         let range = me.launcher_range(&content).unwrap_or(1);
@@ -57,7 +59,7 @@ impl World {
             Some(item) if self.may_loose(item) => {}
             Some(_) => return Spent::Nothing,
             None => {
-                self.say("You have nothing ready to shoot.");
+                self.say(msg::classes::NOTHING_READY_TO_SHOOT);
                 return Spent::Nothing;
             }
         }
@@ -69,7 +71,7 @@ impl World {
         if let Some(cost) = (content.class_active(ClassActive::Volley)).and_then(|a| a.resource) {
             self.spend_resource(player, cost.resource, cost.amount, events);
         }
-        self.say("You loose a volley!");
+        self.say(msg::classes::LOOSE_A_VOLLEY);
         self.choose_at_cell(at, false);
         for _ in 0..volley.shots {
             if self.state.death.is_some() {

@@ -190,9 +190,9 @@ impl PerceptionView<'_> {
         let name = &content.object(object).name;
         let fine = (self.player.inventory.iter()).any(|s| fine(s, object));
         let status = if fine {
-            format!("Return to {}.", open.giver)
+            format!("Return to {}.", open.giver).into()
         } else {
-            "Not made yet.".to_string()
+            "Not made yet.".into()
         };
         let mut giver = open.giver.clone();
         if let Some(first) = giver.get_mut(..1) {
@@ -205,9 +205,9 @@ impl PerceptionView<'_> {
             active: true,
             failed: false,
             completed: 0,
-            giver: open.giver.clone(),
-            offer: open.offer.clone(),
-            objective: format!("{giver} wants you to bring them a Fine {name} or better."),
+            giver: open.giver.clone().into(),
+            offer: open.offer.clone().into(),
+            objective: format!("{giver} wants you to bring them a Fine {name} or better.").into(),
             target: Some(content.object(object).id.clone()),
             status,
             sides: Vec::new(),

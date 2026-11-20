@@ -1351,12 +1351,8 @@ impl World {
             // A patron's open commission is off (`patron.rs`).
             self.patron_dies(id);
             let lines = self.creature_dies(id, credited, stoned);
-            self.news.splice(
-                earned..earned,
-                lines
-                    .into_iter()
-                    .chain(crawled.into_iter().map(crate::lang::Msg::from)),
-            );
+            self.news
+                .splice(earned..earned, lines.into_iter().chain(crawled));
             // Death throes go off where it died (`creature_burst.rs`), after what crawled out.
             self.death_throes(id, (at, &level), creature, events);
         }
@@ -1393,8 +1389,7 @@ impl World {
         }
         // An animated thing's body falls whole or not at all.
         let (mut dropped, broken) = self.remains(&actor);
-        let broken = self.break_lines(&actor.level, actor.pos, &broken);
-        let mut lines: Vec<Msg> = broken.into_iter().map(Msg::from).collect();
+        let mut lines: Vec<Msg> = self.break_lines(&actor.level, actor.pos, &broken);
         dropped.extend(self.loot_of(&actor));
         // Struck dead by Soulglass, its body is crystals (`crystal.rs`).
         let glass = (!stoned).then(|| self.crystallise(&actor)).flatten();
@@ -1423,18 +1418,14 @@ impl World {
         if !stoned && !glassed {
             self.leave_corpse(&actor);
             // In a cursed room the dead rise (`curse.rs`).
-            lines.extend(
-                self.curse_corpse(&actor, by_player)
-                    .into_iter()
-                    .map(Msg::from),
-            );
+            lines.extend(self.curse_corpse(&actor, by_player));
         }
         // A dead shopkeeper's goods are free to take.
         self.keeper_died(id, &actor.level);
         // A dead escort fails its quest (`escort.rs`).
-        lines.extend(self.escort_dies(&actor).into_iter().map(Msg::from));
+        lines.extend(self.escort_dies(&actor));
         // A lure quest's creature killed unbound forms anew (`lure.rs`).
-        lines.extend(self.lured_dies(&actor).into_iter().map(Msg::from));
+        lines.extend(self.lured_dies(&actor));
         self.fallen.push(actor);
         lines
     }

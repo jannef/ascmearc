@@ -2,9 +2,12 @@
 //! and [`crate::action::Action::Drop`], the positions they name, and the burden news a changed
 //! load is said with. `world/mod.rs` has only the dispatch line.
 
+use super::{stacks_arg, stacks_arg_with};
 use crate::action::Positions;
 use crate::burden::Burden;
 use crate::content::ActionKind;
+use crate::lang::{Arg, Msg, Phrase};
+use crate::msg;
 use crate::object::{self, Stack};
 use crate::world::{Spent, World};
 
@@ -12,7 +15,7 @@ impl World {
     /// [`crate::action::Action::PickUp`]: picks up what `positions` names ([`World::pick_up`])
     /// and returns what it cost.
     pub(in crate::world) fn pick_up_objects(&mut self, positions: &Positions) -> Spent {
-        if self.refused_afloat("It would sink.") {
+        if self.refused_afloat(msg::items::IT_WOULD_SINK) {
             return Spent::Nothing;
         }
         // Priced at the load the player has as they begin.
@@ -39,10 +42,10 @@ impl World {
         let here = self.player_pos();
         let pile = self.state.current().objects_at(here).to_vec();
         if pile.is_empty() {
-            self.say("There is nothing here to pick up.");
+            self.say(msg::items::NOTHING_TO_PICK_UP);
             return false;
         }
-        let Some(mut chosen) = self.chosen(positions, pile.len(), "There is no such thing here.")
+        let Some(mut chosen) = self.chosen(positions, pile.len(), msg::items::NO_SUCH_THING_HERE)
         else {
             return false;
         };
@@ -55,11 +58,11 @@ impl World {
             chosen.remove(i);
         }
         if chosen.is_empty() {
-            let what = burning.first().map(|&i| self.lore().describe(&pile[i]));
-            self.say(format!(
-                "You cannot pick up {} while it burns.",
-                what.unwrap_or_default()
-            ));
+            // Only what burns was chosen.
+            if let Some(&first) = burning.first() {
+                let what = self.lore().phrase(&pile[first]);
+                self.say(Msg::new(msg::items::CANNOT_PICK_UP_BURNING).role("what", what));
+            }
             return false;
         }
         let inventory = self.state.inventory_mut();
@@ -70,20 +73,24 @@ impl World {
         self.state.current_mut().set_pile(here, left);
         // In a shop, goods for sale are now owed for.
         let prices = self.picked_up_goods(&got);
-        let tag = |i: usize| prices[i].map(|p| format!("unpaid, {p} gold"));
-        let mut text = format!(
-            "You pick up {}.",
-            object::phrase_with(&got, self.lore(), tag)
-        );
+        let tag = |i: usize, what: &Phrase| {
+            let unpaid = Msg::new(msg::items::UNPAID).role("what", what.clone());
+            prices[i].map(|p| unpaid.role("price", i64::from(p)))
+        };
+        let got_arg = stacks_arg_with(&got, self.lore(), tag);
+        let line = Msg::new(msg::items::PICK_UP).role("what", got_arg);
         let shown: u32 = prices.iter().flatten().sum();
         let priced = prices.iter().flatten().count();
-        if let Some((name, owed)) = self.owing()
-            && priced > 0
-            && (priced > 1 || owed != shown)
-        {
-            text.push_str(&format!(" You owe {name} {owed} gold."));
+        match self.owing() {
+            Some((name, owed)) if priced > 0 && (priced > 1 || owed != shown) => {
+                let owe = Msg::new(msg::items::YOU_OWE)
+                    .role("name", Phrase::literal(name))
+                    .role("owed", i64::from(owed));
+                let lines = Arg::List(vec![line.into(), owe.into()]);
+                self.say(Msg::new(msg::world::LINES).role("lines", lines));
+            }
+            _ => self.say(line),
         }
-        self.say(text);
         // Ammunition goes into an empty quiver by itself (`quiver.rs`).
         self.quiver_picked_up(&places);
         self.train_haul(&got);
@@ -95,7 +102,7 @@ impl World {
     /// the player's cell, taking off first what of them is worn or wielded (which takes its time
     /// too).
     pub(in crate::world) fn drop_objects(&mut self, positions: &Positions) -> Spent {
-        if self.refused_afloat("It would sink.") {
+        if self.refused_afloat(msg::items::IT_WOULD_SINK) {
             return Spent::Nothing;
         }
         // In an open shop, unpaid goods go back and the player's own are offered for.
@@ -104,10 +111,10 @@ impl World {
         }
         let len = self.state.player().inventory.len();
         if len == 0 {
-            self.say("You are not carrying anything.");
+            self.say(msg::items::NOT_CARRYING_ANYTHING);
             return Spent::Nothing;
         }
-        let Some(chosen) = self.chosen(positions, len, "You carry no such thing.") else {
+        let Some(chosen) = self.chosen(positions, len, msg::items::CARRY_NO_SUCH_THING) else {
             return Spent::Nothing;
         };
         // A cursed thing worn stays on (`curse.rs`).
@@ -134,10 +141,8 @@ impl World {
         let mut pile = level.objects_at(here).to_vec();
         object::add_to_pile(&mut pile, &dropped, &content);
         level.set_pile(here, pile);
-        self.say(format!(
-            "You drop {}.",
-            object::phrase(&dropped, self.lore())
-        ));
+        let what = stacks_arg(&dropped, self.lore());
+        self.say(Msg::new(msg::items::DROP).role("what", what));
         spent
     }
 
@@ -148,7 +153,7 @@ impl World {
         &mut self,
         positions: &Positions,
         len: usize,
-        missing: &str,
+        missing: impl Into<Msg>,
     ) -> Option<Positions> {
         if positions.is_empty() {
             return Some(Positions::of(0..len));

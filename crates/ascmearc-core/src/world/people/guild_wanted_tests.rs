@@ -112,7 +112,7 @@ fn the_wanted_follows_the_scroll_and_reveals_the_drawn_lair_and_no_other() {
             texts(&w).last().map(String::as_str),
             Some(format!("Wat One-Eye marks {lair_name} on your map.").as_str())
         );
-        let log = (w.perception().quests().into_iter())
+        let log = (crate::test_support::quest_log(&w).into_iter())
             .find(|q| q.id == "guild_wanted")
             .expect("logged");
         let wants = format!("Wat One-Eye wants you to kill {name}.");
@@ -264,7 +264,7 @@ fn hunt(w: &mut World) -> Vec<Action> {
     let fell = (w.state.current().objects.values().flatten())
         .any(|s| s.magic().and_then(|m| m.unique.as_deref()) == Some("high_toby"));
     assert!(fell, "High Toby lies where he fell");
-    let log_line = (w.perception().quests().into_iter())
+    let log_line = (crate::test_support::quest_log(w).into_iter())
         .find(|q| q.id == "guild_wanted")
         .expect("logged");
     assert!(

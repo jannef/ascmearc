@@ -15,6 +15,7 @@ use crate::action::AttackKind;
 use crate::content::ActionKind;
 use crate::content::Content;
 use crate::geom::Pos;
+use crate::msg;
 use crate::rng::draw;
 use crate::world::{ActorId, ActorKind, LevelState, World, WorldState, fnv1a};
 use std::collections::BTreeSet;
@@ -104,7 +105,7 @@ impl World {
         let melee = me.attack_skills(&self.content, AttackKind::Melee, None);
         let with = me.weapon_item(&self.content);
         let price = self.attack_price(player, ActionKind::Melee, with, melee);
-        self.say("Your blow meets only glass.");
+        self.say(msg::fixtures::BLOW_MEETS_GLASS);
         Some(price)
     }
 

@@ -29,6 +29,8 @@
 //! [`DRAIN_FLOOR`]: crate::stats::DRAIN_FLOOR
 
 use crate::dice::Dice;
+use crate::lang::Msg;
+use crate::msg;
 use crate::rng::draw;
 use crate::stats::{DRAIN_FLOOR, Stat};
 use crate::talent::{self, Taken};
@@ -117,8 +119,7 @@ impl World {
         let (max_hp, max_mana) = (me.max_hp(&content), me.max_mana(&content));
         me.hp = me.hp.min(max_hp).max(1);
         me.mana = me.mana.min(max_mana).max(0);
-        self.news
-            .push(format!("You are level {below} again.").into());
+        (self.news).push(Msg::new(msg::fixtures::LEVEL_AGAIN).role("level", i64::from(below)));
         true
     }
 
@@ -145,7 +146,7 @@ impl World {
             .talents()
             .get(content.talents().id(&id).expect("offered"));
         let name = def.name_for(&content, choice.as_deref());
-        self.say(format!("You gain {name}."));
+        self.say(Msg::new(msg::fixtures::GAIN_TALENT).role("talent", name));
         true
     }
 
@@ -170,7 +171,7 @@ impl World {
         let def = content
             .talents()
             .get(content.talents().id(&id).expect("a flaw"));
-        self.say(format!("You bear the mark: {}.", def.name));
+        self.say(Msg::new(msg::fixtures::BEAR_THE_MARK).role("talent", def.name.as_str()));
         true
     }
 

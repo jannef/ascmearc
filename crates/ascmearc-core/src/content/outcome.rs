@@ -213,6 +213,9 @@ pub struct OutcomeEffect {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct OutcomeDef {
     pub id: String,
+    /// The id of the table it is of (its file's name): what its lines are keyed by
+    /// (`content/data_line.rs`).
+    pub table: String,
     pub kind: OutcomeKind,
     pub tier: OutcomeTier,
     /// Its share of its kind's draw.
@@ -526,6 +529,7 @@ fn resolve(id: &str, spec: TableSpec, content: &Content) -> Result<OutcomeTable,
         let effect = resolve_effect(o.effect, content).map_err(bad)?;
         outcomes.push(OutcomeDef {
             id: o.id,
+            table: id.to_string(),
             kind: o.kind,
             tier: o.tier,
             weight: o.weight,

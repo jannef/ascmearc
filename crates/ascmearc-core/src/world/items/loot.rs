@@ -18,7 +18,9 @@
 use crate::action::Positions;
 use crate::content::{Content, MAX_ITEM_LEVEL, ObjectId};
 use crate::gem;
+use crate::lang::Msg;
 use crate::magic::{LootGrade, loot};
+use crate::msg;
 use crate::object::Stack;
 use crate::rng::Rng;
 use crate::variant::Source;
@@ -45,8 +47,9 @@ impl World {
     /// takes time.
     pub(crate) fn identify(&mut self, item: usize) -> Identified {
         let learned = self.learn_item(item);
-        if let Identified::Now(name) = &learned {
-            self.say(format!("This is {name}!"));
+        if let Identified::Now(_) = &learned {
+            let what = self.lore().phrase(&self.state.player().inventory[item]);
+            self.say(Msg::new(msg::items::THIS_IS).role("what", what));
         }
         learned
     }
@@ -77,14 +80,14 @@ impl World {
     /// Takes no time; says what each turned out to be, or that there was nothing to learn.
     pub(in crate::world) fn identify_dev(&mut self, positions: &Positions) -> Spent {
         let len = self.state.player().inventory.len();
-        let Some(chosen) = self.chosen(positions, len, "You carry no such thing.") else {
+        let Some(chosen) = self.chosen(positions, len, msg::items::CARRY_NO_SUCH_THING) else {
             return Spent::Nothing;
         };
         let learned = (chosen.iter())
             .filter(|&i| matches!(self.identify(i), Identified::Now(_)))
             .count();
         if learned == 0 {
-            self.say("There is nothing to identify (dev).");
+            self.say(msg::items::NOTHING_TO_IDENTIFY_DEV);
             return Spent::Nothing;
         }
         Spent::NoTime

@@ -87,6 +87,19 @@ pub fn english_speech(content: &Content, speech: &Speech) -> String {
     .unwrap_or_else(|e| format!("[{e}]"))
 }
 
+/// A message not logged (a quest log's objective and status) in English, keys left written.
+pub fn english_msg(content: &Content, msg: &Msg) -> String {
+    english(content, &Entry::new(0, msg.clone()), &written_key)
+}
+
+/// An argument alone in English in `form` (a quest's giver said `The`), keys left written; one
+/// English cannot render reads as the reason in brackets.
+pub fn english_arg(content: &Content, arg: &Arg, form: &str) -> String {
+    (content.english())
+        .try_arg(arg, form, content.lexicon(), &written_key)
+        .unwrap_or_else(|e| format!("[{e}]"))
+}
+
 /// A logged message rendered in English, for dev tools and tests ([`crate::World::messages`]):
 /// what the dumps show and what a test reads. The app renders the log itself
 /// ([`crate::World::log`]) in the player's language.

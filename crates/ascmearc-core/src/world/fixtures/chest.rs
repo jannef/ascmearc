@@ -29,11 +29,14 @@ use crate::chest::{Breaking, ChestState, destroyed};
 use crate::content::ActionKind;
 use crate::door::kick_breaks;
 use crate::geom::Pos;
+use crate::lang::{Msg, Phrase};
+use crate::msg;
 use crate::noise::Act;
-use crate::object::{Stack, add_to_pile, phrase};
+use crate::object::{Stack, add_to_pile};
 use crate::rng::draw;
 use crate::skills::Use;
-use crate::text::capitalized;
+use crate::world::combat::fight::word;
+use crate::world::items::stacks_arg;
 use crate::world::{ActorId, Spent, World};
 
 /// The sturdiness of a chest without a band (content without `data/chests.toml`).
@@ -52,27 +55,44 @@ impl World {
         }
     }
 
+    /// [`World::chest_name`] as a phrase: its band's name (`word:coffer`), else its terrain
+    /// (`terrain:<id>`).
+    pub(in crate::world) fn chest_phrase(&self, p: Pos) -> Phrase {
+        let level = self.state.current();
+        let band = (level.chests.get(&p)).and_then(|c| self.content.chests().band_of(c.level));
+        match band {
+            Some(band) => word(&band.name),
+            None => (level.terrain.get(p)).map_or_else(
+                || word("chest"),
+                |t| Phrase::id(format!("terrain:{}", self.content.terrain(*t).id)),
+            ),
+        }
+    }
+
     /// The player opens the shut chest at `p`; a locked one only with a key that fits, which
     /// unlocks it first. Returns what it cost.
     pub(super) fn open_chest(&mut self, p: Pos, events: &mut Vec<Event>) -> Spent {
         let player = self.state.player;
-        let name = self.chest_name(p);
+        let chest = self.chest_phrase(p);
         let open = self.price_of(player, ActionKind::OpenChest);
         let Some(lock) = self.state.current().locks.get(&p).cloned() else {
-            self.say(format!("You open the {name}."));
+            self.say(Msg::new(msg::fixtures::CHEST_OPEN).role("chest", chest));
             self.open_lid(p, events);
             return Spent::Turn(open);
         };
         let Some(key) = self.state.player().key_for(&self.content, &lock) else {
-            self.say(format!("The {name} is locked."));
+            self.say(Msg::new(msg::fixtures::CHEST_LOCKED).role("chest", chest));
             return Spent::Nothing;
         };
         let price = self.price_of(player, ActionKind::Unlock) + open;
         self.state.current_mut().locks.remove(&p);
-        let key = self.content.object(key).name.clone();
-        self.say(format!(
-            "You unlock the {name} with your {key} and open it."
-        ));
+        let key =
+            Phrase::id(format!("object:{}", self.content.object(key).id)).owned_by(self.you());
+        self.say(
+            Msg::new(msg::fixtures::CHEST_UNLOCK)
+                .role("chest", chest)
+                .role("what", key),
+        );
         self.open_lid(p, events);
         Spent::Turn(price)
     }
@@ -163,8 +183,8 @@ impl World {
             }
         } else {
             events.push(Event::DoorKicked { pos: p });
-            let name = self.chest_name(p);
-            self.say(format!("You kick the {name}. It holds."));
+            let chest = self.chest_phrase(p);
+            self.say(Msg::new(msg::fixtures::CHEST_KICK_HOLDS).role("chest", chest));
         }
         Spent::Turn(price)
     }
@@ -175,7 +195,7 @@ impl World {
     /// smashed chest. It is said (a kicked chest always, a blast's if the player sees it), then
     /// what broke and what is left.
     pub(in crate::world) fn break_chest(&mut self, p: Pos, how: Breaking, events: &mut Vec<Event>) {
-        let name = self.chest_name(p);
+        let chest = self.chest_phrase(p);
         let seen = how == Breaking::Smashed || self.perception.is_visible(p);
         let holds = self.empty_chest(p);
         let mut percent = i32::from(self.content.chests().destroyed);
@@ -204,15 +224,14 @@ impl World {
         if !seen {
             return;
         }
-        self.say(match how {
-            Breaking::Smashed => format!("The {name} bursts apart!"),
-            Breaking::BlownUp => format!("The {name} is blown apart!"),
-        });
+        let id = match how {
+            Breaking::Smashed => msg::fixtures::CHEST_BURSTS_APART,
+            Breaking::BlownUp => msg::fixtures::CHEST_BLOWN_APART,
+        };
+        self.say(Msg::new(id).role("chest", chest));
         if !lost.is_empty() {
-            let count: u32 = lost.iter().map(|s| s.count).sum();
-            let verb = if count == 1 { "is" } else { "are" };
-            let lost = capitalized(&phrase(&lost, self.lore()));
-            self.say(format!("{lost} {verb} destroyed."));
+            let lost = stacks_arg(&lost, self.lore());
+            self.say(Msg::new(msg::fixtures::DESTROYED).role("what", lost));
         }
         if !kept.is_empty() {
             self.say_found(&kept);
@@ -249,13 +268,13 @@ impl World {
                 continue;
             };
             self.state.current_mut().trap_memory.insert(p, kind);
-            let name = self.chest_name(p);
-            let trap = &self.content.trap(kind).name;
-            let text = format!(
-                "You notice that the {name} is trapped: {} {trap}.",
-                crate::text::article(trap)
+            let chest = self.chest_phrase(p);
+            let trap = word(&self.content.trap(kind).name);
+            self.say(
+                Msg::new(msg::fixtures::CHEST_TRAPPED)
+                    .role("chest", chest)
+                    .role("trap", trap),
             );
-            self.say(text);
         }
     }
 
@@ -279,10 +298,10 @@ impl World {
     /// coins." or "It is empty." (nothing identified).
     fn say_found(&mut self, found: &[Stack]) {
         if found.is_empty() {
-            self.say("It is empty.");
+            self.say(msg::fixtures::CHEST_EMPTY);
         } else {
-            let found = phrase(found, self.lore());
-            self.say(format!("Inside you find {found}."));
+            let found = stacks_arg(found, self.lore());
+            self.say(Msg::new(msg::fixtures::FIND_INSIDE).role("what", found));
         }
     }
 }

@@ -32,16 +32,16 @@ use crate::content::{ActionKind, Content, Here, TerrainId};
 use crate::fov::compute_fov;
 use crate::geom::Pos;
 use crate::ice::{self, Ice, Shock};
-use crate::lang::{Arg, Msg};
+use crate::lang::Msg;
 use crate::msg;
 use crate::object::Stack;
 use crate::rng::draw;
-use crate::scroll_label::Lore;
 use crate::skills::{Effect, Use};
 use crate::stats::Stat;
 use crate::temperature::{self, Temperature};
 use crate::time::GameTime;
 use crate::world::combat::fight::Harm;
+use crate::world::items::stacks_arg;
 use crate::world::{ActorId, LevelState, Spent, World, WorldState};
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -599,18 +599,5 @@ impl World {
         );
         self.shock(at, radius, crate::ice::Shock::Heat, events);
         Spent::NoTime
-    }
-}
-
-/// Stacks as a line names them (`{what:counted}`): one stack its phrase, two or three a list of
-/// them, more a count of objects ("17 objects"), as [`crate::object::phrase`] says them.
-fn stacks_arg(stacks: &[Stack], lore: Lore<'_>) -> Arg {
-    match stacks {
-        [one] => Arg::Phrase(lore.phrase(one)),
-        [_, _] | [_, _, _] => Arg::List(stacks.iter().map(|s| lore.phrase(s).into()).collect()),
-        _ => {
-            let count: u32 = stacks.iter().map(|s| s.count).sum();
-            Arg::Phrase(crate::world::combat::fight::word("object").count(count))
-        }
     }
 }

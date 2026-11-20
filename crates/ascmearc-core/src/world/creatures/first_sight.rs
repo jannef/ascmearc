@@ -3,6 +3,7 @@
 //! time the player sees one, after the turn's other perception lines. The types whose line was
 //! said are `Progress::sighted`, saved with the run.
 
+use crate::content::data_line;
 use crate::world::{ActorKind, World};
 
 impl World {
@@ -16,11 +17,11 @@ impl World {
             .collect();
         for creature in seen {
             let def = content.creature(creature);
-            let Some(line) = def.first_sight.as_ref() else {
+            if def.first_sight.is_none() {
                 continue;
-            };
+            }
             if self.state.progress.sighted.insert(def.id.clone()) {
-                self.say(line.clone());
+                self.say(data_line::said(data_line::first_sight(&def.id)));
             }
         }
     }

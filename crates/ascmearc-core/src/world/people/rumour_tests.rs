@@ -69,7 +69,7 @@ fn asking_marks_the_way_and_nothing_else() {
         assert!(lines[lines.len() - 2].starts_with("Godgifu says: \""));
         assert_eq!(
             lines.last().map(String::as_str),
-            Some(super::rumour::MARKED)
+            Some("You mark the way on your map.")
         );
         // A corridor of country, not the whole map.
         let marked = remembered_count(&w) - before;

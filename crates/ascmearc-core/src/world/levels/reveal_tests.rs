@@ -286,7 +286,7 @@ fn a_quest_reveals_its_location_at_its_stage() {
 fn the_quest_log_says_where() {
     let (mut w, toward) = at_the_hermit(RevealWhen::Given);
     ask(&mut w, toward, "quest-depths");
-    let log = w.perception().quests();
+    let log = crate::test_support::quest_log(&w);
     assert_eq!(
         log[0].objective,
         format!("The old hermit wants you to reach the Depths 3. {WHERE}")

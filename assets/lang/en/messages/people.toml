@@ -1,0 +1,153 @@
+# People (`world/people/`): quests and their log, escorts, lure quests, the wizards' quarrel,
+# guild ranks, shops, services, and traders' wares. Talk's own lines are `talk.toml`'s. Ids
+# alphabetical (`docs/dev/localization.md` "Literal lines"). What the data writes (a quest's
+# words, a binding's, a town's `told`) is said by its key in the data, not here
+# (`docs/dev/localization.md` "Lines of data").
+#
+# Roles: `who` is the one a line is about (a person by what the player calls them, "the old
+# hermit", "Sister Hild"; a shopkeeper by name); `what` a thing (a phrase built where it is said);
+# `place` a place, said `the` ("the Arena", "Cealdhlāw"); `gold`, `owed`, `price`, `have`, `need`,
+# `xp`, and `times` numbers, said in digits. `quest` is a quest's name and `skill` a skill's name
+# in lower case, text until core's words are converted (#1949); `id` and `target` in a dev
+# action's line are as typed.
+
+# What a quest asks, as the wiki's quest table says it: `task`, a `task_*` line.
+asks = "{task:Bare}."
+cannot_afford = "{who:The} cannot afford {what:counted}."
+# A dev action's: `quest` the quest's name, `target` as typed.
+cannot_draw_dev = "{quest:bare} cannot draw `{target:bare}`."
+cannot_pay = "You cannot pay."
+catches_stealing = "{who:The} catch{who:es} you stealing. \"Stop, thief!\""
+done = "Done."
+# A quest done more than once: `times`, how many times.
+done_times = "Done ({times:bare} times)."
+# A dev action's.
+drawn_by_giver_dev = "{quest:bare} is drawn by its giver: ask them."
+# A potion bought by drinking it in a shop: `what`, the potion as the player knows it.
+drink_and_buy = "You drink it, you buy it: {price:bare} gold for the {what:bare}."
+drunk_or_not = "Drunk or not, the {what:bare} is still {price:bare} gold."
+eat_and_buy = "You eat it, you buy it: {price:bare} gold for the {what:bare}."
+eaten_or_not = "Eaten or not, the {what:bare} is still {price:bare} gold."
+# An escort given something: `who` the escort, `what` what it took off for it.
+escort_drops = "{who:The} drop{who:s} {what:the}."
+escort_follows = "{who:The} follow{who:s} you."
+escort_not_with_you = "{who:The} is not with you."
+escort_puts_on = "{who:The} put{who:s} on {what:the}."
+escort_readies = "{who:The} readies {what:the}."
+escort_wields = "{who:The} wield{who:s} {what:the}."
+# Set on given to escorts: `who`, the escorts, a list.
+escorts_refuse = "{who:And} will not go looking for a fight."
+failed = "Failed."
+# A failed escort quest: `who`, the escort.
+failed_dead = "Failed: {who:The} is dead."
+gain_experience = "You gain {xp:bare} experience."
+# The player gives an escort something: `what`, one of the stack.
+give_escort = "You give {what:the} to {who:the}."
+# The player hands a quest's things in: `what`, what was handed in.
+give_quest_items = "You give {who:the} {what:counted}."
+# A dev action's.
+given_dev = "{quest:bare} is given."
+# A quest giver hands over a letter to deliver, or a reward: `what`, what it gives.
+gives_you = "{who:The} gives you {what:counted}."
+# A dev action's.
+got_somewhere_dev = "{quest:bare} has got somewhere already."
+have_not_paid = "You have not paid for {what:counted}."
+killed = "{have:bare} / {need:bare} killed."
+# A quest's reward teaches more of a skill the player knows.
+learn_more_of = "You learn more of {skill:bare}."
+leave_without_paying = "You leave without paying. \"Stop, thief!\" shouts {who:the}."
+# A dev action's: `who` the lure quest's creature.
+lure_dev = "You lure {who:the} to your side (dev)."
+mark_the_way = "You mark the way on your map."
+# A dev action's.
+marked_done_dev = "{quest:bare} is marked done."
+# A quest's giver marks a hidden location: `place`, its name.
+marks_on_map = "{who:The} marks {place:the} on your map."
+# A guild's master names the player to a rank: `title`, the rank ("Pewter"); `guild`, the guild's
+# name as written ("the Weyfarers' Gilde").
+names_you = "{master:The} names you {title:a} of {guild:bare}."
+# What the player does next once a quest's goal is met: `step`, a `step_*` line.
+next_step = "{step:Bare}."
+no_longer_carry = "You no longer carry {what:the}."
+# A dev action's: `id` as typed.
+no_lure_quest_dev = "There is no lure quest `{id:bare}`."
+# A dev action's: `id` as typed.
+no_quest_dev = "There is no quest `{id:bare}`."
+no_room_beside_you = "There is no room beside you."
+no_use_for = "{who:The} {who:has} no use for {what:counted}."
+nobody_to_pay = "There is nobody here to pay."
+not_carrying_anything = "You are not carrying anything."
+not_reached_yet = "Not reached yet."
+# A dev action's.
+not_rolled_dev = "{quest:bare} is no rolled quest you were given."
+# A dev action's.
+not_under_way_dev = "{quest:bare} is not under way."
+# A lure quest's creature not yet brought home: `place`, where it is to be bound.
+not_yet_bound = "{who:The} is not yet bound in {place:the}."
+nothing_to_decide = "There is nothing to decide."
+# A dev action's: `target` as typed.
+now_asks_dev = "{quest:bare} now asks for {target:bare} (dev)."
+offers_gold = "{who:The} offer{who:s} {gold:bare} gold for {what:counted}."
+owe_but_none = "You owe {who:the} {owed:bare} gold, but you have none."
+owe_but_only = "You owe {who:the} {owed:bare} gold, but you have only {gold:bare}."
+owe_nothing = "You owe {who:the} nothing."
+pay_for_that = "\"You will pay for that!\" shouts {who:the}."
+pay_gold = "You pay {who:the} {gold:bare} gold."
+pay_gold_for = "You pay {who:the} {gold:bare} gold for {what:counted}."
+put_back = "You put back {what:counted}."
+quest_complete = "Quest complete: {quest:bare}."
+quest_failed = "Quest failed: {quest:bare}."
+sell = "You sell {what:counted} to {who:the} for {gold:bare} gold."
+sniffs = "{who:The} sniff{who:s} at {what:counted} and say{who:s}: \"Not at any price.\""
+# The next step of a quest whose goal is met (in `next_step`, `updated_step`): `who`, whoever
+# takes it in now.
+step_return = "return to {who:the}"
+# A delivery: `what`, the thing to deliver.
+step_take = "take {what:the} to {who:the}"
+step_take_them = "take them to {who:the}"
+steps_into_your_way = "{who:The} step{who:s} into your way: you haven't paid."
+take_leave = "You take your leave of {who:the}."
+# A kill quest's target counted: "a giant rat", "3 giant rats".
+target_counted = "{who:counted}"
+# A kill quest's target in its task: a unique by its name ("Black Wystan", "the fire drake").
+target_the = "{who:the}"
+# What a quest asks, in `asks` and `wants`, without where: `task_*`. `who` is whoever it is
+# handed in to, `what` the thing, `target` a `target_*` line, `members` the creature types of
+# a tag, a list.
+task_bring = "bring {what:counted}"
+task_bring_to = "bring {what:counted} to {who:the}"
+task_deliver = "deliver {what:a} to {who:the}"
+# `who`, the escort; `place`, where to bring them.
+task_escort = "bring {who:the} safely to {place:the}"
+task_kill = "kill {target:bare}"
+task_kill_in = "kill {target:bare} in {place:the}"
+task_kill_in_members = "kill {target:bare} in {place:the}: {members:bare}"
+task_kill_members = "kill {target:bare}: {members:bare}"
+# `who`, the creature to lure; `from`, where it waits; `place`, where it is bound.
+task_lure = "lure {who:the} from {from:the} to {place:the}"
+task_reach = "reach {place:the}"
+# A teacher trains the player in a skill.
+trains_you = "{who:The} train{who:s} you in {skill:bare}."
+updated = "Quest updated:"
+# A quest's progress: `what`, what it counts, as many as it needs.
+updated_count = "Quest updated: {have:bare} / {need:bare} {what:bare}."
+updated_reached = "Quest updated: you have reached {place:the}."
+# A delivery picked up again: `step`, a `step_*` line.
+updated_step = "Quest updated: {step:bare}."
+# What a quest asks, as the log's objective says it: `giver`, who gave it; `task`, a `task_*`
+# line.
+wants = "{giver:The} wants you to {task:bare}."
+# A shop's sign: `shop`, as its data writes it with the keeper's name ("Grimbold's General Store").
+welcome_shop = "Welcome to {shop:bare}!"
+# A wizard of a quarrel the player takes the side of: `who`.
+with_you = "{who:The} is with you now."
+# The same, and `heard` the wizards it turns against the player, a list.
+with_you_heard = "{who:The} is with you now. {heard:And} will have heard."
+you_carry = "You carry {have:bare} / {need:bare}."
+you_owe = "You owe {who:the} {owed:bare} gold."
+
+# A kill quest's target the quest calls by its own word (`what`, "wizards"), `count` of them.
+[target_called]
+by = "count.number"
+one = "{what:a}"
+many = "{count:bare} {what:bare}"

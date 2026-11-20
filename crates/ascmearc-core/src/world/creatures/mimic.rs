@@ -20,6 +20,9 @@
 
 use crate::action::{AttackKind, Event};
 use crate::geom::Pos;
+use crate::lang::Msg;
+use crate::msg;
+use crate::world::combat::fight;
 use crate::world::{ActorId, Spent, World};
 
 /// How a mimic is found out (module docs): what is said, and whether it strikes.
@@ -89,14 +92,16 @@ impl World {
         // Found out by searching, the player knows it in the dark too.
         if how == Reveal::Found || self.perception.in_sight(pos) {
             let def = self.content.creature(creature);
+            // The chest band's name is the data's word (`word:`, as a status's look).
             let chest = (self.content.chests().band_of(def.level))
-                .map_or_else(|| "chest".to_string(), |b| b.name.clone());
-            let what = format!("{} {}", crate::text::article(&def.name), def.name);
-            self.say(match how {
-                Reveal::Touch | Reveal::Knocked => format!("The {chest} lurches: it is {what}!"),
-                Reveal::Struck => format!("The {chest} shudders: it is {what}!"),
-                Reveal::Found => format!("You notice the {chest} breathing: {what}!"),
-            });
+                .map_or_else(|| fight::word("chest"), |b| fight::word(&b.name));
+            let line = match how {
+                Reveal::Touch | Reveal::Knocked => msg::creatures::CHEST_LURCHES,
+                Reveal::Struck => msg::creatures::CHEST_SHUDDERS,
+                Reveal::Found => msg::creatures::CHEST_BREATHING,
+            };
+            let line = Msg::new(line).role("chest", chest);
+            self.say(line.role("who", fight::creature(def)));
         }
         if how == Reveal::Touch {
             let player = self.state.player;
