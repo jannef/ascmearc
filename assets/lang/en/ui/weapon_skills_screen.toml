@@ -1,0 +1,27 @@
+# The weapon skills screen (`crates/ascmearc/src/ui/weapon_skills_screen.rs`). Ids alphabetical.
+#
+# The skills' names come from the game's data. The keys named in the footer are fixed (`Esc`):
+# translate the words around them. The screen fits each text to its panel
+# (docs/dev/localization.md "UI text").
+
+[close]
+text = "Esc close"
+
+# The footer's way out: `own`, the screen's own key, as bound.
+[close_own]
+text = "{own:bare} or Esc close"
+
+# What a section's heading says, after the mark, while a style in it is in use.
+[in_use]
+text = "in use"
+
+# The screen has no skills to list.
+[none]
+text = "You know no weapon skills."
+
+# The footer's scroll hint: `keys`, the keys that scroll.
+[scroll]
+text = "{keys:bare} scroll"
+
+[title]
+text = "Weapon skills"

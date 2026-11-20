@@ -1,0 +1,45 @@
+# The scribe list (`crates/ascmearc/src/ui/scribe_screen.rs`). Ids alphabetical.
+#
+# The spells' and the schools' names come from the game's data. The keys named in the footer are
+# fixed (`a`, `Esc`): translate the words around them. The screen fits each text to its panel
+# (docs/dev/localization.md "UI text").
+
+# How long writing a spell takes at a normal pace: `time`, in words ("32 minutes").
+[about]
+text = "about {time:bare}"
+
+[back]
+text = "Esc back"
+
+# The blank scrolls carried: `n`, how many (at least one).
+[blanks]
+by = "n.number"
+one = "You carry {n:bare} blank scroll."
+many = "You carry {n:bare} blank scrolls."
+
+# No blank scroll carried.
+[blanks_none]
+text = "You carry no blank scroll to write on."
+
+# What writing a spell costs: `mana`, the mana.
+[mana]
+text = "{mana:bare} mana"
+
+# The list has no spell.
+[none]
+text = "You know no spell to write."
+
+[title]
+text = "Scribe: which spell?"
+
+# The footer's keys to write: `confirm`, the key that writes the `>` row.
+[write]
+text = "{confirm:bare} write"
+
+# The same with the letter `a`.
+[write_a]
+text = "a or {confirm:bare} write"
+
+# The same with the letters `a` to `last`.
+[write_letters]
+text = "a-{last:bare} or {confirm:bare} write"

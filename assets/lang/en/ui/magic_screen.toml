@@ -1,0 +1,43 @@
+# The Magic page (`crates/ascmearc/src/ui/magic_screen.rs`). Ids alphabetical.
+#
+# The caster styles' and the spells' names come from the game's data. The keys named in the
+# footer are fixed (`Esc`): translate the words around them. The screen fits each text to its
+# panel (docs/dev/localization.md "UI text").
+
+# A spell cast at a place: `cost`, what it rolls and costs ("4d6 fire, 26 mana").
+[aimed]
+text = "{cost:bare}, aimed"
+
+# The caster styles' heading.
+[caster_styles]
+text = "Caster styles"
+
+[close]
+text = "Esc close"
+
+# What the caster styles' heading says, after the mark, while one is marked.
+[legend]
+text = "the style you cast in now"
+
+# The player's mana: `mana`, what they have; `max`, their most.
+[mana]
+text = "Mana {mana:bare}/{max:bare}"
+
+# The spells' section has none.
+[no_spells]
+text = "You know no spells."
+
+# A spell's rank: `rank`, from 1.
+[rank]
+text = "rank {rank:bare}"
+
+# The footer's scroll hint: `keys`, the keys that scroll.
+[scroll]
+text = "{keys:bare} scroll"
+
+# The spells' heading.
+[spells]
+text = "Spells"
+
+[title]
+text = "Magic"
