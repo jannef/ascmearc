@@ -14,6 +14,9 @@
 //! | `gem_size:<id>`, `gem_cut:<id>` | the size's and the cut's `name` |
 //! | `stock:<material id>` | the form word a piece of the material is called by ("ingot", "lump") |
 //! | `race:<id>` | its `name` in lower case ("halfling") |
+//! | `resource:<id>` | its `name` in lower case ("rage") |
+//! | `skill:<id>` | its `name` in lower case ("open lock") |
+//! | `status:<id>` | its `name` in lower case ("hasted") |
 //! | `terrain:<id>` | its `name` ("stone wall") |
 //! | `label:scroll`, `label:wand`, `label:rod`, `label:potion` | an unidentified type's `name` and `plural`, with its `{label}` and `{colour}` slots (`data/scroll_labels.toml`, …) |
 //! | `colour:<colour>` | a potion's colour, as its type writes it ("red") |
@@ -23,8 +26,9 @@
 //! a literal is one thing ("The Hounds quails", "the incubus's"). Only `word:` guesses.
 
 use super::Content;
+use super::{ResourceId, StatusId};
 use crate::lang::en::is_plural;
-use crate::lang::{LexWord, Lexicon};
+use crate::lang::{LexWord, Lexicon, Phrase};
 
 impl Lexicon for Content {
     fn word(&self, id: &str) -> Option<LexWord> {
@@ -89,11 +93,40 @@ impl Lexicon for Content {
             }
             // A race is a common noun in a sentence ("a halfling"); its `name` is a label.
             "race" => Some(LexWord::new(self.race(key)?.name.to_lowercase())),
+            // A resource, a skill, and a status are common words in a sentence ("You are still
+            // hasted.", "Your open lock improves."); their `name`s are labels.
+            "resource" => {
+                let def = self.resource(self.resource_id(key)?);
+                Some(LexWord::new(def.name.to_lowercase()))
+            }
+            "skill" => Some(LexWord::new(
+                self.skill(self.skill_id(key)?).name.to_lowercase(),
+            )),
+            "status" => Some(LexWord::new(
+                self.status(self.status_id(key)?).name.to_lowercase(),
+            )),
             "terrain" => Some(LexWord::new(&self.terrain(self.terrain_id(key)?).name)),
             "colour" => Some(LexWord::new(key)),
             "word" => Some(LexWord::new(key).many(is_plural(key))),
             _ => None,
         }
+    }
+}
+
+impl Content {
+    /// A resource by its name: `resource:<id>` ("too little {name:bare}": "rage").
+    pub fn resource_phrase(&self, id: ResourceId) -> Phrase {
+        Phrase::id(format!("resource:{}", self.resource(id).id))
+    }
+
+    /// A skill by its name: `skill:<id>` ("Your {skill:bare} improves": "open lock").
+    pub fn skill_phrase(&self, id: crate::skills::SkillId) -> Phrase {
+        Phrase::id(format!("skill:{}", self.skill(id).id))
+    }
+
+    /// A status by its name: `status:<id>` ("You are still {status:bare}": "hasted").
+    pub fn status_phrase(&self, id: StatusId) -> Phrase {
+        Phrase::id(format!("status:{}", self.status(id).id))
     }
 }
 
@@ -124,6 +157,9 @@ mod tests {
         assert_eq!(word("label:scroll").base, "scroll labelled {label}");
         assert_eq!(word("word:flames").base, "flames");
         assert_eq!(word("race:half_elf").base, "half-elf");
+        assert_eq!(word("skill:open_lock").base, "open lock");
+        assert_eq!(word("status:bleeding").base, "bleeding");
+        assert_eq!(word("resource:rage").base, "rage");
         assert!(word("word:flames").many, "a plural noun");
         assert!(word("disease:the_shakes").many, "the data says so");
         assert_eq!(word("disease:the_shakes").base, "the shakes");
@@ -138,6 +174,9 @@ mod tests {
             "nonsense",
             "affix:nope",
             "label:book",
+            "skill:juggling",
+            "status:",
+            "resource:mana",
         ] {
             assert_eq!(content.word(unknown), None, "{unknown}");
         }

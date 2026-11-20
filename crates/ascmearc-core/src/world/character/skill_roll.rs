@@ -178,9 +178,8 @@ impl World {
             self.say(msg::character::NO_SKILL_ROLLS);
             return Spent::Nothing;
         };
-        let def = content.skill(id);
         let Some(trained) = self.state.player().skills.get(id) else {
-            let skill = def.name.to_lowercase();
+            let skill = content.skill_phrase(id);
             self.say(Msg::new(msg::character::NOT_TRAINED_IN).role("skill", skill));
             return Spent::Nothing;
         };
@@ -214,7 +213,7 @@ impl World {
         self.player_mut()
             .skills
             .roll(id, rolled, content.skill_rolls());
-        let name = content.skill(id).name.to_lowercase();
+        let name = content.skill_phrase(id);
         self.say(Msg::new(msg::character::SKILL_IMPROVES).role("skill", name));
     }
 

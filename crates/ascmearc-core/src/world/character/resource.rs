@@ -315,7 +315,7 @@ impl World {
         };
         let player = self.state.player;
         self.grant_resource_with_status(player, resource, None, events);
-        let name = self.content.resource(resource).name.clone();
+        let name = self.content.resource_phrase(resource);
         let value = (self.state.player().resources.get(resource)).map_or(0, |p| p.value);
         self.say(
             Msg::new(msg::character::GAIN_RESOURCE_DEV)

@@ -39,12 +39,11 @@ impl World {
     pub(in crate::world) fn refuse_blocked(&mut self, action: &Action) -> Option<Spent> {
         let kind = self.kind_of(action)?;
         let status = (self.state.player().effects).blocking(&self.content, kind)?;
-        let name = self.content.status(status).name.to_lowercase();
         let doing = kind.doing();
         self.say(
             Msg::new(msg::health::CANNOT_WHILE)
                 .role("doing", doing)
-                .role("status", crate::world::combat::fight::word(&name)),
+                .role("status", self.content.status_phrase(status)),
         );
         Some(Spent::Nothing)
     }

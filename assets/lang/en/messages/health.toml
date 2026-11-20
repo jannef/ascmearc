@@ -16,7 +16,7 @@ break_free = "You break free."
 break_free_of = "You break free of {who:the}."
 cannot_consume = "You cannot consume {what:a}."
 cannot_smoke = "You cannot smoke that."
-# `doing`: what the action is ("reading"); `status`: the status that blocks it, lower case.
+# `doing`: what the action is ("reading"); `status`: the status that blocks it, by its name.
 cannot_while = "You cannot {doing:bare} while {status:bare}."
 # A dev action's: `name` the disease's name.
 carry_disease_already = "You carry {name:bare} already (dev)."

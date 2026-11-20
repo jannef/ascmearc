@@ -527,7 +527,7 @@ impl World {
         if self.state.player().skills.get(skill).is_some() {
             return false;
         }
-        let name = self.content.skill(skill).name.clone();
+        let name = self.content.skill_phrase(skill);
         self.say(Msg::new(msg::crafting::NOT_TRAINED).role("skill", name));
         true
     }

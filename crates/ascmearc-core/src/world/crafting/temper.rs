@@ -282,7 +282,7 @@ impl World {
         if self.state.player().skills.get(skill).is_some() {
             return None;
         }
-        let skill = self.content.skill(skill).name.clone();
+        let skill = self.content.skill_phrase(skill);
         let station = super::craft::terrain(&self.content, terrain);
         Some(
             Msg::new(msg::crafting::NEED_SKILL_AT)
