@@ -121,7 +121,7 @@ impl DialogueScreen {
             with: Some(talk.with),
             name: ui_with(T::TITLE, &[("who", who.into())]),
             toward,
-            line: ascmearc_core::messages::english_speech(content, &talk.line),
+            line: super::text::speech(content, &talk.line),
             topics,
             per_item,
             per_cursed,

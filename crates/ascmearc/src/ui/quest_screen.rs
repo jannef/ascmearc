@@ -15,7 +15,7 @@ use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
 use ascmearc_core::content::Content;
-use ascmearc_core::messages::{english_msg, english_speech};
+use ascmearc_core::messages::{msg_in, speech_in};
 use ascmearc_core::perception::PerceptionView;
 use ascmearc_core::world::QuestView;
 
@@ -31,7 +31,7 @@ pub struct QuestScreen {
     selected: usize,
 }
 
-/// A quest of the log, its words rendered (in English until a language can be chosen, L8).
+/// A quest of the log, its words rendered in the language shown (`text::language_code`).
 #[derive(Clone, Debug)]
 struct Logged {
     name: String,
@@ -45,14 +45,15 @@ struct Logged {
 
 impl Logged {
     fn of(content: &Content, quest: &QuestView) -> Self {
-        let offer = english_speech(content, &quest.offer);
+        let code = super::text::language_code();
+        let offer = speech_in(content, &code, &quest.offer);
         let said = [("giver", quest.giver.clone()), ("offer", offer.into())];
         Self {
             name: quest.name.clone(),
             active: quest.active,
             failed: quest.failed,
-            objective: english_msg(content, &quest.objective),
-            status: english_msg(content, &quest.status),
+            objective: msg_in(content, &code, &quest.objective),
+            status: msg_in(content, &code, &quest.status),
             words: ui_with(T::SAID, &said),
         }
     }

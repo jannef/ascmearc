@@ -683,11 +683,11 @@ fn draw_messages(
     more::draw(console, game, mode, bindings);
 }
 
-/// A logged message as the player reads it: rendered in their language (English until the
-/// language setting, L8; `docs/dev/localization.md`), its repeats counted, the keys it names as
+/// A logged message as the player reads it: rendered in their language (`text::message`;
+/// `docs/dev/localization.md`), its repeats counted, the keys it names as
 /// bound ([`message_key`]).
 fn message_text(content: &Content, entry: &Entry, bindings: &Bindings) -> String {
-    ascmearc_core::messages::english(content, entry, &|id| message_key(bindings, id))
+    text::message(content, entry, &|id| message_key(bindings, id))
 }
 
 /// A key a message names by its command's id (`{key:help}`), as bound: `?`
@@ -1439,6 +1439,37 @@ mod tests {
         assert_eq!(shown(&b), "Welcome to Showcase. Press F1 for controls.");
         b.0.retain(|(_, c)| *c != KeyCommand::Help);
         assert_eq!(shown(&b), "Welcome to Showcase. Press Esc for controls.");
+    }
+
+    /// The log is rendered in the language shown each time it is drawn, so switching it (the
+    /// settings, `--lang`) switches what was already said: a test language, `xx`, with the
+    /// welcome line alone, the rest in English.
+    #[test]
+    fn the_log_reads_in_the_language_chosen_and_switches_live() {
+        let mut files = ascmearc_assets::files();
+        let lang = "name = \"Testi\"\ncode = \"xx\"\nmorphology = \"en\"\nfallback = \"en\"\n";
+        files.insert("lang/xx/lang.toml", lang);
+        let welcome = "welcome = \"Tervetuloa: {place}. Paina {key:help}.\"\n";
+        files.insert("lang/xx/messages/world.toml", welcome);
+        let content = Arc::new(Content::load(&files).expect("content with xx"));
+        let mut world = World::new(content, "showcase", None).expect("starts");
+        world.apply(&ascmearc_core::Action::Open(ascmearc_core::Dir::N));
+        let b = Bindings::default();
+        let shown = |world: &World| -> Vec<String> {
+            (world.log().iter())
+                .map(|entry| message_text(world.content(), entry, &b))
+                .collect()
+        };
+        let english = shown(&world);
+        assert_eq!(english[0], "Welcome to Showcase. Press ? for controls.");
+        text::use_language("xx");
+        let switched = shown(&world);
+        text::use_language("en");
+        assert_eq!(switched[0], "Tervetuloa: Showcase. Paina ?.");
+        // What `xx` lacks reads as it did.
+        assert_eq!(switched[1..], english[1..]);
+        assert!(english.len() > 1, "{english:?}");
+        assert_eq!(shown(&world), english);
     }
 
     #[test]

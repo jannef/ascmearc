@@ -1,8 +1,8 @@
 //! English, the language the message ids are generated from (`docs/dev/localization.md`):
 //! `lang/en/lang.toml`, every `lang/en/messages/<file>.toml`, and the app's UI text, every
 //! `lang/en/ui/<module>.toml` (its ids `ui.<module>.<name>`), with the plural dictionary.
-//! Dumps and the tests render the log in it; the app renders it too until a language can be
-//! chosen (L8). Without `lang/en/lang.toml` it is English with no templates: literal lines read as
+//! Dumps and the tests render the log in it; the app renders the language chosen, English for what
+//! it lacks (`languages.rs`). Without `lang/en/lang.toml` it is English with no templates: literal lines read as
 //! written, a template's message as its `[id]`; a test's own files without it read the shipped
 //! English instead, so a fixture's lines read as the game's.
 

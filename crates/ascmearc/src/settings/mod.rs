@@ -11,6 +11,7 @@
 //! palette = "default"     # "default", "high-contrast", "colorblind"
 //! clock = "24h"           # "24h" (14:32) or "12h" (2:32 PM)
 //! temperature = "celsius" # the status bar's unit: "celsius" (°C) or "fahrenheit" (°F)
+//! language = "en"         # the language shown, a folder under assets/lang/ ("en", "fi")
 //! mods = ["pride_month"]  # desktop: the mods turned on, folder names under mods/, in load order
 //!
 //! [effects]               # per-effect switches, all on by default
@@ -54,6 +55,10 @@ pub const DEFAULT_FONT_PX: u32 = 18;
 
 const FILE_NAME: &str = "settings.toml";
 
+/// The language shown until the player chooses one: no guess from the system's locale
+/// (`docs/design/localization.md` §12).
+pub const DEFAULT_LANGUAGE: &str = "en";
+
 /// The display and accessibility settings. Key bindings are the [`Bindings`] resource.
 #[derive(Resource, Debug, Clone, PartialEq)]
 pub struct Settings {
@@ -68,6 +73,9 @@ pub struct Settings {
     pub clock: Clock,
     /// The unit the status bar shows the temperature in (applied only when it is shown).
     pub temperature: TemperatureUnit,
+    /// The code of the language the game is shown in (`assets/lang/<code>/`; `ui::text`), English
+    /// when the content has no such language. `--lang` sets it for the session.
+    pub language: String,
     /// The mods turned on, by folder name, in the order they are laid (desktop; `mods.rs`,
     /// #1731). Set by the Mods screen's Apply once the content has loaded with them.
     pub mods: Vec<String>,
@@ -264,6 +272,7 @@ impl Default for Settings {
             palette: Palette::Default,
             clock: Clock::H24,
             temperature: TemperatureUnit::Celsius,
+            language: DEFAULT_LANGUAGE.to_string(),
             mods: Vec::new(),
         }
     }
@@ -319,6 +328,7 @@ pub fn parse(text: &str) -> Loaded {
             "palette",
             "clock",
             "temperature",
+            "language",
             "mods",
             "bindings",
         ]
@@ -383,6 +393,12 @@ pub fn parse(text: &str) -> Loaded {
             )),
         }
     }
+    if let Some(value) = table.get("language") {
+        match value.as_str().filter(|code| !code.is_empty()) {
+            Some(code) => settings.language = code.to_string(),
+            None => warnings.push(format!("language {value} is not a code; using English")),
+        }
+    }
     if let Some(value) = table.get("mods") {
         let ids = (value.as_array()).and_then(|a| {
             a.iter()
@@ -417,6 +433,7 @@ struct FileOut<'a> {
     palette: &'a str,
     clock: &'a str,
     temperature: &'a str,
+    language: &'a str,
     #[serde(skip_serializing_if = "<[String]>::is_empty")]
     mods: &'a [String],
     effects: std::collections::BTreeMap<&'static str, bool>,
@@ -431,6 +448,7 @@ pub fn to_toml(settings: &Settings, bindings: &Bindings) -> String {
         palette: settings.palette.id(),
         clock: settings.clock.id(),
         temperature: settings.temperature.id(),
+        language: &settings.language,
         mods: &settings.mods,
         effects: settings.effects.to_map(),
         bindings: bindings.to_map(),
@@ -542,6 +560,10 @@ pub fn load_for(args: &Args) -> (SettingsStore, Settings, Bindings) {
             Err(e) => crate::logging::warn_early(format!("keys reset for this launch only: {e}")),
         }
     }
+    // `--lang` chooses the language for this launch, as the settings screen would.
+    if let Some(code) = &args.lang {
+        loaded.settings.language = code.clone();
+    }
     (store, loaded.settings, loaded.bindings)
 }
 
@@ -551,7 +573,41 @@ impl Plugin for SettingsPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<Settings>()
             .init_resource::<SettingsStore>()
+            .add_systems(First, apply_language)
             .add_systems(Last, persist);
+    }
+}
+
+/// Whether the content has the language the settings name: `--lang` with a code it lacks is an
+/// error; a settings file's is a warning, and the game is shown in English.
+pub fn check_language(
+    args: &Args,
+    settings: &Settings,
+    content: &ascmearc_core::content::Content,
+) -> Result<(), String> {
+    if content.language(&settings.language).is_some() {
+        return Ok(());
+    }
+    let known: Vec<&str> = content.languages().map(|l| l.code()).collect();
+    let why = format!(
+        "unknown language `{}` (known: {})",
+        settings.language,
+        known.join(", ")
+    );
+    match args.lang {
+        Some(_) => Err(why),
+        None => {
+            crate::logging::warn_early(format!("{why}; showing English"));
+            Ok(())
+        }
+    }
+}
+
+/// Shows the game in the language the settings name, from the frame after it changed: every
+/// screen and the message log render each frame, so they switch at once.
+fn apply_language(settings: Res<Settings>) {
+    if settings.is_changed() {
+        crate::ui::text::use_language(&settings.language);
     }
 }
 
@@ -604,6 +660,7 @@ mod tests {
             palette: Palette::Colorblind,
             clock: Clock::H12,
             temperature: TemperatureUnit::Fahrenheit,
+            language: "fi".into(),
             mods: vec!["pride_month".into(), "other".into()],
         };
         let mut bindings = Bindings::default();
@@ -707,6 +764,18 @@ mod tests {
         assert_eq!(loaded.settings.font_px, 20);
         assert_eq!(loaded.warnings.len(), 1, "{:?}", loaded.warnings);
         assert_eq!(parse("font_px = 20\n").settings.clock, Clock::H24);
+    }
+
+    /// English by default, any code read as written (the content decides whether it has it),
+    /// and a value that is no code costs only itself.
+    #[test]
+    fn the_language_setting_parses_and_a_bad_value_costs_only_itself() {
+        assert_eq!(parse("").settings.language, "en");
+        assert_eq!(parse("language = \"fi\"\n").settings.language, "fi");
+        let loaded = parse("language = 3\nfont_px = 20\n");
+        assert_eq!(loaded.settings.language, "en");
+        assert_eq!(loaded.settings.font_px, 20);
+        assert_eq!(loaded.warnings.len(), 1, "{:?}", loaded.warnings);
     }
 
     #[test]

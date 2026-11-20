@@ -1000,9 +1000,14 @@ impl Screens<'_> {
 
 /// Shows the screens that stay open while the run changes (the equipment screen beneath a
 /// choice that was just done, an object list or the dialogue beneath a dialog that acted) the
-/// run as it is now: a screen that becomes the top again never shows it as it was.
-pub(super) fn refresh(game: Res<Game>, mut stack: ResMut<ScreenStack>) {
-    if game.is_changed() && !stack.is_empty() {
+/// run as it is now: a screen that becomes the top again never shows it as it was. A change of
+/// the settings rebuilds them too, so what a screen built when it opened (what was said in a
+/// conversation) reads in the language chosen.
+pub(super) fn refresh(game: Res<Game>, settings: Res<Settings>, mut stack: ResMut<ScreenStack>) {
+    if settings.is_changed() {
+        super::text::use_language(&settings.language);
+    }
+    if (game.is_changed() || settings.is_changed()) && !stack.is_empty() {
         stack.refresh(&game.world.perception(), last_talk(&game.last_outcome));
     }
 }

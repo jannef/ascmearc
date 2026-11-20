@@ -23,6 +23,7 @@ changed in the Controls screen instead; see [Controls](controls-rebinding.md).
 | Color palette | The colors: Default, High contrast, or Colorblind (red-green). See below. |
 | Clock | How the [time of day](time.md#days) is written: 24-hour (`14:32`, the default) or 12-hour (`2:32 PM`). It changes the [status bar](the-screen.md#the-screen) and the death screen; the game itself keeps one clock. |
 | Temperature | The unit the [pause menu](the-screen.md#menus) tells the [temperature](temperature.md) in: °C (Celsius, to start with) or °F (Fahrenheit). See [Temperature and ice](temperature.md). |
+| Language | The language the game's words are shown in, named in that language. It changes at once, the messages already shown included. English is the only one so far, and is the default. |
 | Where are my files? | Opens a screen showing where your settings, save, and logs are, and why, with **Open folder** for each. See [Saving](saving.md#portable-mode). |
 | Reset to defaults | Puts every setting above back to its default. Your [keys](controls-rebinding.md) stay as they are. |
 
