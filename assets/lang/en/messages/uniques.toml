@@ -1,0 +1,5 @@
+# Unique items (#1975; `content/unique.rs`, docs/dev/magic-items.md "Unique items"): what the
+# rules say of one. Ids alphabetical.
+
+# A craft refused on a unique: Temper, Whittle, setting a gem in it, taking it apart.
+no_craft = "It is unique: no craft of yours will change it."

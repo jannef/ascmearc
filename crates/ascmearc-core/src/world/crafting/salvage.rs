@@ -4,9 +4,11 @@
 //!
 //! - **Where, with what**: anywhere, with nothing.
 //! - **What**: a stack carried with at least one part of a material a profession works
-//!   ([`salvageable`]: `data/stock.toml`, [`World::profession_of`]), not a spirit weapon.
+//!   ([`salvageable`]: `data/stock.toml`, [`World::profession_of`]), not a spirit weapon, not a
+//!   unique (refused first, "It is unique: no craft of yours will change it.", and never listed;
+//!   #1975).
 //!   Refused, taking no time: one worn or wielded ("Take it off first."), one protected from
-//!   harm ([`World::item_protected`]: a quest's, a unique, of Proof; "It will not come apart."),
+//!   harm ([`World::item_protected`]: a quest's, of Proof; "It will not come apart."),
 //!   unpaid shop goods (`may_loose`), and one with nothing a profession works. Stock (a piece:
 //!   an ingot, a billet, a hide; a loose gem) is never salvageable, so never listed (#1777);
 //!   scrap is, as that is how it becomes stock.
@@ -56,17 +58,19 @@ use crate::skills::{SkillId, Use};
 use crate::stats::Stat;
 use crate::world::{Spent, World};
 
-/// Whether `stack` has anything to salvage: not a spirit weapon, with a part of a material some
-/// profession works, not money (the currency is never melted down: gold ingots come from salvaged
-/// gold, never from gold coins, docs/design/recipes.md; copper coins are not money), and not
-/// stock already (#1777): a piece (an ingot, a billet, a hide) or a loose gem would only come
-/// back as itself, less the yield. Scrap is the one stock salvage takes, as that is how it
-/// becomes ingots and billets. Worn, protected, and unpaid stacks are the rules' to refuse.
+/// Whether `stack` has anything to salvage: not a spirit weapon or a unique (#1975), with a part
+/// of a material some profession works, not money (the currency is never melted down: gold
+/// ingots come from salvaged gold, never from gold coins, docs/design/recipes.md; copper coins
+/// are not money), and not stock already (#1777): a piece (an ingot, a billet, a hide) or a
+/// loose gem would only come back as itself, less the yield. Scrap is the one stock salvage
+/// takes, as that is how it becomes ingots and billets. Worn, protected, and unpaid stacks are
+/// the rules' to refuse.
 pub fn salvageable(content: &Content, stack: &Stack) -> bool {
     let money = content.shops().is_some_and(|s| s.currency == stack.object);
     let stock = content.object(stack.object).id == crate::piece::ID
         || content.gems().is_some_and(|g| g.object == stack.object);
     !stack.is_spirit()
+        && !stack.is_unique()
         && !money
         && !stock
         && (stack.parts(content).iter())
@@ -145,6 +149,10 @@ impl World {
             self.say("You carry no such thing.");
             return Spent::Nothing;
         };
+        if stack.is_unique() {
+            self.say(crate::msg::uniques::NO_CRAFT);
+            return Spent::Nothing;
+        }
         if !salvageable(&self.content, stack) {
             self.say("There is nothing in it worth saving.");
             return Spent::Nothing;

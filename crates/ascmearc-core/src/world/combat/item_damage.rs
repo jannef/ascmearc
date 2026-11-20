@@ -110,8 +110,8 @@ fn quest_objects(content: &Content, quests: &crate::world::Quests) -> BTreeSet<O
 
 /// Whether the player knows `stack` to be protected from item damage while the quests stand as
 /// `quests` (the item description's Eye for the make, which reads perception, not the world):
-/// [`protected`] once its magic is identified; before, only a quest's object, so an unknown
-/// unique or Proof is not given away.
+/// [`protected`] once its magic is identified; before, a quest's object or a unique (its rarity
+/// shows, #1975), so an unknown Proof is not given away.
 pub(crate) fn protected_in(
     content: &Content,
     quests: &crate::world::Quests,
@@ -120,6 +120,6 @@ pub(crate) fn protected_in(
     let quest = quest_objects(content, quests);
     match stack.is_identified() {
         true => protected(content, &quest, stack),
-        false => quest.contains(&stack.object),
+        false => stack.is_unique() || quest.contains(&stack.object),
     }
 }

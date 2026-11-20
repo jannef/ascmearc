@@ -107,7 +107,8 @@ talent add to your Strength for this, as for a door. A chest that holds says
 
 A chest that breaks is **smashed**: `The coffer bursts apart!` Its lock is gone, and **each
 [stack](objects.md#piles) inside has an even chance to break**, one after another. The rest lies in
-the splinters. **Coins and loose [gems](gems.md) never break** under a boot. The
+the splinters. **Coins, loose [gems](gems.md), and [unique items](magic-items.md#unique-items)
+never break** under a boot. The
 [Lockbreaker](talents-exploring.md#talent-lockbreaker) talent (Strength 12) halves the chance.
 
 ```
@@ -123,8 +124,8 @@ Inside you find a dagger and 12 gold coins.
 A [blast](digging.md#explosions), such as a [fireball trap's](traps.md#trap-fireball) or a
 [scroll of fireball](scrolls.md#scroll-of-fireball)'s, **blows apart** a shut chest it reaches if
 it is stronger than the chest's **hardness** (the last column above): `The coffer is blown apart!`
-Each [stack](objects.md#piles) inside breaks with the same even chance, and **nothing is spared**,
-the coins and the [gems](gems.md) included. A fireball's blast (1000) blows apart anything up to a
+Each [stack](objects.md#piles) inside breaks with the same even chance, and **nothing is spared**
+but a [unique item](magic-items.md#unique-items): the coins and the [gems](gems.md) break too. A fireball's blast (1000) blows apart anything up to a
 strongbox; the great chests outlast it.
 
 {{#include generated/chest-breaking.md}}

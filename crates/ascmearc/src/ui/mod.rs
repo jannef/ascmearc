@@ -130,6 +130,9 @@ const PANEL_BG: Rgb = Rgb::new(0x12, 0x12, 0x18);
 const MAGIC: Rgb = Rgb::new(0x96, 0xaa, 0xe6);
 /// ...and of rare ones, a pale yellow (paler than the accent, so a selection still stands out).
 const RARE: Rgb = Rgb::new(0xe6, 0xd8, 0x8c);
+/// ...and of uniques (#1975), a deep golden orange: warmer and more saturated than the rare's
+/// pale yellow, the accent, and the gold coin's yellow.
+const UNIQUE: Rgb = Rgb::new(0xff, 0x99, 0x10);
 
 /// ...and of cursed ones the player knows of (#1754), whatever their rarity, a dull red.
 const CURSED: Rgb = Rgb::new(0xd0, 0x68, 0x60);
@@ -143,6 +146,7 @@ fn rarity_color(rarity: ascmearc_core::content::Rarity, cursed: bool, normal: Rg
         ascmearc_core::content::Rarity::Normal => normal,
         ascmearc_core::content::Rarity::Magic => MAGIC,
         ascmearc_core::content::Rarity::Rare => RARE,
+        ascmearc_core::content::Rarity::Unique => UNIQUE,
     }
 }
 /// The status bar's hunger word as it worsens: Hungry a mild yellow, Weak a
@@ -1301,6 +1305,36 @@ mod tests {
             for bg in [PANEL_BG, Rgb::BLACK] {
                 let ratio = contrast_ratio(fg, bg);
                 assert!(ratio >= 4.5, "{name} on {bg:?} is only {ratio:.2}:1");
+            }
+        }
+    }
+
+    /// #1975: a unique's name reads, and stands apart from every other rarity's colour, the
+    /// curse's, and the selection's accent, in every palette.
+    #[test]
+    fn the_unique_colour_stands_apart_in_every_palette() {
+        use crate::settings::palette::{Palette, Role, contrast_ratio};
+        for bg in [PANEL_BG, Rgb::BLACK] {
+            let ratio = contrast_ratio(UNIQUE, bg);
+            assert!(ratio >= 4.5, "UNIQUE on {bg:?} is only {ratio:.2}:1");
+        }
+        let distance = |a: Rgb, b: Rgb| {
+            let d = |x: u8, y: u8| (f32::from(x) - f32::from(y)).powi(2);
+            (d(a.r, b.r) + d(a.g, b.g) + d(a.b, b.b)).sqrt()
+        };
+        for palette in Palette::ALL {
+            let seen = |c: Rgb| palette.apply(c, Role::Fg);
+            for (name, other) in [
+                ("RARE", RARE),
+                ("MAGIC", MAGIC),
+                ("CURSED", CURSED),
+                ("ACCENT", ACCENT),
+            ] {
+                let apart = distance(seen(UNIQUE), seen(other));
+                assert!(
+                    apart >= 70.0,
+                    "{palette:?}: UNIQUE is {apart:.0} from {name}"
+                );
             }
         }
     }

@@ -67,9 +67,10 @@ fn is_set(content: &Content, stack: &Stack, part: PartId) -> bool {
 }
 
 /// Whether `stack` is an item the Set step offers: one with an ornament part, unset, not a loose
-/// gem, a piece of stock, or a spirit weapon (worn or wielded ones are left out by the caller).
+/// gem, a piece of stock, a spirit weapon, or a unique (worn or wielded ones are left out by the
+/// caller).
 pub fn settable(content: &Content, stack: &Stack) -> bool {
-    refusal(content, stack).is_none()
+    !stack.is_unique() && refusal(content, stack).is_none()
 }
 
 /// Why a gem cannot be set in `stack`, if it cannot.
@@ -112,6 +113,12 @@ fn resolve(
     };
     let pack = &player.inventory;
     let stack = pack.get(item).ok_or("You carry no such thing.")?;
+    if stack.is_unique() {
+        return Err(super::craft_make::english(
+            content,
+            crate::msg::uniques::NO_CRAFT.into(),
+        ));
+    }
     if let Some(text) = refusal(content, stack) {
         return Err(text.into());
     }

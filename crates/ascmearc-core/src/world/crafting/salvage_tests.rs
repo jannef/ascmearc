@@ -320,6 +320,25 @@ fn every_refusal_takes_no_time() {
     w.apply(&Action::Salvage { item: 0 });
     assert!(said(&w, "It will not come apart."));
     assert_eq!(w.state.time, before);
+    // A unique (#1975): refused first by its own line, and never listed.
+    let mut w = world(false, 3);
+    give(&mut w, |w| {
+        w.content()
+            .unique("widowmaker")
+            .expect("Widowmaker")
+            .stack
+            .clone()
+    });
+    let before = w.state.time;
+    w.apply(&Action::Salvage { item: 0 });
+    assert!(said(&w, "It is unique: no craft of yours will change it."));
+    assert_eq!(w.state.time, before);
+    assert_eq!(w.state.player().inventory.len(), 1, "kept");
+    let unique = &w.state.player().inventory[0];
+    assert!(!salvageable(w.content(), unique));
+    let mut plain = unique.clone();
+    plain.set_magic(None);
+    assert!(salvageable(w.content(), &plain), "its base would be");
     // No such stack.
     w.apply(&Action::Salvage { item: 9 });
     assert!(said(&w, "You carry no such thing."));

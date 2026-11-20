@@ -1,5 +1,5 @@
 //! Unique items (`data/uniques/` and each campaign's
-//! `data/uniques/`, one file per item named by its id): a rare item with a set name, set affixes
+//! `data/uniques/`, one file per item named by its id): an item of rarity unique (#1975) with a set name, set affixes
 //! and parts, a make (`quality`), an item level, a power ([`Power`]: a rule only a unique carries), and a line of
 //! lore. Content places one as `unique:ID` wherever it names objects (a pile, a legend's
 //! `objects` and `carry`, and `wield`/`wear` by the same name, a gear line, a kit, a shop's or a
@@ -9,12 +9,12 @@
 //! one. A trader's offer may name uniques instead (`content/offer.rs`, #808): those are made at
 //! run time, once a run each (`WorldState::uniques_offered`).
 //!
-//! The item is [`Magic`] of rarity rare with its name, plus [`Magic::unique`] (its id, saved),
+//! The item is [`Magic`] of rarity unique with its name, plus [`Magic::unique`] (its id, saved),
 //! by which its power and lore are found again ([`Content::unique`]).
 
 use super::level::{ItemPartSpec, hand_made, item_part, magic_of};
 use super::status::{OnHit, OnHitSpec};
-use super::{Content, ContentError, ObjectId, StatusId};
+use super::{Content, ContentError, ObjectId, Rarity, StatusId};
 use crate::item_parts;
 use crate::magic::{Magic, Quality};
 use crate::object::Stack;
@@ -160,6 +160,7 @@ fn resolve(spec: UniqueSpec, content: &Content) -> Result<UniqueDef, String> {
         .ok_or_else(|| format!("unknown object `{}`", spec.object))?;
     let def = content.object(object);
     let mut magic: Magic = magic_of(def, &spec.affixes, Some(name.into()), spec.level, content)?;
+    magic.rarity = Rarity::Unique;
     magic.unique = Some(spec.id.clone());
     let mut stack = Stack::with_magic(object, 1, magic);
     if !spec.parts.is_empty() {

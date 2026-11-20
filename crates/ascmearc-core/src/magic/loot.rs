@@ -436,7 +436,7 @@ fn roll_rarity(content: &Content, rng: &mut Rng, grade: LootGrade, luck: i32) ->
             weight
         }
     };
-    let weights: Vec<(Rarity, u32)> = (Rarity::ALL.into_iter())
+    let weights: Vec<(Rarity, u32)> = (Rarity::ROLLED.into_iter())
         .filter(|r| *r >= grade.least())
         .map(|r| (r, lucky(r, affixes.rarity_weight(r))))
         .collect();
