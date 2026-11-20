@@ -401,8 +401,8 @@ English, as developer text.
 phrase (`{trap:the}`, `{trap:a}`: "an arrow trap") and a chest by `chest_name` the same way
 (`{chest:the}`), until traps and chest bands have lexicon ids. An appraisal's `before` is the
 stack as the player knew it, owned by them (`{before:counted}`: "your gold ring", "your 2
-potions"), and `skills.realise` picks "is" or "are" by its count (`by = "before.number"`),
-as the string did. The herbs a gather finds are one stack's phrase or a list of them, each
+potions"), and `skills.realise` agrees its verb with it (`{before:is}`: "your boots are",
+where the string said "is"). The herbs a gather finds are one stack's phrase or a list of them, each
 `counted`. A trap's `sign` ("a tripwire") is a text role until the traps' text is converted.
 
 When no literal is left, `LITERAL`, the `From` text impls, and this section go.

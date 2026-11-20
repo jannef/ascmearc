@@ -1,7 +1,6 @@
 # Skills (`world/skills/`): appraising, disarming traps, feinting, foraging, gathering herbs,
 # intimidating, listening at doors, picking locks, searching, sidestepping traps, stealing, and
-# wedging doors. Ids alphabetical (`docs/dev/localization.md` "Literal lines"), the plain ones
-# first, then the tables.
+# wedging doors. Ids alphabetical (`docs/dev/localization.md` "Literal lines").
 #
 # Roles: `who` is the creature a line is about, as the player calls it; `what` an item, counted
 # (a phrase built where it is said; a list of them, each counted, where several were found);
@@ -85,6 +84,9 @@ picked_door = "You pick the lock and open the door."
 picked_over = "This fungus has been picked over."
 # `before`: what the player carried, theirs; `after`: what it turned out to be.
 read_magic = "You read the magic bound in {before:counted}: {after:counted}."
+# `before`: what the player carried, theirs ("your gold ring", "your 2 potions"); `after`: what
+# it turned out to be.
+realise = "You realise {before:counted} {before:is} {after:counted}."
 # `before`: what the player carried, theirs; `after`: what it turned out to be.
 recognise = "You recognise {before:counted}: {after:counted}."
 # `came`: what came, as a line told it; `time`: how long the search went on.
@@ -109,10 +111,3 @@ threaten = "You threaten {who:the}."
 wedge = "You drive a wedge under the door."
 wedge_untrained = "You do not know how to wedge a door."
 wedged_already = "That door is wedged already."
-
-# `before`: what the player carried, theirs ("your gold ring", "your 2 potions"); `after`: what
-# it turned out to be.
-[realise]
-by = "before.number"
-one = "You realise {before:counted} is {after:counted}."
-many = "You realise {before:counted} are {after:counted}."
