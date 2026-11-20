@@ -71,7 +71,8 @@
 #                 minutes = 10, hit_points = 50, berserk = 10, berserk_faction = "berserk",
 #                 berserk_message = "..." }`: the corpse's own type stands at `hit_points`
 #                 percent of its hit points, `most` and `minutes` as a summon's; `berserk`
-#                 percent rise in `berserk_faction` instead, saying `berserk_message`
+#                 percent rise in `berserk_faction` instead, saying `berserk_message` (a
+#                 line of data, `spell:<id>.effect.rise.berserk_message`)
 #     charm       a `hex` ray's or bolt's, with no `status`: `{ minutes = 5, mindless = ["undead"],
 #                 message = "takes you for a friend", ends = "shakes off the charm" }`
 #                 (`message` and `ends` lines of data, `spell:<id>.effect.charm.message`, said

@@ -31,7 +31,9 @@ use super::spell::burst_cells;
 use crate::action::{Breach, Event};
 use crate::content::{ActionKind, Content, Rod, RodDoes, RodEffect, RodShape};
 use crate::geom::Pos;
-use crate::text::capitalized;
+use crate::lang::{Msg, Phrase};
+use crate::msg;
+use crate::world::combat::fight;
 use crate::world::{Actor, ActorId, Spent, World};
 
 impl Actor {
@@ -79,7 +81,7 @@ impl World {
         let content = self.content.clone();
         let player = self.state.player;
         let Some(stack) = self.state.player().inventory.get(item) else {
-            self.say("You carry no such thing.");
+            self.say(msg::magic::CARRY_NO_SUCH_THING);
             return Spent::Nothing;
         };
         let Some(rod) = content.object(stack.object).rod else {
@@ -90,7 +92,7 @@ impl World {
         }
         let here = self.player_pos();
         if at == here {
-            self.say("You cannot zap at yourself.");
+            self.say(msg::magic::CANNOT_ZAP_YOURSELF);
             return Spent::Nothing;
         }
         let effect = content.rod_effect(rod.effect);
@@ -101,12 +103,12 @@ impl World {
         let me = self.state.player();
         if let Some(status) = me.effects.blocking(&content, ActionKind::Cast) {
             let name = content.status(status).name.to_lowercase();
-            self.say(format!("You cannot use a rod while {name}."));
+            self.say(Msg::new(msg::magic::CANNOT_USE_ROD_WHILE).role("status", name));
             return Spent::Nothing;
         }
         let base = me.rod_base(&content, &rod);
         if !self.spend_mana(player, base) {
-            self.say("You have not the mana to use it.");
+            self.say(msg::magic::NO_MANA_FOR_ROD);
             return Spent::Nothing;
         }
         self.say_rod(item);
@@ -132,11 +134,11 @@ impl World {
         let Some(rod) = self.state.player().inventory.get(item).cloned() else {
             return;
         };
-        let title = self.lore().title(&rod);
-        self.say(format!("You zap the {title}."));
+        let title = self.lore().title_phrase(&rod);
+        self.say(Msg::new(msg::magic::ZAP).role("what", title));
         if self.learn_scroll(rod.object) {
-            let what = self.content.object(rod.object).describe(1);
-            self.say(format!("It is {what}."));
+            let what = Phrase::id(format!("object:{}", self.content.object(rod.object).id));
+            self.say(Msg::new(msg::magic::IT_IS).role("what", what.count(1)));
         }
     }
 
@@ -168,9 +170,9 @@ impl World {
             }
         }
         self.say(if broken > 0 {
-            "The stone crumbles away before you."
+            msg::magic::STONE_CRUMBLES_AWAY
         } else {
-            "Nothing gives way."
+            msg::magic::NOTHING_GIVES_WAY
         });
     }
 
@@ -187,12 +189,12 @@ impl World {
         let level = self.state.current_level.clone();
         let hit = (path.iter()).find_map(|&p| self.state.actor_at(&level, p).map(|a| a.id));
         let Some(target) = hit else {
-            self.say("The bolt strikes nothing.");
+            self.say(msg::magic::BOLT_STRIKES_NOTHING);
             return;
         };
         let pos = self.state.actors[&target].pos;
         let seen = self.perception.sees_actors_at(pos);
-        let who = capitalized(&self.called(&self.state.actors[&target]));
+        let who = self.called_phrase(&self.state.actors[&target]);
         self.teleport(target, pos, events);
         // An attack, as a blow is: a shopkeeper or a court turns on the user.
         self.provoke(target);
@@ -200,9 +202,9 @@ impl World {
         self.break_empathy(target);
         if seen && self.is_rooted(target) {
             // A rooted one is never moved (`rooted.rs`).
-            self.say(format!("{who} holds fast."));
+            self.say(Msg::new(msg::magic::HOLDS_FAST).role("who", who));
         } else if seen {
-            self.say(format!("{who} vanishes!"));
+            self.say(Msg::new(msg::magic::VANISHES).role("who", who));
         }
     }
 
@@ -227,21 +229,24 @@ impl World {
             .map(|a| a.id)
             .collect();
         let content = self.content.clone();
-        let word = (content.status(status).seen.clone()).unwrap_or_else(|| "affected".into());
+        // The status as it looks, a `word:` phrase ("asleep"; else "affected").
+        let seen = content.status(status).seen.as_deref();
+        let word = fight::word(seen.unwrap_or("affected"));
         for id in caught {
             let actor = &self.state.actors[&id];
             let seen = self.perception.sees_actors_at(actor.pos);
-            let who = capitalized(&self.called(actor));
+            let who = self.called_phrase(actor);
             let creature_level = i32::from(content.creature(actor.creature).level);
             if limit.is_some_and(|l| creature_level > l) {
                 if seen {
-                    self.say(format!("{who} shrugs it off."));
+                    self.say(Msg::new(msg::magic::SHRUGS_IT_OFF).role("who", who));
                 }
                 continue;
             }
             self.afflict(id, status, severity, Some(player), events);
             if seen {
-                self.say(format!("{who} is {word}."));
+                let line = Msg::new(msg::magic::IS_STATUS).role("who", who);
+                self.say(line.role("status", word.clone()));
             }
         }
     }

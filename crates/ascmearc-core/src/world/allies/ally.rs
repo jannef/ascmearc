@@ -50,7 +50,7 @@ use super::companion::CompanionData;
 use crate::action::{Command, Event};
 use crate::combat::Profile;
 use crate::content::{
-    ActionKind, Content, CreatureId, CreatureSpawn, FactionId, LevelKind, SpellId, Stance, counted,
+    ActionKind, Content, CreatureId, CreatureSpawn, FactionId, LevelKind, SpellId, Stance,
 };
 use crate::geom::Pos;
 use crate::lang::{Arg, Msg, Phrase};
@@ -732,21 +732,5 @@ impl World {
             self.say(said.role("who", fight::creature(def)));
         }
         self.fallen.push(actor);
-    }
-}
-
-/// `count` of a thing in words, as the player is told it: "a wolf", "two wolves", "thirteen
-/// wolves" (the counts of a pack are small; a bigger one is a numeral).
-pub(in crate::world) fn few(name: &str, plural: &str, count: u32) -> String {
-    const WORDS: [&str; 13] = [
-        "no", "a", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
-        "eleven", "twelve",
-    ];
-    match count {
-        1 => counted(name, plural, 1),
-        n => match WORDS.get(n as usize) {
-            Some(word) => format!("{word} {plural}"),
-            None => format!("{n} {plural}"),
-        },
     }
 }

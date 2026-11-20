@@ -17,8 +17,9 @@
 //! Determinism: one gameplay draw for each further spell forgotten, none otherwise.
 
 use crate::content::SpellId;
+use crate::lang::{Arg, Msg};
+use crate::msg;
 use crate::rng::draw;
-use crate::text::and_list;
 use crate::world::{ActorId, World};
 
 impl World {
@@ -33,10 +34,13 @@ impl World {
         };
         me.set_spell_rank(spell, rank.saturating_sub(ranks).max(1));
         if caster == self.state.player {
-            let name = content
-                .spell_of(spell)
-                .map_or("the spell", |d| d.name.as_str());
-            self.say(format!("You know {name} less well than you did."));
+            // The spell's name is the data's text until it has a phrase (#1949).
+            match content.spell_of(spell) {
+                Some(def) => {
+                    self.say(Msg::new(msg::magic::KNOW_LESS_WELL).role("spell", def.name.clone()))
+                }
+                None => self.say(msg::magic::KNOW_THE_SPELL_LESS_WELL),
+            }
         }
     }
 
@@ -73,10 +77,10 @@ impl World {
             }
         }
         if caster == self.state.player {
-            let names: Vec<&str> = (gone.iter())
-                .filter_map(|&s| content.spell_of(s).map(|d| d.name.as_str()))
+            let names: Vec<Arg> = (gone.iter())
+                .filter_map(|&s| content.spell_of(s).map(|d| Arg::from(d.name.clone())))
                 .collect();
-            self.say(format!("You have forgotten {}.", and_list(&names)));
+            self.say(Msg::new(msg::magic::FORGOTTEN).role("spells", Arg::List(names)));
         }
     }
 }
