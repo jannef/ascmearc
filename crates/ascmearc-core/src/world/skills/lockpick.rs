@@ -23,9 +23,12 @@ use crate::action::Event;
 use crate::check::check;
 use crate::content::ActionKind;
 use crate::geom::{Dir, Pos};
+use crate::lang::Msg;
+use crate::msg;
 use crate::rng::draw;
 use crate::skills::{Effect, Use};
 use crate::stats::Stat;
+use crate::world::combat::fight::word;
 use crate::world::{Spent, World};
 
 impl World {
@@ -34,7 +37,7 @@ impl World {
         let content = self.content.clone();
         let me = self.state.player();
         if !crate::ability::Ability::PickLock.had_by(me, &content) {
-            self.say("You do not know how to pick locks.");
+            self.say(msg::skills::PICK_UNTRAINED);
             return Spent::Nothing;
         }
         let modifier =
@@ -49,13 +52,16 @@ impl World {
         // A shut chest's lock is picked as a door's.
         let chest = def.is_some_and(|d| d.is_shut_chest());
         if !def.is_some_and(|d| d.is_closed_door()) && !chest {
-            self.say("There is no lock there.");
+            self.say(msg::skills::NO_LOCK);
             return Spent::Nothing;
         }
         if !level.locks.contains_key(&at) {
             match chest {
-                true => self.say(format!("The {} is not locked.", self.chest_name(at))),
-                false => self.say("That door is not locked."),
+                true => self.say(
+                    Msg::new(msg::skills::CHEST_NOT_LOCKED)
+                        .role("chest", word(&self.chest_name(at))),
+                ),
+                false => self.say(msg::skills::DOOR_NOT_LOCKED),
             }
             return Spent::Nothing;
         }
@@ -73,17 +79,17 @@ impl World {
             self.train(Use::Pick);
         }
         if !picked {
-            self.say("You fail to pick the lock.");
+            self.say(msg::skills::PICK_FAILED);
             return Spent::Turn(try_price);
         }
         self.state.current_mut().locks.remove(&at);
         if chest {
-            let name = self.chest_name(at);
-            self.say(format!("You pick the lock and open the {name}."));
+            let chest = word(&self.chest_name(at));
+            self.say(Msg::new(msg::skills::PICKED_CHEST).role("chest", chest));
             self.open_lid(at, events);
             return Spent::Turn(try_price + open_price);
         }
-        self.say("You pick the lock and open the door.");
+        self.say(msg::skills::PICKED_DOOR);
         self.swing_open(player, at, events);
         Spent::Turn(try_price + open_price)
     }

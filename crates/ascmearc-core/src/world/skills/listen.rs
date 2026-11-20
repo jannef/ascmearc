@@ -12,6 +12,7 @@
 use crate::ability::Ability;
 use crate::content::ActionKind;
 use crate::geom::Dir;
+use crate::msg;
 use crate::noise::Listening;
 use crate::skills::{Effect, Use};
 use crate::world::{Spent, World};
@@ -21,7 +22,7 @@ impl World {
     pub(in crate::world) fn listen(&mut self, dir: Dir) -> Spent {
         let player = self.state.player;
         if !Ability::Listen.had_by(self.state.player(), &self.content) {
-            self.say("You do not know how to listen so.");
+            self.say(msg::skills::LISTEN_UNTRAINED);
             return Spent::Nothing;
         }
         let at = self.player_pos().step(dir);
@@ -31,7 +32,7 @@ impl World {
             .get(at)
             .is_some_and(|t| self.content.terrain(*t).opens_to.is_some());
         if !closed {
-            self.say("There is no closed door there to listen at.");
+            self.say(msg::skills::NO_DOOR_TO_LISTEN_AT);
             return Spent::Nothing;
         }
         let skill = self
@@ -44,7 +45,7 @@ impl World {
         if self.trains(Use::Listen) {
             self.train(Use::Listen);
         }
-        self.say("You press your ear to the door and listen.");
+        self.say(msg::skills::LISTEN);
         Spent::Turn(self.price_of(player, ActionKind::Wait))
     }
 }

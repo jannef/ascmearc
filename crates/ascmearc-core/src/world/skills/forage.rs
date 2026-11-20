@@ -35,7 +35,9 @@
 use crate::action::Event;
 use crate::content::{ActionKind, Content, ForageGround, Landscape, LevelKind, parse_local_area};
 use crate::geom::Pos;
+use crate::lang::Msg;
 use crate::magic::loot::pick_weighted;
+use crate::msg;
 use crate::object::{self, Stack};
 use crate::rng::draw;
 use crate::skills::{Effect, Use};
@@ -79,17 +81,17 @@ impl World {
         let content = self.content.clone();
         let me = self.state.player();
         if content.forage().is_none() || !crate::ability::Ability::Forage.had_by(me, &content) {
-            self.say("You do not know how to live off the land.");
+            self.say(msg::skills::FORAGE_UNTRAINED);
             return Spent::Nothing;
         }
         let Some(rules) = content.forage() else {
             return Spent::Nothing;
         };
         if forage_ground(&content, self.state.current(), self.player_pos()).is_none() {
-            self.say("There is nothing to forage here.");
+            self.say(msg::skills::NOTHING_TO_FORAGE);
             return Spent::Nothing;
         }
-        self.say("You search the land about you for something to eat.");
+        self.say(msg::skills::FORAGE_START);
         Spent::Forage(rules.seconds)
     }
 
@@ -113,10 +115,10 @@ impl World {
             Ended::Died => {}
             _ if self.state.time >= until => self.forage_done(),
             Ended::Came(came) => {
-                let text = format!("{}; you stop foraging.", self.came_line(came));
-                self.say(text);
+                let came = self.came_line(came);
+                self.say(Msg::new(msg::skills::FORAGE_BROKEN_BY).role("came", came));
             }
-            Ended::Said | Ended::Done => self.say("You stop foraging."),
+            Ended::Said | Ended::Done => self.say(msg::skills::STOP_FORAGING),
         }
     }
 
@@ -124,7 +126,7 @@ impl World {
     fn forage_done(&mut self) {
         let content = self.content.clone();
         let Some(ground) = forage_ground(&content, self.state.current(), self.player_pos()) else {
-            self.say("You find nothing worth eating.");
+            self.say(msg::skills::NOTHING_TO_EAT);
             return;
         };
         let bonus = self.state.player().skill_effect(&content, Effect::Forage);
@@ -139,13 +141,13 @@ impl World {
                 let count = ground.count.roll(&mut rng).max(1);
                 let mut stacks = [Stack::new(object, count.unsigned_abs())];
                 crate::rot::made_at(&mut stacks, &content, self.state.time);
-                let text = format!("You gather {}.", object::phrase(&stacks, self.lore()));
-                self.say(text);
                 let [stack] = stacks;
+                let what = self.lore().phrase(&stack);
+                self.say(Msg::new(msg::skills::FORAGED).role("what", what));
                 object::add_to_inventory(self.state.inventory_mut(), stack, &content);
                 self.forage_herbs(ground);
             }
-            None => self.say("You find nothing worth eating."),
+            None => self.say(msg::skills::NOTHING_TO_EAT),
         }
         if self.trains(Use::Forage) {
             self.train(Use::Forage);
@@ -170,12 +172,9 @@ impl World {
         };
         let mut stacks = [Stack::new(herb, 1)];
         crate::rot::made_at(&mut stacks, &content, self.state.time);
-        let text = format!(
-            "Your eye for herbs finds {} besides.",
-            object::phrase(&stacks, self.lore())
-        );
-        self.say(text);
         let [stack] = stacks;
+        let what = self.lore().phrase(&stack);
+        self.say(Msg::new(msg::skills::HERBS_BESIDES).role("what", what));
         object::add_to_inventory(self.state.inventory_mut(), stack, &content);
     }
 }

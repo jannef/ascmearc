@@ -1,0 +1,118 @@
+# Skills (`world/skills/`): appraising, disarming traps, feinting, foraging, gathering herbs,
+# intimidating, listening at doors, picking locks, searching, sidestepping traps, stealing, and
+# wedging doors. Ids alphabetical (`docs/dev/localization.md` "Literal lines"), the plain ones
+# first, then the tables.
+#
+# Roles: `who` is the creature a line is about, as the player calls it; `what` an item, counted
+# (a phrase built where it is said; a list of them, each counted, where several were found);
+# `before` and `after` an item the player carries as they knew it and as it turned out to be,
+# `before` theirs ("your gold ring"); `trap` a trap by its type's name ("arrow trap"); `chest` a
+# chest by its name ("coffer"); `came` the clause that says what stopped a long action ("A kobold
+# comes into view"); `time` how long it went on ("3 minutes"). `sign` is how a hidden trap shows
+# ("a tripwire"), English words from the data, text until that data's text is converted.
+
+all_of_a_piece = "It is all of a piece."
+# `trap`: the trap avoided.
+avoid_trap = "You deftly avoid {trap:the}."
+# `who`: the creature that caught the thief.
+caught_stealing = "{who:The} catches you stealing and turns on you!"
+# `chest`: the chest picked at.
+chest_not_locked = "{chest:The} is not locked."
+disarm_failed = "You fail to disarm {trap:the}."
+disarm_untrained = "You do not know how to disarm traps."
+disarmed = "You disarm {trap:the}."
+door_not_locked = "That door is not locked."
+# `who`: the foe fooled.
+falls_for_it = "{who:The} falls for it."
+feint_untrained = "You do not know how to feint."
+# `came`: what came, as a line told it.
+forage_broken_by = "{came:bare}; you stop foraging."
+forage_start = "You search the land about you for something to eat."
+forage_untrained = "You do not know how to live off the land."
+# `what`: the food found.
+foraged = "You gather {what:counted}."
+# `came`: what came, as a line told it.
+gather_broken_by = "{came:bare}; you stop gathering."
+gather_start = "You search the glowing fungus for herbs."
+gather_untrained = "You do not know what to do with these: gathering herbs takes the Herbalism skill."
+# `what`: the herbs found, a stack or a list of them.
+gathered = "You gather {what:counted}."
+# `what`: the herb found besides the food.
+herbs_besides = "Your eye for herbs finds {what:counted} besides."
+# `who`: the creature stolen from.
+hostile_to_thief = "{who:The} is hostile: it would never let you near enough."
+intimidate_untrained = "You do not know how to intimidate."
+intimidate_yourself = "You cannot intimidate yourself."
+listen = "You press your ear to the door and listen."
+listen_untrained = "You do not know how to listen so."
+no_door_to_listen_at = "There is no closed door there to listen at."
+no_door_to_wedge = "There is no closed door there to wedge."
+# `who`: the creature threatened or feinted at.
+no_foe = "{who:The} is no foe of yours."
+# `who`: the creature threatened.
+no_heart = "{who:The} has no heart to quail."
+# `who`: the creature threatened.
+no_heed = "{who:The} pays you no heed."
+no_known_trap = "You know of no trap there."
+no_lock = "There is no lock there."
+# `who`: the creature feinted at.
+no_mind = "{who:The} has no mind to fool."
+no_one_to_feint_at = "You see no one there to feint at."
+no_one_to_intimidate = "You see no one there to intimidate."
+no_one_to_steal_from = "You see no one there to steal from."
+no_pockets = "It has no pockets."
+# `who`: the foe that saw through the feint.
+not_fooled = "{who:The} is not fooled."
+nothing_to_eat = "You find nothing worth eating."
+nothing_to_forage = "There is nothing to forage here."
+nothing_to_gather = "There is nothing here to gather."
+# `who`: the creature stolen from.
+nothing_to_take = "You find nothing to take from {who:the}."
+nothing_worth_gathering = "You find nothing worth gathering."
+# `chest`: the chest picked at; `trap`: the trap on it.
+notice_chest_trapped = "You notice that {chest:the} is trapped: {trap:a}."
+# `trap`: the trap on the door.
+notice_door_trapped = "You notice that the door is trapped: {trap:a}."
+# `sign`: how the trap shows, as the data writes it ("a tripwire"); `trap`: the trap.
+notice_trap = "You notice {sign:bare}: {trap:a}."
+out_of_range = "That is out of range."
+pick_failed = "You fail to pick the lock."
+pick_untrained = "You do not know how to pick locks."
+picked_bare = "The fungus is picked bare."
+# `chest`: the chest opened.
+picked_chest = "You pick the lock and open {chest:the}."
+picked_door = "You pick the lock and open the door."
+picked_over = "This fungus has been picked over."
+# `before`: what the player carried, theirs; `after`: what it turned out to be.
+read_magic = "You read the magic bound in {before:counted}: {after:counted}."
+# `before`: what the player carried, theirs; `after`: what it turned out to be.
+recognise = "You recognise {before:counted}: {after:counted}."
+# `came`: what came, as a line told it; `time`: how long the search went on.
+search_broken_by = "{came:bare}; you stop searching after {time:bare}."
+# `time`: how long the search went on.
+searched_nothing = "You search for {time:bare} and find nothing."
+secret_door = "You find a secret door!"
+# `trap`: the trap that went off.
+set_off = "You set off {trap:the}!"
+sounds_hollow = "The wall here sounds hollow."
+steal_untrained = "You do not know how to steal."
+# `trap`: the pit stepped over.
+step_over = "You step lightly over {trap:the}."
+# `what`: what was taken; `who`: from whom.
+stole = "You steal {what:counted} from {who:the}."
+stop_foraging = "You stop foraging."
+stop_gathering = "You stop gathering."
+# `time`: how long the search went on.
+stop_searching = "You stop searching after {time:bare}."
+# `who`: the creature threatened.
+threaten = "You threaten {who:the}."
+wedge = "You drive a wedge under the door."
+wedge_untrained = "You do not know how to wedge a door."
+wedged_already = "That door is wedged already."
+
+# `before`: what the player carried, theirs ("your gold ring", "your 2 potions"); `after`: what
+# it turned out to be.
+[realise]
+by = "before.number"
+one = "You realise {before:counted} is {after:counted}."
+many = "You realise {before:counted} are {after:counted}."

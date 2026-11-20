@@ -18,6 +18,8 @@
 //! not known that is neither a potion nor a scroll). Each draws only when trained and with a
 //! candidate: one draw for the chance, one for which. They mark nothing until their crafts come.
 
+use crate::lang::Msg;
+use crate::msg;
 use crate::rng::Rng;
 use crate::skills::{Effect, Use};
 use crate::time::{GameTime, HOUR};
@@ -97,32 +99,20 @@ impl World {
         let Some(stack) = self.state.player().inventory.get(item) else {
             return;
         };
-        let before = self.lore().describe(stack);
-        let many = stack.count > 1;
-        let Identified::Now(after) = self.learn_item(item) else {
+        // As they knew it, theirs: "your gold ring", "your 2 potions".
+        let before = self.lore().phrase(stack).owned_by(self.you());
+        let Identified::Now(_) = self.learn_item(item) else {
             return;
         };
-        let before = bare(&before);
-        match look {
-            Effect::IdentifyPotion => self.say(format!("You recognise your {before}: {after}.")),
-            Effect::IdentifyMagic => {
-                self.say(format!(
-                    "You read the magic bound in your {before}: {after}."
-                ));
-            }
-            _ => {
-                let is = if many { "are" } else { "is" };
-                self.say(format!("You realise your {before} {is} {after}."));
-                self.train(Use::Appraise);
-            }
+        let after = self.lore().phrase(&self.state.player().inventory[item]);
+        let id = match look {
+            Effect::IdentifyPotion => msg::skills::RECOGNISE,
+            Effect::IdentifyMagic => msg::skills::READ_MAGIC,
+            _ => msg::skills::REALISE,
+        };
+        self.say(Msg::new(id).role("before", before).role("after", after));
+        if !matches!(look, Effect::IdentifyPotion | Effect::IdentifyMagic) {
+            self.train(Use::Appraise);
         }
     }
-}
-
-/// `name` without its leading article: "a gold ring" → "gold ring"; "2 potions" stays.
-fn bare(name: &str) -> &str {
-    ["a ", "an ", "the "]
-        .iter()
-        .find_map(|article| name.strip_prefix(article))
-        .unwrap_or(name)
 }

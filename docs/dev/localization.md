@@ -15,7 +15,7 @@ the controls, settings, and mods screens (#1935) and the object and rig screens 
 ("Literal lines"); and **L5**, dialogue (#1888): every line a creature says is a line of data
 said by its key, with role slots in the base form ("Dialogue"), on the one mechanism every line
 whose text lives in data uses ("Lines of data"). The doors, the welcome line, combat, allies,
-the character, health, levels, and talk say theirs from templates; every other `say` site still says finished English
+the character, health, levels, skills (L4n, #1925), and talk say theirs from templates; every other `say` site still says finished English
 as a literal line ("Literal lines"). Nothing player-visible has
 changed: the English templates and phrases read as the strings did. The English helpers core,
 the app, and the wiki generator call have moved into the crate behind re-exports at their old
@@ -396,6 +396,14 @@ talent's, a tree's, a skill's, a resource's, and a profane gift's names, a statu
 case, and `Unavailable::reason`. A talent's refusal (`talent::Refusal::words`) stays a literal
 line. `World::learn` returns `Msg`s; `creation_offers` and the creation errors render them in
 English, as developer text.
+
+`world/skills/` (`messages/skills.toml`, L4n) names a trap by its type's `name` as a `word:`
+phrase (`{trap:the}`, `{trap:a}`: "an arrow trap") and a chest by `chest_name` the same way
+(`{chest:the}`), until traps and chest bands have lexicon ids. An appraisal's `before` is the
+stack as the player knew it, owned by them (`{before:counted}`: "your gold ring", "your 2
+potions"), and `skills.realise` picks "is" or "are" by its count (`by = "before.number"`),
+as the string did. The herbs a gather finds are one stack's phrase or a list of them, each
+`counted`. A trap's `sign` ("a tripwire") is a text role until the traps' text is converted.
 
 When no literal is left, `LITERAL`, the `From` text impls, and this section go.
 
