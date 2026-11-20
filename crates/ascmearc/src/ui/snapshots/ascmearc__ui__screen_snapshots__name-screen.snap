@@ -1,6 +1,6 @@
 ---
 source: crates/ascmearc/src/ui/screen_snapshots.rs
-expression: shown
+expression: "render(case, content.clone())"
 ---
 
 
@@ -13,7 +13,7 @@ expression: shown
 
               ┌─ Choose your name (5 of 5) ──────────────────────────────────────────┐
               │                                                                      │
-              │   What is the name of your human thief?                              │
+              │   What is the name of a human thief?                                 │
               │                                                                      │
               │   Name: [Brakka_              ]                                      │
               │                                                                      │

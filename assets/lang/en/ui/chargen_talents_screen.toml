@@ -16,7 +16,9 @@ text = "Chance"
 
 # Why a talent cannot be marked now: `count`, how many talents the character has.
 [chosen_all]
-text = "You have chosen {count:bare} talents: unmark one first."
+by = "count.number"
+one = "You have chosen your talent: unmark it first."
+many = "You have chosen {count:bare} talents: unmark one first."
 
 # The footer's hint to mark a talent: `confirm`, the key.
 [mark]

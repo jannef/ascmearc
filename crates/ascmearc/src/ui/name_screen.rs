@@ -17,10 +17,20 @@ use crate::render::console::Console;
 use crate::settings::fixed;
 use ascmearc_core::character::{MAX_NAME, NAMELESS, random_name};
 use ascmearc_core::content::Content;
-use ascmearc_core::lang::Arg;
+use ascmearc_core::lang::{Arg, Modifier, Phrase, Word};
 
 /// How many random names Random goes through before it starts over.
 const DRAWS: u32 = 64;
+
+/// The panel's question about a `race` `class` character: "What is the name of a human thief?".
+/// The class is the head word and the race an adjective before it, both words of the lexicon by
+/// their English (`word:<text>`); the language says the article ("an elf wizard").
+fn question(race: &str, class: &str) -> String {
+    let race = Word::id(format!("word:{}", race.to_lowercase()));
+    let character =
+        Phrase::id(format!("word:{}", class.to_lowercase())).with(Modifier::Adjective(race));
+    ui_with(T::QUESTION, &[("character", Arg::from(character))])
+}
 
 /// The Name step.
 #[derive(Debug)]
@@ -55,11 +65,7 @@ impl NameScreen {
         let question = spec.map_or(String::new(), |spec| {
             let race = (spec.race(content)).map_or(spec.race.clone(), |r| r.name.clone());
             let class = (spec.class(content)).map_or(spec.class.clone(), |c| c.name.clone());
-            let args = [
-                ("race", Arg::from(race.to_lowercase())),
-                ("class", class.to_lowercase().into()),
-            ];
-            ui_with(T::QUESTION, &args)
+            question(&race, &class)
         });
         Self {
             field: TextField::new(draft.remembered_name().unwrap_or_default(), MAX_NAME),
@@ -265,13 +271,25 @@ mod tests {
     }
 
     #[test]
+    fn the_question_gives_the_article_of_the_race() {
+        assert_eq!(
+            question("Human", "Thief"),
+            "What is the name of a human thief?"
+        );
+        assert_eq!(
+            question("Elf", "Wizard"),
+            "What is the name of an elf wizard?"
+        );
+    }
+
+    #[test]
     fn the_field_shows_the_name_and_the_keys_as_bound() {
         let content = content();
         let mut s = NameScreen::new(&content, &draft(&content));
         let text = drawn(&s);
         assert!(text.contains("Choose your name (5 of 5)"), "{text}");
         assert!(
-            text.contains("What is the name of your human thief?"),
+            text.contains("What is the name of a human thief?"),
             "{text}"
         );
         assert!(text.contains(&format!("[{}_", s.placeholder())), "{text}");
