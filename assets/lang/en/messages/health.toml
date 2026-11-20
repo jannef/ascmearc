@@ -55,6 +55,12 @@ feel_healthy = "You feel healthy."
 feel_satiated = "You feel satiated."
 feel_whole = "You feel whole."
 fills_you = "It fills you as a good meal would."
+# How fresh food looks to a trained eye (`rot::Stage::word`) or smells to a hound's nose
+# (`Freshness::word`), a word said in a screen's or the look line's clause.
+food_fresh = "fresh"
+food_old = "old"
+food_rotten = "rotten"
+food_turning = "turning"
 getting_hungry = "You are getting hungry."
 # `what`: the stat's word ("strength", "nimbleness").
 gift_passes = "Something of its {what:bare} passes into you."

@@ -127,8 +127,9 @@ pub enum CraftStepKind {
 pub struct CraftOption {
     /// Its inventory position.
     pub at: usize,
-    /// As the inventory lists it.
-    pub name: String,
+    /// As the inventory lists it (`Lore::listed`), a message the screen renders; a seal's
+    /// family, its word as the data writes it.
+    pub name: crate::lang::Msg,
     /// What it is, in a word for the running choice: its material ("steel", "ruby"), or the
     /// object's name for an input.
     pub short: String,

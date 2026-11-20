@@ -264,7 +264,7 @@ fn the_seal_steps_follow_the_crystal_and_the_item() {
     let quicken = recipe(&w, "quicken");
     let words = |picks: &[Option<usize>], step: usize| -> Vec<String> {
         (view.craft_steps_given(quicken, picks)[step].options.iter())
-            .map(|o| o.name.clone())
+            .map(|o| o.short.clone())
             .collect()
     };
     let steps = view.craft_steps_given(quicken, &[]);

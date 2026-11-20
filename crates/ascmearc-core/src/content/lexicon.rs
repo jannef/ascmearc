@@ -15,6 +15,7 @@
 //! | `stock:<material id>` | the form word a piece of the material is called by ("ingot", "lump") |
 //! | `race:<id>` | its `name` in lower case ("halfling") |
 //! | `resource:<id>` | its `name` in lower case ("rage") |
+//! | `room:<id>` | a special room's `name` ("echoing hall", `data/room_effects/`) |
 //! | `skill:<id>` | its `name` in lower case ("open lock") |
 //! | `status:<id>` | its `name` in lower case ("hasted") |
 //! | `terrain:<id>` | its `name` ("stone wall") |
@@ -113,6 +114,10 @@ impl Lexicon for Content {
             "resource" => {
                 let def = self.resource(self.resource_id(key)?);
                 Some(LexWord::new(def.name.to_lowercase()))
+            }
+            "room" => {
+                let effects = self.room_effects();
+                Some(LexWord::new(&effects.get(effects.id(key)?).name))
             }
             "skill" => Some(LexWord::new(
                 self.skill(self.skill_id(key)?).name.to_lowercase(),
@@ -343,6 +348,7 @@ mod tests {
         assert_eq!(word("sign:fire.manticore").base, "Fire Manticore");
         assert_eq!(word("class:warrior").base, "warrior");
         assert_eq!(word("stance:aggressive").base, "aggressive");
+        assert_eq!(word("room:echoing").base, "echoing hall");
         assert!(word("word:flames").many, "a plural noun");
         assert!(word("disease:the_shakes").many, "the data says so");
         assert_eq!(word("disease:the_shakes").base, "the shakes");

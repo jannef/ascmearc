@@ -38,7 +38,8 @@ fn plain(w: &World, object: &str) -> Stack {
 }
 
 fn text(w: &World, stack: &Stack) -> Option<String> {
-    Numbers::of(stack, w.content()).text(w.content())
+    let words = Numbers::of(stack, w.content()).words(w.content())?;
+    Some(crate::messages::english_arg(w.content(), &words, "bare"))
 }
 
 /// The player wears `stack` in `slot`, whatever was there taken off.
@@ -76,7 +77,8 @@ fn a_weapon_shows_its_to_hit_and_damage_with_its_known_affixes() {
     let flaming = magic(&w, "long_sword", &[("flaming", 4)], true);
     assert_eq!(text(&w, &flaming).as_deref(), Some("+0 hit, 1d9 +1d4 fire"));
     // The listed name carries them after it.
-    let listed = w.perception().lore().listed(&sword);
+    let listed =
+        crate::test_support::english_of(w.content(), &w.perception().lore().listed(&sword));
     assert!(listed.ends_with("long sword (+1 hit, 1d9+1)"), "{listed}");
 }
 

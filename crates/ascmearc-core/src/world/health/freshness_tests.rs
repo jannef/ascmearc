@@ -49,7 +49,9 @@ fn breads(w: &World, count: u64) -> Vec<Stack> {
 /// What the player is told about each of `stacks`.
 fn told(w: &World, stacks: &[Stack]) -> Vec<Option<&'static str>> {
     let view = w.perception();
-    stacks.iter().map(|s| view.judge(s)).collect()
+    (stacks.iter())
+        .map(|s| view.judge(s).map(rot::Stage::id))
+        .collect()
 }
 
 #[test]

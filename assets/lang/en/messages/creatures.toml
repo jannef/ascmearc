@@ -29,6 +29,8 @@ casts_on = "{who:The} casts {spell:bare} on {target:the}."
 chest_breathing = "You notice {chest:the} breathing: {who:a}!"
 chest_lurches = "{chest:The} lurches: it is {who:a}!"
 chest_shudders = "{chest:The} shudders: it is {who:a}!"
+# An unseen shadowy creature comes near (`creatures/unseen.rs`).
+cold_draught = "You feel a cold draught."
 cold_stare = "You feel a cold stare on you."
 # A dev action's: `who`, the creature that came.
 comes_dev = "A {who:bare} comes (dev)."

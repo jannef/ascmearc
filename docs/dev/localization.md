@@ -290,9 +290,10 @@ identified (`scroll_label_tests.rs::a_line_names_a_scroll_as_it_was_seen_then`).
 docs hold the table): `creature:<id>`, `object:<id>` (with `written`, `written_plural`, and
 `material`, for an item made of its own parts), `affix:<id>`, `material:<id>`, `part:<id>` (its
 `adjective`), `gem_size:<id>`, `gem_cut:<id>`, `stock:<material id>` (a piece's form word),
-`terrain:<id>`, `label:scroll|wand|rod|potion` (an unidentified type's name with its `{label}`
-and `{colour}` slots), `colour:<colour>`, and `word:<text>`: a word the data names without an id
-of its own (a natural attack's "bite", a thrown "stone", "something"), keyed
+`terrain:<id>`, `room:<id>` (a special room's name, #1998), `label:scroll|wand|rod|potion` (an
+unidentified type's name with its `{label}` and `{colour}` slots), `colour:<colour>`, and
+`word:<text>`: a word the data names without an id of its own (a natural attack's "bite", a
+thrown "stone", "something"), keyed
 by its English, which is the word; `disease:<id>` (its name as written, "the shakes"); and
 `status:<id>`, `skill:<id>`, and `resource:<id>` (#1992: the name in lower case, as `race:<id>`'s,
 "hasted", "open lock", "rage"; `Content::status_phrase`, `skill_phrase`, `resource_phrase`), said
@@ -546,10 +547,9 @@ turning. The one who falls, vanishes, or dies of a status is its creature (`figh
 player `World::you()`; an item that falls below `Lore::title_phrase` said `{what:The}`; the
 stairs one stands on a `terrain:` phrase. How long a rest went on is
 `Duration::spoken` ("Words core picks"). Text roles until their words are converted (#1949):
-the dev actions' weather and vision names. Other
-modules' text it says as it is: a sound heard (`noise.rs`), a room entered
-(`fixtures/shrine.rs::enter_line`), and the draught of an unseen shadow
-(`creatures/unseen.rs::DRAUGHT_LINE`), until their slices.
+the dev actions' weather and vision names. A sound heard is `noise.toml`'s (#1998, "Reasons
+core composes"), a room entered its effect's line of data (`fixtures/shrine.rs::enter_line`),
+and the draught of an unseen shadow `creatures.cold_draught`.
 
 Its second half (L4d: `merchants_eye`, `openings`, `orison`, `rage`, `sanctuary`, `smite`,
 `song`, `spirit_weapon`, `stipend`, `thief`, `volley`, `war_cry`, `witch`) says the prayer's
@@ -695,6 +695,22 @@ remainder): a talent's requirements (`Need::words` but a stat's), `takes_words` 
 `Lack`, `CraftPlan` and `RecipeLack::reason`, a heal's ailment names, an attack's source label
 and summary, and `magic/describe.rs`.
 
+**The look line's and the cell's words** (#1998, its first half). **An item as the lists name
+it** (`Lore::listed`) is `items.listed`, the phrase `counted` with `listed_numbers` and
+`listed_spirit` or an empty slot after it; the numbers (`Numbers::words`) are `items.numbers_*`
+parts listed by `numbers_listed`, a signed number and dice written as text (notation every
+language writes alike; a rider's damage type a text role until #1994). The screens render it
+(`text::ui_msg`), a crafting choice holds it (`CraftOption::name`, a seal's family word as text),
+the dumps and a ware's words render English (`english_msg`). Food's freshness (`rot::Stage::word`,
+`Freshness::word`) is `health.food_*`; **a sound heard** is `noise.toml`'s: what it is heard as
+(`SoundKind::heard_as`, `heard_*`), the clause (`you_hear`, `you_faintly_hear`), and the line
+(`heard`, `heard_from` with the direction a text role until `Dir::compass_name` is converted,
+#1996), nested in the look line's `heard_here`; the draught of an unseen shadow is
+`creatures.cold_draught`; a special room is `room:<id>` (`{room:a}`, "in an echoing hall"; the
+wiki keeps `RoomEffectDef::with_article`). How hurt a creature looks is #1996's (`Health::word`).
+Still text (the rest of #1998): where stairs lead (`leads_to`, a level's or a branch level's
+name), a place's name and note (`Place`, a legend's), and the welcome's scenario name.
+
 ## UI text (L6)
 
 **Files.** `assets/lang/en/ui/<module>.toml`, one per screen or UI module, named as its
@@ -818,10 +834,11 @@ terrain `noun`), its phrase `terrain:<id>` with char, blood (`char:`, `blood:`),
 material an `Of`), an ally's owned by the player, a named one a literal; things are the lore's
 phrases said `a` (a rare "the Grim Bite, a long sword"). A list said with commas or semicolons
 (a creature's state, a room's, an item's tags) nests `listed` or `tags`, so the language owns
-the separator. Core's words it says as text until #1949: a sound heard (`you_hear`), an item's
-numbers and freshness, a damage type's name, a room's name with its article (`with_article`),
-where stairs lead, and a place's name and note. A status's `seen`, a chest's band and state, a
-trap's name, and the grade's, char's, and blood's words are lexicon ids (#1995).
+the separator. A sound heard, an item's numbers and freshness, and a room's name are core's
+messages and phrases (#1998, "Reasons core composes"). A status's `seen`, a chest's band and
+state, a trap's name, and the grade's, char's, and blood's words are lexicon ids (#1995). Core's
+words it says as text until #1949: a damage type's name, where stairs lead, and a place's name
+and note.
 
 **The dialogue screens and dialogs** (#1934): `dialog_screen.toml` holds only the one dialog's
 own words (its footer, the keys after an option); every title, question, and option is its

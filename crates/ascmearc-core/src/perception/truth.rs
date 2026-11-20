@@ -1242,17 +1242,16 @@ impl<'a> PerceptionView<'a> {
     }
 
     /// How fresh `stack`, a corpse or food the player has in front of them, looks to an eye
-    /// trained in Appraise or Survival (`world/health/freshness.rs`): `fresh`, `old`,
-    /// or `rotten` when their check passes, `None` otherwise.
-    pub fn judge(&self, stack: &Stack) -> Option<&'static str> {
-        let stage = crate::world::health::freshness::judged(
+    /// trained in Appraise or Survival (`world/health/freshness.rs`): fresh, old, or rotten
+    /// when their check passes (said by [`crate::rot::Stage::word`]), `None` otherwise.
+    pub fn judge(&self, stack: &Stack) -> Option<crate::rot::Stage> {
+        crate::world::health::freshness::judged(
             self.content,
             self.player,
             self.seed,
             stack,
             self.time,
-        )?;
-        Some(stage.id())
+        )
     }
 
     /// The open shop whose floor `p` is, if the player sees or remembers `p` (its sign and goods

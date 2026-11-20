@@ -46,7 +46,7 @@ use super::menu::{HINTS, Nav, Panel, Press, wrap};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::ScreenAction;
 use super::target::AimKind;
-use super::text::{UiText, object_screen as T, ui, ui_with};
+use super::text::{UiText, object_screen as T, ui, ui_msg, ui_with};
 use super::{ACCENT, ScreenName, TEXT, TEXT_DIM, rarity_color};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
@@ -476,7 +476,7 @@ impl ObjectScreen {
                 let judged = (list == ObjectList::Eat && smell.is_none())
                     .then(|| view.judge(s))
                     .flatten()
-                    .map(|w| ui_with(T::MARK_LOOKS, &[("word", w.into())]));
+                    .map(|stage| ui_with(T::MARK_LOOKS, &[("word", stage.word().into())]));
                 // A grimoire in the read list: the spell it teaches, or the rank it would bring a
                 // known spell to, and the chance in words.
                 let study = match (list, item) {
@@ -509,7 +509,7 @@ impl ObjectScreen {
                     item,
                     glyph: def.glyph,
                     fg: view.lore().fg(s),
-                    name: view.lore().listed(s),
+                    name: ui_msg(view.lore().listed(s)),
                     mark: (!marks.is_empty()).then(|| marks.join(") (")),
                     weight: s.weight(content),
                     rarity: s.rarity(),
