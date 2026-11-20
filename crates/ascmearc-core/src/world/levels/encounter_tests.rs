@@ -6,6 +6,7 @@
 
 use crate::action::{Action, parse_actions};
 use crate::content::{ContentFiles, LevelKind, local_area_id};
+use crate::messages::{english_arg, english_msg};
 use crate::replay::Replay;
 use crate::test_support::draws;
 use crate::test_support::{builtin, last_text as last, run as act};
@@ -125,7 +126,7 @@ fn a_forced_outcome_on_a_peaceful_party_draws_no_check() {
     act(&mut w, "meet:hermit");
     assert_eq!(draws(&w), rng, "no lookouts for travellers");
     let view = w.perception().encounter().expect("pending");
-    assert_eq!(view.name, "a hermit");
+    assert_eq!(english_arg(w.content(), &view.name, "bare"), "a hermit");
     let ids: Vec<_> = view.choices.iter().map(|c| c.id()).collect();
     assert_eq!(ids, ["hail", "pass"]);
     act(&mut w, "encounter:pass");
@@ -338,7 +339,8 @@ fn a_party_got_away_from_is_met_again_and_known() {
     assert_eq!(w.player_pos(), cell);
     act(&mut w, "meet:kobolds:met");
     let view = w.perception().encounter().expect("pending");
-    assert!(view.text.ends_with(KNOWN_LINE), "{}", view.text);
+    let text = english_msg(w.content(), &view.text);
+    assert!(text.ends_with(KNOWN_LINE), "{text}");
     act(&mut w, "encounter:fight");
     assert_eq!(party(&w), first, "the same party, placed again");
 }
@@ -448,7 +450,8 @@ fn an_encounter_stops_a_rest_and_a_sleeper_never_has_the_drop() {
                 assert!(p.woken, "met in camp");
                 assert_ne!(p.outcome, EncounterOutcome::Drop, "asleep: never the drop");
                 let view = w.perception().encounter().expect("pending");
-                assert!(view.text.starts_with("You wake"), "{}", view.text);
+                let text = english_msg(w.content(), &view.text);
+                assert!(text.starts_with("You wake"), "{text}");
                 if p.outcome == EncounterOutcome::Met {
                     met += 1;
                 }

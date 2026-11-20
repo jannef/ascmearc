@@ -196,7 +196,10 @@ pub(super) fn pit_rows(world: &World) -> Vec<String> {
 pub(super) fn grave_rows(world: &World) -> Vec<String> {
     let (level, _) = world.ground_truth();
     (level.graves().iter())
-        .map(|(p, text)| format!("grave at {p}: {text}"))
+        .map(|(p, words)| {
+            let text = crate::messages::english_arg(world.content(), words, "bare");
+            format!("grave at {p}: {text}")
+        })
         .collect()
 }
 

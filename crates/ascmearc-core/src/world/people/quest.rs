@@ -309,7 +309,8 @@ pub(crate) fn progress(
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct QuestView {
     pub id: String,
-    pub name: String,
+    /// Its name: a quest's line of data (`QuestDef::name_arg`), a commission's message.
+    pub name: Arg,
     pub kind: QuestKind,
     /// Taken up and not yet done; else done, or failed.
     pub active: bool,
@@ -355,7 +356,7 @@ impl PerceptionView<'_> {
             let (register, race) = content.speaker_voice(def.giver);
             QuestView {
                 id: def.id.clone(),
-                name: def.name.clone(),
+                name: def.name_arg(),
                 kind: def.kind(),
                 active,
                 failed,
@@ -1015,7 +1016,7 @@ impl World {
             }
         }
         self.reveal_at(id, def, RevealWhen::Done);
-        self.say(Msg::new(msg::people::QUEST_COMPLETE).role("quest", def.name.as_str()));
+        self.say(Msg::new(msg::people::QUEST_COMPLETE).role("quest", def.name_arg()));
         self.tell_goodwill(def.giver);
         self.train_stat(StatUse::Quest);
         let taught = Taught {

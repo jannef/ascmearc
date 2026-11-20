@@ -152,7 +152,8 @@ fn summary(world: &World) -> String {
     // An overworld encounter to answer.
     let encounter = view.encounter().map_or(String::new(), |e| {
         let choices: Vec<&str> = e.choices.iter().map(|c| c.id()).collect();
-        format!(" encounter pending: {} ({})", e.name, choices.join(", "))
+        let name = crate::messages::english_arg(world.content(), &e.name, "bare");
+        format!(" encounter pending: {name} ({})", choices.join(", "))
     });
     format!(
         "turn {} time {} level {} viewer {} hp {hp}/{max} mp {mp}/{max_mp}{resources}{dead}{hunger}{dazzled}{averted}{allies}{encounter}{weather} \

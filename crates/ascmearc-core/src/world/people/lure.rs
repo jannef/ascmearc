@@ -136,7 +136,7 @@ impl World {
             return Spent::Nothing;
         };
         if !self.state.quests.is_active(def) {
-            self.say(Msg::new(msg::people::NOT_UNDER_WAY_DEV).role("quest", def.name.as_str()));
+            self.say(Msg::new(msg::people::NOT_UNDER_WAY_DEV).role("quest", def.name_arg()));
             return Spent::Nothing;
         }
         let here = self.state.current_level.clone();

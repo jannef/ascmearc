@@ -218,7 +218,7 @@ pub(super) fn shops(content: &Content) -> String {
             out,
             "| {} | {} | {} | {} | {}% of the worth | {}% of the worth |",
             capital(&def.name),
-            def.sign("Grimbold"),
+            ascmearc_core::messages::english_arg(content, &def.sign("Grimbold"), "bare"),
             stock,
             classes(&def.buys),
             def.markup,

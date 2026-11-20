@@ -67,10 +67,9 @@ impl<'a> PerceptionView<'a> {
         let choices = crate::world::encounter_choices(pending, entry, self.player, self.content);
         Some(crate::world::encounter_view(
             pending,
-            &entry.name,
+            crate::world::party_name(self.campaign, entry),
             area.map(|a| a.landscape),
             &choices,
-            self.content,
         ))
     }
 
@@ -314,7 +313,7 @@ impl<'a> PerceptionView<'a> {
     /// What is cut in the gravestone at `p` (`world/fixtures/graves.rs`), where the
     /// player sees or remembers one: "Here lies Ælfric Wudu, 1381–1427." `None` elsewhere, or
     /// on a blank stone.
-    pub fn epitaph(&self, p: Pos) -> Option<&'a str> {
+    pub fn epitaph(&self, p: Pos) -> Option<&'a crate::lang::Arg> {
         let terrain = match self.cell(p) {
             CellView::Visible(t) | CellView::Remembered(t) => t,
             CellView::Unknown => return None,
@@ -322,7 +321,7 @@ impl<'a> PerceptionView<'a> {
         self.content
             .terrain(terrain)
             .grave
-            .then(|| self.level.graves.get(&p).map(String::as_str))
+            .then(|| self.level.graves.get(&p))
             .flatten()
     }
 

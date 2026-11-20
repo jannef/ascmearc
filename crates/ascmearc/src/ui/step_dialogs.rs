@@ -10,7 +10,7 @@ use ascmearc_core::ability::Ability;
 use ascmearc_core::content::{LevelKind, Offer, RecipeUse, TerrainId};
 use ascmearc_core::hunger::Hunger;
 use ascmearc_core::lang::{Arg, Phrase};
-use ascmearc_core::perception::{CellView, PerceptionView};
+use ascmearc_core::perception::{CellView, PerceptionView, ShopView};
 use ascmearc_core::{Action, Dir, Positions};
 
 /// The dialog a step in `dir` asks first, if any: diving into deep water, leaving a shop owing,
@@ -22,6 +22,12 @@ pub(crate) fn step_dialog(view: &PerceptionView<'_>, dir: Dir) -> Option<Dialog>
         .or_else(|| trap_dialog(view, dir))
         .or_else(|| hunger_dialog(view, dir))
         .or_else(|| offer_dialog(view, dir))
+}
+
+/// A shop's sign, its dialogs' title, in the language shown: "Grimbold's General Store".
+fn sign(view: &PerceptionView<'_>, shop: &ShopView<'_>) -> String {
+    let code = super::text::language_code();
+    ascmearc_core::messages::arg_in(view.content(), &code, &shop.sign(), "bare")
 }
 
 /// The dialog a step in `dir` opens first, if it leaves the shop the player stands in owing
@@ -41,7 +47,7 @@ fn leaving_dialog(view: &PerceptionView<'_>, dir: Dir) -> Option<Dialog> {
     let pay = ui_with(T::PAY_LEAVE, std::slice::from_ref(&owed_arg));
     let dialog = if shop.is_exit(to) {
         if gold >= owed {
-            Dialog::new(shop.sign(), ui_with(T::OWE, &owing))
+            Dialog::new(sign(view, &shop), ui_with(T::OWE, &owing))
                 .accept(pay, Action::Pay(Some(dir)))
                 .decline(ui(T::DONT_PAY), Action::Move(dir))
         } else {
@@ -52,10 +58,10 @@ fn leaving_dialog(view: &PerceptionView<'_>, dir: Dir) -> Option<Dialog> {
                     ui_with(T::OWE_ONLY, &[keeper, owed_arg, have])
                 }
             };
-            Dialog::new(shop.sign(), text).decline(ui(T::GO_BACK), Action::Move(dir))
+            Dialog::new(sign(view, &shop), text).decline(ui(T::GO_BACK), Action::Move(dir))
         }
     } else {
-        let dialog = Dialog::new(shop.sign(), ui_with(T::THEFT, &owing));
+        let dialog = Dialog::new(sign(view, &shop), ui_with(T::THEFT, &owing));
         let dialog = match gold >= owed {
             true => dialog.accept(pay, Action::Pay(Some(dir))),
             false => dialog,
@@ -81,7 +87,7 @@ pub(crate) fn sale_dialog(view: &PerceptionView<'_>, letters: &Positions) -> Opt
     ];
     let sell = ui_with(T::SELL, &[offer]);
     Some(
-        Dialog::new(shop.sign(), ui_with(T::SALE, &args))
+        Dialog::new(sign(view, &shop), ui_with(T::SALE, &args))
             .accept(sell, Action::Sell(letters.clone()))
             .cancel(ui(T::KEEP_IT), ScreenAction::Close),
     )
