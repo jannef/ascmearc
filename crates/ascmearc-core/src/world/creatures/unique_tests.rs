@@ -1,4 +1,4 @@
-//! Unique items: made from their table, rare with a set
+//! Unique items: made from their table, of their own rarity (#1975) with a set
 //! name and affixes; hidden until identified, power and lore too; placed once in all content;
 //! and their powers, each read in its one place: Inflict (`World::after_blow`, through the
 //! attack's profile), Vision (the eyes), and Ward (`World::afflict`).
@@ -99,7 +99,7 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
     assert_eq!(def.name, "Widowmaker");
     assert_eq!(content.object(def.object).id, "stiletto");
     let magic = def.stack.magic().expect("magic");
-    assert_eq!(magic.rarity, Rarity::Rare);
+    assert_eq!(magic.rarity, Rarity::Unique);
     assert_eq!(magic.name.as_deref(), Some("Widowmaker"));
     assert_eq!(magic.unique.as_deref(), Some("widowmaker"));
     assert_eq!(magic.level, 12);
@@ -505,4 +505,74 @@ fn a_unique_survives_a_save() {
             .and_then(|m| m.unique.clone()),
         Some("widowmaker".into())
     );
+}
+
+/// #1975: every unique is of rarity unique, and only a unique may be, named, with its id.
+#[test]
+fn every_unique_is_of_its_own_rarity_and_only_uniques_are() {
+    let w = world();
+    let content = w.content().clone();
+    let mut ids = Vec::new();
+    for u in content.uniques() {
+        let magic = u.stack.magic().expect("magic");
+        assert_eq!(magic.rarity, Rarity::Unique, "{}", u.id);
+        assert!(u.stack.is_unique());
+        let def = content.object(u.object);
+        assert_eq!(magic.check(def, &content), Ok(()), "{}", u.id);
+        ids.push(u.id.as_str());
+    }
+    // The outlaws' four, Sigeric's Star, the pedlar's three, and the test world's Stonebiter.
+    assert_eq!(ids.len(), 9, "{ids:?}");
+    let widowmaker = unique(&w, "widowmaker");
+    let magic = widowmaker.magic().expect("magic");
+    let stiletto = content.object(widowmaker.object);
+    let mut rare = magic.clone();
+    rare.rarity = Rarity::Rare;
+    assert!(
+        rare.check(stiletto, &content).is_err(),
+        "a unique's id on a rare"
+    );
+    let mut nameless = magic.clone();
+    nameless.unique = None;
+    assert!(
+        nameless.check(stiletto, &content).is_err(),
+        "a unique without its id"
+    );
+    rare.unique = None;
+    assert_eq!(
+        rare.check(stiletto, &content),
+        Ok(()),
+        "a rare of the same roll"
+    );
+    // Unidentified it says it is unique, as a rare says it is rare.
+    assert_eq!(
+        widowmaker.describe(&content),
+        "a Marvellous stiletto (unique)"
+    );
+    let lines = describe::lines(&widowmaker, &content);
+    assert!(
+        lines[0].text.starts_with("Unique Marvellous stiletto"),
+        "{}",
+        lines[0].text
+    );
+}
+
+/// #1975: a chest kicked or blown apart never destroys a unique in it, and draws nothing for it.
+#[test]
+fn a_breaking_chest_spares_a_unique() {
+    use crate::chest::{Breaking, destroyed};
+    use crate::rng::Rng;
+    let w = world();
+    let sword = Stack::one(w.content().object_id("long_sword").expect("sword"));
+    for how in [Breaking::Smashed, Breaking::BlownUp] {
+        let holds = vec![unique(&w, "widowmaker"), sword.clone()];
+        let mut rng = Rng::stream(1, "test");
+        let (kept, lost) = destroyed(holds, how, 100, |_| false, &mut rng);
+        assert_eq!(kept, [unique(&w, "widowmaker")], "{how:?}");
+        assert_eq!(lost, std::slice::from_ref(&sword), "{how:?}");
+        // One draw, the sword's: the stream goes on as if the unique were not there.
+        let mut alone = Rng::stream(1, "test");
+        destroyed(vec![sword.clone()], how, 100, |_| false, &mut alone);
+        assert_eq!(rng, alone);
+    }
 }

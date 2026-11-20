@@ -7,8 +7,8 @@
 # Roles: `who` is the one a line is about (a person by what the player calls them, "the old
 # hermit", "Sister Hild"; a shopkeeper by name); `what` a thing (a phrase built where it is said);
 # `place` a place, said `the` ("the Arena", "Cealdhlāw"); `gold`, `owed`, `price`, `have`, `need`,
-# `xp`, and `times` numbers, said in digits. `quest` is a quest's name and `skill` a skill's name
-# in lower case, text until core's words are converted (#1949); `id` and `target` in a dev
+# `xp`, and `times` numbers, said in digits. `skill` is a skill by its name (`skill:<id>`);
+# `quest` a quest's name, text until core's words are converted (#1949); `id` and `target` in a dev
 # action's line are as typed.
 
 # What a quest asks, as the wiki's quest table says it: `task`, a `task_*` line.

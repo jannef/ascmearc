@@ -1031,7 +1031,7 @@ impl World {
     ) {
         for taught in skills {
             let skill = content.skill(taught.skill);
-            let name = skill.name.to_lowercase();
+            let name = content.skill_phrase(taught.skill);
             let own = |yes: bool| data_line::quest_skill(of.quest, of.reward, &skill.id, yes);
             if self.state.player().skills.get(taught.skill).is_some() {
                 if taught.marks == 0 {

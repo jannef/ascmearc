@@ -264,7 +264,15 @@ fn every_refusal_takes_no_time() {
     item(&mut w, "gold_amulet");
     item(&mut w, "iron_ring");
     apply(&mut w, "equip:left_ring:e");
+    // A unique (#1975), whose base, a stiletto, has a pommel to set.
+    let unique = (w.content.unique("widowmaker").expect("Widowmaker").stack).clone();
+    let mut plain = unique.clone();
+    plain.set_magic(None);
+    assert!(settable(&w.content, &plain) && !settable(&w.content, &unique));
+    w.player_mut().inventory.push(unique);
     let before = w.state.time;
+    apply(&mut w, "craft:set:f,c");
+    assert_eq!(last(&w), "It is unique: no craft of yours will change it.");
     for (picks, line) in [
         ("craft:set", "You must choose the item."),
         ("craft:set:a", "You must choose the gem."),

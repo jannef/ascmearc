@@ -7,9 +7,10 @@
 # (`content/data_line.rs`).
 #
 # Roles: `who` is a creature a line is about, as the player calls it ("the kobold", "Grimbold").
-# `status` is a status as the player sees it, lower case ("invisible"); `talent`, `gift`,
-# `skill`, and `name` are a talent's, a profane gift's, a skill's, and a resource's names from the
-# data, and `reason` why an ability cannot be used: text until those words are converted. `id`
+# `status` is a status by its name (`status:<id>`, "invisible"), `skill` a skill's
+# (`skill:<id>`), and `name` a resource's (`resource:<id>`); `talent` and `gift` are a talent's
+# and a profane gift's names from the data, and `reason` why an ability cannot be used: text
+# until those words are converted (#1949). `id`
 # is an id a dev action was given, as typed. `xp`, `level`, and `value` are numbers, said in
 # digits.
 
@@ -54,8 +55,8 @@ feel_more_experienced = "You feel more experienced."
 flames_burst = "Flames burst from you!"
 flees_from_you = "{who:The} cower{who:s} and flee{who:s} from you."
 freezes_under_gaze = "{who:The} freeze{who:s} under your gaze."
-# A dev action's: `name`, the resource; `value`, how much of it the player holds now.
-gain_resource_dev = "You gain {name:bare}: {value:bare} (dev)."
+# A dev action's: `name`, the resource (said as its label, "Rage"); `value`, how much of it the player holds now.
+gain_resource_dev = "You gain {name:Bare}: {value:bare} (dev)."
 gain_xp_dev = "You gain {xp:bare} experience (dev)."
 gain_xp_for_finding = "You gain {xp:bare} experience for finding your way here."
 # A dev action's.

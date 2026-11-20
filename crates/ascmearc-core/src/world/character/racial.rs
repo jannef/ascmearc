@@ -38,7 +38,7 @@ impl World {
             return Spent::Nothing;
         };
         if let Some(status) = fade_refused(&content, me, fading) {
-            let name = content.status(status).name.to_lowercase();
+            let name = content.status_phrase(status);
             self.say(Msg::new(msg::character::CANNOT_FADE_WHILE).role("status", name));
             return Spent::Nothing;
         }

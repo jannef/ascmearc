@@ -236,7 +236,7 @@ cases! {
         screen: Some("describe"),
         ..BASE
     },
-    // A unique item (the quarry's Stonebiter): unidentified, a rare dagger; identified, its
+    // A unique item (the quarry's Stonebiter): unidentified, a unique dagger; identified, its
     // name, affixes, power, and lore.
     unique_description_unidentified: Case {
         name: "unique-description-unidentified",

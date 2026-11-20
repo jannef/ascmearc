@@ -8,10 +8,10 @@
 #
 # Roles: `who` is a creature a line is about, as the player calls it ("the kobold", "Grimbold");
 # `keeper` a shopkeeper by name; `missile` what flew ("the arrow"); `what` a stack as the player
-# knows it, a list of them, or an object type. `status` is a status as the player sees it, lower
-# case ("raging"); `talent` and `name` are a talent's and a resource's names from the data,
+# knows it, a list of them, or an object type. `status` is a status by its name (`status:<id>`,
+# "raging"), `name` a resource's (`resource:<id>`); `talent` is a talent's name from the data,
 # `song` a song's name lower case, and `reason` why an ability cannot be used: text until those
-# words are converted. `came` is who came and how ("The kobold comes close"), from
+# words are converted (#1949). `came` is who came and how ("The kobold comes close"), from
 # `turn/rest.rs`. `class` is a class id as a word (dev) and `id` an id as typed: a prestige
 # class's (dev), a class active's, or a shape's. `gold` is a number, said in digits.
 
@@ -152,7 +152,7 @@ throw_what_where = "Throw what, and where?"
 throws_nothing = "`{id:bare}` throws nothing."
 too_late_to_lurk = "Too late to lurk."
 too_little_mana = "You have too little mana."
-# `name`: the resource the player holds too little of, lower case ("ki").
+# `name`: the resource the player holds too little of ("ki").
 too_little_resource = "You have too little {name:bare}."
 too_little_to_sing = "You have too little to sing it."
 # A holy gift used outside its alignment bands.

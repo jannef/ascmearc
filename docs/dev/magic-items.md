@@ -286,10 +286,40 @@ Unique items (#423, docs/design/adventurers-guild.md §9) are data in
 `content/unique.rs` (`data/uniques/` and each campaign's `data/uniques/`, one file per item,
 read through `ContentFiles::table("uniques")` after objects, affixes, and gems and before
 everything that places objects): `UniqueDef` with its `name`, base `object`, the template
-`stack` (one, rare, unidentified, made by `level::magic_of` and `item_part`, the code an
-`[[item]]` uses), its `power` (`Power`), `phrase`, `lore`, and `campaign`. `Magic::unique` is
-the item's id (saved, hashed; `skip_serializing_if` none, so other items' saves are unchanged);
-`Magic::check` refuses an unknown id, another base, or another rarity than rare.
+`stack` (one, unidentified, made by `level::magic_of` and `item_part`, the code an
+`[[item]]` uses, then given `Rarity::Unique`), its `power` (`Power`), `phrase`, `lore`, and
+`campaign`. `Magic::unique` is the item's id (saved, hashed; `skip_serializing_if` none, so
+other items' saves are unchanged); `Magic::check` refuses an unknown id, another base, a unique
+id on another rarity than unique, and a unique without its id.
+
+- **The rarity** (#1975): `Rarity::Unique`, after `Rare` (so `>= Magic` and `!= Normal` tests
+  count it), is a rarity of its own: `Stack::is_unique` is the one test the rules read.
+  `Rarity::ROLLED` (normal, magic, rare) is what loot rolls; `Affixes::rarity_weight` is 0 for a
+  unique. As a rare: its name (`Rarity::named`, `magic/name.rs`: "Widowmaker, a stiletto"),
+  `most_per_kind` (three of each), its worth (`MagicWorth::add` takes `rare`'s percent; the
+  wiki's worth table says "Rare or unique"). Unidentified it reads "a stiletto (unique)" and
+  the description's first line "Unique stiletto" (`Rarity::word`); its name is the UI's
+  `UNIQUE` golden orange (`ui::rarity_color`; `ui/mod.rs`'s test keeps it 70 apart from the
+  other rarities', the curse's, and the accent in every palette). The `Rarity::Rare` sites left
+  as they are only ever see rolled or enchanted items: loot (`loot.rs`), Enchanting (which
+  refuses a unique first), salvage's rare-material draw (`crystal.rs`; a unique is never
+  salvaged), `level::magic_of` (a named `[[item]]` is a rare).
+- **Never harmed**: `magic::worked::protected` (every item-damage source, floor ruin, gear
+  condition, swimming's soaked paper; `world/combat/item_damage.rs`)
+  keys on `Stack::is_unique`; a chest broken by a kick or a blast never rolls one
+  (`chest::destroyed`), and a unique missile never breaks (`shoot::break_chance`).
+- **Never crafted**: Temper, Whittle, Set, and Salvage refuse a unique first, taking no time,
+  with `no_craft` of `assets/lang/en/messages/uniques.toml` ("It is unique: no craft of yours
+  will change it."), and their lists leave it out (`temper.rs::craftable`, `set::settable`,
+  `salvage::salvageable`); Enchanting's `refusal` says "It will not take your will." as before;
+  a recipe never takes one as an object input (`craft::known_object`). Make do and mend never
+  sees one: a unique is never damaged. Eye for the make says "It would not come apart." of a
+  unique before it is identified too (`item_damage::protected_in`: its rarity shows).
+- **Tests**: `world/creatures/unique_tests.rs` (every unique of the rarity, `check`, "(unique)",
+  a breaking chest), `corrode_tests.rs::acid_and_rust_never_harm_a_unique` (acid, an acid spell,
+  rust both ways), `item_damage_tests.rs` (every `ItemHarm`, fire too), `ruin_tests.rs` (floor
+  ruin), `gear/condition_tests.rs` (never found worn), `temper_tests.rs::a_unique_is_never_worked`, the unique case of
+  `salvage_tests.rs` and `set_tests.rs`'s refusals, and `ui/mod.rs`'s colour test.
 
 - **Affixes set by hand** (#2001): a unique's `affixes` may write an affix with its value
   instead of a tier, `"mystic=30"`, where no tier reaches the value or the affix's bases leave

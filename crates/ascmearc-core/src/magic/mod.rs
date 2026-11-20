@@ -141,10 +141,11 @@ impl Magic {
     }
 
     /// Whether it is a valid item of `def` for `content` (a guard for saves and level files):
-    /// magic or rare, with a name exactly when rare, known affixes that may roll on it (each
-    /// tier one the affix has, each value within the tier's range, no two of one category),
-    /// and no more prefixes or suffixes than its rarity allows (at least one affix). A unique
-    /// item's affixes as its table sets them pass whatever their values and bases
+    /// magic, rare, or unique, with a name exactly when rare or unique, a unique's id exactly
+    /// when unique (of its base), known affixes that may roll on it (each tier one the affix
+    /// has, each value within the tier's range, no two of one category), and no more prefixes
+    /// or suffixes than its rarity allows (at least one affix).
+    /// A unique item's affixes as its table sets them pass whatever their values and bases
     /// ([`Magic::check_set`]).
     pub fn check(&self, def: &ObjectDef, content: &Content) -> Result<(), String> {
         let unique = (self.unique.as_deref()).and_then(|id| content.unique(id));
@@ -166,17 +167,25 @@ impl Magic {
         };
         match (self.rarity, &self.name) {
             (Rarity::Normal, _) => return Err("a normal item has no magic".into()),
-            (Rarity::Rare, None) => return Err("a rare item has a name".into()),
-            (Rarity::Magic, Some(_)) => return Err("only rare items have names".into()),
+            (Rarity::Rare | Rarity::Unique, None) => {
+                return Err(format!("a {} item has a name", self.rarity.word()));
+            }
+            (Rarity::Magic, Some(_)) => return Err("only rare and unique items have names".into()),
             _ => {}
         }
-        if let Some(id) = &self.unique {
-            let unique =
-                (content.unique(id)).ok_or_else(|| format!("unknown unique item `{id}`"))?;
-            let base = &content.object(unique.object).id;
-            if self.rarity != Rarity::Rare || *base != def.id {
-                return Err(format!("unique item `{id}` is a rare `{base}`"));
+        match &self.unique {
+            Some(id) => {
+                let unique =
+                    (content.unique(id)).ok_or_else(|| format!("unknown unique item `{id}`"))?;
+                let base = &content.object(unique.object).id;
+                if self.rarity != Rarity::Unique || *base != def.id {
+                    return Err(format!("unique item `{id}` is a unique `{base}`"));
+                }
             }
+            None if self.rarity == Rarity::Unique => {
+                return Err("a unique item names its unique".into());
+            }
+            None => {}
         }
         if self.affixes.is_empty() {
             return Err("a magic or rare item has an affix at least".into());

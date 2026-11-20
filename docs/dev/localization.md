@@ -285,7 +285,10 @@ docs hold the table): `creature:<id>`, `object:<id>` (with `written`, `written_p
 `terrain:<id>`, `label:scroll|wand|rod|potion` (an unidentified type's name with its `{label}`
 and `{colour}` slots), `colour:<colour>`, and `word:<text>`: a word the data names without an id
 of its own (a natural attack's "bite", a trap's "arrow", a status's "dazed", "something"), keyed
-by its English, which is the word; and `disease:<id>` (its name as written, "the shakes").
+by its English, which is the word; `disease:<id>` (its name as written, "the shakes"); and
+`status:<id>`, `skill:<id>`, and `resource:<id>` (#1992: the name in lower case, as `race:<id>`'s,
+"hasted", "open lock", "rage"; `Content::status_phrase`, `skill_phrase`, `resource_phrase`), said
+`bare` in a sentence and `Bare` where the line kept the data's capital ("You need Metalcraft").
 
 **Number comes from data** (#1965): a phrase is plural by its count or by the lexicon's `many` (a
 noun plural though it names one thing, "flames"); a proper name or a literal is one thing ("The
@@ -419,9 +422,9 @@ damage type's `verb`, and a refusal's `error` are text roles.
 data ("Lines of data", whose table lists their keys): an alignment band's `rise` and `fall`, the
 craving's and the oaths' messages, the laws' `first`, a profane gift's `line`, `undone`, and
 `instead`, and cold blood's bands, the talent found back from the bands the player's mods hold
-(`cold_blood.rs::warmth_source`). Text roles until their words are converted (#1949): a
-talent's, a tree's, a skill's, a resource's, and a profane gift's names, a status's name lower
-case, and `Unavailable::reason`. A talent's refusal (`talent::Refusal::words`) stays a literal
+(`cold_blood.rs::warmth_source`). A status, a skill, and a resource are named by their lexicon
+ids ("Phrases"). Text roles until their words are converted (#1949): a talent's, a tree's, and a
+profane gift's names, and `Unavailable::reason`. A talent's refusal (`talent::Refusal::words`) stays a literal
 line. `World::learn` returns `Msg`s; `creation_offers` and the creation errors render them in
 English, as developer text.
 
@@ -433,8 +436,8 @@ from the talent that gives it, `caster.rs::reprieve_source`), and the status `en
 `recovered` lines a cleanse ends. A backfired summon's creatures are one phrase with its count
 or, of several types, a list of `magic.hostile_creatures` items ("A kobold and two rats"). A
 ruin row's words for one item and for several are both passed (`one`, `many`, lines of data),
-and `magic.ruined`'s count picks one. Text roles until their words are converted (#1949): a
-status's name lower case, `Unavailable::reason`, and a stat's name.
+and `magic.ruined`'s count picks one. A status that blocks a cast is `status:<id>`. Text roles
+until their words are converted (#1949): `Unavailable::reason` and a stat's name.
 
 Its learning and items side (L4l: `corpse_spell`, `decipher`, `forget`, `learn`, `read`, `rod`,
 `scribe`, `summon_spell`) says its lines from the same file; a mishap's `message` and a risen
@@ -443,8 +446,8 @@ player knew it as it was read or zapped (`Lore::title_phrase`, `{what:bare}`: "s
 ZUNBAR") and its type, once learned, by `object:<id>` (`magic.it_is`); a corpse by its object.
 A summon spell's allies are said as a backfired summon's are (`magic.comes_to_call`, `_mixed`
 with `magic.hostile_creatures` items). Text roles until their words are converted (#1949): a
-spell's name as the data writes it (`spell`; a list of them, `spells`, said `{spells:and}`), a
-status's name lower case, and the `came_line` that stops a reading or a writing (`came`).
+spell's name as the data writes it (`spell`; a list of them, `spells`, said `{spells:and}`) and
+the `came_line` that stops a reading or a writing (`came`).
 
 `world/crafting/` (`messages/crafting.toml`, L4f, its first half: making a recipe, cutting,
 enchanting, crystals, digging, the field forge). A refusal a function returns for its caller to
@@ -455,8 +458,8 @@ shows renders it in English (`craft_make.rs::english`) until L8. An item being e
 stack by `Lore::names_phrase` (what they are called as made); a salvaged affix's words ("its
 Sharp magic", "some of its magic") are nested messages in `catch_magic` and `goes_out_unread`;
 Soulglass's crystals a phrase or a list of two (`turns_to_glass`, by number). A profession's
-`failed` and `fumbled` lines are lines of data (`data_line::profession`). Text roles until their
-words are converted (#1949): a skill's and a recipe's names, a launcher's word, the label of a
+`failed` and `fumbled` lines are lines of data (`data_line::profession`). A profession is
+`skill:<id>`. Text roles until their words are converted (#1949): a recipe's name, a launcher's word, the label of a
 pick ("blade", "arrowheads"), and the time a dig took.
 
 Its second half (L4g: mending, mining, the patron, rigging, salvage, setting, tempering, and
@@ -468,8 +471,8 @@ rig list's words (`lacking_knife`, which the screen says in its own `lacking`) a
 sentence. Several stacks are `items::stacks_arg` (`you_save`); one taken apart by its title or
 several counted is one entry by number (`take_apart`). A rig and a trap are `word:` phrases of
 their names (`{rig:a}`, `{trap:a}`). A rig's `made` and `snaps` are lines of data
-(`data_line::rig`). Text roles until their words are converted (#1949): a skill's name
-(`need_skill_at`), a rig's id as the action wrote it, and the patron as the commission calls
+(`data_line::rig`); `need_skill_at`'s skill is `skill:<id>`. Text roles until their words are
+converted (#1949): a rig's id as the action wrote it, and the patron as the commission calls
 them (`giver`, "your patron", kept as text in the save). The commission's quest-log view
 (`patron.rs::commission`) says its objective and status from `commission_*`; its name stays
 text, as every quest's does. Left for their own work: the rig list's "what it takes" (`rig.rs::takes_words`), and the craft
@@ -480,9 +483,9 @@ dialog's plan (`CraftPlan`), screen text built in core.
 lines of data: a calling's `message`, a talent's handed-out `news`, and a resource's `lacking`
 (`{words:Bare}.`). A missile caught is its object (`object:<id>`) or a trap's noun or "missile"
 (`word:`); a shopkeeper in the way a literal phrase of their name; the mark the player cannot
-see is a line of its own (`openings_lost_unseen`, "an unseen foe"), not a phrase. Text roles
-until their words are converted (#1949): a talent's and a resource's names, a status's name
-lower case, and `Unavailable::reason`; a dev action's class id is a `word:` phrase
+see is a line of its own (`openings_lost_unseen`, "an unseen foe"), not a phrase. A status and a resource are
+their lexicon ids. Text roles until their words are converted (#1949): a talent's name and
+`Unavailable::reason`; a dev action's class id is a `word:` phrase
 (`{class:a}`).
 
 `world/turn/` (`messages/turn.toml`, L4o) and the two lines of `world/mod.rs` (`world.toml`)
@@ -576,8 +579,8 @@ delivery picked up again, `updated_step`. `messages::english_msg` and `english_a
 for the quest screen and the dumps; a patron's commission (`crafting/patron.rs`) fills its
 objective and status from `crafting.commission_*`.
 
-Text roles until core's words are converted (#1949): a quest's name (`quest`), a skill's name
-lower case (`skill`), a guild's name (`guild`), a shop's sign (`shop`, its data's
+A skill taught is `skill:<id>`. Text roles until core's words are converted (#1949): a quest's
+name (`quest`), a guild's name (`guild`), a shop's sign (`shop`, its data's
 `{keeper}` filled; the app's step dialogs show the same string), and a dev action's typed ids.
 A rank's title is a `word:` phrase (`{title:a}`). The topic names of a quarrel's sides and the
 parting dialog are UI text ("The dialogue screens and dialogs" below); left as they are:

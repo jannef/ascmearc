@@ -2,14 +2,15 @@
 source: crates/ascmearc/src/ui/screen_snapshots.rs
 expression: "render(case, content.clone())"
 ---
- You see here a dagger (rare).
- You pick up a dagger (rare).
+ You see here a dagger (unique).
+ You pick up a dagger (unique).
+
 
                   ┌─ Item ───────────────────────────────────────────────────────┐
                   │                                                              │
                   │ ) Dagger                                                     │
                   │                                                              │
-                  │ Rare dagger · steel · 450 g                                  │
+                  │ Unique dagger · steel · 450 g                                │
                   │                                                              │
                   │ Dagger, for the main hand                                    │
                   │ Damage 1d4; criticals on 20–24, ×2 damage                    │
@@ -23,8 +24,7 @@ expression: "render(case, content.clone())"
                   │                                                              │
                   │ It can bear two enchantments.                                │
                   │                                                              │
-                  │ Taken apart, it would give 450 steel scraps.                 │
-                  │ It will take three more improvements at the anvil.           │
+                  │ It would not come apart.                                     │
                   │                                                              │
                   │ Esc close                                                    │
                   └──────────────────────────────────────────────────────────────┘

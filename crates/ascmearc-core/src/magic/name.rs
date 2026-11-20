@@ -2,8 +2,9 @@
 //!
 //! - normal: "a long sword";
 //! - magic: its prefix and suffix around the base name, "a Sharp long sword of the Bear";
-//! - rare: its name, then the base, "Grim Bite, a long sword";
-//! - unidentified: the base and the rarity, "a long sword (magic)", "12 arrows (rare)";
+//! - rare or unique: its name, then the base, "Grim Bite, a long sword";
+//! - unidentified: the base and the rarity, "a long sword (magic)", "12 arrows (rare)", "a
+//!   dagger (unique)";
 //! - cursed, once the player knows it (#1754): "cursed" after it, "a long sword (magic,
 //!   cursed)", "a Leaden long sword (cursed)".
 //!
@@ -16,7 +17,7 @@
 //! identified: "a Fine long sword", "a Marvellous Sharp long sword of the Bear", "a damaged long
 //! sword (magic)", "Grim Bite, a Masterwork long sword".
 
-use super::{AffixKind, Magic, Rarity};
+use super::{AffixKind, Magic};
 use crate::content::Content;
 use crate::lang::{Modifier, Note, Phrase, Word};
 
@@ -40,7 +41,7 @@ pub(crate) fn phrase(
         return ahead(word, made).count(count).with_note(Note::Tags(tags));
     }
     let named = match (magic.rarity, &magic.name) {
-        (Rarity::Rare, Some(name)) => {
+        (rarity, Some(name)) if rarity.named() => {
             let base = ahead(word, made).count(count);
             name_phrase(name, magic.unique.is_some()).with_note(Note::Base(Box::new(base)))
         }
