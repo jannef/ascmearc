@@ -326,7 +326,7 @@ pub(super) fn magic_worth(content: &Content) -> String {
         return out;
     };
     let _ = writeln!(out, "| Magic | {}% |", rules.rarity.magic);
-    let _ = writeln!(out, "| Rare | {}% |", rules.rarity.rare);
+    let _ = writeln!(out, "| Rare or unique | {}% |", rules.rarity.rare);
     out.push_str("\n| Tier's item level |");
     let levels = 1..=12u8;
     for level in levels.clone() {

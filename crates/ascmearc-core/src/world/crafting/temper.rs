@@ -10,7 +10,8 @@
 //!   temper ([`crate::content::Content::offer`]); the first such cell around the player in
 //!   [`Dir::ALL`] order. Refused, taking no time, anywhere else ("There is no anvil here.").
 //! - **What**: a weapon, launcher, armour, or shield whose main part is of a metal, and not a
-//!   spirit weapon ([`temperable`]). Refused otherwise, taking no time, and so is an item with
+//!   spirit weapon or a unique ([`temperable`]; a unique is refused first, "It is unique: no craft
+//!   of yours will change it.", #1975). Refused otherwise, taking no time, and so is an item with
 //!   all its improvements ([`workable`] is what the list offers). Ammunition is refused first,
 //!   by its own line ([`AMMUNITION`]), and so by Whittle: its make (Fine arrows) is set where it
 //!   is found or fletched, never at the anvil or with the knife (`magic/worked.rs::ammunition`).
@@ -171,9 +172,10 @@ fn of_material(content: &Content, stack: &Stack, craft: Craft) -> bool {
 }
 
 /// Whether `stack` may be worked by `craft` at all: arms or armour, of its material, with
-/// something an improvement could better.
+/// something an improvement could better, and no unique (#1975).
 fn craftable(content: &Content, stack: &Stack, craft: Craft) -> bool {
-    arms(content, stack)
+    !stack.is_unique()
+        && arms(content, stack)
         && of_material(content, stack, craft)
         && !aspects(content.object(stack.object)).is_empty()
 }
@@ -306,6 +308,10 @@ impl World {
             self.say(msg::crafting::CARRY_NO_SUCH_THING);
             return Spent::Nothing;
         };
+        if stack.is_unique() {
+            self.say(msg::uniques::NO_CRAFT);
+            return Spent::Nothing;
+        }
         if ammunition(self.content.object(stack.object)) {
             self.say(AMMUNITION);
             return Spent::Nothing;
@@ -346,6 +352,10 @@ impl World {
             self.say(msg::crafting::CARRY_NO_SUCH_THING);
             return Spent::Nothing;
         };
+        if stack.is_unique() {
+            self.say(msg::uniques::NO_CRAFT);
+            return Spent::Nothing;
+        }
         if ammunition(self.content.object(stack.object)) {
             self.say(AMMUNITION);
             return Spent::Nothing;

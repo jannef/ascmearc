@@ -64,7 +64,7 @@ ring's or an amulet's setting. You need Jewelcraft 10. Choose the item, then the
 asked to confirm, with the item named as it will be: "Set a sapphire-pommelled hand axe?"
 
 - The item must have a place for a gem with none in it yet ("It is set already."). Something you
-  wear or wield must come off first.
+  wear or wield must come off first. A [unique item](magic-items.md#unique-items) takes no gem.
 - Only a cut gem can be set, never an uncut one.
 
 It takes 20 minutes, anywhere. If something comes into view, you stop, nothing is lost, and the

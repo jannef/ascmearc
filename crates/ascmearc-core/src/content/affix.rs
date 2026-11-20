@@ -682,18 +682,21 @@ impl AffixDef {
     }
 }
 
-/// What loot may be: normal (no affixes), magic (a prefix, a suffix, or one of each), or rare
-/// (up to three of each, and a name).
+/// What an item may be: normal (no affixes), magic (a prefix, a suffix, or one of each), rare
+/// (up to three of each, and a name), or unique (as a rare, made once by the data,
+/// `content/unique.rs`: never rolled, never harmed, never crafted; #1975).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Rarity {
     Normal,
     Magic,
     Rare,
+    Unique,
 }
 
 impl Rarity {
-    pub const ALL: [Rarity; 3] = [Rarity::Normal, Rarity::Magic, Rarity::Rare];
+    /// The rarities loot rolls: a unique is made only by the data.
+    pub const ROLLED: [Rarity; 3] = [Rarity::Normal, Rarity::Magic, Rarity::Rare];
 
     /// `magic`.
     pub const fn word(self) -> &'static str {
@@ -701,6 +704,7 @@ impl Rarity {
             Rarity::Normal => "normal",
             Rarity::Magic => "magic",
             Rarity::Rare => "rare",
+            Rarity::Unique => "unique",
         }
     }
 
@@ -709,8 +713,13 @@ impl Rarity {
         match self {
             Rarity::Normal => 0,
             Rarity::Magic => 1,
-            Rarity::Rare => MAX_PER_KIND,
+            Rarity::Rare | Rarity::Unique => MAX_PER_KIND,
         }
+    }
+
+    /// Whether it bears a name of its own (a rare's two words, a unique's).
+    pub const fn named(self) -> bool {
+        matches!(self, Rarity::Rare | Rarity::Unique)
     }
 }
 
@@ -749,9 +758,9 @@ impl Affixes {
         self.defs.is_empty()
     }
 
-    /// The weight of loot of `rarity`.
+    /// The weight of loot of `rarity` (none for a unique, which loot never rolls).
     pub fn rarity_weight(&self, rarity: Rarity) -> u32 {
-        self.rarity[rarity as usize]
+        self.rarity.get(rarity as usize).copied().unwrap_or(0)
     }
 }
 

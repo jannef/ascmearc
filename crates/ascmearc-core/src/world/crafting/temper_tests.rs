@@ -317,6 +317,28 @@ fn the_main_part_says_what_it_is_made_of() {
     assert!(temperable(c, &sword) && !temperable(c, &dragonbone));
 }
 
+/// #1975: a unique is never worked, at the anvil or with a knife: refused first by its own line,
+/// taking no time, and left off both lists, though its base would be on them.
+#[test]
+fn a_unique_is_never_worked() {
+    let mut w = world(false);
+    let c = w.content.clone();
+    let unique = |id: &str| c.unique(id).expect(id).stack.clone();
+    let plain = |id: &str| {
+        let mut s = unique(id);
+        s.set_magic(None);
+        s
+    };
+    w.player_mut().inventory.push(unique("widowmaker"));
+    let before = w.state.clone();
+    w.apply(&Action::Temper { item: 0 });
+    assert!(said(&w, "It is unique: no craft of yours will change it."));
+    assert_eq!(w.state.time, before.time, "refused, no time");
+    assert_eq!(first(&w), &before.player().inventory[0], "untouched");
+    assert!(workable(&c, &plain("widowmaker")) && !workable(&c, &unique("widowmaker")));
+    assert!(workable_wood(&c, &plain("high_toby")) && !workable_wood(&c, &unique("high_toby")));
+}
+
 #[test]
 fn a_spirit_weapon_is_refused() {
     let mut w = world(false);

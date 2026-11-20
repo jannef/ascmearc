@@ -134,7 +134,7 @@ fn make_magic(w: &mut World, unique: Option<&str>, affixes: &[&str]) {
     use crate::magic::{Affix, Magic, Rarity};
     let magic = Magic {
         rarity: if unique.is_some() {
-            Rarity::Rare
+            Rarity::Unique
         } else {
             Rarity::Magic
         },

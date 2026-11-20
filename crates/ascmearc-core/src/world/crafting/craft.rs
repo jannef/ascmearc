@@ -281,9 +281,10 @@ pub(super) fn input_fits(
 
 /// Whether `stack` is of `object` as the player knows it: of that object, and of a type they
 /// have identified (module docs). An unknown flask of oil is no flask of oil to a recipe, so its
-/// row cannot tell what it is (#1383). The one test every object input is matched by.
+/// row cannot tell what it is (#1383). A unique is never an input: no craft spends one (#1975).
+/// The one test every object input is matched by.
 pub(super) fn known_object(lore: Lore<'_>, stack: &crate::object::Stack, object: ObjectId) -> bool {
-    stack.object == object && lore.is_identified(object)
+    stack.object == object && lore.is_identified(object) && !stack.is_unique()
 }
 
 /// The material a stock input names, or the first of its group: what its lack and its words

@@ -14,7 +14,8 @@
 //!
 //! **Smashing** (a kick that breaks it) destroys each stack inside with `[smash] destroyed`
 //! percent, one gameplay draw a stack, sparing coins and loose gems; **blowing up** (a blast
-//! that beats its band's hardness) rolls every stack at the same percent and spares nothing
+//! that beats its band's hardness) rolls every stack at the same percent and spares nothing but
+//! a unique, which no breaking harms and which is never rolled (#1975)
 //! ([`destroyed`]).
 //!
 //! What a **generated** chest holds is rolled by [`roll_contents`] from its band's loot table, on
@@ -104,7 +105,7 @@ pub enum Breaking {
 /// Splits `holds` into what survives and what is destroyed as a chest breaks `how`: each stack
 /// in order is destroyed with `percent`, one draw of `rng` per stack rolled; on a smash, the
 /// stacks `spared` says are coins or gems are never rolled. Returns (kept, destroyed), each in
-/// the order they were held.
+/// the order they were held. A unique is always kept, never rolled (#1975).
 pub fn destroyed(
     holds: Vec<Stack>,
     how: Breaking,
@@ -115,7 +116,7 @@ pub fn destroyed(
     let mut kept = Vec::new();
     let mut lost = Vec::new();
     for stack in holds {
-        if how == Breaking::Smashed && spared(&stack) {
+        if stack.is_unique() || (how == Breaking::Smashed && spared(&stack)) {
             kept.push(stack);
         } else if rng.chance(percent) {
             lost.push(stack);
