@@ -704,6 +704,16 @@ conditions (`ui::conditions`), and the race, class, stance, resource, sign, skil
 need names data gives as English; the Characters list's race and class, kept in a save's summary
 as the names were.
 
+**The UI core** (#1930): `mod.toml` (the module `text::r#mod`: `build.rs` names every module raw)
+holds the message line's prompts and the status bar's own labels (`HP`, `MP`, `Lv`, a resource's
+value, a kept beast's line, Dazzled, Averted); `more.toml` the `--more--` mark; `info_tabs.toml`
+the pages' names; `encounter.toml` the encounter dialog's title and choice labels, which core's
+`EncounterView` no longer carries (it gives the `outcome` and the `Choice`s; the dump's JSON lost
+its `title` and `label`). The bar still takes from core as text (#1949) the status effects', the
+hunger's, the burden's, the stance's, and a kept beast's health word (`Health::word`), and
+the rest prompt's words (`settings::fixed::REST`, the settings part). The bar's developer
+segments (turn, position, light, vision, seed) and `dev.rs`'s overlay line stay literal.
+
 ## Lines of data
 
 A line whose text lives in the data, not in `messages/` (a dialogue line, a miscast's `seen`, an

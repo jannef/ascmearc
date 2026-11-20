@@ -8,20 +8,37 @@
 
 use super::dialog_screen::Dialog;
 use super::screens::Screens;
+use super::text::{UiText, encounter as T, ui, ui_with};
 use crate::game::Game;
 use ascmearc_core::action::Action;
-use ascmearc_core::world::EncounterView;
+use ascmearc_core::world::{EncounterChoice as Choice, EncounterOutcome as Outcome, EncounterView};
 use bevy::prelude::*;
 
-/// The dialog asking `view`: its title, its text (with the line for a party met again, as the
-/// view gives it), and a plain row per choice.
+/// The dialog asking `view`: the party as its title, its text (with the line for a party met
+/// again, as the view gives it), and a plain row per choice.
 pub(super) fn dialog(view: EncounterView) -> Dialog {
-    let ask = Dialog::new(view.title, view.text);
+    let title = ui_with(T::TITLE, &[("party", view.name.into())]);
+    let ask = Dialog::new(title, view.text);
     (view.choices.into_iter())
-        .fold(ask, |ask, (label, choice)| {
-            ask.plain(label, Action::Encounter(choice))
+        .fold(ask, |ask, choice| {
+            ask.plain(ui(label(view.outcome, choice)), Action::Encounter(choice))
         })
         .required()
+}
+
+/// How the dialog labels `choice` of an encounter that came about as `outcome`.
+fn label(outcome: Outcome, choice: Choice) -> UiText {
+    match (outcome, choice) {
+        (_, Choice::Ambush) => T::AMBUSH,
+        (_, Choice::Bluff) => T::BLUFF,
+        (Outcome::Met, Choice::Evade) => T::EVADE_MET,
+        (_, Choice::Evade) => T::EVADE,
+        (_, Choice::Fight) => T::FIGHT,
+        (_, Choice::Hail) => T::HAIL,
+        (_, Choice::Hunt) => T::HUNT,
+        (Outcome::Wildlife, Choice::Pass) => T::PASS_WILDLIFE,
+        (_, Choice::Pass) => T::PASS,
+    }
 }
 
 /// Opens the dialog when an encounter is pending and it is not open yet; the death screen wins.

@@ -1,0 +1,64 @@
+# The info pages' tab line (`crates/ascmearc/src/ui/info_tabs.rs`). Ids alphabetical.
+#
+# Each page has a name and a short name, for a console too narrow for every name: the short
+# names keep the whole line within an 80-column console. The digits that turn the pages are
+# fixed keys (docs/dev/localization.md "UI text").
+
+[character]
+text = "Character"
+
+[character_short]
+text = "Char"
+
+[equipment]
+text = "Equipment"
+
+[equipment_short]
+text = "Eqp"
+
+[inventory]
+text = "Inventory"
+
+[inventory_short]
+text = "Inv"
+
+[magic]
+text = "Magic"
+
+[magic_short]
+text = "Mag"
+
+[quests]
+text = "Quests"
+
+[quests_short]
+text = "Qst"
+
+[skills]
+text = "Skills"
+
+[skills_short]
+text = "Skl"
+
+[story]
+text = "Story"
+
+[story_short]
+text = "Story"
+
+# A page on the tab line and in hint lines ("6 Magic"): `digit`, the key that turns to it;
+# `page`, its name or short name.
+[tab]
+text = "{digit:bare} {page:bare}"
+
+[talents]
+text = "Talents"
+
+[talents_short]
+text = "Tal"
+
+[weapons]
+text = "Weapons"
+
+[weapons_short]
+text = "Weap"

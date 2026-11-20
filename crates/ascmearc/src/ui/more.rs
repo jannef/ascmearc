@@ -23,6 +23,7 @@
 //! Presentation only: the rules, replays, and dumps never see pages. The whole log is on the
 //! message history screen (`ui::messages_screen`).
 
+use super::text::{more as T, ui};
 use super::{ACCENT, MESSAGE_ROWS, TEXT, TEXT_DIM, message_text};
 use crate::game::Game;
 use crate::input::{Bindings, InputMode};
@@ -31,7 +32,9 @@ use bevy::prelude::*;
 use std::collections::VecDeque;
 
 /// What ends every page of this turn's messages but the last.
-pub const MORE: &str = "--more--";
+fn more() -> String {
+    ui(T::MORE)
+}
 
 /// `texts` run on one after another in lines of at most `width` cells, split at word
 /// boundaries (a word longer than a line where the line ends), in pages of `rows` lines. Every
@@ -39,7 +42,7 @@ pub const MORE: &str = "--more--";
 /// `last_waits`. No pages for no text.
 pub fn pages(texts: &[String], width: usize, rows: usize, last_waits: bool) -> Vec<Vec<String>> {
     let (width, rows) = (width.max(1), rows.max(1));
-    let narrow = width.saturating_sub(MORE.chars().count() + 1).max(1);
+    let narrow = width.saturating_sub(more().chars().count() + 1).max(1);
     let mut words: VecDeque<String> = (texts.iter())
         .flat_map(|text| text.split_whitespace())
         .map(String::from)
@@ -185,7 +188,7 @@ pub(super) fn draw(console: &mut Console, game: &Game, mode: InputMode, bindings
         }
         if let Some(last) = lines.last() {
             let x = 1 + last.chars().count() as i32 + 1;
-            console.print(x, lines.len() as i32 - 1, MORE, ACCENT);
+            console.print(x, lines.len() as i32 - 1, &more(), ACCENT);
         }
         return;
     }
@@ -282,7 +285,7 @@ mod tests {
             end[1].ends_with("I'll know if you count wrong.\""),
             "{end:?}"
         );
-        assert!(!end.iter().any(|l| l.contains(MORE)));
+        assert!(!end.iter().any(|l| l.contains(&more())));
         // A wider line takes fewer pages.
         assert!(stops(&game, 400, &Bindings::default()) < waits);
     }
@@ -315,7 +318,10 @@ mod tests {
             }
             if i + 1 < pages.len() {
                 let last = page.last().expect("a line");
-                assert!(last.chars().count() + 1 + MORE.len() <= 16, "{last:?}");
+                assert!(
+                    last.chars().count() + 1 + more().chars().count() <= 16,
+                    "{last:?}"
+                );
                 assert_eq!(page.len(), 2);
             }
         }
@@ -342,7 +348,10 @@ mod tests {
         let pages = pages(&texts(&words), 16, 2, true);
         for page in &pages {
             let last = page.last().expect("a line");
-            assert!(last.chars().count() + 1 + MORE.len() <= 16, "{last:?}");
+            assert!(
+                last.chars().count() + 1 + more().chars().count() <= 16,
+                "{last:?}"
+            );
         }
         assert_eq!(pages.concat().join(" "), words.join(" "));
         // Nothing to say, nothing to wait at.
