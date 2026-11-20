@@ -44,7 +44,7 @@ impl World {
         self.say(
             Msg::new(msg::health::CANNOT_WHILE)
                 .role("doing", doing)
-                .role("status", name),
+                .role("status", crate::world::combat::fight::word(&name)),
         );
         Some(Spent::Nothing)
     }

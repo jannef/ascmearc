@@ -38,7 +38,7 @@ use crate::action::{Event, Meal, Positions};
 use crate::content::{
     ActionKind, Cleansing, Content, Draught, Effect, LevelKind, StatUse, StatusId,
 };
-use crate::lang::Msg;
+use crate::lang::{Arg, Msg};
 use crate::msg;
 use crate::object::Stack;
 use crate::rng::draw;
@@ -196,8 +196,10 @@ impl World {
         let after = self.state.player().effects.get(status).map(|e| e.severity);
         match (before, after) {
             (Some(was), Some(now)) if now > was => {
-                if let Some(start) = self.content.status(status).start.clone() {
-                    self.say(start);
+                let def = self.content.status(status);
+                if def.start.is_some() {
+                    let key = crate::content::data_line::status_start(def);
+                    self.say(Msg::data_line(Arg::said(key)));
                 }
             }
             (Some(_), _) => self.say(msg::health::NOTHING_MORE_COMES),

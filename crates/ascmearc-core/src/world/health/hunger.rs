@@ -212,13 +212,13 @@ impl World {
         let Some(now) = self.player_hunger() else {
             return;
         };
-        let Some(text) = Hunger::news(before, now) else {
+        let Some(id) = Hunger::news(before, now) else {
             return;
         };
         if Hunger::worsens(before, now) {
-            self.say(text);
+            self.say(id);
         } else {
-            self.note(text);
+            self.note(id);
         }
     }
 

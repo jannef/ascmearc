@@ -405,7 +405,8 @@ pub struct Flask {
     pub range: i32,
     /// What its shattering is heard as, where it shatters.
     pub noise: TrapNoise,
-    /// Said to a thrower who sees it shatter.
+    /// Said to a thrower who sees it shatter: a line of data, said by its key
+    /// ([`super::data_line::flask_words`]).
     pub words: Option<String>,
 }
 

@@ -30,7 +30,7 @@ use crate::check::check;
 use crate::content::{ActionKind, DiseaseId, StatusId};
 use crate::geom::Dir;
 use crate::heal::{self, Ailment};
-use crate::lang::{Msg, Phrase};
+use crate::lang::{Arg, Msg, Phrase};
 use crate::msg;
 use crate::rng::draw;
 use crate::skills::{Effect, Use};
@@ -112,20 +112,21 @@ impl World {
         Spent::Turn(price)
     }
 
-    /// The disease `d` of `patient` as a line names it, said `{disease:the}`: "the sickness",
-    /// "the filth fever"; an ally's "Snel's sickness", "your wolf's sickness".
+    /// The disease `d` of `patient`, said `{disease:the}`: "the sickness", "the filth fever",
+    /// "the shakes" (a name with its own article takes no other, `en::own_article`); an ally's
+    /// "Snel's sickness", "your wolf's sickness".
     fn disease_phrase(&self, patient: ActorId, d: DiseaseId) -> Phrase {
         let Some(actor) = self.state.actors.get(&patient) else {
             return fight::word("sickness");
         };
-        let noun = fight::word(&heal::noun(&self.content, actor, d));
+        let disease = fight::word(&heal::noun(&self.content, actor, d));
         if patient == self.state.player {
-            noun
+            disease
         } else if let Some(data) = actor.kept() {
-            noun.owned_by(Phrase::literal(&data.name))
+            disease.owned_by(Phrase::literal(&data.name))
         } else {
-            let creature = fight::creature(self.content.creature(actor.creature));
-            noun.owned_by(creature.owned_by(self.you()))
+            let kind = fight::creature(self.content.creature(actor.creature));
+            disease.owned_by(kind.owned_by(self.you()))
         }
     }
 
@@ -142,12 +143,8 @@ impl World {
         let Some(treat) = content.status(status).treat.as_ref() else {
             return;
         };
-        let said = if made {
-            treat.made.clone()
-        } else {
-            treat.failed.clone()
-        };
-        self.say(said);
+        let key = crate::content::data_line::status_treat(content.status(status), made);
+        self.say(Msg::data_line(Arg::said(key)));
         let Some(actor) = self.state.actors.get_mut(&patient) else {
             return;
         };
@@ -171,7 +168,7 @@ impl World {
     fn treat_disease(&mut self, patient: ActorId, disease: DiseaseId, made: bool) {
         let content = self.content.clone();
         let def = content.disease(disease);
-        let disease_named = self.disease_phrase(patient, disease);
+        let named = self.disease_phrase(patient, disease);
         let Some(actor) = self.state.actors.get_mut(&patient) else {
             return;
         };
@@ -180,7 +177,7 @@ impl World {
             return;
         };
         if !made {
-            self.say(Msg::new(msg::health::NO_MORE_FOR).role("disease", disease_named));
+            self.say(Msg::new(msg::health::NO_MORE_FOR).role("disease", named));
             return;
         }
         if def.recovers() && infection.streak.saturating_add(1) < recovery {
@@ -189,6 +186,6 @@ impl World {
             let interval = u32::try_from(def.interval_seconds()).unwrap_or(u32::MAX);
             infection.left = infection.left.max(interval);
         }
-        self.say(Msg::new(msg::health::EASE_SOMEWHAT).role("disease", disease_named));
+        self.say(Msg::new(msg::health::EASE_SOMEWHAT).role("disease", named));
     }
 }

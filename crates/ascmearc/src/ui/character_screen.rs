@@ -23,6 +23,7 @@ use ascmearc_core::burden::{Burden, Load};
 use ascmearc_core::character::{Character, Gender};
 use ascmearc_core::color::Rgb;
 use ascmearc_core::content::{Content, possessive};
+use ascmearc_core::heal;
 use ascmearc_core::object::{Weight, format_weight};
 use ascmearc_core::perception::{PerceptionView, Progress};
 use ascmearc_core::stats::{PerStat, Stat};
@@ -136,6 +137,12 @@ pub struct CharacterScreen {
     attacks: Vec<(&'static str, String, String)>,
 }
 
+/// Disease `d` as the screen lists it: its name as written, its own article kept (`{disease:bare}`:
+/// "filth fever", "the shakes"); the list is capitalised as a whole.
+fn disease_name(content: &Content, d: ascmearc_core::content::DiseaseId) -> String {
+    content.english_of(&heal::phrase(content, d), "bare")
+}
+
 impl CharacterScreen {
     /// The screen for what the player perceives of themselves (`None` outside a run: average
     /// scores and no weight).
@@ -226,7 +233,7 @@ impl CharacterScreen {
                 .map(|s| s.text)
                 .collect(),
             diseases: (view.own_diseases())
-                .map(|d| content.disease(d).name.clone())
+                .map(|d| disease_name(content, d))
                 .collect(),
             resistances: resistance_rows(view),
             weight: view.own_weight(),
@@ -465,7 +472,7 @@ impl CharacterScreen {
             }
             y += 1;
         }
-        // `    Diseased      Filth fever`: the diseases they know they have.
+        // `    Diseased      Filth fever`: the diseases they know they have, as written (`{disease:Bare}`).
         if !self.diseases.is_empty() {
             if fits(y) {
                 let names = capitalized(&self.diseases.join(", "));
@@ -852,6 +859,24 @@ mod tests {
             "{text}"
         );
         assert_eq!(world.perception().own_base_scores()[Stat::Dexterity], 10);
+    }
+
+    #[test]
+    fn names_a_disease_without_an_article_as_written() {
+        // "Filth fever", not "The filth fever": a screen says the name as written
+        // (`{disease:Bare}`), as main did; "The shakes" keeps its own article.
+        let world = crate::ui::hoard();
+        let content = world.content();
+        let named = |id: &str| disease_name(content, content.disease_id(id).expect(id));
+        let mut screen = CharacterScreen::new(Some(&world.perception()));
+        for (id, shown) in [("filth_fever", "Filth fever"), ("the_shakes", "The shakes")] {
+            screen.diseases = vec![named(id)];
+            let mut console = Console::default();
+            console.resize(80, 30);
+            screen.draw(&mut console, &Bindings::default());
+            let text = text(&console).join("\n");
+            assert!(text.contains(&format!("Diseased      {shown}")), "{text}");
+        }
     }
 
     #[test]

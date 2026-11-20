@@ -394,6 +394,9 @@
 #   dies      the verb of its death line, "The animated chair splinters." (default "dies")
 #   depart    the words of its going as an ally whose call has run out, "The wolf slips back into
 #             the dark." (default "fades away"; docs/dev/allies.md)
+#   on_eat's message and depart are lines of data, said by their keys
+#   (`creature:<id>.on_eat.message`, `creature:<id>.depart`; docs/dev/localization.md "Lines of
+#   data"); they name no role
 #
 # Animated objects (#483) are not written here: their types are
 # generated when content loads from data/animated.toml and data/animated/ (`animated_<body>`),

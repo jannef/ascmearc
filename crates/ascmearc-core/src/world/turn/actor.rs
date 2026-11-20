@@ -378,13 +378,17 @@ impl Actor {
         })
     }
 
-    /// What it is told when a unique item it wears wards off `status` (Ward), if one does.
-    pub fn ward<'c>(&'c self, content: &'c Content, status: StatusId) -> Option<&'c str> {
-        crate::magic::worn_powers(&self.inventory, &self.equipment, content).find_map(|p| match p {
-            crate::content::Power::Ward { status: s, message } if *s == status => {
-                Some(message.as_str())
+    /// The key of what it is told when a unique item it wears wards off `status` (Ward), if one
+    /// does: the item's `power.message`, a line of data (`content::data_line::ward`).
+    pub fn ward(&self, content: &Content, status: StatusId) -> Option<String> {
+        (self.equipment.items().into_iter()).find_map(|(_, item)| {
+            let id = self.inventory.get(item)?.magic()?.unique.as_deref()?;
+            match content.unique(id)?.power.as_ref()? {
+                crate::content::Power::Ward { status: s, .. } if *s == status => {
+                    Some(crate::content::data_line::ward(id))
+                }
+                _ => None,
             }
-            _ => None,
         })
     }
 

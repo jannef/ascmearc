@@ -722,12 +722,14 @@ impl World {
         });
         if self.perception.sees_actors_at(actor.pos) {
             let def = self.content.creature(actor.creature);
-            let words = def.depart.as_deref().unwrap_or("fades away");
-            self.say(
-                Msg::new(msg::allies::DEPARTS)
-                    .role("who", fight::creature(def))
-                    .role("words", words),
-            );
+            let said = match def.depart {
+                Some(_) => Msg::new(msg::allies::DEPARTS).role(
+                    "words",
+                    Arg::said(crate::content::data_line::depart(&def.id)),
+                ),
+                None => Msg::new(msg::allies::FADES_AWAY),
+            };
+            self.say(said.role("who", fight::creature(def)));
         }
         self.fallen.push(actor);
     }

@@ -347,6 +347,66 @@ fn a_disease_may_be_tried_again_eased_never_cured() {
 }
 
 #[test]
+fn a_disease_named_with_its_own_article_is_not_given_another() {
+    // "the shakes", never "the the shakes" (#1944): the data writes its name with its article,
+    // and `{disease:the}` adds none to it (`en::own_article`).
+    let mut w = World::new(content(false), "room", Some(1)).expect("world");
+    train(&mut w, 0);
+    let shakes = sicken(&mut w, "the_shakes");
+    let player = w.state.player;
+    let actor = w.state.actors.get_mut(&player).expect("player");
+    actor.diseases.get_mut(shakes).expect("caught").progressions = 1;
+    w.apply(&Action::Heal {
+        what: Some("the_shakes".into()),
+        ally: None,
+    });
+    let said = last_message(&w);
+    assert!(
+        [
+            "You ease the shakes somewhat.",
+            "You can do no more for the shakes."
+        ]
+        .contains(&said.as_str()),
+        "{said}"
+    );
+}
+
+#[test]
+fn the_treat_menu_names_a_known_disease_as_written() {
+    // As main: "Filth fever", "The shakes" (`{disease:Bare}`), never "The filth fever".
+    for (id, name) in [("filth_fever", "Filth fever"), ("the_shakes", "The shakes")] {
+        let mut w = World::new(content(false), "room", Some(1)).expect("world");
+        train(&mut w, 0);
+        let d = sicken(&mut w, id);
+        let player = w.state.player;
+        let actor = w.state.actors.get_mut(&player).expect("player");
+        actor.diseases.get_mut(d).expect("caught").progressions = 1;
+        assert_eq!(w.perception().own_ailments()[0].name, name);
+    }
+}
+
+#[test]
+fn one_template_names_a_disease_with_or_without_its_own_article_and_agrees_with_it() {
+    // A template's `{disease:The} {disease:is}`, through the shipped English and the data's
+    // names: "the shakes" keeps its article and is plural, "mummy rot" takes the template's.
+    let mut files = ContentFiles::builtin();
+    files.insert(
+        "lang/en/messages/test.toml",
+        "cured = \"{disease:The} {disease:is} cured.\"\n",
+    );
+    let content = crate::content::Content::load(&files).expect("content");
+    let said = |id: &str| {
+        let d = content.disease_id(id).expect(id);
+        let msg = crate::lang::Msg::new(crate::lang::MessageId::owned("test.cured"))
+            .role("disease", crate::heal::phrase(&content, d));
+        let entry = crate::lang::Entry::new(0, msg);
+        crate::messages::english(&content, &entry, &crate::lang::written_key)
+    };
+    assert_eq!(said("the_shakes"), "The shakes are cured.");
+    assert_eq!(said("mummy_rot"), "The mummy rot is cured.");
+}
+
+#[test]
 fn a_disease_that_never_recovers_or_is_one_check_from_it_has_its_next_turn_put_off() {
     for (id, streak) in [("grave_rot", 0), ("filth_fever", 1)] {
         let mut eased = false;

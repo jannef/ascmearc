@@ -37,7 +37,7 @@ nothing for it, `docs/dev/merging.md` "One build of ascmearc-core"). Dependencie
 | `lang.rs` | `LangFile` and `parse`: `name`, `code`, `morphology`, `fallback`, `repeat` (default `" (×{n})"`), `number_words` (default 12), `[registers.<name>]`, `[race_registers]`, `[generic]`. A key with a letter outside ASCII is quoted in TOML (`"minä" = "mie"`) |
 | `register.rs` | `Register::word("the")` returns the override or the word; `Registers` (`standard` always present; `get`, `for_speaker(own, race)`: the speaker's own, else the race's, else standard; `unknown_race_registers` for the checker) |
 | `morphology/mod.rs` | the `Morphology` trait: `forms() -> Vec<String>`, `phrase(&Phrase, form, &dyn Lexicon, &Register) -> Result<String, FormError>`, `number`, `list(items, Conj)`, `parse_word(entry) -> Result<(), ParseError>`. `FormError::UnknownForm` is the one failure; the renderer falls back from it |
-| `morphology/en.rs` | the helpers (below) and `En`, English as a `Morphology`: forms `bare`/`name`, `plural`, `a`, `the`, `counted`, `your`/`poss`, `they`/`them`/`their`, `s`, `es`, `is`, `has`, `does`, `num`, `ord` (`en::FORMS`). Phrase order: [adjectives and materials] head [of-qualifier] [labelled X] [notes], and what L3 added ("Phrases"); `person: You` renders as "you"/"your" and the plural verb; proper names take no article; a lexicon `plural` form wins over the dictionary. The article, `the`, the pronouns, and the number words go through the register |
+| `morphology/en.rs` | the helpers (below) and `En`, English as a `Morphology`: forms `bare`/`name`, `plural`, `a`, `the`, `counted`, `your`/`poss`, `they`/`them`/`their`, `s`, `es`, `is`, `has`, `does`, `num`, `ord` (`en::FORMS`). Phrase order: [adjectives and materials] head [of-qualifier] [labelled X] [notes], and what L3 added ("Phrases"); `person: You` renders as "you"/"your" and the plural verb; proper names take no article, and a name written with its own ("the shakes", `en::own_article`) takes no second one in any form (an owner's possessive takes its place: "your wolf's shakes"); a lexicon `plural` form wins over the dictionary. The article, `the`, the pronouns, and the number words go through the register |
 | `morphology/generic.rs` | `GenericSpec` (the `[generic]` table: `forms` with the first the lemma, `plural`, `genders`, `adjectives = "before"/"after"`, `agree` (`true`, `false`, or the forms), `[articles.<form>]` and `[pronouns.<form>]` by `<gender>.pl`/`pl`/`<gender>`/`""` (else the table's first word), `number_words`, `counted = "{num} {pl}"`, `and`, `or`, `label`) and `Generic`. Every language has `bare`, `counted`, `num`; a form a word does not list is its lemma |
 | `render.rs` | `Language` (a `LangFile`, its `Morphology`, its `Templates`, its `Registers`): `from_toml(text, plurals)` picks `en`, `fi`, or `generic`; `add_templates(prefix, text)`; `phrase(phrase, form, lex) -> String`; `render(entry, lex, keys) -> String`; `try_render` / `try_render_as(register, …) -> Result<String, RenderError>`. `render_chain(&[&lang, &fallback, …], …)`: the first language that renders wins, else `[id]`. `Keys` is `&dyn Fn(&str) -> String`; `written_key` is the identity for dumps (`{key:help}` stays written) |
 | `proptests.rs` | rendering is total: arbitrary Unicode through `Line::parse`, `Templates::parse`, `lang::parse`, `MapLexicon::parse`, `Plurals::add`, `Language::render`, `En::phrase`, `Generic::phrase`, and `Fi::phrase` (phrases with every modifier and note kind and an owner) gives a string or an `Err`, never a panic; a module renders a form iff it lists it |
@@ -344,22 +344,25 @@ example and `world/combat/` (`messages/combat.toml`) the one whose lines name th
 `world/allies/` (`messages/allies.toml`) is converted: `World::called_phrase` and `ally_phrase`
 are `called` and `ally_subject` as phrases, `pack_args` an order's allies as a list said
 `{pack:the}` (a lone one is its phrase, so its count agrees the verb). What it leaves as text
-for now: the `came_line` that stops a calling or a taming (a `came` role), and the data's own words
-(a charm's, a familiar's arrival, a status's `seen`).
+for now: the `came_line` that stops a calling or a taming (a `came` role). The data's own words
+are lines of data (#1944, "Lines of data"): a charm's, a familiar's arrival, and a creature's
+departure are said inside their templates (`{message:bare}`, `{line:bare}`, `{words:bare}`),
+and a status's `seen` is a `word:` phrase.
 
 What combat leaves as literal lines, for their own slices: a rank risen and what it teaches
 (`fight.rs::ranks_news`, the data's lines joined), acid's lines (`corrode.rs`, the data's
 `{}`).
 
 `world/health/` (`messages/health.toml`, L4i) converted `Cause::message` (how the player died, now
-`Cause::message(&World) -> Msg`) with it. It leaves as literal text what the data writes: a
-status's start, end, ward, and stage lines, a disease's recovery line, a corpse's `on_eat` message,
-a treatment's made and failed lines, a skill gift's lines, and a flask's `words`. Text from another
-module's helper (`came_line`, `Hunger::news`) goes in as a text role, or stays literal. A stat's
-words ("strength", the comparative "stronger") are text roles (`what`, `feel`, `more`) until core's
-words are converted (#1949). A disease treated is a phrase owned by its patient (`{disease:the}`:
-"the sickness", "your wolf's sickness"). Someone a line names is `called_phrase` (what `called`
-says: a named person or a shopkeeper by name), not `phrase_of`, where the string was `called`.
+`Cause::message(&World) -> Msg`) with it. What the data writes is said by its key (#1944, "Lines
+of data"): a status's start, end, ward, and stage lines, a disease's recovery line, a corpse's
+`on_eat` message, a treatment's made and failed lines, a skill gift's lines, and a flask's
+`words`; `Hunger::news` is message ids. The disease in a sentence is a phrase owned by its
+sufferer (`{disease:the}`: "the sickness", "the shakes", "your wolf's sickness"; `heal::phrase`: the data writes a disease's name as it is said, with its own article if it has one, and the character screen and the treat menu say it as written, `{disease:Bare}`: "Filth fever", "The shakes"), the pipe's race `race:<id>`
+(`{smoker:a}`). Text from another module's helper (`came_line`) goes in as a text role. A stat's
+words ("strength", the comparative "stronger") are text roles (`what`, `feel`, `more`) until
+core's words are converted (#1949). Someone a line names is `called_phrase` (what `called` says: a
+named person or a shopkeeper by name), not `phrase_of`, where the string was `called`.
 `health::object_phrase(content, id)` builds `object:<id>` for a type the player knows;
 `Lore::object_phrase` is a type as the player knows it (an unread scroll by its label), and
 `Lore::title_phrase` a stack's `title` as a phrase.
@@ -497,8 +500,31 @@ so a saved log re-renders in any language and a later identification cannot reac
   a stale `of` (the six-hex FNV-1a of the English line as written, `Template::written`), a role
   the English line does not pass (in a placeholder or a `by`; a dialogue line is also given
   `player`), a form the language lacks (a dialogue line: the base form only), variants on an
-  unknown feature or value, and more flavour alternatives than English has are errors; a line not translated is a warning in a kind the language has files for, an error
-  for `--strict`. `--stamp` does not write data files' `of` yet.
+  unknown feature or value, and more flavour alternatives than English has are errors; a line not
+  translated is a warning in a kind the language has files for, an error for `--strict`.
+  `--stamp` writes their `of` too (`lang/data.rs::stamp_data`): an array of lines is stamped item
+  by item, so it is written an item a line.
+
+**The narrator's lines of data** (#1944) are keyed in `content/data_line.rs`, one function a key,
+which the loader (`add_all`, at the end of `Content::load`) and the `say` sites share. An entity's
+line is its kind, its id, and the field's path in its file; a rules file's line is the file's stem
+and the path in it:
+
+| Key | The line |
+|---|---|
+| `status:<id>.start`, `.end`, `.stages.<n>` | a status beginning, ending, and reaching degree `n + 1` (a status with `stages` starts with `.stages.0`) |
+| `status:<id>.treat.made`, `.treat.failed` | the Heal skill's try at it |
+| `disease:<id>.recovered` | the player shaking a disease off |
+| `creature:<id>.on_eat.message`, `creature:<id>.depart` | eating its fresh corpse; an ally of its kind whose time ran out (in `allies.departs`) |
+| `unique:<id>.power.message` | its Ward refusing a status |
+| `object:<id>.throw.words` | a flask shattering |
+| `spell:<id>.effect.charm.message`, `.ends` | a charm taking hold and ending (in `allies.charm_takes`, `allies.charm_ends`) |
+| `familiars:arrives.<creature>` | a familiar's arrival (in `allies.familiar_arrives`) |
+| `hunger:corpses.skills.<skill>.learn`, `.rise` | a corpse teaching a skill |
+
+None of them names a role: the loader refuses one that does. A status's start and end lines said
+as the turn is perceived (`world/turn/perceive.rs`) and the other subsystems' reads of these
+fields are still literal text, until their slices.
 
 **Saying a line of data (the recipe for an L4 slice)**, worked by `miscast:<id>.seen`
 (`content/miscast.rs`, `world/magic/miscast.rs`) and `creature:<id>.touch`/`.unseen`
@@ -655,7 +681,8 @@ check them per language, "UI text"); and **stale** entries. **Warnings**: a miss
 **The `of` hash** of a translated entry is the six-hex FNV-1a (32 bits, the top byte folded into
 the low 24) of the English entry's canonical text: a string as it is, an array's items joined by a
 newline, a table's keys in order as `key=value` lines, never `of`. An entry without
-`of` is stale too. `--stamp <code>` writes `of` into entries that lack one (`--restamp` also
+`of` is stale too. `--stamp <code>` writes `of` into entries (and lines of data, "Lines of data")
+that lack one (`--restamp` also
 refreshes stale ones, after the translator has read the English change); it edits lines, so
 comments and layout stay: a `[table]` gets an `of` line after its header, a plain `id = "text"`
 becomes `id = { text = "text", of = "…" }`, and a plain entry whose value spans lines is refused

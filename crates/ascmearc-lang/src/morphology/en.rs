@@ -125,6 +125,14 @@ pub fn counted(name: &str, plural: &str, count: u32) -> String {
     }
 }
 
+/// A name written with its own article ("the shakes", "The Hounds"): what follows the article
+/// ("shakes"). Said as written in every form, never given a second article ("You ease the shakes
+/// somewhat", "The shakes are cured"); with an owner, the owner's possessive takes the article's
+/// place ("your wolf's shakes"). `None` for a name without one ("mummy rot").
+pub fn own_article(name: &str) -> Option<&str> {
+    ["the ", "The "].iter().find_map(|a| name.strip_prefix(a))
+}
+
 /// Whether a noun's last word is a plural ("flames", "shards"): it ends in `s` but not in `ss`
 /// ("soulglass"), `us`, or `is`. What a lexicon marks `many` ([`crate::LexWord::many`]).
 pub fn is_plural(noun: &str) -> bool {
@@ -412,10 +420,11 @@ impl En {
             );
             words + &notes
         };
+        let singular = assemble(&singular);
         Words {
-            singular: assemble(&singular),
             plural: assemble(&plural),
-            proper: phrase.proper || head.proper,
+            proper: phrase.proper || head.proper || own_article(&singular).is_some(),
+            singular,
             many: head.many,
         }
     }
@@ -499,9 +508,11 @@ impl Morphology for En {
         let owner = || {
             (phrase.owner.as_deref()).map(|o| self.phrase(o, "poss", lex, reg).unwrap_or_default())
         };
+        // A name with its own article gives it up to an owner: "your wolf's shakes".
+        let owned = |name: &str| own_article(name).unwrap_or(name).to_string();
         let the = || {
             if let Some(owner) = owner() {
-                format!("{owner} {}", w.by_count(phrase.count))
+                format!("{owner} {}", owned(w.by_count(phrase.count)))
             } else if w.proper {
                 w.singular.clone()
             } else {
@@ -511,8 +522,8 @@ impl Morphology for En {
         let counted = || {
             let one = phrase.count == 1;
             match owner() {
-                Some(owner) if one => format!("{owner} {}", w.singular),
-                Some(owner) => format!("{owner} {} {}", phrase.count, w.plural),
+                Some(owner) if one => format!("{owner} {}", owned(&w.singular)),
+                Some(owner) => format!("{owner} {} {}", phrase.count, owned(&w.plural)),
                 None if w.proper && one => w.singular.clone(),
                 None if one => format!("{} {}", reg.word(article(&w.singular)), w.singular),
                 None => format!("{} {}", phrase.count, w.plural),
@@ -760,6 +771,42 @@ mod tests {
         assert_eq!(form(&you, "s"), "");
         assert_eq!(form(&you, "has"), "have");
         assert_eq!(form(&you, "does"), "do");
+    }
+
+    #[test]
+    fn a_name_with_its_own_article_is_said_as_written() {
+        let lex = MapLexicon::default()
+            .with("word:the shakes", LexWord::new("the shakes").many(true))
+            .with("word:mummy rot", LexWord::new("mummy rot"))
+            .with("creature:wolf", LexWord::new("wolf"));
+        let form = |phrase: &Phrase, form: &str| {
+            (en().phrase(phrase, form, &lex, &Register::default())).expect(form)
+        };
+        let shakes = Phrase::id("word:the shakes");
+        for f in ["the", "a", "counted", "bare"] {
+            assert_eq!(
+                form(&shakes, f),
+                "the shakes",
+                "{f}: never a second article"
+            );
+        }
+        assert_eq!(form(&shakes, "is"), "are", "the noun says its number");
+        assert_eq!(form(&shakes, "poss"), "the shakes'");
+        let rot = Phrase::id("word:mummy rot");
+        assert_eq!(
+            form(&rot, "the"),
+            "the mummy rot",
+            "a bare name takes the article"
+        );
+        assert_eq!(form(&rot, "a"), "a mummy rot");
+        assert_eq!(form(&rot, "is"), "is");
+        let wolf = Phrase::id("creature:wolf");
+        let wolfs = shakes.owned_by(wolf);
+        assert_eq!(
+            form(&wolfs, "the"),
+            "the wolf's shakes",
+            "the owner takes its place"
+        );
     }
 
     #[test]

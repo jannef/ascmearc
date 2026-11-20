@@ -63,6 +63,9 @@
 #              every living creature within `reach` they do not see, a sound of `kind` at
 #              a rough place, each turn (Quick-sensed; not the undead, animated things, constructs, elementals)
 #   start, end what the player is told as it begins and ends ("end" lets a rest go on)
+#              start, end, stages, and treat's made and failed are lines of data, said by their
+#              keys (`status:<id>.start`, `.stages.<n>`, `.treat.made`; docs/dev/localization.md
+#              "Lines of data"); they name no role
 #   dies       what a creature you see does when it kills it ("The giant rat bleeds to death.")
 #   death      the death screen's line when it kills you
 #   stages     what the player is told as each degree is reached, a line a degree from the first:

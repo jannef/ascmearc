@@ -126,7 +126,8 @@ yugoloth = { train = { willpower = 20 } }
 # rises by `gives` but never past `up_to` from corpses), with what the eater is told: `learn` the
 # first time, `rise` when it adds to it; nothing once it is at `up_to`. A creature may name only
 # the skills here. Literate casters' corpses teach Decipher script (#1103); the quest wizards'
-# teach Spellcraft (#1820).
+# teach Spellcraft (#1820). The words are lines of data, said by their keys
+# (`hunger:corpses.skills.<skill>.learn`; docs/dev/localization.md "Lines of data").
 [corpses.skills]
 decipher_script = { learn = "Strange letters swim before your eyes, and settle into sense.", rise = "The letters come clearer." }
 spellcraft = { learn = "Something stirs behind your eyes, and the shape of a spell makes sense.", rise = "The shapes of spells come clearer." }

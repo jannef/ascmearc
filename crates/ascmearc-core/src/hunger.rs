@@ -92,25 +92,26 @@ impl Hunger {
 
     /// What the player is told when the state goes from `from` to `to`; `None` if it did not
     /// change.
-    pub const fn news(from: Hunger, to: Hunger) -> Option<&'static str> {
+    pub fn news(from: Hunger, to: Hunger) -> Option<crate::lang::MessageId> {
+        use crate::msg;
         use Hunger::*;
         if from as u8 == to as u8 {
             return None;
         }
         let hungrier = (to as u8) < (from as u8);
         Some(match (hungrier, to) {
-            (true, Satiated) => "You no longer feel bloated.",
-            (true, NotHungry) => "You no longer feel satiated.",
-            (true, Hungry) => "You are getting hungry.",
-            (true, Weak) => "You feel weak from hunger. You should eat soon.",
-            (true, Fainting) => "You feel faint from hunger. Eat now, or you will starve!",
-            (true, Starving) => "You are starving! Eat, or you will die!",
-            (false, Fainting) => "You are no longer starving.",
-            (false, Weak) => "You feel less faint.",
-            (false, Hungry) => "You feel less weak.",
-            (false, NotHungry) => "You are no longer hungry.",
-            (false, Satiated) => "You feel satiated.",
-            (false, Bloated) => "You feel bloated.",
+            (true, Satiated) => msg::health::NO_LONGER_BLOATED,
+            (true, NotHungry) => msg::health::NO_LONGER_SATIATED,
+            (true, Hungry) => msg::health::GETTING_HUNGRY,
+            (true, Weak) => msg::health::WEAK_FROM_HUNGER,
+            (true, Fainting) => msg::health::FAINT_FROM_HUNGER,
+            (true, Starving) => msg::health::STARVING,
+            (false, Fainting) => msg::health::NO_LONGER_STARVING,
+            (false, Weak) => msg::health::LESS_FAINT,
+            (false, Hungry) => msg::health::LESS_WEAK,
+            (false, NotHungry) => msg::health::NO_LONGER_HUNGRY,
+            (false, Satiated) => msg::health::FEEL_SATIATED,
+            (false, Bloated) => msg::health::FEEL_BLOATED,
             // Nothing is hungrier than Starving, nor more fed than Bloated.
             (true, Bloated) | (false, Starving) => return None,
         })
@@ -214,32 +215,40 @@ mod tests {
     #[test]
     fn news_says_which_way_it_went() {
         use Hunger::*;
-        assert_eq!(Hunger::news(Hungry, Hungry), None);
+        let content = crate::test_support::builtin();
+        let news = |from, to| {
+            Hunger::news(from, to)
+                .map(|id| crate::test_support::english_of(&content, &crate::lang::Msg::new(id)))
+        };
+        assert_eq!(news(Hungry, Hungry), None);
         assert_eq!(
-            Hunger::news(NotHungry, Hungry),
+            news(NotHungry, Hungry).as_deref(),
             Some("You are getting hungry.")
         );
         assert_eq!(
-            Hunger::news(Weak, Hungry),
+            news(Weak, Hungry).as_deref(),
             Some("You feel less weak."),
             "fed back up"
         );
-        assert_eq!(Hunger::news(Hungry, Satiated), Some("You feel satiated."));
+        assert_eq!(
+            news(Hungry, Satiated).as_deref(),
+            Some("You feel satiated.")
+        );
         // The later states say so more strongly.
         assert_eq!(
-            Hunger::news(Hungry, Weak),
+            news(Hungry, Weak).as_deref(),
             Some("You feel weak from hunger. You should eat soon.")
         );
         assert_eq!(
-            Hunger::news(Weak, Fainting),
+            news(Weak, Fainting).as_deref(),
             Some("You feel faint from hunger. Eat now, or you will starve!")
         );
         assert_eq!(
-            Hunger::news(Fainting, Starving),
+            news(Fainting, Starving).as_deref(),
             Some("You are starving! Eat, or you will die!")
         );
         assert_eq!(
-            Hunger::news(Satiated, NotHungry),
+            news(Satiated, NotHungry).as_deref(),
             Some("You no longer feel satiated.")
         );
         // Only getting hungrier, into Hungry or worse, stops the player.
