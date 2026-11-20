@@ -27,6 +27,7 @@ Rust is pinned in `rust-toolchain.toml`; cargo is in `~/.cargo/bin` (in a fresh 
 | Release configuration | `cargo build -p ascmearc -p ascmearc-cli` (the plain build: the test world, the `showcase` feature, is opt-in) |
 | Regenerate the vast level | `cargo xtask gen-vast` (deterministic, never hand-edit; `--check` after touching `xtask/src/vast.rs`) |
 | Check the docs' code paths | `cargo xtask docs-check` |
+| Check the language files | `cargo xtask lang` (`--stamp CODE` writes the `of` hashes; `docs/dev/localization.md`) |
 | Third-party notices | `cargo xtask licenses`. **Run it after changing dependencies** |
 | Player wiki tables | `cargo xtask wiki`, `--build`, `--check-links` (`docs/dev/wiki.md`) |
 | Golden screenshots | `cargo xtask golden` (authoritative on Linux only), `--local`, `--update` |
@@ -163,7 +164,7 @@ A successful compile does not verify anything visual. Before opening a PR:
 - One branch and PR per issue (or a tight group of related issues); reference issues with
   `Closes #N`. CI must be green before a squash merge into `main`.
 - CI runs on Linux only (`.github/workflows/ci.yml`): Linux (fmt, clippy, test, orphan
-  snapshots); Linux (gen-vast `--check`, docs-check, wiki `--check-links`, smoke, golden); wasm32;
+  snapshots); Linux (gen-vast `--check`, docs-check, lang, wiki `--check-links`, smoke, golden); wasm32;
   the release configuration; cargo-deny and the licences; the web build on pushes to `main`.
   macOS is not run in Actions: development happens on macOS, so run the full local check there
   before every PR (a PR built by a cloud agent, `ops/agents/`, runs it on Linux instead).
