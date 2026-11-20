@@ -302,8 +302,8 @@ A character's other data names (#1993; `Content::character_word`, the helpers be
 talent, a profane gift (a talent), and a tree keep the data's capitals, `talent:<id>` and
 `tree:<id>` ("You learn Cold-blooded."); a talent with what was chosen for it is
 `Content::talent_arg`, the nested `character.talent_chosen` ("Weapon Focus (long blades)"), its
-choice a `weapon_skill:` or `skill:` phrase, else a `word:` one until damage types and schools
-have ids (#1994). A weapon skill is `weapon_skill:<id>` (lower case) and how one is skilled in it
+choice a `weapon_skill:`, `skill:`, `damage_type:`, or `school:` phrase (a kind of creature a
+`word:` one). A weapon skill is `weapon_skill:<id>` (lower case) and how one is skilled in it
 `weapon_skill_phrase:<id>` (its `phrase`, "with long blades", `combat.skill_risen`); a weapon
 ability `weapon_ability:<id>` (lower case, `combat.learned_ability`); an ability
 `ability:<id>`, by `Ability::id` (a weapon ability's `<weapon skill>.<id>`), the abilities menu's name ("Shield bash"); a song `song:<id>`
@@ -314,6 +314,26 @@ adjective; the epitaph `{class:a}` (with `prestige`); a named statue `look.falle
 dwarf"). Left as text: a label shown alone (lists, the status bar, the Characters list: #2000,
 #1999), a grave's epitaph (kept in the level as text, #1999), and the `--character` refusal
 (`ClassDef::refuses`, developer text).
+
+Magic and gear data names (#1994; `content/magic_word.rs`, `Content::spell_phrase` and the
+helpers beside it): a spell is `spell:<id>`, its name in lower case as `skill:<id>`'s, said
+`bare` where a creature casts it ("The kobold casts magic missile.") and `Bare` where the line kept
+the data's capital ("you have learned Magic missile", the read dialog's "Learning Frost"); a list
+of spells forgotten is `magic.spell_listed` items, each `Bare`. A school is `school:<id>` (its id,
+"evocation"), a damage type `damage_type:<id>` (its `name`, "fire"; its verbs are #1995's lines
+of data, `damage_type:<id>.verb`), a recipe `recipe:<id>` (its name as written, "Cut",
+`crafting.done_from_own_list` and a patron's work), an equipment slot `slot:<id>` (lower case,
+`items.nothing_there`; the item screen's title `Bare`), an item class `item_class:<id>` (lower
+case), and a guild `guild:<id>`: its name without the article, a common noun when the data writes
+it with "the" and so said `{guild:the}` ("names you a Tin of the Weyfarers' Gilde", the
+character screen's rank row), else proper. A birth sign's breath and Blaze, said as a spell's
+blows (`World::say_spell_of`), are `sign_noun:<active>` (the ability's name in lower case, "fire
+breath"); a retaliating status's blow (`gifts.rs`) is its `damage_type:` or `status:` phrase. A
+caster style is a weapon skill (`weapon_skill:<id>`). Left as text: the typed slot id
+(`items.no_slot`), a dev zone's kind, composed text (#1997: a spell's roll and an attack's
+summary, `magic/describe.rs`, the epitaph's "miscast {spell}"), a rider's damage type in an
+item's numbers, and labels shown alone (the spells and scribe lists, the school headings,
+item class headers: #2000).
 
 **Number comes from data** (#1965): a phrase is plural by its count or by the lexicon's `many` (a
 noun plural though it names one thing, "flames"); a proper name or a literal is one thing ("The
@@ -469,8 +489,8 @@ corpse's `berserk_message` are lines of data. A scroll, a grimoire, or a rod is 
 player knew it as it was read or zapped (`Lore::title_phrase`, `{what:bare}`: "scroll labelled
 ZUNBAR") and its type, once learned, by `object:<id>` (`magic.it_is`); a corpse by its object.
 A summon spell's allies are said as a backfired summon's are (`magic.comes_to_call`, `_mixed`
-with `magic.hostile_creatures` items). Text roles until their words are converted (#1949): a
-spell's name as the data writes it (`spell`; a list of them, `spells`, said `{spells:and}`). What
+with `magic.hostile_creatures` items). A spell is `spell:<id>` ("Phrases"; a list of them
+`magic.spell_listed` items, said `{spells:and}`). What
 stops a reading or a writing is `World::came_msg` in a `came` role.
 
 `world/crafting/` (`messages/crafting.toml`, L4f, its first half: making a recipe, cutting,
@@ -483,7 +503,7 @@ stack by `Lore::names_phrase` (what they are called as made); a salvaged affix's
 Sharp magic", "some of its magic") are nested messages in `catch_magic` and `goes_out_unread`;
 Soulglass's crystals a phrase or a list of two (`turns_to_glass`, by number). A profession's
 `failed` and `fumbled` lines are lines of data (`data_line::profession`). A profession is
-`skill:<id>`. Text roles until their words are converted (#1949): a recipe's name, a launcher's word, the label of a
+`skill:<id>`. A recipe is `recipe:<id>`. Text roles until their words are converted (#1949): a launcher's word, the label of a
 pick ("blade", "arrowheads"), and the time a dig took.
 
 Its second half (L4g: mending, mining, the patron, rigging, salvage, setting, tempering, and
@@ -555,7 +575,8 @@ list); the debt said after a pickup is `items.you_owe` in a `world.lines`. A lin
 core picks from a few (an equipment action's "wield", "ready", "put on", in both hands or not;
 "put away" or "take off") is an entry per value (`equip.rs::put_on_line`, `take_off_line`).
 A talent is `talent:<id>` (`Content::talent_arg` with a choice). Text roles until their words
-are converted (#1949): a damage type's verb, and a slot's name or the id typed; what stops a prayer or a drink is `World::came_msg` (L4o).
+are converted (#1949): a damage type's verb, and a slot's id as typed (a slot named is
+`slot:<id>`); what stops a prayer or a drink is `World::came_msg` (L4o).
 `equip_saying` takes `Option<impl Into<Msg>>`,
 `chosen` its refusal as `impl Into<Msg>`. The altar's fire seen hitting a creature names it by its
 type (`{who:a}`): a unique by its name, "Black Wystan", where the old line lower-cased it (a bug,
@@ -568,8 +589,7 @@ crawls out of a corpse) are one argument said `{what:Counted}` (`summon.rs::coun
 type alone is its phrase with its count, so the line's `by = "what.number"` picks the verb;
 several types a list. A type's `first_sight` is a line of data, `creature:<id>.first_sight`. A
 possessive after the name is `{who:Poss}` ("The incubus's eyes", #1965). Text roles until their words are
-converted (#1949): a breath's, a burst's, and a summoning's `verb` from the data, and a spell's
-name, lower case. A chest band's name, and a status's `seen`, are `word:` phrases.
+converted (#1949): a breath's, a burst's, and a summoning's `verb` from the data. A spell cast is `spell:<id>`. A chest band's name, and a status's `seen`, are `word:` phrases.
 
 `world/people/` (`messages/people.toml`, L4m; talk's own lines in `messages/talk.toml`) is
 the "People" section below.
@@ -600,9 +620,9 @@ for the quest screen and the dumps; a patron's commission (`crafting/patron.rs`)
 objective and status from `crafting.commission_*`.
 
 A skill taught is `skill:<id>`. Text roles until core's words are converted (#1949): a quest's
-name (`quest`), a guild's name (`guild`), a shop's sign (`shop`, its data's
+name (`quest`), a shop's sign (`shop`, its data's
 `{keeper}` filled; the app's step dialogs show the same string), and a dev action's typed ids.
-A rank's title is a `word:` phrase (`{title:a}`). The topic names of a quarrel's sides and the
+A rank's title is a `word:` phrase (`{title:a}`), its guild `guild:<id>` (`{guild:the}`). The topic names of a quarrel's sides and the
 parting dialog are UI text ("The dialogue screens and dialogs" below); left as they are:
 `carry.rs::chosen`'s refusal (items).
 

@@ -55,7 +55,7 @@ use ascmearc_core::color::Rgb;
 use ascmearc_core::content::{ClassActive, MAX_SPELL_RANK, Rarity, RecipeUse, SpellId};
 use ascmearc_core::equipment;
 use ascmearc_core::item_list::ItemList;
-use ascmearc_core::lang::Arg;
+use ascmearc_core::lang::{Arg, Phrase};
 use ascmearc_core::object::{Stack, Weight, format_weight};
 use ascmearc_core::perception::PerceptionView;
 use ascmearc_core::{Action, Meal, Positions, ReadTarget};
@@ -381,9 +381,9 @@ struct Entry {
     /// not aimed, a spell on oneself, is read at once).
     identify: bool,
     /// A grimoire whose spell may be learned or deepened: what it is ("grimoire of frost"), the
-    /// spell it teaches, the rank a reading would bring (`None`: it would teach the spell), and
-    /// the chance in words, for the dialog.
-    study: Option<(String, String, Option<u8>, &'static str)>,
+    /// spell it teaches (`spell:<id>`), the rank a reading would bring (`None`: it would teach
+    /// the spell), and the chance in words, for the dialog.
+    study: Option<(String, Phrase, Option<u8>, &'static str)>,
 }
 
 #[derive(Debug)]
@@ -482,7 +482,7 @@ impl ObjectScreen {
                 let study = match (list, item) {
                     (ObjectList::Read, Item::Pack(i)) => {
                         (studies.iter()).find(|s| s.item == i).and_then(|study| {
-                            let spell = content.spell_of(study.spell)?.name.clone();
+                            let spell = content.spell_phrase(content.spell_of(study.spell)?);
                             Some((view.lore().title(s), spell, study.rank, study.chance))
                         })
                     }

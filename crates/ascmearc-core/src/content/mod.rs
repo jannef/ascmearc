@@ -118,6 +118,7 @@ mod load_status;
 mod load_world;
 #[cfg(test)]
 mod loader_check_tests;
+mod magic_word;
 mod magic_worth;
 mod material;
 pub mod mimic;

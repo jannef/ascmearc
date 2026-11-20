@@ -169,7 +169,7 @@ pub(crate) fn advance(content: &Content, recipe: &RecipeDef) -> Vec<Stack> {
 fn work_phrase(content: &Content, recipe: &RecipeDef) -> Phrase {
     match &recipe.result {
         Some(r) => Phrase::id(format!("object:{}", content.object(r.object).id)),
-        None => Phrase::id(format!("word:{}", recipe.name)),
+        None => content.recipe_phrase(&recipe.id),
     }
 }
 

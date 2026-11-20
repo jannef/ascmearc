@@ -330,8 +330,7 @@ impl World {
             return;
         }
         let who = self.called_phrase(me);
-        // The spell's name is core's English, text until it is converted (#1949).
-        let name = def.name.to_lowercase();
+        let name = self.content.spell_phrase(def);
         let player = self.state.player;
         let them = (self.state.actors.get(&on))
             .filter(|a| on == player || self.perception.sees_actors_at(a.pos))

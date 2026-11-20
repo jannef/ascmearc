@@ -11,7 +11,7 @@
 use crate::ability::{Ability, Unavailable};
 use crate::action::{AttackKind, Event};
 use crate::combat::{Profile, Strike};
-use crate::content::{ActionKind, SignActive, Stance};
+use crate::content::{ActionKind, SignActive, Stance, StatusId};
 use crate::damage::{Damage, Rider};
 use crate::geom::Pos;
 use crate::lang::Msg;
@@ -251,11 +251,8 @@ impl World {
             return;
         };
         let from = me.pos;
-        let riders: Vec<(Rider, &str)> = (me.effects.iter())
-            .filter_map(|e| {
-                let def = content.status(e.status);
-                def.retaliates.map(|r| (r, def.name.as_str()))
-            })
+        let riders: Vec<(Rider, StatusId)> = (me.effects.iter())
+            .filter_map(|e| content.status(e.status).retaliates.map(|r| (r, e.status)))
             .collect();
         for (rider, status) in riders {
             if !self.state.actors.contains_key(&attacker) || self.state.death.is_some() {
@@ -291,10 +288,10 @@ impl World {
             // (an innate Barbed hide: "The barbed hide stabs you.").
             let def = content.damage_type(rider.kind);
             let noun = match def.physical {
-                true => status.to_lowercase(),
-                false => def.name.clone(),
+                true => content.status_phrase(status),
+                false => content.damage_type_phrase(rider.kind),
             };
-            self.say_spell((&noun, &def.verb), made, events);
+            self.say_spell_of(noun, &def.verb, made, events);
             if harmed {
                 self.spell_type_lands(target, Some(rider.kind), &[attacker], events);
             }

@@ -26,12 +26,13 @@ text = "Read the {grimoire:bare}? {what:bare} will be {chance:bare}. Once you be
 [dialog_title]
 text = "Read"
 
-# What reading would do: `spell`, the spell; `rank`, the rank it would bring; `max`, the top rank.
+# What reading would do: `spell`, the spell by its name (`spell:<id>`, said `Bare`: "Frost");
+# `rank`, the rank it would bring; `max`, the top rank.
 [deepening]
-text = "Deepening {spell:bare} to rank {rank:bare} of {max:bare}"
+text = "Deepening {spell:Bare} to rank {rank:bare} of {max:bare}"
 
 [learning]
-text = "Learning {spell:bare}"
+text = "Learning {spell:Bare}"
 
 # The footer: `letters`, the page's letters (`a-c`); `confirm`, the confirm key; `verb`, below.
 [either]

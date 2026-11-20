@@ -136,8 +136,8 @@ pub struct CharacterScreen {
     /// they could keep themselves; `None` without an oath.
     oath_kills: Option<u32>,
     /// The guilds they belong to: the rank's title, in its metal's
-    /// colour, and the guild's name in a sentence ("the Weyfarers' Gilde").
-    guilds: Vec<(String, Rgb, String)>,
+    /// colour, and the guild by its name (`guild:<id>`, "the Weyfarers' Gilde").
+    guilds: Vec<(String, Rgb, Phrase)>,
     /// The attacks they have ready: where each comes from, what it is made with, and its
     /// numbers (`+4 to hit, 1d8+2 slashing`), beside the stats.
     attacks: Vec<(&'static str, String, String)>,
@@ -283,7 +283,11 @@ impl CharacterScreen {
             guilds: (view.own_guilds().iter())
                 .map(|g| {
                     let color = g.guild.color(content, g.rank, TEXT);
-                    (g.title().to_string(), color, g.guild.name.clone())
+                    (
+                        g.title().to_string(),
+                        color,
+                        content.guild_phrase(&g.guild.id),
+                    )
                 })
                 .collect(),
             attacks: (view.own_attacks().iter())
@@ -510,7 +514,7 @@ impl CharacterScreen {
                 // The row in the text's words, then the title over it in its metal's colour.
                 let args = [
                     ("title", title.as_str().into()),
-                    ("guild", guild.as_str().into()),
+                    ("guild", guild.clone().into()),
                 ];
                 let row = ui_with(T::GUILD_RANK, &args);
                 console.print(at, y, &row, TEXT);

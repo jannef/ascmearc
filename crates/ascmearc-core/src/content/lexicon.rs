@@ -27,6 +27,7 @@
 //! | `sign:<element>.<animal>` | a birth sign as players say it ("Fire Manticore") |
 //! | `class:<id>`, `prestige:<id>` | a class's and a prestige class's `name` in lower case ("warrior") |
 //! | `stance:<id>` | a combat stance's `name` in lower case ("aggressive") |
+//! | `spell:<id>`, `school:<id>`, `damage_type:<id>`, `recipe:<id>`, `slot:<id>`, `item_class:<id>`, `guild:<id>`, `sign_noun:<active>` | magic and gear data names ([`super::magic_word`], #1994) |
 //! | `label:scroll`, `label:wand`, `label:rod`, `label:potion` | an unidentified type's `name` and `plural`, with its `{label}` and `{colour}` slots (`data/scroll_labels.toml`, …) |
 //! | `colour:<colour>` | a potion's colour, as its type writes it ("red") |
 //! | `word:<text>` | a word data names without an id of its own (a natural attack's "bite", a trap's "arrow", a status's "staggered", "something"), keyed by its English, which is the word; with no data to say its number, a plural noun (`many`) as its spelling suggests ([`crate::lang::en::is_plural`]: "claws", "flames", "stakes") |
@@ -131,6 +132,9 @@ impl Lexicon for Content {
             | "class"
             | "prestige"
             | "stance" => self.character_word(kind, key),
+            // Magic and gear data names (#1994).
+            "spell" | "school" | "damage_type" | "recipe" | "slot" | "item_class" | "guild"
+            | "sign_noun" => super::magic_word::word(self, kind, key),
             "colour" => Some(LexWord::new(key)),
             "word" => Some(LexWord::new(key).many(is_plural(key))),
             _ => None,
@@ -210,16 +214,21 @@ impl Content {
             .into()
     }
 
-    /// What was chosen for a talent, by its name in lower case: a weapon skill or a skill by its
-    /// lexicon id; an element, a kind of creature, or a school a `word:` phrase until their words
-    /// have ids (#1994).
+    /// What was chosen for a talent, by its name in lower case: a weapon skill, a skill, an
+    /// element (a damage type), or a school by its lexicon id; a kind of creature a `word:`
+    /// phrase.
     fn choice_phrase(&self, kind: Choice, choice: &str) -> Phrase {
         let name = kind.name(self, choice);
+        let school = super::School::ALL.iter().any(|s| s.id() == choice);
         match kind {
             Choice::WeaponSkill | Choice::Style if name.is_some() => {
                 Phrase::id(format!("weapon_skill:{choice}"))
             }
             Choice::Skill if name.is_some() => Phrase::id(format!("skill:{choice}")),
+            Choice::School if school => Phrase::id(format!("school:{choice}")),
+            Choice::Element | Choice::School if name.is_some() => {
+                Phrase::id(format!("damage_type:{choice}"))
+            }
             _ => Phrase::id(format!("word:{}", name.unwrap_or(choice).to_lowercase())),
         }
     }

@@ -86,8 +86,8 @@ impl World {
         }
         let def = content.spell(spell);
         let Some(scroll) = content.scroll_of(spell) else {
-            // The spell's name is the data's text until it has a phrase (#1949).
-            self.say(Msg::new(msg::magic::NO_SCROLL_CAN_HOLD).role("spell", def.name.clone()));
+            let spell = content.spell_phrase(def);
+            self.say(Msg::new(msg::magic::NO_SCROLL_CAN_HOLD).role("spell", spell));
             return Spent::Nothing;
         };
         let blank = content.blank_scroll();
