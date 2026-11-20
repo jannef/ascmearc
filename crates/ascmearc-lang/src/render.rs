@@ -8,6 +8,7 @@ use crate::lang::{self, LangError, LangFile};
 use crate::lexicon::Lexicon;
 use crate::message::{Arg, Entry, Role};
 use crate::morphology::en::{En, Plurals};
+use crate::morphology::fi::Fi;
 use crate::morphology::generic::Generic;
 use crate::morphology::{Conj, FormError, Morphology, capitalize, capitalized_form, lower_form};
 use crate::phrase::Phrase;
@@ -111,11 +112,12 @@ impl Language {
     }
 
     /// A language from the text of its `lang.toml`, with the module its `morphology` names: `en`
-    /// (given the plural dictionary) or `generic` (its `[generic]` table). `fi` comes with L10.
+    /// (given the plural dictionary), `fi`, or `generic` (its `[generic]` table).
     pub fn from_toml(text: &str, plurals: Plurals) -> Result<Self, LangError> {
         let file = lang::parse(text)?;
         let morphology: Box<dyn Morphology> = match file.morphology.as_str() {
             "en" => Box::new(En::new(plurals, file.number_words)),
+            "fi" => Box::new(Fi::new(file.number_words)),
             "generic" => match &file.generic {
                 Some(spec) => Box::new(Generic::new(spec.clone())),
                 None => {
@@ -128,7 +130,7 @@ impl Language {
             other => {
                 return Err(LangError::new(
                     "lang.toml",
-                    format!("morphology `{other}` has no module (`en`, `generic`)"),
+                    format!("morphology `{other}` has no module (`en`, `fi`, `generic`)"),
                 ));
             }
         };
@@ -687,12 +689,18 @@ text = "{what:Bare}, {count:num} of them."
             generic.morphology().forms(),
             ["bare", "counted", "num", "nom"]
         );
-        let error = Language::from_toml(
-            "name = \"x\"\ncode = \"x\"\nmorphology = \"fi\"\n",
+        let finnish = Language::from_toml(
+            "name = \"suomi\"\ncode = \"fi\"\nmorphology = \"fi\"\n",
             Plurals::default(),
         )
-        .expect_err("no fi yet");
-        assert!(error.to_string().contains("`fi` has no module"), "{error}");
+        .expect("fi");
+        assert!(finnish.morphology().forms().iter().any(|f| f == "ill"));
+        let error = Language::from_toml(
+            "name = \"x\"\ncode = \"x\"\nmorphology = \"xx\"\n",
+            Plurals::default(),
+        )
+        .expect_err("no such module");
+        assert!(error.to_string().contains("`xx` has no module"), "{error}");
         let error = english()
             .add_templates("x", "[a]\nby = 3")
             .expect_err("bad");

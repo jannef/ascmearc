@@ -3,6 +3,10 @@
 Developer notes for working on this part of Ascmearc (moved from CLAUDE.md, #185); the
 rules it implements are in spec/05-interface.md. Keep it current with the code, as CLAUDE.md says.
 
+A screen's words move to `assets/lang/en/ui/<module>.toml` as the L6 parts convert it (the
+abilities menu first): `ui::text::ui(text::abilities_screen::TITLE)` in place of a literal; how, in
+`docs/dev/localization.md` "UI text". Its keys stay fixed in its code.
+
 Modal screens — main menu, the saved characters (Characters), new run and character
 creation (race, gender, class, talents, name, summary), pause, settings, controls, the `?` help, the inventory (`I`), the equipment screen
 (`i`) and its choice of what goes in a slot, an item's description (a letter in the inventory,

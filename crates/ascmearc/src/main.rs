@@ -156,6 +156,8 @@ fn main() -> AppExit {
         ));
     }
     let graveyard = graveyard::GraveyardStore::from_args(&args);
+    // The UI's words come from the content too (`ui/text.rs`).
+    ui::text::use_content(content.clone());
     app.insert_resource(args)
         .insert_resource(game::GameContent(content))
         .insert_resource(ui::StartupNotice(notice))

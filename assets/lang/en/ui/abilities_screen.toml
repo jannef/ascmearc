@@ -1,0 +1,121 @@
+# The abilities menu (`crates/ascmearc/src/ui/abilities_screen.rs`). Ids alphabetical.
+#
+# Widths: the panel is 60 columns at least (`WIDTH`), 56 inside its frame, and grows to fit its
+# rows: on an 80-column console a row's state shares 69 columns with the ability's name
+# (`ROW_EXTRA`); the notice wraps over the description's three lines of 56. The keys named in the hint lines are fixed (`a`, `Enter`, `Esc`): translate the
+# words around them.
+
+# What an ability asks for, when it can be used now.
+[aim_ailment]
+text = "on yourself or an ally"
+width = 69
+
+[aim_cell]
+text = "at a place you see"
+width = 69
+
+[aim_corpse]
+text = "at a corpse you see"
+width = 69
+
+[aim_direction]
+text = "in a direction"
+width = 69
+
+[aim_item]
+text = "on something you carry"
+width = 69
+
+[aim_rig]
+text = "a trap beside you"
+width = 69
+
+[aim_shape]
+text = "in a weapon's shape"
+width = 69
+
+[aim_spell]
+text = "a scroll of a spell you know"
+width = 69
+
+[aim_throw]
+text = "something thrown at a place you see"
+width = 69
+
+# A spell that can be used now and is cast at a place. `cost`: what it rolls and costs
+# (`mana`, `roll_mana`).
+[aimed]
+text = "{cost:bare}, aimed"
+width = 69
+
+# Charge's stamina: `base` for the charge, `per` for each pace run.
+[charge_stamina]
+text = "{base:bare} stamina + {per:bare} a pace"
+width = 69
+
+[close]
+text = "Esc close"
+width = 56
+
+# The footer's way out with no ability listed: `own`, the key that opens the menu.
+[close_own]
+text = "{own:bare} or Esc close"
+width = 56
+
+# A row's state when it can be used now: `cost`, what it costs; `aim`, what it asks for (`aim_*`).
+[cost_aim]
+text = "{cost:bare}, {aim:bare}"
+width = 69
+
+# A row's state when it cannot be used now: `cost`, what it costs; `why`, why not.
+[cost_why]
+text = "{cost:bare}: {why:bare}"
+width = 69
+
+# A spell that rolls nothing: `cost`, its mana.
+[mana]
+text = "{cost:bare} mana"
+width = 69
+
+[none]
+text = "You have no abilities."
+width = 54
+
+# Why the ability just chosen cannot be used: `ability`, its name; `why`, the reason.
+[notice]
+text = "{ability:bare}: {why:bare}."
+width = 168
+
+# A spell's reach now, after its description: `reach`, "range 11, radius 2".
+[reach]
+text = "{reach:Bare}."
+width = 56
+
+# A spell's roll and cost: `roll`, the dice and their type ("4d6 fire"); `cost`, its mana.
+[roll_mana]
+text = "{roll:bare}, {cost:bare} mana"
+width = 69
+
+# A spell the player is short of mana for: `cost`, what it rolls and costs; `mana`, what they have.
+[short_of_mana]
+text = "{cost:bare}: you have {mana:bare}"
+width = 69
+
+# An active weapon ability's stamina.
+[stamina]
+text = "{stamina:bare} stamina"
+width = 69
+
+[title]
+text = "Abilities"
+width = 54
+
+# The footer's letters to use: `confirm`, the key that uses the `>` row.
+[use_a]
+text = "a or {confirm:bare} use"
+width = 56
+
+# The same, for the letters `a` to `last`.
+[use_letters]
+text = "a-{last:bare} or {confirm:bare} use"
+width = 56

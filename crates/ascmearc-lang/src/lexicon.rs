@@ -19,6 +19,9 @@ pub struct LexWord {
     pub proper: bool,
     /// The grammatical gender for languages that have one (`generic`'s article tables).
     pub gender: Option<String>,
+    /// `fi`: `front` or `back`, overriding the vowel-harmony rule where it would misjudge a loan
+    /// word (`oliivi|öljy/1` with `harmony = "front"`).
+    pub harmony: Option<String>,
     /// A plural noun though it names one thing ("flames", "shards"): a verb agrees with it in the
     /// plural.
     pub many: bool,
@@ -44,6 +47,11 @@ impl LexWord {
 
     pub fn gender(mut self, gender: impl Into<String>) -> Self {
         self.gender = Some(gender.into());
+        self
+    }
+
+    pub fn harmony(mut self, harmony: impl Into<String>) -> Self {
+        self.harmony = Some(harmony.into());
         self
     }
 
@@ -88,7 +96,8 @@ impl MapLexicon {
 
     /// Reads one lexicon file. Each entry is `id = "lemma"` or a table: `word` (the lemma, or
     /// for `generic` a table of forms, the first declared being the lemma), `forms` (explicit
-    /// forms), `proper`, `gender`, `many` (a plural noun); `of` (the hash of the English) is the checker's and is skipped.
+    /// forms), `proper`, `gender`, `many` (a plural noun), `harmony` (`fi`); `of` (the hash of
+    /// the English) is the checker's and is skipped.
     /// `prefix` is put before every id (`object:`), matching the data directory the file mirrors.
     pub fn parse(prefix: &str, text: &str) -> Result<Self, LangError> {
         let table: toml::Table =
@@ -160,6 +169,12 @@ fn parse_entry(id: &str, entry: &toml::Table) -> Result<LexWord, LangError> {
         .get("gender")
         .and_then(toml::Value::as_str)
         .map(str::to_string);
+    if let Some(harmony) = entry.get("harmony") {
+        match harmony.as_str() {
+            Some(h @ ("front" | "back")) => word.harmony = Some(h.to_string()),
+            _ => return Err(err("`harmony` is \"front\" or \"back\"".into())),
+        }
+    }
     Ok(word)
 }
 

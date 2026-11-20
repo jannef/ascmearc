@@ -14,7 +14,8 @@ mod tests {
         let content = crate::test_support::builtin();
         let templates = content.english().templates();
         let mut parsed: Vec<(String, Vec<String>)> = Vec::new();
-        for id in templates.ids() {
+        // The UI text's ids are the app's (`ui.<module>.<name>`, `crates/ascmearc/build.rs`).
+        for id in templates.ids().filter(|id| !id.starts_with("ui.")) {
             let mut roles = templates.get(id).expect("listed").roles();
             roles.retain(|r| r != "key");
             parsed.push((id.to_string(), roles));
