@@ -69,7 +69,7 @@ from `content/creature.rs`); `counted` (`content/object.rs`); `Plurals` (`conten
 file in the `ContentError`). Their tests moved with them; `the_builtin_dictionary` stays in core.
 `en::ordinal` is new ("1st", "22nd"). L3 moved three more: `en::made_names` (which
 `content/part.rs::names` wraps), `en::charges` (which `object::charges_text` wraps), and
-`en::is_plural` (from `fight.rs`; the content lexicon's `many`).
+`en::is_plural` (from `fight.rs`; the `word:` lexicon's last-resort `many`, "Phrases").
 
 ## The `fi` module
 
@@ -279,8 +279,16 @@ docs hold the table): `creature:<id>`, `object:<id>` (with `written`, `written_p
 `terrain:<id>`, `label:scroll|wand|rod|potion` (an unidentified type's name with its `{label}`
 and `{colour}` slots), `colour:<colour>`, and `word:<text>`: a word the data names without an id
 of its own (a natural attack's "bite", a trap's "arrow", a status's "dazed", "something"), keyed
-by its English, which is the word. A noun that is plural though it names one thing ("flames") is
-`many` in the lexicon (`en::is_plural`), and verbs agree with it in the plural.
+by its English, which is the word; and `disease:<id>` (its name as written, "the shakes").
+
+**Number comes from data** (#1965): a phrase is plural by its count or by the lexicon's `many` (a
+noun plural though it names one thing, "flames"); a proper name or a literal is one thing ("The
+Hounds quails", "Agnes is"). The content says `many` where it can (a disease's `many` in
+`diseases.toml`: "the shakes are"); objects and creatures are never `many`. Only a `word:` noun,
+which has no data of its own, guesses it from its spelling (`en::is_plural`: "claws", "stakes").
+Verbs agree with the number (`{x:s}`, `{x:is}`), the possessive follows it (`en::possessive_of`:
+"the incubus's", "the wolves'", "the shakes'"), and `{x:a}` of a `many` noun is "some stakes" (no
+indefinite article on a plural).
 
 **Who.** `World::you()` is the player (their name, `Person::You`, their gender);
 `World::phrase_of(id)` any actor as the player knows it when they see it: the player, a
@@ -486,8 +494,7 @@ where it was `called`), and the player as `World::you`. Creatures that came (a s
 crawls out of a corpse) are one argument said `{what:Counted}` (`summon.rs::counted_arg`): one
 type alone is its phrase with its count, so the line's `by = "what.number"` picks the verb;
 several types a list. A type's `first_sight` is a line of data, `creature:<id>.first_sight`. A
-possessive the string wrote as `'s` after the name stays written so (`{who:The}'s eyes`), as
-`{who:poss}` would drop the `s` after "incubus" and "succubus". Text roles until their words are
+possessive after the name is `{who:Poss}` ("The incubus's eyes", #1965). Text roles until their words are
 converted (#1949): a breath's, a burst's, and a summoning's `verb` from the data, and a spell's
 name, lower case. A chest band's name, and a status's `seen`, are `word:` phrases.
 

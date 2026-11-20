@@ -43,6 +43,9 @@ pub struct DiseaseDef {
     pub id: String,
     /// As the character screen names it once the sufferer knows it: `filth fever`.
     pub name: String,
+    /// Its name is a plural noun ("the shakes"): verbs agree with it in the plural (the
+    /// lexicon's `many`, `disease:<id>`).
+    pub many: bool,
     /// What a check must reach to resist it (to not catch it, and to win a progression).
     pub difficulty: i32,
     /// The stat whose modifier the checks add: Toughness unless it says otherwise.
@@ -117,6 +120,8 @@ struct DiseaseFile {
 struct DiseaseSpec {
     id: String,
     name: String,
+    #[serde(default)]
+    many: bool,
     difficulty: i32,
     #[serde(default = "toughness")]
     check: Stat,
@@ -232,6 +237,7 @@ fn resolve(
     Ok(DiseaseDef {
         id: spec.id,
         name: spec.name,
+        many: spec.many,
         difficulty: spec.difficulty,
         check: spec.check,
         incubation,
