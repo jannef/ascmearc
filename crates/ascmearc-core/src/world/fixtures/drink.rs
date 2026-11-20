@@ -73,7 +73,7 @@ impl World {
             Ended::Died => {}
             _ if self.state.time >= until => self.drunk(draught.spring, events),
             Ended::Came(came) => {
-                let came = self.came_line(came);
+                let came = self.came_msg(came);
                 self.say(Msg::new(msg::fixtures::DRINK_BROKEN_BY).role("came", came));
             }
             Ended::Said | Ended::Done => self.say(msg::fixtures::STOP_DRINKING),

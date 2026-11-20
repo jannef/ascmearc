@@ -129,9 +129,11 @@ impl World {
 }
 
 /// What the player is told of a drain of theirs: the stat it took from, or a chill that passes.
-pub(in crate::world) fn drained_message(stat: Option<Stat>) -> String {
+/// The stat's name is core's word, text until it is converted (#1949).
+pub(in crate::world) fn drained_message(stat: Option<Stat>) -> crate::lang::Msg {
+    use crate::{lang::Msg, msg};
     match stat {
-        Some(stat) => format!("You feel your {} drain away!", stat.name().to_lowercase()),
-        None => "A deathly chill passes through you.".to_string(),
+        Some(stat) => Msg::new(msg::health::DRAINED).role("stat", stat.name().to_lowercase()),
+        None => msg::health::DEATHLY_CHILL.into(),
     }
 }

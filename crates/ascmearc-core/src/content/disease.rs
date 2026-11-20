@@ -94,8 +94,14 @@ impl DiseaseDef {
     /// What it says at its progression number `n` (1 for the first) when the check fails: its
     /// symptoms in turn, from the first again after the last.
     pub fn symptom(&self, n: u16) -> &str {
-        let i = usize::from(n.max(1) - 1) % self.symptoms.len().max(1);
-        self.symptoms.get(i).map_or("", String::as_str)
+        self.symptom_index(n)
+            .map_or("", |i| self.symptoms[i].as_str())
+    }
+
+    /// Which of its symptoms [`DiseaseDef::symptom`] says at progression number `n`; `None`
+    /// when it has none.
+    pub fn symptom_index(&self, n: u16) -> Option<usize> {
+        usize::from(n.max(1) - 1).checked_rem(self.symptoms.len())
     }
 
     /// Whether it ever recovers by itself.

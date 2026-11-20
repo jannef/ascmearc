@@ -335,7 +335,7 @@ fn the_override_lasts_three_hours_and_replays_and_saves() {
     assert_eq!(loaded.perception, b.perception);
     // A state without an override says nothing of it (saves and hashes from before stay valid).
     let json = serde_json::to_string(a.state()).expect("serializes");
-    assert!(!json.contains("weather"));
+    assert!(!json.contains("weather_override"));
 }
 
 #[test]

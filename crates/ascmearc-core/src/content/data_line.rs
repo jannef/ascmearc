@@ -322,6 +322,55 @@ fn class_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
     }
 }
 
+// --- The turn's lines (L4o, #1926): what the player perceives as a turn ends -------------------
+
+/// Trap `id`'s `message`, said as the player perceives it go off (`traps.toml`'s `[[trap]]`).
+pub fn trap_message(id: &str) -> String {
+    format!("trap:{id}.message")
+}
+
+/// Disease `id`'s `onset`, said as it shows.
+pub fn disease_onset(id: &str) -> String {
+    format!("disease:{id}.onset")
+}
+
+/// Disease `id`'s symptom `i` (from 0), its `symptoms[i]`.
+fn disease_symptom_at(id: &str, i: usize) -> String {
+    format!("disease:{id}.symptoms.{i}")
+}
+
+/// Disease `def`'s symptom at its progression number `n` (1 for the first) when the check
+/// fails ([`super::DiseaseDef::symptom_index`]); `None` when it has none.
+pub fn disease_symptom(def: &super::DiseaseDef, n: u16) -> Option<String> {
+    Some(disease_symptom_at(&def.id, def.symptom_index(n)?))
+}
+
+/// Resource `id`'s `ended`, said as it ends (`resources.toml`'s `[[resource]]`).
+pub fn resource_ended(id: &str) -> String {
+    format!("resources:resource.{id}.ended")
+}
+
+/// The turn's lines: the traps' messages, the diseases' onsets and symptoms, and the resources'
+/// `ended`.
+fn turn_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
+    for def in content.trap_defs() {
+        if let Some(message) = &def.message {
+            add(trap_message(&def.id), message);
+        }
+    }
+    for def in content.disease_defs() {
+        add(disease_onset(&def.id), &def.onset);
+        for (i, symptom) in def.symptoms.iter().enumerate() {
+            add(disease_symptom_at(&def.id, i), symptom);
+        }
+    }
+    for def in content.resources() {
+        if let Some(ended) = &def.ended {
+            add(resource_ended(&def.id), ended);
+        }
+    }
+}
+
 /// Adds every line above to English by its key; a line naming a role is refused (none is given
 /// one).
 pub(super) fn add_all(content: &mut Content) -> Result<(), ContentError> {
@@ -388,6 +437,7 @@ pub(super) fn add_all(content: &mut Content) -> Result<(), ContentError> {
     class_lines(content, &mut add);
     fixture_lines(content, &mut add);
     creature_lines(content, &mut add);
+    turn_lines(content, &mut add);
     for (id, level) in &content.levels {
         if let Some(line) = &level.arrival {
             add(level_arrival(id), line);

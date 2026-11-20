@@ -163,7 +163,7 @@ impl World {
             },
             Ended::Came(came) => {
                 let said = Msg::new(msg::crafting::WORK_STOPPED_CAME)
-                    .role("came", self.came_line(came))
+                    .role("came", self.came_msg(came))
                     .role("leave", job.leave());
                 self.say(said);
             }

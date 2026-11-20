@@ -223,8 +223,7 @@ impl World {
             Ended::Died => {}
             _ if left.get() == 0 => self.finish_calling(events),
             Ended::Came(came) => {
-                // What came is told as `came_line` says it, until that line is converted.
-                let came = self.came_line(came);
+                let came = self.came_msg(came);
                 self.say(Msg::new(msg::allies::CALLING_BROKEN_BY).role("came", came));
             }
             Ended::Said | Ended::Done => self.say(msg::allies::CALLING_BROKEN),

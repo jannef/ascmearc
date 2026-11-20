@@ -135,7 +135,7 @@ impl World {
             Ended::Died => {}
             _ if self.state.time >= until => self.hallow(),
             Ended::Came(came) => {
-                let came = self.came_line(came);
+                let came = self.came_msg(came);
                 self.say(Msg::new(msg::classes::RISE_FROM_KNEES_CAME).role("came", came));
             }
             Ended::Said | Ended::Done => self.say(msg::classes::RISE_FROM_KNEES),

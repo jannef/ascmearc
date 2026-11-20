@@ -1,0 +1,71 @@
+# The turn (`world/turn/`): what the player perceives as a turn ends (the deaths, falls, and traps
+# they see, the weather turning, a light dazzling them), resting, running, throwing their voice,
+# and the dev actions with no module of their own. Ids alphabetical (`docs/dev/localization.md`
+# "Literal lines"). What the data writes (a status's start and end lines, a disease's, a
+# resource's end, a trap's message) is said by its key in the data, not here (`docs/dev/
+# localization.md` "Lines of data").
+#
+# Roles: `who` is the creature a line is about, `what` a thing or a terrain (phrases built where
+# they are said); `came` the clause that says what stopped a long action, a message of its own
+# (`comes_close`, `comes_into_view`). `time` is how long ("3 minutes"), `dies` how a status kills
+# ("bleeds to death"), `weather` a weather's name: English words from core and the data, text
+# until they are converted. `id` and `name` are a dev action's, as typed and as the data names it.
+
+adjusted = "Your eyes adjust to the dimmer light."
+cannot_rest_in_deep_water = "You cannot rest in deep water."
+clouds_gather = "Clouds gather."
+# `who`: a creature seen farther off before, now close (said as `came`).
+comes_close = "{who:The} come{who:s} close"
+# `who`: a creature not seen before (said as `came`).
+comes_into_view = "{who:A} come{who:s} into view"
+dazzled = "The bright light dazzles you."
+# `who`: the creature; `dies`: how the status that killed it says it ("bleeds to death").
+dies_of_status = "{who:The} {dies:bare}."
+do_not_rest = "You do not rest."
+# `who`: who fell, the player or a creature.
+fall_into_pit = "{who:The} fall{who:s} into a pit."
+# `what`: the item, as the player knows its kind.
+falls_below = "{what:The} fall{what:s} away to the ground far below."
+# `who`: the creature.
+falls_through_ice = "{who:The} fall{who:s} through the ice!"
+hear_nothing_beyond_door = "You hear nothing beyond the door."
+no_path_down = "You know of no path to a way down."
+no_path_up = "You know of no path to a way up."
+# A dev action's: `id` as typed.
+no_vision_profile_dev = "There is no vision profile `{id:bare}`."
+no_way_down = "You know of no way down here."
+no_way_up = "You know of no way up here."
+# `what`: the stairs' terrain.
+on_stairs_already = "You are on {what:the} already."
+rain_eases = "The rain eases."
+rain_grows_heavy = "The rain grows heavy."
+rain_stops = "The rain stops."
+rain_stops_sky_clears = "The rain stops and the sky clears."
+rest_until_dawn = "You rest until dawn."
+rest_until_dusk = "You rest until dusk."
+# `time`: how long.
+rested_for = "You rest for {time:bare}."
+sky_clears = "The sky clears."
+starts_to_pour = "It starts to pour."
+starts_to_rain = "It starts to rain."
+# `time`: how long.
+stop_resting = "You stop resting after {time:bare}."
+# `came`: who came, and how; `time`: how long.
+stop_resting_came = "{came:bare}; you stop resting after {time:bare}."
+# `came`: who came, and how.
+stop_running_came = "{came:bare}; you stop running."
+throw_voice = "You throw your voice."
+throw_voice_only_seen = "You can throw your voice only to a place you see."
+throw_voice_unknown = "You do not know how to throw your voice."
+# A dev action's: `time` how far.
+time_skips_dev = "Time skips ahead {time:bare} (dev)."
+trap_in_the_way = "A trap lies in the way."
+# `who`: the creature.
+vanishes = "{who:The} vanish{who:es}!"
+# A dev action's: `name` the vision profile's.
+vision_dev = "Vision: {name:bare}."
+wall_collapses = "The wall collapses!"
+walls_collapse = "The walls collapse!"
+# A dev action's: `weather` lower case, `time` how long it holds.
+weather_dev = "Weather: {weather:bare} for {time:bare} (dev)."
+wrenched_elsewhere = "You are wrenched elsewhere."

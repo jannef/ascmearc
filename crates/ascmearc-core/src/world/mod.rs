@@ -1494,7 +1494,7 @@ impl World {
             Action::Drop(positions) => return self.drop_objects(positions),
             Action::Sell(positions) => {
                 return self.trade(positions, true).unwrap_or_else(|| {
-                    self.say("There is nobody here to sell to.");
+                    self.say(crate::msg::world::NOBODY_TO_SELL_TO);
                     Spent::Nothing
                 });
             }
@@ -1628,7 +1628,7 @@ impl World {
             return refused;
         }
         self.player_mut().stance = stance;
-        self.say(format!("You take {} stance.", stance.phrase()));
+        self.say(stance.taken());
         if self
             .state
             .player()

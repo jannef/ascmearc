@@ -90,7 +90,7 @@ impl World {
             Ended::Died => {}
             _ if self.state.time >= until => self.prayer_answered(prayer.altar, events),
             Ended::Came(came) => {
-                let came = self.came_line(came);
+                let came = self.came_msg(came);
                 self.say(Msg::new(msg::fixtures::PRAYER_BROKEN_BY).role("came", came));
             }
             Ended::Said | Ended::Done => self.say(msg::fixtures::PRAYER_BROKEN),
