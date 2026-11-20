@@ -15,8 +15,10 @@
 
 use super::menu::{HINTS, Nav, Panel, Press, wrap};
 use super::screens::{ScreenAction, ScreenName};
+use super::text::{story_screen as T, ui, ui_with};
 use super::{TEXT, TEXT_DIM};
 use crate::render::console::Console;
+use ascmearc_core::lang::Arg;
 use ascmearc_core::perception::PerceptionView;
 use std::sync::atomic::{AtomicU64, Ordering};
 
@@ -26,8 +28,6 @@ const OPENING_WIDTH: i32 = 72;
 const PAGE_WIDTH: i32 = super::info_tabs::panel_width(OPENING_WIDTH);
 /// Rows of the panel besides the text: frame, margin, a gap and the footer, frame.
 const EXTRA: i32 = 5;
-/// What page 9 says for a character without a story.
-const UNWRITTEN: &str = "Your story is not written.";
 
 #[derive(Debug)]
 pub struct StoryScreen {
@@ -57,8 +57,10 @@ impl StoryScreen {
     fn new(view: Option<&PerceptionView<'_>>, opening: bool) -> Self {
         let name = view.and_then(|v| v.character()).map(|c| c.name.as_str());
         let title = match name {
-            Some(name) if !name.is_empty() => format!(" {name}'s story "),
-            _ => " Your story ".to_string(),
+            Some(name) if !name.is_empty() => {
+                format!(" {} ", ui_with(T::TITLE_NAMED, &[("name", name.into())]))
+            }
+            _ => format!(" {} ", ui(T::TITLE_YOUR)),
         };
         Self {
             title,
@@ -115,7 +117,7 @@ impl StoryScreen {
     fn lines(&self, width: i32) -> Vec<String> {
         let inner = (width - 6).max(8);
         if self.paragraphs.is_empty() {
-            return wrap(UNWRITTEN, inner);
+            return wrap(&ui(T::UNWRITTEN), inner);
         }
         let mut lines = Vec::new();
         for (i, paragraph) in self.paragraphs.iter().enumerate() {
@@ -156,12 +158,13 @@ impl StoryScreen {
         }
         let keys = HINTS;
         let close = if self.opening {
-            format!("{} continue", keys.confirm)
+            ui_with(T::CLOSE_CONTINUE, &[("confirm", Arg::from(keys.confirm))])
         } else {
-            "Esc close".to_string()
+            ui(T::CLOSE_ESC)
         };
         let footer = if shown < lines.len() {
-            format!("{} scroll   {close}", keys.up_down())
+            let scroll = ui_with(T::SCROLL, &[("up_down", keys.up_down().into())]);
+            format!("{scroll}   {close}")
         } else {
             close
         };
@@ -287,7 +290,7 @@ mod tests {
         let view = world.perception();
         let page = StoryScreen::page(Some(&view));
         let text = shown(&page, 100, 30).join("\n");
-        assert!(text.contains(UNWRITTEN), "{text}");
+        assert!(text.contains("Your story is not written."), "{text}");
         assert!(text.contains("Esc close"), "{text}");
         assert!(text.contains("9 Story"), "the tab line: {text}");
         assert!(!page.is_opening());

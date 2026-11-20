@@ -439,6 +439,20 @@ example:
    and footer), never a width in the text. Run the screen's tests and every screen snapshot
    (`cargo test -p ascmearc`): they must read identically and report no overflow.
 
+6. **No grammar in Rust.** The language owns articles and plurals, so a screen never builds
+   either:
+   - *No articles built in code.* Pass the creature or thing as a `Phrase` (`Phrase::id(format!(
+     "creature:{}", def.id))`, or `word:<text>` for a name the data holds only as English text)
+     and let the entry ask for the form: `text = "Killed by {who:a}"` (`{who:the}`, `{who:bare}`).
+     Finnish has no articles and shows none. `death_screen.rs` and `graveyard_screen.rs` are the
+     example.
+   - *No singular/plural choice in Rust.* One entry with a count variant, the number passed as
+     `Arg::Number`: `by = "n.number"` with `one` and `many` (a count of 0 is `many`; a special
+     sentence for nothing, "no marks", is its own entry). A counted thing is a phrase asked
+     `{x:counted}`. `level_up_screen.toml`'s `left_rolls`, `marks`, and `sources` are the example.
+   - *No sentence glued from entries.* A sentence with optional clauses is one entry with a slot
+     per clause, each clause its own entry or empty: `level_up_screen.toml`'s `explain`.
+
 ## Lines of data
 
 A line whose text lives in the data, not in `messages/` (a dialogue line, a miscast's `seen`, an
