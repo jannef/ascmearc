@@ -49,6 +49,11 @@ text = "on dreaded ground"
 [far_below]
 text = "Far below: {below:bare}."
 
+# A past character a statue bears the name of (`statue_of`'s `of`): `name`, their name as
+# written; `race`, their race (`race:<id>`).
+[fallen]
+text = "{name:bare} the {race:bare}"
+
 # Goods in a shop: `gold`, the price.
 [for_sale]
 text = "for sale, {gold:bare} gold"

@@ -9,10 +9,11 @@
 # Roles: `who` is a creature a line is about, as the player calls it ("the kobold", "Grimbold");
 # `keeper` a shopkeeper by name; `missile` what flew ("the arrow"); `what` a stack as the player
 # knows it, a list of them, or an object type. `status` is a status by its name (`status:<id>`,
-# "raging"), `name` a resource's (`resource:<id>`); `talent` is a talent's name from the data
-# and `song` a song's name lower case: text until those words are converted (#1949). `reason` is
-# why an ability cannot be used, a message of its own (`messages/ability.toml`). `came` is who came and how ("The kobold comes close"), from
-# `turn/rest.rs`. `class` is a class id as a word (dev) and `id` an id as typed: a prestige
+# "raging"), `name` a resource's (`resource:<id>`), `talent` a talent's
+# (`talent:<id>`), and `song` a song's (`song:<id>`); `reason` is why an ability cannot be used, a
+# message of its own (`messages/ability.toml`). `came` is who came and how ("The kobold comes
+# close"), from `turn/rest.rs`. `class` is a class by its name (`class:<id>`, dev) and `id` an id
+# as typed: a prestige
 # class's (dev), a class active's, or a shape's. `gold` is a number, said in digits.
 
 # `id`: the class active as typed (dev).
@@ -68,7 +69,7 @@ level_consecrated = "A stillness settles over the whole level: it is consecrated
 look_over_merchants_eye = "You look over {what:a} with a merchant's eye."
 loose_a_volley = "You loose a volley!"
 mind_already_still = "Your mind is already still."
-# A dev action's: `id`, the prestige class as typed; `class`, the player's class id.
+# A dev action's: `id`, the prestige class as typed; `class`, the player's class.
 no_calling_opens_dev = "No calling of this world opens `{id:bare}` to {class:a} (dev)."
 no_character_to_call_dev = "There is no character to call (dev)."
 no_missile_weapon_ready = "You have no missile weapon ready."

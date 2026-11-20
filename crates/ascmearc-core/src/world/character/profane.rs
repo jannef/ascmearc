@@ -150,7 +150,7 @@ impl World {
         self.regrant();
         self.shift_stats(&book.get(gift).effects, 1);
         self.say(data_line::said(data_line::profane(&def.id, "line")));
-        let name = book.get(gift).name.as_str();
+        let name = content.talent_phrase(gift);
         self.say(Msg::new(msg::character::YOU_ARE).role("gift", name));
         // What it bars falls (Horned's helm, `body_slots.rs`).
         self.shed_unworn();

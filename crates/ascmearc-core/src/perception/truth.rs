@@ -327,12 +327,12 @@ impl<'a> PerceptionView<'a> {
     }
 
     /// Whom the statue at `p` is of, where it bears a past character's name from the graveyard
-    /// (`world/fixtures/graveyard.rs`): "Brakka the dwarf". `None` where they know no statue there, or
-    /// it bears no name.
-    pub fn statue_name(&self, p: Pos) -> Option<String> {
+    /// (`world/fixtures/graveyard.rs`), whose name and race the look line says ("Brakka the
+    /// dwarf"). `None` where they know no statue there, or it bears no name.
+    pub fn statue_name(&self, p: Pos) -> Option<&'a crate::statue::Fallen> {
         self.statue_at(p)?;
         let statue = self.level.statues.get(&p)?;
-        statue.name.as_ref().map(|f| f.words(self.content))
+        statue.name.as_ref()
     }
 
     /// The chests the player sees or remembers on this level ([`PerceptionView::chest_at`]), by

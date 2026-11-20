@@ -56,6 +56,9 @@ const OUTSIDE: i32 = 2;
 struct Entry {
     ability: Ability,
     name: String,
+    /// Its name as a sentence says it: `ability:<id>`, or the name shown where the menu gives it
+    /// one of its own (the priest's prayer by its tier's title).
+    said: Arg,
     description: String,
     /// What it asks for if it can be used now ("in a direction"), else why not.
     state: String,
@@ -137,9 +140,15 @@ impl AbilitiesScreen {
                         }
                         _ => state.clone(),
                     };
+                    let name = view.ability_name(a).to_string();
+                    let said = match name == a.name(content) {
+                        true => content.ability_phrase(a).into(),
+                        false => name.as_str().into(),
+                    };
                     let entry = Entry {
                         ability: a,
-                        name: view.ability_name(a).to_string(),
+                        name,
+                        said,
                         description: describe(view, a),
                         state,
                         available: own.unavailable.is_none(),
@@ -202,7 +211,7 @@ impl AbilitiesScreen {
             Some(entry) if entry.available => ScreenAction::UseAbility(entry.ability),
             Some(entry) => {
                 let args = [
-                    ("ability", entry.name.as_str().into()),
+                    ("ability", entry.said.clone()),
                     ("why", entry.state.as_str().into()),
                 ];
                 self.notice = Some(ui_with(T::NOTICE, &args));

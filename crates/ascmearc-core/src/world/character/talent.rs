@@ -124,7 +124,7 @@ impl World {
                 }
             };
             for &id in &held {
-                let name = content.talents().get(id).name.as_str();
+                let name = content.talent_phrase(id);
                 (self.news).push(Msg::new(msg::character::KNOW_ALREADY).role("talent", name));
             }
             let talents = u8::from(every > 0 && level % every == 0)
@@ -353,7 +353,7 @@ impl World {
                 && !(self.state.progress.due.iter()).any(|d| d.bonus > 0)
             {
                 let names: Vec<Arg> = (self.free_talents_at(d.level).into_iter())
-                    .map(|t| content.talents().get(t).name.as_str().into())
+                    .map(|t| content.talent_phrase(t).into())
                     .collect();
                 let names = Arg::List(names);
                 return Err(Msg::new(msg::character::CHOOSE_YOUR_FREE_FIRST).role("talents", names));
@@ -362,15 +362,14 @@ impl World {
                 .next()
                 .and_then(|(_, t)| t);
             let names: Vec<Arg> = (trees.iter().flatten())
-                .map(|&t| content.talents().tree(t).name.as_str().into())
+                .map(|&t| content.tree_phrase(t).into())
                 .collect();
             let names = Arg::List(names);
             return Err(Msg::new(msg::character::CHOOSE_TALENT_OF).role("trees", names));
         };
         let def = content.talents().get(talent);
-        let name = def.name_for(&content, choice);
         if let Err(why) = talent::may_take(&content, &self.candidate(), def, choice) {
-            return Err(why.words(&content, &name));
+            return Err(why.words(&content, content.talent_arg(talent, choice)));
         }
         // Its hit points by level come now (each later level grows them), and its gifts.
         let level = self.player_level();
@@ -389,6 +388,7 @@ impl World {
         if due.is_spent() {
             self.state.progress.due.remove(at);
         }
+        let name = content.talent_arg(talent, choice);
         Ok(Msg::new(msg::character::LEARN_TALENT).role("talent", name))
     }
 

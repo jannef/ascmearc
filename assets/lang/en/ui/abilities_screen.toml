@@ -63,7 +63,8 @@ text = "{cost:bare} mana"
 [none]
 text = "You have no abilities."
 
-# Why the ability just chosen cannot be used: `ability`, its name; `why`, the reason.
+# Why the ability just chosen cannot be used: `ability`, its name (`ability:<id>`; the prayer by
+# its title); `why`, the reason.
 [notice]
 text = "{ability:bare}: {why:bare}."
 

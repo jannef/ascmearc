@@ -19,7 +19,8 @@ by = "age.number"
 one = "You were born on {date:bare}. You are {age:bare} year old."
 many = "You were born on {date:bare}. You are {age:bare} years old."
 
-# The birth under a sign: `date`, the day; `sign`, "Metal Manticore"; `age`, in years.
+# The birth under a sign: `date`, the day; `sign`, the sign (`sign:<element>.<animal>`, "Metal
+# Manticore"); `age`, in years.
 [born_sign]
 by = "age.number"
 one = "You were born on {date:bare}, in the year of the {sign:bare}. You are {age:bare} year old."
@@ -29,7 +30,7 @@ many = "You were born on {date:bare}, in the year of the {sign:bare}. You are {a
 [continue]
 text = "{confirm:bare} continue"
 
-# A flaw among the gifts: `name`, its name.
+# A flaw among the gifts: `name`, its name (`talent:<id>`).
 [flaw]
 text = "but {name:bare}"
 
