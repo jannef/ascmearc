@@ -1,0 +1,145 @@
+# The dialogs input opens before an action (`crates/ascmearc/src/ui/step_dialogs.rs`): a step
+# into deep water, out of a shop owing, onto a known trap, hungry on the overworld, or into a
+# feature that offers something; selling in a shop; the Heal ability's choice; and a burst that
+# may catch the reader. Each is the one dialog: a title, a question, and its options. Ids
+# alphabetical.
+#
+# The dialog sizes itself to its text (docs/dev/localization.md "UI text").
+
+# A burst that may catch the reader, the option that aims again.
+[aim_again]
+text = "Aim again"
+
+# A spell whose burst may catch the caster: `noun`, the burst ("fireball").
+[burst_cast]
+text = "{noun:The} may catch you too. Cast it anyway?"
+
+# A known scroll whose burst may catch the reader: `noun`, the burst; `scroll`, the scroll.
+[burst_read]
+text = "{noun:The} may catch you too. Read {scroll:the} anyway?"
+
+[cast_it]
+text = "Cast it"
+
+# Deep water: the question.
+[deep_ask]
+text = "Really dive into the deep water?"
+
+[deep_title]
+text = "Deep water"
+
+[dive_in]
+text = "Dive in"
+
+[dont_cast]
+text = "Don't cast it"
+
+# Leaving a shop owing by its door, with the gold: the option that steps out unpaid (the keeper
+# turns them back).
+[dont_pay]
+text = "Don't pay"
+
+[dont_read]
+text = "Don't read it"
+
+# A Fainting player setting out on the overworld.
+[fainting]
+text = "You are faint from hunger, and this journey may kill you. Go on without eating?"
+
+# Leaving a shop owing by its door, without the gold.
+[go_back]
+text = "Go back"
+
+# Going on, hungry.
+[go_on]
+text = "Go on"
+
+# The Heal ability: the question, when there are several things to tend.
+[heal_ask]
+text = "What do you tend to?"
+
+[heal_title]
+text = "Heal"
+
+# Selling, the option that keeps what was to be dropped.
+[keep_it]
+text = "Keep it"
+
+# A feature that offers something, the option that leaves it.
+[leave_it]
+text = "Leave it"
+
+# Leaving a shop owing by another way out: theft.
+[leave_unpaid]
+text = "Leave without paying"
+
+[never_mind]
+text = "Never mind"
+
+# A feature that offers something: the question, by what it offers. `feature`, the feature.
+[offer_drink]
+text = "Would you like to drink from {feature:the}?"
+
+[offer_pray]
+text = "Would you like to pray at {feature:the}?"
+
+[offer_temper]
+text = "Would you like to temper something at {feature:the}?"
+
+# The dialog's title: `feature`.
+[offer_title]
+text = "{feature:Bare}"
+
+# Leaving a shop owing by its door: `keeper`, the shopkeeper's name; `owed`, in gold.
+[owe]
+text = "You owe {keeper:bare} {owed:bare} gold."
+
+# The same, without a coin.
+[owe_none]
+text = "You owe {keeper:bare} {owed:bare} gold and have no gold. Put something back, or bring more gold."
+
+# The same, with too little: `gold`, what the player carries.
+[owe_only]
+text = "You owe {keeper:bare} {owed:bare} gold and have only {gold:bare}. Put something back, or bring more gold."
+
+# The option that pays and leaves: `owed`.
+[pay_leave]
+text = "Pay {owed:bare} gold and leave"
+
+[read_it]
+text = "Read it"
+
+# Selling: `keeper`, the shopkeeper's name; `offer`, in gold; `what`, the things.
+[sale]
+text = "{keeper:bare} offers {offer:bare} gold for {what:bare}."
+
+# The option that sells: `offer`.
+[sell]
+text = "Sell for {offer:bare} gold"
+
+# A Starving player setting out on the overworld.
+[starving]
+text = "You are starving to death, and every step takes what life you have left. This journey may well be your last. Go on without eating?"
+
+[stay]
+text = "Stay"
+
+[stay_back]
+text = "Stay back"
+
+[step_onto]
+text = "Step onto it"
+
+# Leaving a shop owing by a way that is not its door: `keeper`; `owed`.
+[theft]
+text = "You owe {keeper:bare} {owed:bare} gold. Leave this way without paying, and {keeper:bare} will call it theft."
+
+[too_close]
+text = "Too close"
+
+# A known trap: the question. `trap`, the trap.
+[trap_ask]
+text = "Really step onto {trap:the}?"
+
+[trap_title]
+text = "Trap"

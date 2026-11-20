@@ -12,18 +12,23 @@
 //! dialog over the screen, which stays beneath it: after the dialog's action the stack reads
 //! the run again ([`DialogueScreen::refresh`]), so the screen shows the answer and the topics as
 //! they are now (a ware bought is for sale no more, #1772).
+//!
+//! Its words, and its dialogs', are `assets/lang/en/ui/dialogue_screen.toml`: the speaker's
+//! title, the topics the rules make ([`TopicName`]) and their prices, the footer. What is said is
+//! the speaker's line of data.
 
 use super::cursor;
 use super::dialog_screen::Dialog;
 use super::menu::{HINTS, Nav, Panel, Press, wrap};
 use super::screens::ScreenAction;
+use super::text::{dialogue_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
 use ascmearc_core::content::ServiceKind;
+use ascmearc_core::lang::{Arg, Phrase};
 use ascmearc_core::perception::PerceptionView;
-use ascmearc_core::text::capitalized;
-use ascmearc_core::world::{ActorId, Conversation};
+use ascmearc_core::world::{ActorId, Conversation, TopicName};
 use ascmearc_core::{Action, Dir, Event, Outcome};
 
 /// The panel's width.
@@ -62,7 +67,7 @@ impl DialogueScreen {
             with: None,
             name: String::new(),
             toward: None,
-            line: "There is no one to talk to.".into(),
+            line: ui(T::NOBODY),
             topics: Vec::new(),
             per_item: Vec::new(),
             per_cursed: Vec::new(),
@@ -80,18 +85,22 @@ impl DialogueScreen {
         let toward = Dir::from_delta(actor.pos.x - me.x, actor.pos.y - me.y);
         // A unique character by its proper name ("Sister Hild"), anyone else by its type.
         let content = view.content();
-        let name = match (actor.dialogue).and_then(|d| content.dialogue(d).name.as_deref()) {
-            Some(proper) => proper.to_string(),
-            None => format!("the {}", content.creature(actor.creature).name),
+        let who = match (actor.dialogue).and_then(|d| content.dialogue(d).name.as_deref()) {
+            Some(proper) => Phrase::literal(proper),
+            None => Phrase::id(format!("creature:{}", content.creature(actor.creature).id)),
         };
         let topics: Vec<(String, String)> = (talk.topics.iter())
-            .map(|t| match (t.price, t.items) {
-                // A service (`world/people/service.rs`) with its price, per thing or once; free for
-                // a town's goodwill (`world/people/goodwill.rs`).
-                (Some(0), _) => (t.id.clone(), format!("{} (free)", t.name)),
-                (Some(price), Some(_)) => (t.id.clone(), format!("{} ({price} gold each)", t.name)),
-                (Some(price), None) => (t.id.clone(), format!("{} ({price} gold)", t.name)),
-                (None, _) => (t.id.clone(), t.name.clone()),
+            .map(|t| {
+                let topic = ("topic", topic_name(&t.name).into());
+                let name = match (t.price, t.items) {
+                    // A service (`world/people/service.rs`) with its price, per thing or once;
+                    // free for a town's goodwill (`world/people/goodwill.rs`).
+                    (Some(0), _) => ui_with(T::TOPIC_FREE, &[topic]),
+                    (Some(price), Some(_)) => ui_with(T::TOPIC_EACH, &[topic, gold(price)]),
+                    (Some(price), None) => ui_with(T::TOPIC_PRICE, &[topic, gold(price)]),
+                    (None, _) => topic_name(&t.name),
+                };
+                (t.id.clone(), name)
             })
             .collect();
         let per_item = (talk.topics.iter()).map(|t| t.price.zip(t.items)).collect();
@@ -110,7 +119,7 @@ impl DialogueScreen {
             .unwrap_or(0);
         Self {
             with: Some(talk.with),
-            name: capitalized(&name),
+            name: ui_with(T::TITLE, &[("who", who.into())]),
             toward,
             line: ascmearc_core::messages::english_speech(content, &talk.line),
             topics,
@@ -198,57 +207,62 @@ impl DialogueScreen {
     /// The things are cursed things worn with `cursed`.
     fn pay_dialog(&self, price: u32, (items, cursed): (u32, bool), ask: Action) -> Dialog {
         let total = price.saturating_mul(items);
-        let text = match (cursed, items) {
-            (true, 1) => format!("{price} gold to free you of the one cursed thing you wear."),
-            (true, n) => format!(
-                "{price} gold for each of the {n} cursed things you wear: {total} gold in all."
-            ),
-            (false, 1) => format!(
-                "{price} gold for each of the one thing you carry and do not know: {total} gold \
-                 in all."
-            ),
-            (false, n) => format!(
-                "{price} gold for each of the {n} things you carry and do not know: {total} gold \
-                 in all."
-            ),
-        };
+        let args = [
+            ("price", Arg::Number(price.into())),
+            ("count", Arg::Number(items.into())),
+            ("total", Arg::Number(total.into())),
+        ];
+        let text = ui_with(
+            if cursed {
+                T::PER_CURSED
+            } else {
+                T::PER_UNKNOWN
+            },
+            &args,
+        );
         let title = &self.name;
         if self.gold >= total {
+            let pay = ui_with(T::PAY, &[("total", Arg::Number(total.into()))]);
             Dialog::new(title.clone(), text)
-                .accept(format!("Pay {total} gold"), ask)
-                .cancel("Not now", ScreenAction::Close)
+                .accept(pay, ask)
+                .cancel(ui(T::NOT_NOW), ScreenAction::Close)
         } else {
-            let have = match self.gold {
-                0 => "no gold".to_string(),
-                n => format!("only {n}"),
-            };
-            Dialog::new(title.clone(), format!("{text} You have {have}."))
-                .cancel("Go back", ScreenAction::Close)
+            Dialog::new(title.clone(), self.too_little(text))
+                .cancel(ui(T::GO_BACK), ScreenAction::Close)
         }
+    }
+
+    /// The question `asked`, and the gold the player has, too little.
+    fn too_little(&self, asked: String) -> String {
+        let have = match self.gold {
+            0 => ui(T::HAVE_NONE),
+            n => ui_with(T::HAVE_ONLY, &[("gold", Arg::Number(n.into()))]),
+        };
+        ui_with(T::HAVE, &[("asked", asked.into()), ("have", have.into())])
     }
 
     /// The dialog a trader's offer opens (`world/people/wares.rs`): the item in words and its fixed
     /// price, "Buy it" (`ask`) or "Leave it"; without the gold, only leaving it.
     fn offer_dialog(&self, price: u32, ware: &str, ask: Action) -> Dialog {
-        let text = format!("{ware}. {price} gold, take it or leave it.");
+        let args = [("ware", ware.into()), gold(price)];
+        let text = ui_with(T::WARE, &args);
         let title = &self.name;
         if self.gold >= price {
             Dialog::new(title.clone(), text)
-                .accept("Buy it", ask)
-                .cancel("Leave it", ScreenAction::Close)
+                .accept(ui(T::BUY_IT), ask)
+                .cancel(ui(T::LEAVE_IT), ScreenAction::Close)
         } else {
-            let have = match self.gold {
-                0 => "no gold".to_string(),
-                n => format!("only {n}"),
-            };
-            Dialog::new(title.clone(), format!("{text} You have {have}."))
-                .cancel("Leave it", ScreenAction::Close)
+            Dialog::new(title.clone(), self.too_little(text))
+                .cancel(ui(T::LEAVE_IT), ScreenAction::Close)
         }
     }
 
     pub fn draw(&self, console: &mut Console) {
         let width = WIDTH.min(console.cols() as i32) - 4;
-        let said = wrap(&format!("\"{}\"", self.line), width);
+        let said = wrap(
+            &ui_with(T::SAID, &[("line", self.line.as_str().into())]),
+            width,
+        );
         // Rows: margin, what was said, a gap, the topics (and a gap), the footer, the frame.
         let topic_rows = match self.topics.len() {
             0 => 0,
@@ -267,7 +281,7 @@ impl DialogueScreen {
         let mut y = panel.y + 2;
         for line in &said {
             if fits(y) {
-                console.print(x, y, line, TEXT);
+                console.print_in(x, y, line, TEXT, panel.inner_w());
             }
             y += 1;
         }
@@ -281,17 +295,41 @@ impl DialogueScreen {
                 if selected {
                     console.print(x, y, ">", ACCENT);
                 }
-                console.print(x + 2, y, &row, color);
+                console.print_in(x + 2, y, &row, color, panel.inner_w() - 2);
             }
             y += 1;
         }
-        let confirm = HINTS.confirm;
+        let confirm = ("confirm", Arg::from(HINTS.confirm));
+        let leave = ui(T::LEAVE);
         let footer = match self.topics.len() {
-            0 => "Esc  leave".to_string(),
-            1 => format!("1 or {confirm}  ask    Esc  leave"),
-            n => format!("1-{n} or {confirm}  ask    Esc  leave"),
+            0 => leave,
+            1 => format!("{}    {leave}", ui_with(T::ASK_ONE, &[confirm])),
+            n => {
+                let last = ("last", Arg::Number(n as i64));
+                format!("{}    {leave}", ui_with(T::ASK_MANY, &[last, confirm]))
+            }
         };
         panel.footer(console, &footer);
+    }
+}
+
+/// A price's role: `price`, in gold.
+fn gold(price: u32) -> (&'static str, Arg) {
+    ("price", Arg::Number(price.into()))
+}
+
+/// A topic's name as the player picks it: the data's words, or the screen's for a topic the
+/// rules make.
+fn topic_name(name: &TopicName) -> String {
+    let gold = |n: u32| [("gold", Arg::Number(n.into()))];
+    match name {
+        TopicName::Text(text) => text.clone(),
+        TopicName::Side(who) => ui_with(T::SIDE, &[("who", who.clone().into())]),
+        TopicName::Refuse(who) => ui_with(T::REFUSE, &[("who", who.clone().into())]),
+        TopicName::Invest(n) => ui_with(T::INVEST, &gold(*n)),
+        TopicName::InvestAll(n) => ui_with(T::INVEST_ALL, &gold(*n)),
+        TopicName::Withdraw(n) => ui_with(T::WITHDRAW, &gold(*n)),
+        TopicName::WithdrawAll(n) => ui_with(T::WITHDRAW_ALL, &gold(*n)),
     }
 }
 

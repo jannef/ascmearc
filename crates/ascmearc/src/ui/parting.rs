@@ -3,20 +3,27 @@
 //! it: the wizard's name, their words, and the rows Leave and Betray <name>, each sending
 //! `Action::Parting(choice)`. It opens once no screen is up, so the dialogue screen with the
 //! wizard's thanks is read and closed first, and on load. It must be answered: Esc does nothing
-//! and no info screen opens over it ([`Dialog::required`]).
+//! and no info screen opens over it ([`Dialog::required`]). Its words are
+//! `assets/lang/en/ui/parting.toml`; the wizard's are the quest's.
 
 use super::dialog_screen::Dialog;
 use super::screens::Screens;
+use super::text::{parting as T, ui, ui_with};
 use crate::game::Game;
 use ascmearc_core::action::Action;
-use ascmearc_core::world::PartingView;
+use ascmearc_core::world::{PartingChoice, PartingView};
 use bevy::prelude::*;
 
 /// The dialog asking `view`: its title, its text, and a plain row per choice.
 pub(super) fn dialog(view: PartingView) -> Dialog {
-    let ask = Dialog::new(view.title, view.text);
+    let who = [("who", view.who.into())];
+    let ask = Dialog::new(ui_with(T::TITLE, &who), view.text);
     (view.choices.into_iter())
-        .fold(ask, |ask, (label, choice)| {
+        .fold(ask, |ask, choice| {
+            let label = match choice {
+                PartingChoice::Leave => ui(T::LEAVE),
+                PartingChoice::Betray => ui_with(T::BETRAY, &who),
+            };
             ask.plain(label, Action::Parting(choice))
         })
         .required()

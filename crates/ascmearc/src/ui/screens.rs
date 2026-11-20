@@ -2967,7 +2967,12 @@ mod tests {
         let topics = |app: &App| {
             let game = app.world().resource::<Game>();
             let talk = last_talk(&game.last_outcome).expect("talk");
-            (talk.topics.iter().map(|t| t.name.clone()).take(2)).collect::<Vec<_>>()
+            (talk
+                .topics
+                .iter()
+                .filter_map(|t| t.name.text().map(String::from))
+                .take(2))
+            .collect::<Vec<_>>()
         };
         let given = Action::Ask {
             dir: Dir::SE,

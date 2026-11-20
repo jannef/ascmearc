@@ -9,8 +9,10 @@ built from what the player perceives, items are named by phrases English renders
 checker (L7)"); **L10**, the `fi` morphology (#1893, "The `fi` module"); and **L6a**, the UI
 text path (#1900): the app's words in `assets/lang/en/ui/`, the abilities screen converted ("UI
 text"), with its widths in the screens' layout, not the text (#1908), and the further L6 parts:
-the controls, settings, and mods screens (#1935), the object and rig screens (#1928), and the
-character, characters, skills, and talents screens (#1933); **L4a**,
+the controls, settings, and mods screens (#1935), the object and rig screens (#1928), the
+character, characters, skills, and talents screens (#1933), the UI core, `--more--`, info tabs,
+and encounter dialog (#1930), the magic, scribe, and weapon skills screens (#1938), the look
+line (#1927), and the dialogue screens and dialogs (#1934); **L4a**,
 **L4b**, **L4e**, **L4h**, **L4i**, **L4j**, and **L4m**, `world/allies/` (#1912), `world/character/` (#1913),
 `world/creatures/` (#1916), `world/fixtures/` and `world/items/` (#1919), `world/health/` (#1920),
 `world/levels/` (#1921), and `world/people/` (#1924) say their lines from templates
@@ -575,9 +577,9 @@ objective and status from `crafting.commission_*`.
 Text roles until core's words are converted (#1949): a quest's name (`quest`), a skill's name
 lower case (`skill`), a guild's name (`guild`), a shop's sign (`shop`, its data's
 `{keeper}` filled; the app's step dialogs show the same string), and a dev action's typed ids.
-A rank's title is a `word:` phrase (`{title:a}`). Left as they are: the topic names of a
-quarrel's sides ("Take X's side") and the parting dialog (`PartingView`: its text, title, and
-choices), which are UI text; `carry.rs::chosen`'s refusal (items).
+A rank's title is a `word:` phrase (`{title:a}`). The topic names of a quarrel's sides and the
+parting dialog are UI text ("The dialogue screens and dialogs" below); left as they are:
+`carry.rs::chosen`'s refusal (items).
 
 ## Nested messages
 
@@ -736,6 +738,16 @@ creature looks, a status's `seen`, an item's numbers and freshness, a damage typ
 room's name with its article (`with_article`), where stairs lead, a place's name and note, and a
 chest's band with its state, a trap's name, and the grade's, char's, and blood's words (`word:`
 phrases).
+
+**The dialogue screens and dialogs** (#1934): `dialog_screen.toml` holds only the one dialog's
+own words (its footer, the keys after an option); every title, question, and option is its
+caller's, from `step_dialogs.toml`, `dialogue_screen.toml`, and `parting.toml`. A topic the rules
+make is a `TopicName` (core), worded by the screen: a quarrel's `Side` and `Refuse` with the
+wizard as a phrase (`{who:poss}`, `{who:the}`), and the partner's invest and withdraw rows; one
+the data names stays `Text`. `PartingView` holds the wizard as a phrase and the choices' ids.
+The speaker, a feature (`terrain:`), a trap and a burst (`word:`), and a scroll (`object:`) are
+phrases; a shopkeeper is a name (text). The sign reveal's date, sign name, and gifts, a hunger's
+name (the hungry journey's title), and an ailment's name stay core's text.
 
 ## Lines of data
 

@@ -73,7 +73,7 @@ pub struct TopicView {
     /// Its id in replays (`ask:E:rooms`).
     pub id: String,
     /// What the player picks: "The rooms".
-    pub name: String,
+    pub name: TopicName,
     /// What it costs, in gold, for a service (`service.rs`); none for a topic. Per thing for a
     /// service paid per thing (`items`).
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -86,6 +86,49 @@ pub struct TopicView {
     /// dialog shows it before the player buys or leaves it; none for anything else.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub ware: Option<String>,
+}
+
+/// A topic's name. The data's own words, or a topic the rules make, which the dialogue screen
+/// words (its `assets/lang/en/ui/dialogue_screen.toml`): no English is built here.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub enum TopicName {
+    /// As the data writes it: "The rooms".
+    Text(String),
+    /// Taking the side of the wizard spoken to, in a quarrel (`quarrel.rs`): "Take Mistress
+    /// Stormwell's side".
+    Side(Phrase),
+    /// Refusing them: "Refuse Mistress Stormwell".
+    Refuse(Phrase),
+    /// Investing this much gold with a merchant's partner (`world/classes/invest.rs`).
+    Invest(u32),
+    /// Investing all the gold carried, this much.
+    InvestAll(u32),
+    /// Withdrawing this much gold.
+    Withdraw(u32),
+    /// Withdrawing everything invested, this much.
+    WithdrawAll(u32),
+}
+
+impl TopicName {
+    /// The data's words, for a topic the data names.
+    pub fn text(&self) -> Option<&str> {
+        match self {
+            TopicName::Text(text) => Some(text),
+            _ => None,
+        }
+    }
+}
+
+impl From<String> for TopicName {
+    fn from(text: String) -> Self {
+        TopicName::Text(text)
+    }
+}
+
+impl From<&str> for TopicName {
+    fn from(text: &str) -> Self {
+        TopicName::Text(text.into())
+    }
 }
 
 /// What a creature says in one answer: a line, or several said in turn (a one-liner and what a
@@ -253,7 +296,7 @@ impl World {
         let open = |t: &&Topic| (t.calls.as_ref()).is_none_or(|class| self.calling_open(class));
         topics.extend(dialogue.topics.iter().filter(open).map(|t| TopicView {
             id: t.id.clone(),
-            name: t.name.clone(),
+            name: t.name.clone().into(),
             price: None,
             items: None,
             ware: None,
@@ -261,7 +304,7 @@ impl World {
         let offered = |s: &&Service| self.service_offered(s);
         topics.extend(dialogue.services.iter().filter(offered).map(|s| TopicView {
             id: s.id.clone(),
-            name: s.name.clone(),
+            name: s.name.clone().into(),
             price: Some(self.service_price(id, s)),
             items: self.service_items(s),
             ware: None,
