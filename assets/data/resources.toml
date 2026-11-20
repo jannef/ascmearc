@@ -27,7 +27,9 @@
 #   ended         what the player is told when it ends ("Your rage subsides."; needs
 #                 ends_at_zero)
 #   lacking       how the abilities menu greys out an ability it pays for while too little is
-#                 held ("you are short of breath"; default: "not enough stamina")
+#                 held ("you are short of breath"; default: "not enough stamina"); a class
+#                 active refused for it says it as a line of data
+#                 (`resources:resource.<id>.lacking`, naming no role)
 #   status        a status (status/) its holder suffers while they hold it: it begins as the
 #                 resource is granted and ends with it (and the resource with the status, if
 #                 something cures that); a status that `eases` by itself may end first (rage: Raging)

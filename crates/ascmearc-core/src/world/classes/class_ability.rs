@@ -22,9 +22,12 @@
 use super::smite::SmiteMode;
 use crate::ability::{Ability, Unavailable};
 use crate::action::Event;
-use crate::content::{ActionKind, ClassActive, Stance};
+use crate::content::{ActionKind, ClassActive, Stance, data_line};
 use crate::geom::Dir;
+use crate::lang::{Arg, Msg};
+use crate::msg;
 use crate::status::Effect;
+use crate::world::combat::fight;
 use crate::world::{ActorId, Spent, World};
 
 impl World {
@@ -42,17 +45,17 @@ impl World {
         }
         // One aimed at a cell asks where before anything is spent (`use_class_at` uses it).
         if active.aims_cell() {
-            self.say("Where?");
+            self.say(msg::classes::ASK_WHERE);
             return Spent::Nothing;
         }
         // One that throws asks what and where (`use_class_throw` uses it, `openings.rs`).
         if active.aims_throw() {
-            self.say("Throw what, and where?");
+            self.say(msg::classes::THROW_WHAT_WHERE);
             return Spent::Nothing;
         }
         let dir = match (active.aimed(), dir) {
             (true, None) => {
-                self.say("Which way?");
+                self.say(msg::classes::WHICH_WAY);
                 return Spent::Nothing;
             }
             (_, dir) => dir,
@@ -77,7 +80,7 @@ impl World {
             return Spent::Nothing;
         }
         if active.bare_handed() && self.state.player().weapon_item(&self.content).is_some() {
-            self.say("Your hands are not free.");
+            self.say(msg::classes::HANDS_NOT_FREE);
             return Spent::Nothing;
         }
         // Its cost in an alternative resource, if it has one: what
@@ -141,19 +144,19 @@ impl World {
                 _,
             ) => Spent::Nothing,
             (ClassActive::MerchantsEye | ClassActive::MakeDo, _) => {
-                self.say("Use it on what?");
+                self.say(msg::classes::USE_IT_ON_WHAT);
                 Spent::Nothing
             }
             (ClassActive::Rig, _) => {
-                self.say("Rig what, and where? Name a rig and a way: `rig:tripwire:E`.");
+                self.say(msg::classes::RIG_WHAT_WHERE);
                 Spent::Nothing
             }
             (ClassActive::SpiritWeapon, _) => {
-                self.say("Call it in what shape?");
+                self.say(msg::classes::CALL_IN_WHAT_SHAPE);
                 Spent::Nothing
             }
             (ClassActive::Scribe, _) => {
-                self.say("Write which spell? Name one you know: `scribe:fireball`.");
+                self.say(msg::classes::WRITE_WHICH_SPELL);
                 Spent::Nothing
             }
         }
@@ -166,29 +169,28 @@ impl World {
         let ability = Ability::Class(active);
         let me = self.state.player();
         if !ability.had_by(me, &content) {
-            self.say("You have no such ability.");
+            self.say(msg::classes::NO_SUCH_ABILITY);
             return false;
         }
         if let Some(why) = ability.unavailable(me, &content) {
             self.say(match why {
-                Unavailable::While(status) => {
-                    format!(
-                        "You are still {}.",
-                        content.status(status).name.to_lowercase()
-                    )
-                }
-                Unavailable::NoMana => "You have too little mana.".to_string(),
+                Unavailable::While(status) => Msg::new(msg::classes::STILL_STATUS)
+                    .role("status", content.status(status).name.to_lowercase()),
+                Unavailable::NoMana => msg::classes::TOO_LITTLE_MANA.into(),
                 // A pool with words of its own says them (Rage's "You have not the rage for
                 // it.").
-                Unavailable::Short(resource) => match &content.resource(resource).lacking {
-                    Some(words) => format!("{}.", crate::text::capitalized(words)),
-                    None => format!(
-                        "You have too little {}.",
-                        content.resource(resource).name.to_lowercase()
-                    ),
-                },
-                Unavailable::Still => "Your mind is already still.".to_string(),
-                other => format!("You cannot: {}.", other.reason(&content)),
+                Unavailable::Short(resource) => {
+                    let def = content.resource(resource);
+                    match &def.lacking {
+                        Some(_) => Msg::new(msg::classes::LACKING)
+                            .role("words", Arg::said(data_line::lacking(&def.id))),
+                        None => Msg::new(msg::classes::TOO_LITTLE_RESOURCE)
+                            .role("name", def.name.to_lowercase()),
+                    }
+                }
+                Unavailable::Still => msg::classes::MIND_ALREADY_STILL.into(),
+                other => Msg::new(msg::classes::CANNOT_REASON)
+                    .role("reason", other.reason(&content).into_owned()),
             });
             return false;
         }
@@ -211,7 +213,7 @@ impl World {
         };
         let back = wind.hp_at(self.player_level());
         self.heal_player(back);
-        self.say("You draw on an old soldier's wind.");
+        self.say(msg::classes::DRAW_OLD_SOLDIERS_WIND);
         self.afflict(player, wind.cooldown, 1, None, events);
         Spent::Turn(self.price_of(player, ActionKind::Wait))
     }
@@ -250,7 +252,7 @@ impl World {
             let back = i32::from(hands.per_level) * i32::from(self.player_level());
             self.heal_by_magic(player, back, events);
         }
-        self.say("Warmth flows from your hands.");
+        self.say(msg::classes::WARMTH_FLOWS_FROM_HANDS);
         Spent::Turn(self.price_of(player, ActionKind::Cast))
     }
 
@@ -317,16 +319,16 @@ impl World {
         let level = &self.state.current().id;
         let Some((target, creature)) = (self.state.actor_at(level, to)).map(|a| (a.id, a.creature))
         else {
-            self.say("There is nobody there to strike.");
+            self.say(msg::classes::NOBODY_THERE_TO_STRIKE);
             return None;
         };
         let seen = self.perception.sees_actors_at(to);
         if self.stance(self.state.player, target) != Stance::Hostile {
             self.say(if seen {
-                let name = &self.content.creature(creature).name;
-                format!("You have no quarrel with {}.", crate::content::the(name))
+                let who = fight::creature(self.content.creature(creature));
+                Msg::new(msg::classes::NO_QUARREL_WITH).role("who", who)
             } else {
-                "Something is in the way.".into()
+                msg::classes::IN_THE_WAY.into()
             });
             return None;
         }
@@ -348,13 +350,13 @@ impl World {
     /// the time of a cast, spending nothing else.
     pub(super) fn unanswered(&mut self, active: ClassActive) -> Spent {
         self.say(match active {
-            ClassActive::LayOnHands => "You lay on your hands, but no warmth flows from them.",
+            ClassActive::LayOnHands => msg::classes::UNANSWERED_HANDS,
             ClassActive::Smite
             | ClassActive::BrandingSmite
             | ClassActive::WrathfulSmite
-            | ClassActive::BanishingSmite => "You call for holy wrath, but none answers.",
-            ClassActive::HolyRadiance => "You will a holy light, but none comes.",
-            _ => "You kneel and pray, but no holy power answers you.",
+            | ClassActive::BanishingSmite => msg::classes::UNANSWERED_SMITE,
+            ClassActive::HolyRadiance => msg::classes::UNANSWERED_RADIANCE,
+            _ => msg::classes::UNANSWERED_PRAYER,
         });
         Spent::Turn(self.price_of(self.state.player, ActionKind::Cast))
     }

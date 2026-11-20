@@ -27,6 +27,8 @@ use crate::content::{
     RecipeInput, RecipeUse, TerrainId, counted,
 };
 use crate::geom::{Dir, Pos};
+use crate::lang::{Msg, Phrase};
+use crate::msg;
 use crate::scroll_label::Lore;
 use crate::skills::SkillId;
 use crate::text::article;
@@ -147,6 +149,11 @@ pub(crate) fn of_race(recipe: &RecipeDef, race: Option<&RaceDef>) -> bool {
         .race
         .as_deref()
         .is_none_or(|own| race.is_some_and(|r| r.id == own))
+}
+
+/// Terrain `t` as a line names it (a station, a wall): `terrain:<id>`.
+pub(super) fn terrain(content: &Content, t: TerrainId) -> Phrase {
+    Phrase::id(format!("terrain:{}", content.terrain(t).id))
 }
 
 /// The station `station` beside `at` on `level`: the first cell around it (in [`Dir::ALL`]
@@ -520,8 +527,8 @@ impl World {
         if self.state.player().skills.get(skill).is_some() {
             return false;
         }
-        let name = &self.content.skill(skill).name;
-        self.say(format!("You are not trained in {name}."));
+        let name = self.content.skill(skill).name.clone();
+        self.say(Msg::new(msg::crafting::NOT_TRAINED).role("skill", name));
         true
     }
 
@@ -539,25 +546,25 @@ impl World {
     pub(in crate::world) fn start_craft(&mut self, recipe: &str, picks: &[Option<usize>]) -> Spent {
         let content = self.content.clone();
         let Some(id) = content.recipes().id(recipe) else {
-            self.say("You know no such recipe.");
+            self.say(msg::crafting::NO_SUCH_RECIPE);
             return Spent::Nothing;
         };
         let def = content.recipe(id);
         if !of_race(def, self.state.race_of(&content, self.state.player())) {
-            self.say("You know no such recipe.");
+            self.say(msg::crafting::NO_SUCH_RECIPE);
             return Spent::Nothing;
         }
         if self.untrained(def.skill) {
             return Spent::Nothing;
         }
-        let text = match def.uses {
+        let said = match def.uses {
             Some(RecipeUse::Cut) => return self.start_cut(id, picks),
             Some(RecipeUse::Set) => return self.start_set(id, picks),
             Some(RecipeUse::Enchant(_)) => return self.start_enchant(id, picks),
-            Some(_) => format!("{} is done from its own list.", def.name),
+            Some(_) => Msg::new(msg::crafting::DONE_FROM_OWN_LIST).role("recipe", def.name.clone()),
             None => return self.start_making(id, picks),
         };
-        self.say(text);
+        self.say(said);
         Spent::Nothing
     }
 }

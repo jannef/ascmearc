@@ -11,6 +11,8 @@
 
 use crate::action::Event;
 use crate::content::{ActionKind, ClassActive};
+use crate::lang::Msg;
+use crate::msg;
 use crate::time::GameTime;
 use crate::world::{Deed, Spent, World, turn::rest::Ended};
 
@@ -51,7 +53,7 @@ impl World {
             return Spent::Nothing;
         };
         if self.hallowable().is_none() {
-            self.say("There is nothing here to consecrate.");
+            self.say(msg::classes::NOTHING_TO_CONSECRATE);
             return Spent::Nothing;
         }
         if !self.answered(ClassActive::Consecrate) {
@@ -59,10 +61,10 @@ impl World {
         }
         let player = self.state.player;
         if !self.spend_mana(player, consecrate.mana) {
-            self.say("You have too little mana.");
+            self.say(msg::classes::TOO_LITTLE_MANA);
             return Spent::Nothing;
         }
-        self.say("You kneel and pray to consecrate this place.");
+        self.say(msg::classes::KNEEL_TO_CONSECRATE);
         Spent::Consecrate(self.state.time + consecrate.time)
     }
 
@@ -79,17 +81,17 @@ impl World {
             Ended::Died => {}
             _ if self.state.time >= until => self.consecrated(),
             Ended::Came(came) => {
-                let text = format!("{}; you stop your prayer.", self.came_line(came));
-                self.say(text);
+                let came = self.came_line(came);
+                self.say(Msg::new(msg::classes::STOP_PRAYER_CAME).role("came", came));
             }
-            Ended::Said | Ended::Done => self.say("You stop your prayer."),
+            Ended::Said | Ended::Done => self.say(msg::classes::STOP_YOUR_PRAYER),
         }
     }
 
     /// The prayer is done: what is unholy here is lifted for good.
     fn consecrated(&mut self) {
         let Some(hallow) = self.hallowable() else {
-            self.say("There is nothing here to consecrate.");
+            self.say(msg::classes::NOTHING_TO_CONSECRATE);
             return;
         };
         let content = self.content.clone();
@@ -97,11 +99,11 @@ impl World {
         let text = match hallow {
             Hallow::Room(i) => {
                 level.rooms.remove(i);
-                "A stillness settles over the room: it is consecrated."
+                msg::classes::ROOM_CONSECRATED
             }
             Hallow::Level => {
                 level.pervading = None;
-                "A stillness settles over the whole level: it is consecrated."
+                msg::classes::LEVEL_CONSECRATED
             }
         };
         // The dead no longer under a curse lie still.

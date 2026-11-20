@@ -138,6 +138,15 @@ pub fn warmth_bands(def: &TalentDef) -> impl Iterator<Item = &[WarmthBand]> {
     })
 }
 
+// Crafting (#1917).
+
+/// Profession `skill`'s `fumbled` (`fumbled` true) or `failed` line (`recipes.toml`'s
+/// `[[profession]]`).
+pub fn profession(skill: &str, fumbled: bool) -> String {
+    let field = if fumbled { "fumbled" } else { "failed" };
+    format!("recipes:profession.{skill}.{field}")
+}
+
 /// A hand-made level `id`'s `arrival` line.
 fn level_arrival(id: &str) -> String {
     format!("level:{id}.arrival")
@@ -232,6 +241,55 @@ fn magic_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
     }
 }
 
+// --- The classes' lines (L4c, #1914) -----------------------------------------------------------
+
+/// Calling `def`'s `message`: `calling:<scope>.<class>.message`, its scope its campaign (`data`
+/// for one outside every campaign, as a dialogue's), since one prestige class may have a calling
+/// in each campaign.
+pub fn calling(def: &super::CallingDef) -> String {
+    let scope = def.campaign.as_deref().unwrap_or("data");
+    format!("calling:{scope}.{}.message", def.class)
+}
+
+/// The `news` of talent `def`'s `weapon_ranks` and `take_up_skills` effects (said when a class
+/// table gives it), each key with its text: `talent:<id>.effects.<kind>.news`.
+pub fn handed_news(def: &TalentDef) -> impl Iterator<Item = (String, &str)> {
+    use crate::talent::GrowthEffect::{TakeUpSkills, WeaponRanks};
+    (def.effects.iter()).filter_map(|effect| {
+        let (kind, news) = match effect {
+            TalentEffect::Growth(WeaponRanks { news, .. }) => ("weapon_ranks", news),
+            TalentEffect::Growth(TakeUpSkills { news, .. }) => ("take_up_skills", news),
+            _ => return None,
+        };
+        let text = news.as_deref()?;
+        Some((format!("talent:{}.effects.{kind}.news", def.id), text))
+    })
+}
+
+/// Resource `id`'s `lacking` words (`resources.toml`'s `[[resource]]`), said in
+/// `classes.lacking`.
+pub fn lacking(id: &str) -> String {
+    format!("resources:resource.{id}.lacking")
+}
+
+/// The classes' lines: the callings' messages, the talents' handed-out news, and the
+/// resources' `lacking`.
+fn class_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
+    for def in content.callings() {
+        add(calling(def), &def.message);
+    }
+    for (_, def) in content.talents().iter() {
+        for (key, text) in handed_news(def) {
+            add(key, text);
+        }
+    }
+    for def in content.resources() {
+        if let Some(words) = &def.lacking {
+            add(lacking(&def.id), words);
+        }
+    }
+}
+
 /// Adds every line above to English by its key; a line naming a role is refused (none is given
 /// one).
 pub(super) fn add_all(content: &mut Content) -> Result<(), ContentError> {
@@ -294,6 +352,8 @@ pub(super) fn add_all(content: &mut Content) -> Result<(), ContentError> {
     }
     character_lines(content, &mut add);
     magic_lines(content, &mut add);
+    crafting_lines(content, &mut add);
+    class_lines(content, &mut add);
     for (id, level) in &content.levels {
         if let Some(line) = &level.arrival {
             add(level_arrival(id), line);
@@ -370,6 +430,18 @@ fn character_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
                         add(warmth(&def.id, n, slower), text);
                     }
                 }
+            }
+        }
+    }
+}
+
+/// Crafting's lines: the professions' `failed` and `fumbled`.
+fn crafting_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
+    for text in &content.recipes().professions {
+        let skill = &content.skill(text.skill).id;
+        for (fumbled, line) in [(false, &text.failed), (true, &text.fumbled)] {
+            if let Some(line) = line {
+                add(profession(skill, fumbled), line);
             }
         }
     }

@@ -25,6 +25,8 @@ use super::work::{Job, Task};
 use crate::action::Event;
 use crate::content::{Content, LevelKind, TerrainId};
 use crate::geom::{Dir, Pos};
+use crate::lang::MessageId;
+use crate::msg;
 use crate::object::Stack;
 use crate::stats::Stat;
 use crate::world::people::shop::unpaid_parts;
@@ -96,20 +98,20 @@ impl World {
     }
 
     /// Why the cell at `at` will not take an anvil, as the player is told; `None` when it will.
-    fn forge_ground(&self, at: Pos) -> Option<&'static str> {
+    fn forge_ground(&self, at: Pos) -> Option<MessageId> {
         let level = self.state.current();
         let open = (level.terrain_at(at)).is_some_and(|t| open_ground(&self.content, level, t, at));
         if !open {
-            return Some("There is no open ground there to set an anvil on.");
+            return Some(msg::crafting::NO_OPEN_GROUND);
         }
         if self.state.actor_at(&self.state.current_level, at).is_some() {
-            return Some("Something is in the way.");
+            return Some(msg::crafting::SOMETHING_IN_THE_WAY);
         }
         if level.trap_at(at).is_some_and(|t| t.known) {
-            return Some("There is a trap there.");
+            return Some(msg::crafting::TRAP_THERE);
         }
         if !level.objects_at(at).is_empty() {
-            return Some("Clear the ground there first.");
+            return Some(msg::crafting::CLEAR_THE_GROUND);
         }
         None
     }
@@ -123,11 +125,11 @@ impl World {
             return Spent::Nothing;
         };
         if self.state.current().kind() == LevelKind::Overworld {
-            self.say("You cannot set up a forge out here.");
+            self.say(msg::crafting::CANNOT_FORGE_OUT_HERE);
             return Spent::Nothing;
         }
         if self.ingot().is_none() {
-            self.say("You have no ingot to set.");
+            self.say(msg::crafting::NO_INGOT);
             return Spent::Nothing;
         }
         let at = self.player_pos().step(dir);
@@ -135,7 +137,7 @@ impl World {
             self.say(why);
             return Spent::Nothing;
         }
-        self.say("You heap up stones to set an ingot on.");
+        self.say(msg::crafting::HEAP_UP_STONES);
         self.craft_work(Task::FieldForge(Forging { at }), seconds)
     }
 
@@ -146,7 +148,7 @@ impl World {
             return;
         };
         let Some(item) = self.ingot() else {
-            self.say("You have no ingot to set.");
+            self.say(msg::crafting::NO_INGOT);
             return;
         };
         if let Some(why) = self.forge_ground(at) {
@@ -161,6 +163,6 @@ impl World {
                 .after_removal(&crate::action::Positions::of([item]));
         }
         self.set_terrain(at, anvil);
-        self.say("You set the block on a heap of stones: a makeshift anvil.");
+        self.say(msg::crafting::MAKESHIFT_ANVIL);
     }
 }

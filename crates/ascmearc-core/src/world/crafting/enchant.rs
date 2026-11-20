@@ -61,15 +61,16 @@ use crate::content::{
     AffixKind, Content, EnchantKind, ItemHarm, MAX_PER_KIND, ObjectDef, Rarity, RecipeDef,
     RecipeId, RecipeUse,
 };
+use crate::lang::{Arg, MessageId, Msg, Phrase};
 use crate::magic::loot::{pick_weighted, rare_name, rare_split, roll_affix_within, rolls_within};
 use crate::magic::{Affix, Magic, capacity};
+use crate::msg;
 use crate::object::Stack;
 use crate::rng::Rng;
 use crate::rng::draw;
 use crate::scroll_label::Lore;
 use crate::skills::{Effect, MAX_ENCHANT_LEVEL, Use};
 use crate::stats::Stat;
-use crate::text::capitalized;
 use crate::time::Duration;
 use crate::world::combat::item_damage::Harmed;
 use crate::world::{Actor, LevelState, Spent, World};
@@ -96,14 +97,14 @@ pub fn enchant_band(natural: i32, margin: i32) -> EnchantBand {
 }
 
 /// The refusal of an item with no room for one more affix (the row's [`RecipeLack::Room`]).
-const FULL: &str = "It holds all it can.";
+const FULL: MessageId = msg::crafting::HOLDS_ALL_IT_CAN;
 
 /// The refusal of a roll with nothing of the crystal's families left to draw.
-const NOTHING: &str = "No more of that nature will take.";
+const NOTHING: MessageId = msg::crafting::NO_MORE_OF_THAT_NATURE;
 
 /// The refusal of an item whose capacity is below a rare's three affixes (Imbue's and
 /// Ennoble's; the row's [`RecipeLack::Room`] too).
-const SMALL: &str = "It would not hold so much.";
+const SMALL: MessageId = msg::crafting::WOULD_NOT_HOLD_SO_MUCH;
 
 /// The fewest affixes a rare holds, and so the capacity Imbue and Ennoble want.
 const RARE_LEAST: u8 = 3;
@@ -137,46 +138,46 @@ pub(super) fn refusal(
     player: &Actor,
     at: usize,
     kind: EnchantKind,
-) -> Option<&'static str> {
+) -> Option<MessageId> {
     let Some(stack) = player.inventory.get(at) else {
-        return Some("You carry no such thing.");
+        return Some(msg::crafting::CARRY_NO_SUCH_THING);
     };
     let def = content.object(stack.object);
     if def.kind.is_none() || stack.is_spirit() {
-        return Some("No magic can be bound in that.");
+        return Some(msg::crafting::NO_MAGIC_BOUND);
     }
     if !stack.is_identified() {
-        return Some("You must know what is bound in it first.");
+        return Some(msg::crafting::MUST_KNOW_FIRST);
     }
     if player.equipment.holds(at) {
-        return Some("Take it off first.");
+        return Some(msg::crafting::TAKE_IT_OFF_FIRST);
     }
     let magic = stack.magic();
     if magic.is_some_and(|m| m.unique.is_some()) {
-        return Some("It will not take your will.");
+        return Some(msg::crafting::WILL_NOT_TAKE_YOUR_WILL);
     }
     let room = capacity(stack, content);
     match (kind, magic) {
         (EnchantKind::Kindle | EnchantKind::Imbue, Some(_)) => {
-            Some("There is magic in it already.")
+            Some(msg::crafting::MAGIC_IN_IT_ALREADY)
         }
         (EnchantKind::Kindle, None) => None,
         (EnchantKind::Imbue, None) => (room < RARE_LEAST).then_some(SMALL),
         (
             EnchantKind::Quicken | EnchantKind::Recast | EnchantKind::Ennoble | EnchantKind::Unbind,
             None,
-        ) => Some("There is no magic in it."),
+        ) => Some(msg::crafting::NO_MAGIC_IN_IT),
         // A rare's Quicken takes a heart-crystal too (`resolve`).
         (EnchantKind::Quicken, Some(m)) if m.rarity == Rarity::Rare => {
             let full =
                 m.affixes.len() >= usize::from(room) || with_room(content, &m.affixes).is_empty();
             full.then_some(FULL)
         }
-        (EnchantKind::Ennoble, Some(m)) if m.rarity == Rarity::Rare => {
-            Some("It is rare already: only a heart-crystal's Quicken adds to it.")
+        (EnchantKind::Ennoble, Some(magic)) if magic.rarity == Rarity::Rare => {
+            Some(msg::crafting::RARE_ALREADY)
         }
-        (EnchantKind::Recast, Some(m)) if m.rarity == Rarity::Rare => {
-            Some("It is rare: unbind it, then imbue it anew.")
+        (EnchantKind::Recast, Some(magic)) if magic.rarity == Rarity::Rare => {
+            Some(msg::crafting::RARE_UNBIND_FIRST)
         }
         (EnchantKind::Quicken, Some(m)) => {
             let full = m.affixes.len() >= 2 || m.affixes.len() >= usize::from(room);
@@ -201,7 +202,7 @@ pub(super) fn lack(content: &Content, player: &Actor, recipe: &RecipeDef) -> Opt
     let Some(RecipeUse::Enchant(kind)) = recipe.uses else {
         return None;
     };
-    let why: Vec<Option<&str>> = (0..player.inventory.len())
+    let why: Vec<Option<MessageId>> = (0..player.inventory.len())
         .map(|at| refusal(content, player, at, kind))
         .collect();
     if !why.contains(&None) {
@@ -366,25 +367,22 @@ fn resolve(
     player: &Actor,
     recipe: &RecipeDef,
     picks: &[Option<usize>],
-) -> Result<Resolved, String> {
+) -> Result<Resolved, Msg> {
     let Some(RecipeUse::Enchant(kind)) = recipe.uses else {
-        return Err("You know no such recipe.".into());
+        return Err(msg::crafting::NO_SUCH_RECIPE.into());
     };
     let slots = seal::slots(kind, recipe.crystals);
     let item = match picks.first() {
         Some(Some(item)) => *item,
-        _ => return Err("You must choose the item.".into()),
+        _ => return Err(msg::crafting::MUST_CHOOSE_ITEM.into()),
     };
     if picks.len() > slots.len() {
-        return Err("That is more than the work takes.".into());
+        return Err(msg::crafting::MORE_THAN_THE_WORK_TAKES.into());
     }
     let pick = |i: usize| picks.get(i).copied().flatten();
     if slots.crystals.clone().any(|i| pick(i).is_none()) {
-        return Err(match recipe.crystals {
-            1 => "You must choose the crystal.",
-            _ => "You must choose the crystals.",
-        }
-        .into());
+        let count = Arg::Number(i64::from(recipe.crystals));
+        return Err(Msg::new(msg::crafting::MUST_CHOOSE_CRYSTALS).role("count", count));
     }
     if let Some(text) = refusal(content, player, item, kind) {
         return Err(text.into());
@@ -393,13 +391,14 @@ fn resolve(
     let crystals: Vec<usize> = slots.crystals.clone().filter_map(pick).collect();
     let mut families = Vec::new();
     for (n, &at) in crystals.iter().enumerate() {
-        let stone = player.inventory.get(at).ok_or("You carry no such thing.")?;
+        let stone =
+            (player.inventory.get(at)).ok_or(Msg::from(msg::crafting::CARRY_NO_SUCH_THING))?;
         let colour = (content.crystals())
             .and_then(|c| c.colour_of_object(stone.object))
-            .ok_or("That is no crystal.")?;
+            .ok_or(Msg::from(msg::crafting::NO_CRYSTAL))?;
         let picked = crystals[..=n].iter().filter(|&&c| c == at).count();
         if picked > stone.count as usize {
-            return Err("You do not carry so many crystals.".into());
+            return Err(msg::crafting::NOT_SO_MANY_CRYSTALS.into());
         }
         families.push(colour.families.clone());
     }
@@ -411,18 +410,18 @@ fn resolve(
     let heart = match (kind, rare) {
         (EnchantKind::Quicken, true) => Some(
             (rares.and_then(|(heart, _)| seal::carried(player, heart)))
-                .ok_or("A rare takes a heart-crystal beside the crystal, and you have none.")?,
+                .ok_or(Msg::from(msg::crafting::HEART_CRYSTAL_NEEDED))?,
         ),
         _ => None,
     };
     let kept = slots.affix.and_then(pick);
     if kept.is_some_and(|k| k >= rolled.len()) {
-        return Err("There is no such magic in it.".into());
+        return Err(msg::crafting::NO_SUCH_MAGIC.into());
     }
     let fetter = match kept {
         Some(_) => Some(
             (rares.and_then(|(_, fetter)| seal::carried(player, fetter)))
-                .ok_or("You have no soul-fetter to keep it with.")?,
+                .ok_or(Msg::from(msg::crafting::NO_SOUL_FETTER))?,
         ),
         None => None,
     };
@@ -461,7 +460,7 @@ fn resolve(
                 .collect();
             let kinds = kinds_of(content, &others);
             if kinds.is_empty() {
-                return Err("Nothing would be left to recast.".into());
+                return Err(msg::crafting::NOTHING_LEFT_TO_RECAST.into());
             }
             if !kinds.iter().all(|&k| can(k, &had, first)) {
                 return Err(NOTHING.into());
@@ -560,12 +559,16 @@ fn reach(content: &Content, player: &Actor) -> u8 {
 
 /// "the long sword", "the arrows": `stack` named as the work speaks of it.
 /// A known rare goes by its name alone: "Grim Bite".
-fn the(lore: Lore<'_>, stack: &Stack) -> String {
-    let named = stack.known_magic().is_some_and(|m| m.name.is_some());
+fn the(content: &Content, lore: Lore<'_>, stack: &Stack) -> String {
+    content.english_of(&item_phrase(lore, stack), "the")
+}
+
+/// [`the`]'s phrase, said `{item:the}`: one by its title (a known rare's is its name), several
+/// by what they are called as made.
+fn item_phrase(lore: Lore<'_>, stack: &Stack) -> Phrase {
     match stack.count {
-        1 if named => lore.title(stack),
-        1 => format!("the {}", lore.title(stack)),
-        _ => format!("the {}", lore.names(stack).1),
+        1 => lore.title_phrase(stack),
+        n => lore.names_phrase(stack).count(n),
     }
 }
 
@@ -630,11 +633,12 @@ pub(super) fn plan(
     recipe: &RecipeDef,
     picks: &[Option<usize>],
 ) -> Result<CraftPlan, String> {
-    let resolved = resolve(content, player, recipe, picks)?;
+    let resolved = resolve(content, player, recipe, picks)
+        .map_err(|why| super::craft_make::english(content, why))?;
     let seconds = work_seconds(content, recipe, resolved.seals.len());
     Ok(CraftPlan {
         verb: recipe.verb.clone().unwrap_or_else(|| recipe.name.clone()),
-        name: the(lore, &player.inventory[resolved.item]),
+        name: the(content, lore, &player.inventory[resolved.item]),
         uses: uses_words(content, lore, player, &resolved),
         station: None,
         time: format!(
@@ -708,7 +712,7 @@ impl World {
         let def = content.recipe(id);
         let me = self.state.player();
         if me.skills.value(def.skill).unwrap_or(0) < def.from {
-            self.say("That is beyond your skill.");
+            self.say(msg::crafting::BEYOND_YOUR_SKILL);
             return Spent::Nothing;
         }
         let resolved = match resolve(&content, me, def, picks) {
@@ -723,14 +727,14 @@ impl World {
             .quest_objects()
             .contains(&self.state.player().inventory[item].object)
         {
-            self.say("It will not take your will.");
+            self.say(msg::crafting::WILL_NOT_TAKE_YOUR_WILL);
             return Spent::Nothing;
         }
         if !self.may_loose(item) || !resolved.all_spent().iter().all(|&c| self.may_loose(c)) {
             return Spent::Nothing;
         }
-        let thing = the(self.lore(), &self.state.player().inventory[item]);
-        self.say(format!("You take {thing} in your lap and begin."));
+        let thing = item_phrase(self.lore(), &self.state.player().inventory[item]);
+        self.say(Msg::new(msg::crafting::TAKE_IN_LAP).role("item", thing));
         let mut held = [None; MAX_PICKS];
         held[..picks.len()].copy_from_slice(picks);
         let seconds = work_seconds(&content, def, resolved.seals.len());
@@ -748,7 +752,7 @@ impl World {
         let def = content.recipe(work.recipe);
         let picks = work.picks();
         let Ok(resolved) = resolve(&content, self.state.player(), def, &picks) else {
-            self.say("You have nothing left to work on.");
+            self.say(msg::crafting::NOTHING_LEFT_TO_WORK_ON);
             return;
         };
         let me = self.state.player();
@@ -771,58 +775,56 @@ impl World {
         };
         let content = self.content.clone();
         let at = resolved.item;
-        let thing = the(self.lore(), &self.state.player().inventory[at]);
+        let thing = item_phrase(self.lore(), &self.state.player().inventory[at]);
         let stone = (resolved.crystals.first())
-            .map(|&c| self.lore().title(&self.state.player().inventory[c]));
-        let dark = match resolved.crystals.len() + resolved.seals.len() {
-            1 => "The crystal goes dark in your hands.",
-            _ => "The crystals go dark in your hands.",
-        };
+            .map(|&c| self.lore().title_phrase(&self.state.player().inventory[c]));
+        let gone_dark = resolved.crystals.len() + resolved.seals.len();
+        let dark =
+            Msg::new(msg::crafting::CRYSTALS_GO_DARK).role("count", Arg::Number(gone_dark as i64));
         let mut crystals = resolved.all_spent();
         // What the fetter keeps, by name, before the work changes the item.
         let kept = (resolved.kept)
             .and_then(|k| self.state.player().inventory[at].magic()?.affixes.get(k))
             .and_then(|a| content.affixes().get(&a.id))
-            .map(|d| d.name.clone());
+            .map(|d| Phrase::id(format!("affix:{}", d.id)));
         match band {
             EnchantBand::Made => {
-                if let Some(kept) = &kept {
-                    self.say(format!(
-                        "The soul-fetter holds one enchantment fast: {kept}."
-                    ));
+                if let Some(kept) = kept {
+                    self.say(Msg::new(msg::crafting::FETTER_HOLDS).role("affix", kept));
                 }
                 let stack = self.state.player().inventory[at].clone();
                 let made = self.worked(&content, kind, stack, resolved);
-                let name = self.lore().describe(&made);
-                let title = (made.magic().and_then(|m| m.name.clone())).unwrap_or(name.clone());
+                let name = self.lore().phrase(&made);
+                let title = (made.magic().and_then(|m| m.name.clone()))
+                    .map_or(name.clone(), Phrase::literal);
                 self.player_mut().inventory[at] = made;
-                let text = match (kind, &stone) {
-                    (EnchantKind::Unbind, _) | (_, None) => {
-                        format!("The magic goes out of {thing}. It is now {name}.")
+                let text = match (kind, stone) {
+                    (EnchantKind::Unbind, _) | (_, None) => Msg::new(msg::crafting::MAGIC_GOES_OUT)
+                        .role("item", thing)
+                        .role("what", name),
+                    (EnchantKind::Imbue, _) => Msg::new(msg::crafting::IMBUE_WAKES)
+                        .role("item", thing)
+                        .role("count", Arg::Number(crystals.len() as i64))
+                        .role("title", title),
+                    (EnchantKind::Ennoble, Some(stone)) => Msg::new(msg::crafting::ENNOBLE_WAKES)
+                        .role("item", thing)
+                        .role("stone", stone)
+                        .role("title", title),
+                    (EnchantKind::Quicken, Some(stone)) if resolved.heart.is_some() => {
+                        Msg::new(msg::crafting::QUICKEN_HEART)
+                            .role("item", thing)
+                            .role("stone", stone)
                     }
-                    (EnchantKind::Imbue, _) => format!(
-                        "{} drinks the {} crystals and wakes as {title}.",
-                        capitalized(&thing),
-                        crate::text::number_word(crystals.len())
-                    ),
-                    (EnchantKind::Ennoble, Some(stone)) => format!(
-                        "{} takes the {stone}'s glow and wakes as {title}.",
-                        capitalized(&thing)
-                    ),
-                    (EnchantKind::Quicken, Some(stone)) if resolved.heart.is_some() => format!(
-                        "{} takes the {stone}'s glow and the heart-crystal's, and holds more.",
-                        capitalized(&thing)
-                    ),
-                    (_, Some(stone)) => format!(
-                        "{} takes the {stone}'s glow. It is now {name}.",
-                        capitalized(&thing)
-                    ),
+                    (_, Some(stone)) => Msg::new(msg::crafting::ENCHANTED_NOW)
+                        .role("item", thing)
+                        .role("stone", stone)
+                        .role("what", name),
                 };
                 self.say(text);
             }
             EnchantBand::Failed => match kind {
                 EnchantKind::Unbind => {
-                    self.say(format!("{} clings to its magic.", capitalized(&thing)))
+                    self.say(Msg::new(msg::crafting::CLINGS_TO_MAGIC).role("item", thing))
                 }
                 _ => {
                     self.say(dark);
@@ -837,14 +839,12 @@ impl World {
                 // One of a stack (of arrows) warps, set apart at the end of the pack, after
                 // every crystal's position (#1487).
                 let at = self.set_apart(at);
-                let thing = the(self.lore(), &self.state.player().inventory[at]);
+                let thing = item_phrase(self.lore(), &self.state.player().inventory[at]);
                 match self.harm_item(at, ItemHarm::Enchant) {
                     Harmed::Withstood => self.say(WITHSTOOD),
-                    Harmed::Damaged => {
-                        self.say(format!("{} warps under your hands.", capitalized(&thing)))
-                    }
+                    Harmed::Damaged => self.say(Msg::new(msg::crafting::WARPS).role("item", thing)),
                     Harmed::Destroyed => {
-                        self.say(format!("{} warps and falls apart.", capitalized(&thing)));
+                        self.say(Msg::new(msg::crafting::WARPS_APART).role("item", thing));
                         for c in &mut crystals {
                             if *c > at {
                                 *c -= 1;
@@ -860,10 +860,10 @@ impl World {
     /// The heart-crystal or the soul-fetter of a work that did not take, said gone.
     fn rare_lost(&mut self, resolved: &Resolved) {
         if resolved.heart.is_some() {
-            self.say("The heart-crystal goes dark with it.");
+            self.say(msg::crafting::HEART_GOES_DARK);
         }
         if resolved.fetter.is_some() {
-            self.say("The soul-fetter crumbles to nothing.");
+            self.say(msg::crafting::FETTER_CRUMBLES);
         }
     }
 

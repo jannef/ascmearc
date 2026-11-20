@@ -494,7 +494,7 @@ impl<'a> PerceptionView<'a> {
 
     /// Why the player cannot dig now, in the rules' words (no digging tool ready, or untrained
     /// in Mining: `world::dig_refusal`), or `None` when `u` may ask for a direction.
-    pub fn dig_refusal(&self) -> Option<&'static str> {
+    pub fn dig_refusal(&self) -> Option<crate::lang::MessageId> {
         crate::world::dig_refusal(self.player, self.content)
     }
 

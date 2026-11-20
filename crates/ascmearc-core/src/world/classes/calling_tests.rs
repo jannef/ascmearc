@@ -157,11 +157,9 @@ fn a_calling_opens_to_its_class_at_its_level() {
         "{rows:?}"
     );
     run(&mut t, "call:warden");
-    assert!(
-        said(&t)
-            .last()
-            .expect("said")
-            .contains("No calling of this world opens")
+    assert_eq!(
+        said(&t).last().expect("said"),
+        "No calling of this world opens `warden` to a thief (dev)."
     );
     assert!(t.character().expect("character").prestige.is_none());
 }

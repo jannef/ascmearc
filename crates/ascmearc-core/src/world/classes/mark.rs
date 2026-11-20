@@ -22,8 +22,10 @@
 //!
 //! Nothing here draws.
 
-use crate::content::{Build, ClassActive, Content, ResourceId, possessive};
+use crate::content::{Build, ClassActive, Content, ResourceId};
 use crate::geom::{Dir, Pos};
+use crate::lang::{MessageId, Msg};
+use crate::msg;
 use crate::world::{Actor, ActorId, World};
 
 impl World {
@@ -42,12 +44,14 @@ impl World {
         self.state.actors.contains_key(&mark).then_some(mark)
     }
 
-    /// The player's mark as they know it, for what they are told: "the kobold" while they see
-    /// it, else "an unseen foe".
-    pub(super) fn mark_called(&self, mark: ActorId) -> String {
+    /// A line about the player's mark as they know it: `seen`, its `who` the mark ("the
+    /// kobold"), while they see it, else `unseen` (of "an unseen foe").
+    fn mark_line(&self, mark: ActorId, seen: MessageId, unseen: MessageId) -> Msg {
         match self.state.actors.get(&mark) {
-            Some(a) if self.perception.sees_actors_at(a.pos) => self.called(a),
-            _ => "an unseen foe".into(),
+            Some(a) if self.perception.sees_actors_at(a.pos) => {
+                Msg::new(seen).role("who", self.called_phrase(a))
+            }
+            _ => unseen.into(),
         }
     }
 
@@ -65,7 +69,11 @@ impl World {
         match self.mark_of(player) {
             Some(mark) if mark == target => return,
             Some(mark) => {
-                let called = self.mark_called(mark);
+                let lost = self.mark_line(
+                    mark,
+                    msg::classes::OPENINGS_LOST,
+                    msg::classes::OPENINGS_LOST_UNSEEN,
+                );
                 let me = self.player_mut();
                 let mut held = 0u16;
                 for &r in &pools {
@@ -75,7 +83,7 @@ impl World {
                     }
                 }
                 if held > 0 {
-                    self.say(format!("Your openings on {called} are lost."));
+                    self.say(lost);
                 }
             }
             None => {}
@@ -171,11 +179,12 @@ impl World {
         if there.is_none_or(|t| t == mark) {
             return false;
         }
-        let called = self.mark_called(mark);
-        self.say(format!(
-            "Your openings are in {} guard.",
-            possessive(&called)
-        ));
+        let guard = self.mark_line(
+            mark,
+            msg::classes::OPENINGS_IN_GUARD,
+            msg::classes::OPENINGS_IN_GUARD_UNSEEN,
+        );
+        self.say(guard);
         true
     }
 }

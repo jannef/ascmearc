@@ -1,0 +1,89 @@
+# The classes (`world/classes/`): the class actives and their refusals, the ascetic's ki tricks,
+# Charge, Consecrate, the calling, the classes' talents given, the mark of openings, and the
+# business partner's stake. Ids alphabetical (`docs/dev/localization.md` "Literal lines"). The
+# lines the data writes (a calling's `message`, a talent's handed-out `news`, a resource's
+# `lacking`) are lines of data, said by their keys (`content/data_line.rs`).
+#
+# Roles: `who` is a creature a line is about, as the player calls it ("the kobold", "Grimbold");
+# `keeper` a shopkeeper by name; `missile` what flew ("the arrow"). `status` is a status as the
+# player sees it, lower case ("raging"); `talent` and `name` are a talent's and a resource's
+# names from the data, and `reason` why an ability cannot be used: text until those words are
+# converted. `came` is who came and how ("The kobold comes close"), from `turn/rest.rs`. `class`
+# is a class id as a word (dev) and `id` a prestige class id as typed (dev). `gold` is a number,
+# said in digits.
+
+already_light_on_feet = "You are already light on your feet."
+ask_where = "Where?"
+beside_it_already = "You are beside it already."
+call_in_what_shape = "Call it in what shape?"
+cannot_charge_on_overworld = "You cannot charge on the overworld."
+cannot_charge_while_swimming = "You cannot charge while swimming."
+# `reason`: why the ability cannot be used, in words.
+cannot_reason = "You cannot: {reason:bare}."
+charge = "You charge!"
+draw_old_soldiers_wind = "You draw on an old soldier's wind."
+# `talent`: the talent the player's class gave them.
+gain_talent = "You gain {talent:bare}."
+hand_over_gold = "You hand over {gold:bare} gold."
+hands_not_free = "Your hands are not free."
+in_the_way = "Something is in the way."
+# `keeper`: the shopkeeper the player owes, by name.
+keeper_steps_into_way = "{keeper:The} step{keeper:s} into your way: you haven't paid."
+kneel_to_consecrate = "You kneel and pray to consecrate this place."
+# `who`: the one the player asked about a calling not open to them.
+knows_nothing_about_that = "{who:The} know{who:s} nothing about that."
+# `words`: the resource's `lacking`, a line of data ("you have not the rage for it").
+lacking = "{words:Bare}."
+level_consecrated = "A stillness settles over the whole level: it is consecrated."
+mind_already_still = "Your mind is already still."
+# A dev action's: `id`, the prestige class as typed; `class`, the player's class id.
+no_calling_opens_dev = "No calling of this world opens `{id:bare}` to {class:a} (dev)."
+no_character_to_call_dev = "There is no character to call (dev)."
+no_prestige_class_dev = "There is no prestige class `{id:bare}` (dev)."
+no_quarrel_there = "You have no quarrel there."
+# `who`: the creature that is no foe of the player's.
+no_quarrel_with = "You have no quarrel with {who:the}."
+no_such_ability = "You have no such ability."
+nobody_beside_to_kick = "There is nobody beside you to kick."
+nobody_there_to_charge = "There is nobody there you see to charge."
+nobody_there_to_strike = "There is nobody there to strike."
+not_carrying_that_much_gold = "You do not carry that much gold."
+nothing_to_consecrate = "There is nothing here to consecrate."
+# `who`: the mark, the creature whose guard the openings are in.
+openings_in_guard = "Your openings are in {who:poss} guard."
+openings_in_guard_unseen = "Your openings are in an unseen foe's guard."
+# `who`: the mark the openings were on.
+openings_lost = "Your openings on {who:the} are lost."
+openings_lost_unseen = "Your openings on an unseen foe are lost."
+# `missile`: what flew, a shot's or a throw's object or a trap's noun.
+pluck_from_air = "You pluck {missile:the} from the air."
+# A dev action's: `id`, the prestige class the player holds.
+prestige_already_dev = "You are a {id:bare} already (dev)."
+rig_what_where = "Rig what, and where? Name a rig and a way: `rig:tripwire:E`."
+room_consecrated = "A stillness settles over the room: it is consecrated."
+run_into_something = "You run into something!"
+short_of_breath_for_charge = "You are short of breath for so long a charge."
+stake_lost = "With your business partner dead, your stake is lost."
+stake_not_worth_that_much = "Your stake is not worth that much."
+stands_in_way_of_charge = "Something stands in the way of a charge."
+# `status`: the status that keeps the ability from use.
+still_status = "You are still {status:bare}."
+still_your_mind = "You still your mind."
+# `came`: who came, and how.
+stop_prayer_came = "{came:bare}; you stop your prayer."
+stop_your_prayer = "You stop your prayer."
+# `who`: the creature the player's palm stunned.
+stun = "You stun {who:the}."
+throw_what_where = "Throw what, and where?"
+too_little_mana = "You have too little mana."
+# `name`: the resource the player holds too little of, lower case ("ki").
+too_little_resource = "You have too little {name:bare}."
+# A holy gift used outside its alignment bands.
+unanswered_hands = "You lay on your hands, but no warmth flows from them."
+unanswered_prayer = "You kneel and pray, but no holy power answers you."
+unanswered_radiance = "You will a holy light, but none comes."
+unanswered_smite = "You call for holy wrath, but none answers."
+use_it_on_what = "Use it on what?"
+warmth_flows_from_hands = "Warmth flows from your hands."
+which_way = "Which way?"
+write_which_spell = "Write which spell? Name one you know: `scribe:fireball`."

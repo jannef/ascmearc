@@ -1353,7 +1353,9 @@ impl World {
             let lines = self.creature_dies(id, credited, stoned);
             self.news.splice(
                 earned..earned,
-                lines.into_iter().chain(crawled).map(crate::lang::Msg::from),
+                lines
+                    .into_iter()
+                    .chain(crawled.into_iter().map(crate::lang::Msg::from)),
             );
             // Death throes go off where it died (`creature_burst.rs`), after what crawled out.
             self.death_throes(id, (at, &level), creature, events);
@@ -1366,7 +1368,7 @@ impl World {
     /// struck dead by Soulglass, crystals take the corpse's and its stock's place (`crystal.rs`).
     /// `by_player`: the player killed it. Returns the lines for an animated thing's components that
     /// broke as they fell, if the player saw it ([`World::break_lines`]).
-    fn creature_dies(&mut self, id: ActorId, by_player: bool, stoned: bool) -> Vec<String> {
+    fn creature_dies(&mut self, id: ActorId, by_player: bool, stoned: bool) -> Vec<Msg> {
         let Some(actor) = self.state.actors.remove(&id) else {
             return Vec::new();
         };
@@ -1391,7 +1393,8 @@ impl World {
         }
         // An animated thing's body falls whole or not at all.
         let (mut dropped, broken) = self.remains(&actor);
-        let mut lines = self.break_lines(&actor.level, actor.pos, &broken);
+        let broken = self.break_lines(&actor.level, actor.pos, &broken);
+        let mut lines: Vec<Msg> = broken.into_iter().map(Msg::from).collect();
         dropped.extend(self.loot_of(&actor));
         // Struck dead by Soulglass, its body is crystals (`crystal.rs`).
         let glass = (!stoned).then(|| self.crystallise(&actor)).flatten();
@@ -1420,14 +1423,18 @@ impl World {
         if !stoned && !glassed {
             self.leave_corpse(&actor);
             // In a cursed room the dead rise (`curse.rs`).
-            lines.extend(self.curse_corpse(&actor, by_player));
+            lines.extend(
+                self.curse_corpse(&actor, by_player)
+                    .into_iter()
+                    .map(Msg::from),
+            );
         }
         // A dead shopkeeper's goods are free to take.
         self.keeper_died(id, &actor.level);
         // A dead escort fails its quest (`escort.rs`).
-        lines.extend(self.escort_dies(&actor));
+        lines.extend(self.escort_dies(&actor).into_iter().map(Msg::from));
         // A lure quest's creature killed unbound forms anew (`lure.rs`).
-        lines.extend(self.lured_dies(&actor));
+        lines.extend(self.lured_dies(&actor).into_iter().map(Msg::from));
         self.fallen.push(actor);
         lines
     }
