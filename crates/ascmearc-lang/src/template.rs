@@ -25,14 +25,25 @@ pub struct Line(pub Vec<Segment>);
 impl Line {
     /// Parses `"{actor:The} hit{actor:s} {target:the}."`. Never fails: a brace that does not open
     /// a well-formed placeholder (a role and an optional form, non-empty, no spaces or braces in
-    /// either; `{role}` is `{role:bare}`) is kept as text.
+    /// either; `{role}` is `{role:bare}`) is kept as text. `{{` and `}}` are a literal `{` and
+    /// `}`, so `{{gold}}` reads "{gold}".
     pub fn parse(text: &str) -> Self {
         let mut segments = Vec::new();
         let mut plain = String::new();
         let mut rest = text;
-        while let Some(open) = rest.find('{') {
+        while let Some(open) = rest.find(['{', '}']) {
             let (before, from_brace) = rest.split_at(open);
             plain.push_str(before);
+            if let Some(after) = (from_brace.strip_prefix("{{")).or(from_brace.strip_prefix("}}")) {
+                plain.push_str(&from_brace[..1]);
+                rest = after;
+                continue;
+            }
+            if let Some(after) = from_brace.strip_prefix('}') {
+                plain.push('}');
+                rest = after;
+                continue;
+            }
             let Some((slot, after)) = placeholder(from_brace) else {
                 plain.push('{');
                 rest = &from_brace[1..];
@@ -305,7 +316,6 @@ mod tests {
     fn a_brace_that_opens_no_placeholder_is_text() {
         for raw in [
             "{", "}", "{}", "{:}", "{a:}", "{:b}", "{a b:c}", "{a:b c}", "{a::b}", "x {oops",
-            "{{a:b}}",
         ] {
             let line = Line::parse(raw);
             let flat: String = line
@@ -318,11 +328,6 @@ mod tests {
                 .collect();
             assert_eq!(flat, raw, "{raw:?} round trips");
         }
-        assert_eq!(
-            Line::parse("{{a:b}}").0,
-            [text("{"), slot("a", "b"), text("}")],
-            "the inner braces are the placeholder"
-        );
         assert_eq!(Line::parse("{a:b").0, [text("{a:b")]);
         assert_eq!(Line::parse("{a:{b}").0, [text("{a:"), slot("b", "bare")]);
     }
@@ -335,6 +340,22 @@ mod tests {
             [slot("gold", "bare"), text(" gp, {a b}")]
         );
         assert_eq!(Line::parse("{gold}").roles(), ["gold"]);
+    }
+
+    #[test]
+    fn doubled_braces_are_literal_braces() {
+        assert_eq!(Line::parse("{{gold}}").0, [text("{gold}")]);
+        assert_eq!(Line::parse("{{a:b}}").0, [text("{a:b}")]);
+        assert_eq!(
+            Line::parse("{{{gold}}}").0,
+            [text("{"), slot("gold", "bare"), text("}")]
+        );
+        assert_eq!(
+            Line::parse("a }} b {{ c").0,
+            [text("a } b { c")],
+            "a doubled brace is one brace wherever it stands"
+        );
+        assert!(Line::parse("{{gold}}").roles().is_empty());
     }
 
     #[test]

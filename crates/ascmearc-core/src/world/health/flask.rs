@@ -239,7 +239,7 @@ impl World {
             self.afflict(id, status, degrees, Some(cast.by), events);
             let them = &self.state.actors[&id];
             if id != self.state.player && self.perception.sees_actors_at(them.pos) {
-                let who = self.phrase_of(id);
+                let who = self.called_phrase(them);
                 let word = fight::word(&word);
                 self.say(
                     Msg::new(msg::health::IS_STATUS)

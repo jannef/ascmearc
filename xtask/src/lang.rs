@@ -26,8 +26,16 @@ use std::path::{Path, PathBuf};
 /// The English every other language is checked against.
 const ENGLISH: &str = "en";
 
-/// The forms a dialogue line may ask for: dialogue nouns take the base form only (§9).
-const DIALOGUE_FORMS: &[&str] = &["name", "a", "the", "address"];
+/// The forms a dialogue line may ask for: dialogue nouns take the base form only (§9). `bare`
+/// is what `{role}` without a form asks for.
+const DIALOGUE_FORMS: &[&str] = &["name", "bare", "a", "the", "address"];
+
+/// The features a template's variants select on, with the values each takes (`Arg::feature`).
+const FEATURES: &[(&str, &[&str])] = &[
+    ("gender", &["male", "female", "other", "neuter"]),
+    ("number", &["one", "many"]),
+    ("person", &["you", "other"]),
+];
 
 /// Forms every language's lists accept, beside its module's own (`Arg::List`'s conjunctions).
 const LIST_FORMS: &[&str] = &["and", "or"];
@@ -351,6 +359,61 @@ fn slots(template: &Template) -> Vec<(String, String)> {
         .collect()
 }
 
+/// What is wrong with a template's variants, at any depth: a feature no argument has, a key the
+/// feature never takes (a typo there would only ever render `else`), and, for a translation
+/// (`english_roles`, the roles its English entry names), a role English does not pass.
+fn shape_problems(template: &Template, english_roles: Option<&[String]>) -> Vec<String> {
+    let mut out = Vec::new();
+    let Template::Variants {
+        role,
+        feature,
+        variants,
+        otherwise,
+    } = template
+    else {
+        return out;
+    };
+    match FEATURES.iter().find(|(f, _)| f == feature) {
+        None => out.push(format!(
+            "`by = \"{role}.{feature}\"`: no feature `{feature}` (only gender, number, person)"
+        )),
+        Some((_, values)) => {
+            for key in variants.keys().filter(|k| !values.contains(&k.as_str())) {
+                out.push(format!(
+                    "`by = \"{role}.{feature}\"`: `{key}` is no value of it ({})",
+                    values.join(", ")
+                ));
+            }
+        }
+    }
+    if role != KEY_ROLE && english_roles.is_some_and(|roles| !roles.contains(role)) {
+        out.push(format!(
+            "unknown role `{role}` in `by` (English passes {:?})",
+            english_roles.unwrap_or_default()
+        ));
+    }
+    for variant in variants.values().chain(otherwise.iter().map(AsRef::as_ref)) {
+        out.extend(shape_problems(variant, english_roles));
+    }
+    out
+}
+
+/// The most alternatives any line of the template has (a plain line is one).
+fn alternatives(template: &Template) -> usize {
+    match template {
+        Template::Line(_) => 1,
+        Template::Alternatives(lines) => lines.len(),
+        Template::Variants {
+            variants,
+            otherwise,
+            ..
+        } => (variants.values().chain(otherwise.iter().map(AsRef::as_ref)))
+            .map(alternatives)
+            .max()
+            .unwrap_or(1),
+    }
+}
+
 /// A form with its capital taken off (`The` asks for `the`, capitalized).
 fn lower(form: &str) -> String {
     let mut chars = form.chars();
@@ -465,6 +528,18 @@ fn check_entries(
                     report.errors.push(format!(
                         "{code}: {id}: unknown role `{role}` (English passes {:?})",
                         src.template.roles()
+                    ));
+                }
+            }
+            let english_roles = (source.filter(|_| !is_english)).map(|s| s.template.roles());
+            for problem in shape_problems(&entry.template, english_roles.as_deref()) {
+                report.errors.push(format!("{code}: {id}: {problem}"));
+            }
+            if let Some(src) = source.filter(|_| !is_english) {
+                let (most, ours) = (alternatives(&src.template), alternatives(&entry.template));
+                if ours > most {
+                    report.errors.push(format!(
+                        "{code}: {id}: {ours} alternatives, English has {most} (core draws by English's count)"
                     ));
                 }
             }
@@ -889,6 +964,50 @@ mod tests {
     }
 
     #[test]
+    fn variants_on_an_unknown_role_feature_or_value_are_errors() {
+        let xx = format!(
+            "[hit]\nof = \"{}\"\nby = \"victim.person\"\nyou = \"Osut.\"\nother = \"Osuu.\"\n\n\
+             [locked]\nof = \"{}\"\nby = \"actor.persn\"\nelse = \"Lukossa.\"\n",
+            hit_hash(),
+            fnv6("The door is locked.")
+        );
+        let e = errors(&world(&[("messages/combat.toml", &xx)]));
+        assert!(
+            e.iter()
+                .any(|m| m.contains("hit") && m.contains("unknown role `victim` in `by`")),
+            "{e:?}"
+        );
+        assert!(
+            e.iter()
+                .any(|m| m.contains("locked") && m.contains("no feature `persn`")),
+            "{e:?}"
+        );
+        let xx = format!(
+            "[hit]\nof = \"{}\"\nby = \"actor.person\"\nyou = \"Osut.\"\nothers = \"Osuu.\"\n",
+            hit_hash()
+        );
+        let e = errors(&world(&[("messages/combat.toml", &xx)]));
+        assert!(
+            e.iter().any(|m| m.contains("`others` is no value")),
+            "{e:?}"
+        );
+    }
+
+    #[test]
+    fn more_alternatives_than_english_are_an_error() {
+        let xx = format!(
+            "[hit]\nof = \"{}\"\ntext = [\"Osuu.\", \"Osui.\"]\n",
+            hit_hash()
+        );
+        let e = errors(&world(&[("messages/combat.toml", &xx)]));
+        assert!(
+            e.iter()
+                .any(|m| m.contains("2 alternatives, English has 1")),
+            "{e:?}"
+        );
+    }
+
+    #[test]
     fn a_template_that_does_not_parse_is_an_error() {
         let e = errors(&world(&[(
             "messages/combat.toml",
@@ -919,9 +1038,13 @@ mod tests {
     fn dialogue_asks_for_the_base_form_only() {
         let e = errors(&world(&[(
             "dialogue/ceaptun.toml",
-            "[greeting]\nline = \"Hei {player:Name}, {thing:plural} ja {x:the}\"\n",
+            "[greeting]\nline = \"Hei {player:Name}, {thing:plural} ja {x:the} {y}\"\n",
         )]));
         assert!(e.iter().any(|m| m.contains("{thing:plural}")), "{e:?}");
+        assert!(
+            !e.iter().any(|m| m.contains("{y")),
+            "`{{y}}` is the base form: {e:?}"
+        );
         assert!(!e.iter().any(|m| m.contains("Name}")), "{e:?}");
         assert!(!e.iter().any(|m| m.contains("{x:the}")), "{e:?}");
     }

@@ -26,7 +26,7 @@ nothing for it, `docs/dev/merging.md` "One build of ascmearc-core"). Dependencie
 | `message.rs` | `MessageId` (a newtype over `Cow<'static, str>`: a generated constant borrows, a loaded save owns; serialized as the plain string), `Role` (the same, and `Borrow<str>` so `args.get("actor")` works), `Arg` (`Phrase`, `Number`, `Text`, `List`, `Said`, `Key`), `Msg` (id and args; `Msg::new(id).role("who", phrase)`), `Entry` (a `Msg` with `turn`, `count`, and the unserialized `passing`). `Arg::feature` gives the value a template's variants select on |
 | `phrase.rs` | `Phrase` (head `Word`, `mods`, `count`, `proper`, `person`, `gender`, `notes`, `owner`), `Word::{Id, Literal}`, `Modifier::{Adjective, Of, Label, Material, Part, Made}`, `Person`, `Gender`, `Note::{Tags, Charges, Base}`. Builders: `Phrase::id`, `Phrase::literal` (proper), `.count`, `.with(modifier)`, `.note(tag)`, `.with_note`, `.owned_by`, `.without_notes` |
 | `lexicon.rs` | `Lexicon` (`word(id) -> Option<LexWord>`; core implements it over `Content`, "Phrases"), `LexWord` (`base`, explicit `forms`, `proper`, `gender`, `many`, `harmony`, `plural_only`), `MapLexicon` (a map; `MapLexicon::parse` reads a lexicon file: `id = "lemma"` or `{ word, forms, proper, gender, many, harmony, plural_only }`, `of` skipped), `NoLexicon` |
-| `template.rs` | `Line::parse` (total: a `{` that opens no `{role:form}` or `{role}` is text), `Template::{Line, Alternatives, Variants}`, `Templates::parse(prefix, text)` for one `messages/<prefix>.toml` (`[hit] text = …` or a plain `hit = "…"`; `text = [...]` alternatives; `by = "<role>.<feature>"` with one key per value and an optional `else`, nesting allowed; `of` skipped). Errors name the file and the entry |
+| `template.rs` | `Line::parse` (total: a `{` that opens no `{role:form}` or `{role}` is text; `{{` and `}}` are literal braces), `Template::{Line, Alternatives, Variants}`, `Templates::parse(prefix, text)` for one `messages/<prefix>.toml` (`[hit] text = …` or a plain `hit = "…"`; `text = [...]` alternatives; `by = "<role>.<feature>"` with one key per value and an optional `else`, nesting allowed; `of` skipped). Errors name the file and the entry |
 | `lang.rs` | `LangFile` and `parse`: `name`, `code`, `morphology`, `fallback`, `repeat` (default `" (×{n})"`), `number_words` (default 12), `[registers.<name>]`, `[race_registers]`, `[generic]`. A key with a letter outside ASCII is quoted in TOML (`"minä" = "mie"`) |
 | `register.rs` | `Register::word("the")` returns the override or the word; `Registers` (`standard` always present; `get`, `for_speaker(own, race)`: the speaker's own, else the race's, else standard; `unknown_race_registers` for the checker) |
 | `morphology/mod.rs` | the `Morphology` trait: `forms() -> Vec<String>`, `phrase(&Phrase, form, &dyn Lexicon, &Register) -> Result<String, FormError>`, `number`, `list(items, Conj)`, `parse_word(entry) -> Result<(), ParseError>`. `FormError::UnknownForm` is the one failure; the renderer falls back from it |
@@ -35,7 +35,7 @@ nothing for it, `docs/dev/merging.md` "One build of ascmearc-core"). Dependencie
 | `render.rs` | `Language` (a `LangFile`, its `Morphology`, its `Templates`, its `Registers`): `from_toml(text, plurals)` picks `en`, `fi`, or `generic`; `add_templates(prefix, text)`; `phrase(phrase, form, lex) -> String`; `render(entry, lex, keys) -> String`; `try_render` / `try_render_as(register, …) -> Result<String, RenderError>`. `render_chain(&[&lang, &fallback, …], …)`: the first language that renders wins, else `[id]`. `Keys` is `&dyn Fn(&str) -> String`; `written_key` is the identity for dumps (`{key:help}` stays written) |
 | `proptests.rs` | rendering is total: arbitrary Unicode through `Line::parse`, `Templates::parse`, `lang::parse`, `MapLexicon::parse`, `Plurals::add`, `Language::render`, `En::phrase`, `Generic::phrase`, and `Fi::phrase` (phrases with every modifier and note kind and an owner) gives a string or an `Err`, never a panic; a module renders a form iff it lists it |
 
-**Rendering a line.** `{role:form}` (`{role}` alone is `{role:bare}`; a literal word in braces is therefore not writable, and none is needed): the form's first letter upper-case capitalizes the result
+**Rendering a line.** `{role:form}` (`{role}` alone is `{role:bare}`; `{{` and `}}` are a literal `{` and `}`, so `{{gold}}` reads "{gold}"): the form's first letter upper-case capitalizes the result
 (`{actor:The}`); `{key:<command>}` is the host's key for the command (`key` is a reserved role),
 as is an `Arg::Key` in any role; `Arg::Text` is verbatim; `Arg::Number` goes through
 `Morphology::number` (`num`: words up to `number_words`, digits beyond; `ord`); `Arg::List` with
@@ -348,9 +348,13 @@ What combat leaves as literal lines, for their own slices: a rank risen and what
 status's start, end, ward, and stage lines, a disease's recovery line, a corpse's `on_eat` message,
 a treatment's made and failed lines, a skill gift's lines, and a flask's `words`. Text from another
 module's helper (`came_line`, `Hunger::news`) goes in as a text role, or stays literal. A stat's
-comparative ("stronger") and the disease in a sentence ("your wolf's sickness") are text roles
-(`feel`, `more`, `words`) until those words are converted. `health::object_phrase(content, id)`
-builds `object:<id>`; `Lore::title_phrase` is a stack's `title` as a phrase.
+words ("strength", the comparative "stronger") are text roles (`what`, `feel`, `more`) until core's
+words are converted (#1949). A disease treated is a phrase owned by its patient (`{disease:the}`:
+"the sickness", "your wolf's sickness"). Someone a line names is `called_phrase` (what `called`
+says: a named person or a shopkeeper by name), not `phrase_of`, where the string was `called`.
+`health::object_phrase(content, id)` builds `object:<id>` for a type the player knows;
+`Lore::object_phrase` is a type as the player knows it (an unread scroll by its label), and
+`Lore::title_phrase` a stack's `title` as a phrase.
 
 When no literal is left, `LITERAL`, the `From` text impls, and this section go.
 
@@ -407,7 +411,10 @@ example:
 
 1. Make `assets/lang/en/ui/<module>.toml`, an entry per piece of prose the screen draws or
    builds: titles (without the padding spaces, which stay in the code), headings, empty
-   states, hints, row states, notices. The text exactly as the string was.
+   states, hints, row states, notices. The text exactly as the string was. A sentence is one
+   entry, never split across entries to fit rows: where the screen draws it on several rows, its
+   text breaks it with `\n` and the screen makes a row of each line (`controls_screen.toml`'s
+   `note_fixed`), so a translation breaks it where its own words allow.
 2. A `format!` gets a role per value, each `{role:bare}`: a number as `Arg::Number` (`bare`
    gives digits; `num` would give words up to twelve), a name or a string from elsewhere as text
    (`.into()`). `key` is reserved (the host's keys): name a key's role otherwise (`own`).
@@ -496,13 +503,16 @@ example:
 `assets/lang/<code>/` with the crate's parsers (`Language::from_toml`, `Templates::parse`,
 `MapLexicon::parse`, `Morphology::parse_word`) and reports per language. **Errors** (the run
 fails): a file that does not parse; a form the language's `Morphology::forms` (plus `and`/`or`)
-does not list; a role the English entry does not pass; an id English lacks; a lexicon word the
-module refuses; a form request in `dialogue/` other than `name`/`Name`/`a`/`the`/`address`; a
+does not list; a role the English entry does not pass (in a placeholder or a `by`); variants on a
+feature no argument has (only `gender`, `number`, `person`) or with a key the feature never takes
+(`others` for `other`, which would only ever render `else`); more flavour alternatives than
+English has (core draws by English's count); an id English lacks; a lexicon word the module
+refuses; a form request in `dialogue/` other than `name`/`Name`/`bare` (`{role}`)/`a`/`the`/`address`; a
 race naming an unknown register; a key an entry with a `text` does not know (only `text` and
 `of`: a stray `width` is reported, since widths belong to the screens and the screen snapshots
 check them per language, "UI text"); and **stale** entries. **Warnings**: a missing id (an error for
 `--strict <code>`; Finnish is strict before it ships) and an English id no source names as
-`msg::<file>::<ID>`. English is checked for forms, parsing, and keys only.
+`msg::<file>::<ID>`. English is checked for forms, parsing, keys, and its variants' features only.
 
 **The `of` hash** of a translated entry is the six-hex FNV-1a (32 bits, the top byte folded into
 the low 24) of the English entry's canonical text: a string as it is, an array's items joined by a

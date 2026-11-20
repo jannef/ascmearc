@@ -742,3 +742,18 @@ fn a_save_round_trip_keeps_the_companion() {
     assert_eq!(data, loaded_data);
     assert!(data.grade >= 3);
 }
+
+/// `called_phrase` says what `called` says: a shopkeeper or a named person by name, a servant as
+/// the player's, anyone else by its type, so a line that names someone reads as it did.
+#[test]
+fn the_called_phrase_reads_as_called() {
+    let w = crate::test_support::world("ceaptun");
+    let content = w.content().clone();
+    let mut named = 0;
+    for actor in (w.state.actors.values()).filter(|a| a.id != w.state.player) {
+        let phrase = w.called_phrase(actor);
+        named += usize::from(phrase.proper);
+        assert_eq!(content.english_of(&phrase, "the"), w.called(actor));
+    }
+    assert!(named > 0, "someone in town is named");
+}

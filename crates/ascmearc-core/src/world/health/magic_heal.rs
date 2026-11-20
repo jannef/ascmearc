@@ -58,7 +58,7 @@ impl World {
         if id == self.state.player || !self.perception.sees_actors_at(actor.pos) {
             return;
         }
-        let who = self.phrase_of(id);
+        let who = self.called_phrase(actor);
         let words: Vec<String> = (ended.iter())
             .filter_map(|&s| self.content.status(s).seen.clone())
             .collect();
