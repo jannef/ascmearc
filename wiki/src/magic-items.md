@@ -305,6 +305,10 @@ A unique item is one of a kind: a [rare](#rarity) item whose name, affixes, and 
 level](affixes.md#base-items) are set by hand. It also has a **power**, a rule of its own that no affix
 gives.
 
+Its affixes may go past what loot ever rolls: a value above an affix's highest
+[tier](affixes.md), or an affix on a kind of item it never rolls on (High Toby, a bow, has +2
+damage). The table below marks such an affix "set" where the others name their tier.
+
 It is found unidentified like any rare item ("a stiletto (rare)"). Once identified, it shows its
 name, its affixes, its power in words, and a line of lore. Each one lies in one place in the
 world, so a character finds each at most once, and loot never makes one. Most are carried by
@@ -317,8 +321,9 @@ Its power works while it is worn or wielded, identified or not:
 
 - **Inflict**: a hit with it that leaves its target alive causes a
   [status](status-effects.md#how-they-work), either every time or by a chance. The status's
-  resistance applies, as it does to a poisonous bite. A bow's power rides its arrows. A kick, or
-  the weapon in your other hand, has none of it.
+  resistance applies, as it does to a poisonous bite. Some also add damage of a kind to every
+  hit, the way a [damage type](damage-types.md) affix does, but with more dice than any affix
+  gives. A bow's power rides its arrows. A kick, or the weapon in your other hand, has none of it.
 - **Vision**: its wearer sees with a [vision](vision.md#the-four-types) profile wherever that is
   better than their own eyes.
 - **Ward**: its wearer never suffers a status.

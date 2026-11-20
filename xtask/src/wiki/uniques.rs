@@ -24,7 +24,15 @@ pub(super) fn uniques(content: &Content) -> String {
         let affixes: Vec<String> = (magic.rolled(content).iter())
             .map(|r| {
                 let does = describe::phrase(r, kind, content);
-                format!("{} ({}: {does}, value {})", r.def.name, r.tier, r.value)
+                // One its table sets by hand ("mystic=30") is beyond the tiers or the bases.
+                let set = !(r.def.tier(r.tier)).is_some_and(|t| (t.min..=t.max).contains(&r.value))
+                    || !r.def.bases.contains(&kind);
+                let tier = if set {
+                    "set".to_string()
+                } else {
+                    r.tier.to_string()
+                };
+                format!("{} ({tier}: {does}, value {})", r.def.name, r.value)
             })
             .collect();
         let _ = writeln!(
@@ -103,7 +111,7 @@ fn rewarded_by(content: &Content, u: &UniqueDef) -> Vec<String> {
 fn power_text(content: &Content, u: &UniqueDef) -> String {
     match &u.power {
         None => "-".into(),
-        Some(Power::Inflict(hit)) => {
+        Some(Power::Inflict { hit, added }) => {
             let Affliction::Status {
                 status, severity, ..
             } = hit.what
@@ -121,7 +129,17 @@ fn power_text(content: &Content, u: &UniqueDef) -> String {
                 let kind = &content.damage_type(k).name;
                 format!(" (less for what resists {kind}, none for what is immune)")
             });
-            format!("{when} its target alive: {severity} {degrees} of {name}{resisted}")
+            let status =
+                format!("{when} its target alive: {severity} {degrees} of {name}{resisted}");
+            match added {
+                // Added damage lands with every hit, before the status.
+                Some(rider) => format!(
+                    "every hit adds {} {} damage; {status}",
+                    rider.dice,
+                    content.damage_type(rider.kind).name
+                ),
+                None => status,
+            }
         }
         Some(Power::Vision(index)) => {
             let eye = &content.vision_profiles()[*index];

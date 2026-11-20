@@ -116,18 +116,46 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
     assert_eq!(
         magic.affixes,
         [
-            affixes("venomous", 4),
             affixes("of_celerity", 11),
-            affixes("of_the_lynx", 2)
+            affixes("of_the_lynx", 2),
+            affixes("of_precision", 3),
         ]
     );
     assert_eq!(def.stack.count, 1);
+    // The owner's balance pass (#2001): the values set by hand ("mystic=30") and the tiers it
+    // moved, each as the item holds it.
+    let value = |unique: &str, affix: &str| {
+        let magic = content.unique(unique).expect(unique).magic();
+        (magic.affixes.iter())
+            .find(|a| a.id == affix)
+            .map(|a| a.value)
+    };
+    assert_eq!(value("widowmaker", "of_precision"), Some(2));
+    assert_eq!(value("widowmaker", "venomous"), None);
+    assert_eq!(value("high_toby", "of_precision"), Some(4));
+    assert_eq!(value("high_toby", "sharp"), Some(2));
+    assert_eq!(value("eorcanstan", "mystic"), None);
+    assert_eq!(value("eorcanstan", "of_thrift"), Some(25));
+    assert_eq!(value("unhalwed_bedes", "of_clarity"), None);
+    assert_eq!(value("unhalwed_bedes", "mystic"), Some(30));
+    assert_eq!(value("sigerics_star", "mystic"), None);
+    assert_eq!(value("sigerics_star", "of_the_sage"), Some(6));
+    // A value set by hand keeps the affix's top tier, and passes the check a save gets.
+    let bedes = content.unique("unhalwed_bedes").expect("the Bedes");
+    let mystic = &bedes.magic().affixes[0];
+    let tiers = content.affixes().get("mystic").expect("Mystic").tiers.len();
+    assert_eq!(usize::from(mystic.tier), tiers);
+    (bedes.magic().check(content.object(bedes.object), &content)).expect("a unique as set");
+    // Anything else with that value is no item: the hand-set value is the unique's alone.
+    let mut other = bedes.magic().clone();
+    other.unique = None;
+    assert!(other.check(content.object(bedes.object), &content).is_err());
     // The criminals' four, the pedlar's three (#808), and Sigeric's (#1787), each with its power.
     let powers: Vec<(&str, &str)> = (content.uniques())
         .filter(|u| u.stack.magic().is_some_and(|m| m.level == 12))
         .map(|u| {
             let power = match u.power.as_ref().expect("a power") {
-                Power::Inflict(_) => "inflict",
+                Power::Inflict { .. } => "inflict",
                 Power::Vision(_) => "vision",
                 Power::Ward { .. } => "ward",
             };
@@ -189,6 +217,50 @@ fn unidentified_it_hides_its_name_affixes_power_and_lore() {
     assert_eq!(affixes.count(), 3);
 }
 
+/// The form `"mystic=30"` (#2001): a unique's alone, checked at load.
+#[test]
+fn a_unique_sets_an_affix_value_by_hand_and_the_load_checks_it() {
+    let load = |object: &str, affixes: &str| {
+        let mut files = files();
+        files.insert(
+            "data/uniques/test_set.toml",
+            &format!(
+                "[[unique]]\nid = \"test_set\"\nname = \"Test Set\"\nobject = \"{object}\"\n\
+                 affixes = [{affixes}]\nlevel = 12\n"
+            ),
+        );
+        Content::load(&files)
+    };
+    let content = load("gold_ring", "\"mystic=40\"").expect("a value past the top tier");
+    let magic = content.unique("test_set").expect("loaded").magic();
+    assert_eq!(magic.affixes[0].value, 40);
+    // A bow takes flat damage set by hand, though Sharp never rolls on one.
+    load("long_bow", "\"sharp=2\"").expect("an effect a bow's shots use");
+    for (object, affixes, needle) in [
+        ("gold_ring", "\"mystic=-3\"", "sign"),
+        ("gold_ring", "\"mystic=x\"", "must be a number"),
+        ("gold_ring", "\"nothing=3\"", "unknown affix"),
+        // Range on a ring does nothing, set by hand or not.
+        ("gold_ring", "\"hunters=3\"", "does nothing"),
+        ("gold_ring", "\"mystic=30\", \"mystic=31\"", "category"),
+    ] {
+        let e = load(object, affixes).expect_err(affixes).to_string();
+        assert!(e.contains(needle), "{affixes}: {e}");
+    }
+    // A level's `[[item]]` names tiers only.
+    let mut files = files();
+    files.insert(
+        "levels/den.toml",
+        &format!(
+            "{LEVEL}[[item]]\nat = [2, 1]\nobject = \"gold_ring\"\naffixes = [\"mystic=30\"]\n"
+        ),
+    );
+    let e = Content::load(&files)
+        .expect_err("no hand-set value")
+        .to_string();
+    assert!(e.contains("only a unique item"), "{e}");
+}
+
 #[test]
 fn a_unique_is_placed_by_its_id() {
     let level = |objects: &str| {
@@ -240,7 +312,7 @@ fn a_unique_is_placed_by_its_id() {
 fn widowmaker_poisons_on_every_hit() {
     let mut w = world();
     let (player, foe) = (w.player_id(), foe(&w));
-    wear(&mut w, player, "main_hand", "widowmaker");
+    let item = wear(&mut w, player, "main_hand", "widowmaker");
     let content = w.content().clone();
     let profile = w.state.actors[&player].melee(&content);
     let poisoned = status(&w, "poisoned");
@@ -256,6 +328,22 @@ fn widowmaker_poisons_on_every_hit() {
         profile.on_hit,
         [poisons],
         "the stiletto's power rides its blows"
+    );
+    // And its 2d6 poison besides (#2001), a rider of every blow.
+    let poison = content.damage_type_id("poison").expect("poison");
+    let rider = crate::damage::Rider {
+        kind: poison,
+        dice: crate::dice::Dice::of(2, 6),
+    };
+    assert!(profile.riders.contains(&rider), "{:?}", profile.riders);
+    let knife = content.object_id("stiletto").expect("a stiletto");
+    let plain = Stack::new(knife, 1);
+    let actor = &w.state.actors[&player];
+    let mut bare = actor.clone();
+    bare.inventory[item] = plain;
+    assert!(
+        !bare.melee(&content).riders.contains(&rider),
+        "the power's, not the knife's"
     );
     // Its blows: every hit adds a degree, and nothing is drawn for it.
     w.state.actors.get_mut(&foe).expect("rat").hp = 10_000;
@@ -280,7 +368,7 @@ fn widowmaker_poisons_on_every_hit() {
 }
 
 #[test]
-fn high_toby_frightens_at_its_chance_from_the_fixed_stream() {
+fn high_toby_draws_blood_at_its_chance_from_the_fixed_stream() {
     let mut w = world();
     let (player, foe) = (w.player_id(), foe(&w));
     wear(&mut w, player, "missile_weapon", "high_toby");
@@ -288,33 +376,38 @@ fn high_toby_frightens_at_its_chance_from_the_fixed_stream() {
     wear_stack(&mut w, player, "missiles", arrows);
     let content = w.content().clone();
     let profile = w.state.actors[&player].ranged(&content).expect("a shot");
-    let frightened = status(&w, "frightened");
-    let frightens = OnHit {
+    let bleeding = status(&w, "bleeding");
+    let bleeds = OnHit {
         what: Affliction::Status {
-            status: frightened,
+            status: bleeding,
             severity: 1,
             check: None,
         },
         chance: 25,
     };
-    assert_eq!(profile.on_hit, [frightens]);
+    assert_eq!(profile.on_hit, [bleeds]);
+    // A blunt hit, so no wound of its own bleeds the rat (a big hit's, docs/dev/combat.md).
+    let blunt = Blow {
+        kind: content.damage_type_id("bludgeoning"),
+        ..HIT
+    };
     let landed: Vec<bool> = (0..40)
         .map(|_| {
             let label = format!("status/rider/player/{}", w.state.actors.key(foe));
             let lands = crate::test_support::peek(&w, &label).chance(25);
             let expected = draws(&w) + 1;
             let actor = w.state.actors.get_mut(&foe).expect("rat");
-            actor.effects.remove(frightened);
+            actor.effects.remove(bleeding);
             let made = profile.on_hit.clone();
             w.after_blow(
                 player,
                 foe,
                 AttackKind::Ranged,
-                (&HIT, &made),
+                (&blunt, &made),
                 &mut Vec::new(),
             );
             assert_eq!(draws(&w), expected, "one draw");
-            assert_eq!(severity(&w, foe, "frightened").is_some(), lands);
+            assert_eq!(severity(&w, foe, "bleeding").is_some(), lands);
             lands
         })
         .collect();

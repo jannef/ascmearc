@@ -143,8 +143,24 @@ impl Magic {
     /// Whether it is a valid item of `def` for `content` (a guard for saves and level files):
     /// magic or rare, with a name exactly when rare, known affixes that may roll on it (each
     /// tier one the affix has, each value within the tier's range, no two of one category),
-    /// and no more prefixes or suffixes than its rarity allows (at least one affix).
+    /// and no more prefixes or suffixes than its rarity allows (at least one affix). A unique
+    /// item's affixes as its table sets them pass whatever their values and bases
+    /// ([`Magic::check_set`]).
     pub fn check(&self, def: &ObjectDef, content: &Content) -> Result<(), String> {
+        let unique = (self.unique.as_deref()).and_then(|id| content.unique(id));
+        let set = unique.map_or(&[][..], |u| &u.magic().affixes[..]);
+        self.check_set(def, content, set)
+    }
+
+    /// [`Magic::check`], but the affixes in `set` (a unique item's set by hand, `"mystic=30"`,
+    /// #2001, checked where its table is read) are not held to their tier's range or the affix's
+    /// bases.
+    pub(crate) fn check_set(
+        &self,
+        def: &ObjectDef,
+        content: &Content,
+        set: &[Affix],
+    ) -> Result<(), String> {
         let Some(kind) = def.kind else {
             return Err(format!("`{}` cannot be magic: it has no `kind`", def.id));
         };
@@ -175,13 +191,14 @@ impl Magic {
                 .affixes()
                 .get(&affix.id)
                 .ok_or_else(|| format!("unknown affix `{}`", affix.id))?;
-            if !may_roll(a, kind, def) {
+            let hand_set = set.contains(affix);
+            if !hand_set && !may_roll(a, kind, def) {
                 return Err(format!("`{}` does not roll on {}", a.id, def.plural));
             }
             let tier = a
                 .tier(affix.tier)
                 .ok_or_else(|| format!("`{}` has no tier {}", a.id, affix.tier))?;
-            if !(tier.min..=tier.max).contains(&affix.value) {
+            if !hand_set && !(tier.min..=tier.max).contains(&affix.value) {
                 return Err(format!(
                     "`{}` tier {} rolls {} to {}, not {}",
                     a.id, affix.tier, tier.min, tier.max, affix.value
@@ -231,7 +248,7 @@ pub fn may_roll(a: &AffixDef, kind: ItemKind, def: &ObjectDef) -> bool {
 }
 
 /// Whether `def` has what affix `a`'s effect changes ([`may_roll`]).
-fn may_roll_on(a: &AffixDef, def: &ObjectDef) -> bool {
+pub(crate) fn may_roll_on(a: &AffixDef, def: &ObjectDef) -> bool {
     match a.effect {
         Effect::Range => def.range.is_some(),
         Effect::Draw => def.attack.is_some_and(|at| at.strength.is_some()),
