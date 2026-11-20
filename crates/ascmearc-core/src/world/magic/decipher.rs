@@ -30,6 +30,8 @@
 
 use crate::action::Event;
 use crate::content::{ActionKind, Content, Reading, SpellId};
+use crate::lang::Msg;
+use crate::msg;
 use crate::object::Stack;
 use crate::rng::draw;
 use crate::scroll_label::Lore;
@@ -37,9 +39,6 @@ use crate::skills::{Effect, Use};
 use crate::stats::Stat;
 use crate::world::crafting::work::{Job, Task, Work};
 use crate::world::{Spent, World};
-
-/// What the player is told when they fail to make a scroll out.
-const SWIMS: &str = "The writing swims before your eyes.";
 
 impl World {
     /// Whether the player makes out a scroll of `spell` (`None`: no spell behind it, level 0) of
@@ -70,7 +69,7 @@ impl World {
         );
         self.train(Use::Decipher);
         if !made {
-            self.say(SWIMS);
+            self.say(msg::magic::WRITING_SWIMS);
         }
         made
     }
@@ -95,12 +94,12 @@ impl Job for Deciphering {
         self.item = crate::world::crafting::work::one(now);
     }
 
-    fn leave(&self) -> String {
+    fn leave(&self) -> crate::lang::Msg {
         "you put the scroll away".into()
     }
 
-    fn nothing_left(&self) -> &'static str {
-        "You have nothing left to make out."
+    fn nothing_left(&self) -> crate::lang::Msg {
+        "You have nothing left to make out.".into()
     }
 
     fn stat(&self, _: &World) -> Option<Stat> {
@@ -127,14 +126,14 @@ impl World {
             return Spent::Nothing;
         };
         let Some(stack) = self.state.player().inventory.get(item) else {
-            self.say("You carry no such thing.");
+            self.say(msg::magic::CARRY_NO_SUCH_THING);
             return Spent::Nothing;
         };
         if !undeciphered(&content, &self.lore(), stack) {
-            self.say("There is nothing there to make out.");
+            self.say(msg::magic::NOTHING_TO_MAKE_OUT);
             return Spent::Nothing;
         }
-        self.say("You pore over the writing.");
+        self.say(msg::magic::PORE_OVER_WRITING);
         // No Quick hands: making out is no craft.
         Work::spent(Task::Decipher(Deciphering { item }), rules.seconds)
     }
@@ -147,7 +146,7 @@ impl World {
         };
         let object = stack.object;
         if !undeciphered(&content, &self.lore(), stack) {
-            self.say("You have nothing left to make out.");
+            self.say(msg::magic::NOTHING_LEFT_TO_MAKE_OUT);
             return;
         }
         let (spell, level) = match content.object(object).read.as_ref() {
@@ -158,7 +157,7 @@ impl World {
             return;
         }
         self.learn_scroll(object);
-        let name = self.lore().describe_object(object, 1);
-        self.say(format!("You make out the writing: {name}."));
+        let what = self.lore().object_phrase(object).count(1);
+        self.say(Msg::new(msg::magic::MAKE_OUT_WRITING).role("what", what));
     }
 }

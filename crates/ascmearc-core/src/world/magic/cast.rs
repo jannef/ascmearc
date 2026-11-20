@@ -337,7 +337,7 @@ impl World {
         };
         if let Some((object, kept)) = cast.read.get() {
             if kept && self.state.death.is_none() {
-                self.say(super::read::KEPT);
+                self.say(msg::magic::WRITING_DOES_NOT_FADE);
             }
             if let Some(death) = &mut self.state.death {
                 death.by = None;

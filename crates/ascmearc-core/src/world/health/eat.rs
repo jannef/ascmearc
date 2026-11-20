@@ -142,7 +142,7 @@ impl World {
             Ended::Died => {}
             _ if left.get() == 0 => self.finish(dish, events),
             Ended::Came(came) => {
-                let came = self.came_line(came);
+                let came = self.came_msg(came);
                 self.say(Msg::new(msg::health::STOP_EATING_CAME).role("came", came));
             }
             Ended::Said | Ended::Done => self.say(msg::health::STOP_EATING),

@@ -28,6 +28,8 @@
 
 use crate::action::{Event, Positions};
 use crate::content::{ActionKind, ClassActive, Content, ObjectId, SpellData, SpellId, StatUse};
+use crate::lang::{Msg, Phrase};
+use crate::msg;
 use crate::object::{self, Stack};
 use crate::world::{Actor, Ended, Spent, World};
 use std::cell::Cell;
@@ -74,35 +76,36 @@ impl World {
         }
         let content = self.content.clone();
         let Some(spell) = content.spell_id(name) else {
-            self.say(format!("There is no spell `{name}`."));
+            self.say(Msg::new(msg::magic::NO_SPELL_NAMED).role("id", name));
             return Spent::Nothing;
         };
         let me = self.state.player();
         if !me.knows_spell(&content, spell) {
-            self.say("You do not know that spell.");
+            self.say(msg::magic::DO_NOT_KNOW_SPELL);
             return Spent::Nothing;
         }
         let def = content.spell(spell);
         let Some(scroll) = content.scroll_of(spell) else {
-            self.say(format!("No scroll can hold {}.", def.name));
+            // The spell's name is the data's text until it has a phrase (#1949).
+            self.say(Msg::new(msg::magic::NO_SCROLL_CAN_HOLD).role("spell", def.name.clone()));
             return Spent::Nothing;
         };
         let blank = content.blank_scroll();
         if !(me.inventory.iter()).any(|s| Some(s.object) == blank) {
-            self.say("You have nothing to write on.");
+            self.say(msg::magic::NOTHING_TO_WRITE_ON);
             return Spent::Nothing;
         }
         let (Some(cost), Some(turns)) =
             (me.scribe_cost(&content, def), scribe_turns(&content, def))
         else {
-            self.say("You cannot write it.");
+            self.say(msg::magic::CANNOT_WRITE_IT);
             return Spent::Nothing;
         };
         if me.mana < cost {
-            self.say("You lack the mana to write it.");
+            self.say(msg::magic::LACK_MANA_TO_WRITE);
             return Spent::Nothing;
         }
-        self.say("You begin to write.");
+        self.say(msg::magic::BEGIN_TO_WRITE);
         Spent::Scribe(Writing {
             spell,
             scroll,
@@ -125,10 +128,10 @@ impl World {
             Ended::Died => {}
             _ if left.get() == 0 => self.finish_scribe(writing),
             Ended::Came(came) => {
-                let text = format!("{}; you stop writing.", self.came_line(came));
-                self.say(text);
+                let came = self.came_line(came);
+                self.say(Msg::new(msg::magic::WRITE_BROKEN_BY).role("came", came));
             }
-            Ended::Said | Ended::Done => self.say("You stop writing."),
+            Ended::Said | Ended::Done => self.say(msg::magic::STOP_WRITING),
         }
     }
 
@@ -140,12 +143,12 @@ impl World {
         let blank = content.blank_scroll();
         let me = self.state.player();
         let Some(at) = (me.inventory.iter()).position(|s| Some(s.object) == blank) else {
-            self.say("The blank scroll is gone.");
+            self.say(msg::magic::BLANK_SCROLL_GONE);
             return;
         };
         let base = me.scribe_base(&content, content.spell(writing.spell));
         if !base.is_some_and(|base| self.spend_mana(player, base)) {
-            self.say("You lack the mana to write it.");
+            self.say(msg::magic::LACK_MANA_TO_WRITE);
             return;
         }
         let me = self.player_mut();
@@ -161,7 +164,7 @@ impl World {
         );
         self.learn_scroll(writing.scroll);
         self.train_stat(StatUse::Scribe);
-        let what = content.object(writing.scroll).describe(1);
-        self.say(format!("You write {what}."));
+        let what = Phrase::id(format!("object:{}", content.object(writing.scroll).id));
+        self.say(Msg::new(msg::magic::YOU_WRITE).role("what", what.count(1)));
     }
 }

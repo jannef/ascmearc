@@ -258,7 +258,7 @@ impl World {
         let text = match ended {
             Ended::Died => return,
             Ended::Came(came) => Msg::new(msg::skills::SEARCH_BROKEN_BY)
-                .role("came", self.came_line(came))
+                .role("came", self.came_msg(came))
                 .role("time", took),
             Ended::Said => Msg::new(msg::skills::STOP_SEARCHING).role("time", took),
             Ended::Done => Msg::new(msg::skills::SEARCHED_NOTHING).role("time", took),

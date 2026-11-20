@@ -55,9 +55,11 @@ use crate::character::Character;
 use crate::check;
 use crate::content::{
     ActionKind, Band, Content, CreatureSpawn, Drain, MAX_SPELL_RANK, Mishap, MishapEffect,
-    ObjectId, SpellId, StudyRules,
+    ObjectId, SpellId, StudyRules, data_line,
 };
 use crate::geom::Dir;
+use crate::lang::{MessageId, Msg};
+use crate::msg;
 use crate::rng::draw;
 use crate::skills::{Effect, Use};
 use crate::stats::Stat;
@@ -65,7 +67,7 @@ use crate::world::{Actor, Cause, Ended, Spent, World};
 use std::cell::Cell;
 
 /// What a character not trained in Decipher script is told when they would read a grimoire.
-pub const UNTRAINED: &str = "You have no training in Decipher script; you cannot make sense of how to learn a spell from a grimoire.";
+pub const UNTRAINED: MessageId = msg::magic::UNTRAINED_DECIPHER;
 
 /// A study under way: the grimoire read (its position and object as the study began), the
 /// spell it teaches, the rank it is read for (`None`: to learn it), and the turns it takes.
@@ -221,21 +223,24 @@ impl World {
         let content = self.content.clone();
         let me = self.state.player();
         let Some(stack) = me.inventory.get(item) else {
-            self.say("You carry no such thing.");
+            self.say(msg::magic::CARRY_NO_SUCH_THING);
             return Spent::Nothing;
         };
         let object = stack.object;
         // A spell known is read for its next rank; at the last there is nothing to read for.
         let rank = me.rank_sought(&content, spell);
         if me.knows_spell(&content, spell) && rank.is_none() {
-            let name = content
-                .spell_of(spell)
-                .map_or("this spell", |d| d.name.as_str());
-            self.say(format!("You know all there is of {name}."));
+            // The spell's name is the data's text until it has a phrase (#1949).
+            match content.spell_of(spell) {
+                Some(def) => {
+                    self.say(Msg::new(msg::magic::KNOW_ALL_OF).role("spell", def.name.clone()));
+                }
+                None => self.say(msg::magic::KNOW_ALL_OF_THIS_SPELL),
+            }
             return Spent::Nothing;
         }
         if me.max_mana(&content) <= 0 {
-            self.say("You have no gift for magic.");
+            self.say(msg::magic::NO_GIFT_FOR_MAGIC);
             return Spent::Nothing;
         }
         if me.learning(&content).is_none() {
@@ -243,14 +248,14 @@ impl World {
             return Spent::Nothing;
         }
         let (Some(rules), Some(def)) = (content.study_rules(), content.spell_of(spell)) else {
-            self.say("You cannot make sense of it.");
+            self.say(msg::magic::CANNOT_MAKE_SENSE);
             return Spent::Nothing;
         };
         let percent = me.talent_mods(&content).magic.study_percent;
         // A deepening reads the whole book over, rank times.
         let turns = study_turns(rules, def.level, percent) * u32::from(rank.unwrap_or(1));
-        let title = self.lore().title(&stack.single());
-        self.say(format!("You begin to read the {title}."));
+        let title = self.lore().title_phrase(&stack.single());
+        self.say(Msg::new(msg::magic::BEGIN_TO_READ).role("what", title));
         Spent::Study(Lesson {
             item,
             object,
@@ -275,10 +280,10 @@ impl World {
             Ended::Died => {}
             _ if left.get() == 0 => self.finish_study(lesson, events),
             Ended::Came(came) => {
-                let text = format!("{}; you stop reading.", self.came_line(came));
-                self.say(text);
+                let came = self.came_line(came);
+                self.say(Msg::new(msg::magic::READ_BROKEN_BY).role("came", came));
             }
-            Ended::Said | Ended::Done => self.say("You stop reading."),
+            Ended::Said | Ended::Done => self.say(msg::magic::STOP_READING),
         }
     }
 
@@ -291,7 +296,7 @@ impl World {
             _ => pack.iter().position(|s| s.object == lesson.object),
         };
         if at.is_none() {
-            self.say("The grimoire is gone.");
+            self.say(msg::magic::GRIMOIRE_GONE);
             return;
         }
         if self.trains(Use::Study) {
@@ -308,7 +313,7 @@ impl World {
             if learned {
                 self.deepen_spell(lesson.spell, rank);
             } else {
-                self.say("The words add nothing new.");
+                self.say(msg::magic::WORDS_ADD_NOTHING);
             }
             self.crumble(lesson, learned);
             return;
@@ -318,7 +323,7 @@ impl World {
             self.crumble(lesson, true);
             return;
         }
-        self.say("The words twist away from you.");
+        self.say(msg::magic::WORDS_TWIST_AWAY);
         let overreach = odds.map_or(1, |o| o.overreach);
         let band = self
             .content
@@ -359,16 +364,19 @@ impl World {
             player.inventory.remove(at);
             player.equipment.after_removal(&Positions::of([at]));
         }
-        self.say("The grimoire crumbles to dust.");
+        self.say(msg::magic::GRIMOIRE_CRUMBLES);
     }
 
     /// The player knows `spell` at `rank` from now on (module docs: "Deepening").
     fn deepen_spell(&mut self, spell: SpellId, rank: u8) {
         let name = (self.content.spell_of(spell)).map_or_else(String::new, |d| d.name.clone());
         self.player_mut().set_spell_rank(spell, rank);
-        self.say(format!(
-            "The words settle deeper: you know {name} at rank {rank} of {MAX_SPELL_RANK}."
-        ));
+        self.say(
+            Msg::new(msg::magic::WORDS_SETTLE_DEEPER)
+                .role("spell", name)
+                .role("rank", i64::from(rank))
+                .role("most", i64::from(MAX_SPELL_RANK)),
+        );
     }
 
     /// The player learns `spell` for good, at rank 1 (a spell known already keeps its rank).
@@ -380,16 +388,16 @@ impl World {
         if new {
             self.player_mut().set_spell_rank(spell, 1);
         }
-        self.say(format!(
-            "The words settle in your mind: you have learned {name}."
-        ));
+        self.say(Msg::new(msg::magic::LEARNED_SPELL).role("spell", name.clone()));
         // A spell learned by one's own effort pays each time it is learned: once, unless a
         // miscast made the caster forget it.
         let level = self.content.spell_of(spell).map_or(0, |d| d.level);
         let xp = self.content.experience().spell_xp(level);
         if new && xp > 0 {
-            self.news
-                .push(format!("You gain {xp} experience for learning {name}.").into());
+            let gain = Msg::new(msg::magic::GAIN_EXPERIENCE_FOR_LEARNING)
+                .role("xp", i64::from(xp))
+                .role("spell", name);
+            self.news.push(gain);
             self.grant_xp(xp);
         }
     }
@@ -404,7 +412,8 @@ impl World {
 
     /// What `mishap` does to the player who failed to learn `lesson`'s spell (module docs).
     pub(super) fn mishap(&mut self, mishap: &Mishap, lesson: Lesson, events: &mut Vec<Event>) {
-        self.say(mishap.message.clone());
+        // A line of data, by its key (`docs/dev/localization.md` "Lines of data").
+        self.say(data_line::said(data_line::mishap_message(&mishap.id)));
         let player = self.state.player;
         let here = self.player_pos();
         match mishap.effect {

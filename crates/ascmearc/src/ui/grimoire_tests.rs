@@ -78,7 +78,10 @@ fn without_decipher_script_a_grimoire_is_read_at_once_and_refused() {
     assert!(!shown.contains("(learning:"), "{shown}");
     insta::assert_snapshot!("grimoire-read-list-untrained", shown);
     let app = reading("warrior", "r a");
-    assert_eq!(last(&app), ascmearc_core::world::UNTRAINED);
+    assert_eq!(
+        last(&app),
+        "You have no training in Decipher script; you cannot make sense of how to learn a spell from a grimoire."
+    );
 }
 
 /// The wizard's pack: the grimoire of Ray of frost, her class's spell (known at rank 1), and

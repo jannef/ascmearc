@@ -8,7 +8,7 @@ use super::learn::Lesson;
 use crate::action::parse_actions;
 use crate::content::{Band, ContentFiles, drawn_among};
 use crate::replay::Replay;
-use crate::test_support::{builtin, last, run};
+use crate::test_support::{builtin, english_of, last, run};
 use crate::world::*;
 
 /// The pack: a, two grimoires of fireball (Fireball, level 11); b, one of lightning (Lightning
@@ -588,7 +588,7 @@ fn a_character_not_trained_in_decipher_script_cannot_study_cantrips_included() {
     let (time, spells) = (w.state.time, w.state.player().spells.clone());
     let out = run(&mut w, "read:c").remove(0);
     assert!(!out.took_turn);
-    assert_eq!(last(&w), UNTRAINED);
+    assert_eq!(last(&w), english_of(w.content(), &UNTRAINED.into()));
     assert_eq!(w.state.time, time, "no time");
     assert_eq!(w.state.player().spells, spells);
     assert_eq!(count(&w, "grimoire_of_frost"), 2, "the grimoire kept");
@@ -614,7 +614,7 @@ fn a_bonus_alone_opens_nothing_and_counts_for_the_trained() {
     wear_scholar(&mut w, 50);
     assert_eq!(w.state.player().learning(&w.content), None);
     assert!(!run(&mut w, "read:c")[0].took_turn);
-    assert_eq!(last(&w), UNTRAINED);
+    assert_eq!(last(&w), english_of(w.content(), &UNTRAINED.into()));
     // Skill-raising talents do not train it either.
     let decipher = decipher(&w);
     assert_eq!(w.state.player().skills.value(decipher), None);
@@ -703,7 +703,7 @@ fn level_one_casters_learn_cantrips_and_keep_their_granted_spells() {
     assert_eq!(w.state.player().learning(&w.content), None);
     let at = given(&mut w, "grimoire_of_identify");
     assert!(!run(&mut w, &format!("read:{at}"))[0].took_turn);
-    assert_eq!(last(&w), UNTRAINED);
+    assert_eq!(last(&w), english_of(w.content(), &UNTRAINED.into()));
 }
 
 #[test]

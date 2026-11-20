@@ -107,7 +107,8 @@ impl World {
     /// Lays what was broken out of the wall at `at` on its rubble, and says so.
     fn lay_mined(&mut self, at: Pos, found: Stack) {
         let content = self.content.clone();
-        let text = format!("You break out {}.", found.describe(&content));
+        let text = crate::lang::Msg::new(crate::msg::crafting::BREAK_OUT)
+            .role("what", found.phrase(&content));
         let level = self.state.current_mut();
         let mut pile = vec![found];
         object::add_to_pile(&mut pile, level.objects_at(at), &content);

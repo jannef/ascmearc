@@ -316,7 +316,9 @@ id on another rarity than unique, and a unique without its id.
   sees one: a unique is never damaged. Eye for the make says "It would not come apart." of a
   unique before it is identified too (`item_damage::protected_in`: its rarity shows).
 - **Tests**: `world/creatures/unique_tests.rs` (every unique of the rarity, `check`, "(unique)",
-  a breaking chest), `temper_tests.rs::a_unique_is_never_worked`, the unique case of
+  a breaking chest), `corrode_tests.rs::acid_and_rust_never_harm_a_unique` (acid, an acid spell,
+  rust both ways), `item_damage_tests.rs` (every `ItemHarm`, fire too), `ruin_tests.rs` (floor
+  ruin), `gear/condition_tests.rs` (never found worn), `temper_tests.rs::a_unique_is_never_worked`, the unique case of
   `salvage_tests.rs` and `set_tests.rs`'s refusals, and `ui/mod.rs`'s colour test.
 
 - **Placement**: `parse_stacks` (`content/object.rs`) makes `unique:ID` through

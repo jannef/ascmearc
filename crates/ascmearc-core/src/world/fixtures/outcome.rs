@@ -665,7 +665,7 @@ impl World {
                 _ => Msg::new(msg::fixtures::ALTAR_FIRE_HITS_YOU).role("verb", verb),
             });
         } else if self.perception.sees_actors_at(to) {
-            // By its type, as `creature_called` named it ("a kobold", "Black Wystan").
+            // By its type ("a kobold", "Black Wystan").
             let creature = self.state.actors[&target].creature;
             let who = crate::world::combat::fight::creature(self.content.creature(creature));
             self.say(

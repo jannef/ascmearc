@@ -54,9 +54,11 @@ use crate::action::Event;
 use crate::combat;
 use crate::content::{ActionKind, Content, ItemHarm, Offer, RecipeUse, TerrainId};
 use crate::geom::{Dir, Pos};
+use crate::lang::{MessageId, Msg};
 use crate::magic::Worked;
 use crate::magic::worked::proof;
 use crate::magic::worked::{ammunition, arms, aspects};
+use crate::msg;
 use crate::object::Stack;
 use crate::rng::draw;
 use crate::skills::{Effect, Use};
@@ -123,31 +125,31 @@ impl Craft {
         }
     }
 
-    /// The tool, as the messages call it.
-    const fn tool(self) -> &'static str {
+    /// What the player does as the work is cut short: puts its tool down.
+    fn put_down(self) -> MessageId {
         match self {
-            Craft::Temper => "hammer",
-            Craft::Whittle => "knife",
+            Craft::Temper => msg::crafting::PUT_DOWN_HAMMER,
+            Craft::Whittle => msg::crafting::PUT_DOWN_KNIFE,
         }
     }
 
     /// What the item does when the work goes well, badly, mends it, and ends it, and what is
     /// said when it goes wrong in hands that spoil nothing (Waste not).
-    const fn lines(self) -> [&'static str; 5] {
+    fn lines(self) -> [MessageId; 5] {
         match self {
             Craft::Temper => [
-                "The metal rings true.",
-                "The metal cracks under the hammer.",
-                "You hammer the damage out.",
-                "It shatters under the hammer!",
-                "The work goes wrong, but you know when to stop before the steel spoils.",
+                msg::crafting::METAL_RINGS_TRUE,
+                msg::crafting::METAL_CRACKS,
+                msg::crafting::YOU_HAMMER_DAMAGE_OUT,
+                msg::crafting::SHATTERS_UNDER_HAMMER,
+                msg::crafting::STOP_BEFORE_STEEL_SPOILS,
             ],
             Craft::Whittle => [
-                "The wood takes the knife well.",
-                "The knife slips and splits the wood.",
-                "You pare the damage away.",
-                "It splinters under the knife!",
-                "The work goes wrong, but you know when to stop before the wood spoils.",
+                msg::crafting::WOOD_TAKES_KNIFE,
+                msg::crafting::KNIFE_SPLITS_WOOD,
+                msg::crafting::PARE_DAMAGE_AWAY,
+                msg::crafting::SPLINTERS_UNDER_KNIFE,
+                msg::crafting::STOP_BEFORE_WOOD_SPOILS,
             ],
         }
     }
@@ -155,12 +157,11 @@ impl Craft {
 
 /// What is said of ammunition offered to the anvil or the knife: its make is the fletcher's or
 /// the find's alone (`magic/worked.rs::ammunition`).
-pub(super) const AMMUNITION: &str =
-    "Ammunition cannot be worked finer: its make is set when it is fletched.";
+pub(super) const AMMUNITION: MessageId = msg::crafting::AMMUNITION_SET_WHEN_FLETCHED;
 
 /// What is said of a failed attempt the item withstands (`item_damage.rs`: a protected item, or
 /// one of a `proof` material).
-pub(super) const WITHSTOOD: &str = "The work goes wrong, but no harm is done.";
+pub(super) const WITHSTOOD: MessageId = msg::crafting::NO_HARM_DONE;
 
 /// Whether `stack` is of the craft's material, by its main part, and of this world: a spirit
 /// weapon is not.
@@ -239,8 +240,8 @@ impl Job for Tempering {
         self.item = super::work::one(now);
     }
 
-    fn leave(&self) -> String {
-        format!("you put down the {}", self.craft.tool())
+    fn leave(&self) -> Msg {
+        self.craft.put_down().into()
     }
 
     fn stat(&self, _: &World) -> Option<Stat> {
@@ -275,7 +276,7 @@ impl World {
     /// untrained in its skill: what it needs ("You need Metalcraft to work at the anvil."; the
     /// step is refused, taking no time, as any bump is). The trained are shown the profession's
     /// screen by the game, and walking in says the plain bump.
-    pub(in crate::world) fn anvil_needs(&self, terrain: TerrainId) -> Option<String> {
+    pub(in crate::world) fn anvil_needs(&self, terrain: TerrainId) -> Option<Msg> {
         if self.content.offer(terrain) != Some(Offer::Temper) {
             return None;
         }
@@ -283,9 +284,13 @@ impl World {
         if self.state.player().skills.get(skill).is_some() {
             return None;
         }
-        let skill = &self.content.skill(skill).name;
-        let name = &self.content.terrain(terrain).name;
-        Some(format!("You need {skill} to work at the {name}."))
+        let skill = self.content.skill(skill).name.clone();
+        let station = super::craft::terrain(&self.content, terrain);
+        Some(
+            Msg::new(msg::crafting::NEED_SKILL_AT)
+                .role("skill", skill)
+                .role("station", station),
+        )
     }
 
     /// The player begins to work the stack at `item` at the anvil beside them; refused, taking no
@@ -296,15 +301,15 @@ impl World {
             return Spent::Nothing;
         }
         if self.anvil_beside().is_none() {
-            self.say("There is no anvil here.");
+            self.say(msg::crafting::NO_ANVIL_HERE);
             return Spent::Nothing;
         }
         let Some(stack) = self.state.player().inventory.get(item) else {
-            self.say("You carry no such thing.");
+            self.say(msg::crafting::CARRY_NO_SUCH_THING);
             return Spent::Nothing;
         };
         if stack.is_unique() {
-            self.say(crate::msg::uniques::NO_CRAFT);
+            self.say(msg::uniques::NO_CRAFT);
             return Spent::Nothing;
         }
         if ammunition(self.content.object(stack.object)) {
@@ -312,19 +317,19 @@ impl World {
             return Spent::Nothing;
         }
         if !arms(&self.content, stack) {
-            self.say("Only weapons and armour can be tempered.");
+            self.say(msg::crafting::ONLY_ARMS_TEMPERED);
             return Spent::Nothing;
         }
         if !temperable(&self.content, stack) {
-            self.say("Only metal can be worked at an anvil.");
+            self.say(msg::crafting::ONLY_METAL_AT_ANVIL);
             return Spent::Nothing;
         }
         if finished(&self.content, stack) {
-            self.say("It can be made no finer.");
+            self.say(msg::crafting::MADE_NO_FINER);
             return Spent::Nothing;
         }
-        let name = self.lore().title(stack);
-        self.say(format!("You set to work on the {name} at the anvil."));
+        let name = self.lore().title_phrase(stack);
+        self.say(Msg::new(msg::crafting::TEMPER_AT_ANVIL).role("item", name));
         let work = Tempering {
             craft: Craft::Temper,
             item,
@@ -340,15 +345,15 @@ impl World {
             return Spent::Nothing;
         }
         if whittle_lack(self.state.player(), &self.content).is_some() {
-            self.say("You have no knife.");
+            self.say(msg::crafting::NO_KNIFE);
             return Spent::Nothing;
         }
         let Some(stack) = self.state.player().inventory.get(item) else {
-            self.say("You carry no such thing.");
+            self.say(msg::crafting::CARRY_NO_SUCH_THING);
             return Spent::Nothing;
         };
         if stack.is_unique() {
-            self.say(crate::msg::uniques::NO_CRAFT);
+            self.say(msg::uniques::NO_CRAFT);
             return Spent::Nothing;
         }
         if ammunition(self.content.object(stack.object)) {
@@ -356,15 +361,15 @@ impl World {
             return Spent::Nothing;
         }
         if !craftable(&self.content, stack, Craft::Whittle) {
-            self.say("Only a weapon of wood can be whittled.");
+            self.say(msg::crafting::ONLY_WOOD_WHITTLED);
             return Spent::Nothing;
         }
         if finished(&self.content, stack) {
-            self.say("It can be made no finer.");
+            self.say(msg::crafting::MADE_NO_FINER);
             return Spent::Nothing;
         }
-        let name = self.lore().title(stack);
-        self.say(format!("You set to whittling the {name} with your knife."));
+        let name = self.lore().title_phrase(stack);
+        self.say(Msg::new(msg::crafting::WHITTLE_WITH_KNIFE).role("item", name));
         let work = Tempering {
             craft: Craft::Whittle,
             item,
@@ -380,12 +385,12 @@ impl World {
         let craft = work.craft;
         let ok = |s: &Stack| craftable(&content, s, craft) && !finished(&content, s);
         let Some(stack) = pack.get(work.item).filter(|s| ok(s)) else {
-            self.say("You have nothing left to work on.");
+            self.say(msg::crafting::NOTHING_LEFT_TO_WORK_ON);
             return;
         };
         // The knife may have been taken while the time passed.
         if craft == Craft::Whittle && whittle_lack(self.state.player(), &content).is_some() {
-            self.say("You have nothing left to work with.");
+            self.say(msg::crafting::NOTHING_LEFT_TO_WORK_WITH);
             return;
         }
         let mut worked = stack.worked().cloned().unwrap_or_default();
@@ -403,8 +408,8 @@ impl World {
                 Identified::Now(_) | Identified::NoSuchItem => {}
                 Identified::Known => {
                     let stack = &self.state.player().inventory[at];
-                    let name = self.lore().describe(stack);
-                    self.say(format!("This is {name}!"));
+                    let name = self.lore().phrase(stack);
+                    self.say(Msg::new(msg::crafting::MADE_MARVELLOUS).role("what", name));
                 }
             }
         }

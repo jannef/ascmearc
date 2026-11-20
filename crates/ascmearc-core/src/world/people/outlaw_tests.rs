@@ -306,7 +306,6 @@ fn named_monsters_go_by_their_proper_names() {
     let w = den();
     let wystan = &w.state.actors[&of_type(&w, "wystan")];
     assert_eq!(w.called(wystan), "Black Wystan");
-    assert_eq!(w.creature_called(wystan.id), "Black Wystan");
     let footpad = &w.state.actors[&of_type(&w, "footpad")];
     assert_eq!(w.called(footpad), "the footpad");
 }

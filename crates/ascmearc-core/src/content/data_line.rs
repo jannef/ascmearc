@@ -149,6 +149,12 @@ pub fn profession(skill: &str, fumbled: bool) -> String {
     format!("recipes:profession.{skill}.{field}")
 }
 
+/// Rig `id`'s `snaps` (`snaps` true) or `made` line (`rigs.toml`'s `[[rig]]`).
+pub fn rig(id: &str, snaps: bool) -> String {
+    let field = if snaps { "snaps" } else { "made" };
+    format!("rigs:rig.{id}.{field}")
+}
+
 /// A hand-made level `id`'s `arrival` line.
 fn level_arrival(id: &str) -> String {
     format!("level:{id}.arrival")
@@ -172,11 +178,17 @@ pub fn arrival(content: &Content, id: &str) -> Option<String> {
 }
 
 // The magic's lines (L4k, #1922): a spell's look, a miscast's and a mishap's message, a ruin
-// row's words, and a reprieve's.
+// row's words, and a reprieve's; a risen corpse's berserk line (L4l, #1923).
 
 /// Spell `id`'s `[spell.cast]` `message` (its `look.message`), said as it is cast.
 pub fn spell_cast(id: &str) -> String {
     format!("spell:{id}.cast.message")
+}
+
+/// Spell `id`'s `rise` `berserk_message`, said in place of its cast message when the corpse
+/// rises berserk.
+pub fn rise_berserk(id: &str) -> String {
+    format!("spell:{id}.effect.rise.berserk_message")
 }
 
 /// Miscast `id`'s `message`, said to the player who miscast.
@@ -224,6 +236,9 @@ fn magic_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
     for spell in content.spells() {
         if let Some(message) = &spell.look.message {
             add(spell_cast(&spell.id), message);
+        }
+        if let Some(rise) = &spell.effect.rise {
+            add(rise_berserk(&spell.id), &rise.berserk_message);
         }
     }
     for entry in content.miscasts() {
@@ -316,6 +331,55 @@ fn class_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
     }
 }
 
+// --- The turn's lines (L4o, #1926): what the player perceives as a turn ends -------------------
+
+/// Trap `id`'s `message`, said as the player perceives it go off (`traps.toml`'s `[[trap]]`).
+pub fn trap_message(id: &str) -> String {
+    format!("trap:{id}.message")
+}
+
+/// Disease `id`'s `onset`, said as it shows.
+pub fn disease_onset(id: &str) -> String {
+    format!("disease:{id}.onset")
+}
+
+/// Disease `id`'s symptom `i` (from 0), its `symptoms[i]`.
+fn disease_symptom_at(id: &str, i: usize) -> String {
+    format!("disease:{id}.symptoms.{i}")
+}
+
+/// Disease `def`'s symptom at its progression number `n` (1 for the first) when the check
+/// fails ([`super::DiseaseDef::symptom_index`]); `None` when it has none.
+pub fn disease_symptom(def: &super::DiseaseDef, n: u16) -> Option<String> {
+    Some(disease_symptom_at(&def.id, def.symptom_index(n)?))
+}
+
+/// Resource `id`'s `ended`, said as it ends (`resources.toml`'s `[[resource]]`).
+pub fn resource_ended(id: &str) -> String {
+    format!("resources:resource.{id}.ended")
+}
+
+/// The turn's lines: the traps' messages, the diseases' onsets and symptoms, and the resources'
+/// `ended`.
+fn turn_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
+    for def in content.trap_defs() {
+        if let Some(message) = &def.message {
+            add(trap_message(&def.id), message);
+        }
+    }
+    for def in content.disease_defs() {
+        add(disease_onset(&def.id), &def.onset);
+        for (i, symptom) in def.symptoms.iter().enumerate() {
+            add(disease_symptom_at(&def.id, i), symptom);
+        }
+    }
+    for def in content.resources() {
+        if let Some(ended) = &def.ended {
+            add(resource_ended(&def.id), ended);
+        }
+    }
+}
+
 /// Adds every line above to English by its key; a line naming a role is refused (none is given
 /// one).
 pub(super) fn add_all(content: &mut Content) -> Result<(), ContentError> {
@@ -382,6 +446,7 @@ pub(super) fn add_all(content: &mut Content) -> Result<(), ContentError> {
     class_lines(content, &mut add);
     fixture_lines(content, &mut add);
     creature_lines(content, &mut add);
+    turn_lines(content, &mut add);
     for (id, level) in &content.levels {
         if let Some(line) = &level.arrival {
             add(level_arrival(id), line);
@@ -465,7 +530,7 @@ fn character_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
     }
 }
 
-/// Crafting's lines: the professions' `failed` and `fumbled`.
+/// Crafting's lines: the professions' `failed` and `fumbled`, the rigs' `made` and `snaps`.
 fn crafting_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
     for text in &content.recipes().professions {
         let skill = &content.skill(text.skill).id;
@@ -474,6 +539,10 @@ fn crafting_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
                 add(profession(skill, fumbled), line);
             }
         }
+    }
+    for (_, def) in content.rigs().into_iter().flat_map(|rules| rules.iter()) {
+        add(rig(&def.id, false), &def.made);
+        add(rig(&def.id, true), &def.snaps);
     }
 }
 

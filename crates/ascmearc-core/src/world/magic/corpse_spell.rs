@@ -29,9 +29,11 @@
 use super::cast::Cast;
 use crate::action::Event;
 use crate::content::{
-    CorpseUse, CreatureId, CreatureSpawn, FactionId, LevelKind, SpellData, SpellRise,
+    CorpseUse, CreatureId, CreatureSpawn, FactionId, LevelKind, SpellData, SpellRise, data_line,
 };
 use crate::geom::Pos;
+use crate::lang::{Msg, Phrase};
+use crate::msg;
 use crate::rng::draw;
 use crate::time::{Duration, GameTime};
 use crate::world::allies::ally::AllySource;
@@ -85,11 +87,11 @@ impl World {
             return false;
         };
         if self.player_pos().chebyshev(at) > 1 {
-            self.say("You can only touch a corpse next to you.");
+            self.say(msg::magic::TOUCH_CORPSE_NEXT_TO_YOU);
             return false;
         }
         let Some(index) = self.corpse_in_sight(at) else {
-            self.say("There is no corpse there.");
+            self.say(msg::magic::NO_CORPSE_THERE);
             return false;
         };
         let content = self.content.clone();
@@ -98,7 +100,7 @@ impl World {
         let gives_mana = cast.def.effect.mana.is_some() && me.mana < max_mana;
         let bleeds = !self.cured_by_magic(self.state.player).is_empty();
         if me.hp >= max_hp && !gives_mana && !bleeds {
-            self.say("You are not hurt.");
+            self.say(Msg::new(msg::magic::NOT_HURT).role("who", self.you()));
             return false;
         }
         let corpse = self.state.current().objects_at(at)[index].object;
@@ -112,8 +114,8 @@ impl World {
         self.heal_by_magic(self.state.player, back, events);
         let me = self.player_mut();
         me.mana = (me.mana + mana).min(max_mana).max(me.mana);
-        let name = crate::content::the(&content.object(corpse).name);
-        self.say(format!("You draw what life is left out of {name}."));
+        let what = Phrase::id(format!("object:{}", content.object(corpse).id));
+        self.say(Msg::new(msg::magic::DRAW_LIFE_OUT_OF).role("what", what));
         self.spell_landed(cast, self.state.player, back + mana > 0);
         true
     }
@@ -130,15 +132,15 @@ impl World {
             return false;
         };
         let Some(rules) = content.allies() else {
-            self.say("Nothing answers your call.");
+            self.say(msg::magic::NOTHING_ANSWERS);
             return false;
         };
         if self.state.current().kind == LevelKind::Overworld {
-            self.say("Nothing answers your call out here.");
+            self.say(msg::magic::NOTHING_ANSWERS_OUT_HERE);
             return false;
         }
         let Some(index) = self.corpse_in_sight(at) else {
-            self.say("There is no corpse there.");
+            self.say(msg::magic::NO_CORPSE_THERE);
             return false;
         };
         let object = self.state.current().objects_at(at)[index].object;
@@ -146,11 +148,11 @@ impl World {
             return false;
         };
         if content.creature(creature).unique {
-            self.say("It will not rise for you.");
+            self.say(msg::magic::IT_WILL_NOT_RISE);
             return false;
         }
         if self.rising_cell(at).is_none() {
-            self.say("There is no room for it to stand.");
+            self.say(msg::magic::NO_ROOM_TO_STAND);
             return false;
         }
         let player = self.state.player;
@@ -168,7 +170,7 @@ impl World {
             })
             .count();
         if self.allies_here(player).len() - freed_here >= usize::from(rules.most) {
-            self.say("You cannot lead more than this.");
+            self.say(msg::magic::CANNOT_LEAD_MORE);
             return false;
         }
         if !self.pay_cast(cast) {
@@ -181,13 +183,13 @@ impl World {
         let ends = self.state.time + Duration::minutes(u64::try_from(longer.max(1)).unwrap_or(1));
         let risen = match self.draw_berserk(rise) {
             Some(faction) => {
-                self.say(rise.berserk_message.clone());
+                // A line of data, by its key (`docs/dev/localization.md` "Lines of data").
+                let key = data_line::rise_berserk(&cast.def.id);
+                self.say(data_line::said(key));
                 self.rise_berserk(creature, at, faction, ends)
             }
             None => {
-                if let Some(text) = &cast.def.look.message {
-                    self.say(text.clone());
-                }
+                self.say_cast_message(cast.def);
                 for id in mine.drain(..give_way) {
                     self.gives_way(id, events);
                 }

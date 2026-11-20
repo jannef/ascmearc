@@ -83,7 +83,7 @@ impl World {
             Ended::Died => return,
             Ended::Done => Msg::new(msg::health::SMOKE_DONE),
             Ended::Came(came) => Msg::new(msg::health::PUT_OUT_PIPE_CAME)
-                .role("came", self.came_line(came))
+                .role("came", self.came_msg(came))
                 .role("time", smoked.spoken()),
             Ended::Said => Msg::new(msg::health::PUT_OUT_PIPE).role("time", smoked.spoken()),
         };

@@ -244,7 +244,7 @@ impl World {
 
 /// The creatures of one type a backfired summon brought, as an item of a `_mixed` line's list:
 /// each renders its own phrase in the form its count asks.
-fn hostile_creatures(who: Phrase) -> Arg {
+pub(super) fn hostile_creatures(who: Phrase) -> Arg {
     Msg::new(msg::magic::HOSTILE_CREATURES)
         .role("who", who)
         .into()

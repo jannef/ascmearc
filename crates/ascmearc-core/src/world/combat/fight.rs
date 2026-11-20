@@ -344,11 +344,12 @@ pub(in crate::world) fn word(text: &str) -> Phrase {
     Phrase::id(format!("word:{text}"))
 }
 
-/// Whether `noun` is a plural noun ("flames"), as English's lexicon says.
+/// Whether `noun` is a plural noun ("flames"), as English's lexicon says; a literal name is one
+/// thing.
 fn plural(noun: &Phrase, content: &Content) -> bool {
     match &noun.head {
         Word::Id(id) => content.lexicon().word(id).is_some_and(|w| w.many),
-        Word::Literal(text) => crate::lang::en::is_plural(text),
+        Word::Literal(_) => false,
     }
 }
 

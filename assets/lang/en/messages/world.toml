@@ -3,6 +3,14 @@
 # Lines said as one, in turn (`docs/dev/localization.md` "Nested messages"): `lines`, a list of
 # messages (the line on entering a cell, a rank risen and what it teaches).
 lines = "{lines:lines}"
+nobody_to_sell_to = "There is nobody here to sell to."
+
+# The player takes a combat stance, one line a stance.
+take_stance_aggressive = "You take an aggressive stance."
+take_stance_coward = "You take a cowardly stance."
+take_stance_defensive = "You take a defensive stance."
+take_stance_frenzy = "You take a frenzied stance."
+take_stance_neutral = "You take a neutral stance."
 
 # The run's first line. `place`: the scenario's name; `{key:help}` the key that shows the controls.
 welcome = "Welcome to {place:bare}. Press {key:help} for controls."

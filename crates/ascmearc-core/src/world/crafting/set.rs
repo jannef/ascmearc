@@ -31,6 +31,8 @@ use crate::combat;
 use crate::content::{Content, Cutting, MaterialId, PartId, RecipeDef, RecipeId};
 pub use crate::gem::ornament_part;
 use crate::item_parts::{self, ItemPart};
+use crate::lang::{MessageId, Msg, Phrase};
+use crate::msg;
 use crate::object::{self, Stack};
 use crate::rng::draw;
 use crate::scroll_label::Lore;
@@ -74,15 +76,15 @@ pub fn settable(content: &Content, stack: &Stack) -> bool {
 }
 
 /// Why a gem cannot be set in `stack`, if it cannot.
-fn refusal(content: &Content, stack: &Stack) -> Option<&'static str> {
+fn refusal(content: &Content, stack: &Stack) -> Option<MessageId> {
     let def = content.object(stack.object);
     let loose = content.gems().is_some_and(|g| g.object == stack.object);
     let piece = def.id == crate::piece::ID;
     let Some(part) = ornament_part(content, def).filter(|_| !loose && !piece && !stack.is_spirit())
     else {
-        return Some("No gem can be set in that.");
+        return Some(msg::crafting::NO_GEM_CAN_BE_SET);
     };
-    is_set(content, stack, part).then_some("It is set already.")
+    is_set(content, stack, part).then_some(msg::crafting::SET_ALREADY)
 }
 
 /// `stack` (one of it) with `gem` cut as `cutting` set in its ornament part; `None` where the
@@ -104,30 +106,28 @@ fn resolve(
     content: &Content,
     player: &Actor,
     picks: &[Option<usize>],
-) -> Result<(usize, usize, MaterialId, Cutting, Stack), String> {
+) -> Result<(usize, usize, MaterialId, Cutting, Stack), MessageId> {
     let (item, gem) = match picks {
         [Some(item), Some(gem)] => (*item, *gem),
-        [] | [None, ..] => return Err("You must choose the item.".into()),
-        [Some(_)] | [Some(_), None] => return Err("You must choose the gem.".into()),
-        _ => return Err("That is more than the work takes.".into()),
+        [] | [None, ..] => return Err(msg::crafting::MUST_CHOOSE_ITEM),
+        [Some(_)] | [Some(_), None] => return Err(msg::crafting::MUST_CHOOSE_GEM),
+        _ => return Err(msg::crafting::MORE_THAN_THE_WORK_TAKES),
     };
     let pack = &player.inventory;
-    let stack = pack.get(item).ok_or("You carry no such thing.")?;
+    let stack = pack.get(item).ok_or(msg::crafting::CARRY_NO_SUCH_THING)?;
     if stack.is_unique() {
-        return Err(super::craft_make::english(
-            content,
-            crate::msg::uniques::NO_CRAFT.into(),
-        ));
+        return Err(msg::uniques::NO_CRAFT);
     }
     if let Some(text) = refusal(content, stack) {
-        return Err(text.into());
+        return Err(text);
     }
     if player.equipment.holds(item) {
-        return Err("Take it off first.".into());
+        return Err(msg::crafting::TAKE_IT_OFF_FIRST);
     }
-    let stone = pack.get(gem).ok_or("You carry no such thing.")?;
-    let (material, cutting) = cut_gem(content, stone).ok_or("Only a cut gem can be set.")?;
-    let made = with_gem(content, stack, material, cutting).ok_or("No gem can be set in that.")?;
+    let stone = pack.get(gem).ok_or(msg::crafting::CARRY_NO_SUCH_THING)?;
+    let (material, cutting) = cut_gem(content, stone).ok_or(msg::crafting::ONLY_CUT_GEM)?;
+    let made =
+        with_gem(content, stack, material, cutting).ok_or(msg::crafting::NO_GEM_CAN_BE_SET)?;
     Ok((item, gem, material, cutting, made))
 }
 
@@ -190,7 +190,8 @@ pub(super) fn plan(
     def: &RecipeDef,
     picks: &[Option<usize>],
 ) -> Result<CraftPlan, String> {
-    let (_, gem, _, _, made) = resolve(content, player, picks)?;
+    let (_, gem, _, _, made) = resolve(content, player, picks)
+        .map_err(|why| super::craft_make::english(content, why.into()))?;
     Ok(CraftPlan {
         verb: def.verb.clone().unwrap_or_else(|| def.name.clone()),
         name: lore.describe(&made),
@@ -245,7 +246,7 @@ impl World {
         let def = content.recipe(id);
         let me = self.state.player();
         if me.skills.value(def.skill).unwrap_or(0) < def.from {
-            self.say("That is beyond your skill.");
+            self.say(msg::crafting::BEYOND_YOUR_SKILL);
             return Spent::Nothing;
         }
         let (item, gem) = match resolve(&content, me, picks) {
@@ -257,7 +258,7 @@ impl World {
         };
         let pack = &self.state.player().inventory;
         if self.item_protected(&pack[item]) || self.item_protected(&pack[gem]) {
-            self.say("You dare not work on it.");
+            self.say(msg::crafting::DARE_NOT_WORK_ON_IT);
             return Spent::Nothing;
         }
         if !self.may_loose(item) || !self.may_loose(gem) {
@@ -265,10 +266,13 @@ impl World {
         }
         let pack = &self.state.player().inventory;
         let (stone, thing) = (
-            self.lore().title(&pack[gem]),
-            self.lore().title(&pack[item]),
+            self.lore().title_phrase(&pack[gem]),
+            self.lore().title_phrase(&pack[item]),
         );
-        self.say(format!("You begin to set the {stone} in the {thing}."));
+        let said = Msg::new(msg::crafting::BEGIN_TO_SET)
+            .role("gem", stone)
+            .role("item", thing);
+        self.say(said);
         let work = Setting {
             recipe: id,
             item,
@@ -283,7 +287,7 @@ impl World {
         let def = content.recipe(work.recipe);
         let picks = [Some(work.item), Some(work.gem)];
         let Ok((_, _, gem, cutting, made)) = resolve(&content, self.state.player(), &picks) else {
-            self.say("You have nothing left to work on.");
+            self.say(msg::crafting::NOTHING_LEFT_TO_WORK_ON);
             return;
         };
         let (modifier, against) = self.gem_check(def, gem);
@@ -309,12 +313,15 @@ impl World {
         let Some(gems) = content.gems() else {
             return;
         };
-        let gem_name = content.material(gem).name.clone();
+        let gem_name = Phrase::id(format!("material:{}", content.material(gem).id));
         if band == SetBand::Set {
             let at = self.set_apart(work.item);
             self.player_mut().inventory[at] = made;
-            let name = self.lore().describe(&self.state.player().inventory[at]);
-            self.say(format!("You set the {gem_name}. It is now {name}."));
+            let name = self.lore().phrase(&self.state.player().inventory[at]);
+            let said = Msg::new(msg::crafting::SET_GEM)
+                .role("gem", gem_name.clone())
+                .role("what", name);
+            self.say(said);
         }
         // One gem is spent, set or not; a chipped one comes back.
         let stone = self.set_apart(work.gem);
@@ -326,17 +333,13 @@ impl World {
             .then(|| super::salvage::chipped(gems, cutting))
             .flatten();
         let Some(less) = left else {
-            self.say(format!("The {gem_name} shatters."));
+            self.say(Msg::new(msg::crafting::SHATTERS).role("gem", gem_name.clone()));
             return;
         };
-        self.say(format!("The {gem_name} slips and chips."));
+        self.say(Msg::new(msg::crafting::SLIPS_AND_CHIPS).role("gem", gem_name));
         let part = ItemPart::gem(&content, None, gem, less);
         let chipped = Stack::new(gems.object, 1).with_parts(vec![part]);
-        let text = format!(
-            "It is now {}.",
-            object::phrase(std::slice::from_ref(&chipped), self.lore())
-        );
-        self.say(text);
+        self.say(Msg::new(msg::crafting::IT_IS_NOW).role("what", self.lore().phrase(&chipped)));
         object::add_to_inventory(self.state.inventory_mut(), chipped, &content);
     }
 }

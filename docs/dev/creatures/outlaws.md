@@ -31,7 +31,7 @@ plus one naming rule (below).
   (`content::is_proper`), said without an article: `content::the` ("the kobold", "Black
   Wystan") and `content::the_start` ("The kobold") build every message that names a seen
   creature (`fight.rs`'s `End`, deaths, falls, pits, waking, a creature's throw, the "no
-  quarrel" refusals, `World::called`, `World::creature_called`), and look mode names it as it
+  quarrel" refusals, `World::called`), and look mode names it as it
   names an npc ("Black Wystan (hostile, unhurt), ..."). The quest texts already did
   (`content::one_of`). A corpse still takes the type's name ("Black Wystan corpse").
 - **Tests**: `world/people/outlaw_tests.rs` (faction and tags, the gear rolls, stances against every

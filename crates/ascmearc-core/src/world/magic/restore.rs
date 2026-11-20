@@ -47,7 +47,7 @@ impl World {
         self.say_read(&scroll);
         self.restore(cleansing, events);
         if kept {
-            self.say(super::read::KEPT);
+            self.say(msg::magic::WRITING_DOES_NOT_FADE);
         }
         true
     }

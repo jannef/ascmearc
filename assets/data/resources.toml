@@ -25,7 +25,7 @@
 #   ends_at_zero  at 0 the character loses it, and its bar, until something grants it again
 #                 (default false: it sits at 0)
 #   ended         what the player is told when it ends ("Your rage subsides."; needs
-#                 ends_at_zero)
+#                 ends_at_zero); a line of data (`resources:resource.<id>.ended`, naming no role)
 #   lacking       how the abilities menu greys out an ability it pays for while too little is
 #                 held ("you are short of breath"; default: "not enough stamina"); a class
 #                 active refused for it says it as a line of data

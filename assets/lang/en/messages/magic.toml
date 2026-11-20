@@ -1,56 +1,112 @@
 # Magic (`world/magic/`): casting a spell, its heals, hexes, and cleanses, blood magic, miscasts and
 # backfires, ruin, restoration, wands, zones, and the dev actions that show an effect, lay a zone,
-# or spend mana. Ids alphabetical (`docs/dev/localization.md` "Literal lines"), the plain ones
-# first, then the tables. What the data writes (a spell's cast message, a miscast's and a
-# mishap's message, a ruin row's words, a reprieve's message) is said by its key in the data, not
-# here (`docs/dev/localization.md` "Lines of data").
+# or spend mana; reading scrolls, studying grimoires, deciphering, scribing, forgetting, rods, and
+# the summoning and corpse spells. Ids alphabetical (`docs/dev/localization.md` "Literal lines"),
+# the plain ones first, then the tables. What the data writes (a spell's cast message, a miscast's
+# and a mishap's message, a ruin row's words, a reprieve's message, a risen corpse's berserk line)
+# is said by its key in the data, not here (`docs/dev/localization.md` "Lines of data").
 #
 # Roles: `who` is the creature a line is about, as the player calls it ("the kobold", "Snel");
 # `what` an item (a phrase built where it is said); `status` a status as it looks ("dazed");
 # `id`, `kind`, `usage`, `x`, `y` a dev action's words and numbers as typed. `reason` and `stat`
-# are core's English words, text until they are converted.
+# are core's English words, text until they are converted; so are `spell` and `spells`, a
+# spell's name as the data writes it ("Frost"), and `came`, the clause another module writes
+# when something stops a long action ("A kobold comes into view").
 
 # `what`: the item, one of the stack.
 already_know = "You already know what {what:counted} is."
+# `what`: the grimoire, by its title ("grimoire of frost").
+begin_to_read = "You begin to read the {what:bare}."
+begin_to_write = "You begin to write."
+blank_scroll_gone = "The blank scroll is gone."
 # A dev action's.
 bolt_needs_a_way = "A bolt needs a way to go: `effect:ID@X,Y>X,Y`, not into a wall."
+bolt_strikes_nothing = "The bolt strikes nothing."
 # `status`: the status that blocks the cast, its name lower case.
 cannot_cast_while = "You are {status:bare}: you cannot cast now."
+cannot_lead_more = "You cannot lead more than this."
+cannot_make_sense = "You cannot make sense of it."
+# `what`: the item, one of the stack, as the player knows it.
+cannot_read = "You cannot read {what:counted}."
 # `reason`: why the ability is unavailable (`Unavailable::reason`).
 cannot_reason = "You cannot: {reason:bare}."
+# `status`: the status that blocks it, its name lower case.
+cannot_use_rod_while = "You cannot use a rod while {status:bare}."
+cannot_write_it = "You cannot write it."
+cannot_zap_yourself = "You cannot zap at yourself."
 carry_no_such_thing = "You carry no such thing."
 # `usage`: the action text that names the spell (`use:identify`, `read:c`).
 cast_it_on_what = "Cast it on what? Name a stack you carry: `{usage:bare}:c`."
 cast_it_where = "Cast it where? Name a cell: `{usage:bare}:12,5`."
 cleansing_warmth = "A cleansing warmth runs through you."
+do_not_know_spell = "You do not know that spell."
+# `what`: the corpse (its object).
+draw_life_out_of = "You draw what life is left out of {what:the}."
 driven_back = "{who:The} {who:is} driven back."
 # A dev action's: `id` the effect's.
 effect_dev = "Effect: {id:bare} (dev)."
 effect_reaches_no_cell = "Effect `{id:bare}` reaches no cell there."
 # `stat`: the stat's name, lower case ("strength").
 feel_stat_return = "You feel your {stat:bare} return."
+# `spells`: the spells forgotten, a list of their names.
+forgotten = "You have forgotten {spells:and}."
+# `xp`: the experience gained; `spell`: the spell's name.
+gain_experience_for_learning = "You gain {xp:bare} experience for learning {spell:bare}."
 give_blood = "You give your blood, and power wells up in you."
+grimoire_crumbles = "The grimoire crumbles to dust."
+grimoire_gone = "The grimoire is gone."
+grimoire_not_aimed = "A grimoire is read, not aimed: `read:a`."
 healing_flows_into = "Your healing flows into {who:the}."
 hex_comes_home = "The hex comes home."
+# `who`: the one a rod's bolt struck, rooted.
+holds_fast = "{who:The} hold{who:s} fast."
 # `status`: how the status looks ("asleep"), a `word:` phrase.
 is_status = "{who:The} {who:is} {status:bare}."
-# `what`: the wand's type, now known.
+# `what`: the wand's, the rod's, or the scroll's type, now known.
 it_is = "It is {what:counted}."
+it_will_not_rise = "It will not rise for you."
+# `spell`: the spell's name ("Frost").
+know_all_of = "You know all there is of {spell:bare}."
+know_all_of_this_spell = "You know all there is of this spell."
+# `spell`: the spell's name.
+know_less_well = "You know {spell:bare} less well than you did."
+know_the_spell_less_well = "You know the spell less well than you did."
+lack_mana_to_write = "You lack the mana to write it."
+# `spell`: the spell's name.
+learned_spell = "The words settle in your mind: you have learned {spell:bare}."
 looks_better = "{who:The} look{who:s} better."
+# `what`: the scroll's type, now known.
+make_out_writing = "You make out the writing: {what:counted}."
 mana_full = "Your mana is already full."
 means_no_harm = "{who:The} mean{who:s} you no harm."
 no_blood_magic = "You know no blood magic."
+no_corpse_there = "There is no corpse there."
 no_effect = "There is no effect `{id:bare}`."
+no_gift_for_magic = "You have no gift for magic."
+no_mana_for_rod = "You have not the mana to use it."
 no_one_here_hurt = "No one here is hurt."
 no_one_to_hex = "You see no one there to hex."
 no_one_to_touch = "There is no one there to touch."
+no_room_beside_you = "There is no room for them beside you."
+no_room_to_stand = "There is no room for it to stand."
+# `spell`: the spell's name.
+no_scroll_can_hold = "No scroll can hold {spell:bare}."
+# `id`: the spell's id as typed.
+no_spell_named = "There is no spell `{id:bare}`."
 no_such_ability = "You have no such ability."
 # `who`: the one the heal was for, the player ("You are not hurt.") or another.
 not_hurt = "{who:The} {who:is} not hurt."
+nothing_answers = "Nothing answers your call."
+nothing_answers_out_here = "Nothing answers your call out here."
+nothing_gives_way = "Nothing gives way."
 nothing_happens = "Nothing happens."
+nothing_left_to_make_out = "You have nothing left to make out."
 nothing_to_burst = "There is nothing there to burst."
 nothing_to_cure = "There is nothing to cure."
+nothing_to_make_out = "There is nothing there to make out."
 nothing_to_restore = "There is nothing to restore."
+nothing_to_write_on = "You have nothing to write on."
+nothing_written = "There is nothing written on it."
 nowhere_to_go = "There is nowhere to go."
 # A dev action's: `x` and `y` the cell's.
 off_level_dev = "{x:bare},{y:bare} is off the level (dev)."
@@ -63,20 +119,59 @@ pit_refused_ground = "The ground heaves but will not open, and a gate tears thro
 pit_refused_ground_seen = "The ground heaves beside {who:the}, and a gate tears through!"
 pit_refused_in_pit = "The floor here is the Pit's already: a gate tears open beside you instead!"
 pit_refused_in_pit_seen = "The floor heaves beside {who:the}, and a gate tears open!"
+pore_over_writing = "You pore over the writing."
+# `came`: what came, as a line told it.
+read_broken_by = "{came:bare}; you stop reading."
+read_it_at_what = "Read it at what? Name a cell to aim at: `read:a:12,5`."
+read_it_on_what = "Read it on what? Name a stack you carry: `read:a:b`."
+read_on_yourself = "It is read on yourself: `read:a`."
+# `what`: the scroll as the player knew it, its title ("scroll labelled ZUNBAR").
+read_the = "You read the {what:bare}."
+# `who`: one a rod's burst caught that is too strong for it.
+shrugs_it_off = "{who:The} shrug{who:s} it off."
 slip = "You slip on the slick ground!"
 slips = "{who:The} slip{who:s}."
 spell_takes_hold_of = "Your spell takes hold of {who:the} instead."
 # A dev action's: `cost` the mana spent.
 spend_mana_dev = "You spend {cost:bare} mana (dev)."
+stone_crumbles_away = "The stone crumbles away before you."
+stop_reading = "You stop reading."
+stop_writing = "You stop writing."
 takes_mends_you = "What it takes mends you."
 too_little_blood = "You have too little blood left to give."
 too_little_mana = "You have too little mana."
+touch_corpse_next_to_you = "You can only touch a corpse next to you."
 touch_next_to_you = "You can only touch someone next to you."
+untrained_decipher = "You have no training in Decipher script; you cannot make sense of how to learn a spell from a grimoire."
+# `who`: the one a rod's bolt sent away.
+vanishes = "{who:The} vanish{who:es}!"
+words_add_nothing = "The words add nothing new."
+# `spell`: the spell's name; `rank` the rank now known, `most` the last rank.
+words_settle_deeper = "The words settle deeper: you know {spell:bare} at rank {rank:bare} of {most:bare}."
+words_twist_away = "The words twist away from you."
 wounds_close = "Your wounds close."
-# `what`: the wand as the player knows it, its title ("oak wand").
+# `came`: what came, as a line told it.
+write_broken_by = "{came:bare}; you stop writing."
+# Scroll savant keeps a scroll read.
+writing_does_not_fade = "The writing does not fade from the scroll."
+writing_swims = "The writing swims before your eyes."
+# `what`: the scroll written.
+you_write = "You write {what:counted}."
+# `what`: the wand or the rod as the player knows it, its title ("oak wand").
 zap = "You zap the {what:bare}."
 # A dev action's: `kind` the zone's id, `x` and `y` its centre.
 zone_dev = "A {kind:bare} zone lies around {x:bare},{y:bare} (dev)."
+
+# A summon spell's allies: `who` the creatures that came, all of one type, with their count ("a
+# wolf", "two wolves").
+[comes_to_call]
+by = "who.number"
+one = "{who:A} comes to your call."
+many = "{who:Num} {who:plural} come to your call."
+
+# The same, of several types: `who` a list of `hostile_creatures` ("A wolf and two rats").
+[comes_to_call_mixed]
+text = "{who:And} come to your call."
 
 # A backfired summon: `who` the creatures that came, all of one type, with their count ("a
 # kobold", "two kobolds").
@@ -98,8 +193,8 @@ many = "{who:Num} {who:plural} come to {caster:poss} call, but not to its side!"
 [hostile_call_seen_mixed]
 text = "{who:And} come to {caster:poss} call, but not to its side!"
 
-# An item of the `_mixed` lines' list: `who`, the creatures of one type that came ("a kobold",
-# "two rats").
+# An item of the `_mixed` lines' list (`comes_to_call_mixed`'s too): `who`, the creatures of one
+# type that came ("a kobold", "two rats").
 [hostile_creatures]
 by = "who.number"
 one = "{who:a}"

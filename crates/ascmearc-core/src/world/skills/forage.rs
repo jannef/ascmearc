@@ -115,7 +115,7 @@ impl World {
             Ended::Died => {}
             _ if self.state.time >= until => self.forage_done(),
             Ended::Came(came) => {
-                let came = self.came_line(came);
+                let came = self.came_msg(came);
                 self.say(Msg::new(msg::skills::FORAGE_BROKEN_BY).role("came", came));
             }
             Ended::Said | Ended::Done => self.say(msg::skills::STOP_FORAGING),

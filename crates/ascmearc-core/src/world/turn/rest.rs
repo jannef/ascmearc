@@ -5,6 +5,8 @@
 use crate::action::{DiseaseNews, Event, MAX_REST, Rest};
 use crate::content::{ActionKind, LevelKind, StatUse};
 use crate::geom::Pos;
+use crate::lang::Msg;
+use crate::msg;
 use crate::perception::VIEW_RADIUS;
 use crate::sight::{self, LineOfSight};
 use crate::time::{self, GameTime};
@@ -74,35 +76,36 @@ impl World {
             },
         );
         let rested = self.state.time.since(start).spoken();
-        let text = match (ended, goal) {
+        let said = match (ended, goal) {
             (Ended::Died, _) => return,
-            (Ended::Came(came), _) => {
-                format!("{}; you stop resting after {rested}.", self.came_line(came))
-            }
-            (Ended::Said, _) => format!("You stop resting after {rested}."),
-            (Ended::Done, Rest::For(_)) => format!("You rest for {rested}."),
-            (Ended::Done, Rest::Dawn) => "You rest until dawn.".into(),
-            (Ended::Done, Rest::Dusk) => "You rest until dusk.".into(),
+            (Ended::Came(came), _) => Msg::new(msg::turn::STOP_RESTING_CAME)
+                .role("came", self.came_msg(came))
+                .role("time", rested),
+            (Ended::Said, _) => Msg::new(msg::turn::STOP_RESTING).role("time", rested),
+            (Ended::Done, Rest::For(_)) => Msg::new(msg::turn::RESTED_FOR).role("time", rested),
+            (Ended::Done, Rest::Dawn) => Msg::new(msg::turn::REST_UNTIL_DAWN),
+            (Ended::Done, Rest::Dusk) => Msg::new(msg::turn::REST_UNTIL_DUSK),
         };
-        self.say(text);
+        self.say(said);
     }
 
     /// What is said of a creature that stopped a long action ([`Came`]): "A kobold comes into
-    /// view", or, seen farther off before, "The kobold comes close".
-    pub(in crate::world) fn came_line(&self, came: Came) -> String {
-        let called = self.creature_called(came.id);
-        if !came.seen {
-            return format!("{called} comes into view");
-        }
-        let name = &self
-            .content
-            .creature(self.state.actors[&came.id].creature)
-            .name;
-        let called = match crate::content::is_proper(name) {
-            true => called,
-            false => crate::content::the_start(name),
+    /// view", or, seen farther off before, "The kobold comes close". A clause, said in a line
+    /// as its `came` role.
+    pub(in crate::world) fn came_msg(&self, came: Came) -> Msg {
+        let creature = self.content.creature(self.state.actors[&came.id].creature);
+        let id = match came.seen {
+            true => msg::turn::COMES_CLOSE,
+            false => msg::turn::COMES_INTO_VIEW,
         };
-        format!("{called} comes close")
+        Msg::new(id).role("who", crate::world::combat::fight::creature(creature))
+    }
+
+    /// [`World::came_msg`] in English, for the lines not yet converted that write it into their
+    /// text (`docs/dev/localization.md` "Literal lines").
+    pub(in crate::world) fn came_line(&self, came: Came) -> String {
+        let entry = crate::lang::Entry::new(0, self.came_msg(came));
+        crate::messages::english(&self.content, &entry, &crate::lang::written_key)
     }
 
     /// Passes turn after turn of a long action (a rest, digging) through the normal pipeline
@@ -304,7 +307,7 @@ impl World {
 
     /// When a rest toward `goal` ends: at most [`MAX_REST`] from now.
     pub(in crate::world) fn start_rest(&mut self, goal: Rest) -> Spent {
-        if self.refused_afloat("You cannot rest in deep water.") {
+        if self.refused_afloat(msg::turn::CANNOT_REST_IN_DEEP_WATER) {
             return Spent::Nothing;
         }
         let now = self.state.time;
@@ -314,7 +317,7 @@ impl World {
             Rest::Dusk => now.next_at(time::DUSK),
         };
         if until == now {
-            self.say("You do not rest.");
+            self.say(msg::turn::DO_NOT_REST);
             return Spent::Nothing;
         }
         Spent::Rest(until, goal)

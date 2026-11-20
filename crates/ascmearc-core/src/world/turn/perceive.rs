@@ -3,9 +3,10 @@
 //! they see change. `world/mod.rs` has only the call from the turn pipeline.
 
 use crate::action::{AttackKind, Breach, DiseaseNews, Event, MissileEnd};
-use crate::content::{CreatureId, TrapEffect};
+use crate::content::{CreatureId, TrapEffect, data_line};
 use crate::geom::Pos;
 use crate::lang::Msg;
+use crate::msg;
 use crate::noise;
 use crate::perception::{Perception, VIEW_RADIUS};
 use crate::sight::LineOfSight;
@@ -295,10 +296,9 @@ impl World {
                 }
                 let seen = perception.sees_actors_at(at);
                 if let Some(me) = self.actor_or_fallen(actor).filter(|_| seen) {
-                    let name = &content.creature(me.creature).name;
+                    let who = fight::creature(content.creature(me.creature));
                     reports.push((
-                        format!("{} falls through the ice!", crate::content::the_start(name))
-                            .into(),
+                        Msg::new(msg::turn::FALLS_THROUGH_ICE).role("who", who),
                         true,
                     ));
                 }
@@ -308,9 +308,8 @@ impl World {
             Event::FellBelow { object, at } => {
                 let seen = perception.is_visible(at);
                 if seen {
-                    let title = self.lore().title(&crate::object::Stack::one(object));
-                    let text = format!("The {title} falls away to the ground far below.");
-                    reports.push((text.into(), false));
+                    let what = self.lore().title_phrase(&crate::object::Stack::one(object));
+                    reports.push((Msg::new(msg::turn::FALLS_BELOW).role("what", what), false));
                 }
                 seen
             }
@@ -320,16 +319,23 @@ impl World {
                 began,
             } => {
                 let def = content.status(status);
-                let text = if began { &def.start } else { &def.end };
-                if let Some(text) = text.clone().filter(|_| actor == player) {
-                    reports.push((text.into(), began));
+                let key = match began {
+                    true => def.start.as_ref().map(|_| data_line::status_start(def)),
+                    false => def.end.as_ref().map(|_| data_line::status_end(def)),
+                };
+                if let Some(key) = key.filter(|_| actor == player) {
+                    reports.push((data_line::said(key), began));
                 }
                 actor == player
             }
             Event::ResourceEnded { actor, resource } => {
-                let ended = content.resource(resource).ended.clone();
-                if let Some(text) = ended.filter(|_| actor == player) {
-                    reports.push((text.into(), false));
+                let def = content.resource(resource);
+                let key = def
+                    .ended
+                    .as_ref()
+                    .map(|_| data_line::resource_ended(&def.id));
+                if let Some(key) = key.filter(|_| actor == player) {
+                    reports.push((data_line::said(key), false));
                 }
                 actor == player
             }
@@ -339,22 +345,19 @@ impl World {
                 news,
             } => {
                 let def = content.disease(disease);
-                let (text, stops) = match news {
-                    DiseaseNews::Onset => (def.onset.as_str(), true),
-                    DiseaseNews::Worse(n) => (def.symptom(n), true),
-                    DiseaseNews::Recovered => (def.recovered.as_str(), false),
+                let (key, stops) = match news {
+                    DiseaseNews::Onset => (Some(data_line::disease_onset(&def.id)), true),
+                    DiseaseNews::Worse(n) => (data_line::disease_symptom(def, n), true),
+                    DiseaseNews::Recovered => (Some(data_line::disease_recovered(&def.id)), false),
                 };
-                if actor == player {
-                    reports.push((text.into(), stops));
+                if let Some(key) = key.filter(|_| actor == player) {
+                    reports.push((data_line::said(key), stops));
                 }
                 actor == player
             }
             Event::Drained { actor, stat } => {
                 if actor == player {
-                    reports.push((
-                        crate::world::health::drain::drained_message(stat).into(),
-                        true,
-                    ));
+                    reports.push((crate::world::health::drain::drained_message(stat), true));
                 }
                 actor == player
             }
@@ -369,10 +372,12 @@ impl World {
                 }
                 let seen = perception.sees_actors_at(at);
                 if let (true, Some(dead)) = (seen, self.actor_or_fallen(actor)) {
-                    let name = &content.creature(dead.creature).name;
+                    let who = fight::creature(content.creature(dead.creature));
                     let dies = content.status(status).dies.as_deref().unwrap_or("dies");
-                    let text = format!("{} {dies}.", crate::content::the_start(name));
-                    reports.push((text.into(), close(at)));
+                    let said = Msg::new(msg::turn::DIES_OF_STATUS)
+                        .role("who", who)
+                        .role("dies", dies);
+                    reports.push((said, close(at)));
                 }
                 seen
             }
@@ -406,25 +411,30 @@ impl World {
                 let seen = sprung_seen.next().unwrap_or(false);
                 if seen {
                     let def = content.trap(trap);
-                    reports.extend(def.message.clone().map(|text| (text.into(), true)));
-                    let name = (self.actor_or_fallen(victim))
-                        .map(|a| content.creature(a.creature).name.as_str());
-                    let creature = name.filter(|_| perception.sees_actors_at(at));
-                    let text = match (&def.effect, victim == player, creature) {
-                        (TrapEffect::Pit { .. }, true, _) => Some("You fall into a pit.".into()),
-                        (TrapEffect::Pit { .. }, false, Some(name)) => Some(format!(
-                            "{} falls into a pit.",
-                            crate::content::the_start(name)
-                        )),
-                        (TrapEffect::Teleport, true, _) => {
-                            Some("You are wrenched elsewhere.".into())
+                    let message = def
+                        .message
+                        .as_ref()
+                        .map(|_| data_line::trap_message(&def.id));
+                    reports.extend(message.map(|key| (data_line::said(key), true)));
+                    let creature = (self.actor_or_fallen(victim))
+                        .map(|a| fight::creature(content.creature(a.creature)));
+                    let creature = creature.filter(|_| perception.sees_actors_at(at));
+                    let said = match (&def.effect, victim == player, creature) {
+                        (TrapEffect::Pit { .. }, true, _) => {
+                            Some(Msg::new(msg::turn::FALL_INTO_PIT).role("who", self.you()))
                         }
-                        (TrapEffect::Teleport, false, Some(name)) => {
-                            Some(format!("{} vanishes!", crate::content::the_start(name)))
+                        (TrapEffect::Pit { .. }, false, Some(who)) => {
+                            Some(Msg::new(msg::turn::FALL_INTO_PIT).role("who", who))
+                        }
+                        (TrapEffect::Teleport, true, _) => {
+                            Some(msg::turn::WRENCHED_ELSEWHERE.into())
+                        }
+                        (TrapEffect::Teleport, false, Some(who)) => {
+                            Some(Msg::new(msg::turn::VANISHES).role("who", who))
                         }
                         _ => None,
                     };
-                    reports.extend(text.map(|text: String| (text.into(), true)));
+                    reports.extend(said.map(|said| (said, true)));
                 }
                 seen
             }
@@ -461,8 +471,8 @@ impl World {
         }
         match collapsed {
             0 => {}
-            1 => reports.push(("The wall collapses!".into(), true)),
-            _ => reports.push(("The walls collapse!".into(), true)),
+            1 => reports.push((msg::turn::WALL_COLLAPSES.into(), true)),
+            _ => reports.push((msg::turn::WALLS_COLLAPSE.into(), true)),
         }
         reports
     }
@@ -488,7 +498,7 @@ impl World {
             news.clone()
         };
         if listening && told.is_empty() {
-            self.say("You hear nothing beyond the door.");
+            self.say(msg::turn::HEAR_NOTHING_BEYOND_DOOR);
         }
         for sound in told.iter().filter(|s| s.kind != noise::SoundKind::Voice) {
             let text = sound.message(viewer);
@@ -519,14 +529,14 @@ impl World {
     pub(super) fn weather_news(&mut self, from: Weather, to: Weather) {
         use Weather::{Clear, HeavyRain, Overcast, Rain};
         let text = match (from, to) {
-            (Clear, Overcast) => "Clouds gather.",
-            (Overcast, Clear) => "The sky clears.",
-            (Clear | Overcast, Rain) => "It starts to rain.",
-            (Clear | Overcast, HeavyRain) => "It starts to pour.",
-            (Rain, HeavyRain) => "The rain grows heavy.",
-            (HeavyRain, Rain) => "The rain eases.",
-            (Rain | HeavyRain, Overcast) => "The rain stops.",
-            (Rain | HeavyRain, Clear) => "The rain stops and the sky clears.",
+            (Clear, Overcast) => msg::turn::CLOUDS_GATHER,
+            (Overcast, Clear) => msg::turn::SKY_CLEARS,
+            (Clear | Overcast, Rain) => msg::turn::STARTS_TO_RAIN,
+            (Clear | Overcast, HeavyRain) => msg::turn::STARTS_TO_POUR,
+            (Rain, HeavyRain) => msg::turn::RAIN_GROWS_HEAVY,
+            (HeavyRain, Rain) => msg::turn::RAIN_EASES,
+            (Rain | HeavyRain, Overcast) => msg::turn::RAIN_STOPS,
+            (Rain | HeavyRain, Clear) => msg::turn::RAIN_STOPS_SKY_CLEARS,
             _ => return,
         };
         if to.is_rain() && to > from {

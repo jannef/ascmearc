@@ -31,7 +31,6 @@ use crate::sight::LineOfSight;
 use crate::skills::{Effect as SkillEffect, Use};
 use crate::stats::Stat;
 use crate::talent::TalentMods;
-use crate::text::{article, capitalized};
 use crate::time::Duration;
 use crate::world::combat::fight::word;
 use crate::world::{Ended, LevelState, Spent, World};
@@ -152,7 +151,7 @@ impl World {
             (_, Ended::Died) => return,
             (false, _) => Msg::new(msg::crafting::WALL_CRUMBLES).role("wall", name),
             (true, Ended::Came(came)) => {
-                Msg::new(msg::crafting::STOP_DIGGING_CAME).role("came", self.came_line(came))
+                Msg::new(msg::crafting::STOP_DIGGING_CAME).role("came", self.came_msg(came))
             }
             (true, Ended::Said | Ended::Done) => Msg::new(msg::crafting::STOP_DIGGING),
         };
@@ -266,15 +265,5 @@ impl World {
             }
         }
         events.push(Event::WallBroken { pos: p, cause });
-    }
-
-    /// What a creature is called at the start of a sentence: "A kobold", "An elf".
-    pub(in crate::world) fn creature_called(&self, id: crate::world::ActorId) -> String {
-        let creature = self.state.actors[&id].creature;
-        let name = &self.content.creature(creature).name;
-        if crate::content::is_proper(name) {
-            return name.clone();
-        }
-        format!("{} {name}", capitalized(article(name)))
     }
 }

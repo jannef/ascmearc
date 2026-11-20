@@ -32,7 +32,8 @@ use crate::action::{AttackKind, Event, Positions, ReadTarget};
 use crate::content::StatUse;
 use crate::content::{ActionKind, Reading, percent_of};
 use crate::geom::Pos;
-use crate::lang::Msg;
+use crate::lang::{Msg, Phrase};
+use crate::msg;
 use crate::object::Stack;
 use crate::rng::draw;
 use crate::skills::Use;
@@ -40,9 +41,6 @@ use crate::world::combat::fight::{
     End, Guard, Words, attack_message, creature, death_message, driven_message, word,
 };
 use crate::world::{Spent, World};
-
-/// What the player is told when Scroll savant keeps a scroll they read.
-pub(super) const KEPT: &str = "The writing does not fade from the scroll.";
 
 impl World {
     /// The kind of action reading inventory stack `item` is, as a status's `blocks` names it:
@@ -64,31 +62,31 @@ impl World {
     ) -> Spent {
         let content = self.content.clone();
         let Some(stack) = self.state.player().inventory.get(item) else {
-            self.say("You carry no such thing.");
+            self.say(msg::magic::CARRY_NO_SUCH_THING);
             return Spent::Nothing;
         };
         let def = content.object(stack.object);
         // A blank scroll is paper, until a wizard writes on it (`scribe.rs`).
         if content.blank_scroll() == Some(stack.object) {
-            self.say("There is nothing written on it.");
+            self.say(msg::magic::NOTHING_WRITTEN);
             return Spent::Nothing;
         }
         // A grimoire's reading is a study of its spell (`learn.rs`).
         if let Some(spell) = def.grimoire {
             if target.is_some() {
-                self.say("A grimoire is read, not aimed: `read:a`.");
+                self.say(msg::magic::GRIMOIRE_NOT_AIMED);
                 return Spent::Nothing;
             }
             return self.start_study(item, spell);
         }
         let Some(reading) = &def.read else {
-            let what = self.lore().describe(&stack.single());
-            self.say(format!("You cannot read {what}."));
+            let what = self.lore().phrase(&stack.single());
+            self.say(Msg::new(msg::magic::CANNOT_READ).role("what", what));
             return Spent::Nothing;
         };
         match (reading, target) {
             (Reading::Cleanse(_), Some(_)) => {
-                self.say("It is read on yourself: `read:a`.");
+                self.say(msg::magic::READ_ON_YOURSELF);
                 Spent::Nothing
             }
             (&Reading::Cleanse(cleansing), None) => {
@@ -100,11 +98,11 @@ impl World {
                 }
             }
             (Reading::Cast(scroll), Some(ReadTarget::Cell(_)) | None) if scroll.on_item => {
-                self.say("Read it on what? Name a stack you carry: `read:a:b`.");
+                self.say(msg::magic::READ_IT_ON_WHAT);
                 Spent::Nothing
             }
             (Reading::Cast(_), Some(ReadTarget::Item(_))) if !reading.on_item() => {
-                self.say("Read it at what? Name a cell to aim at: `read:a:12,5`.");
+                self.say(msg::magic::READ_IT_AT_WHAT);
                 Spent::Nothing
             }
             (Reading::Cast(scroll), target) => {
@@ -124,11 +122,11 @@ impl World {
     /// labelled ZUNBAR."), and, if they did not know its type, what it turned out to be ("It is
     /// a scroll of fireball."): reading a scroll identifies its type.
     pub(super) fn say_read(&mut self, scroll: &Stack) {
-        let title = self.lore().title(scroll);
-        self.say(format!("You read the {title}."));
+        let title = self.lore().title_phrase(scroll);
+        self.say(Msg::new(msg::magic::READ_THE).role("what", title));
         if self.learn_scroll(scroll.object) {
-            let what = self.content.object(scroll.object).describe(1);
-            self.say(format!("It is {what}."));
+            let what = Phrase::id(format!("object:{}", self.content.object(scroll.object).id));
+            self.say(Msg::new(msg::magic::IT_IS).role("what", what.count(1)));
         }
     }
 
@@ -218,7 +216,7 @@ impl World {
                 // A force blast's (`spell_type.rs`).
                 Event::DoorBroken { pos } => {
                     if self.perception.is_visible(pos) {
-                        said.push("The door crashes open!".into());
+                        said.push(msg::doors::CRASHES_OPEN.into());
                     }
                     events.push(event);
                 }

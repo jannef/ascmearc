@@ -289,9 +289,10 @@ fn ammunition_is_refused_at_the_anvil() {
     w.player_mut().inventory.push(Stack::new(arrow, 12));
     w.player_mut().inventory.push(fine);
     let before = w.state.time;
+    let ammunition = crate::test_support::english_of(&c, &super::temper::AMMUNITION.into());
     for item in [0, 1] {
         w.apply(&Action::Temper { item });
-        assert!(said(&w, super::temper::AMMUNITION), "{item}");
+        assert!(said(&w, &ammunition), "{item}");
     }
     assert_eq!(w.state.time, before, "refused, no time");
     let pack = &w.state.player().inventory;
