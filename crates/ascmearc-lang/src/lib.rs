@@ -3,8 +3,8 @@
 //!
 //! Core says a [`Msg`]: a template id and typed arguments by role, where a thing or a creature is
 //! a [`Phrase`] as the player perceived it. The log keeps these as [`Entry`]s, never English; a
-//! [`Language`] renders them from its template files with its [`Morphology`] (`en`, `generic`;
-//! `fi` is L10), falling back along a chain to English and then to the message id. Rendering is
+//! [`Language`] renders them from its template files with its [`Morphology`] (`en`, `fi`,
+//! `generic`), falling back along a chain to English and then to the message id. Rendering is
 //! total: a string for every entry, no panic on anything a translator or a mod writes, and no
 //! world state, so wording can never feed back into the simulation.
 //!
@@ -26,7 +26,7 @@ mod proptests;
 pub use lang::{LangError, LangFile};
 pub use lexicon::{LexWord, Lexicon, MapLexicon, NoLexicon};
 pub use message::{Arg, Entry, LITERAL, MessageId, Msg, Role};
-pub use morphology::{Conj, FormError, Morphology, ParseError, en, generic};
+pub use morphology::{Conj, FormError, Morphology, ParseError, en, fi, generic};
 pub use phrase::{Gender, Modifier, Note, Person, Phrase, Word};
 pub use register::{Register, Registers};
 pub use render::{Keys, Language, RenderError, render_chain, written_key};

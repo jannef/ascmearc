@@ -8,6 +8,11 @@
 //! in dialogue files, UI entries wider than their `width`, and (English only, a warning) message
 //! ids no code names. `--stamp` writes `of` into the entries that lack one, `--restamp` also
 //! refreshes the stale ones; the diff is the review.
+//!
+//! `--forms fi [WORD...]` and `--suggest fi <KOTUS_XML> [WORD...]` are the Finnish translator's
+//! tools (`lang/fi_tools.rs`).
+
+mod fi_tools;
 
 use crate::workspace_root;
 use ascmearc_lang::en::Plurals;
@@ -32,6 +37,8 @@ const KEY_ROLE: &str = "key";
 pub enum Mode {
     Check { strict: Vec<String> },
     Stamp { code: String, restamp: bool },
+    Forms { words: Vec<String> },
+    Suggest { kotus: PathBuf, words: Vec<String> },
 }
 
 pub struct Options {
@@ -40,6 +47,9 @@ pub struct Options {
 }
 
 pub fn parse_mode(args: &[String]) -> Result<Options, String> {
+    if let Some(mode) = parse_fi_tools(args)? {
+        return Ok(Options { mode, dir: None });
+    }
     let mut strict = Vec::new();
     let mut stamp = None;
     let mut restamp = false;
@@ -63,7 +73,41 @@ pub fn parse_mode(args: &[String]) -> Result<Options, String> {
     Ok(Options { mode, dir })
 }
 
+/// The `fi` tools take their own positional arguments: `--forms fi [WORD...]`,
+/// `--suggest fi <KOTUS_XML> [WORD...]`.
+fn parse_fi_tools(args: &[String]) -> Result<Option<Mode>, String> {
+    let usage = fi_tools::USAGE;
+    match args {
+        [flag, code, rest @ ..] if flag == "--forms" || flag == "--suggest" => {
+            if code != "fi" {
+                return Err(format!("only `fi` has these tools ({usage})"));
+            }
+            if flag == "--forms" {
+                return Ok(Some(Mode::Forms {
+                    words: rest.to_vec(),
+                }));
+            }
+            let [kotus, words @ ..] = rest else {
+                return Err(format!("--suggest fi needs the Kotus XML ({usage})"));
+            };
+            Ok(Some(Mode::Suggest {
+                kotus: PathBuf::from(kotus),
+                words: words.to_vec(),
+            }))
+        }
+        [flag] if flag == "--forms" || flag == "--suggest" => {
+            Err(format!("{flag} needs a language code ({usage})"))
+        }
+        _ => Ok(None),
+    }
+}
+
 pub fn run(options: Options) -> Result<(), String> {
+    match &options.mode {
+        Mode::Forms { words } => return fi_tools::forms_cmd(words),
+        Mode::Suggest { kotus, words } => return fi_tools::suggest_cmd(kotus, words),
+        _ => {}
+    }
     let default_dir = workspace_root().join("assets/lang");
     let dir = options.dir.clone().unwrap_or(default_dir);
     let mut langs = load(&dir)?;
@@ -94,6 +138,7 @@ pub fn run(options: Options) -> Result<(), String> {
                 ))
             }
         }
+        Mode::Forms { .. } | Mode::Suggest { .. } => unreachable!("handled above"),
         Mode::Stamp { code, restamp } => {
             if code == ENGLISH {
                 return Err("English is the source: it carries no `of`".into());
@@ -724,6 +769,28 @@ fn stamp_value(key: &str, value: &str, hash: &str) -> Result<String, String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn args(words: &[&str]) -> Vec<String> {
+        words.iter().map(|w| w.to_string()).collect()
+    }
+
+    #[test]
+    fn the_fi_tools_parse_their_own_arguments() {
+        let forms = parse_mode(&args(&["--forms", "fi", "miekka"])).unwrap();
+        assert!(matches!(forms.mode, Mode::Forms { ref words } if words == &["miekka"]));
+        let suggest = parse_mode(&args(&["--suggest", "fi", "k.xml", "pöytä"])).unwrap();
+        assert!(
+            matches!(suggest.mode, Mode::Suggest { ref kotus, ref words }
+            if kotus == Path::new("k.xml") && words == &["pöytä"])
+        );
+        assert!(parse_mode(&args(&["--forms", "sv"])).is_err());
+        assert!(parse_mode(&args(&["--suggest", "fi"])).is_err());
+        assert!(parse_mode(&args(&["--forms"])).is_err());
+        assert!(matches!(
+            parse_mode(&args(&["--check"])).unwrap().mode,
+            Mode::Check { .. }
+        ));
+    }
 
     const EN_LANG: &str = "name = \"English\"\ncode = \"en\"\nmorphology = \"en\"\n";
     const EN_MSG: &str =

@@ -27,7 +27,7 @@ Rust is pinned in `rust-toolchain.toml`; cargo is in `~/.cargo/bin` (in a fresh 
 | Release configuration | `cargo build -p ascmearc -p ascmearc-cli` (the plain build: the test world, the `showcase` feature, is opt-in) |
 | Regenerate the vast level | `cargo xtask gen-vast` (deterministic, never hand-edit; `--check` after touching `xtask/src/vast.rs`) |
 | Check the docs' code paths | `cargo xtask docs-check` |
-| Check the language files | `cargo xtask lang` (`--stamp CODE` writes the `of` hashes; `docs/dev/localization.md`) |
+| Check the language files | `cargo xtask lang` (`--stamp CODE` writes the `of` hashes; `--forms fi [WORD...]` prints Finnish forms for review, `--suggest fi <kotus.xml>` Kotus classes; `docs/dev/localization.md`) |
 | Third-party notices | `cargo xtask licenses`. **Run it after changing dependencies** |
 | Player wiki tables | `cargo xtask wiki`, `--build`, `--check-links` (`docs/dev/wiki.md`) |
 | Golden screenshots | `cargo xtask golden` (authoritative on Linux only), `--local`, `--update` |
