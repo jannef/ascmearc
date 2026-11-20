@@ -159,6 +159,15 @@ impl<'a> Lore<'a> {
         }
     }
 
+    /// One `object` as the player knows it, as a phrase: [`Lore::describe_object`]'s words, for a
+    /// message to name a type by (an unidentified one by its label, never its true kind).
+    pub fn object_phrase(&self, object: ObjectId) -> Phrase {
+        match self.label_phrase(object) {
+            Some(label) => label,
+            None => Phrase::id(format!("object:{}", self.content.object(object).id)),
+        }
+    }
+
     /// `stack` as the player knows it: a labelled scroll by its label, "2 scrolls labelled
     /// ZUNBAR", anything else as [`Stack::describe`] says: [`Lore::phrase`] counted.
     pub fn describe(&self, stack: &Stack) -> String {

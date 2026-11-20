@@ -148,7 +148,7 @@ impl World {
     fn beast_phrase(&self, id: ActorId) -> Phrase {
         match self.state.actors.get(&id) {
             Some(actor) => self.called_phrase(actor),
-            None => fight::word("the beast"),
+            None => fight::word("beast"),
         }
     }
 

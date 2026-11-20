@@ -5,8 +5,9 @@
 #
 # Roles: `who` is the one a line is about, `what` an item (a phrase built where it is said),
 # `status` a status as it looks ("dazed"), `came` the clause that says what stopped a long action
-# ("A kobold comes into view"), `time` how long it went on ("3 minutes"). `feel`, `more`, `doing`,
-# and `words` are English words from the data, text until that data's text is converted.
+# ("A kobold comes into view"), `time` how long it went on ("3 minutes"), `disease` a disease with
+# whose it is. `feel`, `more`, `doing`, `what` in `gift_passes`, and `smoker` are English words
+# from core or the data, text until those words are converted.
 
 blink_elsewhere = "In a blink, you are elsewhere."
 break_free = "You break free."
@@ -29,8 +30,9 @@ die = "You die..."
 draught_kept = "There is enough left in the flask for another draught."
 drink = "You drink the {what:bare}."
 drown = "You drown..."
-# `words`: the disease in a sentence ("the sickness", "your wolf's sickness").
-ease_somewhat = "You ease {words:bare} somewhat."
+# `disease`: the disease treated, whose it is said in place of the article ("the sickness", "your
+# wolf's sickness").
+ease_somewhat = "You ease {disease:the} somewhat."
 eat = "You eat {what:the}."
 eat_your_fill = "You eat your fill; the rest does you no good."
 elixir_no_difference = "You feel no different."
@@ -62,8 +64,8 @@ no_ally_there = "You have no ally there."
 no_disease = "There is no disease `{id:bare}`."
 no_fuller = "You feel no fuller."
 no_longer = "{who:The} {who:is} no longer {status:bare}."
-# `words`: the disease in a sentence.
-no_more_for = "You can do no more for {words:bare}."
+# `disease`: as above.
+no_more_for = "You can do no more for {disease:the}."
 no_need_to_eat = "You feel no need to eat."
 # A dev action's: `id` as typed.
 no_status = "There is no status `{id:bare}`."

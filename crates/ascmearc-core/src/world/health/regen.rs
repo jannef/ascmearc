@@ -32,7 +32,7 @@ impl World {
         {
             return;
         }
-        let who = self.phrase_of(id);
+        let who = self.called_phrase(actor);
         self.say(Msg::new(msg::health::WOUNDS_CLOSE).role("who", who));
     }
 }

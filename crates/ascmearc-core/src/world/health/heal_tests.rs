@@ -475,3 +475,25 @@ fn heal_tends_an_ally_beside_the_player_and_not_a_far_one() {
     assert!(!out.took_turn && out.elapsed.is_zero());
     assert_eq!(last_message(&w), "You have no ally there.");
 }
+
+#[test]
+fn an_allys_disease_is_named_as_theirs() {
+    let mut w = world("sage");
+    train(&mut w, 100);
+    w.apply(&parse_actions("ally:wolf").expect("action")[0]);
+    let (wolf, dir) = ally_beside(&w).expect("the wolf beside the player");
+    let fever = w.content().disease_id("filth_fever").expect("filth fever");
+    assert!(w.infect(wolf, fever, None));
+    let infection = (w.state.actors.get_mut(&wolf).expect("wolf").diseases)
+        .get_mut(fever)
+        .expect("caught");
+    infection.shown = true;
+    let text = format!("heal:filth_fever:{dir}");
+    assert!(w.apply(&parse_actions(&text).expect("action")[0]).took_turn);
+    let said = last_message(&w);
+    assert!(
+        said == "You ease your wolf's sickness somewhat."
+            || said == "You can do no more for your wolf's sickness.",
+        "{said}"
+    );
+}
