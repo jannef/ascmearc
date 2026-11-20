@@ -244,6 +244,13 @@ lower-case Rust names, or the build fails. `msg.rs`'s test checks that the runti
 same ids and roles in the content. Editing a message file rebuilds core (the ids are in it); the
 text itself is read at run time.
 
+**An id is not text.** `MessageId` and `Role` (`message.rs`) do not implement `Display` (#2011),
+so when a function moves from English text to a message id, every `format!("{}", …)` of it stops
+compiling instead of showing "words.stat_strength" to the player. Player text renders the id
+through the language (`text::message`, the `english` helpers); a dump, the checker, an error, or
+a map key takes `.as_str()`. Keep it so: add no `Display`, `ToString`, or `Deref<Target = str>`
+to either.
+
 **English in the content.** `Content::load` reads English after the plurals (`content/english.rs`):
 `Content::english()` is the `Language`, `Content::lexicon()` its lexicon (the content itself,
 "Phrases"). Without `lang/en/lang.toml` it is `Language::english(plurals)`, no templates: literal

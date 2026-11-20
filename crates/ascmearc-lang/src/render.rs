@@ -330,7 +330,7 @@ pub fn render_chain(
             return text;
         }
     }
-    let mut text = format!("[{}]", entry.id);
+    let mut text = format!("[{}]", entry.id.as_str());
     if entry.count > 1 {
         let repeat = chain.first().map_or(" (×{n})", |l| l.repeat.as_str());
         text.push_str(&repeat.replace("{n}", &entry.count.to_string()));
@@ -374,7 +374,7 @@ impl<'a> Ctx<'a> {
             return ctx.arg(DATA_LINE_ROLE, line, "bare");
         }
         let template = (self.language.templates.get(id.as_str()))
-            .ok_or_else(|| RenderError::NoTemplate(id.to_string()))?;
+            .ok_or_else(|| RenderError::NoTemplate(id.as_str().to_owned()))?;
         ctx.template(template)
     }
 

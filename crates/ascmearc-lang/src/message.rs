@@ -7,11 +7,14 @@ use crate::phrase::Phrase;
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use std::collections::BTreeMap;
-use std::fmt;
 
 /// A template's id, `"<file>.<entry>"` (`combat.hit`). The constants are generated at build time
 /// from `assets/lang/en/messages/*.toml` (L2), so a typo is a compile error; a loaded save gives
 /// an owned one.
+///
+/// Deliberately not `Display` (#2011): an id is never player text, so `format!("{}", id)` must
+/// not compile. The player sees a message only through [`crate::Language::render`]; a dump, a
+/// checker, or a key takes the id with [`MessageId::as_str`].
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 #[serde(transparent)]
 pub struct MessageId(Cow<'static, str>);
@@ -32,14 +35,8 @@ impl MessageId {
     }
 }
 
-impl fmt::Display for MessageId {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_str(&self.0)
-    }
-}
-
 /// A role an argument fills: a short lower-case word the template declares (`actor`, `target`,
-/// `what`, `who`, `count`, `flavour`).
+/// `what`, `who`, `count`, `flavour`). Not `Display`, like [`MessageId`]: [`Role::as_str`].
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 #[serde(transparent)]
 pub struct Role(Cow<'static, str>);
@@ -70,12 +67,6 @@ impl std::borrow::Borrow<str> for Role {
 impl From<String> for Role {
     fn from(role: String) -> Self {
         Self(Cow::Owned(role))
-    }
-}
-
-impl fmt::Display for Role {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_str(&self.0)
     }
 }
 
