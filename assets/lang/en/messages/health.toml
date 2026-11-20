@@ -1,14 +1,15 @@
-# Health (`world/health/`): statuses, diseases, healing, hunger, eating, drinking, pipes, flasks, and
-# how the player dies of hunger, choking, or drowning (`Cause::message`, `world/combat/fight.rs`).
-# Ids alphabetical (`docs/dev/localization.md` "Literal lines"). What the data writes (a status's
-# start and end lines, a corpse's `on_eat` message) is said by its key in the data, not here
-# (`docs/dev/localization.md` "Lines of data").
+# Health (`world/health/`): statuses, diseases, healing, hunger, eating, drinking, pipes, flasks,
+# and how the player dies of hunger, choking, or drowning (`Cause::message`,
+# `world/combat/fight.rs`). Ids alphabetical (`docs/dev/localization.md` "Literal lines"). What the
+# data writes (a status's start and end lines, a corpse's `on_eat` message) is said by its key in
+# the data, not here (`docs/dev/localization.md` "Lines of data").
 #
 # Roles: `who` is the one a line is about, `what` an item (a phrase built where it is said),
 # `status` a status as it looks ("dazed"), `came` the clause that says what stopped a long action
-# ("A kobold comes into view"), `time` how long it went on ("3 minutes"), `disease` a disease with
-# whose it is. `feel`, `more`, `doing`, and `what` in `gift_passes` are core's English words, text
-# until they are converted.
+# ("A kobold comes into view"), `time` how long it went on ("3 minutes", a `words.toml` message),
+# `disease` a disease with whose it is. `feel` and `more` are a stat's comparative and `what` in
+# `gift_passes` its gift, words core picks (`words.toml`); `doing` is core's English word, text
+# until it is converted.
 
 blink_elsewhere = "In a blink, you are elsewhere."
 break_free = "You break free."
@@ -30,7 +31,7 @@ crash_of_glass = "You hear a crash of glass."
 # A drain that took from no stat.
 deathly_chill = "A deathly chill passes through you."
 die = "You die..."
-# `stat`: the stat a drain took from, lower case ("strength"), core's word.
+# `stat`: the stat a drain took from ("strength").
 drained = "You feel your {stat:bare} drain away!"
 draught_kept = "There is enough left in the flask for another draught."
 drink = "You drink {what:the}."

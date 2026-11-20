@@ -3,6 +3,7 @@
 //! `data/animated/`, read through the generated creature types themselves.
 
 use super::creatures::on_hit;
+use super::util::stat_abbrev;
 use super::util::{capital, damage_link, glyph, signed};
 use ascmearc_core::content::{Content, CreatureDef, Numbers};
 use ascmearc_core::item_parts::ItemPart;
@@ -23,7 +24,7 @@ pub(super) fn animated_tiers(content: &Content) -> String {
             .filter_map(|s| {
                 tier.stats
                     .get(s)
-                    .map(|v| format!("{} {}", s.abbrev(), signed(*v)))
+                    .map(|v| format!("{} {}", stat_abbrev(s), signed(*v)))
             })
             .collect();
         let _ = writeln!(

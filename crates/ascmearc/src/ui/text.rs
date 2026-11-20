@@ -131,6 +131,21 @@ pub fn speech(content: &Content, speech: &Speech) -> String {
     ascmearc_core::messages::speech_in(content, &language_code(), speech)
 }
 
+/// A word core picks (a message id: `Stat::name`, `Hunger::name`) or a message (a span of time,
+/// `Duration::spoken`) alone in the current language, in `form`: `bare`, or `Bare` for a
+/// label's capital ("Strength", "Not hungry").
+pub fn word(word: impl Into<Arg>, form: &str) -> String {
+    let content = content();
+    let word = word.into();
+    #[cfg(test)]
+    if let Some(shown) = SHOWN_IN.with(|l| l.borrow().clone())
+        && let Ok(text) = shown.try_arg(&word, form, content.lexicon(), &written_key)
+    {
+        return text;
+    }
+    ascmearc_core::messages::arg_in(&content, &language_code(), &word, form)
+}
+
 #[cfg(test)]
 thread_local! {
     /// The language this thread's UI text is shown in, English as its fallback: the screen

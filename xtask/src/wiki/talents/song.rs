@@ -1,6 +1,7 @@
 //! What the song talents do, in the wiki's words (`ascmearc_core::talent::SongEffect`, #1495): one
 //! arm a variant, beside the area's enum and sum in `ascmearc-core/src/talent/song.rs`.
 
+use super::super::util::stat_name;
 use super::{buff, resource_name};
 use ascmearc_core::content::{Content, SongOn};
 use ascmearc_core::noise::SONG_NOISE;
@@ -32,7 +33,7 @@ pub(super) fn text(content: &Content, effect: &SongEffect) -> String {
                 (SongOn::Hearers, Some(stat)) => format!(
                     "each hostile creature that hears it checks {} against {difficulty} plus \
                      your Music's song difficulty; failed, it suffers",
-                    stat.name()
+                    stat_name(stat)
                 ),
                 _ => "you suffer".to_string(),
             };

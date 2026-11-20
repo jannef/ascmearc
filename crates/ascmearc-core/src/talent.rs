@@ -650,7 +650,7 @@ impl Refusal {
             Refusal::Held => named(msg::character::TALENT_HELD),
             Refusal::Stripped => msg::character::TALENT_STRIPPED.into(),
             Refusal::Unmet(needs) => {
-                let words = needs.iter().map(|n| Arg::Text(n.words(content))).collect();
+                let words = needs.iter().map(|n| n.arg(content)).collect();
                 named(msg::character::TALENT_UNMET).role("needs", Arg::List(words))
             }
         }

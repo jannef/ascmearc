@@ -99,6 +99,6 @@ pub(super) fn kept_rows(view: &PerceptionView<'_>, kept: Kept) -> Vec<String> {
     };
     vec![format!(
         "{head}{at}: {}, order {order}{collar}",
-        ally.health.word()
+        content.english_word(ally.health.word(), "bare")
     )]
 }

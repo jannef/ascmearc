@@ -1,6 +1,7 @@
 //! Magic items: rarity, base items, prefixes, suffixes, and rare names.
 
 use super::order;
+use super::util::stat_name;
 use super::util::{capital, percent_of};
 use super::vision::glow_word;
 use ascmearc_core::content::Effect as ItemEffect;
@@ -262,7 +263,7 @@ fn effect_words(content: &Content, effect: ItemEffect) -> String {
         ItemEffect::ActiveStamina => "weapon feats cost less of a resource".into(),
         ItemEffect::ResourceOnKill => format!("a resource on a kill within {siphon} cells"),
         ItemEffect::Resistance => "resistance to a kind of damage, in percent".into(),
-        ItemEffect::Stat(stat) => stat.name().into(),
+        ItemEffect::Stat(stat) => stat_name(stat),
         ItemEffect::MoveSpeed => "you move faster".into(),
         ItemEffect::Carry => "carrying capacity".into(),
         ItemEffect::Stealth => "quieter footsteps".into(),

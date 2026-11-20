@@ -459,7 +459,7 @@ fn takes(content: &Content, level: &LevelState, player: &Actor, recipe: &RecipeD
     if seconds > 0 {
         words.push(format!(
             "about {}",
-            Duration::seconds(u64::from(seconds)).spoken()
+            content.english_word(Duration::seconds(u64::from(seconds)).spoken(), "bare")
         ));
     }
     words.join(", ")

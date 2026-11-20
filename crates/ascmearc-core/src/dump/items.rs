@@ -75,7 +75,9 @@ pub(super) fn inventory_rows(view: &PerceptionView<'_>) -> Vec<String> {
         "carried {} ({}: {}), total weight {}",
         format_weight(weight.carried),
         load.burden().id(),
-        load.over().join(", "),
+        load.over()
+            .map(|m| crate::messages::english_msg(content, &m))
+            .join(", "),
         format_weight(weight.total())
     ));
     rows

@@ -22,7 +22,7 @@ use super::character_screen::{birth_parts, fit_joined, fit_parts};
 use super::cursor;
 use super::menu::{HINTS, Nav, Panel, Press, truncated, wrap};
 use super::screens::{MenuChoice, ScreenAction, ScreenName};
-use super::text::{UiText, chargen_screen as T, ui, ui_with};
+use super::text::{UiText, chargen_screen as T, ui, ui_with, word};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use ascmearc_core::character::{CharacterSpec, Gender, NAMELESS, Start, check_name, random_name};
@@ -262,7 +262,7 @@ struct Choice {
 pub(super) fn adjustments(by: &PerStat<Dice>) -> String {
     let parts: Vec<String> = (by.iter())
         .filter(|(_, v)| !v.is_zero())
-        .map(|(stat, v)| format!("{} {}", stat.abbrev(), dice_text(v)))
+        .map(|(stat, v)| format!("{} {}", word(stat.abbrev(), "bare"), dice_text(v)))
         .collect();
     if parts.is_empty() {
         ui(T::NO_STAT_CHANGES)
@@ -744,8 +744,8 @@ impl SummaryScreen {
                 for (i, (stat, score)) in start.stats.scores().iter().enumerate() {
                     let row = y + i as i32;
                     if fits(row) {
-                        console.print(x + 2, row, stat.abbrev(), TEXT_DIM);
-                        console.print(x + 6, row, stat.name(), TEXT);
+                        console.print(x + 2, row, &word(stat.abbrev(), "bare"), TEXT_DIM);
+                        console.print(x + 6, row, &word(stat.name(), "Bare"), TEXT);
                         console.print(x + 20, row, &format!("{score:>2}"), TEXT);
                     }
                 }
@@ -998,7 +998,10 @@ mod tests {
                 let text = text(&console);
                 assert!(!text.to_lowercase().contains("seed"), "{text}");
                 for stat in Stat::ALL {
-                    assert!(!text.contains(stat.name()), "{stat:?} in\n{text}");
+                    assert!(
+                        !text.contains(&word(stat.name(), "Bare")),
+                        "{stat:?} in\n{text}"
+                    );
                 }
             }
         }
@@ -1203,7 +1206,11 @@ mod tests {
             .expect("world");
         let view = world.perception();
         for (stat, score) in view.own_scores().iter() {
-            let row = format!("{}  {:<14}{score:>2}", stat.abbrev(), stat.name());
+            let row = format!(
+                "{}  {:<14}{score:>2}",
+                word(stat.abbrev(), "bare"),
+                word(stat.name(), "Bare")
+            );
             assert!(text.contains(&row), "{row:?} in\n{text}");
         }
         // In a narrow console the sign goes on the next line.

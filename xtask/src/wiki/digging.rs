@@ -1,5 +1,6 @@
 //! Digging: the walls that break and how long each tool takes through them.
 
+use super::util::time_words;
 use super::util::{article, capital, glyph, yes};
 use ascmearc_core::content::{
     ActionKind, BASE_TURN, Content, NORMAL_SPEED, TerrainDef, TrapEffect, price,
@@ -17,13 +18,13 @@ fn dig_time(content: &Content, hardness: u16, power: u16, strength: u8) -> Strin
     let seconds = u64::try_from(turn * turns / i64::from(NORMAL_SPEED)).unwrap_or(0);
     let (minutes, rest) = (seconds / 60, seconds % 60);
     match (minutes, rest) {
-        (0, _) | (_, 0) => Duration::seconds(seconds).spoken(),
+        (0, _) | (_, 0) => time_words(Duration::seconds(seconds)),
         (1..10, _) => format!(
             "{} {}",
-            Duration::minutes(minutes).spoken(),
-            Duration::seconds(rest).spoken()
+            time_words(Duration::minutes(minutes)),
+            time_words(Duration::seconds(rest))
         ),
-        _ => Duration::minutes((seconds + 30) / 60).spoken(),
+        _ => time_words(Duration::minutes((seconds + 30) / 60)),
     }
 }
 

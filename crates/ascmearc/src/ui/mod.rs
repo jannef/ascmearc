@@ -117,7 +117,7 @@ use bevy::prelude::*;
 use missiles::Missiles;
 use motion::Motion;
 use spells::Spells;
-use text::{r#mod as T, ui, ui_with};
+use text::{r#mod as T, ui, ui_with, word};
 
 const MESSAGE_ROWS: i32 = 2;
 const STATUS_ROWS: i32 = 1;
@@ -768,9 +768,10 @@ fn draw_status(
     // The hunger word's colour, as it worsens.
     if let Some(hunger) = view.own_hunger()
         && let Some(tint) = hunger_tint(hunger)
-        && let Some(x) = segment_x(&line, hunger.name())
+        && let name = word(hunger.name(), "Bare")
+        && let Some(x) = segment_x(&line, &name)
     {
-        console.print(1 + x, y, hunger.name(), tint);
+        console.print(1 + x, y, &name, tint);
     }
     if show_hint {
         console.print(cols - hint_w - 1, y, hint, TEXT_DIM);
@@ -905,8 +906,8 @@ fn conditions(view: &PerceptionView) -> Vec<Segment> {
     let rest = [
         (view.dazzled()).then(|| Segment::new(1, ui(T::DAZZLED))),
         (view.averted()).then(|| Segment::new(1, ui(T::AVERTED))),
-        hunger.map(|h| Segment::new(u8::from(hunger_tint(h).is_none()), h.name())),
-        (burden != Burden::Unburdened).then(|| Segment::new(1, burden.name())),
+        hunger.map(|h| Segment::new(u8::from(hunger_tint(h).is_none()), word(h.name(), "Bare"))),
+        (burden != Burden::Unburdened).then(|| Segment::new(1, word(burden.name(), "Bare"))),
     ];
     effects.chain(rest.into_iter().flatten()).collect()
 }

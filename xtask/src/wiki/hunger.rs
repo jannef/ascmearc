@@ -1,7 +1,9 @@
 //! Hunger: the states, the facts, each race's need, food, and corpses.
 
 use super::order;
+use super::util::stat_name;
 use super::util::{capital, factor, signed};
+use super::util::{time_words, word};
 use ascmearc_core::content::{Content, HungerDef};
 use ascmearc_core::hunger::Hunger;
 use ascmearc_core::object::format_weight;
@@ -14,7 +16,7 @@ use std::fmt::Write as _;
 fn lasts(def: &HungerDef, points: i32, percent: u16) -> String {
     let points = u64::try_from(points).unwrap_or(0);
     let seconds = points * u64::from(def.burn_seconds) * 100 / u64::from(percent.max(1));
-    Duration::seconds(seconds / 60 * 60).spoken()
+    time_words(Duration::seconds(seconds / 60 * 60))
 }
 
 /// A shelf life, exactly: "30 days", "1 day", "36 hours", "8 hours" (food does not show its age in
@@ -27,7 +29,7 @@ fn shelf(d: Option<Duration>) -> String {
     match d.as_seconds() {
         DAY => "1 day".into(),
         s if s > DAY && s % DAY == 0 => format!("{} days", s / DAY),
-        _ => d.spoken(),
+        _ => time_words(d),
     }
 }
 
@@ -43,7 +45,7 @@ pub(super) fn hunger_states(content: &Content) -> String {
     );
     let weak: Vec<String> = (Stat::ALL.iter())
         .filter(|s| def.weak[**s] != 0)
-        .map(|s| format!("{} {}", s.name(), signed(def.weak[*s])))
+        .map(|s| format!("{} {}", stat_name(s), signed(def.weak[*s])))
         .collect();
     let weak = weak.join(", ");
     let (faint, starve) = (def.faint, def.starve);
@@ -82,10 +84,14 @@ pub(super) fn hunger_states(content: &Content) -> String {
                 "as Fainting; no hit points come back, and you lose {} every {}, until you \
                  starve to death",
                 starve.damage,
-                Duration::seconds(u64::from(starve.seconds)).spoken()
+                time_words(Duration::seconds(u64::from(starve.seconds)))
             ),
         };
-        let _ = writeln!(out, "| {} | {range} | {after} | {does} |", state.name());
+        let _ = writeln!(
+            out,
+            "| {} | {range} | {after} | {does} |",
+            word(state.name(), "Bare")
+        );
     }
     out
 }
@@ -115,7 +121,7 @@ pub(super) fn hunger_facts(content: &Content) -> String {
         format!(
             "{} ({})",
             def.start,
-            def.state(def.start).name().to_lowercase()
+            word(def.state(def.start).name(), "bare")
         ),
     );
     row("The most there can be", def.max.to_string());
@@ -144,7 +150,7 @@ pub(super) fn hunger_facts(content: &Content) -> String {
         format!(
             "{} ({}); what made you vomit feeds nothing",
             def.vomit_leaves,
-            def.state(def.vomit_leaves).name().to_lowercase()
+            word(def.state(def.vomit_leaves).name(), "bare")
         ),
     );
     let sick = (def.sickness.as_deref())
@@ -281,10 +287,10 @@ pub(super) fn corpse_effects(content: &Content) -> String {
         }
         for stat in Stat::ALL {
             if let Some(marks) = eat.train.get(&stat) {
-                does.push(format!("{marks} {} marks", stat.name()));
+                does.push(format!("{marks} {} marks", stat_name(stat)));
             }
             if let Some(chance) = eat.widen.get(&stat) {
-                does.push(format!("{chance}% {} potential +1", stat.name()));
+                does.push(format!("{chance}% {} potential +1", stat_name(stat)));
             }
         }
         for (skill, gift) in &eat.skills {

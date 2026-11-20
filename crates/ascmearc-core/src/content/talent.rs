@@ -912,12 +912,28 @@ pub enum Need {
 }
 
 impl Need {
+    /// The prerequisite as an item of a refusal's `needs`: a stat nests its name's message
+    /// (`character.talent_needs_stat`); the rest are [`Need::words`], text until a talent's
+    /// requirements are converted (#1997).
+    pub fn arg(&self, content: &Content) -> crate::lang::Arg {
+        use crate::lang::{Arg, Msg};
+        match self {
+            Need::Stat(stat, score) => Msg::new(crate::msg::character::TALENT_NEEDS_STAT)
+                .role("stat", stat.name())
+                .role("score", i64::from(*score))
+                .into(),
+            other => Arg::Text(other.words(content)),
+        }
+    }
+
     /// The prerequisite in words, as a refusal and the Talents page say it: "Toughness 14",
     /// "Hardy", "Stealth 25", "to be a dwarf".
     pub fn words(&self, content: &Content) -> String {
         match self {
             Need::Talent(id) => content.talents().get(*id).name.clone(),
-            Need::Stat(stat, score) => format!("{} {score}", stat.name()),
+            Need::Stat(stat, score) => {
+                format!("{} {score}", content.english_word(stat.name(), "Bare"))
+            }
             Need::Skill(id, value) => format!("{} {value}", content.skill(*id).name),
             Need::WeaponSkill(id, rank) => {
                 format!("{} {rank}", content.weapon_skills().skill(*id).name)

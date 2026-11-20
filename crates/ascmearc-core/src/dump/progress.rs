@@ -192,7 +192,10 @@ pub(super) fn progress_rows(world: &World) -> Vec<String> {
         .filter_map(|(stat, n)| {
             let stats = &player.stats;
             let price = rules.price_for(n, stats.score(stat), stats.potential(stat))?;
-            Some(format!("{} {n}/{price}", stat.abbrev()))
+            Some(format!(
+                "{} {n}/{price}",
+                world.content().english_word(stat.abbrev(), "bare")
+            ))
         })
         .collect();
     if !marked.is_empty() {
@@ -215,7 +218,10 @@ pub(super) fn progress_rows(world: &World) -> Vec<String> {
         let mods = player.spell_mods(content, def);
         let rung = player.spell_rung(content, def, crate::world::CastBy::Own, &mods);
         let score = player.effective_stats(content).score(ladder.stat);
-        let mut why = vec![format!("{} {score}", ladder.stat.abbrev())];
+        let mut why = vec![format!(
+            "{} {score}",
+            content.english_word(ladder.stat.abbrev(), "bare")
+        )];
         for (name, rungs) in player.spell_rung_sources(content, def) {
             why.push(format!("+{rungs} {name}"));
         }

@@ -295,7 +295,10 @@ fn potion_lines(stack: &Stack, lore: Lore<'_>) -> Vec<Line> {
         }
         Draught::Cure { .. } => format!("Cures {cures} at once"),
         Draught::Mana { .. } => "Restores mana at once".to_string(),
-        Draught::Elixir { stat, .. } => format!("Makes you {} for good", stat.comparative()),
+        Draught::Elixir { stat, .. } => format!(
+            "Makes you {} for good",
+            content.english_word(stat.comparative(), "bare")
+        ),
         Draught::Harm { .. } => "Sickens whoever drinks it".to_string(),
         Draught::Boost { status, severity } => {
             let def = content.status(*status);
@@ -565,7 +568,7 @@ pub fn phrase(rolled: &Rolled<'_>, kind: ItemKind, content: &Content) -> String 
         Effect::ResourceOnKill => {
             format!("+{v} {} on a kill close by", pool_name(rolled, content))
         }
-        Effect::Stat(stat) => format!("+{v} to {}", stat.name()),
+        Effect::Stat(stat) => format!("+{v} to {}", content.english_word(stat.name(), "Bare")),
         Effect::MoveSpeed => format!("you move {}", faster(v)),
         Effect::Carry => format!("+{v} kg carrying capacity"),
         Effect::Stealth => format!("your footsteps are {v}% quieter"),

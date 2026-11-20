@@ -1,6 +1,7 @@
 //! What the vigour talents do, in the wiki's words (`ascmearc_core::talent::VigourEffect`, #1495):
 //! one arm a variant, beside the area's enum and sum in `ascmearc-core/src/talent/vigour.rs`.
 
+use super::super::util::stat_name;
 use crate::wiki::util::signed;
 use ascmearc_core::content::Content;
 use ascmearc_core::talent::VigourEffect;
@@ -23,7 +24,11 @@ pub(super) fn text(content: &Content, effect: &VigourEffect) -> String {
             )
         }
         VigourEffect::Stat { stat, value } => {
-            format!("{} {} (score and potential)", stat.name(), signed(value))
+            format!(
+                "{} {} (score and potential)",
+                stat_name(stat),
+                signed(value)
+            )
         }
         VigourEffect::HealingPercent { value } => format!("healing pace {}", percent(value)),
         VigourEffect::DiseaseImmune => "you never catch a disease".to_string(),
@@ -35,7 +40,7 @@ pub(super) fn text(content: &Content, effect: &VigourEffect) -> String {
             None => format!("immune to {}: it never takes", status(&to)),
         },
         VigourEffect::NoPenaltyTo { stat } => {
-            format!("no status lowers your {}", stat.name())
+            format!("no status lowers your {}", stat_name(stat))
         }
         VigourEffect::RaisePercent { status: id, value } => {
             format!(
@@ -109,7 +114,7 @@ pub(super) fn text(content: &Content, effect: &VigourEffect) -> String {
             format!("checks against a drain {}", signed(value))
         }
         VigourEffect::Checks { stat, value } => {
-            format!("every {} check {}", stat.name(), signed(value))
+            format!("every {} check {}", stat_name(stat), signed(value))
         }
         VigourEffect::DiseaseIntervalPercent { value } => format!(
             "a disease's progressions come {} further apart",
@@ -126,7 +131,7 @@ pub(super) fn text(content: &Content, effect: &VigourEffect) -> String {
             ..
         } => {
             let stat = stat.map_or_else(String::new, |s| {
-                format!(", and {} {} for good", s.name(), signed(by))
+                format!(", and {} {} for good", stat_name(s), signed(by))
             });
             format!(
                 "once in a life, what would kill you (not starving or choking) leaves you at 1 hit \

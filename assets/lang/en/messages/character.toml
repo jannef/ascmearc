@@ -121,10 +121,13 @@ talent_granted = "{talent:Bare} is given, not chosen."
 talent_held = "You have {talent:bare} already."
 # `choice`: what the talent is chosen for (a `choice_*` entry).
 talent_needs_choice = "{talent:Bare} needs a choice: {choice:bare}."
+# One stat a talent needs, an item of `talent_unmet`'s `needs` (`Need::arg`): `stat` its name
+# (`words.toml`), `score` the score needed ("Strength 13").
+talent_needs_stat = "{stat:Bare} {score}"
 talent_stripped = "The craving has taken this from you."
 talent_takes_no_choice = "{talent:Bare} takes no choice."
-# `needs`: the prerequisites not met, a list of their words ("Strength 13"; text until a talent's
-# requirements are converted, #1997).
+# `needs`: the prerequisites not met, a list: a stat a `talent_needs_stat` ("Strength 13"), the
+# rest their words as text until a talent's requirements are converted (#1997).
 talent_unmet = "You cannot take {talent:bare}: you need {needs:and}."
 # Warnings that a stat's pile has come within reach of a drop (`stat_deeds.rs`).
 warn_dexterity = "Your hands feel less sure."

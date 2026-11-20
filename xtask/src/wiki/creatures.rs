@@ -7,6 +7,7 @@ use super::order;
 use super::util::{
     Term, anchored, at_speed, capital, damage_link, damage_text, glyph, link, signed, yes,
 };
+use super::util::{stat_abbrev, stat_name};
 use ascmearc_core::action::AttackKind;
 use ascmearc_core::burden::{self, Burden};
 use ascmearc_core::combat::Category;
@@ -443,7 +444,7 @@ fn score(score: u8) -> String {
 pub(super) fn creature_stats(content: &Content) -> String {
     let stats: String = Stat::ALL
         .iter()
-        .map(|s| format!(" {} |", s.abbrev()))
+        .map(|s| format!(" {} |", stat_abbrev(s)))
         .collect();
     let mut out = format!(
         "{}| Creature |{stats}\n|---|{}\n",
@@ -611,7 +612,7 @@ fn riders(content: &Content, riders: &[OnHit]) -> Vec<String> {
                 let degrees = if severity == 1 { "degree" } else { "degrees" };
                 let resisted = match check {
                     Some((stat, difficulty)) => {
-                        format!(", unless a {} check against {difficulty}", stat.name())
+                        format!(", unless a {} check against {difficulty}", stat_name(stat))
                     }
                     None => String::new(),
                 };
@@ -1238,7 +1239,7 @@ pub(super) fn creature_auras(content: &Content) -> String {
                     None => format!("{} cells, in sight", a.radius),
                 };
                 let check = match a.check {
-                    Some((stat, d)) => format!("{} {d}", stat.name()),
+                    Some((stat, d)) => format!("{} {d}", stat_name(stat)),
                     None => "nothing".into(),
                 };
                 (aura, reach, check, format!("{} s", a.every))

@@ -4,7 +4,7 @@
 //! catch the reader. `input` decides when to ask; these say what, in the words of
 //! `assets/lang/en/ui/step_dialogs.toml`.
 
-use super::text::{step_dialogs as T, ui, ui_with};
+use super::text::{step_dialogs as T, ui, ui_with, word};
 use crate::ui::{Aim, AimKind, Dialog, ScreenAction, ScreenName};
 use ascmearc_core::ability::Ability;
 use ascmearc_core::content::{LevelKind, Offer, RecipeUse, TerrainId};
@@ -189,7 +189,7 @@ fn hunger_dialog(view: &PerceptionView<'_>, dir: Dir) -> Option<Dialog> {
         return None;
     }
     Some(
-        Dialog::new(hunger.name(), ui(text))
+        Dialog::new(word(hunger.name(), "Bare"), ui(text))
             .accept(ui(T::GO_ON), Action::Move(dir))
             .cancel(ui(T::STAY), ScreenAction::Close),
     )

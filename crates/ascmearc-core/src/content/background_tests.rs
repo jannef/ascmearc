@@ -110,7 +110,7 @@ fn texts_hide_the_numbers() {
         let text = line.text.to_lowercase();
         let words: Vec<&str> = text.split(|c: char| !c.is_alphanumeric()).collect();
         for stat in Stat::ALL {
-            let name = stat.name().to_lowercase();
+            let name = CONTENT.english_word(stat.name(), "bare");
             assert!(!text.contains(&name), "{}: {name}", line.id);
         }
         for word in banned {
