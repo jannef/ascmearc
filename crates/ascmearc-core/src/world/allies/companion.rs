@@ -19,7 +19,7 @@
 //!   when its eyes find none; "Snel growls at the dark." once per thing scented unseen.
 //!
 //! Its name is said instead of "your hound" wherever an ally is named ([`World::called`],
-//! `fight::End::Named`, `ally.rs::pack_phrase`). It dies as any creature does, leaving a corpse.
+//! `fight::End::Named`, `ally.rs::pack_args`). It dies as any creature does, leaving a corpse.
 
 use crate::character::CharacterSpec;
 use crate::combat::Profile;

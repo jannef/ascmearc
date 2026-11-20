@@ -9,12 +9,13 @@ built from what the player perceives, items are named by phrases English renders
 checker (L7)"); **L10**, the `fi` morphology (#1893, "The `fi` module"); and **L6a**, the UI
 text path (#1900): the app's words in `assets/lang/en/ui/`, the abilities screen converted ("UI
 text"), with its widths in the screens' layout, not the text (#1908), and the further L6 parts:
-the controls, settings, and mods screens (#1935) and the object and rig screens (#1928); **L4a**
-and **L4i**, `world/allies/` (#1912) and `world/health/` (#1920) say their lines from templates
+the controls, settings, and mods screens (#1935) and the object and rig screens (#1928); **L4a**,
+**L4i**, and **L4j**, `world/allies/` (#1912), `world/health/` (#1920), and `world/levels/` (#1921)
+say their lines from templates
 ("Literal lines"); and **L5**, dialogue (#1888): every line a creature says is a line of data
 said by its key, with role slots in the base form ("Dialogue"), on the one mechanism every line
 whose text lives in data uses ("Lines of data"). The doors, the welcome line, combat, allies,
-health, and talk say theirs from templates; every other `say` site still says finished English
+health, levels, and talk say theirs from templates; every other `say` site still says finished English
 as a literal line ("Literal lines"). Nothing player-visible has
 changed: the English templates and phrases read as the strings did. The English helpers core,
 the app, and the wiki generator call have moved into the crate behind re-exports at their old
@@ -362,6 +363,21 @@ says: a named person or a shopkeeper by name), not `phrase_of`, where the string
 `health::object_phrase(content, id)` builds `object:<id>` for a type the player knows;
 `Lore::object_phrase` is a type as the player knows it (an unread scroll by its label), and
 `Lore::title_phrase` a stack's `title` as a phrase.
+
+`world/levels/` (`messages/levels.toml`, L4j) converted travel, stairs, encounters, deep water,
+ice, fire, and webs. A line that differs by a value core picks from a few (the land an encounter
+is met on, the way the stairs go, one follower's type or several) is an entry per value, each a
+whole sentence. A place is named by a literal phrase (its name as written, "The Drake's Lair"), a
+terrain by `terrain:<id>`, a party met on the overworld by its entry's `name` as text (the data
+writes its article: "a band of footpads"), stacks that sank by `ice.rs::stacks_arg` (a list of
+two or three, else a count of `word:object`). A level's and a branch's `arrival` are lines of data,
+`level:<id>.arrival` and `dungeon:<id>.arrival` (`Content::arrival_key`). The encounter dialog's
+text (`EncounterView`) is the told line rendered in English, with `told_known` adding the line
+for a party met again, until L8. What it leaves: the line said on entering a cell
+(`enter.rs::tell_cell`), stairs, a feature's lines (`fixtures/feature.rs`), and what lies there,
+joined in one line, stays literal until a line can hold other lines; a spell's `look.message`
+(`web.rs`), an anvil's need, and `burden`'s refusals are their own modules'; a status's `seen`, a
+damage type's `verb`, and a refusal's `error` are text roles.
 
 When no literal is left, `LITERAL`, the `From` text impls, and this section go.
 

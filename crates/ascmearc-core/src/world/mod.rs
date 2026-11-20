@@ -196,8 +196,8 @@ pub(crate) use items::body_slots::has_slot;
 pub use items::loot::Identified;
 pub(crate) use levels::encounter::view as encounter_view;
 pub use levels::encounter::{
-    Choice as EncounterChoice, EncounterView, Forced as EncounterForced, KNOWN_LINE,
-    Outcome as EncounterOutcome, PENDING_REFUSED, Party, Pending,
+    Choice as EncounterChoice, EncounterView, Forced as EncounterForced,
+    Outcome as EncounterOutcome, Party, Pending,
 };
 pub use levels::fire::Blaze;
 pub use levels::pit::Pit;

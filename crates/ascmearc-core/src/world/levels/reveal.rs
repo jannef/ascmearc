@@ -11,6 +11,8 @@
 
 use crate::content::{Content, StairsDir, StairsLink};
 use crate::geom::Pos;
+use crate::lang::{Msg, Phrase};
+use crate::msg;
 use crate::world::{Spent, World, WorldState};
 
 impl World {
@@ -60,15 +62,15 @@ impl World {
     /// `id` as a quest would, marking it on the map. Takes no time.
     pub(in crate::world) fn reveal_dev(&mut self, id: &str) -> Spent {
         let Some((_, location)) = self.content.hidden_location(&self.state.campaign, id) else {
-            self.say(format!("There is no hidden location `{id}`."));
+            self.say(Msg::new(msg::levels::NO_HIDDEN_LOCATION_DEV).role("id", id));
             return Spent::Nothing;
         };
-        let name = crate::text::capitalized(&location.name);
+        let place = Phrase::literal(&location.name);
         if !self.reveal_location(id) {
-            self.say(format!("{name} is no secret any more."));
+            self.say(Msg::new(msg::levels::NO_SECRET_DEV).role("place", place));
             return Spent::Nothing;
         }
-        self.say(format!("{name} is marked on your map (dev)."));
+        self.say(Msg::new(msg::levels::MARKED_DEV).role("place", place));
         Spent::NoTime
     }
 }

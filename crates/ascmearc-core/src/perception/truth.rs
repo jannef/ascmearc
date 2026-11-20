@@ -70,6 +70,7 @@ impl<'a> PerceptionView<'a> {
             &entry.name,
             area.map(|a| a.landscape),
             &choices,
+            self.content,
         ))
     }
 

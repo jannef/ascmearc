@@ -31,6 +31,8 @@ use crate::content::{
 };
 use crate::daylight::{self, DayPhase};
 use crate::geom::{Dir, Pos};
+use crate::lang::{Entry, MessageId, Msg, written_key};
+use crate::msg;
 use crate::rng::Rng;
 use crate::rng::draw;
 use crate::skills::{Effect, Use};
@@ -247,72 +249,75 @@ pub struct EncounterView {
     pub choices: Vec<(String, Choice)>,
 }
 
-/// "Ahead" as the way there is: on the road, on the trail, or across the land.
-fn ahead(landscape: Option<Landscape>) -> &'static str {
+/// The party spotted "ahead" as the way there is: on the road, on the trail, or across the land.
+fn spotted(landscape: Option<Landscape>) -> MessageId {
     match landscape {
-        Some(Landscape::Road) => "on the road ahead",
-        Some(Landscape::Forest | Landscape::DenseForest) => "on the trail ahead",
-        _ => "ahead",
+        Some(Landscape::Road) => msg::levels::SPOT_ON_ROAD,
+        Some(Landscape::Forest | Landscape::DenseForest) => msg::levels::SPOT_ON_TRAIL,
+        _ => msg::levels::SPOT_AHEAD,
     }
 }
 
-/// Where an ambush comes from, by the land.
-fn from_cover(landscape: Option<Landscape>) -> &'static str {
+/// The ambush, from the cover the land gives.
+fn set_upon(landscape: Option<Landscape>) -> MessageId {
     match landscape {
-        Some(Landscape::Road) => "from the roadside",
-        Some(Landscape::Forest | Landscape::DenseForest) => "from the undergrowth",
-        Some(Landscape::Hills) => "from behind the rocks",
-        Some(Landscape::Swamp) => "from the reeds",
-        _ => "from the long grass",
+        Some(Landscape::Road) => msg::levels::SET_UPON_ROADSIDE,
+        Some(Landscape::Forest | Landscape::DenseForest) => msg::levels::SET_UPON_UNDERGROWTH,
+        Some(Landscape::Hills) => msg::levels::SET_UPON_HILLS,
+        Some(Landscape::Swamp) => msg::levels::SET_UPON_REEDS,
+        _ => msg::levels::SET_UPON_GRASS,
     }
 }
 
-/// Where a party is lost, by the land.
-fn lost_in(landscape: Option<Landscape>) -> &'static str {
+/// A party lost, where the land lets it be.
+fn lost_in(landscape: Option<Landscape>) -> MessageId {
     match landscape {
-        Some(Landscape::Road) => "the byways",
-        Some(Landscape::Forest | Landscape::DenseForest) => "the woods",
-        Some(Landscape::Hills) => "the hills",
-        Some(Landscape::Swamp) => "the marsh",
-        _ => "the long grass",
+        Some(Landscape::Road) => msg::levels::LOSE_THEM_BYWAYS,
+        Some(Landscape::Forest | Landscape::DenseForest) => msg::levels::LOSE_THEM_WOODS,
+        Some(Landscape::Hills) => msg::levels::LOSE_THEM_HILLS,
+        Some(Landscape::Swamp) => msg::levels::LOSE_THEM_MARSH,
+        _ => msg::levels::LOSE_THEM_GRASS,
     }
 }
 
-/// The line that acknowledges a party met again (#796 Q10).
-pub const KNOWN_LINE: &str = "You remember them: you got away from them here before.";
+/// An encounter's party in a line: its entry's `name`, as the data writes it, article and all
+/// ("a band of footpads"; text until encounters' names are phrases).
+fn party(id: MessageId, name: &str) -> Msg {
+    Msg::new(id).role("party", name)
+}
 
 /// What the player is told of a party `name` met with `outcome` on `landscape`.
-fn told(outcome: Outcome, name: &str, landscape: Option<Landscape>, woken: bool) -> String {
-    if woken {
-        return match outcome {
-            Outcome::Drop | Outcome::Met => {
-                format!("You wake to the sound of {name} close by your camp.")
-            }
-            Outcome::Peaceful => format!("You wake to find {name} at your camp."),
-            Outcome::Wildlife => format!("You wake to find {name} near your camp."),
-        };
-    }
-    match outcome {
-        Outcome::Drop => format!(
-            "You spot {name} {}. They have not seen you.",
-            ahead(landscape)
-        ),
-        Outcome::Met => format!("You and {name} see each other at the same moment."),
-        Outcome::Peaceful => format!("You meet {name} on the way."),
-        Outcome::Wildlife => format!("You come upon {name}."),
-    }
+fn told(outcome: Outcome, name: &str, landscape: Option<Landscape>, woken: bool) -> Msg {
+    let id = match (woken, outcome) {
+        (true, Outcome::Drop | Outcome::Met) => msg::levels::WAKE_CLOSE_BY,
+        (true, Outcome::Peaceful) => msg::levels::WAKE_AT_CAMP,
+        (true, Outcome::Wildlife) => msg::levels::WAKE_NEAR_CAMP,
+        (false, Outcome::Drop) => spotted(landscape),
+        (false, Outcome::Met) => msg::levels::SEE_EACH_OTHER,
+        (false, Outcome::Peaceful) => msg::levels::MEET_ON_WAY,
+        (false, Outcome::Wildlife) => msg::levels::COME_UPON,
+    };
+    party(id, name)
 }
 
-/// The view of `pending`, its entry named by `name`, offering `choices`.
+/// The view of `pending`, its entry named by `name`, offering `choices`: its text in English
+/// (until a language can be chosen, L8), with the line for a party met again after it.
 pub(crate) fn view(
     pending: &Pending,
     name: &str,
     landscape: Option<Landscape>,
     choices: &[Choice],
+    content: &Content,
 ) -> EncounterView {
-    let text = told(pending.outcome, name, landscape, pending.woken);
+    let english = |msg: Msg| crate::messages::english(content, &Entry::new(0, msg), &written_key);
+    let text = english(told(pending.outcome, name, landscape, pending.woken));
     let text = if pending.known {
-        format!("{text} {KNOWN_LINE}")
+        let known = english(msg::levels::KNOWN.into());
+        english(
+            Msg::new(msg::levels::TOLD_KNOWN)
+                .role("told", text)
+                .role("known", known),
+        )
     } else {
         text
     };
@@ -747,15 +752,11 @@ impl World {
         };
         let Some(outcome) = outcome else {
             // Ambushed: no question; the fight opens on the party's terms.
-            let line = match pending.woken {
-                true => format!("You wake with {} upon you!", entry.name),
-                false => format!(
-                    "You are set upon by {} {}!",
-                    entry.name,
-                    from_cover(landscape)
-                ),
+            let id = match pending.woken {
+                true => msg::levels::WAKE_UPON_YOU,
+                false => set_upon(landscape),
             };
-            self.say(line);
+            self.say(party(id, &entry.name));
             self.encounter.opening = Some(Opening {
                 pending,
                 how: How::Ambushed,
@@ -764,7 +765,7 @@ impl World {
         };
         self.say(told(outcome, &entry.name, landscape, pending.woken));
         if known {
-            self.say(KNOWN_LINE);
+            self.say(msg::levels::KNOWN);
         }
         self.state.encounter = Some(pending);
     }
@@ -914,8 +915,8 @@ impl World {
         }
         // The quarrel's parting (`world/people/quarrel.rs`) pends the same way.
         let refused = match self.state.encounter {
-            Some(_) => PENDING_REFUSED,
-            None => "You must answer first.",
+            Some(_) => msg::levels::PENDING_REFUSED,
+            None => msg::levels::ANSWER_FIRST,
         };
         self.say(refused);
         Some(Spent::Nothing)
@@ -925,7 +926,7 @@ impl World {
     /// encounter. Refused (no time) with nothing pending or a choice it does not offer.
     pub(in crate::world) fn answer_encounter(&mut self, choice: Choice) -> Spent {
         let Some(pending) = self.state.encounter.clone() else {
-            self.say("There is nothing to decide.");
+            self.say(msg::levels::NOTHING_TO_DECIDE);
             return Spent::Nothing;
         };
         let content = self.content.clone();
@@ -936,7 +937,7 @@ impl World {
         };
         let offered = super::talk_past::offered(&pending, entry, self.state.player(), &content);
         if !offered.contains(&choice) {
-            self.say("That is not a choice now.");
+            self.say(msg::levels::NOT_A_CHOICE);
             return Spent::Nothing;
         }
         self.state.encounter = None;
@@ -952,7 +953,7 @@ impl World {
             Choice::Evade => self.evade(entry, pending),
             Choice::Bluff => self.talk_past(entry, pending),
             Choice::Ambush => {
-                self.say("You wait in cover.");
+                self.say(msg::levels::WAIT_IN_COVER);
                 self.encounter.opening = open(How::Ambush);
                 let wait = content.meetings().map_or(0, |r| u64::from(r.ambush_wait));
                 let turns = i64::try_from(wait / BASE_TURN.as_seconds().max(1))
@@ -962,9 +963,9 @@ impl World {
             }
             Choice::Fight | Choice::Hail | Choice::Hunt => {
                 let (how, line) = match choice {
-                    Choice::Fight => (How::Fight, "You stand your ground.".to_string()),
-                    Choice::Hail => (How::Hail, format!("You go to meet {}.", entry.name)),
-                    _ => (How::Hunt, format!("You go after {}.", entry.name)),
+                    Choice::Fight => (How::Fight, msg::levels::STAND_GROUND.into()),
+                    Choice::Hail => (How::Hail, party(msg::levels::GO_TO_MEET, &entry.name)),
+                    _ => (How::Hunt, party(msg::levels::GO_AFTER, &entry.name)),
                 };
                 self.say(line);
                 self.encounter.opening = open(how);
@@ -1005,8 +1006,8 @@ impl World {
         let landscape = self.here(pending.cell).map(|h| h.landscape);
         if made {
             match unaware {
-                true => self.say("You slip away unseen."),
-                false => self.say(format!("You lose them in {}.", lost_in(landscape))),
+                true => self.say(msg::levels::SLIP_AWAY_UNSEEN),
+                false => self.say(lost_in(landscape)),
             }
             if self.trains(Use::Travel) {
                 self.train(Use::Travel);
@@ -1016,8 +1017,8 @@ impl World {
             }
         } else {
             match unaware {
-                true => self.say("They are onto you."),
-                false => self.say("They run you down."),
+                true => self.say(msg::levels::ONTO_YOU),
+                false => self.say(msg::levels::RUN_YOU_DOWN),
             }
             self.encounter.opening = Some(Opening {
                 pending,
@@ -1034,17 +1035,17 @@ impl World {
     pub(in crate::world) fn meet_dev(&mut self, id: &str, forced: Option<Forced>) -> Spent {
         let content = self.content.clone();
         let Some((_, entry)) = content.encounter_entry(&self.state.campaign, id) else {
-            self.say(format!("There is no encounter `{id}` (dev)."));
+            self.say(Msg::new(msg::levels::NO_ENCOUNTER_DEV).role("id", id));
             return Spent::Nothing;
         };
         let cell = self.player_pos();
         let local = content.local_area(&self.state.campaign, &local_area_id(cell));
         if self.state.current().kind != LevelKind::Overworld || local.is_none() {
-            self.say("Nobody is met here: no local area (dev).");
+            self.say(msg::levels::NO_LOCAL_AREA_DEV);
             return Spent::Nothing;
         }
         if content.meetings().is_none() {
-            self.say("Nobody meets anybody: no encounter rules (dev).");
+            self.say(msg::levels::NO_ENCOUNTER_RULES_DEV);
             return Spent::Nothing;
         }
         let side = self.arrival_side();
@@ -1053,9 +1054,6 @@ impl World {
         Spent::NoTime
     }
 }
-
-/// Text said when an action is refused while an encounter is pending.
-pub const PENDING_REFUSED: &str = "You must decide what to do about them.";
 
 /// The energy price of a plain step onto overworld terrain `terrain` (the dev `meet`'s stand-in
 /// for the step a roll follows).

@@ -24,10 +24,11 @@ use crate::action::{Event, SpellShape};
 use crate::check::check;
 use crate::content::{LevelKind, TerrainId, WebRules};
 use crate::geom::Pos;
+use crate::lang::Msg;
+use crate::msg;
 use crate::rng::draw;
 use crate::skills::Effect as SkillEffect;
 use crate::stats::Stat;
-use crate::text::capitalized;
 use crate::world::magic::cast::Cast;
 use crate::world::magic::spell::burst_cells;
 use crate::world::{ActorId, LevelState, World};
@@ -196,10 +197,13 @@ impl World {
         }
         self.afflict(id, rules.status, rules.severity, by, events);
         if id != self.state.player && self.perception.sees_actors_at(pos) {
-            let word = (content.status(rules.status).seen.clone())
-                .unwrap_or_else(|| "caught in a web".into());
-            let who = capitalized(&self.called(&self.state.actors[&id]));
-            self.say(format!("{who} is {word}."));
+            let who = self.called_phrase(&self.state.actors[&id]);
+            self.say(match content.status(rules.status).seen.clone() {
+                Some(seen) => Msg::new(msg::levels::WEB_CAUGHT)
+                    .role("who", who)
+                    .role("seen", seen),
+                None => Msg::new(msg::levels::WEB_CAUGHT_PLAIN).role("who", who),
+            });
         }
         self.webbed(id)
     }
@@ -337,7 +341,12 @@ impl World {
         let cells: Vec<Pos> = self.burst(at, radius).into_iter().collect();
         let laid = (cells.iter()).filter(|&&p| self.holds_web(p)).count();
         self.lay_webs(&cells, None, events);
-        self.say(format!("{laid} webs lie around {},{} (dev).", at.x, at.y));
+        self.say(
+            Msg::new(msg::levels::WEBS_DEV)
+                .role("laid", i64::try_from(laid).unwrap_or(i64::MAX))
+                .role("x", i64::from(at.x))
+                .role("y", i64::from(at.y)),
+        );
         crate::world::Spent::NoTime
     }
 

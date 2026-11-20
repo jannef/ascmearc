@@ -166,7 +166,7 @@ without Hunter's bond.
 
 `World::called(actor)` says a companion's name first ("Snel bites the kobold."); `fight::End::Named`
 is the companion's end in `perceive.rs` and the player's own blow at it ("Snel dies.", "You hit
-Snel."); `ally.rs::pack_phrase` names it before the summons ("Snel comes to heel.", "Snel and your
+Snel."); `ally.rs::pack_args` names it before the summons ("Snel comes to heel.", "Snel and your
 wolves come with you.", "You set Snel on the kobold."); a hunt arrived says "Snel looks back at
 you." (`World::ally_subject`). A dead companion's corpse is "a hound corpse", the type's.
 
