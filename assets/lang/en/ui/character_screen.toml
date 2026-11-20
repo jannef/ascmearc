@@ -1,0 +1,161 @@
+# The character screen (`crates/ascmearc/src/ui/character_screen.rs`). Ids alphabetical.
+#
+# The labels stand in columns: the screen places each in its column and the value beside it.
+# The stats' names, the race, class, stance, alignment, guild titles, conditions, resistance words,
+# and the attacks' labels come from the game's own words. The keys named in the footer are fixed
+# (`Esc`): translate the words around them. The screen fits each text to its panel
+# (docs/dev/localization.md "UI text").
+
+# The two-letter abbreviations in the column before the names.
+[abbrev_defence]
+text = "Dv"
+
+[abbrev_experience]
+text = "XP"
+
+[abbrev_hit_points]
+text = "HP"
+
+[abbrev_level]
+text = "Lv"
+
+[abbrev_mana]
+text = "MP"
+
+[abbrev_protection]
+text = "Pv"
+
+# The birth's parts, joined with a dot: `age`; `date`, the birthday; `sign`, the birth sign's
+# name ("Fire Manticore").
+[age]
+text = "Age {age:bare}"
+
+[alignment]
+text = "Alignment"
+
+[born]
+text = "born {date:bare}"
+
+[class]
+text = "Class"
+
+# The footer: `own`, the screen's own key, as bound.
+[close]
+text = "Esc close"
+
+[close_own]
+text = "{own:bare} or Esc close"
+
+[defence]
+text = "Defence"
+
+# A disease the player knows they have: `disease`, its name as written ("Filth fever", "The
+# shakes").
+[disease]
+text = "{disease:Bare}"
+
+[diseased]
+text = "Diseased"
+
+[experience]
+text = "Experience"
+
+# Experience toward the next level: `xp`, the total; `next`, the total the next level comes at.
+[experience_next]
+text = "{xp:bare} / {next:bare}"
+
+[gender]
+text = "Gender"
+
+# The gender "other" and the stat it raised: `stat`, the stat's name.
+[gender_other]
+text = "Other ({stat:bare} +1)"
+
+[guild]
+text = "Guild"
+
+# A guild row: `title`, the rank's title (shown in its metal's colour); `guild`, the guild's name.
+[guild_rank]
+text = "{title:bare} of {guild:bare}"
+
+[hit_points]
+text = "Hit points"
+
+# A kept beast: `name`, its own name; `kind`, the creature it is.
+[kept]
+text = "{name:bare}, {kind:a}"
+
+[level]
+text = "Level"
+
+[mana]
+text = "Mana"
+
+[oath_kills]
+text = "Oath kills"
+
+[protection]
+text = "Protection"
+
+[race]
+text = "Race"
+
+# A resource that is held in the guard of the player's mark: `mark`, the creature.
+[resource_marked]
+text = "{value:bare}/{max:bare}, in {mark:poss} guard"
+
+[resource_marked_unseen]
+text = "{value:bare}/{max:bare}, in an unseen foe's guard"
+
+# The footer's second part: `own`, the Skills key, as bound.
+[skills]
+text = "{own:bare} skills"
+
+# A birth sign's gift used up: `talent`, its name.
+[spent]
+text = "{talent:bare} (spent)"
+
+[stance]
+text = "Stance"
+
+# The stance named outside a run.
+[stance_neutral]
+text = "Neutral"
+
+[stars]
+text = "Stars"
+
+[status]
+text = "Status"
+
+[talents]
+text = "Talents"
+
+[title]
+text = "Character"
+
+# Hit points, mana, and a resource: `value` of `max`.
+[value_max]
+text = "{value:bare}/{max:bare}"
+
+# The weight: `total`, the player and what they carry; `base`, the player alone; `carried`; and
+# `burden`, the burden's word.
+[weight_burdened]
+text = "Weight {total:bare} (you {base:bare}, carrying {carried:bare}, {burden:bare})"
+
+[weight_carrying]
+text = "Weight {total:bare} (you {base:bare}, carrying {carried:bare})"
+
+[weight_nothing]
+text = "Weight {total:bare}, carrying nothing"
+
+[with]
+text = "With"
+
+# The birth sign: `sign`, its name ("Fire Manticore").
+[year_of]
+text = "year of the {sign:bare}"
+
+# The name outside a run.
+[you]
+text = "You"

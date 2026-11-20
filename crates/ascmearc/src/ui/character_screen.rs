@@ -16,14 +16,16 @@
 
 use super::menu::{Nav, Panel, Press};
 use super::screens::{ScreenAction, ScreenName};
+use super::text::{character_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
 use ascmearc_core::burden::{Burden, Load};
 use ascmearc_core::character::{Character, Gender};
 use ascmearc_core::color::Rgb;
-use ascmearc_core::content::{Content, possessive};
+use ascmearc_core::content::Content;
 use ascmearc_core::heal;
+use ascmearc_core::lang::{Arg, Phrase};
 use ascmearc_core::object::{Weight, format_weight};
 use ascmearc_core::perception::{PerceptionView, Progress};
 use ascmearc_core::stats::{PerStat, Stat};
@@ -55,6 +57,10 @@ fn resistance_rows(view: &PerceptionView<'_>) -> Vec<(&'static str, String)> {
     .collect()
 }
 
+/// Width of the identity's label column ("Gender") and a gap: the values line up with the stat
+/// names.
+const LABEL_W: i32 = 8;
+
 /// Where a value's neighbour on its row begins (Mana beside Hit points, Protection beside
 /// Defence), from the value's column: room for the value and a gap.
 const BESIDE: i32 = 8;
@@ -79,8 +85,8 @@ const LOWERED: Rgb = Rgb::new(0xd0, 0x78, 0x68);
 #[derive(Debug)]
 pub struct CharacterScreen {
     name: String,
-    /// Race, gender, and class, by name; empty for a run without a character.
-    identity: Vec<(&'static str, String)>,
+    /// Race, gender, and class: the label and the name; empty for a run without a character.
+    identity: Vec<(String, String)>,
     /// Age, birthday, and birth sign ([`birth_parts`]); empty without a character.
     birth: Vec<String>,
     /// The birth sign's gifts and flaw by name, in grant order: the
@@ -137,10 +143,18 @@ pub struct CharacterScreen {
     attacks: Vec<(&'static str, String, String)>,
 }
 
-/// Disease `d` as the screen lists it: its name as written, its own article kept (`{disease:bare}`:
-/// "filth fever", "the shakes"); the list is capitalised as a whole.
+/// Disease `d` as the screen lists it: its name as written, its own article kept
+/// (`{disease:Bare}`: "Filth fever", "The shakes").
 fn disease_name(content: &Content, d: ascmearc_core::content::DiseaseId) -> String {
-    content.english_of(&heal::phrase(content, d), "bare")
+    ui_with(T::DISEASE, &[("disease", heal::phrase(content, d).into())])
+}
+
+/// `value` of `max`, as hit points, mana, and a resource are shown: `18/24`.
+fn value_max(value: impl Into<i64>, max: impl Into<i64>) -> [(&'static str, Arg); 2] {
+    [
+        ("value", Arg::Number(value.into())),
+        ("max", Arg::Number(max.into())),
+    ]
 }
 
 impl CharacterScreen {
@@ -149,7 +163,7 @@ impl CharacterScreen {
     pub fn new(view: Option<&PerceptionView<'_>>) -> Self {
         let Some(view) = view else {
             return Self {
-                name: "You".into(),
+                name: ui(T::YOU),
                 identity: Vec::new(),
                 birth: Vec::new(),
                 stars: Vec::new(),
@@ -170,7 +184,7 @@ impl CharacterScreen {
                 mana: (0, 0),
                 defence: ascmearc_core::combat::BASE_DEFENCE,
                 protection: 0,
-                stance: "Neutral".into(),
+                stance: ui(T::STANCE_NEUTRAL),
                 resources: Vec::new(),
                 talents: 0,
                 alignment: None,
@@ -194,13 +208,16 @@ impl CharacterScreen {
             let spec = &c.spec;
             vec![
                 (
-                    "Race",
+                    ui(T::RACE),
                     (spec.race(content)).map_or(spec.race.clone(), |r| r.name.clone()),
                 ),
-                ("Gender", gender_text(c)),
+                (ui(T::GENDER), gender_text(c)),
                 // `Bard` until the class is full, `Bard 30` at its cap, `Bard 30, Hunter 4` once
                 // called.
-                ("Class", c.class_text(content, view.own_experience().level)),
+                (
+                    ui(T::CLASS),
+                    c.class_text(content, view.own_experience().level),
+                ),
             ]
         });
         let birth = (view.character()).map_or(Vec::new(), |c| birth_parts(c, content, view.time()));
@@ -208,17 +225,14 @@ impl CharacterScreen {
             // The sign's gifts only: a profane gift is no star's (the Talents page lists those).
             .filter(|t| t.granted && !t.race && !t.boon && !t.story && t.profane.is_none())
             .map(|t| match t.spent {
-                true => format!("{} (spent)", t.name),
+                true => ui_with(T::SPENT, &[("talent", t.name.into())]),
                 false => t.name,
             })
             .collect();
         let kept = (view.kept()).map(|(ally, data)| {
-            let kind = &content.creature(ally.creature).name;
-            format!(
-                "{}, {} {kind}",
-                data.name,
-                ascmearc_core::text::article(kind)
-            )
+            let kind = Phrase::id(format!("creature:{}", content.creature(ally.creature).id));
+            let name = data.name.as_str().into();
+            ui_with(T::KEPT, &[("name", name), ("kind", kind.into())])
         });
         let kept = kept.collect();
         Self {
@@ -247,10 +261,16 @@ impl CharacterScreen {
             resources: (view.own_resources().iter())
                 .map(|r| {
                     let name = content.resource(r.resource).name.clone();
+                    let [value, max] = value_max(r.value, r.max);
                     // Whose guard the openings are in: "3/5, in the kobold's guard".
-                    let on = (view.own_mark().filter(|_| r.marked))
-                        .map_or(String::new(), |m| format!(", in {} guard", possessive(&m)));
-                    (name, format!("{}/{}{on}", r.value, r.max))
+                    let held = match view.own_mark_phrase().filter(|_| r.marked) {
+                        Some(Some(mark)) => {
+                            ui_with(T::RESOURCE_MARKED, &[value, max, ("mark", mark.into())])
+                        }
+                        Some(None) => ui_with(T::RESOURCE_MARKED_UNSEEN, &[value, max]),
+                        None => ui_with(T::VALUE_MAX, &[value, max]),
+                    };
+                    (name, held)
                 })
                 .collect(),
             talents: view.own_talents().iter().filter(|t| !t.class).count(),
@@ -331,7 +351,7 @@ impl CharacterScreen {
             + i32::from(!self.diseases.is_empty())
             + self.resistances.len() as i32;
         let h = Stat::COUNT as i32 + 16 + identity_rows + thresholds.len() as i32 + status_rows;
-        let panel = Panel::new(console, " Character ", WIDTH, h);
+        let panel = Panel::new(console, &format!(" {} ", ui(T::TITLE)), WIDTH, h);
         super::info_tabs::draw_tabs(console, &panel, super::ScreenName::Character);
         let x = panel.inner_x();
         // Rows from the footer's down would draw over it, or the frame, of a panel cut short.
@@ -344,8 +364,8 @@ impl CharacterScreen {
         for (label, value) in &self.identity {
             // `Race    Dwarf`: the value lines up with the stat names.
             if fits(y) {
-                console.print(x, y, label, TEXT_DIM);
-                console.print(x + 8, y, value, TEXT);
+                console.print_in(x, y, label, TEXT_DIM, LABEL_W - 1);
+                console.print(x + LABEL_W, y, value, TEXT);
             }
             y += 1;
         }
@@ -359,9 +379,9 @@ impl CharacterScreen {
             // `Stars   Fleet, Slight, Supple`: dimmed, the names lined up with the values.
             if fits(y) {
                 if i == 0 {
-                    console.print(x, y, "Stars", TEXT_DIM);
+                    console.print_in(x, y, &ui(T::STARS), TEXT_DIM, LABEL_W - 1);
                 }
-                console.print(x + 8, y, line, TEXT_DIM);
+                console.print(x + LABEL_W, y, line, TEXT_DIM);
             }
             y += 1;
         }
@@ -370,9 +390,9 @@ impl CharacterScreen {
             // companion and a familiar each on its own row.
             if fits(y) {
                 if i == 0 {
-                    console.print(x, y, "With", TEXT_DIM);
+                    console.print_in(x, y, &ui(T::WITH), TEXT_DIM, LABEL_W - 1);
                 }
-                console.print(x + 8, y, beast, TEXT);
+                console.print(x + LABEL_W, y, beast, TEXT);
             }
             y += 1;
         }
@@ -398,29 +418,57 @@ impl CharacterScreen {
         // `MP  Mana  5/12` beside the hit points and `Pv  Protection  3` beside the Defence.
         let (hp, max) = self.hp;
         let (mana, max_mana) = self.mana;
-        let mana = ("MP", "Mana", format!("{mana}/{max_mana}"));
-        let protection = ("Pv", "Protection", format!("{:>2}", self.protection));
+        let mana = (
+            ui(T::ABBREV_MANA),
+            ui(T::MANA),
+            ui_with(T::VALUE_MAX, &value_max(mana, max_mana)),
+        );
+        let protection = (
+            ui(T::ABBREV_PROTECTION),
+            ui(T::PROTECTION),
+            format!("{:>2}", self.protection),
+        );
         for (abbrev, name, value, beside) in [
-            ("Lv", "Level", self.progress.level.to_string(), None),
-            ("XP", "Experience", experience_text(&self.progress), None),
-            ("", "Talents", self.talents.to_string(), None),
-            ("HP", "Hit points", format!("{hp}/{max}"), Some(mana)),
             (
-                "Dv",
-                "Defence",
+                ui(T::ABBREV_LEVEL),
+                ui(T::LEVEL),
+                self.progress.level.to_string(),
+                None,
+            ),
+            (
+                ui(T::ABBREV_EXPERIENCE),
+                ui(T::EXPERIENCE),
+                experience_text(&self.progress),
+                None,
+            ),
+            (
+                String::new(),
+                ui(T::TALENTS),
+                self.talents.to_string(),
+                None,
+            ),
+            (
+                ui(T::ABBREV_HIT_POINTS),
+                ui(T::HIT_POINTS),
+                ui_with(T::VALUE_MAX, &value_max(hp, max)),
+                Some(mana),
+            ),
+            (
+                ui(T::ABBREV_DEFENCE),
+                ui(T::DEFENCE),
                 format!("{:>2}", self.defence),
                 Some(protection),
             ),
-            ("", "Stance", self.stance.clone(), None),
+            (String::new(), ui(T::STANCE), self.stance.clone(), None),
         ] {
             if fits(y) {
-                console.print(x, y, abbrev, TEXT_DIM);
-                console.print(x + 4, y, name, TEXT);
+                console.print_in(x, y, &abbrev, TEXT_DIM, 3);
+                console.print_in(x + 4, y, &name, TEXT, NAME_W - 1);
                 console.print(x + 4 + NAME_W, y, &value, TEXT);
                 if let Some((abbrev, name, value)) = beside {
                     let x = x + 4 + NAME_W + BESIDE;
-                    console.print(x, y, abbrev, TEXT_DIM);
-                    console.print(x + 4, y, name, TEXT);
+                    console.print_in(x, y, &abbrev, TEXT_DIM, 3);
+                    console.print_in(x + 4, y, &name, TEXT, BESIDE_NAME_W - 1);
                     console.print(x + 4 + BESIDE_NAME_W, y, &value, TEXT);
                 }
             }
@@ -437,7 +485,7 @@ impl CharacterScreen {
         // `    Alignment     Kind`: the band, never the score.
         if let Some(band) = self.alignment {
             if fits(y) {
-                console.print(x + 4, y, "Alignment", TEXT);
+                console.print_in(x + 4, y, &ui(T::ALIGNMENT), TEXT, NAME_W - 1);
                 console.print(x + 4 + NAME_W, y, band, TEXT);
             }
             y += 1;
@@ -445,7 +493,7 @@ impl CharacterScreen {
         // `    Oath kills    37`: the tally of a dwarf's Slayer's Oaths.
         if let Some(kills) = self.oath_kills {
             if fits(y) {
-                console.print(x + 4, y, "Oath kills", TEXT);
+                console.print_in(x + 4, y, &ui(T::OATH_KILLS), TEXT, NAME_W - 1);
                 console.print(x + 4 + NAME_W, y, &kills.to_string(), TEXT);
             }
             y += 1;
@@ -454,10 +502,17 @@ impl CharacterScreen {
         for (title, color, guild) in &self.guilds {
             if fits(y) {
                 let at = x + 4 + NAME_W;
-                console.print(x + 4, y, "Guild", TEXT);
-                console.print(at, y, title, *color);
-                let rest = format!(" of {guild}");
-                console.print(at + title.chars().count() as i32, y, &rest, TEXT);
+                console.print_in(x + 4, y, &ui(T::GUILD), TEXT, NAME_W - 1);
+                // The row in the text's words, then the title over it in its metal's colour.
+                let args = [
+                    ("title", title.as_str().into()),
+                    ("guild", guild.as_str().into()),
+                ];
+                let row = ui_with(T::GUILD_RANK, &args);
+                console.print(at, y, &row, TEXT);
+                if let Some(i) = row.find(title.as_str()) {
+                    console.print(at + row[..i].chars().count() as i32, y, title, *color);
+                }
             }
             y += 1;
         }
@@ -466,7 +521,7 @@ impl CharacterScreen {
         for (i, line) in conditions.iter().enumerate() {
             if fits(y) {
                 if i == 0 {
-                    console.print(x + 4, y, "Status", TEXT);
+                    console.print_in(x + 4, y, &ui(T::STATUS), TEXT, NAME_W - 1);
                 }
                 console.print(x + 4 + NAME_W, y, line, LOWERED);
             }
@@ -475,8 +530,8 @@ impl CharacterScreen {
         // `    Diseased      Filth fever`: the diseases they know they have, as written (`{disease:Bare}`).
         if !self.diseases.is_empty() {
             if fits(y) {
-                let names = capitalized(&self.diseases.join(", "));
-                console.print(x + 4, y, "Diseased", TEXT);
+                let names = self.diseases.join(", ");
+                console.print_in(x + 4, y, &ui(T::DISEASED), TEXT, NAME_W - 1);
                 console.print(x + 4 + NAME_W, y, &names, LOWERED);
             }
             y += 1;
@@ -498,17 +553,21 @@ impl CharacterScreen {
         if fits(y) {
             let w = &self.weight;
             // `carrying 28.4 kg, burdened`: the burden is named when there is one.
-            let burden = (self.load.map(|l| l.burden()))
-                .filter(|b| *b != Burden::Unburdened)
-                .map_or(String::new(), |b| format!(", {}", b.id()));
-            let weight = match w.carried {
-                0 => format!("Weight {}, carrying nothing", format_weight(w.total())),
-                carried => format!(
-                    "Weight {} (you {}, carrying {}{burden})",
-                    format_weight(w.total()),
-                    format_weight(w.base),
-                    format_weight(carried),
-                ),
+            let burden = (self.load.map(|l| l.burden())).filter(|b| *b != Burden::Unburdened);
+            let total = ("total", format_weight(w.total()).into());
+            let weight = match (w.carried, burden) {
+                (0, _) => ui_with(T::WEIGHT_NOTHING, &[total]),
+                (carried, burden) => {
+                    let base = ("base", format_weight(w.base).into());
+                    let carried = ("carried", format_weight(carried).into());
+                    match burden {
+                        Some(b) => ui_with(
+                            T::WEIGHT_BURDENED,
+                            &[total, base, carried, ("burden", b.id().into())],
+                        ),
+                        None => ui_with(T::WEIGHT_CARRYING, &[total, base, carried]),
+                    }
+                }
             };
             console.print(x, y, &weight, TEXT);
         }
@@ -519,11 +578,14 @@ impl CharacterScreen {
             }
         }
         let close = match bindings.keys_of(KeyCommand::Character).first() {
-            Some(key) => format!("{} or Esc close", key.display()),
-            None => "Esc close".to_string(),
+            Some(key) => ui_with(T::CLOSE_OWN, &[("own", key.display().into())]),
+            None => ui(T::CLOSE),
         };
         let footer = match bindings.keys_of(KeyCommand::Skills).first() {
-            Some(key) => format!("{close}   {} skills", key.display()),
+            Some(key) => {
+                let skills = ui_with(T::SKILLS, &[("own", key.display().into())]);
+                format!("{close}   {skills}")
+            }
             None => close,
         };
         panel.footer(console, &footer);
@@ -534,7 +596,13 @@ impl CharacterScreen {
 /// the total at the highest level.
 pub fn experience_text(progress: &Progress) -> String {
     match progress.next {
-        Some(next) => format!("{} / {next}", progress.xp),
+        Some(next) => ui_with(
+            T::EXPERIENCE_NEXT,
+            &[
+                ("xp", Arg::Number(i64::from(progress.xp))),
+                ("next", Arg::Number(i64::from(next))),
+            ],
+        ),
         None => progress.xp.to_string(),
     }
 }
@@ -544,7 +612,7 @@ pub fn experience_text(progress: &Progress) -> String {
 /// character creation never names it (#256).
 fn gender_text(character: &Character) -> String {
     match character.spec.gender {
-        Gender::Other => format!("Other ({} +1)", character.raised.name()),
+        Gender::Other => ui_with(T::GENDER_OTHER, &[("stat", character.raised.name().into())]),
         gender => gender.name().to_string(),
     }
 }
@@ -563,12 +631,16 @@ fn stars_lines(names: &[String], width: i32) -> Vec<String> {
 /// Age on `now`, birthday, and birth sign, as shown: `Age 27`, `born 3 Seedtide 1417`, `year of
 /// the Fire Manticore` (no sign without a horoscope).
 pub fn birth_parts(character: &Character, content: &Content, now: GameTime) -> Vec<String> {
+    let age = Arg::Number(i64::from(character.age_on(now)));
     let mut parts = vec![
-        format!("Age {}", character.age_on(now)),
-        format!("born {}", character.born.text(content.calendar())),
+        ui_with(T::AGE, &[("age", age)]),
+        ui_with(
+            T::BORN,
+            &[("date", character.born.text(content.calendar()).into())],
+        ),
     ];
     if let Some(sign) = character.sign_name(content) {
-        parts.push(format!("year of the {sign}"));
+        parts.push(ui_with(T::YEAR_OF, &[("sign", sign.into())]));
     }
     parts
 }
@@ -988,6 +1060,16 @@ mod tests {
             screen.handle(&s, &b),
             ScreenAction::Open(ScreenName::Skills)
         );
+    }
+
+    #[test]
+    fn a_resource_held_in_the_marks_guard_names_it() {
+        let [value, max] = value_max(3, 5);
+        let mark = ("mark", Phrase::id("creature:kobold").into());
+        let marked = ui_with(T::RESOURCE_MARKED, &[value.clone(), max.clone(), mark]);
+        assert_eq!(marked, "3/5, in the kobold's guard");
+        let unseen = ui_with(T::RESOURCE_MARKED_UNSEEN, &[value, max]);
+        assert_eq!(unseen, "3/5, in an unseen foe's guard");
     }
 
     #[test]

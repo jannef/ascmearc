@@ -9,6 +9,7 @@
 //! 1970 (UTC), shown in UTC.
 
 use crate::settings::Clock;
+use crate::ui::text::{characters_screen as T, ui_with};
 use ascmearc_core::World;
 use ascmearc_core::character::NAMELESS;
 use serde::{Deserialize, Serialize};
@@ -90,11 +91,13 @@ impl Summary {
 
     /// Race and class together: `Dwarf Warrior` (either may be missing).
     pub fn race_and_class(&self) -> String {
-        [self.race.as_str(), self.class.as_str()]
-            .into_iter()
-            .filter(|s| !s.is_empty())
-            .collect::<Vec<_>>()
-            .join(" ")
+        match (self.race.as_str(), self.class.as_str()) {
+            ("", one) | (one, "") => one.to_string(),
+            (race, class) => ui_with(
+                T::RACE_CLASS,
+                &[("race", race.into()), ("class", class.into())],
+            ),
+        }
     }
 }
 
@@ -168,8 +171,9 @@ pub fn now() -> u64 {
 /// `2026-10-20 14:32 UTC`, the time of day as `clock` writes it.
 pub fn played_text(secs: u64, clock: Clock) -> String {
     let t = crate::utc::utc_parts(secs);
+    let date = format!("{:04}-{:02}-{:02}", t.year, t.month, t.day);
     let time = clock.format_hm(t.hour, t.minute);
-    format!("{:04}-{:02}-{:02} {time} UTC", t.year, t.month, t.day)
+    ui_with(T::PLAYED, &[("date", date.into()), ("time", time.into())])
 }
 
 #[cfg(test)]

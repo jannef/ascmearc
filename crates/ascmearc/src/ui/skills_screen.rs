@@ -13,6 +13,7 @@ use super::character_screen::fit_joined;
 use super::cursor;
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::screens::ScreenAction;
+use super::text::{skills_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
@@ -84,7 +85,7 @@ impl SkillsScreen {
         let inner = width - 4;
         let list = self.rows.len().max(1) as i32;
         let h = list + 8;
-        let panel = Panel::new(console, " Skills ", width, h);
+        let panel = Panel::new(console, &format!(" {} ", ui(T::TITLE)), width, h);
         super::info_tabs::draw_tabs(console, &panel, super::ScreenName::Skills);
         let x = panel.inner_x();
         let fits = |y: i32| y < panel.y + panel.h - 2;
@@ -93,7 +94,7 @@ impl SkillsScreen {
         let first = self.selected.saturating_sub(room - 1);
         let mut y = panel.y + 2;
         if self.rows.is_empty() && fits(y) {
-            console.print(x, y, "You are not trained in any skill.", TEXT_DIM);
+            console.print_in(x, y, &ui(T::NONE), TEXT_DIM, inner);
         }
         for (i, row) in self.rows.iter().enumerate().skip(first).take(room) {
             if fits(y) {
@@ -116,11 +117,12 @@ impl SkillsScreen {
                 y += 1;
             }
         }
-        let up_down = HINTS.up_down();
-        let footer = match bindings.keys_of(KeyCommand::Skills).first() {
-            Some(key) => format!("{up_down} choose   {} or Esc close", key.display()),
-            None => format!("{up_down} choose   Esc close"),
+        let choose = ui_with(T::CHOOSE, &[("keys", HINTS.up_down().into())]);
+        let close = match bindings.keys_of(KeyCommand::Skills).first() {
+            Some(key) => ui_with(T::CLOSE_OWN, &[("own", key.display().into())]),
+            None => ui(T::CLOSE),
         };
+        let footer = format!("{choose}   {close}");
         panel.footer(console, &footer);
     }
 }
