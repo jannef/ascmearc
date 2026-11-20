@@ -21,6 +21,7 @@
 
 use crate::content::{ActionKind, Effect};
 use crate::hunger::Hunger;
+use crate::msg;
 use crate::rng::draw;
 use crate::talent::TalentMods;
 use crate::time::GameTime;
@@ -137,7 +138,7 @@ impl World {
     /// meal), so they go on. A traveller's step says nothing: the question was asked before it.
     pub(super) fn starving_stops_rest(&mut self, id: ActorId) {
         if self.resting && id == self.state.player {
-            self.say("You are wasting away from hunger.");
+            self.say(msg::health::WASTING_AWAY);
         }
     }
 
@@ -181,7 +182,7 @@ impl World {
         if !draw!(self, "hunger/faint/player").chance(chance.unsigned_abs()) {
             return 0;
         }
-        self.say("You faint from hunger.");
+        self.say(msg::health::FAINT);
         self.stat_deed(crate::content::StatDeed::Fainted);
         let wait = self.price_of(self.state.player, ActionKind::Wait);
         wait.saturating_mul(i64::from(def.faint.turns))
@@ -237,7 +238,7 @@ impl World {
             of: None,
             cause: Some(cause),
         });
-        let text = cause.message(&self.content);
-        self.say(text);
+        let line = cause.message(self);
+        self.say(line);
     }
 }

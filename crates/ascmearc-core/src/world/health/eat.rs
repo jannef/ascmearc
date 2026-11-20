@@ -38,8 +38,11 @@
 //! the one way to give a status; it costs hit points as time passes and may kill ("Died of
 //! poison").
 
+use super::object_phrase;
 use crate::action::{DiseaseNews, Event, Meal, Positions};
-use crate::content::{ActionKind, ObjectId, the, the_start};
+use crate::content::{ActionKind, ObjectId};
+use crate::lang::Msg;
+use crate::msg;
 use crate::object::{self, Stack};
 use crate::rng::draw;
 use crate::stats::Stat;
@@ -59,7 +62,7 @@ pub(in crate::world) struct Dish {
 }
 
 /// What a corpse's training marks of `stat` say, when they are many ([`LOUD_MARKS`]).
-fn gift_news(stat: Stat) -> String {
+fn gift_news(stat: Stat) -> Msg {
     let what = match stat {
         Stat::Strength => "strength",
         Stat::Dexterity => "nimbleness",
@@ -68,7 +71,7 @@ fn gift_news(stat: Stat) -> String {
         Stat::Willpower => "resolve",
         Stat::Presence => "bearing",
     };
-    format!("Something of its {what} passes into you.")
+    Msg::new(msg::health::GIFT_PASSES).role("what", what)
 }
 
 /// The fewest marks of one stat a corpse gives that the player feels (design §8.4): fewer are
@@ -91,8 +94,8 @@ impl World {
         };
         let Some(stack) = stack else {
             self.say(match meal {
-                Meal::Pack(_) => "You carry no such thing.",
-                Meal::Floor(_) => "There is no such thing here.",
+                Meal::Pack(_) => msg::health::CARRY_NO_SUCH_THING,
+                Meal::Floor(_) => msg::health::NO_SUCH_THING_HERE,
             });
             return Spent::Nothing;
         };
@@ -105,14 +108,12 @@ impl World {
             return self.drink_potion(meal, &stack, events);
         }
         let Some(food) = def.food else {
-            self.say(format!(
-                "You cannot consume {}.",
-                self.lore().describe_object(stack.object, 1)
-            ));
+            let what = object_phrase(&content, stack.object).count(1);
+            self.say(Msg::new(msg::health::CANNOT_CONSUME).role("what", what));
             return Spent::Nothing;
         };
         if content.hunger().is_none() || self.state.player().satiation.is_none() {
-            self.say("You feel no need to eat.");
+            self.say(msg::health::NO_NEED_TO_EAT);
             return Spent::Nothing;
         }
         Spent::Meal(Dish {
@@ -141,10 +142,10 @@ impl World {
             Ended::Died => {}
             _ if left.get() == 0 => self.finish(dish, events),
             Ended::Came(came) => {
-                let text = format!("{}; you stop eating.", self.came_line(came));
-                self.say(text);
+                let came = self.came_line(came);
+                self.say(Msg::new(msg::health::STOP_EATING_CAME).role("came", came));
             }
-            Ended::Said | Ended::Done => self.say("You stop eating."),
+            Ended::Said | Ended::Done => self.say(msg::health::STOP_EATING),
         }
     }
 
@@ -154,7 +155,7 @@ impl World {
     fn finish(&mut self, dish: Dish, events: &mut Vec<Event>) {
         let burden = self.load_of(self.state.player).burden();
         let Some(food) = self.take_one(&dish) else {
-            self.say("There is nothing left to eat.");
+            self.say(msg::health::NOTHING_LEFT_TO_EAT);
             return;
         };
         let content = self.content.clone();
@@ -163,7 +164,7 @@ impl World {
         };
         let def = content.object(food.object);
         self.train_judged(&food, self.state.time);
-        self.say(format!("You eat {}.", the(&def.name)));
+        self.say(Msg::new(msg::health::EAT).role("what", object_phrase(&content, food.object)));
         self.ate_goods(dish.meal, &food);
         if let Some(creature) = def.corpse {
             self.ate_corpse(creature);
@@ -268,7 +269,7 @@ impl World {
             let player = self.player_mut();
             if points > 0 && player.hp < max {
                 player.hp = player.hp.saturating_add(points).min(max);
-                self.say("You feel better.");
+                self.say(msg::health::FEEL_BETTER);
             }
         }
         if let Some(harm) = on_eat.harm.filter(|_| !harmless) {
@@ -310,10 +311,8 @@ impl World {
                 && draw!(self, "eat/widen/player").chance(chance)
                 && self.player_mut().stats.widen(stat, 1) > 0
             {
-                self.say(format!(
-                    "You feel you could grow {} yet.",
-                    stat.comparative()
-                ));
+                let more = stat.comparative();
+                self.say(Msg::new(msg::health::COULD_GROW_YET).role("more", more));
             }
         }
     }
@@ -364,17 +363,13 @@ impl World {
         // Deep roots (a Wood-born's pick) eats it as such a race does.
         let rooted = self.state.player().talent_mods(&content).hunger.eats_rotten;
         if rooted || race.is_some_and(|r| r.eats_rotten) {
-            let name = the_start(&content.object(what).name);
-            self.say(format!(
-                "{name} was rotten, but your stomach does not mind."
-            ));
+            let name = object_phrase(&content, what);
+            self.say(Msg::new(msg::health::ROTTEN_NO_MIND).role("what", name));
             self.feed(nutrition, what);
             return;
         }
-        self.say(format!(
-            "Ugh! {} was rotten.",
-            the_start(&content.object(what).name)
-        ));
+        let name = object_phrase(&content, what);
+        self.say(Msg::new(msg::health::UGH_ROTTEN).role("what", name));
         // Iron stomach: never vomits, and half the sickness (no draw for
         // the vomiting it is spared).
         let iron = self
@@ -440,7 +435,7 @@ impl World {
             let me = self.player_mut();
             if points > 0 && me.hp < max {
                 me.hp = me.hp.saturating_add(points).min(max);
-                self.say("You feel better.");
+                self.say(msg::health::FEEL_BETTER);
             }
         }
     }
@@ -516,7 +511,7 @@ impl World {
         if self.state.player().talent_mods(&content).hunger.no_bloating {
             let most = (def.states.bloated - 1).max(nutrition);
             if nutrition.saturating_add(points) > most {
-                self.say("You eat your fill; the rest does you no good.");
+                self.say(msg::health::EAT_YOUR_FILL);
             }
             if let Some(fed) = self.player_mut().satiation.as_mut() {
                 fed.feed(points, most);
@@ -542,7 +537,7 @@ impl World {
                 self.vomit();
                 return;
             }
-            self.say("You have a hard time getting it all down.");
+            self.say(msg::health::HARD_TIME_GETTING_DOWN);
         }
         if let Some(fed) = self.player_mut().satiation.as_mut() {
             fed.feed(points, max);
@@ -570,7 +565,7 @@ impl World {
         let Some(leaves) = self.content.hunger().map(|h| h.vomit_leaves) else {
             return;
         };
-        self.say("You vomit!");
+        self.say(msg::health::VOMIT);
         if let Some(fed) = self.player_mut().satiation.as_mut() {
             fed.nutrition = fed.nutrition.min(leaves);
         }

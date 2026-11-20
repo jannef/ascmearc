@@ -17,8 +17,10 @@
 
 use crate::action::Event;
 use crate::content::StatusId;
+use crate::lang::Msg;
+use crate::msg;
 use crate::status::MAGICAL_HEALING;
-use crate::text::capitalized;
+use crate::world::combat::fight;
 use crate::world::{ActorId, World};
 
 impl World {
@@ -56,12 +58,16 @@ impl World {
         if id == self.state.player || !self.perception.sees_actors_at(actor.pos) {
             return;
         }
-        let who = capitalized(&self.called(actor));
+        let who = self.phrase_of(id);
         let words: Vec<String> = (ended.iter())
             .filter_map(|&s| self.content.status(s).seen.clone())
             .collect();
         for word in words {
-            self.say(format!("{who} is no longer {word}."));
+            self.say(
+                Msg::new(msg::health::NO_LONGER)
+                    .role("who", who.clone())
+                    .role("status", fight::word(&word)),
+            );
         }
     }
 

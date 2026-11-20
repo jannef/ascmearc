@@ -45,11 +45,14 @@
 use crate::action::{Action, Event};
 use crate::check::check;
 use crate::content::{ActionKind, Affliction, Content, StatusId};
+use crate::lang::Msg;
+use crate::msg;
 use crate::rng::draw;
 use crate::skills::{Effect as SkillEffect, Use};
 use crate::stats::Stat;
 use crate::status::Effect;
 use crate::world::Actor;
+use crate::world::combat::fight;
 use crate::world::{ActorId, Spent, World};
 
 impl World {
@@ -159,7 +162,7 @@ impl World {
             .unwrap_or(hold.difficulty);
         let name = holder
             .filter(|h| self.perception.sees_actors_at(h.pos))
-            .map(|h| self.called(h));
+            .map(|h| self.phrase_of(h.id));
         let modifier = match trained {
             true => self.slipping(hold.check),
             false => me.check_modifier(&content, hold.check),
@@ -174,16 +177,16 @@ impl World {
         self.struggled();
         if free {
             self.player_mut().effects.remove(status);
-            self.say(match &name {
-                Some(name) => format!("You break free of {name}."),
-                None => "You break free.".to_string(),
+            self.say(match name {
+                Some(name) => Msg::new(msg::health::BREAK_FREE_OF).role("who", name),
+                None => msg::health::BREAK_FREE.into(),
             });
             // Said as it is: the status's own end ("You are free to move.") would repeat it.
             return None;
         }
-        self.say(match &name {
-            Some(name) => format!("You struggle, but {name} holds you fast."),
-            None => "You struggle, but cannot break free.".to_string(),
+        self.say(match name {
+            Some(name) => Msg::new(msg::health::STRUGGLE_HELD).role("who", name),
+            None => msg::health::STRUGGLE_FREE.into(),
         });
         Some(Spent::Turn(self.price_of(player, kind)))
     }
@@ -207,7 +210,7 @@ impl World {
                 self.ended(player, &[effect], events);
             }
         } else if let Some(seen) = &self.content.clone().status(status).seen {
-            self.say(format!("You struggle, but you are still {seen}."));
+            self.say(Msg::new(msg::health::STRUGGLE_STILL).role("status", fight::word(seen)));
         }
         free
     }

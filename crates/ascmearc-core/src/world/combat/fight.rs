@@ -160,15 +160,15 @@ impl Cause {
 
     /// What the player is told as it happens: "You starve to death...". A trap's victim dies
     /// like any other ("You die...").
-    pub fn message(self, content: &Content) -> String {
-        let name = |o: ObjectId| content.object(o).name.clone();
+    pub fn message(self, world: &World) -> Msg {
         match self {
-            Cause::Starvation => "You starve to death...".into(),
+            Cause::Starvation => msg::health::STARVE.into(),
             Cause::Choked(o) => {
-                format!("You choke to death on {}...", crate::content::the(&name(o)))
+                let what = Phrase::id(format!("object:{}", world.content().object(o).id));
+                Msg::new(msg::health::CHOKE).role("what", what)
             }
-            Cause::Drowned => "You drown...".into(),
-            Cause::Profane => "The Profane takes you, and nothing of you is left...".into(),
+            Cause::Drowned => msg::health::DROWN.into(),
+            Cause::Profane => msg::health::PROFANE_TAKES_YOU.into(),
             Cause::Trap(_)
             | Cause::Scroll(_)
             | Cause::Flask(_)
@@ -176,7 +176,7 @@ impl Cause {
             | Cause::Miscast(_)
             | Cause::Altar
             | Cause::Fall
-            | Cause::Fire => "You die...".into(),
+            | Cause::Fire => msg::health::DIE.into(),
         }
     }
 }
