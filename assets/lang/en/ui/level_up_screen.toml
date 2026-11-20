@@ -28,22 +28,20 @@ text = "a-{last:bare} or {confirm:bare} choose"
 [choose_single]
 text = "a or {confirm:bare} choose"
 
+# A skill's roll explained, one sentence: `dice`, what it adds; `marks`, the practice words;
+# `practice`, the die the practice gives; `known`, `explain_own` or `explain_trade` when one
+# applies; `trained`, `explain_class` or `explain_race`; `halved`, `explain_halved`. Each of those
+# is empty when it does not apply, and starts with its own punctuation when it does.
+[explain]
+text = "Rolls {dice:bare}: practice ({marks:bare}) gives {practice:bare}{known:bare}{trained:bare}{halved:bare}."
+
 # What a skill's roll gets from your class, when it trains the skill.
 [explain_class]
 text = ", +1 as your class trains it"
 
-# The end of the explanation of a roll.
-[explain_end]
-text = "."
-
 # The roll's halving, `cap`, the value the skill rises by half from.
 [explain_halved]
 text = "; from {cap:bare} on the skill rises by half, rounded up"
-
-# A skill's roll explained: `dice`, what it adds; `marks`, the practice words; `practice`, the die
-# the practice gives.
-[explain_start]
-text = "Rolls {dice:bare}: practice ({marks:bare}) gives {practice:bare}"
 
 # `die`, the biggest die.
 [explain_own]

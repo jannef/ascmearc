@@ -496,32 +496,36 @@ fn explain_roll(roll: &SkillRoll, soft_cap: u16) -> String {
         0 => ui(T::MARKS_NONE),
         n => ui_with(T::MARKS, &[("n", Arg::Number(i64::from(n)))]),
     };
-    let mut text = ui_with(
-        T::EXPLAIN_START,
+    // The clauses that apply, each empty when it does not: the sentence is one entry.
+    let die = [("die", roll.die.to_string().into())];
+    let known = match (roll.known, roll.trade) {
+        (false, _) => String::new(),
+        (true, true) => ui_with(T::EXPLAIN_TRADE, &die),
+        (true, false) => ui_with(T::EXPLAIN_OWN, &die),
+    };
+    let trained = match roll.bonus {
+        Some(RollBonus::Class) => ui(T::EXPLAIN_CLASS),
+        Some(RollBonus::Race) => ui(T::EXPLAIN_RACE),
+        None => String::new(),
+    };
+    let halved = match roll.halved {
+        true => ui_with(
+            T::EXPLAIN_HALVED,
+            &[("cap", Arg::Number(i64::from(soft_cap)))],
+        ),
+        false => String::new(),
+    };
+    ui_with(
+        T::EXPLAIN,
         &[
             ("dice", roll.dice().to_string().into()),
             ("marks", marks.into()),
             ("practice", roll.practice.to_string().into()),
+            ("known", known.into()),
+            ("trained", trained.into()),
+            ("halved", halved.into()),
         ],
-    );
-    if roll.known {
-        let id = if roll.trade {
-            T::EXPLAIN_TRADE
-        } else {
-            T::EXPLAIN_OWN
-        };
-        text += &ui_with(id, &[("die", roll.die.to_string().into())]);
-    }
-    match roll.bonus {
-        Some(RollBonus::Class) => text += &ui(T::EXPLAIN_CLASS),
-        Some(RollBonus::Race) => text += &ui(T::EXPLAIN_RACE),
-        None => {}
-    }
-    if roll.halved {
-        let args = [("cap", Arg::Number(i64::from(soft_cap)))];
-        text += &ui_with(T::EXPLAIN_HALVED, &args);
-    }
-    text + &ui(T::EXPLAIN_END)
+    )
 }
 
 #[cfg(test)]

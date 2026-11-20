@@ -427,6 +427,8 @@ example:
      `Arg::Number`: `by = "n.number"` with `one` and `many` (a count of 0 is `many`; a special
      sentence for nothing, "no marks", is its own entry). A counted thing is a phrase asked
      `{x:counted}`. `level_up_screen.toml`'s `left_rolls`, `marks`, and `sources` are the example.
+   - *No sentence glued from entries.* A sentence with optional clauses is one entry with a slot
+     per clause, each clause its own entry or empty: `level_up_screen.toml`'s `explain`.
 
 ## Decisions L1 made where the design left them open
 
