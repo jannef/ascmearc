@@ -1,0 +1,25 @@
+# The Spirit weapon's shape list (`crates/ascmearc/src/ui/shape_screen.rs`). Ids alphabetical.
+#
+# The keys named in the hint lines are fixed (`a`, `Enter`, `Esc`): translate the words around
+# them. The screen fits each text to its panel (docs/dev/localization.md "UI text").
+
+# The footer's letters to call a shape with: `confirm`, the key that calls the `>` row.
+[call_a]
+text = "a or {confirm:bare} call"
+
+# The same, for the letters `a` to `last`.
+[call_letters]
+text = "a-{last:bare} or {confirm:bare} call"
+
+# The same, with no shape listed.
+[call_none]
+text = "{confirm:bare} call"
+
+[esc_back]
+text = "Esc back"
+
+[none]
+text = "There is no shape to call."
+
+[title]
+text = "Spirit weapon: which shape?"

@@ -43,7 +43,7 @@ fighting, `docs/dev/weapon-skills.md`), `ammo`, `launches`; `Content::fits`, `Co
 `equipment.rs` holds the runtime side: `Equipment` (slot → inventory position, on
 `Actor::equipment`, saved and hashed; equipped stacks stay in the inventory and keep weighing),
 `slots_taken` (every hand for a two-handed object), `free_slot` (spawn data), `mark` ("being
-worn"), `verbs` (the message verbs per action). `world/items/equip.rs` is the rules: `Action::Equip {
+worn"); the equipment screen's verbs per action are its UI text (`equipment_screen.rs::verbs`). `world/items/equip.rs` is the rules: `Action::Equip {
 slot, item }` / `Action::Remove(slot)` take off what is in the way (a swap) and cost the slot
 action (`wield`, `wear`, `body_armor`, `ready` in `data/actions.toml`) of everything put on or
 taken off (`World::price_for`); dropping takes off first (`take_off_before_dropping`) and

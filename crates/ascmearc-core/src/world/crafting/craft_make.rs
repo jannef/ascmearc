@@ -161,8 +161,8 @@ pub struct CraftPlan {
     pub name: String,
     /// What it uses: "3 steel ingots and the ruby".
     pub uses: String,
-    /// The station's name: "anvil".
-    pub station: Option<String>,
+    /// The station, as a phrase (`terrain:anvil`): the dialog asks for its form ("the anvil").
+    pub station: Option<Phrase>,
     /// How long it takes: "about 1 hour".
     pub time: String,
 }
@@ -1003,7 +1003,7 @@ pub(crate) fn craft_plan(
         verb,
         name,
         uses: crate::text::and_list(&uses),
-        station: def.station.map(|t| content.terrain(t).name.clone()),
+        station: def.station.map(|t| terrain(content, t)),
         time: format!("about {}", Duration::seconds(u64::from(seconds)).spoken()),
     })
 }
