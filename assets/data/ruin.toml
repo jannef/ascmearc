@@ -23,7 +23,8 @@
 #   percent   the chance an item is lost, 0 to 100 (0: a row that spares what it matches, so
 #             no later row of the type does)
 #   says      what is said of the lost items the player sees: ["burns up", "burn up"], one item
-#             and several ("The scroll burns up.", "3 arrows burn up.")
+#             and several ("The scroll burns up.", "3 arrows burn up."); lines of data,
+#             `ruin:<type>.<class|material|group>.<id>.says.0` and `.says.1`
 #
 # Rows are read in order within a type: put the narrow ones first.
 

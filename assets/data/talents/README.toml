@@ -576,6 +576,7 @@
 #   reprieve { once, status, stat, by, message }   once in its life (`once` names it), what
 #                                 would kill it (not starving or choking) leaves it at 1 hit
 #                                 point with the status, stat by lower for good, message said
+#                                 (a line of data, `talent:<id>.effects.reprieve.message`)
 #   spell { spell }               a caster's spell ability, used from the abilities menu
 #                                 (`use:ID`, `use:ID:X,Y`): the spell of ../spells/ of that id
 #                                 (one of the twelve the casters have, each given once), cast and

@@ -16,6 +16,8 @@
 
 use crate::action::Event;
 use crate::content::Cleansing;
+use crate::lang::Msg;
+use crate::msg;
 use crate::stats::Stat;
 use crate::world::World;
 
@@ -32,7 +34,7 @@ impl World {
         events: &mut Vec<Event>,
     ) -> bool {
         if !self.needs_cleansing(cleansing) {
-            self.say("There is nothing to restore.");
+            self.say(msg::magic::NOTHING_TO_RESTORE);
             return false;
         }
         // A read with no spell behind it: level 0 (`decipher.rs`). Failed, its time and no more.
@@ -92,10 +94,8 @@ impl World {
         }
         let cured = self.cure(player, RESTORATION, events);
         for stat in &back {
-            self.say(format!(
-                "You feel your {} return.",
-                stat.name().to_lowercase()
-            ));
+            let name = stat.name().to_lowercase();
+            self.say(Msg::new(msg::magic::FEEL_STAT_RETURN).role("stat", name));
         }
         cured || !back.is_empty()
     }

@@ -160,6 +160,78 @@ pub fn arrival(content: &Content, id: &str) -> Option<String> {
     }
 }
 
+// The magic's lines (L4k, #1922): a spell's look, a miscast's and a mishap's message, a ruin
+// row's words, and a reprieve's.
+
+/// Spell `id`'s `[spell.cast]` `message` (its `look.message`), said as it is cast.
+pub fn spell_cast(id: &str) -> String {
+    format!("spell:{id}.cast.message")
+}
+
+/// Miscast `id`'s `message`, said to the player who miscast.
+pub fn miscast_message(id: &str) -> String {
+    format!("miscast:{id}.message")
+}
+
+/// Mishap `id`'s `message`, said as it happens.
+pub fn mishap_message(id: &str) -> String {
+    format!("mishap:{id}.message")
+}
+
+/// What `ruin.toml`'s row `row` says of the items it ruined: its `says[0]` of one (`many`
+/// false), its `says[1]` of several. A row is named by its damage type and what it matches
+/// (`ruin:fire.class.scrolls.says.0`, `ruin:cold.group.glass.says.1`).
+pub fn ruin_says(content: &Content, row: &super::RuinRow, many: bool) -> String {
+    let kind = &content.damage_type(row.kind).id;
+    let of = match &row.of {
+        super::RuinOf::Class(c) => format!("class.{}", content.item_class(*c).id),
+        super::RuinOf::Material(m) => format!("material.{}", content.material(*m).id),
+        super::RuinOf::Group(g) => format!("group.{g}"),
+    };
+    format!("ruin:{kind}.{of}.says.{}", u8::from(many))
+}
+
+/// The `message` of talent `talent`'s `reprieve` effect (Miracle, Hag's bargain).
+pub fn reprieve(talent: &str) -> String {
+    format!("talent:{talent}.effects.reprieve.message")
+}
+
+/// The reprieves of talent `def`, its `while` effects' too: each its `once` and its `message`.
+pub fn reprieves(def: &TalentDef) -> impl Iterator<Item = (&str, &str)> {
+    use crate::talent::VigourEffect;
+    let whiles = def.effects_while.iter().map(|(_, e)| e);
+    (def.effects.iter().chain(whiles)).filter_map(|effect| match effect {
+        TalentEffect::Vigour(VigourEffect::Reprieve { once, message, .. }) => {
+            Some((once.as_str(), message.as_str()))
+        }
+        _ => None,
+    })
+}
+
+/// The magic's lines above, for [`add_all`].
+fn magic_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
+    for spell in content.spells() {
+        if let Some(message) = &spell.look.message {
+            add(spell_cast(&spell.id), message);
+        }
+    }
+    for entry in content.miscasts() {
+        add(miscast_message(&entry.id), &entry.message);
+    }
+    for mishap in content.mishaps() {
+        add(mishap_message(&mishap.id), &mishap.message);
+    }
+    for row in &content.ruin().rows {
+        add(ruin_says(content, row, false), &row.one);
+        add(ruin_says(content, row, true), &row.many);
+    }
+    for (_, def) in content.talents().iter() {
+        for (_, message) in reprieves(def) {
+            add(reprieve(&def.id), message);
+        }
+    }
+}
+
 /// Adds every line above to English by its key; a line naming a role is refused (none is given
 /// one).
 pub(super) fn add_all(content: &mut Content) -> Result<(), ContentError> {
@@ -221,6 +293,7 @@ pub(super) fn add_all(content: &mut Content) -> Result<(), ContentError> {
         }
     }
     character_lines(content, &mut add);
+    magic_lines(content, &mut add);
     for (id, level) in &content.levels {
         if let Some(line) = &level.arrival {
             add(level_arrival(id), line);

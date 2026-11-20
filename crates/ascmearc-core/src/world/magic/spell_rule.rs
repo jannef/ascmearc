@@ -27,9 +27,10 @@ use crate::action::{Event, SpellShape};
 use crate::content::{Content, OnlyTerrain, SpellData};
 use crate::fov::radius2;
 use crate::geom::{Dir, Pos};
+use crate::lang::Msg;
+use crate::msg;
 use crate::noise::Heard;
 use crate::rng::draw;
-use crate::text::capitalized;
 use crate::weather::{Override, Weather};
 use crate::world::{Actor, ActorId, World};
 use std::collections::BTreeSet;
@@ -55,7 +56,7 @@ impl World {
             return;
         }
         if self.heal_by_magic(by, back, events) > 0 && by == self.state.player {
-            self.say("What it takes mends you.");
+            self.say(msg::magic::TAKES_MENDS_YOU);
         }
     }
 
@@ -108,15 +109,13 @@ impl World {
             .map(|a| a.id)
             .collect();
         if hurt.is_empty() && undead.is_empty() {
-            self.say("No one here is hurt.");
+            self.say(msg::magic::NO_ONE_HERE_HURT);
             return false;
         }
         if !self.pay_cast(cast) {
             return true;
         }
-        if let Some(text) = &cast.def.look.message {
-            self.say(text.clone());
-        }
+        self.say_cast_message(cast.def);
         self.sound_at(cast.def.look.noise, here);
         let back = heal
             .roll(&mut draw!(self, "spell_rule/heal_all/player"), cast.reroll)
@@ -147,9 +146,7 @@ impl World {
         if !self.pay_cast(cast) {
             return true;
         }
-        if let Some(text) = &cast.def.look.message {
-            self.say(text.clone());
-        }
+        self.say_cast_message(cast.def);
         self.sound_at(cast.def.look.noise, here);
         let path = self.bolt_line(here, at, range);
         if let Some(effect) = &cast.def.look.effect {
@@ -203,8 +200,8 @@ impl World {
             moved |= self.drive_back(id, dir, events).is_some();
         }
         if moved && self.perception.sees_actors_at(at) {
-            let who = capitalized(&self.called(&self.state.actors[&id]));
-            self.say(format!("{who} is driven back."));
+            let who = self.called_phrase(&self.state.actors[&id]);
+            self.say(Msg::new(msg::magic::DRIVEN_BACK).role("who", who));
         }
         moved
     }
@@ -220,15 +217,13 @@ impl World {
         let here = self.player_pos();
         let cells = self.blink_cells(here, i32::from(blink.cells));
         if cells.is_empty() {
-            self.say("There is nowhere to go.");
+            self.say(msg::magic::NOWHERE_TO_GO);
             return false;
         }
         if !self.pay_cast(cast) {
             return true;
         }
-        if let Some(text) = &cast.def.look.message {
-            self.say(text.clone());
-        }
+        self.say_cast_message(cast.def);
         self.sound_at(cast.def.look.noise, here);
         let n = u32::try_from(cells.len()).unwrap_or(u32::MAX);
         let to = cells[draw!(self, "spell_rule/blink/player").below(n) as usize];
@@ -277,15 +272,13 @@ impl World {
             return false;
         };
         if cast.def.open_sky && !self.under_open_sky() {
-            self.say("You need the open sky above you for that.");
+            self.say(msg::magic::OPEN_SKY);
             return false;
         }
         if !self.pay_cast(cast) {
             return true;
         }
-        if let Some(text) = &cast.def.look.message {
-            self.say(text.clone());
-        }
+        self.say_cast_message(cast.def);
         self.sound_at(cast.def.look.noise, self.player_pos());
         let over = Override::lasting(weather.kind, self.state.time, weather.lasts);
         self.state.weather_override = Some(over);

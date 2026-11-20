@@ -23,12 +23,13 @@
 //!   nothing is said, and the pile simply shows less when next seen.
 
 use super::spell::Caster;
-use crate::content::DamageTypeId;
+use crate::content::{DamageTypeId, RuinRow, data_line};
 use crate::geom::Pos;
+use crate::lang::{Arg, Msg};
 use crate::magic::worked::{proof, protected};
+use crate::msg;
 use crate::object::Stack;
 use crate::rng::Rng;
-use crate::text::capitalized;
 use crate::world::World;
 use std::collections::BTreeSet;
 
@@ -48,7 +49,7 @@ impl World {
         let cells: BTreeSet<Pos> = cells.iter().copied().collect();
         let seed = self.state.seed;
         // What the player saw go, by what it is and what is said of it, in the order first lost.
-        let mut told: Vec<(Stack, (&str, &str))> = Vec::new();
+        let mut told: Vec<(Stack, &RuinRow)> = Vec::new();
         for p in cells {
             let Some(pile) = self.state.current().objects.get(&p) else {
                 continue;
@@ -76,10 +77,10 @@ impl World {
                 if seen {
                     let mut gone = stack.clone();
                     gone.count = lost;
-                    let said = (row.one.as_str(), row.many.as_str());
-                    match (told.iter_mut()).find(|(s, w)| s.same_goods(&gone) && *w == said) {
+                    let said = |r: &RuinRow| r.one == row.one && r.many == row.many;
+                    match (told.iter_mut()).find(|(s, r)| s.same_goods(&gone) && said(r)) {
                         Some((s, _)) => s.count += lost,
-                        None => told.push((gone, said)),
+                        None => told.push((gone, row)),
                     }
                 }
                 stack.count -= lost;
@@ -89,13 +90,16 @@ impl World {
                 self.state.current_mut().set_pile(p, pile);
             }
         }
-        for (stack, (one, many)) in told {
-            let line = if stack.count == 1 {
-                let title = self.lore().title(&stack);
-                format!("{} {one}.", crate::content::the_start(&title))
-            } else {
-                format!("{} {many}.", capitalized(&self.lore().describe(&stack)))
-            };
+        // The row's words for one and for several are lines of data, by their keys; the line's
+        // count picks which (`docs/dev/localization.md` "Lines of data").
+        for (stack, row) in told {
+            let one = Arg::said(data_line::ruin_says(&content, row, false));
+            let many = Arg::said(data_line::ruin_says(&content, row, true));
+            let line = Msg::new(msg::magic::RUINED)
+                .role("what", self.lore().phrase(&stack))
+                .role("title", self.lore().title_phrase(&stack))
+                .role("one", one)
+                .role("many", many);
             self.say(line);
         }
     }

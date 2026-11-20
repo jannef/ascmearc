@@ -30,9 +30,10 @@ use crate::action::Event;
 use crate::content::{CreatureId, CreatureSpawn, LevelKind, SpellPurpose, Stance};
 use crate::damage::Damage;
 use crate::dice::Dice;
+use crate::lang::{Arg, Msg, Phrase};
+use crate::msg;
 use crate::rng::draw;
-use crate::text::{and_list, capitalized};
-use crate::world::combat::fight::Harm;
+use crate::world::combat::fight::{self, Harm};
 use crate::world::{ActorId, World};
 
 impl World {
@@ -77,8 +78,8 @@ impl World {
                 (Some((status, _)), Some(degrees)) => match self.nearest_hostile(caster) {
                     Some(on) => {
                         if caster == self.state.player {
-                            let who = self.called(&self.state.actors[&on]);
-                            self.say(format!("Your spell takes hold of {who} instead."));
+                            let who = self.called_phrase(&self.state.actors[&on]);
+                            self.say(Msg::new(msg::magic::SPELL_TAKES_HOLD_OF).role("who", who));
                         }
                         self.afflict(on, status, degrees, None, events);
                         true
@@ -131,13 +132,13 @@ impl World {
             return;
         };
         if caster == player {
-            let who = self.called(them);
-            self.say(format!("Your healing flows into {who}."));
+            let who = self.called_phrase(them);
+            self.say(Msg::new(msg::magic::HEALING_FLOWS_INTO).role("who", who));
         } else if on == player {
-            self.say("Your wounds close.");
+            self.say(msg::magic::WOUNDS_CLOSE);
         } else if self.perception.sees_actors_at(them.pos) {
-            let who = capitalized(&self.called(them));
-            self.say(format!("{who} looks better."));
+            let who = self.called_phrase(them);
+            self.say(Msg::new(msg::magic::LOOKS_BETTER).role("who", who));
         }
         self.heal_by_magic(on, back, events);
     }
@@ -196,28 +197,34 @@ impl World {
                 None => came.push((creature, 1)),
             }
         }
-        let words: Vec<String> = (came.iter())
-            .map(|&(c, n)| {
-                let def = content.creature(c);
-                crate::world::allies::ally::few(&def.name, &def.plural, n)
-            })
+        let mut who: Vec<Phrase> = (came.iter())
+            .map(|&(c, n)| fight::creature(content.creature(c)).count(n))
             .collect();
-        let list = crate::text::capitalized(&and_list(
-            &words.iter().map(String::as_str).collect::<Vec<_>>(),
-        ));
-        let verb = if count == 1 { "comes" } else { "come" };
+        // One type: that phrase, its count picking the line. Several: a list of them, each type
+        // an item that takes its own form ("a kobold and two rats", `magic.hostile_creatures`).
+        let mixed = who.len() > 1;
+        let who: Arg = match mixed {
+            false => who.remove(0).into(),
+            true => Arg::List(who.into_iter().map(hostile_creatures).collect()),
+        };
         let player = self.state.player;
         let me = &self.state.actors[&caster];
         if caster == player {
-            self.say(format!("{list} {verb} to your call, but not to your side!"));
+            let id = match mixed {
+                false => msg::magic::HOSTILE_CALL,
+                true => msg::magic::HOSTILE_CALL_MIXED,
+            };
+            self.say(Msg::new(id).role("who", who));
             for &(creature, n) in &came {
                 (0..n).for_each(|_| self.player_summoned(creature));
             }
         } else if self.perception.sees_actors_at(me.pos) {
-            let who = self.called(me);
-            self.say(format!(
-                "{list} {verb} to {who}'s call, but not to its side!"
-            ));
+            let caster = self.called_phrase(me);
+            let id = match mixed {
+                false => msg::magic::HOSTILE_CALL_SEEN,
+                true => msg::magic::HOSTILE_CALL_SEEN_MIXED,
+            };
+            self.say(Msg::new(id).role("who", who).role("caster", caster));
         }
         true
     }
@@ -233,6 +240,14 @@ impl World {
             self.hurt(caster, amount, Harm::Place, events);
         }
     }
+}
+
+/// The creatures of one type a backfired summon brought, as an item of a `_mixed` line's list:
+/// each renders its own phrase in the form its count asks.
+fn hostile_creatures(who: Phrase) -> Arg {
+    Msg::new(msg::magic::HOSTILE_CREATURES)
+        .role("who", who)
+        .into()
 }
 
 /// How many d6 the fallback harm rolls for a spell of `level`: `level ÷ 3 + 1`, or `level ÷ 2 +

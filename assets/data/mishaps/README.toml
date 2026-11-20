@@ -7,7 +7,7 @@
 #             bad_from and terrible_from), or lucky: drawn beside any band
 #   weight    its share of the draw among its band's and the lucky ones
 #   message   said as it happens, after "The words twist away from you." (then the grimoire
-#             may crumble: study.toml's `crumble`)
+#             may crumble: study.toml's `crumble`); a line of data, `mishap:<id>.message`
 #   effect    what it does, by `kind`:
 #             nothing
 #             status     `status` (an id of status/) at `severity` (default 1)

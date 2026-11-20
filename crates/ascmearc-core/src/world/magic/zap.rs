@@ -25,6 +25,8 @@
 use crate::action::Event;
 use crate::content::{ActionKind, Content};
 use crate::geom::Pos;
+use crate::lang::{Msg, Phrase};
+use crate::msg;
 use crate::world::{Actor, Spent, World};
 
 impl Actor {
@@ -48,14 +50,14 @@ impl World {
         let content = self.content.clone();
         let me = self.state.player();
         let Some(stack) = me.inventory.get(item) else {
-            self.say("You carry no such thing.");
+            self.say(msg::magic::CARRY_NO_SUCH_THING);
             return Spent::Nothing;
         };
         let Some(wand) = content.object(stack.object).wand else {
             return Spent::Nothing;
         };
         if stack.charges_left(&content) == Some(0) {
-            self.say("Nothing happens.");
+            self.say(msg::magic::NOTHING_HAPPENS);
             // Now the player knows it is empty.
             self.player_mut().inventory[item].identify_charges(&content);
             return Spent::Nothing;
@@ -79,11 +81,11 @@ impl World {
         };
         stack.use_charge();
         let wand = stack.clone();
-        let title = self.lore().title(&wand);
-        self.say(format!("You zap the {title}."));
+        let title = self.lore().title_phrase(&wand);
+        self.say(Msg::new(msg::magic::ZAP).role("what", title));
         if self.learn_scroll(wand.object) {
-            let what = self.content.object(wand.object).describe(1);
-            self.say(format!("It is {what}."));
+            let what = Phrase::id(format!("object:{}", self.content.object(wand.object).id));
+            self.say(Msg::new(msg::magic::IT_IS).role("what", what.count(1)));
         }
     }
 }

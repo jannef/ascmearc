@@ -27,7 +27,9 @@
 use crate::content::Effect as ItemEffect;
 use crate::content::{ActionKind, Content, StatUse};
 use crate::hunger::Hunger;
+use crate::lang::Msg;
 use crate::mana;
+use crate::msg;
 use crate::skills::{Effect, Use};
 use crate::stats::Stat;
 use crate::time::GameTime;
@@ -168,10 +170,10 @@ impl World {
         let cost = (self.state.player()).mana_cost(&self.content, i32::from(amount));
         if !self.spend_mana(player, i32::from(amount)) {
             let left = self.state.player().mana;
-            self.say(format!("You have only {left} mana (dev)."));
+            self.say(Msg::new(msg::magic::ONLY_MANA_DEV).role("left", i64::from(left)));
             return Spent::Nothing;
         }
-        self.say(format!("You spend {cost} mana (dev)."));
+        self.say(Msg::new(msg::magic::SPEND_MANA_DEV).role("cost", i64::from(cost)));
         Spent::NoTime
     }
 
@@ -185,22 +187,22 @@ impl World {
         let player = self.state.player;
         let me = self.state.player();
         let Some(blood) = me.talent_mods(&content).magic.blood_magic else {
-            self.say("You know no blood magic.");
+            self.say(msg::magic::NO_BLOOD_MAGIC);
             return Spent::Nothing;
         };
         if me.hp <= blood.hp {
-            self.say("You have too little blood left to give.");
+            self.say(msg::magic::TOO_LITTLE_BLOOD);
             return Spent::Nothing;
         }
         let max = me.max_mana(&content);
         if me.mana >= max {
-            self.say("Your mana is already full.");
+            self.say(msg::magic::MANA_FULL);
             return Spent::Nothing;
         }
         let me = self.player_mut();
         me.hp -= blood.hp;
         me.mana = (me.mana + blood.mana).min(max);
-        self.say("You give your blood, and power wells up in you.");
+        self.say(msg::magic::GIVE_BLOOD);
         Spent::Turn(self.price_of(player, ActionKind::Wait))
     }
 }
