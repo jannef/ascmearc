@@ -20,7 +20,8 @@
 //! | `terrain:<id>` | its `name` ("stone wall") |
 //! | `label:scroll`, `label:wand`, `label:rod`, `label:potion` | an unidentified type's `name` and `plural`, with its `{label}` and `{colour}` slots (`data/scroll_labels.toml`, …) |
 //! | `colour:<colour>` | a potion's colour, as its type writes it ("red") |
-//! | `word:<text>` | a word data names without an id of its own (a natural attack's "bite", a trap's "arrow", a status's "staggered", "something"), keyed by its English, which is the word; with no data to say its number, a plural noun (`many`) as its spelling suggests ([`crate::lang::en::is_plural`]: "claws", "flames", "stakes") |
+//! | `trap:<id>`, `chest:<band>`, `status_seen:<id>`, `grade:<creature>.<n>`, ... | the data's words beside a name ([`super::data_word`], #1995) |
+//! | `word:<text>` | a word data names without an id of its own (a natural attack's "bite", a thrown "stone", "something"), keyed by its English, which is the word; with no data to say its number, a plural noun (`many`) as its spelling suggests ([`crate::lang::en::is_plural`]: "claws", "flames", "stakes") |
 //!
 //! A phrase's number comes from data (#1965): its count, the `many` above, and a proper name or
 //! a literal is one thing ("The Hounds quails", "the incubus's"). Only `word:` guesses.
@@ -108,7 +109,8 @@ impl Lexicon for Content {
             "terrain" => Some(LexWord::new(&self.terrain(self.terrain_id(key)?).name)),
             "colour" => Some(LexWord::new(key)),
             "word" => Some(LexWord::new(key).many(is_plural(key))),
-            _ => None,
+            // The data's words beside a name (#1995): `trap:`, `chest:`, `status_seen:`, ...
+            _ => super::data_word::word(self, kind, key),
         }
     }
 }

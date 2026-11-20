@@ -251,7 +251,6 @@ impl World {
         }
         let content = self.content.clone();
         let who = creature(content.creature(them.creature));
-        let def = content.status(status);
         let staggers = content.ids().staggered == Some(status);
         let from = match trigger {
             Trigger::Blocked => Some("shield"),
@@ -264,8 +263,9 @@ impl World {
             (false, None) => msg::combat::STATUS,
             (false, Some(_)) => msg::combat::STATUS_FROM,
         };
-        let seen = def.seen.clone().unwrap_or_else(|| def.name.to_lowercase());
-        let mut line = Msg::new(id).role("who", who).role("status", word(&seen));
+        let mut line = Msg::new(id)
+            .role("who", who)
+            .role("status", content.seen_or_name(status));
         if let Some(from) = from {
             line = line.role("from", word(from));
         }

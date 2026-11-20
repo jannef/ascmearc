@@ -229,9 +229,8 @@ impl World {
             .map(|a| a.id)
             .collect();
         let content = self.content.clone();
-        // The status as it looks, a `word:` phrase ("asleep"; else "affected").
-        let seen = content.status(status).seen.as_deref();
-        let word = fight::word(seen.unwrap_or("affected"));
+        // The status as it looks ("asleep", `status_seen:<id>`; else "affected").
+        let word = (content.seen_phrase(status)).unwrap_or_else(|| fight::word("affected"));
         for id in caught {
             let actor = &self.state.actors[&id];
             let seen = self.perception.sees_actors_at(actor.pos);

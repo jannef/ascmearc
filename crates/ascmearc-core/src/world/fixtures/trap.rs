@@ -141,7 +141,7 @@ impl World {
         if light {
             self.know_trap(at);
             self.state.current_mut().trap_memory.insert(at, kind);
-            let trap = crate::world::combat::fight::word(&def.name);
+            let trap = self.content.trap_phrase(kind);
             self.say(Msg::new(msg::fixtures::STEP_LIGHTLY_OFF).role("trap", trap));
         }
         light

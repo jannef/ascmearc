@@ -16,7 +16,6 @@ use crate::action::Event;
 use crate::content::{Content, StatusId};
 use crate::lang::Msg;
 use crate::msg;
-use crate::world::combat::fight;
 use crate::world::{ActorId, World};
 
 impl World {
@@ -55,12 +54,11 @@ impl World {
         let has = self.state.actors[&other].effects.has(status);
         if other == companion && has && !had {
             let who = self.ally_phrase(companion);
-            let def = self.content.status(status);
-            let seen = def.seen.clone().unwrap_or_else(|| def.name.to_lowercase());
+            let seen = self.content.seen_or_name(status);
             self.news.push(
                 Msg::new(msg::allies::BOND_SHARED)
                     .role("who", who)
-                    .role("seen", fight::word(&seen)),
+                    .role("seen", seen),
             );
         }
     }

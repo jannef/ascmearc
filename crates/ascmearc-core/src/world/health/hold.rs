@@ -52,7 +52,6 @@ use crate::skills::{Effect as SkillEffect, Use};
 use crate::stats::Stat;
 use crate::status::Effect;
 use crate::world::Actor;
-use crate::world::combat::fight;
 use crate::world::{ActorId, Spent, World};
 
 impl World {
@@ -209,8 +208,8 @@ impl World {
                 self.player_mut().effects.remove(status);
                 self.ended(player, &[effect], events);
             }
-        } else if let Some(seen) = &self.content.clone().status(status).seen {
-            self.say(Msg::new(msg::health::STRUGGLE_STILL).role("status", fight::word(seen)));
+        } else if let Some(seen) = self.content.seen_phrase(status) {
+            self.say(Msg::new(msg::health::STRUGGLE_STILL).role("status", seen));
         }
         free
     }

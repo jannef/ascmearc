@@ -75,21 +75,26 @@ pub struct ChestLook {
 }
 
 impl ChestLook {
-    /// What the player calls it, by its band (`rules`; the terrain's `fallback` name without
-    /// one): "coffer", "open coffer", "smashed coffer"; with Chest-wise "locked coffer" or
-    /// "unlocked coffer".
-    pub fn name(&self, rules: &crate::content::ChestRules, fallback: &str) -> String {
-        let Some(band) = rules.bands.get(self.band) else {
-            return fallback.to_string();
+    /// What the player calls it, by its band (`rules`; `None` without one): the band's name
+    /// (`chest:<band>`, "coffer"), and the state said before it (`chest_state:<state>`): "open
+    /// coffer", "smashed coffer"; with Chest-wise "locked coffer" or "unlocked coffer"
+    /// (`content/data_word.rs`).
+    pub fn phrase(
+        &self,
+        rules: &crate::content::ChestRules,
+    ) -> Option<(crate::lang::Phrase, Option<crate::lang::Word>)> {
+        let band = rules.bands.get(self.band)?;
+        let state = match (self.state, self.locked) {
+            (ChestState::Shut, Some(true)) => Some("locked"),
+            (ChestState::Shut, Some(false)) => Some("unlocked"),
+            (ChestState::Shut, None) => None,
+            (ChestState::Open, _) => Some("open"),
+            (ChestState::Smashed, _) => Some("smashed"),
         };
-        let name = &band.name;
-        match (self.state, self.locked) {
-            (ChestState::Shut, Some(true)) => format!("locked {name}"),
-            (ChestState::Shut, Some(false)) => format!("unlocked {name}"),
-            (ChestState::Shut, None) => name.clone(),
-            (ChestState::Open, _) => format!("open {name}"),
-            (ChestState::Smashed, _) => format!("smashed {name}"),
-        }
+        Some((
+            band.phrase(),
+            state.map(crate::content::data_word::chest_state),
+        ))
     }
 }
 

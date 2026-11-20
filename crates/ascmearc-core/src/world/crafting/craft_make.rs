@@ -144,11 +144,21 @@ pub struct CraftOption {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct CraftStep {
     pub kind: CraftStepKind,
-    /// What it is for: the part ("blade", "head", "pommel") or the input ("arrowheads").
-    pub label: String,
+    /// What it is for: the part ("blade", "head", "pommel") or the input ("arrowheads"), said
+    /// `bare` (`part:<id>`, `object:<id>` in the plural, or a fixed `word:`).
+    pub label: Phrase,
     /// None may be chosen (the ornament, the arrows' head).
     pub optional: bool,
     pub options: Vec<CraftOption>,
+}
+
+#[cfg(test)]
+impl CraftStep {
+    /// Its label in English, by the built-in content (leaked: a test's to compare).
+    pub(crate) fn label_en(&self) -> &'static str {
+        let text = crate::test_support::builtin().english_of(&self.label, "bare");
+        Box::leak(text.into_boxed_str())
+    }
 }
 
 /// What a recipe with the picks chosen would make and use, in words (the dialog's).
@@ -455,15 +465,16 @@ pub(super) fn cut_gem(
     (!gems.cut(cutting.cut).rough).then_some((gem, cutting))
 }
 
-/// What a step is for, in words: the part's name ("blade", "head", "pommel"; a main part without
-/// one by the group of the stock it takes, "metal"), or the input's plural.
-fn label(content: &Content, recipe: &RecipeDef, step: Step) -> String {
+/// What a step is for, as a phrase said `bare`: the part's name ("blade", "head", "pommel",
+/// `part:<id>`; a main part without one by the group of the stock it takes, "metal"), or the
+/// input's plural (`object:<id>` counted as several: "arrowheads").
+fn label(content: &Content, recipe: &RecipeDef, step: Step) -> Phrase {
     let Some(result) = recipe.result.as_ref() else {
-        return String::new();
+        return Phrase::literal("");
     };
     let def = content.object(result.object);
     let part_name = |part: Option<crate::content::PartId>| {
-        part.map(|p| content.part_defs()[usize::from(p.0)].name.clone())
+        part.map(|p| Phrase::id(format!("part:{}", content.part_defs()[usize::from(p.0)].id)))
     };
     match step {
         Step::Part(i) | Step::Sources(i) => (def.parts.get(i))
@@ -473,19 +484,31 @@ fn label(content: &Content, recipe: &RecipeDef, step: Step) -> String {
                 let worked = worked_materials(content, recipe, result.object, i);
                 let group = |m: &MaterialId| content.material(*m).group.clone();
                 let first = group(worked.first()?);
-                worked.iter().all(|m| group(m) == first).then_some(first)?
+                let group = worked
+                    .iter()
+                    .all(|m| group(m) == first)
+                    .then_some(first)??;
+                Some(step_word(&group))
             })
-            .unwrap_or_else(|| "material".into()),
+            .unwrap_or_else(|| step_word("material")),
         Step::Input(i) => match &recipe.inputs[i].kind {
-            InputKind::Object(o) => content.object(*o).plural.clone(),
-            InputKind::Material(m) => content.material(*m).name.clone(),
-            InputKind::Group(group) => group.clone(),
+            InputKind::Object(o) => {
+                Phrase::id(format!("object:{}", content.object(*o).id)).count(2)
+            }
+            InputKind::Material(m) => Phrase::id(format!("material:{}", content.material(*m).id)),
+            InputKind::Group(group) => step_word(group),
         },
-        Step::Ornament(part) => part_name(Some(part)).unwrap_or_default(),
+        Step::Ornament(part) => part_name(Some(part)).unwrap_or_else(|| Phrase::literal("")),
         Step::Gem(i) => (def.parts.get(i))
             .and_then(|p| part_name(p.part))
-            .unwrap_or_else(|| "gem".into()),
+            .unwrap_or_else(|| step_word("gem")),
     }
+}
+
+/// A step's label core picks ("item", "gem", "seal") or a material group's ("metal"), which
+/// has no id of its own: `word:<text>`.
+pub(super) fn step_word(text: &str) -> Phrase {
+    Phrase::id(format!("word:{text}"))
 }
 
 /// The wizard's steps of `recipe` for `player` on `level` (the module docs); empty for a recipe
@@ -1070,7 +1093,7 @@ impl World {
             Some(RecipeLack::Gem) => Some(msg::crafting::NO_GEM_TO_HAND.into()),
             Some(RecipeLack::Launcher(o)) => Some(
                 Msg::new(msg::crafting::NO_LAUNCHER_READY)
-                    .role("launcher", fletch::launcher_word(&content, o).to_string()),
+                    .role("launcher", content.launcher_phrase(o)),
             ),
             Some(
                 RecipeLack::Setting | RecipeLack::Nothing | RecipeLack::Room | RecipeLack::Crystal,

@@ -161,7 +161,7 @@ fn cause_words(fallen: &Fallen, content: &Content) -> String {
         });
     }
     if let Some(trap) = content.trap_id(cause) {
-        return by_name(&content.trap(trap).name);
+        return killed_by(content.trap_phrase(trap));
     }
     if let Some(creature) = content.creature_id(cause) {
         return killed_by(Phrase::id(format!(

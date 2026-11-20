@@ -251,7 +251,7 @@ pub(super) fn steps(
         .collect::<Vec<_>>();
     let mut steps = vec![CraftStep {
         kind: CraftStepKind::Item,
-        label: "item".into(),
+        label: super::craft_make::step_word("item"),
         optional: false,
         options: items,
     }];
@@ -265,7 +265,7 @@ pub(super) fn steps(
         };
         steps.push(CraftStep {
             kind: CraftStepKind::Input,
-            label: label.into(),
+            label: super::craft_make::step_word(label),
             optional: false,
             options: crystals.clone(),
         });

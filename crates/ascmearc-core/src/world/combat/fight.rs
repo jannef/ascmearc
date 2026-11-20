@@ -225,8 +225,10 @@ pub(in crate::world) enum Harm {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(in crate::world) struct Words {
     noun: Phrase,
-    verb: String,
-    you: String,
+    /// What it does, and the same in the player's person: text, or a damage type's line of data
+    /// (`damage_type:<id>.verb`, `.you`; `content/data_word.rs`).
+    verb: Arg,
+    you: Arg,
     /// The noun is a plural ("flames", "shards"): what it does is said in the plural verb
     /// ("The flames burn the goblin.", "Your shards glance off its hide.").
     plural: bool,
@@ -240,7 +242,18 @@ impl Words {
             plural: plural(&noun, content),
             noun,
             verb: verb.into(),
-            you: second_person(verb),
+            you: second_person(verb).into(),
+        }
+    }
+
+    /// What hits and what a blow of damage kind `kind` does ("burns", "burn"), by the kind's
+    /// lines of data.
+    pub(in crate::world) fn of_kind(noun: Phrase, kind: DamageTypeId, content: &Content) -> Self {
+        Self {
+            plural: plural(&noun, content),
+            noun,
+            verb: content.damage_verb(Some(kind), false),
+            you: content.damage_verb(Some(kind), true),
         }
     }
 
@@ -255,7 +268,7 @@ impl Words {
         Self {
             noun: word(noun),
             verb: verb.into(),
-            you: second_person(verb),
+            you: second_person(verb).into(),
             plural: crate::lang::en::is_plural(noun),
         }
     }
@@ -277,15 +290,7 @@ impl Words {
         let noun = object_phrase(weapon);
         match (&weapon.verb, damage) {
             (Some(verb), _) => Self::new(noun, verb, content),
-            (None, Some(kind)) => {
-                let kind = content.damage_type(kind);
-                Self {
-                    plural: plural(&noun, content),
-                    noun,
-                    verb: kind.verb.clone(),
-                    you: kind.you.clone(),
-                }
-            }
+            (None, Some(kind)) => Self::of_kind(noun, kind, content),
             (None, None) => Self::new(noun, "hits", content),
         }
     }
@@ -386,11 +391,9 @@ impl End {
 
     /// A creature the player sees, with how the blow found it ("sleeping", "staggered";
     /// `surprise.rs`) before its name.
-    pub(in crate::world) fn caught(self, word: Option<&str>) -> Self {
+    pub(in crate::world) fn caught(self, word: Option<Word>) -> Self {
         match (self, word) {
-            (End::Seen(p), Some(w)) => {
-                End::Seen(p.with(Modifier::Adjective(Word::id(format!("word:{w}")))))
-            }
+            (End::Seen(p), Some(w)) => End::Seen(p.with(Modifier::Adjective(w))),
             (end, _) => end,
         }
     }
@@ -494,10 +497,10 @@ pub(in crate::world) fn attack_message(
     let both_seen = !attacker.is_unseen() && !target.is_unseen();
     // A plural subject takes the plural verb: a trap's, which is its noun.
     let hit = match (attacker, kind) {
-        (End::You(_), AttackKind::Ranged) => "shoot",
-        (End::You(_), _) => words.you.as_str(),
-        (End::Trap(_), _) if words.plural => words.you.as_str(),
-        _ => words.verb.as_str(),
+        (End::You(_), AttackKind::Ranged) => Arg::from("shoot"),
+        (End::You(_), _) => words.you.clone(),
+        (End::Trap(_), _) if words.plural => words.you.clone(),
+        _ => words.verb.clone(),
     };
     let msg = match strike {
         Strike::Hit { critical } => ends(if critical {
@@ -505,7 +508,7 @@ pub(in crate::world) fn attack_message(
         } else {
             msg::combat::HIT
         })
-        .role("verb", hit),
+        .role("verb", hit.clone()),
         Strike::Soaked if both_seen => off(guard.soak.as_ref(), "armour"),
         Strike::Resisted if both_seen => struck(msg::combat::DOES_NO_HARM),
         Strike::Soaked | Strike::Resisted => ends(msg::combat::HIT_NO_HARM).role("verb", hit),

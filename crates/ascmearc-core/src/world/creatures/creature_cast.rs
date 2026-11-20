@@ -422,8 +422,7 @@ impl World {
                 .collect()
         };
         let content = self.content.clone();
-        let word = (content.status(status).seen.as_deref())
-            .map_or_else(|| fight::word("hexed"), fight::word);
+        let word = (content.seen_phrase(status)).unwrap_or_else(|| fight::word("hexed"));
         for target in caught {
             if !self.state.actors.contains_key(&target) || self.state.death.is_some() {
                 continue;

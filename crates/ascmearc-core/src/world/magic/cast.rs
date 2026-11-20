@@ -711,8 +711,7 @@ impl World {
     /// `who` is now under hex `status`, as the player is told it: "The kobold is asleep." (its
     /// `seen` word, else "hexed").
     fn hexed(&self, who: crate::lang::Phrase, status: StatusId) -> Msg {
-        let seen = self.content.status(status).seen.as_deref();
-        let word = fight::word(seen.unwrap_or("hexed"));
+        let word = (self.content.seen_phrase(status)).unwrap_or_else(|| fight::word("hexed"));
         Msg::new(msg::magic::IS_STATUS)
             .role("who", who)
             .role("status", word)

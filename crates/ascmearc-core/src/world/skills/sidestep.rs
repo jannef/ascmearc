@@ -18,7 +18,6 @@ use crate::msg;
 use crate::rng::draw;
 use crate::skills::Use;
 use crate::world::World;
-use crate::world::combat::fight::word;
 
 impl World {
     /// The player's dodge against a known trap: the Dexterity and Dodge categories of their
@@ -57,7 +56,7 @@ impl World {
             TrapEffect::Pit { .. } => msg::skills::STEP_OVER,
             _ => msg::skills::AVOID_TRAP,
         };
-        self.say(Msg::new(id).role("trap", word(&def.name)));
+        self.say(Msg::new(id).role("trap", self.content.trap_phrase(kind)));
         if self.trains(Use::Dodge) {
             self.train(Use::Dodge);
         }

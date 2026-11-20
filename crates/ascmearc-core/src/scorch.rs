@@ -139,6 +139,11 @@ pub fn word(stain: &Stain) -> &'static str {
     }
 }
 
+/// [`word`] as the lexicon's adjective: `char:<word>` (`content/data_word.rs`).
+pub fn adjective(stain: &Stain) -> crate::lang::Word {
+    crate::lang::Word::id(format!("char:{}", word(stain)))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
