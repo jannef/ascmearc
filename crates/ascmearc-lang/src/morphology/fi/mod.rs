@@ -7,7 +7,10 @@
 //! a count puts the numeral before a partitive, and the player is a pronoun in the case asked.
 //! An owner is a genitive before the phrase ("peikon pitkämiekka"), the player as owner a
 //! possessive suffix ("pitkämiekkasi"); a part's material makes a compound adjective
-//! ("smaragdiponsinen"); a plural-only word (`many`) is said in the plural.
+//! ("smaragdiponsinen"). A word plural in meaning (English's `many`, "liekit") is said in the
+//! plural uncounted and counted as any noun ("kolme liekkiä"); a word with no singular (the
+//! lexicon's `plural_only`, "sakset") is plural in every case and counted with the plural
+//! numeral ("kolmet sakset").
 //! Total: a word the rules refuse renders as written; nothing here panics on file data.
 
 mod classes;
@@ -118,6 +121,16 @@ impl Form {
         }
         out
     }
+}
+
+/// The number a phrase's words are asked in: the plural, the singular (plural for a word
+/// plural in meaning or with no singular), or after a numeral (plural only for a word with no
+/// singular: "kolme liekkiä", "kolmet sakset").
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum Number {
+    Singular,
+    Plural,
+    Counted,
 }
 
 /// A head or modifier word, ready to inflect.
@@ -287,8 +300,45 @@ const KAKSI: [&str; 12] = [
     "kahdelle", "kahtena", "kahdeksi", "kahdetta",
 ];
 
+/// `yksi` and `kaksi` in the plural (`yhdet sakset`), the twelve cases.
+const YKSI_PL: [&str; 12] = [
+    "yhdet", "yksien", "yksiä", "yksissä", "yksistä", "yksiin", "yksillä", "yksiltä", "yksille",
+    "yksinä", "yksiksi", "yksittä",
+];
+const KAKSI_PL: [&str; 12] = [
+    "kahdet", "kaksien", "kaksia", "kaksissa", "kaksista", "kaksiin", "kaksilla", "kaksilta",
+    "kaksille", "kaksina", "kaksiksi", "kaksitta",
+];
+
+/// A plural numeral 1–19 in a case, as a word: what counts a word with no singular ("kolmet
+/// sakset", "kolmissa housuissa", "yhdettoista sakset"). Zero and the tens are left to the
+/// caller.
+fn plural_numeral(n: u32, case: Case) -> Option<String> {
+    let index = Case::SINGULAR.iter().position(|c| *c == case)?;
+    if n == 0 || n >= 20 {
+        return None;
+    }
+    if n >= 11 {
+        return plural_numeral(n - 10, case).map(|w| format!("{w}toista"));
+    }
+    let stem = match n {
+        1 => return YKSI_PL.get(index).map(|s| (*s).to_string()),
+        2 => return KAKSI_PL.get(index).map(|s| (*s).to_string()),
+        // The plural of `kolme` is class 7's (`kolmet`, `kolmien`, `kolmia`), as `ovi`'s.
+        3 => "kolmi/7",
+        4 => "neljä/10",
+        5 => "viisi/27",
+        6 => "kuusi/27",
+        7 => "seitsemä/10",
+        8 => "kahdeksa/10",
+        9 => "yhdeksä/10",
+        _ => "kymmen/32",
+    };
+    word::parse(stem, None).ok()?.form(true, case, None)
+}
+
 /// A numeral 0–19 in a case, as a word: the cardinal's own declension (`kolmeen`,
-/// `yhdentoista`). The tens, hundreds, and the plural are left to digits.
+/// `yhdentoista`). The tens and hundreds are left to digits.
 fn numeral(n: u32, case: Case) -> Option<String> {
     let index = Case::SINGULAR.iter().position(|c| *c == case)?;
     if n >= 20 {
@@ -331,10 +381,16 @@ impl Fi {
         }
     }
 
-    /// The count as a numeral in `case`: a word up to `number_words` (and 19), else digits.
-    fn count(&self, n: u32, case: Case, reg: &Register) -> String {
+    /// The count as a numeral in `case`, `plural` for a word with no singular: a word up to
+    /// `number_words` (and 19), else digits.
+    fn count(&self, n: u32, case: Case, plural: bool, reg: &Register) -> String {
+        let word = if plural {
+            plural_numeral(n, case)
+        } else {
+            numeral(n, case)
+        };
         if n <= self.number_words
-            && let Some(word) = numeral(n, case)
+            && let Some(word) = word
         {
             return reg.word(&word).to_string();
         }
@@ -343,19 +399,25 @@ impl Fi {
 
     /// The phrase's words in a case and number: [genitive qualifiers] [adjectives, materials,
     /// and parts] [what it is made of] head [, jossa lukee X] [(notes)] [, base]; the possessive
-    /// suffix on the head alone. A plural-only word (`many`) is plural whatever the count.
+    /// suffix on the head alone. A word with no singular (`plural_only`) is plural whatever the
+    /// number; a word plural in meaning (`many`) is plural unless counted.
     #[allow(clippy::too_many_arguments)]
     fn assemble(
         &self,
         phrase: &Phrase,
         head: &Inflectable,
-        plural: bool,
+        number: Number,
         case: Case,
         poss: Option<Poss>,
         lex: &dyn Lexicon,
         reg: &Register,
     ) -> String {
-        let plural = plural || self.many(phrase, lex);
+        let (many, plural_only) = self.plurality(phrase, lex);
+        let plural = match number {
+            Number::Plural => true,
+            Number::Singular => many || plural_only,
+            Number::Counted => plural_only,
+        };
         let mut front: Vec<String> = Vec::new();
         let mut adjectives: Vec<String> = Vec::new();
         let mut made: Vec<String> = Vec::new();
@@ -413,9 +475,15 @@ impl Fi {
         out
     }
 
-    /// Whether the head is a plural-only word (`many`): "liekit", "sakset".
-    fn many(&self, phrase: &Phrase, lex: &dyn Lexicon) -> bool {
-        matches!(&phrase.head, Word::Id(id) if lex.word(id).is_some_and(|w| w.many))
+    /// Whether the head is plural in meaning (`many`: "liekit") and whether it has no singular
+    /// (`plural_only`: "sakset").
+    fn plurality(&self, phrase: &Phrase, lex: &dyn Lexicon) -> (bool, bool) {
+        match &phrase.head {
+            Word::Id(id) => lex
+                .word(id)
+                .map_or((false, false), |w| (w.many, w.plural_only)),
+            Word::Literal(_) => (false, false),
+        }
     }
 
     /// Whose it is: the owner's genitive before the phrase ("peikon "), or, for the player, no
@@ -432,8 +500,10 @@ impl Fi {
     }
 
     /// A phrase of several in a singular case: the numeral in that case and the words in the
-    /// partitive after a nominative numeral, else in the case (`kolme nuolta`, `kolmeen
-    /// nuoleen`, `12 nuolta`).
+    /// singular partitive after a nominative numeral, else in the case (`kolme nuolta`,
+    /// `kolmeen nuoleen`, `12 nuolta`, `kolme liekkiä`). A word with no singular takes the
+    /// plural numeral, agreeing in every case (`kolmet sakset`, `kolmia saksia`, `13 sakset`);
+    /// zero is the plain numeral and the plural partitive (`nolla saksia`).
     fn counted(
         &self,
         phrase: &Phrase,
@@ -443,9 +513,14 @@ impl Fi {
         lex: &dyn Lexicon,
         reg: &Register,
     ) -> String {
-        let noun_case = if case == Case::Nom { Case::Par } else { case };
-        let numeral = self.count(phrase.count, case, reg);
-        let words = self.assemble(phrase, head, false, noun_case, poss, lex, reg);
+        let plural = phrase.count != 0 && self.plurality(phrase, lex).1;
+        let noun_case = if case == Case::Nom && !plural {
+            Case::Par
+        } else {
+            case
+        };
+        let numeral = self.count(phrase.count, case, plural, reg);
+        let words = self.assemble(phrase, head, Number::Counted, noun_case, poss, lex, reg);
         format!("{numeral} {words}")
     }
 }
@@ -479,12 +554,20 @@ impl Morphology for Fi {
         let words = match form {
             Form::Num => return Ok(self.number(i64::from(phrase.count), "num", reg)),
             Form::Ord => return Ok(self.number(i64::from(phrase.count), "ord", reg)),
-            Form::Bare => self.assemble(phrase, &head, several, Case::Nom, owned, lex, reg),
+            Form::Bare => {
+                let number = if several {
+                    Number::Plural
+                } else {
+                    Number::Singular
+                };
+                self.assemble(phrase, &head, number, Case::Nom, owned, lex, reg)
+            }
             Form::Counted => {
                 if several {
                     self.counted(phrase, &head, Case::Nom, owned, lex, reg)
                 } else {
-                    self.assemble(phrase, &head, false, Case::Nom, owned, lex, reg)
+                    let number = Number::Singular;
+                    self.assemble(phrase, &head, number, Case::Nom, owned, lex, reg)
                 }
             }
             Form::Case {
@@ -495,7 +578,12 @@ impl Morphology for Fi {
                 self.counted(phrase, &head, case, poss.or(owned), lex, reg)
             }
             Form::Case { plural, case, poss } => {
-                self.assemble(phrase, &head, plural, case, poss.or(owned), lex, reg)
+                let number = if plural {
+                    Number::Plural
+                } else {
+                    Number::Singular
+                };
+                self.assemble(phrase, &head, number, case, poss.or(owned), lex, reg)
             }
         };
         Ok(owner + &words)

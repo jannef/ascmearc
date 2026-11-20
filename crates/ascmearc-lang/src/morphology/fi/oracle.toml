@@ -109,6 +109,13 @@ sg = ["pankki", "pankin", "pankkia", "pankissa", "pankista", "pankkiin", "pankil
 pl = ["pankit", "pankkien", "pankkeja", "pankeissa", "pankeista", "pankkeihin", "pankeilla", "pankeilta", "pankeille", "pankkeina", "pankeiksi", "pankeitta", "pankein", "-"]
 
 [[word]]
+lemma = "liekki"
+kotus = "5*A"
+source = "https://en.wiktionary.org/wiki/liekki" # revision 90160390
+sg = ["liekki", "liekin", "liekkiä", "liekissä", "liekistä", "liekkiin", "liekillä", "liekiltä", "liekille", "liekkinä", "liekiksi", "liekittä", "-", "-"]
+pl = ["liekit", "liekkien", "liekkejä", "liekeissä", "liekeistä", "liekkeihin", "liekeillä", "liekeiltä", "liekeille", "liekkeinä", "liekeiksi", "liekeittä", "liekein", "-"]
+
+[[word]]
 lemma = "lasi"
 kotus = "5"
 source = "https://en.wiktionary.org/wiki/lasi" # revision 92512408
@@ -1378,3 +1385,17 @@ kotus = "10"
 source = "https://en.wiktionary.org/wiki/yhdeks%C3%A4n" # revision 93994864
 sg = ["yhdeksän", "yhdeksän", "yhdeksää", "yhdeksässä", "yhdeksästä", "yhdeksään", "yhdeksällä", "yhdeksältä", "yhdeksälle", "yhdeksänä", "yhdeksäksi", "yhdeksättä", "-", "-"]
 pl = ["yhdeksät", "yhdeksien/yhdeksäin", "yhdeksiä", "yhdeksissä", "yhdeksistä", "yhdeksiin", "yhdeksillä", "yhdeksiltä", "yhdeksille", "yhdeksinä", "yhdeksiksi", "yhdeksittä", "yhdeksin", "yhdeksine"]
+
+[[word]]
+lemma = "yksitoista"
+kotus = "num"
+source = "https://en.wiktionary.org/wiki/yksitoista" # revision 95436732
+sg = ["yksitoista", "yhdentoista", "yhtätoista", "yhdessätoista", "yhdestätoista", "yhteentoista", "yhdellätoista", "yhdeltätoista", "yhdelletoista", "yhtenätoista", "yhdeksitoista", "yhdettätoista", "-", "-"]
+pl = ["yhdettoista", "yksientoista", "yksiätoista", "yksissätoista", "yksistätoista", "yksiintoista", "yksillätoista", "yksiltätoista", "yksilletoista", "yksinätoista", "yksiksitoista", "yksittätoista", "yksintoista", "yksinetoista"]
+
+[[word]]
+lemma = "kolmetoista"
+kotus = "num"
+source = "https://en.wiktionary.org/wiki/kolmetoista" # revision 95436700
+sg = ["kolmetoista", "kolmentoista", "kolmeatoista", "kolmessatoista", "kolmestatoista", "kolmeentoista", "kolmellatoista", "kolmeltatoista", "kolmelletoista", "kolmenatoista", "kolmeksitoista", "kolmettatoista", "-", "-"]
+pl = ["kolmettoista", "kolmientoista", "kolmiatoista", "kolmissatoista", "kolmistatoista", "kolmiintoista", "kolmillatoista", "kolmiltatoista", "kolmilletoista", "kolminatoista", "kolmiksitoista", "kolmittatoista", "kolmintoista", "kolminetoista"]

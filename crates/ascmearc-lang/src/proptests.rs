@@ -107,14 +107,16 @@ fn lex_word() -> impl Strategy<Value = LexWord> {
         any::<bool>(),
         prop::option::of(any::<String>()),
         any::<bool>(),
+        any::<bool>(),
     )
-        .prop_map(|(base, forms, proper, gender, many)| LexWord {
+        .prop_map(|(base, forms, proper, gender, many, plural_only)| LexWord {
             base,
             forms,
             proper,
             gender,
             harmony: None,
             many,
+            plural_only,
         })
 }
 

@@ -23,8 +23,13 @@ pub struct LexWord {
     /// word (`oliivi|öljy/1` with `harmony = "front"`).
     pub harmony: Option<String>,
     /// A plural noun though it names one thing ("flames", "shards"): a verb agrees with it in the
-    /// plural.
+    /// plural. English's, from the content; plural in meaning only (`fi` counts it as any noun:
+    /// "kolme liekkiä").
     pub many: bool,
+    /// `fi`: a word with no singular (a plurale tantum: `sakset`, `housut`, `häät`): plural in
+    /// every case, counted with the plural numeral ("kolmet sakset"). The language's own,
+    /// independent of `many`.
+    pub plural_only: bool,
 }
 
 impl LexWord {
@@ -57,6 +62,11 @@ impl LexWord {
 
     pub fn many(mut self, many: bool) -> Self {
         self.many = many;
+        self
+    }
+
+    pub fn plural_only(mut self, plural_only: bool) -> Self {
+        self.plural_only = plural_only;
         self
     }
 }
@@ -96,8 +106,8 @@ impl MapLexicon {
 
     /// Reads one lexicon file. Each entry is `id = "lemma"` or a table: `word` (the lemma, or
     /// for `generic` a table of forms, the first declared being the lemma), `forms` (explicit
-    /// forms), `proper`, `gender`, `many` (a plural noun), `harmony` (`fi`); `of` (the hash of
-    /// the English) is the checker's and is skipped.
+    /// forms), `proper`, `gender`, `many` (a plural noun), `harmony` and `plural_only` (`fi`);
+    /// `of` (the hash of the English) is the checker's and is skipped.
     /// `prefix` is put before every id (`object:`), matching the data directory the file mirrors.
     pub fn parse(prefix: &str, text: &str) -> Result<Self, LangError> {
         let table: toml::Table =
@@ -165,6 +175,10 @@ fn parse_entry(id: &str, entry: &toml::Table) -> Result<LexWord, LangError> {
         .get("many")
         .and_then(toml::Value::as_bool)
         .unwrap_or(false);
+    word.plural_only = entry
+        .get("plural_only")
+        .and_then(toml::Value::as_bool)
+        .unwrap_or(false);
     word.gender = entry
         .get("gender")
         .and_then(toml::Value::as_str)
@@ -204,6 +218,7 @@ wolf = { of = "22c8d9", word = "wolf", forms = { plural = "wolves" } }
 sword = { word = { nom = "espada", pl = "espadas" }, gender = "f" }
 "Black Wystan" = { word = "Black Wystan", proper = true }
 flames = { word = "flames", many = true }
+scissors = { word = "saksi/7", plural_only = true }
 "#,
         )
         .expect("parses");
@@ -219,6 +234,8 @@ flames = { word = "flames", many = true }
                 .is_some_and(|w| w.proper)
         );
         assert!(lexicon.word("object:flames").is_some_and(|w| w.many));
+        let scissors = lexicon.word("object:scissors").expect("scissors");
+        assert!(scissors.plural_only && !scissors.many);
         assert_eq!(lexicon.word("creature:wolf"), None);
         assert_eq!(NoLexicon.word("object:arrow"), None);
     }

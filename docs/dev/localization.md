@@ -25,7 +25,7 @@ nothing for it, `docs/dev/merging.md` "One build of ascmearc-core"). Dependencie
 |---|---|
 | `message.rs` | `MessageId` (a newtype over `Cow<'static, str>`: a generated constant borrows, a loaded save owns; serialized as the plain string), `Role` (the same, and `Borrow<str>` so `args.get("actor")` works), `Arg` (`Phrase`, `Number`, `Text`, `List`, `Said`, `Key`), `Msg` (id and args; `Msg::new(id).role("who", phrase)`), `Entry` (a `Msg` with `turn`, `count`, and the unserialized `passing`). `Arg::feature` gives the value a template's variants select on |
 | `phrase.rs` | `Phrase` (head `Word`, `mods`, `count`, `proper`, `person`, `gender`, `notes`, `owner`), `Word::{Id, Literal}`, `Modifier::{Adjective, Of, Label, Material, Part, Made}`, `Person`, `Gender`, `Note::{Tags, Charges, Base}`. Builders: `Phrase::id`, `Phrase::literal` (proper), `.count`, `.with(modifier)`, `.note(tag)`, `.with_note`, `.owned_by`, `.without_notes` |
-| `lexicon.rs` | `Lexicon` (`word(id) -> Option<LexWord>`; core implements it over `Content`, "Phrases"), `LexWord` (`base`, explicit `forms`, `proper`, `gender`, `many`, `harmony`), `MapLexicon` (a map; `MapLexicon::parse` reads a lexicon file: `id = "lemma"` or `{ word, forms, proper, gender, many, harmony }`, `of` skipped), `NoLexicon` |
+| `lexicon.rs` | `Lexicon` (`word(id) -> Option<LexWord>`; core implements it over `Content`, "Phrases"), `LexWord` (`base`, explicit `forms`, `proper`, `gender`, `many`, `harmony`, `plural_only`), `MapLexicon` (a map; `MapLexicon::parse` reads a lexicon file: `id = "lemma"` or `{ word, forms, proper, gender, many, harmony, plural_only }`, `of` skipped), `NoLexicon` |
 | `template.rs` | `Line::parse` (total: a `{` that opens no `{role:form}` is text), `Template::{Line, Alternatives, Variants}`, `Templates::parse(prefix, text)` for one `messages/<prefix>.toml` (`[hit] text = …` or a plain `hit = "…"`; `text = [...]` alternatives; `by = "<role>.<feature>"` with one key per value and an optional `else`, nesting allowed; `of` skipped). Errors name the file and the entry |
 | `lang.rs` | `LangFile` and `parse`: `name`, `code`, `morphology`, `fallback`, `repeat` (default `" (×{n})"`), `number_words` (default 12), `[registers.<name>]`, `[race_registers]`, `[generic]`. A key with a letter outside ASCII is quoted in TOML (`"minä" = "mie"`) |
 | `register.rs` | `Register::word("the")` returns the override or the word; `Registers` (`standard` always present; `get`, `for_speaker(own, race)`: the speaker's own, else the race's, else standard; `unknown_race_registers` for the checker) |
@@ -123,7 +123,8 @@ head. **Phrase order**: [genitive qualifiers (`Modifier::Of`, genitive singular,
 `Material` is an agreeing adjective here.
 
 **L3's phrase parts in `fi`** (`fi/mod.rs::assemble`, `owner`; tests `owners_genitive_or_the_players_suffix`,
-`made_and_parts`, `notes_and_plural_only_words`):
+`made_and_parts`, `notes_and_plural_only_words`, `a_word_plural_in_meaning_is_counted_as_any_noun`,
+`a_word_with_no_singular_takes_the_plural_numeral`):
 
 - **An owner** is its genitive before the whole phrase, numeral included: "peikon pitkämiekka",
   `{what:ill}` "peikon pitkämiekkaan", "peikon kolme nuolta". **The player as owner** is no word
@@ -142,9 +143,21 @@ head. **Phrase order**: [genitive qualifiers (`Modifier::Of`, genitive singular,
 - **Notes**: `Tags` in one parenthesis, as written ("(taika, kirottu)"; the tag words are a
   notes table's when one exists, design §8); `Charges` "(7 latausta)", "(1 lataus)", "(tyhjä)";
   `Base` the base phrase after a comma in the same case, "Grim Biteen, pitkämiekkaan".
-- **A plural-only word** (`many`, "liekit", "sakset") is said in the plural in every case:
-  "liekit", `ill` "liekkeihin". A count over one puts the numeral before the plural partitive
-  ("kolme liekkejä"; the plural numeral, "kolmet sakset", is not generated).
+- **A word plural in meaning** (English's `many`, from the content: "flames") is said in the
+  plural uncounted: "liekit", `ill` "liekkeihin". Counted it is any noun: the singular partitive
+  after a nominative numeral, agreement in the other cases ("kolme liekkiä", `ill` "kolmeen
+  liekkiin", `ade` "kolmella liekillä"; #1906).
+- **A word with no singular** (a plurale tantum: `sakset`, `housut`, `häät`, `kasvot`) is the
+  Finnish lexicon's own flag **`plural_only = true`**, independent of `many`: `scissors = { word
+  = "saksi/7", plural_only = true }` (the base is the singular the plural is built on, with its
+  class). It is plural in every case, and a count over one takes the **plural numeral**, numeral
+  and noun agreeing in every case, the nominative included: "kolmet sakset", `par` "kolmia
+  saksia", `gen` "kolmien saksien", `ine` "kolmissa housuissa", "yhdettoista sakset"; beyond the
+  words, digits and the agreeing noun ("13 sakset", "13 housuihin"); zero is the plain numeral
+  and the plural partitive ("nolla saksia"). A count of one says no numeral, as for any noun
+  ("sakset"; the table has `yhdet`). The plural numerals (`fi/mod.rs::plural_numeral`): `yksi`
+  and `kaksi` from a table, 3–10 generated (`kolme` as class 7, `kolmet`, `kolmien`), the teens
+  the unit's plural + `toista` (`yhdettoista`, `kolmientoista`).
 
 **Names** (`word.rs::name`): every `Word::Literal`, and a `proper = true` entry without a class,
 inflects as Finnish inflects a foreign name: the last word takes the endings, no gradation, no
@@ -165,11 +178,14 @@ Unicode through every class 0–60, every letter (and a wrong one), every form, 
 a refused entry; and arbitrary literals, as the player and not.
 
 **The oracle** (`tests.rs`, `oracle.toml`): the declension tables of the English Wiktionary
-(en.wiktionary.org, **CC BY-SA 4.0**; each entry names its page and revision), 176 words: one to
+(en.wiktionary.org, **CC BY-SA 4.0**; each entry names its page and revision), 179 words: one to
 eleven per class and gradation letter (every implemented class, every letter A–M in use), the
-cardinals 1–10, and two names (`Hilda` 9, `Jenni` 5). Every case × number of every word is
+cardinals 1–10, 11, and 13, and two names (`Hilda` 9, `Jenni` 5). Every case × number of every word is
 checked, plus every possessive form (five suffixes × two numbers × thirteen cases) of fourteen
-words, and the numerals in the twelve cases; a form may be any alternative the table lists.
+words, and the numerals in the twelve cases, singular and plural (the plural numerals count a
+`plural_only` word); a form may be any alternative the table lists. `liekki`, `yksitoista`, and
+`kolmetoista` were added for #1906 by the same API call, the rows read from the table as the
+script did.
 The fixture is test data only, generated by a one-off script from the MediaWiki API, never
 shipped; regenerate it rather than hand-edit (the script is not kept: it fetched
 `action=parse` HTML and read the `fi-decl` tables). One known deviation, skipped in the test:
@@ -501,8 +517,9 @@ Nothing here is guessed against the oracle; these are the choices the oracle can
   nuoleen", not "13:een nuoleen").
 - L3's parts: the player's things with `-si` and no "sinun" ("pitkämiekkasi"); `Made` as an
   adjective before the head ("pronssinen kypärä", not the compound "pronssikypärä"); a part's
-  compound adjective ("smaragdiponsinen"); the charges note "(7 latausta)"; a plural-only word
-  counted as "kolme liekkejä" until plural numerals exist.
+  compound adjective ("smaragdiponsinen"); the charges note "(7 latausta)".
+- A `plural_only` word: one without a numeral ("sakset", not "yhdet sakset"); zero as "nolla
+  saksia"; digits with the agreeing plural ("13 sakset").
 
 ## Next
 
