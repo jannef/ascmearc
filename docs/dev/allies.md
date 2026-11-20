@@ -344,8 +344,8 @@ An escort quest's character (#1139, `world/people/escort.rs`, `docs/dev/quests.m
 retinue, pays kills, is healed and displaced. Its differences, each one line in `ally.rs`:
 `ally_plan` gives it only a target beside it (`near(pos, 1)`) whatever its order; `order`'s Set
 on takes the escorts out (`World::escorts_refuse`: "Eadgyth will not go looking for a fight.",
-no time when no one else is left); `pack_args`, `companion.rs::ally_phrase` (and `ally_subject`, the string, for
-`people/escort.rs`) name it as `called` does (`called_phrase`). **Give** (`collar.rs`): `collar_wearer` and the "any to give to" check take kept
+no time when no one else is left); `pack_args` and `companion.rs::ally_phrase` (`people/escort.rs`'s too) name it as `called`
+does (`called_phrase`). **Give** (`collar.rs`): `collar_wearer` and the "any to give to" check take kept
 beasts or escorts; an escort goes to `World::give_escort` (`escort_slot`: `free_slot`, else the
 first slot it `fits_properly`, its own kind first; `slots_taken` for two hands; what those slots
 held leaves its pack for its cell; priced by `hand_over_one` with the slot's action; refused, no

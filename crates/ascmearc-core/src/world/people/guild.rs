@@ -3,6 +3,8 @@
 //! the player to a new rank as the quest that reaches it is given or done, once.
 
 use crate::content::{Content, GuildDef};
+use crate::lang::{Msg, Phrase};
+use crate::msg;
 use crate::perception::PerceptionView;
 use crate::world::{Quests, Stage, World};
 
@@ -66,12 +68,12 @@ impl World {
             let now = self.state.quests.guild_rank(&content, guild);
             if let Some(rank) = now.filter(|&r| Some(r) > *before) {
                 let title = &guild.ranks[rank].title;
-                self.say(format!(
-                    "{} names you {} {title} of {}.",
-                    crate::text::capitalized(&content.speaker_called(guild.master)),
-                    crate::text::article(title),
-                    guild.name,
-                ));
+                self.say(
+                    Msg::new(msg::people::NAMES_YOU)
+                        .role("master", content.speaker_phrase(guild.master))
+                        .role("title", Phrase::id(format!("word:{title}")))
+                        .role("guild", guild.name.as_str()),
+                );
                 self.train_stat(crate::content::StatUse::Promoted);
             }
         }

@@ -54,6 +54,7 @@ use super::{FactionId, StatusId};
 use crate::alignment::{MAX as ALIGNMENT_MAX, Requirement};
 use crate::dice::Dice;
 use crate::geom::Pos;
+use crate::lang::{Arg, Phrase, Role};
 use crate::object::Stack;
 use crate::skills::SkillId;
 use serde::Deserialize;
@@ -479,9 +480,24 @@ pub struct QuestDef {
     /// Who may complete it, the sides, the parting, and the hoard (`super::quarrel`); empty for
     /// most quests.
     pub quarrel: super::quarrel::Quarrel,
+    /// As given, the keys of the words a drawn variant says instead of the quest's, by field
+    /// ([`super::data_line::QUEST_TEXTS`]); empty for any other quest.
+    pub variant_keys: BTreeMap<&'static str, String>,
+    /// As given, what its words name: a rolled quest's draw ([`QuestDef::rolled`]); else nothing.
+    pub words: BTreeMap<Role, Arg>,
 }
 
 impl QuestDef {
+    /// Its words `field` ([`super::data_line::QUEST_TEXTS`]: `offer`, `where`) as said, by its
+    /// key, with what they name: a drawn variant's where it says its own.
+    pub fn said(&self, field: &str) -> Arg {
+        let key = (self.variant_keys.get(field).cloned())
+            .unwrap_or_else(|| super::data_line::quest(&self.id, field));
+        (self.words.iter()).fold(Arg::said(key), |said, (role, arg)| {
+            said.with(role.clone(), arg.clone())
+        })
+    }
+
     pub fn kind(&self) -> QuestKind {
         match self.goal {
             Goal::Kill { .. } => QuestKind::Kill,
@@ -583,7 +599,7 @@ impl QuestDef {
 
     /// The types of tag `tag` as a rolled quest's `members` names them: each family's, a unique
     /// by its name, any other in the plural.
-    pub(super) fn member_phrases(&self, content: &Content, tag: &str) -> Vec<crate::lang::Arg> {
+    pub(crate) fn member_phrases(&self, content: &Content, tag: &str) -> Vec<crate::lang::Arg> {
         (content.tagged_in(tag, self.campaign.as_deref()))
             .filter(|&c| content.family(c) == c)
             .map(|c| content.creature(c))
@@ -637,6 +653,37 @@ impl Content {
             .unwrap_or_else(|| place.to_string())
     }
 
+    /// The creature type whoever speaks dialogue `id` is: its own, or for an npc that of the
+    /// creature a level makes it.
+    pub fn speaker_creature(&self, id: DialogueId) -> Option<CreatureId> {
+        match &self.dialogue(id).speaker {
+            Speaker::Creature(c) => Some(*c),
+            Speaker::Npc(npc) => (self.levels.values())
+                .flat_map(|l| &l.creatures)
+                .find(|s| s.npc.as_deref() == Some(npc))
+                .map(|s| s.creature),
+        }
+    }
+
+    /// Whoever speaks dialogue `id` as a phrase, what [`Content::speaker_called`] says, said
+    /// `the`: its proper name ("Sister Hild"), else its creature type ("the old hermit").
+    pub fn speaker_phrase(&self, id: DialogueId) -> Phrase {
+        if let Some(name) = &self.dialogue(id).name {
+            return Phrase::literal(name);
+        }
+        match self.speaker_creature(id) {
+            Some(c) => Phrase::id(format!("creature:{}", self.creature(c).id)),
+            None => Phrase::id(format!("word:{}", self.speaker_name(id))),
+        }
+    }
+
+    /// Whoever speaks dialogue `id`'s register and race, for a line of data they say
+    /// ([`Arg::spoken_by`]): the dialogue's own register, its creature's race.
+    pub fn speaker_voice(&self, id: DialogueId) -> (Option<String>, Option<String>) {
+        let race = (self.speaker_creature(id)).and_then(|c| self.creature(c).race.clone());
+        (self.dialogue(id).register.clone(), race)
+    }
+
     /// What whoever speaks dialogue `id` is called, without an article: a unique npc's proper
     /// name ("Sister Hild"), its creature type's name ("old hermit"), or for a unique npc
     /// without one that of the creature a level makes it.
@@ -644,14 +691,7 @@ impl Content {
         if let Some(name) = &self.dialogue(id).name {
             return name.clone();
         }
-        let creature = match &self.dialogue(id).speaker {
-            Speaker::Creature(c) => Some(*c),
-            Speaker::Npc(npc) => (self.levels.values())
-                .flat_map(|l| &l.creatures)
-                .find(|s| s.npc.as_deref() == Some(npc))
-                .map(|s| s.creature),
-        };
-        match (creature, &self.dialogue(id).speaker) {
+        match (self.speaker_creature(id), &self.dialogue(id).speaker) {
             (Some(c), _) => self.creature(c).name.clone(),
             (None, Speaker::Npc(npc)) => npc.clone(),
             (None, Speaker::Creature(_)) => String::new(),
@@ -944,6 +984,8 @@ fn resolve(
         where_: spec.where_,
         roll,
         quarrel,
+        variant_keys: BTreeMap::new(),
+        words: BTreeMap::new(),
     })
 }
 

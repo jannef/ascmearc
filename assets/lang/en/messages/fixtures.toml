@@ -34,6 +34,8 @@ chest_trapped = "You notice that {chest:the} is trapped: {trap:a}."
 chest_unlock = "You unlock {chest:the} with {what:the} and open it."
 # `dead`: the creature whose corpse rose; `risen`: what it rose as.
 corpse_rises = "{dead:Poss} corpse rises as {risen:a}!"
+# `dead`: the creature whose corpse will rise, by its type ("'s" written, as the string was).
+corpse_twitches = "{dead:The}'s corpse twitches."
 doors_slam = "The doors slam shut!"
 drink = "You cup your hands and drink from the spring."
 drink_broken_by = "{came:bare}; you stop drinking."

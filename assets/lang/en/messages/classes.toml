@@ -96,6 +96,10 @@ openings_in_guard_unseen = "Your openings are in an unseen foe's guard."
 openings_lost = "Your openings on {who:the} are lost."
 openings_lost_unseen = "Your openings on an unseen foe are lost."
 out_of_reach = "That is out of reach."
+# `what`: the spirit weapon called, an object type; a one-handed one is in the hand, a
+# two-handed one in both.
+pale_light_in_hand = "{what:A} of pale light is in your hand."
+pale_light_in_hands = "{what:A} of pale light is in your hands."
 peace_broken = "The peace is broken."
 # `missile`: what flew, a shot's or a throw's object or a trap's noun.
 pluck_from_air = "You pluck {missile:the} from the air."

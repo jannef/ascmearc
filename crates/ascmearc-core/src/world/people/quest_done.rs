@@ -7,6 +7,8 @@
 
 use super::quest::{QuestRecord, Stage};
 use crate::content::RevealWhen;
+use crate::lang::Msg;
+use crate::msg;
 use crate::world::{Spent, World};
 
 impl World {
@@ -15,14 +17,14 @@ impl World {
     pub(in crate::world) fn quest_done_dev(&mut self, id: &str) -> Spent {
         let content = self.content.clone();
         let Some(def) = content.quest_id(id).map(|q| content.quest(q)) else {
-            self.say(format!("There is no quest `{id}`."));
+            self.say(Msg::new(msg::people::NO_QUEST_DEV).role("id", id));
             return Spent::Nothing;
         };
         let record = (self.state.quests.records.entry(def.id.clone()))
             .or_insert(QuestRecord::new(Stage::Done));
         record.stage = Stage::Done;
         record.completed += 1;
-        self.say(format!("{} is marked done.", def.name));
+        self.say(Msg::new(msg::people::MARKED_DONE_DEV).role("quest", def.name.as_str()));
         Spent::Nothing
     }
 
@@ -32,11 +34,11 @@ impl World {
     pub(in crate::world) fn quest_given_dev(&mut self, id: &str) -> Spent {
         let content = self.content.clone();
         let Some(def) = content.quest_id(id).map(|q| content.quest(q)) else {
-            self.say(format!("There is no quest `{id}`."));
+            self.say(Msg::new(msg::people::NO_QUEST_DEV).role("id", id));
             return Spent::Nothing;
         };
         if def.is_rolled() {
-            self.say(format!("{} is drawn by its giver: ask them.", def.name));
+            self.say(Msg::new(msg::people::DRAWN_BY_GIVER_DEV).role("quest", def.name.as_str()));
             return Spent::Nothing;
         }
         // As `give` counts: every kill for a first time, the kills from now on for a repeat.
@@ -48,7 +50,7 @@ impl World {
         for reveal in def.reveals.iter().filter(|r| r.when == RevealWhen::Given) {
             self.reveal_location(&reveal.location);
         }
-        self.say(format!("{} is given.", def.name));
+        self.say(Msg::new(msg::people::GIVEN_DEV).role("quest", def.name.as_str()));
         Spent::Nothing
     }
 }

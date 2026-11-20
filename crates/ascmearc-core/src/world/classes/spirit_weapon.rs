@@ -134,12 +134,11 @@ impl World {
         let inventory = self.state.inventory_mut();
         object::add_to_inventory(inventory, Stack::spirit(object), &content);
         let item = self.state.player().inventory.len() - 1;
-        let def = content.object(object);
-        let hands = if def.two_handed { "hands" } else { "hand" };
-        let line = format!(
-            "{} of pale light is in your {hands}.",
-            crate::text::capitalized(&def.describe(1))
-        );
+        let id = match content.object(object).two_handed {
+            true => msg::classes::PALE_LIGHT_IN_HANDS,
+            false => msg::classes::PALE_LIGHT_IN_HAND,
+        };
+        let line = Msg::new(id).role("what", object_phrase(&content, object));
         // Priced by the swap: a wield, and what the hands held put away as any swap's.
         let slot = content.slot(hand).id.clone();
         self.equip_saying(&slot, item, Some(line))

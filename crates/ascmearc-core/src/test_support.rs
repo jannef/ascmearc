@@ -54,7 +54,42 @@ pub(crate) fn said(world: &World) -> Vec<String> {
 
 /// One message, not logged, in English with the keys written.
 pub(crate) fn english_of(content: &Content, msg: &Msg) -> String {
-    english(content, &Entry::new(0, msg.clone()), &written_key)
+    crate::messages::english_msg(content, msg)
+}
+
+/// A quest of the log ([`crate::world::QuestView`]) with its words in English.
+#[derive(Clone, Debug)]
+pub(crate) struct LoggedQuest {
+    pub id: String,
+    pub name: String,
+    pub kind: crate::content::QuestKind,
+    pub active: bool,
+    pub failed: bool,
+    /// Who gave it: "the old hermit".
+    pub giver: String,
+    pub offer: String,
+    pub objective: String,
+    pub target: Option<String>,
+    pub status: String,
+}
+
+/// The player's quest log, in English.
+pub(crate) fn quest_log(world: &World) -> Vec<LoggedQuest> {
+    let content = world.content();
+    (world.perception().quests().into_iter())
+        .map(|q| LoggedQuest {
+            giver: crate::messages::english_arg(content, &q.giver, "the"),
+            offer: crate::messages::english_speech(content, &q.offer),
+            objective: english_of(content, &q.objective),
+            status: english_of(content, &q.status),
+            id: q.id,
+            name: q.name,
+            kind: q.kind,
+            active: q.active,
+            failed: q.failed,
+            target: q.target,
+        })
+        .collect()
 }
 
 /// Messages not logged yet (the news, the notes: `World::news`) in English, keys left written.

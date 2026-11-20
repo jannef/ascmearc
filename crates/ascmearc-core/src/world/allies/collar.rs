@@ -155,11 +155,3 @@ impl World {
         level.set_pile(at, pile);
     }
 }
-
-/// `a jade amulet` as `the jade amulet`.
-pub(in crate::world) fn definite(what: &str) -> String {
-    match what.strip_prefix("an ").or_else(|| what.strip_prefix("a ")) {
-        Some(rest) => format!("the {rest}"),
-        None => what.to_string(),
-    }
-}

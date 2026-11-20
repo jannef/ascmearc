@@ -59,7 +59,7 @@ fn leofric_sends_a_druid_after_the_dead_rats() {
             .any(|m| m.contains("keep faith with the beasts")),
         "{said:?}"
     );
-    let given = (w.perception().quests().into_iter())
+    let given = (crate::test_support::quest_log(&w).into_iter())
         .find(|q| q.id == "barrow_rats")
         .expect("in the log");
     assert!(

@@ -134,7 +134,7 @@ fn being_given_the_bounty_makes_the_player_a_tin_once() {
         promotions(&w),
         ["Wat One-Eye names you a Tin of the Weyfarers' Gilde."]
     );
-    let log = (w.perception().quests().into_iter())
+    let log = (crate::test_support::quest_log(&w).into_iter())
         .find(|q| q.id == "guild_quarry")
         .expect("logged");
     assert!(

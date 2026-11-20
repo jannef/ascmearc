@@ -22,6 +22,8 @@
 //! nothing about a quest given already.
 
 use crate::content::{Candidate, QuestDef, Roll, Rolled, TAG_TARGET};
+use crate::lang::Msg;
+use crate::msg;
 use crate::rng::Rng;
 use crate::world::{Spent, World, allies::beast_friend};
 
@@ -84,15 +86,15 @@ impl World {
     pub(in crate::world) fn quest_roll_dev(&mut self, id: &str, target: &str) -> Spent {
         let content = self.content.clone();
         let Some(def) = content.quest_id(id).map(|q| content.quest(q)) else {
-            self.say(format!("There is no quest `{id}`."));
+            self.say(Msg::new(msg::people::NO_QUEST_DEV).role("id", id));
             return Spent::Nothing;
         };
         if !def.is_rolled() || !self.state.quests.is_active(def) {
-            self.say(format!("{} is no rolled quest you were given.", def.name));
+            self.say(Msg::new(msg::people::NOT_ROLLED_DEV).role("quest", def.name.as_str()));
             return Spent::Nothing;
         }
         if self.progress_of(def).0 > 0 {
-            self.say(format!("{} has got somewhere already.", def.name));
+            self.say(Msg::new(msg::people::GOT_SOMEWHERE_DEV).role("quest", def.name.as_str()));
             return Spent::Nothing;
         }
         let pool = def.candidates(&content, &|_| true);
@@ -103,7 +105,11 @@ impl World {
         let Some(drawn) =
             (pool.iter()).find(|c| c.target == target || variant_id(c) == Some(target))
         else {
-            self.say(format!("{} cannot draw `{target}`.", def.name));
+            self.say(
+                Msg::new(msg::people::CANNOT_DRAW_DEV)
+                    .role("quest", def.name.as_str())
+                    .role("target", target),
+            );
             return Spent::Nothing;
         };
         let roll = roll_of(def, drawn);
@@ -121,7 +127,11 @@ impl World {
                 self.reveal_location(&reveal.location);
             }
         }
-        self.say(format!("{} now asks for {target} (dev).", def.name));
+        self.say(
+            Msg::new(msg::people::NOW_ASKS_DEV)
+                .role("quest", def.name.as_str())
+                .role("target", target),
+        );
         Spent::NoTime
     }
 

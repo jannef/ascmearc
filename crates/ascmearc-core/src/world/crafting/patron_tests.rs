@@ -170,8 +170,7 @@ fn a_commission_is_offered_logged_handed_in_and_paid_then_the_next() {
         "the stock advanced"
     );
     // In the log, active, a commission; no quest record of it.
-    let view = w.perception();
-    let quests = view.quests();
+    let quests = crate::test_support::quest_log(&w);
     let logged = quests
         .iter()
         .find(|q| q.id == "commission")
@@ -212,7 +211,7 @@ fn a_commission_is_offered_logged_handed_in_and_paid_then_the_next() {
     let worth = u32::try_from(fine.value(&CONTENT)).expect("worth");
     assert_eq!(
         w.perception().commission().expect("open").status,
-        "Return to your patron."
+        crate::lang::Msg::from("Return to your patron.")
     );
     let coins = gold(&w);
     act(&mut w, "chat:E");

@@ -161,7 +161,7 @@ fn chatted_with_while_the_quest_is_active_she_follows_in_the_coward_stance() {
         texts(&w)
     );
     // The quest log says so.
-    let log = w.perception().quests();
+    let log = crate::test_support::quest_log(&w);
     assert_eq!(log[0].kind, QuestKind::Escort);
     assert_eq!(
         log[0].objective,
@@ -211,7 +211,7 @@ fn home_alone_does_not_complete_it() {
     assert_eq!(eadgyth(&w).level, "cave", "left behind, holding");
     assert_eq!(stage(&w), Some(Stage::Active));
     assert_eq!(
-        w.perception().quests()[0].status,
+        crate::test_support::quest_log(&w)[0].status,
         "Eadgyth is not with you."
     );
     // Back for her: she comes, and it is done.
@@ -315,7 +315,7 @@ fn her_death_fails_the_quest_and_locks_nothing_else() {
     let player = w.player_id();
     assert!(w.hurt(id, 10_000, Harm::Actor(player), &mut Vec::new()));
     assert_eq!(stage(&w), Some(Stage::Failed));
-    let log = w.perception().quests();
+    let log = crate::test_support::quest_log(&w);
     assert!(!log[0].active);
     assert!(log[0].failed);
     assert_eq!(log[0].status, "Failed: Eadgyth is dead.");

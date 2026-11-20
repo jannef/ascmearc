@@ -28,6 +28,7 @@
 
 use crate::action::Event;
 use crate::content::StatUse;
+use crate::content::data_line;
 use crate::content::{
     ActionKind, Budge, Dialogue, DialogueId, DialogueLine, Service, Stance, Topic,
 };
@@ -35,7 +36,6 @@ use crate::geom::{Dir, Pos};
 use crate::lang::{Arg, Msg, Phrase};
 use crate::msg;
 use crate::noise::{self, Act, Heard, SoundKind, Volume};
-use crate::text::capitalized;
 use crate::world::{Actor, ActorId, ActorKind, Spent, World};
 use serde::{Deserialize, Serialize};
 
@@ -197,11 +197,18 @@ impl World {
     /// `player` role, in the speaker's register (its dialogue's own, else its race's). Roles a
     /// line has beside the player's are added with [`Arg::with`].
     pub(in crate::world) fn said(&self, id: ActorId, line: &DialogueLine) -> Arg {
+        self.voiced(id, line.said())
+    }
+
+    /// Line of data `line` (a dialogue line, a quest's words) as creature `id` says it: with
+    /// the player in its `player` role, in the speaker's register (its dialogue's own, else its
+    /// race's).
+    pub(in crate::world) fn voiced(&self, id: ActorId, line: Arg) -> Arg {
         let actor = self.state.actors.get(&id);
         let register = (actor.and_then(|a| self.dialogue_of(a)))
             .and_then(|d| self.content.dialogue(d).register.clone());
         let race = actor.and_then(|a| self.content.creature(a.creature).race.clone());
-        (line.said().with("player", self.you())).spoken_by(register, race)
+        (line.with("player", self.you())).spoken_by(register, race)
     }
 
     /// The dialogue `actor` speaks: its npc's, else its type's.
@@ -269,7 +276,7 @@ impl World {
     pub(in crate::world) fn chat(&mut self, dir: Dir, events: &mut Vec<Event>) -> Spent {
         let at = self.player_pos().step(dir);
         let Some(id) = self.seen_creature_at(at) else {
-            self.say("You see no one there to talk to.");
+            self.say(msg::talk::NO_ONE_TO_TALK_TO);
             return Spent::Nothing;
         };
         let price = self.price_of(self.state.player, ActionKind::Chat);
@@ -330,7 +337,7 @@ impl World {
     ) -> Spent {
         let at = self.player_pos().step(dir);
         let Some(id) = self.seen_creature_at(at) else {
-            self.say("You see no one there to talk to.");
+            self.say(msg::talk::NO_ONE_TO_TALK_TO);
             return Spent::Nothing;
         };
         let Some(dialogue) = self.listens(id) else {
@@ -362,10 +369,7 @@ impl World {
                 self.answer(id, reply, Some(topic.to_string()), events);
                 self.mark_rumoured_way(dialogue, topic);
             }
-            None => {
-                let who = capitalized(&self.called(&self.state.actors[&id]));
-                self.say(format!("{who} knows nothing about that."));
-            }
+            None => self.knows_nothing(id),
         }
         Spent::Nothing
     }
@@ -375,19 +379,26 @@ impl World {
     /// `silent` line).
     pub(super) fn listens(&mut self, id: ActorId) -> Option<DialogueId> {
         let actor = &self.state.actors[&id];
-        let who = capitalized(&self.called(actor));
+        let who = self.called_phrase(actor);
         let dialogue = self.dialogue_of(actor);
         let hostile = self.stance(self.state.player, id) == Stance::Hostile;
+        let answer = Msg::new(msg::talk::DOES_NOT_ANSWER).role("who", who.clone());
         match dialogue {
-            None => self.say(format!("{who} doesn't answer.")),
-            Some(_) if hostile => self.say(format!("{who} is in no mood to talk.")),
-            Some(d) if !self.speaks_to(d) => {
-                let silent = self.content.dialogue(d).silent.clone();
-                self.say(silent.unwrap_or_else(|| format!("{who} doesn't answer.")));
-            }
+            None => self.say(answer),
+            Some(_) if hostile => self.say(Msg::new(msg::talk::IN_NO_MOOD).role("who", who)),
+            Some(d) if !self.speaks_to(d) => match self.content.dialogue(d).silent {
+                Some(_) => self.say(data_line::said(data_line::silent(&self.content, d))),
+                None => self.say(answer),
+            },
             Some(d) => return Some(d),
         }
         None
+    }
+
+    /// Creature `id`, asked about a topic it does not have, says it knows nothing of it.
+    pub(super) fn knows_nothing(&mut self, id: ActorId) {
+        let who = self.called_phrase(&self.state.actors[&id]);
+        self.say(Msg::new(msg::talk::KNOWS_NOTHING).role("who", who));
     }
 
     /// Whether whoever speaks dialogue `d` talks to the player: their alignment band is in its
@@ -530,12 +541,9 @@ impl World {
                         noise::rough_place(level, &self.content, m.at, volume, turn, hidden);
                     let dir = Dir::toward(viewer, place);
                     match (volume, dir) {
-                        (Volume::Faint, _) => {
-                            let from = dir.map_or_else(String::new, |d| {
-                                format!(" to the {}", d.compass_name())
-                            });
-                            Msg::literal(format!("You faintly hear a voice{from}."))
-                        }
+                        (Volume::Faint, None) => Msg::new(msg::talk::VOICE_FAINT),
+                        (Volume::Faint, Some(d)) => Msg::new(msg::talk::VOICE_FAINT_FROM)
+                            .role("dir", Phrase::id(format!("word:{}", d.compass_name()))),
                         (Volume::Clear | Volume::Loud, None) => {
                             Msg::new(msg::talk::VOICE).role("line", m.line)
                         }
@@ -567,18 +575,16 @@ impl World {
 
     /// What the player is told when creature `id` will not make way: why, if they see it.
     pub(in crate::world) fn refused(&mut self, id: ActorId, why: Refusal, seen: bool) {
-        let text = match (seen, why) {
-            (false, _) => "Something is in the way.".to_string(),
-            (true, Refusal::Budge) => {
-                let who = capitalized(&self.called(&self.state.actors[&id]));
-                format!("{who} doesn't budge.")
-            }
-            (true, Refusal::Water) => {
-                let who = capitalized(&self.called(&self.state.actors[&id]));
-                format!("{who} will not go into the water.")
-            }
+        let line = match (seen, why) {
+            (false, _) => Msg::new(msg::talk::SOMETHING_IN_THE_WAY),
+            (true, Refusal::Budge) => Msg::new(msg::talk::DOES_NOT_BUDGE),
+            (true, Refusal::Water) => Msg::new(msg::talk::WILL_NOT_GO_INTO_WATER),
         };
-        self.say(text);
+        let who = seen.then(|| self.called_phrase(&self.state.actors[&id]));
+        self.say(match who {
+            Some(who) => line.role("who", who),
+            None => line,
+        });
     }
 
     /// Creature `id` steps from `from` onto `to`, where the player stood, making way for them:
@@ -604,10 +610,10 @@ impl World {
         };
         actor.pos = to;
         actor.mind.post.get_or_insert(from);
-        let who = if seen {
-            self.called(&self.state.actors[&id])
-        } else {
-            "something".to_string()
+        let swapped = match seen {
+            true => Msg::new(msg::talk::SWAP_PLACES)
+                .role("who", self.called_phrase(&self.state.actors[&id])),
+            false => Msg::new(msg::talk::SWAP_PLACES_UNSEEN),
         };
         events.push(Event::ActorMoved {
             actor: id,
@@ -616,7 +622,7 @@ impl World {
         });
         self.after_tread(id, (from, to), footing, events);
         self.make_noise(id, Act::Step(to));
-        self.say(format!("You swap places with {who}."));
+        self.say(swapped);
         self.train_stat(StatUse::Swapped);
         let extra = self.tread_price(id, footing) + self.step_onto_trap(to, id, events);
         if let Some(actor) = self.state.actors.get_mut(&id) {

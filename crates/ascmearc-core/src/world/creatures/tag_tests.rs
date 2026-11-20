@@ -63,7 +63,7 @@ fn kill(w: &mut World, id: ActorId, harm: Harm) {
 
 /// Quest `id`'s progress, as the log has it.
 fn status(w: &World, id: &str) -> String {
-    let quests = w.perception().quests();
+    let quests = crate::test_support::quest_log(w);
     let quest = quests.iter().find(|q| q.id == id).expect("logged");
     quest.status.clone()
 }
@@ -91,7 +91,7 @@ fn every_member_counts_and_levels_sum() {
 #[test]
 fn the_objective_names_the_tag_and_its_types() {
     let w = arena();
-    let quests = w.perception().quests();
+    let quests = crate::test_support::quest_log(&w);
     let objective = |id: &str| {
         let q = quests.iter().find(|q| q.id == id).expect("logged");
         q.objective.clone()
@@ -183,7 +183,7 @@ fn what_renames_the_noun() {
     let mut w = World::new(content, "arena", None).expect("run");
     w.state.quests =
         serde_json::from_str(r#"{"records": {"cull": {"stage": "active"}}}"#).expect("records");
-    let quests = w.perception().quests();
+    let quests = crate::test_support::quest_log(&w);
     let quest = quests.iter().find(|q| q.id == "cull").expect("logged");
     assert_eq!(
         quest.objective,

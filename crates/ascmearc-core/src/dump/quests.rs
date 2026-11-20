@@ -5,6 +5,8 @@ use super::*;
 /// The player's quest log, one quest a line: its name, whether it is active or done, its giver,
 /// what it asks, and how far it has got.
 pub(super) fn quest_rows(view: &PerceptionView<'_>) -> Vec<String> {
+    let content = view.content();
+    let english = |msg| crate::messages::english_msg(content, msg);
     (view.quests().iter())
         .map(|q| {
             let stage = match (q.active, q.failed) {
@@ -13,7 +15,7 @@ pub(super) fn quest_rows(view: &PerceptionView<'_>) -> Vec<String> {
                 (false, false) => "done",
             };
             let status = if q.active {
-                format!(" {}", q.status)
+                format!(" {}", english(&q.status))
             } else {
                 String::new()
             };
@@ -27,7 +29,9 @@ pub(super) fn quest_rows(view: &PerceptionView<'_>) -> Vec<String> {
             };
             format!(
                 "{} ({stage}, from {}): {}{status}{sides}",
-                q.name, q.giver, q.objective
+                q.name,
+                crate::messages::english_arg(content, &q.giver, "the"),
+                english(&q.objective)
             )
         })
         .collect()
@@ -37,6 +41,8 @@ pub(super) fn quest_rows(view: &PerceptionView<'_>) -> Vec<String> {
 /// "objective", "target", "status"}]`, active quests first (`target`: what a rolled quest drew,
 /// else null).
 pub(super) fn quests_json(view: &PerceptionView<'_>) -> Value {
+    let content = view.content();
+    let english = |msg| crate::messages::english_msg(content, msg);
     (view.quests().iter())
         .map(|q| {
             json!({
@@ -46,10 +52,10 @@ pub(super) fn quests_json(view: &PerceptionView<'_>) -> Value {
                 "active": q.active,
                 "failed": q.failed,
                 "completed": q.completed,
-                "giver": q.giver,
-                "objective": q.objective,
+                "giver": crate::messages::english_arg(content, &q.giver, "the"),
+                "objective": english(&q.objective),
                 "target": q.target,
-                "status": q.status,
+                "status": english(&q.status),
             })
         })
         .collect()

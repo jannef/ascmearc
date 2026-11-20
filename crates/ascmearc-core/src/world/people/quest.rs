@@ -33,12 +33,14 @@ use crate::content::{
     Content, DialogueId, Goal, KillTarget, Pick, QuestDef, QuestId, QuestKind, RevealWhen, Roll,
     Rolled, SkillReward,
 };
+use crate::content::{ObjectId, data_line};
+use crate::lang::{Arg, Msg, Phrase};
+use crate::msg;
 use crate::object::{self, Stack};
 use crate::perception::PerceptionView;
 use crate::rng::Rng;
 use crate::talent::TalentMods;
-use crate::text::capitalized;
-use crate::world::{ActorId, Deed, Spent, TopicView, World};
+use crate::world::{ActorId, Deed, Speech, Spent, TopicView, World};
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use std::collections::{BTreeMap, BTreeSet};
@@ -280,7 +282,8 @@ pub(crate) fn progress(
     (have.min(need), need)
 }
 
-/// A quest as the quest log shows it.
+/// A quest as the quest log shows it: its words as messages and lines of data, which the log
+/// renders in the player's language.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct QuestView {
     pub id: String,
@@ -292,17 +295,17 @@ pub struct QuestView {
     pub failed: bool,
     /// How many times the player has completed it.
     pub completed: u32,
-    /// Who gave it: "the old hermit".
-    pub giver: String,
+    /// Who gave it, said `the`: "the old hermit" (a phrase; a commission's, its text).
+    pub giver: Arg,
     /// What the giver asked, in their words.
-    pub offer: String,
+    pub offer: Speech,
     /// What it asks, as its first breadcrumb: "The old hermit wants you to kill 3 giant rats
     /// in the Arena.", then where, if the quest says.
-    pub objective: String,
+    pub objective: Msg,
     /// A rolled quest: what was drawn (a creature type, `tag:` and a tag, or an object type id).
     pub target: Option<String>,
     /// How far it has got: "2 / 3 killed.", "Return to the old hermit.", "Done."
-    pub status: String,
+    pub status: Msg,
     /// A quarrel's wizards the player has met or turned, by name, and where each stands
     /// (`quarrel.rs`; the dumps).
     pub sides: Vec<(String, super::quarrel::Side)>,
@@ -323,10 +326,11 @@ impl PerceptionView<'_> {
             } else if failed {
                 failed_status(content, def)
             } else if record.completed > 1 {
-                format!("Done ({} times).", record.completed)
+                Msg::new(msg::people::DONE_TIMES).role("times", i64::from(record.completed))
             } else {
-                "Done.".to_string()
+                Msg::new(msg::people::DONE)
             };
+            let (register, race) = content.speaker_voice(def.giver);
             QuestView {
                 id: def.id.clone(),
                 name: def.name.clone(),
@@ -334,8 +338,8 @@ impl PerceptionView<'_> {
                 active,
                 failed,
                 completed: record.completed,
-                giver: speaker_called(content, def.giver),
-                offer: def.texts.offer.clone(),
+                giver: content.speaker_phrase(def.giver).into(),
+                offer: def.said("offer").spoken_by(register, race).into(),
                 objective: objective(content, def),
                 target: record.roll.as_ref().map(|r| r.target.clone()),
                 status,
@@ -358,64 +362,91 @@ impl PerceptionView<'_> {
     }
 }
 
-/// What whoever speaks dialogue `id` is called in messages: "the old hermit", "Sister Hild".
-fn speaker_called(content: &Content, id: DialogueId) -> String {
-    content.speaker_called(id)
+/// Whoever speaks dialogue `id`, as a phrase said `the`: "the old hermit", "Sister Hild".
+fn speaker(content: &Content, id: DialogueId) -> Phrase {
+    content.speaker_phrase(id)
 }
 
-/// `name` as it reads inside a sentence: "The Arena" becomes "the Arena".
-fn in_sentence(name: &str) -> String {
+/// A place (a level or a branch, by its name `name`) as a phrase said `the` inside a sentence:
+/// "The Arena" reads "the Arena", a name without its article as it is ("Cealdhlāw").
+pub(super) fn place(name: &str) -> Phrase {
     match name.strip_prefix("The ") {
-        Some(rest) => format!("the {rest}"),
-        None => name.to_string(),
+        Some(rest) => Phrase::id(format!("word:{rest}")),
+        None => Phrase::literal(name),
     }
 }
 
-/// What kill quest `def` is after, one (`one`) or several: its `what` if it says, else the
-/// type's or the tag's name ("goblin", "goblins").
-fn kill_noun(content: &Content, def: &QuestDef, one: bool) -> String {
+/// [`place`] of the level or branch `id`.
+fn place_of(content: &Content, id: &str) -> Phrase {
+    place(&content.place_name(id))
+}
+
+/// What kill quest `def` is after, `need` of them, as its progress counts them: its `what` if
+/// it says, else the type or the tag ("goblin", "goblins").
+fn kill_noun(content: &Content, def: &QuestDef, need: u32) -> Phrase {
     match &def.goal {
+        // Called as the quest says, one or many alike.
         Goal::Kill {
             what: Some(what), ..
-        } => what.clone(),
-        Goal::Kill { target, .. } => target.name(content, one),
-        _ => String::new(),
+        } => Phrase::id(format!("word:{what}")),
+        Goal::Kill {
+            target: KillTarget::Creature(c),
+            ..
+        } => Phrase::id(format!("creature:{}", content.creature(*c).id)).count(need),
+        Goal::Kill {
+            target: KillTarget::Tag(tag),
+            ..
+        } => Phrase::id(format!("word:{}", crate::content::spoken(tag))).count(need),
+        _ => Phrase::id("word:something"),
     }
 }
 
-/// `n` of what kill quest `def` is after: "a kobold shaman", "3 giant rats", "100 goblins";
-/// one unique by its name ("Black Wystan", "the fire drake": [`crate::content::one_of`]).
-fn creatures(content: &Content, def: &QuestDef, n: u32) -> String {
-    let name = kill_noun(content, def, n == 1);
+/// `n` of what kill quest `def` is after, as its task says them: "a kobold shaman", "3 giant
+/// rats", "100 goblins"; one unique by its name ("Black Wystan", "the fire drake").
+fn creatures(content: &Content, def: &QuestDef, n: u32) -> Msg {
     let unique = matches!(
         &def.goal,
         Goal::Kill { target: KillTarget::Creature(c), what: None, .. } if content.creature(*c).unique
     );
-    if n == 1 {
-        crate::content::one_of(&name, unique)
-    } else {
-        format!("{n} {name}")
+    let named = kill_noun(content, def, n);
+    match &def.goal {
+        Goal::Kill { what: Some(_), .. } => Msg::new(msg::people::TARGET_CALLED)
+            .role("what", named)
+            .role("count", i64::from(n)),
+        _ if unique => Msg::new(msg::people::TARGET_THE).role("who", named),
+        _ => Msg::new(msg::people::TARGET_COUNTED).role("who", named),
     }
 }
 
-/// What quest `def` asks, as the log says it, its first breadcrumb: "The old hermit wants you
-/// to kill 3 giant rats in the Arena.", then where, if the quest says so in words ("The way in
-/// lies in the Barrowdowns.").
-fn objective(content: &Content, def: &QuestDef) -> String {
-    let asks = wants(content, def);
+/// What quest `def` asks, as the log's objective says it, its first breadcrumb: "The old
+/// hermit wants you to kill 3 giant rats in the Arena.", then where, if the quest says so in
+/// words ("The way in lies in the Barrowdowns.").
+fn objective(content: &Content, def: &QuestDef) -> Msg {
+    let wants = wants(content, def);
     match &def.where_ {
-        Some(place) => format!("{asks} {place}"),
-        None => asks,
+        Some(_) => Msg::new(msg::world::LINES).role(
+            "lines",
+            Arg::List(vec![wants.into(), def.said(data_line::QUEST_TEXTS[4])]),
+        ),
+        None => wants,
     }
 }
 
-/// What quest `def` asks, without where ("Kill 5 giant rats in Cealdhlāw."): the log's
-/// objective, and the wiki's goal (of a rolled quest, its pool: "Kill a creature drawn from
-/// the populations of Cealdhlāw and Fyrdelf.").
+/// What quest `def` asks, without where ("Kill 5 giant rats in Cealdhlāw."), in English: the
+/// wiki's goal (of a rolled quest, its pool: "Kill a creature drawn from the populations of
+/// Cealdhlāw and Fyrdelf.").
 pub fn asks(content: &Content, def: &QuestDef) -> String {
     if let Some(rolled) = &def.roll {
         return rolled_asks(content, def, rolled);
     }
+    let asks = Msg::new(msg::people::ASKS).role("task", task(content, def, false));
+    crate::messages::english_msg(content, &asks)
+}
+
+/// What quest `def` asks of the player, the task in `asks` and `wants`; `wants`: as the giver
+/// wants it, a thing to bring the giver themself without saying to whom.
+fn task(content: &Content, def: &QuestDef, wants: bool) -> Msg {
+    let object = |object: ObjectId| Phrase::id(format!("object:{}", content.object(object).id));
     match &def.goal {
         Goal::Kill {
             target,
@@ -423,43 +454,59 @@ pub fn asks(content: &Content, def: &QuestDef) -> String {
             level,
             ..
         } => {
-            let place = level.as_deref().map_or_else(String::new, |l| {
-                format!(" in {}", in_sentence(&content.place_name(l)))
-            });
-            let who = match target {
-                KillTarget::Tag(tag) => format!(": {}", def.members(content, tag)),
-                KillTarget::Creature(_) => String::new(),
+            let members = match target {
+                KillTarget::Tag(tag) => Some(def.member_phrases(content, tag)),
+                KillTarget::Creature(_) => None,
             };
-            format!("Kill {}{place}{who}.", creatures(content, def, *count))
+            let id = match (level, &members) {
+                (None, None) => msg::people::TASK_KILL,
+                (Some(_), None) => msg::people::TASK_KILL_IN,
+                (None, Some(_)) => msg::people::TASK_KILL_MEMBERS,
+                (Some(_), Some(_)) => msg::people::TASK_KILL_IN_MEMBERS,
+            };
+            let mut task = Msg::new(id).role("target", creatures(content, def, *count));
+            if let Some(level) = level {
+                task = task.role("place", place_of(content, level));
+            }
+            if let Some(members) = members {
+                task = task.role("members", Arg::List(members));
+            }
+            task
         }
-        Goal::Bring { object, count, .. } => format!(
-            "Bring {} to {}.",
-            content.object(*object).describe(*count),
-            speaker_called(content, def.turn_in())
-        ),
-        Goal::Reach { level } => format!("Reach {}.", in_sentence(&content.place_name(level))),
-        Goal::Deliver { object, to } => format!(
-            "Deliver {} to {}.",
-            content.object(*object).describe(1),
-            speaker_called(content, *to)
-        ),
-        Goal::Escort { escort, level, .. } => format!(
-            "Bring {} safely to {}.",
-            speaker_called(content, *escort),
-            in_sentence(&content.place_name(level))
-        ),
+        Goal::Bring {
+            object: o, count, ..
+        } if wants && def.turn_in() == def.giver => {
+            Msg::new(msg::people::TASK_BRING).role("what", object(*o).count(*count))
+        }
+        Goal::Bring {
+            object: o, count, ..
+        } => Msg::new(msg::people::TASK_BRING_TO)
+            .role("what", object(*o).count(*count))
+            .role("who", speaker(content, def.turn_in())),
+        Goal::Reach { level } => {
+            Msg::new(msg::people::TASK_REACH).role("place", place_of(content, level))
+        }
+        Goal::Deliver { object: o, to } => Msg::new(msg::people::TASK_DELIVER)
+            .role("what", object(*o))
+            .role("who", speaker(content, *to)),
+        Goal::Escort { escort, level, .. } => Msg::new(msg::people::TASK_ESCORT)
+            .role("who", speaker(content, *escort))
+            .role("place", place_of(content, level)),
         Goal::Lure {
             creature,
             level,
             waits,
             ..
-        } => format!(
-            "Lure {} from {} to {}.",
-            crate::content::the(&content.creature(*creature).name),
-            in_sentence(&content.place_name(&waits.level)),
-            in_sentence(&content.place_name(level))
-        ),
+        } => Msg::new(msg::people::TASK_LURE)
+            .role("who", lure_phrase(content, *creature))
+            .role("from", place_of(content, &waits.level))
+            .role("place", place_of(content, level)),
     }
+}
+
+/// A lure quest's creature, said `the`.
+fn lure_phrase(content: &Content, creature: crate::content::CreatureId) -> Phrase {
+    Phrase::id(format!("creature:{}", content.creature(creature).id))
 }
 
 /// What rolled quest `def` asks, by its pool, for the wiki.
@@ -501,7 +548,7 @@ fn rolled_asks(content: &Content, def: &QuestDef, rolled: &Rolled) -> String {
             format!(
                 "Bring {} of one type of the {class}{loot}, drawn at random, to {}.",
                 some("item", "items"),
-                speaker_called(content, def.turn_in())
+                content.speaker_called(def.turn_in())
             )
         }
         Rolled::Variants(variants) => {
@@ -515,7 +562,9 @@ fn rolled_asks(content: &Content, def: &QuestDef, rolled: &Rolled) -> String {
                     },
                 );
                 match &given.goal {
-                    Goal::Kill { .. } => creatures(content, &given, n),
+                    Goal::Kill { .. } => {
+                        crate::messages::english_msg(content, &creatures(content, &given, n))
+                    }
                     Goal::Bring { object, .. } => content.object(*object).describe(n),
                     _ => v.id.clone(),
                 }
@@ -554,22 +603,10 @@ fn rolled_asks(content: &Content, def: &QuestDef, rolled: &Rolled) -> String {
 /// What quest `def` asks as its first breadcrumb in the log (#422): "Sister Hild wants you to
 /// bring a silver chalice.", "Wat wants you to kill 100 goblins: goblins, goblin archers, and
 /// goblin chiefs.".
-pub fn wants(content: &Content, def: &QuestDef) -> String {
-    let giver = capitalized(&speaker_called(content, def.giver));
-    let asks = match def.goal {
-        Goal::Bring { object, count, .. } if def.turn_in() == def.giver => {
-            format!("bring {}.", content.object(object).describe(count))
-        }
-        _ => {
-            let asks = asks(content, def);
-            let mut chars = asks.chars();
-            match chars.next() {
-                Some(first) => first.to_lowercase().chain(chars).collect(),
-                None => asks,
-            }
-        }
-    };
-    format!("{giver} wants you to {asks}")
+fn wants(content: &Content, def: &QuestDef) -> Msg {
+    Msg::new(msg::people::WANTS)
+        .role("giver", speaker(content, def.giver))
+        .role("task", task(content, def, true))
 }
 
 /// Where active quest `def` stands, as the log says it; `escorted`: its escort follows the
@@ -580,60 +617,67 @@ fn status(
     inventory: &[Stack],
     def: &QuestDef,
     escorted: bool,
-) -> String {
+) -> Msg {
     let (have, need) = progress(content, quests, inventory, def);
     if have >= need {
         let to = super::quarrel::turn_in_now(def, quests.record(&def.id));
-        return format!("{}.", capitalized(&next_step(content, def, to)));
+        return Msg::new(msg::people::NEXT_STEP).role("step", next_step(content, def, to));
     }
+    let counted = |id| {
+        Msg::new(id)
+            .role("have", i64::from(have))
+            .role("need", i64::from(need))
+    };
     match def.goal {
         Goal::Escort { escort, .. } => {
-            let who = capitalized(&speaker_called(content, escort));
-            if escorted {
-                format!("{who} follows you.")
-            } else {
-                format!("{who} is not with you.")
-            }
+            let id = match escorted {
+                true => msg::people::ESCORT_FOLLOWS,
+                false => msg::people::ESCORT_NOT_WITH_YOU,
+            };
+            Msg::new(id).role("who", speaker(content, escort))
         }
-        Goal::Kill { .. } => format!("{have} / {need} killed."),
-        Goal::Bring { .. } => format!("You carry {have} / {need}."),
-        Goal::Reach { .. } => "Not reached yet.".into(),
-        Goal::Deliver { object, .. } => {
-            format!("You no longer carry the {}.", content.object(object).name)
-        }
+        Goal::Kill { .. } => counted(msg::people::KILLED),
+        Goal::Bring { .. } => counted(msg::people::YOU_CARRY),
+        Goal::Reach { .. } => Msg::new(msg::people::NOT_REACHED_YET),
+        Goal::Deliver { object, .. } => Msg::new(msg::people::NO_LONGER_CARRY).role(
+            "what",
+            Phrase::id(format!("object:{}", content.object(object).id)),
+        ),
         Goal::Lure {
             creature,
             ref level,
             ..
-        } => format!(
-            "{} is not yet bound in {}.",
-            capitalized(&crate::content::the(&content.creature(creature).name)),
-            in_sentence(&content.place_name(level))
-        ),
+        } => Msg::new(msg::people::NOT_YET_BOUND)
+            .role("who", lure_phrase(content, creature))
+            .role("place", place_of(content, level)),
     }
 }
 
 /// What failed quest `def`'s log says: "Failed: Eadgyth is dead.".
-fn failed_status(content: &Content, def: &QuestDef) -> String {
+fn failed_status(content: &Content, def: &QuestDef) -> Msg {
     match def.goal {
-        Goal::Escort { escort, .. } => format!(
-            "Failed: {} is dead.",
-            capitalized(&speaker_called(content, escort))
-        ),
-        _ => "Failed.".into(),
+        Goal::Escort { escort, .. } => {
+            Msg::new(msg::people::FAILED_DEAD).role("who", speaker(content, escort))
+        }
+        _ => Msg::new(msg::people::FAILED),
     }
 }
 
 /// What the player does once quest `def`'s goal is met, `to` whoever takes it in now: "return
 /// to the old hermit".
-fn next_step(content: &Content, def: &QuestDef, to: DialogueId) -> String {
-    let to = speaker_called(content, to);
+fn next_step(content: &Content, def: &QuestDef, to: DialogueId) -> Msg {
+    let to = speaker(content, to);
     match def.goal {
-        Goal::Deliver { object, .. } => {
-            format!("take the {} to {to}", content.object(object).name)
+        Goal::Deliver { object, .. } => Msg::new(msg::people::STEP_TAKE)
+            .role(
+                "what",
+                Phrase::id(format!("object:{}", content.object(object).id)),
+            )
+            .role("who", to),
+        Goal::Bring { .. } if def.turn_in() != def.giver => {
+            Msg::new(msg::people::STEP_TAKE_THEM).role("who", to)
         }
-        Goal::Bring { .. } if def.turn_in() != def.giver => format!("take them to {to}"),
-        _ => format!("return to {to}"),
+        _ => Msg::new(msg::people::STEP_RETURN).role("who", to),
     }
 }
 
@@ -643,33 +687,45 @@ fn progress_news(
     def: &QuestDef,
     to: DialogueId,
     (have, need): (u32, u32),
-) -> String {
+) -> Msg {
     let done = have >= need;
-    let mut text = match def.goal {
-        Goal::Kill { .. } => {
-            let name = kill_noun(content, def, need == 1);
-            format!("Quest updated: {have} / {need} {name}.")
-        }
-        Goal::Bring { object, .. } => {
-            let what = content.object(object);
-            let name = if need == 1 { &what.name } else { &what.plural };
-            format!("Quest updated: {have} / {need} {name}.")
-        }
-        Goal::Reach { ref level } => format!(
-            "Quest updated: you have reached {}.",
-            in_sentence(&content.place_name(level))
-        ),
-        Goal::Deliver { .. } | Goal::Escort { .. } | Goal::Lure { .. } => "Quest updated:".into(),
+    let counted = |what: Phrase| {
+        Msg::new(msg::people::UPDATED_COUNT)
+            .role("have", i64::from(have))
+            .role("need", i64::from(need))
+            .role("what", what)
     };
-    if done {
-        text.push(' ');
-        let step = next_step(content, def, to);
-        match def.goal {
-            Goal::Deliver { .. } => text.push_str(&format!("{step}.")),
-            _ => text.push_str(&format!("{}.", capitalized(&step))),
+    let news = match def.goal {
+        Goal::Kill { .. } => counted(kill_noun(content, def, need)),
+        Goal::Bring { object, .. } => {
+            counted(Phrase::id(format!("object:{}", content.object(object).id)).count(need))
         }
+        Goal::Reach { ref level } => {
+            Msg::new(msg::people::UPDATED_REACHED).role("place", place_of(content, level))
+        }
+        // A delivery picked up again goes on in one sentence.
+        Goal::Deliver { .. } if done => {
+            let step = next_step(content, def, to);
+            return Msg::new(msg::people::UPDATED_STEP).role("step", step);
+        }
+        Goal::Deliver { .. } | Goal::Escort { .. } | Goal::Lure { .. } => {
+            Msg::new(msg::people::UPDATED)
+        }
+    };
+    if !done {
+        return news;
     }
-    text
+    let step = Msg::new(msg::people::NEXT_STEP).role("step", next_step(content, def, to));
+    Msg::new(msg::world::LINES).role("lines", Arg::List(vec![news.into(), step.into()]))
+}
+
+/// Where a reward's skill lines are in its quest, for their keys
+/// ([`data_line::quest_skill`]).
+#[derive(Clone, Copy)]
+struct Taught<'a> {
+    quest: &'a str,
+    /// `reward`, or `taker.<npc>.reward`.
+    reward: &'a str,
 }
 
 /// The quest a topic id is about; `None` for any other topic (`accept-ID` and `decline-ID` of
@@ -735,18 +791,19 @@ impl World {
         let quest = quest_topic(topic)?;
         let listed = (self.quest_topics(speaker).iter()).any(|t| t.id == topic);
         let Some(q) = self.content.quest_id(quest).filter(|_| listed) else {
-            let who = capitalized(&self.called(&self.state.actors[&id]));
-            self.say(format!("{who} knows nothing about that."));
+            self.knows_nothing(id);
             return Some(Spent::Nothing);
         };
         let content = self.content.clone();
         let def = content.quest(q);
         if !self.state.quests.is_active(def) {
             // Too green for it yet: the giver says so, and gives nothing.
-            if let Some((level, early)) = &def.min_level
+            if let Some((level, _)) = &def.min_level
                 && self.player_level() < *level
             {
-                self.answer(id, early.clone(), Some(topic.into()), events);
+                let early = Arg::said(data_line::quest(&def.id, "early"));
+                let early = self.voiced(id, early);
+                self.answer(id, early, Some(topic.into()), events);
                 return Some(Spent::Nothing);
             }
             self.give(id, q, topic, events);
@@ -757,7 +814,8 @@ impl World {
             Spent::NoTime
         } else {
             let given = self.state.quests.given(&content, def).into_owned();
-            self.answer(id, given.texts.reminder, Some(topic.into()), events);
+            let reminder = self.voiced(id, given.said("reminder"));
+            self.answer(id, reminder, Some(topic.into()), events);
             Spent::Nothing
         })
     }
@@ -777,17 +835,25 @@ impl World {
         if !self.reveal_location(location) {
             return;
         }
-        let Some((_, location)) = self.content.hidden_location(&self.state.campaign, location)
+        let content = self.content.clone();
+        let Some((level, _, location)) =
+            (content.hidden_locations(&self.state.campaign)).find(|(_, _, h)| h.id == location)
         else {
             return;
         };
-        if let Some(opens) = location.opens.clone() {
-            self.say(opens);
+        if location.opens.is_some() {
+            self.say(data_line::said(data_line::hidden_opens(
+                level,
+                &location.id,
+            )));
             return;
         }
-        let place = in_sentence(&location.name);
-        let who = capitalized(&self.called(&self.state.actors[&id]));
-        self.say(format!("{who} marks {place} on your map."));
+        let who = self.called_phrase(&self.state.actors[&id]);
+        self.say(
+            Msg::new(msg::people::MARKS_ON_MAP)
+                .role("who", who)
+                .role("place", place(&location.name)),
+        );
     }
 
     /// Creature `id` gives the player quest `q` (#422): a rolled quest draws its target, the
@@ -827,10 +893,10 @@ impl World {
             }
             _ => None,
         };
-        let line = match &given.texts.accept {
-            Some(accept) => format!("{} {accept}", given.texts.offer),
-            None => given.texts.offer.clone(),
-        };
+        let mut line = vec![self.voiced(id, given.said("offer"))];
+        if given.texts.accept.is_some() {
+            line.push(self.voiced(id, given.said("accept")));
+        }
         self.answer(id, line, Some(topic.into()), events);
         self.reveal_at(id, &given, RevealWhen::Given);
         if let Goal::Escort { waits: Some(w), .. } = &given.goal
@@ -842,8 +908,12 @@ impl World {
             self.lure_places(&waits.level);
         }
         if let Some(letter) = handed {
-            let who = capitalized(&self.called(&self.state.actors[&id]));
-            self.say(format!("{who} gives you {}.", letter.describe(&content)));
+            let who = self.called_phrase(&self.state.actors[&id]);
+            self.say(
+                Msg::new(msg::people::GIVES_YOU)
+                    .role("who", who)
+                    .role("what", letter.phrase(&content)),
+            );
         }
         self.promote(&standing);
         let progress = self.progress_of(def);
@@ -877,13 +947,23 @@ impl World {
         // A quest with takers pays by whoever took it in (`quarrel.rs`).
         let speaker = self.dialogue_of(&self.state.actors[&id]);
         let taker = speaker.and_then(|s| def.quarrel.taker(s));
-        let done = taker.map_or(&def.texts.done, |t| &t.done).clone();
+        let done = match taker {
+            Some(t) => Arg::said(data_line::quest(&def.id, &format!("taker.{}.done", t.npc))),
+            None => def.said("done"),
+        };
+        let done = self.voiced(id, done);
         let reward = taker.map_or(&def.reward, |t| &t.reward).clone();
+        let reward_path =
+            taker.map_or_else(|| "reward".into(), |t| format!("taker.{}.reward", t.npc));
+        let who = self.called_phrase(&self.state.actors[&id]);
         if let Some((object, count)) = def.hand_in() {
             let handed = self.take_from_pack(object, count);
-            let what = object::phrase(&handed, self.lore());
-            let who = self.called(&self.state.actors[&id]);
-            self.say(format!("You give {who} {what}."));
+            let what = crate::world::items::stacks_arg(&handed, self.lore());
+            self.say(
+                Msg::new(msg::people::GIVE_QUEST_ITEMS)
+                    .role("who", who.clone())
+                    .role("what", what),
+            );
         }
         if let Some(record) = self.state.quests.records.get_mut(&def.id) {
             record.stage = Stage::Done;
@@ -895,15 +975,13 @@ impl World {
                 self.answer(id, done, Some(topic.into()), events);
             }
             None => {
-                let who = capitalized(&self.called(&self.state.actors[&id]));
-                self.say(format!("{who} says: \"{done}\""));
+                self.says(id, done);
             }
         }
         self.reveal_at(id, def, RevealWhen::Done);
-        self.say(format!("Quest complete: {}.", def.name));
+        self.say(Msg::new(msg::people::QUEST_COMPLETE).role("quest", def.name.as_str()));
         self.tell_goodwill(def.giver);
         self.train_stat(StatUse::Quest);
-        let who = capitalized(&self.called(&self.state.actors[&id]));
         // A talent (the half-elf's Diplomat) makes a quest pay more gold.
         let talents = self.state.player().talent_mods(&content);
         let mut stacks = reward.stacks(&content);
@@ -917,15 +995,20 @@ impl World {
         let xp = reward.xp;
         crate::rot::made_at(&mut stacks, &content, self.state.time);
         if !stacks.is_empty() {
-            self.say(format!(
-                "{who} gives you {}.",
-                object::phrase(&stacks, self.lore())
-            ));
+            self.say(
+                Msg::new(msg::people::GIVES_YOU)
+                    .role("who", who.clone())
+                    .role("what", crate::world::items::stacks_arg(&stacks, self.lore())),
+            );
             self.give_player(&stacks);
         }
-        self.teach_skills(&content, &who, &reward.skills);
+        let taught = Taught {
+            quest: &def.id,
+            reward: &reward_path,
+        };
+        self.teach_skills(&content, who, &reward.skills, taught);
         if xp > 0 {
-            self.say(format!("You gain {xp} experience."));
+            self.say(Msg::new(msg::people::GAIN_EXPERIENCE).role("xp", i64::from(xp)));
             self.grant_xp(xp);
             self.say_news();
         }
@@ -936,26 +1019,41 @@ impl World {
 
     /// A reward's skills, taught by `who`: an untrained one trained at its `start`, rolled from
     /// the `levels` stream as background and level rolls are, a trained one given its `marks`
-    /// through [`World::mark_skill`] (which may roll it at once). Told in words, never numbers.
-    fn teach_skills(&mut self, content: &Content, who: &str, skills: &[SkillReward]) {
+    /// through [`World::mark_skill`] (which may roll it at once). Told in words, never numbers:
+    /// the reward's own line (at `of`'s key), else a plain one.
+    fn teach_skills(
+        &mut self,
+        content: &Content,
+        who: Phrase,
+        skills: &[SkillReward],
+        of: Taught<'_>,
+    ) {
         for taught in skills {
-            let name = content.skill(taught.skill).name.to_lowercase();
+            let skill = content.skill(taught.skill);
+            let name = skill.name.to_lowercase();
+            let own = |yes: bool| data_line::quest_skill(of.quest, of.reward, &skill.id, yes);
             if self.state.player().skills.get(taught.skill).is_some() {
                 if taught.marks == 0 {
                     continue;
                 }
-                let more =
-                    (taught.more.clone()).unwrap_or_else(|| format!("You learn more of {name}."));
-                self.say(more);
+                match taught.more {
+                    Some(_) => self.say(data_line::said(own(false))),
+                    None => self.say(Msg::new(msg::people::LEARN_MORE_OF).role("skill", name)),
+                }
                 self.mark_skill(taught.skill, taught.marks);
             } else if let Some(start) = taught.start {
                 let seed = self.state.seed;
                 let rng = (self.state.levels_rng).get_or_insert_with(|| Rng::levels(seed));
                 let rolled = start.roll(rng);
                 self.player_mut().skills.add(taught.skill, rolled);
-                let said = (taught.taught.clone())
-                    .unwrap_or_else(|| format!("{who} trains you in {name}."));
-                self.say(said);
+                match taught.taught {
+                    Some(_) => self.say(data_line::said(own(true))),
+                    None => self.say(
+                        Msg::new(msg::people::TRAINS_YOU)
+                            .role("who", who.clone())
+                            .role("skill", name),
+                    ),
+                }
             }
         }
     }

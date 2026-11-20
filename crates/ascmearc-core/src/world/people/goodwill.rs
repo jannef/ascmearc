@@ -6,7 +6,7 @@
 //! so nothing new is saved. [`World::complete_saying`] tells the player, in the town's `told`
 //! words, as it rises; [`World::service_price`] takes the discount off.
 
-use crate::content::{DialogueId, TownDef};
+use crate::content::{DialogueId, TownDef, data_line};
 use crate::world::World;
 
 /// The most a town's goodwill takes off, in percent: everything.
@@ -35,8 +35,8 @@ impl World {
     /// Says the town's `told` words when a quest from `giver`, one of a town's people, has just
     /// been completed.
     pub(super) fn tell_goodwill(&mut self, giver: DialogueId) {
-        if let Some(told) = self.content.town_of(giver).map(|t| t.told.clone()) {
-            self.say(told);
+        if let Some(town) = self.content.town_of(giver).map(|t| t.id.clone()) {
+            self.say(data_line::said(data_line::town_told(&town)));
         }
     }
 }

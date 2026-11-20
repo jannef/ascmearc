@@ -119,7 +119,7 @@ impl World {
         &mut self,
         dead: &crate::world::Actor,
         by_player: bool,
-    ) -> Option<String> {
+    ) -> Option<Msg> {
         let content = self.content.clone();
         let rise = self.effects_at(&dead.level, dead.pos).rise()?.clone();
         let faction = content.factions().id(&rise.faction)?;
@@ -151,10 +151,7 @@ impl World {
         let seen =
             dead.level == self.state.current_level && self.perception.sees_actors_at(dead.pos);
         seen.then(|| {
-            format!(
-                "{}'s corpse twitches.",
-                crate::content::the_start(&def.name)
-            )
+            Msg::new(msg::fixtures::CORPSE_TWITCHES).role("dead", fight::creature(def))
         })
     }
 

@@ -432,7 +432,7 @@ fn asking_about_a_quest_gives_it_and_takes_no_time() {
     assert_eq!(ids, ["quest-pups", "quest-parcel", "weather"]);
     assert_eq!(stage(&w, "pups"), Some(Stage::Active));
     // On the log at once, with its first breadcrumb.
-    let log = w.perception().quests();
+    let log = crate::test_support::quest_log(&w);
     assert_eq!(log.len(), 1);
     assert_eq!(
         log[0].objective,
@@ -564,8 +564,10 @@ fn kills_before_taking_it_count_but_not_others_kills_nor_other_levels() {
         w.apply(&Action::Wait);
     }
     assert_eq!(creatures_left(&w, "pup"), 0, "the hunter killed them");
-    let view = w.perception();
-    assert_eq!(view.quests()[0].status, "0 / 2 killed.");
+    assert_eq!(
+        crate::test_support::quest_log(&w)[0].status,
+        "0 / 2 killed."
+    );
     // The cellar's pup, killed by the player, is on another level than the quest asks.
     let mut w = world_on("#########\n#E@>....#\n#########\n");
     take(&mut w, Dir::W, "pups");
@@ -578,7 +580,10 @@ fn kills_before_taking_it_count_but_not_others_kills_nor_other_levels() {
         w.apply(&Action::Move(Dir::E));
     }
     assert_eq!(creatures_left(&w, "pup"), 0);
-    assert_eq!(w.perception().quests()[0].status, "0 / 2 killed.");
+    assert_eq!(
+        crate::test_support::quest_log(&w)[0].status,
+        "0 / 2 killed."
+    );
     // Tallied all the same, by level.
     let kills: Vec<_> = w.quests().kills().collect();
     assert_eq!(kills, [("cellar", "pup", 1)]);
@@ -593,7 +598,10 @@ fn a_reach_quest_needs_its_prerequisite_and_counts_where_the_player_has_been() {
         serde_json::from_str(r#"{"records": {"pups": {"stage": "done", "completed": 1}}}"#)
             .expect("quests");
     take(&mut w, Dir::W, "cellar");
-    assert_eq!(w.perception().quests()[0].status, "Not reached yet.");
+    assert_eq!(
+        crate::test_support::quest_log(&w)[0].status,
+        "Not reached yet."
+    );
     run(&mut w, "move:SE move:E*3 descend");
     assert_eq!(w.perception().level_id(), "cellar");
     assert!(
@@ -676,7 +684,10 @@ fn a_quest_with_a_min_level_is_listed_but_refused_until_the_player_reaches_it() 
 fn a_bring_quest_takes_from_the_pack_and_repeats() {
     let mut w = world_on(YARD);
     take(&mut w, Dir::E, "apples");
-    assert_eq!(w.perception().quests()[0].status, "You carry 0 / 2.");
+    assert_eq!(
+        crate::test_support::quest_log(&w)[0].status,
+        "You carry 0 / 2."
+    );
     // The reminder until the player carries enough; it changes nothing.
     let before = quiet_state(&w);
     ask(&mut w, Dir::E, "quest-apples");
@@ -704,10 +715,13 @@ fn a_bring_quest_takes_from_the_pack_and_repeats() {
     assert_eq!(carried(&w, "charm"), 1);
     // Repeatable: offered again, and the log keeps it among the done ones meanwhile.
     assert_eq!(topics_of(&w, "crone"), ["quest-apples"]);
-    let log = w.perception().quests();
+    let log = crate::test_support::quest_log(&w);
     assert_eq!((log[0].name.as_str(), log[0].active), ("Apples", false));
     take(&mut w, Dir::E, "apples");
-    assert_eq!(w.perception().quests()[0].status, "You carry 1 / 2.");
+    assert_eq!(
+        crate::test_support::quest_log(&w)[0].status,
+        "You carry 1 / 2."
+    );
     let record = w.quests().record("apples").cloned().expect("record");
     assert_eq!((record.stage, record.completed), (Stage::Active, 1));
 }
@@ -734,15 +748,17 @@ fn a_delivery_is_blocked_while_the_item_is_lost_and_handed_in_to_the_recipient()
     run(&mut w, "drop");
     assert_eq!(carried(&w, "letter"), 0);
     assert_eq!(topics_of(&w, "crone"), ["quest-apples"]);
-    let view = w.perception();
-    assert_eq!(view.quests()[0].status, "You no longer carry the letter.");
+    assert_eq!(
+        crate::test_support::quest_log(&w)[0].status,
+        "You no longer carry the letter."
+    );
     run(&mut w, "pickup");
     assert_eq!(
         last(&w, 1),
         ["Quest updated: take the letter to the crone."]
     );
     assert_eq!(
-        w.perception().quests()[0].status,
+        crate::test_support::quest_log(&w)[0].status,
         "Take the letter to the crone."
     );
     ask(&mut w, Dir::E, "quest-parcel");
@@ -790,19 +806,19 @@ fn any_number_of_quests_may_be_active_and_none_is_given_up() {
     for quest in ["pups", "parcel", "apples"] {
         assert_eq!(stage(&w, quest), Some(Stage::Active), "{quest}");
     }
-    assert_eq!(w.perception().quests().len(), 3);
+    assert_eq!(crate::test_support::quest_log(&w).len(), 3);
     assert!(parse_actions("abandon:pups").is_err());
 }
 
 #[test]
 fn the_quest_log_lists_active_quests_then_done_ones() {
     let mut w = world_on(YARD);
-    assert!(w.perception().quests().is_empty());
+    assert!(crate::test_support::quest_log(&w).is_empty());
     take(&mut w, Dir::E, "apples");
     take(&mut w, Dir::W, "parcel");
     run(&mut w, "move:S pickup move:W pickup move:NE");
     ask(&mut w, Dir::E, "quest-apples");
-    let log = w.perception().quests();
+    let log = crate::test_support::quest_log(&w);
     let rows: Vec<(&str, bool, &str, &str)> = (log.iter())
         .map(|q| {
             (
@@ -1090,7 +1106,7 @@ fn the_hermits_rats_then_the_depths() {
     assert_eq!(topics_of(&w, "hermit")[0], "quest-depths");
     take(&mut w, toward, "depths");
     w.travel("depths:3", None).expect("depths:3");
-    let log = w.perception().quests();
+    let log = crate::test_support::quest_log(&w);
     assert_eq!(
         log[0].objective,
         "The old hermit wants you to reach the Depths 3."
@@ -1147,7 +1163,7 @@ fn the_gardeners_apples_and_the_bards_letter() {
         ]
     );
     assert_eq!(carried(&w, "sealed_letter"), 0);
-    let log = w.perception().quests();
+    let log = crate::test_support::quest_log(&w);
     assert!(log.iter().all(|q| !q.active));
     assert_eq!(log.len(), 2);
 }
