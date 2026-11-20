@@ -138,6 +138,15 @@ pub fn warmth_bands(def: &TalentDef) -> impl Iterator<Item = &[WarmthBand]> {
     })
 }
 
+// Crafting (#1917).
+
+/// Profession `skill`'s `fumbled` (`fumbled` true) or `failed` line (`recipes.toml`'s
+/// `[[profession]]`).
+pub fn profession(skill: &str, fumbled: bool) -> String {
+    let field = if fumbled { "fumbled" } else { "failed" };
+    format!("recipes:profession.{skill}.{field}")
+}
+
 /// A hand-made level `id`'s `arrival` line.
 fn level_arrival(id: &str) -> String {
     format!("level:{id}.arrival")
@@ -270,6 +279,7 @@ pub(super) fn add_all(content: &mut Content) -> Result<(), ContentError> {
         }
     }
     character_lines(content, &mut add);
+    crafting_lines(content, &mut add);
     class_lines(content, &mut add);
     for (id, level) in &content.levels {
         if let Some(line) = &level.arrival {
@@ -347,6 +357,18 @@ fn character_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
                         add(warmth(&def.id, n, slower), text);
                     }
                 }
+            }
+        }
+    }
+}
+
+/// Crafting's lines: the professions' `failed` and `fumbled`.
+fn crafting_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
+    for text in &content.recipes().professions {
+        let skill = &content.skill(text.skill).id;
+        for (fumbled, line) in [(false, &text.failed), (true, &text.fumbled)] {
+            if let Some(line) = line {
+                add(profession(skill, fumbled), line);
             }
         }
     }

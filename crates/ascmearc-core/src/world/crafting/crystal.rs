@@ -42,10 +42,11 @@
 
 use crate::action::{Meal, Positions};
 use crate::combat;
-use crate::content::{ActionKind, AffixKind, StatUse};
+use crate::content::{ActionKind, AffixKind, Content, ObjectId, StatUse};
+use crate::lang::{Arg, Msg, Phrase};
+use crate::msg;
 use crate::object::Stack;
 use crate::rng::draw;
-use crate::text::capitalized;
 use crate::world::character::alignment::Deed;
 use crate::world::{Actor, Spent, World};
 
@@ -53,7 +54,7 @@ use crate::world::{Actor, Spent, World};
 /// whether any check was made (Enchanting's mark).
 #[derive(Debug, Default)]
 pub(super) struct Caught {
-    pub lines: Vec<String>,
+    pub lines: Vec<Msg>,
     pub stacks: Vec<Stack>,
     pub checked: bool,
 }
@@ -70,12 +71,10 @@ impl World {
         let Some(colour) = crystals.colour_of_object(stack.object) else {
             return Spent::Nothing;
         };
-        let name = colour.name.clone();
+        let crystal = object_phrase(&content, colour.object);
         let spent = self.price_for(&[ActionKind::Drink]);
         let one = self.take_crystal(meal);
-        self.say(format!(
-            "You crush the {name} crystal and drink what is in it. Something of it stays."
-        ));
+        self.say(Msg::new(msg::crafting::CRUSH_CRYSTAL).role("crystal", crystal));
         self.drank_goods(meal, &one);
         let me = self.player_mut();
         let max = me.max_mana(&content);
@@ -139,26 +138,29 @@ impl World {
             let made = crate::check::makes(natural, modifier, rules.salvage_against(affix));
             caught.checked = true;
             // The affix by name only where the player knows the item's magic.
+            let word = Phrase::id(format!("affix:{}", def.id));
             let named = match def.kind {
-                _ if !magic.identified => "some of its magic".to_string(),
-                AffixKind::Prefix => format!("its {} magic", def.name),
-                AffixKind::Suffix => format!("its magic {}", def.name),
+                _ if !magic.identified => Msg::from(msg::crafting::SOME_OF_ITS_MAGIC),
+                AffixKind::Prefix => Msg::new(msg::crafting::ITS_PREFIX_MAGIC).role("affix", word),
+                AffixKind::Suffix => Msg::new(msg::crafting::ITS_MAGIC_SUFFIX).role("affix", word),
             };
             let colour = crystals.colour_of_affix(&content, &affix.id);
             match colour.filter(|_| made) {
                 Some(colour) => {
-                    let a = crate::text::article(&colour.name);
-                    let name = &colour.name;
-                    caught
-                        .lines
-                        .push(format!("You catch {named} in {a} {name} crystal."));
+                    let crystal = object_phrase(&content, colour.object);
+                    (caught.lines).push(
+                        Msg::new(msg::crafting::CATCH_MAGIC)
+                            .role("magic", named)
+                            .role("crystal", crystal),
+                    );
                     let crystal = Stack::new(colour.object, 1);
                     match caught.stacks.iter_mut().find(|s| s.object == colour.object) {
                         Some(s) => s.count += 1,
                         None => caught.stacks.push(crystal),
                     }
                 }
-                None => (caught.lines).push(format!("{} goes out unread.", capitalized(&named))),
+                None => (caught.lines)
+                    .push(Msg::new(msg::crafting::GOES_OUT_UNREAD).role("magic", named)),
             }
         }
         let rare = &crystals.rare;
@@ -168,10 +170,8 @@ impl World {
         {
             let pick = draw!(self, "crystal/rare_salvage/player").index(rare.materials.len());
             let found = rare.materials[pick];
-            let what = content.object(found).describe(1);
-            caught
-                .lines
-                .push(format!("Where its magic was, {what} is left."));
+            let what = object_phrase(&content, found);
+            (caught.lines).push(Msg::new(msg::crafting::MAGIC_LEFT).role("what", what));
             caught.stacks.push(Stack::new(found, 1));
         }
         caught
@@ -185,7 +185,7 @@ impl World {
     pub(in crate::world) fn crystallise(
         &mut self,
         actor: &Actor,
-    ) -> Option<(Vec<Stack>, Option<String>)> {
+    ) -> Option<(Vec<Stack>, Option<Msg>)> {
         if self.glassing != Some(actor.id) {
             return None;
         }
@@ -212,16 +212,21 @@ impl World {
         let seen =
             actor.level == self.state.current_level && self.perception.sees_actors_at(actor.pos);
         let line = seen.then(|| {
-            let verb = if left.len() == 1 && left[0].count == 1 {
-                "lies"
-            } else {
-                "lie"
+            let lore = self.lore();
+            let what = match left.as_slice() {
+                [one] => Arg::Phrase(lore.phrase(one)),
+                // The crystals and the rare material.
+                _ => Arg::List(left.iter().map(|s| lore.phrase(s).into()).collect()),
             };
-            let what = crate::object::phrase(&left, self.lore());
-            format!("Its body turns to glass: where it fell {verb} {what}.")
+            Msg::new(msg::crafting::TURNS_TO_GLASS).role("what", what)
         });
         Some((left, line))
     }
+}
+
+/// Object `id` as a line names it (a crystal, a rare material): `object:<id>`.
+fn object_phrase(content: &Content, id: ObjectId) -> Phrase {
+    Phrase::id(format!("object:{}", content.object(id).id))
 }
 
 #[cfg(test)]

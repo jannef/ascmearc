@@ -1,0 +1,167 @@
+# Crafting (`world/crafting/`): making a recipe, cutting gems, enchanting, crystals, digging, and
+# the field forge. Ids alphabetical (`docs/dev/localization.md` "Literal lines"), the plain ones
+# first, then the tables. A profession's `failed` and `fumbled` lines are the data's, said by
+# their keys (`docs/dev/localization.md` "Lines of data").
+#
+# Roles: `what` is a thing (a phrase built where it is said); `item` the item being enchanted;
+# `stone` the crystal it takes; `title` what it wakes as (a rare's name, else the item); `gem` a
+# gem, as a stack or as its material; `crystal` a crystal by its object; `wall` and `station` a
+# terrain; `affix` an affix by its name ("Sharp", "of the Bear"); `magic` an item's magic as a
+# salvage line names it (`its_magic_suffix`, `its_prefix_magic`, `some_of_its_magic`); `count` a
+# number. `skill`, `recipe`, `launcher`, and `part` are core's and the data's English words, text
+# until they are converted (#1949); `time` how long a work went on ("3 minutes"); `came` the clause
+# that says what stopped it ("A kobold comes into view").
+
+beyond_your_skill = "That is beyond your skill."
+blade_brittle = "The blade comes out brittle and you break it up for the metal."
+blade_brittle_every_ounce = "The blade comes out brittle and you break it up for the metal, every ounce."
+cannot_dig_here = "You cannot dig here."
+cannot_dig_in_deep_water = "You cannot dig in deep water."
+# `wall`: the terrain.
+cannot_dig_through = "You cannot dig through {wall:the}."
+cannot_forge_out_here = "You cannot set up a forge out here."
+cannot_make_yet = "You cannot make that yet."
+carry_no_such_thing = "You carry no such thing."
+# `magic`: `its_magic_suffix`, `its_prefix_magic`, or `some_of_its_magic`; `crystal`: the crystal.
+catch_magic = "You catch {magic:bare} in {crystal:a}."
+clear_the_ground = "Clear the ground there first."
+# `item`: the item being unbound.
+clings_to_magic = "{item:The} clings to its magic."
+could_not_be_finer = "It could not be finer."
+# `crystal`: the crystal consumed.
+crush_crystal = "You crush {crystal:the} and drink what is in it. Something of it stays."
+cut_the_stone = "You cut the stone."
+cut_the_stone_again = "You cut the stone again."
+dare_not_cut = "You dare not cut it."
+# `wall`: the terrain.
+dig_into = "You dig into {wall:the}."
+# `recipe`: the recipe's name.
+done_from_own_list = "{recipe:bare} is done from its own list."
+# `item`: the item being enchanted; `what`: what it is now.
+enchanted_now = "{item:The} takes {stone:poss} glow. It is now {what:counted}."
+# `item`, `stone`, `title`: as above.
+ennoble_wakes = "{item:The} takes {stone:poss} glow and wakes as {title:counted}."
+fetter_crumbles = "The soul-fetter crumbles to nothing."
+# `affix`: the affix the soul-fetter keeps.
+fetter_holds = "The soul-fetter holds one enchantment fast: {affix:bare}."
+# `wall`: the terrain.
+go_on_digging = "You go on digging at {wall:the}."
+# `magic`: as `catch_magic`'s.
+goes_out_unread = "{magic:Bare} goes out unread."
+heap_up_stones = "You heap up stones to set an ingot on."
+heart_crystal_needed = "A rare takes a heart-crystal beside the crystal, and you have none."
+heart_goes_dark = "The heart-crystal goes dark with it."
+holds_all_it_can = "It holds all it can."
+# `item`: the item being imbued; `count`: the crystals spent; `title`: as above.
+imbue_wakes = "{item:The} drinks the {count:num} crystals and wakes as {title:counted}."
+# `what`: the gem as it is now.
+it_is_now = "It is now {what:counted}."
+# `affix`: a suffix ("of the Bear").
+its_magic_suffix = "its magic {affix:bare}"
+# `affix`: a prefix ("Sharp").
+its_prefix_magic = "its {affix:bare} magic"
+# `what`: what a failed brew left.
+left_with = "You are left with {what:counted}."
+# `what`: the item made, by grade.
+made_fine = "This is {what:counted}."
+made_marvellous = "This is {what:counted}!"
+made_masterwork = "You have made {what:counted}!"
+made_plain = "You have made {what:counted}."
+# `item`: the item being unbound, or enchanted without a crystal; `what`: what it is now.
+magic_goes_out = "The magic goes out of {item:the}. It is now {what:counted}."
+magic_in_it_already = "There is magic in it already."
+# `what`: the rare material left.
+magic_left = "Where its magic was, {what:a} is left."
+makeshift_anvil = "You set the block on a heap of stones: a makeshift anvil."
+more_than_the_work_takes = "That is more than the work takes."
+# `what`: as above.
+must_choose = "You must choose the {what:bare}."
+must_choose_gem = "You must choose the gem."
+must_choose_item = "You must choose the item."
+must_know_first = "You must know what is bound in it first."
+no_crystal = "That is no crystal."
+no_digging_tool = "You have no digging tool ready."
+no_finer = "You take off more stone and make it no finer."
+no_gem_to_hand = "You have no gem to hand."
+no_ingot = "You have no ingot to set."
+no_knife = "You have no knife."
+# `launcher`: what the ammunition is shot from ("bow").
+no_launcher_ready = "You have no {launcher:bare} ready."
+no_loose_gem = "That is no loose gem."
+no_magic_bound = "No magic can be bound in that."
+no_magic_in_it = "There is no magic in it."
+no_more_of_that_nature = "No more of that nature will take."
+no_open_ground = "There is no open ground there to set an anvil on."
+no_soul_fetter = "You have no soul-fetter to keep it with."
+# `station`: the station's terrain.
+no_station_here = "There is no {station:bare} here."
+no_such_magic = "There is no such magic in it."
+no_such_recipe = "You know no such recipe."
+not_so_many_crystals = "You do not carry so many crystals."
+# `skill`: the profession's name.
+not_trained = "You are not trained in {skill:bare}."
+nothing_left_to_cut = "There is nothing left to cut."
+nothing_left_to_recast = "Nothing would be left to recast."
+nothing_left_to_work_on = "You have nothing left to work on."
+nothing_left_to_work_with = "You have nothing left to work with."
+nothing_to_dig = "There is nothing to dig there."
+only_cut_gem = "Only a cut gem can be set."
+# `item`, `stone`: as above.
+quicken_heart = "{item:The} takes {stone:poss} glow and the heart-crystal's, and holds more."
+rare_already = "It is rare already: only a heart-crystal's Quicken adds to it."
+rare_unbind_first = "It is rare: unbind it, then imbue it anew."
+rough_it_out = "You rough it out, and lose more than you meant to."
+# `gem`: the gem's name.
+set_to_cutting = "You set to cutting the {gem:bare}."
+# `what`: what is made (several: the plural).
+set_to_work = "You set to work on the {what:bare}."
+# `what`: as `set_to_work`'s; `station`: the station beside the player.
+set_to_work_at = "You set to work on the {what:bare} at {station:the}."
+# `gem`: the gem's material.
+shatters = "{gem:The} shatters."
+some_of_its_magic = "some of its magic"
+something_in_the_way = "Something is in the way."
+spoil_batch = "You spoil the whole batch."
+stone_crumbles = "The stone crumbles under your tools; nothing worth keeping is left."
+stone_splits = "The stone splits badly; what is left is smaller."
+# `time`: how long it went on.
+stop_digging = "You stop digging after {time:bare}."
+# `came`: what came; `time`: how long it went on.
+stop_digging_came = "{came:bare}; you stop digging after {time:bare}."
+take_in_lap = "You take {item:the} in your lap and begin."
+take_it_off_first = "Take it off first."
+too_few = "You have too few {what:plural}."
+too_few_of_those = "You have too few of those."
+trap_there = "There is a trap there."
+untrained_mining = "You do not know how to mine: that takes the Mining skill."
+# `time`: how long it went on; `wall`: the terrain.
+wall_crumbles = "After {time:bare}, {wall:the} crumbles."
+# `item`: the item that warped.
+warps = "{item:The} warps under your hands."
+warps_apart = "{item:The} warps and falls apart."
+# `what`: the part, input, or stock a pick was for ("blade", "arrowheads", "metal").
+will_not_do = "That will not do for the {what:bare}."
+will_not_take_your_will = "It will not take your will."
+work_goes_wrong = "The work goes wrong."
+work_goes_wrong_every_scrap = "The work goes wrong, but you save every scrap of it."
+work_goes_wrong_save = "The work goes wrong, and you save what you can of it."
+would_not_hold_so_much = "It would not hold so much."
+you_make = "You make {what:counted}."
+
+# `count`: the crystals gone dark.
+[crystals_go_dark]
+by = "count.number"
+one = "The crystal goes dark in your hands."
+many = "The crystals go dark in your hands."
+
+# `count`: the crystals the recipe takes.
+[must_choose_crystals]
+by = "count.number"
+one = "You must choose the crystal."
+many = "You must choose the crystals."
+
+# `what`: what it left: a stack, or a list of two.
+[turns_to_glass]
+by = "what.number"
+one = "Its body turns to glass: where it fell lies {what:counted}."
+many = "Its body turns to glass: where it fell lie {what:counted}."

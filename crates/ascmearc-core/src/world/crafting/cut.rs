@@ -31,7 +31,9 @@ use crate::action::Event;
 use crate::combat;
 use crate::content::{Content, CutId, Cutting, Gems, MaterialId, RecipeDef, RecipeId};
 use crate::item_parts::ItemPart;
-use crate::object::{self, Stack};
+use crate::lang::{MessageId, Msg, Phrase};
+use crate::msg;
+use crate::object::Stack;
 use crate::rng::draw;
 use crate::skills::Use;
 use crate::stats::Stat;
@@ -102,14 +104,14 @@ pub fn cuttable(content: &Content, stack: &Stack) -> bool {
 }
 
 /// Why a loose gem cut as `cutting` cannot be cut, if it cannot.
-fn refusal(gems: &Gems, cutting: Cutting) -> Option<&'static str> {
+fn refusal(gems: &Gems, cutting: Cutting) -> Option<MessageId> {
     if gems.cut(cutting.cut).rough {
         return None;
     }
     if usize::from(cutting.cut.0) + 1 >= gems.cuts().len() {
-        return Some("It could not be finer.");
+        return Some(msg::crafting::COULD_NOT_BE_FINER);
     }
-    (cutting.size.0 == 0).then_some("There is nothing left to cut.")
+    (cutting.size.0 == 0).then_some(msg::crafting::NOTHING_LEFT_TO_CUT)
 }
 
 /// A cut under way: the recipe and the gem's position.
@@ -147,25 +149,25 @@ impl World {
         let item = match picks {
             [Some(item)] => *item,
             [] | [None] => {
-                self.say("You must choose the gem.");
+                self.say(msg::crafting::MUST_CHOOSE_GEM);
                 return Spent::Nothing;
             }
             _ => {
-                self.say("That is more than the work takes.");
+                self.say(msg::crafting::MORE_THAN_THE_WORK_TAKES);
                 return Spent::Nothing;
             }
         };
         let me = self.state.player();
         if me.skills.value(def.skill).unwrap_or(0) < def.from {
-            self.say("That is beyond your skill.");
+            self.say(msg::crafting::BEYOND_YOUR_SKILL);
             return Spent::Nothing;
         }
         let Some(stack) = me.inventory.get(item) else {
-            self.say("You carry no such thing.");
+            self.say(msg::crafting::CARRY_NO_SUCH_THING);
             return Spent::Nothing;
         };
         let (Some(gems), Some((_, cutting))) = (content.gems(), stack.gem(&content)) else {
-            self.say("That is no loose gem.");
+            self.say(msg::crafting::NO_LOOSE_GEM);
             return Spent::Nothing;
         };
         if let Some(text) = refusal(gems, cutting) {
@@ -173,14 +175,16 @@ impl World {
             return Spent::Nothing;
         }
         if self.item_protected(stack) {
-            self.say("You dare not cut it.");
+            self.say(msg::crafting::DARE_NOT_CUT);
             return Spent::Nothing;
         }
         if !self.may_loose(item) {
             return Spent::Nothing;
         }
-        let name = self.lore().title(&self.state.player().inventory[item]);
-        self.say(format!("You set to cutting the {name}."));
+        let name = self
+            .lore()
+            .title_phrase(&self.state.player().inventory[item]);
+        self.say(Msg::new(msg::crafting::SET_TO_CUTTING).role("gem", name));
         self.craft_work(Task::Cut(GemWork { recipe: id, item }), def.seconds)
     }
 
@@ -214,7 +218,7 @@ impl World {
             .filter(|s| cuttable(&content, s))
             .and_then(|s| s.gem(&content));
         let Some((gem, cutting)) = still else {
-            self.say("You have nothing left to work on.");
+            self.say(msg::crafting::NOTHING_LEFT_TO_WORK_ON);
             return;
         };
         let (modifier, against) = self.gem_check(def, gem);
@@ -228,34 +232,26 @@ impl World {
 
         let at = self.set_apart(work.item);
         crate::world::fixtures::outcome::remove_stacks(self.player_mut(), &[at]);
-        let gem_name = &content.material(gem).name;
+        let gem_name = Phrase::id(format!("material:{}", content.material(gem).id));
         let recut = !gems.cut(cutting.cut).rough;
         let line = match (band, recut) {
-            (CutBand::Shattered, _) => format!("The {gem_name} shatters."),
+            (CutBand::Shattered, _) => Msg::new(msg::crafting::SHATTERS).role("gem", gem_name),
             // A tiny stone with a size to lose: nothing is left of it.
-            (_, false) if left.is_none() => {
-                "The stone crumbles under your tools; nothing worth keeping is left.".into()
-            }
-            (CutBand::Failed, false) => "The stone splits badly; what is left is smaller.".into(),
+            (_, false) if left.is_none() => msg::crafting::STONE_CRUMBLES.into(),
+            (CutBand::Failed, false) => msg::crafting::STONE_SPLITS.into(),
             (CutBand::Cut(c), false) if usize::from(c.0) <= roughest_true(gems) => {
-                "You rough it out, and lose more than you meant to.".into()
+                msg::crafting::ROUGH_IT_OUT.into()
             }
-            (CutBand::Cut(_), false) => "You cut the stone.".into(),
-            (CutBand::Cut(c), true) if c > cutting.cut => "You cut the stone again.".into(),
-            (CutBand::Failed | CutBand::Cut(_), true) => {
-                "You take off more stone and make it no finer.".into()
-            }
+            (CutBand::Cut(_), false) => msg::crafting::CUT_THE_STONE.into(),
+            (CutBand::Cut(c), true) if c > cutting.cut => msg::crafting::CUT_THE_STONE_AGAIN.into(),
+            (CutBand::Failed | CutBand::Cut(_), true) => msg::crafting::NO_FINER.into(),
         };
         self.say(line);
         if let Some(less) = left {
             let part = ItemPart::gem(&content, None, gem, less);
             let made = Stack::new(gems.object, 1).with_parts(vec![part]);
-            let text = format!(
-                "It is now {}.",
-                object::phrase(std::slice::from_ref(&made), self.lore())
-            );
-            self.say(text);
-            object::add_to_inventory(self.state.inventory_mut(), made, &content);
+            self.say(Msg::new(msg::crafting::IT_IS_NOW).role("what", self.lore().phrase(&made)));
+            crate::object::add_to_inventory(self.state.inventory_mut(), made, &content);
         }
         if self.trains(Use::Craft) {
             self.train_skill(Use::Craft, def.skill);

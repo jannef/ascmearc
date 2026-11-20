@@ -12,7 +12,7 @@ text"), with its widths in the screens' layout, not the text (#1908), and the fu
 the controls, settings, and mods screens (#1935) and the object and rig screens (#1928); **L4a**,
 **L4b**, **L4i**, and **L4j**, `world/allies/` (#1912), `world/character/` (#1913),
 `world/health/` (#1920), and `world/levels/` (#1921) say their lines from templates
-("Literal lines");
+("Literal lines"), as does **L4f**, the first half of `world/crafting/` (#1917);
 **L4c**, the first half of `world/classes/` (#1914, `messages/classes.toml`, "Literal lines");
 and **L5**, dialogue (#1888): every line a creature says is a line of data
 said by its key, with role slots in the base form ("Dialogue"), on the one mechanism every line
@@ -399,6 +399,20 @@ case, and `Unavailable::reason`. A talent's refusal (`talent::Refusal::words`) s
 line. `World::learn` returns `Msg`s; `creation_offers` and the creation errors render them in
 English, as developer text.
 
+`world/crafting/` (`messages/crafting.toml`, L4f, its first half: making a recipe, cutting,
+enchanting, crystals, digging, the field forge). A refusal a function returns for its caller to
+say (`cut.rs::refusal`, `enchant.rs::refusal`, `dig_refusal`, `field_forge.rs::forge_ground`) is
+a `MessageId`; the recipes' `resolve` returns its reason as a `Msg`, and the plan the dialog
+shows renders it in English (`craft_make.rs::english`) until L8. An item being enchanted is
+`enchant.rs::item_phrase` said `{item:the}` (a known rare by its name alone), several of a
+stack by `Lore::names_phrase` (what they are called as made); a salvaged affix's words ("its
+Sharp magic", "some of its magic") are nested messages in `catch_magic` and `goes_out_unread`;
+Soulglass's crystals a phrase or a list of two (`turns_to_glass`, by number). A profession's
+`failed` and `fumbled` lines are lines of data (`data_line::profession`). Text roles until their
+words are converted (#1949): a skill's and a recipe's names, a launcher's word, the label of a
+pick ("blade", "arrowheads"), the time a dig took, and `came_line`. Temper's `WITHSTOOD`, said
+by a warped enchanting too, waits for the second half (#1918).
+
 `world/classes/`'s first half (`messages/classes.toml`, L4c: `ascetic`, `calling`, `charge`,
 `class_ability`, `class`, `consecrate`, `invest`, `mark`) says the lines its data writes as
 lines of data: a calling's `message`, a talent's handed-out `news`, and a resource's `lacking`
@@ -590,6 +604,7 @@ arrays named by the id that tells it apart. Every kind of line of data, the thre
 | `oaths:band.<talent>.message` | an oath band reached, named by the talent it gives |
 | `profane:<id>.line`, `.undone`, `.instead` | a profane gift given, taken back, or said in place of its own line when it takes a gift held away |
 | `talent:<id>.effects.temperature_speed.bands.<n>.slower`, `.faster` | cold blood coming into band `n` (from 0) from a quicker or a slower one |
+| `recipes:profession.<skill>.failed`, `.fumbled` | a recipe with a `failure` object failing, or its `fumble` object made on a natural 2 |
 | `calling:<campaign>.<class>.message` | a calling made (`data` for one outside every campaign, as a dialogue's scope) |
 | `talent:<id>.effects.weapon_ranks.news`, `.take_up_skills.news` | what a talent a class table gives hands out |
 | `resources:resource.<id>.lacking` | a class active refused for too little of the resource (in `classes.lacking`) |
