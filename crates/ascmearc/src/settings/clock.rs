@@ -1,5 +1,6 @@
 //! The clock setting: how a time of day is written (presentation only; the core keeps one clock).
 
+use crate::ui::text::{UiText, settings as T, ui_with};
 use ascmearc_core::time::GameTime;
 
 /// 24-hour (`14:32`) or 12-hour (`2:32 PM`) time of day.
@@ -26,10 +27,10 @@ impl Clock {
     }
 
     /// Name on the settings screen.
-    pub fn label(self) -> &'static str {
+    pub fn label(self) -> UiText {
         match self {
-            Clock::H24 => "24-hour",
-            Clock::H12 => "12-hour (AM/PM)",
+            Clock::H24 => T::CLOCK_24H,
+            Clock::H12 => T::CLOCK_12H,
         }
     }
 
@@ -56,8 +57,9 @@ impl Clock {
                     0 => 12,
                     h => h,
                 };
-                let suffix = if hour < 12 { "AM" } else { "PM" };
-                format!("{h}:{minute:02} {suffix}")
+                let time = format!("{h}:{minute:02}").into();
+                let half = if hour < 12 { T::CLOCK_AM } else { T::CLOCK_PM };
+                ui_with(half, &[("time", time)])
             }
         }
     }

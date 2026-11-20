@@ -41,6 +41,8 @@ pub mod palette;
 use crate::cli::Args;
 use crate::input::Bindings;
 use crate::storage::{self, Backend, Folder};
+use crate::ui::text::{UiText, settings as T, ui_with};
+use ascmearc_core::lang::Arg;
 use ascmearc_core::temperature::Temperature;
 use bevy::prelude::*;
 pub use clock::Clock;
@@ -96,10 +98,10 @@ impl TemperatureUnit {
     }
 
     /// Name shown in the settings screen.
-    pub fn label(self) -> &'static str {
+    pub fn label(self) -> UiText {
         match self {
-            TemperatureUnit::Celsius => "°C (Celsius)",
-            TemperatureUnit::Fahrenheit => "°F (Fahrenheit)",
+            TemperatureUnit::Celsius => T::UNIT_CELSIUS,
+            TemperatureUnit::Fahrenheit => T::UNIT_FAHRENHEIT,
         }
     }
 
@@ -113,10 +115,11 @@ impl TemperatureUnit {
 
     /// `t` as the status bar shows it, in whole degrees: `4 °C`, `-3 °C`, `39 °F`.
     pub fn show(self, t: Temperature) -> String {
-        match self {
-            TemperatureUnit::Celsius => format!("{} °C", t.celsius()),
-            TemperatureUnit::Fahrenheit => format!("{} °F", t.fahrenheit()),
-        }
+        let (text, degrees) = match self {
+            TemperatureUnit::Celsius => (T::DEGREES_CELSIUS, t.celsius()),
+            TemperatureUnit::Fahrenheit => (T::DEGREES_FAHRENHEIT, t.fahrenheit()),
+        };
+        ui_with(text, &[("degrees", Arg::Number(i64::from(degrees)))])
     }
 }
 

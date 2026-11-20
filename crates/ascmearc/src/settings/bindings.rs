@@ -4,6 +4,7 @@
 //! (`keys`, `keymap`) and Controls write it.
 
 use crate::settings::mods::{self, Mods, Platform};
+use crate::ui::text::{UiText, settings as T, ui};
 use ascmearc_core::Dir;
 use bevy::input::keyboard::KeyboardInput;
 use bevy::prelude::*;
@@ -161,15 +162,15 @@ impl Context {
     ];
 
     /// The heading of its group on the controls screen.
-    pub fn title(self) -> &'static str {
-        match self {
-            Context::Play => "In play",
-            Context::Aim => "Aiming",
-            Context::More => "More messages (--more--)",
-            Context::Menu => "Menus and screens",
-            Context::Text => "Text fields",
-            Context::Pages => "Info pages",
-        }
+    pub fn title(self) -> String {
+        ui(match self {
+            Context::Play => T::CONTEXT_PLAY,
+            Context::Aim => T::CONTEXT_AIM,
+            Context::More => T::CONTEXT_MORE,
+            Context::Menu => T::CONTEXT_MENU,
+            Context::Text => T::CONTEXT_TEXT,
+            Context::Pages => T::CONTEXT_PAGES,
+        })
     }
 
     /// Its table in the keymap file (`settings::keymap`).
@@ -200,57 +201,73 @@ impl KeyCommand {
 }
 
 impl KeyCommand {
-    /// What the command does; movement directions share one label (see `KeyCommand::name`).
-    pub fn label(self) -> &'static str {
+    /// The command's name in words, telling directions apart: `ui(KeyCommand::text())`, as
+    /// [`KeyCommand::name`] gives it.
+    pub fn text(self) -> UiText {
+        use KeyCommand::*;
         match self {
-            KeyCommand::Move(_) => "Move",
-            KeyCommand::Run(_) => "Run",
-            KeyCommand::RunPrefix => "Run (then a direction or stairs)",
-            KeyCommand::Wait => "Wait/search",
-            KeyCommand::SearchLong => "Search for a while",
-            KeyCommand::Open => "Open a door",
-            KeyCommand::Close => "Close a door",
-            KeyCommand::Kick => "Kick",
-            KeyCommand::Descend => "Go down stairs",
-            KeyCommand::Ascend => "Go up stairs",
-            KeyCommand::PickUp => "Pick up",
-            KeyCommand::Drop => "Drop",
-            KeyCommand::Inventory => "Inventory",
-            KeyCommand::Equipment => "Equipment",
-            KeyCommand::Character => "Character",
-            KeyCommand::Skills => "Skills",
-            KeyCommand::WeaponSkills => "Weapon skills",
-            KeyCommand::Quests => "Quest log",
-            KeyCommand::Talents => "Talents",
-            KeyCommand::Messages => "Message history",
-            KeyCommand::Rest => "Rest",
-            KeyCommand::MoreNext => "Show the next messages",
-            KeyCommand::MoreSkip => "Skip the rest (Esc always works)",
-            KeyCommand::Eat => "Consume",
-            KeyCommand::Read => "Read a scroll",
-            KeyCommand::Look => "Look around",
-            KeyCommand::Missile => "Throw or shoot the missile weapon",
-            KeyCommand::Throw => "Throw from the pack",
-            KeyCommand::MoreAggressive => "More aggressive stance",
-            KeyCommand::MoreDefensive => "More defensive stance",
-            KeyCommand::Abilities => "Abilities",
-            KeyCommand::RepeatAbility => "Use the last ability again",
-            KeyCommand::Bash => "Bash with your shield",
-            KeyCommand::ThrowVoice => "Throw your voice",
-            KeyCommand::Disarm => "Disarm a trap",
-            KeyCommand::PickLock => "Pick a lock",
-            KeyCommand::Steal => "Steal",
-            KeyCommand::Roundhouse => "Roundhouse",
-            KeyCommand::PrevTarget => "Previous target",
-            KeyCommand::UseTool => "Use a tool (dig, light, smoke)",
-            KeyCommand::Chat => "Chat",
-            KeyCommand::Pay => "Pay the shopkeeper",
-            KeyCommand::Back => "Back (Esc always works)",
-            KeyCommand::TextBack => "Back (Esc always works)",
-            KeyCommand::Help => "Show / hide controls",
-            KeyCommand::Cancel => "Cancel",
-            KeyCommand::Quit => "Save and quit",
-            KeyCommand::PrevPage => "Previous info page",
+            Move(Dir::N) => T::COMMAND_MOVE_N,
+            Move(Dir::NE) => T::COMMAND_MOVE_NE,
+            Move(Dir::E) => T::COMMAND_MOVE_E,
+            Move(Dir::SE) => T::COMMAND_MOVE_SE,
+            Move(Dir::S) => T::COMMAND_MOVE_S,
+            Move(Dir::SW) => T::COMMAND_MOVE_SW,
+            Move(Dir::W) => T::COMMAND_MOVE_W,
+            Move(Dir::NW) => T::COMMAND_MOVE_NW,
+            Run(Dir::N) => T::COMMAND_RUN_N,
+            Run(Dir::NE) => T::COMMAND_RUN_NE,
+            Run(Dir::E) => T::COMMAND_RUN_E,
+            Run(Dir::SE) => T::COMMAND_RUN_SE,
+            Run(Dir::S) => T::COMMAND_RUN_S,
+            Run(Dir::SW) => T::COMMAND_RUN_SW,
+            Run(Dir::W) => T::COMMAND_RUN_W,
+            Run(Dir::NW) => T::COMMAND_RUN_NW,
+            RunPrefix => T::COMMAND_RUN_PREFIX,
+            Wait => T::COMMAND_WAIT,
+            SearchLong => T::COMMAND_SEARCH_LONG,
+            Open => T::COMMAND_OPEN,
+            Close => T::COMMAND_CLOSE,
+            Kick => T::COMMAND_KICK,
+            Descend => T::COMMAND_DESCEND,
+            Ascend => T::COMMAND_ASCEND,
+            PickUp => T::COMMAND_PICK_UP,
+            Drop => T::COMMAND_DROP,
+            Inventory => T::COMMAND_INVENTORY,
+            Equipment => T::COMMAND_EQUIPMENT,
+            Character => T::COMMAND_CHARACTER,
+            Skills => T::COMMAND_SKILLS,
+            WeaponSkills => T::COMMAND_WEAPON_SKILLS,
+            Quests => T::COMMAND_QUESTS,
+            Talents => T::COMMAND_TALENTS,
+            Messages => T::COMMAND_MESSAGES,
+            Rest => T::COMMAND_REST,
+            MoreNext => T::COMMAND_MORE_NEXT,
+            MoreSkip => T::COMMAND_MORE_SKIP,
+            Eat => T::COMMAND_EAT,
+            Read => T::COMMAND_READ,
+            Look => T::COMMAND_LOOK,
+            Missile => T::COMMAND_MISSILE,
+            Throw => T::COMMAND_THROW,
+            MoreAggressive => T::COMMAND_MORE_AGGRESSIVE,
+            MoreDefensive => T::COMMAND_MORE_DEFENSIVE,
+            Abilities => T::COMMAND_ABILITIES,
+            RepeatAbility => T::COMMAND_REPEAT_ABILITY,
+            Bash => T::COMMAND_BASH,
+            ThrowVoice => T::COMMAND_THROW_VOICE,
+            Disarm => T::COMMAND_DISARM,
+            PickLock => T::COMMAND_PICK_LOCK,
+            Steal => T::COMMAND_STEAL,
+            Roundhouse => T::COMMAND_ROUNDHOUSE,
+            PrevTarget => T::COMMAND_PREV_TARGET,
+            UseTool => T::COMMAND_USE_TOOL,
+            Chat => T::COMMAND_CHAT,
+            Pay => T::COMMAND_PAY,
+            Back => T::COMMAND_BACK,
+            TextBack => T::COMMAND_TEXT_BACK,
+            Help => T::COMMAND_HELP,
+            Cancel => T::COMMAND_CANCEL,
+            Quit => T::COMMAND_QUIT,
+            PrevPage => T::COMMAND_PREV_PAGE,
         }
     }
 }
