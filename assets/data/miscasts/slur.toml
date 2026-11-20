@@ -3,5 +3,5 @@ id = "slur"
 from = 49
 to = 50
 message = "Your tongue stumbles, and no word of power will come."
-seen = "{who} mouths words, and nothing comes."
+seen = "{who:The} mouths words, and nothing comes."
 effect = { kind = "status", status = "silenced", severity = 1 }

@@ -32,7 +32,7 @@ radius = 2
 check = "toughness"
 difficulty = 20
 damage_type = "cold"
-touch = "Bitter cold comes off {the}."
+touch = "Bitter cold comes off {subject:the}."
 unseen = "A bitter cold creeps over you."
 [creature.attack]
 damage = "4d12"

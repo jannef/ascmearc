@@ -28,12 +28,13 @@
 use super::ai::Plan;
 use crate::action::Event;
 use crate::check::check;
-use crate::content::{Content, Stance, the};
+use crate::content::{Content, Stance};
+use crate::content::{TOUCH_SOURCE, touch_key};
 use crate::fov::radius2;
+use crate::lang::{Arg, Msg, Phrase};
 use crate::noise::{self, Act, Noise, SoundKind};
 use crate::rng::draw;
 use crate::sight::LineOfSight;
-use crate::text::capitalized;
 use crate::world::{Actor, ActorId, World};
 
 /// Puts `actor`'s innate statuses on it (module docs): those it lacks, and those that refresh.
@@ -145,13 +146,15 @@ impl World {
             .any(|e| matches!(e, Event::Status { actor, began: true, .. } if *actor == target));
         if player && had.is_none() && began {
             let at = self.state.actors[&id].pos;
+            // Lines of data, said by their keys (`docs/dev/localization.md` "Lines of data").
             let line = if self.perception.sees_actors_at(at) {
-                Some(aura.touch.replace("{the}", &the(&def.name)))
+                let bearer = Phrase::id(format!("creature:{}", def.id));
+                Some(Arg::said(touch_key(&def.id, false)).with(TOUCH_SOURCE, bearer))
             } else {
-                aura.unseen.clone()
+                (aura.unseen.as_ref()).map(|_| Arg::said(touch_key(&def.id, true)))
             };
             if let Some(line) = line {
-                self.say(capitalized(&line));
+                self.say(Msg::data_line(line));
             }
         }
         events.extend(made);

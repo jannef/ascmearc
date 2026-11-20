@@ -3,5 +3,5 @@ id = "refund"
 from = 5
 to = 6
 message = "The weave slackens, and the spent power runs back into you."
-seen = "{who} brightens for a moment."
+seen = "{who:The} brightens for a moment."
 effect = { kind = "refund" }

@@ -581,6 +581,19 @@ impl QuestDef {
         crate::text::and_list(&plurals)
     }
 
+    /// The types of tag `tag` as a rolled quest's `members` names them: each family's, a unique
+    /// by its name, any other in the plural.
+    pub(super) fn member_phrases(&self, content: &Content, tag: &str) -> Vec<crate::lang::Arg> {
+        (content.tagged_in(tag, self.campaign.as_deref()))
+            .filter(|&c| content.family(c) == c)
+            .map(|c| content.creature(c))
+            .map(|c| {
+                let one = crate::lang::Phrase::id(format!("creature:{}", c.id));
+                crate::lang::Arg::Phrase(if c.unique { one } else { one.count(2) })
+            })
+            .collect()
+    }
+
     /// Everyone it names: the giver, whoever it is handed in to, and an escort.
     pub fn speakers(&self) -> impl Iterator<Item = DialogueId> {
         [self.giver, self.turn_in()]

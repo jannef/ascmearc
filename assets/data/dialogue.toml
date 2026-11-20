@@ -25,6 +25,15 @@
 #            routine and you are within earshot; `verb` is how ("mutters" by default). You hear
 #            it like any noise: the words with its name if you see it, else as a voice from
 #            somewhere ("You hear a voice to the north: ..."), and only that if it was faint.
+#   address  { male, female, other }: how it addresses you by your gender ("m'lord", "m'lady");
+#            any of its lines may say `{player:address}` (optional)
+#   register the register it speaks in where its race's is not it: `posh` for the better-off,
+#            `cornish` for the deep gnomes (optional; docs/dev/npcs.md)
+#
+# A line is a string, or whole-line variants by a feature of a role: `{ by = "player.gender",
+# female = "...", else = "..." }`. Its slots name roles and take the base form only:
+# `{player:address}`, and in some fields `{work:a}`, `{gold:name}` (docs/dev/localization.md
+# "Dialogue"). Every line is said by its key, `dialogue:<campaign>.<npc or creature>.<field>`.
 #
 # A creature without a dialogue does not answer ("The giant rat doesn't answer."), and one
 # hostile to you is in no mood to talk.

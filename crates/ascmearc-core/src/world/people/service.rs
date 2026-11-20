@@ -48,6 +48,7 @@ use super::goodwill::discounted;
 use super::shop::{count_of, haggling};
 use crate::action::Event;
 use crate::content::{ActionKind, DialogueId, MAX_FAVOUR, Service, ServiceKind};
+use crate::lang::Arg;
 use crate::skills::SkillId;
 use crate::skills::Use;
 use crate::text::capitalized;
@@ -148,19 +149,16 @@ impl World {
         let service = self.content.dialogue(dialogue).service(topic)?.clone();
         let player = self.state.player;
         let actor = self.state.player();
+        let nothing = || Some(self.said(id, &service.nothing));
         let refusal = match service.does {
-            ServiceKind::Cure if !self.prayer_cures(player) => Some(service.nothing.clone()),
+            ServiceKind::Cure if !self.prayer_cures(player) => nothing(),
             ServiceKind::Mend if !actor.damage.is_damaged() && undrained(&actor.drained) => {
-                Some(service.nothing.clone())
+                nothing()
             }
-            ServiceKind::Mend if actor.diseases.shows() => Some(CURE_FIRST.to_string()),
-            ServiceKind::Identify if self.unidentified().is_empty() => {
-                Some(service.nothing.clone())
-            }
-            ServiceKind::Decurse if self.cursed_worn() == 0 => Some(service.nothing.clone()),
-            ServiceKind::TrainSkill if !self.service_offered(&service) => {
-                Some(service.nothing.clone())
-            }
+            ServiceKind::Mend if actor.diseases.shows() => Some(Arg::Text(CURE_FIRST.into())),
+            ServiceKind::Identify if self.unidentified().is_empty() => nothing(),
+            ServiceKind::Decurse if self.cursed_worn() == 0 => nothing(),
+            ServiceKind::TrainSkill if !self.service_offered(&service) => nothing(),
             _ => None,
         };
         if let Some(line) = refusal {
@@ -207,7 +205,8 @@ impl World {
             }
             ServiceKind::TrainSkill => self.teach_skill(id, &service),
         }
-        self.answer(id, service.reply, Some(topic.to_string()), events);
+        let reply = self.said(id, &service.reply);
+        self.answer(id, reply, Some(topic.to_string()), events);
         Some(Spent::Turn(self.price_of(player, ActionKind::Chat)))
     }
 

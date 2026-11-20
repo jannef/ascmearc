@@ -3,5 +3,5 @@ id = "ruinous_withering"
 from = 119
 to = 120
 message = "The spell gorges on you, and every bite goes deep."
-seen = "{who} is gnawed by its own spell."
+seen = "{who:The} is gnawed by its own spell."
 effect = { kind = "drain", stat = "random", points = 2, difficulty = 20, times = 2 }

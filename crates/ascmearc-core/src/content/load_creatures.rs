@@ -1,5 +1,6 @@
 //! Loading creature types and what hangs on them: factions, gear, throws, summons, and drops.
 
+use super::aura::touch_key;
 use super::{
     COMMON, Combat, Content, ContentError, ContentFiles, CreatureId, FactionId, Factions,
     GlyphAnim, MEDIUM, PLAYER_FACTION, animated, aura, campaign, creature, creature_spells, drops,
@@ -7,6 +8,7 @@ use super::{
     weapon_skill,
 };
 use crate::dice::Dice;
+use crate::lang::{Line, Template};
 use crate::skills::Skills;
 use crate::stats::Stats;
 use crate::weapon_skills::WeaponSkills;
@@ -230,6 +232,14 @@ impl Content {
                     ))
                 })?,
             };
+            // An aura's words are lines of data, said by their keys.
+            if let Some(aura) = &resolved.presence.aura {
+                let line = |text: &str| Template::Line(Line::parse(text));
+                (self.english).add_data_line(touch_key(&spec.id, false), line(&aura.touch));
+                if let Some(unseen) = &aura.unseen {
+                    (self.english).add_data_line(touch_key(&spec.id, true), line(unseen));
+                }
+            }
             check_combat(&spec).map_err(err)?;
             if let Some(summon) = &spec.summon {
                 summon

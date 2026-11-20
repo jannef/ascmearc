@@ -3,5 +3,5 @@ id = "fizz"
 from = 17
 to = 18
 message = "The spell fizzes, and a little of your power with it."
-seen = "{who}'s spell fizzes."
+seen = "{who:Poss} spell fizzes."
 effect = { kind = "mana", percent = 10 }

@@ -3,5 +3,5 @@ id = "abyssal_gate"
 from = 87
 to = 88
 message = "A gate yawns open beside you, and the Abyss looks through!"
-seen = "A gate yawns open beside {who}!"
+seen = "A gate yawns open beside {who:the}!"
 effect = { kind = "summon", creature = "abyssal_gate" }

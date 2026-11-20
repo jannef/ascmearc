@@ -35,7 +35,7 @@ difficulty = 17
 every = 24
 heard = true
 loudness = 120
-touch = "{the} screams, and your blood runs cold."
+touch = "{subject:The} screams, and your blood runs cold."
 unseen = "A scream rings through the walls, and your blood runs cold."
 [creature.attack]
 damage = "4d6"

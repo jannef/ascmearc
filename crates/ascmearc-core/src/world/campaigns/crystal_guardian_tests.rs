@@ -301,6 +301,7 @@ fn kerensa_and_ysella_speak_of_it_once_it_is_bound() {
             .expect("a dialogue");
         assert!(d.after.iter().any(|a| a.quest == QUEST), "{npc}");
         for line in d.after.iter().flat_map(|a| &a.lines) {
+            let line = line.written();
             assert!(line.chars().count() <= 72, "{npc}: {line}");
         }
     }

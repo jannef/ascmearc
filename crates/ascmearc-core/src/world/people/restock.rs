@@ -23,7 +23,7 @@
 //! - **The talk** ([`World::economy_lines`], from `talk.rs::one_liner`): in a town, a speaker's
 //!   `[dialogue.economy]` `better` lines while its bonus is above 0, else its `hard` ones.
 
-use crate::content::{Content, Dialogue, TownDef};
+use crate::content::{Content, Dialogue, DialogueLine, TownDef};
 use crate::geom::Pos;
 use crate::magic::loot::pick_weighted;
 use crate::rng::Rng;
@@ -171,7 +171,7 @@ impl World {
 
     /// The one-liners about the town's trade `d` adds in the town the player is in (the module
     /// docs); none outside a town.
-    pub(in crate::world) fn economy_lines<'d>(&self, d: &'d Dialogue) -> &'d [String] {
+    pub(in crate::world) fn economy_lines<'d>(&self, d: &'d Dialogue) -> &'d [DialogueLine] {
         let (Some(economy), Some(town)) =
             (&d.economy, self.content.town_at(&self.state.current_level))
         else {

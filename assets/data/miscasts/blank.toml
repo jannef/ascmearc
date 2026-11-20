@@ -3,5 +3,5 @@ id = "blank"
 from = 115
 to = 116
 message = "Your mind is wiped as clean as a slate."
-seen = "{who} stares, empty-eyed."
+seen = "{who:The} stares, empty-eyed."
 effect = { kind = "forget", all = true }

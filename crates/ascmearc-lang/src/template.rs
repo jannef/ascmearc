@@ -103,6 +103,69 @@ pub enum Template {
 }
 
 impl Template {
+    /// One template from a TOML value: a string (a line), an array of strings (alternatives), or
+    /// a table (`text`, or `by` and its variants). How dialogue data in `assets/data` gives its
+    /// lines (`docs/dev/localization.md` "Dialogue").
+    pub fn from_value(value: &toml::Value) -> Result<Self, String> {
+        parse_template(value)
+    }
+
+    /// The template as written, slots and all (`Hello, {player:address}.`); alternatives and
+    /// variants (in key order, `else` last) joined by ` | `. What a translation's `of` hashes for
+    /// a line of data, whose English is the data's text (`xtask/src/lang.rs`).
+    pub fn written(&self) -> String {
+        let line = |line: &Line| -> String {
+            (line.0.iter())
+                .map(|segment| match segment {
+                    Segment::Text(text) => text.clone(),
+                    Segment::Slot { role, form } => format!("{{{role}:{form}}}"),
+                })
+                .collect()
+        };
+        match self {
+            Template::Line(l) => line(l),
+            Template::Alternatives(lines) => lines.iter().map(line).collect::<Vec<_>>().join(" | "),
+            Template::Variants {
+                variants,
+                otherwise,
+                ..
+            } => (variants.values().chain(otherwise.iter().map(Box::as_ref)))
+                .map(Template::written)
+                .collect::<Vec<_>>()
+                .join(" | "),
+        }
+    }
+
+    /// Every slot of the template, `(role, form)`, in order, across every variant.
+    pub fn slots(&self) -> Vec<(&str, &str)> {
+        let mut slots = Vec::new();
+        self.collect_slots(&mut slots);
+        slots
+    }
+
+    fn collect_slots<'a>(&'a self, into: &mut Vec<(&'a str, &'a str)>) {
+        let line = |line: &'a Line, into: &mut Vec<(&'a str, &'a str)>| {
+            for segment in &line.0 {
+                if let Segment::Slot { role, form } = segment {
+                    into.push((role, form));
+                }
+            }
+        };
+        match self {
+            Template::Line(l) => line(l, into),
+            Template::Alternatives(lines) => lines.iter().for_each(|l| line(l, into)),
+            Template::Variants {
+                variants,
+                otherwise,
+                ..
+            } => {
+                for variant in variants.values().chain(otherwise.iter().map(Box::as_ref)) {
+                    variant.collect_slots(into);
+                }
+            }
+        }
+    }
+
     /// Every role named anywhere in the template, including the one its variants select on.
     pub fn roles(&self) -> Vec<String> {
         let mut roles: Vec<String> = Vec::new();
@@ -163,6 +226,26 @@ impl Templates {
         Ok(templates)
     }
 
+    /// Reads one file of a translation's lines of data, `what` its path for errors, every key
+    /// `<kind>:` and the data's path: `lang/<code>/data/<kind>.toml` (`[dazed] start = …` is
+    /// `status:dazed.start`) and `lang/<code>/dialogue/<file>.toml` (kind `dialogue`, design
+    /// §9.2). Keyed by the data's path: a table nests the key
+    /// (`[ascmearc.servant]`), an array numbers its lines from 0 (`lines = [ … ]` is
+    /// `ascmearc.servant.lines.0`, …), and a string, or a table with a `text` or a `by`, is one
+    /// line's template (`{ by = "player.gender", female = "…", else = "…" }`). An `address`
+    /// table without `by` is one by the player's gender, as the data writes it (`address = {
+    /// male = "m'lord", female = "m'lady", other = "guv'nor" }`). `of` is skipped.
+    pub fn parse_data(what: &str, kind: &str, text: &str) -> Result<Self, LangError> {
+        let table: toml::Table =
+            toml::from_str(text).map_err(|e| LangError::new(what, e.message()))?;
+        let mut templates = Self::default();
+        for (key, value) in &table {
+            let key = format!("{kind}:{key}");
+            dialogue_value(&key, value, &mut templates).map_err(|m| LangError::new(what, m))?;
+        }
+        Ok(templates)
+    }
+
     pub fn insert(&mut self, id: impl Into<String>, template: Template) {
         self.entries.insert(id.into(), template);
     }
@@ -187,6 +270,39 @@ impl Templates {
     pub fn is_empty(&self) -> bool {
         self.entries.is_empty()
     }
+}
+
+/// One value of a dialogue file at key `key` into `templates` ([`Templates::parse_data`]).
+fn dialogue_value(key: &str, value: &toml::Value, templates: &mut Templates) -> Result<(), String> {
+    match value {
+        toml::Value::Array(lines) => {
+            for (i, line) in lines.iter().enumerate() {
+                let template = parse_template(line).map_err(|m| format!("`{key}.{i}`: {m}"))?;
+                templates.insert(format!("{key}.{i}"), template);
+            }
+        }
+        // How the speaker addresses the player, by gender, as the data writes it.
+        toml::Value::Table(t)
+            if key.rsplit('.').next() == Some("address")
+                && !t.contains_key("text")
+                && !t.contains_key("by") =>
+        {
+            let mut by_gender = t.clone();
+            by_gender.insert("by".into(), "player.gender".into());
+            let template = parse_entry(&by_gender).map_err(|m| format!("`{key}`: {m}"))?;
+            templates.insert(key, template);
+        }
+        toml::Value::Table(t) if !t.contains_key("text") && !t.contains_key("by") => {
+            for (name, value) in t.iter().filter(|(name, _)| *name != "of") {
+                dialogue_value(&format!("{key}.{name}"), value, templates)?;
+            }
+        }
+        other => {
+            let template = parse_template(other).map_err(|m| format!("`{key}`: {m}"))?;
+            templates.insert(key, template);
+        }
+    }
+    Ok(())
 }
 
 /// The keys of an entry table that are not variants.
@@ -291,6 +407,43 @@ mod tests {
         assert_eq!(line.roles(), ["actor", "target"]);
         assert_eq!(Line::parse("").0, []);
         assert_eq!(Line::parse("{a:b}").0, [slot("a", "b")]);
+    }
+
+    #[test]
+    fn a_dialogue_file_keys_its_lines_by_the_datas_path() {
+        let file = r#"
+[ascmearc.servant]
+lines = ["Yer lordship.", { text = "Yer ladyship.", of = "abc123" }]
+address = { male = "m'lord", female = "m'lady", other = "guv'nor" }
+[ascmearc.servant.stipend]
+handover = "'Ere it is."
+"#;
+        let t = Templates::parse_data("dialogue/servants.toml", "dialogue", file).expect("parses");
+        assert_eq!(
+            t.ids().collect::<Vec<_>>(),
+            [
+                "dialogue:ascmearc.servant.address",
+                "dialogue:ascmearc.servant.lines.0",
+                "dialogue:ascmearc.servant.lines.1",
+                "dialogue:ascmearc.servant.stipend.handover",
+            ]
+        );
+        assert_eq!(
+            t.get("dialogue:ascmearc.servant.lines.1"),
+            Some(&Template::Line(Line::parse("Yer ladyship.")))
+        );
+        assert!(matches!(
+            t.get("dialogue:ascmearc.servant.address"),
+            Some(Template::Variants { role, .. }) if role == "player"
+        ));
+        let error = Templates::parse_data("d.toml", "k", "[a]\nlines = [3]\n").expect_err("bad");
+        assert_eq!(error.what, "d.toml");
+        assert!(error.message.contains("`k:a.lines.0`"), "{}", error.message);
+        let slots = Template::from_value(&toml::Value::String("{a:the} {b:Name}".into()));
+        assert_eq!(
+            slots.expect("a line").slots(),
+            [("a", "the"), ("b", "Name")]
+        );
     }
 
     /// Widths belong to the screen, not the text (owner, 2026-11-20): `width` is no key, and

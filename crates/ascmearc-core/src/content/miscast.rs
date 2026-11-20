@@ -41,6 +41,7 @@
 use super::learning::{EffectSpec, resolve_effect};
 use super::{Content, ContentError, FactionId, Factions, MishapEffect, ZoneKind, duplicate_id};
 use crate::dice::Dice;
+use crate::lang::Line;
 use crate::stats::Stat;
 use serde::Deserialize;
 use std::collections::BTreeMap;
@@ -132,12 +133,22 @@ pub struct Miscast {
     pub to: Option<i32>,
     /// Said to the player who miscast.
     pub message: String,
-    /// Said of a creature that miscast where the player sees it, `{who}` its name.
+    /// Said of a creature that miscast where the player sees it, `who` the caster
+    /// (`{who:The}`): a line of data, keyed [`Miscast::seen_key`].
     pub seen: String,
     pub effect: MishapEffect,
 }
 
+/// The role a miscast's `seen` names the caster by.
+pub const WHO: &str = "who";
+
 impl Miscast {
+    /// The key of its `seen` among the lines of data (`docs/dev/localization.md` "Lines of
+    /// data"): `miscast:<id>.seen`.
+    pub fn seen_key(&self) -> String {
+        format!("miscast:{}.seen", self.id)
+    }
+
     /// Whether `total` falls in its range.
     pub fn covers(&self, total: i32) -> bool {
         total >= self.from && self.to.is_none_or(|to| total <= to)
@@ -181,8 +192,10 @@ pub(super) fn parse<'a>(
             let id = spec.id.clone();
             let err = |m: String| ContentError::new(path, format!("miscast `{id}`: {m}"));
             let effect = resolve_effect(spec.effect, content, true).map_err(err)?;
-            if !spec.seen.contains("{who}") {
-                return Err(err("its `seen` must name `{who}`".into()));
+            if super::quest_roll::old_placeholder(&spec.seen).is_some()
+                || Line::parse(&spec.seen).roles() != [WHO]
+            {
+                return Err(err("its `seen` names `who` and nothing else".into()));
             }
             let entry = Miscast {
                 id: spec.id,

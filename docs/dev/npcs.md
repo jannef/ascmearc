@@ -136,11 +136,11 @@ player holds its `talent` (`Talents::has`); never twice (an actor with that npc 
 Cēaptūn's servant (`talent = "stipend"`) lodges at the Gæsthūs (40, 27): `squire`, `chambermaid`,
 `servant` (`campaigns/ascmearc/data/creatures/`), speaking `campaigns/ascmearc/data/dialogue/
 servants.toml` (Cockney, Geordie, Brummie, Scouse, Irish, Middle English, Dutch, by the rule
-below). A dialogue's `[dialogue.stipend]` (`ServantWords`: `handover`, `address` by gender,
-`GenderWords`) makes its speaker a family servant: `World::called` names it "your squire",
+below). A dialogue's `[dialogue.stipend]` (`ServantWords`: `handover`; the dialogue's own
+`address` by gender, `GenderWords`) makes its speaker a family servant: `World::called` names it "your squire",
 `World::servant_chat` (one line in `chat` after the escort) hands over `WorldState::stipend`
-with the `handover` line, or says a one-liner (the rotation, `talk.said` counted), `{address}`
-replaced by the gender's word; it takes `chat`'s time and trains the chat. Handed over: gold
+with the `handover` line, or says a one-liner (the rotation, `talk.said` counted), each
+`{player:address}` the gender's word (`docs/dev/localization.md` "Dialogue"); it takes `chat`'s time and trains the chat. Handed over: gold
 coins then the finds into the pack, each stack that would leave the player Overloaded set down
 on their cell ("Too much to carry, set down at your feet: …"; `World::receive`, which the
 partner's withdrawals share). Tests: `world/classes/stipend_tests.rs`.
@@ -153,7 +153,7 @@ per-quest bonus, `TownServant::bonus`, quest ids checked) keeps the corner desk 
 Wulfrun's office (75, 23): `business_partner`, speaking `campaigns/ascmearc/data/dialogue/
 partners.toml` (posh for humans, as a person of means, then the race registers below). A
 dialogue's `[dialogue.partner]` (`PartnerWords`: `worth` and `idle`, said after a one-liner;
-`invested` and `withdrawn`, with `{gold}` and `{fee}`) makes its speaker a partner, "your business
+`invested` and `withdrawn`, with `{gold:name}` and `{fee:name}`) makes its speaker a partner, "your business
 partner". `World::partner_chat` (one line in `chat`, after the servant's) says a one-liner and the
 stake's worth; `World::invest_topics` (one line in `topics`, last) lists `invest_<step>` /
 `invest_all` and `withdraw_<step>` / `withdraw_all` by what the player carries and holds, only for
@@ -179,9 +179,9 @@ Gæsthūs's north-east corner (50, 23): `patron` (`campaigns/ascmearc/data/creat
 ability comes at level 12, so `stipend::place_given` (one line in `class.rs::grant_class`) places
 the helpers of the class abilities just given whose town is made already; a town made later
 places them as it is made (`place_servant`); never twice, and a dead patron is never replaced
-(the grant comes once). A dialogue's `[dialogue.patron]` (`PatronWords`: `offer` with `{work}`
-and `{stock}`, `waiting` and `plain` with `{work}`, `delivered` with `{gold}`, `idle`, `address`
-by gender for `{address}`) makes its speaker a patron, "your patron". `World::patron_chat` (one
+(the grant comes once). A dialogue's `[dialogue.patron]` (`PatronWords`: `offer`, `waiting`, and
+`plain` with `{work:a}`, `delivered` with `{gold:name}`, `idle`; the dialogue's own `address` for
+`{player:address}`; the stock advanced is told after the offer, "You receive …") makes its speaker a patron, "your patron". `World::patron_chat` (one
 line in `chat`, after the partner's), a chat's time: with none open, draws the work
 (`patron::pool`: every recipe with no `use` making one thing whose result has a `worked::aspects`
 of every profession the player is trained in at its `from` or more, in recipe order; one

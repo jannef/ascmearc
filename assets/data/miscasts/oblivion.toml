@@ -2,5 +2,5 @@
 id = "oblivion"
 from = 129
 message = "Oblivion."
-seen = "{who} is unmade."
+seen = "{who:The} is unmade."
 effect = { kind = "harm", dice = "20d10", damage = "force" }

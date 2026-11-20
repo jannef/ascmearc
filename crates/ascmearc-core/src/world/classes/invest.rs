@@ -248,16 +248,16 @@ impl World {
         let d = content.dialogue(dialogue);
         let words = d.partner.as_ref()?;
         let said = self.state.actors[&id].talk.said;
-        let line = self.one_liner(id, d, said);
+        let line = self.said(id, self.one_liner(id, d, said));
         let worth = match self.state.fund.gold() {
-            0 => words.idle.clone(),
-            gold => words.worth.replace("{gold}", &gold.to_string()),
+            0 => self.said(id, &words.idle),
+            gold => self.said(id, &words.worth).with("gold", i64::from(gold)),
         };
         if let Some(actor) = self.state.actors.get_mut(&id) {
             actor.talk.said += 1;
             actor.talk.met = true;
         }
-        self.answer(id, format!("{line} {worth}"), None, events);
+        self.answer(id, vec![line, worth], None, events);
         self.train_stat(StatUse::Chat);
         Some(Spent::Turn(
             self.price_of(self.state.player, ActionKind::Chat),
@@ -312,7 +312,7 @@ impl World {
         } else {
             &words.withdrawn
         };
-        let line = (said.replace("{gold}", &gold.to_string())).replace("{fee}", &fee.to_string());
+        let line = (self.said(id, said).with("gold", i64::from(gold))).with("fee", i64::from(fee));
         self.answer(id, line, Some(topic.to_string()), events);
         self.train_stat(StatUse::Chat);
         Some(Spent::Turn(

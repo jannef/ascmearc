@@ -3,5 +3,5 @@ id = "deep_withering"
 from = 97
 to = 98
 message = "The spell bites deep, reaching for what does not grow back."
-seen = "{who} shudders to the bone."
+seen = "{who:The} shudders to the bone."
 effect = { kind = "drain", stat = "random", points = 2, difficulty = 18 }

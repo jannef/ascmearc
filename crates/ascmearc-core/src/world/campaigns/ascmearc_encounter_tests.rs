@@ -260,7 +260,7 @@ fn villagers_on_the_road_speak_its_lines() {
     for villager in folk {
         assert_eq!(villager.npc.as_deref(), Some("road_folk"));
         let dialogue = CONTENT.dialogue_of(villager.creature, villager.npc.as_deref());
-        let greet = dialogue.and_then(|d| CONTENT.dialogue(d).greet.clone());
+        let greet = dialogue.and_then(|d| CONTENT.dialogue(d).greet.as_ref().map(|g| g.written()));
         assert_eq!(
             greet.as_deref(),
             Some("Mornin'. Fine day for the road, innit.")
