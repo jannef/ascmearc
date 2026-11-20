@@ -44,7 +44,7 @@ web build's font subset (`crates/ascmearc-assets/font_subset.rs`, `docs/dev/rend
 | The message | `World::say` takes a **message**: a template id (a constant generated at build time from `assets/lang/en/messages/*.toml`) and typed arguments by role. The log keeps these **composition entries**, never English; the app renders them in the chosen language, dumps in English. One entry is one line, fixed at the moment core said it; rendering is a pure function of (entry, language). §4 |
 | Noun references | An argument that names a thing is a **phrase**: a head word (a lexicon id or a literal), tagged modifiers (adjectives, a genitive qualifier, a label), a count, and features (proper, person, gender). Built from what the player perceives at that moment (`Lore`, `Stack::names`, `the`), captured by value, so it reads the same after load, after identification, and in any language. §5 |
 | Files | `assets/lang/<code>/`: `lang.toml`, `messages/<subsystem>.toml`, `ui/<module>.toml`, `lexicon/<data dir>.toml`, `dialogue/<file>.toml`. English names and plurals stay in `assets/data`; other languages overlay by id. Every translated entry carries `of = "<6 hex>"`, the FNV-1a of the English it translates. §6 |
-| Morphology | A `Morphology` trait in a new crate `crates/ascmearc-lang`: `en` (today's `text.rs` and `plural.rs`, verb agreement, number words, Oxford lists), `fi` (Kotus classes, consonant gradation, vowel harmony, the 15 cases generated from `"miekka/9*A"`, explicit forms override), `generic` (forms, numbers, genders, agreement declared in `lang.toml`; forms listed per word). §7 |
+| Morphology | A `Morphology` trait in a new crate `crates/ascmearc-lang`: `en` (today's `text.rs` and `plural.rs`, verb agreement, number words, Oxford lists), `fi` (Kotus classes, consonant gradation, vowel harmony, the 15 cases generated at runtime by our own tables from `"pitkä\|miekka/9*A"`, explicit forms override; each class declares the word shape it accepts, a misfit renders in its base form; rendering is total, no panic on file data), `generic` (forms, numbers, genders, agreement declared in `lang.toml`; forms listed per word). The Kotus list is an authoring aid in an xtask, never shipped. §7 |
 | Item names | `magic/name.rs::describe` becomes a phrase builder; each language orders and agrees the parts: "a Flaming emerald-pommelled long sword of the Bear" / "karhun liekehtivä smaragdiponsinen pitkämiekka", in whatever case the template asks. §8 |
 | Dialogue | No morphology: `{target:a}`, `{player:address}`, base forms only; the checker refuses a case form in a dialogue template; gender and number pick whole-line variants. Registers are authored text plus function-word overrides in `lang.toml`, which also maps race → register. §9 |
 | Saves | The log is saved as entries (decided), pinned to the game version like the rest of the state. It **stays in the state hash**: wording cannot move the hash any more, and the hash still proves core said the same things in the same order. §10 |
@@ -83,6 +83,11 @@ Settled by the owner on 2026-11-20 (#1882); the design works inside them and doe
 7. **Dialects are registers inside the game language**: authored text plus "level 1" function-word overrides only (articles, pronouns, possessives, number words). No rewrite rules on inserted words, no per-register morphology. Foreign voices (lizardfolk Dutch) use the game language's grammar. The locale's `lang.toml` maps race → register; unmapped races speak the standard register. A Finnish translation chooses its own registers.
 8. **A text-only mod must not make saves incompatible.**
 9. **The log is saved as composition entries** (the owner, 2026-11-20, in review): what was said, as composed when it was said: the template id, its resolved arguments (noun phrases as perceived then, names by value, numbers, person/number/gender features, any flavour variant core picked). Not rendered text, not a semantic record of what happened from which messages are derived later. §4 says why.
+10. **Finnish forms are generated at runtime** by our own `fi` module (class tables, gradation, vowel harmony): no third-party library, no compile-time or load-time expansion (a lazy `(word, form)` cache only if a profile ever asks for it). Mod words arrive at runtime, the tables are small, and the cost is microseconds a turn.
+11. **The Kotus word list** (Nykysuomen sanalista; its licence to be confirmed) is an **authoring aid only**: an xtask suggests the class and gradation for our words and flags words not in the list. It is never embedded or shipped.
+12. **A lexicon entry** is the base form, the class, and the gradation; `|` marks compound boundaries (harmony and inflection follow the last part); an optional `harmony = "front" | "back"` overrides the vowel rule; explicit forms override any generated case.
+13. **Correctness** by table tests per class used, against an oracle (Wiktionary's declension tables, or Voikko/Omorfi as test tooling only, never a dependency of the game), and an xtask that prints every form of every word in the lexicon for a native speaker's review.
+14. **Bad input never crashes.** Each class declares the word shape it accepts; an entry that does not fit is reported at language load (a mod's load message, the xtask) and that word renders in its base form in every case. A word that fits the shape but is misspelled or invented (`hopöööääa/10` → `hopöööääalla`) inflects mechanically. Rendering is total: no unwrap, panic, or unchecked index on file data; stem edits on char boundaries (ö and ä are two bytes; byte slicing would panic); a property test over arbitrary Unicode × every class × gradation × form. The fallback chain is missing or broken template → English → the message id. Rendering never affects the simulation.
 
 ## 4. The message model: composition entries
 
@@ -189,9 +194,14 @@ impl Language {
 ```
 
 Lookup: the language's template for `entry.id`; none, or one that fails to render (a form the
-language has no rule for) → the fallback chain from `lang.toml` (`fallback = "en"`), ending at
-English, which always exists since the id was generated from it. A rendered entry with `count > 1`
-gets the language's repeat mark (`(×2)` in `lang.toml`, `repeat = " (×{n})"`).
+language has no rule for, a role the template names that the entry lacks) → the fallback chain
+from `lang.toml` (`fallback = "en"`), ending at English, which exists since the id was generated
+from it; should even that fail (a dev content directory with the English file edited by hand),
+the renderer prints the message id itself (`[combat.hit]`). Rendering is **total**: `render`
+returns a `String` for every entry, never panics, never indexes file data unchecked, and never
+touches the world, so nothing a translator or a mod writes can stop a turn or change one. A
+rendered entry with `count > 1` gets the language's repeat mark (`repeat = " (×{n})"` in
+`lang.toml`).
 
 ## 5. Noun references: the phrase
 
@@ -349,10 +359,12 @@ wolf   = { of = "22c8d9", word = "susi/27" }
 "Black Wystan" = { of = "f00d12", word = "Musta Wystan", proper = true }   # a unique: by value, as a literal
 
 # assets/lang/fi/lexicon/objects.toml
-long_sword = { of = "5a5a5a", word = "pitkämiekka/9*A" }
+long_sword = { of = "5a5a5a", word = "pitkä|miekka/9*A" }   # `|`: a compound; the last part inflects and sets harmony
 potion     = { of = "e1e1e1", word = "juoma/10" }
 arrow      = { of = "b7b7b7", word = "nuoli/26" }
 shield     = { of = "c3c3c3", word = "kilpi/7*E" }
+scroll     = { of = "d4d4d4", word = "kirja|käärö/1" }
+olive_oil  = { of = "a0a0a0", word = "oliivi|öljy/1", harmony = "front" }  # an override where the rule would misjudge a loan
 
 # assets/lang/fi/lexicon/affixes.toml
 flaming     = { of = "33aa44", word = "liekehtivä/10" }                 # a prefix: an adjective
@@ -360,11 +372,13 @@ sharp       = { of = "19ff2e", word = "terävä/10" }
 of_the_bear = { of = "8d8d8d", word = "karhu/1", as = "gen" }           # a suffix: a genitive qualifier
 ```
 
-`word` is `"<lemma>/<Kotus class>[*<gradation letter>]"` for `fi` (§7.3) and a plain lemma for
-`en`; a `forms` table beside it overrides any generated form (`forms = { par = "hiittä" }`), and
-for `generic` lists all the forms. `proper = true` marks a name said without an article, kept
-as written. The `of` hash is of the English `name` (and `plural` when given), so a renamed
-creature shows its translation as stale.
+`word` is `"<base form>/<Kotus class>[*<gradation letter>]"` for `fi` (§7.3), with `|` between
+the parts of a compound (harmony and inflection follow the last part) and an optional
+`harmony = "front"` or `"back"` beside it where the vowel rule would misjudge a word; a plain
+lemma for `en`. A `forms` table beside it overrides any generated form (`forms = { par =
+"hiittä" }`), and for `generic` lists all the forms. `proper = true` marks a name said without an
+article, kept as written. The `of` hash is of the English `name` (and `plural` when given), so a
+renamed creature shows its translation as stale.
 
 ### 6.4 UI text
 
@@ -480,9 +494,41 @@ no gradation (§5). `forms` overrides any generated form (`hiisi/27` with `forms
 template writes its verbs out per person variant, which is why `by = "actor.person"` is the
 usual shape of a Finnish narrator line.
 
+**Generated at runtime, by our own code** (decision 10). The module is three small tables and
+the class rules, in Rust, with no third-party library and no expansion step at compile or load
+time: a form is computed when a template asks for it, in microseconds, which is what lets a mod's
+words (arriving at runtime as files) inflect like the game's own. If a profile ever shows the
+cost, a lazy `(word, form)` cache in the `Language` goes in front of it; nothing in the design
+assumes one.
+
+**The Kotus list is an authoring aid** (decision 11). `cargo xtask lang --suggest fi` reads a
+local copy of the Nykysuomen sanalista (its path given on the command line; its licence to be
+confirmed before the xtask is written, §19) and prints, for every lexicon word without a class or
+flagged `?`, the class and gradation the list gives, and names the words the list lacks (compounds
+by their last part, invented words outright) for the translator to decide. The list is never
+embedded, never shipped, and never read by the game.
+
+**Each class declares the word shape it accepts** (decision 14): class 1 ends in `o`/`ö`/`u`/`y`;
+9 and 10 in `a`/`ä`; 26 and 27 in `i` with the right consonant before it; 38 in `nen`; and so on,
+a predicate per class on the base form's last letters. `parse_word` refuses an entry whose base
+form does not fit its class ("`karhu/9`: class 9 takes a word ending in a or ä") or whose
+gradation letter names a consonant the word does not end its stem with; the language loader
+reports every refused entry (in a mod's load message, in the xtask), and the word renders in its
+base form in every case, so a mistake in one word costs one word's grammar and never a line. A
+word that fits the shape but is misspelled or invented (`hopöööääa/10`) inflects mechanically
+(`hopöööääalla`): the module judges shape, not meaning.
+
+**Rendering is total.** Every stem edit works on `char` boundaries (a `Vec<char>` or
+`char_indices`, never byte offsets: ö and ä are two bytes and a byte slice would panic); every
+table lookup has a default; no `unwrap`, `expect`, `panic!`, or `[i]` on data from a file; the
+module's API returns `Result<String, FormError>` and the renderer turns a `FormError` into the
+base form and a report. A property test (`proptest`, in the crate's dev-dependencies) drives
+arbitrary Unicode strings through every class, every gradation letter, and every form and asserts
+only that nothing panics and the result is non-empty when the input is (§15).
+
 Which classes to implement first: the ones the lexicon uses. The ids under `assets/data` will
 need a few dozen of the 49; the module implements a class only when a word of it enters the
-lexicon, with a table test per class (§15), and the parser rejects a class it lacks ("class 31
+lexicon, with a table test per class (§15), and the parser refuses a class it lacks ("class 31
 not implemented: add it with its test") so a translator learns at once. §19 lists the class
 numbers cited here as facts to verify against Kotus before coding.
 
@@ -726,13 +772,16 @@ undertaking, not this design's.
 | stale entry | `of` differs from the hash of the current English (the English changed since the translation) |
 | unknown role | a template names a role the English template (and so the call site) does not pass |
 | unknown form | a form the language's `Morphology::forms` does not list |
-| unparsable lexicon entry | `word` the module's parser refuses (a class it lacks, a bad gradation letter) |
+| unparsable lexicon entry | `word` the module's parser refuses (a class it lacks, a bad gradation letter, a base form that does not fit the class's declared shape); the same report the game gives at language load (a mod's load message), where the word then renders in its base form |
 | case form in dialogue | any form but `name`/`Name`/`a`/`the`/`address` in a dialogue file or field |
 | UI overflow | a rendered UI entry wider than its `width` |
 | unused id | an English template whose generated constant no code names (the checker greps `crates/` for `msg::<file>::<ID>`; a `pub` constant gives no dead-code warning, so the check is the only report) |
 
 `cargo xtask lang --stamp <code>` writes `of` into entries that lack one and, with `--restamp`,
-updates stale ones after review (never run blind: the diff is the review).
+updates stale ones after review (never run blind: the diff is the review). `--suggest fi
+<path to the Kotus list>` proposes classes for unclassed words and flags words the list lacks
+(§7.3); `--forms fi` prints every form of every word for review (below). Neither reads anything
+the game ships.
 
 **Tests.**
 
@@ -743,10 +792,18 @@ updates stale ones after review (never run blind: the diff is the review).
 - `en` unit tests: today's `text.rs` and `plural.rs` tests move with the code; `magic/name.rs`'s
   cases become phrase-rendering cases.
 - `fi` table tests: one test per Kotus class the lexicon uses, a table of (lemma, class, the
-  fifteen singular cases, three plural cases) checked against a reference (the class's paradigm
-  word from Kotus: `valo`, `kala`, `koira`, `ovi`, `nalle`, `risti`, `käsi`, `pieni`,
-  `vastaus`, …); gradation tests per letter; harmony tests (front, back, neutral,
-  compound); proper-name tests (`Hild`, `Bran`, `Wystan`); the `counted` rule.
+  fifteen singular cases, three plural cases) taken from an **oracle** and pasted into the test
+  as data: Wiktionary's declension table for the class's paradigm word (`valo`, `kala`, `koira`,
+  `ovi`, `nalle`, `risti`, `käsi`, `pieni`, `vastaus`, …) and for one gradating word of the
+  class, or Voikko/Omorfi run once by hand as test tooling (never a dependency of the game or of
+  CI). Gradation tests per letter; harmony tests (front, back, neutral, compound by `|`, the
+  `harmony` override); proper-name tests (`Hild`, `Bran`, `Wystan`); the `counted` rule; the
+  word-shape refusals (`karhu/9`) and the base-form fallback they lead to.
+- A property test over arbitrary Unicode × every class × every gradation letter × every form:
+  no panic, a non-empty result for a non-empty input, the base form back for a refused entry.
+- `cargo xtask lang --forms fi` prints every form of every word in the lexicon (one word per
+  block, the fifteen cases and the plurals) for a native speaker's review; a translation PR that
+  adds lexicon words pastes the new words' blocks into its description.
 - Template tests in `ascmearc-lang`: parsing (`{role:form}`, variants, nesting, alternatives),
   fallback (a missing Finnish id renders English), registers (Irish `the` → `th'` in an inserted
   article only), keys (`{key:help}` through the host callback and the identity).
@@ -806,7 +863,7 @@ are pattern work a Sonnet agent does from a worked example and the checker's out
 | L7 | `cargo xtask lang --check` and `--stamp`; CI | mechanical | L2 |
 | L8 | The language setting, the settings screen entry, `--lang` for the CLI and captures, live switching | mechanical | L6 |
 | L9 | Text mods: path classification, fingerprint and envelope exclusion, the example text mod, tests | mechanical | L7 |
-| L10 | The `fi` module: classes used by the first lexicon files, gradation, harmony, proper names, `counted`, table tests | foundational | L1 |
+| L10 | The `fi` module: classes used by the first lexicon files with their word-shape predicates, gradation, harmony and the `|`/`harmony` rules, proper names, `counted`, char-boundary stem edits, the total `Result` API; oracle table tests per class, the property test; `cargo xtask lang --suggest fi` and `--forms fi` | foundational | L1 |
 | L11a–L11k | The Finnish lexicon per `assets/data` directory and campaign (creatures, objects, affixes, materials, parts, statuses, spells, …) | translation, parallel | L10 |
 | L12a–L12n | Finnish templates per subsystem and UI module; `--strict fi` | translation, parallel | L11, L4, L6 |
 | L13 | Finnish dialogue and the Finnish registers in `lang/fi/lang.toml` | translation | L5, L12 |
@@ -838,6 +895,15 @@ alphabetical in their file, one file per subsystem.
 
 Verify against Kotus's "Nykysuomen sanalista" (kotus.fi) and the gradation letter table before
 coding; the design cites them as examples, not as the implementation's truth:
+
+- **The Kotus list's licence** (it has been published under a Creative Commons or LGPL-type
+  licence in different editions): confirm the current one allows a developer to read a local copy
+  with `cargo xtask lang --suggest fi`. Since the list is an authoring aid that is never embedded
+  or shipped (decision 11), only the developer's own use needs to be permitted; the game and its
+  distribution carry nothing of it. Record the finding in `docs/dev/localization.md`.
+- **The oracle** for the table tests: Wiktionary's declension tables (CC BY-SA; pasted as test
+  data with a comment naming the page) or forms produced once by Voikko/Omorfi (GPL; test tooling
+  run by hand, never a dependency, never in CI).
 
 - Class numbers used above: `miekka` 9 with gradation A (kk~k: miekka : miekan); `pitkämiekka`
   the same by its last part; `karhu` 1; `peikko` 1 with A; `nuoli` 26; `käsi` 27 (si~te~de);
