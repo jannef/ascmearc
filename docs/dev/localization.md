@@ -997,6 +997,27 @@ quest's `where` line, itself said by its key with the rest); a placeholder of th
 (`{a_target}`) is refused. `content/quest_roll.rs::fill` renders every text for every draw at
 load, so a bad slot is a load error.
 
+## Registers (L14)
+
+A register is a dialect inside a language: `[registers.<name>]` in its `lang.toml`, a table of
+overrides for the function words the renderer inserts (an article, `the`; a pronoun, `you` for
+the player; a possessive, `your`; a number word), never for authored text or a noun's form
+(`register.rs`). A speaker speaks their dialogue's own `register` (`posh`, `cornish`), else their
+race's from `[race_registers]`, else `standard` (`Registers::for_speaker`). English's tables and
+its race map are in `assets/lang/en/lang.toml`; who speaks which, and how each is written, is
+`docs/dev/npcs.md` "Speech by race and station". The authored lines carry the accent, so a
+register only touches what the renderer adds: the dialogue lines take the base form or
+`a`/`the`/`address` only, and no English register overrides `a`, so every line shipped today
+reads as written. Tests: `content/register_tests.rs` (a speaker of each race, a speaker's own
+register, an unmapped race). Another language names its own registers and race map; a race it
+does not map speaks its standard.
+
+Decisions L14 made where the design left them open: Geordie and Scouse say `you` as "ye" and
+Brummie as "yow" beside the design's Irish, Middle English, and Cornish words, since
+`docs/dev/npcs.md` names those substitutions; Scouse's "me" for my has no table entry, as the
+renderer never inserts "my". Every register is declared even with no overrides, so a race's and
+a dialogue's register are checked names.
+
 ## Decisions L5 made where the design left them open
 
 - One mechanism for every line of data, dialogue and narrator alike (the integrator,
@@ -1014,8 +1035,8 @@ load, so a bad slot is a load error.
 - A speech of several lines (a one-liner and a stake's worth) is one entry with a list in the
   `lines` form, not two entries.
 - `register` is set where a speaker's race's register is not theirs (the human patron and
-  partner, Sigeric, Ælfswīð, Ordgar: `posh`; Gimmwīc's people: `cornish`). English has no
-  register overrides yet (L14).
+  partner, Sigeric, Ælfswīð, Ordgar: `posh`; Gimmwīc's people: `cornish`). English's overrides and race map came
+  with L14 ("Registers").
 
 ## Decisions L1 made where the design left them open
 
@@ -1093,7 +1114,8 @@ feature no argument has (only `gender`, `number`, `person`) or with a key the fe
 (`others` for `other`, which would only ever render `else`); more flavour alternatives than
 English has (core draws by English's count); an id English lacks; a lexicon word the module
 refuses; a form request in `dialogue/` other than `name`/`Name`/`bare` (`{role}`)/`a`/`the`/`address`; a
-race naming an unknown register; a key an entry with a `text` does not know (only `text` and
+race naming an unknown register, a `[race_registers]` race the content has no race of, and a
+dialogue's `register` English does not declare (`lang/registers.rs`); a key an entry with a `text` does not know (only `text` and
 `of`: a stray `width` is reported, since widths belong to the screens and the screen snapshots
 check them per language, "UI text"); and **stale** entries. **Warnings**: a missing id (an error for
 `--strict <code>`; Finnish is strict before it ships) and an English id no source names as

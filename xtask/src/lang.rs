@@ -15,6 +15,7 @@
 
 mod data;
 mod fi_tools;
+mod registers;
 
 use crate::workspace_root;
 use ascmearc_lang::en::Plurals;
@@ -127,6 +128,9 @@ pub fn run(options: Options) -> Result<(), String> {
             let data = data::check_data(&langs, content.english().data_lines(), &strict);
             report.errors.extend(data.errors);
             report.warnings.extend(data.warnings);
+            let (races, spoken) = content_voices(&content);
+            let voices = registers::check_registers(&langs, &races, &spoken);
+            report.errors.extend(voices.errors);
             if options.dir.is_none() {
                 report.warnings.extend(unused_ids(&langs));
             }
@@ -433,6 +437,27 @@ fn lower(form: &str) -> String {
         Some(c) if c.is_uppercase() => c.to_lowercase().chain(chars).collect(),
         _ => form.to_string(),
     }
+}
+
+/// The content's race ids, and each register a dialogue names with whose dialogue it is (the
+/// first one, by the content's order): what `[race_registers]` and English's registers answer to.
+fn content_voices(
+    content: &ascmearc_core::content::Content,
+) -> (BTreeSet<String>, BTreeMap<String, String>) {
+    use ascmearc_core::content::Speaker;
+    let races = content.races().list.iter().map(|r| r.id.clone()).collect();
+    let mut spoken = BTreeMap::new();
+    for dialogue in content.dialogues() {
+        let Some(register) = &dialogue.register else {
+            continue;
+        };
+        let whose = match &dialogue.speaker {
+            Speaker::Npc(npc) => format!("npc `{npc}`"),
+            Speaker::Creature(c) => format!("creature `{}`", content.creature(*c).id),
+        };
+        spoken.entry(register.clone()).or_insert(whose);
+    }
+    (races, spoken)
 }
 
 fn language_of(code: &str, files: &LangFiles, report: &mut Report) -> Option<Language> {
