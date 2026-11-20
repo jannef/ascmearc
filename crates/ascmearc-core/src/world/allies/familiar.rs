@@ -31,9 +31,9 @@
 
 use crate::action::{AttackKind, Event};
 use crate::character::{CharacterSpec, RememberedFamiliar};
-use crate::content::{ActionKind, Content, CreatureId, LevelKind, Stacking};
+use crate::content::{ActionKind, Content, CreatureId, LevelKind, Stacking, data_line};
 use crate::geom::Pos;
-use crate::lang::{Msg, Phrase};
+use crate::lang::{Arg, Msg, Phrase};
 use crate::msg;
 use crate::rng::Rng;
 use crate::rng::draw;
@@ -174,18 +174,16 @@ impl World {
             });
         }
         let kind = fight::creature(content.creature(creature));
-        let line = if back {
-            Some("comes back to you out of the dark")
-        } else {
-            (content.familiars()).and_then(|rules| rules.arrives(creature))
+        let arrives = (content.familiars()).and_then(|rules| rules.arrives(creature));
+        let said = match (back, arrives) {
+            (true, _) => Msg::new(msg::allies::FAMILIAR_BACK),
+            (false, Some(_)) => Msg::new(msg::allies::FAMILIAR_ARRIVES).role(
+                "line",
+                Arg::said(data_line::familiar_arrives(&content.creature(creature).id)),
+            ),
+            (false, None) => Msg::new(msg::allies::FAMILIAR_HEELS),
         };
-        let line = line.unwrap_or("keeps to your heel");
-        self.say(
-            Msg::new(msg::allies::FAMILIAR_ARRIVES)
-                .role("name", Phrase::literal(&name))
-                .role("kind", kind)
-                .role("line", line),
-        );
+        self.say(said.role("name", Phrase::literal(&name)).role("kind", kind));
     }
 
     /// `use:call_familiar`: the player sits down to call, or is refused with no time (module

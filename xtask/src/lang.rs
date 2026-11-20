@@ -155,7 +155,15 @@ pub fn run(options: Options) -> Result<(), String> {
             let lang = langs
                 .get(&code)
                 .ok_or_else(|| format!("no language `{code}`"))?;
-            let changed = stamp(&english, lang, restamp)?;
+            let mut changed = stamp(&english, lang, restamp)?;
+            // The lines of data, against the content's English.
+            let content =
+                ascmearc_assets::content().map_err(|e| format!("cannot load content: {e}"))?;
+            changed.extend(data::stamp_data(
+                content.english().data_lines(),
+                lang,
+                restamp,
+            )?);
             let mut count = 0;
             for (path, text) in changed {
                 count += 1;

@@ -343,21 +343,25 @@ example and `world/combat/` (`messages/combat.toml`) the one whose lines name th
 `world/allies/` (`messages/allies.toml`) is converted: `World::called_phrase` and `ally_phrase`
 are `called` and `ally_subject` as phrases, `pack_args` an order's allies as a list said
 `{pack:the}` (a lone one is its phrase, so its count agrees the verb). What it leaves as text
-for now: the `came_line` that stops a calling or a taming (a `came` role), and the data's own words
-(a charm's, a familiar's arrival, a status's `seen`).
+for now: the `came_line` that stops a calling or a taming (a `came` role). The data's own words
+are lines of data (#1944, "Lines of data"): a charm's, a familiar's arrival, and a creature's
+departure are said inside their templates (`{message:bare}`, `{line:bare}`, `{words:bare}`),
+and a status's `seen` is a `word:` phrase.
 
 What combat leaves as literal lines, for their own slices: a rank risen and what it teaches
 (`fight.rs::ranks_news`, the data's lines joined), acid's lines (`corrode.rs`, the data's
 `{}`).
 
 `world/health/` (`messages/health.toml`, L4i) converted `Cause::message` (how the player died, now
-`Cause::message(&World) -> Msg`) with it. It leaves as literal text what the data writes: a
-status's start, end, ward, and stage lines, a disease's recovery line, a corpse's `on_eat` message,
-a treatment's made and failed lines, a skill gift's lines, and a flask's `words`. Text from another
-module's helper (`came_line`, `Hunger::news`) goes in as a text role, or stays literal. A stat's
-comparative ("stronger") and the disease in a sentence ("your wolf's sickness") are text roles
-(`feel`, `more`, `words`) until those words are converted. `health::object_phrase(content, id)`
-builds `object:<id>`; `Lore::title_phrase` is a stack's `title` as a phrase.
+`Cause::message(&World) -> Msg`) with it. What the data writes is said by its key (#1944, "Lines
+of data"): a status's start, end, ward, and stage lines, a disease's recovery line, a corpse's
+`on_eat` message, a treatment's made and failed lines, a skill gift's lines, and a flask's
+`words`; `Hunger::news` is message ids. The disease in a sentence is a phrase owned by its
+sufferer (`{disease:the}`: "your wolf's sickness"), the pipe's race `race:<id>` (`{smoker:a}`).
+Text from another module's helper (`came_line`) goes in as a text role. A stat's comparative
+("stronger") is a text role (`feel`, `more`) until those words are converted.
+`health::object_phrase(content, id)` builds `object:<id>`; `Lore::title_phrase` is a stack's
+`title` as a phrase.
 
 When no literal is left, `LITERAL`, the `From` text impls, and this section go.
 
@@ -460,7 +464,29 @@ so a saved log re-renders in any language and a later identification cannot reac
   a stale `of` (the six-hex FNV-1a of the English line as written, `Template::written`), a role
   the English line does not pass, a form the language lacks (a dialogue line: the base form only)
   are errors; a line not translated is a warning in a kind the language has files for, an error
-  for `--strict`. `--stamp` does not write data files' `of` yet.
+  for `--strict`. `--stamp` writes their `of` too (`lang/data.rs::stamp_data`): an array of lines
+  is stamped item by item, so it is written an item a line.
+
+**The narrator's lines of data** (#1944) are keyed in `content/data_line.rs`, one function a key,
+which the loader (`add_all`, at the end of `Content::load`) and the `say` sites share. An entity's
+line is its kind, its id, and the field's path in its file; a rules file's line is the file's stem
+and the path in it:
+
+| Key | The line |
+|---|---|
+| `status:<id>.start`, `.end`, `.stages.<n>` | a status beginning, ending, and reaching degree `n + 1` (a status with `stages` starts with `.stages.0`) |
+| `status:<id>.treat.made`, `.treat.failed` | the Heal skill's try at it |
+| `disease:<id>.recovered` | the player shaking a disease off |
+| `creature:<id>.on_eat.message`, `creature:<id>.depart` | eating its fresh corpse; an ally of its kind whose time ran out (in `allies.departs`) |
+| `unique:<id>.power.message` | its Ward refusing a status |
+| `object:<id>.throw.words` | a flask shattering |
+| `spell:<id>.effect.charm.message`, `.ends` | a charm taking hold and ending (in `allies.charm_takes`, `allies.charm_ends`) |
+| `familiars:arrives.<creature>` | a familiar's arrival (in `allies.familiar_arrives`) |
+| `hunger:corpses.skills.<skill>.learn`, `.rise` | a corpse teaching a skill |
+
+None of them names a role: the loader refuses one that does. A status's start and end lines said
+as the turn is perceived (`world/turn/perceive.rs`) and the other subsystems' reads of these
+fields are still literal text, until their slices.
 
 **Saying a line of data (the recipe for an L4 slice)**, worked by `miscast:<id>.seen`
 (`content/miscast.rs`, `world/magic/miscast.rs`) and `creature:<id>.touch`/`.unseen`
@@ -614,7 +640,8 @@ check them per language, "UI text"); and **stale** entries. **Warnings**: a miss
 **The `of` hash** of a translated entry is the six-hex FNV-1a (32 bits, the top byte folded into
 the low 24) of the English entry's canonical text: a string as it is, an array's items joined by a
 newline, a table's keys in order as `key=value` lines, never `of`. An entry without
-`of` is stale too. `--stamp <code>` writes `of` into entries that lack one (`--restamp` also
+`of` is stale too. `--stamp <code>` writes `of` into entries (and lines of data, "Lines of data")
+that lack one (`--restamp` also
 refreshes stale ones, after the translator has read the English change); it edits lines, so
 comments and layout stay: a `[table]` gets an `of` line after its header, a plain `id = "text"`
 becomes `id = { text = "text", of = "…" }`, and a plain entry whose value spans lines is refused

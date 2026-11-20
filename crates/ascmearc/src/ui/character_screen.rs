@@ -843,7 +843,7 @@ mod tests {
             world.apply(&day);
         }
         let text = drawn(&world, 80, 30).join("\n");
-        for expected in ["Status        Diseased", "Diseased      The shakes"] {
+        for expected in ["Status        Diseased", "Diseased      Shakes"] {
             assert!(text.contains(expected), "{expected:?} in\n{text}");
         }
         let dexterity = world.perception().own_scores()[Stat::Dexterity];

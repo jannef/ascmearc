@@ -41,6 +41,7 @@ mod creature_spells;
 mod crystal;
 mod damage_type;
 pub mod danger;
+pub mod data_line;
 mod decipher;
 #[cfg(test)]
 mod demon_roster_tests;
@@ -1361,6 +1362,7 @@ impl Content {
         content.callings = calling::parse(files.table("callings"), &content)?;
         content.encounter_tables = encounter::parse(files.table("encounters"), &content)?;
         content.ids = required::resolve(&content)?;
+        data_line::add_all(&mut content)?;
         content.validate()?;
         content.check_topic_routes()?;
         content.check_topic_callings()?;

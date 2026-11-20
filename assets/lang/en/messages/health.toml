@@ -1,12 +1,13 @@
 # Health (`world/health/`): statuses, diseases, healing, hunger, eating, drinking, pipes, flasks, and
 # how the player dies of hunger, choking, or drowning (`Cause::message`, `world/combat/fight.rs`).
 # Ids alphabetical (`docs/dev/localization.md` "Literal lines"). What the data writes (a status's
-# start and end lines, a corpse's `on_eat` message, a rank's text) is still said as literal lines.
+# start and end lines, a corpse's `on_eat` message) is said by its key in the data, not here
+# (`docs/dev/localization.md` "Lines of data").
 #
 # Roles: `who` is the one a line is about, `what` an item (a phrase built where it is said),
 # `status` a status as it looks ("dazed"), `came` the clause that says what stopped a long action
-# ("A kobold comes into view"), `time` how long it went on ("3 minutes"). `feel`, `more`, `doing`,
-# and `words` are English words from the data, text until that data's text is converted.
+# ("A kobold comes into view"), `time` how long it went on ("3 minutes"). `feel`, `more`, and
+# `doing` are core's English words, text until they are converted.
 
 blink_elsewhere = "In a blink, you are elsewhere."
 break_free = "You break free."
@@ -29,8 +30,8 @@ die = "You die..."
 draught_kept = "There is enough left in the flask for another draught."
 drink = "You drink the {what:bare}."
 drown = "You drown..."
-# `words`: the disease in a sentence ("the sickness", "your wolf's sickness").
-ease_somewhat = "You ease {words:bare} somewhat."
+# `disease`: the disease, its sufferer's ("the sickness", "your wolf's sickness").
+ease_somewhat = "You ease {disease:the} somewhat."
 eat = "You eat {what:the}."
 eat_your_fill = "You eat your fill; the rest does you no good."
 elixir_no_difference = "You feel no different."
@@ -39,11 +40,15 @@ elixir_rise = "You feel {feel:bare}."
 elixir_rise_yet = "You feel {feel:bare}, and that you could be {feel:bare} yet."
 elixir_yet = "You feel that you could be {feel:bare} yet."
 faint = "You faint from hunger."
+faint_from_hunger = "You feel faint from hunger. Eat now, or you will starve!"
 feel_better = "You feel better."
+feel_bloated = "You feel bloated."
 feel_cleansed = "You feel cleansed."
 feel_healthy = "You feel healthy."
+feel_satiated = "You feel satiated."
 feel_whole = "You feel whole."
 fills_you = "It fills you as a good meal would."
+getting_hungry = "You are getting hungry."
 # `what`: the stat's word ("strength", "nimbleness").
 gift_passes = "Something of its {what:bare} passes into you."
 hard_time_getting_down = "You have a hard time getting it all down."
@@ -53,6 +58,8 @@ it_is = "It is {what:counted}."
 it_was = "It was {what:counted}."
 know_nothing_of_healing = "You know nothing of healing."
 land_lurches = "The land lurches, and holds you where you are."
+less_faint = "You feel less faint."
+less_weak = "You feel less weak."
 light_pipe = "You light your pipe and settle back."
 lurch_stay = "You feel a lurch, but stay where you are."
 mind_clears = "Your mind clears, and power wells up in you."
@@ -62,8 +69,12 @@ no_ally_there = "You have no ally there."
 no_disease = "There is no disease `{id:bare}`."
 no_fuller = "You feel no fuller."
 no_longer = "{who:The} {who:is} no longer {status:bare}."
-# `words`: the disease in a sentence.
-no_more_for = "You can do no more for {words:bare}."
+no_longer_bloated = "You no longer feel bloated."
+no_longer_hungry = "You are no longer hungry."
+no_longer_satiated = "You no longer feel satiated."
+no_longer_starving = "You are no longer starving."
+# `disease`: the disease, its sufferer's.
+no_more_for = "You can do no more for {disease:the}."
 no_need_to_eat = "You feel no need to eat."
 # A dev action's: `id` as typed.
 no_status = "There is no status `{id:bare}`."
@@ -72,8 +83,8 @@ nothing_left_to_eat = "There is nothing left to eat."
 nothing_like_that_to_treat = "There is nothing like that to treat."
 nothing_more_comes = "Nothing more comes of it."
 nothing_to_treat = "There is nothing to treat."
-# `smoker`: the race that smokes, lower case ("halfling").
-pipe_not_yours = "You cough and splutter: a pipe is a {smoker:bare}'s pleasure."
+# `smoker`: the race that smokes (`race:<id>`, "a halfling").
+pipe_not_yours = "You cough and splutter: a pipe is {smoker:a}'s pleasure."
 pipe_wants_full_belly = "A pipe wants a full belly first."
 potion_shatters = "The potion shatters; the draught soaks away."
 profane_takes_you = "The Profane takes you, and nothing of you is left..."
@@ -82,6 +93,7 @@ put_out_pipe_came = "{came:bare}; you put out your pipe after {time:bare}."
 rotten_no_mind = "{what:The} was rotten, but your stomach does not mind."
 smoke_done = "You smoke your pipe to the last of it, and feel wonderfully at ease."
 starve = "You starve to death..."
+starving = "You are starving! Eat, or you will die!"
 # A dev action's: `id` as typed.
 status_comes_of_disease = "`{id:bare}` comes of a disease: try `infect:DISEASE`."
 # A dev action's: `id` as typed, `resource` the resource's id.
@@ -98,6 +110,7 @@ ugh_rotten = "Ugh! {what:The} was rotten."
 vomit = "You vomit!"
 wasting_away = "You are wasting away from hunger."
 water_puts_it_out = "The water would only put it out."
+weak_from_hunger = "You feel weak from hunger. You should eat soon."
 # `who`: a creature.
 wounds_close = "{who:Poss} wounds close."
 wounds_close_you = "You feel your wounds close."

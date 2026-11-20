@@ -46,9 +46,10 @@
 use crate::action::{AttackKind, Event};
 use crate::combat::{self, Blow, Strike};
 use crate::content::Effect as ItemEffect;
+use crate::content::data_line;
 use crate::content::{Affliction, Content, DiseaseId, OnHit, StatusId};
 use crate::hunger::Hunger;
-use crate::lang::Msg;
+use crate::lang::{Arg, Msg};
 use crate::msg;
 use crate::rng::draw;
 use crate::stats::Stat;
@@ -119,12 +120,10 @@ impl World {
             return;
         }
         // A unique item's Ward: never taken, and the player is told.
-        let ward = (self.state.actors.get(&id))
-            .and_then(|a| a.ward(&self.content, status))
-            .map(str::to_string);
-        if let Some(message) = ward {
+        let ward = (self.state.actors.get(&id)).and_then(|a| a.ward(&self.content, status));
+        if let Some(key) = ward {
             if id == self.state.player {
-                self.say(message);
+                self.say(Msg::data_line(Arg::said(key)));
             }
             return;
         }
@@ -156,9 +155,9 @@ impl World {
         let now = actor.effects.get(status).map_or(0, |e| e.severity);
         let kills = def.kills_at_max && now >= def.max && added != Added::Same;
         let stage = (usize::from(now).checked_sub(1))
-            .and_then(|i| def.stages.get(i))
+            .filter(|&i| i < def.stages.len())
             .filter(|_| added == Added::Worse && id == self.state.player && !kills)
-            .cloned();
+            .map(|_| data_line::status_stage(def, usize::from(now)));
         if added == Added::Began && id == self.state.player {
             events.push(Event::Status {
                 actor: id,
@@ -170,8 +169,8 @@ impl World {
         self.settle_stance(id);
         if kills {
             self.killed_at_max(id, status, events);
-        } else if let Some(line) = stage {
-            self.say(line);
+        } else if let Some(key) = stage {
+            self.say(Msg::data_line(Arg::said(key)));
         }
     }
 

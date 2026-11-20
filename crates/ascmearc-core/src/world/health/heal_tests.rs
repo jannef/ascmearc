@@ -347,6 +347,30 @@ fn a_disease_may_be_tried_again_eased_never_cured() {
 }
 
 #[test]
+fn a_disease_known_by_name_is_said_with_the_article_the_line_gives_it() {
+    // "the shakes", never "the the shakes" (#1944): the data names it, the line says "the".
+    let mut w = World::new(content(false), "room", Some(1)).expect("world");
+    train(&mut w, 0);
+    let shakes = sicken(&mut w, "the_shakes");
+    let player = w.state.player;
+    let actor = w.state.actors.get_mut(&player).expect("player");
+    actor.diseases.get_mut(shakes).expect("caught").progressions = 1;
+    w.apply(&Action::Heal {
+        what: Some("the_shakes".into()),
+        ally: None,
+    });
+    let said = last_message(&w);
+    assert!(
+        [
+            "You ease the shakes somewhat.",
+            "You can do no more for the shakes."
+        ]
+        .contains(&said.as_str()),
+        "{said}"
+    );
+}
+
+#[test]
 fn a_disease_that_never_recovers_or_is_one_check_from_it_has_its_next_turn_put_off() {
     for (id, streak) in [("grave_rot", 0), ("filth_fever", 1)] {
         let mut eased = false;

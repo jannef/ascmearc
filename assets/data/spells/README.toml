@@ -73,7 +73,9 @@
 #                 percent of its hit points, `most` and `minutes` as a summon's; `berserk`
 #                 percent rise in `berserk_faction` instead, saying `berserk_message`
 #     charm       a `hex` ray's or bolt's, with no `status`: `{ minutes = 5, mindless = ["undead"],
-#                 message = "takes you for a friend", ends = "shakes off the charm" }`: the
+#                 message = "takes you for a friend", ends = "shakes off the charm" }`
+#                 (`message` and `ends` lines of data, `spell:<id>.effect.charm.message`, said
+#                 after the creature's name, no role; docs/dev/localization.md): the
 #                 creature it falls on is the caster's ally for `minutes` (its
 #                 `degrees` ladder grows it), then itself again where it stands; refused on a
 #                 unique, an animated thing, and a creature with a `mindless` tag; `message` and

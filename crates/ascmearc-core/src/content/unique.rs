@@ -39,7 +39,8 @@ pub enum Power {
     /// "darkvision" }`): read where an actor's eyes are chosen.
     Vision(usize),
     /// Its wearer never suffers this status (`{ ward = "frightened", message = "..." }`): read
-    /// in `World::afflict`, which refuses it, telling the player `message`.
+    /// in `World::afflict`, which refuses it, telling the player `message` (a line of data, said
+    /// by its key: [`super::data_line::ward`]).
     Ward { status: StatusId, message: String },
 }
 

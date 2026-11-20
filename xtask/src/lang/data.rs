@@ -9,7 +9,7 @@
 use super::{KEY_ROLE, LIST_FORMS, LangFiles, Report, fnv6, language_of, lower};
 use ascmearc_core::content::DIALOGUE_FORMS;
 use ascmearc_lang::{Morphology, Template, Templates};
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 /// The kind of a dialogue line's key, whose files are `dialogue/<file>.toml`.
 const DIALOGUE: &str = "dialogue";
@@ -81,6 +81,155 @@ pub fn check_data(
         }
     }
     report
+}
+
+/// The data files of `lang` with `of` written (every line lacking one; with `restamp`, the stale
+/// ones too), as `(path, new text)` for the files that changed: `--stamp` for lines of data. It
+/// edits lines as the message files' stamping does, so comments and layout stay: a line in a
+/// table, `start = "…"`, becomes `start = { text = "…", of = "<hash>" }`; an array written an
+/// item a line (dialogue's `lines`) has each item stamped so; a table that is one line (variants,
+/// an `address`) gets an `of` line after its header. An array on one line is refused (write it
+/// an item a line).
+pub fn stamp_data(
+    english: &Templates,
+    lang: &LangFiles,
+    restamp: bool,
+) -> Result<Vec<(String, String)>, String> {
+    let mut changed = Vec::new();
+    for (kind, path, text) in data_files(lang) {
+        let wanted =
+            wanted_stamps(kind, text, english, restamp).map_err(|e| format!("{path}: {e}"))?;
+        if wanted.is_empty() {
+            continue;
+        }
+        let new = stamp_data_text(kind, text, &wanted).map_err(|e| format!("{path}: {e}"))?;
+        // The result must read back with every wanted line stamped.
+        let again = wanted_stamps(kind, &new, english, true)
+            .map_err(|e| format!("{path}: stamping broke the file: {e}"))?;
+        if let Some(key) = wanted.keys().find(|k| again.contains_key(*k)) {
+            return Err(format!(
+                "{path}: `{key}` was not stamped: write its `of` by hand"
+            ));
+        }
+        changed.push((path.to_string(), new));
+    }
+    Ok(changed)
+}
+
+/// The lines of a data file to stamp, by key, with their hashes: those without `of` and, with
+/// `restamp`, the stale ones. A line English lacks is left alone (the check reports it).
+fn wanted_stamps(
+    kind: &str,
+    text: &str,
+    english: &Templates,
+    restamp: bool,
+) -> Result<BTreeMap<String, String>, String> {
+    let table = toml::from_str::<toml::Table>(text).map_err(|e| e.message().to_string())?;
+    let mut leaves = Vec::new();
+    for (key, value) in &table {
+        leaves_of(&format!("{kind}:{key}"), value, &mut leaves);
+    }
+    let mut wanted = BTreeMap::new();
+    for (key, value) in leaves {
+        let Some(en) = english.get(&key) else {
+            continue;
+        };
+        let hash = fnv6(&en.written());
+        let of = value.get("of").and_then(|v| v.as_str());
+        if of.is_none() || (restamp && of != Some(hash.as_str())) {
+            wanted.insert(key, hash);
+        }
+    }
+    Ok(wanted)
+}
+
+/// Writes the `of`s of [`stamp_data`] by editing `text`'s lines.
+fn stamp_data_text(
+    kind: &str,
+    text: &str,
+    wanted: &BTreeMap<String, String>,
+) -> Result<String, String> {
+    let mut out: Vec<String> = Vec::new();
+    let mut table = String::new(); // the path of the table the lines are in ("" at the top)
+    let mut replacing: Option<String> = None; // a one-line table whose own `of` is replaced
+    let mut array: Option<(String, usize)> = None; // an array written an item a line, its next
+    let key_of = |table: &str, name: &str| match table {
+        "" => format!("{kind}:{name}"),
+        t => format!("{kind}:{t}.{name}"),
+    };
+    for line in text.lines() {
+        let trimmed = line.trim();
+        if let Some((base, next)) = &mut array {
+            if trimmed.starts_with(']') {
+                array = None;
+            } else if !trimmed.is_empty() && !trimmed.starts_with('#') {
+                let key = format!("{base}.{next}");
+                *next += 1;
+                if let Some(hash) = wanted.get(&key) {
+                    let indent = &line[..line.len() - line.trim_start().len()];
+                    let item = trimmed.strip_suffix(',').unwrap_or(trimmed).trim_end();
+                    let stamped = super::stamp_value("x", item, hash)?;
+                    let stamped = stamped.strip_prefix("x = ").unwrap_or(&stamped);
+                    out.push(format!("{indent}{stamped},"));
+                    continue;
+                }
+            }
+            out.push(line.to_string());
+            continue;
+        }
+        if trimmed.starts_with('[')
+            && !trimmed.starts_with("[[")
+            && let Some(name) = trimmed[1..].split(']').next()
+        {
+            table = name.trim().to_string();
+            replacing = None;
+            out.push(line.to_string());
+            if let Some(hash) = wanted.get(&key_of("", &table)) {
+                if super::body_has_of(text, line) {
+                    replacing = Some(hash.clone());
+                } else {
+                    out.push(format!("of = \"{hash}\""));
+                }
+            }
+            continue;
+        }
+        if let Some(hash) = &replacing
+            && trimmed
+                .strip_prefix("of")
+                .is_some_and(|r| r.trim_start().starts_with('='))
+        {
+            out.push(format!("of = \"{hash}\""));
+            replacing = None;
+            continue;
+        }
+        if !trimmed.starts_with('#')
+            && let Some((name, value)) = trimmed.split_once('=')
+        {
+            let (name, value) = (name.trim(), value.trim());
+            let key = key_of(&table, name);
+            let opens = value.starts_with('[');
+            let closed = value.matches('[').count() == value.matches(']').count();
+            if opens && !closed {
+                array = Some((key, 0));
+            } else if opens {
+                let prefix = format!("{key}.");
+                if wanted.keys().any(|k| k.starts_with(&prefix)) {
+                    return Err(format!(
+                        "`{name}` is an array on one line: write it an item a line"
+                    ));
+                }
+            } else if let Some(hash) = wanted.get(&key) {
+                out.push(super::stamp_value(name, value, hash)?);
+                continue;
+            }
+        }
+        out.push(line.to_string());
+    }
+    let mut joined = out.join("\n");
+    if text.ends_with('\n') {
+        joined.push('\n');
+    }
+    Ok(joined)
 }
 
 /// Every file of lines of data as `(kind, path, text)`: `data/<kind>.toml`, `dialogue/*.toml`.
@@ -193,6 +342,59 @@ mod tests {
 
     fn checked(files: &[(&str, &str)], strict: &[String]) -> Report {
         check_data(&world(files), &english(), strict)
+    }
+
+    #[test]
+    fn stamping_lines_of_data_writes_each_hash_and_keeps_the_layout() {
+        let status = "# Dazed.\n[dazed]\nstart = \"{who:The} horjuu.\"\nend = { text = \"{who:The} tasaantuu.\", of = \"000000\" }\n";
+        let dialogue = "[ceaptun.gardener]\nlines = [\n    # the first\n    \"{thing:the}, {player:address}.\",\n]\n";
+        let files = [
+            ("data/status.toml", status),
+            ("dialogue/ceaptun.toml", dialogue),
+        ];
+        let langs = world(&files);
+        let changed = stamp_data(&english(), &langs["xx"], false).expect("stamps");
+        assert_eq!(changed.len(), 2, "{changed:?}");
+        let new: std::collections::BTreeMap<_, _> = changed.into_iter().collect();
+        let status = &new["data/status.toml"];
+        assert!(status.starts_with("# Dazed.\n[dazed]\n"), "{status}");
+        assert!(status.contains(&fnv6("{who:The} reels.")), "{status}");
+        assert!(
+            status.contains("000000"),
+            "a stale line waits for --restamp"
+        );
+        assert!(new["dialogue/ceaptun.toml"].contains("# the first"));
+        let stamped: Vec<(&str, &str)> =
+            new.iter().map(|(p, t)| (p.as_str(), t.as_str())).collect();
+        let e = checked(&stamped, &[]).errors;
+        assert_eq!(e.len(), 1, "only the stale end: {e:?}");
+        assert!(
+            e[0].contains("dazed.end") && e[0].contains("stale"),
+            "{e:?}"
+        );
+        // Restamped, it is clean, and stamping again changes nothing.
+        let langs = world(&stamped);
+        let again = stamp_data(&english(), &langs["xx"], true).expect("restamps");
+        let restamped: Vec<(&str, &str)> = (stamped.iter().copied())
+            .map(|(p, t)| {
+                let new = again
+                    .iter()
+                    .find(|(q, _)| q == p)
+                    .map_or(t, |(_, n)| n.as_str());
+                (p, new)
+            })
+            .collect();
+        assert!(checked(&restamped, &[]).errors.is_empty());
+        let langs = world(&restamped);
+        assert!(
+            stamp_data(&english(), &langs["xx"], true)
+                .unwrap()
+                .is_empty()
+        );
+        // An array on one line is refused.
+        let one = "[ceaptun.gardener]\nlines = [\"{thing:the}.\"]\n";
+        let langs = world(&[("dialogue/ceaptun.toml", one)]);
+        assert!(stamp_data(&english(), &langs["xx"], false).is_err());
     }
 
     #[test]

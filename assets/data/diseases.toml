@@ -37,7 +37,8 @@
 #               dialogue: every disease lists it), later potions
 #   onset       said when it shows (stops a rest)
 #   symptoms    said when a progression goes badly, in turn (each stops a rest)
-#   recovered   said when it is gone (lets a rest go on)
+#   recovered   said when it is gone (lets a rest go on); a line of data, said by its key
+#               `disease:<id>.recovered` (docs/dev/localization.md "Lines of data")
 # Creatures' bites may give a disease too: `on_hit = [{ disease = "filth_fever", chance = 10 }]`
 # in creatures.toml (then a check to resist it).
 
@@ -76,7 +77,7 @@ recovered = "The ache in your muscles fades."
 
 [[disease]]
 id = "the_shakes"
-name = "the shakes"
+name = "shakes"
 difficulty = 14
 incubation = 1
 damage = { dexterity = "1d6" }
