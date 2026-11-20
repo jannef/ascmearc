@@ -561,7 +561,8 @@ pub fn quest(quest: &str, path: &str) -> String {
 pub const QUEST_TEXTS: [&str; 5] = ["offer", "accept", "reminder", "done", "where"];
 
 /// What a reward says of the skill `skill` it teaches: `taught` (true) to one untrained, else
-/// `more`. `reward` is the reward's path in the quest: `reward`, or `taker.<npc>.reward`.
+/// `more`. `reward` is the reward's path in the quest: `reward`, `taker.<npc>.reward`, or
+/// `on_accept`.
 pub fn quest_skill(quest: &str, reward: &str, skill: &str, taught: bool) -> String {
     let field = if taught { "taught" } else { "more" };
     self::quest(quest, &format!("{reward}.skills.{skill}.{field}"))
@@ -601,7 +602,9 @@ fn people_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
         }
         let takers =
             (def.quarrel.takers.iter()).map(|t| (format!("taker.{}.reward", t.npc), &t.reward));
-        for (path, reward) in std::iter::once(("reward".to_string(), &def.reward)).chain(takers) {
+        let accept = (def.on_accept.iter()).map(|o| ("on_accept".to_string(), &o.reward));
+        let rewards = std::iter::once(("reward".to_string(), &def.reward)).chain(takers);
+        for (path, reward) in rewards.chain(accept) {
             for taught in &reward.skills {
                 let skill = &content.skill(taught.skill).id;
                 for (yes, text) in [(true, &taught.taught), (false, &taught.more)] {
@@ -755,6 +758,9 @@ fn quest_speech(content: &mut Content) -> Result<(), ContentError> {
         }
         if let Some((_, early)) = &def.min_level {
             add("early".into(), early, &[]);
+        }
+        if let Some(says) = def.on_accept.as_ref().and_then(|o| o.says.as_ref()) {
+            add("on_accept.says".into(), says, &[]);
         }
         if let super::Goal::Escort { joins, thanks, .. } = &def.goal {
             add("joins".into(), joins, &[]);

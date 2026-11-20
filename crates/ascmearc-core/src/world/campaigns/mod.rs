@@ -13,6 +13,7 @@ cfg_if! {
         mod druid_quest_tests;
         mod gnome_letter_tests;
         mod hellegeat_tests;
+        mod hild_welcome_tests;
         mod holtwic_tests;
         mod lictun_tests;
         mod pit_warden_tests;
