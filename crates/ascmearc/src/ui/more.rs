@@ -203,7 +203,7 @@ pub(super) fn draw(console: &mut Console, game: &Game, mode: InputMode, bindings
     for msg in earlier {
         let color = if msg.turn + 1 >= turn { TEXT } else { TEXT_DIM };
         let text = message_text(game.world.content(), msg, bindings);
-        console.print(1, row, &text, color);
+        console.print_clipped(1, row, &text, color);
         row += 1;
     }
     for line in news {

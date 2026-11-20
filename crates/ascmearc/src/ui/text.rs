@@ -1,9 +1,11 @@
 //! The UI's words (`docs/dev/localization.md` "UI text"): `assets/lang/en/ui/<module>.toml`, an
-//! entry per piece of text a screen shows, each with the `width` it must fit. `build.rs` makes an
-//! id per entry (`text::abilities_screen::TITLE`, generated into `OUT_DIR/ui_text_ids.rs`), and a
-//! screen asks [`ui`] for the text, or [`ui_with`] with its slots filled: rendered through the
-//! current language, with the same templates and renderer as the message log. English only until
-//! the language setting (L8), which changes [`language`] alone.
+//! entry per piece of text a screen shows. `build.rs` makes an id per entry
+//! (`text::abilities_screen::TITLE`, generated into `OUT_DIR/ui_text_ids.rs`), and a screen asks
+//! [`ui`] for the text, or [`ui_with`] with its slots filled: rendered through the current
+//! language, with the same templates and renderer as the message log. English only until the
+//! language setting (L8), which changes [`language`] alone. The text has no width: the screen
+//! fits it where it places it (`Console::print_in`, a panel's footer), and the screen snapshots
+//! check that it fits in every language.
 //!
 //! The text comes from the content the game loaded ([`use_content`]: with `--content-dir` and the
 //! mods), else from the built-in content (the tests, which never set one).
@@ -14,18 +16,15 @@ use std::sync::{Arc, LazyLock, RwLock};
 
 include!(concat!(env!("OUT_DIR"), "/ui_text_ids.rs"));
 
-/// A UI text id with the width its English entry declares: what a screen names.
+/// A UI text id: what a screen names.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct UiText {
     pub id: &'static str,
-    /// The columns the text must fit; a rendering wider is cut (the checker keeps a shipped
-    /// language from it).
-    pub width: usize,
 }
 
 impl UiText {
-    pub const fn new(id: &'static str, width: usize) -> Self {
-        Self { id, width }
+    pub const fn new(id: &'static str) -> Self {
+        Self { id }
     }
 }
 
@@ -65,22 +64,30 @@ pub fn ui_with(text: UiText, args: &[(&'static str, Arg)]) -> String {
     let msg = (args.iter()).fold(Msg::new(MessageId::new(text.id)), |msg, (role, arg)| {
         msg.role(*role, arg.clone())
     });
-    let rendered = language(&content).render(&Entry::new(0, msg), content.lexicon(), &written_key);
-    fit(rendered, text.width)
+    let entry = Entry::new(0, msg);
+    #[cfg(test)]
+    if let Some(shown) = SHOWN_IN.with(|l| l.borrow().clone()) {
+        let chain = [&*shown, content.english()];
+        return ascmearc_core::lang::render_chain(&chain, &entry, content.lexicon(), &written_key);
+    }
+    language(&content).render(&entry, content.lexicon(), &written_key)
 }
 
-/// `text` cut to `width` columns with `…` if it is wider: a last resort the checker keeps a
-/// shipped language from.
-fn fit(text: String, width: usize) -> String {
-    if text.chars().count() <= width {
-        return text;
-    }
-    if width == 0 {
-        return String::new();
-    }
-    let mut cut: String = text.chars().take(width - 1).collect();
-    cut.push('…');
-    cut
+#[cfg(test)]
+thread_local! {
+    /// The language this thread's UI text is shown in, English as its fallback: the screen
+    /// snapshots' check in each language (`screen_snapshots/languages.rs`).
+    static SHOWN_IN: std::cell::RefCell<Option<Arc<Language>>> =
+        const { std::cell::RefCell::new(None) };
+}
+
+/// Runs `f` with this thread's UI text in `language` (what it lacks in English).
+#[cfg(test)]
+pub(crate) fn shown_in<R>(language: Arc<Language>, f: impl FnOnce() -> R) -> R {
+    let before = SHOWN_IN.with(|l| l.replace(Some(language)));
+    let out = f();
+    SHOWN_IN.with(|l| *l.borrow_mut() = before);
+    out
 }
 
 #[cfg(test)]
@@ -100,7 +107,7 @@ mod tests {
             parsed.push((id.to_string(), roles));
         }
         let mut generated: Vec<(String, Vec<String>)> = (ALL.iter())
-            .map(|(id, roles, _)| {
+            .map(|(id, roles)| {
                 (
                     id.to_string(),
                     roles.iter().map(|r| r.to_string()).collect(),
@@ -117,14 +124,11 @@ mod tests {
     }
 
     #[test]
-    fn renders_in_english_with_its_slots_and_cuts_what_does_not_fit() {
+    fn renders_in_english_with_its_slots() {
         assert_eq!(ui(abilities_screen::TITLE), "Abilities");
         let head = ui_with(abilities_screen::MANA, &[("cost", Arg::Number(26))]);
         assert_eq!(head, "26 mana");
         let reach = ui_with(abilities_screen::REACH, &[("reach", "range 11".into())]);
         assert_eq!(reach, "Range 11.");
-        assert_eq!(fit("Abilities".into(), 9), "Abilities");
-        assert_eq!(fit("Abilities".into(), 5), "Abil…");
-        assert_eq!(fit("Abilities".into(), 0), "");
     }
 }

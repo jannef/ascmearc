@@ -5,8 +5,9 @@
 //! its own, and reports per language: missing ids (a warning; an error for a `--strict`
 //! language), stale entries (`of` differs from the hash of the English it came from, or is
 //! absent), unknown roles and forms, templates and lexicon words that do not parse, form requests
-//! in dialogue files, UI entries wider than their `width`, and (English only, a warning) message
-//! ids no code names. `--stamp` writes `of` into the entries that lack one, `--restamp` also
+//! in dialogue files, keys a text entry does not know (`width` among them: widths belong to the
+//! screen, which the screen snapshots check), and (English only, a warning) message ids no code
+//! names. `--stamp` writes `of` into the entries that lack one, `--restamp` also
 //! refreshes the stale ones; the diff is the review.
 //!
 //! `--forms fi [WORD...]` and `--suggest fi <KOTUS_XML> [WORD...]` are the Finnish translator's
@@ -235,14 +236,14 @@ pub fn fnv6(text: &str) -> String {
 }
 
 /// What an entry's hash is taken of: its text, its alternatives, or its variants, each key and
-/// value in key order; never `of` or `width`, which are no part of what a translator reads.
+/// value in key order; never `of`, which is no part of what a translator reads.
 fn canonical(value: &toml::Value) -> String {
     match value {
         toml::Value::String(s) => s.clone(),
         toml::Value::Array(items) => items.iter().map(canonical).collect::<Vec<_>>().join("\n"),
         toml::Value::Table(t) => t
             .iter()
-            .filter(|(k, _)| !matches!(k.as_str(), "of" | "width"))
+            .filter(|(k, _)| k.as_str() != "of")
             .map(|(k, v)| format!("{k}={}", canonical(v)))
             .collect::<Vec<_>>()
             .join("\n"),
@@ -268,52 +269,42 @@ fn template_files(files: &LangFiles) -> Vec<(&'static str, String, &str)> {
     out
 }
 
-/// One parsed entry: its template, its hash, its `of`, its `width`, and its written texts.
+/// One parsed entry: its template, its hash, its `of`, and the keys of a text entry beside
+/// `text` and `of`, which nothing reads (a `width` from before widths moved to the screens).
 struct Entry {
     template: Template,
     hash: String,
     of: Option<String>,
-    width: Option<usize>,
-    texts: Vec<String>,
+    unknown: Vec<String>,
 }
 
-/// Parses a file; the errors are the file's problems, never a panic. `width` is taken out
-/// before the template parser sees the table (it is no variant).
+/// The keys an entry with a `text` has; any other is an error.
+const TEXT_KEYS: &[&str] = &["text", "of"];
+
+/// Parses a file; the errors are the file's problems, never a panic.
 fn parse_file(folder: &str, stem: &str, text: &str) -> Result<BTreeMap<String, Entry>, String> {
     let what = format!("{folder}/{stem}.toml");
-    let mut table: toml::Table =
+    let table: toml::Table =
         toml::from_str(text).map_err(|e| format!("{what}: {}", e.message()))?;
     let mut meta = BTreeMap::new();
-    for (name, value) in &mut table {
+    for (name, value) in &table {
         let hash = fnv6(&canonical(value));
         let mut of = None;
-        let mut width = None;
+        let mut unknown = Vec::new();
         if let toml::Value::Table(entry) = value {
             of = entry.get("of").and_then(|v| v.as_str()).map(str::to_string);
-            width = entry
-                .remove("width")
-                .and_then(|v| v.as_integer())
-                .map(|w| w.max(0) as usize);
+            if entry.contains_key("text") {
+                unknown = (entry.keys())
+                    .filter(|k| !TEXT_KEYS.contains(&k.as_str()))
+                    .cloned()
+                    .collect();
+            }
         }
-        let source = match value {
-            toml::Value::Table(t) => t.get("text").cloned(),
-            other => Some(other.clone()),
-        };
-        let texts = match source {
-            Some(toml::Value::String(s)) => vec![s],
-            Some(toml::Value::Array(items)) => items
-                .iter()
-                .filter_map(|i| i.as_str().map(str::to_string))
-                .collect(),
-            _ => Vec::new(),
-        };
-        meta.insert(name.clone(), (hash, of, width, texts));
+        meta.insert(name.clone(), (hash, of, unknown));
     }
-    let stripped = toml::to_string(&table).map_err(|e| format!("{what}: {e}"))?;
-    let templates =
-        Templates::parse(stem, &stripped).map_err(|e| format!("{what}: {}", e.message))?;
+    let templates = Templates::parse(stem, text).map_err(|e| format!("{what}: {}", e.message))?;
     let mut out = BTreeMap::new();
-    for (name, (hash, of, width, texts)) in meta {
+    for (name, (hash, of, unknown)) in meta {
         let template = templates
             .get(&format!("{stem}.{name}"))
             .ok_or_else(|| format!("{what}: [{name}] did not parse"))?
@@ -324,8 +315,7 @@ fn parse_file(folder: &str, stem: &str, text: &str) -> Result<BTreeMap<String, E
                 template,
                 hash,
                 of,
-                width,
-                texts,
+                unknown,
             },
         );
     }
@@ -490,22 +480,14 @@ fn check_entries(
                     Some(_) => {}
                 }
             }
-            if let Some(width) = entry.width {
-                for text in &entry.texts {
-                    let fixed: usize = Line::parse(text)
-                        .0
-                        .iter()
-                        .map(|s| match s {
-                            Segment::Text(t) => t.chars().count(),
-                            Segment::Slot { .. } => 0,
-                        })
-                        .sum();
-                    if fixed > width {
-                        report.errors.push(format!(
-                            "{code}: {id}: wider than its width ({fixed} > {width}): {text}"
-                        ));
-                    }
-                }
+            for key in &entry.unknown {
+                let why = match key.as_str() {
+                    "width" => "widths belong to the screen, which fits the text to its panel",
+                    _ => "an entry with a `text` has only `text` and `of`",
+                };
+                report
+                    .errors
+                    .push(format!("{code}: {id}: unknown key `{key}` ({why})"));
             }
         }
     }
@@ -935,16 +917,20 @@ mod tests {
     }
 
     #[test]
-    fn a_ui_entry_wider_than_its_width_is_an_error() {
+    fn a_stray_width_is_an_error() {
         let mut langs = world(&[]);
         langs.get_mut("en").unwrap().files.insert(
             "ui/menu.toml".into(),
-            "[title]\ntext = \"Inventory of the {who:bare}\"\nwidth = 10\n\n[ok]\ntext = \"OK\"\nwidth = 4\n"
+            "[title]\ntext = \"Inventory of the {who:bare}\"\nwidth = 10\n\n[ok]\ntext = \"OK\"\n"
                 .into(),
         );
         let e = errors(&langs);
-        assert_eq!(e.iter().filter(|m| m.contains("wider")).count(), 1, "{e:?}");
-        assert!(e.iter().any(|m| m.contains("ui/menu/title")), "{e:?}");
+        let width: Vec<_> = e
+            .iter()
+            .filter(|m| m.contains("unknown key `width`"))
+            .collect();
+        assert_eq!(width.len(), 1, "{e:?}");
+        assert!(width[0].contains("ui/menu/title"), "{e:?}");
     }
 
     #[test]
@@ -991,10 +977,10 @@ mod tests {
     }
 
     #[test]
-    fn the_hash_is_six_hex_and_ignores_of_and_width() {
+    fn the_hash_is_six_hex_and_ignores_of() {
         assert_eq!(fnv6("a").len(), 6);
         assert_ne!(fnv6("a"), fnv6("b"));
-        let a: toml::Value = toml::from_str("text = \"x\"\nof = \"111111\"\nwidth = 3").unwrap();
+        let a: toml::Value = toml::from_str("text = \"x\"\nof = \"111111\"").unwrap();
         let b: toml::Value = toml::from_str("text = \"x\"").unwrap();
         assert_eq!(canonical(&a), canonical(&b));
     }

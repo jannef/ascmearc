@@ -8,7 +8,7 @@ built from what the player perceives, items are named by phrases English renders
 `world/combat/` says its lines from templates ("Phrases", below); **L7**, the checker ("The
 checker (L7)"); **L10**, the `fi` morphology (#1893, "The `fi` module"); and **L6a**, the UI
 text path (#1900): the app's words in `assets/lang/en/ui/`, the abilities screen converted ("UI
-text"). The doors, the welcome line, and combat say theirs from templates; every other `say`
+text"), with its widths in the screens' layout, not the text (#1908). The doors, the welcome line, and combat say theirs from templates; every other `say`
 site still says finished English as a literal line ("Literal lines"). Nothing player-visible has
 changed: the English templates and phrases read as the strings did. The English helpers core,
 the app, and the wiki generator call have moved into the crate behind re-exports at their old
@@ -327,33 +327,49 @@ When no literal is left, `LITERAL`, the `From` text impls, and this section go.
 
 **Files.** `assets/lang/en/ui/<module>.toml`, one per screen or UI module, named as its
 `crates/ascmearc/src/ui/<module>.rs` (`abilities_screen.toml`). Every entry is a table with a
-`text` (or `by` and its variants, as a message's) and a `width`, alphabetical:
+`text` (or `by` and its variants, as a message's), alphabetical:
 
 ```toml
 # A spell's roll and cost: `roll`, the dice and their type ("4d6 fire"); `cost`, its mana.
 [roll_mana]
 text = "{roll:bare}, {cost:bare} mana"
-width = 69
 ```
 
-`width` is the columns the rendered text must fit, from the screen's layout (its `WIDTH`, the
-room of a column, the lines a paragraph wraps over); say in the file's head comment where the
-numbers come from. `width` is a reserved key in `template.rs`, never a variant. Core reads the
+**No widths in the text** (owner, 2026-11-20, #1908): how wide a text may be is a fact about the
+panel, column, or hint line that holds it, so the screen code owns it. An entry declares no
+`width`; a stray one is an error `cargo xtask lang` reports. Core reads the
 files into English as `ui.<module>.<name>` (`content/english.rs`; every content file must be
 read), so `Content::english()` holds the UI text beside the messages.
 
 **Ids at build time.** `crates/ascmearc/build.rs` scans `assets/lang/en/ui/*.toml` as core's
 does the message files and writes `ui_text_ids` into `OUT_DIR`, included by `ui/text.rs`: a module
-per file and a `UiText` (the id and the width) per entry, `text::abilities_screen::TITLE`. An
-entry without a `width` fails the build. `text.rs`'s test checks the scan against the runtime
-parser.
+per file and a `UiText` (the id) per entry, `text::abilities_screen::TITLE`. A line outside
+every table fails the build. `text.rs`'s test checks the scan against the runtime parser.
 
 **Rendering.** `ui::text::ui(text::abilities_screen::TITLE)`, or with slots
 `ui_with(text::abilities_screen::MANA, &[("cost", Arg::Number(n))])`: the entry through the
-current language (`text::language`, English until L8) and the content's lexicon. A rendering wider than its `width` is cut at
-`width - 1` with `…`, a last resort (`cargo xtask lang --check` reports the overflow). The text
+current language (`text::language`, English until L8) and the content's lexicon, whole. The text
 comes from the content the game loaded (`text::use_content`, `main.rs`), else the built-in
 content (tests).
+
+**Placing it.** The screen fits the text to the room its layout gives it:
+`Console::print_in(x, y, text, fg, room)` cuts a wider text to `room - 1` and `…`, a last resort;
+`Panel::new`'s title and `Panel::footer` do so in the panel's width; a paragraph wraps
+(`fit_joined`) and its last line takes the words past its lines, so it is cut in turn. Plain
+`Console::print` keeps working, and notes a line that runs past the console's edge or into the
+frame of the panel it starts in.
+
+**Overflow is found by rendering.** The console keeps what did not fit (`Console::overflows`:
+`Past` for a line past its panel or the console, `Cut` for one cut to its room). Every screen
+snapshot case fails on any, in English (`screen_snapshots.rs::check_with`); a known one waits in
+`KNOWN` there with its issue. `ui/screen_snapshots/languages.rs` runs every case of the `cases!`
+again with the UI text in each language under `assets/lang/` that has `ui/` files (English as
+its fallback; `text::shown_in` sets the thread's language, so the harness runs its schedules on
+the test's thread), and lists `code: case: overflow` for each. A translator runs it with
+`cargo test -p ascmearc screens_fit_in_every_language`; a line it lists is fixed by a shorter
+translation or by the screen's layout in a normal PR. Until a second language has UI text, a
+test-only one, English with every letter tripled (`stretched`), proves the check finds a cut
+text (`a_cut_text_is_caught`) and a line past its panel (`a_line_past_its_panel_is_caught`).
 
 **Converting a screen (the L6 parts)** is mechanical, and `ui/abilities_screen.rs` is the worked
 example:
@@ -373,10 +389,10 @@ example:
    ability and source names) wait for their L4 slice; text from a shared module (`paged_list`'s
    page hint, `menu.rs`) waits for that module's part. A function another screen calls
    (`needs`, `spell_head`) moves with its own module and returns `String`.
-5. Import `use super::text::{<module> as T, ui, ui_with};`, replace each literal, and run the
-   screen's tests and every screen snapshot (`cargo test -p ascmearc`): they must read
-   identically. A snapshot that changes is a mistake, usually a `width` too small (the panel
-   grows wider than its `WIDTH` on an 80-column console: take the room it has there).
+5. Import `use super::text::{<module> as T, ui, ui_with};`, replace each literal, and place it
+   in its room ("Placing it": `print_in` with the room the layout computes, the panel's title
+   and footer), never a width in the text. Run the screen's tests and every screen snapshot
+   (`cargo test -p ascmearc`): they must read identically and report no overflow.
 
 ## Decisions L1 made where the design left them open
 
@@ -438,8 +454,9 @@ example:
   switches one language for the log and the UI.
 - Screens draw without a handle on the content, so `ui/text.rs` keeps the game's content in a
   static (`use_content`) instead of threading a language through every `draw`.
-- A UI entry is always a table: the shorthand `id = "text"` has no room for its `width`.
-- `width` is the English file's, compiled into the id (`UiText`); a translation declares none.
+- A UI entry is always a table (the build script's scan reads tables only). L6a declared a
+  `width` per entry, compiled into the id; #1908 (owner, 2026-11-20) took the widths out of the
+  text and into the screens ("UI text").
 - Numbers are `{role:bare}` (digits in every language); fixed keys stay written in the text.
 
 ## The checker (L7)
@@ -450,15 +467,15 @@ example:
 fails): a file that does not parse; a form the language's `Morphology::forms` (plus `and`/`or`)
 does not list; a role the English entry does not pass; an id English lacks; a lexicon word the
 module refuses; a form request in `dialogue/` other than `name`/`Name`/`a`/`the`/`address`; a
-race naming an unknown register; a UI entry (`ui/<module>.toml`, ids `ui.<module>.<name>`) whose
-fixed text is wider than its `width` (placeholders count nothing: a lower bound, so no false
-failure until L6 renders them); and **stale** entries. **Warnings**: a missing id (an error for
+race naming an unknown register; a key an entry with a `text` does not know (only `text` and
+`of`: a stray `width` is reported, since widths belong to the screens and the screen snapshots
+check them per language, "UI text"); and **stale** entries. **Warnings**: a missing id (an error for
 `--strict <code>`; Finnish is strict before it ships) and an English id no source names as
-`msg::<file>::<ID>`. English is checked for forms, parsing, and width only.
+`msg::<file>::<ID>`. English is checked for forms, parsing, and keys only.
 
 **The `of` hash** of a translated entry is the six-hex FNV-1a (32 bits, the top byte folded into
 the low 24) of the English entry's canonical text: a string as it is, an array's items joined by a
-newline, a table's keys in order as `key=value` lines, never `of` or `width`. An entry without
+newline, a table's keys in order as `key=value` lines, never `of`. An entry without
 `of` is stale too. `--stamp <code>` writes `of` into entries that lack one (`--restamp` also
 refreshes stale ones, after the translator has read the English change); it edits lines, so
 comments and layout stay: a `[table]` gets an `of` line after its header, a plain `id = "text"`

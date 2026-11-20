@@ -39,7 +39,7 @@ impl Content {
             (self.english.add_templates(stem, text))
                 .map_err(|e| ContentError::new(path, e.message))?;
         }
-        // The UI text is the app's (it renders it, `ui/text.rs`); its `width`s are read there.
+        // The UI text is the app's (it renders it, `ui/text.rs`, and fits it where it places it).
         for (path, stem, text) in files.in_dir(UI) {
             (self.english.add_templates(&format!("ui.{stem}"), text))
                 .map_err(|e| ContentError::new(path, e.message))?;

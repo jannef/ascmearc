@@ -22,6 +22,7 @@ use crate::settings::mods::Mods;
 use crate::ui::screens::{MenuChoice, ScreenStack};
 use ascmearc_core::World;
 use ascmearc_core::content::Content;
+use bevy::ecs::schedule::SingleThreadedExecutor;
 use bevy::input::ButtonState;
 use bevy::input::keyboard::{Key, KeyboardInput, NativeKeyCode};
 use clap::Parser;
@@ -115,8 +116,11 @@ name = "Sigeberht"
 /// `cargo test -p ascmearc cases::main_menu` one.
 macro_rules! cases {
     ($($test:ident: $case:expr,)*) => {
-        mod cases {
+        pub(super) mod cases {
             use super::*;
+
+            /// Every case of the group, for the check in each language (`languages.rs`).
+            pub(in crate::ui::screen_snapshots) const ALL: &[Case] = &[$($case,)*];
             $(
                 #[test]
                 fn $test() {
@@ -131,6 +135,7 @@ mod abilities;
 mod crafting;
 mod creation;
 mod items;
+mod languages;
 mod magic_items;
 mod menus;
 mod pages;
@@ -143,37 +148,83 @@ mod talk;
 static CONTENT: LazyLock<Arc<Content>> =
     LazyLock::new(|| Arc::new(ascmearc_assets::content().expect("content")));
 
-/// The snapshot of one of the [`cases!`].
+/// Every case of the [`cases!`], in their groups' order.
+fn all_cases() -> impl Iterator<Item = &'static Case> {
+    [
+        abilities::cases::ALL,
+        crafting::cases::ALL,
+        creation::cases::ALL,
+        items::cases::ALL,
+        magic_items::cases::ALL,
+        menus::cases::ALL,
+        pages::cases::ALL,
+        progression::cases::ALL,
+        shops::cases::ALL,
+        talk::cases::ALL,
+    ]
+    .into_iter()
+    .flatten()
+}
+
+/// The snapshot of one of the [`cases!`]; its text fits where it is drawn (in English: the
+/// other languages are `languages.rs`'s).
 fn check(case: &Case) {
     let content = &*CONTENT;
-    insta::assert_snapshot!(case.name, render(case, content.clone()));
+    check_with(case, content.clone());
 }
 
 /// The snapshot `case.name` of `case` run on `content`: a case on content of its own. Every
 /// snapshot is asserted in this module, so the files keep its name whichever file the case is in.
 fn check_with(case: &Case, content: Arc<Content>) {
-    insta::assert_snapshot!(case.name, render(case, content));
+    let mut app = start(case, content);
+    let shown = render(case, &mut app);
+    insta::assert_snapshot!(case.name, shown);
+    let overflows = overflows(case, &app);
+    assert!(
+        overflows.is_empty(),
+        "{}:\n{}",
+        case.name,
+        overflows.join("\n")
+    );
 }
 
-/// The UI console's text once `case` has started and its keys were pressed, as [`shown`] tells
-/// it, the status bar kept if the case is about it.
-fn render(case: &Case, content: Arc<Content>) -> String {
-    let mut app = start(case, content);
-    press_keys(&mut app, case.keys.unwrap_or(""));
+/// Text known not to fit in English, as `(case, the text's start)`, each with its issue: the
+/// check passes over it until the screen is fixed. Add none to make a check pass.
+const KNOWN: &[(&str, &str)] = &[
+    // #1910: a long spell's detail runs over the magic screen's frame at 80 columns.
+    ("magic-screen-short", "6d6 force, shoves on a big hit"),
+];
+
+/// What did not fit where `app`'s UI drew it ([`Console::overflows`]), a line each, but the
+/// [`KNOWN`] of `case`.
+pub(super) fn overflows(case: &Case, app: &App) -> Vec<String> {
+    let console = app.world().resource::<Console>();
+    let known = |text: &str| (KNOWN.iter()).any(|(c, t)| *c == case.name && text.starts_with(t));
+    (console.overflows().iter())
+        .filter(|o| !known(&o.text))
+        .map(|o| format!("{:?} at {},{}: {}", o.kind, o.x, o.y, o.text))
+        .collect()
+}
+
+/// The UI console's text once `case` has started (`app`) and its keys were pressed, as
+/// [`shown`] tells it, the status bar kept if the case is about it.
+pub(super) fn render(case: &Case, app: &mut App) -> String {
+    press_keys(app, case.keys.unwrap_or(""));
+    let app = &*app;
     if case.status_bar {
         // The bar as a player sees it (#1666): where the row shows whole, it is drawn again
         // without the developer segments a debug build adds.
         let console = app.world().resource::<Console>();
         let mut lines: Vec<String> = text(console).split('\n').map(String::from).collect();
-        if let Some(bar) = status_bar(&app, drawn_dev(&app))
+        if let Some(bar) = status_bar(app, drawn_dev(app))
             && lines.last() == Some(&bar)
-            && let Some(player) = status_bar(&app, false)
+            && let Some(player) = status_bar(app, false)
         {
             *lines.last_mut().expect("a row") = player;
         }
         redact(lines.join("\n"))
     } else {
-        shown(&app)
+        shown(app)
     }
 }
 
@@ -319,6 +370,12 @@ pub(super) fn start(case: &Case, content: Arc<Content>) -> App {
     if let Some(game) = game {
         app.insert_resource(game);
     }
+    // On this thread, so the UI text is in the language the test shows it in (`languages.rs`).
+    let on_this_thread = |schedule: &mut Schedule| {
+        schedule.set_executor(SingleThreadedExecutor::new());
+    };
+    app.edit_schedule(Startup, on_this_thread)
+        .edit_schedule(Update, on_this_thread);
     app.update();
     app
 }
