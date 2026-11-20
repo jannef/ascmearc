@@ -277,21 +277,21 @@ struct Entry {
     texts: Vec<String>,
 }
 
-/// Parses a file; the errors are the file's problems, never a panic. `width` is taken out
-/// before the template parser sees the table (it is no variant).
+/// Parses a file; the errors are the file's problems, never a panic. `width` is read from the
+/// raw table; the template parser reserves it (it is no variant).
 fn parse_file(folder: &str, stem: &str, text: &str) -> Result<BTreeMap<String, Entry>, String> {
     let what = format!("{folder}/{stem}.toml");
-    let mut table: toml::Table =
+    let table: toml::Table =
         toml::from_str(text).map_err(|e| format!("{what}: {}", e.message()))?;
     let mut meta = BTreeMap::new();
-    for (name, value) in &mut table {
+    for (name, value) in &table {
         let hash = fnv6(&canonical(value));
         let mut of = None;
         let mut width = None;
         if let toml::Value::Table(entry) = value {
             of = entry.get("of").and_then(|v| v.as_str()).map(str::to_string);
             width = entry
-                .remove("width")
+                .get("width")
                 .and_then(|v| v.as_integer())
                 .map(|w| w.max(0) as usize);
         }
@@ -309,9 +309,7 @@ fn parse_file(folder: &str, stem: &str, text: &str) -> Result<BTreeMap<String, E
         };
         meta.insert(name.clone(), (hash, of, width, texts));
     }
-    let stripped = toml::to_string(&table).map_err(|e| format!("{what}: {e}"))?;
-    let templates =
-        Templates::parse(stem, &stripped).map_err(|e| format!("{what}: {}", e.message))?;
+    let templates = Templates::parse(stem, text).map_err(|e| format!("{what}: {}", e.message))?;
     let mut out = BTreeMap::new();
     for (name, (hash, of, width, texts)) in meta {
         let template = templates
@@ -945,6 +943,19 @@ mod tests {
         let e = errors(&langs);
         assert_eq!(e.iter().filter(|m| m.contains("wider")).count(), 1, "{e:?}");
         assert!(e.iter().any(|m| m.contains("ui/menu/title")), "{e:?}");
+    }
+
+    #[test]
+    fn a_ui_entry_with_a_width_parses_as_a_plain_entry() {
+        let e = parse_file(
+            "en/ui",
+            "menu",
+            "[title]\ntext = \"Abilities\"\nwidth = 54\n",
+        )
+        .unwrap();
+        let title = &e["title"];
+        assert_eq!(title.width, Some(54));
+        assert!(matches!(title.template, Template::Line(_)), "not a variant");
     }
 
     #[test]
