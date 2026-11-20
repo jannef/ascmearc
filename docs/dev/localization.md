@@ -333,6 +333,12 @@ example and `world/combat/` (`messages/combat.toml`) the one whose lines name th
    read the same, and the replays' hashes move only where a converted line was said (a literal
    entry became an id's): regenerate those with `replay --create` and say so.
 
+`world/allies/` (`messages/allies.toml`) is converted: `World::called_phrase` and `ally_phrase`
+are `called` and `ally_subject` as phrases, `pack_args` an order's allies as a list said
+`{pack:the}` (a lone one is its phrase, so its count agrees the verb). What it leaves as text
+for now: the `came_line` that stops a calling or a taming (a `came` role), and the data's own words
+(a charm's, a familiar's arrival, a status's `seen`).
+
 What combat leaves as literal lines, for their own slices: a rank risen and what it teaches
 (`fight.rs::ranks_news`, the data's lines joined), acid's lines (`corrode.rs`, the data's
 `{}`), and how the player died (`fight.rs::Cause::message`, said by `health/`).

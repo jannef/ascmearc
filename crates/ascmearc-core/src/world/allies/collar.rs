@@ -23,6 +23,8 @@
 use crate::action::Positions;
 use crate::content::{ActionKind, Content, SlotId};
 use crate::geom::Dir;
+use crate::lang::{Msg, Phrase};
+use crate::msg;
 use crate::object::{self, Stack};
 use crate::world::{ActorId, Spent, World, allies_beside};
 
@@ -52,15 +54,15 @@ impl World {
         let Some(known) =
             (self.allies_of(player).into_iter()).find(|id| takes(&self.state.actors[id]))
         else {
-            self.say("You keep no beast to give it to.");
+            self.say(msg::allies::NO_BEAST_KEPT);
             return Spent::Nothing;
         };
         let Some(beast) = self.collar_wearer(way) else {
             if way.is_some() {
-                self.say("No beast of yours stands that way.");
+                self.say(msg::allies::NO_BEAST_THAT_WAY);
             } else {
-                let name = self.ally_subject(known);
-                self.say(format!("{name} is not beside you."));
+                let name = self.ally_phrase(known);
+                self.say(Msg::new(msg::allies::NOT_BESIDE_YOU).role("who", name));
             }
             return Spent::Nothing;
         };
@@ -72,22 +74,26 @@ impl World {
         if self.state.actors[&beast].escorting().is_some() {
             return self.give_escort(item, beast);
         }
-        let name = self.ally_subject(beast);
+        let name = self.ally_phrase(beast);
         let Some(stack) = self.state.player().inventory.get(item).cloned() else {
-            self.say("You carry no such thing.");
+            self.say(msg::allies::CARRY_NO_SUCH_THING);
             return Spent::Nothing;
         };
         if !fits_neck(&self.content, &stack) {
-            self.say(format!("{name} has no use for that."));
+            self.say(Msg::new(msg::allies::NO_USE_FOR_THAT).role("who", name));
             return Spent::Nothing;
         }
         if !self.may_loose(item) {
             return Spent::Nothing;
         }
         let (spent, one) = self.hand_over_one(item, ActionKind::Wear);
-        let what = definite(&self.lore().describe(&one));
-        self.say(format!("You fasten {what} about {name}'s neck."));
-        self.fasten(beast, one, &name);
+        let what = self.lore().phrase(&one);
+        self.say(
+            Msg::new(msg::allies::FASTEN_COLLAR)
+                .role("what", what)
+                .role("who", name.clone()),
+        );
+        self.fasten(beast, one, name);
         spent
     }
 
@@ -117,7 +123,7 @@ impl World {
     }
 
     /// `collar` goes on `beast`'s neck, and what was there falls on its cell.
-    fn fasten(&mut self, beast: ActorId, collar: Stack, name: &str) {
+    fn fasten(&mut self, beast: ActorId, collar: Stack, name: Phrase) {
         let content = self.content.clone();
         let Some(slot) = neck(&content) else {
             return;
@@ -137,10 +143,12 @@ impl World {
         let Some(old) = old else {
             return;
         };
-        let what = self.lore().describe(&old);
-        let bare = definite(&what);
-        let bare = bare.strip_prefix("the ").unwrap_or(&bare);
-        self.say(format!("{name}'s {bare} falls to the floor."));
+        let what = self.lore().phrase(&old);
+        self.say(
+            Msg::new(msg::allies::COLLAR_FALLS)
+                .role("who", name)
+                .role("what", what),
+        );
         let level = self.state.current_mut();
         let mut pile = level.objects_at(at).to_vec();
         object::add_to_pile(&mut pile, std::slice::from_ref(&old), &content);

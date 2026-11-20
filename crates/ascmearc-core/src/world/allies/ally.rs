@@ -51,13 +51,15 @@ use crate::action::{Command, Event};
 use crate::combat::Profile;
 use crate::content::{
     ActionKind, Content, CreatureId, CreatureSpawn, FactionId, LevelKind, SpellId, Stance, counted,
-    the_start,
 };
 use crate::geom::Pos;
+use crate::lang::{Arg, Msg, Phrase};
+use crate::msg;
 use crate::noise::Act;
 use crate::skills::Use;
-use crate::text::{and_list, capitalized};
+use crate::text::and_list;
 use crate::time::{Duration, GameTime};
+use crate::world::combat::fight;
 use crate::world::creatures::ai::{Plan, Route};
 use crate::world::{Actor, ActorId, Mind, Spent, World, WorldState, stance_between};
 use serde::{Deserialize, Serialize};
@@ -297,13 +299,13 @@ impl World {
         lasts: Option<Duration>,
     ) -> Spent {
         if self.content.allies().is_none() {
-            self.say("This world knows no allies.");
+            self.say(msg::allies::NO_ALLIES);
             return Spent::Nothing;
         }
         let Some(kind) =
             (self.content.creature_id(creature)).filter(|&c| Some(c) != self.content.ids().player)
         else {
-            self.say(format!("There is no creature `{creature}`."));
+            self.say(Msg::new(msg::allies::NO_SUCH_CREATURE).role("creature", creature));
             return Spent::Nothing;
         };
         let player = self.state.player;
@@ -315,7 +317,7 @@ impl World {
             self.summon_cells(player, DEV_SPREAD)
         };
         if cells.is_empty() {
-            self.say("There is no room for them beside you.");
+            self.say(msg::allies::NO_ROOM_BESIDE_YOU);
             return Spent::Nothing;
         }
         let until = lasts.map(|d| self.state.time + d);
@@ -333,13 +335,12 @@ impl World {
             made += 1;
         }
         if made == 0 {
-            self.say("You cannot lead more than this.");
+            self.say(msg::allies::LEAD_NO_MORE);
             return Spent::Nothing;
         }
         let def = self.content.creature(kind);
-        let what = few(&def.name, &def.plural, made);
-        let verb = if made == 1 { "comes" } else { "come" };
-        self.say(format!("{} {verb} to your side.", capitalized(&what)));
+        let what = fight::creature(def).count(made);
+        self.say(Msg::new(msg::allies::COME_TO_YOUR_SIDE).role("what", what));
         Spent::NoTime
     }
 
@@ -438,8 +439,8 @@ impl World {
                 Route::There | Route::Unreachable => {
                     self.set_order(id, Order::Follow);
                     if self.perception.sees_actors_at(pos) {
-                        let who = self.ally_subject(id);
-                        self.say(format!("{who} looks back at you."));
+                        let who = self.ally_phrase(id);
+                        self.say(Msg::new(msg::allies::LOOKS_BACK).role("who", who));
                     }
                     Plan::Wait
                 }
@@ -479,7 +480,7 @@ impl World {
         let player = self.state.player;
         let mut allies = self.allies_here(player);
         if allies.is_empty() {
-            self.say("You have no one to call.");
+            self.say(msg::allies::NO_ONE_TO_CALL);
             return Spent::Nothing;
         }
         // An escort is set on nothing (`escort.rs`): it says so, and the rest go.
@@ -494,11 +495,10 @@ impl World {
         if let Command::SetOn(at) = command
             && !self.perception.is_visible(at)
         {
-            self.say("You can set them on only a place you see.");
+            self.say(msg::allies::SET_ON_UNSEEN);
             return Spent::Nothing;
         }
-        let pack = self.pack_phrase(&allies);
-        let one = allies.len() == 1;
+        let pack = self.pack_args(&allies);
         for &id in &allies {
             let order = match command {
                 Command::Heel => Order::Follow,
@@ -510,16 +510,18 @@ impl World {
             self.set_order(id, order);
         }
         let line = match command {
-            Command::Heel if one => format!("{} comes to heel.", capitalized(&pack)),
-            Command::Heel => format!("{} come to heel.", capitalized(&pack)),
-            Command::Hold if one => format!("{} holds.", capitalized(&pack)),
-            Command::Hold => format!("{} hold.", capitalized(&pack)),
+            Command::Heel => Msg::new(msg::allies::HEEL).role("pack", pack),
+            Command::Hold => Msg::new(msg::allies::HOLD).role("pack", pack),
             Command::SetOn(at) => {
                 let target = (self.state.actor_at(&self.state.current_level, at))
                     .filter(|a| a.id != player && self.perception.sees_actors_at(at))
-                    .map(|a| the_start(&self.content.creature(a.creature).name).to_lowercase());
-                let on = target.as_deref().unwrap_or("that spot");
-                format!("You set {pack} on {on}.")
+                    .map(|a| fight::creature(self.content.creature(a.creature)));
+                match target {
+                    Some(target) => Msg::new(msg::allies::SET_ON)
+                        .role("pack", pack)
+                        .role("target", target),
+                    None => Msg::new(msg::allies::SET_ON_SPOT).role("pack", pack),
+                }
             }
         };
         self.make_noise(player, Act::Order);
@@ -531,6 +533,39 @@ impl World {
             self.train(Use::Handle);
         }
         Spent::NoTime
+    }
+
+    /// The allies `ids` as a line names them, as a list of phrases: a kept beast by its name, an
+    /// escort as the player calls it, the rest "your" and their type, one phrase to a type with
+    /// its count ("Snel", "your wolves"); a template says it `{pack:the}` ("Snel and your
+    /// wolves") and agrees its verb by `pack.number`.
+    pub(in crate::world) fn pack_args(&self, ids: &[ActorId]) -> Arg {
+        let mut names: Vec<Phrase> = Vec::new();
+        let mut kinds: Vec<(CreatureId, u32)> = Vec::new();
+        for id in ids {
+            let Some(a) = self.state.actors.get(id) else {
+                continue;
+            };
+            if a.kept().is_some() || a.ally.as_ref().is_some_and(|x| x.source.is_escort()) {
+                names.push(self.called_phrase(a));
+                continue;
+            }
+            match kinds.iter_mut().find(|(c, _)| *c == a.creature) {
+                Some((_, n)) => *n += 1,
+                None => kinds.push((a.creature, 1)),
+            }
+        }
+        let you = self.you();
+        names.extend(kinds.into_iter().map(|(c, n)| {
+            fight::creature(self.content.creature(c))
+                .count(n)
+                .owned_by(you.clone())
+        }));
+        // One alone is that phrase, so its own count agrees the verb ("your wolves hold").
+        match <[Phrase; 1]>::try_from(names) {
+            Ok([one]) => Arg::Phrase(one),
+            Err(names) => Arg::List(names.into_iter().map(Arg::Phrase).collect()),
+        }
     }
 
     /// The allies `ids` as the player's words name them: "your wolf", "your wolves", "your
@@ -631,9 +666,8 @@ impl World {
             .filter(|id| self.perception.sees_actors_at(self.state.actors[id].pos))
             .collect();
         if !seen.is_empty() {
-            let words = capitalized(&self.pack_phrase(&seen));
-            let verb = if seen.len() == 1 { "is" } else { "are" };
-            self.say(format!("{words} {verb} left behind."));
+            let pack = self.pack_args(&seen);
+            self.say(Msg::new(msg::allies::LEFT_BEHIND).role("pack", pack));
         }
         let mut came: Vec<ActorId> = Vec::new();
         for id in coming {
@@ -660,15 +694,12 @@ impl World {
             came.push(id);
         }
         if !came.is_empty() {
-            let words = capitalized(&self.pack_phrase(&came));
-            let one = came.len() == 1;
-            let line = match (from_overworld, one) {
-                (true, true) => format!("{words} follows you in."),
-                (true, false) => format!("{words} follow you in."),
-                (false, true) => format!("{words} comes with you."),
-                (false, false) => format!("{words} come with you."),
+            let pack = self.pack_args(&came);
+            let line = match from_overworld {
+                true => msg::allies::FOLLOW_YOU_IN,
+                false => msg::allies::COME_WITH_YOU,
             };
-            self.say(line);
+            self.say(Msg::new(line).role("pack", pack));
         }
         // Summons left here earlier whose time has passed are gone.
         let gone: Vec<ActorId> = (self.state.actors.values())
@@ -734,7 +765,11 @@ impl World {
         if self.perception.sees_actors_at(actor.pos) {
             let def = self.content.creature(actor.creature);
             let words = def.depart.as_deref().unwrap_or("fades away");
-            self.say(format!("{} {words}.", the_start(&def.name)));
+            self.say(
+                Msg::new(msg::allies::DEPARTS)
+                    .role("who", fight::creature(def))
+                    .role("words", words),
+            );
         }
         self.fallen.push(actor);
     }
