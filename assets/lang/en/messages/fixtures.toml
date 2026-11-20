@@ -14,6 +14,8 @@
 
 # The forgotten altar's fire, harming the player (`outcome.rs`).
 altar_fire_harmless = "The altar's fire washes over you harmlessly."
+# `verb`: the fire's damage type's verb ("burns"); `who`: the creature hit, by its type.
+altar_fire_hits = "The altar's fire {verb:bare} {who:a}."
 # `verb`: the fire's damage type's verb ("burns").
 altar_fire_hits_you = "The altar's fire {verb:bare} you."
 altar_gutters = "The altar's glow gutters and dies."

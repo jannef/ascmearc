@@ -665,10 +665,14 @@ impl World {
                 _ => Msg::new(msg::fixtures::ALTAR_FIRE_HITS_YOU).role("verb", verb),
             });
         } else if self.perception.sees_actors_at(to) {
-            // A literal line still: the creature as `creature_called` says it, lower-cased
-            // ("a kobold"), which a phrase would not say for a unique ("Black Wystan").
-            let name = self.creature_called(target).to_lowercase();
-            self.say(format!("The altar's fire {verb} {name}."));
+            // By its type, as `creature_called` named it ("a kobold", "Black Wystan").
+            let creature = self.state.actors[&target].creature;
+            let who = crate::world::combat::fight::creature(self.content.creature(creature));
+            self.say(
+                Msg::new(msg::fixtures::ALTAR_FIRE_HITS)
+                    .role("verb", verb)
+                    .role("who", who),
+            );
         }
         if taken <= 0 {
             return;

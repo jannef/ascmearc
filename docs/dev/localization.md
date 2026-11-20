@@ -408,9 +408,9 @@ core picks from a few (an equipment action's "wield", "ready", "put on", in both
 "put away" or "take off") is an entry per value (`equip.rs::put_on_line`, `take_off_line`).
 Text roles until their words are converted (#1949): a talent's name, a damage type's verb, a
 slot's name or the id typed, and `came_line`. `equip_saying` takes `Option<impl Into<Msg>>`,
-`chosen` its refusal as `impl Into<Msg>`. What it leaves: the altar's fire seen hitting a
-creature stays a literal line (it says the creature lower-cased, "a kobold", which a phrase
-would say "Black Wystan" for a unique); `Burden::news` (`burden.rs`) stays core's text.
+`chosen` its refusal as `impl Into<Msg>`. The altar's fire seen hitting a creature names it by its
+type (`{who:a}`): a unique by its name, "Black Wystan", where the old line lower-cased it (a bug,
+corrected). What it leaves: `Burden::news` (`burden.rs`) stays core's text.
 
 When no literal is left, `LITERAL`, the `From` text impls, and this section go.
 
