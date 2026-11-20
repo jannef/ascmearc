@@ -34,13 +34,17 @@
 use super::work::{Job, Task};
 use crate::action::Event;
 use crate::combat;
+use crate::content::data_line;
 use crate::content::{ActionKind, ClassActive, Content, LevelKind, RigDef, RigId, RigTakes, Trap};
 use crate::geom::{Dir, Pos};
+use crate::lang::{MessageId, Msg};
+use crate::msg;
 use crate::perception::PerceptionView;
 use crate::rng::draw;
 use crate::stats::Stat;
 use crate::text::article;
 use crate::time::Duration;
+use crate::world::combat::fight::word;
 use crate::world::{Actor, Spent, World};
 
 /// A rig under way: which, and on which cell.
@@ -51,8 +55,8 @@ pub(in crate::world) struct Rigging {
 }
 
 impl Job for Rigging {
-    fn leave(&self) -> String {
-        "you leave the trap unfinished".into()
+    fn leave(&self) -> Msg {
+        msg::crafting::LEAVE_TRAP_UNFINISHED.into()
     }
 
     fn stat(&self, _: &World) -> Option<Stat> {
@@ -74,8 +78,36 @@ pub struct RigRow {
     /// "up to 3 arrows", "a wood billet and a knife", "a digging tool ready".
     pub takes: String,
     pub time: Duration,
-    /// "no digging tool ready"; `None`: it may be rigged, a cell allowing.
-    pub lacking: Option<&'static str>,
+    /// "no digging tool ready" (`crafting.lacking_*`); `None`: it may be rigged, a cell allowing.
+    pub lacking: Option<MessageId>,
+}
+
+/// What a rigger lacks for a rig.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum Lack {
+    Knife,
+    Inputs,
+    DigTool,
+}
+
+impl Lack {
+    /// What the rig list says is lacking: "no knife".
+    fn words(self) -> MessageId {
+        match self {
+            Lack::Knife => msg::crafting::LACKING_KNIFE,
+            Lack::Inputs => msg::crafting::LACKING_RIG_INPUTS,
+            Lack::DigTool => msg::crafting::LACKING_DIG_TOOL,
+        }
+    }
+
+    /// The refusal of a rig begun without it: "You have no knife."
+    fn refusal(self) -> MessageId {
+        match self {
+            Lack::Knife => msg::crafting::NO_KNIFE,
+            Lack::Inputs => msg::crafting::NOTHING_TO_RIG_WITH,
+            Lack::DigTool => msg::crafting::NO_DIGGING_TOOL,
+        }
+    }
 }
 
 /// What a rig's inputs are found in the pack: the stack spent and how many of it.
@@ -113,14 +145,14 @@ fn stock_stack(actor: &Actor, content: &Content, group: &str) -> Option<usize> {
     })
 }
 
-/// What `actor` would rig `def` with now, or why not, in words ("nothing to rig it with": "You have …" in a refusal).
-fn inputs(actor: &Actor, content: &Content, def: &RigDef) -> Result<Inputs, &'static str> {
+/// What `actor` would rig `def` with now, or what they lack.
+fn inputs(actor: &Actor, content: &Content, def: &RigDef) -> Result<Inputs, Lack> {
     if def.knife && super::temper::whittle_lack(actor, content).is_some() {
-        return Err("no knife");
+        return Err(Lack::Knife);
     }
     match &def.takes {
         RigTakes::Ammo { kind, most } => {
-            let item = ammo_stack(actor, content, kind).ok_or("nothing to rig it with")?;
+            let item = ammo_stack(actor, content, kind).ok_or(Lack::Inputs)?;
             let count = actor.inventory[item].count.min(u32::from(*most));
             Ok(Inputs {
                 spent: Some((item, count)),
@@ -128,14 +160,14 @@ fn inputs(actor: &Actor, content: &Content, def: &RigDef) -> Result<Inputs, &'st
             })
         }
         RigTakes::Stock { group, charges } => {
-            let item = stock_stack(actor, content, group).ok_or("nothing to rig it with")?;
+            let item = stock_stack(actor, content, group).ok_or(Lack::Inputs)?;
             Ok(Inputs {
                 spent: Some((item, 1)),
                 charges: *charges,
             })
         }
         RigTakes::DigTool { charges } => {
-            actor.dig_tool(content).ok_or("no digging tool ready")?;
+            actor.dig_tool(content).ok_or(Lack::DigTool)?;
             Ok(Inputs {
                 spent: None,
                 charges: *charges,
@@ -144,9 +176,9 @@ fn inputs(actor: &Actor, content: &Content, def: &RigDef) -> Result<Inputs, &'st
     }
 }
 
-/// Why `actor` lacks what `def` takes, in words; `None` when they carry it.
-pub(crate) fn lack(actor: &Actor, content: &Content, def: &RigDef) -> Option<&'static str> {
-    inputs(actor, content, def).err()
+/// Why `actor` lacks what `def` takes, in the rig list's words; `None` when they carry it.
+pub(crate) fn lack(actor: &Actor, content: &Content, def: &RigDef) -> Option<MessageId> {
+    inputs(actor, content, def).err().map(Lack::words)
 }
 
 /// What `def` takes, in words: "up to 3 arrows", "a wood billet and a knife", "a digging tool
@@ -245,34 +277,34 @@ impl PerceptionView<'_> {
 impl World {
     /// Why the cell `at` cannot hold a rigged trap, as the player knows it, in words; `None`
     /// when it may. Someone unseen there, or a hidden trap, is found only at the end.
-    fn rig_refusal(&self, at: Pos) -> Option<&'static str> {
+    fn rig_refusal(&self, at: Pos) -> Option<MessageId> {
         let content = &self.content;
         let level = self.state.current();
         let Some(terrain) = level.terrain_at(at) else {
-            return Some("There is no room to rig a trap there.");
+            return Some(msg::crafting::NO_ROOM_FOR_TRAP);
         };
         let def = content.terrain(terrain);
         let fungus = content.herbs().is_some_and(|h| h.terrain == terrain);
         if level.is_door(content, at) || def.stairs.is_some() || level.stairs_at(at).is_some() {
-            return Some("A trap cannot be rigged in a way through.");
+            return Some(msg::crafting::TRAP_NOT_IN_WAY_THROUGH);
         }
         if !def.walkable || def.swim || fungus {
-            return Some("There is no room to rig a trap there.");
+            return Some(msg::crafting::NO_ROOM_FOR_TRAP);
         }
         if def.chest.is_some() || level.chests().contains_key(&at) {
-            return Some("A chest stands there.");
+            return Some(msg::crafting::CHEST_STANDS_THERE);
         }
         if def.freeze.is_some() || def.ice.is_some() || level.ice_at(at).is_some() {
-            return Some("A trap cannot be rigged in water or on ice.");
+            return Some(msg::crafting::TRAP_NOT_IN_WATER);
         }
         if level.shops().iter().any(|s| s.contains(at)) {
-            return Some("The shopkeeper would never stand for it.");
+            return Some(msg::crafting::SHOPKEEPER_WOULD_NEVER);
         }
         if level.traps.get(&at).is_some_and(|t| t.known) {
-            return Some("There is a trap there already.");
+            return Some(msg::crafting::TRAP_THERE_ALREADY);
         }
         if self.perception.sees_actors_at(at) && self.state.actor_at(&level.id, at).is_some() {
-            return Some("Someone is in the way.");
+            return Some(msg::crafting::SOMEONE_IN_THE_WAY);
         }
         None
     }
@@ -288,19 +320,19 @@ impl World {
             return Spent::Nothing;
         };
         let Some(rig) = rules.id(name) else {
-            self.say(format!("There is no rig `{name}`."));
+            self.say(Msg::new(msg::crafting::NO_SUCH_RIG).role("name", name.to_string()));
             return Spent::Nothing;
         };
         let def = rules.rig(rig);
         let Some(dir) = dir else {
-            self.say("Which way?");
+            self.say(msg::crafting::WHICH_WAY);
             return Spent::Nothing;
         };
         if self.state.current().kind == LevelKind::Overworld {
-            self.say("You cannot rig a trap here.");
+            self.say(msg::crafting::CANNOT_RIG_HERE);
             return Spent::Nothing;
         }
-        if self.refused_afloat("You cannot rig a trap in deep water.") {
+        if self.refused_afloat(msg::crafting::CANNOT_RIG_IN_DEEP_WATER) {
             return Spent::Nothing;
         }
         let at = self.player_pos().step(dir);
@@ -313,15 +345,15 @@ impl World {
             .wall
             .is_some_and(|reach| !wall_near(&content, level, at, reach))
         {
-            self.say("There is no wall near enough to fix it to.");
+            self.say(msg::crafting::NO_WALL_NEAR);
             return Spent::Nothing;
         }
         if let Err(why) = inputs(self.state.player(), &content, def) {
-            self.say(format!("You have {why}."));
+            self.say(why.refusal());
             return Spent::Nothing;
         }
-        let name = def.name.to_lowercase();
-        self.say(format!("You set to work on {} {name}.", article(&name)));
+        let name = word(&def.name.to_lowercase());
+        self.say(Msg::new(msg::crafting::SET_TO_WORK_ON_RIG).role("rig", name));
         self.craft_work(Task::Rig(Rigging { rig, at }), def.seconds)
     }
 
@@ -338,8 +370,8 @@ impl World {
         if let Some(kind) = (self.state.current().traps.get(&at)).map(|t| t.kind) {
             self.know_trap(at);
             self.state.current_mut().trap_memory.insert(at, kind);
-            let name = &content.trap(kind).name;
-            self.say(format!("You find {} {name} there already.", article(name)));
+            let trap = word(&content.trap(kind).name);
+            self.say(Msg::new(msg::crafting::FIND_TRAP_THERE).role("trap", trap));
             let mut news = Vec::new();
             self.perceive(&mut news);
             events.extend(news);
@@ -347,11 +379,11 @@ impl World {
         }
         let level = &self.state.current().id;
         if self.state.actor_at(level, at).is_some() {
-            self.say("Something is in the way; you leave the trap unfinished.");
+            self.say(msg::crafting::IN_THE_WAY_UNFINISHED);
             return;
         }
         let Ok(inputs) = inputs(self.state.player(), &content, def) else {
-            self.say("You have nothing left to rig it with.");
+            self.say(msg::crafting::NOTHING_LEFT_TO_RIG_WITH);
             return;
         };
         let me = self.state.player();
@@ -359,7 +391,7 @@ impl World {
         let natural = combat::roll_natural(&mut draw!(self, "rig/player"));
         let snaps = natural == 2;
         if !snaps && !crate::check::makes(natural, modifier, rules.difficulty) {
-            self.say("The rig will not hold.");
+            self.say(msg::crafting::RIG_WILL_NOT_HOLD);
             return;
         }
         if let Some((item, count)) = inputs.spent {
@@ -377,14 +409,14 @@ impl World {
         level.trap_memory.insert(at, def.trap);
         let mut news = Vec::new();
         if snaps {
-            self.say(def.snaps.clone());
+            self.say(data_line::said(data_line::rig(&def.id, true)));
             let player = self.state.player;
             let climb = self.spring_trap(at, player, &mut news);
             if climb > 0 && self.state.death.is_none() {
                 self.run_turn(climb, &mut news);
             }
         } else {
-            self.say(def.made.clone());
+            self.say(data_line::said(data_line::rig(&def.id, false)));
         }
         self.perceive(&mut news);
         events.extend(news);

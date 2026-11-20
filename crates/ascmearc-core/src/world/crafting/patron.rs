@@ -38,8 +38,9 @@ use crate::content::{
     QuestKind, RecipeCount, RecipeDef, RecipeId,
 };
 use crate::dice::Dice;
-use crate::lang::{Arg, Phrase};
+use crate::lang::{Arg, Msg, Phrase};
 use crate::magic::worked;
+use crate::msg;
 use crate::object::Stack;
 use crate::perception::PerceptionView;
 use crate::rng::Rng;
@@ -187,17 +188,17 @@ impl PerceptionView<'_> {
         let content = self.content;
         let recipe = content.recipe(content.recipes().id(&open.recipe)?);
         let object = recipe.result.as_ref()?.object;
-        let name = &content.object(object).name;
         let fine = (self.player.inventory.iter()).any(|s| fine(s, object));
+        let giver = || Arg::Text(open.giver.clone());
         let status = if fine {
-            format!("Return to {}.", open.giver).into()
+            Msg::new(msg::crafting::COMMISSION_RETURN).role("giver", giver())
         } else {
-            "Not made yet.".into()
+            Msg::new(msg::crafting::COMMISSION_NOT_MADE)
         };
-        let mut giver = open.giver.clone();
-        if let Some(first) = giver.get_mut(..1) {
-            first.make_ascii_uppercase();
-        }
+        let work = Phrase::id(format!("object:{}", content.object(object).id));
+        let objective = Msg::new(msg::crafting::COMMISSION_WANTS)
+            .role("giver", giver())
+            .role("what", work);
         Some(QuestView {
             id: "commission".into(),
             name: format!("Commission: {}", work_words(content, recipe)),
@@ -207,7 +208,7 @@ impl PerceptionView<'_> {
             completed: 0,
             giver: open.giver.clone().into(),
             offer: open.offer.clone().into(),
-            objective: format!("{giver} wants you to bring them a Fine {name} or better.").into(),
+            objective,
             target: Some(content.object(object).id.clone()),
             status,
             sides: Vec::new(),
@@ -270,8 +271,9 @@ impl World {
                         // magic as the player knows it (#1709).
                         let gold = rules.paid(stack.worth(&content));
                         let gold = u32::try_from(gold).unwrap_or(u32::MAX);
-                        let what = self.lore().describe(&stack);
-                        self.say(format!("You hand over {what}."));
+                        let what = self.lore().phrase(&stack);
+                        let said = Msg::new(msg::crafting::HAND_OVER).role("what", what);
+                        self.say(said);
                         let line = self
                             .said(id, &words.delivered)
                             .with("gold", i64::from(gold));
@@ -339,7 +341,7 @@ impl World {
             .and_then(|a| self.dialogue_of(a))
             .is_some_and(|d| self.patron_words(d).is_some());
         if patron && self.state.patron.open.take().is_some() {
-            self.say("With your patron dead, the commission is off.");
+            self.say(msg::crafting::PATRON_DEAD);
         }
     }
 

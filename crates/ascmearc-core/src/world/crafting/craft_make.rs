@@ -1036,8 +1036,8 @@ impl Job for Crafting {
         self.picks[..now.len()].copy_from_slice(now);
     }
 
-    fn nothing_left(&self) -> &'static str {
-        "You have nothing left to work with."
+    fn nothing_left(&self) -> Msg {
+        msg::crafting::NOTHING_LEFT_TO_WORK_WITH.into()
     }
 
     fn stat(&self, w: &World) -> Option<Stat> {

@@ -50,10 +50,13 @@ use crate::action::Event;
 use crate::combat;
 use crate::content::{ActionKind, Content, Cutting, Gems, MaterialId};
 use crate::item_parts::ItemPart;
+use crate::lang::{Msg, Phrase};
+use crate::msg;
 use crate::object::{self, Stack};
 use crate::rng::draw;
 use crate::skills::{SkillId, Use};
 use crate::stats::Stat;
+use crate::world::items::stacks_arg;
 use crate::world::{Spent, World};
 
 /// Whether `stack` has anything to salvage: not a spirit weapon, with a part of a material some
@@ -117,8 +120,8 @@ impl Job for Salvaging {
         self.item = super::work::one(now);
     }
 
-    fn leave(&self) -> String {
-        "you leave off your work".into()
+    fn leave(&self) -> Msg {
+        msg::crafting::LEAVE_OFF_WORK.into()
     }
 
     fn done(&self, w: &mut World, _: &mut Vec<Event>) {
@@ -142,19 +145,19 @@ impl World {
             return Spent::Nothing;
         };
         let Some(stack) = self.state.player().inventory.get(item) else {
-            self.say("You carry no such thing.");
+            self.say(msg::crafting::CARRY_NO_SUCH_THING);
             return Spent::Nothing;
         };
         if !salvageable(&self.content, stack) {
-            self.say("There is nothing in it worth saving.");
+            self.say(msg::crafting::NOTHING_WORTH_SAVING);
             return Spent::Nothing;
         }
         if self.state.player().equipment.holds(item) {
-            self.say("Take it off first.");
+            self.say(msg::crafting::TAKE_IT_OFF_FIRST);
             return Spent::Nothing;
         }
         if self.item_protected(stack) {
-            self.say("It will not come apart.");
+            self.say(msg::crafting::WILL_NOT_COME_APART);
             return Spent::Nothing;
         }
         if !self.may_loose(item) {
@@ -169,7 +172,7 @@ impl World {
             }
         };
         let name = self.salvage_name(stack, taken);
-        self.say(format!("You set to taking {name} apart."));
+        self.say(Msg::new(msg::crafting::SET_TO_TAKING_APART).role("what", name));
         self.craft_work(Task::Salvage(Salvaging { item }), rules.seconds)
     }
 
@@ -177,32 +180,34 @@ impl World {
     /// one of anything not stackable; of a stackable thing the fewest that make a piece, so a
     /// copper ingot takes 72 copper coins; one of a magic stack whatever its materials give, for
     /// its magic. With fewer, the refusal's words.
-    fn salvage_take(&self, stack: &Stack) -> Result<u32, String> {
+    fn salvage_take(&self, stack: &Stack) -> Result<u32, Msg> {
         let content = &self.content;
         let percent = salvage_percent(content, self.state.player());
         match crate::piece::salvage_batch(stack, content, percent) {
             Some((n, _)) if n <= stack.count => Ok(n),
             _ if stack.magic().is_some() => Ok(1),
             Some((_, material)) => {
-                let piece = crate::piece::make(content, material, 1).map_or_else(
-                    || "anything".to_string(),
-                    |p| object::phrase(&[p], self.lore()),
-                );
-                let (_, plural) = self.lore().names(stack);
-                Err(format!("You have too few {plural} to make {piece}."))
+                let what = self.lore().names_phrase(stack);
+                Err(match crate::piece::make(content, material, 1) {
+                    Some(piece) => Msg::new(msg::crafting::TOO_FEW_TO_MAKE)
+                        .role("what", what)
+                        .role("piece", self.lore().phrase(&piece)),
+                    None => Msg::new(msg::crafting::TOO_FEW_TO_MAKE_ANYTHING).role("what", what),
+                })
             }
-            None => Err("There is nothing in it worth saving.".into()),
+            None => Err(msg::crafting::NOTHING_WORTH_SAVING.into()),
         }
     }
 
-    /// What the lines call `count` of `stack` taken apart: "the quarterstaff", "72 copper coins".
-    fn salvage_name(&self, stack: &Stack, count: u32) -> String {
+    /// What the lines call `count` of `stack` taken apart (`{what}` of `set_to_taking_apart`,
+    /// `take_apart`): one by its title ("the quarterstaff"), several counted ("72 copper coins").
+    fn salvage_name(&self, stack: &Stack, count: u32) -> Phrase {
         match count {
-            1 => format!("the {}", self.lore().title(stack)),
+            1 => self.lore().title_phrase(stack),
             _ => {
                 let mut some = stack.clone();
                 some.count = count;
-                object::phrase(&[some], self.lore())
+                self.lore().phrase(&some)
             }
         }
     }
@@ -219,7 +224,7 @@ impl World {
             salvageable(&content, s) && !me.equipment.holds(item) && !self.item_protected(s)
         });
         let Some(stack) = still else {
-            self.say("You have nothing left to work on.");
+            self.say(msg::crafting::NOTHING_LEFT_TO_WORK_ON);
             return;
         };
         let taken = match self.salvage_take(stack) {
@@ -270,7 +275,7 @@ impl World {
             crate::world::fixtures::outcome::remove_stacks(me, &[item]);
         }
         let one = batch;
-        self.say(format!("You take {name} apart."));
+        self.say(Msg::new(msg::crafting::TAKE_APART).role("what", name));
         for line in caught.lines {
             self.say(line);
         }
@@ -287,7 +292,7 @@ impl World {
                 saved.push(fall);
                 continue;
             }
-            let gem_name = &content.material(material).name;
+            let gem_name = Phrase::id(format!("material:{}", content.material(material).id));
             match fall.gem(&content) {
                 Some((gem, cutting)) => {
                     let gems = content.gems().expect("a loose gem has gems");
@@ -299,24 +304,24 @@ impl World {
                             let part = ItemPart::gem(&content, None, gem, less);
                             let chipped =
                                 Stack::new(gems.object, fall.count).with_parts(vec![part]);
-                            self.say(format!("The {gem_name} chips."));
+                            self.say(Msg::new(msg::crafting::CHIPS).role("gem", gem_name));
                             saved.push(chipped);
                         }
-                        None => self.say(format!("The {gem_name} shatters.")),
+                        None => self.say(Msg::new(msg::crafting::SHATTERS).role("gem", gem_name)),
                     }
                 }
                 None => {
                     let what = self.part_word(&one, material);
-                    self.say(format!("The {what} cracks and is good for nothing."));
+                    self.say(Msg::new(msg::crafting::CRACKS_GOOD_FOR_NOTHING).role("what", what));
                 }
             }
         }
         saved.extend(caught.stacks);
         if saved.is_empty() {
-            self.say("Nothing is left worth keeping.");
+            self.say(msg::crafting::NOTHING_LEFT_WORTH_KEEPING);
         } else {
-            let text = format!("You save {}.", object::phrase(&saved, self.lore()));
-            self.say(text);
+            let what = stacks_arg(&saved, self.lore());
+            self.say(Msg::new(msg::crafting::YOU_SAVE).role("what", what));
             for stack in saved {
                 object::add_to_inventory(self.state.inventory_mut(), stack, &content);
             }
@@ -336,13 +341,18 @@ impl World {
     }
 
     /// What the failed lines call the part of `stack` made of `material`: its first part of it
-    /// by name ("blade"), else the material ("hardwood").
-    fn part_word(&self, stack: &Stack, material: MaterialId) -> String {
+    /// by name ("blade", `part:<id>`), else the material ("hardwood", `material:<id>`).
+    fn part_word(&self, stack: &Stack, material: MaterialId) -> Phrase {
         let content = &self.content;
         (stack.parts(content).iter())
             .find(|p| p.material == material)
             .and_then(|p| p.part)
-            .map(|id| content.part_defs()[usize::from(id.0)].name.clone())
-            .unwrap_or_else(|| content.material(material).name.clone())
+            .map(|id| {
+                Phrase::id(format!(
+                    "part:{}",
+                    content.part_defs()[usize::from(id.0)].id
+                ))
+            })
+            .unwrap_or_else(|| Phrase::id(format!("material:{}", content.material(material).id)))
     }
 }

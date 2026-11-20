@@ -5,7 +5,7 @@
 use super::patron::{self, Patron};
 use crate::character::CharacterSpec;
 use crate::magic::worked::Quality;
-use crate::test_support::{CONTENT, run as act, texts};
+use crate::test_support::{CONTENT, english_of, run as act, texts};
 use crate::world::*;
 
 /// The patron's corner of the Gæsthūs, and the cell west of it.
@@ -209,10 +209,8 @@ fn a_commission_is_offered_logged_handed_in_and_paid_then_the_next() {
             .expect("graded"),
     );
     let worth = u32::try_from(fine.value(&CONTENT)).expect("worth");
-    assert_eq!(
-        w.perception().commission().expect("open").status,
-        crate::lang::Msg::from("Return to your patron.")
-    );
+    let status = w.perception().commission().expect("open").status;
+    assert_eq!(english_of(&CONTENT, &status), "Return to your patron.");
     let coins = gold(&w);
     act(&mut w, "chat:E");
     assert!(

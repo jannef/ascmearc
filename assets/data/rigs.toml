@@ -37,6 +37,8 @@
 #                directions (1 to 10; a shot's slit is the nearest wall)
 #   made         said when it is rigged
 #   snaps        said when a natural 2 springs it on the rigger
+#                (both lines of data, said by their keys, naming no role;
+#                docs/dev/localization.md "Lines of data")
 
 difficulty = 10
 skill = "woodcraft"
