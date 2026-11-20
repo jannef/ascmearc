@@ -395,6 +395,10 @@ width = 60
 
 Ids are generated per module (`ui::text::abilities_screen::TITLE`), §12.
 
+**Amended (owner, 2026-11-20, #1908): width is a property of the UI container, not of the
+string.** UI entries declare no `width` (a stray one is an error the checker reports); the screen
+that places a text fits it to its panel, column, or hint line (§12, §15).
+
 ## 7. Morphology: the trait and the three modules
 
 ```rust
@@ -726,6 +730,16 @@ a last resort that the check keeps from happening in shipped languages. Screens 
 measuring (`info_tabs::panel_width`) measure the rendered text as they do now, so most of them
 need no rule. The message line wraps as it does today, on the rendered text.
 
+**Amended (owner, 2026-11-20, #1908): widths belong to the UI container, not the text.** The
+paragraph above is superseded. A declared `width` was a fact about the panel copied into the text
+file, stale the moment the layout changed, and the static check counted placeholders as nothing,
+so a line with an inserted Finnish name passed and still overflowed. Entries declare no width,
+and a UI id is only its id. `ui`/`ui_with` return the text; the screen cuts it where it places it
+(`Console::print_in`, a panel's title and footer), `…` still only a last resort. Overflow is found
+by rendering: every screen snapshot case runs in each language under `assets/lang/`, and fails on
+text that ran past its panel or the console, or was cut (`ui/screen_snapshots/languages.rs`;
+`docs/dev/localization.md` "UI text").
+
 **Setting.** `language = "fi"` in `settings.toml` (`Settings`, beside `temperature`), default
 `"en"` (no locale detection: the game ships with two languages, the setting is one keypress away,
 and a guess from the OS locale would surprise the many Finns who run their systems in English).
@@ -774,7 +788,7 @@ undertaking, not this design's.
 | unknown form | a form the language's `Morphology::forms` does not list |
 | unparsable lexicon entry | `word` the module's parser refuses (a class it lacks, a bad gradation letter, a base form that does not fit the class's declared shape); the same report the game gives at language load (a mod's load message), where the word then renders in its base form |
 | case form in dialogue | any form but `name`/`Name`/`a`/`the`/`address` in a dialogue file or field |
-| UI overflow | a rendered UI entry wider than its `width` |
+| UI overflow | a rendered UI entry wider than its `width` (amended 2026-11-20, #1908: no widths in the text; overflow is found by rendering every screen snapshot case per language, a test in the app, and the checker reports a stray `width` key instead) |
 | unused id | an English template whose generated constant no code names (the checker greps `crates/` for `msg::<file>::<ID>`; a `pub` constant gives no dead-code warning, so the check is the only report) |
 
 `cargo xtask lang --stamp <code>` writes `of` into entries that lack one and, with `--restamp`,

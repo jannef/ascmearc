@@ -186,8 +186,8 @@ impl Templates {
     }
 }
 
-/// The keys of an entry table that are not variants (`width`: a UI entry's room, read by the app).
-const RESERVED: [&str; 4] = ["of", "by", "else", "width"];
+/// The keys of an entry table that are not variants.
+const RESERVED: [&str; 3] = ["of", "by", "else"];
 
 fn parse_template(value: &toml::Value) -> Result<Template, String> {
     match value {
@@ -290,20 +290,12 @@ mod tests {
         assert_eq!(Line::parse("{a:b}").0, [slot("a", "b")]);
     }
 
-    /// A UI entry's `width` is its room, not a variant, with `text` or with `by`.
+    /// Widths belong to the screen, not the text (owner, 2026-11-20): `width` is no key, and
+    /// in a table of variants it is a variant that is no template.
     #[test]
-    fn a_width_is_no_variant() {
-        let file = "[title]\ntext = \"Abilities\"\nwidth = 54\n\
-                    [count]\nby = \"n.number\"\none = \"one\"\nelse = \"many\"\nwidth = 20\n";
-        let templates = Templates::parse("ui.x", file).expect("parses");
-        assert_eq!(
-            templates.get("ui.x.title"),
-            Some(&Template::Line(Line(vec![text("Abilities")])))
-        );
-        let Some(Template::Variants { variants, .. }) = templates.get("ui.x.count") else {
-            panic!("variants");
-        };
-        assert_eq!(variants.keys().collect::<Vec<_>>(), ["one"]);
+    fn a_width_is_no_key() {
+        let file = "[count]\nby = \"n.number\"\none = \"one\"\nelse = \"many\"\nwidth = 20\n";
+        assert!(Templates::parse("ui.x", file).is_err());
     }
 
     #[test]

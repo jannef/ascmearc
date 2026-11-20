@@ -631,7 +631,7 @@ fn draw_messages(
         if let Some(status) = line.status() {
             about = format!("{about} {status}");
         }
-        console.print(1, 0, &about, TEXT);
+        console.print_clipped(1, 0, &about, TEXT);
         let missile = match aim.kind {
             AimKind::Fire => view.ready_to_fire().map(|(_, item, _)| item),
             AimKind::Throw(item)
@@ -662,7 +662,7 @@ fn draw_messages(
     }
     if let InputMode::Look(p) = mode {
         let about = look::describe(&game.world.perception(), p, blood);
-        console.print(1, 0, &about, TEXT);
+        console.print_clipped(1, 0, &about, TEXT);
         let stop = match bindings.key_name(KeyCommand::Look) {
             Some(key) => format!("Esc or {key}"),
             None => "Esc".to_string(),
@@ -671,10 +671,10 @@ fn draw_messages(
         // What Knowledge tells of a creature takes the row's start: the description above is
         // long enough to clip, the hint can spare it.
         let x = match look::known(&game.world.perception(), p) {
-            Some(known) => 2 + console.print(1, 1, &known, TEXT),
+            Some(known) => 2 + console.print_clipped(1, 1, &known, TEXT),
             None => 1,
         };
-        console.print(x, 1, &prompt, TEXT_DIM);
+        console.print_clipped(x, 1, &prompt, TEXT_DIM);
         return;
     }
     more::draw(console, game, mode, bindings);

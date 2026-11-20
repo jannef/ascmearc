@@ -61,6 +61,26 @@ impl CellFx {
 /// toward the background (`BLUR_PULL` in `console.wesl`) would wash the glyph out.
 pub const BLUR_MAX: u8 = 8;
 
+/// Text that did not fit where it was placed: what the screen snapshots check in every language
+/// (`docs/dev/localization.md` "UI text"). The layout owns the widths, so the console and the
+/// containers on it note what they cut or what ran past them.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Overflow {
+    pub x: i32,
+    pub y: i32,
+    /// The whole text, as it was given.
+    pub text: String,
+    pub kind: OverflowKind,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum OverflowKind {
+    /// Ran past the console's right edge or into its panel's frame ([`Console::print`]).
+    Past,
+    /// Cut to its container's room with `…` ([`Console::print_in`]), or more lines than it has.
+    Cut,
+}
+
 /// A grid of cells; `None` cells are transparent.
 #[derive(Resource, Debug, Default)]
 pub struct Console {
@@ -70,6 +90,11 @@ pub struct Console {
     anims: Vec<CellAnim>,
     fx: Vec<CellFx>,
     blur: Vec<u8>,
+    /// The panels drawn since the last clear, `(x, y, w, h)` with their frame, in order: a line
+    /// printed inside the last one that holds it must stop before its right frame.
+    panels: Vec<(i32, i32, i32, i32)>,
+    /// What did not fit since the last clear.
+    overflows: Vec<Overflow>,
     /// Set when cells change; cleared by the upload.
     pub dirty: bool,
 }
@@ -121,7 +146,37 @@ impl Console {
         self.anims.fill(CellAnim::STILL);
         self.fx.fill(CellFx::NONE);
         self.blur.fill(0);
+        self.panels.clear();
+        self.overflows.clear();
         self.dirty = true;
+    }
+
+    /// The text that did not fit since the last clear, in the order it was drawn.
+    #[cfg(test)]
+    pub fn overflows(&self) -> &[Overflow] {
+        &self.overflows
+    }
+
+    /// Notes that `text` at `(x, y)` did not fit (a container that cuts it on its own: a
+    /// paragraph with more lines than its room).
+    pub fn note_overflow(&mut self, x: i32, y: i32, text: &str, kind: OverflowKind) {
+        self.overflows.push(Overflow {
+            x,
+            y,
+            text: text.to_string(),
+            kind,
+        });
+    }
+
+    /// The right edge (exclusive) a line starting at `(x, y)` has: the frame of the last panel
+    /// drawn that holds it inside its frame, else the console's.
+    fn right_edge(&self, x: i32, y: i32) -> i32 {
+        let inside = |&&(px, py, pw, ph): &&(i32, i32, i32, i32)| {
+            x > px && x < px + pw - 1 && y > py && y < py + ph - 1
+        };
+        (self.panels.iter().rev().find(inside)).map_or(self.cols as i32, |&(px, _, pw, _)| {
+            (px + pw - 1).min(self.cols as i32)
+        })
     }
 
     fn index(&self, x: i32, y: i32) -> Option<usize> {
@@ -190,8 +245,14 @@ impl Console {
     }
 
     /// Writes `text` starting at `(x, y)` keeping each cell's background (black where the cell
-    /// was transparent). Returns the number of cells written (clipped at the right edge).
+    /// was transparent). Returns the number of cells written (clipped at the right edge). Text
+    /// on the console that runs past its right edge, or into the frame of the panel it is in,
+    /// is noted ([`OverflowKind::Past`]): trailing blanks count nothing.
     pub fn print(&mut self, x: i32, y: i32, text: &str, fg: Rgb) -> i32 {
+        let len = text.trim_end().chars().count() as i32;
+        if len > 0 && y >= 0 && (y as u32) < self.rows && x + len > self.right_edge(x, y) {
+            self.note_overflow(x, y, text, OverflowKind::Past);
+        }
         let mut written = 0;
         for (i, ch) in text.chars().enumerate() {
             let cx = x + i as i32;
@@ -206,6 +267,32 @@ impl Console {
         written
     }
 
+    /// Writes `text` as [`Console::print`] does, cut at the console's right edge by design and so
+    /// not noted: a row of the message line that keeps one message a row (the full text is in
+    /// the message log), or what look mode describes.
+    pub fn print_clipped(&mut self, x: i32, y: i32, text: &str, fg: Rgb) -> i32 {
+        let room = (self.cols as i32 - x).max(0) as usize;
+        let shown: String = text.chars().take(room).collect();
+        self.print(x, y, &shown, fg)
+    }
+
+    /// Writes `text` at `(x, y)` in a container with `room` columns: cut to `room - 1` and `…`
+    /// when it is wider, a last resort the overflow check reports ([`OverflowKind::Cut`]).
+    /// Returns the number of cells written.
+    pub fn print_in(&mut self, x: i32, y: i32, text: &str, fg: Rgb, room: i32) -> i32 {
+        let room = room.max(0) as usize;
+        if text.trim_end().chars().count() <= room {
+            let shown: String = text.chars().take(room).collect();
+            return self.print(x, y, &shown, fg);
+        }
+        self.note_overflow(x, y, text, OverflowKind::Cut);
+        let shown: String = match room {
+            0 => String::new(),
+            _ => text.chars().take(room - 1).chain(['…']).collect(),
+        };
+        self.print(x, y, &shown, fg)
+    }
+
     /// Fills a rectangle with `cell`.
     pub fn fill(&mut self, x: i32, y: i32, w: i32, h: i32, cell: Cell) {
         for cy in y..y + h {
@@ -215,11 +302,13 @@ impl Console {
         }
     }
 
-    /// Draws a single-line box border with `bg` interior.
+    /// Draws a single-line box border with `bg` interior: a panel, which the lines printed
+    /// inside it must fit ([`Console::print`]).
     pub fn frame(&mut self, x: i32, y: i32, w: i32, h: i32, fg: Rgb, bg: Rgb) {
         if w < 2 || h < 2 {
             return;
         }
+        self.panels.push((x, y, w, h));
         self.fill(x, y, w, h, Cell { ch: ' ', fg, bg });
         let mut edge = |cx, cy, ch| self.put(cx, cy, Cell { ch, fg, bg });
         for cx in x + 1..x + w - 1 {
@@ -248,6 +337,37 @@ mod tests {
         assert_eq!(c.print(3, 0, "hello", Rgb::WHITE), 2);
         assert_eq!(c.get(4, 0).map(|cell| cell.ch), Some('e'));
         assert_eq!(c.print(0, 5, "x", Rgb::WHITE), 0);
+    }
+
+    #[test]
+    fn what_does_not_fit_is_noted() {
+        let mut c = Console::default();
+        c.resize(20, 6);
+        c.print(15, 0, "fits ", Rgb::WHITE);
+        c.print_clipped(15, 1, "clipped by design", Rgb::WHITE);
+        assert_eq!(c.overflows(), []);
+        c.print(15, 2, "past the edge", Rgb::WHITE);
+        // In a frame, a line must stop before its right edge.
+        c.frame(0, 3, 10, 3, Rgb::WHITE, Rgb::BLACK);
+        c.print(1, 4, "12345678", Rgb::WHITE);
+        assert_eq!(c.print_in(1, 4, "123456789", Rgb::WHITE, 8), 8);
+        assert_eq!(c.get(8, 4).map(|cell| cell.ch), Some('…'));
+        let kinds: Vec<_> = c
+            .overflows()
+            .iter()
+            .map(|o| (o.kind, o.text.as_str()))
+            .collect();
+        assert_eq!(
+            kinds,
+            [
+                (OverflowKind::Past, "past the edge"),
+                (OverflowKind::Cut, "123456789")
+            ]
+        );
+        c.print(1, 4, "123456789", Rgb::WHITE);
+        assert_eq!(c.overflows().len(), 3);
+        c.clear();
+        assert_eq!(c.overflows(), []);
     }
 
     #[test]

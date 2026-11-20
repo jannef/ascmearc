@@ -239,7 +239,7 @@ impl AbilitiesScreen {
         let (x, top) = (panel.inner_x(), panel.y + 2);
         let fits = |y: i32| y < panel.y + panel.h - 2;
         if self.entries.is_empty() && fits(top) {
-            console.print(x + 2, top, &ui(T::NONE), TEXT_DIM);
+            console.print_in(x + 2, top, &ui(T::NONE), TEXT_DIM, panel.inner_w() - 2);
         }
         // The name column: the longest name on any page, so turning the page keeps it.
         let name_w = (self.entries.iter())
@@ -275,9 +275,8 @@ impl AbilitiesScreen {
             }
             console.print(x + 2, y, &format!("{letter}  {}", entry.name), color);
             let state_x = x + 5 + name_w + 2;
-            let room = (panel.x + panel.w - 2 - state_x).max(0) as usize;
-            let state: String = entry.state.chars().take(room).collect();
-            console.print(state_x, y, &state, TEXT_DIM);
+            let room = panel.x + panel.w - 2 - state_x;
+            console.print_in(state_x, y, &entry.state, TEXT_DIM, room);
         }
         // Below the list: why the ability just chosen cannot be used, else what the selected
         // one does.
@@ -288,11 +287,18 @@ impl AbilitiesScreen {
         };
         let words: Vec<String> = text.split(' ').map(String::from).collect();
         let lines = fit_joined(&words, " ", panel.inner_w());
-        // In a panel cut short, never over the list.
+        // In a panel cut short, never over the list. Words past its lines go on the last one,
+        // which the panel then cuts.
         let first = panel.y + panel.h - 3 - DESCRIPTION;
-        for (line, y) in lines.iter().take(DESCRIPTION as usize).zip(first..) {
+        let shown = lines.len().min(DESCRIPTION as usize);
+        for (i, y) in (0..shown).zip(first..) {
+            let line = if i + 1 == shown {
+                lines[i..].join(" ")
+            } else {
+                lines[i].clone()
+            };
             if fits(y) && y >= top + count {
-                console.print(x, y, line, color);
+                console.print_in(x, y, &line, color, panel.inner_w());
             }
         }
         panel.footer(console, &self.footer(bindings));

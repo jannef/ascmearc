@@ -490,7 +490,15 @@ asserted in the harness (`check`, `check_with` for a case on content of its own)
 keeps the name `ascmearc__ui__screen_snapshots__<name>.snap` whichever group holds the case. To
 add one, add a case to its group's `cases!` (`test_name: Case { name: "test-name", .. }`: one
 `#[test]` a case, #1529, so one mismatch hides no other), run `cargo test -p ascmearc screen_snapshots`, then `cargo insta review` (or
-`INSTA_UPDATE=always`, then read the diff). The snapshot leaves out the status bar's row where
+`INSTA_UPDATE=always`, then read the diff). Each case also fails on text that does not fit
+where it is drawn (#1908): the console notes a line that runs past its right edge or into the
+frame of the panel it is in (`Console::print`), and a container that cuts its text to its room
+with `…` (`Console::print_in`: a panel's title and footer, a column) notes the cut. A screen
+places its text in the room its layout has (the widths are the layout's, never the text's:
+`docs/dev/localization.md` "UI text"); rows that clip at the console's edge by design (an earlier
+message one a row, look mode's description) use `Console::print_clipped`. A known overflow waits
+in `KNOWN` with its issue. `ui/screen_snapshots/languages.rs` runs every case again with the UI
+text in each language under `assets/lang/`. The snapshot leaves out the status bar's row where
 it shows whole (`shown`, #1521: a HUD change rewrites only the cases about the bar, those with
 `status_bar: true`, which show the bar as a player sees it: a whole row is drawn again without the developer segments, the turn, position, light, vision, and seed, that the debug build adds, #1666) and writes the game's version `[version]` (#1532). A changed screen shows as a text diff in the PR. New
 screens get a case here, never a golden (CLAUDE.md "Golden screenshots").

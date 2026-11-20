@@ -508,7 +508,8 @@ impl Panel {
             h,
         };
         console.frame(panel.x, panel.y, w, h, TEXT_DIM, PANEL_BG);
-        console.print(panel.x + 2, panel.y, title, ACCENT);
+        // On the top frame, clear of its corners and a stroke of it.
+        console.print_in(panel.x + 2, panel.y, title, ACCENT, w - 4);
         panel
     }
 
@@ -564,8 +565,10 @@ impl Panel {
         }
     }
 
+    /// The hint line at the bottom, in the panel's inner width.
     pub fn footer(&self, console: &mut Console, text: &str) {
-        console.print(self.inner_x(), self.y + self.h - 2, text, TEXT_DIM);
+        let y = self.y + self.h - 2;
+        console.print_in(self.inner_x(), y, text, TEXT_DIM, self.inner_w());
     }
 }
 
