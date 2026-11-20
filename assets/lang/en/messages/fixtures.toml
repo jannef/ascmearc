@@ -9,8 +9,9 @@
 # Roles: `chest` is a chest by its band ("coffer") or its terrain; `what` a thing, or a
 # feature's terrain; `who` a creature a line is about, as the player calls it; `trap` a trap by
 # its name ("arrow trap"); `came` the clause that says what stopped a long action ("A kobold
-# comes into view"). `talent` is a talent's name and `verb` a damage type's verb ("burns"),
-# text until those words are converted. `level` is a number.
+# comes into view"). `talent` is a talent by its name (`talent:<id>`, with what was chosen for it
+# `character.talent_chosen`); `verb` a damage type's verb ("burns"), text until those words are
+# converted. `level` is a number.
 
 # The forgotten altar's fire, harming the player (`outcome.rs`).
 altar_fire_harmless = "The altar's fire washes over you harmlessly."

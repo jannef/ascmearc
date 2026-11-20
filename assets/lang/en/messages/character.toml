@@ -9,8 +9,9 @@
 # Roles: `who` is a creature a line is about, as the player calls it ("the kobold", "Grimbold").
 # `status` is a status by its name (`status:<id>`, "invisible"), `skill` a skill's
 # (`skill:<id>`), and `name` a resource's (`resource:<id>`); `talent` and `gift` are a talent's
-# and a profane gift's names from the data, and `reason` why an ability cannot be used: text
-# until those words are converted (#1949). `id`
+# and a profane gift's names (`talent:<id>`, with what was chosen for it `talent_chosen`), and
+# `trees` and `talents` lists of them (`tree:<id>`); `reason` why an ability cannot be used: text
+# until it is converted (#1949). `id`
 # is an id a dev action was given, as typed. `xp`, `level`, and `value` are numbers, said in
 # digits.
 
@@ -106,6 +107,9 @@ still_status = "You are still {status:bare}."
 # What the player is told as the Profane takes them (`profane_taken.rs`), in turn.
 taken_called_back = "The flesh that was given is called back to the one that gave it."
 taken_wakes = "Something old and hungry wakes behind your eyes, and it does not sleep again."
+# A talent with what was chosen for it, as a sentence names it (`Content::talent_arg`): `talent`,
+# the talent; `choice`, what was chosen, lower case ("Weapon Focus (long blades)").
+talent_chosen = "{talent:bare} ({choice:bare})"
 # Warnings that a stat's pile has come within reach of a drop (`stat_deeds.rs`).
 warn_dexterity = "Your hands feel less sure."
 warn_intelligence = "Your mind feels dull."

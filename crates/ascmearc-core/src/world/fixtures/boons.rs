@@ -142,10 +142,8 @@ impl World {
         found(self);
         let (id, choice) = ways[draw!(self, "boons/talent/player").index(ways.len())].clone();
         self.bestow(&id, choice.as_deref());
-        let def = content
-            .talents()
-            .get(content.talents().id(&id).expect("offered"));
-        let name = def.name_for(&content, choice.as_deref());
+        let talent = content.talents().id(&id).expect("offered");
+        let name = content.talent_arg(talent, choice.as_deref());
         self.say(Msg::new(msg::fixtures::GAIN_TALENT).role("talent", name));
         true
     }
@@ -168,10 +166,8 @@ impl World {
         found(self);
         let id = flaws[draw!(self, "boons/flaw/player").index(flaws.len())].clone();
         self.bestow(&id, None);
-        let def = content
-            .talents()
-            .get(content.talents().id(&id).expect("a flaw"));
-        self.say(Msg::new(msg::fixtures::BEAR_THE_MARK).role("talent", def.name.as_str()));
+        let flaw = content.talent_phrase(content.talents().id(&id).expect("a flaw"));
+        self.say(Msg::new(msg::fixtures::BEAR_THE_MARK).role("talent", flaw));
         true
     }
 

@@ -1135,9 +1135,9 @@ impl World {
         before: &[(WeaponSkillId, crate::content::WeaponAbilityId)],
     ) {
         let content = self.content.clone();
-        let table = content.weapon_skills();
-        let how = table.skill(risen).phrase.as_str();
-        let mut lines: Vec<Arg> = vec![Msg::new(msg::combat::SKILL_RISEN).role("how", how).into()];
+        let how = content.weapon_skill_how(risen);
+        let risen_line = Msg::new(msg::combat::SKILL_RISEN).role("how", how);
+        let mut lines: Vec<Arg> = vec![risen_line.clone().into()];
         // The first active a rank teaches grants the stamina it is paid from to one without it
         // (the third place stamina is granted, beside the class tables and a restored run),
         // said after that active.
@@ -1150,7 +1150,7 @@ impl World {
         }
         // Said as one line (`docs/dev/localization.md` "Nested messages").
         let said = match lines.len() {
-            1 => Msg::new(msg::combat::SKILL_RISEN).role("how", how),
+            1 => risen_line,
             _ => Msg::new(msg::world::LINES).role("lines", Arg::List(lines)),
         };
         self.news.push(said);

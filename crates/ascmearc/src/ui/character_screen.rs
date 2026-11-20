@@ -226,7 +226,10 @@ impl CharacterScreen {
             // The sign's gifts only: a profane gift is no star's (the Talents page lists those).
             .filter(|t| t.granted && !t.race && !t.boon && !t.story && t.profane.is_none())
             .map(|t| match t.spent {
-                true => ui_with(T::SPENT, &[("talent", t.name.into())]),
+                true => {
+                    let talent = content.talent_arg(t.id, t.choice.as_deref());
+                    ui_with(T::SPENT, &[("talent", talent)])
+                }
                 false => t.name,
             })
             .collect();
@@ -640,8 +643,8 @@ pub fn birth_parts(character: &Character, content: &Content, now: GameTime) -> V
             &[("date", character.born.text(content.calendar()).into())],
         ),
     ];
-    if let Some(sign) = character.sign_name(content) {
-        parts.push(ui_with(T::YEAR_OF, &[("sign", sign.into())]));
+    if let Some(sign) = character.sign_arg(content) {
+        parts.push(ui_with(T::YEAR_OF, &[("sign", sign)]));
     }
     parts
 }

@@ -111,7 +111,7 @@ text = "{value:bare}/{max:bare}, in an unseen foe's guard"
 [skills]
 text = "{own:bare} skills"
 
-# A birth sign's gift used up: `talent`, its name.
+# A birth sign's gift used up: `talent`, its name (`talent:<id>`).
 [spent]
 text = "{talent:bare} (spent)"
 
@@ -152,7 +152,7 @@ text = "Weight {total:bare}, carrying nothing"
 [with]
 text = "With"
 
-# The birth sign: `sign`, its name ("Fire Manticore").
+# The birth sign: `sign`, its name (`sign:<element>.<animal>`, "Fire Manticore").
 [year_of]
 text = "year of the {sign:bare}"
 

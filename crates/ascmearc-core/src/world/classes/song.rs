@@ -69,7 +69,7 @@ impl World {
             SongOn::Singer => Vec::new(),
             SongOn::Hearers => {
                 if let Some(def) = content.class_active(active) {
-                    self.say(Msg::new(msg::classes::SING_A).role("song", def.name.to_lowercase()));
+                    self.say(Msg::new(msg::classes::SING_A).role("song", content.song_phrase(def)));
                 }
                 self.heard_by(Act::Sing)
             }

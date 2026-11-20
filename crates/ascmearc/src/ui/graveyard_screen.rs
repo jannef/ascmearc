@@ -156,7 +156,7 @@ fn cause_words(fallen: &Fallen, content: &Content) -> String {
         return (def.death.clone()).unwrap_or_else(|| {
             ui_with(
                 T::CAUSE_DIED_OF,
-                &[("name", def.name.to_lowercase().into())],
+                &[("name", content.status_phrase(status).into())],
             )
         });
     }

@@ -327,10 +327,17 @@ fn fixture(view: &PerceptionView<'_>, p: Pos, t: TerrainId, blood: bool) -> (Phr
         // by the past character the graveyard names it for: "a statue of Brakka the dwarf".
         (None, Some(was)) => {
             let of = match view.statue_name(p) {
-                Some(name) => Phrase::literal(name),
-                None => creature_phrase(content, was),
+                Some(fallen) if !fallen.race.is_empty() => clause(
+                    T::FALLEN,
+                    [
+                        ("name", Phrase::literal(&fallen.name).into()),
+                        ("race", content.race_phrase(&fallen.race).into()),
+                    ],
+                ),
+                Some(fallen) => Phrase::literal(&fallen.name).into(),
+                None => creature_phrase(content, was).into(),
             };
-            let of = clause(T::STATUE_OF, [("of", of.into())]);
+            let of = clause(T::STATUE_OF, [("of", of)]);
             (terrain_phrase(content, t), of)
         }
         (None, None) => (terrain_phrase(content, t), none()),

@@ -51,7 +51,7 @@ keep_wits = "You keep your wits about you."
 # `what`: the player's weapon, knocked away by `who`.
 knocked_from_hand = "{who:The} knock{who:s} {what:the} from your hand!"
 lands_beside_you = "It lands beside you."
-# `ability`: a weapon ability a rank risen taught, by its name ("deep cut").
+# `ability`: a weapon ability a rank risen taught, by its name (`weapon_ability:<id>`, "deep cut").
 learned_ability = "You have learned {ability:the}."
 misses = "{actor:The} miss{actor:es} {target:the}."
 no_ability = "You have no such ability."
@@ -86,8 +86,8 @@ shields_fumble = "Your shields get in the way, and the spell slips from your gra
 shoots_at = "{actor:The} shoot{actor:s} at {target:the}."
 # `verb`: "shoot" or "throw"; `what`: the missile, counted.
 shot = "You {verb:bare} {what:a}."
-# A rank risen in a weapon skill: `how`, the skill's phrase as the data writes it ("with long
-# blades").
+# A rank risen in a weapon skill: `how`, the skill's phrase (`weapon_skill_phrase:<id>`, "with
+# long blades").
 skill_risen = "You feel more skilled {how:bare}."
 something_dies = "Something dies."
 # `status`: how the status looks ("dazed"); `from`: what turned the blow ("shield", "parry").
