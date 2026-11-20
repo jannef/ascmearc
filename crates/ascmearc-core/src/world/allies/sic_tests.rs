@@ -259,9 +259,10 @@ fn the_menu_says_when_there_is_no_companion_here() {
     run(&mut w, "wait");
     assert_eq!(why(&w), Some(crate::ability::Unavailable::NoCompanion));
     assert_eq!(
-        crate::ability::Unavailable::NoCompanion
-            .reason(w.content())
-            .as_ref(),
+        crate::test_support::english_of(
+            w.content(),
+            &crate::ability::Unavailable::NoCompanion.reason(w.content())
+        ),
         "no companion here"
     );
     assert_eq!(active.reach(w.content()), Some(10));

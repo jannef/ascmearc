@@ -76,7 +76,8 @@ pub enum Choice {
 }
 
 impl Choice {
-    /// What is chosen, in words: "a weapon skill".
+    /// What is chosen, in words: "a weapon skill", for the content's errors (developer text;
+    /// the player reads [`Choice::message`]).
     pub fn words(self) -> &'static str {
         match self {
             Choice::WeaponSkill => "a weapon skill",
@@ -85,6 +86,20 @@ impl Choice {
             Choice::Element => "an element",
             Choice::Tag => "a kind of creature",
             Choice::School => "a school of magic or an element",
+        }
+    }
+
+    /// What is chosen, as the player reads it in a refusal (`character.choice_*`): "a weapon
+    /// skill". [`Choice::words`] is the same in English, for the content's own errors.
+    pub fn message(self) -> crate::lang::MessageId {
+        use crate::msg;
+        match self {
+            Choice::WeaponSkill => msg::character::CHOICE_WEAPON_SKILL,
+            Choice::Style => msg::character::CHOICE_STYLE,
+            Choice::Skill => msg::character::CHOICE_SKILL,
+            Choice::Element => msg::character::CHOICE_ELEMENT,
+            Choice::Tag => msg::character::CHOICE_TAG,
+            Choice::School => msg::character::CHOICE_SCHOOL,
         }
     }
 

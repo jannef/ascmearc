@@ -11,6 +11,8 @@ use super::cast::Reach;
 use super::spell_rung::CastBy;
 use crate::content::{Content, DamageTypeId, Shape, SpellData};
 use crate::dice::Roll;
+use crate::lang::{Arg, Msg};
+use crate::msg;
 use crate::world::Actor;
 
 /// The roll a spell makes as its caster would cast it now, and what it does: harm of a kind, or
@@ -80,23 +82,32 @@ pub fn roll_words(content: &Content, spell: &SpellData, roll: Roll) -> SpellRoll
     }
 }
 
-/// A spell of `shape`'s `reach` in words, each a part: `range 11` (a ray's, bolt's, or burst's),
-/// `length 9` (a cone's or a line's), `radius 2` (a burst's), `jumps 3` (Chain lightning's). A
-/// touch's reach of 1 and a spell on oneself say nothing.
-pub fn reach_words(shape: Shape, reach: Reach) -> Vec<String> {
+/// A spell of `shape`'s `reach` in words, a clause of its parts (`magic.reach_*`): `range 11` (a
+/// ray's, bolt's, or burst's), `length 9` (a cone's or a line's), `radius 2` (a burst's), `jumps
+/// 3` (Chain lightning's), listed by `magic.reach_listed` ("range 11, radius 2"). A touch's reach
+/// of 1 and a spell on oneself say nothing: `None`.
+pub fn reach_words(shape: Shape, reach: Reach) -> Option<Msg> {
+    let part = |id, n: i32| Msg::new(id).role("n", Arg::Number(i64::from(n)));
     let mut parts = Vec::new();
     match (shape, reach.range) {
-        (Shape::Cone | Shape::Line, Some(n)) => parts.push(format!("length {n}")),
-        (Shape::Ray | Shape::Bolt | Shape::Burst, Some(n)) => parts.push(format!("range {n}")),
+        (Shape::Cone | Shape::Line, Some(n)) => parts.push(part(msg::magic::REACH_LENGTH, n)),
+        (Shape::Ray | Shape::Bolt | Shape::Burst, Some(n)) => {
+            parts.push(part(msg::magic::REACH_RANGE, n));
+        }
         _ => {}
     }
     if let Some(r) = reach.radius {
-        parts.push(format!("radius {r}"));
+        parts.push(part(msg::magic::REACH_RADIUS, r));
     }
     if let Some(n) = reach.jumps {
-        parts.push(format!("jumps {n}"));
+        parts.push(part(msg::magic::REACH_JUMPS, n));
     }
-    parts
+    let last = parts.pop()?;
+    Some(parts.into_iter().rev().fold(last, |rest, first| {
+        Msg::new(msg::magic::REACH_LISTED)
+            .role("first", first)
+            .role("rest", rest)
+    }))
 }
 
 /// A reroll of the dice showing `most` or less, in words (the spell scaling design §9's note):
@@ -214,17 +225,27 @@ mod tests {
             radius,
             ..Reach::default()
         };
+        let words = |shape, reach| {
+            reach_words(shape, reach).map(|m| crate::test_support::english_of(&BUILTIN, &m))
+        };
         assert_eq!(
-            reach_words(Shape::Burst, reach(Some(11), Some(2))),
-            ["range 11", "radius 2"]
+            words(Shape::Burst, reach(Some(11), Some(2))).as_deref(),
+            Some("range 11, radius 2")
         );
-        assert_eq!(reach_words(Shape::Cone, reach(Some(3), None)), ["length 3"]);
-        assert!(reach_words(Shape::Touch, reach(Some(1), None)).is_empty());
-        assert!(reach_words(Shape::Myself, reach(None, None)).is_empty());
+        assert_eq!(
+            words(Shape::Cone, reach(Some(3), None)).as_deref(),
+            Some("length 3")
+        );
+        assert_eq!(words(Shape::Touch, reach(Some(1), None)), None);
+        assert_eq!(words(Shape::Myself, reach(None, None)), None);
         let chain = Reach {
             jumps: Some(3),
+            radius: Some(1),
             ..reach(Some(8), None)
         };
-        assert_eq!(reach_words(Shape::Bolt, chain), ["range 8", "jumps 3"]);
+        assert_eq!(
+            words(Shape::Bolt, chain).as_deref(),
+            Some("range 8, radius 1, jumps 3")
+        );
     }
 }

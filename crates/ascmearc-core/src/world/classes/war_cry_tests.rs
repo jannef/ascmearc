@@ -104,7 +104,10 @@ fn war_cry_comes_at_25_and_only_the_rage_refuses_it() {
     let rage_id = w.content().resource_id("rage").expect("rage");
     assert_eq!(own(&w), Some(Some(Unavailable::Short(rage_id))));
     assert_eq!(
-        Unavailable::Short(rage_id).reason(w.content()),
+        crate::test_support::english_of(
+            w.content(),
+            &Unavailable::Short(rage_id).reason(w.content())
+        ),
         "you have not the rage for it"
     );
     let time = w.state.time;

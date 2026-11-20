@@ -73,7 +73,8 @@ nothing_to_bash = "There is nothing there to bash."
 out_of_range = "That is out of range."
 # Said after the first active weapon ability a rank taught, which grants stamina.
 pace_your_breath = "You learn to pace your breath."
-# `reason`: why the ability cannot be used now, as the abilities menu says it.
+# `reason`: why the ability cannot be used now, as the abilities menu says it (a message of its
+# own, `messages/ability.toml`).
 reason = "{reason:Bare}."
 # `who`: whose shield; `weapon`: the spell's bolt, said with its caster ("your bolt").
 reflected = "{who:Poss} shield turns {weapon:the} back at {target:the}."

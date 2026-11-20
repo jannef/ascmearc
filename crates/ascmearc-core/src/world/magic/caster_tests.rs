@@ -468,7 +468,7 @@ fn blessing_costs_mana_and_wants_more_than_there_is() {
     w.player_mut().mana = 0;
     assert_eq!(own(&w, sp("blessing")), Some(Some(Unavailable::NoMana)));
     assert_eq!(
-        Unavailable::NoMana.reason(w.content()),
+        crate::test_support::english_of(w.content(), &Unavailable::NoMana.reason(w.content())),
         "you have too little mana"
     );
     let turn = w.state.turn;

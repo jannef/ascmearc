@@ -753,18 +753,27 @@ fn a_short_pool_and_the_wrong_grip_grey_the_row_and_refuse() {
     w.player_mut().resources.get_mut(stamina_id).unwrap().value = 2;
     assert_eq!(row(&w).unavailable, Some(Unavailable::Short(stamina_id)));
     assert_eq!(
-        Unavailable::Short(stamina_id).reason(&content),
+        crate::test_support::english_of(&content, &Unavailable::Short(stamina_id).reason(&content)),
         "you are short of breath"
     );
     let outcome = use_(&mut w, "use:lunge:E");
     assert!(!outcome.took_turn);
     assert_eq!(stamina(&w), 2, "a refused use costs nothing");
+    // The reason nested in the refusal, a line of data, capitalized where it begins it.
+    assert_eq!(
+        crate::test_support::last_text(&w),
+        "You are short of breath."
+    );
     // A knife is no spear: not so held.
     let mut w = world("######\n#@.p.#\n######\n");
     give(&mut w, "wt_knife");
     ranks(&mut w, &[("spears", 9), ("long_blades", 1)]);
     assert_eq!(row(&w).unavailable, Some(Unavailable::NotSoHeld));
     assert!(!use_(&mut w, "use:lunge:E").took_turn);
+    assert_eq!(
+        crate::test_support::last_text(&w),
+        "Your hands are not so held."
+    );
     // Its row asks for a direction and acts with it.
     let ability = row(&w).ability;
     assert_eq!(

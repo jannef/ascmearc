@@ -387,7 +387,7 @@ fn at_a_hundred_the_softeners_are_stripped_for_good() {
     let why = crate::talent::may_take(&content, &w.candidate(), lean, None).expect_err("refused");
     assert_eq!(why, crate::talent::Refusal::Stripped);
     assert_eq!(
-        why.words(&content, "Lean"),
+        crate::test_support::english_of(&content, &why.words(&content, "Lean")),
         "The craving has taken this from you."
     );
     // Never given again, nor granted back by the sign on a restore or a save.

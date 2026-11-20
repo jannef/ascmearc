@@ -53,8 +53,9 @@ impl World {
             self.say(match why {
                 Unavailable::While(status) => Msg::new(msg::character::STILL_STATUS)
                     .role("status", content.status_phrase(status)),
-                other => Msg::new(msg::character::CANNOT_REASON)
-                    .role("reason", other.reason(&content).into_owned()),
+                other => {
+                    Msg::new(msg::character::CANNOT_REASON).role("reason", other.reason(&content))
+                }
             });
             return Spent::Nothing;
         }

@@ -383,7 +383,10 @@ fn a_class_active_that_costs_a_resource_is_unavailable_without_it_and_spends_it(
         Some(Unavailable::Short(focus))
     );
     assert_eq!(
-        Unavailable::Short(focus).reason(w.content()),
+        crate::test_support::english_of(
+            w.content(),
+            &Unavailable::Short(focus).reason(w.content())
+        ),
         "not enough focus"
     );
     assert_eq!(Unavailable::Short(focus).id(w.content()), "short:focus");

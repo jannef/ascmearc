@@ -43,7 +43,8 @@ pub(super) fn spell_does(view: &PerceptionView<'_>, spell: crate::content::Spell
         .into_iter()
         .collect();
     if let Some(reach) = view.own_spell_reach(spell) {
-        parts.extend(crate::world::reach_words(def.shape, reach));
+        let words = crate::world::reach_words(def.shape, reach);
+        parts.extend(words.map(|m| crate::messages::english_msg(content, &m)));
     }
     parts
 }

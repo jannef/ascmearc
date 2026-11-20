@@ -133,7 +133,10 @@ fn the_untrained_are_refused_and_the_trained_find_more() {
     let skill = herbalism(&w);
     assert_eq!(gather.unavailable, Some(Unavailable::Untrained(skill)));
     assert_eq!(
-        Unavailable::Untrained(skill).reason(w.content()),
+        crate::test_support::english_of(
+            w.content(),
+            &Unavailable::Untrained(skill).reason(w.content())
+        ),
         "you are untrained in Herbalism"
     );
     // Refused, taking no time, with nothing found and nothing marked.
