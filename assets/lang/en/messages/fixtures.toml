@@ -1,0 +1,8 @@
+# The fixtures of a level (`world/fixtures/`): a special feature of the ground the player arrives
+# at (`feature.rs`). Ids alphabetical.
+#
+# `what`: the feature's terrain, an entry per way its name counts (the terrain's `noun`: one, a
+# mass, or a plural). Its description and the note of its place follow it as lines of their own.
+feature_here = "There is {what:a} here."
+feature_mass_here = "There is {what:bare} here."
+feature_plural_here = "There are {what:bare} here."

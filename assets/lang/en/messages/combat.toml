@@ -40,6 +40,8 @@ keep_wits = "You keep your wits about you."
 # `what`: the player's weapon, knocked away by `who`.
 knocked_from_hand = "{who:The} knock{who:s} {what:the} from your hand!"
 lands_beside_you = "It lands beside you."
+# `ability`: a weapon ability a rank risen taught, by its name ("deep cut").
+learned_ability = "You have learned {ability:the}."
 misses = "{actor:The} miss{actor:es} {target:the}."
 no_ability = "You have no such ability."
 # `what`: the ammunition the launcher takes ("arrows").
@@ -58,6 +60,8 @@ nothing_ready = "You have nothing ready to throw or shoot."
 nothing_ready_to_shoot = "You have nothing ready to shoot."
 nothing_to_bash = "There is nothing there to bash."
 out_of_range = "That is out of range."
+# Said after the first active weapon ability a rank taught, which grants stamina.
+pace_your_breath = "You learn to pace your breath."
 # `reason`: why the ability cannot be used now, as the abilities menu says it.
 reason = "{reason:Bare}."
 # `who`: whose shield; `weapon`: the spell's bolt, said with its caster ("your bolt").
@@ -69,6 +73,9 @@ shields_fumble = "Your shields get in the way, and the spell slips from your gra
 shoots_at = "{actor:The} shoot{actor:s} at {target:the}."
 # `verb`: "shoot" or "throw"; `what`: the missile, counted.
 shot = "You {verb:bare} {what:counted}."
+# A rank risen in a weapon skill: `how`, the skill's phrase as the data writes it ("with long
+# blades").
+skill_risen = "You feel more skilled {how:bare}."
 something_dies = "Something dies."
 # `status`: how the status looks ("dazed"); `from`: what turned the blow ("shield", "parry").
 staggers = "{who:The} staggers."

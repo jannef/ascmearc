@@ -6,7 +6,7 @@
 
 use crate::lang::{self, LangError, LangFile};
 use crate::lexicon::Lexicon;
-use crate::message::{Arg, DATA_LINE, DATA_LINE_ROLE, Entry, Role};
+use crate::message::{Arg, DATA_LINE, DATA_LINE_ROLE, Entry, MessageId, Role, literal_text};
 use crate::morphology::en::{En, Plurals};
 use crate::morphology::fi::Fi;
 use crate::morphology::generic::Generic;
@@ -256,26 +256,9 @@ impl Language {
         lex: &dyn Lexicon,
         keys: Keys<'_>,
     ) -> Result<String, RenderError> {
-        let mut text = match entry.literal_text() {
-            // Transitional: a literal line reads as written in every language.
-            Some(literal) => literal.to_string(),
-            // A line of data said alone: the line, by its key.
-            None if entry.id == DATA_LINE => match entry.args.get(DATA_LINE_ROLE) {
-                Some(line) => {
-                    self.ctx(register, lex, keys, &entry.args)
-                        .arg(DATA_LINE_ROLE, line, "bare")?
-                }
-                None => return Err(RenderError::MissingRole(DATA_LINE_ROLE.into())),
-            },
-            None => {
-                let template = self
-                    .templates
-                    .get(entry.id.as_str())
-                    .ok_or_else(|| RenderError::NoTemplate(entry.id.to_string()))?;
-                self.ctx(register, lex, keys, &entry.args)
-                    .template(template)?
-            }
-        };
+        let mut text = self
+            .ctx(register, lex, keys, &entry.args)
+            .message(&entry.id, &entry.args)?;
         if entry.count > 1 {
             text.push_str(&self.repeat.replace("{n}", &entry.count.to_string()));
         }
@@ -368,6 +351,33 @@ struct Ctx<'a> {
 }
 
 impl<'a> Ctx<'a> {
+    /// Message `id` filled with `args`: an entry's own, or one nested in an argument
+    /// ([`Arg::Msg`]), in this context's language and register.
+    fn message(
+        &self,
+        id: &MessageId,
+        args: &'a BTreeMap<Role, Arg>,
+    ) -> Result<String, RenderError> {
+        let ctx = Ctx {
+            args,
+            said: None,
+            ..*self
+        };
+        if let Some(literal) = literal_text(id, args) {
+            // Transitional: a literal line reads as written in every language.
+            return Ok(literal.to_string());
+        }
+        if *id == DATA_LINE {
+            // A line of data said alone: the line, by its key.
+            let line = (args.get(DATA_LINE_ROLE))
+                .ok_or_else(|| RenderError::MissingRole(DATA_LINE_ROLE.into()))?;
+            return ctx.arg(DATA_LINE_ROLE, line, "bare");
+        }
+        let template = (self.language.templates.get(id.as_str()))
+            .ok_or_else(|| RenderError::NoTemplate(id.to_string()))?;
+        ctx.template(template)
+    }
+
     fn template(&self, template: &Template) -> Result<String, RenderError> {
         match template {
             Template::Line(line) => self.line(line),
@@ -529,6 +539,8 @@ impl<'a> Ctx<'a> {
                 register,
                 race,
             } => self.said(key, args, register.as_deref(), race.as_deref())?,
+            // A message inside the line, in its own words: its template picks its forms.
+            Arg::Msg { id, args } => self.message(id, args)?,
         })
     }
 }

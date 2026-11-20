@@ -35,7 +35,7 @@
 //! fast creature comes at its own speed. No draws at all, so replays stay deterministic.
 
 use crate::content::{ActionKind, Budge, CreatureId, LevelKind, StairsDir, Stance};
-use crate::lang::{Arg, Msg};
+use crate::lang::{Arg, Msg, Phrase};
 use crate::msg;
 use crate::world::combat::fight;
 use crate::world::{ActorId, ActorKind, Mind, World, allies::beast_friend};
@@ -129,7 +129,7 @@ impl World {
     }
 
     /// The line for followers `ids`, by type in the order they first come: "The kobold follows
-    /// you down the stairs.", "Three kobolds follow you up the stairs.", "2 kobolds and a rat
+    /// you down the stairs.", "Three kobolds follow you up the stairs.", "Two kobolds and the rat
     /// follow you up the stairs."
     fn followers_line(&self, ids: &[ActorId], way: StairsDir) -> Option<Msg> {
         if ids.is_empty() {
@@ -143,16 +143,24 @@ impl World {
                 None => kinds.push((creature, 1)),
             }
         }
-        let mut who: Vec<Arg> = (kinds.iter())
-            .map(|&(c, n)| fight::creature(self.content.creature(c)).count(n).into())
+        let mut who: Vec<Phrase> = (kinds.iter())
+            .map(|&(c, n)| fight::creature(self.content.creature(c)).count(n))
             .collect();
-        // One type: that phrase, its count picking the line; several: a list of them.
+        // One type: that phrase, its count picking the line. Several: a list of them, each type
+        // an item that takes its own form ("two kobolds and the giant rat", `levels.follower`).
         let (id, who) = match (who.len(), way) {
-            (1, StairsDir::Down) => (msg::levels::FOLLOW_DOWN, who.remove(0)),
-            (1, StairsDir::Up) => (msg::levels::FOLLOW_UP, who.remove(0)),
-            (_, StairsDir::Down) => (msg::levels::FOLLOW_DOWN_MIXED, Arg::List(who)),
-            (_, StairsDir::Up) => (msg::levels::FOLLOW_UP_MIXED, Arg::List(who)),
+            (1, StairsDir::Down) => (msg::levels::FOLLOW_DOWN, who.remove(0).into()),
+            (1, StairsDir::Up) => (msg::levels::FOLLOW_UP, who.remove(0).into()),
+            (_, StairsDir::Down) => (msg::levels::FOLLOW_DOWN_MIXED, followers(who)),
+            (_, StairsDir::Up) => (msg::levels::FOLLOW_UP_MIXED, followers(who)),
         };
         Some(Msg::new(id).role("who", who))
     }
+}
+
+/// The followers of several types as a list of `levels.follower` items, one per type: each
+/// renders its own phrase in the form its count asks.
+fn followers(types: Vec<Phrase>) -> Arg {
+    let item = |who: Phrase| Msg::new(msg::levels::FOLLOWER).role("who", who).into();
+    Arg::List(types.into_iter().map(item).collect())
 }

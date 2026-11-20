@@ -30,7 +30,7 @@ nothing for it, `docs/dev/merging.md` "One build of ascmearc-core"). Dependencie
 
 | Module | What |
 |---|---|
-| `message.rs` | `MessageId` (a newtype over `Cow<'static, str>`: a generated constant borrows, a loaded save owns; serialized as the plain string), `Role` (the same, and `Borrow<str>` so `args.get("actor")` works), `Arg` (`Phrase`, `Number`, `Text`, `List`, `Said`, `Key`; `Arg::said(key).with(role, arg)`, `.spoken_by(register, race)`), `Msg` (id and args; `Msg::new(id).role("who", phrase)`; `Msg::data_line(said)`, the `DATA_LINE` entry), `Entry` (a `Msg` with `turn`, `count`, and the unserialized `passing`). `Arg::feature` gives the value a template's variants select on |
+| `message.rs` | `MessageId` (a newtype over `Cow<'static, str>`: a generated constant borrows, a loaded save owns; serialized as the plain string), `Role` (the same, and `Borrow<str>` so `args.get("actor")` works), `Arg` (`Phrase`, `Number`, `Text`, `List`, `Said`, `Key`, `Msg`: a message inside a message, "Nested messages"; `Arg::said(key).with(role, arg)`, `.spoken_by(register, race)`), `Msg` (id and args; `Msg::new(id).role("who", phrase)`; `Msg::data_line(said)`, the `DATA_LINE` entry), `Entry` (a `Msg` with `turn`, `count`, and the unserialized `passing`). `Arg::feature` gives the value a template's variants select on |
 | `phrase.rs` | `Phrase` (head `Word`, `mods`, `count`, `proper`, `person`, `gender`, `notes`, `owner`), `Word::{Id, Literal}`, `Modifier::{Adjective, Of, Label, Material, Part, Made}`, `Person`, `Gender`, `Note::{Tags, Charges, Base}`. Builders: `Phrase::id`, `Phrase::literal` (proper), `.count`, `.with(modifier)`, `.note(tag)`, `.with_note`, `.owned_by`, `.without_notes` |
 | `lexicon.rs` | `Lexicon` (`word(id) -> Option<LexWord>`; core implements it over `Content`, "Phrases"), `LexWord` (`base`, explicit `forms`, `proper`, `gender`, `many`, `harmony`, `plural_only`), `MapLexicon` (a map; `MapLexicon::parse` reads a lexicon file: `id = "lemma"` or `{ word, forms, proper, gender, many, harmony, plural_only }`, `of` skipped), `NoLexicon` |
 | `template.rs` | `Line::parse` (total: a `{` that opens no `{role:form}` or `{role}` is text; `{{` and `}}` are literal braces), `Template::{Line, Alternatives, Variants}` (`from_value`, `slots`, `written`), `Templates::parse(prefix, text)` for one `messages/<prefix>.toml`, `Templates::parse_data(what, kind, text)` for a translation's lines of data (`[hit] text = …` or a plain `hit = "…"`; `text = [...]` alternatives; `by = "<role>.<feature>"` with one key per value and an optional `else`, nesting allowed; `of` skipped). Errors name the file and the entry |
@@ -48,7 +48,7 @@ as is an `Arg::Key` in any role; `Arg::Text` is verbatim; `Arg::Number` goes thr
 `Morphology::number` (`num`: words up to `number_words`, digits beyond; `ord`); `Arg::List` with
 form `and`/`or` joins the items rendered bare with that conjunction, any other form renders each
 item in it and joins with "and", and `lines` says the items one after another, each `bare`
-(one speech of several lines); `Arg::Said` is a line of data by its key ("Lines of data"). `Alternatives` are picked
+(one speech of several lines); `Arg::Said` is a line of data by its key ("Lines of data"); `Arg::Msg` a message rendered by its own template ("Nested messages"). `Alternatives` are picked
 by the `flavour` role's number, wrapping (`rem_euclid`), the first without one. `Variants` select
 on `Arg::feature` (`person`: `you`/`other`; `number`: `one`/`many`; `gender`); no match and no
 `else` is a `RenderError::NoVariant`. An entry with `count > 1` gets the language's `repeat` mark
@@ -349,9 +349,10 @@ are lines of data (#1944, "Lines of data"): a charm's, a familiar's arrival, and
 departure are said inside their templates (`{message:bare}`, `{line:bare}`, `{words:bare}`),
 and a status's `seen` is a `word:` phrase.
 
-What combat leaves as literal lines, for their own slices: a rank risen and what it teaches
-(`fight.rs::ranks_news`, the data's lines joined), acid's lines (`corrode.rs`, the data's
-`{}`).
+What combat leaves as literal lines, for their own slices: acid's lines (`corrode.rs`, the data's
+`{}`). A rank risen and what it teaches (`fight.rs::ranks_news`) is `combat.skill_risen` (the
+skill's `phrase` from the data as text), each `combat.learned_ability` (the ability's name a
+`word:` phrase), and `combat.pace_your_breath`, said as one ("Nested messages").
 
 `world/health/` (`messages/health.toml`, L4i) converted `Cause::message` (how the player died, now
 `Cause::message(&World) -> Msg`) with it. What the data writes is said by its key (#1944, "Lines
@@ -370,19 +371,52 @@ named person or a shopkeeper by name), not `phrase_of`, where the string was `ca
 `world/levels/` (`messages/levels.toml`, L4j) converted travel, stairs, encounters, deep water,
 ice, fire, and webs. A line that differs by a value core picks from a few (the land an encounter
 is met on, the way the stairs go, one follower's type or several) is an entry per value, each a
-whole sentence. A place is named by a literal phrase (its name as written, "The Drake's Lair"), a
+whole sentence; followers of several types are a list of `levels.follower` items, each taking its
+own form ("Two kobolds and the giant rat", "Nested messages"). A place is named by a literal phrase (its name as written, "The Drake's Lair"), a
 terrain by `terrain:<id>`, a party met on the overworld by its entry's `name` as text (the data
 writes its article: "a band of footpads"), stacks that sank by `ice.rs::stacks_arg` (a list of
 two or three, else a count of `word:object`). A level's and a branch's `arrival` are lines of data,
 `level:<id>.arrival` and `dungeon:<id>.arrival` (`Content::arrival_key`). The encounter dialog's
 text (`EncounterView`) is the told line rendered in English, with `told_known` adding the line
-for a party met again, until L8. What it leaves: the line said on entering a cell
-(`enter.rs::tell_cell`), stairs, a feature's lines (`fixtures/feature.rs`), and what lies there,
-joined in one line, stays literal until a line can hold other lines; a spell's `look.message`
+for a party met again, until L8. The line said on entering a cell (`enter.rs::tell_cell`):
+stairs (`levels.staircase_down_here`, `way_into_here`, …), a feature's lines
+(`fixtures/feature.rs`, `messages/fixtures.toml`: the terrain by its `noun`, its description and
+its place's note after it as the data's text), and what lies there (`levels.see_here`,
+`see_here_for_sale`, `several_objects_here`), said as one ("Nested messages"). What it leaves:
+a spell's `look.message`
 (`web.rs`), an anvil's need, and `burden`'s refusals are their own modules'; a status's `seen`, a
 damage type's `verb`, and a refusal's `error` are text roles.
 
 When no literal is left, `LITERAL`, the `From` text impls, and this section go.
+
+## Nested messages
+
+An argument can hold a message: **`Arg::Msg { id, args }`** (`From<Msg>` and `From<MessageId>`
+for `Arg`, so `Arg::from(msg)` or `msg.into()`). It is saved in the entry like any argument
+(`msg = { id = "levels.follower", args = … }` under its role, design §4's composition entries),
+folds with it on equal args, and is rendered in the same language and register as the line it
+stands in (`render.rs::Ctx::message`, which an entry's own id goes through too: a template, a
+literal line, or a line of data). The slot's form is not passed down: the nested template asks
+its own forms, and a capital in the slot capitalizes the result. If the language cannot render
+a nested message (no template, a form it lacks), the whole line fails in that language and the
+chain falls back with it, so a line is never half one language. Two uses:
+
+- **Lines said as one.** `world.lines` (`{lines:lines}`) says a list of messages in turn, each
+  `bare`, joined with a space: the line on entering a cell (`enter.rs::tell_cell`: stairs, a
+  feature, what lies there) and a rank risen (`fight.rs::ranks_news`). A part that is the data's
+  words (a feature's description) is an `Arg::Text` item beside the messages. One part alone is
+  said as itself, not in a `lines`.
+- **List items that take their own forms.** A list said `{who:And}` renders every item in one
+  form; when each item needs its own (one creature "the giant rat", several "two kobolds"), each
+  item is a message whose template picks the form by the item's own features:
+  `levels.follower` (`by = "who.number"`, `one = "{who:the}"`, `many = "{who:num}
+  {who:plural}"`) in `follow_down_mixed`'s `"{who:And} follow you down the stairs."` A
+  translation writes the item in its own forms (`fi`: `follower = "{who:nom}"`, "Kaksi koboltia
+  ja jättirotta"). `nested_tests.rs` renders both uses in `en`, `fi`, and `generic`; the
+  proptests nest messages in every argument kind and render them through all three.
+
+The checker needs nothing new: a nested template is an entry like any other (its roles and forms
+checked, a missing one a warning), and `lines`/`and` are list forms every language accepts.
 
 ## UI text (L6)
 
