@@ -830,14 +830,14 @@ arrays named by the id that tells it apart. Every kind of line of data, the thre
 | `room_effect:<id>.enter`, `.near`, `.pervade`, `.arrive`, `.shrine.welcome`, `.shrine.unwelcome` | a special room entered, glimpsed, covering the level, hinted at on arrival, and a shrine's entry by how it treats the player (`Shrine::enter_field`) |
 | `talent:<id>.effects.bars_slot.<slot>.refused` | something put on in a slot the talent bars (the first talent held that bars it with these words, `body_slots.rs::barred_words`) |
 | `quest:<id>.binding.words.<n>`, `.binding.shatters`, `.binding.reforms` | a lure quest's creature bound, killed unbound, and formed anew |
-| `quest:<id>.reward.skills.<skill>.taught`, `.more`; `quest:<id>.taker.<npc>.reward.skills.…` | a quest's reward (or a taker's) teaching a skill |
+| `quest:<id>.reward.skills.<skill>.taught`, `.more`; `quest:<id>.taker.<npc>.reward.skills.…`, `quest:<id>.on_accept.skills.…` | a quest's reward (or a taker's, or its `on_accept`'s) teaching a skill |
 | `town:<id>.told` | a town's goodwill rising |
 | `level:<id>.hidden.<location>.opens` | a hidden location opening as a quest reveals it |
 | `dialogue:<scope>.silent` | a speaker turning away one outside its `speaks_to` |
 
 What quests' people say is keyed in the same file (`data_line::quest`, added by `quest_speech`)
 but said by a speaker, so in their register and with the player given: a giver's `offer`,
-`accept`, `reminder`, `done`, `where`, and `early`, a drawn variant's
+`accept`, `reminder`, `done`, `where`, `early`, and `on_accept.says`, a drawn variant's
 (`quest:<id>.variant.<v>.offer`), an escort's `joins` and `thanks`, a taker's `done` and
 `betrayed` (`quest:<id>.taker.<npc>.done`), a side's `offer`, `join`, and `refuse`
 (`quest:<id>.side.<npc>.join`), and the parting's `betray`. A rolled quest's lines may name

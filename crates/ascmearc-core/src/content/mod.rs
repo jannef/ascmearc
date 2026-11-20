@@ -381,8 +381,8 @@ pub use prestige::{PrestigeDef, Table};
 pub use profane::{GiftDef, GiftKind, GiftTier, ProfaneRolls, ProfaneTable};
 pub use quarrel::{PartingDef, Quarrel, QuarrelHoard, SideDef, Taker};
 pub use quest::{
-    Binding, Boon, GOLD, Goal, KillTarget, QuestDef, QuestId, QuestKind, QuestTexts, Reveal,
-    RevealWhen, Reward, SkillReward, Waits,
+    Binding, Boon, GOLD, Goal, KillTarget, OnAccept, QuestDef, QuestId, QuestKind, QuestTexts,
+    Reveal, RevealWhen, Reward, SkillReward, Waits,
 };
 pub(crate) use quest_roll::roll_known;
 pub use quest_roll::{Candidate, Pick, Roll, Rolled, Variant, one_of};
