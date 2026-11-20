@@ -36,6 +36,8 @@
 use crate::action::Event;
 use crate::content::{ActionKind, ClassActive, LevelKind, Stance};
 use crate::geom::{Dir, Pos};
+use crate::lang::{Msg, Phrase};
+use crate::msg;
 use crate::world::combat::free_blow::{Free, FreeBlow};
 use crate::world::levels::enter::Entry;
 use crate::world::levels::ice::Footing;
@@ -58,12 +60,12 @@ impl World {
         if let (Some(cost), Some(amount)) = (base, price) {
             let held = (self.state.player().resources.get(cost.resource)).map_or(0, |p| p.value);
             if held < amount {
-                self.say("You are short of breath for so long a charge.");
+                self.say(msg::classes::SHORT_OF_BREATH_FOR_CHARGE);
                 return Spent::Nothing;
             }
             self.spend_resource(player, cost.resource, amount, events);
         }
-        self.say("You charge!");
+        self.say(msg::classes::CHARGE);
         let whirling = self
             .state
             .player()
@@ -76,7 +78,7 @@ impl World {
         for to in path {
             let level = &self.state.current().id;
             if self.state.actor_at(level, to).is_some() {
-                self.say("You run into something!");
+                self.say(msg::classes::RUN_INTO_SOMETHING);
                 return Spent::Turn(time.max(self.price_of(player, ActionKind::Step)));
             }
             let terrain = self.state.current().terrain[to];
@@ -150,11 +152,11 @@ impl World {
         let content = self.content.clone();
         let player = self.state.player;
         if self.state.current().kind == LevelKind::Overworld {
-            self.say("You cannot charge on the overworld.");
+            self.say(msg::classes::CANNOT_CHARGE_ON_OVERWORLD);
             return None;
         }
         if self.swimming() {
-            self.say("You cannot charge while swimming.");
+            self.say(msg::classes::CANNOT_CHARGE_WHILE_SWIMMING);
             return None;
         }
         if !self.can_move() {
@@ -167,16 +169,16 @@ impl World {
             .filter(|a| self.perception.sees_actors_at(at) && !a.effects.hides(&content))
             .map(|a| a.id);
         let Some(target) = target else {
-            self.say("There is nobody there you see to charge.");
+            self.say(msg::classes::NOBODY_THERE_TO_CHARGE);
             return None;
         };
         if self.stance(player, target) != Stance::Hostile {
-            self.say("You have no quarrel there.");
+            self.say(msg::classes::NO_QUARREL_THERE);
             return None;
         }
         let path: Vec<Pos> = here.line_between(at).collect();
         if path.is_empty() {
-            self.say("You are beside it already.");
+            self.say(msg::classes::BESIDE_IT_ALREADY);
             return None;
         }
         let blocked = path.iter().any(|&cell| {
@@ -190,7 +192,7 @@ impl World {
             !open || level.ice_at(cell).is_some() || trap || seen
         });
         if blocked {
-            self.say("Something stands in the way of a charge.");
+            self.say(msg::classes::STANDS_IN_WAY_OF_CHARGE);
             return None;
         }
         // Out of a shop's door owing: the keeper would turn a step back there (`shop.rs`).
@@ -198,8 +200,8 @@ impl World {
             .chain(path.iter().copied())
             .zip(path.iter().copied());
         if let Some(shop) = steps.find_map(|(from, to)| self.owing_exit(from, to)) {
-            let text = format!("{} steps into your way: you haven't paid.", shop.name);
-            self.say(text);
+            let keeper = Phrase::literal(&shop.name);
+            self.say(Msg::new(msg::classes::KEEPER_STEPS_INTO_WAY).role("keeper", keeper));
             return None;
         }
         Some((target, path))

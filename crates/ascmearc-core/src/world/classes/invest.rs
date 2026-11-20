@@ -36,6 +36,8 @@ use crate::action::Event;
 use crate::content::{
     ActionKind, DialogueId, InvestRules, StatUse, TalentEffect, TownDef, TownServant,
 };
+use crate::lang::Msg;
+use crate::msg;
 use crate::object::Stack;
 use crate::rng::Rng;
 use crate::talent::FortuneEffect;
@@ -286,12 +288,12 @@ impl World {
                 Amount::Gold(n) => n,
             };
             if gold == 0 || gold > carried {
-                self.say("You do not carry that much gold.");
+                self.say(msg::classes::NOT_CARRYING_THAT_MUCH_GOLD);
                 return Some(Spent::Nothing);
             }
             let fee = InvestRules::fee(gold, rules.fee_in);
             self.put_in(gold, fee);
-            self.say(format!("You hand over {gold} gold."));
+            self.say(Msg::new(msg::classes::HAND_OVER_GOLD).role("gold", i64::from(gold)));
             (gold, fee)
         } else {
             let worth = self.state.fund.gold();
@@ -300,7 +302,7 @@ impl World {
                 Amount::Gold(n) => n,
             };
             if gold == 0 || gold > worth {
-                self.say("Your stake is not worth that much.");
+                self.say(msg::classes::STAKE_NOT_WORTH_THAT_MUCH);
                 return Some(Spent::Nothing);
             }
             let fee = InvestRules::fee(gold, rules.fee_out);
@@ -354,7 +356,7 @@ impl World {
             .is_some_and(|d| self.partner_words(d).is_some());
         if partner && self.state.fund.cents > 0 {
             self.state.fund.cents = 0;
-            self.say("With your business partner dead, your stake is lost.");
+            self.say(msg::classes::STAKE_LOST);
         }
     }
 

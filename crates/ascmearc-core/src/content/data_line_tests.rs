@@ -104,3 +104,20 @@ fn a_line_that_names_a_role_is_refused() {
         err.message
     );
 }
+
+#[test]
+fn the_classes_lines_read_as_the_data_writes_them() {
+    let content = &CONTENT;
+    let said = |key: String| said_text(content, key);
+    assert!(!content.callings().is_empty(), "a calling");
+    for def in content.callings() {
+        assert_eq!(said(calling(def)), def.message);
+    }
+    let book = content.talents();
+    let hands = book.get(book.id("travelled_hands").expect("talent"));
+    let (key, text) = handed_news(hands).next().expect("news");
+    assert_eq!(key, "talent:travelled_hands.effects.weapon_ranks.news");
+    assert_eq!(said(key), text);
+    let rage = content.resource(content.resource_id("rage").expect("rage"));
+    assert_eq!(Some(said(lacking("rage"))), rage.lacking);
+}

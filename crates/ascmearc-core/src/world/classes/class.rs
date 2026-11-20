@@ -12,7 +12,9 @@
 //! is identified ([`World::appraise_carried`]).
 
 use crate::character::Character;
-use crate::content::{Content, TalentDef, TalentEffect, TalentId};
+use crate::content::{Content, TalentDef, TalentEffect, TalentId, data_line};
+use crate::lang::Msg;
+use crate::msg;
 use crate::talent::GrowthEffect;
 use crate::talent::TalentMods;
 use crate::world::{Actor, World, classes::focus};
@@ -54,18 +56,6 @@ fn raise_ranks(content: &Content, actor: &mut Actor, to: u8, skills: &[String]) 
     for id in rows {
         actor.weapon_skills.raise_to(id, to);
     }
-}
-
-/// What the hand-outs of `def` say as a class table gives it (Travelled hands:
-/// one line, never one per skill).
-fn handed_news(def: &TalentDef) -> Vec<String> {
-    (def.effects.iter())
-        .filter_map(|e| match e {
-            TalentEffect::Growth(GrowthEffect::WeaponRanks { news, .. })
-            | TalentEffect::Growth(GrowthEffect::TakeUpSkills { news, .. }) => news.clone(),
-            _ => None,
-        })
-        .collect()
 }
 
 /// Gives `actor` (of `character`; none without one) the talents their classes give up to total
@@ -145,9 +135,10 @@ impl World {
         if news {
             for id in given {
                 let def = content.talents().get(id);
-                self.news.push(format!("You gain {}.", def.name).into());
-                self.news
-                    .extend(handed_news(def).into_iter().map(crate::lang::Msg::from));
+                let gain = Msg::new(msg::classes::GAIN_TALENT).role("talent", def.name.clone());
+                self.news.push(gain);
+                let handed = data_line::handed_news(def).map(|(key, _)| data_line::said(key));
+                self.news.extend(handed);
             }
         }
     }
