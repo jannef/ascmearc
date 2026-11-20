@@ -22,12 +22,14 @@
 
 use super::cursor;
 use super::menu::{HINTS, Nav, Panel, Press, truncated, wrap};
+use super::text::{UiText, controls_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::{Bindings, Context, KeyBinding, KeyCommand};
 use crate::render::console::Console;
 use crate::settings::keymap::{self, KeymapFile};
 use crate::settings::keys::{ABILITY_KEYS, Bound, Conflict, REBINDABLE};
 use crate::settings::mods;
+use ascmearc_core::lang::Arg;
 use bevy::prelude::*;
 
 /// What the screen is doing.
@@ -45,7 +47,7 @@ enum Mode {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Row {
     /// A line of text about keys in general.
-    Note(&'static str),
+    Note(UiText),
     /// The space before a group.
     Blank,
     /// The heading of a context's group.
@@ -84,12 +86,12 @@ impl Row {
     }
 
     /// The label of an action row.
-    fn action(self) -> Option<&'static str> {
+    fn action(self) -> Option<UiText> {
         match self {
-            Row::Reset => Some("Reset all keys"),
-            Row::Export => Some("Export keys…"),
-            Row::Import => Some("Import keys…"),
-            Row::Back => Some("Back"),
+            Row::Reset => Some(T::ACTION_RESET),
+            Row::Export => Some(T::ACTION_EXPORT),
+            Row::Import => Some(T::ACTION_IMPORT),
+            Row::Back => Some(T::ACTION_BACK),
             Row::Note(_)
             | Row::Blank
             | Row::Header(_)
@@ -101,16 +103,8 @@ impl Row {
     }
 }
 
-/// The heading of the abilities' own keys, below every other group.
-const ABILITY_KEYS_TITLE: &str = "Ability keys (all in the abilities menu too)";
-
 /// What the list says first: the keys no binding changes.
-const NOTES: [&str; 4] = [
-    "Esc always backs out and cancels; it cannot be rebound.",
-    "Menus, dialogs, text fields, and info pages have fixed keys,",
-    "as do the rest prompt and aiming: hint lines name them.",
-    "On screens the numpad moves as the arrows do (fixed).",
-];
+const NOTES: [UiText; 4] = [T::NOTE_1, T::NOTE_2, T::NOTE_3, T::NOTE_4];
 
 /// The command whose keys are open as a sub-list, and how many keys it has.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -175,7 +169,7 @@ impl ControlsScreen {
     /// rebinding screen ends with its actions.
     fn rows(&self) -> Vec<Row> {
         let read_only = self.mode == Mode::ReadOnly;
-        let mut rows: Vec<Row> = NOTES.iter().map(|note| Row::Note(note)).collect();
+        let mut rows: Vec<Row> = NOTES.iter().map(|&note| Row::Note(note)).collect();
         for &context in Context::ALL {
             rows.extend([Row::Blank, Row::Header(context)]);
             let commands =
@@ -232,10 +226,8 @@ impl ControlsScreen {
         let keys = bindings.keys_of(command).len();
         self.open = Some(Open { command, keys });
         self.selected += 1;
-        self.message = vec![format!(
-            "The keys of {}. The first is the one hints name.",
-            command.name()
-        )];
+        let name = command.name();
+        self.message = vec![ui_with(T::KEYS_OF, &[("name", name.into())])];
     }
 
     /// Closes the open sub-list, its command selected.
@@ -286,19 +278,19 @@ impl ControlsScreen {
             Nav::Enter if !press.repeat => match row {
                 Some(Row::Reset) => {
                     bindings.reset_all();
-                    self.message = vec!["All keys are back to their defaults.".into()];
+                    self.message = vec![ui(T::ALL_RESET)];
                 }
                 Some(Row::Export) => {
                     self.message = vec![match self.keymap.export(bindings) {
                         Ok(said) => said,
-                        Err(why) => format!("! {why}"),
+                        Err(why) => refused(why),
                     }];
                 }
                 Some(Row::Import) => {
                     self.message = match self.keymap.import(bindings) {
                         Ok(Some(report)) => report,
-                        Ok(None) => vec!["Choose a keymap file to import.".into()],
-                        Err(why) => vec![format!("! {why}")],
+                        Ok(None) => vec![ui(T::IMPORT_CHOOSE)],
+                        Err(why) => vec![refused(why)],
                     };
                 }
                 Some(Row::Back) => return true,
@@ -309,7 +301,7 @@ impl ControlsScreen {
                 if let Some(command) = self.selected_command() {
                     bindings.reset_command(command);
                     let name = command.name();
-                    self.message = vec![format!("{name} is back to its default keys.")];
+                    self.message = vec![ui_with(T::KEYS_RESET, &[("name", name.into())])];
                 }
             }
             _ => {}
@@ -371,12 +363,11 @@ impl ControlsScreen {
         }
         if press.nav == Nav::Back {
             self.mode = Mode::Browse;
-            self.message = vec!["Cancelled.".into()];
+            self.message = vec![ui(T::CANCELLED)];
             return;
         }
         let Some(key) = press.binding.clone() else {
-            let refusal = "! That key cannot be bound. Try another, or Esc to cancel.";
-            self.message = vec![refusal.into()];
+            self.message = vec![ui(T::REFUSED_UNBINDABLE)];
             return;
         };
         let (command, at) = match self.rows().get(self.selected) {
@@ -394,7 +385,7 @@ impl ControlsScreen {
             false => key,
         };
         if let Some(why) = key.refused_for(command) {
-            self.message = vec![format!("! {why}. Try another, or Esc to cancel.")];
+            self.message = vec![ui_with(T::REFUSED_TRY, &[("why", why.into())])];
             return;
         }
         let shown = key.display();
@@ -403,31 +394,50 @@ impl ControlsScreen {
         let keys: Vec<KeyBinding> = bindings.keys_of(command).into_iter().cloned().collect();
         let had = keys.iter().position(|k| *k == key);
         let old = at.and_then(|at| keys.get(at)).map(|k| k.display());
+        let mut args = vec![
+            ("name", name.clone().into()),
+            ("shown", shown.clone().into()),
+        ];
         self.message = vec![match bindings.bind_at(command, key, at) {
             Ok(Bound::Free) => match (had, old) {
-                (Some(had), _) if at.is_none_or(|at| at == had) => {
-                    format!("{name} has {shown} already.")
+                (Some(had), _) if at.is_none_or(|at| at == had) => ui_with(T::HAS_ALREADY, &args),
+                (Some(_), Some(old)) => {
+                    args.push(("old", old.into()));
+                    ui_with(T::TRADED, &args)
                 }
-                (Some(_), Some(old)) => format!("{name}: {shown} and {old} traded places."),
-                (None, Some(old)) => format!("{name}: {old} is now {shown}."),
-                _ => format!("{name}: {shown} added."),
+                (None, Some(old)) => {
+                    args.push(("old", old.into()));
+                    ui_with(T::NOW, &args)
+                }
+                _ => ui_with(T::ADDED, &args),
             },
             Ok(Bound::Moved {
                 from,
                 keyless: true,
                 ..
-            }) => format!(
-                "{shown} moved to {}; {} has no key.",
-                command.name(),
-                from.name()
-            ),
-            Ok(Bound::Moved { from, .. }) => {
-                format!("{shown} moved to {} (was {}).", command.name(), from.name())
+            }) => {
+                let args = [
+                    ("shown", shown.into()),
+                    ("to", name.into()),
+                    ("from", from.name().into()),
+                ];
+                ui_with(T::MOVED_KEYLESS, &args)
             }
-            Err(conflict) => format!(
-                "! {shown} is fixed for {} and cannot be taken.",
-                conflict.owner.name()
-            ),
+            Ok(Bound::Moved { from, .. }) => {
+                let args = [
+                    ("shown", shown.into()),
+                    ("to", name.into()),
+                    ("from", from.name().into()),
+                ];
+                ui_with(T::MOVED, &args)
+            }
+            Err(conflict) => {
+                let args = [
+                    ("shown", shown.into()),
+                    ("owner", conflict.owner.name().into()),
+                ];
+                ui_with(T::FIXED_CANNOT_TAKE, &args)
+            }
         }];
     }
 
@@ -456,7 +466,12 @@ impl ControlsScreen {
             .max()
             .unwrap_or(0) as i32;
         let width = (label_w + longest + 11).clamp(60, WIDEST);
-        let panel = Panel::new(console, " Controls ", width, count as i32 + spare);
+        let panel = Panel::new(
+            console,
+            &format!(" {} ", ui(T::TITLE)),
+            width,
+            count as i32 + spare,
+        );
         let value_w = (panel.w - label_w - 11).max(1) as usize;
         let message_rows = if read_only { 0 } else { 6 };
         let visible = (panel.body_rows() - message_rows).max(1) as usize;
@@ -473,14 +488,20 @@ impl ControlsScreen {
             let selected = !read_only && i == self.selected;
             match row {
                 Row::Note(note) => {
-                    console.print(panel.inner_x(), y, note, TEXT_DIM);
+                    console.print_in(panel.inner_x(), y, &ui(*note), TEXT_DIM, panel.inner_w());
                 }
                 Row::Blank => {}
                 Row::Header(context) => {
-                    console.print(panel.inner_x(), y, context.title(), ACCENT);
+                    console.print_in(panel.inner_x(), y, context.title(), ACCENT, panel.inner_w());
                 }
                 Row::AbilityKeys => {
-                    console.print(panel.inner_x(), y, ABILITY_KEYS_TITLE, ACCENT);
+                    console.print_in(
+                        panel.inner_x(),
+                        y,
+                        &ui(T::ABILITY_KEYS),
+                        ACCENT,
+                        panel.inner_w(),
+                    );
                 }
                 Row::Command(command) => {
                     let value = truncated(&key_list(bindings, *command), value_w);
@@ -488,23 +509,27 @@ impl ControlsScreen {
                 }
                 Row::Key(command, at) => {
                     let value = match bindings.keys_of(*command).get(*at) {
-                        _ if selected && capturing => "press a key...".to_string(),
+                        _ if selected && capturing => ui(T::PRESS_A_KEY),
                         Some(key) => truncated(&key.display(), value_w),
                         None => String::new(),
                     };
-                    let label = format!("  Key {}", at + 1);
+                    let label = format!(
+                        "  {}",
+                        ui_with(T::KEY_N, &[("n", Arg::Number(*at as i64 + 1))])
+                    );
                     panel.row(console, y, selected, &label, &value, label_w);
                 }
                 Row::AddKey(_) => {
                     let value = match selected && capturing {
-                        true => "press a key...",
-                        false => "",
+                        true => ui(T::PRESS_A_KEY),
+                        false => String::new(),
                     };
-                    panel.row(console, y, selected, "  Add a key", value, label_w);
+                    let label = format!("  {}", ui(T::ADD_KEY));
+                    panel.row(console, y, selected, &label, &value, label_w);
                 }
                 Row::Reset | Row::Export | Row::Import | Row::Back => {
-                    let label = row.action().unwrap_or_default();
-                    panel.row(console, y, selected, label, "", label_w);
+                    let label = row.action().map(ui).unwrap_or_default();
+                    panel.row(console, y, selected, &label, "", label_w);
                 }
             }
         }
@@ -521,22 +546,30 @@ impl ControlsScreen {
         let keys = HINTS;
         let footer = if read_only {
             let close = match bindings.key_name(KeyCommand::Help) {
-                Some(key) => format!("{key} or Esc close"),
-                None => "Esc close".to_string(),
+                Some(key) => ui_with(T::FOOTER_CLOSE, &[("shown", key.into())]),
+                None => ui(T::FOOTER_CLOSE_PLAIN),
             };
             let scroll = if first > 0 || more {
-                format!("{} scroll   ", keys.up_down())
+                format!(
+                    "{}   ",
+                    ui_with(T::FOOTER_SCROLL, &[("up_down", keys.up_down().into())])
+                )
             } else {
                 String::new()
             };
             format!("{scroll}{close}")
         } else if self.open.is_some() {
-            format!(
-                "{} replace or add   {} remove   Esc done",
-                keys.confirm, keys.erase
-            )
+            let args = [
+                ("confirm", keys.confirm.into()),
+                ("erase", keys.erase.into()),
+            ];
+            ui_with(T::FOOTER_OPEN, &args)
         } else {
-            format!("{} keys   {} reset   Esc back", keys.confirm, keys.erase)
+            let args = [
+                ("confirm", keys.confirm.into()),
+                ("erase", keys.erase.into()),
+            ];
+            ui_with(T::FOOTER_BROWSE, &args)
         };
         panel.footer(console, &footer);
     }
@@ -548,17 +581,17 @@ impl ControlsScreen {
             let name = self
                 .selected_command()
                 .map_or_else(String::new, |c| c.name());
-            vec![format!("Press a key for \"{name}\". Esc cancels.")]
+            vec![ui_with(T::CAPTURE_PROMPT, &[("name", name.into())])]
         } else if !self.message.is_empty() {
             self.message.clone()
         } else if let Some((key, first, second)) = bindings.conflicts().first() {
-            vec![format!(
-                "! {} is bound to both {} and {} ({}).",
-                key.display(),
-                first.name(),
-                second.name(),
-                first.context().title()
-            )]
+            let args = [
+                ("shown", key.display().into()),
+                ("first", first.name().into()),
+                ("second", second.name().into()),
+                ("context", first.context().title().into()),
+            ];
+            vec![ui_with(T::CONFLICT, &args)]
         } else {
             Vec::new()
         };
@@ -604,12 +637,17 @@ pub(super) fn receive_keymap(
             }
             report.summary("the keymap")
         }
-        Err(why) => vec![format!("! {why}")],
+        Err(why) => vec![refused(why)],
     };
     if changed.0 != bindings.0 {
         *bindings = changed;
     }
     stack.keymap_imported(lines);
+}
+
+/// A refusal from elsewhere, marked as one.
+fn refused(why: String) -> String {
+    ui_with(T::REFUSED, &[("why", why.into())])
 }
 
 /// `text` wrapped to `width` cells, breaking words longer than that (a file's path).
@@ -634,14 +672,20 @@ fn remove_message(
 ) -> String {
     let name = command.name();
     match removed {
-        Some(Ok(key)) if bindings.keys_of(command).is_empty() => {
-            format!("{name}: {} removed; it has no key now.", key.display())
+        Some(Ok(key)) => {
+            let args = [("name", name.into()), ("shown", key.display().into())];
+            match bindings.keys_of(command).is_empty() {
+                true => ui_with(T::REMOVED_KEYLESS, &args),
+                false => ui_with(T::REMOVED, &args),
+            }
         }
-        Some(Ok(key)) => format!("{name}: {} removed.", key.display()),
-        Some(Err(conflict)) => format!(
-            "! {} is fixed for {name} and cannot be removed.",
-            conflict.key.display()
-        ),
+        Some(Err(conflict)) => {
+            let args = [
+                ("name", name.into()),
+                ("shown", conflict.key.display().into()),
+            ];
+            ui_with(T::FIXED_CANNOT_REMOVE, &args)
+        }
         None => String::new(),
     }
 }
@@ -655,7 +699,7 @@ fn key_list(bindings: &Bindings, command: KeyCommand) -> String {
         .map(|k| k.display())
         .collect();
     if keys.is_empty() {
-        "(none)".into()
+        ui(T::NONE)
     } else {
         keys.join(" ")
     }

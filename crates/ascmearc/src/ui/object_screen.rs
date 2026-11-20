@@ -46,6 +46,7 @@ use super::menu::{HINTS, Nav, Panel, Press, wrap};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::ScreenAction;
 use super::target::AimKind;
+use super::text::{UiText, object_screen as T, ui, ui_with};
 use super::{ACCENT, ScreenName, TEXT, TEXT_DIM, rarity_color};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
@@ -54,6 +55,7 @@ use ascmearc_core::color::Rgb;
 use ascmearc_core::content::{ClassActive, MAX_SPELL_RANK, Rarity, RecipeUse, SpellId};
 use ascmearc_core::equipment;
 use ascmearc_core::item_list::ItemList;
+use ascmearc_core::lang::Arg;
 use ascmearc_core::object::{Stack, Weight, format_weight};
 use ascmearc_core::perception::PerceptionView;
 use ascmearc_core::{Action, Meal, Positions, ReadTarget};
@@ -113,14 +115,14 @@ pub enum IdentifyBy {
 struct ListSpec {
     /// The screen it is (`--screen`, the stack's name for it).
     screen: ScreenName,
-    title: &'static str,
+    title: UiText,
     /// What it says when it lists nothing.
-    empty: &'static str,
+    empty: UiText,
     /// Where its rows come from.
     rows: Rows,
     /// What choosing a stack does, in the footer ("temper"), for a list of one pick; `None` for
     /// one that marks stacks (the inventory's drop mode, the pile).
-    verb: Option<&'static str>,
+    verb: Option<UiText>,
     /// The action choosing a stack makes, for a list that only acts on it.
     act: Option<fn(usize) -> Action>,
 }
@@ -173,120 +175,120 @@ impl ObjectList {
         match self {
             ObjectList::Inventory => ListSpec {
                 screen: ScreenName::Inventory,
-                title: " Inventory ",
-                empty: "You are not carrying anything.",
+                title: T::TITLE_INVENTORY,
+                empty: T::EMPTY_INVENTORY,
                 rows: Rows::Pack,
                 verb: None,
                 act: None,
             },
             ObjectList::PickUp => ListSpec {
                 screen: ScreenName::PickUp,
-                title: " Pick up ",
-                empty: "There is nothing here.",
+                title: T::TITLE_PICK_UP,
+                empty: T::EMPTY_PICK_UP,
                 rows: Rows::Pile,
                 verb: None,
                 act: None,
             },
             ObjectList::Throw => list(
                 ScreenName::Throw,
-                " Throw ",
-                "You have nothing to throw.",
+                T::TITLE_THROW,
+                T::EMPTY_THROW,
                 ItemList::Throw,
-                "choose",
+                T::VERB_CHOOSE,
             ),
             ObjectList::ThrownExploit => list(
                 ScreenName::ThrownExploit,
-                " Thrown exploit ",
-                "You have nothing to throw into an opening.",
+                T::TITLE_THROWN_EXPLOIT,
+                T::EMPTY_THROWN_EXPLOIT,
                 ItemList::ThrownExploit,
-                "choose",
+                T::VERB_CHOOSE,
             ),
             ObjectList::Eat => list(
                 ScreenName::Eat,
-                " Consume what? ",
-                "You have nothing to consume.",
+                T::TITLE_EAT,
+                T::EMPTY_EAT,
                 ItemList::Eat,
-                "consume",
+                T::VERB_CONSUME,
             ),
             ObjectList::Read => list(
                 ScreenName::Read,
-                " Read ",
-                "You have nothing to read.",
+                T::TITLE_READ,
+                T::EMPTY_READ,
                 ItemList::Read,
-                "read",
+                T::VERB_READ,
             ),
             ObjectList::Identify(_) => list(
                 ScreenName::Identify,
-                " Identify ",
-                "You carry nothing unidentified.",
+                T::TITLE_IDENTIFY,
+                T::EMPTY_IDENTIFY,
                 ItemList::Identify,
-                "identify",
+                T::VERB_IDENTIFY,
             ),
             ObjectList::Temper => acts(
                 |item| Action::Temper { item },
                 list(
                     ScreenName::Temper,
-                    " Temper ",
-                    "You carry no metal arms or armour to work.",
+                    T::TITLE_TEMPER,
+                    T::EMPTY_TEMPER,
                     ItemList::Temper,
-                    "temper",
+                    T::VERB_TEMPER,
                 ),
             ),
             ObjectList::Whittle => acts(
                 |item| Action::Whittle { item },
                 list(
                     ScreenName::Whittle,
-                    " Whittle ",
-                    "You carry no wooden weapon to whittle.",
+                    T::TITLE_WHITTLE,
+                    T::EMPTY_WHITTLE,
                     ItemList::Whittle,
-                    "whittle",
+                    T::VERB_WHITTLE,
                 ),
             ),
             ObjectList::Salvage => acts(
                 |item| Action::Salvage { item },
                 list(
                     ScreenName::Salvage,
-                    " Salvage ",
-                    "You carry nothing worth taking apart.",
+                    T::TITLE_SALVAGE,
+                    T::EMPTY_SALVAGE,
                     ItemList::Salvage,
-                    "salvage",
+                    T::VERB_SALVAGE,
                 ),
             ),
             ObjectList::MakeDo => acts(
                 |item| Action::UseOn(ClassActive::MakeDo, item),
                 list(
                     ScreenName::MakeDo,
-                    " Make do and mend ",
-                    "You carry nothing damaged to mend.",
+                    T::TITLE_MAKE_DO,
+                    T::EMPTY_MAKE_DO,
                     ItemList::MakeDo,
-                    "mend",
+                    T::VERB_MEND,
                 ),
             ),
             ObjectList::Cut => list(
                 ScreenName::Cut,
-                " Cut ",
-                "You carry no gem that can be cut.",
+                T::TITLE_CUT,
+                T::EMPTY_CUT,
                 ItemList::Cut,
-                "cut",
+                T::VERB_CUT,
             ),
             ObjectList::Decipher => acts(
                 |item| Action::Decipher { item },
                 list(
                     ScreenName::Decipher,
-                    " Decipher ",
-                    "You carry no scroll you have not made out.",
+                    T::TITLE_DECIPHER,
+                    T::EMPTY_DECIPHER,
                     ItemList::Decipher,
-                    "decipher",
+                    T::VERB_DECIPHER,
                 ),
             ),
             ObjectList::Give => acts(
                 |item| Action::Give { item, ally: None },
                 list(
                     ScreenName::Give,
-                    " Give ",
-                    "You carry nothing for a beast's neck.",
+                    T::TITLE_GIVE,
+                    T::EMPTY_GIVE,
                     ItemList::Give,
-                    "give",
+                    T::VERB_GIVE,
                 ),
             ),
         }
@@ -306,11 +308,11 @@ impl ObjectList {
             .map(|spec| spec.screen)
     }
 
-    fn title(self) -> &'static str {
-        self.spec().title
+    fn title(self) -> String {
+        format!(" {} ", ui(self.spec().title))
     }
 
-    fn empty(self) -> &'static str {
+    fn empty(self) -> UiText {
         self.spec().empty
     }
 
@@ -390,7 +392,7 @@ pub struct ObjectScreen {
     /// The stacks listed, grouped by class and paged (`paged_list`).
     entries: PagedList<Entry>,
     /// What an empty list says: [`ObjectList::empty`].
-    empty: &'static str,
+    empty: UiText,
     /// The marked stacks of a selection screen, by position: marks belong to stacks, not to
     /// the letters a page gives them, so they stay across pages.
     marked: Positions,
@@ -455,28 +457,26 @@ impl ObjectScreen {
                 // what to eat says what lies here. In a shop goods lying
                 // there say their price, and what the player has not paid for what they owe.
                 let mark = match (item, list) {
-                    (Item::Floor(_), ObjectList::Eat) => Some("lying here".to_string()),
+                    (Item::Floor(_), ObjectList::Eat) => Some(ui(T::MARK_LYING_HERE)),
                     (Item::Floor(_), _) => None,
                     (Item::Pack(i), _) => equipment::mark(content, view.equipment(), i),
                 };
                 let price = match item {
-                    Item::Floor(_) => {
-                        (view.price_tag(view.viewer(), s)).map(|g| format!("for sale, {g} gold"))
-                    }
-                    Item::Pack(i) => {
-                        (unpaid.get(i).copied().flatten()).map(|g| format!("unpaid, {g} gold"))
-                    }
+                    Item::Floor(_) => (view.price_tag(view.viewer(), s))
+                        .map(|g| ui_with(T::MARK_FOR_SALE, &[("gold", Arg::Number(g as i64))])),
+                    Item::Pack(i) => (unpaid.get(i).copied().flatten())
+                        .map(|g| ui_with(T::MARK_UNPAID, &[("gold", Arg::Number(g as i64))])),
                 };
                 // Hound's nose: what to eat says how fresh it smells.
                 let smell = (list == ObjectList::Eat)
                     .then(|| view.smell(s))
                     .flatten()
-                    .map(|f| format!("smells {}", f.word()));
+                    .map(|f| ui_with(T::MARK_SMELLS, &[("word", f.word().into())]));
                 // A trained eye (Appraise, Survival; #1031) tells it in words, if the check passes.
                 let judged = (list == ObjectList::Eat && smell.is_none())
                     .then(|| view.judge(s))
                     .flatten()
-                    .map(|w| format!("looks {w}"));
+                    .map(|w| ui_with(T::MARK_LOOKS, &[("word", w.into())]));
                 // A grimoire in the read list: the spell it teaches, or the rank it would bring a
                 // known spell to, and the chance in words.
                 let study = match (list, item) {
@@ -489,8 +489,15 @@ impl ObjectScreen {
                     _ => None,
                 };
                 let teaches = (study.as_ref()).map(|(_, _, rank, chance)| match rank {
-                    Some(rank) => format!("rank {rank} of {MAX_SPELL_RANK}: {chance}"),
-                    None => format!("learning: {chance}"),
+                    Some(rank) => ui_with(
+                        T::MARK_RANK,
+                        &[
+                            ("rank", Arg::Number(i64::from(*rank))),
+                            ("max", Arg::Number(i64::from(MAX_SPELL_RANK))),
+                            ("chance", (*chance).into()),
+                        ],
+                    ),
+                    None => ui_with(T::MARK_LEARNING, &[("chance", (*chance).into())]),
                 });
                 let marks: Vec<String> = (teaches.into_iter())
                     .chain(mark)
@@ -560,9 +567,9 @@ impl ObjectScreen {
     }
 
     /// The panel's title: the list's, or the inventory's drop mode's.
-    fn title(&self) -> &'static str {
+    fn title(&self) -> String {
         match self.is_dropping() {
-            true => " Inventory: drop ",
+            true => format!(" {} ", ui(T::TITLE_DROP)),
             false => self.list.title(),
         }
     }
@@ -596,23 +603,34 @@ impl ObjectScreen {
                     return ScreenAction::Stay;
                 };
                 let what = match rank {
-                    Some(rank) => format!("Deepening {spell} to rank {rank} of {MAX_SPELL_RANK}"),
-                    None => format!("Learning {spell}"),
+                    Some(rank) => ui_with(
+                        T::DEEPENING,
+                        &[
+                            ("spell", spell.into()),
+                            ("rank", Arg::Number(i64::from(rank))),
+                            ("max", Arg::Number(i64::from(MAX_SPELL_RANK))),
+                        ],
+                    ),
+                    None => ui_with(T::LEARNING, &[("spell", spell.into())]),
                 };
-                let text = format!(
-                    "Read the {grimoire}? {what} will be {chance}. Once you begin you cannot \
-                     stop of your own accord."
+                let text = ui_with(
+                    T::DIALOG_TEXT,
+                    &[
+                        ("grimoire", grimoire.into()),
+                        ("what", what.into()),
+                        ("chance", chance.into()),
+                    ],
                 );
                 ScreenAction::Dialog(Box::new(
-                    super::dialog_screen::Dialog::new("Read", text)
+                    super::dialog_screen::Dialog::new(ui(T::DIALOG_TITLE), text)
                         .accept(
-                            "Read it",
+                            ui(T::DIALOG_READ),
                             Action::Read {
                                 item: item.position(),
                                 target: None,
                             },
                         )
-                        .cancel("Don't read it", ScreenAction::Close),
+                        .cancel(ui(T::DIALOG_CANCEL), ScreenAction::Close),
                 ))
             }
             (ObjectList::Read, item) if !identify => ScreenAction::Act(Action::Read {
@@ -768,15 +786,19 @@ impl ObjectScreen {
     /// burden changes, dimmer: `Carrying 28.4 kg (burdened)   ·   Your weight 98.4 kg (you 70
     /// kg)`, `Burdened over 15 kg, strained over 30 kg, overloaded over 45 kg`.
     fn summary(&self, width: i32) -> Vec<(String, Rgb)> {
-        let burden = (self.load.map(|l| l.burden()))
-            .filter(|b| *b != Burden::Unburdened)
-            .map_or(String::new(), |b| format!(" ({})", b.id()));
+        let burden = (self.load.map(|l| l.burden())).filter(|b| *b != Burden::Unburdened);
+        let weight = ("weight", format_weight(self.weight.carried).into());
         let parts = [
-            format!("Carrying {}{burden}", format_weight(self.weight.carried)),
-            format!(
-                "Your weight {} (you {})",
-                format_weight(self.weight.total()),
-                format_weight(self.weight.base),
+            match burden {
+                Some(b) => ui_with(T::CARRYING_BURDEN, &[weight, ("burden", b.id().into())]),
+                None => ui_with(T::CARRYING, &[weight]),
+            },
+            ui_with(
+                T::YOUR_WEIGHT,
+                &[
+                    ("total", format_weight(self.weight.total()).into()),
+                    ("base", format_weight(self.weight.base).into()),
+                ],
             ),
         ];
         let carried = fit_joined(&parts, "   ·   ", width).into_iter();
@@ -838,12 +860,12 @@ impl ObjectScreen {
         let (summary, extra, gap) = self.layout(console.cols(), console.rows());
         // An empty list's words, on as many rows as they take.
         let width = self.list.width().min(console.cols() as i32) - 8;
-        let said = wrap(self.empty, width);
+        let said = wrap(&ui(self.empty), width);
         let count = match self.entries.is_empty() {
             true => said.len(),
             false => self.entries.tallest().max(1),
         } as i32;
-        let panel = Panel::new(console, self.title(), self.list.width(), count + extra);
+        let panel = Panel::new(console, &self.title(), self.list.width(), count + extra);
         // The drop mode turns no pages: marks would be lost.
         if read_only {
             super::info_tabs::draw_tabs(console, &panel, super::ScreenName::Inventory);
@@ -888,8 +910,17 @@ impl ObjectScreen {
             let weight = format_weight(entry.weight);
             let weight_x = panel.x + panel.w - 3 - weight.chars().count() as i32;
             let room = (weight_x - name_x - 1).max(0) as usize;
-            let mark = (entry.mark.as_ref()).map_or(String::new(), |m| format!(" ({m})"));
-            let name: String = format!("{}{mark}", entry.name).chars().take(room).collect();
+            let name = match &entry.mark {
+                Some(m) => ui_with(
+                    T::NAME_MARKED,
+                    &[
+                        ("name", entry.name.clone().into()),
+                        ("mark", m.clone().into()),
+                    ],
+                ),
+                None => entry.name.clone(),
+            };
+            let name: String = name.chars().take(room).collect();
             console.print(
                 name_x,
                 y,
@@ -918,45 +949,49 @@ impl ObjectScreen {
             'a' => "a".to_string(),
             last => format!("a-{last}"),
         });
-        let with = |what: &str| {
-            letters
-                .as_ref()
-                .map_or(String::new(), |l| format!("{l} {what}   "))
+        let with = |text: UiText| match &letters {
+            Some(l) => format!("{}   ", ui_with(text, &[("letters", l.clone().into())])),
+            None => String::new(),
         };
         let page = (self.entries.hint(&keys)).map_or(String::new(), |hint| format!("{hint}   "));
-        let confirm = &keys.confirm;
-        let either = |verb: &str| match &letters {
-            Some(l) => format!("{l} or {confirm} {verb}"),
-            None => format!("{confirm} {verb}"),
+        let confirm = || ("confirm", Arg::from(keys.confirm));
+        let either = |verb: UiText| {
+            let verb = ("verb", ui(verb).into());
+            match &letters {
+                Some(l) => ui_with(T::EITHER, &[("letters", l.clone().into()), confirm(), verb]),
+                None => ui_with(T::EITHER_NONE, &[confirm(), verb]),
+            }
         };
-        let mark = |verb: &str, esc: &str| {
+        let mark = |verb: UiText, esc: UiText| {
             format!(
-                "{}{} all   {confirm} {verb}   {page}Esc {esc}",
-                with("mark"),
-                keys.mark_all
+                "{}{}   {}   {page}{}",
+                with(T::FOOTER_MARK),
+                ui_with(T::FOOTER_MARK_ALL, &[("own", keys.mark_all.into())]),
+                ui_with(T::EITHER_NONE, &[confirm(), ("verb", ui(verb).into())]),
+                ui(esc),
             )
         };
         match self.list {
             ObjectList::Inventory => match self.dropping {
-                Dropping::FromInventory => mark("drop", "back"),
-                Dropping::FromPlay => mark("drop", "cancel"),
+                Dropping::FromInventory => mark(T::VERB_DROP, T::ESC_BACK),
+                Dropping::FromPlay => mark(T::VERB_DROP, T::ESC_CANCEL),
                 Dropping::No => {
                     let close = match bindings.keys_of(KeyCommand::Inventory).first() {
-                        Some(key) => format!("{} or Esc close", key.display()),
-                        None => "Esc close".to_string(),
+                        Some(key) => ui_with(T::ESC_CLOSE_OWN, &[("own", key.display().into())]),
+                        None => ui(T::ESC_CLOSE),
                     };
                     let drop = if letters.is_some() {
-                        format!("{DROP_MODE} drop   ")
+                        format!("{}   ", ui(T::FOOTER_DROP))
                     } else {
                         String::new()
                     };
-                    format!("{page}{}{drop}{close}", with("look"))
+                    format!("{page}{}{drop}{close}", with(T::FOOTER_LOOK))
                 }
             },
-            ObjectList::PickUp => mark("pick up", "cancel"),
+            ObjectList::PickUp => mark(T::VERB_PICK_UP, T::ESC_CANCEL),
             list => {
-                let verb = list.spec().verb.unwrap_or("choose");
-                format!("{}   {page}Esc cancel", either(verb))
+                let verb = list.spec().verb.unwrap_or(T::VERB_CHOOSE);
+                format!("{}   {page}{}", either(verb), ui(T::ESC_CANCEL))
             }
         }
     }

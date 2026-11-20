@@ -8,8 +8,9 @@ use crate::content::ContentFiles;
 use crate::magic::{Affix, Magic, Rarity};
 use crate::test_support::draws;
 use crate::test_support::run;
-use crate::world::health::potion::KEPT;
 use crate::world::*;
+
+const KEPT: &str = "There is enough left in the flask for another draught.";
 
 /// Fixture affixes, one per effect, with ranges wide enough for every test.
 const AFFIXES: &str = r#"

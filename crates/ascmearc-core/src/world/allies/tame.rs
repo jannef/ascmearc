@@ -34,10 +34,12 @@ use crate::action::Event;
 use crate::check;
 use crate::content::{ActionKind, Stance};
 use crate::geom::Dir;
+use crate::lang::{Msg, Phrase};
+use crate::msg;
 use crate::rng::draw;
 use crate::skills::{Effect, Use};
 use crate::stats::Stat;
-use crate::text::capitalized;
+use crate::world::combat::fight;
 use crate::world::turn::rest::Ended;
 use crate::world::{ActorId, Spent, World};
 use std::cell::Cell;
@@ -57,40 +59,40 @@ impl World {
         let player = self.state.player;
         let trained = crate::ability::Ability::Tame.had_by(self.state.player(), &content);
         if !trained || content.companions().is_none() || content.allies().is_none() {
-            self.say("You do not know how to tame beasts.");
+            self.say(msg::allies::TAME_UNTRAINED);
             return Spent::Nothing;
         }
         if self.companion().is_some() {
-            self.say("You already have a companion.");
+            self.say(msg::allies::HAVE_COMPANION);
             return Spent::Nothing;
         }
         let at = self.player_pos().step(dir);
         let Some(beast) = self.seen_creature_at(at) else {
-            self.say("There is no beast there to tame.");
+            self.say(msg::allies::NO_BEAST_TO_TAME);
             return Spent::Nothing;
         };
         let actor = &self.state.actors[&beast];
-        let called = self.called(actor);
-        let name = capitalized(&called);
+        let who = self.called_phrase(actor);
+        let about = |id| Msg::new(id).role("who", who.clone());
         if actor.master() == Some(player) {
-            self.say(format!("{name} is yours already."));
+            self.say(about(msg::allies::YOURS_ALREADY));
             return Spent::Nothing;
         }
         if actor.ally.is_some() || !content.creature(actor.creature).tameable {
-            self.say(format!("{name} cannot be tamed."));
+            self.say(about(msg::allies::CANNOT_BE_TAMED));
             return Spent::Nothing;
         }
         if self.stance(player, beast) == Stance::Hostile && !self.unaware(beast, player) {
-            self.say(format!("{name} has seen you: it will not be tamed now."));
+            self.say(about(msg::allies::HAS_SEEN_YOU));
             return Spent::Nothing;
         }
         let text = match self.first_food() {
             Some(i) => {
                 let food = &self.state.player().inventory[i];
-                let what = self.lore().describe_object(food.object, 1);
-                format!("You crouch by {called} and hold out {what}.")
+                let what = self.lore().phrase(food).count(1);
+                about(msg::allies::CROUCH_FEED).role("what", what)
             }
-            None => format!("You crouch by {called} and speak softly to it."),
+            None => about(msg::allies::CROUCH_SPEAK),
         };
         self.say(text);
         Spent::Tame(Taming { beast })
@@ -129,19 +131,25 @@ impl World {
         if ended == Ended::Died || left.get() == 0 {
             return;
         }
-        let called = (self.state.actors.get(&taming.beast)).map(|a| self.called(a));
-        let called = called.unwrap_or_else(|| "the beast".into());
+        let who = self.beast_phrase(taming.beast);
+        let about = |id| Msg::new(id).role("who", who.clone());
         let text = match ended {
-            _ if !self.taming_holds(taming) => {
-                format!(
-                    "{} leaves your side; you stop taming it.",
-                    capitalized(&called)
-                )
+            _ if !self.taming_holds(taming) => about(msg::allies::BEAST_LEAVES),
+            // What came is told as `came_line` says it, until that line is converted.
+            Ended::Came(came) => {
+                about(msg::allies::TAME_BROKEN_BY).role("came", self.came_line(came))
             }
-            Ended::Came(came) => format!("{}; you stop taming {called}.", self.came_line(came)),
-            _ => format!("You stop taming {called}."),
+            _ => about(msg::allies::TAME_STOPPED),
         };
         self.say(text);
+    }
+
+    /// Beast `id` as the lines name it: as the player calls it, or "the beast" once it is gone.
+    fn beast_phrase(&self, id: ActorId) -> Phrase {
+        match self.state.actors.get(&id) {
+            Some(actor) => self.called_phrase(actor),
+            None => fight::word("the beast"),
+        }
     }
 
     /// Whether the try at taming may go on: the beast is alive beside the player, on their
@@ -188,8 +196,7 @@ impl World {
 
     /// The turns are done: the food, the check, the mark, and what comes of it (module docs).
     fn tame_check(&mut self, beast: ActorId) {
-        let called = (self.state.actors.get(&beast)).map(|a| self.called(a));
-        let called = called.unwrap_or_else(|| "the beast".into());
+        let who = self.beast_phrase(beast);
         let fed = self.first_food().is_some_and(|i| {
             let player = self.player_mut();
             if player.inventory[i].count > 1 {
@@ -210,9 +217,12 @@ impl World {
             self.train(Use::Handle);
         }
         self.wake(beast);
-        let name = capitalized(&called);
         if made && let Some(own) = self.adopt(beast) {
-            self.say(format!("{name} comes to your hand. You call it {own}."));
+            self.say(
+                Msg::new(msg::allies::COMES_TO_YOUR_HAND)
+                    .role("who", who)
+                    .role("own", Phrase::literal(&own)),
+            );
         } else {
             // A hostile one has seen the player now: no second try while it hunts them.
             let at = self.player_pos();
@@ -220,7 +230,7 @@ impl World {
             if let Some(actor) = self.state.actors.get_mut(&beast).filter(|_| hostile) {
                 actor.mind.last_seen = Some(at);
             }
-            self.say(format!("{name} snaps at you and backs away."));
+            self.say(Msg::new(msg::allies::SNAPS_AND_BACKS_AWAY).role("who", who));
         }
     }
 }

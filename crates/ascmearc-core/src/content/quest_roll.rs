@@ -415,7 +415,11 @@ fn fill(content: &Content, text: &str, words: &Words) -> Result<String, String> 
                 return Err(format!("unknown role `{role}` in `{{{role}:{form}}}`"));
             }
             if !DIALOGUE_FORMS.contains(&form.to_lowercase().as_str()) || form == "address" {
-                let forms = DIALOGUE_FORMS[..3].join(", ");
+                let forms = (DIALOGUE_FORMS.iter())
+                    .filter(|f| **f != "address")
+                    .copied()
+                    .collect::<Vec<_>>()
+                    .join(", ");
                 return Err(format!("`{{{role}:{form}}}`: a quest's text takes {forms}"));
             }
         }

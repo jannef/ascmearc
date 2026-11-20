@@ -193,33 +193,6 @@ impl World {
         self.content.english_of(&self.called_phrase(actor), "the")
     }
 
-    /// Who `actor` is to someone talking with it ([`World::called`]), as a phrase.
-    pub(in crate::world) fn called_phrase(&self, actor: &Actor) -> Phrase {
-        if let Some(data) = actor.kept() {
-            return Phrase::literal(&data.name);
-        }
-        let keeper = (self.state.levels.get(&actor.level))
-            .and_then(|level| level.shops.iter().find(|s| s.keeper == actor.id));
-        let proper =
-            (self.dialogue_of(actor)).and_then(|d| self.content.dialogue(d).name.as_deref());
-        // An aristocrat's own servant is theirs: "your squire" (`stipend.rs`); so is a merchant's
-        // business partner (`invest.rs`), and a craftsperson's patron (`patron.rs`).
-        let servant = (self.dialogue_of(actor)).is_some_and(|d| {
-            let d = self.content.dialogue(d);
-            d.stipend.is_some() || d.partner.is_some() || d.patron.is_some()
-        });
-        let creature = Phrase::id(format!(
-            "creature:{}",
-            self.content.creature(actor.creature).id
-        ));
-        match (keeper, proper) {
-            (Some(shop), _) => Phrase::literal(&shop.name),
-            (None, Some(name)) => Phrase::literal(name),
-            (None, None) if servant => creature.owned_by(self.you()),
-            (None, None) => creature,
-        }
-    }
-
     /// `line` of creature `id`'s dialogue as it says it: by its key, with the player in its
     /// `player` role, in the speaker's register (its dialogue's own, else its race's). Roles a
     /// line has beside the player's are added with [`Arg::with`].

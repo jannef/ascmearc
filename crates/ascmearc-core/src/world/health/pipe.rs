@@ -12,6 +12,8 @@
 use crate::action::Event;
 use crate::content::{ActionKind, ItemKind};
 use crate::hunger::Hunger;
+use crate::lang::Msg;
+use crate::msg;
 use crate::stats::Stat;
 use crate::time::GameTime;
 use crate::world::levels::encounter::Watch;
@@ -35,7 +37,7 @@ impl World {
     pub(in crate::world) fn start_smoke(&mut self) -> Spent {
         let content = self.content.clone();
         let Some(rules) = content.pipe() else {
-            self.say("You cannot smoke that.");
+            self.say(msg::health::CANNOT_SMOKE);
             return Spent::Nothing;
         };
         let race = self.state.race_of(&content, self.state.player());
@@ -43,20 +45,18 @@ impl World {
             let smoker = content
                 .race(&rules.race)
                 .map_or("halfling", |r| r.name.as_str());
-            self.say(format!(
-                "You cough and splutter: a pipe is a {}'s pleasure.",
-                smoker.to_lowercase()
-            ));
+            let smoker = smoker.to_lowercase();
+            self.say(Msg::new(msg::health::PIPE_NOT_YOURS).role("smoker", smoker));
             return Spent::Nothing;
         }
         if self.player_hunger() != Some(Hunger::Bloated) {
-            self.say("A pipe wants a full belly first.");
+            self.say(msg::health::PIPE_WANTS_FULL_BELLY);
             return Spent::Nothing;
         }
-        if self.refused_afloat("The water would only put it out.") {
+        if self.refused_afloat(msg::health::WATER_PUTS_IT_OUT) {
             return Spent::Nothing;
         }
-        self.say("You light your pipe and settle back.");
+        self.say(msg::health::LIGHT_PIPE);
         Spent::Smoke(self.state.time + crate::time::Duration::seconds(u64::from(rules.seconds)))
     }
 
@@ -84,15 +84,11 @@ impl World {
         let smoked = self.state.time.since(start);
         let text = match ended {
             Ended::Died => return,
-            Ended::Done => {
-                "You smoke your pipe to the last of it, and feel wonderfully at ease.".to_string()
-            }
-            Ended::Came(came) => format!(
-                "{}; you put out your pipe after {}.",
-                self.came_line(came),
-                smoked.spoken()
-            ),
-            Ended::Said => format!("You put out your pipe after {}.", smoked.spoken()),
+            Ended::Done => Msg::new(msg::health::SMOKE_DONE),
+            Ended::Came(came) => Msg::new(msg::health::PUT_OUT_PIPE_CAME)
+                .role("came", self.came_line(came))
+                .role("time", smoked.spoken()),
+            Ended::Said => Msg::new(msg::health::PUT_OUT_PIPE).role("time", smoked.spoken()),
         };
         self.say(text);
         let share = (smoked.as_seconds()).min(u64::from(rules.seconds));

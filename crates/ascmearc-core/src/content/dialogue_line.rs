@@ -20,11 +20,11 @@ use crate::lang::{Arg, Line};
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
-/// The forms a dialogue line may ask: the base form (`name`), an article with it (`a`, `the`:
-/// function words, not morphology), and how the speaker addresses someone (`address`). A form
-/// written with a capital capitalizes. The checker asks the same of a translation
-/// (`xtask/src/lang.rs`).
-pub const DIALOGUE_FORMS: [&str; 4] = ["name", "a", "the", "address"];
+/// The forms a dialogue line may ask: the base form (`name`, or `bare`, which a form-less
+/// `{role}` is), an article with it (`a`, `the`: function words, not morphology), and how the
+/// speaker addresses someone (`address`). A form written with a capital capitalizes. The checker
+/// asks the same of a translation (`xtask/src/lang/data.rs`).
+pub const DIALOGUE_FORMS: [&str; 5] = ["name", "bare", "a", "the", "address"];
 
 /// The kind of a dialogue line's key: `dialogue:ascmearc.servant.lines.3`.
 pub const KIND: &str = "dialogue";
@@ -273,7 +273,8 @@ mod tests {
         bad("lines = [\"Hi, {player:plural}.\"]", "base form only");
         bad("lines = [\"Hi, {work:a}.\"]", "names only player");
         bad("lines = [\"Hi, {player:address}.\"]", "no `address`");
-        bad("lines = [\"Hi, {address}.\"]", "a slot is `{role:form}`");
+        // `{address}` is `{address:bare}` (#1945): a role no line here is given.
+        bad("lines = [\"Hi, {address}.\"]", "names only player");
         bad(
             "lines = [{ by = \"work.number\", one = \"Hi.\" }]",
             "variants by `work`",
@@ -293,5 +294,20 @@ mod tests {
         assert_eq!(said(&content, &line(0), Gender::Other), "Hi, Friend.");
         assert_eq!(said(&content, &line(1), Gender::Female), "Lady!");
         assert_eq!(said(&content, &line(1), Gender::Male), "Hi.");
+    }
+
+    #[test]
+    fn a_form_less_slot_is_the_base_form() {
+        // `{role}` is `{role:bare}` (#1945), and `bare` is the base form, as `name` is.
+        let mut files = ContentFiles::builtin();
+        let ok = "[[dialogue]]\nnpc = \"talk_test\"\n\
+                  lines = [\"Hi, {player}.\", \"Hi, {player:name}.\", \
+                  \"{player:Bare}!\", \"{player:Name}!\"]\n";
+        files.insert("campaigns/ascmearc/data/dialogue/talk_test.toml", ok);
+        let content = Content::load(&files).expect("loads");
+        let line = |n: u32| format!("dialogue:ascmearc.talk_test.lines.{n}");
+        let said = |n: u32| said(&content, &line(n), Gender::Other);
+        assert_eq!(said(0), said(1));
+        assert_eq!(said(2), said(3));
     }
 }

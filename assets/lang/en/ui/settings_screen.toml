@@ -1,0 +1,149 @@
+# The settings screen (`crates/ascmearc/src/ui/settings_screen.rs`). Ids alphabetical.
+#
+# The key named in the footer is fixed (`Esc`): translate the words around it. The screen fits
+# each text to its panel: a translation longer than the room is cut with `…`, which the screen
+# snapshots check (docs/dev/localization.md "UI text").
+
+# The row after the last option, and the help under each row.
+[back]
+text = "Back"
+
+[back_help]
+text = "Settings are saved as you change them."
+
+[clock]
+text = "Clock"
+
+[clock_help]
+text = "How the time of day is written: 14:32 or 2:32 PM."
+
+[color_palette]
+text = "Color palette"
+
+[effect_blood]
+text = "Blood"
+
+[effect_blood_help]
+text = "Blood stains from big hits and kills (not part of the preset)."
+
+[effect_circles]
+text = "Spell circles"
+
+[effect_circles_help]
+text = "Circles about the buffed and hexed (still with the preset)."
+
+[effect_distortion]
+text = "Heat haze"
+
+[effect_distortion_help]
+text = "Heat haze over lava and fires; the ground far below a tower window out of focus."
+
+[effect_flicker]
+text = "Light flicker"
+
+[effect_flicker_help]
+text = "Firelight flickers and drifts in hue; steady when off."
+
+[effect_glow]
+text = "Bloom and glow"
+
+[effect_glow_help]
+text = "Bloom around glowing glyphs such as lava and crystals."
+
+[effect_glyph_animation]
+text = "Glyph animation"
+
+[effect_glyph_animation_help]
+text = "Water waves, pulsing altars, sounds rippling in."
+
+[effect_motion]
+text = "Slides, camera"
+
+[effect_motion_help]
+text = "Slides, the camera, and spell effects; off, they snap."
+
+[effect_particles]
+text = "Particles"
+
+[effect_particles_help]
+text = "Sparks, embers, splashes, and dust."
+
+[effect_screen_fades]
+text = "Screen fades"
+
+[effect_screen_fades_help]
+text = "Level fades, flashes, bright spells darkening the view."
+
+[effect_screen_shake]
+text = "Screen shake"
+
+[effect_screen_shake_help]
+text = "The view shakes when a spell lands near you."
+
+[effect_weather]
+text = "Weather"
+
+[effect_weather_help]
+text = "Rain falling, splashing, and rings on water."
+
+# The row that opens the files screen.
+[files]
+text = "Where are my files?"
+
+[files_help]
+text = "Where settings and saves are, and open the folder."
+
+# `px`, the font size in logical pixels.
+[font_px]
+text = "{px:bare} px"
+
+[font_size]
+text = "Font size"
+
+[font_size_help]
+text = "Size of the glyphs, in logical pixels."
+
+# The footer: `up_down` and `left_right`, the keys that select and change a row.
+[footer]
+text = "{up_down:bare} select   {left_right:bare} change   Esc back"
+
+[off]
+text = "Off"
+
+# A switch the reduced-effects preset overrides.
+[off_preset]
+text = "Off (preset)"
+
+[on]
+text = "On"
+
+[palette_help]
+text = "Recolors everything on screen; game data is unchanged."
+
+[reduced_effects]
+text = "Reduced effects"
+
+[reduced_effects_help]
+text = "Preset: turns every effect below off."
+
+[reset]
+text = "Reset to defaults"
+
+[reset_help]
+text = "Restores these settings (not the key bindings)."
+
+# The two sample lines under the help: how text and the marks read at this size and palette.
+[sample]
+text = "Sample: legible text, then  [ marked ]  and  * flagged *"
+
+[sample_accent]
+text = "Sample accent text"
+
+[temperature]
+text = "Temperature"
+
+[temperature_help]
+text = "The unit the status bar shows the temperature in."
+
+[title]
+text = "Settings"

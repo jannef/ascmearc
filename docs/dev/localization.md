@@ -8,11 +8,14 @@ built from what the player perceives, items are named by phrases English renders
 `world/combat/` says its lines from templates ("Phrases", below); **L7**, the checker ("The
 checker (L7)"); **L10**, the `fi` morphology (#1893, "The `fi` module"); and **L6a**, the UI
 text path (#1900): the app's words in `assets/lang/en/ui/`, the abilities screen converted ("UI
-text"), with its widths in the screens' layout, not the text (#1908); and **L5**, dialogue
-(#1888): every line a creature says is a line of data said by its key, with role slots in the
-base form ("Dialogue"), on the one mechanism every line whose text lives in data uses ("Lines
-of data"). The doors, the welcome line, combat, and talk say theirs from templates; every other
-`say` site still says finished English as a literal line ("Literal lines"). Nothing player-visible has
+text"), with its widths in the screens' layout, not the text (#1908), and the further L6 parts:
+the controls, settings, and mods screens (#1935) and the object and rig screens (#1928); **L4a**
+and **L4i**, `world/allies/` (#1912) and `world/health/` (#1920) say their lines from templates
+("Literal lines"); and **L5**, dialogue (#1888): every line a creature says is a line of data
+said by its key, with role slots in the base form ("Dialogue"), on the one mechanism every line
+whose text lives in data uses ("Lines of data"). The doors, the welcome line, combat, allies,
+health, and talk say theirs from templates; every other `say` site still says finished English
+as a literal line ("Literal lines"). Nothing player-visible has
 changed: the English templates and phrases read as the strings did. The English helpers core,
 the app, and the wiki generator call have moved into the crate behind re-exports at their old
 paths.
@@ -29,7 +32,7 @@ nothing for it, `docs/dev/merging.md` "One build of ascmearc-core"). Dependencie
 | `message.rs` | `MessageId` (a newtype over `Cow<'static, str>`: a generated constant borrows, a loaded save owns; serialized as the plain string), `Role` (the same, and `Borrow<str>` so `args.get("actor")` works), `Arg` (`Phrase`, `Number`, `Text`, `List`, `Said`, `Key`; `Arg::said(key).with(role, arg)`, `.spoken_by(register, race)`), `Msg` (id and args; `Msg::new(id).role("who", phrase)`; `Msg::data_line(said)`, the `DATA_LINE` entry), `Entry` (a `Msg` with `turn`, `count`, and the unserialized `passing`). `Arg::feature` gives the value a template's variants select on |
 | `phrase.rs` | `Phrase` (head `Word`, `mods`, `count`, `proper`, `person`, `gender`, `notes`, `owner`), `Word::{Id, Literal}`, `Modifier::{Adjective, Of, Label, Material, Part, Made}`, `Person`, `Gender`, `Note::{Tags, Charges, Base}`. Builders: `Phrase::id`, `Phrase::literal` (proper), `.count`, `.with(modifier)`, `.note(tag)`, `.with_note`, `.owned_by`, `.without_notes` |
 | `lexicon.rs` | `Lexicon` (`word(id) -> Option<LexWord>`; core implements it over `Content`, "Phrases"), `LexWord` (`base`, explicit `forms`, `proper`, `gender`, `many`, `harmony`, `plural_only`), `MapLexicon` (a map; `MapLexicon::parse` reads a lexicon file: `id = "lemma"` or `{ word, forms, proper, gender, many, harmony, plural_only }`, `of` skipped), `NoLexicon` |
-| `template.rs` | `Line::parse` (total: a `{` that opens no `{role:form}` is text), `Template::{Line, Alternatives, Variants}` (`from_value`, `slots`, `written`), `Templates::parse(prefix, text)` for one `messages/<prefix>.toml`, `Templates::parse_data(what, kind, text)` for a translation's lines of data (`[hit] text = …` or a plain `hit = "…"`; `text = [...]` alternatives; `by = "<role>.<feature>"` with one key per value and an optional `else`, nesting allowed; `of` skipped). Errors name the file and the entry |
+| `template.rs` | `Line::parse` (total: a `{` that opens no `{role:form}` or `{role}` is text), `Template::{Line, Alternatives, Variants}` (`from_value`, `slots`, `written`), `Templates::parse(prefix, text)` for one `messages/<prefix>.toml`, `Templates::parse_data(what, kind, text)` for a translation's lines of data (`[hit] text = …` or a plain `hit = "…"`; `text = [...]` alternatives; `by = "<role>.<feature>"` with one key per value and an optional `else`, nesting allowed; `of` skipped). Errors name the file and the entry |
 | `lang.rs` | `LangFile` and `parse`: `name`, `code`, `morphology`, `fallback`, `repeat` (default `" (×{n})"`), `number_words` (default 12), `[registers.<name>]`, `[race_registers]`, `[generic]`. A key with a letter outside ASCII is quoted in TOML (`"minä" = "mie"`) |
 | `register.rs` | `Register::word("the")` returns the override or the word; `Registers` (`standard` always present; `get`, `for_speaker(own, race)`: the speaker's own, else the race's, else standard; `unknown_race_registers` for the checker) |
 | `morphology/mod.rs` | the `Morphology` trait: `forms() -> Vec<String>`, `phrase(&Phrase, form, &dyn Lexicon, &Register) -> Result<String, FormError>`, `number`, `list(items, Conj)`, `parse_word(entry) -> Result<(), ParseError>`. `FormError::UnknownForm` is the one failure; the renderer falls back from it |
@@ -38,7 +41,7 @@ nothing for it, `docs/dev/merging.md` "One build of ascmearc-core"). Dependencie
 | `render.rs` | `Language` (a `LangFile`, its `Morphology`, its `Templates`, its `Registers`): `from_toml(text, plurals)` picks `en`, `fi`, or `generic`; `add_templates(prefix, text)`; `phrase(phrase, form, lex) -> String`; `render(entry, lex, keys) -> String`; `try_render` / `try_render_as(register, …) -> Result<String, RenderError>`. `render_chain(&[&lang, &fallback, …], …)`: the first language that renders wins, else `[id]`. `Keys` is `&dyn Fn(&str) -> String`; `written_key` is the identity for dumps (`{key:help}` stays written) |
 | `proptests.rs` | rendering is total: arbitrary Unicode through `Line::parse`, `Templates::parse`, `lang::parse`, `MapLexicon::parse`, `Plurals::add`, `Language::render`, `En::phrase`, `Generic::phrase`, and `Fi::phrase` (phrases with every modifier and note kind and an owner) gives a string or an `Err`, never a panic; a module renders a form iff it lists it |
 
-**Rendering a line.** `{role:form}`: the form's first letter upper-case capitalizes the result
+**Rendering a line.** `{role:form}` (`{role}` alone is `{role:bare}`; a literal word in braces is therefore not writable, and none is needed): the form's first letter upper-case capitalizes the result
 (`{actor:The}`); `{key:<command>}` is the host's key for the command (`key` is a reserved role),
 as is an `Arg::Key` in any role; `Arg::Text` is verbatim; `Arg::Number` goes through
 `Morphology::number` (`num`: words up to `number_words`, digits beyond; `ord`); `Arg::List` with
@@ -337,9 +340,24 @@ example and `world/combat/` (`messages/combat.toml`) the one whose lines name th
    read the same, and the replays' hashes move only where a converted line was said (a literal
    entry became an id's): regenerate those with `replay --create` and say so.
 
+`world/allies/` (`messages/allies.toml`) is converted: `World::called_phrase` and `ally_phrase`
+are `called` and `ally_subject` as phrases, `pack_args` an order's allies as a list said
+`{pack:the}` (a lone one is its phrase, so its count agrees the verb). What it leaves as text
+for now: the `came_line` that stops a calling or a taming (a `came` role), and the data's own words
+(a charm's, a familiar's arrival, a status's `seen`).
+
 What combat leaves as literal lines, for their own slices: a rank risen and what it teaches
 (`fight.rs::ranks_news`, the data's lines joined), acid's lines (`corrode.rs`, the data's
-`{}`), and how the player died (`fight.rs::Cause::message`, said by `health/`).
+`{}`).
+
+`world/health/` (`messages/health.toml`, L4i) converted `Cause::message` (how the player died, now
+`Cause::message(&World) -> Msg`) with it. It leaves as literal text what the data writes: a
+status's start, end, ward, and stage lines, a disease's recovery line, a corpse's `on_eat` message,
+a treatment's made and failed lines, a skill gift's lines, and a flask's `words`. Text from another
+module's helper (`came_line`, `Hunger::news`) goes in as a text role, or stays literal. A stat's
+comparative ("stronger") and the disease in a sentence ("your wolf's sickness") are text roles
+(`feel`, `more`, `words`) until those words are converted. `health::object_phrase(content, id)`
+builds `object:<id>`; `Lore::title_phrase` is a stack's `title` as a phrase.
 
 When no literal is left, `LITERAL`, the `From` text impls, and this section go.
 
@@ -471,7 +489,8 @@ fields `greet`, `greet_evil.<n>`, `greet_good.<n>`, `lines.<n>`, `after.<quest>.
 
 **No morphology** (owner, #1882): a slot names a role and takes the base form only, `name`, or
 an article with it, `a`/`the` (function words, which a register may change), or `address`, each
-capitalized by a capital (`content::DIALOGUE_FORMS`). Gender and number pick whole lines. Every
+capitalized by a capital (`content::DIALOGUE_FORMS`). `bare` is the base form too, so a form-less
+`{role}` (`{role:bare}`, #1945) is accepted for a role the line is given. Gender and number pick whole lines. Every
 line is given `player` (`World::you()`); `partner.worth` `gold`, `invested`/`withdrawn` `gold`
 and `fee`, `patron.offer`/`waiting`/`plain` `work`, `patron.delivered` `gold`. The loader refuses
 another role or form, and `{player:address}` in a dialogue without `address`. `{player:address}`

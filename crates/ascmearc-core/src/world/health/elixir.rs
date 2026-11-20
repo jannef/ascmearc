@@ -18,20 +18,23 @@
 //! [`Stats::widen`]: crate::stats::Stats::widen
 
 use crate::dice::Dice;
+use crate::lang::Msg;
+use crate::msg;
 use crate::rng::draw;
 use crate::stats::Stat;
 use crate::world::World;
 
 /// What an elixir of `stat` says: `rose` whether the score rose, `widened` whether the potential
 /// rose by 2 or more besides.
-fn news(stat: Stat, rose: bool, widened: bool) -> String {
+fn news(stat: Stat, rose: bool, widened: bool) -> Msg {
     let feel = stat.comparative();
-    match (rose, widened) {
-        (true, true) => format!("You feel {feel}, and that you could be {feel} yet."),
-        (true, false) => format!("You feel {feel}."),
-        (false, true) => format!("You feel that you could be {feel} yet."),
-        (false, false) => "You feel no different.".to_string(),
-    }
+    let id = match (rose, widened) {
+        (true, true) => msg::health::ELIXIR_RISE_YET,
+        (true, false) => msg::health::ELIXIR_RISE,
+        (false, true) => msg::health::ELIXIR_YET,
+        (false, false) => return msg::health::ELIXIR_NO_DIFFERENCE.into(),
+    };
+    Msg::new(id).role("feel", feel)
 }
 
 impl World {

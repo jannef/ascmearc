@@ -24,8 +24,8 @@ pub struct Line(pub Vec<Segment>);
 
 impl Line {
     /// Parses `"{actor:The} hit{actor:s} {target:the}."`. Never fails: a brace that does not open
-    /// a well-formed placeholder (a role and a form, both non-empty, no spaces or braces in
-    /// either) is kept as text.
+    /// a well-formed placeholder (a role and an optional form, non-empty, no spaces or braces in
+    /// either; `{role}` is `{role:bare}`) is kept as text.
     pub fn parse(text: &str) -> Self {
         let mut segments = Vec::new();
         let mut plain = String::new();
@@ -69,7 +69,10 @@ impl Line {
 fn placeholder(text: &str) -> Option<(Segment, &str)> {
     let inner = text.strip_prefix('{')?;
     let close = inner.find('}')?;
-    let (role, form) = inner[..close].split_once(':')?;
+    // `{role}` is `{role:bare}`.
+    let (role, form) = inner[..close]
+        .split_once(':')
+        .unwrap_or((&inner[..close], "bare"));
     let well_formed =
         |s: &str| !s.is_empty() && !s.chars().any(|c| c.is_whitespace() || c == '{' || c == ':');
     if !well_formed(role) || !well_formed(form) {
@@ -454,8 +457,8 @@ handover = "'Ere it is."
     #[test]
     fn a_brace_that_opens_no_placeholder_is_text() {
         for raw in [
-            "{", "}", "{}", "{:}", "{a}", "{a:}", "{:b}", "{a b:c}", "{a:b c}", "{a:{b}", "{a::b}",
-            "x {oops", "{{a:b}}",
+            "{", "}", "{}", "{:}", "{a:}", "{:b}", "{a b:c}", "{a:b c}", "{a::b}", "x {oops",
+            "{{a:b}}",
         ] {
             let line = Line::parse(raw);
             let flat: String = line
@@ -474,6 +477,17 @@ handover = "'Ere it is."
             "the inner braces are the placeholder"
         );
         assert_eq!(Line::parse("{a:b").0, [text("{a:b")]);
+        assert_eq!(Line::parse("{a:{b}").0, [text("{a:"), slot("b", "bare")]);
+    }
+
+    #[test]
+    fn a_placeholder_without_a_form_is_bare() {
+        assert_eq!(Line::parse("{gold}").0, [slot("gold", "bare")]);
+        assert_eq!(
+            Line::parse("{gold} gp, {a b}").0,
+            [slot("gold", "bare"), text(" gp, {a b}")]
+        );
+        assert_eq!(Line::parse("{gold}").roles(), ["gold"]);
     }
 
     #[test]

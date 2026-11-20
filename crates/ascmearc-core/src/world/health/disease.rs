@@ -29,6 +29,8 @@
 use crate::action::{DiseaseNews, Event};
 use crate::check::check;
 use crate::content::{DiseaseId, Effect, TerrainId};
+use crate::lang::Msg;
+use crate::msg;
 use crate::rng::draw;
 use crate::skills::Use;
 use crate::stats::Stat;
@@ -296,16 +298,16 @@ impl World {
     /// disease `id`. Refused for an unknown disease, or one they carry already. Takes no time.
     pub(in crate::world) fn infect_dev(&mut self, id: &str) -> Spent {
         let Some(disease) = self.content.disease_id(id) else {
-            self.say(format!("There is no disease `{id}`."));
+            self.say(Msg::new(msg::health::NO_DISEASE).role("id", id));
             return Spent::Nothing;
         };
         let player = self.state.player;
         let name = self.content.disease(disease).name.clone();
         if !self.infect(player, disease, None) {
-            self.say(format!("You carry {name} already (dev)."));
+            self.say(Msg::new(msg::health::CARRY_DISEASE_ALREADY).role("name", name));
             return Spent::Nothing;
         }
-        self.say(format!("You catch {name} (dev)."));
+        self.say(Msg::new(msg::health::CATCH_DISEASE).role("name", name));
         Spent::NoTime
     }
 }

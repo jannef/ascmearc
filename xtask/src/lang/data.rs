@@ -248,6 +248,12 @@ mod tests {
             &[],
         );
         assert!(e.errors.is_empty(), "{:?}", e.errors);
+        // A form-less slot is the base form (`{thing}` is `{thing:bare}`).
+        let e = checked(
+            &[("dialogue/ceaptun.toml", &line("{thing}, {player:Bare}"))],
+            &[],
+        );
+        assert!(e.errors.is_empty(), "{:?}", e.errors);
         let e = checked(&[("dialogue/ceaptun.toml", &line("{thing:plural}"))], &[]).errors;
         assert!(
             e.iter()

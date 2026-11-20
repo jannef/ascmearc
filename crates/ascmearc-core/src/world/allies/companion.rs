@@ -25,9 +25,12 @@ use crate::character::CharacterSpec;
 use crate::combat::Profile;
 use crate::content::{CompanionGrowth, Content, CreatureId, LevelKind};
 use crate::geom::Pos;
+use crate::lang::{Msg, Phrase};
+use crate::msg;
 use crate::rng::Rng;
 use crate::sight::LineOfSight;
 use crate::stats::Stat;
+use crate::world::combat::fight;
 use crate::world::{Actor, ActorId, AllySource, LevelState, World, WorldState};
 use serde::{Deserialize, Serialize};
 
@@ -146,6 +149,44 @@ impl World {
         }
     }
 
+    /// Actor `actor` as the player calls it in a line, as a phrase (`called`'s words): a kept
+    /// beast or a shop's keeper by its name, a named person by it, a servant as the player's
+    /// ("your squire"), anyone else by its creature type ("the gardener").
+    pub(in crate::world) fn called_phrase(&self, actor: &Actor) -> Phrase {
+        if let Some(data) = actor.kept() {
+            return Phrase::literal(&data.name);
+        }
+        let keeper = (self.state.levels.get(&actor.level))
+            .and_then(|level| level.shops.iter().find(|s| s.keeper == actor.id));
+        let proper =
+            (self.dialogue_of(actor)).and_then(|d| self.content.dialogue(d).name.as_deref());
+        let servant = (self.dialogue_of(actor)).is_some_and(|d| {
+            let d = self.content.dialogue(d);
+            d.stipend.is_some() || d.partner.is_some() || d.patron.is_some()
+        });
+        let creature = fight::creature(self.content.creature(actor.creature));
+        match (keeper, proper) {
+            (Some(shop), _) => Phrase::literal(&shop.name),
+            (None, Some(name)) => Phrase::literal(name),
+            (None, None) if servant => creature.owned_by(self.you()),
+            (None, None) => creature,
+        }
+    }
+
+    /// Ally `id` as the subject of a line, as a phrase (`ally_subject`'s words): an escort by
+    /// what the player calls it, a kept beast by its name, any other as the player's ("your
+    /// wolf").
+    pub(in crate::world) fn ally_phrase(&self, id: ActorId) -> Phrase {
+        let actor = &self.state.actors[&id];
+        if actor.escorting().is_some() {
+            return self.called_phrase(actor);
+        }
+        match actor.kept() {
+            Some(data) => Phrase::literal(&data.name),
+            None => fight::creature(self.content.creature(actor.creature)).owned_by(self.you()),
+        }
+    }
+
     /// Animal companion's beast as the run begins (the module docs): drawn, made beside the
     /// player (into the retinue on the overworld), named, and said. Nothing without the talent,
     /// the data, the ally core, a character, or with a companion already.
@@ -191,8 +232,12 @@ impl World {
                 ally.retinue = true;
             }
         }
-        let kind = &content.creature(creature).name;
-        self.say(format!("{name}, your {kind}, pads at your heel."));
+        let kind = fight::creature(content.creature(creature));
+        self.say(
+            Msg::new(msg::allies::COMPANION_ARRIVES)
+                .role("name", Phrase::literal(&name))
+                .role("kind", kind),
+        );
     }
 
     /// Creature `id` becomes the player's companion where it stands (Tame, `tame.rs`): it keeps
@@ -254,7 +299,9 @@ impl World {
             let name = data.name.clone();
             let after = actor.max_hp(&content);
             actor.hp += after - before;
-            self.news.push(format!("{name} grows stronger.").into());
+            let who = Phrase::literal(&name);
+            self.news
+                .push(Msg::new(msg::allies::GROWS_STRONGER).role("who", who));
         }
     }
 
@@ -288,8 +335,8 @@ impl World {
             data.scent = Some(target);
         }
         if fresh && self.perception.sees_actors_at(pos) && !self.perception.sees_actors_at(at) {
-            let who = self.ally_subject(id);
-            self.say(format!("{who} growls at the dark."));
+            let who = self.ally_phrase(id);
+            self.say(Msg::new(msg::allies::GROWLS_AT_THE_DARK).role("who", who));
         }
     }
 }

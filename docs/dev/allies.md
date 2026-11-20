@@ -85,8 +85,9 @@ cell), **no time** (`Spent::NoTime`), a voice's noise where the player stands
 (`noise::Act::Order`: `SoundKind::Voice` at `[orders] noise`, never quietened by stealth, as a
 mutter or a thrown voice is not), `Event::Ordered { at }` for presentation, the message ("Your
 wolf comes to heel." / "Your wolves hold." / "You set your wolf on the kobold." or "... on that
-spot."; `pack_phrase`: "your wolf", "your wolves", "your wolves and bear" by type, a companion by
-its name first, "Snel and your wolves"), and a Handle animal mark
+spot."; `pack_args` (the lines, `messages/allies.toml`): a list of phrases, "your wolf", "your
+wolves" by type, a companion by its name first, "Snel and your wolves"; `pack_phrase` is the same
+as a string, for `levels/endless.rs` until its slice), and a Handle animal mark
 (`Use::Handle`, `skills/` `handle_animal`'s `mark`, 50 %: the skill's first; the owner's
 Q10). Refused, no time and no noise, with no ally on the level ("You have no one to call.") and
 Set on at a cell the player does not see (`Perception::is_visible`). `buff.rs::kind_of` prices
@@ -343,8 +344,8 @@ An escort quest's character (#1139, `world/people/escort.rs`, `docs/dev/quests.m
 retinue, pays kills, is healed and displaced. Its differences, each one line in `ally.rs`:
 `ally_plan` gives it only a target beside it (`near(pos, 1)`) whatever its order; `order`'s Set
 on takes the escorts out (`World::escorts_refuse`: "Eadgyth will not go looking for a fight.",
-no time when no one else is left); `pack_phrase` and `companion.rs::ally_subject` name it as
-`called` does. **Give** (`collar.rs`): `collar_wearer` and the "any to give to" check take kept
+no time when no one else is left); `pack_args`, `companion.rs::ally_phrase` (and `ally_subject`, the string, for
+`people/escort.rs`) name it as `called` does (`called_phrase`). **Give** (`collar.rs`): `collar_wearer` and the "any to give to" check take kept
 beasts or escorts; an escort goes to `World::give_escort` (`escort_slot`: `free_slot`, else the
 first slot it `fits_properly`, its own kind first; `slots_taken` for two hands; what those slots
 held leaves its pack for its cell; priced by `hand_over_one` with the slot's action; refused, no

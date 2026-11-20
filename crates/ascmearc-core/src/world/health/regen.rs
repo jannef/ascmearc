@@ -5,7 +5,8 @@
 //! close." when they see a regenerating creature (its `regen` above 100) get a tenth of its hit
 //! points back in one passing of time.
 
-use crate::text::capitalized;
+use crate::lang::Msg;
+use crate::msg;
 use crate::world::{ActorId, World};
 
 impl World {
@@ -31,7 +32,7 @@ impl World {
         {
             return;
         }
-        let who = capitalized(&self.called(actor));
-        self.say(format!("{who}'s wounds close."));
+        let who = self.phrase_of(id);
+        self.say(Msg::new(msg::health::WOUNDS_CLOSE).role("who", who));
     }
 }

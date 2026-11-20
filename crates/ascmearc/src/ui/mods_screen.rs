@@ -7,10 +7,12 @@
 use super::cursor;
 use super::menu::{HINTS, Nav, Panel, Press, truncated, wrap};
 use super::screens::{MenuChoice, ScreenAction};
+use super::text::{mods_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use ascmearc_assets::mods::{Found, Mod, clashes};
 use ascmearc_core::content::ModStamp;
+use ascmearc_core::lang::Arg;
 use std::path::{Path, PathBuf};
 
 type Opener = fn(&Path) -> Result<(), String>;
@@ -125,7 +127,10 @@ impl ModsScreen {
         } else {
             match &self.found.iter().find(|f| f.id == id).expect("found").read {
                 Ok(_) => self.on.push(id.clone()),
-                Err(e) => return self.say(format!("{id} cannot be used: {e}"), true),
+                Err(e) => {
+                    let args = [("id", id.as_str().into()), ("why", e.as_str().into())];
+                    return self.say(ui_with(T::CANNOT_USE, &args), true);
+                }
             }
         }
         // The selection follows the mod to its new row.
@@ -155,12 +160,15 @@ impl ModsScreen {
     fn act(&mut self, act: Act) -> ScreenAction {
         match act {
             Act::Back => return ScreenAction::Close,
-            Act::Apply if self.wanted() == self.applied => self.say("Nothing to apply.", false),
+            Act::Apply if self.wanted() == self.applied => self.say(ui(T::NOTHING_TO_APPLY), false),
             Act::Apply => return ScreenAction::Choose(MenuChoice::ApplyMods(self.wanted())),
             Act::OpenFolder => match &self.folder {
-                None => self.say("This launch keeps no mods folder.", true),
+                None => self.say(ui(T::NO_FOLDER), true),
                 Some(dir) => match (self.opener)(dir) {
-                    Ok(()) => self.say(format!("Opened {}.", dir.display()), false),
+                    Ok(()) => {
+                        let args = [("dir", dir.display().to_string().into())];
+                        self.say(ui_with(T::OPENED, &args), false)
+                    }
                     Err(e) => self.say(e, true),
                 },
             },
@@ -174,14 +182,14 @@ impl ModsScreen {
         match result {
             Ok(on) => {
                 let text = match on.len() {
-                    0 => "Applied: no mods are on.".to_string(),
-                    1 => "Applied: 1 mod is on.".to_string(),
-                    n => format!("Applied: {n} mods are on."),
+                    0 => ui(T::APPLIED_NONE),
+                    1 => ui(T::APPLIED_ONE),
+                    n => ui_with(T::APPLIED_MANY, &[("n", Arg::Number(n as i64))]),
                 };
                 self.applied = on;
                 self.say(text, false);
             }
-            Err(e) => self.say(format!("Not applied: {e}"), true),
+            Err(e) => self.say(ui_with(T::NOT_APPLIED, &[("why", e.into())]), true),
         }
     }
 
@@ -200,19 +208,27 @@ impl ModsScreen {
         let mut info: Vec<(String, bool)> = Vec::new();
         if order.is_empty() {
             let place = match &self.folder {
-                Some(dir) => format!("No mods are in {}.", dir.display()),
-                None => "This launch keeps no mods folder.".into(),
+                Some(dir) => {
+                    let dir = dir.display().to_string();
+                    ui_with(T::NONE_IN, &[("dir", dir.into())])
+                }
+                None => ui(T::NO_FOLDER),
             };
             info.push((place, false));
-            info.push(("A mod is a folder there with a mod.toml.".into(), false));
+            info.push((ui(T::EMPTY_HINT), false));
         }
         for (path, ids) in clashes(&self.on_mods()) {
             let last = ids.last().cloned().unwrap_or_default();
-            let text = format!("{} all change {path}: {last}'s is used.", ids.join(", "));
+            let args = [
+                ("ids", ids.join(", ").into()),
+                ("path", path.as_str().into()),
+                ("last", last.into()),
+            ];
+            let text = ui_with(T::CLASH, &args);
             info.push((text, false));
         }
         if self.wanted() != self.applied {
-            info.push(("Changes are not applied yet.".into(), false));
+            info.push((ui(T::NOT_APPLIED_YET), false));
         }
         if let Some(status) = &self.status {
             info.push((status.text.clone(), status.error));
@@ -223,7 +239,7 @@ impl ModsScreen {
         // The panel fits what it shows: the margins, three rows a mod, the actions, a gap, the
         // info, a gap, the footer.
         let wanted = 2 + 3 * order.len().max(1) as i32 + ACTS.len() as i32 + 1 + info_rows + 3;
-        let panel = Panel::new(console, " Mods ", W, wanted.max(14));
+        let panel = Panel::new(console, &format!(" {} ", ui(T::TITLE)), W, wanted.max(14));
         let (x, w) = (panel.inner_x(), panel.inner_w());
         let width = w.max(1) as usize;
         let bottom = panel.y + panel.h - 3;
@@ -250,7 +266,8 @@ impl ModsScreen {
                 Ok(m) => {
                     let mut head = format!("{}  {}", m.name, m.version);
                     if m.game_version != ascmearc_core::GAME_VERSION {
-                        head.push_str(&format!("  (made for {})", m.game_version));
+                        let args = [("version", m.game_version.as_str().into())];
+                        head.push_str(&format!("  {}", ui_with(T::MADE_FOR, &args)));
                     }
                     console.print(x + 6, y, &truncated(&head, width - 6), color);
                     let line = truncated(&m.description, width.saturating_sub(6));
@@ -258,24 +275,31 @@ impl ModsScreen {
                 }
                 Err(e) => {
                     console.print(x + 6, y, &truncated(&found.id, width - 6), color);
-                    let line = truncated(&format!("Cannot be used: {e}"), width - 6);
+                    let line = truncated(
+                        &ui_with(T::CANNOT_USE_LINE, &[("why", e.as_str().into())]),
+                        width - 6,
+                    );
                     console.print(x + 6, y + 1, &line, ACCENT);
                 }
             }
             y += 3;
         }
         if order.len() > fits {
-            let more = format!("{} of {} mods shown", fits.min(order.len()), order.len());
+            let args = [
+                ("shown", Arg::Number(fits.min(order.len()) as i64)),
+                ("total", Arg::Number(order.len() as i64)),
+            ];
+            let more = ui_with(T::SHOWN, &args);
             console.print(x + 2, y - 1, &more, TEXT_DIM);
         }
         for (i, act) in ACTS.iter().enumerate() {
             let selected = order.len() + i == self.selected;
             let label = match act {
-                Act::Apply => "Apply",
-                Act::OpenFolder => "Open the mods folder",
-                Act::Back => "Back",
+                Act::Apply => ui(T::ACT_APPLY),
+                Act::OpenFolder => ui(T::ACT_OPEN_FOLDER),
+                Act::Back => ui(T::ACT_BACK),
             };
-            panel.row(console, y, selected, label, "", 0);
+            panel.row(console, y, selected, &label, "", 0);
             y += 1;
         }
         y += 1;
@@ -286,12 +310,13 @@ impl ModsScreen {
             }
         }
         let keys = HINTS;
-        let footer = format!(
-            "{} select   {}/{} on/off   Shift+{} order   Esc back",
-            keys.up_down(),
-            keys.confirm,
-            keys.mark,
-            keys.up_down()
+        let footer = ui_with(
+            T::FOOTER,
+            &[
+                ("up_down", keys.up_down().into()),
+                ("confirm", keys.confirm.into()),
+                ("mark", keys.mark.into()),
+            ],
         );
         panel.footer(console, &footer);
     }
@@ -304,7 +329,7 @@ fn open_folder(dir: &Path) -> Result<(), String> {
 
 #[cfg(target_arch = "wasm32")]
 fn open_folder(_dir: &Path) -> Result<(), String> {
-    Err("There is no mods folder here.".into())
+    Err(ui(T::NO_FOLDER))
 }
 
 #[cfg(test)]
