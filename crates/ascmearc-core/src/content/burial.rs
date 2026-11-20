@@ -21,8 +21,8 @@ use crate::grid::Grid;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
-/// What a place says of one of the run's dead when the level gives no `epitaph`.
-pub const DEFAULT_EPITAPH: &str = "Here lies {name}, {death}.";
+/// The roles a level's `epitaph` may name: `name` (who they were) and `death` (how they died).
+pub const EPITAPH_ROLES: [&str; 2] = ["name", "death"];
 
 /// A level file's `[burial]` table.
 #[derive(Debug, Deserialize)]
@@ -34,15 +34,15 @@ pub(super) struct BurialSpec {
     depth: u8,
     /// The words a place is cut with for one of the dead: `{name}` ("Brakka the dwarf
     /// warrior") and `{death}` ("killed by a kobold in Fyrdelf 3, The Ascmearc"); default
-    /// [`DEFAULT_EPITAPH`].
+    /// the message `fixtures.epitaph`.
     epitaph: Option<String>,
 }
 
 /// What a level's legend marks for its burial ground, gathered cell by cell.
 #[derive(Debug, Default)]
 pub(super) struct Marks {
-    /// The fixed graves' words, by cell.
-    pub epitaphs: BTreeMap<Pos, String>,
+    /// The fixed graves' legend characters and words, by cell.
+    pub epitaphs: BTreeMap<Pos, (char, String)>,
     /// The cells kept for statues.
     pub statue_places: Vec<Pos>,
     /// The way down: its cell and the stairs it becomes.
@@ -56,12 +56,14 @@ pub struct Burial {
     pub chain: String,
     /// Its place in the chain, 0 the churchyard.
     pub depth: u8,
-    /// The words for one of the dead (`{name}`, `{death}`).
-    pub epitaph: String,
+    /// The words for one of the dead (`{name}`, `{death}`), said by their key
+    /// (`data_line::burial_epitaph`); `None`: the message `fixtures.epitaph`.
+    pub epitaph: Option<String>,
     /// The places for the dead, in row order: the order they are filled in.
     pub places: Vec<Pos>,
-    /// The fixed graves' words, by cell (the town's own dead): no place for the run's.
-    pub epitaphs: BTreeMap<Pos, String>,
+    /// The fixed graves (the town's own dead), by cell: no place for the run's. Each is its
+    /// legend character, which keys its words (`data_line::grave`), and the words.
+    pub epitaphs: BTreeMap<Pos, (char, String)>,
     /// The cells kept for statues, in row order; nothing is placed there yet.
     pub statue_places: Vec<Pos>,
     /// The way down, which opens once every place is filled.
@@ -130,9 +132,17 @@ pub(super) fn resolve(
     if places.is_empty() {
         return Err("`[burial]`: no place for the dead (a terrain with `burial`)".into());
     }
-    let epitaph = spec.epitaph.unwrap_or_else(|| DEFAULT_EPITAPH.to_string());
-    if !epitaph.contains("{name}") {
-        return Err("`[burial]`: the `epitaph` names no one (`{name}`)".into());
+    if let Some(epitaph) = &spec.epitaph {
+        let line = crate::lang::Line::parse(epitaph);
+        let roles = line.roles();
+        if !roles.contains(&"name") {
+            return Err("`[burial]`: the `epitaph` names no one (`{name}`)".into());
+        }
+        if let Some(role) = roles.iter().find(|r| !EPITAPH_ROLES.contains(r)) {
+            return Err(format!(
+                "`[burial]`: the `epitaph` names `{role}`: only `name` and `death`"
+            ));
+        }
     }
     if let Some(p) = (marks.epitaphs.keys()).find(|p| !def(**p).grave) {
         return Err(format!(
@@ -174,7 +184,7 @@ pub(super) fn resolve(
     Ok(Some(Burial {
         chain: spec.chain,
         depth: spec.depth,
-        epitaph,
+        epitaph: spec.epitaph,
         places,
         epitaphs: marks.epitaphs,
         statue_places: marks.statue_places,

@@ -10,7 +10,7 @@
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::ScreenAction;
-use super::text::{shape_screen as T, ui, ui_with};
+use super::text::{shape_screen as T, ui, ui_msg, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::Bindings;
 use crate::render::console::Console;
@@ -58,7 +58,7 @@ impl ShapeScreen {
                     id: def.id.clone(),
                     glyph: def.glyph,
                     fg: stack.fg(content),
-                    name: view.lore().listed(&stack),
+                    name: ui_msg(view.lore().listed(&stack)),
                     weight: stack.weight(content),
                 };
                 Some((def.skill?, shape))

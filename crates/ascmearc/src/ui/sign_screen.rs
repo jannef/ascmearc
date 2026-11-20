@@ -86,7 +86,7 @@ impl SignScreen {
         let parts = (content.horoscope())
             .zip(c.sign.as_ref())
             .and_then(|(h, s)| h.parts(s));
-        let date = ("date", Arg::from(c.born.text(content.calendar())));
+        let date = ("date", c.born.arg());
         let age = ("age", Arg::Number(c.age_on(draft.start()).into()));
         let Some((animal, element)) = parts else {
             return empty(ui_with(T::BORN, &[date, age]));

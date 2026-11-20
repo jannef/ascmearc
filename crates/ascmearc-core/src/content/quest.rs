@@ -529,6 +529,12 @@ impl QuestDef {
         })
     }
 
+    /// Its name as the quest log and the lines that name it say it: its `name`, a line of
+    /// data by its key (`quest:<id>.name`), so a saved line renders in any language.
+    pub fn name_arg(&self) -> Arg {
+        Arg::said(super::data_line::quest(&self.id, "name"))
+    }
+
     pub fn kind(&self) -> QuestKind {
         match self.goal {
             Goal::Kill { .. } => QuestKind::Kill,

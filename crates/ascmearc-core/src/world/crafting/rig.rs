@@ -44,7 +44,6 @@ use crate::rng::draw;
 use crate::stats::Stat;
 use crate::text::article;
 use crate::time::Duration;
-use crate::world::combat::fight::word;
 use crate::world::{Actor, Spent, World};
 
 /// A rig under way: which, and on which cell.
@@ -352,7 +351,7 @@ impl World {
             self.say(why.refusal());
             return Spent::Nothing;
         }
-        let name = word(&def.name.to_lowercase());
+        let name = content.rig_phrase(&def.id);
         self.say(Msg::new(msg::crafting::SET_TO_WORK_ON_RIG).role("rig", name));
         self.craft_work(Task::Rig(Rigging { rig, at }), def.seconds)
     }
@@ -370,7 +369,7 @@ impl World {
         if let Some(kind) = (self.state.current().traps.get(&at)).map(|t| t.kind) {
             self.know_trap(at);
             self.state.current_mut().trap_memory.insert(at, kind);
-            let trap = word(&content.trap(kind).name);
+            let trap = content.trap_phrase(kind);
             self.say(Msg::new(msg::crafting::FIND_TRAP_THERE).role("trap", trap));
             let mut news = Vec::new();
             self.perceive(&mut news);

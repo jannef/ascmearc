@@ -15,6 +15,7 @@
 //! | `stock:<material id>` | the form word a piece of the material is called by ("ingot", "lump") |
 //! | `race:<id>` | its `name` in lower case ("halfling") |
 //! | `resource:<id>` | its `name` in lower case ("rage") |
+//! | `room:<id>` | a special room's `name` ("echoing hall", `data/room_effects/`) |
 //! | `skill:<id>` | its `name` in lower case ("open lock") |
 //! | `status:<id>` | its `name` in lower case ("hasted") |
 //! | `terrain:<id>` | its `name` ("stone wall") |
@@ -29,7 +30,8 @@
 //! | `stance:<id>` | a combat stance's `name` in lower case ("aggressive") |
 //! | `label:scroll`, `label:wand`, `label:rod`, `label:potion` | an unidentified type's `name` and `plural`, with its `{label}` and `{colour}` slots (`data/scroll_labels.toml`, …) |
 //! | `colour:<colour>` | a potion's colour, as its type writes it ("red") |
-//! | `word:<text>` | a word data names without an id of its own (a natural attack's "bite", a trap's "arrow", a status's "staggered", "something"), keyed by its English, which is the word; with no data to say its number, a plural noun (`many`) as its spelling suggests ([`crate::lang::en::is_plural`]: "claws", "flames", "stakes") |
+//! | `trap:<id>`, `chest:<band>`, `status_seen:<id>`, `grade:<creature>.<n>`, ... | the data's words beside a name ([`super::data_word`], #1995) |
+//! | `word:<text>` | a word data names without an id of its own (a natural attack's "bite", a thrown "stone", "something"), keyed by its English, which is the word; with no data to say its number, a plural noun (`many`) as its spelling suggests ([`crate::lang::en::is_plural`]: "claws", "flames", "stakes") |
 //!
 //! A phrase's number comes from data (#1965): its count, the `many` above, and a proper name or
 //! a literal is one thing ("The Hounds quails", "the incubus's"). Only `word:` guesses.
@@ -113,6 +115,10 @@ impl Lexicon for Content {
                 let def = self.resource(self.resource_id(key)?);
                 Some(LexWord::new(def.name.to_lowercase()))
             }
+            "room" => {
+                let effects = self.room_effects();
+                Some(LexWord::new(&effects.get(effects.id(key)?).name))
+            }
             "skill" => Some(LexWord::new(
                 self.skill(self.skill_id(key)?).name.to_lowercase(),
             )),
@@ -133,7 +139,8 @@ impl Lexicon for Content {
             | "stance" => self.character_word(kind, key),
             "colour" => Some(LexWord::new(key)),
             "word" => Some(LexWord::new(key).many(is_plural(key))),
-            _ => None,
+            // The data's words beside a name (#1995): `trap:`, `chest:`, `status_seen:`, ...
+            _ => super::data_word::word(self, kind, key),
         }
     }
 }
@@ -341,6 +348,7 @@ mod tests {
         assert_eq!(word("sign:fire.manticore").base, "Fire Manticore");
         assert_eq!(word("class:warrior").base, "warrior");
         assert_eq!(word("stance:aggressive").base, "aggressive");
+        assert_eq!(word("room:echoing").base, "echoing hall");
         assert!(word("word:flames").many, "a plural noun");
         assert!(word("disease:the_shakes").many, "the data says so");
         assert_eq!(word("disease:the_shakes").base, "the shakes");

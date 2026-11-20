@@ -655,14 +655,11 @@ impl World {
             return;
         };
         let taken = self.resisted(target, damage);
-        let verb = (damage.kind).map_or_else(
-            || "hits".to_string(),
-            |k| self.content.damage_type(k).verb.clone(),
-        );
+        let verb = self.content.damage_verb(damage.kind, false);
         if target == self.state.player {
             self.say(match taken {
                 t if t <= 0 => Msg::new(msg::fixtures::ALTAR_FIRE_HARMLESS),
-                _ => Msg::new(msg::fixtures::ALTAR_FIRE_HITS_YOU).role("verb", verb),
+                _ => Msg::new(msg::fixtures::ALTAR_FIRE_HITS_YOU).role("verb", verb.clone()),
             });
         } else if self.perception.sees_actors_at(to) {
             // By its type ("a kobold", "Black Wystan").

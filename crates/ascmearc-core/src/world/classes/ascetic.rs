@@ -182,7 +182,7 @@ impl World {
         if !flew || !blow.strike.is_hit() {
             return blow;
         }
-        let noun = fight::word(&self.content.trap(trap).noun);
+        let noun = self.content.trap_noun_phrase(trap);
         if self.caught_missile(target, noun, events) {
             return Blow::missed(None);
         }

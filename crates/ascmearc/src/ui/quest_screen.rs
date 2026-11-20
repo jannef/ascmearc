@@ -15,7 +15,7 @@ use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
 use ascmearc_core::content::Content;
-use ascmearc_core::messages::{msg_in, speech_in};
+use ascmearc_core::messages::{arg_in, msg_in, speech_in};
 use ascmearc_core::perception::PerceptionView;
 use ascmearc_core::world::QuestView;
 
@@ -49,7 +49,7 @@ impl Logged {
         let offer = speech_in(content, &code, &quest.offer);
         let said = [("giver", quest.giver.clone()), ("offer", offer.into())];
         Self {
-            name: quest.name.clone(),
+            name: arg_in(content, &code, &quest.name, "bare"),
             active: quest.active,
             failed: quest.failed,
             objective: msg_in(content, &code, &quest.objective),

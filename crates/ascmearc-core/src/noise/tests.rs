@@ -405,19 +405,28 @@ fn messages_name_the_rough_direction() {
         volume,
     };
     let viewer = Pos::new(10, 10);
+    let content = crate::test_support::builtin();
+    let said = |s: PerceivedSound| crate::test_support::english_of(&content, &s.message(viewer));
     assert_eq!(
-        sound(14, 6, Volume::Clear).message(viewer),
+        said(sound(14, 6, Volume::Clear)),
         "You hear footsteps to the north-east."
     );
     assert_eq!(
-        sound(10, 15, Volume::Faint).message(viewer),
+        said(sound(10, 15, Volume::Faint)),
         "You faintly hear footsteps to the south."
     );
     let door = PerceivedSound {
         kind: SoundKind::DoorClosed,
         ..sound(3, 10, Volume::Loud)
     };
-    assert_eq!(door.message(viewer), "You hear a door close to the west.");
+    assert_eq!(said(door), "You hear a door close to the west.");
+    assert_eq!(
+        said(PerceivedSound {
+            pos: viewer,
+            ..door
+        }),
+        "You hear a door close."
+    );
 }
 
 mod props {

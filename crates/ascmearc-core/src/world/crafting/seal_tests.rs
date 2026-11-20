@@ -264,12 +264,12 @@ fn the_seal_steps_follow_the_crystal_and_the_item() {
     let quicken = recipe(&w, "quicken");
     let words = |picks: &[Option<usize>], step: usize| -> Vec<String> {
         (view.craft_steps_given(quicken, picks)[step].options.iter())
-            .map(|o| o.name.clone())
+            .map(|o| o.short.clone())
             .collect()
     };
     let steps = view.craft_steps_given(quicken, &[]);
     assert_eq!(
-        (steps.iter().map(|s| s.label.as_str())).collect::<Vec<_>>(),
+        (steps.iter().map(|s| s.label_en())).collect::<Vec<_>>(),
         ["item", "crystal", "seal", "second seal", "third seal"]
     );
     // Before a crystal is picked, every colour carried; then the red's alone.
@@ -394,7 +394,7 @@ fn a_soul_fetter_keeps_one_affix_through_a_recast() {
     let view = w.perception();
     let steps = view.craft_steps_given(recipe(&w, "recast"), &[Some(0)]);
     let affix = steps.last().expect("a step");
-    assert_eq!(affix.label, "affix kept");
+    assert_eq!(affix.label_en(), "affix kept");
     let names: Vec<&str> = affix.options.iter().map(|o| o.short.as_str()).collect();
     assert_eq!(names, ["Sharp", "of the Bear"]);
     let plan = (view.craft_plan(

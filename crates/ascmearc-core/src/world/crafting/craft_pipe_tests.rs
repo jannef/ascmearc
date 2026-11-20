@@ -91,9 +91,7 @@ fn only_a_halfling_sees_and_makes_the_pipe() {
     // The bowl of wood, then the mouthpiece's trim, which may be left off.
     stock(&mut halfling, "horn", 2);
     let steps = halfling.perception().craft_steps(pipe_recipe(&halfling));
-    let shown: Vec<(&str, bool)> = (steps.iter())
-        .map(|s| (s.label.as_str(), s.optional))
-        .collect();
+    let shown: Vec<(&str, bool)> = (steps.iter()).map(|s| (s.label_en(), s.optional)).collect();
     assert_eq!(shown, [("bowl", false), ("mouthpiece", true)]);
     // Made whole: ten minutes, a plain pipe of the wood.
     let start = halfling.state.time;

@@ -38,11 +38,12 @@ damage with its material and local affixes through the very `Mods::sharpen` a st
 `Profile::bare`, a launcher's or thrower's range, ammunition's additions, a worn thing's global
 to-hit and damage (`Mods::global`, one stack's global effects), Dv as armour + shield + parry +
 the local Armour/Shield/Parry + the global Dodge/Deflection/Natural, Pv as `Stack::protection`),
-figured on `Stack::as_known` so an unidentified affix moves no number; `text` is the item lists'
-form (`Lore::listed` = `Lore::describe` + ` (numbers)`, which the object screens, the equipment
-screen and its choice, look mode's piles, and the `inventory` dump layer use; messages keep
-`describe`), `lines` the description's (`describe::lines` adds them after the base stats);
-`dice_text` is the one damage-dice form, which `OwnAttack::damage_text` uses too).
+figured on `Stack::as_known` so an unidentified affix moves no number; `words` is the item lists'
+form, a message of parts (`items.numbers_*`; `Lore::listed` is `items.listed`, the phrase counted
+and ` (numbers)`, which the object screens, the equipment screen and its choice, the crafting
+choices, and the `inventory` dump layer render; look mode's piles tag the phrase with `words`;
+messages keep the phrase), `lines` the description's (`describe::lines` adds them after the
+base stats); `dice_text` is the one damage-dice form, which `OwnAttack::damage_text` uses too).
 `loot::roll` first lets a find of grade `any` be a loose gem (`gem::find`), then sets an item
 of a class with an `[[ornament]]` with a gem (`gem::ornament`), and last draws its material
 (`variant::draw`, step 8: by the materials' `rarity` at the item level; `loot::roll_from` takes

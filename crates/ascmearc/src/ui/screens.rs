@@ -454,7 +454,8 @@ impl Screen {
                 let campaigns = content.campaigns().len() > 1;
                 let characters = launch.characters.clone();
                 let died = launch.fallen.len();
-                Screen::Characters(CharactersScreen::new(characters, campaigns).died(died))
+                let screen = CharactersScreen::new(content, characters, campaigns);
+                Screen::Characters(screen.died(died))
             }
             ScreenName::Graveyard => {
                 Screen::Graveyard(GraveyardScreen::new(&launch.fallen, content))

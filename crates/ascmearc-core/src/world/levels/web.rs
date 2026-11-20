@@ -198,7 +198,7 @@ impl World {
         self.afflict(id, rules.status, rules.severity, by, events);
         if id != self.state.player && self.perception.sees_actors_at(pos) {
             let who = self.called_phrase(&self.state.actors[&id]);
-            self.say(match content.status(rules.status).seen.clone() {
+            self.say(match content.seen_phrase(rules.status) {
                 Some(seen) => Msg::new(msg::levels::WEB_CAUGHT)
                     .role("who", who)
                     .role("seen", seen),

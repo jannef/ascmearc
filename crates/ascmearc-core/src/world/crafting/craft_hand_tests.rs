@@ -144,7 +144,7 @@ fn the_stock_follows_the_bases_weight_as_the_design_counts_it() {
         let mut w = world();
         stock(&mut w, "wood", 20);
         let steps = w.perception().craft_steps(recipe(&w, id));
-        assert_eq!(steps[1].label, "haft");
+        assert_eq!(steps[1].label_en(), "haft");
         assert_eq!(steps[1].options[0].takes, count, "{id}");
     }
 }
@@ -157,7 +157,7 @@ fn the_spear_steps_are_the_head_then_the_haft_of_another_professions_stock() {
     stock(&mut w, "flint", 1);
     let steps = w.perception().craft_steps(recipe(&w, "spear"));
     let shown: Vec<(&str, Vec<usize>)> = (steps.iter())
-        .map(|s| (s.label.as_str(), s.options.iter().map(|o| o.at).collect()))
+        .map(|s| (s.label_en(), s.options.iter().map(|o| o.at).collect()))
         .collect();
     // The smith's head takes the iron, never the flint; the haft the wood, Woodcraft's stock on
     // a Metalcraft recipe; then the inlay, none carried.
@@ -167,7 +167,7 @@ fn the_spear_steps_are_the_head_then_the_haft_of_another_professions_stock() {
     );
     let steps = w.perception().craft_steps(recipe(&w, "spear_by_hand"));
     let shown: Vec<(&str, Vec<usize>)> = (steps.iter())
-        .map(|s| (s.label.as_str(), s.options.iter().map(|o| o.at).collect()))
+        .map(|s| (s.label_en(), s.options.iter().map(|o| o.at).collect()))
         .collect();
     assert_eq!(shown, [("head", vec![2]), ("haft", vec![1])]);
 }

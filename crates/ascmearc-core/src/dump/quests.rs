@@ -29,7 +29,7 @@ pub(super) fn quest_rows(view: &PerceptionView<'_>, code: &str) -> Vec<String> {
             };
             format!(
                 "{} ({stage}, from {}): {}{status}{sides}",
-                q.name,
+                crate::messages::arg_in(content, code, &q.name, "bare"),
                 crate::messages::arg_in(content, code, &q.giver, "the"),
                 said(&q.objective)
             )
@@ -47,7 +47,7 @@ pub(super) fn quests_json(view: &PerceptionView<'_>, code: &str) -> Value {
         .map(|q| {
             json!({
                 "id": q.id,
-                "name": q.name,
+                "name": crate::messages::arg_in(content, code, &q.name, "bare"),
                 "kind": q.kind.id(),
                 "active": q.active,
                 "failed": q.failed,

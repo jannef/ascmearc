@@ -109,7 +109,8 @@ impl World {
         };
         if self.perception.sees_actors_at(here) {
             let line = Msg::new(msg::creatures::BURSTS).role("who", fight::creature(def));
-            self.say(line.role("verb", burst.verb.as_str()));
+            let verb = crate::content::data_word::creature_verb(&def.id, "burst");
+            self.say(line.role("verb", crate::lang::Arg::said(verb)));
         }
         let sound = TrapNoise {
             sound: SoundKind::Explosion,

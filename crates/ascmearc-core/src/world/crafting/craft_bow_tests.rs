@@ -80,7 +80,12 @@ fn row(w: &World, id: &str) -> (String, Option<RecipeLack>) {
 /// Each step's label and the positions it offers.
 fn shown(w: &World, id: &str) -> Vec<(String, Vec<usize>)> {
     (w.perception().craft_steps(recipe(w, id)).iter())
-        .map(|s| (s.label.clone(), s.options.iter().map(|o| o.at).collect()))
+        .map(|s| {
+            (
+                s.label_en().to_string(),
+                s.options.iter().map(|o| o.at).collect(),
+            )
+        })
         .collect()
 }
 

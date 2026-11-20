@@ -53,10 +53,7 @@ pub fn describe(view: &PerceptionView<'_>, p: Pos, blood: bool) -> String {
         (None, CellView::Unknown) => None,
     };
     lines.extend(described.map(Arg::Text));
-    lines.extend(
-        view.epitaph(p)
-            .map(|epitaph| Arg::Text(epitaph.to_string())),
-    );
+    lines.extend(view.epitaph(p).cloned());
     ui_with(T::LINES, &[("lines", Arg::List(lines))])
 }
 
@@ -143,9 +140,9 @@ fn terrain_phrase(content: &Content, t: TerrainId) -> Phrase {
     Phrase::id(format!("terrain:{}", content.terrain(t).id))
 }
 
-/// A known trap as a phrase: its name, until traps have lexicon ids.
+/// A known trap as a phrase: its name (`trap:<id>`).
 fn trap_phrase(content: &Content, trap: TrapId) -> Phrase {
-    word(&content.trap(trap).name)
+    content.trap_phrase(trap)
 }
 
 /// What look mode says of a zone on a cell (`world/magic/zone.rs`).
@@ -187,7 +184,7 @@ fn describe_cell(view: &PerceptionView<'_>, p: Pos, blood: bool) -> Arg {
         return trap_alone(view, p, trap.clone(), on);
     }
     // A sound heard there (never on a cell the player sees): "You hear footsteps here."
-    let heard = view.sound_at(p).map(|s| Arg::Text(s.you_hear()));
+    let heard = view.sound_at(p).map(|s| Arg::from(s.you_hear()));
     let things = pile(view, p);
     let here = (things.clone()).map_or_else(none, |o| clause(T::HERE, [("things", o)]));
     // What the player remembers at a cell out of sight.
@@ -314,10 +311,18 @@ fn fixture(view: &PerceptionView<'_>, p: Pos, t: TerrainId, blood: bool) -> (Phr
     let chest = view.chest_at(p);
     let chest_trap = view.trap(p).filter(|_| chest.is_some());
     let def = content.terrain(t);
+    // The chest's state, said nearest its name: "a charred open coffer".
+    let mut state = None;
     let (phrase, of) = match (chest, view.statue_at(p)) {
         (Some(chest), _) => {
-            // The band's name with its state: core's words, until they are converted (#1949).
-            let name = word(&chest.name(content.chests(), &def.name));
+            // The band's name (`chest:<band>`) with its state (`chest_state:`), else the terrain.
+            let name = match chest.phrase(content.chests()) {
+                Some((name, said)) => {
+                    state = said;
+                    name
+                }
+                None => terrain_phrase(content, t),
+            };
             let trapped = chest_trap.map_or_else(none, |trap| {
                 clause(T::TRAPPED, [("trap", trap_phrase(content, trap).into())])
             });
@@ -344,15 +349,15 @@ fn fixture(view: &PerceptionView<'_>, p: Pos, t: TerrainId, blood: bool) -> (Phr
     };
     // Char reads before the blood: "charred blood-stained stone floor"; a wall the player found
     // sounds hollow (a sealed room's breach) says so: "a hollow stone wall".
-    let char = (view.scorch(p).filter(|_| blood)).map(|c| ascmearc_core::scorch::word(c));
-    let stain = (view.blood(p).filter(|_| blood)).map(|stain| stain.word(!def.transparent));
-    let hollow =
-        (view.hollow(p) && chest.is_none() && view.statue_at(p).is_none()).then_some("hollow");
-    let phrase = [char, stain, hollow]
+    let char = (view.scorch(p).filter(|_| blood)).map(ascmearc_core::scorch::adjective);
+    let stain = (view.blood(p).filter(|_| blood)).map(|stain| stain.adjective(!def.transparent));
+    let hollow = (view.hollow(p) && chest.is_none() && view.statue_at(p).is_none())
+        .then(|| Word::id("word:hollow"));
+    let phrase = [char, stain, hollow, state]
         .into_iter()
         .flatten()
         .fold(phrase, |phrase, adjective| {
-            phrase.with(Modifier::Adjective(Word::id(format!("word:{adjective}"))))
+            phrase.with(Modifier::Adjective(adjective))
         });
     // Stairs and locations name where they lead: "a staircase down, leading to The Depths 1";
     // a wall in sight that was dug into says so: "a stone wall, partly dug"; a named place its
@@ -387,9 +392,10 @@ fn room(view: &PerceptionView<'_>, p: Pos) -> Option<Arg> {
         CellView::Visible(t) | CellView::Remembered(t) => view.content().terrain(t).walkable,
         CellView::Unknown => false,
     };
-    // The room's name with its article is core's words until they are converted (#1949).
-    let room = (view.room(p).filter(|_| walkable))
-        .map(|r| clause(T::IN_ROOM, [("room", Arg::Text(r.with_article()))]));
+    let room = (view.room(p).filter(|_| walkable)).map(|r| {
+        let room = Phrase::id(format!("room:{}", r.id));
+        clause(T::IN_ROOM, [("room", room.into())])
+    });
     let hallow = (view.hallow(p).filter(|_| walkable)).map(|dark| match dark {
         true => clause(T::DREADED, []),
         false => clause(T::HALLOWED, []),
@@ -410,7 +416,7 @@ fn trap_alone(view: &PerceptionView<'_>, p: Pos, trap: Arg, on: impl Fn(TerrainI
             let memory = clause(T::TRAP_ON, [("trap", trap), ("ground", on(t))]);
             clause(
                 T::HEARD_WHERE_REMEMBERED,
-                [("heard", Arg::Text(heard.you_hear())), ("memory", memory)],
+                [("heard", heard.you_hear().into()), ("memory", memory)],
             )
         }
         (CellView::Remembered(t), None) => {
@@ -442,11 +448,10 @@ fn pile(view: &PerceptionView<'_>, p: Pos) -> Option<Arg> {
     let seen = matches!(view.cell(p), CellView::Visible(_));
     let item = |stack: &Stack| {
         let what = Arg::from(view.lore().phrase(stack));
-        // The numbers are core's words until they are converted (#1949).
-        let numbers = Numbers::of(stack, content).text(content).map(Arg::Text);
+        let numbers = Numbers::of(stack, content).words(content);
         // A trained eye (Appraise, Survival; #1031) tells food's freshness of what it sees.
         let fresh = (seen.then(|| view.judge(stack)).flatten())
-            .map(|w| clause(T::LOOKS, [("fresh", Arg::Text(w.to_string()))]));
+            .map(|stage| clause(T::LOOKS, [("fresh", stage.word().into())]));
         let price = (view.price_tag(p, stack))
             .map(|g| clause(T::FOR_SALE, [("gold", Arg::Number(i64::from(g)))]));
         let tags = [numbers, fresh, price].into_iter().flatten().collect();
@@ -475,10 +480,10 @@ fn creature(view: &PerceptionView<'_>, actor: &SeenActor) -> Arg {
     };
     // They see how hurt it is: in words, never in hit points.
     let health = Some(Arg::from(actor.health.word()));
-    // The status effects that show on it: ", bleeding" (the data's words, #1949).
+    // The status effects that show on it: ", bleeding" (`status_seen:<id>`).
     let effects = (view.effects_of(actor.id))
-        .filter_map(|s| content.status(s).seen.clone())
-        .map(Arg::Text);
+        .filter_map(|s| content.seen_phrase(s))
+        .map(Arg::from);
     // Stalker's eye: it has not noticed the player (never said without it).
     let unaware = actor.unaware.then(|| clause(T::UNAWARE, []));
     // The creature the player's openings are in (`world/classes/mark.rs`).
@@ -543,8 +548,8 @@ fn creature(view: &PerceptionView<'_>, actor: &SeenActor) -> Arg {
         None => {
             let def = content.creature(actor.creature);
             let who = kind(content, actor);
-            let who = match ascmearc_core::grade::word(def, actor.grade) {
-                Some(grade) => who.with(Modifier::Adjective(Word::id(format!("word:{grade}")))),
+            let who = match Content::grade_word(def, actor.grade) {
+                Some(grade) => who.with(Modifier::Adjective(grade)),
                 None => who,
             };
             let who = made_of(content, actor, who);
@@ -783,7 +788,11 @@ mod tests {
         assert_eq!(w.perception().level_id(), "lictun");
         // One of the town's own, by the chapel (a fixed grave, `docs/dev/graves.md`).
         let stone = Pos::new(21, 19);
-        let cut = w.ground_truth().0.graves()[&stone].clone();
+        let cut = ascmearc_core::messages::english_arg(
+            w.content(),
+            &w.ground_truth().0.graves()[&stone],
+            "bare",
+        );
         assert_eq!(
             describe(&w.perception(), stone, true),
             format!("A gravestone. {cut}")

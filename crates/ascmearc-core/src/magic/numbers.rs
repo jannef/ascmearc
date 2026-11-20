@@ -7,7 +7,7 @@
 //! as the player knows them. They are figured on the stack as the player knows it
 //! ([`Stack::as_known`]): an unidentified item's magic counts for nothing until it is
 //! identified, so no hidden affix moves a number. The item lists write them after the name
-//! ([`Numbers::text`], through `Lore::listed`), the item description on lines of their own
+//! ([`Numbers::words`], through `Lore::listed`), the item description on lines of their own
 //! ([`Numbers::lines`]).
 
 use super::{Effect, Mods};
@@ -15,6 +15,8 @@ use crate::combat::{Attack, DEFAULT_CRIT, DEFAULT_THREAT, Profile};
 use crate::content::{Content, ItemKind};
 use crate::damage::{Kinds, Rider};
 use crate::dice::{Dice, Roll};
+use crate::lang::{Arg, Msg};
+use crate::msg;
 use crate::object::Stack;
 
 /// What an item gives, as the player knows it.
@@ -104,16 +106,23 @@ impl Numbers {
 
     /// The numbers as the item lists write them, after the name in parentheses: `+2 hit,
     /// 1d8+1`, `+0 hit, 1d6, range 15`, `+1 hit, +1d4 fire` (ammunition), `Dv +1, Pv 2`, `Dv +2`
-    /// (a shield), `+0 hit, 1d6, Dv +1` (a weapon that parries). `None` when there is nothing.
-    pub fn text(&self, content: &Content) -> Option<String> {
+    /// (a shield), `+0 hit, 1d6, Dv +1` (a weapon that parries). A message of its parts
+    /// (`items.numbers_*`) listed by `items.numbers_listed`, so the language owns the words and
+    /// the separator; `None` when there is nothing.
+    pub fn words(&self, content: &Content) -> Option<Arg> {
         let mut parts = Vec::new();
         if let Some(attack) = &self.attack {
-            parts.push(attack.text(content));
+            parts.extend(attack.parts(content));
         }
         if let Some(defence) = self.defence {
-            parts.push(defence.text());
+            parts.push(defence.message().into());
         }
-        (!parts.is_empty()).then(|| parts.join(", "))
+        let last = parts.pop()?;
+        Some(parts.into_iter().rev().fold(last, |rest, first| {
+            (Msg::new(msg::items::NUMBERS_LISTED).role("first", first))
+                .role("rest", rest)
+                .into()
+        }))
     }
 
     /// The numbers as the item description writes them, a line each: `To hit +2, damage
@@ -149,37 +158,67 @@ impl AttackNumbers {
             }
             return text;
         }
+        let added = self.added().map(|t| format!("{t} damage"));
+        let parts: Vec<String> = added.into_iter().chain(riders).collect();
+        parts.join(", ")
+    }
+
+    /// What something that only adds adds to the damage, its extra dice and flat bonus signed:
+    /// `+1d4+2`, `+2`; `None` for nothing.
+    fn added(&self) -> Option<String> {
         let bonus = self.damage.bonus();
-        let added = match self.extra {
+        match self.extra {
             Some(extra) => {
                 let mut t = format!("+{}", extra.plus(-extra.bonus()));
                 if bonus != 0 {
                     t.push_str(&format!("{bonus:+}"));
                 }
-                Some(format!("{t} damage"))
+                Some(t)
             }
-            None if bonus != 0 => Some(format!("{bonus:+} damage")),
+            None if bonus != 0 => Some(format!("{bonus:+}")),
             None => None,
-        };
-        let parts: Vec<String> = added.into_iter().chain(riders).collect();
-        parts.join(", ")
+        }
     }
 
-    /// As the item lists write it: `+2 hit, 1d8+1`, `+0 hit, 1d6, range 15`, `+1 hit, +2
-    /// damage`.
-    fn text(&self, content: &Content) -> String {
+    /// As the item lists write it, a part each (`items.numbers_*`): `+2 hit`, `1d8+1`, `range
+    /// 15`; for what only adds, `+1 hit`, `+2 damage`, `+1d4 fire`.
+    fn parts(&self, content: &Content) -> Vec<Arg> {
         let mut parts = Vec::new();
         if !self.adds() || self.to_hit != 0 {
-            parts.push(format!("{:+} hit", self.to_hit));
+            parts.push(
+                Msg::new(msg::items::NUMBERS_HIT)
+                    .role("n", signed(self.to_hit))
+                    .into(),
+            );
         }
-        let damage = self.damage_text(content);
-        if !damage.is_empty() {
-            parts.push(damage);
-        }
+        parts.extend(self.damage_parts(content));
         if let Some(range) = self.range {
-            parts.push(format!("range {range}"));
+            let n = Arg::Number(i64::from(range));
+            parts.push(Msg::new(msg::items::NUMBERS_RANGE).role("n", n).into());
         }
-        parts.join(", ")
+        parts
+    }
+
+    /// [`AttackNumbers::damage_text`] as parts of the item lists' numbers: a weapon's dice with
+    /// its riders after them (`items.numbers_with_rider`), one part; for what only adds, what it
+    /// adds (`items.numbers_damage`) and each rider, a part each.
+    fn damage_parts(&self, content: &Content) -> Vec<Arg> {
+        let riders = self.riders.iter().map(|r| {
+            Msg::new(msg::items::NUMBERS_RIDER)
+                .role("dice", Arg::Text(format!("+{}", r.dice)))
+                .role("kind", Arg::Text(content.damage_type(r.kind).name.clone()))
+        });
+        if !self.adds() {
+            let dice = Arg::Text(dice_text(self.damage, self.extra));
+            return vec![riders.fold(dice, |damage, rider| {
+                (Msg::new(msg::items::NUMBERS_WITH_RIDER).role("damage", damage))
+                    .role("rider", rider)
+                    .into()
+            })];
+        }
+        let added =
+            (self.added()).map(|t| Msg::new(msg::items::NUMBERS_DAMAGE).role("dice", Arg::Text(t)));
+        (added.into_iter().chain(riders)).map(Arg::from).collect()
     }
 
     /// As the item description writes it: `To hit +2, damage 1d8+1, range 15`; for ammunition
@@ -215,6 +254,17 @@ impl AttackNumbers {
 }
 
 impl DefenceNumbers {
+    /// `Dv +1, Pv 2`, or `Dv +2` without Protection, as the item lists write it
+    /// (`items.numbers_dv_pv`, `items.numbers_dv`).
+    fn message(self) -> Msg {
+        let dv = signed(self.dv);
+        match self.pv {
+            Some(pv) => (Msg::new(msg::items::NUMBERS_DV_PV).role("dv", dv))
+                .role("pv", Arg::Number(i64::from(pv))),
+            None => Msg::new(msg::items::NUMBERS_DV).role("dv", dv),
+        }
+    }
+
     /// `Dv +1, Pv 2`, or `Dv +2` without Protection.
     fn text(self) -> String {
         match self.pv {
@@ -222,6 +272,11 @@ impl DefenceNumbers {
             None => format!("Dv {:+}", self.dv),
         }
     }
+}
+
+/// A number written with its sign, `+0`, `-1`: notation every language writes alike, so text.
+fn signed(n: i32) -> Arg {
+    Arg::Text(format!("{n:+}"))
 }
 
 /// Damage dice as written: the dice (and any extra dice) with the flat bonus last, `1d8+2`,

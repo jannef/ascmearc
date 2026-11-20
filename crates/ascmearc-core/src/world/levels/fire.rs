@@ -220,7 +220,7 @@ impl World {
         let rolled = rules.harm.roll(&mut draw!(self, "fire/burn/{}", actor.key));
         let damage = Damage::new(rolled, Some(rules.damage_type));
         let taken = self.resisted(id, damage);
-        let verb = content.damage_type(rules.damage_type).verb.clone();
+        let verb = content.damage_verb(Some(rules.damage_type), false);
         let fire = (self.state.current().terrain_at(pos)).map_or_else(
             || fight::word("fire"),
             |t| Phrase::id(format!("terrain:{}", content.terrain(t).id)),
@@ -230,7 +230,7 @@ impl World {
                 t if t <= 0 => Msg::new(msg::levels::FIRE_HARMLESS).role("fire", fire),
                 _ => Msg::new(msg::levels::FIRE_BURNS_YOU)
                     .role("fire", fire)
-                    .role("verb", verb),
+                    .role("verb", verb.clone()),
             });
         } else if self.perception.sees_actors_at(pos) {
             let who = fight::creature(content.creature(self.state.actors[&id].creature));

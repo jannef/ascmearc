@@ -169,13 +169,13 @@ pub(super) fn steps(content: &Content, lore: Lore<'_>, player: &Actor) -> Vec<Cr
     vec![
         CraftStep {
             kind: CraftStepKind::Item,
-            label: "item".into(),
+            label: super::craft_make::step_word("item"),
             optional: false,
             options: items,
         },
         CraftStep {
             kind: CraftStepKind::Gem,
-            label: "gem".into(),
+            label: super::craft_make::step_word("gem"),
             optional: false,
             options: gems,
         },
