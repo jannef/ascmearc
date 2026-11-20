@@ -24,6 +24,8 @@
 use crate::action::Event;
 use crate::check;
 use crate::content::{ActionKind, Stance, StatusId};
+use crate::lang::Msg;
+use crate::msg;
 use crate::noise::{self, Act};
 use crate::rng::draw;
 use crate::skills::{Effect, Use};
@@ -42,7 +44,7 @@ impl World {
         let price = self.price_of(player, ActionKind::Wait);
         let difficulty = self.threat_difficulty(cry.difficulty);
         // Who hears it: the same noise the howl makes, before it is made.
-        self.say("You roar your fury!");
+        self.say(msg::classes::ROAR_YOUR_FURY);
         let heard = self.heard_by(Act::Howl);
         self.make_noise(player, Act::Howl);
         if self.trains(Use::Intimidate) {
@@ -103,7 +105,7 @@ impl World {
         };
         let nerve = them.check_modifier(&content, Stat::Willpower);
         let seen = self.perception.sees_actors_at(them.pos);
-        let who = crate::text::capitalized(&self.called(them));
+        let who = self.called_phrase(them);
         let quails = !check::check(
             &mut draw!(self, "war_cry/cow/{}", them.key),
             nerve,
@@ -114,11 +116,12 @@ impl World {
             self.afflict(id, status, degrees, Some(player), events);
         }
         if seen {
-            self.say(if quails {
-                format!("{who} quails and flees from you.")
+            let line = if quails {
+                msg::classes::QUAILS_AND_FLEES
             } else {
-                format!("{who} does not flinch.")
-            });
+                msg::classes::DOES_NOT_FLINCH
+            };
+            self.say(Msg::new(line).role("who", who));
         }
         quails
     }

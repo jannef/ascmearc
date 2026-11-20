@@ -27,6 +27,8 @@
 use crate::action::Event;
 use crate::check;
 use crate::content::{ActionKind, ClassActive, SongOn, Stance, StatUse, StatusId};
+use crate::lang::Msg;
+use crate::msg;
 use crate::noise::Act;
 use crate::rng::draw;
 use crate::skills::{Effect, Use};
@@ -54,7 +56,7 @@ impl World {
             None => true,
         };
         if !paid {
-            self.say("You have too little to sing it.");
+            self.say(msg::classes::TOO_LITTLE_TO_SING);
             return Spent::Nothing;
         }
         let price = self.price_of(player, ActionKind::Song);
@@ -67,7 +69,7 @@ impl World {
             SongOn::Singer => Vec::new(),
             SongOn::Hearers => {
                 if let Some(def) = content.class_active(active) {
-                    self.say(format!("You sing a {}.", def.name.to_lowercase()));
+                    self.say(Msg::new(msg::classes::SING_A).role("song", def.name.to_lowercase()));
                 }
                 self.heard_by(Act::Sing)
             }
@@ -113,18 +115,19 @@ impl World {
         };
         let will = them.check_modifier(&content, stat);
         let seen = self.perception.sees_actors_at(them.pos);
-        let who = crate::text::capitalized(&self.called(them));
+        let who = self.called_phrase(them);
         let falls = !check::check(&mut draw!(self, "song/lull/{}", them.key), will, difficulty);
         if falls {
             let player = self.state.player;
             self.afflict(id, status, degrees, Some(player), events);
         }
         if seen {
-            self.say(if falls {
-                format!("{who}'s eyes grow heavy.")
+            let line = if falls {
+                msg::classes::EYES_GROW_HEAVY
             } else {
-                format!("{who} shakes off the song.")
-            });
+                msg::classes::SHAKES_OFF_SONG
+            };
+            self.say(Msg::new(line).role("who", who));
         }
     }
 }

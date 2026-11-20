@@ -31,6 +31,8 @@ use crate::combat::{Blow, Profile};
 use crate::content::{ActionKind, ClassActive, Stance};
 use crate::fov::radius2;
 use crate::geom::{Dir, Pos};
+use crate::lang::Msg;
+use crate::msg;
 use crate::perception::CellView;
 use crate::rng::draw;
 use crate::world::combat::shoot::Loose;
@@ -47,14 +49,14 @@ impl World {
         let level = &self.state.current().id;
         let foe = (self.state.actor_at(level, to)).map(|a| a.id);
         let Some(foe) = foe.filter(|&id| self.stance(player, id) == Stance::Hostile) else {
-            self.say("There is no one there.");
+            self.say(msg::classes::NO_ONE_THERE);
             return false;
         };
         if self.off_mark(ClassActive::Exploit, Some(dir)) {
             return false;
         }
         if self.perception.sees_actors_at(to) && !self.has_vitals(foe) {
-            self.say("It has no vital spot.");
+            self.say(msg::classes::NO_VITAL_SPOT);
             return false;
         }
         true
@@ -104,9 +106,9 @@ impl World {
     /// What the player is told as an exploit of `n` openings is made, a blow or a throw.
     fn say_exploit(&mut self, n: u16) {
         self.say(match n {
-            0 | 1 => "You strike at the opening.",
-            2..=4 => "You press your openings.",
-            _ => "You tear into every opening!",
+            0 | 1 => msg::classes::STRIKE_AT_OPENING,
+            2..=4 => msg::classes::PRESS_YOUR_OPENINGS,
+            _ => msg::classes::TEAR_INTO_EVERY_OPENING,
         });
     }
 
@@ -120,7 +122,7 @@ impl World {
         events: &mut Vec<Event>,
     ) -> Spent {
         if !active.aims_throw() {
-            self.say(format!("`{}` throws nothing.", active.id()));
+            self.say(Msg::new(msg::classes::THROWS_NOTHING).role("id", active.id()));
             return Spent::Nothing;
         }
         if !self.may_use_class(active) || !self.can_loose_here() {
@@ -150,12 +152,12 @@ impl World {
         let player = self.state.player;
         let me = self.state.player();
         let Some(stack) = me.inventory.get(item) else {
-            self.say("You carry no such thing.");
+            self.say(msg::classes::CARRY_NO_SUCH_THING);
             return None;
         };
         let Some(range) = me.exploit_throw_range(item, &content) else {
-            let what = self.lore().describe(&stack.single());
-            self.say(format!("You cannot exploit an opening with {what}."));
+            let what = self.lore().phrase(&stack.single());
+            self.say(Msg::new(msg::classes::CANNOT_EXPLOIT_WITH).role("what", what));
             return None;
         };
         // Unpaid goods are not thrown (`shop.rs`).
@@ -167,19 +169,19 @@ impl World {
             .filter(|&id| id != player && self.perception.sees_actors_at(at))
             .filter(|&id| self.stance(player, id) == Stance::Hostile);
         let Some(foe) = foe else {
-            self.say("There is no one there.");
+            self.say(msg::classes::NO_ONE_THERE);
             return None;
         };
         if self.off_mark_at(active, at) {
             return None;
         }
         if !self.has_vitals(foe) {
-            self.say("It has no vital spot.");
+            self.say(msg::classes::NO_VITAL_SPOT);
             return None;
         }
         let here = self.player_pos();
         if at.dist2(here) > radius2(range) {
-            self.say("That is out of reach.");
+            self.say(msg::classes::OUT_OF_REACH);
             return None;
         }
         let view = self.perception();
@@ -190,7 +192,7 @@ impl World {
         let in_the_way =
             (here.ray(at).take_while(|&p| p != at)).any(|p| solid(p) || view.actor_at(p).is_some());
         if in_the_way {
-            self.say("Something is in the way.");
+            self.say(msg::classes::IN_THE_WAY);
             return None;
         }
         Some(foe)

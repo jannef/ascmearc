@@ -17,6 +17,7 @@
 use crate::action::Event;
 use crate::content::{ActionKind, ClassActive};
 use crate::geom::Dir;
+use crate::msg;
 use crate::world::{Actor, ActorId, Spent, World};
 
 impl World {
@@ -26,7 +27,7 @@ impl World {
     pub(super) fn thief_may(&mut self, active: ClassActive, dir: Option<Dir>) -> bool {
         match (active, dir) {
             (ClassActive::Lurk, _) if self.hostiles_beside().iter().any(|&(_, seen)| seen) => {
-                self.say("Too late to lurk.");
+                self.say(msg::classes::TOO_LATE_TO_LURK);
                 false
             }
             (ClassActive::Exploit, Some(dir)) => self.exploit_may(dir),

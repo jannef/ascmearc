@@ -21,6 +21,8 @@
 use crate::action::Event;
 use crate::content::{ActionKind, Face, LevelKind};
 use crate::geom::Pos;
+use crate::lang::Msg;
+use crate::msg;
 use crate::time::GameTime;
 use crate::world::{LevelState, Spent, World, turn::rest::Ended};
 use serde::{Deserialize, Serialize};
@@ -97,26 +99,26 @@ impl World {
         };
         let (level, here, now) = (self.state.current(), self.player_pos(), self.state.time);
         let refused = if level.kind == LevelKind::Overworld {
-            Some("The open land cannot be hallowed: find a place to kneel.")
+            Some(msg::classes::CANNOT_HALLOW_OPEN_LAND)
         } else if level.is_open_water(&self.content, here) {
-            Some("You cannot kneel in water.")
+            Some(msg::classes::CANNOT_KNEEL_IN_WATER)
         } else if level.shops.iter().any(|s| s.contains(here)) {
-            Some("This is a shop, not a sanctuary.")
+            Some(msg::classes::SHOP_NOT_SANCTUARY)
         } else if level.hallows_at(here, now).next().is_some() {
-            Some("This ground is already hallowed.")
+            Some(msg::classes::GROUND_ALREADY_HALLOWED)
         } else {
             None
         };
-        if let Some(text) = refused {
-            self.say(text);
+        if let Some(line) = refused {
+            self.say(line);
             return Spent::Nothing;
         }
         let player = self.state.player;
         if !self.spend_mana(player, sanctuary.mana) {
-            self.say("You have too little mana.");
+            self.say(msg::classes::TOO_LITTLE_MANA);
             return Spent::Nothing;
         }
-        self.say("You kneel and pray.");
+        self.say(msg::classes::KNEEL_AND_PRAY);
         Spent::Sanctuary(self.state.time + sanctuary.time)
     }
 
@@ -133,10 +135,10 @@ impl World {
             Ended::Died => {}
             _ if self.state.time >= until => self.hallow(),
             Ended::Came(came) => {
-                let text = format!("{}; you rise from your knees.", self.came_line(came));
-                self.say(text);
+                let came = self.came_line(came);
+                self.say(Msg::new(msg::classes::RISE_FROM_KNEES_CAME).role("came", came));
             }
-            Ended::Said | Ended::Done => self.say("You rise from your knees."),
+            Ended::Said | Ended::Done => self.say(msg::classes::RISE_FROM_KNEES),
         }
     }
 
@@ -156,9 +158,9 @@ impl World {
         };
         self.state.current_mut().hallows.push(hallow);
         self.say(if dark {
-            "A dread settles on the ground about you."
+            msg::classes::DREAD_SETTLES
         } else {
-            "The ground about you is hallowed."
+            msg::classes::GROUND_HALLOWED
         });
     }
 
@@ -170,7 +172,7 @@ impl World {
         let before = level.hallows.len();
         level.hallows.retain(|h| !h.covers(here, now));
         if level.hallows.len() != before {
-            self.say("The peace is broken.");
+            self.say(msg::classes::PEACE_BROKEN);
         }
     }
 
@@ -186,7 +188,7 @@ impl World {
         let faded = (level.hallows.iter()).any(|h| h.until <= now && h.until > began);
         level.hallows.retain(|h| h.until > now);
         if faded {
-            self.note("The hallowing fades.");
+            self.note(msg::classes::HALLOWING_FADES);
         }
     }
 

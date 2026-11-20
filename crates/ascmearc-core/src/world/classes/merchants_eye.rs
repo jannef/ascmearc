@@ -10,6 +10,8 @@
 //! random but that training.
 
 use crate::content::{ActionKind, ClassActive, StatUse};
+use crate::lang::Msg;
+use crate::msg;
 use crate::world::items::loot::Identified;
 use crate::world::{Spent, World};
 
@@ -18,7 +20,7 @@ impl World {
     /// one that asks for a stack ([`ClassActive::aims_item`]) may.
     pub(in crate::world) fn use_class_on(&mut self, active: ClassActive, item: usize) -> Spent {
         if !active.aims_item() {
-            self.say(format!("`{}` works on nothing you carry.", active.id()));
+            self.say(Msg::new(msg::classes::WORKS_ON_NOTHING_CARRIED).role("id", active.id()));
             return Spent::Nothing;
         }
         if !self.may_use_class(active) {
@@ -34,16 +36,16 @@ impl World {
     /// Merchant's eye on inventory stack `item` (see the module docs).
     fn merchants_eye(&mut self, item: usize) -> Spent {
         let Some(stack) = self.state.player().inventory.get(item) else {
-            self.say("You carry no such thing.");
+            self.say(msg::classes::CARRY_NO_SUCH_THING);
             return Spent::Nothing;
         };
         if self.lore().knows(stack) {
-            let what = self.lore().describe(&stack.single());
-            self.say(format!("You already know what {what} is."));
+            let what = self.lore().phrase(&stack.single());
+            self.say(Msg::new(msg::classes::ALREADY_KNOW_WHAT).role("what", what));
             return Spent::Nothing;
         }
-        let what = self.lore().describe(&stack.single());
-        self.say(format!("You look over {what} with a merchant's eye."));
+        let what = self.lore().phrase(&stack.single());
+        self.say(Msg::new(msg::classes::LOOK_OVER_MERCHANTS_EYE).role("what", what));
         if matches!(self.identify(item), Identified::Now(_)) {
             self.train_stat(StatUse::Identified);
         }

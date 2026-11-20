@@ -25,6 +25,8 @@
 use crate::action::Positions;
 use crate::combat::{FUMBLE, Profile};
 use crate::content::{ActionKind, ClassActive, Content, ObjectId, TalentEffect};
+use crate::lang::{Msg, Phrase};
+use crate::msg;
 use crate::object::{self, Stack};
 use crate::talent::MartialEffect;
 use crate::talent::TalentMods;
@@ -85,6 +87,11 @@ pub(in crate::world) fn gifts(talents: &TalentMods, stack: &Stack, profile: &mut
     }
 }
 
+/// Object type `id` as a phrase: `object:<id>` ("a long sword").
+fn object_phrase(content: &Content, id: ObjectId) -> Phrase {
+    Phrase::id(format!("object:{}", content.object(id).id))
+}
+
 /// Whether `profile` ignores every point of Protection (a spirit weapon's): what the character
 /// screen's attacks say as "pierces armour".
 pub fn pierces_all(profile: &Profile) -> bool {
@@ -96,7 +103,7 @@ impl World {
     /// only one that asks for a shape ([`ClassActive::aims_shape`]) may.
     pub(in crate::world) fn use_class_shape(&mut self, active: ClassActive, shape: &str) -> Spent {
         if !active.aims_shape() {
-            self.say(format!("`{}` takes no shape.", active.id()));
+            self.say(Msg::new(msg::classes::TAKES_NO_SHAPE).role("id", active.id()));
             return Spent::Nothing;
         }
         if !self.may_use_class(active) {
@@ -114,14 +121,12 @@ impl World {
         let content = self.content.clone();
         let object = content.object_id(shape);
         let (Some(object), Some(hand)) = (object, content.hand_slots().next()) else {
-            self.say(format!("There is no weapon `{shape}` to call."));
+            self.say(Msg::new(msg::classes::NO_WEAPON_TO_CALL).role("id", shape));
             return Spent::Nothing;
         };
         if !shapes(&content).contains(&object) {
-            let what = content.object(object).describe(1);
-            self.say(format!(
-                "You cannot call {what}: it is no weapon for the hand."
-            ));
+            let what = object_phrase(&content, object);
+            self.say(Msg::new(msg::classes::CANNOT_CALL_NO_WEAPON).role("what", what));
             return Spent::Nothing;
         }
         // One held already fades first: calling again reshapes it.
@@ -164,8 +169,8 @@ impl World {
         if gone.is_empty() {
             return gone;
         }
-        let names: Vec<String> = (gone.iter())
-            .map(|i| content.object(player.inventory[i].object).name.clone())
+        let names: Vec<Phrase> = (gone.iter())
+            .map(|i| object_phrase(&content, player.inventory[i].object))
             .collect();
         let player = self.player_mut();
         for i in gone.iter().collect::<Vec<_>>().into_iter().rev() {
@@ -173,7 +178,7 @@ impl World {
         }
         player.equipment.after_removal(&gone);
         for name in names {
-            self.say(format!("The {name} fades from your hand."));
+            self.say(Msg::new(msg::classes::FADES_FROM_HAND).role("what", name));
         }
         gone
     }

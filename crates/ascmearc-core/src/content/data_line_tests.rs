@@ -134,3 +134,23 @@ fn the_classes_lines_read_as_the_data_writes_them() {
     let rage = content.resource(content.resource_id("rage").expect("rage"));
     assert_eq!(Some(said(lacking("rage"))), rage.lacking);
 }
+
+#[test]
+fn the_prayers_words_read_as_the_data_writes_them() {
+    use crate::content::{Face, PrayerUse};
+    let content = &CONTENT;
+    let said = |key: String| said_text(content, key);
+    let rules = content.prayer().expect("prayer");
+    for face in [Face::Holy, Face::Dark] {
+        let words = rules.words(face);
+        assert_eq!(said(prayer_words(face, "pray")), words.pray);
+        assert_eq!(said(prayer_words(face, "fizzle")), words.fizzle);
+        assert_eq!(said(prayer_words(face, "nothing")), words.nothing);
+        for def in &rules.uses {
+            assert_eq!(said(prayer_use(def.id, face)), def.words.of(face));
+        }
+    }
+    let key = prayer_use(PrayerUse::Wounds, Face::Dark);
+    assert_eq!(key, "prayer:use.wounds.dark");
+    assert_eq!(said(key), "Your wounds close, cold to the touch.");
+}

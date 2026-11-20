@@ -8,6 +8,7 @@
 
 use crate::action::Event;
 use crate::content::ActionKind;
+use crate::msg;
 use crate::world::{ActorId, Spent, World};
 
 impl World {
@@ -51,7 +52,7 @@ impl World {
             actor.hp = 1;
         }
         if id == self.state.player {
-            self.say("You refuse to fall!");
+            self.say(msg::classes::REFUSE_TO_FALL);
         }
         true
     }
