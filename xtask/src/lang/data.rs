@@ -6,7 +6,9 @@
 //! form the language lacks (a dialogue line: the base form only, `DIALOGUE_FORMS`) are errors; a
 //! line not translated is a warning (an error for `--strict`).
 
-use super::{KEY_ROLE, LIST_FORMS, LangFiles, Report, fnv6, language_of, lower};
+use super::{
+    KEY_ROLE, LIST_FORMS, LangFiles, Report, alternatives, fnv6, language_of, lower, shape_problems,
+};
 use ascmearc_core::content::DIALOGUE_FORMS;
 use ascmearc_lang::{Morphology, Template, Templates};
 use std::collections::{BTreeMap, BTreeSet};
@@ -63,7 +65,10 @@ pub fn check_data(
                     ));
                 }
                 match Template::from_value(&by_gender(&key, value)) {
-                    Ok(t) => check_slots(&at, kind, &t, en, language.morphology(), &mut report),
+                    Ok(t) => {
+                        check_slots(&at, kind, &t, en, language.morphology(), &mut report);
+                        check_shape(&at, kind, &t, en, &mut report);
+                    }
                     Err(e) => report.errors.push(format!("{at}: {e}")),
                 }
             }
@@ -278,6 +283,25 @@ fn by_gender(key: &str, value: &toml::Value) -> toml::Value {
     }
 }
 
+/// A translated line's variants and alternatives, as a message's: a `by` on a role the English
+/// line does not pass, a feature no argument has, or a value the feature never takes, and more
+/// flavour alternatives than English has (core draws by English's count).
+fn check_shape(at: &str, kind: &str, line: &Template, english: &Template, report: &mut Report) {
+    let mut roles = english.roles();
+    if kind == DIALOGUE {
+        roles.push(PLAYER.to_string());
+    }
+    for problem in shape_problems(line, Some(&roles)) {
+        report.errors.push(format!("{at}: {problem}"));
+    }
+    let (most, ours) = (alternatives(english), alternatives(line));
+    if ours > most {
+        report.errors.push(format!(
+            "{at}: {ours} alternatives, English has {most} (core draws by English's count)"
+        ));
+    }
+}
+
 /// A translated line's slots: roles the English line passes, forms the language (a dialogue
 /// line: the base form only) has.
 fn check_slots(
@@ -462,5 +486,57 @@ mod tests {
                 .any(|m| m.contains("{thing:plural}") && m.contains("base form only")),
             "{e:?}"
         );
+    }
+
+    #[test]
+    fn a_line_of_datas_by_and_alternatives_are_checked_like_a_messages() {
+        let start = fnv6("{who:The} reels.");
+        let gardener = fnv6("Mind the {thing:the}, {player:address}.");
+        let status = |entry: &str| format!("[dazed]\nstart = {{ of = \"{start}\", {entry} }}\n");
+        let e = |file: &str, text: &str| checked(&[(file, text)], &[]).errors;
+        let wrong_role = e(
+            "data/status.toml",
+            &status("by = \"x.gender\", else = \"{who:The} horjuu.\""),
+        );
+        assert!(
+            wrong_role
+                .iter()
+                .any(|m| m.contains("dazed.start") && m.contains("unknown role `x` in `by`")),
+            "{wrong_role:?}"
+        );
+        let wrong_value = e(
+            "data/status.toml",
+            &status("by = \"who.number\", one = \"Horjuu.\", lots = \"Horjuvat.\""),
+        );
+        assert!(
+            wrong_value.iter().any(|m| m.contains("`lots` is no value")),
+            "{wrong_value:?}"
+        );
+        let wrong_feature = e(
+            "data/status.toml",
+            &status("by = \"who.mood\", else = \"x\""),
+        );
+        assert!(
+            wrong_feature
+                .iter()
+                .any(|m| m.contains("no feature `mood`")),
+            "{wrong_feature:?}"
+        );
+        let more = e(
+            "data/status.toml",
+            &status("text = [\"Horjuu.\", \"Huojuu.\"]"),
+        );
+        assert!(
+            more.iter()
+                .any(|m| m.contains("2 alternatives, English has 1")),
+            "{more:?}"
+        );
+        // Dialogue is given the player: a `by` on it is fine, as is an `address` by gender.
+        let by_player = format!(
+            "[ceaptun.gardener]\nlines = [{{ of = \"{gardener}\", by = \"player.gender\", \
+             female = \"{{thing:the}}\", else = \"{{thing}}\" }}]\n"
+        );
+        let ok = e("dialogue/ceaptun.toml", &by_player);
+        assert!(ok.is_empty(), "{ok:?}");
     }
 }

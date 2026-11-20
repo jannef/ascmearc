@@ -162,7 +162,7 @@ impl World {
             .unwrap_or(hold.difficulty);
         let name = holder
             .filter(|h| self.perception.sees_actors_at(h.pos))
-            .map(|h| self.phrase_of(h.id));
+            .map(|h| self.called_phrase(h));
         let modifier = match trained {
             true => self.slipping(hold.check),
             false => me.check_modifier(&content, hold.check),

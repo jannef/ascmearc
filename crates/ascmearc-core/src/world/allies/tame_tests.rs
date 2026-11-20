@@ -332,3 +332,16 @@ fn a_witch_with_a_familiar_may_still_tame_a_companion() {
     assert!(w.familiar().is_some(), "the familiar stays");
     assert_eq!(w.perception().kept().count(), 2);
 }
+
+#[test]
+fn a_beast_gone_mid_try_is_the_beast() {
+    let mut w = world("hound");
+    train(&mut w, Some(200));
+    let hound = beast(&w);
+    let Spent::Tame(taming) = w.start_tame(Dir::N) else {
+        panic!("no try: {}", last(&w));
+    };
+    w.state.actors.remove(&hound);
+    w.tame(taming, &mut Vec::new());
+    assert_eq!(last(&w), "The beast leaves your side; you stop taming it.");
+}

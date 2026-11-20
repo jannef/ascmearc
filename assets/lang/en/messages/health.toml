@@ -6,8 +6,9 @@
 #
 # Roles: `who` is the one a line is about, `what` an item (a phrase built where it is said),
 # `status` a status as it looks ("dazed"), `came` the clause that says what stopped a long action
-# ("A kobold comes into view"), `time` how long it went on ("3 minutes"). `feel`, `more`, and
-# `doing` are core's English words, text until they are converted.
+# ("A kobold comes into view"), `time` how long it went on ("3 minutes"), `disease` a disease with
+# whose it is. `feel`, `more`, `doing`, and `what` in `gift_passes` are core's English words, text
+# until they are converted.
 
 blink_elsewhere = "In a blink, you are elsewhere."
 break_free = "You break free."
@@ -30,7 +31,8 @@ die = "You die..."
 draught_kept = "There is enough left in the flask for another draught."
 drink = "You drink the {what:bare}."
 drown = "You drown..."
-# `disease`: the disease, its sufferer's ("the sickness", "your wolf's sickness").
+# `disease`: the disease treated, whose it is said in place of the article ("the sickness", "your
+# wolf's sickness").
 ease_somewhat = "You ease {disease:the} somewhat."
 eat = "You eat {what:the}."
 eat_your_fill = "You eat your fill; the rest does you no good."
@@ -73,7 +75,7 @@ no_longer_bloated = "You no longer feel bloated."
 no_longer_hungry = "You are no longer hungry."
 no_longer_satiated = "You no longer feel satiated."
 no_longer_starving = "You are no longer starving."
-# `disease`: the disease, its sufferer's.
+# `disease`: as above.
 no_more_for = "You can do no more for {disease:the}."
 no_need_to_eat = "You feel no need to eat."
 # A dev action's: `id` as typed.

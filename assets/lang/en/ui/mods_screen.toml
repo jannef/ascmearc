@@ -14,15 +14,14 @@ text = "Back"
 [act_open_folder]
 text = "Open the mods folder"
 
-# What Apply tells: `n`, how many mods are on now.
-[applied_many]
-text = "Applied: {n:bare} mods are on."
+# What Apply tells: `n`, how many mods are on now (one or more; none is `applied_none`).
+[applied]
+by = "n.number"
+one = "Applied: {n:bare} mod is on."
+many = "Applied: {n:bare} mods are on."
 
 [applied_none]
 text = "Applied: no mods are on."
-
-[applied_one]
-text = "Applied: 1 mod is on."
 
 # `id`, the mod; `why`, what is wrong with it.
 [cannot_use]
@@ -50,7 +49,6 @@ text = "(made for {version:bare})"
 
 [no_folder]
 text = "This launch keeps no mods folder."
-
 # The folder has no mods: `dir`, the folder.
 [none_in]
 text = "No mods are in {dir:bare}."

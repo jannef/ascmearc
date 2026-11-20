@@ -108,7 +108,7 @@ impl World {
             return self.drink_potion(meal, &stack, events);
         }
         let Some(food) = def.food else {
-            let what = object_phrase(&content, stack.object).count(1);
+            let what = self.lore().object_phrase(stack.object).count(1);
             self.say(Msg::new(msg::health::CANNOT_CONSUME).role("what", what));
             return Spent::Nothing;
         };
