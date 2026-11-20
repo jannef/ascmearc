@@ -143,9 +143,9 @@ fn terrain_phrase(content: &Content, t: TerrainId) -> Phrase {
     Phrase::id(format!("terrain:{}", content.terrain(t).id))
 }
 
-/// A known trap as a phrase: its name, until traps have lexicon ids.
+/// A known trap as a phrase: its name (`trap:<id>`).
 fn trap_phrase(content: &Content, trap: TrapId) -> Phrase {
-    word(&content.trap(trap).name)
+    content.trap_phrase(trap)
 }
 
 /// What look mode says of a zone on a cell (`world/magic/zone.rs`).
@@ -314,10 +314,18 @@ fn fixture(view: &PerceptionView<'_>, p: Pos, t: TerrainId, blood: bool) -> (Phr
     let chest = view.chest_at(p);
     let chest_trap = view.trap(p).filter(|_| chest.is_some());
     let def = content.terrain(t);
+    // The chest's state, said nearest its name: "a charred open coffer".
+    let mut state = None;
     let (phrase, of) = match (chest, view.statue_at(p)) {
         (Some(chest), _) => {
-            // The band's name with its state: core's words, until they are converted (#1949).
-            let name = word(&chest.name(content.chests(), &def.name));
+            // The band's name (`chest:<band>`) with its state (`chest_state:`), else the terrain.
+            let name = match chest.phrase(content.chests()) {
+                Some((name, said)) => {
+                    state = said;
+                    name
+                }
+                None => terrain_phrase(content, t),
+            };
             let trapped = chest_trap.map_or_else(none, |trap| {
                 clause(T::TRAPPED, [("trap", trap_phrase(content, trap).into())])
             });
@@ -344,15 +352,15 @@ fn fixture(view: &PerceptionView<'_>, p: Pos, t: TerrainId, blood: bool) -> (Phr
     };
     // Char reads before the blood: "charred blood-stained stone floor"; a wall the player found
     // sounds hollow (a sealed room's breach) says so: "a hollow stone wall".
-    let char = (view.scorch(p).filter(|_| blood)).map(|c| ascmearc_core::scorch::word(c));
-    let stain = (view.blood(p).filter(|_| blood)).map(|stain| stain.word(!def.transparent));
-    let hollow =
-        (view.hollow(p) && chest.is_none() && view.statue_at(p).is_none()).then_some("hollow");
-    let phrase = [char, stain, hollow]
+    let char = (view.scorch(p).filter(|_| blood)).map(ascmearc_core::scorch::adjective);
+    let stain = (view.blood(p).filter(|_| blood)).map(|stain| stain.adjective(!def.transparent));
+    let hollow = (view.hollow(p) && chest.is_none() && view.statue_at(p).is_none())
+        .then(|| Word::id("word:hollow"));
+    let phrase = [char, stain, hollow, state]
         .into_iter()
         .flatten()
         .fold(phrase, |phrase, adjective| {
-            phrase.with(Modifier::Adjective(Word::id(format!("word:{adjective}"))))
+            phrase.with(Modifier::Adjective(adjective))
         });
     // Stairs and locations name where they lead: "a staircase down, leading to The Depths 1";
     // a wall in sight that was dug into says so: "a stone wall, partly dug"; a named place its
@@ -475,10 +483,10 @@ fn creature(view: &PerceptionView<'_>, actor: &SeenActor) -> Arg {
     };
     // They see how hurt it is: in words, never in hit points.
     let health = Some(Arg::from(actor.health.word()));
-    // The status effects that show on it: ", bleeding" (the data's words, #1949).
+    // The status effects that show on it: ", bleeding" (`status_seen:<id>`).
     let effects = (view.effects_of(actor.id))
-        .filter_map(|s| content.status(s).seen.clone())
-        .map(Arg::Text);
+        .filter_map(|s| content.seen_phrase(s))
+        .map(Arg::from);
     // Stalker's eye: it has not noticed the player (never said without it).
     let unaware = actor.unaware.then(|| clause(T::UNAWARE, []));
     // The creature the player's openings are in (`world/classes/mark.rs`).
@@ -543,8 +551,8 @@ fn creature(view: &PerceptionView<'_>, actor: &SeenActor) -> Arg {
         None => {
             let def = content.creature(actor.creature);
             let who = kind(content, actor);
-            let who = match ascmearc_core::grade::word(def, actor.grade) {
-                Some(grade) => who.with(Modifier::Adjective(Word::id(format!("word:{grade}")))),
+            let who = match Content::grade_word(def, actor.grade) {
+                Some(grade) => who.with(Modifier::Adjective(grade)),
                 None => who,
             };
             let who = made_of(content, actor, who);

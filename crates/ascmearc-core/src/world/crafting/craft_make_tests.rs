@@ -269,7 +269,7 @@ fn the_wizard_steps_offer_what_fits_and_the_plan_names_the_item() {
                 .iter()
                 .map(|o| (o.at, o.takes, o.enough))
                 .collect();
-            (s.label.clone(), s.optional, options)
+            (s.label_en().to_string(), s.optional, options)
         })
         .collect();
     // The blade: the steel (too few) and the mithril, never the wood; the pommel: the cut ruby,

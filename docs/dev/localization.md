@@ -292,7 +292,7 @@ docs hold the table): `creature:<id>`, `object:<id>` (with `written`, `written_p
 `adjective`), `gem_size:<id>`, `gem_cut:<id>`, `stock:<material id>` (a piece's form word),
 `terrain:<id>`, `label:scroll|wand|rod|potion` (an unidentified type's name with its `{label}`
 and `{colour}` slots), `colour:<colour>`, and `word:<text>`: a word the data names without an id
-of its own (a natural attack's "bite", a trap's "arrow", a status's "dazed", "something"), keyed
+of its own (a natural attack's "bite", a thrown "stone", "something"), keyed
 by its English, which is the word; `disease:<id>` (its name as written, "the shakes"); and
 `status:<id>`, `skill:<id>`, and `resource:<id>` (#1992: the name in lower case, as `race:<id>`'s,
 "hasted", "open lock", "rage"; `Content::status_phrase`, `skill_phrase`, `resource_phrase`), said
@@ -314,6 +314,27 @@ adjective; the epitaph `{class:a}` (with `prestige`); a named statue `look.falle
 dwarf"). Left as text: a label shown alone (lists, the status bar, the Characters list: #2000,
 #1999), a grave's epitaph (kept in the level as text, #1999), and the `--character` refusal
 (`ClassDef::refuses`, developer text).
+
+**The data's words beside a name** (#1995, `content/data_word.rs`, whose module docs hold both
+tables) have keys of their own, chosen by kind: a noun or an adjective a phrase is built of is a
+lexicon id, a verb or a part of a sentence written with its own article a line of data ("Lines of
+data"). The lexicon ids: `trap:<id>` (a trap's name) and `trap_noun:<id>` (what hits from it),
+`chest:<band>` with `chest_state:locked|unlocked|open|smashed` said before it
+(`ChestLook::phrase`), `rig:<id>` (its name lower case), `launcher:<launches>`
+(`data/fletch.toml`'s word, `Content::launcher_phrase`), `status_seen:<id>` (a status's `seen`,
+`Content::seen_phrase`; with no `seen`, `seen_or_name` falls back to `status:<id>`),
+`grade:<creature>.0`/`.1` (`grade_words`, `Content::grade_word`), and char's and blood's words,
+`char:<word>` and `blood:<word>` (`scorch::adjective`, `Stain::adjective`); each reads as its
+`word:` phrase did, its number guessed from its spelling. The lines of data: a status's
+`status:<id>.dies`, a trap's `trap:<id>.sign` ("a tripwire"), a damage type's
+`damage_type:<id>.verb` and `.you` (`Content::damage_verb`; combat's `Words::of_kind`), and a
+creature's `creature:<id>.breath.verb`, `.burst.verb`, `.summon.verb`, each said in a `verb`,
+`dies`, or `sign` role (`Arg::Said`, which renders whatever the role's form). A pick's label
+(`CraftStep::label`) is a phrase: `part:<id>`, `material:<id>`, `object:<id>` counted as several
+("arrowheads"), or the `word:` core picks ("item", "seal", a material group). Left for their
+slices: a trap's `verb`, a weapon's and a natural attack's verbs, a creature's `dies` verb, a
+spell's `look` noun and verb (`say_spell`, the burst dialog), and the epitaph's and
+`RecipeLack::reason`'s text (#1997).
 
 **Number comes from data** (#1965): a phrase is plural by its count or by the lexicon's `many` (a
 noun plural though it names one thing, "flames"); a proper name or a literal is one thing ("The
@@ -402,7 +423,7 @@ are `called` and the ally as a subject as phrases, `pack_args` an order's allies
 taming is `World::came_msg` in a `came` role (L4o, below). The data's own words
 are lines of data (#1944, "Lines of data"): a charm's, a familiar's arrival, and a creature's
 departure are said inside their templates (`{message:bare}`, `{line:bare}`, `{words:bare}`),
-and a status's `seen` is a `word:` phrase.
+and a status's `seen` is `status_seen:<id>` (#1995).
 
 Combat's last literal lines went with `world/creatures/` (L4e): acid's, fire's, and rust's harm to
 gear (`corrode.rs`), `combat.acid_eats_at` and the rest, name the piece as made, the player's
@@ -440,8 +461,8 @@ stairs (`levels.staircase_down_here`, `way_into_here`, …), a feature's lines
 its place's note after it as the data's text), and what lies there (`levels.see_here`,
 `see_here_for_sale`, `several_objects_here`), said as one ("Nested messages"). What it leaves:
 a spell's `look.message`
-(`web.rs`), an anvil's need, and `burden`'s refusals are their own modules'; a status's `seen`, a
-damage type's `verb`, and a refusal's `error` are text roles.
+(`web.rs`), an anvil's need, and `burden`'s refusals are their own modules'; a refusal's `error`
+is a text role. A status's `seen` and a damage type's `verb` have keys (#1995, "Phrases").
 
 `world/character/` (`messages/character.toml`, L4b) says the lines its data writes as lines of
 data ("Lines of data", whose table lists their keys): an alignment band's `rise` and `fall`, the
@@ -483,8 +504,9 @@ stack by `Lore::names_phrase` (what they are called as made); a salvaged affix's
 Sharp magic", "some of its magic") are nested messages in `catch_magic` and `goes_out_unread`;
 Soulglass's crystals a phrase or a list of two (`turns_to_glass`, by number). A profession's
 `failed` and `fumbled` lines are lines of data (`data_line::profession`). A profession is
-`skill:<id>`. Text roles until their words are converted (#1949): a recipe's name, a launcher's word, the label of a
-pick ("blade", "arrowheads"), and the time a dig took.
+`skill:<id>`. A launcher (`launcher:<launches>`) and the label of a pick ("blade", "arrowheads")
+are phrases (#1995). Text roles until their words are converted (#1949): a recipe's name and
+the time a dig took.
 
 Its second half (L4g: mending, mining, the patron, rigging, salvage, setting, tempering, and
 `work.rs`, the driver of long work). What the player does as a work is cut short (`Job::leave`:
@@ -493,8 +515,8 @@ Its second half (L4g: mending, mining, the patron, rigging, salvage, setting, te
 literal line in that slot until its slice. A rig's lacking (`rig.rs::Lack`) is two entries: the
 rig list's words (`lacking_knife`, which the screen says in its own `lacking`) and the refusal's
 sentence. Several stacks are `items::stacks_arg` (`you_save`); one taken apart by its title or
-several counted is one entry by number (`take_apart`). A rig and a trap are `word:` phrases of
-their names (`{rig:a}`, `{trap:a}`). A rig's `made` and `snaps` are lines of data
+several counted is one entry by number (`take_apart`). A rig and a trap are `rig:<id>` and
+`trap:<id>` (`{rig:a}`, `{trap:a}`). A rig's `made` and `snaps` are lines of data
 (`data_line::rig`); `need_skill_at`'s skill is `skill:<id>`. Text roles until their words are
 converted (#1949): a rig's id as the action wrote it, and the patron as the commission calls
 them (`giver`, "your patron", kept as text in the save). The commission's quest-log view
@@ -521,8 +543,8 @@ differs by a value core picks from a few is an entry per value: a combat stance 
 turning. The one who falls, vanishes, or dies of a status is its creature (`fight::creature`), the
 player `World::you()`; an item that falls below `Lore::title_phrase` said `{what:The}`; the
 stairs one stands on a `terrain:` phrase. How long a rest went on is
-`Duration::spoken` ("Words core picks"). Text roles until their words are converted (#1949): how
-a status kills (`dies`, "bleeds to death") and the dev actions' weather and vision names. Other
+`Duration::spoken` ("Words core picks"). Text roles until their words are converted (#1949):
+the dev actions' weather and vision names. Other
 modules' text it says as it is: a sound heard (`noise.rs`), a room entered
 (`fixtures/shrine.rs::enter_line`), and the draught of an unseen shadow
 (`creatures/unseen.rs::DRAUGHT_LINE`), until their slices.
@@ -537,25 +559,24 @@ two-handed one: "A long sword of pale light is in your hand."), which `World::eq
 says as its `put_on`. A song is `song:<id>`. Text roles until their words are converted
 (#1949): the ids typed in a dev-style refusal (`id`).
 
-`world/skills/` (`messages/skills.toml`, L4n) names a trap by its type's `name` as a `word:`
-phrase (`{trap:the}`, `{trap:a}`: "an arrow trap") and a chest by `chest_name` the same way
-(`{chest:the}`), until traps and chest bands have lexicon ids. An appraisal's `before` is the
+`world/skills/` (`messages/skills.toml`, L4n) names a trap by `trap:<id>` (`{trap:the}`,
+`{trap:a}`: "an arrow trap") and a chest by `World::chest_phrase` (`{chest:the}`). An appraisal's `before` is the
 stack as the player knew it, owned by them (`{before:a}`: "your gold ring", "your 2
 potions"), and `skills.realise` agrees its verb with it (`{before:is}`: "your boots are",
 where the string said "is"). The herbs a gather finds are one stack's phrase or a list of them, each
-`a`. A trap's `sign` ("a tripwire") is a text role until the traps' text is converted.
+`a`. A trap's `sign` ("a tripwire") is its line of data, `trap:<id>.sign`.
 
 `world/fixtures/` (`messages/fixtures.toml`) and `world/items/` (`messages/items.toml`, L4h)
 say an outcome's lines and a special room's as lines of data ("Lines of data"). A chest is
-`World::chest_phrase` (its band's name a `word:` phrase, else its terrain), a trap a `word:`
-phrase of its name, a key or a thing named as the player's ("your iron key", "Your long sword")
+`World::chest_phrase` (its band's name `chest:<band>`, else its terrain), a trap `trap:<id>`, a key or a thing named as the player's ("your iron key", "Your long sword")
 a phrase `owned_by(self.you())`, and stacks `items::stacks_arg` (moved from `ice.rs`), or
 `stacks_arg_with` when each item carries its price (`items.unpaid`, an item message in the
 list); the debt said after a pickup is `items.you_owe` in a `world.lines`. A line whose verb
 core picks from a few (an equipment action's "wield", "ready", "put on", in both hands or not;
 "put away" or "take off") is an entry per value (`equip.rs::put_on_line`, `take_off_line`).
-A talent is `talent:<id>` (`Content::talent_arg` with a choice). Text roles until their words
-are converted (#1949): a damage type's verb, and a slot's name or the id typed; what stops a prayer or a drink is `World::came_msg` (L4o).
+A talent is `talent:<id>` (`Content::talent_arg` with a choice). A damage type's verb is its line
+of data (`Content::damage_verb`). Text roles until their words are converted (#1949): a slot's
+name or the id typed; what stops a prayer or a drink is `World::came_msg` (L4o).
 `equip_saying` takes `Option<impl Into<Msg>>`,
 `chosen` its refusal as `impl Into<Msg>`. The altar's fire seen hitting a creature names it by its
 type (`{who:a}`): a unique by its name, "Black Wystan", where the old line lower-cased it (a bug,
@@ -567,9 +588,9 @@ where it was `called`), and the player as `World::you`. Creatures that came (a s
 crawls out of a corpse) are one argument said `{what:Counted}` (`summon.rs::counted_arg`): one
 type alone is its phrase with its count, so the line's `by = "what.number"` picks the verb;
 several types a list. A type's `first_sight` is a line of data, `creature:<id>.first_sight`. A
-possessive after the name is `{who:Poss}` ("The incubus's eyes", #1965). Text roles until their words are
-converted (#1949): a breath's, a burst's, and a summoning's `verb` from the data, and a spell's
-name, lower case. A chest band's name, and a status's `seen`, are `word:` phrases.
+possessive after the name is `{who:Poss}` ("The incubus's eyes", #1965). A breath's, a burst's,
+and a summoning's `verb` are lines of data, a chest band's name and a status's `seen` lexicon ids
+(#1995). Text roles until their words are converted (#1949): a spell's name, lower case.
 
 `world/people/` (`messages/people.toml`, L4m; talk's own lines in `messages/talk.toml`) is
 the "People" section below.
@@ -787,15 +808,16 @@ layout gives the detail the room).
 (`Arg::Msg` of a `ui.look.*` id, "Nested messages"), an empty text for a clause that does not
 apply; `lines` says it with the far-below part and the data's notes after it. The ground is a
 clause that says its own article (`ground` after "on", `ground_named` alone, an entry per
-terrain `noun`), its phrase `terrain:<id>` with char, blood, and "hollow" as `word:` adjectives;
-a creature is its type (`creature:<id>`, its grade a `word:` adjective, an animated thing's
+terrain `noun`), its phrase `terrain:<id>` with char, blood (`char:`, `blood:`), "hollow"
+(`word:`), and a chest's state as adjectives; a creature is its type (`creature:<id>`, its grade
+`grade:<creature>.<n>`, an animated thing's
 material an `Of`), an ally's owned by the player, a named one a literal; things are the lore's
 phrases said `a` (a rare "the Grim Bite, a long sword"). A list said with commas or semicolons
 (a creature's state, a room's, an item's tags) nests `listed` or `tags`, so the language owns
-the separator. Core's words it says as text until #1949: a sound heard (`you_hear`), a status's `seen`, an item's numbers and freshness, a damage type's name, a
-room's name with its article (`with_article`), where stairs lead, a place's name and note, and a
-chest's band with its state, a trap's name, and the grade's, char's, and blood's words (`word:`
-phrases).
+the separator. Core's words it says as text until #1949: a sound heard (`you_hear`), an item's
+numbers and freshness, a damage type's name, a room's name with its article (`with_article`),
+where stairs lead, and a place's name and note. A status's `seen`, a chest's band and state, a
+trap's name, and the grade's, char's, and blood's words are lexicon ids (#1995).
 
 **The dialogue screens and dialogs** (#1934): `dialog_screen.toml` holds only the one dialog's
 own words (its footer, the keys after an option); every title, question, and option is its
@@ -803,7 +825,7 @@ caller's, from `step_dialogs.toml`, `dialogue_screen.toml`, and `parting.toml`. 
 make is a `TopicName` (core), worded by the screen: a quarrel's `Side` and `Refuse` with the
 wizard as a phrase (`{who:poss}`, `{who:the}`), and the partner's invest and withdraw rows; one
 the data names stays `Text`. `PartingView` holds the wizard as a phrase and the choices' ids.
-The speaker, a feature (`terrain:`), a trap and a burst (`word:`), and a scroll (`object:`) are
+The speaker, a feature (`terrain:`), a trap (`trap:`), a burst (`word:`), and a scroll (`object:`) are
 phrases; a shopkeeper is a name (text). The sign reveal's date, sign name, and gifts and an ailment's
 name stay core's text.
 
@@ -947,6 +969,7 @@ arrays named by the id that tells it apart. Every kind of line of data, the thre
 | `resources:resource.<id>.lacking` | a class active refused for too little of the resource (in `classes.lacking`) |
 | `resources:resource.<id>.ended` | the resource ending (L4o) |
 | `trap:<id>.message` | a trap seen going off (L4o) |
+| `status:<id>.dies`, `trap:<id>.sign`, `damage_type:<id>.verb`, `.you`, `creature:<id>.breath.verb`, `.burst.verb`, `.summon.verb` | the data's words beside a name (#1995, "Phrases"; `content/data_word.rs`), said in a role of the line they stand in |
 | `prayer:words.<face>.pray`, `.fizzle`, `.nothing`; `prayer:use.<id>.<face>` | the prayer begun, fizzled, and refused, and each use answered, in the face's words |
 | `outcome:<table>.outcome.<id>.message`, `.messages.<n>`, `.otherwise` | an altar's, a spring's, or a potion's outcome: its one line, line `n` of several, or what it says when it found nothing to do (`OutcomeDef::table` is the table) |
 | `room_effect:<id>.enter`, `.near`, `.pervade`, `.arrive`, `.shrine.welcome`, `.shrine.unwelcome` | a special room entered, glimpsed, covering the level, hinted at on arrival, and a shrine's entry by how it treats the player (`Shrine::enter_field`) |

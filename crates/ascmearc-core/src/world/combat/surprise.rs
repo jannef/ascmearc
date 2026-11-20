@@ -403,11 +403,14 @@ pub(in crate::world) fn mark_caught(
 /// What an attack that found a creature `caught` calls it, before its name: "sleeping",
 /// "unsuspecting", "stunned" (by its status's `seen` word); nothing when the attack found it
 /// aware ([`super::fight::End::caught`]).
-pub(in crate::world) fn caught_word(content: &Content, caught: Option<Caught>) -> Option<&str> {
+pub(in crate::world) fn caught_word(
+    content: &Content,
+    caught: Option<Caught>,
+) -> Option<crate::lang::Word> {
     match caught {
         None => None,
-        Some(Caught::Asleep) => Some("sleeping"),
-        Some(Caught::Unaware) => Some("unsuspecting"),
-        Some(Caught::OffGuard(status)) => content.status(status).seen.as_deref(),
+        Some(Caught::Asleep) => Some(crate::lang::Word::id("word:sleeping")),
+        Some(Caught::Unaware) => Some(crate::lang::Word::id("word:unsuspecting")),
+        Some(Caught::OffGuard(status)) => content.seen_word(status),
     }
 }

@@ -210,7 +210,7 @@ pub(super) fn steps(
         options.sort_by(|a, b| a.name.cmp(&b.name));
         steps.push(CraftStep {
             kind: CraftStepKind::Family,
-            label: seal_label(n).into(),
+            label: super::craft_make::step_word(seal_label(n)),
             optional: true,
             options,
         });
@@ -234,7 +234,7 @@ pub(super) fn steps(
         });
         steps.push(CraftStep {
             kind: CraftStepKind::Affix,
-            label: "affix kept".into(),
+            label: super::craft_make::step_word("affix kept"),
             optional: true,
             options,
         });

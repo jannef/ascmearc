@@ -143,9 +143,8 @@ fn trap_dialog(view: &PerceptionView<'_>, dir: Dir) -> Option<Dialog> {
     let trap = view
         .trap(to)
         .filter(|_| !door && view.actor_at(to).is_none())?;
-    // The trap as the data names it, a word of the lexicon by its text.
-    let name = &view.content().trap(trap).name;
-    let trap = ("trap", Phrase::id(format!("word:{name}")).into());
+    // The trap by its name (`trap:<id>`).
+    let trap = ("trap", view.content().trap_phrase(trap).into());
     Some(
         Dialog::new(ui(T::TRAP_TITLE), ui_with(T::TRAP_ASK, &[trap]))
             .accept(ui(T::STEP_ONTO), Action::Move(dir))

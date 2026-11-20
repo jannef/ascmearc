@@ -133,7 +133,7 @@ impl World {
         &mut self,
         events: &mut Vec<Event>,
     ) -> Vec<(Msg, bool)> {
-        use fight::{End, Guard, Words, attack_message, death_message, word};
+        use fight::{End, Guard, Words, attack_message, death_message};
         let player = self.state.player;
         let content = self.content.clone();
         let mut reports: Vec<(Msg, bool)> = Vec::new();
@@ -373,7 +373,13 @@ impl World {
                 let seen = perception.sees_actors_at(at);
                 if let (true, Some(dead)) = (seen, self.actor_or_fallen(actor)) {
                     let who = fight::creature(content.creature(dead.creature));
-                    let dies = content.status(status).dies.as_deref().unwrap_or("dies");
+                    let def = content.status(status);
+                    let dies = match def.dies {
+                        Some(_) => {
+                            crate::lang::Arg::said(crate::content::data_word::status_dies(&def.id))
+                        }
+                        None => crate::lang::Arg::from("dies"),
+                    };
                     let said = Msg::new(msg::turn::DIES_OF_STATUS)
                         .role("who", who)
                         .role("dies", dies);
@@ -449,10 +455,11 @@ impl World {
                 let def = content.trap(trap);
                 // A fall is said with the trap ("You fall into a pit.").
                 if seen && !matches!(def.effect, TrapEffect::Pit { .. }) {
-                    let words = Words::named(&def.noun, &def.verb, &content);
+                    let noun = content.trap_noun_phrase(trap);
+                    let words = Words::new(noun.clone(), &def.verb, &content);
                     let guard = Guard::of(self.actor_or_fallen(target), &content, &self.state);
                     let said = attack_message(
-                        &End::Trap(word(&def.noun)),
+                        &End::Trap(noun),
                         &end(target, true),
                         &words,
                         AttackKind::Melee,

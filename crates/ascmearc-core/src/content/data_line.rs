@@ -458,6 +458,7 @@ pub(super) fn add_all(content: &mut Content) -> Result<(), ContentError> {
         }
     }
     people_lines(content, &mut add);
+    super::data_word::lines(content, &mut add);
     for (key, text) in lines {
         let line = Line::parse(&text);
         if let Some(role) = line.roles().first() {

@@ -437,7 +437,17 @@ fn chest_wise_tells_locked_from_unlocked() {
     w.apply(&Action::Wait);
     let view = w.perception();
     let rules = w.content().chests();
-    let name = |p| view.chest_at(p).expect("seen").name(rules, "chest");
+    let name = |p| {
+        let (name, state) = view
+            .chest_at(p)
+            .expect("seen")
+            .phrase(rules)
+            .expect("a band");
+        let state = state
+            .map(crate::lang::Modifier::Adjective)
+            .expect("a state");
+        w.content().english_of(&name.with(state), "bare")
+    };
     assert_eq!(name(LOCKED), "locked coffer");
     assert_eq!(name(COFFER), "unlocked coffer");
     assert_eq!(name(KIST), "locked kist");

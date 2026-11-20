@@ -208,7 +208,7 @@ fn the_head_step_lists_arrowheads_then_shards_and_blocks_then_none() {
     assert_eq!(steps.len(), 2, "the head, then the shaft: {steps:?}");
     let head = &steps[0];
     assert_eq!(
-        (head.kind, head.label.as_str()),
+        (head.kind, head.label_en()),
         (CraftStepKind::Sources, "head")
     );
     assert!(head.optional, "None may be chosen");
@@ -226,7 +226,7 @@ fn the_head_step_lists_arrowheads_then_shards_and_blocks_then_none() {
     );
     let shaft = &steps[1];
     assert_eq!(
-        (shaft.kind, shaft.label.as_str()),
+        (shaft.kind, shaft.label_en()),
         (CraftStepKind::Stock, "shaft")
     );
     assert_eq!(shaft.options.len(), 1);

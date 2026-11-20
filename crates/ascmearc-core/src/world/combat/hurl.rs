@@ -171,8 +171,10 @@ pub(in crate::world) fn throw_messages(
                 .role("what", word(noun)),
         );
     }
-    let verb = damage.map_or("hits", |d| content.damage_type(d).verb.as_str());
-    let words = Words::named(noun, verb, content);
+    let words = match damage {
+        Some(kind) => Words::of_kind(word(noun), kind, content),
+        None => Words::named(noun, "hits", content),
+    };
     let blow = attack_message(
         &End::Trap(word(noun)),
         target,

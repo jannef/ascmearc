@@ -42,6 +42,7 @@ mod crystal;
 mod damage_type;
 pub mod danger;
 pub mod data_line;
+pub mod data_word;
 mod decipher;
 #[cfg(test)]
 mod demon_roster_tests;

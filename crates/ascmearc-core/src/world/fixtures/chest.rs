@@ -43,25 +43,13 @@ use crate::world::{ActorId, Spent, World};
 const STURDINESS: u8 = 20;
 
 impl World {
-    /// The name of the chest at `p` on the current level: its band's ("coffer"), else its
-    /// terrain's.
-    pub(in crate::world) fn chest_name(&self, p: Pos) -> String {
-        let level = self.state.current();
-        let band = (level.chests.get(&p)).and_then(|c| self.content.chests().band_of(c.level));
-        match band {
-            Some(band) => band.name.clone(),
-            None => (level.terrain.get(p))
-                .map_or_else(|| "chest".into(), |t| self.content.terrain(*t).name.clone()),
-        }
-    }
-
-    /// [`World::chest_name`] as a phrase: its band's name (`word:coffer`), else its terrain
-    /// (`terrain:<id>`).
+    /// The chest at `p` on the current level as a phrase: its band's name (`chest:<band>`,
+    /// "coffer"), else its terrain (`terrain:<id>`).
     pub(in crate::world) fn chest_phrase(&self, p: Pos) -> Phrase {
         let level = self.state.current();
         let band = (level.chests.get(&p)).and_then(|c| self.content.chests().band_of(c.level));
         match band {
-            Some(band) => word(&band.name),
+            Some(band) => band.phrase(),
             None => (level.terrain.get(p)).map_or_else(
                 || word("chest"),
                 |t| Phrase::id(format!("terrain:{}", self.content.terrain(*t).id)),
@@ -269,7 +257,7 @@ impl World {
             };
             self.state.current_mut().trap_memory.insert(p, kind);
             let chest = self.chest_phrase(p);
-            let trap = word(&self.content.trap(kind).name);
+            let trap = self.content.trap_phrase(kind);
             self.say(
                 Msg::new(msg::fixtures::CHEST_TRAPPED)
                     .role("chest", chest)

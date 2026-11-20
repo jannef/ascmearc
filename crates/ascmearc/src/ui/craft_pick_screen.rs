@@ -664,7 +664,8 @@ mod tests {
         let kindle = view.content().recipes().id("kindle").expect("kindle");
         let mut screen = CraftPickScreen::new(Some(&view), Some(kindle));
         screen.fit(100, 60);
-        let labels: Vec<&str> = screen.steps.iter().map(|s| s.label.as_str()).collect();
+        let english = |s: &CraftStep| view.content().english_of(&s.label, "bare");
+        let labels: Vec<String> = screen.steps.iter().map(english).collect();
         assert_eq!(
             labels,
             ["item", "crystal", "seal", "second seal", "third seal"]
