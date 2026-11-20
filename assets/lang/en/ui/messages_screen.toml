@@ -1,0 +1,29 @@
+# The message history (`crates/ascmearc/src/ui/messages_screen.rs`). Ids alphabetical.
+#
+# The keys named in the footer are fixed (`Esc`): translate the words around them. The screen
+# fits each text to its panel (docs/dev/localization.md "UI text").
+
+# The footer's way out.
+[close]
+text = "Esc close"
+
+# The footer's way out: `own`, the key that opens the history.
+[close_own]
+text = "{own:bare} or Esc close"
+
+# The dim first line: `count`, how many messages the log keeps.
+[note]
+by = "count.number"
+one = "The log keeps the last message."
+many = "The log keeps the last {count:bare} messages."
+
+# The paging keys in the footer: `next` and `prev`, the keys that scroll a panel's height.
+[page]
+text = "{next:bare} {prev:bare} page"
+
+# The scrolling keys in the footer: `up_down`, the keys that scroll a line.
+[scroll]
+text = "{up_down:bare} scroll"
+
+[title]
+text = "Messages"

@@ -12,7 +12,9 @@ text"), with its widths in the screens' layout, not the text (#1908), and the fu
 the controls, settings, and mods screens (#1935), the object and rig screens (#1928), the
 character, characters, skills, and talents screens (#1933), the UI core, `--more--`, info tabs,
 and encounter dialog (#1930), the magic, scribe, and weapon skills screens (#1938), the look
-line (#1927), and the dialogue screens and dialogs (#1934); **L4a**,
+line (#1927), the dialogue screens and dialogs (#1934), the screens module, menus, paged list,
+messages and files screens (#1931), the quest, almanac, and targeting screens (#1939), and the
+settings module (#1936), which complete L6 (#1889); **L4a**,
 **L4b**, **L4e**, **L4h**, **L4i**, **L4j**, and **L4m**, `world/allies/` (#1912), `world/character/` (#1913),
 `world/creatures/` (#1916), `world/fixtures/` and `world/items/` (#1919), `world/health/` (#1920),
 `world/levels/` (#1921), and `world/people/` (#1924) say their lines from templates
@@ -712,8 +714,8 @@ value, a kept beast's line, Dazzled, Averted); `more.toml` the `--more--` mark; 
 the pages' names; `encounter.toml` the encounter dialog's title and choice labels, which core's
 `EncounterView` no longer carries (it gives the `outcome` and the `Choice`s; the dump's JSON lost
 its `title` and `label`). The bar still takes from core as text (#1949) the status effects', the
-hunger's, the burden's, the stance's, and a kept beast's health word (`Health::word`), and
-the rest prompt's words (`settings::fixed::REST`, the settings part). The bar's developer
+hunger's, the burden's, the stance's, and a kept beast's health word (`Health::word`); the
+rest prompt's words are the settings part's (`settings::fixed::REST`, #1936). The bar's developer
 segments (turn, position, light, vision, seed) and `dev.rs`'s overlay line stay literal.
 
 **The magic, scribe, and weapon skills screens** (#1938; `spells.rs` draws effects and has no
@@ -748,6 +750,28 @@ the data names stays `Text`. `PartingView` holds the wizard as a phrase and the 
 The speaker, a feature (`terrain:`), a trap and a burst (`word:`), and a scroll (`object:`) are
 phrases; a shopkeeper is a name (text). The sign reveal's date, sign name, and gifts, a hunger's
 name (the hungry journey's title), and an ailment's name stay core's text.
+
+**The shared modules** (#1931): `paged_list.toml` holds the page label and the page keys' hint
+every paged list shows (`PagedList::page_label`, `hint`), `menu.toml` the main and pause menus and
+the quit dialogs, `screens.toml` the stack's notices; the messages and files screens have their
+own files. The main menu's spaced-out title is the game's name and stays in code; the files
+screen's kinds, what they hold, and where they are come from `paths.rs` as English.
+
+**The quest log, the almanac, and targeting** (#1939): the quest log's objective and status stay
+the core messages they were (`QuestView`, `english_msg`); its giver is passed as the phrase it is
+(`{giver:The}`). The almanac's date asks for the day's ordinal (`{day:ord}`), and several moons
+are a list of nested `moon_named` messages (`{moons:and}`, the language's conjunction). Each way
+of aiming has its whole prompt (`target.toml`'s `prompt_*`); `Line::status` returns the text. What
+is aimed (`describe_object`, an ability's name) stays core's text. `circle_tracks.rs` shows no
+text.
+
+**The settings module** (#1936) keeps its words in `ui/settings.toml`: a command's name is
+`command_<id>` (`KeyCommand::text`, a direction's its own entry: `command_move_n`, never "Move" and
+a direction glued), a context's title `context_<id>`, the palette, clock, and unit labels (their
+`label()` gives the `UiText`), the 12-hour clock's `AM`/`PM` and the degrees, the rest prompt's
+choices (`fixed::REST`), why a key cannot be bound (`fixed_in_<context>`, `kept_by_*`), and what
+exporting and importing a keymap reports, in Controls and on the command line. The settings file's
+ids and its load warnings (the log), and the keymap file's comments, stay as written.
 
 ## Lines of data
 

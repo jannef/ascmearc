@@ -12,6 +12,7 @@
 use crate::input::{Bindings, Context, KeyBinding, KeyCommand};
 use crate::settings::fixed;
 use crate::settings::mods::{self, Mods, Platform};
+use crate::ui::text::ui;
 use ascmearc_core::Dir;
 use bevy::input::keyboard::KeyboardInput;
 use bevy::prelude::*;
@@ -334,26 +335,10 @@ impl KeyCommand {
         REBINDABLE.iter().copied().find(|c| c.id() == Some(id))
     }
 
-    /// Name for the controls screen; unlike [`KeyCommand::label`] it tells directions apart.
+    /// Name for the controls screen, `?`, and the messages that name a command
+    /// ([`KeyCommand::text`] in the current language).
     pub fn name(self) -> String {
-        match self {
-            KeyCommand::Move(dir) => format!("Move {}", direction_name(dir)),
-            KeyCommand::Run(dir) => format!("Run {}", direction_name(dir)),
-            other => other.label().to_string(),
-        }
-    }
-}
-
-fn direction_name(dir: Dir) -> &'static str {
-    match dir {
-        Dir::N => "north",
-        Dir::NE => "northeast",
-        Dir::E => "east",
-        Dir::SE => "southeast",
-        Dir::S => "south",
-        Dir::SW => "southwest",
-        Dir::W => "west",
-        Dir::NW => "northwest",
+        ui(self.text())
     }
 }
 

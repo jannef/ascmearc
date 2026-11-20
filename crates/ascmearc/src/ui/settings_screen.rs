@@ -206,9 +206,9 @@ impl SettingsScreen {
                     let indent = if e.in_preset() { "  " } else { "" };
                     (format!("{indent}{}", ui(e.label())), value)
                 }
-                Row::Palette => (ui(T::COLOR_PALETTE), settings.palette.label().to_string()),
-                Row::Clock => (ui(T::CLOCK), settings.clock.label().to_string()),
-                Row::Temperature => (ui(T::TEMPERATURE), settings.temperature.label().to_string()),
+                Row::Palette => (ui(T::COLOR_PALETTE), ui(settings.palette.label())),
+                Row::Clock => (ui(T::CLOCK), ui(settings.clock.label())),
+                Row::Temperature => (ui(T::TEMPERATURE), ui(settings.temperature.label())),
                 Row::Files => (ui(T::FILES), String::new()),
                 Row::Reset => (ui(T::RESET), String::new()),
                 Row::Back => (ui(T::BACK), String::new()),

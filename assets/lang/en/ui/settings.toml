@@ -1,0 +1,393 @@
+# The settings module's words (`crates/ascmearc/src/settings/`): the commands' names and the
+# contexts' titles that Controls and `?` show, the palette, clock and temperature settings, the
+# rest prompt's choices, why a key cannot be bound, and what exporting and importing a keymap
+# reports. Ids alphabetical. The ids of the settings file (`wait`, `high-contrast`) are not
+# words and are not here.
+
+# The clock setting's two forms.
+[clock_12h]
+text = "12-hour (AM/PM)"
+
+[clock_24h]
+text = "24-hour"
+
+# A time of day on the 12-hour clock: `time`, the hour and minutes ("2:32").
+[clock_am]
+text = "{time:bare} AM"
+
+[clock_pm]
+text = "{time:bare} PM"
+
+# A command's name, as Controls, `?`, and the messages that name a command show it
+# (`command_<id>`, the command's id in the settings file). The keys named are fixed (`Esc`).
+[command_abilities]
+text = "Abilities"
+
+[command_ascend]
+text = "Go up stairs"
+
+[command_back]
+text = "Back (Esc always works)"
+
+[command_bash]
+text = "Bash with your shield"
+
+[command_cancel]
+text = "Cancel"
+
+[command_character]
+text = "Character"
+
+[command_chat]
+text = "Chat"
+
+[command_close]
+text = "Close a door"
+
+[command_descend]
+text = "Go down stairs"
+
+[command_disarm]
+text = "Disarm a trap"
+
+[command_drop]
+text = "Drop"
+
+[command_eat]
+text = "Consume"
+
+[command_equipment]
+text = "Equipment"
+
+[command_help]
+text = "Show / hide controls"
+
+[command_inventory]
+text = "Inventory"
+
+[command_kick]
+text = "Kick"
+
+[command_look]
+text = "Look around"
+
+[command_messages]
+text = "Message history"
+
+[command_missile]
+text = "Throw or shoot the missile weapon"
+
+[command_more_aggressive]
+text = "More aggressive stance"
+
+[command_more_defensive]
+text = "More defensive stance"
+
+[command_more_next]
+text = "Show the next messages"
+
+[command_more_skip]
+text = "Skip the rest (Esc always works)"
+
+[command_move_e]
+text = "Move east"
+
+[command_move_n]
+text = "Move north"
+
+[command_move_ne]
+text = "Move northeast"
+
+[command_move_nw]
+text = "Move northwest"
+
+[command_move_s]
+text = "Move south"
+
+[command_move_se]
+text = "Move southeast"
+
+[command_move_sw]
+text = "Move southwest"
+
+[command_move_w]
+text = "Move west"
+
+[command_open]
+text = "Open a door"
+
+[command_pay]
+text = "Pay the shopkeeper"
+
+[command_pick_lock]
+text = "Pick a lock"
+
+[command_pick_up]
+text = "Pick up"
+
+[command_prev_page]
+text = "Previous info page"
+
+[command_prev_target]
+text = "Previous target"
+
+[command_quests]
+text = "Quest log"
+
+[command_quit]
+text = "Save and quit"
+
+[command_read]
+text = "Read a scroll"
+
+[command_repeat_ability]
+text = "Use the last ability again"
+
+[command_rest]
+text = "Rest"
+
+[command_roundhouse]
+text = "Roundhouse"
+
+[command_run_e]
+text = "Run east"
+
+[command_run_n]
+text = "Run north"
+
+[command_run_ne]
+text = "Run northeast"
+
+[command_run_nw]
+text = "Run northwest"
+
+[command_run_prefix]
+text = "Run (then a direction or stairs)"
+
+[command_run_s]
+text = "Run south"
+
+[command_run_se]
+text = "Run southeast"
+
+[command_run_sw]
+text = "Run southwest"
+
+[command_run_w]
+text = "Run west"
+
+[command_search_long]
+text = "Search for a while"
+
+[command_skills]
+text = "Skills"
+
+[command_steal]
+text = "Steal"
+
+[command_talents]
+text = "Talents"
+
+[command_text_back]
+text = "Back (Esc always works)"
+
+[command_throw]
+text = "Throw from the pack"
+
+[command_throw_voice]
+text = "Throw your voice"
+
+[command_use_tool]
+text = "Use a tool (dig, light, smoke)"
+
+[command_wait]
+text = "Wait/search"
+
+[command_weapon_skills]
+text = "Weapon skills"
+
+# Where a key is read: each group's heading in Controls and `?`.
+[context_aim]
+text = "Aiming"
+
+[context_menu]
+text = "Menus and screens"
+
+[context_more]
+text = "More messages (--more--)"
+
+[context_pages]
+text = "Info pages"
+
+[context_play]
+text = "In play"
+
+[context_text]
+text = "Text fields"
+
+# A temperature in whole degrees: `degrees`, the number.
+[degrees_celsius]
+text = "{degrees:bare} °C"
+
+[degrees_fahrenheit]
+text = "{degrees:bare} °F"
+
+# Why a key cannot be bound: it is fixed where the command is read. `shown`, the key.
+[fixed_in_aim]
+text = "{shown:bare} is fixed in aiming"
+
+[fixed_in_menu]
+text = "{shown:bare} is fixed in menus and screens"
+
+[fixed_in_pages]
+text = "{shown:bare} is fixed in info pages"
+
+[fixed_in_text]
+text = "{shown:bare} is fixed in text fields"
+
+# What importing a keymap skipped or moved, a line each (the first shows in Controls). `shown`, a
+# key; `name`, the command the file lists; `owner`, the command that had the key.
+[import_keyless]
+text = "{owner:bare} has no key now ({shown:bare} went to {name:bare})"
+
+[import_listed_for_both]
+text = "{shown:bare} is listed for both {owner:bare} and {name:bare}; kept for {owner:bare}"
+
+# `version`, the file's format version.
+[import_newer]
+text = "written by a newer Ascmearc (version {version:bare}); read as far as this one knows"
+
+# `place`, where the file lists the command ("[play] wait", as written in the file).
+[import_no_usable]
+text = "{place:bare}: no usable keys; left as it was"
+
+# `name`, a table or value in the file that is neither.
+[import_not_command]
+text = "`{name:bare}` is not a context or a command; skipped"
+
+# `item`, the value in the file.
+[import_not_key]
+text = "{place:bare}: {item:bare} is no key that can be bound"
+
+# The file is no TOML: `error`, what the reader said.
+[import_not_keymap]
+text = "not a keymap: {error:bare}"
+
+[import_not_list]
+text = "{place:bare}: expected a list of keys; skipped"
+
+# The summary's line of problems: `problem`, the first; `more`, how many others. A translation
+# keeps the `!`, which marks a refusal.
+[import_problem]
+text = "! {problem:bare}"
+
+[import_problems]
+text = "! {problem:bare} (and {more:bare} more)"
+
+# `why`, the reason the key cannot be bound (`fixed_in_*`, `kept_by_*`, `plain_keys_only`).
+[import_refused]
+text = "{place:bare}: {why:bare}; skipped"
+
+[import_twice]
+text = "{place:bare}: listed twice; the first kept"
+
+[import_unknown_command]
+text = "{place:bare}: unknown command; skipped"
+
+# `value`, what the file has as its version.
+[import_version]
+text = "version {value:bare} is not a number; read as the current one"
+
+# What importing did: `source`, the file (or "the keymap" from the browser); `name`, the one
+# command changed; `count`, how many changed.
+[imported_many]
+text = "Imported {source:bare}: keys of {count:bare} commands changed."
+
+[imported_none]
+text = "Imported {source:bare}: no keys changed."
+
+[imported_one]
+text = "Imported {source:bare}: {name:bare} changed."
+
+# A shortcut the system or the browser keeps, so it never reaches the game: `shown`, the key.
+[kept_by_browser]
+text = "{shown:bare} is kept by the browser"
+
+[kept_by_macos]
+text = "{shown:bare} is kept by macOS"
+
+[kept_by_system]
+text = "{shown:bare} is kept by the system"
+
+# Export keys and Import keys: `path`, the file; `file`, the download's name; `error`, what
+# the system said.
+[keymap_cannot_read]
+text = "Could not read {path:bare}: {error:bare}"
+
+[keymap_cannot_write]
+text = "Could not write {path:bare}: {error:bare}"
+
+[keymap_downloaded]
+text = "Keys saved as {file:bare}."
+
+[keymap_exported]
+text = "Keys exported to {path:bare}."
+
+[keymap_missing]
+text = "No keymap at {path:bare}: export one first, or put one there."
+
+[keymap_not_stored]
+text = "Keys are not stored in this launch."
+
+# The command line's `--import-keys FILE` and `--export-keys FILE`: `path`, the file; `place`,
+# the settings file; `error`, what went wrong.
+[keys_cannot_read]
+text = "cannot read {path:bare}: {error:bare}"
+
+[keys_cannot_write]
+text = "cannot write {path:bare}: {error:bare}"
+
+[keys_in_file]
+text = "{path:bare}: {error:bare}"
+
+[keys_not_saved]
+text = "Not saved: settings are not stored in this launch."
+
+[keys_saved]
+text = "Saved in {place:bare}."
+
+[keys_wrote]
+text = "Wrote the keymap to {path:bare}."
+
+# The color palettes.
+[palette_colorblind]
+text = "Colorblind (red-green)"
+
+[palette_default]
+text = "Default"
+
+[palette_high_contrast]
+text = "High contrast"
+
+# A key with modifiers for a command outside play: `name`, the command. The modifier names are
+# keys: keep them.
+[plain_keys_only]
+text = "{name:bare} takes plain keys only: Ctrl, Alt, and Super are for keys in play"
+
+# The rest prompt's choices. Its key (h, d, n) is marked where a word starts with it ("until
+# (d)awn"), else shown after the words: a translation keeps the keys.
+[rest_dawn]
+text = "until dawn"
+
+[rest_hour]
+text = "hour"
+
+[rest_nightfall]
+text = "until nightfall"
+
+# The temperature unit setting.
+[unit_celsius]
+text = "°C (Celsius)"
+
+[unit_fahrenheit]
+text = "°F (Fahrenheit)"

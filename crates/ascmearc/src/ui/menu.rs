@@ -12,6 +12,7 @@ use super::almanac::Almanac;
 use super::cursor;
 use super::dialog_screen::Dialog;
 use super::screens::{MenuChoice, ScreenAction, ScreenName};
+use super::text::{menu as T, ui, ui_with};
 use super::{ACCENT, PANEL_BG, TEXT, TEXT_DIM};
 use crate::input::{Bindings, Context, KeyBinding};
 use crate::render::console::Console;
@@ -246,21 +247,22 @@ fn pair(a: &str, b: &str) -> String {
 /// the web, quitting reloads the page (`MenuChoice::Quit` does either).
 pub fn quit_dialog(saving: bool) -> Dialog {
     let (text, yes) = if saving {
-        ("Save the run and quit Ascmearc?", "Save and quit")
+        (T::QUIT_TEXT_SAVING, T::QUIT_YES_SAVING)
     } else {
-        ("Quit Ascmearc?", "Quit")
+        (T::QUIT_TEXT, T::QUIT_YES)
     };
-    Dialog::yes_no("Quit", text, yes, MenuChoice::Quit, "Stay")
+    let (title, stay) = (ui(T::QUIT_TITLE), ui(T::STAY));
+    Dialog::yes_no(title, ui(text), ui(yes), MenuChoice::Quit, stay)
 }
 
 /// The dialog the pause menu's Save and quit to menu asks.
 pub fn save_to_menu_dialog() -> Dialog {
     Dialog::yes_no(
-        "Main menu",
-        "Save the run and return to the main menu?",
-        "Save and return",
+        ui(T::MAIN_TITLE),
+        ui(T::MAIN_TEXT),
+        ui(T::MAIN_YES),
         MenuChoice::SaveToMenu,
-        "Stay",
+        ui(T::STAY),
     )
 }
 
@@ -279,19 +281,19 @@ enum MainItem {
 }
 
 impl MainItem {
-    fn label(self) -> &'static str {
-        match self {
-            MainItem::Resume => "Resume",
-            MainItem::SaveToMenu => "Save and quit to menu",
-            MainItem::Continue => "Continue",
-            MainItem::Characters => "Characters",
-            MainItem::Graveyard => "Graveyard",
-            MainItem::NewRun => "New run",
-            MainItem::Settings => "Settings",
-            MainItem::Controls => "Controls",
-            MainItem::Mods => "Mods",
-            MainItem::Quit => "Quit",
-        }
+    fn label(self) -> String {
+        ui(match self {
+            MainItem::Resume => T::ITEM_RESUME,
+            MainItem::SaveToMenu => T::ITEM_SAVE_TO_MENU,
+            MainItem::Continue => T::ITEM_CONTINUE,
+            MainItem::Characters => T::ITEM_CHARACTERS,
+            MainItem::Graveyard => T::ITEM_GRAVEYARD,
+            MainItem::NewRun => T::ITEM_NEW_RUN,
+            MainItem::Settings => T::ITEM_SETTINGS,
+            MainItem::Controls => T::ITEM_CONTROLS,
+            MainItem::Mods => T::ITEM_MODS,
+            MainItem::Quit => T::ITEM_QUIT,
+        })
     }
 }
 
@@ -415,11 +417,11 @@ impl MainMenu {
         let panel = Panel::new(console, "", w, h);
         let cx = |text: &str| panel.x + (panel.w - text.chars().count() as i32) / 2;
         let title = if self.pause {
-            "P A U S E D"
+            ui(T::PAUSE_TITLE)
         } else {
-            "A S C M E A R C"
+            "A S C M E A R C".to_string()
         };
-        console.print(cx(title), panel.y + 2, title, ACCENT);
+        console.print(cx(&title), panel.y + 2, &title, ACCENT);
         let rule = "═".repeat(title.chars().count());
         console.print(cx(&rule), panel.y + 3, &rule, TEXT_DIM);
         // The pause menu's line on the world, in at most two centred lines (three in a very
@@ -427,8 +429,8 @@ impl MainMenu {
         // 10 °C, the world waits.`
         let tagline = match (&self.almanac, self.pause) {
             (Some(almanac), _) => almanac.lines(unit, panel.inner_w()),
-            (None, true) => vec!["the world waits".to_string()],
-            (None, false) => vec!["an ASCII roguelike".to_string()],
+            (None, true) => vec![ui(T::PAUSE_TAGLINE)],
+            (None, false) => vec![ui(T::TAGLINE)],
         };
         for (i, line) in tagline.iter().take(3).enumerate() {
             console.print(cx(line), panel.y + 4 + i as i32, line, TEXT_DIM);
@@ -440,7 +442,7 @@ impl MainMenu {
                 MainItem::Continue => self.last.as_deref().unwrap_or(""),
                 _ => "",
             };
-            panel.row(console, y, i == self.selected, item.label(), value, 8);
+            panel.row(console, y, i == self.selected, &item.label(), value, 8);
         }
         let notice_y = panel.y + 8 + items.len() as i32;
         for (i, line) in notice_lines.iter().enumerate() {
@@ -452,12 +454,16 @@ impl MainMenu {
             );
         }
         let keys = HINTS;
-        let hint = format!("{} select   {} choose", keys.up_down(), keys.confirm);
-        let hint = if self.pause {
-            format!("{hint}   Esc resume")
+        let footer = if self.pause {
+            T::FOOTER_PAUSE
         } else {
-            hint
+            T::FOOTER
         };
+        let args = [
+            ("up_down", keys.up_down().into()),
+            ("confirm", keys.confirm.into()),
+        ];
+        let hint = ui_with(footer, &args);
         panel.footer(console, &hint);
         if !self.pause {
             let cols = console.cols() as usize;
@@ -474,17 +480,11 @@ impl MainMenu {
 /// Legal Notices": copyright, no warranty, where the license is), as long as fits in `width`
 /// columns; `None` if not even the short form fits.
 fn legal_notice(width: usize) -> Option<String> {
-    let version = env!("CARGO_PKG_VERSION");
-    [
-        format!(
-            "Ascmearc {version} · © 2026 Janne Lê Forsell · free software under GPL-3.0 \
-             (see LICENSE), without warranty"
-        ),
-        format!("Ascmearc {version} · © 2026 Janne Lê Forsell · GPL-3.0, no warranty"),
-        "© 2026 Janne Lê Forsell · GPL-3.0, no warranty".to_string(),
-    ]
-    .into_iter()
-    .find(|n| n.chars().count() <= width)
+    let version = [("version", env!("CARGO_PKG_VERSION").into())];
+    [T::LEGAL_LONG, T::LEGAL_MEDIUM, T::LEGAL_SHORT]
+        .into_iter()
+        .map(|text| ui_with(text, &version))
+        .find(|n| n.chars().count() <= width)
 }
 
 /// A centered, framed panel on the console, with helpers to lay out rows inside it.

@@ -713,6 +713,7 @@ fn message_key(bindings: &Bindings, id: &str) -> String {
 fn rest_prompt() -> String {
     let choices: Vec<String> = (crate::settings::fixed::REST.iter())
         .map(|(key, _, words)| {
+            let words = &ui(*words);
             let mut starts = std::iter::once(0).chain(words.match_indices(' ').map(|(i, _)| i + 1));
             match starts.find(|&at| words[at..].starts_with(key)) {
                 Some(at) => {
