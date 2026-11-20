@@ -25,11 +25,14 @@
 use crate::action::{AttackKind, Event, SpellShape};
 use crate::combat::{Blow, Strike};
 use crate::content::{Bolt, Burst, BurstIce, DamageTypeId, EffectShape, TrapId, TrapNoise};
+use crate::content::{SpellData, data_line};
 use crate::damage::Damage;
 use crate::dice::Roll;
 use crate::fov::radius2;
 use crate::geom::Pos;
 use crate::ice::Shock;
+use crate::lang::Msg;
+use crate::msg;
 use crate::noise::{self, Noise};
 use crate::rng::draw;
 use crate::sight::LineOfSight;
@@ -60,6 +63,14 @@ impl World {
             Caster::Actor(id) => self.state.actors.key(id).into_owned(),
             Caster::Trap(trap) => format!("trap/{}", trap.0),
             Caster::Place => "place".to_string(),
+        }
+    }
+
+    /// Says spell `def`'s cast message (`[spell.cast]` `message`), if it has one: a line of
+    /// data, by its key (`docs/dev/localization.md` "Lines of data").
+    pub(in crate::world) fn say_cast_message(&mut self, def: &SpellData) {
+        if def.look.message.is_some() {
+            self.say(data_line::said(data_line::spell_cast(&def.id)));
         }
     }
 }
@@ -187,7 +198,7 @@ impl World {
         events: &mut Vec<Event>,
     ) -> Spent {
         let Some(def) = self.content.effect(id) else {
-            self.say(format!("There is no effect `{id}`."));
+            self.say(Msg::new(msg::magic::NO_EFFECT).role("id", id));
             return Spent::Nothing;
         };
         let level = self.state.current();
@@ -203,17 +214,17 @@ impl World {
             EffectShape::Bolt => {
                 let path = to.map_or_else(Vec::new, |to| bolt_path(at, to, opaque));
                 if path.is_empty() {
-                    self.say("A bolt needs a way to go: `effect:ID@X,Y>X,Y`, not into a wall.");
+                    self.say(msg::magic::BOLT_NEEDS_A_WAY);
                     return Spent::Nothing;
                 }
                 (SpellShape::Bolt { path: path.clone() }, path)
             }
         };
         if cells.is_empty() {
-            self.say(format!("Effect `{id}` reaches no cell there."));
+            self.say(Msg::new(msg::magic::EFFECT_REACHES_NO_CELL).role("id", id));
             return Spent::Nothing;
         }
-        self.say(format!("Effect: {id} (dev)."));
+        self.say(Msg::new(msg::magic::EFFECT_DEV).role("id", id));
         events.push(Event::Spell {
             effect: id.to_string(),
             origin: at,

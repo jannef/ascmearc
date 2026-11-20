@@ -47,7 +47,7 @@ impl World {
         );
         if after > before {
             self.player_mut().mana = after;
-            self.news.push("The hex comes home.".to_string().into());
+            self.news.push(crate::msg::magic::HEX_COMES_HOME.into());
         }
     }
 }

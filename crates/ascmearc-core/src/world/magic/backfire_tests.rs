@@ -210,3 +210,26 @@ fn a_creatures_heal_rebounds_on_the_player() {
     assert!(w.state.player().hp > 1, "{:?}", said(&w));
     assert_eq!(w.state.actors[&shaman].hp, 50);
 }
+
+#[test]
+fn a_hostile_call_of_several_types_reads_as_the_strings_did() {
+    use crate::lang::{Arg, Msg, Phrase};
+    use crate::msg::magic;
+    use crate::test_support::english_of;
+    let c = builtin();
+    let creature = |id: &str, n: u32| Phrase::id(format!("creature:{id}")).count(n);
+    let item = |p: Phrase| Arg::from(Msg::new(magic::HOSTILE_CREATURES).role("who", p));
+    let one = Msg::new(magic::HOSTILE_CALL).role("who", creature("kobold", 1));
+    assert_eq!(
+        english_of(&c, &one),
+        "A kobold comes to your call, but not to your side!"
+    );
+    let mixed = Arg::List(vec![item(creature("wolf", 1)), item(creature("rat", 13))]);
+    let seen = Msg::new(magic::HOSTILE_CALL_SEEN_MIXED)
+        .role("who", mixed)
+        .role("caster", creature("kobold", 1));
+    assert_eq!(
+        english_of(&c, &seen),
+        "A wolf and 13 giant rats come to the kobold's call, but not to its side!"
+    );
+}

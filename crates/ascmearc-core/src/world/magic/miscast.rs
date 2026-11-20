@@ -37,6 +37,7 @@ use super::cast::Cast;
 use super::spell::Caster;
 use crate::action::{Event, ReadTarget};
 use crate::check::{self, Checked};
+use crate::content::data_line;
 use crate::content::{
     Burst, Content, CreatureId, CreatureSpawn, Drain, Miscast, MishapEffect, SpellData, SpellId,
     TrapNoise,
@@ -44,7 +45,8 @@ use crate::content::{
 use crate::damage::Damage;
 use crate::dice::{Dice, Roll};
 use crate::geom::{Dir, Pos};
-use crate::lang::{Arg, Msg};
+use crate::lang::{Arg, MessageId, Msg};
+use crate::msg;
 use crate::noise::SoundKind;
 use crate::rng::draw;
 use crate::skills::Effect;
@@ -91,16 +93,16 @@ impl Actor {
 }
 
 /// What the player is told of a portal the level refuses (`pit.rs`): their own line, and the
-/// line of a creature's they see.
-fn pit_refused_words(why: Refused) -> (&'static str, &'static str) {
+/// line of a creature's they see (its `who` the caster).
+fn pit_refused_words(why: Refused) -> (MessageId, MessageId) {
     match why {
         Refused::Ground => (
-            "The ground heaves but will not open, and a gate tears through beside you instead!",
-            "The ground heaves beside {who}, and a gate tears through!",
+            msg::magic::PIT_REFUSED_GROUND,
+            msg::magic::PIT_REFUSED_GROUND_SEEN,
         ),
         Refused::InPit => (
-            "The floor here is the Pit's already: a gate tears open beside you instead!",
-            "The floor heaves beside {who}, and a gate tears open!",
+            msg::magic::PIT_REFUSED_IN_PIT,
+            msg::magic::PIT_REFUSED_IN_PIT_SEEN,
         ),
     }
 }
@@ -187,18 +189,15 @@ impl World {
             _ => None,
         };
         if caster == player {
-            let message = match refused {
-                Some(why) => pit_refused_words(why).0,
-                None => entry.message.as_str(),
-            };
-            self.say(message.to_string());
+            match refused {
+                Some(why) => self.say(pit_refused_words(why).0),
+                // A line of data, by its key (`docs/dev/localization.md` "Lines of data").
+                None => self.say(data_line::said(data_line::miscast_message(&entry.id))),
+            }
         } else if self.perception.sees_actors_at(here) {
             let who = self.called_phrase(me);
             match refused {
-                Some(why) => {
-                    let called = self.called(me);
-                    self.say(pit_refused_words(why).1.replace("{who}", &called));
-                }
+                Some(why) => self.say(Msg::new(pit_refused_words(why).1).role("who", who)),
                 // A line of data, by its key (`docs/dev/localization.md` "Lines of data").
                 None => self.say(Msg::data_line(
                     Arg::said(entry.seen_key()).with(crate::content::MISCAST_WHO, who),

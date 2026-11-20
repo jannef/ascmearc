@@ -399,6 +399,18 @@ case, and `Unavailable::reason`. A talent's refusal (`talent::Refusal::words`) s
 line. `World::learn` returns `Msg`s; `creation_offers` and the creation errors render them in
 English, as developer text.
 
+`world/magic/`'s casting side (`messages/magic.toml`, L4k: `cast`, `backfire`, `caster`,
+`miscast`, `mana`, `malison`, `ruin`, `restore`, `spell_rule`, `spell`, `zap`, `zone`) says its
+lines from templates; what its data writes is said by key ("Lines of data"): a spell's cast
+message (`World::say_cast_message`), a miscast's `message`, a reprieve's `message` (found back
+from the talent that gives it, `caster.rs::reprieve_source`), and the status `end` and disease
+`recovered` lines a cleanse ends. A backfired summon's creatures are one phrase with its count
+or, of several types, a list of `magic.hostile_creatures` items ("A kobold and two rats"). A
+ruin row's words for one item and for several are both passed (`one`, `many`, lines of data),
+and `magic.ruined`'s count picks one. Text roles until their words are converted (#1949): a
+status's name lower case, `Unavailable::reason`, and a stat's name; `read::KEPT` is the learning
+side's (#1923).
+
 `world/crafting/` (`messages/crafting.toml`, L4f, its first half: making a recipe, cutting,
 enchanting, crystals, digging, the field forge). A refusal a function returns for its caller to
 say (`cut.rs::refusal`, `enchant.rs::refusal`, `dig_refusal`, `field_forge.rs::forge_ground`) is
@@ -594,6 +606,10 @@ arrays named by the id that tells it apart. Every kind of line of data, the thre
 | `unique:<id>.power.message` | its Ward refusing a status |
 | `object:<id>.throw.words` | a flask shattering |
 | `spell:<id>.effect.charm.message`, `.ends` | a charm taking hold and ending (in `allies.charm_takes`, `allies.charm_ends`) |
+| `spell:<id>.cast.message` | a spell cast (its `[spell.cast]` `message`) |
+| `miscast:<id>.message`, `mishap:<id>.message` | a miscast befalling the player; a mishap of study |
+| `ruin:<type>.<class\|material\|group>.<id>.says.0`, `.says.1` | a `ruin.toml` row's words for one item ruined and for several (in `magic.ruined`) |
+| `talent:<id>.effects.reprieve.message` | a reprieve saving the player from death |
 | `familiars:arrives.<creature>` | a familiar's arrival (in `allies.familiar_arrives`) |
 | `hunger:corpses.skills.<skill>.learn`, `.rise` | a corpse teaching a skill |
 | `level:<id>.arrival`, `dungeon:<id>.arrival` | arriving on a hand-made level by stairs, or on a branch's first level (`data_line::arrival`) |

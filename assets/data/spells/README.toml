@@ -104,7 +104,7 @@
 #                 cone, a bolt's for a ray, a bolt, or a line; none for touch or self
 #     noun, verb  what hits and what it does, for messages ("the fireball burns"; default its
 #                 name in lower case, and its damage type's verb)
-#     message     said as it is cast
+#     message     said as it is cast (a line of data, `spell:<id>.cast.message`)
 #     noise       { sound, loudness } where it goes off (a burst's centre, else the caster)
 #     blast       a burst's, as a scroll's: the walls it breaks
 #     heat, frost  a burst's, standing in for what its type does to ice and water (`[types]` in

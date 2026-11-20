@@ -5,10 +5,25 @@
 
 use crate::action::Event;
 use crate::combat::Blow;
+use crate::content::data_line;
 use crate::world::ActorId;
 use crate::world::World;
 
 impl World {
+    /// The talent whose reprieve is `once`, by id: the last the player holds with it, the one
+    /// its mods keep, else the first in the book that has it.
+    fn reprieve_source(&self, once: &str) -> Option<String> {
+        let book = self.content.talents();
+        let gives =
+            |def: &&crate::content::TalentDef| data_line::reprieves(def).any(|(o, _)| o == once);
+        let held = (self.state.player().talents.iter())
+            .filter_map(|taken| book.id(&taken.id).map(|id| book.get(id)))
+            .filter(gives)
+            .last();
+        let any = || book.iter().map(|(_, def)| def).find(gives);
+        held.or_else(any).map(|def| def.id.clone())
+    }
+
     /// Hag's bargain, Doom of their kind: once in a life each, what would kill the player does
     /// not (the first reprieve they hold not yet spent). They are left at 1 hit point, suffer the
     /// reprieve's status, and lose its stat for good; its words are said. Returns whether it saved
@@ -22,7 +37,11 @@ impl World {
             return false;
         };
         self.state.progress.once.insert(reprieve.once.clone());
-        self.say(reprieve.message.clone());
+        // A line of data, by the key of the talent that gives it (`docs/dev/localization.md`
+        // "Lines of data").
+        if let Some(talent) = self.reprieve_source(&reprieve.once) {
+            self.say(data_line::said(data_line::reprieve(&talent)));
+        }
         let me = self.player_mut();
         me.hp = 1;
         if let Some((stat, by)) = reprieve.stat {

@@ -67,6 +67,7 @@ use crate::ability::{Ability, Unavailable};
 use crate::action::position_text;
 use crate::action::{AttackKind, Event, ReadTarget, SpellShape};
 use crate::combat::{self, Attack, Category, Profile, Strike};
+use crate::content::data_line;
 use crate::content::{
     Bolt, Burst, Content, Flask, Grip, Resolution, Shape, SpellData, SpellPurpose, Stance,
     StatusId, merge_rider,
@@ -75,9 +76,11 @@ use crate::content::{Effect as ItemEffect, ObjectId, SpellId};
 use crate::damage::{Damage, Kinds};
 use crate::dice::Roll;
 use crate::geom::Pos;
+use crate::lang::Msg;
 use crate::magic::Mods;
+use crate::msg;
 use crate::rng::draw;
-use crate::text::capitalized;
+use crate::world::combat::fight;
 use crate::world::combat::reflect::{Shot, Turned};
 use crate::world::{Actor, ActorId, AttackSkills, Cause, Spent, World};
 use std::cell::Cell;
@@ -169,28 +172,27 @@ impl World {
         let me = self.state.player();
         let spell = content.spell_id(name);
         let (Some(spell), Some(_)) = (spell, content.spell_rules()) else {
-            self.say("You have no such ability.");
+            self.say(msg::magic::NO_SUCH_ABILITY);
             return Spent::Nothing;
         };
         let def = content.spell(spell);
         let ability = Ability::Spell(spell);
         if !ability.had_by(me, &content) {
-            self.say("You have no such ability.");
+            self.say(msg::magic::NO_SUCH_ABILITY);
             return Spent::Nothing;
         }
         if let Some(why) = ability.unavailable(me, &content) {
             self.say(match why {
-                Unavailable::While(status) => format!(
-                    "You are {}: you cannot cast now.",
-                    content.status(status).name.to_lowercase()
-                ),
-                other => format!("You cannot: {}.", other.reason(&content)),
+                Unavailable::While(status) => Msg::new(msg::magic::CANNOT_CAST_WHILE)
+                    .role("status", content.status(status).name.to_lowercase()),
+                other => Msg::new(msg::magic::CANNOT_REASON)
+                    .role("reason", other.reason(&content).into_owned()),
             });
             return Spent::Nothing;
         }
         let me = self.state.player();
         if me.mana < me.spell_cost(&content, def) {
-            self.say("You have too little mana.");
+            self.say(msg::magic::TOO_LITTLE_MANA);
             return Spent::Nothing;
         }
         let Some(target) = self.cast_aim(def, target, &format!("use:{name}")) else {
@@ -233,14 +235,12 @@ impl World {
         match (def.aims_item(), def.aimed(), target) {
             (true, _, Some(ReadTarget::Item(on))) => Some(Some(ReadTarget::Item(on))),
             (true, _, _) => {
-                self.say(format!(
-                    "Cast it on what? Name a stack you carry: `{usage}:c`."
-                ));
+                self.say(Msg::new(msg::magic::CAST_IT_ON_WHAT).role("usage", usage));
                 None
             }
             (false, true, Some(ReadTarget::Cell(at))) => Some(Some(ReadTarget::Cell(at))),
             (false, true, _) => {
-                self.say(format!("Cast it where? Name a cell: `{usage}:12,5`."));
+                self.say(Msg::new(msg::magic::CAST_IT_WHERE).role("usage", usage));
                 None
             }
             (false, false, _) => Some(None),
@@ -260,7 +260,7 @@ impl World {
     ) -> bool {
         let content = self.content.clone();
         let (def, Some(_)) = (content.spell(spell), content.spell_rules()) else {
-            self.say("Nothing happens.");
+            self.say(msg::magic::NOTHING_HAPPENS);
             return false;
         };
         let usage = format!("read:{}", position_text(item));
@@ -285,7 +285,7 @@ impl World {
     ) -> bool {
         let content = self.content.clone();
         let (def, Some(_)) = (content.spell(spell), content.spell_rules()) else {
-            self.say("Nothing happens.");
+            self.say(msg::magic::NOTHING_HAPPENS);
             return false;
         };
         let target = Some(ReadTarget::Cell(at));
@@ -327,7 +327,7 @@ impl World {
                 self.cast_weather(cast, events)
             }
             SpellPurpose::Utility => {
-                self.say("Nothing happens.");
+                self.say(msg::magic::NOTHING_HAPPENS);
                 false
             }
             SpellPurpose::Summon if cast.def.effect.rise.is_some() => {
@@ -433,12 +433,12 @@ impl World {
             return false;
         };
         let Some(stack) = self.state.player().inventory.get(on) else {
-            self.say("You carry no such thing.");
+            self.say(msg::magic::CARRY_NO_SUCH_THING);
             return false;
         };
         if self.lore().knows(stack) {
-            let what = self.lore().describe(&stack.single());
-            self.say(format!("You already know what {what} is."));
+            let what = self.lore().phrase(&stack.single());
+            self.say(Msg::new(msg::magic::ALREADY_KNOW).role("what", what));
             return false;
         }
         let before = self.state.player().inventory.len();
@@ -471,14 +471,14 @@ impl World {
         let target = match (cast.def.shape, at) {
             (Shape::Touch, Some(at)) if at != self.player_pos() => {
                 if self.player_pos().chebyshev(at) > 1 {
-                    self.say("You can only touch someone next to you.");
+                    self.say(msg::magic::TOUCH_NEXT_TO_YOU);
                     return false;
                 }
                 let level = self.state.current().id.clone();
                 match self.state.actor_at(&level, at).map(|a| a.id) {
                     Some(id) => id,
                     None => {
-                        self.say("There is no one there to touch.");
+                        self.say(msg::magic::NO_ONE_TO_TOUCH);
                         return false;
                     }
                 }
@@ -493,11 +493,11 @@ impl World {
             return false;
         };
         if actor.hp >= actor.max_hp(&content) && self.cured_by_magic(target).is_empty() {
-            self.say(if target == player {
-                "You are not hurt.".to_string()
-            } else {
-                format!("{} is not hurt.", capitalized(&self.called(actor)))
-            });
+            let who = match target == player {
+                true => self.you(),
+                false => self.called_phrase(actor),
+            };
+            self.say(Msg::new(msg::magic::NOT_HURT).role("who", who));
             return false;
         }
         let Some(heal) = cast.roll else {
@@ -530,10 +530,10 @@ impl World {
             return;
         }
         if target == self.state.player {
-            self.say("Your wounds close.");
+            self.say(msg::magic::WOUNDS_CLOSE);
         } else {
-            let who = capitalized(&self.called(&self.state.actors[&target]));
-            self.say(format!("{who} looks better."));
+            let who = self.called_phrase(&self.state.actors[&target]);
+            self.say(Msg::new(msg::magic::LOOKS_BETTER).role("who", who));
         }
         self.heal_by_magic(target, back, events);
     }
@@ -554,13 +554,13 @@ impl World {
             Vec::new()
         };
         if ended.is_empty() && sick.is_empty() {
-            self.say("There is nothing to cure.");
+            self.say(msg::magic::NOTHING_TO_CURE);
             return false;
         }
         if !self.pay_cast(cast) {
             return true;
         }
-        self.say("A cleansing warmth runs through you.");
+        self.say(msg::magic::CLEANSING_WARMTH);
         let from = events.len();
         for e in &ended {
             self.player_mut().effects.remove(e.status);
@@ -570,23 +570,27 @@ impl World {
             self.end_disease(player, disease, events);
         }
         let content = self.content.clone();
+        // Lines of data, by their keys (`docs/dev/localization.md` "Lines of data").
         let said: Vec<String> = (events[from..].iter())
             .filter_map(|e| match *e {
                 Event::Disease {
                     disease,
                     news: crate::action::DiseaseNews::Recovered,
                     ..
-                } => Some(content.disease(disease).recovered.clone()),
+                } => Some(data_line::disease_recovered(&content.disease(disease).id)),
                 Event::Status {
                     status,
                     began: false,
                     ..
-                } => content.status(status).end.clone(),
+                } => {
+                    let def = content.status(status);
+                    def.end.as_ref().map(|_| data_line::status_end(def))
+                }
                 _ => None,
             })
             .collect();
-        for text in said {
-            self.say(text);
+        for key in said {
+            self.say(data_line::said(key));
         }
         self.spell_landed(cast, player, true);
         true
@@ -641,10 +645,8 @@ impl World {
             return true;
         }
         self.afflict(target, status, severity, Some(player), events);
-        let who = capitalized(&self.called(&self.state.actors[&target]));
-        let content = self.content.clone();
-        let word = (content.status(status).seen.clone()).unwrap_or_else(|| "hexed".into());
-        self.say(format!("{who} is {word}."));
+        let who = self.called_phrase(&self.state.actors[&target]);
+        self.say(self.hexed(who, status));
         self.spell_landed(cast, target, self.suffers(target, status));
         true
     }
@@ -669,9 +671,7 @@ impl World {
         if !self.pay_cast(cast) {
             return true;
         }
-        if let Some(text) = &cast.def.look.message {
-            self.say(text.clone());
-        }
+        self.say_cast_message(cast.def);
         let center = self.burst_center(here, at, range);
         self.sound_at(cast.def.look.noise, center);
         let level = self.state.current();
@@ -696,18 +696,26 @@ impl World {
             .filter(|a| self.sees_flash(a, cast.def.effect.only_sighted))
             .map(|a| a.id)
             .collect();
-        let content = self.content.clone();
-        let word = (content.status(status).seen.clone()).unwrap_or_else(|| "hexed".into());
         for id in caught {
             self.afflict(id, status, severity, Some(player), events);
             let pos = self.state.actors[&id].pos;
             if self.perception.sees_actors_at(pos) {
-                let who = capitalized(&self.called(&self.state.actors[&id]));
-                self.say(format!("{who} is {word}."));
+                let who = self.called_phrase(&self.state.actors[&id]);
+                self.say(self.hexed(who, status));
             }
             self.spell_landed(cast, id, self.suffers(id, status));
         }
         true
+    }
+
+    /// `who` is now under hex `status`, as the player is told it: "The kobold is asleep." (its
+    /// `seen` word, else "hexed").
+    fn hexed(&self, who: crate::lang::Phrase, status: StatusId) -> Msg {
+        let seen = self.content.status(status).seen.as_deref();
+        let word = fight::word(seen.unwrap_or("hexed"));
+        Msg::new(msg::magic::IS_STATUS)
+            .role("who", who)
+            .role("status", word)
     }
 
     /// Whether actor `id` suffers status `status` now (a hex that took on it).
@@ -724,12 +732,12 @@ impl World {
         let level = self.state.current().id.clone();
         let target = (self.state.actor_at(&level, at)).map(|a| a.id);
         let Some(target) = target.filter(|_| self.perception.sees_actors_at(at)) else {
-            self.say("You see no one there to hex.");
+            self.say(msg::magic::NO_ONE_TO_HEX);
             return None;
         };
         if self.stance(self.state.player, target) != Stance::Hostile {
-            let who = capitalized(&self.called(&self.state.actors[&target]));
-            self.say(format!("{who} means you no harm."));
+            let who = self.called_phrase(&self.state.actors[&target]);
+            self.say(Msg::new(msg::magic::MEANS_NO_HARM).role("who", who));
             return None;
         }
         Some(target)
@@ -758,12 +766,12 @@ impl World {
         }
         if def.shape == Shape::Touch {
             if at == self.player_pos() || self.player_pos().chebyshev(at) > 1 {
-                self.say("You can only touch someone next to you.");
+                self.say(msg::magic::TOUCH_NEXT_TO_YOU);
                 return false;
             }
             let level = self.state.current().id.clone();
             if self.state.actor_at(&level, at).is_none() {
-                self.say("There is no one there to touch.");
+                self.say(msg::magic::NO_ONE_TO_TOUCH);
                 return false;
             }
         } else if !def.about_caster()
@@ -773,11 +781,11 @@ impl World {
             return false;
         }
         if def.open_sky && !self.under_open_sky() {
-            self.say("You need the open sky above you for that.");
+            self.say(msg::magic::OPEN_SKY);
             return false;
         }
         if def.aims_corpse() && self.corpse_in_sight(at).is_none() {
-            self.say("There is nothing there to burst.");
+            self.say(msg::magic::NOTHING_TO_BURST);
             return false;
         }
         let player = self.state.player;
@@ -786,9 +794,7 @@ impl World {
         }
         let roll = cast.roll.unwrap_or_default();
         let reroll = cast.reroll;
-        if let Some(text) = &def.look.message {
-            self.say(text.clone());
-        }
+        self.say_cast_message(def);
         let here = self.player_pos();
         // Before the cast: who stands in its way may fall (`zone.rs`).
         let radius = cast.reach.radius.unwrap_or(1);

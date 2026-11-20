@@ -43,7 +43,9 @@ use crate::combat::Strike;
 use crate::content::{BurstIce, Content, LightId, Shape, SpellId, ZoneKind};
 use crate::damage::Damage;
 use crate::geom::Pos;
+use crate::lang::Msg;
 use crate::light::Light;
+use crate::msg;
 use crate::rng::draw;
 use crate::stats::Stat;
 use crate::time::{Duration, GameTime};
@@ -281,9 +283,7 @@ impl World {
         if !self.pay_cast(cast) {
             return true;
         }
-        if let Some(text) = &cast.def.look.message {
-            self.say(text.clone());
-        }
+        self.say_cast_message(cast.def);
         let center = match cast.def.shape {
             Shape::Burst => self.burst_center(here, at, range),
             _ => here,
@@ -319,12 +319,12 @@ impl World {
         let by = self.state.player;
         let seconds = DEV_TURNS * TURN_SECONDS;
         self.lay_cells((kind, by, harm, None), cells, seconds, events);
-        self.say(format!(
-            "A {} zone lies around {},{} (dev).",
-            kind.id(),
-            at.x,
-            at.y
-        ));
+        self.say(
+            Msg::new(msg::magic::ZONE_DEV)
+                .role("kind", kind.id())
+                .role("x", i64::from(at.x))
+                .role("y", i64::from(at.y)),
+        );
         Spent::NoTime
     }
 
@@ -334,7 +334,11 @@ impl World {
     pub(in crate::world) fn off_level_dev(&mut self, at: Pos) -> bool {
         let off = !self.state.current().terrain.in_bounds(at);
         if off {
-            self.say(format!("{},{} is off the level (dev).", at.x, at.y));
+            self.say(
+                Msg::new(msg::magic::OFF_LEVEL_DEV)
+                    .role("x", i64::from(at.x))
+                    .role("y", i64::from(at.y)),
+            );
         }
         off
     }
@@ -477,10 +481,10 @@ impl World {
             return;
         }
         if id == self.state.player {
-            self.say("You slip on the slick ground!");
+            self.say(msg::magic::SLIP);
         } else if self.perception.sees_actors_at(pos) {
-            let who = crate::text::capitalized(&self.called(&self.state.actors[&id]));
-            self.say(format!("{who} slips."));
+            let who = self.called_phrase(&self.state.actors[&id]);
+            self.say(Msg::new(msg::magic::SLIPS).role("who", who));
         }
         self.afflict(id, staggered, 1, Some(zone.by), events);
     }

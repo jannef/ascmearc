@@ -10,7 +10,7 @@
 #   id        the entry's id
 #   from, to  the totals it covers; the entries tile 1 and up with no gap or overlap, and only
 #             the last leaves out `to` (every total from its `from` up)
-#   message   said to the player who miscast
+#   message   said to the player who miscast (a line of data, `miscast:<id>.message`)
 #   seen      said of a creature that miscast where the player sees it, `who` the caster:
 #             `{who:The}`, `{who:the}`, `{who:poss}` (full grammar: a line of data,
 #             docs/dev/localization.md "Lines of data")
