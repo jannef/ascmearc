@@ -125,8 +125,8 @@ fn a_forced_outcome_on_a_peaceful_party_draws_no_check() {
     act(&mut w, "meet:hermit");
     assert_eq!(draws(&w), rng, "no lookouts for travellers");
     let view = w.perception().encounter().expect("pending");
-    assert_eq!(view.title, "A hermit");
-    let ids: Vec<_> = view.choices.iter().map(|(_, c)| c.id()).collect();
+    assert_eq!(view.name, "a hermit");
+    let ids: Vec<_> = view.choices.iter().map(|c| c.id()).collect();
     assert_eq!(ids, ["hail", "pass"]);
     act(&mut w, "encounter:pass");
     assert!(w.state.encounter.is_none());
@@ -170,14 +170,14 @@ fn the_drop_offers_three_choices_and_met_two() {
     act(&mut w, "meet:kobolds:drop");
     assert!(said(&w, "You spot a band of kobolds"), "{}", last(&w));
     let v = w.perception().encounter().expect("pending");
-    let labels: Vec<_> = v.choices.iter().map(|(l, _)| l.as_str()).collect();
-    assert_eq!(labels, ["Lie in wait", "Slip past", "Stand and fight"]);
+    let ids: Vec<_> = v.choices.iter().map(|c| c.id()).collect();
+    assert_eq!(ids, ["ambush", "evade", "fight"]);
     act(&mut w, "encounter:hunt");
     assert_eq!(last(&w), "That is not a choice now.");
     let mut w = world(false);
     act(&mut w, "meet:kobolds:met");
     let v = w.perception().encounter().expect("pending");
-    let ids: Vec<_> = v.choices.iter().map(|(_, c)| c.id()).collect();
+    let ids: Vec<_> = v.choices.iter().map(|c| c.id()).collect();
     assert_eq!(ids, ["evade", "fight"]);
     // Nothing pending: refused.
     let mut w = world(false);
@@ -568,7 +568,7 @@ fn talker(seed: u64, presence: u8, bluff: Option<u16>) -> World {
 
 fn choice_ids(w: &World) -> Vec<&'static str> {
     let v = w.perception().encounter().expect("pending");
-    v.choices.iter().map(|(_, c)| c.id()).collect()
+    v.choices.iter().map(|c| c.id()).collect()
 }
 
 #[test]
@@ -577,7 +577,7 @@ fn talking_past_is_offered_only_when_flagged_met_and_trained() {
     act(&mut w, "meet:talkers:met");
     assert_eq!(choice_ids(&w), ["evade", "bluff", "fight"]);
     let v = w.perception().encounter().unwrap();
-    assert_eq!(v.choices[1].0, "Talk your way past");
+    assert_eq!(v.outcome, EncounterOutcome::Met);
     let json = crate::dump::json(&w, &[], false);
     assert_eq!(json["encounter"]["choices"][1]["id"], "bluff");
     // Not from the drop: the party has not seen them.

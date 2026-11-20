@@ -207,16 +207,6 @@ impl Offer {
             Offer::Drink => "drink",
         }
     }
-
-    /// What a step into its feature asks after, before the feature's name: "Would you like to
-    /// pray at the forgotten altar?".
-    pub const fn asks(self) -> &'static str {
-        match self {
-            Offer::Pray => "pray at",
-            Offer::Temper => "temper something at",
-            Offer::Drink => "drink from",
-        }
-    }
 }
 
 #[derive(Deserialize)]

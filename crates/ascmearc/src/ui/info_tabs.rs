@@ -11,24 +11,26 @@
 
 use super::menu::{Panel, Press};
 use super::screens::{ScreenAction, ScreenName};
+use super::text::{UiText, info_tabs as T, ui, ui_with};
 use super::{ACCENT, TEXT_DIM};
 use crate::input::{Bindings, Context};
 use crate::render::console::Console;
 use crate::settings::fixed::{self, PageKey};
+use ascmearc_core::lang::Arg;
 
 /// The pages, in number order, with their tab labels: a name, and a short one for a console too
 /// narrow for every name (short enough that the line fits an 80-column console). Only screens
 /// that exist are listed; the ninth fills the last digit.
-const PAGES: &[(ScreenName, &str, &str)] = &[
-    (ScreenName::Character, "Character", "Char"),
-    (ScreenName::Inventory, "Inventory", "Inv"),
-    (ScreenName::Equipment, "Equipment", "Eqp"),
-    (ScreenName::Skills, "Skills", "Skl"),
-    (ScreenName::WeaponSkills, "Weapons", "Weap"),
-    (ScreenName::Magic, "Magic", "Mag"),
-    (ScreenName::Quests, "Quests", "Qst"),
-    (ScreenName::Talents, "Talents", "Tal"),
-    (ScreenName::Story, "Story", "Story"),
+const PAGES: &[(ScreenName, UiText, UiText)] = &[
+    (ScreenName::Character, T::CHARACTER, T::CHARACTER_SHORT),
+    (ScreenName::Inventory, T::INVENTORY, T::INVENTORY_SHORT),
+    (ScreenName::Equipment, T::EQUIPMENT, T::EQUIPMENT_SHORT),
+    (ScreenName::Skills, T::SKILLS, T::SKILLS_SHORT),
+    (ScreenName::WeaponSkills, T::WEAPONS, T::WEAPONS_SHORT),
+    (ScreenName::Magic, T::MAGIC, T::MAGIC_SHORT),
+    (ScreenName::Quests, T::QUESTS, T::QUESTS_SHORT),
+    (ScreenName::Talents, T::TALENTS, T::TALENTS_SHORT),
+    (ScreenName::Story, T::STORY, T::STORY_SHORT),
 ];
 
 /// The width every page's panel has at least, so that the pages share one frame and one tab
@@ -61,7 +63,15 @@ pub fn is_page(name: ScreenName) -> bool {
 /// for a screen that is no page.
 pub fn hint(name: ScreenName) -> Option<String> {
     let i = PAGES.iter().position(|(n, _, _)| *n == name)?;
-    Some(format!("{} {}", i + 1, PAGES[i].1))
+    Some(tab(i + 1, ui(PAGES[i].1)))
+}
+
+/// Page `digit` on the tab line, named `page`: "6 Magic".
+fn tab(digit: usize, page: String) -> String {
+    ui_with(
+        T::TAB,
+        &[("digit", Arg::Number(digit as i64)), ("page", page.into())],
+    )
 }
 
 /// What a press does on page `current`: replace it with the page the press names, if that is
@@ -101,17 +111,11 @@ fn tabs(current: ScreenName, width: usize) -> Vec<(String, bool)> {
     let make = |label: Label| -> Vec<(String, bool)> {
         let mut parts = Vec::new();
         for (i, (name, full, short)) in PAGES.iter().enumerate() {
-            let key = (i + 1).to_string();
             let here = *name == current;
-            let named = match label {
-                Label::Name => *full,
-                Label::Short => *short,
-                Label::Key => "",
-            };
-            let text = match (named.is_empty(), key.is_empty()) {
-                (true, _) => key,
-                (false, true) => named.to_string(),
-                (false, false) => format!("{key} {named}"),
+            let text = match label {
+                Label::Name => tab(i + 1, ui(*full)),
+                Label::Short => tab(i + 1, ui(*short)),
+                Label::Key => (i + 1).to_string(),
             };
             parts.push((text, here));
         }

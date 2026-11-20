@@ -111,12 +111,13 @@ use ascmearc_core::burden::Burden;
 use ascmearc_core::color::Rgb;
 use ascmearc_core::content::{Content, ObjectId};
 use ascmearc_core::hunger::Hunger;
-use ascmearc_core::lang::Entry;
+use ascmearc_core::lang::{Arg, Entry};
 use ascmearc_core::perception::{BelowView, CellView, PerceptionView};
 use bevy::prelude::*;
 use missiles::Missiles;
 use motion::Motion;
 use spells::Spells;
+use text::{r#mod as T, ui, ui_with};
 
 const MESSAGE_ROWS: i32 = 2;
 const STATUS_ROWS: i32 = 1;
@@ -585,43 +586,43 @@ fn draw_messages(
     bindings: &Bindings,
     blood: bool,
 ) {
+    // A prompt's room: the message line between its margins.
+    let room = console.cols() as i32 - 2;
     if let InputMode::Direction(command) = mode {
         let prompt = match command {
-            KeyCommand::UseTool => "Dig in which direction? (Esc to cancel)",
-            KeyCommand::Chat => "Talk in which direction? (Esc to cancel)",
-            KeyCommand::RunPrefix => "Run in which direction, or to which stairs? (Esc to cancel)",
-            _ => "In which direction? (Esc to cancel)",
+            KeyCommand::UseTool => T::DIG_WAY,
+            KeyCommand::Chat => T::TALK_WAY,
+            KeyCommand::RunPrefix => T::RUN_WAY,
+            _ => T::WAY,
         };
-        console.print(1, 0, prompt, ACCENT);
+        console.print_in(1, 0, &ui(prompt), ACCENT, room);
         return;
     }
     if let InputMode::Ability(ability) = mode {
         let prompt = match ability {
-            Ability::Disarm => "Disarm in which direction? (Esc to cancel)".to_string(),
-            Ability::Listen => "Listen at which door? (Esc to cancel)".to_string(),
-            Ability::Wedge => "Wedge which door? (Esc to cancel)".to_string(),
+            Ability::Disarm => ui(T::DISARM_WAY),
+            Ability::Listen => ui(T::LISTEN_DOOR),
+            Ability::Wedge => ui(T::WEDGE_DOOR),
             // Two kept beasts beside: which is tended, or the player (`input.rs::tend_way`).
             Ability::Heal => match bindings.key_name(KeyCommand::Wait) {
-                Some(key) => format!("Tend to which side? ({key} yourself, Esc to cancel)"),
-                None => "Tend to which side? (Esc to cancel)".to_string(),
+                Some(key) => ui_with(T::TEND_WAY, &[("own", key.into())]),
+                None => ui(T::TEND_WAY_ESC),
             },
-            _ => "In which direction? (Esc to cancel)".to_string(),
+            _ => ui(T::WAY),
         };
-        console.print(1, 0, &prompt, ACCENT);
+        console.print_in(1, 0, &prompt, ACCENT, room);
         return;
     }
     if let InputMode::GiveWay(_) = mode {
-        let prompt = "Give it to which side? (Esc to cancel)";
-        console.print(1, 0, prompt, ACCENT);
+        console.print_in(1, 0, &ui(T::GIVE_WAY), ACCENT, room);
         return;
     }
     if let InputMode::RigWay(_) = mode {
-        let prompt = "Rig it on which side? (Esc to cancel)";
-        console.print(1, 0, prompt, ACCENT);
+        console.print_in(1, 0, &ui(T::RIG_WAY), ACCENT, room);
         return;
     }
     if mode == InputMode::Rest {
-        console.print(1, 0, &rest_prompt(), ACCENT);
+        console.print_in(1, 0, &rest_prompt(), ACCENT, room);
         return;
     }
     if let InputMode::Aim(aim) = mode {
@@ -650,7 +651,10 @@ fn draw_messages(
                     .wand_does(s)
                     .filter(|_| matches!(aim.kind, AimKind::Zap(_)))
                 {
-                    Some(does) => format!("{named} ({does})"),
+                    Some(does) => ui_with(
+                        T::AIM_WAND,
+                        &[("item", named.into()), ("does", does.into())],
+                    ),
                     None => named,
                 }
             }),
@@ -663,11 +667,10 @@ fn draw_messages(
     if let InputMode::Look(p) = mode {
         let about = look::describe(&game.world.perception(), p, blood);
         console.print_clipped(1, 0, &about, TEXT);
-        let stop = match bindings.key_name(KeyCommand::Look) {
-            Some(key) => format!("Esc or {key}"),
-            None => "Esc".to_string(),
+        let prompt = match bindings.key_name(KeyCommand::Look) {
+            Some(key) => ui_with(T::LOOK_HINT, &[("own", key.into())]),
+            None => ui(T::LOOK_HINT_ESC),
         };
-        let prompt = format!("Looking: direction keys move, {stop} to stop.");
         // What Knowledge tells of a creature takes the row's start: the description above is
         // long enough to clip, the hint can spare it.
         let x = match look::known(&game.world.perception(), p) {
@@ -716,15 +719,15 @@ fn rest_prompt() -> String {
             }
         })
         .collect();
-    format!("Rest: {}? (Esc to cancel)", choices.join(", "))
+    ui_with(T::REST, &[("choices", choices.join(", ").into())])
 }
 
 /// The status bar's reminder of where the keys are: the help key, else the pause menu (which
 /// holds Controls).
 fn controls_hint(bindings: &Bindings) -> String {
     match bindings.key_name(KeyCommand::Help) {
-        Some(key) => format!("{key} controls"),
-        None => "Esc menu".to_string(),
+        Some(key) => ui_with(T::CONTROLS, &[("own", key.into())]),
+        None => ui(T::CONTROLS_MENU),
     }
 }
 
@@ -811,9 +814,13 @@ fn status_segments(view: &PerceptionView, clock: Clock, dev: bool) -> Vec<Segmen
     let (mp, max_mp) = view.own_mana();
     let resources = (view.own_resources().into_iter()).map(|r| {
         let def = content.resource(r.resource);
+        let (name, value) = (
+            ("name", def.short.clone().into()),
+            ("value", number(r.value)),
+        );
         let text = match def.show_max {
-            true => format!("{} {}/{}", def.short, r.value, r.max),
-            false => format!("{} {}", def.short, r.value),
+            true => ui_with(T::RESOURCE, &[name, value, ("max", number(r.max))]),
+            false => ui_with(T::RESOURCE_VALUE, &[name, value]),
         };
         Segment::new(1, text)
     });
@@ -822,24 +829,29 @@ fn status_segments(view: &PerceptionView, clock: Clock, dev: bool) -> Vec<Segmen
     // actor id order; cut down to its name before it is dropped.
     let kept: Vec<Segment> = (view.kept())
         .map(|(ally, data)| {
-            let how = match ally.retinue {
-                true => "with you".to_string(),
-                false => ally.health.word().to_string(),
+            let name = ("name", data.name.clone().into());
+            let text = match ally.retinue {
+                true => ui_with(T::KEPT_RETINUE, &[name]),
+                false => ui_with(T::KEPT, &[name, ("health", ally.health.word().into())]),
             };
-            Segment::new(2, format!("{}: {how}", data.name)).or_short(data.name.clone())
+            Segment::new(2, text).or_short(data.name.clone())
         })
         .collect();
     let stance = view.own_stance();
     let head = [
         Segment::new(1, view.level_name()),
-        Segment::new(1, format!("HP {hp}/{max_hp}")),
-        Segment::new(1, format!("MP {mp}/{max_mp}")),
-    ];
-    let rest = [
-        Some(Segment::new(
+        Segment::new(
             1,
-            format!("Lv {}", view.own_experience().level),
-        )),
+            ui_with(T::HP, &[("hp", number(hp)), ("max", number(max_hp))]),
+        ),
+        Segment::new(
+            1,
+            ui_with(T::MP, &[("mp", number(mp)), ("max", number(max_mp))]),
+        ),
+    ];
+    let level = number(view.own_experience().level);
+    let rest = [
+        Some(Segment::new(1, ui_with(T::LEVEL, &[("level", level)]))),
         (!stance.is_neutral()).then(|| Segment::new(1, content.stance_def(stance).name.clone())),
     ];
     let tail = [
@@ -868,6 +880,11 @@ fn status_segments(view: &PerceptionView, clock: Clock, dev: bool) -> Vec<Segmen
         .collect()
 }
 
+/// A number for a UI text's slot (`{hp:bare}`).
+fn number(n: impl Into<i64>) -> Arg {
+    Arg::Number(n.into())
+}
+
 /// The conditions on the character, in display order, as the status bar's segments: the
 /// status effects the player suffers (by name, never how bad, the most important first: the
 /// last gives way first), Dazzled (strong light on light-blind eyes), Averted (eyes kept from a
@@ -881,8 +898,8 @@ fn conditions(view: &PerceptionView) -> Vec<Segment> {
     let hunger = view.own_hunger().filter(|h| *h != Hunger::NotHungry);
     let effects = (view.own_effects()).map(|s| Segment::new(1, content.status(s).name.clone()));
     let rest = [
-        (view.dazzled()).then(|| Segment::new(1, "Dazzled")),
-        (view.averted()).then(|| Segment::new(1, "Averted")),
+        (view.dazzled()).then(|| Segment::new(1, ui(T::DAZZLED))),
+        (view.averted()).then(|| Segment::new(1, ui(T::AVERTED))),
         hunger.map(|h| Segment::new(u8::from(hunger_tint(h).is_none()), h.name())),
         (burden != Burden::Unburdened).then(|| Segment::new(1, burden.name())),
     ];

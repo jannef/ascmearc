@@ -1,0 +1,13 @@
+# The quarrel's parting, asked in the one dialog (`crates/ascmearc/src/ui/parting.rs`). The
+# wizard's words are the quest's data. Ids alphabetical (docs/dev/localization.md "UI text").
+
+# The row that turns on them: `who`, the wizard.
+[betray]
+text = "Betray {who:the}"
+
+[leave]
+text = "Leave"
+
+# The dialog's title: `who`, the wizard.
+[title]
+text = "{who:The}"

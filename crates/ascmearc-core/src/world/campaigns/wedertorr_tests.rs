@@ -332,7 +332,10 @@ fn allied_she_pays_with_spellcraft_and_concentration_and_parts_in_her_words() {
     assert_eq!(carried(&w, "gold_coin"), gold + 250);
     assert_eq!(w.state.experience, xp + 900);
     let parting = w.perception().parting().expect("the parting pends");
-    assert_eq!(parting.title, "Mistress Ælfswīð");
+    assert_eq!(
+        parting.who,
+        crate::lang::Phrase::literal("Mistress Ælfswīð")
+    );
     assert_eq!(
         parting.text,
         "That's the end of it. You're paid, and I'm busy. Out you go, unless you've a better idea."

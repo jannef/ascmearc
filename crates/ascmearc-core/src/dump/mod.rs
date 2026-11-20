@@ -142,7 +142,7 @@ fn summary(world: &World) -> String {
     };
     // An overworld encounter to answer.
     let encounter = view.encounter().map_or(String::new(), |e| {
-        let choices: Vec<&str> = e.choices.iter().map(|(_, c)| c.id()).collect();
+        let choices: Vec<&str> = e.choices.iter().map(|c| c.id()).collect();
         format!(" encounter pending: {} ({})", e.name, choices.join(", "))
     });
     format!(

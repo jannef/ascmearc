@@ -219,7 +219,7 @@ pub use people::guild::GuildRank;
 pub use people::quarrel::{Parting, PartingChoice, PartingView, Side};
 pub use people::quest::{QuestRecord, QuestView, Quests, Stage, asks as quest_asks};
 pub use people::shop::{Shop, ShopStatus, count_of, favour, part_of, unpaid_parts};
-pub use people::talk::{Conversation, Speech, Talk, TopicView};
+pub use people::talk::{Conversation, Speech, Talk, TopicName, TopicView};
 pub(crate) use skills::forage::forage_ground;
 pub(crate) use skills::gather::{fungus_ways, unskilled};
 pub use turn::actor::{Actor, ActorId, ActorKind, AttackSkills, Mind, PLAYER_KEY, Patrol};

@@ -9,9 +9,13 @@
 //! then the list scrolls (↑↓). Read-only: Esc, Enter, or its own key closes it. It is read from
 //! the perception snapshot when it opens; no game time passes while it is open, so it cannot go
 //! stale.
+//!
+//! Its words are `assets/lang/en/ui/weapon_skills_screen.toml` (`T::…`, [`super::text`]); the
+//! skills' names are the data's, the sections' core's (`Section::name`).
 
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::screens::ScreenAction;
+use super::text::{ui, ui_with, weapon_skills_screen as T};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
@@ -173,7 +177,8 @@ impl WeaponSkillsScreen {
             .collect();
         let body = tallest(&columns).max(1) as i32;
         let width = super::info_tabs::panel_width(if two { WIDTH_TWO } else { WIDTH });
-        let panel = Panel::new(console, " Weapon skills ", width, body + around);
+        let title = format!(" {} ", ui(T::TITLE));
+        let panel = Panel::new(console, &title, width, body + around);
         super::info_tabs::draw_tabs(console, &panel, super::ScreenName::WeaponSkills);
         let room = (panel.h - around).max(0);
         let most = (body - room).max(0) as usize;
@@ -181,7 +186,8 @@ impl WeaponSkillsScreen {
         let first = self.top.min(most);
         let top = panel.y + if compact { 1 } else { 2 };
         if left.is_empty() && right.is_empty() && room > 0 {
-            console.print(panel.inner_x(), top, "You know no weapon skills.", TEXT_DIM);
+            let none = ui(T::NONE);
+            console.print_in(panel.inner_x(), top, &none, TEXT_DIM, panel.inner_w());
         }
         for (i, rows) in columns.iter().enumerate() {
             let x = panel.inner_x() + i as i32 * (COLUMN_W + GUTTER);
@@ -198,15 +204,16 @@ impl WeaponSkillsScreen {
             console.print(edge, top + room - 1, "↓", TEXT_DIM);
         }
         let mut close = match bindings.keys_of(KeyCommand::WeaponSkills).first() {
-            Some(key) => format!("{} or Esc close", key.display()),
-            None => "Esc close".to_string(),
+            Some(key) => ui_with(T::CLOSE_OWN, &[("own", key.display().into())]),
+            None => ui(T::CLOSE),
         };
         // The spells' skills and the caster styles are on the Magic page.
         if let Some(magic) = super::info_tabs::hint(super::ScreenName::Magic) {
             close = format!("{magic}   {close}");
         }
         let footer = if most > 0 {
-            format!("{} scroll   {close}", HINTS.up_down())
+            let scroll = ui_with(T::SCROLL, &[("keys", HINTS.up_down().into())]);
+            format!("{scroll}   {close}")
         } else {
             close
         };
@@ -218,12 +225,12 @@ impl WeaponSkillsScreen {
 fn draw_row(console: &mut Console, x: i32, y: i32, row: &Row) {
     match row {
         Row::Section { name, legend } => {
-            console.print(x, y, name, TEXT_DIM);
+            console.print_in(x, y, name, TEXT_DIM, COLUMN_W);
             if *legend {
-                let text = format!("{IN_USE} in use");
-                let at = x + COLUMN_W - text.chars().count() as i32;
+                let text = ui(T::IN_USE);
+                let at = x + COLUMN_W - text.chars().count() as i32 - 2;
                 console.print(at, y, &IN_USE.to_string(), ACCENT);
-                console.print(at + 1, y, " in use", TEXT_DIM);
+                console.print_in(at + 2, y, &text, TEXT_DIM, x + COLUMN_W - at - 2);
             }
         }
         Row::Skill {
@@ -237,7 +244,7 @@ fn draw_row(console: &mut Console, x: i32, y: i32, row: &Row) {
             if *in_use {
                 console.print(x, y, &IN_USE.to_string(), ACCENT);
             }
-            console.print(x + 2, y, name, fg);
+            console.print_in(x + 2, y, name, fg, NAME_W - 1);
             console.print(x + 2 + NAME_W, y, &format!("{rank:>2}"), fg);
             if let Some(filled) = filled {
                 draw_bar(console, x + NAME_W + 6, y, *filled);

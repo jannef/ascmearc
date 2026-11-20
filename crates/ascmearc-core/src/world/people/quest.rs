@@ -747,7 +747,7 @@ impl World {
         for def in self.content.quests() {
             let topic = || TopicView {
                 id: format!("{QUEST}{}", def.id),
-                name: def.name.clone(),
+                name: def.name.clone().into(),
                 price: None,
                 items: None,
                 ware: None,

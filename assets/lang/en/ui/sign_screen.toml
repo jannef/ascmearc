@@ -1,0 +1,41 @@
+# Born under the stars, character creation's reveal (`crates/ascmearc/src/ui/sign_screen.rs`).
+# The legends, the gifts' names and words, and the stat adjustments are the data's. Ids
+# alphabetical.
+#
+# The keys named in the hint lines are fixed (`Esc`): translate the words around them. The screen
+# fits each text to its panel (docs/dev/localization.md "UI text").
+
+# One sign's stat adjustments: `name`, the animal or the element; `stats`, as written in data.
+[adjustment]
+text = "{name:bare}: {stats:bare}"
+
+# Footer.
+[back]
+text = "Esc back"
+
+# The birth, with no sign to show: `date`, the day; `age`, in years.
+[born]
+by = "age.number"
+one = "You were born on {date:bare}. You are {age:bare} year old."
+many = "You were born on {date:bare}. You are {age:bare} years old."
+
+# The birth under a sign: `date`, the day; `sign`, "Metal Manticore"; `age`, in years.
+[born_sign]
+by = "age.number"
+one = "You were born on {date:bare}, in the year of the {sign:bare}. You are {age:bare} year old."
+many = "You were born on {date:bare}, in the year of the {sign:bare}. You are {age:bare} years old."
+
+# Footer: `confirm`, the key that goes on.
+[continue]
+text = "{confirm:bare} continue"
+
+# A flaw among the gifts: `name`, its name.
+[flaw]
+text = "but {name:bare}"
+
+# What the reveal says with no race to choose.
+[no_races]
+text = "There are no races to be born to."
+
+[title]
+text = "Born under the stars"

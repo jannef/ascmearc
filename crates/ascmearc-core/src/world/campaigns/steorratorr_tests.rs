@@ -581,7 +581,7 @@ fn up_steorratorr_to_his_side_and_his_pay_replays_exactly() {
     assert_eq!(carried(&w, "gold_coin"), gold + 300);
     assert_eq!(w.state.experience, xp + 900);
     let parting = w.perception().parting().expect("the parting pends");
-    assert_eq!(parting.title, "Master Sigeric");
+    assert_eq!(parting.who, crate::lang::Phrase::literal("Master Sigeric"));
     assert!(parting.text.starts_with("And so we part"));
     play(&mut w, &mut replay, "levelup:auto parting:leave");
     assert!(heard(&w, "You take your leave of Master Sigeric."));
