@@ -3,5 +3,5 @@ id = "pit_yawning"
 from = 113
 to = 114
 message = "The floor yawns open, and a stair goes down into red dark. A great gate stands at its head!"
-seen = "The floor yawns open beside {who}, and a great gate stands at the stair's head!"
+seen = "The floor yawns open beside {who:the}, and a great gate stands at the stair's head!"
 effect = { kind = "portal", gate = "abyssal_gate" }

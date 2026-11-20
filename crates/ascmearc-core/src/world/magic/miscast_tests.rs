@@ -245,7 +245,7 @@ fn the_loader_keeps_what_could_kill_off_the_protected_half() {
             "data/miscasts/glimmer.toml",
             &format!(
                 "[[miscast]]\nid = \"glimmer\"\nfrom = 1\nto = 2\nmessage = \"x\"\n\
-                 seen = \"{{who}}\"\neffect = {{ {effect} }}\n"
+                 seen = \"{{who:The}}\"\neffect = {{ {effect} }}\n"
             ),
         );
         Content::load(&files)

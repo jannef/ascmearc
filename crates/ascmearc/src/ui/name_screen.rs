@@ -10,15 +10,27 @@
 use super::chargen_screen::{Draft, Step};
 use super::menu::{Edit, Panel, Press, wrap};
 use super::screens::{ScreenAction, ScreenName};
+use super::text::{name_screen as T, ui, ui_with};
 use super::text_field::TextField;
 use super::{TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use crate::settings::fixed;
 use ascmearc_core::character::{MAX_NAME, NAMELESS, random_name};
 use ascmearc_core::content::Content;
+use ascmearc_core::lang::{Arg, Modifier, Phrase, Word};
 
 /// How many random names Random goes through before it starts over.
 const DRAWS: u32 = 64;
+
+/// The panel's question about a `race` `class` character: "What is the name of the human thief?".
+/// The class is the head word and the race an adjective before it, both words of the lexicon by
+/// their English (`word:<text>`); the definite article, as it is the player's own character.
+fn question(race: &str, class: &str) -> String {
+    let race = Word::id(format!("word:{}", race.to_lowercase()));
+    let character =
+        Phrase::id(format!("word:{}", class.to_lowercase())).with(Modifier::Adjective(race));
+    ui_with(T::QUESTION, &[("character", Arg::from(character))])
+}
 
 /// The Name step.
 #[derive(Debug)]
@@ -30,8 +42,8 @@ pub struct NameScreen {
     draws: Vec<String>,
     /// How often Random was pressed here.
     rolls: usize,
-    /// Who is being named, as the panel says it: `a dwarf warrior`.
-    who: String,
+    /// The panel's question about the character (empty without a race and class).
+    question: String,
 }
 
 impl NameScreen {
@@ -50,17 +62,16 @@ impl NameScreen {
         } else {
             draws
         };
-        let who = spec.map_or(String::new(), |spec| {
+        let question = spec.map_or(String::new(), |spec| {
             let race = (spec.race(content)).map_or(spec.race.clone(), |r| r.name.clone());
             let class = (spec.class(content)).map_or(spec.class.clone(), |c| c.name.clone());
-            let article = ascmearc_core::text::article(&race);
-            format!("{article} {} {}", race.to_lowercase(), class.to_lowercase())
+            question(&race, &class)
         });
         Self {
             field: TextField::new(draft.remembered_name().unwrap_or_default(), MAX_NAME),
             draws,
             rolls: 0,
-            who,
+            question,
         }
     }
 
@@ -111,39 +122,36 @@ impl NameScreen {
         // frame.
         let panel = Panel::new(
             console,
-            Step::Name.title(),
+            &Step::Name.title(),
             super::chargen_screen::WIDTH,
             11,
         );
         let x = panel.inner_x();
         let mut y = panel.y + 2;
-        if !self.who.is_empty() {
-            console.print(
-                x + 2,
-                y,
-                &format!("What is the name of {}?", self.who),
-                TEXT,
-            );
+        if !self.question.is_empty() {
+            console.print_in(x + 2, y, &self.question, TEXT, panel.inner_w() - 2);
         }
         y += 2;
-        console.print(x + 2, y, "Name: ", TEXT);
+        console.print(x + 2, y, &ui(T::FIELD), TEXT);
         self.field.draw(console, x + 8, y, self.placeholder());
         y += 2;
-        let help = format!(
-            "Type a name of up to {MAX_NAME} characters, or {} for one of your people's names. \
-             Left empty, it is {}.",
-            fixed::TEXT_RANDOM,
-            self.placeholder()
-        );
+        let args = [
+            ("max", Arg::Number(MAX_NAME as i64)),
+            ("random", fixed::TEXT_RANDOM.into()),
+            ("name", self.placeholder().into()),
+        ];
+        let help = ui_with(T::HELP, &args);
         for line in wrap(&help, panel.inner_w() - 2).into_iter().take(2) {
             console.print(x + 2, y, &line, TEXT_DIM);
             y += 1;
         }
+        let own = |text, key: &str| ui_with(text, &[("own", key.into())]);
         let footer = format!(
-            "{} accept   {} random   {} erase   Esc back",
-            fixed::TEXT_CONFIRM,
-            fixed::TEXT_RANDOM,
-            fixed::TEXT_ERASE,
+            "{}   {}   {}   {}",
+            own(T::ACCEPT, fixed::TEXT_CONFIRM),
+            own(T::RANDOM, fixed::TEXT_RANDOM),
+            own(T::ERASE, fixed::TEXT_ERASE),
+            ui(T::BACK),
         );
         panel.footer(console, &footer);
     }
@@ -263,13 +271,25 @@ mod tests {
     }
 
     #[test]
+    fn the_question_names_the_character_with_the_definite_article() {
+        assert_eq!(
+            question("Human", "Thief"),
+            "What is the name of the human thief?"
+        );
+        assert_eq!(
+            question("Elf", "Wizard"),
+            "What is the name of the elf wizard?"
+        );
+    }
+
+    #[test]
     fn the_field_shows_the_name_and_the_keys_as_bound() {
         let content = content();
         let mut s = NameScreen::new(&content, &draft(&content));
         let text = drawn(&s);
         assert!(text.contains("Choose your name (5 of 5)"), "{text}");
         assert!(
-            text.contains("What is the name of a human thief?"),
+            text.contains("What is the name of the human thief?"),
             "{text}"
         );
         assert!(text.contains(&format!("[{}_", s.placeholder())), "{text}");

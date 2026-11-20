@@ -48,6 +48,8 @@ use crate::combat::{self, Blow, Strike};
 use crate::content::Effect as ItemEffect;
 use crate::content::{Affliction, Content, DiseaseId, OnHit, StatusId};
 use crate::hunger::Hunger;
+use crate::lang::Msg;
+use crate::msg;
 use crate::rng::draw;
 use crate::stats::Stat;
 use crate::status::{Added, Effect};
@@ -660,20 +662,22 @@ impl World {
     /// as. Takes no time.
     pub(in crate::world) fn afflict_dev(&mut self, id: &str, events: &mut Vec<Event>) -> Spent {
         let Some(status) = self.content.status_id(id) else {
-            self.say(format!("There is no status `{id}`."));
+            self.say(Msg::new(msg::health::NO_STATUS).role("id", id));
             return Spent::Nothing;
         };
         if self.content.disease_status() == Some(status) {
-            self.say(format!("`{id}` comes of a disease: try `infect:DISEASE`."));
+            self.say(Msg::new(msg::health::STATUS_COMES_OF_DISEASE).role("id", id));
             return Spent::Nothing;
         }
         // A status a resource brings lasts while that is held: Raging
         // comes of Rage.
         if let Some(r) = (self.content.resources().iter()).find(|r| r.status == Some(status)) {
-            self.say(format!(
-                "`{id}` comes of a resource: try `resource:{}`.",
-                r.id
-            ));
+            let resource = r.id.to_string();
+            self.say(
+                Msg::new(msg::health::STATUS_COMES_OF_RESOURCE)
+                    .role("id", id)
+                    .role("resource", resource),
+            );
             return Spent::Nothing;
         }
         let player = self.state.player;

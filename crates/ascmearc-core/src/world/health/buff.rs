@@ -27,6 +27,8 @@
 use crate::action::{Action, Event};
 use crate::content::{ActionKind, Stance, TalentActive};
 use crate::geom::Dir;
+use crate::lang::Msg;
+use crate::msg;
 use crate::status::Effect;
 use crate::world::ActorId;
 use crate::world::{Spent, World};
@@ -38,7 +40,12 @@ impl World {
         let kind = self.kind_of(action)?;
         let status = (self.state.player().effects).blocking(&self.content, kind)?;
         let name = self.content.status(status).name.to_lowercase();
-        self.say(format!("You cannot {} while {name}.", kind.doing()));
+        let doing = kind.doing();
+        self.say(
+            Msg::new(msg::health::CANNOT_WHILE)
+                .role("doing", doing)
+                .role("status", name),
+        );
         Some(Spent::Nothing)
     }
 

@@ -1,0 +1,32 @@
+# Character creation's name step (`crates/ascmearc/src/ui/name_screen.rs`). Ids alphabetical.
+#
+# The keys named in the hint lines are fixed: translate the words around them. The screen fits
+# each text to its panel: a translation longer than the room is cut with `…`, which the screen
+# snapshots check (docs/dev/localization.md "UI text").
+
+# The footer's hints: `own`, the key.
+[accept]
+text = "{own:bare} accept"
+
+[back]
+text = "Esc back"
+
+[erase]
+text = "{own:bare} erase"
+
+[random]
+text = "{own:bare} random"
+
+# The field's label.
+[field]
+text = "Name: "
+
+# The help under the field: `max`, the most characters; `random`, the key of Random; `name`, the
+# name an empty field gives.
+[help]
+text = "Type a name of up to {max:bare} characters, or {random:bare} for one of your people's names. Left empty, it is {name:bare}."
+
+# The question about the character: `character`, a phrase of the class with the race as an
+# adjective before it ("human thief"), with the definite article: it is the player's own character.
+[question]
+text = "What is the name of {character:the}?"

@@ -22,12 +22,14 @@ use super::character_screen::{birth_parts, fit_joined, fit_parts};
 use super::cursor;
 use super::menu::{HINTS, Nav, Panel, Press, truncated, wrap};
 use super::screens::{MenuChoice, ScreenAction, ScreenName};
+use super::text::{UiText, chargen_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use ascmearc_core::character::{CharacterSpec, Gender, NAMELESS, Start, check_name, random_name};
 use ascmearc_core::content::{ClassDef, Content, pace_words};
 use ascmearc_core::dice::Dice;
 use ascmearc_core::kit;
+use ascmearc_core::lang::Arg;
 use ascmearc_core::rng::Rng;
 use ascmearc_core::stats::{PerStat, Stat};
 use ascmearc_core::time::GameTime;
@@ -78,12 +80,23 @@ impl Step {
         }
     }
 
-    pub(super) fn title(self) -> &'static str {
+    pub(super) fn title(self) -> String {
+        let text = match self {
+            Step::Race => T::RACE_TITLE,
+            Step::Gender => T::GENDER_TITLE,
+            Step::Class => T::CLASS_TITLE,
+            Step::Name => T::NAME_TITLE,
+        };
+        format!(" {} ", ui(text))
+    }
+
+    /// What Random does on the step, said.
+    fn random_text(self) -> UiText {
         match self {
-            Step::Race => " Choose your race (1 of 5) ",
-            Step::Gender => " Choose your gender (2 of 5) ",
-            Step::Class => " Choose your class (3 of 5) ",
-            Step::Name => " Choose your name (5 of 5) ",
+            Step::Race => T::RANDOM_RACE,
+            Step::Gender => T::RANDOM_GENDER,
+            Step::Class => T::RANDOM_CLASS,
+            Step::Name => T::RANDOM_NAME,
         }
     }
 }
@@ -252,7 +265,7 @@ pub(super) fn adjustments(by: &PerStat<Dice>) -> String {
         .map(|(stat, v)| format!("{} {}", stat.abbrev(), dice_text(v)))
         .collect();
     if parts.is_empty() {
-        "No stat changes".into()
+        ui(T::NO_STAT_CHANGES)
     } else {
         parts.join("  ")
     }
@@ -285,7 +298,10 @@ impl ChoiceScreen {
                     let eyes = content
                         .vision(&r.vision)
                         .map_or(r.vision.as_str(), |v| &v.name);
-                    let mut details = vec![adjustments(&r.stats), format!("Vision: {eyes}")];
+                    let mut details = vec![
+                        adjustments(&r.stats),
+                        ui_with(T::VISION, &[("eyes", eyes.into())]),
+                    ];
                     details.extend(pace_words(r.experience).map(String::from));
                     Choice {
                         id: r.id.clone(),
@@ -300,7 +316,7 @@ impl ChoiceScreen {
                 .map(|g| Choice {
                     id: g.id().to_string(),
                     name: g.name().to_string(),
-                    description: gender_description(g).to_string(),
+                    description: ui(gender_description(g)),
                     details: Vec::new(),
                 })
                 .collect(),
@@ -374,14 +390,18 @@ impl ChoiceScreen {
         // Rows: margin, the list (options and Random), a gap, the description (up to three
         // lines), the details (up to three), a gap, the footer, the frame.
         let rows = self.choices.len() as i32 + 1;
-        let panel = Panel::new(console, self.step.title(), WIDTH, rows + 12);
+        let panel = Panel::new(console, &self.step.title(), WIDTH, rows + 12);
         let x = panel.inner_x();
         let visible = (panel.h - 12).clamp(1, rows);
         let first = (self.selected as i32 - visible + 1).clamp(0, rows - visible);
         for row in first..first + visible {
             let y = panel.y + 2 + row - first;
             let i = row as usize;
-            let name = self.choices.get(i).map_or("Random", |c| c.name.as_str());
+            let random = ui(T::RANDOM);
+            let name = self
+                .choices
+                .get(i)
+                .map_or(random.as_str(), |c| c.name.as_str());
             panel.row(console, y, i == self.selected, name, "", 0);
         }
         if first > 0 {
@@ -393,10 +413,7 @@ impl ChoiceScreen {
         let footer_y = panel.y + panel.h - 2;
         let (description, details) = match self.choices.get(self.selected) {
             Some(c) => (c.description.clone(), c.details.clone()),
-            None => (
-                format!("Let chance pick your {}.", self.step.id()),
-                Vec::new(),
-            ),
+            None => (ui(self.step.random_text()), Vec::new()),
         };
         let lines = wrap(&description, panel.inner_w() - 2).into_iter().take(3);
         let text = (lines.map(|l| (l, TEXT_DIM))).chain(details.into_iter().map(|l| (l, TEXT)));
@@ -407,20 +424,24 @@ impl ChoiceScreen {
         }
         let keys = HINTS;
         let footer = format!(
-            "{} choose   {} next   Esc back",
-            keys.up_down(),
-            keys.confirm
+            "{}   {}   {}",
+            ui_with(T::CHOOSE, &[("keys", keys.up_down().into())]),
+            ui_with(
+                T::CONFIRM_NEXT,
+                &[("confirm", keys.confirm.to_string().into())]
+            ),
+            ui(T::BACK),
         );
         panel.footer(console, &footer);
     }
 }
 
 /// What a gender does. `other` never names the stat it raises (#256): fate picks it.
-fn gender_description(gender: Gender) -> &'static str {
+fn gender_description(gender: Gender) -> UiText {
     match gender {
-        Gender::Male => "Strength +1.",
-        Gender::Female => "Dexterity +1.",
-        Gender::Other => "+1 to one stat, chosen by fate.",
+        Gender::Male => T::GENDER_MALE,
+        Gender::Female => T::GENDER_FEMALE,
+        Gender::Other => T::GENDER_OTHER,
     }
 }
 
@@ -434,14 +455,14 @@ enum Row {
 }
 
 /// The summary's rows: start, go back to a step, or to the birth sign's reveal.
-const SUMMARY_ROWS: &[(&str, Row)] = &[
-    ("Start the run", Row::Start),
-    ("Name", Row::Step(Step::Name)),
-    ("Race", Row::Step(Step::Race)),
-    ("Sign", Row::Sign),
-    ("Gender", Row::Step(Step::Gender)),
-    ("Class", Row::Step(Step::Class)),
-    ("Talents", Row::Talents),
+const SUMMARY_ROWS: &[(UiText, Row)] = &[
+    (T::ROW_START, Row::Start),
+    (T::ROW_NAME, Row::Step(Step::Name)),
+    (T::ROW_RACE, Row::Step(Step::Race)),
+    (T::ROW_SIGN, Row::Sign),
+    (T::ROW_GENDER, Row::Step(Step::Gender)),
+    (T::ROW_CLASS, Row::Step(Step::Class)),
+    (T::ROW_TALENTS, Row::Talents),
 ];
 
 /// Where the starting skills' columns begin, beside the scores (from the panel's inner edge).
@@ -465,7 +486,7 @@ fn kit_words(content: &Content, draft: &Draft, start: &Result<Start, String>) ->
         None => start.kit.clone(),
     };
     match pack.names(content) {
-        names if names.is_empty() => vec!["nothing".into()],
+        names if names.is_empty() => vec![ui(T::KIT_NOTHING)],
         names => names,
     }
 }
@@ -484,7 +505,7 @@ fn talent_names(content: &Content, spec: Option<&CharacterSpec>) -> String {
         })
         .collect();
     match names.is_empty() {
-        true => "chosen by chance".into(),
+        true => ui(T::TALENTS_CHANCE),
         false => names.join(", "),
     }
 }
@@ -520,20 +541,16 @@ pub struct SummaryScreen {
     talents: String,
     /// The line under the kit that a background story will be told, with content that tells them;
     /// empty without.
-    fate: &'static str,
+    fate: String,
     selected: usize,
 }
-
-/// What the summary says of the background story to come: it changes what the run starts with,
-/// and nothing of it is known yet.
-pub const FATE: &str = "Fate will have its say when you set out.";
 
 impl SummaryScreen {
     pub fn new(content: &Content, draft: &Draft) -> Self {
         let spec = draft.spec(content);
         let start = match &spec {
             Some(spec) => spec.start(content, draft.seed(), draft.start()),
-            None => Err("There are no races or classes to choose from.".into()),
+            None => Err(ui(T::NO_RACES_OR_CLASSES)),
         };
         let name = draft.name(content);
         // The gender by name alone: "other" never names the stat it raised here (#256).
@@ -585,9 +602,9 @@ impl SummaryScreen {
             alignment,
             talents,
             fate: if content.background().is_some() {
-                FATE
+                ui(T::FATE)
             } else {
-                ""
+                String::new()
             },
             selected: 0,
         }
@@ -694,12 +711,13 @@ impl SummaryScreen {
         let squeeze = (full - console.rows() as i32).clamp(0, 3);
         let gap = |n: i32| i32::from(squeeze < n);
         let h = full - squeeze;
-        let panel = Panel::new(console, " Your character ", width, h);
+        let panel = Panel::new(console, &format!(" {} ", ui(T::TITLE)), width, h);
         let x = panel.inner_x();
         let fits = |y: i32| y < panel.y + panel.h - 2;
         let mut y = panel.y + 2;
         for (i, (label, step)) in SUMMARY_ROWS.iter().enumerate() {
             if fits(y) {
+                let label = ui(*label);
                 let value = match step {
                     Row::Start => "",
                     Row::Step(s) => self.names[*s as usize].as_str(),
@@ -709,7 +727,7 @@ impl SummaryScreen {
                 // The value starts 12 cells in and is padded by two spaces on each side; a
                 // longer one is cut to stay inside the frame.
                 let value = truncated(value, (inner - 14).max(0) as usize);
-                panel.row(console, y, i == self.selected, label, &value, 6);
+                panel.row(console, y, i == self.selected, &label, &value, 6);
             }
             y += 1;
         }
@@ -764,7 +782,7 @@ impl SummaryScreen {
         for (i, line) in kit.iter().enumerate() {
             if fits(y) {
                 if i == 0 {
-                    console.print(x + 2, y, "Kit", TEXT_DIM);
+                    console.print(x + 2, y, &ui(T::KIT), TEXT_DIM);
                 }
                 console.print(x + KIT_X, y, line, TEXT);
             }
@@ -772,36 +790,45 @@ impl SummaryScreen {
         }
         if !self.fate.is_empty() {
             if fits(y) {
-                console.print(x + KIT_X, y, self.fate, TEXT_DIM);
+                console.print(x + KIT_X, y, &self.fate, TEXT_DIM);
             }
             y += 1;
         }
         // The seed only in developer builds (#256).
         let scenario = self.scenario.as_ref().map_or(String::new(), |s| {
             if s.shows_seed {
-                format!("{}, seed {}", s.name, s.seed)
+                let args = [
+                    ("scenario", Arg::from(s.name.as_str())),
+                    ("seed", Arg::from(s.seed.to_string())),
+                ];
+                ui_with(T::SCENARIO_SEED, &args)
             } else {
                 s.name.clone()
             }
         });
         let rows = [
-            ("Alignment", &self.alignment),
-            ("Vision", &self.eyes),
-            ("Scenario", &scenario),
+            (T::ALIGNMENT, &self.alignment),
+            (T::VISION_LABEL, &self.eyes),
+            (T::SCENARIO, &scenario),
         ];
         for (label, value) in rows {
-            if label == "Alignment" && value.is_empty() {
+            if label == T::ALIGNMENT && value.is_empty() {
                 continue;
             }
             if fits(y) {
-                console.print(x + 2, y, label, TEXT_DIM);
+                console.print(x + 2, y, &ui(label), TEXT_DIM);
                 console.print(x + 12, y, value, TEXT);
             }
             y += 1;
         }
         let keys = HINTS;
         let (up_down, confirm) = (keys.up_down(), keys.confirm);
-        let footer = format!("{up_down} choose   {confirm} start or change   Esc back");
+        let footer = format!(
+            "{}   {}   {}",
+            ui_with(T::CHOOSE, &[("keys", up_down.into())]),
+            ui_with(T::CONFIRM_START, &[("confirm", confirm.to_string().into())]),
+            ui(T::BACK),
+        );
         panel.footer(console, &footer);
     }
 }

@@ -30,6 +30,8 @@ use crate::check::check;
 use crate::content::{ActionKind, DiseaseId, StatusId};
 use crate::geom::Dir;
 use crate::heal::{self, Ailment};
+use crate::lang::Msg;
+use crate::msg;
 use crate::rng::draw;
 use crate::skills::{Effect, Use};
 use crate::stats::Stat;
@@ -60,7 +62,7 @@ impl World {
         let content = self.content.clone();
         let healer = self.state.player();
         if !Ability::Heal.had_by(healer, &content) {
-            self.say("You know nothing of healing.");
+            self.say(msg::health::KNOW_NOTHING_OF_HEALING);
             return Spent::Nothing;
         }
         let patient = match ally {
@@ -68,7 +70,7 @@ impl World {
             Some(d) => match allies_beside(&self.state).iter().find(|(w, _)| *w == d) {
                 Some((_, a)) => a.id,
                 None => {
-                    self.say("You have no ally there.");
+                    self.say(msg::health::NO_ALLY_THERE);
                     return Spent::Nothing;
                 }
             },
@@ -79,11 +81,11 @@ impl World {
             Some(id) => Ailment::named(&content, id),
         };
         let Some(ailment) = ailment else {
-            self.say("There is nothing to treat.");
+            self.say(msg::health::NOTHING_TO_TREAT);
             return Spent::Nothing;
         };
         if !heal::may_treat(me, &content, ailment) {
-            self.say("There is nothing like that to treat.");
+            self.say(msg::health::NOTHING_LIKE_THAT_TO_TREAT);
             return Spent::Nothing;
         }
         let healer = self.state.player();
@@ -177,7 +179,7 @@ impl World {
             return;
         };
         if !made {
-            self.say(format!("You can do no more for {words}."));
+            self.say(Msg::new(msg::health::NO_MORE_FOR).role("words", words));
             return;
         }
         if def.recovers() && infection.streak.saturating_add(1) < recovery {
@@ -186,6 +188,6 @@ impl World {
             let interval = u32::try_from(def.interval_seconds()).unwrap_or(u32::MAX);
             infection.left = infection.left.max(interval);
         }
-        self.say(format!("You ease {words} somewhat."));
+        self.say(Msg::new(msg::health::EASE_SOMEWHAT).role("words", words));
     }
 }

@@ -8,8 +8,14 @@ built from what the player perceives, items are named by phrases English renders
 `world/combat/` says its lines from templates ("Phrases", below); **L7**, the checker ("The
 checker (L7)"); **L10**, the `fi` morphology (#1893, "The `fi` module"); and **L6a**, the UI
 text path (#1900): the app's words in `assets/lang/en/ui/`, the abilities screen converted ("UI
-text"), with its widths in the screens' layout, not the text (#1908). The doors, the welcome line, and combat say theirs from templates; every other `say`
-site still says finished English as a literal line ("Literal lines"). Nothing player-visible has
+text"), with its widths in the screens' layout, not the text (#1908), and the further L6 parts:
+the controls, settings, and mods screens (#1935) and the object and rig screens (#1928); **L4a**
+and **L4i**, `world/allies/` (#1912) and `world/health/` (#1920) say their lines from templates
+("Literal lines"); and **L5**, dialogue (#1888): every line a creature says is a line of data
+said by its key, with role slots in the base form ("Dialogue"), on the one mechanism every line
+whose text lives in data uses ("Lines of data"). The doors, the welcome line, combat, allies,
+health, and talk say theirs from templates; every other `say` site still says finished English
+as a literal line ("Literal lines"). Nothing player-visible has
 changed: the English templates and phrases read as the strings did. The English helpers core,
 the app, and the wiki generator call have moved into the crate behind re-exports at their old
 paths.
@@ -23,10 +29,10 @@ nothing for it, `docs/dev/merging.md` "One build of ascmearc-core"). Dependencie
 
 | Module | What |
 |---|---|
-| `message.rs` | `MessageId` (a newtype over `Cow<'static, str>`: a generated constant borrows, a loaded save owns; serialized as the plain string), `Role` (the same, and `Borrow<str>` so `args.get("actor")` works), `Arg` (`Phrase`, `Number`, `Text`, `List`, `Said`, `Key`), `Msg` (id and args; `Msg::new(id).role("who", phrase)`), `Entry` (a `Msg` with `turn`, `count`, and the unserialized `passing`). `Arg::feature` gives the value a template's variants select on |
+| `message.rs` | `MessageId` (a newtype over `Cow<'static, str>`: a generated constant borrows, a loaded save owns; serialized as the plain string), `Role` (the same, and `Borrow<str>` so `args.get("actor")` works), `Arg` (`Phrase`, `Number`, `Text`, `List`, `Said`, `Key`; `Arg::said(key).with(role, arg)`, `.spoken_by(register, race)`), `Msg` (id and args; `Msg::new(id).role("who", phrase)`; `Msg::data_line(said)`, the `DATA_LINE` entry), `Entry` (a `Msg` with `turn`, `count`, and the unserialized `passing`). `Arg::feature` gives the value a template's variants select on |
 | `phrase.rs` | `Phrase` (head `Word`, `mods`, `count`, `proper`, `person`, `gender`, `notes`, `owner`), `Word::{Id, Literal}`, `Modifier::{Adjective, Of, Label, Material, Part, Made}`, `Person`, `Gender`, `Note::{Tags, Charges, Base}`. Builders: `Phrase::id`, `Phrase::literal` (proper), `.count`, `.with(modifier)`, `.note(tag)`, `.with_note`, `.owned_by`, `.without_notes` |
 | `lexicon.rs` | `Lexicon` (`word(id) -> Option<LexWord>`; core implements it over `Content`, "Phrases"), `LexWord` (`base`, explicit `forms`, `proper`, `gender`, `many`, `harmony`, `plural_only`), `MapLexicon` (a map; `MapLexicon::parse` reads a lexicon file: `id = "lemma"` or `{ word, forms, proper, gender, many, harmony, plural_only }`, `of` skipped), `NoLexicon` |
-| `template.rs` | `Line::parse` (total: a `{` that opens no `{role:form}` is text), `Template::{Line, Alternatives, Variants}`, `Templates::parse(prefix, text)` for one `messages/<prefix>.toml` (`[hit] text = …` or a plain `hit = "…"`; `text = [...]` alternatives; `by = "<role>.<feature>"` with one key per value and an optional `else`, nesting allowed; `of` skipped). Errors name the file and the entry |
+| `template.rs` | `Line::parse` (total: a `{` that opens no `{role:form}` or `{role}` is text), `Template::{Line, Alternatives, Variants}` (`from_value`, `slots`, `written`), `Templates::parse(prefix, text)` for one `messages/<prefix>.toml`, `Templates::parse_data(what, kind, text)` for a translation's lines of data (`[hit] text = …` or a plain `hit = "…"`; `text = [...]` alternatives; `by = "<role>.<feature>"` with one key per value and an optional `else`, nesting allowed; `of` skipped). Errors name the file and the entry |
 | `lang.rs` | `LangFile` and `parse`: `name`, `code`, `morphology`, `fallback`, `repeat` (default `" (×{n})"`), `number_words` (default 12), `[registers.<name>]`, `[race_registers]`, `[generic]`. A key with a letter outside ASCII is quoted in TOML (`"minä" = "mie"`) |
 | `register.rs` | `Register::word("the")` returns the override or the word; `Registers` (`standard` always present; `get`, `for_speaker(own, race)`: the speaker's own, else the race's, else standard; `unknown_race_registers` for the checker) |
 | `morphology/mod.rs` | the `Morphology` trait: `forms() -> Vec<String>`, `phrase(&Phrase, form, &dyn Lexicon, &Register) -> Result<String, FormError>`, `number`, `list(items, Conj)`, `parse_word(entry) -> Result<(), ParseError>`. `FormError::UnknownForm` is the one failure; the renderer falls back from it |
@@ -35,12 +41,13 @@ nothing for it, `docs/dev/merging.md` "One build of ascmearc-core"). Dependencie
 | `render.rs` | `Language` (a `LangFile`, its `Morphology`, its `Templates`, its `Registers`): `from_toml(text, plurals)` picks `en`, `fi`, or `generic`; `add_templates(prefix, text)`; `phrase(phrase, form, lex) -> String`; `render(entry, lex, keys) -> String`; `try_render` / `try_render_as(register, …) -> Result<String, RenderError>`. `render_chain(&[&lang, &fallback, …], …)`: the first language that renders wins, else `[id]`. `Keys` is `&dyn Fn(&str) -> String`; `written_key` is the identity for dumps (`{key:help}` stays written) |
 | `proptests.rs` | rendering is total: arbitrary Unicode through `Line::parse`, `Templates::parse`, `lang::parse`, `MapLexicon::parse`, `Plurals::add`, `Language::render`, `En::phrase`, `Generic::phrase`, and `Fi::phrase` (phrases with every modifier and note kind and an owner) gives a string or an `Err`, never a panic; a module renders a form iff it lists it |
 
-**Rendering a line.** `{role:form}`: the form's first letter upper-case capitalizes the result
+**Rendering a line.** `{role:form}` (`{role}` alone is `{role:bare}`; a literal word in braces is therefore not writable, and none is needed): the form's first letter upper-case capitalizes the result
 (`{actor:The}`); `{key:<command>}` is the host's key for the command (`key` is a reserved role),
 as is an `Arg::Key` in any role; `Arg::Text` is verbatim; `Arg::Number` goes through
 `Morphology::number` (`num`: words up to `number_words`, digits beyond; `ord`); `Arg::List` with
 form `and`/`or` joins the items rendered bare with that conjunction, any other form renders each
-item in it and joins with "and"; `Arg::Said` renders its key until L5. `Alternatives` are picked
+item in it and joins with "and", and `lines` says the items one after another, each `bare`
+(one speech of several lines); `Arg::Said` is a line of data by its key ("Lines of data"). `Alternatives` are picked
 by the `flavour` role's number, wrapping (`rem_euclid`), the first without one. `Variants` select
 on `Arg::feature` (`person`: `you`/`other`; `number`: `one`/`many`; `gender`); no match and no
 `else` is a `RenderError::NoVariant`. An entry with `count > 1` gets the language's `repeat` mark
@@ -341,7 +348,16 @@ for now: the `came_line` that stops a calling or a taming (a `came` role), and t
 
 What combat leaves as literal lines, for their own slices: a rank risen and what it teaches
 (`fight.rs::ranks_news`, the data's lines joined), acid's lines (`corrode.rs`, the data's
-`{}`), and how the player died (`fight.rs::Cause::message`, said by `health/`).
+`{}`).
+
+`world/health/` (`messages/health.toml`, L4i) converted `Cause::message` (how the player died, now
+`Cause::message(&World) -> Msg`) with it. It leaves as literal text what the data writes: a
+status's start, end, ward, and stage lines, a disease's recovery line, a corpse's `on_eat` message,
+a treatment's made and failed lines, a skill gift's lines, and a flask's `words`. Text from another
+module's helper (`came_line`, `Hunger::news`) goes in as a text role, or stays literal. A stat's
+comparative ("stronger") and the disease in a sentence ("your wolf's sickness") are text roles
+(`feel`, `more`, `words`) until those words are converted. `health::object_phrase(content, id)`
+builds `object:<id>`; `Lore::title_phrase` is a stack's `title` as a phrase.
 
 When no literal is left, `LITERAL`, the `From` text impls, and this section go.
 
@@ -429,6 +445,106 @@ example:
      `{x:counted}`. `level_up_screen.toml`'s `left_rolls`, `marks`, and `sources` are the example.
    - *No sentence glued from entries.* A sentence with optional clauses is one entry with a slot
      per clause, each clause its own entry or empty: `level_up_screen.toml`'s `explain`.
+
+## Lines of data
+
+A line whose text lives in the data, not in `messages/` (a dialogue line, a miscast's `seen`, an
+aura's `touch`, and every narrator `message`/`text`/`line`/`seen` field the L4 slices and #1944
+convert), is said by **its key in the data, never its text**: `<kind>:<id>.<field>[.<n>]`
+(`dialogue:ascmearc.servant.lines.3`, `miscast:blank.seen`, `creature:banshee.touch`;
+`status:dazed.start` for a status's). The entry holds `Arg::Said { key, args, register, race }`,
+so a saved log re-renders in any language and a later identification cannot reach back into it.
+
+- **English is the data itself.** As the content loads, each line's text is parsed
+  (`Template::from_value`: a string, or `{ by = "<role>.<feature>", <value> = "…", else = "…" }`)
+  and added to English by its key (`Language::add_data_line`); `content.english().data_lines()`
+  enumerates every key (what the checker reads).
+- **A translation overlays it** with `assets/lang/<code>/data/<kind>.toml` (`[dazed] start = {
+  text = "…", of = "<hash>" }` is `status:dazed.start`) and, for dialogue,
+  `assets/lang/<code>/dialogue/<file>.toml` (kind `dialogue`, keyed by the data's path:
+  `[ascmearc.servant] lines = [ … ]`, an array numbered from 0; an `address` table without `by`
+  is by the player's gender): `Templates::parse_data`, `Language::add_data_file`. A key the
+  language lacks fails that language's rendering, so the chain falls back to English (L8 loads the
+  chosen language's files). A mod's data lines are keyed by its content ids and overlay the same
+  way.
+- **Rendering**: the line by its key, filled with the Said's args like any template, in the
+  speaker's register (`Registers::for_speaker(register, race)`; standard for a narrator's). A
+  narrator's line takes full grammar; a dialogue line the base form only (below).
+- **The checker** (`xtask/src/lang/data.rs`) treats a key like a message id: a key English lacks,
+  a stale `of` (the six-hex FNV-1a of the English line as written, `Template::written`), a role
+  the English line does not pass, a form the language lacks (a dialogue line: the base form only)
+  are errors; a line not translated is a warning in a kind the language has files for, an error
+  for `--strict`. `--stamp` does not write data files' `of` yet.
+
+**Saying a line of data (the recipe for an L4 slice)**, worked by `miscast:<id>.seen`
+(`content/miscast.rs`, `world/magic/miscast.rs`) and `creature:<id>.touch`/`.unseen`
+(`content/aura.rs::touch_key`, `world/creatures/aura.rs`):
+
+1. In the data, turn the field's placeholders into role slots: `{who}` → `{who:The}` at the
+   start, `{who:the}` inside, `{who}'s` → `{who:poss}`; `{the}` → `{subject:the}`. Say which roles
+   the field passes in its README.
+2. At load, check the text names only those roles (`Line::parse(text).roles()`), and add it to
+   English: `content.english.add_data_line(key, Template::Line(Line::parse(text)))` (a function
+   giving the key, as `Miscast::seen_key`, so the loader and the `say` site agree).
+3. At the `say` site: `self.say(Msg::data_line(Arg::said(key).with("who", phrase)))`; a dialogue
+   line is said by `World::answer` instead ("Dialogue"). The role's value is a phrase as for any
+   template (`self.called_phrase(actor)`, `self.phrase_of(id)`, an id phrase).
+4. Tests read English as before; the replays' hashes move where a converted line was said.
+
+## Dialogue (L5)
+
+Every line a creature says (`content/dialogue_line.rs`, `DialogueLine`) is a line of data of kind
+`dialogue`, keyed `dialogue:<scope>.<field>`: the scope is the dialogue's campaign (`data` outside
+every campaign) and its `npc` or `creature` id (two dialogues keyed alike are refused); the
+fields `greet`, `greet_evil.<n>`, `greet_good.<n>`, `lines.<n>`, `after.<quest>.<n>`,
+`economy.hard.<n>`, `economy.better.<n>`, `topic.<id>`, `service.<id>.reply`/`.nothing`,
+`offer.reply`/`.sold`, `mutter.<n>`, `stipend.handover`, `partner.<field>`, `patron.<field>`, and
+`address`. A line is a string or whole-line variants (`by = "player.gender"`, design §9.1).
+
+**No morphology** (owner, #1882): a slot names a role and takes the base form only, `name`, or
+an article with it, `a`/`the` (function words, which a register may change), or `address`, each
+capitalized by a capital (`content::DIALOGUE_FORMS`). `bare` is the base form too, so a form-less
+`{role}` (`{role:bare}`, #1945) is accepted for a role the line is given. Gender and number pick whole lines. Every
+line is given `player` (`World::you()`); `partner.worth` `gold`, `invested`/`withdrawn` `gold`
+and `fee`, `patron.offer`/`waiting`/`plain` `work`, `patron.delivered` `gold`. The loader refuses
+another role or form, and `{player:address}` in a dialogue without `address`. `{player:address}`
+renders the dialogue's `address` (`{ male, female, other }` on the `[[dialogue]]`, a line of
+variants by the player's gender) found up the line's key.
+
+**Said.** `World::said(id, &line)` is the line as creature `id` says it: `Arg::said(key)` with
+the player and the speaker's `register` (the dialogue's own, `posh` or `cornish`) and race; more
+roles with `.with`. `World::answer(id, speech, asked, events)` logs `talk.says` (`{who:The} says:
+"{line:lines}"`, `who` the speaker as `World::called_phrase`) and records the `Conversation`,
+whose `line` is a `Speech` (the lines said in turn); `World::says` the same without a
+conversation. The dialogue screen renders the speech with `messages::english_speech`. A mutter
+is `talk.mutters` (seen) or `talk.voice`/`talk.voice_from` (heard). Lines from quest data (a
+giver's `offer`, `reminder`, `done`, a side's words, an escort's) are still finished English
+passed as a `Speech` of text until people's slice keys them.
+
+**Quests' texts** (`content/quest_roll.rs::fill`) take the same slots, filled in English as the
+quest is rolled: `target` (a phrase counted as the quest asks: `{target:a}` "a cave bear",
+`{target:name}` "goblins" for 25), `count`, `members`, `branch`, `where`; a placeholder of the old
+shape (`{a_target}`) is refused.
+
+## Decisions L5 made where the design left them open
+
+- One mechanism for every line of data, dialogue and narrator alike (the integrator,
+  2026-11-20): the key `<kind>:<id>.<field>[.<n>]` and `Arg::Said`; a narrator's line alone is
+  the `DATA_LINE` entry (`Msg::data_line`). English is not a file: the content adds the data's
+  text to English by key, so the fallback chain (a language, then English) is the overlay.
+- `Arg::Said` carries the speaker's `register` and race, so L14's race map needs no new entry
+  shape.
+- `address` moved from `[dialogue.stipend]`/`[dialogue.patron]` to the dialogue itself, so any
+  of its lines can say `{player:address}`.
+- English keeps `{target:a}` and `{work:a}` where the article reads naturally: the article is a
+  function word the design allows, and English reads as before. Lines were reworded only where
+  a form outside the base form was asked: the patrons' offers (the counted stock, now told by
+  "You receive …" after the line) and one quest's `where` (a plural for one beast).
+- A speech of several lines (a one-liner and a stake's worth) is one entry with a list in the
+  `lines` form, not two entries.
+- `register` is set where a speaker's race's register is not theirs (the human patron and
+  partner, Sigeric, Ælfswīð, Ordgar: `posh`; Gimmwīc's people: `cornish`). English has no
+  register overrides yet (L14).
 
 ## Decisions L1 made where the design left them open
 
@@ -560,6 +676,6 @@ Nothing here is guessed against the oracle; these are the choices the oracle can
 
 ## Next
 
-The L4 slices ("Literal lines"), L5 (the dialogue slots), the other L6 parts ("UI text"), the
+The L4 slices ("Literal lines", "Lines of data"), the other L6 parts ("UI text"), the
 Finnish lexicon (L11) on `fi`:
 `docs/design/localization.md` §17.

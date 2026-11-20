@@ -3,5 +3,5 @@ id = "slick"
 from = 47
 to = 48
 message = "The ground about you weeps and turns slick."
-seen = "The ground about {who} turns slick."
+seen = "The ground about {who:the} turns slick."
 effect = { kind = "zone", zone = "slick", radius = 1, turns = 10 }

@@ -31,7 +31,7 @@ blood = "none"
 status = "silenced"
 radius = 3
 every = 6
-touch = "The gibbering of {the} drowns your voice."
+touch = "The gibbering of {subject:the} drowns your voice."
 unseen = "A gibbering drowns your voice."
 [creature.attack]
 damage = "2d6"

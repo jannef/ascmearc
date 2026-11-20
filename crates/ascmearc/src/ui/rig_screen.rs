@@ -10,10 +10,12 @@
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::ScreenAction;
+use super::text::{rig_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::Bindings;
 use crate::render::console::Console;
 use ascmearc_core::Action;
+use ascmearc_core::lang::Arg;
 use ascmearc_core::perception::PerceptionView;
 use ascmearc_core::world::RigRow;
 
@@ -32,7 +34,7 @@ impl RigScreen {
             (view.rigs().into_iter()).map(|row| ((), row)).collect()
         });
         Self {
-            rigs: PagedList::grouped(rows, |()| "Traps".to_string()),
+            rigs: PagedList::grouped(rows, |()| ui(T::GROUP_TRAPS)),
         }
     }
 
@@ -79,13 +81,20 @@ impl RigScreen {
         // Rows: margin, the list, a gap, the footer, the frame.
         self.fit(console.cols(), console.rows());
         let count = self.rigs.tallest().max(1) as i32;
-        let panel = Panel::new(console, " Trapwright: which trap? ", WIDTH, count + 5);
+        let title = format!(" {} ", ui(T::TITLE));
+        let panel = Panel::new(console, &title, WIDTH, count + 5);
         self.rigs.draw_label(console, &panel);
         let x = panel.inner_x();
         let right = panel.x + panel.w - 3;
         let fits = |y: i32| y < panel.y + panel.h - 2;
         if self.rigs.is_empty() && fits(panel.y + 2) {
-            console.print(x + 2, panel.y + 2, "You know no trap to rig.", TEXT_DIM);
+            console.print_in(
+                x + 2,
+                panel.y + 2,
+                &ui(T::NONE),
+                TEXT_DIM,
+                panel.inner_w() - 2,
+            );
         }
         for (row, y) in self.rigs.rows().into_iter().zip(panel.y + 2..) {
             if !fits(y) {
@@ -115,24 +124,27 @@ impl RigScreen {
             console.print(x + 2, y, &format!("{letter} - {}", rig.name), color);
             console.print(x + 18, y, &rig.takes, color);
             let tail = match rig.lacking {
-                Some(why) => format!("({why})"),
-                None => format!("about {}", rig.time.spoken()),
+                Some(why) => ui_with(T::LACKING, &[("why", why.into())]),
+                None => ui_with(T::TIME, &[("time", rig.time.spoken().into())]),
             };
             let tail_x = right - tail.chars().count() as i32;
             console.print(tail_x, y, &tail, TEXT_DIM);
         }
         let keys = HINTS;
-        let confirm = &keys.confirm;
+        let confirm = ("confirm", Arg::from(keys.confirm));
         let choose = match self.rigs.last_letter() {
-            Some('a') => format!("a or {confirm}"),
-            Some(last) => format!("a-{last} or {confirm}"),
-            None => confirm.to_string(),
+            Some('a') => ui_with(T::PICK_A, &[confirm]),
+            Some(last) => ui_with(
+                T::PICK_LETTERS,
+                &[("last", last.to_string().into()), confirm],
+            ),
+            None => ui_with(T::PICK_ONLY, &[confirm]),
         };
         let page = (self.rigs.hint(&keys)).map_or(String::new(), |hint| format!("{hint}   "));
         if self.rigs.is_empty() {
-            panel.footer(console, "Esc back");
+            panel.footer(console, &ui(T::ESC_BACK));
         } else {
-            panel.footer(console, &format!("{choose} rig   {page}Esc back"));
+            panel.footer(console, &format!("{choose}   {page}{}", ui(T::ESC_BACK)));
         }
     }
 }

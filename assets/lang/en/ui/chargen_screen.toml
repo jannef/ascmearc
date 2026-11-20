@@ -1,0 +1,131 @@
+# Character creation: the race, gender, and class steps and the summary
+# (`crates/ascmearc/src/ui/chargen_screen.rs`). Ids alphabetical.
+#
+# The keys named in the hint lines are fixed (`Esc`, and the ones passed as `{confirm}`, `{keys}`):
+# translate the words around them. The race, class, and skill names and descriptions come from the
+# game's data. The screen fits each text to its panel: a translation longer than the room is cut
+# with `…`, which the screen snapshots check (docs/dev/localization.md "UI text").
+
+# The summary's line of the character's alignment, the label.
+[alignment]
+text = "Alignment"
+
+# The footer's hint to go back.
+[back]
+text = "Esc back"
+
+# The footer's hint to choose a row: `keys`, the keys that move the cursor.
+[choose]
+text = "{keys:bare} choose"
+
+# The footer's hint to go on: `confirm`, the key.
+[confirm_next]
+text = "{confirm:bare} next"
+
+# The footer's hint on the summary: `confirm`, the key.
+[confirm_start]
+text = "{confirm:bare} start or change"
+
+# The step's title. The panel pads it with spaces.
+[class_title]
+text = "Choose your class (3 of 5)"
+
+[gender_title]
+text = "Choose your gender (2 of 5)"
+
+[name_title]
+text = "Choose your name (5 of 5)"
+
+[race_title]
+text = "Choose your race (1 of 5)"
+
+# What each gender gives. The "other" gender never names the stat it raises.
+[gender_female]
+text = "Dexterity +1."
+
+[gender_male]
+text = "Strength +1."
+
+[gender_other]
+text = "+1 to one stat, chosen by fate."
+
+# The summary: the label of the kit line.
+[kit]
+text = "Kit"
+
+# The kit, when the character starts with none.
+[kit_nothing]
+text = "nothing"
+
+# The summary's note under the kit, when the story is told through fate.
+[fate]
+text = "Fate will have its say when you set out."
+
+# What a race or class changes in the stats, when it changes none.
+[no_stat_changes]
+text = "No stat changes"
+
+# Why a character cannot be made: the content has no races or classes.
+[no_races_or_classes]
+text = "There are no races or classes to choose from."
+
+# The Random row of a step.
+[random]
+text = "Random"
+
+[random_class]
+text = "Let chance pick your class."
+
+[random_gender]
+text = "Let chance pick your gender."
+
+[random_name]
+text = "Let chance pick your name."
+
+[random_race]
+text = "Let chance pick your race."
+
+# The summary's line of the scenario: `scenario`, its name; `seed`, the seed (developer builds).
+[scenario]
+text = "Scenario"
+
+[scenario_seed]
+text = "{scenario:bare}, seed {seed:bare}"
+
+# The summary's rows, each of which goes back to its step.
+[row_class]
+text = "Class"
+
+[row_gender]
+text = "Gender"
+
+[row_name]
+text = "Name"
+
+[row_race]
+text = "Race"
+
+[row_sign]
+text = "Sign"
+
+[row_start]
+text = "Start the run"
+
+[row_talents]
+text = "Talents"
+
+# The summary's talents row, when the talents are left to chance.
+[talents_chance]
+text = "chosen by chance"
+
+# The summary panel's title.
+[title]
+text = "Your character"
+
+# A race's detail line of its sight: `eyes`, the kind of vision.
+[vision]
+text = "Vision: {eyes:bare}"
+
+# The summary's label of the character's vision.
+[vision_label]
+text = "Vision"

@@ -38,6 +38,7 @@ use crate::content::{
     QuestKind, RecipeCount, RecipeDef, RecipeId,
 };
 use crate::dice::Dice;
+use crate::lang::{Arg, Phrase};
 use crate::magic::worked;
 use crate::object::Stack;
 use crate::perception::PerceptionView;
@@ -45,6 +46,7 @@ use crate::rng::Rng;
 use crate::skills::Use;
 use crate::text::article;
 use crate::world::people::quest::QuestView;
+use crate::world::people::talk::Speech;
 use crate::world::{ActorId, Spent, World};
 use serde::{Deserialize, Serialize};
 
@@ -162,6 +164,14 @@ pub(crate) fn advance(content: &Content, recipe: &RecipeDef) -> Vec<Stack> {
 }
 
 /// The work of `recipe` with its article: "a long sword".
+/// What a commission of `recipe` asks for, as a patron's line names it (`{work:a}`).
+fn work_phrase(content: &Content, recipe: &RecipeDef) -> Phrase {
+    match &recipe.result {
+        Some(r) => Phrase::id(format!("object:{}", content.object(r.object).id)),
+        None => Phrase::id(format!("word:{}", recipe.name)),
+    }
+}
+
 fn work_words(content: &Content, recipe: &RecipeDef) -> String {
     let name = recipe
         .result
@@ -216,14 +226,6 @@ impl World {
         self.content.dialogue(d).patron.as_ref()
     }
 
-    /// `line` with `{address}` made the player's word in `words`.
-    fn to_player(&self, words: &PatronWords, line: &str) -> String {
-        let Some(character) = &self.state.character else {
-            return line.to_string();
-        };
-        line.replace("{address}", words.address.of(character.spec.gender))
-    }
-
     /// Chats with creature `id`, who speaks `dialogue`, if it is a patron: offers a commission,
     /// or takes the work and pays for it (the module docs). `None` for anyone else.
     pub(in crate::world) fn patron_chat(
@@ -243,7 +245,11 @@ impl World {
             Some(open) => {
                 let content = self.content.clone();
                 let recipe = (content.recipes().id(&open.recipe)).map(|r| content.recipe(r));
-                let work = recipe.map_or_else(String::new, |r| work_words(&content, r));
+                let work = recipe.map(|r| work_phrase(&content, r));
+                let with_work = |line: Arg| match &work {
+                    Some(work) => line.with("work", work.clone()),
+                    None => line,
+                };
                 let object = recipe.and_then(|r| r.result.as_ref()).map(|r| r.object);
                 let inventory = &self.state.player().inventory;
                 let equipment = &self.state.player().equipment;
@@ -266,8 +272,9 @@ impl World {
                         let gold = u32::try_from(gold).unwrap_or(u32::MAX);
                         let what = self.lore().describe(&stack);
                         self.say(format!("You hand over {what}."));
-                        let line = words.delivered.replace("{gold}", &gold.to_string());
-                        let line = self.to_player(&words, &line);
+                        let line = self
+                            .said(id, &words.delivered)
+                            .with("gold", i64::from(gold));
                         self.answer(id, line, None, events);
                         self.state.patron.open = None;
                         if let Some(coin) = crate::chest::currency(&content).filter(|_| gold > 0) {
@@ -276,20 +283,19 @@ impl World {
                         self.train(Use::Deal);
                     }
                     None if plain => {
-                        let line = self.to_player(&words, &words.plain.replace("{work}", &work));
+                        let line = with_work(self.said(id, &words.plain));
                         self.answer(id, line, None, events);
                     }
                     // Waiting: a one-liner (the rotation), then the reminder.
                     None => {
                         let said = self.state.actors[&id].talk.said;
                         let d = content.dialogue(dialogue);
-                        let one = self.one_liner(id, d, said);
+                        let one = self.said(id, self.one_liner(id, d, said));
                         if let Some(actor) = self.state.actors.get_mut(&id) {
                             actor.talk.said += 1;
                         }
-                        let waiting = words.waiting.replace("{work}", &work);
-                        let line = self.to_player(&words, &format!("{one} {waiting}"));
-                        self.answer(id, line, None, events);
+                        let waiting = with_work(self.said(id, &words.waiting));
+                        self.answer(id, vec![one, waiting], None, events);
                     }
                 }
             }
@@ -304,7 +310,7 @@ impl World {
         let content = self.content.clone();
         let pool = pool(&content, self.state.player());
         if pool.is_empty() {
-            let line = self.to_player(words, &words.idle);
+            let line = self.said(id, &words.idle);
             self.answer(id, line, None, events);
             return;
         }
@@ -312,15 +318,16 @@ impl World {
         let mut rng = Rng::stream(self.state.seed, &format!("patron/{taken}"));
         let recipe = content.recipe(pool[rng.index(pool.len())]);
         let stock = advance(&content, recipe);
-        let line = (words.offer.replace("{work}", &work_words(&content, recipe)))
-            .replace("{stock}", &self.listed(&stock));
-        let line = self.to_player(words, &line);
+        let line = Speech::from(
+            self.said(id, &words.offer)
+                .with("work", work_phrase(&content, recipe)),
+        );
         let giver = self.called(&self.state.actors[&id]);
         self.state.patron.taken += 1;
         self.state.patron.open = Some(Commission {
             recipe: recipe.id.clone(),
             giver,
-            offer: line.clone(),
+            offer: crate::messages::english_speech(&content, &line),
         });
         self.answer(id, line, None, events);
         self.receive(stock);

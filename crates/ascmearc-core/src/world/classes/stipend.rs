@@ -27,8 +27,8 @@
 
 use crate::action::Event;
 use crate::content::{
-    ActionKind, Content, CreatureSpawn, Dialogue, DialogueId, MAX_ITEM_LEVEL, Rarity, StatUse,
-    TalentId, TownServant,
+    ActionKind, Content, CreatureSpawn, DialogueId, MAX_ITEM_LEVEL, Rarity, StatUse, TalentId,
+    TownServant,
 };
 use crate::equipment::Equipment;
 use crate::geom::Pos;
@@ -198,14 +198,6 @@ impl World {
         Some(format!("stipend {} gold: {items}", stipend.gold))
     }
 
-    /// The dialogue `d`'s words with `{address}` made the player's.
-    fn addressed(&self, d: &Dialogue, line: &str) -> String {
-        let (Some(words), Some(character)) = (&d.stipend, &self.state.character) else {
-            return line.to_string();
-        };
-        line.replace("{address}", words.address.of(character.spec.gender))
-    }
-
     /// Chats with creature `id`, who speaks `dialogue`, if it is a family servant: hands over
     /// the stipend, or says a one-liner (the module docs). `None` for anyone else.
     pub(in crate::world) fn servant_chat(
@@ -220,15 +212,14 @@ impl World {
         let price = self.price_of(self.state.player, ActionKind::Chat);
         if self.state.stipend.is_empty() {
             let said = self.state.actors[&id].talk.said;
-            let line = self.one_liner(id, d, said);
-            let line = self.addressed(d, &line);
+            let line = self.said(id, self.one_liner(id, d, said));
             if let Some(actor) = self.state.actors.get_mut(&id) {
                 actor.talk.said += 1;
                 actor.talk.met = true;
             }
             self.answer(id, line, None, events);
         } else {
-            let line = self.addressed(d, &words.handover);
+            let line = self.said(id, &words.handover);
             if let Some(actor) = self.state.actors.get_mut(&id) {
                 actor.talk.met = true;
             }

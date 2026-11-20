@@ -129,10 +129,12 @@
 #              left out)
 # A kill a Beast-friend's talent forbids is never drawn for one: a creature type of an animal
 # faction (data/factions/), a tag any of whose types is one, or a variant asking for either.
-# Their texts (all but `name`) may name the roll: {target} and {targets} (the name and plural),
-# {a_target} (with its article; a unique's name alone), {count}, {members} (a tag's types,
-# plurals in a list), {branch} (the first branch, in the pick's order, it lives in), {where} (the
-# filled `where`), and each capitalised ({A_target}, {Where}). Only a rolled quest has them.
+# Their texts (all but `name`) may name the roll by role, as dialogue does: the base form only,
+# `name`, `a`, or `the`, capitalised by a capital (docs/dev/localization.md "Dialogue"): `target`
+# (what it is after, counted as it asks: {target:a} "a cave bear", a unique's name alone;
+# {target:name} "goblins" for 25 of them), `count` ({count:name}), `members` (a tag's types,
+# plurals in a list: {members:name}), `branch` (the first branch, in the pick's order, it lives
+# in: {branch:name}), and `where` (the filled `where`: {where:Name}). Only a rolled quest has them.
 # Texts are one line of at most 280 characters, filled for every target the pool can hold.
 # Someone's topics (their dialogue's, and one per quest they give or take) must fit the
 # dialogue screen's nine.

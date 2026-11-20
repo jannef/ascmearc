@@ -3,5 +3,5 @@ id = "twofold_withering"
 from = 85
 to = 86
 message = "The spell feeds on you, and comes back for more."
-seen = "A grey shadow passes twice over {who}."
+seen = "A grey shadow passes twice over {who:the}."
 effect = { kind = "drain", stat = "random", points = 1, difficulty = 16, times = 2 }

@@ -3,5 +3,5 @@ id = "falter"
 from = 63
 to = 64
 message = "The spell's shape crumbles in your mind."
-seen = "{who} falters."
+seen = "{who:The} falters."
 effect = { kind = "rank_loss", ranks = 2 }

@@ -36,7 +36,7 @@ difficulty = 16
 every = 18
 heard = true
 loudness = 50
-touch = "The drone of {the} weighs on your eyes."
+touch = "The drone of {subject:the} weighs on your eyes."
 unseen = "A droning weighs on your eyes."
 [creature.attack]
 damage = "4d6"

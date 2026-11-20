@@ -36,7 +36,7 @@ radius = 2
 check = "toughness"
 difficulty = 16
 every = 30
-touch = "The stench of {the} turns your stomach."
+touch = "The stench of {subject:the} turns your stomach."
 unseen = "A stench turns your stomach."
 [creature.attack]
 damage = "4d8"

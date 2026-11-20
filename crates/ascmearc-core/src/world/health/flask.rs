@@ -32,13 +32,16 @@
 //! rules), and nothing is learned. A potion without a `throw` table spills where it lands, uselessly: "The
 //! potion shatters; the draught soaks away." where seen, and nothing is learned.
 
+use super::object_phrase;
 use crate::action::{AttackKind, Event, MissileEnd, Positions, SpellShape};
 use crate::content::{
     ActionKind, Burst, ObjectId, Shape, SpellPurpose, SpellZone, StatusId, TrapNoise,
 };
 use crate::geom::Pos;
+use crate::lang::Msg;
+use crate::msg;
 use crate::noise::{Act, SHATTER_NOISE, SoundKind};
-use crate::text::capitalized;
+use crate::world::combat::fight;
 use crate::world::magic::cast::Cast;
 use crate::world::magic::spell::{Caster, burst_cells};
 use crate::world::{ActorId, AttackSkills, Cause, Spent, World};
@@ -69,8 +72,8 @@ impl World {
             me.inventory.remove(item);
             me.equipment.after_removal(&Positions::of([item]));
         }
-        let title = self.lore().title(&flask);
-        self.say(format!("You throw the {title}."));
+        let title = self.lore().title_phrase(&flask);
+        self.say(Msg::new(msg::health::THROW_FLASK).role("what", title));
         self.make_noise(player, Act::Attack(AttackKind::Thrown));
         let from = self.player_pos();
         self.shatter_flask(player, flask.object, (from, at, range), events);
@@ -126,11 +129,11 @@ impl World {
         // What the player makes in their own action is spent before they hear it (`run_turn`):
         // their own flask breaking unseen is told here.
         if !seen && by == self.state.player {
-            self.say("You hear a crash of glass.");
+            self.say(msg::health::CRASH_OF_GLASS);
         }
         let Some(flask) = &def.flask else {
             if seen {
-                self.say("The potion shatters; the draught soaks away.");
+                self.say(msg::health::POTION_SHATTERS);
             }
             return;
         };
@@ -139,7 +142,8 @@ impl World {
                 self.say(words.clone());
             }
             if self.learn_scroll(object) {
-                self.say(format!("It was {}.", def.describe(1)));
+                let what = object_phrase(&content, object).count(1);
+                self.say(Msg::new(msg::health::IT_WAS).role("what", what));
             }
         }
         let cast = Cast::by_flask(by, &content, flask);
@@ -235,8 +239,13 @@ impl World {
             self.afflict(id, status, degrees, Some(cast.by), events);
             let them = &self.state.actors[&id];
             if id != self.state.player && self.perception.sees_actors_at(them.pos) {
-                let who = capitalized(&self.called(them));
-                self.say(format!("{who} is {word}."));
+                let who = self.phrase_of(id);
+                let word = fight::word(&word);
+                self.say(
+                    Msg::new(msg::health::IS_STATUS)
+                        .role("who", who)
+                        .role("status", word),
+                );
             }
             self.spell_landed(cast, id, true);
         }

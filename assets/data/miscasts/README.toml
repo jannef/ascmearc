@@ -11,7 +11,9 @@
 #   from, to  the totals it covers; the entries tile 1 and up with no gap or overlap, and only
 #             the last leaves out `to` (every total from its `from` up)
 #   message   said to the player who miscast
-#   seen      said of a creature that miscast where the player sees it; `{who}` is its name
+#   seen      said of a creature that miscast where the player sees it, `who` the caster:
+#             `{who:The}`, `{who:the}`, `{who:poss}` (full grammar: a line of data,
+#             docs/dev/localization.md "Lines of data")
 #   effect    what it does, by `kind` (the mishaps' kinds, mishaps/README.toml, and these):
 #             nothing
 #             status     `status` (an id of status/) on the caster at `severity` (default 1)

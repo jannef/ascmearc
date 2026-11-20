@@ -3,5 +3,5 @@ id = "iron_gate"
 from = 91
 to = 92
 message = "An iron gate grinds open beside you, and the hells are behind it!"
-seen = "An iron gate grinds open beside {who}!"
+seen = "An iron gate grinds open beside {who:the}!"
 effect = { kind = "summon", creature = "iron_gate" }

@@ -3,5 +3,5 @@ id = "ruin"
 from = 109
 to = 110
 message = "Ruin pours through the broken weave and over you."
-seen = "Ruin pours through {who}!"
+seen = "Ruin pours through {who:the}!"
 effect = { kind = "harm", dice = "10d10", damage = "force" }

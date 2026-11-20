@@ -6,6 +6,7 @@
 
 [[dialogue]]
 npc = "aelfswith"
+register = "posh"
 name = "Mistress Ælfswīð"
 greet = "Shut the door. You're letting the weather in, and it is mine."
 greet_evil = [

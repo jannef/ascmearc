@@ -4,8 +4,8 @@
 //! Reads `assets/lang/<code>/` (or `--dir`) with the `ascmearc-lang` parsers, never a parser of
 //! its own, and reports per language: missing ids (a warning; an error for a `--strict`
 //! language), stale entries (`of` differs from the hash of the English it came from, or is
-//! absent), unknown roles and forms, templates and lexicon words that do not parse, form requests
-//! in dialogue files, keys a text entry does not know (`width` among them: widths belong to the
+//! absent), unknown roles and forms, templates and lexicon words that do not parse, the
+//! translated lines of data (`lang/data.rs`: dialogue takes the base form only), keys a text entry does not know (`width` among them: widths belong to the
 //! screen, which the screen snapshots check), and (English only, a warning) message ids no code
 //! names. `--stamp` writes `of` into the entries that lack one, `--restamp` also
 //! refreshes the stale ones; the diff is the review.
@@ -13,6 +13,7 @@
 //! `--forms fi [WORD...]` and `--suggest fi <KOTUS_XML> [WORD...]` are the Finnish translator's
 //! tools (`lang/fi_tools.rs`).
 
+mod data;
 mod fi_tools;
 
 use crate::workspace_root;
@@ -26,11 +27,9 @@ use std::path::{Path, PathBuf};
 /// The English every other language is checked against.
 const ENGLISH: &str = "en";
 
-/// The forms a dialogue line may ask for: dialogue nouns take the base form only (§9).
-const DIALOGUE_FORMS: &[&str] = &["name", "a", "the", "address"];
-
-/// Forms every language's lists accept, beside its module's own (`Arg::List`'s conjunctions).
-const LIST_FORMS: &[&str] = &["and", "or"];
+/// Forms every language's lists accept, beside its module's own (`Arg::List`'s conjunctions, and
+/// `lines`: one speech of several lines, said in turn).
+const LIST_FORMS: &[&str] = &["and", "or", "lines"];
 
 /// The role the host fills with a key; its "form" is a command name, not a grammatical form.
 const KEY_ROLE: &str = "key";
@@ -115,6 +114,12 @@ pub fn run(options: Options) -> Result<(), String> {
     match options.mode {
         Mode::Check { strict } => {
             let mut report = check(&langs, &strict);
+            // The lines of data: English is the content's data itself.
+            let content =
+                ascmearc_assets::content().map_err(|e| format!("cannot load content: {e}"))?;
+            let data = data::check_data(&langs, content.english().data_lines(), &strict);
+            report.errors.extend(data.errors);
+            report.warnings.extend(data.warnings);
             if options.dir.is_none() {
                 report.warnings.extend(unused_ids(&langs));
             }
@@ -422,7 +427,6 @@ pub fn check(langs: &BTreeMap<String, LangFiles>, strict: &[String]) -> Report {
             &mut report,
         );
         check_lexicon(code, files, language.morphology(), &mut report);
-        check_dialogue(code, files, &mut report);
         for (race, register) in language.registers().unknown_race_registers() {
             report.errors.push(format!(
                 "{code}: lang.toml: race `{race}` names the unknown register `{register}`"
@@ -522,46 +526,6 @@ fn check_lexicon(code: &str, files: &LangFiles, morphology: &dyn Morphology, rep
                             .errors
                             .push(format!("{code}: {path}: `{id}`: {}", e.reason));
                     }
-                }
-            }
-        }
-    }
-}
-
-fn check_dialogue(code: &str, files: &LangFiles, report: &mut Report) {
-    fn walk(value: &toml::Value, at: &str, code: &str, path: &str, report: &mut Report) {
-        match value {
-            toml::Value::String(s) => {
-                for (role, form) in slots(&Template::Line(Line::parse(s))) {
-                    if role != KEY_ROLE && !DIALOGUE_FORMS.contains(&lower(&form).as_str()) {
-                        report.errors.push(format!(
-                            "{code}: {path}: {at}: `{{{role}:{form}}}`: dialogue takes the base form only ({})",
-                            DIALOGUE_FORMS.join(", ")
-                        ));
-                    }
-                }
-            }
-            toml::Value::Array(items) => {
-                for (i, v) in items.iter().enumerate() {
-                    walk(v, &format!("{at}[{i}]"), code, path, report);
-                }
-            }
-            toml::Value::Table(t) => {
-                for (k, v) in t {
-                    walk(v, &format!("{at}.{k}"), code, path, report);
-                }
-            }
-            _ => {}
-        }
-    }
-    for (path, text) in files.under("dialogue") {
-        match toml::from_str::<toml::Table>(text) {
-            Err(e) => report
-                .errors
-                .push(format!("{code}: {path}: {}", e.message())),
-            Ok(table) => {
-                for (k, v) in &table {
-                    walk(v, k, code, path, report);
                 }
             }
         }
@@ -788,7 +752,7 @@ mod tests {
     }
 
     /// English plus a second language `xx` (the English module, so the forms are known).
-    fn world(xx: &[(&str, &str)]) -> BTreeMap<String, LangFiles> {
+    pub(super) fn world(xx: &[(&str, &str)]) -> BTreeMap<String, LangFiles> {
         let mut langs = BTreeMap::new();
         langs.insert(
             "en".to_string(),
@@ -879,6 +843,16 @@ mod tests {
     }
 
     #[test]
+    fn a_form_less_placeholder_with_an_unknown_role_is_an_error() {
+        let xx = format!("[hit]\nof = \"{}\"\ntext = \"{{victim}}\"\n", hit_hash());
+        let e = errors(&world(&[("messages/combat.toml", &xx)]));
+        assert!(
+            e.iter().any(|m| m.contains("unknown role `victim`")),
+            "{e:?}"
+        );
+    }
+
+    #[test]
     fn a_template_that_does_not_parse_is_an_error() {
         let e = errors(&world(&[(
             "messages/combat.toml",
@@ -903,17 +877,6 @@ mod tests {
         )]));
         assert!(e.iter().any(|m| m.contains("goblin")), "{e:?}");
         assert!(!e.iter().any(|m| m.contains("`rat`")), "{e:?}");
-    }
-
-    #[test]
-    fn dialogue_asks_for_the_base_form_only() {
-        let e = errors(&world(&[(
-            "dialogue/ceaptun.toml",
-            "[greeting]\nline = \"Hei {player:Name}, {thing:plural} ja {x:the}\"\n",
-        )]));
-        assert!(e.iter().any(|m| m.contains("{thing:plural}")), "{e:?}");
-        assert!(!e.iter().any(|m| m.contains("Name}")), "{e:?}");
-        assert!(!e.iter().any(|m| m.contains("{x:the}")), "{e:?}");
     }
 
     #[test]

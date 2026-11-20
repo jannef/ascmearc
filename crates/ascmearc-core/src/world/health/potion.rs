@@ -33,10 +33,13 @@
 //! [`Action::Eat`]: crate::action::Action::Eat
 //! [`Draught`]: crate::content::Draught
 
+use super::object_phrase;
 use crate::action::{Event, Meal, Positions};
 use crate::content::{
     ActionKind, Cleansing, Content, Draught, Effect, LevelKind, StatUse, StatusId,
 };
+use crate::lang::Msg;
+use crate::msg;
 use crate::object::Stack;
 use crate::rng::draw;
 use crate::world::{Actor, Spent, World};
@@ -54,9 +57,6 @@ impl Actor {
         u8::try_from(sum).unwrap_or(talent)
     }
 }
-
-/// What the player is told when Thrifty drinker keeps a potion they drank.
-pub(in crate::world) const KEPT: &str = "There is enough left in the flask for another draught.";
 
 /// What a potion of restoration cleanses: stat damage and drains both.
 const RESTORE: Cleansing = Cleansing {
@@ -78,12 +78,12 @@ impl World {
             return Spent::Nothing;
         };
         let price = self.price_of(self.state.player, ActionKind::Drink);
-        let title = self.lore().title(stack);
+        let title = self.lore().title_phrase(stack);
         let (one, kept) = self.take_draught(meal);
-        self.say(format!("You drink the {title}."));
+        self.say(Msg::new(msg::health::DRINK).role("what", title));
         if self.learn_scroll(stack.object) {
-            let what = content.object(stack.object).describe(1);
-            self.say(format!("It is {what}."));
+            let what = object_phrase(&content, stack.object).count(1);
+            self.say(Msg::new(msg::health::IT_IS).role("what", what));
         }
         if !kept {
             self.drank_goods(meal, &one);
@@ -95,9 +95,9 @@ impl World {
                 // A heal by magic (`magic_heal.rs`): bleeding stops too.
                 let healed = self.heal_by_magic(player, points, events) > 0;
                 self.say(if healed {
-                    "You feel your wounds close."
+                    msg::health::WOUNDS_CLOSE_YOU
                 } else {
-                    "You feel healthy."
+                    msg::health::FEEL_HEALTHY
                 });
                 for cure in cures {
                     self.cure(player, cure, events);
@@ -118,7 +118,7 @@ impl World {
                     }
                 }
                 if events.len() == from {
-                    self.say("You feel cleansed.");
+                    self.say(msg::health::FEEL_CLEANSED);
                 }
             }
             Draught::Mana { dice } => {
@@ -129,9 +129,9 @@ impl World {
                 me.mana = me.mana.saturating_add(points).min(max).max(me.mana);
                 let gained = me.mana > before;
                 self.say(if gained {
-                    "Your mind clears, and power wells up in you."
+                    msg::health::MIND_CLEARS
                 } else {
-                    "Your mind feels clear."
+                    msg::health::MIND_FEELS_CLEAR
                 });
             }
             &Draught::Elixir {
@@ -141,7 +141,7 @@ impl World {
             } => self.drink_elixir(stat, points, potential),
             Draught::Harm { dice, status } => {
                 let degrees = dice.roll(&mut draw!(self, "potion/harm/player"));
-                self.say("It tastes foul!");
+                self.say(msg::health::TASTES_FOUL);
                 if let Ok(degrees @ 1..) = u16::try_from(degrees) {
                     let player = self.state.player;
                     self.afflict(player, *status, degrees, None, events);
@@ -159,14 +159,14 @@ impl World {
             &Draught::Nourish { satiation } => {
                 let fuller = self.satiate(satiation);
                 self.say(if fuller {
-                    "It fills you as a good meal would."
+                    msg::health::FILLS_YOU
                 } else {
-                    "You feel no fuller."
+                    msg::health::NO_FULLER
                 });
             }
             Draught::Restore => {
                 if !self.restore(RESTORE, events) {
-                    self.say("You feel whole.");
+                    self.say(msg::health::FEEL_WHOLE);
                 }
             }
             Draught::Blink => self.blink_draught(events),
@@ -180,7 +180,7 @@ impl World {
             self.train_stat_times(used, Some(stat), marks);
         }
         if kept {
-            self.say(KEPT);
+            self.say(msg::health::DRAUGHT_KEPT);
         }
         Spent::Turn(price)
     }
@@ -200,7 +200,7 @@ impl World {
                     self.say(start);
                 }
             }
-            (Some(_), _) => self.say("Nothing more comes of it."),
+            (Some(_), _) => self.say(msg::health::NOTHING_MORE_COMES),
             _ => {}
         }
     }
@@ -210,15 +210,15 @@ impl World {
     /// map of the land.
     fn blink_draught(&mut self, events: &mut Vec<Event>) {
         if self.state.current().kind == LevelKind::Overworld {
-            self.say("The land lurches, and holds you where you are.");
+            self.say(msg::health::LAND_LURCHES);
             return;
         }
         let (player, here) = (self.state.player, self.player_pos());
         self.teleport(player, here, events);
         self.say(if self.player_pos() == here {
-            "You feel a lurch, but stay where you are."
+            msg::health::LURCH_STAY
         } else {
-            "In a blink, you are elsewhere."
+            msg::health::BLINK_ELSEWHERE
         });
     }
 

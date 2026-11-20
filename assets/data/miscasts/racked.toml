@@ -3,5 +3,5 @@ id = "racked"
 from = 69
 to = 70
 message = "You are racked, and something of you is bent out of true."
-seen = "{who} is racked."
+seen = "{who:The} is racked."
 effect = { kind = "stat_damage", stat = "random", points = 2 }
