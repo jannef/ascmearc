@@ -45,7 +45,7 @@ no_danger_dev = "Nothing comes here: the level has no danger (dev)."
 raise_eyes = "You raise your eyes again."
 see_again = "You can see {who:the} again."
 # `who`: the thief, or "something" unseen; `what`: the stack it took.
-snatches = "{who:The} snatches {what:counted} from you!"
+snatches = "{who:The} snatches {what:a} from you!"
 spins_web = "{who:The} spins a web."
 # `who`: the creature that split (said once a run for its type: `splits_first`).
 splits = "{who:The} splits in two."

@@ -107,7 +107,7 @@ your work and nothing is spent.
 
 - **Made**: the item is enchanted and you know its magic. "The long sword takes the red
   crystal's glow. It is now a Sharp long sword." An imbued or ennobled item wakes with its
-  name: "The long sword drinks the three crystals and wakes as Grim Bite."
+  name: "The long sword drinks the three crystals and wakes as the Grim Bite."
 - **Failed**: the crystals go dark and are spent, with any heart-crystal or soul-fetter. The
   item is as it was. A failed Unbind leaves the magic where it was.
 - **A natural 2**: the crystals are spent and the item **warps**: it is

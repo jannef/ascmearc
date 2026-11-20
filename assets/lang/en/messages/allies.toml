@@ -32,7 +32,7 @@ comes_to_your_hand = "{who:The} come{who:s} to your hand. You call it {own:bare}
 # `name`: its name; `kind`: its type.
 companion_arrives = "{name:bare}, your {kind:bare}, pads at your heel."
 # `what`: the food held out.
-crouch_feed = "You crouch by {who:the} and hold out {what:counted}."
+crouch_feed = "You crouch by {who:the} and hold out {what:a}."
 crouch_speak = "You crouch by {who:the} and speak softly to it."
 # `who`: an ally whose time ran out, of a kind with no `depart` of its own.
 fades_away = "{who:The} fades away."

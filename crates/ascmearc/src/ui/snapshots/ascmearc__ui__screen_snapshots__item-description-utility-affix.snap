@@ -1,9 +1,9 @@
 ---
 source: crates/ascmearc/src/ui/screen_snapshots.rs
-expression: "render(case, content.clone())"
+expression: shown
 ---
  The lightning bolt strikes the cave beetle.
- You pick up Hollow Charm, a gold and ruby amulet.
+ You pick up the Hollow Charm, a gold and ruby amulet.
 
 
 

@@ -1,9 +1,9 @@
 ---
 source: crates/ascmearc/src/ui/screen_snapshots.rs
-expression: "render(case, content.clone())"
+expression: shown
 ---
- You pick up Ash Coat, a Masterwork chain mail shirt. Spears spring from the floor! The spear stabs
- the giant rat. Lightning arcs across the floor! The lightning bolt strikes the cave beetle.
+ You pick up the Ash Coat, a Masterwork chain mail shirt. Spears spring from the floor! The spear
+ stabs the giant rat. Lightning arcs across the floor! The lightning bolt strikes the cave beetle.
 
 
 

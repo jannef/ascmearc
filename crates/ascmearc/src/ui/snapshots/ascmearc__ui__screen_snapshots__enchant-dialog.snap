@@ -1,6 +1,6 @@
 ---
 source: crates/ascmearc/src/ui/screen_snapshots.rs
-expression: "render(case, content.clone())"
+expression: shown
 ---
  Welcome to Showcase. Press ? for controls.
 
@@ -12,13 +12,13 @@ expression: "render(case, content.clone())"
 
 
 
-                             ┌─ Unbind ───────────────────────────────┐
-                             │                                        │
-                             │ Unbind Storm Hunger? It takes about 30 │
-                             │                minutes.                │
-                             │                                        │
-                             │            Unbind  (y)                 │
-                             │          > Not now  (n, Esc)           │
-                             │                                        │
-                             │ ↑/↓ choose  Enter select               │
-                             └────────────────────────────────────────┘
+                            ┌─ Unbind ────────────────────────────────┐
+                            │                                         │
+                            │ Unbind the Storm Hunger? It takes about │
+                            │               30 minutes.               │
+                            │                                         │
+                            │             Unbind  (y)                 │
+                            │           > Not now  (n, Esc)           │
+                            │                                         │
+                            │ ↑/↓ choose  Enter select                │
+                            └─────────────────────────────────────────┘

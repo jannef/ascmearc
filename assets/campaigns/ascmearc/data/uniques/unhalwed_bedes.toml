@@ -2,7 +2,7 @@
 # prayer beads"): a caster who puts the lantern out, unseen, unlit, with spells from the dark.
 [[unique]]
 id = "unhalwed_bedes"
-name = "The Unhalwed Bedes"
+name = "the Unhalwed Bedes"
 object = "bone_amulet"
 affixes = ["mystic:7", "of_clarity:12", "of_the_owl:2", "of_shadows:7"]
 level = 12

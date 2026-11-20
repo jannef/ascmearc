@@ -19,6 +19,12 @@ pub struct Phrase {
     /// Said without an article, capitalized as written.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub proper: bool,
+    /// A proper name of one thing that takes the definite article where a sentence needs an
+    /// article (`the` and `a`), and none in a list (`bare` and `counted`): a rare item's "Grim
+    /// Bite" ("You pick up the Grim Bite", a list's "Grim Bite"). A language without articles
+    /// says it as any proper name.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub definite: bool,
     #[serde(default)]
     pub person: Person,
     #[serde(default)]
@@ -51,12 +57,22 @@ impl Phrase {
         }
     }
 
+    /// A proper name said with "the" in a sentence and bare in a list (the `definite` field): a
+    /// rare item's name, or a unique's written with its own "the".
+    pub fn definite(name: impl Into<String>) -> Self {
+        Self {
+            definite: true,
+            ..Self::literal(name)
+        }
+    }
+
     fn of(head: Word) -> Self {
         Self {
             head,
             mods: Vec::new(),
             count: 1,
             proper: false,
+            definite: false,
             person: Person::Third,
             gender: Gender::Neuter,
             notes: Vec::new(),

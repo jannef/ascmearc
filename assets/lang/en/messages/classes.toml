@@ -18,7 +18,7 @@
 # `id`: the class active as typed (dev).
 aims_at_no_place = "`{id:bare}` aims at no place."
 # `what`: the stack, as the player knows it.
-already_know_what = "You already know what {what:counted} is."
+already_know_what = "You already know what {what:a} is."
 already_light_on_feet = "You are already light on your feet."
 ask_where = "Where?"
 beside_it_already = "You are beside it already."
@@ -29,7 +29,7 @@ cannot_call_no_weapon = "You cannot call {what:a}: it is no weapon for the hand.
 cannot_charge_on_overworld = "You cannot charge on the overworld."
 cannot_charge_while_swimming = "You cannot charge while swimming."
 # `what`: the stack, as the player knows it.
-cannot_exploit_with = "You cannot exploit an opening with {what:counted}."
+cannot_exploit_with = "You cannot exploit an opening with {what:a}."
 cannot_hallow_open_land = "The open land cannot be hallowed: find a place to kneel."
 cannot_kneel_in_water = "You cannot kneel in water."
 # `reason`: why the ability cannot be used, in words.
@@ -65,7 +65,7 @@ knows_nothing_about_that = "{who:The} know{who:s} nothing about that."
 lacking = "{words:Bare}."
 level_consecrated = "A stillness settles over the whole level: it is consecrated."
 # `what`: the stack, as the player knows it.
-look_over_merchants_eye = "You look over {what:counted} with a merchant's eye."
+look_over_merchants_eye = "You look over {what:a} with a merchant's eye."
 loose_a_volley = "You loose a volley!"
 mind_already_still = "Your mind is already still."
 # A dev action's: `id`, the prestige class as typed; `class`, the player's class id.
@@ -111,7 +111,7 @@ quails = "{who:The} quail{who:s}!"
 # `who`: the creature the war cry cowed.
 quails_and_flees = "{who:The} quail{who:s} and flee{who:s} from you."
 # `what`: the stacks handed over, a list.
-receive = "You receive {what:counted}."
+receive = "You receive {what:a}."
 # `who`: the unholy creature the banishing smite struck.
 reels_under_wrath = "{who:The} reel{who:s} under holy wrath!"
 refuse_to_fall = "You refuse to fall!"
@@ -123,7 +123,7 @@ roar_your_fury = "You roar your fury!"
 room_consecrated = "A stillness settles over the room: it is consecrated."
 run_into_something = "You run into something!"
 # `what`: the stacks left at the player's feet, a list.
-set_down_too_much = "Too much to carry, set down at your feet: {what:counted}."
+set_down_too_much = "Too much to carry, set down at your feet: {what:a}."
 # `who`: the creature the lullaby did not lull.
 shakes_off_song = "{who:The} shake{who:s} off the song."
 shop_not_sanctuary = "This is a shop, not a sanctuary."
