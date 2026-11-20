@@ -721,6 +721,22 @@ gives as English (the scribe list's school headings are the school's id, capital
 screen's spell detail is cut in its room, not run over the frame (#1910 stays in `KNOWN` until its
 layout gives the detail the room).
 
+**The look line** (`ui/look.rs`, `look.toml`, #1927) is a sentence entry per shape of the cell
+(`you`, `seen_creature`, `remember_things`, …) with its clauses nested in it as UI entries
+(`Arg::Msg` of a `ui.look.*` id, "Nested messages"), an empty text for a clause that does not
+apply; `lines` says it with the far-below part and the data's notes after it. The ground is a
+clause that says its own article (`ground` after "on", `ground_named` alone, an entry per
+terrain `noun`), its phrase `terrain:<id>` with char, blood, and "hollow" as `word:` adjectives;
+a creature is its type (`creature:<id>`, its grade a `word:` adjective, an animated thing's
+material an `Of`), an ally's owned by the player, a named one a literal; things are the lore's
+phrases said `a` (a rare "the Grim Bite, a long sword"). A list said with commas or semicolons
+(a creature's state, a room's, an item's tags) nests `listed` or `tags`, so the language owns
+the separator. Core's words it says as text until #1949: a sound heard (`you_hear`), how hurt a
+creature looks, a status's `seen`, an item's numbers and freshness, a damage type's name, a
+room's name with its article (`with_article`), where stairs lead, a place's name and note, and a
+chest's band with its state, a trap's name, and the grade's, char's, and blood's words (`word:`
+phrases).
+
 ## Lines of data
 
 A line whose text lives in the data, not in `messages/` (a dialogue line, a miscast's `seen`, an

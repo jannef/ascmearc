@@ -1,17 +1,24 @@
 //! Look mode: a cursor the player moves over the map to read what is there. It is a
 //! free action — no game time passes — and it only describes what the player perceives.
+//!
+//! The line is said from `assets/lang/en/ui/look.toml`: a sentence entry per shape of the cell,
+//! the clauses it holds nested in it as messages (`docs/dev/localization.md` "Nested messages"),
+//! an empty slot for a clause that does not apply. Creatures, things, and the ground are
+//! phrases, so the language gives their articles and numbers.
 
+use super::text::{UiText, look as T, ui_with};
 use crate::render::console::{Cell, Console};
 use ascmearc_core::Pos;
 use ascmearc_core::color::Rgb;
 use ascmearc_core::content::{
-    ActionKind, Content, Noun, ServiceKind, Stance, TerrainId, ZoneKind, is_proper,
+    ActionKind, Content, CreatureId, MaterialId, Noun, ServiceKind, Stance, TerrainId, TrapId,
+    ZoneKind,
 };
 use ascmearc_core::damage::ResistanceWord;
+use ascmearc_core::lang::{Arg, MessageId, Modifier, Msg, Person, Phrase, Word};
 use ascmearc_core::magic::Numbers;
-use ascmearc_core::object::{Stack, phrase, phrase_with};
+use ascmearc_core::object::Stack;
 use ascmearc_core::perception::{BelowView, CellView, PerceptionView, SeenActor};
-use ascmearc_core::text::{and_list, article, capitalized};
 use ascmearc_core::world::{ActorId, ActorKind};
 
 /// Cursor colors: dark glyph on a warm highlight, so it reads on any terrain and under any light.
@@ -28,37 +35,29 @@ pub const CURSOR_BG: Rgb = Rgb::new(0xe0, 0xc0, 0x70);
 /// behind you."; so does terrain with a description (a forgotten altar's), and then a
 /// gravestone's inscription.
 pub fn describe(view: &PerceptionView<'_>, p: Pos, blood: bool) -> String {
-    let text = describe_cell(view, p, blood);
-    let text = match view.below(p) {
-        Some(below) => format!("{text} Far below: {}.", far_below(view, below)),
-        None => text,
-    };
-    let text = match view.place(p).and_then(|place| place.note.as_deref()) {
-        Some(note) => format!("{text} {note}"),
-        None => text,
-    };
-    // Terrain with a description of its own (a forgotten altar) adds it after; a chest its
-    // band's.
-    let terrain = match view.cell(p) {
-        CellView::Visible(t) | CellView::Remembered(t) => Some(t),
-        CellView::Unknown => None,
-    };
+    let mut lines = vec![describe_cell(view, p, blood)];
+    if let Some(below) = view.below(p) {
+        lines.push(clause(T::FAR_BELOW, [("below", far_below(view, below))]));
+    }
+    // The data's own words after it, as written: a place's note, a terrain's description (a
+    // forgotten altar's) or a chest's band's, and a gravestone's inscription last ("A
+    // gravestone. Here lies Ælfric Wudu, 1381–1427.").
+    lines.extend((view.place(p)).and_then(|place| place.note.clone().map(Arg::Text)));
     let content = view.content();
     let band = (view.chest_at(p)).and_then(|c| content.chests().bands.get(c.band));
-    let described = match band {
-        Some(band) => Some(band.description.as_str()),
-        None => terrain.and_then(|t| content.terrain(t).description.as_deref()),
+    let described = match (band, view.cell(p)) {
+        (Some(band), _) => Some(band.description.clone()),
+        (None, CellView::Visible(t) | CellView::Remembered(t)) => {
+            content.terrain(t).description.clone()
+        }
+        (None, CellView::Unknown) => None,
     };
-    let text = match described {
-        Some(description) => format!("{text} {description}"),
-        None => text,
-    };
-    // A gravestone's inscription last: "A gravestone. Here lies Ælfric Wudu,
-    // 1381–1427."
-    match view.epitaph(p) {
-        Some(epitaph) => format!("{text} {epitaph}"),
-        None => text,
-    }
+    lines.extend(described.map(Arg::Text));
+    lines.extend(
+        view.epitaph(p)
+            .map(|epitaph| Arg::Text(epitaph.to_string())),
+    );
+    ui_with(T::LINES, &[("lines", Arg::List(lines))])
 }
 
 /// What the player's Knowledge tells of the creature at `p`, if it tells anything: "You know the
@@ -68,116 +67,178 @@ pub fn known(view: &PerceptionView<'_>, p: Pos) -> Option<String> {
     let content = view.content();
     let actor = view.actor_at(p)?;
     let known = view.known_resistances(actor);
-    let parts: Vec<String> = [
-        ResistanceWord::Immune,
-        ResistanceWord::Resistant,
-        ResistanceWord::Vulnerable,
+    let parts: Vec<Arg> = [
+        (ResistanceWord::Immune, T::IMMUNE_TO),
+        (ResistanceWord::Resistant, T::RESISTANT_TO),
+        (ResistanceWord::Vulnerable, T::VULNERABLE_TO),
     ]
     .into_iter()
-    .filter_map(|word| {
-        let kinds: Vec<&str> = (known.iter())
+    .filter_map(|(word, text)| {
+        // A damage type's name is the data's text until core's words are converted (#1949).
+        let kinds: Vec<Arg> = (known.iter())
             .filter(|(_, w)| *w == word)
-            .map(|(k, _)| content.damage_type(*k).name.as_str())
+            .map(|(k, _)| Arg::Text(content.damage_type(*k).name.clone()))
             .collect();
-        (!kinds.is_empty()).then(|| format!("{} to {}", word.word(), and_list(&kinds)))
+        (!kinds.is_empty()).then(|| clause(text, [("kinds", Arg::List(kinds))]))
     })
     .collect();
     if parts.is_empty() {
         return None;
     }
-    let name = &content.creature(actor.creature).name;
     let who = match proper_name(content, actor) {
-        Some(proper) => proper.to_string(),
-        None => {
-            let the = if actor.ally { "your" } else { "the" };
-            format!("{the} {name}{}", made_of(content, actor).0)
-        }
+        Some(proper) => proper,
+        None if actor.ally => made_of(content, actor, kind(content, actor)).owned_by(you()),
+        None => made_of(content, actor, kind(content, actor)),
     };
-    let parts: Vec<&str> = parts.iter().map(String::as_str).collect();
-    Some(format!("You know {who} is {}.", and_list(&parts)))
+    Some(ui_with(
+        T::KNOWN,
+        &[("who", who.into()), ("parts", Arg::List(parts))],
+    ))
+}
+
+/// A UI entry said inside another, with its slots filled.
+fn clause<const N: usize>(text: UiText, args: [(&'static str, Arg); N]) -> Arg {
+    let msg = (args.into_iter()).fold(Msg::new(MessageId::new(text.id)), |msg, (role, arg)| {
+        msg.role(role, arg)
+    });
+    msg.into()
+}
+
+/// An empty slot: a clause that does not apply.
+fn none() -> Arg {
+    Arg::Text(String::new())
+}
+
+/// `items` joined by `joiner` (`listed`, `tags`), a nested entry per join; none for none.
+fn joined(joiner: UiText, items: Vec<Arg>) -> Option<Arg> {
+    let mut items = items.into_iter().rev();
+    let last = items.next()?;
+    Some(items.fold(last, |rest, first| {
+        clause(joiner, [("first", first), ("rest", rest)])
+    }))
+}
+
+/// The player, as an owner ("your wolf").
+fn you() -> Phrase {
+    Phrase::literal("").person(Person::You)
+}
+
+/// A `word:` phrase: a word the data names without an id of its own (core's words, #1949).
+fn word(text: &str) -> Phrase {
+    Phrase::id(format!("word:{text}"))
+}
+
+/// A creature type as a phrase.
+fn creature_phrase(content: &Content, creature: CreatureId) -> Phrase {
+    Phrase::id(format!("creature:{}", content.creature(creature).id))
+}
+
+/// A seen creature's type as a phrase.
+fn kind(content: &Content, actor: &SeenActor) -> Phrase {
+    creature_phrase(content, actor.creature)
+}
+
+/// A terrain as a phrase.
+fn terrain_phrase(content: &Content, t: TerrainId) -> Phrase {
+    Phrase::id(format!("terrain:{}", content.terrain(t).id))
+}
+
+/// A known trap as a phrase: its name, until traps have lexicon ids.
+fn trap_phrase(content: &Content, trap: TrapId) -> Phrase {
+    word(&content.trap(trap).name)
 }
 
 /// What look mode says of a zone on a cell (`world/magic/zone.rs`).
-fn zone_words(kind: ZoneKind) -> &'static str {
-    match kind {
-        ZoneKind::Fire => "wreathed in fire",
-        ZoneKind::Fouled => "under a foul reek",
-        ZoneKind::Slick => "slick underfoot",
-        ZoneKind::Dark => "under a pall of dark",
-        ZoneKind::Smoke => "in thick smoke",
-    }
+fn zone_words(kind: ZoneKind) -> Arg {
+    let text = match kind {
+        ZoneKind::Fire => T::ZONE_FIRE,
+        ZoneKind::Fouled => T::ZONE_FOULED,
+        ZoneKind::Slick => T::ZONE_SLICK,
+        ZoneKind::Dark => T::ZONE_DARK,
+        ZoneKind::Smoke => T::ZONE_SMOKE,
+    };
+    clause(text, [])
 }
 
 /// [`describe`] without a place's note: who is there ([`creature`]), what lies there
-/// ([`pile`]), on what ground ([`fixture`], [`room`], a known trap), and what was heard there.
-fn describe_cell(view: &PerceptionView<'_>, p: Pos, blood: bool) -> String {
+/// ([`pile`]), on what ground ([`ground`], a known trap), and what was heard there.
+fn describe_cell(view: &PerceptionView<'_>, p: Pos, blood: bool) -> Arg {
     let content = view.content();
-    let room = room(view, p);
-    let ground = |t| {
-        let named = fixture(view, p, t, blood);
-        match (&room, view.leads_to(p)) {
-            (Some(room), Some(_)) => format!("{named}, {room}"),
-            (Some(room), None) => format!("{named} {room}"),
-            (None, _) => named,
-        }
-    };
-    let room_here = room.as_ref().map_or(String::new(), |r| format!(", {r}"));
+    // The ground after "on", with the room it lies in.
+    let on = |t| ground(view, p, t, blood, false, room_after(view, p));
     // A known trap is part of the ground: "a fireball trap on stone floor".
     let trap = (view.trap(p).filter(|_| view.chest_at(p).is_none()))
-        .map(|t| content.trap(t).name.as_str());
-    let terrain = |t| match trap {
-        Some(trap) => format!("{} on {}", with_article(trap), ground(t)),
-        None => ground(t),
+        .map(|t| Arg::from(trap_phrase(content, t)));
+    let terrain = |t| match &trap {
+        Some(trap) => clause(T::TRAP_ON, [("trap", trap.clone()), ("ground", on(t))]),
+        None => on(t),
     };
-    // Ground named in the plural ("webs") or as a mass noun ("open air") takes no article.
-    let plural = |t: TerrainId| {
-        trap.is_none() && matches!(content.terrain(t).noun, Noun::Plural | Noun::Mass)
-    };
-    let named = |t: TerrainId, phrase: String| match plural(t) {
-        true => phrase,
-        false => with_article(&phrase),
+    // The ground named alone, with its article unless it is named in the plural ("webs") or as
+    // a mass noun ("open air").
+    let named = |t| match &trap {
+        Some(_) => terrain(t),
+        None => ground(view, p, t, blood, true, room_after(view, p)),
     };
     // Nothing but a trap there: the trap first ("A pit, on stone floor.").
-    if let Some(trap) = trap
+    if let Some(trap) = &trap
         && view.actor_at(p).is_none()
         && view.objects(p).is_empty()
     {
-        return trap_alone(view, p, trap, ground);
+        return trap_alone(view, p, trap.clone(), on);
     }
     // A sound heard there (never on a cell the player sees): "You hear footsteps here."
-    let heard = view.sound_at(p).map(|s| s.you_hear());
+    let heard = view.sound_at(p).map(|s| Arg::Text(s.you_hear()));
     let things = pile(view, p);
-    let here = things
-        .as_ref()
-        .map_or(String::new(), |o| format!("; here: {o}"));
+    let here = (things.clone()).map_or_else(none, |o| clause(T::HERE, [("things", o)]));
     // What the player remembers at a cell out of sight.
     let memory = |t| match &things {
-        Some(things) => format!("{things} on {}", terrain(t)),
-        None => named(t, terrain(t)),
+        Some(things) => clause(
+            T::THINGS_ON,
+            [("things", things.clone()), ("ground", terrain(t))],
+        ),
+        None => named(t),
     };
     match (view.cell(p), heard) {
         (CellView::Visible(t), _) => match (view.actor_at(p), &things) {
-            (Some(_), _) if p == view.viewer() => format!("You, on {}{here}.", terrain(t)),
+            (Some(_), _) if p == view.viewer() => {
+                clause(T::YOU, [("ground", terrain(t)), ("here", here)])
+            }
             // The player's own image in a hall of mirrors.
             (Some(actor), _) if actor.kind == ActorKind::Player => {
-                format!("Your reflection, on {}{here}.", terrain(t))
+                clause(T::REFLECTION, [("ground", terrain(t)), ("here", here)])
             }
-            (Some(actor), _) => format!("{}, on {}{here}.", creature(view, actor), terrain(t)),
-            (None, Some(things)) => format!("{}, on {}.", capitalized(things), terrain(t)),
-            (None, None) => format!("{}.", capitalized(&named(t, terrain(t)))),
-        },
-        (CellView::Remembered(t), Some(heard)) => {
-            format!("{heard} here, where you remember {}.", memory(t))
-        }
-        (CellView::Remembered(t), None) => match &things {
-            Some(things) => format!("You remember {things} here, on {}.", terrain(t)),
-            None => format!(
-                "You remember {} here{room_here}.",
-                named(t, fixture(view, p, t, blood))
+            (Some(actor), _) => clause(
+                T::SEEN_CREATURE,
+                [
+                    ("who", creature(view, actor)),
+                    ("ground", terrain(t)),
+                    ("here", here),
+                ],
             ),
+            (None, Some(things)) => clause(
+                T::SEEN_THINGS,
+                [("things", things.clone()), ("ground", terrain(t))],
+            ),
+            (None, None) => clause(T::SEEN_GROUND, [("ground", named(t))]),
         },
-        (CellView::Unknown, Some(heard)) => format!("{heard} here."),
-        (CellView::Unknown, None) => "You don't know what is there.".to_string(),
+        (CellView::Remembered(t), Some(heard)) => clause(
+            T::HEARD_WHERE_REMEMBERED,
+            [("heard", heard), ("memory", memory(t))],
+        ),
+        (CellView::Remembered(t), None) => match &things {
+            Some(things) => clause(
+                T::REMEMBER_THINGS,
+                [("things", things.clone()), ("ground", terrain(t))],
+            ),
+            None => {
+                let room = (room(view, p))
+                    .map_or_else(none, |room| clause(T::ROOM_AFTER_COMMA, [("room", room)]));
+                let ground = ground(view, p, t, blood, true, none());
+                clause(T::REMEMBER_GROUND, [("ground", ground), ("room", room)])
+            }
+        },
+        (CellView::Unknown, Some(heard)) => clause(T::HEARD_HERE, [("heard", heard)]),
+        (CellView::Unknown, None) => clause(T::UNKNOWN, []),
     }
 }
 
@@ -186,335 +247,412 @@ fn describe_cell(view: &PerceptionView<'_>, p: Pos, blood: bool) -> String {
 /// examined further: how it stands toward them, how hurt it is, and what it wears stay unknown
 /// from this height), else what lies there ("a dagger, on grass"), else the ground ("grass");
 /// remembered, the ground as last seen from above.
-fn far_below(view: &PerceptionView<'_>, below: BelowView<'_>) -> String {
+fn far_below(view: &PerceptionView<'_>, below: BelowView<'_>) -> Arg {
     let content = view.content();
     match below {
         BelowView::Visible(cell) => {
-            let ground = &content.terrain(cell.terrain).name;
+            let ground = Arg::from(terrain_phrase(content, cell.terrain));
             match (&cell.actor, &cell.pile) {
-                (Some(actor), _) => {
-                    let name = &content.creature(actor.creature).name;
-                    let name = if is_proper(name) {
-                        name.clone()
-                    } else {
-                        with_article(name)
-                    };
-                    format!("{name}, on {ground}")
-                }
-                (None, Some(top)) => {
-                    let things = phrase(std::slice::from_ref(top), view.lore());
-                    format!("{things}, on {ground}")
-                }
-                (None, None) => ground.clone(),
+                (Some(actor), _) => clause(
+                    T::BELOW_CREATURE,
+                    [
+                        ("who", creature_phrase(content, actor.creature).into()),
+                        ("ground", ground),
+                    ],
+                ),
+                (None, Some(top)) => clause(
+                    T::BELOW_THING,
+                    [("what", view.lore().phrase(top).into()), ("ground", ground)],
+                ),
+                (None, None) => clause(T::BELOW_GROUND, [("ground", ground)]),
             }
         }
-        BelowView::Remembered(t) => content.terrain(t).name.clone(),
+        BelowView::Remembered(t) => clause(
+            T::BELOW_GROUND,
+            [("ground", terrain_phrase(content, t).into())],
+        ),
     }
 }
 
+/// The ground of `p`, of terrain `t`, as look mode names it, a clause: said after "on"
+/// (`ground`), or alone with its article (`ground_named`, by the terrain's noun) if `named`;
+/// with `room` after it ([`room_after`], or none).
+fn ground(
+    view: &PerceptionView<'_>,
+    p: Pos,
+    t: TerrainId,
+    blood: bool,
+    named: bool,
+    room: Arg,
+) -> Arg {
+    let (phrase, of, place) = fixture(view, p, t, blood);
+    let text = match (named, view.content().terrain(t).noun) {
+        (false, _) => T::GROUND,
+        (true, Noun::One) => T::GROUND_NAMED,
+        (true, Noun::Plural) => T::GROUND_NAMED_PLURAL,
+        (true, Noun::Mass) => T::GROUND_NAMED_MASS,
+    };
+    clause(
+        text,
+        [
+            ("ground", phrase.into()),
+            ("of", of),
+            ("where", place),
+            ("room", room),
+        ],
+    )
+}
+
 /// What the ground of `p`, of terrain `t`, is called with what stands on it, as look mode names
-/// it: the terrain, or a chest or a statue there, a wall found hollow; blood and char before it
-/// if `blood` is shown; where it leads, that it is partly dug, or the named place after it.
-fn fixture(view: &PerceptionView<'_>, p: Pos, t: TerrainId, blood: bool) -> String {
+/// it: the terrain, or a chest or a statue there, a wall found hollow, with blood and char
+/// before it if `blood` is shown; its `of` clause (a statue's, a chest's known trap); and its
+/// `where` clause: where it leads, that it is partly dug, or the named place.
+fn fixture(view: &PerceptionView<'_>, p: Pos, t: TerrainId, blood: bool) -> (Phrase, Arg, Arg) {
     let content = view.content();
-    // Stairs and locations name where they lead: "a staircase down, leading to The Depths 1";
-    // a named place its name: "a volcano, Fyrbeorg";
-    // a wall in sight that was dug into says so: "a stone wall, partly dug";
-    // a wall found to sound hollow says so: "a hollow stone wall".
     // A chest goes by its band: "a coffer", "an open coffer", "a locked coffer" (Chest-wise);
     // its known trap after it: "a coffer, trapped: an arrow trap".
     let chest = view.chest_at(p);
-    let chest_trap = (view.trap(p).filter(|_| chest.is_some())).map(|t| &content.trap(t).name);
+    let chest_trap = view.trap(p).filter(|_| chest.is_some());
     let def = content.terrain(t);
-    let def_name = match (chest, chest_trap) {
-        (Some(chest), Some(trap)) => format!(
-            "{}, trapped: {}",
-            chest.name(content.chests(), &def.name),
-            with_article(trap)
-        ),
-        (Some(chest), None) => chest.name(content.chests(), &def.name),
+    let (phrase, of) = match (chest, view.statue_at(p)) {
+        (Some(chest), _) => {
+            // The band's name with its state: core's words, until they are converted (#1949).
+            let name = word(&chest.name(content.chests(), &def.name));
+            let trapped = chest_trap.map_or_else(none, |trap| {
+                clause(T::TRAPPED, [("trap", trap_phrase(content, trap).into())])
+            });
+            (name, trapped)
+        }
         // A statue of the stoned goes by what it was: "a statue of a dwarf, mouth open", or
         // by the past character the graveyard names it for: "a statue of Brakka the dwarf".
-        (None, _) if view.statue_at(p).is_some() => {
-            let of = view.statue_at(p).map(|c| &content.creature(c).name);
-            let of = of.map_or_else(String::new, |name| {
-                if is_proper(name) {
-                    name.clone()
-                } else {
-                    with_article(name)
-                }
-            });
-            let of = view.statue_name(p).unwrap_or(of);
-            format!("{} of {of}, mouth open", def.name)
+        (None, Some(was)) => {
+            let of = match view.statue_name(p) {
+                Some(name) => Phrase::literal(name),
+                None => creature_phrase(content, was),
+            };
+            let of = clause(T::STATUE_OF, [("of", of.into())]);
+            (terrain_phrase(content, t), of)
         }
-        // A wall the player found sounds hollow (a sealed room's breach): "a hollow stone
-        // wall".
-        (None, _) if view.hollow(p) => format!("hollow {}", def.name),
-        (None, _) => def.name.clone(),
+        (None, None) => (terrain_phrase(content, t), none()),
     };
-    let name = match view.blood(p).filter(|_| blood) {
-        Some(stain) => format!("{} {def_name}", stain.word(!def.transparent)),
-        None => def_name,
-    };
-    // Char reads before the blood: "charred blood-stained stone floor".
-    let name = match view.scorch(p).filter(|_| blood) {
-        Some(char) => format!("{} {name}", ascmearc_core::scorch::word(char)),
-        None => name,
-    };
-    match view.leads_to(p) {
-        Some(to) => format!("{name}, leading to {to}"),
-        None if view.is_dug(p) => format!("{name}, partly dug"),
+    // Char reads before the blood: "charred blood-stained stone floor"; a wall the player found
+    // sounds hollow (a sealed room's breach) says so: "a hollow stone wall".
+    let char = (view.scorch(p).filter(|_| blood)).map(|c| ascmearc_core::scorch::word(c));
+    let stain = (view.blood(p).filter(|_| blood)).map(|stain| stain.word(!def.transparent));
+    let hollow =
+        (view.hollow(p) && chest.is_none() && view.statue_at(p).is_none()).then_some("hollow");
+    let phrase = [char, stain, hollow]
+        .into_iter()
+        .flatten()
+        .fold(phrase, |phrase, adjective| {
+            phrase.with(Modifier::Adjective(Word::id(format!("word:{adjective}"))))
+        });
+    // Stairs and locations name where they lead: "a staircase down, leading to The Depths 1";
+    // a wall in sight that was dug into says so: "a stone wall, partly dug"; a named place its
+    // name: "a volcano, Fyrbeorg".
+    let place = match view.leads_to(p) {
+        Some(to) => clause(T::LEADING_TO, [("to", Arg::Text(to))]),
+        None if view.is_dug(p) => clause(T::PARTLY_DUG, []),
         None => match view.place(p) {
-            Some(place) => format!("{name}, {}", place.name),
-            None => name,
+            Some(place) => clause(T::PLACE, [("place", Arg::Text(place.name.clone()))]),
+            None => none(),
         },
+    };
+    (phrase, of, place)
+}
+
+/// The room clause after the ground's name ([`room`]): after a comma where the ground leads
+/// somewhere ("a staircase down, leading to The Vast Caverns, in a sanctuary"); none for none.
+fn room_after(view: &PerceptionView<'_>, p: Pos) -> Arg {
+    match (room(view, p), view.leads_to(p)) {
+        (Some(room), Some(_)) => clause(T::ROOM_AFTER_COMMA, [("room", room)]),
+        (Some(room), None) => clause(T::ROOM, [("room", room)]),
+        (None, _) => none(),
     }
 }
 
 /// Where the walkable ground of `p` lies, as it reads after the ground's name: the special room
 /// the player has been in ("in an echoing hall"), ground hallowed by Sanctuary ("on hallowed
 /// ground", the dark powers' "on dreaded ground"), and a zone lying on it ("under a foul
-/// reek"), joined by commas; none for none of them.
-fn room(view: &PerceptionView<'_>, p: Pos) -> Option<String> {
+/// reek"), a list; none for none of them.
+fn room(view: &PerceptionView<'_>, p: Pos) -> Option<Arg> {
     let walkable = match view.cell(p) {
         CellView::Visible(t) | CellView::Remembered(t) => view.content().terrain(t).walkable,
         CellView::Unknown => false,
     };
-    let room = (view.room(p))
-        .filter(|_| walkable)
-        .map(|r| format!("in {}", r.with_article()));
-    let hallow = (view.hallow(p).filter(|_| walkable))
-        .map(|dark| format!("on {} ground", if dark { "dreaded" } else { "hallowed" }));
-    let room = match (room, hallow) {
-        (Some(room), Some(hallow)) => Some(format!("{room}, {hallow}")),
-        (room, hallow) => room.or(hallow),
-    };
-    match (room, view.zone_at(p).map(zone_words)) {
-        (Some(room), Some(zone)) => Some(format!("{room}, {zone}")),
-        (room, zone) => room.or(zone.map(str::to_string)),
-    }
+    // The room's name with its article is core's words until they are converted (#1949).
+    let room = (view.room(p).filter(|_| walkable))
+        .map(|r| clause(T::IN_ROOM, [("room", Arg::Text(r.with_article()))]));
+    let hallow = (view.hallow(p).filter(|_| walkable)).map(|dark| match dark {
+        true => clause(T::DREADED, []),
+        false => clause(T::HALLOWED, []),
+    });
+    let zone = view.zone_at(p).map(zone_words);
+    joined(
+        T::LISTED,
+        [room, hallow, zone].into_iter().flatten().collect(),
+    )
 }
 
 /// A cell that holds nothing but a known trap `trap`: the trap first ("A pit, on stone floor."),
-/// on its `ground`.
-fn trap_alone(
-    view: &PerceptionView<'_>,
-    p: Pos,
-    trap: &str,
-    ground: impl Fn(TerrainId) -> String,
-) -> String {
-    let a_trap = with_article(trap);
+/// on its ground (`on`).
+fn trap_alone(view: &PerceptionView<'_>, p: Pos, trap: Arg, on: impl Fn(TerrainId) -> Arg) -> Arg {
     match (view.cell(p), view.sound_at(p)) {
-        (CellView::Visible(t), _) => format!("{}, on {}.", capitalized(&a_trap), ground(t)),
-        (CellView::Remembered(t), Some(heard)) => format!(
-            "{} here, where you remember {a_trap} on {}.",
-            heard.you_hear(),
-            ground(t)
-        ),
-        (CellView::Remembered(t), None) => {
-            format!("You remember {a_trap} here, on {}.", ground(t))
+        (CellView::Visible(t), _) => clause(T::SEEN_TRAP, [("trap", trap), ("ground", on(t))]),
+        (CellView::Remembered(t), Some(heard)) => {
+            let memory = clause(T::TRAP_ON, [("trap", trap), ("ground", on(t))]);
+            clause(
+                T::HEARD_WHERE_REMEMBERED,
+                [("heard", Arg::Text(heard.you_hear())), ("memory", memory)],
+            )
         }
-        (CellView::Unknown, _) => "You don't know what is there.".to_string(),
+        (CellView::Remembered(t), None) => {
+            clause(T::REMEMBER_TRAP, [("trap", trap), ("ground", on(t))])
+        }
+        (CellView::Unknown, _) => clause(T::UNKNOWN, []),
+    }
+}
+
+/// Stacks as the line names them: one its phrase, two or three a list, more a count of objects
+/// ("17 objects"); `item` makes each of a list. None for none.
+fn stacks(stacks: &[Stack], item: impl Fn(&Stack) -> Arg) -> Option<Arg> {
+    match stacks {
+        [] => None,
+        [one] => Some(item(one)),
+        [_, _] | [_, _, _] => Some(Arg::List(stacks.iter().map(item).collect())),
+        _ => {
+            let count: u32 = stacks.iter().map(|s| s.count).sum();
+            Some(word("object").count(count).into())
+        }
     }
 }
 
 /// What lies on `p` as look mode names it: "a dagger", "a dagger and 12 arrows", "17 objects";
 /// none for nothing. Each says what it gives in numbers (`magic::numbers`), and goods for sale in a
 /// shop their price: "a dagger (+0 hit, 1d4, range 5; for sale, 45 gold)".
-fn pile(view: &PerceptionView<'_>, p: Pos) -> Option<String> {
-    let objects = view.objects(p);
-    let tag = |i: usize| {
-        let numbers = Numbers::of(&objects[i], view.content()).text(view.content());
-        let price = (view.price_tag(p, &objects[i])).map(|g| format!("for sale, {g} gold"));
+fn pile(view: &PerceptionView<'_>, p: Pos) -> Option<Arg> {
+    let content = view.content();
+    let seen = matches!(view.cell(p), CellView::Visible(_));
+    let item = |stack: &Stack| {
+        let what = Arg::from(view.lore().phrase(stack));
+        // The numbers are core's words until they are converted (#1949).
+        let numbers = Numbers::of(stack, content).text(content).map(Arg::Text);
         // A trained eye (Appraise, Survival; #1031) tells food's freshness of what it sees.
-        let fresh = matches!(view.cell(p), CellView::Visible(_))
-            .then(|| view.judge(&objects[i]))
-            .flatten()
-            .map(|w| format!("looks {w}"));
-        let tags: Vec<String> = numbers.into_iter().chain(fresh).chain(price).collect();
-        (!tags.is_empty()).then(|| tags.join("; "))
+        let fresh = (seen.then(|| view.judge(stack)).flatten())
+            .map(|w| clause(T::LOOKS, [("fresh", Arg::Text(w.to_string()))]));
+        let price = (view.price_tag(p, stack))
+            .map(|g| clause(T::FOR_SALE, [("gold", Arg::Number(i64::from(g)))]));
+        let tags = [numbers, fresh, price].into_iter().flatten().collect();
+        match joined(T::TAGS, tags) {
+            Some(tags) => clause(T::TAGGED, [("what", what), ("tags", tags)]),
+            None => what,
+        }
     };
-    (!objects.is_empty()).then(|| phrase_with(objects, view.lore(), tag))
+    stacks(view.objects(p), item)
 }
 
 /// A creature the player sees (not themselves), as it reads before ", on" its ground: its name,
 /// how it stands toward them, how hurt it looks and the effects that show on it, and what it
 /// wears and wields.
-fn creature(view: &PerceptionView<'_>, actor: &SeenActor) -> String {
+fn creature(view: &PerceptionView<'_>, actor: &SeenActor) -> Arg {
     let content = view.content();
-    let name = &content.creature(actor.creature).name;
-    // Its type tells the player how it stands toward them (its faction), and they
-    // see how hurt it is: in words, never in hit points.
-    // An ally of the player's is theirs: "Your wolf (unhurt)", or
-    // a named one "(your ally, unhurt)".
-    let stance = match view.stance(actor) {
-        _ if actor.ally => "",
-        Stance::Hostile => "hostile, ",
-        Stance::Neutral => "",
+    let proper = proper_name(content, actor);
+    // A named ally of the player's is theirs: "(your ally, unhurt)"; any other ally is said
+    // as theirs: "Your wolf (unhurt)".
+    let ally = (actor.ally && proper.is_some()).then(|| clause(T::ALLY, []));
+    // Its type tells the player how it stands toward them (its faction).
+    let hostile = match view.stance(actor) {
+        _ if actor.ally => None,
+        Stance::Hostile => Some(clause(T::HOSTILE, [])),
+        Stance::Neutral => None,
     };
-    let health = actor.health.word();
-    // The status effects that show on it: ", bleeding".
-    let effects: String = (view.effects_of(actor.id))
-        .filter_map(|s| content.status(s).seen.as_deref())
-        .map(|word| format!(", {word}"))
-        .collect();
+    // They see how hurt it is: in words, never in hit points (core's words, #1949).
+    let health = Some(Arg::Text(actor.health.word().to_string()));
+    // The status effects that show on it: ", bleeding" (the data's words, #1949).
+    let effects = (view.effects_of(actor.id))
+        .filter_map(|s| content.status(s).seen.clone())
+        .map(Arg::Text);
     // Stalker's eye: it has not noticed the player (never said without it).
-    let effects = if actor.unaware {
-        format!("{effects}, unaware of you")
-    } else {
-        effects
-    };
+    let unaware = actor.unaware.then(|| clause(T::UNAWARE, []));
     // The creature the player's openings are in (`world/classes/mark.rs`).
-    let effects = if actor.marked {
-        format!("{effects}, your mark")
-    } else {
-        effects
-    };
+    let marked = actor.marked.then(|| clause(T::YOUR_MARK, []));
+    let state: Vec<Arg> = [ally, hostile, health]
+        .into_iter()
+        .flatten()
+        .chain(effects)
+        .chain([unaware, marked].into_iter().flatten())
+        .collect();
+    let state = joined(T::LISTED, state).unwrap_or_else(none);
     // What lives in it shows (docs/design/monster-dread.md §5.5): "writhing".
     let writhing = match content.creature(actor.creature).dies_into {
-        Some(_) => ", writhing",
-        None => "",
+        Some(_) => clause(T::WRITHING, []),
+        None => none(),
     };
-    let gear = format!(
-        "{writhing}{}{}",
-        made_of(content, actor).1,
-        gear(view, actor.id)
-    );
-    // A unique character the player knows by name: "Sister Hild (unhurt), who
-    // cures and mends for gold, on plank floor."; or a named monster by its type's
-    // proper name: "Black Wystan (hostile, unhurt), ...".
-    let proper = proper_name(content, actor);
-    let ally = if actor.ally { "your ally, " } else { "" };
+    let moves = (moves(content, actor)).map_or_else(none, |m| clause(T::MOVES, [("moves", m)]));
+    let [wielding, wearing, ready] = gear(view, actor.id);
+    let after = |who: Arg, services: Arg, waits: Arg| {
+        [
+            ("who", who),
+            ("state", state.clone()),
+            ("services", services),
+            ("waits", waits),
+            ("writhing", writhing.clone()),
+            ("moves", moves.clone()),
+            ("wielding", wielding.clone()),
+            ("wearing", wearing.clone()),
+            ("ready", ready.clone()),
+        ]
+    };
     match proper {
-        Some(proper) => format!(
-            "{proper} ({ally}{stance}{health}{effects}){}{gear}",
-            services(content, actor),
+        // A unique character the player knows by name: "Sister Hild (unhurt), who
+        // cures and mends for gold, on plank floor."; or a named monster by its type's
+        // proper name: "Black Wystan (hostile, unhurt), ...".
+        Some(proper) => clause(
+            T::CREATURE,
+            after(proper.into(), services(content, actor), none()),
         ),
         // The player's kept beast by its name: "Snel, your hound (unhurt), ...".
-        None if actor.companion => format!(
-            "{}, your {name}{} ({health}{effects}){gear}",
-            (view.kept())
-                .find(|(a, _)| a.id == actor.id)
-                .map_or("Your companion", |(_, c)| c.name.as_str()),
-            made_of(content, actor).0,
-        ),
-        // Its grade, which anyone sees: "A big
-        // kobold"; messages name its type alone.
+        None if actor.companion => {
+            let name = (view.kept()).find(|(a, _)| a.id == actor.id).map_or_else(
+                || clause(T::YOUR_COMPANION, []),
+                |(_, c)| Arg::Text(c.name.clone()),
+            );
+            let who = made_of(content, actor, kind(content, actor)).owned_by(you());
+            clause(
+                T::COMPANION,
+                [
+                    ("name", name),
+                    ("who", who.into()),
+                    ("state", state),
+                    ("writhing", writhing),
+                    ("moves", moves),
+                    ("wielding", wielding),
+                    ("wearing", wearing),
+                    ("ready", ready),
+                ],
+            )
+        }
+        // Its grade, which anyone sees: "A big kobold"; messages name its type alone.
         None => {
             let def = content.creature(actor.creature);
-            let name = match ascmearc_core::grade::word(def, actor.grade) {
-                Some(word) => format!("{word} {name}"),
-                None => name.clone(),
+            let who = kind(content, actor);
+            let who = match ascmearc_core::grade::word(def, actor.grade) {
+                Some(grade) => who.with(Modifier::Adjective(Word::id(format!("word:{grade}")))),
+                None => who,
             };
-            format!(
-                "{} {name}{} ({stance}{health}{effects}){}{gear}",
-                if actor.ally {
-                    "Your".to_string()
-                } else {
-                    capitalized(article(&name))
-                },
-                made_of(content, actor).0,
-                waits(content, actor),
+            let who = made_of(content, actor, who);
+            let who = match actor.ally {
+                true => who.owned_by(you()),
+                false => who,
+            };
+            clause(
+                T::CREATURE,
+                after(who.into(), none(), waits(content, actor)),
             )
         }
     }
 }
 
 /// The proper name a seen creature goes by, if any: a unique character's or a named monster's.
-fn proper_name<'a>(content: &'a Content, actor: &SeenActor) -> Option<&'a str> {
+fn proper_name(content: &Content, actor: &SeenActor) -> Option<Phrase> {
     let name = &content.creature(actor.creature).name;
-    (actor.dialogue)
-        .and_then(|d| content.dialogue(d).name.as_deref())
-        .or_else(|| ascmearc_core::content::is_proper(name).then_some(name.as_str()))
+    match (actor.dialogue).and_then(|d| content.dialogue(d).name.as_deref()) {
+        Some(name) => Some(Phrase::literal(name)),
+        None => ascmearc_core::content::is_proper(name).then(|| kind(content, actor)),
+    }
 }
 
 /// What a seen creature sells as a service, as it reads after its name: ", who cures and mends
 /// for gold"; nothing if it sells none (campaign design §6.1).
-fn services(content: &Content, actor: &SeenActor) -> String {
+fn services(content: &Content, actor: &SeenActor) -> Arg {
     let Some(dialogue) = actor.dialogue else {
-        return String::new();
+        return none();
     };
-    let mut verbs: Vec<&str> = Vec::new();
+    let mut verbs: Vec<UiText> = Vec::new();
     for service in &content.dialogue(dialogue).services {
         let verb = match service.does {
-            ServiceKind::Cure => "cures",
-            ServiceKind::Decurse => "frees the cursed",
-            ServiceKind::Identify => "identifies",
-            ServiceKind::Mend => "mends",
-            ServiceKind::TrainSkill => "teaches",
+            ServiceKind::Cure => T::CURES,
+            ServiceKind::Decurse => T::FREES_THE_CURSED,
+            ServiceKind::Identify => T::IDENTIFIES,
+            ServiceKind::Mend => T::MENDS,
+            ServiceKind::TrainSkill => T::TEACHES,
         };
         if !verbs.contains(&verb) {
             verbs.push(verb);
         }
     }
     if verbs.is_empty() {
-        return String::new();
+        return none();
     }
-    format!(", who {} for gold", and_list(&verbs))
+    let verbs = verbs.into_iter().map(|verb| clause(verb, [])).collect();
+    clause(T::SERVICES, [("verbs", Arg::List(verbs))])
 }
 
 /// ", who waits" after a seen creature's name when its dialogue's only topics are callings'
 /// (`calls`), with no service or wares (the Strange Spirit: "a strange spirit (unhurt), who
 /// waits"; docs/design/prestige-classes.md §7); nothing for any other.
-fn waits(content: &Content, actor: &SeenActor) -> &'static str {
+fn waits(content: &Content, actor: &SeenActor) -> Arg {
     let Some(dialogue) = actor.dialogue else {
-        return "";
+        return none();
     };
     let d = content.dialogue(dialogue);
     let callings = !d.topics.is_empty() && d.topics.iter().all(|t| t.calls.is_some());
     match callings && d.services.is_empty() && d.offer.is_none() {
-        true => ", who waits",
-        false => "",
+        true => clause(T::WAITS, []),
+        false => none(),
     }
 }
 
-/// What a seen animated thing is made of and how it moves, as they
-/// read after its name and after how hurt it looks: (" of silver", ", rocking"); nothing for any
-/// other creature.
-fn made_of(content: &Content, actor: &SeenActor) -> (String, String) {
+/// What a seen animated thing's body is made of, if it is one.
+fn animated(content: &Content, actor: &SeenActor) -> Option<MaterialId> {
     // A household thing's body; a blade's weapon is told by the gear line instead.
-    let Some(shape) = actor
-        .shape
+    (actor.shape)
         .filter(|_| content.animated_body(actor.creature).is_some())
-    else {
-        return Default::default();
-    };
-    let moves = (content.animated_body(actor.creature))
-        .and_then(|b| b.spec.moves.as_deref())
-        .map_or(String::new(), |m| format!(", {m}"));
-    (
-        format!(" of {}", content.material(shape.material).name),
-        moves,
-    )
+        .map(|shape| shape.material)
 }
 
-/// What a seen creature wears and wields, as it reads after its name: ", wielding a spear,
-/// wearing a leather jerkin", ", with a short bow and 20 arrows ready"; nothing if it has none.
-/// That is all the player sees of what it carries.
-fn gear(view: &PerceptionView<'_>, actor: ActorId) -> String {
+/// `who`, a seen creature's phrase, with what it is made of if it is an animated thing:
+/// "animated candlestick of silver".
+fn made_of(content: &Content, actor: &SeenActor, who: Phrase) -> Phrase {
+    match animated(content, actor) {
+        Some(material) => {
+            let material = format!("material:{}", content.material(material).id);
+            who.with(Modifier::Of(Word::id(material)))
+        }
+        None => who,
+    }
+}
+
+/// How a seen animated thing moves, the data's word ("rocking"); none for any other creature.
+fn moves(content: &Content, actor: &SeenActor) -> Option<Arg> {
+    animated(content, actor)?;
+    let body = content.animated_body(actor.creature)?;
+    body.spec.moves.clone().map(Arg::Text)
+}
+
+/// What a seen creature wields, wears, and has ready, as each reads after its name: ", wielding
+/// a spear", ", wearing a leather jerkin", ", with a short bow and 20 arrows ready"; each none if
+/// it has none. That is all the player sees of what it carries.
+fn gear(view: &PerceptionView<'_>, actor: ActorId) -> [Arg; 3] {
     let content = view.content();
-    let mut groups: [(&str, &str, Vec<Stack>); 3] = [
-        ("wielding ", "", Vec::new()),
-        ("wearing ", "", Vec::new()),
-        ("with ", " ready", Vec::new()),
-    ];
+    let mut groups: [Vec<Stack>; 3] = Default::default();
     for g in view.gear(actor) {
         let group = match content.slot(g.slot).action {
             ActionKind::Wield => 0,
             ActionKind::Ready => 2,
             _ => 1,
         };
-        groups[group].2.push(g.stack.clone());
+        groups[group].push(g.stack.clone());
     }
-    groups
-        .iter()
-        .filter(|(_, _, stacks)| !stacks.is_empty())
-        .map(|(before, after, stacks)| format!(", {before}{}{after}", phrase(stacks, view.lore())))
-        .collect()
-}
-
-fn with_article(noun: &str) -> String {
-    format!("{} {noun}", article(noun))
+    let said = |text: UiText, group: &[Stack]| {
+        stacks(group, |stack| view.lore().phrase(stack).into())
+            .map_or_else(none, |what| clause(text, [("what", what)]))
+    };
+    [
+        said(T::WIELDING, &groups[0]),
+        said(T::WEARING, &groups[1]),
+        said(T::READY, &groups[2]),
+    ]
 }
 
 /// Draws the cursor at console cell `(x, y)`, showing what the player perceives there.
@@ -1546,12 +1684,5 @@ map = '''
         // No material word: the gear line names the weapon as anyone's, unidentified.
         let said = [Pos::new(2, 1), Pos::new(4, 1)].map(|p| describe(&view, p, true));
         insta::assert_snapshot!(said.join("\n"));
-    }
-
-    #[test]
-    fn articles() {
-        assert_eq!(with_article("open door"), "an open door");
-        assert_eq!(with_article("stone wall"), "a stone wall");
-        assert_eq!(capitalized("an altar"), "An altar");
     }
 }
