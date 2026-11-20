@@ -8,13 +8,16 @@
 //!
 //! It never says a number the game hides, the word "seed", or that lucky days exist to anyone
 //! not born on one. Like every screen it is a plain state machine, testable without a window.
+//! Its words are `assets/lang/en/ui/sign_screen.toml`; the legends and the gifts are the data's.
 
 use super::chargen_screen::{Draft, WIDTH, adjustments};
 use super::menu::{HINTS, Nav, Panel, Press, wrap};
 use super::screens::{ScreenAction, ScreenName};
+use super::text::{sign_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use ascmearc_core::content::Content;
+use ascmearc_core::lang::Arg;
 
 /// Where a gift's words begin, from the panel's inner edge.
 const WORDS_X: i32 = 20;
@@ -65,19 +68,19 @@ pub struct SignScreen {
 impl SignScreen {
     /// The reveal for the race chosen on the screens below.
     pub fn new(content: &Content, draft: &Draft) -> Self {
-        let empty = |why: &str| Self {
-            born: why.to_string(),
+        let empty = |why: String| Self {
+            born: why,
             legend: String::new(),
             lucky: None,
             gifts: Vec::new(),
             adjustments: String::new(),
         };
         let Some(spec) = draft.spec(content) else {
-            return empty("There are no races to be born to.");
+            return empty(ui(T::NO_RACES));
         };
         let start = match spec.start(content, draft.seed(), draft.start()) {
             Ok(start) => start,
-            Err(why) => return empty(&why),
+            Err(why) => return empty(why),
         };
         let c = start.character;
         let parts = (content.horoscope())
@@ -86,18 +89,13 @@ impl SignScreen {
                 let (animal, element) = h.parts(s)?;
                 Some((h, animal, element))
             });
-        let date = c.born.text(content.calendar());
-        let age = c.age_on(draft.start());
-        let years = if age == 1 { "year" } else { "years" };
+        let date = ("date", Arg::from(c.born.text(content.calendar())));
+        let age = ("age", Arg::Number(c.age_on(draft.start()).into()));
         let Some((h, animal, element)) = parts else {
-            return empty(&format!(
-                "You were born on {date}. You are {age} {years} old."
-            ));
+            return empty(ui_with(T::BORN, &[date, age]));
         };
-        let sign = h.name(c.sign.as_ref().expect("a sign"));
-        let born = format!(
-            "You were born on {date}, in the year of the {sign}. You are {age} {years} old."
-        );
+        let sign = ("sign", h.name(c.sign.as_ref().expect("a sign")).into());
+        let born = ui_with(T::BORN_SIGN, &[date, sign, age]);
         let legend = format!("{} {}", animal.description, element.description);
         let lucky = c.lucky(content);
         let book = content.talents();
@@ -115,7 +113,7 @@ impl SignScreen {
                     Look::Plain
                 };
                 let name = if def.flaw {
-                    format!("but {}", def.name)
+                    ui_with(T::FLAW, &[("name", def.name.as_str().into())])
                 } else {
                     def.name.clone()
                 };
@@ -126,12 +124,16 @@ impl SignScreen {
                 }
             })
             .collect();
+        let adjustment = |name: &str, stats: String| {
+            ui_with(
+                T::ADJUSTMENT,
+                &[("name", name.into()), ("stats", stats.into())],
+            )
+        };
         let adjustments = format!(
-            "{}: {}   {}: {}",
-            animal.name,
-            adjustments(&animal.stats),
-            element.name,
-            adjustments(&element.stats)
+            "{}   {}",
+            adjustment(&animal.name, adjustments(&animal.stats)),
+            adjustment(&element.name, adjustments(&element.stats))
         );
         Self {
             born,
@@ -199,21 +201,17 @@ impl SignScreen {
         // Rows: margin, the lines, a gap, the footer, the frame.
         let inner = WIDTH.min(console.cols() as i32) - 4;
         let lines = self.lines(inner - 2);
-        let panel = Panel::new(
-            console,
-            " Born under the stars ",
-            WIDTH,
-            lines.len() as i32 + 5,
-        );
+        let title = format!(" {} ", ui(T::TITLE));
+        let panel = Panel::new(console, &title, WIDTH, lines.len() as i32 + 5);
         let x = panel.inner_x();
         let footer_y = panel.y + panel.h - 2;
         for (y, (line, look, at)) in (panel.y + 2..).zip(&lines) {
             if y < footer_y - 1 {
-                console.print(x + 1 + at, y, line, look.color());
+                console.print_in(x + 1 + at, y, line, look.color(), panel.inner_w() - 1 - at);
             }
         }
-        let keys = HINTS;
-        panel.footer(console, &format!("{} continue   Esc back", keys.confirm));
+        let go_on = ui_with(T::CONTINUE, &[("confirm", HINTS.confirm.into())]);
+        panel.footer(console, &format!("{go_on}   {}", ui(T::BACK)));
     }
 }
 

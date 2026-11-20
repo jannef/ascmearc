@@ -351,6 +351,7 @@ The data is `content/quarrel.rs` (`QuestDef::quarrel`, a `Quarrel`; the fields i
   arrival's words: an active quarrel's side standing on the level, absent or `Turned`, becomes
   `Offered` and says its `offer` through `World::answer`, so `Event::Talked` opens the dialogue
   screen on it. `side_topics` (after the quest topics) lists `side-<quest>` "Take <name>'s side"
+  (`TopicName::Side`; the dialogue screen words it)
   and `refuse-<quest>` "Refuse <name>" while `Offered`; `ask_side` answers them: join makes them
   `Allied` and every other wizard `Hostile` (the giver, one offered or allied) or `Turned` (one
   not met), says the `join` (the screen reopens) and "<name> is with you now. <others> will have

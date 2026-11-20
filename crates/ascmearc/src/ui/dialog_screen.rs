@@ -11,10 +11,14 @@
 //! a dialog that must be answered ([`Dialog::required`]: an overworld encounter) ignores Esc.
 //! The safe option (Cancel, else Decline) is selected at first. Each option shows its shortcut
 //! keys. A held key's repeats never answer (`ScreenStack::handle`).
+//!
+//! Its own words (the footer, the keys after an option) are
+//! `assets/lang/en/ui/dialog_screen.toml`; everything it asks is its caller's.
 
 use super::cursor;
 use super::menu::{HINTS, Nav, Panel, Press, wrap};
 use super::screens::ScreenAction;
+use super::text::{dialog_screen as T, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use crate::settings::fixed::{self, Answer};
@@ -202,7 +206,10 @@ impl DialogScreen {
         (self.dialog.options.iter().enumerate())
             .map(|(i, o)| match self.dialog.keys_of(i).join(", ") {
                 keys if keys.is_empty() => o.label.clone(),
-                keys => format!("{}  ({keys})", o.label),
+                keys => {
+                    let keys = ui_with(T::KEYS, &[("keys", keys.into())]);
+                    format!("{}  {keys}", o.label)
+                }
             })
             .collect()
     }
@@ -213,9 +220,13 @@ impl DialogScreen {
         let lines = wrap(&self.dialog.text, TEXT_W as i32);
         let rows = self.rows();
         let keys = HINTS;
+        let select = ui_with(T::SELECT, &[("confirm", keys.confirm.into())]);
         let footer = match rows.len() {
-            0 | 1 => format!("{} select", keys.confirm),
-            _ => format!("{}/{} choose  {} select", keys.up, keys.down, keys.confirm),
+            0 | 1 => select,
+            _ => {
+                let arrows = [("up", keys.up.into()), ("down", keys.down.into())];
+                format!("{}  {select}", ui_with(T::CHOOSE, &arrows))
+            }
         };
         let footer = footer.as_str();
         let width = |s: &str| s.chars().count();

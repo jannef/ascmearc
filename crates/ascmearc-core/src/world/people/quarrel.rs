@@ -33,8 +33,7 @@ use crate::msg;
 use crate::object::{self, Stack};
 use crate::perception::PerceptionView;
 use crate::rng::Rng;
-use crate::text::capitalized;
-use crate::world::{ActorId, Spent, TopicView, World};
+use crate::world::{ActorId, Spent, TopicName, TopicView, World};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
@@ -109,15 +108,16 @@ impl PartingChoice {
     }
 }
 
-/// The parting as the one dialog asks it.
+/// The parting as the one dialog asks it; the app words its title and rows
+/// (`assets/lang/en/ui/parting.toml`).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct PartingView {
-    /// The wizard's name: "Master Ordgar".
-    pub title: String,
+    /// The wizard: "Master Ordgar".
+    pub who: Phrase,
     /// Their words.
     pub text: String,
-    /// The two rows: "Leave", and "Betray Master Ordgar".
-    pub choices: Vec<(String, PartingChoice)>,
+    /// The two rows: leave, and betray them.
+    pub choices: Vec<PartingChoice>,
 }
 
 /// Whether wizard `npc` of `def`'s quarrel is the player's ally, `record` the quest's: the giver
@@ -165,14 +165,10 @@ impl PerceptionView<'_> {
         let def = content.quest(content.quest_id(&pending.quest)?);
         let taker = def.quarrel.takers.iter().find(|t| t.npc == pending.npc)?;
         let words = def.quarrel.parting.as_ref()?;
-        let name = content.speaker_called(taker.speaker);
         Some(PartingView {
+            who: content.speaker_phrase(taker.speaker),
             text: taker.parting.clone().unwrap_or_else(|| words.text.clone()),
-            choices: vec![
-                ("Leave".into(), PartingChoice::Leave),
-                (format!("Betray {name}"), PartingChoice::Betray),
-            ],
-            title: capitalized(&name),
+            choices: vec![PartingChoice::Leave, PartingChoice::Betray],
         })
     }
 }
@@ -271,16 +267,16 @@ impl World {
             if !offered {
                 continue;
             }
-            let name = self.content.speaker_called(speaker);
-            let topic = |prefix: &str, name: String| TopicView {
+            let who = self.content.speaker_phrase(speaker);
+            let topic = |prefix: &str, name: TopicName| TopicView {
                 id: format!("{prefix}{}", def.id),
                 name,
                 price: None,
                 items: None,
                 ware: None,
             };
-            topics.push(topic(SIDE, format!("Take {name}'s side")));
-            topics.push(topic(REFUSE, format!("Refuse {name}")));
+            topics.push(topic(SIDE, TopicName::Side(who.clone())));
+            topics.push(topic(REFUSE, TopicName::Refuse(who)));
         }
         topics
     }

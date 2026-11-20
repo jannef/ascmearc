@@ -523,7 +523,7 @@ messages, heard sounds, and, with `--state`, the full world state; and:
   band's id, or null without alignment rules), `guilds` (`id`, `name`, `rank`; left out before
   joining one), `hunger` (`bloated` … `starving`, or null when nobody hungers), `stance` (the
   combat stance's id), `dazzled`.
-- `parting`: a quarrel's parting pending: `title`, `text`, `choices` (`id`, `label`), or null.
+- `parting`: a quarrel's parting pending: `who` (the wizard), `text`, `choices` (the ids), or null.
 - `encounter`: the overworld encounter pending: `entry`, `name`, `outcome`, `title`, `text`,
   `choices` (`id`, `label`), or null; with `--state` also the dev `encounter_tables`, those
   matching the player's cell, and the dev `callings`, each of the campaign's with its `class`,

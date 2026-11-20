@@ -1,0 +1,113 @@
+# The dialogue screen (`crates/ascmearc/src/ui/dialogue_screen.rs`) and the dialogs its topics
+# ask first in. What is said is the speaker's line of data; a topic the data names is the data's.
+# Ids alphabetical.
+#
+# The keys named in the hint lines are fixed (`1`, `Esc`): translate the words around them. The
+# screen fits each text to its panel (docs/dev/localization.md "UI text").
+
+# Footer, several topics: `last`, the last topic's number; `confirm`, the key that asks the `>`
+# topic.
+[ask_many]
+text = "1-{last:bare} or {confirm:bare}  ask"
+
+# Footer, one topic: `confirm`.
+[ask_one]
+text = "1 or {confirm:bare}  ask"
+
+# A trader's offer, the dialog's row that buys it.
+[buy_it]
+text = "Buy it"
+
+# A service paid per thing, the dialog's row that goes back without the gold.
+[go_back]
+text = "Go back"
+
+# A dialog's question and what the player has, too little: `asked`, the question (`per_cursed`,
+# `per_unknown`, `ware`); `have`, `have_none` or `have_only`.
+[have]
+text = "{asked:bare} {have:bare}"
+
+[have_none]
+text = "You have no gold."
+
+# `gold`, what the player carries.
+[have_only]
+text = "You have only {gold:bare}."
+
+# Investing with a merchant's partner: `gold`, how much.
+[invest]
+text = "Invest {gold:bare} gold"
+
+# `gold`, all the player carries.
+[invest_all]
+text = "Invest all your gold ({gold:bare})"
+
+# Footer.
+[leave]
+text = "Esc  leave"
+
+# A trader's offer, the dialog's row that leaves it.
+[leave_it]
+text = "Leave it"
+
+# What the screen says with no one to talk to.
+[nobody]
+text = "There is no one to talk to."
+
+# A service paid per thing, the dialog's row that waits.
+[not_now]
+text = "Not now"
+
+# A service paid per thing, the dialog's row that pays: `total`, in gold.
+[pay]
+text = "Pay {total:bare} gold"
+
+# A temple's decursing, per cursed thing worn: `price`, each; `count`, how many; `total`.
+[per_cursed]
+by = "count.number"
+one = "{price:bare} gold to free you of the one cursed thing you wear."
+many = "{price:bare} gold for each of the {count:bare} cursed things you wear: {total:bare} gold in all."
+
+# An appraisal, per thing carried and not known: `price`, each; `count`, how many; `total`.
+[per_unknown]
+by = "count.number"
+one = "{price:bare} gold for each of the one thing you carry and do not know: {total:bare} gold in all."
+many = "{price:bare} gold for each of the {count:bare} things you carry and do not know: {total:bare} gold in all."
+
+# Refusing the wizard spoken to, in a quarrel: `who`.
+[refuse]
+text = "Refuse {who:the}"
+
+# What the speaker said last, quoted: `line`.
+[said]
+text = "\"{line:bare}\""
+
+# Taking the side of the wizard spoken to, in a quarrel: `who`.
+[side]
+text = "Take {who:poss} side"
+
+# The screen's title, and its dialogs': `who`, the one spoken to.
+[title]
+text = "{who:The}"
+
+# A topic that is a service: `topic`, its name; `price`, in gold.
+[topic_each]
+text = "{topic:bare} ({price:bare} gold each)"
+
+[topic_free]
+text = "{topic:bare} (free)"
+
+[topic_price]
+text = "{topic:bare} ({price:bare} gold)"
+
+# A trader's offer: `ware`, the item in words; `price`, in gold.
+[ware]
+text = "{ware:bare}. {price:bare} gold, take it or leave it."
+
+# Withdrawing from a merchant's partner: `gold`, how much.
+[withdraw]
+text = "Withdraw {gold:bare} gold"
+
+# `gold`, all that is invested.
+[withdraw_all]
+text = "Withdraw everything ({gold:bare} gold)"

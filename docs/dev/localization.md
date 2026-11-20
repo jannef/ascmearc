@@ -575,9 +575,9 @@ objective and status from `crafting.commission_*`.
 Text roles until core's words are converted (#1949): a quest's name (`quest`), a skill's name
 lower case (`skill`), a guild's name (`guild`), a shop's sign (`shop`, its data's
 `{keeper}` filled; the app's step dialogs show the same string), and a dev action's typed ids.
-A rank's title is a `word:` phrase (`{title:a}`). Left as they are: the topic names of a
-quarrel's sides ("Take X's side") and the parting dialog (`PartingView`: its text, title, and
-choices), which are UI text; `carry.rs::chosen`'s refusal (items).
+A rank's title is a `word:` phrase (`{title:a}`). The topic names of a quarrel's sides and the
+parting dialog are UI text ("The dialogue screens and dialogs" below); left as they are:
+`carry.rs::chosen`'s refusal (items).
 
 ## Nested messages
 
@@ -703,6 +703,16 @@ name, the alignment band's, the burden's word and thresholds (`Load::over`), the
 conditions (`ui::conditions`), and the race, class, stance, resource, sign, skill, talent, tree, and
 need names data gives as English; the Characters list's race and class, kept in a save's summary
 as the names were.
+
+**The dialogue screens and dialogs** (#1934): `dialog_screen.toml` holds only the one dialog's
+own words (its footer, the keys after an option); every title, question, and option is its
+caller's, from `step_dialogs.toml`, `dialogue_screen.toml`, and `parting.toml`. A topic the rules
+make is a `TopicName` (core), worded by the screen: a quarrel's `Side` and `Refuse` with the
+wizard as a phrase (`{who:poss}`, `{who:the}`), and the partner's invest and withdraw rows; one
+the data names stays `Text`. `PartingView` holds the wizard as a phrase and the choices' ids.
+The speaker, a feature (`terrain:`), a trap and a burst (`word:`), and a scroll (`object:`) are
+phrases; a shopkeeper is a name (text). The sign reveal's date, sign name, and gifts, a hunger's
+name (the hungry journey's title), and an ailment's name stay core's text.
 
 ## Lines of data
 

@@ -42,7 +42,7 @@ use crate::object::Stack;
 use crate::rng::Rng;
 use crate::talent::FortuneEffect;
 use crate::time::DAY;
-use crate::world::{ActorId, Spent, TopicView, World};
+use crate::world::{ActorId, Spent, TopicName, TopicView, World};
 use serde::{Deserialize, Serialize};
 
 /// A game week in seconds.
@@ -198,7 +198,7 @@ impl World {
         if !self.invests() {
             return Vec::new();
         }
-        let topic = |id: String, name: String| TopicView {
+        let topic = |id: String, name: TopicName| TopicView {
             id,
             name,
             price: None,
@@ -209,24 +209,16 @@ impl World {
         let worth = self.state.fund.gold();
         let mut topics = Vec::new();
         for &step in rules.steps.iter().filter(|&&s| s <= gold) {
-            topics.push(topic(
-                format!("invest_{step}"),
-                format!("Invest {step} gold"),
-            ));
+            topics.push(topic(format!("invest_{step}"), TopicName::Invest(step)));
         }
         if gold > 0 {
-            let name = format!("Invest all your gold ({gold})");
-            topics.push(topic("invest_all".into(), name));
+            topics.push(topic("invest_all".into(), TopicName::InvestAll(gold)));
         }
         for &step in rules.steps.iter().filter(|&&s| s <= worth) {
-            topics.push(topic(
-                format!("withdraw_{step}"),
-                format!("Withdraw {step} gold"),
-            ));
+            topics.push(topic(format!("withdraw_{step}"), TopicName::Withdraw(step)));
         }
         if worth > 0 {
-            let name = format!("Withdraw everything ({worth} gold)");
-            topics.push(topic("withdraw_all".into(), name));
+            topics.push(topic("withdraw_all".into(), TopicName::WithdrawAll(worth)));
         }
         topics
     }

@@ -1,12 +1,15 @@
 //! The dialogs and screens input opens before an action: what a step asks first
 //! (deep water, leaving a shop owing, a known trap, a hungry journey, an offer, an anvil's
 //! screen), selling what is dropped in a shop, the Heal ability's choice, and a burst that may
-//! catch the reader. `input` decides when to ask; these say what.
+//! catch the reader. `input` decides when to ask; these say what, in the words of
+//! `assets/lang/en/ui/step_dialogs.toml`.
 
+use super::text::{step_dialogs as T, ui, ui_with};
 use crate::ui::{Aim, AimKind, Dialog, ScreenAction, ScreenName};
 use ascmearc_core::ability::Ability;
 use ascmearc_core::content::{LevelKind, Offer, RecipeUse, TerrainId};
 use ascmearc_core::hunger::Hunger;
+use ascmearc_core::lang::{Arg, Phrase};
 use ascmearc_core::perception::{CellView, PerceptionView};
 use ascmearc_core::{Action, Dir, Positions};
 
@@ -29,37 +32,37 @@ pub(crate) fn step_dialog(view: &PerceptionView<'_>, dir: Dir) -> Option<Dialog>
 fn leaving_dialog(view: &PerceptionView<'_>, dir: Dir) -> Option<Dialog> {
     let to = view.viewer().step(dir);
     let (shop, owed) = view.owed_on_leaving(to)?;
-    let (keeper, gold) = (shop.keeper(), view.own_gold());
-    let pay = format!("Pay {owed} gold and leave");
+    let gold = view.own_gold();
+    let (keeper, owed_arg) = (
+        ("keeper", Arg::from(shop.keeper())),
+        ("owed", Arg::Number(owed.into())),
+    );
+    let owing = [keeper.clone(), owed_arg.clone()];
+    let pay = ui_with(T::PAY_LEAVE, std::slice::from_ref(&owed_arg));
     let dialog = if shop.is_exit(to) {
         if gold >= owed {
-            Dialog::new(shop.sign(), format!("You owe {keeper} {owed} gold."))
+            Dialog::new(shop.sign(), ui_with(T::OWE, &owing))
                 .accept(pay, Action::Pay(Some(dir)))
-                .decline("Don't pay", Action::Move(dir))
+                .decline(ui(T::DONT_PAY), Action::Move(dir))
         } else {
-            let have = match gold {
-                0 => "no gold".to_string(),
-                n => format!("only {n}"),
+            let text = match gold {
+                0 => ui_with(T::OWE_NONE, &owing),
+                n => {
+                    let have = ("gold", Arg::Number(n.into()));
+                    ui_with(T::OWE_ONLY, &[keeper, owed_arg, have])
+                }
             };
-            let text = format!(
-                "You owe {keeper} {owed} gold and have {have}. Put something back, or bring \
-                 more gold."
-            );
-            Dialog::new(shop.sign(), text).decline("Go back", Action::Move(dir))
+            Dialog::new(shop.sign(), text).decline(ui(T::GO_BACK), Action::Move(dir))
         }
     } else {
-        let text = format!(
-            "You owe {keeper} {owed} gold. Leave this way without paying, and {keeper} will \
-             call it theft."
-        );
-        let dialog = Dialog::new(shop.sign(), text);
+        let dialog = Dialog::new(shop.sign(), ui_with(T::THEFT, &owing));
         let dialog = match gold >= owed {
             true => dialog.accept(pay, Action::Pay(Some(dir))),
             false => dialog,
         };
         dialog
-            .plain("Leave without paying", Action::Move(dir))
-            .cancel("Stay", ScreenAction::Close)
+            .plain(ui(T::LEAVE_UNPAID), Action::Move(dir))
+            .cancel(ui(T::STAY), ScreenAction::Close)
     };
     Some(dialog)
 }
@@ -70,22 +73,27 @@ pub(crate) fn sale_dialog(view: &PerceptionView<'_>, letters: &Positions) -> Opt
     let sale = view.sale(letters)?;
     let shop = view.shop_here()?;
     let what = ascmearc_core::object::phrase(&sale.stacks, view.lore());
-    let text = format!("{} offers {} gold for {what}.", shop.keeper(), sale.offer);
-    let sell = format!("Sell for {} gold", sale.offer);
+    let offer = ("offer", Arg::Number(sale.offer.into()));
+    let args = [
+        ("keeper", shop.keeper().into()),
+        offer.clone(),
+        ("what", what.into()),
+    ];
+    let sell = ui_with(T::SELL, &[offer]);
     Some(
-        Dialog::new(shop.sign(), text)
+        Dialog::new(shop.sign(), ui_with(T::SALE, &args))
             .accept(sell, Action::Sell(letters.clone()))
-            .cancel("Keep it", ScreenAction::Close),
+            .cancel(ui(T::KEEP_IT), ScreenAction::Close),
     )
 }
 
 /// The Heal ability's choice when the player may treat several things: one
 /// option for each, in the order the rules list them, and a way out.
 pub(crate) fn treat_dialog(ailments: &[ascmearc_core::heal::OwnAilment]) -> Dialog {
-    let dialog = Dialog::new("Heal", "What do you tend to?");
+    let dialog = Dialog::new(ui(T::HEAL_TITLE), ui(T::HEAL_ASK));
     (ailments.iter())
         .fold(dialog, |d, a| d.plain(a.name.clone(), a.action.clone()))
-        .cancel("Never mind", ScreenAction::Close)
+        .cancel(ui(T::NEVER_MIND), ScreenAction::Close)
 }
 
 /// The question before reading a scroll (or casting a spell) whose
@@ -93,17 +101,18 @@ pub(crate) fn treat_dialog(ailments: &[ascmearc_core::heal::OwnAilment]) -> Dial
 /// [`Aim::catches_reader`]): read (cast) it anyway, aim again (back at the same cursor, the
 /// target remembered), or not.
 pub(crate) fn burst_dialog(view: &PerceptionView<'_>, aim: Aim) -> Option<Dialog> {
-    let noun = aim.catches_reader(view)?;
+    // The burst's noun as the data writes it ("fireball"), a word of the lexicon by its text.
+    let noun = (
+        "noun",
+        Phrase::id(format!("word:{}", aim.catches_reader(view)?)).into(),
+    );
     let read = aim.action(view.content())?;
     let AimKind::Read(item) = aim.kind else {
         return Some(
-            Dialog::new(
-                "Too close",
-                format!("The {noun} may catch you too. Cast it anyway?"),
-            )
-            .accept("Cast it", read)
-            .decline("Aim again", ScreenAction::Aim(aim.kind))
-            .cancel("Don't cast it", ScreenAction::Close),
+            Dialog::new(ui(T::TOO_CLOSE), ui_with(T::BURST_CAST, &[noun]))
+                .accept(ui(T::CAST_IT), read)
+                .decline(ui(T::AIM_AGAIN), ScreenAction::Aim(aim.kind))
+                .cancel(ui(T::DONT_CAST), ScreenAction::Close),
         );
     };
     let stack = view.inventory().get(item)?;
@@ -111,15 +120,13 @@ pub(crate) fn burst_dialog(view: &PerceptionView<'_>, aim: Aim) -> Option<Dialog
     if view.lore().label(stack.object).is_some() {
         return None;
     }
-    let name = &view.content().object(stack.object).name;
+    let id = &view.content().object(stack.object).id;
+    let scroll = ("scroll", Phrase::id(format!("object:{id}")).into());
     Some(
-        Dialog::new(
-            "Too close",
-            format!("The {noun} may catch you too. Read the {name} anyway?"),
-        )
-        .accept("Read it", read)
-        .decline("Aim again", ScreenAction::Aim(aim.kind))
-        .cancel("Don't read it", ScreenAction::Close),
+        Dialog::new(ui(T::TOO_CLOSE), ui_with(T::BURST_READ, &[noun, scroll]))
+            .accept(ui(T::READ_IT), read)
+            .decline(ui(T::AIM_AGAIN), ScreenAction::Aim(aim.kind))
+            .cancel(ui(T::DONT_READ), ScreenAction::Close),
     )
 }
 
@@ -136,11 +143,13 @@ fn trap_dialog(view: &PerceptionView<'_>, dir: Dir) -> Option<Dialog> {
     let trap = view
         .trap(to)
         .filter(|_| !door && view.actor_at(to).is_none())?;
+    // The trap as the data names it, a word of the lexicon by its text.
     let name = &view.content().trap(trap).name;
+    let trap = ("trap", Phrase::id(format!("word:{name}")).into());
     Some(
-        Dialog::new("Trap", format!("Really step onto the {name}?"))
-            .accept("Step onto it", Action::Move(dir))
-            .cancel("Stay back", ScreenAction::Close),
+        Dialog::new(ui(T::TRAP_TITLE), ui_with(T::TRAP_ASK, &[trap]))
+            .accept(ui(T::STEP_ONTO), Action::Move(dir))
+            .cancel(ui(T::STAY_BACK), ScreenAction::Close),
     )
 }
 
@@ -149,9 +158,9 @@ fn trap_dialog(view: &PerceptionView<'_>, dir: Dir) -> Option<Dialog> {
 /// safe answer, selected first, and Esc's; it takes no time).
 fn deep_water_dialog(view: &PerceptionView<'_>, dir: Dir) -> Option<Dialog> {
     view.dives_at(view.viewer().step(dir)).then(|| {
-        Dialog::new("Deep water", "Really dive into the deep water?")
-            .accept("Dive in", Action::Move(dir))
-            .cancel("Stay back", ScreenAction::Close)
+        Dialog::new(ui(T::DEEP_TITLE), ui(T::DEEP_ASK))
+            .accept(ui(T::DIVE_IN), Action::Move(dir))
+            .cancel(ui(T::STAY_BACK), ScreenAction::Close)
     })
 }
 
@@ -167,13 +176,8 @@ fn hunger_dialog(view: &PerceptionView<'_>, dir: Dir) -> Option<Dialog> {
     }
     let hunger = view.own_hunger()?;
     let text = match hunger {
-        Hunger::Fainting => {
-            "You are faint from hunger, and this journey may kill you. Go on without eating?"
-        }
-        Hunger::Starving => {
-            "You are starving to death, and every step takes what life you have left. This \
-             journey may well be your last. Go on without eating?"
-        }
+        Hunger::Fainting => T::FAINTING,
+        Hunger::Starving => T::STARVING,
         _ => return None,
     };
     let to = view.viewer().step(dir);
@@ -185,9 +189,9 @@ fn hunger_dialog(view: &PerceptionView<'_>, dir: Dir) -> Option<Dialog> {
         return None;
     }
     Some(
-        Dialog::new(hunger.name(), text)
-            .accept("Go on", Action::Move(dir))
-            .cancel("Stay", ScreenAction::Close),
+        Dialog::new(hunger.name(), ui(text))
+            .accept(ui(T::GO_ON), Action::Move(dir))
+            .cancel(ui(T::STAY), ScreenAction::Close),
     )
 }
 
@@ -230,18 +234,17 @@ fn offer_dialog(view: &PerceptionView<'_>, dir: Dir) -> Option<Dialog> {
         ability.name(view.content()).into_owned(),
         ScreenAction::UseAbility(ability),
     );
-    let name = &view.content().terrain(terrain).name;
-    let mut letters = name.chars();
-    let title: String = (letters.next().iter().flat_map(|c| c.to_uppercase()))
-        .chain(letters)
-        .collect();
+    let id = &view.content().terrain(terrain).id;
+    let feature = [("feature", Phrase::id(format!("terrain:{id}")).into())];
+    let ask = match offer {
+        Offer::Pray => T::OFFER_PRAY,
+        Offer::Temper => T::OFFER_TEMPER,
+        Offer::Drink => T::OFFER_DRINK,
+    };
     Some(
-        Dialog::new(
-            title,
-            format!("Would you like to {} the {name}?", offer.asks()),
-        )
-        .accept(label, then)
-        .cancel("Leave it", ScreenAction::Close),
+        Dialog::new(ui_with(T::OFFER_TITLE, &feature), ui_with(ask, &feature))
+            .accept(label, then)
+            .cancel(ui(T::LEAVE_IT), ScreenAction::Close),
     )
 }
 
