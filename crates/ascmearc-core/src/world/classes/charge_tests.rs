@@ -184,7 +184,11 @@ fn a_charge_out_of_a_shop_owing_is_refused() {
     let outcome = use_(&mut w, "use:charge:7,2");
     assert!(!outcome.took_turn, "{:#?}", said(&w));
     assert_eq!((stamina(&w), w.state.player().pos, w.state.turn), before);
-    assert!(said(&w).iter().any(|m| m.contains("you haven't paid")));
+    assert!(
+        said(&w)
+            .iter()
+            .any(|m| m == "Orvald steps into your way: you haven't paid.")
+    );
     assert!(!w.state.current().shops[0].unpaid.is_empty(), "no theft");
 }
 

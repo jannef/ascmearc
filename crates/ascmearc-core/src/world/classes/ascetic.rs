@@ -24,9 +24,12 @@
 
 use crate::action::{AttackKind, Event};
 use crate::combat::Blow;
-use crate::content::{ActionKind, ObjectId, Role, TrapId, the};
+use crate::content::{ActionKind, ObjectId, Role, TrapId};
 use crate::geom::Dir;
+use crate::lang::{MessageId, Msg, Phrase};
+use crate::msg;
 use crate::talent::PalmBlow;
+use crate::world::combat::fight;
 use crate::world::{ActorId, AttackSkills, Spent, World};
 
 // --- Roundhouse (#1733) -------------------------------------------------------------------------
@@ -36,7 +39,7 @@ impl World {
     /// the player.
     pub(super) fn may_roundhouse(&mut self) -> bool {
         if self.hostiles_beside().is_empty() {
-            self.say("There is nobody beside you to kick.");
+            self.say(msg::classes::NOBODY_BESIDE_TO_KICK);
             return false;
         }
         true
@@ -79,7 +82,7 @@ impl World {
             return false;
         };
         if me.effects.has(status) {
-            self.say("You are already light on your feet.");
+            self.say(msg::classes::ALREADY_LIGHT_ON_FEET);
             return false;
         }
         true
@@ -117,7 +120,7 @@ impl World {
     pub(super) fn caught_missile(
         &mut self,
         target: ActorId,
-        noun: &str,
+        noun: Phrase,
         events: &mut Vec<Event>,
     ) -> bool {
         let Some(me) = self.state.actors.get(&target) else {
@@ -137,8 +140,7 @@ impl World {
         }
         self.caught = true;
         if target == self.state.player {
-            self.news
-                .push(format!("You pluck the {noun} from the air.").into());
+            (self.news).push(Msg::new(msg::classes::PLUCK_FROM_AIR).role("missile", noun));
         }
         true
     }
@@ -156,8 +158,11 @@ impl World {
         if !missile || !blow.is_some_and(|b| b.strike.is_hit()) {
             return blow;
         }
-        let noun = with.map_or_else(|| "missile".into(), |o| self.content.object(o).name.clone());
-        if self.caught_missile(target, &noun, events) {
+        let noun = with.map_or_else(
+            || fight::word("missile"),
+            |o| Phrase::id(format!("object:{}", self.content.object(o).id)),
+        );
+        if self.caught_missile(target, noun, events) {
             return Some(Blow::missed(None));
         }
         blow
@@ -177,8 +182,8 @@ impl World {
         if !flew || !blow.strike.is_hit() {
             return blow;
         }
-        let noun = self.content.trap(trap).noun.clone();
-        if self.caught_missile(target, &noun, events) {
+        let noun = fight::word(&self.content.trap(trap).noun);
+        if self.caught_missile(target, noun, events) {
             return Blow::missed(None);
         }
         blow
@@ -202,19 +207,20 @@ impl World {
         else {
             return Spent::Nothing;
         };
-        self.palm_blow(dir, strike, Some("stun"), events)
+        self.palm_blow(dir, strike, Some(msg::classes::STUN), events)
     }
 
     /// The palm blow, Stunning strike's and Quivering palm's one body: a blow of the player's
     /// bare hand at the hostile in `dir`, at the price of a melee attack (the unarmed skill's
     /// and the style's speed counted); a hit that does damage leaves the target `palm`'s
-    /// degrees of its status. With a `verb`, the player is told when the status took hold on
-    /// one they see ("You stun the kobold."), before whatever answers the blow.
+    /// degrees of its status. With a `took` line (its `who` the target), the player is told
+    /// when the status took hold on one they see ("You stun the kobold."), before whatever
+    /// answers the blow.
     pub(super) fn palm_blow(
         &mut self,
         dir: Dir,
         palm: PalmBlow,
-        verb: Option<&str>,
+        took_line: Option<MessageId>,
         events: &mut Vec<Event>,
     ) -> Spent {
         let content = self.content.clone();
@@ -233,9 +239,9 @@ impl World {
             let took = (self.state.actors.get(&target))
                 .filter(|a| a.effects.has(palm.status))
                 .filter(|a| self.perception.sees_actors_at(a.pos))
-                .map(|a| content.creature(a.creature).name.clone());
-            if let (Some(verb), Some(name)) = (verb, took) {
-                self.say(format!("You {verb} {}.", the(&name)));
+                .map(|a| fight::creature(content.creature(a.creature)));
+            if let (Some(line), Some(who)) = (took_line, took) {
+                self.say(Msg::new(line).role("who", who));
             }
         }
         self.after_attack(
@@ -270,7 +276,7 @@ impl World {
         else {
             return Spent::Nothing;
         };
-        self.say("You still your mind.");
+        self.say(msg::classes::STILL_YOUR_MIND);
         let me = self.player_mut();
         let ended: Vec<crate::status::Effect> = (ends.iter())
             .filter_map(|&status| me.effects.get(status).copied())

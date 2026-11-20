@@ -12,7 +12,9 @@ text"), with its widths in the screens' layout, not the text (#1908), and the fu
 the controls, settings, and mods screens (#1935) and the object and rig screens (#1928); **L4a**,
 **L4b**, **L4i**, and **L4j**, `world/allies/` (#1912), `world/character/` (#1913),
 `world/health/` (#1920), and `world/levels/` (#1921) say their lines from templates
-("Literal lines"), as does **L4f**, the first half of `world/crafting/` (#1917); and **L5**, dialogue (#1888): every line a creature says is a line of data
+("Literal lines"), as does **L4f**, the first half of `world/crafting/` (#1917);
+**L4c**, the first half of `world/classes/` (#1914, `messages/classes.toml`, "Literal lines");
+and **L5**, dialogue (#1888): every line a creature says is a line of data
 said by its key, with role slots in the base form ("Dialogue"), on the one mechanism every line
 whose text lives in data uses ("Lines of data"). The doors, the welcome line, combat, allies,
 the character, health, levels, and talk say theirs from templates; every other `say` site still says finished English
@@ -411,6 +413,16 @@ words are converted (#1949): a skill's and a recipe's names, a launcher's word, 
 pick ("blade", "arrowheads"), the time a dig took, and `came_line`. Temper's `WITHSTOOD`, said
 by a warped enchanting too, waits for the second half (#1918).
 
+`world/classes/`'s first half (`messages/classes.toml`, L4c: `ascetic`, `calling`, `charge`,
+`class_ability`, `class`, `consecrate`, `invest`, `mark`) says the lines its data writes as
+lines of data: a calling's `message`, a talent's handed-out `news`, and a resource's `lacking`
+(`{words:Bare}.`). A missile caught is its object (`object:<id>`) or a trap's noun or "missile"
+(`word:`); a shopkeeper in the way a literal phrase of their name; the mark the player cannot
+see is a line of its own (`openings_lost_unseen`, "an unseen foe"), not a phrase. Text roles
+until their words are converted (#1949): a talent's and a resource's names, a status's name
+lower case, `Unavailable::reason`, and the `came_line` that stops a consecration (`came`); a dev
+action's class id is a `word:` phrase (`{class:a}`).
+
 When no literal is left, `LITERAL`, the `From` text impls, and this section go.
 
 ## Nested messages
@@ -593,6 +605,9 @@ arrays named by the id that tells it apart. Every kind of line of data, the thre
 | `profane:<id>.line`, `.undone`, `.instead` | a profane gift given, taken back, or said in place of its own line when it takes a gift held away |
 | `talent:<id>.effects.temperature_speed.bands.<n>.slower`, `.faster` | cold blood coming into band `n` (from 0) from a quicker or a slower one |
 | `recipes:profession.<skill>.failed`, `.fumbled` | a recipe with a `failure` object failing, or its `fumble` object made on a natural 2 |
+| `calling:<campaign>.<class>.message` | a calling made (`data` for one outside every campaign, as a dialogue's scope) |
+| `talent:<id>.effects.weapon_ranks.news`, `.take_up_skills.news` | what a talent a class table gives hands out |
+| `resources:resource.<id>.lacking` | a class active refused for too little of the resource (in `classes.lacking`) |
 
 None of them names a role: the loader refuses one that does. A status's start and end lines said
 as the turn is perceived (`world/turn/perceive.rs`) and the other subsystems' reads of these
