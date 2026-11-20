@@ -344,10 +344,9 @@ pub fn json(world: &World, layers: &[Layer], include_state: bool) -> Value {
                 "entry": entry,
                 "name": e.name,
                 "outcome": outcome.id(),
-                "title": e.title,
                 "text": e.text,
                 "choices": (e.choices.iter())
-                    .map(|(label, c)| json!({ "id": c.id(), "label": label }))
+                    .map(|c| json!({ "id": c.id() }))
                     .collect::<Vec<_>>(),
             })
         }),

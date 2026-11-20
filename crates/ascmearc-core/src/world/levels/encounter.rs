@@ -37,7 +37,6 @@ use crate::rng::Rng;
 use crate::rng::draw;
 use crate::skills::{Effect, Use};
 use crate::stats::Stat;
-use crate::text::capitalized;
 use crate::weather::Weather;
 use crate::world::{ActorId, Spent, World};
 use serde::{Deserialize, Serialize};
@@ -123,21 +122,6 @@ impl Outcome {
             Outcome::Met => &[Choice::Evade, Choice::Fight],
             Outcome::Peaceful => &[Choice::Hail, Choice::Pass],
             Outcome::Wildlife => &[Choice::Hunt, Choice::Pass],
-        }
-    }
-
-    /// How the dialog labels `choice`.
-    pub const fn label(self, choice: Choice) -> &'static str {
-        match (self, choice) {
-            (_, Choice::Ambush) => "Lie in wait",
-            (_, Choice::Bluff) => "Talk your way past",
-            (Outcome::Met, Choice::Evade) => "Give them the slip",
-            (_, Choice::Evade) => "Slip past",
-            (_, Choice::Fight) => "Stand and fight",
-            (_, Choice::Hail) => "Hail them",
-            (_, Choice::Hunt) => "Hunt them",
-            (Outcome::Wildlife, Choice::Pass) => "Let them be",
-            (_, Choice::Pass) => "Pass by",
         }
     }
 }
@@ -239,14 +223,15 @@ pub(in crate::world) struct Underway {
 }
 
 /// What the player is shown of a pending encounter ([`crate::perception::PerceptionView::encounter`]):
-/// the one dialog's title, text, and rows.
+/// the one dialog's text and choices. The app titles it by the name and labels each choice by
+/// the outcome ("Give them the slip" when each saw the other; `ui/encounter.rs`).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct EncounterView {
     /// The entry's name, as written: "a band of footpads".
     pub name: String,
-    pub title: String,
+    pub outcome: Outcome,
     pub text: String,
-    pub choices: Vec<(String, Choice)>,
+    pub choices: Vec<Choice>,
 }
 
 /// The party spotted "ahead" as the way there is: on the road, on the trail, or across the land.
@@ -323,11 +308,9 @@ pub(crate) fn view(
     };
     EncounterView {
         name: name.to_string(),
-        title: capitalized(name),
+        outcome: pending.outcome,
         text,
-        choices: (choices.iter())
-            .map(|&c| (pending.outcome.label(c).to_string(), c))
-            .collect(),
+        choices: choices.to_vec(),
     }
 }
 
