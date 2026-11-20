@@ -13,8 +13,10 @@
 //! by which its power and lore are found again ([`Content::unique`]).
 
 use super::level::{ItemPartSpec, hand_made, item_part, magic_of};
+use super::object::AddedSpec;
 use super::status::{OnHit, OnHitSpec};
 use super::{Content, ContentError, ObjectId, Rarity, StatusId};
+use crate::damage::Rider;
 use crate::item_parts;
 use crate::magic::{Magic, Quality};
 use crate::object::Stack;
@@ -32,8 +34,11 @@ pub enum Power {
     /// Its hits cause a status, by a chance (`{ inflict = "poisoned", chance = 100, severity =
     /// 1 }`): read where a natural attack's `on_hit` is applied (`World::after_blow`), for the
     /// weapon that hit (a launcher's for its shots), through the attack's
-    /// [`crate::combat::Profile`]. The target's resistance applies as to any `on_hit`.
-    Inflict(OnHit),
+    /// [`crate::combat::Profile`]. The target's resistance applies as to any `on_hit`. With
+    /// `added` (`added = { type = "poison", damage = "2d6" }`, #2001) its every hit also deals
+    /// that damage, a rider of the weapon's attacks as an object's `added` is (resisted, never
+    /// soaked), through the same profile.
+    Inflict { hit: OnHit, added: Option<Rider> },
     /// Its wearer sees with this vision profile (an index into
     /// [`Content::vision_profiles`]) where it is better than their own (`{ vision =
     /// "darkvision" }`): read where an actor's eyes are chosen.
@@ -129,6 +134,8 @@ struct PowerSpec {
     inflict: Option<String>,
     chance: Option<u8>,
     severity: Option<u16>,
+    /// Damage of a kind its hits add besides (`inflict` only).
+    added: Option<AddedSpec>,
     vision: Option<String>,
     ward: Option<String>,
     message: Option<String>,
@@ -166,7 +173,14 @@ fn resolve(spec: UniqueSpec, content: &Content) -> Result<UniqueDef, String> {
     let object = (content.object_id(&spec.object))
         .ok_or_else(|| format!("unknown object `{}`", spec.object))?;
     let def = content.object(object);
-    let mut magic: Magic = magic_of(def, &spec.affixes, Some(name.into()), spec.level, content)?;
+    let mut magic: Magic = magic_of(
+        def,
+        &spec.affixes,
+        Some(name.into()),
+        spec.level,
+        true,
+        content,
+    )?;
     magic.rarity = Rarity::Unique;
     magic.unique = Some(spec.id.clone());
     let mut stack = Stack::with_magic(object, 1, magic);
@@ -195,15 +209,16 @@ fn resolve(spec: UniqueSpec, content: &Content) -> Result<UniqueDef, String> {
     })
 }
 
-/// The power a `power` table names: exactly one of `inflict` (with `chance` and `severity`),
+/// The power a `power` table names: exactly one of `inflict` (with `chance` and `severity`, and
+/// perhaps `added`),
 /// `vision`, and `ward` (with a `message`).
 fn power(p: &PowerSpec, content: &Content) -> Result<Power, String> {
     let named = [p.inflict.is_some(), p.vision.is_some(), p.ward.is_some()];
     if named.iter().filter(|&&n| n).count() != 1 {
         return Err("power: name one of `inflict`, `vision`, and `ward`".into());
     }
-    if p.inflict.is_none() && (p.chance.is_some() || p.severity.is_some()) {
-        return Err("power: `chance` and `severity` belong to `inflict`".into());
+    if p.inflict.is_none() && (p.chance.is_some() || p.severity.is_some() || p.added.is_some()) {
+        return Err("power: `chance`, `severity`, and `added` belong to `inflict`".into());
     }
     if p.ward.is_none() && p.message.is_some() {
         return Err("power: `message` belongs to `ward`".into());
@@ -226,7 +241,11 @@ fn power(p: &PowerSpec, content: &Content) -> Result<Power, String> {
         let hit = spec
             .resolve(known, |_| None)
             .map_err(|m| format!("power: {m}"))?;
-        return Ok(Power::Inflict(hit));
+        let added = (p.added.as_ref())
+            .map(|a| a.resolve(content))
+            .transpose()
+            .map_err(|m| format!("power: {m}"))?;
+        return Ok(Power::Inflict { hit, added });
     }
     if let Some(vision) = &p.vision {
         let index = (content.vision_index(vision))

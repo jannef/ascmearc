@@ -562,7 +562,7 @@ impl Effect {
 
     /// The kinds of item it may be on at all: what only attacks made with an item can use needs
     /// such an item, and what changes an item needs one that has it.
-    fn allowed_on(self, kind: ItemKind) -> bool {
+    pub fn allowed_on(self, kind: ItemKind) -> bool {
         if kind == ItemKind::Ammo && !self.betters_a_shot() {
             return false;
         }

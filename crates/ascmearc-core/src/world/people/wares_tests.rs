@@ -236,7 +236,9 @@ fn the_three_uniques_are_a_ring_a_neck_and_hands() {
             let def = CONTENT.unique(id).expect(id);
             assert!(def.power.is_some() && def.lore.is_some(), "{id}");
             let magic = def.magic();
-            assert_eq!((magic.level, magic.affixes.len()), (12, 6), "{id}");
+            // Six affixes, but the Eorcanstān five since the owner's balance pass (#2001).
+            let affixes = if id == "eorcanstan" { 5 } else { 6 };
+            assert_eq!((magic.level, magic.affixes.len()), (12, affixes), "{id}");
             let kind = CONTENT.object(def.object).kind.expect("a kind");
             format!("{kind:?}")
         })

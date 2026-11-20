@@ -1,12 +1,13 @@
 # Brother Osrick's rosary (docs/design/adventurers-guild.md §9.2; Middle English, "unhallowed
-# prayer beads"): a caster who puts the lantern out, unseen, unlit, with spells from the dark.
+# prayer beads"): a caster who puts the lantern out, unseen, unlit, with spells from the dark,
+# and a deep well of mana for them (+30, set by hand: #2001).
 [[unique]]
 id = "unhalwed_bedes"
 name = "the Unhalwed Bedes"
 object = "bone_amulet"
-affixes = ["mystic:7", "of_clarity:12", "of_the_owl:2", "of_shadows:7"]
+affixes = ["mystic=30", "of_the_owl:2", "of_shadows:7"]
 level = 12
-# Four enchantments need its make (docs/dev/enchanting.md): a flawless smokestone setting.
+# Its make holds four enchantments (docs/dev/enchanting.md): a flawless smokestone setting.
 parts = [{ part = "setting", of = "smokestone", cut = "flawless" }]
 power = { vision = "darkvision", phrase = "Its wearer sees in the dark." }
 lore = "Each bead is a knucklebone, and none of them a saint's."
