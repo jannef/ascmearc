@@ -15,6 +15,9 @@
 # digits.
 
 at_whom = "At whom?"
+# A birth date (`BirthDate::arg`): `day` and `year` numbers, `month` the month's name, a line of
+# data (`calendar:months.<n>`).
+birth_date = "{day:bare} {month:bare} {year:bare}"
 birthday = "It is your birthday."
 # The breaths of the birth sign's picks (`sign_picks.rs`), as each is loosed.
 breath_bile = "You hawk up a gobbet of bile and spit it!"

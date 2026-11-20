@@ -89,7 +89,7 @@ impl SignScreen {
                 let (animal, element) = h.parts(s)?;
                 Some((h, animal, element))
             });
-        let date = ("date", Arg::from(c.born.text(content.calendar())));
+        let date = ("date", c.born.arg());
         let age = ("age", Arg::Number(c.age_on(draft.start()).into()));
         let Some((h, animal, element)) = parts else {
             return empty(ui_with(T::BORN, &[date, age]));

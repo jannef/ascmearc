@@ -261,7 +261,7 @@ pub use background::{
     Points, Tier as StoryTier, Tiers, When,
 };
 pub use breath::Breath;
-pub use burial::{Burial, BurialStairs, DEFAULT_EPITAPH};
+pub use burial::{Burial, BurialStairs, EPITAPH_ROLES};
 pub use burst::{BurstWhen, CreatureBurst};
 pub use calendar::Calendar;
 pub use calling::CallingDef;
@@ -414,9 +414,7 @@ pub use scenario::ScenarioDef;
 pub use scroll::{Cleansing, Reading, SpellScroll};
 pub use scroll_label::ScrollLabelDef;
 pub use search::{PassiveSearch, SEARCH_TURNS, SearchRules, Secret, secret_look};
-pub use shop::{
-    KEEPER, Keeper, MAX_FAVOUR, MAX_SHOPS, MOST_FAVOUR, ShopDef, ShopId, ShopPlan, Shops,
-};
+pub use shop::{Keeper, MAX_FAVOUR, MAX_SHOPS, MOST_FAVOUR, ShopDef, ShopId, ShopPlan, Shops};
 pub use size::{MEDIUM, SizeDef};
 pub use skill::{OptionalSkill, SkillBook, SkillDef};
 pub use sky::{MoonDef, PHASE_ONE, STANDARD_SIZE};

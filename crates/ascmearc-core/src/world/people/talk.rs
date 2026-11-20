@@ -232,6 +232,7 @@ impl World {
     /// ("Grimbold"), a unique character by its proper name ("Sister Hild"), or
     /// a kept beast (a companion, a familiar) by its own ("Snel"): [`World::called_phrase`] in
     /// English.
+    #[cfg(test)]
     pub(in crate::world) fn called(&self, actor: &Actor) -> String {
         self.content.english_of(&self.called_phrase(actor), "the")
     }

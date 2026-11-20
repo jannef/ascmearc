@@ -194,11 +194,11 @@ pub use fixtures::mirrors::Image;
 pub(crate) use health::heal::allies_beside;
 pub(crate) use items::body_slots::has_slot;
 pub use items::loot::Identified;
-pub(crate) use levels::encounter::view as encounter_view;
 pub use levels::encounter::{
     Choice as EncounterChoice, EncounterView, Forced as EncounterForced,
     Outcome as EncounterOutcome, Party, Pending,
 };
+pub(crate) use levels::encounter::{party_name, view as encounter_view};
 pub use levels::fire::Blaze;
 pub use levels::pit::Pit;
 pub(crate) use levels::swim::shore_refusal;

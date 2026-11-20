@@ -405,12 +405,13 @@ ice, fire, and webs. A line that differs by a value core picks from a few (the l
 is met on, the way the stairs go, one follower's type or several) is an entry per value, each a
 whole sentence; followers of several types are a list of `levels.follower` items, each taking its
 own form ("Two kobolds and the giant rat", "Nested messages"). A place is named by a literal phrase (its name as written, "The Drake's Lair"), a
-terrain by `terrain:<id>`, a party met on the overworld by its entry's `name` as text (the data
-writes its article: "a band of footpads"), stacks that sank by `items::stacks_arg` (a list of
+terrain by `terrain:<id>`, a party met on the overworld by its entry's `name` as a line of data
+(`encounter:<campaign>.<entry>.name`, `encounter::party_name`; the data writes its article: "a
+band of footpads"), stacks that sank by `items::stacks_arg` (a list of
 two or three, else a count of `word:object`). A level's and a branch's `arrival` are lines of data,
 `level:<id>.arrival` and `dungeon:<id>.arrival` (`data_line::arrival`). The encounter dialog's
-text (`EncounterView`) is the told line rendered in English, with `told_known` adding the line
-for a party met again, English whatever the language until core's words move to the app (#1949). The line said on entering a cell (`enter.rs::tell_cell`):
+text (`EncounterView`) is the told message, with `told_known` nesting the line for a party met
+again, which the app renders in the language shown from the run's content (`ui/encounter.rs`). The line said on entering a cell (`enter.rs::tell_cell`):
 stairs (`levels.staircase_down_here`, `way_into_here`, …), a feature's lines
 (`fixtures/feature.rs`, `messages/fixtures.toml`: the terrain by its `noun`, its description and
 its place's note after it as the data's text), and what lies there (`levels.see_here`,
@@ -472,11 +473,11 @@ rig list's words (`lacking_knife`, which the screen says in its own `lacking`) a
 sentence. Several stacks are `items::stacks_arg` (`you_save`); one taken apart by its title or
 several counted is one entry by number (`take_apart`). A rig and a trap are `word:` phrases of
 their names (`{rig:a}`, `{trap:a}`). A rig's `made` and `snaps` are lines of data
-(`data_line::rig`); `need_skill_at`'s skill is `skill:<id>`. Text roles until their words are
-converted (#1949): a rig's id as the action wrote it, and the patron as the commission calls
-them (`giver`, "your patron", kept as text in the save). The commission's quest-log view
-(`patron.rs::commission`) says its objective and status from `commission_*`; its name stays
-text, as every quest's does. Left for their own work: the rig list's "what it takes" (`rig.rs::takes_words`), and the craft
+(`data_line::rig`); `need_skill_at`'s skill is `skill:<id>`. A text role until its words are
+converted (#1949): a rig's id as the action wrote it. The open commission keeps the patron as a
+phrase (`called_phrase`, "your patron", said `the`) and what they said as a `Speech`, both
+saved by their keys; its quest-log view (`patron.rs::commission`) is named `commission_name`
+("Commission: {work:a}") and says its objective and status from `commission_*`. Left for their own work: the rig list's "what it takes" (`rig.rs::takes_words`), and the craft
 dialog's plan (`CraftPlan`), screen text built in core.
 
 `world/classes/`'s first half (`messages/classes.toml`, L4c: `ascetic`, `calling`, `charge`,
@@ -580,9 +581,11 @@ delivery picked up again, `updated_step`. `messages::english_msg` and `english_a
 for the quest screen and the dumps; a patron's commission (`crafting/patron.rs`) fills its
 objective and status from `crafting.commission_*`.
 
-A skill taught is `skill:<id>`. Text roles until core's words are converted (#1949): a quest's
-name (`quest`), a guild's name (`guild`), a shop's sign (`shop`, its data's
-`{keeper}` filled; the app's step dialogs show the same string), and a dev action's typed ids.
+A skill taught is `skill:<id>`. A quest's name (`quest`, and the log's `QuestView::name`) is a
+line of data, `quest:<id>.name` (`QuestDef::name_arg`), and a shop's sign (`shop`) is
+`shop:<id>.title` with the keeper's name in its `keeper` role (`ShopDef::sign`; the app's step
+dialogs title themselves with it, `step_dialogs.rs::sign`, from the run's content): "Names kept in saves" below. Text roles
+until core's words are converted (#1949): a guild's name (`guild`), and a dev action's typed ids.
 A rank's title is a `word:` phrase (`{title:a}`). The topic names of a quarrel's sides and the
 parting dialog are UI text ("The dialogue screens and dialogs" below); left as they are:
 `carry.rs::chosen`'s refusal (items).
@@ -709,8 +712,8 @@ the character screen's stat names and abbreviations (`Stat::name`, `Stat::abbrev
 name, the alignment band's, the burden's word and thresholds (`Load::over`), the resistance words
 (`ResistanceWord::label`), an attack's source label and summary, the guild rank's title, the
 conditions (`ui::conditions`), and the race, class, stance, resource, sign, skill, talent, tree, and
-need names data gives as English; the Characters list's race and class, kept in a save's summary
-as the names were.
+need names data gives as English, the Characters list's among them (a save's summary keeps the
+race and the classes by id, "Names kept in saves").
 
 **The UI core** (#1930): `mod.toml` (the module `text::r#mod`: `build.rs` names every module raw)
 holds the message line's prompts and the status bar's own labels (`HP`, `MP`, `Lv`, a resource's
@@ -752,8 +755,10 @@ make is a `TopicName` (core), worded by the screen: a quarrel's `Side` and `Refu
 wizard as a phrase (`{who:poss}`, `{who:the}`), and the partner's invest and withdraw rows; one
 the data names stays `Text`. `PartingView` holds the wizard as a phrase and the choices' ids.
 The speaker, a feature (`terrain:`), a trap and a burst (`word:`), and a scroll (`object:`) are
-phrases; a shopkeeper is a name (text). The sign reveal's date, sign name, and gifts, a hunger's
-name (the hungry journey's title), and an ailment's name stay core's text.
+phrases; a shopkeeper is a name (text), a shop's sign a line of data (`step_dialogs.rs::sign`, from the run's content). The
+sign reveal's date is a message (`BirthDate::arg`, "Names kept in saves"); its sign name and
+gifts are the character's data names (#1993); a hunger's name (the hungry journey's title) and
+an ailment's name stay core's text.
 
 **The shared modules** (#1931): `paged_list.toml` holds the page label and the page keys' hint
 every paged list shows (`PagedList::page_label`, `hint`), `menu.toml` the main and pause menus and
@@ -803,8 +808,8 @@ draws, and the message line, the history, and `--more--` render the log's entrie
 (`text::message`), so a switch shows at once, what was said before it included: the log holds
 entries, not text. What a screen built when it opened (the dialogue screen's speech,
 `text::speech`) is rebuilt by `screens::refresh` on the change. What core renders to text before
-the app sees it (the perception's item names, an encounter's text, the quest log's words, the
-words #1949 lists) stays English until it moves to the app.
+the app sees it (the perception's item names, the words
+#1949 lists) stays English until it moves to the app.
 
 **Dumps.** `ascmearc-cli dump --lang CODE` (`dump::ascii_in`, `dump::json_in`,
 `dump::layer_rows_in`) says the log (the `messages` layer, the JSON's `messages`), the quest log,
@@ -904,6 +909,7 @@ arrays named by the id that tells it apart. Every kind of line of data, the thre
 | `town:<id>.told` | a town's goodwill rising |
 | `level:<id>.hidden.<location>.opens` | a hidden location opening as a quest reveals it |
 | `dialogue:<scope>.silent` | a speaker turning away one outside its `speaks_to` |
+| `quest:<id>.name`, `shop:<id>.title`, `encounter:<campaign>.<entry>.name`, `calendar:months.<n>`, `level:<id>.burial.epitaph`, `level:<id>.legend.<char>.epitaph` | names kept in saves ("Names kept in saves", below) |
 
 What quests' people say is keyed in the same file (`data_line::quest`, added by `quest_speech`)
 but said by a speaker, so in their register and with the player given: a giver's `offer`,
@@ -913,8 +919,26 @@ but said by a speaker, so in their register and with the player given: a giver's
 (`quest:<id>.side.<npc>.join`), and the parting's `betray`. A rolled quest's lines may name
 its roles ("Dialogue", "Quests' texts"); every other one names none.
 
-None of the narrator's names a role: the loader refuses one that does. The other subsystems'
+None of the narrator's names a role but the names below: the loader refuses one that does. The other subsystems'
 reads of these fields are still literal text, until their slices.
+
+**Names kept in saves** (#1999, part of #1949): what a save or the quest log keeps is a key and
+its args, never English, so it renders in any language. A name the data writes, said as it is
+written, is a line of data (`data_line::saved_names` adds them, each naming only the roles it is
+given): a quest's `quest:<id>.name` (in the log, `QuestView::name`, and every line naming it),
+a shop's sign `shop:<id>.title` (its `keeper` a literal phrase: `{keeper:poss} General Store`),
+an encounter party's `encounter:<campaign>.<entry>.name` (the data's article in it, "a band of
+footpads"), a month's `calendar:months.<n>` (in `character.birth_date`, the sign reveal's and
+the character screen's date), a burial ground's `level:<id>.burial.epitaph` (its `name` and
+`death`; without one, the message `fixtures.epitaph`) and a fixed grave's
+`level:<id>.legend.<char>.epitaph`, which `LevelState::graves` keeps by key. The patron is a
+phrase and their offer a `Speech` in the saved commission. A save's summary (the Characters
+list) keeps the race, the class, and the prestige class by id (`Summary::race_and_class` names
+them, through #1993's ids once the screens' labels are converted, #2000); a summary another
+version wrote with the names shows them as written. Still text: who a grave's dead were and how
+they died, which the graveyard file on disk keeps in the app's words (its records predate any
+key, and a death's cause is the death screen's English, `Cause::epitaph`, until its words are
+converted), and the race and class in them until #1993's `race:`/`class:` phrases name them.
 
 **Saying a line of data (the recipe for an L4 slice)**, worked by `miscast:<id>.seen`
 (`content/miscast.rs`, `world/magic/miscast.rs`) and `creature:<id>.touch`/`.unseen`

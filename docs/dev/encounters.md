@@ -211,7 +211,9 @@ action and never saved.
 
 ## What is shown
 
-`PerceptionView::encounter()` (`EncounterView`: `name`, `outcome`, `text`, the `Choice`s) and
+`PerceptionView::encounter()` (`EncounterView`: `name`, the entry's `name` as a line of data,
+`encounter:<campaign>.<entry>.name`; `outcome`; `text`, the told message with the known line
+nested in it; the `Choice`s) and
 `encounter_pending()`; the dump header `encounter pending: a band of kobolds
 (ambush, evade, fight)`; JSON `encounter` (`entry`, `name`, `outcome`, `text`, `choices` by id)
 or null, and with `--state` the dev `encounter_tables` (the ids matching the player's
@@ -221,7 +223,8 @@ campaign with tables; the `actors` layer's `of encounter ID`.
 The app (`crates/ascmearc/src/ui/encounter.rs`, #805): `on_encounter` opens the one dialog
 (`Dialog`, `docs/dev/screens.md`) from the view whenever the run changed with an encounter
 pending and no such dialog open: after the step that met them and on load. Its title is the
-party's name, its text the view's (the known line included), a plain row per choice sending
+party's name, its text the view's (the known line included), both rendered in the language
+shown, a plain row per choice sending
 `Action::Encounter`, labelled by the outcome (`assets/lang/en/ui/encounter.toml`);
 `Dialog::required`: Esc does nothing and no info page opens over it (the owner, Q9; the
 design's §5.3 Esc and info screens first are overridden). It runs before `on_level_up`, so a

@@ -129,7 +129,9 @@ fn the_lost_shaft_waits_for_the_barrows_heart_and_reveals_fyrdelf() {
         w.perception()
             .quests()
             .iter()
-            .all(|q| q.name != "The lost shaft")
+            .all(
+                |q| crate::messages::english_arg(w.content(), &q.name, "bare") != "The lost shaft"
+            )
     );
     assert!(
         w.state.revealed.is_empty(),

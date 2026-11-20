@@ -22,6 +22,7 @@ use super::level::{CreatureSpawn, equip_ids};
 use super::object::{ObjectId, parse_stacks};
 use super::{Content, ContentError};
 use crate::geom::Pos;
+use crate::lang::{Arg, Phrase};
 use crate::object::Stack;
 use serde::{Deserialize, Serialize};
 
@@ -36,8 +37,6 @@ pub const MAX_FAVOUR: i32 = 50;
 /// The most favour there can be once talents lift the cap (the
 /// merchant's Magnate and Golden tongue), either way.
 pub const MOST_FAVOUR: i32 = 90;
-/// The placeholder for the keeper's name in a shop's `title`.
-pub const KEEPER: &str = "{keeper}";
 
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -98,7 +97,7 @@ pub struct ShopDef {
     pub id: String,
     /// What it is, without an article: "general store".
     pub name: String,
-    /// Its sign, with [`KEEPER`] for the keeper's name: "{keeper}'s General Store".
+    /// Its sign, a line of data naming its `keeper`: "{keeper:poss} General Store".
     pub title: String,
     /// The item classes of what generated shops of this kind lay out.
     pub stock: Vec<ItemClassId>,
@@ -123,9 +122,10 @@ pub struct ShopDef {
 }
 
 impl ShopDef {
-    /// Its sign, kept by `keeper`: "Grimbold's General Store".
-    pub fn sign(&self, keeper: &str) -> String {
-        self.title.replace(KEEPER, keeper)
+    /// Its sign, kept by `keeper`, by its key (`data_line::shop_sign`): "Grimbold's General
+    /// Store".
+    pub fn sign(&self, keeper: &str) -> Arg {
+        Arg::said(super::data_line::shop_sign(&self.id)).with("keeper", Phrase::literal(keeper))
     }
 }
 
@@ -456,7 +456,7 @@ mod tests {
         assert!(shops.generated());
         let store = shops.id("general_store").expect("a general store");
         assert_eq!(
-            shops.get(store).sign("Grimbold"),
+            crate::messages::english_arg(&c, &shops.get(store).sign("Grimbold"), "bare"),
             "Grimbold's General Store"
         );
         let keeper = shops.keeper_spawn(Pos::new(3, 4));

@@ -509,7 +509,7 @@ mod tests {
         assert_eq!(listed.len(), 1);
         let summary = listed[0].summary.clone().expect("a summary");
         assert_eq!((summary.name.as_str(), summary.level), ("Tamsin", 1));
-        assert_eq!(summary.race_and_class(), "Human Thief");
+        assert_eq!(summary.race_and_class(&content()), "Human Thief");
         assert_eq!(s.last_played().map(|c| c.id), Some(id));
     }
 

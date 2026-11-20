@@ -90,7 +90,7 @@ pub struct LevelState {
     /// sees.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty", with = "by_pos")]
     pub(crate) statues: BTreeMap<Pos, crate::world::creatures::statue::Statue>,
-    /// What is cut in its graves, by position (`world/fixtures/graves.rs`): a burial
+    /// What is cut in its graves, by position, by its key (`world/fixtures/graves.rs`): a burial
     /// ground's fixed graves and the run's dead laid there. Decoration, read by no rule and left
     /// out of the state hash; the player reads one in look mode.
     #[serde(
@@ -98,7 +98,7 @@ pub struct LevelState {
         skip_serializing_if = "super::hash::unhashed_map",
         with = "by_pos"
     )]
-    pub(crate) graves: BTreeMap<Pos, String>,
+    pub(crate) graves: BTreeMap<Pos, crate::lang::Arg>,
     /// The cells the run's dead changed (`world/fixtures/graves.rs`): each place
     /// filled and the way down opened, with the terrain it had before. Decoration like
     /// `graves`: the state hash sees the level as without them ([`LevelState::unburied`]).
@@ -368,7 +368,7 @@ impl LevelState {
     }
 
     /// What is cut in its gravestones, by position (`world/fixtures/graves.rs`).
-    pub fn graves(&self) -> &BTreeMap<Pos, String> {
+    pub fn graves(&self) -> &BTreeMap<Pos, crate::lang::Arg> {
         &self.graves
     }
 

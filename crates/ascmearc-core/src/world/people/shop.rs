@@ -146,11 +146,12 @@ impl Shop {
         self.status.is_open()
     }
 
-    /// Its sign: "Grimbold's General Store".
-    pub fn sign(&self, content: &Content) -> String {
-        content
-            .shops()
-            .map_or_else(|| self.name.clone(), |s| s.get(self.kind).sign(&self.name))
+    /// Its sign, by its key: "Grimbold's General Store" (its keeper's name without shops).
+    pub fn sign(&self, content: &Content) -> Arg {
+        (content.shops()).map_or_else(
+            || Phrase::literal(&self.name).into(),
+            |s| s.get(self.kind).sign(&self.name),
+        )
     }
 
     /// What the player owes for what they took, in gold, at `favour`.

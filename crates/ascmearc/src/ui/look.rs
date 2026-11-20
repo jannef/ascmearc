@@ -53,10 +53,7 @@ pub fn describe(view: &PerceptionView<'_>, p: Pos, blood: bool) -> String {
         (None, CellView::Unknown) => None,
     };
     lines.extend(described.map(Arg::Text));
-    lines.extend(
-        view.epitaph(p)
-            .map(|epitaph| Arg::Text(epitaph.to_string())),
-    );
+    lines.extend(view.epitaph(p).cloned());
     ui_with(T::LINES, &[("lines", Arg::List(lines))])
 }
 
@@ -776,7 +773,11 @@ mod tests {
         assert_eq!(w.perception().level_id(), "lictun");
         // One of the town's own, by the chapel (a fixed grave, `docs/dev/graves.md`).
         let stone = Pos::new(21, 19);
-        let cut = w.ground_truth().0.graves()[&stone].clone();
+        let cut = ascmearc_core::messages::english_arg(
+            w.content(),
+            &w.ground_truth().0.graves()[&stone],
+            "bare",
+        );
         assert_eq!(
             describe(&w.perception(), stone, true),
             format!("A gravestone. {cut}")

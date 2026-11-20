@@ -34,8 +34,8 @@ impl<'a> ShopView<'a> {
         (self.shops).price(self.content, self.shop.kind, stack, self.favour)
     }
 
-    /// Its sign: "Grimbold's General Store".
-    pub fn sign(&self) -> String {
+    /// Its sign, by its key: "Grimbold's General Store".
+    pub fn sign(&self) -> crate::lang::Arg {
         self.shop.sign(self.content)
     }
 

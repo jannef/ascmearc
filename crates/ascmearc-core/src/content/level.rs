@@ -794,7 +794,7 @@ pub(super) fn parse_level(
                 places.insert(pos, place);
             }
             if let Some(words) = &detail.epitaph {
-                marks.epitaphs.insert(pos, words.clone());
+                marks.epitaphs.insert(pos, (ch, words.clone()));
             }
             if detail.statue_place == Some(true) {
                 marks.statue_places.push(pos);

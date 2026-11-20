@@ -6,8 +6,10 @@
 //! (`hunger:corpses.skills.spellcraft.learn`, `familiars:arrives.cat`, `laws:eat.first`), a row
 //! of its arrays named by the id that tells it apart (`craving:threshold.<talent>.message`). Each
 //! function here gives one key, so the loader and the `say` site agree. None of these lines names
-//! a role: a fragment (a charm's `message`, a creature's `depart`, a familiar's arrival) is said
-//! inside a template of `messages/allies.toml`, which names the one it is about.
+//! a role but a name kept in a save ([`saved_names`]: a shop's sign names its `keeper`, a burial
+//! ground's epitaph its dead): a fragment (a charm's `message`, a creature's `depart`, a
+//! familiar's arrival) is said inside a template of `messages/allies.toml`, which names the one
+//! it is about.
 
 use super::{Content, ContentError, StatusDef, TalentDef, TalentEffect, TalentId};
 use super::{OutcomeDef, RoomEffectDef};
@@ -469,6 +471,7 @@ pub(super) fn add_all(content: &mut Content) -> Result<(), ContentError> {
         content.english.add_data_line(key, Template::Line(line));
     }
     quest_speech(content)?;
+    saved_names(content)?;
     Ok(())
 }
 
@@ -717,9 +720,79 @@ fn creature_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
     }
 }
 
+// ----- Names kept in saves and the quest log (#1999): a shop's sign, an encounter's party, a
+// month, and a burial ground's epitaphs, said by their keys so a saved line or a level's graves
+// render in any language. -----
+
+/// Shop kind `id`'s sign (its `title`), which names its `keeper` (`shops.toml`).
+pub fn shop_sign(id: &str) -> String {
+    format!("shop:{id}.title")
+}
+
+/// The name of encounter entry `entry` of campaign `campaign`'s tables (an entry's id is its
+/// campaign's), as the data writes it, article and all: "a band of footpads".
+pub fn encounter_name(campaign: &str, entry: &str) -> String {
+    format!("encounter:{campaign}.{entry}.name")
+}
+
+/// Month `month`'s name (1 to 12; `calendar.toml`'s `months`, numbered from 0).
+pub fn month(month: u32) -> String {
+    format!("calendar:months.{}", month.clamp(1, 12) - 1)
+}
+
+/// The words of level `level`'s fixed grave of legend character `glyph` (its `epitaph`).
+pub fn grave(level: &str, glyph: char) -> String {
+    format!("level:{level}.legend.{glyph}.epitaph")
+}
+
+/// Level `level`'s words for one of the run's dead laid there (`[burial]`'s `epitaph`), which
+/// name them (`name`) and how they died (`death`).
+pub fn burial_epitaph(level: &str) -> String {
+    format!("level:{level}.burial.epitaph")
+}
+
+/// Adds the names above to English by their keys, each naming only the roles it is given.
+fn saved_names(content: &mut Content) -> Result<(), ContentError> {
+    let mut lines: Vec<(String, String, &[&str])> = Vec::new();
+    for def in content.shops().map_or(&[][..], |s| s.defs()) {
+        lines.push((shop_sign(&def.id), def.title.clone(), &["keeper"]));
+    }
+    for table in &content.encounter_tables {
+        for entry in &table.entries {
+            let key = encounter_name(&table.campaign, &entry.id);
+            lines.push((key, entry.name.clone(), &[]));
+        }
+    }
+    for n in 1..=12 {
+        lines.push((month(n), content.calendar().month(n).to_string(), &[]));
+    }
+    for (id, level) in &content.levels {
+        let Some(burial) = &level.burial else {
+            continue;
+        };
+        if let Some(epitaph) = &burial.epitaph {
+            lines.push((burial_epitaph(id), epitaph.clone(), &super::EPITAPH_ROLES));
+        }
+        for (glyph, words) in burial.epitaphs.values() {
+            lines.push((grave(id, *glyph), words.clone(), &[]));
+        }
+    }
+    for (key, text, roles) in lines {
+        let line = Line::parse(&text);
+        if let Some(role) = line.roles().into_iter().find(|r| !roles.contains(r)) {
+            return Err(ContentError::new(
+                "data",
+                format!("`{key}`: \"{text}\" names `{role}`, which this line is not given"),
+            ));
+        }
+        content.english.add_data_line(key, Template::Line(line));
+    }
+    Ok(())
+}
+
 /// Adds what quests' people say to English by its key: a giver's words (and a drawn variant's),
-/// an escort's, a taker's, a side's, and the parting's betrayal. Said by a person, a line takes
-/// the base form only; a rolled quest's words may name what the roll drew
+/// an escort's, a taker's, a side's, and the parting's betrayal; and the quest's `name`. Said
+/// by a person, a line takes the base form only; a rolled quest's words may name what the roll drew
 /// (`content/quest_roll.rs`'s roles), any other quest's none.
 fn quest_speech(content: &mut Content) -> Result<(), ContentError> {
     let mut lines: Vec<(String, String, &[&str])> = Vec::new();
@@ -733,6 +806,8 @@ fn quest_speech(content: &mut Content) -> Result<(), ContentError> {
         let mut add = |path: String, text: &str, roles: &'static [&'static str]| {
             lines.push((quest(id, &path), text.to_string(), roles));
         };
+        // Its name (`QuestDef::name_arg`), which names no role.
+        add("name".into(), &def.name, &[]);
         let own = [
             Some(&def.texts.offer),
             def.texts.accept.as_ref(),

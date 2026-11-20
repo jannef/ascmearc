@@ -18,6 +18,7 @@ use super::{TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use crate::save::{SavedCharacter, Summary, played_text};
 use crate::settings::Clock;
+use ascmearc_core::content::Content;
 use ascmearc_core::lang::{Arg, Phrase};
 
 /// The panel's width.
@@ -31,6 +32,9 @@ const LEVEL_END: i32 = 66;
 #[derive(Debug)]
 pub struct CharactersScreen {
     characters: Vec<SavedCharacter>,
+    /// Each character's race and class as the list names them (`Summary::race_and_class`);
+    /// empty without a summary.
+    kinds: Vec<String>,
     selected: usize,
     /// More than one campaign is installed (a developer build, with the test world): the place
     /// is named with its campaign.
@@ -41,10 +45,15 @@ pub struct CharactersScreen {
 }
 
 impl CharactersScreen {
-    /// The list of `characters`; `campaigns` when more than one campaign is installed.
-    pub fn new(characters: Vec<SavedCharacter>, campaigns: bool) -> Self {
+    /// The list of `characters`, their races and classes named from `content`; `campaigns` when
+    /// more than one campaign is installed.
+    pub fn new(content: &Content, characters: Vec<SavedCharacter>, campaigns: bool) -> Self {
+        let kinds = (characters.iter())
+            .map(|c| (c.summary.as_ref()).map_or_else(String::new, |s| s.race_and_class(content)))
+            .collect();
         Self {
             characters,
+            kinds,
             selected: 0,
             campaigns,
             died: 0,
@@ -152,7 +161,8 @@ impl CharactersScreen {
                 } else {
                     TEXT_DIM
                 };
-                console.print(x + RACE_X, y, &summary.race_and_class(), colour);
+                let kind = self.kinds.get(row as usize).map_or("", String::as_str);
+                console.print(x + RACE_X, y, kind, colour);
                 let level = if summary.this_version() {
                     let level = Arg::Number(i64::from(summary.level));
                     ui_with(T::LEVEL, &[("level", level)])
@@ -218,8 +228,9 @@ mod tests {
             id: id.into(),
             summary: Some(Summary {
                 name: name.into(),
-                race: "Dwarf".into(),
-                class: "Warrior".into(),
+                race: "dwarf".into(),
+                class: "warrior".into(),
+                prestige: String::new(),
                 level,
                 place: "the Hub".into(),
                 campaign: "The Showcase".into(),
@@ -238,7 +249,11 @@ mod tests {
                 summary: None,
             },
         ];
-        CharactersScreen::new(characters, false)
+        CharactersScreen::new(&content(), characters, false)
+    }
+
+    fn content() -> ascmearc_core::content::Content {
+        ascmearc_assets::content().expect("the built-in content loads")
     }
 
     fn drawn(screen: &CharactersScreen) -> String {
@@ -296,7 +311,10 @@ mod tests {
         let text = drawn(&s);
         assert!(text.contains("> tamsin-1"), "{text}");
         assert!(text.contains("Nothing is known"), "{text}");
-        assert!(drawn(&CharactersScreen::new(Vec::new(), false)).contains("No saved characters."));
+        assert!(
+            drawn(&CharactersScreen::new(&content(), Vec::new(), false))
+                .contains("No saved characters.")
+        );
     }
 
     /// A save another version made is listed as that, says why it cannot be continued, and is
@@ -306,8 +324,10 @@ mod tests {
         let mut old = saved("osric-1", "Osric", 5);
         if let Some(summary) = &mut old.summary {
             summary.version = "0.1.0".into();
+            // Another version kept the names, not the ids: shown as written.
+            (summary.race, summary.class) = ("Dwarf".into(), "Warrior".into());
         }
-        let mut s = CharactersScreen::new(vec![old.clone()], false);
+        let mut s = CharactersScreen::new(&content(), vec![old.clone()], false);
         let text = drawn(&s);
         assert!(text.contains("Dwarf Warrior"), "{text}");
         assert!(text.contains("other version"), "{text}");

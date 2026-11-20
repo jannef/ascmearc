@@ -42,12 +42,14 @@ chips = "{gem:The} chips."
 clear_the_ground = "Clear the ground there first."
 # `item`: the item being unbound.
 clings_to_magic = "{item:The} clings to its magic."
-# The open commission in the quest log: not made yet, made, and what it asks.
+# The open commission in the quest log: its name (`work`: the work, by its object), not made
+# yet, made, and what it asks.
+commission_name = "Commission: {work:a}"
 commission_not_made = "Not made yet."
-# `giver`: the patron as the commission calls them ("your patron"), text.
-commission_return = "Return to {giver:bare}."
+# `giver`: the patron as the commission calls them ("your patron"), a phrase.
+commission_return = "Return to {giver:the}."
 # `giver`: as `commission_return`; `what`: the work, by its object.
-commission_wants = "{giver:Bare} wants you to bring them a Fine {what:bare} or better."
+commission_wants = "{giver:The} wants you to bring them a Fine {what:bare} or better."
 could_not_be_finer = "It could not be finer."
 # `what`: the part ("blade") or the material ("hardwood") that failed.
 cracks_good_for_nothing = "{what:The} cracks and is good for nothing."
