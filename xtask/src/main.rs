@@ -10,6 +10,9 @@
 //! - `golden [--update | --local]`: compare headless captures with `tests/golden/*.png`.
 //! - `wiki [--build | --check-links]`: write the player wiki's generated tables (`--build`: run
 //!   mdBook; `--check-links`: also check every link and anchor in the built book).
+//! - `lang --forms fi [WORD...]` / `lang --suggest fi <KOTUS_XML> [WORD...]`: the Finnish
+//!   translator's tools: every form of every lexicon word; Kotus classes for unclassed words
+//!   (`lang.rs`).
 //! - `bench-frames`: release-mode frame-time measurement of offscreen captures (the hub, with
 //!   flicker on and off, the vast level, and fifty spell circles, `bench_circles.rs`).
 //! - `bench-turns [ROW...]`: release-mode turn-time table for the hub, the vast level, and the
@@ -22,6 +25,7 @@ mod bench;
 mod bench_circles;
 mod docs_check;
 mod golden;
+mod lang;
 mod licenses;
 mod vast;
 mod wasm_check;
@@ -42,11 +46,12 @@ fn main() -> ExitCode {
         Some("licenses") => licenses::run(args.get(1).is_some_and(|a| a == "--check")),
         Some("golden") => golden::parse_mode(&args[1..]).and_then(golden::run),
         Some("wiki") => wiki::parse_mode(&args[1..]).and_then(wiki::run),
+        Some("lang") => lang::parse_mode(&args[1..]).and_then(lang::run),
         Some("bench-turns") => bench_turns(&args[1..]),
         Some("bench-frames") => bench::frames(args.get(1).map_or("2560x1440", String::as_str)),
         _ => {
             eprintln!(
-                "usage: cargo xtask <docs-check | smoke | web | web-smoke [CHROME] | gen-vast [--check] | licenses [--check] | golden [--update | --local] | wiki [--build | --check-links] | bench-turns [ROW...] | bench-frames [WxH]>"
+                "usage: cargo xtask <docs-check | smoke | web | web-smoke [CHROME] | gen-vast [--check] | licenses [--check] | golden [--update | --local] | wiki [--build | --check-links] | lang <--forms fi [WORD...] | --suggest fi <KOTUS_XML> [WORD...]> | bench-turns [ROW...] | bench-frames [WxH]>"
             );
             return ExitCode::from(2);
         }

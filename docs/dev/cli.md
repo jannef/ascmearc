@@ -64,6 +64,14 @@ metadata`'s `target_directory`) for the build output it reads and the files it w
   runs `mdbook build wiki` into `wiki/book/` (needs `cargo install mdbook --locked`);
   `--check-links` builds, then fails on any link to a missing page or anchor, or an anchor
   defined twice (CI runs it).
+- **Finnish translator's tools**, `cargo xtask lang` (`xtask/src/lang.rs`): `--forms fi
+  [WORD...]` prints every case form, singular and plural, of every word in
+  `assets/lang/fi/lexicon/*.toml` and of each `WORD` given (`"pitkä|miekka/9*A"`), for a native
+  speaker's review; `--suggest fi <KOTUS_XML> [WORD...]` reads a local copy of the Kotus word
+  list (never shipped; `docs/dev/localization.md` "The Kotus word list") and prints the class
+  and gradation it gives each lexicon word without a class (a compound by its last part), says
+  where an entry's class differs from the list's, and names the words the list lacks. The
+  checker (`--check`, `--stamp`) is L7 (`docs/design/localization.md` §15).
 - **Golden screenshots**, `cargo xtask golden`: compare, authoritative on Linux only; `--local`
   captures to `target/xtask/golden/*.local.png`, no compare; `--update` rewrites references
   (CLAUDE.md "Golden screenshots").

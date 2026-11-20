@@ -29,6 +29,7 @@ Rust is pinned in `rust-toolchain.toml`; cargo is in `~/.cargo/bin` (in a fresh 
 | Check the docs' code paths | `cargo xtask docs-check` |
 | Third-party notices | `cargo xtask licenses`. **Run it after changing dependencies** |
 | Player wiki tables | `cargo xtask wiki`, `--build`, `--check-links` (`docs/dev/wiki.md`) |
+| Finnish forms for review, Kotus class suggestions | `cargo xtask lang --forms fi`, `--suggest fi <kotus.xml>` (`docs/dev/localization.md`) |
 | Golden screenshots | `cargo xtask golden` (authoritative on Linux only), `--local`, `--update` |
 | Benchmarks, balance probe, web smoke test | `docs/dev/cli.md` |
 

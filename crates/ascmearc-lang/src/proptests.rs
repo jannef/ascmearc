@@ -88,6 +88,7 @@ fn lex_word() -> impl Strategy<Value = LexWord> {
             forms,
             proper,
             gender,
+            harmony: None,
         })
 }
 
