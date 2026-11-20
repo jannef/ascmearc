@@ -497,7 +497,13 @@ impl ControlsScreen {
                 }
                 Row::Blank => {}
                 Row::Header(context) => {
-                    console.print_in(panel.inner_x(), y, context.title(), ACCENT, panel.inner_w());
+                    console.print_in(
+                        panel.inner_x(),
+                        y,
+                        &context.title(),
+                        ACCENT,
+                        panel.inner_w(),
+                    );
                 }
                 Row::AbilityKeys => {
                     console.print_in(
@@ -640,7 +646,7 @@ pub(super) fn receive_keymap(
             for warning in &report.warnings {
                 warn!("keymap: {warning}");
             }
-            report.summary("the keymap")
+            report.summary(&ui(T::IMPORT_PICKED))
         }
         Err(why) => vec![refused(why)],
     };

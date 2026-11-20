@@ -76,6 +76,11 @@ text = "{name:bare} has {shown:bare} already."
 [import_choose]
 text = "Choose a keymap file to import."
 
+# What a keymap the browser's file picker delivered is called in the import's report
+# (`settings.toml`'s `imported_*`, as `source`).
+[import_picked]
+text = "the keymap"
+
 # `n`, the key's place in the command's list.
 [key_n]
 text = "Key {n:bare}"

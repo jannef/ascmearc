@@ -704,6 +704,14 @@ conditions (`ui::conditions`), and the race, class, stance, resource, sign, skil
 need names data gives as English; the Characters list's race and class, kept in a save's summary
 as the names were.
 
+**The settings module** (#1936) keeps its words in `ui/settings.toml`: a command's name is
+`command_<id>` (`KeyCommand::text`, a direction's its own entry: `command_move_n`, never "Move" and
+a direction glued), a context's title `context_<id>`, the palette, clock, and unit labels (their
+`label()` gives the `UiText`), the 12-hour clock's `AM`/`PM` and the degrees, the rest prompt's
+choices (`fixed::REST`), why a key cannot be bound (`fixed_in_<context>`, `kept_by_*`), and what
+exporting and importing a keymap reports, in Controls and on the command line. The settings file's
+ids and its load warnings (the log), and the keymap file's comments, stay as written.
+
 ## Lines of data
 
 A line whose text lives in the data, not in `messages/` (a dialogue line, a miscast's `seen`, an
