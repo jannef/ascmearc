@@ -16,6 +16,8 @@ use crate::combat::Profile;
 use crate::content::Content;
 use crate::damage::{Kinds, Rider};
 use crate::dice::Dice;
+use crate::lang::{Arg, MessageId, Msg};
+use crate::msg;
 use crate::world::Actor;
 
 /// Where an attack comes from.
@@ -34,14 +36,15 @@ pub enum AttackSource {
 }
 
 impl AttackSource {
-    /// Its name on the character screen and in dumps.
-    pub fn label(self) -> &'static str {
+    /// Its name on the character screen and in dumps, a word (`combat.attack_source_*`) said
+    /// `Bare`: "Main hand".
+    pub fn label(self) -> MessageId {
         match self {
-            AttackSource::MainHand => "Main hand",
-            AttackSource::OffHand => "Off hand",
-            AttackSource::ThirdHand => "Third hand",
-            AttackSource::Tail => "Tail",
-            AttackSource::Missile => "Missile",
+            AttackSource::MainHand => msg::combat::ATTACK_SOURCE_MAIN_HAND,
+            AttackSource::OffHand => msg::combat::ATTACK_SOURCE_OFF_HAND,
+            AttackSource::ThirdHand => msg::combat::ATTACK_SOURCE_THIRD_HAND,
+            AttackSource::Tail => msg::combat::ATTACK_SOURCE_TAIL,
+            AttackSource::Missile => msg::combat::ATTACK_SOURCE_MISSILE,
         }
     }
 
@@ -131,21 +134,31 @@ impl OwnAttack {
         text
     }
 
-    /// The whole line as the character screen and the dump write it: `+4 to hit, 1d8+2 slashing`,
-    /// `+3 to hit, 1d6 piercing, range 10`.
-    pub fn summary(&self, content: &Content) -> String {
-        let mut text = format!(
-            "{} to hit, {}",
-            self.to_hit_text(),
-            self.damage_text(content)
-        );
+    /// The whole line as the character screen and the dump write it, its parts listed by
+    /// `combat.attack_listed`: `+4 to hit, 1d8+2 slashing`, `+3 to hit, 1d6 piercing, range 10`.
+    /// The damage is text until damage types are converted (#1994).
+    pub fn summary(&self, content: &Content) -> Msg {
+        // After the to-hit: the damage, then the range and whether it pierces.
+        let mut rest = vec![Arg::Text(self.damage_text(content))];
         if let Some(range) = self.range {
-            text.push_str(&format!(", range {range}"));
+            rest.push(
+                Msg::new(msg::combat::ATTACK_RANGE)
+                    .role("n", i64::from(range))
+                    .into(),
+            );
         }
         if self.pierces {
-            text.push_str(", pierces armour");
+            rest.push(msg::combat::ATTACK_PIERCES.into());
         }
-        text
+        let list = |first: Arg, rest: Arg| {
+            Msg::new(msg::combat::ATTACK_LISTED)
+                .role("first", first)
+                .role("rest", rest)
+        };
+        let last = rest.pop().unwrap_or(Arg::Text(String::new()));
+        let rest = (rest.into_iter().rev()).fold(last, |rest, first| list(first, rest).into());
+        let to_hit = Msg::new(msg::combat::ATTACK_TO_HIT).role("to_hit", self.to_hit_text());
+        list(to_hit.into(), rest)
     }
 }
 

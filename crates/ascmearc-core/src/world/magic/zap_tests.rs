@@ -150,7 +150,10 @@ fn identifying_a_wand_tells_its_spell_and_charges() {
     let roll = (w.state.player())
         .spell_roll_words(&content, content.spell(wand.spell), by)
         .expect("it rolls");
-    let holds = format!("Holds Magic missile: {}", roll.text);
+    let holds = format!(
+        "Holds Magic missile: {}",
+        crate::test_support::english_of(&content, &roll.text)
+    );
     assert!(lines.contains(&holds), "{lines:?}");
     assert!(lines.iter().any(|l| l == "12 charges left"), "{lines:?}");
 }

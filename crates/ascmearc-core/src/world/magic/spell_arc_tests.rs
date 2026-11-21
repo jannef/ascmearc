@@ -323,7 +323,10 @@ fn chain_lightnings_jumps_grow_by_its_ladder_and_are_shown_as_reach() {
         crate::test_support::english_of(&w.content, &words),
         "range 10, jumps 6"
     );
-    let text = view.own_spell_roll(chain).expect("a roll").text;
+    let text = crate::test_support::english_of(
+        &w.content,
+        &view.own_spell_roll(chain).expect("a roll").text,
+    );
     assert!(text.ends_with("electricity, may arc, conducts"), "{text}");
 }
 

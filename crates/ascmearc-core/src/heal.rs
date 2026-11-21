@@ -19,9 +19,8 @@
 
 use crate::content::{Content, DiseaseId, StatusId};
 use crate::geom::Dir;
-use crate::lang::Phrase;
-use crate::lang::en::own_article;
-use crate::text::capitalized;
+use crate::lang::{Msg, Person, Phrase};
+use crate::msg;
 use crate::world::Actor;
 
 /// Something the Heal skill treats.
@@ -49,16 +48,13 @@ impl Ailment {
             .or_else(|| content.disease_id(id).map(Ailment::Disease))
     }
 
-    /// How `actor` knows it, for a choice of what to treat: the status's name ("Bleeding"), the
-    /// disease's once they know which it is, said `{disease:Bare}`, as written ("Filth fever",
-    /// "The shakes"), else "Sickness".
-    pub fn name(self, content: &Content, actor: &Actor) -> String {
+    /// How `actor` knows it, for a choice of what to treat: the status (`status:<id>`, said
+    /// `Bare`: "Bleeding"), the disease once they know which it is ([`phrase`]: "Filth fever",
+    /// "The shakes"), else "Sickness" ([`phrase_for`]).
+    pub fn name(self, content: &Content, actor: &Actor) -> Phrase {
         match self {
-            Ailment::Status(s) => content.status(s).name.clone(),
-            Ailment::Disease(d) if knows(actor, d) => {
-                content.english_of(&phrase(content, d), "Bare")
-            }
-            Ailment::Disease(_) => capitalized("sickness"),
+            Ailment::Status(s) => content.status_phrase(s),
+            Ailment::Disease(d) => phrase_for(content, actor, d),
         }
     }
 }
@@ -76,22 +72,12 @@ pub fn phrase(content: &Content, d: DiseaseId) -> Phrase {
 }
 
 /// Disease `d` as `actor` calls it, as a phrase: [`phrase`] once they know which it is, else
-/// "sickness" (as [`noun`]).
+/// "sickness".
 pub fn phrase_for(content: &Content, actor: &Actor, d: DiseaseId) -> Phrase {
     if knows(actor, d) {
         phrase(content, d)
     } else {
         Phrase::id("word:sickness")
-    }
-}
-
-/// What `actor` calls disease `d` in a sentence: its name once they know which it is ("filth
-/// fever", "the shakes"), else "sickness".
-pub fn noun(content: &Content, actor: &Actor, d: DiseaseId) -> String {
-    if knows(actor, d) {
-        content.disease(d).name.clone()
-    } else {
-        "sickness".to_string()
     }
 }
 
@@ -116,9 +102,9 @@ pub fn treatable(actor: &Actor, content: &Content) -> Vec<Ailment> {
 /// ability's choice offers it.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct OwnAilment {
-    /// How they know it: "Bleeding", "Filth fever", "Sickness"; an ally's "Your wolf's
-    /// bleeding".
-    pub name: String,
+    /// How they know it, a `health.treat_*` message: "Bleeding", "Filth fever", "Sickness"; an
+    /// ally's "Your wolf's bleeding".
+    pub name: Msg,
     /// The action that treats it: `heal:ID`, an ally's `heal:ID:DIR`.
     pub action: crate::action::Action,
 }
@@ -128,7 +114,7 @@ pub struct OwnAilment {
 pub fn own(actor: &Actor, content: &Content) -> Vec<OwnAilment> {
     (treatable(actor, content).into_iter())
         .map(|a| OwnAilment {
-            name: a.name(content, actor),
+            name: Msg::new(msg::health::TREAT_OWN).role("ailment", a.name(content, actor)),
             action: crate::action::Action::Heal {
                 what: Some(a.id(content).to_string()),
                 ally: None,
@@ -141,31 +127,32 @@ pub fn own(actor: &Actor, content: &Content) -> Vec<OwnAilment> {
 /// direction order), each ally's in [`treatable`]'s order: "Your wolf's bleeding", and the way
 /// to it after when two allies beside them go by the same name ("Your wolf's bleeding (east)").
 pub fn of_allies(allies: &[(Dir, &Actor)], content: &Content) -> Vec<OwnAilment> {
-    // A kept beast by its name ("Snel's bleeding"; `world/allies/companion.rs`), the rest "Your wolf's".
+    // A kept beast by its name ("Snel's bleeding"; `world/allies/companion.rs`), the rest "Your
+    // wolf's"; two go by the same name when they share a kept name or a creature.
+    let key = |ally: &Actor| match ally.kept() {
+        Some(data) => Err(data.name.clone()),
+        None => Ok(ally.creature),
+    };
     let named = |ally: &Actor| match ally.kept() {
-        Some(data) => data.name.clone(),
-        None => format!("Your {}", content.creature(ally.creature).name),
+        Some(data) => Phrase::literal(&data.name),
+        None => Phrase::id(format!("creature:{}", content.creature(ally.creature).id))
+            .owned_by(Phrase::literal("").person(Person::You)),
     };
     let mut list = Vec::new();
     for &(dir, ally) in allies {
-        let name = named(ally);
-        let twin = (allies.iter()).any(|&(d, other)| d != dir && named(other) == name);
+        let twin = (allies.iter()).any(|&(d, other)| d != dir && key(other) == key(ally));
         for a in treatable(ally, content) {
-            let what = match a {
-                Ailment::Status(s) => content.status(s).name.to_lowercase(),
-                // After a possessive a name gives up its own article: "Your wolf's shakes".
-                Ailment::Disease(d) => {
-                    let noun = noun(content, ally, d);
-                    own_article(&noun).unwrap_or(&noun).to_string()
-                }
-            };
-            let way = if twin {
-                format!(" ({})", dir.compass_name())
+            // After a possessive a name gives up its own article: "Your wolf's shakes".
+            let what = a.name(content, ally).owned_by(named(ally));
+            let name = if twin {
+                Msg::new(msg::health::TREAT_ALLY_WAY)
+                    .role("ailment", what)
+                    .role("way", dir.compass_name())
             } else {
-                String::new()
+                Msg::new(msg::health::TREAT_ALLY).role("ailment", what)
             };
             list.push(OwnAilment {
-                name: format!("{name}'s {what}{way}"),
+                name,
                 action: crate::action::Action::Heal {
                     what: Some(a.id(content).to_string()),
                     ally: Some(dir),

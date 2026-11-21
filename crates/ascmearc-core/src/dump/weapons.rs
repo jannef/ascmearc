@@ -47,8 +47,10 @@ pub(super) fn ranked_rows(
 pub(super) fn attack_rows(view: &PerceptionView<'_>) -> Vec<String> {
     (view.own_attacks().iter())
         .map(|a| {
-            let line = a.summary(view.content());
-            format!("{} {}: {line}", a.source.label(), a.name)
+            let content = view.content();
+            let line = crate::messages::english_msg(content, &a.summary(content));
+            let label = content.english_word(a.source.label(), "Bare");
+            format!("{label} {}: {line}", a.name)
         })
         .collect()
 }

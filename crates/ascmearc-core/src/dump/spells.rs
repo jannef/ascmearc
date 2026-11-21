@@ -39,7 +39,7 @@ pub(super) fn spell_does(view: &PerceptionView<'_>, spell: crate::content::Spell
     };
     let mut parts: Vec<String> = view
         .own_spell_roll(spell)
-        .map(|r| r.text)
+        .map(|r| crate::messages::english_msg(content, &r.text))
         .into_iter()
         .collect();
     if let Some(reach) = view.own_spell_reach(spell) {
@@ -75,7 +75,7 @@ pub(super) fn spells_json(view: &PerceptionView<'_>) -> Value {
                 "level": def.level,
                 "rank": view.own_spell_rank(spell),
                 "cost": view.own_spell_cost(spell),
-                "roll": roll.map(|r| r.text),
+                "roll": roll.map(|r| crate::messages::english_msg(content, &r.text)),
                 "damage_type": damage_type,
                 "reach": {
                     "range": range,

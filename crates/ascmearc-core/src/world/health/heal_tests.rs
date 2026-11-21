@@ -11,6 +11,7 @@ use crate::content::{ContentFiles, DiseaseId, StatusId};
 use crate::heal::Ailment;
 use crate::skills::{Effect, SkillId, Trained};
 use crate::stats::Stat;
+use crate::test_support::english_of;
 use crate::test_support::peek;
 use crate::test_support::{last_text as last_message, texts as messages};
 use crate::time::Duration;
@@ -308,7 +309,11 @@ fn a_disease_may_be_tried_again_eased_never_cured() {
         let fever = sicken(&mut w, "filth_fever");
         let own = w.perception().own_ailments();
         assert_eq!(own.len(), 1);
-        assert_eq!(own[0].name, "Sickness", "not known by name yet");
+        assert_eq!(
+            english_of(w.content(), &own[0].name),
+            "Sickness",
+            "not known by name yet"
+        );
         assert_eq!(own[0].action, "heal:filth_fever".parse().expect("action"));
         let before = *w.state.player().diseases.get(fever).expect("it");
         let difficulty = w.content().disease(fever).difficulty;
@@ -384,7 +389,8 @@ fn the_treat_menu_names_a_known_disease_as_written() {
         let player = w.state.player;
         let actor = w.state.actors.get_mut(&player).expect("player");
         actor.diseases.get_mut(d).expect("caught").progressions = 1;
-        assert_eq!(w.perception().own_ailments()[0].name, name);
+        let own = w.perception().own_ailments();
+        assert_eq!(english_of(w.content(), &own[0].name), name);
     }
 }
 
@@ -453,7 +459,7 @@ fn several_ailments_are_listed_bleeding_first() {
     afflict(&mut w, "poisoned", 2);
     afflict(&mut w, "bleeding", 3);
     let names: Vec<String> = (w.perception().own_ailments().into_iter())
-        .map(|a| a.name)
+        .map(|a| english_of(w.content(), &a.name))
         .collect();
     assert_eq!(names, ["Bleeding", "Poisoned", "Sickness"]);
     let me = w.state.player();
@@ -493,7 +499,10 @@ fn heal_tends_an_ally_beside_the_player_and_not_a_far_one() {
     // Offered by name and way, though the player has nothing of their own to treat.
     let offered = w.perception().own_ailments();
     assert_eq!(offered.len(), 1, "{offered:?}");
-    assert_eq!(offered[0].name, "Your wolf's bleeding");
+    assert_eq!(
+        english_of(w.content(), &offered[0].name),
+        "Your wolf's bleeding"
+    );
     assert_eq!(
         offered[0].action.to_string(),
         format!("heal:bleeding:{dir}")

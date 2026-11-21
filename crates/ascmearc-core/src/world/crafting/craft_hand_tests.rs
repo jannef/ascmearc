@@ -177,7 +177,10 @@ fn a_metal_spear_needs_billets_greyed_and_refused_with_no_time_without_them() {
     let mut w = world();
     stock(&mut w, "iron", 2);
     let lack = row_lack(&w, "spear").expect("greyed");
-    assert_eq!(lack.reason(&w.content), "no wood to hand");
+    assert_eq!(
+        crate::test_support::english_of(&w.content, &lack.reason(&w.content)),
+        "no wood to hand"
+    );
     let start = w.state.time;
     apply(&mut w, "craft:spear:a");
     assert_eq!(said(&w), "You must choose the haft.");

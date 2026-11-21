@@ -12,6 +12,7 @@ use super::{
     duplicate_id,
 };
 use crate::alignment::Requirement;
+use crate::lang::{Arg, Msg, Phrase};
 use crate::skills::SkillId;
 use crate::stats::{PerStat, Stat};
 use crate::talent::{
@@ -19,7 +20,6 @@ use crate::talent::{
     GrowthEffect, HungerEffect, MagicEffect, MartialEffect, MovementEffect, OffenceEffect,
     ResourceEffect, SensesEffect, SignEffect, SlotEffect, SongEffect, StealthEffect, VigourEffect,
 };
-use crate::text::article;
 use serde::{Deserialize, Deserializer};
 use std::collections::BTreeMap;
 
@@ -912,85 +912,104 @@ pub enum Need {
 }
 
 impl Need {
-    /// The prerequisite as an item of a refusal's `needs`: a stat nests its name's message
-    /// (`character.talent_needs_stat`); the rest are [`Need::words`], text until a talent's
-    /// requirements are converted (#1997).
+    /// The prerequisite as an item of a refusal's `needs` ([`Need::message`]).
     pub fn arg(&self, content: &Content) -> crate::lang::Arg {
-        use crate::lang::{Arg, Msg};
-        match self {
-            Need::Stat(stat, score) => Msg::new(crate::msg::character::TALENT_NEEDS_STAT)
-                .role("stat", stat.name())
-                .role("score", i64::from(*score))
-                .into(),
-            other => Arg::Text(other.words(content)),
-        }
+        self.message(content).into()
     }
 
-    /// The prerequisite in words, as a refusal and the Talents page say it: "Toughness 14",
-    /// "Hardy", "Stealth 25", "to be a dwarf".
-    pub fn words(&self, content: &Content) -> String {
+    /// The prerequisite in words, as a refusal and the Talents page say it, a
+    /// `character.talent_needs_*` message: "Toughness 14", "Hardy", "Stealth 25", "to be a
+    /// dwarf". A weapon skill's name, a birth sign's animal and element, a vision's name, and an
+    /// `any_weapon_skill`'s words are the data's text inside it.
+    pub fn message(&self, content: &Content) -> Msg {
+        use crate::msg::character as m;
+        let number = |n: u32| Arg::Number(i64::from(n));
+        // Each one of a list ("a dwarf or an elf"), said with its article.
+        let each = |phrase: Phrase| Arg::from(Msg::new(m::TALENT_NEEDS_ONE).role("who", phrase));
         match self {
-            Need::Talent(id) => content.talents().get(*id).name.clone(),
-            Need::Stat(stat, score) => {
-                format!("{} {score}", content.english_word(stat.name(), "Bare"))
+            Need::Talent(id) => {
+                Msg::new(m::TALENT_NEEDS_TALENT).role("talent", content.talent_phrase(*id))
             }
-            Need::Skill(id, value) => format!("{} {value}", content.skill(*id).name),
+            Need::Stat(stat, score) => Msg::new(m::TALENT_NEEDS_STAT)
+                .role("stat", stat.name())
+                .role("score", number(u32::from(*score))),
+            Need::Skill(id, value) => Msg::new(m::TALENT_NEEDS_SKILL)
+                .role("skill", content.skill_phrase(*id))
+                .role("value", number(u32::from(*value))),
+            // The weapon skill as the data writes it ("Twin Blades"): `weapon_skill:` is lower
+            // case, and a style's name keeps its capitals here.
             Need::WeaponSkill(id, rank) => {
-                format!("{} {rank}", content.weapon_skills().skill(*id).name)
+                let skill = content.weapon_skills().skill(*id);
+                Msg::new(m::TALENT_NEEDS_WEAPON_SKILL)
+                    .role("skill", skill.name.as_str())
+                    .role("rank", number(u32::from(*rank)))
             }
-            Need::AnyWeaponSkill(any) => format!("{} {}", any.words, any.rank),
-            Need::Chosen(rank) => format!("the chosen one at {rank}"),
-            Need::Level(level) => format!("level {level}"),
+            Need::AnyWeaponSkill(any) => Msg::new(m::TALENT_NEEDS_ANY_WEAPON_SKILL)
+                .role("skill", any.words.as_str())
+                .role("rank", number(u32::from(any.rank))),
+            Need::Chosen(rank) => {
+                Msg::new(m::TALENT_NEEDS_CHOSEN_RANK).role("rank", number(u32::from(*rank)))
+            }
+            Need::Level(level) => {
+                Msg::new(m::TALENT_NEEDS_LEVEL).role("level", number(u32::from(*level)))
+            }
             Need::Race(ids) => {
-                let names: Vec<String> = (ids.iter())
-                    .map(|id| {
-                        let name = content.race(id).map_or(id.as_str(), |r| r.name.as_str());
-                        format!("{} {}", article(name), name.to_lowercase())
-                    })
-                    .collect();
-                format!("to be {}", crate::text::or_list(&names))
+                let races = ids.iter().map(|id| each(content.race_phrase(id))).collect();
+                Msg::new(m::TALENT_NEEDS_RACE).role("races", Arg::List(races))
             }
             Need::NotRace(id) => {
-                let name = content.race(id).map_or(id.as_str(), |r| r.name.as_str());
-                format!("not to be {} {}", article(name), name.to_lowercase())
+                let races = vec![each(content.race_phrase(id))];
+                Msg::new(m::TALENT_NEEDS_NOT_RACE).role("races", Arg::List(races))
             }
             Need::Class(id) => {
-                let name = content.class(id).map_or(id.as_str(), |c| c.name.as_str());
-                format!("to be {} {}", article(name), name.to_lowercase())
+                Msg::new(m::TALENT_NEEDS_CLASS).role("class", content.class_phrase(id))
             }
             Need::RaceLacks(skill) => {
-                let races: Vec<String> = (content.races().teaching(*skill))
-                    .map(|r| format!("{} {}", article(&r.name), r.name.to_lowercase()))
+                let races = (content.races().teaching(*skill))
+                    .map(|r| each(content.race_phrase(&r.id)))
                     .collect();
-                format!("not to be {}", crate::text::or_list(&races))
+                Msg::new(m::TALENT_NEEDS_NOT_RACE).role("races", Arg::List(races))
             }
             Need::Eyes(ids) => {
-                let names: Vec<String> = (ids.iter())
+                let names = (ids.iter())
                     .map(|id| content.vision(id).map_or(id.as_str(), |v| v.name.as_str()))
-                    .map(str::to_lowercase)
+                    .map(|name| Arg::Text(name.to_lowercase()))
                     .collect();
-                format!("{} eyes", crate::text::or_list(&names))
+                Msg::new(m::TALENT_NEEDS_EYES).role("eyes", Arg::List(names))
             }
             Need::Animal(id) => {
                 let name = (content.horoscope())
                     .and_then(|h| h.animals.iter().find(|a| &a.id == id))
                     .map_or(id.as_str(), |a| a.name.as_str());
-                format!("to be born in the year of the {name}")
+                Msg::new(m::TALENT_NEEDS_ANIMAL).role("animal", name)
             }
             Need::Element(id) => {
                 let name = (content.horoscope())
                     .and_then(|h| h.elements.iter().find(|e| &e.id == id))
                     .map_or(id.as_str(), |e| e.name.as_str());
-                format!("to be {name}-born")
+                Msg::new(m::TALENT_NEEDS_ELEMENT).role("element", name)
             }
-            Need::Lucky => "to be born on a lucky day".into(),
-            Need::Creation => "to be a new character".into(),
-            Need::Eaten(n) => format!("to have eaten {n} sapients"),
-            Need::Either(needs) => (needs.iter())
-                .map(|n| n.words(content))
-                .collect::<Vec<_>>()
-                .join(" or "),
+            Need::Lucky => m::TALENT_NEEDS_LUCKY.into(),
+            Need::Creation => m::TALENT_NEEDS_CREATION.into(),
+            Need::Eaten(n) => Msg::new(m::TALENT_NEEDS_EATEN).role("n", number(*n)),
+            // "Intelligence 12 or Appraise 20": each joined to the rest by `talent_needs_either`.
+            Need::Either(needs) => {
+                let mut items: Vec<Msg> = needs.iter().map(|n| n.message(content)).collect();
+                let last = items
+                    .pop()
+                    .expect("an `either` is never empty (its parsing)");
+                (items.into_iter().rev()).fold(last, |rest, first| {
+                    Msg::new(m::TALENT_NEEDS_EITHER)
+                        .role("first", first)
+                        .role("rest", rest)
+                })
+            }
         }
+    }
+
+    /// The prerequisite in English ([`Need::message`]): the wiki's and the tests'.
+    pub fn words(&self, content: &Content) -> String {
+        crate::messages::english_msg(content, &self.message(content))
     }
 }
 

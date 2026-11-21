@@ -90,9 +90,25 @@ its_magic_suffix = "its magic {affix:bare}"
 # `affix`: a prefix ("Sharp").
 its_prefix_magic = "its {affix:bare} magic"
 knife_splits_wood = "The knife slips and splits the wood."
+# Why a recipe cannot be made now or a rig cannot be rigged, a clause the profession screen and
+# the rig list show beside the row (`RecipeLack::reason`, `rig.rs::Lack`).
+lacking_crystal = "no crystal to hand"
 lacking_dig_tool = "no digging tool ready"
+lacking_enchantable = "nothing to enchant"
+lacking_gem = "no gem to hand"
+# `what`: the input, an object (said in the plural).
+lacking_input = "not enough {what:plural}"
 lacking_knife = "no knife"
+# `launcher`: what the ammunition is shot from ("bow").
+lacking_launcher = "no {launcher:bare} ready"
 lacking_rig_inputs = "nothing to rig it with"
+lacking_room = "it holds all it can"
+lacking_setting = "nothing to set a gem in"
+lacking_skill = "beyond your skill"
+# `station`: the station, a terrain.
+lacking_station = "no {station:bare} beside you"
+# `stock`: the stock's material group, else its material ("wood", "metal").
+lacking_stock = "no {stock:bare} to hand"
 leave_anvil_unfinished = "you leave the anvil unfinished"
 leave_off_work = "you leave off your work"
 leave_trap_unfinished = "you leave the trap unfinished"
@@ -175,6 +191,13 @@ put_down_work = "you put down your work"
 quicken_heart = "{item:The} takes {stone:poss} glow and the heart-crystal's, and holds more."
 rare_already = "It is rare already: only a heart-crystal's Quicken adds to it."
 rare_unbind_first = "It is rare: unbind it, then imbue it anew."
+# What a rig takes, as the rig list and the wiki say it (`rig.rs::takes_words`): `what` an
+# object or a piece of stock, `n` the most it takes; `takes` what it takes besides the knife (one of
+# these again).
+rig_takes_dig_tool = "a digging tool ready"
+rig_takes_one = "{what:a}"
+rig_takes_up_to = "up to {n:bare} {what:plural}"
+rig_takes_with_knife = "{takes:bare} and a knife"
 rig_will_not_hold = "The rig will not hold."
 rough_it_out = "You rough it out, and lose more than you meant to."
 set_already = "It is set already."

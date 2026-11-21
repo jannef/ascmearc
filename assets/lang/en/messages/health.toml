@@ -112,6 +112,12 @@ struggle_free = "You struggle, but cannot break free."
 struggle_held = "You struggle, but {who:the} holds you fast."
 struggle_still = "You struggle, but you are still {status:bare}."
 tastes_foul = "It tastes foul!"
+# What the Heal ability offers to treat, an option of its choice: `ailment` a status or a
+# disease as the player knows it (an ally's with its owner, "Your wolf's bleeding"); `way` the
+# compass word to that ally ("east"), when two beside them go by the same name.
+treat_ally = "{ailment:The}"
+treat_ally_way = "{ailment:The} ({way:bare})"
+treat_own = "{ailment:Bare}"
 throw_flask = "You throw {what:the}."
 ugh_rotten = "Ugh! {what:The} was rotten."
 vomit = "You vomit!"

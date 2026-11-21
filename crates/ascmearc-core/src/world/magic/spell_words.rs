@@ -22,8 +22,9 @@ pub struct SpellRoll {
     pub roll: Roll,
     /// The kind of harm; `None` for healing.
     pub damage_type: Option<DamageTypeId>,
-    /// The roll as the menu shows it: `4d6 fire, burns one in four`, `3d6 healed`.
-    pub text: String,
+    /// The roll as the menu shows it, a `magic.roll_*` clause: `4d6 fire, burns one in four`,
+    /// `3d6 healed`.
+    pub text: Msg,
 }
 
 impl Actor {
@@ -44,36 +45,43 @@ impl Actor {
     }
 }
 
-/// `roll`, made by `spell`, in words.
+/// `roll`, made by `spell`, in words: a `magic.roll_*` clause. A damage type's name and its rule
+/// are the data's text until damage types are converted (#1994).
 pub fn roll_words(content: &Content, spell: &SpellData, roll: Roll) -> SpellRoll {
-    let what = match spell.damage_type {
-        Some(kind) => content.damage_type(kind).name.as_str(),
-        None if spell.kind == crate::content::SpellPurpose::Summon => "called",
-        None => "healed",
-    };
     // A fixed roll is its number ("1 called"), never a bonus's "+1".
     let shown = if roll.is_fixed() {
         roll.min().to_string()
     } else {
         roll.to_string()
     };
+    let mut text = match spell.damage_type {
+        Some(kind) => {
+            Msg::new(msg::magic::ROLL_HARM).role("kind", content.damage_type(kind).name.as_str())
+        }
+        None if spell.kind == crate::content::SpellPurpose::Summon => {
+            Msg::new(msg::magic::ROLL_CALLED)
+        }
+        None => Msg::new(msg::magic::ROLL_HEALED),
+    }
+    .role("roll", shown);
     // The rule every spell of its type carries (`data/spells.toml`'s `[types]`); one that never
     // shoves (`shove = false`) leaves them unsaid: force's tell only of its shove.
     let rule = (content.spell_type(spell.damage_type))
         .filter(|_| spell.shove)
         .and_then(|t| t.words.as_deref());
-    let mut text = match rule {
-        Some(rule) => format!("{shown} {what}, {rule}"),
-        None => format!("{shown} {what}"),
-    };
+    if let Some(rule) = rule {
+        text = Msg::new(msg::magic::ROLL_RULE)
+            .role("roll", text)
+            .role("rule", rule);
+    }
     // What comes back to the caster (Leech), in words: the percent stays the wiki's.
     if let Some(percent) = spell.effect.leech {
         let share = match percent {
-            100 => "all",
-            50 => "half",
-            _ => "part",
+            100 => msg::magic::ROLL_LEECH_ALL,
+            50 => msg::magic::ROLL_LEECH_HALF,
+            _ => msg::magic::ROLL_LEECH_PART,
         };
-        text.push_str(&format!(", {share} of it yours"));
+        text = Msg::new(share).role("roll", text);
     }
     SpellRoll {
         text,
@@ -110,17 +118,18 @@ pub fn reach_words(shape: Shape, reach: Reach) -> Option<Msg> {
     }))
 }
 
-/// A reroll of the dice showing `most` or less, in words (the spell scaling design §9's note):
-/// `Your 1s are rolled again.`, `Your 1s and 2s are rolled again.`; `None` for none.
-pub fn reroll_words(most: u32) -> Option<String> {
-    let faces: Vec<String> = (1..=most).map(|n| format!("{n}s")).collect();
-    if faces.is_empty() {
-        return None;
-    }
-    Some(format!(
-        "Your {} are rolled again.",
-        crate::text::and_list(&faces)
-    ))
+/// A reroll of the dice showing `most` or less, in words (the spell scaling design's note on
+/// rerolls): a `magic.reroll` sentence of its faces (`magic.reroll_face`), `Your 1s are rolled
+/// again.`, `Your 1s and 2s are rolled again.`; `None` for none.
+pub fn reroll_words(most: u32) -> Option<Msg> {
+    let faces: Vec<Arg> = (1..=most)
+        .map(|n| {
+            Msg::new(msg::magic::REROLL_FACE)
+                .role("n", i64::from(n))
+                .into()
+        })
+        .collect();
+    (!faces.is_empty()).then(|| Msg::new(msg::magic::REROLL).role("faces", Arg::List(faces)))
 }
 
 #[cfg(test)]
@@ -170,9 +179,17 @@ mod tests {
                 }
                 None => "healed".into(),
             };
-            assert_eq!(words.text, format!("{} {what}", words.roll), "{}", def.id);
+            assert_eq!(
+                crate::test_support::english_of(&BUILTIN, &words.text),
+                format!("{} {what}", words.roll),
+                "{}",
+                def.id
+            );
         }
-        let text = |id: &str| view.own_spell_roll(sp(id)).map(|r| r.text);
+        let text = |id: &str| {
+            (view.own_spell_roll(sp(id)))
+                .map(|r| crate::test_support::english_of(&BUILTIN, &r.text))
+        };
         // Fireball at Intelligence 19: rung 3 by stats (10d6), Empower a rung more (10d6+2).
         assert_eq!(
             text("fireball").as_deref(),
@@ -209,13 +226,11 @@ mod tests {
 
     #[test]
     fn a_reroll_names_its_faces() {
-        assert_eq!(reroll_words(0), None);
-        assert_eq!(reroll_words(1).unwrap(), "Your 1s are rolled again.");
-        assert_eq!(reroll_words(2).unwrap(), "Your 1s and 2s are rolled again.");
-        assert_eq!(
-            reroll_words(3).unwrap(),
-            "Your 1s, 2s, and 3s are rolled again."
-        );
+        let said = |most| reroll_words(most).map(|m| crate::test_support::english_of(&BUILTIN, &m));
+        assert_eq!(said(0), None);
+        assert_eq!(said(1).unwrap(), "Your 1s are rolled again.");
+        assert_eq!(said(2).unwrap(), "Your 1s and 2s are rolled again.");
+        assert_eq!(said(3).unwrap(), "Your 1s, 2s, and 3s are rolled again.");
     }
 
     #[test]

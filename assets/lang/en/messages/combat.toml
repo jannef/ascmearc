@@ -13,6 +13,21 @@ acid_eats_at = "The acid eats at {what:the}."
 acid_eats_away = "The acid eats {what:the} away."
 acid_runs_off = "The acid runs off {what:the}."
 aimed_at_nothing = "That is aimed at nothing."
+# An attack the player has ready, as the character screen and the `weapons` dump say it
+# (`world/combat/attacks.rs`): its parts listed by `attack_listed` (`first` a part, `rest` the
+# others: this entry again, or the last part); `to_hit` its to-hit as written ("+4"); `n` a range
+# in cells. Its damage ("1d8+2 slashing") is the dice and the damage types' names as text until
+# those are converted (#1994).
+attack_listed = "{first:bare}, {rest:bare}"
+attack_pierces = "pierces armour"
+attack_range = "range {n:bare}"
+# Where an attack comes from, a label said `Bare` ("Main hand").
+attack_source_main_hand = "main hand"
+attack_source_missile = "missile"
+attack_source_off_hand = "off hand"
+attack_source_tail = "tail"
+attack_source_third_hand = "third hand"
+attack_to_hit = "{to_hit:bare} to hit"
 # The intent alone: an attack the player saw made, its blow not (yet) told.
 attacks = "{actor:The} attack{actor:s} {target:the}."
 blades_rend = "Your blades rend {target:the}."

@@ -499,8 +499,9 @@ their names (`{rig:a}`, `{trap:a}`). A rig's `made` and `snaps` are lines of dat
 converted (#1949): a rig's id as the action wrote it, and the patron as the commission calls
 them (`giver`, "your patron", kept as text in the save). The commission's quest-log view
 (`patron.rs::commission`) says its objective and status from `commission_*`; its name stays
-text, as every quest's does. Left for their own work: the rig list's "what it takes" (`rig.rs::takes_words`), and the craft
-dialog's plan (`CraftPlan`), screen text built in core.
+text, as every quest's does. The rig list's "what it takes" is a message (`rig.rs::takes_words`,
+"Reasons core composes"); left for its own work: the craft dialog's plan (`CraftPlan`), screen
+text built in core.
 
 `world/classes/`'s first half (`messages/classes.toml`, L4c: `ascetic`, `calling`, `charge`,
 `class_ability`, `class`, `consecrate`, `invest`, `mark`) says the lines its data writes as
@@ -665,10 +666,32 @@ picks"), the rest `Need::words` text until talent requirements are converted. **
 a long action** is `World::came_msg` everywhere (`came_line` is gone). **A spell's reach**
 (`spell_words.rs::reach_words`) is one clause, `None` for none: its parts (`magic.reach_range`,
 `reach_length`, `reach_radius`, `reach_jumps`) listed by `magic.reach_listed`, a nested entry a
-join, as the look line's `listed`, so the language owns the separator. Still English (#1997's
-remainder): a talent's requirements (`Need::words` but a stat's), `takes_words` and
-`Lack`, `CraftPlan` and `RecipeLack::reason`, a heal's ailment names, an attack's source label
-and summary, and `magic/describe.rs`.
+join, as the look line's `listed`, so the language owns the separator.
+
+**#1997's second part** goes on the same way. **A talent's requirements** are
+`character.talent_needs_*` messages (`Need::message`; `Need::arg` nests one in a refusal's
+`needs`, `Need::words` renders it in English for the wiki and the tests): a talent, a skill, a
+race, and a class their phrases (`talent:`, `skill:`, `race:`, `class:`; a weapon skill its
+data name as text, since `weapon_skill:` is lower case and a style keeps its capitals here,
+"Twin Blades 3"), a list of races each a `talent_needs_one` said `{races:or}`, an `either` joined by
+`talent_needs_either`; the Talents page's `NeedView::words` is the message (with
+`talent_needs_untaken` for a talent the craving took). **What a rig takes**
+(`rig.rs::takes_words`, `RigRow::takes`) is a `crafting.rig_takes_*` clause and **why a recipe
+cannot be made** (`RecipeLack::reason`) a `crafting.lacking_*` one (the station a `terrain:`
+phrase, an input an `object:` said `plural`), shown by the rig list and the profession screen
+(`text::ui_msg`) and the `recipes` dump. **What the Heal ability offers** (`OwnAilment::name`) is
+a `health.treat_*` message: the ailment's phrase (`Ailment::name`: `status:`, `disease:`, or
+"sickness"), an ally's owned by the ally ("Your wolf's shakes", the article given up to the
+owner by `en`), the way to it a text role. **An attack's** source label is a
+`combat.attack_source_*` word (said `Bare`) and its summary a `combat.attack_*` list
+(`attack_listed`, as `reach_listed`). **A spell's roll** (`roll_words`, `SpellRoll::text`) is a
+`magic.roll_*` clause and a reroll (`reroll_words`) `magic.reroll` with its faces said
+`{faces:and}`. Text roles inside them until #1994 converts damage types and schools: a damage
+type's name and its rule, an attack's damage ("1d8+2 slashing"); and until their data has ids: a
+birth sign's animal and element, a vision's name, an `any_weapon_skill`'s words, a launcher, a
+stock's group, a compass word. Still English: `CraftPlan` (the craft dialog's plan, its `english` reason why
+not), a recipe row's `takes`, and `magic/describe.rs` (an item's description, which renders a
+wand's roll in English).
 
 ## UI text (L6)
 

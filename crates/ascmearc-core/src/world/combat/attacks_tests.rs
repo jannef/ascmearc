@@ -177,7 +177,7 @@ fn damage_reads_dice_bonus_kinds_and_riders() {
         pierces: false,
     };
     assert_eq!(
-        attack.summary(content),
+        crate::test_support::english_of(content, &attack.summary(content)),
         "+4 to hit, 1d8+2 slashing or piercing"
     );
     attack.extra = Some(crate::dice::Dice::of(1, 4));
@@ -188,7 +188,7 @@ fn damage_reads_dice_bonus_kinds_and_riders() {
     attack.to_hit = -1;
     attack.range = Some(3);
     assert_eq!(
-        attack.summary(content),
+        crate::test_support::english_of(content, &attack.summary(content)),
         "-1 to hit, 1d8+1d4+2 slashing or piercing +1d6 fire, range 3"
     );
 }
