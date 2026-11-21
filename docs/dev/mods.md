@@ -77,8 +77,11 @@ load it (core: `content/mods.rs`, `save.rs`, `replay.rs`; `ascmearc-assets`; the
 `mods.rs`; the Mods screen's snapshots read the repository root as `--config-dir`). When a
 change to those five files' other fields lands, copy it into the mod's files too.
 
-**The example text mod**, `mods/creaky_doors/`, rewords four door lines
-(`lang/en/messages/doors.toml`: `close`, `crashes_open`, `open`, `unwedge`), every other door line
-staying the game's. Tests load it (core: `content/text_mod_tests.rs`, `save.rs`, `replay.rs`;
-`ascmearc-assets`; `xtask/src/lang/mods.rs`). When a door line it rewords is renamed or removed,
-change it here too.
+**The test mods**, under `tests/mods/`, are not shipped: the game's `mods/` folder holds only
+the mods players see (`pride_month`; the owner, 2026-11-21). `tests/mods/creaky_doors/`, the
+example text mod, rewords four door lines (`lang/en/messages/doors.toml`: `close`,
+`crashes_open`, `open`, `unwedge`), every other door line staying the game's.
+`tests/mods/tiny_language/` adds a language, `xx`, on the `generic` morphology with three door
+lines (design §11). Tests load them (core: `content/text_mod_tests.rs`, `save.rs`, `replay.rs`;
+`ascmearc-assets`; `xtask/src/lang/mods.rs`, whose test checks them as `cargo xtask lang --check`
+checks `mods/`, or `--mod tests/mods/<id>`). When a door line they hold is renamed or removed, change it here too.

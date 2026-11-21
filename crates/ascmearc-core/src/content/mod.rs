@@ -366,7 +366,7 @@ pub use mining::{Mined, MiningBand, MiningFind, MiningRules, Vein, Veins};
 pub use miscast::{Miscast, MiscastRules, WHO as MISCAST_WHO};
 pub use mods::{ModStamp, describe as describe_mods, is_text_path, merges_by_id};
 #[cfg(test)]
-pub(crate) use mods::{pride_month, repo_mod};
+pub(crate) use mods::{pride_month, test_mod};
 pub use monster_pool::{MonsterPool, VaultMonsters};
 pub use names::{NameLists, Names};
 pub use oath::{OathBand, OathRules, TREE as OATH_TREE};

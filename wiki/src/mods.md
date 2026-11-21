@@ -94,9 +94,10 @@ each a copy of the game's with only the `fg` line (the colour) changed. Eadric a
 their colours: their kinds of creature live outside the town too, and the change would reach
 them all.
 
-`mods/creaky_doors` is a text mod. Doors creak, groan, and scrape as they open and close. Its one
-file, `lang/en/messages/doors.toml`, holds four lines, and every other door message stays the
-game's:
+`tests/mods/creaky_doors` is a text mod. It is not in the game's `mods` folder, so the Mods
+screen does not list it; copy it there to try it. Doors creak, groan, and scrape as they open and
+close. Its one file, `lang/en/messages/doors.toml`, holds four lines, and every other door
+message stays the game's:
 
 ```toml
 close = "You close the door. It groans shut."

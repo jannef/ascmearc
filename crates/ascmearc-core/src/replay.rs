@@ -294,7 +294,7 @@ mod tests {
     /// text mod plays with it, and one made with it plays without it.
     #[test]
     fn a_text_mod_never_refuses_a_replay() {
-        let mod_files = crate::content::repo_mod("creaky_doors");
+        let mod_files = crate::content::test_mod("creaky_doors");
         let mut files = crate::content::ContentFiles::builtin();
         let stamp = ModStamp {
             id: "creaky_doors".into(),

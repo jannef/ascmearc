@@ -108,20 +108,20 @@ cases! {
         config_dir: Some("."),
         ..BASE
     },
-    // The example mods (the text mod, then the content mod) turned on, not yet applied.
+    // The example mod turned on, not yet applied.
     mods_screen_on: Case {
         name: "mods-screen-on",
         screen: Some("mods"),
         config_dir: Some("."),
-        keys: Some("Enter Down Enter"),
+        keys: Some("Enter"),
         ..BASE
     },
-    // Turned on and applied: the content is loaded with them.
+    // Turned on and applied: the content is loaded with it.
     mods_screen_applied: Case {
         name: "mods-screen-applied",
         screen: Some("mods"),
         config_dir: Some("."),
-        keys: Some("Enter Down Enter Down Enter"),
+        keys: Some("Enter Down Enter"),
         ..BASE
     },
     // Every scenario under its campaign's name (a developer build), the start first.

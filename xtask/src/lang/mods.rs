@@ -12,18 +12,22 @@ use ascmearc_core::content::merges_by_id;
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::PathBuf;
 
-/// The folders under the repository's `mods/`, by name (none without it).
+/// The folders under the repository's `mods/`, the mods that ship, by name (none without it).
 pub fn repo_mods() -> Result<Vec<PathBuf>, String> {
-    let root = workspace_root().join("mods");
-    let Ok(entries) = std::fs::read_dir(&root) else {
-        return Ok(Vec::new());
+    Ok(mods_in("mods"))
+}
+
+/// The folders under the repository's `folder`, by name (none without it).
+fn mods_in(folder: &str) -> Vec<PathBuf> {
+    let Ok(entries) = std::fs::read_dir(workspace_root().join(folder)) else {
+        return Vec::new();
     };
     let mut dirs: Vec<PathBuf> = (entries.flatten())
         .map(|e| e.path())
         .filter(|p| p.is_dir())
         .collect();
     dirs.sort();
-    Ok(dirs)
+    dirs
 }
 
 /// What each mod in `dirs` adds to `base_report`, the report on `base` (the game's languages).
@@ -158,14 +162,17 @@ mod tests {
         assert!(laid(&world(&[]), &m).is_none());
     }
 
-    /// The repository's mods add no error: each loads and its text checks.
+    /// The repository's mods, and the test mods under `tests/mods/` (the example text mod, a
+    /// tiny language), add no error: each loads and its text checks.
     #[test]
     fn the_repository_mods_check_clean() {
         let root = workspace_root().join("assets/lang");
         let base = super::super::load(&root).expect("assets/lang");
         let base_report = check(&base, &[]);
-        let dirs = repo_mods().expect("mods/");
+        let mut dirs = repo_mods().expect("mods/");
+        dirs.extend(mods_in("tests/mods"));
         assert!(dirs.iter().any(|d| d.ends_with("creaky_doors")));
+        assert!(dirs.iter().any(|d| d.ends_with("tiny_language")));
         let found = check_mods(&base, &base_report, &dirs, &[]);
         assert!(found.errors.is_empty(), "{:?}", found.errors);
     }

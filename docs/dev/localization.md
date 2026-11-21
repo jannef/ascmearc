@@ -1553,12 +1553,14 @@ content too pins them by its content alone. **The checker** lays each mod's `lan
 game's the same way (`xtask/src/lang/mods.rs`: an English file of the mod's merges into English,
 so a translation of it is checked against the merge; a content mod's lines of data against the
 content loaded with it) and reports, under `mods/<id>:`, what the mod adds to the game's own
-report. The example is `mods/creaky_doors/` (English: four door lines reworded).
+report. The examples are test mods, not shipped (`tests/mods/`, `docs/dev/mods.md`):
+`creaky_doors` (English: four door lines reworded) and `tiny_language` (a new language, `xx`).
 
 **Decisions L9 made where the design left them open.** The example text mod is English
-(`creaky_doors`), not §11's `mods/lang_example/` with a tiny `generic` language: no language but
-English is read by the game before L8, so a mod's new language fails the load as an unread file
-until then. A language file merges by id rather than replacing the game's whole (§11 has a
+(`creaky_doors`), and §11's tiny `generic` language is a second test mod, `tiny_language`
+(`text_mod_tests.rs`, `a_text_mod_adds_a_language`): since L8 reads every `lang/<code>/` with a
+`lang.toml`, a mod's new language loads, is offered in the settings, and falls back to English.
+Neither ships in `mods/`. A language file merges by id rather than replacing the game's whole (§11 has a
 retranslation replace a file whole): a mod translating its own content ids into Finnish then
 ships `lang/fi/data/creature.toml` holding only its own creatures. The fingerprint's mod digest
 leaves every `lang/` file out, a content mod's too, so a text mod laid over a content mod's text

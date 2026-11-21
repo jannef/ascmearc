@@ -173,10 +173,25 @@ pub(crate) fn pride_month() -> Vec<(String, String)> {
 /// The repository's mod `mods/<id>/` as the binaries read it: every TOML file under it but
 /// `mod.toml`, at its path.
 #[cfg(test)]
-pub(crate) fn repo_mod(id: &str) -> Vec<(String, String)> {
-    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("../../mods")
-        .join(id);
+fn repo_mod(id: &str) -> Vec<(String, String)> {
+    read_mod_dir(
+        &std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../../mods")
+            .join(id),
+    )
+}
+
+/// The test mod `tests/mods/<id>/` (a mod that does not ship, e.g. the example text mod
+/// `creaky_doors`), read as `repo_mod` reads one.
+#[cfg(test)]
+pub(crate) fn test_mod(id: &str) -> Vec<(String, String)> {
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/mods");
+    read_mod_dir(&root.join(id))
+}
+
+#[cfg(test)]
+fn read_mod_dir(root: &std::path::Path) -> Vec<(String, String)> {
+    let root = root.to_path_buf();
     let mut files = Vec::new();
     let mut dirs = vec![root.clone()];
     while let Some(dir) = dirs.pop() {

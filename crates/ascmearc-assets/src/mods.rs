@@ -171,6 +171,11 @@ mod tests {
         Path::new(env!("CARGO_MANIFEST_DIR")).join("../../mods")
     }
 
+    /// The test mods, which do not ship (the example text mod `creaky_doors`).
+    fn test_mods() -> PathBuf {
+        Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/mods")
+    }
+
     #[test]
     fn the_example_mod_reads_and_loads() {
         let found = scan(&repo_mods());
@@ -190,7 +195,7 @@ mod tests {
     /// The example text mod (#1892) reads as one, loads, and leaves the save's mods empty.
     #[test]
     fn the_example_text_mod_reads_and_loads() {
-        let m = Mod::read(&repo_mods().join("creaky_doors")).expect("reads");
+        let m = Mod::read(&test_mods().join("creaky_doors")).expect("reads");
         assert_eq!(m.name, "Creaky doors");
         assert!(m.is_text(), "{:?}", m.files);
         let pride = Mod::read(&repo_mods().join("pride_month")).expect("reads");
@@ -202,7 +207,7 @@ mod tests {
     /// Two mods' language files at one path merge by id: no clash.
     #[test]
     fn language_files_never_clash() {
-        let m = Mod::read(&repo_mods().join("creaky_doors")).expect("reads");
+        let m = Mod::read(&test_mods().join("creaky_doors")).expect("reads");
         let other = Mod {
             id: "other".into(),
             ..m.clone()

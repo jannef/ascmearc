@@ -1,7 +1,8 @@
 ---
 source: crates/ascmearc/src/ui/screen_snapshots.rs
-expression: shown
+expression: "render(case, content.clone())"
 ---
+
 
 
 
@@ -11,15 +12,14 @@ expression: shown
 
           ┌─ Mods ───────────────────────────────────────────────────────────────────────┐
           │                                                                              │
-          │ > [ ] Creaky doors  1.0.0                                                    │
-          │       Doors creak, groan, and scrape as they open and close.                 │
-          │                                                                              │
-          │   [ ] Pride month  1.0.0                                                     │
+          │ > [ ] Pride month  1.0.0                                                     │
           │       Five of Cēaptūn's townsfolk in bright colours (not Eadric or Ceolred). │
           │                                                                              │
           │   Apply                                                                      │
           │   Open the mods folder                                                       │
           │   Back                                                                       │
+          │                                                                              │
+          │                                                                              │
           │                                                                              │
           │                                                                              │
           │ ↑↓ select   Enter/Space on/off   Shift+↑↓ order   Esc back                   │

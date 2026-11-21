@@ -11,7 +11,8 @@
 //! refreshes the stale ones; the diff is the review.
 //!
 //! `--check` then checks each mod's `lang/` laid over the game's (`lang/mods.rs`, #1892): every
-//! mod under the repository's `mods/`, or the `--mod` folders, reporting what the mod adds.
+//! mod under the repository's `mods/`, or the `--mod` folders, reporting what the mod adds (the
+//! test mods under `tests/mods/` in `lang/mods.rs`' tests).
 //!
 //! `--check` also runs the guard against English in code (`lang/neutral.rs`, #2035): text said
 //! as written only with a `lang:` reason.

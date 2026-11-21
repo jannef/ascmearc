@@ -1,0 +1,7 @@
+# A test text mod that adds a language (#1892, design §11): `lang/xx/` with a `lang.toml` on the
+# `generic` morphology and three door lines. Every other line falls back to English.
+# It is a test fixture, not shipped: the game's `mods/` holds only the mods players see.
+name = "Tiny language"
+description = "A language of a few lines, for the tests."
+version = "1.0.0"
+game_version = "0.22.0"

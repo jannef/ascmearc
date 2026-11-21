@@ -314,7 +314,7 @@ mod tests {
     }
 
     fn creaky_doors() -> (&'static str, Vec<(String, String)>) {
-        ("creaky_doors", crate::content::repo_mod("creaky_doors"))
+        ("creaky_doors", crate::content::test_mod("creaky_doors"))
     }
 
     /// A text mod (#1892) is never recorded: a save made without the example text mod loads

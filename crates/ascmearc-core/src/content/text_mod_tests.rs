@@ -2,7 +2,7 @@
 //! told apart by its paths, merges its language files with the game's by id, and leaves the
 //! fingerprint and the saved mods alone; a mod with content as well pins saves by its content.
 
-use super::{Content, ContentFiles, ModStamp, pride_month, repo_mod};
+use super::{Content, ContentFiles, ModStamp, pride_month, test_mod};
 
 fn stamp(id: &str) -> ModStamp {
     ModStamp {
@@ -47,7 +47,7 @@ fn pride_with_text() -> Vec<(String, String)> {
 #[test]
 fn a_mod_is_text_by_its_paths() {
     let content = load(&[
-        ("creaky_doors", repo_mod("creaky_doors")),
+        ("creaky_doors", test_mod("creaky_doors")),
         ("pride_month", pride_month()),
         ("both", pride_with_text()),
         ("empty", Vec::new()),
@@ -65,7 +65,7 @@ fn a_mod_is_text_by_its_paths() {
 #[test]
 fn a_language_file_merges_by_id() {
     let base = Content::builtin().expect("base");
-    let modded = load(&[("creaky_doors", repo_mod("creaky_doors"))]);
+    let modded = load(&[("creaky_doors", test_mod("creaky_doors"))]);
     assert_eq!(
         english(&modded, "doors.open"),
         "You open the door. It creaks."
@@ -85,7 +85,7 @@ fn a_language_file_merges_by_id() {
 fn the_last_mod_laid_wins_an_id() {
     let path = "lang/en/messages/doors.toml";
     let later = vec![(path.to_string(), "open = \"Later.\"\n".to_string())];
-    let content = load(&[("creaky_doors", repo_mod("creaky_doors")), ("later", later)]);
+    let content = load(&[("creaky_doors", test_mod("creaky_doors")), ("later", later)]);
     assert_eq!(english(&content, "doors.open"), "Later.");
     assert_eq!(
         english(&content, "doors.close"),
@@ -97,7 +97,7 @@ fn the_last_mod_laid_wins_an_id() {
 #[test]
 fn inserting_a_file_drops_its_layers() {
     let mut files = ContentFiles::builtin();
-    lay(&mut files, "creaky_doors", &repo_mod("creaky_doors"));
+    lay(&mut files, "creaky_doors", &test_mod("creaky_doors"));
     files.insert("lang/en/messages/doors.toml", "open = \"Only.\"\n");
     let content = Content::load(&files).expect("loads");
     assert_eq!(english(&content, "doors.open"), "Only.");
@@ -110,7 +110,7 @@ fn inserting_a_file_drops_its_layers() {
 fn text_never_moves_the_fingerprint() {
     let fp = |c: &Content| c.fingerprint_for("ascmearc");
     let base = Content::builtin().expect("base");
-    let text = load(&[("creaky_doors", repo_mod("creaky_doors"))]);
+    let text = load(&[("creaky_doors", test_mod("creaky_doors"))]);
     assert_eq!(fp(&base), fp(&text));
     let pride = load(&[("pride_month", pride_month())]);
     let both = load(&[("pride_month", pride_with_text())]);
@@ -118,7 +118,30 @@ fn text_never_moves_the_fingerprint() {
     assert_eq!(fp(&pride), fp(&both), "the content pins it, not the text");
     let pride_and_text = load(&[
         ("pride_month", pride_month()),
-        ("creaky_doors", repo_mod("creaky_doors")),
+        ("creaky_doors", test_mod("creaky_doors")),
     ]);
     assert_eq!(fp(&pride), fp(&pride_and_text));
+}
+
+/// A text mod can add a language (design §11, since L8 reads every language under `lang/`): the
+/// test mod `tiny_language`'s `lang/xx/` loads on the `generic` morphology, its lines are its own,
+/// the rest falls back to English, and it stays a text mod.
+#[test]
+fn a_text_mod_adds_a_language() {
+    let base = Content::builtin().expect("base");
+    let content = load(&[("tiny_language", test_mod("tiny_language"))]);
+    let xx = content.language("xx").expect("the mod's language");
+    assert_eq!(xx.name(), "Tiny");
+    let written = |id: &str| xx.templates().get(id).map(|t| t.written());
+    assert_eq!(written("doors.open").as_deref(), Some("Abres la puerta."));
+    assert_eq!(written("doors.unlock"), None, "English renders the rest");
+    let chain: Vec<&str> = (content.shown_chain("xx").iter())
+        .map(|l| l.code())
+        .collect();
+    assert_eq!(chain, ["xx", "en"]);
+    assert!(content.content_mods().is_empty());
+    assert_eq!(
+        base.fingerprint_for("ascmearc"),
+        content.fingerprint_for("ascmearc")
+    );
 }
