@@ -794,6 +794,56 @@ fn refused_entries_render_as_written_and_say_why() {
     );
 }
 
+/// #2038: a `|` with nothing on one side is no compound boundary: the entry is refused and
+/// renders as written, bars and all, in every form; never empty, never a panic.
+#[test]
+fn an_empty_compound_part_is_refused_and_written_as_is() {
+    let fi = Fi::default();
+    for (entry, written) in [
+        ("|/0", "|"),
+        ("|/9", "|"),
+        ("||/9", "||"),
+        ("a|/9", "a|"),
+        ("|a/9", "|a"),
+        ("|ä/10", "|ä"),
+        ("ä|/10", "ä|"),
+        ("€|/9", "€|"),
+        ("|€/9*A", "|€"),
+        ("miekka|/9*A", "miekka|"),
+        ("|miekka/9*A", "|miekka"),
+        ("pitkä||miekka/9*A", "pitkä||miekka"),
+        ("pitkä/10 |", "pitkä |"),
+        (" | ", "|"),
+        ("|", "|"),
+        ("a|", "a|"),
+        ("|a", "|a"),
+    ] {
+        let error = fi.parse_word(entry).expect_err(entry).to_string();
+        assert!(
+            error.contains("empty compound part") || error.contains("no class"),
+            "{entry}: {error}"
+        );
+        assert_eq!(Entry::base_text(entry), written, "{entry}");
+        let lexicon = MapLexicon::default().with("x", LexWord::new(entry));
+        for form in fi.forms() {
+            if form.starts_with("num") || form.starts_with("ord") {
+                continue;
+            }
+            let out = fi
+                .phrase(&Phrase::id("x"), &form, &lexicon, &Register::default())
+                .expect("a listed form renders");
+            assert_eq!(out, written, "{entry} {form}");
+        }
+    }
+    assert_eq!(
+        fi.parse_word("pitkä|miekka|kahva/9")
+            .map(|_| ())
+            .map_err(|e| e.to_string()),
+        Ok(()),
+        "every part non-empty: a compound"
+    );
+}
+
 #[test]
 fn forms_numbers_and_lists() {
     let fi = Fi::new(12);
