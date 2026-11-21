@@ -1230,7 +1230,8 @@ mod tests {
         );
         assert!(equipment.contains(
             "| `c` | Body | Padded coat, leather jerkin, studded leather jerkin, chain mail shirt, \
-             suit of scale mail, suit of banded mail, suit of plate armour, patched smock, reed kilt,"
+             suit of scale mail, suit of banded mail, suit of plate armour, suit of full plate, \
+             patched smock, reed kilt,"
         ));
         // Weapons by skill, then value, then name (the staves last among the melee skills).
         // Shields fit either hand (two-shield fighting, #611), after the weapons.

@@ -1,0 +1,18 @@
+[[object]]
+id = "full_plate"
+name = "suit of full plate"
+plural = "suits of full plate"
+glyph = "["
+fg = "#c4ccd4"
+class = "body_armour"
+materials = ["steel"]
+made_of = ["metal", "chitin", "dragonbone"]
+weight = 25000
+value = 1800
+slot = "body"
+spell_cost_percent = 50
+armour = 1
+protection = 7
+max_dex = 1
+kind = "body"
+level = 20
