@@ -248,7 +248,7 @@ fn the_hidden_way_in_in_micelfenn_leads_down_once_revealed_and_back() {
         &format!("reveal:fennmynster {} descend", walk(start, MINSTER)),
     );
     assert_eq!(w.perception().level_id(), "fennmynster:1");
-    assert_eq!(w.perception().level_name(), "Fennmynster 1");
+    assert_eq!(crate::test_support::level_name(&w), "Fennmynster 1");
     assert_eq!(w.danger("fennmynster:1"), 3);
     run(&mut w, "ascend");
     assert_eq!(w.perception().level_id(), "ascmearc");

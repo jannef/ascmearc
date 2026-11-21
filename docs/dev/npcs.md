@@ -217,8 +217,8 @@ be magic, not ammunition or a stack, by frequency in id order; the count by weig
 `loot::heirloom`, so rare). The item is identified (a trader names his wares). Price: a unique
 `price.unique`; else `Stack::value` + `price.affix` × affixes × item level; no favour.
 `World::topics` lists it after the services (`World::offer_topic`) with `TopicView::price` and
-`TopicView::ware` (the item listed, then its affix and power lines from `describe::lines`,
-joined by ". ") while for sale. `World::ask_offer` (in `ask` after `ask_service`): sold, the
+`TopicView::ware` (a message: the item listed, `people.ware`, then its affix and power lines
+from `describe::lines`, each `people.ware_listed`, ". " in English) while for sale. `World::ask_offer` (in `ask` after `ask_service`): sold, the
 `sold` line (no time); without the gold "You cannot pay." (no time); else `hand_over`, "You pay
 the pedlar N gold for X.", the item into the pack, `Wares::item` cleared, `train_deal`, the
 `reply`, `chat`'s time. Saved: `WorldState::wares` (`BTreeMap<ActorId, Wares>`) and

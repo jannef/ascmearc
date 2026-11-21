@@ -178,7 +178,10 @@ fn on_the_clearing_the_stair_climbs_and_anywhere_else_up_leaves() {
     put_player(&mut w, STAIR);
     act(&mut w, "ascend");
     assert_eq!(
-        (w.perception().level_id(), w.perception().level_name()),
+        (
+            w.perception().level_id(),
+            crate::test_support::level_name(&w).as_str()
+        ),
         ("drytorr_tower:1", "Drȳtorr 2")
     );
     assert_eq!(w.player_pos(), STAIR);

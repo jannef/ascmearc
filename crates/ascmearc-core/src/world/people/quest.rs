@@ -871,11 +871,14 @@ impl World {
             )));
             return;
         }
+        // Its name by its key, as the data writes it: one with its own article writes it in
+        // lower case ("the Skeul Hir"), as a unique's name does (`en::own_article`).
+        let place = Arg::said(data_line::hidden_name(level, &location.id));
         let who = self.called_phrase(&self.state.actors[&id]);
         self.say(
             Msg::new(msg::people::MARKS_ON_MAP)
                 .role("who", who)
-                .role("place", place(&location.name)),
+                .role("place", place),
         );
     }
 

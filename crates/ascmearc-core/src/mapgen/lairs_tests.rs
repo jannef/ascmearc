@@ -226,7 +226,10 @@ fn each_hidden_way_in_leads_down_once_revealed() {
             w.apply(&action);
         }
         assert_eq!(w.perception().level_id(), format!("{}:1", lair.id));
-        assert_eq!(w.perception().level_name(), format!("{} 1", lair.name));
+        assert_eq!(
+            crate::test_support::level_name(&w),
+            format!("{} 1", lair.name)
+        );
         assert_eq!(w.danger(&format!("{}:1", lair.id)), 6);
     }
 }

@@ -26,6 +26,7 @@ use super::text::{UiText, chargen_screen as T, label, ui, ui_with, word};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use ascmearc_core::character::{CharacterSpec, Gender, NAMELESS, Start, check_name, random_name};
+use ascmearc_core::content::data_line::scenario_name;
 use ascmearc_core::content::{ClassDef, Content, pace_words};
 use ascmearc_core::dice::Dice;
 use ascmearc_core::kit;
@@ -104,8 +105,8 @@ impl Step {
 /// The scenario and seed chosen on the New run screen.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ScenarioPick {
+    /// The scenario's id: its name is said by its key (`data_line::scenario_name`).
     pub id: String,
-    pub name: String,
     /// The seed the run will have: in developer builds the typed one, else the scenario's; in
     /// release builds one no one chose.
     pub seed: u64,
@@ -798,12 +799,12 @@ impl SummaryScreen {
         let scenario = self.scenario.as_ref().map_or(String::new(), |s| {
             if s.shows_seed {
                 let args = [
-                    ("scenario", Arg::from(s.name.as_str())),
+                    ("scenario", Arg::said(scenario_name(&s.id))),
                     ("seed", Arg::from(s.seed.to_string())),
                 ];
                 ui_with(T::SCENARIO_SEED, &args)
             } else {
-                s.name.clone()
+                label(Arg::said(scenario_name(&s.id)))
             }
         });
         let rows = [
@@ -847,7 +848,6 @@ mod tests {
         Draft {
             scenario: Some(ScenarioPick {
                 id: "showcase".into(),
-                name: showcase.name.clone(),
                 seed,
                 shows_seed: true,
                 character: showcase.character.clone(),
@@ -1097,7 +1097,6 @@ mod tests {
         let mut d = draft(1);
         d.scenario = Some(ScenarioPick {
             id: "world".into(),
-            name: world.name.clone(),
             shows_seed: true,
             seed: 1,
             character: world.character.clone(),

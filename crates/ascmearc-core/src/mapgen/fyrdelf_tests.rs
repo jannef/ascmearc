@@ -354,7 +354,7 @@ fn the_hidden_way_in_on_ascdun_leads_down_once_revealed_and_back() {
         &format!("reveal:fyrdelf {} descend", walk(start, MINE)),
     );
     assert_eq!(w.perception().level_id(), "fyrdelf:1");
-    assert_eq!(w.perception().level_name(), "Fyrdelf 1");
+    assert_eq!(crate::test_support::level_name(&w), "Fyrdelf 1");
     assert_eq!(w.danger("fyrdelf:1"), 5);
     run(&mut w, "ascend");
     assert_eq!(w.perception().level_id(), "ascmearc");

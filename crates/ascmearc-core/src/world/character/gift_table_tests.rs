@@ -105,7 +105,7 @@ fn the_pools_after_each_of_ten_meals() {
     let death = w.death().expect("the Profane took them");
     rows.push(format!(
         "died: {}",
-        death.cause.expect("a cause").epitaph(w.content())
+        crate::test_support::epitaph(w.content(), death.cause.expect("a cause"))
     ));
     assert_eq!(
         w.state.gifts_received.len(),

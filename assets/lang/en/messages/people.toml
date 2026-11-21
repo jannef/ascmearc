@@ -61,8 +61,9 @@ lure_dev = "You lure {who:the} to your side (dev)."
 mark_the_way = "You mark the way on your map."
 # A dev action's.
 marked_done_dev = "{quest:bare} is marked done."
-# A quest's giver marks a hidden location: `place`, its name.
-marks_on_map = "{who:The} marks {place:the} on your map."
+# A quest's giver marks a hidden location: `place`, its name as the data writes it, with its own
+# article if it has one, lower case ("the Skeul Hir", "Fyrdelf").
+marks_on_map = "{who:The} marks {place:bare} on your map."
 # A guild's master names the player to a rank: `title`, the rank ("Pewter"); `guild`, the guild by
 # its name (`guild:<id>`, said `the`: "the Weyfarers' Gilde").
 names_you = "{master:The} names you {title:a} of {guild:the}."
@@ -137,6 +138,12 @@ updated_step = "Quest updated: {step:bare}."
 # What a quest asks, as the log's objective says it: `giver`, who gave it; `task`, a `task_*`
 # line.
 wants = "{giver:The} wants you to {task:bare}."
+# A trader's offered item in words (`wares.rs`), the one dialog's: `item`, the item as the lists
+# name it (`items.listed`).
+ware = "{item:Bare}"
+# What its magic does after it: `ware`, the item (`ware`, or this entry again); `line`, a line of
+# its description.
+ware_listed = "{ware:bare}. {line:bare}"
 # A shop's sign: `shop`, as its data writes it with the keeper's name ("Grimbold's General Store").
 welcome_shop = "Welcome to {shop:bare}!"
 # A wizard of a quarrel the player takes the side of: `who`.

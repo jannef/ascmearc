@@ -13,11 +13,12 @@ use super::chargen_screen::ScenarioPick;
 use super::cursor;
 use super::menu::{HINTS, Nav, Panel, Press, wrap};
 use super::screens::{MenuChoice, ScreenAction, ScreenName};
-use super::text::{new_run_screen as T, ui, ui_with};
+use super::text::{label_in, new_run_screen as T, ui, ui_with};
 use super::{TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use ascmearc_core::character::CharacterSpec;
-use ascmearc_core::content::{CampaignKind, Content};
+use ascmearc_core::content::{CampaignKind, Content, data_line};
+use ascmearc_core::lang::Arg;
 use ascmearc_core::time::GameTime;
 
 /// A scenario as listed on the screen.
@@ -77,7 +78,7 @@ impl NewRunScreen {
                 rows.push(Row::Scenario(scenarios.len()));
                 scenarios.push(ScenarioInfo {
                     id: s.id.clone(),
-                    name: s.name.clone(),
+                    name: label_in(content, Arg::said(data_line::scenario_name(&s.id))),
                     description: s.description.clone(),
                     seed: s.seed,
                     character: s.character.clone(),
@@ -109,7 +110,6 @@ impl NewRunScreen {
         let info = self.scenarios.get(self.selected)?;
         Some(ScenarioPick {
             id: info.id.clone(),
-            name: info.name.clone(),
             seed: self.seed(info),
             shows_seed: matches!(self.seed, Seed::Field(_)),
             character: info.character.clone(),

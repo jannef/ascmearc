@@ -140,7 +140,11 @@ pub fn speech(content: &Content, speech: &Speech) -> String {
 /// `Duration::spoken`) alone in the current language, in `form`: `bare`, or `Bare` for a
 /// label's capital ("Strength", "Not hungry").
 pub fn word(word: impl Into<Arg>, form: &str) -> String {
-    let content = content();
+    word_in(&content(), word, form)
+}
+
+/// [`word`] rendered with the run's `content`, whose lines of data it may be (a level's name).
+pub fn word_in(content: &Content, word: impl Into<Arg>, form: &str) -> String {
     let word = word.into();
     #[cfg(test)]
     if let Some(shown) = SHOWN_IN.with(|l| l.borrow().clone())
@@ -148,7 +152,7 @@ pub fn word(word: impl Into<Arg>, form: &str) -> String {
     {
         return text;
     }
-    ascmearc_core::messages::arg_in(&content, &language_code(), &word, form)
+    ascmearc_core::messages::arg_in(content, &language_code(), &word, form)
 }
 
 /// A data name shown alone, as a label (a list row, a heading, a status bar segment), in the
@@ -157,6 +161,12 @@ pub fn word(word: impl Into<Arg>, form: &str) -> String {
 /// says it in lower case (#2000).
 pub fn label(name: impl Into<Arg>) -> String {
     word(name, ascmearc_core::lang::LABEL_FORM)
+}
+
+/// [`label`] rendered with the run's `content`, whose lines of data it may be: a level's name
+/// (`PerceptionView::level_name`) in the status bar, the death screen, a save's summary.
+pub fn label_in(content: &Content, name: impl Into<Arg>) -> String {
+    word_in(content, name, ascmearc_core::lang::LABEL_FORM)
 }
 
 #[cfg(test)]

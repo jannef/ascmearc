@@ -156,7 +156,7 @@ fn the_world_scenario_starts_on_the_overworld_beside_the_hall() {
     let view = world.perception();
     assert_eq!(view.level_id(), "overworld");
     assert_eq!(view.level_kind(), LevelKind::Overworld);
-    assert_eq!(view.level_name(), "The Wildlands");
+    assert_eq!(crate::test_support::level_name(&world), "The Wildlands");
     assert_eq!(view.region(), Some("Greenmarch"));
     assert_eq!(terrain_id(&world), "road");
     let hall = location(&world, "hub");
@@ -384,7 +384,7 @@ fn descending_elsewhere_enters_the_cells_local_area_and_its_edges_lead_back() {
     let view = world.perception();
     assert_eq!(view.level_id(), id);
     assert_eq!(view.level_kind(), LevelKind::Outdoor);
-    assert_eq!(view.level_name(), "Road");
+    assert_eq!(crate::test_support::level_name(&world), "Road");
     assert_eq!(view.region(), Some("Greenmarch"));
     assert_eq!(last_message(&world), "You explore the road.");
     let (w, h) = crate::mapgen::local::SIZE;

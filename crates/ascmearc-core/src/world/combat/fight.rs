@@ -68,7 +68,6 @@ use crate::noise::Act;
 use crate::object;
 use crate::rng::draw;
 use crate::skills::Use;
-use crate::text::article;
 use crate::time::GameTime;
 use crate::world::turn::phrase::something;
 use crate::world::{Actor, ActorId, AttackSkills, Spent, World, WorldState};
@@ -80,8 +79,8 @@ pub struct Death {
     /// The turn it happened in.
     pub turn: u64,
     pub time: GameTime,
-    /// Where: the name of the level.
-    pub place: String,
+    /// Where: the level's name as the game says it (`PerceptionView::level_name`).
+    pub place: Arg,
     /// What killed them, if they saw it: a creature type. `None`: something unseen, a status,
     /// or no creature at all (see `cause`).
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -126,35 +125,37 @@ pub enum Cause {
 }
 
 impl Cause {
-    /// How the death screen says it: "Starved to death", "Choked to death on a ration",
-    /// "Killed by a fireball trap", "Killed by their own scroll of fireball".
-    pub fn epitaph(self, content: &Content) -> String {
-        let what = |o: ObjectId| content.object(o).describe(1);
+    /// How the death screen says it, a `health.epitaph_*` line: "Starved to death", "Choked to
+    /// death on a ration", "Killed by a fireball trap", "Killed by their own scroll of fireball".
+    pub fn epitaph(self, content: &Content) -> Msg {
+        use msg::health as h;
+        let object = |o: ObjectId| Phrase::id(format!("object:{}", content.object(o).id));
+        let spell = |id: crate::content::SpellId| content.spell_of(id);
         match self {
-            Cause::Starvation => "Starved to death".into(),
-            Cause::Fall => "Fell through a collapsed floor".into(),
-            Cause::Fire => "Burned to death".into(),
-            Cause::Choked(o) => format!("Choked to death on {}", what(o)),
-            Cause::Drowned => "Drowned in deep water".into(),
+            Cause::Starvation => h::EPITAPH_STARVATION.into(),
+            Cause::Fall => h::EPITAPH_FALL.into(),
+            Cause::Fire => h::EPITAPH_FIRE.into(),
+            Cause::Choked(o) => Msg::new(h::EPITAPH_CHOKED).role("what", object(o)),
+            Cause::Drowned => h::EPITAPH_DROWNED.into(),
             Cause::Trap(t) => {
-                let name = &content.trap(t).name;
-                format!("Killed by {} {name}", article(name))
+                let trap = Phrase::id(format!("trap:{}", content.trap(t).id));
+                Msg::new(h::EPITAPH_TRAP).role("trap", trap)
             }
-            Cause::Scroll(o) | Cause::Flask(o) => {
-                format!("Killed by their own {}", content.object(o).name)
+            Cause::Scroll(o) | Cause::Flask(o) => Msg::new(h::EPITAPH_OWN).role("what", object(o)),
+            Cause::Spell(id) => {
+                // The look noun is a data word with no id yet (#2028): said by its English.
+                let noun = spell(id).map_or("spell", |s| s.look.noun.as_str());
+                Msg::new(h::EPITAPH_OWN_SPELL).role("noun", Phrase::id(format!("word:{noun}")))
             }
-            Cause::Spell(spell) => {
-                let noun = (content.spell_of(spell))
-                    .map_or_else(|| "spell".into(), |s| s.look.noun.clone());
-                format!("Killed by their own {noun}")
+            Cause::Miscast(id) => {
+                let name = match spell(id) {
+                    Some(s) => Phrase::id(format!("spell:{}", s.id)),
+                    None => Phrase::id("word:spell"),
+                };
+                Msg::new(h::EPITAPH_MISCAST).role("spell", name)
             }
-            Cause::Miscast(spell) => {
-                let name = (content.spell_of(spell))
-                    .map_or_else(|| "spell".into(), |s| s.name.to_lowercase());
-                format!("Killed by their own miscast {name}")
-            }
-            Cause::Altar => "Struck down at a forgotten altar".into(),
-            Cause::Profane => "Taken by the Profane".into(),
+            Cause::Altar => h::EPITAPH_ALTAR.into(),
+            Cause::Profane => h::EPITAPH_PROFANE.into(),
         }
     }
 

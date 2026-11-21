@@ -232,9 +232,9 @@ fn a_fall_can_kill_and_records_its_cause() {
             let death = w.state.death.as_ref().expect("dead");
             assert_eq!(death.cause, Some(Cause::Fall));
             assert_eq!((death.by, death.of), (None, None));
-            assert_eq!(death.place, "Cellar");
+            assert_eq!(crate::test_support::place_text(&w, &death.place), "Cellar");
             assert_eq!(
-                Cause::Fall.epitaph(w.content()),
+                crate::test_support::epitaph(w.content(), Cause::Fall),
                 "Fell through a collapsed floor"
             );
             let staggered = w.content().status_id("staggered").expect("staggered");

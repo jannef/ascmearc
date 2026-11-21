@@ -44,7 +44,9 @@ impl<'a> PerceptionView<'a> {
         &self.level.id
     }
 
-    pub fn level_name(&self) -> &'a str {
+    /// The level's name as the game says it (a line of data by its key, a phrase): the status
+    /// bar shows it as a label (`lang::LABEL_FORM`).
+    pub fn level_name(&self) -> &'a crate::lang::Arg {
         &self.level.name
     }
 

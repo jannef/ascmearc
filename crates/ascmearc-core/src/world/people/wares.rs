@@ -29,7 +29,7 @@
 use super::shop::count_of;
 use crate::action::Event;
 use crate::content::{ActionKind, DialogueId, MAX_ITEM_LEVEL, TradeOffer};
-use crate::lang::Msg;
+use crate::lang::{Arg, Msg};
 use crate::magic::describe::{self, LineKind};
 use crate::msg;
 use crate::object::{self, Stack};
@@ -115,22 +115,25 @@ impl World {
             name: offer.name.clone().into(),
             price: item.and(wares.map(|w| w.price)),
             items: None,
-            ware: item.map(|s| self.ware_text(s)),
+            ware: item.map(|s| self.ware_text(s).into()),
         })
     }
 
-    /// An offered item in words as the player knows it: its name with its numbers, then what
-    /// its magic does and its power ("a ring ... (+1 hit). Mystic: +12 to maximum mana. ...").
-    fn ware_text(&self, stack: &Stack) -> String {
+    /// An offered item in words as the player knows it, a `people.ware` message: its name with
+    /// its numbers (`Lore::listed`), then what its magic does and its power, each
+    /// `people.ware_listed` after the last ("A ring ... (+1 hit). Mystic: +12 to maximum mana.
+    /// ..."). The description's lines are English text until `magic/describe.rs` is converted.
+    fn ware_text(&self, stack: &Stack) -> Msg {
         let lore = self.lore();
         let magic = (describe::lines(stack, &self.content).into_iter())
             .filter(|l| matches!(l.kind, LineKind::Affix(_) | LineKind::Power))
-            .map(|l| l.text);
-        let name = crate::messages::english_msg(&self.content, &lore.listed(stack));
-        std::iter::once(crate::text::capitalized(&name))
-            .chain(magic)
-            .collect::<Vec<_>>()
-            .join(". ")
+            .map(|l| Arg::Text(l.text));
+        let name = Msg::new(msg::people::WARE).role("item", lore.listed(stack));
+        magic.fold(name, |ware, line| {
+            Msg::new(msg::people::WARE_LISTED)
+                .role("ware", ware)
+                .role("line", line)
+        })
     }
 
     /// Asks creature `id`, whose dialogue is `dialogue`, for its offer `topic`: buys it (the
