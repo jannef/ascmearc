@@ -1,0 +1,4 @@
+# A kind of ammunition (`ammo:<kind>`): what a rig or a launcher takes.
+arrow = "nuoli/26"
+bolt = "varsijousen nuoli/26"
+stone = "linko|kivi/7"

@@ -1,0 +1,14 @@
+# Lines of data: the rigs (`rigs:rig.<id>.<field>`): `made` is said as it is rigged, `snaps` as a
+# fumble springs it on the rigger.
+
+[rig.pitfall]
+made = { text = "Kaivat kuopan ja levität sen päälle ohuen kuoren.", of = "231ad4" }
+snaps = { text = "Kuori pettää altasi!", of = "c35cad" }
+
+[rig.stakes]
+made = { text = "Isket teroitetut seipäät maahan.", of = "00bf6d" }
+snaps = { text = "Seiväs ponnahtaa irti, kun asetat sitä!", of = "137927" }
+
+[rig.tripwire]
+made = { text = "Virität kompastuslangan polun poikki.", of = "508a23" }
+snaps = { text = "Kompastuslanka katkeaa, kun virität sitä!", of = "00b136" }

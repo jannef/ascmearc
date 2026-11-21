@@ -439,6 +439,11 @@ impl Fi {
                     }
                 }
                 Modifier::Of(w) => front.push(self.word(w, lex).form(false, Case::Gen, None)),
+                // A wand's, rod's, or potion's label is a word ("tamminen", "kuohuva"): an
+                // agreeing adjective, as a colour is.
+                Modifier::Label(w @ Word::Id(_)) => {
+                    adjectives.push(self.word(w, lex).form(plural, case, None));
+                }
                 Modifier::Label(w) => {
                     let which = if plural { "joissa" } else { "jossa" };
                     after.push(format!(", {which} lukee {}", self.word(w, lex).fallback));

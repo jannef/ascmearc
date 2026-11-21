@@ -1,0 +1,263 @@
+# Lines of data: miscasts (`miscast:<id>.<field>`). `message` is said to the player who
+# miscast; `seen` of a creature that miscast where the player sees it, `who` the caster
+# ("{who:Gen} loitsu sihahtaa.").
+
+[abyssal_gate]
+message = { text = "Viereesi aukeaa portti, ja Kuilu katsoo sen läpi!", of = "ec047c" }
+seen = { text = "{who:Gen} viereen aukeaa portti!", of = "031dfd" }
+
+[ache]
+message = { text = "Syvä särky asettuu luihisi.", of = "3219ec" }
+seen = { text = "{who:Nom} köyristyy.", of = "47c0f4" }
+
+[amnesia]
+message = { text = "Loitsu repii muistiasi, ja minkä se irrottaa, se on poissa.", of = "0c0493" }
+seen = { text = "{who:Nom} tarttuu päähänsä.", of = "d46bb4" }
+
+[annihilation]
+message = { text = "Voima tuhoaa kaiken, mihin se koskee, ja se koskee sinuun.", of = "3c30ee" }
+seen = { text = "{who:Nom} repeytyy kappaleiksi omasta voimastaan!", of = "e3e20f" }
+
+[arch_gate]
+message = { text = "Viereesi aukeaa kaariportti, kyllin leveä helvettien ruhtinaalle.", of = "43df4e" }
+seen = { text = "{who:Gen} viereen aukeaa kaariportti!", of = "473831" }
+
+[backlash]
+message = { text = "Loitsu vääntyy otteessasi ja kääntyy sinua vastaan!", of = "d43b0c" }
+seen = { text = "{who:Gen} loitsu vääntyy ja kääntyy loitsijaansa vastaan!", of = "cccb95" }
+
+[black_gate]
+message = { text = "Viereesi aukeaa musta portti, ja siitä katsovat ne, jotka palvelevat palkasta.", of = "2eba93" }
+seen = { text = "{who:Gen} viereen aukeaa musta portti.", of = "fb711b" }
+
+[blank]
+message = { text = "Mielesi pyyhkiytyy puhtaaksi kuin taulu.", of = "f87d14" }
+seen = { text = "{who:Nom} tuijottaa tyhjin silmin.", of = "998d66" }
+
+[blast]
+message = { text = "Loitsu räjähtää niin rajusti, että henkesi salpautuu.", of = "36337c" }
+seen = { text = "Loitsu räjähtää {who:gen} kasvoille.", of = "49f58b" }
+
+[blessing]
+message = { text = "Harhaileva voima irtoaa ja asettuu yllesi siunaukseksi.", of = "7e0ad3" }
+seen = { text = "Harhailevaa voimaa irtoaa {who:gen} ympärille.", of = "46523a" }
+
+[burn]
+message = { text = "Loitsu räjähtää käsissäsi, ja saat sen pahimman iskun.", of = "c4aa24" }
+seen = { text = "Loitsu räjähtää {who:gen} käsissä.", of = "d1a156" }
+
+[chill]
+message = { text = "Kylmyys painuu jäseniisi ja hidastaa niitä.", of = "a5964a" }
+seen = { text = "{who:Nom} hidastuu kuin kahlaisi.", of = "54ac19" }
+
+[crack]
+message = { text = "Loitsu päättyy paukahdukseen kuin piiskan sivallus.", of = "c63f97" }
+seen = { text = "{who:Gen} loitsu päättyy paukahdukseen.", of = "50de98" }
+
+[deep_withering]
+message = { text = "Loitsu puree syvälle ja kurottaa kohti sitä, mikä ei kasva takaisin.", of = "55fb4a" }
+seen = { text = "{who:Nom} värisee luitaan myöten.", of = "387595" }
+
+[dire_gate]
+message = { text = "Kauhea portti repeää auki, ja sen läpi astuvalla on nimi.", of = "810378" }
+seen = { text = "Kauhea portti repeää auki {who:gen} viereen!", of = "e68000" }
+
+[displaced]
+message = { text = "Maailma taittuu, ja sinut singotaan sen läpi.", of = "a4baca" }
+seen = { text = "{who:Nom} sinkoutuu ilmaan auenneen poimun läpi.", of = "b523d8" }
+
+[drowse]
+message = { text = "Loitsu kiskoo sinua mukaansa lähtiessään.", of = "f69b5b" }
+seen = { text = "{who:Gen} silmäluomet painuvat.", of = "9e88b0" }
+
+[dry]
+message = { text = "Voimasi jokainen pisara revitään sinusta.", of = "6adc28" }
+seen = { text = "{who:Nom} harmaantuu.", of = "3d0e45" }
+
+[echo]
+message = { text = "Loitsu soi kuin lyöty kello ja kajahtaa kahdesti.", of = "89e0fd" }
+seen = { text = "{who:Gen} loitsu kajahtaa kahdesti!", of = "69de99" }
+
+[falter]
+message = { text = "Loitsun muoto murenee mielessäsi.", of = "e00b6b" }
+seen = { text = "{who:Nom} horjahtaa.", of = "a58579" }
+
+[fizz]
+message = { text = "Loitsu sihahtaa, ja sen mukana vähän voimastasi.", of = "61a370" }
+seen = { text = "{who:Gen} loitsu sihahtaa.", of = "6dbfc1" }
+
+[flinch]
+message = { text = "Jokin kylmä katsoo sinua takaisin loitsun läpi.", of = "35ba86" }
+seen = { text = "{who:Nom} säpsähtää jotakin näkymätöntä.", of = "75738a" }
+
+[fog]
+message = { text = "Harmaa sumu kuohuu loitsusta ja kietoo sinut.", of = "2b1a7c" }
+seen = { text = "Harmaa sumu kuohuu {who:gen} ympärillä.", of = "7dacd6" }
+
+[forgetting]
+message = { text = "Loitsu repeää irti mielestäsi.", of = "e3f1a5" }
+seen = { text = "{who:Nom} tuijottaa käsiään.", of = "8170c9" }
+
+[glimmer]
+message = { text = "Ilma välkehtii hetken ja tyyntyy.", of = "ca5285" }
+seen = { text = "Ilma välkehtii {who:gen} ympärillä.", of = "7bc6f4" }
+
+[gloom]
+message = { text = "Loitsu juo valon, ja pimeys lammikoituu ympärillesi.", of = "605e81" }
+seen = { text = "Pimeys lammikoituu {who:gen} ympärille.", of = "399c82" }
+
+[gloom_gate]
+message = { text = "Synkkyyden portti seisoo auki siinä, missä ei porttia ollut, ja jokin ulvoo sen takana.", of = "3d6fb5" }
+seen = { text = "Synkkyyden portti aukeaa {who:gen} viereen.", of = "228f19" }
+
+[harrowing]
+message = { text = "Oma voimasi raastaa sinua.", of = "f902c5" }
+seen = { text = "{who:Nom} raastuu omasta voimastaan!", of = "1c3634" }
+
+[hellmouth]
+message = { text = "Maa vieressäsi halkeaa vasken ja tulen kidaksi!", of = "78732c" }
+seen = { text = "Maa halkeaa {who:gen} vieressä vasken ja tulen kidaksi!", of = "26b0fc" }
+
+[hum]
+message = { text = "Matala hurina jää leijumaan ilmaan loitsun jälkeen.", of = "fc1c6a" }
+seen = { text = "Matala hurina leijuu {who:gen} ympärillä.", of = "42841e" }
+
+[iron_gate]
+message = { text = "Rautaportti narahtaa auki vieressäsi, ja sen takana ovat helvetit!", of = "77beea" }
+seen = { text = "Rautaportti narahtaa auki {who:gen} vieressä!", of = "2f9a84" }
+
+[lapse]
+message = { text = "Vähän vaivalla hankitusta harjaantumisestasi lipsuu pois.", of = "c90a91" }
+seen = { text = "{who:Nom} pudistaa päätään.", of = "2db1d5" }
+
+[lash]
+message = { text = "Loitsu kääntyy ja ruoskaisee sinua.", of = "9f631a" }
+seen = { text = "{who:Gen} loitsu ruoskaisee loitsijaansa.", of = "be925b" }
+
+[leak]
+message = { text = "Voimasi vuotaa pois kudoksen rispaantuneesta kohdasta.", of = "8ff648" }
+seen = { text = "{who:Gen} valo lepattaa.", of = "3788c6" }
+
+[lords_gate]
+message = { text = "Portti aukeaa helvettien ruhtinaalle.", of = "119f2c" }
+seen = { text = "Portti aukeaa {who:gen} viereen helvettien ruhtinaalle!", of = "99347f" }
+
+[motes]
+message = { text = "Värihiukkasia leijuu käsistäsi ja haalistuu.", of = "f87825" }
+seen = { text = "Värihiukkasia leijuu {who:gen} käsistä.", of = "95ae32" }
+
+[oblivion]
+message = { text = "Unohdus.", of = "01af11" }
+seen = { text = "{who:Nom} lakkaa olemasta.", of = "a5fc8d" }
+
+[pit]
+message = { text = "Lattia halkeaa, ja porras laskeutuu punaiseen pimeään. Jokin odottaa sen päässä.", of = "34d815" }
+seen = { text = "Lattia halkeaa {who:gen} vieressä, ja porras laskeutuu punaiseen pimeään!", of = "411419" }
+
+[pit_and_lords]
+message = { text = "Lattia halkeaa, porras laskeutuu punaiseen pimeään, ja helvettien ruhtinas nousee sitä ylös!", of = "350cea" }
+seen = { text = "Lattia halkeaa {who:gen} vieressä, ja helvettien ruhtinas nousee portaita ylös!", of = "1eb604" }
+
+[pit_roaring]
+message = { text = "Lattia halkeaa jylisten, ja porras laskeutuu punaiseen pimeään. Sen päässä seisoo kauhea portti!", of = "7ae1c6" }
+seen = { text = "Lattia halkeaa jylisten {who:gen} vieressä, ja portaiden päässä seisoo kauhea portti!", of = "f00437" }
+
+[pit_yawning]
+message = { text = "Lattia ammottaa auki, ja porras laskeutuu punaiseen pimeään. Sen päässä seisoo suuri portti!", of = "ac439a" }
+seen = { text = "Lattia ammottaa auki {who:gen} vieressä, ja portaiden päässä seisoo suuri portti!", of = "b7078f" }
+
+[quickened]
+message = { text = "Voima humisee jäsenissäsi, ja ne nopeutuvat.", of = "a96e06" }
+seen = { text = "{who:Nom} nopeutuu.", of = "b4255a" }
+
+[racked]
+message = { text = "Sinua raastetaan, ja jokin sinussa vääntyy vinoon.", of = "3dee46" }
+seen = { text = "{who:Nom} vääntelehtii tuskissaan.", of = "3d66b7" }
+
+[rebound]
+message = { text = "Loitsu kimpoaa takaisin sinuun kaikella voimallaan!", of = "03bcc9" }
+seen = { text = "{who:Gen} loitsu kimpoaa takaisin loitsijaansa kaikella voimallaan!", of = "fd943d" }
+
+[refund]
+message = { text = "Kudos höltyy, ja kulutettu voima valuu takaisin sinuun.", of = "d08b60" }
+seen = { text = "{who:Nom} kirkastuu hetkeksi.", of = "d270dd" }
+
+[rend]
+message = { text = "Raaka voima repii sinua.", of = "7b981e" }
+seen = { text = "{who:Nom} repeilee omasta voimastaan.", of = "c55fed" }
+
+[rift]
+message = { text = "Viereesi repeää railo, ja Kuilun löyhkä tulvii ulos!", of = "6657d0" }
+seen = { text = "{who:Gen} viereen repeää railo!", of = "59cb81" }
+
+[ruin]
+message = { text = "Tuho tulvii rikkoutuneen kudoksen läpi ja ylitsesi.", of = "9562a4" }
+seen = { text = "Tuho tulvii {who:gen} läpi!", of = "d5de73" }
+
+[ruinous_withering]
+message = { text = "Loitsu ahmii sinua, ja jokainen puraisu käy syvälle.", of = "51dfe8" }
+seen = { text = "{who:Nom} joutuu oman loitsunsa jyrsimäksi.", of = "679ae7" }
+
+[scorch]
+message = { text = "Loitsu potkaisee kuin muuli ja raapaisee sinua.", of = "f1d595" }
+seen = { text = "{who:Gen} loitsu potkaisee takaisin ja raapaisee loitsijaansa.", of = "fc1eca" }
+
+[seep]
+message = { text = "Puolet voimastasi valuu pois rikkoutuneen kudoksen läpi.", of = "d30a4f" }
+seen = { text = "{who:Nom} himmenee.", of = "f26a5b" }
+
+[shiver]
+message = { text = "Väristys kulkee lävitsesi ja jättää sinut heikoksi.", of = "19c8c5" }
+seen = { text = "{who:Nom} värisee ja lysähtää.", of = "8a7a56" }
+
+[singe]
+message = { text = "Loitsu napsahtaa takaisin ja kirvelee sinua.", of = "e2f06a" }
+seen = { text = "{who:Gen} loitsu napsahtaa takaisin ja kirvelee loitsijaansa.", of = "4b70d8" }
+
+[slick]
+message = { text = "Maa ympärilläsi tihkuu ja muuttuu liukkaaksi.", of = "c89605" }
+seen = { text = "Maa {who:gen} ympärillä muuttuu liukkaaksi.", of = "80e9cf" }
+
+[slip]
+message = { text = "Avaruus solmiutuu ja vääntyy ympärilläsi.", of = "db81fa" }
+seen = { text = "Avaruus solmiutuu ja vääntyy {who:gen} ympärillä.", of = "23711c" }
+
+[slur]
+message = { text = "Kielesi kompastuu, eikä yhtään mahtisanaa tule.", of = "143b9f" }
+seen = { text = "{who:Nom} muodostaa huulillaan sanoja, mutta mitään ei tule.", of = "9e8c9b" }
+
+[sparks]
+message = { text = "Kipinät hyppäävät sormistasi ja purevat.", of = "dd2bf4" }
+seen = { text = "Kipinät purevat {who:gen} sormia.", of = "c9fa40" }
+
+[stumble]
+message = { text = "Loitsun muoto sumenee mielessäsi.", of = "1301dc" }
+seen = { text = "{who:Nom} näyttää hämmentyneeltä.", of = "9f8cf6" }
+
+[threefold_withering]
+message = { text = "Loitsu imee sinua kuin juotikas, joka ei hellitä.", of = "bd2458" }
+seen = { text = "Harmaa varjo kulkee {who:gen} yli yhä uudelleen.", of = "070d7d" }
+
+[thunder]
+message = { text = "Loitsu murtuu ukkosen jyrähdykseen.", of = "b821da" }
+seen = { text = "{who:Gen} loitsu murtuu ukkosen jyrähdykseen!", of = "7f6bd4" }
+
+[twofold_withering]
+message = { text = "Loitsu imee sinua ja palaa hakemaan lisää.", of = "e09bbb" }
+seen = { text = "Harmaa varjo kulkee kahdesti {who:gen} yli.", of = "511780" }
+
+[unmaking]
+message = { text = "Voima purkaa sinut sisältäpäin.", of = "2c0069" }
+seen = { text = "{who:Nom} purkautuu sisältäpäin!", of = "7c763b" }
+
+[unravelling]
+message = { text = "Kudos purkautuu lävitsesi, ja raaka voima repii sinua sisältäpäin!", of = "8a23ed" }
+seen = { text = "Raaka voima repeää {who:gen} läpi!", of = "bd3336" }
+
+[withering]
+message = { text = "Loitsu kääntyy ja imee sinua.", of = "fd4476" }
+seen = { text = "Harmaa varjo kulkee {who:gen} yli.", of = "838a37" }
+
+[wobble]
+message = { text = "Maailma heilahtaa, ja sinä sen mukana.", of = "b2e109" }
+seen = { text = "{who:Nom} horjuu.", of = "cb9039" }

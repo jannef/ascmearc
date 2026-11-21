@@ -142,8 +142,8 @@ table, the rest by their own class; beyond `number_words` or 19, digits: "13 nuo
 form ignores the count. **The player** (`person: You`) renders as the second-person pronoun in
 the case asked (`{target:ill}` → "sinuun"), through the register (`sinä` → `sie`), whatever the
 head. **Phrase order**: [genitive qualifiers (`Modifier::Of`, genitive singular, not agreeing)]
-[adjectives and materials, agreeing in case and number] head [`, jossa lukee X` for a label;
-`joissa` in the plural] [notes]: "karhun liekehtivään smaragdiponsiseen pitkämiekkaan". A
+[adjectives and materials, agreeing in case and number] head [`, jossa lukee X` for a literal
+label, a scroll's; `joissa` in the plural; a label that is a lexicon word is an adjective] [notes]: "karhun liekehtivään smaragdiponsiseen pitkämiekkaan". A
 `Material` is an agreeing adjective here.
 
 **L3's phrase parts in `fi`** (`fi/mod.rs::assemble`, `owner`; tests `owners_genitive_or_the_players_suffix`,
@@ -1561,8 +1561,18 @@ class, and starting kit), the lines of data of those places, statuses, traps, an
 Cēaptūn's dialogue. What it lacks reads in English. Known gaps a later slice fills: a place's
 name (a line of data) takes no case, so lines say it in the nominative ("Laskeudut portaita alas
 paikkaan Cēaptūn"); words core still says as text (a resource's short name, the read dialog's
-chance, a ready weapon's name in the targeting line) stay English; an unidentified potion's label
-is a `Label` clause where Finnish wants an agreeing adjective.
+chance, a ready weapon's name in the targeting line) stay English.
+
+**The third slice, items** (#2055): every object, material, affix, spell, talent and tree,
+recipe, crystal and seal family, rig, and an unknown wand's, rod's, or potion's label word; the
+lines of data of spells, talents, profane gifts, miscasts, mishaps, skills, rod effects, uniques,
+flasks, recipes, stock, and rigs; and `messages/crafting.toml`. A prefix is an agreeing adjective
+and a suffix a genitive before the whole name ("karhun liekehtivä pitkämiekka"), said alone in
+the genitive too (its `bare` and `label` forms: "Karhun"). A label that is a lexicon word
+(`word:oak`, `word:fizzy`: a wand's, rod's, or potion's) is an agreeing adjective in `fi`, as a
+colour is ("kuohuva punainen juoma", "tammipuinen taikasauva"); a scroll's literal label keeps
+the clause. A unique keeps its name as the data writes it. A scroll or wand of a spell is the
+spell's genitive and its head ("tulipallon käärö").
 
 ## Mods (L9)
 

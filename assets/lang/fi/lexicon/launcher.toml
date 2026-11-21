@@ -1,0 +1,4 @@
+# What ammunition is shot from (`launcher:<launches>`, `data/fletch.toml`): "Sinulla ei ole jousta
+# valmiina".
+arrow = "jousi/26"
+bolt = "varsi|jousi/26"

@@ -1,0 +1,1441 @@
+# Lines of data: talents and profane gifts (`talent:<id>.<field>`). `description` is the rules
+# text the talents screen shows: plain, exact, said to "sinä". The effects' lines are messages:
+# `bars_slot.<slot>.refused` (something put on in a barred slot), `reprieve.message` (saved from
+# death), `temperature_speed.bands.<n>.slower`/`.faster` (cold blood entering band n),
+# `take_up_skills.news` and `weapon_ranks.news` (what a class talent hands out), and
+# `spirit_weapon.phrase` (the spirit weapon's description). Game terms keep the screens' words,
+# lowercase inside a sentence as `messages/describe.toml` writes them (suojaus +1, väistö,
+# kimmotus, torjunta, a skill's or a stat's word); another talent is named by its
+# `lexicon/talent.toml` name, capitalized ("Halkaisu-taipumuksen"). "(a spell, paid in mana)" is
+# "(loitsu, maksaa manaa)", "(an ability, paid in zeal)" "(kyky, maksaa intoa)", a cantrip
+# "pikkuloitsu", a smite "rankaisu". Months: hämäräkuu (Darkening), sulakuu (Thawmonth),
+# kylvökuu (Seedtide), lehtikuu (Greenleaf), suvikuu (Highsun), hehkukuu (Emberheat),
+# korjuukuu (Harvestide), ruskakuu (Leaffall), usvakuu (Mistmoon).
+
+[adamant_hands]
+description = { text = "Mikään ei ole kovempaa kuin kätesi ja jalkasi: paljain käsin lyömiesi iskujen ja potkujesi vahinko on 1d12.", of = "c575bc" }
+
+[adder_quick]
+description = { text = "Nopeat kädet: olet notkeampi kuin ennen.", of = "bc89d2" }
+
+[ageless]
+description = { text = "Aika koskettaa sinua kevyesti: nälkä tulee hitaammin, ja tauti kulkee kulkunsa puolta hitaammin.", of = "de2fd1" }
+
+[alert]
+description = { text = "Huomaat kätketyt asiat ohimennen, kuten valppaat huomaavat, ja useammin kuin useimmat.", of = "eab620" }
+
+[always_a_way]
+description = { text = "Löydät salaovet ja kätketyt ansat helpommin, ja etsintäsi ulottuu kauemmas. Veden kaudella, hämäräkuusta sulakuuhun, löydät ne vielä helpommin.", of = "f62049" }
+
+[ambusher]
+description = { text = "Iskusi ja laukauksesi satuttavat enemmän, kun ne osuvat olentoon, joka ei ole nähnyt sinua.", of = "b0f4b4" }
+
+[animal_companion]
+description = { text = "Erämaan peto kiintyi sinuun kauan sitten eikä ole sen koommin poistunut viereltäsi: se taistelee puolestasi, kulkee kanssasi minne menetkin ja kasvaa niin kuin sinäkin. Toisen pedon kesyttäminen käy sinulta hieman helpommin.", of = "96d42f" }
+
+[another_head]
+description = { text = "Hydran päät kasvavat takaisin: osumapisteesi palaavat silloinkin, kun näet nälkää, ja lepo parantaa sinua kaksi kertaa nopeammin.", of = "388e89" }
+
+[arcane_bolt]
+description = { text = "Puhtaan voiman salama kädestäsi kohti paikkaa, johon tähtäät (loitsu, maksaa manaa); se lävistää jokaisen, joka on sen linjalla.", of = "a40aa5" }
+
+[arcane_mastery]
+description = { text = "Manasi palaa kaksi kertaa nopeammin.", of = "524e48" }
+
+[arcane_training]
+description = { text = "Oppisi on harjoitustasi edellä: luet loitsuja kuin kirjoitusten tulkintasi olisi kymmenen pistettä korkeampi.", of = "bb38dd" }
+
+[archmage]
+description = { text = "Loitsusi ovat kaksi askelmaa ylempänä tikapuillaan, ja ne maksavat puolet vähemmän manaa.", of = "6c4547" }
+
+[armour_breaker]
+description = { text = "Parhaat iskusi löytävät raot: kriittinen osumasi tunkeutuu paremmin nahan, kuoren ja levyhaarniskan läpi, ja haarniskan halkaiseminen tai sen rakojen etsiminen vie sinulta vähemmän kestävyyttä.", of = "7ae79c" }
+
+[armour_drill]
+description = { text = "Liikut vapaasti haarniskassa, ja se istuu oikein: haarniska haittaa väistelyäsi vähemmän, ja suojaus +1, kun sinulla on yllä mikä tahansa haarniska.", of = "5ba4e1" }
+
+[armour_training]
+description = { text = "Liikut vapaasti haarniskassa: se vähentää ketteryytesi osuutta torjunnassa vähemmän.", of = "d0fcda" }
+
+[avatar]
+description = { text = "Kosketuksesi parantaa haavat kokonaan ja poistaa myrkyn, verenvuodon ja taudin, puolella innosta; ja vihasi lankeaa jokaisen vihollisen ylle.", of = "90a509" }
+
+[banishing_smite]
+description = { text = "Rankaisu, joka lähettää kutsutut takaisin sinne, mistä ne tulivat (kyky, maksaa intoa): kutsuttu olento puretaan saman tien, ja epäpyhät saavat vihasi kahdesti.", of = "e0e9ba" }
+
+[barbed_hide]
+description = { text = "Väkäsesi viiltävät niitä, jotka lyövät sinua lähitaistelussa.", of = "786814" }
+
+[barkskin]
+description = { text = "Ihosi kovettuu hetkeksi kuin kaarna (loitsu, maksaa manaa): iskut osuvat sinuun harvemmin.", of = "d8335e" }
+
+[barrow_eyed]
+description = { text = "Näet hieman pimeään, kuin se olisi ohuempaa.", of = "ae9653" }
+
+[barrow_kings_will]
+description = { text = "Tahto, joka kesti kauemmin kuin valtakunta: tahtosi on vahvempi, ja haudan kylmä kosketus ja se, mikä imee eläviä, tehoavat sinuun heikommin, mutta haavasi umpeutuvat hitaasti.", of = "a8fac2" }
+
+[battle_rhythm]
+description = { text = "Taistelu itse pitää hengityksesi yllä: jokainen lähitaistelussa osuva iskusi palauttaa yhden kestävyyspisteen, ja vihollisen kaatava isku kaksi.", of = "425802" }
+
+[battle_scarred]
+description = { text = "Arpesi ovat opettaneet ruumiisi kestämään iskun: suojaus +1, ja raivotessasi vielä +2.", of = "1e8feb" }
+
+[battle_trance]
+description = { text = "Raivosi alkaa 6 korkeammalta ja palaa hitaammin loppuun.", of = "ae2bd0" }
+
+[beast_bond]
+description = { text = "Rinnallasi taistelevat taistelevat sen ansiosta paremmin: liittolaisesi lyövät varmemmin ja kärsivät vähemmän vahinkoa.", of = "9bb7aa" }
+
+[beast_friend]
+description = { text = "Eläimet jättävät sinut rauhaan, niin rotat kuin peuratkin, kunnes käyt jonkin niiden lajisen kimppuun.", of = "1f8152" }
+
+[beast_of_burden]
+description = { text = "Vielä kymmenesosa lisää, ja raskaasti kuormittuneena maksat vain sen, minkä muut maksavat kuormittuneina.", of = "9dba5b" }
+
+[bedrock]
+description = { text = "Maa kannattelee sinua: suojaus +1, eikä kuoppa koskaan nappaa sinua.", of = "28090c" }
+
+[beguile]
+description = { text = "Lähellä näkemäsi olento pitää sinua hetken ystävänään ja taistelee rinnallasi, kunnes lumous raukeaa tai jätät sen jälkeesi (loitsu, maksaa manaa).", of = "981b9d" }
+
+[benediction]
+description = { text = "Yksi rukous vastaa kahteen vaivaasi.", of = "f92bc5" }
+
+[benison]
+description = { text = "Siunaus kaikille vierelläsi (maksaa manaa): osumapisteitä takaisin sinulle ja liittolaisillesi.", of = "babbb2" }
+
+[big_hands]
+description = { text = "Työhön tehdyt kädet lyövät lujaa: teet enemmän vahinkoa nuijilla ja kurikoilla sekä paljain käsin.", of = "93b790" }
+
+[bile_spitting]
+description = { text = "Toinen, happamampi maha: voit sylkeä polttavaa sappea lyhyen matkan, mutta nälkä tulee aiemmin.", of = "1e8295" }
+
+[bind]
+description = { text = "Sido lähellä näkemäsi vihollinen paikalleen (loitsu, maksaa manaa): se ei pääse astumaan muutamaan toimeen, vaikka voi yhä lyödä.", of = "d117ac" }
+
+[blaze]
+description = { text = "Sinusta leimahtaa liekkejä, jotka polttavat kaikkia vierelläsi seisovia; sen jälkeen olet pitkään loppuun palanut. Tulen kaudella, suvikuusta hehkukuuhun, liekit palavat kuumemmin.", of = "ffb6a9" }
+
+[blessing]
+description = { text = "Pyydä jumalasi suosiota (loitsu, maksaa manaa): hetken siunattuna iskusi osuvat varmemmin ja tahtosi on lujempi.", of = "bd7a50" }
+
+[blight]
+description = { text = "Turmeluksen purkaus sinne, minne tähtäät (loitsu, maksaa manaa): se kuihduttaa lihaa ja myrkyttää jokaisen, johon se ulottuu.", of = "7e0375" }
+
+[blink]
+description = { text = "Olet muualla, muutaman ruudun päässä (maksaa manaa), vapaana kaikesta, mikä sinua piteli.", of = "b44676" }
+
+[blood_frenzy]
+description = { text = "Raivotessasi taistelet verihurmassa: iskusi tulevat viidenneksen nopeammin, ja jokainen tappo ruokkii tulta.", of = "1bbcf6" }
+
+[blood_magic]
+description = { text = "Veresi on voimaa: anna osumapisteitäsi, et koskaan viimeistä, ja saat manaa saman tien (kyky).", of = "9b760d" }
+
+[blood_nosed]
+description = { text = "Haistat veren kaukaa, missä se valuukin, ja kuulet tarkemmin.", of = "55e273" }
+
+[blood_scent]
+description = { text = "Aistit verta vuotavat olennot pimeässä kuin näkisit ne, paljon kauempaa kuin pimeänäkösi ulottuu.", of = "00d104" }
+
+[brace_of_steel]
+description = { text = "Vastaanottava asentosi kohtaa vihollisen varmemmin, ja isku jättää sen horjumaan, hitaaksi toimimaan seuraavaksi.", of = "f08aa9" }
+
+[bramble]
+description = { text = "Piikkejä ja juuria siellä, missä jokin kasvaa (maksaa manaa): jokainen, joka seisoo elävällä maalla siellä, minne tähtäät, jää kiinni.", of = "953ab6" }
+
+[brand]
+description = { text = "Kädessäsi oleva ase palaa hetken (loitsu, maksaa manaa): iskusi tekevät lisäksi tulivahinkoa, ja terä valaisee hieman tietäsi.", of = "a6c02f" }
+
+[branding_smite]
+description = { text = "Rankaisu, joka jättää pyhän valon tarttumaan viholliseen (kyky, maksaa intoa): se hohtaa kaikkien nähtäväksi, eikä pimeys enää kätke sitä sinulta.", of = "005ae0" }
+
+[brawn]
+description = { text = "Lähi-iskusi lyövät kovempaa: vahinkoa 1 enemmän.", of = "c1e7b3" }
+
+[breaker]
+description = { text = "Potkusi saavat vihollisen horjahtamaan: se, johon potkusi osuu, sinkoutuu ruudun taaksepäin, jos tilaa on; ja kaivat neljänneksen nopeammin.", of = "ba784e" }
+
+[brewster]
+description = { text = "Olit oluenpanijan oppipoikana: aloitat alkemiaan koulutettuna, mukanasi noidanlukkoa ja hohtosieniä juomaksi tai kahdeksi, ja keittotaitosi kasvaa niin kuin panijan.", of = "5c9e77" }
+
+[brimming]
+description = { text = "Vuodatat jokaiseen loitsuun enemmän kuin se pyytää: vahinko- ja parannusloitsusi heittävät yhden nopan enemmän ja maksavat kymmenesosan enemmän.", of = "483bee" }
+
+[brutal_critical]
+description = { text = "Kriittiset iskusi kaksikätisellä aseella iskevät kovempaa.", of = "fe97ef" }
+
+[bulwark]
+description = { text = "Seisot kuin muuri: suojaus +2.", of = "f9274b" }
+
+[burning_hands]
+description = { text = "Liekkiviuhka käsistäsi (loitsu, maksaa manaa): jokainen sen alla palaa.", of = "8ed8cc" }
+
+[cackle]
+description = { text = "Kaakatat niin kovaa, että se kuuluu: jokainen noituus, jonka olet langettanut näkemääsi olentoon, pysyy hetken pidempään.", of = "a42840" }
+
+[call_lightning]
+description = { text = "Kutsu taivaan tuli alas (loitsu, maksaa manaa): avoimen taivaan alla salama iskee kohti paikkaa, johon tähtäät.", of = "aa8c40" }
+
+[call_of_the_forest]
+description = { text = "Kutsu syvät metsät avuksesi (loitsu, maksaa manaa): karhu lönkyttelee varjoista taistelemaan rinnallasi muutamaksi minuutiksi.", of = "d85a72" }
+
+[call_of_the_wild]
+description = { text = "Kutsu erämaa avuksesi (loitsu, maksaa manaa): susi tulee pimeydestä taistelemaan rinnallasi muutamaksi minuutiksi.", of = "ef40e0" }
+
+[call_the_elements]
+description = { text = "Kutsu alkuvoimat avuksesi (loitsu, maksaa manaa): maa, vesi, ilma tai tuli, sen mukaan kuin erämaa valitsee, nousee suureksi elementaaliksi taistelemaan rinnallasi muutamaksi minuutiksi.", of = "642527" }
+
+[cauldron]
+description = { text = "Mahasi on pata: raadot eivät koskaan vahingoita sinua, niiden lahjat ruumiillesi kaksinkertaistuvat, ja tuore raato parantaa sinua.", of = "f31635" }
+
+[cause_wounds]
+description = { text = "Kosketus, joka avaa haavoja vierelläsi olevaan olentoon (loitsu, maksaa manaa), jos se osuu.", of = "8f4ff3" }
+
+[chain_lightning]
+description = { text = "Salama kohti paikkaa, johon tähtäät (loitsu, maksaa manaa): se iskee ensimmäiseen tiellään olevaan olentoon ja hyppää sitten seuraavaan ja taas seuraavaan.", of = "a1168c" }
+
+[champion]
+description = { text = "Kriittiset iskusi lähitaisteluaseilla iskevät vielä kovempaa.", of = "3e1d35" }
+
+[channeler]
+description = { text = "Voima virtaa lävitsesi helposti: valtikka ottaa manastasi neljänneksen vähemmän joka käyttökerralla.", of = "23758e" }
+
+[charge]
+description = { text = "Rynnistä suoraa tietä kohti näkemääsi vihollista ja iske sitä tullessasi (kyky): yksi kestävyyspiste ja yksi lisää joka askeleelta. Kukaan, jonka ohitat, ei ehdi lyödä.", of = "7daf9e" }
+
+[charnel_burst]
+description = { text = "Näkemäsi ruumis räjähtää siinä, missä se makaa, ja repii jokaista sen vierellä olevaa (loitsu, maksaa manaa).", of = "2421f2" }
+
+[chest_wise]
+description = { text = "Tunnet jokaisen arkun konnankoukun: lukitun erotat lukitsemattomasta yhdellä silmäyksellä, ansoitetun katsoessasi sitä, ja läheltä matkijan siksi, mikä se on. Matkijan liima ei koskaan pidä sinua.", of = "9afda3" }
+
+[choosers_quickness]
+description = { text = "Hän toimi kahdesti, kun muut kerran; nyt teet sinäkin, melkein: olet paljon nopeampi ja notkeampi, toimit ensin ja haavasi umpeutuvat nopeasti, mutta nälkä kalvaa sinua enemmän.", of = "db08b7" }
+
+[clawed]
+description = { text = "Kynnet: mitkään käsineet eivät mahdu, mutta paljaat kätesi repivät, ja niiden jättämät haavat vuotavat verta.", of = "3f04a2" }
+
+[clawed.effects.bars_slot.hands]
+refused = { text = "Kyntesi repivät rikki kaiken, mitä yrität vetää käsiisi.", of = "417d73" }
+
+[clear_mind]
+description = { text = "Rauhallinen mieli kerää voimansa nopeasti: mana palaa sinulle nopeammin.", of = "7ca1f1" }
+
+[cleave]
+description = { text = "Vihollisen kaatava isku jatkaa matkaansa: kun iskusi tappaa, lyöt heti toista vierelläsi olevaa vihollista.", of = "f73dba" }
+
+[cleaving_strike]
+description = { text = "Vihollisen kaatava isku jatkaa matkaansa toiseen vierelläsi olevaan; Halkaisu-taipumuksen kanssa yhä uudelleen, niin kauan kuin vihollisia kaatuu.", of = "6a9d8c" }
+
+[clotting]
+description = { text = "Haavasi umpeutuvat nopeasti: raskas isku ei saa sinua vuotamaan verta, tappava saa vähemmän, ja verenvuoto tyrehtyy kaksi kertaa nopeammin.", of = "bc6d02" }
+
+[cloudburst]
+description = { text = "Avoimen taivaan alla kutsut sateen tunniksi (maksaa manaa): se sammuttaa sen, mikä palaa.", of = "e8d8d8" }
+
+[cold_blooded]
+description = { text = "Veresi on yhtä lämmintä kuin ilma: kylmä tekee sinusta kankean ja kuumuus nopeuttaa sinua. Kahlaat vedessä yhtä nopeasti ja hiljaa kuin kävelet kuivalla maalla.", of = "143326" }
+
+[cold_blooded.effects.temperature_speed.bands.0]
+slower = { text = "Kylmyys painuu syvälle vereesi; kangistut ja hidastut.", of = "b2501d" }
+
+[cold_blooded.effects.temperature_speed.bands.1]
+faster = { text = "Pahin kylmyys hellittää veressäsi, mutta olet yhä kankea.", of = "0fc2c1" }
+slower = { text = "Kylmyys hiipii vereesi; olosi käy kankeaksi.", of = "965dc2" }
+
+[cold_blooded.effects.temperature_speed.bands.2]
+faster = { text = "Lämpö palaa vereesi; kankeus jättää sinut.", of = "dbda42" }
+slower = { text = "Lämpö hiipuu veressäsi.", of = "747e0e" }
+
+[cold_blooded.effects.temperature_speed.bands.3]
+faster = { text = "Kuumuus vilkastuttaa sinua.", of = "460481" }
+slower = { text = "Kova kuumuus laantuu, mutta veresi kulkee yhä vilkkaasti.", of = "1e97c3" }
+
+[cold_blooded.effects.temperature_speed.bands.4]
+faster = { text = "Kova kuumuus panee veresi kiitämään.", of = "ce89cd" }
+
+[communion]
+description = { text = "Epäpyhät paikat ovat sinun: kirotussa, imevässä tai kummittelevassa huoneessa, tai tasolla, jonka yllä sellainen kirous lepää, rukouksesi eivät maksa sinulle mitään, eikä paikan imu kosketa sinua.", of = "910ffb" }
+
+[conductor]
+description = { text = "Salama tuntee kätesi: sähköloitsusi kaareutuvat joka kerta, ja se, mikä palaa takaisin sinuun, puree vähemmän.", of = "d8baeb" }
+
+[consecrate]
+description = { text = "Polvistu ja rukoile minuutti kirotussa, imevässä tai kummittelevassa paikassa (kyky, maksaa manaa): sen kirous poistuu lopullisesti, koko tason kirous, jos se lepää koko tason yllä.", of = "361bdb" }
+
+[cool_head]
+description = { text = "Yllätetyksi tultuasi et menetä siihen aikaa: yllättyneenä mikään tekemisesi ei hidastu.", of = "36f08a" }
+
+[craven]
+description = { text = "Jokin sinussa säpsähtää: pelko pitää sinua pidempään, ja tahtosi pettää helpommin.", of = "b8dde5" }
+
+[craving_consumed]
+description = { text = "Mitä ikinä olitkin, se on syöty. Liha antaa sen, minkä liha antaa.", of = "198f91" }
+
+[craving_empowered]
+description = { text = "Liikut sen vuoksi nopeammin, ja nälkä tulee nopeammin.", of = "eb8bca" }
+
+[craving_forgetting]
+description = { text = "Nahkasi on paksuuntunut. Taistelet enää vain yhdellä tavalla. Jotakin sinusta on poissa.", of = "01cb10" }
+
+[craving_hollowed]
+description = { text = "Myrkky ei voi satuttaa sinua. Olet sitä, minkä syödyt tekivät. Et ole se, mikä olit.", of = "e61930" }
+
+[craving_nourished]
+description = { text = "Ajattelevien liha on tehnyt sinusta vahvemman, nopeamman ja kovemman, ja nälkäisemmän. Sitä et koskaan oksenna.", of = "f3b8fc" }
+
+[craving_spoken_to]
+description = { text = "Mikään tauti ei tartu sinuun. Jokainen raato ruokkii sinua enemmän, eikä mikään ateria hidasta sinua. Himo puhuu, etkä voi pidättäytyä.", of = "c8d63e" }
+
+[craving_throttled]
+description = { text = "Haistat vuotavat pimeän läpi. Nälkä satuttaa sinua kaksin verroin, eikä mikään suojaa sinua siltä. Väki kavahtaa sinua.", of = "055e0b" }
+
+[craving_unleashed]
+description = { text = "Et voi enää painautua pelkoon, etkä taistella niin tyynesti kuin aiot.", of = "4e0a00" }
+
+[crusher]
+description = { text = "Murskaavat iskusi ja potkusi tunkeutuvat paremmin haarniskan läpi.", of = "cf6902" }
+
+[cure_wounds]
+description = { text = "Rukous, joka sulkee haavat (loitsu, maksaa manaa): osumapisteitä takaisin, sitä enemmän mitä enemmän kasvat; sen lausuminen vie hetken.", of = "92e951" }
+
+[curse_of_sloth]
+description = { text = "Kiroa lähellä näkemäsi vihollinen (loitsu, maksaa manaa): minuutin hidastuneena kaikki, mitä se tekee, vie puolitoista kertaa niin kauan.", of = "ac9d81" }
+
+[daily_bread]
+description = { text = "Rukouksesi ruokkivat sinua: nälkäisenä saat ravintoa. Eikä pilaantunut ruoka sairastuta sinua eikä kanna sinuun tautia.", of = "3921c8" }
+
+[dark_adaptation]
+description = { text = "Silmäsi oppivat pimeän: näet kaksi ruutua kauemmas, oli kuinka pimeää tahansa.", of = "fe5522" }
+
+[deadly_aim]
+description = { text = "Laukauksesi osuvat sinne, mihin sattuu: vahinkoa 2 enemmän jokaisella laukauksella.", of = "a2af7f" }
+
+[deep_eyed]
+description = { text = "Näet niin kuin kääpiö, olipa kansasi mikä tahansa, ja kauemmas pimeään; ja näet ne, jotka eivät ole nähneet sinua.", of = "648f34" }
+
+[deep_lungs]
+description = { text = "Kestävyyttäsi on reilusti enemmän.", of = "714068" }
+
+[deep_pockets]
+description = { text = "Kannat omaisuutta helposti: kolikot eivät paina sinulle mitään.", of = "aeda24" }
+
+[deep_roots]
+description = { text = "Juurtunut kuin vanha puu: väistö +1, eikä pilaantunut ruoka koskaan vahingoita sinua.", of = "2bbc67" }
+
+[deep_well]
+description = { text = "Voimasi ulottuu syvälle: enemmän manaa, ja yhä enemmän tasojen myötä.", of = "7d4ad7" }
+
+[deflect_missiles]
+description = { text = "Livahdat sivuun nuolien ja kivien tieltä: väistö +2 torjuntaasi laukauksia, heittoja ja ansojen ammuksia vastaan.", of = "9a6d51" }
+
+[deflection]
+description = { text = "Iskut kimpoavat sinusta kuin näkymätön käsi kääntäisi ne: kimmotus +1 torjuntaasi.", of = "6c0319" }
+
+[devourer]
+description = { text = "Saat syömästäsi enemmän: raadon vahvuudet siirtyvät sinuun helpommin, eikä mikään ateria tee sinusta hidastunutta.", of = "b3e634" }
+
+[diamond_soul]
+description = { text = "Iskut kääntyvät sivuun ennen kuin ehtivät sinuun: kimmotus +2. Kun kätesi ovat tyhjät, nappaat ilmasta laukauksen tai heiton, joka osuisi sinuun, yhden ki-pisteen hinnalla.", of = "e9f4ee" }
+
+[dim_eyed]
+description = { text = "Kalvo silmilläsi: tarvitset enemmän valoa nähdäksesi.", of = "551c70" }
+
+[diplomat]
+description = { text = "Kotonasi kummankin kansan parissa: kauppiaat pitävät sinusta enemmän (suosio +10 %), ja ne, joita palvelet, maksavat neljänneksen enemmän kultaa.", of = "8da110" }
+
+[divine_grace]
+description = { text = "Armo varjelee sinua: karistat taudit helpommin, myrkky jättää sinut pikemmin, eikä kuolleiden imevä kosketus tartu sinuun yhtä usein.", of = "861fb5" }
+
+[dodge]
+description = { text = "Livahdat sivuun iskujen tieltä: väistö +1 torjuntaasi.", of = "b41d00" }
+
+[dragon_hoard]
+description = { text = "Rikkaudet löytävät sinut: löytämäsi ja surmaamasi on yhä useammin rikkaampaa, jalokiviä tulee vastaan yhä useammin, ja kauppojen suosio +10 %.", of = "b5251f" }
+
+[drillmaster]
+description = { text = "Vuosien harjoitus on tehnyt asetempuistasi hengitykselle halpoja: jokainen vie sinulta vähemmän kestävyyttä.", of = "585bca" }
+
+[drow_fume]
+description = { text = "Tummahaltioiden vanha pimeyden temppu: osaat savuverhon loitsun (maksaa manaa).", of = "3f5fb1" }
+
+[drowning_grip]
+description = { text = "Mitä lyöt, sitä pidät: olento, johon osut lähitaistelussa, ei pääse astumaan pois, ennen kuin lyöt siltä ohi, lyöt toista tai liikut.", of = "59c120" }
+
+[duergar_invisibility]
+description = { text = "Harmaakääpiöiden synkkä lahja: voit hetkeksi haihtua näkyvistä (kyky), kuten harmaat sukulaisesi, etkä sitten uudestaan muutamaan minuuttiin.", of = "0a55ed" }
+
+[dwarven_resilience]
+description = { text = "Vaikea sairastua: myrkky jättää sinut pikemmin, ja karistat taudit helpommin.", of = "a839af" }
+
+[early_mastery]
+description = { text = "Mitä asetaitosi ja taistelutyylisi opettavat, tulee sinulle astetta aiemmin.", of = "aaf367" }
+
+[elemental_ward]
+description = { text = "Karistat osan yhden alkuaineen vahingosta.", of = "2f465d" }
+
+[elven_accuracy]
+description = { text = "Haltiajousimiehen silmä: nuolesi löytävät heikot kohdat useammin.", of = "0ea7f2" }
+
+[ember_veined]
+description = { text = "Suonesi hehkuvat: tuli vaivaa sinua vähemmän, ja sinusta hohtaa himmeää punaista valoa, jossa näet, ja jossa sinut nähdään.", of = "b7f85a" }
+
+[empower]
+description = { text = "Loitsusi ovat askelmaa ylempänä tikapuillaan ja maksavat hieman vähemmän.", of = "62ad9c" }
+
+[evasion]
+description = { text = "Heittäydyt tulen ja salaman tieltä: purkaukset ja salamat, niin ansoista kuin kääröistäkin, tekevät sinulle puolet vahingosta.", of = "0739cc" }
+
+[evergreen]
+description = { text = "Nälkä tulee sinulle hitaammin, ja pilaantunut ruoka vahingoittaa sinua vähemmän.", of = "ecae05" }
+
+[evil_eye]
+description = { text = "Luo pahan silmän katse lähellä näkemääsi viholliseen (loitsu, maksaa manaa): minuutin noiduttuna sen iskut osuvat huonommin.", of = "ce705f" }
+
+[exploit]
+description = { text = "Jokainen hallussasi oleva avaus menee yhteen iskuun yhteen suuntaan (kyky): salahyökkäys, tiesi vihollinen mitä tahansa, ja se viiltää syvemmälle jokaisesta käytetystä avauksesta. Vihollisella, jolla ei ole elintärkeitä kohtia, ei ole rakoa löydettäväksi.", of = "79a503" }
+
+[extra_arm]
+description = { text = "Kolmas käsivarsi omine kämmenineen: se pitää sitä, mitä heikompi käsi pitää, kevyttä asetta, joka lyö muiden rinnalla, tai kilpeä, joka suojaa ja tönäisee. Ihmiset eivät jaksa katsoa sinua pitkään.", of = "bf7704" }
+
+[eye_for_the_make]
+description = { text = "Luet esineen tekotavan yhdellä silmäyksellä: mihin se hajoaisi, kuinka paljon enemmän työtä se vaatisi ja kuinka vaikeaa sen ainesta on työstää.", of = "c8092c" }
+
+[eyes_of_the_heights]
+description = { text = "Näet kauemmas avoimen maan yli, päivällä ja yöllä.", of = "502ede" }
+
+[familiar]
+description = { text = "Vanhan taidon pieni peto pysyttelee kintereilläsi. Sen kosketus on pahan silmäsi kosketus, ja se käy sen kimppuun, minkä olet noitunut. Jos menetät sen, kutsut sen takaisin tunnin istunnolla.", of = "d9882f" }
+
+[familiars_sight]
+description = { text = "Katsot apurieläimesi silmin ja haistat sen sieraimin, mikä väijyy pimeässä tai oven takana.", of = "d03c99" }
+
+[family_wealth]
+description = { text = "Synnyit rahaan: lähdet matkaan paljon suuremmalla kultamäärällä kuin useimmat, ja lisäksi muutama jalokivi.", of = "b2c32c" }
+
+[far_shot]
+description = { text = "Laukauksesi lentävät 2 ruutua kauemmas ja heittämäsi 1 ruudun kauemmas.", of = "ebfcc7" }
+
+[fast_healer]
+description = { text = "Lepo korjaa sinut nopeasti: lepo parantaa sinua puolitoista kertaa niin nopeasti.", of = "4e8821" }
+
+[fathers_sword]
+description = { text = "Sukusi ase, sitä lajia, jota kansasi suosii, periytyi sinulle: mestarityö, lumottu, ja tiedät, mitä se tekee.", of = "4d688e" }
+
+[favoured_prey]
+description = { text = "Tunnet saaliisi tavat: sitä olentolajia vastaan, jota olet tappanut eniten, hyökkäyksesi ovat varmempia ja tappavampia.", of = "c8ea47" }
+
+[fear]
+description = { text = "Kauhu purkautuu sinne, minne tähtäät (loitsu, maksaa manaa): jokainen, johon se ulottuu, pakenee sinua hetken.", of = "8ae8fe" }
+
+[fell_minded]
+description = { text = "Ajatuksesi kulkevat nopeammin ja kylmemmin: olet ovelampi, manasi ulottuu syvemmälle, ja se palaa pikemmin.", of = "9f199e" }
+
+[fencing]
+description = { text = "Miekkailumestarisi opit pysyvät mukanasi: taistelet kaksintaistelijana astetta parempana kuin olet.", of = "2dfba3" }
+
+[ferocity]
+description = { text = "Örkkiveri on kuumaa: pahoin haavoittuneena lyöt kovempaa.", of = "9df2e2" }
+
+[fever_proof]
+description = { text = "Karistat sairauden pikemmin kuin useimmat: tauti tarvitsee yhden hyvän päivän vähemmän peräkkäin jättääkseen sinut, jos se ikinä jättää.", of = "ab46c1" }
+
+[field_forge]
+description = { text = "Missä oletkin, harkko kivikasan päällä on alasin (kyky): tunnin työ avoimella maalla vierelläsi, ja alasin jää paikalleen.", of = "ef8128" }
+
+[fire_breath]
+description = { text = "Lentoliskon henkäys: tulisuihku kohisee sinusta kohti valitsemaasi paikkaa ja polttaa jokaisen tiellään; sitten tulesi on hetken ehtynyt.", of = "c15aa1" }
+
+[flame_and_frost]
+description = { text = "Kaksi loitsua, jotka maksavat manaa: tulipallo tai purevan pakkasen purkaus paikkaan, johon tähtäät.", of = "a65476" }
+
+[flame_hardened]
+description = { text = "Tuli puree sinua vähemmän.", of = "2bdcc8" }
+
+[flay]
+description = { text = "Avaa lähellä näkemäsi vihollinen (loitsu, maksaa manaa): sen nahka halkeaa, ja se vuotaa verta.", of = "61bf50" }
+
+[fleet_footed]
+description = { text = "Liikut ja toimit hieman nopeammin.", of = "af5be2" }
+
+[fletcher]
+description = { text = "Teet omat nuolesi ja varsijousen nuolesi, ja teet ne hyvin: puolessa ajassa, kaksi kertaa niin monta ja varmemmin.", of = "27f42c" }
+
+[flurry]
+description = { text = "Tyhjin käsin taistellessasi lyöt kahdesti, jälkimmäinen isku hieman villimpi, yhden ki-pisteen hinnalla.", of = "1ee4df" }
+
+[forge_born]
+description = { text = "Opit aseet nopeasti: jokaisen asetaidon ja taistelutyylin.", of = "ba8aec" }
+
+[frail]
+description = { text = "Olet hauras kuin kytevä kipinä: enimmäisosumapisteesi ovat 10 % pienemmät.", of = "918963" }
+
+[frost_breathed]
+description = { text = "Kuuraa keuhkoissasi: voit puhaltaa purevan kylmän puuskan, ja kylmä vaivaa sinua vähemmän.", of = "9da1f8" }
+
+[frugal_caster]
+description = { text = "Et tuhlaa voimastasi mitään: kyvyt maksavat sinulle viidenneksen vähemmän manaa.", of = "6aeb65" }
+
+[gale]
+description = { text = "Tuulenpuuska linjaa pitkin (maksaa manaa): jokainen linjalla oleva sinkoutuu taaksepäin, ja tulet sillä sammuvat.", of = "e6cdd3" }
+
+[gatekeeper]
+description = { text = "Vihollinen, joka astuu viereesi, voi saada sinulta vapaan iskun tullessaan, sitä todennäköisemmin, mitä rohkeampi asentosi on.", of = "a7ad33" }
+
+[gem_lore]
+description = { text = "Gnomit tuntevat kivensä: näet, mitä kukin jalokivi on arvoinen, ja löydät jalokiviä kaksi kertaa useammin.", of = "9825f6" }
+
+[gemcutter]
+description = { text = "Olit jalokivenhiojan oppipoikana: aloitat jalokivityöhön koulutettuna, mukanasi hiomaton granaatti tai zirkoni, ja hiontataitosi kasvaa niin kuin hiojan.", of = "54bc1d" }
+
+[glass_boned]
+description = { text = "Kevyet, hauraat luut: iskut osuvat kovemmin, raskaat iskut haavoittavat syvemmin, ja ansat satuttavat sinua enemmän.", of = "227dfe" }
+
+[gnomish_glamour]
+description = { text = "Jokainen gnomi oppii lapsena vanhan harhan: osaat harhakuvan loitsun (maksaa manaa).", of = "6b3e3b" }
+
+[gnomish_illusionist]
+description = { text = "Harhat tulevat gnomeille luonnostaan: harhaloitsusi maksavat sinulle paljon vähemmän manaa.", of = "8778ce" }
+
+[gourmand]
+description = { text = "Tuoreet raadot tekevät ruumiillesi kaksin verroin hyvää, etkä koskaan syö itseäsi pöhöön: lopetat, kun olet kylläinen.", of = "9c42ec" }
+
+[grasping_arms]
+description = { text = "Ase kummassakin kädessä haittaa sinua vähemmän, ja miekan ja kilven kanssa vapaa kilpi-iskusi tulee useammin.", of = "c1d999" }
+
+[grave_breath]
+description = { text = "Avoimen haudan henkäys (loitsu, maksaa manaa): jokainen sen viuhkassa kuihtuu.", of = "d15ca0" }
+
+[grave_feast]
+description = { text = "Ime vierelläsi olevasta ruumiista se elämä, mitä siinä on jäljellä: osumapisteitä ja manaa takaisin (loitsu, maksaa manaa).", of = "e0d96d" }
+
+[great_cleave]
+description = { text = "Halkaisusi jatkuu niin kauan kuin iskusi tappavat, kerran kutakin vierelläsi olevaa vihollista kohti vuorossa.", of = "e0bc6c" }
+
+[grim_company]
+description = { text = "Kauppiaat ajattelevat sinusta huonommin: hinnat liikkuvat 10 % sinua vastaan.", of = "7480d5" }
+
+[haggler]
+description = { text = "Et koskaan maksa ensimmäistä hintaa: kauppiaat tekevät kanssasi parempia kauppoja.", of = "fe1679" }
+
+[hags_bargain]
+description = { text = "Kerran elämässäsi kuolema ohittaa sinut hintaa vastaan: jäät sen partaalle, päiväksi riutuneena ja pysyvästi vähemmän kauniina.", of = "a07b8b" }
+
+[hags_bargain.effects.reprieve]
+message = { text = "Jokin vanha ottaa hintansa, etkä kuole.", of = "1ca3d7" }
+
+[hair_trigger]
+description = { text = "Mikä käy kimppuusi yllättäen mutta ei saa sinua varomattomana, kohtaa ensin terääsi: lyöt heti takaisin.", of = "e918bf" }
+
+[hardened]
+description = { text = "Tästä lähtien jokainen taso lisää taas osumapisteitäsi, ja vähän enemmän.", of = "c08b67" }
+
+[hardened_hands]
+description = { text = "Vuosien lyönnit paaluun ja kiveen ovat karaisseet kätesi ja jalkasi: paljain käsin lyömiesi iskujen ja potkujesi vahinko on 1d8.", of = "c6a8bd" }
+
+[hardy]
+description = { text = "Sitkeämpi kuin useimmat: enemmän osumapisteitä, ja yhä enemmän tasojen myötä.", of = "582a0f" }
+
+[hate_wyrms_heart]
+description = { text = "Vuorten alla vanhin tuli, kytemässä sinussa: tuli tuskin koskettaa sinua, olet vahvempi ja sitkeämpi, ja voit puhaltaa suuren liekkisuihkun, mutta kylmä puree syvemmin.", of = "7e7fb3" }
+
+[headlong]
+description = { text = "Raivotessasi syöksyt suin päin: askeleesi maksavat viidenneksen vähemmän.", of = "a91201" }
+
+[healthy]
+description = { text = "Osumapisteesi palaavat neljänneksen nopeammin.", of = "9e639a" }
+
+[heavy_armour_mastery]
+description = { text = "Raskaassa haarniskassa (suojaus 3 tai enemmän) otat iskut sen vahvimmille kohdille: suojaus +1.", of = "ce559b" }
+
+[heavy_footed]
+description = { text = "Olet kömpelö jaloistasi: askeleesi kuuluvat kovempaa.", of = "739ca7" }
+
+[heedless]
+description = { text = "Et ole yksityiskohtien ihminen: löydät kätkettyjä asioita harvemmin.", of = "ba4bb8" }
+
+[herb_lore]
+description = { text = "Tiedät, mikä on hyvää syötäväksi: pilaantunut ruoka sairastuttaa sinua puolet vähemmän, raadon oma haitta ei koskaan kosketa sinua, ja väinönputken juuri parantaa myös sinua.", of = "fc6635" }
+
+[hex_of_weakness]
+description = { text = "Noidu lähellä näkemäsi vihollinen (loitsu, maksaa manaa): kaksi minuuttia heikentyneenä se on heikompi ja kömpelömpi.", of = "470163" }
+
+[hide_in_plain_sight]
+description = { text = "Kuormattomana askeleesi eivät päästä ääntäkään, ja hyökkäyksesi ovat hiljaisempia.", of = "2ff222" }
+
+[hill_thewed]
+description = { text = "Leveät hartiat: olet vahvempi kuin ennen.", of = "e5511e" }
+
+[hoard_sense]
+description = { text = "Löytämäsi ja surmaamasi on useammin rikkaampaa, ja jalokiviä tulee vastaasi useammin.", of = "26e663" }
+
+[hollow_of_the_night]
+description = { text = "Jotakin sinusta ei ole enää aivan tässä: näet pimeässä, toimit ensin, et pelkää mitään, ja terät ja iskut kulkevat osin lävitsesi, mutta olet hauraampi, ja muut tuntevat puutteen.", of = "8a84cd" }
+
+[hollowed]
+description = { text = "Terät ja iskut kulkevat puoliksi lävitsesi, mutta haavasi umpeutuvat hitaasti, ja muut tuntevat sinussa puutteen.", of = "6bb5d4" }
+
+[holy_radiance]
+description = { text = "Pehmeä valo loistaa ympärilläsi niin kauan kuin tahdot (kyky, päälle ja pois); kaikki näkevät sen.", of = "e248af" }
+
+[holy_wrath]
+description = { text = "Jokainen epäpyhään osuva iskusi kantaa nopallisen jumalasi vihaa.", of = "74c304" }
+
+[hoofed]
+description = { text = "Kaviot: mitkään saappaat eivät mahdu ja askeleesi kopisevat, mutta olet nopeampi ja potkusi osuvat lujaa.", of = "7cf803" }
+
+[hoofed.effects.bars_slot.feet]
+refused = { text = "Kavioitasi ei saa mihinkään sisään.", of = "0ab254" }
+
+[horn_of_plenty]
+description = { text = "Sarvesi armo parantaa myös haavasi, ja se lepää sen jälkeen vain kahdeksan tuntia.", of = "d82b54" }
+
+[horned]
+description = { text = "Sarvet: mikään kypärä ei mahdu, mutta kannat itseäsi kuin olento, joka on otettava lukuun.", of = "98e27d" }
+
+[horned.effects.bars_slot.head]
+refused = { text = "Sarvesi ovat tiellä.", of = "5e8029" }
+
+[horns_grace]
+description = { text = "Yksisarvisen armo: verenvuotosi ja myrkytyksesi päättyvät, ja karistat taudin; sitten sarvi lepää päivän.", of = "8c91d3" }
+
+[hounds_bay]
+description = { text = "Hornankoiran ulvonta: sen kuulevat heikommat viholliset pakenevat sinua hetken; sitten kurkkusi on tunnin käheä.", of = "12b032" }
+
+[hounds_nose]
+description = { text = "Haistat veren lähellä olevista vuotavista olennoista pimeässäkin, ja tunnet hajusta, kuinka tuoretta ruoka on.", of = "85ac1f" }
+
+[hungering]
+description = { text = "Nälkä tulee sinulle aiemmin kuin pitäisi.", of = "ee53bc" }
+
+[hunters_bond]
+description = { text = "Sinä ja toverisi olette yksi metsästys: näet, mitä se näkee, ja haistat sen sieraimin, mikä väijyy pimeässä tai oven takana. Siunaus, juoma tai loitsu, joka vahvistaa toista teistä, vahvistaa toistakin, mutta yksikään kirous ei siirry.", of = "5bdbf9" }
+
+[hurlers_arm]
+description = { text = "Viimeisen jättiläisen voima ja hänen hitautensa: olet paljon vahvempi, kannat enemmän ja heität kauemmas, mutta liikut hitaammin.", of = "92eecd" }
+
+[immune_to_pain]
+description = { text = "Jokainen sinuun osuva isku tekee haarniskasi jälkeen vahinkoa 1 vähemmän, mutta ei koskaan nollaa.", of = "a5b5fa" }
+
+[improved_critical]
+description = { text = "Tiedät, missä valitsemasi ase tekee eniten tuhoa, ja löydät sen kohdan useammin.", of = "179d72" }
+
+[improved_sneak_attack]
+description = { text = "Salahyökkäyksesi satuttavat paljon enemmän, ja jokainen Tilaisuusiskuun käytetty avaus viiltää kaksi kertaa syvemmälle.", of = "cd7596" }
+
+[inner_calm]
+description = { text = "Ki-voimaasi mahtuu enintään 2 enemmän, ja se palaa nopeammin.", of = "3f4e9a" }
+
+[inner_light]
+description = { text = "Himmeä valo loistaa ympärilläsi, missä oletkin: näet pimeässä sen, mikä on vierelläsi, ja niin näkee kaikki muukin.", of = "4bc7d4" }
+
+[inspire]
+description = { text = "Saat innoitusta, jota omat tappoisi kasvattavat ja aika kuluttaa. Laula itsellesi rohkeutta (kyky, maksaa innoitusta, ja kuuluu): hetken osut varmemmin ja väistät nopeammin, sitä pidempään, mitä paremmin laulat.", of = "8a09e1" }
+
+[invest]
+description = { text = "Liikekumppanisi kaupungissa panee kultasi töihin. Viikko viikolta se kasvaa tai silloin tällöin kutistuu; mitä enemmän kaupunki on sinulle velkaa, sitä paremmin sille käy.", of = "7103c1" }
+
+[iron_grip]
+description = { text = "Suuri ase on kevyt käsissäsi: iskusi kaksikätisellä aseella tulevat nopeammin.", of = "8c6833" }
+
+[iron_hands]
+description = { text = "Kätesi ja jalkasi iskevät kuin rauta: paljain käsin lyömiesi iskujen ja potkujesi vahinko on 1d10.", of = "4c0428" }
+
+[iron_stomach]
+description = { text = "Pidät sisälläsi sen, mitä muut eivät: pilaantunut ruoka ei koskaan saa sinua oksentamaan ja sairastuttaa sinua vähemmän, eikä liika syöminenkään.", of = "a4ada5" }
+
+[iron_will]
+description = { text = "Käskemään kasvatettu tahto: kestät lujemmin sen, mikä koettelee tahtoasi, ja ryhtisi kasvaa (karisma +1).", of = "4ba9b7" }
+
+[jack_of_all_trades]
+description = { text = "Olet poiminut tieltä vähän kaikkea.", of = "0a7dc2" }
+
+[jack_of_all_trades.effects.take_up_skills]
+news = { text = "Huomaat osaavasi vähän kaikkea.", of = "77f7c6" }
+
+[keen_ears]
+description = { text = "Kuulet heikompia ääniä.", of = "d71431" }
+
+[keen_edge]
+description = { text = "Iskusi purevat syvälle: kriittisiä osumia tulee useammin, ja vielä useammin metallin kaudella, ruskakuusta usvakuuhun.", of = "bc71e0" }
+
+[keen_mind]
+description = { text = "Yksi taikuuden koulukunta tai yksi alkuaine vastaa järkeesi paremmin kuin useimmat: sen loitsut heittävät sinulle kokoa suurempia noppia, d6:n sijaan d7:n, d8:n sijaan d9:n.", of = "b8881a" }
+
+[keen_searcher]
+description = { text = "Etsit tarkemmin ja ruudun kauempaa.", of = "7117c1" }
+
+[kindled]
+description = { text = "Tuli palaa sinulle mielellään ja puree sinua vähemmän: lyhtysi valaisee ruudun kauemmas.", of = "040cc7" }
+
+[knock]
+description = { text = "Vapauttava sana (kyky, maksaa manaa): vierelläsi olevan lukitun oven tai arkun lukko ponnahtaa auki. Mikään ei aukea itsestään, eikä mihinkään ansaan kosketa.", of = "32182d" }
+
+[lamplighter]
+description = { text = "Hoidat lyhtyäsi hyvin: se palaa kirkkaammin ja valaisee ruudun kauemmas.", of = "33dcbb" }
+
+[landed_noble]
+description = { text = "Suvullasi on maata, ja vuokrat juoksevat: apuraha, jonka he panevat sinulle sivuun, on paljon runsaampi, kultana ja hienompina tavaroina.", of = "7277f7" }
+
+[lasting_draughts]
+description = { text = "Ruumiisi pitää kiinni siitä, mitä juoma sille antaa: sinua vahvistavat tai silmiäsi terävöittävät juomat kestävät puolitoista kertaa niin kauan.", of = "e33d24" }
+
+[lay_on_hands]
+description = { text = "Kosketuksesi parantaa (kyky, maksaa intoa): osumapisteitä takaisin sen mukaan, kuinka kokenut olet.", of = "9bc596" }
+
+[lead_footed]
+description = { text = "Raskaat jalat: askeleesi kuuluvat kovempaa, ja toimit hitaammin, kun taistelu yllättää sinut valmistautumattomana.", of = "72b539" }
+
+[lean]
+description = { text = "Nälkä tulee sinulle hitaammin, eikä ponnistelu maksa sinulle mitään.", of = "6285d8" }
+
+[leech]
+description = { text = "Nälän säde (maksaa manaa): puolet siitä, mitä se vie, korjaa sinua.", of = "3929ac" }
+
+[light_step]
+description = { text = "Astut kevyesti: ansa, jolle astut, ei ehkä laukea allasi, ja löydät sen, eikä kuoppa koskaan nappaa sinua. Askeleesi ovat kaksi viidesosaa hiljaisempia, eivätkä avaamasi ja sulkemasi ovet päästä ääntä.", of = "6181ab" }
+
+[litany_of_restoring]
+description = { text = "Rukouksesi ulottuvat vielä pidemmälle: mitä sairaus vei ruumiistasi, se korjataan, ja mitä kuolleet joivat sinusta, se annetaan takaisin.", of = "0b0f6c" }
+
+[litany_of_the_mind]
+description = { text = "Rukouksesi täyttävät mielesi: manasi, täyteen.", of = "8cdb26" }
+
+[little_loved]
+description = { text = "Kauppiaat ajattelevat sinusta huonommin: hinnat liikkuvat 10 % sinua vastaan.", of = "7480d5" }
+
+[lockbreaker]
+description = { text = "Potkusi oviin ja arkkuihin ovat voimakkaampia ja hiljaisempia, ja kun potkaiset arkun auki, sen sisältö rikkoutuu puolet harvemmin.", of = "c68f23" }
+
+[long_fast]
+description = { text = "Olet oppinut hallitsemaan ruumiisi tarpeet: nälkä ei koskaan heikennä sinua, olit ilman kuinka kauan tahansa, etkä koskaan pyörry siitä. Nääntyminen tappaa silti.", of = "dfed9f" }
+
+[long_reach]
+description = { text = "Laukauksesi ja heittosi löytävät kauempaakin vihollisen, joka ei ole nähnyt sinua.", of = "1ae95a" }
+
+[lord_of_the_wild]
+description = { text = "Erämaa on sinun käskettävissäsi: kutsumasi pysyy vierelläsi, kunnes se surmataan, ja voit pitää rinnallasi jokaista kutsua yhden enemmän.", of = "330289" }
+
+[low_blow]
+description = { text = "Hiekkaa silmiin ennen veistä: tilaisuusiskusi jättävät vihollisen pökertyneeksi, alttiiksi seuraavalle iskullesi ja hitaaksi omaansa, ja jokainen käytetty avaus tekee niistä varmempia osumaan.", of = "443ff0" }
+
+[lucky]
+description = { text = "Puolituisen onni: pahasti harhaan menevän iskun voi yrittää uudestaan.", of = "554618" }
+
+[lullaby]
+description = { text = "Hidas laulu niille, jotka tahtovat sinulle pahaa (kyky, maksaa manaa, ja kuuluu): jokainen vihollinen, joka kuulee sen eikä pysty karistamaan sitä, käy hetkeksi uniseksi ja hitaaksi kaikessa, mitä tekee.", of = "caccfd" }
+
+[lurk]
+description = { text = "Väijy (kyky): vihollinen, joka astuu viereesi, saa heti iskusi, yllätettynä, ellei se jo jahdannut sinua.", of = "25d9ca" }
+
+[mage_armour]
+description = { text = "Voiman suojus ympärilläsi, kun et käytä haarniskaa: kimmotus +2 torjuntaasi.", of = "03514c" }
+
+[magic_missile]
+description = { text = "Voiman tikka, joka kiemurtelee jokaisen tiellään olevan ohi ja iskee olentoon, johon tähtäät (loitsu, maksaa manaa), eikä koskaan osu ohi.", of = "26537b" }
+
+[make_do_and_mend]
+description = { text = "Voit korjata mukanasi kantamasi vahingoittuneen esineen missä tahansa, ilman alasinta (kyky): se vie aikaa, ja jos kätesi pettävät, menetät vain ajan.", of = "f5354e" }
+
+[makers_mark]
+description = { text = "Tekemäsi kantaa merkkiäsi: tekemäsi aseet, haarniskat ja korut ovat puolitoista kertaa arvokkaampia, suojelijasi maksaa niistä enemmän, ja niihin mahtuu yksi lumous lisää.", of = "eb6a3d" }
+
+[malison]
+description = { text = "Noitumasi olento kärsii enemmän iskuistasi ja loitsuistasi, ja kun se kuolee noituutesi alla, noituus palaa sinulle manana.", of = "f2d2b5" }
+
+[many_eyed]
+description = { text = "Silmiä aukeaa kaikkialle ihollesi: näet ne, jotka eivät ole nähneet sinua, eikä taistelu juuri yllätä sinua valmistautumattomana, mutta kukaan ei kestä katsoa sinua, eikä kukaan väisty tieltäsi.", of = "b4151c" }
+
+[many_fingered]
+description = { text = "Kuudes sormi kummassakin kädessä: tilaa yhdelle sormukselle lisää, vaikka kätesi ovat kömpelömmät.", of = "d9a558" }
+
+[many_minds]
+description = { text = "Tahtosi on jakautunut: tahtoheittosi onnistuvat huonommin.", of = "750bdf" }
+
+[marked_by_the_deep]
+description = { text = "Jokin syvällä alhaalla on saanut vainusi: olentoja tulee useammin sinne, missä olet.", of = "23f6f4" }
+
+[martial_arts]
+description = { text = "Harjoitetut kädet ja jalat: paljain käsin lyömäsi iskut ja potkusi osuvat paljon kovemmin. Saat ki-voimaa, joka kasvaa kanssasi ja palaa ajan myötä, myös levätessä.", of = "2d61c2" }
+
+[master_hunter]
+description = { text = "Jousesi ja varsijousesi löytävät ratkaisevan kohdan useammin, ja mielisaaliisi pelkää sinua enemmän kuin koskaan.", of = "800e91" }
+
+[master_of_none]
+description = { text = "Ei minkään mestari, mutta jokainen osaamasi ammatti käy hieman helpommin: jokainen taito, johon olet koulutettu, lasketaan korkeammaksi.", of = "720f89" }
+
+[master_thief]
+description = { text = "Salahyökkäyksesi löytävät ratkaisevan kohdan paljon useammin, ja tilaisuusiskusi sitä useammin, mitä useampia avauksia ne käyttävät; käytä viisi tai enemmän, niin osuva tilaisuusisku löytää sen aina.", of = "aff38b" }
+
+[masters_hand]
+description = { text = "Mestarin käsi: jokainen laatuaste ja jokainen hionta tulee aiemmin.", of = "baa63b" }
+
+[meditation]
+description = { text = "Lepäät hiljaisuudessa: lepo palauttaa manasi puolitoista kertaa niin nopeasti.", of = "0b115b" }
+
+[mend]
+description = { text = "Kosketus, joka sulkee naarmun (pikkuloitsu, maksaa manaa): muutama osumapiste takaisin, sinulle tai jollekulle vierelläsi.", of = "9a6a7d" }
+
+[merchants_eye]
+description = { text = "Tunnet tavaran, kun sen näet (kyky): huolellinen katse kertoo, mikä kantamasi esine on, kuten tunnistuksen käärö kertoisi, siinä ajassa, joka käärön lukemiseen kuluu.", of = "37130a" }
+
+[mere_eyed]
+description = { text = "Kalpeat, suuret silmät: näet vähemmässä valossa, mutta et yhtä kauas avoimen taivaan alla.", of = "3184aa" }
+
+[mere_wifes_hide]
+description = { text = "Nahka, joka kääntää terät: ihosi on paksu ja harmaa, olet vahvempi, uit kuin lammenväki, eikä mikään ote pidä sinua kauan.", of = "abf2f4" }
+
+[mesmerise]
+description = { text = "Vangitse lähellä näkemäsi vihollisen katse (loitsu, maksaa manaa): hetken lumoutuneena kaikki, mitä se tekee, vie kaksi kertaa niin kauan.", of = "59d6cd" }
+
+[midden_gut]
+description = { text = "Vatsasi ottaa mitä tahansa: mätä liha ei tee sinulle pahaa.", of = "84da47" }
+
+[mighty_kick]
+description = { text = "Potkusi osuvat kuin vasarat: ne satuttavat olentoja enemmän (ja vielä enemmän harjoitetuin käsin), ja ovet antavat periksi pikemmin.", of = "0792e5" }
+
+[mighty_rage]
+description = { text = "Raivosi tekee sinusta yhä mahtavamman ja voi kasvaa suuremmaksi, ja sen jälkeinen uupumus menee ohi pikemmin.", of = "7c5532" }
+
+[mighty_thews]
+description = { text = "Ruumiisi voimistuu: sinusta tulee pysyvästi vahvempi ja sitkeämpi.", of = "4b22cf" }
+
+[miracle]
+description = { text = "Kaikkeen, mikä sinua vaivaa, vastataan kerralla: haavat, nälkä, sairaus ja myrkky, noituudet ja otteet, se mikä vietiin, ja manasi ja jokainen voimavarasi täytetään.", of = "e5b147" }
+
+[natures_ward]
+description = { text = "Luonto varjelee sinua: kahlaaminen ei koskaan tuo sinulle tautia, ja myrkky jättää sinut kaksi kertaa nopeammin.", of = "aff349" }
+
+[night_eyes]
+description = { text = "Silmäsi tottuvat pimeään: näet puolella siitä valosta, jota ennen tarvitsit.", of = "52a56a" }
+
+[nightsight]
+description = { text = "Silmäsi aukeavat pimeälle hetkeksi (loitsu, maksaa manaa): näet niin kuin kissa.", of = "28433d" }
+
+[oak_hearted]
+description = { text = "Sydämesi lyö hitaasti ja vahvasti: olet sitkeämpi kuin ennen.", of = "8d9f6e" }
+
+[oath_bane_eyed]
+description = { text = "Tiedät, mistä ruumis murtuu: hyökkäyksesi uhkaavat kriittistä osumaa useammin, varmistavat sen varmemmin ja leikkaavat silloin syvemmälle haarniskan läpi.", of = "70c936" }
+
+[oath_blooded]
+description = { text = "Valavelkasi ensimmäinen osa on maksettu, ja ruumiisi tietää sen: sitkeys +2, ja iskusi löytävät varmemmin ja kovemmin ne lajit, joita vastaan olet vannonut.", of = "756ccd" }
+
+[oath_deathward]
+description = { text = "Kuolema on kulkenut vierelläsi niin kauan, ettei se juuri tunne sinua: suojaus +2, kalmavahingosta puolet raukeaa sinuun, ja harvoin mikään imee sinua.", of = "e56434" }
+
+[oath_doom]
+description = { text = "Valasi on pidetty, ja salit laulavat sinusta: yhä varmempi ja kovempi niitä lajeja vastaan, joita vastaan olet vannonut, kovemmat iskut lähitaistelussa, kriittisiä osumia useammin, ja kerran elämässäsi kuolema ohittaa sinut ja jättää sinut riutuneeksi.", of = "9d2b2c" }
+
+[oath_doom.effects.reprieve]
+message = { text = "Valasi eivät ole vielä päästäneet sinusta. Et kuole.", of = "0b022d" }
+
+[oath_grim]
+description = { text = "Kaunasi on kovettunut sinuun: tahtosi on rautaa, eikä pelko koskaan valtaa sinua.", of = "c314ac" }
+
+[oath_grudge_hewer]
+description = { text = "Iskusi osuvat jokaisen vääryyden painolla: paljon varmemmin ja kovemmin niitä lajeja vastaan, joita vastaan olet vannonut, kovemmin mitä tahansa vastaan lähitaistelussa, ja sitkeys +1.", of = "6e5277" }
+
+[oath_iron_armed]
+description = { text = "Valojesi työ on karaissut käsivartesi: voima +2, ja lähi-iskusi osuvat kovemmin.", of = "dede28" }
+
+[oath_mountain_hearted]
+description = { text = "Sinua on yhtä vaikea liikuttaa kuin vuoren juuria: voima +2, sitkeys +2, viidennes enemmän osumapisteitä, ja jokainen sinuun osuva isku tekee taas vähemmän.", of = "61530d" }
+
+[oath_stone_skinned]
+description = { text = "Heidän iskunsa eivät helposti satuta sinua: suojaus +2, ja jokainen sinuun osuva isku tekee vähemmän.", of = "a6feb7" }
+
+[oath_unyielding]
+description = { text = "Olet seissyt heitä vastaan sata kertaa ja enemmänkin: paljon enemmän osumapisteitä, yhä enemmän tasojen myötä, ja haavasi umpeutuvat nopeammin.", of = "7029cd" }
+
+[of_the_deep]
+description = { text = "Jää kantaa sinua kuin et kantaisi mitään, sen läpi pulahtaminen ei koskaan satuta sinua, ja kiipeät helposti sen päälle; kylmä puree sinua vähemmän.", of = "e2f816" }
+
+[old_delver]
+description = { text = "Oudoilla paikoilla on vain vähän temppuja, joita et ole kohdannut: halkeillut lattia ei koskaan petä allasi, imevä huone ei voi vetää manaasi, eikä mikään tappamasi nouse kirotussa paikassa.", of = "6f48c7" }
+
+[old_grudges]
+description = { text = "Kääpiö ei koskaan unohda vääryyttä: vannot itsesi yhtä olentolajia vastaan, kun sinut luodaan, ja uudelleen tasoilla 10, 20, 30, 40 ja 50, ilmaiseksi.", of = "d42fe8" }
+
+[old_hand]
+description = { text = "Otat mielelläsi vastaan, mitä outo paikka antaa: huone, joka nopeuttaa paranemista tai manaa, nopeuttaa sitä sinulle vielä puolet enemmän, ja nostat houkuttelevasta aarteesta yhden esineen ennen kuin se laukeaa.", of = "8c4392" }
+
+[old_lore]
+description = { text = "Taikaesine, jota kannat päivän, kertoo sinulle, mikä se on, ja luet kääröt nopeasti.", of = "82708c" }
+
+[opportunist]
+description = { text = "Vihollinen, joka kääntyy sinusta, maksaa siitä: se, joka astuu pois viereltäsi, saa iskun lähtiessään.", of = "5499d8" }
+
+[orcish_hide]
+description = { text = "Paksu örkin nahka: suojaus +1.", of = "32e13c" }
+
+[orison]
+description = { text = "Rukoile (loitsun aika, ei manaa): siihen, mikä sinua eniten vaivaa, vastataan, niin pitkälle kuin rukouksesi ulottuvat; toistaiseksi haavoihisi. Rukoile liian usein, niin mikään ei vastaa hetkeen.", of = "2c1ac8" }
+
+[overreach]
+description = { text = "Olet kotonasi syvillä vesillä: oppisi ylittävä loitsu on kolmanneksen vähemmän ulottumattomissasi.", of = "5ba9c1" }
+
+[owl_eyed]
+description = { text = "Pyöreät, kultaiset silmät: avoimen taivaan alla näet yöllä kauemmas, mutta päivällä et yhtä kauas.", of = "884a4b" }
+
+[pack_leader]
+description = { text = "Erämaa seuraa sinua mielellään: jokainen kutsusi tuo yhden lisää, voit pitää rinnallasi kutakin yhden enemmän, ja ne viipyvät puolitoista kertaa niin kauan.", of = "c26552" }
+
+[pack_mule]
+description = { text = "Kannat kymmenesosan enemmän, ja kuorma hidastaa sinua ja haittaa väistelyäsi vähemmän.", of = "351941" }
+
+[pack_tactics]
+description = { text = "Sinä ja toverisi metsästätte yhtenä: kaikki, mikä seisoo teidän molempien vierellä, joutuu ahdistetuksi kahdelta puolelta, ja kumpikin teistä lyö sitä varmemmin; toverisi tuntee mielisaaliisi yhtä hyvin kuin sinä.", of = "10d858" }
+
+[palsied]
+description = { text = "Kätesi vapisevat: olet kömpelömpi kuin ennen ja toimit hitaammin taistelun alkaessa.", of = "9d0e6d" }
+
+[paper_skinned]
+description = { text = "Ihosi on ohut kuin paperi: raskaat iskut haavoittavat sinua syvemmin, ja ansat satuttavat sinua enemmän.", of = "f6f7cc" }
+
+[patient_blade]
+description = { text = "Avauksesi haihtuvat hitaammin, ja vihollinen, jota olet työstänyt, antaa sinulle kaatuessaan kaksi avausta.", of = "10615a" }
+
+[patron]
+description = { text = "Varakas suojelija kaupungissa tilaa työtäsi: yksi hieno kappale kerrallaan, aineet etukäteen, maksu täysimääräisenä toimitettaessa.", of = "65d9b4" }
+
+[peerless]
+description = { text = "Kun löydät avauksen, otat siitä kaiken irti: kriittiset iskusi osuvat varmemmin.", of = "b3ec34" }
+
+[perfect_self]
+description = { text = "Ruumis ja mieli täydellisiksi tehtyinä: paljaat kätesi löytävät ratkaisevan kohdan useammin ja julmemmin, ja ki-voimasi palaa nopeammin.", of = "444b8f" }
+
+[petrifying_gaze]
+description = { text = "Katseesi pitää vihollista kaksi kertaa niin kauan, ja silmäsi lepäävät sen jälkeen vain tunnin.", of = "933573" }
+
+[pious]
+description = { text = "Noudatat vanhoja menoja: oman puolesi alttari kuulee rukouksesi sitäkin suopeammin, eikä toisen puolen alttari yhtään ankarammin kuin kenenkään muun, ja temppelin parannukset ja korjaukset maksavat sinulle puolet ja jättävät sinut vahvemmaksi.", of = "df2873" }
+
+[pitman]
+description = { text = "Teit työtä kaivoksissa: aloitat louhintaan koulutettuna, mukanasi hakku, ja louhintataitosi kasvaa niin kuin kaivosmiehen.", of = "111322" }
+
+[poison_lore]
+description = { text = "Tunnet myrkyn: se jättää sinut kaksi kertaa nopeammin, ja iskusi ja loitsusi satuttavat myrkytettyä vihollista enemmän.", of = "91c580" }
+
+[poison_resistance]
+description = { text = "Myrkky kulkee lävitsesi nopeasti: se haihtuu kaksi kertaa nopeammin eikä koskaan heikennä sinua.", of = "ca6850" }
+
+[ponderous]
+description = { text = "Olet hieman hidas.", of = "95a398" }
+
+[porter]
+description = { text = "Vielä kymmenesosa lisää, väistelysi haittaantuu vielä vähemmän, eikä kuormittuneisuus maksa sinulle mitään.", of = "143ebc" }
+
+[practised_technique]
+description = { text = "Asetemppusi ovat käyneet sinulle toiseksi luonnoksi: ne vievät sinulta vähemmän aikaa.", of = "df3010" }
+
+[prayer_of_cleansing]
+description = { text = "Rukouksesi ulottuvat pidemmälle: jokainen tauti sinussa, puhjennut tai itävä, on poissa, ja kaikki myrkky sen mukana.", of = "adef12" }
+
+[prayer_of_release]
+description = { text = "Rukouksesi vapauttavat sinut: mikä tahansa noituus, ote tai seitti päästää irti.", of = "0411ed" }
+
+[prehensile_tail]
+description = { text = "Pitkä, tarttuva häntä: se pitää kevyttä asetta, tikaria tai veistä, ja lyö sillä käsiesi rinnalla. Mielesi harhailee sen perässä.", of = "47badc" }
+
+[pure_blood]
+description = { text = "Karistat taudit helpommin, ja myrkky kulkee lävitsesi nopeasti heikentämättä sinua.", of = "338409" }
+
+[purity_of_body]
+description = { text = "Mikään tauti ei enää tartu sinuun.", of = "23a778" }
+
+[quick]
+description = { text = "Liikut ja toimit hieman nopeammin.", of = "8f5c4e" }
+
+[quick_hands]
+description = { text = "Kätesi tuntevat työn: jokainen käsityö puolessa ajassa.", of = "6e144c" }
+
+[quick_knit]
+description = { text = "Lihasi kasvaa nopeasti umpeen: haavasi sulkeutuvat nopeammin.", of = "315e1f" }
+
+[quick_learner]
+description = { text = "Jokainen taso tuo sinulle yhden taitoheiton enemmän.", of = "aa0bf4" }
+
+[quick_study]
+description = { text = "Loitsut tulevat sinulle helposti: opit ne loitsukirjoista puolessa ajassa, eikä taitosi ylittävä loitsu ole yhtä suuri uhkapeli.", of = "81f3fd" }
+
+[quiet_delver]
+description = { text = "Kuljet luolastossa niin hiljaa, että siellä asuvat löytävät tiensä luoksesi vain puolet niin usein.", of = "4efa1e" }
+
+[quivering_palm]
+description = { text = "Paljain käsin lyöty isku (kyky), joka jättää haavoittuneen vihollisen vuotamaan pahasti verta, viiden ki-pisteen hinnalla.", of = "f1407b" }
+
+[rage]
+description = { text = "Raivostu (kyky): vahvempi ja sitkeämpi, liian hurja lukemaan tai loitsimaan, ja taistelu pitää tulen yllä; sen jälkeen uupunut, eikä raivoa ennen kuin uupumus on ohi.", of = "8fd3ca" }
+
+[rapid_reload]
+description = { text = "Lataat varsijousen nopeammin.", of = "92d8bc" }
+
+[rapid_shot]
+description = { text = "Saat keskittyneisyyttä, joka palaa ajan myötä mutta ei levätessä. Laukaus, jonka ammut, kun keskittyneisyyttä on varaa, kuluttaa sitä hieman ja vie vähemmän aikaa.", of = "bedd78" }
+
+[rat_kings_court]
+description = { text = "Rottien kuningas on nyt sinussa: syöpäläiset jättävät sinut rauhaan, kunnes lyöt jotakin niiden lajista, sairaus ja myrkky tarttuvat sinuun heikommin, mutta monta suuta on ruokittava.", of = "4e7c2b" }
+
+[ray_of_frost]
+description = { text = "Ohut kylmän säde kohti paikkaa, johon tähtäät (pikkuloitsu, maksaa manaa): se iskee ensimmäiseen tiellään olevaan olentoon, jos osuu.", of = "38a36b" }
+
+[reborn_whole]
+description = { text = "Nousu tuhkastasi tuo sinut takaisin ehjänä: jokainen haava parannettu, jokainen vaiva ja tauti poltettu pois, eikä heikkoutta jälkeenpäin.", of = "b8872b" }
+
+[rebuke]
+description = { text = "Uskosi polttaa kuolleita (maksaa manaa): jokainen epäkuollut siellä, minne tähtäät, kärventyy ja pakenee.", of = "32c527" }
+
+[reeking]
+description = { text = "Tunkion haju tarttuu sinuun: sinut on helpompi huomata, eikä kukaan väisty tieltäsi.", of = "404447" }
+
+[regrowth]
+description = { text = "Osumapisteesi palaavat puolitoista kertaa niin nopeasti, ja verenvuotosi tyrehtyy pikemmin.", of = "5b8583" }
+
+[relentless]
+description = { text = "Isku iskun perään samaan viholliseen, ja jokainen osuu varmemmin kuin edellinen.", of = "bc08c0" }
+
+[relentless_fury]
+description = { text = "Iskusarjasi yhtä vihollista vastaan kestää pidempään, ja sen jatkuessa iskusi purevat kovemmin.", of = "e53ff8" }
+
+[remove_disease]
+description = { text = "Puhdistusmeno (loitsu, maksaa manaa): jokainen kantamasi tauti ja kaikki myrkky sinussa on poissa.", of = "50172a" }
+
+[renewal]
+description = { text = "Lihasi kasvaa hetken nopeasti umpeen (loitsu, maksaa manaa): haavat sulkeutuvat neljä kertaa nopeammin.", of = "264bc1" }
+
+[retribution]
+description = { text = "Vierelläsi oleva vihollinen, joka osuu sinuun, saa heti rankaisusi, niin kauan kuin intoasi riittää.", of = "b22687" }
+
+[riddlers_mind]
+description = { text = "Saat 10 % enemmän kokemusta.", of = "ef5b86" }
+
+[rime]
+description = { text = "Tappavan pakkasen henkäys käsistäsi (loitsu, maksaa manaa): jokainen sen alla kohmettuu ja hidastuu, ja vesi sen alla jäätyy.", of = "58acc1" }
+
+[rime_blooded]
+description = { text = "Maailman alainen kylmyys on suonissasi: kylmä ja jäätävä vesi tuskin koskettavat sinua, ja olet vahvempi ja sitkeämpi, mutta tuli puree syvemmin.", of = "90b87c" }
+
+[riposte]
+description = { text = "Aseellasi sivuun kääntämäsi isku avaa lyöjänsä sinun iskullesi: lyöt heti takaisin.", of = "603b65" }
+
+[rise_from_ashes]
+description = { text = "Kerran elämässäsi se, minkä pitäisi tappaa sinut, ei tapa: nouset tuhkastasi liekkien leimahduksessa, heikkona päivän ajan. Nääntyminen ja tukehtuminen tappavat silti.", of = "03c1e3" }
+
+[rocs_strength]
+description = { text = "Kannat 25 % enemmän, ja potkaiset ovia sisään kuin olisit paljon vahvempi.", of = "864fcf" }
+
+[rot_breathed]
+description = { text = "Hautakummun henkäys: voit puhaltaa pitkän mätäpuuskan, joka kuihduttaa sen, mihin koskee, ja haudan kosketus vaivaa sinua vähemmän, mutta haavasi umpeutuvat hitaasti.", of = "afa093" }
+
+[roundhouse]
+description = { text = "Kieppuva potku (kyky) kahdella ki-pisteellä ja yhden potkun ajassa: jokainen vierelläsi oleva vihollinen saa potkun.", of = "e629fe" }
+
+[rouse_the_dead]
+description = { text = "Näkemäsi ruumis nousee sellaisena kuin se oli taistelemaan hetken rinnallasi. Silloin tällöin se nousee kaikkea vastaan, myös sinua (loitsu, maksaa manaa).", of = "300f5e" }
+
+[salt_of_the_earth]
+description = { text = "Paranet kuin maalaisväki, josta olet lähtöisin: haavasi paranevat nopeammin, ja levätessä vielä nopeammin.", of = "b0ba7e" }
+
+[sanctuary]
+description = { text = "Polvistu minuutiksi pyhittämään maa ympärilläsi (maksaa manaa): tunnin ajan yksikään vihollinen ei astu kahta askelta lähemmäs, ja haavat ja mieli korjaantuvat nopeasti. Sieltä iskeminen rikkoo sen.", of = "f4808e" }
+
+[scaled]
+description = { text = "Pienet harmaat suomut: iskut osuvat pehmeämmin, eivätkä terät helposti pure.", of = "630356" }
+
+[school_focus]
+description = { text = "Olet tehnyt yhdestä taikuuden koulukunnasta tai yhdestä alkuaineesta omasi: sen loitsut maksavat sinulle vähemmän ja ulottuvat ruudun kauemmas.", of = "a0395f" }
+
+[scourge]
+description = { text = "Vihollisen kaatava isku jatkaa matkaansa: kun lähi-iskusi tappaa, lyöt heti toista vierelläsi olevaa vihollista. Ne, jotka lyövät sinua, saavat haavan vastineeksi.", of = "617dae" }
+
+[scribe]
+description = { text = "Kun sinulla on tyhjä käärö, aikaa ja kolmen loitsun verran manaa, kirjoitat käärön osaamastasi loitsusta (kyky). Mana kuluu ja tyhjä käärö käytetään vasta, kun käärö on valmis.", of = "5384d4" }
+
+[scroll_adept]
+description = { text = "Kääröt ovat taitosi: luet ne puolessa ajassa, ja lukemasi loitsukääröt loitsitaan askelmaa ylempänä.", of = "5e191d" }
+
+[scroll_savant]
+description = { text = "Luet kääröjä paljon nopeammin, eivätkä vapauttamiesi kääröjen ja loitsujen purkaukset koskaan osu sinuun.", of = "43d6c7" }
+
+[second_breakfast]
+description = { text = "Puolituiset syövät hyvin ja usein: mahaasi mahtuu kaksi kertaa niin paljon kuin muiden, ennen kuin et jaksa enempää, ähky ei koskaan hidasta sinua, ja täysi vatsa tekee hiljalleen hyvää koko ruumiillesi.", of = "5b5c8b" }
+
+[second_rising]
+description = { text = "Feeniks nousee kahdesti: voit nousta tuhkastasi vielä kerran.", of = "a15934" }
+
+[second_sight]
+description = { text = "Näet sen, mikä on kätketty: huomaat kätketyt asiat ohimennen ja löydät ne helpommin etsiessäsi.", of = "032b6d" }
+
+[second_wind]
+description = { text = "Kiivaimman taistelun keskellä voit vetää henkeä: osa osumapisteistäsi takaisin heti (kyky), sitten olet hengästynyt vartin ajan.", of = "023dcf" }
+
+[sense_the_quick]
+description = { text = "Tunnet elävät ympärilläsi hetken (maksaa manaa): niiden sydämenlyönnit, suunnilleen paikannettuina.", of = "e018a3" }
+
+[set_in_ways]
+description = { text = "Taisteluasennon vaihtaminen vie sinulta hetken.", of = "96cf2b" }
+
+[shatter]
+description = { text = "Voiman jysähdys sinne, minne tähtäät (maksaa manaa): se rikkoo seiniä, jäätä, suljettuja ovia ja suljettuja arkkuja.", of = "ed2758" }
+
+[shield_expert]
+description = { text = "Kilpesi torjuu useampia iskuja (kilpi +1 torjuntaasi), ja taistellessasi aseella ja kilvellä lyöt kilvellä useammin.", of = "423c4f" }
+
+[shield_line]
+description = { text = "Pidät rivin kilven takana: kilpi +1 torjuntaasi, kun taistelet kilvellä ja aseella tai kahdella kilvellä.", of = "cde6b7" }
+
+[shield_wall]
+description = { text = "Kilven takana se, mikä pääsee sen ohi, osuu pehmeämmin: suojaus +1, kun pidät kilpeä.", of = "63d9be" }
+
+[sic]
+description = { text = "Usuta toverisi näkemääsi olentoon (kyky), suurella osalla keskittyneisyyttäsi: se ajaa olennon takaa raivoisaa vauhtia, ja sen muutama seuraava osuva puraisu on hirvittävä.", of = "61ec30" }
+
+[silence]
+description = { text = "Hiljaisuus laskeutuu sinne, minne tähtäät (loitsu, maksaa manaa): kukaan, johon se ulottuu, ei voi hetkeen loitsia, lukea eikä laulaa.", of = "02bad7" }
+
+[skill_focus]
+description = { text = "Sinulla on erityinen lahja yhteen osaamaasi ammattiin: valitsemasi taito lasketaan korkeammaksi kuin pelkkä harjoitus antaisi, vaikka harjoitus ulottuisi kuinka pitkälle.", of = "4a72ea" }
+
+[slayers_oath]
+description = { text = "Olet vannonut jahtaavasi olentolajia, jota vastaan olet vannoutunut: hyökkäyksesi niitä vastaan ovat yhä varmempia ja tappavampia, ja jokainen surmaamasi lasketaan valojesi hyväksi.", of = "926502" }
+
+[slight]
+description = { text = "Olet hento: kantokykysi on 10 % pienempi.", of = "ddb3ec" }
+
+[slinger]
+description = { text = "Kasvatettu linko kädessä: linkokivesi osuvat kovemmin ja lentävät kauemmas.", of = "493c62" }
+
+[slip_away]
+description = { text = "Askel, joka vie sinut kaikkien vierelläsi olevien vihamielisten ulottumattomiin, on nopeampi.", of = "3efbc3" }
+
+[slow_blooded]
+description = { text = "Hidas veri: haavasi umpeutuvat hitaasti, ja olet hitaampi jaloiltasi.", of = "740555" }
+
+[small_target]
+description = { text = "Isojen on vaikea osua: väistö +1 itseäsi suurempia olentoja vastaan.", of = "5a9fc9" }
+
+[smite]
+description = { text = "Pyhän vihan isku yhteen suuntaan (kyky, maksaa intoa): sitä varmempi, mitä suurempi karismasi, sitä kovempi, mitä enemmän kasvat, ja vielä kovempi epäpyhiä vastaan. Intosi kasvaa, kun annat ja otat iskuja.", of = "5193c3" }
+
+[smith]
+description = { text = "Olit sepän oppipoikana: aloitat metallityöhön koulutettuna, mukanasi kolme teräsharkkoa, ja sepäntaitosi kasvaa niin kuin sepän.", of = "a04254" }
+
+[sneak_attack]
+description = { text = "Löydät ratkaisevan kohdan vihollisesta, joka ei ole nähnyt sinun tulevan (salahyökkäys), ja yllättämäsi kokoavat ajatuksensa hitaammin; jokainen osuva salahyökkäys antaa sinulle avauksen (avaukset: ne haihtuvat ajan myötä).", of = "961a10" }
+
+[soft_footed]
+description = { text = "Paksut, äänettömät anturat: askeleesi ovat hiljaisempia.", of = "a77b6a" }
+
+[soulglass]
+description = { text = "Haudankylmä säde (maksaa manaa): siitä, minkä se tappaa, ei jää ruumista vaan kristalli sen olemuksesta.", of = "c8a2ee" }
+
+[spark]
+description = { text = "Rätisevä salama sormistasi (pikkuloitsu, maksaa manaa): se iskee ensimmäiseen tiellään olevaan olentoon.", of = "c251de" }
+
+[spell_recall]
+description = { text = "Silloin tällöin kirjoitus ei haihdu lukemastasi käärystä, ja voit lukea sen uudestaan.", of = "3ebdeb" }
+
+[spellwright]
+description = { text = "Olit loitsusepän oppipoikana: aloitat lumoamiseen koulutettuna, mukanasi tunnistuksen käärö, ja lumoamistaitosi kasvaa niin kuin loitsusepän.", of = "135248" }
+
+[spinners_blood]
+description = { text = "Hänen myrkkynsä virtaa nyt sinussa: myrkky vaivaa sinua vähän, seitit valuvat sinusta, ja lyöt kovaa varomattomia.", of = "2c8ffa" }
+
+[spirit_weapon]
+description = { text = "Kutsu henkiaineesta tehty ase käteesi valitsemassasi muodossa (kyky). Se osuu varmemmin ja löytää raot mistä tahansa haarniskasta, ja se palaa sinne, mistä tuli, heti kun se lähtee otteestasi; kutsu se uudestaan.", of = "fb45e6" }
+
+[spirit_weapon.effects.spirit_weapon]
+phrase = { text = "Henkiaineesta tehty ase: se löytää raot mistä tahansa haarniskasta ja haihtuu, kun se lähtee kädestäsi.", of = "79dc0a" }
+
+[staggering_blow]
+description = { text = "Parhaat iskusi horjuttavat vihollista: kriittinen osuma lähitaistelussa jättää sen horjumaan, hitaaksi toimimaan seuraavaksi.", of = "81a6be" }
+
+[stalkers_eye]
+description = { text = "Luet olennon ryhdin yhdellä silmäyksellä: tiedät, ketkä näkemistäsi eivät ole huomanneet sinua.", of = "66c55a" }
+
+[stalwart]
+description = { text = "Puolustusasento ei vie iskuiltasi mitään tarkkuudesta.", of = "f9d0ca" }
+
+[steady_breathing]
+description = { text = "Kestävyytesi palaa nopeammin.", of = "3c7f0f" }
+
+[steady_hand]
+description = { text = "Keskittyneisyytesi palaa nopeammin.", of = "f0e807" }
+
+[step_of_the_wind]
+description = { text = "Ilman haarniskaa ja kilpeä liikut hieman nopeammin; ja yhdellä ki-pisteellä (kyky, joka ei vie aikaa) seuraava toimesi on nopea, puolet tavallisesta ajastaan.", of = "f35be0" }
+
+[still_mind]
+description = { text = "Mielesi on tyyni: tahtosi on suurempi, eikä mikään sinua vaivaava tylsytä järkeäsi tai tahtoasi. Ja kahdella ki-pisteellä (Tyyneys, kyky, joka ei vie aikaa) se, mikä samentaa mielesi tai pitää ruumistasi, päättyy heti.", of = "4988c0" }
+
+[stipend]
+description = { text = "Sukusi panee sinulle sivuun apurahan jokaisesta saavuttamastasi tasosta: kultaa ja silloin tällöin jotakin hienompaa. Oma palvelijasi säilyttää sitä kaupungissa, kunnes pyydät sen.", of = "42f15a" }
+
+[stone_eyed]
+description = { text = "Liuskekiven harmaat silmät: tuijotuksesi voi pitää vihollisen paikallaan, mutta ihmiset kääntävät katseensa sinusta ja tinkivät kovemmin.", of = "941941" }
+
+[stone_hide]
+description = { text = "Suojaus +1, ja enemmän maan kaudella, korjuukuussa.", of = "059a85" }
+
+[stone_sense]
+description = { text = "Kivi puhuu sinulle: löydät siihen kätketyn helpommin, ja kaivat nopeammin.", of = "000a18" }
+
+[stone_sinewed]
+description = { text = "Jänteet kuin köyttä ja luut kuin kiveä: olet paljon vahvempi ja kannat enemmän.", of = "39cd1c" }
+
+[stonewise]
+description = { text = "Huomaat ohimennen, mitä kiveen on kätketty, ja kaivat nopeammin.", of = "ffcccb" }
+
+[storm_marrowed]
+description = { text = "Luusi hurisevat: salama vaivaa sinua vähän ja loitsut maksavat sinulle vähemmän, mutta olet hauraampi ja nälkäisempi.", of = "458bb0" }
+
+[storm_wrights_marrow]
+description = { text = "Kukkuloiden alainen ukkonen löysi uuden kodin: salama tuskin koskettaa sinua, mielesi on terävämpi, ja manasi palaa nopeammin.", of = "91fcec" }
+
+[strong_constitution]
+description = { text = "Sairaus saa sinusta huonosti otteen: vastustat tauteja paremmin, sekä tartunnan hetkellä että niiden kulkiessa kulkuaan.", of = "cdd239" }
+
+[strong_swimmer]
+description = { text = "Kahlaaminen ei maksa sinulle enempää kuin askel kuivalla maalla, eivätkä suot koskaan sairastuta sinua.", of = "e4e7b4" }
+
+[stubborn]
+description = { text = "Liian itsepäinen sairastumaan tai heikkenemään: sinusta tulee pysyvästi sitkeämpi, eikä myrkky koskaan vie voimaasi tai näppäryyttäsi.", of = "5f5d15" }
+
+[stunning_strike]
+description = { text = "Paljain käsin lyöty isku (kyky), joka jättää haavoittuneen vihollisen pökertyneeksi, varomattomaksi ja hitaaksi toimimaan, yhden ki-pisteen hinnalla.", of = "6fc2a4" }
+
+[stylist]
+description = { text = "Taistelet valitsemallasi tyylillä kuin olisit harjaantuneempi kuin olet.", of = "1597bf" }
+
+[sunfire]
+description = { text = "Pala aurinkoa purkautuu sinne, minne tähtäät (loitsu, maksaa manaa): kaikki sen alla palaa, ja pimeys karkotetaan.", of = "107925" }
+
+[supple]
+description = { text = "Väistö +1, ja raskas kuorma haittaa väistelyäsi vähemmän. Puun kaudella, kylvökuusta lehtikuuhun, olet vielä notkeampi.", of = "fbc77d" }
+
+[sure_hand]
+description = { text = "Loitsusi eivät horju: loitsunoppasi, joka näyttää 1, heitetään uudestaan, kerran.", of = "8a2eba" }
+
+[surrender_to_hunger]
+description = { text = "Lakkaat taistelemasta ajattelevien lihan nälkää vastaan. Se tekee sinusta enemmän kuin olet, ja vähemmän.", of = "85c15a" }
+
+[swimmer]
+description = { text = "Vesi ei hidasta sinua: kahlaat yhtä nopeasti kuin kävelet, eikä jään läpi pulahtaminen koskaan satuta sinua.", of = "2c97a7" }
+
+[sworn_foe]
+description = { text = "Olet vannonut itsesi yhtä olentolajia vastaan: hyökkäyksesi niitä vastaan ovat varmempia ja tappavampia.", of = "78c29a" }
+
+[tailed]
+description = { text = "Häntä: sinuun on vaikeampi osua ja uit hyvin, mutta se laahaa ja kahisee perässäsi.", of = "e5072b" }
+
+[tempered]
+description = { text = "Karaistu kuin hyvä teräs: parhaiten osaamallasi asetaidolla kriittisiä osumia tulee useammin.", of = "24fc67" }
+
+[tentacles]
+description = { text = "Ase kummassakin kädessä: heikomman kätesi iskut osuvat kovemmin.", of = "6a1c1a" }
+
+[thick_blooded]
+description = { text = "Veresi virtaa hitaana ja tummana: haavat vuotavat vähemmän, ja sairaus tarttuu sinuun harvemmin.", of = "6de4c1" }
+
+[thick_skin]
+description = { text = "Ihosi kääntää iskuja: luontainen panssari +1 torjuntaasi.", of = "9f45b2" }
+
+[thick_skulled]
+description = { text = "Paksu kallo: iskut osuvat hieman pehmeämmin, ja ajatukset kulkevat hieman hitaammin.", of = "17e321" }
+
+[thin_skinned]
+description = { text = "Satut helposti: kova isku saa sinut vuotamaan pahemmin verta.", of = "6f312d" }
+
+[thrifty_drinker]
+description = { text = "Siemailet sen, minkä muut hörppäävät: silloin tällöin juomasi juoma jättää pulloon vielä toisen kulauksen.", of = "fe0dcb" }
+
+[throw_voice]
+description = { text = "Saa ääni kuulumaan lähellä näkemästäsi paikasta (kyky): sen kuulevat menevät katsomaan sinne.", of = "d7f821" }
+
+[thrower]
+description = { text = "Heittoaseet osuvat käsissäsi 1 kovemmin, ja heität hieman nopeammin.", of = "7409f5" }
+
+[thrown_exploit]
+description = { text = "Jokainen hallussasi oleva avaus menee yhteen heittoon näkemääsi vihollista kohti (kyky): Tilaisuusiskun isku heitetyn veitsen viemänä, kun kohde on ulottumattomissa. Se lentää vain niin kauas kuin salahyökkäys ulottuu, ja tarvitsee esteettömän linjan.", of = "4139d5" }
+
+[thunder_throated]
+description = { text = "Myrsky rinnassasi: voit puhaltaa pitkän salamanräsähdyksen, ja salama vaivaa sinua vähemmän.", of = "55eec9" }
+
+[thunderclap]
+description = { text = "Ukkosen jyrähdys ympärilläsi (maksaa manaa): kaikki vierelläsi horjuvat, sinä myös, ja koko taso kuulee sen.", of = "296dbf" }
+
+[tidal]
+description = { text = "Henkesi voima palaa kuin vuorovesi: mana palaa sinulle nopeammin.", of = "338f52" }
+
+[time_served]
+description = { text = "Palvelit kisälliaikasi ammatissa: jokainen ammatti, jonka otat, kun sinut luodaan, alkaa selvästi harrastelijan tason yläpuolelta.", of = "ec3af1" }
+
+[tinkerer]
+description = { text = "Gnomin näppärät sormet: voit purkaa tietämiäsi ansoja (kyky), koulutettuna tai ilman.", of = "00e752" }
+
+[tracker]
+description = { text = "Korvasi ovat metsästäjän: kuulet heikompia ääniä ja tiedät, mistä jokainen kuulemasi ääni lähti.", of = "8dbdae" }
+
+[trailblazer]
+description = { text = "Matkasi maailmankartalla taittuvat nopeammin, eivätkä metsät, kukkulat ja suot hidasta sinua enempää kuin tasangot.", of = "20db84" }
+
+[transfixing_stare]
+description = { text = "Basiliskin tuijotus: lähellä oleva vihollinen, joka näkee sinut, hidastuu hetkeksi ryömintään; silmäsi lepäävät sen jälkeen kaksi tuntia.", of = "ce4d17" }
+
+[trap_sense]
+description = { text = "Löydät kätketyt ansat ja salaovet helpommin, ja ansa, joka saa sinut, satuttaa sinua vain puolet.", of = "3d6e5a" }
+
+[trapwright]
+description = { text = "Viritat ansoja (kyky): nuolista laukaisulangan, puupölkystä seipäät tai hakulla kaivetun putouskuopan vieressäsi olevaan ruutuun. Ansasi tappama olento on sinun tappamasi.", of = "c726fb" }
+
+[travelled_hands]
+description = { text = "Olet taistellut sillä, mitä käteen sattui, kaikilla tavoilla: tunnet vähän jokaista asetta ja jokaista tyyliä.", of = "c72296" }
+
+[travelled_hands.effects.weapon_ranks]
+news = { text = "Kätesi tuntevat vähän jokaista asetta.", of = "8b59b6" }
+
+[treasure_hunter]
+description = { text = "Löytämäsi saalis ja se, mitä olennot pudottavat, on useammin lumottua, ja useammin harvinaistakin.", of = "569f2e" }
+
+[trusted_by_none]
+description = { text = "Kukaan ei väisty tieltäsi: kierrät.", of = "0faaff" }
+
+[tunneler]
+description = { text = "Kaivat paljon nopeammin.", of = "7c28b2" }
+
+[twice_born]
+description = { text = "Kerran se, minkä pitäisi tappaa sinut, ei tapa: nouset tuhkastasi liekkien leimahduksessa, heikkona päivän ajan; Feeniksin merkissä syntynyt nousee kerran useammin kuin tähdet sallivat. Nääntyminen ja tukehtuminen tappavat silti.", of = "336638" }
+
+[two_weapon_training]
+description = { text = "Ase kummassakin kädessä haittaa sinua vähemmän, niin vahvemmassa kuin heikommassa kädessä.", of = "9e7297" }
+
+[unbinding]
+description = { text = "Sana, joka murtaa sinuun langetetut noituudet (loitsu, maksaa manaa): paha silmä, heikkous, laiskuus, unisuus, seitit ja pelko ovat poissa.", of = "3320b0" }
+
+[unblinking]
+description = { text = "Huomaat kätketyt asiat ohimennen, kuin sinut olisi koulutettu huomaamaan ne.", of = "b20986" }
+
+[unbowed]
+description = { text = "Kipu ja myrkky taivuttavat sinua vähemmän: mitä vaivasi vievät voimastasi, ketteryydestäsi ja muusta, puolittuu.", of = "2038e9" }
+
+[unbroken_soul]
+description = { text = "Itsesi pitää lujasti: kuolleiden kosketus, joka juo eläviltä voimaa ja järkeä, löytää sinusta paljon vähemmän otettavaa.", of = "c1f3e5" }
+
+[undertow]
+description = { text = "Vesi kantaa sinua: kahlaaminen ei maksa sinulle enempää kuin askel kuivalla maalla, eikä jään läpi pulahtaminen koskaan satuta sinua.", of = "1f9922" }
+
+[ungainly_ashore]
+description = { text = "Matkat maata pitkin vievät sinulta hieman kauemmin.", of = "3189b5" }
+
+[unlikely_hero]
+description = { text = "Kukaan ei odottanut sitä sinulta, kaikkein vähiten sinä itse: jokainen ominaisuutesi nousee 1:llä.", of = "ba5a49" }
+
+[unquiet]
+description = { text = "Uni ei tuo lepoa: lepo ei paranna sinua eikä palauta manaasi yhtään nopeammin kuin valveilla oleminen.", of = "e86e80" }
+
+[unstoppable]
+description = { text = "Raivotessasi verenvuoto ja myrkky eivät voi satuttaa sinua, ja isku, joka kaataisi sinut, jättää sinut pystyyn osan raivosi hinnalla.", of = "a6bd43" }
+
+[vanishing_act]
+description = { text = "Ruumis kaatuu, ja olet jo muualla: tappava salahyökkäyksesi jättää sinut keveäksi jaloiltasi.", of = "a443df" }
+
+[venom_toothed]
+description = { text = "Myrkkyhampaat: paljain käsin lyömäsi iskut voivat myrkyttää, ja myrkky vaivaa sinua vähemmän, mutta kitkerä suusi karkottaa ihmisiä.", of = "90c88e" }
+
+[versatile]
+description = { text = "Ihmiset kääntyvät mihin tahansa: yksi taipumus lisää, kun sinut luodaan, ja yksi lisää tasolla 30.", of = "c5ade3" }
+
+[veterans_wind]
+description = { text = "Vanhan sotilaan toinen tuuli (kyky): osumapisteitä takaisin heti, sitten hengästynyt vartin ajan.", of = "ddc31a" }
+
+[virtuoso]
+description = { text = "Laulusi kohoavat korkeammalle ja kestävät pidempään, eivätkä maksa sinulle mitään.", of = "fc3a54" }
+
+[volley]
+description = { text = "Ammu nuolisade paikkaan, johon tähtäät (kyky): kolme laukausta yhden ajassa, suurella osalla keskittyneisyyttäsi.", of = "fd77a9" }
+
+[wand_mastery]
+description = { text = "Saat taikasauvasta enemmän kuin sen tekijä siihen pani: käyttämäsi taikasauvat loitsivat askelmaa ylempänä.", of = "5e126a" }
+
+[war_cry]
+description = { text = "Karjaise raivosi (kyky, raivotessasi): viholliset, jotka kuulevat ja näkevät sinut, pakenevat sinua hetken, elleivät pidä päätään; se kuuluu kauas.", of = "ce948b" }
+
+[warden_of_the_gate]
+description = { text = "Kukaan ei poistu viereltäsi rankaisematta: vihollinen, joka astuu pois vierestäsi, saa iskun lähtiessään. Suojaus +1, ja mitä vaivasi vievät ominaisuuksistasi, puolittuu.", of = "61ce8c" }
+
+[wary]
+description = { text = "Odotat pahinta jokaisesta pimeästä nurkasta: näkymättömissä kimppuusi käyvä yllättää sinut harvemmin.", of = "952cfb" }
+
+[waste_not]
+description = { text = "Käsissäsi ei mene hukkaan mitään paitsi aika: purkamasi antaa enemmän takaisin, epäonnistunut työ ei menetä aineksiaan, eikä epäonnistunut karkaisu pilaa mitään.", of = "4d9445" }
+
+[watchful]
+description = { text = "Kuulet heikompia ääniä, ja tiedät tarkalleen, mihin askeleet osuvat.", of = "b25c7d" }
+
+[water_walking]
+description = { text = "Vesi kantaa sinua hetken (loitsu, maksaa manaa): kahlaaminen ei maksa sinulle enempää kuin askel kuivalla maalla, eikä jää koskaan petä allasi.", of = "cd1418" }
+
+[way_of_far_casting]
+description = { text = "Haltiat loitsivat kaukaa: kaukaa tähdätyt loitsusi osuvat tarkemmin ja kovemmin, mutta käsivarren mitalta tai haarniskassa loitsittu loitsu menee vinoon.", of = "765fd2" }
+
+[way_of_the_duel]
+description = { text = "Yksi ase ja toinen käsi vapaana, kuten haltiamestarit opettavat: taistelet kaksintaistelijana paljon paremmin ja kaikilla muilla tavoilla huonommin.", of = "cde23e" }
+
+[way_of_the_long_blade]
+description = { text = "Pitkä terä on ainoa kunnon ase: taistelet sellaisella paljon paremmin ja kaikella muulla huonommin, paljaat kädet ja kilvet mukaan lukien.", of = "af43c6" }
+
+[way_of_the_longbow]
+description = { text = "Haltioiden sotajousi eikä mikään muu: laukauksesi pitkällä sotajousella osuvat tarkemmin ja kovemmin, mutta jokainen muu jousi, varsijousi, linko ja heitto tuntuu käsissäsi väärältä.", of = "113592" }
+
+[weapon_drill]
+description = { text = "Vuosien harjoitus: opit nopeammin jokaisella lähitaisteluaseella.", of = "063d69" }
+
+[weapon_focus]
+description = { text = "Olet harjoitellut yhdellä aselajilla, kunnes se osuu maaliinsa useammin.", of = "29dd2b" }
+
+[weapon_mastery]
+description = { text = "Hallitsemallasi lähitaisteluaseella iskusi löytävät ratkaisevan kohdan useammin.", of = "729bc9" }
+
+[weapon_specialization]
+description = { text = "Taistelet valitsemallasi aseella kuin olisit astetta harjaantuneempi kuin olet.", of = "d26925" }
+
+[whirling_charge]
+description = { text = "Rynnäkkösi raivaa kujan: jokainen vihollinen reittisi vieressä saa iskun ohittaessasi, kukin kerran, ennen kuin se, jota kohti ryntäät, saa omansa.", of = "b58c52" }
+
+[wild_guard]
+description = { text = "Raivosi hurmoksessakin puolustuksesi säilyttää puolet siitä, minkä se muuten luovuttaisi.", of = "198be7" }
+
+[wildfire]
+description = { text = "Roihusi palaa kuumemmin ja ulottuu kauemmas.", of = "7d2287" }
+
+[wing_shouldered]
+description = { text = "Nahkeat tyngät hartioissasi: mikään viitta ei mahdu, ja olet hauraampi, mutta olet nopeampi, taistelussa ja tiellä.", of = "61cfa0" }
+
+[wing_shouldered.effects.bars_slot.cloak]
+refused = { text = "Siipesi ovat tiellä.", of = "57adf1" }
+
+[winners_luck]
+description = { text = "Onni kulkee kanssasi: pahasti harhaan menevän iskun voi yrittää uudestaan, ja olet vielä nopeampi.", of = "d995e6" }
+
+[withered]
+description = { text = "Lihasi on riutunut: olet hauraampi kuin ennen.", of = "aa5376" }
+
+[wortcunner]
+description = { text = "Sinulle opetettiin yrttien tietoa: aloitat yrttitietoon koulutettuna, mukanasi raunioyrttiä ja rautayrttiä, ja yrttitaitosi kasvaa niin kuin yrttitietäjän.", of = "eec5ff" }
+
+[wrathful_smite]
+description = { text = "Rankaisu, joka murtaa vihollisen rohkeuden (kyky, maksaa intoa): ellei sen tahto kestä, se pakenee sinua hetken.", of = "ef78af" }
+
+[wright]
+description = { text = "Olit puusepän oppipoikana: aloitat puutyöhön koulutettuna, mukanasi neljä puupölkkyä ja pätkä jännettä, ja puutyötaitosi kasvaa niin kuin puusepän.", of = "a1df3f" }
+
+[wyrm_blooded]
+description = { text = "Lohikäärmeen veri: tuli, kylmä, salama ja myrkky vaivaavat sinua kaikki vähemmän.", of = "d9166d" }
+
+[wyrms_hunger]
+description = { text = "Nälkä tulee sinulle paljon aiemmin kuin pitäisi, vaikka mikään ateria ei tee sinusta hidastunutta.", of = "f12c28" }
+
+[zealot]
+description = { text = "Jokainen sinuun osuva isku lietsoo intoasi sitä enemmän.", of = "c99f51" }

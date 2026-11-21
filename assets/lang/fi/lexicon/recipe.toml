@@ -1,0 +1,154 @@
+# Recipes (`recipe:<id>`): a recipe's name as the profession screen lists it, and in a sentence
+# ("Hionta tehdään omasta valikostaan"). A recipe that makes an item is named by the item's
+# word (`lexicon/object.toml`), a pair or a batch by its plural (`label`); one that works an item
+# already made is a noun of the act ("Karkaisu"). Setting a gem and the enchanting works name no
+# profession's verb, so the craft dialog says their name `bare` as its verb: their `nom` form is
+# that imperative ("Sytytä pitkämiekka?") and their `label` the noun the screens list. No sentence
+# says them in the nominative.
+
+# Alchemy.
+blasting_flask = "räjähdys|pullo/1"
+flask_of_fire = "tuli|pullo/1"
+flask_of_frost = "pakkas|pullo/1"
+flask_of_smoke = "savu|pullo/1"
+flask_of_thunder = "ukkos|pullo/1"
+greater_potion_of_grace = "väkevä/10 ketteryys|juoma/10"
+greater_potion_of_might = "väkevä/10 voima|juoma/10"
+greater_potion_of_presence = "väkevä/10 karisma|juoma/10"
+greater_potion_of_vigour = "väkevä/10 sitkeys|juoma/10"
+greater_potion_of_will = "väkevä/10 tahto|juoma/10"
+greater_potion_of_wit = "väkevä/10 äly|juoma/10"
+pitch_fire = "piki|tuli/23"
+potion_of_antidote = "vasta|myrkky/1*A"
+potion_of_barkskin = "kaarnaihon juoma/10"
+potion_of_cats_eyes = "kissansilmien juoma/10"
+potion_of_clear_head = "selväpäisyyden juoma/10"
+potion_of_cure_disease = "tauti|lääke/48*A"
+potion_of_earthing = "maadoitus|juoma/10"
+potion_of_frost = "kylmänkesto|juoma/10"
+potion_of_full_healing = "täysparannus|juoma/10"
+potion_of_grace = "ketteryys|juoma/10"
+potion_of_greater_healing = "väkevä/10 parannus|juoma/10"
+potion_of_healing = "parannus|juoma/10"
+potion_of_mana = "mana|juoma/10"
+potion_of_might = "voima|juoma/10"
+potion_of_moths_eyes = "koinsilmien juoma/10"
+potion_of_owls_eyes = "pöllönsilmien juoma/10"
+potion_of_presence = "karisma|juoma/10"
+potion_of_proofing = "myrkynkesto|juoma/10"
+potion_of_renewal = "elpymisen juoma/10"
+potion_of_sea_legs = "vedenkävijän juoma/10"
+potion_of_sustenance = "ravinto|juoma/10"
+potion_of_vigour = "sitkeys|juoma/10"
+potion_of_warmth = "lämmön juoma/10"
+potion_of_will = "tahto|juoma/10"
+potion_of_wit = "äly|juoma/10"
+sleeping_draught = "uni|juoma/10"
+stinking_flask = "löyhkä|pullo/1"
+
+# Enchanting: nouns of the act (`label`); `nom` the dialog's imperative.
+ennoble = { word = "jalostus/39", forms = { nom = "Jalosta", label = "Jalostus" } }
+imbue = { word = "kyllästys/39", forms = { nom = "Kyllästä", label = "Kyllästys" } }
+kindle = { word = "sytytys/39", forms = { nom = "Sytytä", label = "Sytytys" } }
+quicken = { word = "elävöitys/39", forms = { nom = "Elävöitä", label = "Elävöitys" } }
+recast = { word = "uudelleen|valu/1", forms = { nom = "Valaa uudelleen", label = "Uudelleenvalu" } }
+unbind = { word = "irrotus/39", forms = { nom = "Irrota taika:", label = "Irrotus" } }
+
+# Jewelcraft.
+amber_amulet = "meripihka-amuletti/5*C"
+cut = "hionta/9*J"
+gold_amulet = "kulta-amuletti/5*C"
+gold_ring = "kulta|sormus/39"
+iron_ring = "rauta|sormus/39"
+jade_amulet = "jade|amuletti/5*C"
+set = { word = "upotus/39", forms = { nom = "Upota", label = "Upotus" } }
+silver_ring = "hopea|sormus/39"
+
+# Metalcraft.
+arrowheads = { word = "nuolen|kärki/7*L", many = true, forms = { label = "Nuolenkärjet" } }
+banded_mail = "vanne|haarniska/13"
+battle_axe = "sota|kirves/41"
+buckler = "nyrkki|kilpi/7*E"
+chain_mail = "rengas|paita/9*F"
+dagger = "tikari/6"
+full_plate = "täys|haarniska/13"
+gauntlets = { word = "panssari|hansikas/41*A", plural_only = true }
+glaive = "säilä|keihäs/41"
+great_axe = "suuri/26 kirves/41"
+great_helm = "ruukku|kypärä/12"
+great_sword = "kaksikätinen/38 miekka/9*A"
+halberd = "hilpari/6"
+hand_axe = "käsi|kirves/41"
+iron_helm = "kypärä/12"
+iron_shod_boots = { word = "helainen/38 saapas/41*B", plural_only = true }
+javelin = "heitto|keihäs/41"
+knife = "veitsi/30"
+lantern = "lyhty/1*F"
+large_shield = "suuri/26 kilpi/7*E"
+long_sword = "pitkä|miekka/9*A"
+mace = "sota|nuija/10"
+mattock = "kuokka/10*A"
+maul = "moukari/6"
+morning_star = "aamu|tähti/7*F"
+pick_axe = "hakku/1*A"
+plate_armour = "levy|haarniska/13"
+rapier = "rapiiri/6"
+scale_mail = "suomu|haarniska/13"
+scimitar = "käyrä|miekka/9*A"
+short_sword = "lyhyt|miekka/9*A"
+small_shield = "pieni/26 kilpi/7*E"
+smelt = "sulatus/39"
+spear = "keihäs/41"
+stiletto = "stiletti/5*C"
+temper = "karkaisu/2"
+tower_shield = "torni|kilpi/7*E"
+trident = "atrain/33"
+war_hammer = "sota|vasara/12"
+
+# Woodcraft.
+arrows = { word = "nuoli/26", many = true, forms = { label = "Nuolet" } }
+bolts = { word = "varsijousen nuoli/26", many = true, forms = { label = "Varsijousen nuolet" } }
+bone_amulet = "luu|amuletti/5*C"
+buckler_by_hand = "nyrkki|kilpi/7*E"
+clogs = { word = "puu|kenkä/10*G", plural_only = true }
+club = "kurikka/14*A"
+composite_bow = "sarvi|jousi/26"
+crossbow = "varsi|jousi/26"
+dagger_by_hand = "tikari/6"
+flaming_arrows = { word = "tuli|nuoli/26", many = true, forms = { label = "Tulinuolet" } }
+fur_cloak = "turkis|viitta/9*C"
+great_helm_by_hand = "ruukku|kypärä/12"
+hand_axe_by_hand = "käsi|kirves/41"
+heavy_crossbow = "raskas/41 varsi|jousi/26"
+hide_tunic = "vuota|paita/9*F"
+hobnailed_boots = { word = "nasta|saapas/41*B", plural_only = true }
+iron_helm_by_hand = "kypärä/12"
+ironwood_staff = "rautapuu|sauva/9"
+javelin_by_hand = "heitto|keihäs/41"
+knife_by_hand = "veitsi/30"
+large_shield_by_hand = "suuri/26 kilpi/7*E"
+leather_apron = "nahka|esiliina/9"
+leather_boots = { word = "nahka|saapas/41*B", plural_only = true }
+leather_cap_by_hand = "nahka|lakki/5*A"
+leather_gloves = { word = "nahka|käsine/48", plural_only = true }
+leather_jerkin = "nahka|liivi/5"
+long_bow = "pitkä|jousi/26"
+lute = "luuttu/1*C"
+mattock_by_hand = "kuokka/9*A"
+pick_axe_by_hand = "hakku/1*A"
+pipe = "pitkävartinen/38 piippu/1*B"
+quarterstaff = "taistelu|sauva/9"
+sandals = { word = "sandaali/6", plural_only = true }
+scale_mail_by_hand = "suomu|haarniska/13"
+shoes = { word = "kenkä/10*G", plural_only = true }
+short_bow = "lyhyt|jousi/26"
+sling = "linko/1*G"
+sling_stones = { word = "linko|kivi/7", many = true, forms = { label = "Linkokivet" } }
+small_shield_by_hand = "pieni/26 kilpi/7*E"
+soft_boots = { word = "pehmeä/15 saapas/41*B", plural_only = true }
+spear_by_hand = "keihäs/41"
+studded_leather = "niitattu/1*C nahka|liivi/5"
+tower_shield_by_hand = "torni|kilpi/7*E"
+travelling_cloak = "matka|viitta/9*C"
+turnshoes = { word = "lapikas/41*A", plural_only = true }
+whittle = "vuoleminen/38"
