@@ -212,9 +212,10 @@ the base and the rest of `roll_with`'s draws among the class's objects, with the
 most `MAX_ITEM_LEVEL`; floor loot keeps the floor's (`world/magic/magic_tests.rs`,
 `a_drop_rolls_at_the_creatures_level_at_least_the_floors`). **The floor's item level**
 (`Content::item_level`, #1850): a branch floor's danger (`Content::floor_danger` at player level
-0, so a danger that grows with the player gives its fixed part; an endless branch's keeps rising),
-or its depth on a branch with no danger; a hand-made level's `item_level` (default 1); 1
-elsewhere; within 1 to `MAX_ITEM_LEVEL`. Everything that reads it follows: floor loot, vault
+0, so a danger that grows with the player gives its fixed part; an endless branch's keeps rising);
+a hand-made level's `item_level` (default 1); 1 elsewhere. Never the depth (#2067, the owner's
+rule: loot follows danger only): every branch floor needs a `danger` (`content/dungeon.rs` refuses
+a depth without one), so depth reaches loot only through `per_depth`; within 1 to `MAX_ITEM_LEVEL`. Everything that reads it follows: floor loot, vault
 `loot` cells, chests, hoards, creature gear and drops, a generated shop's stock and restocking,
 herbs gathered, gems mined, a fixture's loot, and the arrival XP (`content/item_level_tests.rs`).
 

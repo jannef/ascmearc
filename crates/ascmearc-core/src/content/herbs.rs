@@ -200,7 +200,7 @@ mod tests {
         // Cealdhlāw 1: glowcap, moonwort, and comfrey only.
         let rules = content.herbs().expect("herbs.toml");
         assert_eq!(rules.at(1).len(), 3);
-        // Moonwort thins with depth but never goes below nothing.
+        // Moonwort thins with the item level but never goes below nothing.
         assert!(percent(&content, "moonwort", 10) < percent(&content, "moonwort", 1));
         assert!(percent(&content, "moonwort", 60) >= 0.0);
         // Every herb is a known stackable material.

@@ -14,9 +14,19 @@ fn a_branch_floor_rolls_loot_at_its_danger() {
 }
 
 #[test]
-fn a_branch_without_a_danger_keeps_its_depth() {
-    let (def, _) = (CONTENT.branch_level("tower_climb_floors:2")).expect("the test tower");
-    assert!(def.plan(2).and_then(|p| p.danger).is_none(), "no danger");
+fn every_branch_floor_has_a_danger_and_rolls_loot_at_it_never_at_its_depth() {
+    // A branch without a danger is refused (`content/dungeon.rs`), so no floor falls back to its
+    // depth (#2067): where the two agree, it is because the danger rises one a floor.
+    for def in CONTENT.dungeons().filter(|d| d.portal.is_none()) {
+        for depth in 1..=def.depth {
+            let id = def.level_id(depth);
+            let danger = def.plan(depth).and_then(|p| p.danger);
+            assert!(danger.is_some(), "{id} has no danger");
+            let expected = CONTENT.floor_danger(&id, 0).clamp(1, MAX_ITEM_LEVEL.into());
+            assert_eq!(u32::from(CONTENT.item_level(&id)), expected, "{id}");
+        }
+    }
+    // The test tower's danger is 1 and rises one a floor.
     assert_eq!(CONTENT.item_level("tower_climb_floors:2"), 2);
 }
 

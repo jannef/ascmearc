@@ -15,8 +15,12 @@ secret_doors = [1, 2]
 hidden_per_depth = 1
 # Locks harder to pick deeper down too (14 on the first level, 21 on the eighth).
 locks_per_depth = 1
-# Loot on the floor of each level: its item level is the depth.
+# Loot on the floor of each level, at the floor's danger: 1 on the first, one more a level down.
 loot = [2, 4]
+danger = 1
+# Only its patrols live there: nothing is drawn by the danger, and nothing comes back.
+population_count = 0
+spawn = { chance = 0 }
 key = "rusty_key"
 # Cool, as cellars are, and colder deeper down (never freezing).
 temperature = 10

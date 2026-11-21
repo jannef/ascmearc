@@ -475,7 +475,7 @@ line in `fight.rs::dies` before `creature_dies` (its line is said after the deat
 lines); `World::offspring_share` in `dies` for the credit; `Actor::split_from` (`Split::Half`,
 `Split::Corpse`; saved, left out while `None`). Look mode's ", writhing" is the UI's
 (`ui/look.rs`). Tests: `world/creatures/split_tests.rs`, `ui::look::tests::what_lives_in_a_wormhost_shows_writhing`.
-Where the rosters are met (#531): the showcase's Depths has no danger (its patrol of rats, bats,
+Where the rosters are met (#531): the showcase's Depths has a danger (its depth) but draws nobody (its patrol of rats, bats,
 and kobolds only; there is no general candidate pool). In the Ascmearc a type of level 17 or less
 (level 11 or less in Fennmynster, whose danger runs 3 to 10) is placed in a population where it
 fits (Fennmynster 3–10, Fyrdelf 5–16, #534); every other hostile type comes only as a stray

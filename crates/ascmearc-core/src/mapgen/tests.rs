@@ -122,12 +122,12 @@ fn caves_snapshot() {
 /// drawn as the effect's mark.
 #[test]
 fn special_room_snapshots() {
-    let flooded = level(33, 2);
+    let flooded = level(24, 2);
     assert_eq!(flooded.rooms.len(), 1);
-    insta::assert_snapshot!("rooms_seed_33_depth_2_flooded", describe(&flooded));
-    let shadowed = level(5, 4);
+    insta::assert_snapshot!("rooms_seed_24_depth_2_flooded", describe(&flooded));
+    let shadowed = level(18, 4);
     assert_eq!(shadowed.rooms.len(), 1);
-    insta::assert_snapshot!("caves_seed_5_depth_4_shadowed", describe(&shadowed));
+    insta::assert_snapshot!("caves_seed_18_depth_4_shadowed", describe(&shadowed));
     // Without the marks, the flooded room shows its water.
     let map = ascii(&flooded, &CONTENT);
     let water = CONTENT
@@ -301,8 +301,11 @@ fn check(level: &LevelTemplate, depth: u32) -> Result<(), TestCaseError> {
     // Traps are hidden, on walkable ground that is not stairs, never next to
     // stairs (the player arrives there), and never on a patrol (creatures would spring them
     // every round).
+    // A vault's monster pool is drawn after the traps are hidden, and a route its map writes is
+    // not walked around them (the Depths' danger draws them since #2067), so its walks are left
+    // out here.
     let mut patrolled = Vec::new();
-    for spawn in &level.creatures {
+    for spawn in (level.creatures.iter()).filter(|s| !level.outside_cap.contains(&s.pos)) {
         let mut p = spawn.pos;
         patrolled.push(p);
         for dir in &spawn.route {
@@ -552,11 +555,13 @@ static FIXTURE: LazyLock<Content> = LazyLock::new(|| {
     let fixture = "\n\
          [[dungeon]]\nid = \"fixture_flooded\"\ndepth = 2\n[dungeon.level]\ngenerator = { kind = \"rooms\" }\n\
          size = [80, 21]\n\
+         danger = 1\npopulation = [\"rat\"]\npopulation_count = 0\nspawn = { chance = 0 }\n\
          room_effects = { chance = 60, per_level = 3, favoured = { flooded = 100 } }\n\
          shops = { chance = 0 }\n\
          [[dungeon.levels]]\nfrom = 2\ngenerator = { kind = \"caves\" }\nsize = [100, 40]\n\
          [[dungeon]]\nid = \"fixture_traders\"\ndepth = 1\n[dungeon.level]\ngenerator = { kind = \"rooms\" }\n\
          size = [80, 21]\nroom_effects = { chance = 0 }\n\
+         danger = 1\npopulation = [\"rat\"]\npopulation_count = 0\nspawn = { chance = 0 }\n\
          shops = { chance = 100, kinds = [\"general_store\"], names = [\"Durin\"], \
          keeper = \"kobold\" }\n";
     // Appended once, to the first of the table's files.
@@ -798,7 +803,7 @@ fn vaults_are_stamped_whole_some_way_round_with_their_lights_and_creatures() {
         .filter(|v| v.campaign.is_none())
         .collect();
     let mut seen = vec![0; vaults.len()];
-    for seed in 0..60 {
+    for seed in 0..120 {
         for depth in 1..=8 {
             let level = level(seed, depth);
             for (i, vault) in vaults.iter().enumerate() {
@@ -817,9 +822,19 @@ fn vaults_are_stamped_whole_some_way_round_with_their_lights_and_creatures() {
                     for at in stamped_at(&level, &turned).into_iter().filter(piles_hold) {
                         seen[i] += 1;
                         let shift = |p: Pos| Pos::new(at.x + p.x, at.y + p.y);
-                        for (p, light) in &turned.template.lights {
-                            assert_eq!(level.lights.get(&shift(*p)), Some(light), "{}", vault.id());
-                        }
+                        // A symmetric hall (the Mead-hall) mirrored has the same terrain with its
+                        // lamp elsewhere, so the lights hold for some way round too.
+                        let lights_hold = |turned: &Vault| {
+                            (turned.template.lights.iter())
+                                .all(|(p, light)| level.lights.get(&shift(*p)) == Some(light))
+                        };
+                        assert!(
+                            (crate::content::Turn::ALL.into_iter())
+                                .map(|t| vault.turned(t))
+                                .any(|t| stamped_at(&level, &t).contains(&at) && lights_hold(&t)),
+                            "{} lights",
+                            vault.id()
+                        );
                         // Chests look alike: the Reeve's Strong-room mirrored has the same terrain
                         // with its trapped chest elsewhere, so the traps hold for some way round.
                         let traps_hold = |turned: &Vault| {
@@ -851,16 +866,19 @@ fn vaults_are_stamped_whole_some_way_round_with_their_lights_and_creatures() {
     }
     // Dungeons get every dungeon vault and never the ruins meant for the overworld's local areas,
     // nor the vaults a branch level names (stamped only there), nor one whose `danger` the Depths'
-    // (none: 0) is outside of.
+    // (1 to 8, one a floor) is outside of.
     for (vault, count) in vaults.iter().zip(&seen) {
         if vault.pinned {
             assert_eq!(*count, 0, "vault `{}` stamped where not named", vault.id());
         } else if vault.is_outdoor() {
             assert_eq!(*count, 0, "outdoor vault `{}` in a dungeon", vault.id());
-        } else if !vault.suits(0) {
-            // The depths have no danger, and a deep vault keeps to its own (#1073); the vault
+        } else if !(1..=8).any(|danger| vault.suits(danger)) {
+            // The Depths are shallow, and a deep vault keeps to its own (#1073); the vault
             // stamp test finds it on floors it suits (`vault_stamp_tests.rs`).
             assert_eq!(*count, 0, "vault `{}` above its danger", vault.id());
+        } else if !vault.suits(0) {
+            // One that keeps to a danger the Depths reach on some floors only may not come in
+            // these seeds; the vault stamp test finds it there.
         } else {
             assert!(*count > 0, "vault `{}` never placed", vault.id());
         }

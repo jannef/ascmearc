@@ -68,9 +68,9 @@
 //! ambient = [0, 0, 0, 0]        # optional
 //! temperature = 9               # °C; default the dungeon default (10)
 //! key = "rusty_key"             # optional: rooms levels lock a few rooms with its lock
-//! danger = 4                    # optional (`super::danger`): the
+//! danger = 4                    # required on every floor (`super::danger`): the
 //! population = ["rat"]          # level's danger, who lives there, how many, and how they
-//! population_count = 40         # come back; none: danger 0, nothing comes
+//! population_count = 40         # come back; the danger is also its loot's item level
 //! stray = 5                    # the draws' odds (`super::danger::Odds`); default
 //! stray_pool = "populations"    # strays only from populations; default "all"
 //! out_of_depth = 5             # data/dungeons.toml's `[defaults]`
@@ -130,7 +130,7 @@
 //! the same way whichever odds they read. The old `effects` list is refused.
 //!
 //! What is checked is the resolved plan of each depth, not which table gave a field: a plan
-//! with `dread_one_in` or a `population` but no `danger` is refused wherever they came from, as
+//! with no `danger` is refused wherever the rest came from (a floor's danger is its item level), as
 //! is a size its generator does not build, a hidden location on more than one depth, or a tower
 //! plan with what a tower has not.
 
@@ -226,7 +226,7 @@ struct LevelSpec {
     locks_per_depth: Option<u8>,
     /// The only ores its walls give a miner (`data/mining.toml`); none: every ore.
     ores: Option<Vec<String>>,
-    /// How dangerous its floors are; none: 0, nothing comes.
+    /// How dangerous its floors are, and their loot's item level; every floor needs one.
     danger: Option<DangerSpec>,
     /// The creature types that live there; default: `creatures`.
     population: Option<Vec<String>>,
@@ -652,7 +652,8 @@ pub struct LevelPlan {
     /// The key to the rooms its generator locks: it locks them with the
     /// lock this key opens and leaves one where the player can reach it. `None`: no locked rooms.
     pub key: Option<ObjectId>,
-    /// How dangerous it is; `None`: danger 0, nothing comes.
+    /// How dangerous it is, and its loot's item level; `Some` on every branch floor (the
+    /// branch is refused without one; a caves plan's is checked as an endless branch's).
     pub danger: Option<DangerRule>,
     /// What lives there and how it comes back; `None` with `danger`.
     pub spawning: Option<Spawning>,
@@ -1237,6 +1238,12 @@ impl DungeonFile {
                 let plan = level
                     .resolve(where_, look)
                     .map_err(|m| at(format!("depth {depth}: {m}")))?;
+                // A floor's danger is its loot's item level, which never falls back to the depth.
+                if plan.danger.is_none() {
+                    return Err(at(format!(
+                        "depth {depth}: needs a `danger` (it is the item level of its loot)"
+                    )));
+                }
                 plans.push(plan);
             }
             let caves_plan = match &caves_spec {
@@ -1385,10 +1392,16 @@ mod tests {
 
     /// A rooms branch of `depth` levels: its branch fields and a `[dungeon.level]` with `more`
     /// after the generator and size.
+    /// A branch of `depth` floors with `more` fields; danger 1 with rats unless `more` gives a
+    /// danger (every floor needs one).
     fn branch(id: &str, depth: u32, more: &str) -> String {
+        let danger = match more.contains("danger") {
+            true => "",
+            false => "danger = 1\npopulation = [\"rat\"]\n",
+        };
         format!(
             "[[dungeon]]\nid = \"{id}\"\ndepth = {depth}\n[dungeon.level]\n\
-             generator = {{ kind = \"rooms\" }}\nsize = [80, 21]\n{more}"
+             generator = {{ kind = \"rooms\" }}\nsize = [80, 21]\n{danger}{more}"
         )
     }
 
@@ -1530,7 +1543,7 @@ mod tests {
 
     #[test]
     fn a_portal_branch_ends_and_leads_nowhere_else() {
-        let level = "[dungeon.level]\ngenerator = { kind = \"rooms\" }\nsize = [80, 21]\n";
+        let level = "[dungeon.level]\ngenerator = { kind = \"rooms\" }\nsize = [80, 21]\ndanger = 1\npopulation = [\"rat\"]\n";
         let base = "[[dungeon]]\nid = \"p\"\n";
         let pits = resolve(&format!("{base}depth = 5\n[dungeon.portal]\n{level}")).unwrap();
         assert_eq!((pits[0].portal, pits[0].depth), (Some(Portal), 5));
@@ -1551,7 +1564,7 @@ mod tests {
 
     #[test]
     fn a_bottom_is_where_the_deepest_level_leads_and_stands_alone() {
-        let level = "[dungeon.level]\ngenerator = { kind = \"rooms\" }\nsize = [80, 21]\n";
+        let level = "[dungeon.level]\ngenerator = { kind = \"rooms\" }\nsize = [80, 21]\ndanger = 1\npopulation = [\"rat\"]\n";
         let base = "[[dungeon]]\nid = \"d\"\n";
         let d = resolve(&format!("{base}depth = 3\nbottom = \"town\"\n{level}")).unwrap();
         let d = &d[0];
@@ -1640,7 +1653,7 @@ mod tests {
     #[test]
     fn a_rows_generator_of_the_templates_kind_layers_over_it() {
         let defs = resolve(
-            "[[dungeon]]\nid = \"d\"\ndepth = 3\n[dungeon.level]\nsize = [80, 21]\n\
+            "[[dungeon]]\nid = \"d\"\ndepth = 3\n[dungeon.level]\nsize = [80, 21]\ndanger = 1\npopulation = [\"rat\"]\n\
              generator = { kind = \"rooms\", gap = 3, lit_chance = 50 }\n\
              [[dungeon.levels]]\nfrom = 2\ngenerator = { kind = \"rooms\", lit_chance = 10 }\n\
              [[dungeon.levels]]\nfrom = 3\ngenerator = { kind = \"caves\" }\nsize = [80, 30]\n",
@@ -1668,7 +1681,7 @@ mod tests {
     #[test]
     fn ramps_run_over_the_branchs_floors_of_their_kind_and_a_row_pins_one() {
         let text = "[[dungeon]]\nid = \"m\"\ndepth = 6\n[dungeon.level]\n\
-                    generator = { kind = \"rooms\" }\nsize = [100, 40]\n\
+                    generator = { kind = \"rooms\" }\nsize = [100, 40]\ndanger = 1\npopulation = [\"rat\"]\n\
                     [[dungeon.levels]]\nfrom = 5\ngenerator = { kind = \"mines\", lava = 7 }\n\
                     [[dungeon.levels]]\nfrom = 3\nto = 6\ngenerator = { kind = \"mines\" }\n";
         let defs = resolve(text).unwrap();
@@ -1683,7 +1696,7 @@ mod tests {
         assert_eq!(mines(6), (100, 100));
         let minster = resolve(
             "[[dungeon]]\nid = \"m\"\ndepth = 8\n[dungeon.level]\n\
-             generator = { kind = \"minster\" }\nsize = [100, 40]\n",
+             generator = { kind = \"minster\" }\nsize = [100, 40]\ndanger = 1\npopulation = [\"rat\"]\n",
         )
         .unwrap();
         let flood: Vec<i32> = (1..=8)
@@ -1738,12 +1751,32 @@ mod tests {
             odds("[[dungeon.levels]]\nfrom = 3\ndread_one_in = 20\n"),
             [100, 100, 20]
         );
-        let no_danger = branch("d", 3, "[[dungeon.levels]]\nfrom = 3\ndread_one_in = 20\n");
-        let err = resolve(&no_danger).unwrap_err().message;
-        assert!(
-            err.contains("depth 3") && err.contains("need a `danger`"),
-            "a depth's needs a danger: {err}"
+        // A row's danger alone: the depths above it have none.
+        let row_only = branch(
+            "d",
+            3,
+            "[[dungeon.levels]]\nfrom = 3\ndanger = 4\ndread_one_in = 20\n",
         );
+        let err = resolve(&row_only).unwrap_err().message;
+        assert!(
+            err.contains("depth 1") && err.contains("needs a `danger`"),
+            "every depth needs a danger: {err}"
+        );
+    }
+
+    #[test]
+    fn every_floor_needs_a_danger_its_item_level() {
+        // No danger anywhere: refused at the first depth (#2067), never its depth instead.
+        let bare = "[[dungeon]]\nid = \"d\"\ndepth = 2\n[dungeon.level]\n\
+                    generator = { kind = \"rooms\" }\nsize = [80, 21]\ncreatures = [\"rat\"]\n";
+        let err = resolve(bare).unwrap_err().message;
+        assert!(
+            err.contains("depth 1") && err.contains("needs a `danger`"),
+            "{err}"
+        );
+        // A danger on the template reaches every depth.
+        let defs = resolve(&branch("d", 2, "creatures = [\"rat\"]\ndanger = 3\n")).unwrap();
+        assert!((1..=2).all(|depth| defs[0].plan(depth).unwrap().danger.is_some()));
     }
 
     #[test]
@@ -1790,8 +1823,6 @@ mod tests {
     #[test]
     fn floors_take_the_templates_danger_or_their_own() {
         let base = "creatures = [\"rat\"]\n";
-        let none = resolve(&branch("d", 3, base)).unwrap();
-        assert!(none[0].spawning.is_none() && none[0].plan(1).unwrap().danger.is_none());
         let defs = resolve(&branch(
             "d",
             3,
@@ -1824,15 +1855,15 @@ mod tests {
         };
         assert_eq!((stray(1), stray(3)), (5, 0));
         assert_eq!(own[0].spawning.as_ref().unwrap().odds.stray, 5);
-        // A danger on a row alone is that depth's.
-        let lone = resolve(&branch(
+        // A row's danger is its depths' own, whole.
+        let row = resolve(&branch(
             "d",
             3,
-            &format!("{base}[[dungeon.levels]]\nfrom = 3\ndanger = 4\n"),
+            &format!("{base}danger = 2\n[[dungeon.levels]]\nfrom = 3\ndanger = 4\n"),
         ))
         .unwrap();
-        assert!(lone[0].spawning.is_none() && lone[0].plan(2).unwrap().danger.is_none());
-        assert_eq!(lone[0].plan(3).unwrap().danger.unwrap().at(3, 1), 6);
+        assert_eq!(row[0].plan(2).unwrap().danger.unwrap().at(2, 1), 3);
+        assert_eq!(row[0].plan(3).unwrap().danger.unwrap().at(3, 1), 6);
     }
 
     #[test]

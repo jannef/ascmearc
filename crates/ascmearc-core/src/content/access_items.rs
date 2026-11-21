@@ -276,20 +276,14 @@ impl Content {
 
     /// The item level of loot on level `id`: a dungeon branch level's danger
     /// ([`Content::floor_danger`], its fixed part where it grows with the player; still rising on
-    /// an endless branch), or its depth on a branch with no danger (#1850); a hand-made level's
-    /// `item_level` (default 1); else 1. Kept within 1 to [`MAX_ITEM_LEVEL`].
+    /// an endless branch; #1850); a hand-made level's `item_level` (default 1); else 1. Never the
+    /// depth (#2067): every branch floor has a danger (`content/dungeon.rs` refuses one without),
+    /// and depth reaches loot only through it (`per_depth`). Kept within 1 to [`MAX_ITEM_LEVEL`].
     pub fn item_level(&self, id: &str) -> u8 {
         if let Some(template) = self.levels.get(id) {
             return template.item_level;
         }
-        let Some((_, depth)) = self.branch_level(id) else {
-            return 1;
-        };
-        let level = match self.floor_danger(id, 0) {
-            0 => depth,
-            danger => danger,
-        };
-        u8::try_from(level)
+        u8::try_from(self.floor_danger(id, 0))
             .unwrap_or(MAX_ITEM_LEVEL)
             .clamp(1, MAX_ITEM_LEVEL)
     }

@@ -8,7 +8,7 @@
 # (the time is spent). One that runs its time finds `count` herbs, plus one for each
 # `value_per_count` of the skill's trained value (skills/).
 # Each herb is one draw by weight from the rows below, at the level's item level (a dungeon
-# level's depth; a hand-made level's `item_level`). A gather that runs its time picks that cell of
+# level's danger; a hand-made level's `item_level`). A gather that runs its time picks that cell of
 # fungus over: it becomes the `picked` terrain, which gives nothing and never grows back, so a
 # level's fungus gives as many finds as it has cells. A gather cut short leaves it as it was.
 #
@@ -34,7 +34,7 @@ count = "1d2"
 value_per_count = 50
 skill = "herbalism"
 
-# The fungus's own cap, at every depth.
+# The fungus's own cap, at every item level.
 [[herb]]
 object = "glowcap"
 find = 40
@@ -49,7 +49,7 @@ deeper = -1
 object = "comfrey"
 find = 20
 
-# From depth 3.
+# From item level 3.
 [[herb]]
 object = "feverfew"
 find = 10
@@ -62,7 +62,7 @@ find = 10
 deeper = 2
 level = 3
 
-# From depth 4.
+# From item level 4.
 [[herb]]
 object = "eyebright"
 find = 6
@@ -81,7 +81,7 @@ find = 6
 deeper = 2
 level = 4
 
-# From depth 6, the rarest.
+# From item level 6, the rarest.
 [[herb]]
 object = "mandrake"
 find = 2

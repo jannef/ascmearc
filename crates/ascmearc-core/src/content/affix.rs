@@ -27,7 +27,7 @@ use crate::stats::Stat;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
-/// The highest item level: dungeon depth gives it.
+/// The highest item level (`Content::item_level`: a floor's danger gives it).
 pub const MAX_ITEM_LEVEL: u8 = 99;
 /// The most prefixes, and the most suffixes, an item may have (a rare: three of each).
 pub const MAX_PER_KIND: usize = 3;

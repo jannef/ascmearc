@@ -78,7 +78,7 @@ what they held (`statue_gone`).
   dropped, and a `CreatureSpawn` of `Content::mimic_at(level)` carrying the contents pushed on
   the template's creatures, nothing more drawn; `docs/dev/creatures/mimics.md`; never in a
   `shunned` room, a sanctuary, where the chest stays a chest, the draw made all the same, #661). Cells avoid the population, so a fixture comparing a floor with and
-  without a danger sets `chests = { chance = 0 }` (`world/creatures/spawn_tests.rs`'s barrow).
+  without its population sets `chests = { chance = 0 }` (`world/creatures/spawn_tests.rs`'s barrow).
 - A vault's chests draw only from `vault_chests/<level id>`, and only for those with nothing in
   them. A vault chest is a cell that is not walkable, so stamping one moves the population's
   cells as any wall would (the lairs' bottom-floor snapshots changed with C7).

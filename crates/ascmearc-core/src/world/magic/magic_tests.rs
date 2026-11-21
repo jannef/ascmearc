@@ -670,11 +670,21 @@ fn generated_levels_hold_floor_and_vault_loot() {
         let b = crate::mapgen::generate(&content, ("showcase", 43), &id, None).expect("level");
         assert_eq!(a, b, "deterministic");
         // Loot: base items and scrolls, what has a loot frequency.
-        let loot: Vec<&Stack> = (a.objects.values().flatten())
-            .filter(|s| content.object(s.object).frequency > 0)
+        let loot: Vec<(&Pos, &Stack)> = (a.objects.iter())
+            .flat_map(|(p, pile)| pile.iter().map(move |s| (p, s)))
+            .filter(|(_, s)| content.object(s.object).frequency > 0)
             .collect();
         assert!(loot.len() >= 2, "depth {depth}: {} items", loot.len());
-        for s in loot.iter().filter_map(|s| s.magic()) {
+        // At the floor's item level, its danger (the Depths': its depth), but in a hoard, which
+        // adds its own `loot_level`, and a shop's stock (`RestockRules::item_level`).
+        let hoard = |p: &Pos| {
+            (a.rooms.iter()).any(|r| {
+                let e = content.room_effect(r.effect);
+                (e.hoard.is_some() || e.swarm.is_some()) && r.contains(*p)
+            }) || a.shops.iter().any(|s| s.contains(*p))
+        };
+        let floor = loot.iter().filter(|(p, _)| !hoard(p));
+        for s in floor.filter_map(|(_, s)| s.magic()) {
             assert_eq!(u32::from(s.level), depth);
         }
     }

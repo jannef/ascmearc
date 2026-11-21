@@ -16,10 +16,12 @@ static FIXTURE: LazyLock<Content> = LazyLock::new(|| {
     let fixture = "\n\
          [[dungeon]]\nid = \"fixture_tunnels\"\ndepth = 4\n[dungeon.level]\ngenerator = { kind = \"tunnels\" }\n\
          size = [60, 24]\n\
+         danger = 1\npopulation = [\"rat\"]\npopulation_count = 0\nspawn = { chance = 0 }\n\
          [[dungeon.levels]]\nfrom = 2\nsize = [100, 40]\n\
          [[dungeon.levels]]\nfrom = 3\nsize = [140, 50]\n\
          [[dungeon]]\nid = \"fixture_passage\"\ndepth = 3\n[dungeon.level]\ngenerator = { kind = \"passage\" }\n\
          size = [80, 21]\n\
+         danger = 1\npopulation = [\"rat\"]\npopulation_count = 0\nspawn = { chance = 0 }\n\
          [[dungeon.levels]]\nfrom = 2\nsize = [120, 30]\n";
     let mut once = Some(fixture);
     files.edit_table("dungeons", |text| {

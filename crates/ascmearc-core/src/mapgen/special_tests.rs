@@ -122,7 +122,7 @@ fn a_feature_with_a_level_chance_sometimes_covers_the_whole_level() {
         .id("glittering")
         .expect("the new feature");
     let (mut whole, mut rooms) = (0, 0);
-    for seed in 0..80 {
+    for seed in 0..160 {
         let level =
             generate(&content, ("showcase", seed), "depths:1", Some("hub")).expect("generates");
         let in_room = level.rooms.iter().any(|r| r.effect == glittering);
@@ -131,10 +131,14 @@ fn a_feature_with_a_level_chance_sometimes_covers_the_whole_level() {
             assert!(!in_room, "seed {seed}: the room stays plain, one a level");
         }
         rooms += usize::from(in_room);
-        assert!(level.pervading.is_none_or(|e| e == glittering));
+        assert!(
+            level
+                .pervading
+                .is_none_or(|e| content.room_effect(e).level_chance > 0)
+        );
     }
-    // Most draws are the glittering hall (weight 100 of 145), 40 % of those the whole level.
-    assert!((10..=45).contains(&whole), "{whole} of 80 levels covered");
+    // Most draws are the glittering hall, 40 % of those the whole level.
+    assert!((20..=90).contains(&whole), "{whole} of 160 levels covered");
     assert!(rooms > 15, "{rooms} levels with a glittering room");
     // Without a level chance nothing ever covers a level.
     for seed in 0..40 {
@@ -165,8 +169,7 @@ fn features_are_drawn_only_where_they_are_eligible() {
             })
             .count()
     };
-    // The Depths have no danger; Fennmynster does.
-    assert_eq!(only("needs_danger = true\n", "showcase", "depths:1"), 0);
+    // Every branch floor has a danger (#2067), so a feature that needs one may come on any.
     // (The fen keeps 80 % of its draws for its own and a room special one time in four.)
     assert!(only("needs_danger = true\n", "ascmearc", "fennmynster:1") > 0);
     // The Depths' bottom, 8, has no level below.

@@ -40,7 +40,7 @@ just before it, from their own stream `vault_monsters/<level id>`, through the s
 `danger::draw`; the population keeps off every marked cell, so a floor with such a vault moves its
 population (not its map, traps, secrets, or loot), and only that floor; `hide_traps` is untouched, so
 a hidden trap may take a marked cell, which then stays empty (`mapgen/vault_monsters_tests.rs`).
-On a floor with no danger nothing is drawn: the Depths' guard post keeps its one kobold. On a
+A hand-made level with no danger draws nothing (every branch floor has one, #2067). On a
 branch with a danger the initial population follows (`mapgen/population.rs`, stream
 `population/<level id>`; `docs/dev/creatures.md`: its own folk, now and then a stray from every
 hostile type of the campaign, populations or none, unless the branch's `stray_pool` says
@@ -107,8 +107,8 @@ may vary by depth; the generators, `generate_for`, `Content::spawning`, and the 
 `def.plan(depth)`. `DungeonDef::spawning` is the template's folk (what the branch's floors have
 unless a row says otherwise), which the encounter pools, the quests, and the branch tables of the
 wiki read; `Content::fill_generic` fills the template's and every plan's generic list. The checks
-are on the resolved plan, not on which table gave a field: a `dread_one_in` or `population`
-without a `danger`, a size its generator does not build (`GeneratorKind::size_limits`), a
+are on the resolved plan, not on which table gave a field: a depth with no `danger` (its item level, #2067)
+(so no `dread_one_in` or `population` without one), a size its generator does not build (`GeneratorKind::size_limits`), a
 `hidden` on more than one depth or on a portal or endless branch, `vaults` on an endless branch,
 and a tower plan with `size`, `secret_doors`, `key`, `ores`, `temperature`, `vaults`, `hidden`,
 or a generator of another kind. Endless branches and towers are branch rules that pick or size a
@@ -434,7 +434,7 @@ turn holds. A new shared vault joins the test by being in `assets/vaults/`. Its
 `old_enemies_halls_are_hostile_both_ways` checks the catalogue's open point for Old Enemies
 (#1074): every type the `demon` pool may draw and every type of the `devil` pool are hostile
 both ways, since a faction's `hostile` list binds both sides, so no `demon` line on `devil` is
-needed. The shallow test level's depths have no danger, so a vault with a `danger` never stamps
+needed. The test world's Depths have danger 1 to 8, one a floor (#2067), so a vault whose `danger` is past 8 never stamps
 there (`vaults_are_stamped_whole_some_way_round_with_their_lights_and_creatures` checks that). Test fixtures at peace
 (`world/creatures/fixture_factions.rs::make_peace`) leave the shared vaults out: a tag pool holds only
 types hostile to the player.

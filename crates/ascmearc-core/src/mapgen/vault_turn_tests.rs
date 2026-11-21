@@ -72,8 +72,8 @@ fn flooded_cell_and_guard_post_come_turned_and_their_doors_lead_out() {
         let mut sizes = BTreeSet::new();
         let mut ways = Vec::new();
         for (campaign, branch) in floors {
-            for seed in 1..=60 {
-                for depth in 1..=4 {
+            for seed in 1..=120 {
+                for depth in 1..=8 {
                     let level_id = format!("{branch}:{depth}");
                     let Ok(level) = generate(&CONTENT, (campaign, seed), &level_id, None) else {
                         continue;

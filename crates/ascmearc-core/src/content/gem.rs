@@ -4,7 +4,7 @@
 //! colour, what a plain one is worth in gold, and how often loot finds it ([`GemDef`]). What
 //! every gem shares lives in `assets/data/gems.toml` ([`Gems`]): the object a loose gem is, the
 //! chance that a find is one, the sizes and cuts (ordered, each a value multiplier; sizes weigh
-//! something, and both shift up with depth in loot), and where items of each class are set with a
+//! something, and both shift up with the item level in loot), and where items of each class are set with a
 //! gem (an ornament: a part of the item, [`Ornament`]).
 //!
 //! A gem's worth is its `value` × its size's × its cut's multiplier ([`Gems::value`]); the plain

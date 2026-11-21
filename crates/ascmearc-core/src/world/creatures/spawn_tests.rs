@@ -2,7 +2,7 @@
 //! danger of a level, where and what comes, the cap, uniques, frozen floors, the talents, and
 //! determinism.
 
-use crate::content::{ContentFiles, LevelTemplate};
+use crate::content::{ContentFiles, CreatureSpawn, LevelTemplate};
 use crate::perception::Perception;
 use crate::test_support::{builtin, run, said};
 use crate::time::{Duration, GameTime};
@@ -166,11 +166,13 @@ fn the_danger_is_the_rule_at_the_depth() {
         ),
         (2, 3, 9)
     );
-    // No danger given: 0, nothing comes (the showcase's levels and its Depths).
-    for id in ["hub", "arena", "depths:1", "depths:5", "wildlands"] {
+    // No danger given: 0, nothing comes (the showcase's hand-made levels).
+    for id in ["hub", "arena", "wildlands"] {
         assert_eq!(w.danger(id), 0, "{id}");
         assert!(w.content.spawning(id).is_none(), "{id}");
     }
+    // Every branch floor has one (#2067): the Depths' is its depth.
+    assert_eq!((w.danger("depths:1"), w.danger("depths:5")), (1, 5));
 }
 
 #[test]
@@ -192,9 +194,9 @@ fn a_player_scaled_level_follows_the_character() {
 fn only_levels_with_a_danger_keep_a_spawner() {
     let w = haunt(1);
     assert!(w.state.current().spawner.is_some());
-    // The builtin worlds: no level has one, so their states are as they were.
+    // The showcase's hand-made levels have none, so their states are as they were.
     let content = builtin();
-    let mut d = World::new(content, "depths", Some(3)).expect("world");
+    let mut d = World::new(content, "arena", Some(3)).expect("world");
     run(&mut d, "rest:24h spawn");
     assert!(d.state.levels.values().all(|l| l.spawner.is_none()));
     assert!(said(&d).last().is_some_and(|m| m.contains("no danger")));
@@ -436,13 +438,16 @@ fn barrow_floor(content: &Content, seed: u64) -> LevelTemplate {
     crate::mapgen::generate(content, ("showcase", seed), "barrow:1", None).expect("barrow:1")
 }
 
-/// The builtin content with the barrow but no danger anywhere: the same maps, no population.
-fn without_danger() -> Arc<Content> {
+/// The builtin content with the barrow at its danger but nobody living there: the same maps.
+fn without_population() -> Arc<Content> {
     let mut files = ContentFiles::builtin();
     files.insert("data/creatures/zz_chief.toml", CHIEF);
+    // Every floor keeps its danger (its item level, #2067); nobody lives there.
     let plain: String = (BARROW.lines())
-        .filter(|l| !l.starts_with("danger") && !l.starts_with("population"))
-        .map(|l| format!("{l}\n"))
+        .map(|l| match l.starts_with("population = [\"kobold\"") {
+            true => format!("{l}\npopulation_count = 0\nspawn = {{ chance = 0 }}\n"),
+            false => format!("{l}\n"),
+        })
         .collect();
     let dungeons = format!(
         "{}{plain}",
@@ -459,7 +464,7 @@ fn without_danger() -> Arc<Content> {
 #[test]
 fn a_generated_floor_is_laid_down_full_and_nothing_else_moves() {
     let content = content();
-    let plain = without_danger();
+    let plain = without_population();
     let mut files = files_with(HAUNT);
     files.edit_table("creatures", crate::world::items::gear_tests::without_gear);
     let ungeared = Content::load(&files).expect("valid without gear");
@@ -479,6 +484,14 @@ fn a_generated_floor_is_laid_down_full_and_nothing_else_moves() {
                 .collect::<Vec<_>>()
         };
         if with.shops.len() != without.shops.len() || laid(&with) != laid(&without) {
+            continue;
+        }
+        // A den's sleepers come after the population (`den::fill`), so with one the creatures
+        // before them are not the generator's alone.
+        let den = |t: &LevelTemplate| {
+            (t.rooms.iter()).any(|r| content.room_effect(r.effect).swarm.is_some())
+        };
+        if den(&with) || den(&without) {
             continue;
         }
         compared += 1;
@@ -502,9 +515,15 @@ fn a_generated_floor_is_laid_down_full_and_nothing_else_moves() {
             objects
         };
         assert_eq!(loose(&with.objects), loose(&without.objects), "seed {seed}");
-        // The generator's own creatures (patrols, a vault's) come first, as they were.
+        // The generator's own creatures (patrols, a vault's, a vault's monster pool, drawn at the
+        // danger both have) come first, where they were.
         let (own, population) = with.creatures.split_at(without.creatures.len());
-        assert_eq!(own, without.creatures.as_slice(), "seed {seed}");
+        let placed = |c: &[CreatureSpawn]| -> Vec<_> {
+            (c.iter())
+                .map(|s| (s.creature, s.pos, s.route.clone()))
+                .collect()
+        };
+        assert_eq!(placed(own), placed(&without.creatures), "seed {seed}");
         let walkable = (with.terrain.iter())
             .filter(|(_, t)| content.terrain(**t).walkable)
             .count();
@@ -512,9 +531,7 @@ fn a_generated_floor_is_laid_down_full_and_nothing_else_moves() {
         let count = spawning
             .count
             .for_cells(u32::try_from(walkable).expect("cells"));
-        // On top of it, a vault's monster pool (the guard post's two), drawn first.
-        let pools = with.outside_cap.len();
-        assert_eq!(population.len(), count as usize + pools, "seed {seed}");
+        assert_eq!(population.len(), count as usize, "seed {seed}");
         let mut cells: BTreeSet<_> = own.iter().map(|s| s.pos).collect();
         for spawn in population {
             let kinds = [&spawning.population, &spawning.generic];
@@ -539,7 +556,7 @@ fn a_generated_floor_is_laid_down_full_and_nothing_else_moves() {
             assert!(!spawn.rolls_gear);
         }
         // The population rolls its gear too, from the level's gear stream after the generator's
-        // creatures (whose gear is as it was, above); without gear tables, it is the same
+        // creatures; without gear tables, it is the same
         // population, bare.
         let bare = |t: &LevelTemplate| -> Vec<_> {
             (t.creatures.iter())
