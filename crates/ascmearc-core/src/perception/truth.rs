@@ -1119,14 +1119,14 @@ impl<'a> PerceptionView<'a> {
                 let mut needs: Vec<NeedView> = (def.needs.iter())
                     .map(|need| NeedView {
                         met: who.meets(content, &need, def.choice, None),
-                        words: need.words(content),
+                        words: need.message(content),
                     })
                     .collect();
                 // Taken for good by the ratfolk craving: a need never met again.
                 if who.stripped.contains(&def.id) {
                     needs.push(NeedView {
                         met: false,
-                        words: "not taken by the craving".into(),
+                        words: crate::msg::character::TALENT_NEEDS_UNTAKEN.into(),
                     });
                 }
                 TalentView {

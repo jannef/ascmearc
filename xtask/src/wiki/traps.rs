@@ -104,7 +104,7 @@ pub(super) fn rigs(content: &Content) -> String {
             rig.name,
             capital(&trap.name),
             trap.id.replace('_', "-"),
-            capital(&takes_words(content, rig)),
+            content.english_word(takes_words(content, rig), "Bare"),
         );
     }
     let _ = writeln!(

@@ -37,12 +37,11 @@ use crate::combat;
 use crate::content::data_line;
 use crate::content::{ActionKind, ClassActive, Content, LevelKind, RigDef, RigId, RigTakes, Trap};
 use crate::geom::{Dir, Pos};
-use crate::lang::{MessageId, Msg};
+use crate::lang::{MessageId, Msg, Phrase};
 use crate::msg;
 use crate::perception::PerceptionView;
 use crate::rng::draw;
 use crate::stats::Stat;
-use crate::text::article;
 use crate::time::Duration;
 use crate::world::{Actor, Spent, World};
 
@@ -74,8 +73,8 @@ pub struct RigRow {
     /// Its id: what the action names (`rig:tripwire:E`).
     pub id: String,
     pub name: String,
-    /// "up to 3 arrows", "a wood billet and a knife", "a digging tool ready".
-    pub takes: String,
+    /// "up to 3 arrows", "a wood billet and a knife", "a digging tool ready" ([`takes_words`]).
+    pub takes: Msg,
     pub time: Duration,
     /// "no digging tool ready" (`crafting.lacking_*`); `None`: it may be rigged, a cell allowing.
     pub lacking: Option<MessageId>,
@@ -180,29 +179,35 @@ pub(crate) fn lack(actor: &Actor, content: &Content, def: &RigDef) -> Option<Mes
     inputs(actor, content, def).err().map(Lack::words)
 }
 
-/// What `def` takes, in words: "up to 3 arrows", "a wood billet and a knife", "a digging tool
-/// ready".
-pub fn takes_words(content: &Content, def: &RigDef) -> String {
+/// What `def` takes, a clause of `crafting.rig_takes_*`: "up to 3 arrows", "a wood billet and a
+/// knife", "a digging tool ready".
+pub fn takes_words(content: &Content, def: &RigDef) -> Msg {
     let what = match &def.takes {
         RigTakes::Ammo { kind, most } => {
             // The object of the kind's own name ("arrow"), else the first of the kind.
             let defs = content.object_defs();
             let named = (defs.iter().find(|o| o.id == *kind))
                 .or_else(|| defs.iter().find(|o| o.ammo.as_deref() == Some(kind)));
-            let plural = named.map_or_else(|| format!("{kind}s"), |o| o.plural.clone());
+            let what = named.map_or_else(
+                || Phrase::id(format!("word:{kind}")),
+                |o| Phrase::id(format!("object:{}", o.id)),
+            );
             match most {
-                1 => format!("{} {kind}", article(kind)),
-                n => format!("up to {n} {plural}"),
+                1 => Msg::new(msg::crafting::RIG_TAKES_ONE).role("what", what),
+                n => Msg::new(msg::crafting::RIG_TAKES_UP_TO)
+                    .role("what", what)
+                    .role("n", i64::from(*n)),
             }
         }
         RigTakes::Stock { group, .. } => {
             let name = (content.stock().group(group)).map_or("piece", |g| g.name.as_str());
-            format!("{} {group} {name}", article(group))
+            let piece = Phrase::id(format!("word:{group} {name}"));
+            Msg::new(msg::crafting::RIG_TAKES_ONE).role("what", piece)
         }
-        RigTakes::DigTool { .. } => "a digging tool ready".to_string(),
+        RigTakes::DigTool { .. } => msg::crafting::RIG_TAKES_DIG_TOOL.into(),
     };
     if def.knife {
-        format!("{what} and a knife")
+        Msg::new(msg::crafting::RIG_TAKES_WITH_KNIFE).role("takes", what)
     } else {
         what
     }

@@ -394,7 +394,7 @@ fn the_gold_amulet_must_have_a_cut_gem() {
         let rows = w.perception().recipes(jewel);
         let row = rows.iter().find(|r| r.id == recipe(w, "gold_amulet"));
         row.and_then(|r| r.unavailable)
-            .map(|u| u.reason(&w.content))
+            .map(|u| crate::test_support::english_of(&w.content, &u.reason(&w.content)))
     };
     assert_eq!(row(&w).as_deref(), Some("no gem to hand"));
     let before = w.state.time;

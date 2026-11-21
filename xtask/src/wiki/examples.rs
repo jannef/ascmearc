@@ -143,7 +143,13 @@ fn combat_a_dwarf_warrior_against_a_kobold() {
         &format!("{} for rank {rank} in Long blades", signed(benefit.to_hit)),
     );
     says(&block, &format!("**{}**", signed(blow.to_hit)));
-    says(&block, &format!("\"{}\"", blow.summary(&content)));
+    says(
+        &block,
+        &format!(
+            "\"{}\"",
+            ascmearc_core::messages::english_msg(&content, &blow.summary(&content))
+        ),
+    );
 
     // The kobold: no gear, no armour.
     let kobold_id = content.creature_id("kobold").expect("kobold");

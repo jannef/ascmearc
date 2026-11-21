@@ -90,7 +90,12 @@ fn pack(w: &World) -> Vec<String> {
 fn rows(w: &World) -> Vec<String> {
     (w.perception().recipes(alchemy(w)).into_iter())
         .map(|r| match r.unavailable {
-            Some(why) => format!("{}: {} ({})", r.name, r.takes, why.reason(&w.content)),
+            Some(why) => format!(
+                "{}: {} ({})",
+                r.name,
+                r.takes,
+                crate::test_support::english_of(&w.content, &why.reason(&w.content))
+            ),
             None => format!("{}: {}", r.name, r.takes),
         })
         .collect()

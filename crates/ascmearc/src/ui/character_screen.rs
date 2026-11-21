@@ -16,7 +16,7 @@
 
 use super::menu::{Nav, Panel, Press};
 use super::screens::{ScreenAction, ScreenName};
-use super::text::{character_screen as T, ui, ui_with, word};
+use super::text::{character_screen as T, ui, ui_msg, ui_with, word};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
@@ -140,7 +140,7 @@ pub struct CharacterScreen {
     guilds: Vec<(String, Rgb, Phrase)>,
     /// The attacks they have ready: where each comes from, what it is made with, and its
     /// numbers (`+4 to hit, 1d8+2 slashing`), beside the stats.
-    attacks: Vec<(&'static str, String, String)>,
+    attacks: Vec<(String, String, String)>,
 }
 
 /// The known diseases as the screen lists them: one list, its names as written, their own
@@ -291,7 +291,10 @@ impl CharacterScreen {
                 })
                 .collect(),
             attacks: (view.own_attacks().iter())
-                .map(|a| (a.source.label(), a.name.clone(), a.summary(content)))
+                .map(|a| {
+                    let label = word(a.source.label(), "Bare");
+                    (label, a.name.clone(), ui_msg(a.summary(content)))
+                })
                 .collect(),
         }
     }
@@ -972,7 +975,7 @@ mod tests {
         // The attacks' numbers are the one exception (the owner's): take them out first.
         let view = world.perception();
         for attack in view.own_attacks() {
-            let numbers = attack.summary(view.content());
+            let numbers = ui_msg(attack.summary(view.content()));
             assert!(text.contains(&numbers), "{numbers:?} in\n{text}");
             text = text.replace(&numbers, "");
         }

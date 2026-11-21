@@ -340,9 +340,18 @@ fn the_menu_and_the_rig_list_say_what_is_lacking() {
             ("pitfall", Some("no digging tool ready")),
         ]
     );
-    assert_eq!(rows[0].takes, "up to 3 arrows");
-    assert_eq!(rows[1].takes, "a wood billet and a knife");
-    assert_eq!(rows[2].takes, "a digging tool ready");
+    assert_eq!(
+        crate::test_support::english_of(&w.content, &rows[0].takes),
+        "up to 3 arrows"
+    );
+    assert_eq!(
+        crate::test_support::english_of(&w.content, &rows[1].takes),
+        "a wood billet and a knife"
+    );
+    assert_eq!(
+        crate::test_support::english_of(&w.content, &rows[2].takes),
+        "a digging tool ready"
+    );
     carry(&mut w, "arrow", 1);
     assert_eq!(w.perception().rigs()[0].lacking, None);
 }

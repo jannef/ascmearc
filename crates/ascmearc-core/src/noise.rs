@@ -49,7 +49,7 @@ use crate::burden::Burden;
 use crate::content::Effect as ItemEffect;
 use crate::content::{Content, TerrainId};
 use crate::geom::{Dir, Pos};
-use crate::lang::{Arg, MessageId, Msg};
+use crate::lang::{MessageId, Msg};
 use crate::msg;
 use crate::skills::Effect;
 use crate::talent::TalentMods;

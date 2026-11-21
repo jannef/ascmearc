@@ -225,7 +225,7 @@ pub(crate) fn wand_does(stack: &Stack, lore: Lore<'_>, user: &Actor) -> Option<S
     let rung = stack.known_wand_rung(lore)?;
     let spell = content.spell(wand.spell);
     let roll = user.spell_roll_words(content, spell, CastBy::Wand(rung))?;
-    let mut text = roll.text;
+    let mut text = crate::messages::english_msg(content, &roll.text);
     if let Some(radius) = user.spell_reach(content, spell).radius {
         text += &format!(", radius {radius}");
     }

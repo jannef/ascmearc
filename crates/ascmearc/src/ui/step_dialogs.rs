@@ -4,7 +4,7 @@
 //! catch the reader. `input` decides when to ask; these say what, in the words of
 //! `assets/lang/en/ui/step_dialogs.toml`.
 
-use super::text::{step_dialogs as T, ui, ui_with, word};
+use super::text::{step_dialogs as T, ui, ui_msg, ui_with, word};
 use crate::ui::{Aim, AimKind, Dialog, ScreenAction, ScreenName};
 use ascmearc_core::ability::Ability;
 use ascmearc_core::content::{LevelKind, Offer, RecipeUse, TerrainId};
@@ -98,7 +98,9 @@ pub(crate) fn sale_dialog(view: &PerceptionView<'_>, letters: &Positions) -> Opt
 pub(crate) fn treat_dialog(ailments: &[ascmearc_core::heal::OwnAilment]) -> Dialog {
     let dialog = Dialog::new(ui(T::HEAL_TITLE), ui(T::HEAL_ASK));
     (ailments.iter())
-        .fold(dialog, |d, a| d.plain(a.name.clone(), a.action.clone()))
+        .fold(dialog, |d, a| {
+            d.plain(ui_msg(a.name.clone()), a.action.clone())
+        })
         .cancel(ui(T::NEVER_MIND), ScreenAction::Close)
 }
 
