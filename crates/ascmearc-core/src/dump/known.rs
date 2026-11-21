@@ -6,7 +6,10 @@ use super::*;
 /// known locations` when there are none (and on any other level).
 pub(super) fn location_rows(view: &PerceptionView<'_>) -> Vec<String> {
     let rows: Vec<String> = (view.known_locations().into_iter())
-        .map(|(p, name)| format!("{p} {name}"))
+        .map(|(p, name)| {
+            let name = crate::messages::english_arg(view.content(), &name, "bare");
+            format!("{p} {name}")
+        })
         .collect();
     if rows.is_empty() {
         vec!["no known locations".into()]

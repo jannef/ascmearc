@@ -48,7 +48,10 @@ fn the_way_in_is_hidden_until_the_player_climbs_out_of_it() {
         "{}",
         locations(&w)
     );
-    assert_eq!(w.perception().leads_to(UTGANG).as_deref(), Some("Ūtgang"));
+    assert_eq!(
+        crate::test_support::leads_to(&w, UTGANG).as_deref(),
+        Some("Ūtgang")
+    );
     // From now on a way in like any other, and said only the once.
     let action = parse_actions("descend").expect("actions").remove(0);
     w.apply(&action);

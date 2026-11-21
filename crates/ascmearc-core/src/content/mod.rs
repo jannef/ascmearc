@@ -1244,7 +1244,7 @@ impl Content {
             if let Some(first) = seen.insert(id.to_string(), path) {
                 return Err(duplicate_id("level", id, path, first));
             }
-            let level = level::parse_level(path, id, text, &content, &default_legend)?;
+            let level = level::parse_level(path, "level", id, text, &content, &default_legend)?;
             if !vault::parse_dungeons(path, text)?.is_empty() {
                 return Err(ContentError::new(
                     path,
@@ -1322,7 +1322,7 @@ impl Content {
             }
             // Its range first: the level parser would refuse a bad one without saying why.
             let danger = vault::parse_danger(path, text)?.unwrap_or_default();
-            let template = level::parse_level(path, id, text, &content, &default_legend)?;
+            let template = level::parse_level(path, "vault", id, text, &content, &default_legend)?;
             if template.burial.is_some() {
                 return Err(ContentError::new(
                     path,

@@ -49,6 +49,10 @@ fn a_quarter_turn_is_the_vault_drawn_a_quarter_on() {
     let mut turned = as_drawn.turned(Turn::ALL[1]);
     assert_eq!(turned.template.id, "as_drawn");
     turned.template.id = quarter_on.template.id.clone();
+    // A turned vault's places keep its own keys (`vault:as_drawn.legend.S`).
+    for place in turned.template.places.values_mut() {
+        place.key = place.key.replace("as_drawn", "quarter_on");
+    }
     assert_eq!(turned.template, quarter_on.template);
     assert_eq!(turned.entrances, quarter_on.entrances);
     assert_eq!(turned.entrances, vec![(Pos::new(0, 3), Dir::W)]);

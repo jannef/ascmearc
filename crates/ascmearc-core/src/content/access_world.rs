@@ -116,6 +116,16 @@ impl Content {
             || self.local_area(campaign, id).is_some()
     }
 
+    /// [`Self::level_display_name`] as the game says it: a hand-made level's name, a line of
+    /// data, or a branch level's ([`DungeonDef::level_name_arg`]).
+    pub fn level_name_arg(&self, id: &str) -> Option<crate::lang::Arg> {
+        if self.levels.contains_key(id) {
+            return Some(crate::lang::Arg::said(super::data_line::level_name(id)));
+        }
+        self.branch_level(id)
+            .map(|(def, depth)| def.level_name_arg(depth))
+    }
+
     /// The name a player would know a level by: a hand-made level's name or a branch level's
     /// generated name (e.g. "The Depths 3"). `None` for unknown ids and local areas.
     pub fn level_display_name(&self, id: &str) -> Option<String> {

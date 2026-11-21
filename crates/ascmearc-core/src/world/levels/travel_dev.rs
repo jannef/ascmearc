@@ -3,7 +3,7 @@
 //! places without walking it (Steorratorr's replay goes from its top to Drȳtorr's and
 //! Wedertorr's and back, #1787). No time passes and nothing on the way is met.
 
-use crate::lang::{Msg, Phrase};
+use crate::lang::Msg;
 use crate::msg;
 use crate::world::{Spent, World};
 
@@ -18,7 +18,7 @@ impl World {
         }
         match self.travel(id, None) {
             Ok(()) => {
-                let place = Phrase::literal(&self.state.current().name);
+                let place = self.level_name(id);
                 self.say(Msg::new(msg::levels::ON_DEV).role("place", place));
                 Spent::NoTime
             }

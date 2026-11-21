@@ -154,7 +154,7 @@ fn the_dev_reveal_marks_it_and_it_leads_on() {
     assert_eq!(glyph(&w, Layer::Memory, BARROW), '>');
     assert_eq!(glyph(&w, Layer::Truth, BARROW), '>');
     assert_eq!(
-        w.perception().leads_to(BARROW).as_deref(),
+        crate::test_support::leads_to(&w, BARROW).as_deref(),
         Some("The Old Barrow")
     );
     let known = dump::layer_rows(&w, Layer::Locations);
@@ -170,6 +170,15 @@ fn the_dev_reveal_marks_it_and_it_leads_on() {
     .filter_map(|l| l["name"].as_str())
     .collect();
     assert!(names.contains(&"The Old Barrow"), "{names:?}");
+    // The link keeps the name's key, not its English, and reads the same after a save and load.
+    let link = (w.state().current().stairs_at(BARROW)).expect("the revealed way in");
+    let key = "level:overworld.hidden.old_barrow.name";
+    assert_eq!(link.name, Some(crate::lang::Arg::said(key)));
+    let loaded = crate::save::decode(&crate::save::encode(&w), w.content().clone()).expect("loads");
+    assert_eq!(
+        crate::test_support::leads_to(&loaded, BARROW).as_deref(),
+        Some("The Old Barrow")
+    );
     // A second reveal changes nothing (but what the player is told); an unknown id is refused.
     let quiet = |w: &World| {
         let mut state = w.state().clone();

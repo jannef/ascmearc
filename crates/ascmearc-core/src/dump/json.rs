@@ -180,7 +180,10 @@ pub fn json_in(world: &World, layers: &[Layer], include_state: bool, code: &str)
         })
         .collect();
     let locations: Vec<Value> = (view.known_locations().into_iter())
-        .map(|(p, name)| json!({ "pos": p, "name": name }))
+        .map(|(p, name)| {
+            let name = crate::messages::english_arg(content, &name, "bare");
+            json!({ "pos": p, "name": name })
+        })
         .collect();
     // The chests the player sees or remembers, as they see them.
     let chests: Vec<Value> = (view.known_chests().into_iter())

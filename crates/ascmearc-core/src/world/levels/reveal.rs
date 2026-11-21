@@ -9,9 +9,9 @@
 //! dev action `reveal:ID` ([`crate::action::Action::Reveal`]) at once. `world/mod.rs` has only
 //! the dispatch line.
 
-use crate::content::{Content, StairsDir, StairsLink};
+use crate::content::{Content, StairsDir, StairsLink, data_line};
 use crate::geom::Pos;
-use crate::lang::{Msg, Phrase};
+use crate::lang::{Arg, Msg};
 use crate::msg;
 use crate::world::{Spent, World, WorldState};
 
@@ -47,25 +47,29 @@ impl World {
     /// Climbing out through a hidden way reveals it: before the stairs from
     /// level `from` take the player to `to`, a hidden location of the overworld `to` that leads
     /// to `from` and is still hidden is revealed, so they arrive on it. Returns its name.
-    pub(super) fn reveal_way_out(&mut self, from: &str, to: &str) -> Option<String> {
+    pub(super) fn reveal_way_out(&mut self, from: &str, to: &str) -> Option<Arg> {
         let overworld = self.content.overworld_of(&self.state.campaign)?;
         if overworld.id != to {
             return None;
         }
         let location = (overworld.hidden.values())
             .find(|h| h.to.as_deref() == Some(from) && !self.state.revealed.contains(&h.id))?;
-        let (id, name) = (location.id.clone(), location.name.clone());
+        let id = location.id.clone();
+        let name = Arg::said(data_line::hidden_name(&overworld.id, &id));
         self.reveal_location(&id).then_some(name)
     }
 
     /// The dev action `reveal:ID` ([`crate::action::Action::Reveal`]): reveals hidden location
     /// `id` as a quest would, marking it on the map. Takes no time.
     pub(in crate::world) fn reveal_dev(&mut self, id: &str) -> Spent {
-        let Some((_, location)) = self.content.hidden_location(&self.state.campaign, id) else {
+        let content = self.content.clone();
+        let Some((level, _, _)) =
+            (content.hidden_locations(&self.state.campaign)).find(|(_, _, h)| h.id == id)
+        else {
             self.say(Msg::new(msg::levels::NO_HIDDEN_LOCATION_DEV).role("id", id));
             return Spent::Nothing;
         };
-        let place = Phrase::literal(&location.name);
+        let place = Arg::said(data_line::hidden_name(level, id));
         if !self.reveal_location(id) {
             self.say(Msg::new(msg::levels::NO_SECRET_DEV).role("place", place));
             return Spent::Nothing;
@@ -101,7 +105,7 @@ fn reveal_on(state: &mut WorldState, content: &Content, level_id: &str, id: &str
         pos: at,
         dir: (content.terrain(location.terrain).stairs).unwrap_or(StairsDir::Down),
         to: location.to,
-        name: (!two_ends).then_some(location.name),
+        name: (!two_ends).then(|| Arg::said(data_line::hidden_name(level_id, id))),
     });
     Some(at)
 }

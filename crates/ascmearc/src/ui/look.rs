@@ -6,7 +6,7 @@
 //! an empty slot for a clause that does not apply. Creatures, things, and the ground are
 //! phrases, so the language gives their articles and numbers.
 
-use super::text::{UiText, look as T, ui_with};
+use super::text::{UiText, look as T, ui_msg_in, ui_with};
 use crate::render::console::{Cell, Console};
 use ascmearc_core::Pos;
 use ascmearc_core::color::Rgb;
@@ -42,7 +42,7 @@ pub fn describe(view: &PerceptionView<'_>, p: Pos, blood: bool) -> String {
     // The data's own words after it, as written: a place's note, a terrain's description (a
     // forgotten altar's) or a chest's band's, and a gravestone's inscription last ("A
     // gravestone. Here lies Ælfric Wudu, 1381–1427.").
-    lines.extend((view.place(p)).and_then(|place| place.note.clone().map(Arg::Text)));
+    lines.extend((view.place(p)).and_then(|place| place.note_arg()));
     let content = view.content();
     let band = (view.chest_at(p)).and_then(|c| content.chests().bands.get(c.band));
     let described = match (band, view.cell(p)) {
@@ -54,7 +54,9 @@ pub fn describe(view: &PerceptionView<'_>, p: Pos, blood: bool) -> String {
     };
     lines.extend(described.map(Arg::Text));
     lines.extend(view.epitaph(p).cloned());
-    ui_with(T::LINES, &[("lines", Arg::List(lines))])
+    // The run's content renders it: the names nested in it are its lines of data.
+    let msg = Msg::new(MessageId::new(T::LINES.id)).role("lines", Arg::List(lines));
+    ui_msg_in(view.content(), msg)
 }
 
 /// What the player's Knowledge tells of the creature at `p`, if it tells anything: "You know the
@@ -363,10 +365,10 @@ fn fixture(view: &PerceptionView<'_>, p: Pos, t: TerrainId, blood: bool) -> (Phr
     // a wall in sight that was dug into says so: "a stone wall, partly dug"; a named place its
     // name: "a volcano, Fyrbeorg".
     let place = match view.leads_to(p) {
-        Some(to) => clause(T::LEADING_TO, [("to", Arg::Text(to))]),
+        Some(to) => clause(T::LEADING_TO, [("to", to)]),
         None if view.is_dug(p) => clause(T::PARTLY_DUG, []),
         None => match view.place(p) {
-            Some(place) => clause(T::PLACE, [("place", Arg::Text(place.name.clone()))]),
+            Some(place) => clause(T::PLACE, [("place", place.name_arg())]),
             None => none(),
         },
     };
@@ -711,6 +713,7 @@ pub fn draw_cursor_on(
 mod tests {
     use super::*;
     use ascmearc_core::content::Content;
+    use ascmearc_core::messages::english_arg;
     use ascmearc_core::{Action, Dir, World};
     use std::sync::Arc;
 
@@ -1091,7 +1094,10 @@ mod tests {
         let (level, _) = w.ground_truth();
         let down = (0..level.height())
             .flat_map(|y| (0..level.width()).map(move |x| Pos::new(x, y)))
-            .find(|&p| view.leads_to(p).as_deref() == Some("The Vast Caverns"))
+            .find(|&p| {
+                let to = view.leads_to(p);
+                to.is_some_and(|to| english_arg(view.content(), &to, "bare") == "The Vast Caverns")
+            })
             .expect("the staircase to the vast level is in view");
         let text = describe(&view, down, true);
         // The stairs nook is a sanctuary, which the player knows once they have been in it.

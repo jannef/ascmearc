@@ -708,8 +708,22 @@ the dumps and a ware's words render English (`english_msg`). Food's freshness (`
 #1996), nested in the look line's `heard_here`; the draught of an unseen shadow is
 `creatures.cold_draught`; a special room is `room:<id>` (`{room:a}`, "in an echoing hall"; the
 wiki keeps `RoomEffectDef::with_article`). How hurt a creature looks is #1996's (`Health::word`).
-Still text (the rest of #1998): where stairs lead (`leads_to`, a level's or a branch level's
-name), a place's name and note (`Place`, a legend's), and the welcome's scenario name.
+
+**The names of places** (#1998, its second half) are lines of data (`data_line::place_names`):
+a hand-made level's `level:<id>.name`, a branch's `dungeon:<id>.name` (a level of it
+`levels.branch_level`, "{branch} {floor}", where its name has a floor:
+`DungeonDef::level_name_arg`, `Content::level_name_arg`), a legend's named place's
+`level:<id>.legend.<char>.name` and `.note` (`vault:<id>.legend.<char>.…` in a vault;
+`Place::key`, `name_arg`, `note_arg`), a hand-made level's hidden location's
+`level:<id>.hidden.<location>.name`, and a scenario's `scenario:<id>.name` (the welcome's
+`place`). A `StairsLink` keeps its `name` as an `Arg` (a place's or a revealed location's key,
+the Pit's `levels.the_pit`), so where stairs lead (`PerceptionView::leads_to`,
+`known_locations`, rendered English by the `locations` dump) and the stairs' lines
+(`World::level_name`, `place_name`) say them by key. A `Place` and a `HiddenLocation` keep the
+data's English beside the key, which a quest's `waits` and the wiki name them by; the game never
+shows it. Still text: the current level's name (`LevelState::name`: the status bar, a save's
+summary), a hidden location's name where a quest marks it (`people.marks_on_map`, whose "The"
+`quest.rs::place` lowers), and the scenario's name on the new-run and chargen screens.
 
 ## UI text (L6)
 
@@ -1001,6 +1015,7 @@ arrays named by the id that tells it apart. Every kind of line of data, the thre
 | `town:<id>.told` | a town's goodwill rising |
 | `level:<id>.hidden.<location>.opens` | a hidden location opening as a quest reveals it |
 | `dialogue:<scope>.silent` | a speaker turning away one outside its `speaks_to` |
+| `level:<id>.name`, `dungeon:<id>.name`, `level:<id>.legend.<char>.name`, `.note`, `vault:<id>.legend.<char>.name`, `.note`, `level:<id>.hidden.<location>.name`, `scenario:<id>.name` | the names of places ("Reasons core composes (#1949)", #1998) |
 | `quest:<id>.name`, `shop:<id>.title`, `encounter:<campaign>.<entry>.name`, `calendar:months.<n>`, `level:<id>.burial.epitaph`, `level:<id>.legend.<char>.epitaph` | names kept in saves ("Names kept in saves", below) |
 
 What quests' people say is keyed in the same file (`data_line::quest`, added by `quest_speech`)
