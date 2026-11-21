@@ -157,7 +157,7 @@ impl World {
         if burst.gust {
             self.gust(here, &cells);
         }
-        let words = fight::Words::of_kind(fight::word(&burst.noun), burst.kind, &content);
+        let words = fight::Words::of_kind(content.burst_noun_phrase(def), burst.kind, &content);
         self.say_spell(words, made, events);
         for &target in &harmed {
             for rider in &burst.riders {

@@ -114,10 +114,12 @@ pub(super) fn check(
         }
         let holds = |at: &usize| colour(*at).is_some_and(|c| c.families.contains(category));
         if !crystals.iter().any(holds) {
-            let word = Arg::Text(word.clone());
+            // lang: todo(#2035) a seal family's word
+            let word = Arg::text(word.clone());
             return Err(match crystals {
                 [one] => {
-                    let name = colour(*one).map_or("", |c| c.name.as_str());
+                    // lang: todo(#2035) a crystal colour's name
+                    let name = Arg::text(colour(*one).map_or("", |c| c.name.as_str()));
                     (Msg::new(msg::crafting::CRYSTAL_HOLDS_NOTHING_OF).role("colour", name))
                         .role("word", word)
                 }
@@ -147,6 +149,7 @@ pub(super) fn words(content: &Content, categories: &[String]) -> Arg {
     let table = content.crystals();
     let words = (categories.iter())
         .map(|c| (table.and_then(|t| t.family_word(c))).unwrap_or(c.as_str()))
+        // lang: todo(#2035) a seal family's word
         .map(|word| Phrase::id(format!("word:{word}")).into())
         .collect();
     Arg::List(words)
@@ -214,7 +217,8 @@ pub(super) fn steps(
                     && (item.as_ref())
                         .is_none_or(|it| sealable(content, (it.def, it.level), &it.had, category))
             })
-            .map(|(i, (_, word))| option(i, word.into(), word.clone()))
+            // lang: todo(#2035) a seal family's word
+            .map(|(i, (_, word))| option(i, Msg::literal(word.as_str()), word.clone()))
             .collect();
         options.sort_by(|a, b| a.short.cmp(&b.short));
         steps.push(CraftStep {

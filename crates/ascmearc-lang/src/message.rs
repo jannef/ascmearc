@@ -137,19 +137,33 @@ impl From<i64> for Arg {
     }
 }
 
-impl From<String> for Arg {
-    fn from(text: String) -> Self {
-        Self::Text(text)
-    }
-}
-
-impl From<&str> for Arg {
-    fn from(text: &str) -> Self {
-        Self::Text(text.to_string())
-    }
-}
-
 impl Arg {
+    /// Verbatim text, the same in every language. Language-neutral only: a name the player
+    /// typed, a scroll's label word, an internal error. Every use outside tests carries a
+    /// `// lang: <kind>` comment, which `cargo xtask lang` checks (`docs/dev/localization.md`
+    /// "Language-neutral text"); English prose is a message or a line of data instead.
+    pub fn text(text: impl Into<String>) -> Self {
+        Self::Text(text.into())
+    }
+
+    /// A content or command id, as the data writes it: a dev line's or a refusal's "no such
+    /// {id}". Language-neutral (`docs/dev/localization.md` "Language-neutral text").
+    pub fn id(id: impl Into<String>) -> Self {
+        Self::Text(id.into())
+    }
+
+    /// Notation every language writes alike: dice ("2d6+1"), a signed number ("+2"), a
+    /// critical range ("19-20"), digits with a unit symbol (`docs/dev/localization.md`
+    /// "Language-neutral text").
+    pub fn notation(text: impl Into<String>) -> Self {
+        Self::Text(text.into())
+    }
+
+    /// Nothing: a role a line leaves empty ("" in every language).
+    pub fn empty() -> Self {
+        Self::Text(String::new())
+    }
+
     /// The line of data keyed `key`, filled with nothing yet: [`Arg::with`] adds args.
     pub fn said(key: impl Into<String>) -> Self {
         Self::Said {
@@ -264,31 +278,6 @@ pub(crate) fn literal_text<'a>(id: &MessageId, args: &'a BTreeMap<Role, Arg>) ->
     }
 }
 
-/// Finished text said as it is: a literal line (transitional, [`LITERAL`]).
-impl From<String> for Msg {
-    fn from(text: String) -> Self {
-        Self::literal(text)
-    }
-}
-
-impl From<&str> for Msg {
-    fn from(text: &str) -> Self {
-        Self::literal(text)
-    }
-}
-
-impl From<&String> for Msg {
-    fn from(text: &String) -> Self {
-        Self::literal(text.as_str())
-    }
-}
-
-impl From<Cow<'_, str>> for Msg {
-    fn from(text: Cow<'_, str>) -> Self {
-        Self::literal(text.into_owned())
-    }
-}
-
 /// One line of the log, as core composed it. Repeats in a row fold on equal `(id, args)`.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Entry {
@@ -348,11 +337,19 @@ mod tests {
 
     #[test]
     fn a_message_builds_its_roles_and_an_entry_folds_equal_ones() {
-        let msg = Msg::new(HIT).role("count", 3).role("who", "Hild");
+        let msg = Msg::new(HIT)
+            .role("count", 3)
+            .role("who", Arg::text("Hild"));
         assert_eq!(msg.args.len(), 2);
         let entry = Entry::new(7, msg.clone());
         assert!(entry.repeats(&msg));
-        assert!(!entry.repeats(&Msg::new(HIT).role("count", 4).role("who", "Hild")));
+        assert!(
+            !entry.repeats(
+                &Msg::new(HIT)
+                    .role("count", 4)
+                    .role("who", Arg::text("Hild"))
+            )
+        );
         assert_eq!(entry.arg("who"), Some(&Arg::Text("Hild".into())));
         assert_eq!(
             entry.arg("count").and_then(|a| a.feature("number")),
@@ -364,17 +361,20 @@ mod tests {
 
     #[test]
     fn text_said_as_it_is_is_a_literal_line_that_folds_on_its_text() {
-        let msg = Msg::from("You open the door.");
+        let msg = Msg::literal("You open the door.");
         assert_eq!(msg.id, LITERAL);
         assert_eq!(msg.literal_text(), Some("You open the door."));
-        assert_eq!(Msg::from(String::from("You open the door.")), msg);
+        assert_eq!(Msg::literal(String::from("You open the door.")), msg);
         let entry = Entry::new(3, msg.clone());
         assert_eq!(entry.literal_text(), Some("You open the door."));
         assert!(entry.repeats(&msg));
-        assert!(!entry.repeats(&Msg::from("You close the door.")));
+        assert!(!entry.repeats(&Msg::literal("You close the door.")));
         assert_eq!(Msg::new(HIT).literal_text(), None);
         // Not literal: another id with a `text` role.
-        assert_eq!(Msg::new(HIT).role("text", "x").literal_text(), None);
+        assert_eq!(
+            Msg::new(HIT).role("text", Arg::text("x")).literal_text(),
+            None
+        );
     }
 
     #[test]

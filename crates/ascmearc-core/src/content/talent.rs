@@ -953,7 +953,7 @@ impl Need {
                 .role("skill", content.weapon_skill_phrase(*id))
                 .role("rank", number(u32::from(*rank))),
             Need::AnyWeaponSkill(any) => Msg::new(msg::character::TALENT_NEEDS_ANY_WEAPON_SKILL)
-                .role("skill", any.words.as_str())
+                .role("skill", Arg::text(any.words.as_str())) /* lang: todo(#2035) */
                 .role("rank", number(u32::from(any.rank))),
             Need::Chosen(rank) => Msg::new(msg::character::TALENT_NEEDS_CHOSEN_RANK)
                 .role("rank", number(u32::from(*rank))),
@@ -980,7 +980,7 @@ impl Need {
                 let names = (ids.iter())
                     .map(|id| match content.vision(id) {
                         Some(_) => content.vision_phrase(id).into(),
-                        None => Arg::Text(id.to_lowercase()),
+                        None => Arg::id(id.to_lowercase()),
                     })
                     .collect();
                 Msg::new(msg::character::TALENT_NEEDS_EYES).role("eyes", Arg::List(names))

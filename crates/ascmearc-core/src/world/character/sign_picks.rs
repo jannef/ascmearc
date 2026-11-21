@@ -174,12 +174,15 @@ impl World {
 
 /// A breath's words: what the player cannot do at themselves ("You cannot breathe fire at
 /// yourself."), and what is said as it is loosed.
-fn breath_words(active: SignActive) -> (&'static str, MessageId) {
+fn breath_words(active: SignActive) -> (MessageId, MessageId) {
     match active {
-        SignActive::FrostBreath => ("breathe frost", msg::character::BREATH_FROST),
-        SignActive::BileSpit => ("spit", msg::character::BREATH_BILE),
-        SignActive::RotBreath => ("breathe rot", msg::character::BREATH_ROT),
-        SignActive::ThunderBreath => ("breathe thunder", msg::character::BREATH_THUNDER),
-        _ => ("breathe fire", msg::character::BREATH_FIRE),
+        SignActive::FrostBreath => (msg::combat::AIM_BREATHE_FROST, msg::character::BREATH_FROST),
+        SignActive::BileSpit => (msg::combat::AIM_SPIT, msg::character::BREATH_BILE),
+        SignActive::RotBreath => (msg::combat::AIM_BREATHE_ROT, msg::character::BREATH_ROT),
+        SignActive::ThunderBreath => (
+            msg::combat::AIM_BREATHE_THUNDER,
+            msg::character::BREATH_THUNDER,
+        ),
+        _ => (msg::combat::AIM_BREATHE_FIRE, msg::character::BREATH_FIRE),
     }
 }

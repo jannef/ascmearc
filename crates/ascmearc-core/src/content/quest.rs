@@ -710,6 +710,7 @@ impl Content {
         }
         match self.speaker_creature(id) {
             Some(c) => Phrase::id(format!("creature:{}", self.creature(c).id)),
+            // lang: todo(#2035) a speaker's name as written
             None => Phrase::id(format!("word:{}", self.speaker_name(id))),
         }
     }

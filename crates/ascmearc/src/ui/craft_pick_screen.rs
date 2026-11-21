@@ -389,7 +389,7 @@ impl CraftPickScreen {
             panel.footer(console, &ui(T::ESC_BACK));
             return;
         };
-        let name = || ("name", Arg::from(self.name.clone()));
+        let name = || ("name", Arg::text(self.name.clone()));
         let label = ("label", Arg::from(step.label.clone()));
         let title = format!(" {} ", ui_with(T::TITLE_STEP, &[name(), label]));
         let panel = Panel::new(console, &title, WIDTH, count + 9);
@@ -403,7 +403,7 @@ impl CraftPickScreen {
             .map(|(s, pick)| {
                 let what = (pick.and_then(|at| s.options.iter().find(|o| o.at == at)))
                     .map_or("—".to_string(), |o| o.short.clone());
-                let args = [("label", s.label.clone().into()), ("what", what.into())];
+                let args = [("label", s.label.clone().into()), ("what", Arg::text(what))];
                 ui_with(T::CHOSEN_STEP, &args)
             })
             .collect();
@@ -411,7 +411,7 @@ impl CraftPickScreen {
             true => self.name.clone(),
             false => ui_with(
                 T::HEADER_CHOSEN,
-                &[name(), ("chosen", chosen.join(", ").into())],
+                &[name(), ("chosen", Arg::text(chosen.join(", ")))],
             ),
         };
         let header: String = header
@@ -480,12 +480,12 @@ impl CraftPickScreen {
             console.print(state_x, y, &state, TEXT_DIM);
         }
         let keys = HINTS;
-        let confirm = ("confirm", Arg::from(keys.confirm));
+        let confirm = ("confirm", Arg::text(keys.confirm));
         let mut hints = Vec::new();
         match self.list().last_letter() {
             Some('a') => hints.push(ui_with(T::CHOOSE_A, &[confirm])),
             Some(last) => {
-                let last = ("last", last.to_string().into());
+                let last = ("last", Arg::text(last.to_string()));
                 hints.push(ui_with(T::CHOOSE_LETTERS, &[last, confirm]));
             }
             None if step.optional => hints.push(ui_with(T::CHOOSE_NONE, &[confirm])),

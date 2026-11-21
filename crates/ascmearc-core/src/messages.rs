@@ -196,11 +196,11 @@ mod tests {
     #[test]
     fn repeats_fold_into_one_entry() {
         let mut log = MessageLog::default();
-        log.push(1, "You open the door.");
-        log.push(2, "You open the door.");
+        log.push(1, Msg::literal("You open the door."));
+        log.push(2, Msg::literal("You open the door."));
         log.push(3, msg::doors::CLOSE);
         log.push(4, msg::doors::CLOSE);
-        log.push(5, "You open the door.");
+        log.push(5, Msg::literal("You open the door."));
         assert_eq!(
             shown(&log),
             [
@@ -215,7 +215,8 @@ mod tests {
     #[test]
     fn keys_named_in_a_message_are_filled_in_as_bound() {
         let content = crate::test_support::builtin();
-        let welcome = || Msg::new(msg::world::WELCOME).role("place", "Showcase");
+        let welcome =
+            || Msg::new(msg::world::WELCOME).role("place", crate::lang::Arg::text("Showcase"));
         let mut log = MessageLog::default();
         log.push(1, welcome());
         log.push(2, welcome());
@@ -242,7 +243,7 @@ mod tests {
     #[test]
     fn the_log_saves_entries_and_single_messages_without_a_count() {
         let mut log = MessageLog::default();
-        log.push(1, "Hello.");
+        log.push(1, Msg::literal("Hello."));
         log.push(2, msg::doors::LOCKED);
         let json = serde_json::to_string(&log).unwrap();
         assert!(!json.contains("count"), "{json}");
@@ -258,7 +259,7 @@ mod tests {
     fn drops_oldest_beyond_capacity() {
         let mut log = MessageLog::default();
         for i in 0..(CAPACITY as u64 + 5) {
-            log.push(i, format!("m{i}"));
+            log.push(i, Msg::literal(format!("m{i}")));
         }
         assert_eq!(log.len(), CAPACITY);
         assert_eq!(log.iter().next().map(|m| m.turn), Some(5));

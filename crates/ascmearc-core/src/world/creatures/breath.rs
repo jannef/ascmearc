@@ -103,7 +103,7 @@ impl World {
                 _ => None,
             })
             .collect();
-        let words = fight::Words::of_kind(fight::word(&breath.noun), breath.kind, &content);
+        let words = fight::Words::of_kind(content.breath_noun_phrase(def), breath.kind, &content);
         self.say_spell(words, made, events);
         self.spell_type_lands(id, Some(breath.kind), &harmed, events);
         for target in harmed {

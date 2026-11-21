@@ -29,7 +29,7 @@
 //! `supply` of their flasks and have a cooldown (#1794 replaced the design's endless supply, Q9);
 //! a flask in a pack is thrown only as a throw's supply (Q10 otherwise holds).
 
-use super::fight::{End, Guard, Words, attack_message, word};
+use super::fight::{End, Guard, Words, attack_message, data_word};
 use super::shoot::Flight;
 use crate::action::{AttackKind, Event, Positions};
 use crate::combat::Strike;
@@ -169,15 +169,15 @@ pub(in crate::world) fn throw_messages(
             Msg::new(msg::combat::THROWS)
                 .role("actor", thrower.phrase())
                 .role("verb", content.throw_verb(content.creature(by)))
-                .role("what", word(noun)),
+                .role("what", data_word(noun)),
         );
     }
     let words = match damage {
-        Some(kind) => Words::of_kind(word(noun), kind, content),
+        Some(kind) => Words::of_kind(data_word(noun), kind, content),
         None => Words::named(noun, "hits", content),
     };
     let blow = attack_message(
-        &End::Trap(word(noun)),
+        &End::Trap(data_word(noun)),
         target,
         &words,
         AttackKind::Thrown,

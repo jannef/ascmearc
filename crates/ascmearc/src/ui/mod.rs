@@ -609,7 +609,7 @@ fn draw_messages(
             Ability::Wedge => ui(T::WEDGE_DOOR),
             // Two kept beasts beside: which is tended, or the player (`input.rs::tend_way`).
             Ability::Heal => match bindings.key_name(KeyCommand::Wait) {
-                Some(key) => ui_with(T::TEND_WAY, &[("own", key.into())]),
+                Some(key) => ui_with(T::TEND_WAY, &[("own", Arg::text(key))]),
                 None => ui(T::TEND_WAY_ESC),
             },
             _ => ui(T::WAY),
@@ -657,7 +657,7 @@ fn draw_messages(
                 {
                     Some(does) => ui_with(
                         T::AIM_WAND,
-                        &[("item", named.into()), ("does", does.into())],
+                        &[("item", Arg::text(named)), ("does", does.into())],
                     ),
                     None => named,
                 }
@@ -672,7 +672,7 @@ fn draw_messages(
         let about = look::describe(&game.world.perception(), p, blood);
         console.print_clipped(1, 0, &about, TEXT);
         let prompt = match bindings.key_name(KeyCommand::Look) {
-            Some(key) => ui_with(T::LOOK_HINT, &[("own", key.into())]),
+            Some(key) => ui_with(T::LOOK_HINT, &[("own", Arg::text(key))]),
             None => ui(T::LOOK_HINT_ESC),
         };
         // What Knowledge tells of a creature takes the row's start: the description above is
@@ -724,14 +724,14 @@ fn rest_prompt() -> String {
             }
         })
         .collect();
-    ui_with(T::REST, &[("choices", choices.join(", ").into())])
+    ui_with(T::REST, &[("choices", Arg::text(choices.join(", ")))])
 }
 
 /// The status bar's reminder of where the keys are: the help key, else the pause menu (which
 /// holds Controls).
 fn controls_hint(bindings: &Bindings) -> String {
     match bindings.key_name(KeyCommand::Help) {
-        Some(key) => ui_with(T::CONTROLS, &[("own", key.into())]),
+        Some(key) => ui_with(T::CONTROLS, &[("own", Arg::text(key))]),
         None => ui(T::CONTROLS_MENU),
     }
 }
@@ -821,7 +821,7 @@ fn status_segments(view: &PerceptionView, clock: Clock, dev: bool) -> Vec<Segmen
     let resources = (view.own_resources().into_iter()).map(|r| {
         let def = content.resource(r.resource);
         let (name, value) = (
-            ("name", def.short.clone().into()),
+            ("name", Arg::text(def.short.clone())),
             ("value", number(r.value)),
         );
         let text = match def.show_max {
@@ -835,7 +835,7 @@ fn status_segments(view: &PerceptionView, clock: Clock, dev: bool) -> Vec<Segmen
     // actor id order; cut down to its name before it is dropped.
     let kept: Vec<Segment> = (view.kept())
         .map(|(ally, data)| {
-            let name = ("name", data.name.clone().into());
+            let name = ("name", Arg::text(data.name.clone()));
             let text = match ally.retinue {
                 true => ui_with(T::KEPT_RETINUE, &[name]),
                 false => ui_with(T::KEPT, &[name, ("health", ally.health.word().into())]),

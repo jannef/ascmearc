@@ -97,7 +97,9 @@ impl World {
         }
         let effect = content.rod_effect(rod.effect);
         let reach = self.state.player().rod_reach(&content, effect);
-        if effect.shape == RodShape::Burst && !self.within_reach(at, reach, "zap") {
+        if effect.shape == RodShape::Burst
+            && !self.within_reach(at, reach, crate::msg::combat::AIM_ZAP)
+        {
             return Spent::Nothing;
         }
         let me = self.state.player();

@@ -43,7 +43,7 @@ use crate::combat::Strike;
 use crate::content::{BurstIce, Content, LightId, Shape, SpellId, ZoneKind};
 use crate::damage::Damage;
 use crate::geom::Pos;
-use crate::lang::Msg;
+use crate::lang::{Arg, Msg};
 use crate::light::Light;
 use crate::msg;
 use crate::rng::draw;
@@ -276,7 +276,7 @@ impl World {
         (at, range, radius): (Pos, i32, i32),
         events: &mut Vec<Event>,
     ) -> bool {
-        if !self.can_loose_here() || !self.within_reach(at, range, "cast") {
+        if !self.can_loose_here() || !self.within_reach(at, range, crate::msg::combat::AIM_CAST) {
             return false;
         }
         let here = self.player_pos();
@@ -322,7 +322,7 @@ impl World {
         self.lay_cells((kind, by, harm, None), cells, seconds, events);
         self.say(
             Msg::new(msg::magic::ZONE_DEV)
-                .role("kind", kind.id())
+                .role("kind", Arg::id(kind.id()))
                 .role("x", i64::from(at.x))
                 .role("y", i64::from(at.y)),
         );

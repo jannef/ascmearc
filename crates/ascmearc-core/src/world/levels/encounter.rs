@@ -1025,7 +1025,7 @@ impl World {
     pub(in crate::world) fn meet_dev(&mut self, id: &str, forced: Option<Forced>) -> Spent {
         let content = self.content.clone();
         let Some((_, entry)) = content.encounter_entry(&self.state.campaign, id) else {
-            self.say(Msg::new(msg::levels::NO_ENCOUNTER_DEV).role("id", id));
+            self.say(Msg::new(msg::levels::NO_ENCOUNTER_DEV).role("id", Arg::id(id)));
             return Spent::Nothing;
         };
         let cell = self.player_pos();

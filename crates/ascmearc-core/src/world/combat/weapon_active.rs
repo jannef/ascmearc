@@ -526,7 +526,7 @@ impl World {
             return Spent::Nothing;
         };
         let range = me.launcher_range(&content).unwrap_or(1);
-        if !self.may_loose(item) || !self.within_reach(at, range, "shoot") {
+        if !self.may_loose(item) || !self.within_reach(at, range, crate::msg::combat::AIM_SHOOT) {
             return Spent::Nothing;
         }
         if effect == WeaponDoes::IgnoreProtection {

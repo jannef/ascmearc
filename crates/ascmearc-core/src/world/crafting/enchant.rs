@@ -607,7 +607,7 @@ fn uses_words(
         let item = &pack[resolved.item];
         let affix = (item.magic().and_then(|m| m.affixes.get(k)))
             .filter(|a| content.affixes().get(&a.id).is_some())
-            .map_or(Arg::Text(String::new()), |a| {
+            .map_or(Arg::empty(), |a| {
                 Phrase::id(format!("affix:{}", a.id)).into()
             });
         let keeping = Msg::new(msg::crafting::PLAN_KEEPING)

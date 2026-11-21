@@ -195,7 +195,7 @@ impl BirthDate {
 /// by its id, as text.
 pub fn class_arg(content: &Content, class: &str, prestige: Option<&str>, level: u8) -> Arg {
     let Some(def) = content.class(class) else {
-        return class.into();
+        return Arg::id(class);
     };
     let at = |name: crate::lang::Phrase, level: u8| -> Arg {
         (Msg::new(crate::msg::character::CLASS_LEVEL).role("class", name))
@@ -347,7 +347,8 @@ impl Character {
         let sign = self.sign.as_ref()?;
         match content.horoscope().and_then(|h| h.parts(sign)) {
             Some(_) => Some(content.sign_phrase(sign).into()),
-            None => self.sign_name(content).map(Into::into),
+            // lang: todo(#2035) a sign the horoscope lacks a part of, by its name
+            None => self.sign_name(content).map(crate::lang::Arg::text),
         }
     }
 

@@ -7,7 +7,7 @@
 
 use super::quest::{QuestRecord, Stage};
 use crate::content::RevealWhen;
-use crate::lang::Msg;
+use crate::lang::{Arg, Msg};
 use crate::msg;
 use crate::world::{Spent, World};
 
@@ -17,7 +17,7 @@ impl World {
     pub(in crate::world) fn quest_done_dev(&mut self, id: &str) -> Spent {
         let content = self.content.clone();
         let Some(def) = content.quest_id(id).map(|q| content.quest(q)) else {
-            self.say(Msg::new(msg::people::NO_QUEST_DEV).role("id", id));
+            self.say(Msg::new(msg::people::NO_QUEST_DEV).role("id", Arg::id(id)));
             return Spent::Nothing;
         };
         let record = (self.state.quests.records.entry(def.id.clone()))
@@ -34,7 +34,7 @@ impl World {
     pub(in crate::world) fn quest_given_dev(&mut self, id: &str) -> Spent {
         let content = self.content.clone();
         let Some(def) = content.quest_id(id).map(|q| content.quest(q)) else {
-            self.say(Msg::new(msg::people::NO_QUEST_DEV).role("id", id));
+            self.say(Msg::new(msg::people::NO_QUEST_DEV).role("id", Arg::id(id)));
             return Spent::Nothing;
         };
         if def.is_rolled() {

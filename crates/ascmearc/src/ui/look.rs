@@ -52,7 +52,8 @@ pub fn describe(view: &PerceptionView<'_>, p: Pos, blood: bool) -> String {
         }
         (None, CellView::Unknown) => None,
     };
-    lines.extend(described.map(Arg::Text));
+    // lang: todo(#2035) a chest band's or a terrain's description
+    lines.extend(described.map(Arg::text));
     lines.extend(view.epitaph(p).cloned());
     // The run's content renders it: the names nested in it are its lines of data.
     let msg = Msg::new(MessageId::new(T::LINES.id)).role("lines", Arg::List(lines));
@@ -76,7 +77,8 @@ pub fn known(view: &PerceptionView<'_>, p: Pos) -> Option<String> {
         // A damage type's name is the data's text until core's words are converted (#1949).
         let kinds: Vec<Arg> = (known.iter())
             .filter(|(_, w)| *w == word)
-            .map(|(k, _)| Arg::Text(content.damage_type(*k).name.clone()))
+            // lang: todo(#2035) a damage type's name
+            .map(|(k, _)| Arg::text(content.damage_type(*k).name.clone()))
             .collect();
         (!kinds.is_empty()).then(|| clause(text, [("kinds", Arg::List(kinds))]))
     })
@@ -105,7 +107,7 @@ fn clause<const N: usize>(text: UiText, args: [(&'static str, Arg); N]) -> Arg {
 
 /// An empty slot: a clause that does not apply.
 fn none() -> Arg {
-    Arg::Text(String::new())
+    Arg::empty()
 }
 
 /// `items` joined by `joiner` (`listed`, `tags`), a nested entry per join; none for none.
@@ -124,6 +126,7 @@ fn you() -> Phrase {
 
 /// A `word:` phrase: a word the data names without an id of its own (core's words, #1949).
 fn word(text: &str) -> Phrase {
+    // lang: todo(#2035) a word the data names without an id
     Phrase::id(format!("word:{text}"))
 }
 
@@ -529,7 +532,8 @@ fn creature(view: &PerceptionView<'_>, actor: &SeenActor) -> Arg {
         None if actor.companion => {
             let name = (view.kept()).find(|(a, _)| a.id == actor.id).map_or_else(
                 || clause(T::YOUR_COMPANION, []),
-                |(_, c)| Arg::Text(c.name.clone()),
+                // lang: typed a kept beast's name
+                |(_, c)| Arg::text(c.name.clone()),
             );
             let who = made_of(content, actor, kind(content, actor)).owned_by(you());
             clause(
@@ -641,7 +645,8 @@ fn made_of(content: &Content, actor: &SeenActor, who: Phrase) -> Phrase {
 fn moves(content: &Content, actor: &SeenActor) -> Option<Arg> {
     animated(content, actor)?;
     let body = content.animated_body(actor.creature)?;
-    body.spec.moves.clone().map(Arg::Text)
+    // lang: todo(#2035) how an animated thing moves
+    body.spec.moves.clone().map(Arg::text)
 }
 
 /// What a seen creature wields, wears, and has ready, as each reads after its name: ", wielding

@@ -242,8 +242,10 @@ impl Words {
         Self {
             plural: plural(&noun, content),
             noun,
-            verb: verb.into(),
-            you: data_word::second_person(verb).into(),
+            // lang: todo(#2035) a verb the data or the code writes
+            verb: Arg::text(verb),
+            // lang: todo(#2035) a verb the data or the code writes
+            you: Arg::text(data_word::second_person(verb)),
         }
     }
 
@@ -304,21 +306,23 @@ impl Words {
             content.attack_verb(def, n, false),
             content.attack_verb(def, n, true),
         );
-        Self::said(word(&attack.name), verbs, content)
+        Self::said(content.attack_name_phrase(def, n), verbs, content)
     }
 
     /// Words for a noun the data names without an id of its own ("bite", "fireball", "arrow"):
     /// `word:<noun>` (`content/lexicon.rs`).
     pub(in crate::world) fn named(noun: &str, verb: &str, content: &Content) -> Self {
-        Self::new(word(noun), verb, content)
+        Self::new(data_word(noun), verb, content)
     }
 
     #[cfg(test)]
     pub(super) fn test(noun: &str, verb: &str) -> Self {
         Self {
-            noun: word(noun),
-            verb: verb.into(),
-            you: data_word::second_person(verb).into(),
+            noun: data_word(noun),
+            // lang: test
+            verb: Arg::text(verb),
+            // lang: test
+            you: Arg::text(data_word::second_person(verb)),
             plural: crate::lang::en::is_plural(noun),
         }
     }
@@ -390,8 +394,16 @@ pub(in crate::world) fn creature(def: &CreatureDef) -> Phrase {
     Phrase::id(format!("creature:{}", def.id))
 }
 
-/// A word the data names without an id of its own, as a phrase: `word:<text>`.
-pub(in crate::world) fn word(text: &str) -> Phrase {
+/// A word core names (`word:hexed`), as a phrase: a fixed lexicon id, which a translation's
+/// lexicon gives its own word (`docs/dev/localization.md` "Language-neutral text").
+pub(in crate::world) fn word(text: &'static str) -> Phrase {
+    // lang: label a fixed id, `word:` and a word core names
+    Phrase::id(format!("word:{text}"))
+}
+
+/// A word the data names without an id of its own, as a phrase: `word:<text>`, English.
+pub(in crate::world) fn data_word(text: &str) -> Phrase {
+    // lang: todo(#2035) the data's word as English
     Phrase::id(format!("word:{text}"))
 }
 
@@ -468,7 +480,7 @@ impl Guard {
         };
         let race = state.race_of(content, target);
         Self {
-            hide: target.hide(content, race).map(|h| word(&h.name)),
+            hide: target.hide(content, race).map(|h| data_word(&h.name)),
             soak: target.soaked_by_phrase(content, race),
         }
     }
@@ -514,14 +526,14 @@ pub(in crate::world) fn attack_message(
             .role("weapon", weapon.clone())
             .role("target", t.clone())
     };
-    let off = |armour: Option<&Phrase>, or: &str| {
+    let off = |armour: Option<&Phrase>, or: &'static str| {
         let armour = armour.cloned().unwrap_or_else(|| word(or));
         struck(msg::combat::GLANCES_OFF).role("armour", armour)
     };
     let both_seen = !attacker.is_unseen() && !target.is_unseen();
     // A plural subject takes the plural verb: a trap's, which is its noun.
     let hit = match (attacker, kind) {
-        (End::You(_), AttackKind::Ranged) => Arg::from("shoot"),
+        (End::You(_), AttackKind::Ranged) => Arg::from(msg::combat::VERB_SHOOT),
         (End::You(_), _) => words.you.clone(),
         (End::Trap(_), _) if words.plural => words.you.clone(),
         _ => words.verb.clone(),
@@ -1668,7 +1680,7 @@ impl World {
         ));
         if died && seen {
             let dies = (target_actor.map(|a| content.creature(a.creature).dies_arg()))
-                .unwrap_or_else(|| Arg::from("dies"));
+                .unwrap_or_else(|| Arg::from(msg::combat::VERB_DIES));
             said.push(death_message(&end, dies));
         }
         for text in said {

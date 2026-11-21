@@ -66,7 +66,7 @@ impl DeathScreen {
         let by = match view.character() {
             Some(c) => {
                 let name = c.titled_name(view.content());
-                lines.push(ui_with(T::EPITAPH_HERE_LIES, &[("name", name.into())]));
+                lines.push(ui_with(T::EPITAPH_HERE_LIES, &[("name", Arg::text(name))]));
                 // "a bard", or "a bard and hunter" once called.
                 let content = view.content();
                 let class = ("class", content.class_phrase(&c.spec.class).into());
@@ -85,12 +85,12 @@ impl DeathScreen {
             None => by,
         };
         lines.extend([
-            ui_with(T::EPITAPH_BY, &[("by", by.into())]),
+            ui_with(T::EPITAPH_BY, &[("by", Arg::text(by))]),
             ui_with(
                 T::EPITAPH_PLACE,
                 &[(
                     "place",
-                    label_in(view.content(), death.place.clone()).into(),
+                    Arg::text(label_in(view.content(), death.place.clone())),
                 )],
             ),
             String::new(),
@@ -120,8 +120,8 @@ impl DeathScreen {
         let lines = self.lines.iter().map(|line| match &self.when {
             Some((date, time)) if line.is_empty() => {
                 let args = [
-                    ("date", date.as_str().into()),
-                    ("time", clock.format(*time).into()),
+                    ("date", Arg::text(date.as_str())),
+                    ("time", Arg::text(clock.format(*time))),
                 ];
                 ui_with(T::EPITAPH_WHEN, &args)
             }
@@ -161,7 +161,7 @@ impl DeathScreen {
         if self.remembered && fits(y + 1) {
             console.print(cx(remembered), y + 1, remembered, TEXT_DIM);
         }
-        let footer = ui_with(T::FOOTER, &[("confirm", Arg::from(HINTS.confirm))]);
+        let footer = ui_with(T::FOOTER, &[("confirm", Arg::text(HINTS.confirm))]);
         panel.footer(console, &footer);
     }
 }

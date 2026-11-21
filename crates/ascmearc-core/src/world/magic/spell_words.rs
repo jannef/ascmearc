@@ -65,7 +65,7 @@ pub fn roll_words(content: &Content, spell: &SpellData, roll: Roll) -> SpellRoll
         }
         None => Msg::new(msg::magic::ROLL_HEALED),
     }
-    .role("roll", shown);
+    .role("roll", Arg::notation(shown));
     // The rule every spell of its type carries (`data/spells.toml`'s `[types]`); one that never
     // shoves (`shove = false`) leaves them unsaid: force's tell only of its shove.
     let rule = (spell.damage_type)

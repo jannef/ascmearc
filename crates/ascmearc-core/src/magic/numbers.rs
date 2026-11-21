@@ -87,11 +87,10 @@ impl Numbers {
         let known = stack.as_known();
         let mut attack = attack(&known, content);
         // A spirit weapon's gift to hit, with its own.
-        if let (Some(attack), Some((to_hit, ..))) =
-            (attack.as_mut(), crate::world::spirit_gift(content))
+        if let (Some(attack), Some(gift)) = (attack.as_mut(), crate::world::spirit_gift(content))
             && stack.is_spirit()
         {
-            attack.to_hit += to_hit;
+            attack.to_hit += gift.to_hit;
         }
         Self {
             attack,
@@ -195,19 +194,19 @@ impl AttackNumbers {
     fn damage_parts(&self, content: &Content) -> Vec<Arg> {
         let riders = self.riders.iter().map(|r| {
             Msg::new(msg::items::NUMBERS_RIDER)
-                .role("dice", Arg::Text(format!("+{}", r.dice)))
+                .role("dice", Arg::notation(format!("+{}", r.dice)))
                 .role("kind", content.damage_type_phrase(r.kind))
         });
         if !self.adds() {
-            let dice = Arg::Text(dice_text(self.damage, self.extra));
+            let dice = Arg::notation(dice_text(self.damage, self.extra));
             return vec![riders.fold(dice, |damage, rider| {
                 (Msg::new(msg::items::NUMBERS_WITH_RIDER).role("damage", damage))
                     .role("rider", rider)
                     .into()
             })];
         }
-        let added =
-            (self.added()).map(|t| Msg::new(msg::items::NUMBERS_DAMAGE).role("dice", Arg::Text(t)));
+        let added = (self.added())
+            .map(|t| Msg::new(msg::items::NUMBERS_DAMAGE).role("dice", Arg::notation(t)));
         (added.into_iter().chain(riders)).map(Arg::from).collect()
     }
 
@@ -265,7 +264,7 @@ impl DefenceNumbers {
 /// `parts` said one after another (`items.numbers_listed`); empty text for none.
 fn listed(mut parts: Vec<Arg>) -> Arg {
     let Some(last) = parts.pop() else {
-        return Arg::Text(String::new());
+        return Arg::empty();
     };
     parts.into_iter().rev().fold(last, |rest, first| {
         (Msg::new(msg::items::NUMBERS_LISTED).role("first", first))
@@ -276,7 +275,7 @@ fn listed(mut parts: Vec<Arg>) -> Arg {
 
 /// A number written with its sign, `+0`, `-1`: notation every language writes alike, so text.
 fn signed(n: i32) -> Arg {
-    Arg::Text(format!("{n:+}"))
+    Arg::notation(format!("{n:+}"))
 }
 
 /// Damage dice as written: the dice (and any extra dice) with the flat bonus last, `1d8+2`,

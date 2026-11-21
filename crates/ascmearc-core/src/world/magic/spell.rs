@@ -31,7 +31,7 @@ use crate::dice::Roll;
 use crate::fov::radius2;
 use crate::geom::Pos;
 use crate::ice::Shock;
-use crate::lang::Msg;
+use crate::lang::{Arg, Msg};
 use crate::msg;
 use crate::noise::{self, Noise};
 use crate::rng::draw;
@@ -198,7 +198,7 @@ impl World {
         events: &mut Vec<Event>,
     ) -> Spent {
         let Some(def) = self.content.effect(id) else {
-            self.say(Msg::new(msg::magic::NO_EFFECT).role("id", id));
+            self.say(Msg::new(msg::magic::NO_EFFECT).role("id", Arg::id(id)));
             return Spent::Nothing;
         };
         let level = self.state.current();
@@ -221,10 +221,10 @@ impl World {
             }
         };
         if cells.is_empty() {
-            self.say(Msg::new(msg::magic::EFFECT_REACHES_NO_CELL).role("id", id));
+            self.say(Msg::new(msg::magic::EFFECT_REACHES_NO_CELL).role("id", Arg::id(id)));
             return Spent::Nothing;
         }
-        self.say(Msg::new(msg::magic::EFFECT_DEV).role("id", id));
+        self.say(Msg::new(msg::magic::EFFECT_DEV).role("id", Arg::id(id)));
         events.push(Event::Spell {
             effect: id.to_string(),
             origin: at,

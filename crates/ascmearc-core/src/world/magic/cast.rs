@@ -76,7 +76,7 @@ use crate::content::{Effect as ItemEffect, ObjectId, SpellId};
 use crate::damage::{Damage, Kinds};
 use crate::dice::Roll;
 use crate::geom::Pos;
-use crate::lang::Msg;
+use crate::lang::{Arg, Msg};
 use crate::magic::Mods;
 use crate::msg;
 use crate::rng::draw;
@@ -234,12 +234,12 @@ impl World {
         match (def.aims_item(), def.aimed(), target) {
             (true, _, Some(ReadTarget::Item(on))) => Some(Some(ReadTarget::Item(on))),
             (true, _, _) => {
-                self.say(Msg::new(msg::magic::CAST_IT_ON_WHAT).role("usage", usage));
+                self.say(Msg::new(msg::magic::CAST_IT_ON_WHAT).role("usage", Arg::id(usage)));
                 None
             }
             (false, true, Some(ReadTarget::Cell(at))) => Some(Some(ReadTarget::Cell(at))),
             (false, true, _) => {
-                self.say(Msg::new(msg::magic::CAST_IT_WHERE).role("usage", usage));
+                self.say(Msg::new(msg::magic::CAST_IT_WHERE).role("usage", Arg::id(usage)));
                 None
             }
             (false, false, _) => Some(None),
@@ -662,7 +662,7 @@ impl World {
         events: &mut Vec<Event>,
     ) -> bool {
         let range = cast.reach.range.unwrap_or(1);
-        if !self.can_loose_here() || !self.within_reach(at, range, "cast") {
+        if !self.can_loose_here() || !self.within_reach(at, range, crate::msg::combat::AIM_CAST) {
             return false;
         }
         let player = self.state.player;
@@ -724,7 +724,7 @@ impl World {
     /// The creature a hex at `at` within `range` falls on: one the player sees there, that is
     /// not friendly to them. `None` (said) otherwise.
     pub(in crate::world) fn hex_target(&mut self, at: Pos, range: i32) -> Option<ActorId> {
-        if !self.within_reach(at, range, "hex") {
+        if !self.within_reach(at, range, crate::msg::combat::AIM_HEX) {
             return None;
         }
         let level = self.state.current().id.clone();
@@ -774,7 +774,7 @@ impl World {
             }
         } else if !def.about_caster()
             && !(def.aims_corpse() && at == self.player_pos())
-            && !self.within_reach(at, range, "cast")
+            && !self.within_reach(at, range, crate::msg::combat::AIM_CAST)
         {
             return false;
         }

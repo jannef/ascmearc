@@ -330,7 +330,7 @@ impl World {
             return Err(msg::character::NO_TALENT_TO_CHOOSE.into());
         }
         let Some(talent) = content.talents().id(id) else {
-            return Err(Msg::new(msg::character::NO_TALENT).role("id", id));
+            return Err(Msg::new(msg::character::NO_TALENT).role("id", Arg::id(id)));
         };
         // A free pick first, of the level whose free talent it is; then a bonus pick, of the
         // level whose class's trees the talent is of.

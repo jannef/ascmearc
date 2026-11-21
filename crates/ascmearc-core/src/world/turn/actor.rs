@@ -955,6 +955,7 @@ impl Actor {
     ) -> Option<crate::lang::Phrase> {
         self.soaker(content, race).map(|soak| match soak {
             Ok(object) => crate::lang::Phrase::id(format!("object:{}", content.object(object).id)),
+            // lang: todo(#2035) a hide's name
             Err(hide) => crate::lang::Phrase::id(format!("word:{}", hide.name)),
         })
     }

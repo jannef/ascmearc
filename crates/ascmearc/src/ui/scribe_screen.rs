@@ -158,12 +158,12 @@ impl ScribeScreen {
         }
         let keys = HINTS;
 
-        let confirm = ("confirm", Arg::from(keys.confirm));
+        let confirm = ("confirm", Arg::text(keys.confirm));
         let write = match self.spells.last_letter() {
             Some('a') => ui_with(T::WRITE_A, &[confirm]),
             Some(last) => ui_with(
                 T::WRITE_LETTERS,
-                &[("last", last.to_string().into()), confirm],
+                &[("last", Arg::text(last.to_string())), confirm],
             ),
             None => ui_with(T::WRITE, &[confirm]),
         };

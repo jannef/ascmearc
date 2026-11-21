@@ -135,15 +135,15 @@ impl MessagesScreen {
         }
         let keys = HINTS;
         let close = match bindings.key_name(KeyCommand::Messages) {
-            Some(key) => ui_with(T::CLOSE_OWN, &[("own", key.into())]),
+            Some(key) => ui_with(T::CLOSE_OWN, &[("own", Arg::text(key))]),
             None => ui(T::CLOSE),
         };
         let footer = if top > 0 {
             let (up_down, next, prev) = (keys.up_down(), &keys.next_page, &keys.prev_page);
-            let scroll = ui_with(T::SCROLL, &[("up_down", up_down.into())]);
+            let scroll = ui_with(T::SCROLL, &[("up_down", Arg::text(up_down))]);
             let page = ui_with(
                 T::PAGE,
-                &[("next", (*next).into()), ("prev", (*prev).into())],
+                &[("next", Arg::text(*next)), ("prev", Arg::text(*prev))],
             );
             format!("{scroll}   {page}   {close}")
         } else {
@@ -249,7 +249,10 @@ mod tests {
     fn long_messages_wrap_with_their_further_lines_indented() {
         let mut screen = MessagesScreen::new(None, &Arc::default());
         let words = "word ".repeat(40);
-        screen.messages = vec![Entry::new(1, words.trim().into())];
+        screen.messages = vec![Entry::new(
+            1,
+            ascmearc_core::lang::Msg::literal(words.trim()),
+        )];
         let rows = shown(&screen, 40, 20);
         let body: Vec<&String> = rows.iter().filter(|r| r.contains("word")).collect();
         assert!(body.len() > 2, "{rows:#?}");

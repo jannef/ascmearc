@@ -142,7 +142,7 @@ impl World {
         let Some(range) = ability.reach_at(&content, self.state.time) else {
             return Spent::Nothing;
         };
-        if !self.within_reach(at, range, "stare") {
+        if !self.within_reach(at, range, crate::msg::combat::AIM_STARE) {
             return Spent::Nothing;
         }
         let level = self.state.current().id.clone();

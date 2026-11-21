@@ -260,6 +260,7 @@ impl Content {
             Choice::Element | Choice::School if name.is_some() => {
                 Phrase::id(format!("damage_type:{choice}"))
             }
+            // lang: todo(#2035) a talent's choice by its name
             _ => Phrase::id(format!("word:{}", name.unwrap_or(choice).to_lowercase())),
         }
     }
@@ -324,7 +325,7 @@ impl Content {
             .is_some_and(|h| h.animals.iter().any(|a| a.id == id))
         {
             true => Phrase::id(format!("sign_animal:{id}")).into(),
-            false => id.into(),
+            false => Arg::id(id),
         }
     }
 
@@ -336,7 +337,7 @@ impl Content {
             .is_some_and(|h| h.elements.iter().any(|e| e.id == id))
         {
             true => Phrase::id(format!("sign_element:{id}")).into(),
-            false => id.into(),
+            false => Arg::id(id),
         }
     }
 
@@ -493,7 +494,7 @@ mod tests {
             format!("Wizard {cap}, Hunter 4")
         );
         let missing = class_arg(&content, "jester", None, 3);
-        assert_eq!(missing, Arg::from("jester"), "a class the content lacks");
+        assert_eq!(missing, Arg::id("jester"), "a class the content lacks");
     }
 
     /// The last labels and words (#2028): a vision's name, lower case in a sentence; a sign's
@@ -513,7 +514,7 @@ mod tests {
         assert_eq!(english_arg(&content, &element, "bare"), "Wood");
         assert_eq!(
             content.sign_animal_arg("no_such_beast"),
-            "no_such_beast".into(),
+            crate::lang::Arg::id("no_such_beast"),
             "as written"
         );
         let listed = |kind: Choice, id: &str| {

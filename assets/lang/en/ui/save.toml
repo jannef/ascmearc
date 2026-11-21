@@ -1,0 +1,19 @@
+# What saving and resuming say in the message log (`crates/ascmearc/src/save.rs`, `game.rs`).
+# Ids alphabetical.
+
+[game_saved]
+text = "Game saved."
+
+[snapshot_loaded]
+text = "Snapshot loaded."
+
+[snapshot_saved]
+text = "Snapshot saved."
+
+# A save that failed: `error`, why (the store's own words).
+[try_again]
+text = "{error:bare} Try again."
+
+# A saved run resumed.
+[welcome_back]
+text = "Welcome back."

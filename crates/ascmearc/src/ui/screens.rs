@@ -3043,7 +3043,7 @@ mod tests {
             name: "Your wares".into(),
             price: Some(340),
             items: None,
-            ware: Some("A ring".into()),
+            ware: Some(ascmearc_core::lang::Arg::text("A ring")),
         });
         let screen = Screen::Dialogue(DialogueScreen::new(
             Some(&stale),

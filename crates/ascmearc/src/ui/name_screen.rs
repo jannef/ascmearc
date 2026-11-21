@@ -132,15 +132,15 @@ impl NameScreen {
         y += 2;
         let args = [
             ("max", Arg::Number(MAX_NAME as i64)),
-            ("random", fixed::TEXT_RANDOM.into()),
-            ("name", self.placeholder().into()),
+            ("random", Arg::text(fixed::TEXT_RANDOM)),
+            ("name", Arg::text(self.placeholder())),
         ];
         let help = ui_with(T::HELP, &args);
         for line in wrap(&help, panel.inner_w() - 2).into_iter().take(2) {
             console.print(x + 2, y, &line, TEXT_DIM);
             y += 1;
         }
-        let own = |text, key: &str| ui_with(text, &[("own", key.into())]);
+        let own = |text, key: &str| ui_with(text, &[("own", Arg::text(key))]);
         let footer = format!(
             "{}   {}   {}   {}",
             own(T::ACCEPT, fixed::TEXT_CONFIRM),

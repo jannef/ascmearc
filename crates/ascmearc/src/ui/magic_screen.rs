@@ -132,7 +132,7 @@ impl MagicScreen {
         }
         let close = ui(T::CLOSE);
         let footer = if most > 0 {
-            let scroll = ui_with(T::SCROLL, &[("keys", HINTS.up_down().into())]);
+            let scroll = ui_with(T::SCROLL, &[("keys", Arg::text(HINTS.up_down()))]);
             format!("{scroll}   {close}")
         } else {
             close
@@ -160,7 +160,7 @@ fn rows(view: &PerceptionView<'_>) -> Vec<Row> {
                 let detail = if needs(a.aim(content)).is_empty() {
                     head
                 } else {
-                    ui_with(T::AIMED, &[("cost", head.into())])
+                    ui_with(T::AIMED, &[("cost", Arg::text(head))])
                 };
                 Some(Row::Spell {
                     name: (content.spell_of(spell))

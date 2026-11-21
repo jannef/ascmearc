@@ -273,7 +273,7 @@ impl QuestDef {
         def.words = words(content, &def, &roll.target);
         let where_ = def.where_.as_ref().map(|_| def.said(WHERE));
         def.words
-            .insert(WHERE.into(), where_.unwrap_or(Arg::Text(String::new())));
+            .insert(WHERE.into(), where_.unwrap_or(Arg::empty()));
         // As given, it is drawn: nothing about it is rolled any more.
         def.roll = None;
         def
@@ -351,6 +351,7 @@ fn words(content: &Content, def: &QuestDef, target: &str) -> Words {
         } => {
             let named = match (what, kill) {
                 // Called as the quest says, one or many alike.
+                // lang: todo(#2035) a rolled quest's thing by the data's word
                 (Some(what), _) => Phrase::id(format!("word:{what}")),
                 (None, KillTarget::Creature(c)) => {
                     let one = Phrase::id(format!("creature:{}", content.creature(*c).id));
@@ -364,14 +365,14 @@ fn words(content: &Content, def: &QuestDef, target: &str) -> Words {
                 put("members", Arg::List(def.member_phrases(content, tag)));
             }
             let branch = branch_of(content, def, kill).unwrap_or_default();
-            put("branch", Arg::Text(branch));
+            put("branch", Arg::id(branch));
         }
         Goal::Bring { object, count, .. } => {
             let what = Phrase::id(format!("object:{}", content.object(*object).id));
             put("target", Arg::Phrase(what.count(*count)));
             put("count", Arg::Number(i64::from(*count)));
         }
-        _ => put("target", Arg::Text(target.to_string())),
+        _ => put("target", Arg::id(target)),
     }
     words
 }
@@ -607,9 +608,10 @@ fn check_roll(content: &Content, def: &QuestDef, roll: &Roll) -> Result<(), Stri
             return Err("`where` cannot name `where`".into());
         }
         let filled = fill(content, w, &words)?;
-        words.insert(WHERE.into(), Arg::Text(filled));
+        // lang: todo(#2035) a quest's `where`, filled in English
+        words.insert(WHERE.into(), Arg::text(filled));
     } else {
-        words.insert(WHERE.into(), Arg::Text(String::new()));
+        words.insert(WHERE.into(), Arg::empty());
     }
     for text in texts.iter().chain(accept.iter()) {
         fill(content, text, &words)?;

@@ -26,8 +26,8 @@ settings module (#1936), which complete L6 (#1889); **L4a**,
 said by its key, with role slots in the base form ("Dialogue"), on the one mechanism every line
 whose text lives in data uses ("Lines of data"). The doors, the welcome line, combat, allies,
 the character, creatures, the fixtures, items, health, levels, people, skills (L4n, #1925), and talk say
-theirs from templates; every other `say` site still says finished English
-as a literal line ("Literal lines"). Nothing player-visible has
+theirs from templates; the few `say` sites left say a literal line ("Literal lines"), each with
+its reason, which `cargo xtask lang` checks ("Language-neutral text", #2035). Nothing player-visible has
 changed: the English templates and phrases read as the strings did. The English helpers core,
 the app, and the wiki generator call have moved into the crate behind re-exports at their old
 paths.
@@ -442,8 +442,8 @@ form), `Note::Charges` ("(7 charges)"),
 
 ## Literal lines
 
-Until the L4 slices convert every `say` site, text said as it is becomes a **literal line**:
-`Msg::literal(text)` (`From<String>`, `&str`, `&String`, `Cow<str>` for `Msg`), the entry
+Text said as it is is a **literal line**: `Msg::literal(text)` (no `From` impl makes one from a
+string since #2035: a literal is written out, with its reason, "Language-neutral text"), the entry
 `literal` (`ascmearc_lang::LITERAL`; no dot, so no generated id can be it) with the text in its
 `text` role. Every language renders it as written, with its repeat mark (`try_render_as`). It
 folds on equal text, as the old log did, and costs a save a few bytes more per line.
@@ -656,7 +656,8 @@ and a summoning's `verb` are lines of data, a chest band's name and a status's `
 `world/people/` (`messages/people.toml`, L4m; talk's own lines in `messages/talk.toml`) is
 the "People" section below.
 
-When no literal is left, `LITERAL`, the `From` text impls, and this section go.
+The `From` text impls went with #2035; `LITERAL` stays for what is language-neutral on purpose
+(an error's own words, a test's lines) and for the leftovers listed in "Language-neutral text".
 
 ## People
 
@@ -880,11 +881,73 @@ parts) are messages, a list joined by `listed`, `and_joined`, or `or_joined` whe
 joined it by hand, `{x:and}` where it said `and_list`. A wand's line nests its roll
 (`wand_does`, `Option<Msg>`, the aim prompt's too). Text roles: the dice and a critical range
 (notation), the parts' and the weight's words (`Content::describe_parts`, `format_weight`), a gem's
-part name, a weapon's noun (`weapon_noun`), what salvage would give (`object::phrase`), a spell's
-and a rod effect's description and a rod effect's name; a unique's power and lore and a spirit
-weapon's power are literal lines. The seal refusals (`seal::check`) are `crafting.seal_*` and
+part name, a weapon's noun (`weapon_noun`), and what salvage would give (`object::phrase`). A
+spell's and a rod effect's description, a rod effect's name, a unique's power and lore, and a
+spirit weapon's power are lines of data (#2035: `spell:<id>.description`,
+`rod_effect:<id>.name`, `.description`, `unique:<id>.phrase`, `.lore`,
+`talent:<id>.effects.spirit_weapon.phrase`). The seal refusals (`seal::check`) are `crafting.seal_*` and
 `crystal(s)_hold(s)_nothing_of` messages; `piece::any_names` ("an iron or brass ingot", inside a
-recipe's stock words) is still English.
+recipe's stock words) is still English ("Language-neutral text").
+
+## Language-neutral text (#2035)
+
+Text a translation cannot reach is an `Arg::Text` (a role filled with text) or a literal line
+(`Msg::literal`). Since #2035 neither is made implicitly: `Arg` and `Msg` have no `From<String>`
+or `From<&str>`, so each is written out, and says what it is:
+
+- `Arg::id(id)`: a content or command id as the data writes it, in a dev line or a refusal of a
+  typed id ("There is no status `dazed`.", "Cast it where? Name a cell: `cast:fire:12,5`.").
+- `Arg::notation(text)`: notation every language writes alike: dice ("2d6+1"), a signed number
+  ("+2"), a critical range ("19-20"), a weight in digits and its unit ("15 kg").
+- `Arg::empty()`: a role left empty.
+- `Arg::text(text)`: anything else, with a reason.
+
+**The guard** (`xtask/src/lang/neutral.rs`; `cargo xtask lang --check` runs it, and so does
+`cargo test -p xtask`): in `ascmearc-core` and `ascmearc-cli`, outside tests, every `Arg::text(`,
+`Arg::Text(`, `Msg::literal(`, and `word:` id formatted from a runtime value (`"word:{`) carries
+a `// lang: <kind>` comment on its line or in the comment lines right above it. In the app,
+whose text roles hold what it rendered already in the language shown (a key as bound, a path,
+a number, a `ui` text), the same holds for `Msg::literal(`, `Arg::Text(`, a runtime `word:`
+id, and an `Arg::text(` of a string literal with a letter in it. The kinds:
+
+| Kind | What the text is |
+|---|---|
+| `typed` | a name or text the player typed |
+| `label` | a word made up and the same in every language (a scroll's label), or a fixed `word:` id core names (`fight::word`, which takes only a `&'static str`) |
+| `error` | an error's own words (an I/O or a parse error, a level that failed to load), shown as written |
+| `dev` | a dev-only line |
+| `test` | a test helper outside a test file |
+| `todo(#N)` | English still to convert, tracked in issue N |
+
+A fixed `word:<id>` (`word:hexed`, `word:sickness`) is a lexicon id like any other: a
+translation's lexicon gives it its word. Key names (`Esc`, a key as bound) are `{key:…}` args or
+the app's text, never core's.
+
+**What #2035 converted**: the last literal `say`s (a burden's news and refusals,
+`items.burdened`, `too_much_to_move`, …; food rotted away, `health.rotted_away`; deciphering's
+stop and end; searching afloat; the shop's "no such thing"; a web's cast message, now the spell's
+line of data; a scenario's `arrival`, `scenario:<id>.arrival`); the save's notices (the app's
+`ui/save.toml`, said in the log by their `ui.save.*` ids); the verbs core supplied as English
+(`combat.verb_dies`, `verb_hit`, `verb_hits`, `verb_shoot`, `creatures.verb_summons`, and what the
+player aims, `combat.aim_*`); a healer's "Be cured first." (`people.be_cured_first`); a slot's
+mark (`slot:<id>.mark`); the item description's data (above); and as lexicon ids a natural
+attack's name (`attack_name:<creature>.<n>`), a breath's and a burst's noun (`breath_noun:`,
+`burst_noun:`), and a guild rank's title (`guild_rank:<guild>.<n>`; `content/data_word.rs`).
+
+**Left, marked `todo(#2035)`** (the guard lists them: `grep -rn 'lang: todo' crates/`):
+`piece::any_names` and the craft stock words (`craft.rs::stock_counted`, a stock's group in
+`lacking_stock`); the parts' words (`describe_parts`), a gem's part name, `weapon_noun`, and
+salvage's `object::phrase` in an item's description; a crystal colour's name and a seal
+family's word (`seal.rs`); an `any_weapon_skill`'s words; a terrain feature's `description`; a
+mutter's verb; a quest's filled `where`; a birth sign without its horoscope parts; the
+graveyard's dead (name, race and class, and how they died, kept in the app's words); the verbs
+and nouns `fight::Words` takes as English (`Words::new`, `named`, a spell's look set in code,
+`data_word`: a hide's name, a hurled thing's noun, a weapon ability's source); the `word:`
+phrases built from data words (`magic/name.rs::ahead`, `describe.rs`'s ammunition nouns,
+`rig.rs`, `seal.rs`, `quest.rs`, `quest_roll.rs`, `content/quest.rs`, `content/lexicon.rs`,
+`actor.rs`); speech as text (`Speech::from(String)`); and why a save could not be resumed. The
+app's screens still show the data's descriptions and names as written (a race's, a class's, a
+talent's, a skill's `description`), which no `Arg` carries and the guard does not see.
 
 ## UI text (L6)
 
@@ -1177,6 +1240,8 @@ arrays named by the id that tells it apart. Every kind of line of data, the thre
 | `level:<id>.hidden.<location>.opens` | a hidden location opening as a quest reveals it |
 | `dialogue:<scope>.silent` | a speaker turning away one outside its `speaks_to` |
 | `level:<id>.name`, `dungeon:<id>.name`, `level:<id>.legend.<char>.name`, `.note`, `vault:<id>.legend.<char>.name`, `.note`, `level:<id>.hidden.<location>.name`, `scenario:<id>.name` | the names of places ("Reasons core composes (#1949)", #1998) |
+| `scenario:<id>.arrival` | a scenario's first line after the welcome (#2035) |
+| `unique:<id>.phrase`, `.lore`; `talent:<id>.effects.spirit_weapon.phrase`; `spell:<id>.description`; `rod_effect:<id>.name`, `.description`; `slot:<id>.mark` | an item's description's words from the data, and a slot's mark in the inventory (#2035, `data_line::describe_lines`) |
 | `quest:<id>.name`, `shop:<id>.title`, `encounter:<campaign>.<entry>.name`, `calendar:months.<n>`, `level:<id>.burial.epitaph`, `level:<id>.legend.<char>.epitaph` | names kept in saves ("Names kept in saves", below) |
 
 What quests' people say is keyed in the same file (`data_line::quest`, added by `quest_speech`)
@@ -1320,8 +1385,8 @@ a dialogue's register are checked names.
 
 ## Decisions L2 made where the design left them open
 
-- The transitional path is the literal entry above, in the crate (`LITERAL`, `From<String> for
-  Msg`), so `say` takes `impl Into<Msg>` and no unconverted site changed.
+- The transitional path is the literal entry above, in the crate (`LITERAL`, and until #2035
+  `From<String> for Msg`), so `say` takes `impl Into<Msg>` and no unconverted site changed.
 - `World::messages()` became the log rendered in English (a `Vec<Message>`), and `World::log()`
   the entries, so the ~290 test reads of the log compile unchanged; the app reads `log()`.
 - The doors' templates are `messages/doors.toml` (the design's `msg::doors::LOCKED`), not

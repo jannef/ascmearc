@@ -397,7 +397,7 @@ fn speaker(content: &Content, id: DialogueId) -> Phrase {
 fn place_of(content: &Content, id: &str) -> Arg {
     (content.level_name_arg(id))
         .or_else(|| (content.dungeon(id)).map(|d| Arg::said(data_line::dungeon_name(&d.id))))
-        .unwrap_or_else(|| Arg::Text(id.to_string()))
+        .unwrap_or_else(|| Arg::id(id))
 }
 
 /// What kill quest `def` is after, `need` of them, as its progress counts them: its `what` if
@@ -407,6 +407,7 @@ fn kill_noun(content: &Content, def: &QuestDef, need: u32) -> Phrase {
         // Called as the quest says, one or many alike.
         Goal::Kill {
             what: Some(what), ..
+        // lang: todo(#2035) a quest's thing named by the data's word
         } => Phrase::id(format!("word:{what}")),
         Goal::Kill {
             target: KillTarget::Creature(c),

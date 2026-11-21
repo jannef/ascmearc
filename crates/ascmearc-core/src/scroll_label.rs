@@ -263,6 +263,7 @@ impl<'a> Lore<'a> {
         self.label_def(object)?;
         let word = match kind {
             "scroll" => Word::literal(label),
+            // lang: label an unknown item's label word
             _ => Word::id(format!("word:{label}")),
         };
         let phrase = Phrase::id(format!("label:{kind}")).with(Modifier::Label(word));
@@ -298,5 +299,5 @@ impl<'a> Lore<'a> {
 
 /// An empty slot: a clause of [`Lore::listed`] that does not apply.
 fn empty() -> Arg {
-    Arg::Text(String::new())
+    Arg::empty()
 }

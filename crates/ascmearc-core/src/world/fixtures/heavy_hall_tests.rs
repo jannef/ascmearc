@@ -5,8 +5,13 @@
 use crate::burden::{self, Burden};
 use crate::content::ContentFiles;
 use crate::object::Stack;
-use crate::test_support::{builtin, run, said_text as said};
+use crate::test_support::{builtin, english_of, run, said_text as said};
 use crate::world::*;
+
+/// Whether the player was told message `id` (it has no roles).
+fn told(w: &World, id: crate::lang::MessageId) -> bool {
+    said(w, &english_of(w.content(), &id.into()))
+}
 
 /// A hall, 30 wide, with a heavy hall over x 10 to 19.
 const HALL: &str = "\
@@ -97,13 +102,13 @@ fn the_limit_is_halved_inside_and_the_player_is_told() {
         &w,
         "Your pack drags at you, as if the stones pulled it down."
     ));
-    assert!(said(&w, Burden::Burdened.news()));
+    assert!(told(&w, Burden::Burdened.news()));
     assert_eq!(load(&w).limit, inside);
     assert_eq!(load(&w).burden(), Burden::Burdened);
     assert_eq!(w.perception().own_load(), load(&w));
     // Out again: lighter at once.
     run(&mut w, "move:W");
-    assert!(said(&w, Burden::Unburdened.news()));
+    assert!(told(&w, Burden::Unburdened.news()));
     assert_eq!(load(&w).limit, outside);
     assert_eq!(w.perception().own_load(), load(&w));
 }
@@ -119,14 +124,14 @@ fn no_step_in_where_the_load_would_be_too_much_but_always_out() {
     run(&mut w, "move:E");
     assert_eq!(w.state.player().pos, OUTSIDE, "refused");
     assert_eq!(w.state.time, time, "no time taken");
-    assert!(said(&w, burden::HEAVY_REFUSED));
+    assert!(told(&w, burden::HEAVY_REFUSED));
     // Inside, with the same load (picked up there, say): overloaded, so no step deeper in, but
     // a step out is to where they can move.
     w.player_mut().pos = INSIDE;
     assert_eq!(load(&w).burden(), Burden::Overloaded);
     run(&mut w, "move:E");
     assert_eq!(w.state.player().pos, INSIDE);
-    assert!(said(&w, burden::MOVE_REFUSED));
+    assert!(told(&w, burden::MOVE_REFUSED));
     run(&mut w, "move:W");
     assert_eq!(w.state.player().pos, OUTSIDE);
     assert_eq!(load(&w).burden(), Burden::Burdened);

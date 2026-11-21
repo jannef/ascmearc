@@ -266,8 +266,8 @@ impl SettingsScreen {
         let footer = ui_with(
             T::FOOTER,
             &[
-                ("up_down", keys.up_down().into()),
-                ("left_right", keys.left_right().into()),
+                ("up_down", Arg::text(keys.up_down())),
+                ("left_right", Arg::text(keys.left_right())),
             ],
         );
         panel.footer(console, &footer);

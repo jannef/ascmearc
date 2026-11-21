@@ -3,7 +3,7 @@
 //! ([`crate::action::Action::SetWeather`]), and the hour skip
 //! ([`crate::action::Action::SkipTime`]). `world/mod.rs` has only the dispatch lines.
 
-use crate::lang::Msg;
+use crate::lang::{Arg, Msg};
 use crate::msg;
 use crate::time::Duration;
 use crate::weather::{self, Weather};
@@ -35,7 +35,7 @@ impl World {
 
     pub(in crate::world) fn set_vision(&mut self, id: &str) -> Spent {
         if self.content.vision(id).is_none() {
-            self.say(Msg::new(msg::turn::NO_VISION_PROFILE_DEV).role("id", id));
+            self.say(Msg::new(msg::turn::NO_VISION_PROFILE_DEV).role("id", Arg::id(id)));
             return Spent::Nothing;
         }
         let name = self.content.vision_phrase(id);

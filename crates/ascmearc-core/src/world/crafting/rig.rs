@@ -37,7 +37,7 @@ use crate::combat;
 use crate::content::data_line;
 use crate::content::{ActionKind, ClassActive, Content, LevelKind, RigDef, RigId, RigTakes, Trap};
 use crate::geom::{Dir, Pos};
-use crate::lang::{MessageId, Msg, Phrase};
+use crate::lang::{Arg, MessageId, Msg, Phrase};
 use crate::msg;
 use crate::perception::PerceptionView;
 use crate::rng::draw;
@@ -189,6 +189,7 @@ pub fn takes_words(content: &Content, def: &RigDef) -> Msg {
             let named = (defs.iter().find(|o| o.id == *kind))
                 .or_else(|| defs.iter().find(|o| o.ammo.as_deref() == Some(kind)));
             let what = named.map_or_else(
+                // lang: todo(#2035) an ammunition kind
                 || Phrase::id(format!("word:{kind}")),
                 |o| Phrase::id(format!("object:{}", o.id)),
             );
@@ -201,6 +202,7 @@ pub fn takes_words(content: &Content, def: &RigDef) -> Msg {
         }
         RigTakes::Stock { group, .. } => {
             let name = (content.stock().group(group)).map_or("piece", |g| g.name.as_str());
+            // lang: todo(#2035) a stock group's piece
             let piece = Phrase::id(format!("word:{group} {name}"));
             Msg::new(msg::crafting::RIG_TAKES_ONE).role("what", piece)
         }
@@ -324,7 +326,7 @@ impl World {
             return Spent::Nothing;
         };
         let Some(rig) = rules.id(name) else {
-            self.say(Msg::new(msg::crafting::NO_SUCH_RIG).role("name", name.to_string()));
+            self.say(Msg::new(msg::crafting::NO_SUCH_RIG).role("name", Arg::id(name.to_string())));
             return Spent::Nothing;
         };
         let def = rules.rig(rig);

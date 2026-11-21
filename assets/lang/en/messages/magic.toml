@@ -121,6 +121,8 @@ pit_refused_ground_seen = "The ground heaves beside {who:the}, and a gate tears 
 pit_refused_in_pit = "The floor here is the Pit's already: a gate tears open beside you instead!"
 pit_refused_in_pit_seen = "The floor heaves beside {who:the}, and a gate tears open!"
 pore_over_writing = "You pore over the writing."
+# What stopped deciphering: said inside a line of what stopped it.
+put_scroll_away = "you put the scroll away"
 # A spell's reach now, a part of it (`spell_words.rs::reach_words`): `n`, the cells (a jump's
 # count for `reach_jumps`). The abilities menu and the `spells` dump say them after its description.
 reach_jumps = "jumps {n:bare}"

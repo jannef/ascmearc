@@ -18,6 +18,7 @@ use crate::input::{Bindings, Context, KeyBinding};
 use crate::render::console::Console;
 use crate::settings::mods::Mods;
 use crate::settings::{TemperatureUnit, fixed};
+use ascmearc_core::lang::Arg;
 use bevy::input::keyboard::{Key, KeyCode, KeyboardInput};
 
 /// A key press reduced to what menus care about: its fixed menu key (`settings::fixed::menu`),
@@ -460,8 +461,8 @@ impl MainMenu {
             T::FOOTER
         };
         let args = [
-            ("up_down", keys.up_down().into()),
-            ("confirm", keys.confirm.into()),
+            ("up_down", Arg::text(keys.up_down())),
+            ("confirm", Arg::text(keys.confirm)),
         ];
         let hint = ui_with(footer, &args);
         panel.footer(console, &hint);
@@ -480,7 +481,7 @@ impl MainMenu {
 /// Legal Notices": copyright, no warranty, where the license is), as long as fits in `width`
 /// columns; `None` if not even the short form fits.
 fn legal_notice(width: usize) -> Option<String> {
-    let version = [("version", env!("CARGO_PKG_VERSION").into())];
+    let version = [("version", Arg::text(env!("CARGO_PKG_VERSION")))];
     [T::LEGAL_LONG, T::LEGAL_MEDIUM, T::LEGAL_SHORT]
         .into_iter()
         .map(|text| ui_with(text, &version))

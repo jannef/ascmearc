@@ -955,8 +955,11 @@ impl World {
         let name = crate::lang::Arg::said(crate::content::data_line::scenario_name(&def.id));
         let welcome = Msg::new(crate::msg::world::WELCOME).role("place", name);
         state.messages.push(0, welcome);
-        if let Some(line) = &def.arrival {
-            state.messages.push(0, line.clone());
+        if def.arrival.is_some() {
+            let line = crate::content::data_line::scenario_arrival(&def.id);
+            state
+                .messages
+                .push(0, crate::content::data_line::said(line));
         }
         if let Some(text) = fixtures::rooms::pervade_line(&state, &content) {
             state.messages.push(0, text);
@@ -1525,7 +1528,8 @@ impl World {
             // Waiting is searching (#1326): a turn of it looks around, one code path. Afloat, the
             // turn passes without the checks (`search_turn`); searching for a while is refused.
             Action::Search(turns)
-                if *turns > 1 && self.refused_afloat("You cannot search in deep water.") =>
+                if *turns > 1
+                    && self.refused_afloat(crate::msg::turn::CANNOT_SEARCH_IN_DEEP_WATER) =>
             {
                 return Spent::Nothing;
             }

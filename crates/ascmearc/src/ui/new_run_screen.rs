@@ -217,7 +217,10 @@ impl NewRunScreen {
             y += 1;
             let (seed, color) = if text.is_empty() {
                 (
-                    ui_with(T::SEED_DEFAULT, &[("seed", info.seed.to_string().into())]),
+                    ui_with(
+                        T::SEED_DEFAULT,
+                        &[("seed", Arg::text(info.seed.to_string()))],
+                    ),
                     TEXT_DIM,
                 )
             } else {
@@ -244,8 +247,8 @@ impl NewRunScreen {
         };
         let footer = format!(
             "{}   {}   {}",
-            ui_with(T::CHOOSE, &[("keys", keys.up_down().into())]),
-            ui_with(next, &[("confirm", keys.confirm.to_string().into())]),
+            ui_with(T::CHOOSE, &[("keys", Arg::text(keys.up_down()))]),
+            ui_with(next, &[("confirm", Arg::text(keys.confirm.to_string()))]),
             ui(T::BACK),
         );
         panel.footer(console, &footer);

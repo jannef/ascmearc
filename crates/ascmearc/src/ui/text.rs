@@ -29,6 +29,14 @@ impl UiText {
     }
 }
 
+/// A UI text said in the message log (`save.welcome_back`): its id, rendered as the log's lines
+/// are, in the language shown.
+impl From<UiText> for Msg {
+    fn from(text: UiText) -> Self {
+        Msg::new(MessageId::new(text.id))
+    }
+}
+
 /// The content the UI text comes from, once the game has loaded it.
 static CONTENT: RwLock<Option<Arc<Content>>> = RwLock::new(None);
 
@@ -227,7 +235,7 @@ mod tests {
         assert_eq!(ui(abilities_screen::TITLE), "Abilities");
         let head = ui_with(abilities_screen::MANA, &[("cost", Arg::Number(26))]);
         assert_eq!(head, "26 mana");
-        let reach = ui_with(abilities_screen::REACH, &[("reach", "range 11".into())]);
+        let reach = ui_with(abilities_screen::REACH, &[("reach", Arg::text("range 11"))]);
         assert_eq!(reach, "Range 11.");
     }
 }

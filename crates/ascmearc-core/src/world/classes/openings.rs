@@ -31,7 +31,7 @@ use crate::combat::{Blow, Profile};
 use crate::content::{ActionKind, ClassActive, Stance};
 use crate::fov::radius2;
 use crate::geom::{Dir, Pos};
-use crate::lang::Msg;
+use crate::lang::{Arg, Msg};
 use crate::msg;
 use crate::perception::CellView;
 use crate::rng::draw;
@@ -122,7 +122,7 @@ impl World {
         events: &mut Vec<Event>,
     ) -> Spent {
         if !active.aims_throw() {
-            self.say(Msg::new(msg::classes::THROWS_NOTHING).role("id", active.id()));
+            self.say(Msg::new(msg::classes::THROWS_NOTHING).role("id", Arg::id(active.id())));
             return Spent::Nothing;
         }
         if !self.may_use_class(active) || !self.can_loose_here() {

@@ -22,6 +22,7 @@ use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
 use ascmearc_core::color::Rgb;
 use ascmearc_core::content::{Content, Section, WeaponSkillDef, WeaponSkillId};
+use ascmearc_core::lang::Arg;
 use ascmearc_core::perception::PerceptionView;
 use ascmearc_core::weapon_skills::WeaponSkills;
 use std::sync::atomic::{AtomicUsize, Ordering};
@@ -206,7 +207,7 @@ impl WeaponSkillsScreen {
             console.print(edge, top + room - 1, "↓", TEXT_DIM);
         }
         let mut close = match bindings.keys_of(KeyCommand::WeaponSkills).first() {
-            Some(key) => ui_with(T::CLOSE_OWN, &[("own", key.display().into())]),
+            Some(key) => ui_with(T::CLOSE_OWN, &[("own", Arg::text(key.display()))]),
             None => ui(T::CLOSE),
         };
         // The spells' skills and the caster styles are on the Magic page.
@@ -214,7 +215,7 @@ impl WeaponSkillsScreen {
             close = format!("{magic}   {close}");
         }
         let footer = if most > 0 {
-            let scroll = ui_with(T::SCROLL, &[("keys", HINTS.up_down().into())]);
+            let scroll = ui_with(T::SCROLL, &[("keys", Arg::text(HINTS.up_down()))]);
             format!("{scroll}   {close}")
         } else {
             close

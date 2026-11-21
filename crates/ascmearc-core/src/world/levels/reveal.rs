@@ -66,7 +66,7 @@ impl World {
         let Some((level, _, _)) =
             (content.hidden_locations(&self.state.campaign)).find(|(_, _, h)| h.id == id)
         else {
-            self.say(Msg::new(msg::levels::NO_HIDDEN_LOCATION_DEV).role("id", id));
+            self.say(Msg::new(msg::levels::NO_HIDDEN_LOCATION_DEV).role("id", Arg::id(id)));
             return Spent::Nothing;
         };
         let place = Arg::said(data_line::hidden_name(level, id));

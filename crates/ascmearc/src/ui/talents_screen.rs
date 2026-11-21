@@ -19,6 +19,7 @@ use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
 use ascmearc_core::color::Rgb;
 use ascmearc_core::content::TreeId;
+use ascmearc_core::lang::Arg;
 use ascmearc_core::perception::{NeedView, PerceptionView};
 
 /// Width of the panel: the character screen's.
@@ -206,9 +207,9 @@ impl TalentsScreen {
                 }
             }
         }
-        let choose = ui_with(T::CHOOSE, &[("keys", HINTS.up_down().into())]);
+        let choose = ui_with(T::CHOOSE, &[("keys", Arg::text(HINTS.up_down()))]);
         let close = match bindings.keys_of(KeyCommand::Talents).first() {
-            Some(key) => ui_with(T::CLOSE_OWN, &[("own", key.display().into())]),
+            Some(key) => ui_with(T::CLOSE_OWN, &[("own", Arg::text(key.display()))]),
             None => ui(T::CLOSE),
         };
         let footer = format!("{choose}   {close}");
@@ -233,7 +234,7 @@ impl TalentsScreen {
             console.print(
                 at,
                 y,
-                &ui_with(T::FROM, &[("from", ui(from).into())]),
+                &ui_with(T::FROM, &[("from", Arg::text(ui(from)))]),
                 TEXT_DIM,
             );
         }

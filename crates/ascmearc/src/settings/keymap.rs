@@ -73,10 +73,10 @@ impl Report {
     /// The report in a few words, for the controls screen and the command line: how many
     /// commands changed, then the problems, the first named.
     pub fn summary(&self, source: &str) -> Vec<String> {
-        let source = ("source", Arg::from(source));
+        let source = ("source", Arg::text(source));
         let changed = match self.changed.as_slice() {
             [] => ui_with(T::IMPORTED_NONE, &[source]),
-            [only] => ui_with(T::IMPORTED_ONE, &[source, ("name", only.name().into())]),
+            [only] => ui_with(T::IMPORTED_ONE, &[source, ("name", Arg::text(only.name()))]),
             many => {
                 let count = ("count", Arg::Number(many.len() as i64));
                 ui_with(T::IMPORTED_MANY, &[source, count])
@@ -87,12 +87,12 @@ impl Report {
             [] => {}
             [only] => lines.push(ui_with(
                 T::IMPORT_PROBLEM,
-                &[("problem", only.as_str().into())],
+                &[("problem", Arg::text(only.as_str()))],
             )),
             [first, rest @ ..] => lines.push(ui_with(
                 T::IMPORT_PROBLEMS,
                 &[
-                    ("problem", first.as_str().into()),
+                    ("problem", Arg::text(first.as_str())),
                     ("more", Arg::Number(rest.len() as i64)),
                 ],
             )),
@@ -105,14 +105,14 @@ impl Report {
 /// leaving `bindings` as they were.
 pub fn import(bindings: &mut Bindings, text: &str) -> Result<Report, String> {
     let table: toml::Table = toml::from_str(text)
-        .map_err(|e| ui_with(T::IMPORT_NOT_KEYMAP, &[("error", e.message().into())]))?;
+        .map_err(|e| ui_with(T::IMPORT_NOT_KEYMAP, &[("error", Arg::text(e.message()))]))?;
     let mut warnings = Vec::new();
     let version = match table.get("version") {
         None => 0,
         Some(v) => v.as_integer().unwrap_or_else(|| {
             warnings.push(ui_with(
                 T::IMPORT_VERSION,
-                &[("value", v.to_string().into())],
+                &[("value", Arg::text(v.to_string()))],
             ));
             VERSION
         }),
@@ -147,13 +147,13 @@ fn listed(table: &toml::Table, warnings: &mut Vec<String>) -> Vec<(KeyCommand, V
             toml::Value::Array(_) => entries.push((name.clone(), name.as_str(), value)),
             _ => warnings.push(ui_with(
                 T::IMPORT_NOT_COMMAND,
-                &[("name", name.as_str().into())],
+                &[("name", Arg::text(name.as_str()))],
             )),
         }
     }
     let mut listed: Vec<(KeyCommand, Vec<KeyBinding>)> = Vec::new();
     for (place, id, value) in entries {
-        let at = ("place", Arg::from(place.as_str()));
+        let at = ("place", Arg::text(place.as_str()));
         let Some(command) = KeyCommand::from_id(id) else {
             if RETIRED.contains(&id) {
                 continue;
@@ -171,13 +171,13 @@ fn listed(table: &toml::Table, warnings: &mut Vec<String>) -> Vec<(KeyCommand, V
                 Some(key) if keys.contains(&key) => {}
                 Some(key) => match key.refused_for(command) {
                     Some(why) => {
-                        let why = ("why", why.into());
+                        let why = ("why", Arg::text(why));
                         warnings.push(ui_with(T::IMPORT_REFUSED, &[at.clone(), why]));
                     }
                     None => keys.push(key),
                 },
                 None => {
-                    let item = ("item", item.to_string().into());
+                    let item = ("item", Arg::text(item.to_string()));
                     warnings.push(ui_with(T::IMPORT_NOT_KEY, &[at.clone(), item]));
                 }
             }
@@ -209,9 +209,9 @@ fn apply(
             let shown = key.display();
             let args = |owner: KeyCommand| {
                 [
-                    ("shown", Arg::from(shown.as_str())),
-                    ("owner", owner.name().into()),
-                    ("name", command.name().into()),
+                    ("shown", Arg::text(shown.as_str())),
+                    ("owner", Arg::text(owner.name())),
+                    ("name", Arg::text(command.name())),
                 ]
             };
             match bindings.owner_in(command.context(), &key) {
@@ -262,18 +262,18 @@ impl KeymapFile {
                     }
                     std::fs::write(path, text)
                 };
-                let shown = ("path", Arg::from(path.display().to_string()));
+                let shown = ("path", Arg::text(path.display().to_string()));
                 write()
                     .map(|()| ui_with(T::KEYMAP_EXPORTED, std::slice::from_ref(&shown)))
                     .map_err(|e| {
                         ui_with(
                             T::KEYMAP_CANNOT_WRITE,
-                            &[shown.clone(), ("error", e.to_string().into())],
+                            &[shown.clone(), ("error", Arg::text(e.to_string()))],
                         )
                     })
             }
             KeymapFile::Browser => {
-                let saved = || ui_with(T::KEYMAP_DOWNLOADED, &[("file", FILE_NAME.into())]);
+                let saved = || ui_with(T::KEYMAP_DOWNLOADED, &[("file", Arg::text(FILE_NAME))]);
                 web::download(FILE_NAME, &text).map(|()| saved())
             }
         }
@@ -285,13 +285,13 @@ impl KeymapFile {
         match self {
             KeymapFile::Nowhere => Err(ui(T::KEYMAP_NOT_STORED)),
             KeymapFile::Path(path) => {
-                let shown = ("path", Arg::from(path.display().to_string()));
+                let shown = ("path", Arg::text(path.display().to_string()));
                 let text = std::fs::read_to_string(path).map_err(|e| match e.kind() {
                     std::io::ErrorKind::NotFound => {
                         ui_with(T::KEYMAP_MISSING, std::slice::from_ref(&shown))
                     }
                     _ => {
-                        let error = ("error", e.to_string().into());
+                        let error = ("error", Arg::text(e.to_string()));
                         ui_with(T::KEYMAP_CANNOT_READ, &[shown.clone(), error])
                     }
                 })?;
@@ -311,8 +311,8 @@ pub fn command(args: &crate::cli::Args) -> Result<String, String> {
     let mut out = String::new();
     if let Some(path) = &args.import_keys {
         let shown = path.display().to_string();
-        let at = ("path", Arg::from(shown.as_str()));
-        let failed = |text, e: String| ui_with(text, &[at.clone(), ("error", e.into())]);
+        let at = ("path", Arg::text(shown.as_str()));
+        let failed = |text, e: String| ui_with(text, &[at.clone(), ("error", Arg::text(e))]);
         let text = (std::fs::read_to_string(path))
             .map_err(|e| failed(T::KEYS_CANNOT_READ, e.to_string()))?;
         let report = import(&mut bindings, &text).map_err(|e| failed(T::KEYS_IN_FILE, e))?;
@@ -321,17 +321,17 @@ pub fn command(args: &crate::cli::Args) -> Result<String, String> {
         summary.extend(report.warnings.iter().map(|w| format!("  {w}")));
         store.save(&settings, &bindings)?;
         summary.push(match store.place() {
-            Some(place) => ui_with(T::KEYS_SAVED, &[("place", place.into())]),
+            Some(place) => ui_with(T::KEYS_SAVED, &[("place", Arg::text(place))]),
             None => ui(T::KEYS_NOT_SAVED),
         });
         out.extend(summary.into_iter().map(|line| line + "\n"));
     }
     if let Some(path) = &args.export_keys {
-        let at = ("path", Arg::from(path.display().to_string()));
+        let at = ("path", Arg::text(path.display().to_string()));
         std::fs::write(path, export(&bindings)).map_err(|e| {
             ui_with(
                 T::KEYS_CANNOT_WRITE,
-                &[at.clone(), ("error", e.to_string().into())],
+                &[at.clone(), ("error", Arg::text(e.to_string()))],
             )
         })?;
         out.push_str(&ui_with(T::KEYS_WROTE, &[at]));

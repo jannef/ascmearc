@@ -14,6 +14,7 @@
 
 adjusted = "Your eyes adjust to the dimmer light."
 cannot_rest_in_deep_water = "You cannot rest in deep water."
+cannot_search_in_deep_water = "You cannot search in deep water."
 clouds_gather = "Clouds gather."
 # `who`: a creature seen farther off before, now close (said as `came`).
 comes_close = "{who:The} come{who:s} close"

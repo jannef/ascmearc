@@ -385,7 +385,7 @@ fn creatures_that_came_are_said_counted_and_agree_their_verb() {
     assert_eq!(say(crawl), "3 kobolds crawl out of the wormhost!");
     let summons = Msg::new(creatures::SUMMONS)
         .role("who", creature(content.creature(kobold)))
-        .role("verb", "summons")
+        .role("verb", crate::msg::creatures::VERB_SUMMONS)
         .role("what", crate::world::turn::phrase::something());
     assert_eq!(say(summons), "The kobold summons something!");
     let broke = |n| {

@@ -370,7 +370,7 @@ impl World {
     /// `spell` by its name (`spell:<id>`); nothing for a spell the content lacks.
     fn spell_name(&self, spell: SpellId) -> Arg {
         (self.content.spell_of(spell))
-            .map_or_else(|| Arg::from(""), |d| self.content.spell_phrase(d).into())
+            .map_or_else(Arg::empty, |d| self.content.spell_phrase(d).into())
     }
 
     /// The player knows `spell` at `rank` from now on (module docs: "Deepening").

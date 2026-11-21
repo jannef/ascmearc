@@ -496,10 +496,10 @@ impl ObjectScreen {
                         &[
                             ("rank", Arg::Number(i64::from(*rank))),
                             ("max", Arg::Number(i64::from(MAX_SPELL_RANK))),
-                            ("chance", (*chance).into()),
+                            ("chance", Arg::text(*chance)),
                         ],
                     ),
-                    None => ui_with(T::MARK_LEARNING, &[("chance", (*chance).into())]),
+                    None => ui_with(T::MARK_LEARNING, &[("chance", Arg::text(*chance))]),
                 });
                 let marks: Vec<String> = (teaches.into_iter())
                     .chain(mark)
@@ -618,9 +618,9 @@ impl ObjectScreen {
                 let text = ui_with(
                     T::DIALOG_TEXT,
                     &[
-                        ("grimoire", grimoire.into()),
-                        ("what", what.into()),
-                        ("chance", chance.into()),
+                        ("grimoire", Arg::text(grimoire)),
+                        ("what", Arg::text(what)),
+                        ("chance", Arg::text(chance)),
                     ],
                 );
                 ScreenAction::Dialog(Box::new(
@@ -789,17 +789,17 @@ impl ObjectScreen {
     /// kg)`, `Burdened over 15 kg, strained over 30 kg, overloaded over 45 kg`.
     fn summary(&self, width: i32) -> Vec<(String, Rgb)> {
         let burden = (self.load.map(|l| l.burden())).filter(|b| *b != Burden::Unburdened);
-        let weight = ("weight", format_weight(self.weight.carried).into());
+        let weight = ("weight", Arg::text(format_weight(self.weight.carried)));
         let parts = [
             match burden {
-                Some(b) => ui_with(T::CARRYING_BURDEN, &[weight, ("burden", b.id().into())]),
+                Some(b) => ui_with(T::CARRYING_BURDEN, &[weight, ("burden", Arg::text(b.id()))]),
                 None => ui_with(T::CARRYING, &[weight]),
             },
             ui_with(
                 T::YOUR_WEIGHT,
                 &[
-                    ("total", format_weight(self.weight.total()).into()),
-                    ("base", format_weight(self.weight.base).into()),
+                    ("total", Arg::text(format_weight(self.weight.total()))),
+                    ("base", Arg::text(format_weight(self.weight.base))),
                 ],
             ),
         ];
@@ -916,8 +916,8 @@ impl ObjectScreen {
                 Some(m) => ui_with(
                     T::NAME_MARKED,
                     &[
-                        ("name", entry.name.clone().into()),
-                        ("mark", m.clone().into()),
+                        ("name", Arg::text(entry.name.clone())),
+                        ("mark", Arg::text(m.clone())),
                     ],
                 ),
                 None => entry.name.clone(),
@@ -952,15 +952,18 @@ impl ObjectScreen {
             last => format!("a-{last}"),
         });
         let with = |text: UiText| match &letters {
-            Some(l) => format!("{}   ", ui_with(text, &[("letters", l.clone().into())])),
+            Some(l) => format!("{}   ", ui_with(text, &[("letters", Arg::text(l.clone()))])),
             None => String::new(),
         };
         let page = (self.entries.hint(&keys)).map_or(String::new(), |hint| format!("{hint}   "));
-        let confirm = || ("confirm", Arg::from(keys.confirm));
+        let confirm = || ("confirm", Arg::text(keys.confirm));
         let either = |verb: UiText| {
-            let verb = ("verb", ui(verb).into());
+            let verb = ("verb", Arg::text(ui(verb)));
             match &letters {
-                Some(l) => ui_with(T::EITHER, &[("letters", l.clone().into()), confirm(), verb]),
+                Some(l) => ui_with(
+                    T::EITHER,
+                    &[("letters", Arg::text(l.clone())), confirm(), verb],
+                ),
                 None => ui_with(T::EITHER_NONE, &[confirm(), verb]),
             }
         };
@@ -968,8 +971,8 @@ impl ObjectScreen {
             format!(
                 "{}{}   {}   {page}{}",
                 with(T::FOOTER_MARK),
-                ui_with(T::FOOTER_MARK_ALL, &[("own", keys.mark_all.into())]),
-                ui_with(T::EITHER_NONE, &[confirm(), ("verb", ui(verb).into())]),
+                ui_with(T::FOOTER_MARK_ALL, &[("own", Arg::text(keys.mark_all))]),
+                ui_with(T::EITHER_NONE, &[confirm(), ("verb", Arg::text(ui(verb)))]),
                 ui(esc),
             )
         };
@@ -979,7 +982,9 @@ impl ObjectScreen {
                 Dropping::FromPlay => mark(T::VERB_DROP, T::ESC_CANCEL),
                 Dropping::No => {
                     let close = match bindings.keys_of(KeyCommand::Inventory).first() {
-                        Some(key) => ui_with(T::ESC_CLOSE_OWN, &[("own", key.display().into())]),
+                        Some(key) => {
+                            ui_with(T::ESC_CLOSE_OWN, &[("own", Arg::text(key.display()))])
+                        }
                         None => ui(T::ESC_CLOSE),
                     };
                     let drop = if letters.is_some() {

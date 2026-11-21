@@ -400,10 +400,10 @@ impl Aim {
             AimKind::Ability(_) => T::PROMPT_ABILITY,
         };
         let args = [
-            ("ready", Arg::from(ready)),
-            ("next", Arg::from(fixed::NEXT_TARGET)),
-            ("loose", Arg::from(fixed::LOOSE)),
-            ("confirm", Arg::from(confirm)),
+            ("ready", Arg::text(ready)),
+            ("next", Arg::text(fixed::NEXT_TARGET)),
+            ("loose", Arg::text(fixed::LOOSE)),
+            ("confirm", Arg::text(confirm)),
         ];
         ui_with(text, &args)
     }
