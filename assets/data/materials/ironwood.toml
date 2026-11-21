@@ -9,8 +9,8 @@ to_hit = 0
 damage = 0
 protection = 60
 value = 300
-rarity = { weight = 40, deeper = 3 }
-gear = { weight = 20, deeper = 3 }
+rarity = { weight = 40, per_level = 3 }
+gear = { weight = 20, per_level = 3 }
 fit = { armour = "poor" }
 work = 3
 binding = 1

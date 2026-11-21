@@ -1,8 +1,8 @@
 //! Gems (#191): the data is checked; a gem is worth its value × size × cut, and
 //! an ornament adds its gem's worth to its item; names, descriptions, colours, and weights follow
 //! the gems; identical gems stack; loot finds gems and sets items with them, rarely and
-//! deterministically, larger and finer deeper; gems survive saves and replays; shops price them
-//! by their gem.
+//! deterministically, larger and finer at higher item levels; gems survive saves and replays;
+//! shops price them by their gem.
 
 use crate::action::{Positions, parse_actions};
 use crate::color::Rgb;
@@ -511,7 +511,7 @@ fn placements_and_items_name_their_gems() {
 }
 
 #[test]
-fn loot_finds_gems_rarely_and_larger_and_finer_deeper() {
+fn loot_finds_gems_rarely_and_larger_and_finer_at_higher_item_levels() {
     let content = builtin();
     let gems = content.gems().expect("gems");
     // Across seeds: 5000 finds from each of four runs' streams.

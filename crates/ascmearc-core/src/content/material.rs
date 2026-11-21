@@ -231,15 +231,15 @@ pub struct Fits {
     pub other: Fit,
 }
 
-/// How often something is made of a material, among the materials its item may be made of: a
-/// `weight` at level 1, `deeper` more (or less) for each level past the first, never below 0,
-/// and nothing below `level`. Loot's level is the item level; gear's, the creature's.
+/// How often something is made of a material, among the materials its item may be made of:
+/// nothing below its own `level`, then a `weight` there and `per_level` more (or less) for each
+/// level past it, never below 0. Loot's level is the item level; gear's, the creature's.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Found {
     pub weight: u32,
     #[serde(default)]
-    pub deeper: i32,
+    pub per_level: i32,
     #[serde(default = "first")]
     pub level: u8,
 }
@@ -253,14 +253,15 @@ fn first() -> u8 {
 }
 
 impl Found {
-    /// Its weight at `level`: 0 below its own level, else `weight` plus `deeper` for each level
-    /// past the first, at least 0 and at most [`MAX_FOUND`].
+    /// Its weight at `level`: 0 below its own level, else `weight` plus `per_level` for each
+    /// level past its own (so a material is as rare as `weight` says where it first appears), at
+    /// least 0 and at most [`MAX_FOUND`].
     pub fn at(&self, level: u8) -> u32 {
         let level = level.max(1);
         if level < self.level {
             return 0;
         }
-        let more = i64::from(self.deeper) * i64::from(level - 1);
+        let more = i64::from(self.per_level) * i64::from(level - self.level.max(1));
         let weight = (i64::from(self.weight) + more).clamp(0, i64::from(MAX_FOUND));
         u32::try_from(weight).unwrap_or(0)
     }

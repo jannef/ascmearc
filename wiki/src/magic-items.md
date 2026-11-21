@@ -89,10 +89,10 @@ also set with a [gem](gems.md) more often, for the kinds of item that ever are:
 
 {{#include generated/gear-item-level.md}}
 
-The [materials](materials.md) that hold magic best turn up from a higher item level and grow more
-common as it rises:
-dragonbone and dragonscale from item level 6, mithril from 8, adamantium (a fighting metal, which
-holds less) from 16; gold a little more at every level.
+The [materials](materials.md#how-often-each-material-is-found) that hold magic best come only at
+higher item levels and grow more common from there: dragonbone and dragonscale from item level
+16, mithril from 20, adamantium (a fighting metal, which holds less) from 30; gold a little more
+at every level.
 
 How it works out for what you find:
 

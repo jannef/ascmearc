@@ -6,7 +6,7 @@ use super::order;
 use super::util::stat_name;
 use super::util::{capital, percent, signed, times};
 use ascmearc_core::content::{
-    Content, Fit, MaterialDef, MaterialId, ObjectDef, PartRole, VERY_RARE,
+    Content, Fit, Found, MaterialDef, MaterialId, ObjectDef, PartRole, VERY_RARE,
 };
 use ascmearc_core::item_parts::ItemPart;
 use ascmearc_core::object::{Stack, format_weight};
@@ -159,33 +159,37 @@ pub(super) fn material_work(content: &Content) -> String {
     out
 }
 
-/// How often loot and creatures' gear are made of each material: the weight at item level 1 (in
-/// words too), how it changes with each item level higher, the least level, and how well it suits
-/// each use of item (#1191).
+/// How often loot and creatures' gear are made of each material: the least item level, the
+/// weight there (in words too), how it changes with each item level higher, the same for gear by
+/// the creature's level, and how well it suits each use of item (#1191; a weight counts from the
+/// material's own level, `Found::at`, #2046).
 pub(super) fn material_finds(content: &Content) -> String {
     let mut out = String::from(
-        "| Material | Loot at item level 1 | Each item level higher | From item level \
-         | Gear at creature level 1 | Each level higher | Weapons | Armour | Jewellery | Other items |\n\
-         |---|---|---:|---:|---|---:|---|---|---|---|\n",
+        "| Material | Loot from item level | Weight there | Each item level higher \
+         | Gear | Each level higher | Weapons | Armour | Jewellery | Other items |\n\
+         |---|---:|---|---:|---|---:|---|---|---|---|\n",
     );
-    let level = |found: Option<ascmearc_core::content::Found>| match found {
-        Some(f) => (
-            format!("{} ({})", f.weight, how_often(f.weight)),
-            signed(f.deeper),
-            f.level.to_string(),
-        ),
-        None => ("never".to_string(), "-".to_string(), "-".to_string()),
-    };
+    let weight = |f: Found| format!("{} ({})", f.weight, how_often(f.weight));
     for (_, m) in by_group(content) {
         if m.rarity.is_none() && m.gear.is_none() {
             continue;
         }
-        let (loot, deeper, from) = level(m.rarity);
-        let (gear, higher, _) = level(m.gear);
+        let (from, loot, more) = match m.rarity {
+            Some(f) => (f.level.max(1).to_string(), weight(f), signed(f.per_level)),
+            None => ("-".to_string(), "never".to_string(), "-".to_string()),
+        };
+        let (gear, higher) = match m.gear {
+            Some(f) if f.level > 1 => (
+                format!("{}, from level {}", weight(f), f.level),
+                signed(f.per_level),
+            ),
+            Some(f) => (weight(f), signed(f.per_level)),
+            None => ("never".to_string(), "-".to_string()),
+        };
         let f = m.fit;
         let _ = writeln!(
             out,
-            "| {} | {loot} | {deeper} | {from} | {gear} | {higher} | {} | {} | {} | {} |",
+            "| {} | {from} | {loot} | {more} | {gear} | {higher} | {} | {} | {} | {} |",
             capital(&m.name),
             f.weapon.id(),
             f.armour.id(),
