@@ -56,9 +56,10 @@ and hashed; the business partner is an actor like the servant.
 
 The message log (`WorldState::messages`, `messages.rs`) is saved and hashed as composition
 entries, never as text (#1885; `docs/dev/localization.md` "The log"): each `{turn, id, args,
-count}`, `args` left out while empty and `count` while 1, `passing` neither saved nor hashed. A
-line still said as text is the `literal` entry with its text (`{"id":"literal","args":{"text":
-{"text":"You hit the kobold."}}}`) until its subsystem is converted. So a changed English word
+count}`, `args` left out while empty and `count` while 1, `passing` neither saved nor hashed. The
+few lines said as text, each language-neutral with its reason (a typed name, an error's own
+words, a dev line; `docs/dev/localization.md` "Language-neutral text"), are the `literal` entry
+with its text (`{"id":"literal","args":{"text":{"text":"…"}}}`). So a changed English word
 in `assets/lang/` moves no state hash and loads in any save; a renamed message id, a role added,
 or an argument changed does, like any field, under the version pin.
 

@@ -44,6 +44,14 @@ the screen tells which. No run exists in the main menu, so nothing holds the old
 content change rebuilds the glyph atlas and the animation table (`render::layout`), as a font
 size change does.
 
+**Languages.** A language is content files under `lang/<code>/` (`docs/dev/localization.md`
+"The language setting"), so a mod adds one by shipping `lang/<code>/lang.toml` and its
+`messages/` and `ui/` files, and the settings screen lists it; or it replaces one of the game's
+language files whole (an English one included). Such a mod is a content mod like any other for
+now: the save and the replay record it and refuse its absence. Exempting a mod whose files all
+lie under `lang/` (a text mod) from the fingerprint and the save's `mods` is still to come
+(`docs/design/localization.md` §11).
+
 **The CLI** takes `--mod DIR` too (`ascmearc-cli/src/main.rs`).
 
 **The example mod**, `mods/pride_month/`, gives each of Cēaptūn's five townsfolk (Hild, Godgifu,
