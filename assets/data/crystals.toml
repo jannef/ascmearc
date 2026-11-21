@@ -386,7 +386,7 @@ tag = "dragon"
 dragon = "heart_crystal"
 heart = "heart_crystal"
 fetter = "soul_fetter"
-salvage_level = 10
+salvage_level = 20
 salvage_chance = 3
 
 [consume]

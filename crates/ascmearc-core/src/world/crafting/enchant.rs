@@ -23,8 +23,10 @@
 //!   affix is of its first crystal's families, the second of the second's, the third of the
 //!   third's, any more of all three; each of its crystals must have something to roll.
 //! - **The item level of the roll**: the greater of the item's own and the enchanter's reach
-//!   (Enchanting's [`Effect::EnchantLevel`], 1 to 12); Kindle's and Imbue's are the reach,
-//!   Unbind's the item's own. The item takes the roll's level.
+//!   (Enchanting's [`Effect::EnchantLevel`], 1 to 40); Kindle's and Imbue's are the reach,
+//!   Unbind's the item's own. The item takes the roll's level. The level sets the highest tier
+//!   the roll reaches, not the tier: each affix's tier is loot's roll among the tiers the level
+//!   reaches ([`crate::magic::loot::roll_affix_within`]).
 //! - **Time**: the recipe's `seconds` and each seal's `seal_seconds` (Quick hands' share of
 //!   them, `mastery::craft_seconds`), in turns of the `craft` action (the work driver,
 //!   [`World::work`]):
@@ -548,7 +550,7 @@ fn place(content: &Content, affixes: &mut Vec<Affix>, affix: Affix, kind: AffixK
     }
 }
 
-/// `player`'s reach: the item level their Enchanting rolls at, 1 to 12.
+/// `player`'s reach: the item level their Enchanting rolls at, 1 to 40.
 fn reach(content: &Content, player: &Actor) -> u8 {
     let skill = content.enchanting().map(|r| r.skill);
     let value = skill.map_or(1, |s| {

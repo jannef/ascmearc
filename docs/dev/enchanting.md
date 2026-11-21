@@ -157,7 +157,7 @@ and objects:
   reached.
 - `[rare]`: `materials` (`heart_crystal`, `soul_fetter`: class `materials`, 30 g, value 300, not
   crystals), Soulglass's `level`, `chance`, `tag` (`"dragon"`) and `dragon` (the material a creature
-  of that tag always gives, E3), salvage's `salvage_level = 10`,
+  of that tag always gives, E3), salvage's `salvage_level = 20`,
   `salvage_chance = 3`, and which the recipes take: `heart` (a rare's Quicken) and `fetter`
   (Recast's affix kept), each one of `materials` (`RareMaterials::{heart, fetter}`; the loader
   refuses otherwise).
@@ -181,7 +181,8 @@ families, so change them with the colours.
 skill of every enchanting check's `craft` points, the reach, and salvage's affix mark; the loader
 refuses an unknown one), `stat = "willpower"` (every enchanting check's stat; #1493),
 `salvage_difficulty = 12`,
-`salvage_tier_step = 3` (`salvage_against(affix)` = 12 + tier ÷ 3, a tier-12 affix +4),
+`salvage_tier_step = 3` (`salvage_against(affix)` = 12 + tier ÷ 3: tier 3 +1, tier 11 +3, a tier-12 affix +4; the
+wiki reads the highest tier from the affixes),
 `level_step = 3` (the recipes' check, below) and `seal_seconds = 1800` (a seal's time, below).
 
 ## Consuming a crystal
@@ -226,8 +227,9 @@ holds `kindle.toml`, `quicken.toml`, `recast.toml`, `imbue.toml`, `ennoble.toml`
 menu for the trained, and `data/recipes.toml`'s `[[profession]]` gives it "Your work as an
 enchanter.", `stat = "willpower"`, `verb = "Enchant"`. `data/skills/` gives Enchanting
 the professions' `craft` curve (0, 8 at 100, 12 at 200; salvage's affix checks read it too), its
-reach `enchant_level` (`Effect::EnchantLevel`, `[[0, 1], [110, 12], [200, 12]]`, at most
-`MAX_ENCHANT_LEVEL` 12), and a `craft` mark at 100 %.
+reach `enchant_level` (`Effect::EnchantLevel`, `[[0, 1], [110, 24], [200, 40]]`, at most
+`MAX_ENCHANT_LEVEL` 40: a journeyman at 110 reaches the ladders' middle, a master at 200 their
+top; `docs/design/item-level-40.md` §8), and a `craft` mark at 100 %.
 
 - **The data** (`content/recipe.rs`): `use = "enchant"` with `enchant = "kindle" | "quicken" |
   "recast" | "imbue" | "ennoble" | "unbind"` (`RecipeUse::Enchant(EnchantKind)`) and `crystals` (`RecipeDef::crystals`, 0 to
@@ -268,8 +270,11 @@ reach `enchant_level` (`Effect::EnchantLevel`, `[[0, 1], [110, 12], [200, 12]]`,
   fewer crystals carried, all stacks counted, than the recipe takes). `takes`: "a plain item, a crystal, about
   1 hour", "a magic item, a crystal, about 1 hour", "a magic item, about 30 minutes".
 - **The roll's item level**: the reach is `skill_effect_of(enchanting, EnchantLevel)` clamped
-  to 1..12; Kindle and Imbue roll at the reach, Quicken, Recast, and Ennoble at the greater of the item's `Magic.level` and the
-  reach, Unbind's check reads the item's own. The made item's `Magic.level` is the roll's.
+  to 1..40; Kindle and Imbue roll at the reach, Quicken, Recast, and Ennoble at the greater of the item's `Magic.level` and the
+  reach, Unbind's check reads the item's own. The made item's `Magic.level` is the roll's. The
+  level bounds the tiers, not the tier: each affix's tier is loot's roll among the tiers the
+  level reaches (`magic::loot`; `docs/dev/magic-items.md`), so the reach is the highest an
+  enchanter can roll, and Recast is how he chases a top tier.
 - **The check** (`World::enchanted`, after the work driver ran the recipe's `seconds`, Quick hands' share
   of them, `mastery::craft_seconds`, as the plan and the row say; an interruption
   spends nothing but the time): `combat::roll_natural` (two keyed draws) + `stat`'s modifier

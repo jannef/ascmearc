@@ -217,8 +217,8 @@ fn kindle_makes_a_plain_item_magic_with_one_affix_of_the_crystals_colour() {
             assert_eq!(magic.rarity, Rarity::Magic);
             assert_eq!(magic.affixes.len(), 1);
             assert!(magic.identified);
-            // Enchanting 100: a reach of 11.
-            assert_eq!(magic.level, 11);
+            // Enchanting 100: a reach of 21.
+            assert_eq!(magic.level, 21);
             let families = families(&w, colour);
             assert!(
                 families.contains(&category(&w, &magic.affixes[0])),
@@ -287,8 +287,8 @@ fn quicken_adds_the_kind_a_magic_item_lacks() {
             .expect("affix");
         assert_eq!(added.kind, AffixKind::Suffix);
         assert!(families(&w, "red").contains(&added.category));
-        // The roll's level: the greater of the item's (1) and the reach (11).
-        assert_eq!(magic.level, 11);
+        // The roll's level: the greater of the item's (1) and the reach (21).
+        assert_eq!(magic.level, 21);
     }
 }
 
@@ -371,8 +371,8 @@ fn enchanted_arrows_hold_one_affix_less() {
 }
 
 #[test]
-fn the_reach_grows_with_enchanting_and_a_deeper_item_keeps_its_level() {
-    for (value, reach) in [(0, 1), (10, 2), (55, 6), (110, 12), (200, 12)] {
+fn the_reach_grows_with_enchanting_and_a_higher_item_keeps_its_level() {
+    for (value, reach) in [(0, 1), (10, 3), (55, 12), (110, 24), (155, 32), (200, 40)] {
         let mut w = world(1);
         train(&mut w, value);
         item(&mut w, "long_sword", 1);
@@ -380,7 +380,7 @@ fn the_reach_grows_with_enchanting_and_a_deeper_item_keeps_its_level() {
         enchant_out_for_test(&mut w, "kindle", &[Some(0), Some(1)], EnchantBand::Made);
         assert_eq!(checked(&w, 0).level, reach, "Enchanting {value}");
     }
-    // Quicken rolls at a found item's own level when it is deeper than the reach.
+    // Quicken rolls at a found item's own level when it is higher than the reach.
     let mut w = world(1);
     train(&mut w, 10);
     magic_sword(&mut w, &["sharp"], false, true);
@@ -757,7 +757,7 @@ fn recast_rolls_as_many_affixes_of_the_same_kinds_anew() {
         for affix in &magic.affixes {
             assert!(blue.contains(&category(&w, affix)), "{:?}", magic.affixes);
         }
-        assert_eq!(magic.level, 11);
+        assert_eq!(magic.level, 21);
         assert_eq!(w.state.player().inventory.len(), 1, "the crystal is spent");
     }
     // One suffix stays one suffix.
@@ -794,7 +794,7 @@ fn imbue_makes_a_plain_item_rare_within_its_capacity() {
         assert_eq!(magic.rarity, Rarity::Rare);
         assert!(magic.identified);
         assert_eq!(magic.affixes.len(), 3, "{:?}", magic.affixes);
-        assert_eq!(magic.level, 11);
+        assert_eq!(magic.level, 21);
         // Prefixes before suffixes, each affix of one crystal's colour.
         let k = kinds(&w, &magic);
         assert!(k.windows(2).all(|p| p[0] <= p[1]), "{k:?}");
