@@ -1,0 +1,14 @@
+# Lines of data: objects (`object:<id>.<field>`). A weapon's `verb` is the third person
+# singular, its `you` the second, both taking a partitive object.
+
+[battle_axe]
+verb = { text = "hakkaa", of = "1c029f" }
+you = { text = "hakkaat", of = "3c6a21" }
+
+[great_axe]
+verb = { text = "hakkaa", of = "1c029f" }
+you = { text = "hakkaat", of = "3c6a21" }
+
+[hand_axe]
+verb = { text = "hakkaa", of = "1c029f" }
+you = { text = "hakkaat", of = "3c6a21" }

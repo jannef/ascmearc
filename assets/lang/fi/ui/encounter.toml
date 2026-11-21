@@ -1,0 +1,41 @@
+# The overworld encounter's dialog (`crates/ascmearc/src/ui/encounter.rs`).
+
+[ambush]
+of = "e02ee9"
+text = "Väijy"
+
+[bluff]
+of = "0591d0"
+text = "Puhu itsesi ohi"
+
+[evade]
+of = "e29d9c"
+text = "Livahda ohi"
+
+[evade_met]
+of = "65c8e3"
+text = "Pääse karkuun"
+
+[fight]
+of = "7b4218"
+text = "Taistele"
+
+[hail]
+of = "1f12ca"
+text = "Tervehdi"
+
+[hunt]
+of = "cb193f"
+text = "Metsästä"
+
+[pass]
+of = "1ec085"
+text = "Kulje ohi"
+
+[pass_wildlife]
+of = "473e35"
+text = "Anna olla"
+
+[title]
+of = "561760"
+text = "{party:Bare}"

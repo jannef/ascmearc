@@ -1,0 +1,121 @@
+# The classes: class actives and their refusals, ki, Charge, Consecrate, the calling, talents
+# given, openings, the business partner's stake, the prayer, Sanctuary, smites, songs, the spirit
+# weapon, the stipend, Rage, Lurk, Volley, War cry, Cackle. Roles as in the English file: `who` a
+# creature, `keeper` a shopkeeper, `missile` what flew, `what` a stack or a list or an object
+# type; `status`, `name`, `talent`, `song`, `class` phrases; `reason`, `came` nested messages;
+# `id` typed text; `gold` digits.
+
+aims_at_no_place = { text = "`{id:bare}` ei tähtää mihinkään paikkaan.", of = "4b0c30" }
+already_know_what = { text = "Tiedät jo, mikä {what:nom} on.", of = "78d703" }
+already_light_on_feet = { text = "Askeleesi ovat jo kevyet.", of = "fb068b" }
+ask_where = { text = "Mihin?", of = "76a927" }
+beside_it_already = { text = "Olet jo sen vieressä.", of = "396427" }
+cackle = { text = "Räkätät.", of = "bfce68" }
+call_in_what_shape = { text = "Missä muodossa kutsut sen?", of = "09295a" }
+cannot_call_no_weapon = { text = "Et voi kutsua esiin {what:par}: se ei ole käteen sopiva ase.", of = "dab990" }
+cannot_charge_on_overworld = { text = "Et voi rynnäköidä maailmankartalla.", of = "ff3e23" }
+cannot_charge_while_swimming = { text = "Et voi rynnäköidä uidessasi.", of = "2270f8" }
+cannot_exploit_with = { text = "Et voi iskeä aukkoon {what:ade}.", of = "01a1fd" }
+cannot_hallow_open_land = { text = "Avointa maata ei voi pyhittää: etsi paikka, jossa polvistua.", of = "ae4680" }
+cannot_kneel_in_water = { text = "Et voi polvistua veteen.", of = "e7a42a" }
+cannot_reason = { text = "Et voi: {reason:bare}.", of = "a58460" }
+carry_no_such_thing = { text = "Sinulla ei ole sellaista mukanasi.", of = "b79167" }
+charge = { text = "Rynnäköit!", of = "f95524" }
+does_not_flinch = { text = "{who:Nom} ei hätkähdäkään.", of = "ed6dd9" }
+draw_old_soldiers_wind = { text = "Ammennat voimaa vanhan soturin sitkeydestä.", of = "183d64" }
+dread_settles = { text = "Kammo laskeutuu maahan ympärilläsi.", of = "cc0d6d" }
+eyes_grow_heavy = { text = "{who:Gen} silmäluomet alkavat painaa.", of = "552fb3" }
+fades_from_hand = { text = "{what:Nom} haihtuu kädestäsi.", of = "e658e7" }
+gain_talent = { text = "Saat taipumuksen: {talent:Nom}.", of = "a9e72d" }
+ground_already_hallowed = { text = "Tämä maa on jo pyhitetty.", of = "25b48d" }
+ground_hallowed = { text = "Maa ympärilläsi on pyhitetty.", of = "ffb783" }
+hallowing_fades = { text = "Pyhitys haihtuu.", of = "bf4e88" }
+hand_over_gold = { text = "Annat {gold:bare} kultaa.", of = "383a02" }
+hands_not_free = { text = "Kätesi eivät ole vapaat.", of = "c6343e" }
+hexes_hold = { text = "Kirouksesi pitävät.", of = "ae6a8b" }
+holy_light_clings = { text = "Pyhä valo tarttuu {who:ill}.", of = "68bc79" }
+in_the_way = { text = "Jokin on tiellä.", of = "ce360b" }
+keeper_steps_into_way = { text = "{keeper:Nom} astuu tiellesi: et ole maksanut.", of = "d8fc0a" }
+kneel_and_pray = { text = "Polvistut rukoilemaan.", of = "2934e5" }
+kneel_to_consecrate = { text = "Polvistut ja rukoilet pyhittääksesi tämän paikan.", of = "0bbe1d" }
+knows_nothing_about_that = { text = "{who:Nom} ei tiedä siitä mitään.", of = "eb6c6f" }
+lacking = { text = "{words:Bare}.", of = "65c517" }
+level_consecrated = { text = "Hiljaisuus laskeutuu koko kerroksen ylle: se on pyhitetty.", of = "620227" }
+look_over_merchants_eye = { text = "Tarkastelet {what:par} kauppiaan silmin.", of = "b396cd" }
+loose_a_volley = { text = "Ammut laukaussarjan!", of = "5487a9" }
+mind_already_still = { text = "Mielesi on jo tyyni.", of = "d9b486" }
+no_calling_opens_dev = { text = "Mikään tämän maailman kutsumus ei avaa arvoluokkaa `{id:bare}` {class:all} (dev).", of = "1c0302" }
+no_character_to_call_dev = { text = "Kutsuttavaa hahmoa ei ole (dev).", of = "1104f3" }
+no_missile_weapon_ready = { text = "Sinulla ei ole ampuma-asetta valmiina.", of = "1c1e1e" }
+no_one_there = { text = "Siellä ei ole ketään.", of = "17fcac" }
+no_one_under_hex = { text = "Kukaan näkemäsi ei ole kirouksesi alaisena.", of = "08559f" }
+no_prestige_class_dev = { text = "Arvoluokkaa `{id:bare}` ei ole (dev).", of = "9a0702" }
+no_quarrel_there = { text = "Sinulla ei ole siellä riitaa kenenkään kanssa.", of = "9803b9" }
+no_quarrel_with = { text = "Sinulla ei ole riitaa {who:gen} kanssa.", of = "017b57" }
+no_such_ability = { text = "Sinulla ei ole sellaista kykyä.", of = "f10090" }
+no_vital_spot = { text = "Sillä ei ole heikkoa kohtaa.", of = "897edd" }
+no_weapon_to_call = { text = "Asetta `{id:bare}` ei voi kutsua.", of = "a3801f" }
+nobody_beside_to_kick = { text = "Vierelläsi ei ole ketään potkaistavaa.", of = "321715" }
+nobody_there_to_charge = { text = "Siellä ei näy ketään, jota kohti rynnäköidä.", of = "4b63a1" }
+nobody_there_to_strike = { text = "Siellä ei ole ketään lyötävää.", of = "efe8e1" }
+not_carrying_that_much_gold = { text = "Sinulla ei ole niin paljon kultaa.", of = "19cc38" }
+nothing_ready_to_shoot = { text = "Sinulla ei ole mitään valmiina ammuttavaksi.", of = "822aa1" }
+nothing_to_consecrate = { text = "Täällä ei ole mitään pyhitettävää.", of = "fff232" }
+nothing_to_pray_for = { text = "Sinulla ei ole mitään, minkä puolesta rukoilla.", of = "bad2c6" }
+openings_in_guard = { text = "Olet löytänyt aukkoja {who:gen} puolustuksesta.", of = "5b0afd" }
+openings_in_guard_unseen = { text = "Olet löytänyt aukkoja näkymättömän vihollisen puolustuksesta.", of = "ddaec2" }
+openings_lost = { text = "Menetät löytämäsi aukot {who:gen} puolustuksessa.", of = "0d6c88" }
+openings_lost_unseen = { text = "Menetät löytämäsi aukot näkymättömän vihollisen puolustuksessa.", of = "0553db" }
+out_of_reach = { text = "Se on ulottumattomissa.", of = "12c2fe" }
+pale_light_in_hand = { text = "Kädessäsi on kalpeasta valosta tehty {what:nom}.", of = "b75517" }
+pale_light_in_hands = { text = "Käsissäsi on kalpeasta valosta tehty {what:nom}.", of = "f5d4a5" }
+peace_broken = { text = "Rauha on rikottu.", of = "239e85" }
+pluck_from_air = { text = "Nappaat {missile:gen} ilmasta.", of = "4e04d6" }
+press_your_openings = { text = "Käytät löytämiäsi aukkoja hyväksesi.", of = "4fb79e" }
+prestige_already_dev = { text = "Olet jo `{id:bare}` (dev).", of = "5610a6" }
+quails = { text = "{who:Nom} kavahtaa!", of = "1113b9" }
+quails_and_flees = { text = "{who:Nom} kavahtaa ja pakenee luotasi.", of = "8ea511" }
+receive = { text = "Sinulle ojennetaan {what:nom}.", of = "2a907a" }
+reels_under_wrath = { text = "{who:Nom} horjuu pyhän vihan alla!", of = "c26a7f" }
+refuse_to_fall = { text = "Kieltäydyt kaatumasta!", of = "79d46e" }
+rig_what_where = { text = "Mitä viritetään ja minne? Nimeä viritys ja suunta: `rig:tripwire:E`.", of = "c41603" }
+rise_from_knees = { text = "Nouset polviltasi.", of = "3b8ca8" }
+rise_from_knees_came = { text = "{came:bare}; nouset polviltasi.", of = "18b1fe" }
+roar_your_fury = { text = "Karjaiset raivosi ilmoille!", of = "73fca5" }
+room_consecrated = { text = "Hiljaisuus laskeutuu huoneeseen: se on pyhitetty.", of = "66ce32" }
+run_into_something = { text = "Törmäät johonkin!", of = "5b4d89" }
+set_down_too_much = { text = "Liikaa kannettavaa, jalkojesi juureen jää: {what:nom}.", of = "7d3858" }
+shakes_off_song = { text = "{who:Nom} karistaa laulun yltään.", of = "e89879" }
+shop_not_sanctuary = { text = "Tämä on kauppa, ei pyhäkkö.", of = "56456f" }
+short_of_breath_for_charge = { text = "Henkesi ei riitä niin pitkään rynnäkköön.", of = "220557" }
+sing_a = { text = "Laulat {song:gen}.", of = "fa91c6" }
+smite = { text = "Isket pyhällä vihalla!", of = "709f32" }
+stake_lost = { text = "Liikekumppanisi on kuollut, ja osuutesi on mennyttä.", of = "ea1a1b" }
+stake_not_worth_that_much = { text = "Osuutesi ei ole niin arvokas.", of = "f2f423" }
+stands_in_way_of_charge = { text = "Jokin on rynnäkön tiellä.", of = "e85dad" }
+still_status = { text = "Olet yhä {status:nom}.", of = "931dc4" }
+still_your_mind = { text = "Tyynnytät mielesi.", of = "562d99" }
+stipend_grown = { text = "Kotoa tulee sana: elatusrahasi on kasvanut.", of = "00ce3b" }
+stop_prayer_came = { text = "{came:bare}; keskeytät rukouksesi.", of = "6555d8" }
+stop_your_prayer = { text = "Keskeytät rukouksesi.", of = "b20d16" }
+strike_at_opening = { text = "Isket aukkoon.", of = "f6c4de" }
+stun = { text = "Tainnutat {who:gen}.", of = "8022ac" }
+takes_no_shape = { text = "`{id:bare}` ei ota muotoa.", of = "4c9b85" }
+tear_into_every_opening = { text = "Iskeydyt jokaiseen aukkoon!", of = "b78a27" }
+throw_what_where = { text = "Mitä heität, ja minne?", of = "ba6c34" }
+throws_nothing = { text = "`{id:bare}` ei heitä mitään.", of = "f73bee" }
+too_late_to_lurk = { text = "Liian myöhäistä väijyä.", of = "802ac6" }
+too_little_mana = { text = "Sinulla on liian vähän manaa.", of = "8acd3a" }
+too_little_resource = { text = "Sinulla on liian vähän {name:par}.", of = "71c47b" }
+too_little_to_sing = { text = "Voimasi eivät riitä sen laulamiseen.", of = "ab2807" }
+unanswered_hands = { text = "Lasket kätesi, mutta niistä ei virtaa lämpöä.", of = "02d6b2" }
+unanswered_prayer = { text = "Polvistut rukoilemaan, mutta mikään pyhä voima ei vastaa sinulle.", of = "cebbfb" }
+unanswered_radiance = { text = "Tahdot pyhää valoa, mutta sitä ei tule.", of = "065990" }
+unanswered_smite = { text = "Huudat pyhää vihaa avuksesi, mutta mikään ei vastaa.", of = "0fd74e" }
+unmade = { text = "{who:Nom} hajoaa olemattomiin!", of = "889189" }
+use_it_on_what = { text = "Mihin käytät sen?", of = "6d114a" }
+warmth_flows_from_hands = { text = "Lämpö virtaa käsistäsi.", of = "80bff0" }
+which_way = { text = "Mihin suuntaan?", of = "bd07cf" }
+will_holds = { text = "{who:Gen} tahto kestää.", of = "f4cbb2" }
+works_on_nothing_carried = { text = "`{id:bare}` ei toimi millään kantamallasi.", of = "f3e5c4" }
+write_which_spell = { text = "Minkä loitsun kirjoitat? Nimeä jokin osaamasi: `scribe:fireball`.", of = "3e1724" }

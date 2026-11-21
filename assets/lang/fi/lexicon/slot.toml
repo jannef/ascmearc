@@ -1,0 +1,19 @@
+# Equipment slots (`slot:<id>`); `label` where the screen's word is not the capitalized one.
+body = "vartalo/2"
+cloak = "viitta/9*C"
+extra_ring_1 = { word = "lisä|sormus/39", forms = { label = "Lisäsormus 1" } }
+extra_ring_2 = { word = "lisä|sormus/39", forms = { label = "Lisäsormus 2" } }
+extra_ring_3 = { word = "lisä|sormus/39", forms = { label = "Lisäsormus 3" } }
+feet = { word = "jalka/9*D", many = true }
+hands = { word = "käsi/27", many = true }
+head = "pää/18"
+left_ring = "vasemman käden sormus/39"
+main_hand = "ase|käsi/27"
+missile_weapon = "ampuma-ase/48"
+missiles = { word = "ammus/39", many = true }
+neck = "kaula/9"
+off_hand = "kilpi|käsi/27"
+right_ring = "oikean käden sormus/39"
+tail = "häntä/10*J"
+third_hand = "lisä|käsi/27"
+tool = "työ|kalu/2"

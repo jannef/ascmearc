@@ -1,0 +1,37 @@
+# The New run screen (`crates/ascmearc/src/ui/new_run_screen.rs`).
+
+[back]
+of = "03caaf"
+text = "Esc takaisin"
+
+[choose]
+of = "3476a8"
+text = "{keys:bare} skenaario"
+
+[next]
+of = "5fde38"
+text = "{confirm:bare} seuraava"
+
+[start]
+of = "a0d3bc"
+text = "{confirm:bare} aloita"
+
+[seed_default]
+of = "9f675e"
+text = "(oletus: {seed:bare})"
+
+[seed_hint]
+of = "877ce7"
+text = "Anna siemeneksi luku tai sana."
+
+[seed_label]
+of = "655796"
+text = "Siemen: ["
+
+[none]
+of = "0a94f7"
+text = "Skenaarioita ei ole asennettu."
+
+[title]
+of = "c5983b"
+text = "Uusi seikkailu"

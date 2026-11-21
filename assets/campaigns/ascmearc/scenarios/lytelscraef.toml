@@ -1,0 +1,9 @@
+# A dev scenario of the Ascmearc (#2043): straight onto the first floor of Lytelscræf, the little
+# cave at Grægweall's foot where a new character comes down first: rats, bats, beetles, grave
+# worms, and kobolds. With Cēaptūn's, the opening the first Finnish slice covers (`--lang fi`).
+name = "Lytelscræf"
+description = "Straight into Lytelscræf, the little cave: three short floors of vermin and kobolds."
+start_level = "lytelscraef:1"
+seed = 1
+character = { race = "human", gender = "male", class = "warrior", name = "Wulfstan" }
+wield = ["lantern"]

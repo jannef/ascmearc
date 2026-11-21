@@ -119,8 +119,13 @@ come back if you have bought them all.
 The new goods are a little better each time, on average. Their magic is made like
 [loot](magic-items.md#finding-them)'s, at an item level that climbs slowly with your level, so
 stronger [magic items](magic-items.md) turn up more often. Shop goods are always of their usual
-material. A shop deep in a [dungeon](dungeons.md) has better goods from the start, and its new
-goods are better too.
+material. A shop on a dangerous floor of a [dungeon](dungeons.md) has better goods from the
+start, and its new goods are better too.
+
+A shop sells a kind of weapon, armour, or jewellery only once its goods' item level reaches that
+item's own level, the same as loot: an armourer has no plate armour (item level 7) until then,
+and no full plate (item level 20). Potions, scrolls, and other things that are never magic are
+sold at any item level.
 
 It does not matter where you are when you gain the level. A shop in a town you are far from gets
 its new goods at once, the same as if you were standing in it. A level you lose and gain again
@@ -172,17 +177,20 @@ only what you know:
 - An item's [rarity](magic-items.md#rarity) shows at once, so a magic or rare item is worth a
   share more than the plain item, identified or not.
 - Each affix adds gold once the item is [identified](magic-items.md#unidentified-items). The
-  higher the item level its tier is found from, the more it adds.
+  higher the item level its tier is found from, the more it adds. A
+  [unique item](magic-items.md#unique-items)'s affixes are priced by the unique's own item level
+  instead, whatever their tiers.
 
 Identifying an item before you sell it gets you a better offer. What you pick up in a shop stays
 on your bill at the price it had when you took it, even if you identify it before paying.
 
 The share is added first, then the affixes' gold, then a [maker's mark](class-craftsperson.md#makers-mark)'s half again on top. A dagger is worth 30 gold. As a magic item it is
-worth 45 unidentified, and 45 + 75 = 120 once you know it is Sharp with its first tier.
+worth 45 unidentified, and 45 + 60 = 105 once you know it is Sharp with its first tier.
 
 The first table gives the share by rarity. The second gives the gold each identified affix adds,
 by the item level its tier is found from ([Prefixes and suffixes](affixes.md) lists each
-affix's tiers).
+affix's tiers), or by a unique's own item level. Not every level has a row: each level adds the
+same gold, so a level between two rows is worth in between.
 
 {{#include generated/magic-worth.md}}
 

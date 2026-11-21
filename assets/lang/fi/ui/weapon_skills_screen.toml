@@ -1,0 +1,25 @@
+# The weapon skills screen (`crates/ascmearc/src/ui/weapon_skills_screen.rs`).
+
+[close]
+of = "12c352"
+text = "Esc sulje"
+
+[close_own]
+of = "2a7cbf"
+text = "{own:bare} tai Esc sulje"
+
+[in_use]
+of = "be4492"
+text = "käytössä"
+
+[none]
+of = "af2928"
+text = "Et osaa yhtään asetaitoa."
+
+[scroll]
+of = "0d4145"
+text = "{keys:bare} vieritä"
+
+[title]
+of = "1d28a1"
+text = "Asetaidot"

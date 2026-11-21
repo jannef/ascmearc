@@ -60,15 +60,21 @@ pub(super) fn crystal_rules(content: &Content) -> String {
             .map_or(0, |a| a.shift.consume_crystal)
             .abs(),
     );
+    // The highest tier any affix has: what the most a salvage check's tier adds is read at.
+    let top = (content.affixes().all().iter())
+        .map(|a| a.tiers.len())
+        .max()
+        .unwrap_or(1);
+    let top = u8::try_from(top).unwrap_or(u8::MAX);
     let _ = writeln!(
         out,
         "- **Salvage** checks each affix of a magic item, identified or not: 2d12 plus your {stat} \
          modifier, what talents add to {stat} checks, and what {skill} gives to its craft, \
-         against {} plus one for every {} tiers of the affix (a tier-12 affix is +{}). A natural \
-         {FUMBLE} always fails, a natural {HIGHEST} always succeeds.",
+         against {} plus one for every {} tiers of the affix (a tier-{top} affix, the highest, is +{}). A \
+         natural {FUMBLE} always fails, a natural {HIGHEST} always succeeds.",
         rules.salvage_difficulty,
         rules.salvage_tier_step,
-        12 / rules.salvage_tier_step,
+        top / rules.salvage_tier_step,
     );
     let _ = writeln!(
         out,

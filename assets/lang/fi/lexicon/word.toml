@@ -1,0 +1,17 @@
+# Words core and data name without an id of their own (`word:<English>`): blows, steps, a
+# creature gone from sight.
+bite = "puraisu/2"
+claws = { word = "kynsi/28", many = true }
+fire = "tuli/23"
+fist = "nyrkki/5*A"
+flames = { word = "liekki/5*A", many = true }
+gem = "jalo|kivi/7"
+item = "esine/48"
+kick = "potku/1"
+material = "materiaali/6"
+shot = "laukaus/39"
+something = { word = "jokin/33", forms = { nom = "jokin", bare = "jokin", name = "jokin", gen = "jonkin", par = "jotakin", ine = "jossakin", ela = "jostakin", ill = "johonkin", ade = "jollakin", abl = "joltakin", all = "jollekin", ess = "jonakin", tra = "joksikin", label = "Jokin" } }
+spell = "loitsu/2"
+sting = "pisto/1"
+stone = "kivi/7"
+throw = "heitto/1*C"

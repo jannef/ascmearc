@@ -1,0 +1,116 @@
+# A craftsperson's patron (campaigns/ascmearc/data/dialogue/patrons.toml), of the craftsperson's
+# race, each in that race's dialect (#1896); a human patron is a person of means: kirjakieli,
+# uncompromising. `{work:name}` is the thing asked for, in the nominative: the lines are worded
+# so it stands alone ("tämä: {work:name}"). "Hieno" is the quality grade by its name.
+
+# Humans, half-elves, and half-orcs: kirjakieli.
+[ascmearc.patron]
+lines = [
+    { text = "Hyvin tehty esine ilahduttaa kodissa aina.", of = "43162b" },
+    { text = "Gæsthūsin pöytä on mielestäni varsin siedettävä.", of = "130035" },
+    { text = "Hyvä työ ei ole koskaan halpaa, eikä halpa työ ole koskaan hyvää.", of = "485e6e" },
+]
+address = { male = "hyvä herra", female = "hyvä rouva", other = "hyvä ystävä", of = "4c94ab" }
+
+[ascmearc.patron.patron]
+offer = { text = "Ah, {player:address}. Toivoisin teiltä työtä: {work:name}, laadultaan vähintään Hieno. Ottakaa nämä tarveaineet, älkääkä pitäkö minua odottamassa liian kauan.", of = "13e400" }
+waiting = { text = "Antamani tarveaineet olivat tätä varten: {work:name}, {player:address}. Voin odottaa, mutta en mielelläni.", of = "7b9434" }
+plain = { text = "Tämä on {work:name}, {player:address}, eikä mitään enempää. Pyysin Hienoa työtä.", of = "ef51fa" }
+delivered = { text = "Erinomaista. Aivan erinomaista. {gold:name} kultaa, kuten sovimme, ja jokaisen kolikon arvoista.", of = "40b476" }
+idle = { text = "Palatkaa, kun kätenne ovat palkkaamisen arvoiset, {player:address}.", of = "626bb3" }
+
+# Dwarves and duergar: pohjalaismurre.
+[ascmearc.patron_dwarf]
+lines = [
+    { text = "Mää tykkään tavarasta, joka on kunnolla tehty.", of = "6ba7d2" },
+    { text = "Gæsthūsissa tehrähän hyvää muhennosta, kyllä.", of = "362fd6" },
+    { text = "Hyvä tyä ei oo koskaan halapaa, eikä halapa tyä hyvää.", of = "f544a0" },
+]
+address = { male = "poika", female = "tyttö", other = "ystävä", of = "94d1dd" }
+
+[ascmearc.patron_dwarf.patron]
+offer = { text = "No niin, {player:address}. Mää tartten tämän: {work:name}, Hieno tai parempi, muista. Tässä on aineet siihen.", of = "99fa54" }
+waiting = { text = "Mää annoin ne aineet tätä varten: {work:name}, {player:address}. Älä rupia vitkuttelemahan.", of = "a37cb2" }
+plain = { text = "Tua on {work:name} eikä sen enempää, {player:address}. Mää sanoin jotta Hienoa tyätä.", of = "426166" }
+delivered = { text = "Kah, tuapa on komiaa tyätä. {gold:name} kultaa, niinku sovittihin, ja sen arvoosta.", of = "f76623" }
+idle = { text = "Tuu takasin ku sun käret on palakkaamisen arvoset, {player:address}.", of = "a61a51" }
+
+# Elves: Turun murre.
+[ascmearc.patron_elf]
+lines = [
+    { text = "Mää tykkään kunnol tehdyst kamast, nii tykkään.", of = "3d52ba" },
+    { text = "Gæsthūsis on ihan kelpo safka, kyl.", of = "c30609" },
+    { text = "Hyvä työ ei oo halpaa, eik halpa työ oo hyvää.", of = "dd3e0b" },
+]
+address = { male = "kulta", female = "kulta", other = "kulta", of = "76ae0a" }
+
+[ascmearc.patron_elf.patron]
+offer = { text = "Terve, {player:address}. Mää haluun tän: {work:name}, Hieno tai parempi. Täsä on aineet siihe, nääs.", of = "a8df9d" }
+waiting = { text = "Noi aineet oli tätä varte: {work:name}, {player:address}. Ei mul kiire oo, mut ei mul pitkä pinnakaa oo.", of = "1f7066" }
+plain = { text = "Toi on {work:name}, {player:address}, eik muuta. Mää pyysin Hienoo työt.", of = "2c37d1" }
+delivered = { text = "Hyvä. Tosi hyvä. {gold:name} kultaa, niinku sovittii.", of = "e2f092" }
+idle = { text = "Tuu takasi ku sun kätes on palkkaamisen arvoset, {player:address}.", of = "74ddd4" }
+
+# Halflings and gnomes: savon murre.
+[ascmearc.patron_halfling]
+lines = [
+    { text = "Kyllä se kunnolla tehty tavara on mukavoo, minusta. Jos sitä minulta kysytään.", of = "562b76" },
+    { text = "Gæsthūsissa on ruoka hyvvee, sanovat. Ja minäkii sanon.", of = "731eed" },
+    { text = "Hyvä työ ei oo koskaan halapoo, eikä halapa työ hyvvee.", of = "ab9500" },
+]
+address = { male = "poeka", female = "tyttö", other = "hyvä ihminen", of = "83c94e" }
+
+[ascmearc.patron_halfling.patron]
+offer = { text = "No terve, {player:address}. Minä tarttisin semmosen: {work:name}, Hieno tae parempi. Tässä ois aenekset siihen, jos kelepoo.", of = "bd2842" }
+waiting = { text = "Ne aenekset oli tätä varten: {work:name}, {player:address}. Kyllähän sitä ootella voe, vuan ei sitä ikuisesti ootella.", of = "dc6907" }
+plain = { text = "Tuo on {work:name}, {player:address}, eikä sen kummempoo. Minä sanoin Hienoo työtä, vae sanoinko? Sanoin minä.", of = "c6ea08" }
+delivered = { text = "No kylläpä on hyvvee työtä. {gold:name} kultoo, niinku sovittiin.", of = "d240c1" }
+idle = { text = "Tule takasin sitte ku kätes on palakkoomisen arvoset, {player:address}. Tae ennen, mikäpä minä oon sanomaan.", of = "a61a51" }
+
+# Goblins, kobolds, and ratfolk: Rauman giäl.
+[ascmearc.patron_goblin]
+lines = [
+    { text = "Mnää tykkä kunnol tehdyst kamast, tykkä mnää.", of = "a9277e" },
+    { text = "Gæsthūsis o fiin pöyt, kyl o.", of = "c42cdf" },
+    { text = "Hyvä työ ei ol ikä halp, eik halp työ ol hyvä.", of = "8cba79" },
+]
+address = { male = "poik", female = "flikk", other = "kamrat", of = "150c98" }
+
+[ascmearc.patron_goblin.patron]
+offer = { text = "No, {player:address}. Mnää haluis tämmöse: {work:name}, Hieno tai parem. Täsä o aineks siihe.", of = "6ef6e6" }
+waiting = { text = "Ne aineks ol tätä varte: {work:name}, {player:address}. Mnää ootta viäl, ootta mnää.", of = "91243f" }
+plain = { text = "Toi o {work:name}, {player:address}, eik mittä muut. Mnää sanos Hieno työ, kyl mnää sanos.", of = "9988c0" }
+delivered = { text = "No, fiini työ. {gold:name} kultta, niingo sovitti, ja sen arvone.", of = "167fbb" }
+idle = { text = "Tul takas ko su kädet kelppa palkattavaks, {player:address}.", of = "a61a51" }
+
+# Drow: the Old Literary Finnish of Agricola's day.
+[ascmearc.patron_drow]
+lines = [
+    { text = "Hyuesti tehdyt calut ilahuttawat minua.", of = "ab37da" },
+    { text = "Gæsthūs pite hyue pöyte.", of = "fa9d79" },
+    { text = "Hyue töö ei ole coscan halpa, eike halpa töö hyue.", of = "fd0a0b" },
+]
+address = { male = "Herra", female = "Emende", other = "Ystewe", of = "fb6ae5" }
+
+[ascmearc.patron_drow.patron]
+offer = { text = "Terue tultuas, {player:address}. Mine tahtoisin teme: {work:name}, Hieno taicka parambi. Tesse ombi aineet site warten.", of = "4ab367" }
+waiting = { text = "Ne aineet olit teme warten: {work:name}, {player:address}. Mine odhotan, waan en ijancaikisesta.", of = "c98491" }
+plain = { text = "Teme ombi {work:name}, {player:address}, ia ei mitän enembi. Hienoa töte mine sinulda anoin.", of = "21c841" }
+delivered = { text = "Totisesta, teme ombi hyue töö. {gold:name} culda, ninquin me sowimma.", of = "82aca7" }
+idle = { text = "Tule iellens, coska sinun kätes owat palcan arwoiset, {player:address}.", of = "a4594b" }
+
+# Lizardfolk: Estonian, untranslated.
+[ascmearc.patron_lizardfolk]
+lines = [
+    { text = "Mulle meeldivad hästi tehtud asjad.", of = "9d8576" },
+    { text = "Gæsthūsis on päris korralik köök.", of = "ddbff7" },
+    { text = "Hea töö pole kunagi odav ja odav töö pole kunagi hea.", of = "8690bd" },
+]
+address = { male = "härra", female = "proua", other = "sõber", of = "4171fc" }
+
+[ascmearc.patron_lizardfolk.patron]
+offer = { text = "Tere päevast, {player:address}. Ma soovin seda: {work:name}, Hieno või parem. Siin on selleks materjal.", of = "d54c07" }
+waiting = { text = "See materjal oli selle jaoks: {work:name}, {player:address}. Ma ootan, aga mitte igavesti.", of = "460a66" }
+plain = { text = "See on {work:name}, {player:address}, ja mitte enamat. Ma palusin Hieno tööd.", of = "a23f24" }
+delivered = { text = "Suurepärane töö. {gold:name} kulda, nagu kokku lepitud.", of = "78644a" }
+idle = { text = "Tulge tagasi, kui teie käed on palkamist väärt, {player:address}.", of = "1ebc37" }

@@ -94,6 +94,9 @@ pub struct TopicView {
 pub enum TopicName {
     /// As the data writes it: "The rooms".
     Text(String),
+    /// A line of data by its key: a dialogue's topic or service, which a translation names
+    /// (`dialogue:<scope>.topic_name.<id>`, `content/dialogue_line.rs`).
+    Line(String),
     /// Taking the side of the wizard spoken to, in a quarrel (`quarrel.rs`): "Take Mistress
     /// Stormwell's side".
     Side(Phrase),
@@ -110,10 +113,14 @@ pub enum TopicName {
 }
 
 impl TopicName {
-    /// The data's words, for a topic the data names.
-    pub fn text(&self) -> Option<&str> {
+    /// The data's words in English, for a topic the data names (tests and tools).
+    pub fn text(&self, content: &crate::content::Content) -> Option<String> {
         match self {
-            TopicName::Text(text) => Some(text),
+            TopicName::Text(text) => Some(text.clone()),
+            TopicName::Line(key) => Some(crate::messages::english_msg(
+                content,
+                &Msg::data_line(Arg::said(key.clone())),
+            )),
             _ => None,
         }
     }
@@ -291,7 +298,7 @@ impl World {
         let open = |t: &&Topic| (t.calls.as_ref()).is_none_or(|class| self.calling_open(class));
         topics.extend(dialogue.topics.iter().filter(open).map(|t| TopicView {
             id: t.id.clone(),
-            name: t.name.clone().into(),
+            name: TopicName::Line(t.name_key.clone()),
             price: None,
             items: None,
             ware: None,
@@ -299,7 +306,7 @@ impl World {
         let offered = |s: &&Service| self.service_offered(s);
         topics.extend(dialogue.services.iter().filter(offered).map(|s| TopicView {
             id: s.id.clone(),
-            name: s.name.clone().into(),
+            name: TopicName::Line(s.name_key.clone()),
             price: Some(self.service_price(id, s)),
             items: self.service_items(s),
             ware: None,

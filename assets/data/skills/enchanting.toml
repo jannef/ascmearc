@@ -12,9 +12,9 @@ mark = [{ on = "craft", chance = 100 }, { on = "salvage", chance = 100 }]
 # Its craft (docs/dev/enchanting.md; the enchanter's recipes): added to the Willpower check of an
 # enchanting recipe and of salvage's affix checks, +8 at 100, +12 at 200, read for this skill
 # alone. Its reach, `enchant_level`: the item level an enchanting recipe rolls its affixes at
-# (the greater of it and the item's own), 1 untrained or at 0, 12 at 110 and above.
+# (the greater of it and the item's own), 1 untrained or at 0, 24 at 110, 40 at 200.
 benefit = [
     { effect = "identify_magic", curve = [[0, 5], [100, 25], [200, 40]] },
     { effect = "craft", curve = [[0, 0], [100, 8], [200, 12]] },
-    { effect = "enchant_level", curve = [[0, 1], [110, 12], [200, 12]] },
+    { effect = "enchant_level", curve = [[0, 1], [110, 24], [200, 40]] },
 ]

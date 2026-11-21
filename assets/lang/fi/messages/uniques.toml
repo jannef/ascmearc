@@ -1,0 +1,4 @@
+# Unique items (`content/unique.rs`).
+
+# A craft refused on a unique: Temper, Whittle, setting a gem in it, taking it apart.
+no_craft = { text = "Se on ainutlaatuinen: mikään taitosi ei muuta sitä.", of = "749215" }

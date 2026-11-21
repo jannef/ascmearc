@@ -1,0 +1,6 @@
+# A loose gem's size (`gem_size:<id>`), an adjective before it.
+huge = "valtava/10"
+large = "suuri/26"
+medium = "keski|kokoinen/38"
+small = "pieni/26"
+tiny = "pikkuruinen/38"

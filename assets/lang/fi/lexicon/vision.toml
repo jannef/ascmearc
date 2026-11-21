@@ -1,0 +1,5 @@
+# Vision profiles (`vision:<id>`), shown on the character screen.
+darkvision = "pimeä|näkö/1*D"
+low_light = "hämärä|näkö/1*D"
+normal = "tavallinen/38 näkö/1*D"
+uv_sight = "uv-näkö/1*D"

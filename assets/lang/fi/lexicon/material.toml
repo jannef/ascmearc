@@ -1,0 +1,39 @@
+# Materials (`material:<id>`): an agreeing adjective before what is made of it ("rautainen"),
+# its `compound` the noun a part's compound adjective is built on ("rautakärkinen"). A
+# material said "of" (a block of stone, a bolt of cloth) takes its noun's genitive (`gen`).
+# Gems are nouns: a loose gem is named by its material ("suuri rubiini").
+amber = { word = "meripihkainen/38", forms = { compound = "meripihka" } }
+amethyst = "ametisti/5"
+bone = { word = "luinen/38", forms = { compound = "luu" } }
+brass = { word = "messinkinen/38", forms = { compound = "messinki" } }
+bronze = { word = "pronssinen/38", forms = { compound = "pronssi" } }
+chitin = { word = "kitiininen/38", forms = { compound = "kitiini" } }
+cloth = { word = "kankainen/38", forms = { compound = "kangas", gen = "kankaan" } }
+copper = { word = "kuparinen/38", forms = { compound = "kupari" } }
+emerald = "smaragdi/5"
+flesh = { word = "lihainen/38", forms = { compound = "liha" } }
+flint = { word = "piikivinen/38", forms = { compound = "piikivi", gen = "piikiven" } }
+fur = { word = "turkiksinen/38", forms = { compound = "turkis" } }
+garnet = "granaatti/5*C"
+glass = { word = "lasinen/38", forms = { compound = "lasi", gen = "lasin" } }
+gold = { word = "kultainen/38", forms = { compound = "kulta" } }
+hardened_leather = { word = "kova|nahkainen/38", forms = { compound = "kovanahka" } }
+hardwood = { word = "kova|puinen/38", forms = { compound = "kovapuu" } }
+horn = { word = "sarvinen/38", forms = { compound = "sarvi" } }
+iron = { word = "rautainen/38", forms = { compound = "rauta" } }
+lead = { word = "lyijyinen/38", forms = { compound = "lyijy" } }
+leather = { word = "nahkainen/38", forms = { compound = "nahka" } }
+paper = { word = "paperinen/38", forms = { compound = "paperi" } }
+plant = { word = "kasvi|peräinen/38", forms = { compound = "kasvi" } }
+ruby = "rubiini/6"
+sapphire = "safiiri/6"
+silk = { word = "silkkinen/38", forms = { compound = "silkki" } }
+silver = { word = "hopeinen/38", forms = { compound = "hopea" } }
+sinew = { word = "jänteinen/38", forms = { compound = "jänne", gen = "jänteen" } }
+steel = { word = "teräksinen/38", forms = { compound = "teräs" } }
+stone = { word = "kivinen/38", forms = { compound = "kivi", gen = "kiven" } }
+tin = { word = "tinainen/38", forms = { compound = "tina" } }
+topaz = "topaasi/6"
+wax = { word = "vahainen/38", forms = { compound = "vaha" } }
+wood = { word = "puinen/38", forms = { compound = "puu" } }
+wool = { word = "villainen/38", forms = { compound = "villa" } }

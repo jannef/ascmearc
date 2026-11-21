@@ -1,0 +1,111 @@
+# The main menu, the pause menu, and the quit dialogs (`crates/ascmearc/src/ui/menu.rs`).
+
+[footer]
+of = "4b5b5f"
+text = "{up_down:bare} valitse   {confirm:bare} hyväksy"
+
+[footer_pause]
+of = "5fb81d"
+text = "{up_down:bare} valitse   {confirm:bare} hyväksy   Esc jatka"
+
+[item_characters]
+of = "9ad278"
+text = "Hahmot"
+
+[item_continue]
+of = "12cf2b"
+text = "Jatka"
+
+[item_controls]
+of = "985795"
+text = "Näppäimet"
+
+[item_graveyard]
+of = "88d921"
+text = "Hautausmaa"
+
+[item_mods]
+of = "9702d0"
+text = "Modit"
+
+[item_new_run]
+of = "c5983b"
+text = "Uusi seikkailu"
+
+[item_quit]
+of = "7186f1"
+text = "Lopeta"
+
+[item_resume]
+of = "e33e97"
+text = "Jatka"
+
+[item_save_to_menu]
+of = "ba2e71"
+text = "Tallenna ja palaa valikkoon"
+
+[item_settings]
+of = "08e16d"
+text = "Asetukset"
+
+# The legal notice (GPL-3.0): copyright, no warranty, where the license is.
+[legal_long]
+of = "735738"
+text = "Ascmearc {version:bare} · © 2026 Janne Lê Forsell · vapaa ohjelmisto, GPL-3.0 (ks. LICENSE), ei takuuta"
+
+[legal_medium]
+of = "63d134"
+text = "Ascmearc {version:bare} · © 2026 Janne Lê Forsell · GPL-3.0, ei takuuta"
+
+[legal_short]
+of = "64e748"
+text = "© 2026 Janne Lê Forsell · GPL-3.0, ei takuuta"
+
+[main_text]
+of = "e992f0"
+text = "Tallennetaanko peli ja palataan päävalikkoon?"
+
+[main_title]
+of = "0c4204"
+text = "Päävalikko"
+
+[main_yes]
+of = "ebd876"
+text = "Tallenna ja palaa"
+
+[pause_tagline]
+of = "0abf48"
+text = "maailma odottaa"
+
+[pause_title]
+of = "db8daf"
+text = "T A U K O"
+
+[quit_text]
+of = "d48846"
+text = "Suljetaanko Ascmearc?"
+
+[quit_text_saving]
+of = "b7b148"
+text = "Tallennetaanko peli ja suljetaan Ascmearc?"
+
+[quit_title]
+of = "7186f1"
+text = "Lopeta"
+
+[quit_yes]
+of = "7186f1"
+text = "Lopeta"
+
+[quit_yes_saving]
+of = "298afb"
+text = "Tallenna ja lopeta"
+
+# The answer that keeps playing.
+[stay]
+of = "90bd27"
+text = "Jatka"
+
+[tagline]
+of = "08cf98"
+text = "luolastoseikkailu ASCII-merkein"

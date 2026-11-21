@@ -116,8 +116,8 @@ pub const MAX_WHITTLE_BONUS: i32 = 12;
 /// salvage, `world/crafting/salvage.rs`).
 pub const MAX_CRAFT_BONUS: i32 = 20;
 /// The highest item level an enchanting recipe's reach gives (docs/design/enchanting.md §7: the
-/// ladders' top).
-pub const MAX_ENCHANT_LEVEL: i32 = 12;
+/// ladders' top; docs/design/item-level-40.md §8).
+pub const MAX_ENCHANT_LEVEL: i32 = 40;
 /// The most a skill adds to reading a scroll (`world/magic/decipher.rs`).
 pub const MAX_DECIPHER_BONUS: i32 = 20;
 /// The most a skill adds to a Swim check (a plunge through the ice).

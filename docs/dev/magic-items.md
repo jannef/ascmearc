@@ -313,8 +313,9 @@ id on another rarity than unique, and a unique without its id.
   count it), is a rarity of its own: `Stack::is_unique` is the one test the rules read.
   `Rarity::ROLLED` (normal, magic, rare) is what loot rolls; `Affixes::rarity_weight` is 0 for a
   unique. As a rare: its name (`Rarity::named`, `magic/name.rs`: "Widowmaker, a stiletto"),
-  `most_per_kind` (three of each), its worth (`MagicWorth::add` takes `rare`'s percent; the
-  wiki's worth table says "Rare or unique"). Unidentified it reads "a stiletto (unique)" and
+  `most_per_kind` (three of each), its worth (`MagicWorth::add` takes `rare`'s percent, the
+  wiki's worth table says "Rare or unique", and prices each identified affix by the unique's
+  own item level, `Magic::level`, never its tier's, #2048). Unidentified it reads "a stiletto (unique)" and
   the description's first line "Unique stiletto" (`Rarity::word`, a `words.rarity_*` id); its name is the UI's
   `UNIQUE` golden orange (`ui::rarity_color`; `ui/mod.rs`'s test keeps it 70 apart from the
   other rarities', the curse's, and the accent in every palette). The `Rarity::Rare` sites left
@@ -345,8 +346,8 @@ id on another rarity than unique, and a unique without its id.
   picks among the tiers of as many dice), a light's light `"of_light=item_glow"`. A
   unique written with a tier (`"mystic:2"`) is a content error. `content/affix_value.rs::valued`
   reads it at load: the affix takes the **first tier whose range holds the value** (a light's:
-  the tier of that light), whose level counts toward the item level when `level` is unset and
-  prices it (`MagicWorth::add`); a unique's value may lie **past the last tier** (away from
+  the tier of that light), whose level counts toward the item level when `level` is unset (that item
+  level, not the tier's, prices it: `MagicWorth::add`); a unique's value may lie **past the last tier** (away from
   zero, `Tier::passed_by`), which it then takes; any other value no tier rolls is an error. A
   unique may set an affix whose bases leave out its base, on an effect that works there
   (`Effect::allowed_on`, `magic::may_roll_on`: High Toby's `"sharp=2"`, no flat-damage affix

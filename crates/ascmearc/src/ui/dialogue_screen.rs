@@ -333,6 +333,7 @@ fn topic_name(name: &TopicName) -> String {
     let gold = |n: u32| [("gold", Arg::Number(n.into()))];
     match name {
         TopicName::Text(text) => text.clone(),
+        TopicName::Line(key) => super::text::data_line(key.clone()),
         TopicName::Side(who) => ui_with(T::SIDE, &[("who", who.clone().into())]),
         TopicName::Refuse(who) => ui_with(T::REFUSE, &[("who", who.clone().into())]),
         TopicName::Invest(n) => ui_with(T::INVEST, &gold(*n)),

@@ -1,0 +1,5 @@
+# `--more--` in the message line (`crates/ascmearc/src/ui/more.rs`).
+
+[more]
+of = "5a73e0"
+text = "--lisää--"

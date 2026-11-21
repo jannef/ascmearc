@@ -5,7 +5,7 @@
 //! the chain ([`render_chain`]) to English, and past that to the message id itself (`[combat.hit]`).
 
 use crate::lang::{self, LangError, LangFile};
-use crate::lexicon::Lexicon;
+use crate::lexicon::{Layered, Lexicon, MapLexicon};
 use crate::message::{Arg, DATA_LINE, DATA_LINE_ROLE, Entry, MessageId, Role, literal_text};
 use crate::morphology::en::{En, Plurals};
 use crate::morphology::fi::Fi;
@@ -97,6 +97,9 @@ pub struct Language {
     /// and a narrator's lines of data (`miscast.blank.seen`). English's come from the data
     /// itself, a translation's from its keyed files ([`Templates::parse_data`]).
     lines: Templates,
+    /// The language's own words (`lexicon/<kind>.toml`), over the lexicon a rendering is given (the
+    /// content's, English's): [`Layered`]. Empty for English.
+    lexicon: MapLexicon,
     registers: Registers,
 }
 
@@ -106,6 +109,7 @@ impl fmt::Debug for Language {
             .field("code", &self.code)
             .field("templates", &self.templates.len())
             .field("lines", &self.lines.len())
+            .field("lexicon", &self.lexicon.len())
             .finish_non_exhaustive()
     }
 }
@@ -128,6 +132,7 @@ impl Language {
             morphology,
             templates: Templates::default(),
             lines: Templates::default(),
+            lexicon: MapLexicon::default(),
             registers: Registers::new(file.registers.clone(), file.race_registers.clone()),
         }
     }
@@ -195,6 +200,29 @@ impl Language {
         Ok(())
     }
 
+    /// Adds a lexicon file of the language's own words (`lexicon/<kind>.toml`): each key is an id
+    /// of `kind` (`creature`: `rat` is `creature:rat`), a word this language says over the one
+    /// the content gives ([`Layered`]). A word the morphology refuses still loads: it renders as
+    /// written, and the checker reports it.
+    pub fn add_lexicon(&mut self, kind: &str, text: &str) -> Result<(), LangError> {
+        self.lexicon
+            .extend(MapLexicon::parse(&format!("{kind}:"), text)?);
+        Ok(())
+    }
+
+    /// The language's own words (none for English, whose words are the content's).
+    pub fn lexicon(&self) -> &MapLexicon {
+        &self.lexicon
+    }
+
+    /// The words a rendering in this language reads: its own over `base`.
+    pub fn words<'a>(&'a self, base: &'a dyn Lexicon) -> Layered<'a> {
+        Layered {
+            own: &self.lexicon,
+            base,
+        }
+    }
+
     /// The lines of data, by key.
     pub fn data_lines(&self) -> &Templates {
         &self.lines
@@ -229,8 +257,9 @@ impl Language {
     pub fn phrase(&self, phrase: &Phrase, form: &str, lex: &dyn Lexicon) -> String {
         let reg = self.registers.standard();
         let lower = lower_form(form);
-        let text = (self.morphology.phrase(phrase, &lower, lex, reg))
-            .or_else(|_| self.morphology.phrase(phrase, "bare", lex, reg))
+        let lex = self.words(lex);
+        let text = (self.morphology.phrase(phrase, &lower, &lex, reg))
+            .or_else(|_| self.morphology.phrase(phrase, "bare", &lex, reg))
             .unwrap_or_default();
         match capitalized_form(form) {
             true => capitalize(&text),
@@ -282,7 +311,7 @@ impl Language {
         Ctx {
             language: self,
             register,
-            lex,
+            lex: self.words(lex),
             keys,
             args,
             said: None,
@@ -348,7 +377,8 @@ pub fn render_chain(
 struct Ctx<'a> {
     language: &'a Language,
     register: &'a Register,
-    lex: &'a dyn Lexicon,
+    /// The language's own words over the content's.
+    lex: Layered<'a>,
     keys: Keys<'a>,
     args: &'a BTreeMap<Role, Arg>,
     /// The key of the dialogue line being rendered, if it is one: where its `address` is found.
@@ -511,7 +541,7 @@ impl<'a> Ctx<'a> {
         }
         Ok(match arg {
             Arg::Phrase(phrase) => morphology
-                .phrase(phrase, form, self.lex, self.register)
+                .phrase(phrase, form, &self.lex, self.register)
                 .map_err(|error| RenderError::Form {
                     role: role.to_string(),
                     error,
@@ -1034,6 +1064,49 @@ lines = ["Bless {target:the}."]
     }
 
     #[test]
+    fn a_language_says_its_own_words_and_english_the_content_s() {
+        let en = english();
+        let mut fi = Language::from_toml(
+            "name = \"suomi\"\ncode = \"fi\"\nmorphology = \"fi\"\nfallback = \"en\"",
+            Plurals::default(),
+        )
+        .expect("fi");
+        fi.add_templates("combat", "hit = \"Osut {target:ill}.\"\n")
+            .expect("templates");
+        fi.add_lexicon("creature", "goblin = \"hiisi/27\"\n")
+            .expect("lexicon");
+        assert!(fi.add_lexicon("creature", "goblin = 3").is_err());
+        assert_eq!(fi.lexicon().len(), 1);
+        let hit = |target: Phrase| {
+            let msg = Msg::new(id("combat.hit"))
+                .role("actor", you())
+                .role("target", target);
+            Entry::new(1, msg)
+        };
+        let lex = lexicon();
+        assert_eq!(
+            render_chain(&[&fi, &en], &hit(goblin()), &lex, &written_key),
+            "Osut hiiteen."
+        );
+        assert_eq!(fi.phrase(&goblin(), "Par", &lex), "Hiittä");
+        // A word the language lacks is the content's, as written; English never reads Finnish.
+        let wystan = Phrase::id("creature:wystan");
+        assert_eq!(
+            render_chain(&[&fi, &en], &hit(wystan), &lex, &written_key),
+            "Osut Black Wystaniin."
+        );
+        assert_eq!(
+            render(
+                &en,
+                Msg::new(id("combat.hit"))
+                    .role("actor", you())
+                    .role("target", goblin())
+            ),
+            "You hit the goblin."
+        );
+    }
+
+    #[test]
     fn a_register_renders_the_inserted_article() {
         let en = english();
         let irish = en.registers().get("irish").expect("irish");
@@ -1088,7 +1161,7 @@ lines = ["Bless {target:the}."]
         assert_eq!(error.what, "messages/x.toml");
         assert_eq!(
             format!("{:?}", english()),
-            "Language { code: \"en\", templates: 7, lines: 0, .. }"
+            "Language { code: \"en\", templates: 7, lines: 0, lexicon: 0, .. }"
         );
     }
 }

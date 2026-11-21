@@ -11,13 +11,16 @@
 # Fields:
 #   rarity   percent added to the item's worth as made: `magic`, `rare` (a unique is rare)
 #   affix    gold added for each identified affix: `each`, plus `per_level` times the item level
-#            its tier is found from (data/affixes/: Sharp's top tier, level 12, adds
-#            50 + 25 × 12 = 350)
+#            its tier is found from (data/affixes/: a tier of level 12 adds 50 + 10 × 12 = 170,
+#            one of level 40 adds 450). A unique's affixes are priced by the unique's own item
+#            level instead (data/uniques/ `level`), so their values, set by hand, never move its
+#            price
 #
 # Tuned so that magic clearly pays: a dagger (worth 30) is worth 45 as a magic item unidentified
-# and 45 + 75 = 120 identified with Sharp's first tier (level 1), four times its base; a rare long
-# sword (worth 80) with four affixes of level 8 tiers is worth 160 + 4 × 250 = 1160, about what an
-# aristocrat's stipend has put by at level 5.
+# and 45 + 60 = 105 identified with Sharp's first tier (level 1), three and a half times its base;
+# a rare long sword (worth 80) with four affixes of level 8 tiers is worth 160 + 4 × 130 = 680.
+# The gold grows slowly with the tier's level so that a rare of item level 40 stays a purchase a
+# level-40 character can imagine (docs/design/item-level-40.md §9).
 
 rarity = { magic = 50, rare = 100 }
-affix = { each = 50, per_level = 25 }
+affix = { each = 50, per_level = 10 }

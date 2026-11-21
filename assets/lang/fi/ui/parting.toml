@@ -1,0 +1,14 @@
+# The quarrel's parting, asked in the one dialog (`crates/ascmearc/src/ui/parting.rs`).
+
+# `who`, the wizard.
+[betray]
+of = "54a61f"
+text = "Petä {who:par}"
+
+[leave]
+of = "5b87a4"
+text = "Lähde"
+
+[title]
+of = "e171c5"
+text = "{who:Nom}"

@@ -1,0 +1,160 @@
+# The controls screen and the `?` help (`crates/ascmearc/src/ui/controls_screen.rs`). Keep the
+# leading `!` (a refusal). Command names are nested: phrase around them ("komennolle X").
+
+[added]
+of = "9c4710"
+text = "{name:bare}: {shown:bare} lisätty."
+
+[ability_keys]
+of = "69d9b5"
+text = "Kykynäppäimet (kaikki myös kykyvalikossa)"
+
+[action_back]
+of = "15e766"
+text = "Takaisin"
+
+[action_export]
+of = "857b17"
+text = "Vie näppäimet…"
+
+[action_import]
+of = "37130c"
+text = "Tuo näppäimet…"
+
+[action_reset]
+of = "146758"
+text = "Palauta kaikki näppäimet"
+
+[add_key]
+of = "400123"
+text = "Lisää näppäin"
+
+[all_reset]
+of = "7d9ead"
+text = "Kaikki näppäimet on palautettu oletuksiin."
+
+[cancelled]
+of = "c8e4a1"
+text = "Peruttu."
+
+[capture_prompt]
+of = "3c6aa7"
+text = "Paina näppäintä komennolle \"{name:bare}\". Esc peruu."
+
+[conflict]
+of = "f3d935"
+text = "! {shown:bare} on sidottu sekä komentoon {first:bare} että {second:bare} ({context:bare})."
+
+[fixed_cannot_remove]
+of = "f36011"
+text = "! {shown:bare} on kiinteä komennolle {name:bare}, eikä sitä voi poistaa."
+
+[fixed_cannot_take]
+of = "125a3a"
+text = "! {shown:bare} on kiinteä komennolle {owner:bare}, eikä sitä voi ottaa."
+
+[footer_browse]
+of = "aa8c19"
+text = "{confirm:bare} näppäimet   {erase:bare} palauta   Esc takaisin"
+
+[footer_close]
+of = "9ffeb3"
+text = "{shown:bare} tai Esc sulje"
+
+[footer_close_plain]
+of = "12c352"
+text = "Esc sulje"
+
+[footer_open]
+of = "297a96"
+text = "{confirm:bare} korvaa tai lisää   {erase:bare} poista   Esc valmis"
+
+[footer_scroll]
+of = "4401ee"
+text = "{up_down:bare} vieritä"
+
+[has_already]
+of = "c8ce80"
+text = "Komennolla {name:bare} on jo {shown:bare}."
+
+[import_choose]
+of = "62e509"
+text = "Valitse tuotava näppäinkarttatiedosto."
+
+# The keymap the browser's file picker delivered, as `source` in `imported_*`.
+[import_picked]
+of = "b33ae8"
+text = "näppäinkartta"
+
+[key_n]
+of = "928f3c"
+text = "Näppäin {n:bare}"
+
+[keys_of]
+of = "8ffc47"
+text = "Komennon {name:bare} näppäimet. Vihjeet näyttävät ensimmäisen."
+
+[keys_reset]
+of = "b0d782"
+text = "{name:bare}: oletusnäppäimet palautettu."
+
+[moved]
+of = "ff3202"
+text = "{shown:bare} siirtyi komennolle {to:bare} (oli: {from:bare})."
+
+[moved_keyless]
+of = "fd389d"
+text = "{shown:bare} siirtyi komennolle {to:bare}; komennolla {from:bare} ei ole näppäintä."
+
+[none]
+of = "1090d3"
+text = "(ei mitään)"
+
+# A line break (`\n`) starts a new row.
+[note_esc]
+of = "647357"
+text = "Esc palaa ja peruu aina; sitä ei voi vaihtaa."
+
+[note_fixed]
+of = "f8220f"
+text = "Valikoiden, ikkunoiden, tekstikenttien ja tietosivujen\nnäppäimet ovat kiinteät, samoin lepokyselyn ja\ntähtäyksen: vihjerivit kertovat ne."
+
+[note_numpad]
+of = "b446bb"
+text = "Näkymissä numeronäppäimistö toimii kuin\nnuolinäppäimet (kiinteä)."
+
+[now]
+of = "50f103"
+text = "{name:bare}: {old:bare} on nyt {shown:bare}."
+
+[press_a_key]
+of = "1cf813"
+text = "paina näppäintä..."
+
+[refused]
+of = "0d8c1f"
+text = "! {why:bare}"
+
+[refused_try]
+of = "2a141c"
+text = "! {why:bare}. Kokeile toista, tai Esc peruu."
+
+[refused_unbindable]
+of = "b73075"
+text = "! Tätä näppäintä ei voi sitoa. Kokeile toista, tai Esc peruu."
+
+[removed]
+of = "35da6f"
+text = "{name:bare}: {shown:bare} poistettu."
+
+[removed_keyless]
+of = "ad544a"
+text = "{name:bare}: {shown:bare} poistettu; komennolla ei ole nyt näppäintä."
+
+[title]
+of = "985795"
+text = "Näppäimet"
+
+[traded]
+of = "9de491"
+text = "{name:bare}: {shown:bare} ja {old:bare} vaihtoivat paikkaa."

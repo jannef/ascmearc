@@ -314,36 +314,36 @@ fn unidentified_magic_gives_its_crystals_by_the_same_checks_unnamed() {
 }
 
 #[test]
-fn the_trained_enchanter_is_marked_and_a_deep_rare_sometimes_leaves_a_rare_material() {
+fn the_trained_enchanter_is_marked_and_a_high_rare_sometimes_leaves_a_rare_material() {
     let w = salvage(9, Some(10), |w| {
         sword(w, Rarity::Magic, 5, &[("flaming", 2)], true)
     });
     let s = enchanting(&w);
     assert_eq!(w.state.player().skills.get(s).map(|t| t.marks), Some(1));
-    let (mut found, mut shallow) = (0, 0);
+    let (mut found, mut lower) = (0, 0);
     for seed in 0..400 {
-        let deep = salvage(seed, None, |w| {
+        let high = salvage(seed, None, |w| {
             sword(
                 w,
                 Rarity::Rare,
-                10,
+                20,
                 &[("flaming", 2), ("of_the_bear", 1)],
                 true,
             )
         });
-        found += count(&deep, "heart_crystal") + count(&deep, "soul_fetter");
+        found += count(&high, "heart_crystal") + count(&high, "soul_fetter");
         let low = salvage(seed, None, |w| {
             sword(
                 w,
                 Rarity::Rare,
-                9,
+                19,
                 &[("flaming", 2), ("of_the_bear", 1)],
                 true,
             )
         });
-        shallow += count(&low, "heart_crystal") + count(&low, "soul_fetter");
+        lower += count(&low, "heart_crystal") + count(&low, "soul_fetter");
     }
     // 3 % of 400: about 12.
     assert!((2..40).contains(&found), "{found}");
-    assert_eq!(shallow, 0, "below item level 10, never");
+    assert_eq!(lower, 0, "below item level 20, never");
 }

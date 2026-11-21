@@ -1,0 +1,154 @@
+# The dialogs input opens before an action (`crates/ascmearc/src/ui/step_dialogs.rs`).
+# `keeper` is text (a name) and cannot be inflected: the lines keep it in the nominative.
+
+[aim_again]
+of = "9ea0ce"
+text = "Tähtää uudelleen"
+
+[burst_cast]
+of = "e93fd0"
+text = "{noun:Nom} voi osua sinuunkin. Loitsitko silti?"
+
+[burst_read]
+of = "923402"
+text = "{noun:Nom} voi osua sinuunkin. Luetko {scroll:gen} silti?"
+
+[cast_it]
+of = "83cae8"
+text = "Loitsi"
+
+[deep_ask]
+of = "a33273"
+text = "Sukellatko todella syvään veteen?"
+
+[deep_title]
+of = "4e33d3"
+text = "Syvä vesi"
+
+[dive_in]
+of = "4e5c57"
+text = "Sukella"
+
+[dont_cast]
+of = "cc0699"
+text = "Älä loitsi"
+
+[dont_pay]
+of = "98d86b"
+text = "Älä maksa"
+
+[dont_read]
+of = "f71739"
+text = "Älä lue"
+
+[fainting]
+of = "0eda52"
+text = "Olet nälästä heikko, ja tämä matka voi tappaa sinut. Jatkatko syömättä?"
+
+[go_back]
+of = "895553"
+text = "Palaa"
+
+[go_on]
+of = "b63c94"
+text = "Jatka"
+
+[heal_ask]
+of = "581592"
+text = "Mitä hoidat?"
+
+[heal_title]
+of = "f7e033"
+text = "Paranna"
+
+[keep_it]
+of = "e1741c"
+text = "Pidä"
+
+[leave_it]
+of = "e78262"
+text = "Jätä"
+
+[leave_unpaid]
+of = "bbc847"
+text = "Lähde maksamatta"
+
+[never_mind]
+of = "455a7c"
+text = "Ei sittenkään"
+
+[offer_drink]
+of = "20e1d9"
+text = "Haluatko juoda {feature:ela}?"
+
+[offer_pray]
+of = "944fcf"
+text = "Haluatko rukoilla {feature:ade}?"
+
+[offer_temper]
+of = "3fb136"
+text = "Haluatko karkaista jotakin {feature:ade}?"
+
+[offer_title]
+of = "acb4d2"
+text = "{feature:Nom}"
+
+[owe]
+of = "6e293b"
+text = "{keeper:bare} odottaa saavansa {owed:bare} kultaa."
+
+[owe_none]
+of = "525e3d"
+text = "{keeper:bare} odottaa saavansa {owed:bare} kultaa, eikä sinulla ole kultaa. Palauta jotakin tai tuo lisää kultaa."
+
+[owe_only]
+of = "a6a7aa"
+text = "{keeper:bare} odottaa saavansa {owed:bare} kultaa, ja sinulla on vain {gold:bare}. Palauta jotakin tai tuo lisää kultaa."
+
+[pay_leave]
+of = "a8f08a"
+text = "Maksa {owed:bare} kultaa ja lähde"
+
+[read_it]
+of = "fafd6d"
+text = "Lue"
+
+[sale]
+of = "022e4a"
+text = "{keeper:bare} tarjoaa {offer:bare} kultaa: {what:bare}."
+
+[sell]
+of = "f75602"
+text = "Myy {offer:bare} kullalla"
+
+[starving]
+of = "83390c"
+text = "Olet nääntymässä nälkään, ja jokainen askel vie sitä vähää elämää, mitä sinulla on jäljellä. Tämä matka voi hyvin olla viimeisesi. Jatkatko syömättä?"
+
+[stay]
+of = "90bd27"
+text = "Jää"
+
+[stay_back]
+of = "5a1aac"
+text = "Pysy kauempana"
+
+[step_onto]
+of = "e7f5b3"
+text = "Astu"
+
+[theft]
+of = "0138f2"
+text = "{keeper:bare} odottaa saavansa {owed:bare} kultaa. Jos lähdet tätä tietä maksamatta, {keeper:bare} pitää sitä varkautena."
+
+[too_close]
+of = "b55e3c"
+text = "Liian lähellä"
+
+[trap_ask]
+of = "36d841"
+text = "Astutko todella {trap:ill}?"
+
+[trap_title]
+of = "5c68a6"
+text = "Ansa"

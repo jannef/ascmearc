@@ -1,0 +1,228 @@
+# Combat (`world/combat/`); the roles as in `en/messages/combat.toml`. `actor` attacks and
+# `target` is attacked (either may be the player); `weapon` what strikes, with its owner, a trap's
+# possibly plural ("nuolet"); `verb` a line of data, a finite verb taking a partitive object,
+# already in the actor's person. A plural trap actor gets English's plural verb, which in Finnish
+# would be the second person: its lines say a verb of their own (`actor.number` `many`).
+
+acid_eats_at = { text = "Happo syövyttää {what:par}.", of = "36004d" }
+acid_eats_away = { text = "Happo syö {what:gen} olemattomiin.", of = "cff4b1" }
+acid_runs_off = { text = "Happo valuu {what:abl} tekemättä vahinkoa.", of = "5284d4" }
+# What the player does at a place they aim at, an infinitive with its object:
+# `cannot_aim_at_yourself`'s `verb`.
+aim_breathe_fire = { text = "syöstä tulta", of = "a8cb9a" }
+aim_breathe_frost = { text = "syöstä huurretta", of = "a1be8e" }
+aim_breathe_rot = { text = "syöstä mätää", of = "f5201c" }
+aim_breathe_thunder = { text = "syöstä ukkosta", of = "0436dc" }
+aim_cast = { text = "loitsia", of = "2550e4" }
+aim_hex = { text = "noitua", of = "b49db4" }
+aim_set_companion = { text = "usuttaa seuralaistasi", of = "acac6e" }
+aim_shoot = { text = "ampua", of = "1596c4" }
+aim_spit = { text = "sylkeä", of = "14faa4" }
+aim_stare = { text = "tuijottaa", of = "2b1c08" }
+aim_throw = { text = "heittää", of = "787655" }
+aim_throw_voice = { text = "heittää ääntäsi", of = "4f66ad" }
+aim_zap = { text = "laukaista sauvaa", of = "95e2a7" }
+aimed_at_nothing = { text = "Se ei osoita mihinkään.", of = "dfa95b" }
+attack_damage = { text = "{dice:bare} {kinds:bare}", of = "7fa298" }
+attack_kind_or = { text = "{first:bare} tai {rest:bare}", of = "269c79" }
+attack_listed = { text = "{first:bare}, {rest:bare}", of = "a51d07" }
+attack_pierces = { text = "läpäisee panssarin", of = "90ce22" }
+attack_range = { text = "kantama {n:bare}", of = "d7fa6a" }
+attack_source_main_hand = { text = "pääkäsi", of = "f81a7c" }
+attack_source_missile = { text = "ammus", of = "ef6827" }
+attack_source_off_hand = { text = "sivukäsi", of = "7d95aa" }
+attack_source_tail = { text = "häntä", of = "39a86c" }
+attack_source_third_hand = { text = "kolmas käsi", of = "0addbb" }
+attack_to_hit = { text = "osuma {to_hit:bare}", of = "07e471" }
+blades_rend = { text = "Teräsi repivät {target:par}.", of = "7d69cb" }
+blades_rend_you = { text = "{actor:Gen} terät repivät sinua.", of = "9d93aa" }
+burns_away = { text = "{what:Nom} palaa poroksi.", of = "2d649d" }
+cannot_aim_at_yourself = { text = "Et voi {verb:bare} itseäsi kohti.", of = "fbc972" }
+cannot_loose_here = { text = "Et voi tehdä sitä matkakartalla.", of = "8c215a" }
+cannot_throw = { text = "Et voi heittää {what:par}.", of = "39fc4b" }
+carry_no_such_thing = { text = "Sinulla ei ole sellaista.", of = "b79167" }
+comes_away_pitted = { text = "{what:Nom} syöpyy kuoppaiseksi.", of = "3bae81" }
+comes_away_rusted = { text = "{what:Nom} ruostuu.", of = "2ca78b" }
+comes_away_scorched = { text = "{what:Nom} kärventyy.", of = "f8169a" }
+dies = { text = "{who:Nom} {verb:bare}.", of = "35ccf0" }
+dummy_learned_all = { text = "Olet oppinut kaiken, mitä harjoitusnukke voi opettaa.", of = "0fe7fa" }
+fires_by_itself = { text = "Se laukeaa itsestään.", of = "ec70bd" }
+frenzy = { text = "Taistelet hurmoksessa.", of = "64bf46" }
+frenzy_ends = { text = "Palaat hyökkäävään asentoon.", of = "d2e4b9" }
+frenzy_holds = { text = "Raivosi pitää sinut hurmoksessa.", of = "0f167c" }
+frenzy_needs_rage = { text = "Vain raivo tuo hurmoksen.", of = "259871" }
+heat_leaves_unmarked = { text = "Kuumuus ei jätä jälkeä {what:ade}.", of = "49fb36" }
+heat_scorches = { text = "Kuumuus kärventää {what:par}.", of = "e0ec8c" }
+in_the_way = { text = "Jokin on tiellä.", of = "ce360b" }
+keep_wits = { text = "Pidät pääsi kylmänä.", of = "2dc11a" }
+# `what`: the player's weapon, knocked away by `who`; a total object (one: the genitive;
+# counted: the numeral and the partitive, "kolme nuolta").
+knocked_from_hand = { by = "what.number", one = "{who:Nom} lyö {what:gen} kädestäsi!", many = "{who:Nom} lyö {what:nom} kädestäsi!", of = "39bd8a" }
+lands_beside_you = { text = "Se putoaa viereesi.", of = "b4044b" }
+learned_ability = { text = "Olet oppinut {ability:gen}.", of = "869173" }
+no_ability = { text = "Sinulla ei ole sellaista kykyä.", of = "f10090" }
+no_ammunition = { text = "Sinulla ei ole {what:pl_par} valmiina.", of = "210e58" }
+no_ammunition_kind = { text = "Sinulla ei ole ammuksia valmiina.", of = "8e3998" }
+no_ammunition_left = { text = "Sinulla ei ole enää {what:pl_par}.", of = "9ff43c" }
+no_quarrel = { text = "Sinulla ei ole riitaa {target:gen} kanssa.", of = "d1eae8" }
+no_room_to_lunge = { text = "Syöksyyn ei ole tilaa.", of = "fb40b9" }
+no_shield_to_bash = { text = "Sinulla ei ole kilpeä, jolla töytäistä.", of = "2a543e" }
+no_vital_spot = { text = "Sillä ei ole heikkoa kohtaa.", of = "897edd" }
+no_weapon_skill = { text = "Asetaitoa `{skill:bare}` ei ole.", of = "c15ee4" }
+nobody_beside_you = { text = "Vieressäsi ei ole ketään lyötävää.", of = "d07a16" }
+nobody_there = { text = "Siellä ei ole ketään lyötävää.", of = "efe8e1" }
+nothing_ready = { text = "Sinulla ei ole mitään valmiina heitettäväksi tai ammuttavaksi.", of = "634235" }
+nothing_ready_to_shoot = { text = "Sinulla ei ole mitään valmiina ammuttavaksi.", of = "822aa1" }
+nothing_to_bash = { text = "Siellä ei ole mitään töytäistävää.", of = "152856" }
+out_of_range = { text = "Se on kantaman ulkopuolella.", of = "884956" }
+pace_your_breath = { text = "Opit säästelemään hengitystäsi.", of = "1eb68f" }
+reason = { text = "{reason:Bare}.", of = "90dfd1" }
+reflected_at_you = { text = "{weapon:Nom} kääntyy takaisin sinuun.", of = "5f13c9" }
+rust_spreads = { text = "Ruoste leviää {what:ill}.", of = "657a46" }
+rusts_away = { text = "{what:Nom} ruostuu olemattomiin.", of = "192c24" }
+shield_wrath = { text = "Vastaat iskuun pyhällä vihalla!", of = "9a6276" }
+shields_fumble = { text = "Kilpesi ovat tiellä, ja loitsu lipeää otteestasi.", of = "48fc89" }
+# `verb` ("ampua", "heittää") is not said: the missile flies, said alone.
+shot = { text = "{what:Nom} lentää.", of = "0c868a" }
+skill_risen = { text = "Tunnet olevasi taitavampi {how:bare}.", of = "be8e74" }
+something_dies = { text = "Jokin kuolee.", of = "fd9a9e" }
+staggers = { text = "{who:Nom} horjahtaa.", of = "9f3bd4" }
+# `from`: what turned the blow ("kilpi", "torjunta"), the player's.
+staggers_from = { text = "{from:Nom_si} saa {who:gen} horjahtamaan.", of = "c80f17" }
+status = { text = "{who:Nom} on {status:nom}.", of = "3d7f6e" }
+status_from = { text = "{from:Nom_si} jättää {who:gen} {status:tra}.", of = "2e1e72" }
+takes_no_rust = { text = "{what:Nom} ei ruostu.", of = "9eeb6e" }
+throws = { text = "{actor:Nom} {verb:bare} {what:par}.", of = "1cd694" }
+throws_flask = { text = "{actor:Nom} {verb:bare} pulloa.", of = "ef2b5e" }
+# Verbs said in a line's `verb` where the data gives none, each taking a partitive object; the
+# third person, and the player's (second person) beside it.
+verb_bash = { text = "töytäiset", of = "dc9025" }
+verb_bashes = { text = "töytäisee", of = "46142a" }
+verb_burn = { text = "poltat", of = "f910c9" }
+verb_burns = { text = "polttaa", of = "15a107" }
+verb_cast_a_spell_at = { text = "noidut", of = "9670be" }
+verb_casts_a_spell_at = { text = "noituu", of = "d5dd1d" }
+verb_dies = { text = "kuolee", of = "332143" }
+verb_hit = { text = "lyöt", of = "d2b8a8" }
+verb_hits = { text = "lyö", of = "b8fdd1" }
+verb_kick = { text = "potkaiset", of = "1c13d9" }
+verb_kicks = { text = "potkaisee", of = "32934e" }
+verb_sear = { text = "kärvennät", of = "5085ac" }
+verb_sears = { text = "kärventää", of = "c269e2" }
+verb_shoot = { text = "ammut", of = "1596c4" }
+verb_shoots = { text = "ampuu", of = "fb2639" }
+where = { text = "Mihin?", of = "76a927" }
+which_way = { text = "Mihin suuntaan?", of = "bd07cf" }
+whirls = { text = "{who:Nom} pyörähtää sinua kohti.", of = "1ec9f2" }
+will_not_leave_hand = { text = "Se ei irtoa kädestäsi.", of = "f33ddb" }
+you_die = { text = "Kuolet...", of = "d1e389" }
+
+[attacks]
+of = "f163fc"
+by = "actor.person"
+you = "Hyökkäät {target:gen} kimppuun."
+other = { by = "target.person", you = "{actor:Nom} hyökkää kimppuusi.", other = "{actor:Nom} hyökkää {target:gen} kimppuun." }
+
+[blocks]
+of = "d34dc3"
+by = "target.person"
+you = "Torjut {weapon:par} kilvelläsi."
+other = "{target:Nom} torjuu {weapon:par} kilvellään."
+
+[casts_at]
+of = "415ff3"
+by = "actor.person"
+you = "Kohdistat loitsun {target:ill}."
+other = "{actor:Nom} kohdistaa loitsun {target:ill}."
+
+[does_no_harm]
+of = "888652"
+by = "weapon.number"
+one = "{weapon:Nom} ei vahingoita {target:par}."
+many = "{weapon:Nom} eivät vahingoita {target:par}."
+
+[dodges]
+of = "9d8d0d"
+by = "target.person"
+you = "Väistät {weapon:par}."
+other = "{target:Nom} väistää {weapon:par}."
+
+[driven_back]
+of = "cd9ead"
+by = "who.person"
+you = "Sinkoudut taaksepäin."
+else = "{who:Nom} sinkoutuu taaksepäin."
+
+# `armour`: what it glances off: the piece worn, a hide, "panssari".
+[glances_off]
+of = "2d4639"
+by = "weapon.number"
+one = { by = "target.person", you = "{weapon:Nom} kimpoaa {armour:ela_si}.", other = "{weapon:Nom} kimpoaa {target:gen} {armour:ela}." }
+many = { by = "target.person", you = "{weapon:Nom} kimpoavat {armour:ela_si}.", other = "{weapon:Nom} kimpoavat {target:gen} {armour:ela}." }
+
+[hit]
+of = "7ca028"
+by = "actor.person"
+you = "{verb:Bare} {target:par}."
+other = { by = "actor.number", one = "{actor:Nom} {verb:bare} {target:par}.", many = "{actor:Nom} osuvat {target:ill}." }
+
+[hit_hard]
+of = "3086ae"
+by = "actor.person"
+you = "{verb:Bare} {target:par} rajusti!"
+other = { by = "actor.number", one = "{actor:Nom} {verb:bare} {target:par} rajusti!", many = "{actor:Nom} osuvat {target:ill} rajusti!" }
+
+[hit_no_harm]
+of = "5a485a"
+by = "actor.person"
+you = "{verb:Bare} {target:par}, mutta vahinkoa ei synny."
+other = { by = "actor.number", one = "{actor:Nom} {verb:bare} {target:par}, mutta vahinkoa ei synny.", many = "{actor:Nom} osuvat {target:ill}, mutta vahinkoa ei synny." }
+
+[misses]
+of = "65b86b"
+by = "actor.person"
+you = "Et osu {target:ill}."
+other = { by = "actor.number", one = "{actor:Nom} ei osu {target:ill}.", many = "{actor:Nom} eivät osu {target:ill}." }
+
+[parries]
+of = "35fa13"
+by = "target.person"
+you = "Torjut {weapon:par}."
+other = "{target:Nom} torjuu {weapon:par}."
+
+# `who`: whose shield; `weapon`: the spell's bolt, with its caster ("salamasi").
+[reflected]
+of = "fb8a19"
+by = "who.person"
+you = "Kilpesi kääntää {weapon:gen} takaisin {target:ill}."
+other = "{who:Gen} kilpi kääntää {weapon:gen} takaisin {target:ill}."
+
+[reflected_at_caster]
+of = "949097"
+by = "who.person"
+you = "Kilpesi kääntää {weapon:gen} takaisin loitsijaansa."
+other = "{who:Gen} kilpi kääntää {weapon:gen} takaisin loitsijaansa."
+
+[shoots_at]
+of = "6e3afe"
+by = "actor.person"
+you = "Ammut {target:par} kohti."
+other = { by = "actor.number", one = "{actor:Nom} ampuu {target:par} kohti.", many = "{actor:Nom} lentävät {target:par} kohti." }
+
+[strikes_wall]
+of = "c17c10"
+by = "weapon.number"
+one = "{weapon:Nom} iskee kiveen siellä, missä {target:nom} piileskelee seinässä."
+many = "{weapon:Nom} iskevät kiveen siellä, missä {target:nom} piileskelee seinässä."
+
+[throws_at]
+of = "be5e7c"
+by = "actor.person"
+you = "Heität {target:par} kohti."
+other = "{actor:Nom} heittää {target:par} kohti."
+
+[turned_aside]
+of = "11322f"
+by = "weapon.number"
+one = "{weapon:Nom} kääntyy sivuun ennen kuin ehtii {target:ill}."
+many = "{weapon:Nom} kääntyvät sivuun ennen kuin ehtivät {target:ill}."

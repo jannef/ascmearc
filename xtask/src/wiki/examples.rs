@@ -16,7 +16,7 @@ use ascmearc_core::combat;
 use ascmearc_core::content::Content;
 use ascmearc_core::mana;
 use ascmearc_core::object::format_weight;
-use ascmearc_core::skills::Effect;
+use ascmearc_core::skills::{Effect, MAX_ENCHANT_LEVEL};
 use ascmearc_core::stats::{self, Stat};
 use ascmearc_core::world::World;
 
@@ -536,7 +536,8 @@ fn enchanting_kindling_a_long_sword() {
         &block,
         &format!("Willpower {willpower} and Enchanting {value}"),
     );
-    let reach = skill_gives(&content, &skill, Effect::EnchantLevel, value).clamp(1, 12);
+    let reach =
+        skill_gives(&content, &skill, Effect::EnchantLevel, value).clamp(1, MAX_ENCHANT_LEVEL);
     let craft = skill_gives(&content, &skill, Effect::Craft, value);
     let modifier = stats::modifier(willpower) + craft;
     let recipe = |id: &str| content.recipe(content.recipes().id(id).expect("recipe"));
@@ -593,7 +594,7 @@ fn enchanting_kindling_a_long_sword() {
     says(
         &block,
         &format!(
-            "of item level {level}, rolls at its own {level}: Quicken's {} plus {}, difficulty {difficulty}, and the dice need {}, {}",
+            "of item level {level}, above her reach, rolls at its own {level}: Quicken's {} plus {}, difficulty {difficulty}, and the dice need {}, {}",
             quicken.difficulty,
             level / step,
             difficulty - modifier,

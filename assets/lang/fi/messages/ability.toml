@@ -1,0 +1,41 @@
+# Why an ability cannot be used now (`Unavailable::reason`): a lower-case clause shown beside the
+# greyed-out row and in a refusal's `reason` ("Et voi: {reason:bare}."). Roles as in English:
+# `status` a status, `skill` a skill, `name` a resource (phrases); `words` a line of data.
+
+familiar_lives = { text = "apurieläimesi elää yhä", of = "f835df" }
+fires_by_itself = { text = "laukeaa itsestään", of = "40aaf5" }
+have_companion = { text = "sinulla on jo seuralainen", of = "52a637" }
+lacking = { text = "{words:bare}", of = "b5a20e" }
+no_allies = { text = "täällä ei ole liittolaisia", of = "80f37c" }
+no_companion = { text = "seuralaisesi ei ole täällä", of = "280600" }
+no_knife = { text = "sinulla ei ole veistä", of = "3cd283" }
+no_mana = { text = "manasi ei riitä", of = "d2dc45" }
+no_shield = { text = "sinulla ei ole kilpeä", of = "e0344b" }
+no_target_beast = { text = "vierelläsi ei ole kesytettävää eläintä", of = "348133" }
+no_target_closed_door = { text = "vierelläsi ei ole suljettua ovea", of = "01d8b4" }
+no_target_foe = { text = "ulottuvillasi ei ole vihollista", of = "4afa66" }
+no_target_fool = { text = "vierelläsi ei ole ketään harhautettavaa", of = "c77750" }
+no_target_fungus = { text = "vierelläsi ei ole sientä", of = "26377b" }
+no_target_ground = { text = "vierelläsi ei ole vapaata maata", of = "b72a3a" }
+no_target_lock = { text = "vierelläsi ei ole lukkoa", of = "84a3d2" }
+no_target_mark = { text = "vierelläsi ei ole ketään ryöstettävää", of = "fafe28" }
+no_target_open_door = { text = "vierelläsi ei ole avointa ovea", of = "bc1325" }
+no_target_openable = { text = "vierelläsi ei ole mitään avattavaa", of = "c3c195" }
+no_target_someone = { text = "vierelläsi ei ole ketään", of = "4909c1" }
+no_target_trap = { text = "vierelläsi ei ole tuntemaasi ansaa", of = "252386" }
+no_target_wall = { text = "vierelläsi ei ole mitään kaivettavaa", of = "d095c3" }
+no_unknown_scroll = { text = "ei tuntemattomia kääröjä", of = "60db8a" }
+not_beside = { text = "ei vierelläsi", of = "90ed06" }
+not_here = { text = "ei käytettävissä täällä", of = "68c91b" }
+not_so_held = { text = "otteesi ei ole oikea", of = "31ef72" }
+not_yet = { text = "ei vielä käytettävissä", of = "cc2d15" }
+nothing_to_mend = { text = "ei mitään parannettavaa", of = "6cd00c" }
+nothing_to_treat = { text = "ei mitään hoidettavaa", of = "b37020" }
+# `name`: the resource, too little of it held.
+short = { text = "liian vähän {name:par}", of = "85871c" }
+still = { text = "mielesi on jo tyyni", of = "39943e" }
+# `skill`: the skill the actor is not trained in.
+untrained = { text = "et hallitse {skill:par}", of = "52e773" }
+watched = { text = "jokin tarkkailee", of = "d64251" }
+# `status`: the status that keeps the ability from use.
+while_status = { text = "olet {status:nom}", of = "1962f9" }

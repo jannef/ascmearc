@@ -384,9 +384,11 @@ mod tests {
         press(&mut screen, &mut s, Nav::Left);
         assert_eq!(s.temperature, TemperatureUnit::Celsius);
         press(&mut screen, &mut s, Nav::Right);
-        // The language: with English alone, it stays English.
+        // The language: steps through the shipped ones, English and Finnish, and back.
         press(&mut screen, &mut s, Nav::Down);
         press(&mut screen, &mut s, Nav::Right);
+        assert_eq!(s.language, "fi");
+        press(&mut screen, &mut s, Nav::Left);
         assert_eq!(s.language, "en");
         press(&mut screen, &mut s, Nav::Down);
         assert_eq!(

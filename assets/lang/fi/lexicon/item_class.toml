@@ -1,0 +1,25 @@
+# Item classes (`item_class:<id>`): plural nouns ("lähiaseet"), a heading capitalized.
+amulets = { word = "amuletti/5*C", many = true }
+body_armour = { word = "haarniska/13", many = true }
+boots = { word = "jalkine/48", many = true }
+cloaks = { word = "viitta/9*C", many = true }
+clothing = { word = "vaate/48*C", many = true }
+coins = { word = "raha/9", many = true }
+food = "ruoka/10*D"
+gems = { word = "jalo|kivi/7", many = true }
+gloves = { word = "käsine/48", many = true }
+helmets = { word = "kypärä/12", many = true }
+household = { word = "talous|tavara/12", many = true }
+light_sources = { word = "valon|lähde/48*F", many = true }
+materials = { word = "materiaali/6", many = true }
+melee_weapons = { word = "lähi|ase/48", many = true }
+miscellaneous = { word = "sekalainen/38", many = true, forms = { label = "Sekalaista" } }
+missile_weapons = { word = "ampuma-ase/48", many = true }
+missiles = { word = "ammus/39", many = true }
+potions = { word = "juoma/10", many = true }
+rings = { word = "sormus/39", many = true }
+rods = { word = "valtikka/14*A", many = true }
+scrolls = { word = "käärö/1", many = true }
+shields = { word = "kilpi/7*E", many = true }
+tools = { word = "työ|kalu/2", many = true }
+wands = { word = "taika|sauva/9", many = true }

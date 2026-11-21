@@ -1,0 +1,101 @@
+# The abilities menu (`crates/ascmearc/src/ui/abilities_screen.rs`).
+
+[aim_ailment]
+of = "6e69d9"
+text = "itseesi tai liittolaiseen"
+
+[aim_cell]
+of = "a89b28"
+text = "näkemääsi paikkaan"
+
+[aim_corpse]
+of = "f51e85"
+text = "näkemääsi ruumiiseen"
+
+[aim_direction]
+of = "067b18"
+text = "johonkin suuntaan"
+
+[aim_item]
+of = "ad1569"
+text = "kantamaasi esineeseen"
+
+[aim_rig]
+of = "8abe19"
+text = "ansa viereesi"
+
+[aim_shape]
+of = "ab094a"
+text = "aseen muodossa"
+
+[aim_spell]
+of = "a66323"
+text = "tuntemasi loitsun käärö"
+
+[aim_throw]
+of = "e7306d"
+text = "heitto näkemääsi paikkaan"
+
+[aimed]
+of = "82aee0"
+text = "{cost:bare}, tähdättävä"
+
+[charge_stamina]
+of = "9856d7"
+text = "{base:bare} kestävyyttä + {per:bare} askelta kohden"
+
+[close]
+of = "12c352"
+text = "Esc sulje"
+
+[close_own]
+of = "2a7cbf"
+text = "{own:bare} tai Esc sulje"
+
+[cost_aim]
+of = "a79a2a"
+text = "{cost:bare}, {aim:bare}"
+
+[cost_why]
+of = "6ab67b"
+text = "{cost:bare}: {why:bare}"
+
+[mana]
+of = "657aa1"
+text = "{cost:bare} manaa"
+
+[none]
+of = "b72ac6"
+text = "Sinulla ei ole kykyjä."
+
+[notice]
+of = "af6200"
+text = "{ability:bare}: {why:bare}."
+
+[reach]
+of = "bf0c4a"
+text = "{reach:Bare}."
+
+[roll_mana]
+of = "2bcf78"
+text = "{roll:bare}, {cost:bare} manaa"
+
+[short_of_mana]
+of = "c6d637"
+text = "{cost:bare}: sinulla on {mana:bare}"
+
+[stamina]
+of = "1063b7"
+text = "{stamina:bare} kestävyyttä"
+
+[title]
+of = "1510d4"
+text = "Kyvyt"
+
+[use_a]
+of = "b70c56"
+text = "a tai {confirm:bare} käytä"
+
+[use_letters]
+of = "3ae999"
+text = "a-{last:bare} tai {confirm:bare} käytä"

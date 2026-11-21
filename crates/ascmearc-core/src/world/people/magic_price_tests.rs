@@ -62,15 +62,49 @@ fn magic_adds_its_rarity_and_known_affixes_to_the_worth() {
     // Unidentified, only the rarity is known: half again, twice.
     assert_eq!(magic_dagger(&c, Rarity::Magic, false).worth(&c), 45);
     assert_eq!(magic_dagger(&c, Rarity::Rare, false).worth(&c), 60);
-    // Identified, each affix adds 50 + 25 × its tier's item level (1).
-    assert_eq!(magic_dagger(&c, Rarity::Magic, true).worth(&c), 45 + 75);
-    assert_eq!(magic_dagger(&c, Rarity::Rare, true).worth(&c), 60 + 75);
+    // Identified, each affix adds 50 + 10 × its tier's item level (1).
+    assert_eq!(magic_dagger(&c, Rarity::Magic, true).worth(&c), 45 + 60);
+    assert_eq!(magic_dagger(&c, Rarity::Rare, true).worth(&c), 60 + 60);
     // A stack counts each one.
     let mut two = magic_dagger(&c, Rarity::Magic, true);
     two.count = 2;
-    assert_eq!(two.worth(&c), 240);
+    assert_eq!(two.worth(&c), 210);
     // Value stays the make alone.
     assert_eq!(two.value(&c), 60);
+}
+
+#[test]
+fn a_unique_is_priced_by_its_own_item_level_not_its_tiers() {
+    // Its values are set by hand (`id=value`), so its affixes' tiers say nothing of its worth:
+    // each identified affix adds the gold of the unique's own item level (#2048).
+    let c = content();
+    let rules = *c.magic_worth().expect("magic is worth something");
+    assert!(c.uniques().next().is_some(), "some unique to price");
+    for unique in c.uniques() {
+        let mut stack = unique.stack.clone();
+        let made = stack.worth(&c);
+        assert!(stack.identify(), "{}", unique.id);
+        let magic = unique.magic();
+        let affixes = magic.affixes.len() as u64 * rules.affix_worth(magic.level);
+        assert_eq!(stack.worth(&c), made + affixes, "{}", unique.id);
+    }
+    // The same affixes on a rare that is no unique are priced by their tiers.
+    let unique = c.uniques().next().expect("a unique");
+    let mut rare = unique.stack.clone();
+    let tiers = |m: &Magic| -> u64 {
+        (m.affixes.iter())
+            .map(|a| {
+                let tier = c.affixes().get(&a.id).and_then(|d| d.tier(a.tier));
+                rules.affix_worth(tier.map_or(0, |t| t.level))
+            })
+            .sum()
+    };
+    let made = rare.worth(&c);
+    assert!(rare.identify());
+    let magic = rare.magic_mut().expect("magic");
+    magic.unique = None;
+    let by_tiers = tiers(magic);
+    assert_eq!(rare.worth(&c), made + by_tiers);
 }
 
 #[test]

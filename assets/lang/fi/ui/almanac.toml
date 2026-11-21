@@ -1,0 +1,79 @@
+# The pause menu's line on the world (`crates/ascmearc/src/ui/almanac.rs`).
+
+[air]
+of = "3b8a83"
+text = "lämpötila {degrees:bare}"
+
+[air_sky]
+of = "617375"
+text = "{sky:bare}, {degrees:bare}"
+
+# Day as digits with a dot, the month's name as the data gives it.
+[date]
+of = "b08634"
+text = "{day:bare}. {month:bare} {year:bare}"
+
+[moon]
+of = "f0c0f5"
+text = ", taivaalla {phase:bare}"
+
+[moon_named]
+of = "20b981"
+text = "{name:bare} ({phase:bare})"
+
+[moons]
+of = "57771b"
+text = ", taivaalla {moons:and}"
+
+# A moon's phase, as a whole noun.
+[phase_first_quarter]
+of = "9f7faa"
+text = "kasvava puolikuu"
+
+[phase_full]
+of = "0b7788"
+text = "täysikuu"
+
+[phase_last_quarter]
+of = "d76177"
+text = "vähenevä puolikuu"
+
+[phase_new]
+of = "10c6dc"
+text = "uusikuu"
+
+[phase_waning_crescent]
+of = "147426"
+text = "vähenevä kuunsirppi"
+
+[phase_waning_gibbous]
+of = "ea47e2"
+text = "vähenevä kuu"
+
+[phase_waxing_crescent]
+of = "03eb65"
+text = "kasvava kuunsirppi"
+
+[phase_waxing_gibbous]
+of = "584166"
+text = "kasvava kuu"
+
+[sentence]
+of = "449ad6"
+text = "{date:bare}{moon:bare}, {air:bare}. Maailma odottaa."
+
+[sky_clear]
+of = "0b7283"
+text = "selkeää"
+
+[sky_heavy_rain]
+of = "5bfca6"
+text = "rankkasadetta"
+
+[sky_overcast]
+of = "924790"
+text = "pilvistä"
+
+[sky_rain]
+of = "856229"
+text = "sadetta"

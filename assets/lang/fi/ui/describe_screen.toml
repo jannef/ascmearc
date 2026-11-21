@@ -1,0 +1,33 @@
+# The item description (`crates/ascmearc/src/ui/describe_screen.rs`).
+
+[esc_close]
+of = "12c352"
+text = "Esc sulje"
+
+[label_power]
+of = "f8fa47"
+text = "Teho"
+
+[label_prefix]
+of = "8cf611"
+text = "Etul."
+
+[label_suffix]
+of = "34fd0c"
+text = "Jälkil."
+
+[name]
+of = "ca252b"
+text = "{name:Bare}"
+
+[name_marked]
+of = "ed410c"
+text = "{name:Bare} ({mark:bare})"
+
+[none]
+of = "9b74cc"
+text = "Sinulla ei ole sellaista."
+
+[title]
+of = "273b7d"
+text = "Esine"

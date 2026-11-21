@@ -401,7 +401,9 @@ fn chatting_greets_once_then_rotates_the_lines() {
     let talk = talked(&out).expect("an answer");
     assert_eq!(talk.with, ActorId(1));
     assert_eq!(talk.asked, None);
-    let topics: Vec<&str> = talk.topics.iter().filter_map(|t| t.name.text()).collect();
+    let topics: Vec<String> = (talk.topics.iter())
+        .filter_map(|t| t.name.text(w.content()))
+        .collect();
     assert_eq!(topics, ["The weather", "The road"]);
     // The lines in turn: each once a round, never the same twice in a row.
     let mut said = Vec::new();

@@ -1,0 +1,29 @@
+# Weapon skills and fighting styles (`weapon_skill:<id>`): a weapon skill is its weapons in the
+# plural ("tikarit ja veitset"), a style what one who fights so is called.
+axes = { word = "kirves/41", many = true }
+battle_caster = "taistelu|loitsija/12"
+bows = { word = "jousi/26", many = true }
+brawler = "tappelija/12"
+crossbows = { word = "varsi|jousi/26", many = true }
+daggers = { word = "tikari/6 ja veitsi/30", many = true }
+duelist = "kaksin|taistelija/12"
+great_blades = { word = "suuri/26 terä/10", many = true }
+great_weapon = { word = "raskas/41 ase/48", many = true }
+long_blades = { word = "pitkä/10 terä/10", many = true }
+maces = { word = "nuija/10 ja kurikka/14*A", many = true }
+marksman = "tarkka-ampuja/10"
+polearms = { word = "salko|ase/48", many = true }
+shield_bash = "kilpi-isku/1"
+short_blades = { word = "lyhyt/43 terä/10", many = true }
+skirmisher = "kahakoitsija/12"
+slings = { word = "linko/1*G", many = true }
+sniper = "etä|loitsija/12"
+spears = { word = "keihäs/41", many = true }
+staff_fighter = "sauva|taistelija/12"
+staves = { word = "sauva/9", many = true }
+sword_and_board = "miekka/9*A ja kilpi/7*E"
+thrown = { word = "heitto|ase/48", many = true }
+toucher = "kosketus|loitsija/12"
+twin_blades = { word = "kaksois|terä/10", many = true }
+two_shields = { word = "kaksois|kilpi/7*E", many = true }
+unarmed = "aseeton/34*C taistelu/2"

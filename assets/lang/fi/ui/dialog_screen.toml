@@ -1,0 +1,13 @@
+# The one dialog (`crates/ascmearc/src/ui/dialog_screen.rs`): only its own words.
+
+[choose]
+of = "eda6a8"
+text = "{up:bare}/{down:bare} valitse"
+
+[keys]
+of = "ca3daa"
+text = "({keys:bare})"
+
+[select]
+of = "7c2d9d"
+text = "{confirm:bare} hyväksy"

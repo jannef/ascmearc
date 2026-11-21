@@ -1,0 +1,194 @@
+# The settings screen (`crates/ascmearc/src/ui/settings_screen.rs`). Labels fit 18 columns
+# (16 for an indented effect), the help lines one row of the panel.
+
+[back]
+of = "15e766"
+text = "Takaisin"
+
+[back_help]
+of = "cdbfbe"
+text = "Asetukset tallentuvat heti, kun muutat niitä."
+
+[clock]
+of = "0803e7"
+text = "Kello"
+
+[clock_help]
+of = "2ee478"
+text = "Miten kellonaika kirjoitetaan: 14:32 tai 2:32 PM."
+
+[color_palette]
+of = "af69d2"
+text = "Väripaletti"
+
+[effect_blood]
+of = "a9d2c5"
+text = "Veri"
+
+[effect_blood_help]
+of = "2e0da4"
+text = "Veri kovista iskuista ja tapoista; ei esiasetuksessa."
+
+[effect_circles]
+of = "111426"
+text = "Loitsukehät"
+
+[effect_circles_help]
+of = "e884d6"
+text = "Kehät siunattujen ja kirottujen yllä (ei esiasetuksessa)."
+
+[effect_distortion]
+of = "a7224a"
+text = "Kuumuusväreily"
+
+[effect_distortion_help]
+of = "12a9a8"
+text = "Väreily laavan ja tulen yllä; syvyys tornista sumeana."
+
+[effect_flicker]
+of = "ede9f2"
+text = "Valon lepatus"
+
+[effect_flicker_help]
+of = "da29dd"
+text = "Tulen valo lepattaa ja vaihtaa sävyä; pois: tasainen."
+
+[effect_glow]
+of = "49db8d"
+text = "Hehku"
+
+[effect_glow_help]
+of = "482386"
+text = "Hehku loistavien merkkien ympärillä: laava, kiteet."
+
+[effect_glyph_animation]
+of = "afe0ce"
+text = "Merkkianimaatio"
+
+[effect_glyph_animation_help]
+of = "26340a"
+text = "Veden aallot, sykkivät alttarit, väreilevät äänet."
+
+[effect_motion]
+of = "fc1282"
+text = "Liike, kamera"
+
+[effect_motion_help]
+of = "edbd06"
+text = "Liukumat, kamera, loitsutehosteet; pois: välittömät."
+
+[effect_particles]
+of = "07e72d"
+text = "Hiukkaset"
+
+[effect_particles_help]
+of = "b06a27"
+text = "Kipinät, kekäleet, roiskeet ja pöly."
+
+[effect_screen_fades]
+of = "562603"
+text = "Ruudun häivytys"
+
+[effect_screen_fades_help]
+of = "6fd68d"
+text = "Kerrosten häivytys, välähdykset, loitsujen tummennus."
+
+[effect_screen_shake]
+of = "52bba9"
+text = "Ruudun tärinä"
+
+[effect_screen_shake_help]
+of = "c55874"
+text = "Näkymä tärisee, kun loitsu osuu lähellesi."
+
+[effect_weather]
+of = "56753f"
+text = "Sää"
+
+[effect_weather_help]
+of = "60ad07"
+text = "Satava sade, roiskeet ja renkaat vedessä."
+
+[files]
+of = "a472a7"
+text = "Missä tiedostoni?"
+
+[files_help]
+of = "1ab056"
+text = "Missä asetukset ja tallennukset ovat; avaa kansio."
+
+[font_px]
+of = "745ef9"
+text = "{px:bare} px"
+
+[font_size]
+of = "8b83e3"
+text = "Kirjasinkoko"
+
+[font_size_help]
+of = "b525f8"
+text = "Merkkien koko loogisina pikseleinä."
+
+[footer]
+of = "40f49f"
+text = "{up_down:bare} valitse   {left_right:bare} muuta   Esc takaisin"
+
+[language]
+of = "5aa06c"
+text = "Kieli"
+
+[language_help]
+of = "fb33bc"
+text = "Kieli, jolla peli näytetään."
+
+[off]
+of = "b07ab6"
+text = "Pois"
+
+[off_preset]
+of = "40277e"
+text = "Pois (esiasetus)"
+
+[on]
+of = "4dfc30"
+text = "Päällä"
+
+[palette_help]
+of = "7f7883"
+text = "Värittää koko näytön; pelin tiedot eivät muutu."
+
+[reduced_effects]
+of = "09eea6"
+text = "Kevyet tehosteet"
+
+[reduced_effects_help]
+of = "e93fd4"
+text = "Esiasetus: kytkee kaikki alla olevat tehosteet pois."
+
+[reset]
+of = "566678"
+text = "Palauta oletukset"
+
+[reset_help]
+of = "fda5e5"
+text = "Palauttaa nämä asetukset (ei näppäimiä)."
+
+[sample]
+of = "c1f917"
+text = "Näyte: tekstiä,  [ merkitty ]  ja  * korostettu *"
+
+[sample_accent]
+of = "531a45"
+text = "Korostusvärin näyte"
+
+[temperature]
+of = "334bb9"
+text = "Lämpötila"
+
+[temperature_help]
+of = "fe9ef1"
+text = "Yksikkö, jolla tilarivi näyttää lämpötilan."
+
+[title]
+of = "08e16d"
+text = "Asetukset"

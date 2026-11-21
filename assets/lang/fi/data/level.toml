@@ -1,0 +1,13 @@
+# Lines of data: hand-made levels (`level:<id>.<field>`).
+
+[ceaptun]
+arrival = { text = "Cēaptūnissa on markkinapäivä, ja torilla käy kova häly.", of = "c1bfe8" }
+name = { text = "Cēaptūn", of = "5d84f5" }
+
+[ceaptun.legend.N]
+name = { text = "palkkiotaulu", of = "875b05" }
+note = { text = "Ilmoituksia on naulattu kolmeen kerrokseen, ja useimmat niistä ovat vuosia vanhoja.", of = "cd27a7" }
+
+[gimmwic.hidden.skeul_hir]
+name = { text = "Skeul Hir", of = "793524" }
+opens = { text = "Peran koputtaa pitkää pöytää kolmesti. Taempana, luolassa josta tulit, kivi narskuu kiveä vasten, ja laatta kääntyy ylös jyrkän pimeyteen nousevan portaikon edestä: Skeul Hir.", of = "09a363" }

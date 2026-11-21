@@ -1,0 +1,31 @@
+# Talk (`world/people/talk.rs`); the roles as in `en/messages/talk.toml`. `dir` is a compass word
+# in the nominative, said in parentheses.
+
+does_not_answer = { text = "{who:Nom} ei vastaa.", of = "7cdb04" }
+does_not_budge = { text = "{who:Nom} ei hievahdakaan.", of = "adecd9" }
+in_no_mood = { text = "{who:Nom} ei ole puhetuulella.", of = "1e530f" }
+knows_nothing = { text = "{who:Nom} ei tiedä siitä mitään.", of = "eb6c6f" }
+no_one_to_talk_to = { text = "Siellä ei ole ketään, jolle puhua.", of = "3c6c3d" }
+something_in_the_way = { text = "Jokin on tiellä.", of = "ce360b" }
+swap_places = { text = "Vaihdat paikkaa {who:gen} kanssa.", of = "b53f27" }
+swap_places_unseen = { text = "Vaihdat paikkaa jonkin kanssa.", of = "29ffee" }
+verb_mutters = { text = "mutisee", of = "4e7347" }
+voice_faint = { text = "Kuulet heikosti äänen.", of = "da80ef" }
+voice_faint_from = { text = "Kuulet heikosti äänen ({dir:bare}).", of = "14ed5d" }
+will_not_go_into_water = { text = "{who:Nom} ei mene veteen.", of = "c8e09b" }
+
+[mutters]
+of = "36ef7a"
+text = "{who:Nom} {verb:bare}: \"{line:bare}\""
+
+[says]
+of = "dc4229"
+text = "{who:Nom} sanoo: \"{line:lines}\""
+
+[voice]
+of = "ce4144"
+text = "Kuulet äänen: \"{line:bare}\""
+
+[voice_from]
+of = "9feb71"
+text = "Kuulet äänen ({dir:bare}): \"{line:bare}\""

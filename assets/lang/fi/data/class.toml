@@ -1,0 +1,46 @@
+# Lines of data: classes (`class:<id>.description`), as the New run screen shows them.
+
+[aristocrat]
+description = { text = "Syntynyt rikkauteen ja käskemään, eikä häntä ole koskaan pyydetty nostamaan pikaria raskaampaa.", of = "e28409" }
+
+[ascetic]
+description = { text = "Vanhan kurin kiertelevä askeetti, jonka ruumis ja hengitys on harjoitettu yhdeksi: nopea, kestävä ja sisäänpäin kääntynyt.", of = "684641" }
+
+[bard]
+description = { text = "Kiertelevä laulaja ja tarinankertoja, joka pärjää hurmaavuudellaan, näppärillä sormillaan ja vielä näppärämmällä kielellään.", of = "17da67" }
+
+[berserker]
+description = { text = "Erämaiden soturi, joka taistelee raivon vallassa: mahtava ja kestävä, nopeampi raivoamaan kuin lukemaan.", of = "4cfed9" }
+
+[commoner]
+description = { text = "Renki, työmies tai palvelija vailla nimeksikään koulutusta: tottunut kovaan työhön, ei siihen, että häntä kuunneltaisiin.", of = "2a9472" }
+
+[craftsperson]
+description = { text = "Seppä, puuseppä tai kutoja, joka tuntee ammattinsa läpikotaisin: varmat kädet, kärsivällinen mieli ja vähän sanoja.", of = "78b5de" }
+
+[druid]
+description = { text = "Vanhojen tapojen vaalija, joka puhuu metsän ja eläinten puolesta: sitkeä ja kärsivällinen, mutta kaupungeissa levoton.", of = "f68a06" }
+
+[merchant]
+description = { text = "Kauppias, joka tietää kaiken hinnan: ovela ja taivutteleva, tiskin takana vietettyjen vuosien pehmentämä.", of = "2f180a" }
+
+[paladin]
+description = { text = "Valaansa vannoutunut pyhä ritari: vahva ja käskevä, horjumaton liiankin, eikä helposti epäile.", of = "1e2b34" }
+
+[priest]
+description = { text = "Jumalansa palvelija, riittiin ja pyhiin kirjoituksiin koulittu: tahdoltaan ja ääneltään vahva, kädeltään pehmeä.", of = "94b6b2" }
+
+[ranger]
+description = { text = "Rajamaiden metsästäjä ja jäljittäjä: tarkkasilmäinen, varmajalkainen ja eläinten kanssa luontevampi kuin ihmisten.", of = "dfcd76" }
+
+[thief]
+description = { text = "Taskuvaras, murtovaras ja lukkojen tiirikoija, joka elää näppärien sormiensa ja nopean älynsä varassa.", of = "1bc567" }
+
+[warrior]
+description = { text = "Kilpimuurin ja kaksintaistelukentän koulima taistelija: vahva, vakaa ja hyvin harjaantunut.", of = "dcd92e" }
+
+[witch]
+description = { text = "Yrttien, kirousten ja vanhojen sopimusten taitaja: ovela, oudoilla tavoilla viisas ja pelätty.", of = "c80df0" }
+
+[wizard]
+description = { text = "Salaisten oppien tutkija, joka vaihtoi auringonvalon kynttilänvaloon: mieleltään loistava, ruumiiltaan hauras.", of = "313d36" }

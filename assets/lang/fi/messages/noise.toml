@@ -1,0 +1,30 @@
+# Sounds heard (`noise.rs`); the roles as in `en/messages/noise.toml`. A `heard_*` word is the
+# object of "Kuulet" (`you_hear`), so it is written in its object case. `dir` is a compass word in
+# the nominative, said in parentheses.
+
+heard = { text = "{hear:bare}.", of = "476693" }
+heard_banging = { text = "jyskettä", of = "310a7d" }
+heard_bell = { text = "kellon soivan", of = "65ce00" }
+heard_bowstring = { text = "jousen jänteen napsahduksen", of = "000369" }
+heard_buzzing = { text = "surinaa", of = "8d60a7" }
+heard_chanting = { text = "loitsulaulua", of = "0e1349" }
+heard_digging = { text = "kaivamisen ääniä", of = "429612" }
+heard_door_closed = { text = "oven sulkeutuvan", of = "464827" }
+heard_door_opened = { text = "oven aukeavan", of = "8ecd82" }
+heard_explosion = { text = "räjähdyksen", of = "47d77d" }
+heard_fighting = { text = "taistelun ääniä", of = "531afa" }
+heard_footsteps = { text = "askelia", of = "5c1866" }
+heard_from = { text = "{hear:bare} ({dir:bare}).", of = "cfe6ba" }
+heard_giggle = { text = "kikatusta", of = "7c47ee" }
+heard_heartbeat = { text = "sydämen lyönnin", of = "8b044e" }
+heard_hiss = { text = "sihahduksen", of = "bfea3e" }
+heard_howl = { text = "ulvontaa", of = "a4e625" }
+heard_rattle = { text = "kalahduksen", of = "1891ef" }
+heard_roar = { text = "karjaisun", of = "0ad0bf" }
+heard_scream = { text = "kirkaisun", of = "368c58" }
+heard_shatter = { text = "lasin särkyvän", of = "36c8bb" }
+heard_thunder = { text = "ukkosen jyrähdyksen", of = "943608" }
+heard_voice = { text = "äänen", of = "78125c" }
+heard_wail = { text = "valitusta", of = "ebbe4f" }
+you_faintly_hear = { text = "Kuulet heikosti {sound:bare}", of = "ad1ea9" }
+you_hear = { text = "Kuulet {sound:bare}", of = "0b8aa2" }

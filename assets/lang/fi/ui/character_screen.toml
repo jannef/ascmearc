@@ -1,0 +1,187 @@
+# The character screen (`crates/ascmearc/src/ui/character_screen.rs`). Room: `race`, `gender`,
+# `class`, `stars`, `with` 7 columns; the stat names 13; `mana`, `protection` 10.
+
+[abbrev_defence]
+of = "5f555d"
+text = "Tj"
+
+[abbrev_experience]
+of = "1a5f45"
+text = "KP"
+
+[abbrev_hit_points]
+of = "416fd5"
+text = "OP"
+
+[abbrev_level]
+of = "4be615"
+text = "Ts"
+
+[abbrev_mana]
+of = "4975ca"
+text = "MP"
+
+[abbrev_protection]
+of = "2dd109"
+text = "Sj"
+
+[age]
+of = "c78412"
+text = "Ikä {age:bare}"
+
+[alignment]
+of = "24b0ca"
+text = "Mielenlaatu"
+
+[born]
+of = "44e086"
+text = "syntynyt {date:bare}"
+
+[class]
+of = "907d59"
+text = "Luokka"
+
+[close]
+of = "12c352"
+text = "Esc sulje"
+
+[close_own]
+of = "2a7cbf"
+text = "{own:bare} tai Esc sulje"
+
+[defence]
+of = "2b1534"
+text = "Torjunta"
+
+[diseases]
+of = "7f5a70"
+text = "{diseases:Bare}"
+
+[diseased]
+of = "2a3250"
+text = "Sairaudet"
+
+[experience]
+of = "63a23c"
+text = "Kokemus"
+
+[experience_next]
+of = "fd1ff7"
+text = "{xp:bare} / {next:bare}"
+
+[gender]
+of = "8539fc"
+text = "Sukup."
+
+[gender_other]
+of = "56482e"
+text = "Muu ({stat:Bare} +1)"
+
+[guild]
+of = "42909b"
+text = "Kilta"
+
+# `title`, the rank's title (text); `guild`, the guild's name.
+[guild_rank]
+of = "fa8118"
+text = "{guild:gen} {title:bare}"
+
+[hit_points]
+of = "990e5b"
+text = "Osumapisteet"
+
+[kept]
+of = "bbb1c9"
+text = "{name:bare}, {kind:nom}"
+
+[level]
+of = "c8b99c"
+text = "Taso"
+
+[mana]
+of = "57f6a8"
+text = "Mana"
+
+[oath_kills]
+of = "43d08d"
+text = "Valan uhrit"
+
+[protection]
+of = "62ad78"
+text = "Suojaus"
+
+[race]
+of = "9696c0"
+text = "Kansa"
+
+[resistance_kinds]
+of = "c38afe"
+text = "{first:bare}, {rest:bare}"
+
+[resource_marked]
+of = "c6d3b7"
+text = "{value:bare}/{max:bare}, {mark:gen} puolustuksessa"
+
+[resource_marked_unseen]
+of = "4d8051"
+text = "{value:bare}/{max:bare}, näkymättömän vihollisen puolustuksessa"
+
+[skills]
+of = "5351cb"
+text = "{own:bare} taidot"
+
+[spent]
+of = "05881a"
+text = "{talent:bare} (käytetty)"
+
+[stance]
+of = "e01153"
+text = "Asento"
+
+[stance_neutral]
+of = "fab11a"
+text = "Neutraali"
+
+[stars]
+of = "f63ea9"
+text = "Tähdet"
+
+[status]
+of = "f180fc"
+text = "Tila"
+
+[talents]
+of = "d7a243"
+text = "Taipumukset"
+
+[title]
+of = "1f826b"
+text = "Hahmo"
+
+[value_max]
+of = "e93f93"
+text = "{value:bare}/{max:bare}"
+
+[weight_burdened]
+of = "b06cc4"
+text = "Paino {total:bare} (itse {base:bare}, kannat {carried:bare}, {burden:bare})"
+
+[weight_carrying]
+of = "7c9f86"
+text = "Paino {total:bare} (itse {base:bare}, kannat {carried:bare})"
+
+[weight_nothing]
+of = "885cf1"
+text = "Paino {total:bare}, et kanna mitään"
+
+[with]
+of = "a9a3d5"
+text = "Mukana"
+
+[year_of]
+of = "c3aae5"
+text = "{sign:gen} vuosi"
+
+[you]
+of = "9b6184"
+text = "Sinä"

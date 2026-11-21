@@ -1,0 +1,27 @@
+# The message history (`crates/ascmearc/src/ui/messages_screen.rs`).
+
+[close]
+of = "12c352"
+text = "Esc sulje"
+
+[close_own]
+of = "2a7cbf"
+text = "{own:bare} tai Esc sulje"
+
+[note]
+of = "58607f"
+by = "count.number"
+one = "Loki säilyttää viimeisimmän viestin."
+many = "Loki säilyttää viimeiset {count:bare} viestiä."
+
+[page]
+of = "8c5e65"
+text = "{next:bare} {prev:bare} sivu"
+
+[scroll]
+of = "4401ee"
+text = "{up_down:bare} vieritä"
+
+[title]
+of = "6f1dd7"
+text = "Viestit"

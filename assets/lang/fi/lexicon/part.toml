@@ -1,0 +1,20 @@
+# An item's parts (`part:<id>`); `adjective` the compound adjective a precious material makes
+# of it ("kulta" + "ponsinen": "kultaponsinen").
+band = "vanne/48*J"
+blade = "terä/10"
+bowl = "pesä/10"
+chain = "ketju/1"
+cord = "nauha/9"
+grip = "kahva/9"
+haft = "varsi/28"
+head = "pää/18"
+inlay = { word = "upotus/39", forms = { adjective = "upotteinen/38" } }
+lining = "vuori/26"
+mouthpiece = "suu|kappale/48"
+pendant = "riipus/39"
+pommel = { word = "ponsi/28", forms = { adjective = "ponsinen/38" } }
+setting = "istutus/39"
+shaft = "varsi/28"
+studs = { word = "nasta/9", many = true, forms = { adjective = "nastoitettu/1*C" } }
+tip = { word = "kärki/7*L", forms = { adjective = "kärkinen/38" } }
+trim = "reunus/39"
