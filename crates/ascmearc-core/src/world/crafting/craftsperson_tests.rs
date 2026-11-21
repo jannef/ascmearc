@@ -149,7 +149,7 @@ fn eye_for_the_make_reads_an_items_make() {
             .find(|s| s.object == object)
             .expect("carried");
         (view.describe_item(stack).into_iter())
-            .map(|l| l.text)
+            .map(|l| l.english(view.content()))
             .collect()
     };
     let lines = texts(&world, sword);
@@ -190,7 +190,8 @@ fn eye_for_the_make_tells_the_capacity_without_appraise() {
         let stack = (view.inventory().iter())
             .find(|s| s.object == dagger)
             .expect("carried");
-        (view.describe_item(stack).into_iter()).any(|l| l.text == "It can bear two enchantments.")
+        (view.describe_item(stack).into_iter())
+            .any(|l| l.english(view.content()) == "It can bear two enchantments.")
     };
     assert!(told(&world), "Eye for the make, no Appraise");
     world.player_mut().talents = Default::default();

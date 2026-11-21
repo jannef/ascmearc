@@ -19,7 +19,7 @@ pub(super) fn numbers_json(stack: &Stack, content: &Content) -> Value {
     let defence = numbers.defence;
     json!({
         "to_hit": attack.map(|a| a.to_hit),
-        "damage": attack.map(|a| a.damage_text(content)),
+        "damage": attack.map(|a| crate::messages::english_arg(content, &a.damage_words(content), "bare")),
         "range": attack.and_then(|a| a.range),
         "dv": defence.map(|d| d.dv),
         "pv": defence.and_then(|d| d.pv),

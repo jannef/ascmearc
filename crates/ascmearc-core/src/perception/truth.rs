@@ -434,7 +434,7 @@ impl<'a> PerceptionView<'a> {
     /// What the wand `stack` does in the player's hands once they know its type (its rung comes
     /// with the type, the spell scaling design §7.4): `4d6 fire, radius 2`; `None` before, for
     /// anything else, and for a wand whose spell rolls nothing.
-    pub fn wand_does(&self, stack: &Stack) -> Option<String> {
+    pub fn wand_does(&self, stack: &Stack) -> Option<crate::lang::Msg> {
         crate::magic::describe::wand_does(stack, self.lore, self.player)
     }
 

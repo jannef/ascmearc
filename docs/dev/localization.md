@@ -333,7 +333,7 @@ blows (`World::say_spell_of`), are `sign_noun:<active>` (the ability's name in l
 breath"); a retaliating status's blow (`gifts.rs`) is its `damage_type:` or `status:` phrase. A
 caster style is a weapon skill (`weapon_skill:<id>`). Left as text: the typed slot id
 (`items.no_slot`), a dev zone's kind, composed text (#1997: a spell's roll and an attack's
-summary, `magic/describe.rs`, the epitaph's "miscast {spell}").
+summary, the epitaph's "miscast {spell}").
 
 **A name shown alone, as a label** (#2000: a list row, a heading, a status bar segment) is its
 lexicon id in the `label` form (`render.rs::LABEL_FORM`, which every language has; the app's
@@ -769,8 +769,7 @@ reroll (`reroll_words`) `magic.reroll` with its faces said `{faces:and}`. Text r
 the dice, and a spell type's rule (data words with no line of data yet); and until their data has
 ids, a birth sign's animal and element, a vision's name in a talent's need (lower case there,
 where `vision:` is as written), an `any_weapon_skill`'s words, a launcher, a stock's group. Still English: `CraftPlan` (the craft dialog's plan, its `english` reason why
-not), a recipe row's `takes`, and `magic/describe.rs` (an item's description, which renders a
-wand's roll in English).
+not) and a recipe row's `takes`.
 
 **The look line's and the cell's words** (#1998, its first half). **An item as the lists name
 it** (`Lore::listed`) is `items.listed`, the phrase `counted` with `listed_numbers` and
@@ -800,6 +799,26 @@ data's English beside the key, which a quest's `waits` and the wiki name them by
 shows it. Still text: the current level's name (`LevelState::name`: the status bar, a save's
 summary), a hidden location's name where a quest marks it (`people.marks_on_map`, whose "The"
 `quest.rs::place` lowers), and the scenario's name on the new-run and chargen screens.
+
+**An item's description** (#2029, `magic/describe.rs`) is a message a line: `Line::msg`, from
+`messages/describe.toml`, which the describe screen renders (`text::ui_msg`) and the tests, a
+ware's words, and the wiki in English (`Line::english`, `english_msg`). The first line nests the
+item's phrase (`Lore::names_phrase` with the anvil's word ahead, `name::ahead`), a stack's count
+(`base_count`), and its rarity's word (`base_rarity`); a gem is `gem_cut`/`gem_rough` of its
+`gem_size:`, `material:`, and `gem_cut:` phrases (`gem::phrase`), its worth `gem_worth` around the
+line. An affix's effect (`describe::phrase`) is a `does_*` message with its value `v` (the units
+by `v.number`, a speed a `speed_*` word, a bane's creatures `{bane:plural}` of a `tag:` phrase),
+said in `affix` (`affix_line`, also the Recast choice's row); the base stats (`base_stats`, the
+wiki's) and the numbers (`Numbers::lines`, `numbers_*` around the item lists' `items.numbers_*`
+parts) are messages, a list joined by `listed`, `and_joined`, or `or_joined` where the old text
+joined it by hand, `{x:and}` where it said `and_list`. A wand's line nests its roll
+(`wand_does`, `Option<Msg>`, the aim prompt's too). Text roles: the dice and a critical range
+(notation), the parts' and the weight's words (`Content::describe_parts`, `format_weight`), a gem's
+part name, a weapon's noun (`weapon_noun`), what salvage would give (`object::phrase`), a spell's
+and a rod effect's description and a rod effect's name; a unique's power and lore and a spirit
+weapon's power are literal lines. The seal refusals (`seal::check`) are `crafting.seal_*` and
+`crystal(s)_hold(s)_nothing_of` messages; `piece::any_names` ("an iron or brass ingot", inside a
+recipe's stock words) is still English.
 
 ## UI text (L6)
 

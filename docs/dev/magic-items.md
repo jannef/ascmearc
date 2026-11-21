@@ -102,8 +102,8 @@ unidentified armour's base numbers and its affixes once identified, a shield, a 
 range, ammunition, a worn thing's to-hit). A new effect is a
 variant of `Effect` (id, local/global, `allowed_on`; `index()` and `all()` insert
 it by group, never at the end), its reader in one rule, a
-phrase in `describe.rs`, and a wiki word and tier form in `xtask/src/wiki/magic.rs`
-(`effect_words`, `tier_value`). Affixes are saved by id, so
+`describe.does_*` message (`messages/describe.toml`) in `describe.rs::phrase`, and a wiki word
+and tier form in `xtask/src/wiki/magic.rs` (`effect_words`, `tier_value`). Affixes are saved by id, so
 adding affixes keeps saves; their values and tiers are checked on load, strictly
 (`Magic::check`: each tier one the affix has, each value within its tier's range, but a unique's values set by hand, "Unique items"). The lenient
 read of #637 (re-tiering a save's affixes after a ladder was

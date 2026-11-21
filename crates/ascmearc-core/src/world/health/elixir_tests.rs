@@ -141,7 +141,7 @@ fn an_unknown_elixir_is_a_gold_potion_and_a_known_one_says_what_it_does_in_words
         let stack = &w.state.player().inventory[0];
         (crate::magic::describe::appraised(stack, w.lore(), Default::default()))
             .into_iter()
-            .map(|l| l.text)
+            .map(|l| l.english(w.content()))
             .collect()
     };
     let stack = w.state.player().inventory[0].clone();

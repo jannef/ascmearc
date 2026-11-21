@@ -314,7 +314,7 @@ fn identifying_a_rod_tells_its_effect_and_cost() {
         Default::default(),
     ))
     .into_iter()
-    .map(|l| l.text)
+    .map(|l| l.english(w.content()))
     .collect();
     let text = unknown.join(" ");
     assert!(!text.contains("Sleep") && !text.contains("mana"), "{text}");
@@ -326,7 +326,7 @@ fn identifying_a_rod_tells_its_effect_and_cost() {
     let lines: Vec<String> =
         (crate::magic::describe::appraised(stack, w.lore(), Default::default()))
             .into_iter()
-            .map(|l| l.text)
+            .map(|l| l.english(w.content()))
             .collect();
     assert!(
         lines.iter().any(|l| l.starts_with("Holds Sleep: ")),

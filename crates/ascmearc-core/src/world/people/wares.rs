@@ -125,7 +125,7 @@ impl World {
         let lore = self.lore();
         let magic = (describe::lines(stack, &self.content).into_iter())
             .filter(|l| matches!(l.kind, LineKind::Affix(_) | LineKind::Power))
-            .map(|l| l.text);
+            .map(|l| l.english(&self.content));
         let name = crate::messages::english_msg(&self.content, &lore.listed(stack));
         std::iter::once(crate::text::capitalized(&name))
             .chain(magic)

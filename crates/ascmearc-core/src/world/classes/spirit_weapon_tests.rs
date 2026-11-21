@@ -312,7 +312,7 @@ fn its_description_and_the_dumps_say_what_it_is() {
     let text = |kind: LineKind| -> Vec<String> {
         (lines.iter())
             .filter(|l| l.kind == kind)
-            .map(|l| l.text.clone())
+            .map(|l| l.english(w.content()))
             .collect()
     };
     assert_eq!(

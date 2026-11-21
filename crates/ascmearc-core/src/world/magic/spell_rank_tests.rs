@@ -347,7 +347,7 @@ fn the_dumps_the_read_list_and_the_description_say_the_rank() {
     let text = |w: &World, item: usize| -> Vec<String> {
         let stack = w.state.player().inventory[item].clone();
         (w.perception().describe_item(&stack).into_iter())
-            .map(|l| l.text)
+            .map(|l| l.english(w.content()))
             .collect()
     };
     let lines = text(&w, 2);

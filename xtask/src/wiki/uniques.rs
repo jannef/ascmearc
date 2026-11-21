@@ -24,6 +24,7 @@ pub(super) fn uniques(content: &Content) -> String {
         let affixes: Vec<String> = (magic.rolled(content).iter())
             .map(|r| {
                 let does = describe::phrase(r, kind, content);
+                let does = ascmearc_core::messages::english_msg(content, &does);
                 // One its table sets by hand ("mystic=30") is beyond the tiers or the bases.
                 let set = !(r.def.tier(r.tier)).is_some_and(|t| (t.min..=t.max).contains(&r.value))
                     || !r.def.bases.contains(&kind);

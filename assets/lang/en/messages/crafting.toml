@@ -55,6 +55,11 @@ could_not_be_finer = "It could not be finer."
 cracks_good_for_nothing = "{what:The} cracks and is good for nothing."
 # `crystal`: the crystal consumed.
 crush_crystal = "You crush {crystal:the} and drink what is in it. Something of it stays."
+# A seal's refusal: `colour`, the one crystal's colour; `word`, the family sealed (the data's
+# words, text).
+crystal_holds_nothing_of = "The {colour:bare} crystal holds nothing of {word:bare}."
+# `word`: the family sealed, as `crystal_holds_nothing_of`.
+crystals_hold_nothing_of = "The crystals hold nothing of {word:bare}."
 cut_the_stone = "You cut the stone."
 cut_the_stone_again = "You cut the stone again."
 dare_not_cut = "You dare not cut it."
@@ -202,6 +207,10 @@ rig_takes_up_to = "up to {n:bare} {what:plural}"
 rig_takes_with_knife = "{takes:bare} and a knife"
 rig_will_not_hold = "The rig will not hold."
 rough_it_out = "You rough it out, and lose more than you meant to."
+seal_already = "You have sealed that already."
+seal_no_such = "There is no such seal."
+seal_nothing_there = "There is nothing to seal there."
+seal_too_few_crystals = "You carry too few crystals for the seals."
 set_already = "It is set already."
 # `gem`: the gem's material; `what`: the item as it is now.
 set_gem = "You set {gem:the}. It is now {what:a}."

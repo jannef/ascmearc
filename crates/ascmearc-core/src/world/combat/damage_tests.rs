@@ -604,7 +604,7 @@ fn the_plunge_is_cold_and_the_words_say_what_a_creature_did() {
 fn descriptions_say_kinds_added_damage_and_resistances() {
     let text = |s: &Stack| -> Vec<String> {
         (crate::magic::describe::lines(s, &CONTENT).into_iter())
-            .map(|l| l.text)
+            .map(|l| l.english(&CONTENT))
             .collect()
     };
     let mail = text(&one("chain_mail"));

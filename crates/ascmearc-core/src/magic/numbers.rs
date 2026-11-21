@@ -125,15 +125,16 @@ impl Numbers {
         }))
     }
 
-    /// The numbers as the item description writes them, a line each: `To hit +2, damage
-    /// 1d8+1, range 15`, `Adds to a shot: +1 to hit, +1d4 fire`, `Dv +1, Pv 2`.
-    pub fn lines(&self, content: &Content) -> Vec<String> {
+    /// The numbers as the item description writes them, a message each (`describe.numbers_*`):
+    /// `To hit +2, damage 1d8+1, range 15`, `Adds to a shot: +1 to hit, +1d4 fire`, `Dv +1, Pv
+    /// 2`.
+    pub fn lines(&self, content: &Content) -> Vec<Msg> {
         let mut out = Vec::new();
         if let Some(attack) = &self.attack {
             out.push(attack.line(content));
         }
         if let Some(defence) = self.defence {
-            out.push(defence.text());
+            out.push(defence.message());
         }
         out
     }
@@ -143,24 +144,6 @@ impl AttackNumbers {
     /// Whether it only adds to attacks made with something else (ammunition, a worn thing).
     fn adds(&self) -> bool {
         self.role != Role::Weapon
-    }
-
-    /// Its damage dice and riders as written: `1d8+1`, `1d8+1d4+1`, `1d6 +1d6 fire`; for what
-    /// only adds, what it adds, `+2 damage`, `+1d4+2 damage, +1d4 fire`, or nothing.
-    pub fn damage_text(&self, content: &Content) -> String {
-        let riders = (self.riders.iter())
-            .map(|r| format!("+{} {}", r.dice, content.damage_type(r.kind).name));
-        if !self.adds() {
-            let mut text = dice_text(self.damage, self.extra);
-            for rider in riders {
-                text.push(' ');
-                text.push_str(&rider);
-            }
-            return text;
-        }
-        let added = self.added().map(|t| format!("{t} damage"));
-        let parts: Vec<String> = added.into_iter().chain(riders).collect();
-        parts.join(", ")
     }
 
     /// What something that only adds adds to the damage, its extra dice and flat bonus signed:
@@ -199,9 +182,16 @@ impl AttackNumbers {
         parts
     }
 
-    /// [`AttackNumbers::damage_text`] as parts of the item lists' numbers: a weapon's dice with
-    /// its riders after them (`items.numbers_with_rider`), one part; for what only adds, what it
-    /// adds (`items.numbers_damage`) and each rider, a part each.
+    /// Its damage dice and riders as one argument, its parts ([`AttackNumbers::damage_parts`])
+    /// listed: `1d8+1`, `1d6 +1d6 fire`; for what only adds, `+2 damage, +1d4 fire`, or empty
+    /// text (the `items` dump's, in English).
+    pub fn damage_words(&self, content: &Content) -> Arg {
+        listed(self.damage_parts(content))
+    }
+
+    /// Its damage dice and riders as parts of its numbers: a weapon's dice with its riders after
+    /// them (`items.numbers_with_rider`, `1d6 +1d6 fire`), one part; for what only adds, what it
+    /// adds (`items.numbers_damage`, `+2 damage`) and each rider, a part each.
     fn damage_parts(&self, content: &Content) -> Vec<Arg> {
         let riders = self.riders.iter().map(|r| {
             Msg::new(msg::items::NUMBERS_RIDER)
@@ -224,27 +214,33 @@ impl AttackNumbers {
     /// As the item description writes it: `To hit +2, damage 1d8+1, range 15`; for ammunition
     /// `Adds to a shot: +1 to hit, +2 damage, +1d4 fire`, for a worn thing `Adds to every
     /// attack: +1 to hit`.
-    fn line(&self, content: &Content) -> String {
-        let damage = self.damage_text(content);
+    fn line(&self, content: &Content) -> Msg {
+        let mut damage = self.damage_parts(content);
         if self.adds() {
             let mut parts = Vec::new();
             if self.to_hit != 0 {
-                parts.push(format!("{:+} to hit", self.to_hit));
+                parts.push(
+                    Msg::new(msg::describe::NUMBERS_TO_HIT)
+                        .role("hit", signed(self.to_hit))
+                        .into(),
+                );
             }
-            if !damage.is_empty() {
-                parts.push(damage);
-            }
-            let to = match self.role {
-                Role::Ammo => "a shot",
-                _ => "every attack",
+            parts.append(&mut damage);
+            let id = match self.role {
+                Role::Ammo => msg::describe::NUMBERS_ADDS_SHOT,
+                _ => msg::describe::NUMBERS_ADDS_ATTACK,
             };
-            return format!("Adds to {to}: {}", parts.join(", "));
+            return Msg::new(id).role("parts", listed(parts));
         }
-        let mut text = format!("To hit {:+}, damage {damage}", self.to_hit);
-        if let Some(range) = self.range {
-            text.push_str(&format!(", range {range}"));
+        let id = match self.range {
+            Some(_) => msg::describe::NUMBERS_ATTACK_RANGE,
+            None => msg::describe::NUMBERS_ATTACK,
+        };
+        let said = (Msg::new(id).role("hit", signed(self.to_hit))).role("damage", listed(damage));
+        match self.range {
+            Some(range) => said.role("range", Arg::Number(i64::from(range))),
+            None => said,
         }
-        text
     }
 
     /// Whether it adds nothing (plain ammunition, a plain ring).
@@ -264,14 +260,18 @@ impl DefenceNumbers {
             None => Msg::new(msg::items::NUMBERS_DV).role("dv", dv),
         }
     }
+}
 
-    /// `Dv +1, Pv 2`, or `Dv +2` without Protection.
-    fn text(self) -> String {
-        match self.pv {
-            Some(pv) => format!("Dv {:+}, Pv {pv}", self.dv),
-            None => format!("Dv {:+}", self.dv),
-        }
-    }
+/// `parts` said one after another (`items.numbers_listed`); empty text for none.
+fn listed(mut parts: Vec<Arg>) -> Arg {
+    let Some(last) = parts.pop() else {
+        return Arg::Text(String::new());
+    };
+    parts.into_iter().rev().fold(last, |rest, first| {
+        (Msg::new(msg::items::NUMBERS_LISTED).role("first", first))
+            .role("rest", rest)
+            .into()
+    })
 }
 
 /// A number written with its sign, `+0`, `-1`: notation every language writes alike, so text.

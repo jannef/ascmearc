@@ -423,7 +423,7 @@ fn a_variant_is_named_and_drawn_by_its_material() {
     // The description: what it is made of, its weight, and its damage with the material's.
     let text: Vec<String> = lines(&variant(&content, "long_sword", "bronze"), &content)
         .into_iter()
-        .map(|l| l.text)
+        .map(|l| l.english(&content))
         .collect();
     assert_eq!(
         text[0],
@@ -435,7 +435,7 @@ fn a_variant_is_named_and_drawn_by_its_material() {
     );
     let text: Vec<String> = lines(&variant(&content, "chain_mail", "tin"), &content)
         .into_iter()
-        .map(|l| l.text)
+        .map(|l| l.english(&content))
         .collect();
     assert!(
         text.iter().any(|t| t.starts_with("Protection 1 (")),
@@ -783,7 +783,7 @@ fn adamantium_rolls_a_die_more_and_doubles_armour_and_shields() {
         let stack = made(&content, id, "adamantium");
         lines(&stack, &content)
             .into_iter()
-            .map(|l| l.text)
+            .map(|l| l.english(&content))
             .collect::<Vec<_>>()
             .join("\n")
     };
