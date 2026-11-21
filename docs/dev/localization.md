@@ -314,8 +314,7 @@ ability `weapon_ability:<id>` (lower case, `combat.learned_ability`); an ability
 `Character::sign_arg`); a class, a prestige class, and a stance `class:<id>`, `prestige:<id>`,
 `stance:<id>` (lower case, as `race:<id>`). The chargen name question is `class:` with a `race:`
 adjective; the epitaph `{class:a}` (with `prestige`); a named statue `look.fallen` ("Brakka the
-dwarf"). Left as text: the race and class words in a grave's `name` (the graveyard file keeps text, "Names kept in
-saves"), and the `--character` refusal
+dwarf"). Left as text: the `--character` refusal
 (`ClassDef::refuses`, developer text).
 
 Magic and gear data names (#1994; `content/magic_word.rs`, `Content::spell_phrase` and the
@@ -389,10 +388,12 @@ from it a lexicon id, `spell_noun:<id>` (`Content::spell_noun_phrase`; `Words::o
 `World::say_spell` takes the `Words` (a spell's, a damage type's for a birth sign's breath and
 Blaze or a creature's breath and burst), a reflected bolt and the burst dialog
 (`Aim::catches_reader`) the noun. A heal searing the undead says words set in code
-(`SpellLook::own` false: "the light of mending sears", as written). The launcher in
+(`SpellLook::own` false: "the light of mending sears", `data_word::SEARING_NOUN` and
+`combat.verb_sears`, #2035). The launcher in
 `RecipeLack::reason` and in a recipe row's `takes` is `Content::launcher_phrase`; an epitaph
-names its trap `trap:<id>` and its spell's noun `spell_noun:<id>` (below). Still text: a
-creature's breath and burst noun, and a natural attack's or throw's name (`word:`).
+names its trap `trap:<id>` and its spell's noun `spell_noun:<id>` (below). A creature's breath
+and burst noun, a natural attack's name, and what it throws have ids of their own since #2035
+(`breath_noun:`, `burst_noun:`, `attack_name:`, `throw_noun:`).
 
 **Number comes from data** (#1965): a phrase is plural by its count or by the lexicon's `many` (a
 noun plural though it names one thing, "flames"); a proper name or a literal is one thing ("The
@@ -808,8 +809,8 @@ enchanting works on, `plan_plural` for a batch); its `uses` (`None` for nothing)
 `reach_listed`), a part's choices by `takes_either` ("or"), each a `takes_*` or `work_*` clause
 (an input an `object:` phrase with its count, a station `terrain:`, a launcher `launcher:`, an
 enchanting's crystals `takes_crystals`). The profession screen renders it (`text::ui_msg`), the
-`abilities` dump in English. A text role inside: a piece of any of several materials, which
-`piece::any_names` composes in English ("an iron or brass ingot"); one material is its phrase.
+`abilities` dump in English. Inside: a piece of any of several materials, which
+`piece::any_arg` composes of messages ("an iron or brass ingot", #2035); one material is its phrase.
 
 **The look line's and the cell's words** (#1998, its first half). **An item as the lists name
 it** (`Lore::listed`) is `items.listed`, the phrase `counted` with `listed_numbers` and
@@ -886,8 +887,8 @@ spell's and a rod effect's description, a rod effect's name, a unique's power an
 spirit weapon's power are lines of data (#2035: `spell:<id>.description`,
 `rod_effect:<id>.name`, `.description`, `unique:<id>.phrase`, `.lore`,
 `talent:<id>.effects.spirit_weapon.phrase`). The seal refusals (`seal::check`) are `crafting.seal_*` and
-`crystal(s)_hold(s)_nothing_of` messages; `piece::any_names` ("an iron or brass ingot", inside a
-recipe's stock words) is still English ("Language-neutral text").
+`crystal(s)_hold(s)_nothing_of` messages; `piece::any_arg` ("an iron or brass ingot", inside a
+recipe's stock words) is composed of messages since #2035 ("Language-neutral text").
 
 ## Language-neutral text (#2035)
 
@@ -917,6 +918,8 @@ id, and an `Arg::text(` of a string literal with a letter in it. The kinds:
 | `error` | an error's own words (an I/O or a parse error, a level that failed to load), shown as written |
 | `dev` | a dev-only line |
 | `test` | a test helper outside a test file |
+| `id` | a content id said as written where the content has no word for it: an npc no level places, a talent's choice or a grave's race the content lacks, a birth sign the horoscope lacks a part of (what a removed mod leaves) |
+| `record` | what a record on disk keeps as text: the graveyard's (a killer's name, a place, how the dead died as the app rendered it in the language shown, `GraveyardStore::dead`), a save's summary another version wrote |
 | `todo(#N)` | English still to convert, tracked in issue N |
 
 A fixed `word:<id>` (`word:hexed`, `word:sickness`) is a lexicon id like any other: a
@@ -934,20 +937,46 @@ mark (`slot:<id>.mark`); the item description's data (above); and as lexicon ids
 attack's name (`attack_name:<creature>.<n>`), a breath's and a burst's noun (`breath_noun:`,
 `burst_noun:`), and a guild rank's title (`guild_rank:<guild>.<n>`; `content/data_word.rs`).
 
-**Left, marked `todo(#2035)`** (the guard lists them: `grep -rn 'lang: todo' crates/`):
-`piece::any_names` and the craft stock words (`craft.rs::stock_counted`, a stock's group in
-`lacking_stock`); the parts' words (`describe_parts`), a gem's part name, `weapon_noun`, and
-salvage's `object::phrase` in an item's description; a crystal colour's name and a seal
-family's word (`seal.rs`); an `any_weapon_skill`'s words; a terrain feature's `description`; a
-mutter's verb; a quest's filled `where`; a birth sign without its horoscope parts; the
-graveyard's dead (name, race and class, and how they died, kept in the app's words); the verbs
-and nouns `fight::Words` takes as English (`Words::new`, `named`, a spell's look set in code,
-`data_word`: a hide's name, a hurled thing's noun, a weapon ability's source); the `word:`
-phrases built from data words (`magic/name.rs::ahead`, `describe.rs`'s ammunition nouns,
-`rig.rs`, `seal.rs`, `quest.rs`, `quest_roll.rs`, `content/quest.rs`, `content/lexicon.rs`,
-`actor.rs`); speech as text (`Speech::from(String)`); and why a save could not be resumed. The
-app's screens still show the data's descriptions and names as written (a race's, a class's, a
-talent's, a skill's `description`), which no `Arg` carries and the guard does not see.
+**What #2035's remainder converted** (none is marked `todo` any more):
+
+- **The data's words as lexicon ids** (`content/data_word.rs`, whose table lists them): what a
+  creature throws (`throw_noun:<creature>`), a hide (`hide:race.<id>`, `hide:creature.<id>`), a
+  weapon's noun by its skill (`weapon_noun:<weapon skill>`, the item description's "long blade"),
+  a weapon role in a talent's need (`weapon_role:<role>`), a kill quest's quarry
+  (`quest_what:<quest>`), a crystal family's word and a crystal colour (`seal_family:<category>`,
+  `crystal:<colour>`), a material group (`material_group:<group>`), a stock group's piece
+  (`stock_group:<group>`, a rig's "wood billet"), and an ammunition kind no object is named for
+  (`ammo:<kind>`). A talent's choice of a kind of creature is its `tag:` phrase.
+- **Words set in code as fixed ids or messages**: `fight::Words` takes a noun core names (a fixed
+  `word:`, `Words::named` takes a `&'static str`) and a verb, `fight::Verb`, said by
+  `combat.verb_*` with the player's person beside it (`verb_hits`/`verb_hit`, `verb_bashes`,
+  `verb_shoots`, `verb_kicks`, `verb_burns`, `verb_casts_a_spell_at`); a heal searing the undead
+  is `data_word::SEARING_NOUN` and `combat.verb_sears`; an anvil's word and a craft step's label
+  are fixed `word:` ids (`magic/name.rs::ahead`, `craft_make::step_word` take a `&'static str`); a
+  mutter without a `verb` says `talk.verb_mutters`.
+- **Composed in messages**: an item's parts (`describe.part_made`, joined by
+  `describe.comma_joined`), a gem's part (`part:<id>`), what salvage gives (the stacks as a line
+  names them, `world/items::stacks_arg`, said `{what:counted}`), pieces of any of several stock
+  (`piece::any_arg`, `crafting.stock_any_*` and `stock_some_*`), a talent's need of any of several
+  weapon skills (`AnyWeaponSkill::words`, `character.any_weapon_skill_*`), a grave's name
+  (`Fallen::grave_name`, `fixtures.grave_name*`), a seal step's option (`crafting.seal_family`),
+  and why a save could not be resumed (the app's `ui/save.toml`, `could_not_*`; `Resume::Failed`
+  holds a `Msg`).
+- **Lines of data** ("Lines of data"): a mutter's `verb` (`dialogue:<scope>.mutter_verb`), and what
+  the screens and the look line showed as the data wrote it (`data_line::shown_lines`): a race's,
+  a class's, a talent's, a skill's, a scenario's, a terrain's, a chest band's, and a birth sign
+  animal's and element's `description` (`<kind>:<id>.description`), a lucky day's
+  (`lucky:<element>.<animal>.<day>.description`), an animated body's `moves`
+  (`animated:<body>.moves`), and a status's `death` (`status:<id>.death`, the death and graveyard
+  screens). The app says one alone with `ui::text::data_line`. `Speech` has no `From<String>`.
+- **Kept as text, with a reason**: the graveyard's records (`record`: a killer the content lacks
+  by the name the record keeps, a place, how they died as the app rendered it for a grave), a
+  save's place another version wrote (`record`), and ids the content has no word for (`id`).
+
+**Still as written, outside the guard**: an ability's description on the abilities menu
+(`PerceptionView::ability_description`: a spell's, a talent's, a weapon ability's, a class
+active's, a prayer's, which the data writes in several files), a lucky day's `title` in a name
+("Brakka, the Iron Scourge"), and the wiki's tables, which are English by design.
 
 ## UI text (L6)
 
@@ -1242,6 +1271,8 @@ arrays named by the id that tells it apart. Every kind of line of data, the thre
 | `level:<id>.name`, `dungeon:<id>.name`, `level:<id>.legend.<char>.name`, `.note`, `vault:<id>.legend.<char>.name`, `.note`, `level:<id>.hidden.<location>.name`, `scenario:<id>.name` | the names of places ("Reasons core composes (#1949)", #1998) |
 | `scenario:<id>.arrival` | a scenario's first line after the welcome (#2035) |
 | `unique:<id>.phrase`, `.lore`; `talent:<id>.effects.spirit_weapon.phrase`; `spell:<id>.description`; `rod_effect:<id>.name`, `.description`; `slot:<id>.mark` | an item's description's words from the data, and a slot's mark in the inventory (#2035, `data_line::describe_lines`) |
+| `race:<id>.description`, `class:<id>.description`, `talent:<id>.description`, `skill:<id>.description`, `scenario:<id>.description`, `terrain:<id>.description`, `chest:<band>.description`, `sign_animal:<id>.description`, `sign_element:<id>.description`, `lucky:<element>.<animal>.<day>.description`, `animated:<body>.moves`, `status:<id>.death` | what the screens and the look line show of the data (#2035, `data_line::shown_lines`; the app's `ui::text::data_line`) |
+| `dialogue:<scope>.mutter_verb` | how a creature mutters, its dialogue's `mutter` `verb` (`dialogue_line.rs`; without one, `talk.verb_mutters`) |
 | `quest:<id>.name`, `shop:<id>.title`, `encounter:<campaign>.<entry>.name`, `calendar:months.<n>`, `level:<id>.burial.epitaph`, `level:<id>.legend.<char>.epitaph` | names kept in saves ("Names kept in saves", below) |
 
 What quests' people say is keyed in the same file (`data_line::quest`, added by `quest_speech`)
@@ -1268,10 +1299,10 @@ the character screen's date), a burial ground's `level:<id>.burial.epitaph` (its
 phrase and their offer a `Speech` in the saved commission. A save's summary (the Characters
 list) keeps the race, the class, and the prestige class by id (`Summary::race_and_class` names
 them as labels, `race:<id>` and `character::class_arg`, #2000); a summary another version wrote
-with the names shows them as written. Still text: who a grave's dead were and how
-they died, which the graveyard file on disk keeps in the app's words (its records predate any
-key, and a death's cause is the death screen's English, `Cause::epitaph`, until its words are
-converted), and the race and class in them until #1993's `race:`/`class:` phrases name them.
+with the names shows them as written. A grave names its dead by `fixtures.grave_name*` with
+their race and class as `race:`/`class:` phrases (#2035, `Fallen::grave_name`); how they died
+stays text, the graveyard screen's words as the app renders them in the language shown when the
+run begins (`GraveyardStore::dead`; the file keeps a record of ids, not a message).
 
 **Saying a line of data (the recipe for an L4 slice)**, worked by `miscast:<id>.seen`
 (`content/miscast.rs`, `world/magic/miscast.rs`) and `creature:<id>.touch`/`.unseen`

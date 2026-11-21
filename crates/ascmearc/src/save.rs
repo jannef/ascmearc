@@ -39,8 +39,9 @@ pub enum Resume {
     NoSave,
     /// Boxed: a world is large.
     Loaded(Box<World>),
-    /// The save could not be used; the message is for the player.
-    Failed(String),
+    /// The save could not be used; the message is for the player (`ui/save.toml`'s
+    /// `could_not_*`).
+    Failed(Msg),
 }
 
 /// Where saves live, and whether saving is on at all.
@@ -54,6 +55,12 @@ pub struct SaveStore {
     read_only: bool,
     /// Dev snapshots (F5/F9) are available.
     dev: bool,
+}
+
+/// Why a save could not be resumed, `text` with its `error` (the store's or the save's own words).
+fn failed(text: text::UiText, error: impl std::fmt::Display) -> Msg {
+    // lang: error the store's or the save's own words
+    Msg::from(text).role("error", Arg::text(error.to_string()))
 }
 
 /// The save of character `id`.
@@ -162,26 +169,30 @@ impl SaveStore {
         let bytes = match backend.read(&save_file(id)) {
             Ok(bytes) => bytes,
             Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Resume::NoSave,
-            Err(e) => return Resume::Failed(format!("Could not read the save: {e}.")),
+            Err(e) => return Resume::Failed(failed(text::save::COULD_NOT_READ, e)),
         };
         match save::decode(&bytes, content.clone()) {
             Ok(world) => Resume::Loaded(Box::new(world)),
             // Another version's save is kept as it is, listed as that version's.
             Err(err @ save::SaveError::OtherVersion { .. }) => {
-                Resume::Failed(format!("Could not resume: {err}."))
+                Resume::Failed(failed(text::save::COULD_NOT_RESUME, err))
             }
             Err(err) => {
                 let kept = match self.writable() {
                     Some(backend) => match backend.rename(&save_file(id), &bad_file(id)) {
                         Ok(()) => {
                             let _ = backend.remove(&summary_file(id));
-                            format!("The old save was kept as {}.", bad_file(id))
+                            // lang: error a file's path
+                            Some(Arg::text(bad_file(id)))
                         }
-                        Err(_) => "The old save was left in place.".to_string(),
+                        Err(_) => None,
                     },
-                    None => "The old save was left in place.".to_string(),
+                    None => None,
                 };
-                Resume::Failed(format!("Could not resume: {err}. {kept}"))
+                Resume::Failed(match kept {
+                    Some(file) => failed(text::save::COULD_NOT_RESUME_KEPT, err).role("file", file),
+                    None => failed(text::save::COULD_NOT_RESUME_LEFT, err),
+                })
             }
         }
     }
@@ -558,6 +569,7 @@ mod tests {
         let Resume::Failed(msg) = s.resume("tamsin-1", &content()) else {
             panic!("expected failure");
         };
+        let msg = crate::ui::text::ui_msg_in(&content(), msg);
         assert!(msg.contains("not an Ascmearc save"), "{msg}");
         assert!(!dir.join("saves/tamsin-1.sav").exists());
         assert_eq!(
@@ -717,6 +729,7 @@ mod tests {
         let Resume::Failed(msg) = s.resume("osric-1", &content()) else {
             panic!("refused");
         };
+        let msg = crate::ui::text::ui_msg_in(&content(), msg);
         assert!(msg.contains("made by version 0.1.0"), "{msg}");
         assert!(save.is_file(), "kept as it is");
         assert!(!dir.join("saves/osric-1.sav.bad").exists());

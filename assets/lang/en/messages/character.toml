@@ -15,6 +15,12 @@
 # is an id a dev action was given, as typed. `xp`, `level`, and `value` are numbers, said in
 # digits.
 
+# A talent's need of any of several weapon skills (`AnyWeaponSkill::words`): a skill it names,
+# `skill` (`weapon_skill:<id>`, as its label: "Maces"); two of them, `first` and `rest`, said with
+# "or" (no comma, however many); the roles it names, `roles` (`weapon_role:<role>`, "melee").
+any_weapon_skill_named = "{skill:label}"
+any_weapon_skill_or = "{first:bare} or {rest:bare}"
+any_weapon_skill_roles = "a {roles:bare} weapon skill"
 at_whom = "At whom?"
 # A birth date (`BirthDate::arg`): `day` and `year` numbers, `month` the month's name, a line of
 # data (`calendar:months.<n>`).
@@ -135,7 +141,7 @@ talent_held = "You have {talent:bare} already."
 # (`content/talent.rs::Need::message`). `animal` and `element` are a birth sign's (the data's
 # words); `n`, `rank`, `level`, and `value` numbers.
 talent_needs_animal = "to be born in the year of the {animal:bare}"
-# `skill`: the data's words for the skills ("a melee or unarmed weapon skill").
+# `skill`: the skills ("a melee or unarmed weapon skill", `AnyWeaponSkill::words`).
 talent_needs_any_weapon_skill = "{skill:bare} {rank:bare}"
 # `choice`: what the talent is chosen for (a `choice_*` entry).
 talent_needs_choice = "{talent:Bare} needs a choice: {choice:bare}."

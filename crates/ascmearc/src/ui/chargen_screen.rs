@@ -306,7 +306,9 @@ impl ChoiceScreen {
                     Choice {
                         id: r.id.clone(),
                         name: label(content.race_phrase(&r.id)),
-                        description: r.description.clone(),
+                        description: crate::ui::text::data_line(
+                            ascmearc_core::content::data_line::description("race", &r.id),
+                        ),
                         details,
                     }
                 })
@@ -329,7 +331,9 @@ impl ChoiceScreen {
             .map(|c| Choice {
                 id: c.id.clone(),
                 name: label(content.class_phrase(&c.id)),
-                description: c.description.clone(),
+                description: crate::ui::text::data_line(
+                    ascmearc_core::content::data_line::description("class", &c.id),
+                ),
                 details: [adjustments(&c.stats)]
                     .into_iter()
                     .chain(pace_words(c.experience).map(String::from))

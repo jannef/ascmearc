@@ -19,6 +19,16 @@
 //! | `blood:spattered`, `stained`, `soaked`, `smeared` | blood by amount, "blood-stained" ([`crate::blood::Stain::adjective`]) |
 //! | `attack_name:<creature>.<n>` | a type's natural attack `n` (from 0, in the order struck), its `name` ("bite") |
 //! | `breath_noun:<creature>`, `burst_noun:<creature>` | what hits from a type's breath and burst, their `noun` ("fire") |
+//! | `throw_noun:<creature>` | what a type throws, its `[creature.throw]` attack's `name` ("rock") |
+//! | `hide:race.<id>`, `hide:creature.<id>` | a race's or a creature type's natural armour, its `name` ("shell") |
+//! | `weapon_noun:<weapon skill>` | what one weapon of the skill is called ("long blade", "mace or club"; [`super::object::weapon_noun`]) |
+//! | `weapon_role:<role>` | a weapon skill role as a talent's need says it ("melee", "missile") |
+//! | `quest_what:<quest>` | what a kill quest calls its quarry, its `what` ("bandits") |
+//! | `seal_family:<category>` | a crystal family's word (`data/crystals.toml`, "fire") |
+//! | `crystal:<colour>` | a crystal colour's `name` ("ruby") |
+//! | `material_group:<group>` | a material group as the data names it ("metal") |
+//! | `stock_group:<group>` | one piece of a stock group, its group and form word ("wood billet") |
+//! | `ammo:<kind>` | an ammunition kind no object is named for, as written |
 //! | `guild_rank:<guild>.<n>` | a guild's rank `n` (from 0, the lowest), its `title` ("Tin") |
 //!
 //! Each reads as its `word:` phrase did: a plural noun as its spelling suggests
@@ -92,6 +102,45 @@ pub(super) fn word(content: &Content, kind: &str, key: &str) -> Option<LexWord> 
         "burst_noun" => (content.creature(content.creature_id(key)?).burst.as_ref())?
             .noun
             .clone(),
+        "throw_noun" => (content.creature(content.creature_id(key)?).throw.as_ref())?
+            .attack
+            .name
+            .clone(),
+        "hide" => {
+            let hide = match key.split_once('.')? {
+                ("race", id) => content.race(id)?.natural.as_ref(),
+                ("creature", id) => content.creature(content.creature_id(id)?).natural.as_ref(),
+                _ => None,
+            };
+            hide?.name.clone()
+        }
+        "weapon_noun" => {
+            let skills = content.weapon_skills();
+            let skill = skills.skill(skills.id(key)?);
+            super::object::category_name(&skill.id)
+                .map_or_else(|| skill.name.to_lowercase(), str::to_string)
+        }
+        "weapon_role" => match key {
+            "launcher" => "missile".to_string(),
+            role => role.replace('_', " "),
+        },
+        "quest_what" => match &content.quest(content.quest_id(key)?).goal {
+            super::quest::Goal::Kill { what, .. } => what.clone()?,
+            _ => return None,
+        },
+        "seal_family" => {
+            let table = content.crystals()?;
+            table.family_word(key).unwrap_or(key).to_string()
+        }
+        "crystal" => {
+            let table = content.crystals()?;
+            table.colours.iter().find(|c| c.id == key)?.name.clone()
+        }
+        "material_group" | "ammo" => key.to_string(),
+        "stock_group" => {
+            let name = (content.stock().group(key)).map_or("piece", |g| g.name.as_str());
+            format!("{key} {name}")
+        }
         "guild_rank" => {
             let (guild, n) = key.rsplit_once('.')?;
             let def = content.guilds().iter().find(|g| g.id == guild)?;
@@ -116,6 +165,16 @@ impl Content {
     /// What hits from creature type `def`'s burst: `burst_noun:<id>`.
     pub fn burst_noun_phrase(&self, def: &CreatureDef) -> Phrase {
         Phrase::id(format!("burst_noun:{}", def.id))
+    }
+
+    /// What kill quest `quest` calls its quarry, its `what`: `quest_what:<id>` ("bandits").
+    pub fn quest_what_phrase(&self, quest: &str) -> Phrase {
+        Phrase::id(format!("quest_what:{quest}"))
+    }
+
+    /// What creature type `def` throws: `throw_noun:<id>` ("the rock").
+    pub fn throw_noun_phrase(&self, def: &CreatureDef) -> Phrase {
+        Phrase::id(format!("throw_noun:{}", def.id))
     }
 
     /// Guild `guild`'s rank `n` (from 0, the lowest) by its title: `guild_rank:<guild>.<n>`.
@@ -195,22 +254,23 @@ impl Content {
 }
 
 impl Content {
-    /// What hits from spell `def`, its look's noun: `spell_noun:<id>` ("the fireball"); words
-    /// set in code (`SpellLook::own` false) as written.
+    /// What hits from spell `def`, its look's noun: `spell_noun:<id>` ("the fireball"); the
+    /// words set in code (`SpellLook::own` false), a heal's searing the undead
+    /// (`heal_harm.rs`), the fixed [`SEARING_NOUN`].
     pub fn spell_noun_phrase(&self, def: &SpellData) -> Phrase {
         match def.look.own {
             true => Phrase::id(format!("spell_noun:{}", def.id)),
-            // lang: todo(#2035) a spell's noun set in code
-            false => Phrase::id(format!("word:{}", def.look.noun)),
+            false => Phrase::id(SEARING_NOUN),
         }
     }
 
     /// What spell `def`'s blows do, as a line of data: `spell:<id>.cast.verb`, or with `you`
-    /// `.you` ("burns", "burn"); words set in code as written.
+    /// `.you` ("burns", "burn"); a heal's searing the undead `combat.verb_sears` ("sear").
     pub fn spell_verb(&self, def: &SpellData, you: bool) -> Arg {
-        match def.look.own {
-            true => Arg::said(spell_verb(&def.id, you)),
-            false => verb_text(&def.look.verb, you),
+        match (def.look.own, you) {
+            (true, _) => Arg::said(spell_verb(&def.id, you)),
+            (false, false) => crate::msg::combat::VERB_SEARS.into(),
+            (false, true) => crate::msg::combat::VERB_SEAR.into(),
         }
     }
 
@@ -249,15 +309,8 @@ impl CreatureDef {
     }
 }
 
-/// `verb` as text, or with `you` in the player's person.
-fn verb_text(verb: &str, you: bool) -> Arg {
-    match you {
-        // lang: todo(#2035) a spell's verb set in code
-        true => Arg::text(second_person(verb)),
-        // lang: todo(#2035) a spell's verb set in code
-        false => Arg::text(verb),
-    }
-}
+/// What hits as a heal sears the undead (`heal_harm.rs`), a fixed lexicon id.
+pub const SEARING_NOUN: &str = "word:light of mending";
 
 /// A verb in the player's person: "slashes" → "slash", "bashes" → "bash", "pierces" →
 /// "pierce", "hits" → "hit" (an `es` after a sibilant comes off, else the `s`); a verb that

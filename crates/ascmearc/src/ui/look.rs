@@ -10,6 +10,7 @@ use super::text::{UiText, look as T, ui_msg_in, ui_with};
 use crate::render::console::{Cell, Console};
 use ascmearc_core::Pos;
 use ascmearc_core::color::Rgb;
+use ascmearc_core::content::data_line::{animated_moves, description};
 use ascmearc_core::content::{
     ActionKind, Content, CreatureId, MaterialId, Noun, ServiceKind, Stance, TerrainId, TrapId,
     ZoneKind,
@@ -46,14 +47,16 @@ pub fn describe(view: &PerceptionView<'_>, p: Pos, blood: bool) -> String {
     let content = view.content();
     let band = (view.chest_at(p)).and_then(|c| content.chests().bands.get(c.band));
     let described = match (band, view.cell(p)) {
-        (Some(band), _) => Some(band.description.clone()),
+        (Some(band), _) => Some(description("chest", &band.id)),
         (None, CellView::Visible(t) | CellView::Remembered(t)) => {
-            content.terrain(t).description.clone()
+            let def = content.terrain(t);
+            def.description
+                .as_ref()
+                .map(|_| description("terrain", &def.id))
         }
         (None, CellView::Unknown) => None,
     };
-    // lang: todo(#2035) a chest band's or a terrain's description
-    lines.extend(described.map(Arg::text));
+    lines.extend(described.map(Arg::said));
     lines.extend(view.epitaph(p).cloned());
     // The run's content renders it: the names nested in it are its lines of data.
     let msg = Msg::new(MessageId::new(T::LINES.id)).role("lines", Arg::List(lines));
@@ -74,11 +77,9 @@ pub fn known(view: &PerceptionView<'_>, p: Pos) -> Option<String> {
     ]
     .into_iter()
     .filter_map(|(word, text)| {
-        // A damage type's name is the data's text until core's words are converted (#1949).
         let kinds: Vec<Arg> = (known.iter())
             .filter(|(_, w)| *w == word)
-            // lang: todo(#2035) a damage type's name
-            .map(|(k, _)| Arg::text(content.damage_type(*k).name.clone()))
+            .map(|(k, _)| Phrase::id(format!("damage_type:{}", content.damage_type(*k).id)).into())
             .collect();
         (!kinds.is_empty()).then(|| clause(text, [("kinds", Arg::List(kinds))]))
     })
@@ -124,9 +125,9 @@ fn you() -> Phrase {
     Phrase::literal("").person(Person::You)
 }
 
-/// A `word:` phrase: a word the data names without an id of its own (core's words, #1949).
-fn word(text: &str) -> Phrase {
-    // lang: todo(#2035) a word the data names without an id
+/// A `word:` phrase: a fixed lexicon id, a word the screen names ("object").
+fn word(text: &'static str) -> Phrase {
+    // lang: label a fixed id, a word the screen names
     Phrase::id(format!("word:{text}"))
 }
 
@@ -645,8 +646,7 @@ fn made_of(content: &Content, actor: &SeenActor, who: Phrase) -> Phrase {
 fn moves(content: &Content, actor: &SeenActor) -> Option<Arg> {
     animated(content, actor)?;
     let body = content.animated_body(actor.creature)?;
-    // lang: todo(#2035) how an animated thing moves
-    body.spec.moves.clone().map(Arg::text)
+    (body.spec.moves.as_ref()).map(|_| Arg::said(animated_moves(&body.spec.id)))
 }
 
 /// What a seen creature wields, wears, and has ready, as each reads after its name: ", wielding

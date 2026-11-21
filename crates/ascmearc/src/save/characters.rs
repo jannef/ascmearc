@@ -147,7 +147,7 @@ fn place_or_text<'de, D: serde::Deserializer<'de>>(de: D) -> Result<Arg, D::Erro
     }
     Ok(match Place::deserialize(de)? {
         Place::Said(arg) => arg,
-        // lang: todo(#2035) a place another version wrote as text
+        // lang: record a place another version wrote as text
         Place::Text(text) => Arg::text(text),
     })
 }

@@ -12,8 +12,9 @@ use super::text::{death_screen as T, label_in, ui, ui_msg_in, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use crate::settings::Clock;
-use ascmearc_core::lang::Arg;
+use ascmearc_core::content::data_line::status_death;
 use ascmearc_core::lang::Phrase;
+use ascmearc_core::lang::{Arg, Msg};
 use ascmearc_core::perception::PerceptionView;
 use ascmearc_core::time::GameTime;
 
@@ -45,12 +46,13 @@ impl DeathScreen {
             // A status effect killed them: "Bled to death".
             (Some(status), _, _) => {
                 let def = content.status(status);
-                (def.death.clone()).unwrap_or_else(|| {
-                    ui_with(
+                match def.death {
+                    Some(_) => ui_msg_in(content, Msg::data_line(Arg::said(status_death(&def.id)))),
+                    None => ui_with(
                         T::DIED_OF,
                         &[("status", content.status_phrase(status).into())],
-                    )
-                })
+                    ),
+                }
             }
             // Hunger, overeating, or a trap: "Killed by a fireball trap".
             (None, Some(cause), _) => ui_msg_in(content, cause.epitaph(content)),

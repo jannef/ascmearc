@@ -24,6 +24,12 @@ pub const KINDS: &[&str] = &[
     "error", // a dev-only line (a dev action, the dumps)
     "dev",   // a test helper outside a test file
     "test",
+    // a content id said as written where the content has no word for it (an npc no level
+    // places, a talent's choice the content lacks): what a broken or removed mod leaves
+    "id",
+    // what a record on disk keeps as text (the graveyard, a save's summary another version
+    // wrote), or the app's words it was rendered in, in the language shown
+    "record",
 ];
 
 /// The crates checked, and whether every text constructor needs a reason (core and the CLI) or
@@ -228,7 +234,7 @@ let a = Arg::text(name);
 let b = Arg::text(name);
 let c = Arg::text(name); // lang: error the store's
 // a comment
-// lang: todo(#2035) a part's name
+// lang: todo(#123) a part's name
 let d = Arg::text(part);
 let e = Msg::literal(x); // lang: because
 let f = Phrase::id(format!(\"word:{noun}\"));

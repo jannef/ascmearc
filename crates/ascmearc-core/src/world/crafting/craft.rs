@@ -25,10 +25,10 @@
 use super::craft_make::counted_msg;
 use crate::content::{
     Content, InputKind, MaterialId, ObjectId, PartSource, RaceDef, RecipeDef, RecipeId,
-    RecipeInput, RecipeUse, TerrainId, counted,
+    RecipeInput, RecipeUse, TerrainId,
 };
 use crate::geom::{Dir, Pos};
-use crate::lang::{Arg, Msg, Phrase};
+use crate::lang::{Msg, Phrase};
 use crate::msg;
 use crate::scroll_label::Lore;
 use crate::skills::SkillId;
@@ -87,9 +87,11 @@ impl RecipeLack {
                 .role("launcher", content.launcher_phrase(o)),
             RecipeLack::Stock(m) => {
                 let def = content.material(m);
-                let stock = def.group.as_deref().unwrap_or(&def.name).to_string();
-                // lang: todo(#2035) a stock's group or material name
-                Msg::new(msg::crafting::LACKING_STOCK).role("stock", Arg::text(stock))
+                let stock = match def.group.as_deref() {
+                    Some(group) => Phrase::id(format!("material_group:{group}")),
+                    None => Phrase::id(format!("material:{}", def.id)),
+                };
+                Msg::new(msg::crafting::LACKING_STOCK).role("stock", stock)
             }
             RecipeLack::Input(o) => Msg::new(msg::crafting::LACKING_INPUT).role(
                 "what",
@@ -307,7 +309,7 @@ fn input_material(content: &Content, input: &RecipeInput) -> Option<MaterialId> 
 }
 
 /// A stock input in words: "a length of sinew", "an ingot" (of any metal: the form word alone,
-/// [`crate::piece::any_names`]).
+/// [`crate::piece::any_arg`]).
 fn stock_input_words(content: &Content, input: &RecipeInput) -> Option<Msg> {
     let material = input_material(content, input)?;
     let piece = content.object(content.object_id(crate::piece::ID)?);
@@ -476,25 +478,14 @@ fn joined(parts: Vec<Msg>, join: crate::lang::MessageId) -> Option<Msg> {
 
 /// `count` pieces of any one of `materials`, all of one group, said `work_counted`: a piece of
 /// one material as its phrase ([`crate::piece::name_phrase`]: "3 steel ingots"), of several
-/// [`crate::piece::any_names`]' English counted, as text (it joins the materials' words
-/// itself: "an iron or brass ingot").
+/// [`crate::piece::any_arg`] ("an iron or brass ingot").
 fn stock_counted(
     content: &Content,
     piece: &crate::content::ObjectDef,
     materials: &[MaterialId],
     count: u32,
 ) -> Option<Msg> {
-    let what: crate::lang::Arg = match materials {
-        [] => return None,
-        [one] => crate::piece::name_phrase(content, piece, *one)
-            .count(count)
-            .into(),
-        _ => {
-            let (one, many) = crate::piece::any_names(content, piece, materials)?;
-            // lang: todo(#2035) `any_names`' English
-            Arg::text(counted(&one, &many, count))
-        }
-    };
+    let what = crate::piece::any_arg(content, piece, materials, count)?;
     Some(Msg::new(msg::crafting::WORK_COUNTED).role("what", what))
 }
 
@@ -502,7 +493,7 @@ fn stock_counted(
 /// base material where it is among them (else the cheapest of its group), once for each group
 /// they hold, the base material's group first: "3 ingots", "7 billets or 7 shards", the
 /// material named only where the part takes just that one of its group ("a block of flint";
-/// [`crate::piece::any_names`]) (docs/design/professions.md §3: the part's share of the result's
+/// [`crate::piece::any_arg`]) (docs/design/professions.md §3: the part's share of the result's
 /// weight, in pieces; another material of the group takes as many of its own).
 fn stock_words(
     content: &Content,

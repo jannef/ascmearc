@@ -351,8 +351,7 @@ fn words(content: &Content, def: &QuestDef, target: &str) -> Words {
         } => {
             let named = match (what, kill) {
                 // Called as the quest says, one or many alike.
-                // lang: todo(#2035) a rolled quest's thing by the data's word
-                (Some(what), _) => Phrase::id(format!("word:{what}")),
+                (Some(_), _) => content.quest_what_phrase(&def.id),
                 (None, KillTarget::Creature(c)) => {
                     let one = Phrase::id(format!("creature:{}", content.creature(*c).id));
                     one.count(*count)
@@ -607,12 +606,10 @@ fn check_roll(content: &Content, def: &QuestDef, roll: &Roll) -> Result<(), Stri
         if Line::parse(w).roles().contains(&WHERE) {
             return Err("`where` cannot name `where`".into());
         }
-        let filled = fill(content, w, &words)?;
-        // lang: todo(#2035) a quest's `where`, filled in English
-        words.insert(WHERE.into(), Arg::text(filled));
-    } else {
-        words.insert(WHERE.into(), Arg::empty());
+        fill(content, w, &words)?;
     }
+    // `where` is checked on its own above; the texts that name it are checked with it empty.
+    words.insert(WHERE.into(), Arg::empty());
     for text in texts.iter().chain(accept.iter()) {
         fill(content, text, &words)?;
     }

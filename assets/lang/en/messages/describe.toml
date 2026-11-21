@@ -51,6 +51,8 @@ capacity_can = "It can bear {room:bare}."
 # `has`: how many it bears (`enchantments`); `n`, how many more it could.
 capacity_more = "It bears {has:bare} and could bear {n:num} more."
 capacity_over = "It bears more than its make should hold."
+# Two or more said with commas, as `and_joined`: an item's parts ("steel blade, leather grip").
+comma_joined = "{first:bare}, {rest:bare}"
 cursed = "Cursed: once worn or wielded, it will not come off."
 # `dice`: the dice; `critical`, the range a critical threatens on; `crit`, its multiplier.
 damage = "Damage {dice:bare}; criticals on {critical:bare}, ×{crit:bare} damage"
@@ -142,8 +144,8 @@ held_main = "{noun:Bare}, for the {slot:bare}"
 # last part).
 listed = "{first:bare}, {rest:bare}"
 magic_unknown = "Unidentified: what its magic does is unknown, though it works all the same."
-make_apart = "Taken apart, it would give {what:bare}."
-make_apart_batch = "Taken apart, enough of them would give {what:bare}."
+make_apart = "Taken apart, it would give {what:counted}."
+make_apart_batch = "Taken apart, enough of them would give {what:counted}."
 # `place`: where it would be made good (`place_*`).
 make_damaged = "It is damaged: work {place:bare} would make it good."
 make_damaged_mend = "It is damaged: work {place:bare} would make it good, or your own hands."
@@ -168,6 +170,8 @@ numbers_attack_range = "To hit {hit:bare}, damage {damage:bare}, range {range:ba
 numbers_to_hit = "{hit:bare} to hit"
 # Two or more said with "or", as `and_joined`.
 or_joined = "{first:bare} or {rest:bare}"
+# A part of an item as made: `material`, its material; `part`, the part ("steel blade").
+part_made = "{material:bare} {part:bare}"
 parry = "Parry +{n:bare}"
 pierces = "Pierces armour"
 place_anvil = "at the anvil"

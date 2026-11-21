@@ -42,8 +42,8 @@ drink = "You cup your hands and drink from the spring."
 drink_broken_by = "{came:bare}; you stop drinking."
 # What a burial ground without an `epitaph` of its own cuts in one of the run's dead's grave
 # (`graves.rs`): `name`, who they were ("Brakka the dwarf warrior"), and `death`, how they died
-# ("killed by a kobold in Fyrdelf 3, The Ascmearc"; `untold_death` when unknown), text until
-# their words are converted.
+# ("killed by a kobold in Fyrdelf 3, The Ascmearc"; `untold_death` when unknown), as the app
+# rendered it in the language shown (the graveyard file keeps a record, not a message).
 epitaph = "Here lies {name:bare}, {death:bare}."
 # `place`: the level the player fell to, by its name.
 fall_to = "You fall to {place:bare}."
@@ -57,6 +57,11 @@ floor_gives_way = "The floor gives way beneath you!"
 find_inside = "Inside you find {what:a}."
 # `talent`: the talent the altar gave.
 gain_talent = "You gain {talent:bare}."
+# A grave's `name` (`Fallen::grave_name`): `name`, as typed; `race` and `class`, a `race:` and a
+# `class:` phrase (said in lower case, "dwarf", "warrior"), or an id this content lacks.
+grave_name = "{name:bare} the {race:bare} {class:bare}"
+grave_name_class = "{name:bare} the {class:bare}"
+grave_name_race = "{name:bare} the {race:bare}"
 # `level`: the level the player is at once more.
 level_again = "You are level {level:bare} again."
 lock_springs = "The lock springs open with a click."

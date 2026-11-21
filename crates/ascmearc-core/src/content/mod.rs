@@ -368,7 +368,7 @@ pub use mods::{ModStamp, describe as describe_mods};
 pub use monster_pool::{MonsterPool, VaultMonsters};
 pub use names::{NameLists, Names};
 pub use oath::{OathBand, OathRules, TREE as OATH_TREE};
-pub use object::{MAX_VALUE, ObjectDef, ObjectId, counted, weapon_noun};
+pub use object::{MAX_VALUE, ObjectDef, ObjectId, counted, weapon_noun, weapon_noun_phrase};
 pub use offer::TradeOffer;
 pub use outcome::{
     Amount, Explosion, Harmful, Near, OutcomeDef, OutcomeEffect, OutcomeKind, OutcomeSummon,

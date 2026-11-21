@@ -54,7 +54,9 @@ impl SkillsScreen {
                         name: label(content.skill_phrase(s.skill)),
                         value: s.value,
                         progress: s.progress,
-                        description: def.description.clone(),
+                        description: crate::ui::text::data_line(
+                            ascmearc_core::content::data_line::description("skill", &def.id),
+                        ),
                     }
                 })
                 .collect()

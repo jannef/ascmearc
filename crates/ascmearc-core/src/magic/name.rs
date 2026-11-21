@@ -26,7 +26,7 @@ use crate::lang::{Modifier, Note, Phrase, Word};
 /// shows; `word` is what an anvil's work calls it; `cursed` marks a curse the player knows of.
 pub(crate) fn phrase(
     made: Phrase,
-    word: Option<&str>,
+    word: Option<&'static str>,
     count: u32,
     magic: Option<&Magic>,
     (known, cursed): (bool, bool),
@@ -82,12 +82,13 @@ pub(crate) fn name_phrase(name: &str, unique: bool) -> Phrase {
     }
 }
 
-/// `phrase` with what an anvil's work calls it ahead of the rest.
-pub(crate) fn ahead(word: Option<&str>, phrase: Phrase) -> Phrase {
+/// `phrase` with what an anvil's work calls it ahead of the rest ([`super::Worked::word`], a word
+/// set in code: `word:fine`).
+pub(crate) fn ahead(word: Option<&'static str>, phrase: Phrase) -> Phrase {
     match word {
         Some(word) => {
             let mut phrase = phrase;
-            // lang: todo(#2035) the anvil's word for its work
+            // lang: label a fixed id, a word core names
             let worked = Modifier::Adjective(Word::id(format!("word:{word}")));
             phrase.mods.insert(0, worked);
             phrase

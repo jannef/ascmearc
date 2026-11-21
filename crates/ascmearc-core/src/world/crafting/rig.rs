@@ -189,8 +189,7 @@ pub fn takes_words(content: &Content, def: &RigDef) -> Msg {
             let named = (defs.iter().find(|o| o.id == *kind))
                 .or_else(|| defs.iter().find(|o| o.ammo.as_deref() == Some(kind)));
             let what = named.map_or_else(
-                // lang: todo(#2035) an ammunition kind
-                || Phrase::id(format!("word:{kind}")),
+                || Phrase::id(format!("ammo:{kind}")),
                 |o| Phrase::id(format!("object:{}", o.id)),
             );
             match most {
@@ -201,9 +200,7 @@ pub fn takes_words(content: &Content, def: &RigDef) -> Msg {
             }
         }
         RigTakes::Stock { group, .. } => {
-            let name = (content.stock().group(group)).map_or("piece", |g| g.name.as_str());
-            // lang: todo(#2035) a stock group's piece
-            let piece = Phrase::id(format!("word:{group} {name}"));
+            let piece = Phrase::id(format!("stock_group:{group}"));
             Msg::new(msg::crafting::RIG_TAKES_ONE).role("what", piece)
         }
         RigTakes::DigTool { .. } => msg::crafting::RIG_TAKES_DIG_TOOL.into(),

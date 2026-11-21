@@ -18,7 +18,8 @@
 
 use crate::content::{Content, MaterialId, ObjectDef, Part};
 use crate::item_parts::ItemPart;
-use crate::lang::{Modifier, Phrase, Word};
+use crate::lang::{Arg, Modifier, Msg, Phrase, Word};
+use crate::msg;
 use crate::object::Stack;
 
 /// The piece object's id.
@@ -53,20 +54,22 @@ pub fn name_phrase(content: &Content, def: &ObjectDef, material: MaterialId) -> 
     }
 }
 
-/// What a piece of any one of `materials`, all of one group, is called, singular and plural, as
-/// a recipe that takes any of them says it (#1767). The whole group is its form word alone, for
-/// the stack spent may be of any of it ("ingot"/"ingots"; "block of stone", by the group, where
-/// the material comes after the word; "hide or pelt" where its materials' words differ); some of
-/// it names them ("iron or brass ingot", "block of flint or obsidian", "leather hide or fur
-/// pelt"); one is [`names`]. `None` for none.
-pub fn any_names(
+/// `count` pieces of any one of `materials`, all of one group, as a recipe that takes any of them
+/// says it (#1767), said `counted`. The whole group is its form word alone, for the stack spent
+/// may be of any of it ("an ingot"/"3 ingots"; "a block of stone", by the group
+/// (`material_group:<group>`), where the material comes after the word; "a hide or pelt" where
+/// its materials' words differ); some of it names them ("an iron or brass ingot", "a block of
+/// flint or obsidian", "a leather hide or fur pelt"); one is [`name_phrase`]. Several kinds are
+/// said with "or" (`crafting.stock_any_*`, `crafting.stock_some_*`). `None` for none.
+pub fn any_arg(
     content: &Content,
     def: &ObjectDef,
     materials: &[MaterialId],
-) -> Option<(String, String)> {
+    count: u32,
+) -> Option<Arg> {
     let (&first, rest) = materials.split_first()?;
     if rest.is_empty() {
-        return Some(names(content, def, first));
+        return Some(name_phrase(content, def, first).count(count).into());
     }
     let group = content.material(first).group.as_deref();
     let whole = (content.materials().iter().enumerate())
@@ -75,44 +78,110 @@ pub fn any_names(
     let forms: Option<Vec<(&str, &str, bool)>> = (materials.iter())
         .map(|&m| content.stock().form_of(content, m))
         .collect();
-    let pairs: Vec<(String, String)> = match (forms, group) {
+    let stock = |m: MaterialId| Phrase::id(format!("stock:{}", content.material(m).id));
+    let kinds: Vec<Phrase> = match (forms, group) {
         // The whole group: its form words, without a material.
-        (Some(forms), Some(group)) if whole => (forms.into_iter())
-            .map(|(name, plural, of)| match of {
-                true => (format!("{name} of {group}"), format!("{plural} of {group}")),
-                false => (name.to_string(), plural.to_string()),
-            })
-            .collect(),
+        (Some(forms), Some(group)) if whole => {
+            let mut seen = Vec::new();
+            let mut kinds = Vec::new();
+            for (&m, form) in materials.iter().zip(forms) {
+                if seen.contains(&form) {
+                    continue;
+                }
+                seen.push(form);
+                kinds.push(match form.2 {
+                    true => {
+                        stock(m).with(Modifier::Of(Word::id(format!("material_group:{group}"))))
+                    }
+                    false => stock(m),
+                });
+            }
+            kinds
+        }
         // Some of it, all under one word: the materials named before or after it.
         (Some(forms), _) if forms.iter().all(|f| *f == forms[0]) => {
-            let (name, plural, of) = forms[0];
-            let named: Vec<String> = (materials.iter())
-                .map(|&m| content.material(m).name.clone())
-                .collect();
-            let named = or_joined(&named);
-            return Some(match of {
-                true => (format!("{name} of {named}"), format!("{plural} of {named}")),
-                false => (format!("{named} {name}"), format!("{named} {plural}")),
-            });
+            let (_, _, of) = forms[0];
+            return Some(some_under_one(content, materials, stock(first), of, count));
         }
         // Else each material by its own name.
         _ => (materials.iter())
-            .map(|&m| names(content, def, m))
+            .map(|&m| name_phrase(content, def, m))
             .collect(),
     };
-    let (one, many): (Vec<String>, Vec<String>) = pairs.into_iter().unzip();
-    Some((or_joined(&one), or_joined(&many)))
+    Some(any_of(kinds, count))
 }
 
-/// `words` joined with "or", each once, in order.
-fn or_joined(words: &[String]) -> String {
-    let mut once: Vec<&str> = Vec::new();
-    for w in words {
-        if !once.contains(&w.as_str()) {
-            once.push(w);
+/// `kinds`, `count` of any one of them, said with "or": one kind counted, else
+/// `crafting.stock_any_one` ("a hide or pelt"), `stock_any_many` ("3 hides or pelts").
+fn any_of(kinds: Vec<Phrase>, count: u32) -> Arg {
+    let mut kinds = kinds.into_iter();
+    let Some(first) = kinds.next() else {
+        return Arg::empty();
+    };
+    let rest: Vec<Phrase> = kinds.collect();
+    if rest.is_empty() {
+        return first.count(count).into();
+    }
+    let msg = match count {
+        1 => Msg::new(msg::crafting::STOCK_ANY_ONE)
+            .role("first", first)
+            .role("rest", or_joined(rest.into_iter().map(Arg::from).collect())),
+        n => {
+            let all = std::iter::once(first).chain(rest);
+            Msg::new(msg::crafting::STOCK_ANY_MANY)
+                .role("n", i64::from(n))
+                .role("kinds", or_joined(all.map(|k| k.count(n).into()).collect()))
+        }
+    };
+    msg.into()
+}
+
+/// `count` pieces of any one of `materials` under one form word, `form` (`stock:<material>`),
+/// the materials named before it ("an iron or brass ingot") or, with `of`, after it ("a block of
+/// flint or obsidian"): `crafting.stock_some_*`.
+fn some_under_one(
+    content: &Content,
+    materials: &[MaterialId],
+    form: Phrase,
+    of: bool,
+    count: u32,
+) -> Arg {
+    let mut named: Vec<Phrase> = Vec::new();
+    for &m in materials {
+        let phrase = Phrase::id(format!("material:{}", content.material(m).id));
+        if !named.contains(&phrase) {
+            named.push(phrase);
         }
     }
-    once.join(" or ")
+    let all = || or_joined(named.iter().cloned().map(Arg::from).collect());
+    let msg = match (of, count) {
+        (false, 1) => Msg::new(msg::crafting::STOCK_SOME_ONE)
+            .role("first", named[0].clone())
+            .role(
+                "rest",
+                or_joined(named[1..].iter().cloned().map(Arg::from).collect()),
+            ),
+        (false, n) => Msg::new(msg::crafting::STOCK_SOME_MANY)
+            .role("n", i64::from(n))
+            .role("materials", all()),
+        (true, 1) => Msg::new(msg::crafting::STOCK_SOME_OF_ONE).role("materials", all()),
+        (true, n) => Msg::new(msg::crafting::STOCK_SOME_OF_MANY)
+            .role("n", i64::from(n))
+            .role("materials", all()),
+    };
+    msg.role("form", form.count(count)).into()
+}
+
+/// `items` said with "or", a nested `describe.or_joined` for each but the last.
+fn or_joined(items: Vec<Arg>) -> Arg {
+    let mut items = items.into_iter().rev();
+    let last = items.next().unwrap_or_else(Arg::empty);
+    items.fold(last, |rest, first| {
+        Msg::new(msg::describe::OR_JOINED)
+            .role("first", first)
+            .role("rest", rest)
+            .into()
+    })
 }
 
 /// How many pieces of `material` `grams` of it make: `max(1, round(grams / one piece's
@@ -330,7 +399,12 @@ mod tests {
         let piece = content.object(content.object_id(ID).expect("piece"));
         let said = |ids: &[&str]| {
             let of: Vec<MaterialId> = ids.iter().map(|id| material(&content, id)).collect();
-            any_names(&content, piece, &of).expect("named")
+            let counted = |n: u32| {
+                let what = any_arg(&content, piece, &of, n).expect("named");
+                let msg = Msg::new(msg::crafting::WORK_COUNTED).role("what", what);
+                crate::messages::english_msg(&content, &msg)
+            };
+            (counted(1), counted(3))
         };
         let group = |g: &str| -> Vec<&str> {
             (content.materials().iter())
@@ -339,27 +413,33 @@ mod tests {
                 .collect()
         };
         let pair = |a: &str, b: &str| (a.to_string(), b.to_string());
-        assert_eq!(said(&group("metal")), pair("ingot", "ingots"));
-        assert_eq!(said(&group("wood")), pair("billet", "billets"));
+        assert_eq!(said(&group("metal")), pair("an ingot", "3 ingots"));
+        assert_eq!(said(&group("wood")), pair("a billet", "3 billets"));
         assert_eq!(
             said(&group("cloth")),
-            pair("bolt of cloth", "bolts of cloth")
+            pair("a bolt of cloth", "3 bolts of cloth")
         );
-        assert_eq!(said(&group("hide")), pair("hide or pelt", "hides or pelts"));
+        assert_eq!(
+            said(&group("hide")),
+            pair("a hide or pelt", "3 hides or pelts")
+        );
         assert_eq!(
             said(&["iron", "brass"]),
-            pair("iron or brass ingot", "iron or brass ingots")
+            pair("an iron or brass ingot", "3 iron or brass ingots")
         );
         assert_eq!(
             said(&["flint", "obsidian"]),
-            pair("block of flint or obsidian", "blocks of flint or obsidian")
+            pair(
+                "a block of flint or obsidian",
+                "3 blocks of flint or obsidian"
+            )
         );
         assert_eq!(
             said(&["leather", "fur"]),
-            pair("leather hide or fur pelt", "leather hides or fur pelts")
+            pair("a leather hide or fur pelt", "3 leather hides or fur pelts")
         );
-        assert_eq!(said(&["steel"]), pair("steel ingot", "steel ingots"));
-        assert_eq!(any_names(&content, piece, &[]), None);
+        assert_eq!(said(&["steel"]), pair("a steel ingot", "3 steel ingots"));
+        assert_eq!(any_arg(&content, piece, &[], 1), None);
     }
 
     #[test]

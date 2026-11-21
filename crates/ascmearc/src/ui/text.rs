@@ -144,6 +144,12 @@ pub fn speech(content: &Content, speech: &Speech) -> String {
     ascmearc_core::messages::speech_in(content, &language_code(), speech)
 }
 
+/// A line of data by its key (`ascmearc_core::content::data_line`) alone, in the current
+/// language: a race's or a talent's `description`, a status's `death`.
+pub fn data_line(key: String) -> String {
+    ui_msg(Msg::data_line(Arg::said(key)))
+}
+
 /// A word core picks (a message id: `Stat::name`, `Hunger::name`) or a message (a span of time,
 /// `Duration::spoken`) alone in the current language, in `form`: `bare`, or `Bare` for a
 /// label's capital ("Strength", "Not hungry").

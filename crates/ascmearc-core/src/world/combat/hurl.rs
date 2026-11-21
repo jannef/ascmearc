@@ -29,7 +29,7 @@
 //! `supply` of their flasks and have a cooldown (#1794 replaced the design's endless supply, Q9);
 //! a flask in a pack is thrown only as a throw's supply (Q10 otherwise holds).
 
-use super::fight::{End, Guard, Words, attack_message, data_word};
+use super::fight::{End, Guard, Verb, Words, attack_message};
 use super::shoot::Flight;
 use crate::action::{AttackKind, Event, Positions};
 use crate::combat::Strike;
@@ -153,7 +153,7 @@ pub(in crate::world) fn thrown_by<'c>(
 /// at `target`, what came of it, the kind of damage it did, and the target's guard.
 pub(in crate::world) fn throw_messages(
     content: &Content,
-    (by, throw): (CreatureId, &Throw),
+    (by, _): (CreatureId, &Throw),
     (thrower, target): (&End, &End),
     strike: Option<Strike>,
     damage: Option<DamageTypeId>,
@@ -162,22 +162,23 @@ pub(in crate::world) fn throw_messages(
     if thrower.is_unseen() && target.is_unseen() {
         return Vec::new();
     }
-    let noun = throw.attack.name.as_str();
+    // What it throws, by its type's word (`throw_noun:<creature>`).
+    let noun = || content.throw_noun_phrase(content.creature(by));
     let mut said = Vec::new();
     if let End::Seen(_) | End::Yours(_) | End::Named(_) = thrower {
         said.push(
             Msg::new(msg::combat::THROWS)
                 .role("actor", thrower.phrase())
                 .role("verb", content.throw_verb(content.creature(by)))
-                .role("what", data_word(noun)),
+                .role("what", noun()),
         );
     }
     let words = match damage {
-        Some(kind) => Words::of_kind(data_word(noun), kind, content),
-        None => Words::named(noun, "hits", content),
+        Some(kind) => Words::of_kind(noun(), kind, content),
+        None => Words::new(noun(), Verb::Hits, content),
     };
     let blow = attack_message(
-        &End::Trap(data_word(noun)),
+        &End::Trap(noun()),
         target,
         &words,
         AttackKind::Thrown,

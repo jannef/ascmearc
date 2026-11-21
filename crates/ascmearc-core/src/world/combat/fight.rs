@@ -58,7 +58,7 @@ use crate::action::{AttackKind, Event};
 use crate::combat::{self, Blow, Category, Profile, Strike, Target};
 use crate::content::{
     ActionKind, Build, Content, CreatureDef, CreatureId, DamageTypeId, Grip, ObjectDef, ObjectId,
-    Role, SpellData, Stance, StatusId, TrapId, WeaponSkillId, data_word,
+    Role, SpellData, Stance, StatusId, TrapId, WeaponSkillId,
 };
 use crate::damage::{self, Damage, Protection, Resistances};
 use crate::geom::Dir;
@@ -236,17 +236,10 @@ pub(in crate::world) struct Words {
 }
 
 impl Words {
-    /// What hits (an arrow, a fireball) and what it does ("hits", "burns"); what the player does
-    /// with it follows ("hit", "burn").
-    pub(in crate::world) fn new(noun: Phrase, verb: &str, content: &Content) -> Self {
-        Self {
-            plural: plural(&noun, content),
-            noun,
-            // lang: todo(#2035) a verb the data or the code writes
-            verb: Arg::text(verb),
-            // lang: todo(#2035) a verb the data or the code writes
-            you: Arg::text(data_word::second_person(verb)),
-        }
+    /// What hits (an arrow, a fireball) and what it does, a verb set in code ("hits", "burns");
+    /// what the player does with it follows ("hit", "burn").
+    pub(in crate::world) fn new(noun: Phrase, verb: Verb, content: &Content) -> Self {
+        Self::said(noun, verb.args(), content)
     }
 
     /// What hits and what a blow of damage kind `kind` does ("burns", "burn"), by the kind's
@@ -288,7 +281,7 @@ impl Words {
     ) -> Self {
         match kind {
             Some(kind) => Self::of_kind(noun, kind, content),
-            None => Self::new(noun, "burns", content),
+            None => Self::new(noun, Verb::Burns, content),
         }
     }
 
@@ -297,7 +290,7 @@ impl Words {
     /// Attacks alike in name and verb (two claws) say the first's line, so their blows fold.
     pub(in crate::world) fn natural(def: &CreatureDef, n: usize, content: &Content) -> Self {
         let Some(attack) = def.natural_attacks().nth(n) else {
-            return Self::named("fist", "hits", content);
+            return Self::named("fist", Verb::Hits, content);
         };
         let n = (def.natural_attacks())
             .position(|a| a.name == attack.name && a.verb == attack.verb)
@@ -309,20 +302,20 @@ impl Words {
         Self::said(content.attack_name_phrase(def, n), verbs, content)
     }
 
-    /// Words for a noun the data names without an id of its own ("bite", "fireball", "arrow"):
-    /// `word:<noun>` (`content/lexicon.rs`).
-    pub(in crate::world) fn named(noun: &str, verb: &str, content: &Content) -> Self {
-        Self::new(data_word(noun), verb, content)
+    /// Words for a noun core names ("fist", "kick", "shot"): a fixed `word:<noun>` ([`word`]).
+    pub(in crate::world) fn named(noun: &'static str, verb: Verb, content: &Content) -> Self {
+        Self::new(word(noun), verb, content)
     }
 
     #[cfg(test)]
     pub(super) fn test(noun: &str, verb: &str) -> Self {
         Self {
-            noun: data_word(noun),
+            // lang: test
+            noun: Phrase::id(format!("word:{noun}")),
             // lang: test
             verb: Arg::text(verb),
             // lang: test
-            you: Arg::text(data_word::second_person(verb)),
+            you: Arg::text(crate::content::data_word::second_person(verb)),
             plural: crate::lang::en::is_plural(noun),
         }
     }
@@ -334,7 +327,7 @@ impl Words {
 
     /// A kick: "You kick the giant rat.", "The giant rat dodges your kick."
     pub(super) fn kick(content: &Content) -> Self {
-        Self::named("kick", "kicks", content)
+        Self::named("kick", Verb::Kicks, content)
     }
 
     /// What a weapon's blow does: the weapon's own `verb` ("cleaves"),
@@ -345,7 +338,7 @@ impl Words {
         match (verbs, damage) {
             (Some(verbs), _) => Self::said(noun, verbs, content),
             (None, Some(kind)) => Self::of_kind(noun, kind, content),
-            (None, None) => Self::new(noun, "hits", content),
+            (None, None) => Self::new(noun, Verb::Hits, content),
         }
     }
 
@@ -360,11 +353,11 @@ impl Words {
         content: &Content,
     ) -> Self {
         let object =
-            |o: ObjectId, verb: &str| Self::new(object_phrase(content.object(o)), verb, content);
-        let named = |noun: &str, verb: &str| Self::named(noun, verb, content);
+            |o: ObjectId, verb: Verb| Self::new(object_phrase(content.object(o)), verb, content);
+        let named = |noun: &'static str, verb: Verb| Self::named(noun, verb, content);
         match kind {
             AttackKind::Melee if let Some(with) = with => match content.object(with) {
-                shield if shield.bash.is_some() => object(with, "bashes"),
+                shield if shield.bash.is_some() => object(with, Verb::Bashes),
                 weapon => Self::blow(weapon, damage, content),
             },
             AttackKind::Melee => match actor.weapon(content) {
@@ -372,14 +365,14 @@ impl Words {
                 None => Self::natural(content.creature(actor.creature), 0, content),
             },
             AttackKind::Ranged => match with.or_else(|| actor.ammunition(content)) {
-                Some(ammo) => object(ammo, "shoots"),
-                None => named("shot", "shoots"),
+                Some(ammo) => object(ammo, Verb::Shoots),
+                None => named("shot", Verb::Shoots),
             },
             AttackKind::Thrown => match with {
-                Some(thrown) => object(thrown, "hits"),
-                None => named("throw", "hits"),
+                Some(thrown) => object(thrown, Verb::Hits),
+                None => named("throw", Verb::Hits),
             },
-            AttackKind::Spell => named("spell", "casts a spell at"),
+            AttackKind::Spell => named("spell", Verb::CastsASpellAt),
         }
     }
 }
@@ -401,10 +394,33 @@ pub(in crate::world) fn word(text: &'static str) -> Phrase {
     Phrase::id(format!("word:{text}"))
 }
 
-/// A word the data names without an id of its own, as a phrase: `word:<text>`, English.
-pub(in crate::world) fn data_word(text: &str) -> Phrase {
-    // lang: todo(#2035) the data's word as English
-    Phrase::id(format!("word:{text}"))
+/// A blow's verb set in code, with the same in the player's person: `combat.verb_*`.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(in crate::world) enum Verb {
+    Bashes,
+    Burns,
+    CastsASpellAt,
+    Hits,
+    Kicks,
+    Shoots,
+}
+
+impl Verb {
+    /// The verb and the same in the player's person ("hits", "hit").
+    pub(in crate::world) fn args(self) -> (Arg, Arg) {
+        let (verb, you) = match self {
+            Verb::Bashes => (msg::combat::VERB_BASHES, msg::combat::VERB_BASH),
+            Verb::Burns => (msg::combat::VERB_BURNS, msg::combat::VERB_BURN),
+            Verb::CastsASpellAt => (
+                msg::combat::VERB_CASTS_A_SPELL_AT,
+                msg::combat::VERB_CAST_A_SPELL_AT,
+            ),
+            Verb::Hits => (msg::combat::VERB_HITS, msg::combat::VERB_HIT),
+            Verb::Kicks => (msg::combat::VERB_KICKS, msg::combat::VERB_KICK),
+            Verb::Shoots => (msg::combat::VERB_SHOOTS, msg::combat::VERB_SHOOT),
+        };
+        (Arg::from(verb), Arg::from(you))
+    }
 }
 
 /// Whether `noun` is a plural noun ("flames"), as English's lexicon says; a literal name is one
@@ -480,7 +496,7 @@ impl Guard {
         };
         let race = state.race_of(content, target);
         Self {
-            hide: target.hide(content, race).map(|h| data_word(&h.name)),
+            hide: target.hide_phrase(content, race),
             soak: target.soaked_by_phrase(content, race),
         }
     }

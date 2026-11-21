@@ -105,7 +105,7 @@ pub(super) fn check(
     let colour =
         |at: usize| (player.inventory.get(at)).and_then(|s| table.colour_of_object(s.object));
     for &seal in seals {
-        let (category, word) = table
+        let (category, _) = table
             .families
             .get(seal)
             .ok_or(Msg::from(msg::crafting::SEAL_NO_SUCH))?;
@@ -114,12 +114,12 @@ pub(super) fn check(
         }
         let holds = |at: &usize| colour(*at).is_some_and(|c| c.families.contains(category));
         if !crystals.iter().any(holds) {
-            // lang: todo(#2035) a seal family's word
-            let word = Arg::text(word.clone());
+            let word = family_phrase(category);
             return Err(match crystals {
                 [one] => {
-                    // lang: todo(#2035) a crystal colour's name
-                    let name = Arg::text(colour(*one).map_or("", |c| c.name.as_str()));
+                    let name = colour(*one).map_or_else(Arg::empty, |c| {
+                        Phrase::id(format!("crystal:{}", c.id)).into()
+                    });
                     (Msg::new(msg::crafting::CRYSTAL_HOLDS_NOTHING_OF).role("colour", name))
                         .role("word", word)
                 }
@@ -144,15 +144,14 @@ pub(super) fn check(
 }
 
 /// The words of `categories` sealed, a list said `{shut:and}` ("fire and the critical"): each
-/// the crystals table's family word as a `word:` phrase (it has no id of its own).
-pub(super) fn words(content: &Content, categories: &[String]) -> Arg {
-    let table = content.crystals();
-    let words = (categories.iter())
-        .map(|c| (table.and_then(|t| t.family_word(c))).unwrap_or(c.as_str()))
-        // lang: todo(#2035) a seal family's word
-        .map(|word| Phrase::id(format!("word:{word}")).into())
-        .collect();
-    Arg::List(words)
+/// the crystals table's family word ([`family_phrase`]).
+pub(super) fn words(_content: &Content, categories: &[String]) -> Arg {
+    Arg::List(categories.iter().map(|c| family_phrase(c).into()).collect())
+}
+
+/// A crystal family by its word: `seal_family:<category>` (`content/data_word.rs`).
+fn family_phrase(category: &str) -> Phrase {
+    Phrase::id(format!("seal_family:{category}"))
 }
 
 /// A seal step's label: "seal", "second seal", "third seal".
@@ -217,8 +216,11 @@ pub(super) fn steps(
                     && (item.as_ref())
                         .is_none_or(|it| sealable(content, (it.def, it.level), &it.had, category))
             })
-            // lang: todo(#2035) a seal family's word
-            .map(|(i, (_, word))| option(i, Msg::literal(word.as_str()), word.clone()))
+            .map(|(i, (category, word))| {
+                let name =
+                    Msg::new(msg::crafting::SEAL_FAMILY).role("family", family_phrase(category));
+                option(i, name, word.clone())
+            })
             .collect();
         options.sort_by(|a, b| a.short.cmp(&b.short));
         steps.push(CraftStep {

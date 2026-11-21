@@ -38,7 +38,8 @@ pub(super) fn dialogue(content: &Content) -> String {
             |m| {
                 format!(
                     "{} ({} % of its actions, when you are near)",
-                    m.verb, m.chance
+                    m.verb.as_deref().unwrap_or("mutters"),
+                    m.chance
                 )
             },
         );

@@ -10,7 +10,7 @@
 use super::{AffixKind, Effect, Rolled};
 use crate::combat::HIGHEST;
 use crate::content::{
-    ActionKind, Content, Draught, ItemKind, ObjectDef, Rarity, data_line, weapon_noun,
+    ActionKind, Content, Draught, ItemKind, ObjectDef, Rarity, data_line, weapon_noun_phrase,
 };
 use crate::lang::{Arg, MessageId, Msg, Phrase};
 use crate::msg;
@@ -64,6 +64,27 @@ fn num(n: impl TryInto<i64>) -> Arg {
 
 /// `items` said one after another with `join` (`listed`, `and_joined`, `or_joined`): the
 /// language owns the separator. `None` for none.
+/// `parts` in words, as [`Content::describe_parts`] writes them: every part, the main one first,
+/// each its material and part ("steel blade", `describe.part_made`), an unnamed part its material
+/// ("steel"), joined with commas (`describe.comma_joined`).
+fn parts_arg(content: &Content, parts: &[crate::content::Part]) -> Arg {
+    let words: Vec<Arg> = (parts.iter())
+        .map(|p| {
+            let material = Phrase::id(format!("material:{}", content.material(p.material).id));
+            match p.part {
+                Some(part) => {
+                    let part = &content.part_defs()[usize::from(part.0)].id;
+                    (Msg::new(msg::describe::PART_MADE).role("material", material))
+                        .role("part", Phrase::id(format!("part:{part}")))
+                        .into()
+                }
+                None => material.into(),
+            }
+        })
+        .collect();
+    joined(words, msg::describe::COMMA_JOINED).unwrap_or_else(Arg::empty)
+}
+
 fn joined(items: Vec<Arg>, join: MessageId) -> Option<Arg> {
     let mut items = items;
     let last = items.pop()?;
@@ -426,11 +447,9 @@ fn lines_named(stack: &Stack, content: &Content, name: Phrase, maker: Option<&st
             .into(),
     };
     let parts = stack.parts(content);
-    let made = content.describe_parts(&parts);
     let weight = format_weight(stack.weight(content));
     let base = (Msg::new(msg::describe::BASE).role("what", what))
-        // lang: todo(#2035) the parts' words (`describe_parts`)
-        .role("made", Arg::text(made))
+        .role("made", parts_arg(content, &parts))
         .role("weight", Arg::notation(weight));
     out.push(line(LineKind::Base, base));
     for part in parts.iter() {
@@ -438,8 +457,7 @@ fn lines_named(stack: &Stack, content: &Content, name: Phrase, maker: Option<&st
         let gem = crate::gem::phrase(content, part.material, cutting);
         let said = match part.part {
             Some(p) => {
-                // lang: todo(#2035) a part's name
-                let kind = Arg::text(content.part_defs()[usize::from(p.0)].name.as_str());
+                let kind = Phrase::id(format!("part:{}", content.part_defs()[usize::from(p.0)].id));
                 (Msg::new(msg::describe::GEM).role("part", kind)).role("gem", gem)
             }
             None => Msg::new(msg::describe::GEM_LOOSE).role("gem", gem),
@@ -843,16 +861,14 @@ fn stats(
 fn how_held(def: &ObjectDef, content: &Content) -> Option<Msg> {
     let slot = def.slot.as_ref()?;
     let slot = content.slots().iter().find(|s| &s.fits == slot)?;
-    let noun = weapon_noun(def, content);
+    let noun = weapon_noun_phrase(def, content);
     let place = Phrase::id(format!("slot:{}", slot.id));
     Some(match (noun, slot.action) {
         (Some(c), ActionKind::Wield) if def.two_handed => {
-            // lang: todo(#2035) a weapon's noun (`weapon_noun`)
-            Msg::new(msg::describe::HELD_BOTH_HANDS).role("noun", Arg::text(c))
+            Msg::new(msg::describe::HELD_BOTH_HANDS).role("noun", c)
         }
         (Some(c), ActionKind::Wield) => {
-            // lang: todo(#2035) a weapon's noun (`weapon_noun`)
-            (Msg::new(msg::describe::HELD_MAIN).role("noun", Arg::text(c))).role("slot", place)
+            (Msg::new(msg::describe::HELD_MAIN).role("noun", c)).role("slot", place)
         }
         (Some(c), _) if def.launches.is_some() => {
             let ammo: Arg = (def.launches.as_deref())
@@ -861,23 +877,19 @@ fn how_held(def: &ObjectDef, content: &Content) -> Option<Msg> {
                     || msg::describe::AMMUNITION.into(),
                     |o| Phrase::id(format!("object:{}", o.id)).into(),
                 );
-            // lang: todo(#2035) a weapon's noun (`weapon_noun`)
-            (Msg::new(msg::describe::AMMO_LAUNCHER).role("noun", Arg::text(c))).role("ammo", ammo)
+            (Msg::new(msg::describe::AMMO_LAUNCHER).role("noun", c)).role("ammo", ammo)
         }
         (_, _) if def.ammo.is_some() => {
-            let nouns: Vec<String> = (content.object_defs().iter())
+            let nouns: Vec<Phrase> = (content.object_defs().iter())
                 .filter(|o| o.launches.is_some() && o.launches == def.ammo)
-                .filter_map(|o| weapon_noun(o, content))
+                .filter_map(|o| weapon_noun_phrase(o, content))
                 .fold(Vec::new(), |mut all, c| {
                     if !all.contains(&c) {
                         all.push(c);
                     }
                     all
                 });
-            let from: Vec<Arg> = (nouns.iter())
-                // lang: todo(#2035) a weapon's noun
-                .map(|c| Phrase::id(format!("word:{c}")).count(2).into())
-                .collect();
+            let from: Vec<Arg> = (nouns.into_iter()).map(|c| c.count(2).into()).collect();
             let from = joined(from, msg::describe::AND_JOINED).unwrap_or_else(Arg::empty);
             Msg::new(msg::describe::AMMO_QUIVERED).role("from", from)
         }
@@ -929,14 +941,10 @@ pub fn make_lines(
     let apart: Msg = match () {
         () if protected => msg::describe::MAKE_PROTECTED.into(),
         () if saved.is_empty() => msg::describe::MAKE_NOTHING.into(),
-        () if batch == 1 => {
-            Msg::new(msg::describe::MAKE_APART)
-                // lang: todo(#2035) what salvage gives (`object::phrase`)
-                .role("what", Arg::text(crate::object::phrase(&saved, lore)))
-        }
+        () if batch == 1 => Msg::new(msg::describe::MAKE_APART)
+            .role("what", crate::world::items::stacks_arg(&saved, lore)),
         () => Msg::new(msg::describe::MAKE_APART_BATCH)
-            // lang: todo(#2035) what salvage gives (`object::phrase`)
-            .role("what", Arg::text(crate::object::phrase(&saved, lore))),
+            .role("what", crate::world::items::stacks_arg(&saved, lore)),
     };
     out.push(line(LineKind::Note, apart));
     let place = match () {
