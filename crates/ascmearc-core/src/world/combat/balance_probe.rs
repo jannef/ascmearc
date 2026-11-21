@@ -28,7 +28,9 @@
 //!   untrained career takes its trained twin's ranks; the skills no fight trains are set by
 //!   level (`rank`, the trained warrior's pace). Gear: the kit,
 //!   plain level-appropriate pieces, or the same pieces magic (rare from level 30, with an
-//!   amulet and two rings from 15), equipped with `equip:`.
+//!   amulet and two rings from 15; the flat roll's expected gear), or those magic pieces at
+//!   their best (every affix at the top tier its item level reaches: `at_best`, #2049),
+//!   equipped with `equip:`.
 //! - **A fight**: one round is a normal turn. Each side's expected damage a round is its blows
 //!   a round times the mean of `combat::strike` against the other's target over `STRIKES`
 //!   draws (the player's off hand adds its blow); the hit chance is `combat::hit_ways` exactly.
@@ -128,6 +130,10 @@ enum Gear {
     Kit,
     Plain,
     Magic,
+    /// The magic pieces with every affix at the top tier their item level reaches, at its
+    /// highest value (#2049; the item level 40 design §12): the prize, beside the flat roll's
+    /// expected `Magic`.
+    Best,
 }
 
 /// The Sneak attack value assumed at a character level: the thief's creation 2d6+10 and about
@@ -975,11 +981,13 @@ fn act(w: &mut World, text: &str) {
     }
 }
 
-/// Puts `build`'s gear for `level` on `w`'s player: plain, or magic (rare from level 30).
+/// Puts `build`'s gear for `level` on `w`'s player: plain, or magic (rare from level 30), or
+/// the same magic at its best ([`at_best`]).
 fn dress(w: &mut World, build: &Build, level: u8, gear: Gear, seed: u64) {
     let content = w.content.clone();
     let mut pieces = (build.gear)(level);
-    if gear == Gear::Magic && level >= 15 {
+    let magic = matches!(gear, Gear::Magic | Gear::Best);
+    if magic && level >= 15 {
         pieces.push(("neck", "gold_amulet"));
         pieces.push(("left_ring", "gold_ring"));
         pieces.push(("right_ring", "silver_ring"));
@@ -988,18 +996,40 @@ fn dress(w: &mut World, build: &Build, level: u8, gear: Gear, seed: u64) {
         let object = content.object_id(name).expect(name);
         let mut rng = Rng::stream(seed * 1000 + u64::from(level), name);
         let mut stack = match gear {
-            Gear::Magic if level >= 30 => {
+            _ if magic && level >= 30 => {
                 loot::make(&content, &mut rng, object, 1, level, LootGrade::Rare)
             }
-            Gear::Magic if level >= 3 => {
+            _ if magic && level >= 3 => {
                 loot::make(&content, &mut rng, object, 1, level, LootGrade::Magic)
             }
             _ => Stack::new(object, 1),
         };
+        if gear == Gear::Best {
+            at_best(&content, &mut stack);
+        }
         stack.identify();
         let at = w.player_mut().inventory.len();
         w.player_mut().inventory.push(stack);
         act(w, &format!("equip:{slot}:{at}"));
+    }
+}
+
+/// `stack`'s affixes, the same ones the magic row rolled, each moved to the highest tier its
+/// item level reaches and that tier's highest value: what `dress` puts on instead of a roll for
+/// [`Gear::Best`]. A curse keeps its roll (its top would be its worst).
+fn at_best(content: &Content, stack: &mut Stack) {
+    let Some(magic) = stack.magic_mut() else {
+        return;
+    };
+    let level = magic.level;
+    for affix in &mut magic.affixes {
+        let def = content.affixes().get(&affix.id).expect("affix");
+        let reached = def.tiers_at(level);
+        if def.cursed || reached == 0 {
+            continue;
+        }
+        affix.tier = u8::try_from(reached).expect("tier");
+        affix.value = def.tiers[reached - 1].max;
     }
 }
 
@@ -1077,7 +1107,7 @@ fn career(
                 w.player_mut().skills.add(id, by);
             }
         }
-        for gear in [Gear::Kit, Gear::Plain, Gear::Magic] {
+        for gear in [Gear::Kit, Gear::Plain, Gear::Magic, Gear::Best] {
             let mut w2 = w.clone();
             if gear != Gear::Kit {
                 dress(&mut w2, build, level, gear, seed);

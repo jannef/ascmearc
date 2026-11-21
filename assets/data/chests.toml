@@ -1,6 +1,6 @@
 # Chests (docs/design/chests-and-treasure.md): what a chest of each
 # level is called and what it is like. A chest is a fixture of a cell (the `chest` terrains,
-# terrain/) with a level: its floor's (a branch floor's depth, a hand-made level's
+# terrain/) with a level: its floor's item level (a branch floor's danger, a hand-made level's
 # item_level), or what a level's legend gives it (`chest = "kist"`: that band's `from`; `chest =
 # 7`). The band is the last whose `from` the level reaches: it names the chest and gives its
 # numbers. The band is never saved, only the level, so bands may be renamed or re-cut freely.

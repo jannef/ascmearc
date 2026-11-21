@@ -14,8 +14,9 @@
 //! - [`ornament`]: for an item whose class is set with gems, one draw against its `chance`; on a
 //!   hit, a gem (never a rough one) as the class's part, or the object's own `ornament` part.
 //! - [`roll`]: one draw for the gem among the gem materials by `rarity` (by material id), one
-//!   for the size and one for the cut by their weights at the item level (`find` plus `deeper`
-//!   for each level above the first), so deeper finds run larger and finer.
+//!   for the size and one for the cut by their weights at the item level (`find` plus
+//!   `per_level` for each level above the first), so finds of a higher item level run larger
+//!   and finer.
 
 use crate::color::Rgb;
 use crate::content::{Content, Cutting, MaterialId, ObjectDef, PartId, dull};
