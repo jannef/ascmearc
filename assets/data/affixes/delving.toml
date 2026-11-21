@@ -7,9 +7,14 @@ bases = ["body", "gloves", "tool"]
 weight = 60
 tiers = [
   { level = 2, min = 10, max = 15 },
-  { level = 4, min = 17, max = 22 },
-  { level = 6, min = 24, max = 29 },
-  { level = 8, min = 31, max = 36 },
-  { level = 10, min = 38, max = 43 },
-  { level = 12, min = 45, max = 50 },
+  { level = 4, min = 14, max = 19 },
+  { level = 8, min = 17, max = 22 },
+  { level = 12, min = 21, max = 26 },
+  { level = 16, min = 24, max = 29 },
+  { level = 20, min = 28, max = 33 },
+  { level = 24, min = 31, max = 36 },
+  { level = 28, min = 35, max = 40 },
+  { level = 32, min = 38, max = 43 },
+  { level = 36, min = 42, max = 47 },
+  { level = 40, min = 45, max = 50 },
 ]

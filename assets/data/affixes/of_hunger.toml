@@ -11,6 +11,6 @@ bases = ["body", "cloak", "ring", "amulet"]
 weight = 4
 tiers = [
   { level = 1, min = 15, max = 25 },
-  { level = 6, min = 25, max = 35 },
-  { level = 12, min = 35, max = 50 },
+  { level = 16, min = 25, max = 35 },
+  { level = 32, min = 35, max = 50 },
 ]

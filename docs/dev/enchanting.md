@@ -62,14 +62,14 @@ after its material, ornament, wand rung, and (for creature gear) its condition:
   affixes written in every asset file's `[[unique]]` and `[[item]]` and fails with the item and
   its shortfall, and checks the heirloom (every race's weapon at the effect's `max`).
 
-## Deeper finds are better made
+## Finds of a higher item level are better made
 
-#1436 (the owner, 2026-11-13): deeper finds come in better make and materials, so the trim leaves
+#1436 (the owner, 2026-11-13): finds of a higher item level come in better make and materials, so the trim leaves
 them more affixes; the capacity and the trim are unchanged, and everything still ends in
 `loot::finished`.
 
-- **The make**: `data/gear_condition.toml`'s `[[depth]]` rows (`content::Depth`, by rising item
-  level; `GearConditions::depth_at`) give per mille of Fine, Marvellous, and Masterwork. Loot
+- **The make**: `data/gear_condition.toml`'s `[[item_level]]` rows (`content::ItemLevelRow`, by rising item
+  level; `GearConditions::at_item_level`) give per mille of Fine, Marvellous, and Masterwork. Loot
   (every find `make_from` makes with `Source::Loot`: floor loot, chests, hoards, dens, room loot,
   vault loot) draws its make with `magic/make.rs::make` after the wand's rung and
   before the trim, from the loot stream: one draw, then one per improvement's aspect; none where
@@ -77,7 +77,7 @@ them more affixes; the capacity and the trim are unchanged, and everything still
   arms or armour with an aspect). A stack of ammunition takes the same one draw and no more, its
   make fixed by the grade (docs/dev/special-rooms.md "Ammunition's make"); this added draw moved
   the loot stream after deep arrows, bolts, and stones. Creature gear adds the row of its level's item level to its
-  tribe's odds (`Odds::deeper`: damaged gives way to what the improvements leave), in the same one
+  tribe's odds (`Odds::with_row`: damaged gives way to what the improvements leave), in the same one
   condition draw. The loader keeps every row's improvements with any table's within
   1000. Kits, the background's gifts, the stipend, the pedlar, and animated things (`loot::make`,
   `make_as` with `Source::Gear`) take none.
@@ -87,8 +87,8 @@ them more affixes; the capacity and the trim are unchanged, and everything still
   `deeper = 8`; dragonbone and dragonscale from 6, `deeper = 5`; adamantium from 16, `deeper = 6`;
   gold `deeper = 3`. The draw itself is `variant::draw`'s one draw.
 
-Shallow levels have no row below item level 3, and the material weights at item level 1 are
-the base ones. Deeper, the make's draws come after the item's other draws on the loot stream.
+There is no row below item level 3, and the material weights at item level 1 are the base
+ones. From there, the make's draws come after the item's other draws on the loot stream.
 
 ## Quality on hand-made items
 
@@ -406,7 +406,7 @@ capacity; Recast keeping an affix with a soul-fetter, its refusals, the affix st
 words, a failure spending the fetter; Imbue's seals paid by the first crystal of their colour; a
 replay). `world/crafting/enchant_tests.rs` (the band; the three recipes' data; Kindle of every colour on many
 fates holding `Magic::check` and the colour rule; a failure and a warp; Quicken's lacking kind;
-Unbind made and failed; a stack of arrows at once; the reach and a deeper item's level; the
+Unbind made and failed; a stack of arrows at once; the reach and a found item's higher level; the
 steps, the plan, and the rows' lacks; every refusal with no time; the hour and the mark; a
 replay). `content/crystal_tests.rs` (the owner's order and two rules, the yield, every affix's colour and
 word, every creature's colour by its first tags, the loader's refusals), `world/crafting/crystal_tests.rs`
@@ -422,27 +422,27 @@ and repaired Masterwork, `binding` from a variant's part, the trim's sequence on
 and 1+3 at capacities 1 to 5 with the rarity and name kept, the trim's draws only when it trims,
 every loot path at item levels 1 to 20 and every creature's gear after its condition within
 capacity, and `hand_made_items_are_never_trimmed`. `magic/shares_tests.rs` prints the share of
-rares the trim leaves at each affix count, and holds deep rares to keeping more (#1436); the
-`[[depth]]` rows' loader checks and `Odds::deeper` are tested in `content/gear_condition.rs`, loot's
+rares the trim leaves at each affix count, and holds rares of a high item level to keeping more (#1436); the
+`[[item_level]]` rows' loader checks and `Odds::with_row` are tested in `content/gear_condition.rs`, loot's
 make in `gear/condition_tests.rs`; `magic/describe` tests the capacity line.
 
 ## The measured shares
 
-`magic/shares_tests.rs` at item levels 1, 4, 8, 12, 16, and 20 (4 000 rares and 4 000
-magic-grade finds each, loot's bases of every class), with the base at 2, deeper finds better
-made (#1436), and the quality's term scaled down (Fine +0, Marvellous +1, Masterwork +2) and
-adamantium's binding to +1 (#1444).
+`magic/shares_tests.rs` at item levels 1, 8, 16, 24, 32, and 40 (4 000 rares and 4 000
+magic-grade finds each, loot's bases of every class), with the base at 2, finds of a higher item
+level better made (#1436; the make's row at 40, #2045), and the quality's term scaled down (Fine
++0, Marvellous +1, Masterwork +2) and adamantium's binding to +1 (#1444).
 
 | Item level | Rares: capacity 2 | Rares keep 3+ | Rares untrimmed | Magic-grade untrimmed |
 |---:|---:|---:|---:|---:|
-| 1 | 85.5 % | 11.3 % | 8.4 % | 87.5 % |
-| 4 | 84.2 % | 13.9 % | 8.8 % | 88.0 % |
-| 8 | 81.0 % | 17.4 % | 10.7 % | 88.5 % |
-| 12 | 72.8 % | 26.1 % | 16.8 % | 87.8 % |
-| 16 | 64.9 % | 33.7 % | 21.4 % | 89.8 % |
-| 20 | 57.5 % | 41.0 % | 26.1 % | 89.8 % |
+| 1 | 84.6 % | 10.1 % | 5.9 % | 87.1 % |
+| 8 | 77.3 % | 18.9 % | 11.7 % | 88.7 % |
+| 16 | 63.2 % | 34.2 % | 22.4 % | 88.3 % |
+| 24 | 50.1 % | 47.4 % | 30.5 % | 90.0 % |
+| 32 | 43.8 % | 54.4 % | 35.7 % | 90.9 % |
+| 40 | 38.7 % | 59.5 % | 40.0 % | 91.6 % |
 
-The test fails if rares at item levels 1 and 4 keep three or more a fifth of the time or more, at
-16 and 20 a quarter of the time or less, or if the share falls from one level
-to the next. Magic-grade finds (one or two affixes) are untrimmed about 88 % to 90 % of the time at
+The test fails if rares at item levels 1 and 8 keep three or more a fifth of the time or more, at
+32 and 40 a quarter of the time or less, or if the share falls from one level
+to the next. Magic-grade finds (one or two affixes) are untrimmed about 87 % to 92 % of the time at
 every level.

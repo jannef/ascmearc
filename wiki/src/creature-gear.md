@@ -40,8 +40,8 @@ kit a place gives a creature are always as made. The chances, by the creature's
 
 {{#include generated/gear-condition.md}}
 
-Deeper down, gear is better made: the chances of Fine, Marvellous, and Masterwork in the
-[table of deeper finds](magic-items.md#deeper-finds) are added to these, and the chance of a
+Where the item level is higher, gear is better made: the chances of Fine, Marvellous, and
+Masterwork in the [table of better-made finds](magic-items.md#better-made-finds) are added to these, and the chance of a
 damaged piece shrinks to make room.
 
 See also: [Creatures](creatures.md), [What creatures leave](creature-drops.md), and

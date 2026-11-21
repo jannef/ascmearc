@@ -6,9 +6,9 @@
 # ability makes them, capped at rules/temper.toml's `most`), or else as made. A fixed kit (a level
 # file's placed gear) is never rolled and stays as made. Dropped, a piece keeps its condition.
 #
-# Deeper finds are better made (#1436): from an item level on, a depth row adds its chances of
-# Fine, Marvellous, and Masterwork to every source's arms and armour, so the affix-capacity trim
-# (docs/dev/enchanting.md) leaves deep finds more of their affixes. Loot (floor loot, chests,
+# Finds of a higher item level are better made (#1436): from an item level on, an item-level row
+# adds its chances of Fine, Marvellous, and Masterwork to every source's arms and armour, so the
+# affix-capacity trim (docs/dev/enchanting.md) leaves them more of their affixes. Loot (floor loot, chests,
 # hoards, dens, room loot) is otherwise always as made, never damaged; creature gear adds the row
 # of its level's item level to its tribe's odds, damaged giving way. The same row adds its
 # `ornament` percent to loot's chance of a set gem (gems.toml `[[ornament]]`).
@@ -23,7 +23,7 @@
 #     masterwork   per mille Masterwork
 #   [[tribe]]      a tribe's own odds, the four above, for a creature with its `tag`; a creature
 #     tag          with several takes the first listed (so `hobgoblin` before `goblin`)
-#   [[depth]]      by item level, rising: what finds from `level` on (to the next row's) take
+#   [[item_level]] by item level, rising: what finds from `level` on (to the next row's) take
 #     level        the least item level of the row
 #     fine         per mille more Fine (default 0)
 #     marvellous   per mille more Marvellous (default 0)
@@ -44,69 +44,78 @@ masterwork = 2
 [kinds]
 metal = ["rust", "acid"]
 
-# Shallow finds (item levels 1 and 2) are as they always were: no row.
-[[depth]]
+# Finds of item levels 1 and 2 are as they always were: no row.
+[[item_level]]
 level = 3
 fine = 30
 marvellous = 5
 masterwork = 1
 ornament = 1
 
-[[depth]]
+[[item_level]]
 level = 5
 fine = 80
 marvellous = 15
 masterwork = 3
 ornament = 2
 
-[[depth]]
+[[item_level]]
 level = 7
 fine = 150
 marvellous = 35
 masterwork = 8
 ornament = 4
 
-[[depth]]
+[[item_level]]
 level = 9
 fine = 230
 marvellous = 60
 masterwork = 15
 ornament = 6
 
-[[depth]]
+[[item_level]]
 level = 11
 fine = 330
 marvellous = 120
 masterwork = 30
 ornament = 8
 
-[[depth]]
+[[item_level]]
 level = 14
 fine = 360
 marvellous = 170
 masterwork = 45
 ornament = 10
 
-[[depth]]
+[[item_level]]
 level = 18
 fine = 360
 marvellous = 220
 masterwork = 80
 ornament = 12
 
-[[depth]]
+[[item_level]]
 level = 24
 fine = 330
 marvellous = 260
 masterwork = 110
 ornament = 15
 
-[[depth]]
+[[item_level]]
 level = 30
 fine = 300
 marvellous = 300
 masterwork = 150
 ornament = 18
+
+# The ladders' top (docs/design/item-level-40.md §6): Fine gives way as Marvellous and Masterwork
+# grow. Past 40 this row holds.
+[[item_level]]
+level = 40
+fine = 280
+marvellous = 320
+masterwork = 190
+ornament = 20
 
 # The dead keep what they were buried with: almost all of it rotten with age.
 [[tribe]]

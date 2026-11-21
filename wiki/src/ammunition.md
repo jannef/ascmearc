@@ -42,7 +42,7 @@ Where it comes from:
 
 - **Found**: from [item level](magic-items.md#finding-them) 3 on, a stack you find may be
   better made, by the same chances as a weapon found there (see
-  [Deeper finds](magic-items.md#deeper-finds)). What creatures carry and what shops sell is
+  [Better-made finds](magic-items.md#better-made-finds)). What creatures carry and what shops sell is
   plain.
 - **Fletched**: a batch of arrows, bolts, or sling stones takes the grade your check earns, as a
   forged weapon does (see [Batches](handcraft.md#batches-arrowheads-arrows-and-stones)). Brittle

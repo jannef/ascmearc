@@ -147,8 +147,8 @@ pub fn uncut(content: &Content, rng: &mut Rng, level: u8) -> Option<Stack> {
 }
 
 /// Whether loot sets an item of `def` at item level `level` with a gem, by its class's
-/// ornament `chance` and `more` percent besides (deeper finds', `gear_condition.toml`'s
-/// `[[depth]]`; one draw, none for a class never set), and if so the part it becomes.
+/// ornament `chance` and `more` percent besides (by the item level, `gear_condition.toml`'s
+/// `[[item_level]]`; one draw, none for a class never set), and if so the part it becomes.
 pub fn ornament(
     content: &Content,
     rng: &mut Rng,

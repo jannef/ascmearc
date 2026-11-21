@@ -11,6 +11,6 @@ bases = ["boots"]
 weight = 4
 tiers = [
   { level = 1, min = 8, max = 12 },
-  { level = 6, min = 12, max = 18 },
-  { level = 12, min = 18, max = 25 },
+  { level = 16, min = 12, max = 18 },
+  { level = 32, min = 18, max = 25 },
 ]

@@ -560,12 +560,17 @@ pub fn phrase(rolled: &Rolled<'_>, kind: ItemKind, content: &Content) -> Msg {
         }
     };
     let by = |id: MessageId| Msg::new(id).role("v", num(v));
+    // A dice family's value is its dice's sides, its tier's `dice` how many: `1d8`, `2d10`.
+    let dice = |id: MessageId| {
+        let count = rolled.def.tier(rolled.tier).map_or(1, |t| t.dice);
+        Msg::new(id).role("dice", Arg::notation(format!("{count}d{v}")))
+    };
     match effect {
         Effect::ToHit => every(msg::describe::DOES_TO_HIT),
         Effect::Damage => every(msg::describe::DOES_DAMAGE),
-        Effect::ExtraDamage => by(msg::describe::DOES_EXTRA_DAMAGE),
+        Effect::ExtraDamage => dice(msg::describe::DOES_EXTRA_DAMAGE),
         Effect::Elemental => {
-            by(msg::describe::DOES_ELEMENTAL).role("kind", kind_name(rolled, content))
+            dice(msg::describe::DOES_ELEMENTAL).role("kind", kind_name(rolled, content))
         }
         Effect::Resistance => {
             by(msg::describe::DOES_RESISTANCE).role("kind", kind_name(rolled, content))

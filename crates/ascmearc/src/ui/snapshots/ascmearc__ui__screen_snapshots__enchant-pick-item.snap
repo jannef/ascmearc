@@ -1,6 +1,6 @@
 ---
 source: crates/ascmearc/src/ui/screen_snapshots.rs
-expression: "render(case, content.clone())"
+expression: shown
 ---
  Welcome to Showcase. Press ? for controls.
 
@@ -16,7 +16,7 @@ expression: "render(case, content.clone())"
                   │ Unbind                                                       │
                   │                                                              │
                   │ Melee weapons                                                │
-                  │ > a - Storm Hunger, a Masterwork long sword (+1 hit,  uses 1 │
+                  │ > a - Ghoul Edge, a Masterwork long sword (+1 hit, 1d uses 1 │
                   │                                                              │
                   │                                                              │
                   │                                                              │

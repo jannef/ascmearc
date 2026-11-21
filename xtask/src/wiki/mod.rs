@@ -201,7 +201,7 @@ fn generate(content: &Content) -> Vec<(String, String)> {
         ("factions.md", creatures::factions),
         ("creature-tags.md", creatures::creature_tags),
         ("gear-condition.md", gear_condition::gear_condition),
-        ("gear-depth.md", gear_condition::gear_depth),
+        ("gear-item-level.md", gear_condition::gear_item_level),
         ("creature-drops.md", drops::creature_drops),
         ("drops-by-tag.md", drops::tag_drops),
         ("creature-stats.md", creatures::creature_stats),
@@ -681,25 +681,32 @@ mod tests {
         let suffixes = magic::suffixes(&content);
         for row in [
             "| Tireless | maximum stamina | stamina | body armour, gloves, boots, rings, amulets | \
-             1: +1 · 3: +1–2 · 5: +2 · 7: +2–3 · 9: +3 · 11: +3–4 · 12: +4–5 | 60 |",
+             1: +1 · 6: +1–2 · 12: +2 · 18: +2–3 · 24: +3 · 30: +3–4 · 36: +4 · 40: +4–5 | 60 |",
             "| Delving | digs faster | digging | body armour, gloves, tools | 2: 10–15% less time · \
-             4: 17–22% less time · 6: 24–29% less time · 8: 31–36% less time · \
-             10: 38–43% less time · 12: 45–50% less time | 60 |",
+             4: 14–19% less time · 8: 17–22% less time · 12: 21–26% less time · \
+             16: 24–29% less time · 20: 28–33% less time · 24: 31–36% less time · \
+             28: 35–40% less time · 32: 38–43% less time · 36: 42–47% less time · \
+             40: 45–50% less time | 60 |",
             "| Mage-wrought | this armour's spell cost surcharge is lower, in points | \
-             spell armour | body armour, helmets, shields | 2: 4 points less · 4: 7 points less · \
-             6: 10 points less · 8: 13 points less · 10: 16 points less · 12: 20 points less | 50 |",
+             spell armour | body armour, helmets, shields | 2: 4 points less · 8: 7 points less · \
+             14: 10 points less · 20: 13 points less · 26: 16 points less · 32: 20 points less · \
+             40: 28 points less | 50 |",
+            "| Heavy | adds dice of damage | extra damage | weapons, missile weapons, ammunition | \
+             1: 1d2–1d3 · 4: 1d3–1d4 · 8: 1d4–1d5 · 12: 1d4–1d6 · 16: 1d5–1d6 · 20: 1d6–1d7 · \
+             24: 1d6–1d8 · 28: 1d8–1d10 · 32: 1d12 · 36: 2d8 · 40: 2d10 | 100 |",
         ] {
             assert!(prefixes.contains(row), "{row}\nin\n{prefixes}");
         }
         for row in [
             "| of Thrift | every mana cost is lower | mana cost | helmets, cloaks, rings, amulets | \
-             2: 4–5% less · 4: 6–7% less · 6: 8–9% less · 8: 10–11% less · 10: 12–13% less · \
-             12: 14–16% less | 60 |",
+             2: 4–5% less · 8: 6–7% less · 14: 8–9% less · 20: 10–11% less · 26: 12–13% less · \
+             32: 14–16% less · 40: 18–22% less | 60 |",
             "| of Ease | weapon feats cost less stamina | stamina cost | weapons, missile weapons, \
-             shields, gloves | 3: 1 less · 7: 1–2 less · 10: 2 less | 40 |",
+             shields, gloves | 3: 1 less · 16: 1–2 less · 30: 2 less | 40 |",
             "| of Sustenance | hunger comes slower | hunger | body armour, cloaks, rings, amulets | \
-             2: 8–10% slower · 4: 12–14% slower · 6: 16–19% slower · 8: 21–24% slower · \
-             10: 25–29% slower · 12: 30–35% slower | 60 |",
+             2: 8–10% slower · 4: 10–13% slower · 8: 12–15% slower · 12: 15–18% slower · \
+             16: 17–20% slower · 20: 19–23% slower · 24: 21–25% slower · 28: 23–28% slower · \
+             32: 26–30% slower · 36: 28–33% slower · 40: 30–35% slower | 60 |",
         ] {
             assert!(suffixes.contains(row), "{row}\nin\n{suffixes}");
         }
@@ -1664,21 +1671,23 @@ mod tests {
         assert!(text("magic-bases.md").contains("| Long sword | weapons |"));
         let prefixes = text("magic-prefixes.md");
         assert!(prefixes.contains(
-            "| Sharp | damage, added to every roll | physical damage | weapons, ammunition | 1: +1 · 3: +1–2"
+            "| Sharp | damage, added to every roll | physical damage | weapons, ammunition | 1: +1 · 6: +1–2"
         ));
         // Speed is exact: the share of the time it takes off.
         assert!(prefixes.contains(
-            "| Fleet | you move faster | movement speed | boots | 1: 5–8% less time · 2: 5–9%"
+            "| Fleet | you move faster | movement speed | boots | 1: 5–8% less time · 5: 6–9%"
         ));
         assert!(text("magic-suffixes.md").contains("| of the Bear | Strength | strength |"));
         assert!(text("magic-names.md").contains("| Weapons | Bite,"));
         assert!(text("magic-names.md").contains("| Tools | Tooth, Fang, Bite, Jaw, Maw |"));
-        // The tier window and a drop's item level (docs/design/affixes-systems.md §3, §8).
-        assert!(text("magic-rarity.md").contains("at least 3 below it (an item of level 12"));
+        // The flat tier roll (docs/design/item-level-40.md §4) and a drop's item level.
+        assert!(
+            text("magic-rarity.md").contains("drawn evenly among those its item level reaches")
+        );
         assert!(text("magic-rarity.md").contains("has the creature's level as its item level"));
         // Unique items: the campaigns', exactly, never the test world's.
         let uniques = text("uniques.md");
-        assert!(uniques.contains("| Widowmaker | Stiletto | 12 | of Celerity (11: attacks"));
+        assert!(uniques.contains("| Widowmaker | Stiletto | 12 | of Celerity (8: attacks"));
         assert!(uniques.contains(
             "every hit adds 2d6 poison damage; every hit that leaves its target alive: 1 degree \
              of Poisoned"

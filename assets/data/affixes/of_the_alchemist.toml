@@ -7,9 +7,9 @@ bases = ["gloves", "ring", "amulet"]
 weight = 40
 tiers = [
   { level = 3, min = 8, max = 10 },
-  { level = 5, min = 11, max = 13 },
-  { level = 7, min = 14, max = 16 },
-  { level = 9, min = 17, max = 19 },
-  { level = 11, min = 20, max = 22 },
-  { level = 12, min = 22, max = 25 },
+  { level = 10, min = 11, max = 13 },
+  { level = 17, min = 14, max = 16 },
+  { level = 24, min = 17, max = 19 },
+  { level = 31, min = 20, max = 22 },
+  { level = 38, min = 22, max = 25 },
 ]
