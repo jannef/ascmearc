@@ -132,7 +132,7 @@ pub fn free_slot(content: &Content, equipment: &Equipment, object: ObjectId) -> 
 pub fn mark(content: &Content, equipment: &Equipment, item: usize) -> Option<Arg> {
     let slots = equipment.slots_of(item);
     let first = content.slot(*slots.first()?);
-    let mark = Arg::Text(first.mark.clone());
+    let mark = Arg::said(crate::content::data_line::slot_mark(&first.id));
     Some(if slots.len() > 1 {
         Msg::new(crate::msg::words::IN_BOTH_HANDS)
             .role("mark", mark)

@@ -10,7 +10,7 @@
 
 use crate::content::{ActionKind, SlotId};
 use crate::equipment;
-use crate::lang::{Msg, Phrase};
+use crate::lang::{Arg, Msg, Phrase};
 use crate::msg;
 use crate::world::{Spent, World};
 
@@ -58,7 +58,7 @@ impl World {
     ) -> Spent {
         let content = self.content.clone();
         let Some(slot) = self.own_slot(slot) else {
-            self.say(Msg::new(msg::items::NO_SLOT).role("slot", slot));
+            self.say(Msg::new(msg::items::NO_SLOT).role("slot", Arg::id(slot)));
             return Spent::Nothing;
         };
         let player = self.state.player();
@@ -132,7 +132,7 @@ impl World {
     pub(in crate::world) fn remove(&mut self, slot: &str) -> Spent {
         let content = self.content.clone();
         let Some(slot) = self.own_slot(slot) else {
-            self.say(Msg::new(msg::items::NO_SLOT).role("slot", slot));
+            self.say(Msg::new(msg::items::NO_SLOT).role("slot", Arg::id(slot)));
             return Spent::Nothing;
         };
         let player = self.state.player();

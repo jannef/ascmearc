@@ -131,12 +131,12 @@ impl RigScreen {
             console.print(tail_x, y, &tail, TEXT_DIM);
         }
         let keys = HINTS;
-        let confirm = ("confirm", Arg::from(keys.confirm));
+        let confirm = ("confirm", Arg::text(keys.confirm));
         let choose = match self.rigs.last_letter() {
             Some('a') => ui_with(T::PICK_A, &[confirm]),
             Some(last) => ui_with(
                 T::PICK_LETTERS,
-                &[("last", last.to_string().into()), confirm],
+                &[("last", Arg::text(last.to_string())), confirm],
             ),
             None => ui_with(T::PICK_ONLY, &[confirm]),
         };

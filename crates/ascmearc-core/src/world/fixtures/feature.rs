@@ -39,7 +39,8 @@ fn feature_at(state: &WorldState, content: &Content, p: Pos) -> Option<Msg> {
     let line = Msg::new(id).role("what", Phrase::id(format!("terrain:{}", def.id)));
     let note = level.place(content, p).and_then(|place| place.note_arg());
     // The description and the note are the data's words, said after the feature as written.
-    let more: Vec<Arg> = (def.description.as_deref().map(Arg::from).into_iter())
+    // lang: todo(#2035) a terrain feature's description
+    let more: Vec<Arg> = (def.description.as_deref().map(Arg::text).into_iter())
         .chain(note)
         .collect();
     if more.is_empty() {

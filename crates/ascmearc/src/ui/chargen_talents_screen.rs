@@ -324,7 +324,7 @@ impl ChargenTalentsScreen {
             let choice = split(&way).1.filter(|_| in_choices);
             let name = match entry.talent {
                 Some(talent) => self.content.talent_arg(talent, choice),
-                None => entry.name.as_str().into(),
+                None => Arg::text(entry.name.as_str()),
             };
             self.notice = Some(ui_with(T::CANNOT_TAKE, &[("name", name)]));
             return ScreenAction::Stay;
@@ -416,7 +416,7 @@ impl ChargenTalentsScreen {
             }
         }
         let keys = HINTS;
-        let confirm = ("confirm", keys.confirm.to_string().into());
+        let confirm = ("confirm", Arg::text(keys.confirm.to_string()));
         let mut footer = ui_with(T::MARK, &[confirm]);
         if let Some(hint) = list.hint(&keys) {
             footer = format!("{footer}   {hint}");

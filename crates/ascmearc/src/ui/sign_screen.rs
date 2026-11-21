@@ -125,7 +125,10 @@ impl SignScreen {
             })
             .collect();
         let adjustment = |name: Arg, stats: String| {
-            ui_with(T::ADJUSTMENT, &[("name", name), ("stats", stats.into())])
+            ui_with(
+                T::ADJUSTMENT,
+                &[("name", name), ("stats", Arg::text(stats))],
+            )
         };
         let adjustments = format!(
             "{}   {}",
@@ -213,7 +216,7 @@ impl SignScreen {
                 console.print_in(x + 1 + at, y, line, look.color(), panel.inner_w() - 1 - at);
             }
         }
-        let go_on = ui_with(T::CONTINUE, &[("confirm", HINTS.confirm.into())]);
+        let go_on = ui_with(T::CONTINUE, &[("confirm", Arg::text(HINTS.confirm))]);
         panel.footer(console, &format!("{go_on}   {}", ui(T::BACK)));
     }
 }

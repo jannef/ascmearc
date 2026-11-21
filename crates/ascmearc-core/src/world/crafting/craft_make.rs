@@ -582,6 +582,7 @@ fn label(content: &Content, recipe: &RecipeDef, step: Step) -> Phrase {
 /// A step's label core picks ("item", "gem", "seal") or a material group's ("metal"), which
 /// has no id of its own: `word:<text>`.
 pub(super) fn step_word(text: &str) -> Phrase {
+    // lang: todo(#2035) a step's label or a material group's word
     Phrase::id(format!("word:{text}"))
 }
 

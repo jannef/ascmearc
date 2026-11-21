@@ -647,7 +647,7 @@ impl Refusal {
             }
             Refusal::TakesNoChoice => named(msg::character::TALENT_TAKES_NO_CHOICE),
             Refusal::BadChoice(kind, id) => Msg::new(msg::character::TALENT_BAD_CHOICE)
-                .role("id", id.as_str())
+                .role("id", Arg::id(id.as_str()))
                 .role("choice", kind.message()),
             Refusal::Held => named(msg::character::TALENT_HELD),
             Refusal::Stripped => msg::character::TALENT_STRIPPED.into(),

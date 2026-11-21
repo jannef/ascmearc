@@ -275,7 +275,7 @@ impl World {
     pub(super) fn leave_by_edge(&mut self, exit: EdgeExit, events: &mut Vec<Event>) -> Spent {
         let from = self.state.current_level.clone();
         if let Err(err) = self.travel(&exit.to, Some(exit.pos)) {
-            self.say(Msg::new(msg::levels::CANNOT_LEAVE).role("error", err.to_string()));
+            self.say(Msg::new(msg::levels::CANNOT_LEAVE).role("error", Arg::text(err.to_string())) /* lang: error */);
             return Spent::Nothing;
         }
         events.push(Event::LevelChanged { from, to: exit.to });
@@ -303,12 +303,12 @@ impl World {
         let arrival = match self.visit(&id, Some(&from)) {
             Ok(level) => side.and_then(|s| arrival(&level.terrain, &content, s)),
             Err(err) => {
-                self.say(Msg::new(msg::levels::CANNOT_GO).role("error", err.to_string()));
+                self.say(Msg::new(msg::levels::CANNOT_GO).role("error", Arg::text(err.to_string())) /* lang: error */);
                 return false;
             }
         };
         if let Err(err) = self.travel(&id, arrival) {
-            self.say(Msg::new(msg::levels::CANNOT_GO).role("error", err.to_string()));
+            self.say(Msg::new(msg::levels::CANNOT_GO).role("error", Arg::text(err.to_string())) /* lang: error */);
             return false;
         }
         events.push(Event::LevelChanged { from, to: id });
@@ -356,7 +356,7 @@ impl World {
         let followers = self.stair_followers();
         let found = self.reveal_way_out(&from, &to);
         if let Err(err) = self.travel(&to, None) {
-            self.say(Msg::new(msg::levels::STAIRS_BLOCKED).role("error", err.to_string()));
+            self.say(Msg::new(msg::levels::STAIRS_BLOCKED).role("error", Arg::text(err.to_string())) /* lang: error */);
             return false;
         }
         events.push(Event::LevelChanged {

@@ -63,6 +63,8 @@ strike_at_something = "You strike at something."
 summons = "{who:The} {verb:bare} {what:counted}!"
 # `who`: the gazer.
 tear_eyes_from = "You tear your eyes from {who:poss}."
+# `summons`'s `verb` for a type whose data gives none.
+verb_summons = "summons"
 wakes_up = "{who:The} wakes up."
 
 # `what`: the creatures that appeared, counted: one creature, one type of several, or a list.

@@ -12,6 +12,7 @@ use super::text::{UiText, encounter as T, ui, ui_with};
 use crate::game::Game;
 use ascmearc_core::action::Action;
 use ascmearc_core::content::Content;
+use ascmearc_core::lang::Arg;
 use ascmearc_core::messages::{arg_in, msg_in};
 use ascmearc_core::world::{EncounterChoice as Choice, EncounterOutcome as Outcome, EncounterView};
 use bevy::prelude::*;
@@ -23,7 +24,7 @@ pub(super) fn dialog(content: &Content, view: EncounterView) -> Dialog {
     // content (its encounter tables).
     let code = super::text::language_code();
     let name = arg_in(content, &code, &view.name, "bare");
-    let title = ui_with(T::TITLE, &[("party", name.into())]);
+    let title = ui_with(T::TITLE, &[("party", Arg::text(name))]);
     let ask = Dialog::new(title, msg_in(content, &code, &view.text));
     (view.choices.into_iter())
         .fold(ask, |ask, choice| {

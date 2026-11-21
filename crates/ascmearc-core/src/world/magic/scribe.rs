@@ -28,7 +28,7 @@
 
 use crate::action::{Event, Positions};
 use crate::content::{ActionKind, ClassActive, Content, ObjectId, SpellData, SpellId, StatUse};
-use crate::lang::{Msg, Phrase};
+use crate::lang::{Arg, Msg, Phrase};
 use crate::msg;
 use crate::object::{self, Stack};
 use crate::world::{Actor, Ended, Spent, World};
@@ -76,7 +76,7 @@ impl World {
         }
         let content = self.content.clone();
         let Some(spell) = content.spell_id(name) else {
-            self.say(Msg::new(msg::magic::NO_SPELL_NAMED).role("id", name));
+            self.say(Msg::new(msg::magic::NO_SPELL_NAMED).role("id", Arg::id(name)));
             return Spent::Nothing;
         };
         let me = self.state.player();

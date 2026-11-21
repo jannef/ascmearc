@@ -201,8 +201,12 @@ impl World {
                     said.extend(attack_message(
                         &caster, &struck_at, &words, kind, strike, &guard,
                     ));
-                    seen = (!end.is_unseen())
-                        .then(|| (end, def.map_or_else(|| "dies".into(), |d| d.dies_arg())));
+                    seen = (!end.is_unseen()).then(|| {
+                        (
+                            end,
+                            def.map_or_else(|| msg::combat::VERB_DIES.into(), |d| d.dies_arg()),
+                        )
+                    });
                     if seen.is_some() {
                         events.push(event);
                     }

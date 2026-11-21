@@ -304,7 +304,7 @@ impl World {
         let Some(kind) =
             (self.content.creature_id(creature)).filter(|&c| Some(c) != self.content.ids().player)
         else {
-            self.say(Msg::new(msg::allies::NO_SUCH_CREATURE).role("creature", creature));
+            self.say(Msg::new(msg::allies::NO_SUCH_CREATURE).role("creature", Arg::id(creature)));
             return Spent::Nothing;
         };
         let player = self.state.player;

@@ -54,7 +54,10 @@ fn resistance_rows(view: &PerceptionView<'_>) -> Vec<(ResistanceWord, String)> {
             .map(|(k, _)| content.damage_type_phrase(*k).into())
             .collect();
         let listed = kinds.into_iter().rev().reduce(|rest, first| {
-            ui_with(T::RESISTANCE_KINDS, &[("first", first), ("rest", rest)]).into()
+            Arg::text(ui_with(
+                T::RESISTANCE_KINDS,
+                &[("first", first), ("rest", rest)],
+            ))
         })?;
         Some((resistance, word(listed, "bare")))
     })
@@ -240,7 +243,7 @@ impl CharacterScreen {
             .collect();
         let kept = (view.kept()).map(|(ally, data)| {
             let kind = Phrase::id(format!("creature:{}", content.creature(ally.creature).id));
-            let name = data.name.as_str().into();
+            let name = Arg::text(data.name.as_str());
             ui_with(T::KEPT, &[("name", name), ("kind", kind.into())])
         });
         let kept = kept.collect();
@@ -521,7 +524,7 @@ impl CharacterScreen {
                 console.print_in(x + 4, y, &ui(T::GUILD), TEXT, NAME_W - 1);
                 // The row in the text's words, then the title over it in its metal's colour.
                 let args = [
-                    ("title", title.as_str().into()),
+                    ("title", Arg::text(title.as_str())),
                     ("guild", guild.clone().into()),
                 ];
                 let row = ui_with(T::GUILD_RANK, &args);
@@ -570,16 +573,16 @@ impl CharacterScreen {
             let w = &self.weight;
             // `carrying 28.4 kg, burdened`: the burden is named when there is one.
             let burden = (self.load.map(|l| l.burden())).filter(|b| *b != Burden::Unburdened);
-            let total = ("total", format_weight(w.total()).into());
+            let total = ("total", Arg::text(format_weight(w.total())));
             let weight = match (w.carried, burden) {
                 (0, _) => ui_with(T::WEIGHT_NOTHING, &[total]),
                 (carried, burden) => {
-                    let base = ("base", format_weight(w.base).into());
-                    let carried = ("carried", format_weight(carried).into());
+                    let base = ("base", Arg::text(format_weight(w.base)));
+                    let carried = ("carried", Arg::text(format_weight(carried)));
                     match burden {
                         Some(b) => ui_with(
                             T::WEIGHT_BURDENED,
-                            &[total, base, carried, ("burden", b.id().into())],
+                            &[total, base, carried, ("burden", Arg::text(b.id()))],
                         ),
                         None => ui_with(T::WEIGHT_CARRYING, &[total, base, carried]),
                     }
@@ -594,12 +597,12 @@ impl CharacterScreen {
             }
         }
         let close = match bindings.keys_of(KeyCommand::Character).first() {
-            Some(key) => ui_with(T::CLOSE_OWN, &[("own", key.display().into())]),
+            Some(key) => ui_with(T::CLOSE_OWN, &[("own", Arg::text(key.display()))]),
             None => ui(T::CLOSE),
         };
         let footer = match bindings.keys_of(KeyCommand::Skills).first() {
             Some(key) => {
-                let skills = ui_with(T::SKILLS, &[("own", key.display().into())]);
+                let skills = ui_with(T::SKILLS, &[("own", Arg::text(key.display()))]);
                 format!("{close}   {skills}")
             }
             None => close,

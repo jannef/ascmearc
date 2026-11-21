@@ -518,7 +518,7 @@ impl World {
             self.say(msg::people::NOT_CARRYING_ANYTHING);
             return Some(Spent::Nothing);
         }
-        let Some(chosen) = self.chosen(positions, len, "You carry no such thing.") else {
+        let Some(chosen) = self.chosen(positions, len, msg::items::CARRY_NO_SUCH_THING) else {
             return Some(Spent::Nothing);
         };
         // A cursed thing worn stays on (`curse.rs`).

@@ -77,12 +77,12 @@ impl Entry {
                 content.prestige_phrase(&fallen.prestige),
                 &fallen.prestige,
             );
-            let args = [("what", what.into()), ("prestige", prestige.into())];
+            let args = [("what", Arg::text(what)), ("prestige", Arg::text(prestige))];
             what = ui_with(T::AND_PRESTIGE, &args);
         }
         let death = ui_with(
             T::DEATH_LINE,
-            &[("death", death_words(fallen, content).into())],
+            &[("death", Arg::text(death_words(fallen, content)))],
         );
         let name = if fallen.name.is_empty() {
             ui(T::SOMEONE)
@@ -126,7 +126,7 @@ fn age_arg(age: u32) -> (&'static str, Arg) {
 }
 
 fn when_arg(when: u64, clock: Clock) -> (&'static str, Arg) {
-    ("when", played_text(when, clock).into())
+    ("when", Arg::text(played_text(when, clock)))
 }
 
 /// What killed `fallen` and where, in words without a full stop: `Killed by a kobold in Fyrdelf
@@ -137,8 +137,8 @@ pub(crate) fn death_words(fallen: &Fallen, content: &Content) -> String {
         cause
     } else {
         let args = [
-            ("cause", cause.into()),
-            ("place", fallen.place.as_str().into()),
+            ("cause", Arg::text(cause)),
+            ("place", Arg::text(fallen.place.as_str())),
         ];
         ui_with(T::DEATH_PLACE, &args)
     }
@@ -148,6 +148,7 @@ pub(crate) fn death_words(fallen: &Fallen, content: &Content) -> String {
 fn cause_words(fallen: &Fallen, content: &Content) -> String {
     let killed_by = |who: Phrase| ui_with(T::CAUSE_KILLED_BY, &[("who", who.into())]);
     // A name the record or the data holds as English text: a word of the lexicon by its text.
+    // lang: todo(#2035) the graveyard's killer in the app's words
     let by_name = |name: &str| killed_by(Phrase::id(format!("word:{name}")));
     let cause = fallen.cause.as_str();
     match cause {
@@ -186,7 +187,7 @@ fn cause_words(fallen: &Fallen, content: &Content) -> String {
     }
     if let Some(object) = content.object_id(cause) {
         let name = content.object(object).name.as_str();
-        return ui_with(T::CAUSE_OWN, &[("name", name.into())]);
+        return ui_with(T::CAUSE_OWN, &[("name", Arg::text(name))]);
     }
     ui(T::CAUSE_UNKNOWN)
 }
@@ -292,9 +293,9 @@ impl GraveyardScreen {
         let keys = HINTS;
         let footer = if pages.len() > 1 {
             let args = [
-                ("up_down", keys.up_down().into()),
-                ("next", Arg::from(keys.next_page)),
-                ("prev", Arg::from(keys.prev_page)),
+                ("up_down", Arg::text(keys.up_down())),
+                ("next", Arg::text(keys.next_page)),
+                ("prev", Arg::text(keys.prev_page)),
             ];
             ui_with(T::FOOTER_PAGES, &args)
         } else {

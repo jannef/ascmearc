@@ -40,7 +40,7 @@ fn leaving_dialog(view: &PerceptionView<'_>, dir: Dir) -> Option<Dialog> {
     let (shop, owed) = view.owed_on_leaving(to)?;
     let gold = view.own_gold();
     let (keeper, owed_arg) = (
-        ("keeper", Arg::from(shop.keeper())),
+        ("keeper", Arg::text(shop.keeper())),
         ("owed", Arg::Number(owed.into())),
     );
     let owing = [keeper.clone(), owed_arg.clone()];
@@ -81,9 +81,9 @@ pub(crate) fn sale_dialog(view: &PerceptionView<'_>, letters: &Positions) -> Opt
     let what = ascmearc_core::object::phrase(&sale.stacks, view.lore());
     let offer = ("offer", Arg::Number(sale.offer.into()));
     let args = [
-        ("keeper", shop.keeper().into()),
+        ("keeper", Arg::text(shop.keeper())),
         offer.clone(),
-        ("what", what.into()),
+        ("what", Arg::text(what)),
     ];
     let sell = ui_with(T::SELL, &[offer]);
     Some(

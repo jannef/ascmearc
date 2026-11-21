@@ -20,8 +20,10 @@ use crate::cli::Args;
 use crate::game::{Game, SimSet};
 use crate::paths::{SAVES_DIR, SNAPSHOTS_DIR};
 use crate::storage::{self, Backend, Folder};
+use crate::ui::text;
 use ascmearc_core::World;
 use ascmearc_core::content::Content;
+use ascmearc_core::lang::{Arg, Msg};
 use ascmearc_core::save;
 use bevy::prelude::*;
 use bevy::window::ExitSystems;
@@ -343,7 +345,7 @@ fn handle_commands(
         match command {
             SaveCommand::SaveAndQuit => match store.save_run(&id, &game.world) {
                 Ok(()) => {
-                    game.world.notice("Game saved.");
+                    game.world.notice(text::save::GAME_SAVED);
                     quit_saved.0 = true;
                     // A web page cannot close itself: reload to a fresh main menu instead.
                     #[cfg(target_arch = "wasm32")]
@@ -351,21 +353,28 @@ fn handle_commands(
                     #[cfg(not(target_arch = "wasm32"))]
                     exit.write(AppExit::Success);
                 }
-                Err(e) => game.world.notice(format!("{e} Try again.")),
+                Err(e) => {
+                    // lang: error the store's own words
+                    let error = Arg::text(e);
+                    game.world
+                        .notice(Msg::from(text::save::TRY_AGAIN).role("error", error));
+                }
             },
             SaveCommand::Snapshot => match store.save_snapshot(&id, &game.world) {
-                Ok(true) => game.world.notice("Snapshot saved."),
+                Ok(true) => game.world.notice(text::save::SNAPSHOT_SAVED),
                 Ok(false) => {}
-                Err(e) => game.world.notice(e),
+                // lang: error the store's own words
+                Err(e) => game.world.notice(Msg::literal(e)),
             },
             SaveCommand::LoadSnapshot => match store.load_snapshot(&id, game.world.content()) {
                 Ok(world) => {
                     game.world = world;
                     game.last_outcome = default();
                     game.mark_read();
-                    game.world.notice("Snapshot loaded.");
+                    game.world.notice(text::save::SNAPSHOT_LOADED);
                 }
-                Err(e) => game.world.notice(e),
+                // lang: error the store's own words
+                Err(e) => game.world.notice(Msg::literal(e)),
             },
         }
     }
@@ -387,7 +396,8 @@ fn autosave(
         return;
     }
     if let Err(e) = store.save_run(&key.0, &game.world) {
-        game.world.notice(e);
+        // lang: error the store's own words
+        game.world.notice(Msg::literal(e));
     }
 }
 

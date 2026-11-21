@@ -10,11 +10,15 @@
 //! names. `--stamp` writes `of` into the entries that lack one, `--restamp` also
 //! refreshes the stale ones; the diff is the review.
 //!
+//! `--check` also runs the guard against English in code (`lang/neutral.rs`, #2035): text said
+//! as written only with a `lang:` reason.
+//!
 //! `--forms fi [WORD...]` and `--suggest fi <KOTUS_XML> [WORD...]` are the Finnish translator's
 //! tools (`lang/fi_tools.rs`).
 
 mod data;
 mod fi_tools;
+mod neutral;
 mod registers;
 
 use crate::workspace_root;
@@ -133,6 +137,10 @@ pub fn run(options: Options) -> Result<(), String> {
             report.errors.extend(voices.errors);
             if options.dir.is_none() {
                 report.warnings.extend(unused_ids(&langs));
+                let said = neutral::check_sources(&workspace_root());
+                report
+                    .errors
+                    .extend(said.into_iter().map(|s| format!("english in code: {s}")));
             }
             for w in &report.warnings {
                 eprintln!("warning: {w}");

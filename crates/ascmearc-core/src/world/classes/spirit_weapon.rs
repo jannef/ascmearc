@@ -25,7 +25,7 @@
 use crate::action::Positions;
 use crate::combat::{FUMBLE, Profile};
 use crate::content::{ActionKind, ClassActive, Content, ObjectId, TalentEffect};
-use crate::lang::{Msg, Phrase};
+use crate::lang::{Arg, Msg, Phrase};
 use crate::msg;
 use crate::object::{self, Stack};
 use crate::talent::MartialEffect;
@@ -56,20 +56,36 @@ pub fn shapes(content: &Content) -> Vec<ObjectId> {
 }
 
 /// What a spirit weapon's description says of its power, and what it adds to its numbers: the
-/// first `spirit_weapon` effect of the talents (one rank today), as `(to_hit, threat, ignores
-/// Protection, phrase)`.
-pub fn gift(content: &Content) -> Option<(i32, u8, bool, &str)> {
-    (content.talents().iter())
-        .flat_map(|(_, t)| &t.effects)
-        .find_map(|e| match e {
+/// first `spirit_weapon` effect of the talents (one rank today).
+#[derive(Clone, Copy, Debug)]
+pub struct Gift<'a> {
+    pub to_hit: i32,
+    pub threat: u8,
+    /// Whether it ignores Protection.
+    pub pierces: bool,
+    /// The talent whose effect it is, which keys its words
+    /// (`talent:<id>.effects.spirit_weapon.phrase`).
+    pub talent: &'a str,
+}
+
+/// The spirit weapon's [`Gift`], if a talent gives one.
+pub fn gift(content: &Content) -> Option<Gift<'_>> {
+    (content.talents().iter()).find_map(|(_, t)| {
+        t.effects.iter().find_map(|e| match e {
             TalentEffect::Martial(MartialEffect::SpiritWeapon {
                 to_hit,
                 threat,
                 ignores_protection,
-                phrase,
-            }) => Some((*to_hit, *threat, *ignores_protection, phrase.as_str())),
+                ..
+            }) => Some(Gift {
+                to_hit: *to_hit,
+                threat: *threat,
+                pierces: *ignores_protection,
+                talent: t.id.as_str(),
+            }),
             _ => None,
         })
+    })
 }
 
 /// `profile` struck with `stack` sharpened by a spirit weapon's gifts, when it is one and the
@@ -103,7 +119,7 @@ impl World {
     /// only one that asks for a shape ([`ClassActive::aims_shape`]) may.
     pub(in crate::world) fn use_class_shape(&mut self, active: ClassActive, shape: &str) -> Spent {
         if !active.aims_shape() {
-            self.say(Msg::new(msg::classes::TAKES_NO_SHAPE).role("id", active.id()));
+            self.say(Msg::new(msg::classes::TAKES_NO_SHAPE).role("id", Arg::id(active.id())));
             return Spent::Nothing;
         }
         if !self.may_use_class(active) {
@@ -121,7 +137,7 @@ impl World {
         let content = self.content.clone();
         let object = content.object_id(shape);
         let (Some(object), Some(hand)) = (object, content.hand_slots().next()) else {
-            self.say(Msg::new(msg::classes::NO_WEAPON_TO_CALL).role("id", shape));
+            self.say(Msg::new(msg::classes::NO_WEAPON_TO_CALL).role("id", Arg::id(shape)));
             return Spent::Nothing;
         };
         if !shapes(&content).contains(&object) {

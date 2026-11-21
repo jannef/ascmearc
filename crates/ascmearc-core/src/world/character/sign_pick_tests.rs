@@ -187,7 +187,7 @@ fn every_pick_is_offered_only_under_its_sign() {
     // The refusal says the sign in words.
     let words = may(&born("hydra", "fire"), "fire_breath", 15)
         .expect_err("not a wyvern")
-        .words(&BUILTIN, "Fire breath");
+        .words(&BUILTIN, crate::lang::Arg::text("Fire breath"));
     assert_eq!(
         crate::test_support::english_of(&BUILTIN, &words),
         "You cannot take Fire breath: you need to be born in the year of the Wyvern."

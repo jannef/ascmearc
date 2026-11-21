@@ -70,7 +70,10 @@ pub fn hint(name: ScreenName) -> Option<String> {
 fn tab(digit: usize, page: String) -> String {
     ui_with(
         T::TAB,
-        &[("digit", Arg::Number(digit as i64)), ("page", page.into())],
+        &[
+            ("digit", Arg::Number(digit as i64)),
+            ("page", Arg::text(page)),
+        ],
     )
 }
 

@@ -13,6 +13,8 @@
 
 # What a quest asks, as the wiki's quest table says it: `task`, a `task_*` line.
 asks = "{task:Bare}."
+# Why a healer will not mend a wound yet: the player shows a disease.
+be_cured_first = "Be cured first."
 cannot_afford = "{who:The} cannot afford {what:a}."
 # A dev action's: `quest` the quest's name, `target` as typed.
 cannot_draw_dev = "{quest:bare} cannot draw `{target:bare}`."

@@ -48,7 +48,7 @@ impl World {
             self.say(msg::allies::NO_COMPANION_HERE);
             return Spent::Nothing;
         };
-        if !self.within_reach(at, sic.range, "set your companion") {
+        if !self.within_reach(at, sic.range, crate::msg::combat::AIM_SET_COMPANION) {
             return Spent::Nothing;
         }
         let quarry = (self.state.actor_at(&self.state.current_level, at))

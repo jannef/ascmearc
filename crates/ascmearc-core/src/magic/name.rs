@@ -87,6 +87,7 @@ pub(crate) fn ahead(word: Option<&str>, phrase: Phrase) -> Phrase {
     match word {
         Some(word) => {
             let mut phrase = phrase;
+            // lang: todo(#2035) the anvil's word for its work
             let worked = Modifier::Adjective(Word::id(format!("word:{word}")));
             phrase.mods.insert(0, worked);
             phrase

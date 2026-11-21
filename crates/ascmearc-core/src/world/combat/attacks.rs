@@ -119,7 +119,7 @@ impl OwnAttack {
     /// `combat.attack_kind_or`), each rider `items.numbers_rider` after it
     /// (`items.numbers_with_rider`), as the item lists say a weapon's.
     pub fn damage(&self, content: &Content) -> Arg {
-        let dice = Arg::Text(crate::magic::numbers::dice_text(self.damage, self.extra));
+        let dice = Arg::notation(crate::magic::numbers::dice_text(self.damage, self.extra));
         let mut kinds = (self.kinds.iter()).map(|k| Arg::from(content.damage_type_phrase(k)));
         let damage = match kinds.next() {
             Some(first) => {
@@ -136,7 +136,7 @@ impl OwnAttack {
         };
         self.riders.iter().fold(damage, |damage, r| {
             let rider = Msg::new(msg::items::NUMBERS_RIDER)
-                .role("dice", Arg::Text(format!("+{}", r.dice)))
+                .role("dice", Arg::notation(format!("+{}", r.dice)))
                 .role("kind", content.damage_type_phrase(r.kind));
             (Msg::new(msg::items::NUMBERS_WITH_RIDER).role("damage", damage))
                 .role("rider", rider)
@@ -169,9 +169,10 @@ impl OwnAttack {
                 .role("first", first)
                 .role("rest", rest)
         };
-        let last = rest.pop().unwrap_or(Arg::Text(String::new()));
+        let last = rest.pop().unwrap_or(Arg::empty());
         let rest = (rest.into_iter().rev()).fold(last, |rest, first| list(first, rest).into());
-        let to_hit = Msg::new(msg::combat::ATTACK_TO_HIT).role("to_hit", self.to_hit_text());
+        let to_hit =
+            Msg::new(msg::combat::ATTACK_TO_HIT).role("to_hit", Arg::notation(self.to_hit_text()));
         list(to_hit.into(), rest)
     }
 }

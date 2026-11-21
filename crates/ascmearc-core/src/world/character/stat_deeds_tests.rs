@@ -222,7 +222,7 @@ fn a_deed_that_brings_a_drop_within_reach_warns_once_in_words() {
     assert_eq!(warned(&w), 1, "once per crossing");
     // Out of reach again, and back: warned again.
     w.player_mut().stat_marks[Stat::Presence] = -5;
-    w.say("Between.");
+    w.say(crate::lang::Msg::literal("Between."));
     w.stat_deed(StatDeed::Caught);
     assert_eq!(warned(&w), 2);
     // A positive pile taken down but not within reach says nothing.

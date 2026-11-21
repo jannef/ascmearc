@@ -148,3 +148,9 @@ weak_from_hunger = "You feel weak from hunger. You should eat soon."
 # `who`: a creature.
 wounds_close = "{who:Poss} wounds close."
 wounds_close_you = "You feel your wounds close."
+
+# `what`: the food rotted away, the player's, by its name (`object:<id>`); `count` how many.
+[rotted_away]
+by = "count.number"
+one = "Your {what:bare} has rotted away."
+many = "Your {count} {what:plural} have rotted away."

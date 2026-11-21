@@ -115,7 +115,7 @@ impl Summary {
     pub fn race_and_class(&self, content: &Content) -> String {
         let race = (!self.race.is_empty()).then(|| match content.race(&self.race) {
             Some(_) => Arg::from(content.race_phrase(&self.race)),
-            None => Arg::from(self.race.as_str()),
+            None => Arg::text(self.race.as_str()),
         });
         let prestige = Some(self.prestige.as_str()).filter(|p| !p.is_empty());
         let level = u8::try_from(self.level).unwrap_or(u8::MAX);
@@ -133,7 +133,7 @@ impl Summary {
 
 /// A summary's place before one is read: none.
 fn no_place() -> Arg {
-    Arg::Text(String::new())
+    Arg::empty()
 }
 
 /// A summary's place as written: the name as the game says it, or the text another version
@@ -147,7 +147,8 @@ fn place_or_text<'de, D: serde::Deserializer<'de>>(de: D) -> Result<Arg, D::Erro
     }
     Ok(match Place::deserialize(de)? {
         Place::Said(arg) => arg,
-        Place::Text(text) => Arg::Text(text),
+        // lang: todo(#2035) a place another version wrote as text
+        Place::Text(text) => Arg::text(text),
     })
 }
 
@@ -223,7 +224,10 @@ pub fn played_text(secs: u64, clock: Clock) -> String {
     let t = crate::utc::utc_parts(secs);
     let date = format!("{:04}-{:02}-{:02}", t.year, t.month, t.day);
     let time = clock.format_hm(t.hour, t.minute);
-    ui_with(T::PLAYED, &[("date", date.into()), ("time", time.into())])
+    ui_with(
+        T::PLAYED,
+        &[("date", Arg::text(date)), ("time", Arg::text(time))],
+    )
 }
 
 #[cfg(test)]

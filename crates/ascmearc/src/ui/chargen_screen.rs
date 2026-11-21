@@ -298,7 +298,7 @@ impl ChoiceScreen {
                 .map(|r| {
                     let eyes = match content.vision(&r.vision) {
                         Some(_) => Arg::from(content.vision_phrase(&r.vision)),
-                        None => Arg::from(r.vision.as_str()),
+                        None => Arg::text(r.vision.as_str()),
                     };
                     let mut details =
                         vec![adjustments(&r.stats), ui_with(T::VISION, &[("eyes", eyes)])];
@@ -425,10 +425,10 @@ impl ChoiceScreen {
         let keys = HINTS;
         let footer = format!(
             "{}   {}   {}",
-            ui_with(T::CHOOSE, &[("keys", keys.up_down().into())]),
+            ui_with(T::CHOOSE, &[("keys", Arg::text(keys.up_down()))]),
             ui_with(
                 T::CONFIRM_NEXT,
-                &[("confirm", keys.confirm.to_string().into())]
+                &[("confirm", Arg::text(keys.confirm.to_string()))]
             ),
             ui(T::BACK),
         );
@@ -800,7 +800,7 @@ impl SummaryScreen {
             if s.shows_seed {
                 let args = [
                     ("scenario", Arg::said(scenario_name(&s.id))),
-                    ("seed", Arg::from(s.seed.to_string())),
+                    ("seed", Arg::text(s.seed.to_string())),
                 ];
                 ui_with(T::SCENARIO_SEED, &args)
             } else {
@@ -826,8 +826,11 @@ impl SummaryScreen {
         let (up_down, confirm) = (keys.up_down(), keys.confirm);
         let footer = format!(
             "{}   {}   {}",
-            ui_with(T::CHOOSE, &[("keys", up_down.into())]),
-            ui_with(T::CONFIRM_START, &[("confirm", confirm.to_string().into())]),
+            ui_with(T::CHOOSE, &[("keys", Arg::text(up_down))]),
+            ui_with(
+                T::CONFIRM_START,
+                &[("confirm", Arg::text(confirm.to_string()))]
+            ),
             ui(T::BACK),
         );
         panel.footer(console, &footer);

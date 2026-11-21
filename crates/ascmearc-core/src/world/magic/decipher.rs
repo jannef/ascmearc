@@ -95,11 +95,11 @@ impl Job for Deciphering {
     }
 
     fn leave(&self) -> crate::lang::Msg {
-        "you put the scroll away".into()
+        msg::magic::PUT_SCROLL_AWAY.into()
     }
 
     fn nothing_left(&self) -> crate::lang::Msg {
-        "You have nothing left to make out.".into()
+        msg::magic::NOTHING_LEFT_TO_MAKE_OUT.into()
     }
 
     fn stat(&self, _: &World) -> Option<Stat> {

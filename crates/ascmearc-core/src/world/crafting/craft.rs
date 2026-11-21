@@ -28,7 +28,7 @@ use crate::content::{
     RecipeInput, RecipeUse, TerrainId, counted,
 };
 use crate::geom::{Dir, Pos};
-use crate::lang::{Msg, Phrase};
+use crate::lang::{Arg, Msg, Phrase};
 use crate::msg;
 use crate::scroll_label::Lore;
 use crate::skills::SkillId;
@@ -88,7 +88,8 @@ impl RecipeLack {
             RecipeLack::Stock(m) => {
                 let def = content.material(m);
                 let stock = def.group.as_deref().unwrap_or(&def.name).to_string();
-                Msg::new(msg::crafting::LACKING_STOCK).role("stock", stock)
+                // lang: todo(#2035) a stock's group or material name
+                Msg::new(msg::crafting::LACKING_STOCK).role("stock", Arg::text(stock))
             }
             RecipeLack::Input(o) => Msg::new(msg::crafting::LACKING_INPUT).role(
                 "what",
@@ -458,7 +459,7 @@ fn takes(content: &Content, level: &LevelState, player: &Actor, recipe: &RecipeD
     if seconds > 0 {
         words.push(super::craft_make::about(seconds));
     }
-    joined(words, msg::crafting::TAKES_LISTED).unwrap_or_else(|| Msg::literal(String::new()))
+    joined(words, msg::crafting::TAKES_LISTED).unwrap_or_else(|| msg::crafting::NOTHING.into())
 }
 
 /// `parts` joined two by two by `join` (`takes_listed`, `takes_either`: `{first}, {rest}`), the
@@ -490,7 +491,8 @@ fn stock_counted(
             .into(),
         _ => {
             let (one, many) = crate::piece::any_names(content, piece, materials)?;
-            counted(&one, &many, count).into()
+            // lang: todo(#2035) `any_names`' English
+            Arg::text(counted(&one, &many, count))
         }
     };
     Some(Msg::new(msg::crafting::WORK_COUNTED).role("what", what))

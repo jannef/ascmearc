@@ -151,12 +151,12 @@ impl ShapeScreen {
             console.print(weight_x, y, &weight, TEXT_DIM);
         }
         let keys = HINTS;
-        let confirm = ("confirm", Arg::from(keys.confirm));
+        let confirm = ("confirm", Arg::text(keys.confirm));
         let choose = match self.shapes.last_letter() {
             Some('a') => ui_with(T::CALL_A, &[confirm]),
             Some(last) => ui_with(
                 T::CALL_LETTERS,
-                &[("last", last.to_string().into()), confirm],
+                &[("last", Arg::text(last.to_string())), confirm],
             ),
             None => ui_with(T::CALL_NONE, &[confirm]),
         };

@@ -675,7 +675,7 @@ text = "{what:Bare}, {count:num} of them."
             Plurals::default(),
         )
         .expect("generic");
-        let mut entry = Entry::new(1, Msg::from("Press {key:help} {sic}."));
+        let mut entry = Entry::new(1, Msg::literal("Press {key:help} {sic}."));
         for language in [&english(), &Language::default(), &generic] {
             assert_eq!(
                 language.render(&entry, &NoLexicon, &|_| "?".into()),
@@ -780,7 +780,11 @@ text = "{what:Bare}, {count:num} of them."
         );
         let loot = Msg::new(id("combat.loot")).role(
             "what",
-            Arg::List(vec!["gold".into(), "ruby".into(), Arg::Phrase(goblin())]),
+            Arg::List(vec![
+                Arg::text("gold"),
+                Arg::text("ruby"),
+                Arg::Phrase(goblin()),
+            ]),
         );
         assert_eq!(
             render(&en, loot),
@@ -984,7 +988,7 @@ lines = ["Bless {target:the}."]
             RenderError::MissingRole("target".into())
         );
         assert_eq!(
-            fails(Msg::new(id("combat.sees")).role("target", "a text")),
+            fails(Msg::new(id("combat.sees")).role("target", Arg::text("a text"))),
             RenderError::NoVariant {
                 role: "target".into(),
                 feature: "number".into(),

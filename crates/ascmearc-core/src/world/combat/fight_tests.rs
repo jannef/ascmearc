@@ -1,7 +1,7 @@
 //! Combat in the world: attacks hurt and kill, creatures drop what they
 //! carry, hit points come back with time, and the player's death ends the run.
 
-use super::fight::{End, Guard, Words, attack_message, death_message, word};
+use super::fight::{End, Guard, Words, attack_message, data_word, death_message, word};
 use crate::action::{AttackKind, parse_actions};
 use crate::combat::{Category, Health, Strike};
 use crate::content::{ContentFiles, Role};
@@ -254,10 +254,13 @@ fn messages_say_what_came_of_an_attack_without_numbers() {
         None
     );
     assert_eq!(
-        text(Some(death_message(&rat(), "dies"))),
+        text(Some(death_message(&rat(), crate::msg::combat::VERB_DIES))),
         "The giant rat dies."
     );
-    assert_eq!(text(Some(death_message(&you(), ""))), "You die...");
+    assert_eq!(
+        text(Some(death_message(&you(), crate::msg::combat::VERB_DIES))),
+        "You die..."
+    );
 }
 
 fn you() -> End {
@@ -265,11 +268,11 @@ fn you() -> End {
 }
 
 fn seen(name: &str) -> End {
-    End::Seen(word(name))
+    End::Seen(data_word(name))
 }
 
 fn trap(name: &str) -> End {
-    End::Trap(word(name))
+    End::Trap(data_word(name))
 }
 
 /// A message in English, or nothing.

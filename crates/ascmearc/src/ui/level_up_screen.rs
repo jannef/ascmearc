@@ -149,19 +149,19 @@ impl LevelUpScreen {
             0 => None,
             1 => Some(ui_with(
                 T::AFTER_ONE,
-                &[("level", later[0].as_str().into())],
+                &[("level", Arg::text(later[0].as_str()))],
             )),
             // Many levels at once: the first and the last, so the footer fits.
             n if n > 3 => Some(ui_with(
                 T::AFTER_MANY,
                 &[
-                    ("first", later[0].as_str().into()),
-                    ("last", later[n - 1].as_str().into()),
+                    ("first", Arg::text(later[0].as_str())),
+                    ("last", Arg::text(later[n - 1].as_str())),
                 ],
             )),
             _ => Some(ui_with(
                 T::AFTER_LIST,
-                &[("levels", later.join(", ").into())],
+                &[("levels", Arg::text(later.join(", ")))],
             )),
         };
         screen.left = match screen.step {
@@ -416,7 +416,7 @@ impl LevelUpScreen {
         let keys = HINTS;
         let list = self.list();
         let rolling = self.step == Step::Rolls;
-        let confirm = ("confirm", Arg::from(keys.confirm));
+        let confirm = ("confirm", Arg::text(keys.confirm));
         let letters = match list.last_letter() {
             Some('a') => {
                 let id = if rolling {
@@ -432,7 +432,7 @@ impl LevelUpScreen {
                 } else {
                     T::CHOOSE_RANGE
                 };
-                ui_with(id, &[("last", last.to_string().into()), confirm])
+                ui_with(id, &[("last", Arg::text(last.to_string())), confirm])
             }
             None => String::new(),
         };
@@ -467,7 +467,7 @@ fn roll_sources(count: RollCount) -> Option<String> {
     .filter(|&(_, n)| n > 0)
     .map(|(from, n)| {
         let args = [
-            ("source", ui(from).into()),
+            ("source", Arg::text(ui(from))),
             ("n", Arg::Number(i64::from(n))),
         ];
         ui_with(T::SOURCE, &args)
@@ -475,7 +475,7 @@ fn roll_sources(count: RollCount) -> Option<String> {
     .collect();
     let args = [
         ("total", Arg::Number(i64::from(total))),
-        ("from", parts.join(", ").into()),
+        ("from", Arg::text(parts.join(", "))),
     ];
     Some(ui_with(T::SOURCES, &args))
 }
@@ -497,7 +497,7 @@ fn explain_roll(roll: &SkillRoll, soft_cap: u16) -> String {
         n => ui_with(T::MARKS, &[("n", Arg::Number(i64::from(n)))]),
     };
     // The clauses that apply, each empty when it does not: the sentence is one entry.
-    let die = [("die", roll.die.to_string().into())];
+    let die = [("die", Arg::text(roll.die.to_string()))];
     let known = match (roll.known, roll.trade) {
         (false, _) => String::new(),
         (true, true) => ui_with(T::EXPLAIN_TRADE, &die),
@@ -518,12 +518,12 @@ fn explain_roll(roll: &SkillRoll, soft_cap: u16) -> String {
     ui_with(
         T::EXPLAIN,
         &[
-            ("dice", roll.dice().to_string().into()),
-            ("marks", marks.into()),
-            ("practice", roll.practice.to_string().into()),
-            ("known", known.into()),
-            ("trained", trained.into()),
-            ("halved", halved.into()),
+            ("dice", Arg::text(roll.dice().to_string())),
+            ("marks", Arg::text(marks)),
+            ("practice", Arg::text(roll.practice.to_string())),
+            ("known", Arg::text(known)),
+            ("trained", Arg::text(trained)),
+            ("halved", Arg::text(halved)),
         ],
     )
 }

@@ -17,6 +17,7 @@ use super::text::{label, skills_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
+use ascmearc_core::lang::Arg;
 use ascmearc_core::perception::PerceptionView;
 use ascmearc_core::skills::PROGRESS_STEPS;
 
@@ -117,9 +118,9 @@ impl SkillsScreen {
                 y += 1;
             }
         }
-        let choose = ui_with(T::CHOOSE, &[("keys", HINTS.up_down().into())]);
+        let choose = ui_with(T::CHOOSE, &[("keys", Arg::text(HINTS.up_down()))]);
         let close = match bindings.keys_of(KeyCommand::Skills).first() {
-            Some(key) => ui_with(T::CLOSE_OWN, &[("own", key.display().into())]),
+            Some(key) => ui_with(T::CLOSE_OWN, &[("own", Arg::text(key.display()))]),
             None => ui(T::CLOSE),
         };
         let footer = format!("{choose}   {close}");

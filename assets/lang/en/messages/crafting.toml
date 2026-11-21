@@ -175,6 +175,8 @@ no_wall_near = "There is no wall near enough to fix it to."
 not_so_many_crystals = "You do not carry so many crystals."
 # `skill`: the profession's name.
 not_trained = "You are not trained in {skill:Bare}."
+# A recipe that takes nothing (none does today).
+nothing = ""
 nothing_left_to_cut = "There is nothing left to cut."
 nothing_left_to_recast = "Nothing would be left to recast."
 nothing_left_to_rig_with = "You have nothing left to rig it with."

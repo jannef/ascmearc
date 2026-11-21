@@ -60,7 +60,7 @@ impl World {
         let Some(range) = self.state.player().throw_range(item, &content) else {
             return Spent::Nothing;
         };
-        if !self.may_loose(item) || !self.within_reach(at, range, "throw") {
+        if !self.may_loose(item) || !self.within_reach(at, range, crate::msg::combat::AIM_THROW) {
             return Spent::Nothing;
         }
         // Priced as the throw begins, with the flask still in the pack.

@@ -10,6 +10,7 @@
 
 # `what`: what is already in the slot.
 already_there = "You already have {what:a} there."
+burdened = "You are burdened."
 # `what`: the burning thing that cannot be picked up.
 cannot_pick_up_burning = "You cannot pick up {what:a} while it burns."
 carry_no_such_thing = "You carry no such thing."
@@ -39,6 +40,7 @@ listed_spirit = " (spirit)"
 # `what`: the light, the player's.
 lower_hood = "You lower the hood of {what:the}."
 no_light_ready = "You have no light ready to use."
+no_longer_burdened = "You are no longer burdened."
 # `slot`: the slot as typed.
 no_slot = "There is no slot `{slot:bare}`."
 no_longer_fits = "{what:The} no longer fits, and falls to the floor."
@@ -80,9 +82,13 @@ ready_both_hands = "You ready {what:a} in both hands."
 ready_in_quiver = "You ready {what:a} in your quiver."
 # `what`: a worn ring, the player's.
 slips_from_finger = "{what:The} slips from a finger that is no longer there."
+strain_under_load = "You strain under your load."
 take_off = "You take off {what:a}."
 # `what`: the item just identified.
 this_is = "This is {what:a}!"
+# A heavy hall the player would be overloaded in.
+too_much_to_go_in = "You carry too much to go in there."
+too_much_to_move = "You carry too much to move."
 # `what`: the cursed weapon thrown.
 twists_in_grip = "{what:The} twists in your grip and will not leave your hand."
 # An item of `pick_up`'s list: `what` goods for sale picked up, `price` what they cost.

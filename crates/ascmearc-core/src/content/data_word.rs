@@ -17,6 +17,9 @@
 //! | `grade:<creature>.0`, `.1` | a creature type's `grade_words`, below and above its grade ("small", "big") |
 //! | `char:scorched`, `blackened`, `charred` | char by amount ([`crate::scorch::adjective`]) |
 //! | `blood:spattered`, `stained`, `soaked`, `smeared` | blood by amount, "blood-stained" ([`crate::blood::Stain::adjective`]) |
+//! | `attack_name:<creature>.<n>` | a type's natural attack `n` (from 0, in the order struck), its `name` ("bite") |
+//! | `breath_noun:<creature>`, `burst_noun:<creature>` | what hits from a type's breath and burst, their `noun` ("fire") |
+//! | `guild_rank:<guild>.<n>` | a guild's rank `n` (from 0, the lowest), its `title` ("Tin") |
 //!
 //! Each reads as its `word:` phrase did: a plural noun as its spelling suggests
 //! ([`crate::lang::en::is_plural`]).
@@ -75,12 +78,51 @@ pub(super) fn word(content: &Content, kind: &str, key: &str) -> Option<LexWord> 
         }
         "char" => CHAR.contains(&key).then(|| key.to_string())?,
         "blood" => BLOOD.contains(&key).then(|| format!("blood-{key}"))?,
+        "attack_name" => {
+            let (creature, n) = key.rsplit_once('.')?;
+            let def = content.creature(content.creature_id(creature)?);
+            def.natural_attacks()
+                .nth(n.parse::<usize>().ok()?)?
+                .name
+                .clone()
+        }
+        "breath_noun" => (content.creature(content.creature_id(key)?).breath.as_ref())?
+            .noun
+            .clone(),
+        "burst_noun" => (content.creature(content.creature_id(key)?).burst.as_ref())?
+            .noun
+            .clone(),
+        "guild_rank" => {
+            let (guild, n) = key.rsplit_once('.')?;
+            let def = content.guilds().iter().find(|g| g.id == guild)?;
+            def.ranks.get(n.parse::<usize>().ok()?)?.title.clone()
+        }
         _ => return None,
     };
     Some(LexWord::new(&text).many(is_plural(&text)))
 }
 
 impl Content {
+    /// Creature type `def`'s natural attack `n` by its name: `attack_name:<id>.<n>` ("the bite").
+    pub fn attack_name_phrase(&self, def: &CreatureDef, n: usize) -> Phrase {
+        Phrase::id(format!("attack_name:{}.{n}", def.id))
+    }
+
+    /// What hits from creature type `def`'s breath: `breath_noun:<id>` ("the fire").
+    pub fn breath_noun_phrase(&self, def: &CreatureDef) -> Phrase {
+        Phrase::id(format!("breath_noun:{}", def.id))
+    }
+
+    /// What hits from creature type `def`'s burst: `burst_noun:<id>`.
+    pub fn burst_noun_phrase(&self, def: &CreatureDef) -> Phrase {
+        Phrase::id(format!("burst_noun:{}", def.id))
+    }
+
+    /// Guild `guild`'s rank `n` (from 0, the lowest) by its title: `guild_rank:<guild>.<n>`.
+    pub fn guild_rank_phrase(&self, guild: &str, n: usize) -> Phrase {
+        Phrase::id(format!("guild_rank:{guild}.{n}"))
+    }
+
     /// A trap by its name: `trap:<id>` ("an arrow trap").
     pub fn trap_phrase(&self, id: TrapId) -> Phrase {
         Phrase::id(format!("trap:{}", self.trap(id).id))
@@ -143,7 +185,11 @@ impl Content {
     pub fn damage_verb(&self, kind: Option<DamageTypeId>, you: bool) -> Arg {
         match kind {
             Some(kind) => Arg::said(damage_verb(&self.damage_type(kind).id, you)),
-            None => Arg::Text(if you { "hit" } else { "hits" }.into()),
+            None => Arg::from(if you {
+                crate::msg::combat::VERB_HIT
+            } else {
+                crate::msg::combat::VERB_HITS
+            }),
         }
     }
 }
@@ -154,6 +200,7 @@ impl Content {
     pub fn spell_noun_phrase(&self, def: &SpellData) -> Phrase {
         match def.look.own {
             true => Phrase::id(format!("spell_noun:{}", def.id)),
+            // lang: todo(#2035) a spell's noun set in code
             false => Phrase::id(format!("word:{}", def.look.noun)),
         }
     }
@@ -197,7 +244,7 @@ impl CreatureDef {
     pub fn dies_arg(&self) -> Arg {
         match self.dies {
             Some(_) => Arg::said(creature_dies(&self.id)),
-            None => Arg::from("dies"),
+            None => Arg::from(crate::msg::combat::VERB_DIES),
         }
     }
 }
@@ -205,8 +252,10 @@ impl CreatureDef {
 /// `verb` as text, or with `you` in the player's person.
 fn verb_text(verb: &str, you: bool) -> Arg {
     match you {
-        true => Arg::from(second_person(verb)),
-        false => Arg::from(verb),
+        // lang: todo(#2035) a spell's verb set in code
+        true => Arg::text(second_person(verb)),
+        // lang: todo(#2035) a spell's verb set in code
+        false => Arg::text(verb),
     }
 }
 

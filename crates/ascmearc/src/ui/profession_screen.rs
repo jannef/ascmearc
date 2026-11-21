@@ -19,7 +19,7 @@ use crate::input::Bindings;
 use crate::render::console::Console;
 use ascmearc_core::Action;
 use ascmearc_core::content::{ItemClassId, RecipeId, RecipeUse};
-use ascmearc_core::lang::Msg;
+use ascmearc_core::lang::{Arg, Msg};
 use ascmearc_core::perception::PerceptionView;
 use ascmearc_core::skills::SkillId;
 
@@ -195,7 +195,7 @@ impl ProfessionScreen {
         let count = self.recipes.tallest().max(1) as i32;
         let title = format!(
             " {} ",
-            ui_with(T::TITLE, &[("profession", self.title.as_str().into())])
+            ui_with(T::TITLE, &[("profession", Arg::text(self.title.as_str()))])
         );
         let panel = Panel::new(console, &title, WIDTH, count + 7);
         self.recipes.draw_label(console, &panel);
@@ -251,12 +251,12 @@ impl ProfessionScreen {
             console.print_in(x, under, &text, TEXT_DIM, panel.inner_w());
         }
         let keys = HINTS;
-        let confirm = ("confirm", keys.confirm.to_string().into());
+        let confirm = ("confirm", Arg::text(keys.confirm.to_string()));
         let choose = match self.recipes.last_letter() {
             Some('a') => ui_with(T::MAKE_A, &[confirm]),
             Some(last) => ui_with(
                 T::MAKE_LETTERS,
-                &[("last", last.to_string().into()), confirm],
+                &[("last", Arg::text(last.to_string())), confirm],
             ),
             None => keys.confirm.to_string(),
         };

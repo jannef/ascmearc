@@ -368,7 +368,10 @@ impl World {
                 of: Some(status),
             } => {
                 if actor == player {
-                    reports.push((death_message(&End::You(self.you()), ""), true));
+                    reports.push((
+                        death_message(&End::You(self.you()), crate::msg::combat::VERB_DIES),
+                        true,
+                    ));
                     return true;
                 }
                 let seen = perception.sees_actors_at(at);
@@ -379,7 +382,7 @@ impl World {
                         Some(_) => {
                             crate::lang::Arg::said(crate::content::data_word::status_dies(&def.id))
                         }
-                        None => crate::lang::Arg::from("dies"),
+                        None => crate::lang::Arg::from(crate::msg::combat::VERB_DIES),
                     };
                     let said = Msg::new(msg::turn::DIES_OF_STATUS)
                         .role("who", who)
@@ -392,12 +395,18 @@ impl World {
                 None => actor == player,
                 Some(Last::Attack(_, _, _, by)) if actor == player => {
                     killer_seen = Some(by);
-                    reports.push((death_message(&End::You(self.you()), ""), true));
+                    reports.push((
+                        death_message(&End::You(self.you()), crate::msg::combat::VERB_DIES),
+                        true,
+                    ));
                     true
                 }
                 // A trap's victim: the death records the trap, not who was seen.
                 Some(Last::Trap(..)) if actor == player => {
-                    reports.push((death_message(&End::You(self.you()), ""), true));
+                    reports.push((
+                        death_message(&End::You(self.you()), crate::msg::combat::VERB_DIES),
+                        true,
+                    ));
                     true
                 }
                 // A death by the player's hand was said with their blow, and recorded only if
@@ -407,7 +416,7 @@ impl World {
                     let seen = seen && target == actor;
                     if seen {
                         let dies = (self.actor_or_fallen(actor)).map_or_else(
-                            || "dies".into(),
+                            || crate::msg::combat::VERB_DIES.into(),
                             |a| content.creature(a.creature).dies_arg(),
                         );
                         reports.push((death_message(&end(actor, true), dies), close(at)));

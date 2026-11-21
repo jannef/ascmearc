@@ -98,14 +98,15 @@ impl LevelState {
 fn words(content: &Content, id: &str, burial: &Burial, fallen: &Fallen) -> Arg {
     let mut chars = fallen.death.chars();
     let death: Arg = match chars.next() {
-        Some(first) => first.to_lowercase().chain(chars).collect::<String>().into(),
+        // lang: todo(#2035) the graveyard keeps a death in the app's words
+        Some(first) => Arg::text(first.to_lowercase().chain(chars).collect::<String>()),
         None => msg::fixtures::UNTOLD_DEATH.into(),
     };
-    let name = fallen.grave_words(content);
+    // lang: todo(#2035) the graveyard keeps the dead by name, race, and class in English
+    let name = Arg::text(fallen.grave_words(content));
     match &burial.epitaph {
-        Some(_) => {
-            (Arg::said(data_line::burial_epitaph(id)).with("name", name)).with("death", death)
-        }
+        Some(_) => (Arg::said(data_line::burial_epitaph(id)).with("name", name.clone()))
+            .with("death", death),
         None => (Msg::new(msg::fixtures::EPITAPH).role("name", name))
             .role("death", death)
             .into(),

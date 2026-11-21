@@ -89,11 +89,17 @@ impl AbilitiesScreen {
                     };
                     // What it costs, then why it cannot be used now, or what it asks for.
                     let why = |cost: String| {
-                        let args = [("cost", cost.into()), ("why", state.as_str().into())];
+                        let args = [
+                            ("cost", Arg::text(cost)),
+                            ("why", Arg::text(state.as_str())),
+                        ];
                         ui_with(T::COST_WHY, &args)
                     };
                     let aim = |cost: String| {
-                        let args = [("cost", cost.into()), ("aim", state.as_str().into())];
+                        let args = [
+                            ("cost", Arg::text(cost)),
+                            ("aim", Arg::text(state.as_str())),
+                        ];
                         ui_with(T::COST_AIM, &args)
                     };
                     // A spell says the roll it makes now with its type, as the character
@@ -106,12 +112,12 @@ impl AbilitiesScreen {
                             match own.unavailable {
                                 Some(Unavailable::NoMana) => {
                                     let mana = Arg::Number(i64::from(view.own_mana().0));
-                                    let args = [("cost", head.into()), ("mana", mana)];
+                                    let args = [("cost", Arg::text(head)), ("mana", mana)];
                                     ui_with(T::SHORT_OF_MANA, &args)
                                 }
                                 Some(_) => why(head),
                                 None if state.is_empty() => head,
-                                None => ui_with(T::AIMED, &[("cost", head.into())]),
+                                None => ui_with(T::AIMED, &[("cost", Arg::text(head))]),
                             }
                         }
                         // An active weapon ability says what it costs the player in
@@ -143,7 +149,7 @@ impl AbilitiesScreen {
                     let shown = view.ability_name(a);
                     let said: Arg = match shown == a.name(content) {
                         true => content.ability_phrase(a).into(),
-                        false => shown.as_ref().into(),
+                        false => Arg::text(shown.as_ref()),
                     };
                     let entry = Entry {
                         ability: a,
@@ -212,7 +218,7 @@ impl AbilitiesScreen {
             Some(entry) => {
                 let args = [
                     ("ability", entry.said.clone()),
-                    ("why", entry.state.as_str().into()),
+                    ("why", Arg::text(entry.state.as_str())),
                 ];
                 self.notice = Some(ui_with(T::NOTICE, &args));
                 ScreenAction::Stay
@@ -318,10 +324,10 @@ impl AbilitiesScreen {
     fn footer(&self, bindings: &Bindings) -> String {
         let keys = HINTS;
         let page = (self.entries.hint(&keys)).map_or(String::new(), |hint| format!("{hint}   "));
-        let confirm = ("confirm", Arg::from(keys.confirm));
+        let confirm = ("confirm", Arg::text(keys.confirm));
         let close = match bindings.keys_of(KeyCommand::Abilities).first() {
             Some(key) if self.entries.is_empty() => {
-                ui_with(T::CLOSE_OWN, &[("own", key.display().into())])
+                ui_with(T::CLOSE_OWN, &[("own", Arg::text(key.display()))])
             }
             _ => ui(T::CLOSE),
         };
@@ -329,7 +335,7 @@ impl AbilitiesScreen {
             Some('a') => ui_with(T::USE_A, &[confirm]),
             Some(last) => ui_with(
                 T::USE_LETTERS,
-                &[("last", last.to_string().into()), confirm],
+                &[("last", Arg::text(last.to_string())), confirm],
             ),
             None => return close,
         };

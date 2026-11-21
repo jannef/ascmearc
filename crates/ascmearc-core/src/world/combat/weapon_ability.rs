@@ -37,7 +37,7 @@ use crate::content::{
 use crate::damage::Damage;
 use crate::dice::{Dice, Roll};
 use crate::geom::Pos;
-use crate::lang::Msg;
+use crate::lang::{Arg, Msg};
 use crate::msg;
 use crate::rng::draw;
 use crate::talent::TalentMods;
@@ -632,7 +632,7 @@ impl World {
         let content = self.content.clone();
         let table = content.weapon_skills();
         let Some(id) = table.id(skill) else {
-            self.say(Msg::new(msg::combat::NO_WEAPON_SKILL).role("skill", skill));
+            self.say(Msg::new(msg::combat::NO_WEAPON_SKILL).role("skill", Arg::id(skill)));
             return Spent::Nothing;
         };
         let before = self.state.player().weapon_abilities(&content);

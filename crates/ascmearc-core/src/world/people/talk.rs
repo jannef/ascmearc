@@ -145,7 +145,8 @@ impl From<Arg> for Speech {
 
 impl From<String> for Speech {
     fn from(text: String) -> Self {
-        Self(vec![Arg::Text(text)])
+        // lang: todo(#2035) speech as text
+        Self(vec![Arg::text(text)])
     }
 }
 
@@ -574,7 +575,8 @@ impl World {
             let said = match self.state.actors.get(&m.actor) {
                 Some(actor) if self.perception.sees_actors_at(m.at) => Msg::new(msg::talk::MUTTERS)
                     .role("who", self.called_phrase(actor))
-                    .role("verb", m.verb)
+                    // lang: todo(#2035) a mutter's verb from the data
+                    .role("verb", Arg::text(m.verb))
                     .role("line", m.line),
                 _ => {
                     let volume = Volume::of(heard.loudness, threshold);

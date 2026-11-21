@@ -82,9 +82,9 @@ impl CharactersScreen {
     /// summary's campaign known, `In Cēaptūn (The Ascmearc).`
     fn place(&self, summary: &Summary) -> String {
         let name = self.places.get(self.selected).cloned().unwrap_or_default();
-        let place = ("place", name.into());
+        let place = ("place", Arg::text(name));
         if self.campaigns && !summary.campaign.is_empty() {
-            let campaign = ("campaign", summary.campaign.as_str().into());
+            let campaign = ("campaign", Arg::text(summary.campaign.as_str()));
             ui_with(T::PLACE_CAMPAIGN, &[place, campaign])
         } else {
             ui_with(T::PLACE, &[place])
@@ -97,7 +97,10 @@ impl CharactersScreen {
         if summary.version.is_empty() {
             ui(T::MADE_BY_OLDER)
         } else {
-            ui_with(T::MADE_BY, &[("version", summary.version.as_str().into())])
+            ui_with(
+                T::MADE_BY,
+                &[("version", Arg::text(summary.version.as_str()))],
+            )
         }
     }
 
@@ -198,7 +201,7 @@ impl CharactersScreen {
                 }
                 lines.push(self.place(summary));
                 let when = played_text(summary.played, clock);
-                lines.push(ui_with(T::LAST_PLAYED, &[("when", when.into())]));
+                lines.push(ui_with(T::LAST_PLAYED, &[("when", Arg::text(when))]));
                 lines
             }
             Some(_) => vec![ui(T::NOTHING_KNOWN)],
@@ -217,9 +220,9 @@ impl CharactersScreen {
         }
         let keys = HINTS;
         let footer = [
-            ui_with(T::FOOTER_CHOOSE, &[("keys", keys.up_down().into())]),
-            ui_with(T::FOOTER_PLAY, &[("keys", keys.confirm.into())]),
-            ui_with(T::FOOTER_DELETE, &[("keys", keys.erase.into())]),
+            ui_with(T::FOOTER_CHOOSE, &[("keys", Arg::text(keys.up_down()))]),
+            ui_with(T::FOOTER_PLAY, &[("keys", Arg::text(keys.confirm))]),
+            ui_with(T::FOOTER_DELETE, &[("keys", Arg::text(keys.erase))]),
             ui(T::FOOTER_BACK),
         ]
         .join("   ");
@@ -240,7 +243,7 @@ mod tests {
                 class: "warrior".into(),
                 prestige: String::new(),
                 level,
-                place: "the Hub".into(),
+                place: Arg::text("the Hub"),
                 campaign: "The Showcase".into(),
                 played: 1_781_654_400,
                 version: ascmearc_core::GAME_VERSION.into(),

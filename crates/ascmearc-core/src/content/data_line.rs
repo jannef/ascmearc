@@ -280,6 +280,78 @@ fn magic_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
     }
 }
 
+// --- An item's description's words from the data (#2035) -------------------------------------
+
+/// Slot `id`'s `mark`, what the inventory says of a thing in it ("being worn").
+pub fn slot_mark(id: &str) -> String {
+    format!("slot:{id}.mark")
+}
+
+/// Unique `id`'s power in words (its `phrase`), a line of its description.
+pub fn unique_phrase(id: &str) -> String {
+    format!("unique:{id}.phrase")
+}
+
+/// Unique `id`'s `lore`, a line of its description.
+pub fn unique_lore(id: &str) -> String {
+    format!("unique:{id}.lore")
+}
+
+/// What talent `id`'s `spirit_weapon` effect says of a spirit weapon's power (its `phrase`).
+pub fn spirit_weapon_phrase(id: &str) -> String {
+    format!("talent:{id}.effects.spirit_weapon.phrase")
+}
+
+/// Spell `id`'s `description`, what a grimoire or a wand says it does.
+pub fn spell_description(id: &str) -> String {
+    format!("spell:{id}.description")
+}
+
+/// Rod effect `id`'s `name` (`Holds Digging`).
+pub fn rod_effect_name(id: &str) -> String {
+    format!("rod_effect:{id}.name")
+}
+
+/// Rod effect `id`'s `description`.
+pub fn rod_effect_description(id: &str) -> String {
+    format!("rod_effect:{id}.description")
+}
+
+/// The words an item's description takes from the data: a slot's mark, a unique's power and
+/// lore, a spirit weapon's power, a spell's and a rod effect's description, and a rod effect's
+/// name.
+fn describe_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
+    for slot in content.slots() {
+        add(slot_mark(&slot.id), &slot.mark);
+    }
+    for def in content.uniques() {
+        if let Some(phrase) = &def.phrase {
+            add(unique_phrase(&def.id), phrase);
+        }
+        if let Some(lore) = &def.lore {
+            add(unique_lore(&def.id), lore);
+        }
+    }
+    for (_, def) in content.talents().iter() {
+        for effect in &def.effects {
+            if let super::TalentEffect::Martial(crate::talent::MartialEffect::SpiritWeapon {
+                phrase,
+                ..
+            }) = effect
+            {
+                add(spirit_weapon_phrase(&def.id), phrase);
+            }
+        }
+    }
+    for spell in content.spells() {
+        add(spell_description(&spell.id), &spell.description);
+    }
+    for effect in content.rod_effects() {
+        add(rod_effect_name(&effect.id), &effect.name);
+        add(rod_effect_description(&effect.id), &effect.description);
+    }
+}
+
 // --- The classes' lines (L4c, #1914) -----------------------------------------------------------
 
 /// Calling `def`'s `message`: `calling:<scope>.<class>.message`, its scope its campaign (`data`
@@ -479,6 +551,12 @@ pub(super) fn add_all(content: &mut Content) -> Result<(), ContentError> {
             add(dungeon_arrival(&def.id), line);
         }
     }
+    for def in content.scenarios.values() {
+        if let Some(line) = &def.arrival {
+            add(scenario_arrival(&def.id), line);
+        }
+    }
+    describe_lines(content, &mut add);
     people_lines(content, &mut add);
     place_names(content, &mut add);
     super::data_word::lines(content, &mut add);
@@ -803,6 +881,11 @@ pub fn dungeon_name(id: &str) -> String {
 /// Hidden location `id`'s `name`, the location on hand-made level `level`.
 pub fn hidden_name(level: &str, id: &str) -> String {
     format!("level:{level}.hidden.{id}.name")
+}
+
+/// Scenario `id`'s `arrival` line, said after the welcome.
+pub fn scenario_arrival(id: &str) -> String {
+    format!("scenario:{id}.arrival")
 }
 
 /// Scenario `id`'s name (the welcome's place).

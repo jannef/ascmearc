@@ -250,7 +250,10 @@ impl<T, K: Copy + Ord> PagedList<T, K> {
     pub fn hint(&self, keys: &Hints) -> Option<String> {
         self.page_label().map(|_| {
             let (next, prev) = (keys.next_page, keys.prev_page);
-            ui_with(Text::HINT, &[("next", next.into()), ("prev", prev.into())])
+            ui_with(
+                Text::HINT,
+                &[("next", Arg::text(next)), ("prev", Arg::text(prev))],
+            )
         })
     }
 

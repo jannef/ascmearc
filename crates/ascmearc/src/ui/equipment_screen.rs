@@ -80,7 +80,7 @@ impl Item {
         let name = match text.note {
             Some((note, args)) => {
                 let mut args = args.to_vec();
-                args.push(("name", self.name.clone().into()));
+                args.push(("name", Arg::text(self.name.clone())));
                 ui_with(note, &args)
             }
             None => self.name.clone(),
@@ -261,7 +261,7 @@ impl EquipmentScreen {
                 }
                 None => {
                     let empty = match &row.barred {
-                        Some(mark) => ui_with(T::BARRED, &[("mark", mark.clone().into())]),
+                        Some(mark) => ui_with(T::BARRED, &[("mark", Arg::text(mark.clone()))]),
                         None => "—".into(),
                     };
                     console.print_in(item_x + 2, y, &empty, TEXT_DIM, right - item_x - 2);
@@ -282,7 +282,7 @@ impl EquipmentScreen {
         }
         let y = panel.y + panel.h - 4;
         if fits(y) && y > panel.y + 1 + count {
-            let weight = |grams| Arg::from(format_weight(grams));
+            let weight = |grams| Arg::text(format_weight(grams));
             let summary = format!(
                 "{}   ·   {}",
                 ui_with(T::CARRYING, &[("weight", weight(self.weight.carried))]),
@@ -297,9 +297,9 @@ impl EquipmentScreen {
             console.print_in(x, y, &summary, TEXT, panel.inner_w());
         }
         let last = letter(self.rows.len().saturating_sub(1)).unwrap_or('a');
-        let lower = ui_with(T::CHOOSE_SLOT, &[("last", last.to_string().into())]);
+        let lower = ui_with(T::CHOOSE_SLOT, &[("last", Arg::text(last.to_string()))]);
         let upper = last.to_ascii_uppercase().to_string();
-        let upper = ui_with(T::LOOK, &[("last", upper.into())]);
+        let upper = ui_with(T::LOOK, &[("last", Arg::text(upper))]);
         let close = ui(T::ESC_CLOSE);
         panel.footer(console, &format!("{lower}   {upper}   {close}"));
     }
@@ -341,7 +341,7 @@ impl ItemScreen {
     pub fn new(view: Option<&PerceptionView<'_>>, slot: SlotId) -> Self {
         let mut screen = Self {
             slot: String::new(),
-            name: Arg::from(""),
+            name: Arg::text(""),
             kind: ActionKind::Wear,
             choices: PagedList::empty(),
             rows: 0,
@@ -480,12 +480,12 @@ impl ItemScreen {
             console.print_in(x, y, &ui(take_off), TEXT_DIM, panel.inner_w());
         }
         let keys = HINTS;
-        let confirm = ("confirm", Arg::from(keys.confirm));
-        let verb = ("verb", Arg::from(ui(put_on)));
+        let confirm = ("confirm", Arg::text(keys.confirm));
+        let verb = ("verb", Arg::text(ui(put_on)));
         let choose = match self.choices.last_letter() {
             Some('a') => ui_with(T::USE_A, &[confirm, verb]),
             Some(last) => {
-                let last = ("last", last.to_string().into());
+                let last = ("last", Arg::text(last.to_string()));
                 ui_with(T::USE_LETTERS, &[last, confirm, verb])
             }
             None => ui_with(T::USE_NONE, &[confirm, verb]),

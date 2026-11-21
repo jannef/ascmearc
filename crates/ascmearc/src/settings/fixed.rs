@@ -14,6 +14,7 @@ use crate::settings::mods::{self, Mods};
 use crate::ui::text::{UiText, settings as T, ui_with};
 use crate::ui::{Edit, Nav};
 use ascmearc_core::Rest;
+use ascmearc_core::lang::Arg;
 use ascmearc_core::time::Duration;
 use bevy::input::keyboard::{KeyCode, KeyboardInput};
 
@@ -220,7 +221,7 @@ pub fn refusal(key: &KeyBinding, context: Context) -> Option<String> {
         Context::Aim => T::FIXED_IN_AIM,
         Context::Play | Context::More => return None,
     };
-    taken(context, key).then(|| ui_with(why, &[("shown", key.display().into())]))
+    taken(context, key).then(|| ui_with(why, &[("shown", Arg::text(key.display()))]))
 }
 
 /// What a press means in one place: for each key the press may stand for, most specific first,
