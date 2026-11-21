@@ -290,10 +290,11 @@ identified (`scroll_label_tests.rs::a_line_names_a_scroll_as_it_was_seen_then`).
 docs hold the table): `creature:<id>`, `object:<id>` (with `written`, `written_plural`, and
 `material`, for an item made of its own parts), `affix:<id>`, `material:<id>`, `part:<id>` (its
 `adjective`), `gem_size:<id>`, `gem_cut:<id>`, `stock:<material id>` (a piece's form word),
-`terrain:<id>`, `room:<id>` (a special room's name, #1998), `label:scroll|wand|rod|potion` (an
-unidentified type's name with its `{label}` and `{colour}` slots), `colour:<colour>`, and
-`word:<text>`: a word the data names without an id of its own (a natural attack's "bite", a
-thrown "stone", "something"), keyed
+`terrain:<id>`, `room:<id>` (a special room's name, #1998), `tag:<tag>` (a creature tag),
+`vision:<id>` (a vision profile's name), `label:scroll|wand|rod|potion` (an unidentified type's
+name with its `{label}` and `{colour}` slots), `colour:<colour>`, and `word:<text>`: a word the
+data names without an id of its own (a natural attack's "bite", a thrown "stone", "something"),
+keyed
 by its English, which is the word; `disease:<id>` (its name as written, "the shakes"); and
 `status:<id>`, `skill:<id>`, and `resource:<id>` (#1992: the name in lower case, as `race:<id>`'s,
 "hasted", "open lock", "rage"; `Content::status_phrase`, `skill_phrase`, `resource_phrase`), said
@@ -354,8 +355,7 @@ creature's `creature:<id>.breath.verb`, `.burst.verb`, `.summon.verb`, each said
 (`CraftStep::label`) is a phrase: `part:<id>`, `material:<id>`, `object:<id>` counted as several
 ("arrowheads"), or the `word:` core picks ("item", "seal", a material group). Left for their
 slices: a trap's `verb`, a weapon's and a natural attack's verbs, a creature's `dies` verb, a
-spell's `look` noun and verb (`say_spell`, the burst dialog), and the epitaph's and
-`RecipeLack::reason`'s text (#1997).
+spell's `look` noun and verb (`say_spell`, the burst dialog), and the epitaph's text (#1997).
 
 **Number comes from data** (#1965): a phrase is plural by its count or by the lexicon's `many` (a
 noun plural though it names one thing, "flames"); a proper name or a literal is one thing ("The
@@ -543,8 +543,9 @@ several counted is one entry by number (`take_apart`). A rig and a trap are `rig
 converted (#1949): a rig's id as the action wrote it. The open commission keeps the patron as a
 phrase (`called_phrase`, "your patron", said `the`) and what they said as a `Speech`, both
 saved by their keys; its quest-log view (`patron.rs::commission`) is named `commission_name`
-("Commission: {work:a}") and says its objective and status from `commission_*`. Left for their own work: the rig list's "what it takes" (`rig.rs::takes_words`), and the craft
-dialog's plan (`CraftPlan`), screen text built in core.
+("Commission: {work:a}") and says its objective and status from `commission_*`. The rig list's
+"what it takes" is a message (`rig.rs::takes_words`, "Reasons core composes"); left for its own
+work: the craft dialog's plan (`CraftPlan`), screen text built in core.
 
 `world/classes/`'s first half (`messages/classes.toml`, L4c: `ascetic`, `calling`, `charge`,
 `class_ability`, `class`, `consecrate`, `invest`, `mark`) says the lines its data writes as
@@ -686,9 +687,24 @@ hunger's name (`Burden::name`, `Hunger::name`) and a burden's threshold (`Load::
 `seconds` by `n.number`, `hours_and_minutes` nesting two). A line says one in a role (the id is
 an `Arg::Msg`); a screen says one alone with `ui::text::word(id, form)` and the dumps and the
 wiki in English with `Content::english_word`. A word is lower case, as in a sentence; a label asks
-`Bare` ("Strength", "Not hungry"). The rest of #1996's words (resistance words, rarities, the
-equipment mark, `ActionKind::doing`, gender, alignment band, weather and vision, `Section::name`,
-`paths.rs`'s file kinds) are text until the issue's remainder converts them.
+`Bare` ("Strength", "Not hungry").
+
+The rest of #1996 follows the same pattern: a resistance's word and its row label
+(`ResistanceWord::word`, `label`: "resistant", "resistant to"), an item's rarity (`Rarity::word`,
+all four, `Unique` too), what a status keeps one from doing (`ActionKind::doing`, said in
+`health.cannot_while`), a gender's and an alignment band's name (`Gender::name`, `Band::name`),
+the weather's (`Weather::name`; its `Display` is its id, developer text), the weapon skills
+screen's sections (`Section::name`), and a compass direction as a sentence says it
+(`Dir::compass_word`: the voice heard from afar, a sound's direction, the way to an ally in the
+Heal ability's list). A worn thing's mark (`equipment::mark`) is an `Arg`: the slot's `mark` as the data's text, or
+`words.in_both_hands` nesting it. A vision profile is the lexicon id `vision:<id>` (its name as
+written, "Darkvision": the dev line and character creation) and a creature tag `tag:<tag>`
+(`tag::spoken`'s words, "marsh thing": a kill quest's target). What stays English: the quest
+roll's and a bane affix's descriptions, `Requirement::words` (the wiki's, which renders the bands
+in English), and a class's refusal (gender by its id, which is its English word). The files
+screen's kinds and what they hold (`paths.rs`, `Locations::entries`) are UI text
+(`files_screen.toml`), so `--paths` says them in English too; why a folder is where it is stays
+`paths.rs`'s.
 
 The checker needs nothing new: a nested template is an entry like any other (its roles and forms
 checked, a missing one a warning), and `lines`/`and` are list forms every language accepts.
@@ -706,14 +722,38 @@ untrained in {skill:Bare}", a resource's own `lacking` as its line of data, and 
 (`Content::talent_arg`, with what was chosen for it), what a choice is for a `character.choice_*` message (`Choice::message`; `Choice::words`
 stays the content's own developer errors), and the prerequisites not met a list said
 `{needs:and}` (`Need::arg`): a stat a `character.talent_needs_stat` nesting its name ("Words core
-picks"), the rest `Need::words` text until talent requirements are converted. **What stopped
+picks"), the rest their `character.talent_needs_*` messages (#1997's second part, below). **What stopped
 a long action** is `World::came_msg` everywhere (`came_line` is gone). **A spell's reach**
 (`spell_words.rs::reach_words`) is one clause, `None` for none: its parts (`magic.reach_range`,
 `reach_length`, `reach_radius`, `reach_jumps`) listed by `magic.reach_listed`, a nested entry a
-join, as the look line's `listed`, so the language owns the separator. Still English (#1997's
-remainder): a talent's requirements (`Need::words` but a stat's), `takes_words` and
-`Lack`, `CraftPlan` and `RecipeLack::reason`, a heal's ailment names, an attack's source label
-and summary, and `magic/describe.rs`.
+join, as the look line's `listed`, so the language owns the separator.
+
+**#1997's second part** goes on the same way. **A talent's requirements** are
+`character.talent_needs_*` messages (`Need::message`; `Need::arg` nests one in a refusal's
+`needs`, `Need::words` renders it in English for the wiki and the tests): a talent, a skill, a
+race, and a class their phrases (`talent:`, `skill:`, `race:`, `class:`; a weapon skill its
+data name as text, since `weapon_skill:` is lower case and a style keeps its capitals here,
+"Twin Blades 3"), a list of races each a `talent_needs_one` said `{races:or}`, an `either` joined by
+`talent_needs_either`; the Talents page's `NeedView::words` is the message (with
+`talent_needs_untaken` for a talent the craving took). **What a rig takes**
+(`rig.rs::takes_words`, `RigRow::takes`) is a `crafting.rig_takes_*` clause and **why a recipe
+cannot be made** (`RecipeLack::reason`) a `crafting.lacking_*` one (the station a `terrain:`
+phrase, an input an `object:` said `plural`), shown by the rig list and the profession screen
+(`text::ui_msg`) and the `recipes` dump. **What the Heal ability offers** (`OwnAilment::name`) is
+a `health.treat_*` message: the ailment's phrase (`Ailment::name`: `status:`, `disease:`, or
+"sickness"), an ally's owned by the ally ("Your wolf's shakes", the article given up to the
+owner by `en`), the way to it a compass word (`Dir::compass_word`). **An attack's** source label is a
+`combat.attack_source_*` word (said `Bare`) and its summary a `combat.attack_*` list
+(`attack_listed`, as `reach_listed`), its damage (`OwnAttack::damage`, "1d8+2 slashing")
+`combat.attack_damage` with each kind a `damage_type:` phrase (`attack_kind_or` between two)
+and each rider the item lists' `items.numbers_with_rider`. **A spell's roll** (`roll_words`,
+`SpellRoll::text`) is a `magic.roll_*` clause, its damage type a `damage_type:` phrase, and a
+reroll (`reroll_words`) `magic.reroll` with its faces said `{faces:and}`. Text roles inside them:
+the dice, and a spell type's rule (data words with no line of data yet); and until their data has
+ids, a birth sign's animal and element, a vision's name in a talent's need (lower case there,
+where `vision:` is as written), an `any_weapon_skill`'s words, a launcher, a stock's group. Still English: `CraftPlan` (the craft dialog's plan, its `english` reason why
+not), a recipe row's `takes`, and `magic/describe.rs` (an item's description, which renders a
+wand's roll in English).
 
 **The look line's and the cell's words** (#1998, its first half). **An item as the lists name
 it** (`Lore::listed`) is `items.listed`, the phrase `counted` with `listed_numbers` and
@@ -724,9 +764,8 @@ language writes alike; a rider's damage type `damage_type:<id>`). The screens re
 the dumps and a ware's words render English (`english_msg`). Food's freshness (`rot::Stage::word`,
 `Freshness::word`) is `health.food_*`; **a sound heard** is `noise.toml`'s: what it is heard as
 (`SoundKind::heard_as`, `heard_*`), the clause (`you_hear`, `you_faintly_hear`), and the line
-(`heard`, `heard_from` with the direction a text role until `Dir::compass_name` is converted,
-#1996), nested in the look line's `heard_here`; the draught of an unseen shadow is
-`creatures.cold_draught`; a special room is `room:<id>` (`{room:a}`, "in an echoing hall"; the
+(`heard`, `heard_from` with the direction `Dir::compass_word`), nested in the look line's
+`heard_here`; the draught of an unseen shadow is `creatures.cold_draught`; a special room is `room:<id>` (`{room:a}`, "in an echoing hall"; the
 wiki keeps `RoomEffectDef::with_article`). How hurt a creature looks is #1996's (`Health::word`).
 Still text (the rest of #1998): where stairs lead (`leads_to`, a level's or a branch level's
 name), a place's name and note (`Place`, a legend's), and the welcome's scenario name.
@@ -821,9 +860,7 @@ example:
      per clause, each clause its own entry or empty: `level_up_screen.toml`'s `explain`.
 
 **Words the screens still take from core as text** until core's words are converted (#1949):
-the gender's name, the alignment band's, the resistance words
-(`ResistanceWord::label`), an attack's source label and summary, the guild rank's title, the
-conditions (`ui::conditions`), and the race, class, stance, resource, sign, skill, talent, tree, and
+the guild rank's title, the conditions (`ui::conditions`), and the race, class, stance, resource, sign, skill, talent, tree, and
 need names data gives as English, the Characters list's among them (a save's summary keeps the
 race and the classes by id, "Names kept in saves").
 
@@ -838,7 +875,7 @@ rest prompt's words are the settings part's (`settings::fixed::REST`, #1936). Th
 segments (turn, position, light, vision, seed) and `dev.rs`'s overlay line stay literal.
 
 **The magic, scribe, and weapon skills screens** (#1938; `spells.rs` draws effects and has no
-text) still take as text the weapon skills' section names (`Section::name`) and the spell, school, caster style, and skill names data
+text) still take as text the spell, school, caster style, and skill names data
 gives as English (the scribe list's school headings are the school's id, capitalized). The magic
 screen's spell detail is cut in its room, not run over the frame (#1910 stays in `KNOWN` until its
 layout gives the detail the room).

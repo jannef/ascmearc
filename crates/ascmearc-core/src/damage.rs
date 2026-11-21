@@ -241,21 +241,22 @@ impl ResistanceWord {
         }
     }
 
-    /// `resistant`.
-    pub const fn word(self) -> &'static str {
+    /// The word, a message id (`messages/words.toml`): `resistant`.
+    pub const fn word(self) -> crate::lang::MessageId {
         match self {
-            ResistanceWord::Vulnerable => "vulnerable",
-            ResistanceWord::Resistant => "resistant",
-            ResistanceWord::Immune => "immune",
+            ResistanceWord::Vulnerable => crate::msg::words::RESISTANCE_VULNERABLE,
+            ResistanceWord::Resistant => crate::msg::words::RESISTANCE_RESISTANT,
+            ResistanceWord::Immune => crate::msg::words::RESISTANCE_IMMUNE,
         }
     }
 
-    /// `Resistant to`.
-    pub const fn label(self) -> &'static str {
+    /// The row's label, a message id: `resistant to` (the character screen asks `Bare`,
+    /// "Resistant to").
+    pub const fn label(self) -> crate::lang::MessageId {
         match self {
-            ResistanceWord::Vulnerable => "Vulnerable to",
-            ResistanceWord::Resistant => "Resistant to",
-            ResistanceWord::Immune => "Immune to",
+            ResistanceWord::Vulnerable => crate::msg::words::RESISTANCE_VULNERABLE_TO,
+            ResistanceWord::Resistant => crate::msg::words::RESISTANCE_RESISTANT_TO,
+            ResistanceWord::Immune => crate::msg::words::RESISTANCE_IMMUNE_TO,
         }
     }
 }
@@ -422,7 +423,11 @@ mod tests {
         assert_eq!(ResistanceWord::of(75), Some(ResistanceWord::Resistant));
         assert_eq!(ResistanceWord::of(100), Some(ResistanceWord::Immune));
         assert_eq!(ResistanceWord::of(-1), Some(ResistanceWord::Vulnerable));
-        assert_eq!(ResistanceWord::Immune.label(), "Immune to");
+        let content = crate::test_support::builtin();
+        assert_eq!(
+            content.english_word(ResistanceWord::Immune.label(), "Bare"),
+            "Immune to"
+        );
     }
 
     #[test]

@@ -156,9 +156,15 @@ fn without_sinew_or_metal_the_rows_grey_and_the_work_is_refused_with_no_time() {
     carry(&mut w, "knife");
     stock(&mut w, "wood", 20);
     let (_, lack) = row(&w, "short_bow");
-    assert_eq!(lack.expect("greyed").reason(&w.content), "no sinew to hand");
+    assert_eq!(
+        crate::test_support::english_of(&w.content, &lack.expect("greyed").reason(&w.content)),
+        "no sinew to hand"
+    );
     let (_, lack) = row(&w, "crossbow");
-    assert_eq!(lack.expect("greyed").reason(&w.content), "no metal to hand");
+    assert_eq!(
+        crate::test_support::english_of(&w.content, &lack.expect("greyed").reason(&w.content)),
+        "no metal to hand"
+    );
     let start = w.state.time;
     apply(&mut w, "craft:short_bow:b");
     assert_eq!(said(&w), "You must choose the sinew.");
@@ -168,7 +174,10 @@ fn without_sinew_or_metal_the_rows_grey_and_the_work_is_refused_with_no_time() {
     // One length will not string a composite bow.
     stock(&mut w, "sinew", 1);
     let (_, lack) = row(&w, "composite_bow");
-    assert_eq!(lack.expect("greyed").reason(&w.content), "no sinew to hand");
+    assert_eq!(
+        crate::test_support::english_of(&w.content, &lack.expect("greyed").reason(&w.content)),
+        "no sinew to hand"
+    );
     apply(&mut w, "craft:composite_bow:b,c");
     assert_eq!(said(&w), "You have too few of those.");
     assert_eq!(w.state.time, start);

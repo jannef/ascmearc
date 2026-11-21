@@ -75,25 +75,32 @@ pub enum RecipeLack {
 }
 
 impl RecipeLack {
-    /// The reason, as the row says it: "no anvil beside you".
-    pub fn reason(self, content: &Content) -> String {
+    /// The reason, as the row says it, a clause of `crafting.lacking_*`: "no anvil beside you".
+    pub fn reason(self, content: &Content) -> Msg {
         match self {
-            RecipeLack::Skill => "beyond your skill".into(),
-            RecipeLack::Station(t) => format!("no {} beside you", content.terrain(t).name),
-            RecipeLack::Knife => "no knife".into(),
-            RecipeLack::Launcher(o) => {
-                format!("no {} ready", super::fletch::launcher_word(content, o))
+            RecipeLack::Skill => msg::crafting::LACKING_SKILL.into(),
+            RecipeLack::Station(t) => {
+                Msg::new(msg::crafting::LACKING_STATION).role("station", terrain(content, t))
             }
+            RecipeLack::Knife => msg::crafting::LACKING_KNIFE.into(),
+            RecipeLack::Launcher(o) => Msg::new(msg::crafting::LACKING_LAUNCHER).role(
+                "launcher",
+                super::fletch::launcher_word(content, o).to_string(),
+            ),
             RecipeLack::Stock(m) => {
                 let def = content.material(m);
-                format!("no {} to hand", def.group.as_deref().unwrap_or(&def.name))
+                let stock = def.group.as_deref().unwrap_or(&def.name).to_string();
+                Msg::new(msg::crafting::LACKING_STOCK).role("stock", stock)
             }
-            RecipeLack::Input(o) => format!("not enough {}", content.object(o).plural),
-            RecipeLack::Gem => "no gem to hand".into(),
-            RecipeLack::Setting => "nothing to set a gem in".into(),
-            RecipeLack::Nothing => "nothing to enchant".into(),
-            RecipeLack::Room => "it holds all it can".into(),
-            RecipeLack::Crystal => "no crystal to hand".into(),
+            RecipeLack::Input(o) => Msg::new(msg::crafting::LACKING_INPUT).role(
+                "what",
+                Phrase::id(format!("object:{}", content.object(o).id)),
+            ),
+            RecipeLack::Gem => msg::crafting::LACKING_GEM.into(),
+            RecipeLack::Setting => msg::crafting::LACKING_SETTING.into(),
+            RecipeLack::Nothing => msg::crafting::LACKING_ENCHANTABLE.into(),
+            RecipeLack::Room => msg::crafting::LACKING_ROOM.into(),
+            RecipeLack::Crystal => msg::crafting::LACKING_CRYSTAL.into(),
         }
     }
 

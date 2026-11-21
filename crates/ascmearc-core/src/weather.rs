@@ -67,13 +67,14 @@ impl Weather {
         self as usize
     }
 
-    /// Its name, capitalised (the wiki's tables; the dev message lowercases it).
-    pub const fn name(self) -> &'static str {
+    /// Its name, a message id (`messages/words.toml`): `heavy rain` (the wiki's tables ask
+    /// `Bare`, "Heavy rain").
+    pub const fn name(self) -> crate::lang::MessageId {
         match self {
-            Weather::Clear => "Clear",
-            Weather::Overcast => "Overcast",
-            Weather::Rain => "Rain",
-            Weather::HeavyRain => "Heavy rain",
+            Weather::Clear => crate::msg::words::WEATHER_CLEAR,
+            Weather::Overcast => crate::msg::words::WEATHER_OVERCAST,
+            Weather::Rain => crate::msg::words::WEATHER_RAIN,
+            Weather::HeavyRain => crate::msg::words::WEATHER_HEAVY_RAIN,
         }
     }
 
@@ -97,9 +98,10 @@ impl Weather {
     }
 }
 
+/// Its id (`heavy`): developer text, a test's or a log's; the player is told [`Weather::name`].
 impl fmt::Display for Weather {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_str(self.name())
+        f.write_str(self.id())
     }
 }
 

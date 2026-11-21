@@ -1,6 +1,7 @@
 //! Character creation: stats, genders, races, classes, and the
 //! horoscope, with adjustments as written in data.
 
+use super::util::word;
 use super::util::{Term, anchored, damage_link, signed, table_text};
 use super::util::{stat_abbrev, stat_name};
 use super::weapon_skills;
@@ -248,7 +249,7 @@ pub(super) fn genders(_content: &Content) -> String {
             Gender::Female => format!("{} +1", stat_name(Stat::Dexterity)),
             Gender::Other => "+1 to one stat, chosen by fate".to_string(),
         };
-        let _ = writeln!(out, "| {} | {raises} |", gender.name());
+        let _ = writeln!(out, "| {} | {raises} |", word(gender.name(), "Bare"));
     }
     out
 }
@@ -426,7 +427,7 @@ pub(super) fn class_limits(content: &Content) -> String {
                 closed.push(c.name.clone());
             } else if let Some(only) = c.only.iter().find(|o| o.race == r.id) {
                 let genders: Vec<String> = (only.genders.iter())
-                    .map(|g| g.name().to_lowercase())
+                    .map(|g| word(g.name(), "bare"))
                     .collect();
                 closed.push(format!("{} (unless {})", c.name, genders.join(" or ")));
             }

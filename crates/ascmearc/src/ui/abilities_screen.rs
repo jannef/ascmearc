@@ -352,7 +352,7 @@ fn describe(view: &PerceptionView<'_>, ability: Ability) -> String {
         text += &format!(" {}", ui_with(T::REACH, &[("reach", reach.into())]));
     }
     if let Some(reroll) = reroll_words(view.own_spell_reroll(spell)) {
-        text += &format!(" {reroll}");
+        text += &format!(" {}", ui_msg(reroll));
     }
     text
 }

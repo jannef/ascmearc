@@ -602,7 +602,7 @@ mod tests {
 
     fn ailment(ally: Option<Dir>) -> ascmearc_core::heal::OwnAilment {
         ascmearc_core::heal::OwnAilment {
-            name: "Bleeding".into(),
+            name: ascmearc_core::msg::health::TREAT_OWN.into(),
             action: Action::Heal { what: None, ally },
         }
     }

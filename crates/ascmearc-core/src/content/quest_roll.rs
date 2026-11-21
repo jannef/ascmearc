@@ -356,9 +356,7 @@ fn words(content: &Content, def: &QuestDef, target: &str) -> Words {
                     let one = Phrase::id(format!("creature:{}", content.creature(*c).id));
                     one.count(*count)
                 }
-                (None, KillTarget::Tag(tag)) => {
-                    Phrase::id(format!("word:{}", super::tag::spoken(tag))).count(*count)
-                }
+                (None, KillTarget::Tag(tag)) => content.tag_phrase(tag).count(*count),
             };
             put("target", Arg::Phrase(named));
             put("count", Arg::Number(i64::from(*count)));

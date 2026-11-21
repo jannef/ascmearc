@@ -2,6 +2,7 @@
 //! adds, items as they are named: the classes in the wiki's order, the races in the order New run
 //! offers them.
 
+use super::util::word;
 use ascmearc_core::content::{ClassDef, Content, Keep, Kit, KitItem};
 use ascmearc_core::equipment::{self, Equipment};
 use ascmearc_core::magic::LootGrade;
@@ -111,7 +112,7 @@ pub(super) fn line_text(content: &Content, line: &KitItem) -> String {
         ));
     }
     if let Some(gender) = line.gender {
-        notes.push(format!("if {}", gender.name().to_lowercase()));
+        notes.push(format!("if {}", word(gender.name(), "bare")));
     }
     if line.fill {
         notes.push("if the slot is free".into());

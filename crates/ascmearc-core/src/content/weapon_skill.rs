@@ -118,13 +118,14 @@ impl Section {
         Section::Styles,
     ];
 
-    /// `Missile and thrown`.
-    pub const fn name(self) -> &'static str {
+    /// Its heading, a message id (`messages/words.toml`): `missile and thrown` (the screen asks
+    /// `Bare`, "Missile and thrown").
+    pub const fn name(self) -> crate::lang::MessageId {
         match self {
-            Section::Melee => "Melee",
-            Section::Missile => "Missile and thrown",
-            Section::Shields => "Shields",
-            Section::Styles => "Fighting styles",
+            Section::Melee => crate::msg::words::SECTION_MELEE,
+            Section::Missile => crate::msg::words::SECTION_MISSILE,
+            Section::Shields => crate::msg::words::SECTION_SHIELDS,
+            Section::Styles => crate::msg::words::SECTION_FIGHTING_STYLES,
         }
     }
 }

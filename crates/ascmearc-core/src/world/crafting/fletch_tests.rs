@@ -378,7 +378,10 @@ fn bolts_are_the_twin_for_a_crossbow() {
         Some(Some(RecipeLack::Launcher(object(&w, "arrow"))))
     );
     assert_eq!(
-        RecipeLack::Launcher(object(&w, "arrow")).reason(&w.content),
+        crate::test_support::english_of(
+            &w.content,
+            &RecipeLack::Launcher(object(&w, "arrow")).reason(&w.content)
+        ),
         "no bow ready"
     );
     assert_eq!(row(&w, "bolts"), Some(None));
@@ -460,7 +463,10 @@ fn the_knife_and_the_launcher_are_asked_for_with_no_time() {
     // Ready, with no wood: "no wood to hand".
     let mut w = equipped(false, 7, "short_bow");
     let lack = row(&w, "arrows").flatten().expect("no wood");
-    assert_eq!(lack.reason(&w.content), "no wood to hand");
+    assert_eq!(
+        crate::test_support::english_of(&w.content, &lack.reason(&w.content)),
+        "no wood to hand"
+    );
     pieces(&mut w, "wood", 1);
     assert_eq!(row(&w, "arrows"), Some(None));
     let wood = skill(&w, "woodcraft");

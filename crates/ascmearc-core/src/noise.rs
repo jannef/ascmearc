@@ -49,7 +49,7 @@ use crate::burden::Burden;
 use crate::content::Effect as ItemEffect;
 use crate::content::{Content, TerrainId};
 use crate::geom::{Dir, Pos};
-use crate::lang::{Arg, MessageId, Msg};
+use crate::lang::{MessageId, Msg};
 use crate::msg;
 use crate::skills::Effect;
 use crate::talent::TalentMods;
@@ -781,9 +781,8 @@ impl PerceivedSound {
     /// (`noise.heard_from`; `noise.heard` with no direction).
     pub fn message(&self, viewer: Pos) -> Msg {
         match Dir::toward(viewer, self.pos) {
-            // The direction's name is core's English word until it is converted (#1996).
             Some(dir) => (Msg::new(msg::noise::HEARD_FROM).role("hear", self.you_hear()))
-                .role("dir", Arg::Text(dir.compass_name().to_string())),
+                .role("dir", dir.compass_word()),
             None => Msg::new(msg::noise::HEARD).role("hear", self.you_hear()),
         }
     }

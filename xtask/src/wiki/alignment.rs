@@ -2,6 +2,7 @@
 //! much, what reads it, and the score and band each race and class starts with. The game shows
 //! only the band; the wiki states the numbers exactly (the game is vague, the wiki is accurate).
 
+use super::util::word;
 use super::util::{capital, signed, signed_or_zero};
 use ascmearc_core::alignment::{Band, Score};
 use ascmearc_core::content::{AlignmentRules, ClassActive, Content};
@@ -37,7 +38,7 @@ pub(super) fn alignment_bands(content: &Content) -> String {
         let _ = writeln!(
             out,
             "| {} | {scores} | {} |",
-            def.band.name(),
+            word(def.band.name(), "Bare"),
             def.description
         );
         top = def.from - 1;
@@ -140,7 +141,9 @@ pub(super) fn alignment_quests(content: &Content) -> String {
         "| Quest | Given by | Completing it is | Worth | Offered to |\n|---|---|---|:---:|---|\n",
     );
     for q in quests {
-        let offered = q.requires_alignment.map_or("anyone".into(), |r| r.words());
+        let offered = q
+            .requires_alignment
+            .map_or("anyone".into(), |r| r.words(content));
         let _ = writeln!(
             out,
             "| {} | {} | {} | {} | {offered} |",
@@ -160,7 +163,7 @@ pub(super) fn alignment_gifts(content: &Content) -> String {
         .filter_map(|&a| content.class_active(a))
         .filter_map(|def| {
             def.alignment
-                .map(|bands| (def.name.as_str(), bands.words()))
+                .map(|bands| (def.name.as_str(), bands.words(content)))
         })
         .collect();
     gifts.sort();
@@ -193,7 +196,7 @@ pub(super) fn alignment_shops(content: &Content) -> String {
             let _ = writeln!(
                 out,
                 "| {} | {how} {way} | {} % |",
-                band.name(),
+                word(band.name(), "Bare"),
                 signed(favour)
             );
         }
@@ -227,7 +230,7 @@ pub(super) fn alignment_start(content: &Content) -> String {
             let _ = write!(
                 out,
                 " {} ({}) |",
-                band.name(),
+                word(band.name(), "Bare"),
                 signed_or_zero(score.value())
             );
         }

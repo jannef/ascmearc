@@ -13,7 +13,7 @@
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::{ScreenAction, ScreenName};
-use super::text::{profession_screen as T, ui, ui_with};
+use super::text::{profession_screen as T, ui, ui_msg, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::Bindings;
 use crate::render::console::Console;
@@ -92,7 +92,7 @@ impl ProfessionScreen {
                     key: def.id.clone(),
                     name: row.name,
                     takes: row.takes,
-                    why: row.unavailable.map(|why| why.reason(content)),
+                    why: row.unavailable.map(|why| ui_msg(why.reason(content))),
                     uses: def.uses,
                     wizard,
                     confirm: !wizard && def.uses.is_none() && view.craft_plan(row.id, &[]).is_ok(),

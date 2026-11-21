@@ -12,6 +12,7 @@
 //! [`init`] gathers the real inputs once at startup and [`locations`] hands the result out.
 
 use crate::cli::Args;
+use crate::ui::text::{UiText, files_screen as T, ui};
 use std::path::{Path, PathBuf};
 use std::sync::OnceLock;
 
@@ -102,9 +103,10 @@ pub struct Inputs {
 /// One line of `--paths` and of Settings > Files.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Entry {
-    pub label: &'static str,
+    /// The kind of file, as the files screen names it (`ui/files_screen.toml`): "Settings".
+    pub label: UiText,
     /// What is in the folder.
-    pub what: &'static str,
+    pub what: UiText,
     pub dir: Option<PathBuf>,
     pub reason: Reason,
 }
@@ -225,32 +227,32 @@ impl Locations {
         };
         vec![
             entry(
-                "Settings",
-                "settings.toml, with the key bindings",
+                T::SETTINGS,
+                T::SETTINGS_HOLDS,
                 self.config.dir.clone(),
                 &self.config.reason,
             ),
             entry(
-                "Graveyard",
-                "graveyard.toml, every character who has died",
+                T::GRAVEYARD,
+                T::GRAVEYARD_HOLDS,
                 self.config.dir.clone(),
                 &self.config.reason,
             ),
             entry(
-                "Saves",
-                "one save per character",
+                T::SAVES,
+                T::SAVES_HOLDS,
                 self.saves_dir(),
                 &self.data.reason,
             ),
             entry(
-                "Snapshots",
-                "dev snapshots (F5/F9), one per character",
+                T::SNAPSHOTS,
+                T::SNAPSHOTS_HOLDS,
                 self.snapshots_dir(),
                 &self.data.reason,
             ),
             entry(
-                "Logs",
-                "logs and crash reports",
+                T::LOGS,
+                T::LOGS_HOLDS,
                 self.logs.dir.clone(),
                 &self.logs.reason,
             ),
@@ -282,9 +284,9 @@ impl Locations {
             };
             out.push_str(&format!(
                 "\n{}: {}\n  {} ({})\n",
-                e.label,
+                ui(e.label),
                 place,
-                e.what,
+                ui(e.what),
                 e.reason.describe()
             ));
         }

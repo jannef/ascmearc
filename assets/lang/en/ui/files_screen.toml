@@ -1,5 +1,7 @@
 # Settings > Files (`crates/ascmearc/src/ui/files_screen.rs`). Ids alphabetical. The kinds of
-# file, what they hold, and why they are where they are come from `paths.rs`.
+# file and what they hold are named here, in the order `paths.rs` lists them (`Locations::entries`):
+# a kind as a label (`settings`), what its folder holds after it (`settings_holds`). Why they are
+# where they are still comes from `paths.rs`.
 #
 # The keys named in the footer are fixed (`Esc`): translate the words around them. The screen
 # wraps each text to its panel (docs/dev/localization.md "UI text").
@@ -19,6 +21,18 @@ text = "{up_down:bare} select   {confirm:bare} open folder   Esc back"
 [footer_back]
 text = "Esc back"
 
+[graveyard]
+text = "Graveyard"
+
+[graveyard_holds]
+text = "graveyard.toml, every character who has died"
+
+[logs]
+text = "Logs"
+
+[logs_holds]
+text = "logs and crash reports"
+
 # A kind's place when it is kept nowhere.
 [not_stored]
 text = "(not stored)"
@@ -30,6 +44,24 @@ text = "{label:bare} is not stored anywhere."
 # The folder was opened: `folder`, its path.
 [opened]
 text = "Opened {folder:bare}."
+
+[saves]
+text = "Saves"
+
+[saves_holds]
+text = "one save per character"
+
+[settings]
+text = "Settings"
+
+[settings_holds]
+text = "settings.toml, with the key bindings"
+
+[snapshots]
+text = "Snapshots"
+
+[snapshots_holds]
+text = "dev snapshots (F5/F9), one per character"
 
 [title]
 text = "Where are my files?"

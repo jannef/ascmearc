@@ -1,5 +1,6 @@
 //! Dialogue and quests: who talks and who gives quests.
 
+use super::util::word;
 use super::util::{capital, yes};
 use ascmearc_core::content::{Content, Dialogue, QuestDef, Reward, Speaker};
 use ascmearc_core::world::quest_asks;
@@ -99,9 +100,13 @@ fn speaks_to_text(d: &Dialogue) -> String {
     d.speaks_to.map_or_else(
         || "anyone".to_string(),
         |r| match (r.min, r.max) {
-            (Some(min), Some(max)) => format!("{} to {}", min.name(), max.name()),
-            (Some(min), None) => format!("{} or better", min.name()),
-            (None, Some(max)) => format!("{} or worse", max.name()),
+            (Some(min), Some(max)) => format!(
+                "{} to {}",
+                word(min.name(), "Bare"),
+                word(max.name(), "Bare")
+            ),
+            (Some(min), None) => format!("{} or better", word(min.name(), "Bare")),
+            (None, Some(max)) => format!("{} or worse", word(max.name(), "Bare")),
             (None, None) => "anyone".to_string(),
         },
     )

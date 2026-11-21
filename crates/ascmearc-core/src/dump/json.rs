@@ -41,7 +41,7 @@ pub fn json_in(world: &World, layers: &[Layer], include_state: bool, code: &str)
             let known = view.known_resistances(a);
             if !known.is_empty() {
                 let known: serde_json::Map<String, Value> = (known.into_iter())
-                    .map(|(k, w)| (content.damage_type(k).id.clone(), json!(w.word())))
+                    .map(|(k, w)| (content.damage_type(k).id.clone(), json!(content.english_word(w.word(), "bare"))))
                     .collect();
                 seen["known"] = Value::Object(known);
             }
@@ -305,7 +305,7 @@ pub fn json_in(world: &World, layers: &[Layer], include_state: bool, code: &str)
         "defence": view.own_defence(),
         "protection": view.own_protection(),
         "resistances": (view.own_resistances().into_iter())
-            .map(|(k, w)| (content.damage_type(k).id.clone(), json!(w.word())))
+            .map(|(k, w)| (content.damage_type(k).id.clone(), json!(content.english_word(w.word(), "bare"))))
             .collect::<serde_json::Map<String, Value>>(),
         "hunger": view.own_hunger(),
         "stance": view.own_stance().id(),

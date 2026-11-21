@@ -173,7 +173,9 @@ fn rings_fit_either_hand() {
     assert_eq!(rings(&w), (None, Some(5)));
     assert_eq!(last_message(&w), "You put on a silver ring.");
     assert_eq!(
-        equipment::mark(w.content(), w.perception().equipment(), 5).as_deref(),
+        equipment::mark(w.content(), w.perception().equipment(), 5)
+            .map(|m| w.content().english_word(m, "bare"))
+            .as_deref(),
         Some("on right hand")
     );
 }
@@ -241,7 +243,9 @@ fn an_aristocrat_alone_has_three_extra_ring_slots() {
         ])
     );
     assert_eq!(
-        equipment::mark(w.content(), w.perception().equipment(), f).as_deref(),
+        equipment::mark(w.content(), w.perception().equipment(), f)
+            .map(|m| w.content().english_word(m, "bare"))
+            .as_deref(),
         Some("on a finger")
     );
     let rows = crate::dump::layer_rows(&w, crate::dump::Layer::Equipment);
@@ -286,7 +290,9 @@ fn a_two_handed_weapon_takes_both_hands() {
     assert_eq!(last_message(&w), "You wield a quarterstaff in both hands.");
     let view = w.perception();
     assert_eq!(
-        equipment::mark(view.content(), view.equipment(), 0).as_deref(),
+        equipment::mark(view.content(), view.equipment(), 0)
+            .map(|m| view.content().english_word(m, "bare"))
+            .as_deref(),
         Some("wielded in both hands")
     );
     // A shield in the off hand puts the staff away from both hands.

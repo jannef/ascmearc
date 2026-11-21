@@ -136,6 +136,21 @@ read_it_on_what = "Read it on what? Name a stack you carry: `read:a:b`."
 read_on_yourself = "It is read on yourself: `read:a`."
 # `what`: the scroll as the player knew it, its title ("scroll labelled ZUNBAR").
 read_the = "You read {what:the}."
+# A reroll of the low faces of a spell's dice (`spell_words.rs::reroll_words`): `faces`, a list of
+# `reroll_face`s, each `n` a face ("1s").
+reroll = "Your {faces:and} are rolled again."
+reroll_face = "{n:bare}s"
+# A spell's roll as the abilities menu, a wand's description, and the `spells` dump say it
+# (`spell_words.rs::roll_words`): `roll` the dice as written ("4d6+2", a fixed roll its number),
+# or, in `roll_rule` and the `roll_leech_*`, the clause so far; `kind` a damage type
+# (`damage_type:<id>`) and `rule` its type's rule (the data's words, text).
+roll_called = "{roll:bare} called"
+roll_harm = "{roll:bare} {kind:bare}"
+roll_healed = "{roll:bare} healed"
+roll_leech_all = "{roll:bare}, all of it yours"
+roll_leech_half = "{roll:bare}, half of it yours"
+roll_leech_part = "{roll:bare}, part of it yours"
+roll_rule = "{roll:bare}, {rule:bare}"
 # `who`: one a rod's burst caught that is too strong for it.
 shrugs_it_off = "{who:The} shrug{who:s} it off."
 slip = "You slip on the slick ground!"
