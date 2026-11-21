@@ -15,8 +15,14 @@ pub struct ContentFiles {
     pub(super) read: RefCell<BTreeSet<String>>,
     /// The mods laid over the files ([`ContentFiles::overlay`]), in order (#1731).
     pub(super) mods: Vec<ModStamp>,
+    /// Whether each of `mods` is a text mod (every file under `lang/`, #1892).
+    pub(super) text: Vec<bool>,
     /// Each file a mod supplied, with the index in `mods` of the last that did.
     pub(super) origin: BTreeMap<String, usize>,
+    /// The texts a mod's language file was laid over, oldest first (the base's, then earlier
+    /// mods'): a language file merges by id ([`ContentFiles::overlay`]), so [`ContentFiles::
+    /// in_dir`] gives these before the file itself.
+    pub(super) layers: BTreeMap<String, Vec<String>>,
 }
 
 impl ContentFiles {
@@ -53,7 +59,9 @@ impl ContentFiles {
         self.files.keys().map(String::as_str)
     }
 
+    /// Puts `text` at `path`, replacing a file there whole (with any language layers under it).
     pub fn insert(&mut self, path: &str, text: &str) {
+        self.layers.remove(path);
         self.files.insert(path.to_string(), text.to_string());
     }
 
@@ -61,8 +69,10 @@ impl ContentFiles {
     /// (`data/creatures/`, with or without the slash) for a test that brings its own table.
     pub fn remove(&mut self, path: &str) {
         self.files.remove(path);
+        self.layers.remove(path);
         let dir = format!("{}/", path.trim_end_matches('/'));
         self.files.retain(|p, _| !p.starts_with(&dir));
+        self.layers.retain(|p, _| !p.starts_with(&dir));
     }
 
     /// The files of the content table `name`, in the order its entries are numbered:
@@ -214,13 +224,21 @@ impl ContentFiles {
 
     /// Files directly under `dir/` with their stem (`levels/hub.toml` → `hub`), then those
     /// directly under each campaign's `dir/` (`campaigns/showcase/levels/hub.toml`), the
-    /// campaigns in [`ContentFiles::campaign_order`]: each `(path, stem, text)`.
+    /// campaigns in [`ContentFiles::campaign_order`]: each `(path, stem, text)`. A language file
+    /// a mod was laid over comes once per layer, the oldest first (`layers`), so a reader that
+    /// adds each in turn merges them by id, the last laid winning.
     pub(super) fn in_dir<'a>(&'a self, dir: &'a str) -> Vec<(&'a str, &'a str, &'a str)> {
         let under = |prefix: String| {
-            self.files.iter().filter_map(move |(path, text)| {
-                let rest = path.strip_prefix(&prefix)?;
-                let stem = rest.strip_suffix(".toml")?;
-                (!stem.contains('/')).then_some((path.as_str(), stem, text.as_str()))
+            self.files.iter().flat_map(move |(path, text)| {
+                let stem = (path.strip_prefix(&prefix))
+                    .and_then(|rest| rest.strip_suffix(".toml"))
+                    .filter(|stem| !stem.contains('/'));
+                let layers = stem.map_or(&[][..], |_| {
+                    self.layers.get(path).map_or(&[][..], Vec::as_slice)
+                });
+                (layers.iter().map(String::as_str))
+                    .chain(std::iter::once(text.as_str()))
+                    .filter_map(move |text| Some((path.as_str(), stem?, text)))
             })
         };
         let mut all: Vec<_> = under(format!("{dir}/")).collect();

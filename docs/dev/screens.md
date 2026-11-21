@@ -3,9 +3,11 @@
 Developer notes for working on this part of Ascmearc (moved from CLAUDE.md, #185); the
 rules it implements are in spec/05-interface.md. Keep it current with the code, as CLAUDE.md says.
 
-A screen's words move to `assets/lang/en/ui/<module>.toml` as the L6 parts convert it (the
-abilities menu first): `ui::text::ui(text::abilities_screen::TITLE)` in place of a literal; how, in
-`docs/dev/localization.md` "UI text". Its keys stay fixed in its code.
+A screen's words are in `assets/lang/en/ui/<module>.toml`, never literals in its code: it asks
+`ui::text::ui(text::abilities_screen::TITLE)` (or `ui_with`, with slots) as it draws, so the
+words below in quotes are the English data, not the code's. How, and the guard on English in
+code (`cargo xtask lang --check`): `docs/dev/localization.md` "UI text" and "Language-neutral
+text". Its keys stay fixed in its code.
 
 Modal screens — main menu, the saved characters (Characters), new run and character
 creation (race, gender, class, talents, name, summary), pause, settings, controls, the `?` help, the inventory (`I`), the equipment screen
@@ -135,8 +137,8 @@ to open, read keys for, or draw one:
   `dialog(view)` from `PerceptionView::encounter()` whenever the run changed with one pending and
   none is open, so after the step and on load; a plain row per choice, `Action::Encounter`;
   `required`: no Esc, no info page over it, the owner's #796 Q9; `docs/dev/encounters.md`). **A new
-  question is a `Dialog` value at its call site**, e.g. `Dialog::yes_no("Quest", text,
-  "Accept", Action::.., "Not now")` returned as `ScreenAction::Dialog`, with no screen, prompt,
+  question is a `Dialog` value at its call site**, e.g. `Dialog::yes_no(&verb, text, &verb,
+  action, ui(T::DIALOG_NOT_NOW))` (`ui/craft_pick_screen.rs`; its words UI text) returned as `ScreenAction::Dialog`, with no screen, prompt,
   `InputMode`, or key handling of its own (quests are given through dialogue topics, which
   are no question).
   `--screen dialog` shows the quit dialog. On wasm, quit saves then reloads the page
@@ -232,7 +234,9 @@ to open, read keys for, or draw one:
   With no dialog, a walk into an anvil opens a screen instead (`ui::step_dialogs::step_screen`, #1387):
   Metalcraft's profession screen for one with its row, at once and with no time; untrained, the
   step goes to the rules, which say what it needs.
-- **The message line and `--more--`** (`ui/more.rs`, #207): `Game::read` is
+- **The message line and `--more--`** (`ui/more.rs`, #207): the log holds entries, which the
+  line renders in the language shown each frame (`text::message`; `docs/dev/localization.md`
+  "The log"). `Game::read` is
   the message log as it was when the player last acted (`Game::apply` takes it before applying;
   a new run starts with nothing read, so its welcome is news; `Game::from_world`, a resumed run,
   has read everything; a replay's last step is news, `play_replay`; a loaded snapshot calls

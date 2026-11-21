@@ -50,7 +50,8 @@ of a boot, a lantern's glass, and a pick's haft cost nothing.
 
 Metal is priced **by weight**, so mail is costly. A chain mail shirt weighs 11 kg and takes 22
 ingots and two hours. A suit of plate weighs 22 kg and takes 44 ingots and four hours, and it is
-listed only from Metalcraft 60. A [salvaged](salvage.md) suit gives back half: a chain shirt gives
+listed only from Metalcraft 60. Full plate, the heaviest suit, weighs 25 kg and takes 50 ingots
+and five hours, from Metalcraft 75. A [salvaged](salvage.md) suit gives back half: a chain shirt gives
 11 ingots.
 
 A stone pick or mattock needs no forge. It is a digger's first tool, knapped by hand from blocks

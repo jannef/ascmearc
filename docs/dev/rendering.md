@@ -167,7 +167,8 @@ about 11 000 glyphs), rasterized by fontdue into the atlases. The atlas holds pr
 the content's glyphs, and the fixed `GLYPH_RANGES` (Latin-1 and Latin Extended-A and -B, so
 every Old English letter: ā ǣ ȳ æ þ ð ƿ, #1816); any other character draws as `?`, and text
 fields refuse it (`atlas::draws`). Two tests in `render/atlas.rs` keep text from drawing `?`:
-`every_content_string_draws` (every string in every TOML file under `assets/`) and
+`every_content_string_draws` (every string in every TOML file under `assets/`, so every
+language's text under `assets/lang/`, where the player's words live: `docs/dev/localization.md`) and
 `every_ui_string_draws` (the string literals of `crates/ascmearc/src` and
 `crates/ascmearc-core/src` outside comments and test modules); a character either fails is
 added to `GLYPH_RANGES` (and `SAFETY_RANGES`), or the text changes. ascmearc-assets embeds it (`FONT`). The web build embeds a

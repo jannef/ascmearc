@@ -105,7 +105,7 @@ it by group, never at the end), its reader in one rule, a
 `describe.does_*` message (`messages/describe.toml`) in `describe.rs::phrase`, and a wiki word
 and tier form in `xtask/src/wiki/magic.rs` (`effect_words`, `tier_value`). Affixes are saved by id, so
 adding affixes keeps saves; their values and tiers are checked on load, strictly
-(`Magic::check`: each tier one the affix has, each value within its tier's range, but a unique's values set by hand, "Unique items"). The lenient
+(`Magic::check`: each tier one the affix has, each value within its tier's range, but a unique's past its last tier and off its bases, "Unique items"). The lenient
 read of #637 (re-tiering a save's affixes after a ladder was
 regraded) is gone with #840: saves are pinned to the version that wrote them
 (docs/dev/saves.md), so a regraded ladder needs nothing for saves.
@@ -322,20 +322,26 @@ id on another rarity than unique, and a unique without its id.
   ruin), `gear/condition_tests.rs` (never found worn), `temper_tests.rs::a_unique_is_never_worked`, the unique case of
   `salvage_tests.rs` and `set_tests.rs`'s refusals, and `ui/mod.rs`'s colour test.
 
-- **Affixes set by hand** (#2001): a unique's `affixes` may write an affix with its value
-  instead of a tier, `"mystic=30"`, where no tier reaches the value or the affix's bases leave
-  out the base (High Toby's `"sharp=2"`: no flat-damage affix rolls on a launcher). Only a
-  unique may (`magic_of`'s `hand_set`; an `[[item]]` that tries is a content error).
-  `level::hand_set_affix` checks it at load: a whole number of the sign of the affix's tiers,
-  and an effect that works on the base (`Effect::allowed_on`, `magic::may_roll_on`); the
-  category and per-kind limits hold as ever. It takes the affix's top tier (its level counts
-  toward the item level when `level` is unset, and prices it as any affix of that tier,
-  `MagicWorth::add`); the description and `Numbers` read its value as any other.
-  `Magic::check_set` leaves such affixes out of the tier-range and bases checks: the load passes
-  the hand-set ones, and `Magic::check` (saves) passes those of the unique's own table (an
-  affix equal to one there), so a value set by hand is valid on that unique alone. The wiki
-  table marks them `set` in place of a tier. Use it for the owner's exact numbers; a value a
-  tier tops is still written with its tier.
+- **Affixes written with their values** (#2001, #2044): a unique's `affixes` write each affix
+  with its value, never a tier, so a regrade of the ladders that renumbers the tiers leaves
+  every unique's numbers as they are (docs/design/item-level-40.md §10): `"mystic=30"`, a dice
+  family's die `"heavy=1d12"` (`Effect::is_dice`: Heavy, of Wounding, the elements; every tier
+  rolls one die until L2 gives tiers a dice count), a light's light `"of_light=item_glow"`. A
+  unique written with a tier (`"mystic:2"`) is a content error. `content/affix_value.rs::valued`
+  reads it at load: the affix takes the **first tier whose range holds the value** (a light's:
+  the tier of that light), whose level counts toward the item level when `level` is unset and
+  prices it (`MagicWorth::add`); a unique's value may lie **past the last tier** (away from
+  zero, `Tier::passed_by`), which it then takes; any other value no tier rolls is an error. A
+  unique may set an affix whose bases leave out its base, on an effect that works there
+  (`Effect::allowed_on`, `magic::may_roll_on`: High Toby's `"sharp=2"`, no flat-damage affix
+  rolls on a launcher); the category and per-kind limits hold as ever. `Magic::check_set`
+  holds the unique's affixes (the load passes them; `Magic::check`, the saves' guard, passes
+  those equal to the unique's own table's) to their tier's range but past the last tier's top,
+  and leaves out the bases, so such a value is valid on that unique alone. A level's
+  `[[item]]` may write the same form (`magic_of`), held within the ladder and the bases as a
+  rolled affix is; the showcase's keep their tiers. The wiki table marks a value past the
+  ladder or off the bases `set` in place of a tier. `content/unique_values_tests.rs` writes
+  down every unique's item level and values: a change there is a change to a unique.
 - **Placement**: `parse_stacks` (`content/object.rs`) makes `unique:ID` through
   `Content::place_unique` (`Uniques::place`). Content places each unique once (the data
   author's promise, not counted at load, #1205). `level::equip_ids` takes `unique:ID` in
@@ -356,6 +362,14 @@ id on another rarity than unique, and a unique without its id.
   offer (`docs/dev/npcs.md` "A trader's offer"; no other content places them), and the run's
   `WorldState::uniques_offered` keeps each to one offer a run. The wiki's
   "Carried by" names the offer with its chance (`offered_by`).
+- **The drop-pool three** (#1976): the Grandmother (a Masterwork mithril great sword: +10
+  damage, a d12 more, a d12 of necrotic, +4 to hit, +4 Strength, and Bleeding on half its
+  hits), Silverstrike (a Marvellous long war bow: Range ×2, +6 to hit, Keen, Steady), and the
+  Radiant (a Masterwork war hammer: Light `radiant_hammer`, radius 20, `data/lights.toml`; +4
+  damage, Keen, +4 Toughness, +12 hit points), in the shared `data/uniques/`, item level 12,
+  every affix written with its value. They are meant for the low-chance drop pool (#196; #2004 / #2009 may
+  move them to item level 40) and placed nowhere yet but the test world's quarry
+  (`campaigns/showcase/levels/quarry.toml`), so tests and captures reach them.
 - **Powers**, a variant each, read in one place each: `Power::Inflict { hit, added }` rides
   `Mods::local` of the weapon into `Profile::on_hit` (`sharpen`), which `World::resolve` hands
   to `after_blow` after the natural attack's `on_hit` (`Mods::worn` never carries it: it is the
@@ -368,6 +382,14 @@ id on another rarity than unique, and a unique without its id.
   for the player unless `WorldState::vision_dev` (set by the dev `vision:` action) and the AI's
   and ambush's sight checks for creatures. `Power::Ward { status, message }`: `World::afflict`
   returns before anything else when `Actor::ward` finds one, saying `message` to the player.
+  `Power::Light(LightId)` (`{ light = "radiant_hammer" }`, a preset of `data/lights.toml`;
+  #1976): `Mods::worn` carries it as a glowing affix's light (`Mods::add_light`: the
+  farther-reaching counts), so the light cache's `GLOW` source sheds it on the player and on a
+  creature alike, while worn or wielded. `Power::Range(times)` (`{ range = 2 }`, 2 or more,
+  only on a base with a `range`; #1976): `Mods::local` keeps it, and `Mods::range` is the
+  base's range plus what affixes add, times it, read by `Actor::launcher_range`,
+  `Actor::throw_range`, and `Numbers::of` (talents add after). A creature's AI still judges
+  its reach by its launcher's plain `range` (`world/creatures/ai.rs`), as it ignores Hunter's.
   `magic::worn_powers` lists the powers of what an actor has equipped.
 - **Description**: `describe::lines` adds `LineKind::Power` (the `phrase`) and
   `LineKind::Lore` after the affixes, only through `known_magic`; the UI labels the first
@@ -381,7 +403,9 @@ id on another rarity than unique, and a unique without its id.
 - **Tests**: `world/creatures/unique_tests.rs` (the table and the values set by hand, hiding
   until identified, placement, Widowmaker's poison and its 2d6 on every hit, High Toby's
   Bleeding by its chance on its keyed stream, the
-  Bedes' darkvision on and off and under the dev override, the Turncoat's ward, a save); the
+  Bedes' darkvision on and off and under the dev override, the Turncoat's ward, the Radiant's
+  light on and off and on a creature, Silverstrike's doubled range, the load's checks of both
+  powers, a save); the
   item description's text snapshots `unique-description` and `unique-description-unidentified`
   (the quarry's Stonebiter, the test world's unique). Tests that strip statuses or skills
   remove `campaigns/ascmearc/data/uniques` with them.

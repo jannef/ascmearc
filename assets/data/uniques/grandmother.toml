@@ -1,0 +1,16 @@
+# The Grandmother (#1976): a mithril great sword for the drop pool to come (#196; placed nowhere
+# yet but the test world's quarry). Very big damage, past any rare great sword's: its three
+# prefixes the damage affixes above their top tiers (+10, a d12 more, a d12 of necrotic: the old
+# woman's wasting touch), and a sure, strong arm. Every value set by hand (`=`), so a regrade
+# of the tiers leaves it as it is (docs/dev/magic-items.md "Unique items").
+[[unique]]
+id = "grandmother"
+name = "the Grandmother"
+object = "great_sword"
+affixes = ["sharp=10", "heavy=1d12", "withering=1d12", "of_precision=4", "of_the_bear=4"]
+level = 12
+# Its make holds six enchantments (docs/dev/enchanting.md): Masterwork mithril.
+quality = "masterwork"
+parts = [{ of = "mithril" }]
+power = { inflict = "bleeding", chance = 50, severity = 1, phrase = "Its cuts are slow to close." }
+lore = "She has outlived three houses, and buried every son who bore her."

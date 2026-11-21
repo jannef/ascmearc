@@ -30,8 +30,9 @@ drink_and_buy = { text = "Joit sen, ostit sen: {price:bare} kultaa {what:ela}.",
 drunk_or_not = { text = "Juotu tai ei, {what:nom} maksaa yhä {price:bare} kultaa.", of = "85cb11" }
 eat_and_buy = { text = "Söit sen, ostit sen: {price:bare} kultaa {what:ela}.", of = "763725" }
 eaten_or_not = { text = "Syöty tai ei, {what:nom} maksaa yhä {price:bare} kultaa.", of = "3951bd" }
-# An escort given something: `who` the escort, `what` what it took off for it.
-escort_drops = { text = "{who:Nom} pudottaa {what:gen}.", of = "a61fd2" }
+# An escort given something: `who` the escort, `what` what it took off for it, a total object
+# (one: the genitive; counted: the numeral and the partitive, "kolme nuolta").
+escort_drops = { by = "what.number", one = "{who:Nom} pudottaa {what:gen}.", many = "{who:Nom} pudottaa {what:nom}.", of = "a61fd2" }
 escort_follows = { text = "{who:Nom} seuraa sinua.", of = "725168" }
 escort_not_with_you = { text = "{who:Nom} ei ole mukanasi.", of = "7fe0e7" }
 escort_puts_on = { text = "{who:Nom} pukee ylleen {what:gen}.", of = "7cd33d" }

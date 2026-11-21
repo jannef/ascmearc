@@ -22,9 +22,9 @@ be done once the page is going), so what can be lost is the turns since the last
 most `AUTOSAVE_TURNS` (50) turns, or the last change of level (#1591). Only the `web-sys` features in `crates/ascmearc/Cargo.toml` are enabled (size).
 
 **Saves are pinned to the game version that wrote them** (#840; `spec/06-content.md` "Saves, permadeath, the graveyard"). The envelope (`ascmearc-core/src/save.rs`) is `magic`, `game_version`
-(`ascmearc_core::GAME_VERSION`, the workspace version), `content_fingerprint`, `mods` (the mods
+(`ascmearc_core::GAME_VERSION`, the workspace version), `content_fingerprint`, `mods` (the content mods
 the run was played with, `[{id, version}]` in load order, left out without any; #1731,
-docs/dev/mods.md), and the state; `save::decode` refuses a save whose `game_version` is not this
+docs/dev/mods.md; text mods are never listed, #1892, docs/dev/mods.md "Text mods"), and the state; `save::decode` refuses a save whose `game_version` is not this
 build's (`SaveError::OtherVersion`, before the state is read; a save that names none, from before
 the pin, is "an older version"), then one made with other mods (`OtherMods`, saying both sets),
 then one whose fingerprint differs (`ContentMismatch`), then one that does not read (`Corrupt`).
@@ -56,9 +56,10 @@ and hashed; the business partner is an actor like the servant.
 
 The message log (`WorldState::messages`, `messages.rs`) is saved and hashed as composition
 entries, never as text (#1885; `docs/dev/localization.md` "The log"): each `{turn, id, args,
-count}`, `args` left out while empty and `count` while 1, `passing` neither saved nor hashed. A
-line still said as text is the `literal` entry with its text (`{"id":"literal","args":{"text":
-{"text":"You hit the kobold."}}}`) until its subsystem is converted. So a changed English word
+count}`, `args` left out while empty and `count` while 1, `passing` neither saved nor hashed. The
+few lines said as text, each language-neutral with its reason (a typed name, an error's own
+words, a dev line; `docs/dev/localization.md` "Language-neutral text"), are the `literal` entry
+with its text (`{"id":"literal","args":{"text":{"text":"…"}}}`). So a changed English word
 in `assets/lang/` moves no state hash and loads in any save; a renamed message id, a role added,
 or an argument changed does, like any field, under the version pin.
 

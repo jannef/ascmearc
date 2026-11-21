@@ -6,7 +6,7 @@
 id = "grendles_grape"
 name = "Grendles Grāpe"
 object = "gauntlets"
-affixes = ["accurate:5", "vicious:3", "hardened:4", "of_the_bear:6", "of_celerity:11", "of_the_ox:5"]
+affixes = ["accurate=3", "vicious=2", "hardened=3", "of_the_bear=4", "of_celerity=16", "of_the_ox=4"]
 level = 12
 # Six enchantments need its make (docs/dev/enchanting.md): Masterwork mithril.
 quality = "masterwork"

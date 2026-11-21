@@ -59,7 +59,8 @@ struct EnvelopeOut<'a> {
     magic: &'static str,
     game_version: &'a str,
     content_fingerprint: u64,
-    /// The mods the run was played with, in order (#1731); left out without any.
+    /// The content mods the run was played with, in order (#1731); left out without any. Text
+    /// mods are never listed (#1892): a save loads with or without them.
     #[serde(skip_serializing_if = "<[ModStamp]>::is_empty")]
     mods: &'a [ModStamp],
     state: &'a WorldState,
@@ -80,7 +81,11 @@ struct EnvelopeIn {
 
 /// Serializes the world's state into save bytes.
 pub fn try_encode(world: &World) -> Result<Vec<u8>, SaveError> {
-    try_encode_state(world.state(), world.fingerprint(), world.content().mods())
+    try_encode_state(
+        world.state(),
+        world.fingerprint(),
+        world.content().content_mods(),
+    )
 }
 
 /// Serializes a state (for example a clone taken earlier) with the content fingerprint and the
@@ -157,10 +162,10 @@ pub fn decode(bytes: &[u8], content: Arc<Content>) -> Result<World, SaveError> {
             found: envelope.game_version,
         });
     }
-    if envelope.mods != content.mods() {
+    if envelope.mods != content.content_mods() {
         return Err(SaveError::OtherMods {
             found: describe_mods(&envelope.mods),
-            active: describe_mods(content.mods()),
+            active: describe_mods(content.content_mods()),
         });
     }
     if envelope.content_fingerprint
@@ -286,19 +291,87 @@ mod tests {
         );
     }
 
+    /// The content with the repository's mods `ids` (`mods/<id>/`) laid over, in order; a mod
+    /// given as `(id, files)` lays those files.
+    fn with_mods(mods: &[(&str, Vec<(String, String)>)]) -> Arc<Content> {
+        let mut files = crate::content::ContentFiles::builtin();
+        for (id, mod_files) in mods {
+            let stamp = ModStamp {
+                id: (*id).into(),
+                version: "1.0.0".into(),
+            };
+            files.overlay(
+                stamp,
+                mod_files.iter().map(|(p, t)| (p.as_str(), t.as_str())),
+            );
+        }
+        Arc::new(Content::load(&files).expect("the mods load"))
+    }
+
     /// The content with the repository's example mod, `mods/pride_month/`, laid over.
     fn with_pride_month() -> Arc<Content> {
-        let mut files = crate::content::ContentFiles::builtin();
-        let mod_files = crate::content::pride_month();
-        let stamp = ModStamp {
-            id: "pride_month".into(),
-            version: "1.0.0".into(),
-        };
-        files.overlay(
-            stamp,
-            mod_files.iter().map(|(p, t)| (p.as_str(), t.as_str())),
-        );
-        Arc::new(Content::load(&files).expect("the mod loads"))
+        with_mods(&[("pride_month", crate::content::pride_month())])
+    }
+
+    fn creaky_doors() -> (&'static str, Vec<(String, String)>) {
+        ("creaky_doors", crate::content::test_mod("creaky_doors"))
+    }
+
+    /// A text mod (#1892) is never recorded: a save made without the example text mod loads
+    /// with it, one made with it loads without it, and its log reads in either.
+    #[test]
+    fn a_text_mod_never_refuses_a_save() {
+        let plain = encode(&world());
+        assert!(decode(&plain, with_mods(&[creaky_doors()])).is_ok());
+        let text = with_mods(&[creaky_doors()]);
+        let mut w = World::new(text.clone(), "showcase", None).expect("world");
+        w.apply(&Action::Wait);
+        let bytes = encode(&w);
+        let restored = decode(&bytes, content()).expect("loads without the text mod");
+        assert_eq!(restored.state(), w.state());
+        assert_eq!(restored.log(), w.log());
+        // With a content mod beside it, only the content mod counts.
+        let both = with_mods(&[
+            ("pride_month", crate::content::pride_month()),
+            creaky_doors(),
+        ]);
+        let mut w = World::new(both, "showcase", None).expect("world");
+        w.apply(&Action::Wait);
+        let bytes = encode(&w);
+        assert!(decode(&bytes, with_pride_month()).is_ok());
+        assert!(matches!(
+            decode(&bytes, text),
+            Err(SaveError::OtherMods { .. })
+        ));
+    }
+
+    /// A mod with content and text pins the save by its content: refused without it, whatever
+    /// text mods are on.
+    #[test]
+    fn a_mod_with_content_and_text_pins_the_save() {
+        let mut files = crate::content::pride_month();
+        files.push((
+            "lang/en/messages/doors.toml".into(),
+            "open = \"You open the door, proudly.\"\n".into(),
+        ));
+        let both = with_mods(&[("pride_month", files)]);
+        assert_eq!(both.content_mods().len(), 1);
+        let mut w = World::new(both.clone(), "showcase", None).expect("world");
+        w.apply(&Action::Wait);
+        let bytes = encode(&w);
+        assert!(matches!(
+            decode(&bytes, content()),
+            Err(SaveError::OtherMods { .. })
+        ));
+        assert!(matches!(
+            decode(&bytes, with_mods(&[creaky_doors()])),
+            Err(SaveError::OtherMods { .. })
+        ));
+        assert!(matches!(
+            decode(&encode(&world()), both.clone()),
+            Err(SaveError::OtherMods { .. })
+        ));
+        assert!(decode(&bytes, both).is_ok());
     }
 
     /// A save records its mods (#1731): one made without the mod is refused with it, one made

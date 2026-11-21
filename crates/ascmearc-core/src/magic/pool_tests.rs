@@ -230,3 +230,21 @@ fn a_level_file_may_not_roll_a_pool() {
         .message;
     assert!(err.contains("rolled only in vaults"), "{err}");
 }
+
+#[test]
+fn full_plate_rolls_from_item_level_20_and_not_below() {
+    let c = content();
+    let plate = c.object_id("full_plate").expect("full plate");
+    let body = pool(&c, &["body_armour"], LootGrade::Any);
+    let found = |level| (roll_many(&c, &body, level, 600).iter()).any(|s| s.object == plate);
+    assert!(!found(19), "never below its level");
+    assert!(found(20), "a suit of full plate at item level 20");
+    assert!(found(MAX_ITEM_LEVEL));
+    // Nor below it from loot of any class, not only from a pool of body armour.
+    let mut rng = Rng::stream(3, "full_plate");
+    assert!(
+        (0..4000)
+            .filter_map(|_| loot::roll(&c, &mut rng, 19, LootGrade::Any))
+            .all(|s| s.object != plate)
+    );
+}

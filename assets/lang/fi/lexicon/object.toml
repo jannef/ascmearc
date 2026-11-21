@@ -25,6 +25,7 @@ doublet = { word = "nuttu/1*C", forms = { material = "villainen" } }
 dried_meat = "kuiva|liha|suikale/48"
 flask_of_oil = "öljy|pullo/1"
 frock = "mekko/1*A"
+full_plate = { word = "täys|haarniska/13", forms = { material = "teräksinen" } }
 fur_cloak = { word = "turkis|viitta/9*C", forms = { material = "turkiksinen" } }
 gauntlets = { word = "panssari|hansikas/41*A", plural_only = true, forms = { material = "rautainen" } }
 gem = "jalo|kivi/7"

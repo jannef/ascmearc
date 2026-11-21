@@ -108,6 +108,7 @@ fn the_stock_follows_the_bases_weight_as_the_design_counts_it() {
         ("scale_mail", "bronze", 28),
         ("banded_mail", "steel", 34),
         ("plate_armour", "steel", 44),
+        ("full_plate", "steel", 50),
         ("buckler", "iron", 3),
         // A wooden shield's weight in iron.
         ("small_shield", "iron", 13),
@@ -195,6 +196,16 @@ fn plate_is_beyond_skill_below_60() {
     apply(&mut w, "craft:plate_armour:a");
     assert_eq!(said(&w), "That is beyond your skill.");
     assert_eq!(w.state.time, start, "no time");
+}
+
+#[test]
+fn full_plate_is_beyond_skill_below_75() {
+    let mut w = world();
+    stock(&mut w, "steel", 50);
+    train(&mut w, "metalcraft", 74);
+    assert_eq!(row(&w, "full_plate").1, Some(RecipeLack::Skill));
+    train(&mut w, "metalcraft", 75);
+    assert_eq!(row(&w, "full_plate").1, None);
 }
 
 #[test]

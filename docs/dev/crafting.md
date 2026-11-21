@@ -348,6 +348,7 @@ P8's hide routes (#1353) and the stone tools take `<base>_by_hand`.
 | scale_mail | Metalcraft | Scale mail | — | 14 | 7200 | 30 | 28 iron |
 | banded_mail | Metalcraft | Banded mail | — | 15 | 10800 | 40 | 34 steel |
 | plate_armour | Metalcraft | Plate armour | — | 17 | 14400 | 60 | 44 steel |
+| full_plate | Metalcraft | Full plate | — | 19 | 18000 | 75 | 50 steel (#2050) |
 | buckler | Metalcraft | | inlay | 11 | 3600 | 0 | 3 iron |
 | small_shield | Metalcraft | | — | 12 | 3600 | 10 | 13 (wooden base: steel) |
 | large_shield | Metalcraft | | — | 13 | 5400 | 20 | 30 (wooden base) |

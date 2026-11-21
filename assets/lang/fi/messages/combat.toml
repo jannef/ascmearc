@@ -55,8 +55,9 @@ heat_leaves_unmarked = { text = "Kuumuus ei jätä jälkeä {what:ade}.", of = "
 heat_scorches = { text = "Kuumuus kärventää {what:par}.", of = "e0ec8c" }
 in_the_way = { text = "Jokin on tiellä.", of = "ce360b" }
 keep_wits = { text = "Pidät pääsi kylmänä.", of = "2dc11a" }
-# `what`: the player's weapon, knocked away by `who`.
-knocked_from_hand = { text = "{who:Nom} lyö {what:gen} kädestäsi!", of = "39bd8a" }
+# `what`: the player's weapon, knocked away by `who`; a total object (one: the genitive;
+# counted: the numeral and the partitive, "kolme nuolta").
+knocked_from_hand = { by = "what.number", one = "{who:Nom} lyö {what:gen} kädestäsi!", many = "{who:Nom} lyö {what:nom} kädestäsi!", of = "39bd8a" }
 lands_beside_you = { text = "Se putoaa viereesi.", of = "b4044b" }
 learned_ability = { text = "Olet oppinut {ability:gen}.", of = "869173" }
 no_ability = { text = "Sinulla ei ole sellaista kykyä.", of = "f10090" }

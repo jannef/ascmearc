@@ -1,0 +1,9 @@
+# The example text mod (#1892; the wiki's Mods page tells how to make one). Every file beside this
+# one lies under `lang/`, so it is a text mod: it changes how the game reads, never what a save
+# means, and a save made with it loads without it, and the other way round. A language file merges
+# with the game's by id: `lang/en/messages/doors.toml` here holds only the lines it rewords, and
+# every other door line stays the game's.
+name = "Creaky doors"
+description = "Doors creak, groan, and scrape as they open and close."
+version = "1.0.0"
+game_version = "0.22.0"

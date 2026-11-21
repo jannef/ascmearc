@@ -24,7 +24,7 @@ not required. Avoid being overtly verbose."
 - [`spec/02-worlds.md`](spec/02-worlds.md) — **Worlds**: campaigns, the showcase (the test world), the Ascmearc campaign, names and language
 - [`spec/03-rendering.md`](spec/03-rendering.md) — **Rendering**: glyphs and layers, visual light, motion and time, effects, readability
 - [`spec/04-perception.md`](spec/04-perception.md) — **Perception**: line of sight, light, visibility and eyes, creature sight, sky and weather, temperature and ice, overworld sight, hearing, the perception snapshot
-- [`spec/05-interface.md`](spec/05-interface.md) — **Input and interface**: keys, the abilities menu, screens and prompts, menus and runs, what is shown, the status bar, messages
+- [`spec/05-interface.md`](spec/05-interface.md) — **Input and interface**: keys, the abilities menu, screens and prompts, menus and runs, what is shown, the status bar, messages, language
 - [`spec/06-content.md`](spec/06-content.md) — **Content**: data, level files, terrain, creature types, objects and materials, factions, dialogue and quests, scenarios, saves and the graveyard
 - [`spec/07-generation.md`](spec/07-generation.md) — **Generation**: branches, vaults, the endless branch, the Pits, danger and spawning, the overworld, encounters, shops, special rooms
 - [`spec/08-architecture.md`](spec/08-architecture.md) — **Architecture, time, determinism**: the core and the app, time and speed, rest, dice and events, determinism

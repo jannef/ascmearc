@@ -484,6 +484,12 @@ impl Effect {
         matches!(self, Effect::Elemental | Effect::Resistance)
     }
 
+    /// Whether its value is the sides of a die it adds (Heavy, of Wounding, the elements), so
+    /// content written by hand gives it as dice, `"heavy=1d8"` (#2044).
+    pub const fn is_dice(self) -> bool {
+        matches!(self, Effect::ExtraDamage | Effect::Elemental)
+    }
+
     /// Whether a curse may have it (`cursed = true`, #1754): an effect whose reader takes it the
     /// other way, as a hindrance: hunger comes faster, the piece is heavier, its wearer steps
     /// slower.
@@ -597,6 +603,19 @@ pub struct Tier {
     pub max: i32,
     /// A light's tier: the light the item gives.
     pub light: Option<LightId>,
+}
+
+impl Tier {
+    /// Whether it rolls `value`.
+    pub fn holds(&self, value: i32) -> bool {
+        (self.min..=self.max).contains(&value)
+    }
+
+    /// Whether `value` lies past its top, away from zero: where a unique's value written by hand
+    /// may lie on its affix's last tier (#2044; [`crate::magic::Magic::check`]).
+    pub fn passed_by(&self, value: i32) -> bool {
+        self.max != 0 && value.signum() == self.max.signum() && value.abs() > self.max.abs()
+    }
 }
 
 /// A prefix or a suffix.

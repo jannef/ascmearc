@@ -104,21 +104,25 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
     assert_eq!(magic.unique.as_deref(), Some("widowmaker"));
     assert_eq!(magic.level, 12);
     assert!(!magic.identified, "found unidentified");
-    // Each affix at its tier, its value the top of the tier's range.
-    let affixes = |id: &str, tier: u8| {
+    // Each affix with its value as written (#2044), at the first tier that rolls it.
+    let affixes = |id: &str, value: i32| {
         let a = content.affixes().get(id).expect(id);
+        let tier = (a.tiers.iter())
+            .position(|t| t.holds(value))
+            .expect("a tier")
+            + 1;
         Affix {
             id: id.into(),
-            tier,
-            value: a.tier(tier).expect("tier").max,
+            tier: u8::try_from(tier).expect("a tier"),
+            value,
         }
     };
     assert_eq!(
         magic.affixes,
         [
-            affixes("of_celerity", 11),
+            affixes("of_celerity", 16),
             affixes("of_the_lynx", 2),
-            affixes("of_precision", 3),
+            affixes("of_precision", 2),
         ]
     );
     assert_eq!(def.stack.count, 1);
@@ -140,7 +144,7 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
     assert_eq!(value("unhalwed_bedes", "mystic"), Some(30));
     assert_eq!(value("sigerics_star", "mystic"), None);
     assert_eq!(value("sigerics_star", "of_the_sage"), Some(6));
-    // A value set by hand keeps the affix's top tier, and passes the check a save gets.
+    // A value past the ladder takes the affix's last tier, and passes the check a save gets.
     let bedes = content.unique("unhalwed_bedes").expect("the Bedes");
     let mystic = &bedes.magic().affixes[0];
     let tiers = content.affixes().get("mystic").expect("Mystic").tiers.len();
@@ -150,7 +154,8 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
     let mut other = bedes.magic().clone();
     other.unique = None;
     assert!(other.check(content.object(bedes.object), &content).is_err());
-    // The criminals' four, the pedlar's three (#808), and Sigeric's (#1787), each with its power.
+    // The drop pool's three (#1976, the shared table first), the criminals' four, the pedlar's
+    // three (#808), and Sigeric's (#1787), each with its power.
     let powers: Vec<(&str, &str)> = (content.uniques())
         .filter(|u| u.stack.magic().is_some_and(|m| m.level == 12))
         .map(|u| {
@@ -158,6 +163,8 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
                 Power::Inflict { .. } => "inflict",
                 Power::Vision(_) => "vision",
                 Power::Ward { .. } => "ward",
+                Power::Light(_) => "light",
+                Power::Range(_) => "range",
             };
             (u.id.as_str(), power)
         })
@@ -165,6 +172,9 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
     assert_eq!(
         powers,
         [
+            ("grandmother", "inflict"),
+            ("radiant", "light"),
+            ("silverstrike", "range"),
             ("brosinga_mene", "ward"),
             ("eorcanstan", "ward"),
             ("grendles_grape", "ward"),
@@ -224,7 +234,8 @@ fn unidentified_it_hides_its_name_affixes_power_and_lore() {
     assert_eq!(affixes.count(), 3);
 }
 
-/// The form `"mystic=30"` (#2001): a unique's alone, checked at load.
+/// The form `"mystic=30"` (#2001, #2044): a unique's affixes are written so, never with a tier,
+/// and take the first tier that rolls the value, or past the ladder its last; checked at load.
 #[test]
 fn a_unique_sets_an_affix_value_by_hand_and_the_load_checks_it() {
     let load = |object: &str, affixes: &str| {
@@ -238,15 +249,44 @@ fn a_unique_sets_an_affix_value_by_hand_and_the_load_checks_it() {
         );
         Content::load(&files)
     };
+    let tiers = |content: &Content, id: &str| content.affixes().get(id).expect(id).tiers.clone();
     let content = load("gold_ring", "\"mystic=40\"").expect("a value past the top tier");
     let magic = content.unique("test_set").expect("loaded").magic();
     assert_eq!(magic.affixes[0].value, 40);
+    assert_eq!(
+        usize::from(magic.affixes[0].tier),
+        tiers(&content, "mystic").len()
+    );
+    // A value the ladder rolls takes the first tier that rolls it.
+    let content = load("gold_ring", "\"mystic=7\"").expect("a value on the ladder");
+    let affix = &content.unique("test_set").expect("loaded").magic().affixes[0];
+    let first = tiers(&content, "mystic").iter().position(|t| t.holds(7));
+    assert_eq!((affix.value, Some(usize::from(affix.tier) - 1)), (7, first));
+    // A dice family's value is a die: its sides (#2044).
+    let content = load("dagger", "\"heavy=1d12\", \"flaming=1d3\"").expect("dice");
+    let magic = content.unique("test_set").expect("loaded").magic();
+    let values: Vec<i32> = magic.affixes.iter().map(|a| a.value).collect();
+    assert_eq!(values, [12, 3]);
+    // A light's value is its light.
+    let content = load("gold_ring", "\"of_light=item_glow_bright\"").expect("a light");
+    let affix = &content.unique("test_set").expect("loaded").magic().affixes[0];
+    assert_eq!(
+        tiers(&content, "of_light")[usize::from(affix.tier) - 1].light,
+        content.light_id("item_glow_bright")
+    );
     // A bow takes flat damage set by hand, though Sharp never rolls on one.
     load("long_bow", "\"sharp=2\"").expect("an effect a bow's shots use");
     for (object, affixes, needle) in [
-        ("gold_ring", "\"mystic=-3\"", "sign"),
+        ("gold_ring", "\"mystic=-3\"", "no tier of `mystic` rolls it"),
+        ("gold_ring", "\"mystic=1\"", "no tier of `mystic` rolls it"),
         ("gold_ring", "\"mystic=x\"", "must be a number"),
+        ("gold_ring", "\"mystic:2\"", "not a tier"),
+        ("gold_ring", "\"mystic\"", "not a tier"),
         ("gold_ring", "\"nothing=3\"", "unknown affix"),
+        ("dagger", "\"heavy=8\"", "the value is a die"),
+        ("dagger", "\"heavy=2d8\"", "one die"),
+        ("dagger", "\"sharp=1d4\"", "must be a number"),
+        ("gold_ring", "\"of_light=3\"", "a light's value is a light"),
         // Range on a ring does nothing, set by hand or not.
         ("gold_ring", "\"hunters=3\"", "does nothing"),
         ("gold_ring", "\"mystic=30\", \"mystic=31\"", "category"),
@@ -254,18 +294,39 @@ fn a_unique_sets_an_affix_value_by_hand_and_the_load_checks_it() {
         let e = load(object, affixes).expect_err(affixes).to_string();
         assert!(e.contains(needle), "{affixes}: {e}");
     }
-    // A level's `[[item]]` names tiers only.
-    let mut files = files();
-    files.insert(
-        "levels/den.toml",
-        &format!(
-            "{LEVEL}[[item]]\nat = [2, 1]\nobject = \"gold_ring\"\naffixes = [\"mystic=30\"]\n"
-        ),
+    // The save's check: a value past the top on the last tier alone, the unique's alone.
+    let content = load("gold_ring", "\"mystic=40\"").expect("past the top");
+    let unique = content.unique("test_set").expect("loaded");
+    let ring = content.object(unique.object);
+    unique.magic().check(ring, &content).expect("as set");
+    let mut lower = unique.magic().clone();
+    lower.affixes[0].tier = 1;
+    assert!(
+        lower.check(ring, &content).is_err(),
+        "past a tier not the last"
     );
-    let e = Content::load(&files)
-        .expect_err("no hand-set value")
-        .to_string();
-    assert!(e.contains("only a unique item"), "{e}");
+}
+
+/// A level's `[[item]]` may write an affix with its value (#2044), held within the ladder and
+/// the affix's bases as a rolled one is.
+#[test]
+fn an_item_writes_an_affix_with_its_value_within_the_ladder() {
+    let load = |affixes: &str| {
+        let mut files = files();
+        files.insert(
+            "levels/den.toml",
+            &format!(
+                "{LEVEL}[[item]]\nat = [2, 1]\nobject = \"gold_ring\"\naffixes = [{affixes}]\n"
+            ),
+        );
+        Content::load(&files).map_err(|e| e.to_string())
+    };
+    load("\"mystic=7\"").expect("a value the ladder rolls");
+    let e = load("\"mystic=30\"").expect_err("past the ladder");
+    assert!(e.contains("no tier of `mystic` rolls it"), "{e}");
+    assert!(!e.contains("a unique's"), "{e}");
+    let e = load("\"sharp=2\"").expect_err("off the bases");
+    assert!(e.contains("does not roll on"), "{e}");
 }
 
 #[test]
@@ -283,7 +344,7 @@ fn a_unique_is_placed_by_its_id() {
         files.insert(
             "data/uniques/test_blade.toml",
             "[[unique]]\nid = \"test_blade\"\nname = \"Test Blade\"\nobject = \"stiletto\"\n\
-             affixes = [\"of_celerity:1\"]\n",
+             affixes = [\"of_celerity=8\"]\n",
         );
         files
     };
@@ -495,6 +556,99 @@ fn the_turncoat_wards_off_fear() {
     assert_eq!(w.messages().len(), said);
 }
 
+/// The Light power (#1976): the Radiant lights its bearer's surroundings while wielded.
+#[test]
+fn the_radiant_lights_the_dark_while_wielded_and_not_after() {
+    let mut w = world();
+    let (player, foe) = (w.player_id(), foe(&w));
+    let content = w.content().clone();
+    let preset = content.light_id("radiant_hammer").expect("its light");
+    assert_eq!(content.light(preset).radius, 20, "about twenty cells");
+    // In the dark, the rat three cells off is seen only by its light.
+    let seen = |w: &mut World| {
+        w.perceive(&mut Vec::new());
+        (w.perception().actors().iter()).any(|a| a.id == foe)
+    };
+    let lit_here = |w: &World| {
+        (w.perception().light_sources().iter())
+            .any(|s| s.preset() == Some(preset) && s.pos() == Some(w.player_pos()))
+    };
+    assert!(!seen(&mut w), "dark without it");
+    let item = wear(&mut w, player, "main_hand", "radiant");
+    assert_eq!(w.state.actors[&player].mods(&content).light, Some(preset));
+    assert!(seen(&mut w), "its light shows the rat");
+    assert!(lit_here(&w), "a light on its bearer, unidentified too");
+    // Carried and not wielded, it gives none.
+    w.state
+        .actors
+        .get_mut(&player)
+        .expect("player")
+        .equipment
+        .take_off(item);
+    assert_eq!(w.state.actors[&player].mods(&content).light, None);
+    assert!(!seen(&mut w), "dark again");
+    // A creature wielding it lights itself up.
+    wear(&mut w, foe, "main_hand", "radiant");
+    assert!(seen(&mut w), "the rat's own light shows it");
+}
+
+/// The Range power (#1976): Silverstrike shoots twice as far as a long bow.
+#[test]
+fn silverstrike_shoots_twice_as_far_as_its_bow() {
+    let content = world().content().clone();
+    let bow = content.object_id("long_bow").expect("long bow");
+    let range = |stack: Stack| {
+        let mut w = world();
+        let player = w.player_id();
+        wear_stack(&mut w, player, "missile_weapon", stack);
+        w.state.actors[&player].launcher_range(&content)
+    };
+    let plain = range(Stack::new(bow, 1)).expect("a bow's range");
+    assert_eq!(Some(plain), content.object(bow).range, "no talent adds");
+    let silverstrike = content.unique("silverstrike").expect("Silverstrike");
+    assert_eq!(silverstrike.power, Some(Power::Range(2)));
+    assert_eq!(range(silverstrike.stack.clone()), Some(2 * plain));
+    // Its numbers say so too, once it is identified (before, a long bow's).
+    let mut known = silverstrike.stack.clone();
+    let numbers = |s: &Stack| crate::magic::numbers::Numbers::of(s, &content);
+    assert_eq!(numbers(&known).attack.and_then(|a| a.range), Some(plain));
+    known.identify();
+    let numbers = numbers(&known);
+    assert_eq!(
+        numbers.attack.and_then(|a| a.range),
+        Some(2 * plain),
+        "the item's numbers"
+    );
+}
+
+/// A Light power names a light preset, a Range power is 2 or more on a base with a range, and a
+/// power names one rule.
+#[test]
+fn the_load_checks_light_and_range_powers() {
+    let load = |object: &str, power: &str| {
+        let mut files = files();
+        files.insert(
+            "data/uniques/test_power.toml",
+            &format!(
+                "[[unique]]\nid = \"test_power\"\nname = \"Test Power\"\nobject = \"{object}\"\n\
+                 affixes = [\"keen=1\"]\npower = {{ {power}, phrase = \"It does.\" }}\n"
+            ),
+        );
+        Content::load(&files).map(|_| ()).map_err(|e| e.to_string())
+    };
+    load("war_hammer", "light = \"torch\"").expect("a light preset");
+    load("short_bow", "range = 3").expect("three times as far");
+    for (object, power, needle) in [
+        ("war_hammer", "light = \"nothing\"", "unknown light preset"),
+        ("short_bow", "range = 1", "2 or more"),
+        ("war_hammer", "range = 2", "needs a base that shoots"),
+        ("short_bow", "range = 2, light = \"torch\"", "name one of"),
+    ] {
+        let e = load(object, power).expect_err(power);
+        assert!(e.contains(needle), "{power}: {e}");
+    }
+}
+
 #[test]
 fn a_unique_survives_a_save() {
     let mut w = world();
@@ -528,8 +682,9 @@ fn every_unique_is_of_its_own_rarity_and_only_uniques_are() {
         assert_eq!(magic.check(def, &content), Ok(()), "{}", u.id);
         ids.push(u.id.as_str());
     }
-    // The outlaws' four, Sigeric's Star, the pedlar's three, and the test world's Stonebiter.
-    assert_eq!(ids.len(), 9, "{ids:?}");
+    // The outlaws' four, Sigeric's Star, the pedlar's three, the drop pool's three (#1976), and
+    // the test world's Stonebiter.
+    assert_eq!(ids.len(), 12, "{ids:?}");
     let widowmaker = unique(&w, "widowmaker");
     let magic = widowmaker.magic().expect("magic");
     let stiletto = content.object(widowmaker.object);

@@ -1,5 +1,5 @@
-//! `cargo xtask lang [--check] [--strict CODE]... [--stamp CODE [--restamp]] [--dir PATH]`
-//! (`docs/design/localization.md` §15, `docs/dev/localization.md` "The checker").
+//! `cargo xtask lang [--check] [--strict CODE]... [--stamp CODE [--restamp]] [--dir PATH]
+//! [--mod DIR]...` (`docs/design/localization.md` §15, `docs/dev/localization.md` "The checker").
 //!
 //! Reads `assets/lang/<code>/` (or `--dir`) with the `ascmearc-lang` parsers, never a parser of
 //! its own, and reports per language: missing ids (a warning; an error for a `--strict`
@@ -10,6 +10,10 @@
 //! names. `--stamp` writes `of` into the entries that lack one, `--restamp` also
 //! refreshes the stale ones; the diff is the review.
 //!
+//! `--check` then checks each mod's `lang/` laid over the game's (`lang/mods.rs`, #1892): every
+//! mod under the repository's `mods/`, or the `--mod` folders, reporting what the mod adds (the
+//! test mods under `tests/mods/` in `lang/mods.rs`' tests).
+//!
 //! `--check` also runs the guard against English in code (`lang/neutral.rs`, #2035): text said
 //! as written only with a `lang:` reason.
 //!
@@ -18,6 +22,7 @@
 
 mod data;
 mod fi_tools;
+mod mods;
 mod neutral;
 mod registers;
 
@@ -56,16 +61,23 @@ pub enum Mode {
 pub struct Options {
     pub mode: Mode,
     pub dir: Option<PathBuf>,
+    /// The mod folders `--check` checks (`--mod`); none given, every one in `mods/`.
+    pub mods: Vec<PathBuf>,
 }
 
 pub fn parse_mode(args: &[String]) -> Result<Options, String> {
     if let Some(mode) = parse_fi_tools(args)? {
-        return Ok(Options { mode, dir: None });
+        return Ok(Options {
+            mode,
+            dir: None,
+            mods: Vec::new(),
+        });
     }
     let mut strict = Vec::new();
     let mut stamp = None;
     let mut restamp = false;
     let mut dir = None;
+    let mut mods = Vec::new();
     let mut it = args.iter();
     while let Some(arg) = it.next() {
         match arg.as_str() {
@@ -74,6 +86,7 @@ pub fn parse_mode(args: &[String]) -> Result<Options, String> {
             "--stamp" => stamp = Some(it.next().ok_or("--stamp needs a language code")?.clone()),
             "--restamp" => restamp = true,
             "--dir" => dir = Some(PathBuf::from(it.next().ok_or("--dir needs a path")?)),
+            "--mod" => mods.push(PathBuf::from(it.next().ok_or("--mod needs a folder")?)),
             other => return Err(format!("lang: unknown argument `{other}`")),
         }
     }
@@ -82,7 +95,7 @@ pub fn parse_mode(args: &[String]) -> Result<Options, String> {
         None if restamp => return Err("--restamp goes with --stamp CODE".into()),
         None => Mode::Check { strict },
     };
-    Ok(Options { mode, dir })
+    Ok(Options { mode, dir, mods })
 }
 
 /// The `fi` tools take their own positional arguments: `--forms fi [WORD...]`,
@@ -137,7 +150,15 @@ pub fn run(options: Options) -> Result<(), String> {
             report.errors.extend(voices.errors);
             let words = check_lexicon_ids(&langs, content.lexicon());
             report.errors.extend(words.errors);
+            // Each mod's language files, laid over these: what it adds to the report.
             if options.dir.is_none() {
+                let dirs = match options.mods.is_empty() {
+                    true => mods::repo_mods()?,
+                    false => options.mods.clone(),
+                };
+                let found = mods::check_mods(&langs, &report, &dirs, &strict);
+                report.errors.extend(found.errors);
+                report.warnings.extend(found.warnings);
                 report.warnings.extend(unused_ids(&langs));
                 let said = neutral::check_sources(&workspace_root());
                 report
@@ -202,14 +223,21 @@ pub fn run(options: Options) -> Result<(), String> {
 #[derive(Clone, Debug, Default)]
 pub struct LangFiles {
     pub files: BTreeMap<String, String>,
+    /// The texts mods laid over a file that merges by id (`lang/mods.rs`), in order: read after
+    /// it, each entry replacing the same id, as the game reads them.
+    pub over: BTreeMap<String, Vec<String>>,
 }
 
 impl LangFiles {
+    /// The files under `folder`, each `(path, text)`; a file mods were laid over comes again
+    /// for each of their texts, after its own.
     fn under<'a>(&'a self, folder: &'a str) -> impl Iterator<Item = (&'a str, &'a str)> {
-        self.files.iter().filter_map(move |(path, text)| {
-            path.strip_prefix(folder)
-                .and_then(|rest| rest.strip_prefix('/'))
-                .map(|_| (path.as_str(), text.as_str()))
+        self.files.iter().flat_map(move |(path, text)| {
+            let inside = (path.strip_prefix(folder)).is_some_and(|rest| rest.starts_with('/'));
+            let over = self.over.get(path).map_or(&[][..], Vec::as_slice);
+            (std::iter::once(text).chain(over))
+                .filter(move |_| inside)
+                .map(move |text| (path.as_str(), text.as_str()))
         })
     }
 }
@@ -493,7 +521,8 @@ fn parse_templates(code: &str, files: &LangFiles, report: &mut Report) -> Entrie
     for (folder, stem, text) in template_files(files) {
         match parse_file(folder, &stem, text) {
             Ok(entries) => {
-                parsed.insert(format!("{folder}/{stem}"), entries);
+                // A mod's layer replaces the ids it holds (`LangFiles::over`).
+                (parsed.entry(format!("{folder}/{stem}")).or_default()).extend(entries);
             }
             Err(e) => report.errors.push(format!("{code}: {e}")),
         }
@@ -902,6 +931,7 @@ mod tests {
                 .iter()
                 .map(|(p, t)| (p.to_string(), t.to_string()))
                 .collect(),
+            over: BTreeMap::new(),
         }
     }
 

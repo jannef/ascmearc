@@ -8,6 +8,9 @@ points here. Keep it current with the code, as CLAUDE.md says: a new flag, `--sc
 scenario, dump layer, or action is added here in the same PR, by its group, never at the end
 (an action's rules belong in its own topic file; here its syntax and a short gloss).
 
+The flags, layers, verbs, and dump fields are ids and stay English; the words the game and the
+dumps show the player come from `assets/lang/` (`docs/dev/localization.md`).
+
 Where the lists come from: `--scenario` names are the files of `assets/campaigns/*/scenarios/`,
 `--screen` names are `ui/screens.rs::ScreenName` (clap lists them: `cargo dev --help`), dump
 layers are `dump/layer.rs::Layer`, and action verbs are `action/text.rs`'s `VERBS` table (read by
@@ -40,9 +43,11 @@ metadata`'s `target_directory`) for the build output it reads and the files it w
   `assets/campaigns/showcase/levels/vast.toml`; deterministic, never hand-edit. `--check` fails
   if the file differs from the generator output; run it after touching `xtask/src/vast.rs` (CI runs it).
 - **Check the language files**, `cargo xtask lang [--check] [--strict CODE] [--stamp CODE
-  [--restamp]] [--dir PATH]` (`xtask/src/lang.rs`, #1890; CI runs `--check`;
+  [--restamp]] [--dir PATH] [--mod DIR]...` (`xtask/src/lang.rs`, #1890; CI runs `--check`;
   `docs/dev/localization.md` "The checker"): checks `assets/lang/<code>/` against English with
-  the `ascmearc-lang` parsers. Errors fail the run, a missing id is a warning (an error for a
+  the `ascmearc-lang` parsers, then each mod's `lang/` laid over it (every folder in `mods/`, or
+  the `--mod` folders; `xtask/src/lang/mods.rs`, #1892), reporting what each mod adds under
+  `mods/<id>:`. Errors fail the run, a missing id is a warning (an error for a
   `--strict` language). `--stamp CODE` writes `of` into the entries that lack one, `--restamp`
   refreshes the stale ones too (read the diff). `--dir` points it at another language folder.
   The Finnish translator's tools are the same command (`xtask/src/lang/fi_tools.rs`): `--forms fi
@@ -440,7 +445,9 @@ and are **dev-only**.
   Bookhold hostile, Master Brasswright turned]`.
 - `messages`: the last ten messages of the log, oldest first, a line each with its repeats
   (`You open the door. (×2)`), keys written as their command (`{key:help}`); in `--lang`'s
-  language.
+  language. The log holds entries, so the words are the language's data under `assets/lang/`
+  (`docs/dev/localization.md` "The log"): a wording change there moves no state hash, only these
+  lines and their snapshots.
 - `story`: the player's background story, a paragraph a line as the story screen tells it, `no
   story` without one.
 - `companion`: the player's animal companion as they know it, `Snel, a hound (grade 12) at (12,
