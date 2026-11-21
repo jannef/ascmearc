@@ -7,7 +7,7 @@ crashes_open = { text = "Ovi lentää rytisten auki!", of = "26da88" }
 in_the_way = { text = "Jokin on tiellä.", of = "ce360b" }
 kick_empty = { text = "Potkaiset tyhjää.", of = "ac7071" }
 # `what`: the terrain kicked.
-kick_hurts = { text = "{what:Gen} potkiminen satuttaisi vain jalkaasi.", of = "15dc51" }
+kick_hurts = { text = "Satuttaisit vain jalkasi potkiessasi {what:par}.", of = "15dc51" }
 locked = { text = "Ovi on lukossa.", of = "b80cf8" }
 nothing_to_close = { text = "Siellä ei ole mitään suljettavaa.", of = "49d3fa" }
 nothing_to_open = { text = "Siellä ei ole mitään avattavaa.", of = "ebb281" }

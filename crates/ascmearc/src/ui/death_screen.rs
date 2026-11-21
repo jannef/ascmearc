@@ -8,7 +8,7 @@
 
 use super::menu::{HINTS, Nav, Panel, Press, wrap};
 use super::screens::{MenuChoice, ScreenAction};
-use super::text::{death_screen as T, label_in, ui, ui_msg_in, ui_with};
+use super::text::{death_screen as T, ui, ui_msg_in, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use crate::settings::Clock;
@@ -88,13 +88,8 @@ impl DeathScreen {
         };
         lines.extend([
             ui_with(T::EPITAPH_BY, &[("by", Arg::text(by))]),
-            ui_with(
-                T::EPITAPH_PLACE,
-                &[(
-                    "place",
-                    Arg::text(label_in(view.content(), death.place.clone())),
-                )],
-            ),
+            // The place as a word, so a language can put it in a case ("Cēaptūnissa").
+            ui_with(T::EPITAPH_PLACE, &[("place", death.place.clone())]),
             String::new(),
             turns,
             ui_with(
@@ -242,7 +237,7 @@ mod tests {
             })
             .expect("an unseen killer");
         assert!(shown.contains("Y O U   D I E D"), "{shown}");
-        assert!(shown.contains("in The Arena,"), "{shown}");
+        assert!(shown.contains("in the Arena,"), "{shown}");
         assert!(shown.contains("Darkening, Year 1444, at 08:"), "{shown}");
         assert!(shown.contains("turns."), "{shown}");
         assert!(shown.contains("You had reached level 1."), "{shown}");

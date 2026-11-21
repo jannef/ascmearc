@@ -33,12 +33,12 @@
 "animated_coat_stand.0" = { word = "käsi|varsi/28", many = true }
 "animated_cooking_pot.0" = "reuna/9"
 "animated_cutlery.0" = { word = "piikki/5*A", many = true }
-"animated_kettle.0" = "nokka/9*A"
+"animated_kettle.0" = "nokka/10*A"
 "animated_ladle.0" = "kauha/9"
 "animated_lantern.0" = "liekki/5*A"
 "animated_rug.0" = { word = "poimu/1", many = true }
 "animated_stool.0" = { word = "jalka/9*D", many = true }
-"animated_teapot.0" = "nokka/9*A"
+"animated_teapot.0" = "nokka/10*A"
 "animated_warming_pan.0" = "pannu/1"
 "ankou.0" = "viikate/48*C"
 "annis_hag.0" = { word = "rauta|kynsi/28", many = true }
@@ -78,7 +78,7 @@
 "bone_drake.0" = { word = "kynsi/28", many = true }
 "bone_wyvern.0" = "pisto/1"
 "bound_squall.0" = "tuulen|puuska/9"
-"brass_peacock.0" = "nokka/9*A"
+"brass_peacock.0" = "nokka/10*A"
 "brimwolf.0" = "aalto/1*I"
 "burning_skull.0" = "puraisu/2"
 "cambion.0" = { word = "kynsi/28", many = true }
@@ -90,11 +90,11 @@
 "charnel_titan.0" = "isku/1"
 "charred_dead.0" = "nyrkki/5*A"
 "chasme.0" = "kärsä/10"
-"chicken.0" = "nokka/9*A"
+"chicken.0" = "nokka/10*A"
 "church_grim.0" = "puraisu/2"
 "cinder_elemental.0" = "kosketus/39"
 "cloud_giant.0" = "aamu|tähti/7*F"
-"cockatrice.0" = "nokka/9*A"
+"cockatrice.0" = "nokka/10*A"
 "corpse_candle.0" = "kosketus/39"
 "crawling_hand.0" = "kynsi/28"
 "crocodile.0" = "puraisu/2"
@@ -335,7 +335,7 @@
 "quicksilver_hound.0" = "puraisu/2"
 "rakshasa.0" = { word = "kynsi/28", many = true }
 "rat.0" = "puraisu/2"
-"raven.0" = "nokka/9*A"
+"raven.0" = "nokka/10*A"
 "redcap.0" = "polkaisu/2"
 "revenant.0" = "isku/1"
 "rimethurse.0" = "nyrkki/5*A"

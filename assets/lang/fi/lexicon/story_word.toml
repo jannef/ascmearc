@@ -11,7 +11,7 @@
 "data.parents.comfortable.home" = "talo/1"
 "data.parents.deep_halls.home" = "syvä/10 sali/5"
 "data.parents.farm_folk.home" = "maa|tila/9"
-"data.parents.foundling.guardian" = "sisar|kunta/9*J"
+"data.parents.foundling.guardian" = "sisar|kunta/10*J"
 "data.parents.foundling.home" = "luostari/6"
 "data.parents.jewellers_child.guardian" = "isä/10"
 "data.parents.jewellers_child.trade" = "hioma|pöytä/10*F"

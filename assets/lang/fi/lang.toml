@@ -30,6 +30,7 @@ fallback = "en"
 "sinulla" = "sulla"
 "sinulta" = "sulta"
 "sinulle" = "sulle"
+"sinut" = "sut"
 
 # Pohjalaismurre (Ostrobothnian).
 [registers.pohjalainen]
@@ -42,6 +43,7 @@ fallback = "en"
 "sinulla" = "sulla"
 "sinulta" = "sulta"
 "sinulle" = "sulle"
+"sinut" = "sut"
 
 # Turun murre.
 [registers.turku]
@@ -54,6 +56,7 @@ fallback = "en"
 "sinulla" = "sul"
 "sinulta" = "sult"
 "sinulle" = "sul"
+"sinut" = "sut"
 
 # Savon murre.
 [registers.savo]
@@ -74,11 +77,13 @@ fallback = "en"
 "sinulla" = "sul"
 "sinulta" = "sult"
 "sinulle" = "sul"
+"sinut" = "sut"
 
 # Agricolan aikainen vanha kirjasuomi (the drow).
 [registers.vanha_kirjasuomi]
 "sinä" = "sine"
 "sinuun" = "sinuhun"
+"sinut" = "sinun"
 
 # Karjala (the deep gnomes; the data names their register `cornish`).
 [registers.cornish]
@@ -91,6 +96,7 @@ fallback = "en"
 "sinulla" = "siula"
 "sinulta" = "siulta"
 "sinulle" = "siule"
+"sinut" = "siut"
 
 # Eesti (the lizardfolk: a foreign voice, its authored lines in Estonian).
 [registers.viro]
@@ -105,6 +111,7 @@ fallback = "en"
 "sinulle" = "sinule"
 "sinuksi" = "sinuks"
 "sinutta" = "sinuta"
+"sinut" = "sind"
 
 # Race id (`data/races.toml`) → register. A race not listed speaks `standard`; a speaker's
 # dialogue may name its own (`posh`, `cornish`).

@@ -26,7 +26,7 @@ draw_old_soldiers_wind = { text = "Ammennat voimaa vanhan soturin sitkeydestä."
 dread_settles = { text = "Kammo laskeutuu maahan ympärilläsi.", of = "cc0d6d" }
 eyes_grow_heavy = { text = "{who:Gen} silmäluomet alkavat painaa.", of = "552fb3" }
 fades_from_hand = { text = "{what:Nom} haihtuu kädestäsi.", of = "e658e7" }
-gain_talent = { text = "Saat taipumuksen: {talent:Nom}.", of = "a9e72d" }
+gain_talent = { text = "Saat taipumuksen {talent:bare}.", of = "a9e72d" }
 ground_already_hallowed = { text = "Tämä maa on jo pyhitetty.", of = "25b48d" }
 ground_hallowed = { text = "Maa ympärilläsi on pyhitetty.", of = "ffb783" }
 hallowing_fades = { text = "Pyhitys haihtuu.", of = "bf4e88" }
@@ -70,7 +70,7 @@ out_of_reach = { text = "Se on ulottumattomissa.", of = "12c2fe" }
 pale_light_in_hand = { text = "Kädessäsi on kalpeasta valosta tehty {what:nom}.", of = "b75517" }
 pale_light_in_hands = { text = "Käsissäsi on kalpeasta valosta tehty {what:nom}.", of = "f5d4a5" }
 peace_broken = { text = "Rauha on rikottu.", of = "239e85" }
-pluck_from_air = { text = "Nappaat {missile:gen} ilmasta.", of = "4e04d6" }
+pluck_from_air = { text = "Nappaat {missile:acc} ilmasta.", of = "4e04d6" }
 press_your_openings = { text = "Käytät löytämiäsi aukkoja hyväksesi.", of = "4fb79e" }
 prestige_already_dev = { text = "Olet jo `{id:bare}` (dev).", of = "5610a6" }
 quails = { text = "{who:Nom} kavahtaa!", of = "1113b9" }
@@ -84,11 +84,11 @@ rise_from_knees_came = { text = "{came:bare}; nouset polviltasi.", of = "18b1fe"
 roar_your_fury = { text = "Karjaiset raivosi ilmoille!", of = "73fca5" }
 room_consecrated = { text = "Hiljaisuus laskeutuu huoneeseen: se on pyhitetty.", of = "66ce32" }
 run_into_something = { text = "Törmäät johonkin!", of = "5b4d89" }
-set_down_too_much = { text = "Liikaa kannettavaa, jalkojesi juureen jää: {what:nom}.", of = "7d3858" }
+set_down_too_much = { text = "Kannat liikaa: {what:nom} jää jalkojesi juureen.", of = "7d3858" }
 shakes_off_song = { text = "{who:Nom} karistaa laulun yltään.", of = "e89879" }
 shop_not_sanctuary = { text = "Tämä on kauppa, ei pyhäkkö.", of = "56456f" }
 short_of_breath_for_charge = { text = "Henkesi ei riitä niin pitkään rynnäkköön.", of = "220557" }
-sing_a = { text = "Laulat {song:gen}.", of = "fa91c6" }
+sing_a = { text = "Laulat {song:acc}.", of = "fa91c6" }
 smite = { text = "Isket pyhällä vihalla!", of = "709f32" }
 stake_lost = { text = "Liikekumppanisi on kuollut, ja osuutesi on mennyttä.", of = "ea1a1b" }
 stake_not_worth_that_much = { text = "Osuutesi ei ole niin arvokas.", of = "f2f423" }
@@ -99,7 +99,7 @@ stipend_grown = { text = "Kotoa tulee sana: elatusrahasi on kasvanut.", of = "00
 stop_prayer_came = { text = "{came:bare}; keskeytät rukouksesi.", of = "6555d8" }
 stop_your_prayer = { text = "Keskeytät rukouksesi.", of = "b20d16" }
 strike_at_opening = { text = "Isket aukkoon.", of = "f6c4de" }
-stun = { text = "Tainnutat {who:gen}.", of = "8022ac" }
+stun = { text = "Tainnutat {who:acc}.", of = "8022ac" }
 takes_no_shape = { text = "`{id:bare}` ei ota muotoa.", of = "4c9b85" }
 tear_into_every_opening = { text = "Iskeydyt jokaiseen aukkoon!", of = "b78a27" }
 throw_what_where = { text = "Mitä heität, ja minne?", of = "ba6c34" }

@@ -75,7 +75,7 @@ fume = "Savu|verho/1"
 gale = "Myrsky|tuuli/26"
 gather = "Yrttien keruu/1"
 give = { word = "Lahja/10", forms = { bare = "Anna" } }
-glamour = "Harha|kuva/9"
+glamour = "Harha|kuva/10"
 grave_breath = "Haudan henkäys/39"
 grave_feast = "Haudan ateria/12"
 grave_spear = "Hauta|keihäs/41"

@@ -18,10 +18,10 @@ deathly_chill = { text = "Kuolettava kylmyys kulkee lävitsesi.", of = "c8aa80" 
 die = { text = "Kuolet...", of = "d1e389" }
 drained = { text = "Tunnet, kuinka {stat:bare} valuu sinusta pois!", of = "3a2bef" }
 draught_kept = { text = "Pullossa on vielä toiseen kulaukseen.", of = "d59604" }
-drink = { text = "Juot {what:gen}.", of = "6f886e" }
+drink = { text = "Juot {what:acc}.", of = "6f886e" }
 drown = { text = "Hukut...", of = "6b08da" }
 ease_somewhat = { text = "Lievität {disease:par} hieman.", of = "e8e19e" }
-eat = { text = "Syöt {what:gen}.", of = "9cbb8f" }
+eat = { text = "Syöt {what:acc}.", of = "9cbb8f" }
 eat_your_fill = { text = "Syöt itsesi kylläiseksi; loppu ei tee sinulle hyvää.", of = "f938b6" }
 elixir_no_difference = { text = "Et tunne mitään eroa.", of = "e1912f" }
 # How the death screen says a death (their own: the suffix `-nsa`).
@@ -54,7 +54,7 @@ food_rotten = { text = "mätä", of = "a77da6" }
 food_turning = { text = "pilaantumassa", of = "398a7a" }
 getting_hungry = { text = "Sinulle tulee nälkä.", of = "779ca2" }
 # `what`: the stat's word ("voima").
-gift_passes = { text = "Sinuun siirtyy jotakin sen olemuksesta: {what:bare}.", of = "a4e4da" }
+gift_passes = { text = "Sinuun siirtyy hiukan sen {what:bare}.", of = "a4e4da" }
 hard_time_getting_down = { text = "Saat vaivoin kaiken alas.", of = "97a5e3" }
 is_status = { text = "{who:Nom} on {status:nom}.", of = "3d7f6e" }
 it_is = { text = "Se on {what:nom}.", of = "843fc2" }
@@ -104,7 +104,7 @@ tastes_foul = { text = "Se maistuu kamalalta!", of = "c0bb56" }
 treat_ally = { text = "{ailment:Nom}", of = "b4cb32" }
 treat_ally_way = { text = "{ailment:Nom} ({way:ine})", of = "3d9070" }
 treat_own = { text = "{ailment:Nom}", of = "b8fa86" }
-throw_flask = { text = "Heität {what:gen}.", of = "af00e3" }
+throw_flask = { text = "Heität {what:acc}.", of = "af00e3" }
 ugh_rotten = { text = "Yäk! {what:Nom} oli pilaantunut.", of = "60220a" }
 vomit = { text = "Oksennat!", of = "a786a1" }
 wasting_away = { text = "Riudut nälästä.", of = "588cff" }

@@ -63,7 +63,7 @@ text = "Näkymättömän surmaama"
 
 [death_place]
 of = "56fb9a"
-text = "{cause:bare} paikassa {place:bare}"
+text = "{cause:bare}, {place:bare}"
 
 [death_line]
 of = "e02341"

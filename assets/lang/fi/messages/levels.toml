@@ -22,9 +22,9 @@ cannot_swim = { text = "Et osaa uida.", of = "bc339f" }
 climb_out_onto_ice = { text = "Kiipeät jään päälle.", of = "e6c56a" }
 # `place`: the level's name.
 climb_out_to = { text = "Kiipeät ulos {place:ill}.", of = "7d0529" }
-climb_to = { text = "Nouset portaita ylös {place:ill}.", of = "d4b382" }
+climb_to = { text = "Nouset portaat {place:ill}.", of = "d4b382" }
 come_upon = { text = "Vastaasi tulee {party:bare}.", of = "6027d0" }
-descend_to = { text = "Laskeudut portaita alas {place:ill}.", of = "a67381" }
+descend_to = { text = "Laskeudut portaat {place:ill}.", of = "a67381" }
 dive_in = { text = "Sukellat syvään veteen.", of = "4f6166" }
 enemies_about = { text = "Et voi livahtaa pois, kun vihollisia on lähellä.", of = "5e0276" }
 enter_place = { text = "Saavut {place:ill}.", of = "069d3d" }
@@ -46,14 +46,14 @@ known = { text = "Muistat heidät: pääsit heiltä pakoon täällä ennenkin.",
 # `boss`: the layer boss slain.
 lair_opens = { text = "Nyt kun {boss:nom} on kuollut, lattiaan aukeavat portaat.", of = "614f65" }
 # `what`: the player's light, theirs.
-light_goes_out = { by = "what.number", one = "{what:Nom} sammuu.", many = "{what:Nom} sammuvat.", of = "54e802" }
+light_goes_out = { text = "{what:Nom} sammuu.", of = "54e802" }
 lose_them_byways = { text = "Karistat heidät kannoiltasi sivupoluilla.", of = "a2a3e1" }
 lose_them_grass = { text = "Karistat heidät kannoiltasi korkeassa heinikossa.", of = "a2c8c7" }
 lose_them_hills = { text = "Karistat heidät kannoiltasi kukkuloilla.", of = "9c58bd" }
 lose_them_marsh = { text = "Karistat heidät kannoiltasi suolla.", of = "f34f20" }
 lose_them_woods = { text = "Karistat heidät kannoiltasi metsässä.", of = "bbc6f9" }
 # `place`: the hidden location found on the way out.
-mark_found = { text = "Merkitset karttaasi {place:gen}.", of = "d75c81" }
+mark_found = { text = "Merkitset karttaasi {place:acc}.", of = "d75c81" }
 # A dev action's: `place`, the hidden location.
 marked_dev = { text = "{place:Nom} on merkitty karttaasi (dev).", of = "e1afeb" }
 meet_on_way = { text = "Matkalla vastaasi tulee {party:bare}.", of = "795d4b" }
@@ -82,25 +82,25 @@ return_to = { text = "Palaat {place:ill}.", of = "8d5352" }
 run_you_down = { text = "He saavat sinut kiinni.", of = "00ba39" }
 see_each_other = { text = "Sinä ja {party:bare} huomaatte toisenne samalla hetkellä.", of = "bd5389" }
 # `what`: what lies on the cell the player entered, one stack; `price` its price, for sale.
-see_here = { text = "Tässä on {what:counted}.", of = "835e0e" }
-see_here_for_sale = { text = "Tässä on {what:counted} (myytävänä, {price:bare} kultaa).", of = "b21110" }
+see_here = { text = "Täällä on {what:nom}.", of = "835e0e" }
+see_here_for_sale = { text = "Täällä on {what:nom} (myytävänä, {price:bare} kultaa).", of = "b21110" }
 # `party` is set upon the player from cover, which the land gives.
 set_upon_grass = { text = "Korkeasta heinikosta kimppuusi käy {party:bare}!", of = "04e2dd" }
 set_upon_hills = { text = "Kivien takaa kimppuusi käy {party:bare}!", of = "891b83" }
 set_upon_reeds = { text = "Kaislikosta kimppuusi käy {party:bare}!", of = "9fe472" }
 set_upon_roadside = { text = "Tienvarresta kimppuusi käy {party:bare}!", of = "bab00c" }
 set_upon_undergrowth = { text = "Tiheiköstä kimppuusi käy {party:bare}!", of = "f28021" }
-several_objects_here = { text = "Tässä on useita esineitä.", of = "96dae4" }
+several_objects_here = { text = "Täällä on useita esineitä.", of = "96dae4" }
 slip_away_unseen = { text = "Livahdat pois huomaamatta.", of = "906a8e" }
 # `what`: the paper item, the player's.
-soaked = { by = "what.number", one = "{what:Nom} kastuu läpimäräksi ja pilaantuu.", many = "{what:Nom} kastuvat läpimäriksi ja pilaantuvat.", of = "7c97a0" }
+soaked = { text = "{what:Nom} kastuu läpimäräksi ja pilaantuu.", of = "7c97a0" }
 # `party`, seen first; where, as the land runs.
 spot_ahead = { text = "Edessäpäin on {party:bare}. He eivät ole huomanneet sinua.", of = "b067ce" }
 spot_on_road = { text = "Tiellä edessäpäin on {party:bare}. He eivät ole huomanneet sinua.", of = "b3e85e" }
 spot_on_trail = { text = "Polulla edessäpäin on {party:bare}. He eivät ole huomanneet sinua.", of = "227dc7" }
 stair_crumbles = { text = "Portaat murenevat soraksi takanasi.", of = "d06c2a" }
-staircase_down_here = { text = "Tässä on portaat alas.", of = "858d21" }
-staircase_up_here = { text = "Tässä on portaat ylös.", of = "645f14" }
+staircase_down_here = { text = "Täällä on portaat alas.", of = "858d21" }
+staircase_up_here = { text = "Täällä on portaat ylös.", of = "645f14" }
 stairs_blocked = { text = "Portaat ovat tukossa ({error:bare}).", of = "40b8ce" }
 stairs_lead_nowhere = { text = "Nämä portaat eivät vielä johda minnekään.", of = "6f106a" }
 stand_ground = { text = "Pidät pintasi.", of = "6e4248" }
@@ -152,28 +152,24 @@ abl = "{branch:gen} kerrokselta {floor:bare}"
 all = "{branch:gen} kerrokselle {floor:bare}"
 else = "{branch:nom} {floor:bare}"
 
-# `who`: the creatures that followed, all of one type ("koboltti", "kolme koboltia"; a numeral
+# `who`: the creatures that followed, all of one type ("koboldi", "kolme koboldia"; a numeral
 # subject takes a singular verb).
 [follow_down]
 of = "6924d0"
-by = "who.number"
-one = "{who:Nom} seuraa sinua portaita alas."
-many = "{who:Nom} seuraa sinua portaita alas."
+text = "{who:Nom} tulee perässäsi portaita alas."
 
 # `who`: the creatures that followed, of several types, a list of `follower`s.
 [follow_down_mixed]
 of = "2a9c91"
-text = "{who:And} seuraavat sinua portaita alas."
+text = "{who:And} tulevat perässäsi portaita alas."
 
 [follow_up]
 of = "4defb5"
-by = "who.number"
-one = "{who:Nom} seuraa sinua portaita ylös."
-many = "{who:Nom} seuraa sinua portaita ylös."
+text = "{who:Nom} tulee perässäsi portaita ylös."
 
 [follow_up_mixed]
 of = "42c4e1"
-text = "{who:And} seuraavat sinua portaita ylös."
+text = "{who:And} tulevat perässäsi portaita ylös."
 
 # An item of `follow_down_mixed`'s and `follow_up_mixed`'s list: `who`, the creatures of one
 # type that followed ("jättirotta", "kaksi koboltia").
@@ -189,4 +185,4 @@ many = "{who:nom}"
 of = "8b4a23"
 by = "what.number"
 one = "{what:Nom} uppoaa veteen."
-many = "Veteen uppoaa {what:counted}."
+many = "Veteen uppoaa {what:nom}."

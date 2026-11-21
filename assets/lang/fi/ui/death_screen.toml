@@ -30,7 +30,7 @@ text = "Olit ehtinyt tasolle {level:bare}."
 
 [epitaph_place]
 of = "eff1ae"
-text = "paikassa {place:bare},"
+text = "{place:ine},"
 
 [epitaph_turns]
 of = "e516e7"

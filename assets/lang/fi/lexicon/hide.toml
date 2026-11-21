@@ -210,7 +210,7 @@
 "creature.mimic_58" = "puinen/38 kuori/26"
 "creature.mimic_59" = "puinen/38 kuori/26"
 "creature.mimic_60" = "puinen/38 kuori/26"
-"creature.mud_golem" = "muta/9*F"
+"creature.mud_golem" = "muta/10*F"
 "creature.mummy_king" = { word = "kääre/48", many = true }
 "creature.mummy_lord" = { word = "kääre/48", many = true }
 "creature.mummy_priest" = { word = "kääre/48", many = true }
