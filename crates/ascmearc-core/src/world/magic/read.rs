@@ -32,13 +32,13 @@ use crate::action::{AttackKind, Event, Positions, ReadTarget};
 use crate::content::StatUse;
 use crate::content::{ActionKind, Reading, percent_of};
 use crate::geom::Pos;
-use crate::lang::{Msg, Phrase};
+use crate::lang::{Arg, Msg, Phrase};
 use crate::msg;
 use crate::object::Stack;
 use crate::rng::draw;
 use crate::skills::Use;
 use crate::world::combat::fight::{
-    End, Guard, Words, attack_message, creature, death_message, driven_message, word,
+    End, Guard, Words, attack_message, creature, death_message, driven_message,
 };
 use crate::world::{Spent, World};
 
@@ -161,32 +161,21 @@ impl World {
     /// are said at once, as their shots are): each blow on someone they see or themselves, and
     /// the deaths of those they saw; then any news it brought (a level gained). Its events go to
     /// presentation the same way: the spell's own, and the blows and deaths seen. The player's
-    /// own death is said as the turn is perceived. `(noun, verb)` say the spell's blows ("the
-    /// fireball burns").
+    /// own death is said as the turn is perceived. `words` say the spell's blows ("the
+    /// fireball burns"): a spell's ([`Words::of_spell`]), a birth sign's breath or Blaze
+    /// (`sign_noun:<active>`), a damage type's (`damage_type:<id>`), a creature's breath or burst.
     pub(in crate::world) fn say_spell(
         &mut self,
-        (noun, verb): (&str, &str),
-        made: Vec<Event>,
-        events: &mut Vec<Event>,
-    ) {
-        self.say_spell_of(word(noun), verb, made, events);
-    }
-
-    /// [`World::say_spell`] with the noun a phrase of its own: a birth sign's breath or Blaze
-    /// (`sign_noun:<active>`), a damage type (`damage_type:<id>`).
-    pub(in crate::world) fn say_spell_of(
-        &mut self,
-        noun: Phrase,
-        verb: &str,
+        words: Words,
         made: Vec<Event>,
         events: &mut Vec<Event>,
     ) {
         let content = self.content.clone();
         let player = self.state.player;
-        let words = Words::new(noun.clone(), verb, &content);
+        let noun = words.noun().clone();
         let mut said: Vec<Msg> = Vec::new();
         // Whom the last blow struck, as the player saw them (if they did).
-        let mut seen: Option<(End, &str)> = None;
+        let mut seen: Option<(End, Arg)> = None;
         for event in made {
             match event {
                 Event::Attacked {
@@ -212,8 +201,8 @@ impl World {
                     said.extend(attack_message(
                         &caster, &struck_at, &words, kind, strike, &guard,
                     ));
-                    seen =
-                        (!end.is_unseen()).then(|| (end, def.map_or("dies", |d| d.death_verb())));
+                    seen = (!end.is_unseen())
+                        .then(|| (end, def.map_or_else(|| "dies".into(), |d| d.dies_arg())));
                     if seen.is_some() {
                         events.push(event);
                     }
@@ -235,7 +224,7 @@ impl World {
                 Event::Died { actor, .. } if actor == player => events.push(event),
                 Event::Died { .. } => {
                     if let Some((end, dies)) = &seen {
-                        said.push(death_message(end, dies));
+                        said.push(death_message(end, dies.clone()));
                         events.push(event);
                     }
                 }

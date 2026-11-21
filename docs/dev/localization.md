@@ -330,7 +330,7 @@ of data, `damage_type:<id>.verb`), a recipe `recipe:<id>` (its name as written, 
 case), and a guild `guild:<id>`: its name without the article, a common noun when the data writes
 it with "the" and so said `{guild:the}` ("names you a Tin of the Weyfarers' Gilde", the
 character screen's rank row), else proper. A birth sign's breath and Blaze, said as a spell's
-blows (`World::say_spell_of`), are `sign_noun:<active>` (the ability's name in lower case, "fire
+blows (`World::say_spell`), are `sign_noun:<active>` (the ability's name in lower case, "fire
 breath"); a retaliating status's blow (`gifts.rs`) is its `damage_type:` or `status:` phrase. A
 caster style is a weapon skill (`weapon_skill:<id>`). Left as text: the typed slot id
 (`items.no_slot`), a dev zone's kind, composed text (#1997: a spell's roll and an attack's
@@ -376,9 +376,24 @@ data"). The lexicon ids: `trap:<id>` (a trap's name) and `trap_noun:<id>` (what 
 creature's `creature:<id>.breath.verb`, `.burst.verb`, `.summon.verb`, each said in a `verb`,
 `dies`, or `sign` role (`Arg::Said`, which renders whatever the role's form). A pick's label
 (`CraftStep::label`) is a phrase: `part:<id>`, `material:<id>`, `object:<id>` counted as several
-("arrowheads"), or the `word:` core picks ("item", "seal", a material group). Left for their
-slices: a trap's `verb`, a weapon's and a natural attack's verbs, a creature's `dies` verb, a
-spell's `look` noun and verb (`say_spell`, the burst dialog), and the epitaph's text (#1997).
+("arrowheads"), or the `word:` core picks ("item", "seal", a material group).
+
+**The data's verbs left by #1995** (#2028, part of #1949) are lines of data too, a verb with a
+`.you` line beside it, the verb in the player's person, which the data does not write (English
+makes it, `data_word::second_person`; a translation writes its own): a trap's `trap:<id>.verb`,
+a weapon's `object:<id>.verb` (`Content::weapon_verb`), a natural attack's
+`creature:<id>.attack.<n>.verb` (`n` from 0 in the order struck, `Words::natural`), a throw's
+`creature:<id>.throw.verb` (no `.you`), a creature's death `creature:<id>.dies`
+(`CreatureDef::dies_arg`, else "dies"), and a spell's blows `spell:<id>.cast.verb`, what hits
+from it a lexicon id, `spell_noun:<id>` (`Content::spell_noun_phrase`; `Words::of_spell` both).
+`World::say_spell` takes the `Words` (a spell's, a damage type's for a birth sign's breath and
+Blaze or a creature's breath and burst), a reflected bolt and the burst dialog
+(`Aim::catches_reader`) the noun. A heal searing the undead says words set in code
+(`SpellLook::own` false: "the light of mending sears", as written). The launcher in
+`RecipeLack::reason` is `Content::launcher_phrase`. Still text: the epitaph (`Cause::epitaph`,
+which names the trap and the spell's noun as English; `trap:<id>` and `spell_noun:<id>` are the
+phrases it can take), a creature's breath and burst noun, and a natural attack's or throw's
+name (`word:`).
 
 **Number comes from data** (#1965): a phrase is plural by its count or by the lexicon's `many` (a
 noun plural though it names one thing, "flames"); a proper name or a literal is one thing ("The
@@ -1114,7 +1129,7 @@ arrays named by the id that tells it apart. Every kind of line of data, the thre
 | `resources:resource.<id>.lacking` | a class active refused for too little of the resource (in `classes.lacking`) |
 | `resources:resource.<id>.ended` | the resource ending (L4o) |
 | `trap:<id>.message` | a trap seen going off (L4o) |
-| `status:<id>.dies`, `trap:<id>.sign`, `damage_type:<id>.verb`, `.you`, `creature:<id>.breath.verb`, `.burst.verb`, `.summon.verb` | the data's words beside a name (#1995, "Phrases"; `content/data_word.rs`), said in a role of the line they stand in |
+| `status:<id>.dies`, `trap:<id>.sign`, `damage_type:<id>.verb`, `.you`, `creature:<id>.breath.verb`, `.burst.verb`, `.summon.verb`; `trap:<id>.verb`, `object:<id>.verb`, `creature:<id>.attack.<n>.verb`, `spell:<id>.cast.verb` with their `.you`, `creature:<id>.throw.verb`, `creature:<id>.dies` (#2028) | the data's words beside a name (#1995, "Phrases"; `content/data_word.rs`), said in a role of the line they stand in |
 | `spells:types.<damage type>.words` | a spell type's rule after a spell's roll (`magic.roll_rule`'s `rule`, #2028; `content/data_word.rs`) |
 | `recipe:<id>.verb`, `recipes:profession.<skill>.verb`, `stock:group.<group>.verb`, `stock:gems.verb` | the craft dialog's verb (`CraftPlan::verb`, #2028; "Reasons core composes") |
 | `prayer:words.<face>.pray`, `.fizzle`, `.nothing`; `prayer:use.<id>.<face>` | the prayer begun, fizzled, and refused, and each use answered, in the face's words |

@@ -157,8 +157,8 @@ impl World {
         if burst.gust {
             self.gust(here, &cells);
         }
-        let verb = &content.damage_type(burst.kind).verb;
-        self.say_spell((&burst.noun, verb), made, events);
+        let words = fight::Words::of_kind(fight::word(&burst.noun), burst.kind, &content);
+        self.say_spell(words, made, events);
         for &target in &harmed {
             for rider in &burst.riders {
                 if !self.state.actors.contains_key(&target) || self.state.death.is_some() {

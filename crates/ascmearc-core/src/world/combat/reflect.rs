@@ -27,7 +27,7 @@
 //! [`Trigger::SpellBlocked`]: crate::content::Trigger::SpellBlocked
 //! [`WeaponDoes::ReflectSpell`]: crate::content::WeaponDoes::ReflectSpell
 
-use super::fight::{creature, word};
+use super::fight::creature;
 use super::weapon_ability::Fired;
 use crate::action::{AttackKind, Event, SpellShape};
 use crate::combat::{Blow, Category};
@@ -146,7 +146,8 @@ impl World {
         if self.state.death.is_some() {
             return;
         }
-        self.say_reflection(reflector, caster, &shot.def.look.noun);
+        let bolt = self.content.spell_noun_phrase(shot.def);
+        self.say_reflection(reflector, caster, bolt);
         let flies = shot.def.shape != Shape::Touch;
         if flies && !shot.effect.is_empty() && !path.is_empty() {
             made.push(Event::Spell {
@@ -166,7 +167,7 @@ impl World {
 
     /// Says a spell turned back, as the player sees it: "Your shield turns the bolt back at the
     /// shaman.", "The champion's shield turns your bolt back at you."
-    fn say_reflection(&mut self, reflector: ActorId, caster: ActorId, noun: &str) {
+    fn say_reflection(&mut self, reflector: ActorId, caster: ActorId, bolt: Phrase) {
         let player = self.state.player;
         let content = self.content.clone();
         let seen = |w: &World, id: ActorId| {
@@ -174,7 +175,6 @@ impl World {
                 .filter(|a| w.perception.sees_actors_at(a.pos))
                 .map(|a| creature(content.creature(a.creature)))
         };
-        let bolt = word(noun);
         // Turned back at its caster: by name if the player sees them.
         let at = |w: &World, who: Phrase, bolt: Phrase| {
             let line = match seen(w, caster) {
