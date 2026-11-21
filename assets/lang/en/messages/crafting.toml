@@ -186,6 +186,18 @@ only_metal_at_anvil = "Only metal can be worked at an anvil."
 only_wood_whittled = "Only a weapon of wood can be whittled."
 pare_damage_away = "You pare the damage away."
 patron_dead = "With your patron dead, the commission is off."
+# The craft dialog's plan (`craft_make.rs::CraftPlan`; the dialog's sentence is the UI's,
+# `ui/craft_pick_screen.toml`): what it makes, what it uses, and the verb where neither the recipe
+# nor its profession names one (theirs are lines of data). `what` an item or a stack; `affix` the
+# affix a soul-fetter keeps, by its name ("Sharp"); `items` what the work uses, a list of
+# `work_*`, `plan_keeping`, and `plan_more` clauses; `shut` the crystal families the seals shut
+# out, a list of words. A recipe making a batch names it `plan_plural` ("flint arrows").
+plan_keeping = "{what:counted} (keeping {affix:bare})"
+plan_make = "Make"
+plan_plural = "{what:plural}"
+plan_sealing = "sealing out {shut:and}"
+plan_uses = "{items:and}"
+plan_uses_sealing = "{items:and}, sealing out {shut:and}"
 put_down_hammer = "you put down the hammer"
 put_down_knife = "you put down the knife"
 put_down_work = "you put down your work"
@@ -235,6 +247,22 @@ stop_digging = "You stop digging after {time:bare}."
 # `came`: what came; `time`: how long it went on.
 stop_digging_came = "{came:bare}; you stop digging after {time:bare}."
 take_in_lap = "You take {item:the} in your lap and begin."
+# What a recipe takes, as the profession screen's row and line say it (`craft.rs::takes`): its
+# parts joined by `takes_listed` (`first` a part, `rest` the parts after it, one of these again),
+# a part's choices by `takes_either` (the same, with "or"), each a `work_*` clause or one of
+# these. `station` the station's terrain; `launcher` what the ammunition is shot from ("bow").
+takes_cut = "a loose gem"
+takes_cut_gem = "a cut gem"
+takes_either = "{first:bare} or {rest:bare}"
+takes_knife = "a knife"
+takes_launcher = "{launcher:a} ready"
+takes_listed = "{first:bare}, {rest:bare}"
+takes_magic_item = "a magic item"
+takes_plain_item = "a plain item"
+takes_set = "an item and a cut gem"
+takes_station = "{station:a}"
+takes_temper = "a metal weapon or armour"
+takes_whittle = "a wooden weapon"
 take_it_off_first = "Take it off first."
 # `item`: the item worked, by its title.
 temper_at_anvil = "You set to work on {item:the} at the anvil."
@@ -262,6 +290,12 @@ will_not_come_apart = "It will not come apart."
 will_not_do = "That will not do for the {what:bare}."
 will_not_take_your_will = "It will not take your will."
 wood_takes_knife = "The wood takes the knife well."
+# A clause of the craft dialog's plan and of what a recipe takes: `time` how long the work takes
+# (a `words.toml` span); `what` a thing (with its count: "3 steel ingots"), or what goes for each
+# one made; `work_the` a stack named by its title ("the ruby").
+work_about = "about {time:bare}"
+work_counted = "{what:counted}"
+work_each = "{what:counted} for each made"
 work_goes_wrong = "The work goes wrong."
 work_goes_wrong_every_scrap = "The work goes wrong, but you save every scrap of it."
 work_goes_wrong_save = "The work goes wrong, and you save what you can of it."
@@ -269,6 +303,7 @@ work_goes_wrong_save = "The work goes wrong, and you save what you can of it."
 work_stopped = "{leave:Bare}."
 # `came`: what came; `leave`: as `work_stopped`'s.
 work_stopped_came = "{came:bare}; {leave:bare}."
+work_the = "{what:the}"
 would_not_hold_so_much = "It would not hold so much."
 you_hammer_damage_out = "You hammer the damage out."
 you_make = "You make {what:a}."
@@ -287,6 +322,13 @@ by = "count.number"
 one = "You must choose the crystal."
 many = "You must choose the crystals."
 
+# What the seals take beyond the crystals the work names (`plan_uses`'s items): `n` how many more
+# of a crystal, `what` the crystal by its title.
+[plan_more]
+by = "n.number"
+one = "{n:num} more {what:bare}"
+many = "{n:num} more {what:plural}"
+
 # `what`: one taken apart by its title, several counted.
 [set_to_taking_apart]
 by = "what.number"
@@ -298,6 +340,12 @@ many = "You set to taking {what:a} apart."
 by = "what.number"
 one = "You take {what:the} apart."
 many = "You take {what:a} apart."
+
+# What an enchanting recipe takes besides the item (`takes_listed`'s part): `n` its crystals.
+[takes_crystals]
+by = "n.number"
+one = "a crystal"
+many = "{n:bare} crystals"
 
 # `what`: what it left: a stack, or a list of two.
 [turns_to_glass]

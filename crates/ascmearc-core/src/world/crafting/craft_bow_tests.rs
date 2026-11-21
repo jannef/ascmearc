@@ -74,7 +74,8 @@ fn row(w: &World, id: &str) -> (String, Option<RecipeLack>) {
     let def = w.content.recipe(recipe(w, id));
     let rows = w.perception().recipes(def.skill);
     let row = rows.iter().find(|r| r.id == recipe(w, id)).expect("listed");
-    (row.takes.clone(), row.unavailable)
+    let takes = crate::test_support::english_of(&w.content, &row.takes);
+    (takes, row.unavailable)
 }
 
 /// Each step's label and the positions it offers.
@@ -190,7 +191,7 @@ fn a_long_bow_is_made_of_the_wood_its_sinew_spent_and_no_part_of_it() {
     stock(&mut w, "wood", 7);
     stock(&mut w, "sinew", 2);
     let plan = (w.perception())
-        .craft_plan(recipe(&w, "long_bow"), &[Some(1), Some(2)])
+        .craft_plan_en(recipe(&w, "long_bow"), &[Some(1), Some(2)])
         .expect("a plan");
     assert_eq!(plan.verb, "Make");
     assert_eq!(plan.uses, "7 wood billets and a length of sinew");
@@ -237,7 +238,7 @@ fn a_composite_bow_of_wood_is_a_variant_named_from_its_parts() {
     stock(&mut w, "sinew", 2);
     let name = |w: &World, at: usize| {
         (w.perception())
-            .craft_plan(recipe(w, "composite_bow"), &[Some(at), Some(3)])
+            .craft_plan_en(recipe(w, "composite_bow"), &[Some(at), Some(3)])
             .expect("a plan")
             .name
     };

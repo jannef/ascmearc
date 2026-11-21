@@ -19,6 +19,7 @@ use crate::input::Bindings;
 use crate::render::console::Console;
 use ascmearc_core::Action;
 use ascmearc_core::content::{ItemClassId, RecipeId, RecipeUse};
+use ascmearc_core::lang::Msg;
 use ascmearc_core::perception::PerceptionView;
 use ascmearc_core::skills::SkillId;
 
@@ -34,8 +35,8 @@ struct Entry {
     /// The recipe's id: what the action names.
     key: String,
     name: String,
-    /// What it takes, in words.
-    takes: String,
+    /// What it takes, in words (core's message, rendered as the screen draws).
+    takes: Msg,
     /// Why it cannot be made now, in words; `None` when it can.
     why: Option<String>,
     /// The built-in action it runs, if it is one.
@@ -238,7 +239,7 @@ impl ProfessionScreen {
             }
             console.print(x + 2, y, &format!("{letter} - {}", entry.name), color);
             let state_x = x + 2 + name_w;
-            let state = entry.why.as_ref().unwrap_or(&entry.takes);
+            let state = (entry.why.clone()).unwrap_or_else(|| ui_msg(entry.takes.clone()));
             let room = (right - state_x).max(0) as usize;
             let state: String = state.chars().take(room).collect();
             console.print(state_x, y, &state, TEXT_DIM);
@@ -246,7 +247,7 @@ impl ProfessionScreen {
         // Under the list: what the selected recipe takes, in full.
         let under = panel.y + panel.h - 4;
         if let Some(entry) = self.recipes.selected().filter(|_| fits(under)) {
-            let text = ui_with(T::TAKES, &[("takes", entry.takes.as_str().into())]);
+            let text = ui_with(T::TAKES, &[("takes", entry.takes.clone().into())]);
             console.print_in(x, under, &text, TEXT_DIM, panel.inner_w());
         }
         let keys = HINTS;

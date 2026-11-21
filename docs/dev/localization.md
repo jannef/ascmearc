@@ -519,8 +519,8 @@ stops a reading or a writing is `World::came_msg` in a `came` role.
 `world/crafting/` (`messages/crafting.toml`, L4f, its first half: making a recipe, cutting,
 enchanting, crystals, digging, the field forge). A refusal a function returns for its caller to
 say (`cut.rs::refusal`, `enchant.rs::refusal`, `dig_refusal`, `field_forge.rs::forge_ground`) is
-a `MessageId`; the recipes' `resolve` returns its reason as a `Msg`, and the plan the dialog
-shows renders it in English (`craft_make.rs::english`) whatever the language, until core's words move to the app (#1949). An item being enchanted is
+a `MessageId`; the recipes' `resolve` returns its reason as a `Msg`, which the plan the dialog
+shows refuses with, rendered in the language shown (#2028). An item being enchanted is
 `enchant.rs::item_phrase` said `{item:the}` (a known rare by its name, "the Grim Bite"), several of a
 stack by `Lore::names_phrase` (what they are called as made); a salvaged affix's words ("its
 Sharp magic", "some of its magic") are nested messages in `catch_magic` and `goes_out_unread`;
@@ -544,8 +544,8 @@ converted (#1949): a rig's id as the action wrote it. The open commission keeps 
 phrase (`called_phrase`, "your patron", said `the`) and what they said as a `Speech`, both
 saved by their keys; its quest-log view (`patron.rs::commission`) is named `commission_name`
 ("Commission: {work:a}") and says its objective and status from `commission_*`. The rig list's
-"what it takes" is a message (`rig.rs::takes_words`, "Reasons core composes"); left for its own
-work: the craft dialog's plan (`CraftPlan`), screen text built in core.
+"what it takes" is a message (`rig.rs::takes_words`, "Reasons core composes"), as are the craft
+dialog's plan (`CraftPlan`) and a recipe's row's `takes` (#2028).
 
 `world/classes/`'s first half (`messages/classes.toml`, L4c: `ascetic`, `calling`, `charge`,
 `class_ability`, `class`, `consecrate`, `invest`, `mark`) says the lines its data writes as
@@ -748,12 +748,31 @@ owner by `en`), the way to it a compass word (`Dir::compass_word`). **An attack'
 `combat.attack_damage` with each kind a `damage_type:` phrase (`attack_kind_or` between two)
 and each rider the item lists' `items.numbers_with_rider`. **A spell's roll** (`roll_words`,
 `SpellRoll::text`) is a `magic.roll_*` clause, its damage type a `damage_type:` phrase, and a
-reroll (`reroll_words`) `magic.reroll` with its faces said `{faces:and}`. Text roles inside them:
-the dice, and a spell type's rule (data words with no line of data yet); and until their data has
-ids, a birth sign's animal and element, a vision's name in a talent's need (lower case there,
-where `vision:` is as written), an `any_weapon_skill`'s words, a launcher, a stock's group. Still English: `CraftPlan` (the craft dialog's plan, its `english` reason why
-not), a recipe row's `takes`, and `magic/describe.rs` (an item's description, which renders a
-wand's roll in English).
+reroll (`reroll_words`) `magic.reroll` with its faces said `{faces:and}`, its type's rule the
+line of data `spells:types.<damage type>.words` (#2028). Text roles inside them: the dice; and
+until their data has ids, a birth sign's animal and element, a vision's name in a talent's need
+(lower case there, where `vision:` is as written), an `any_weapon_skill`'s words, a launcher, a
+stock's group. Still English: `magic/describe.rs` (an item's description, which renders a wand's
+roll in English; #2029).
+
+**The craft plan and a recipe's row** (#2028, its first part). The craft dialog's plan
+(`CraftPlan`, built by `craft_make.rs::craft_plan`, `set.rs::plan`, and `enchant.rs::plan`) holds
+messages the dialog renders in the language shown, and `craft_plan` refuses with the rules' own
+`Msg` (no longer rendered to English in core): its `verb` a line of data, the recipe's
+`recipe:<id>.verb`, else its profession row's `recipes:profession.<skill>.verb`, else its stock's
+`stock:group.<group>.verb` or `stock:gems.verb` (`Profession::verb_key`), else Set's and an
+enchanting's name `recipe:<id>`, else `crafting.plan_make`; its `name` a nested message that asks
+the form each plan used (`work_counted` for a made item and Set's, `work_the` for the item an
+enchanting works on, `plan_plural` for a batch); its `uses` (`None` for nothing) a
+`crafting.plan_uses` list of `work_counted`, `work_each`, and `work_the` clauses (an enchanting's
+`plan_more`, `plan_keeping`, and the seals' families as `word:` phrases said `{shut:and}`,
+`plan_uses_sealing`); its `time` `work_about`. **What a recipe takes** (`RecipeRow::takes`,
+`craft.rs::takes`) is a `Msg`: its parts chained by `crafting.takes_listed` (", ", as
+`reach_listed`), a part's choices by `takes_either` ("or"), each a `takes_*` or `work_*` clause
+(an input an `object:` phrase with its count, a station `terrain:`, a launcher `launcher:`, an
+enchanting's crystals `takes_crystals`). The profession screen renders it (`text::ui_msg`), the
+`abilities` dump in English. A text role inside: a piece of any of several materials, which
+`piece::any_names` composes in English ("an iron or brass ingot"); one material is its phrase.
 
 **The look line's and the cell's words** (#1998, its first half). **An item as the lists name
 it** (`Lore::listed`) is `items.listed`, the phrase `counted` with `listed_numbers` and
@@ -1063,6 +1082,8 @@ arrays named by the id that tells it apart. Every kind of line of data, the thre
 | `resources:resource.<id>.ended` | the resource ending (L4o) |
 | `trap:<id>.message` | a trap seen going off (L4o) |
 | `status:<id>.dies`, `trap:<id>.sign`, `damage_type:<id>.verb`, `.you`, `creature:<id>.breath.verb`, `.burst.verb`, `.summon.verb` | the data's words beside a name (#1995, "Phrases"; `content/data_word.rs`), said in a role of the line they stand in |
+| `spells:types.<damage type>.words` | a spell type's rule after a spell's roll (`magic.roll_rule`'s `rule`, #2028; `content/data_word.rs`) |
+| `recipe:<id>.verb`, `recipes:profession.<skill>.verb`, `stock:group.<group>.verb`, `stock:gems.verb` | the craft dialog's verb (`CraftPlan::verb`, #2028; "Reasons core composes") |
 | `prayer:words.<face>.pray`, `.fizzle`, `.nothing`; `prayer:use.<id>.<face>` | the prayer begun, fizzled, and refused, and each use answered, in the face's words |
 | `outcome:<table>.outcome.<id>.message`, `.messages.<n>`, `.otherwise` | an altar's, a spring's, or a potion's outcome: its one line, line `n` of several, or what it says when it found nothing to do (`OutcomeDef::table` is the table) |
 | `room_effect:<id>.enter`, `.near`, `.pervade`, `.arrive`, `.shrine.welcome`, `.shrine.unwelcome` | a special room entered, glimpsed, covering the level, hinted at on arrival, and a shrine's entry by how it treats the player (`Shrine::enter_field`) |

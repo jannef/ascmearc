@@ -435,14 +435,14 @@ fn the_steps_plan_and_rows_say_what_the_work_takes() {
     );
 
     let plan = (w.perception())
-        .craft_plan(recipe(&w, "kindle"), &[Some(0), Some(3)])
+        .craft_plan_en(recipe(&w, "kindle"), &[Some(0), Some(3)])
         .expect("a plan");
     assert_eq!(plan.verb, "Kindle");
     assert_eq!(plan.name, "the long sword");
     assert_eq!(plan.uses, "a red crystal");
     assert_eq!(plan.time, "about 1 hour");
     let plan = (w.perception())
-        .craft_plan(recipe(&w, "unbind"), &[Some(1)])
+        .craft_plan_en(recipe(&w, "unbind"), &[Some(1)])
         .expect("a plan");
     assert_eq!((plan.verb.as_str(), plan.uses.as_str()), ("Unbind", ""));
     assert_eq!(plan.time, "about 30 minutes");
@@ -450,7 +450,10 @@ fn the_steps_plan_and_rows_say_what_the_work_takes() {
     let rows = |w: &World| -> Vec<(String, String, Option<String>)> {
         let view = w.perception();
         (view.recipes(enchanting(w)).into_iter())
-            .map(|r| (r.name, r.takes, r.unavailable.map(|l| l.id(&w.content))))
+            .map(|r| {
+                let takes = crate::test_support::english_of(&w.content, &r.takes);
+                (r.name, takes, r.unavailable.map(|l| l.id(&w.content)))
+            })
             .collect()
     };
     let row = |name: &str, takes: &str, lack: Option<&str>| {
@@ -502,7 +505,7 @@ fn the_steps_plan_and_rows_say_what_the_work_takes() {
     let n = w.state.player().inventory.len();
     let picks = [Some(n - 4), Some(n - 2), Some(n - 3), Some(n - 1)];
     let plan = (w.perception())
-        .craft_plan(recipe(&w, "imbue"), &picks)
+        .craft_plan_en(recipe(&w, "imbue"), &picks)
         .expect("a plan");
     assert_eq!(
         (plan.name.as_str(), plan.uses.as_str(), plan.time.as_str()),
@@ -696,7 +699,8 @@ fn quick_hands_halves_the_hour() {
         content.recipe(id),
         &[Some(0), Some(1)],
     )
-    .expect("a plan");
+    .expect("a plan")
+    .en(&content);
     assert_eq!(plan.time, "about 30 minutes");
     let start = w.state.time;
     apply(&mut w, "craft:kindle:a,b");

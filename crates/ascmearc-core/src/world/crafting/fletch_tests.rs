@@ -176,7 +176,7 @@ fn takes(w: &World, id: &str) -> String {
     let def = w.content.recipe(recipe);
     (w.perception().recipes(def.skill).into_iter())
         .find(|r| r.id == recipe)
-        .map(|r| r.takes)
+        .map(|r| crate::test_support::english_of(&w.content, &r.takes))
         .expect("listed")
 }
 

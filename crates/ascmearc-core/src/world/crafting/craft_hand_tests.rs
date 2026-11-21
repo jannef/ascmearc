@@ -239,7 +239,7 @@ fn a_recipes_profession_is_its_directorys_for_the_stat_the_skill_and_the_mark() 
     stock(&mut w, "flint", 1);
     carry(&mut w, "knife");
     let plan = (w.perception())
-        .craft_plan(recipe(&w, "knife_by_hand"), &[Some(0)])
+        .craft_plan_en(recipe(&w, "knife_by_hand"), &[Some(0)])
         .expect("a plan");
     assert_eq!(plan.verb, "Make");
     assert_eq!(plan.name, "a flint knife");
@@ -279,7 +279,7 @@ fn the_made_spear_and_javelin_are_named_by_their_heads_and_the_javelin_still_fli
     stock(&mut w, "bone", 1);
     stock(&mut w, "wood", 4);
     let plan = (w.perception())
-        .craft_plan(recipe(&w, "javelin_by_hand"), &[Some(1), Some(2)])
+        .craft_plan_en(recipe(&w, "javelin_by_hand"), &[Some(1), Some(2)])
         .expect("a plan");
     assert_eq!(plan.name, "a bone javelin");
     assert_eq!(plan.uses, "a bone shard and 4 wood billets");

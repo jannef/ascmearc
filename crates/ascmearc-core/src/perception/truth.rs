@@ -859,7 +859,7 @@ impl<'a> PerceptionView<'a> {
         &self,
         recipe: crate::content::RecipeId,
         picks: &[Option<usize>],
-    ) -> Result<crate::world::CraftPlan, String> {
+    ) -> Result<crate::world::CraftPlan, crate::lang::Msg> {
         crate::world::craft_plan(
             self.content,
             self.lore,
@@ -868,6 +868,18 @@ impl<'a> PerceptionView<'a> {
             recipe,
             picks,
         )
+    }
+
+    /// [`Self::craft_plan`] in English, the refusal too: for the tests to compare.
+    #[cfg(test)]
+    pub(crate) fn craft_plan_en(
+        &self,
+        recipe: crate::content::RecipeId,
+        picks: &[Option<usize>],
+    ) -> Result<crate::world::PlanEn, String> {
+        (self.craft_plan(recipe, picks))
+            .map(|plan| plan.en(self.content))
+            .map_err(|why| crate::messages::english_msg(self.content, &why))
     }
 
     /// What the player's spell `spell` costs them now, in mana (they know

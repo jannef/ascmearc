@@ -151,6 +151,26 @@ pub fn profession(skill: &str, fumbled: bool) -> String {
     format!("recipes:profession.{skill}.{field}")
 }
 
+/// Profession `skill`'s `verb` (`recipes.toml`'s `[[profession]]`): the craft dialog's verb
+/// where no recipe names its own ("Brew").
+pub fn profession_verb(skill: &str) -> String {
+    format!("recipes:profession.{skill}.verb")
+}
+
+/// Recipe `id`'s own `verb`, the craft dialog's (a ring is made, not cut).
+pub fn recipe_verb(id: &str) -> String {
+    format!("recipe:{id}.verb")
+}
+
+/// The verb of stock group `group`'s profession (`stock.toml`'s `[[group]]`), or with `None`
+/// the gems' (`gems`): "Forge", "Cut".
+pub fn stock_verb(group: Option<&str>) -> String {
+    match group {
+        Some(group) => format!("stock:group.{group}.verb"),
+        None => "stock:gems.verb".to_string(),
+    }
+}
+
 /// Rig `id`'s `snaps` (`snaps` true) or `made` line (`rigs.toml`'s `[[rig]]`).
 pub fn rig(id: &str, snaps: bool) -> String {
     let field = if snaps { "snaps" } else { "made" };
@@ -537,8 +557,21 @@ fn character_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
 
 /// Crafting's lines: the professions' `failed` and `fumbled`, the rigs' `made` and `snaps`.
 fn crafting_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
+    for def in &content.recipes().list {
+        if let Some(verb) = &def.verb {
+            add(recipe_verb(&def.id), verb);
+        }
+    }
+    let stock = content.stock();
+    let groups = stock.groups.iter().filter_map(|g| g.profession.as_ref());
+    for profession in groups.chain(&stock.gems) {
+        add(profession.verb_key.clone(), &profession.verb);
+    }
     for text in &content.recipes().professions {
         let skill = &content.skill(text.skill).id;
+        if let Some(verb) = &text.verb {
+            add(profession_verb(skill), verb);
+        }
         for (fumbled, line) in [(false, &text.failed), (true, &text.fumbled)] {
             if let Some(line) = line {
                 add(profession(skill, fumbled), line);

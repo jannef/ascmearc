@@ -55,19 +55,20 @@ pub fn craft_dialog(
     let plan = match view.craft_plan(recipe, &picks) {
         Ok(plan) => plan,
         Err(why) => {
-            return Dialog::new(ui(T::DIALOG_TITLE), why)
+            return Dialog::new(ui(T::DIALOG_TITLE), ui_msg(why))
                 .cancel(ui(T::DIALOG_BACK), ScreenAction::Close);
         }
     };
+    let verb = super::text::word(plan.verb.clone(), "bare");
     let mut args = vec![
-        ("verb", Arg::from(plan.verb.clone())),
+        ("verb", plan.verb),
         ("name", plan.name.into()),
         ("time", plan.time.into()),
     ];
     // A work that uses nothing up and needs no station (Enchanting's Unbind) says only its time.
-    let uses = !plan.uses.is_empty();
-    if uses {
-        args.push(("uses", plan.uses.into()));
+    let uses = plan.uses.is_some();
+    if let Some(what) = plan.uses {
+        args.push(("uses", what.into()));
     }
     let at = plan.station.is_some();
     if let Some(station) = plan.station {
@@ -84,7 +85,7 @@ pub fn craft_dialog(
         recipe: view.content().recipe(recipe).id.clone(),
         picks,
     };
-    Dialog::yes_no(&plan.verb, text, &plan.verb, action, ui(T::DIALOG_NOT_NOW))
+    Dialog::yes_no(&verb, text, &verb, action, ui(T::DIALOG_NOT_NOW))
 }
 
 #[derive(Debug)]
