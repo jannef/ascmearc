@@ -8,6 +8,6 @@ color = "#6b3e1e"
 weight = 45
 protection = 45
 value = 80
-rarity = { weight = 300, deeper = 10 }
-gear = { weight = 300, deeper = 10 }
+rarity = { weight = 300, per_level = 10 }
+gear = { weight = 300, per_level = 10 }
 fit = { weapon = "poor", jewellery = "poor" }

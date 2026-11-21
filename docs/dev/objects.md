@@ -115,8 +115,10 @@ Whittle (#1028) works the same `Stack::worked` state as Temper, on a weapon, lau
 **Materials and variants** (#193, #194). `content/material.rs`:
 `MaterialDef` gains `group`, `color`, `weight` (percent of steel's), `to_hit` and `damage`
 (`MaterialDef::weapon`: `None` when neither is given, it cannot be a weapon's working part),
-`protection` (`None`: cannot be armour), and `rarity` and `gear` (`Found { weight, deeper, level
-}`, `Found::at(level)`, capped at `MAX_FOUND`), all optional; `MaterialDef::check` keeps
+`protection` (`None`: cannot be armour), and `rarity` and `gear` (`Found { weight, per_level,
+level }`, `Found::at(level)`: 0 below `level`, then `weight + per_level × (level − own level)`,
+counted from the material's own level so it is as rare as `weight` where it first appears, #2046;
+at least 0, capped at `MAX_FOUND`), all optional; `MaterialDef::check` keeps
 what the code needs: a `weight` above 0 (`variant::weight` divides by the base material's), a
 `rarity` or `gear` only with a group (only grouped materials are drawn), and a gem with no group
 (gems are set, never a part's material). `VERY_RARE` (10) is the cap `variant.rs` puts on a
@@ -218,8 +220,8 @@ precious, checked), one file each in `data/materials/` (diamond, ruby, emerald, 
 heliodor, amethyst, zircon, garnet, smokestone; amber is no gem). `data/gems.toml` (`Gems`,
 `Content::gems()`, optional: without it nothing is found or set) names the loose gem's `object`
 (`objects/gem.toml`: `*`, class gems, value 0, made of stone, which no gem stack ever is), the
-find `chance`, the ordered sizes (`GemSize`: `value` %, `weight` g, loot `find` + `deeper` per
-item level) and cuts (`Cut`: `value`, `find`, `deeper`, `rough`), one `plain` of each (small, fair:
+find `chance`, the ordered sizes (`GemSize`: `value` %, `weight` g, loot `find` + `per_level`
+per item level) and cuts (`Cut`: `value`, `find`, `per_level`, `rough`), one `plain` of each (small, fair:
 `Gems::plain`), and the `[[ornament]]`s per item class (`Ornament`: `part`, `chance`, `colour`);
 objects may override the part with `ornament = "tip"` (`ObjectDef::ornament`; checked: a class
 must have an ornament, and the part is never the object's main part). The runtime is `gem.rs`:

@@ -71,7 +71,7 @@ pub struct GemSize {
     pub weight: u32,
     /// Its weight in loot at item level 1, and what each item level above adds.
     pub find: u32,
-    pub deeper: u32,
+    pub per_level: u32,
 }
 
 /// A cut.
@@ -84,7 +84,7 @@ pub struct Cut {
     pub value: u32,
     /// Its weight in loot at item level 1, and what each item level above adds.
     pub find: u32,
-    pub deeper: u32,
+    pub per_level: u32,
     /// Not cut at all: named before the size ("an uncut tiny garnet"), drawn duller, never set
     /// in an item.
     pub rough: bool,
@@ -137,7 +137,7 @@ struct SizeSpec {
     weight: u32,
     find: u32,
     #[serde(default)]
-    deeper: u32,
+    per_level: u32,
     #[serde(default)]
     plain: bool,
 }
@@ -150,7 +150,7 @@ struct CutSpec {
     value: u32,
     find: u32,
     #[serde(default)]
-    deeper: u32,
+    per_level: u32,
     #[serde(default)]
     plain: bool,
     #[serde(default)]
@@ -219,7 +219,7 @@ impl Gems {
                 value: s.value,
                 weight: s.weight,
                 find: s.find,
-                deeper: s.deeper,
+                per_level: s.per_level,
             });
         }
         let mut ids = BTreeSet::new();
@@ -233,7 +233,7 @@ impl Gems {
                 name: c.name.clone(),
                 value: c.value,
                 find: c.find,
-                deeper: c.deeper,
+                per_level: c.per_level,
                 rough: c.rough,
             });
         }
@@ -333,19 +333,19 @@ impl Gems {
 
     /// The sizes by their weight in loot at item level `level`, smallest first.
     pub fn size_weights(&self, level: u8) -> Vec<(GemSizeId, u32)> {
-        let deeper = u32::from(level.max(1) - 1);
+        let above = u32::from(level.max(1) - 1);
         (self.sizes.iter().enumerate())
-            .map(|(i, s)| (GemSizeId(i as u8), s.find + s.deeper * deeper))
+            .map(|(i, s)| (GemSizeId(i as u8), s.find + s.per_level * above))
             .collect()
     }
 
     /// The cuts by their weight in loot at item level `level`, roughest first; `set`: only those
     /// an item may be set with (not rough).
     pub fn cut_weights(&self, level: u8, set: bool) -> Vec<(CutId, u32)> {
-        let deeper = u32::from(level.max(1) - 1);
+        let above = u32::from(level.max(1) - 1);
         (self.cuts.iter().enumerate())
             .filter(|(_, c)| !(set && c.rough))
-            .map(|(i, c)| (CutId(i as u8), c.find + c.deeper * deeper))
+            .map(|(i, c)| (CutId(i as u8), c.find + c.per_level * above))
             .collect()
     }
 }

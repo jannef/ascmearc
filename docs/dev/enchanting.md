@@ -83,9 +83,14 @@ them more affixes; the capacity and the trim are unchanged, and everything still
   `make_as` with `Source::Gear`) take none.
 - **Gems**: the row's `ornament` adds percent to loot's `[[ornament]]` chance (`gem::ornament`'s
   `more`), the same one draw.
-- **Materials**: in the material files' `rarity` (and `gear`): mithril from item level 8,
-  `deeper = 8`; dragonbone and dragonscale from 6, `deeper = 5`; adamantium from 16, `deeper = 6`;
-  gold `deeper = 3`. The draw itself is `variant::draw`'s one draw.
+- **Materials**: in the material files' `rarity` (loot, by item level) and `gear` (a creature's
+  kit, by its level), each `{ weight, per_level, level }`: nothing below `level`, `weight` at it,
+  and `per_level` more for each level past it (`Found::at` counts from the material's own level,
+  #2046, so a material is rare where it first appears). Mithril from item level 20, `per_level =
+  8` (gear from 24); adamantium from 30, `per_level = 6` (gear from 34); dragonbone and
+  dragonscale from 16, where dragons start (Fyrdelf's bottom floor, danger 16), `per_level = 5`
+  (gear from 19, the fire drake's level); chromium and nicrosil from 8; gold `per_level = 3` from
+  1 (the item level 40 design §7). The draw itself is `variant::draw`'s one draw.
 
 Shallow levels have no row below item level 3, and the material weights at item level 1 are
 the base ones. Deeper, the make's draws come after the item's other draws on the loot stream.

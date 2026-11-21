@@ -1,10 +1,11 @@
 # The dread design §5.8 (#1131). Adamantium: heavier than iron and harder than anything else a
 # smith may work, an edge that bites deeper and mail that turns more, and nothing harms it. Better
-# than steel and dearer still than mithril: very rare, and only deeper. A fighting metal rather
-# than an enchanting one (#1444): it binds less magic than mithril, but a weapon of it rolls a die
-# more of its own size (a long sword's 1d9 is 2d9), armour of it gives twice steel's Protection, a
-# shield twice its Defence, and it is never damaged: not by acid, rust, heat, a failed working, or
-# a spell's ruin, and never found damaged.
+# than steel and dearer still than mithril: very rare, found from item level 30 (on creatures,
+# from level 34; the item level 40 design §7, #2046). A fighting metal rather than an enchanting
+# one (#1444): it binds less magic than mithril, but a weapon of it rolls a die more of its own
+# size (a long sword's 1d9 is 2d9), armour of it gives twice steel's Protection, a shield twice
+# its Defence, and it is never damaged: not by acid, rust, heat, a failed working, or a spell's
+# ruin, and never found damaged.
 [[material]]
 id = "adamantium"
 name = "adamantium"
@@ -19,7 +20,7 @@ dice = 1
 protection = 200
 defence = 200
 value = 3000
-rarity = { weight = 10, deeper = 6, level = 16 }
-gear = { weight = 5, deeper = 2, level = 24 }
+rarity = { weight = 10, per_level = 6, level = 30 }
+gear = { weight = 5, per_level = 2, level = 34 }
 work = 8
 binding = 1

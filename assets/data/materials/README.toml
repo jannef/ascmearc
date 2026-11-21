@@ -46,9 +46,10 @@
 #   rarity    how often loot makes an item of it instead of its base item's own material, among
 #             the other materials it may be made of (its construction list; the own material is
 #             not weighed: it takes 90% of finds at level 1, 80% from level 21, #1191, variant.rs
-#             `variant_percent`): { weight = 800, deeper = -40,
-#             level = 1 }, a weight at item level 1, `deeper` more (or less: never below 0) each
-#             item level past the first, and none below `level` (default 1). None: loot never
+#             `variant_percent`): { weight = 800, per_level = -40, level = 1 }: none below
+#             `level` (default 1), a `weight` at that item level, and `per_level` more (or less:
+#             never below 0) for each item level past it (content/material.rs `Found::at`), so a
+#             material is as rare as its weight says where it first appears. None: loot never
 #             makes anything of it. A material worse in a fight than an item's own (to hit or
 #             damage lower on a weapon, Protection lower on armour) and dearer weighs at most 10
 #             (very rare) for that item, whatever it says here; jewellery is never worse
@@ -80,9 +81,10 @@
 #             capacity of an item whose main part is of it (docs/dev/enchanting.md). Silver −2;
 #             the soft metals and knapped stone −1; gold, electrum, ironwood, ivory, jade, amber,
 #             and silk +1; adamantium +1 (a fighting metal: its gift is `dice` and Protection);
-#             mithril, dragonbone, and dragonscale +2. Deeper finds
-#             come of the high-binding materials more often (#1436): their `rarity` starts
-#             shallower than their worth alone would and grows by `deeper`
+#             mithril, dragonbone, and dragonscale +2. Finds of a higher item level
+#             come of the high-binding materials more often (#1436): their `rarity` grows by
+#             `per_level` from their own `level` (mithril 20, adamantium 30, dragonbone and
+#             dragonscale 16: where the first dragon is; the item level 40 design §7)
 #   gem      makes it a gem (precious, with no group): an inline
 #             table of
 #               color   "#rrggbb": a loose gem's glyph, and a ring set with it

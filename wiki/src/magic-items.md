@@ -89,9 +89,10 @@ Rings, amulets, and the [gear you start with](starting-kit.md) are not affected.
 
 {{#include generated/gear-depth.md}}
 
-The [materials](materials.md) that hold magic best come deeper and grow more common as you go:
-dragonbone and dragonscale from item level 6, mithril from 8, adamantium (a fighting metal, which
-holds less) from 16; gold a little more at every level.
+The [materials](materials.md#how-often-each-material-is-found) that hold magic best come only at
+higher item levels and grow more common from there: dragonbone and dragonscale from item level
+16, mithril from 20, adamantium (a fighting metal, which holds less) from 30; gold a little more
+at every level.
 
 How it works out for what you find:
 

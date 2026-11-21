@@ -210,3 +210,27 @@ fn rolled_creature_gear_follows_its_tribe() {
     assert!(arms > 200, "{arms}");
     assert!(of_bronze * 100 / arms > 30, "{of_bronze} of {arms}");
 }
+
+#[test]
+fn the_late_materials_arrive_rare_at_their_own_item_level() {
+    // #2046: a material's weight counts from its own level, so mithril (20), adamantium (30),
+    // and dragonbone (16) are very rare where they first appear and grow from there.
+    let content = builtin();
+    let sword = content.object(content.object_id("long_sword").expect("long sword"));
+    let id = |m: &str| content.material_id(m).expect(m);
+    let ppm = |level, m: &str| {
+        let weights = variant::weights(&content, sword, Source::Loot, level);
+        share(&weights, |w| w == id(m))
+    };
+    // Nothing below its own level; under 1 % of long swords where it first appears.
+    for (m, from) in [("dragonbone", 16), ("mithril", 20), ("adamantium", 30)] {
+        assert_eq!(ppm(from - 1, m), 0, "{m}");
+        assert!((1..10_000).contains(&ppm(from, m)), "{m}: {}", ppm(from, m));
+    }
+    // Then more often with each item level: at 40 about one long sword in 23 is mithril and one
+    // in 57 adamantium (the wiki's materials page says so), more again at 60.
+    let at_40 = (ppm(40, "mithril"), ppm(40, "adamantium"));
+    assert!((40_000..46_000).contains(&at_40.0), "{at_40:?}");
+    assert!((16_000..20_000).contains(&at_40.1), "{at_40:?}");
+    assert!(ppm(60, "mithril") > at_40.0 && ppm(60, "adamantium") > at_40.1);
+}
