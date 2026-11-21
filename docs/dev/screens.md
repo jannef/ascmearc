@@ -137,8 +137,8 @@ to open, read keys for, or draw one:
   `dialog(view)` from `PerceptionView::encounter()` whenever the run changed with one pending and
   none is open, so after the step and on load; a plain row per choice, `Action::Encounter`;
   `required`: no Esc, no info page over it, the owner's #796 Q9; `docs/dev/encounters.md`). **A new
-  question is a `Dialog` value at its call site**, e.g. `Dialog::yes_no(ui(T::QUEST), text,
-  ui(T::ACCEPT), Action::.., ui(T::DIALOG_NOT_NOW))` (its words from `assets/lang/en/ui/`) returned as `ScreenAction::Dialog`, with no screen, prompt,
+  question is a `Dialog` value at its call site**, e.g. `Dialog::yes_no(&verb, text, &verb,
+  action, ui(T::DIALOG_NOT_NOW))` (`ui/craft_pick_screen.rs`; its words UI text) returned as `ScreenAction::Dialog`, with no screen, prompt,
   `InputMode`, or key handling of its own (quests are given through dialogue topics, which
   are no question).
   `--screen dialog` shows the quit dialog. On wasm, quit saves then reloads the page
