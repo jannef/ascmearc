@@ -145,17 +145,18 @@ impl Magic {
     /// when unique (of its base), known affixes that may roll on it (each tier one the affix
     /// has, each value within the tier's range, no two of one category), and no more prefixes
     /// or suffixes than its rarity allows (at least one affix).
-    /// A unique item's affixes as its table sets them pass whatever their values and bases
-    /// ([`Magic::check_set`]).
+    /// A unique item's affixes as its table sets them may lie past their affix's last tier and
+    /// off its bases ([`Magic::check_set`]).
     pub fn check(&self, def: &ObjectDef, content: &Content) -> Result<(), String> {
         let unique = (self.unique.as_deref()).and_then(|id| content.unique(id));
         let set = unique.map_or(&[][..], |u| &u.magic().affixes[..]);
         self.check_set(def, content, set)
     }
 
-    /// [`Magic::check`], but the affixes in `set` (a unique item's set by hand, `"mystic=30"`,
-    /// #2001, checked where its table is read) are not held to their tier's range or the affix's
-    /// bases.
+    /// [`Magic::check`], but the affixes in `set` (a unique item's, written with their values,
+    /// `"mystic=30"`, #2001, #2044, checked where its table is read) are not held to the affix's
+    /// bases, and on the affix's last tier one may lie past its top (`Tier::passed_by`; a rolled
+    /// item's is held within its tier).
     pub(crate) fn check_set(
         &self,
         def: &ObjectDef,
@@ -208,7 +209,8 @@ impl Magic {
             let tier = a
                 .tier(affix.tier)
                 .ok_or_else(|| format!("`{}` has no tier {}", a.id, affix.tier))?;
-            if !hand_set && !(tier.min..=tier.max).contains(&affix.value) {
+            let last = usize::from(affix.tier) == a.tiers.len();
+            if !tier.holds(affix.value) && !(hand_set && last && tier.passed_by(affix.value)) {
                 return Err(format!(
                     "`{}` tier {} rolls {} to {}, not {}",
                     a.id, affix.tier, tier.min, tier.max, affix.value

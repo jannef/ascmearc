@@ -7,7 +7,7 @@
 id = "brosinga_mene"
 name = "the Brosinga Mene"
 object = "gold_amulet"
-affixes = ["shimmering:5", "oaken:5", "hale:11", "of_the_salamander:12", "of_warmth:12", "of_the_wind:7"]
+affixes = ["shimmering=3", "oaken=3", "hale=12", "of_the_salamander=45", "of_warmth=45", "of_the_wind=10"]
 level = 12
 # Six enchantments need its make (docs/dev/enchanting.md): a mithril chain, a flawless ruby.
 parts = [{ part = "chain", of = "mithril" }, { part = "setting", of = "ruby", cut = "flawless" }]

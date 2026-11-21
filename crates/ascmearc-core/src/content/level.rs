@@ -1577,35 +1577,29 @@ fn parse_magic(spec: &ItemSpec, content: &Content) -> Result<Magic, String> {
     Ok(magic)
 }
 
-/// The magic of an item of `def` placed by hand with `written` affixes (each an id with an
-/// optional tier, default 1, whose value is the top of the tier's range): rare with a `name`,
-/// else magic; of item level `level`, or that of its highest tier; unidentified; checked against
-/// `def` ([`Magic::check`]). An `[[item]]` and a unique item (`super::unique`) are made so.
+/// The magic of an item of `def` placed by hand with `written` affixes: rare with a `name`, else
+/// magic; of item level `level`, or that of its highest tier; unidentified; checked against `def`
+/// ([`Magic::check`]). An `[[item]]` and a unique item (`super::unique`) are made so.
 ///
-/// With `hand_set` (a unique item's, #2001) an affix may instead be written with its value,
-/// `"mystic=30"` ([`hand_set_affix`]); [`Magic::check_set`] then leaves out its tier's range and
-/// the affix's bases.
+/// An affix is written with its value, `"mystic=30"`, `"heavy=1d8"`, `"of_light=item_glow"`
+/// ([`super::affix_value`], #2044), or, an `[[item]]`'s alone, as an id with an optional tier
+/// (default 1) whose value is the top of the tier's range. A `unique` item's are always written
+/// with their values, and [`Magic::check_set`] lets them lie past their last tier and off the
+/// affix's bases.
 pub(super) fn magic_of(
     def: &super::ObjectDef,
     written: &[String],
     name: Option<String>,
     level: Option<u8>,
-    hand_set: bool,
+    unique: bool,
     content: &Content,
 ) -> Result<Magic, String> {
     let mut affixes = Vec::new();
-    let mut set = Vec::new();
     let mut highest = 1;
     for text in written {
         if let Some((id, value)) = text.split_once('=') {
-            if !hand_set {
-                return Err(format!(
-                    "`{text}`: only a unique item sets an affix's value; name a tier (`{id}:2`)"
-                ));
-            }
-            let (affix, level) = hand_set_affix(def, id, value, content)?;
+            let (affix, level) = super::affix_value::valued(def, id, value, unique, content)?;
             highest = highest.max(level);
-            set.push(affix.clone());
             affixes.push(affix);
             continue;
         }
@@ -1618,6 +1612,11 @@ pub(super) fn magic_of(
             }
             None => (text.as_str(), 1),
         };
+        if unique {
+            return Err(format!(
+                "`{text}`: a unique item's affix is written with its value (`{id}=3`), not a tier"
+            ));
+        }
         let a = (content.affixes().get(id)).ok_or_else(|| format!("unknown affix `{id}`"))?;
         let t = a
             .tier(tier)
@@ -1644,47 +1643,9 @@ pub(super) fn magic_of(
         curse_known: false,
         unique: None,
     };
-    magic.check_set(def, content, &set)?;
+    let set = if unique { &magic.affixes[..] } else { &[] };
+    magic.check_set(def, content, set)?;
     Ok(magic)
-}
-
-/// A unique item's affix `id` set by hand to `value` (`"of_the_sage=6"`, #2001), with the level
-/// of its top tier: any value of the sign of the affix's tiers, beyond them or not, on any item of
-/// `def`'s kind its effect works on (the affix's bases say only where loot rolls it). It takes
-/// the affix's top tier, which prices it as any affix of that tier
-/// ([`crate::content::MagicWorth`]).
-fn hand_set_affix(
-    def: &super::ObjectDef,
-    id: &str,
-    value: &str,
-    content: &Content,
-) -> Result<(Affix, u8), String> {
-    let text = format!("{id}={value}");
-    let value = (value.trim().parse::<i32>())
-        .map_err(|_| format!("`{text}`: the value must be a number, e.g. `mystic=30`"))?;
-    let a = (content.affixes().get(id)).ok_or_else(|| format!("unknown affix `{id}`"))?;
-    let top = (a.tiers.last()).ok_or_else(|| format!("`{id}` has no tiers"))?;
-    let tier = u8::try_from(a.tiers.len()).map_err(|_| format!("`{id}` has too many tiers"))?;
-    if value == 0 || value.signum() != top.max.signum() {
-        return Err(format!(
-            "`{text}`: the value must have the sign of `{id}`'s tiers"
-        ));
-    }
-    let kind = def
-        .kind
-        .ok_or_else(|| format!("`{}` cannot be magic", def.id))?;
-    if !a.effect.allowed_on(kind) || !crate::magic::may_roll_on(a, def) {
-        return Err(format!(
-            "`{text}`: its effect does nothing on {}",
-            def.plural
-        ));
-    }
-    let affix = Affix {
-        id: id.to_string(),
-        tier,
-        value,
-    };
-    Ok((affix, top.level))
 }
 
 /// A part an `[[item]]` names: a gem, of the plain size and cut unless it says otherwise, or

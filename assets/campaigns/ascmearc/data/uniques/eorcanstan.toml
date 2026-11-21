@@ -7,7 +7,7 @@
 id = "eorcanstan"
 name = "the Eorcanstān"
 object = "gold_ring"
-affixes = ["potent:3", "hale:6", "of_the_scholar:6", "of_clarity:12", "of_thrift=25"]
+affixes = ["potent=3", "hale=8", "of_the_scholar=29", "of_clarity=50", "of_thrift=25"]
 level = 12
 # Its make holds six enchantments (docs/dev/enchanting.md): a mithril band, a flawless sapphire.
 parts = [{ of = "mithril" }, { part = "setting", of = "sapphire", cut = "flawless" }]
