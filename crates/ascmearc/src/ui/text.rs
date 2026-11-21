@@ -146,6 +146,14 @@ pub fn word(word: impl Into<Arg>, form: &str) -> String {
     ascmearc_core::messages::arg_in(&content, &language_code(), &word, form)
 }
 
+/// A data name shown alone, as a label (a list row, a heading, a status bar segment), in the
+/// current language: its lexicon id (a `Phrase` from `Content::status_phrase` and its kin) in
+/// the `label` form, the name as the data writes it ("Twin Blades", "Hasted") where a sentence
+/// says it in lower case (#2000).
+pub fn label(name: impl Into<Arg>) -> String {
+    word(name, ascmearc_core::lang::LABEL_FORM)
+}
+
 #[cfg(test)]
 thread_local! {
     /// The language this thread's UI text is shown in, English as its fallback: the screen

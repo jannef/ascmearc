@@ -26,7 +26,7 @@ use super::menu::{HINTS, Nav, Panel, Press, truncated};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::ScreenAction;
 use super::skills_screen::meter;
-use super::text::{level_up_screen as T, ui, ui_with};
+use super::text::{label, level_up_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use ascmearc_core::Action;
@@ -182,7 +182,7 @@ impl LevelUpScreen {
                         explain_roll(&r, content.skill_rolls().soft_cap)
                     });
                     let entry = Entry {
-                        name: def.name.clone(),
+                        name: label(content.skill_phrase(s.skill)),
                         detail: format!("{:>3}  {}  {dice}", s.value, meter(s.progress)),
                         description: format!("{explained} {}", def.description)
                             .trim()
@@ -226,8 +226,8 @@ impl LevelUpScreen {
                         let name = match &action {
                             Some(Action::Talent {
                                 choice: Some(c), ..
-                            }) => def.name_for(content, Some(c)),
-                            _ => t.name.clone(),
+                            }) => label(content.talent_arg(t.id, Some(c.as_str()))),
+                            _ => label(content.talent_phrase(t.id)),
                         };
                         let entry = Entry {
                             name,
@@ -243,7 +243,7 @@ impl LevelUpScreen {
         };
         screen.entries = PagedList::grouped(items, |group| match group {
             Group::Skills => ui(T::SKILLS),
-            Group::Tree(tree) => book.tree(tree).name.clone(),
+            Group::Tree(tree) => label(content.tree_phrase(tree)),
         });
         screen
     }

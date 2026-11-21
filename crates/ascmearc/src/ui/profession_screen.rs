@@ -13,7 +13,7 @@
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::{ScreenAction, ScreenName};
-use super::text::{profession_screen as T, ui, ui_with};
+use super::text::{label, profession_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::Bindings;
 use crate::render::console::Console;
@@ -90,7 +90,7 @@ impl ProfessionScreen {
                 let entry = Entry {
                     id: row.id,
                     key: def.id.clone(),
-                    name: row.name,
+                    name: label(content.recipe_phrase(&def.id)),
                     takes: row.takes,
                     why: row.unavailable.map(|why| why.reason(content)),
                     uses: def.uses,
@@ -102,11 +102,11 @@ impl ProfessionScreen {
             .collect();
         let recipes = PagedList::grouped(rows, |class| match class {
             None => ui(T::WORK),
-            Some(class) => content.item_class(class).name.clone(),
+            Some(class) => label(content.item_class_phrase(class)),
         });
         Self {
             skill: Some(skill),
-            title: content.skill(skill).name.clone(),
+            title: label(content.skill_phrase(skill)),
             recipes,
         }
     }

@@ -312,8 +312,7 @@ ability `weapon_ability:<id>` (lower case, `combat.learned_ability`); an ability
 `Character::sign_arg`); a class, a prestige class, and a stance `class:<id>`, `prestige:<id>`,
 `stance:<id>` (lower case, as `race:<id>`). The chargen name question is `class:` with a `race:`
 adjective; the epitaph `{class:a}` (with `prestige`); a named statue `look.fallen` ("Brakka the
-dwarf"). Left as text: a label shown alone (lists, the status bar, the Characters list: #2000),
-the race and class words in a grave's `name` (the graveyard file keeps text, "Names kept in
+dwarf"). Left as text: the race and class words in a grave's `name` (the graveyard file keeps text, "Names kept in
 saves"), and the `--character` refusal
 (`ClassDef::refuses`, developer text).
 
@@ -333,8 +332,27 @@ blows (`World::say_spell_of`), are `sign_noun:<active>` (the ability's name in l
 breath"); a retaliating status's blow (`gifts.rs`) is its `damage_type:` or `status:` phrase. A
 caster style is a weapon skill (`weapon_skill:<id>`). Left as text: the typed slot id
 (`items.no_slot`), a dev zone's kind, composed text (#1997: a spell's roll and an attack's
-summary, `magic/describe.rs`, the epitaph's "miscast {spell}"), and labels shown alone (the spells and scribe lists, the school headings,
-item class headers: #2000).
+summary, `magic/describe.rs`, the epitaph's "miscast {spell}").
+
+**A name shown alone, as a label** (#2000: a list row, a heading, a status bar segment) is its
+lexicon id in the `label` form (`render.rs::LABEL_FORM`, which every language has; the app's
+`ui::text::label`). A name a sentence says in lower case (a race, a class, a prestige class, a
+stance, a resource, a skill, a status, a weapon skill, a weapon ability, a song, a spell, a slot,
+an item class) keeps the data's name as written as its lexicon `label` form
+(`content/lexicon.rs::labelled`), so a label reads as the data writes it, internal capitals and
+all ("Twin Blades", where a sentence says "twin blades"); any other phrase, a nested message, or
+a word without a `label` form is said `bare` with a capital ("Cold-blooded", "Evocation"), and
+text as written. A translation's lexicon gives a word its own `label` form where a capital on the
+first letter is not the label. The screens that take their labels so: the status bar's effects
+and stance (`ui::conditions`), the character screen's race, classes, stance, resources, and
+sign's gifts, the skills, talents, level-up, chargen (race, class, the summary's skills and
+talents), chargen talents, sign, weapon skills, magic, scribe (the school headings), shape,
+profession, craft pick, and equipment screens' rows and headings, `PagedList::new`'s item
+classes, and the Characters list and the graveyard's race and classes. A character's classes
+(`character::class_arg`) are a phrase or the nested `character.class_level` ("Bard 30") and
+`character.classes` ("Bard 30, Hunter 4"), said `label`; the dump says them in English. Still
+text: a talent's choice in the level-up list (`Choice::name`, as the data writes each kind), the
+horoscope's animal and element names, and the abilities menu's rows and source headings.
 
 **The data's words beside a name** (#1995, `content/data_word.rs`, whose module docs hold both
 tables) have keys of their own, chosen by kind: a noun or an adjective a phrase is built of is a
@@ -822,24 +840,23 @@ example:
 
 **Words the screens still take from core as text** until core's words are converted (#1949):
 the gender's name, the alignment band's, the resistance words
-(`ResistanceWord::label`), an attack's source label and summary, the guild rank's title, the
-conditions (`ui::conditions`), and the race, class, stance, resource, sign, skill, talent, tree, and
-need names data gives as English, the Characters list's among them (a save's summary keeps the
-race and the classes by id, "Names kept in saves").
+(`ResistanceWord::label`) and the damage types they list, an attack's source label and summary,
+the guild rank's title, and the need names data gives as English. The data names a screen shows
+alone are labels ("A name shown alone, as a label").
 
 **The UI core** (#1930): `mod.toml` (the module `text::r#mod`: `build.rs` names every module raw)
 holds the message line's prompts and the status bar's own labels (`HP`, `MP`, `Lv`, a resource's
 value, a kept beast's line, Dazzled, Averted); `more.toml` the `--more--` mark; `info_tabs.toml`
 the pages' names; `encounter.toml` the encounter dialog's title and choice labels, which core's
 `EncounterView` no longer carries (it gives the `outcome` and the `Choice`s; the dump's JSON lost
-its `title` and `label`). The bar still takes from core as text (#1949) the status effects' and the
-stance's names; the hunger's, the burden's, and a kept beast's health word are words core picks; the
+its `title` and `label`). The status effects' and the stance's names are labels (#2000); the
+hunger's, the burden's, and a kept beast's health word are words core picks; the
 rest prompt's words are the settings part's (`settings::fixed::REST`, #1936). The bar's developer
 segments (turn, position, light, vision, seed) and `dev.rs`'s overlay line stay literal.
 
 **The magic, scribe, and weapon skills screens** (#1938; `spells.rs` draws effects and has no
-text) still take as text the weapon skills' section names (`Section::name`) and the spell, school, caster style, and skill names data
-gives as English (the scribe list's school headings are the school's id, capitalized). The magic
+text) still take as text the weapon skills' section names (`Section::name`); the spell, school,
+caster style, and skill names are labels (#2000). The magic
 screen's spell detail is cut in its room, not run over the frame (#1910 stays in `KNOWN` until its
 layout gives the detail the room).
 
@@ -1046,8 +1063,8 @@ the character screen's date), a burial ground's `level:<id>.burial.epitaph` (its
 `level:<id>.legend.<char>.epitaph`, which `LevelState::graves` keeps by key. The patron is a
 phrase and their offer a `Speech` in the saved commission. A save's summary (the Characters
 list) keeps the race, the class, and the prestige class by id (`Summary::race_and_class` names
-them, through #1993's ids once the screens' labels are converted, #2000); a summary another
-version wrote with the names shows them as written. Still text: who a grave's dead were and how
+them as labels, `race:<id>` and `character::class_arg`, #2000); a summary another version wrote
+with the names shows them as written. Still text: who a grave's dead were and how
 they died, which the graveyard file on disk keeps in the app's words (its records predate any
 key, and a death's cause is the death screen's English, `Cause::epitaph`, until its words are
 converted), and the race and class in them until #1993's `race:`/`class:` phrases name them.

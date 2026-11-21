@@ -27,7 +27,7 @@ use super::dialog_screen::Dialog;
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::{ScreenAction, ScreenName};
-use super::text::{craft_pick_screen as T, ui, ui_msg, ui_with};
+use super::text::{craft_pick_screen as T, label, ui, ui_msg, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::Bindings;
 use crate::render::console::Console;
@@ -143,7 +143,7 @@ impl CraftPickScreen {
             return;
         };
         self.recipe = Some(recipe);
-        self.name = content.recipe(recipe).name.clone();
+        self.name = label(content.recipe_phrase(&content.recipe(recipe).id));
         self.steps = view.craft_steps(recipe);
         self.base = self.steps.clone();
         self.stale = false;

@@ -31,5 +31,5 @@ pub use message::{Arg, DATA_LINE, Entry, LITERAL, MessageId, Msg, Role};
 pub use morphology::{Conj, FormError, Morphology, ParseError, en, fi, generic};
 pub use phrase::{Gender, Modifier, Note, Person, Phrase, Word};
 pub use register::{Register, Registers};
-pub use render::{Keys, Language, RenderError, render_chain, written_key};
+pub use render::{Keys, LABEL_FORM, Language, RenderError, render_chain, written_key};
 pub use template::{Line, Segment, Template, Templates};

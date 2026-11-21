@@ -9,10 +9,11 @@
 //! 1970 (UTC), shown in UTC.
 
 use crate::settings::Clock;
-use crate::ui::text::{characters_screen as T, ui_with};
+use crate::ui::text::{characters_screen as T, label, ui_with};
 use ascmearc_core::World;
-use ascmearc_core::character::{NAMELESS, class_text};
+use ascmearc_core::character::{NAMELESS, class_arg};
 use ascmearc_core::content::Content;
+use ascmearc_core::lang::Arg;
 use serde::{Deserialize, Serialize};
 
 /// The longest slug of a name in an id.
@@ -103,19 +104,20 @@ impl Summary {
     /// Race and class together: `Dwarf Warrior`, `Human Bard 30, Hunter 4` (either may be
     /// missing), named from `content`.
     pub fn race_and_class(&self, content: &Content) -> String {
-        let race = (content.race(&self.race)).map_or_else(|| self.race.clone(), |r| r.name.clone());
+        let race = (!self.race.is_empty()).then(|| match content.race(&self.race) {
+            Some(_) => Arg::from(content.race_phrase(&self.race)),
+            None => Arg::from(self.race.as_str()),
+        });
         let prestige = Some(self.prestige.as_str()).filter(|p| !p.is_empty());
         let level = u8::try_from(self.level).unwrap_or(u8::MAX);
-        let class = match self.class.is_empty() {
-            true => String::new(),
-            false => class_text(content, &self.class, prestige, level),
-        };
-        match (race.as_str(), class.as_str()) {
-            ("", one) | (one, "") => one.to_string(),
-            (race, class) => ui_with(
-                T::RACE_CLASS,
-                &[("race", race.into()), ("class", class.into())],
-            ),
+        let class =
+            (!self.class.is_empty()).then(|| class_arg(content, &self.class, prestige, level));
+        match (race, class) {
+            (Some(race), Some(class)) => {
+                ui_with(T::RACE_CLASS, &[("race", race), ("class", class)])
+            }
+            (Some(one), None) | (None, Some(one)) => label(one),
+            (None, None) => String::new(),
         }
     }
 }

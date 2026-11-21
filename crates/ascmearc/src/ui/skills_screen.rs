@@ -13,7 +13,7 @@ use super::character_screen::fit_joined;
 use super::cursor;
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::screens::ScreenAction;
-use super::text::{skills_screen as T, ui, ui_with};
+use super::text::{label, skills_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
@@ -50,7 +50,7 @@ impl SkillsScreen {
                 .map(|s| {
                     let def = content.skill(s.skill);
                     Row {
-                        name: def.name.clone(),
+                        name: label(content.skill_phrase(s.skill)),
                         value: s.value,
                         progress: s.progress,
                         description: def.description.clone(),

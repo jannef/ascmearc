@@ -12,7 +12,8 @@
 //! | `guild:<id>` | a guild's name without its article ("Weyfarers' Gilde"); a name written with "the" is a common noun said `the`, any other proper |
 //! | `sign_noun:<active>` | a birth sign's (or a profane gift's) active as the noun of its blow, lower case ("fire breath") |
 //!
-//! A caster style is a weapon skill (`weapon_skill:<id>`, #1993).
+//! A caster style is a weapon skill (`weapon_skill:<id>`, #1993). A name in lower case keeps the
+//! data's name as its `label` form (`lexicon::labelled`, #2000).
 
 use super::{Content, DamageTypeId, ItemClassId, School, SignActive, SlotId, SpellData};
 use crate::ability::Ability;
@@ -21,7 +22,7 @@ use crate::lang::{LexWord, Phrase};
 
 /// The word at lexicon id `kind:key` of the kinds above, if it is one.
 pub(super) fn word(content: &Content, kind: &str, key: &str) -> Option<LexWord> {
-    let lower = |name: &str| Some(LexWord::new(name.to_lowercase()));
+    let lower = |name: &str| Some(super::lexicon::labelled(name));
     match kind {
         "spell" => lower(&content.spell(content.spell_id(key)?).name),
         "school" => (School::ALL.iter())

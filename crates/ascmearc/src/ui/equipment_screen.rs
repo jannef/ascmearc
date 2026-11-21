@@ -22,7 +22,7 @@ use super::cursor;
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::ScreenAction;
-use super::text::{UiText, equipment_screen as T, ui, ui_msg, ui_with};
+use super::text::{UiText, equipment_screen as T, label, ui, ui_msg, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM, rarity_color};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
@@ -155,12 +155,12 @@ impl EquipmentScreen {
     pub fn refresh(&mut self, view: &PerceptionView<'_>) {
         let worn = view.equipment();
         self.rows = (view.own_slots().into_iter())
-            .map(|(slot, def)| {
+            .map(|(slot, _)| {
                 let item = worn.get(slot);
                 let slots = item.map_or(Vec::new(), |i| worn.slots_of(i));
                 SlotRow {
                     slot,
-                    name: def.name.clone(),
+                    name: label(view.content().slot_phrase(slot)),
                     item: (item.and_then(|i| view.inventory().get(i))).map(|s| Item::of(s, view)),
                     held: item,
                     both_hands: slots.len() > 1,

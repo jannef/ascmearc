@@ -16,7 +16,7 @@
 
 use super::menu::{Nav, Panel, Press};
 use super::screens::{ScreenAction, ScreenName};
-use super::text::{character_screen as T, ui, ui_with, word};
+use super::text::{character_screen as T, label, ui, ui_with, word};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
@@ -210,14 +210,15 @@ impl CharacterScreen {
             vec![
                 (
                     ui(T::RACE),
-                    (spec.race(content)).map_or(spec.race.clone(), |r| r.name.clone()),
+                    (spec.race(content))
+                        .map_or(spec.race.clone(), |r| label(content.race_phrase(&r.id))),
                 ),
                 (ui(T::GENDER), gender_text(c)),
                 // `Bard` until the class is full, `Bard 30` at its cap, `Bard 30, Hunter 4` once
                 // called.
                 (
                     ui(T::CLASS),
-                    c.class_text(content, view.own_experience().level),
+                    label(c.class_arg(content, view.own_experience().level)),
                 ),
             ]
         });
@@ -225,12 +226,12 @@ impl CharacterScreen {
         let stars = (view.own_talents().into_iter())
             // The sign's gifts only: a profane gift is no star's (the Talents page lists those).
             .filter(|t| t.granted && !t.race && !t.boon && !t.story && t.profane.is_none())
-            .map(|t| match t.spent {
-                true => {
-                    let talent = content.talent_arg(t.id, t.choice.as_deref());
-                    ui_with(T::SPENT, &[("talent", talent)])
+            .map(|t| {
+                let talent = content.talent_arg(t.id, t.choice.as_deref());
+                match t.spent {
+                    true => ui_with(T::SPENT, &[("talent", talent)]),
+                    false => label(talent),
                 }
-                false => t.name,
             })
             .collect();
         let kept = (view.kept()).map(|(ally, data)| {
@@ -261,10 +262,10 @@ impl CharacterScreen {
             mana: view.own_mana(),
             defence: view.own_defence(),
             protection: view.own_protection(),
-            stance: content.stance_def(view.own_stance()).name.clone(),
+            stance: label(content.stance_phrase(view.own_stance())),
             resources: (view.own_resources().iter())
                 .map(|r| {
-                    let name = content.resource(r.resource).name.clone();
+                    let name = label(content.resource_phrase(r.resource));
                     let [value, max] = value_max(r.value, r.max);
                     // Whose guard the openings are in: "3/5, in the kobold's guard".
                     let held = match view.own_mark_phrase().filter(|_| r.marked) {

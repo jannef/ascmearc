@@ -13,7 +13,7 @@
 
 use super::menu::{HINTS, Nav, Panel, Press, wrap};
 use super::screens::ScreenAction;
-use super::text::{graveyard_screen as T, ui, ui_with};
+use super::text::{graveyard_screen as T, label, ui, ui_with};
 use super::{TEXT, TEXT_DIM};
 use crate::graveyard::{Fallen, PROFANE, STONE};
 use crate::render::console::Console;
@@ -51,17 +51,32 @@ struct Entry {
 
 impl Entry {
     fn new(fallen: &Fallen, content: &Content) -> Self {
-        let race = (content.race(&fallen.race)).map_or(fallen.race.as_str(), |r| r.name.as_str());
-        let class =
-            (content.class(&fallen.class)).map_or(fallen.class.as_str(), |c| c.name.as_str());
+        // A name the content has, as a label; else the id kept, as written.
+        let named = |known: bool, phrase: Phrase, id: &str| match known {
+            true => label(phrase),
+            false => id.to_string(),
+        };
+        let race = named(
+            content.race(&fallen.race).is_some(),
+            content.race_phrase(&fallen.race),
+            &fallen.race,
+        );
+        let class = named(
+            content.class(&fallen.class).is_some(),
+            content.class_phrase(&fallen.class),
+            &fallen.class,
+        );
         let mut what = [race, class]
             .into_iter()
             .filter(|s| !s.is_empty())
             .collect::<Vec<_>>()
             .join(" ");
         if !fallen.prestige.is_empty() {
-            let prestige = (content.prestige(&fallen.prestige))
-                .map_or(fallen.prestige.as_str(), |p| p.name.as_str());
+            let prestige = named(
+                content.prestige(&fallen.prestige).is_some(),
+                content.prestige_phrase(&fallen.prestige),
+                &fallen.prestige,
+            );
             let args = [("what", what.into()), ("prestige", prestige.into())];
             what = ui_with(T::AND_PRESTIGE, &args);
         }

@@ -22,7 +22,7 @@ use super::character_screen::{birth_parts, fit_joined, fit_parts};
 use super::cursor;
 use super::menu::{HINTS, Nav, Panel, Press, truncated, wrap};
 use super::screens::{MenuChoice, ScreenAction, ScreenName};
-use super::text::{UiText, chargen_screen as T, ui, ui_with, word};
+use super::text::{UiText, chargen_screen as T, label, ui, ui_with, word};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use ascmearc_core::character::{CharacterSpec, Gender, NAMELESS, Start, check_name, random_name};
@@ -305,7 +305,7 @@ impl ChoiceScreen {
                     details.extend(pace_words(r.experience).map(String::from));
                     Choice {
                         id: r.id.clone(),
-                        name: r.name.clone(),
+                        name: label(content.race_phrase(&r.id)),
                         description: r.description.clone(),
                         details,
                     }
@@ -328,7 +328,7 @@ impl ChoiceScreen {
             .into_iter()
             .map(|c| Choice {
                 id: c.id.clone(),
-                name: c.name.clone(),
+                name: label(content.class_phrase(&c.id)),
                 description: c.description.clone(),
                 details: [adjustments(&c.stats)]
                     .into_iter()
@@ -501,7 +501,7 @@ fn talent_names(content: &Content, spec: Option<&CharacterSpec>) -> String {
                 Some((id, choice)) => (id, Some(choice)),
                 None => (pick.as_str(), None),
             };
-            book.id(id).map(|t| book.get(t).name_for(content, choice))
+            book.id(id).map(|t| label(content.talent_arg(t, choice)))
         })
         .collect();
     match names.is_empty() {
@@ -557,10 +557,10 @@ impl SummaryScreen {
         let names = match &spec {
             Some(spec) => [
                 spec.race(content)
-                    .map_or(spec.race.clone(), |r| r.name.clone()),
+                    .map_or(spec.race.clone(), |r| label(content.race_phrase(&r.id))),
                 spec.gender.name().to_string(),
                 spec.class(content)
-                    .map_or(spec.class.clone(), |c| c.name.clone()),
+                    .map_or(spec.class.clone(), |c| label(content.class_phrase(&c.id))),
                 name.clone(),
             ],
             None => Default::default(),
@@ -583,7 +583,7 @@ impl SummaryScreen {
             });
         let skills = start.as_ref().map_or(Vec::new(), |s| {
             (s.skills.iter())
-                .map(|(id, t)| (content.skill(id).name.clone(), t.value))
+                .map(|(id, t)| (label(content.skill_phrase(id)), t.value))
                 .collect()
         });
         let kit = kit_words(content, draft, &start);

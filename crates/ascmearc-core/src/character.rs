@@ -64,6 +64,7 @@ use crate::content::{
     ClassDef, Content, CreatureId, PrestigeDef, RaceDef, ScenarioDef, Sign, Table, WeaponSkillId,
 };
 use crate::kit::{self, Pack};
+use crate::lang::{Arg, Msg};
 use crate::rng::Rng;
 use crate::skills::{self, Skills};
 use crate::stats::{self, AVERAGE, PerStat, Stat, Stats, adjusted};
@@ -188,24 +189,33 @@ impl BirthDate {
 }
 
 /// The classes `class` and `prestige` (ids) at total `level`, as the character screen and the
-/// Characters list name them ([`Character::class_text`]): `Bard` until the class is full, `Bard
-/// 30` at its cap, `Bard 30, Hunter 4` once the prestige class has levels; a class the content
-/// lacks by its id.
-pub fn class_text(content: &Content, class: &str, prestige: Option<&str>, level: u8) -> String {
-    let Some(class) = content.class(class) else {
-        return class.to_string();
+/// Characters list name them ([`Character::class_arg`]), said as a label (the `label` form):
+/// `Bard` until the class is full, `Bard 30` at its cap (`character.class_level`), `Bard 30,
+/// Hunter 4` once the prestige class has levels (`character.classes`); a class the content lacks
+/// by its id, as text.
+pub fn class_arg(content: &Content, class: &str, prestige: Option<&str>, level: u8) -> Arg {
+    let Some(def) = content.class(class) else {
+        return class.into();
     };
-    let mut text = class.name.clone();
-    if level >= class.max_level {
-        text.push_str(&format!(" {}", class.max_level));
-    }
-    if let Some(p) = prestige.and_then(|p| content.prestige(p)) {
-        match level.saturating_sub(class.max_level) {
-            0 => text.push_str(&format!(", {}", p.name)),
-            n => text.push_str(&format!(", {} {n}", p.name)),
-        }
-    }
-    text
+    let at = |name: crate::lang::Phrase, level: u8| -> Arg {
+        (Msg::new(crate::msg::character::CLASS_LEVEL).role("class", name))
+            .role("level", Arg::Number(level.into()))
+            .into()
+    };
+    let class = match level >= def.max_level {
+        true => at(content.class_phrase(&def.id), def.max_level),
+        false => content.class_phrase(&def.id).into(),
+    };
+    let Some(p) = prestige.filter(|p| content.prestige(p).is_some()) else {
+        return class;
+    };
+    let prestige = match level.saturating_sub(def.max_level) {
+        0 => content.prestige_phrase(p).into(),
+        n => at(content.prestige_phrase(p), n),
+    };
+    (Msg::new(crate::msg::character::CLASSES).role("class", class))
+        .role("prestige", prestige)
+        .into()
 }
 
 /// Who the player is in a run: the choice and what came of it.
@@ -305,9 +315,10 @@ impl Character {
     }
 
     /// The Class row of the character screen at total `level`: `Bard` until the class is full,
-    /// `Bard 30` at its cap, `Bard 30, Hunter 4` once the prestige class has levels.
-    pub fn class_text(&self, content: &Content, level: u8) -> String {
-        class_text(content, &self.spec.class, self.prestige.as_deref(), level)
+    /// `Bard 30` at its cap, `Bard 30, Hunter 4` once the prestige class has levels ([`class_arg`]), said
+    /// as a label.
+    pub fn class_arg(&self, content: &Content, level: u8) -> Arg {
+        class_arg(content, &self.spec.class, self.prestige.as_deref(), level)
     }
 
     /// Whether the character was born in a year of `element` (an id: "is this character

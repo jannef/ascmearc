@@ -117,7 +117,7 @@ use bevy::prelude::*;
 use missiles::Missiles;
 use motion::Motion;
 use spells::Spells;
-use text::{r#mod as T, ui, ui_with, word};
+use text::{label, r#mod as T, ui, ui_with, word};
 
 const MESSAGE_ROWS: i32 = 2;
 const STATUS_ROWS: i32 = 1;
@@ -858,7 +858,7 @@ fn status_segments(view: &PerceptionView, clock: Clock, dev: bool) -> Vec<Segmen
     let level = number(view.own_experience().level);
     let rest = [
         Some(Segment::new(1, ui_with(T::LEVEL, &[("level", level)]))),
-        (!stance.is_neutral()).then(|| Segment::new(1, content.stance_def(stance).name.clone())),
+        (!stance.is_neutral()).then(|| Segment::new(1, label(content.stance_phrase(stance)))),
     ];
     let tail = [
         view.region().map(|r| Segment::new(4, r)),
@@ -902,7 +902,7 @@ fn conditions(view: &PerceptionView) -> Vec<Segment> {
     let content = view.content();
     let burden = view.own_load().burden();
     let hunger = view.own_hunger().filter(|h| *h != Hunger::NotHungry);
-    let effects = (view.own_effects()).map(|s| Segment::new(1, content.status(s).name.clone()));
+    let effects = (view.own_effects()).map(|s| Segment::new(1, label(content.status_phrase(s))));
     let rest = [
         (view.dazzled()).then(|| Segment::new(1, ui(T::DAZZLED))),
         (view.averted()).then(|| Segment::new(1, ui(T::AVERTED))),
