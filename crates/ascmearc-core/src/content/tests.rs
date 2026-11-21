@@ -1016,7 +1016,9 @@ fn dungeons_need_the_terrain_generators_build_with() {
     let mut files = minimal_files("#@#\n", "");
     files.insert(
         "data/dungeons.toml",
-        "[[dungeon]]\nid = \"d\"\ndepth = 1\n[dungeon.level]\ngenerator = { kind = \"rooms\" }\nsize = [80, 21]\n",
+        "[defaults]\nstray = 5\nout_of_depth = 5\ndeeper = 5\ndread_one_in = 100\nneutral = 10\n\
+         [[dungeon]]\nid = \"d\"\ndepth = 1\n[dungeon.level]\ngenerator = { kind = \"rooms\" }\n\
+         size = [80, 21]\ndanger = 1\npopulation = [\"rat\"]\n",
     );
     // And the generators' parameters: without them no branch loads.
     let err = Content::load(&files).unwrap_err();

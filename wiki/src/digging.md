@@ -30,7 +30,7 @@ pick-axe, gloves, or body armour, adds its percent of work a turn on top (see
 may give you ore, stone, or a gem (see [Mining](mining.md)).
 
 A pick-axe can itself be magic. Magic ones turn up rarely in the [loot](magic-items.md#finding-them)
-of the deeper places (from [item level](affixes.md#base-items) 3) and in [shops](shops.md). Its
+of the more dangerous places (from [item level](affixes.md#base-items) 3) and in [shops](shops.md). Its
 description gives its digging power: "Digs at 10". A mattock digs at 15. The pick-axes you start
 with, find lying in a level, or take from a [dwarf](races.md#race-dwarf) are plain.
 

@@ -168,11 +168,6 @@ fn draws_npcs_and_quest_variants_are_checked() {
             "no branch `wulfeshol` of the campaign",
         ),
         (
-            "showcase",
-            drawn.replace("wulfeshol", "depths"),
-            "has no population",
-        ),
-        (
             "ascmearc",
             drawn.replace("1d3", "1d3-1"),
             "gives at least 1",

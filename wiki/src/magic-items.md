@@ -133,8 +133,9 @@ enchantments.", or how many more it could bear.
 
 The more dangerous the floor, the better the loot. An item's **item level** is the
 [danger](dungeons.md#who-lives-there-and-how-many) of the dungeon floor it was found on:
-Lytelscræf's first floor is item level 1, Dēopgang's first is 14. A floor with no danger gives
-its depth instead, and a level made by hand gives its own item level, mostly 1. What a creature
+Lytelscræf's first floor is item level 1, Dēopgang's first is 14. Every dungeon floor has a
+danger, and going deeper makes loot better only by raising it. A level made by hand gives its own
+item level, mostly 1. What a creature
 drops has the creature's level as its item level when that is higher, so a creature [out of its
 depth](dungeons.md#out-of-depth) drops a better item. The game never shows an item's level.
 

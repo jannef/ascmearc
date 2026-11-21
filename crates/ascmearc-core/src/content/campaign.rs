@@ -531,7 +531,7 @@ mod tests {
         refused(
             &format!("{ASH}/data/dungeons/barrow.toml"),
             "[[dungeon]]\nid = \"barrow\"\ndepth = 2\n[dungeon.level]\ngenerator = { kind = \"rooms\" }\nsize = [80, 21]\n\
-             creatures = [\"bard\"]\n",
+             danger = 1\ncreatures = [\"bard\"]\n",
             "names creature `bard`, a creature of campaign `showcase`",
         );
         refused(
@@ -585,7 +585,7 @@ mod tests {
         );
         clash(
             &format!("{ASH}/data/dungeons/depths.toml"),
-            "[[dungeon]]\nid = \"depths\"\ndepth = 2\n[dungeon.level]\ngenerator = { kind = \"rooms\" }\nsize = [80, 21]\n",
+            "[[dungeon]]\nid = \"depths\"\ndepth = 2\n[dungeon.level]\ngenerator = { kind = \"rooms\" }\nsize = [80, 21]\ndanger = 1\npopulation = [\"rat\"]\n",
             "duplicate dungeon id `depths`",
         );
         clash(

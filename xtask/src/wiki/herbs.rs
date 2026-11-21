@@ -1,13 +1,13 @@
 //! Herbs (Herbalism; `data/herbs.toml`, `data/forage.toml`): what gathering
-//! from the glowing fungus takes and finds, and each herb's share by depth and where it grows on
-//! the surface.
+//! from the glowing fungus takes and finds, and each herb's share by item level and where it grows
+//! on the surface.
 
 use super::util::{Term, anchored, capital, percent_of};
 use ascmearc_core::content::Content;
 use std::fmt::Write as _;
 
-/// The depths the herb table shows shares at.
-const DEPTHS: [u8; 4] = [1, 3, 6, 10];
+/// The item levels the herb table shows shares at.
+const LEVELS: [u8; 4] = [1, 3, 6, 10];
 
 /// Gathering's numbers: the time, and how many herbs a gather finds.
 pub(super) fn gathering(content: &Content) -> String {
@@ -24,19 +24,19 @@ pub(super) fn gathering(content: &Content) -> String {
 }
 
 /// Every herb, as the gather table lists them: its worth, its share of a gather's draws at
-/// depths 1, 3, 6, and 10, and the lands a forage may find it on.
+/// item levels 1, 3, 6, and 10, and the lands a forage may find it on.
 pub(super) fn herbs(content: &Content) -> String {
     let Some(rules) = content.herbs() else {
         return "Nobody gathers herbs.\n".into();
     };
-    let mut out = String::from("| Herb | Worth | From depth |");
-    for depth in DEPTHS {
-        let _ = write!(out, " Depth {depth} |");
+    let mut out = String::from("| Herb | Worth | From item level |");
+    for level in LEVELS {
+        let _ = write!(out, " Item level {level} |");
     }
     out.push_str(" On a forage (Herbalism) |\n|---|---:|---:|");
-    out.push_str(&"---:|".repeat(DEPTHS.len()));
+    out.push_str(&"---:|".repeat(LEVELS.len()));
     out.push_str("---|\n");
-    let tables: Vec<_> = DEPTHS.iter().map(|&d| rules.at(d)).collect();
+    let tables: Vec<_> = LEVELS.iter().map(|&d| rules.at(d)).collect();
     for herb in &rules.herbs {
         let def = content.object(herb.object);
         let _ = write!(

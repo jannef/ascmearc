@@ -255,6 +255,10 @@ depth = 3
 [dungeon.level]
 generator = { kind = "rooms" }
 size = [80, 21]
+danger = 1
+population = ["rat"]
+population_count = 0
+spawn = { chance = 0 }
 room_effects = { chance = 100, per_level = 3, favoured = { collapsed = 100 } }
 [[dungeon.levels]]
 from = 2

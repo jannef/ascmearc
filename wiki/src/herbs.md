@@ -34,9 +34,9 @@ that cell again. Each gather that runs its time trains Herbalism.
 
 ## What you find
 
-Which herb each find is depends on how deep the fungus grows: the deeper, the rarer the herbs.
-The shares below are for each herb found, at four depths (a dungeon's floor number; a place made
-by hand counts as its own depth). A dash means the herb never grows that high up. The last column
+Which herb each find is depends on the [item level](magic-items.md#finding-them) of the level the
+fungus grows on: the more dangerous the floor, the rarer the herbs. The shares below are for each
+herb found, at four item levels. A dash means the herb never grows on so safe a floor. The last column
 says where a [forage](skill-uses.md#foraging) may find it with Herbalism; glowcap and mandrake
 grow only in the dark.
 

@@ -9,7 +9,7 @@ use std::fmt::Write as _;
 
 /// The potions: what drinking each does in numbers, its colour, the training marks it gives,
 /// what throwing it does (a flask's splash), from which item level
-/// (depth) loot holds it and how often, and what it is worth. By name.
+/// (the floor's danger) loot holds it and how often, and what it is worth. By name.
 pub(super) fn potions(content: &Content) -> String {
     let mut out = String::from(
         "| Potion | Kind | What drinking it does | Thrown | Colour | Marks | Found from | Value |\n\

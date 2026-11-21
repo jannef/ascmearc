@@ -17,5 +17,11 @@ generator = { kind = "tower" }
 traps = ["arrow", "spear", "alarm", "pit"]
 traps_per_level = [3, 5]
 hidden_per_depth = 2
+# The floor's danger, and so its loot's item level: 1 on the first floor, one more a floor up.
+danger = 1
+# Nobody lives there, and nobody comes.
+population = ["rat"]
+population_count = 0
+spawn = { chance = 0 }
 shops = { chance = 0 }
 room_effects = { chance = 0 }

@@ -26,14 +26,18 @@ static BEFORE: LazyLock<Content> = LazyLock::new(|| {
 /// Counts: (neutral, all).
 type Share = [u32; 2];
 
-/// Every branch floor with a danger (an endless branch's first 30) whose odds scale the neutral.
+/// Every branch floor with a population drawn (an endless branch's first 30; not the test
+/// world's quiet Depths, whose patrols are placed) whose odds scale the neutral.
 fn floors(content: &Content) -> Vec<String> {
     let mut ids = Vec::new();
     for def in content.dungeons() {
         let depth = if def.endless.is_some() { 30 } else { def.depth };
         for d in 1..=depth {
             let id = format!("{}:{d}", def.id);
-            if content.spawning(&id).is_some() {
+            let drawn = |(_, _, s): (_, _, &crate::content::Spawning)| {
+                s.count != crate::content::Count::Fixed(0)
+            };
+            if content.spawning(&id).is_some_and(drawn) {
                 ids.push(id);
             }
         }
@@ -89,13 +93,20 @@ fn a_fifth(after: Share, before: Share) -> bool {
     percent([after[0].saturating_sub(2), after[1]]) * 5.0 <= percent(before)
 }
 
-/// The branches whose odds scale the neutral (Ælfhām's fey keep their weight).
+/// The branches whose odds scale the neutral (Ælfhām's fey keep their weight) and whose floors
+/// draw a population ([`floors`]).
 fn scaled() -> Vec<String> {
+    let drawn = floors(&CONTENT);
     (CONTENT.dungeons())
         .filter(|d| {
             CONTENT
                 .draw_odds_at(&format!("{}:1", d.id))
                 .is_some_and(|o| o.neutral < 100)
+        })
+        .filter(|d| {
+            drawn
+                .iter()
+                .any(|id| id.split(':').next() == Some(d.id.as_str()))
         })
         .map(|d| d.id.clone())
         .collect()

@@ -173,7 +173,8 @@ fn a_vault_a_branch_level_names_takes_no_danger() {
     files.remove_shared_vaults();
     files.insert("vaults/marked.toml", &vault_file("danger = { from = 6 }"));
     let branch = "\n[[dungeon]]\nid = \"pinning\"\nname = \"Pinning\"\ndepth = 1\n[dungeon.level]\ngenerator = { kind = \"rooms\" }\n\
-         size = [80, 21]\n[[dungeon.levels]]\nfrom = 1\nvaults = [\"marked\"]\n";
+         size = [80, 21]\ndanger = 1\npopulation = [\"rat\"]\n\
+         [[dungeon.levels]]\nfrom = 1\nvaults = [\"marked\"]\n";
     let dungeons = format!(
         "{}{branch}",
         include_str!("../../../../assets/data/dungeons.toml")

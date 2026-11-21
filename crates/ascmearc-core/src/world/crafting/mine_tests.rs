@@ -255,7 +255,7 @@ fn bad_files_are_refused() {
     let mut files = ContentFiles::builtin();
     let dungeons = format!(
         "{}\n[[dungeon]]\nid = \"bad\"\ndepth = 1\n[dungeon.level]\ngenerator = {{ kind = \"rooms\" }}\nsize = [40, 20]\n\
-         ores = [\"steel\"]\n",
+         ores = [\"steel\"]\ndanger = 1\npopulation = [\"rat\"]\n",
         include_str!("../../../../../assets/data/dungeons.toml")
     );
     files.insert("data/dungeons.toml", &dungeons);

@@ -42,7 +42,7 @@ fn scriptoria_have_shelves_and_two_to_four_scrolls() {
     let shelves = with.terrain_id("shelves").expect("shelves");
     let effect = with.room_effects().id("scriptorium").expect("scriptorium");
     let (mut rooms, mut counts) = (0, [0u32; 5]);
-    for seed in 0..80 {
+    for seed in 0..120 {
         let level = generate(&with, ("showcase", seed), "depths:2", None).expect("level");
         let plain = generate(&without, ("showcase", seed), "depths:2", None).expect("level");
         assert_eq!(level.terrain, plain.terrain, "seed {seed}: the same map");

@@ -13,7 +13,7 @@
 # each optional, layered field by field over the template for their depths (first match wins),
 # so any level field may vary by depth; a table field (`generator` of the template's kind,
 # `chests`, `spawn`, `room_effects`, `shops`) layers field by field too, `danger` is one value.
-# What is checked is each depth's resolved plan: a `dread_one_in` or a `population` without a
+# What is checked is each depth's resolved plan: a depth without a
 # `danger`, a size its generator does not build, a `hidden` on more than one depth, or a tower
 # plan with what a tower has not is refused wherever the field came from (#1834;
 # `content/dungeon.rs`, docs/dev/mapgen.md "Branches and level plans").
@@ -114,8 +114,8 @@
 #   key        a key (objects.toml): the rooms generator locks the door of up to
 #              two rooms that have only one (the mines generator, of up to two chambers), with the lock this key opens, and leaves the key
 #              where the player reaches it without unlocking anything (default none: no locks)
-#   danger     how dangerous its floors are (default none: 0, and
-#              nothing comes): `danger = 4` is `{ base = 4, per_depth = 1 }`, the floor at depth d
+#   danger     how dangerous its floors are, and the item level of their loot: every floor
+#              needs one (depth reaches loot only through it): `danger = 4` is `{ base = 4, per_depth = 1 }`, the floor at depth d
 #              `base + (d - 1) × per_depth` (at most 99 a floor); `player = {
 #              percent, from, max }` adds percent % of each player level past `from`, at most
 #              `max` (an area that grows with the player). One value: a row's replaces the
