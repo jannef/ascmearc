@@ -96,7 +96,17 @@ impl SignScreen {
             content.sign_phrase(c.sign.as_ref().expect("a sign")).into(),
         );
         let born = ui_with(T::BORN_SIGN, &[date, sign, age]);
-        let legend = format!("{} {}", animal.description, element.description);
+        let legend = format!(
+            "{} {}",
+            crate::ui::text::data_line(ascmearc_core::content::data_line::description(
+                "sign_animal",
+                &animal.id
+            )),
+            crate::ui::text::data_line(ascmearc_core::content::data_line::description(
+                "sign_element",
+                &element.id
+            ))
+        );
         let lucky = c.lucky(content);
         let book = content.talents();
         let lucky_grants: Vec<&str> = lucky.map_or(Vec::new(), |l| {
@@ -119,7 +129,9 @@ impl SignScreen {
                 };
                 Gift {
                     name,
-                    words: def.description.clone(),
+                    words: crate::ui::text::data_line(
+                        ascmearc_core::content::data_line::description("talent", &def.id),
+                    ),
                     look,
                 }
             })
@@ -144,7 +156,9 @@ impl SignScreen {
         Self {
             born,
             legend,
-            lucky: lucky.map(|l| l.description.clone()),
+            lucky: lucky.map(|l| {
+                crate::ui::text::data_line(ascmearc_core::content::data_line::lucky_description(l))
+            }),
             gifts,
             adjustments,
         }

@@ -562,7 +562,7 @@ fn label(content: &Content, recipe: &RecipeDef, step: Step) -> Phrase {
                     .iter()
                     .all(|m| group(m) == first)
                     .then_some(first)??;
-                Some(step_word(&group))
+                Some(Phrase::id(format!("material_group:{group}")))
             })
             .unwrap_or_else(|| step_word("material")),
         Step::Input(i) => match &recipe.inputs[i].kind {
@@ -570,7 +570,7 @@ fn label(content: &Content, recipe: &RecipeDef, step: Step) -> Phrase {
                 Phrase::id(format!("object:{}", content.object(*o).id)).count(2)
             }
             InputKind::Material(m) => Phrase::id(format!("material:{}", content.material(*m).id)),
-            InputKind::Group(group) => step_word(group),
+            InputKind::Group(group) => Phrase::id(format!("material_group:{group}")),
         },
         Step::Ornament(part) => part_name(Some(part)).unwrap_or_else(|| Phrase::literal("")),
         Step::Gem(i) => (def.parts.get(i))
@@ -579,10 +579,9 @@ fn label(content: &Content, recipe: &RecipeDef, step: Step) -> Phrase {
     }
 }
 
-/// A step's label core picks ("item", "gem", "seal") or a material group's ("metal"), which
-/// has no id of its own: `word:<text>`.
-pub(super) fn step_word(text: &str) -> Phrase {
-    // lang: todo(#2035) a step's label or a material group's word
+/// A step's label core picks ("item", "gem", "seal"): a fixed `word:<text>`.
+pub(super) fn step_word(text: &'static str) -> Phrase {
+    // lang: label a fixed id, a word core names
     Phrase::id(format!("word:{text}"))
 }
 

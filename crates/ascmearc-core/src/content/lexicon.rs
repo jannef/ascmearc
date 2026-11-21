@@ -246,8 +246,8 @@ impl Content {
     }
 
     /// What was chosen for a talent, by its name in lower case: a weapon skill, a skill, an
-    /// element (a damage type), or a school by its lexicon id; a kind of creature a `word:`
-    /// phrase. A list of choices says it in [`Choice::listed_form`].
+    /// element (a damage type), a school, or a kind of creature (a tag) by its lexicon id; a
+    /// choice the content lacks by its id. A list of choices says it in [`Choice::listed_form`].
     pub fn choice_phrase(&self, kind: Choice, choice: &str) -> Phrase {
         let name = kind.name(self, choice);
         let school = super::School::ALL.iter().any(|s| s.id() == choice);
@@ -260,7 +260,8 @@ impl Content {
             Choice::Element | Choice::School if name.is_some() => {
                 Phrase::id(format!("damage_type:{choice}"))
             }
-            // lang: todo(#2035) a talent's choice by its name
+            Choice::Tag if name.is_some() => self.tag_phrase(choice),
+            // lang: id a choice the content lacks
             _ => Phrase::id(format!("word:{}", name.unwrap_or(choice).to_lowercase())),
         }
     }

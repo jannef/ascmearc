@@ -1,7 +1,7 @@
 //! Combat in the world: attacks hurt and kill, creatures drop what they
 //! carry, hit points come back with time, and the player's death ends the run.
 
-use super::fight::{End, Guard, Words, attack_message, data_word, death_message, word};
+use super::fight::{End, Guard, Words, attack_message, death_message, word};
 use crate::action::{AttackKind, parse_actions};
 use crate::combat::{Category, Health, Strike};
 use crate::content::{ContentFiles, Role};
@@ -268,11 +268,11 @@ fn you() -> End {
 }
 
 fn seen(name: &str) -> End {
-    End::Seen(data_word(name))
+    End::Seen(crate::lang::Phrase::id(format!("word:{name}")))
 }
 
 fn trap(name: &str) -> End {
-    End::Trap(data_word(name))
+    End::Trap(crate::lang::Phrase::id(format!("word:{name}")))
 }
 
 /// A message in English, or nothing.

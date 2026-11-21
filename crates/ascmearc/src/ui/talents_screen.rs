@@ -107,7 +107,12 @@ impl TalentsScreen {
             screen.items.push(Item {
                 name: label(content.talent_arg(talent.id, talent.choice.as_deref())),
                 from,
-                description: talent.description,
+                description: crate::ui::text::data_line(
+                    ascmearc_core::content::data_line::description(
+                        "talent",
+                        &content.talents().get(talent.id).id,
+                    ),
+                ),
                 needs: Vec::new(),
                 own: true,
             });
@@ -135,7 +140,12 @@ impl TalentsScreen {
             screen.items.push(Item {
                 name: label(content.talent_phrase(talent.id)),
                 from: None,
-                description: talent.description,
+                description: crate::ui::text::data_line(
+                    ascmearc_core::content::data_line::description(
+                        "talent",
+                        &content.talents().get(talent.id).id,
+                    ),
+                ),
                 needs: talent.needs,
                 own: false,
             });

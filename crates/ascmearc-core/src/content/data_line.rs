@@ -352,6 +352,85 @@ fn describe_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
     }
 }
 
+// --- What screens and the look line show of the data (#2035) -----------------------------------
+
+/// The data's words the screens and the look line show as written: a race's, a class's, a
+/// talent's, a skill's, a scenario's, and a birth sign animal's and element's `description`, a
+/// lucky day's, a terrain's and a chest band's `description` (the look
+/// line and a feature underfoot), an animated body's `moves`, and a status's `death` (the death
+/// and graveyard screens: "Bled to death").
+fn shown_lines(content: &Content, add: &mut impl FnMut(String, &str)) {
+    for def in &content.races().list {
+        add(description("race", &def.id), &def.description);
+    }
+    for def in content.classes() {
+        add(description("class", &def.id), &def.description);
+    }
+    for (_, def) in content.talents().iter() {
+        add(description("talent", &def.id), &def.description);
+    }
+    for def in content.skills() {
+        add(description("skill", &def.id), &def.description);
+    }
+    for def in content.terrain_defs() {
+        if let Some(text) = &def.description {
+            add(description("terrain", &def.id), text);
+        }
+    }
+    for band in &content.chests().bands {
+        add(description("chest", &band.id), &band.description);
+    }
+    for body in &content.animated().bodies {
+        if let Some(moves) = &body.spec.moves {
+            add(animated_moves(&body.spec.id), moves);
+        }
+    }
+    for def in content.status_defs() {
+        if let Some(death) = &def.death {
+            add(status_death(&def.id), death);
+        }
+    }
+    for def in content.scenarios.values() {
+        add(description("scenario", &def.id), &def.description);
+    }
+    if let Some(horoscope) = content.horoscope() {
+        for part in &horoscope.animals {
+            add(description("sign_animal", &part.id), &part.description);
+        }
+        for part in &horoscope.elements {
+            add(description("sign_element", &part.id), &part.description);
+        }
+        for day in &horoscope.lucky {
+            add(lucky_description(day), &day.description);
+        }
+    }
+}
+
+/// A lucky day's legend, its `description`: `lucky:<element>.<animal>.<day>.description`.
+pub fn lucky_description(day: &super::Lucky) -> String {
+    format!(
+        "lucky:{}.{}.{}.description",
+        day.element, day.animal, day.day
+    )
+}
+
+/// A `description` the screens show: `<kind>:<id>.description` (`race`, `class`, `talent`,
+/// `skill`, `terrain`, `chest`, `scenario`, `sign_animal`, `sign_element`: the kinds of their
+/// lexicon ids).
+pub fn description(kind: &str, id: &str) -> String {
+    format!("{kind}:{id}.description")
+}
+
+/// How an animated body moves, its `moves`: `animated:<body>.moves` ("rocking").
+pub fn animated_moves(body: &str) -> String {
+    format!("animated:{body}.moves")
+}
+
+/// How a status kills, its `death`: `status:<id>.death` ("Bled to death").
+pub fn status_death(id: &str) -> String {
+    format!("status:{id}.death")
+}
+
 // --- The classes' lines (L4c, #1914) -----------------------------------------------------------
 
 /// Calling `def`'s `message`: `calling:<scope>.<class>.message`, its scope its campaign (`data`
@@ -557,6 +636,7 @@ pub(super) fn add_all(content: &mut Content) -> Result<(), ContentError> {
         }
     }
     describe_lines(content, &mut add);
+    shown_lines(content, &mut add);
     people_lines(content, &mut add);
     place_names(content, &mut add);
     super::data_word::lines(content, &mut add);

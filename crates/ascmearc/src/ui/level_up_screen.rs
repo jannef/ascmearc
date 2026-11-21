@@ -184,9 +184,14 @@ impl LevelUpScreen {
                     let entry = Entry {
                         name: label(content.skill_phrase(s.skill)),
                         detail: format!("{:>3}  {}  {dice}", s.value, meter(s.progress)),
-                        description: format!("{explained} {}", def.description)
-                            .trim()
-                            .to_string(),
+                        description: format!(
+                            "{explained} {}",
+                            crate::ui::text::data_line(
+                                ascmearc_core::content::data_line::description("skill", &def.id)
+                            )
+                        )
+                        .trim()
+                        .to_string(),
                         action: Some(Action::Advance(def.id.clone())),
                         choices: Vec::new(),
                     };
@@ -232,7 +237,9 @@ impl LevelUpScreen {
                         let entry = Entry {
                             name,
                             detail: String::new(),
-                            description: t.description.clone(),
+                            description: crate::ui::text::data_line(
+                                ascmearc_core::content::data_line::description("talent", &def.id),
+                            ),
                             action,
                             choices,
                         };

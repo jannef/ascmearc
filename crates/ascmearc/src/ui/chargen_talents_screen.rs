@@ -182,7 +182,9 @@ impl ChargenTalentsScreen {
                 let entry = Entry {
                     talent: Some(id),
                     name: label(content.talent_phrase(id)),
-                    description: def.description.clone(),
+                    description: crate::ui::text::data_line(
+                        ascmearc_core::content::data_line::description("talent", &def.id),
+                    ),
                     ways,
                     done: false,
                 };

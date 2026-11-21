@@ -347,7 +347,7 @@ impl Character {
         let sign = self.sign.as_ref()?;
         match content.horoscope().and_then(|h| h.parts(sign)) {
             Some(_) => Some(content.sign_phrase(sign).into()),
-            // lang: todo(#2035) a sign the horoscope lacks a part of, by its name
+            // lang: id a sign the horoscope lacks a part of, by its ids
             None => self.sign_name(content).map(crate::lang::Arg::text),
         }
     }

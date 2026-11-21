@@ -143,13 +143,6 @@ impl From<Arg> for Speech {
     }
 }
 
-impl From<String> for Speech {
-    fn from(text: String) -> Self {
-        // lang: todo(#2035) speech as text
-        Self(vec![Arg::text(text)])
-    }
-}
-
 impl From<Vec<Arg>> for Speech {
     fn from(lines: Vec<Arg>) -> Self {
         Self(lines)
@@ -176,7 +169,7 @@ pub struct Conversation {
 pub(in crate::world) struct Mutter {
     actor: ActorId,
     at: Pos,
-    verb: String,
+    verb: Arg,
     line: Arg,
 }
 
@@ -542,7 +535,11 @@ impl World {
         let key = self.rotation_key(id, b"mutters");
         let line = &mutter.lines[rotation(key, actor.talk.muttered, mutter.lines.len())];
         let line = self.said(id, line);
-        let (at, verb) = (actor.pos, mutter.verb.clone());
+        let verb = match &mutter.verb_key {
+            Some(key) => Arg::said(key.clone()),
+            None => msg::talk::VERB_MUTTERS.into(),
+        };
+        let at = actor.pos;
         if let Some(actor) = self.state.actors.get_mut(&id) {
             actor.talk.muttered += 1;
         }
@@ -575,8 +572,7 @@ impl World {
             let said = match self.state.actors.get(&m.actor) {
                 Some(actor) if self.perception.sees_actors_at(m.at) => Msg::new(msg::talk::MUTTERS)
                     .role("who", self.called_phrase(actor))
-                    // lang: todo(#2035) a mutter's verb from the data
-                    .role("verb", Arg::text(m.verb))
+                    .role("verb", m.verb)
                     .role("line", m.line),
                 _ => {
                     let volume = Volume::of(heard.loudness, threshold);

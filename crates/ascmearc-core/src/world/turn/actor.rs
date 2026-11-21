@@ -691,6 +691,24 @@ impl Actor {
         (race.and_then(|r| r.natural.as_ref())).or(content.creature(self.creature).natural.as_ref())
     }
 
+    /// [`Actor::hide`] by its name: `hide:race.<id>` or `hide:creature.<id>` ("shell";
+    /// `content/data_word.rs`).
+    pub fn hide_phrase(
+        &self,
+        content: &Content,
+        race: Option<&RaceDef>,
+    ) -> Option<crate::lang::Phrase> {
+        let id = match race.filter(|r| r.natural.is_some()) {
+            Some(race) => format!("hide:race.{}", race.id),
+            None => {
+                let def = content.creature(self.creature);
+                def.natural.as_ref()?;
+                format!("hide:creature.{}", def.id)
+            }
+        };
+        Some(crate::lang::Phrase::id(id))
+    }
+
     /// Its Defence: 10 plus its Dexterity modifier (capped by the worn
     /// armour that allows the least and by its `burden`, the burden it suffers: the lowest cap
     /// wins), the best armour, shield, and parry of what it wears and wields (each with what its
@@ -947,17 +965,19 @@ impl Actor {
     }
 
     /// [`Actor::soaked_by`] as a phrase: the piece's object (`object:chain_mail_shirt`), or its
-    /// natural armour's word (`word:shell`).
+    /// natural armour's ([`Actor::hide_phrase`]).
     pub(crate) fn soaked_by_phrase(
         &self,
         content: &Content,
         race: Option<&RaceDef>,
     ) -> Option<crate::lang::Phrase> {
-        self.soaker(content, race).map(|soak| match soak {
-            Ok(object) => crate::lang::Phrase::id(format!("object:{}", content.object(object).id)),
-            // lang: todo(#2035) a hide's name
-            Err(hide) => crate::lang::Phrase::id(format!("word:{}", hide.name)),
-        })
+        match self.soaker(content, race)? {
+            Ok(object) => Some(crate::lang::Phrase::id(format!(
+                "object:{}",
+                content.object(object).id
+            ))),
+            Err(_) => self.hide_phrase(content, race),
+        }
     }
 
     /// What soaks a blow: the object it wears, or its natural armour.

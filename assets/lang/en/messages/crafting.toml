@@ -222,6 +222,8 @@ rig_takes_with_knife = "{takes:bare} and a knife"
 rig_will_not_hold = "The rig will not hold."
 rough_it_out = "You rough it out, and lose more than you meant to."
 seal_already = "You have sealed that already."
+# A seal step's option: `family`, a crystal family by its word (`seal_family:<category>`, "fire").
+seal_family = "{family:bare}"
 seal_no_such = "There is no such seal."
 seal_nothing_there = "There is nothing to seal there."
 seal_too_few_crystals = "You carry too few crystals for the seals."
@@ -249,7 +251,18 @@ someone_in_the_way = "Someone is in the way."
 something_in_the_way = "Something is in the way."
 splinters_under_knife = "It splinters under the knife!"
 spoil_batch = "You spoil the whole batch."
-stone_crumbles = "The stone crumbles under your tools; nothing worth keeping is left."
+# Pieces of any of several kinds of stock, as a recipe takes them (`piece::any_arg`): one of them,
+# `first`, the first kind, and `rest`, the others (`describe.or_joined`); several, `n`, how many,
+# and `kinds`, every kind of `n` (`describe.or_joined`).
+stock_any_many = "{n:bare} {kinds:bare}"
+stock_any_one = "{first:a} or {rest:bare}"
+# The same, the materials under one form word, `form` (`stock:<material>`, of one or of `n`), the
+# materials before it or after it ("of"): `first` and `rest`, or all of them, `materials`.
+stock_some_many = "{n:bare} {materials:bare} {form:bare}"
+stock_some_of_many = "{n:bare} {form:bare} of {materials:bare}"
+stock_some_of_one = "{form:a} of {materials:bare}"
+stock_some_one = "{first:a} or {rest:bare} {form:bare}"
+stone_crumbles ="The stone crumbles under your tools; nothing worth keeping is left."
 stone_splits = "The stone splits badly; what is left is smaller."
 stop_before_steel_spoils = "The work goes wrong, but you know when to stop before the steel spoils."
 stop_before_wood_spoils = "The work goes wrong, but you know when to stop before the wood spoils."

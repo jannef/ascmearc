@@ -49,7 +49,7 @@ use crate::msg;
 use crate::rng::draw;
 use crate::stats::Stat;
 use crate::time::{Duration, GameTime};
-use crate::world::combat::fight::Words;
+use crate::world::combat::fight::{Verb, Words};
 use crate::world::{ActorId, Cause, LevelState, Spent, World};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
@@ -433,7 +433,7 @@ impl World {
         });
         let spell = zone.spell.and_then(|s| content.spell_of(s));
         let words = spell.map_or_else(
-            || Words::named("fire", "burns", &content),
+            || Words::named("fire", Verb::Burns, &content),
             |s| Words::of_spell(s, &content),
         );
         self.say_spell(words, made, events);

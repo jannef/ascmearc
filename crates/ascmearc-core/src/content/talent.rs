@@ -953,7 +953,7 @@ impl Need {
                 .role("skill", content.weapon_skill_phrase(*id))
                 .role("rank", number(u32::from(*rank))),
             Need::AnyWeaponSkill(any) => Msg::new(msg::character::TALENT_NEEDS_ANY_WEAPON_SKILL)
-                .role("skill", Arg::text(any.words.as_str())) /* lang: todo(#2035) */
+                .role("skill", any.words(content))
                 .role("rank", number(u32::from(any.rank))),
             Need::Chosen(rank) => Msg::new(msg::character::TALENT_NEEDS_CHOSEN_RANK)
                 .role("rank", number(u32::from(*rank))),
@@ -1019,8 +1019,43 @@ pub struct AnyWeaponSkill {
     /// The skills, in file order.
     pub skills: Vec<WeaponSkillId>,
     pub rank: u8,
-    /// How it is said: "a melee or unarmed weapon skill", "Maces and clubs or Unarmed".
-    pub words: String,
+    /// The roles it names, as written, and the skills it names, in the file's order.
+    roles: Vec<super::Role>,
+    named: Vec<WeaponSkillId>,
+}
+
+impl AnyWeaponSkill {
+    /// How it is said: "a melee or unarmed weapon skill", "Maces and clubs or Unarmed": the
+    /// roles (each `weapon_role:<role>`) in `character.any_weapon_skill_roles`, then each skill
+    /// named as its label, all said with "or" (`character.any_weapon_skill_or`).
+    pub fn words(&self, content: &Content) -> Arg {
+        let or = |items: Vec<Arg>| {
+            let mut items = items.into_iter().rev();
+            let last = items.next().unwrap_or_else(Arg::empty);
+            items.fold(last, |rest, first| {
+                Msg::new(crate::msg::character::ANY_WEAPON_SKILL_OR)
+                    .role("first", first)
+                    .role("rest", rest)
+                    .into()
+            })
+        };
+        let mut parts = Vec::new();
+        if !self.roles.is_empty() {
+            let roles = (self.roles.iter())
+                .map(|r| Phrase::id(format!("weapon_role:{}", r.id())).into())
+                .collect();
+            parts.push(
+                Msg::new(crate::msg::character::ANY_WEAPON_SKILL_ROLES)
+                    .role("roles", or(roles))
+                    .into(),
+            );
+        }
+        parts.extend(self.named.iter().map(|&id| {
+            let skill = content.weapon_skill_phrase(id);
+            Arg::from(Msg::new(crate::msg::character::ANY_WEAPON_SKILL_NAMED).role("skill", skill))
+        }));
+        or(parts)
+    }
 }
 
 /// The prerequisites of a talent: all must hold
@@ -1464,22 +1499,11 @@ fn resolve_any(spec: AnySpec, content: &Content) -> Result<Option<AnyWeaponSkill
         .filter(|(id, def)| spec.roles.contains(&def.role) || named.contains(id))
         .map(|(id, _)| id)
         .collect();
-    let mut parts: Vec<String> = (named.iter())
-        .map(|&id| table.skill(id).name.clone())
-        .collect();
-    if !spec.roles.is_empty() {
-        let roles: Vec<String> = (spec.roles.iter())
-            .map(|r| match r {
-                super::Role::Launcher => "missile".to_string(),
-                r => r.id().replace('_', " "),
-            })
-            .collect();
-        parts.insert(0, format!("a {} weapon skill", roles.join(" or ")));
-    }
     Ok(Some(AnyWeaponSkill {
         skills,
         rank: spec.rank,
-        words: parts.join(" or "),
+        roles: spec.roles,
+        named,
     }))
 }
 

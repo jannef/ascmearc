@@ -64,7 +64,7 @@ use super::skills_screen::SkillsScreen;
 use super::story_screen::StoryScreen;
 use super::talents_screen::TalentsScreen;
 use super::target::AimKind;
-use super::text::{screens as T, ui};
+use super::text::{screens as T, ui, ui_msg};
 use super::weapon_skills_screen::WeaponSkillsScreen;
 use crate::cli::Args;
 use crate::game::{Game, GameContent, PlayerAction};
@@ -1257,7 +1257,7 @@ fn resume(commands: &mut Commands, screens: &mut Screens, id: &str) {
             commands.insert_resource(Game::from_world(*world, id.to_string()));
             screens.stack.clear();
         }
-        Resume::Failed(message) => screens.back_to_main(Some(message), false),
+        Resume::Failed(message) => screens.back_to_main(Some(ui_msg(message)), false),
         Resume::NoSave => screens.back_to_main(Some(ui(T::SAVE_GONE)), false),
     }
 }

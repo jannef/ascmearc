@@ -13,13 +13,14 @@
 
 use super::menu::{HINTS, Nav, Panel, Press, wrap};
 use super::screens::ScreenAction;
-use super::text::{graveyard_screen as T, label, ui, ui_with};
+use super::text::{data_line, graveyard_screen as T, label, ui, ui_with};
 use super::{TEXT, TEXT_DIM};
 use crate::graveyard::{Fallen, PROFANE, STONE};
 use crate::render::console::Console;
 use crate::save::played_text;
 use crate::settings::Clock;
 use ascmearc_core::content::Content;
+use ascmearc_core::content::data_line::status_death;
 use ascmearc_core::lang::{Arg, Phrase};
 use std::sync::atomic::{AtomicUsize, Ordering};
 
@@ -147,9 +148,6 @@ pub(crate) fn death_words(fallen: &Fallen, content: &Content) -> String {
 /// What killed `fallen`, in words: `Killed by a kobold`, `Turned to stone`, `Bled to death`.
 fn cause_words(fallen: &Fallen, content: &Content) -> String {
     let killed_by = |who: Phrase| ui_with(T::CAUSE_KILLED_BY, &[("who", who.into())]);
-    // A name the record or the data holds as English text: a word of the lexicon by its text.
-    // lang: todo(#2035) the graveyard's killer in the app's words
-    let by_name = |name: &str| killed_by(Phrase::id(format!("word:{name}")));
     let cause = fallen.cause.as_str();
     match cause {
         STONE => return ui(T::CAUSE_STONE),
@@ -164,17 +162,24 @@ fn cause_words(fallen: &Fallen, content: &Content) -> String {
         "unseen" => return ui(T::CAUSE_UNSEEN),
         _ => {}
     }
+    // A creature killed them: its type by its id, the record's `cause`; a type this content
+    // lacks by the name the record keeps.
     if !fallen.killer.is_empty() {
-        return by_name(&fallen.killer);
+        return killed_by(match content.creature_id(cause) {
+            Some(creature) => Phrase::id(format!("creature:{}", content.creature(creature).id)),
+            // lang: record a killer's name as the record keeps it
+            None => Phrase::id(format!("word:{}", fallen.killer)),
+        });
     }
     if let Some(status) = content.status_id(cause) {
         let def = content.status(status);
-        return (def.death.clone()).unwrap_or_else(|| {
-            ui_with(
+        return match def.death {
+            Some(_) => data_line(status_death(&def.id)),
+            None => ui_with(
                 T::CAUSE_DIED_OF,
                 &[("name", content.status_phrase(status).into())],
-            )
-        });
+            ),
+        };
     }
     if let Some(trap) = content.trap_id(cause) {
         return killed_by(content.trap_phrase(trap));
@@ -186,8 +191,8 @@ fn cause_words(fallen: &Fallen, content: &Content) -> String {
         )));
     }
     if let Some(object) = content.object_id(cause) {
-        let name = content.object(object).name.as_str();
-        return ui_with(T::CAUSE_OWN, &[("name", Arg::text(name))]);
+        let name = Phrase::id(format!("object:{}", content.object(object).id));
+        return ui_with(T::CAUSE_OWN, &[("name", name.into())]);
     }
     ui(T::CAUSE_UNKNOWN)
 }

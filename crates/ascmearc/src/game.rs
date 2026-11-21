@@ -5,7 +5,7 @@ use crate::save::{Resume, SaveStore};
 use ascmearc_core::character::CharacterSpec;
 use ascmearc_core::content::{Content, ContentFiles};
 use ascmearc_core::hunger::Hunger;
-use ascmearc_core::lang::{Entry, Msg};
+use ascmearc_core::lang::Entry;
 use ascmearc_core::messages::MessageLog;
 use ascmearc_core::replay::{Divergence, Replay};
 use ascmearc_core::world::WorldError;
@@ -201,8 +201,7 @@ impl Game {
                 let dead = crate::graveyard::GraveyardStore::from_args(args).dead(world.content());
                 world.set_graveyard(dead);
                 if let Some(message) = failure {
-                    // lang: todo(#2035) why a save could not be resumed, in English
-                    world.notice(Msg::literal(message));
+                    world.notice(message);
                 }
                 let replay = args.record.is_some().then(|| Replay::new(&world));
                 story_due = args.capture.is_none();
@@ -357,6 +356,7 @@ pub fn apply_queued<'a>(actions: impl Iterator<Item = &'a PlayerAction>, game: &
 #[cfg(test)]
 mod tests {
     use super::*;
+    use ascmearc_core::lang::Msg;
     use ascmearc_core::messages::CAPACITY;
     use ascmearc_core::{Dir, Event};
     use clap::Parser;

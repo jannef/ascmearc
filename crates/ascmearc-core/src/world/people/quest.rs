@@ -405,10 +405,7 @@ fn place_of(content: &Content, id: &str) -> Arg {
 fn kill_noun(content: &Content, def: &QuestDef, need: u32) -> Phrase {
     match &def.goal {
         // Called as the quest says, one or many alike.
-        Goal::Kill {
-            what: Some(what), ..
-        // lang: todo(#2035) a quest's thing named by the data's word
-        } => Phrase::id(format!("word:{what}")),
+        Goal::Kill { what: Some(_), .. } => content.quest_what_phrase(&def.id),
         Goal::Kill {
             target: KillTarget::Creature(c),
             ..

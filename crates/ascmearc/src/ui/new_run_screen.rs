@@ -79,7 +79,9 @@ impl NewRunScreen {
                 scenarios.push(ScenarioInfo {
                     id: s.id.clone(),
                     name: label_in(content, Arg::said(data_line::scenario_name(&s.id))),
-                    description: s.description.clone(),
+                    description: crate::ui::text::data_line(data_line::description(
+                        "scenario", &s.id,
+                    )),
                     seed: s.seed,
                     character: s.character.clone(),
                     start: s.start,
