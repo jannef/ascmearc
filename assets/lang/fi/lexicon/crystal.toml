@@ -1,0 +1,8 @@
+# A crystal by its colour (`crystal:<colour>`, `data/crystals.toml`), an agreeing adjective
+# ("punaiseen kiteeseen").
+black = "musta/9"
+blue = "sininen/38"
+gold = "kultainen/38"
+green = "vihreä/15"
+red = "punainen/38"
+white = "valkoinen/38"

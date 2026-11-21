@@ -682,6 +682,10 @@ fn check_lexicon(code: &str, files: &LangFiles, morphology: &dyn Morphology, rep
                     let Some(word) = lexicon.word(id) else {
                         continue;
                     };
+                    // A name (`proper` with no class) inflects as a foreign name: no class to check.
+                    if word.proper && !word.base.contains('/') {
+                        continue;
+                    }
                     if let Err(e) = morphology.parse_word(&word.base) {
                         report
                             .errors
@@ -1157,6 +1161,28 @@ mod tests {
         )]));
         assert!(e.iter().any(|m| m.contains("goblin")), "{e:?}");
         assert!(!e.iter().any(|m| m.contains("`rat`")), "{e:?}");
+    }
+
+    #[test]
+    fn a_proper_name_without_a_class_is_no_error() {
+        let mut langs = world(&[]);
+        langs.insert(
+            "xx".to_string(),
+            lang(&[
+                (
+                    "lang.toml",
+                    "name = \"xx\"\ncode = \"xx\"\nmorphology = \"fi\"\nfallback = \"en\"\n",
+                ),
+                (
+                    "lexicon/creature.toml",
+                    "gnaegan = { word = \"Rottakuningas Gnægan\", proper = true }\n\
+                     rat = \"rotta\"\n",
+                ),
+            ]),
+        );
+        let e = errors(&langs);
+        assert!(!e.iter().any(|m| m.contains("gnaegan")), "{e:?}");
+        assert!(e.iter().any(|m| m.contains("`creature:rat`")), "{e:?}");
     }
 
     #[test]

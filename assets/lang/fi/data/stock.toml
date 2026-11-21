@@ -1,0 +1,27 @@
+# Lines of data: the professions of the material stock (`stock:group.<group>.verb`,
+# `stock:gems.verb`). `verb` is the craft dialog's verb, an imperative before what is made, its
+# object in the nominative ("Tao pitkämiekka?").
+
+[gems]
+verb = { text = "Hio", of = "e2583b" }
+
+[group.bone]
+verb = { text = "Tee", of = "6bed87" }
+
+[group.hide]
+verb = { text = "Tee", of = "6bed87" }
+
+[group.metal]
+verb = { text = "Tao", of = "6e0d9f" }
+
+[group.resin]
+verb = { text = "Hio", of = "e2583b" }
+
+[group.sinew]
+verb = { text = "Tee", of = "6bed87" }
+
+[group.stone]
+verb = { text = "Työstä", of = "e2583b" }
+
+[group.wood]
+verb = { text = "Tee", of = "6bed87" }

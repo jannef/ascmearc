@@ -1,0 +1,21 @@
+# Talent trees (`tree:<id>`): a tree's name keeps its capital as English does ("Sinun on
+# valittava taipumus puusta Sisu tai Voima"), said in the nominative.
+class = { word = "Luokan kyky/1*M", plural_only = true }
+crafts = { word = "Käsi|työ/19", plural_only = true }
+craving = "Himo/1"
+delver = "Syövereiden kulkija/12"
+finesse = "Näppäryys/40"
+grit = "Sisu/1"
+guard = "Puolustus/39"
+heritage = "Suku/1*M"
+might = "Voima/10"
+oath = "Vala/9"
+profane = "Epäpyhä/10"
+racial = "Kansan perintö/1*J"
+scholar = "Tietäjä/12"
+shadow = "Varjo/1"
+spellcraft = "Loitsu|taito/1*F"
+stars = { word = "Tähti/7*F", plural_only = true }
+vigour = "Elin|voima/10"
+wayfarer = "Vaeltaja/12"
+weaponcraft = "Ase|taito/1*F"

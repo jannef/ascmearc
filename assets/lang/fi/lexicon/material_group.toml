@@ -1,0 +1,11 @@
+# A group of materials (`material_group:<group>`): a noun, said in the genitive before a piece
+# ("metallin harkko") or alone as a pick's label.
+bone = "luu/18"
+cloth = "kangas/41*G"
+glass = "lasi/5"
+hide = "vuota/9*F"
+metal = "metalli/6"
+resin = "hartsi/5"
+sinew = "jänne/48*J"
+stone = "kivi/7"
+wood = "puu/18"

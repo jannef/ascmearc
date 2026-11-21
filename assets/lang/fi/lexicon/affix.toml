@@ -1,0 +1,127 @@
+# Affixes (`affix:<id>`). A prefix is an agreeing adjective before the item's name
+# ("liekehtivä pitkämiekka"); a suffix is a noun said in the genitive before the whole name,
+# prefix and all (`Modifier::Of`: "karhun liekehtivä pitkämiekka"), and alone, as a label or
+# a list's row, in the genitive too (`bare`, `label`: "Karhun"). A bane
+# (`of_<kind>_bane`, `data/rules/foes.toml`) is the kind's genitive and `surma`.
+accurate = "tarkka/9*A"
+baleful = "turmiollinen/38"
+brutal = "julma/10"
+burly = "roteva/10"
+corrosive = "syövyttävä/10"
+delving = "louhiva/10"
+featherweight = "höyhen|kevyt/43"
+flaming = "liekehtivä/10"
+fleet = "vikkelä/10"
+freezing = "jäätävä/10"
+glinting = "välkkyvä/10"
+guarding = "suojaava/10"
+hale = "terhakka/14*A"
+hardened = "karkaistu/1"
+heavy = "raskas/41"
+hobnailed = "nastoitettu/1*C"
+hunters = "kauas|kantava/10"
+keen = "viiltävä/10"
+leaden = "lyijyn|raskas/41"
+mage_wrought = "taika|taottu/1*C"
+mystic = "mystinen/38"
+nimble = "notkea/15"
+oaken = "tamminen/38"
+of_appraisal = { word = "arviointi/5*J", forms = { gen = "arvioinnin", bare = "arvioinnin", label = "Arvioinnin" } }
+of_balance = { word = "tasa|paino/1", forms = { gen = "tasapainon", bare = "tasapainon", label = "Tasapainon" } }
+of_beast_bane = { word = "pedon|surma/10", forms = { gen = "pedonsurman", bare = "pedonsurman", label = "Pedonsurman" } }
+of_breath = { word = "hengitys/39", forms = { gen = "hengityksen", bare = "hengityksen", label = "Hengityksen" } }
+of_celerity = { word = "joutuisuus/40", forms = { gen = "joutuisuuden", bare = "joutuisuuden", label = "Joutuisuuden" } }
+of_clarity = { word = "selkeys/40", forms = { gen = "selkeyden", bare = "selkeyden", label = "Selkeyden" } }
+of_construct_bane = { word = "rakennelman|surma/10", forms = { gen = "rakennelmansurman", bare = "rakennelmansurman", label = "Rakennelmansurman" } }
+of_disarming = { word = "purkaminen/38", forms = { gen = "purkamisen", bare = "purkamisen", label = "Purkamisen" } }
+of_dragon_bane = { word = "lohikäärmeen|surma/10", forms = { gen = "lohikäärmeensurman", bare = "lohikäärmeensurman", label = "Lohikäärmeensurman" } }
+of_drow_bane = { word = "tummahaltian|surma/10", forms = { gen = "tummahaltiansurman", bare = "tummahaltiansurman", label = "Tummahaltiansurman" } }
+of_duergar_bane = { word = "harmaakääpiön|surma/10", forms = { gen = "harmaakääpiönsurman", bare = "harmaakääpiönsurman", label = "Harmaakääpiönsurman" } }
+of_durability = { word = "lujuus/40", forms = { gen = "lujuuden", bare = "lujuuden", label = "Lujuuden" } }
+of_ease = { word = "keveys/40", forms = { gen = "keveyden", bare = "keveyden", label = "Keveyden" } }
+of_elemental_bane = { word = "alkuhengen|surma/10", forms = { gen = "alkuhengensurman", bare = "alkuhengensurman", label = "Alkuhengensurman" } }
+of_evasion = { word = "väistely/2", forms = { gen = "väistelyn", bare = "väistelyn", label = "Väistelyn" } }
+of_farcasting = { word = "kauko|loitsinta/9*J", forms = { gen = "kaukoloitsinnan", bare = "kaukoloitsinnan", label = "Kaukoloitsinnan" } }
+of_fey_bane = { word = "keijun|surma/10", forms = { gen = "keijunsurman", bare = "keijunsurman", label = "Keijunsurman" } }
+of_fiend_bane = { word = "pirun|surma/10", forms = { gen = "pirunsurman", bare = "pirunsurman", label = "Pirunsurman" } }
+of_fury = { word = "raivo/1", forms = { gen = "raivon", bare = "raivon", label = "Raivon" } }
+of_giant_bane = { word = "jättiläisen|surma/10", forms = { gen = "jättiläisensurman", bare = "jättiläisensurman", label = "Jättiläisensurman" } }
+of_glass = { word = "lasi/5", forms = { gen = "lasin", bare = "lasin", label = "Lasin" } }
+of_goblin_bane = { word = "hiiden|surma/10", forms = { gen = "hiidensurman", bare = "hiidensurman", label = "Hiidensurman" } }
+of_guile = { word = "oveluus/40", forms = { gen = "oveluuden", bare = "oveluuden", label = "Oveluuden" } }
+of_hag_bane = { word = "noidan|surma/10", forms = { gen = "noidansurman", bare = "noidansurman", label = "Noidansurman" } }
+of_haggling = { word = "tinkiminen/38", forms = { gen = "tinkimisen", bare = "tinkimisen", label = "Tinkimisen" } }
+of_health = { word = "terveys/40", forms = { gen = "terveyden", bare = "terveyden", label = "Terveyden" } }
+of_hobgoblin_bane = { word = "isohiiden|surma/10", forms = { gen = "isohiidensurman", bare = "isohiidensurman", label = "Isohiidensurman" } }
+of_hunger = { word = "nälkä/10*D", forms = { gen = "nälän", bare = "nälän", label = "Nälän" } }
+of_kobold_bane = { word = "koboldin|surma/10", forms = { gen = "koboldinsurman", bare = "koboldinsurman", label = "Koboldinsurman" } }
+of_light = { word = "valo/1", forms = { gen = "valon", bare = "valon", label = "Valon" } }
+of_lingering = { word = "viipyminen/38", forms = { gen = "viipymisen", bare = "viipymisen", label = "Viipymisen" } }
+of_mending = { word = "korjaus/39", forms = { gen = "korjauksen", bare = "korjauksen", label = "Korjauksen" } }
+of_ogre_bane = { word = "mörön|surma/10", forms = { gen = "mörönsurman", bare = "mörönsurman", label = "Mörönsurman" } }
+of_orc_bane = { word = "örkin|surma/10", forms = { gen = "örkinsurman", bare = "örkinsurman", label = "Örkinsurman" } }
+of_precision = { word = "tarkkuus/40", forms = { gen = "tarkkuuden", bare = "tarkkuuden", label = "Tarkkuuden" } }
+of_proof = { word = "suoja/10", forms = { gen = "suojan", bare = "suojan", label = "Suojan" } }
+of_reach = { word = "kantama/10", forms = { gen = "kantaman", bare = "kantaman", label = "Kantaman" } }
+of_ruin = { word = "tuho/1", forms = { gen = "tuhon", bare = "tuhon", label = "Tuhon" } }
+of_seeking = { word = "etsintä/9*J", forms = { gen = "etsinnän", bare = "etsinnän", label = "Etsinnän" } }
+of_shadows = { word = "varjo/1", forms = { gen = "varjojen", bare = "varjojen", label = "Varjojen" } }
+of_siphoning = { word = "imeminen/38", forms = { gen = "imemisen", bare = "imemisen", label = "Imemisen" } }
+of_slaying = { word = "surma/10", forms = { gen = "surman", bare = "surman", label = "Surman" } }
+of_spider_bane = { word = "hämähäkin|surma/10", forms = { gen = "hämähäkinsurman", bare = "hämähäkinsurman", label = "Hämähäkinsurman" } }
+of_spirit_bane = { word = "hengen|surma/10", forms = { gen = "hengensurman", bare = "hengensurman", label = "Hengensurman" } }
+of_steadiness = { word = "vakaus/40", forms = { gen = "vakauden", bare = "vakauden", label = "Vakauden" } }
+of_stealth = { word = "hiiviskely/2", forms = { gen = "hiiviskelyn", bare = "hiiviskelyn", label = "Hiiviskelyn" } }
+of_stillness = { word = "tyyneys/40", forms = { gen = "tyyneyden", bare = "tyyneyden", label = "Tyyneyden" } }
+of_sustenance = { word = "ravinto/1*J", forms = { gen = "ravinnon", bare = "ravinnon", label = "Ravinnon" } }
+of_the_adder = { word = "kyy/18", forms = { gen = "kyyn", bare = "kyyn", label = "Kyyn" } }
+of_the_alchemist = { word = "alkemisti/5", forms = { gen = "alkemistin", bare = "alkemistin", label = "Alkemistin" } }
+of_the_anvil = { word = "alasin/33", forms = { gen = "alasimen", bare = "alasimen", label = "Alasimen" } }
+of_the_bear = { word = "karhu/1", forms = { gen = "karhun", bare = "karhun", label = "Karhun" } }
+of_the_cutpurse = { word = "tasku|varas/41*D", forms = { gen = "taskuvarkaan", bare = "taskuvarkaan", label = "Taskuvarkaan" } }
+of_the_eagle = { word = "kotka/9", forms = { gen = "kotkan", bare = "kotkan", label = "Kotkan" } }
+of_the_fox = { word = "kettu/1*C", forms = { gen = "ketun", bare = "ketun", label = "Ketun" } }
+of_the_hare = { word = "jänis/39", forms = { gen = "jäniksen", bare = "jäniksen", label = "Jäniksen" } }
+of_the_hunt = { word = "metsästys/39", forms = { gen = "metsästyksen", bare = "metsästyksen", label = "Metsästyksen" } }
+of_the_leech = { word = "iili|mato/1*F", forms = { gen = "iilimadon", bare = "iilimadon", label = "Iilimadon" } }
+of_the_lion = { word = "leijona/12", forms = { gen = "leijonan", bare = "leijonan", label = "Leijonan" } }
+of_the_living = { word = "elävä/10", forms = { gen = "elävien", bare = "elävien", label = "Elävien" } }
+of_the_lynx = { word = "ilves/39", forms = { gen = "ilveksen", bare = "ilveksen", label = "Ilveksen" } }
+of_the_magus = { word = "velho/1", forms = { gen = "velhon", bare = "velhon", label = "Velhon" } }
+of_the_mule = { word = "muuli/5", forms = { gen = "muulin", bare = "muulin", label = "Muulin" } }
+of_the_muse = { word = "runotar/32*C", forms = { gen = "runottaren", bare = "runottaren", label = "Runottaren" } }
+of_the_owl = { word = "pöllö/1", forms = { gen = "pöllön", bare = "pöllön", label = "Pöllön" } }
+of_the_ox = { word = "härkä/10*D", forms = { gen = "härän", bare = "härän", label = "Härän" } }
+of_the_picklock = { word = "tiirikoitsija/12", forms = { gen = "tiirikoitsijan", bare = "tiirikoitsijan", label = "Tiirikoitsijan" } }
+of_the_sage = { word = "tietäjä/12", forms = { gen = "tietäjän", bare = "tietäjän", label = "Tietäjän" } }
+of_the_salamander = { word = "salamanteri/6", forms = { gen = "salamanterin", bare = "salamanterin", label = "Salamanterin" } }
+of_the_scholar = { word = "oppinut/47", forms = { gen = "oppineen", bare = "oppineen", label = "Oppineen" } }
+of_the_stag = { word = "hirvi/7", forms = { gen = "hirven", bare = "hirven", label = "Hirven" } }
+of_the_storm = { word = "myrsky/1", forms = { gen = "myrskyn", bare = "myrskyn", label = "Myrskyn" } }
+of_the_tortoise = { word = "kilpi|konna/10", forms = { gen = "kilpikonnan", bare = "kilpikonnan", label = "Kilpikonnan" } }
+of_the_wanderer = { word = "vaeltaja/12", forms = { gen = "vaeltajan", bare = "vaeltajan", label = "Vaeltajan" } }
+of_the_wind = { word = "tuuli/26", forms = { gen = "tuulen", bare = "tuulen", label = "Tuulen" } }
+of_thrift = { word = "säästäväisyys/40", forms = { gen = "säästäväisyyden", bare = "säästäväisyyden", label = "Säästäväisyyden" } }
+of_troll_bane = { word = "peikon|surma/10", forms = { gen = "peikonsurman", bare = "peikonsurman", label = "Peikonsurman" } }
+of_undead_bane = { word = "epäkuolleen|surma/10", forms = { gen = "epäkuolleensurman", bare = "epäkuolleensurman", label = "Epäkuolleensurman" } }
+of_vermin_bane = { word = "syöpäläisen|surma/10", forms = { gen = "syöpäläisensurman", bare = "syöpäläisensurman", label = "Syöpäläisensurman" } }
+of_vitality = { word = "elin|voima/10", forms = { gen = "elinvoiman", bare = "elinvoiman", label = "Elinvoiman" } }
+of_wands = { word = "taika|sauva/9", forms = { gen = "taikasauvojen", bare = "taikasauvojen", label = "Taikasauvojen" } }
+of_warding = { word = "varjelus/39", forms = { gen = "varjeluksen", bare = "varjeluksen", label = "Varjeluksen" } }
+of_wariness = { word = "valppaus/40", forms = { gen = "valppauden", bare = "valppauden", label = "Valppauden" } }
+of_warmth = { word = "lämpö/1*H", forms = { gen = "lämmön", bare = "lämmön", label = "Lämmön" } }
+of_wounding = { word = "haavoitus/39", forms = { gen = "haavoituksen", bare = "haavoituksen", label = "Haavoituksen" } }
+plodding = "laahustava/10"
+potent = "voimallinen/38"
+radiant = "säteilevä/10"
+reinforced = "vahvistettu/1*C"
+sharp = "terävä/10"
+shimmering = "kimmeltävä/10"
+shocking = "salamoiva/10"
+steady = "vakaa/17"
+sturdy = "tukeva/10"
+supple = "taipuisa/10"
+tireless = "väsymätön/34*C"
+venomous = "myrkyllinen/38"
+vicious = "raivokas/41*A"
+withering = "näivettävä/10"

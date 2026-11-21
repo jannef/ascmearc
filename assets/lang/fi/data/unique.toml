@@ -1,0 +1,67 @@
+# Lines of data: unique items (`unique:<id>.<field>`). A unique keeps its name as the data writes
+# it (a proper name, in every language); its `phrase` (what its power does, on its description)
+# and `lore` are sentences of their own, its `power.message` what its wearer is told as it wards
+# off a status. Old in tone, as the lore of heirlooms is.
+
+[brosinga_mene]
+lore = { text = "Hama vei sen mukanaan kirkkaaseen kaupunkiin, eikä kukaan ole sittemmin kertonut, minne se joutui.", of = "7f1af7" }
+phrase = { text = "Mikään myrkky ei tartu sen kantajaan.", of = "78b2f2" }
+
+[brosinga_mene.power]
+message = { text = "Myrkky ei saa sinusta otetta.", of = "f7ef80" }
+
+[eorcanstan]
+lore = { text = "Kivi on tumma, kunnes sen lähellä lausutaan loitsu; silloin se tummuu entisestään.", of = "5dc3aa" }
+phrase = { text = "Mikään hiljaisuus ei vaienna sen kantajan ääntä.", of = "b8013d" }
+
+[eorcanstan.power]
+message = { text = "Hiljaisuus ei saa ääntäsi vaikenemaan.", of = "3bc6d2" }
+
+[grandmother]
+lore = { text = "Hän on elänyt kauemmin kuin kolme sukua ja haudannut jokaisen pojan, joka häntä kantoi.", of = "3ccae1" }
+phrase = { text = "Sen viiltämät haavat umpeutuvat hitaasti.", of = "64f657" }
+
+[grendles_grape]
+lore = { text = "Sormet puristuvat hiukan tiukemmin kuin niiden sisällä oleva käsi.", of = "f41c75" }
+phrase = { text = "Mikään isku ei horjuta sen kantajaa.", of = "847eb1" }
+
+[grendles_grape.power]
+message = { text = "Pysyt jaloillasi.", of = "dada06" }
+
+[high_toby]
+lore = { text = "Moni vaunu on pysähtynyt sen tähden, ja moni kuski juossut karkuun.", of = "6c3884" }
+phrase = { text = "Sen nuolet jättävät vuotavia haavoja.", of = "0f05cd" }
+
+[radiant]
+lore = { text = "Se taottiin pyhän lähteen äärellä, eikä se ole sen jälkeen pimennyt, vaikka moni on yrittänyt sitä sammuttaa.", of = "1f3284" }
+phrase = { text = "Se valaisee kantajansa ympärille valon kuin keskipäivällä.", of = "db315d" }
+
+[sigerics_star]
+lore = { text = "Sormuksen sisäpuolella, hyvin pienin kirjaimin: SIGERIC MINUT TEKI. Ulkopuolella, suuremmin: SIGERIC.", of = "8aa25a" }
+phrase = { text = "Mikään ei pidä sen kantajan katsetta vangittuna.", of = "e81a46" }
+
+[sigerics_star.power]
+message = { text = "Mikään ei vangitse katsettasi kauaksi aikaa.", of = "124df4" }
+
+[silverstrike]
+lore = { text = "Sen jänne, niin jousentekijät vannoivat, oli kehrätty kuun hiuksesta.", of = "87875c" }
+phrase = { text = "Sen nuolet lentävät kaksi kertaa niin kauas kuin tavallisen jousen.", of = "7eb75c" }
+
+[stonebiter]
+lore = { text = "Lovettu sadassa louhoksen seinässä, eikä yksikään niistä antanut periksi.", of = "fa63dd" }
+phrase = { text = "Sen kantaja näkee hämärässä.", of = "95fdf0" }
+
+[turncoat]
+lore = { text = "Rykmentin värit leikattiin siitä irti kauan sitten; ompeleet näkyvät yhä.", of = "d825c0" }
+phrase = { text = "Sen kantaja ei tunne pelkoa.", of = "ff336e" }
+
+[turncoat.power]
+message = { text = "Pelko ei saa sinusta otetta.", of = "345b88" }
+
+[unhalwed_bedes]
+lore = { text = "Jokainen helmi on rystyluu, eikä yksikään niistä pyhimyksen.", of = "93ec1f" }
+phrase = { text = "Sen kantaja näkee pimeässä.", of = "8a8773" }
+
+[widowmaker]
+lore = { text = "Ohut kuin hattuneula, eikä koskaan aivan puhdas.", of = "a463c4" }
+phrase = { text = "Sen jokainen viilto myrkyttää.", of = "1649e4" }

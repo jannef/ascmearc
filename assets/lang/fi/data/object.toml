@@ -1,9 +1,43 @@
 # Lines of data: objects (`object:<id>.<field>`). A weapon's `verb` is the third person
-# singular, its `you` the second, both taking a partitive object.
+# singular, its `you` the second, both taking a partitive object. A thrown flask's
+# `throw.words` is what is seen as it shatters, a sentence of its own.
 
 [battle_axe]
 verb = { text = "hakkaa", of = "1c029f" }
 you = { text = "hakkaat", of = "3c6a21" }
+
+[blasting_flask.throw]
+words = { text = "Pullo halkeaa paukahtaen, ja voima lyö ulos!", of = "a76215" }
+
+[flask_of_brilliance.throw]
+words = { text = "Sirpaleista leimahtaa sokaiseva valkea välähdys!", of = "2c6326" }
+
+[flask_of_darkness.throw]
+words = { text = "Sirpaleista tulvii pimeyttä.", of = "43b017" }
+
+[flask_of_enfeeblement.throw]
+words = { text = "Sirpaleista tihkuu harmaata huurua.", of = "2f2b68" }
+
+[flask_of_fire.throw]
+words = { text = "Tuli syöksyy pauhaten sirpaleista!", of = "ff30a8" }
+
+[flask_of_frost.throw]
+words = { text = "Purevaa pakkasta purkautuu sirpaleista!", of = "0ae1d0" }
+
+[flask_of_oil.throw]
+words = { text = "Öljy leviää sirpaleista liukkaana ja kiiltävänä.", of = "897e56" }
+
+[flask_of_sloth.throw]
+words = { text = "Sirpaleista tihkuu raskasta huurua.", of = "f06479" }
+
+[flask_of_smoke.throw]
+words = { text = "Sirpaleista tupruaa savua.", of = "1b7da6" }
+
+[flask_of_tar.throw]
+words = { text = "Tahmeaa tervaa roiskuu sirpaleista.", of = "bb44c8" }
+
+[flask_of_thunder.throw]
+words = { text = "Ukkonen jyrähtää sirpaleista!", of = "82dd91" }
 
 [great_axe]
 verb = { text = "hakkaa", of = "1c029f" }
@@ -12,3 +46,24 @@ you = { text = "hakkaat", of = "3c6a21" }
 [hand_axe]
 verb = { text = "hakkaa", of = "1c029f" }
 you = { text = "hakkaat", of = "3c6a21" }
+
+[holy_water.throw]
+words = { text = "Vesi välähtää kirkkaana roiskuessaan.", of = "fb0f97" }
+
+[pitch_fire.throw]
+words = { text = "Palavaa pikeä räiskyy sirpaleista ja lammikoituu maahan.", of = "1d6a25" }
+
+[sleeping_draught.throw]
+words = { text = "Sirpaleista pöllähtää makeaa, raskasta usvaa.", of = "714f30" }
+
+[stinking_flask.throw]
+words = { text = "Sirpaleista tupruaa löyhkäävä pilvi!", of = "c4dcf0" }
+
+[vial_of_acid.throw]
+words = { text = "Happoa suihkuaa sihisten sirpaleista.", of = "05352e" }
+
+[vial_of_nightmares.throw]
+words = { text = "Sirpaleista kiemurtelee varjoisa haituva.", of = "305b09" }
+
+[vial_of_silence.throw]
+words = { text = "Sirpaleista leviää hiljaisuus.", of = "8ca98a" }

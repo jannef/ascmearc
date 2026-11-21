@@ -1,0 +1,10 @@
+# Schools of magic (`school:<id>`): a noun, its label capitalized ("Kalmataika"); each a kind
+# of "taika".
+abjuration = "suoja|taika/9*D"
+divination = "näkö|taika/9*D"
+enchantment = "lumo|taika/9*D"
+evocation = "voima|taika/9*D"
+illusion = "harha|taika/9*D"
+necromancy = "kalma|taika/9*D"
+restoration = "parannus|taika/9*D"
+transmutation = "muunto|taika/9*D"

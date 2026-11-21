@@ -1,0 +1,11 @@
+# Lines of data: the professions' rows of `data/recipes.toml` (`recipes:profession.<skill>.<field>`).
+# `verb` is the craft dialog's verb, an imperative before what is made ("Keitä parannusjuoma?");
+# `failed` and `fumbled` are said when a brew goes wrong.
+
+[profession.alchemy]
+failed = { text = "Juoma samenee ja laskeutuu sakeaksi. Sitä et aikonut keittää.", of = "c953cb" }
+fumbled = { text = "Juoma kuohuu ja muuttuu väriin, josta yksikään kirja ei kerro.", of = "b542bf" }
+verb = { text = "Keitä", of = "3f5e99" }
+
+[profession.enchanting]
+verb = { text = "Lumoa", of = "3a3869" }

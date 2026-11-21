@@ -1,0 +1,16 @@
+# Lines of data: familiars (`familiars:arrives.<creature>`): a familiar's arrival, a finite
+# verb in the third person after "<name>, <your kind>,".
+
+[arrives]
+bat = { text = "roikkuu hupustasi", of = "2c4259" }
+black_hound = { text = "tassuttelee esiin varjostasi", of = "0b1a95" }
+cat = { text = "kiertelee nilkkojesi ympärillä", of = "00a56a" }
+cave_lizard = { text = "lipoo kieltään kantapääsi luona", of = "a9d0e5" }
+hare = { text = "kyyristyy kantapääsi juureen", of = "e4f58e" }
+imp = { text = "virnistää sinulle liian monin hampain", of = "847566" }
+large_spider = { text = "kehrää lankaa hihastasi", of = "63cd68" }
+panther = { text = "tassuttelee pimeästä rinnallesi", of = "7a5db1" }
+polecat = { text = "kiertyy kaulasi ympärille", of = "92a6b8" }
+rat = { text = "juoksee hihaasi pitkin ja istuutuu olallesi", of = "3a4357" }
+raven = { text = "asettuu olallesi", of = "6afead" }
+toad = { text = "kyyhöttää varjossasi", of = "606b5a" }

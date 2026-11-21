@@ -401,8 +401,9 @@ fn the_designs_item_phrases() {
         "nuoli",
         "one: the nominative"
     );
+    // An unknown potion's label is a word, an agreeing adjective before its colour.
     let potion = Phrase::id("object:potion")
-        .with(Modifier::Adjective(Word::id("potion_word:fizzy")))
+        .with(Modifier::Label(Word::id("potion_word:fizzy")))
         .with(Modifier::Adjective(Word::id("colour:red")));
     assert_eq!(form(&potion, "nom"), "kuohuva punainen juoma");
     assert_eq!(form(&potion, "ill"), "kuohuvaan punaiseen juomaan");
@@ -410,6 +411,7 @@ fn the_designs_item_phrases() {
         form(&potion.clone().count(2), "counted"),
         "kaksi kuohuvaa punaista juomaa"
     );
+    assert_eq!(form(&potion, "pl_ine"), "kuohuvissa punaisissa juomissa");
     let scroll = Phrase::id("object:scroll").with(Modifier::Label(Word::literal("ZUNBAR")));
     assert_eq!(form(&scroll, "nom"), "kirjakäärö, jossa lukee ZUNBAR");
     assert_eq!(form(&scroll, "ill"), "kirjakääröön, jossa lukee ZUNBAR");
