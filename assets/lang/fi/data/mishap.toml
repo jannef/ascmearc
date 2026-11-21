@@ -1,0 +1,50 @@
+# Lines of data: mishaps of study (`mishap:<id>.message`), said to the player whose reading of a
+# grimoire or a scroll went wrong.
+
+[backwash]
+message = { text = "Rikkoutuneen loitsun jälkimaininki jättää sinut heikoksi.", of = "07be44" }
+
+[black_curse]
+message = { text = "Musta kirous laskeutuu yllesi.", of = "25d24b" }
+
+[eruption]
+message = { text = "Loitsu purkautuu käsissäsi olevasta käärööstä!", of = "5b45f7" }
+
+[fizzle]
+message = { text = "Sanat haalistuvat sivulta ennen kuin ehdit tarttua niihin.", of = "b1441f" }
+
+[forgetting]
+message = { text = "Sanat jättävät aukon muistiisi.", of = "71b6a3" }
+
+[hard_lesson]
+message = { text = "Epäonnistuminen opettaa sinulle silti jotakin.", of = "70fd77" }
+
+[ill_omen]
+message = { text = "Rikkoutuneet sanat jättävät sinuun kirouksen.", of = "319d9c" }
+
+[learned_anyway]
+message = { text = "Silti sanat jäävät jotenkin mieleesi.", of = "30474c" }
+
+[mana_drain]
+message = { text = "Loitsu imee manaasi purkautuessaan.", of = "26ce1b" }
+
+[mana_leak]
+message = { text = "Puoliksi kudottu loitsu juo manaasi.", of = "5b94e9" }
+
+[mind_burn]
+message = { text = "Loitsu polttaa läpi mielesi ja ruumiisi!", of = "2966ff" }
+
+[rift]
+message = { text = "Sanat repäisevät auki railon, ja jokin ryömii sen läpi!", of = "e90af5" }
+
+[swimming_head]
+message = { text = "Pääsi pyörii puoliksi ymmärretyistä sanoista.", of = "cb8ee1" }
+
+[torn_loose]
+message = { text = "Loitsu repeää irti sivulta!", of = "d1834c" }
+
+[twisted_space]
+message = { text = "Loitsu vääntää avaruutta ympärilläsi!", of = "7097a6" }
+
+[warm_light]
+message = { text = "Tomusta tulvii lämmin valo: tunnet olevasi siunattu.", of = "be64d2" }

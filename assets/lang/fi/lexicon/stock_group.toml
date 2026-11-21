@@ -1,0 +1,10 @@
+# A piece of stock by its group (`stock_group:<group>`): what a rig takes ("metalliharkko").
+bone = "luu|siru/2"
+cloth = "kangas|pakka/9*A"
+glass = "lasi|kimpale/48"
+hide = "vuota/9*F"
+metal = "metalli|harkko/1*A"
+resin = "hartsi|kimpale/48"
+sinew = "jänne/48*J"
+stone = "kivi|lohkare/48"
+wood = "puu|pölkky/1*A"

@@ -1,0 +1,104 @@
+# Lines of data: skills (`skill:<id>.description`), what the skills screen shows of a skill (its
+# name is `lexicon/skill.toml`).
+
+[alchemy]
+description = { text = "Juomien keittäminen ja juomien erottaminen toisistaan.", of = "41ef06" }
+
+[appraise]
+description = { text = "Sen arvioiminen, mitä jokin on arvoltaan ja mistä se on tehty.", of = "b54bba" }
+
+[athletics]
+description = { text = "Juokseminen, hyppiminen, kiipeily ja potkiminen: voimaa käytössä.", of = "c5bf21" }
+
+[balance]
+description = { text = "Varma jalansija raskaan kuorman alla tai huonolla maalla.", of = "75fb29" }
+
+[bluff]
+description = { text = "Valehtelu pokkana, harhautus ja itsensä puhuminen ohi.", of = "945999" }
+
+[concentration]
+description = { text = "Mielen pitäminen tehtävässä, tapahtuipa ympärillä mitä tahansa: manasi palaa nopeammin, ja varantosi on hieman syvempi.", of = "ba3132" }
+
+[decipher_script]
+description = { text = "Vanhojen kirjoitusten, outojen aakkosten ja salakirjoitusten ymmärtäminen.", of = "130252" }
+
+[detect_traps]
+description = { text = "Kätkettyjen ansojen löytäminen, ennen kuin ne löytävät sinut.", of = "2b31c4" }
+
+[disable_device]
+description = { text = "Ansojen ja koneistojen purkaminen laukaisematta niitä.", of = "e393be" }
+
+[enchanting]
+description = { text = "Taian sitominen esineisiin ja sen lukeminen, mitä niihin on sidottu.", of = "f8d307" }
+
+[escape_artist]
+description = { text = "Livahtaminen irti siteistä, otteista ja ahtaista paikoista.", of = "50f299" }
+
+[handle_animal]
+description = { text = "Eläinten rauhoittaminen, taluttaminen ja kouluttaminen.", of = "8dfa9f" }
+
+[heal]
+description = { text = "Haavojen sitominen ja sairaiden hoitaminen.", of = "8d9350" }
+
+[herbalism]
+description = { text = "Kasvien tunteminen: mikä parantaa, mikä vahingoittaa ja missä se kasvaa.", of = "fd50a8" }
+
+[initiative]
+description = { text = "Mielenmaltin säilyttäminen, kun jokin hyökkää kimppuusi huomaamatta.", of = "f6a246" }
+
+[intimidate]
+description = { text = "Toisten saaminen perääntymään katseella tai uhkauksella.", of = "54aeb5" }
+
+[jewelcraft]
+description = { text = "Jalokivien hiominen ja istuttaminen sekä kiven ja meripihkan työstäminen.", of = "fb4096" }
+
+[knowledge]
+description = { text = "Tietämys historiasta, kansoista, paikoista ja niissä elävistä olennoista. Vihollisensa tunteminen auttaa vastustamaan sen voimia ja kertoo, mikä siihen ei pure ja mitä se pelkää.", of = "c82022" }
+
+[listen]
+description = { text = "Sen kuuleminen, minkä muut eivät kuule: hiljaiset askeleet, kaukainen ovi.", of = "eab263" }
+
+[metalcraft]
+description = { text = "Metallin työstäminen: takominen sekä aseiden ja haarniskoiden korjaaminen.", of = "515dd5" }
+
+[mining]
+description = { text = "Malmin löytäminen kalliosta ja sen irrottaminen: kaivaminen käy helpommin.", of = "89bce4" }
+
+[music]
+description = { text = "Laulaminen: kuinka syvälle sydämeen laulusi kantavat ja kuinka kauan ne siellä viipyvät.", of = "e11f4c" }
+
+[negotiation]
+description = { text = "Tinkiminen, kaupoista sopiminen ja sen tietäminen, milloin on aika lähteä.", of = "16cdb2" }
+
+[open_lock]
+description = { text = "Lukkojen tiirikointi ilman avainta.", of = "c985d2" }
+
+[search]
+description = { text = "Kätketyn löytäminen: salaovet, ontot seinät ja kätköt.", of = "78d171" }
+
+[sneak_attack]
+description = { text = "Arimman kohdan löytäminen viholliselta, joka ei ole nähnyt sinun tulevan.", of = "9f2b87" }
+
+[spellcraft]
+description = { text = "Loitsujen ymmärtäminen: miten ne on kudottu ja mitä ne tekevät.", of = "c33720" }
+
+[spot]
+description = { text = "Piilossa olevan tai paikaltaan poikkeavan huomaaminen yhdellä silmäyksellä.", of = "6c7c8a" }
+
+[steal]
+description = { text = "Kukkaron tai korun nappaaminen kenenkään huomaamatta.", of = "db368b" }
+
+[stealth]
+description = { text = "Liikkuminen kuulumatta ja näkymättä: pehmeät askeleet, hiljaiset ovet ja livahtaminen pimeässä näkevien silmien ohi.", of = "5336d2" }
+
+[survival]
+description = { text = "Eläminen maan antimilla ja helpoimman tien löytäminen erämaan halki.", of = "d93209" }
+
+[swim]
+description = { text = "Pinnalla pysyminen ja eteneminen syvässä vedessä.", of = "0ab9ee" }
+
+[tumble]
+description = { text = "Kieriminen, syöksyminen ja kiertyminen pois vahingon tieltä.", of = "21f845" }
+
+[woodcraft]
+description = { text = "Puun työstäminen: veistäminen, puusepäntyö sekä jousten, nuolten ja varsijousen nuolten tekeminen.", of = "95e3aa" }

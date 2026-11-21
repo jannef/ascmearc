@@ -142,8 +142,8 @@ table, the rest by their own class; beyond `number_words` or 19, digits: "13 nuo
 form ignores the count. **The player** (`person: You`) renders as the second-person pronoun in
 the case asked (`{target:ill}` → "sinuun"), through the register (`sinä` → `sie`), whatever the
 head. **Phrase order**: [genitive qualifiers (`Modifier::Of`, genitive singular, not agreeing)]
-[adjectives and materials, agreeing in case and number] head [`, jossa lukee X` for a label;
-`joissa` in the plural] [notes]: "karhun liekehtivään smaragdiponsiseen pitkämiekkaan". A
+[adjectives and materials, agreeing in case and number] head [`, jossa lukee X` for a literal
+label, a scroll's; `joissa` in the plural; a label that is a lexicon word is an adjective] [notes]: "karhun liekehtivään smaragdiponsiseen pitkämiekkaan". A
 `Material` is an agreeing adjective here.
 
 **L3's phrase parts in `fi`** (`fi/mod.rs::assemble`, `owner`; tests `owners_genitive_or_the_players_suffix`,
@@ -1562,8 +1562,7 @@ class, and starting kit), the lines of data of those places, statuses, traps, an
 Cēaptūn's dialogue. What it lacks reads in English. Known gaps a later slice fills: a place's
 name (a line of data) takes no case, so lines say it in the nominative ("Laskeudut portaita alas
 paikkaan Cēaptūn"); words core still says as text (a resource's short name, the read dialog's
-chance, a ready weapon's name in the targeting line) stay English; an unidentified potion's label
-is a `Label` clause where Finnish wants an agreeing adjective.
+chance, a ready weapon's name in the targeting line) stay English.
 
 **The second slice, creatures (#2054)**: every creature type of the game and the campaigns
 (`lexicon/creature.toml`, the generated animated and mimic tiers each by id), its grade words
@@ -1577,9 +1576,20 @@ Gnæganin"). Choices: the old Finnish beings where one fits (hiisi goblin, isohi
 peikko troll, mörkö ogre, piru imp, tursas thurse, virvatuli will-o'-wisp, etiäinen fetch, kalmanitkijä
 banshee, painajainen night mare, horna for hell), native compounds for the rest (an elemental is a
 `-henki`, a lich a `kalmanvelho`, a ghoul a `-syöjä`, a drake a `lentolisko`), and the D&D fiends'
-names as Finnish loans (`balori`, `arkanalotti`). The corpses of the types beyond Lytelscræf
-(`object:<id>_corpse`) are not in yet: they belong in `lexicon/object.toml`, the objects slice's
-file.
+names as Finnish loans (`balori`, `arkanalotti`). A type's corpse
+(`object:<id>_corpse`, `lexicon/object.toml`, the third slice) is its genitive and its head
+("mörön ruumis"), and a bane (`of_<kind>_bane`) the kind's genitive and `surma`.
+
+**The third slice, items** (#2055): every object, material, affix, spell, talent and tree,
+recipe, crystal and seal family, rig, and an unknown wand's, rod's, or potion's label word; the
+lines of data of spells, talents, profane gifts, miscasts, mishaps, skills, rod effects, uniques,
+flasks, recipes, stock, and rigs; and `messages/crafting.toml`. A prefix is an agreeing adjective
+and a suffix a genitive before the whole name ("karhun liekehtivä pitkämiekka"), said alone in
+the genitive too (its `bare` and `label` forms: "Karhun"). A label that is a lexicon word
+(`word:oak`, `word:fizzy`: a wand's, rod's, or potion's) is an agreeing adjective in `fi`, as a
+colour is ("kuohuva punainen juoma", "tammipuinen taikasauva"); a scroll's literal label keeps
+the clause. A unique keeps its name as the data writes it. A scroll or wand of a spell is the
+spell's genitive and its head ("tulipallon käärö").
 
 **The other towns (#2056)**: the dialogue of Holtwīc, Līctūn, Gimmwīc, Alberich's delving,
 the three wizards' towers, the roads, and the strange spirit (`dialogue/<file>.toml`, one per

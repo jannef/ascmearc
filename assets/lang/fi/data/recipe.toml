@@ -1,0 +1,20 @@
+# Lines of data: a recipe's own (`recipe:<id>.<field>`). `verb` is the craft dialog's verb, an
+# imperative before what is made, its object in the nominative ("Tee kultasormus?").
+
+[amber_amulet]
+verb = { text = "Tee", of = "6bed87" }
+
+[gold_amulet]
+verb = { text = "Tee", of = "6bed87" }
+
+[gold_ring]
+verb = { text = "Tee", of = "6bed87" }
+
+[iron_ring]
+verb = { text = "Tee", of = "6bed87" }
+
+[jade_amulet]
+verb = { text = "Tee", of = "6bed87" }
+
+[silver_ring]
+verb = { text = "Tee", of = "6bed87" }

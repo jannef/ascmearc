@@ -1,0 +1,23 @@
+# Lines of data: the spell rules (`spells:types.<damage type>.words`), a damage type's rule said
+# after a spell's roll in the abilities menu ("2d6 (tuli), sytyttää yhden neljästä").
+
+[types.acid]
+words = { text = "jatkaa syövyttämistä", of = "01c089" }
+
+[types.cold]
+words = { text = "kangistaa", of = "40c0cc" }
+
+[types.electricity]
+words = { text = "voi loikata, johtuu veteen", of = "33ffc5" }
+
+[types.fire]
+words = { text = "sytyttää yhden neljästä", of = "b1eb94" }
+
+[types.force]
+words = { text = "työntää kovalla osumalla", of = "7a5374" }
+
+[types.necrotic]
+words = { text = "puree haavoittuneita", of = "848c4e" }
+
+[types.poison]
+words = { text = "myrkyttää", of = "914a17" }

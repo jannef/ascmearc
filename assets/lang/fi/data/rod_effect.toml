@@ -1,0 +1,18 @@
+# Lines of data: rod effects (`rod_effect:<id>.<field>`). `name` is what the player calls the
+# effect once the rod is known, a capitalized name said alone; `description` what it does.
+
+[digging]
+description = { text = "Kivi murenee edestäsi suorana linjana, sitä kauemmas, mitä vahvempi tahtosi on; graniitti ja ovet pysäyttävät sen.", of = "1af33e" }
+name = { text = "Kaivuu", of = "2b2d80" }
+
+[sleep]
+description = { text = "Unen pilvi sinne, minne tähtäät: sen sisällä olevat olennot, elleivät ne ole liian mahtavia, nukahtavat, kunnes ääni tai isku herättää ne.", of = "36f696" }
+name = { text = "Uni", of = "a62c87" }
+
+[teleport_other]
+description = { text = "Salama, joka lähettää ensimmäisen kohtaamansa olennon jonnekin muualle tällä tasolla.", of = "ba7d93" }
+name = { text = "Poissiirto", of = "95a51a" }
+
+[terror]
+description = { text = "Kauhu purkautuu sinne, minne tähtäät: sen sisällä olevat olennot, elleivät ne ole liian mahtavia, pakenevat sinua jonkin aikaa.", of = "1a9ae0" }
+name = { text = "Kauhu", of = "d74dc2" }
