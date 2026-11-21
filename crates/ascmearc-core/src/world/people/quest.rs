@@ -390,18 +390,14 @@ fn speaker(content: &Content, id: DialogueId) -> Phrase {
     content.speaker_phrase(id)
 }
 
-/// A place (a level or a branch, by its name `name`) as a phrase said `the` inside a sentence:
-/// "The Arena" reads "the Arena", a name without its article as it is ("Cealdhlāw").
-pub(super) fn place(name: &str) -> Phrase {
-    match name.strip_prefix("The ") {
-        Some(rest) => Phrase::id(format!("word:{rest}")),
-        None => Phrase::literal(name),
-    }
-}
-
-/// [`place`] of the level or branch `id`.
-fn place_of(content: &Content, id: &str) -> Phrase {
-    place(&content.place_name(id))
+/// The level or branch `id` as its name is said, by its key: a level's (a hand-made level's line
+/// of data, a branch level's `levels.branch_level`; `Content::level_name_arg`), else a branch's
+/// `dungeon:<id>.name`, else the id as text. A name with its own article writes it in lower case
+/// in the data ("the Arena"), as a hidden location's does (`people.marks_on_map`).
+fn place_of(content: &Content, id: &str) -> Arg {
+    (content.level_name_arg(id))
+        .or_else(|| (content.dungeon(id)).map(|d| Arg::said(data_line::dungeon_name(&d.id))))
+        .unwrap_or_else(|| Arg::Text(id.to_string()))
 }
 
 /// What kill quest `def` is after, `need` of them, as its progress counts them: its `what` if

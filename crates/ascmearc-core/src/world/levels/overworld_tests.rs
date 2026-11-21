@@ -266,7 +266,7 @@ fn locations_lead_into_their_levels_and_back_out_to_the_location() {
     for (to, name) in [
         ("hub", "The Hub"),
         ("vast", "The Vast Caverns"),
-        ("depths:1", "The Depths 1"),
+        ("depths:1", "the Depths 1"),
     ] {
         let at = location(&world, to);
         walk_to(&mut world, at, &mut log);

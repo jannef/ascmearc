@@ -2,7 +2,7 @@
 
 [[dungeon]]
 id = "depths"
-name = "The Depths"
+name = "the Depths"
 depth = 8
 
 [dungeon.level]

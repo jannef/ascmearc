@@ -128,34 +128,34 @@ impl Cause {
     /// How the death screen says it, a `health.epitaph_*` line: "Starved to death", "Choked to
     /// death on a ration", "Killed by a fireball trap", "Killed by their own scroll of fireball".
     pub fn epitaph(self, content: &Content) -> Msg {
-        use msg::health as h;
         let object = |o: ObjectId| Phrase::id(format!("object:{}", content.object(o).id));
         let spell = |id: crate::content::SpellId| content.spell_of(id);
         match self {
-            Cause::Starvation => h::EPITAPH_STARVATION.into(),
-            Cause::Fall => h::EPITAPH_FALL.into(),
-            Cause::Fire => h::EPITAPH_FIRE.into(),
-            Cause::Choked(o) => Msg::new(h::EPITAPH_CHOKED).role("what", object(o)),
-            Cause::Drowned => h::EPITAPH_DROWNED.into(),
+            Cause::Starvation => msg::health::EPITAPH_STARVATION.into(),
+            Cause::Fall => msg::health::EPITAPH_FALL.into(),
+            Cause::Fire => msg::health::EPITAPH_FIRE.into(),
+            Cause::Choked(o) => Msg::new(msg::health::EPITAPH_CHOKED).role("what", object(o)),
+            Cause::Drowned => msg::health::EPITAPH_DROWNED.into(),
             Cause::Trap(t) => {
-                let trap = Phrase::id(format!("trap:{}", content.trap(t).id));
-                Msg::new(h::EPITAPH_TRAP).role("trap", trap)
+                Msg::new(msg::health::EPITAPH_TRAP).role("trap", content.trap_phrase(t))
             }
-            Cause::Scroll(o) | Cause::Flask(o) => Msg::new(h::EPITAPH_OWN).role("what", object(o)),
+            Cause::Scroll(o) | Cause::Flask(o) => {
+                Msg::new(msg::health::EPITAPH_OWN).role("what", object(o))
+            }
             Cause::Spell(id) => {
-                // The look noun is a data word with no id yet (#2028): said by its English.
-                let noun = spell(id).map_or("spell", |s| s.look.noun.as_str());
-                Msg::new(h::EPITAPH_OWN_SPELL).role("noun", Phrase::id(format!("word:{noun}")))
+                let noun =
+                    spell(id).map_or(Phrase::id("word:spell"), |s| content.spell_noun_phrase(s));
+                Msg::new(msg::health::EPITAPH_OWN_SPELL).role("noun", noun)
             }
             Cause::Miscast(id) => {
                 let name = match spell(id) {
                     Some(s) => Phrase::id(format!("spell:{}", s.id)),
                     None => Phrase::id("word:spell"),
                 };
-                Msg::new(h::EPITAPH_MISCAST).role("spell", name)
+                Msg::new(msg::health::EPITAPH_MISCAST).role("spell", name)
             }
-            Cause::Altar => h::EPITAPH_ALTAR.into(),
-            Cause::Profane => h::EPITAPH_PROFANE.into(),
+            Cause::Altar => msg::health::EPITAPH_ALTAR.into(),
+            Cause::Profane => msg::health::EPITAPH_PROFANE.into(),
         }
     }
 

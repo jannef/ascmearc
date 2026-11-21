@@ -84,7 +84,7 @@ not_rolled_dev = "{quest:bare} is no rolled quest you were given."
 # A dev action's.
 not_under_way_dev = "{quest:bare} is not under way."
 # A lure quest's creature not yet brought home: `place`, where it is to be bound.
-not_yet_bound = "{who:The} is not yet bound in {place:the}."
+not_yet_bound = "{who:The} is not yet bound in {place:bare}."
 nothing_to_decide = "There is nothing to decide."
 # A dev action's: `target` as typed.
 now_asks_dev = "{quest:bare} now asks for {target:bare} (dev)."
@@ -119,20 +119,20 @@ task_bring = "bring {what:a}"
 task_bring_to = "bring {what:a} to {who:the}"
 task_deliver = "deliver {what:a} to {who:the}"
 # `who`, the escort; `place`, where to bring them.
-task_escort = "bring {who:the} safely to {place:the}"
+task_escort = "bring {who:the} safely to {place:bare}"
 task_kill = "kill {target:bare}"
-task_kill_in = "kill {target:bare} in {place:the}"
-task_kill_in_members = "kill {target:bare} in {place:the}: {members:bare}"
+task_kill_in = "kill {target:bare} in {place:bare}"
+task_kill_in_members = "kill {target:bare} in {place:bare}: {members:bare}"
 task_kill_members = "kill {target:bare}: {members:bare}"
 # `who`, the creature to lure; `from`, where it waits; `place`, where it is bound.
-task_lure = "lure {who:the} from {from:the} to {place:the}"
-task_reach = "reach {place:the}"
+task_lure = "lure {who:the} from {from:bare} to {place:bare}"
+task_reach = "reach {place:bare}"
 # A teacher trains the player in a skill.
 trains_you = "{who:The} train{who:s} you in {skill:bare}."
 updated = "Quest updated:"
 # A quest's progress: `what`, what it counts, as many as it needs.
 updated_count = "Quest updated: {have:bare} / {need:bare} {what:bare}."
-updated_reached = "Quest updated: you have reached {place:the}."
+updated_reached = "Quest updated: you have reached {place:bare}."
 # A delivery picked up again: `step`, a `step_*` line.
 updated_step = "Quest updated: {step:bare}."
 # What a quest asks, as the log's objective says it: `giver`, who gave it; `task`, a `task_*`

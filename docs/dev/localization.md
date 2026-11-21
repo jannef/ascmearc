@@ -390,10 +390,9 @@ from it a lexicon id, `spell_noun:<id>` (`Content::spell_noun_phrase`; `Words::o
 Blaze or a creature's breath and burst), a reflected bolt and the burst dialog
 (`Aim::catches_reader`) the noun. A heal searing the undead says words set in code
 (`SpellLook::own` false: "the light of mending sears", as written). The launcher in
-`RecipeLack::reason` is `Content::launcher_phrase`. Still text: the epitaph (`Cause::epitaph`,
-which names the trap and the spell's noun as English; `trap:<id>` and `spell_noun:<id>` are the
-phrases it can take), a creature's breath and burst noun, and a natural attack's or throw's
-name (`word:`).
+`RecipeLack::reason` and in a recipe row's `takes` is `Content::launcher_phrase`; an epitaph
+names its trap `trap:<id>` and its spell's noun `spell_noun:<id>` (below). Still text: a
+creature's breath and burst noun, and a natural attack's or throw's name (`word:`).
 
 **Number comes from data** (#1965): a phrase is plural by its count or by the lexicon's `many` (a
 noun plural though it names one thing, "flames"); a proper name or a literal is one thing ("The
@@ -849,12 +848,14 @@ it too. A save's summary keeps it as the `Arg` (`Summary::place`, named by `plac
 another version wrote as text reads as text), and the graveyard's record, whose format outlives
 versions, writes it as text in the language shown. **A hidden location a quest marks**
 (`people.marks_on_map`) is said by its key as the data writes it, a name with its own article
-written in lower case ("the Skeul Hir", as a unique's, `en::own_article`); `quest.rs::place` still
-lowers a level's "The" in a quest's task. **The scenario's name** on the new-run and chargen
+written in lower case ("the Skeul Hir", as a unique's, `en::own_article`); so is a level or
+branch named in a quest's task (`quest.rs::place_of`, said `{place:bare}`: a level's key, a
+branch level's `levels.branch_level`, a branch's `dungeon:<id>.name`), the showcase's "the Hub",
+"the Arena", and "the Depths" among them (a label capitalizes it). **The scenario's name** on the new-run and chargen
 screens is its `scenario:<id>.name` as a label (`ScenarioPick` keeps only the id). **An
 epitaph** (`Cause::epitaph`) is a `health.epitaph_*` message: the meal or their own scroll an
-`object:` phrase, the trap `trap:`, the spell miscast `spell:`, their own spell's look noun a
-`word:` (no id yet); the death screen renders it, the json dump in English. **A trader's ware**
+`object:` phrase, the trap `trap:` (`Content::trap_phrase`), the spell miscast `spell:`, their
+own spell's look noun `spell_noun:<id>` (`Content::spell_noun_phrase`); the death screen renders it, the json dump in English. **A trader's ware**
 (`TopicView::ware`) is a `people.ware` message, the item `Lore::listed`, each affix and power
 line after it `people.ware_listed`; the lines are `describe::lines`' English text until
 `magic/describe.rs` is converted.

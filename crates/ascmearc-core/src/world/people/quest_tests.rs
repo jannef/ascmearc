@@ -306,8 +306,8 @@ fn files_with(map: &str, quests: &str) -> ContentFiles {
     let level = |name: &str, map: &str| {
         format!("name = \"{name}\"\nambient = [255, 255, 255, 0]\nmap = '''\n{map}'''\n")
     };
-    files.insert("levels/yard.toml", &level("The Yard", map));
-    files.insert("levels/cellar.toml", &level("The Cellar", CELLAR));
+    files.insert("levels/yard.toml", &level("the Yard", map));
+    files.insert("levels/cellar.toml", &level("the Cellar", CELLAR));
     files.insert(
         "scenarios/yard.toml",
         "name = \"Yard\"\nstart_level = \"yard\"\nhp = 30\nstats = { strength = 30 }\n",
