@@ -1,0 +1,32 @@
+# Lines of data: animated bodies (`animated:<body>.moves`): how one moves, a present
+# participle after its state in the look line.
+
+[book]
+moves = { text = "lepattava", of = "ee4872" }
+
+[broom]
+moves = { text = "vipeltävä", of = "b9cca5" }
+
+[bucket]
+moves = { text = "vieriskelevä", of = "6a38fa" }
+
+[candlestick]
+moves = { text = "keikkuva", of = "fcb72b" }
+
+[chair]
+moves = { text = "hoippuva", of = "fe4fab" }
+
+[coat_stand]
+moves = { text = "hoippuva", of = "fe4fab" }
+
+[cooking_pot]
+moves = { text = "vieriskelevä", of = "6a38fa" }
+
+[cutlery]
+moves = { text = "kaliseva", of = "9dfe7b" }
+
+[rug]
+moves = { text = "aaltoileva", of = "4a3237" }
+
+[stool]
+moves = { text = "hyppelevä", of = "ae1809" }
