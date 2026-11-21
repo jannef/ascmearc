@@ -64,7 +64,7 @@ use super::skills_screen::SkillsScreen;
 use super::story_screen::StoryScreen;
 use super::talents_screen::TalentsScreen;
 use super::target::AimKind;
-use super::text::{screens as T, ui};
+use super::text::{screens as T, ui, ui_msg};
 use super::weapon_skills_screen::WeaponSkillsScreen;
 use crate::cli::Args;
 use crate::game::{Game, GameContent, PlayerAction};
@@ -454,7 +454,8 @@ impl Screen {
                 let campaigns = content.campaigns().len() > 1;
                 let characters = launch.characters.clone();
                 let died = launch.fallen.len();
-                Screen::Characters(CharactersScreen::new(characters, campaigns).died(died))
+                let screen = CharactersScreen::new(content, characters, campaigns);
+                Screen::Characters(screen.died(died))
             }
             ScreenName::Graveyard => {
                 Screen::Graveyard(GraveyardScreen::new(&launch.fallen, content))
@@ -1256,7 +1257,7 @@ fn resume(commands: &mut Commands, screens: &mut Screens, id: &str) {
             commands.insert_resource(Game::from_world(*world, id.to_string()));
             screens.stack.clear();
         }
-        Resume::Failed(message) => screens.back_to_main(Some(message), false),
+        Resume::Failed(message) => screens.back_to_main(Some(ui_msg(message)), false),
         Resume::NoSave => screens.back_to_main(Some(ui(T::SAVE_GONE)), false),
     }
 }
@@ -3042,7 +3043,7 @@ mod tests {
             name: "Your wares".into(),
             price: Some(340),
             items: None,
-            ware: Some("A ring".into()),
+            ware: Some(ascmearc_core::lang::Arg::text("A ring")),
         });
         let screen = Screen::Dialogue(DialogueScreen::new(
             Some(&stale),

@@ -362,7 +362,9 @@ fn the_rider_hook_stays_for_a_talent_beside_the_types_own() {
 fn the_menu_and_the_dump_say_the_rule_after_the_roll() {
     let w = hall(1);
     let view = w.perception();
-    let text = |id: &str| view.own_spell_roll(sp(id)).map(|r| r.text);
+    let text = |id: &str| {
+        (view.own_spell_roll(sp(id))).map(|r| crate::test_support::english_of(&w.content, &r.text))
+    };
     assert_eq!(text("ray_of_frost").as_deref(), Some("2d6 cold, numbs"));
     assert_eq!(
         text("scorching_ray")
@@ -372,7 +374,10 @@ fn the_menu_and_the_dump_say_the_rule_after_the_roll() {
     );
     // The dice left out: they grow with the score.
     let rule = |id: &str| {
-        let text = view.own_spell_roll(sp(id)).expect("a roll").text;
+        let text = crate::test_support::english_of(
+            &w.content,
+            &view.own_spell_roll(sp(id)).expect("a roll").text,
+        );
         text.split_once(", ").map(|x| x.1.to_string())
     };
     // Magic missile never shoves (`shove = false`): force's words are left unsaid.

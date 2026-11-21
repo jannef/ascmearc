@@ -230,7 +230,7 @@ impl ControlsScreen {
         self.open = Some(Open { command, keys });
         self.selected += 1;
         let name = command.name();
-        self.message = vec![ui_with(T::KEYS_OF, &[("name", name.into())])];
+        self.message = vec![ui_with(T::KEYS_OF, &[("name", Arg::text(name))])];
     }
 
     /// Closes the open sub-list, its command selected.
@@ -304,7 +304,7 @@ impl ControlsScreen {
                 if let Some(command) = self.selected_command() {
                     bindings.reset_command(command);
                     let name = command.name();
-                    self.message = vec![ui_with(T::KEYS_RESET, &[("name", name.into())])];
+                    self.message = vec![ui_with(T::KEYS_RESET, &[("name", Arg::text(name))])];
                 }
             }
             _ => {}
@@ -388,7 +388,7 @@ impl ControlsScreen {
             false => key,
         };
         if let Some(why) = key.refused_for(command) {
-            self.message = vec![ui_with(T::REFUSED_TRY, &[("why", why.into())])];
+            self.message = vec![ui_with(T::REFUSED_TRY, &[("why", Arg::text(why))])];
             return;
         }
         let shown = key.display();
@@ -398,18 +398,18 @@ impl ControlsScreen {
         let had = keys.iter().position(|k| *k == key);
         let old = at.and_then(|at| keys.get(at)).map(|k| k.display());
         let mut args = vec![
-            ("name", name.clone().into()),
-            ("shown", shown.clone().into()),
+            ("name", Arg::text(name.clone())),
+            ("shown", Arg::text(shown.clone())),
         ];
         self.message = vec![match bindings.bind_at(command, key, at) {
             Ok(Bound::Free) => match (had, old) {
                 (Some(had), _) if at.is_none_or(|at| at == had) => ui_with(T::HAS_ALREADY, &args),
                 (Some(_), Some(old)) => {
-                    args.push(("old", old.into()));
+                    args.push(("old", Arg::text(old)));
                     ui_with(T::TRADED, &args)
                 }
                 (None, Some(old)) => {
-                    args.push(("old", old.into()));
+                    args.push(("old", Arg::text(old)));
                     ui_with(T::NOW, &args)
                 }
                 _ => ui_with(T::ADDED, &args),
@@ -420,24 +420,24 @@ impl ControlsScreen {
                 ..
             }) => {
                 let args = [
-                    ("shown", shown.into()),
-                    ("to", name.into()),
-                    ("from", from.name().into()),
+                    ("shown", Arg::text(shown)),
+                    ("to", Arg::text(name)),
+                    ("from", Arg::text(from.name())),
                 ];
                 ui_with(T::MOVED_KEYLESS, &args)
             }
             Ok(Bound::Moved { from, .. }) => {
                 let args = [
-                    ("shown", shown.into()),
-                    ("to", name.into()),
-                    ("from", from.name().into()),
+                    ("shown", Arg::text(shown)),
+                    ("to", Arg::text(name)),
+                    ("from", Arg::text(from.name())),
                 ];
                 ui_with(T::MOVED, &args)
             }
             Err(conflict) => {
                 let args = [
-                    ("shown", shown.into()),
-                    ("owner", conflict.owner.name().into()),
+                    ("shown", Arg::text(shown)),
+                    ("owner", Arg::text(conflict.owner.name())),
                 ];
                 ui_with(T::FIXED_CANNOT_TAKE, &args)
             }
@@ -557,13 +557,13 @@ impl ControlsScreen {
         let keys = HINTS;
         let footer = if read_only {
             let close = match bindings.key_name(KeyCommand::Help) {
-                Some(key) => ui_with(T::FOOTER_CLOSE, &[("shown", key.into())]),
+                Some(key) => ui_with(T::FOOTER_CLOSE, &[("shown", Arg::text(key))]),
                 None => ui(T::FOOTER_CLOSE_PLAIN),
             };
             let scroll = if first > 0 || more {
                 format!(
                     "{}   ",
-                    ui_with(T::FOOTER_SCROLL, &[("up_down", keys.up_down().into())])
+                    ui_with(T::FOOTER_SCROLL, &[("up_down", Arg::text(keys.up_down()))])
                 )
             } else {
                 String::new()
@@ -571,14 +571,14 @@ impl ControlsScreen {
             format!("{scroll}{close}")
         } else if self.open.is_some() {
             let args = [
-                ("confirm", keys.confirm.into()),
-                ("erase", keys.erase.into()),
+                ("confirm", Arg::text(keys.confirm)),
+                ("erase", Arg::text(keys.erase)),
             ];
             ui_with(T::FOOTER_OPEN, &args)
         } else {
             let args = [
-                ("confirm", keys.confirm.into()),
-                ("erase", keys.erase.into()),
+                ("confirm", Arg::text(keys.confirm)),
+                ("erase", Arg::text(keys.erase)),
             ];
             ui_with(T::FOOTER_BROWSE, &args)
         };
@@ -592,15 +592,15 @@ impl ControlsScreen {
             let name = self
                 .selected_command()
                 .map_or_else(String::new, |c| c.name());
-            vec![ui_with(T::CAPTURE_PROMPT, &[("name", name.into())])]
+            vec![ui_with(T::CAPTURE_PROMPT, &[("name", Arg::text(name))])]
         } else if !self.message.is_empty() {
             self.message.clone()
         } else if let Some((key, first, second)) = bindings.conflicts().first() {
             let args = [
-                ("shown", key.display().into()),
-                ("first", first.name().into()),
-                ("second", second.name().into()),
-                ("context", first.context().title().into()),
+                ("shown", Arg::text(key.display())),
+                ("first", Arg::text(first.name())),
+                ("second", Arg::text(second.name())),
+                ("context", Arg::text(first.context().title())),
             ];
             vec![ui_with(T::CONFLICT, &args)]
         } else {
@@ -658,7 +658,7 @@ pub(super) fn receive_keymap(
 
 /// A refusal from elsewhere, marked as one.
 fn refused(why: String) -> String {
-    ui_with(T::REFUSED, &[("why", why.into())])
+    ui_with(T::REFUSED, &[("why", Arg::text(why))])
 }
 
 /// `text` wrapped to `width` cells, breaking words longer than that (a file's path).
@@ -684,7 +684,10 @@ fn remove_message(
     let name = command.name();
     match removed {
         Some(Ok(key)) => {
-            let args = [("name", name.into()), ("shown", key.display().into())];
+            let args = [
+                ("name", Arg::text(name)),
+                ("shown", Arg::text(key.display())),
+            ];
             match bindings.keys_of(command).is_empty() {
                 true => ui_with(T::REMOVED_KEYLESS, &args),
                 false => ui_with(T::REMOVED, &args),
@@ -692,8 +695,8 @@ fn remove_message(
         }
         Some(Err(conflict)) => {
             let args = [
-                ("name", name.into()),
-                ("shown", conflict.key.display().into()),
+                ("name", Arg::text(name)),
+                ("shown", Arg::text(conflict.key.display())),
             ];
             ui_with(T::FIXED_CANNOT_REMOVE, &args)
         }

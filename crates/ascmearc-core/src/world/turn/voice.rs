@@ -22,7 +22,9 @@ impl World {
             return Spent::Nothing;
         }
         let range = self.content.tuning().throw_voice.range;
-        if !self.can_loose_here() || !self.within_reach(at, range, "throw your voice") {
+        if !self.can_loose_here()
+            || !self.within_reach(at, range, crate::msg::combat::AIM_THROW_VOICE)
+        {
             return Spent::Nothing;
         }
         let solid = self.state.current().is_opaque(&self.content, at);

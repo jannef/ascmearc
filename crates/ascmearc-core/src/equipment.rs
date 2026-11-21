@@ -7,6 +7,7 @@
 
 use crate::action::Positions;
 use crate::content::{Content, ObjectId, SlotId};
+use crate::lang::{Arg, Msg};
 use crate::object::Stack;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
@@ -126,15 +127,18 @@ pub fn free_slot(content: &Content, equipment: &Equipment, object: ObjectId) -> 
 }
 
 /// What the inventory says of stack `item`, without parentheses: the mark of the slot it is in
-/// ("being worn", "wielded"), or for a two-handed object "wielded in both hands"; `None` if it
-/// is not equipped.
-pub fn mark(content: &Content, equipment: &Equipment, item: usize) -> Option<String> {
+/// ("being worn", "wielded", the data's text), or for a two-handed object a `words.in_both_hands`
+/// message ("wielded in both hands"); `None` if it is not equipped.
+pub fn mark(content: &Content, equipment: &Equipment, item: usize) -> Option<Arg> {
     let slots = equipment.slots_of(item);
     let first = content.slot(*slots.first()?);
+    let mark = Arg::said(crate::content::data_line::slot_mark(&first.id));
     Some(if slots.len() > 1 {
-        format!("{} in both hands", first.mark)
+        Msg::new(crate::msg::words::IN_BOTH_HANDS)
+            .role("mark", mark)
+            .into()
     } else {
-        first.mark.clone()
+        mark
     })
 }
 
@@ -204,7 +208,11 @@ mod tests {
         held.put(&slots_taken(&c, staff, main), 2);
         assert_eq!(held.slots_of(2), [main, off]);
         assert_eq!(held.items(), [(main, 2)]);
-        assert_eq!(mark(&c, &held, 2).as_deref(), Some("wielded in both hands"));
+        let english = |m: Arg| c.english_word(m, "bare");
+        assert_eq!(
+            mark(&c, &held, 2).map(english).as_deref(),
+            Some("wielded in both hands")
+        );
         assert_eq!(mark(&c, &held, 0), None);
         held.take_off(2);
         assert!(held.is_empty());

@@ -13,12 +13,13 @@
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::{ScreenAction, ScreenName};
-use super::text::{profession_screen as T, ui, ui_with};
+use super::text::{label, profession_screen as T, ui, ui_msg, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::Bindings;
 use crate::render::console::Console;
 use ascmearc_core::Action;
 use ascmearc_core::content::{ItemClassId, RecipeId, RecipeUse};
+use ascmearc_core::lang::{Arg, Msg};
 use ascmearc_core::perception::PerceptionView;
 use ascmearc_core::skills::SkillId;
 
@@ -34,8 +35,8 @@ struct Entry {
     /// The recipe's id: what the action names.
     key: String,
     name: String,
-    /// What it takes, in words.
-    takes: String,
+    /// What it takes, in words (core's message, rendered as the screen draws).
+    takes: Msg,
     /// Why it cannot be made now, in words; `None` when it can.
     why: Option<String>,
     /// The built-in action it runs, if it is one.
@@ -90,9 +91,9 @@ impl ProfessionScreen {
                 let entry = Entry {
                     id: row.id,
                     key: def.id.clone(),
-                    name: row.name,
+                    name: label(content.recipe_phrase(&def.id)),
                     takes: row.takes,
-                    why: row.unavailable.map(|why| why.reason(content)),
+                    why: row.unavailable.map(|why| ui_msg(why.reason(content))),
                     uses: def.uses,
                     wizard,
                     confirm: !wizard && def.uses.is_none() && view.craft_plan(row.id, &[]).is_ok(),
@@ -102,11 +103,11 @@ impl ProfessionScreen {
             .collect();
         let recipes = PagedList::grouped(rows, |class| match class {
             None => ui(T::WORK),
-            Some(class) => content.item_class(class).name.clone(),
+            Some(class) => label(content.item_class_phrase(class)),
         });
         Self {
             skill: Some(skill),
-            title: content.skill(skill).name.clone(),
+            title: label(content.skill_phrase(skill)),
             recipes,
         }
     }
@@ -194,7 +195,7 @@ impl ProfessionScreen {
         let count = self.recipes.tallest().max(1) as i32;
         let title = format!(
             " {} ",
-            ui_with(T::TITLE, &[("profession", self.title.as_str().into())])
+            ui_with(T::TITLE, &[("profession", Arg::text(self.title.as_str()))])
         );
         let panel = Panel::new(console, &title, WIDTH, count + 7);
         self.recipes.draw_label(console, &panel);
@@ -238,7 +239,7 @@ impl ProfessionScreen {
             }
             console.print(x + 2, y, &format!("{letter} - {}", entry.name), color);
             let state_x = x + 2 + name_w;
-            let state = entry.why.as_ref().unwrap_or(&entry.takes);
+            let state = (entry.why.clone()).unwrap_or_else(|| ui_msg(entry.takes.clone()));
             let room = (right - state_x).max(0) as usize;
             let state: String = state.chars().take(room).collect();
             console.print(state_x, y, &state, TEXT_DIM);
@@ -246,16 +247,16 @@ impl ProfessionScreen {
         // Under the list: what the selected recipe takes, in full.
         let under = panel.y + panel.h - 4;
         if let Some(entry) = self.recipes.selected().filter(|_| fits(under)) {
-            let text = ui_with(T::TAKES, &[("takes", entry.takes.as_str().into())]);
+            let text = ui_with(T::TAKES, &[("takes", entry.takes.clone().into())]);
             console.print_in(x, under, &text, TEXT_DIM, panel.inner_w());
         }
         let keys = HINTS;
-        let confirm = ("confirm", keys.confirm.to_string().into());
+        let confirm = ("confirm", Arg::text(keys.confirm.to_string()));
         let choose = match self.recipes.last_letter() {
             Some('a') => ui_with(T::MAKE_A, &[confirm]),
             Some(last) => ui_with(
                 T::MAKE_LETTERS,
-                &[("last", last.to_string().into()), confirm],
+                &[("last", Arg::text(last.to_string())), confirm],
             ),
             None => keys.confirm.to_string(),
         };

@@ -281,6 +281,7 @@ fn lexicon() -> MapLexicon {
     MapLexicon::default()
         .with("object:long_sword", LexWord::new("pitkä|miekka/9*A"))
         .with("object:arrow", LexWord::new("nuoli/26"))
+        .with("item_tag:magic", LexWord::new("taika/9*D"))
         .with("object:shield", LexWord::new("kilpi/7*E"))
         .with("object:potion", LexWord::new("juoma/10"))
         .with("object:scroll", LexWord::new("kirja|käärö/1"))
@@ -363,7 +364,7 @@ fn the_designs_item_phrases() {
         form(&magic, "pl_ade"),
         "karhun liekehtivillä smaragdiponsisilla pitkämiekoilla"
     );
-    let unknown = Phrase::id("object:long_sword").note("taika");
+    let unknown = Phrase::id("object:long_sword").note(Word::literal("taika"));
     assert_eq!(form(&unknown, "nom"), "pitkämiekka (taika)");
     assert_eq!(form(&unknown, "ill"), "pitkämiekkaan (taika)");
     let arrows = Phrase::id("object:arrow").count(13);
@@ -561,9 +562,10 @@ fn made_and_parts() {
 #[test]
 fn notes_and_plural_only_words() {
     let sword = Phrase::id("object:long_sword");
-    let tagged = sword
-        .clone()
-        .with_note(Note::Tags(vec!["taika".into(), "kirottu".into()]));
+    let tagged = sword.clone().with_note(Note::Tags(vec![
+        Word::id("item_tag:magic"),
+        Word::literal("kirottu"),
+    ]));
     assert_eq!(form(&tagged, "nom"), "pitkämiekka (taika, kirottu)");
     let wand = Phrase::id("object:wand");
     let charged = |n| form(&wand.clone().with_note(Note::Charges(n)), "nom");
@@ -789,6 +791,56 @@ fn refused_entries_render_as_written_and_say_why() {
         Entry::base_text("a/b"),
         "a/b",
         "a slash before letters is text"
+    );
+}
+
+/// #2038: a `|` with nothing on one side is no compound boundary: the entry is refused and
+/// renders as written, bars and all, in every form; never empty, never a panic.
+#[test]
+fn an_empty_compound_part_is_refused_and_written_as_is() {
+    let fi = Fi::default();
+    for (entry, written) in [
+        ("|/0", "|"),
+        ("|/9", "|"),
+        ("||/9", "||"),
+        ("a|/9", "a|"),
+        ("|a/9", "|a"),
+        ("|ä/10", "|ä"),
+        ("ä|/10", "ä|"),
+        ("€|/9", "€|"),
+        ("|€/9*A", "|€"),
+        ("miekka|/9*A", "miekka|"),
+        ("|miekka/9*A", "|miekka"),
+        ("pitkä||miekka/9*A", "pitkä||miekka"),
+        ("pitkä/10 |", "pitkä |"),
+        (" | ", "|"),
+        ("|", "|"),
+        ("a|", "a|"),
+        ("|a", "|a"),
+    ] {
+        let error = fi.parse_word(entry).expect_err(entry).to_string();
+        assert!(
+            error.contains("empty compound part") || error.contains("no class"),
+            "{entry}: {error}"
+        );
+        assert_eq!(Entry::base_text(entry), written, "{entry}");
+        let lexicon = MapLexicon::default().with("x", LexWord::new(entry));
+        for form in fi.forms() {
+            if form.starts_with("num") || form.starts_with("ord") {
+                continue;
+            }
+            let out = fi
+                .phrase(&Phrase::id("x"), &form, &lexicon, &Register::default())
+                .expect("a listed form renders");
+            assert_eq!(out, written, "{entry} {form}");
+        }
+    }
+    assert_eq!(
+        fi.parse_word("pitkä|miekka|kahva/9")
+            .map(|_| ())
+            .map_err(|e| e.to_string()),
+        Ok(()),
+        "every part non-empty: a compound"
     );
 }
 

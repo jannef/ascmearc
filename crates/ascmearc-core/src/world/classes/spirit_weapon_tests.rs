@@ -312,7 +312,7 @@ fn its_description_and_the_dumps_say_what_it_is() {
     let text = |kind: LineKind| -> Vec<String> {
         (lines.iter())
             .filter(|l| l.kind == kind)
-            .map(|l| l.text.clone())
+            .map(|l| l.english(w.content()))
             .collect()
     };
     assert_eq!(
@@ -335,7 +335,7 @@ fn its_description_and_the_dumps_say_what_it_is() {
     assert!(!plain.iter().any(|l| l.kind == LineKind::Power));
     // The item lists, the attacks, and JSON.
     assert_eq!(
-        w.lore().listed(&stack),
+        crate::test_support::english_of(w.content(), &w.lore().listed(&stack)),
         "a long sword (+3 hit, 1d9) (spirit)"
     );
     let inventory = dump::layer_rows(&w, Layer::Inventory);

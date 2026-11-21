@@ -413,7 +413,10 @@ impl En {
         let mut notes = String::new();
         for note in &phrase.notes {
             match note {
-                Note::Tags(tags) => notes += &format!(" ({})", tags.join(", ")),
+                Note::Tags(tags) => {
+                    let tags: Vec<String> = tags.iter().map(|w| self.text(w, lex)).collect();
+                    notes += &format!(" ({})", tags.join(", "));
+                }
                 Note::Charges(n) => notes += &format!(" ({})", charges(*n)),
                 Note::Base(base) => {
                     let base = self.phrase(base, "counted", lex, reg).unwrap_or_default();
@@ -918,7 +921,9 @@ mod tests {
             form(&sword.clone().count(2), "counted"),
             "2 Flaming emerald-pommelled long swords of the Bear"
         );
-        let magic = Phrase::id("object:long_sword").note("magic").note("cursed");
+        let magic = Phrase::id("object:long_sword")
+            .note(Word::literal("magic"))
+            .note(Word::literal("cursed"));
         assert_eq!(form(&magic, "a"), "a long sword (magic) (cursed)");
         let scroll = Phrase::id("object:scroll").with(Modifier::Label(Word::literal("ZUNBAR")));
         assert_eq!(form(&scroll, "a"), "a [object:scroll] labelled ZUNBAR");
@@ -964,8 +969,11 @@ mod tests {
         let amber = Phrase::id("object:piece").with(Modifier::Of(Word::id("material:amber")));
         assert_eq!(form(&amber, "a"), "a piece of amber");
         let unknown = Phrase::id("object:long_sword")
-            .with_note(Note::Tags(vec!["magic".into(), "cursed".into()]))
-            .note("lit")
+            .with_note(Note::Tags(vec![
+                Word::literal("magic"),
+                Word::literal("cursed"),
+            ]))
+            .note(Word::literal("lit"))
             .with_note(Note::Charges(1));
         assert_eq!(
             form(&unknown, "a"),

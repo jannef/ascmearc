@@ -12,6 +12,8 @@
 //!   arrives there.
 
 use crate::action::Positions;
+use crate::lang::{Msg, Phrase};
+use crate::msg;
 use crate::object::Stack;
 use crate::rot::{self, Stage};
 use crate::time::GameTime;
@@ -38,14 +40,12 @@ impl World {
         if rotted.is_empty() {
             return;
         }
-        let told: Vec<String> = (rotted.iter())
+        let told: Vec<Msg> = (rotted.iter())
             .map(|i| {
                 let stack = &actor.inventory[i];
-                let def = content.object(stack.object);
-                match stack.count {
-                    1 => format!("Your {} has rotted away.", def.name),
-                    n => format!("Your {n} {} have rotted away.", def.plural),
-                }
+                let what = Phrase::id(format!("object:{}", content.object(stack.object).id));
+                (Msg::new(msg::health::ROTTED_AWAY).role("what", what))
+                    .role("count", i64::from(stack.count))
             })
             .collect();
         let mut i = 0;

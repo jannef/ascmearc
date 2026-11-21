@@ -45,7 +45,6 @@ use crate::object::Stack;
 use crate::perception::PerceptionView;
 use crate::rng::Rng;
 use crate::skills::Use;
-use crate::text::article;
 use crate::world::people::quest::QuestView;
 use crate::world::people::talk::Speech;
 use crate::world::{ActorId, Spent, World};
@@ -77,10 +76,10 @@ impl Patron {
 pub(crate) struct Commission {
     /// The recipe of the work.
     pub recipe: String,
-    /// The patron as messages call them ("your patron"): the log's giver.
-    pub giver: String,
-    /// What the patron said as they gave it: the log's offer.
-    pub offer: String,
+    /// The patron as messages call them ("your patron", said `the`): the log's giver.
+    pub giver: Phrase,
+    /// What the patron said as they gave it, by its keys: the log's offer.
+    pub offer: Speech,
 }
 
 /// The recipes a patron may commission of `player` (the module docs), in recipe order.
@@ -164,21 +163,12 @@ pub(crate) fn advance(content: &Content, recipe: &RecipeDef) -> Vec<Stack> {
     given
 }
 
-/// The work of `recipe` with its article: "a long sword".
 /// What a commission of `recipe` asks for, as a patron's line names it (`{work:a}`).
 fn work_phrase(content: &Content, recipe: &RecipeDef) -> Phrase {
     match &recipe.result {
         Some(r) => Phrase::id(format!("object:{}", content.object(r.object).id)),
-        None => Phrase::id(format!("word:{}", recipe.name)),
+        None => content.recipe_phrase(&recipe.id),
     }
-}
-
-fn work_words(content: &Content, recipe: &RecipeDef) -> String {
-    let name = recipe
-        .result
-        .as_ref()
-        .map_or(recipe.name.as_str(), |r| &content.object(r.object).name);
-    format!("{} {name}", article(name))
 }
 
 impl PerceptionView<'_> {
@@ -189,7 +179,7 @@ impl PerceptionView<'_> {
         let recipe = content.recipe(content.recipes().id(&open.recipe)?);
         let object = recipe.result.as_ref()?.object;
         let fine = (self.player.inventory.iter()).any(|s| fine(s, object));
-        let giver = || Arg::Text(open.giver.clone());
+        let giver = || Arg::Phrase(open.giver.clone());
         let status = if fine {
             Msg::new(msg::crafting::COMMISSION_RETURN).role("giver", giver())
         } else {
@@ -201,13 +191,15 @@ impl PerceptionView<'_> {
             .role("what", work);
         Some(QuestView {
             id: "commission".into(),
-            name: format!("Commission: {}", work_words(content, recipe)),
+            name: Msg::new(msg::crafting::COMMISSION_NAME)
+                .role("work", work_phrase(content, recipe))
+                .into(),
             kind: QuestKind::Commission,
             active: true,
             failed: false,
             completed: 0,
-            giver: open.giver.clone().into(),
-            offer: open.offer.clone().into(),
+            giver: giver(),
+            offer: open.offer.clone(),
             objective,
             target: Some(content.object(object).id.clone()),
             status,
@@ -324,12 +316,12 @@ impl World {
             self.said(id, &words.offer)
                 .with("work", work_phrase(&content, recipe)),
         );
-        let giver = self.called(&self.state.actors[&id]);
+        let giver = self.called_phrase(&self.state.actors[&id]);
         self.state.patron.taken += 1;
         self.state.patron.open = Some(Commission {
             recipe: recipe.id.clone(),
             giver,
-            offer: crate::messages::english_speech(&content, &line),
+            offer: line.clone(),
         });
         self.answer(id, line, None, events);
         self.receive(stock);

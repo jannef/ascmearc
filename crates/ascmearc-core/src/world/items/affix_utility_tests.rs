@@ -342,7 +342,7 @@ fn the_pick_axe_is_a_tool_rolled_magic_from_item_level_3() {
     // It shows no numbers; its description gives its power.
     assert!(Numbers::of(&found, &CONTENT).is_empty());
     let lines: Vec<String> = (describe::lines(&found, &CONTENT).into_iter())
-        .map(|l| l.text)
+        .map(|l| l.english(&CONTENT))
         .collect();
     assert!(lines.contains(&"Digs at 10".to_string()), "{lines:?}");
     // Worn and dug with: faster than a plain one.

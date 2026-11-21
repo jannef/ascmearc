@@ -1,6 +1,8 @@
 //! Magic items: rarity, base items, prefixes, suffixes, and rare names.
 
 use super::order;
+use super::util::stat_name;
+use super::util::word;
 use super::util::{capital, percent_of};
 use super::vision::glow_word;
 use ascmearc_core::content::Effect as ItemEffect;
@@ -47,7 +49,7 @@ pub(super) fn magic_rarity(content: &Content) -> String {
         let _ = writeln!(
             out,
             "| {} | {} |",
-            capital(rarity.word()),
+            word(rarity.word(), "Bare"),
             percent_of(affixes.rarity_weight(rarity), total.max(1))
         );
     }
@@ -98,8 +100,8 @@ pub(super) fn magic_bases(content: &Content) -> String {
             .collect();
         let total: u32 = bases.iter().map(|o| o.frequency).sum();
         for o in bases {
-            let stats = describe::base_stats(o, content)
-                .into_iter()
+            let stats = (describe::base_stats(o, content).iter())
+                .map(|s| ascmearc_core::messages::english_msg(content, s))
                 .filter(|s| !s.starts_with("Worn") && !s.starts_with("Held"))
                 .collect::<Vec<_>>();
             let stats = if stats.is_empty() {
@@ -262,7 +264,7 @@ fn effect_words(content: &Content, effect: ItemEffect) -> String {
         ItemEffect::ActiveStamina => "weapon feats cost less of a resource".into(),
         ItemEffect::ResourceOnKill => format!("a resource on a kill within {siphon} cells"),
         ItemEffect::Resistance => "resistance to a kind of damage, in percent".into(),
-        ItemEffect::Stat(stat) => stat.name().into(),
+        ItemEffect::Stat(stat) => stat_name(stat),
         ItemEffect::MoveSpeed => "you move faster".into(),
         ItemEffect::Carry => "carrying capacity".into(),
         ItemEffect::Stealth => "quieter footsteps".into(),

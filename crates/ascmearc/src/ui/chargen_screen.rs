@@ -22,10 +22,11 @@ use super::character_screen::{birth_parts, fit_joined, fit_parts};
 use super::cursor;
 use super::menu::{HINTS, Nav, Panel, Press, truncated, wrap};
 use super::screens::{MenuChoice, ScreenAction, ScreenName};
-use super::text::{UiText, chargen_screen as T, ui, ui_with};
+use super::text::{UiText, chargen_screen as T, label, ui, ui_with, word};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use ascmearc_core::character::{CharacterSpec, Gender, NAMELESS, Start, check_name, random_name};
+use ascmearc_core::content::data_line::scenario_name;
 use ascmearc_core::content::{ClassDef, Content, pace_words};
 use ascmearc_core::dice::Dice;
 use ascmearc_core::kit;
@@ -104,8 +105,8 @@ impl Step {
 /// The scenario and seed chosen on the New run screen.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ScenarioPick {
+    /// The scenario's id: its name is said by its key (`data_line::scenario_name`).
     pub id: String,
-    pub name: String,
     /// The seed the run will have: in developer builds the typed one, else the scenario's; in
     /// release builds one no one chose.
     pub seed: u64,
@@ -262,7 +263,7 @@ struct Choice {
 pub(super) fn adjustments(by: &PerStat<Dice>) -> String {
     let parts: Vec<String> = (by.iter())
         .filter(|(_, v)| !v.is_zero())
-        .map(|(stat, v)| format!("{} {}", stat.abbrev(), dice_text(v)))
+        .map(|(stat, v)| format!("{} {}", word(stat.abbrev(), "bare"), dice_text(v)))
         .collect();
     if parts.is_empty() {
         ui(T::NO_STAT_CHANGES)
@@ -295,18 +296,19 @@ impl ChoiceScreen {
         let choices: Vec<Choice> = match step {
             Step::Race => (content.races().list.iter())
                 .map(|r| {
-                    let eyes = content
-                        .vision(&r.vision)
-                        .map_or(r.vision.as_str(), |v| &v.name);
-                    let mut details = vec![
-                        adjustments(&r.stats),
-                        ui_with(T::VISION, &[("eyes", eyes.into())]),
-                    ];
+                    let eyes = match content.vision(&r.vision) {
+                        Some(_) => Arg::from(content.vision_phrase(&r.vision)),
+                        None => Arg::text(r.vision.as_str()),
+                    };
+                    let mut details =
+                        vec![adjustments(&r.stats), ui_with(T::VISION, &[("eyes", eyes)])];
                     details.extend(pace_words(r.experience).map(String::from));
                     Choice {
                         id: r.id.clone(),
-                        name: r.name.clone(),
-                        description: r.description.clone(),
+                        name: label(content.race_phrase(&r.id)),
+                        description: crate::ui::text::data_line(
+                            ascmearc_core::content::data_line::description("race", &r.id),
+                        ),
                         details,
                     }
                 })
@@ -315,7 +317,7 @@ impl ChoiceScreen {
                 .into_iter()
                 .map(|g| Choice {
                     id: g.id().to_string(),
-                    name: g.name().to_string(),
+                    name: word(g.name(), "Bare"),
                     description: ui(gender_description(g)),
                     details: Vec::new(),
                 })
@@ -328,8 +330,10 @@ impl ChoiceScreen {
             .into_iter()
             .map(|c| Choice {
                 id: c.id.clone(),
-                name: c.name.clone(),
-                description: c.description.clone(),
+                name: label(content.class_phrase(&c.id)),
+                description: crate::ui::text::data_line(
+                    ascmearc_core::content::data_line::description("class", &c.id),
+                ),
                 details: [adjustments(&c.stats)]
                     .into_iter()
                     .chain(pace_words(c.experience).map(String::from))
@@ -425,10 +429,10 @@ impl ChoiceScreen {
         let keys = HINTS;
         let footer = format!(
             "{}   {}   {}",
-            ui_with(T::CHOOSE, &[("keys", keys.up_down().into())]),
+            ui_with(T::CHOOSE, &[("keys", Arg::text(keys.up_down()))]),
             ui_with(
                 T::CONFIRM_NEXT,
-                &[("confirm", keys.confirm.to_string().into())]
+                &[("confirm", Arg::text(keys.confirm.to_string()))]
             ),
             ui(T::BACK),
         );
@@ -501,7 +505,7 @@ fn talent_names(content: &Content, spec: Option<&CharacterSpec>) -> String {
                 Some((id, choice)) => (id, Some(choice)),
                 None => (pick.as_str(), None),
             };
-            book.id(id).map(|t| book.get(t).name_for(content, choice))
+            book.id(id).map(|t| label(content.talent_arg(t, choice)))
         })
         .collect();
     match names.is_empty() {
@@ -557,10 +561,10 @@ impl SummaryScreen {
         let names = match &spec {
             Some(spec) => [
                 spec.race(content)
-                    .map_or(spec.race.clone(), |r| r.name.clone()),
-                spec.gender.name().to_string(),
+                    .map_or(spec.race.clone(), |r| label(content.race_phrase(&r.id))),
+                word(spec.gender.name(), "Bare"),
                 spec.class(content)
-                    .map_or(spec.class.clone(), |c| c.name.clone()),
+                    .map_or(spec.class.clone(), |c| label(content.class_phrase(&c.id))),
                 name.clone(),
             ],
             None => Default::default(),
@@ -571,19 +575,20 @@ impl SummaryScreen {
         let sign = (start.as_ref().ok())
             .and_then(|s| s.character.sign_title(content))
             .unwrap_or_default();
-        let eyes = start.as_ref().map_or(String::new(), |s| {
-            content
-                .vision(&s.vision)
-                .map_or(s.vision.clone(), |v| v.name.clone())
-        });
+        let eyes = start
+            .as_ref()
+            .map_or(String::new(), |s| match content.vision(&s.vision) {
+                Some(_) => label(content.vision_phrase(&s.vision)),
+                None => s.vision.clone(),
+            });
         let alignment = (start.as_ref().ok())
             .zip(content.alignment())
             .map_or(String::new(), |(s, rules)| {
-                rules.band(s.alignment).name().to_string()
+                word(rules.band(s.alignment).name(), "Bare")
             });
         let skills = start.as_ref().map_or(Vec::new(), |s| {
             (s.skills.iter())
-                .map(|(id, t)| (content.skill(id).name.clone(), t.value))
+                .map(|(id, t)| (label(content.skill_phrase(id)), t.value))
                 .collect()
         });
         let kit = kit_words(content, draft, &start);
@@ -744,8 +749,8 @@ impl SummaryScreen {
                 for (i, (stat, score)) in start.stats.scores().iter().enumerate() {
                     let row = y + i as i32;
                     if fits(row) {
-                        console.print(x + 2, row, stat.abbrev(), TEXT_DIM);
-                        console.print(x + 6, row, stat.name(), TEXT);
+                        console.print(x + 2, row, &word(stat.abbrev(), "bare"), TEXT_DIM);
+                        console.print(x + 6, row, &word(stat.name(), "Bare"), TEXT);
                         console.print(x + 20, row, &format!("{score:>2}"), TEXT);
                     }
                 }
@@ -798,12 +803,12 @@ impl SummaryScreen {
         let scenario = self.scenario.as_ref().map_or(String::new(), |s| {
             if s.shows_seed {
                 let args = [
-                    ("scenario", Arg::from(s.name.as_str())),
-                    ("seed", Arg::from(s.seed.to_string())),
+                    ("scenario", Arg::said(scenario_name(&s.id))),
+                    ("seed", Arg::text(s.seed.to_string())),
                 ];
                 ui_with(T::SCENARIO_SEED, &args)
             } else {
-                s.name.clone()
+                label(Arg::said(scenario_name(&s.id)))
             }
         });
         let rows = [
@@ -825,8 +830,11 @@ impl SummaryScreen {
         let (up_down, confirm) = (keys.up_down(), keys.confirm);
         let footer = format!(
             "{}   {}   {}",
-            ui_with(T::CHOOSE, &[("keys", up_down.into())]),
-            ui_with(T::CONFIRM_START, &[("confirm", confirm.to_string().into())]),
+            ui_with(T::CHOOSE, &[("keys", Arg::text(up_down))]),
+            ui_with(
+                T::CONFIRM_START,
+                &[("confirm", Arg::text(confirm.to_string()))]
+            ),
             ui(T::BACK),
         );
         panel.footer(console, &footer);
@@ -847,7 +855,6 @@ mod tests {
         Draft {
             scenario: Some(ScenarioPick {
                 id: "showcase".into(),
-                name: showcase.name.clone(),
                 seed,
                 shows_seed: true,
                 character: showcase.character.clone(),
@@ -998,7 +1005,10 @@ mod tests {
                 let text = text(&console);
                 assert!(!text.to_lowercase().contains("seed"), "{text}");
                 for stat in Stat::ALL {
-                    assert!(!text.contains(stat.name()), "{stat:?} in\n{text}");
+                    assert!(
+                        !text.contains(&word(stat.name(), "Bare")),
+                        "{stat:?} in\n{text}"
+                    );
                 }
             }
         }
@@ -1094,7 +1104,6 @@ mod tests {
         let mut d = draft(1);
         d.scenario = Some(ScenarioPick {
             id: "world".into(),
-            name: world.name.clone(),
             shows_seed: true,
             seed: 1,
             character: world.character.clone(),
@@ -1203,7 +1212,11 @@ mod tests {
             .expect("world");
         let view = world.perception();
         for (stat, score) in view.own_scores().iter() {
-            let row = format!("{}  {:<14}{score:>2}", stat.abbrev(), stat.name());
+            let row = format!(
+                "{}  {:<14}{score:>2}",
+                word(stat.abbrev(), "bare"),
+                word(stat.name(), "Bare")
+            );
             assert!(text.contains(&row), "{row:?} in\n{text}");
         }
         // In a narrow console the sign goes on the next line.

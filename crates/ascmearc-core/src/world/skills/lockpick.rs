@@ -28,7 +28,6 @@ use crate::msg;
 use crate::rng::draw;
 use crate::skills::{Effect, Use};
 use crate::stats::Stat;
-use crate::world::combat::fight::word;
 use crate::world::{Spent, World};
 
 impl World {
@@ -58,8 +57,7 @@ impl World {
         if !level.locks.contains_key(&at) {
             match chest {
                 true => self.say(
-                    Msg::new(msg::skills::CHEST_NOT_LOCKED)
-                        .role("chest", word(&self.chest_name(at))),
+                    Msg::new(msg::skills::CHEST_NOT_LOCKED).role("chest", self.chest_phrase(at)),
                 ),
                 false => self.say(msg::skills::DOOR_NOT_LOCKED),
             }
@@ -84,7 +82,7 @@ impl World {
         }
         self.state.current_mut().locks.remove(&at);
         if chest {
-            let chest = word(&self.chest_name(at));
+            let chest = self.chest_phrase(at);
             self.say(Msg::new(msg::skills::PICKED_CHEST).role("chest", chest));
             self.open_lid(at, events);
             return Spent::Turn(try_price + open_price);

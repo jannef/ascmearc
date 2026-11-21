@@ -12,7 +12,39 @@
 acid_eats_at = "The acid eats at {what:the}."
 acid_eats_away = "The acid eats {what:the} away."
 acid_runs_off = "The acid runs off {what:the}."
+# What the player does at a place they aim at: `cannot_aim_at_yourself`'s and `shot`'s `verb`.
+aim_breathe_fire = "breathe fire"
+aim_breathe_frost = "breathe frost"
+aim_breathe_rot = "breathe rot"
+aim_breathe_thunder = "breathe thunder"
+aim_cast = "cast"
+aim_hex = "hex"
+aim_set_companion = "set your companion"
+aim_shoot = "shoot"
+aim_spit = "spit"
+aim_stare = "stare"
+aim_throw = "throw"
+aim_throw_voice = "throw your voice"
+aim_zap = "zap"
 aimed_at_nothing = "That is aimed at nothing."
+# An attack the player has ready, as the character screen and the `weapons` dump say it
+# (`world/combat/attacks.rs`): its parts listed by `attack_listed` (`first` a part, `rest` the
+# others: this entry again, or the last part); `to_hit` its to-hit as written ("+4"); `n` a range
+# in cells. Its damage ("1d8+2 slashing") is `attack_damage`: `dice` the dice as written, `kinds`
+# a damage type or, for two or more, `attack_kind_or` (`first` one, `rest` this entry again or
+# the last); its riders are `items.numbers_with_rider`'s.
+attack_damage = "{dice:bare} {kinds:bare}"
+attack_kind_or = "{first:bare} or {rest:bare}"
+attack_listed = "{first:bare}, {rest:bare}"
+attack_pierces = "pierces armour"
+attack_range = "range {n:bare}"
+# Where an attack comes from, a label said `Bare` ("Main hand").
+attack_source_main_hand = "main hand"
+attack_source_missile = "missile"
+attack_source_off_hand = "off hand"
+attack_source_tail = "tail"
+attack_source_third_hand = "third hand"
+attack_to_hit = "{to_hit:bare} to hit"
 # The intent alone: an attack the player saw made, its blow not (yet) told.
 attacks = "{actor:The} attack{actor:s} {target:the}."
 blades_rend = "Your blades rend {target:the}."
@@ -51,7 +83,7 @@ keep_wits = "You keep your wits about you."
 # `what`: the player's weapon, knocked away by `who`.
 knocked_from_hand = "{who:The} knock{who:s} {what:the} from your hand!"
 lands_beside_you = "It lands beside you."
-# `ability`: a weapon ability a rank risen taught, by its name ("deep cut").
+# `ability`: a weapon ability a rank risen taught, by its name (`weapon_ability:<id>`, "deep cut").
 learned_ability = "You have learned {ability:the}."
 misses = "{actor:The} miss{actor:es} {target:the}."
 no_ability = "You have no such ability."
@@ -73,7 +105,8 @@ nothing_to_bash = "There is nothing there to bash."
 out_of_range = "That is out of range."
 # Said after the first active weapon ability a rank taught, which grants stamina.
 pace_your_breath = "You learn to pace your breath."
-# `reason`: why the ability cannot be used now, as the abilities menu says it.
+# `reason`: why the ability cannot be used now, as the abilities menu says it (a message of its
+# own, `messages/ability.toml`).
 reason = "{reason:Bare}."
 # `who`: whose shield; `weapon`: the spell's bolt, said with its caster ("your bolt").
 reflected = "{who:Poss} shield turns {weapon:the} back at {target:the}."
@@ -86,8 +119,8 @@ shields_fumble = "Your shields get in the way, and the spell slips from your gra
 shoots_at = "{actor:The} shoot{actor:s} at {target:the}."
 # `verb`: "shoot" or "throw"; `what`: the missile, counted.
 shot = "You {verb:bare} {what:a}."
-# A rank risen in a weapon skill: `how`, the skill's phrase as the data writes it ("with long
-# blades").
+# A rank risen in a weapon skill: `how`, the skill's phrase (`weapon_skill_phrase:<id>`, "with
+# long blades").
 skill_risen = "You feel more skilled {how:bare}."
 something_dies = "Something dies."
 # `status`: how the status looks ("dazed"); `from`: what turned the blow ("shield", "parry").
@@ -102,6 +135,23 @@ throws = "{actor:The} {verb:bare} {what:a}."
 throws_at = "{actor:The} throw{actor:s} at {target:the}."
 throws_flask = "{actor:The} {verb:bare} a flask."
 turned_aside = "{weapon:The} turn{weapon:s} aside before {weapon:they} reach{weapon:es} {target:the}."
+# Verbs said in a line's `verb` where the data gives none: a death, a blow, the player's shot;
+# each blow's verb with the same in the player's person beside it (`fight::Words`).
+verb_bash = "bash"
+verb_bashes = "bashes"
+verb_burn = "burn"
+verb_burns = "burns"
+verb_cast_a_spell_at = "cast a spell at"
+verb_casts_a_spell_at = "casts a spell at"
+verb_dies = "dies"
+verb_hit = "hit"
+verb_hits = "hits"
+verb_kick = "kick"
+verb_kicks = "kicks"
+verb_sear = "sear"
+verb_sears = "sears"
+verb_shoot = "shoot"
+verb_shoots = "shoots"
 where = "Where?"
 which_way = "Which way?"
 whirls = "{who:The} whirls to face you."

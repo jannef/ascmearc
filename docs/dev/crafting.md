@@ -198,7 +198,7 @@ so a hand knife may also be of ivory or dragonbone (both `bone`); jade is no wea
 - **The row's words** (`craft::stock_words`) price a part once per material group it may be of,
   the base material's group first, each other group by its cheapest material (`value`: a bow
   "or 4 horn shards", never dragonbone). It names the material only where the part takes some
-  of its group (#1767, `piece::any_names`): the whole group is the form word alone, "3 ingots",
+  of its group (#1767, `piece::any_arg`): the whole group is the form word alone, "3 ingots",
   "7 billets or 7 shards", "a block of stone" (an `of` form takes the group's name), "a hide or
   pelt"; some of it names them, the priced one first, "an iron or brass ingot", "4 horn or
   dragonbone shards", "a block of flint or obsidian"; one names it, "a gold ingot". A stock
@@ -442,7 +442,7 @@ the cells beside the player, and the skills: presentation never decides availabi
 
 - `takes`: what a built-in works on ("a metal weapon or armour", "a wooden weapon"), each stock
   part priced in pieces (`piece::count_for` of the part's share of the result's weight, named by
-  `piece::any_names`: "3 ingots" of any metal, "an iron or brass ingot"; "Routes and the
+  `piece::any_arg`: "3 ingots" of any metal, "an iron or brass ingot"; "Routes and the
   recipe's profession"), inputs ("20 arrowheads", "an arrowhead for each made"), the station
   ("an anvil"), "a knife", "a bow ready" (`data/fletch.toml`'s word for what shoots the result),
   then the time in `Duration::spoken` ("about 10 minutes": Temper's and Whittle's
@@ -527,7 +527,8 @@ below). Its turns are `ActionKind::Craft` (`data/actions.toml` `craft = 1000`;
   `data/recipes.toml` row's where it names one, else `stock.toml`'s for the directory's skill, so
   a steel-headed arrow is Woodcraft's "Make"), the name `Lore::describe` of the made item ("a
   ruby-pommelled mithril long sword"; a counted recipe's plural, "flint arrows"), `uses` the
-  pieces counted, "an arrowhead for each made", and "the ruby".
+  pieces counted, "an arrowhead for each made", and "the ruby": messages the dialog renders
+  (docs/dev/localization.md "Reasons core composes").
 - **Start** (`World::start_making`): refused with no time by the row's `lack` (beyond skill: "That
   is beyond your skill."; no station: "There is no anvil here."; no knife; no launcher: "You
   have no bow ready."), then by the plan's reason. Then "You set to work on the long sword at the anvil." and the work driver's

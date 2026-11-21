@@ -109,7 +109,8 @@ impl World {
         };
         if self.perception.sees_actors_at(here) {
             let line = Msg::new(msg::creatures::BURSTS).role("who", fight::creature(def));
-            self.say(line.role("verb", burst.verb.as_str()));
+            let verb = crate::content::data_word::creature_verb(&def.id, "burst");
+            self.say(line.role("verb", crate::lang::Arg::said(verb)));
         }
         let sound = TrapNoise {
             sound: SoundKind::Explosion,
@@ -156,8 +157,8 @@ impl World {
         if burst.gust {
             self.gust(here, &cells);
         }
-        let verb = &content.damage_type(burst.kind).verb;
-        self.say_spell((&burst.noun, verb), made, events);
+        let words = fight::Words::of_kind(content.burst_noun_phrase(def), burst.kind, &content);
+        self.say_spell(words, made, events);
         for &target in &harmed {
             for rider in &burst.riders {
                 if !self.state.actors.contains_key(&target) || self.state.death.is_some() {

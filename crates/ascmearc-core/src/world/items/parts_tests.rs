@@ -99,7 +99,10 @@ fn names_show_gems_and_precious_metals_descriptions_every_part() {
     let content = content();
     let name = |id: &str| {
         let s = Stack::one(object(&content, id));
-        (s.describe(&content), lines(&s, &content)[0].text.clone())
+        (
+            s.describe(&content),
+            lines(&s, &content)[0].english(&content),
+        )
     };
     assert_eq!(
         name("gold_amulet"),
@@ -156,7 +159,10 @@ fn materials_show_before_the_item_is_identified() {
         .expect("carried")
         .clone();
     assert_eq!(seen.describe(&content), "a gold and ruby amulet (magic)");
-    let text: Vec<String> = lines(&seen, &content).into_iter().map(|l| l.text).collect();
+    let text: Vec<String> = lines(&seen, &content)
+        .into_iter()
+        .map(|l| l.english(&content))
+        .collect();
     assert_eq!(
         text[0],
         "Magic gold and ruby amulet · gold chain, ruby setting · 90 g"

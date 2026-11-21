@@ -125,7 +125,9 @@ fn a_tool_goes_in_the_tool_slot_and_digs_from_there() {
     assert_eq!(content.slot(tool).name, "Tool");
     assert_eq!(w.perception().equipment().get(tool), Some(0));
     assert_eq!(
-        crate::equipment::mark(&content, w.perception().equipment(), 0).as_deref(),
+        crate::equipment::mark(&content, w.perception().equipment(), 0)
+            .map(|m| content.english_word(m, "bare"))
+            .as_deref(),
         Some("in use")
     );
     assert_eq!(w.perception().ready_to_dig(), content.object_id("pick_axe"));
@@ -240,7 +242,8 @@ fn digging_stops_like_resting_and_the_work_stays_on_the_wall() {
         last_message(&w),
         format!(
             "A giant rat comes into view; you stop digging after {}.",
-            Duration::seconds(took).spoken()
+            w.content
+                .english_word(Duration::seconds(took).spoken(), "bare")
         )
     );
     // It would come for the player; gone, it leaves them to dig on.
@@ -318,7 +321,8 @@ fn digging_is_loud_and_what_it_brings_stops_it() {
     assert!(
         text.ends_with(&format!(
             "stop digging after {}.",
-            Duration::seconds(took).spoken()
+            w.content
+                .english_word(Duration::seconds(took).spoken(), "bare")
         )),
         "{text}"
     );

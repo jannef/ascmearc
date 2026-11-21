@@ -204,7 +204,10 @@ impl World {
         let summoner = &self.state.actors[&id];
         let def = content.creature(summoner.creature);
         let line = if self.perception.sees_actors_at(pos) {
-            let verb = def.summon.as_ref().map_or("summons", |s| s.verb.as_str());
+            let verb = match def.summon {
+                Some(_) => Arg::said(crate::content::data_word::creature_verb(&def.id, "summon")),
+                None => Arg::from(msg::creatures::VERB_SUMMONS),
+            };
             let what = came.unwrap_or_else(|| something().into());
             Msg::new(msg::creatures::SUMMONS)
                 .role("who", fight::creature(def))

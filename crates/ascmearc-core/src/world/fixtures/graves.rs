@@ -9,19 +9,20 @@
 //! second's, and so on down the chain. A place filled becomes its grave terrain, cut with the
 //! level's `epitaph`; a level whose places are all filled opens its way down to the next. The
 //! fixed graves (the legend's `epitaph`) are cut whatever the graveyard holds. No draw: the
-//! same graveyard always lays the same dead in the same places.
+//! same graveyard always lays the same dead in the same places. What is cut is kept by its key,
+//! a line of data (`data_line::grave`, `burial_epitaph`) or `fixtures.epitaph`, so a save's
+//! graves read in any language; who the dead were and how they died are the graveyard's text.
 //!
 //! **Decoration**: a place and its grave are the same in every rule (checked at load), no rule
 //! reads an inscription, and the state hash sees each level as it would be with no graveyard
 //! ([`LevelState::unburied`]): the places empty, the way down closed. So a replay verifies under
 //! any graveyard, unless it steps on or takes an opened way down. Saves keep them.
 
-use crate::content::{Burial, Content};
+use crate::content::{Burial, Content, data_line};
+use crate::lang::{Arg, Msg};
+use crate::msg;
 use crate::world::{Fallen, LevelState, WorldState};
 use std::borrow::Cow;
-
-/// What a death without words reads as (an entry the app gave none).
-const UNTOLD: &str = "taken before their time";
 
 /// Lays the run's dead in level `id`'s burial ground, as the module docs say; a level without
 /// one is left as it is.
@@ -33,7 +34,9 @@ pub(in crate::world) fn bury(state: &mut WorldState, content: &Content, id: &str
         return;
     };
     unbury(level);
-    level.graves = burial.epitaphs.clone();
+    level.graves = (burial.epitaphs.iter())
+        .map(|(&p, (glyph, _))| (p, Arg::said(data_line::grave(id, *glyph))))
+        .collect();
     let dead: Vec<&Fallen> = (state.graveyard.iter().rev())
         .filter(|f| !f.petrified)
         .collect();
@@ -44,7 +47,7 @@ pub(in crate::world) fn bury(state: &mut WorldState, content: &Content, id: &str
             continue;
         };
         change(level, p, grave);
-        level.graves.insert(p, words(content, burial, fallen));
+        level.graves.insert(p, words(content, id, burial, fallen));
     }
     if dead.len() >= above + burial.places.len()
         && let Some(link) = burial.opened()
@@ -90,15 +93,22 @@ impl LevelState {
     }
 }
 
-/// One of the run's dead in `burial`'s words: "Here lies Brakka the dwarf warrior, killed by a
-/// kobold in Fyrdelf 3, The Ascmearc."
-fn words(content: &Content, burial: &Burial, fallen: &Fallen) -> String {
+/// One of the run's dead in the words of level `id`'s `burial`: "Here lies Brakka the dwarf
+/// warrior, killed by a kobold in Fyrdelf 3, The Ascmearc."
+fn words(content: &Content, id: &str, burial: &Burial, fallen: &Fallen) -> Arg {
     let mut chars = fallen.death.chars();
-    let death = match chars.next() {
-        Some(first) => first.to_lowercase().chain(chars).collect(),
-        None => UNTOLD.to_string(),
+    let death: Arg = match chars.next() {
+        // lang: record the death as the app rendered it in the language shown
+        // (`GraveyardStore::dead`), its first letter lower-cased for the middle of a sentence
+        Some(first) => Arg::text(first.to_lowercase().chain(chars).collect::<String>()),
+        None => msg::fixtures::UNTOLD_DEATH.into(),
     };
-    (burial.epitaph)
-        .replace("{name}", &fallen.grave_words(content))
-        .replace("{death}", &death)
+    let name = fallen.grave_name(content);
+    match &burial.epitaph {
+        Some(_) => (Arg::said(data_line::burial_epitaph(id)).with("name", name.clone()))
+            .with("death", death),
+        None => (Msg::new(msg::fixtures::EPITAPH).role("name", name))
+            .role("death", death)
+            .into(),
+    }
 }

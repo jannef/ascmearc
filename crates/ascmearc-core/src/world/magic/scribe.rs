@@ -28,7 +28,7 @@
 
 use crate::action::{Event, Positions};
 use crate::content::{ActionKind, ClassActive, Content, ObjectId, SpellData, SpellId, StatUse};
-use crate::lang::{Msg, Phrase};
+use crate::lang::{Arg, Msg, Phrase};
 use crate::msg;
 use crate::object::{self, Stack};
 use crate::world::{Actor, Ended, Spent, World};
@@ -76,7 +76,7 @@ impl World {
         }
         let content = self.content.clone();
         let Some(spell) = content.spell_id(name) else {
-            self.say(Msg::new(msg::magic::NO_SPELL_NAMED).role("id", name));
+            self.say(Msg::new(msg::magic::NO_SPELL_NAMED).role("id", Arg::id(name)));
             return Spent::Nothing;
         };
         let me = self.state.player();
@@ -86,8 +86,8 @@ impl World {
         }
         let def = content.spell(spell);
         let Some(scroll) = content.scroll_of(spell) else {
-            // The spell's name is the data's text until it has a phrase (#1949).
-            self.say(Msg::new(msg::magic::NO_SCROLL_CAN_HOLD).role("spell", def.name.clone()));
+            let spell = content.spell_phrase(def);
+            self.say(Msg::new(msg::magic::NO_SCROLL_CAN_HOLD).role("spell", spell));
             return Spent::Nothing;
         };
         let blank = content.blank_scroll();
@@ -128,7 +128,7 @@ impl World {
             Ended::Died => {}
             _ if left.get() == 0 => self.finish_scribe(writing),
             Ended::Came(came) => {
-                let came = self.came_line(came);
+                let came = self.came_msg(came);
                 self.say(Msg::new(msg::magic::WRITE_BROKEN_BY).role("came", came));
             }
             Ended::Said | Ended::Done => self.say(msg::magic::STOP_WRITING),

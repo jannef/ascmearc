@@ -11,16 +11,18 @@
 //! stale.
 //!
 //! Its words are `assets/lang/en/ui/weapon_skills_screen.toml` (`T::…`, [`super::text`]); the
-//! skills' names are the data's, the sections' core's (`Section::name`).
+//! skills' names are their lexicon ids as labels (`text::label`), the sections' core's words
+//! (`Section::name`, a message id).
 
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::screens::ScreenAction;
-use super::text::{ui, ui_with, weapon_skills_screen as T};
+use super::text::{label, ui, ui_with, weapon_skills_screen as T};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
 use ascmearc_core::color::Rgb;
-use ascmearc_core::content::{Section, WeaponSkillDef, WeaponSkillId, WeaponSkillTable};
+use ascmearc_core::content::{Content, Section, WeaponSkillDef, WeaponSkillId};
+use ascmearc_core::lang::Arg;
 use ascmearc_core::perception::PerceptionView;
 use ascmearc_core::weapon_skills::WeaponSkills;
 use std::sync::atomic::{AtomicUsize, Ordering};
@@ -52,7 +54,7 @@ const WIDTH_TWO: i32 = 2 * COLUMN_W + GUTTER + 4;
 enum Row {
     /// A section's heading (`Melee`), and the legend of the in-use mark for the styles' while
     /// one is in use.
-    Section { name: &'static str, legend: bool },
+    Section { name: String, legend: bool },
     /// A skill: its name, its rank, how many of the bar's cells its marks fill (`None` at the
     /// last rank: nothing more to earn), and whether it is a fighting style in use.
     Skill {
@@ -83,7 +85,7 @@ impl WeaponSkillsScreen {
     pub fn new(view: Option<&PerceptionView<'_>>) -> Self {
         match view {
             Some(view) => Self::of(
-                view.content().weapon_skills(),
+                view.content(),
                 view.own_weapon_skills(),
                 &view.own_styles_in_use(),
             ),
@@ -99,9 +101,10 @@ impl WeaponSkillsScreen {
         }
     }
 
-    /// The screen for ranks and marks `own` in the skills of `table`, the styles `in_use`
+    /// The screen for ranks and marks `own` in the skills of `content`'s table, the styles `in_use`
     /// marked.
-    fn of(table: &WeaponSkillTable, own: &WeaponSkills, in_use: &[WeaponSkillId]) -> Self {
+    fn of(content: &Content, own: &WeaponSkills, in_use: &[WeaponSkillId]) -> Self {
+        let table = content.weapon_skills();
         let mut columns: [Vec<Row>; 2] = [Vec::new(), Vec::new()];
         for section in Section::ALL {
             // The caster styles are where a spell is cast from: the Magic page's.
@@ -110,8 +113,8 @@ impl WeaponSkillsScreen {
                 .filter(|&(id, def)| {
                     def.role.section() == section && !casts(def) && own.shows(table, id)
                 })
-                .map(|(id, def)| Row::Skill {
-                    name: def.name.clone(),
+                .map(|(id, _)| Row::Skill {
+                    name: label(content.weapon_skill_phrase(id)),
                     rank: own.rank(id),
                     filled: (own.progress(table, id))
                         .map(|(marks, need)| marks * BAR / need.max(1)),
@@ -127,7 +130,7 @@ impl WeaponSkillsScreen {
             }
             let legend = (skills.iter()).any(|r| matches!(r, Row::Skill { in_use: true, .. }));
             rows.push(Row::Section {
-                name: section.name(),
+                name: label(section.name()),
                 legend,
             });
             rows.extend(skills);
@@ -204,7 +207,7 @@ impl WeaponSkillsScreen {
             console.print(edge, top + room - 1, "↓", TEXT_DIM);
         }
         let mut close = match bindings.keys_of(KeyCommand::WeaponSkills).first() {
-            Some(key) => ui_with(T::CLOSE_OWN, &[("own", key.display().into())]),
+            Some(key) => ui_with(T::CLOSE_OWN, &[("own", Arg::text(key.display()))]),
             None => ui(T::CLOSE),
         };
         // The spells' skills and the caster styles are on the Magic page.
@@ -212,7 +215,7 @@ impl WeaponSkillsScreen {
             close = format!("{magic}   {close}");
         }
         let footer = if most > 0 {
-            let scroll = ui_with(T::SCROLL, &[("keys", HINTS.up_down().into())]);
+            let scroll = ui_with(T::SCROLL, &[("keys", Arg::text(HINTS.up_down()))]);
             format!("{scroll}   {close}")
         } else {
             close
@@ -361,7 +364,7 @@ mod tests {
         assert_eq!(marked, 2, "{text:#?}");
         // With none in use there is no legend.
         let content = world.content();
-        let none = WeaponSkillsScreen::of(content.weapon_skills(), &WeaponSkills::default(), &[]);
+        let none = WeaponSkillsScreen::of(content, &WeaponSkills::default(), &[]);
         let text = drawn(&none, 80, 40).join("\n");
         assert!(!text.contains(IN_USE), "{text}");
     }
@@ -377,7 +380,7 @@ mod tests {
         let mut skills = WeaponSkills::from_ranks([(daggers, 2), (bows, MAX_RANK)]);
         // Daggers 2 needs 190 for rank 3: 76 marks fill four cells of ten.
         skills.train(table, daggers, 76);
-        let screen = WeaponSkillsScreen::of(table, &skills, &[]);
+        let screen = WeaponSkillsScreen::of(&content, &skills, &[]);
         let text = drawn(&screen, 80, 40).join("\n");
         let done = BAR_DONE.to_string().repeat(4);
         let left = BAR_LEFT.to_string().repeat(6);

@@ -447,7 +447,12 @@ impl Fi {
         }
         for note in &phrase.notes {
             after.push(match note {
-                Note::Tags(tags) => format!("({})", tags.join(", ")),
+                Note::Tags(tags) => {
+                    let tags: Vec<String> = (tags.iter())
+                        .map(|w| self.word(w, lex).form(false, Case::Nom, None))
+                        .collect();
+                    format!("({})", tags.join(", "))
+                }
                 Note::Charges(0) => "(tyhjä)".to_string(),
                 Note::Charges(1) => "(1 lataus)".to_string(),
                 Note::Charges(n) => format!("({n} latausta)"),

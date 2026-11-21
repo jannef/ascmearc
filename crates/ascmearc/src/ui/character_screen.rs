@@ -16,7 +16,7 @@
 
 use super::menu::{Nav, Panel, Press};
 use super::screens::{ScreenAction, ScreenName};
-use super::text::{character_screen as T, ui, ui_with};
+use super::text::{character_screen as T, label, ui, ui_msg, ui_with, word};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
@@ -24,6 +24,7 @@ use ascmearc_core::burden::{Burden, Load};
 use ascmearc_core::character::{Character, Gender};
 use ascmearc_core::color::Rgb;
 use ascmearc_core::content::Content;
+use ascmearc_core::damage::ResistanceWord;
 use ascmearc_core::heal;
 use ascmearc_core::lang::{Arg, Phrase};
 use ascmearc_core::object::{Weight, format_weight};
@@ -36,9 +37,9 @@ use ascmearc_core::time::GameTime;
 const NAME_W: i32 = 14;
 
 /// The player's resistances as rows: one per word, in the order
-/// immune, resistant, vulnerable, each listing its kinds in damage type order; none at 0.
-fn resistance_rows(view: &PerceptionView<'_>) -> Vec<(&'static str, String)> {
-    use ascmearc_core::damage::ResistanceWord;
+/// immune, resistant, vulnerable, each listing its kinds in damage type order ("fire, cold":
+/// `damage_type:<id>`, joined by `resistance_kinds`); none at 0.
+fn resistance_rows(view: &PerceptionView<'_>) -> Vec<(ResistanceWord, String)> {
     let content = view.content();
     let own = view.own_resistances();
     [
@@ -47,12 +48,18 @@ fn resistance_rows(view: &PerceptionView<'_>) -> Vec<(&'static str, String)> {
         ResistanceWord::Vulnerable,
     ]
     .into_iter()
-    .filter_map(|word| {
-        let kinds: Vec<&str> = (own.iter())
-            .filter(|(_, w)| *w == word)
-            .map(|(k, _)| content.damage_type(*k).name.as_str())
+    .filter_map(|resistance| {
+        let kinds: Vec<Arg> = (own.iter())
+            .filter(|(_, w)| *w == resistance)
+            .map(|(k, _)| content.damage_type_phrase(*k).into())
             .collect();
-        (!kinds.is_empty()).then(|| (word.label(), kinds.join(", ")))
+        let listed = kinds.into_iter().rev().reduce(|rest, first| {
+            Arg::text(ui_with(
+                T::RESISTANCE_KINDS,
+                &[("first", first), ("rest", rest)],
+            ))
+        })?;
+        Some((resistance, word(listed, "bare")))
     })
     .collect()
 }
@@ -107,7 +114,7 @@ pub struct CharacterScreen {
     diseases: Vec<Phrase>,
     /// What they resist, in words only: a row per word ("Resistant
     /// to", "Vulnerable to", "Immune to") with the kinds it holds for, in that order.
-    resistances: Vec<(&'static str, String)>,
+    resistances: Vec<(ResistanceWord, String)>,
     weight: Weight,
     /// What they carry against what they can; `None` outside a run.
     load: Option<Load>,
@@ -131,16 +138,16 @@ pub struct CharacterScreen {
     talents: usize,
     /// Their alignment band's name, never the score; `None` without
     /// alignment rules.
-    alignment: Option<&'static str>,
+    alignment: Option<String>,
     /// Their oath kills (a dwarf with a Slayer's Oath, `docs/dev/oaths.md`): the tally, which
     /// they could keep themselves; `None` without an oath.
     oath_kills: Option<u32>,
     /// The guilds they belong to: the rank's title, in its metal's
-    /// colour, and the guild's name in a sentence ("the Weyfarers' Gilde").
-    guilds: Vec<(String, Rgb, String)>,
+    /// colour, and the guild by its name (`guild:<id>`, "the Weyfarers' Gilde").
+    guilds: Vec<(String, Rgb, Phrase)>,
     /// The attacks they have ready: where each comes from, what it is made with, and its
     /// numbers (`+4 to hit, 1d8+2 slashing`), beside the stats.
-    attacks: Vec<(&'static str, String, String)>,
+    attacks: Vec<(String, String, String)>,
 }
 
 /// The known diseases as the screen lists them: one list, its names as written, their own
@@ -210,14 +217,15 @@ impl CharacterScreen {
             vec![
                 (
                     ui(T::RACE),
-                    (spec.race(content)).map_or(spec.race.clone(), |r| r.name.clone()),
+                    (spec.race(content))
+                        .map_or(spec.race.clone(), |r| label(content.race_phrase(&r.id))),
                 ),
                 (ui(T::GENDER), gender_text(c)),
                 // `Bard` until the class is full, `Bard 30` at its cap, `Bard 30, Hunter 4` once
                 // called.
                 (
                     ui(T::CLASS),
-                    c.class_text(content, view.own_experience().level),
+                    label(c.class_arg(content, view.own_experience().level)),
                 ),
             ]
         });
@@ -225,14 +233,17 @@ impl CharacterScreen {
         let stars = (view.own_talents().into_iter())
             // The sign's gifts only: a profane gift is no star's (the Talents page lists those).
             .filter(|t| t.granted && !t.race && !t.boon && !t.story && t.profane.is_none())
-            .map(|t| match t.spent {
-                true => ui_with(T::SPENT, &[("talent", t.name.into())]),
-                false => t.name,
+            .map(|t| {
+                let talent = content.talent_arg(t.id, t.choice.as_deref());
+                match t.spent {
+                    true => ui_with(T::SPENT, &[("talent", talent)]),
+                    false => label(talent),
+                }
             })
             .collect();
         let kept = (view.kept()).map(|(ally, data)| {
             let kind = Phrase::id(format!("creature:{}", content.creature(ally.creature).id));
-            let name = data.name.as_str().into();
+            let name = Arg::text(data.name.as_str());
             ui_with(T::KEPT, &[("name", name), ("kind", kind.into())])
         });
         let kept = kept.collect();
@@ -258,10 +269,10 @@ impl CharacterScreen {
             mana: view.own_mana(),
             defence: view.own_defence(),
             protection: view.own_protection(),
-            stance: content.stance_def(view.own_stance()).name.clone(),
+            stance: label(content.stance_phrase(view.own_stance())),
             resources: (view.own_resources().iter())
                 .map(|r| {
-                    let name = content.resource(r.resource).name.clone();
+                    let name = label(content.resource_phrase(r.resource));
                     let [value, max] = value_max(r.value, r.max);
                     // Whose guard the openings are in: "3/5, in the kobold's guard".
                     let held = match view.own_mark_phrase().filter(|_| r.marked) {
@@ -275,16 +286,23 @@ impl CharacterScreen {
                 })
                 .collect(),
             talents: view.own_talents().iter().filter(|t| !t.class).count(),
-            alignment: view.own_alignment().map(|b| b.name()),
+            alignment: view.own_alignment().map(|b| word(b.name(), "Bare")),
             oath_kills: view.own_oath_kills(),
             guilds: (view.own_guilds().iter())
                 .map(|g| {
                     let color = g.guild.color(content, g.rank, TEXT);
-                    (g.title().to_string(), color, g.guild.name.clone())
+                    (
+                        g.title().to_string(),
+                        color,
+                        content.guild_phrase(&g.guild.id),
+                    )
                 })
                 .collect(),
             attacks: (view.own_attacks().iter())
-                .map(|a| (a.source.label(), a.name.clone(), a.summary(content)))
+                .map(|a| {
+                    let label = word(a.source.label(), "Bare");
+                    (label, a.name.clone(), ui_msg(a.summary(content)))
+                })
                 .collect(),
         }
     }
@@ -407,8 +425,8 @@ impl CharacterScreen {
                 } else {
                     TEXT
                 };
-                console.print(x, y, stat.abbrev(), TEXT_DIM);
-                console.print(x + 4, y, stat.name(), TEXT);
+                console.print(x, y, &word(stat.abbrev(), "bare"), TEXT_DIM);
+                console.print(x + 4, y, &word(stat.name(), "Bare"), TEXT);
                 console.print(x + 4 + NAME_W, y, &format!("{score:>2}"), color);
             }
             y += 1;
@@ -484,7 +502,7 @@ impl CharacterScreen {
             y += 1;
         }
         // `    Alignment     Kind`: the band, never the score.
-        if let Some(band) = self.alignment {
+        if let Some(band) = &self.alignment {
             if fits(y) {
                 console.print_in(x + 4, y, &ui(T::ALIGNMENT), TEXT, NAME_W - 1);
                 console.print(x + 4 + NAME_W, y, band, TEXT);
@@ -506,8 +524,8 @@ impl CharacterScreen {
                 console.print_in(x + 4, y, &ui(T::GUILD), TEXT, NAME_W - 1);
                 // The row in the text's words, then the title over it in its metal's colour.
                 let args = [
-                    ("title", title.as_str().into()),
-                    ("guild", guild.as_str().into()),
+                    ("title", Arg::text(title.as_str())),
+                    ("guild", guild.clone().into()),
                 ];
                 let row = ui_with(T::GUILD_RANK, &args);
                 console.print(at, y, &row, TEXT);
@@ -538,14 +556,14 @@ impl CharacterScreen {
             y += 1;
         }
         // `    Resistant to  fire, cold`, `    Vulnerable to acid`: words, never a percentage.
-        for (label, kinds) in &self.resistances {
+        for (resistance, kinds) in &self.resistances {
             if fits(y) {
-                let color = if *label == "Vulnerable to" {
+                let color = if *resistance == ResistanceWord::Vulnerable {
                     LOWERED
                 } else {
                     TEXT
                 };
-                console.print(x + 4, y, label, TEXT);
+                console.print(x + 4, y, &word(resistance.label(), "Bare"), TEXT);
                 console.print(x + 4 + NAME_W, y, kinds, color);
             }
             y += 1;
@@ -555,16 +573,16 @@ impl CharacterScreen {
             let w = &self.weight;
             // `carrying 28.4 kg, burdened`: the burden is named when there is one.
             let burden = (self.load.map(|l| l.burden())).filter(|b| *b != Burden::Unburdened);
-            let total = ("total", format_weight(w.total()).into());
+            let total = ("total", Arg::text(format_weight(w.total())));
             let weight = match (w.carried, burden) {
                 (0, _) => ui_with(T::WEIGHT_NOTHING, &[total]),
                 (carried, burden) => {
-                    let base = ("base", format_weight(w.base).into());
-                    let carried = ("carried", format_weight(carried).into());
+                    let base = ("base", Arg::text(format_weight(w.base)));
+                    let carried = ("carried", Arg::text(format_weight(carried)));
                     match burden {
                         Some(b) => ui_with(
                             T::WEIGHT_BURDENED,
-                            &[total, base, carried, ("burden", b.id().into())],
+                            &[total, base, carried, ("burden", Arg::text(b.id()))],
                         ),
                         None => ui_with(T::WEIGHT_CARRYING, &[total, base, carried]),
                     }
@@ -579,12 +597,12 @@ impl CharacterScreen {
             }
         }
         let close = match bindings.keys_of(KeyCommand::Character).first() {
-            Some(key) => ui_with(T::CLOSE_OWN, &[("own", key.display().into())]),
+            Some(key) => ui_with(T::CLOSE_OWN, &[("own", Arg::text(key.display()))]),
             None => ui(T::CLOSE),
         };
         let footer = match bindings.keys_of(KeyCommand::Skills).first() {
             Some(key) => {
-                let skills = ui_with(T::SKILLS, &[("own", key.display().into())]);
+                let skills = ui_with(T::SKILLS, &[("own", Arg::text(key.display()))]);
                 format!("{close}   {skills}")
             }
             None => close,
@@ -614,7 +632,7 @@ pub fn experience_text(progress: &Progress) -> String {
 fn gender_text(character: &Character) -> String {
     match character.spec.gender {
         Gender::Other => ui_with(T::GENDER_OTHER, &[("stat", character.raised.name().into())]),
-        gender => gender.name().to_string(),
+        gender => word(gender.name(), "Bare"),
     }
 }
 
@@ -635,13 +653,10 @@ pub fn birth_parts(character: &Character, content: &Content, now: GameTime) -> V
     let age = Arg::Number(i64::from(character.age_on(now)));
     let mut parts = vec![
         ui_with(T::AGE, &[("age", age)]),
-        ui_with(
-            T::BORN,
-            &[("date", character.born.text(content.calendar()).into())],
-        ),
+        ui_with(T::BORN, &[("date", character.born.arg())]),
     ];
-    if let Some(sign) = character.sign_name(content) {
-        parts.push(ui_with(T::YEAR_OF, &[("sign", sign.into())]));
+    if let Some(sign) = character.sign_arg(content) {
+        parts.push(ui_with(T::YEAR_OF, &[("sign", sign)]));
     }
     parts
 }
@@ -674,8 +689,9 @@ pub fn fit_joined(parts: &[String], sep: &str, width: i32) -> Vec<String> {
 /// The weights at which the player's burden changes, in lines of at most
 /// `width` characters: `Burdened over 15 kg, strained over 30 kg, overloaded over 45 kg`.
 pub fn thresholds(load: &Load, width: i32) -> Vec<String> {
-    let mut parts = load.over().to_vec();
-    parts[0] = capitalized(&parts[0]);
+    let mut parts: Vec<String> = (load.over().into_iter().enumerate())
+        .map(|(i, part)| word(part, if i == 0 { "Bare" } else { "bare" }))
+        .collect();
     let last = parts.len() - 1;
     for part in &mut parts[..last] {
         part.push(',');
@@ -967,7 +983,7 @@ mod tests {
         // The attacks' numbers are the one exception (the owner's): take them out first.
         let view = world.perception();
         for attack in view.own_attacks() {
-            let numbers = attack.summary(view.content());
+            let numbers = ui_msg(attack.summary(view.content()));
             assert!(text.contains(&numbers), "{numbers:?} in\n{text}");
             text = text.replace(&numbers, "");
         }
@@ -985,7 +1001,7 @@ mod tests {
         let world =
             World::with_character(content.clone(), "showcase", None, Some(&spec)).expect("world");
         let text = drawn(&world, 80, 30).join("\n");
-        let raised = ascmearc_core::character::other_stat(1).name();
+        let raised = word(ascmearc_core::character::other_stat(1).name(), "Bare");
         for expected in [
             "Race    Half-orc",
             &format!("Gender  Other ({raised} +1)"),

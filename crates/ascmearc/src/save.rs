@@ -20,8 +20,10 @@ use crate::cli::Args;
 use crate::game::{Game, SimSet};
 use crate::paths::{SAVES_DIR, SNAPSHOTS_DIR};
 use crate::storage::{self, Backend, Folder};
+use crate::ui::text;
 use ascmearc_core::World;
 use ascmearc_core::content::Content;
+use ascmearc_core::lang::{Arg, Msg};
 use ascmearc_core::save;
 use bevy::prelude::*;
 use bevy::window::ExitSystems;
@@ -37,8 +39,9 @@ pub enum Resume {
     NoSave,
     /// Boxed: a world is large.
     Loaded(Box<World>),
-    /// The save could not be used; the message is for the player.
-    Failed(String),
+    /// The save could not be used; the message is for the player (`ui/save.toml`'s
+    /// `could_not_*`).
+    Failed(Msg),
 }
 
 /// Where saves live, and whether saving is on at all.
@@ -52,6 +55,12 @@ pub struct SaveStore {
     read_only: bool,
     /// Dev snapshots (F5/F9) are available.
     dev: bool,
+}
+
+/// Why a save could not be resumed, `text` with its `error` (the store's or the save's own words).
+fn failed(text: text::UiText, error: impl std::fmt::Display) -> Msg {
+    // lang: error the store's or the save's own words
+    Msg::from(text).role("error", Arg::text(error.to_string()))
 }
 
 /// The save of character `id`.
@@ -160,26 +169,30 @@ impl SaveStore {
         let bytes = match backend.read(&save_file(id)) {
             Ok(bytes) => bytes,
             Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Resume::NoSave,
-            Err(e) => return Resume::Failed(format!("Could not read the save: {e}.")),
+            Err(e) => return Resume::Failed(failed(text::save::COULD_NOT_READ, e)),
         };
         match save::decode(&bytes, content.clone()) {
             Ok(world) => Resume::Loaded(Box::new(world)),
             // Another version's save is kept as it is, listed as that version's.
             Err(err @ save::SaveError::OtherVersion { .. }) => {
-                Resume::Failed(format!("Could not resume: {err}."))
+                Resume::Failed(failed(text::save::COULD_NOT_RESUME, err))
             }
             Err(err) => {
                 let kept = match self.writable() {
                     Some(backend) => match backend.rename(&save_file(id), &bad_file(id)) {
                         Ok(()) => {
                             let _ = backend.remove(&summary_file(id));
-                            format!("The old save was kept as {}.", bad_file(id))
+                            // lang: error a file's path
+                            Some(Arg::text(bad_file(id)))
                         }
-                        Err(_) => "The old save was left in place.".to_string(),
+                        Err(_) => None,
                     },
-                    None => "The old save was left in place.".to_string(),
+                    None => None,
                 };
-                Resume::Failed(format!("Could not resume: {err}. {kept}"))
+                Resume::Failed(match kept {
+                    Some(file) => failed(text::save::COULD_NOT_RESUME_KEPT, err).role("file", file),
+                    None => failed(text::save::COULD_NOT_RESUME_LEFT, err),
+                })
             }
         }
     }
@@ -314,7 +327,7 @@ mod web_hooks {
         let key = (
             game.save_id.clone(),
             game.world.turn(),
-            game.world.perception().level_name().to_string(),
+            game.world.perception().level_id().to_string(),
         );
         if last.as_ref() != Some(&key) {
             let summary = Summary::of(&game.world, characters::now());
@@ -343,7 +356,7 @@ fn handle_commands(
         match command {
             SaveCommand::SaveAndQuit => match store.save_run(&id, &game.world) {
                 Ok(()) => {
-                    game.world.notice("Game saved.");
+                    game.world.notice(text::save::GAME_SAVED);
                     quit_saved.0 = true;
                     // A web page cannot close itself: reload to a fresh main menu instead.
                     #[cfg(target_arch = "wasm32")]
@@ -351,21 +364,28 @@ fn handle_commands(
                     #[cfg(not(target_arch = "wasm32"))]
                     exit.write(AppExit::Success);
                 }
-                Err(e) => game.world.notice(format!("{e} Try again.")),
+                Err(e) => {
+                    // lang: error the store's own words
+                    let error = Arg::text(e);
+                    game.world
+                        .notice(Msg::from(text::save::TRY_AGAIN).role("error", error));
+                }
             },
             SaveCommand::Snapshot => match store.save_snapshot(&id, &game.world) {
-                Ok(true) => game.world.notice("Snapshot saved."),
+                Ok(true) => game.world.notice(text::save::SNAPSHOT_SAVED),
                 Ok(false) => {}
-                Err(e) => game.world.notice(e),
+                // lang: error the store's own words
+                Err(e) => game.world.notice(Msg::literal(e)),
             },
             SaveCommand::LoadSnapshot => match store.load_snapshot(&id, game.world.content()) {
                 Ok(world) => {
                     game.world = world;
                     game.last_outcome = default();
                     game.mark_read();
-                    game.world.notice("Snapshot loaded.");
+                    game.world.notice(text::save::SNAPSHOT_LOADED);
                 }
-                Err(e) => game.world.notice(e),
+                // lang: error the store's own words
+                Err(e) => game.world.notice(Msg::literal(e)),
             },
         }
     }
@@ -381,13 +401,14 @@ fn autosave(
     let key = (
         game.save_id.clone(),
         game.world.turn() / AUTOSAVE_TURNS,
-        game.world.perception().level_name().to_string(),
+        game.world.perception().level_id().to_string(),
     );
     if last.replace(key.clone()).as_ref() == Some(&key) {
         return;
     }
     if let Err(e) = store.save_run(&key.0, &game.world) {
-        game.world.notice(e);
+        // lang: error the store's own words
+        game.world.notice(Msg::literal(e));
     }
 }
 
@@ -509,7 +530,7 @@ mod tests {
         assert_eq!(listed.len(), 1);
         let summary = listed[0].summary.clone().expect("a summary");
         assert_eq!((summary.name.as_str(), summary.level), ("Tamsin", 1));
-        assert_eq!(summary.race_and_class(), "Human Thief");
+        assert_eq!(summary.race_and_class(&content()), "Human Thief");
         assert_eq!(s.last_played().map(|c| c.id), Some(id));
     }
 
@@ -548,6 +569,7 @@ mod tests {
         let Resume::Failed(msg) = s.resume("tamsin-1", &content()) else {
             panic!("expected failure");
         };
+        let msg = crate::ui::text::ui_msg_in(&content(), msg);
         assert!(msg.contains("not an Ascmearc save"), "{msg}");
         assert!(!dir.join("saves/tamsin-1.sav").exists());
         assert_eq!(
@@ -707,6 +729,7 @@ mod tests {
         let Resume::Failed(msg) = s.resume("osric-1", &content()) else {
             panic!("refused");
         };
+        let msg = crate::ui::text::ui_msg_in(&content(), msg);
         assert!(msg.contains("made by version 0.1.0"), "{msg}");
         assert!(save.is_file(), "kept as it is");
         assert!(!dir.join("saves/osric-1.sav.bad").exists());

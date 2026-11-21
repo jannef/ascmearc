@@ -185,7 +185,7 @@ fn putting_one_on_shows_the_curse_but_not_the_affix() {
     let stack = w.state().player().inventory[ring].clone();
     assert!(stack.known_magic().is_none(), "the affixes stay unknown");
     let lines: Vec<String> = (w.perception().describe_item(&stack).into_iter())
-        .map(|l| l.text)
+        .map(|l| l.english(w.content()))
         .collect();
     assert!(lines.iter().any(|l| l.starts_with("Cursed:")), "{lines:?}");
     assert!(!lines.iter().any(|l| l.contains("Hunger")), "{lines:?}");
@@ -194,7 +194,7 @@ fn putting_one_on_shows_the_curse_but_not_the_affix() {
     let stack = w.state().player().inventory[ring].clone();
     assert_eq!(w.lore().describe(&stack), "an iron ring of Hunger (cursed)");
     let lines: Vec<String> = (w.perception().describe_item(&stack).into_iter())
-        .map(|l| l.text)
+        .map(|l| l.english(w.content()))
         .collect();
     assert!(
         lines.contains(&"of Hunger: hunger comes 25% faster".to_string()),

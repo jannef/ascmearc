@@ -42,14 +42,15 @@ text = "Random"
 [random_hint]
 text = "Let chance pick your talents."
 
-# A talent the character does not meet the needs of: `name`, the talent.
+# A talent the character does not meet the needs of: `name`, the talent (`talent:<id>`, with what
+# was chosen for it `character.talent_chosen`).
 [cannot_take]
 text = "You cannot take {name:bare} yet."
 
-# The panel's title when the race gives a free talent: `names`, the talent or talents; `left`, how
-# many remain.
+# The panel's title when the race gives a free talent: `names`, the talent or talents
+# (`talent:<id>`), a list; `left`, how many remain.
 [title_free]
-text = "Choose your free {names:bare} (4 of 5): {left:bare} left"
+text = "Choose your free {names:or} (4 of 5): {left:bare} left"
 
 # When the class gives trades to choose first.
 [title_trade]

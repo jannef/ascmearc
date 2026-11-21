@@ -217,8 +217,8 @@ be magic, not ammunition or a stack, by frequency in id order; the count by weig
 `loot::heirloom`, so rare). The item is identified (a trader names his wares). Price: a unique
 `price.unique`; else `Stack::value` + `price.affix` × affixes × item level; no favour.
 `World::topics` lists it after the services (`World::offer_topic`) with `TopicView::price` and
-`TopicView::ware` (the item listed, then its affix and power lines from `describe::lines`,
-joined by ". ") while for sale. `World::ask_offer` (in `ask` after `ask_service`): sold, the
+`TopicView::ware` (a message: the item listed, `people.ware`, then its affix and power lines
+from `describe::lines`, each `people.ware_listed`, ". " in English) while for sale. `World::ask_offer` (in `ask` after `ask_service`): sold, the
 `sold` line (no time); without the gold "You cannot pay." (no time); else `hand_over`, "You pay
 the pedlar N gold for X.", the item into the pack, `Wares::item` cleared, `train_deal`, the
 `reply`, `chat`'s time. Saved: `WorldState::wares` (`BTreeMap<ActorId, Wares>`) and
@@ -275,39 +275,54 @@ and a save, the hermit's topic offered to a full bard only), `world/classes/call
 ## Speech by race and station (#1392)
 
 Spoken text (topics, replies, services, rotation lines, mutters, quest text, arrival lines, cries
-with words) is written in the speaker's own register: commoners Cockney, the rich posh,
-**dwarves Geordie** (#1391, the owner 2026-11-12), hinted the same way: "howay", "hinny", "pet",
-"canny", "divvent" (don't), "aa" (I), "wor" (our), "ye knaa", "gan" (go), "noo" (now), "doon",
-"oot", "aboot", "nee" (no), "reet" (right), "marra" (mate), "gadgie" (man), "bairn", "wey aye"
-(yes), "us" for me; and **elves Brummie** (the Birmingham accent and dialect). Readability comes
-first and the accent is hinted: "bab", "ar" (yes), "tara-a-bit" (goodbye), "yow" (you), "summat",
-"gambol" (a forward roll), "cob" (a bread roll), "bostin" (great), "babby", "ow am ya?", and the
-vowels only lightly ("loike", "noice"); **halflings and gnomes Scouse** (the Liverpool accent
-and dialect), hinted the same way: "la", "lad", "der" (there), "made up" (delighted), "boss"
-(great), "sound", "me" for my, "ye" for you, "giz" (give us), "kecks" (trousers), "scran" (food),
-"arl feller" (old man); and **goblins, kobolds, and ratfolk a very heavy Irish brogue**, the one
-accent laid on thick: "ye", "yer", "meself", "tis", "sure an'", "begorrah", "eejit", "feckin'",
-"grand", "craic", "wee", "me oul' da", "would ye ever", "th'" for the, "t'" for to, "ould" for old,
-"tink" for think, "dat" for that; and **drow Middle English**, Chaucer's register made readable:
-"thou", "thee", "ye", "hast", "dost", "nat" (not), "eek" (also), "ywis" (truly), "anon", "certes",
-"sooth", "-eth" verbs ("he cometh"), "y-" past participles ("yslain"), "quod she" (said she);
-and **lizardfolk Dutch** (Nederlands, untranslated): they are alien to everyone else, so their
-lines are plain Dutch, "Wat moet je hier, warmbloed?"; and **deep gnomes Cornish** (#1434), the
-West Country of the tin mines, kept apart from the Scouse of the gnomes up top: "my 'ansum", "my
-lover", "dreckly" (later, some day), "proper job" (well done), "wasson?" (what's going on?),
-"'ee" (you), "'un" (him, it), "where's it to?", "emmet" (an outsider: anyone from up top),
-"teasy" (cross), "giss on" (get away), dropped h's ("'ands"), and talk that turns to the work.
-This is style only: languages have no game
-rules (no translation, no skill, no check), and the player understands what they understand. Ids, topic names, and placeholders never change with the
-accent. The rule binds speakers whose data says they are of that race (`race = "dwarf"` (and
-`"duergar"`, the grey dwarves), `"elf"`, `"halfling"`,
-`"gnome"`, `"goblin"`, `"kobold"`, `"ratfolk"`, `"drow"`, `"lizardfolk"`, or a creature that is one: a goblin,
-a deep gnome (tag `deep-gnome`: no playable race, so no `race` field),
-a kobold, a rat king, a drow who speaks). The one dwarf who speaks is Alberich of Fyrdelf
-(#1391; the duergar traders keep shop with the shops' shared words and have no dialogue), but for
-an aristocrat's own servant, who is of the aristocrat's race and has a dialogue for each register
-(#1405, `servants.toml`), and a merchant's business partner, the same (#1407, `partners.toml`). The deep gnomes of Gimmwīc speak (#1434, `campaigns/ascmearc/data/dialogue/gimmwic.toml`). As of #1392 none of the others speaks: the campaigns have no elf, halfling, gnome, goblin,
-kobold, ratfolk, drow, or lizardfolk NPC, and their creatures have no words, and Ælfrun of Holtwīc is a
-human cottar; **half-elves and half-orcs speak as humans do** (Cockney or posh by their station, never
-the Brummie of elves); the fey of Ælfhām are not elves by this rule. A new speaker
-of one of these races is written in its accent from the start.
+with words) is written in the speaker's own register. **Who speaks which is data**:
+`assets/lang/en/lang.toml`'s `[race_registers]` maps a race to its register (an unmapped race
+speaks `standard`), and a dialogue's own `register` (`posh` for the rich, `cornish` for the deep
+gnomes of Gimmwīc, a tag and no playable race) wins over its race's (`docs/dev/localization.md`
+"Registers"). The rule binds speakers whose data says they are of that race (a creature's
+`race`). The authored line carries the accent; a register only swaps the few function words the
+renderer inserts into a line (`[registers.<name>]`), so a line reads as written.
+
+How each register is written, the accent hinted and readability first:
+
+- **Cockney** (commoners) and **posh** (the rich, by station: a person of means, a patron, a
+  wizard who owns a tower).
+- **Geordie** (dwarves and the duergar; #1391, the owner 2026-11-12): "howay", "hinny", "pet",
+  "canny", "divvent" (don't), "aa" (I), "wor" (our), "ye knaa", "gan" (go), "noo" (now), "doon",
+  "oot", "aboot", "nee" (no), "reet" (right), "marra" (mate), "gadgie" (man), "bairn", "wey aye"
+  (yes), "us" for me.
+- **Brummie** (elves; the Birmingham accent and dialect): "bab", "ar" (yes), "tara-a-bit"
+  (goodbye), "yow" (you), "summat", "gambol" (a forward roll), "cob" (a bread roll), "bostin"
+  (great), "babby", "ow am ya?", and the vowels only lightly ("loike", "noice").
+- **Scouse** (halflings and gnomes; the Liverpool accent and dialect): "la", "lad", "der"
+  (there), "made up" (delighted), "boss" (great), "sound", "me" for my, "ye" for you, "giz" (give
+  us), "kecks" (trousers), "scran" (food), "arl feller" (old man).
+- **Irish** (goblins, kobolds, and ratfolk), the one accent laid on thick, a very heavy brogue:
+  "ye", "yer", "meself", "tis", "sure an'", "begorrah", "eejit", "feckin'", "grand", "craic",
+  "wee", "me oul' da", "would ye ever", "th'" for the, "t'" for to, "ould" for old, "tink" for
+  think, "dat" for that.
+- **Middle English** (drow), Chaucer's register made readable: "thou", "thee", "ye", "hast",
+  "dost", "nat" (not), "eek" (also), "ywis" (truly), "anon", "certes", "sooth", "-eth" verbs ("he
+  cometh"), "y-" past participles ("yslain"), "quod she" (said she).
+- **Dutch** (lizardfolk; Nederlands, untranslated): they are alien to everyone else, so their
+  lines are plain Dutch, "Wat moet je hier, warmbloed?"; a foreign voice, so the words the
+  renderer inserts stay the game language's.
+- **Cornish** (the deep gnomes, #1434), the West Country of the tin mines, kept apart from the
+  Scouse of the gnomes up top: "my 'ansum", "my lover", "dreckly" (later, some day), "proper job"
+  (well done), "wasson?" (what's going on?), "'ee" (you), "'un" (him, it), "where's it to?",
+  "emmet" (an outsider: anyone from up top), "teasy" (cross), "giss on" (get away), dropped h's
+  ("'ands"), and talk that turns to the work.
+
+**Half-elves and half-orcs speak as humans do** (Cockney or posh by their station, never the
+Brummie of elves); the fey of Ælfhām are not elves by this rule. This is style only: languages
+have no game rules (no translation, no skill, no check), and the player understands what they
+understand. Ids, topic names, and placeholders never change with the accent.
+
+Who speaks today: the one dwarf is Alberich of Fyrdelf (#1391; the duergar traders keep shop
+with the shops' shared words and have no dialogue), but for an aristocrat's own servant, who is
+of the aristocrat's race and has a dialogue for each register (#1405, `servants.toml`), and a
+merchant's business partner, the same (#1407, `partners.toml`). The deep gnomes of Gimmwīc speak
+(#1434, `campaigns/ascmearc/data/dialogue/gimmwic.toml`). As of #1392 none of the others speaks:
+the campaigns have no elf, halfling, gnome, goblin, kobold, ratfolk, drow, or lizardfolk NPC, and
+their creatures have no words, and Ælfrun of Holtwīc is a human cottar. A new speaker of one of
+these races is written in its accent from the start.

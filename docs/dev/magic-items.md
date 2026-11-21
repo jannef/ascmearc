@@ -38,11 +38,12 @@ damage with its material and local affixes through the very `Mods::sharpen` a st
 `Profile::bare`, a launcher's or thrower's range, ammunition's additions, a worn thing's global
 to-hit and damage (`Mods::global`, one stack's global effects), Dv as armour + shield + parry +
 the local Armour/Shield/Parry + the global Dodge/Deflection/Natural, Pv as `Stack::protection`),
-figured on `Stack::as_known` so an unidentified affix moves no number; `text` is the item lists'
-form (`Lore::listed` = `Lore::describe` + ` (numbers)`, which the object screens, the equipment
-screen and its choice, look mode's piles, and the `inventory` dump layer use; messages keep
-`describe`), `lines` the description's (`describe::lines` adds them after the base stats);
-`dice_text` is the one damage-dice form, which `OwnAttack::damage_text` uses too).
+figured on `Stack::as_known` so an unidentified affix moves no number; `words` is the item lists'
+form, a message of parts (`items.numbers_*`; `Lore::listed` is `items.listed`, the phrase counted
+and ` (numbers)`, which the object screens, the equipment screen and its choice, the crafting
+choices, and the `inventory` dump layer render; look mode's piles tag the phrase with `words`;
+messages keep the phrase), `lines` the description's (`describe::lines` adds them after the
+base stats); `dice_text` is the one damage-dice form, which `OwnAttack::damage_text` uses too).
 `loot::roll` first lets a find of grade `any` be a loose gem (`gem::find`), then sets an item
 of a class with an `[[ornament]]` with a gem (`gem::ornament`), and last draws its material
 (`variant::draw`, step 8: by the materials' `rarity` at the item level; `loot::roll_from` takes
@@ -101,8 +102,8 @@ unidentified armour's base numbers and its affixes once identified, a shield, a 
 range, ammunition, a worn thing's to-hit). A new effect is a
 variant of `Effect` (id, local/global, `allowed_on`; `index()` and `all()` insert
 it by group, never at the end), its reader in one rule, a
-phrase in `describe.rs`, and a wiki word and tier form in `xtask/src/wiki/magic.rs`
-(`effect_words`, `tier_value`). Affixes are saved by id, so
+`describe.does_*` message (`messages/describe.toml`) in `describe.rs::phrase`, and a wiki word
+and tier form in `xtask/src/wiki/magic.rs` (`effect_words`, `tier_value`). Affixes are saved by id, so
 adding affixes keeps saves; their values and tiers are checked on load, strictly
 (`Magic::check`: each tier one the affix has, each value within its tier's range, but a unique's values set by hand, "Unique items"). The lenient
 read of #637 (re-tiering a save's affixes after a ladder was
@@ -298,7 +299,7 @@ id on another rarity than unique, and a unique without its id.
   unique. As a rare: its name (`Rarity::named`, `magic/name.rs`: "Widowmaker, a stiletto"),
   `most_per_kind` (three of each), its worth (`MagicWorth::add` takes `rare`'s percent; the
   wiki's worth table says "Rare or unique"). Unidentified it reads "a stiletto (unique)" and
-  the description's first line "Unique stiletto" (`Rarity::word`); its name is the UI's
+  the description's first line "Unique stiletto" (`Rarity::word`, a `words.rarity_*` id); its name is the UI's
   `UNIQUE` golden orange (`ui::rarity_color`; `ui/mod.rs`'s test keeps it 70 apart from the
   other rarities', the curse's, and the accent in every palette). The `Rarity::Rare` sites left
   as they are only ever see rolled or enchanted items: loot (`loot.rs`), Enchanting (which

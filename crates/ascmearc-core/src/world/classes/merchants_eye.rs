@@ -10,7 +10,7 @@
 //! random but that training.
 
 use crate::content::{ActionKind, ClassActive, StatUse};
-use crate::lang::Msg;
+use crate::lang::{Arg, Msg};
 use crate::msg;
 use crate::world::items::loot::Identified;
 use crate::world::{Spent, World};
@@ -20,7 +20,9 @@ impl World {
     /// one that asks for a stack ([`ClassActive::aims_item`]) may.
     pub(in crate::world) fn use_class_on(&mut self, active: ClassActive, item: usize) -> Spent {
         if !active.aims_item() {
-            self.say(Msg::new(msg::classes::WORKS_ON_NOTHING_CARRIED).role("id", active.id()));
+            self.say(
+                Msg::new(msg::classes::WORKS_ON_NOTHING_CARRIED).role("id", Arg::id(active.id())),
+            );
             return Spent::Nothing;
         }
         if !self.may_use_class(active) {

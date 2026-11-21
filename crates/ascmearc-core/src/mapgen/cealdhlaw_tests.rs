@@ -194,7 +194,7 @@ fn the_way_in_on_hlawdun_leads_down_and_back() {
         replay.push(&action, &w);
     }
     assert_eq!(w.perception().level_id(), "cealdhlaw:1");
-    assert_eq!(w.perception().level_name(), "Cealdhlāw 1");
+    assert_eq!(crate::test_support::level_name(&w), "Cealdhlāw 1");
     assert!(w.danger("cealdhlaw:1") == 1);
     for action in parse_actions("ascend").expect("actions") {
         w.apply(&action);

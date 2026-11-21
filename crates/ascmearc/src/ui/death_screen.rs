@@ -8,12 +8,13 @@
 
 use super::menu::{HINTS, Nav, Panel, Press, wrap};
 use super::screens::{MenuChoice, ScreenAction};
-use super::text::{death_screen as T, ui, ui_with};
+use super::text::{death_screen as T, label_in, ui, ui_msg_in, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
 use crate::settings::Clock;
-use ascmearc_core::lang::Arg;
+use ascmearc_core::content::data_line::status_death;
 use ascmearc_core::lang::Phrase;
+use ascmearc_core::lang::{Arg, Msg};
 use ascmearc_core::perception::PerceptionView;
 use ascmearc_core::time::GameTime;
 
@@ -45,15 +46,16 @@ impl DeathScreen {
             // A status effect killed them: "Bled to death".
             (Some(status), _, _) => {
                 let def = content.status(status);
-                (def.death.clone()).unwrap_or_else(|| {
-                    ui_with(
+                match def.death {
+                    Some(_) => ui_msg_in(content, Msg::data_line(Arg::said(status_death(&def.id)))),
+                    None => ui_with(
                         T::DIED_OF,
                         &[("status", content.status_phrase(status).into())],
-                    )
-                })
+                    ),
+                }
             }
             // Hunger, overeating, or a trap: "Killed by a fireball trap".
-            (None, Some(cause), _) => cause.epitaph(content),
+            (None, Some(cause), _) => ui_msg_in(content, cause.epitaph(content)),
             (None, None, Some(creature)) => {
                 let who = Phrase::id(format!("creature:{}", content.creature(creature).id));
                 ui_with(T::KILLED_BY, &[("who", who.into())])
@@ -66,10 +68,17 @@ impl DeathScreen {
         let by = match view.character() {
             Some(c) => {
                 let name = c.titled_name(view.content());
-                lines.push(ui_with(T::EPITAPH_HERE_LIES, &[("name", name.into())]));
+                lines.push(ui_with(T::EPITAPH_HERE_LIES, &[("name", Arg::text(name))]));
                 // "a bard", or "a bard and hunter" once called.
-                let class = c.class_phrase(view.content());
-                lines.push(ui_with(T::EPITAPH_CLASS, &[("class", class.into())]));
+                let content = view.content();
+                let class = ("class", content.class_phrase(&c.spec.class).into());
+                lines.push(match c.prestige.as_deref() {
+                    Some(p) if content.prestige(p).is_some() => {
+                        let prestige = ("prestige", content.prestige_phrase(p).into());
+                        ui_with(T::EPITAPH_CLASS_PRESTIGE, &[class, prestige])
+                    }
+                    _ => ui_with(T::EPITAPH_CLASS, &[class]),
+                });
                 let mut chars = by.chars();
                 chars
                     .next()
@@ -78,8 +87,14 @@ impl DeathScreen {
             None => by,
         };
         lines.extend([
-            ui_with(T::EPITAPH_BY, &[("by", by.into())]),
-            ui_with(T::EPITAPH_PLACE, &[("place", death.place.as_str().into())]),
+            ui_with(T::EPITAPH_BY, &[("by", Arg::text(by))]),
+            ui_with(
+                T::EPITAPH_PLACE,
+                &[(
+                    "place",
+                    Arg::text(label_in(view.content(), death.place.clone())),
+                )],
+            ),
             String::new(),
             turns,
             ui_with(
@@ -107,8 +122,8 @@ impl DeathScreen {
         let lines = self.lines.iter().map(|line| match &self.when {
             Some((date, time)) if line.is_empty() => {
                 let args = [
-                    ("date", date.as_str().into()),
-                    ("time", clock.format(*time).into()),
+                    ("date", Arg::text(date.as_str())),
+                    ("time", Arg::text(clock.format(*time))),
                 ];
                 ui_with(T::EPITAPH_WHEN, &args)
             }
@@ -148,7 +163,7 @@ impl DeathScreen {
         if self.remembered && fits(y + 1) {
             console.print(cx(remembered), y + 1, remembered, TEXT_DIM);
         }
-        let footer = ui_with(T::FOOTER, &[("confirm", Arg::from(HINTS.confirm))]);
+        let footer = ui_with(T::FOOTER, &[("confirm", Arg::text(HINTS.confirm))]);
         panel.footer(console, &footer);
     }
 }

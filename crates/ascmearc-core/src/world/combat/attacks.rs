@@ -16,6 +16,8 @@ use crate::combat::Profile;
 use crate::content::Content;
 use crate::damage::{Kinds, Rider};
 use crate::dice::Dice;
+use crate::lang::{Arg, MessageId, Msg};
+use crate::msg;
 use crate::world::Actor;
 
 /// Where an attack comes from.
@@ -34,14 +36,15 @@ pub enum AttackSource {
 }
 
 impl AttackSource {
-    /// Its name on the character screen and in dumps.
-    pub fn label(self) -> &'static str {
+    /// Its name on the character screen and in dumps, a word (`combat.attack_source_*`) said
+    /// `Bare`: "Main hand".
+    pub fn label(self) -> MessageId {
         match self {
-            AttackSource::MainHand => "Main hand",
-            AttackSource::OffHand => "Off hand",
-            AttackSource::ThirdHand => "Third hand",
-            AttackSource::Tail => "Tail",
-            AttackSource::Missile => "Missile",
+            AttackSource::MainHand => msg::combat::ATTACK_SOURCE_MAIN_HAND,
+            AttackSource::OffHand => msg::combat::ATTACK_SOURCE_OFF_HAND,
+            AttackSource::ThirdHand => msg::combat::ATTACK_SOURCE_THIRD_HAND,
+            AttackSource::Tail => msg::combat::ATTACK_SOURCE_TAIL,
+            AttackSource::Missile => msg::combat::ATTACK_SOURCE_MISSILE,
         }
     }
 
@@ -111,41 +114,66 @@ impl OwnAttack {
 
     /// The damage as written: the dice (and any extra dice) with the flat bonus last, then the
     /// kinds and every rider: `1d8+2 slashing`, `1d6+1d4+1 slashing or piercing`, `1d8 slashing
-    /// +1d6 fire`.
-    pub fn damage_text(&self, content: &Content) -> String {
-        let mut text = crate::magic::numbers::dice_text(self.damage, self.extra);
-        let kinds: Vec<&str> = (self.kinds.iter())
-            .map(|k| content.damage_type(k).name.as_str())
-            .collect();
-        if !kinds.is_empty() {
-            text.push(' ');
-            text.push_str(&kinds.join(" or "));
-        }
-        for rider in &self.riders {
-            text.push_str(&format!(
-                " +{} {}",
-                rider.dice,
-                content.damage_type(rider.kind).name
-            ));
-        }
-        text
+    /// +1d6 fire`. The dice are text (notation every language writes alike), each kind a
+    /// `damage_type:` phrase: the kinds `combat.attack_damage` (two or more joined by
+    /// `combat.attack_kind_or`), each rider `items.numbers_rider` after it
+    /// (`items.numbers_with_rider`), as the item lists say a weapon's.
+    pub fn damage(&self, content: &Content) -> Arg {
+        let dice = Arg::notation(crate::magic::numbers::dice_text(self.damage, self.extra));
+        let mut kinds = (self.kinds.iter()).map(|k| Arg::from(content.damage_type_phrase(k)));
+        let damage = match kinds.next() {
+            Some(first) => {
+                let kinds = kinds.fold(first, |first, rest| {
+                    (Msg::new(msg::combat::ATTACK_KIND_OR).role("first", first))
+                        .role("rest", rest)
+                        .into()
+                });
+                (Msg::new(msg::combat::ATTACK_DAMAGE).role("dice", dice))
+                    .role("kinds", kinds)
+                    .into()
+            }
+            None => dice,
+        };
+        self.riders.iter().fold(damage, |damage, r| {
+            let rider = Msg::new(msg::items::NUMBERS_RIDER)
+                .role("dice", Arg::notation(format!("+{}", r.dice)))
+                .role("kind", content.damage_type_phrase(r.kind));
+            (Msg::new(msg::items::NUMBERS_WITH_RIDER).role("damage", damage))
+                .role("rider", rider)
+                .into()
+        })
     }
 
-    /// The whole line as the character screen and the dump write it: `+4 to hit, 1d8+2 slashing`,
-    /// `+3 to hit, 1d6 piercing, range 10`.
-    pub fn summary(&self, content: &Content) -> String {
-        let mut text = format!(
-            "{} to hit, {}",
-            self.to_hit_text(),
-            self.damage_text(content)
-        );
+    /// [`OwnAttack::damage`] in English, as the dumps write it.
+    pub fn damage_text(&self, content: &Content) -> String {
+        content.english_word(self.damage(content), "bare")
+    }
+
+    /// The whole line as the character screen and the dump write it, its parts listed by
+    /// `combat.attack_listed`: `+4 to hit, 1d8+2 slashing`, `+3 to hit, 1d6 piercing, range 10`.
+    pub fn summary(&self, content: &Content) -> Msg {
+        // After the to-hit: the damage, then the range and whether it pierces.
+        let mut rest = vec![self.damage(content)];
         if let Some(range) = self.range {
-            text.push_str(&format!(", range {range}"));
+            rest.push(
+                Msg::new(msg::combat::ATTACK_RANGE)
+                    .role("n", i64::from(range))
+                    .into(),
+            );
         }
         if self.pierces {
-            text.push_str(", pierces armour");
+            rest.push(msg::combat::ATTACK_PIERCES.into());
         }
-        text
+        let list = |first: Arg, rest: Arg| {
+            Msg::new(msg::combat::ATTACK_LISTED)
+                .role("first", first)
+                .role("rest", rest)
+        };
+        let last = rest.pop().unwrap_or(Arg::empty());
+        let rest = (rest.into_iter().rev()).fold(last, |rest, first| list(first, rest).into());
+        let to_hit =
+            Msg::new(msg::combat::ATTACK_TO_HIT).role("to_hit", Arg::notation(self.to_hit_text()));
+        list(to_hit.into(), rest)
     }
 }
 

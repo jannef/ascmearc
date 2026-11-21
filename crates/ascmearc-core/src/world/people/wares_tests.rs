@@ -122,7 +122,9 @@ fn chatting_makes_one_favoured_identified_offer_the_same_each_run() {
     let topic = wares_topic(&w, pedlar);
     assert_eq!(topic.price, Some(wares.price));
     let ware = topic.ware.expect("the item in words");
-    assert!(ware.contains(&w.lore().listed(&item)[1..]), "{ware}");
+    let ware = crate::messages::english_arg(w.content(), &ware, "bare");
+    let listed = crate::test_support::english_of(w.content(), &w.lore().listed(&item));
+    assert!(ware.contains(&listed[1..]), "{ware}");
     // Chatting again changes nothing; the same run makes the same offer.
     act(&mut w, &format!("chat:{dir:?}"));
     assert_eq!(w.state.wares[&pedlar], wares);

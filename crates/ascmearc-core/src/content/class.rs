@@ -499,9 +499,9 @@ impl ClassDef {
         if only.genders.contains(&gender) {
             return None;
         }
-        let genders: Vec<String> = (only.genders.iter())
-            .map(|g| g.name().to_lowercase())
-            .collect();
+        // The genders by their ids, which are their English words: this refusal is English text
+        // throughout until the class's words are converted (#1949).
+        let genders: Vec<&str> = (only.genders.iter()).map(|g| g.id()).collect();
         Some(format!(
             "{} may be {} only if {}",
             a(&who),

@@ -4,6 +4,7 @@
 use crate::action::{Positions, letter, parse_actions};
 use crate::content::{ContentFiles, Shops};
 use crate::geom::Dir;
+use crate::messages::english_arg;
 use crate::object::Stack;
 use crate::perception::Sale;
 use crate::replay::Replay;
@@ -79,7 +80,8 @@ fn object(w: &World, id: &str) -> Stack {
 fn the_courtyard_has_a_general_store_kept_by_grimbold() {
     let w = courtyard();
     let shop = shop(&w);
-    assert_eq!(shop.sign(w.content()), "Grimbold's General Store");
+    let sign = english_arg(w.content(), &shop.sign(w.content()), "bare");
+    assert_eq!(sign, "Grimbold's General Store");
     assert_eq!((shop.post, shop.status), (POST, ShopStatus::Open));
     let keeper = &w.state.actors[&shop.keeper];
     assert_eq!(keeper.pos, POST);
@@ -109,13 +111,19 @@ fn the_keeper_keeps_its_post_and_talks_trade_by_its_name() {
 fn entering_greets_and_goods_show_their_prices() {
     let mut w = in_shop();
     assert!(said(&w, "Welcome to Grimbold's General Store!"));
+    // The sign is kept by its key: the saved line reads the same once loaded.
+    let loaded = crate::save::decode(&crate::save::encode(&w), w.content.clone()).expect("loads");
+    assert!(said(&loaded, "Welcome to Grimbold's General Store!"));
     let dagger = object(&w, "dagger");
     let asked = price(&w, &dagger);
     assert!(asked > 0);
     let view = w.perception();
     let here = view.shop_here().expect("in the shop");
     assert_eq!(
-        (here.sign(), here.keeper()),
+        (
+            english_arg(w.content(), &here.sign(), "bare"),
+            here.keeper()
+        ),
         ("Grimbold's General Store".into(), "Grimbold")
     );
     assert_eq!(view.price_tag(DAGGER, &dagger), Some(asked));

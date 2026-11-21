@@ -152,7 +152,8 @@ fn summary(world: &World) -> String {
     // An overworld encounter to answer.
     let encounter = view.encounter().map_or(String::new(), |e| {
         let choices: Vec<&str> = e.choices.iter().map(|c| c.id()).collect();
-        format!(" encounter pending: {} ({})", e.name, choices.join(", "))
+        let name = crate::messages::english_arg(world.content(), &e.name, "bare");
+        format!(" encounter pending: {name} ({})", choices.join(", "))
     });
     format!(
         "turn {} time {} level {} viewer {} hp {hp}/{max} mp {mp}/{max_mp}{resources}{dead}{hunger}{dazzled}{averted}{allies}{encounter}{weather} \
@@ -362,9 +363,9 @@ mod tests {
         // Other names the stat it raised.
         let content = crate::test_support::builtin();
         let other = "gnome,other,bard".parse().expect("a character");
-        let gnome =
-            World::with_character(content, "showcase", Some(3), Some(&other)).expect("world");
-        let raised = crate::character::other_stat(3).name();
+        let gnome = World::with_character(content.clone(), "showcase", Some(3), Some(&other))
+            .expect("world");
+        let raised = content.english_word(crate::character::other_stat(3).name(), "Bare");
         assert!(
             layer_rows(&gnome, Layer::Stats).contains(&format!("Gender Other ({raised} +1)")),
             "{:?}",

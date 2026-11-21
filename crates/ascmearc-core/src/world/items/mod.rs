@@ -17,7 +17,7 @@ use crate::scroll_label::Lore;
 
 /// Stacks as a line names them (`{what:counted}`): one stack its phrase, two or three a list of
 /// them, more a count of objects ("17 objects"), as [`crate::object::phrase`] says them.
-pub(in crate::world) fn stacks_arg(stacks: &[Stack], lore: Lore<'_>) -> Arg {
+pub(crate) fn stacks_arg(stacks: &[Stack], lore: Lore<'_>) -> Arg {
     stacks_arg_with(stacks, lore, |_, _| None)
 }
 

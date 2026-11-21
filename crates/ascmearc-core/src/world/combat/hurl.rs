@@ -29,11 +29,11 @@
 //! `supply` of their flasks and have a cooldown (#1794 replaced the design's endless supply, Q9);
 //! a flask in a pack is thrown only as a throw's supply (Q10 otherwise holds).
 
-use super::fight::{End, Guard, Words, attack_message, word};
+use super::fight::{End, Guard, Verb, Words, attack_message};
 use super::shoot::Flight;
 use crate::action::{AttackKind, Event, Positions};
 use crate::combat::Strike;
-use crate::content::{ActionKind, Content, DamageTypeId, ObjectId, Throw};
+use crate::content::{ActionKind, Content, CreatureId, DamageTypeId, ObjectId, Throw};
 use crate::fov::radius2;
 use crate::geom::Pos;
 use crate::lang::Msg;
@@ -72,7 +72,8 @@ impl World {
         let content = self.content.clone();
         let me = &self.state.actors[&id];
         let at = self.state.actors.get(&target).map(|a| a.pos);
-        let throw = content.creature(me.creature).throw.as_ref();
+        let creature = me.creature;
+        let throw = content.creature(creature).throw.as_ref();
         let (Some(throw), Some(profile), Some(at)) = (throw, me.hurled(&content), at) else {
             return self.price_of(id, ActionKind::Wait);
         };
@@ -91,7 +92,7 @@ impl World {
             if self.perception.sees_actors_at(from) && !self.perception.conceals(id) {
                 let line = Msg::new(msg::combat::THROWS_FLASK)
                     .role("actor", self.end_of(id, true).phrase())
-                    .role("verb", throw.attack.verb.as_str());
+                    .role("verb", content.throw_verb(content.creature(creature)));
                 self.say(line);
             }
             self.shatter_flask(id, throw.object, (from, at, throw.range), events);
@@ -152,7 +153,7 @@ pub(in crate::world) fn thrown_by<'c>(
 /// at `target`, what came of it, the kind of damage it did, and the target's guard.
 pub(in crate::world) fn throw_messages(
     content: &Content,
-    throw: &Throw,
+    (by, _): (CreatureId, &Throw),
     (thrower, target): (&End, &End),
     strike: Option<Strike>,
     damage: Option<DamageTypeId>,
@@ -161,20 +162,23 @@ pub(in crate::world) fn throw_messages(
     if thrower.is_unseen() && target.is_unseen() {
         return Vec::new();
     }
-    let noun = throw.attack.name.as_str();
+    // What it throws, by its type's word (`throw_noun:<creature>`).
+    let noun = || content.throw_noun_phrase(content.creature(by));
     let mut said = Vec::new();
     if let End::Seen(_) | End::Yours(_) | End::Named(_) = thrower {
         said.push(
             Msg::new(msg::combat::THROWS)
                 .role("actor", thrower.phrase())
-                .role("verb", throw.attack.verb.as_str())
-                .role("what", word(noun)),
+                .role("verb", content.throw_verb(content.creature(by)))
+                .role("what", noun()),
         );
     }
-    let verb = damage.map_or("hits", |d| content.damage_type(d).verb.as_str());
-    let words = Words::named(noun, verb, content);
+    let words = match damage {
+        Some(kind) => Words::of_kind(noun(), kind, content),
+        None => Words::new(noun(), Verb::Hits, content),
+    };
     let blow = attack_message(
-        &End::Trap(word(noun)),
+        &End::Trap(noun()),
         target,
         &words,
         AttackKind::Thrown,

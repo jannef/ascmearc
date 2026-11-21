@@ -166,17 +166,18 @@ impl Dir {
         Dir::from_delta(sx as i32, sy as i32)
     }
 
-    /// The compass name, e.g. `north-east`.
-    pub const fn compass_name(self) -> &'static str {
+    /// The compass word as a sentence says it, a message id (`messages/words.toml`):
+    /// `north-east` ("You hear a voice to the north-east.").
+    pub const fn compass_word(self) -> crate::lang::MessageId {
         match self {
-            Dir::N => "north",
-            Dir::NE => "north-east",
-            Dir::E => "east",
-            Dir::SE => "south-east",
-            Dir::S => "south",
-            Dir::SW => "south-west",
-            Dir::W => "west",
-            Dir::NW => "north-west",
+            Dir::N => crate::msg::words::DIR_NORTH,
+            Dir::NE => crate::msg::words::DIR_NORTH_EAST,
+            Dir::E => crate::msg::words::DIR_EAST,
+            Dir::SE => crate::msg::words::DIR_SOUTH_EAST,
+            Dir::S => crate::msg::words::DIR_SOUTH,
+            Dir::SW => crate::msg::words::DIR_SOUTH_WEST,
+            Dir::W => crate::msg::words::DIR_WEST,
+            Dir::NW => crate::msg::words::DIR_NORTH_WEST,
         }
     }
 
@@ -244,7 +245,6 @@ mod tests {
         assert_eq!(toward(1, -1), Some(Dir::NE));
         assert_eq!(toward(-2, -5), Some(Dir::N));
         assert_eq!(toward(-3, 5), Some(Dir::SW));
-        assert_eq!(Dir::NW.compass_name(), "north-west");
     }
 
     #[test]

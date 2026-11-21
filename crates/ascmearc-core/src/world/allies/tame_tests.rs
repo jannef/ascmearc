@@ -154,7 +154,10 @@ fn a_calm_beast_is_tamed_after_the_turns_and_becomes_a_companion() {
     // Tame now greys out with the reason, and is refused.
     assert_eq!(menu(&w), Some(Some(Unavailable::HaveCompanion)));
     assert_eq!(
-        Unavailable::HaveCompanion.reason(w.content()),
+        crate::test_support::english_of(
+            w.content(),
+            &Unavailable::HaveCompanion.reason(w.content())
+        ),
         "you already have a companion"
     );
     let time = w.time();

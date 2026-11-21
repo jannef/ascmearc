@@ -187,9 +187,9 @@ fn every_pick_is_offered_only_under_its_sign() {
     // The refusal says the sign in words.
     let words = may(&born("hydra", "fire"), "fire_breath", 15)
         .expect_err("not a wyvern")
-        .words(&BUILTIN, "Fire breath");
+        .words(&BUILTIN, crate::lang::Arg::text("Fire breath"));
     assert_eq!(
-        words,
+        crate::test_support::english_of(&BUILTIN, &words),
         "You cannot take Fire breath: you need to be born in the year of the Wyvern."
     );
 }
@@ -455,7 +455,10 @@ fn hounds_bay_sends_lesser_foes_fleeing_then_leaves_you_hoarse() {
     assert_eq!(severity(&w, kobold, "frightened"), 0);
     // The howl is heard: a loud noise.
     assert_eq!(
-        crate::noise::SoundKind::Howl.heard_as(),
+        crate::test_support::english_of(
+            &w.content,
+            &crate::noise::SoundKind::Howl.heard_as().into()
+        ),
         "a howl",
         "the player hears others' howls by this name"
     );

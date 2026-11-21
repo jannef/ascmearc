@@ -24,7 +24,7 @@
 use crate::character::Character;
 use crate::content::Content;
 use crate::dice::Dice;
-use crate::lang::Msg;
+use crate::lang::{Arg, Msg};
 use crate::msg;
 use crate::rng::Rng;
 use crate::skills::{SkillId, Trained};
@@ -171,7 +171,7 @@ impl World {
     pub(in crate::world) fn advance_skill(&mut self, skill: &str) -> Spent {
         let content = self.content.clone();
         let Some(id) = content.skill_id(skill) else {
-            self.say(Msg::new(msg::character::NO_SKILL).role("id", skill));
+            self.say(Msg::new(msg::character::NO_SKILL).role("id", Arg::id(skill)));
             return Spent::Nothing;
         };
         let Some(at) = (self.state.progress.due.iter()).position(|d| d.rolls > 0) else {

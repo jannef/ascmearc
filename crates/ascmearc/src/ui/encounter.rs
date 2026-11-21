@@ -11,14 +11,21 @@ use super::screens::Screens;
 use super::text::{UiText, encounter as T, ui, ui_with};
 use crate::game::Game;
 use ascmearc_core::action::Action;
+use ascmearc_core::content::Content;
+use ascmearc_core::lang::Arg;
+use ascmearc_core::messages::{arg_in, msg_in};
 use ascmearc_core::world::{EncounterChoice as Choice, EncounterOutcome as Outcome, EncounterView};
 use bevy::prelude::*;
 
 /// The dialog asking `view`: the party as its title, its text (with the line for a party met
 /// again, as the view gives it), and a plain row per choice.
-pub(super) fn dialog(view: EncounterView) -> Dialog {
-    let title = ui_with(T::TITLE, &[("party", view.name.into())]);
-    let ask = Dialog::new(title, view.text);
+pub(super) fn dialog(content: &Content, view: EncounterView) -> Dialog {
+    // The party's name and what the player is told, in the language shown, from the run's
+    // content (its encounter tables).
+    let code = super::text::language_code();
+    let name = arg_in(content, &code, &view.name, "bare");
+    let title = ui_with(T::TITLE, &[("party", Arg::text(name))]);
+    let ask = Dialog::new(title, msg_in(content, &code, &view.text));
     (view.choices.into_iter())
         .fold(ask, |ask, choice| {
             ask.plain(ui(label(view.outcome, choice)), Action::Encounter(choice))
@@ -52,6 +59,6 @@ pub(super) fn on_encounter(game: Res<Game>, mut screens: Screens) {
         return;
     }
     if let Some(view) = game.world.perception().encounter() {
-        screens.ask(dialog(view));
+        screens.ask(dialog(game.world.content(), view));
     }
 }

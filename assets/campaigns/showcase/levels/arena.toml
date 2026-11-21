@@ -16,7 +16,7 @@
 arrival = "The clash of arms echoes off the stone."
 # What the fallen drop is rolled at this item level.
 item_level = 2
-name = "The Arena"
+name = "the Arena"
 ambient = [0, 0, 0, 0]
 map = '''
 ########################################################################

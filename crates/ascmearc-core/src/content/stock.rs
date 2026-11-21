@@ -22,6 +22,9 @@ pub struct Profession {
     pub stat: Stat,
     /// The verb its rows and dialogs use ("Forge", "Make", "Cut").
     pub verb: String,
+    /// The verb's line of data, said in its place: `stock:group.<group>.verb`, `stock:gems.verb`
+    /// (a material row's is that of the group or the gems it names).
+    pub verb_key: String,
 }
 
 /// One group's stock.
@@ -126,7 +129,10 @@ impl Stock {
         let mut stock = Stock::default();
         // Content without skills (a fixture) has no professions.
         let skills = !content.skills().is_empty();
-        let profession = |spec: &ProfessionSpec, of: &str| -> Result<Profession, ContentError> {
+        let profession = |spec: &ProfessionSpec,
+                          of: &str,
+                          verb_key: String|
+         -> Result<Profession, ContentError> {
             let skill = (content.skill_id(&spec.skill))
                 .ok_or_else(|| err(format!("{of}: unknown skill `{}`", spec.skill)))?;
             if spec.verb.is_empty() {
@@ -136,6 +142,7 @@ impl Stock {
                 skill,
                 stat: spec.stat,
                 verb: spec.verb.clone(),
+                verb_key,
             })
         };
         for row in parsed.group {
@@ -155,7 +162,8 @@ impl Stock {
             let profession = match (row.skill, row.stat, row.verb) {
                 (None, None, None) => None,
                 (Some(skill), Some(stat), Some(verb)) if skills => {
-                    Some(profession(&ProfessionSpec { skill, stat, verb }, &of)?)
+                    let key = super::data_line::stock_verb(Some(&row.group));
+                    Some(profession(&ProfessionSpec { skill, stat, verb }, &of, key)?)
                 }
                 (Some(_), Some(_), Some(_)) => None,
                 _ => {
@@ -174,7 +182,8 @@ impl Stock {
             });
         }
         if let Some(gems) = parsed.gems.as_ref().filter(|_| skills) {
-            stock.gems = Some(profession(gems, "`gems`")?);
+            let key = super::data_line::stock_verb(None);
+            stock.gems = Some(profession(gems, "`gems`", key)?);
         }
         let all = (stock.groups.iter().filter_map(|g| g.profession.as_ref())).chain(&stock.gems);
         let mut seen: Vec<&Profession> = Vec::new();

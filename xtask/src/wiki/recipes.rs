@@ -4,6 +4,7 @@
 //! cutting (`world/crafting/cut.rs`: the cut bands, a large uncut ruby's fates, the odds), and gem setting
 //! (`world/crafting/set.rs`: the odds).
 
+use super::util::time_words;
 use super::util::{Term, anchored, capital, link};
 use ascmearc_core::combat::HIGHEST;
 use ascmearc_core::content::{
@@ -266,7 +267,7 @@ pub(super) fn recipes_of(content: &Content, skill: &str) -> String {
             "| {} | {} | {} ({} s) | {difficulty} | {} |",
             r.name,
             r.from,
-            Duration::seconds(u64::from(r.seconds)).spoken(),
+            time_words(Duration::seconds(u64::from(r.seconds))),
             r.seconds,
             odds.join(" / "),
         );
@@ -386,7 +387,7 @@ pub(super) fn brews(content: &Content) -> String {
             anchored(Term::Brew, &r.id, &link(Term::Potion, &potion.id, &r.name)),
             herbs.join(", "),
             r.from,
-            Duration::seconds(u64::from(r.seconds)).spoken(),
+            time_words(Duration::seconds(u64::from(r.seconds))),
             r.difficulty,
         );
         for value in BREWERS {
@@ -686,7 +687,7 @@ pub(super) fn gem_cutting(content: &Content) -> String {
         "\nA natural 2 shatters the gem, whatever the margin. A natural 24 cuts it at least \
          {}. Cutting takes {} against a difficulty of {} plus the gem's work.\n",
         plain.to_lowercase(),
-        Duration::seconds(u64::from(recipe.seconds)).spoken(),
+        time_words(Duration::seconds(u64::from(recipe.seconds))),
         recipe.difficulty,
     );
 
@@ -855,7 +856,7 @@ pub(super) fn gem_setting(content: &Content) -> String {
         out,
         "\nSetting takes {} against a difficulty of {} plus the gem's work, and is listed from \
          Jewelcraft {}.",
-        Duration::seconds(u64::from(recipe.seconds)).spoken(),
+        time_words(Duration::seconds(u64::from(recipe.seconds))),
         recipe.difficulty,
         recipe.from,
     );

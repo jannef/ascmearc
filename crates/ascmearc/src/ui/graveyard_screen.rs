@@ -13,13 +13,14 @@
 
 use super::menu::{HINTS, Nav, Panel, Press, wrap};
 use super::screens::ScreenAction;
-use super::text::{graveyard_screen as T, ui, ui_with};
+use super::text::{data_line, graveyard_screen as T, label, ui, ui_with};
 use super::{TEXT, TEXT_DIM};
 use crate::graveyard::{Fallen, PROFANE, STONE};
 use crate::render::console::Console;
 use crate::save::played_text;
 use crate::settings::Clock;
 use ascmearc_core::content::Content;
+use ascmearc_core::content::data_line::status_death;
 use ascmearc_core::lang::{Arg, Phrase};
 use std::sync::atomic::{AtomicUsize, Ordering};
 
@@ -51,23 +52,38 @@ struct Entry {
 
 impl Entry {
     fn new(fallen: &Fallen, content: &Content) -> Self {
-        let race = (content.race(&fallen.race)).map_or(fallen.race.as_str(), |r| r.name.as_str());
-        let class =
-            (content.class(&fallen.class)).map_or(fallen.class.as_str(), |c| c.name.as_str());
+        // A name the content has, as a label; else the id kept, as written.
+        let named = |known: bool, phrase: Phrase, id: &str| match known {
+            true => label(phrase),
+            false => id.to_string(),
+        };
+        let race = named(
+            content.race(&fallen.race).is_some(),
+            content.race_phrase(&fallen.race),
+            &fallen.race,
+        );
+        let class = named(
+            content.class(&fallen.class).is_some(),
+            content.class_phrase(&fallen.class),
+            &fallen.class,
+        );
         let mut what = [race, class]
             .into_iter()
             .filter(|s| !s.is_empty())
             .collect::<Vec<_>>()
             .join(" ");
         if !fallen.prestige.is_empty() {
-            let prestige = (content.prestige(&fallen.prestige))
-                .map_or(fallen.prestige.as_str(), |p| p.name.as_str());
-            let args = [("what", what.into()), ("prestige", prestige.into())];
+            let prestige = named(
+                content.prestige(&fallen.prestige).is_some(),
+                content.prestige_phrase(&fallen.prestige),
+                &fallen.prestige,
+            );
+            let args = [("what", Arg::text(what)), ("prestige", Arg::text(prestige))];
             what = ui_with(T::AND_PRESTIGE, &args);
         }
         let death = ui_with(
             T::DEATH_LINE,
-            &[("death", death_words(fallen, content).into())],
+            &[("death", Arg::text(death_words(fallen, content)))],
         );
         let name = if fallen.name.is_empty() {
             ui(T::SOMEONE)
@@ -111,7 +127,7 @@ fn age_arg(age: u32) -> (&'static str, Arg) {
 }
 
 fn when_arg(when: u64, clock: Clock) -> (&'static str, Arg) {
-    ("when", played_text(when, clock).into())
+    ("when", Arg::text(played_text(when, clock)))
 }
 
 /// What killed `fallen` and where, in words without a full stop: `Killed by a kobold in Fyrdelf
@@ -122,8 +138,8 @@ pub(crate) fn death_words(fallen: &Fallen, content: &Content) -> String {
         cause
     } else {
         let args = [
-            ("cause", cause.into()),
-            ("place", fallen.place.as_str().into()),
+            ("cause", Arg::text(cause)),
+            ("place", Arg::text(fallen.place.as_str())),
         ];
         ui_with(T::DEATH_PLACE, &args)
     }
@@ -132,8 +148,6 @@ pub(crate) fn death_words(fallen: &Fallen, content: &Content) -> String {
 /// What killed `fallen`, in words: `Killed by a kobold`, `Turned to stone`, `Bled to death`.
 fn cause_words(fallen: &Fallen, content: &Content) -> String {
     let killed_by = |who: Phrase| ui_with(T::CAUSE_KILLED_BY, &[("who", who.into())]);
-    // A name the record or the data holds as English text: a word of the lexicon by its text.
-    let by_name = |name: &str| killed_by(Phrase::id(format!("word:{name}")));
     let cause = fallen.cause.as_str();
     match cause {
         STONE => return ui(T::CAUSE_STONE),
@@ -148,20 +162,27 @@ fn cause_words(fallen: &Fallen, content: &Content) -> String {
         "unseen" => return ui(T::CAUSE_UNSEEN),
         _ => {}
     }
+    // A creature killed them: its type by its id, the record's `cause`; a type this content
+    // lacks by the name the record keeps.
     if !fallen.killer.is_empty() {
-        return by_name(&fallen.killer);
+        return killed_by(match content.creature_id(cause) {
+            Some(creature) => Phrase::id(format!("creature:{}", content.creature(creature).id)),
+            // lang: record a killer's name as the record keeps it
+            None => Phrase::id(format!("word:{}", fallen.killer)),
+        });
     }
     if let Some(status) = content.status_id(cause) {
         let def = content.status(status);
-        return (def.death.clone()).unwrap_or_else(|| {
-            ui_with(
+        return match def.death {
+            Some(_) => data_line(status_death(&def.id)),
+            None => ui_with(
                 T::CAUSE_DIED_OF,
-                &[("name", def.name.to_lowercase().into())],
-            )
-        });
+                &[("name", content.status_phrase(status).into())],
+            ),
+        };
     }
     if let Some(trap) = content.trap_id(cause) {
-        return by_name(&content.trap(trap).name);
+        return killed_by(content.trap_phrase(trap));
     }
     if let Some(creature) = content.creature_id(cause) {
         return killed_by(Phrase::id(format!(
@@ -170,7 +191,7 @@ fn cause_words(fallen: &Fallen, content: &Content) -> String {
         )));
     }
     if let Some(object) = content.object_id(cause) {
-        let name = content.object(object).name.as_str();
+        let name = Phrase::id(format!("object:{}", content.object(object).id));
         return ui_with(T::CAUSE_OWN, &[("name", name.into())]);
     }
     ui(T::CAUSE_UNKNOWN)
@@ -277,9 +298,9 @@ impl GraveyardScreen {
         let keys = HINTS;
         let footer = if pages.len() > 1 {
             let args = [
-                ("up_down", keys.up_down().into()),
-                ("next", Arg::from(keys.next_page)),
-                ("prev", Arg::from(keys.prev_page)),
+                ("up_down", Arg::text(keys.up_down())),
+                ("next", Arg::text(keys.next_page)),
+                ("prev", Arg::text(keys.prev_page)),
             ];
             ui_with(T::FOOTER_PAGES, &args)
         } else {

@@ -13,12 +13,13 @@
 use super::cursor;
 use super::menu::{HINTS, Nav, Panel, Press, wrap};
 use super::screens::{ScreenAction, ScreenName};
-use super::text::{UiText, talents_screen as T, ui, ui_with};
+use super::text::{UiText, label, talents_screen as T, ui, ui_msg, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
 use ascmearc_core::color::Rgb;
 use ascmearc_core::content::TreeId;
+use ascmearc_core::lang::Arg;
 use ascmearc_core::perception::{NeedView, PerceptionView};
 
 /// Width of the panel: the character screen's.
@@ -69,7 +70,8 @@ impl TalentsScreen {
         let Some(view) = view else {
             return screen;
         };
-        let book = view.content().talents();
+        let content = view.content();
+        let book = content.talents();
         // The player's own, tree by tree in tree order, each tree in the order taken.
         let mut own = view.own_talents();
         own.sort_by_key(|t| t.tree);
@@ -83,7 +85,7 @@ impl TalentsScreen {
                 tree = Some(talent.tree);
                 screen
                     .lines
-                    .push(Line::Tree(book.tree(talent.tree).name.clone()));
+                    .push(Line::Tree(label(content.tree_phrase(talent.tree))));
             }
             let from = match () {
                 // A profane gift (docs/design/profane-gifts.md §11), a bane marked as a flaw.
@@ -103,9 +105,14 @@ impl TalentsScreen {
             };
             screen.lines.push(Line::Name(screen.items.len()));
             screen.items.push(Item {
-                name: talent.name,
+                name: label(content.talent_arg(talent.id, talent.choice.as_deref())),
                 from,
-                description: talent.description,
+                description: crate::ui::text::data_line(
+                    ascmearc_core::content::data_line::description(
+                        "talent",
+                        &content.talents().get(talent.id).id,
+                    ),
+                ),
                 needs: Vec::new(),
                 own: true,
             });
@@ -125,15 +132,20 @@ impl TalentsScreen {
                 tree = Some(talent.tree);
                 screen
                     .lines
-                    .push(Line::Tree(book.tree(talent.tree).name.clone()));
+                    .push(Line::Tree(label(content.tree_phrase(talent.tree))));
             }
             let index = screen.items.len();
             screen.lines.push(Line::Name(index));
             screen.lines.push(Line::Needs(index));
             screen.items.push(Item {
-                name: talent.name,
+                name: label(content.talent_phrase(talent.id)),
                 from: None,
-                description: talent.description,
+                description: crate::ui::text::data_line(
+                    ascmearc_core::content::data_line::description(
+                        "talent",
+                        &content.talents().get(talent.id).id,
+                    ),
+                ),
                 needs: talent.needs,
                 own: false,
             });
@@ -205,9 +217,9 @@ impl TalentsScreen {
                 }
             }
         }
-        let choose = ui_with(T::CHOOSE, &[("keys", HINTS.up_down().into())]);
+        let choose = ui_with(T::CHOOSE, &[("keys", Arg::text(HINTS.up_down()))]);
         let close = match bindings.keys_of(KeyCommand::Talents).first() {
-            Some(key) => ui_with(T::CLOSE_OWN, &[("own", key.display().into())]),
+            Some(key) => ui_with(T::CLOSE_OWN, &[("own", Arg::text(key.display()))]),
             None => ui(T::CLOSE),
         };
         let footer = format!("{choose}   {close}");
@@ -232,7 +244,7 @@ impl TalentsScreen {
             console.print(
                 at,
                 y,
-                &ui_with(T::FROM, &[("from", ui(from).into())]),
+                &ui_with(T::FROM, &[("from", Arg::text(ui(from)))]),
                 TEXT_DIM,
             );
         }
@@ -258,7 +270,8 @@ fn draw_needs(console: &mut Console, x: i32, y: i32, needs: &[NeedView], panel: 
         if i > 0 {
             print(console, ", ", TEXT_DIM);
         }
-        print(console, &need.words, if need.met { TEXT } else { TEXT_DIM });
+        let words = ui_msg(need.words.clone());
+        print(console, &words, if need.met { TEXT } else { TEXT_DIM });
     }
 }
 

@@ -146,11 +146,12 @@ impl Shop {
         self.status.is_open()
     }
 
-    /// Its sign: "Grimbold's General Store".
-    pub fn sign(&self, content: &Content) -> String {
-        content
-            .shops()
-            .map_or_else(|| self.name.clone(), |s| s.get(self.kind).sign(&self.name))
+    /// Its sign, by its key: "Grimbold's General Store" (its keeper's name without shops).
+    pub fn sign(&self, content: &Content) -> Arg {
+        (content.shops()).map_or_else(
+            || Phrase::literal(&self.name).into(),
+            |s| s.get(self.kind).sign(&self.name),
+        )
     }
 
     /// What the player owes for what they took, in gold, at `favour`.
@@ -517,7 +518,7 @@ impl World {
             self.say(msg::people::NOT_CARRYING_ANYTHING);
             return Some(Spent::Nothing);
         }
-        let Some(chosen) = self.chosen(positions, len, "You carry no such thing.") else {
+        let Some(chosen) = self.chosen(positions, len, msg::items::CARRY_NO_SUCH_THING) else {
             return Some(Spent::Nothing);
         };
         // A cursed thing worn stays on (`curse.rs`).

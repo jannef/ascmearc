@@ -1,6 +1,6 @@
 name = "Tamsin"
-race = "Human"
-class = "Thief"
+race = "human"
+class = "thief"
 level = 2
 place = "The Hub"
 campaign = "The Showcase"

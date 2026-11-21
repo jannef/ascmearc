@@ -255,7 +255,10 @@ fn blocked_actions_are_refused_and_abilities_that_cost_them_greyed_out() {
         }
     );
     let why = Unavailable::While(fumbling);
-    assert_eq!(why.reason(&content), "you are fumbling");
+    assert_eq!(
+        crate::test_support::english_of(&content, &why.reason(&content)),
+        "you are fumbling"
+    );
     assert_eq!(why.id(&content), "while:fumbling");
     assert!(!w.apply(&Action::Bash(Dir::E)).took_turn);
     assert_eq!(last_message(&w), "You cannot fight while fumbling.");

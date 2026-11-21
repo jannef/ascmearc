@@ -309,7 +309,8 @@ pub(crate) fn progress(
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct QuestView {
     pub id: String,
-    pub name: String,
+    /// Its name: a quest's line of data (`QuestDef::name_arg`), a commission's message.
+    pub name: Arg,
     pub kind: QuestKind,
     /// Taken up and not yet done; else done, or failed.
     pub active: bool,
@@ -355,7 +356,7 @@ impl PerceptionView<'_> {
             let (register, race) = content.speaker_voice(def.giver);
             QuestView {
                 id: def.id.clone(),
-                name: def.name.clone(),
+                name: def.name_arg(),
                 kind: def.kind(),
                 active,
                 failed,
@@ -389,18 +390,14 @@ fn speaker(content: &Content, id: DialogueId) -> Phrase {
     content.speaker_phrase(id)
 }
 
-/// A place (a level or a branch, by its name `name`) as a phrase said `the` inside a sentence:
-/// "The Arena" reads "the Arena", a name without its article as it is ("Cealdhlāw").
-pub(super) fn place(name: &str) -> Phrase {
-    match name.strip_prefix("The ") {
-        Some(rest) => Phrase::id(format!("word:{rest}")),
-        None => Phrase::literal(name),
-    }
-}
-
-/// [`place`] of the level or branch `id`.
-fn place_of(content: &Content, id: &str) -> Phrase {
-    place(&content.place_name(id))
+/// The level or branch `id` as its name is said, by its key: a level's (a hand-made level's line
+/// of data, a branch level's `levels.branch_level`; `Content::level_name_arg`), else a branch's
+/// `dungeon:<id>.name`, else the id as text. A name with its own article writes it in lower case
+/// in the data ("the Arena"), as a hidden location's does (`people.marks_on_map`).
+fn place_of(content: &Content, id: &str) -> Arg {
+    (content.level_name_arg(id))
+        .or_else(|| (content.dungeon(id)).map(|d| Arg::said(data_line::dungeon_name(&d.id))))
+        .unwrap_or_else(|| Arg::id(id))
 }
 
 /// What kill quest `def` is after, `need` of them, as its progress counts them: its `what` if
@@ -408,9 +405,7 @@ fn place_of(content: &Content, id: &str) -> Phrase {
 fn kill_noun(content: &Content, def: &QuestDef, need: u32) -> Phrase {
     match &def.goal {
         // Called as the quest says, one or many alike.
-        Goal::Kill {
-            what: Some(what), ..
-        } => Phrase::id(format!("word:{what}")),
+        Goal::Kill { what: Some(_), .. } => content.quest_what_phrase(&def.id),
         Goal::Kill {
             target: KillTarget::Creature(c),
             ..
@@ -418,7 +413,7 @@ fn kill_noun(content: &Content, def: &QuestDef, need: u32) -> Phrase {
         Goal::Kill {
             target: KillTarget::Tag(tag),
             ..
-        } => Phrase::id(format!("word:{}", crate::content::spoken(tag))).count(need),
+        } => content.tag_phrase(tag).count(need),
         _ => Phrase::id("word:something"),
     }
 }
@@ -870,11 +865,14 @@ impl World {
             )));
             return;
         }
+        // Its name by its key, as the data writes it: one with its own article writes it in
+        // lower case ("the Skeul Hir"), as a unique's name does (`en::own_article`).
+        let place = Arg::said(data_line::hidden_name(level, &location.id));
         let who = self.called_phrase(&self.state.actors[&id]);
         self.say(
             Msg::new(msg::people::MARKS_ON_MAP)
                 .role("who", who)
-                .role("place", place(&location.name)),
+                .role("place", place),
         );
     }
 
@@ -1015,7 +1013,7 @@ impl World {
             }
         }
         self.reveal_at(id, def, RevealWhen::Done);
-        self.say(Msg::new(msg::people::QUEST_COMPLETE).role("quest", def.name.as_str()));
+        self.say(Msg::new(msg::people::QUEST_COMPLETE).role("quest", def.name_arg()));
         self.tell_goodwill(def.giver);
         self.train_stat(StatUse::Quest);
         let taught = Taught {

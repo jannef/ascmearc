@@ -23,12 +23,11 @@ use ascmearc_core::lang::{Arg, Modifier, Phrase, Word};
 const DRAWS: u32 = 64;
 
 /// The panel's question about a `race` `class` character: "What is the name of the human thief?".
-/// The class is the head word and the race an adjective before it, both words of the lexicon by
-/// their English (`word:<text>`); the definite article, as it is the player's own character.
+/// The class is the head word and the race an adjective before it, both by their lexicon ids
+/// (`class:<id>`, `race:<id>`); the definite article, as it is the player's own character.
 fn question(race: &str, class: &str) -> String {
-    let race = Word::id(format!("word:{}", race.to_lowercase()));
-    let character =
-        Phrase::id(format!("word:{}", class.to_lowercase())).with(Modifier::Adjective(race));
+    let race = Word::id(format!("race:{race}"));
+    let character = Phrase::id(format!("class:{class}")).with(Modifier::Adjective(race));
     ui_with(T::QUESTION, &[("character", Arg::from(character))])
 }
 
@@ -62,11 +61,7 @@ impl NameScreen {
         } else {
             draws
         };
-        let question = spec.map_or(String::new(), |spec| {
-            let race = (spec.race(content)).map_or(spec.race.clone(), |r| r.name.clone());
-            let class = (spec.class(content)).map_or(spec.class.clone(), |c| c.name.clone());
-            question(&race, &class)
-        });
+        let question = spec.map_or(String::new(), |spec| question(&spec.race, &spec.class));
         Self {
             field: TextField::new(draft.remembered_name().unwrap_or_default(), MAX_NAME),
             draws,
@@ -137,15 +132,15 @@ impl NameScreen {
         y += 2;
         let args = [
             ("max", Arg::Number(MAX_NAME as i64)),
-            ("random", fixed::TEXT_RANDOM.into()),
-            ("name", self.placeholder().into()),
+            ("random", Arg::text(fixed::TEXT_RANDOM)),
+            ("name", Arg::text(self.placeholder())),
         ];
         let help = ui_with(T::HELP, &args);
         for line in wrap(&help, panel.inner_w() - 2).into_iter().take(2) {
             console.print(x + 2, y, &line, TEXT_DIM);
             y += 1;
         }
-        let own = |text, key: &str| ui_with(text, &[("own", key.into())]);
+        let own = |text, key: &str| ui_with(text, &[("own", Arg::text(key))]);
         let footer = format!(
             "{}   {}   {}   {}",
             own(T::ACCEPT, fixed::TEXT_CONFIRM),
@@ -172,7 +167,6 @@ mod tests {
         Draft {
             scenario: Some(ScenarioPick {
                 id: "showcase".into(),
-                name: showcase.name.clone(),
                 seed: 1,
                 shows_seed: true,
                 character: showcase.character.clone(),
@@ -273,11 +267,11 @@ mod tests {
     #[test]
     fn the_question_names_the_character_with_the_definite_article() {
         assert_eq!(
-            question("Human", "Thief"),
+            question("human", "thief"),
             "What is the name of the human thief?"
         );
         assert_eq!(
-            question("Elf", "Wizard"),
+            question("elf", "wizard"),
             "What is the name of the elf wizard?"
         );
     }

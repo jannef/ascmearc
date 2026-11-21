@@ -2,6 +2,7 @@
 
 use super::order;
 use super::util::{Term, anchored, capital, link, percent_of, signed, stat_link, yes};
+use super::util::{stat_name, time_words, word};
 use ascmearc_core::check;
 use ascmearc_core::content::{
     Affliction, Content, DiseaseDef, DiseaseId, PrayerUse, StatusDef, StatusId, TalentEffect,
@@ -49,7 +50,12 @@ pub(super) fn healing(content: &Content) -> String {
         }
     }
     if content.hunger().is_some() {
-        let _ = writeln!(out, "| {} | {} |", Hunger::Starving.name(), pace(0));
+        let _ = writeln!(
+            out,
+            "| {} | {} |",
+            word(Hunger::Starving.name(), "Bare"),
+            pace(0)
+        );
     }
     out
 }
@@ -80,13 +86,13 @@ fn every(seconds: u32) -> String {
 fn exactly(seconds: u32) -> String {
     let d = Duration::seconds(u64::from(seconds));
     match (seconds / 60, seconds % 60) {
-        (0, _) | (_, 0) => d.spoken(),
+        (0, _) | (_, 0) => time_words(d),
         (m, s) if m < 60 => format!(
             "{} and {}",
-            Duration::minutes(u64::from(m)).spoken(),
-            Duration::seconds(u64::from(s)).spoken()
+            time_words(Duration::minutes(u64::from(m))),
+            time_words(Duration::seconds(u64::from(s)))
         ),
-        _ => d.spoken(),
+        _ => time_words(d),
     }
 }
 
@@ -159,7 +165,9 @@ fn status_detail(def: &StatusDef, status: usize, what: &Affliction) -> Option<St
         } if usize::from(s.0) == status => {
             let degrees = if severity == 1 { "degree" } else { "degrees" };
             let resisted = match check {
-                Some((stat, d)) => format!(", unless a {} check against {d} is made", stat.name()),
+                Some((stat, d)) => {
+                    format!(", unless a {} check against {d} is made", stat_name(stat))
+                }
                 None => String::new(),
             };
             Some(format!(", {severity} {degrees}{resisted}"))
@@ -271,7 +279,7 @@ fn causes(content: &Content, status: usize, def: &StatusDef) -> String {
                         "a wounding hit of {} (a class ability) and failing the check: 2d12 + \
                          the {} modifier against its difficulty plus the smiter's aim",
                         t.name,
-                        stat.name()
+                        stat_name(stat)
                     ),
                     None => format!("a wounding hit of {} (a class ability)", t.name),
                 });
@@ -296,7 +304,7 @@ fn causes(content: &Content, status: usize, def: &StatusDef) -> String {
                     "hearing {} (a class ability's song) and failing the check: 2d12 + the \
                      {} modifier against {difficulty} plus the singer's Music",
                     t.name,
-                    stat.name()
+                    stat_name(stat)
                 ));
             }
         }
@@ -380,7 +388,9 @@ fn also(content: &Content, status: usize, def: &StatusDef) -> Vec<String> {
         ));
     }
     if !def.blocks.is_empty() {
-        let doing: Vec<&str> = def.blocks.iter().map(|k| k.doing()).collect();
+        let doing: Vec<String> = (def.blocks.iter())
+            .map(|k| word(k.doing(), "bare"))
+            .collect();
         let list = match doing.as_slice() {
             [init @ .., one, last] if !init.is_empty() => {
                 format!("{}, {one}, or {last}", init.join(", "))
@@ -410,7 +420,7 @@ fn also(content: &Content, status: usize, def: &StatusDef) -> Vec<String> {
         parts.push(format!(
             "a step is a struggle to break free: a {} check against the holder's grip ({} \
              unless its attack says otherwise); made, you step, failed, the turn is lost",
-            hold.check.name(),
+            stat_name(hold.check),
             hold.difficulty
         ));
     }
@@ -463,7 +473,7 @@ fn also(content: &Content, status: usize, def: &StatusDef) -> Vec<String> {
             "every living creature within {} cells you do not see (not the undead, animated \
              things, or constructs) is heard as {} at a rough place, up to 2 cells off, each turn",
             senses.reach,
-            senses.kind.heard_as()
+            super::hearing::heard_as(content, senses.kind)
         ));
     }
     if let Some(vision) = def.vision {
@@ -835,7 +845,7 @@ pub(super) fn disease_checks(content: &Content) -> String {
             out,
             "| {} | {} | {} |{odds}",
             capital(&def.name),
-            def.check.name(),
+            stat_name(def.check),
             def.difficulty
         );
     }

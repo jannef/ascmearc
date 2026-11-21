@@ -63,6 +63,7 @@ impl Pack {
         let mut names: Vec<(Option<usize>, String)> = Vec::new();
         for (i, stack) in self.items.iter().enumerate() {
             if let Some(mark) = equipment::mark(content, &self.equipment, i) {
+                let mark = content.english_word(mark, "bare");
                 names.push((None, format!("{} ({mark})", stack.describe(content))));
                 continue;
             }

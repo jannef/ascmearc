@@ -185,7 +185,7 @@ fn each_seal_costs_a_crystal_of_the_colour_and_half_an_hour() {
     crystals(&mut w, "red", 4); // b
     let (fire, crit) = (family(&w, "fire_damage"), family(&w, "critical_chance"));
     let plan = (w.perception())
-        .craft_plan(
+        .craft_plan_en(
             recipe(&w, "kindle"),
             &[Some(0), Some(1), Some(fire), Some(crit)],
         )
@@ -264,12 +264,12 @@ fn the_seal_steps_follow_the_crystal_and_the_item() {
     let quicken = recipe(&w, "quicken");
     let words = |picks: &[Option<usize>], step: usize| -> Vec<String> {
         (view.craft_steps_given(quicken, picks)[step].options.iter())
-            .map(|o| o.name.clone())
+            .map(|o| o.short.clone())
             .collect()
     };
     let steps = view.craft_steps_given(quicken, &[]);
     assert_eq!(
-        (steps.iter().map(|s| s.label.as_str())).collect::<Vec<_>>(),
+        (steps.iter().map(|s| s.label_en())).collect::<Vec<_>>(),
         ["item", "crystal", "seal", "second seal", "third seal"]
     );
     // Before a crystal is picked, every colour carried; then the red's alone.
@@ -308,7 +308,7 @@ fn a_rares_quicken_takes_a_heart_crystal() {
     assert_eq!(w.state.time, before);
     item(&mut w, "heart_crystal", 1); // c
     let plan = (w.perception())
-        .craft_plan(recipe(&w, "quicken"), &[Some(0), Some(1)])
+        .craft_plan_en(recipe(&w, "quicken"), &[Some(0), Some(1)])
         .expect("a plan");
     assert_eq!(plan.uses, "a red crystal and a heart-crystal");
     for seed in 1..20 {
@@ -394,10 +394,10 @@ fn a_soul_fetter_keeps_one_affix_through_a_recast() {
     let view = w.perception();
     let steps = view.craft_steps_given(recipe(&w, "recast"), &[Some(0)]);
     let affix = steps.last().expect("a step");
-    assert_eq!(affix.label, "affix kept");
+    assert_eq!(affix.label_en(), "affix kept");
     let names: Vec<&str> = affix.options.iter().map(|o| o.short.as_str()).collect();
     assert_eq!(names, ["Sharp", "of the Bear"]);
-    let plan = (view.craft_plan(
+    let plan = (view.craft_plan_en(
         recipe(&w, "recast"),
         &[Some(0), Some(1), None, None, None, Some(0)],
     ))
@@ -423,7 +423,7 @@ fn imbues_seals_are_paid_by_the_first_crystal_of_their_colour() {
     let mana = family(&w, "mana");
     let fire = family(&w, "fire_damage");
     let plan = (w.perception())
-        .craft_plan(
+        .craft_plan_en(
             recipe(&w, "imbue"),
             &[Some(0), Some(1), Some(2), Some(2), Some(mana)],
         )
@@ -433,7 +433,7 @@ fn imbues_seals_are_paid_by_the_first_crystal_of_their_colour() {
         "a red crystal, a blue crystal, a blue crystal, and one more blue crystal, sealing out mana"
     );
     // Fire is the red's alone, and the red stack has nothing to spare.
-    let refused = (w.perception()).craft_plan(
+    let refused = (w.perception()).craft_plan_en(
         recipe(&w, "imbue"),
         &[Some(0), Some(1), Some(2), Some(2), Some(fire)],
     );

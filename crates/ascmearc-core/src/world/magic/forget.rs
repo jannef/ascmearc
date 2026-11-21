@@ -34,11 +34,10 @@ impl World {
         };
         me.set_spell_rank(spell, rank.saturating_sub(ranks).max(1));
         if caster == self.state.player {
-            // The spell's name is the data's text until it has a phrase (#1949).
             match content.spell_of(spell) {
-                Some(def) => {
-                    self.say(Msg::new(msg::magic::KNOW_LESS_WELL).role("spell", def.name.clone()))
-                }
+                Some(def) => self.say(
+                    Msg::new(msg::magic::KNOW_LESS_WELL).role("spell", content.spell_phrase(def)),
+                ),
                 None => self.say(msg::magic::KNOW_THE_SPELL_LESS_WELL),
             }
         }
@@ -77,8 +76,11 @@ impl World {
             }
         }
         if caster == self.state.player {
+            // Each said with its capital: an item of its own (`magic.spell_listed`).
             let names: Vec<Arg> = (gone.iter())
-                .filter_map(|&s| content.spell_of(s).map(|d| Arg::from(d.name.clone())))
+                .filter_map(|&s| content.spell_of(s))
+                .map(|d| Msg::new(msg::magic::SPELL_LISTED).role("spell", content.spell_phrase(d)))
+                .map(Arg::from)
                 .collect();
             self.say(Msg::new(msg::magic::FORGOTTEN).role("spells", Arg::List(names)));
         }

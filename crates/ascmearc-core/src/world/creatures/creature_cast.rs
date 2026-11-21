@@ -330,8 +330,7 @@ impl World {
             return;
         }
         let who = self.called_phrase(me);
-        // The spell's name is core's English, text until it is converted (#1949).
-        let name = def.name.to_lowercase();
+        let name = self.content.spell_phrase(def);
         let player = self.state.player;
         let them = (self.state.actors.get(&on))
             .filter(|a| on == player || self.perception.sees_actors_at(a.pos))
@@ -422,8 +421,7 @@ impl World {
                 .collect()
         };
         let content = self.content.clone();
-        let word = (content.status(status).seen.as_deref())
-            .map_or_else(|| fight::word("hexed"), fight::word);
+        let word = (content.seen_phrase(status)).unwrap_or_else(|| fight::word("hexed"));
         for target in caught {
             if !self.state.actors.contains_key(&target) || self.state.death.is_some() {
                 continue;

@@ -1,0 +1,33 @@
+# What saving and resuming say in the message log (`crates/ascmearc/src/save.rs`, `game.rs`).
+# Ids alphabetical.
+
+# A save that could not be resumed: `error`, why (the store's or the save's own words); `file`,
+# where the unusable save was kept.
+[could_not_read]
+text = "Could not read the save: {error:bare}."
+
+[could_not_resume]
+text = "Could not resume: {error:bare}."
+
+[could_not_resume_kept]
+text = "Could not resume: {error:bare}. The old save was kept as {file:bare}."
+
+[could_not_resume_left]
+text = "Could not resume: {error:bare}. The old save was left in place."
+
+[game_saved]
+text = "Game saved."
+
+[snapshot_loaded]
+text = "Snapshot loaded."
+
+[snapshot_saved]
+text = "Snapshot saved."
+
+# A save that failed: `error`, why (the store's own words).
+[try_again]
+text = "{error:bare} Try again."
+
+# A saved run resumed.
+[welcome_back]
+text = "Welcome back."

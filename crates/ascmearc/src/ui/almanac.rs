@@ -56,18 +56,18 @@ impl Almanac {
     /// world waits.`; out of the weather, `the air at 10 °C`. One sentence (`sentence`), its
     /// moon clause empty when it gives way.
     fn sentence(&self, moon: Option<&str>, sky: Option<Weather>, unit: TemperatureUnit) -> String {
-        let degrees = Arg::from(unit.show(self.temperature));
+        let degrees = Arg::text(unit.show(self.temperature));
         let air = match sky {
             Some(weather) => {
-                let sky = Arg::from(ui(sky_words(weather)));
+                let sky = Arg::text(ui(sky_words(weather)));
                 ui_with(T::AIR_SKY, &[("sky", sky), ("degrees", degrees)])
             }
             None => ui_with(T::AIR, &[("degrees", degrees)]),
         };
         let args = [
-            ("date", self.date.as_str().into()),
-            ("moon", moon.unwrap_or_default().into()),
-            ("air", air.into()),
+            ("date", Arg::text(self.date.as_str())),
+            ("moon", Arg::text(moon.unwrap_or_default())),
+            ("air", Arg::text(air)),
         ];
         ui_with(T::SENTENCE, &args)
     }
@@ -77,7 +77,7 @@ impl Almanac {
 fn date(month: &str, time: GameTime) -> String {
     let args = [
         ("day", Arg::Number(i64::from(time.day()))),
-        ("month", month.into()),
+        ("month", Arg::text(month)),
         ("year", Arg::Number(time.year() as i64)),
     ];
     ui_with(T::DATE, &args)
@@ -86,7 +86,7 @@ fn date(month: &str, time: GameTime) -> String {
 /// `, under a waxing gibbous moon`; with several moons, each by name (`, under Moon full and
 /// Ilse new`, joined by the language); `None` without moons.
 fn moon(moons: &[MoonDef], time: GameTime) -> Option<String> {
-    let phase = |m: &MoonDef| Arg::from(ui(words(MoonPhase::of(m.phase_at(time)))));
+    let phase = |m: &MoonDef| Arg::text(ui(words(MoonPhase::of(m.phase_at(time)))));
     match moons {
         [] => None,
         [moon] => Some(ui_with(T::MOON, &[("phase", phase(moon))])),
@@ -94,7 +94,7 @@ fn moon(moons: &[MoonDef], time: GameTime) -> Option<String> {
             let each = (moons.iter())
                 .map(|m| {
                     (Msg::new(MessageId::new(T::MOON_NAMED.id)))
-                        .role("name", m.name.as_str())
+                        .role("name", Arg::text(m.name.as_str()))
                         .role("phase", phase(m))
                         .into()
                 })

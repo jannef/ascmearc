@@ -37,7 +37,7 @@ use crate::content::{
 use crate::damage::Damage;
 use crate::dice::{Dice, Roll};
 use crate::geom::Pos;
-use crate::lang::Msg;
+use crate::lang::{Arg, Msg};
 use crate::msg;
 use crate::rng::draw;
 use crate::talent::TalentMods;
@@ -251,7 +251,6 @@ impl World {
         }
         let content = self.content.clone();
         let who = creature(content.creature(them.creature));
-        let def = content.status(status);
         let staggers = content.ids().staggered == Some(status);
         let from = match trigger {
             Trigger::Blocked => Some("shield"),
@@ -264,8 +263,9 @@ impl World {
             (false, None) => msg::combat::STATUS,
             (false, Some(_)) => msg::combat::STATUS_FROM,
         };
-        let seen = def.seen.clone().unwrap_or_else(|| def.name.to_lowercase());
-        let mut line = Msg::new(id).role("who", who).role("status", word(&seen));
+        let mut line = Msg::new(id)
+            .role("who", who)
+            .role("status", content.seen_or_name(status));
         if let Some(from) = from {
             line = line.role("from", word(from));
         }
@@ -309,7 +309,7 @@ impl World {
         let names = (
             creature(content.creature(me.creature)),
             creature(content.creature(them.creature)),
-            content.creature(them.creature).death_verb().to_string(),
+            content.creature(them.creature).dies_arg(),
         );
         let mut rng = draw!(self, "weapon_ability/harm/{}/{}", me.key, them.key);
         let amount: i32 = rolls.iter().map(|d| d.roll(&mut rng).max(0)).sum();
@@ -330,7 +330,7 @@ impl World {
             let mut made = Vec::new();
             let died = self.hurt(target, amount, super::fight::Harm::Actor(by), &mut made);
             if died && by == player && seen_them {
-                self.news.push(death_message(&end, &names.2));
+                self.news.push(death_message(&end, names.2.clone()));
             }
             if by != player || seen_them {
                 events.extend(made);
@@ -618,7 +618,7 @@ impl World {
             .filter(|(_, id)| !before.iter().any(|(_, b)| b == id))
             .map(|(skill, id)| {
                 let ability = content.weapon_ability(id);
-                let what = word(&ability.name.to_lowercase());
+                let what = content.weapon_ability_phrase(id);
                 let line = Msg::new(msg::combat::LEARNED_ABILITY).role("ability", what);
                 (skill, line, ability.active.is_some())
             })
@@ -632,7 +632,7 @@ impl World {
         let content = self.content.clone();
         let table = content.weapon_skills();
         let Some(id) = table.id(skill) else {
-            self.say(Msg::new(msg::combat::NO_WEAPON_SKILL).role("skill", skill));
+            self.say(Msg::new(msg::combat::NO_WEAPON_SKILL).role("skill", Arg::id(skill)));
             return Spent::Nothing;
         };
         let before = self.state.player().weapon_abilities(&content);

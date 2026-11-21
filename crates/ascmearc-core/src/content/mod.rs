@@ -42,6 +42,7 @@ mod crystal;
 mod damage_type;
 pub mod danger;
 pub mod data_line;
+pub mod data_word;
 mod decipher;
 #[cfg(test)]
 mod demon_roster_tests;
@@ -118,6 +119,7 @@ mod load_status;
 mod load_world;
 #[cfg(test)]
 mod loader_check_tests;
+mod magic_word;
 mod magic_worth;
 mod material;
 pub mod mimic;
@@ -155,6 +157,8 @@ mod ranged;
 mod recipe;
 #[cfg(test)]
 mod recipe_tests;
+#[cfg(test)]
+mod register_tests;
 pub mod required;
 mod resource;
 mod restock;
@@ -261,7 +265,7 @@ pub use background::{
     Points, Tier as StoryTier, Tiers, When,
 };
 pub use breath::Breath;
-pub use burial::{Burial, BurialStairs, DEFAULT_EPITAPH};
+pub use burial::{Burial, BurialStairs, EPITAPH_ROLES};
 pub use burst::{BurstWhen, CreatureBurst};
 pub use calendar::Calendar;
 pub use calling::CallingDef;
@@ -364,7 +368,7 @@ pub use mods::{ModStamp, describe as describe_mods};
 pub use monster_pool::{MonsterPool, VaultMonsters};
 pub use names::{NameLists, Names};
 pub use oath::{OathBand, OathRules, TREE as OATH_TREE};
-pub use object::{MAX_VALUE, ObjectDef, ObjectId, counted, weapon_noun};
+pub use object::{MAX_VALUE, ObjectDef, ObjectId, counted, weapon_noun, weapon_noun_phrase};
 pub use offer::TradeOffer;
 pub use outcome::{
     Amount, Explosion, Harmful, Near, OutcomeDef, OutcomeEffect, OutcomeKind, OutcomeSummon,
@@ -414,9 +418,7 @@ pub use scenario::ScenarioDef;
 pub use scroll::{Cleansing, Reading, SpellScroll};
 pub use scroll_label::ScrollLabelDef;
 pub use search::{PassiveSearch, SEARCH_TURNS, SearchRules, Secret, secret_look};
-pub use shop::{
-    KEEPER, Keeper, MAX_FAVOUR, MAX_SHOPS, MOST_FAVOUR, ShopDef, ShopId, ShopPlan, Shops,
-};
+pub use shop::{Keeper, MAX_FAVOUR, MAX_SHOPS, MOST_FAVOUR, ShopDef, ShopId, ShopPlan, Shops};
 pub use size::{MEDIUM, SizeDef};
 pub use skill::{OptionalSkill, SkillBook, SkillDef};
 pub use sky::{MoonDef, PHASE_ONE, STANDARD_SIZE};
@@ -1243,7 +1245,7 @@ impl Content {
             if let Some(first) = seen.insert(id.to_string(), path) {
                 return Err(duplicate_id("level", id, path, first));
             }
-            let level = level::parse_level(path, id, text, &content, &default_legend)?;
+            let level = level::parse_level(path, "level", id, text, &content, &default_legend)?;
             if !vault::parse_dungeons(path, text)?.is_empty() {
                 return Err(ContentError::new(
                     path,
@@ -1321,7 +1323,7 @@ impl Content {
             }
             // Its range first: the level parser would refuse a bad one without saying why.
             let danger = vault::parse_danger(path, text)?.unwrap_or_default();
-            let template = level::parse_level(path, id, text, &content, &default_legend)?;
+            let template = level::parse_level(path, "vault", id, text, &content, &default_legend)?;
             if template.burial.is_some() {
                 return Err(ContentError::new(
                     path,

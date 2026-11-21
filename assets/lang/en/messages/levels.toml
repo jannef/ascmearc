@@ -15,6 +15,8 @@
 already_on_dev = "You are on `{id:bare}` already."
 answer_first = "You must answer first."
 break_through_ice = "You break through the ice."
+# A level of a dungeon branch by its name: `branch`, the branch's name; `floor`, its number.
+branch_level = "{branch:bare} {floor:bare}"
 cannot_go = "You cannot go there ({error:bare})."
 cannot_go_dev = "You cannot go there: {error:bare}."
 cannot_go_that_way = "You can't go that way."
@@ -109,6 +111,8 @@ stand_ground = "You stand your ground."
 stone_grinds = "Somewhere stone grinds on stone."
 swallow_water = "You swallow water."
 talk_past = "You talk your way past."
+# The name of a Pit's mouth, where its stairs lead.
+the_pit = "the Pit"
 # A dev action's: `x`, `y` the centre.
 thaw_dev = "Heat melts the ice around {x:bare},{y:bare} (dev)."
 # The encounter's dialog text for a party met again: `told`, how it was met, and `known`, the

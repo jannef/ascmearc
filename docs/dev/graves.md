@@ -23,13 +23,17 @@ chain is found from the files, so a new crypt is one new file.
 [burial]
 chain = "lictun"        # the chain's id: the id of its depth-0 level, the churchyard
 depth = 3               # its place: 0 the churchyard, 1 the first crypt, 2 the second, ...
-epitaph = "Here lies {name}, {death}."   # optional; this is the default
+epitaph = "Here lies {name}, {death}."   # optional; the default is `fixtures.epitaph`
 ```
 
 `{name}` is the dead's name, race, and class ("Brakka the dwarf warrior", either word left out
 where unknown); `{death}` how and where they died, in the Graveyard screen's words with a lower
 case first letter ("killed by a kobold in Fyrdelf 3, The Ascmearc"; "taken before their time"
-when unknown). The epitaph must have `{name}`.
+when unknown). The epitaph must have `{name}` and names no other role; it is a line of data,
+`level:<id>.burial.epitaph`, and a fixed grave's words are `level:<id>.legend.<char>.epitaph`
+(`content/data_line.rs`), so `LevelState::graves` keeps each by its key and a save's graves read
+in any language (`docs/dev/localization.md` "Lines of data"). Who they were and how they died
+stay the graveyard's text.
 
 | Mark | Legend entry | Rules |
 |---|---|---|

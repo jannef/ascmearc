@@ -86,7 +86,7 @@ dev action `call:ID` (`Action::Call`, `World::call_dev`) ignores the level. The 
 in is a dialogue topic with `calls` (`World::ask_calling`, offered only while the calling is
 open; docs/dev/npcs.md "Callings by topic"): the Ascmearc's Strange Spirit, the test world's
 hermit. Draws: none of its
-own. Dumps: `stats` `Class Bard 30, Hunter 4` (`Character::class_text`), `progress` the calling
+own. Dumps: `stats` `Class Bard 30, Hunter 4` (`Character::class_arg`), `progress` the calling
 rows (`dump::calling_rows`), JSON `character.prestige`, `character.classes`, and `callings` with
 `--state`. Tests: `world/classes/calling_tests.rs` on a fixture (the class tables stripped, the bard
 capped at 12, the Warden prestige class of 5 levels and its calling in the showcase):

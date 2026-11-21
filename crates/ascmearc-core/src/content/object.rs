@@ -145,6 +145,12 @@ pub fn weapon_noun(def: &ObjectDef, content: &Content) -> Option<String> {
     Some(category_name(&skill.id).map_or_else(|| skill.name.to_lowercase(), str::to_string))
 }
 
+/// [`weapon_noun`] as a phrase: `weapon_noun:<weapon skill>` (`content/data_word.rs`).
+pub fn weapon_noun_phrase(def: &ObjectDef, content: &Content) -> Option<crate::lang::Phrase> {
+    let skill = content.weapon_skills().skill(def.skill?);
+    Some(crate::lang::Phrase::id(format!("weapon_noun:{}", skill.id)))
+}
+
 /// An object type as written in content files.
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]

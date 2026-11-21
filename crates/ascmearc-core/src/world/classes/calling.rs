@@ -19,9 +19,8 @@
 
 use crate::action::Event;
 use crate::content::{ActionKind, CallingDef, DialogueId, data_line};
-use crate::lang::Msg;
+use crate::lang::{Arg, Msg};
 use crate::msg;
-use crate::world::combat::fight;
 use crate::world::{ActorId, Spent, World};
 
 /// Where the player stands with a calling, for the dev `progress` dump.
@@ -136,7 +135,7 @@ impl World {
     pub(in crate::world) fn call_dev(&mut self, id: &str) -> Spent {
         let content = self.content.clone();
         if content.prestige(id).is_none() {
-            self.say(Msg::new(msg::classes::NO_PRESTIGE_CLASS_DEV).role("id", id));
+            self.say(Msg::new(msg::classes::NO_PRESTIGE_CLASS_DEV).role("id", Arg::id(id)));
             return Spent::Nothing;
         }
         let Some(character) = &self.state.character else {
@@ -145,7 +144,7 @@ impl World {
         };
         if let Some(held) = &character.prestige {
             let held = held.clone();
-            self.say(Msg::new(msg::classes::PRESTIGE_ALREADY_DEV).role("id", held));
+            self.say(Msg::new(msg::classes::PRESTIGE_ALREADY_DEV).role("id", Arg::id(held)));
             return Spent::Nothing;
         }
         let class = character.spec.class.clone();
@@ -153,8 +152,8 @@ impl World {
         else {
             self.say(
                 Msg::new(msg::classes::NO_CALLING_OPENS_DEV)
-                    .role("id", id)
-                    .role("class", fight::word(&class)),
+                    .role("id", Arg::id(id))
+                    .role("class", content.class_phrase(&class)),
             );
             return Spent::Nothing;
         };

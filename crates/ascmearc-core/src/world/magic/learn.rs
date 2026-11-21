@@ -58,7 +58,7 @@ use crate::content::{
     ObjectId, SpellId, StudyRules, data_line,
 };
 use crate::geom::Dir;
-use crate::lang::{MessageId, Msg};
+use crate::lang::{Arg, MessageId, Msg};
 use crate::msg;
 use crate::rng::draw;
 use crate::skills::{Effect, Use};
@@ -230,10 +230,10 @@ impl World {
         // A spell known is read for its next rank; at the last there is nothing to read for.
         let rank = me.rank_sought(&content, spell);
         if me.knows_spell(&content, spell) && rank.is_none() {
-            // The spell's name is the data's text until it has a phrase (#1949).
             match content.spell_of(spell) {
                 Some(def) => {
-                    self.say(Msg::new(msg::magic::KNOW_ALL_OF).role("spell", def.name.clone()));
+                    let spell = content.spell_phrase(def);
+                    self.say(Msg::new(msg::magic::KNOW_ALL_OF).role("spell", spell));
                 }
                 None => self.say(msg::magic::KNOW_ALL_OF_THIS_SPELL),
             }
@@ -280,7 +280,7 @@ impl World {
             Ended::Died => {}
             _ if left.get() == 0 => self.finish_study(lesson, events),
             Ended::Came(came) => {
-                let came = self.came_line(came);
+                let came = self.came_msg(came);
                 self.say(Msg::new(msg::magic::READ_BROKEN_BY).role("came", came));
             }
             Ended::Said | Ended::Done => self.say(msg::magic::STOP_READING),
@@ -367,9 +367,15 @@ impl World {
         self.say(msg::magic::GRIMOIRE_CRUMBLES);
     }
 
+    /// `spell` by its name (`spell:<id>`); nothing for a spell the content lacks.
+    fn spell_name(&self, spell: SpellId) -> Arg {
+        (self.content.spell_of(spell))
+            .map_or_else(Arg::empty, |d| self.content.spell_phrase(d).into())
+    }
+
     /// The player knows `spell` at `rank` from now on (module docs: "Deepening").
     fn deepen_spell(&mut self, spell: SpellId, rank: u8) {
-        let name = (self.content.spell_of(spell)).map_or_else(String::new, |d| d.name.clone());
+        let name = self.spell_name(spell);
         self.player_mut().set_spell_rank(spell, rank);
         self.say(
             Msg::new(msg::magic::WORDS_SETTLE_DEEPER)
@@ -383,7 +389,7 @@ impl World {
     /// A forgotten spell (`spell_rank.rs`) is learned again as if for the first time, its
     /// experience paid again: there is no guard against it (#1289).
     pub(super) fn learn_spell(&mut self, spell: SpellId) {
-        let name = (self.content.spell_of(spell)).map_or_else(String::new, |d| d.name.clone());
+        let name = self.spell_name(spell);
         let new = !self.state.player().knows_spell(&self.content, spell);
         if new {
             self.player_mut().set_spell_rank(spell, 1);

@@ -1,5 +1,6 @@
 //! Traps.
 
+use super::util::time_words;
 use super::util::{Term, anchored, article, capital, percent_of, signed};
 use ascmearc_core::check;
 use ascmearc_core::content::{Bolt, Burst, BurstIce, Content, RigTakes, TrapEffect, TrapNoise};
@@ -96,14 +97,14 @@ pub(super) fn rigs(content: &Content) -> String {
             Some(n) => format!("a wall within {n} cells of the cell, in a straight line"),
             None => "—".to_string(),
         };
-        let time = Duration::seconds(u64::from(rig.seconds)).spoken();
+        let time = time_words(Duration::seconds(u64::from(rig.seconds)));
         let _ = writeln!(
             out,
             "| {} | [{}](#trap-{}) | {} | {time} | {goes_off} | {damage} | {needs} |",
             rig.name,
             capital(&trap.name),
             trap.id.replace('_', "-"),
-            capital(&takes_words(content, rig)),
+            content.english_word(takes_words(content, rig), "Bare"),
         );
     }
     let _ = writeln!(

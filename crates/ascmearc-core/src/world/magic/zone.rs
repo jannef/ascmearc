@@ -43,12 +43,13 @@ use crate::combat::Strike;
 use crate::content::{BurstIce, Content, LightId, Shape, SpellId, ZoneKind};
 use crate::damage::Damage;
 use crate::geom::Pos;
-use crate::lang::Msg;
+use crate::lang::{Arg, Msg};
 use crate::light::Light;
 use crate::msg;
 use crate::rng::draw;
 use crate::stats::Stat;
 use crate::time::{Duration, GameTime};
+use crate::world::combat::fight::{Verb, Words};
 use crate::world::{ActorId, Cause, LevelState, Spent, World};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
@@ -275,7 +276,7 @@ impl World {
         (at, range, radius): (Pos, i32, i32),
         events: &mut Vec<Event>,
     ) -> bool {
-        if !self.can_loose_here() || !self.within_reach(at, range, "cast") {
+        if !self.can_loose_here() || !self.within_reach(at, range, crate::msg::combat::AIM_CAST) {
             return false;
         }
         let here = self.player_pos();
@@ -321,7 +322,7 @@ impl World {
         self.lay_cells((kind, by, harm, None), cells, seconds, events);
         self.say(
             Msg::new(msg::magic::ZONE_DEV)
-                .role("kind", kind.id())
+                .role("kind", Arg::id(kind.id()))
                 .role("x", i64::from(at.x))
                 .role("y", i64::from(at.y)),
         );
@@ -431,10 +432,11 @@ impl World {
             )
         });
         let spell = zone.spell.and_then(|s| content.spell_of(s));
-        let (noun, verb) = spell.map_or(("fire", "burns"), |s| {
-            (s.look.noun.as_str(), s.look.verb.as_str())
-        });
-        self.say_spell((noun, verb), made, events);
+        let words = spell.map_or_else(
+            || Words::named("fire", Verb::Burns, &content),
+            |s| Words::of_spell(s, &content),
+        );
+        self.say_spell(words, made, events);
         if id == self.state.player
             && id == zone.by
             && let (Some(death), Some(spell)) = (&mut self.state.death, zone.spell)

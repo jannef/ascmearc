@@ -14,12 +14,12 @@
 //! snapshot when it opens; no game time passes while it is open, so it cannot go stale.
 //!
 //! Its words are `assets/lang/en/ui/magic_screen.toml` (`T::…`, [`super::text`]); the styles'
-//! and spells' names are the data's.
+//! and spells' names are their lexicon ids as labels (`text::label`).
 
 use super::abilities_screen::{needs, spell_head};
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::screens::ScreenAction;
-use super::text::{magic_screen as T, ui, ui_with};
+use super::text::{label, magic_screen as T, ui, ui_with};
 use super::weapon_skills_screen::{BAR, IN_USE, draw_bar};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::render::console::Console;
@@ -132,7 +132,7 @@ impl MagicScreen {
         }
         let close = ui(T::CLOSE);
         let footer = if most > 0 {
-            let scroll = ui_with(T::SCROLL, &[("keys", HINTS.up_down().into())]);
+            let scroll = ui_with(T::SCROLL, &[("keys", Arg::text(HINTS.up_down()))]);
             format!("{scroll}   {close}")
         } else {
             close
@@ -148,7 +148,7 @@ fn rows(view: &PerceptionView<'_>) -> Vec<Row> {
     let own = view.own_weapon_skills();
     let in_use = view.own_styles_in_use();
     let skill = |id| Row::Skill {
-        name: table.skill(id).name.clone(),
+        name: label(content.weapon_skill_phrase(id)),
         rank: own.rank(id),
         filled: (own.progress(table, id)).map(|(marks, need)| marks * BAR / need.max(1)),
         in_use: in_use.contains(&id),
@@ -160,10 +160,11 @@ fn rows(view: &PerceptionView<'_>) -> Vec<Row> {
                 let detail = if needs(a.aim(content)).is_empty() {
                     head
                 } else {
-                    ui_with(T::AIMED, &[("cost", head.into())])
+                    ui_with(T::AIMED, &[("cost", Arg::text(head))])
                 };
                 Some(Row::Spell {
-                    name: a.name(content).to_string(),
+                    name: (content.spell_of(spell))
+                        .map_or_else(String::new, |s| label(content.spell_phrase(s))),
                     rank: view.own_spell_rank(spell).unwrap_or(1),
                     detail,
                 })

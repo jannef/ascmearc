@@ -22,7 +22,7 @@ use super::cursor;
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::ScreenAction;
-use super::text::{UiText, equipment_screen as T, ui, ui_with};
+use super::text::{UiText, equipment_screen as T, label, ui, ui_msg, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM, rarity_color};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
@@ -62,7 +62,7 @@ impl Item {
         Self {
             glyph: def.glyph,
             fg: stack.fg(content),
-            name: view.lore().listed(stack),
+            name: ui_msg(view.lore().listed(stack)),
             weight: stack.weight(content),
             rarity: stack.rarity(),
             cursed: stack.known_cursed(content),
@@ -80,7 +80,7 @@ impl Item {
         let name = match text.note {
             Some((note, args)) => {
                 let mut args = args.to_vec();
-                args.push(("name", self.name.clone().into()));
+                args.push(("name", Arg::text(self.name.clone())));
                 ui_with(note, &args)
             }
             None => self.name.clone(),
@@ -155,12 +155,12 @@ impl EquipmentScreen {
     pub fn refresh(&mut self, view: &PerceptionView<'_>) {
         let worn = view.equipment();
         self.rows = (view.own_slots().into_iter())
-            .map(|(slot, def)| {
+            .map(|(slot, _)| {
                 let item = worn.get(slot);
                 let slots = item.map_or(Vec::new(), |i| worn.slots_of(i));
                 SlotRow {
                     slot,
-                    name: def.name.clone(),
+                    name: label(view.content().slot_phrase(slot)),
                     item: (item.and_then(|i| view.inventory().get(i))).map(|s| Item::of(s, view)),
                     held: item,
                     both_hands: slots.len() > 1,
@@ -261,7 +261,7 @@ impl EquipmentScreen {
                 }
                 None => {
                     let empty = match &row.barred {
-                        Some(mark) => ui_with(T::BARRED, &[("mark", mark.clone().into())]),
+                        Some(mark) => ui_with(T::BARRED, &[("mark", Arg::text(mark.clone()))]),
                         None => "—".into(),
                     };
                     console.print_in(item_x + 2, y, &empty, TEXT_DIM, right - item_x - 2);
@@ -282,7 +282,7 @@ impl EquipmentScreen {
         }
         let y = panel.y + panel.h - 4;
         if fits(y) && y > panel.y + 1 + count {
-            let weight = |grams| Arg::from(format_weight(grams));
+            let weight = |grams| Arg::text(format_weight(grams));
             let summary = format!(
                 "{}   ·   {}",
                 ui_with(T::CARRYING, &[("weight", weight(self.weight.carried))]),
@@ -297,9 +297,9 @@ impl EquipmentScreen {
             console.print_in(x, y, &summary, TEXT, panel.inner_w());
         }
         let last = letter(self.rows.len().saturating_sub(1)).unwrap_or('a');
-        let lower = ui_with(T::CHOOSE_SLOT, &[("last", last.to_string().into())]);
+        let lower = ui_with(T::CHOOSE_SLOT, &[("last", Arg::text(last.to_string()))]);
         let upper = last.to_ascii_uppercase().to_string();
-        let upper = ui_with(T::LOOK, &[("last", upper.into())]);
+        let upper = ui_with(T::LOOK, &[("last", Arg::text(upper))]);
         let close = ui(T::ESC_CLOSE);
         panel.footer(console, &format!("{lower}   {upper}   {close}"));
     }
@@ -312,7 +312,7 @@ struct Choice {
     item: usize,
     shown: Item,
     /// What the inventory says of it if it is worn or wielded: "(being worn)".
-    mark: Option<String>,
+    mark: Option<Arg>,
     /// It is what the slot holds: choosing it takes it off.
     here: bool,
 }
@@ -320,9 +320,9 @@ struct Choice {
 /// Choosing what goes in one slot, opened from the equipment screen.
 #[derive(Debug)]
 pub struct ItemScreen {
-    /// The slot's id (for the action) and name (the title).
+    /// The slot's id (for the action) and name (the title; `slot:<id>`, nothing outside a run).
     slot: String,
-    name: String,
+    name: Arg,
     /// How the slot is used: what putting on and taking off are called there (`verbs`).
     kind: ActionKind,
     /// What fits, grouped by class and paged (`paged_list`); its cursor is the `>` row.
@@ -341,7 +341,7 @@ impl ItemScreen {
     pub fn new(view: Option<&PerceptionView<'_>>, slot: SlotId) -> Self {
         let mut screen = Self {
             slot: String::new(),
-            name: String::new(),
+            name: Arg::text(""),
             kind: ActionKind::Wear,
             choices: PagedList::empty(),
             rows: 0,
@@ -357,7 +357,7 @@ impl ItemScreen {
         let def = content.slot(slot);
         let worn = view.equipment();
         screen.slot = def.id.clone();
-        screen.name = def.name.clone();
+        screen.name = content.slot_phrase(slot).into();
         screen.kind = def.action;
         // A slot the body bars takes nothing (`world/items/body_slots.rs`).
         screen.barred = view.barred_words(slot);
@@ -436,7 +436,7 @@ impl ItemScreen {
         // equipment screen beneath at least. A page takes what rows the console has for it.
         self.fit(console.cols(), console.rows());
         let count = self.choices.tallest().max(self.rows).max(1) as i32;
-        let title = ui_with(T::TITLE_CHOICE, &[("slot", self.name.clone().into())]);
+        let title = ui_with(T::TITLE_CHOICE, &[("slot", self.name.clone())]);
         let title = format!(" {title} ");
         let panel = Panel::new(console, &title, WIDTH, count + 7);
         self.choices.draw_label(console, &panel);
@@ -469,7 +469,7 @@ impl ItemScreen {
             // `b - [ an iron helm (being worn)    1.5 kg`, the page's letter.
             let label = format!("{letter} -");
             console.print(x + 2, y, &label, color);
-            let mark = (choice.mark.clone()).map(|m| [("mark", Arg::from(m))]);
+            let mark = (choice.mark.clone()).map(|m| [("mark", m)]);
             let note = (mark.as_ref()).map(|args| (T::NAME_MARKED, &args[..]));
             let text = Text { color, note };
             choice.shown.draw(console, (x + 6, y), right, true, text);
@@ -480,12 +480,12 @@ impl ItemScreen {
             console.print_in(x, y, &ui(take_off), TEXT_DIM, panel.inner_w());
         }
         let keys = HINTS;
-        let confirm = ("confirm", Arg::from(keys.confirm));
-        let verb = ("verb", Arg::from(ui(put_on)));
+        let confirm = ("confirm", Arg::text(keys.confirm));
+        let verb = ("verb", Arg::text(ui(put_on)));
         let choose = match self.choices.last_letter() {
             Some('a') => ui_with(T::USE_A, &[confirm, verb]),
             Some(last) => {
-                let last = ("last", last.to_string().into());
+                let last = ("last", Arg::text(last.to_string()));
                 ui_with(T::USE_LETTERS, &[last, confirm, verb])
             }
             None => ui_with(T::USE_NONE, &[confirm, verb]),

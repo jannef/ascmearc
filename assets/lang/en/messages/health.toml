@@ -1,14 +1,15 @@
-# Health (`world/health/`): statuses, diseases, healing, hunger, eating, drinking, pipes, flasks, and
-# how the player dies of hunger, choking, or drowning (`Cause::message`, `world/combat/fight.rs`).
-# Ids alphabetical (`docs/dev/localization.md` "Literal lines"). What the data writes (a status's
-# start and end lines, a corpse's `on_eat` message) is said by its key in the data, not here
-# (`docs/dev/localization.md` "Lines of data").
+# Health (`world/health/`): statuses, diseases, healing, hunger, eating, drinking, pipes, flasks,
+# and how the player dies of hunger, choking, or drowning (`Cause::message`,
+# `world/combat/fight.rs`). Ids alphabetical (`docs/dev/localization.md` "Literal lines"). What the
+# data writes (a status's start and end lines, a corpse's `on_eat` message) is said by its key in
+# the data, not here (`docs/dev/localization.md` "Lines of data").
 #
 # Roles: `who` is the one a line is about, `what` an item (a phrase built where it is said),
 # `status` a status as it looks ("dazed"), `came` the clause that says what stopped a long action
-# ("A kobold comes into view"), `time` how long it went on ("3 minutes"), `disease` a disease with
-# whose it is. `feel`, `more`, `doing`, and `what` in `gift_passes` are core's English words, text
-# until they are converted.
+# ("A kobold comes into view"), `time` how long it went on ("3 minutes", a `words.toml` message),
+# `disease` a disease with whose it is. `feel` and `more` are a stat's comparative and `what` in
+# `gift_passes` its gift, words core picks (`words.toml`); `doing` is core's English word, text
+# until it is converted.
 
 blink_elsewhere = "In a blink, you are elsewhere."
 break_free = "You break free."
@@ -30,7 +31,7 @@ crash_of_glass = "You hear a crash of glass."
 # A drain that took from no stat.
 deathly_chill = "A deathly chill passes through you."
 die = "You die..."
-# `stat`: the stat a drain took from, lower case ("strength"), core's word.
+# `stat`: the stat a drain took from ("strength").
 drained = "You feel your {stat:bare} drain away!"
 draught_kept = "There is enough left in the flask for another draught."
 drink = "You drink {what:the}."
@@ -41,6 +42,21 @@ ease_somewhat = "You ease {disease:the} somewhat."
 eat = "You eat {what:the}."
 eat_your_fill = "You eat your fill; the rest does you no good."
 elixir_no_difference = "You feel no different."
+# How the death screen says a death that was neither a creature's doing nor a status effect's
+# (`Cause::epitaph`): `what`, the meal choked on or their own scroll or flask (`object:<id>`);
+# `trap`, the trap (`trap:<id>`); `noun`, their own spell's look noun ("bolt"); `spell`, the
+# spell they miscast (`spell:<id>`).
+epitaph_altar = "Struck down at a forgotten altar"
+epitaph_choked = "Choked to death on {what:a}"
+epitaph_drowned = "Drowned in deep water"
+epitaph_fall = "Fell through a collapsed floor"
+epitaph_fire = "Burned to death"
+epitaph_miscast = "Killed by their own miscast {spell:bare}"
+epitaph_own = "Killed by their own {what:bare}"
+epitaph_own_spell = "Killed by their own {noun:bare}"
+epitaph_profane = "Taken by the Profane"
+epitaph_starvation = "Starved to death"
+epitaph_trap = "Killed by {trap:a}"
 # `feel`: the stat's comparative ("stronger").
 elixir_rise = "You feel {feel:bare}."
 elixir_rise_yet = "You feel {feel:bare}, and that you could be {feel:bare} yet."
@@ -54,6 +70,12 @@ feel_healthy = "You feel healthy."
 feel_satiated = "You feel satiated."
 feel_whole = "You feel whole."
 fills_you = "It fills you as a good meal would."
+# How fresh food looks to a trained eye (`rot::Stage::word`) or smells to a hound's nose
+# (`Freshness::word`), a word said in a screen's or the look line's clause.
+food_fresh = "fresh"
+food_old = "old"
+food_rotten = "rotten"
+food_turning = "turning"
 getting_hungry = "You are getting hungry."
 # `what`: the stat's word ("strength", "nimbleness").
 gift_passes = "Something of its {what:bare} passes into you."
@@ -111,6 +133,12 @@ struggle_free = "You struggle, but cannot break free."
 struggle_held = "You struggle, but {who:the} holds you fast."
 struggle_still = "You struggle, but you are still {status:bare}."
 tastes_foul = "It tastes foul!"
+# What the Heal ability offers to treat, an option of its choice: `ailment` a status or a
+# disease as the player knows it (an ally's with its owner, "Your wolf's bleeding"); `way` the
+# compass word to that ally ("east"), when two beside them go by the same name.
+treat_ally = "{ailment:The}"
+treat_ally_way = "{ailment:The} ({way:bare})"
+treat_own = "{ailment:Bare}"
 throw_flask = "You throw {what:the}."
 ugh_rotten = "Ugh! {what:The} was rotten."
 vomit = "You vomit!"
@@ -120,3 +148,9 @@ weak_from_hunger = "You feel weak from hunger. You should eat soon."
 # `who`: a creature.
 wounds_close = "{who:Poss} wounds close."
 wounds_close_you = "You feel your wounds close."
+
+# `what`: the food rotted away, the player's, by its name (`object:<id>`); `count` how many.
+[rotted_away]
+by = "count.number"
+one = "Your {what:bare} has rotted away."
+many = "Your {count} {what:plural} have rotted away."

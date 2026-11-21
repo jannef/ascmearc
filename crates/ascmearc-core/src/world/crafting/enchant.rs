@@ -51,7 +51,10 @@
 //! [`Action::Craft`]: crate::action::Action::Craft
 
 use super::craft::RecipeLack;
-use super::craft_make::{CraftOption, CraftPlan, CraftStep, CraftStepKind, MAX_PICKS};
+use super::craft_make::{
+    CraftOption, CraftPlan, CraftStep, CraftStepKind, MAX_PICKS, about, counted_msg, list,
+    own_verb, the_msg, uses_msg,
+};
 use super::seal;
 use super::temper::WITHSTOOD;
 use super::work::{Job, Task};
@@ -71,7 +74,6 @@ use crate::rng::draw;
 use crate::scroll_label::Lore;
 use crate::skills::{Effect, MAX_ENCHANT_LEVEL, Use};
 use crate::stats::Stat;
-use crate::time::Duration;
 use crate::world::combat::item_damage::Harmed;
 use crate::world::{Actor, LevelState, Spent, World};
 
@@ -109,24 +111,22 @@ const SMALL: MessageId = msg::crafting::WOULD_NOT_HOLD_SO_MUCH;
 /// The fewest affixes a rare holds, and so the capacity Imbue and Ennoble want.
 const RARE_LEAST: u8 = 3;
 
-/// The words of what `kind` works on, the row's: "a plain item".
-fn item_words(kind: EnchantKind) -> &'static str {
+/// What `kind` works on, the row's words: "a plain item" (`crafting.takes_*_item`).
+fn item_words(kind: EnchantKind) -> MessageId {
     match kind {
-        EnchantKind::Kindle | EnchantKind::Imbue => "a plain item",
+        EnchantKind::Kindle | EnchantKind::Imbue => msg::crafting::TAKES_PLAIN_ITEM,
         EnchantKind::Quicken | EnchantKind::Recast | EnchantKind::Ennoble | EnchantKind::Unbind => {
-            "a magic item"
+            msg::crafting::TAKES_MAGIC_ITEM
         }
     }
 }
 
 /// What a recipe of `kind` taking `crystals` takes, before its time, in the row's words: "a
-/// plain item, a crystal".
-pub(super) fn takes(kind: EnchantKind, crystals: u8) -> Vec<String> {
-    let mut words = vec![item_words(kind).to_string()];
-    match crystals {
-        0 => {}
-        1 => words.push("a crystal".into()),
-        n => words.push(format!("{n} crystals")),
+/// plain item", "a crystal" (`crafting.takes_crystals`).
+pub(super) fn takes(kind: EnchantKind, crystals: u8) -> Vec<Msg> {
+    let mut words = vec![item_words(kind).into()];
+    if crystals > 0 {
+        words.push(Msg::new(msg::crafting::TAKES_CRYSTALS).role("n", i64::from(crystals)));
     }
     words
 }
@@ -251,7 +251,7 @@ pub(super) fn steps(
         .collect::<Vec<_>>();
     let mut steps = vec![CraftStep {
         kind: CraftStepKind::Item,
-        label: "item".into(),
+        label: super::craft_make::step_word("item"),
         optional: false,
         options: items,
     }];
@@ -265,7 +265,7 @@ pub(super) fn steps(
         };
         steps.push(CraftStep {
             kind: CraftStepKind::Input,
-            label: label.into(),
+            label: super::craft_make::step_word(label),
             optional: false,
             options: crystals.clone(),
         });
@@ -557,14 +557,9 @@ fn reach(content: &Content, player: &Actor) -> u8 {
     u8::try_from(value.clamp(1, MAX_ENCHANT_LEVEL)).unwrap_or(1)
 }
 
-/// "the long sword", "the arrows": `stack` named as the work speaks of it.
-/// A known rare by its name: "the Grim Bite".
-fn the(content: &Content, lore: Lore<'_>, stack: &Stack) -> String {
-    content.english_of(&item_phrase(lore, stack), "the")
-}
-
-/// [`the`]'s phrase, said `{item:the}`: one by its title (a known rare by its name), several
-/// by what they are called as made.
+/// `stack` named as the work speaks of it, said `{item:the}` ("the long sword", "the arrows"):
+/// one by its title (a known rare by its name, "the Grim Bite"), several by what they are
+/// called as made.
 fn item_phrase(lore: Lore<'_>, stack: &Stack) -> Phrase {
     match stack.count {
         1 => lore.title_phrase(stack),
@@ -575,12 +570,18 @@ fn item_phrase(lore: Lore<'_>, stack: &Stack) -> Phrase {
 /// What the work `resolved` uses, in words, in order (the order of the crystals matters to
 /// Imbue): "a red crystal", "a red crystal, a red crystal, and a blue crystal", then the seals'
 /// crystals, the heart-crystal, the soul-fetter with what it keeps, and what the seals shut out:
-/// "a red crystal and one more red crystal, sealing out fire".
-fn uses_words(content: &Content, lore: Lore<'_>, player: &Actor, resolved: &Resolved) -> String {
+/// "a red crystal and one more red crystal, sealing out fire" (`crafting.plan_uses`,
+/// `plan_uses_sealing`, `plan_sealing`; the families the crystals table's words, `word:` phrases);
+/// `None` for nothing (Unbind).
+fn uses_words(
+    content: &Content,
+    lore: Lore<'_>,
+    player: &Actor,
+    resolved: &Resolved,
+) -> Option<Msg> {
     let pack = &player.inventory;
-    let mut words: Vec<String> = (resolved.crystals.iter())
-        .map(|&at| lore.describe(&pack[at].single()))
-        .collect();
+    let single = |at: usize| counted_msg(lore.phrase(&pack[at].single()));
+    let mut words: Vec<Msg> = resolved.crystals.iter().map(|&at| single(at)).collect();
     let mut more: Vec<(usize, u32)> = Vec::new();
     for &at in &resolved.spent {
         if Some(at) == resolved.heart || Some(at) == resolved.fetter {
@@ -592,37 +593,37 @@ fn uses_words(content: &Content, lore: Lore<'_>, player: &Actor, resolved: &Reso
         }
     }
     for (at, n) in more {
-        words.push(match n {
-            1 => format!("one more {}", lore.title(&pack[at].single())),
-            n => format!(
-                "{} more {}",
-                crate::text::number_word(n as usize),
-                lore.names(&pack[at]).1
-            ),
-        });
+        let what = match n {
+            1 => lore.title_phrase(&pack[at].single()),
+            _ => lore.names_phrase(&pack[at]),
+        };
+        let more = Msg::new(msg::crafting::PLAN_MORE).role("n", i64::from(n));
+        words.push(more.role("what", what));
     }
     if let Some(at) = resolved.heart {
-        words.push(lore.describe(&pack[at].single()));
+        words.push(single(at));
     }
     if let (Some(at), Some(k)) = (resolved.fetter, resolved.kept) {
         let item = &pack[resolved.item];
         let affix = (item.magic().and_then(|m| m.affixes.get(k)))
-            .and_then(|a| content.affixes().get(&a.id))
-            .map_or(String::new(), |d| d.name.clone());
-        words.push(format!(
-            "{} (keeping {affix})",
-            lore.describe(&pack[at].single())
-        ));
+            .filter(|a| content.affixes().get(&a.id).is_some())
+            .map_or(Arg::empty(), |a| {
+                Phrase::id(format!("affix:{}", a.id)).into()
+            });
+        let keeping = Msg::new(msg::crafting::PLAN_KEEPING)
+            .role("what", lore.phrase(&pack[at].single()))
+            .role("affix", affix);
+        words.push(keeping);
     }
-    let mut text = crate::text::and_list(&words);
-    if !resolved.seals.is_empty() {
-        let shut = seal::words(content, &resolved.seals);
-        text = match text.is_empty() {
-            true => format!("sealing out {shut}"),
-            false => format!("{text}, sealing out {shut}"),
-        };
+    if resolved.seals.is_empty() {
+        return uses_msg(words);
     }
-    text
+    let shut = seal::words(content, &resolved.seals);
+    Some(match words.is_empty() {
+        true => Msg::new(msg::crafting::PLAN_SEALING).role("shut", shut),
+        false => (Msg::new(msg::crafting::PLAN_USES_SEALING).role("items", list(words)))
+            .role("shut", shut),
+    })
 }
 
 /// What working `recipe` with `picks` would do and use, in words (the dialog's), or why not.
@@ -632,22 +633,16 @@ pub(super) fn plan(
     player: &Actor,
     recipe: &RecipeDef,
     picks: &[Option<usize>],
-) -> Result<CraftPlan, String> {
-    let resolved = resolve(content, player, recipe, picks)
-        .map_err(|why| super::craft_make::english(content, why))?;
+) -> Result<CraftPlan, Msg> {
+    let resolved = resolve(content, player, recipe, picks)?;
     let seconds = work_seconds(content, recipe, resolved.seals.len());
+    let item = item_phrase(lore, &player.inventory[resolved.item]);
     Ok(CraftPlan {
-        verb: recipe.verb.clone().unwrap_or_else(|| recipe.name.clone()),
-        name: the(content, lore, &player.inventory[resolved.item]),
+        verb: own_verb(content, recipe),
+        name: the_msg(item),
         uses: uses_words(content, lore, player, &resolved),
         station: None,
-        time: format!(
-            "about {}",
-            Duration::seconds(u64::from(super::mastery::craft_seconds(
-                content, player, seconds
-            )))
-            .spoken()
-        ),
+        time: about(super::mastery::craft_seconds(content, player, seconds)),
     })
 }
 

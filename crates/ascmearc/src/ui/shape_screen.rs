@@ -10,7 +10,7 @@
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::ScreenAction;
-use super::text::{shape_screen as T, ui, ui_with};
+use super::text::{label, shape_screen as T, ui, ui_msg, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::Bindings;
 use crate::render::console::Console;
@@ -58,15 +58,15 @@ impl ShapeScreen {
                     id: def.id.clone(),
                     glyph: def.glyph,
                     fg: stack.fg(content),
-                    name: view.lore().listed(&stack),
+                    name: ui_msg(view.lore().listed(&stack)),
                     weight: stack.weight(content),
                 };
                 Some((def.skill?, shape))
             })
             .collect();
-        let skills = content.weapon_skills();
+
         Self {
-            shapes: PagedList::grouped(rows, |skill| skills.skill(skill).name.clone()),
+            shapes: PagedList::grouped(rows, |skill| label(content.weapon_skill_phrase(skill))),
         }
     }
 
@@ -151,12 +151,12 @@ impl ShapeScreen {
             console.print(weight_x, y, &weight, TEXT_DIM);
         }
         let keys = HINTS;
-        let confirm = ("confirm", Arg::from(keys.confirm));
+        let confirm = ("confirm", Arg::text(keys.confirm));
         let choose = match self.shapes.last_letter() {
             Some('a') => ui_with(T::CALL_A, &[confirm]),
             Some(last) => ui_with(
                 T::CALL_LETTERS,
-                &[("last", last.to_string().into()), confirm],
+                &[("last", Arg::text(last.to_string())), confirm],
             ),
             None => ui_with(T::CALL_NONE, &[confirm]),
         };

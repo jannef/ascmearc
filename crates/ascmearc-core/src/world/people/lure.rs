@@ -32,7 +32,7 @@
 use super::escort_waits::spot;
 use crate::content::{CombatStance, CreatureSpawn, QuestId, data_line};
 use crate::equipment::Equipment;
-use crate::lang::{Msg, Phrase};
+use crate::lang::{Arg, Msg, Phrase};
 use crate::msg;
 use crate::skills::SkillId;
 use crate::world::levels::travel::make_creature;
@@ -132,11 +132,11 @@ impl World {
         let content = self.content.clone();
         let def = (content.quest_id(id)).map(|q| content.quest(q));
         let Some((def, (creature, ..))) = def.and_then(|d| Some((d, d.lure()?))) else {
-            self.say(Msg::new(msg::people::NO_LURE_QUEST_DEV).role("id", id));
+            self.say(Msg::new(msg::people::NO_LURE_QUEST_DEV).role("id", Arg::id(id)));
             return Spent::Nothing;
         };
         if !self.state.quests.is_active(def) {
-            self.say(Msg::new(msg::people::NOT_UNDER_WAY_DEV).role("quest", def.name.as_str()));
+            self.say(Msg::new(msg::people::NOT_UNDER_WAY_DEV).role("quest", def.name_arg()));
             return Spent::Nothing;
         }
         let here = self.state.current_level.clone();

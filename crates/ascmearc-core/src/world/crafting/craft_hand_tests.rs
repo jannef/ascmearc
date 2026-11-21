@@ -144,7 +144,7 @@ fn the_stock_follows_the_bases_weight_as_the_design_counts_it() {
         let mut w = world();
         stock(&mut w, "wood", 20);
         let steps = w.perception().craft_steps(recipe(&w, id));
-        assert_eq!(steps[1].label, "haft");
+        assert_eq!(steps[1].label_en(), "haft");
         assert_eq!(steps[1].options[0].takes, count, "{id}");
     }
 }
@@ -157,7 +157,7 @@ fn the_spear_steps_are_the_head_then_the_haft_of_another_professions_stock() {
     stock(&mut w, "flint", 1);
     let steps = w.perception().craft_steps(recipe(&w, "spear"));
     let shown: Vec<(&str, Vec<usize>)> = (steps.iter())
-        .map(|s| (s.label.as_str(), s.options.iter().map(|o| o.at).collect()))
+        .map(|s| (s.label_en(), s.options.iter().map(|o| o.at).collect()))
         .collect();
     // The smith's head takes the iron, never the flint; the haft the wood, Woodcraft's stock on
     // a Metalcraft recipe; then the inlay, none carried.
@@ -167,7 +167,7 @@ fn the_spear_steps_are_the_head_then_the_haft_of_another_professions_stock() {
     );
     let steps = w.perception().craft_steps(recipe(&w, "spear_by_hand"));
     let shown: Vec<(&str, Vec<usize>)> = (steps.iter())
-        .map(|s| (s.label.as_str(), s.options.iter().map(|o| o.at).collect()))
+        .map(|s| (s.label_en(), s.options.iter().map(|o| o.at).collect()))
         .collect();
     assert_eq!(shown, [("head", vec![2]), ("haft", vec![1])]);
 }
@@ -177,7 +177,10 @@ fn a_metal_spear_needs_billets_greyed_and_refused_with_no_time_without_them() {
     let mut w = world();
     stock(&mut w, "iron", 2);
     let lack = row_lack(&w, "spear").expect("greyed");
-    assert_eq!(lack.reason(&w.content), "no wood to hand");
+    assert_eq!(
+        crate::test_support::english_of(&w.content, &lack.reason(&w.content)),
+        "no wood to hand"
+    );
     let start = w.state.time;
     apply(&mut w, "craft:spear:a");
     assert_eq!(said(&w), "You must choose the haft.");
@@ -236,7 +239,7 @@ fn a_recipes_profession_is_its_directorys_for_the_stat_the_skill_and_the_mark() 
     stock(&mut w, "flint", 1);
     carry(&mut w, "knife");
     let plan = (w.perception())
-        .craft_plan(recipe(&w, "knife_by_hand"), &[Some(0)])
+        .craft_plan_en(recipe(&w, "knife_by_hand"), &[Some(0)])
         .expect("a plan");
     assert_eq!(plan.verb, "Make");
     assert_eq!(plan.name, "a flint knife");
@@ -276,7 +279,7 @@ fn the_made_spear_and_javelin_are_named_by_their_heads_and_the_javelin_still_fli
     stock(&mut w, "bone", 1);
     stock(&mut w, "wood", 4);
     let plan = (w.perception())
-        .craft_plan(recipe(&w, "javelin_by_hand"), &[Some(1), Some(2)])
+        .craft_plan_en(recipe(&w, "javelin_by_hand"), &[Some(1), Some(2)])
         .expect("a plan");
     assert_eq!(plan.name, "a bone javelin");
     assert_eq!(plan.uses, "a bone shard and 4 wood billets");

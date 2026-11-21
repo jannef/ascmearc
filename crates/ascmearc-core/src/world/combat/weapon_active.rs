@@ -139,9 +139,7 @@ impl World {
             return Spent::Nothing;
         };
         if let Some(why) = Ability::Weapon(skill, id).unavailable(me, &content) {
-            self.say(
-                Msg::new(msg::combat::REASON).role("reason", why.reason(&content).into_owned()),
-            );
+            self.say(Msg::new(msg::combat::REASON).role("reason", why.reason(&content)));
             return Spent::Nothing;
         }
         let effect = def.effect;
@@ -528,7 +526,7 @@ impl World {
             return Spent::Nothing;
         };
         let range = me.launcher_range(&content).unwrap_or(1);
-        if !self.may_loose(item) || !self.within_reach(at, range, "shoot") {
+        if !self.may_loose(item) || !self.within_reach(at, range, crate::msg::combat::AIM_SHOOT) {
             return Spent::Nothing;
         }
         if effect == WeaponDoes::IgnoreProtection {

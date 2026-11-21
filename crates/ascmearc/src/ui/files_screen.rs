@@ -10,6 +10,7 @@ use super::text::{files_screen as T, ui, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::paths::{Entry, Locations, Reason};
 use crate::render::console::Console;
+use ascmearc_core::lang::Arg;
 use std::path::Path;
 
 type Opener = fn(&Path) -> Result<(), String>;
@@ -63,11 +64,11 @@ impl FilesScreen {
                 None => return ScreenAction::Close,
                 Some(entry) => {
                     self.status = Some(match &entry.dir {
-                        None => ui_with(T::NOWHERE, &[("label", entry.label.into())]),
+                        None => ui_with(T::NOWHERE, &[("label", Arg::text(ui(entry.label)))]),
                         Some(dir) => match (self.opener)(dir) {
                             Ok(()) => {
                                 let folder = dir.display().to_string();
-                                ui_with(T::OPENED, &[("folder", folder.into())])
+                                ui_with(T::OPENED, &[("folder", Arg::text(folder))])
                             }
                             Err(e) => e,
                         },
@@ -99,8 +100,8 @@ impl FilesScreen {
             let selected = i == self.selected;
             let color = if selected { ACCENT } else { TEXT };
             console.print(x, y, if selected { ">" } else { " " }, ACCENT);
-            console.print(x + 2, y, e.label, color);
-            console.print(x + 14, y, e.what, TEXT_DIM);
+            console.print(x + 2, y, &ui(e.label), color);
+            console.print(x + 14, y, &ui(e.what), TEXT_DIM);
             let place = match &e.dir {
                 Some(dir) => truncated_head(&dir.display().to_string(), (w - 4).max(0) as usize),
                 None => ui(T::NOT_STORED),
@@ -127,7 +128,10 @@ impl FilesScreen {
             let (up_down, confirm) = (keys.up_down(), keys.confirm);
             ui_with(
                 T::FOOTER,
-                &[("up_down", up_down.into()), ("confirm", confirm.into())],
+                &[
+                    ("up_down", Arg::text(up_down)),
+                    ("confirm", Arg::text(confirm)),
+                ],
             )
         };
         panel.footer(console, &footer);

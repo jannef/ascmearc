@@ -2,7 +2,7 @@
 source: crates/ascmearc-core/src/mapgen/tests.rs
 expression: "describe(&level(seed, 8))"
 ---
-The Depths 8 (depths:8) 80x21
+the Depths 8 (depths:8) 80x21
 stairs Up at (48, 4) -> depths:7
 
   ###############                                                  ########

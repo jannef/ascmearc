@@ -31,7 +31,7 @@ use crate::content::{
 };
 use crate::daylight::{self, DayPhase};
 use crate::geom::{Dir, Pos};
-use crate::lang::{Entry, MessageId, Msg, written_key};
+use crate::lang::{Arg, MessageId, Msg};
 use crate::msg;
 use crate::rng::Rng;
 use crate::rng::draw;
@@ -224,13 +224,15 @@ pub(in crate::world) struct Underway {
 
 /// What the player is shown of a pending encounter ([`crate::perception::PerceptionView::encounter`]):
 /// the one dialog's text and choices. The app titles it by the name and labels each choice by
-/// the outcome ("Give them the slip" when each saw the other; `ui/encounter.rs`).
+/// the outcome ("Give them the slip" when each saw the other; `ui/encounter.rs`), and renders
+/// both in the language shown.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct EncounterView {
-    /// The entry's name, as written: "a band of footpads".
-    pub name: String,
+    /// The entry's name, by its key ([`party_name`]): "a band of footpads".
+    pub name: Arg,
     pub outcome: Outcome,
-    pub text: String,
+    /// What the player is told, with the line for a party met again after it.
+    pub text: Msg,
     pub choices: Vec<Choice>,
 }
 
@@ -265,14 +267,22 @@ fn lost_in(landscape: Option<Landscape>) -> MessageId {
     }
 }
 
-/// An encounter's party in a line: its entry's `name`, as the data writes it, article and all
-/// ("a band of footpads"; text until encounters' names are phrases).
-fn party(id: MessageId, name: &str) -> Msg {
+/// Entry `entry`'s name, of campaign `campaign`'s tables: its `name`, as the data writes it,
+/// article and all ("a band of footpads"), a line of data by its key
+/// (`data_line::encounter_name`), so a saved line renders in any language.
+pub(crate) fn party_name(campaign: &str, entry: &EncounterEntry) -> Arg {
+    Arg::said(crate::content::data_line::encounter_name(
+        campaign, &entry.id,
+    ))
+}
+
+/// An encounter's party in a line, by its name ([`party_name`]).
+fn party(id: MessageId, name: Arg) -> Msg {
     Msg::new(id).role("party", name)
 }
 
 /// What the player is told of a party `name` met with `outcome` on `landscape`.
-fn told(outcome: Outcome, name: &str, landscape: Option<Landscape>, woken: bool) -> Msg {
+fn told(outcome: Outcome, name: Arg, landscape: Option<Landscape>, woken: bool) -> Msg {
     let id = match (woken, outcome) {
         (true, Outcome::Drop | Outcome::Met) => msg::levels::WAKE_CLOSE_BY,
         (true, Outcome::Peaceful) => msg::levels::WAKE_AT_CAMP,
@@ -285,29 +295,24 @@ fn told(outcome: Outcome, name: &str, landscape: Option<Landscape>, woken: bool)
     party(id, name)
 }
 
-/// The view of `pending`, its entry named by `name`, offering `choices`: its text in English
-/// (whatever the language until core's words move to the app, #1949), with the line for a party met again after it.
+/// The view of `pending`, its entry named by `name`, offering `choices`: what the player is
+/// told, with the line for a party met again after it.
 pub(crate) fn view(
     pending: &Pending,
-    name: &str,
+    name: Arg,
     landscape: Option<Landscape>,
     choices: &[Choice],
-    content: &Content,
 ) -> EncounterView {
-    let english = |msg: Msg| crate::messages::english(content, &Entry::new(0, msg), &written_key);
-    let text = english(told(pending.outcome, name, landscape, pending.woken));
+    let text = told(pending.outcome, name.clone(), landscape, pending.woken);
     let text = if pending.known {
-        let known = english(msg::levels::KNOWN.into());
-        english(
-            Msg::new(msg::levels::TOLD_KNOWN)
-                .role("told", text)
-                .role("known", known),
-        )
+        Msg::new(msg::levels::TOLD_KNOWN)
+            .role("told", text)
+            .role("known", msg::levels::KNOWN)
     } else {
         text
     };
     EncounterView {
-        name: name.to_string(),
+        name,
         outcome: pending.outcome,
         text,
         choices: choices.to_vec(),
@@ -739,14 +744,15 @@ impl World {
                 true => msg::levels::WAKE_UPON_YOU,
                 false => set_upon(landscape),
             };
-            self.say(party(id, &entry.name));
+            self.say(party(id, party_name(&self.state.campaign, entry)));
             self.encounter.opening = Some(Opening {
                 pending,
                 how: How::Ambushed,
             });
             return;
         };
-        self.say(told(outcome, &entry.name, landscape, pending.woken));
+        let name = party_name(&self.state.campaign, entry);
+        self.say(told(outcome, name, landscape, pending.woken));
         if known {
             self.say(msg::levels::KNOWN);
         }
@@ -919,6 +925,7 @@ impl World {
             return Spent::NoTime;
         };
         let offered = super::talk_past::offered(&pending, entry, self.state.player(), &content);
+        let name = party_name(&self.state.campaign, entry);
         if !offered.contains(&choice) {
             self.say(msg::levels::NOT_A_CHOICE);
             return Spent::Nothing;
@@ -947,8 +954,8 @@ impl World {
             Choice::Fight | Choice::Hail | Choice::Hunt => {
                 let (how, line) = match choice {
                     Choice::Fight => (How::Fight, msg::levels::STAND_GROUND.into()),
-                    Choice::Hail => (How::Hail, party(msg::levels::GO_TO_MEET, &entry.name)),
-                    _ => (How::Hunt, party(msg::levels::GO_AFTER, &entry.name)),
+                    Choice::Hail => (How::Hail, party(msg::levels::GO_TO_MEET, name)),
+                    _ => (How::Hunt, party(msg::levels::GO_AFTER, name)),
                 };
                 self.say(line);
                 self.encounter.opening = open(how);
@@ -1018,7 +1025,7 @@ impl World {
     pub(in crate::world) fn meet_dev(&mut self, id: &str, forced: Option<Forced>) -> Spent {
         let content = self.content.clone();
         let Some((_, entry)) = content.encounter_entry(&self.state.campaign, id) else {
-            self.say(Msg::new(msg::levels::NO_ENCOUNTER_DEV).role("id", id));
+            self.say(Msg::new(msg::levels::NO_ENCOUNTER_DEV).role("id", Arg::id(id)));
             return Spent::Nothing;
         };
         let cell = self.player_pos();

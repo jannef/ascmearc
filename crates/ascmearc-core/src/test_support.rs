@@ -57,6 +57,28 @@ pub(crate) fn english_of(content: &Content, msg: &Msg) -> String {
     crate::messages::english_msg(content, msg)
 }
 
+/// A level's name (`PerceptionView::level_name`, `Death::place`) in English as the status bar
+/// shows it, a label.
+pub(crate) fn place_text(world: &World, place: &crate::lang::Arg) -> String {
+    crate::messages::english_arg(world.content(), place, crate::lang::LABEL_FORM)
+}
+
+/// The current level's name in English, as the status bar shows it.
+pub(crate) fn level_name(world: &World) -> String {
+    place_text(world, world.perception().level_name())
+}
+
+/// How the death screen says `cause` (`Cause::epitaph`), in English.
+pub(crate) fn epitaph(content: &Content, cause: crate::world::Cause) -> String {
+    english_of(content, &cause.epitaph(content))
+}
+
+/// Where the stairs or location at `p` lead ([`crate::PerceptionView::leads_to`]), in English.
+pub(crate) fn leads_to(world: &World, p: crate::geom::Pos) -> Option<String> {
+    let to = world.perception().leads_to(p)?;
+    Some(crate::messages::english_arg(world.content(), &to, "bare"))
+}
+
 /// A quest of the log ([`crate::world::QuestView`]) with its words in English.
 #[derive(Clone, Debug)]
 pub(crate) struct LoggedQuest {
@@ -82,8 +104,8 @@ pub(crate) fn quest_log(world: &World) -> Vec<LoggedQuest> {
             offer: crate::messages::english_speech(content, &q.offer),
             objective: english_of(content, &q.objective),
             status: english_of(content, &q.status),
+            name: crate::messages::english_arg(content, &q.name, "bare"),
             id: q.id,
-            name: q.name,
             kind: q.kind,
             active: q.active,
             failed: q.failed,

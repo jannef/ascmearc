@@ -118,6 +118,13 @@ impl Stain {
             (true, _) => "blood-smeared",
         }
     }
+
+    /// [`Stain::word`] as the lexicon's adjective: `blood:<word>`, the word after "blood-"
+    /// (`content/data_word.rs`).
+    pub fn adjective(&self, wall: bool) -> crate::lang::Word {
+        let word = self.word(wall);
+        crate::lang::Word::id(format!("blood:{}", word.trim_start_matches("blood-")))
+    }
 }
 
 /// The seed of a blow's splatter: the turn and the moment it was struck and who struck whom.

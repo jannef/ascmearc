@@ -808,6 +808,10 @@ pub struct SpellLook {
     /// What hits ("fireball") and what it does ("burns"), for messages.
     pub noun: String,
     pub verb: String,
+    /// Whether `noun` and `verb` are the spell's own, as its data loaded: said by their keys
+    /// (`spell_noun:<id>`, `spell:<id>.cast.verb`; [`super::Content::spell_words`]); false for words
+    /// set in code (a heal searing the undead, `heal_harm.rs`), said as written.
+    pub own: bool,
     /// Said as it is cast.
     pub message: Option<String>,
     /// The noise it makes where it goes off (a burst's centre, else the caster).
@@ -1186,6 +1190,7 @@ fn resolve(spec: SpellSpec, rules: &SpellRules, content: &Content) -> Result<Spe
     let look = look(spec.cast, shape, radius, damage_type, content)?;
     let look = SpellLook {
         noun: look.noun.unwrap_or_else(|| spec.name.to_lowercase()),
+        own: true,
         ..look.look
     };
     Ok(SpellData {
@@ -1379,6 +1384,7 @@ fn look(
             noise: c.noise,
             blast,
             ice,
+            own: false,
         },
         noun: c.noun,
     })

@@ -24,7 +24,10 @@
 //! [`Effect::Craft`]: crate::skills::Effect::Craft
 
 use super::craft::RecipeLack;
-use super::craft_make::{CraftOption, CraftPlan, CraftStep, CraftStepKind, cut_gem};
+use super::craft_make::{
+    CraftOption, CraftPlan, CraftStep, CraftStepKind, about, counted_msg, cut_gem, own_verb,
+    the_msg, uses_msg,
+};
 use super::work::{Job, Task};
 use crate::action::Event;
 use crate::combat;
@@ -38,7 +41,6 @@ use crate::rng::draw;
 use crate::scroll_label::Lore;
 use crate::skills::Use;
 use crate::stats::Stat;
-use crate::time::Duration;
 use crate::world::{Actor, Spent, World};
 
 /// What the check comes to.
@@ -169,13 +171,13 @@ pub(super) fn steps(content: &Content, lore: Lore<'_>, player: &Actor) -> Vec<Cr
     vec![
         CraftStep {
             kind: CraftStepKind::Item,
-            label: "item".into(),
+            label: super::craft_make::step_word("item"),
             optional: false,
             options: items,
         },
         CraftStep {
             kind: CraftStepKind::Gem,
-            label: "gem".into(),
+            label: super::craft_make::step_word("gem"),
             optional: false,
             options: gems,
         },
@@ -189,23 +191,15 @@ pub(super) fn plan(
     player: &Actor,
     def: &RecipeDef,
     picks: &[Option<usize>],
-) -> Result<CraftPlan, String> {
-    let (_, gem, _, _, made) = resolve(content, player, picks)
-        .map_err(|why| super::craft_make::english(content, why.into()))?;
+) -> Result<CraftPlan, Msg> {
+    let (_, gem, _, _, made) = resolve(content, player, picks).map_err(Msg::from)?;
+    let gem = the_msg(lore.title_phrase(&player.inventory[gem]));
     Ok(CraftPlan {
-        verb: def.verb.clone().unwrap_or_else(|| def.name.clone()),
-        name: lore.describe(&made),
-        uses: format!("the {}", lore.title(&player.inventory[gem])),
+        verb: own_verb(content, def),
+        name: counted_msg(lore.phrase(&made)),
+        uses: uses_msg(vec![gem]),
         station: None,
-        time: format!(
-            "about {}",
-            Duration::seconds(u64::from(super::mastery::craft_seconds(
-                content,
-                player,
-                def.seconds
-            )))
-            .spoken()
-        ),
+        time: about(super::mastery::craft_seconds(content, player, def.seconds)),
     })
 }
 

@@ -19,7 +19,7 @@ pub(super) fn numbers_json(stack: &Stack, content: &Content) -> Value {
     let defence = numbers.defence;
     json!({
         "to_hit": attack.map(|a| a.to_hit),
-        "damage": attack.map(|a| a.damage_text(content)),
+        "damage": attack.map(|a| crate::messages::english_arg(content, &a.damage_words(content), "bare")),
         "range": attack.and_then(|a| a.range),
         "dv": defence.map(|d| d.dv),
         "pv": defence.and_then(|d| d.pv),
@@ -47,7 +47,7 @@ pub(super) fn inventory_rows(view: &PerceptionView<'_>) -> Vec<String> {
             class = Some(here);
             rows.push(format!("{}:", content.item_class(here).name));
         }
-        let mut name = view.lore().listed(s);
+        let mut name = crate::messages::english_msg(content, &view.lore().listed(s));
         // A wand's rung once its type is known (the spell scaling design §7.4).
         if let Some(rung) = s.known_wand_rung(view.lore()) {
             name += &format!(" (rung {rung})");
@@ -57,8 +57,9 @@ pub(super) fn inventory_rows(view: &PerceptionView<'_>) -> Vec<String> {
             name += &format!(" (throw {range})");
         }
         let weight = format_weight(s.weight(content));
-        let mark = equipment::mark(content, view.equipment(), i)
-            .map_or(String::new(), |m| format!(" ({m})"));
+        let mark = equipment::mark(content, view.equipment(), i).map_or(String::new(), |m| {
+            format!(" ({})", content.english_word(m, "bare"))
+        });
         let owed = (unpaid.get(i).copied().flatten())
             .map_or(String::new(), |p| format!(" (unpaid, {p} gold)"));
         // Last, the affixes it holds against its capacity, as they truly are
@@ -75,7 +76,9 @@ pub(super) fn inventory_rows(view: &PerceptionView<'_>) -> Vec<String> {
         "carried {} ({}: {}), total weight {}",
         format_weight(weight.carried),
         load.burden().id(),
-        load.over().join(", "),
+        load.over()
+            .map(|m| crate::messages::english_msg(content, &m))
+            .join(", "),
         format_weight(weight.total())
     ));
     rows

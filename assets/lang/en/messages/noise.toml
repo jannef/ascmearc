@@ -1,0 +1,38 @@
+# Sounds heard (`noise.rs`): what a sound is heard as, and the line the player is told of it
+# (`World::hear`) or the look line says where it was heard (`ui/look.rs`). Ids alphabetical
+# (`docs/dev/localization.md` "Literal lines").
+#
+# Roles: `hear`, `you_hear` or `you_faintly_hear`; `sound`, a `heard_*` word; `dir`, the rough
+# direction it came from, a compass word ("north-east", `words.dir_*`).
+
+# A sound heard where the player stands, or with no direction: `hear`.
+heard = "{hear:bare}."
+# What a sound is heard as (`SoundKind::heard_as`), said after "You hear".
+heard_banging = "banging"
+heard_bell = "a bell ring"
+heard_bowstring = "a bowstring"
+heard_buzzing = "buzzing"
+heard_chanting = "chanting"
+heard_digging = "digging"
+heard_door_closed = "a door close"
+heard_door_opened = "a door open"
+heard_explosion = "an explosion"
+heard_fighting = "fighting"
+heard_footsteps = "footsteps"
+# A sound heard from a direction: `hear`; `dir`.
+heard_from = "{hear:bare} to the {dir:bare}."
+heard_giggle = "giggling"
+heard_heartbeat = "a heartbeat"
+heard_hiss = "a hiss"
+heard_howl = "a howl"
+heard_rattle = "a rattle"
+heard_roar = "a roar"
+heard_scream = "a scream"
+heard_shatter = "a crash of glass"
+heard_thunder = "a thunderclap"
+heard_voice = "a voice"
+heard_wail = "a wail"
+# A faint sound: `sound`.
+you_faintly_hear = "You faintly hear {sound:bare}"
+# A clear or loud sound: `sound`.
+you_hear = "You hear {sound:bare}"

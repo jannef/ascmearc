@@ -21,6 +21,7 @@
 
 use crate::input::{Context, KeyBinding, KeyCommand};
 use crate::ui::text::{UiText, settings as T, ui_with};
+use ascmearc_core::lang::Arg;
 use bevy::input::keyboard::{Key, KeyboardInput};
 use bevy::prelude::*;
 
@@ -330,11 +331,14 @@ pub fn refusal(key: &KeyBinding, command: KeyCommand, platform: Platform) -> Opt
         return None;
     };
     if command.context() != Context::Play {
-        let name = command.name().into();
+        let name = Arg::text(command.name());
         return Some(ui_with(T::PLAIN_KEYS_ONLY, &[("name", name)]));
     }
     let kept = reserved(*mods, base, platform)?;
-    Some(ui_with(kept, &[("shown", key.display_on(platform).into())]))
+    Some(ui_with(
+        kept,
+        &[("shown", Arg::text(key.display_on(platform)))],
+    ))
 }
 
 /// What keeps the shortcut `mods` + `base` on `platform` (the system, the browser), if anything:

@@ -1,5 +1,7 @@
 //! Special rooms.
 
+use super::util::time_words;
+use super::util::word;
 use super::util::{Term, anchored, article, capital};
 use ascmearc_core::content::{Content, Hoard, Offer, StatusId};
 use ascmearc_core::world::rise_candidates;
@@ -234,7 +236,7 @@ pub(super) fn special_rooms(content: &Content) -> String {
                 "A creature that dies in it (not one of the {}) rises from its corpse {} later \
                  as one of them, unless the corpse is gone by then (see Cursed rooms).",
                 faction_name(content, &rise.faction),
-                rise.after.spoken()
+                time_words(rise.after)
             ));
         }
         if let Some(haunt) = &e.haunt {
@@ -243,7 +245,7 @@ pub(super) fn special_rooms(content: &Content) -> String {
                  the level's danger comes inside (as the dead rise in a cursed room: of that \
                  level, else the nearest), out of your sight where it can, and comes for you. It \
                  never comes while you do anything else (see Haunted rooms).",
-                haunt.every.spoken().trim_start_matches("1 "),
+                time_words(haunt.every).trim_start_matches("1 "),
                 faction_name(content, &haunt.faction),
             ));
         }
@@ -354,7 +356,9 @@ fn held(content: &Content, status: StatusId) -> String {
         p => what.push(format!("mana back at {p}% of the pace")),
     }
     if !def.blocks.is_empty() {
-        let doing: Vec<&str> = def.blocks.iter().map(|k| k.doing()).collect();
+        let doing: Vec<String> = (def.blocks.iter())
+            .map(|k| word(k.doing(), "bare"))
+            .collect();
         let list = match doing.split_last() {
             Some((last, rest)) if !rest.is_empty() => format!("{}, or {last}", rest.join(", ")),
             _ => doing.join(""),

@@ -38,7 +38,7 @@ use crate::combat::Profile;
 use crate::content::{ActionKind, Content, Effect, LevelKind, ObjectId};
 use crate::fov::radius2;
 use crate::geom::Pos;
-use crate::lang::{Msg, Phrase};
+use crate::lang::{Arg, Msg, Phrase};
 use crate::magic::Mods;
 use crate::magic::mods::less;
 use crate::msg;
@@ -125,7 +125,7 @@ impl World {
         if !self.may_loose(item) {
             return Spent::Nothing;
         }
-        if !self.within_reach(at, range, "shoot") {
+        if !self.within_reach(at, range, crate::msg::combat::AIM_SHOOT) {
             return Spent::Nothing;
         }
         let loose = Loose {
@@ -198,7 +198,7 @@ impl World {
             return Spent::Nothing;
         };
         let throwing = me.attack_skills(&content, AttackKind::Thrown, Some(stack.object));
-        if !self.may_loose(item) || !self.within_reach(at, range, "throw") {
+        if !self.may_loose(item) || !self.within_reach(at, range, crate::msg::combat::AIM_THROW) {
             return Spent::Nothing;
         }
         let loose = Loose {
@@ -224,9 +224,14 @@ impl World {
         here
     }
 
-    /// Whether the player may `verb` ("shoot", "throw") at cell `at` with a missile that flies
+    /// Whether the player may `verb` (`combat.aim_shoot`, "shoot") at cell `at` with a missile that flies
     /// `range` cells: not at themselves, and not out of range. Says why not.
-    pub(in crate::world) fn within_reach(&mut self, at: Pos, range: i32, verb: &str) -> bool {
+    pub(in crate::world) fn within_reach(
+        &mut self,
+        at: Pos,
+        range: i32,
+        verb: crate::lang::MessageId,
+    ) -> bool {
         let here = self.player_pos();
         if at == here {
             self.say(Msg::new(msg::combat::CANNOT_AIM_AT_YOURSELF).role("verb", verb));
@@ -265,7 +270,7 @@ impl World {
         );
         let mut said: Vec<Msg> = Vec::new();
         // Whether the player saw the target of the last attack, and how it reads.
-        let mut seen: Option<(End, &str)> = None;
+        let mut seen: Option<(End, Arg)> = None;
         let mut attacked = false;
         let you = End::You(self.you());
         for event in made {
@@ -291,15 +296,19 @@ impl World {
                     said.extend(attack_message(
                         &you, &struck_at, &words, kind, strike, &guard,
                     ));
-                    seen =
-                        (!end.is_unseen()).then(|| (end, def.map_or("dies", |d| d.death_verb())));
+                    seen = (!end.is_unseen()).then(|| {
+                        (
+                            end,
+                            def.map_or_else(|| msg::combat::VERB_DIES.into(), |d| d.dies_arg()),
+                        )
+                    });
                     if seen.is_some() {
                         events.push(event);
                     }
                 }
                 Event::Died { .. } => {
                     if let Some((end, dies)) = &seen {
-                        said.push(death_message(end, dies));
+                        said.push(death_message(end, dies.clone()));
                         events.push(event);
                     }
                 }
@@ -308,8 +317,8 @@ impl World {
         }
         if !attacked {
             let verb = match kind {
-                AttackKind::Thrown => "throw",
-                _ => "shoot",
+                AttackKind::Thrown => msg::combat::AIM_THROW,
+                _ => msg::combat::AIM_SHOOT,
             };
             let what = self.lore().phrase(&stack);
             let shot = Msg::new(msg::combat::SHOT).role("verb", verb);

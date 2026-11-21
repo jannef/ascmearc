@@ -61,6 +61,7 @@ use crate::equipment::{self, Equipment};
 use crate::geom::{Dir, Pos};
 use crate::grid::Grid;
 use crate::item_parts::{self, ItemPart};
+use crate::lang::Arg;
 use crate::light::Light;
 use crate::magic::{Affix, LootGrade, LootPool, Magic, Quality};
 use crate::object::{Stack, add_to_pile};
@@ -540,10 +541,10 @@ pub struct StairsLink {
     pub dir: StairsDir,
     /// Target level id; `None` for stairs that lead nowhere yet.
     pub to: Option<String>,
-    /// What the place it leads to is called, when not its level's name: a revealed hidden
-    /// location's `name`.
+    /// What the place it leads to is called, when not its level's name: a legend's named
+    /// place's, a revealed hidden location's (lines of data), the Pit's.
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub name: Option<String>,
+    pub name: Option<Arg>,
 }
 
 /// A location hidden on a cell of the overworld or a hand-made level until a quest reveals it:
@@ -566,14 +567,40 @@ pub struct HiddenLocation {
 
 /// A named place on a cell of a hand-made level or a vault (a legend's `name`): a location, a
 /// landmark, an inscribed statue. Look mode names it on a cell the player sees or remembers; it
-/// is no secret.
+/// is no secret. The game says its name and note by their keys ([`Self::name_arg`],
+/// [`Self::note_arg`]), lines of data; the text is the data's English, which a quest's `waits`
+/// names it by.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Place {
+    /// Its legend entry: `level:<id>.legend.<char>` or `vault:<id>.legend.<char>`.
+    pub key: String,
     pub name: String,
     /// A sentence look mode adds about it (and the line an announced terrain's arrival says
     /// after its description, `world/fixtures/feature.rs`).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub note: Option<String>,
+}
+
+impl Place {
+    /// The key of its name, a line of data.
+    pub fn name_key(&self) -> String {
+        format!("{}.name", self.key)
+    }
+
+    /// The key of its note, a line of data.
+    pub fn note_key(&self) -> String {
+        format!("{}.note", self.key)
+    }
+
+    /// Its name, said by its key.
+    pub fn name_arg(&self) -> Arg {
+        Arg::said(self.name_key())
+    }
+
+    /// Its note, said by its key, if it has one.
+    pub fn note_arg(&self) -> Option<Arg> {
+        self.note.as_ref().map(|_| Arg::said(self.note_key()))
+    }
 }
 
 /// A parsed, validated level ready to instantiate: from a level file, or generated (see
@@ -701,8 +728,11 @@ pub(super) fn legend_char(file: &str, key: &str) -> Result<char, ContentError> {
     }
 }
 
+/// Parses level or vault `id` (`kind`: `level`, `vault`; what its named places are keyed by,
+/// [`Place::key`]) from `file`.
 pub(super) fn parse_level(
     file: &str,
+    kind: &str,
     id: &str,
     text: &str,
     content: &Content,
@@ -772,8 +802,9 @@ pub(super) fn parse_level(
             if let Some(um) = parse_ice(ch, entry, content.terrain(terrain)).map_err(err)? {
                 ice.insert(pos, um);
             }
+            let key = format!("{kind}:{id}.legend.{ch}");
             let place = detail
-                .and_then(|d| parse_place(d).transpose())
+                .and_then(|d| parse_place(key, d).transpose())
                 .transpose()
                 .map_err(|m| err(format!("legend `{ch}`: {m}")))?;
             if let Some(dir) = content.terrain(terrain).stairs {
@@ -781,7 +812,7 @@ pub(super) fn parse_level(
                     pos,
                     dir,
                     to: detail.and_then(|d| d.to.clone()),
-                    name: place.as_ref().map(|p| p.name.clone()),
+                    name: place.as_ref().map(Place::name_arg),
                 });
             } else if detail.is_some_and(|d| d.to.is_some()) {
                 return Err(err(format!(
@@ -794,7 +825,7 @@ pub(super) fn parse_level(
                 places.insert(pos, place);
             }
             if let Some(words) = &detail.epitaph {
-                marks.epitaphs.insert(pos, words.clone());
+                marks.epitaphs.insert(pos, (ch, words.clone()));
             }
             if detail.statue_place == Some(true) {
                 marks.statue_places.push(pos);
@@ -1251,8 +1282,9 @@ pub(super) fn parse_level(
     Ok(template)
 }
 
-/// A legend entry's named place (`name`, and `note` with it), if it has one.
-fn parse_place(detail: &LegendDetail) -> Result<Option<Place>, String> {
+/// A legend entry's named place (`name`, and `note` with it), if it has one; `key` is the
+/// entry's ([`Place::key`]).
+fn parse_place(key: String, detail: &LegendDetail) -> Result<Option<Place>, String> {
     let Some(name) = &detail.name else {
         return match detail.note {
             Some(_) => Err("a `note` needs a `name`".into()),
@@ -1260,6 +1292,7 @@ fn parse_place(detail: &LegendDetail) -> Result<Option<Place>, String> {
         };
     };
     Ok(Some(Place {
+        key,
         name: name.clone(),
         note: detail.note.clone(),
     }))

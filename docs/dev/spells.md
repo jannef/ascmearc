@@ -339,7 +339,7 @@ cast path shares.
     records `WorldState::pits[S] = Pit { from: the level, sealed: false }`, turns the first plain
     free cell within `[pit] mouth_reach` (`data/rules/tuning.toml`, 3) of the caster (walkable; no one on it; no stairs,
     door, chest, statue, grave, light, trap, hidden location, place, or flow) into `stairs_down`
-    (`set_terrain`) and pushes a `StairsLink` down to `hellegeat@S:1` named "the Pit", as
+    (`set_terrain`) and pushes a `StairsLink` down to `hellegeat@S:1` named "the Pit" (`levels.the_pit`), as
     `open_lair` opens a lair; then the gate comes to the first free cell around the caster but
     the mouth (`miscast_summon`'s `besides`). **Refused** (`World::pit_refused`) on the
     overworld, on a Pit's own floor (`is_portal_floor`), and with no plain cell: no draw, no
@@ -531,7 +531,7 @@ cast path shares.
   dump `spells` layer's `Fireball (level 11, 26 mana): 4d6 fire, range 11, radius 2`; a test
   holds it to `Actor::spell_roll`), and `own_spell_reroll(spell)` (Sure hand's faces, the
   description's "Your 1s are rolled again."). `spell_words.rs` also says a reach
-  (`reach_words`: `range 11`, `length 3`, `radius 2`) and a reroll (`reroll_words`) for the
+  (`reach_words`, a message: `range 11`, `length 3`, `radius 2`, listed with commas) and a reroll (`reroll_words`, a message too, as the roll's `text`) for the
   menu, the wand's description, and the dump. The character screen does not show spells (its
   attacks column holds three).
 - **UI**: the abilities menu's **Spells** group (`Source::Spell`) with the roll now, its type,

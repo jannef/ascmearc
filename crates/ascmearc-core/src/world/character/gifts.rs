@@ -11,14 +11,14 @@
 use crate::ability::{Ability, Unavailable};
 use crate::action::{AttackKind, Event};
 use crate::combat::{Profile, Strike};
-use crate::content::{ActionKind, SignActive, Stance};
+use crate::content::{ActionKind, SignActive, Stance, StatusId};
 use crate::damage::{Damage, Rider};
 use crate::geom::Pos;
 use crate::lang::Msg;
 use crate::msg;
 use crate::rng::draw;
 use crate::status::Effect;
-use crate::world::combat::fight::Harm;
+use crate::world::combat::fight::{Harm, Words};
 use crate::world::{ActorId, Spent, World};
 use serde::{Deserialize, Serialize};
 
@@ -53,8 +53,9 @@ impl World {
             self.say(match why {
                 Unavailable::While(status) => Msg::new(msg::character::STILL_STATUS)
                     .role("status", content.status_phrase(status)),
-                other => Msg::new(msg::character::CANNOT_REASON)
-                    .role("reason", other.reason(&content).into_owned()),
+                other => {
+                    Msg::new(msg::character::CANNOT_REASON).role("reason", other.reason(&content))
+                }
             });
             return Spent::Nothing;
         }
@@ -141,7 +142,7 @@ impl World {
         let Some(range) = ability.reach_at(&content, self.state.time) else {
             return Spent::Nothing;
         };
-        if !self.within_reach(at, range, "stare") {
+        if !self.within_reach(at, range, crate::msg::combat::AIM_STARE) {
             return Spent::Nothing;
         }
         let level = self.state.current().id.clone();
@@ -250,11 +251,8 @@ impl World {
             return;
         };
         let from = me.pos;
-        let riders: Vec<(Rider, &str)> = (me.effects.iter())
-            .filter_map(|e| {
-                let def = content.status(e.status);
-                def.retaliates.map(|r| (r, def.name.as_str()))
-            })
+        let riders: Vec<(Rider, StatusId)> = (me.effects.iter())
+            .filter_map(|e| content.status(e.status).retaliates.map(|r| (r, e.status)))
             .collect();
         for (rider, status) in riders {
             if !self.state.actors.contains_key(&attacker) || self.state.death.is_some() {
@@ -290,10 +288,10 @@ impl World {
             // (an innate Barbed hide: "The barbed hide stabs you.").
             let def = content.damage_type(rider.kind);
             let noun = match def.physical {
-                true => status.to_lowercase(),
-                false => def.name.clone(),
+                true => content.status_phrase(status),
+                false => content.damage_type_phrase(rider.kind),
             };
-            self.say_spell((&noun, &def.verb), made, events);
+            self.say_spell(Words::of_kind(noun, rider.kind, &content), made, events);
             if harmed {
                 self.spell_type_lands(target, Some(rider.kind), &[attacker], events);
             }

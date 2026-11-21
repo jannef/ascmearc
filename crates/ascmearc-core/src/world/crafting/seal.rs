@@ -17,9 +17,11 @@
 
 use super::craft_make::{CraftOption, CraftStep, CraftStepKind};
 use crate::content::{AffixKind, Content, EnchantKind, ObjectDef, ObjectId};
+use crate::lang::{Arg, Msg, Phrase};
 use crate::magic::Affix;
-use crate::magic::describe::phrase;
+use crate::magic::describe::affix_line;
 use crate::magic::loot::rolls_within;
+use crate::msg;
 use crate::world::Actor;
 use std::ops::Range;
 
@@ -92,33 +94,40 @@ pub(super) fn check(
     had: &[Affix],
     crystals: &[usize],
     seals: &[usize],
-) -> Result<Sealed, String> {
+) -> Result<Sealed, Msg> {
     let mut sealed = Sealed::default();
     if seals.is_empty() {
         return Ok(sealed);
     }
     let Some(table) = content.crystals() else {
-        return Err("There is nothing to seal there.".into());
+        return Err(msg::crafting::SEAL_NOTHING_THERE.into());
     };
     let colour =
         |at: usize| (player.inventory.get(at)).and_then(|s| table.colour_of_object(s.object));
     for &seal in seals {
-        let (category, word) = table.families.get(seal).ok_or("There is no such seal.")?;
+        let (category, _) = table
+            .families
+            .get(seal)
+            .ok_or(Msg::from(msg::crafting::SEAL_NO_SUCH))?;
         if sealed.categories.contains(category) {
-            return Err("You have sealed that already.".into());
+            return Err(msg::crafting::SEAL_ALREADY.into());
         }
         let holds = |at: &usize| colour(*at).is_some_and(|c| c.families.contains(category));
         if !crystals.iter().any(holds) {
+            let word = family_phrase(category);
             return Err(match crystals {
-                [one] => format!(
-                    "The {} crystal holds nothing of {word}.",
-                    colour(*one).map_or("", |c| c.name.as_str())
-                ),
-                _ => format!("The crystals hold nothing of {word}."),
+                [one] => {
+                    let name = colour(*one).map_or_else(Arg::empty, |c| {
+                        Phrase::id(format!("crystal:{}", c.id)).into()
+                    });
+                    (Msg::new(msg::crafting::CRYSTAL_HOLDS_NOTHING_OF).role("colour", name))
+                        .role("word", word)
+                }
+                _ => Msg::new(msg::crafting::CRYSTALS_HOLD_NOTHING_OF).role("word", word),
             });
         }
         if !sealable(content, item, had, category) {
-            return Err("There is nothing to seal there.".into());
+            return Err(msg::crafting::SEAL_NOTHING_THERE.into());
         }
         let used = |at: usize| {
             (crystals.iter().chain(&sealed.crystals))
@@ -127,20 +136,22 @@ pub(super) fn check(
         };
         let pay = (crystals.iter().copied())
             .find(|at| holds(at) && used(*at) < player.inventory[*at].count as usize)
-            .ok_or("You carry too few crystals for the seals.")?;
+            .ok_or(Msg::from(msg::crafting::SEAL_TOO_FEW_CRYSTALS))?;
         sealed.categories.push(category.clone());
         sealed.crystals.push(pay);
     }
     Ok(sealed)
 }
 
-/// The words of `categories` sealed, joined: "fire and the critical".
-pub(super) fn words(content: &Content, categories: &[String]) -> String {
-    let table = content.crystals();
-    let words: Vec<&str> = (categories.iter())
-        .map(|c| (table.and_then(|t| t.family_word(c))).unwrap_or(c.as_str()))
-        .collect();
-    crate::text::and_list(&words)
+/// The words of `categories` sealed, a list said `{shut:and}` ("fire and the critical"): each
+/// the crystals table's family word ([`family_phrase`]).
+pub(super) fn words(_content: &Content, categories: &[String]) -> Arg {
+    Arg::List(categories.iter().map(|c| family_phrase(c).into()).collect())
+}
+
+/// A crystal family by its word: `seal_family:<category>` (`content/data_word.rs`).
+fn family_phrase(category: &str) -> Phrase {
+    Phrase::id(format!("seal_family:{category}"))
 }
 
 /// A seal step's label: "seal", "second seal", "third seal".
@@ -187,7 +198,7 @@ pub(super) fn steps(
             .filter_map(|s| table.colour_of_object(s.object))
             .collect(),
     };
-    let option = |at: usize, name: String, short: String| CraftOption {
+    let option = |at: usize, name: Msg, short: String| CraftOption {
         at,
         name,
         short,
@@ -205,12 +216,16 @@ pub(super) fn steps(
                     && (item.as_ref())
                         .is_none_or(|it| sealable(content, (it.def, it.level), &it.had, category))
             })
-            .map(|(i, (_, word))| option(i, word.clone(), word.clone()))
+            .map(|(i, (category, word))| {
+                let name =
+                    Msg::new(msg::crafting::SEAL_FAMILY).role("family", family_phrase(category));
+                option(i, name, word.clone())
+            })
             .collect();
-        options.sort_by(|a, b| a.name.cmp(&b.name));
+        options.sort_by(|a, b| a.short.cmp(&b.short));
         steps.push(CraftStep {
             kind: CraftStepKind::Family,
-            label: seal_label(n).into(),
+            label: super::craft_make::step_word(seal_label(n)),
             optional: true,
             options,
         });
@@ -227,14 +242,14 @@ pub(super) fn steps(
                         tier: a.tier,
                         value: a.value,
                     };
-                    let does = base.map_or_else(String::new, |k| phrase(&rolled, k, content));
-                    Some(option(i, format!("{}: {does}", def.name), def.name.clone()))
+                    let name = affix_line(&rolled, base, content);
+                    Some(option(i, name, def.name.clone()))
                 })
                 .collect()
         });
         steps.push(CraftStep {
             kind: CraftStepKind::Affix,
-            label: "affix kept".into(),
+            label: super::craft_make::step_word("affix kept"),
             optional: true,
             options,
         });

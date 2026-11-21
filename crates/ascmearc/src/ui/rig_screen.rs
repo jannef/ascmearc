@@ -10,7 +10,7 @@
 use super::menu::{HINTS, Nav, Panel, Press};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::ScreenAction;
-use super::text::{rig_screen as T, ui, ui_with};
+use super::text::{rig_screen as T, ui, ui_msg, ui_with};
 use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::Bindings;
 use crate::render::console::Console;
@@ -122,7 +122,7 @@ impl RigScreen {
             // `a - Tripwire   up to 3 arrows          about 5 minutes`, or greyed with what is
             // lacking in place of the time.
             console.print(x + 2, y, &format!("{letter} - {}", rig.name), color);
-            console.print(x + 18, y, &rig.takes, color);
+            console.print(x + 18, y, &ui_msg(rig.takes.clone()), color);
             let tail = match &rig.lacking {
                 Some(why) => ui_with(T::LACKING, &[("why", why.clone().into())]),
                 None => ui_with(T::TIME, &[("time", rig.time.spoken().into())]),
@@ -131,12 +131,12 @@ impl RigScreen {
             console.print(tail_x, y, &tail, TEXT_DIM);
         }
         let keys = HINTS;
-        let confirm = ("confirm", Arg::from(keys.confirm));
+        let confirm = ("confirm", Arg::text(keys.confirm));
         let choose = match self.rigs.last_letter() {
             Some('a') => ui_with(T::PICK_A, &[confirm]),
             Some(last) => ui_with(
                 T::PICK_LETTERS,
-                &[("last", last.to_string().into()), confirm],
+                &[("last", Arg::text(last.to_string())), confirm],
             ),
             None => ui_with(T::PICK_ONLY, &[confirm]),
         };

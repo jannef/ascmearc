@@ -20,7 +20,6 @@ use crate::content::StatusId;
 use crate::lang::Msg;
 use crate::msg;
 use crate::status::MAGICAL_HEALING;
-use crate::world::combat::fight;
 use crate::world::{ActorId, World};
 
 impl World {
@@ -59,14 +58,14 @@ impl World {
             return;
         }
         let who = self.called_phrase(actor);
-        let words: Vec<String> = (ended.iter())
-            .filter_map(|&s| self.content.status(s).seen.clone())
+        let words: Vec<_> = (ended.iter())
+            .filter_map(|&s| self.content.seen_phrase(s))
             .collect();
         for word in words {
             self.say(
                 Msg::new(msg::health::NO_LONGER)
                     .role("who", who.clone())
-                    .role("status", fight::word(&word)),
+                    .role("status", word),
             );
         }
     }

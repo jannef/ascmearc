@@ -102,12 +102,12 @@ pub enum Freshness {
 }
 
 impl Freshness {
-    /// The word: `fresh`, `turning`, `rotten`.
-    pub const fn word(self) -> &'static str {
+    /// The word (`health.food_*`): fresh, turning, rotten.
+    pub const fn word(self) -> crate::lang::MessageId {
         match self {
-            Freshness::Fresh => "fresh",
-            Freshness::Turning => "turning",
-            Freshness::Rotten => "rotten",
+            Freshness::Fresh => crate::msg::health::FOOD_FRESH,
+            Freshness::Turning => crate::msg::health::FOOD_TURNING,
+            Freshness::Rotten => crate::msg::health::FOOD_ROTTEN,
         }
     }
 }
@@ -133,10 +133,10 @@ pub struct TalentView {
     pub openings: Vec<Option<String>>,
 }
 
-/// One prerequisite as shown: "Toughness 14", met or not.
+/// One prerequisite as shown: "Toughness 14" (a `character.talent_needs_*` message), met or not.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct NeedView {
-    pub words: String,
+    pub words: crate::lang::Msg,
     pub met: bool,
 }
 

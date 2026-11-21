@@ -128,7 +128,10 @@ impl ModsScreen {
             match &self.found.iter().find(|f| f.id == id).expect("found").read {
                 Ok(_) => self.on.push(id.clone()),
                 Err(e) => {
-                    let args = [("id", id.as_str().into()), ("why", e.as_str().into())];
+                    let args = [
+                        ("id", Arg::text(id.as_str())),
+                        ("why", Arg::text(e.as_str())),
+                    ];
                     return self.say(ui_with(T::CANNOT_USE, &args), true);
                 }
             }
@@ -166,7 +169,7 @@ impl ModsScreen {
                 None => self.say(ui(T::NO_FOLDER), true),
                 Some(dir) => match (self.opener)(dir) {
                     Ok(()) => {
-                        let args = [("dir", dir.display().to_string().into())];
+                        let args = [("dir", Arg::text(dir.display().to_string()))];
                         self.say(ui_with(T::OPENED, &args), false)
                     }
                     Err(e) => self.say(e, true),
@@ -188,7 +191,7 @@ impl ModsScreen {
                 self.applied = on;
                 self.say(text, false);
             }
-            Err(e) => self.say(ui_with(T::NOT_APPLIED, &[("why", e.into())]), true),
+            Err(e) => self.say(ui_with(T::NOT_APPLIED, &[("why", Arg::text(e))]), true),
         }
     }
 
@@ -209,7 +212,7 @@ impl ModsScreen {
             let place = match &self.folder {
                 Some(dir) => {
                     let dir = dir.display().to_string();
-                    ui_with(T::NONE_IN, &[("dir", dir.into())])
+                    ui_with(T::NONE_IN, &[("dir", Arg::text(dir))])
                 }
                 None => ui(T::NO_FOLDER),
             };
@@ -219,9 +222,9 @@ impl ModsScreen {
         for (path, ids) in clashes(&self.on_mods()) {
             let last = ids.last().cloned().unwrap_or_default();
             let args = [
-                ("ids", ids.join(", ").into()),
-                ("path", path.as_str().into()),
-                ("last", last.into()),
+                ("ids", Arg::text(ids.join(", "))),
+                ("path", Arg::text(path.as_str())),
+                ("last", Arg::text(last)),
             ];
             let text = ui_with(T::CLASH, &args);
             info.push((text, false));
@@ -265,7 +268,7 @@ impl ModsScreen {
                 Ok(m) => {
                     let mut head = format!("{}  {}", m.name, m.version);
                     if m.game_version != ascmearc_core::GAME_VERSION {
-                        let args = [("version", m.game_version.as_str().into())];
+                        let args = [("version", Arg::text(m.game_version.as_str()))];
                         head.push_str(&format!("  {}", ui_with(T::MADE_FOR, &args)));
                     }
                     console.print(x + 6, y, &truncated(&head, width - 6), color);
@@ -275,7 +278,7 @@ impl ModsScreen {
                 Err(e) => {
                     console.print(x + 6, y, &truncated(&found.id, width - 6), color);
                     let line = truncated(
-                        &ui_with(T::CANNOT_USE_LINE, &[("why", e.as_str().into())]),
+                        &ui_with(T::CANNOT_USE_LINE, &[("why", Arg::text(e.as_str()))]),
                         width - 6,
                     );
                     console.print(x + 6, y + 1, &line, ACCENT);
@@ -312,9 +315,9 @@ impl ModsScreen {
         let footer = ui_with(
             T::FOOTER,
             &[
-                ("up_down", keys.up_down().into()),
-                ("confirm", keys.confirm.into()),
-                ("mark", keys.mark.into()),
+                ("up_down", Arg::text(keys.up_down())),
+                ("confirm", Arg::text(keys.confirm)),
+                ("mark", Arg::text(keys.mark)),
             ],
         );
         panel.footer(console, &footer);

@@ -117,7 +117,7 @@ use bevy::prelude::*;
 use missiles::Missiles;
 use motion::Motion;
 use spells::Spells;
-use text::{r#mod as T, ui, ui_with};
+use text::{label, label_in, r#mod as T, ui, ui_with, word};
 
 const MESSAGE_ROWS: i32 = 2;
 const STATUS_ROWS: i32 = 1;
@@ -609,7 +609,7 @@ fn draw_messages(
             Ability::Wedge => ui(T::WEDGE_DOOR),
             // Two kept beasts beside: which is tended, or the player (`input.rs::tend_way`).
             Ability::Heal => match bindings.key_name(KeyCommand::Wait) {
-                Some(key) => ui_with(T::TEND_WAY, &[("own", key.into())]),
+                Some(key) => ui_with(T::TEND_WAY, &[("own", Arg::text(key))]),
                 None => ui(T::TEND_WAY_ESC),
             },
             _ => ui(T::WAY),
@@ -657,7 +657,7 @@ fn draw_messages(
                 {
                     Some(does) => ui_with(
                         T::AIM_WAND,
-                        &[("item", named.into()), ("does", does.into())],
+                        &[("item", Arg::text(named)), ("does", does.into())],
                     ),
                     None => named,
                 }
@@ -672,7 +672,7 @@ fn draw_messages(
         let about = look::describe(&game.world.perception(), p, blood);
         console.print_clipped(1, 0, &about, TEXT);
         let prompt = match bindings.key_name(KeyCommand::Look) {
-            Some(key) => ui_with(T::LOOK_HINT, &[("own", key.into())]),
+            Some(key) => ui_with(T::LOOK_HINT, &[("own", Arg::text(key))]),
             None => ui(T::LOOK_HINT_ESC),
         };
         // What Knowledge tells of a creature takes the row's start: the description above is
@@ -724,14 +724,14 @@ fn rest_prompt() -> String {
             }
         })
         .collect();
-    ui_with(T::REST, &[("choices", choices.join(", ").into())])
+    ui_with(T::REST, &[("choices", Arg::text(choices.join(", ")))])
 }
 
 /// The status bar's reminder of where the keys are: the help key, else the pause menu (which
 /// holds Controls).
 fn controls_hint(bindings: &Bindings) -> String {
     match bindings.key_name(KeyCommand::Help) {
-        Some(key) => ui_with(T::CONTROLS, &[("own", key.into())]),
+        Some(key) => ui_with(T::CONTROLS, &[("own", Arg::text(key))]),
         None => ui(T::CONTROLS_MENU),
     }
 }
@@ -768,9 +768,10 @@ fn draw_status(
     // The hunger word's colour, as it worsens.
     if let Some(hunger) = view.own_hunger()
         && let Some(tint) = hunger_tint(hunger)
-        && let Some(x) = segment_x(&line, hunger.name())
+        && let name = word(hunger.name(), "Bare")
+        && let Some(x) = segment_x(&line, &name)
     {
-        console.print(1 + x, y, hunger.name(), tint);
+        console.print(1 + x, y, &name, tint);
     }
     if show_hint {
         console.print(cols - hint_w - 1, y, hint, TEXT_DIM);
@@ -820,7 +821,7 @@ fn status_segments(view: &PerceptionView, clock: Clock, dev: bool) -> Vec<Segmen
     let resources = (view.own_resources().into_iter()).map(|r| {
         let def = content.resource(r.resource);
         let (name, value) = (
-            ("name", def.short.clone().into()),
+            ("name", Arg::text(def.short.clone())),
             ("value", number(r.value)),
         );
         let text = match def.show_max {
@@ -834,7 +835,7 @@ fn status_segments(view: &PerceptionView, clock: Clock, dev: bool) -> Vec<Segmen
     // actor id order; cut down to its name before it is dropped.
     let kept: Vec<Segment> = (view.kept())
         .map(|(ally, data)| {
-            let name = ("name", data.name.clone().into());
+            let name = ("name", Arg::text(data.name.clone()));
             let text = match ally.retinue {
                 true => ui_with(T::KEPT_RETINUE, &[name]),
                 false => ui_with(T::KEPT, &[name, ("health", ally.health.word().into())]),
@@ -844,7 +845,7 @@ fn status_segments(view: &PerceptionView, clock: Clock, dev: bool) -> Vec<Segmen
         .collect();
     let stance = view.own_stance();
     let head = [
-        Segment::new(1, view.level_name()),
+        Segment::new(1, label_in(content, view.level_name().clone())),
         Segment::new(
             1,
             ui_with(T::HP, &[("hp", number(hp)), ("max", number(max_hp))]),
@@ -857,7 +858,7 @@ fn status_segments(view: &PerceptionView, clock: Clock, dev: bool) -> Vec<Segmen
     let level = number(view.own_experience().level);
     let rest = [
         Some(Segment::new(1, ui_with(T::LEVEL, &[("level", level)]))),
-        (!stance.is_neutral()).then(|| Segment::new(1, content.stance_def(stance).name.clone())),
+        (!stance.is_neutral()).then(|| Segment::new(1, label(content.stance_phrase(stance)))),
     ];
     let tail = [
         view.region().map(|r| Segment::new(4, r)),
@@ -901,12 +902,12 @@ fn conditions(view: &PerceptionView) -> Vec<Segment> {
     let content = view.content();
     let burden = view.own_load().burden();
     let hunger = view.own_hunger().filter(|h| *h != Hunger::NotHungry);
-    let effects = (view.own_effects()).map(|s| Segment::new(1, content.status(s).name.clone()));
+    let effects = (view.own_effects()).map(|s| Segment::new(1, label(content.status_phrase(s))));
     let rest = [
         (view.dazzled()).then(|| Segment::new(1, ui(T::DAZZLED))),
         (view.averted()).then(|| Segment::new(1, ui(T::AVERTED))),
-        hunger.map(|h| Segment::new(u8::from(hunger_tint(h).is_none()), h.name())),
-        (burden != Burden::Unburdened).then(|| Segment::new(1, burden.name())),
+        hunger.map(|h| Segment::new(u8::from(hunger_tint(h).is_none()), word(h.name(), "Bare"))),
+        (burden != Burden::Unburdened).then(|| Segment::new(1, word(burden.name(), "Bare"))),
     ];
     effects.chain(rest.into_iter().flatten()).collect()
 }
@@ -1477,14 +1478,17 @@ mod tests {
 
     /// The log is rendered in the language shown each time it is drawn, so switching it (the
     /// settings, `--lang`) switches what was already said: a test language, `xx`, with the
-    /// welcome line alone, the rest in English.
+    /// line for nothing to open alone, the rest in English (the welcome too, whose place, a line
+    /// of data, `xx` lacks).
     #[test]
     fn the_log_reads_in_the_language_chosen_and_switches_live() {
         let mut files = ascmearc_assets::files();
         let lang = "name = \"Testi\"\ncode = \"xx\"\nmorphology = \"en\"\nfallback = \"en\"\n";
         files.insert("lang/xx/lang.toml", lang);
-        let welcome = "welcome = \"Tervetuloa: {place}. Paina {key:help}.\"\n";
-        files.insert("lang/xx/messages/world.toml", welcome);
+        files.insert(
+            "lang/xx/messages/doors.toml",
+            "nothing_to_open = \"Ei avattavaa.\"\n",
+        );
         let content = Arc::new(Content::load(&files).expect("content with xx"));
         let mut world = World::new(content, "showcase", None).expect("starts");
         world.apply(&ascmearc_core::Action::Open(ascmearc_core::Dir::N));
@@ -1496,13 +1500,21 @@ mod tests {
         };
         let english = shown(&world);
         assert_eq!(english[0], "Welcome to Showcase. Press ? for controls.");
+        let door = (english
+            .iter()
+            .position(|l| l == "There is nothing to open there."))
+        .expect("the door line");
         text::use_language("xx");
         let switched = shown(&world);
         text::use_language("en");
-        assert_eq!(switched[0], "Tervetuloa: Showcase. Paina ?.");
+        assert_eq!(switched[door], "Ei avattavaa.");
         // What `xx` lacks reads as it did.
-        assert_eq!(switched[1..], english[1..]);
-        assert!(english.len() > 1, "{english:?}");
+        for (i, (s, e)) in switched.iter().zip(&english).enumerate() {
+            if i != door {
+                assert_eq!(s, e);
+            }
+        }
+        assert_eq!(switched.len(), english.len());
         assert_eq!(shown(&world), english);
     }
 

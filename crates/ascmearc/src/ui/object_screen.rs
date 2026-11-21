@@ -46,7 +46,7 @@ use super::menu::{HINTS, Nav, Panel, Press, wrap};
 use super::paged_list::{PagedList, Row, draw_header};
 use super::screens::ScreenAction;
 use super::target::AimKind;
-use super::text::{UiText, object_screen as T, ui, ui_with};
+use super::text::{UiText, object_screen as T, ui, ui_msg, ui_with, word};
 use super::{ACCENT, ScreenName, TEXT, TEXT_DIM, rarity_color};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
@@ -55,7 +55,7 @@ use ascmearc_core::color::Rgb;
 use ascmearc_core::content::{ClassActive, MAX_SPELL_RANK, Rarity, RecipeUse, SpellId};
 use ascmearc_core::equipment;
 use ascmearc_core::item_list::ItemList;
-use ascmearc_core::lang::Arg;
+use ascmearc_core::lang::{Arg, Phrase};
 use ascmearc_core::object::{Stack, Weight, format_weight};
 use ascmearc_core::perception::PerceptionView;
 use ascmearc_core::{Action, Meal, Positions, ReadTarget};
@@ -381,9 +381,9 @@ struct Entry {
     /// not aimed, a spell on oneself, is read at once).
     identify: bool,
     /// A grimoire whose spell may be learned or deepened: what it is ("grimoire of frost"), the
-    /// spell it teaches, the rank a reading would bring (`None`: it would teach the spell), and
-    /// the chance in words, for the dialog.
-    study: Option<(String, String, Option<u8>, &'static str)>,
+    /// spell it teaches (`spell:<id>`), the rank a reading would bring (`None`: it would teach
+    /// the spell), and the chance in words, for the dialog.
+    study: Option<(String, Phrase, Option<u8>, &'static str)>,
 }
 
 #[derive(Debug)]
@@ -459,7 +459,9 @@ impl ObjectScreen {
                 let mark = match (item, list) {
                     (Item::Floor(_), ObjectList::Eat) => Some(ui(T::MARK_LYING_HERE)),
                     (Item::Floor(_), _) => None,
-                    (Item::Pack(i), _) => equipment::mark(content, view.equipment(), i),
+                    (Item::Pack(i), _) => {
+                        equipment::mark(content, view.equipment(), i).map(|m| word(m, "bare"))
+                    }
                 };
                 let price = match item {
                     Item::Floor(_) => (view.price_tag(view.viewer(), s))
@@ -476,13 +478,13 @@ impl ObjectScreen {
                 let judged = (list == ObjectList::Eat && smell.is_none())
                     .then(|| view.judge(s))
                     .flatten()
-                    .map(|w| ui_with(T::MARK_LOOKS, &[("word", w.into())]));
+                    .map(|stage| ui_with(T::MARK_LOOKS, &[("word", stage.word().into())]));
                 // A grimoire in the read list: the spell it teaches, or the rank it would bring a
                 // known spell to, and the chance in words.
                 let study = match (list, item) {
                     (ObjectList::Read, Item::Pack(i)) => {
                         (studies.iter()).find(|s| s.item == i).and_then(|study| {
-                            let spell = content.spell_of(study.spell)?.name.clone();
+                            let spell = content.spell_phrase(content.spell_of(study.spell)?);
                             Some((view.lore().title(s), spell, study.rank, study.chance))
                         })
                     }
@@ -494,10 +496,10 @@ impl ObjectScreen {
                         &[
                             ("rank", Arg::Number(i64::from(*rank))),
                             ("max", Arg::Number(i64::from(MAX_SPELL_RANK))),
-                            ("chance", (*chance).into()),
+                            ("chance", Arg::text(*chance)),
                         ],
                     ),
-                    None => ui_with(T::MARK_LEARNING, &[("chance", (*chance).into())]),
+                    None => ui_with(T::MARK_LEARNING, &[("chance", Arg::text(*chance))]),
                 });
                 let marks: Vec<String> = (teaches.into_iter())
                     .chain(mark)
@@ -509,7 +511,7 @@ impl ObjectScreen {
                     item,
                     glyph: def.glyph,
                     fg: view.lore().fg(s),
-                    name: view.lore().listed(s),
+                    name: ui_msg(view.lore().listed(s)),
                     mark: (!marks.is_empty()).then(|| marks.join(") (")),
                     weight: s.weight(content),
                     rarity: s.rarity(),
@@ -616,9 +618,9 @@ impl ObjectScreen {
                 let text = ui_with(
                     T::DIALOG_TEXT,
                     &[
-                        ("grimoire", grimoire.into()),
-                        ("what", what.into()),
-                        ("chance", chance.into()),
+                        ("grimoire", Arg::text(grimoire)),
+                        ("what", Arg::text(what)),
+                        ("chance", Arg::text(chance)),
                     ],
                 );
                 ScreenAction::Dialog(Box::new(
@@ -787,17 +789,17 @@ impl ObjectScreen {
     /// kg)`, `Burdened over 15 kg, strained over 30 kg, overloaded over 45 kg`.
     fn summary(&self, width: i32) -> Vec<(String, Rgb)> {
         let burden = (self.load.map(|l| l.burden())).filter(|b| *b != Burden::Unburdened);
-        let weight = ("weight", format_weight(self.weight.carried).into());
+        let weight = ("weight", Arg::text(format_weight(self.weight.carried)));
         let parts = [
             match burden {
-                Some(b) => ui_with(T::CARRYING_BURDEN, &[weight, ("burden", b.id().into())]),
+                Some(b) => ui_with(T::CARRYING_BURDEN, &[weight, ("burden", Arg::text(b.id()))]),
                 None => ui_with(T::CARRYING, &[weight]),
             },
             ui_with(
                 T::YOUR_WEIGHT,
                 &[
-                    ("total", format_weight(self.weight.total()).into()),
-                    ("base", format_weight(self.weight.base).into()),
+                    ("total", Arg::text(format_weight(self.weight.total()))),
+                    ("base", Arg::text(format_weight(self.weight.base))),
                 ],
             ),
         ];
@@ -914,8 +916,8 @@ impl ObjectScreen {
                 Some(m) => ui_with(
                     T::NAME_MARKED,
                     &[
-                        ("name", entry.name.clone().into()),
-                        ("mark", m.clone().into()),
+                        ("name", Arg::text(entry.name.clone())),
+                        ("mark", Arg::text(m.clone())),
                     ],
                 ),
                 None => entry.name.clone(),
@@ -950,15 +952,18 @@ impl ObjectScreen {
             last => format!("a-{last}"),
         });
         let with = |text: UiText| match &letters {
-            Some(l) => format!("{}   ", ui_with(text, &[("letters", l.clone().into())])),
+            Some(l) => format!("{}   ", ui_with(text, &[("letters", Arg::text(l.clone()))])),
             None => String::new(),
         };
         let page = (self.entries.hint(&keys)).map_or(String::new(), |hint| format!("{hint}   "));
-        let confirm = || ("confirm", Arg::from(keys.confirm));
+        let confirm = || ("confirm", Arg::text(keys.confirm));
         let either = |verb: UiText| {
-            let verb = ("verb", ui(verb).into());
+            let verb = ("verb", Arg::text(ui(verb)));
             match &letters {
-                Some(l) => ui_with(T::EITHER, &[("letters", l.clone().into()), confirm(), verb]),
+                Some(l) => ui_with(
+                    T::EITHER,
+                    &[("letters", Arg::text(l.clone())), confirm(), verb],
+                ),
                 None => ui_with(T::EITHER_NONE, &[confirm(), verb]),
             }
         };
@@ -966,8 +971,8 @@ impl ObjectScreen {
             format!(
                 "{}{}   {}   {page}{}",
                 with(T::FOOTER_MARK),
-                ui_with(T::FOOTER_MARK_ALL, &[("own", keys.mark_all.into())]),
-                ui_with(T::EITHER_NONE, &[confirm(), ("verb", ui(verb).into())]),
+                ui_with(T::FOOTER_MARK_ALL, &[("own", Arg::text(keys.mark_all))]),
+                ui_with(T::EITHER_NONE, &[confirm(), ("verb", Arg::text(ui(verb)))]),
                 ui(esc),
             )
         };
@@ -977,7 +982,9 @@ impl ObjectScreen {
                 Dropping::FromPlay => mark(T::VERB_DROP, T::ESC_CANCEL),
                 Dropping::No => {
                     let close = match bindings.keys_of(KeyCommand::Inventory).first() {
-                        Some(key) => ui_with(T::ESC_CLOSE_OWN, &[("own", key.display().into())]),
+                        Some(key) => {
+                            ui_with(T::ESC_CLOSE_OWN, &[("own", Arg::text(key.display()))])
+                        }
                         None => ui(T::ESC_CLOSE),
                     };
                     let drop = if letters.is_some() {

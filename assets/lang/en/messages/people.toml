@@ -13,6 +13,8 @@
 
 # What a quest asks, as the wiki's quest table says it: `task`, a `task_*` line.
 asks = "{task:Bare}."
+# Why a healer will not mend a wound yet: the player shows a disease.
+be_cured_first = "Be cured first."
 cannot_afford = "{who:The} cannot afford {what:a}."
 # A dev action's: `quest` the quest's name, `target` as typed.
 cannot_draw_dev = "{quest:bare} cannot draw `{target:bare}`."
@@ -61,11 +63,12 @@ lure_dev = "You lure {who:the} to your side (dev)."
 mark_the_way = "You mark the way on your map."
 # A dev action's.
 marked_done_dev = "{quest:bare} is marked done."
-# A quest's giver marks a hidden location: `place`, its name.
-marks_on_map = "{who:The} marks {place:the} on your map."
-# A guild's master names the player to a rank: `title`, the rank ("Pewter"); `guild`, the guild's
-# name as written ("the Weyfarers' Gilde").
-names_you = "{master:The} names you {title:a} of {guild:bare}."
+# A quest's giver marks a hidden location: `place`, its name as the data writes it, with its own
+# article if it has one, lower case ("the Skeul Hir", "Fyrdelf").
+marks_on_map = "{who:The} marks {place:bare} on your map."
+# A guild's master names the player to a rank: `title`, the rank ("Pewter"); `guild`, the guild by
+# its name (`guild:<id>`, said `the`: "the Weyfarers' Gilde").
+names_you = "{master:The} names you {title:a} of {guild:the}."
 # What the player does next once a quest's goal is met: `step`, a `step_*` line.
 next_step = "{step:Bare}."
 no_longer_carry = "You no longer carry {what:the}."
@@ -83,7 +86,7 @@ not_rolled_dev = "{quest:bare} is no rolled quest you were given."
 # A dev action's.
 not_under_way_dev = "{quest:bare} is not under way."
 # A lure quest's creature not yet brought home: `place`, where it is to be bound.
-not_yet_bound = "{who:The} is not yet bound in {place:the}."
+not_yet_bound = "{who:The} is not yet bound in {place:bare}."
 nothing_to_decide = "There is nothing to decide."
 # A dev action's: `target` as typed.
 now_asks_dev = "{quest:bare} now asks for {target:bare} (dev)."
@@ -118,25 +121,31 @@ task_bring = "bring {what:a}"
 task_bring_to = "bring {what:a} to {who:the}"
 task_deliver = "deliver {what:a} to {who:the}"
 # `who`, the escort; `place`, where to bring them.
-task_escort = "bring {who:the} safely to {place:the}"
+task_escort = "bring {who:the} safely to {place:bare}"
 task_kill = "kill {target:bare}"
-task_kill_in = "kill {target:bare} in {place:the}"
-task_kill_in_members = "kill {target:bare} in {place:the}: {members:bare}"
+task_kill_in = "kill {target:bare} in {place:bare}"
+task_kill_in_members = "kill {target:bare} in {place:bare}: {members:bare}"
 task_kill_members = "kill {target:bare}: {members:bare}"
 # `who`, the creature to lure; `from`, where it waits; `place`, where it is bound.
-task_lure = "lure {who:the} from {from:the} to {place:the}"
-task_reach = "reach {place:the}"
+task_lure = "lure {who:the} from {from:bare} to {place:bare}"
+task_reach = "reach {place:bare}"
 # A teacher trains the player in a skill.
 trains_you = "{who:The} train{who:s} you in {skill:bare}."
 updated = "Quest updated:"
 # A quest's progress: `what`, what it counts, as many as it needs.
 updated_count = "Quest updated: {have:bare} / {need:bare} {what:bare}."
-updated_reached = "Quest updated: you have reached {place:the}."
+updated_reached = "Quest updated: you have reached {place:bare}."
 # A delivery picked up again: `step`, a `step_*` line.
 updated_step = "Quest updated: {step:bare}."
 # What a quest asks, as the log's objective says it: `giver`, who gave it; `task`, a `task_*`
 # line.
 wants = "{giver:The} wants you to {task:bare}."
+# A trader's offered item in words (`wares.rs`), the one dialog's: `item`, the item as the lists
+# name it (`items.listed`).
+ware = "{item:Bare}"
+# What its magic does after it: `ware`, the item (`ware`, or this entry again); `line`, a line of
+# its description.
+ware_listed = "{ware:bare}. {line:bare}"
 # A shop's sign: `shop`, as its data writes it with the keeper's name ("Grimbold's General Store").
 welcome_shop = "Welcome to {shop:bare}!"
 # A wizard of a quarrel the player takes the side of: `who`.

@@ -15,7 +15,8 @@ use super::{ACCENT, TEXT, TEXT_DIM};
 use crate::input::{Bindings, KeyCommand};
 use crate::render::console::Console;
 use ascmearc_core::content::Content;
-use ascmearc_core::messages::{msg_in, speech_in};
+use ascmearc_core::lang::Arg;
+use ascmearc_core::messages::{arg_in, msg_in, speech_in};
 use ascmearc_core::perception::PerceptionView;
 use ascmearc_core::world::QuestView;
 
@@ -47,9 +48,9 @@ impl Logged {
     fn of(content: &Content, quest: &QuestView) -> Self {
         let code = super::text::language_code();
         let offer = speech_in(content, &code, &quest.offer);
-        let said = [("giver", quest.giver.clone()), ("offer", offer.into())];
+        let said = [("giver", quest.giver.clone()), ("offer", Arg::text(offer))];
         Self {
-            name: quest.name.clone(),
+            name: arg_in(content, &code, &quest.name, "bare"),
             active: quest.active,
             failed: quest.failed,
             objective: msg_in(content, &code, &quest.objective),
@@ -102,7 +103,7 @@ impl QuestScreen {
             }
             // A failed quest (an escort's death) is among the finished ones, marked so.
             let name = if quest.failed {
-                ui_with(T::FAILED, &[("name", quest.name.as_str().into())])
+                ui_with(T::FAILED, &[("name", Arg::text(quest.name.as_str()))])
             } else {
                 quest.name.clone()
             };
@@ -182,10 +183,10 @@ impl QuestScreen {
     /// The footer: the keys.
     fn footer(&self, bindings: &Bindings) -> String {
         let close = match (bindings.keys_of(KeyCommand::Quests).first()).map(|k| k.display()) {
-            Some(own) => ui_with(T::CLOSE_OWN, &[("own", own.into())]),
+            Some(own) => ui_with(T::CLOSE_OWN, &[("own", Arg::text(own))]),
             None => ui(T::CLOSE),
         };
-        let choose = ui_with(T::CHOOSE, &[("keys", HINTS.up_down().into())]);
+        let choose = ui_with(T::CHOOSE, &[("keys", Arg::text(HINTS.up_down()))]);
         format!("{choose}   {close}")
     }
 }

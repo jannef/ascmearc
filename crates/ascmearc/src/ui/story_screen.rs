@@ -58,7 +58,10 @@ impl StoryScreen {
         let name = view.and_then(|v| v.character()).map(|c| c.name.as_str());
         let title = match name {
             Some(name) if !name.is_empty() => {
-                format!(" {} ", ui_with(T::TITLE_NAMED, &[("name", name.into())]))
+                format!(
+                    " {} ",
+                    ui_with(T::TITLE_NAMED, &[("name", Arg::text(name))])
+                )
             }
             _ => format!(" {} ", ui(T::TITLE_YOUR)),
         };
@@ -158,12 +161,12 @@ impl StoryScreen {
         }
         let keys = HINTS;
         let close = if self.opening {
-            ui_with(T::CLOSE_CONTINUE, &[("confirm", Arg::from(keys.confirm))])
+            ui_with(T::CLOSE_CONTINUE, &[("confirm", Arg::text(keys.confirm))])
         } else {
             ui(T::CLOSE_ESC)
         };
         let footer = if shown < lines.len() {
-            let scroll = ui_with(T::SCROLL, &[("up_down", keys.up_down().into())]);
+            let scroll = ui_with(T::SCROLL, &[("up_down", Arg::text(keys.up_down()))]);
             format!("{scroll}   {close}")
         } else {
             close

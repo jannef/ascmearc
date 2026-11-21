@@ -49,7 +49,7 @@ fn plain_phrase() -> impl Strategy<Value = Phrase> {
             Just(Gender::Other),
             Just(Gender::Neuter)
         ],
-        prop::collection::vec(any::<String>(), 0..2),
+        prop::collection::vec(word(), 0..2),
         any::<u32>(),
     )
         .prop_map(
@@ -350,4 +350,32 @@ fn the_strategies_cover_the_arg_kinds() {
         *kinds.entry(kind).or_insert(0) += 1;
     }
     assert!(kinds.len() >= 4, "{kinds:?}");
+}
+
+/// #2038's inputs in `en` and `generic`, which have no compound marker: a `|` is a letter like
+/// any other, accepted, rendered in every listed form, and written as is in the word's own
+/// forms (the `fi` side: `morphology/fi/tests.rs`).
+#[test]
+fn a_bar_is_plain_text_in_en_and_generic() {
+    let en = En::new(Plurals::default(), 12);
+    let spec: GenericSpec =
+        toml::from_str("forms = [\"nom\", \"pl\"]\nplural = \"pl\"\n").expect("parses");
+    let generic = Generic::new(spec);
+    for entry in ["|", "||", "a|", "|a", " | ", "ä|", "|€", "pitkä||miekka"] {
+        let lexicon = MapLexicon::default().with("x", LexWord::new(entry));
+        for (name, module) in [("en", &en as &dyn Morphology), ("generic", &generic)] {
+            assert!(module.parse_word(entry).is_ok(), "{name} {entry}");
+            for form in module.forms() {
+                for phrase in [Phrase::id("x"), Phrase::literal(entry)] {
+                    let out = module
+                        .phrase(&phrase, &form, &lexicon, &Register::default())
+                        .expect("a listed form renders");
+                    assert!(!out.is_empty(), "{name} {entry} {form}");
+                    if ["bare", "the", "plural", "nom", "pl"].contains(&form.as_str()) {
+                        assert!(out.contains('|'), "{name} {entry} {form}: {out}");
+                    }
+                }
+            }
+        }
+    }
 }

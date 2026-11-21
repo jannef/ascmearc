@@ -10,7 +10,7 @@
 //! `npc` or `creature` id (`ascmearc.servant`, `data.shopkeeper`), then the field: `greet`,
 //! `greet_evil.<n>`, `greet_good.<n>`, `lines.<n>`, `after.<quest>.<n>`, `economy.hard.<n>`,
 //! `economy.better.<n>`, `topic.<id>`, `service.<id>.reply`, `service.<id>.nothing`,
-//! `offer.reply`, `offer.sold`, `mutter.<n>`, `stipend.handover`, `partner.<field>`,
+//! `offer.reply`, `offer.sold`, `mutter.<n>`, `mutter_verb`, `stipend.handover`, `partner.<field>`,
 //! `patron.<field>`, and `address`, the dialogue's `address` table as variants by the player's
 //! gender. A translation's `dialogue/` file keys by the same path.
 
@@ -170,6 +170,14 @@ pub(super) fn key_lines(d: &mut Dialogue, scope: &str) -> Result<Vec<(String, Te
     }
     if let Some(words) = &d.address {
         keyed.push((format!("{KIND}:{scope}.address"), address_template(words)));
+    }
+    // A mutter's `verb` is a line of its own, said by the narrator ("hums").
+    if let Some(mutter) = &mut d.mutter
+        && let Some(verb) = &mutter.verb
+    {
+        let key = format!("{KIND}:{scope}.mutter_verb");
+        keyed.push((key.clone(), Template::Line(Line::parse(verb))));
+        mutter.verb_key = Some(key);
     }
     Ok(keyed)
 }

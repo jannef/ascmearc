@@ -4,13 +4,13 @@
 //! catch the reader. `input` decides when to ask; these say what, in the words of
 //! `assets/lang/en/ui/step_dialogs.toml`.
 
-use super::text::{step_dialogs as T, ui, ui_with};
+use super::text::{step_dialogs as T, ui, ui_msg, ui_with, word};
 use crate::ui::{Aim, AimKind, Dialog, ScreenAction, ScreenName};
 use ascmearc_core::ability::Ability;
 use ascmearc_core::content::{LevelKind, Offer, RecipeUse, TerrainId};
 use ascmearc_core::hunger::Hunger;
 use ascmearc_core::lang::{Arg, Phrase};
-use ascmearc_core::perception::{CellView, PerceptionView};
+use ascmearc_core::perception::{CellView, PerceptionView, ShopView};
 use ascmearc_core::{Action, Dir, Positions};
 
 /// The dialog a step in `dir` asks first, if any: diving into deep water, leaving a shop owing,
@@ -24,6 +24,12 @@ pub(crate) fn step_dialog(view: &PerceptionView<'_>, dir: Dir) -> Option<Dialog>
         .or_else(|| offer_dialog(view, dir))
 }
 
+/// A shop's sign, its dialogs' title, in the language shown: "Grimbold's General Store".
+fn sign(view: &PerceptionView<'_>, shop: &ShopView<'_>) -> String {
+    let code = super::text::language_code();
+    ascmearc_core::messages::arg_in(view.content(), &code, &shop.sign(), "bare")
+}
+
 /// The dialog a step in `dir` opens first, if it leaves the shop the player stands in owing
 /// anything. Out of its door: pay and leave in one action (offered only with
 /// the gold; else the dialog says what they owe and have), or not, and the keeper turns them
@@ -34,14 +40,14 @@ fn leaving_dialog(view: &PerceptionView<'_>, dir: Dir) -> Option<Dialog> {
     let (shop, owed) = view.owed_on_leaving(to)?;
     let gold = view.own_gold();
     let (keeper, owed_arg) = (
-        ("keeper", Arg::from(shop.keeper())),
+        ("keeper", Arg::text(shop.keeper())),
         ("owed", Arg::Number(owed.into())),
     );
     let owing = [keeper.clone(), owed_arg.clone()];
     let pay = ui_with(T::PAY_LEAVE, std::slice::from_ref(&owed_arg));
     let dialog = if shop.is_exit(to) {
         if gold >= owed {
-            Dialog::new(shop.sign(), ui_with(T::OWE, &owing))
+            Dialog::new(sign(view, &shop), ui_with(T::OWE, &owing))
                 .accept(pay, Action::Pay(Some(dir)))
                 .decline(ui(T::DONT_PAY), Action::Move(dir))
         } else {
@@ -52,10 +58,10 @@ fn leaving_dialog(view: &PerceptionView<'_>, dir: Dir) -> Option<Dialog> {
                     ui_with(T::OWE_ONLY, &[keeper, owed_arg, have])
                 }
             };
-            Dialog::new(shop.sign(), text).decline(ui(T::GO_BACK), Action::Move(dir))
+            Dialog::new(sign(view, &shop), text).decline(ui(T::GO_BACK), Action::Move(dir))
         }
     } else {
-        let dialog = Dialog::new(shop.sign(), ui_with(T::THEFT, &owing));
+        let dialog = Dialog::new(sign(view, &shop), ui_with(T::THEFT, &owing));
         let dialog = match gold >= owed {
             true => dialog.accept(pay, Action::Pay(Some(dir))),
             false => dialog,
@@ -75,13 +81,13 @@ pub(crate) fn sale_dialog(view: &PerceptionView<'_>, letters: &Positions) -> Opt
     let what = ascmearc_core::object::phrase(&sale.stacks, view.lore());
     let offer = ("offer", Arg::Number(sale.offer.into()));
     let args = [
-        ("keeper", shop.keeper().into()),
+        ("keeper", Arg::text(shop.keeper())),
         offer.clone(),
-        ("what", what.into()),
+        ("what", Arg::text(what)),
     ];
     let sell = ui_with(T::SELL, &[offer]);
     Some(
-        Dialog::new(shop.sign(), ui_with(T::SALE, &args))
+        Dialog::new(sign(view, &shop), ui_with(T::SALE, &args))
             .accept(sell, Action::Sell(letters.clone()))
             .cancel(ui(T::KEEP_IT), ScreenAction::Close),
     )
@@ -92,7 +98,9 @@ pub(crate) fn sale_dialog(view: &PerceptionView<'_>, letters: &Positions) -> Opt
 pub(crate) fn treat_dialog(ailments: &[ascmearc_core::heal::OwnAilment]) -> Dialog {
     let dialog = Dialog::new(ui(T::HEAL_TITLE), ui(T::HEAL_ASK));
     (ailments.iter())
-        .fold(dialog, |d, a| d.plain(a.name.clone(), a.action.clone()))
+        .fold(dialog, |d, a| {
+            d.plain(ui_msg(a.name.clone()), a.action.clone())
+        })
         .cancel(ui(T::NEVER_MIND), ScreenAction::Close)
 }
 
@@ -101,11 +109,8 @@ pub(crate) fn treat_dialog(ailments: &[ascmearc_core::heal::OwnAilment]) -> Dial
 /// [`Aim::catches_reader`]): read (cast) it anyway, aim again (back at the same cursor, the
 /// target remembered), or not.
 pub(crate) fn burst_dialog(view: &PerceptionView<'_>, aim: Aim) -> Option<Dialog> {
-    // The burst's noun as the data writes it ("fireball"), a word of the lexicon by its text.
-    let noun = (
-        "noun",
-        Phrase::id(format!("word:{}", aim.catches_reader(view)?)).into(),
-    );
+    // The burst's noun ("fireball"), `spell_noun:<id>`.
+    let noun = ("noun", aim.catches_reader(view)?.into());
     let read = aim.action(view.content())?;
     let AimKind::Read(item) = aim.kind else {
         return Some(
@@ -143,9 +148,8 @@ fn trap_dialog(view: &PerceptionView<'_>, dir: Dir) -> Option<Dialog> {
     let trap = view
         .trap(to)
         .filter(|_| !door && view.actor_at(to).is_none())?;
-    // The trap as the data names it, a word of the lexicon by its text.
-    let name = &view.content().trap(trap).name;
-    let trap = ("trap", Phrase::id(format!("word:{name}")).into());
+    // The trap by its name (`trap:<id>`).
+    let trap = ("trap", view.content().trap_phrase(trap).into());
     Some(
         Dialog::new(ui(T::TRAP_TITLE), ui_with(T::TRAP_ASK, &[trap]))
             .accept(ui(T::STEP_ONTO), Action::Move(dir))
@@ -189,7 +193,7 @@ fn hunger_dialog(view: &PerceptionView<'_>, dir: Dir) -> Option<Dialog> {
         return None;
     }
     Some(
-        Dialog::new(hunger.name(), ui(text))
+        Dialog::new(word(hunger.name(), "Bare"), ui(text))
             .accept(ui(T::GO_ON), Action::Move(dir))
             .cancel(ui(T::STAY), ScreenAction::Close),
     )
