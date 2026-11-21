@@ -7,7 +7,7 @@
 id = "grandmother"
 name = "the Grandmother"
 object = "great_sword"
-affixes = ["sharp=10", "heavy=12", "withering=12", "of_precision=4", "of_the_bear=4"]
+affixes = ["sharp=10", "heavy=1d12", "withering=1d12", "of_precision=4", "of_the_bear=4"]
 level = 12
 # Its make holds six enchantments (docs/dev/enchanting.md): Masterwork mithril.
 quality = "masterwork"

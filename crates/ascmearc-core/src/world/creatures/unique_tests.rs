@@ -104,21 +104,25 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
     assert_eq!(magic.unique.as_deref(), Some("widowmaker"));
     assert_eq!(magic.level, 12);
     assert!(!magic.identified, "found unidentified");
-    // Each affix at its tier, its value the top of the tier's range.
-    let affixes = |id: &str, tier: u8| {
+    // Each affix with its value as written (#2044), at the first tier that rolls it.
+    let affixes = |id: &str, value: i32| {
         let a = content.affixes().get(id).expect(id);
+        let tier = (a.tiers.iter())
+            .position(|t| t.holds(value))
+            .expect("a tier")
+            + 1;
         Affix {
             id: id.into(),
-            tier,
-            value: a.tier(tier).expect("tier").max,
+            tier: u8::try_from(tier).expect("a tier"),
+            value,
         }
     };
     assert_eq!(
         magic.affixes,
         [
-            affixes("of_celerity", 11),
+            affixes("of_celerity", 16),
             affixes("of_the_lynx", 2),
-            affixes("of_precision", 3),
+            affixes("of_precision", 2),
         ]
     );
     assert_eq!(def.stack.count, 1);
@@ -140,7 +144,7 @@ fn a_unique_is_made_from_its_table_rare_with_its_name_and_affixes() {
     assert_eq!(value("unhalwed_bedes", "mystic"), Some(30));
     assert_eq!(value("sigerics_star", "mystic"), None);
     assert_eq!(value("sigerics_star", "of_the_sage"), Some(6));
-    // A value set by hand keeps the affix's top tier, and passes the check a save gets.
+    // A value past the ladder takes the affix's last tier, and passes the check a save gets.
     let bedes = content.unique("unhalwed_bedes").expect("the Bedes");
     let mystic = &bedes.magic().affixes[0];
     let tiers = content.affixes().get("mystic").expect("Mystic").tiers.len();
@@ -230,7 +234,8 @@ fn unidentified_it_hides_its_name_affixes_power_and_lore() {
     assert_eq!(affixes.count(), 3);
 }
 
-/// The form `"mystic=30"` (#2001): a unique's alone, checked at load.
+/// The form `"mystic=30"` (#2001, #2044): a unique's affixes are written so, never with a tier,
+/// and take the first tier that rolls the value, or past the ladder its last; checked at load.
 #[test]
 fn a_unique_sets_an_affix_value_by_hand_and_the_load_checks_it() {
     let load = |object: &str, affixes: &str| {
@@ -244,15 +249,44 @@ fn a_unique_sets_an_affix_value_by_hand_and_the_load_checks_it() {
         );
         Content::load(&files)
     };
+    let tiers = |content: &Content, id: &str| content.affixes().get(id).expect(id).tiers.clone();
     let content = load("gold_ring", "\"mystic=40\"").expect("a value past the top tier");
     let magic = content.unique("test_set").expect("loaded").magic();
     assert_eq!(magic.affixes[0].value, 40);
+    assert_eq!(
+        usize::from(magic.affixes[0].tier),
+        tiers(&content, "mystic").len()
+    );
+    // A value the ladder rolls takes the first tier that rolls it.
+    let content = load("gold_ring", "\"mystic=7\"").expect("a value on the ladder");
+    let affix = &content.unique("test_set").expect("loaded").magic().affixes[0];
+    let first = tiers(&content, "mystic").iter().position(|t| t.holds(7));
+    assert_eq!((affix.value, Some(usize::from(affix.tier) - 1)), (7, first));
+    // A dice family's value is a die: its sides (#2044).
+    let content = load("dagger", "\"heavy=1d12\", \"flaming=1d3\"").expect("dice");
+    let magic = content.unique("test_set").expect("loaded").magic();
+    let values: Vec<i32> = magic.affixes.iter().map(|a| a.value).collect();
+    assert_eq!(values, [12, 3]);
+    // A light's value is its light.
+    let content = load("gold_ring", "\"of_light=item_glow_bright\"").expect("a light");
+    let affix = &content.unique("test_set").expect("loaded").magic().affixes[0];
+    assert_eq!(
+        tiers(&content, "of_light")[usize::from(affix.tier) - 1].light,
+        content.light_id("item_glow_bright")
+    );
     // A bow takes flat damage set by hand, though Sharp never rolls on one.
     load("long_bow", "\"sharp=2\"").expect("an effect a bow's shots use");
     for (object, affixes, needle) in [
-        ("gold_ring", "\"mystic=-3\"", "sign"),
+        ("gold_ring", "\"mystic=-3\"", "no tier of `mystic` rolls it"),
+        ("gold_ring", "\"mystic=1\"", "no tier of `mystic` rolls it"),
         ("gold_ring", "\"mystic=x\"", "must be a number"),
+        ("gold_ring", "\"mystic:2\"", "not a tier"),
+        ("gold_ring", "\"mystic\"", "not a tier"),
         ("gold_ring", "\"nothing=3\"", "unknown affix"),
+        ("dagger", "\"heavy=8\"", "the value is a die"),
+        ("dagger", "\"heavy=2d8\"", "one die"),
+        ("dagger", "\"sharp=1d4\"", "must be a number"),
+        ("gold_ring", "\"of_light=3\"", "a light's value is a light"),
         // Range on a ring does nothing, set by hand or not.
         ("gold_ring", "\"hunters=3\"", "does nothing"),
         ("gold_ring", "\"mystic=30\", \"mystic=31\"", "category"),
@@ -260,18 +294,39 @@ fn a_unique_sets_an_affix_value_by_hand_and_the_load_checks_it() {
         let e = load(object, affixes).expect_err(affixes).to_string();
         assert!(e.contains(needle), "{affixes}: {e}");
     }
-    // A level's `[[item]]` names tiers only.
-    let mut files = files();
-    files.insert(
-        "levels/den.toml",
-        &format!(
-            "{LEVEL}[[item]]\nat = [2, 1]\nobject = \"gold_ring\"\naffixes = [\"mystic=30\"]\n"
-        ),
+    // The save's check: a value past the top on the last tier alone, the unique's alone.
+    let content = load("gold_ring", "\"mystic=40\"").expect("past the top");
+    let unique = content.unique("test_set").expect("loaded");
+    let ring = content.object(unique.object);
+    unique.magic().check(ring, &content).expect("as set");
+    let mut lower = unique.magic().clone();
+    lower.affixes[0].tier = 1;
+    assert!(
+        lower.check(ring, &content).is_err(),
+        "past a tier not the last"
     );
-    let e = Content::load(&files)
-        .expect_err("no hand-set value")
-        .to_string();
-    assert!(e.contains("only a unique item"), "{e}");
+}
+
+/// A level's `[[item]]` may write an affix with its value (#2044), held within the ladder and
+/// the affix's bases as a rolled one is.
+#[test]
+fn an_item_writes_an_affix_with_its_value_within_the_ladder() {
+    let load = |affixes: &str| {
+        let mut files = files();
+        files.insert(
+            "levels/den.toml",
+            &format!(
+                "{LEVEL}[[item]]\nat = [2, 1]\nobject = \"gold_ring\"\naffixes = [{affixes}]\n"
+            ),
+        );
+        Content::load(&files).map_err(|e| e.to_string())
+    };
+    load("\"mystic=7\"").expect("a value the ladder rolls");
+    let e = load("\"mystic=30\"").expect_err("past the ladder");
+    assert!(e.contains("no tier of `mystic` rolls it"), "{e}");
+    assert!(!e.contains("a unique's"), "{e}");
+    let e = load("\"sharp=2\"").expect_err("off the bases");
+    assert!(e.contains("does not roll on"), "{e}");
 }
 
 #[test]
@@ -289,7 +344,7 @@ fn a_unique_is_placed_by_its_id() {
         files.insert(
             "data/uniques/test_blade.toml",
             "[[unique]]\nid = \"test_blade\"\nname = \"Test Blade\"\nobject = \"stiletto\"\n\
-             affixes = [\"of_celerity:1\"]\n",
+             affixes = [\"of_celerity=8\"]\n",
         );
         files
     };
@@ -576,7 +631,7 @@ fn the_load_checks_light_and_range_powers() {
             "data/uniques/test_power.toml",
             &format!(
                 "[[unique]]\nid = \"test_power\"\nname = \"Test Power\"\nobject = \"{object}\"\n\
-                 affixes = [\"keen:1\"]\npower = {{ {power}, phrase = \"It does.\" }}\n"
+                 affixes = [\"keen=1\"]\npower = {{ {power}, phrase = \"It does.\" }}\n"
             ),
         );
         Content::load(&files).map(|_| ()).map_err(|e| e.to_string())

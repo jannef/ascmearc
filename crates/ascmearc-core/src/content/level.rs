@@ -202,7 +202,8 @@ struct PileSpec {
 
 /// An item placed by hand: a magic or rare one, `[[item]] at = [x, y] object = "long_sword"
 /// affixes = ["sharp:2", "of_the_bear"]`, each affix an id with an optional tier (default 1)
-/// whose value is the top of the tier's range (a rare one has a `name`); and an item set with a
+/// whose value is the top of the tier's range, or with its value, `"sharp=3"`, `"heavy=1d6"`
+/// ([`magic_of`], #2044) (a rare one has a `name`); and an item set with a
 /// gem or a loose gem, `parts = [{ part = "pommel", of = "emerald", size = "small", cut = "fine"
 /// }]` (a loose gem's gem is its main part, no `part`), or made of another
 /// material, `parts = [{ of = "bronze" }]` (a variant, #193: no size or cut), with affixes or

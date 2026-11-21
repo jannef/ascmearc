@@ -56,7 +56,10 @@ pub(super) fn valued(
     if unique {
         let kind = (def.kind).ok_or_else(|| format!("`{}` cannot be magic", def.id))?;
         if !a.effect.allowed_on(kind) || !crate::magic::may_roll_on(a, def) {
-            return Err(format!("`{text}`: its effect does nothing on {}", def.plural));
+            return Err(format!(
+                "`{text}`: its effect does nothing on {}",
+                def.plural
+            ));
         }
     }
     let affix = Affix {

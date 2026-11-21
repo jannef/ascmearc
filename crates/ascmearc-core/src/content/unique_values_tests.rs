@@ -4,8 +4,11 @@
 
 use super::*;
 
-/// Each unique: its item level, and each affix with its value, as its table writes them.
-const UNIQUES: &[(&str, u8, &[(&str, i32)])] = &[
+/// A unique's id, its item level, and each affix with its value, as its table writes them.
+type Written = (&'static str, u8, &'static [(&'static str, i32)]);
+
+/// Every unique, by id.
+const UNIQUES: &[Written] = &[
     (
         "brosinga_mene",
         12,
@@ -132,7 +135,9 @@ fn every_unique_keeps_its_numbers() {
 fn a_light_is_written_with_its_light() {
     let content = Content::load(&ContentFiles::builtin()).expect("builtin content");
     let magic = content.unique("sigerics_star").expect("loaded").magic();
-    let light = (magic.affixes.iter()).find(|a| a.id == "of_light").expect("of Light");
+    let light = (magic.affixes.iter())
+        .find(|a| a.id == "of_light")
+        .expect("of Light");
     let tier = (content.affixes().get("of_light")).and_then(|a| a.tier(light.tier));
     assert_eq!(tier.and_then(|t| t.light), content.light_id("item_glow"));
 }
