@@ -14,9 +14,10 @@
 //! scrolls of identify), then each drawn from what it stocks by its loot `frequency` (100 for
 //! what is never loot, `Shops::goods`), so a spell scroll of a low tier lies there more often
 //! than one of a high tier, a stackable one in a bundle. Each is made as loot is at the item
-//! level `data/rules/restock.toml` gives a level-1 player on a floor this deep (`Shops::lay_out`:
-//! its magic and an ornament, never another material), so a shop deep down lays out better goods
-//! (#1735).
+//! level `data/rules/restock.toml` gives a level-1 player on a floor of this danger
+//! (`Shops::lay_out`: its magic and an ornament, never another material), so a shop on a
+//! dangerous floor lays out better goods (#1735), and a base item comes only once that item level
+//! reaches its own (#2048).
 
 use super::Canvas;
 use crate::content::ShopPlan;
@@ -78,8 +79,8 @@ pub(super) fn place(canvas: &mut Canvas, rng: &mut Rng, candidates: &[Candidate]
     };
     light(canvas, room, front, post);
     let content = canvas.content;
-    let goods = shops.goods(content, kind);
     let made_at = (content.restock()).map_or(1, |r| r.item_level(1, canvas.item_level, 0));
+    let goods = shops.goods(content, kind, made_at);
     let mut cells: Vec<Pos> = (room.cells())
         .filter(|&p| p != front && p != post && canvas.is_free_floor(p))
         .filter(|p| !canvas.objects.contains_key(p))

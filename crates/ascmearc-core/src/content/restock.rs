@@ -4,7 +4,7 @@
 //!
 //! The quality is counted in hundredths of an item level ([`RestockRules::item_level`]): 100 (item
 //! level 1), plus `per_level` for each level the player has beyond the first, plus `danger`
-//! percent of the level's own item level (its depth) for a shop in no town, plus the town's
+//! percent of the level's own item level (its danger) for a shop in no town, plus the town's
 //! bonus (its `[town.restock]`, `content/town.rs`), of which a merchant's stake with their
 //! business partner gives `invest.step` for each `invest.per` gold, at most `invest.most`.
 //!
@@ -106,13 +106,20 @@ mod tests {
     fn the_quality_climbs_slowly() {
         let content = crate::test_support::builtin();
         let rules = content.restock().expect("shops restock");
+        // A town's shops lag the ladder (docs/design/item-level-40.md §9): 12 at 20, 24 at 40,
+        // 36 at 60, never its top.
         assert_eq!(rules.item_level(1, 0, 0), 1);
-        assert_eq!(rules.item_level(10, 0, 0), 4);
-        assert_eq!(rules.item_level(30, 0, 0), 12);
-        // A shop ten floors down, outside a town.
-        assert_eq!(rules.item_level(10, 10, 0), 9);
-        // Two item levels of a town's bonus.
-        assert_eq!(rules.item_level(10, 0, 200), 6);
+        assert_eq!(rules.item_level(10, 0, 0), 6);
+        assert_eq!(rules.item_level(20, 0, 0), 12);
+        assert_eq!(rules.item_level(30, 0, 0), 18);
+        assert_eq!(rules.item_level(40, 0, 0), 24);
+        assert_eq!(rules.item_level(60, 0, 0), 36);
+        // A shop outside a town, on a floor of danger 10, and of danger 24 for a level-30 one.
+        assert_eq!(rules.item_level(10, 10, 0), 11);
+        assert_eq!(rules.item_level(30, 24, 0), 30);
+        // Two item levels of a town's bonus; the full stake's three at 60.
+        assert_eq!(rules.item_level(10, 0, 200), 8);
+        assert_eq!(rules.item_level(60, 0, 300), 39);
     }
 
     #[test]

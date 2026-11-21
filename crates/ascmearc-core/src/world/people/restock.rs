@@ -13,12 +13,13 @@
 //!   level>`, so what comes does not depend on when or whether the player looks: `gone` stacks
 //!   of goods lying on the shop floor (what the shop trades, never its kind's `always`) leave,
 //!   chosen evenly; then the kind's `always` objects missing from the floor come back, and `come`
-//!   stacks more are drawn from what the kind stocks (`Shops::goods`), each on a free cell of the
+//!   stacks more are drawn from what the kind stocks (`Shops::goods`: a base item only once the
+//!   restock's item level reaches its own, as loot's), each on a free cell of the
 //!   shop floor (plain ground, nothing lying there, no trap or fire, not the keeper's
 //!   post; who stands where does not count, so goods may come to lie under a creature), made at
 //!   the restock's item level (`Shops::lay_out`).
 //! - **The item level** ([`crate::content::RestockRules::item_level`]): the player's level, the
-//!   level's own item level for a shop in no town (`content.item_level`: a floor's depth), and the
+//!   level's own item level for a shop in no town (`content.item_level`: a floor's danger), and the
 //!   town's bonus ([`World::restock_bonus`]).
 //! - **The talk** ([`World::economy_lines`], from `talk.rs::one_liner`): in a town, a speaker's
 //!   `[dialogue.economy]` `better` lines while its bonus is above 0, else its `hard` ones.
@@ -149,7 +150,7 @@ impl World {
             .collect();
         rng.shuffle(&mut free);
         let come = rng.range(i32::from(rules.come.0), i32::from(rules.come.1));
-        let goods = shops.goods(content, shop.kind);
+        let goods = shops.goods(content, shop.kind, made_at);
         let mut cells = free.into_iter();
         let drawn = (0..usize::try_from(come).unwrap_or(0)).map(|_| None);
         for always in missing.into_iter().map(Some).chain(drawn) {

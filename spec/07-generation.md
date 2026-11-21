@@ -61,11 +61,11 @@ Part of the design document; the index is [`specification.md`](../specification.
 - A keeper who is robbed, attacked, or catches the player stealing joins `outraged` and comes after them. That shop never trades again.
 - A dead keeper's shop is abandoned: its goods and purse are free.
 - The only number the player sees is the price. Presence, Negotiation, talents, and a good keeper's view of the player's alignment move prices within a cap. The player never sees by how much.
-- A magic item is priced for its magic, above its base item. Rotten food, junk, keys, and quest letters are never traded.
+- A magic item is priced for its magic, above its base item: each known affix by its tier's item level, a unique's by the unique's own item level. Rotten food, junk, keys, and quest letters are never traded.
 - Unpaid goods cannot be shot or thrown.
 - The Steal skill takes from a keeper's pack, never from the shop floor.
 - Generated shops appear only on rooms and mines levels, in a single-door room (a mine's worked chamber) other than the arrival's. Each branch has its own odds, kinds, and keepers. A town's own kinds are never generated.
-- Every shop restocks as the player gains a level: a few goods go, a few of its kind come, their magic made at an item level that climbs slowly with the player's level, the item level (the danger) of a shop's floor outside a town, and its town's trade (quests done, a merchant's stake). Each level gained counts once, wherever the player is, and the result does not depend on when they look. The game says it only through the townsfolk's talk of hard and better times (#1735).
+- Every shop restocks as the player gains a level: a few goods go, a few of its kind come, their magic made at an item level that climbs slowly with the player's level, the item level (the danger) of a shop's floor outside a town, and its town's trade (quests done, a merchant's stake). A base item comes only once that item level reaches its own, as in loot, so a starting town sells no plate. Each level gained counts once, wherever the player is, and the result does not depend on when they look. The game says it only through the townsfolk's talk of hard and better times (#1735).
 
 ## Special rooms
 
