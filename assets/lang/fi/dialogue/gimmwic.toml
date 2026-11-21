@@ -1,0 +1,293 @@
+# The people of Gimmwīc (campaigns/ascmearc/data/dialogue/gimmwic.toml). The deep gnomes speak
+# Karelian (their dialogue's `register = "cornish"`, lang.toml): the south-eastern Finnish of
+# Karelia, mie/sie/hää, miun/siun, "elä" for don't, followable for any Finnish reader. The
+# Cornish of the English is carried by fixed words: an emmet (anyone from up top) is a
+# "pinnalaine", my 'ansum and my lover are "miun kultaine" and "rakkahaine", dreckly is
+# "jokkuna", proper job is "Kunnon työ!", teasy is "kiukkune". The Deep Way is "Syvätie", the
+# Glimmering "Hohde", the moot "käräjät".
+
+# The townsfolk.
+[ascmearc.deep_gnome]
+greet = { text = "Mitä kuuluu, pinnalaine? Tulit koko Syvätien alas, vai? Kunnon työ!", of = "d51a87" }
+greet_evil = [
+    { text = "Mäne tiehes. Myö tunnetaa siun sorttis täälläi alhaal.", of = "6621a8" },
+    { text = "Pie kätes erillää kivistä, pinnalaine. Mie katon.", of = "d78fc8" },
+]
+lines = [
+    { text = "Hio kivi väärin, ni se o mänetetty. Mittaa kahest, miun kultaine.", of = "b01280" },
+    { text = "Taskus o granaatti, mikä kaipaa istutusta. Teen sen jokkuna.", of = "995b9e" },
+    { text = "Tregearin hiomakivi o laulant ensvuorost asti. Komeeta, se.", of = "795c49" },
+    { text = "Äiti Senara hoitaa siut Hohtees, jos sie oot loukkaantunt.", of = "1c3bfc" },
+    { text = "Kerensa sannoo, mitä siun repus o. Ja mitä se maksaa, rakkahaine.", of = "32cde9" },
+    { text = "Ylhääl ne ostaa pataset. Ostaa! Jotkut ei oo koskaa tehnt mittää.", of = "b5e030" },
+    { text = "Duergarit kaivaa taas meijän suonii. Kaivaa niinku sika tonkii.", of = "34f531" },
+    { text = "Gnomi hioo ensmäise kivensä seitsenvuotiaana. Miun ol savukvartsi.", of = "ddd2f4" },
+    { text = "Vakaa käsi, tarkka silmä ja kärsivällisyys. Kivityö. Kärsivällisyys.", of = "886c3d" },
+    { text = "Hiomolattian alasimet o vapaat. Jätä ne vaa siistiks.", of = "592c35" },
+]
+mutter = [
+    { text = "...neljännes kierros viel hiomakivel...", of = "644621" },
+    { text = "Missä miun luuppi o? Ol se tässä hetki sitte.", of = "93b224" },
+    { text = "Kunnon työ, tuo. Kunnon työ.", of = "0b65dd" },
+    { text = "Fasetti, fasetti, fasetti...", of = "4248a9" },
+    { text = "Jokkuna. Mie teen sen jokkuna.", of = "5b8ed4" },
+]
+
+[ascmearc.deep_gnome.economy]
+hard = [
+    { text = "Joryl o hyllyt vähis, miun kultaine. Mitää ei tule alas, ei lähe ylös.", of = "2935db" },
+    { text = "Ei kauppaa ylhäälle. Myö myyvää toisillemme, eikä se oo kauppaa.", of = "661763" },
+]
+better = [
+    { text = "Joryn hyllyt o täydemmät ku vuosiin mie oon nähnt. Kunnon työ!", of = "6991ae" },
+    { text = "Rahhaa tulloo taas Syvätietä alas. Hyvä hiomakivel, hyvä kaikil.", of = "1f665d" },
+]
+
+[ascmearc.deep_gnome.after]
+gnome_letter = [
+    { text = "Pinnalaiset ja gnomit kauppaa reilust. Peran sannoo, et kirje sen teki.", of = "46f008" },
+    { text = "Cēaptūnin hopeet kivist, niiden rautaa istutuksiin. Kuka ois uskont?", of = "62fc4c" },
+]
+
+# The traders.
+[ascmearc.deep_gnome_trader]
+greet = { text = "Tule sisää, miun kultaine. Mitä nostat, siit maksat ovel. Reilu?", of = "b74c11" }
+greet_evil = [
+    { text = "Kyl mie siul myyn. Lasken vaa tavarat jälkeepäi, kuule.", of = "511cd2" },
+    { text = "Maksa ovel, pinnalaine, ja pie kätes siin, mis mie ne näen.", of = "8a77f4" },
+]
+lines = [
+    { text = "Hyvää rautaa, hyvää hopeeta, hyviä harkkoja. Tee niist jotai, tuu.", of = "8bcab3" },
+    { text = "Mie ostan, mitä sie oot löytänt, jos se o kantamise arvone.", of = "4aeed2" },
+    { text = "Kulta o kultaa, mut hyvä harkko o kalu, mikä oottaa tekijäänsä.", of = "8501bc" },
+    { text = "Hinnat o reilut. Reilummat ku ylhääl, kuulin.", of = "0ce816" },
+    { text = "Varo askelmaa, rakkahaine. Varo kaikkee täälä alhaal, oikeestaa.", of = "05f81f" },
+]
+
+# Headman Peran.
+[ascmearc.peran]
+greet = { text = "Tervetuloa Gimmwīciin, vieras. Harva tulloo Syvätien alas ja elää kertomaa.", of = "9df0fc" }
+greet_evil = [
+    { text = "Siuss o verta. Sano asias ja mäne, pinnalaine.", of = "67d26d" },
+    { text = "Gimmwīcin ovi o auki. Elä pane meitä sulkemaa sitä.", of = "a4b2d4" },
+]
+lines = [
+    { text = "Istu, istu. Käräjätalon tuolit o gnomin kokosii, kuule. Kyykisty sit.", of = "8797e8" },
+    { text = "Myö hiotaa kiveä, istutetaa kiveä, tehhää kaluja. Se o Gimmwīc.", of = "e3e666" },
+    { text = "Ylhääl luullaa, et myö ollaa satuu. Sopii meil, enimmäkseen.", of = "03e16c" },
+    { text = "Syvätie o kova. Kova pittää väärät ihmiset ulkona.", of = "6b5495" },
+    { text = "Myö ollaa pietty tätä salii jo ennen ku vuori alko savuttaa.", of = "471318" },
+    { text = "Kauppa o hyvä asia. Tekemine o parempi.", of = "50fdd4" },
+]
+mutter = [
+    { text = "...käräjät istuu jokkuna, eikä ennen...", of = "160568" },
+    { text = "Kunnon työ. Kunnon työ.", of = "cc104a" },
+]
+
+[ascmearc.peran.topic]
+gimmwic = { text = "Gimmwīc o syvägnomien kaupunki, miun kultaine, ja aina ol. Myö hakattii se kalliost isku kerrallaa. Hohde loukkaantuneil, Kerensa kivil, Jory tavaroil, ja Tregearin hiomolattia niil, ket halluu oppia. Siel alasimet o vapaat kaikil, ket tekköö siistii jälkee.", of = "625ef2" }
+up_top = { text = "Myö kauppaillaa Syvätietä ylös silloin tällöin, hiljaksee, kivi jauhosäkkii vastaa. Markkinakaupungin pinnalaiset ei kysy, mistä se o. Ei oo koskaa kysynt. Myö ei kerrota. Siks o pysynt ystävällisenä, näätsie.", of = "abf309" }
+deep = { text = "Duergarit idäs, kaivamas meijän suonii. Tummahaltiat nousoo alhaalt, ku ne o kiukkusii. Peikkoi ja pahempaa villeis luolis välis. Siks Syvätie kiemurtelloo niin, ja siks sen ovet piilottelloo. Varo pimmeetä, rakkahaine.", of = "6ed6a6" }
+
+# Kerensa, the gem dealer.
+[ascmearc.kerensa]
+greet = { text = "Kivii ja istutuksii, rakkahaine. Katsele mitä halluut. Koske, ni maksat.", of = "64a9e2" }
+greet_evil = [
+    { text = "Kyl mie siul myyn. Lasken joka kiven jälkeepäi.", of = "7adcde" },
+    { text = "Maksa ovel, pinnalaine. Miul o nopee silmä ja nopeempi käsi.", of = "749cac" },
+]
+lines = [
+    { text = "Rubiini o pelkkää punasta lasii, kunnes joku hioo sen kunnolla.", of = "b7ebae" },
+    { text = "Hiomaton o halvempi. Hiomisest sie maksat, näätsie. Tai tee ite.", of = "1cb195" },
+    { text = "Mie ostan jokaise kiven, mink tuot. Reilu hinta: gnomin, ei pinnalaise.", of = "c747ea" },
+    { text = "Tuon sormukse mie istutin ite. Kolme päivää pelkkii kynsii.", of = "91e4a0" },
+    { text = "Mie voin sannoo, mitä mikä tahansa o. Maksust, kuule.", of = "5adc00" },
+]
+mutter = [
+    { text = "Virheetön... melkein virheetön...", of = "baced2" },
+    { text = "Kuka o ollt miun luupil?", of = "326358" },
+]
+
+[ascmearc.kerensa.topic]
+gems = { text = "Hiomattomina ne o tylsii kivii; kunnolla hiottuina ne o tulta. Koko ja hionta tekköö hinnan, ei pelkkä kivi. Iso kivi huonost hiottuna o vähemmän arvone ku pieni hienost tehty. Mie myyn molempii. Osta hiomaton ja hio se ite, jos Tregear o opettant siut.", of = "ba6981" }
+appraisal = { text = "Jalokiviseppän silmä näkkee muutaki ku kivii, miun kultaine. Lumotut terät, käärööt, koko roska. Sata kultaa joka tavarast, mitä sie et tunne, ja nippu samaa lasketaa yheks. Mie katon kaike, mitä sie kannat, tai en mittää. Ei puolikkaita.", of = "e1f573" }
+
+[ascmearc.kerensa.service.identify]
+reply = { text = "Kas niin. Joka tavara katottu kunnolla. Nyt sie tiijät, mitä sie kannat, mikä o enemmä ku useimmil pinnalaisil.", of = "262dbc" }
+nothing = { text = "Sie tiijät jo kaike, mitä sie kannat, rakkahaine. Mie en laskuta siult sen sanomisest.", of = "dd3600" }
+
+[ascmearc.kerensa.after]
+crystal_guardian = [
+    { text = "Varo vartijaa, rakkahaine. Se ei liiku, mut kaike se huomaa.", of = "dc1093" },
+    { text = "Siit asti ku se tul, joka kivi soi puhtaast. Hiotaa hienommin, kaikki.", of = "50db55" },
+    { text = "Sie toit sen kottii? Kunnon työ! Paras asia kaupal miespolviin.", of = "468c0a" },
+    { text = "Hio täs kaupungis, ni se hyräilee mukan. Vakauttaa käe, se hyräily.", of = "57d285" },
+    { text = "Varkaat pysyy nyt kaukan miun puojist. En tiijä miks.", of = "519761" },
+]
+
+# Mother Senara of the Glimmering.
+[ascmearc.senara]
+greet = { text = "Rauha siul, syvyyksien lapsi tai ylhäält tullut. Hohde ei käännä ketää pois.", of = "537651" }
+greet_evil = [
+    { text = "Siuss o verta. Rukoile ensin, ja tule sit takasi.", of = "98dfbc" },
+    { text = "Siukii voija parantaa, aikanaa. Ei tänää.", of = "3d2392" },
+]
+lines = [
+    { text = "Leppää täs nii kaua ku tarviit. Mikkää paha ei astu tän lattian yli.", of = "689fd3" },
+    { text = "Seinien kivet istutti ensmäiset gnomit. Kunnioita niitä.", of = "c1346b" },
+    { text = "Parannus maksaa kultaa. Kristallit ei valase itteään.", of = "a036c1" },
+    { text = "Tee jotai käsilläs joka päivä. Sekii o parantamista.", of = "a763b1" },
+    { text = "Hohde pittää valon, ku lamput sammuu.", of = "b04f1d" },
+]
+mutter = [
+    { text = "...pie valo, pie kivi, pie käsi vakaana...", of = "932e83" },
+    { text = "...ja tuo hiojat kottii syvyyksist...", of = "94fd61" },
+]
+mutter_verb = { text = "rukoilee", of = "9e4ad8" }
+
+[ascmearc.senara.topic]
+glimmering = { text = "Hohde o meijän temppeli, lapsi: kristalleja, mitkä ensmäiset gnomit istutti kallioo, eikä ne oo koskaa pimentynt. Myö parannetaa, haudataa ja pietää valoa. Leppää sen lattial, ni haavas umpeutuu nopeemmin.", of = "5b6821" }
+
+[ascmearc.senara.service.cure]
+reply = { text = "Mäne terveenä, lapsi. Ja pysy poies villeist luolist.", of = "59af78" }
+nothing = { text = "Siul ei oo mittää vaivaa, lapsi.", of = "17c126" }
+
+[ascmearc.senara.service.mend]
+reply = { text = "Kas niin. Taas ehjä, sellasena ku siut tehtii.", of = "5f921c" }
+nothing = { text = "Sie oot ehjä, lapsi. Mäne valon kera.", of = "c86ec5" }
+
+[ascmearc.senara.service.decurse]
+reply = { text = "Kas niin. Se päästi siust irti. Jätä se sinne, mihi se jäi, lapsi: kirottu se o yhä.", of = "74ba74" }
+nothing = { text = "Siuss ei roiku mittää kirottua, lapsi.", of = "f47c75" }
+
+# Ysella the Binder.
+[ascmearc.ysella]
+greet = { text = "Mitä kuuluu, pinnalaine? Seiso hetki paikallas. Kivi kuuntelee siuta.", of = "095ffa" }
+greet_evil = [
+    { text = "Siun kaius o verta, pinnalaine. Kristalli ei laula siul.", of = "966f27" },
+    { text = "Mie sion kivii, en ihmisii. Elä pane miuta opettelemaa miten.", of = "7f33d6" },
+]
+lines = [
+    { text = "Joka kives o laulu. Sitomine o vaa sävelen opettelemista.", of = "8d5f75" },
+    { text = "Hio kristalli väärin, ni se mököttää sata vuotta. Ihan kiukkune.", of = "790b61" },
+    { text = "Syvyys o täynnä paikkoi, mitkä ei oo ihan täällä. Mie tunnen muutaman.", of = "287f0a" },
+    { text = "Vanha Tregear hioo niitä. Mie herätän niitä. Eri ammatti, sama kivi.", of = "da2fb3" },
+    { text = "Puutarha o hiljane. Kivi kuulee paremmin hiljasuuvessa, rakkahaine.", of = "737eb9" },
+]
+mutter = [
+    { text = "...mmmm... siinä se sävel... pie se, pie se...", of = "edb94b" },
+    { text = "...neljännessävel alemmas, miun kultaine, ja laula...", of = "cd0084" },
+]
+mutter_verb = { text = "hyräilee", of = "a689f7" }
+
+[ascmearc.ysella.topic]
+binding = { text = "Sidottu kivi tekköö työtä kaupungil, miun kultaine: valasoo Hohteen, vakauttaa hiojan kiven. Sitä ei kahlita. Sille lauletaa se sävel, mitä se o oottant, ja se jääpi. Oppimisee mänöö koko ikä. Mie opettelen viel.", of = "9b98f7" }
+meyn_bew = { text = "Meyn Bew, elävät kivet. Syvyyden tasku, mis kallio o enemmä elävä ku kuollut, niinku kupla lasis. Mie voin avata tien, jos o tarvet. Mitä siel o, ei rakasta vieraita, kuule. Kaikki o kristallii, ja kristallil o pitkä muisti.", of = "4c1034" }
+
+[ascmearc.ysella.after]
+crystal_guardian = [
+    { text = "Kuulet sie sen hyräilevän Kerensan luon? Se o tyytyväine, se.", of = "5a206a" },
+    { text = "Kunnol sidottu se o. Ei vaella, ei mökötä, ei satuta ketää.", of = "0463d2" },
+    { text = "Kaupungis hiotut kivet tullee nyt hienommat. Se laulaa ne puhtaiks.", of = "3fccf8" },
+]
+
+# The crystal guardian of Meyn Bew: no words, only its note.
+[ascmearc.crystal_guardian]
+lines = [
+    { text = "Mmmmmmmmmmm.", of = "8edc01" },
+    { text = "Kling... kling... kling.", of = "a2bf00" },
+    { text = "Hmmmmmmm... kling.", of = "ee99c1" },
+]
+mutter = [
+    { text = "Mmmmmmmmmmmm...", of = "25c2eb" },
+    { text = "...kling... kling...", of = "e11ffa" },
+    { text = "Hmmmmmm... mmmmm...", of = "6e1d73" },
+]
+mutter_verb = { text = "hyräilee", of = "a689f7" }
+
+# Old Tregear, master jeweller.
+[ascmearc.tregear]
+greet = { text = "Varo hiomakiveä, pinnalaine. Puhu, mut elä tönäse miun kyynärpäätä.", of = "f84057" }
+greet_evil = [
+    { text = "Mie opetan kenet tahansa, kuka maksaa. Ei miun tarvii tykätä siit.", of = "07b3fc" },
+    { text = "Pie kätes erillää miun kivistä, ni myö tullaa toimee.", of = "54f17b" },
+]
+lines = [
+    { text = "Kuuskymment vuotta tän hiomakiven äärel. Opettelen viel, miun kultaine.", of = "bdc66a" },
+    { text = "Kives o syy niinku puus. Etsi se, hio sen mukkaa.", of = "de97c2" },
+    { text = "Kunnon työ o kivi, mikä ottaa valon joka puolelt.", of = "cc428e" },
+    { text = "Alasin o vapaa. Hiomakivi o miun. Kysy ensin.", of = "119592" },
+    { text = "Sormukset ja amuletit o helppoi. Kiven istutus suoraa, se o taidetta.", of = "23bdf4" },
+]
+mutter = [
+    { text = "Neljännes kierros... neljännes kierros... noin.", of = "80bbaa" },
+    { text = "Mäne tiehes, sie itsepäine pieni granaatti.", of = "6a1261" },
+    { text = "Kunnon työ. Kunnon työ.", of = "cc104a" },
+]
+mutter_verb = { text = "mutisee", of = "4e7347" }
+
+[ascmearc.tregear.topic]
+jewelcraft = { text = "Kivien hiomista, istuttamista, sormuksii ja amuletteja hyvästä metallist. Sie tarviit vakaan käe, veitsen ja kärsivällisyyttä, ja sie tarviit opetusta. Viistoist sattaa kultaa, ni mie näytän, miten kivee pietää, ettei se lennä hiomakiveltä.", of = "d7dd4d" }
+
+[ascmearc.tregear.service.train_jewelcraft]
+reply = { text = "Selvä. Pane se puristimee, näin. Etsi syy. Pieniä hiontoi, miun kultaine, pieniä hiontoi, ja katso jokaista. Kas niin. Sie pilaat muutaman, ennen ku teet yhen. Kaikki pilaa.", of = "0ca85f" }
+nothing = { text = "Sie osaat jo hioa kiven, pinnalaine. Mie en opeta siuta kahesti.", of = "d56bad" }
+
+# Morwenna, the crystal-reader.
+[ascmearc.morwenna]
+greet = { text = "Kristalleja, vai? Mie luen niitä, miun kultaine. Joka väri pittää omasa.", of = "62f401" }
+greet_evil = [
+    { text = "Mustii kristalleja sie ajat takaa. Mie haistan siust haua.", of = "345e76" },
+    { text = "Mie kerron, mitä kristalli sitoo. En kerro kahesti, pinnalaine.", of = "af7c58" },
+]
+lines = [
+    { text = "Musta o haua väri. Mätää ja myrkkyy terää, ja varjoja piiloks.", of = "393521" },
+    { text = "Musta tykkää tappoiskust kans. Iskee syvält ja ruokkii siuta siit.", of = "68b658" },
+    { text = "Sininen o mieli ja pakkane. Mana, loitsut, kylmä ja salama.", of = "defbdc" },
+    { text = "Valkone suojaa siuta. Haarniska, kilpikäsi, elämä ja valo nähä.", of = "258927" },
+    { text = "Punane o veri ja tuli. Purru terää, vahva käsi, kuuma terä.", of = "52da4e" },
+    { text = "Vihree o myrkky ja nopsat jalat. Myrkky, happo ja näppärät sormet.", of = "4f8195" },
+    { text = "Kulta o tekijän onni. Tarkka silmä, hyvä kauppa, varma käsi.", of = "b8ce24" },
+    { text = "Kristalli sitoo vaa omaa lajiaa. Punane ei pie pakkasta, sininen tulta.", of = "9d72de" },
+    { text = "Pura lumottu kalu, ni sen taika valuu kristalliks. Nopiaa, kuule.", of = "7cb791" },
+    { text = "Lumousta ei tarvii tuntea, et sen saa kiinni. Mänöö se kuitenki.", of = "115afa" },
+    { text = "Sydänkristalli tekköö tilaa. Yks lumous lissää harvinaisee ku ennen.", of = "a47d06" },
+    { text = "Sielunkahle pittää yhen lumoukse kiinni, ku muut lumotaa uuvestaa.", of = "804e96" },
+    { text = "Murskaa kristalli ja juo se: mana takasi, lujempi tahto. Ja tahra.", of = "fe7d64" },
+]
+mutter = [
+    { text = "...punane verel, sininen mielel, musta haual...", of = "6b087b" },
+    { text = "Kunnon väri, tuo. Kunnon työ.", of = "588af0" },
+    { text = "Pie sitä valoo vasten... noin. Vihree, ja syvä vihree.", of = "750b45" },
+]
+
+# The topics' and services' names: menu labels the player picks, in standard Finnish.
+[ascmearc.peran.topic_name]
+gimmwic = { text = "Gimmwīc", of = "3d50bf" }
+up_top = { text = "Väki ylhäällä", of = "070196" }
+deep = { text = "Syvyys", of = "88e46f" }
+
+[ascmearc.kerensa.topic_name]
+gems = { text = "Jalokivet", of = "28cc19" }
+appraisal = { text = "Arvioinnit", of = "6b5c1f" }
+
+[ascmearc.kerensa.service_name]
+identify = { text = "Tavaroiden arviointi", of = "c07ed8" }
+
+[ascmearc.senara.topic_name]
+glimmering = { text = "Hohde", of = "97f56c" }
+
+[ascmearc.senara.service_name]
+cure = { text = "Parannus vaivoihin", of = "6719ee" }
+mend = { text = "Ruumiin eheyttäminen", of = "7a0dd7" }
+decurse = { text = "Vapautus kirouksesta", of = "c036e9" }
+
+[ascmearc.ysella.topic_name]
+binding = { text = "Sitominen", of = "7df2f1" }
+meyn_bew = { text = "Meyn Bew", of = "c80078" }
+
+[ascmearc.tregear.topic_name]
+jewelcraft = { text = "Jalokivityö", of = "dfa100" }
+
+[ascmearc.tregear.service_name]
+train_jewelcraft = { text = "Opeta minut hiomaan kiviä", of = "bd80e6" }

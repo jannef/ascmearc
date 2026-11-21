@@ -1,0 +1,28 @@
+# The sexton of Līctūn (campaigns/ascmearc/data/dialogue/lictun.toml): Old Dudda, human, a
+# commoner, so Stadin slangi (#1896), grim and dry.
+
+[ascmearc.dudda]
+greet = { text = "Huomenta. Tai iltaa. Ihan sama mun porukalle.", of = "46d9d3" }
+greet_evil = [
+    { text = "Tulit täyttää yhen paikan, vai? Mul on tilaa.", of = "885c9f" },
+    { text = "Näpit irti kivistä, sä. Niil on ollu tarpeeks vaivaa.", of = "ea8208" },
+]
+lines = [
+    { text = "Kato mihin astut. Jokainen täällä alla oli jonkun oma.", of = "ddf366" },
+    { text = "Kuus jalkaa alas, suorat seinät. Kukaan ei oo palauttanu yhtään.", of = "ebf3a2" },
+    { text = "Kiireinen vuosi. Aina on kiireinen vuosi.", of = "a06b81" },
+    { text = "Maa on Frostmeressä kovaa ku rauta. Mun porukka oottaa suojasäitä.", of = "9c8ae8" },
+    { text = "Seikkailijoit? Rivikaupal. Rohkeit, hiljasii nyt. Alhaal on lisää tilaa.", of = "b3abeb" },
+    { text = "Mä kaivan sunkin, ku sen aika tulee. Ekast jalast en laskuta.", of = "18b91a" },
+    { text = "Sisar Hild sanoo sanat, mä hoidan kaivamisen. Reilu jako, se.", of = "701e2c" },
+    { text = "Valoi pihal öisin? Suokaasuu. Enimmäkseen.", of = "5dcab6" },
+    { text = "Nelkyt vuotta mä oon pitäny tätä pihaa. Kukaan ei oo vielä päässy ulos.", of = "dbc146" },
+]
+mutter = [
+    { text = "Taas sammalta niiden päällä.", of = "2a4655" },
+    { text = "Lapio pitäis teroittaa.", of = "2252f6" },
+    { text = "Taas yks suojasäihin mennes, en ihmettelis.", of = "69a481" },
+    { text = "Lepää rauhas, vanha jätkä. Lepää rauhas.", of = "198c1d" },
+    { text = "Leipuriks ois pitäny ruveta. Lämmintä duunii, leipominen.", of = "35ce54" },
+]
+mutter_verb = { text = "murisee", of = "a967f2" }

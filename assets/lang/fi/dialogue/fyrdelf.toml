@@ -1,0 +1,47 @@
+# The people of Fyrdelf (campaigns/ascmearc/data/dialogue/fyrdelf.toml): Alberich, the dwarven
+# miser of the fifth floor. A dwarf, so he speaks South Ostrobothnian (lang.toml `pohjalainen`):
+# mää/sää/hää, the opened diphthongs (hianoo, lyä, nuari), "kläppi", "tiärätkö", d as r
+# (löyrä, pirä). A little mad: he talks to his gold and minds the player's hands.
+
+[ascmearc.alberich]
+greet = { text = "Kukas siälä? Piä kätes siinä, missä mää ne nään, kläppi. Kaikki tää on mun, tiärätkö. Joka jyvä.", of = "30fd02" }
+lines = [
+    { text = "Neljäsataa yheksänkymmentäkaheksan, yheksän... älä hengitä sen päälle!", of = "5bd52d" },
+    { text = "Mulla oli kerran sormus. Hianoon ikinä. Yksisilmäänen ukko vei sen.", of = "49df8d" },
+    { text = "Kuka sitä sormusta kantaa, sen mää kiroosin. Saakoon riamunsa, hah!", of = "64da29" },
+    { text = "Kolome likkaa joella nauroo mulle kerran. Kuka nyt nauraa, hä?", of = "8aae40" },
+    { text = "Mää luovuin rakkaudesta tämän takia. Kulta ei karkaa toisen matkaan.", of = "59b760" },
+    { text = "Oli kypärä. Päähän ja oot poissa. En löyrä sitä. Tai se on päässä.", of = "3d3f7b" },
+    { text = "Kerran mulla oli kokonaanen kansa kaivamassa. Nyt vain mää ja hakku.", of = "7acc30" },
+    { text = "Mun veli on seppä. Hyörytön. Ei saa lusikkaakaan tehtyä valittamatta.", of = "11defc" },
+    { text = "Alhaalla lohikäärmeellä on isompi aarre. Mää vihaan sitä, kultaane.", of = "3ebac5" },
+    { text = "Älä koske kasoohin. Mää tiärän kyllä. Mää oon laskenu ne.", of = "931857" },
+    { text = "Lämmin täälä alahalla, häh? Kulta pitää lämpimänä, kulta pitää.", of = "034c47" },
+]
+mutter = [
+    { text = "Yks... kaks... kolome... nyt meni sekaasin. Yks...", of = "d56540" },
+    { text = "Mun. Mun. Kaikki mun.", of = "f2976e" },
+    { text = "Kirous sille. Kirous yksisilmääselle varkahalle ja sen tuliselle kamulle.", of = "f57711" },
+    { text = "Kuka nyt nauraa, te vetiset likat?", of = "a09c67" },
+    { text = "Kas niin, mun koriat kasat. Kukaan ei teitä vie.", of = "ffde94" },
+    { text = "Missä mun kypärä? Onko se päässä? Olenko mää eres täälä?", of = "049bb1" },
+]
+mutter_verb = { text = "mutisoo", of = "4e7347" }
+
+[ascmearc.alberich.topic]
+gold = { text = "Mun. Kaikki. Kaivoon ne ylähä näillä käsillä, ja toisten käsillä ennenku ne karkas. Sää haluat vähä? Opi kaivamaan omas, kläppi. Mää opetan, hinnasta.", of = "594849" }
+ring = { text = "Mää tein sen joen kullasta. Likat vahti sitä ja nauroo, niin mää otin sen. Sitte yksisilmäänen ukko ja sen tulinen kaveri huijas mut konnaksi ja kaappas sen. Kirous niille. Kirous kenelle tahansa, joka sitä pitää. Mää sanoon sen ja mää tarkootin sen.", of = "160fcc" }
+mining = { text = "Kallio on ku kukkaro, kläppi. Lyä oikeesta kohtaa niin se aukiaa. Malmia, kiveä, vähä jalokiveä jos oot onnekas. Tarttet hakun, ja vähä voimaa käsivarteen, ja opetusta. Viissataa kultaa, suunnilleen.", of = "3f08d1" }
+
+[ascmearc.alberich.service.train_mining]
+reply = { text = "No niin. Pirä hakkua näin. Ei, NÄIN. Lyä siihen, missä kivi on väsyny. Kuuletko? Se puhuu sulle. Nyt mee kaivaan, äläkä kaiva mun kullan lähellä.", of = "c21c85" }
+nothing = { text = "Sää osaat jo kaivaa, äijä. Mää en opeta kahesti.", of = "7ee9d1" }
+
+# The topics' and services' names: menu labels the player picks, in standard Finnish.
+[ascmearc.alberich.topic_name]
+gold = { text = "Kultasi", of = "b5334c" }
+ring = { text = "Sormus", of = "2eda5d" }
+mining = { text = "Kaivostyö", of = "527edc" }
+
+[ascmearc.alberich.service_name]
+train_mining = { text = "Opeta minut louhimaan", of = "61e33c" }

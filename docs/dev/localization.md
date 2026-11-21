@@ -1564,6 +1564,21 @@ paikkaan Cēaptūn"); words core still says as text (a resource's short name, th
 chance, a ready weapon's name in the targeting line) stay English; an unidentified potion's label
 is a `Label` clause where Finnish wants an agreeing adjective.
 
+**The other towns (#2056)**: the dialogue of Holtwīc, Līctūn, Gimmwīc, Alberich's delving,
+the three wizards' towers, the roads, and the strange spirit (`dialogue/<file>.toml`, one per
+campaign file); every quest's lines (`data/quest.toml`: a giver's words in their dialect, the
+rewards' and a lure's binding in the narrator's standard); the profane gifts
+(`data/profane.toml`), the hunter's calling (`data/calling.toml`); and the campaign's place
+names, notes, arrivals, and epitaphs (`data/level.toml`, `dungeon.toml`, `town.toml`). Gimmwīc
+speaks Karelian with fixed words for the deep's Cornish (its file's header names them), Alberich
+South Ostrobothnian, the wizards kirjakieli, the rest Stadin slangi. The showcase's dialogue,
+quests, and levels stay English (a dev world). Still English, as no line of data holds them yet:
+an npc's `name` ("Headman Peran sanoo: …"), a trader's offer's name ("Your wares"), a guild's
+name and ranks, the backgrounds, and the prestige classes. A place's name still takes no case:
+giving places lexicon words would let `{place:ill}` decline a hand-made level's name, but a
+branch level's name is a nested message (`levels.branch_level`, "Fyrdelf 2") that a form does
+not reach, so the place messages stay in the nominative until that is designed.
+
 ## Mods (L9)
 
 A mod's files under `lang/` are its text (#1892; the mechanism and the save rules are

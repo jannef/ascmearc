@@ -1,0 +1,78 @@
+# The people of Holtwīc (campaigns/ascmearc/data/dialogue/holtwic.toml). Everyone here is human
+# and has no `register` of their own, so all speak as commoners: Stadin slangi (#1896), a
+# country village's (no modern things). Gammer Wynflæd keeps an old wise-woman's tone inside it,
+# her charms half-sung; Ælfrun is a frightened girl.
+
+# The cottars.
+[ascmearc.cottar]
+greet = { text = "Huomenta. Tulit tietä ylös Cēaptūnist, vai? Harva tulee.", of = "50a182" }
+greet_evil = [
+    { text = "Ei me haluta sun sorttisii Holtwīciin. Mee takas tietä alas.", of = "0d8cec" },
+    { text = "Pysy pois mun pellolta, sä. Ja mun portailta.", of = "b81208" },
+]
+lines = [
+    { text = "Tie loppuu tähän. Meist eteenpäin on pelkkää metsää, eikä se oo meidän.", of = "c77d82" },
+    { text = "Kysy Muori Wynflædilt metsäst. Se tuntee sen konstit, kato.", of = "be5c0d" },
+    { text = "Älä mee noihin puihin pimeel. Äläkä viheltele siel.", of = "3f2ea8" },
+    { text = "Ohra on harvaa tänä vuonna. Tuhkaa vuorelta päällä, näätsä.", of = "3d6557" },
+    { text = "Cēaptūnin jengi sanoo meit juntiks. Silti ne syö meidän leipää.", of = "1e6288" },
+    { text = "Jos kuulet metsäs huilun, käänny ja mee toiseen suuntaan. Äkkii.", of = "58b617" },
+    { text = "Jätä tilkka maitoo portaille pikkuväelle. Ei se maksa mitään.", of = "ae16ad" },
+    { text = "Susii syvällä metsäs, villisikoi lähempänä. Hiisii, joinain talvina.", of = "990542" },
+]
+mutter = [
+    { text = "Mihin se lehmä on menny?", of = "2b378c" },
+    { text = "Pihlaja oven päälle. Pihlaja oven päälle.", of = "589559" },
+    { text = "Mun selkä on ihan paskana.", of = "6400ec" },
+    { text = "Voi ei taas kirnuunnu. Joku on pilannu sen.", of = "364b6e" },
+    { text = "Sadetta illaks.", of = "85f7cf" },
+]
+
+# Gammer Wynflæd, the wise-woman.
+[ascmearc.wynflaed]
+greet = { text = "Tuu sisään, kultaseni, ja pistä ovi kii vedolta. Metsä kuuntelee.", of = "d7b79e" }
+greet_evil = [
+    { text = "Sus on pimeyttä, jota mä en päästä kynnyksen yli. Mee menojas.", of = "810759" },
+    { text = "Metsä ottais sut ilomielin, luulen mä. Ei mun ovi.", of = "025fe1" },
+]
+lines = [
+    { text = "Pihlaja ja punanen lanka. Pitää useimmat jutut ulkona. Useimmat.", of = "2e01a2" },
+    { text = "Pietaryrtti päähän, siankärsämö haavaan. Älä ikinä poimi kuutamol.", of = "f51704" },
+    { text = "Holtwīcis synnyin, tänne mut haudataan. Cēaptūnis kävin kahdesti.", of = "91a54f" },
+    { text = "Älä kiitä ketään metsäs. Kiitos on niille velka, kato.", of = "2f2889" },
+    { text = "Leipä ja suola on vanha tapa. Älä syö mitään, mitä kukkulan alla tarjotaan.", of = "3415fb" },
+    { text = "Mun äiti piti tätä ovee ennen mua, ja sen äiti ennen sitä.", of = "8b142c" },
+]
+mutter = [
+    { text = "...pihlaja ovelle, rauta kynnykselle...", of = "9b776d" },
+    { text = "...yks talolle, yks liedelle, yks kukkulalle...", of = "ae80f3" },
+    { text = "...hiljaa nyt. Hiljaa...", of = "f249bb" },
+]
+mutter_verb = { text = "mumisee", of = "f17b79" }
+
+[ascmearc.wynflaed.topic]
+holtwic = { text = "Holtwīc on tien pää, kultaseni. Meist eteenpäin on vaan Holegnwudu, paatsamametsä, aina kukkuloille asti. Tusina taloo, pellot, kaivo ja mä. Me kasvatetaan ohraa ja pidetään pää matalana, ja metsä antaa meidän olla, enimmäkseen.", of = "b5fce1" }
+wood = { text = "Holegnwudu on vanhempi ku hautakummut. Villisikoi, susii syvemmäl, hiisii joinain talvina. Mut ei mua otukset huoleta. On paikkoi, mis puut seisoo liian lähekkäin, kehäs, ja valo menee kummaks, ja kuuluu huilu. Kierrä ne, jos sul on järkee.", of = "eac855" }
+fair_folk = { text = "Älä sano niiden nimee, kultaseni: huonoo käytöstä ja huonompaa onnee. Kaks hovii niil on, mun äiti sano, valosa ja pimee. Valosat vaan tekee kepposii. Pimeillä on sali kukkulan alla tässä metsäs, ja mikä sinne menee, ei tuu samana takas, jos tulee ollenkaan.", of = "a32e8b" }
+
+[ascmearc.wynflaed.topic_name]
+holtwic = { text = "Holtwīc", of = "76e6fe" }
+wood = { text = "Paatsamametsä", of = "2f62a5" }
+fair_folk = { text = "Haltijaväki", of = "847b86" }
+
+# Ælfrun, Osgar's girl, on the way home from under the hill.
+[ascmearc.aelfrun]
+lines = [
+    { text = "Onks vielä pitkä matka? Mun jalat ei lakkaa tärisemäst.", of = "8dc862" },
+    { text = "Älä katso valoihin. Ne haluu et sä katsot niihin.", of = "238cdb" },
+    { text = "Ne lauloi mulle koko ajan. Mä kuulen sen vieläkin, tavallaan.", of = "4e8080" },
+    { text = "Kauanks mä olin siel alhaal? Tuntu yheltä pitkältä illalta.", of = "b0c088" },
+    { text = "Mä en syöny mitään mitä ne anto. Muori sano aina, ettei saa.", of = "4a21d3" },
+    { text = "Kiitti. Oikeesti. Mä olisin jääny sinne ikuisiks, muuten.", of = "c550d0" },
+]
+mutter = [
+    { text = "...älä katso, älä katso...", of = "9ccdbe" },
+    { text = "...äiti on ihan sekasin...", of = "a03c5b" },
+    { text = "...pihlaja ovelle, rauta kynnykselle...", of = "9b776d" },
+]
+mutter_verb = { text = "kuiskaa", of = "663994" }
